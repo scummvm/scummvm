@@ -261,7 +261,7 @@ LABEL_38:
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
 			ex->_param = obj->_odelay;
-			ex->_field_14 = 0x100;
+			ex->_field_14 = 0x80;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
 			mq->addExCommandToEnd(ex);

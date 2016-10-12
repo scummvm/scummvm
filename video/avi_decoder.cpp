@@ -385,7 +385,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		TrackStatus status;
 		status.track = *it;
 		status.index = index;
-		status.chunkSearchOffset = 0;
+		status.chunkSearchOffset = _movieListStart;
 
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
 			_audioTracks.push_back(status);
@@ -397,6 +397,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 			assert(_videoTracks.size() == 1);
 
 			// Find the index entry for the frame and move to it
+			status.chunkSearchOffset = 0;
 			for (uint idx = 0; idx < _indexEntries.size(); ++idx) {
 				if (_indexEntries[idx].id != ID_REC &&
 					getStreamIndex(_indexEntries[idx].id) == index) {

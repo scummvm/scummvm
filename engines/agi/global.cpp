@@ -247,7 +247,7 @@ void AgiEngine::setVarSecondsTrigger(byte newSeconds) {
 // This is also called in the main loop, because the game needs to be sync'd to 20 cycles per second
 void AgiEngine::inGameTimerUpdate() {
 	uint32 curPlayTimeMilliseconds = inGameTimerGet();
-	uint32 curPlayTimeCycles = curPlayTimeMilliseconds / 50;
+	uint32 curPlayTimeCycles = curPlayTimeMilliseconds / 25;
 
 	if (curPlayTimeCycles == _lastUsedPlayTimeInCycles) {
 		// No difference, skip updating

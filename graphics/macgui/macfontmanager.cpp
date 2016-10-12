@@ -127,6 +127,7 @@ void MacFontManager::loadFonts() {
 		}
 
 		FontMan.assignFontToName(fontName, font);
+		macfont->setBdfFont(font);
 		_fontRegistry.setVal(fontName, macfont);
 
 		debug(2, " %s", fontName.c_str());
@@ -150,7 +151,7 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 		font = FontMan.getFontByName(macFont.getName());
 
 		if (!font) {
-			warning("Cannot load font %s", macFont.getName().c_str());
+			warning("Cannot load font '%s'", macFont.getName().c_str());
 
 			font = FontMan.getFontByName(MacFont(kMacFontChicago, 12).getName());
 		}
@@ -219,7 +220,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 
 	// Now half size
 	name = getFontName(macFont.getId(), macFont.getSize() / 2, macFont.getSlant());
-	if (_fontRegistry.contains(name)) {
+	if (_fontRegistry.contains(name) && !_fontRegistry[name]->isGenerated()) {
 		generateFont(macFont, *_fontRegistry[name]);
 
 		return;
@@ -230,7 +231,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	// First we gather all font sizes for this font
 	Common::Array<int> sizes;
 	for (Common::HashMap<Common::String, MacFont *>::iterator i = _fontRegistry.begin(); i != _fontRegistry.end(); ++i) {
-		if (i->_value->getId() == macFont.getId() && i->_value->getSlant() == macFont.getSlant())
+		if (i->_value->getId() == macFont.getId() && i->_value->getSlant() == macFont.getSlant() && !i->_value->isGenerated())
 			sizes.push_back(i->_value->getSize());
 	}
 
@@ -251,17 +252,31 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	}
 
 	if (candidate != 1000) {
-		generateFont(macFont, MacFont(macFont.getId(), candidate, macFont.getSlant()));
+		generateFont(macFont, *_fontRegistry[getFontName(macFont.getId(), candidate, macFont.getSlant())]);
 		return;
 	}
 
 	// Now next smaller font, which is the biggest we have
-	generateFont(macFont, MacFont(macFont.getId(), maxSize, macFont.getSlant()));
+	generateFont(macFont, *_fontRegistry[getFontName(macFont.getId(), maxSize, macFont.getSlant())]);
 }
 
-void MacFontManager::generateFont(MacFont fromFont, MacFont toFont) {
-	debugN("Found font substitute for font %s ", getFontName(fromFont));
-	debug("as %s", getFontName(toFont));
+void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
+	debugN("Found font substitute for font '%s' ", getFontName(toFont));
+	debug("as '%s'", getFontName(fromFont));
+
+	Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(fromFont.getBdfFont(), toFont.getSize());
+
+	if (!font) {
+		warning("Failed to generate font '%s'", getFontName(toFont));
+	}
+
+	toFont.setGenerated(true);
+	toFont.setBdfFont(font);
+
+	FontMan.assignFontToName(getFontName(toFont), font);
+	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
+
+	debug("Generated font '%s'", getFontName(toFont));
 }
 
 } // End of namespace Graphics

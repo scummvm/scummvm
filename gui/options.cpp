@@ -433,13 +433,13 @@ void OptionsDialog::close() {
 				if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 					ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
 					message += "\n";
-					message += _("the fullscreen setting could not be changed");
+					message += _("the aspect ratio setting could not be changed");
 				}
 
 				if (gfxError & OSystem::kTransactionFullscreenFailed) {
 					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
 					message += "\n";
-					message += _("the aspect ratio setting could not be changed");
+					message += _("the fullscreen setting could not be changed");
 				}
 
 				// And display the error

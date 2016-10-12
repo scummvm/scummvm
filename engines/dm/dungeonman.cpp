@@ -477,7 +477,14 @@ DungeonMan::~DungeonMan() {
 
 void DungeonMan::decompressDungeonFile() {
 	Common::File f;
-	f.open("Dungeon.dat");
+	if (_vm->isDemo())
+		f.open("DemoDun.dat");
+	else
+		f.open("Dungeon.dat");
+
+	if (!f.isOpen())
+		error("Unable to open Dungeon.dat file");
+
 	if (f.readUint16BE() == 0x8104) { // if dungeon is compressed
 		_rawDunFileDataSize = f.readUint32BE();
 		delete[] _rawDunFileData;

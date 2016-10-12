@@ -68,6 +68,11 @@
 #include "dm/sounds.h"
 
 namespace DM {
+
+bool DMEngine::isDemo() const {
+	return (bool)(_gameVersion->_desc.flags & ADGF_DEMO);
+}
+
 Direction DMEngine::turnDirRight(int16 dir) {
 	Direction result = (Direction)((dir + 1) & 3);
 	return result;
