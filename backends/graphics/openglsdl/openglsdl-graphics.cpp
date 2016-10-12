@@ -734,38 +734,13 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_f) {
-				// Ctrl+Alt+f toggles the graphics modes.
-
-				// We are crazy we will allow the OpenGL base class to
-				// introduce new graphics modes like shaders for special
-				// filtering. If some other OpenGL subclass needs this,
-				// we can think of refactoring this.
-				int mode = getGraphicsMode();
-				const OSystem::GraphicsMode *supportedModes = getSupportedGraphicsModes();
-				const OSystem::GraphicsMode *modeDesc = nullptr;
-
-				// Search the current mode.
-				for (; supportedModes->name; ++supportedModes) {
-					if (supportedModes->id == mode) {
-						modeDesc = supportedModes;
-						break;
-					}
-				}
-				assert(modeDesc);
-
-				// Try to use the next mode in the list.
-				++modeDesc;
-				if (!modeDesc->name) {
-					modeDesc = getSupportedGraphicsModes();
-				}
-
-				// Never ever try to resize the window when we simply want to
-				// switch the graphics mode. This assures that the window size
-				// does not change.
+				// Never ever try to resize the window when we simply want to enable or disable filtering.
+				// This assures that the window size does not change.
 				_ignoreLoadVideoMode = true;
 
+				// Ctrl+Alt+f toggles filtering on/off
 				beginGFXTransaction();
-					setGraphicsMode(modeDesc->id);
+				setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
 				endGFXTransaction();
 
 				// Make sure we do not ignore the next resize. This
@@ -773,8 +748,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+					displayMessageOnOSD(_("Filtering enabled"));
+				} else {
+					displayMessageOnOSD(_("Filtering disabled"));
+				}
 #endif
 
 				return true;
