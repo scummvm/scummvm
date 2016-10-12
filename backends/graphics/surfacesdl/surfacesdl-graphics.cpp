@@ -24,8 +24,8 @@
 
 #ifdef PSP2
 #include <vita2d.h>
-vita2d_texture *vitatex;
-void *sdlpixels;
+vita2d_texture *vitatex_hwscreen;
+void *sdlpixels_hwscreen;
 #endif
 
 #if defined(SDL_BACKEND)
@@ -827,12 +827,6 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 			_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 			);
-#ifdef PSP2
-		vitatex = vita2d_create_empty_texture_format(_videoMode.hardwareWidth, _videoMode.hardwareHeight, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
-		sdlpixels = _hwscreen->pixels; // for SDL_FreeSurface...
-		_hwscreen->pixels = vita2d_texture_get_datap(vitatex);
-		vita2d_set_vblank_wait(false);
-#endif
 	}
 
 #ifdef USE_RGB_COLOR
@@ -928,8 +922,8 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 
 	if (_hwscreen) {
 #ifdef PSP2
-		vita2d_free_texture(vitatex);
-		_hwscreen->pixels = sdlpixels; 
+		vita2d_free_texture(vitatex_hwscreen);
+		_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
 		SDL_FreeSurface(_hwscreen);
 		_hwscreen = NULL;
@@ -985,8 +979,8 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 
 	// Release the HW screen surface
 #ifdef PSP2
-	vita2d_free_texture(vitatex);
-	_hwscreen->pixels = sdlpixels; 
+	vita2d_free_texture(vitatex_hwscreen);
+	_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
 	SDL_FreeSurface(_hwscreen); _hwscreen = NULL;
 
@@ -2584,6 +2578,13 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	} else {
+#ifdef PSP2
+		vita2d_set_vblank_wait(true);
+		vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
+		sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
+		screen->pixels = vita2d_texture_get_datap(vitatex_hwscreen);
+#endif
 		return screen;
 	}
 }
@@ -2606,7 +2607,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	sy = (float)h/(float)screen->h;
 	
 	vita2d_start_drawing();
-	vita2d_draw_texture_scale(vitatex, x, y, sx, sy);
+	vita2d_draw_texture_scale(vitatex_hwscreen, x, y, sx, sy);
 	vita2d_end_drawing();
 	vita2d_swap_buffers();
 #else

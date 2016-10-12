@@ -24,7 +24,7 @@
 #define PLATFORM_SDL_PSP2_H
 
 #include "backends/platform/sdl/sdl.h"
-//#define PSP2DEBUG 1
+#define PSP2DEBUG 1
 
 class OSystem_PSP2 : public OSystem_SDL {
 public:
