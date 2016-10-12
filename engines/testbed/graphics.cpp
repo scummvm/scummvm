@@ -488,7 +488,7 @@ TestExitStatus GFXtests::fullScreenMode() {
 
 		prompt = "This should be your initial state. Is it?";
 
-		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", shouldSelect)) {
+		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", kOptionLeft)) {
 			// User selected incorrect mode
 			Testsuite::logDetailedPrintf("switching back to initial state failed\n");
 			passed = kTestFailed;
