@@ -706,7 +706,7 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 		return NULL;
 	}
 
-	if (src->getFontSize()) {
+	if (src->getFontSize() == 0) {
 		warning("Requested to scale 0 size font");
 		return NULL;
 	}
@@ -735,11 +735,13 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 		boxes[i].xOffset = src->_data.boxes[i].xOffset;
 		boxes[i].yOffset = src->_data.boxes[i].yOffset;
 	}
+	data.boxes = boxes;
 
 	byte *advances = new byte[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
 		advances[i] = src->_data.advances[i];
 	}
+	data.advances = advances;
 
 	byte **bitmaps = new byte *[data.numCharacters];
 
@@ -758,8 +760,6 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	}
 
 	data.bitmaps = bitmaps;
-	data.advances = advances;
-	data.boxes = boxes;
 
 	return new BdfFont(data, DisposeAfterUse::YES);
 }

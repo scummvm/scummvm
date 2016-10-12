@@ -104,7 +104,7 @@ private:
 	const char *getFontName(MacFont &font);
 
 	void generateFontSubstitute(MacFont &macFont);
-	void generateFont(MacFont toFont, MacFont fromFont);
+	void generateFont(MacFont &toFont, MacFont &fromFont);
 
 private:
 	bool _builtInFonts;

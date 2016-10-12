@@ -257,14 +257,18 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	}
 
 	// Now next smaller font, which is the biggest we have
-	generateFont(macFont, MacFont(macFont.getId(), maxSize, macFont.getSlant()));
+	generateFont(macFont, *_fontRegistry[getFontName(macFont.getId(), maxSize, macFont.getSlant())]);
 }
 
-void MacFontManager::generateFont(MacFont toFont, MacFont fromFont) {
+void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont));
 	debug("as '%s'", getFontName(fromFont));
 
 	Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(fromFont.getBdfFont(), toFont.getSize());
+
+	if (!font) {
+		warning("Failed to generate font '%s'", getFontName(toFont));
+	}
 
 	toFont.setGenerated(true);
 	toFont.setBdfFont(font);
