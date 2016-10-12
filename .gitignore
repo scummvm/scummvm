@@ -210,8 +210,6 @@ scummvm.xcodeproj
 
 #Ignore PSP2 files
 psp2pkg/
-eboot.bin
-param.sfo
 *.velf
 *.vpk
 
