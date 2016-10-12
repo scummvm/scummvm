@@ -313,6 +313,9 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needUpdatescreen = false;
 
 	_transactionDetails.normal1xScaler = false;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_transactionDetails.needTextureUpdate = false;
+#endif
 #ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
 #endif
@@ -420,6 +423,12 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	} else if (_transactionDetails.needTextureUpdate) {
+		setGraphicsModeIntern();
+		recreateScreenTexture();
+		internUpdateScreen();
+#endif
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 		internUpdateScreen();
@@ -1301,7 +1310,7 @@ void SurfaceSdlGraphicsManager::setFilteringMode(bool enable) {
 
 	if (_transactionMode == kTransactionActive) {
 		_videoMode.filtering = enable;
-		_transactionDetails.needHotswap = true;
+		_transactionDetails.needTextureUpdate = true;
 	}
 }
 #endif
@@ -2355,6 +2364,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			displayMessageOnOSD(_("Filtering disabled"));
 		}
 #endif
+		_forceFull = true;
 		internUpdateScreen();
 		return true;
 	}
@@ -2578,6 +2588,20 @@ void SurfaceSdlGraphicsManager::setWindowResolution(int width, int height) {
 
 	// Force a full redraw because we changed the viewport.
 	_forceFull = true;
+}
+
+void SurfaceSdlGraphicsManager::recreateScreenTexture() {
+	if (!_renderer)
+		return;
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
+	
+	SDL_Texture *oldTexture = _screenTexture;
+	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	if (_screenTexture)
+		SDL_DestroyTexture(oldTexture);
+	else
+		_screenTexture = oldTexture;
 }
 
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
