@@ -701,6 +701,11 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 }
 
 BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
+	if (!src) {
+		warning("Emtpy font reference in scale font");
+		return NULL;
+	}
+
 	if (src->getFontSize()) {
 		warning("Requested to scale 0 size font");
 		return NULL;
@@ -720,6 +725,8 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
+	data.familyName = strdup(src->_data.familyName);
+	data.slant = strdup(src->_data.slant);
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
