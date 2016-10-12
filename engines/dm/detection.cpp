@@ -71,13 +71,14 @@ static const DMADGameDescription gameDescriptions[] = {
 	    { kDMSavePlatformAcceptAny }
 	},
 	{
-		{"dm", "Amiga Demo v??? English",
+		// Added by Strangerke
+		{"dm", "Amiga Demo v2.0 English",
 			{
 				{"graphics.dat", 0, "3932c8359bb36c24291b09e915114d38", 192421},
 				{"DemoDun.dat", 0, "78848e1a2d3d5a11e5954deb8c7b772b", 1209},
 				AD_LISTEND
 			},
-			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_DEMO, GUIO1(GUIO_NONE),
 		},
 		kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
 		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList},
@@ -90,11 +91,9 @@ static const DMADGameDescription gameDescriptions[] = {
 	}
 };
 
-
 static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
-
 
 class DMMetaEngine : public AdvancedMetaEngine {
 public:

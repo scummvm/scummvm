@@ -700,4 +700,68 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
+BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
+	if (!src) {
+		warning("Emtpy font reference in scale font");
+		return NULL;
+	}
+
+	if (src->getFontSize() == 0) {
+		warning("Requested to scale 0 size font");
+		return NULL;
+	}
+
+	float scale = newSize / src->getFontSize();
+
+	BdfFontData data;
+
+	data.maxAdvance = src->_data.maxAdvance;
+	data.height = src->_data.height;
+	data.defaultBox.width = src->_data.defaultBox.width;
+	data.defaultBox.height = src->_data.defaultBox.height;
+	data.defaultBox.xOffset = src->_data.defaultBox.xOffset;
+	data.defaultBox.yOffset = src->_data.defaultBox.yOffset;
+	data.ascent = src->_data.ascent;
+	data.firstCharacter = src->_data.firstCharacter;
+	data.defaultCharacter = src->_data.defaultCharacter;
+	data.numCharacters = src->_data.numCharacters;
+	data.familyName = strdup(src->_data.familyName);
+	data.slant = strdup(src->_data.slant);
+
+	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
+	for (int i = 0; i < data.numCharacters; ++i) {
+		boxes[i].width = src->_data.boxes[i].width;
+		boxes[i].height = src->_data.boxes[i].height;
+		boxes[i].xOffset = src->_data.boxes[i].xOffset;
+		boxes[i].yOffset = src->_data.boxes[i].yOffset;
+	}
+	data.boxes = boxes;
+
+	byte *advances = new byte[data.numCharacters];
+	for (int i = 0; i < data.numCharacters; ++i) {
+		advances[i] = src->_data.advances[i];
+	}
+	data.advances = advances;
+
+	byte **bitmaps = new byte *[data.numCharacters];
+
+	for (int i = 0; i < data.numCharacters; ++i) {
+		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
+		if (src->_data.bitmaps[i]) {
+			const int bytes = ((box.width + 7) / 8) * box.height;
+			bitmaps[i] = new byte[bytes];
+
+			for (int j = 0; j < bytes; j++)
+				bitmaps[i][j] = src->_data.bitmaps[i][j];
+
+		} else {
+			bitmaps[i] = 0;
+		}
+	}
+
+	data.bitmaps = bitmaps;
+
+	return new BdfFont(data, DisposeAfterUse::YES);
+}
+
 } // End of namespace Graphics

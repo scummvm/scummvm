@@ -978,7 +978,7 @@ public:
 	void inGameTimerUpdate();
 
 private:
-	uint32 _lastUsedPlayTimeInCycles; // 20 per second
+	uint32 _lastUsedPlayTimeInCycles; // 40 per second
 	uint32 _lastUsedPlayTimeInSeconds; // actual seconds
 	uint32 _passedPlayTimeCycles; // increased by 1 every time we passed a cycle
 

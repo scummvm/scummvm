@@ -1832,6 +1832,9 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 }
 
 bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
+	if (_vm->isDemo())
+		return false;
+
 	int16 squareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType();
 
 	return ((squareType == kDMElementTypeCorridor) || (squareType == kDMElementTypeTeleporter)

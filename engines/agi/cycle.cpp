@@ -413,7 +413,27 @@ int AgiEngine::playGame() {
 			}
 		}
 
+		// Increment the delay value by one, so that we wait for at least 1 cycle
+		// In Original AGI 1 cycle was 50 milliseconds, so 20 frames per second
+		// So TIME_DELAY 1 resulted in around 20 frames per second
+		//               2 resulted in around 10 frames per second
+		//               0 however resulted in no limits at all, so the game ran as fast as possible
+		// We obviously do not want the game to run as fast as possible, so we will use 40 frames per second instead.
+		timeDelay = timeDelay * 2;
+		if (!timeDelay)
+			timeDelay = 1;
+
+		// Our cycle counter runs at 25 milliseconds.
+		// So time delay has to be 1 for the originally unlimited speed - for our 40 fps
+		//                         2 for 20 frames per second
+		//                         4 for 10 frames per second
+		//                         and so on.
+
 		if (_passedPlayTimeCycles >= timeDelay) {
+			// code to check for executed cycles
+			// TimeDate time;
+			// g_system->getTimeAndDate(time);
+			// warning("cycle %d", time.tm_sec);
 			inGameTimerResetPassedCycles();
 
 			interpretCycle();

@@ -48,6 +48,7 @@ public:
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;
+		_bdfFont = NULL;
 	}
 
 	int getId() { return _id; };
@@ -59,6 +60,8 @@ public:
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
+	BdfFont *getBdfFont() { return _bdfFont; }
+	void setBdfFont(BdfFont *bdfFont) { _bdfFont = bdfFont; }
 
 private:
 	int _id;
@@ -68,6 +71,7 @@ private:
 	FontManager::FontUsage _fallback;
 
 	bool _generated;
+	BdfFont *_bdfFont;
 };
 
 class MacFontManager {
@@ -100,7 +104,7 @@ private:
 	const char *getFontName(MacFont &font);
 
 	void generateFontSubstitute(MacFont &macFont);
-	void generateFont(MacFont fromFont, MacFont toFont);
+	void generateFont(MacFont &toFont, MacFont &fromFont);
 
 private:
 	bool _builtInFonts;
