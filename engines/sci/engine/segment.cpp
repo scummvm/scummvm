@@ -274,7 +274,7 @@ Common::Array<reg_t> ArrayTable::listAllOutgoingReferences(reg_t addr) const {
 	}
 
 	SciArray &array = const_cast<SciArray &>(at(addr.getOffset()));
-	if (array.getType() == kArrayTypeID) {
+	if (array.getType() == kArrayTypeID || array.getType() == kArrayTypeInt16) {
 		for (uint16 i = 0; i < array.size(); ++i) {
 			const reg_t value = array.getAsID(i);
 			if (value.isPointer()) {
