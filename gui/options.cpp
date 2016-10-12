@@ -135,6 +135,7 @@ void OptionsDialog::init() {
 	_renderModePopUp = 0;
 	_renderModePopUpDesc = 0;
 	_fullscreenCheckbox = 0;
+	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiTabId = 0;
@@ -242,6 +243,12 @@ void OptionsDialog::open() {
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 #endif // GUI_ONLY_FULLSCREEN
+
+		// Filtering setting
+		if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+			_filteringCheckbox->setState(ConfMan.getBool("filtering", _domain));
+		else
+			_filteringCheckbox->setVisible(false);
 
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
@@ -353,11 +360,14 @@ void OptionsDialog::close() {
 		bool graphicsModeChanged = false;
 		if (_fullscreenCheckbox) {
 			if (_enableGraphicSettings) {
+				if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState())
+					graphicsModeChanged = true;
 				if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
 					graphicsModeChanged = true;
 				if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 					graphicsModeChanged = true;
 
+				ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 
@@ -384,6 +394,7 @@ void OptionsDialog::close() {
 					ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
 			} else {
 				ConfMan.removeKey("fullscreen", _domain);
+				ConfMan.removeKey("filtering", _domain);
 				ConfMan.removeKey("aspect_ratio", _domain);
 				ConfMan.removeKey("gfx_mode", _domain);
 				ConfMan.removeKey("render_mode", _domain);
@@ -399,6 +410,9 @@ void OptionsDialog::close() {
 				g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 			if (ConfMan.hasKey("fullscreen"))
 				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
+			if (ConfMan.hasKey("filtering"))
+				g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
+			
 			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 			// Since this might change the screen resolution we need to give
@@ -440,6 +454,12 @@ void OptionsDialog::close() {
 					ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
 					message += "\n";
 					message += _("the fullscreen setting could not be changed");
+				}
+				
+				if (gfxError & OSystem::kTransactionFilteringFailed) {
+					ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
+					message += "\n";
+					message += _("the filtering setting could not be changed");
 				}
 
 				// And display the error
@@ -633,6 +653,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_gfxPopUp->setEnabled(enabled);
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
+	_filteringCheckbox->setEnabled(enabled);
 #ifndef GUI_ENABLE_KEYSDIALOG
 	_fullscreenCheckbox->setEnabled(enabled);
 	if (_guioptions.contains(GUIO_NOASPECT))
@@ -785,6 +806,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
+	
+	// Filtering checkbox
+	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));

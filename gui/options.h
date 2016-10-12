@@ -114,6 +114,7 @@ private:
 	StaticTextWidget *_gfxPopUpDesc;
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
