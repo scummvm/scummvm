@@ -28,6 +28,7 @@
 #include "bladerunner/adq.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
+#include "bladerunner/items.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/slice_renderer.h"
@@ -54,12 +55,12 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		// TODO: Reset aesc
 		// TODO: Clear regions
 		// TODO: Destroy all overlays
-		_defaultLoop         =  0;
-		_defaultLoopSet      =  0;
-		_field_20_loop_stuff =  0;
-		_specialLoopMode     = -1;
-		_specialLoop         = -1;
-		_frame               = -1;
+		_defaultLoop = 0;
+		_defaultLoopSet = 0;
+		_field_20_loop_stuff = 0;
+		_specialLoopMode = -1;
+		_specialLoop = -1;
+		_frame = -1;
 	}
 
 	Common::String vqaName;
@@ -114,23 +115,25 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
-				i,
-				actor->getBoundingBox(),
-				actor->getScreenRectangle(),
-				1,
-				0,
-				actor->isTargetable(),
-				actor->isRetired());
+				   i,
+				   actor->getBoundingBox(),
+				   actor->getScreenRectangle(),
+				   1,
+				   0,
+				   actor->isTargetable(),
+				   actor->isRetired());
 		}
 	}
 
 	_set->addObjectsToScene(_vm->_sceneObjects);
+	_vm->_items->addToSet(setId);
+	_vm->_sceneObjects->updateObstacles();
 	// TODO: add all items to scene
 	// TODO: calculate walking obstacles??
 
-	 if (_specialLoopMode) {
-	 	_vm->_script->PlayerWalkedIn();
-	 }
+	if (_specialLoopMode) {
+		_vm->_script->PlayerWalkedIn();
+	}
 
 	return true;
 }
@@ -144,10 +147,10 @@ bool Scene::close(bool isLoadingGame) {
 	//_vm->_policeMaze->clear(!isLoadingGame);
 	if (isLoadingGame) {
 		_vm->_script->PlayerWalkedOut();
-	}	
-//	if (SceneScript_isLoaded() && !SceneScript_unload()) {
-//		result = false;
-//	}
+	}
+	//	if (SceneScript_isLoaded() && !SceneScript_unload()) {
+	//		result = false;
+	//	}
 	if (_vqaPlayer != nullptr) {
 		//_vqaPlayer->stop();
 		delete _vqaPlayer;
@@ -163,7 +166,7 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer->getSurface());
-		memcpy(zBuffer, _vqaPlayer->getZBuffer(), 640*480*2);
+		memcpy(zBuffer, _vqaPlayer->getZBuffer(), 640 * 480 * 2);
 		_vqaPlayer->updateView(_vm->_view);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
@@ -220,7 +223,7 @@ bool Scene::objectSetHotMouse(int objectId) {
 	return _set->objectSetHotMouse(objectId);
 }
 
-bool Scene::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
+bool Scene::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
 	return _set->objectGetBoundingBox(objectId, boundingBox);
 }
 
@@ -235,7 +238,7 @@ void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded,
 	_set->objectSetIsObstacle(objectId, isObstacle);
 	if (sceneLoaded) {
 		_vm->_sceneObjects->setIsObstacle(objectId + 198, isObstacle);
-		if(updateWalkpath) {
+		if (updateWalkpath) {
 			_vm->_sceneObjects->updateObstacles();
 		}
 	}

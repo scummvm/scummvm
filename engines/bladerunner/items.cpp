@@ -32,12 +32,12 @@ Items::Items(BladeRunnerEngine *vm) {
 }
 
 Items::~Items() {
-	for(int i = _items.size() - 1; i >= 0; i--) {
+	for (int i = _items.size() - 1; i >= 0; i--) {
 		delete _items.remove_at(i);
 	}
 }
 
-void Items::getXYZ(int itemId, float* x, float* y, float* z) {
+void Items::getXYZ(int itemId, float *x, float *y, float *z) {
 	int itemIndex = findItem(itemId);
 	assert(itemIndex != -1);
 
@@ -53,8 +53,8 @@ void Items::getWidthHeight(int itemId, int *width, int *height) {
 
 void Items::tick() {
 	int setId = _vm->_scene->getSetId();
-	for(int i = 0; i < (int)_items.size(); i++) {
-		if(_items[i]->_setId != setId) {
+	for (int i = 0; i < (int)_items.size(); i++) {
+		if (_items[i]->_setId != setId) {
 			continue;
 		}
 		bool set14NotTarget = setId == 14 && !_items[i]->isTargetable();
@@ -62,12 +62,12 @@ void Items::tick() {
 	}
 }
 
-bool Items::add(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy, bool addToSet) {
+bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy, bool addToSet) {
 	if (_items.size() >= 100) {
 		return false;
 	}
 	int itemIndex = findItem(itemId);
-	if(itemIndex == -1) {
+	if (itemIndex == -1) {
 		itemIndex = _items.size();
 	}
 
@@ -75,8 +75,22 @@ bool Items::add(int itemId, int animationId, int setId, Vector3 position, int fa
 	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetable, isVisible, isPoliceMazeEnemy);
 	_items.push_back(item);
 
-	if(addToSet && setId == _vm->_scene->getSetId()) {
+	if (addToSet && setId == _vm->_scene->getSetId()) {
 		return _vm->_sceneObjects->addItem(itemId + SCENE_OBJECTS_ITEMS_OFFSET, &item->_boundingBox, &item->_screenRectangle, isTargetable, isVisible);
+	}
+	return true;
+}
+
+bool Items::addToSet(int setId) {
+	int itemsCount = _vm->_items->_items.size();
+	if (itemsCount == 0) {
+		return true;
+	}
+	for (int i = 0; i < itemsCount; i++) {
+		Item *item = _vm->_items->_items[i];
+		if (item->_setId == setId) {
+			_vm->_sceneObjects->addItem(item->_itemId + SCENE_OBJECTS_ITEMS_OFFSET, &item->_boundingBox, &item->_screenRectangle, item->isTargetable(), item->_isVisible);
+		}
 	}
 	return true;
 }
@@ -86,7 +100,7 @@ bool Items::remove(int itemId) {
 		return false;
 	}
 	int itemIndex = findItem(itemId);
-	if(itemIndex == -1) {
+	if (itemIndex == -1) {
 		return false;
 	}
 

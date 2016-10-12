@@ -131,7 +131,7 @@ public:
 	int _walkSoundId;
 	int _walkSoundVolume;
 	int _walkSoundBalance;
-	int _walkingActorId;	
+	int _walkingActorId;
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
@@ -178,8 +178,7 @@ public:
 	void ISez(const char *str);
 };
 
-static inline
-const Graphics::PixelFormat createRGB555() {
+static inline const Graphics::PixelFormat createRGB555() {
 	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 }
 

@@ -228,7 +228,7 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 				break;
 		}
 		return false;
-	} else { 
+	} else {
 		//TODO:
 		// original code, not yet working
 		*isRunning = false;
@@ -511,7 +511,7 @@ void Actor::draw() {
 	// TODO: Handle SHORTY mode
 
 	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zBuffer2);
-	//todo udpate screenrect
+	_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);
 }
 
 int Actor::getSetId() {

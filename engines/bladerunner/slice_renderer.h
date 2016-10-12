@@ -28,6 +28,8 @@
 #include "bladerunner/view.h"
 #include "bladerunner/matrix.h"
 
+#include "common/rect.h"
+
 #include "graphics/surface.h"
 
 namespace Common {
@@ -49,7 +51,7 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
-	View      _view;
+	View        _view;
 	Lights     *_lights;
 	SetEffects *_setEffects;
 
@@ -63,15 +65,12 @@ class SliceRenderer {
 	uint32  _framePaletteIndex;
 	uint32  _frameSliceCount;
 
-	Matrix3x2 _field_109E;
-	Vector3   _startScreenVector;
-	Vector3   _endScreenVector;
-	float     _startSlice;
-	float     _endSlice;
-	int       _minX;
-	int       _maxX;
-	int       _minY;
-	int       _maxY;
+	Matrix3x2    _modelMatrix;
+	Vector3      _startScreenVector;
+	Vector3      _endScreenVector;
+	float        _startSlice;
+	float        _endSlice;
+	Common::Rect _screenRectangle;
 
 	int _m11lookup[256];
 	int _m12lookup[256];
@@ -98,10 +97,10 @@ public:
 	void setLights(Lights *lights);
 	void setSetEffects(SetEffects *setEffects);
 
-	void setupFrame(int animation, int frame, Vector3 position, float facing, float scale = 1.0f);
-	void calculateBoundingRect();
-	
+	void setupFrameInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale = 1.0f);
+	void getScreenRectangle(Common::Rect *screenRectangle, int animationId, int animationFrame, Vector3 position, float facing, float scale);
 	void drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
+
 	void drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
 
 	void preload(int animationId);
@@ -109,6 +108,10 @@ public:
 	void disableShadows(int *animationsIdsList, int listSize);
 
 private:
+
+	void calculateBoundingRect();
+	void loadFrame(int animation, int frame);
+
 	class SliceRendererLights {
 		Lights *_lights;
 		Color   _colors[20];

@@ -27,33 +27,13 @@
 #include "bladerunner/set_effects.h"
 #include "bladerunner/slice_animations.h"
 
-#include "common/debug.h"
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/util.h"
 
 namespace BladeRunner {
 
-#if 0
-void dump(const char *str, Vector3 v) {
-	debug("%s %g %g %g", str, v.x, v.y, v.z);
-}
-
-void dump(const char *str, Matrix3x2 m) {
-	debug("%s", str);
-	debug("%11.6g %11.6g %11.6g", m(0, 0), m(0, 1), m(0, 2));
-	debug("%11.6g %11.6g %11.6g", m(1, 0), m(1, 1), m(1, 2));
-}
-
-void dump(const char *str, Matrix4x3 m) {
-	debug("%s", str);
-	debug("%11.6g %11.6g %11.6g %11.6g", m(0, 0), m(0, 1), m(0, 2), m(0, 3));
-	debug("%11.6g %11.6g %11.6g %11.6g", m(1, 0), m(1, 1), m(1, 2), m(1, 3));
-	debug("%11.6g %11.6g %11.6g %11.6g", m(2, 0), m(2, 1), m(2, 2), m(2, 3));
-}
-#endif
-
-SliceRenderer::SliceRenderer(BladeRunnerEngine* vm) {
+SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_pixelFormat = createRGB555();
 	int i;
@@ -70,35 +50,28 @@ void SliceRenderer::setView(const View &view) {
 	_view = view;
 }
 
-void SliceRenderer::setLights(Lights* lights){
+void SliceRenderer::setLights(Lights *lights) {
 	_lights = lights;
 }
 
-void SliceRenderer::setSetEffects(SetEffects* setEffects){
+void SliceRenderer::setSetEffects(SetEffects *setEffects) {
 	_setEffects = setEffects;
 }
 
-void SliceRenderer::setupFrame(int animation, int frame, Vector3 position, float facing, float scale) {
-	_animation = animation;
-	_frame = frame;
+void SliceRenderer::setupFrameInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale) {
 	_position = position;
 	_facing = facing;
 	_scale = scale;
 
-	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(_animation, _frame);
-
-	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
-
-	_frameScale.x      = stream.readFloatLE();
-	_frameScale.y      = stream.readFloatLE();
-	_frameSliceHeight  = stream.readFloatLE();
-	_framePos.x        = stream.readFloatLE();
-	_framePos.y        = stream.readFloatLE();
-	_frameBottomZ      = stream.readFloatLE();
-	_framePaletteIndex = stream.readUint32LE();
-	_frameSliceCount   = stream.readUint32LE();
+	loadFrame(animationId, animationFrame);
 
 	calculateBoundingRect();
+}
+
+void SliceRenderer::getScreenRectangle(Common::Rect *screenRectangle, int animationId, int animationFrame, Vector3 position, float facing, float scale) {
+	assert(screenRectangle);
+	setupFrameInWorld(animationId, animationFrame, position, facing, scale);
+	*screenRectangle = _screenRectangle;
 }
 
 Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
@@ -122,10 +95,10 @@ Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 void SliceRenderer::calculateBoundingRect() {
 	assert(_sliceFramePtr);
 
-	_minX = 0.0f;
-	_maxX = 0.0f;
-	_minY = 0.0f;
-	_maxY = 0.0f;
+	_screenRectangle.left   = 0;
+	_screenRectangle.right  = 0;
+	_screenRectangle.top    = 0;
+	_screenRectangle.bottom = 0;
 
 	Matrix4x3 viewMatrix = _view._sliceViewMatrix;
 
@@ -142,13 +115,13 @@ void SliceRenderer::calculateBoundingRect() {
 
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
-	Matrix3x2 m4(_view._viewportDistance / bottom.z,  0.0f, 0.0f,
-	                                           0.0f, 25.5f, 0.0f);
+	Matrix3x2 m_projection(_view._viewportDistance / bottom.z,  0.0f, 0.0f,
+	                                                     0.0f, 25.5f, 0.0f);
 
-	Matrix3x2 m2(_frameScale.x,          0.0f, _framePos.x,
-	                      0.0f, _frameScale.y, _framePos.y);
+	Matrix3x2 m_frame(_frameScale.x,          0.0f, _framePos.x,
+	                           0.0f, _frameScale.y, _framePos.y);
 
-	_field_109E = m4 * (facingRotation * m2);
+	_modelMatrix = m_projection * (facingRotation * m_frame);
 
 	Vector4 startScreenVector(
 	           _view._viewportHalfWidth   + top.x / top.z * _view._viewportDistance,
@@ -173,8 +146,9 @@ void SliceRenderer::calculateBoundingRect() {
 
 	Vector4 delta = endScreenVector - startScreenVector;
 
-	if (delta.y == 0.0f)
+	if (delta.y == 0.0f) {
 		return;
+	}
 
 	/*
 	 * Calculate min and max Y
@@ -212,8 +186,8 @@ void SliceRenderer::calculateBoundingRect() {
 	 * Calculate min and max X
 	 */
 
-	Matrix3x2 mB6 = _field_109E + Vector2(startScreenVector.x, 25.5f / startScreenVector.z);
-	Matrix3x2 mC2 = _field_109E + Vector2(endScreenVector.x,   25.5f / endScreenVector.z);
+	Matrix3x2 mB6 = _modelMatrix + Vector2(startScreenVector.x, 25.5f / startScreenVector.z);
+	Matrix3x2 mC2 = _modelMatrix + Vector2(endScreenVector.x,   25.5f / endScreenVector.z);
 
 	float min_x =  640.0f;
 	float max_x =    0.0f;
@@ -232,8 +206,8 @@ void SliceRenderer::calculateBoundingRect() {
 		}
 	}
 
-	int bbox_min_x = MIN(MAX((int)min_x,     0), 640);
-	int bbox_max_x = MIN(MAX((int)max_x + 1, 0), 640);
+	int bbox_min_x = CLIP((int)min_x,     0, 640);
+	int bbox_max_x = CLIP((int)max_x + 1, 0, 640);
 
 	_startScreenVector.x = startScreenVector.x;
 	_startScreenVector.y = startScreenVector.y;
@@ -244,10 +218,27 @@ void SliceRenderer::calculateBoundingRect() {
 	_startSlice          = startScreenVector.w;
 	_endSlice            = endScreenVector.w;
 
-	_minX = bbox_min_x;
-	_minY = bbox_min_y;
-	_maxX = bbox_max_x;
-	_maxY = bbox_max_y;
+	_screenRectangle.left   = bbox_min_x;
+	_screenRectangle.right  = bbox_max_x;
+	_screenRectangle.top    = bbox_min_y;
+	_screenRectangle.bottom = bbox_max_y;
+}
+
+void SliceRenderer::loadFrame(int animation, int frame) {
+	_animation = animation;
+	_frame = frame;
+	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(_animation, _frame);
+
+	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
+
+	_frameScale.x = stream.readFloatLE();
+	_frameScale.y = stream.readFloatLE();
+	_frameSliceHeight = stream.readFloatLE();
+	_framePos.x = stream.readFloatLE();
+	_framePos.y = stream.readFloatLE();
+	_frameBottomZ = stream.readFloatLE();
+	_framePaletteIndex = stream.readUint32LE();
+	_frameSliceCount = stream.readUint32LE();
 }
 
 struct SliceLineIterator {
@@ -348,14 +339,14 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	assert(_setEffects);
 	//assert(_view);
 
-	_vm->_sliceRenderer->setupFrame(animationId, animationFrame, position, facing);
+	_vm->_sliceRenderer->setupFrameInWorld(animationId, animationFrame, position, facing);
 
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
 		_endScreenVector.x,   _endScreenVector.y,   _endScreenVector.z,
 		_startScreenVector.x, _startScreenVector.y, _startScreenVector.z,
 		_endSlice,            _startSlice,
-		_field_109E              // 3x2 matrix
+		_modelMatrix
 	);
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
@@ -388,8 +379,11 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 	setupLookupTable(_m11lookup, sliceLineIterator._sliceMatrix[0][0]);
 	setupLookupTable(_m12lookup, sliceLineIterator._sliceMatrix[0][1]);
+	_m13 = sliceLineIterator._sliceMatrix[0][2];
 	setupLookupTable(_m21lookup, sliceLineIterator._sliceMatrix[1][0]);
 	setupLookupTable(_m22lookup, sliceLineIterator._sliceMatrix[1][1]);
+	_m23 = sliceLineIterator._sliceMatrix[1][2];
+
 
 	if(_animationsShadowEnabled[_animation]) {
 		//TODO: draw shadows
@@ -401,9 +395,6 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
 
 	while (sliceLineIterator._currentY <= sliceLineIterator._endY) {
-		_m13 = sliceLineIterator._sliceMatrix[0][2];
-		_m23 = sliceLineIterator._sliceMatrix[1][2];
-
 		sliceLine = sliceLineIterator.line();
 
 		sliceRendererLights.calculateColorSlice(Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight));
@@ -424,8 +415,9 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_setEffectColor.g = setEffectColor.g * 31.0f * 65536.0f;
 		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
-		if (frameY >= 0 && frameY < 480)
+		if (frameY >= 0 && frameY < 480) {
 			drawSlice((int)sliceLine, true, frameLinePtr, zBufferLinePtr);
+		}
 
 		sliceLineIterator.advance();
 		frameY += 1;
@@ -437,28 +429,13 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
 	if (scale == 0.0f) {
 		return;
-	}
-	_animation = -1;// animationId;
-	_frame = animationFrame;
+	}	
 	_position.x = 0;
 	_position.y = 0;
 	_position.z = 0;
 	_facing = facing;
-	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(animationId, animationFrame);
-	if (_sliceFramePtr == nullptr) {
-		return;
-	}
-
-	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[animationId].frameSize);
-
-	_frameScale.x = stream.readFloatLE();
-	_frameScale.y = stream.readFloatLE();
-	_frameSliceHeight = stream.readFloatLE();
-	_framePos.x = stream.readFloatLE();
-	_framePos.y = stream.readFloatLE();
-	_frameBottomZ = stream.readFloatLE();
-	_framePaletteIndex = stream.readUint32LE();
-	_frameSliceCount = stream.readUint32LE();
+	
+	loadFrame(animationId, animationFrame);
 
 	float frameHeight = _frameSliceHeight * _frameSliceCount;
 	float frameSize = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
@@ -493,7 +470,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 
 	int frameY = screenY + (size / 2.0f * frameHeight);
 	int currentY = frameY;
-	
+
 	float currentSlice = 0;
 	float sliceStep = 1.0f / size / _frameSliceHeight;
 
@@ -591,13 +568,12 @@ SliceRenderer::SliceRendererLights::SliceRendererLights(Lights *lights) {
 
 	_lights = lights;
 
-	for(int i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++) {
 		_colors[i].r = 0.0f;
 		_colors[i].g = 0.0f;
 		_colors[i].b = 0.0f;
 	}
 }
-
 
 void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position2, float height) {
 	_finalColor.r = 0.0f;
@@ -605,7 +581,7 @@ void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, V
 	_finalColor.b = 0.0f;
 	_hmm3 = 0;
 	if (_lights) {
-		for(uint i = 0; i < _lights->_lights.size(); i++) {
+		for (uint i = 0; i < _lights->_lights.size(); i++) {
 			Light *light = _lights->_lights[i];
 			if (i < 20) {
 				float v8 = light->calculate(position1, position2/*, height*/);

@@ -65,10 +65,10 @@
 namespace BladeRunner {
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
-		: Engine(syst),
-		  _rnd("bladerunner") {
+	: Engine(syst),
+	  _rnd("bladerunner") {
 	_windowIsActive = true;
-	_gameIsRunning  = true;
+	_gameIsRunning = true;
 	_playerLosesControlCounter = 0;
 
 	_crimesDatabase = nullptr;
@@ -286,7 +286,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_mainFont = new Font(this);
 	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
-	_mainFont->setSpacing(1, 0);	
+	_mainFont->setSpacing(1, 0);
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
@@ -428,7 +428,7 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("SPCHSFX.TLK"))
 		closeArchive("SPCHSFX.TLK");
 
-	if(_mainFont) {
+	if (_mainFont) {
 		_mainFont->close();
 		delete _mainFont;
 		_mainFont = nullptr;
@@ -524,7 +524,7 @@ void BladeRunnerEngine::gameLoop() {
 
 #if _DEBUG
 
-void drawBBox(Vector3 start, Vector3 end, View* view, Graphics::Surface *surface, int color) {
+void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color) {
 	Vector3 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
 	Vector3 bfr = view->calculateScreenPosition(Vector3(start.x, end.y, start.z));
 	Vector3 bbr = view->calculateScreenPosition(Vector3(end.x, end.y, start.z));
@@ -584,7 +584,7 @@ void BladeRunnerEngine::gameTick() {
 		}
 		(void)backgroundChanged;
 		_surface2.copyFrom(_surface1);
-		memcpy(_zBuffer2, _zBuffer1, 640*480*2);
+		memcpy(_zBuffer2, _zBuffer1, 640 * 480 * 2);
 
 #if 0
 		{
@@ -613,7 +613,7 @@ void BladeRunnerEngine::gameTick() {
 			//int setId = _scene->_setId;
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 				//if (_actors[i]->getSetId() == setId) {
-					if (i == 0 || i == 23){ // Currently limited to McCoy and Officer Leroy
+				if (i == 0 || i == 23) { // Currently limited to McCoy and Officer Leroy
 					_actors[i]->tick(backgroundChanged);
 				}
 			}
@@ -638,7 +638,7 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if false
+#if 0
 			//draw scene objects
 			int count = _sceneObjects->_count;
 			if (count > 0) {
@@ -655,24 +655,25 @@ void BladeRunnerEngine::gameTick() {
 					}
 					if (sceneObject->_sceneObjectType == SceneObjectTypeObject) {
 						color = 0b011110111101111;
-						//if (sceneObject->_isObstacle)
-						//	color += 0b100000000000000;
+			//if (sceneObject->_isObstacle)
+			//	color += 0b100000000000000;
 						if (sceneObject->_isClickable)
 							color = 0b000001111100000;
-						//if (sceneObject->_isTarget)
-						//	color += 0b000000000010000;
+			//if (sceneObject->_isTarget)
+			//	color += 0b000000000010000;
 					}
 
-					sceneObject->_sceneObjectId;
 					drawBBox(a, b, _view, &_surface2, color);
 
+			//_surface2.frameRect(sceneObject->_screenRectangle, color);
+
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
-					switch(sceneObject->_sceneObjectType) {
+					switch (sceneObject->_sceneObjectType) {
 					case SceneObjectTypeActor:
 						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surface2, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeItem:
-						_mainFont->draw("item", _surface2, pos.x, pos.y);
+						_mainFont->drawColor("item", _surface2, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeObject:
 						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surface2, pos.x, pos.y, color);
@@ -683,13 +684,13 @@ void BladeRunnerEngine::gameTick() {
 
 			//draw regions
 			for (int i = 0; i < 10; i++) {
-				Region* region  =  &_scene->_regions->_regions[i];
+				Region *region = &_scene->_regions->_regions[i];
 				if (!region->_present) continue;
 				_surface2.frameRect(region->_rectangle, 0b000000000011111);
 			}
 
 			for (int i = 0; i < 10; i++) {
-				Region* region = &_scene->_exits->_regions[i];
+				Region *region = &_scene->_exits->_regions[i];
 				if (!region->_present) continue;
 				_surface2.frameRect(region->_rectangle, 0b111111111111111);
 			}
@@ -700,7 +701,7 @@ void BladeRunnerEngine::gameTick() {
 				for (int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
 					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j + 1) % walkbox->_vertexCount]);
-					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
+			//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
 					_mainFont->drawColor(walkbox->_name, _surface2, pos.x, pos.y, 0b111111111100000);
@@ -717,7 +718,7 @@ void BladeRunnerEngine::gameTick() {
 				int colorG = (light->_color.g * 31.0f);
 				int colorB = (light->_color.b * 31.0f);
 				int color = (colorR << 10) + (colorG << 5) + colorB;
-				drawBBox(pos-size, pos+size, _view, &_surface2, color);
+				drawBBox(pos - size, pos + size, _view, &_surface2, color);
 
 			}
 #endif
@@ -759,7 +760,7 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	int isTarget;
 
 	int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
-	int exitIndex     = _scene->_exits->getRegionAtXY(x, y);
+	int exitIndex = _scene->_exits->getRegionAtXY(x, y);
 
 	debug("%d %d", sceneObjectId, exitIndex);
 
@@ -819,7 +820,7 @@ void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
 }
 
 void BladeRunnerEngine::gameWaitForActive() {
-	while(!_windowIsActive) {
+	while (!_windowIsActive) {
 		handleEvents();
 	}
 }
@@ -873,7 +874,7 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 
 bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 	for (uint i = 0; i != 10; ++i) {
-		if (_archives[i].isOpen() &&_archives[i].getName() == name) {
+		if (_archives[i].isOpen() && _archives[i].getName() == name) {
 			_archives[i].close();
 			return true;
 		}
@@ -885,7 +886,7 @@ bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 
 bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) {
 	for (uint i = 0; i != 10; ++i) {
-		if (_archives[i].isOpen() &&_archives[i].getName() == name)
+		if (_archives[i].isOpen() && _archives[i].getName() == name)
 			return true;
 	}
 

@@ -662,7 +662,7 @@ void ScriptBase::Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune) {
 }
 
 void ScriptBase::Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly) {
-	_vm->_items->add(itemId, animationId, setId, Vector3(x, y, z), facing, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly == 0);
+	_vm->_items->addToWorld(itemId, animationId, setId, Vector3(x, y, z), facing, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly == 0);
 }
 
 void ScriptBase::Item_Remove_From_World(int itemId) {

@@ -202,9 +202,6 @@ bool ScriptRC01::MouseClick(int x, int y) {
 }
 
 bool ScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
-#if _DEBUG
-	Item_Pickup_Spin_Effect(938, 426, 316);
-#endif
 	if (Object_Query_Click("BARICADE01", objectName)
 		|| Object_Query_Click("BARICADE03", objectName)
 		|| Object_Query_Click("BARICADE04", objectName)
