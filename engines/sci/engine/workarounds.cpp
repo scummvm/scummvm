@@ -347,6 +347,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",                         NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #5033, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #5148, temp 1)
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #5169
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #5165
+	{ GID_QFG3,          470,   470, -1,     "<invalid name>", "notify",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // same as previous, with rm470::name used for temp storage by fan patches added by GOG
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #5167
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    sig_uninitread_qfg3_2,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
 	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #5282
