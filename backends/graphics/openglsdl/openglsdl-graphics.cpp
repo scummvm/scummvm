@@ -612,9 +612,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					displayMessageOnOSD("Fullscreen mode");
+					displayMessageOnOSD(_("Fullscreen mode"));
 				} else {
-					displayMessageOnOSD("Windowed mode");
+					displayMessageOnOSD(_("Windowed mode"));
 				}
 #endif
 				return true;
@@ -707,7 +707,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 				int windowWidth = 0, windowHeight = 0;
 				getWindowDimensions(&windowWidth, &windowHeight);
-				const Common::String osdMsg = Common::String::format("Resolution: %dx%d", windowWidth, windowHeight);
+				const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
 				displayMessageOnOSD(osdMsg.c_str());
 #endif
 
@@ -727,9 +727,10 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				Common::String osdMsg = "Aspect ratio correction: ";
-				osdMsg += getFeatureState(OSystem::kFeatureAspectRatioCorrection) ? "enabled" : "disabled";
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+					displayMessageOnOSD(_("Enabled aspect ratio correction"));
+				else
+					displayMessageOnOSD(_("Disabled aspect ratio correction"));
 #endif
 
 				return true;
@@ -773,7 +774,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
+				const Common::String osdMsg = Common::String::format(_("Graphics mode: %s"), _(modeDesc->description));
 				displayMessageOnOSD(osdMsg.c_str());
 #endif
 
