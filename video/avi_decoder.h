@@ -272,10 +272,15 @@ protected:
 		uint32 chunkSearchOffset;
 	};
 
+	class IndexEntries : public Common::Array<OldIndex> {
+	public:
+		OldIndex *find(uint index, uint frameNumber);
+	};
+
 	AVIHeader _header;
 
 	void readOldIndex(uint32 size);
-	Common::Array<OldIndex> _indexEntries;
+	IndexEntries _indexEntries;
 
 	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;
@@ -296,8 +301,9 @@ protected:
 	void handleStreamHeader(uint32 size);
 	void readStreamName(uint32 size);
 	uint16 getStreamType(uint32 tag) const { return tag & 0xFFFF; }
-	byte getStreamIndex(uint32 tag) const;
+	static byte getStreamIndex(uint32 tag);
 	void checkTruemotion1();
+	uint getVideoTrackOffset(uint trackIndex, uint frameNumber = 0);
 
 	void handleNextPacket(TrackStatus& status);
 	bool shouldQueueAudio(TrackStatus& status);

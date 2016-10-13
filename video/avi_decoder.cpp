@@ -392,19 +392,9 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		} else if (_videoTracks.empty()) {
 			_videoTracks.push_back(status);
 		} else {
-			// Secondary video track. Figure out the starting chunk offset,
-			// by iteratiing through the index
+			// Secondary video track
 			assert(_videoTracks.size() == 1);
-
-			// Find the index entry for the frame and move to it
-			status.chunkSearchOffset = 0;
-			for (uint idx = 0; idx < _indexEntries.size(); ++idx) {
-				if (_indexEntries[idx].id != ID_REC &&
-					getStreamIndex(_indexEntries[idx].id) == index) {
-					status.chunkSearchOffset = _indexEntries[idx].offset;
-					break;
-				}
-			}
+			status.chunkSearchOffset = getVideoTrackOffset(index);
 			assert(status.chunkSearchOffset != 0);
 
 			// Add the video track to the list
@@ -558,12 +548,21 @@ bool AVIDecoder::rewind() {
 		return false;
 
 	for (uint32 i = 0; i < _videoTracks.size(); i++)
-		_videoTracks[i].chunkSearchOffset = _movieListStart;
+		_videoTracks[i].chunkSearchOffset = getVideoTrackOffset(_videoTracks[i].index);
 
 	for (uint32 i = 0; i < _audioTracks.size(); i++)
 		_audioTracks[i].chunkSearchOffset = _movieListStart;
 
 	return true;
+}
+
+uint AVIDecoder::getVideoTrackOffset(uint trackIndex, uint frameNumber) {
+	if (trackIndex == _videoTracks.front().index && frameNumber == 0)
+		return _movieListStart;
+
+	OldIndex *entry = _indexEntries.find(trackIndex, frameNumber);
+	assert(entry);
+	return entry->offset;
 }
 
 bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
@@ -702,28 +701,22 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 
 	// Update any secondary video track for transparencies
 	if (_videoTracks.size() == 2) {
-		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
-
 		// Set it's frame number
+		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
 		videoTrack2->setCurFrame((int)frame - 1);
 
-		// Find the index entry for the frame and move to it
-		for (uint i = 0, frameNum = 0; i < _indexEntries.size(); ++i) {
-			if (_indexEntries[i].id != ID_REC &&
-					getStreamIndex(_indexEntries[i].id) == _videoTracks.back().index) {
-				if (frameNum++ == frame) {
-					Common::SeekableReadStream *chunk = nullptr;
-					_fileStream->seek(_indexEntries[i].offset + 8);
-					_videoTracks.back().chunkSearchOffset = _indexEntries[i].offset;
+		// Find the index entry for the frame and read it in
+		OldIndex *entry = _indexEntries.find(_videoTracks.back().index, frame);
+		assert(entry);
 
-					if (_indexEntries[i].size != 0)
-						chunk = _fileStream->readStream(_indexEntries[i].size);
+		Common::SeekableReadStream *chunk = nullptr;
+		_fileStream->seek(entry->offset + 8);
+		_videoTracks.back().chunkSearchOffset = entry->offset;
 
-					videoTrack2->decodeFrame(chunk);
-					break;
-				}
-			}
-		}
+		if (entry->size != 0)
+			chunk = _fileStream->readStream(entry->size);
+
+		videoTrack2->decodeFrame(chunk);
 	}
 
 	// Set the video track's frame
@@ -734,7 +727,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	return true;
 }
 
-byte AVIDecoder::getStreamIndex(uint32 tag) const {
+byte AVIDecoder::getStreamIndex(uint32 tag) {
 	char string[3];
 	WRITE_BE_UINT16(string, tag >> 16);
 	string[2] = 0;
@@ -1033,6 +1026,18 @@ void AVIDecoder::AVIAudioTrack::createAudioStream() {
 }
 
 AVIDecoder::TrackStatus::TrackStatus() : track(0), chunkSearchOffset(0) {
+}
+
+AVIDecoder::OldIndex *AVIDecoder::IndexEntries::find(uint index, uint frameNumber) {
+	for (uint idx = 0, frameCtr = 0; idx < size(); ++idx) {
+		if ((*this)[idx].id != ID_REC &&
+				AVIDecoder::getStreamIndex((*this)[idx].id) == index) {
+			if (frameCtr++ == frameNumber)
+				return &(*this)[idx];
+		}
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Video
