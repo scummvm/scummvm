@@ -402,6 +402,22 @@ public:
 #endif
 
 	/**
+	 * Read a 32-bit floating point value stored in little endian (LSB first)
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE float readFloatLE() {
+		uint32 n = readUint32LE();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
 	 * The returned stream might contain less data than requested,
