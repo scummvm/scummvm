@@ -81,6 +81,8 @@ private:
 	const byte *_synonyms; /**< Synonyms block or 0 if not present */
 	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
 
+	int _codeOffset; /**< The absolute offset of the VM code block */
+
 	int _localsOffset;
 	uint16 _localsCount;
 

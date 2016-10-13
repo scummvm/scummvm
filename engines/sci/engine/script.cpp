@@ -72,6 +72,11 @@ void Script::freeScript() {
 	_offsetLookupSaidCount = 0;
 }
 
+enum {
+	kSci11NumExportsOffset = 6,
+	kSci11ExportTableOffset = 8
+};
+
 void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
 	freeScript();
 
@@ -172,10 +177,11 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			_localsCount = (READ_LE_UINT16(_buf + _localsOffset - 2) - 4) >> 1;	// half block size
 		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {	// does the script have an export table?
-			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+		_numExports = READ_SCI11ENDIAN_UINT16(_buf + kSci11NumExportsOffset);
+		if (_numExports) {
+			_exportTable = (const uint16 *)(_buf + kSci11ExportTableOffset);
 		}
+
 		_localsOffset = _scriptSize + 4;
 		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
@@ -234,6 +240,7 @@ void Script::identifyOffsets() {
 	_offsetLookupObjectCount = 0;
 	_offsetLookupStringCount = 0;
 	_offsetLookupSaidCount = 0;
+	_codeOffset = 0;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// SCI0 + SCI1
@@ -392,6 +399,16 @@ void Script::identifyOffsets() {
 		scriptDataPtr = _heapStart;
 		scriptDataLeft = _heapSize;
 
+		enum {
+			kExportSize = 2,
+			kPropertySize = 2,
+			kNumMethodsSize = 2,
+			kPropDictEntrySize = 2,
+			kMethDictEntrySize = 4
+		};
+
+		const byte *hunkPtr = _buf + kSci11ExportTableOffset + _numExports * kExportSize;
+
 		if (scriptDataLeft < 4)
 			error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
@@ -431,11 +448,22 @@ void Script::identifyOffsets() {
 			if (scriptDataLeft < 2)
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
-			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr) * 2;
+			const uint16 numProperties = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			blockSize = numProperties * kPropertySize;
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
+
+			const uint16 scriptNum = READ_SCI11ENDIAN_UINT16(scriptDataPtr + 6);
+
+			if (scriptNum != 0xFFFF) {
+				hunkPtr += numProperties * kPropDictEntrySize;
+			}
+
+			const uint16 numMethods = READ_SCI11ENDIAN_UINT16(hunkPtr);
+			hunkPtr += kNumMethodsSize + numMethods * kMethDictEntrySize;
+
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
 			if (scriptDataLeft < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
@@ -443,6 +471,8 @@ void Script::identifyOffsets() {
 			scriptDataPtr  += blockSize;
 			scriptDataLeft -= blockSize;
 		} while (1);
+
+		_codeOffset = hunkPtr - _buf;
 
 		// now scriptDataPtr points to right at the start of the strings
 		if (scriptDataPtr > endOfStringPtr)
@@ -820,9 +850,10 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 		}
 	}
 
-	// Note that it's perfectly normal to return a zero offset, especially in
-	// SCI1.1 and newer games. Examples include script 64036 in Torin's Passage,
-	// script 64908 in the demo of RAMA and script 1013 in KQ6 floppy.
+	// TODO: Check if this should be done for SCI1.1 games as well
+	if (getSciVersion() >= SCI_VERSION_2 && offset == 0) {
+		offset = _codeOffset;
+	}
 
 	if (offset >= _bufSize)
 		error("Invalid export function pointer");
