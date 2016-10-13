@@ -1403,6 +1403,26 @@ void ScriptBase::ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int
 	warning("ESPER_Define_Special_Region(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)",  a1,  a2,  a3,  a4,  a5,  a6,  a7,  a8,  a9,  a10,  a11,  a12,  a13, name);
 }
 
+void ScriptBase::VK_Add_Question(int a1, int a2, int a3) {
+	//TODO
+	warning("VK_Add_Question(%d, %d, %d)", a1, a2, a3);
+}
+
+void ScriptBase::VK_Eye_Animates(int a1) {
+	//TODO
+	warning("VK_Eye_Animates(%d)", a1);
+}
+
+void ScriptBase::VK_Subject_Reacts(int a1, int a2, int a3, int a4) {
+	//TODO
+	warning("VK_Subject_Reacts(%d, %d, %d, %d)", a1, a2, a3, a4);
+}
+
+void ScriptBase::VK_Play_Speech_Line(int actorIndex, int a2, float a3) {
+	//TODO
+	warning("VK_Play_Speech_Line(%d, %d, %g)", actorIndex, a2, a3);
+}
+
 AIScripts::AIScripts(BladeRunnerEngine *vm) : _vm(vm), _inScriptCounter(0) {
 	for (int i = 0; i != 100; ++i)
 		_AIScripts[i] = 0;
