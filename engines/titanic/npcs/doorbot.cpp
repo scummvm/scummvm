@@ -319,16 +319,16 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
-	const char *const NAMES1[] = {
+	static const char *const NAMES1[] = {
 		"Mutter Aside", "Rub Chin", "Drunken Eye Roll", "Drunken Head Move",
 		"Look down and mutter",  "Look side to side", "Gesture forward and around",
 		"Arms behind back", "Look down", "Rolling around", "Hold face",
 		"Touch chin", "Cross hands in front", nullptr
 	};
-	const char *const NAMES2[] = {
+	static const char *const NAMES2[] = {
 		"SE Talking 1", "SE Talking 2", "SE Talking 3", "SE Talking 4"
 	};
-	const char *const NAMES3[] = {
+	static const char *const NAMES3[] = {
 		"SE Ask For Help", nullptr
 	};
 
@@ -349,7 +349,7 @@ bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 }
 
 bool CDoorbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
-	const char *const NAMES[] = {
+	static const char *const NAMES[] = {
 		"Hand swivel", "Prompt Push", "Eye Roll", "Say something", nullptr
 	};
 

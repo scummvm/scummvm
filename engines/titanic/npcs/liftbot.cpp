@@ -156,7 +156,7 @@ bool CLiftBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 }
 
 bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
-	const char *const NAMES[] = {
+	static const char *const NAMES[] = {
 		"Groaning", "Groaning 2", "Talking 1", "Talking 2", "Talking 3",
 		"Happy Talking", "Complaining", "Aggressive", "Explaining",
 		"Happy Talking 2", "Happy Talking 3", "Happy Talking 4"

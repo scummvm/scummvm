@@ -109,7 +109,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 			_npcFlags &= ~NPCFLAG_2;
 			stopMovie();
 
-			CNPCPlayTalkingAnimationMsg msg1(_speechDuration, 0, 0);
+			CNPCPlayTalkingAnimationMsg msg1(_speechDuration, 0, nullptr);
 			msg1.execute(this);
 
 			if (msg1._names) {

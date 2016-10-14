@@ -410,7 +410,7 @@ bool CParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
-	const char *const ROOM_NAMES[] = {
+	static const char *const ROOM_NAMES[] = {
 		"SGTState", "SGTLittleLift", "SecClassLittleLift", "SecClassState",
 		"Lift", "ServiceElevator", "Dome", "Home", "MoonEmbLobby", nullptr
 	};
@@ -477,7 +477,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 }
 
 bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
-	const char *const NAMES[] = {
+	static const char *const NAMES[] = {
 		"Talking0", "Talking1", "Talking2", "Talking3", "Talking4",
 		"Talking5", "Talking6", "Talking7", nullptr
 	};
@@ -492,7 +492,7 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 }
 
 bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
-	const char *const NAMES[] = {
+	static const char *const NAMES[] = {
 		"Idle0", "Idle1", "Peck At Feet", "Peck At Feet Left"
 		"Peck At Feet Right", nullptr
 	};
