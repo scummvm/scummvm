@@ -116,7 +116,7 @@ void BdfFont::drawChar(Surface *dst, uint32 chr, const int tx, const int ty, con
 	// TODO: Where is the relation between the max advance being smaller or
 	// equal to 50 and the decision of the theme designer?
 	// asserting _data.maxAdvance <= 50: let the theme designer decide what looks best
-	assert(_data.maxAdvance <= 50);
+	//assert(_data.maxAdvance <= 50);
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 
 	const int idx = mapToIndex(chr);
@@ -715,13 +715,13 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 
 	BdfFontData data;
 
-	data.maxAdvance = src->_data.maxAdvance;
-	data.height = src->_data.height;
-	data.defaultBox.width = src->_data.defaultBox.width;
-	data.defaultBox.height = src->_data.defaultBox.height;
-	data.defaultBox.xOffset = src->_data.defaultBox.xOffset;
-	data.defaultBox.yOffset = src->_data.defaultBox.yOffset;
-	data.ascent = src->_data.ascent;
+	data.maxAdvance = src->_data.maxAdvance * scale;
+	data.height = src->_data.height * scale;
+	data.defaultBox.width = src->_data.defaultBox.width * scale;
+	data.defaultBox.height = src->_data.defaultBox.height * scale;
+	data.defaultBox.xOffset = src->_data.defaultBox.xOffset * scale;
+	data.defaultBox.yOffset = src->_data.defaultBox.yOffset * scale;
+	data.ascent = src->_data.ascent * scale;
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
@@ -730,16 +730,16 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
-		boxes[i].width = src->_data.boxes[i].width;
-		boxes[i].height = src->_data.boxes[i].height;
-		boxes[i].xOffset = src->_data.boxes[i].xOffset;
-		boxes[i].yOffset = src->_data.boxes[i].yOffset;
+		boxes[i].width = src->_data.boxes[i].width * scale;
+		boxes[i].height = src->_data.boxes[i].height * scale;
+		boxes[i].xOffset = src->_data.boxes[i].xOffset * scale;
+		boxes[i].yOffset = src->_data.boxes[i].yOffset * scale;
 	}
 	data.boxes = boxes;
 
 	byte *advances = new byte[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
-		advances[i] = src->_data.advances[i];
+		advances[i] = src->_data.advances[i] * scale;
 	}
 	data.advances = advances;
 
@@ -747,12 +747,41 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 
 	for (int i = 0; i < data.numCharacters; ++i) {
 		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
+		const BdfBoundingBox &srcBox = data.boxes ? src->_data.boxes[i] : src->_data.defaultBox;
+
 		if (src->_data.bitmaps[i]) {
-			const int bytes = ((box.width + 7) / 8) * box.height;
+			const int bytes = ((box.width + 7) / 8) * box.height; // Dimensions have been already corrected
 			bitmaps[i] = new byte[bytes];
 
-			for (int j = 0; j < bytes; j++)
-				bitmaps[i][j] = src->_data.bitmaps[i][j];
+			int srcPitch = (srcBox.width + 7) / 8;
+			int dstPitch = (box.width + 7) / 8;
+
+			byte *ptr = bitmaps[i];
+
+			for (int y = 0; y < box.height; y++) {
+				byte *srcd = (byte *)&src->_data.bitmaps[i][((int)(y * scale)) * srcPitch];
+				byte *dst = ptr;
+				byte b = 0;
+
+				for (int x = 0; x < box.width; ++x) {
+					if (!(x % 8) && x) {
+						*dst++ = b;
+						b = 0;
+					}
+
+					int sx = x * scale;
+
+					if (srcd[sx / 8] & (0x80 >> (sx % 8)))
+						b |= 1;
+
+					b <<= 1;
+				}
+
+				if (!((box.width - 1) % 8))
+					*dst = b;
+
+				ptr += dstPitch;
+			}
 
 		} else {
 			bitmaps[i] = 0;
