@@ -235,12 +235,12 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
+	// Check if a breakpoint is set on this method
+	g_sci->checkExportBreakpoint(script, pubfunct);
+
 	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
 	if (!exportAddr)
 		return NULL;
-
-	// Check if a breakpoint is set on this method
-	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	assert(argp[0].toUint16() == argc); // The first argument is argc
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
