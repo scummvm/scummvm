@@ -133,6 +133,9 @@ private:
 	Lingo *_lingo;
 
 	Common::String _sharedCastFile;
+
+private:
+	void testFont();
 };
 
 } // End of namespace Director

@@ -117,6 +117,8 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
+	//testFont();
+
 	scanMovies(ConfMan.get("path"));
 
 	loadSharedCastsFrom(_sharedCastFile);
