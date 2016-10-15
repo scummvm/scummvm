@@ -972,7 +972,9 @@ reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
 	int16 fromColor;
 	int16 toColor;
 
-	if (argc > 4) {
+	if ((getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7)
+		&& argc > 4) {
+
 		fromColor = argv[3].toSint16();
 		toColor = argv[4].toSint16();
 	} else {
