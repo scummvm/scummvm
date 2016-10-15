@@ -29,7 +29,21 @@ namespace Graphics {
 
 enum {
 	kMacFontNonStandard = -1,
-	kMacFontChicago = 0
+	kMacFontChicago = 0,
+	kMacFontGeneva = 1,
+	kMacFontNewYork = 2,
+	kMacFontMonaco = 4,
+	kMacFontVenice = 5,
+	kMacFontLondon = 6,
+	kMacFontAthens = 7,
+	kMacFontSanFrancisco = 8,
+	kMacFontCairo = 11,
+	kMacFontLosAngeles = 12,
+	kMacFontPalatino = 16,
+	kMacFontTimes = 20,
+	kMacFontHelvetica = 21,
+	kMacFontCourier = 22,
+	kMacFontSymbol = 23
 };
 
 enum {
