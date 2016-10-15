@@ -35,13 +35,13 @@ class Lights {
 #if _DEBUG
 	friend class BladeRunnerEngine;
 #endif
-	friend class SliceRenderer;
+	friend class SliceRendererLights;
 
 	BladeRunnerEngine *_vm;
 
-	Color                 _ambientLightColor;
-	Common::Array<Light*> _lights;
-	int                   _frame;
+	Color                  _ambientLightColor;
+	Common::Array<Light *> _lights;
+	int                    _frame;
 	//char gap[28];
 
 public:

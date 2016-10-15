@@ -429,12 +429,12 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
 	if (scale == 0.0f) {
 		return;
-	}	
+	}
 	_position.x = 0;
 	_position.y = 0;
 	_position.z = 0;
 	_facing = facing;
-	
+
 	loadFrame(animationId, animationFrame);
 
 	float frameHeight = _frameSliceHeight * _frameSliceCount;
@@ -561,7 +561,7 @@ void SliceRenderer::disableShadows(int animationsIdsList[], int listSize) {
 	}
 }
 
-SliceRenderer::SliceRendererLights::SliceRendererLights(Lights *lights) {
+SliceRendererLights::SliceRendererLights(Lights *lights) {
 	_finalColor.r = 0.0f;
 	_finalColor.g = 0.0f;
 	_finalColor.b = 0.0f;
@@ -575,7 +575,7 @@ SliceRenderer::SliceRendererLights::SliceRendererLights(Lights *lights) {
 	}
 }
 
-void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position2, float height) {
+void SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position2, float height) {
 	_finalColor.r = 0.0f;
 	_finalColor.g = 0.0f;
 	_finalColor.b = 0.0f;
@@ -610,7 +610,7 @@ void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, V
 	}
 }
 
-void SliceRenderer::SliceRendererLights::calculateColorSlice(Vector3 position) {
+void SliceRendererLights::calculateColorSlice(Vector3 position) {
 	_finalColor.r = 0.0f;
 	_finalColor.g = 0.0f;
 	_finalColor.b = 0.0f;

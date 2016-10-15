@@ -111,23 +111,23 @@ private:
 
 	void calculateBoundingRect();
 	void loadFrame(int animation, int frame);
+};
 
-	class SliceRendererLights {
-		Lights *_lights;
-		Color   _colors[20];
-		float   _hmm[20];
-		float   _hmm2[20];
-		int     _hmm3;
+class SliceRendererLights {
+	Lights *_lights;
+	Color   _colors[20];
+	float   _hmm[20];
+	float   _hmm2[20];
+	int     _hmm3;
 
-	public:
-		Color   _finalColor;
+public:
+	Color   _finalColor;
 
-	public:
-		SliceRendererLights(Lights *lights);
+public:
+	SliceRendererLights(Lights *lights);
 
-		void calculateColorBase(Vector3 position1, Vector3 position2, float height);
-		void calculateColorSlice(Vector3 position);
-	};
+	void calculateColorBase(Vector3 position1, Vector3 position2, float height);
+	void calculateColorSlice(Vector3 position);
 };
 
 } // End of namespace BladeRunner
