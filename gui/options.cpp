@@ -1536,6 +1536,7 @@ void GlobalOptionsDialog::close() {
 		}
 #endif
 
+#ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 		if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
 			if (!CloudMan.switchStorage(_selectedStorageIndex)) {
@@ -1549,7 +1550,7 @@ void GlobalOptionsDialog::close() {
 				dialog.runModal();
 			}
 		}
-#endif
+#endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 		// save server's port
@@ -1560,8 +1561,9 @@ void GlobalOptionsDialog::close() {
 				port = contents;
 		}
 		ConfMan.setInt("local_server_port", port);
-#endif
-#endif
+#endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+#endif // USE_SDL_NET
+#endif // USE_CLOUD
 	}
 #ifdef USE_SDL_NET
 	if (LocalServer.isRunning()) {
@@ -1703,7 +1705,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kCloudTabContainerReflowCmd:
 		setupCloudTab();
 		break;
-#endif
 #ifdef USE_LIBCURL
 	case kPopUpItemSelectedCmd:
 	{
@@ -1723,7 +1724,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		ConfMan.setInt("local_server_port", port);
 		ConfMan.flushToDisk();
-#endif
+#endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 		StorageWizardDialog dialog(_selectedStorageIndex);
 		dialog.runModal();
 		//update container's scrollbar
@@ -1752,7 +1753,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			dialog.runModal();
 			break;
 		}
-#endif
+#endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	case kRunServerCmd:
 		{
@@ -1766,7 +1767,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			}
 			ConfMan.setInt("local_server_port", port);
 			ConfMan.flushToDisk();
-#endif
+#endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 
 			if (LocalServer.isRunning())
 				LocalServer.stopOnIdle();
@@ -1783,7 +1784,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		draw();
 		break;
 	}
-#endif
+#endif // USE_SDL_NET
+#endif // USE_CLOUD
 #ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
@@ -1904,7 +1906,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageDownloadButton->setVisible(shown && _selectedStorageIndex == CloudMan.getStorageIndex());
 	if (!shown)
 		serverLabelPosition = (_storageUsernameDesc ? _storageUsernameDesc->getRelY() : 0);
-#else
+#else // USE_LIBCURL
 	_selectedStorageIndex = 0;
 
 	if (_storagePopUpDesc)
@@ -1933,7 +1935,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_storageDownloadButton->setVisible(false);
 
 	serverLabelPosition = (_storagePopUpDesc ? _storagePopUpDesc->getRelY() : 0);
-#endif
+#endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	//determine original widget's positions
 	int16 x, y;
@@ -2014,15 +2016,15 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_serverPortClearButton->setPos(_serverPortClearButton->getRelX(), serverLabelPosition + serverPortClearButtonY - serverInfoY);
 		_serverPortClearButton->setEnabled(!serverIsRunning);
 	}
-#else
+#else // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	if (_serverPortDesc)
 		_serverPortDesc->setVisible(false);
 	if (_serverPort)
 		_serverPort->setVisible(false);
 	if (_serverPortClearButton)
 		_serverPortClearButton->setVisible(false);
-#endif
-#else
+#endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
+#else // USE_SDL_NET
 	if (_runServerButton)
 		_runServerButton->setVisible(false);
 	if (_serverInfoLabel)
@@ -2039,9 +2041,9 @@ void GlobalOptionsDialog::setupCloudTab() {
 		_serverPort->setVisible(false);
 	if (_serverPortClearButton)
 		_serverPortClearButton->setVisible(false);
-#endif
+#endif // USE_SDL_NET
 }
-#endif
+
 #ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageInfoCallback(Cloud::Storage::StorageInfoResponse response) {
 	//we could've used response.value.email()
@@ -2067,6 +2069,7 @@ void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse respons
 	if (!response.interrupted)
 		g_system->displayMessageOnOSD(_("Request failed.\nCheck your Internet connection."));
 }
-#endif
+#endif // USE_LIBCURL
+#endif // USE_CLOUD
 
 } // End of namespace GUI
