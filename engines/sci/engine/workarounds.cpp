@@ -788,6 +788,7 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_LAURABOW2,      -1,    -1,  0,           "sCartoon", "changeState",                NULL,     0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #4966
 	{ GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",                NULL,     0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",                NULL,     0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
+	{ GID_LSL6HIRES,     740,   740,  0,        "showCartoon", "changeState",                NULL,     0, { WORKAROUND_IGNORE, 0 } }, // during ending, multiple additional parameters are passed by accident
 	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",                NULL,     0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",                    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
 	{ GID_QFG4,           -1,   110,  0,            "dreamer", "dispose",                    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // during the dream sequence, a 3rd parameter is passed by accident
