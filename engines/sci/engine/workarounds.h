@@ -89,6 +89,7 @@ extern const SciWorkaroundEntry kNumCels_workarounds[];
 extern const SciWorkaroundEntry kPalVarySetPercent_workarounds[];
 extern const SciWorkaroundEntry kRandom_workarounds[];
 extern const SciWorkaroundEntry kReadNumber_workarounds[];
+extern const SciWorkaroundEntry kResCheck_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
 extern const SciWorkaroundEntry kSetCursor_workarounds[];
 extern const SciWorkaroundEntry kArraySetElements_workarounds[];
