@@ -3350,6 +3350,14 @@ esac
 append_var MODULES "backends/platform/$_backend"
 
 #
+# Disasble use of SDL_net and libcurl is cloud is disabled
+#
+if test "$_cloud" = no ; then
+	_sdlnet=no;
+	_libcurl=no;
+fi
+
+#
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
