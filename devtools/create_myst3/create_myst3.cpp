@@ -44,7 +44,7 @@ void copyData(Common::File &temp, Common::File &target);
 
 void writeSoundNames(const char *string, Common::File &target, uint offset);
 
-static const uint kVersion = 1;
+static const uint kVersion = 2;
 
 RoomScripts roomScripts[] = {
 		{ "ATIX", kNodeScripts, 571168, 324, 0 },
@@ -72,7 +72,7 @@ RoomScripts roomScripts[] = {
 		{ "ENSI", kBackgroundSoundScripts, 571820, 1664, 0 },
 		{ "ENSI", kNodeScripts, 598480, 3576, 0 },
 		{ "INIT", kAmbientCues, 570996, 126, 0 },
-		{ "INIT", kInitScript, 548928, 64, 0 },
+		{ "INIT", kInitScript, 548928, 72, 0 },
 		{ "INTR", kAmbientSoundScripts, 754184, 2, 0 },
 		{ "INTR", kNodeScripts, 602848, 16, 0 },
 		{ "JRNL", kAmbientSoundScripts, 605420, 26, 0 },

@@ -159,7 +159,7 @@ private:
 	Common::HashMap<uint32, int16> _roomZipBitIndex;
 
 	// 'myst3.dat' cached data
-	static const uint kDatVersion = 1;
+	static const uint kDatVersion = 2;
 	Common::SeekableReadStream *_datFile;
 	Common::Array<RoomScripts> _roomScriptsIndex;
 	int32 _roomScriptsStartOffset;
