@@ -159,7 +159,6 @@ of the engine needs to be enabled using one of the following two options:
 You will need these elements from your game CDs or DVD :
   * M3Data directory
   * Data directory
-  * The original game executable (Windows or Mac)
   * The menu language file 'language.m3u', or '[LANGUAGE].m3u' (DVD only)
 
 When using the CD version, you will need to merge the 'Data' directories from
@@ -169,26 +168,15 @@ It is recommended to apply the most recent official update for your game
 language. The DVD version comes fully updated. The updates can be downloaded
 from http://demos.residualvm.org/patches/.
 
-ResidualVM will accept either the Windows executable (M3.exe) or the Mac
-executable. Some Windows executables are encrypted using SafeDisc. ResidualVM
-cannot read the required data from those, and will refuse to launch the game.
-Since the updated executables are not encrypted, please use the executable from
-the official update corresponding to your game language instead.
-
 The DVD version is multilingual, you can change the in-game language from the
 game menu. However, you must choose the language of the menus by copying the
-appropriate files. You have to copy M3.exe and the menu language file both from
-your chosen language folder on the disc. The menu language file can be named
-'language.m3u' or '[LANGUAGE].m3u' depending on the release. It should be
-copied to the 'M3Data/TEXT' folder.
-
-The language of the original executable and of the datafiles you use must match.
-You must not mix the files from different versions of the game.
+appropriate files. You have to copy the menu language file from your chosen
+language folder on the disc. The menu language file can be named 'language.m3u'
+or '[LANGUAGE].m3u' depending on the release. It should be copied to the
+'M3Data/TEXT' folder.
 
 The required files must be organized in the following manner to be recognized:
 
-    ├── bin
-    │   └── M3.exe
     ├── Data
     │   └── *.m3a
     └── M3Data
