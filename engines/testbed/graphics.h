@@ -41,6 +41,7 @@ Common::Rect drawCursor(bool cursorPaletteDisabled = false, int cursorTargetScal
 // will contain function declarations for GFX tests
 TestExitStatus cursorTrails();
 TestExitStatus fullScreenMode();
+TestExitStatus filteringMode();
 TestExitStatus aspectRatio();
 TestExitStatus palettizedCursors();
 TestExitStatus mouseMovements();

@@ -198,6 +198,7 @@ protected:
 	int _windowWidth, _windowHeight;
 	void deinitializeRenderer();
 	void setWindowResolution(int width, int height);
+	void recreateScreenTexture();
 
 	SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
@@ -237,6 +238,9 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool needTextureUpdate;
+#endif
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
@@ -249,6 +253,10 @@ protected:
 		bool fullscreen;
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool filtering;
+#endif
 
 		int mode;
 		int scaleFactor;
@@ -383,6 +391,9 @@ protected:
 
 	virtual void setFullscreenMode(bool enable);
 	virtual void setAspectRatioCorrection(bool enable);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual void setFilteringMode(bool enable);
+#endif
 
 	virtual int effectiveScreenHeight() const;
 

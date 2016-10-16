@@ -56,6 +56,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// GFX Transcations
 	addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	addTest("FilteringMode", &GFXtests::filteringMode);
 	addTest("AspectRatio", &GFXtests::aspectRatio);
 	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
 
@@ -501,6 +502,106 @@ TestExitStatus GFXtests::fullScreenMode() {
 	return passed;
 }
 
+/**
+ * Tests the filtering mode by: toggling between filtered and non-filtered modes.
+ */
+TestExitStatus GFXtests::filteringMode() {
+	Testsuite::clearScreen();
+	Common::String info = "Filtering test. Here you should expect a toggle between filtered and non-filtered states depending "
+	"upon your initial state.";
+
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Testing filtering mode", pt);
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : FilteringMode\n");
+		return kTestSkipped;
+	}
+
+	bool isFeaturePresent;
+	bool isFeatureEnabled;
+	TestExitStatus passed = kTestPassed;
+	Common::String prompt;
+	OptionSelected shouldSelect;
+
+	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureFilteringMode);
+
+	if (isFeaturePresent) {
+		// Toggle
+		isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFilteringMode);
+		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
+
+		// Do test in fullscreen if possible as filtering may have no effect in windowed mode
+		bool fullScreenToggled = false;
+		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode) && !g_system->getFeatureState(OSystem::kFeatureFullscreenMode)) {
+			fullScreenToggled = true;
+			g_system->beginGFXTransaction();
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
+			g_system->endGFXTransaction();
+		}
+
+		g_system->delayMillis(1000);
+
+		if (isFeatureEnabled) {
+			Testsuite::logDetailedPrintf("Current Mode is Filtered\n");
+		} else {
+			Testsuite::logDetailedPrintf("Current Mode is Unfiltered\n");
+		}
+
+		prompt = " Which mode do you see currently ?  ";
+
+		if (!Testsuite::handleInteractiveInput(prompt, "Filtered", "Unfiltered", shouldSelect)) {
+			// User selected incorrect current state
+			passed = kTestFailed;
+			Testsuite::logDetailedPrintf("g_system->getFeatureState() failed\n");
+		}
+
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
+		g_system->endGFXTransaction();
+
+		// Current state should be now !isFeatureEnabled
+		isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFilteringMode);
+		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
+
+		g_system->delayMillis(1000);
+
+		prompt = "  Which mode do you see now ?   ";
+
+		if (!Testsuite::handleInteractiveInput(prompt, "Filtered", "Unfiltered", shouldSelect)) {
+			// User selected incorrect mode
+			passed = kTestFailed;
+			Testsuite::logDetailedPrintf("g_system->setFeatureState() failed\n");
+		}
+
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
+		g_system->endGFXTransaction();
+
+		g_system->delayMillis(1000);
+
+		prompt = "This should be your initial state. Is it?";
+
+		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", kOptionLeft)) {
+			// User selected incorrect mode
+			Testsuite::logDetailedPrintf("switching back to initial state failed\n");
+			passed = kTestFailed;
+		}
+
+		// Restore fullscreen state
+		if (fullScreenToggled) {
+			g_system->beginGFXTransaction();
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
+			g_system->endGFXTransaction();
+		}
+
+	} else {
+		Testsuite::displayMessage("feature not supported");
+	}
+
+	return passed;
+}
+	
 /**
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */
