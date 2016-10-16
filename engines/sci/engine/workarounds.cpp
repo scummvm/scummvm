@@ -694,6 +694,7 @@ const SciWorkaroundEntry kNumCels_workarounds[] = {
 	{ GID_SQ6,           320, 64998, -1,          "wandererB", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 8 } }, // random background movement on Polysorbate LX street 3
 	{ GID_SQ6,           340, 64998, -1,          "wandererB", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 8 } }, // random background movement on Polysorbate LX street 1
 	{ GID_SQ6,           530, 64998, -1,           "monitors", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 5 } }, // random background movement during cutscene
+	{ GID_SQ6,           680, 64998, -1,                "ego", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 1 } }, // clicking the blockage in the bile duct
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
