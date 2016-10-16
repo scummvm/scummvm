@@ -732,7 +732,7 @@ static const uint16 sig_kResCheck_lsl6hires_1[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
 const SciWorkaroundEntry kResCheck_workarounds[] = {
-	{ GID_LSL6HIRES,     740,   740, -1,       "myCreditText", "handleEvent", sig_kResCheck_lsl6hires_1, -1, { WORKAROUND_IGNORE, 0 } }, // when clicking during the final credits
+	{ GID_LSL6HIRES,     740,   740, -1,       "myCreditText", "handleEvent", sig_kResCheck_lsl6hires_1, -1, { WORKAROUND_IGNORE, 0 } }, // when clicking quit during the final credits
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
