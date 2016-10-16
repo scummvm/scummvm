@@ -139,7 +139,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 }
 
 void Sound::updateVolume() {
-	debug(9, "STUB Sound::updateVolume()");
+	// not needed in our implementation
 }
 
 void Sound::setPanAndVolumeByStaticAni() {
@@ -479,7 +479,8 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	Sound *snd = 0;
 
 	for (int i = 0; i < g_fp->_currSoundListCount; i++)
-		snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum);
+		if ((snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != NULL)
+			break;
 
 	if (!snd)
 		return;
