@@ -2594,7 +2594,8 @@ Die folgenden Schlüsselwörter werden erkannt:
     aspect_ratio       Bool     Seitenverhältniskorrektur
     gfx_mode           Text     Grafikmodus (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl)
+    filtering          Bool     Lineare Filterung aktivieren
 
     confirm_exit       Bool     Fragt Anwender vor Beenden nach Bestätigung
                                 (nur SDL-System).
