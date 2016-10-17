@@ -146,7 +146,7 @@ void TTconcept::reset() {
 }
 
 bool TTconcept::compareTo(const char *str) const {
-	return this != nullptr && _wordP != nullptr &&
+	return _wordP != nullptr &&
 		_wordP->compareTo(str);
 }
 
