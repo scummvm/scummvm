@@ -191,7 +191,7 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		delete screenItem->_celObj;
 		screenItem->_celObj = celObj;
 	}
-	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
+	_type = (getSciVersion() == SCI_VERSION_3 && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
 GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate) {
@@ -751,8 +751,12 @@ void Plane::setType() {
 		_type = kPlaneTypeOpaque;
 		break;
 	case kPlanePicTransparentPicture:
-		_type = kPlaneTypeTransparentPicture;
-		break;
+		if (getSciVersion() == SCI_VERSION_3) {
+			warning("TODO: Using transparent picture plane. Rendering may be incomplete");
+			_type = kPlaneTypeTransparentPicture;
+			break;
+		}
+		// fall through for sci2/2.1
 	default:
 		if (_type != kPlaneTypeTransparentPicture) {
 			_type = kPlaneTypePicture;
