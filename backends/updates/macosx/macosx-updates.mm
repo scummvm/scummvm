@@ -103,7 +103,7 @@ void MacOSXUpdateManager::checkForUpdates() {
 	if (sparkleUpdater == nullptr)
 		return;
 
-	[sparkleUpdater checkForUpdatesInBackground];
+	[sparkleUpdater checkForUpdates:nil];
 }
 
 void MacOSXUpdateManager::setAutomaticallyChecksForUpdates(UpdateManager::UpdateState state) {
