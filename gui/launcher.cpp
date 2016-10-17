@@ -52,7 +52,7 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -328,7 +328,7 @@ void LauncherDialog::addGame() {
 
 		if (_browser->runModal() > 0) {
 			// User made his choice...
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 			String selectedDirectory = _browser->getResult().getPath();
 			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')

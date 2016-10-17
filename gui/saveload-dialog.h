@@ -30,7 +30,7 @@
 
 namespace GUI {
 
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 enum SaveLoadCloudSyncProgress {
 	kSavesSyncProgressCmd = 'SSPR',
 	kSavesSyncEndedCmd = 'SSEN'
@@ -81,7 +81,7 @@ public:
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	virtual void runSaveSync(bool hasSavepathOverride);
 #endif
 

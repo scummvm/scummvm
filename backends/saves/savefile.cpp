@@ -23,7 +23,7 @@
 #include "common/util.h"
 #include "common/savefile.h"
 #include "common/str.h"
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -39,7 +39,7 @@ void OutSaveFile::clearErr() { _wrapped->clearErr(); }
 
 void OutSaveFile::finalize() {
 	_wrapped->finalize();
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	CloudMan.syncSaves();
 #endif
 }

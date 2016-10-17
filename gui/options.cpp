@@ -45,6 +45,7 @@
 #include "widgets/scrollcontainer.h"
 #include "widgets/edittext.h"
 
+#ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/downloaddialog.h"
@@ -53,6 +54,7 @@
 
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
+#endif
 #endif
 
 namespace GUI {
@@ -412,7 +414,7 @@ void OptionsDialog::close() {
 				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 			if (ConfMan.hasKey("filtering"))
 				g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
-			
+
 			OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 			// Since this might change the screen resolution we need to give
@@ -455,7 +457,7 @@ void OptionsDialog::close() {
 					message += "\n";
 					message += _("the fullscreen setting could not be changed");
 				}
-				
+
 				if (gfxError & OSystem::kTransactionFilteringFailed) {
 					ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
 					message += "\n";
@@ -806,7 +808,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
-	
+
 	// Filtering checkbox
 	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
@@ -1310,7 +1312,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
 
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 #else
 	_selectedStorageIndex = 0;
@@ -1318,7 +1320,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i)
 		_storagePopUp->appendEntry(list[i], i);
