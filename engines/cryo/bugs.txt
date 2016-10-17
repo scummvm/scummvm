@@ -8,3 +8,9 @@
 7. Mouse clipping may be lost during FMV scenes
 8. Screen doubling feature probably doesn't work (not really needed, can be replaced with built-in SCUMMVM scaler)
 9. Tons of debug messages spam when hover mouse over party icons or menu buttons
+A. King's bread drawn over inventory bar
+B. One side of PC cursor has flipped texture
+C. PC cursor clipped too agressively
+D. PC logos and credits videos won't play because encoded in old HNM format
+E. Eye blinking works incorrectly?
+F. Bogus hitbox in upper right corner of mirror screen (under mini-map)

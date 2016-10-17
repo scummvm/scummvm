@@ -871,6 +871,18 @@ extern float flt_2DF84;
 extern int16 cube_texcoords[3][6 * 2 * 3 * 2];
 extern char tab_2E138[4 * 3];
 
+//
+
+struct XYZ {
+	signed short x, y, z;
+};
+
+struct cubeCursor {
+	unsigned char	sides[6];	// spr idx for each side
+	unsigned char	kind;
+	signed char	speed;
+};
+
 } // End of namespace Cryo
 
 #endif

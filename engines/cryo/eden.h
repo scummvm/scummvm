@@ -281,6 +281,7 @@ private:
 	void ConvertLinks(room_t *room, int count);
 	void ConvertMacToPC();
 	void loadpermfiles();
+	char ReadDataSyncVOC(unsigned int num);
 	char ReadDataSync(uint16 num);
 	void loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len);
 	void Expand_hsq(void *input, void *output);
@@ -502,6 +503,50 @@ private:
 	int16 OpenDialog(void *arg1, void *arg2);
 	void LostEdenMac_InitPrefs();
 
+	void pc_initcube();
+	void pc_moteur();
+	void pc_selectmap(int16 num);
+
+	void MakeTables();
+	void GetSinCosTables(unsigned short angle, signed char **cos_table, signed char **sin_table);
+	void RotatePoint(XYZ *point, XYZ *rpoint);
+	void MapPoint(XYZ *point, short *x, short *y);
+	short CalcFaceArea(XYZ *face);
+	void PaintPixel(XYZ *point, unsigned char pixel);
+	void PaintFace0(XYZ *point);
+	void PaintFace1(XYZ *point);
+	void PaintFace2(XYZ *point);
+	void PaintFace3(XYZ *point);
+	void PaintFace4(XYZ *point);
+	void PaintFace5(XYZ *point);
+	void PaintFaces();
+	void RenderCube();
+
+	void IncAngleX(int step);
+	void DecAngleX();
+	void IncAngleY(int step);
+	void DecAngleY();
+	void IncZoom();
+	void DecZoom();
+
+	cubeCursor *pc_cursor;
+
+	signed short tab1[30];
+	signed short tab2[30];
+	signed char tab3[36][71];
+	short angle_x, angle_y, angle_z, zoom, zoom_step;
+
+	signed char *cos_x, *sin_x;
+	signed char *cos_y, *sin_y;
+	signed char *cos_z, *sin_z;
+
+	unsigned char *face[6], *newface[6];
+	short faceskip;
+
+	unsigned char cursor[40 * 40];
+	unsigned char *cursorcenter;
+
+
 private:
 	int16  _scrollPos;
 	int16  _oldScrollPos;
@@ -668,6 +713,10 @@ private:
 
 	int16           word_378CC; //TODO: set by CLComputer_Init to 0
 	int16           word_378CE;
+
+	int		invIconsCount;
+	int		invIconsBase;
+	int		roomIconsBase;
 
 	//// cube.c
 	int16 tabcos[361 * 2];
