@@ -235,7 +235,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 void Lingo::executeScript(ScriptType type, uint16 id) {
 	if (!_scripts[type].contains(id)) {
-		warning("Request to execute non-existant script type %d id %d", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
 
@@ -279,7 +279,6 @@ void Lingo::processEvent(LEvent event, int entityId) {
 		call(_eventHandlerTypes[event], 0);
 		pop();
 	} else {
-		warning("---- Handler %s is not set", _eventHandlerTypes[event]);
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}
 }
