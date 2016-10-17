@@ -826,14 +826,14 @@ void VideoDecoder::setEndFrame(uint frame) {
 }
 
 VideoDecoder::Track *VideoDecoder::getTrack(uint track) {
-	if (track > _internalTracks.size())
+	if (track >= _internalTracks.size())
 		return 0;
 
 	return _internalTracks[track];
 }
 
 const VideoDecoder::Track *VideoDecoder::getTrack(uint track) const {
-	if (track > _internalTracks.size())
+	if (track >= _internalTracks.size())
 		return 0;
 
 	return _internalTracks[track];
