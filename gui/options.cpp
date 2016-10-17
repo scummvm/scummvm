@@ -1312,7 +1312,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 #else
 	_selectedStorageIndex = 0;
@@ -1320,7 +1320,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_LIBCURL
 	Common::StringArray list = CloudMan.listStorages();
 	for (uint32 i = 0; i < list.size(); ++i)
 		_storagePopUp->appendEntry(list[i], i);
@@ -1368,7 +1368,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 #ifdef USE_SDL_NET
 	_serverWasRunning = false;
 #endif
-#endif
+#endif // USE_CLOUD
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -1553,6 +1553,7 @@ void GlobalOptionsDialog::close() {
 			}
 		}
 #endif // USE_LIBCURL
+
 #ifdef USE_SDL_NET
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 		// save server's port
@@ -1567,7 +1568,7 @@ void GlobalOptionsDialog::close() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 	}
-#ifdef USE_SDL_NET
+#if defined(USE_CLOUD) && defined(USE_SDL_NET)
 	if (LocalServer.isRunning()) {
 		LocalServer.stop();
 	}
