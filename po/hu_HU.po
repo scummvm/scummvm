@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-22 16:22+0200\n"
-"PO-Revision-Date: 2016-10-03 05:32+0200\n"
+"PO-Revision-Date: 2016-10-17 07:44+0200\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "Language: Magyar\n"
@@ -837,9 +837,8 @@ msgid "the aspect ratio setting could not be changed"
 msgstr "a képméretarány beállítások nem változtak"
 
 #: gui/options.cpp:462
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "a teljesképernyõs beállítás nem változott"
+msgstr "a szûrési beállítást nem lehet megváltoztatni"
 
 #: gui/options.cpp:782
 msgid "Graphics mode:"
@@ -859,13 +858,12 @@ msgid "Fullscreen mode"
 msgstr "Teljesképernyõs mód:"
 
 #: gui/options.cpp:811
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Szines grafikát használ"
+msgstr "Grafika szûrése"
 
 #: gui/options.cpp:811
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Lineáris szûrés használata a grafika átméretezésénél"
 
 #: gui/options.cpp:814
 msgid "Aspect ratio correction"
@@ -1865,9 +1863,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Teljesképernyõs beállítás nincs alkalmazva"
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Teljesképernyõs beállítás nincs alkalmazva"
+msgstr "Nem sikerült alkalmazni a szûrési beállítást."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2177,14 +2174,12 @@ msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Kattintás engedve"
+msgstr "Szûrés engedélyezve"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Kattintás tiltva"
+msgstr "Szûrés letiltva"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
