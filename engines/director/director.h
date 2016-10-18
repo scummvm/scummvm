@@ -55,7 +55,8 @@ enum {
 	kDebugLingoExec		= 1 << 0,
 	kDebugLingoCompile	= 1 << 1,
 	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3
+	kDebugImages		= 1 << 3,
+	kDebugText			= 1 << 4
 };
 
 

@@ -586,9 +586,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	} else {
 		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
 	}
-	/*uint32 unk1 = */ textStream->readUint32();
+	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
-	/*uin32 dataLen = */ textStream->readUint32();
+	uint32 dataLen = textStream->readUint32();
 	Common::String text;
 
 	for (uint32 i = 0; i < strLen; i++) {
@@ -598,6 +598,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 		}
 		text += ch;
 	}
+
+	debugC(3, kDebugText, "renderText: unk1: %d strLen: %d dataLen: %d textlen: %d", unk1, strLen, dataLen, text.size());
 
 	uint32 rectLeft = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.left;
 	uint32 rectTop = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.top;
