@@ -105,9 +105,6 @@ public:
 	 */
 	const Font *getFont(MacFont macFont);
 
-private:
-	void loadFonts();
-
 	/**
 	 * Return font name from standard ID
 	 * @param id ID of the font
@@ -116,6 +113,9 @@ private:
 	 */
 	const char *getFontName(int id, int size, int slant = kMacFontRegular);
 	const char *getFontName(MacFont &font);
+
+private:
+	void loadFonts();
 
 	void generateFontSubstitute(MacFont &macFont);
 	void generateFont(MacFont &toFont, MacFont &fromFont);
