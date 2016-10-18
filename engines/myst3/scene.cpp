@@ -104,7 +104,7 @@ void Scene::drawSunspotFlare(const SunSpot &s) {
 	Graphics::colorToRGB< Graphics::ColorMasks<888> >(s.color, r, g, b);
 	uint32 color = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
 
-	_vm->_gfx->selectTargetWindow(this, false, false);
+	_vm->_gfx->selectTargetWindow(this, false, true);
 	_vm->_gfx->drawRect2D(frame, color);
 }
 
