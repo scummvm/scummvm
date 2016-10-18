@@ -731,8 +731,6 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {
 		boxes[i].width = (int)((float)src->_data.boxes[i].width * scale);
-		if (i == 40)
-			warning("char w: %d, scale: %g", boxes[i].width, scale);
 		boxes[i].height = (int)((float)src->_data.boxes[i].height * scale);
 		boxes[i].xOffset = (int)((float)src->_data.boxes[i].xOffset * scale);
 		boxes[i].yOffset = (int)((float)src->_data.boxes[i].yOffset * scale);
