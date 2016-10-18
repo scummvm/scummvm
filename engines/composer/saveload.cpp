@@ -40,7 +40,7 @@ void ComposerEngine::syncArray(Common::Serializer &ser, Common::Array<T> &data, 
 	if (ser.isSaving()) {
 		uint32 size = data.size();
 		ser.syncAsUint32LE(size, minVersion, maxVersion);
-		for (Common::Array<T>::iterator i = data.begin(); i != data.end(); i++) {
+		for (typename Common::Array<T>::iterator i = data.begin(); i != data.end(); i++) {
 			sync<T>(ser, *i, minVersion, maxVersion);
 		}
 	} else {
@@ -59,7 +59,7 @@ void ComposerEngine::syncList(Common::Serializer &ser, Common::List<T> &data, Co
 	if (ser.isSaving()) {
 		uint32 size = data.size();
 		ser.syncAsUint32LE(size, minVersion, maxVersion);
-		for (Common::List<T>::iterator i = data.begin(); i != data.end(); i++) {
+		for (typename Common::List<T>::iterator i = data.begin(); i != data.end(); i++) {
 			sync<T>(ser, *i, minVersion, maxVersion);
 		}
 	} else {
@@ -78,7 +78,7 @@ void ComposerEngine::syncListReverse(Common::Serializer &ser, Common::List<T> &d
 	if (ser.isSaving()) {
 		uint32 size = data.size();
 		ser.syncAsUint32LE(size, minVersion, maxVersion);
-		for (Common::List<T>::iterator i = data.reverse_begin(); i != data.end(); i--) {
+		for (typename Common::List<T>::iterator i = data.reverse_begin(); i != data.end(); i--) {
 			sync<T>(ser, *i, minVersion, maxVersion);
 		}
 	} else {
