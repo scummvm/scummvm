@@ -1,6 +1,10 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+1.9.1 (YYYY-MM-DD)
+ General:
+   - Added bilinear filtering option for SDL2 fullscreen mode.
+
 1.9.0 (2016-10-17)
  New Games:
    - Added support for Myst.
