@@ -1,5 +1,7 @@
 AUTHORS.txt
 COPYING.LGPL.txt
+COPYING.BSD.txt
+COPYING.FREEFONT.txt
 COPYING.txt
 COPYRIGHT.txt
 drascula.dat
@@ -16,7 +18,8 @@ README.txt
 scummclassic.zip
 scummmodern.zip
 scummvm.exe
-SDL.dll
+SDL2.dll
+WinSparkle.dll
 sky.cpt
 teenagent.dat
 migration.bat
