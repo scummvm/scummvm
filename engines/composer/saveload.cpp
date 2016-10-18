@@ -256,8 +256,8 @@ void ComposerEngine::sync<Sprite>(Common::Serializer &ser, Sprite &data, Common:
 		ser.syncAsUint16LE(data._surface.pitch);
 		ser.syncAsUint16LE(data._zorder);
 		if (ser.isLoading())
-			data._surface.pixels = malloc(data._surface.h * data._surface.pitch);
-		byte *pix = static_cast<byte *>(data._surface.pixels);
+			data._surface.setPixels(malloc(data._surface.h * data._surface.pitch));
+		byte *pix = static_cast<byte *>(data._surface.getPixels());
 		for (uint16 y = 0; y < data._surface.h; y++) {
 			for (uint16 x = 0; x < data._surface.w; x++) {
 				ser.syncAsByte(pix[x]);
