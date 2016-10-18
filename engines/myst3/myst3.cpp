@@ -1672,6 +1672,11 @@ void Myst3Engine::settingsInitDefaults() {
 }
 
 int16 Myst3Engine::getGameLanguageCode() const {
+	// The monolingual versions of the game always use 0 as the language code
+	if (isMonolingual()) {
+		return kEnglish;
+	}
+
 	switch (getGameLanguage()) {
 	case Common::FR_FRA:
 		return kFrench;
