@@ -714,13 +714,15 @@ BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
-	/*byte flags =*/ stream.readByte();
+	flags1 = stream.readByte();
 	borderSize = static_cast<SizeType>(stream.readByte());
 	gutterSize = static_cast<SizeType>(stream.readByte());
 	boxShadow = static_cast<SizeType>(stream.readByte());
 	textType = static_cast<TextType>(stream.readByte());
 	textAlign = static_cast<TextAlignType>(stream.readUint16());
-	stream.skip(6); //palinfo
+	palinfo1 = stream.readUint16();
+	palinfo2 = stream.readUint16();
+	palinfo3 = stream.readUint16();
 
 	int t = stream.readUint32();
 	assert(t == 0); // So far we saw only 0 here
@@ -734,6 +736,8 @@ TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 		textFlags.push_back(kTextFlagAutoTab);
 	if (flags & 0x4)
 		textFlags.push_back(kTextFlagDoNotWrap);
+	if (flags & 0xf8)
+		warning("Unproxessed text cast flags: %x", flags & 0xf8);
 
 	// TODO: FIXME: guesswork
 	fontId = stream.readByte();

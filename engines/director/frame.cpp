@@ -599,7 +599,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 		text += ch;
 	}
 
-	debugC(3, kDebugText, "renderText: unk1: %d strLen: %d dataLen: %d textlen: %d", unk1, strLen, dataLen, text.size());
+	debugC(3, kDebugText, "renderText: unk1: %d strLen: %d dataLen: %d textlen: %u", unk1, strLen, dataLen, text.size());
+	if (strLen < 200)
+		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
 	uint32 rectLeft = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.left;
 	uint32 rectTop = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.top;
@@ -617,6 +619,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	}
 
 	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
+
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
 	font->drawString(&surface, text, x, y, width, 0);
 
