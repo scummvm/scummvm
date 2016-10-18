@@ -21,6 +21,7 @@
  */
 #include "common/scummsys.h"
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "common/keyboard.h"
