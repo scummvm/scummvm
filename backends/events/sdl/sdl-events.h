@@ -47,7 +47,7 @@ public:
 	/**
 	 * Resets keyboard emulation after a video screen change
 	 */
-	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
+	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
 protected:
 	/** @name Keyboard mouse emulation

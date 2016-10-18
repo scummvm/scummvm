@@ -918,7 +918,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	// For SDL2 the output resolution might differ from the requested
 	// resolution. We handle resetting the keyboard emulation properly inside
 	// our SDL_SetVideoMode wrapper for SDL2.
-	_eventSource->resetKeyboadEmulation(
+	_eventSource->resetKeyboardEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
 #endif
@@ -2562,7 +2562,7 @@ void SurfaceSdlGraphicsManager::setWindowResolution(int width, int height) {
 	_windowHeight = height;
 
 	// We expect full screen resolution as inputs coming from the event system.
-	_eventSource->resetKeyboadEmulation(_windowWidth - 1, _windowHeight - 1);
+	_eventSource->resetKeyboardEmulation(_windowWidth - 1, _windowHeight - 1);
 
 	// Calculate the "viewport" for the actual area we draw in. In fullscreen
 	// we can easily get a different resolution than what we requested. In

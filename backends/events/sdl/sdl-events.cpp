@@ -848,7 +848,7 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.x_max = x_max;
 	_km.y_max = y_max;
 	_km.delay_time = 25;
