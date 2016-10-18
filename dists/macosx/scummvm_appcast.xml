@@ -6,27 +6,34 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 1.9.0b</title>
-			<sparkle:releaseNotesLink>
-				https://scummvm.org/frs/scummvm/1.9.0/ReleaseNotes
-			</sparkle:releaseNotesLink>
-			<description>Fixed Sparkle problem on Win32</description>
+			<title>Version 1.9.0.2 (Win32-only)</title>
+			<description>
+				<![CDATA[
+				1.9.0.2 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Fixed Sparkle problem on Win32<br/>
+				<br/>
+				1.9.0.1 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Added missing Mohawk plugin on Win32
+				]]>
+			</description>
 			<pubDate>Mon, 18 Oct 2016 22:44:00 +0000</pubDate>
 			<enclosure sparkle:os="windows"
-						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0b-win32.exe"
-						sparkle:version="1.9.0b" length="10530146" type="application/octet-stream"
-						sparkle:dsaSignature="MCwCFAxr9aE/rNouzkWw96DWNlkYhDJhAhQKTAQZYzxz2x7RI/478EwfauAIxQ==" />
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.2-win32.exe"
+						sparkle:version="1.9.0.2" length="10530439" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFELGrrsFcxJJlm4pqPmATz4qUnSpAhUAtBZpnjtyKhV/Vg7R6C0JLCc5Euc=" />
 		</item>
 		<item>
-			<title>Version 1.9.0a</title>
-			<sparkle:releaseNotesLink>
-				https://scummvm.org/frs/scummvm/1.9.0/ReleaseNotes
-			</sparkle:releaseNotesLink>
-			<description>Added missing Mohawk plugin on Win32</description>
+			<title>Version 1.9.0.1 (Win32-only)</title>
+			<description>
+				<![CDATA[
+				1.9.0.1 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Added missing Mohawk plugin on Win32
+				]]>
+			</description>
 			<pubDate>Mon, 18 Oct 2016 09:51:00 +0000</pubDate>
 			<enclosure sparkle:os="windows"
-						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0a-win32.exe"
-						sparkle:version="1.9.0a" length="10529380" type="application/octet-stream"
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.1-win32.exe"
+						sparkle:version="1.9.0.1" length="10529380" type="application/octet-stream"
 						sparkle:dsaSignature="MC4CFQDWLnEdFmN8uWDAGGSu2PD39Bd75QIVANOhPd/9EJ2LAXVCxKEiG7Kfcg8u" />
 		</item>
 		<item>
