@@ -6,6 +6,18 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
+			<title>Version 1.9.0b</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.9.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<description>Fixed Sparkle problem on Win32</description>
+			<pubDate>Mon, 18 Oct 2016 22:44:00 +0000</pubDate>
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0b-win32.exe"
+						sparkle:version="1.9.0b" length="10530146" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFAxr9aE/rNouzkWw96DWNlkYhDJhAhQKTAQZYzxz2x7RI/478EwfauAIxQ==" />
+		</item>
+		<item>
 			<title>Version 1.9.0a</title>
 			<sparkle:releaseNotesLink>
 				https://scummvm.org/frs/scummvm/1.9.0/ReleaseNotes
