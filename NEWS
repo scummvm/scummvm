@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.10.0 (YYYY-MM-DD)
 
+1.9.1 (YYYY-MM-DD)
+ General:
+   - Added bilinear filtering option for SDL2 fullscreen mode.
 
 1.9.0 (2016-10-17)
  New Games:
