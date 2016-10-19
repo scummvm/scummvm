@@ -21,6 +21,7 @@
  */
 
 #include "sci/console.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
@@ -191,7 +192,7 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		delete screenItem->_celObj;
 		screenItem->_celObj = celObj;
 	}
-	_type = (getSciVersion() == SCI_VERSION_3 && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
+	_type = (g_sci->_features->hasTransparentPicturePlanes() && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
 GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate) {
@@ -751,14 +752,13 @@ void Plane::setType() {
 		_type = kPlaneTypeOpaque;
 		break;
 	case kPlanePicTransparentPicture:
-		if (getSciVersion() == SCI_VERSION_3) {
-			warning("TODO: Using transparent picture plane. Rendering may be incomplete");
+		if (g_sci->_features->hasTransparentPicturePlanes()) {
 			_type = kPlaneTypeTransparentPicture;
 			break;
 		}
-		// fall through for sci2/2.1
+		// fall through for games without transparent picture planes
 	default:
-		if (_type != kPlaneTypeTransparentPicture) {
+		if (!g_sci->_features->hasTransparentPicturePlanes() || _type != kPlaneTypeTransparentPicture) {
 			_type = kPlaneTypePicture;
 		}
 		break;

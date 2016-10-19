@@ -28,6 +28,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/util.h"
+#include "sci/engine/features.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/screen.h"
@@ -557,7 +558,7 @@ void GfxPalette32::setCycle(const uint8 fromColor, const uint8 toColor, const in
 	}
 
 	uint16 numColorsToCycle = toColor - fromColor;
-	if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) {
+	if (g_sci->_features->hasNewPaletteCode()) {
 		numColorsToCycle += 1;
 	}
 	cycler->fromColor = fromColor;
