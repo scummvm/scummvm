@@ -18,7 +18,7 @@ README.txt
 scummclassic.zip
 scummmodern.zip
 scummvm.exe
-SDL.dll
+SDL2.dll
 sky.cpt
 teenagent.dat
 migration.bat
