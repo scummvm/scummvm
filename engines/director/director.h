@@ -109,7 +109,7 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
-	Common::HashMap<Common::String, Score *> scanMovies(const Common::String &folder);
+	Common::HashMap<Common::String, Score *> *scanMovies(const Common::String &folder);
 	void loadEXE();
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);

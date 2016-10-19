@@ -120,7 +120,7 @@ Common::Error DirectorEngine::run() {
 
 	//testFont();
 
-	scanMovies(ConfMan.get("path"));
+	_movies = scanMovies(ConfMan.get("path"));
 
 	loadSharedCastsFrom(_sharedCastFile);
 	loadMainArchive();
@@ -134,7 +134,7 @@ Common::Error DirectorEngine::run() {
 	return Common::kNoError;
 }
 
-Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -145,7 +145,7 @@ Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common
 		sharedMMMname = "Shared Cast*";
 
 
-	Common::HashMap<Common::String, Score *> nameMap;
+	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))
 		return nameMap;
 
@@ -162,7 +162,7 @@ Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common
 
 			arc->openFile(i->getName());
 			Score *sc = new Score(this, arc);
-			nameMap[sc->getMacName()] = sc;
+			nameMap->setVal(sc->getMacName(), sc);
 
 			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
 		}
