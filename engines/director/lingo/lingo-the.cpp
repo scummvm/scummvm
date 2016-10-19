@@ -427,6 +427,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->_machineType;
 		break;
+	case kTheFrame:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->getCurrentFrame();
+		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);
 		d.type = VOID;
