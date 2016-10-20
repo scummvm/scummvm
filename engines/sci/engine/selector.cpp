@@ -233,12 +233,12 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable) {
 		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
 		error("Selector '%s' of object could not be written to. Address %04x:%04x, %s", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.toString().c_str());
-	} else {
-		*address.getPointer(segMan) = value;
-#ifdef ENABLE_SCI32
-		updateInfoFlagViewVisible(segMan->getObject(object), selectorId);
-#endif
 	}
+
+	*address.getPointer(segMan) = value;
+#ifdef ENABLE_SCI32
+	updateInfoFlagViewVisible(segMan->getObject(object), address.varindex);
+#endif
 }
 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
