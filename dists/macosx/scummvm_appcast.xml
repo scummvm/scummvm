@@ -17,6 +17,9 @@
 				]]>
 			</description>
 			<pubDate>Mon, 18 Oct 2016 22:44:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.2-macosx.dmg"
+						sparkle:version="1.9.0.2" length="16628758" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDR26+9zisczFFbwOfhOG7sWY3qTgIUfbKeCYtrlxBarbmv6CjEhxgXseM=" />
 			<enclosure sparkle:os="windows"
 						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.2-win32.exe"
 						sparkle:version="1.9.0.2" length="10530439" type="application/octet-stream"
