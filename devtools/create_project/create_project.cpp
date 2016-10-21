@@ -373,11 +373,18 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 
-	bool updatesEnabled = false;
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable && !strcmp(i->name, "updates"))
-			updatesEnabled = true;
+		if (i->enable) {
+			if (!strcmp(i->name, "updates"))
+				updatesEnabled = true;
+			else if (!strcmp(i->name, "libcurl"))
+				curlEnabled = true;
+			else if (!strcmp(i->name, "sdlnet"))
+				sdlnetEnabled = true;
+		}
 	}
+
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
 		if (projectType != kProjectXcode)
@@ -385,6 +392,11 @@ int main(int argc, char *argv[]) {
 		else
 			setup.libraries.push_back("sparkle");
 	}
+
+	if (curlEnabled && projectType == kProjectMSVC)
+		setup.defines.push_back("CURL_STATICLIB");
+	if (sdlnetEnabled && projectType == kProjectMSVC)
+		setup.libraries.push_back("iphlpapi");
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
