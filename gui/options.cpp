@@ -219,8 +219,8 @@ void OptionsDialog::open() {
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-		// Aspect ratio setting
-		if (_guioptions.contains(GUIO_NOASPECT)) {
+		// Aspect ratio setting - ResidualVM specific condition
+		if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState()) {
 			_aspectCheckbox->setState(false);
 			_aspectCheckbox->setEnabled(false);
 		} else {
