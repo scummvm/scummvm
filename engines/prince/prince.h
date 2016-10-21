@@ -38,6 +38,7 @@
 
 #include "gui/debugger.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "engines/util.h"
 
@@ -51,7 +52,17 @@
 
 namespace Prince {
 
-struct PrinceGameDescription;
+enum PrinceGameType {
+	kPrinceDataUNK,
+	kPrinceDataDE,
+	kPrinceDataPL
+};
+
+struct PrinceGameDescription {
+	ADGameDescription desc;
+	PrinceGameType gameType;
+};
+
 struct SavegameHeader;
 
 class PrinceEngine;
@@ -73,6 +84,17 @@ class Pscr;
 enum {
 	GF_TRANSLATED = 1 << 0
 };
+
+struct SavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+};
+
+#define kSavegameStrSize 14
+#define kSavegameStr "SCUMMVM_PRINCE"
 
 struct Text {
 	const char *_str;

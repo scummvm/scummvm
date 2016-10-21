@@ -38,7 +38,6 @@
 #include "graphics/pixelformat.h"
 
 #include "engines/util.h"
-#include "engines/advancedDetector.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
@@ -62,7 +61,6 @@
 #include "prince/animation.h"
 #include "prince/option_text.h"
 #include "prince/curve_values.h"
-#include "prince/detection.h"
 
 namespace Prince {
 
