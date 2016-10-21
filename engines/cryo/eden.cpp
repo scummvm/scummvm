@@ -147,6 +147,10 @@ EdenGame::EdenGame() {
 	word_378CC = 0; //TODO: set by CLComputer_Init to 0
 	word_378CE = 0;
 
+	word_32448 = word_3244A = word_3244C = 0;
+	flt_32450 = flt_32454 = 0.0;	//TODO: never changed, make consts?
+	curs_old_tick = 0;
+
 	invIconsBase = 19;
 //	invIconsCount = (g_ed->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	invIconsCount = 11;
