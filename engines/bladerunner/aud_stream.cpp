@@ -75,7 +75,7 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 
 				assert(sig == 0xdeaf);
 				assert(_end - _p >= blockSize);
-				assert(blockOutSize = 4 * blockSize);
+				assert(blockOutSize == 4 * blockSize);
 
 				_deafBlockRemain = blockSize;
 			}
