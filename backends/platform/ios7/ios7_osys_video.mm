@@ -76,7 +76,6 @@ int OSystem_iOS7::getDefaultGraphicsMode() const {
 bool OSystem_iOS7::setGraphicsMode(int mode) {
 	switch (mode) {
 	case kGraphicsModeNone:
-	case kGraphicsModeLinear:
 	case kGraphicsMode2xSaI:
 	case kGraphicsModeSuper2xSaI:
 	case kGraphicsModeSuperEagle:

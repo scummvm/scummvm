@@ -442,26 +442,7 @@ uint getSizeNextPOT(uint size) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
 
-	GLint filter = GL_LINEAR;
-
-	switch (_videoContext.graphicsMode) {
-	case kGraphicsModeNone:
-		filter = GL_NEAREST;
-		break;
-
-	case kGraphicsModeLinear:
-	case kGraphicsMode2xSaI:
-	case kGraphicsModeSuper2xSaI:
-	case kGraphicsModeSuperEagle:
-	case kGraphicsModeAdvMame2x:
-	case kGraphicsModeAdvMame3x:
-	case kGraphicsModeHQ2x:
-	case kGraphicsModeHQ3x:
-	case kGraphicsModeTV2x:
-	case kGraphicsModeDotMatrix:
-		filter = GL_LINEAR;
-		break;
-	}
+	GLint filter = _videoContext.filtering ? GL_LINEAR : GL_NEAREST;
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
@@ -478,9 +459,6 @@ uint getSizeNextPOT(uint size) {
 	int scalerScale = 1;
 
 	switch (_videoContext.graphicsMode) {
-	case kGraphicsModeLinear:
-		break;
-
 	case kGraphicsModeNone:
 		break;
 #ifdef USE_SCALERS
