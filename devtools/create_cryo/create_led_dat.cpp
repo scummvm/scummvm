@@ -10,7 +10,7 @@ static void writeLE(FILE *f, T value) {
 		unsigned char b = value & 0xFF;
 		fwrite(&b, 1, 1, f);
 	}
-};
+}
 
 struct _icon_t : icon_t {
 	void write(FILE *f) {
@@ -28,7 +28,7 @@ static void emitIcons(FILE *f) {
 	_icon_t *icons = (_icon_t*)gameIcons;
 	for(int i = 0;i < kNumIcons;i++)
 		icons[i].write(f);
-};
+}
 
 struct _room_t : room_t {
 	void write(FILE *f) {
@@ -51,7 +51,7 @@ static void emitRooms(FILE *f) {
 	_room_t *rooms = (_room_t*)gameRooms;
 	for(int i = 0;i < kNumRooms;i++)
 		rooms[i].write(f);
-};
+}
 
 static int emitData(char *outputFilename) {
 	FILE *f = fopen(outputFilename, "w+b");
@@ -70,7 +70,7 @@ static int emitData(char *outputFilename) {
 	printf("Done!\n");
 
 	return 0;
-};
+}
 
 int main(int argc, char **argv) {
 
