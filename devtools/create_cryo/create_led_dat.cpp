@@ -6,7 +6,7 @@
 
 template <typename T>
 static void writeLE(FILE *f, T value) {
-	for(int i = 0;i < sizeof(value);i++, value >>= 8) {
+	for (int i = 0; i < sizeof(value); i++, value >>= 8) {
 		unsigned char b = value & 0xFF;
 		fwrite(&b, 1, 1, f);
 	}
@@ -26,7 +26,7 @@ struct _icon_t : icon_t {
 
 static void emitIcons(FILE *f) {
 	_icon_t *icons = (_icon_t*)gameIcons;
-	for(int i = 0;i < kNumIcons;i++)
+	for (int i = 0; i < kNumIcons; i++)
 		icons[i].write(f);
 }
 
@@ -49,13 +49,13 @@ struct _room_t : room_t {
 
 static void emitRooms(FILE *f) {
 	_room_t *rooms = (_room_t*)gameRooms;
-	for(int i = 0;i < kNumRooms;i++)
+	for (int i = 0; i < kNumRooms; i++)
 		rooms[i].write(f);
 }
 
 static int emitData(char *outputFilename) {
 	FILE *f = fopen(outputFilename, "w+b");
-	if(!f) {
+	if (!f) {
 		printf("ERROR: Unable to create output file %s\n", outputFilename);
 		return 1;
 	}
@@ -74,7 +74,7 @@ static int emitData(char *outputFilename) {
 
 int main(int argc, char **argv) {
 
-	if(argc > 1)
+	if (argc > 1)
 		return emitData(argv[1]);
 	else
 		printf("Usage: %s <output.dat>\n", argv[0]);
