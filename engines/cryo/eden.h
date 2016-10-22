@@ -23,6 +23,7 @@
 #ifndef CRYO_EDEN_H
 #define CRYO_EDEN_H
 
+#include "cryo/sound.h"
 #include "cryo/defs.h"
 
 enum Direction {
@@ -641,7 +642,8 @@ private:
 	bool    gameStarted;
 	bool _soundAllocated;
 
-	soundchannel_t  *_musicChannel;
+	CSoundChannel *_musicChannel;
+	CSoundChannel *_voiceChannel;
 	soundchannel_t  *hnmsound_ch;
 	sound_t         *voiceSound;
 
@@ -693,7 +695,7 @@ private:
 	byte   *mus_samples_ptr;
 	byte   *mus_patterns_ptr;  //TODO: sndblock_t ?
 	byte   *mus_sequence_ptr;
-	soundgroup_t    *mus_queue_grp;
+	bool   mus_enabled;
 	int16           *pCurrentObjectLocation;
 	byte   own_objects[128];
 	bool   byte_31D64;

@@ -1,0 +1,71 @@
+#include "cryo/sound.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
+
+namespace Cryo {
+
+	CSoundChannel::CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo) : _mixer(mixer), _sampleRate(sampleRate), _stereo(stereo) {
+	_audioStream = nullptr;
+	_volumeLeft = _volumeRight = Audio::Mixer::kMaxChannelVolume;
+}
+
+CSoundChannel::~CSoundChannel() {
+	stop();
+	if (_audioStream)
+		delete _audioStream;
+}
+
+void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow) {
+	if (playNow)
+		stop();
+	if (!_audioStream)
+		_audioStream = Audio::makeQueuingAudioStream(_sampleRate, _stereo);
+	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+	if (!_mixer->isSoundHandleActive(_soundHandle)) {
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		applyVolumeChange();
+	}
+}
+
+void CSoundChannel::stop() {
+	if (_mixer->isSoundHandleActive(_soundHandle))
+		_mixer->stopHandle(_soundHandle);
+
+	if (_audioStream) {
+		_audioStream->finish();
+		delete _audioStream;
+		_audioStream = nullptr;
+	}
+}
+
+unsigned int CSoundChannel::numQueued() {
+	return _audioStream ? _audioStream->numQueuedStreams() : 0;
+}
+
+unsigned int CSoundChannel::getVolume() {
+	return (_volumeRight + _volumeLeft) / 2;
+}
+
+void CSoundChannel::setVolume(unsigned int volumeLeft, unsigned int volumeRight) {
+	_volumeLeft = volumeLeft;
+	_volumeRight = volumeRight;
+	applyVolumeChange();
+}
+
+void CSoundChannel::setVolumeLeft(unsigned int volume) {
+	setVolume(volume, _volumeRight);
+}
+
+void CSoundChannel::setVolumeRight(unsigned int volume) {
+	setVolume(_volumeLeft, volume);
+}
+
+void CSoundChannel::applyVolumeChange() {
+	unsigned int volume = (_volumeRight + _volumeLeft) / 2;
+	int balance = (signed int)(_volumeRight - _volumeLeft) / 2;
+	_mixer->setChannelVolume(_soundHandle, volume);
+	_mixer->setChannelBalance(_soundHandle, balance);
+}
+
+}
