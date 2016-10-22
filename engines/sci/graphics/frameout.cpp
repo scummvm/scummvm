@@ -1272,14 +1272,6 @@ void GfxFrameout::throttle() {
 	}
 }
 
-void GfxFrameout::showRect(const Common::Rect &rect) {
-	if (!rect.isEmpty()) {
-		_showList.clear();
-		_showList.add(rect);
-		showBits();
-	}
-}
-
 void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 	if (direction & kShakeHorizontal) {
 		// Used by QFG4 room 750

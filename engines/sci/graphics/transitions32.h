@@ -239,12 +239,15 @@ private:
 	SegManager *_segMan;
 
 	/**
-	 * Throttles transition playback to prevent
-	 * transitions from being instant on fast
-	 * computers.
+	 * Throttles transition playback to prevent transitions from being instant
+	 * on fast computers.
 	 */
 	void throttle();
 	int8 _throttleState;
+
+	void clearShowRects();
+	void addShowRect(const Common::Rect &rect);
+	void sendShowRects();
 
 #pragma mark -
 #pragma mark Show styles
@@ -352,7 +355,7 @@ private:
 	 * Performs a transition that renders to black
 	 * with a horizontal shutter effect.
 	 */
-	void processHShutterIn(PlaneShowStyle &showStyle);
+	void processHShutterIn(const PlaneShowStyle &showStyle);
 
 	/**
 	 * Performs a transition that renders into a room
@@ -424,7 +427,7 @@ private:
 	 * SCI2.1mid and later implementation of
 	 * pixel dissolve.
 	 */
-	bool processPixelDissolve21Mid(PlaneShowStyle &showStyle);
+	bool processPixelDissolve21Mid(const PlaneShowStyle &showStyle);
 
 	/**
 	 * Performs a transition that fades to black

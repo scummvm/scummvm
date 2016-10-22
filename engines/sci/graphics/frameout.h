@@ -39,6 +39,7 @@ struct PlaneShowStyle;
  * Roughly equivalent to GraphicsMgr in the actual SCI engine.
  */
 class GfxFrameout {
+	friend class GfxTransitions32;
 private:
 	GfxCursor32 *_cursor;
 	GfxPalette32 *_palette;

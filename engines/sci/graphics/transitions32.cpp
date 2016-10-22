@@ -81,6 +81,23 @@ void GfxTransitions32::throttle() {
 	g_sci->getEngineState()->_throttleTrigger = true;
 }
 
+void GfxTransitions32::clearShowRects() {
+	g_sci->_gfxFrameout->_showList.clear();
+}
+
+void GfxTransitions32::addShowRect(const Common::Rect &rect) {
+	if (!rect.isEmpty()) {
+		g_sci->_gfxFrameout->_showList.add(rect);
+	}
+}
+
+void GfxTransitions32::sendShowRects() {
+	g_sci->_gfxFrameout->showBits();
+	g_sci->getSciDebugger()->onFrame();
+	clearShowRects();
+	throttle();
+}
+
 #pragma mark -
 #pragma mark Show styles
 
@@ -546,7 +563,7 @@ void GfxTransitions32::processHShutterOut(PlaneShowStyle &showStyle) {
 	error("HShutterOut is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 }
 
-void GfxTransitions32::processHShutterIn(PlaneShowStyle &showStyle) {
+void GfxTransitions32::processHShutterIn(const PlaneShowStyle &showStyle) {
 	if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
 		error("HShutterIn is not known to be used by any SCI2.1early- game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 	}
@@ -559,15 +576,16 @@ void GfxTransitions32::processHShutterIn(PlaneShowStyle &showStyle) {
 	const int width = screenRect.width();
 	const int divisionWidth = width / divisions - 1;
 
+	clearShowRects();
+
 	if (width % divisions) {
 		rect.left = (divisionWidth + 1) * divisions + screenRect.left;
 		rect.top = screenRect.top;
 		rect.right = (divisionWidth + 1) * divisions + (width % divisions) + screenRect.left;
 		rect.bottom = screenRect.bottom;
-		g_sci->_gfxFrameout->showRect(rect);
+		addShowRect(rect);
+		sendShowRects();
 	}
-
-	throttle();
 
 	for (int i = 0; i < width / (2 * divisions); ++i) {
 		// Left side
@@ -575,20 +593,20 @@ void GfxTransitions32::processHShutterIn(PlaneShowStyle &showStyle) {
 		rect.top = screenRect.top;
 		rect.right = i * divisions + divisions + screenRect.left;
 		rect.bottom = screenRect.bottom;
-		g_sci->_gfxFrameout->showRect(rect);
+		addShowRect(rect);
 
 		// Right side
 		rect.left = (divisionWidth - i) * divisions + screenRect.left;
 		rect.top = screenRect.top;
 		rect.right = (divisionWidth - i) * divisions + divisions + screenRect.left;
 		rect.bottom = screenRect.bottom;
-		g_sci->_gfxFrameout->showRect(rect);
+		addShowRect(rect);
 
-		throttle();
+		sendShowRects();
 	}
 
-	g_sci->_gfxFrameout->showRect(screenRect);
-	throttle();
+	addShowRect(screenRect);
+	sendShowRects();
 }
 
 void GfxTransitions32::processVShutterOut(PlaneShowStyle &showStyle) {
@@ -743,7 +761,7 @@ bool GfxTransitions32::processPixelDissolve21Early(PlaneShowStyle &showStyle) {
 	return false;
 }
 
-bool GfxTransitions32::processPixelDissolve21Mid(PlaneShowStyle &showStyle) {
+bool GfxTransitions32::processPixelDissolve21Mid(const PlaneShowStyle &showStyle) {
 	// SQ6 room 530
 
 	Plane* plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
@@ -760,44 +778,42 @@ bool GfxTransitions32::processPixelDissolve21Mid(PlaneShowStyle &showStyle) {
 	int seq = 1;
 
 	uint iteration = 0;
-	const uint numIterationsPerTick = (width * height + divisions) / divisions;
+	const uint numIterationsPerTick = ARRAYSIZE(g_sci->_gfxFrameout->_showList);
+
+	clearShowRects();
 
 	do {
 		int row = seq / width;
 		int col = seq % width;
 
 		if (row < height) {
-			if (row == height && (planeHeight % divisions)) {
-				if (col == width && (planeWidth % divisions)) {
+			if (row == height - 1 && (planeHeight % divisions)) {
+				if (col == width - 1 && (planeWidth % divisions)) {
 					rect.left = col * divisions;
 					rect.top = row * divisions;
 					rect.right = col * divisions + (planeWidth % divisions);
 					rect.bottom = row * divisions + (planeHeight % divisions);
-					rect.clip(screenRect);
-					g_sci->_gfxFrameout->showRect(rect);
+					addShowRect(rect);
 				} else {
 					rect.left = col * divisions;
 					rect.top = row * divisions;
-					rect.right = col * divisions * 2;
+					rect.right = col * divisions + divisions;
 					rect.bottom = row * divisions + (planeHeight % divisions);
-					rect.clip(screenRect);
-					g_sci->_gfxFrameout->showRect(rect);
+					addShowRect(rect);
 				}
 			} else {
-				if (col == width && (planeWidth % divisions)) {
+				if (col == width - 1 && (planeWidth % divisions)) {
 					rect.left = col * divisions;
 					rect.top = row * divisions;
-					rect.right = col * divisions + (planeWidth % divisions) + 1;
-					rect.bottom = row * divisions * 2 + 1;
-					rect.clip(screenRect);
-					g_sci->_gfxFrameout->showRect(rect);
+					rect.right = col * divisions + (planeWidth % divisions);
+					rect.bottom = row * divisions + divisions;
+					addShowRect(rect);
 				} else {
 					rect.left = col * divisions;
 					rect.top = row * divisions;
-					rect.right = col * divisions * 2 + 1;
-					rect.bottom = row * divisions * 2 + 1;
-					rect.clip(screenRect);
-					g_sci->_gfxFrameout->showRect(rect);
+					rect.right = col * divisions + divisions;
+					rect.bottom = row * divisions + divisions;
+					addShowRect(rect);
 				}
 			}
 		}
@@ -809,20 +825,21 @@ bool GfxTransitions32::processPixelDissolve21Mid(PlaneShowStyle &showStyle) {
 		}
 
 		if (++iteration == numIterationsPerTick) {
-			throttle();
+			sendShowRects();
 			iteration = 0;
 		}
-	} while(seq != 1 && !g_engine->shouldQuit());
+	} while (seq != 1 && !g_engine->shouldQuit());
 
 	rect.left = screenRect.left;
 	rect.top = screenRect.top;
 	rect.right = divisions + screenRect.left;
 	rect.bottom = divisions + screenRect.bottom;
-	rect.clip(screenRect);
-	g_sci->_gfxFrameout->showRect(rect);
-	throttle();
+	addShowRect(rect);
+	sendShowRects();
 
-	g_sci->_gfxFrameout->showRect(screenRect);
+	addShowRect(screenRect);
+	sendShowRects();
+
 	return true;
 }
 
