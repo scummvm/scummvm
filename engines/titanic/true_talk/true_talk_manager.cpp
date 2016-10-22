@@ -423,22 +423,19 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 		}
 	} else {
 		CTrueTalkGetAnimSetMsg getAnimMsg;
-		if (_speechDuration > 300) {
-			do {
-				getAnimMsg.execute(npc);
-				if (!getAnimMsg._endFrame)
-					break;
+		while (_speechDuration > 300) {
+			getAnimMsg.execute(npc);
+			if (!getAnimMsg._endFrame)
+				break;
 
-				npc->playMovie(getAnimMsg._startFrame, getAnimMsg._endFrame, 0);
-				getAnimMsg._endFrame = 0;
+			npc->playMovie(getAnimMsg._startFrame, getAnimMsg._endFrame, 0);
+			getAnimMsg._endFrame = 0;
 
-				uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
-				int64 val = (numFrames * 1000) * 0x88888889;
-				uint diff = (val >> (32 + 5)) - 500;
-				_speechDuration += diff;
+			uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
+			int diff = (numFrames * 1000) / 15 - 500;
+			_speechDuration += diff;
 
-				getAnimMsg._index++;
-			} while (_speechDuration > 0);
+			getAnimMsg._index++;
 		}
 	}
 }
