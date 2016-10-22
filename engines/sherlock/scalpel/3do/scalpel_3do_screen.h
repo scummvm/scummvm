@@ -34,12 +34,6 @@ namespace Scalpel {
 class Scalpel3DOScreen : public ScalpelScreen {
 protected:
 	/**
-	 * Draws a sub-section of a surface at a given position within this surface
-	 * Overriden for the 3DO to automatically double the size of everything to the underlying 640x400 surface
-	 */
-	virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds);
-
-	/**
 	 * Draws a surface at a given position within this surface with transparency
 	 */
 	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped,
@@ -61,9 +55,36 @@ public:
 	void blitFrom3DOcolorLimit(uint16 color);
 
 	/**
+	 * Draws a surface on this surface
+	 */
+	virtual void SHblitFrom(const Graphics::Surface &src);
+
+	/**
+	 * Draws a surface at a given position within this surface
+	 */
+	virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos);
+
+	/**
+	 * Draws a sub-section of a surface at a given position within this surface
+	 */
+	virtual void SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos, const Common::Rect &srcBounds);
+
+	/**
+	 * Draws an image frame at a given position within this surface with transparency
+	 */
+	virtual void SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+
+	/**
+	 * Draws an image frame at a given position within this surface with transparency
+	 */
+	virtual void SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped = false, int overrideColor = 0, int scaleVal = SCALE_THRESHOLD);
+
+	/**
 	 * Fill a given area of the surface with a given color
 	 */
-	virtual void fillRect(const Common::Rect &r, uint color);
+	virtual void SHfillRect(const Common::Rect &r, uint color);
 
 	virtual uint16 width() const;
 	virtual uint16 height() const;

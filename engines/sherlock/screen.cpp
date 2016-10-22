@@ -57,7 +57,7 @@ Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm),
 	_oldFadePercent = 0;
 	_flushScreen = false;
 
-	create(_backBuffer1.w, _backBuffer1.h);
+	create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_backBuffer.create(_backBuffer1, _backBuffer1.getBounds());
 }
 

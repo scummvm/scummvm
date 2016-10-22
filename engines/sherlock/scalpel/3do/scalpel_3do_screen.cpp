@@ -31,6 +31,14 @@ namespace Scalpel {
 Scalpel3DOScreen::Scalpel3DOScreen(SherlockEngine *vm): ScalpelScreen(vm) {
 }
 
+void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src) {
+	SHblitFrom(src, Common::Point(0, 0));
+}
+
+void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Point &destPos) {
+	SHblitFrom(src, Common::Point(0, 0), Common::Rect(0, 0, src.w, src.h));
+}
+
 void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
 	if (!_vm->_isScreenDoubled) {
 		ScalpelScreen::SHblitFrom(src, pt, srcBounds);
@@ -107,12 +115,25 @@ void Scalpel3DOScreen::transBlitFromUnscaled(const Graphics::Surface &src, const
 #endif
 }
 
-void Scalpel3DOScreen::fillRect(const Common::Rect &r, uint color) {
+void Scalpel3DOScreen::SHfillRect(const Common::Rect &r, uint color) {
 	if (_vm->_isScreenDoubled)
 		ScalpelScreen::fillRect(Common::Rect(r.left * 2, r.top * 2, r.right * 2, r.bottom * 2), color);
 	else
 		ScalpelScreen::fillRect(r, color);
 }
+
+void Scalpel3DOScreen::SHtransBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		bool flipped, int overrideColor, int scaleVal) {
+	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
+		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
+}
+
+void Scalpel3DOScreen::SHtransBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped, int overrideColor, int scaleVal) {
+	ScalpelScreen::SHtransBlitFrom(src, pt, flipped, overrideColor,
+		_vm->_isScreenDoubled ? scaleVal / 2 : scaleVal);
+}
+
 
 void Scalpel3DOScreen::fadeIntoScreen3DO(int speed) {
 	Events &events = *_vm->_events;
