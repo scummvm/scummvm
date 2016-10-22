@@ -81,7 +81,7 @@ public:
 	SDL_Window *getSDLWindow() const { return _window; }
 
 	/**
-	 * Creates a new SDL window (and destroies the old one).
+	 * Creates a new SDL window (and destroys the old one).
 	 *
 	 * @param width   Width of the window.
 	 * @param height  Height of the window.
@@ -91,7 +91,7 @@ public:
 	bool createWindow(int width, int height, uint32 flags);
 
 	/**
-	 * Destroies the current SDL window.
+	 * Destroys the current SDL window.
 	 */
 	void destroyWindow();
 
