@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.9.0git\n"
+"Project-Id-Version: ScummVM 1.9.1\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-22 16:22+0200\n"
-"PO-Revision-Date: 2016-10-22 16:13+0200\n"
+"PO-Revision-Date: 2016-10-22 16:47+0200\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<rootfather@scummvm.org>\n"
@@ -850,9 +850,8 @@ msgstr ""
 "Einstellung für Seitenverhältniskorrektur konnte nicht geändert werden."
 
 #: gui/options.cpp:462
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "Vollbildeinstellung konnte nicht geändert werden."
+msgstr "Die Filtereinstellung konnte nicht geändert werden"
 
 #: gui/options.cpp:782
 msgid "Graphics mode:"
@@ -873,13 +872,12 @@ msgid "Fullscreen mode"
 msgstr "Vollbildmodus"
 
 #: gui/options.cpp:811
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Farbgrafik verwenden"
+msgstr "Bilineare Filterung"
 
 #: gui/options.cpp:811
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Verwende bilineare Filterung zur Grafik-Skalierung"
 
 #: gui/options.cpp:814
 msgid "Aspect ratio correction"
@@ -1905,9 +1903,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Konnte Einstellung für Vollbildmodus nicht anwenden."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Konnte Einstellung für Vollbildmodus nicht anwenden."
+msgstr "Konnte Filtereinstellungen nicht anwenden."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2223,14 +2220,12 @@ msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klicken aktiviert"
+msgstr "Bilineare Filterung aktiviert"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klicken deaktiviert"
+msgstr "Bilineare Filterung deaktiviert"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
