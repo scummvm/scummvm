@@ -560,6 +560,7 @@ void OSVideoSurface::playMovie(uint flags, CGameObject *obj) {
 void OSVideoSurface::playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie) {
 		_movie->play(startFrame, endFrame, flags, obj);
+		_movie->pause();
 	}
 }
 

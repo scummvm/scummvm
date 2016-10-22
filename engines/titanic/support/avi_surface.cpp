@@ -114,6 +114,15 @@ void AVISurface::stop() {
 	_movieRangeInfo.destroyContents();
 }
 
+void AVISurface::pause() {
+	_decoder->pauseVideo(true);
+}
+
+void AVISurface::resume() {
+	if (_decoder->isPaused())
+		_decoder->pauseVideo(false);
+}
+
 bool AVISurface::startAtFrame(int frameNumber) {
 	if (isPlaying())
 		// If it's already playing, then don't allow it

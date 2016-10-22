@@ -120,6 +120,16 @@ public:
 	virtual void stop();
 
 	/**
+	 * Pauses video playback
+	 */
+	virtual void pause();
+
+	/**
+	 * Resumes the video if it's paused
+	 */
+	virtual void resume();
+
+	/**
 	 * Return true if a video is currently playing
 	 */
 	virtual bool isPlaying() const { return _decoder->isPlaying(); }

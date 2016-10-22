@@ -143,6 +143,10 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 	g_vm->_events->removeTarget();
 }
 
+void OSMovie::pause() {
+	_aviSurface.pause();
+}
+
 void OSMovie::stop() {
 	_aviSurface.stop();
 	removeFromPlayingMovies();
@@ -161,6 +165,10 @@ void OSMovie::setFrame(uint frameNumber) {
 }
 
 bool OSMovie::handleEvents(CMovieEventList &events) {
+	// WORKAROUND: If a movie is paused as part of initial
+	// scene loading, now's the time to un-pause it
+	_aviSurface.resume();
+
 	if (!_aviSurface.isPlaying())
 		return false;
 	if (!_aviSurface.isNextFrame())
