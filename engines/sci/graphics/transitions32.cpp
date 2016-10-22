@@ -389,6 +389,7 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 		break;
 	case kShowStyleNone:
 	case kShowStyleMorph:
+	case kShowStyleHShutterIn:
 		// do nothing
 		break;
 	default:
@@ -546,7 +547,48 @@ void GfxTransitions32::processHShutterOut(PlaneShowStyle &showStyle) {
 }
 
 void GfxTransitions32::processHShutterIn(PlaneShowStyle &showStyle) {
-	error("HShutterIn is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
+		error("HShutterIn is not known to be used by any SCI2.1early- game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	}
+
+	Plane* plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
+	const Common::Rect &screenRect = plane->_screenRect;
+	Common::Rect rect;
+
+	const int divisions = showStyle.divisions;
+	const int width = screenRect.width();
+	const int divisionWidth = width / divisions - 1;
+
+	if (width % divisions) {
+		rect.left = (divisionWidth + 1) * divisions + screenRect.left;
+		rect.top = screenRect.top;
+		rect.right = (divisionWidth + 1) * divisions + (width % divisions) + screenRect.left;
+		rect.bottom = screenRect.bottom;
+		g_sci->_gfxFrameout->showRect(rect);
+	}
+
+	throttle();
+
+	for (int i = 0; i < width / (2 * divisions); ++i) {
+		// Left side
+		rect.left = i * divisions + screenRect.left;
+		rect.top = screenRect.top;
+		rect.right = i * divisions + divisions + screenRect.left;
+		rect.bottom = screenRect.bottom;
+		g_sci->_gfxFrameout->showRect(rect);
+
+		// Right side
+		rect.left = (divisionWidth - i) * divisions + screenRect.left;
+		rect.top = screenRect.top;
+		rect.right = (divisionWidth - i) * divisions + divisions + screenRect.left;
+		rect.bottom = screenRect.bottom;
+		g_sci->_gfxFrameout->showRect(rect);
+
+		throttle();
+	}
+
+	g_sci->_gfxFrameout->showRect(screenRect);
+	throttle();
 }
 
 void GfxTransitions32::processVShutterOut(PlaneShowStyle &showStyle) {
