@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	clsoundgroup.o \
 	clsoundraw.o \
 	cryolib.o \
+	sound.o \
 	eden.o \
 	cryo.o \
 	detection.o \
