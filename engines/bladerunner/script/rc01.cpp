@@ -388,7 +388,7 @@ bool ScriptRC01::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(0, -151.98f, -0.3f, 318.15f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			Actor_Set_Immunity_To_Obstacles(0, true);
-			Loop_Actor_Walk_To_XYZ(0, -151.98f, -0.3f, 318.15f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(0, -10.98f, -0.3f, 318.15f, 0, 0, false, 0);
 			if (Game_Flag_Query(486) && !Game_Flag_Query(660)) {
 				Actor_Voice_Over(4310, 99);
 				Actor_Voice_Over(4320, 99);

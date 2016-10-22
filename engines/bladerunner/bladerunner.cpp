@@ -80,6 +80,14 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_obstacles = new Obstacles(this);
 	_itemPickup = new ItemPickup(this);
 
+	_playerActorIdle = false;
+	_playerDead = false;
+	_speechSkipped = false;
+	_gameOver = false;
+	_gameAutoSave = 0;
+	_gameIsLoading = false;
+	_sceneIsLoading = false;
+
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
 	_walkSoundBalance = 0;
@@ -342,7 +350,7 @@ void BladeRunnerEngine::initChapterAndScene() {
 		_aiScripts->Initialize(i);
 
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i)
-		_actors[i]->changeAnimationMode(i);
+		_actors[i]->changeAnimationMode(0);
 
 	_settings->setChapter(1);
 	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
@@ -507,7 +515,7 @@ bool BladeRunnerEngine::loadSplash() {
 	_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
 	_system->updateScreen();
 
-	return false;
+	return true;
 }
 
 bool BladeRunnerEngine::init2() {

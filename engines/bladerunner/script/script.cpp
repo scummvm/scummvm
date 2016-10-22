@@ -436,7 +436,7 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 	_vm->loopActorSpeaking();
 	_vm->_adq->flush(1, true);
 
-	Actor *actor = _vm->_actors[actorId];
+	Actor *actor = (actorId == 99) ? _vm->_voiceoverActor : _vm->_actors[actorId];
 
 	actor->speechPlay(sentenceId, true);
 	Player_Loses_Control();

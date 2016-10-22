@@ -78,7 +78,9 @@ void Actor::setup(int actorId) {
 	_fps = 15;
 	_frame_ms = 1000 / _fps;
 
+	_isMoving = false;
 	_isTargetable = false;
+	_inCombat = false;
 	_isInvisible = false;
 	_isImmuneToObstacles = false;
 

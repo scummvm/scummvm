@@ -334,12 +334,12 @@ static void setupLookupTable(int t[256], int inc) {
 }
 
 void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
-	assert(_sliceFramePtr);
 	assert(_lights);
 	assert(_setEffects);
 	//assert(_view);
 
 	_vm->_sliceRenderer->setupFrameInWorld(animationId, animationFrame, position, facing);
+	assert(_sliceFramePtr);
 
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
