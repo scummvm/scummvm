@@ -122,7 +122,7 @@ OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, 
 }
 
 OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
-	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
 	init();
 }
 
@@ -140,7 +140,6 @@ void OptionsDialog::init() {
 	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
-	_midiTabId = 0;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
@@ -183,7 +182,6 @@ void OptionsDialog::init() {
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
 
-	_pathsTabId = 0;
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
