@@ -75,7 +75,14 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 
 				assert(sig == 0xdeaf);
 				assert(_end - _p >= blockSize);
-				assert(blockOutSize == 4 * blockSize);
+
+				// TODO: Previously we asserted that
+				// blockOutSize == 4 * blockSize, but
+				// occasionally, at the end of an AUD,
+				// we see blockOutSize == 4 * blockSize + 2
+				// Investigate how BLADE.EXE handles this.
+
+				assert(blockOutSize / 4 == blockSize);
 
 				_deafBlockRemain = blockSize;
 			}
