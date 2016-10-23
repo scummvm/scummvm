@@ -402,6 +402,8 @@ bool CDoorbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 }
 
 bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
+	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
+
 	if (_npcFlags & NPCFLAG_8000000) {
 		switch (msg->_dialogueId) {
 		case 10552:
