@@ -105,7 +105,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 		_speechDuration = msg->_speechDuration;
 		_startTicks = getTicksCount();
 
-		if (hasActiveMovie() || (_npcFlags & NPCFLAG_2)) {
+		if (!hasActiveMovie() || (_npcFlags & NPCFLAG_2)) {
 			_npcFlags &= ~NPCFLAG_2;
 			stopMovie();
 
