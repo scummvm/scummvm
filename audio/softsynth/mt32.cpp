@@ -42,6 +42,7 @@
 #include "common/archive.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/osd_message_queue.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
@@ -79,7 +80,7 @@ protected:
 		error("MT32emu: Init Error - Missing PCM ROM image");
 	}
 	void showLCDMessage(const char *message) {
-		g_system->displayMessageOnOSD(message);
+		Common::OSDMessageQueue::instance().addMessage(message);
 	}
 };
 
