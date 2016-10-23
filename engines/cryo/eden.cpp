@@ -83,7 +83,7 @@ EdenGame::EdenGame() {
 	textoutptr = textout = nullptr;
 	currentSpecialObject = nullptr;
 	word_30AFC = 0;
-	byte_30AFE = 0;
+	parlemoiNormalFlag = false;
 	byte_30B00 = 0;
 	dword_30B04 = 0;
 	lastPhrasesFile = 0;
@@ -457,14 +457,12 @@ void EdenGame::gotolieu(goto_t *go) {
 }
 
 void EdenGame::deplaval(uint16 roomNum) {
-	byte c1, newAreaNum, curAreaNum;
-	int16 newRoomNum;
 	p_global->newLocation = roomNum & 0xFF;
 	p_global->valleyVidNum = 0;
 	p_global->phaseActionsCount++;
 	closesalle();
 	endpersovox();
-	c1 = roomNum & 0xFF;
+	byte c1 = roomNum & 0xFF;
 	if (c1 == 0)
 		return;
 	if (c1 < 0x80) {
@@ -509,9 +507,9 @@ void EdenGame::deplaval(uint16 roomNum) {
 		return;
 	}
 	p_global->stepsToFindAppleFast = 0;
-	newAreaNum = c1 & 0x7F;
-	curAreaNum = p_global->roomNum >> 8;
-	newRoomNum = newAreaNum << 8;
+	byte newAreaNum = c1 & 0x7F;
+	byte curAreaNum = p_global->roomNum >> 8;
+	int16 newRoomNum = newAreaNum << 8;
 	if (curAreaNum == Areas::arTausCave && newAreaNum == Areas::arMo)
 		newRoomNum |= 0x16;
 	else if (curAreaNum == Areas::arMoorkusLair)
@@ -522,8 +520,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 	if (newAreaNum == Areas::arTausCave)
 		gotolieu(&gotos[0]);
 	else {
-		goto_t *go;
-		for (go = gotos + 1; go->curAreaNum != 0xFF; go++) {
+		for (goto_t *go = gotos + 1; go->curAreaNum != 0xFF; go++) {
 			if (go->curAreaNum == curAreaNum) {
 				gotolieu(go);
 				break;
@@ -536,7 +533,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 void EdenGame::move(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
-	debug("deplacement: from room %4X", roomNum);
+	debug("move: from room %4X", roomNum);
 	char newLoc = 0;
 	rundcurs();
 	afficher();
@@ -714,7 +711,7 @@ void EdenGame::dinaparle() {
 				persovox();
 			}
 			p_global->ff_CA = 0;
-			p_global->dialogType = 0;
+			p_global->dialogType = DialogType::dtTalk;
 		} else
 			endFrescoes();
 	}
@@ -3073,7 +3070,7 @@ void EdenGame::vavapers() {
 void EdenGame::citadelle() {
 	p_global->ff_69++;
 	p_global->ff_F6++;
-	byte_30AFE = 1;
+	parlemoiNormalFlag = true;
 	byte_30B00 = 1;
 }
 
@@ -3181,7 +3178,7 @@ void EdenGame::parle_moi() {
 			if (!byte_30B00)
 				p_global->next_dialog_ptr = 0;
 		}
-		if (byte_30AFE) {
+		if (parlemoiNormalFlag) {
 			parlemoi_normal();
 			return;
 		}
@@ -3194,12 +3191,12 @@ void EdenGame::parle_moi() {
 			dial = p_global->last_dialog_ptr;
 		ok = dial_scan(dial);
 		p_global->last_dialog_ptr = p_global->dialog_ptr;
-		byte_30AFE = 0;
+		parlemoiNormalFlag = false;
 		if (!ok) {
-			byte_30AFE = 1;
+			parlemoiNormalFlag = true;
 			if (p_global->ff_60) {
 				if (p_global->perso_ptr == &kPersons[PER_MESSAGER]) {
-					p_global->dialogType = 0;
+					p_global->dialogType = DialogType::dtTalk;
 					if (p_global->eloiHaveNews)
 						parlemoi_normal();
 					else
@@ -3234,9 +3231,9 @@ void EdenGame::perso1(perso_t *perso) {
 }
 
 void EdenGame::perso_normal(perso_t *perso) {
-	p_global->last_dialog_ptr = 0;
-	p_global->dialogType = 0;
-	byte_30AFE = 0;
+	p_global->last_dialog_ptr = nullptr;
+	p_global->dialogType = DialogType::dtTalk;
+	parlemoiNormalFlag = false;
 	perso1(perso);
 }
 
@@ -3250,7 +3247,7 @@ void EdenGame::persoparle(int16 pers) {
 	af_subtitle();
 	persovox();
 	p_global->ff_CA = 0;
-	p_global->dialogType = 0;
+	p_global->dialogType = DialogType::dtTalk;
 }
 
 void EdenGame::roi()  {
@@ -3321,8 +3318,8 @@ void EdenGame::dino() {
 	perso_t *perso = p_global->room_perso;
 	if (!perso)
 		return;
-	byte_30AFE = 1;
-	p_global->dialogType = 0;
+	parlemoiNormalFlag = true;
+	p_global->dialogType = DialogType::dtTalk;
 	p_global->roomPersoFlags = perso->_flags;
 	p_global->roomPersoItems = perso->_items;
 	p_global->roomPersoPowers = perso->_powers;
@@ -3361,8 +3358,9 @@ void EdenGame::tyran() {
 	perso_t *perso = p_global->room_perso;
 	if (!perso)
 		return;
-	byte_30AFE = 1;
-	p_global->dialogType = 0;
+
+	parlemoiNormalFlag = true;
+	p_global->dialogType = DialogType::dtTalk;
 	p_global->roomPersoFlags = perso->_flags;
 	p_global->perso_ptr = perso;
 	init_perso_ptr(perso);
@@ -3387,15 +3385,13 @@ void EdenGame::morkus()   {
 }
 
 void EdenGame::comment() {
-	perso_t *perso;
-	perso = &kPersons[PER_DINA];
+	perso_t *perso = &kPersons[PER_DINA];
 	if (!(p_global->party & PersonMask::pmDina)) {
 		perso = &kPersons[PER_EVE];
 		if (!(p_global->party & PersonMask::pmEve)) {
 			perso = &kPersons[PER_GARDES];
-			if (!(p_global->party & PersonMask::pmThugg)) {
+			if (!(p_global->party & PersonMask::pmThugg))
 				return;
-			}
 		}
 	}
 	p_global->dialogType = DialogType::dtHint;
@@ -3403,9 +3399,6 @@ void EdenGame::comment() {
 }
 
 void EdenGame::adam() {
-	char *objvid;
-	object_t *object;
-	int16 vid;
 	resetScroll();
 	switch (p_global->curObjectId) {
 	case Objects::obNone:
@@ -3457,13 +3450,13 @@ void EdenGame::adam() {
 	case Objects::obTablet3:
 	case Objects::obTablet4:
 	case Objects::obTablet5:
-	case Objects::obTablet6:
+	case Objects::obTablet6: {
 		if ((p_global->partyOutside & PersonMask::pmDina)
 		        && p_global->curObjectId == Objects::obTablet1 && p_global->phaseNum == 370)
 			incphase1();
-		objvid = &kTabletView[(p_global->curObjectId - Objects::obTablet1) * 2];
-		object = getobjaddr(*objvid++);
-		vid = 84;
+		char *objvid = &kTabletView[(p_global->curObjectId - Objects::obTablet1) * 2];
+		object_t *object = getobjaddr(*objvid++);
+		int16 vid = 84;
 		if (!object->_count)
 			vid = *objvid;
 		bars_out();
@@ -3473,6 +3466,7 @@ void EdenGame::adam() {
 		p_global->ff_102 = 16;
 		showBars();
 		gametomiroir(0);
+		}
 		break;
 	case Objects::obApple:
 	case Objects::obShroom:
@@ -3575,7 +3569,7 @@ void EdenGame::SpcTalisman(perso_t *perso) {
 void EdenGame::SpcMasque(perso_t *perso) {
 	if (perso == &kPersons[PER_BAMBOO]) {
 		dialautoon();
-		byte_30AFE = 1;
+		parlemoiNormalFlag = true;
 	}
 }
 
@@ -3814,20 +3808,21 @@ byte *EdenGame::gettxtad(int16 id) {
 }
 
 void EdenGame::gotocarte() {
-	char newArea, curArea;
 	goto_t *go = &gotos[current_spot2->object_id];
 	endpersovox();
-	newArea = go->areaNum;
+	char newArea = go->areaNum;
 	p_global->newRoomNum = (go->areaNum << 8) | 1;
 	p_global->newLocation = 1;
 	p_global->prevLocation = p_global->roomNum & 0xFF;
-	curArea = p_global->roomNum >> 8;
+	char curArea = p_global->roomNum >> 8;
 	if (curArea == go->areaNum)
 		newArea = 0;
 	else {
-		for (; go->curAreaNum != 0xFF; go++)
+		for (; go->curAreaNum != 0xFF; go++) {
 			if (go->curAreaNum == curArea)
 				break;
+		}
+
 		if (go->areaNum == 0xFF)
 			return;
 	}
@@ -3837,25 +3832,29 @@ void EdenGame::gotocarte() {
 	waitendspeak();
 	if (pomme_q)
 		return;
+
 	close_perso();
 	if (verif_oui())
 		gotolieu(go);
 }
 
 void EdenGame::record() {
-	int16 i;
-	tape_t *tape;
-	perso_t *perso;
 	if (p_global->curObjectId)
 		return;
+
 	if (p_global->perso_ptr >= &kPersons[PER_UNKN_18C])
 		return;
+
 	if (p_global->eventType == EventType::etEventE || p_global->eventType >= EventType::etGotoArea)
 		return;
-	for (tape = tapes; tape != tapes + MAX_TAPES; tape++)
+
+	for (tape_t *tape = tapes; tape != tapes + MAX_TAPES; tape++) {
 		if (tape->_textNum == p_global->textNum)
 			return;
-	for (tape = tapes, i = 0; i < MAX_TAPES - 1; i++) {
+	}
+
+	tape_t *tape = tapes;
+	for (int16 i = 0; i < MAX_TAPES - 1; i++) {
 		tape->_textNum = tape[+1]._textNum;
 		tape->_perso = tape[+1]._perso;
 		tape->_party = tape[+1]._party;
@@ -3864,7 +3863,8 @@ void EdenGame::record() {
 		tape->_dialog = tape[+1]._dialog;
 		tape++;
 	}
-	perso = p_global->perso_ptr;
+
+	perso_t *perso = p_global->perso_ptr;
 	if (perso == &kPersons[PER_EVE])
 		perso = p_global->phaseNum >= 352 ? &kPersons[PER_UNKN_372]
 		        : &kPersons[PER_UNKN_402];
@@ -3877,10 +3877,8 @@ void EdenGame::record() {
 }
 
 char EdenGame::dial_scan(dial_t *dial) {
-	byte flags;
 	byte hidx, lidx;
-	char bidx, pnum;
-	int16 i;
+	char bidx;
 	uint16 mask;
 	perso_t *perso;
 	if (p_global->numGiveObjs) {
@@ -3895,7 +3893,7 @@ char EdenGame::dial_scan(dial_t *dial) {
 		for (;; p_global->dialog_ptr++) {
 			if (p_global->dialog_ptr->_flags == -1 && p_global->dialog_ptr->_condNumLow == -1)
 				return 0;
-			flags = p_global->dialog_ptr->_flags;
+			byte flags = p_global->dialog_ptr->_flags;
 			p_global->dialogFlags = flags;
 			if (!(flags & DialogFlags::dfSpoken) || (flags & DialogFlags::dfRepeatable)) {
 				hidx = (p_global->dialog_ptr->_textCondHiMask >> 6) & 3;
@@ -3922,7 +3920,9 @@ char EdenGame::dial_scan(dial_t *dial) {
 		if (mask)
 			break;
 	}
-	for (perso = kPersons; !(perso->_partyMask == mask && perso->_roomNum == p_global->roomNum); perso++) ; //Find matching
+	for (perso = kPersons; !(perso->_partyMask == mask && perso->_roomNum == p_global->roomNum); perso++)
+		; //Find matching
+
 	p_global->perso_ptr = perso;
 	init_perso_ptr(perso);
 	no_perso();
@@ -3932,7 +3932,7 @@ no_perso:
 	lidx = p_global->dialog_ptr->_textNumLow;
 	p_global->textNum = ((hidx << 8) | lidx) & 0x3FF;
 	if (p_global->phraseBufferPtr != phraseBuffer) {
-		for (i = 0; i < 32; i++)
+		for (int16 i = 0; i < 32; i++)
 			SysBeep(1);
 	} else
 		my_bulle();
@@ -3954,7 +3954,7 @@ no_perso:
 			&EdenGame::choixzone,
 			&EdenGame::lostobject
 		};
-		pnum = p_global->dialog_ptr->_flags & 0xF;
+		char pnum = p_global->dialog_ptr->_flags & 0xF;
 		if (pnum)
 			(this->*talk_subject[pnum - 1])();
 		p_global->ff_60 = 0xFF;
@@ -3971,24 +3971,20 @@ no_perso:
 }
 
 char EdenGame::dialoscansvmas(dial_t *dial) {
-	char res;
-	char old = dialogSkipFlags;
+	char oldFlag = dialogSkipFlags;
 	dialogSkipFlags = DialogFlags::df20;
-	res = dial_scan(dial);
-	dialogSkipFlags = old;
+	char res = dial_scan(dial);
+	dialogSkipFlags = oldFlag;
 	return res;
 }
 
 char EdenGame::dialo_even(perso_t *perso) {
-	char res;
-	int num;
-	dial_t *dial;
 	p_global->perso_ptr = perso;
-	num = (perso->_id << 3) | DialogType::dtEvent;
-	dial = (dial_t *)getElem(gameDialogs, num);
-	res = dialoscansvmas(dial);
-	p_global->last_dialog_ptr = 0;
-	byte_30AFE = 0;
+	int num = (perso->_id << 3) | DialogType::dtEvent;
+	dial_t *dial = (dial_t *)getElem(gameDialogs, num);
+	char res = dialoscansvmas(dial);
+	p_global->last_dialog_ptr = nullptr;
+	parlemoiNormalFlag = false;
 	return res;
 }
 
@@ -4012,13 +4008,13 @@ void EdenGame::mort(int16 vid) {
 }
 
 void EdenGame::evenchrono() {
-	uint16 old;
 	if (!(p_global->displayFlags & DisplayFlags::dfFlag1))
 		return;
-	old = p_global->gameTime;
+
+	uint16 oldGameTime = p_global->gameTime;
 	currentTime = TimerTicks / 100;
 	p_global->gameTime = currentTime;
-	if (p_global->gameTime <= old)
+	if (p_global->gameTime <= oldGameTime)
 		return;
 	heurepasse();
 	if (!(p_global->chrono_on & 1))
@@ -4064,15 +4060,13 @@ void EdenGame::chronoon(int16 t) {
 }
 
 void EdenGame::prechargephrases(int16 vid) {
-	int num;
-	dial_t *dial;
 	perso_t *perso = &kPersons[PER_MORKUS];
 	if (vid == 170)
 		perso = &kPersons[PER_UNKN_156];
 	p_global->perso_ptr = perso;
 	p_global->dialogType = DialogType::dtInspect;
-	num = (perso->_id << 3) | p_global->dialogType;
-	dial = (dial_t *)getElem(gameDialogs, num);
+	int num = (perso->_id << 3) | p_global->dialogType;
+	dial_t *dial = (dial_t *)getElem(gameDialogs, num);
 	dialoscansvmas(dial);
 }
 
@@ -5061,7 +5055,7 @@ void EdenGame::init_globals() {
 	p_global->ff_DC = 0;
 	p_global->room_x_base = 0;
 	p_global->ff_E0 = 0;
-	p_global->dialogType = 0;
+	p_global->dialogType = DialogType::dtTalk;
 	p_global->ff_E4 = 0;
 	p_global->currentMusicNum = 0;
 	p_global->textNum = 0;
@@ -5103,7 +5097,7 @@ void EdenGame::init_globals() {
 	p_global->tape_ptr = tapes;
 	p_global->next_dialog_ptr = 0;
 	p_global->narrator_dialog_ptr = 0;
-	p_global->last_dialog_ptr = 0;
+	p_global->last_dialog_ptr = nullptr;
 	p_global->nextRoomIcon = 0;
 	p_global->phraseBufferPtr = 0;
 	p_global->__UNUSED_90 = 0;
@@ -6699,7 +6693,7 @@ void EdenGame::loseObject(int16 id) {
 }
 
 void EdenGame::lostobject() {
-	byte_30AFE = 1;
+	parlemoiNormalFlag = true;
 	if (p_global->curObjectId)
 		loseObject(p_global->curObjectId);
 }
@@ -6803,7 +6797,7 @@ void EdenGame::takeobject() {
 	objectmain(current_spot2->object_id);
 	p_global->next_dialog_ptr = 0;
 	byte_30B00 = 0;
-	p_global->dialogType = 0;
+	p_global->dialogType = DialogType::dtTalk;
 	if (p_global->inventoryScrollPos)
 		p_global->inventoryScrollPos--;
 	showObjects();
@@ -7782,8 +7776,8 @@ void EdenGame::phase434() {
 }
 
 void EdenGame::phase513() {
-	p_global->last_dialog_ptr = 0;
-	byte_30AFE = 0;
+	p_global->last_dialog_ptr = nullptr;
+	parlemoiNormalFlag = false;
 	dialautoon();
 }
 
@@ -8045,8 +8039,8 @@ void EdenGame::phase480() {
 
 void EdenGame::phase496() {
 	dialautoon();
-	p_global->last_dialog_ptr = 0;
-	byte_30AFE = 0;
+	p_global->last_dialog_ptr = nullptr;
+	parlemoiNormalFlag = false;
 }
 
 void EdenGame::phase512() {

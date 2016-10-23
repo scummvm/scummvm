@@ -599,7 +599,7 @@ private:
 	byte   *textout;
 	object_t        *currentSpecialObject;
 	int16           word_30AFC;
-	byte   byte_30AFE;
+	bool parlemoiNormalFlag;
 
 	byte   byte_30B00;
 	int             dword_30B04;
