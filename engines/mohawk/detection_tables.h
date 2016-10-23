@@ -408,7 +408,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 
 	// Riven: The Sequel to Myst
-	// Version 1.? (5CD) - Japanese
+	// Version 1.0J (5CD) - Japanese
 	// From sev
 	{
 		{
@@ -416,7 +416,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("a_Data.MHK", "3a2b4764979dc007a0e6ded64e4b7889", 10014314),
 			Common::JA_JPN,
-			Common::kPlatformMacintosh,
+			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
