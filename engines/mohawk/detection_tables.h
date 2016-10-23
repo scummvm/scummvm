@@ -416,7 +416,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("a_Data.MHK", "3a2b4764979dc007a0e6ded64e4b7889", 10014314),
 			Common::JA_JPN,
-			Common::kPlatformWindows,
+			Common::kPlatformMacintosh,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
