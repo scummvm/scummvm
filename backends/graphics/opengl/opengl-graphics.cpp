@@ -377,7 +377,6 @@ void OpenGLGraphicsManager::updateScreen() {
 
 #ifdef USE_OSD
 	{
-		Common::StackLock lock(_osdMutex);
 		if (_osdMessageChangeRequest) {
 			osdMessageUpdateSurface();
 		}
@@ -741,11 +740,6 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #ifdef USE_OSD
-	// HACK: Actually no client code should use graphics functions from
-	// another thread. But the MT-32 emulator and network synchronization still do,
-	// thus we need to make sure this doesn't happen while a updateScreen call is done.
-	Common::StackLock lock(_osdMutex);
-
 	_osdMessageChangeRequest = true;
 
 	_osdMessageNextData = msg;

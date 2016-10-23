@@ -596,14 +596,6 @@ private:
 		kOSDIconTopMargin = 10,
 		kOSDIconRightMargin = 10
 	};
-
-	/**
-	 * Mutex for the OSD draw calls.
-	 *
-	 * Mutex to allow displayMessageOnOSD and displayActivityIconOnOSD
-	 * to be used from the audio and network threads.
-	 */
-	Common::Mutex _osdMutex;
 #endif
 };
 
