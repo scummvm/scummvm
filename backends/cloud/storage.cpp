@@ -28,6 +28,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include <common/translation.h>
+#include "common/osd_message_queue.h"
 
 namespace Cloud {
 
@@ -207,7 +208,7 @@ void Storage::savesSyncDefaultCallback(BoolResponse response) {
 
 	if (!response.value)
 		warning("SavesSyncRequest called success callback with `false` argument");
-	g_system->displayMessageOnOSD(_("Saved games sync complete."));
+	Common::OSDMessageQueue::instance().addMessage(_("Saved games sync complete."));
 }
 
 void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
@@ -218,9 +219,9 @@ void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
 	printErrorResponse(error);
 
 	if (error.interrupted)
-		g_system->displayMessageOnOSD(_("Saved games sync was cancelled."));
+		Common::OSDMessageQueue::instance().addMessage(_("Saved games sync was cancelled."));
 	else
-		g_system->displayMessageOnOSD(_("Saved games sync failed.\nCheck your Internet connection."));
+		Common::OSDMessageQueue::instance().addMessage(_("Saved games sync failed.\nCheck your Internet connection."));
 }
 
 ///// DownloadFolderRequest-related /////
@@ -328,7 +329,7 @@ void Storage::directoryDownloadedCallback(FileArrayResponse response) {
 	} else {
 		message = _("Download complete.");
 	}
-	g_system->displayMessageOnOSD(message.c_str());
+	Common::OSDMessageQueue::instance().addMessage(message.c_str());
 }
 
 void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
@@ -336,7 +337,7 @@ void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) 
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();
 
-	g_system->displayMessageOnOSD(_("Download failed."));
+	Common::OSDMessageQueue::instance().addMessage(_("Download failed."));
 }
 
 } // End of namespace Cloud
