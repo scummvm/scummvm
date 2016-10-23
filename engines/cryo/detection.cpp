@@ -79,6 +79,30 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Lost Eden EN PC version
+	// Added by Strangerke
+	{
+		"losteden",
+		0,
+		AD_ENTRY1s("EDEN.DAT", "2126f14fe38b47c7a132f7937c79a2f0", 451205552),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Lost Eden FR PC version
+	// Added by Strangerke
+	{
+		"losteden",
+		0,
+		AD_ENTRY1s("EDEN.DAT", "378b1260ac400ecf35f8843357adcca6", 448040496),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Lost Eden Mac version
 	{
 		"losteden",
