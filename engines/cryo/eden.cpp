@@ -4077,15 +4077,13 @@ void EdenGame::prechargephrases(int16 vid) {
 }
 
 void EdenGame::effet1() {
-	debug(__FUNCTION__);
 	int x, y;
-	int16 i;
 	int16 dy, ny;
 	rectanglenoir32();
 	if (!_doubledScreen) {
 		setRS1(0, 0, 16 - 1, 4 - 1);
 		y = p_mainview->_normal._dstTop;
-		for (i = 16; i <= 96; i += 4) {
+		for (int16 i = 16; i <= 96; i += 4) {
 			for (x = p_mainview->_normal._dstLeft; x < p_mainview->_normal._dstLeft + 320; x += 16) {
 				setRD1(x, y + i, x + 16 - 1, y + i + 4 - 1);
 				CLBlitter_CopyViewRect(p_view2, &ScreenView, &rect_src, &rect_dst);
@@ -4098,7 +4096,7 @@ void EdenGame::effet1() {
 	} else {
 		setRS1(0, 0, 16 * 2 - 1, 4 * 2 - 1);
 		y = p_mainview->_zoom._dstTop;
-		for (i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
+		for (int16 i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
 			for (x = p_mainview->_zoom._dstLeft; x < p_mainview->_zoom._dstLeft + 320 * 2; x += 16 * 2) {
 				setRD1(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
 				CLBlitter_CopyViewRect(p_view2, &ScreenView, &rect_src, &rect_dst);
@@ -4113,7 +4111,7 @@ void EdenGame::effet1() {
 	p_mainview->_zoom._height = 4;
 	ny = p_mainview->_normal._dstTop;
 	dy = p_mainview->_zoom._dstTop;
-	for (i = 0; i < 100; i += 2) {
+	for (int16 i = 0; i < 100; i += 2) {
 		p_mainview->_normal._srcTop = 99 - i;
 		p_mainview->_zoom._srcTop = 99 - i;
 		p_mainview->_normal._dstTop = 99 - i + ny;
@@ -4137,43 +4135,37 @@ void EdenGame::effet1() {
 }
 
 void EdenGame::effet2() {
-	debug(__FUNCTION__);
+	static int16 pattern1[] = {0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9};
+	static int16 pattern2[] = {0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9};
+	static int16 pattern3[] = {0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14};
+	static int16 pattern4[] = {0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9};
+
 	static int eff2pat = 0;
 	if (p_global->ff_103 == 69) {
 		effet4();
 		return;
 	}
 	switch (++eff2pat) {
-	case 1: {
-		static int16 pattern[] = {0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 5, 6, 10, 9};
-		colimacon(pattern);
+	case 1:
+		colimacon(pattern1);
 		break;
-	}
-	case 2: {
-		static int16 pattern[] = {0, 15, 1, 14, 2, 13, 3, 12, 7, 8, 11, 4, 5, 10, 6, 9};
-		colimacon(pattern);
+	case 2:
+		colimacon(pattern2);
 		break;
-	}
-	case 3: {
-		static int16 pattern[] = {0, 2, 5, 7, 8, 10, 13, 15, 1, 3, 4, 6, 9, 11, 12, 14};
-		colimacon(pattern);
+	case 3:
+		colimacon(pattern3);
 		break;
-	}
-	case 4: {
-		static int16 pattern[] = {0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9};
-		colimacon(pattern);
+	case 4:
+		colimacon(pattern4);
 		eff2pat = 0;
 		break;
-	}
 	}
 }
 
 void EdenGame::effet3() {
-	debug(__FUNCTION__);
-	uint16 i, c;
 	CLPalette_GetLastPalette(oldPalette);
-	for (i = 0; i < 6; i++) {
-		for (c = 0; c < 256; c++) {
+	for (uint16 i = 0; i < 6; i++) {
+		for (uint16 c = 0; c < 256; c++) {
 			newColor.r = oldPalette[c].r >> i;
 			newColor.g = oldPalette[c].g >> i;
 			newColor.b = oldPalette[c].b >> i;
@@ -4183,8 +4175,8 @@ void EdenGame::effet3() {
 		wait(1);
 	}
 	CLBlitter_CopyView2Screen(p_mainview);
-	for (i = 0; i < 6; i++) {
-		for (c = 0; c < 256; c++) {
+	for (uint16 i = 0; i < 6; i++) {
+		for (uint16 c = 0; c < 256; c++) {
 			newColor.r = global_palette[c].r >> (5 - i);
 			newColor.g = global_palette[c].g >> (5 - i);
 			newColor.b = global_palette[c].b >> (5 - i);
@@ -4198,18 +4190,18 @@ void EdenGame::effet3() {
 void EdenGame::effet4() {
 	debug(__FUNCTION__);
 	byte *scr, *pix, *r24, *r25, *r30, c;
-	int16 i;
 	int16 x, y;
-	int16 w, h, ww;
 	int16 r17, r23, r16, r18, r19, r22, r27, r31;
 	CLPalette_Send2Screen(global_palette, 0, 256);
-	w = ScreenView._width;
-	h = ScreenView._height;
-	ww = ScreenView._pitch;
+
+//	Unused
+//	int16 w = ScreenView._width;
+//	int16 h = ScreenView._height;
+	int16 ww = ScreenView._pitch;
 	if (!_doubledScreen) {
 		x = p_mainview->_normal._dstLeft;
 		y = p_mainview->_normal._dstTop;
-		for (i = 32; i > 0; i -= 2) {
+		for (int16 i = 32; i > 0; i -= 2) {
 			scr = ScreenView._bufferPtr;
 			scr += (y + 16) * ww + x;
 			pix = p_mainview->_bufferPtr + 16 * 640;
@@ -4273,7 +4265,7 @@ void EdenGame::effet4() {
 	} else {
 		x = p_mainview->_zoom._dstLeft;
 		y = p_mainview->_zoom._dstTop;
-		for (i = 32; i > 0; i -= 2) {
+		for (int16 i = 32; i > 0; i -= 2) {
 			scr = ScreenView._bufferPtr;
 			scr += (y + 16 * 2) * ww + x;
 			pix = p_mainview->_bufferPtr + 16 * 640;
@@ -4339,18 +4331,19 @@ void EdenGame::effet4() {
 
 void EdenGame::ClearScreen() {
 	byte *scr;
-	int16 x, y, xx, yy;
-	int16 w, h, ww;
-	w = ScreenView._width;
-	h = ScreenView._height;
-	ww = ScreenView._pitch;
+	int16 x, y;
+
+//	Unused
+//	int16 w = ScreenView._width;
+//	int16 h = ScreenView._height;
+	int16 ww = ScreenView._pitch;
 	if (!_doubledScreen) {
 		x = p_mainview->_normal._dstLeft;
 		y = p_mainview->_normal._dstTop;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
-		for (yy = 0; yy < 160; yy++) {
-			for (xx = 0; xx < 320; xx++)
+		for (int16 yy = 0; yy < 160; yy++) {
+			for (int16 xx = 0; xx < 320; xx++)
 				*scr++ = 0;
 			scr += ww - 320;
 		}
@@ -4359,8 +4352,8 @@ void EdenGame::ClearScreen() {
 		y = p_mainview->_zoom._dstTop;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 32) * ww + x;
-		for (yy = 0; yy < 160; yy++) {
-			for (xx = 0; xx < 320; xx++) {
+		for (int16 yy = 0; yy < 160; yy++) {
+			for (int16 xx = 0; xx < 320; xx++) {
 				scr[0] = 0;
 				scr[1] = 0;
 				scr[ww] = 0;
@@ -4376,20 +4369,21 @@ void EdenGame::ClearScreen() {
 void EdenGame::colimacon(int16 pattern[16]) {
 	byte *scr, *pix;
 	int16 x, y;
-	int16 w, h, ww;
-	int16 i, j, p, r27, r25;
-	w = ScreenView._width;
-	h = ScreenView._height;
-	ww = ScreenView._pitch;
+	int16 p, r27, r25;
+
+//	Unused
+//	int16 w = ScreenView._width;
+//	int16 h = ScreenView._height;
+	int16 ww = ScreenView._pitch;
 	if (!_doubledScreen) {
 		x = p_mainview->_normal._dstLeft;
 		y = p_mainview->_normal._dstTop;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
-		for (i = 0; i < 16; i++) {
+		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
 			r27 = p % 4 + p / 4 * ww;
-			for (j = 0; j < 320 * 160 / 16; j++)
+			for (int16 j = 0; j < 320 * 160 / 16; j++)
 				scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] = 0;
 			CLBlitter_UpdateScreen();
 			wait(1);
@@ -4399,10 +4393,10 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		y = p_mainview->_zoom._dstTop;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
-		for (i = 0; i < 16; i++) {
+		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
 			r27 = p % 4 * 2 + p / 4 * ww * 2;
-			for (j = 0; j < 320 * 160 / 16; j++) {
+			for (int16 j = 0; j < 320 * 160 / 16; j++) {
 				byte *sc = &scr[j / (320 / 4) * ww * 4 * 2 + j % (320 / 4) * 4 * 2 + r27];
 				sc[0] = 0;
 				sc[1] = 0;
@@ -4420,11 +4414,11 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		pix += 640 * 16;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
-		for (i = 0; i < 16; i++) {
+		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
 			r25 = p % 4 + p / 4 * 640;
 			r27 = p % 4 + p / 4 * ww;
-			for (j = 0; j < 320 * 160 / 16; j++)
+			for (int16 j = 0; j < 320 * 160 / 16; j++)
 				scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
 				    pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
 			CLBlitter_UpdateScreen();
@@ -4437,11 +4431,11 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		pix += 640 * 16;
 		scr = ScreenView._bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
-		for (i = 0; i < 16; i++) {
+		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
 			r25 = p % 4 + p / 4 * 640;
 			r27 = p % 4 * 2 + p / 4 * ww * 2;
-			for (j = 0; j < 320 * 160 / 16; j++) {
+			for (int16 j = 0; j < 320 * 160 / 16; j++) {
 				byte c = pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
 				byte *sc = &scr[j / (320 / 4) * ww * 4 * 2 + j % (320 / 4) * 4 * 2 + r27];
 				sc[0] = c;
@@ -4455,10 +4449,9 @@ void EdenGame::colimacon(int16 pattern[16]) {
 }
 
 void EdenGame::fadetoblack(int delay) {
-	int16 i, j;
 	CLPalette_GetLastPalette(oldPalette);
-	for (i = 0; i < 6; i++) {
-		for (j = 0; j < 256; j++) {
+	for (int16 i = 0; i < 6; i++) {
+		for (int16 j = 0; j < 256; j++) {
 			newColor.r = oldPalette[j].r >> i;
 			newColor.g = oldPalette[j].g >> i;
 			newColor.b = oldPalette[j].b >> i;
@@ -4470,10 +4463,9 @@ void EdenGame::fadetoblack(int delay) {
 }
 
 void EdenGame::fadetoblack128(int delay) {
-	int16 i, j;
 	CLPalette_GetLastPalette(oldPalette);
-	for (i = 0; i < 6; i++) {
-		for (j = 0; j < 129; j++) { //TODO: wha?
+	for (int16 i = 0; i < 6; i++) {
+		for (int16 j = 0; j < 129; j++) { //TODO: wha?
 			newColor.r = oldPalette[j].r >> i;
 			newColor.g = oldPalette[j].g >> i;
 			newColor.b = oldPalette[j].b >> i;
@@ -4485,9 +4477,8 @@ void EdenGame::fadetoblack128(int delay) {
 }
 
 void EdenGame::fadefromblack128(int delay) {
-	int16 i, j;
-	for (i = 0; i < 6; i++) {
-		for (j = 0; j < 129; j++) { //TODO: wha?
+	for (int16 i = 0; i < 6; i++) {
+		for (int16 j = 0; j < 129; j++) { //TODO: wha?
 			newColor.r = global_palette[j].r >> (5 - i);
 			newColor.g = global_palette[j].g >> (5 - i);
 			newColor.b = global_palette[j].b >> (5 - i);
@@ -4500,9 +4491,8 @@ void EdenGame::fadefromblack128(int delay) {
 
 void EdenGame::rectanglenoir32() {
 	// blacken 32x32 rectangle
-	int i;
 	int *pix = (int *)p_view2_buf;
-	for (i = 0; i < 32; i++) {
+	for (int16 i = 0; i < 32; i++) {
 		pix[0] = 0;
 		pix[1] = 0;
 		pix[2] = 0;
@@ -4530,24 +4520,23 @@ void EdenGame::setRD1(int16 sx, int16 sy, int16 ex, int16 ey) {
 }
 
 void EdenGame::wait(int howlong) {
-	int t2, t = TickCount();
+	int t = TickCount();
 #ifdef EDEN_DEBUG
 	howlong *= 10;
 #endif
-	for (t2 = t; t2 - t < howlong; t2 = TickCount()) g_system->delayMillis(10); // waste time
+	for (int t2 = t; t2 - t < howlong; t2 = TickCount())
+		g_system->delayMillis(10); // waste time
 }
 
 void EdenGame::effetpix() {
-	debug(__FUNCTION__);
 	byte *scr, *pix;
 	int16 x, y;
-	int16 w, h, ww;
 	int16 r25, r18, r31, r30;  //TODO: change to xx/yy
-	byte r24, r23;         //TODO: change to p0/p1
-	int16 r26, r27, r20;
-	w = ScreenView._width;
-	h = ScreenView._height;
-	ww = ScreenView._pitch;
+
+//	Unused
+//	int16 w = ScreenView._width;
+//	int16 h = ScreenView._height;
+	int16 ww = ScreenView._pitch;
 	r25 = ww * 80;
 	r18 = 640 * 80;
 	pix = p_mainview->_bufferPtr + 16 * 640;
@@ -4563,9 +4552,9 @@ void EdenGame::effetpix() {
 		scr += (y + 16 * 2) * ww + x;
 		r25 *= 2;
 	}
-	r20 = 0x4400;   //TODO
-	r27 = 1;
-	r26 = 0;
+	int16 r20 = 0x4400;   //TODO
+	int16 r27 = 1;
+	int16 r26 = 0;
 	do {
 		char r8 = r27 & 1;
 		r27 >>= 1;
@@ -4613,27 +4602,27 @@ void EdenGame::effetpix() {
 		if (r27 < 320 * 80) {
 			r31 = r27 / 320;
 			r30 = r27 % 320;
-			r24 = pix[r31 * 640 + r30];
-			r23 = pix[r31 * 640 + r18 + r30];
+			byte p0 = pix[r31 * 640 + r30];
+			byte p1 = pix[r31 * 640 + r18 + r30];
 			if (_doubledScreen) {
 				r31 *= 2;
 				r30 *= 2;
-				scr[r31 * ww + r30] = r24;
-				scr[r31 * ww + r30 + 1] = r24;
-				scr[r31 * ww + r25 + r30] = r23;
-				scr[r31 * ww + r25 + r30 + 1] = r23;
+				scr[r31 * ww + r30] = p0;
+				scr[r31 * ww + r30 + 1] = p0;
+				scr[r31 * ww + r25 + r30] = p1;
+				scr[r31 * ww + r25 + r30 + 1] = p1;
 				r31++;
-				scr[r31 * ww + r30] = r24;
-				scr[r31 * ww + r30 + 1] = r24;
-				scr[r31 * ww + r25 + r30] = r23;
-				scr[r31 * ww + r25 + r30 + 1] = r23;
+				scr[r31 * ww + r30] = p0;
+				scr[r31 * ww + r30 + 1] = p0;
+				scr[r31 * ww + r25 + r30] = p1;
+				scr[r31 * ww + r25 + r30 + 1] = p1;
 				if (++r26 == 960) {
 					wait(1);
 					r26 = 0;
 				}
 			} else {
-				scr[r31 * ww + r30] = r24;
-				scr[r31 * ww + r25 + r30] = r23;
+				scr[r31 * ww + r30] = p0;
+				scr[r31 * ww + r25 + r30] = p1;
 				if (++r26 == 960) {
 					CLBlitter_UpdateScreen();
 					wait(1);
@@ -4648,23 +4637,22 @@ void EdenGame::effetpix() {
 ////// datfile.c
 void EdenGame::verifh(void *ptr) {
 	byte sum = 0;
-	byte *data;
 	byte *head = (byte *)ptr;
-	uint16 h0, h3;
-	int16 i;
-	char h2;
-	for (i = 0; i < 6; i++)
+
+	for (int8 i = 0; i < 6; i++)
 		sum += *head++;
+
 	if (sum != 0xAB)
 		return;
+
 	debug("* Begin unpacking resource");
 	head -= 6;
-	h0 = PLE16(head);
+	uint16 h0 = PLE16(head);
 	head += 2;
-	h2 = *head++;
-	h3 = PLE16(head);
+	char unused = *head++;
+	uint16 h3 = PLE16(head);
 	head += 2;
-	data = h0 + head + 26;
+	byte *data = h0 + head + 26;
 	h3 -= 6;
 	head += h3;
 	for (; h3; h3--)
@@ -4773,8 +4761,7 @@ int EdenGame::ssndfl(uint16 num) {
 
 #if 1
 void EdenGame::ConvertIcons(icon_t *icon, int count) {
-	int i;
-	for (i = 0; i < count; i++, icon++) {
+	for (int i = 0; i < count; i++, icon++) {
 		icon->sx = BE16(icon->sx);
 		icon->sy = BE16(icon->sy);
 		icon->ex = BE16(icon->ex);
@@ -4786,15 +4773,14 @@ void EdenGame::ConvertIcons(icon_t *icon, int count) {
 }
 
 void EdenGame::ConvertLinks(room_t *room, int count) {
-	int i;
-	for (i = 0; i < count; i++, room++) {
+	for (int i = 0; i < count; i++, room++) {
 		room->bank = BE16(room->bank);
 		room->party = BE16(room->party);
 	}
 }
 
 void EdenGame::ConvertMacToPC() {
-	// Conert all mac (big-endian) resources to native format
+	// Convert all mac (big-endian) resources to native format
 	ConvertIcons(gameIcons, 136);
 	ConvertLinks(gameRooms, 424);
 	// Array of longs
@@ -4810,6 +4796,7 @@ void EdenGame::loadpermfiles() {
 	{
 		// Since PC version stores hotspots and rooms info in the executable, load them from premade resource file
 		Common::File f;
+
 		if (f.open("led.dat")) {
 			const int kNumIcons = 136;
 			const int kNumRooms = 424;
@@ -4818,8 +4805,7 @@ void EdenGame::loadpermfiles() {
 			f.read(gameIcons, kNumIcons * sizeof(icon_t));
 			f.read(gameRooms, kNumRooms * sizeof(room_t));
 			f.close();
-		}
-		else
+		} else
 			error("Can not load aux data");
 	}
 		break;
