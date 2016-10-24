@@ -7403,14 +7403,8 @@ void EdenGame::affresult() {
 }
 
 void EdenGame::limitezonecurs(int16 xmin, int16 xmax, int16 ymin, int16 ymax) {
-	if (curs_x < xmin)
-		curs_x = xmin;
-	if (curs_x > xmax)
-		curs_x = xmax;
-	if (curs_y < ymin)
-		curs_y = ymin;
-	if (curs_y > ymax)
-		curs_y = ymax;
+	curs_x = CLIP(curs_x, xmin, xmax);
+	curs_y = CLIP(curs_y, ymin, ymax);
 }
 
 void EdenGame::PommeQ() {
@@ -7846,7 +7840,7 @@ void EdenGame::bigphase1() {
 		&EdenGame::phase560
 	};
 
-	int16   phase = (p_global->phaseNum & ~3) + 0x10;   //TODO: check me
+	int16 phase = (p_global->phaseNum & ~3) + 0x10;   //TODO: check me
 	debug("!!! big phase - %4X", phase);
 	p_global->phaseActionsCount = 0;
 	p_global->phaseNum = phase;
@@ -8183,7 +8177,6 @@ void EdenGame::loadrestart() {
 void EdenGame::loadgame(char *name) {
 //	filespec_t fs;
 //	file_t handle;
-	int32 size;
 //	CLFile_MakeStruct(0, 0, name, &fs);
 //	CLFile_Open(&fs, 3, handle);
 
@@ -8194,7 +8187,7 @@ void EdenGame::loadgame(char *name) {
 #define CLFile_Read(h, ptr, size) \
 	h->read(ptr, *size);
 
-	size = (char *)(&p_global->save_end) - (char *)(p_global);
+	int32 size = (char *)(&p_global->save_end) - (char *)(p_global);
 	CLFile_Read(handle, p_global, &size);
 	vavaoffsetin();
 	size = (char *)(&gameIcons[134]) - (char *)(&gameIcons[123]);
