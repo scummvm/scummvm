@@ -99,8 +99,10 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 	++_field100;
 
 	if (!(_npcFlags & NPCFLAG_8)) {
+		// Stop any previous animation
 		if (_speechTimerId)
-			stopTimer(_speechTimerId);
+			stopAnimTimer(_speechTimerId);
+		_speechTimerId = 0;
 
 		_speechDuration = msg->_speechDuration;
 		_startTicks = getTicksCount();
@@ -200,7 +202,7 @@ bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
 			index = getRandomNumber(count - 1);
 		} while (getClipDuration(msg->_names[index]) > msg->_maxDuration && --tries);
 
-		if (tries) {
+		if (!tries) {
 			// Sequentially go through the clips to find any below the maximum
 			index = 0;
 			for (int idx = 0; idx < count; ++idx) {
@@ -211,9 +213,9 @@ bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
 			}
 		}
 
-		playClip(msg->_names[index], MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playClip(msg->_names[index], MOVIE_NOTIFY_OBJECT);
 	} else {
-		playClip(msg->_names[getRandomNumber(count - 1)]);
+		playClip(msg->_names[getRandomNumber(count - 1)], MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;
