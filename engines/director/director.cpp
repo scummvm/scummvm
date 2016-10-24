@@ -122,7 +122,8 @@ Common::Error DirectorEngine::run() {
 
 	_movies = scanMovies(ConfMan.get("path"));
 
-	loadSharedCastsFrom(_sharedCastFile);
+	if (!_sharedCastFile.empty())
+		loadSharedCastsFrom(_sharedCastFile);
 	loadMainArchive();
 
 	_currentScore = new Score(this, _mainArchive);
@@ -160,6 +161,7 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 
 			Archive *arc = createArchive();
 
+			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
 			Score *sc = new Score(this, arc);
 			nameMap->setVal(sc->getMacName(), sc);
