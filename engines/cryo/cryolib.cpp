@@ -131,38 +131,43 @@ uint16 gIntervalLast, gIntervalFirst, gIntervalSet;
 int16 gMacintize = 0;
 color_t black_palette[256];
 color_t last_palette[256];
+
 void CLPalette_Init() {
-	int16 i;
-	for (i = 0; i < 256; i++)
+	for (int16 i = 0; i < 256; i++)
 		black_palette[i].r = black_palette[i].g = black_palette[i].b = 0;
 }
+
 void CLPalette_SetLastPalette(color_t *palette, int16 first, int16 count) {
-	int16 i;
-	for (i = first; i < first + count; i++)
+	for (int16 i = first; i < first + count; i++)
 		last_palette[i] = palette[i];
 }
+
 void CLPalette_GetLastPalette(color_t *palette) {
-	int16 i;
-	for (i = 0; i < 256; i++)
+	for (int16 i = 0; i < 256; i++)
 		palette[i] = last_palette[i];
 }
+
 void CLPalette_SetRGBColor(color_t *palette, uint16 index, color3_t *rgb) {
 	palette[index].r = rgb->r;
 	palette[index].g = rgb->g;
 	palette[index].b = rgb->b;
 	palette[index].a = 0;
 }
+
 void CLPalette_Macintize(int16 macintize) {
 	gMacintize = macintize;
 }
+
 void CLPalette_SetInterval(uint16 first, uint16 last) {
 	gIntervalFirst = first;
 	gIntervalSet = 1;
 	gIntervalLast = last;
 }
+
 void CLPalette_DeactivateInterval() {
 	gIntervalSet = 0;
 }
+
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) {
 	if (gMacintize) {
 		palette[0].r = palette[0].g = palette[0].b = 0xFFFF;
@@ -187,9 +192,11 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) 
 
 	CLPalette_SetLastPalette(palette, first, count);
 }
+
 void CLPalette_BeBlack() {
 	CLPalette_Send2Screen(black_palette, 0, 256);
 }
+
 void CLPalette_BeSystem() {
 }
 
@@ -213,14 +220,17 @@ void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Commo
 			*d++ = *s++;
 	}
 }
+
 void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count) {
 	pNewPalette = palette;
 	useNewPalette = 1;
 	newPaletteFirst = first;
 	newPaletteCount = count;
 }
+
 void CLBlitter_OneBlackFlash() {
 }
+
 void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
                                        byte *dst, int16 dstw, int16 dstp, int16 dsth) {
 	for (int16 y = 0; y < srch; y++) {
@@ -358,14 +368,6 @@ uint16 CLMouse_IsDown() {
 }
 
 ///// CLFile
-void CLFile_SetFilter(int a3, int a4, int a5, int a6, int a7) {
-}
-
-void CLFile_SetFinderInfos(void *fs, int a4, int a5) {
-}
-
-void CLFile_GetFullPath(void *a3, char *a4) {
-}
 
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
 	strcpy(fs->name, name);
@@ -481,21 +483,6 @@ void CLTimer_Done() {
 }
 
 ///// CRYOLib
-void CRYOLib_InstallExitPatch() {
-}
-
-void CRYOLib_RemoveExitPatch() {
-}
-
-void CRYOLib_Init() {
-}
-
-void CRYOLib_Done() {
-}
-
-void CRYOLib_MinimalInit() {
-}
-
 void CRYOLib_ManagersInit() {
 	CLTimer_Init();
 	CLScreenView_Init();
@@ -503,29 +490,6 @@ void CRYOLib_ManagersInit() {
 
 void CRYOLib_ManagersDone() {
 	CLTimer_Done();
-}
-
-void CRYOLib_SetDebugMode(int16 enable) {
-}
-
-void CRYOLib_InstallEmergencyExit(void(*proc)()) {
-}
-
-void CRYOLib_SetupEnvironment() {
-}
-
-void CRYOLib_RestoreEnvironment() {
-}
-
-void CRYOLib_TestConfig() {
-}
-
-///// CLComputer
-int16 CLComputer_Has68030() {
-	return 0;
-}
-int16 CLComputer_Has68040() {
-	return 0;
 }
 
 ///// CLDesktop

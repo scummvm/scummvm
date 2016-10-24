@@ -5599,22 +5599,14 @@ void EdenGame::run() {
 	invIconsCount = (g_ed->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	roomIconsBase = invIconsBase + invIconsCount;
 
-	CRYOLib_Init();
-	CRYOLib_InstallExitPatch();
-	CRYOLib_SetDebugMode(0);
 	word_378CE = 0;
-	CRYOLib_MinimalInit();
-	CRYOLib_TestConfig();
 	CRYOLib_ManagersInit();
-	CLFile_SetFilter(1, 'EDNS', 0, 0, 0);
-	// CRYOLib_InstallEmergencyExit(EmergencyExit);
-	CRYOLib_SetupEnvironment();
 	CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
 	CLHNM_SetForceZero2Black(true);
 	CLHNM_SetupTimer(12.5);
 	voiceSound = CLSoundRaw_New(0, 11025 * 65536.0, 8, 0);
 	hnmsound_ch = CLHNM_GetSoundChannel();
-	CLSound_SetWantsDesigned(1);
+	CLSound_SetWantsDesigned(1); // CHECKME: Used?
 
 	_musicChannel = new CSoundChannel(g_ed->_mixer, 11025, false);
 	_voiceChannel = new CSoundChannel(g_ed->_mixer, 11025, false);
@@ -5665,10 +5657,7 @@ void EdenGame::run() {
 	fadetoblack(4);
 	closebigfile();
 	freebuf();
-	CRYOLib_RestoreEnvironment();
 	CRYOLib_ManagersDone();
-	CRYOLib_Done();
-	CRYOLib_RemoveExitPatch();
 }
 
 void EdenGame::edmain() {

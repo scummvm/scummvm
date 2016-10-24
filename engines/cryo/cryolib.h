@@ -215,9 +215,6 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeBlack();
 void CLPalette_BeSystem();
 
-void CLFile_SetFilter(int a3, int a4, int a5, int a6, int a7);
-void CLFile_SetFinderInfos(void *fs, int a4, int a5);
-void CLFile_GetFullPath(void *a3, char *a4);
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
 void CLFile_Create(filespec_t *fs);
 void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle);
@@ -260,21 +257,9 @@ void CLView_CenterIn(View *parent, View *child);
 void CLScreenView_Init();
 void CLScreenView_CenterIn(View *view);
 
-void CRYOLib_InstallExitPatch();
-void CRYOLib_RemoveExitPatch();
-void CRYOLib_Init();
-void CRYOLib_Done();
-void CRYOLib_MinimalInit();
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
-void CRYOLib_SetDebugMode(int16 enable);
-void CRYOLib_InstallEmergencyExit(void(*proc)());
-void CRYOLib_SetupEnvironment();
-void CRYOLib_RestoreEnvironment();
-void CRYOLib_TestConfig();
 
-int16 CLComputer_Has68030();
-int16 CLComputer_Has68040();
 void CLDesktop_TestOpenFileAtStartup();
 
 
