@@ -40,11 +40,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
-	{ // Generic D3 entry
+	{ // Generic D3 Mac entry
 		{
 			"director",
 			"",
-			AD_ENTRY1("D3", 0),
+			AD_ENTRY1("D3-mac", 0),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -52,6 +52,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 		},
 		GID_GENERIC,
 		3
+	},
+	{ // Generic D4 Mac entry
+		{
+			"director",
+			"",
+			AD_ENTRY1("D4-mac", 0),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
 	},
 	{
 		{
