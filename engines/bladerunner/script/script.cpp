@@ -432,11 +432,13 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 #endif
 
 void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
+	assert(actorId < ACTORS_COUNT);
+
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
 	_vm->_adq->flush(1, true);
 
-	Actor *actor = (actorId == 99) ? _vm->_voiceoverActor : _vm->_actors[actorId];
+	Actor *actor = _vm->_actors[actorId];
 
 	actor->speechPlay(sentenceId, true);
 	Player_Loses_Control();
@@ -458,7 +460,7 @@ void ScriptBase::Actor_Start_Speech_Sample(int actorId, int sentenceId) {
 
 void ScriptBase::Actor_Start_Voice_Over_Sample(int sentenceId) {
 	_vm->loopActorSpeaking();
-	_vm->_voiceoverActor->speechPlay(sentenceId, true);
+	_vm->_actors[VOICEOVER_ACTOR]->speechPlay(sentenceId, true);
 }
 
 int ScriptBase::Actor_Query_Which_Set_In(int actorId) {
@@ -646,11 +648,11 @@ bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
-	_vm->_actors[actorId]->copyClues(99);
+	_vm->_actors[actorId]->copyClues(VOICEOVER_ACTOR);
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
-	_vm->_voiceoverActor->copyClues(actorId);
+	_vm->_actors[VOICEOVER_ACTOR]->copyClues(actorId);
 }
 
 void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {

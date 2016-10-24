@@ -50,7 +50,7 @@ ADQ::~ADQ() {
 }
 
 void ADQ::add(int actorId, int sentenceId, int animationMode) {
-	if (actorId == 0 || actorId == 99) {
+	if (actorId == 0 || actorId == VOICEOVER_ACTOR) {
 		animationMode = -1;
 	}
 	if (_entries.size() < 25) {

@@ -236,12 +236,12 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_zBuffer2 = new uint16[640 * 480];
 
 	int actorCount = (int)_gameInfo->getActorCount();
-	assert(actorCount < 99);
+	assert(actorCount < ACTORS_COUNT);
 	for (int i = 0; i != actorCount; ++i) {
 		_actors[i] = new Actor(this, i);
 		_actors[i]->setup(i);
 	}
-	_voiceoverActor = new Actor(this, 99);
+	_actors[VOICEOVER_ACTOR] = new Actor(this, VOICEOVER_ACTOR);
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
 	_playerActor->setFPS(15);

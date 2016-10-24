@@ -868,7 +868,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	sprintf(name, "%02d-%04d.AUD", _id, sentenceId); //TODO somewhere here should be also language code
 	int balance;
 
-	if (voiceOver || _id == 99) {
+	if (voiceOver || _id == VOICEOVER_ACTOR) {
 		balance = 0;
 	} else {
 		// Vector3 pos = _vm->_view->_frameViewMatrix * _position;
@@ -910,7 +910,7 @@ void Actor::copyClues(int actorId) {
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
 		if (hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
-			if (_id == 99)
+			if (_id == VOICEOVER_ACTOR)
 				fromActorId = _clues->getFromActorId(i);
 			otherActor->acquireClue(i, 0, fromActorId);
 		}

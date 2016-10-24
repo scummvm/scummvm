@@ -64,6 +64,9 @@ class TextResource;
 class View;
 class Waypoints;
 
+#define ACTORS_COUNT 100
+#define VOICEOVER_ACTOR (ACTORS_COUNT - 1)
+
 class BladeRunnerEngine : public Engine {
 public:
 	bool      _gameIsRunning;
@@ -107,8 +110,7 @@ public:
 
 	Common::Array<Shape*> _shapes;
 
-	Actor *_actors[99];
-	Actor *_voiceoverActor;
+	Actor *_actors[ACTORS_COUNT];
 	Actor *_playerActor;
 
 	int in_script_counter;
