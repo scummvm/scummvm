@@ -185,6 +185,10 @@ void AmbientSounds::addSoundByName(
 		int pan1begin, int pan1end,
 		int pan2begin, int pan2end,
 		int priority, int unk3) {
+	if (strlen(name) > 12) {
+		error("AmbientSounds::addSoundByName: Overlong name '%s'", name);
+	}
+
 	int i = findAvailableNonLoopingTrack();
 	if (i < 0)
 		return;
