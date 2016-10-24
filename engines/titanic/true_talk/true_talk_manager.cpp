@@ -407,7 +407,7 @@ uint CTrueTalkManager::readDialogueSpeech() {
 		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
 		if (waveFile) {
-			_speechDuration += waveFile->getDuration();
+			_speechDuration += waveFile->getDurationTicks();
 		}
 	}
 

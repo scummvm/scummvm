@@ -43,8 +43,17 @@ CWaveFile::~CWaveFile() {
 	}
 }
 
-uint CWaveFile::getDuration() const {
-	return _stream ? _stream->getLength().secs() : 0;
+uint CWaveFile::getDurationTicks() const {
+	if (!_stream)
+		return 0;
+
+	// FIXME: The original uses acmStreamSize to calculate
+	// a desired size. Since I have no idea how the system API
+	// method works, for now I'm using a simple ratio of a
+	// sample output to input value
+	uint size = _size - 0x46;
+	double newSize = (double)size * (1475712.0 / 199836.0);
+	return newSize * 1000.0 / _stream->getRate();
 }
 
 bool CWaveFile::loadSound(const CString &name) {

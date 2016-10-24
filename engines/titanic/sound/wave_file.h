@@ -46,9 +46,11 @@ public:
 	~CWaveFile();
 
 	/**
-	 * Returns the duration of the wave file in seconds
+	 * Returns the duration of the wave file
+	 * @returns	Total ticks. Not really sure how ticks
+	 * map to real time
 	 */
-	uint getDuration() const;
+	uint getDurationTicks() const;
 
 	/**
 	 * Return the size of the wave file
