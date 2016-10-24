@@ -95,7 +95,7 @@ void SetEffects::setupFrame(int frame) {
 
 void SetEffects::setFadeColor(float r, float g, float b) {
 	_fadeColor.r = r;
-	_fadeColor.r = g;
+	_fadeColor.g = g;
 	_fadeColor.b = b;
 }
 
