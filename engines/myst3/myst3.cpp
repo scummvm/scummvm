@@ -327,9 +327,9 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if (!isMonolingual() || getPlatform() == Common::kPlatformXbox)
-		if (!addArchive("language.m3u", false))
-			addArchive(menuLanguage + ".m3u", true);
+	if (!isMonolingual() || getPlatform() == Common::kPlatformXbox) {
+		addArchive(menuLanguage + ".m3u", true);
+	}
 
 	addArchive("RSRC.m3r", true);
 }
@@ -343,6 +343,7 @@ void Myst3Engine::closeArchives() {
 
 bool Myst3Engine::checkDatafiles() {
 	if (!SearchMan.hasFile("OVER101.m3o")) {
+		warning("Unable to open the update game archive 'OVER101.m3o'");
 		static const char *updateMessage =
 				_("This version of Myst III has not been updated with the latest official patch.\n"
 						  "Please install the official update corresponding to your game's language.\n"
