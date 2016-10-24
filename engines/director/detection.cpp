@@ -23,6 +23,8 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -55,6 +57,9 @@ Common::Language DirectorEngine::getLanguage() const {
 }
 
 Common::String DirectorEngine::getEXEName() const {
+	if (ConfMan.hasKey("start_movie"))
+		return ConfMan.get("start_movie");
+
 	return _gameDescription->desc.filesDescriptions[0].fileName;
 }
 
