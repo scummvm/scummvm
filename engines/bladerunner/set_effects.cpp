@@ -69,10 +69,11 @@ void SetEffects::read(Common::ReadStream *stream, int framesCount) {
 		}
 		if (!fog) {
 			//TODO exception, unknown fog type
+		} else {
+			fog->read(stream, framesCount);
+			fog->_next = _fogs;
+			_fogs = fog;
 		}
-		fog->read(stream, framesCount);
-		fog->_next = _fogs;
-		_fogs = fog;
 	}
 }
 
