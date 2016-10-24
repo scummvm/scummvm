@@ -50,7 +50,7 @@ int MovementTrack::append(int waypointId, int delay, int running) {
 }
 
 int MovementTrack::append(int waypointId, int delay, int angle, int running) {
-	if (_lastIndex > ARRAYSIZE(_entries))
+	if (_lastIndex >= ARRAYSIZE(_entries))
 		return 0;
 
 	_entries[_lastIndex].waypointId = waypointId;
