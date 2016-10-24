@@ -484,7 +484,6 @@ private:
 	uint16 opera_faux(uint16 v1, uint16 v2);
 	uint16 operation(byte op, uint16 v1, uint16 v2);
 	uint16 cher_valeur();
-	void monbreak();
 	void ret();
 	void make_tabcos();
 	void make_matrice_fix();

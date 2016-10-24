@@ -164,7 +164,6 @@ void CLPalette_DeactivateInterval() {
 	gIntervalSet = 0;
 }
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) {
-	int16 i;
 	if (gMacintize) {
 		palette[0].r = palette[0].g = palette[0].b = 0xFFFF;
 		palette[255].r = palette[255].g = palette[255].b = 0;
@@ -177,7 +176,7 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) 
 	}
 
 	byte buffer[256 * 3];
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		buffer[i * 3] = palette[i].r >> 8;
 		buffer[i * 3 + 1] = palette[i].g >> 8;
 		buffer[i * 3 + 2] = palette[i].b >> 8;
@@ -200,16 +199,17 @@ static color_t *pNewPalette;
 static uint16 useNewPalette;
 
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2) {
-	int sy, dy = rect2->top, x, w = rect1->right - rect1->left + 1;
+	int dy = rect2->top;
+	int w = rect1->right - rect1->left + 1;
 	//  debug("- Copy rect %3d:%3d-%3d:%3d -> %3d:%3d-%3d:%3d - %s",
 	//      rect1->sx, rect1->sy, rect1->ex, rect1->ey,
 	//      rect2->sx, rect2->sy, rect2->ex, rect2->ey,
 	//      (rect1->ex - rect1->sx == rect2->ex - rect2->sx && rect1->ey - rect1->sy == rect2->ey - rect2->sy) ? "ok" : "BAD");
 	assert(rect1->right - rect1->left == rect2->right - rect2->left && rect1->bottom - rect1->top == rect2->bottom - rect2->top);
-	for (sy = rect1->top; sy <= rect1->bottom; sy++, dy++) {
+	for (int sy = rect1->top; sy <= rect1->bottom; sy++, dy++) {
 		byte *s = view1->_bufferPtr + sy * view1->_pitch + rect1->left;
 		byte *d = view2->_bufferPtr + dy * view2->_pitch + rect2->left;
-		for (x = 0; x < w; x++)
+		for (int x = 0; x < w; x++)
 			*d++ = *s++;
 	}
 }
@@ -223,17 +223,16 @@ void CLBlitter_OneBlackFlash() {
 }
 void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
                                        byte *dst, int16 dstw, int16 dstp, int16 dsth) {
-	int16 x, y;
-	for (y = 0; y < srch; y++) {
-		for (x = 0; x < srcw; x++)
+	for (int16 y = 0; y < srch; y++) {
+		for (int16 x = 0; x < srcw; x++)
 			*dst++ = *src++;
 		src += srcp - srcw;
 		dst += dstp - dstw;
 	}
 }
 void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
-	View *dest = &ScreenView;
 	if (!view->_doubled) {
+		View *dest = &ScreenView;
 		int16 srcpitch = view->_pitch;
 		int16 dstpitch = dest->_pitch;
 
@@ -249,7 +248,6 @@ void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	}
 }
 void CLBlitter_CopyView2Screen(View *view) {
-
 	if (useNewPalette) {
 		color_t palette[256];
 		CLPalette_GetLastPalette(palette);
@@ -267,12 +265,13 @@ void CLBlitter_CopyView2Screen(View *view) {
 void CLBlitter_UpdateScreen() {
 	CLBlitter_CopyView2Screen(nullptr);
 }
+
 void CLBlitter_FillView(View *view, unsigned int fill) {
-	int16 x, y;
 	byte *d = view->_bufferPtr;
 	assert((fill & 0xFF) * 0x01010101 == fill);
-	for (y = 0; y < view->_height; y++) {
-		for (x = 0; x < view->_width; x++)
+
+	for (int16 y = 0; y < view->_height; y++) {
+		for (int16 x = 0; x < view->_width; x++)
 			*d++ = fill;
 		d += view->_pitch - view->_width;
 	}
@@ -324,12 +323,15 @@ void pollEvents() {
 int16 CLKeyboard_HasCmdDown() {
 	return 0;
 }
+
 void CLKeyboard_Read() {
 	pollEvents();
 }
+
 byte CLKeyboard_GetLastASCII() {
 	return 0;
 }
+
 int16 CLKeyboard_IsScanCodeDown(int16 scancode) {
 	return 0;
 }
@@ -337,15 +339,19 @@ int16 CLKeyboard_IsScanCodeDown(int16 scancode) {
 ///// CLMouse
 void CLMouse_Hide() {
 }
+
 void CLMouse_Show() {
 }
+
 void CLMouse_GetPosition(int16 *x, int16 *y) {
 	*x = g_system->getEventManager()->getMousePos().x;
 	*y = g_system->getEventManager()->getMousePos().y;
 }
+
 void CLMouse_SetPosition(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
+
 uint16 CLMouse_IsDown() {
 	pollEvents();
 	return _mouseButton != 0;
@@ -354,30 +360,39 @@ uint16 CLMouse_IsDown() {
 ///// CLFile
 void CLFile_SetFilter(int a3, int a4, int a5, int a6, int a7) {
 }
+
 void CLFile_SetFinderInfos(void *fs, int a4, int a5) {
 }
+
 void CLFile_GetFullPath(void *a3, char *a4) {
 }
+
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
 	strcpy(fs->name, name);
 	fs->create = 0;
 }
+
 void CLFile_Create(filespec_t *fs) {
 	fs->create = 1;
 }
+
 void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle) {
 	handle.open(fs->name);
 }
+
 void CLFile_Close(file_t &handle) {
 	handle.close();
 }
+
 void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos) {
 	assert(mode == 1);
 	handle.seek(pos, 0);
 }
+
 void CLFile_Read(file_t &handle, void *buffer, int32 *size) {
 	handle.read(buffer, *size);
 }
+
 void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
 	assert(0);
 }
@@ -392,8 +407,10 @@ void CLSound_PrepareSample(sound_t *sound, int16 mode) {
 	sound->ff_32 = 0;
 	sound->_volume = 255;
 }
+
 void CLSound_SetWantsDesigned(int16 designed) {
 }
+
 void CLSound_SetLength(sound_t *sound, int length) {
 }
 
@@ -413,28 +430,35 @@ soundchannel_t *CLSoundChannel_New(int arg1) {
 
 	return ch;
 }
+
 void CLSoundChannel_Free(soundchannel_t *ch) {
 	free(ch);
 }
+
 void CLSoundChannel_Stop(soundchannel_t *ch) {
 	//  g_ed->_mixer->stopHandle(ch->ch);
 }
+
 void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound) {
 }
+
 int16 CLSoundChannel_GetVolume(soundchannel_t *ch) {
 	return (ch->_volumeLeft + ch->_volumeRight) / 2;
 }
+
 void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 	ch->_volumeLeft = volume;
 	ch->_volumeRight = volume;
 }
+
 void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 	ch->_volumeRight = volume;
 }
+
 void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
@@ -459,29 +483,40 @@ void CLTimer_Done() {
 ///// CRYOLib
 void CRYOLib_InstallExitPatch() {
 }
+
 void CRYOLib_RemoveExitPatch() {
 }
+
 void CRYOLib_Init() {
 }
+
 void CRYOLib_Done() {
 }
+
 void CRYOLib_MinimalInit() {
 }
+
 void CRYOLib_ManagersInit() {
 	CLTimer_Init();
 	CLScreenView_Init();
 }
+
 void CRYOLib_ManagersDone() {
 	CLTimer_Done();
 }
+
 void CRYOLib_SetDebugMode(int16 enable) {
 }
+
 void CRYOLib_InstallEmergencyExit(void(*proc)()) {
 }
+
 void CRYOLib_SetupEnvironment() {
 }
+
 void CRYOLib_RestoreEnvironment() {
 }
+
 void CRYOLib_TestConfig() {
 }
 

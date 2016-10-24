@@ -2972,7 +2972,8 @@ void EdenGame::my_pr_bulle() {
 					textout += char_width;
 				}
 			} else
-				monbreak();
+				error("my_pr_bulle: Unexpected format");
+
 			c = *text_ptr++;
 			if (c == 0xFF)
 				done = 1;
@@ -8409,11 +8410,6 @@ uint16 EdenGame::cher_valeur() {
 		code_ptr += 2;
 	}
 	return val;
-}
-
-void EdenGame::monbreak() {
-	assert(0);
-	signon(" coucou");
 }
 
 void EdenGame::ret() {
