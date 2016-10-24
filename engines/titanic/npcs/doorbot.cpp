@@ -121,7 +121,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_4;
 			endTalking(this, false);
 			startTalking(this, 221474);
-			_npcFlags &= ~NPCFLAG_8000000;
+			_npcFlags |= NPCFLAG_8000000;
 			_field108 = 0;
 		} else if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 			petShow();
