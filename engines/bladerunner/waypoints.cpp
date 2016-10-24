@@ -30,6 +30,7 @@ Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
 }
 
 Waypoints::~Waypoints() {
+	delete[] _waypoints;
 }
 
 void Waypoints::getXYZ(int waypointId, float *x, float *y, float *z) {
