@@ -35,7 +35,7 @@ class TextResource;
 #define NONREPLICANT_CLUES_COUNT 20
 #define OTHER_CLUES_COUNT 20
 #define IDENTITY_CLUES_COUNT 10
-#define PHOTO_CLUES_COUNT 10
+#define PHOTO_CLUES_COUNT 6
 
 class SuspectDatabaseEntry {
 	BladeRunnerEngine *_vm;
@@ -48,7 +48,7 @@ class SuspectDatabaseEntry {
 	int _nonReplicantClues[NONREPLICANT_CLUES_COUNT];
 	int _otherClues[OTHER_CLUES_COUNT];
 	int _identityClues[IDENTITY_CLUES_COUNT];
-	int _photoClues[6][3];
+	int _photoClues[PHOTO_CLUES_COUNT][3];
 	int _moCluesCount;
 	int _whereaboutsCluesCount;
 	int _replicantCluesCount;
