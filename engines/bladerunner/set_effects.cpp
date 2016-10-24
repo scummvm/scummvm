@@ -77,18 +77,16 @@ void SetEffects::read(Common::ReadStream *stream, int framesCount) {
 }
 
 void SetEffects::reset() {
-	Fog *fog, *nextFog;
+	Fog *nextFog;
 
 	if (!_fogs)
 		return;
 
 	do {
-		fog = _fogs;
-		nextFog = fog->_next;
-		delete fog;
-		fog = nextFog;
+		nextFog = _fogs->_next;
+		delete this->_fogs;
+		this->_fogs = nextFog;
 	} while (nextFog);
-
 }
 
 void SetEffects::setupFrame(int frame) {
