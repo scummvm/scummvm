@@ -141,6 +141,9 @@ static const char HELP_STRING[] =
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
 #endif
+#if defined(ENABLE_DIRECTOR)
+	"  --start-movie=NAME       Start movie for Director\n"
+#endif
 #ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
@@ -444,7 +447,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_OPTION_BOOL('f', "fullscreen")
 			END_OPTION
-			
+
 			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
 
@@ -613,6 +616,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 			// Optional console window on Windows (default: enabled)
 			DO_LONG_OPTION_BOOL("console")
+			END_OPTION
+#endif
+
+#if defined(ENABLE_DIRECTOR)
+			DO_LONG_OPTION("start-movie")
 			END_OPTION
 #endif
 
