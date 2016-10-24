@@ -159,21 +159,24 @@ of the engine needs to be enabled using one of the following two options:
 You will need these elements from your game CDs or DVD :
   * M3Data directory
   * Data directory
-  * The menu language file 'language.m3u', or '[LANGUAGE].m3u' (DVD only)
+  * The menu language file '[LANGUAGE].m3u' (DVD only)
 
 When using the CD version, you will need to merge the 'Data' directories from
 all four discs. Playing directly from the CDs is not supported.
 
-It is recommended to apply the most recent official update for your game
-language. The DVD version comes fully updated. The updates can be downloaded
-from http://demos.residualvm.org/patches/.
+The game must be at least version 1.1. For most releases of the game, the
+update is already applied on the installation media, no action is required.
+Otherwise, ResidualVM asks for the update to be installed and refuses to run
+the game. The updates can be downloaded from
+http://demos.residualvm.org/patches/.
 
 The DVD version is multilingual, you can change the in-game language from the
 game menu. However, you must choose the language of the menus by copying the
 appropriate files. You have to copy the menu language file from your chosen
-language folder on the disc. The menu language file can be named 'language.m3u'
-or '[LANGUAGE].m3u' depending on the release. It should be copied to the
-'M3Data/TEXT' folder.
+language folder on the disc. On the DVD, the menu language file can be named
+'language.m3u' or '[LANGUAGE].m3u' depending on the release. It should
+be copied to the 'M3Data/TEXT' folder. If the file is named 'language.m3u',
+it should be renamed to the explicit language e.g. ENGLISH.m3u for English.
 
 The required files must be organized in the following manner to be recognized:
 
