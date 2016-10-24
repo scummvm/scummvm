@@ -55,7 +55,7 @@ private:
 	void scrollMirror();
 	void scrollpano();
 	void displayFollower(Follower *follower, int16 x, int16 y);
-	void persoinmiroir();
+	void characterInMirror();
 	void gametomiroir(byte arg1);
 	void flipMode();
 	void quitMirror();

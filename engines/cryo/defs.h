@@ -665,7 +665,7 @@ struct global_t {
 	byte   newLocation;
 	byte   prevLocation;
 	byte   curPersoFlags;
-	byte   ff_60;
+	bool ff_60;
 	byte   eventType;
 	byte   ff_62;  //TODO: pad?
 	byte   curObjectId;
@@ -682,7 +682,7 @@ struct global_t {
 	byte   labyrinthDirections;
 	byte   labyrinthRoom;
 	void            *__UNUSED_70;   //TODO: pad?
-	dial_t          *dialog_ptr;
+	dial_t          *_dialogPtr;
 	tape_t          *tape_ptr;
 	dial_t          *next_dialog_ptr;
 	dial_t          *narrator_dialog_ptr;
