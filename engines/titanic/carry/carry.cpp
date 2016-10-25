@@ -100,15 +100,15 @@ bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	CString name = getName();
 
 	if (_fieldE0) {
-		if (_visible) {
-			CShowTextMsg textMsg("You can't get this.");
-			textMsg.execute("PET");
-		}
-	} else {
 		if (checkStartDragging(msg)) {
 			CPassOnDragStartMsg startMsg(msg->_mousePos);
 			startMsg.execute(this);
 			return true;
+		}
+	} else {
+		if (_visible) {
+			CShowTextMsg textMsg("You can't get this.");
+			textMsg.execute("PET");
 		}
 	}
 
