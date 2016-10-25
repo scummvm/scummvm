@@ -81,7 +81,7 @@ void CDoorbot::load(SimpleFile *file) {
 }
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_npcFlags & NPCFLAG_8000000) {
+	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		switch (_field108) {
 		case 3:
 			startTalking(this, 221482);
@@ -121,7 +121,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_4;
 			endTalking(this, false);
 			startTalking(this, 221474);
-			_npcFlags |= NPCFLAG_8000000;
+			_npcFlags |= NPCFLAG_DOORBOT_INTRO;
 			_field108 = 0;
 		} else if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 			petShow();
@@ -226,7 +226,7 @@ bool CDoorbot::DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg) {
 	moveToView("ServiceElevator.Node 1.N");
 	setPosition(Point(100, 42));
 
-	if (_npcFlags & NPCFLAG_8000000) {
+	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		_field108 = 7;
 		_npcFlags |= NPCFLAG_200000;
 		loadFrame(797);
@@ -240,7 +240,7 @@ bool CDoorbot::DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg) {
 }
 
 bool CDoorbot::LeaveViewMsg(CLeaveViewMsg *msg) {
-	if (!(_npcFlags & NPCFLAG_8000000) && (_npcFlags & NPCFLAG_400000)) {
+	if (!(_npcFlags & NPCFLAG_DOORBOT_INTRO) && (_npcFlags & NPCFLAG_400000)) {
 		performAction(true);
 		_npcFlags &= ~NPCFLAG_4;
 	}
@@ -251,7 +251,7 @@ bool CDoorbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "NPCIdleAnim") {
 		return CTrueTalkNPC::TimerMsg(msg);
-	} else if (_npcFlags & NPCFLAG_8000000) {
+	} else if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		switch (msg->_actionVal) {
 		case 0:
 			startTalking(this, 221475);
@@ -362,7 +362,7 @@ bool CDoorbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 
 bool CDoorbot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 	petMoveToHiddenRoom();
-	_npcFlags &= ~(NPCFLAG_4 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_8000000);
+	_npcFlags &= ~(NPCFLAG_4 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_DOORBOT_INTRO);
 	if (msg->_value)
 		performAction(true);
 
@@ -404,7 +404,8 @@ bool CDoorbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 
-	if (_npcFlags & NPCFLAG_8000000) {
+	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
+		// Initial speech by Doorbot in 
 		switch (msg->_dialogueId) {
 		case 10552:
 			playClip("SE Try Buttons", MOVIE_NOTIFY_OBJECT);
@@ -508,7 +509,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 }
 
 bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
-	if (!(_npcFlags & NPCFLAG_8000000))
+	if (!(_npcFlags & NPCFLAG_DOORBOT_INTRO))
 		return CTrueTalkNPC::TextInputMsg(msg);
 
 	if (_field108 == 1) {
@@ -531,7 +532,7 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 }
 
 bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
-	if ((_npcFlags & NPCFLAG_8000000) && _field108 == 7)
+	if ((_npcFlags & NPCFLAG_DOORBOT_INTRO) && _field108 == 7)
 		playClip("SE Move And Turn", MOVIE_NOTIFY_OBJECT);
 
 	return true;
