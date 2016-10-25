@@ -63,21 +63,21 @@ EdenGame::EdenGame() {
 	torchCursor = false;
 	_curBankNum = 0;
 	glow_h = glow_w = glow_y = glow_x = 0;
-	needPaletteUpdate = 0;
+	needPaletteUpdate = false;
 	curs_saved = false;
 	showBlackBars = false;
-	fond_saved = 0;
+	fond_saved = false;
 	bank_data_ptr = nullptr;
 	tyranPtr = nullptr;
 	last_anim_frame_num = cur_anim_frame_num = 0;
 	_lastAnimTicks = 0;
 	cur_perso_rect = nullptr;
 	num_anim_frames = max_perso_desc = num_img_desc = 0;
-	restartAnimation = animationActive = 0;
+	restartAnimation = animationActive = false;
 	animationDelay = animationIndex = lastAnimationIndex = 0;
 	dword_30724 = dword_30728 = dword_3072C = animationTable = nullptr;
 	perso_img_bank_data_ptr = nullptr;
-	savedUnderSubtitles = 0;
+	savedUnderSubtitles = false;
 	num_text_lines = 0;
 	text_ptr = nullptr;
 	textoutptr = textout = nullptr;
@@ -123,8 +123,8 @@ EdenGame::EdenGame() {
 	current_spot = current_spot2 = nullptr;
 	pomme_q = 0;
 	keybd_held = false;
-	mouse_held = 0;
-	normalCursor = 0;
+	mouse_held = false;
+	normalCursor = false;
 	showVideoSubtitle = 0;
 	specialTextMode = false;
 	voiceSamplesSize = 0;
@@ -193,7 +193,7 @@ void EdenGame::displayFrescoes() {
 	noclipax(0, 0, 16);
 	useBank(p_global->fresqImgBank + 1);
 	noclipax(0, 320, 16);
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 }
 
 void EdenGame::gametofresques() {
@@ -351,7 +351,7 @@ void EdenGame::gametomiroir(byte arg1) {
 	useBank(resNum + 1);
 	noclipax(0, 320, 16);
 	characterInMirror();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 	p_global->iconsIndex = 16;
 	p_global->autoDialog = false;
 	p_global->displayFlags = DisplayFlags::dfMirror;
@@ -368,7 +368,7 @@ void EdenGame::flipMode() {
 				getdatasync();
 				load_perso_cour();
 				addanim();
-				restartAnimation = 1;
+				restartAnimation = true;
 				anim_perso();
 			}
 		} else
@@ -842,7 +842,7 @@ void EdenGame::getplaque() {
 	playHNM(149);
 	p_global->ff_F1 = RoomFlags::rf04;
 	p_global->drawFlags = DrawFlags::drDrawFlag20;
-	normalCursor = 1;
+	normalCursor = true;
 	maj2();
 }
 
@@ -962,7 +962,7 @@ void EdenGame::moveWest() {
 void EdenGame::afficher() {
 	if (!p_global->ff_102 && !p_global->ff_103) {
 		if (needPaletteUpdate) {
-			needPaletteUpdate = 0;
+			needPaletteUpdate = false;
 			CLPalette_Send2Screen(global_palette, 0, 256);
 		}
 		CLBlitter_CopyView2Screen(p_mainview);
@@ -971,6 +971,7 @@ void EdenGame::afficher() {
 			effet3();
 		else
 			effet2();
+
 		p_global->ff_103 = 0;
 		p_global->ff_102 = 0;
 	}
@@ -1541,7 +1542,7 @@ void EdenGame::sauvefondbouche() {
 	rect_dst.right = cur_perso_rect->ex + 320;
 	rect_dst.bottom = cur_perso_rect->ey;
 	CLBlitter_CopyViewRect(p_mainview, p_mainview, &rect_src, &rect_dst);
-	fond_saved = 1;
+	fond_saved = true;
 }
 
 void EdenGame::restaurefondbouche() {
@@ -1582,7 +1583,7 @@ void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 	_adamMapMarkPos.x = -1;
 	_adamMapMarkPos.y = -1;
 	displayValleyMap();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 }
 
 // Original name: affplanval
@@ -2246,7 +2247,7 @@ void EdenGame::anim_perso() {
 	restaurefondbulle();
 	if (restartAnimation) {
 		_lastAnimTicks = TimerTicks;
-		restartAnimation = 0;
+		restartAnimation = false;
 	}
 	cur_anim_frame_num = (TimerTicks - _lastAnimTicks) >> 2;   // TODO: check me!!!
 	if (cur_anim_frame_num > num_anim_frames)               // TODO: bug?
@@ -2325,7 +2326,7 @@ void EdenGame::addanim() {
 	p_global->animationFlags = 0xC0;
 	p_global->curPersoAnimPtr = p_global->persoSpritePtr;
 	getanimrnd();
-	animationActive = 1;
+	animationActive = true;
 	if (p_global->perso_ptr == &kPersons[PER_ROI])
 		return;
 	perso_spr(p_global->persoSpritePtr + PLE16(p_global->persoSpritePtr));  //TODO: GetElem(0)
@@ -2361,7 +2362,7 @@ void EdenGame::virespritebouche() {
 void EdenGame::anim_perfin() {
 	p_global->animationFlags &= ~0x80;
 	animationDelay = 0;
-	animationActive = 0;
+	animationActive = false;
 }
 
 void EdenGame::perso_spr(byte *spr) {
@@ -2572,7 +2573,7 @@ void EdenGame::close_perso() {
 	endpersovox();
 	if (p_global->displayFlags == DisplayFlags::dfPerson && p_global->perso_ptr->_id != PersonId::pidNarrator && p_global->eventType != EventType::etEventE) {
 		rundcurs();
-		savedUnderSubtitles = 1;
+		savedUnderSubtitles = true;
 		restaurefondbulle();
 		afficher();
 		p_global->ff_103 = 16;
@@ -2676,7 +2677,7 @@ no_suiveur:
 
 void EdenGame::af_fondperso() {
 	if (p_global->perso_ptr->_spriteBank) {
-		fond_saved = 0;
+		fond_saved = false;
 		af_fondperso1();
 	}
 }
@@ -2709,7 +2710,7 @@ void EdenGame::show_perso() {
 			if (perso == &kPersons[PER_THOO] && p_global->curObjectId == Objects::obShell) {
 				af_subtitle();
 				update_cursor();
-				needPaletteUpdate = 1;
+				needPaletteUpdate = true;
 				afficher();
 				rundcurs();
 				return;
@@ -2721,11 +2722,11 @@ void EdenGame::show_perso() {
 			af_perso();
 			af_subtitle();
 		}
-		restartAnimation = 1;
+		restartAnimation = true;
 		anim_perso();
 		if (perso != &kPersons[PER_UNKN_156])
 			update_cursor();
-		needPaletteUpdate = 1;
+		needPaletteUpdate = true;
 		if (perso != &kPersons[PER_UNKN_156])
 			rundcurs();
 		afficher();
@@ -2743,8 +2744,8 @@ void EdenGame::showpersopanel() {
 		af_perso();
 		af_subtitle();
 	}
-	restartAnimation = 1;
-	needPaletteUpdate = 1;
+	restartAnimation = true;
+	needPaletteUpdate = true;
 	if (p_global->drawFlags & DrawFlags::drDrawFlag8)
 		return;
 	anim_perso();
@@ -2801,9 +2802,9 @@ void EdenGame::waitendspeak() {
 				break;
 		if (mouse_held)
 			if (!CLMouse_IsDown())
-				mouse_held = 0;
+				mouse_held = false;
 	}
-	mouse_held = 1;
+	mouse_held = true;
 }
 
 void EdenGame::my_bulle() {
@@ -3035,14 +3036,14 @@ void EdenGame::sauvefondbulle(int16 y) {
 	_underSubtitlesBackupRect.top = 0;
 	_underSubtitlesBackupRect.bottom = num_text_lines * FONT_HEIGHT;
 	CLBlitter_CopyViewRect(p_mainview, p_underSubtitlesView, &_underSubtitlesScreenRect, &_underSubtitlesBackupRect);
-	savedUnderSubtitles = 1;
+	savedUnderSubtitles = true;
 }
 
 void EdenGame::restaurefondbulle() {
 	if (!savedUnderSubtitles)
 		return;
 	CLBlitter_CopyViewRect(p_underSubtitlesView, p_mainview, &_underSubtitlesBackupRect, &_underSubtitlesScreenRect);
-	savedUnderSubtitles = 0;
+	savedUnderSubtitles = false;
 }
 
 void EdenGame::af_subtitlehnm() {
@@ -3466,7 +3467,7 @@ void EdenGame::adam() {
 		bars_out();
 		specialTextMode = true;
 		playHNM(vid);
-		needPaletteUpdate = 1;
+		needPaletteUpdate = true;
 		p_global->ff_102 = 16;
 		showBars();
 		gametomiroir(0);
@@ -5260,7 +5261,7 @@ void EdenGame::displayPlace() {
 	}
 	p_global->nextRoomIcon = &gameIcons[roomIconsBase];
 	displayRoom();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 }
 
 // Original name: loadsal
@@ -5619,14 +5620,15 @@ void EdenGame::run() {
 	if (!bufferAllocationErrorFl) {
 		LostEdenMac_InitPrefs();
 		if (g_ed->getPlatform() == Common::kPlatformMacintosh)
-			init_cube();
+			initCubeMac();
 		else
-			pc_initcube();
+			initCubePC();
+
 		p_mainview->_doubled = _doubledScreen;
 		while (!quit_flag2) {
 			init_globals();
 			quit_flag3 = false;
-			normalCursor = 1;
+			normalCursor = true;
 			torchCursor = false;
 			_cursKeepPos = Common::Point(-1, -1);
 			CLDesktop_TestOpenFileAtStartup();
@@ -5734,11 +5736,6 @@ void EdenGame::intro() {
 	}
 }
 
-char EdenGame::testcdromspeed() {
-	//TODO: obsolete, remove me
-	return 1;
-}
-
 void EdenGame::entergame() {
 	char flag = 0;
 	currentTime = TimerTicks / 100;
@@ -5778,13 +5775,14 @@ void EdenGame::signon(const char *s) {
 }
 
 void EdenGame::testPommeQ() {
-	char key;
 	if (!CLKeyboard_HasCmdDown())
 		return;
-	key = CLKeyboard_GetLastASCII();
-	if (key == 'Q' || key == 'q')
+
+	char key = CLKeyboard_GetLastASCII();
+	if (key == 'Q' || key == 'q') {
 		if (!pomme_q)
-			pomme_q = 1;
+			pomme_q = true;
+	}
 }
 
 void EdenGame::FRDevents() {
@@ -5861,12 +5859,12 @@ void EdenGame::FRDevents() {
 	}
 	if (CLMouse_IsDown()) {
 		if (!mouse_held) {
-			mouse_held = 1;
+			mouse_held = true;
 			gameStarted = true;
 			mouse();
 		}
 	} else
-		mouse_held = 0;
+		mouse_held = false;
 	if (p_global->displayFlags != DisplayFlags::dfFlag2) {
 		if (--_inventoryScrollDelay <= 0) {
 			if (p_global->obj_count > invIconsCount && curs_y > 164) {
@@ -5875,6 +5873,7 @@ void EdenGame::FRDevents() {
 					_inventoryScrollDelay = 20;
 					showObjects();
 				}
+
 				if (curs_x < 30 && p_global->inventoryScrollPos != 0) {
 					p_global->inventoryScrollPos--;
 					_inventoryScrollDelay = 20;
@@ -6296,11 +6295,11 @@ void EdenGame::showMovie(char arg1) {
 		if (arg1) {
 			if (CLMouse_IsDown()) {
 				if (!mouse_held) {
-					mouse_held = 1;
+					mouse_held = true;
 					videoCanceled = 1;
 				}
 			} else
-				mouse_held = 0;
+				mouse_held = false;
 		}
 	} while (playing && !videoCanceled);
 	CLView_Free(p_hnmview);
@@ -6649,7 +6648,7 @@ void EdenGame::showObjects() {
 		icon->object_id = obj;
 		noclipax(obj + 9, icon->sx, 178);
 	}
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 	if ((p_global->displayFlags & DisplayFlags::dfMirror) || (p_global->displayFlags & DisplayFlags::dfPanable)) {
 		saveBottomFrieze();
 		scroll();
@@ -6680,7 +6679,7 @@ void EdenGame::loseObject(int16 id) {
 	p_global->curObjectCursor = 9;
 	gameIcons[16].cursor_id |= 0x8000;
 	object->_flags &= ~ObjectFlags::ofInHands;
-	normalCursor = 1;
+	normalCursor = true;
 	current_cursor = 0;
 	torchCursor = false;
 }
@@ -6708,7 +6707,7 @@ void EdenGame::objectmain(int16 id) {
 	object->_flags |= ObjectFlags::ofInHands;
 	p_global->curObjectFlags = object->_flags;
 	current_cursor = p_global->curObjectId + 9;
-	normalCursor = 0;
+	normalCursor = false;
 }
 
 void EdenGame::getobject(int16 id) {
@@ -6740,7 +6739,7 @@ void EdenGame::putobject() {
 	byte_30B00 = 0;
 	p_global->dialogType = DialogType::dtTalk;
 	showObjects();
-	normalCursor = 1;
+	normalCursor = true;
 }
 
 void EdenGame::newobject(int16 id, int16 arg2) {
@@ -6930,7 +6929,7 @@ void EdenGame::generique() {
 	playHNM(95);
 	affpanel();
 	afftoppano();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 	startmusique(oldmusic);
 }
 
@@ -6980,7 +6979,7 @@ void EdenGame::load() {
 	if (!gameLoaded) {
 		_musicFadeFlag = 3;
 		musicspy();
-		needPaletteUpdate = 1;
+		needPaletteUpdate = true;
 		return;
 	}
 	if ((oldMusic & 0xFF) != p_global->currentMusicNum) { //TODO: r30 is uns char/bug???
@@ -7019,7 +7018,7 @@ void EdenGame::initafterload() {
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
 	animateTalking = 0;
-	animationActive = 0;
+	animationActive = false;
 	p_global->ff_100 = 0;
 	p_global->eventType = EventType::etEventC;
 	p_global->valleyVidNum = 0;
@@ -7047,7 +7046,7 @@ void EdenGame::save() {
 	CLBlitter_FillScreenView(0);
 	_musicFadeFlag = 3;
 	musicspy();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 }
 
 void EdenGame::desktopcolors() {
@@ -7077,7 +7076,7 @@ void EdenGame::panelrestart() {
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
 	animateTalking = 0;
-	animationActive = 0;
+	animationActive = false;
 	p_global->ff_100 = 0;
 	p_global->eventType = 0;
 	p_global->valleyVidNum = 0;
@@ -7133,7 +7132,7 @@ void EdenGame::confirmyes() {
 void EdenGame::confirmno() {
 	affpanel();
 	p_global->iconsIndex = 85;
-	pomme_q = 0;
+	pomme_q = false;
 }
 
 void EdenGame::restart() {
@@ -7304,7 +7303,7 @@ void EdenGame::stoptape() {
 	fin_perso();
 	affpanel();
 	afftoppano();
-	needPaletteUpdate = 1;
+	needPaletteUpdate = true;
 }
 
 void EdenGame::cliccurstape() {
@@ -8456,7 +8455,8 @@ void EdenGame::projection_fix(cube_t *cubep, int n) {
 	}
 }
 
-void EdenGame::init_cube() {
+// Original name init_cube
+void EdenGame::initCubeMac() {
 	NEWcharge_map(2493, cube_texture);
 	NEWcharge_objet_mob(&cube, 2494, cube_texture);
 	make_tabcos();
@@ -9122,7 +9122,7 @@ void EdenGame::DecZoom() {
 	}
 }
 
-void EdenGame::pc_initcube() {
+void EdenGame::initCubePC() {
 	zoom = 170;
 	zoom_step = 40;
 	angle_x = angle_y = angle_z = 0;

@@ -314,7 +314,6 @@ private:
 	void EmergencyExit();
 	void edmain();
 	void intro();
-	char testcdromspeed();
 	void entergame();
 	void signon(const char *s);
 	void testPommeQ();
@@ -488,7 +487,7 @@ private:
 	void make_tabcos();
 	void make_matrice_fix();
 	void projection_fix(cube_t *cube, int n);
-	void init_cube();
+	void initCubeMac();
 	void moteur();
 	void affiche_objet(cube_t *cube);
 	void NEWcharge_map(int file_id, byte *buffer);
@@ -503,7 +502,7 @@ private:
 	int16 OpenDialog(void *arg1, void *arg2);
 	void LostEdenMac_InitPrefs();
 
-	void pc_initcube();
+	void initCubePC();
 	void pc_moteur();
 	void pc_selectmap(int16 num);
 
@@ -555,17 +554,17 @@ private:
 	Common::Point _adamMapMarkPos;
 	byte   _cursKeepBuf[2500];
 	Common::Point _cursKeepPos;
-	bool            torchCursor;
+	bool  torchCursor;
 	int16           _curBankNum;
 	int16           glow_h;
 	int16           glow_w;
 	int16           glow_y;
 	int16           glow_x;
-	byte   needPaletteUpdate;
-	bool   curs_saved;
-	bool   showBlackBars;
-	byte   fond_saved;
-	byte   *bank_data_ptr;
+	bool needPaletteUpdate;
+	bool curs_saved;
+	bool showBlackBars;
+	bool fond_saved;
+	byte *bank_data_ptr;
 	color3_t        pal_entry;
 	color_t         global_palette[256];    //TODO palette_t
 	perso_t         *tyranPtr;
@@ -576,11 +575,11 @@ private:
 	int16           num_anim_frames;
 	int16           max_perso_desc;
 	int16           num_img_desc;
-	byte   restartAnimation;
-	byte   animationActive;
-	byte   animationDelay;
-	byte   animationIndex;
-	byte   lastAnimationIndex;
+	bool restartAnimation;
+	bool animationActive;
+	byte animationDelay;
+	byte animationIndex;
+	byte lastAnimationIndex;
 
 	byte   *dword_30724;
 	byte   *dword_30728;   //TODO: rename - something amim-related
@@ -588,7 +587,7 @@ private:
 	byte   *animationTable;
 	byte   imagedesc[512];
 	byte   *perso_img_bank_data_ptr;
-	byte   savedUnderSubtitles;
+	bool savedUnderSubtitles;
 	int16           num_text_lines;
 	byte   phraseBuffer[400];
 	byte   *text_ptr;
@@ -670,10 +669,10 @@ private:
 	int16           current_cursor;
 	icon_t          *current_spot;
 	icon_t          *current_spot2;
-	byte   pomme_q;
-	bool   keybd_held;
-	byte   mouse_held;
-	byte   normalCursor;
+	bool pomme_q;
+	bool keybd_held;
+	bool mouse_held;
+	bool normalCursor;
 	byte   *p_hnmview_buf;
 	byte   showVideoSubtitle;
 	byte   videoCanceled;  //TODO: hnm_canceled
