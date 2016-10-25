@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv(a)
+
 #include "common/config-manager.h"
 
 #include "backends/platform/androidsdl/androidsdl-sdl.h"
@@ -36,7 +38,7 @@ void OSystem_ANDROIDSDL::initBackend() {
 		_graphicsManager = new AndroidSdlGraphicsManager(_eventSource, _window);
 
 	if (!ConfMan.hasKey("browser_lastpath"))
-		ConfMan.set("browser_lastpath", "/storage");
+		ConfMan.set("browser_lastpath", getenv("SDCARD"));
 
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
