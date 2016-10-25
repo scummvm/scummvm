@@ -184,7 +184,9 @@ void CPetControl::resetRemoteTarget() {
 }
 
 void CPetControl::setActiveNPC(CTrueTalkNPC *npc) {
-	if (_activeNPC == npc) {
+	if (_activeNPC != npc) {
+		_activeNPC = npc;
+
 		if (_activeNPC) {
 			_activeNPCName = npc->getName();
 			_conversations.displayNPCName(npc);
