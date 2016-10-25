@@ -66,6 +66,7 @@ private:
 	CursorId _cursorId;
 	CursorEntry _cursors[NUM_CURSORS];
 	uint _setCursorCount;
+	int _hideCount;
 	int _fieldE4;
 	int _fieldE8;
 

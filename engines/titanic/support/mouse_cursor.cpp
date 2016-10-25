@@ -55,9 +55,10 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
-		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
+		_hideCount(0), _setCursorCount(0), _fieldE4(0), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
+	CursorMan.showMouse(true);
 }
 
 CMouseCursor::~CMouseCursor() {
@@ -87,11 +88,15 @@ void CMouseCursor::loadCursorImages() {
 }
 
 void CMouseCursor::show() {
-	CursorMan.showMouse(true);
+	--_hideCount;
+	assert(_hideCount >= 0);
+	if (_hideCount == 0)
+		CursorMan.showMouse(true);
 }
 
 void CMouseCursor::hide() {
-	CursorMan.showMouse(false);
+	if (_hideCount++ == 0)
+		CursorMan.showMouse(false);
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {

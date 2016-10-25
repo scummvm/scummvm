@@ -49,7 +49,10 @@ void CInputHandler::incLockCount() {
 }
 
 void CInputHandler::decLockCount() {
-	if (--_lockCount == 0 && _inputTranslator) {
+	--_lockCount;
+	assert(_lockCount >= 0);
+
+	if (_lockCount == 0 && _inputTranslator) {
 		if (_dragging && !_inputTranslator->isMousePressed()) {
 			CMouseButtonUpMsg upMsg(_mousePos, MK_LBUTTON);
 			handleMessage(upMsg);

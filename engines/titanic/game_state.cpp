@@ -79,14 +79,14 @@ void CGameState::load(SimpleFile *file) {
 void CGameState::setMode(GameStateMode newMode) {
 	CScreenManager *sm = CScreenManager::_screenManagerPtr;
 
-	if (newMode == GSMODE_CUTSCENE && newMode != _mode) {
+	if (newMode == GSMODE_CUTSCENE && _mode != GSMODE_CUTSCENE) {
 		if (_gameManager)
 			_gameManager->lockInputHandler();
 
 		if (sm && sm->_mouseCursor)
 			sm->_mouseCursor->hide();
 
-	} else if (newMode != GSMODE_CUTSCENE && newMode != _mode) {
+	} else if (newMode != GSMODE_CUTSCENE && _mode == GSMODE_CUTSCENE) {
 		if (sm && sm->_mouseCursor)
 			sm->_mouseCursor->show();
 
