@@ -987,8 +987,7 @@ private:
 	uint16 _specialGuiShapeY;
 	uint16 _specialGuiShapeMirrorFlag;
 
-	char _lastOverridePalFile[12];
-	char *_lastOverridePalFilePtr;
+	Common::String _lastOverridePalFile;
 	int _lastSpecialColor;
 	int _lastSpecialColorWeight;
 
