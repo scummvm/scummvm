@@ -95,6 +95,7 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 			playSound("a#35.wav", 50, 0, 0);
 		} else if (msg->_action == "newSTCD") {
 			// Starship Titanic CD dropped on CDROM Tray
+			disableMouse();
 			playMovie(11, 21, MOVIE_NOTIFY_OBJECT);
 			playSound("a#35.wav", 50, 0, 0);
 		} else {
