@@ -51,6 +51,7 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/osd_message_queue.h"
 
 #include "gui/gui-manager.h"
 #include "gui/error.h"
@@ -477,6 +478,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	g_eventRec.RegisterEventSource();
 #endif
 
+	Common::OSDMessageQueue::instance().registerEventSource();
+
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
 
@@ -615,6 +618,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::DebugManager::destroy();
+	Common::OSDMessageQueue::destroy();
 #ifdef ENABLE_EVENTRECORDER
 	GUI::EventRecorder::destroy();
 #endif
