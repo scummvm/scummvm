@@ -120,10 +120,13 @@ Common::Error DirectorEngine::run() {
 
 	//testFont();
 
-	_movies = scanMovies(ConfMan.get("path"));
+	if (getPlatform() == Common::kPlatformWindows)
+		_sharedCastFile = "SHARDCST.MMM";
+	else
+		_sharedCastFile = "Shared Cast*";
 
-	if (!_sharedCastFile.empty())
-		loadSharedCastsFrom(_sharedCastFile);
+	loadSharedCastsFrom(_sharedCastFile);
+
 	loadMainArchive();
 
 	_currentScore = new Score(this, _mainArchive);

@@ -194,7 +194,11 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	debugC(1, kDebugLoading, "Loading Shared cast '%s'", filename.c_str());
 
-	shardcst->openFile(filename);
+	if (!shardcst->openFile(filename)) {
+		warning("No shared cast %s", filename.c_str());
+
+		return;
+	}
 
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
