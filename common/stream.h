@@ -514,6 +514,15 @@ public:
 	 * err() or eos() to determine whether an exception occurred.
 	 */
 	virtual String readLine();
+
+	/**
+	 * Print a hexdump of the stream while maintaing position. The number
+	 * of bytes per line is customizable.
+	 * @param len	the length of that data
+	 * @param bytesPerLine	number of bytes to print per line (default: 16)
+	 * @param startOffset	shift the shown offsets by the starting offset (default: 0)
+	 */
+	void hexdump(int len, int bytesPerLine = 16, int startOffset = 0);
 };
 
 /**
