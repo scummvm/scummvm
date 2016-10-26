@@ -365,6 +365,11 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
+	if (_vm->getVersion() >= 4) { // HACK: Skip the header. Why it is there?
+		stream.readUint32LE();
+		stream.readUint32LE();
+	}
+
 	_labels = new Common::SortedArray<Label *>(compareLabels);
 	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
