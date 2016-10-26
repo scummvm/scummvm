@@ -200,10 +200,12 @@ bool CChicken::ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg) {
 }
 
 bool CChicken::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	if (_field13C)
+	if (_field13C) {
+		showMouse();
 		return true;
-	else
+	} else {
 		return CCarry::MouseDragEndMsg(msg);
+	}
 }
 
 bool CChicken::PETObjectStateMsg(CPETObjectStateMsg *msg) {

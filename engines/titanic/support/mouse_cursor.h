@@ -66,7 +66,8 @@ private:
 	CursorId _cursorId;
 	CursorEntry _cursors[NUM_CURSORS];
 	uint _setCursorCount;
-	int _hideCount;
+	int _hideCounter;
+	bool _cursorSuppressed;
 	int _fieldE4;
 	int _fieldE8;
 
@@ -87,6 +88,29 @@ public:
 	 * Hide the mouse cursor
 	 */
 	void hide();
+
+	/**
+	 * Decrements the hide counter, and shows the mouse if
+	 * it's reached zero
+	 */
+	void incHideCounter();
+
+	/**
+	 * Increments the hide counter, hiding the mouse if it's the first call
+	 */
+	void decHideCounter();
+
+	/**
+	 * Suppresses the cursor. When suppressed, the cursor isn't drawn,
+	 * even if it's not otherwise being hidden
+	 */
+	void suppressCursor();
+
+	/**
+	 * Unflags the cursor as being suppressed, allowing it to be drawn
+	 * again if it's enabled
+	 */
+	void unsuppressCursor();
 
 	/**
 	 * Set the cursor

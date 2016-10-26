@@ -121,6 +121,8 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	showMouse();
+
 	if (msg->_dropTarget) {
 		if (msg->_dropTarget->isPet()) {
 			petAddToInventory();
@@ -224,6 +226,8 @@ bool CCarry::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	hideMouse();
+
 	if (_visibleFrame != -1)
 		loadFrame(_visibleFrame);
 

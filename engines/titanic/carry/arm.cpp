@@ -141,6 +141,7 @@ bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		CShowTextMsg textMsg("You can't get this.");
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
+		hideMouse();
 		_tempPos = msg->_mousePos - _bounds;
 		setPosition(msg->_mousePos - _tempPos);
 

@@ -150,11 +150,12 @@ void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *new
 	if (clip && clip->_startFrame != clip->_endFrame && _movie) {
 		// Clip details specifying a sub-section of movie to play
 		Rect tempRect(20, 10, SCREEN_WIDTH - 20, 350);
+		CMouseCursor &mouseCursor = *CScreenManager::_screenManagerPtr->_mouseCursor;
 
 		lockInputHandler();
-		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+		mouseCursor.incHideCounter();
 		_movie->playCutscene(tempRect, clip->_startFrame, clip->_endFrame);
-		CScreenManager::_screenManagerPtr->_mouseCursor->show();
+		mouseCursor.decHideCounter();
 		unlockInputHandler();
 	}
 }

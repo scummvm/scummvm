@@ -308,13 +308,11 @@ CVideoSurface *OSScreenManager::createSurface(const CResourceKey &key) {
 }
 
 void OSScreenManager::showCursor() {
-	// TODO: Figure out what this method actually is
-	//	CScreenManager::_screenManagerPtr->_mouseCursor->show();
+	CScreenManager::_screenManagerPtr->_mouseCursor->unsuppressCursor();
 }
 
 void OSScreenManager::hideCursor() {
-	// TODO: Figure out what this method actually is
-	//CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+	CScreenManager::_screenManagerPtr->_mouseCursor->suppressCursor();
 }
 
 void OSScreenManager::destroyFrontAndBackBuffers() {

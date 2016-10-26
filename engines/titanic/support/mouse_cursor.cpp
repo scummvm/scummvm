@@ -54,8 +54,8 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 }
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
-		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
-		_hideCount(0), _setCursorCount(0), _fieldE4(0), _fieldE8(0) {
+		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
+		_cursorSuppressed(false), _setCursorCount(0), _fieldE4(0), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 	CursorMan.showMouse(true);
@@ -88,15 +88,34 @@ void CMouseCursor::loadCursorImages() {
 }
 
 void CMouseCursor::show() {
-	--_hideCount;
-	assert(_hideCount >= 0);
-	if (_hideCount == 0)
-		CursorMan.showMouse(true);
+	CursorMan.showMouse(!_cursorSuppressed);
 }
 
 void CMouseCursor::hide() {
-	if (_hideCount++ == 0)
-		CursorMan.showMouse(false);
+	CursorMan.showMouse(false);
+}
+
+void CMouseCursor::incHideCounter() {
+	if (_hideCounter++ == 0)
+		hide();
+}
+
+void CMouseCursor::decHideCounter() {
+	--_hideCounter;
+	assert(_hideCounter >= 0);
+	if (_hideCounter == 0)
+		show();
+}
+
+void CMouseCursor::suppressCursor() {
+	_cursorSuppressed = true;
+	hide();
+}
+
+void CMouseCursor::unsuppressCursor() {
+	_cursorSuppressed = false;
+	if (_hideCounter == 0)
+		show();
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {

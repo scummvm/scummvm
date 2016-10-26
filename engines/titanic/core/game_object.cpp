@@ -1142,11 +1142,11 @@ void CGameObject::lockMouse() {
 }
 
 void CGameObject::hideMouse() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+	CScreenManager::_screenManagerPtr->_mouseCursor->incHideCounter();
 }
 
 void CGameObject::showMouse() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->show();
+	CScreenManager::_screenManagerPtr->_mouseCursor->decHideCounter();
 }
 
 void CGameObject::disableMouse() {

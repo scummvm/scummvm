@@ -145,6 +145,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		}
 	}
 
+	showMouse();
 	return true;
 }
 
