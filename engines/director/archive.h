@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DIRECTOR_RESOURCE_H
-#define DIRECTOR_RESOURCE_H
+#ifndef DIRECTOR_ARCHIVE_H
+#define DIRECTOR_ARCHIVE_H
 
 #include "common/file.h"
 #include "common/substream.h"

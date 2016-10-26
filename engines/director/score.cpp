@@ -32,7 +32,7 @@
 
 #include "director/score.h"
 #include "director/frame.h"
-#include "director/resource.h"
+#include "director/archive.h"
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo.h"

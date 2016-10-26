@@ -27,7 +27,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/resource.h"
+#include "director/archive.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
 

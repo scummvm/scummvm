@@ -29,7 +29,7 @@
 #include "director/director.h"
 #include "director/frame.h"
 #include "director/images.h"
-#include "director/resource.h"
+#include "director/archive.h"
 #include "director/score.h"
 #include "director/sprite.h"
 
