@@ -149,7 +149,7 @@ void TitanicEngine::setItemNames() {
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_DESCRIPTIONS");
 	while (r->pos() < r->size())
-		_itemNames.push_back(readStringFromStream(r));
+		_itemDescriptions.push_back(readStringFromStream(r));
 	delete r;
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_IDS");
