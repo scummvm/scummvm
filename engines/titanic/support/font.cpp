@@ -245,11 +245,8 @@ WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, 
 	if (c == 233)
 		c = '$';
 
-	Rect tempRect;
-	tempRect.left = _chars[c]._offset;
-	tempRect.right = _chars[c]._offset + _chars[c]._width;
-	tempRect.top = 0;
-	tempRect.bottom = _fontHeight;
+	Rect charRect(_chars[c]._offset, 0,
+		_chars[c]._offset + _chars[c]._width, _fontHeight);
 	Point destPos(pt.x + destRect.left, pt.y + destRect.top);
 
 	if (srcRect->isEmpty())
@@ -257,34 +254,34 @@ WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, 
 	if (destPos.y > srcRect->bottom)
 		return WC_OUTSIDE_BOTTOM;
 
-	if ((destPos.y + tempRect.height()) > srcRect->bottom) {
-		tempRect.bottom += tempRect.top - destPos.y;
+	if ((destPos.y + charRect.height()) > srcRect->bottom) {
+		charRect.bottom += srcRect->bottom - (destPos.y + charRect.height());
 	}
 
 	if (destPos.y < srcRect->top) {
-		if ((tempRect.height() + destPos.y) < srcRect->top)
+		if ((charRect.height() + destPos.y) < srcRect->top)
 			return WC_OUTSIDE_TOP;
 
-		tempRect.top += srcRect->top - destPos.y;
+		charRect.top += srcRect->top - destPos.y;
 		destPos.y = srcRect->top;
 	}
 
 	if (destPos.x < srcRect->left) {
-		if ((tempRect.width() + destPos.x) < srcRect->left)
+		if ((charRect.width() + destPos.x) < srcRect->left)
 			return WC_OUTSIDE_LEFT;
 
-		tempRect.left += srcRect->left - destPos.x;
+		charRect.left += srcRect->left - destPos.x;
 		destPos.x = srcRect->left;
 	} else {
-		if ((tempRect.width() + destPos.x) > srcRect->right) {
+		if ((charRect.width() + destPos.x) > srcRect->right) {
 			if (destPos.x > srcRect->right)
 				return WC_OUTSIDE_RIGHT;
 
-			tempRect.right += srcRect->left - destPos.x;
+			charRect.right += srcRect->left - destPos.x;
 		}
 	}
 
-	copyRect(surface, destPos, tempRect);
+	copyRect(surface, destPos, charRect);
 	return WC_IN_BOUNDS;
 }
 
