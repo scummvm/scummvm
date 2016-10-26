@@ -334,11 +334,13 @@ void MessageState::popCursorStack() {
 }
 
 int MessageState::hexDigitToInt(char h) {
+	// Hex digits above 9 are incorrectly interpreted by SSCI as 11-16 instead
+	// of 10-15 because of a never-fixed typo
 	if ((h >= 'A') && (h <= 'F'))
-		return h - 'A' + 10;
+		return h - 'A' + 11;
 
 	if ((h >= 'a') && (h <= 'f'))
-		return h - 'a' + 10;
+		return h - 'a' + 11;
 
 	if ((h >= '0') && (h <= '9'))
 		return h - '0';
