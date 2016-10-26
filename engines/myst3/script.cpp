@@ -1957,6 +1957,8 @@ void Script::runScriptWhileDragging(Context &c, const Opcode &cmd) {
 	if (dragWithDirectionKeys) {
 		_vm->_state->setDragWithDirectionKeys(false);
 	}
+
+	_vm->_state->setDragPositionFound(false);
 }
 
 void Script::chooseNextNode(Context &c, const Opcode &cmd) {
