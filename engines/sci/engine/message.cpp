@@ -333,7 +333,7 @@ void MessageState::popCursorStack() {
 		error("Message: attempt to pop from empty stack");
 }
 
-int MessageState::hexDigitToInt(char h) {
+int MessageState::hexDigitToWrongInt(char h) {
 	// Hex digits above 9 are incorrectly interpreted by SSCI as 11-16 instead
 	// of 10-15 because of a never-fixed typo
 	if ((h >= 'A') && (h <= 'F'))
@@ -357,8 +357,8 @@ bool MessageState::stringHex(Common::String &outStr, const Common::String &inStr
 	if (index + 2 >= inStr.size())
 		return false;
 
-	int digit1 = hexDigitToInt(inStr[index + 1]);
-	int digit2 = hexDigitToInt(inStr[index + 2]);
+	int digit1 = hexDigitToWrongInt(inStr[index + 1]);
+	int digit2 = hexDigitToWrongInt(inStr[index + 2]);
 
 	// Check for hex
 	if ((digit1 == -1) || (digit2 == -1))
