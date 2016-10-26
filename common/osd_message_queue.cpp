@@ -28,11 +28,14 @@ namespace Common {
 DECLARE_SINGLETON(OSDMessageQueue);
 	
 OSDMessageQueue::OSDMessageQueue() : _lastUpdate(0) {
-	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 }
 
 OSDMessageQueue::~OSDMessageQueue() {
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
+}
+	
+void OSDMessageQueue::registerEventSource() {
+	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 }
 	
 void OSDMessageQueue::addMessage(const char *msg) {

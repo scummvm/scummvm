@@ -39,6 +39,8 @@ public:
 	OSDMessageQueue();
 	~OSDMessageQueue();
 	
+	void registerEventSource();
+	
 	enum {
 		kMinimumDelay = 1000 /** < Minimum delay between two OSD messages (in milliseconds) */
 	};
