@@ -330,7 +330,6 @@ void OSScreenManager::loadCursors() {
 		delete _mouseCursor;
 	}
 	_mouseCursor = new CMouseCursor(this);
-	showCursor();
 
 	if (!_textCursor) {
 		_textCursor = new CTextCursor(this);

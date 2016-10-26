@@ -67,6 +67,7 @@ private:
 	CursorEntry _cursors[NUM_CURSORS];
 	uint _setCursorCount;
 	int _hideCounter;
+	int _hiddenCount;
 	bool _cursorSuppressed;
 	int _fieldE4;
 	int _fieldE8;
