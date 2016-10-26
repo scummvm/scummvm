@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-12 23:37+0100\n"
-"PO-Revision-Date: 2016-10-09 21:57+0100\n"
-"Last-Translator: Willem Jan Palenstijn <wjp@usecode.org>\n"
+"PO-Revision-Date: 2016-10-26 16:06+0200\n"
+"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Poedit 1.8.11\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -847,9 +847,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "de volledig-scherminstelling kon niet veranderd worden"
 
 #: gui/options.cpp:462
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "de volledig-scherminstelling kon niet veranderd worden"
+msgstr "de filterinstelling kon niet veranderd worden"
 
 #: gui/options.cpp:782
 msgid "Graphics mode:"
@@ -869,13 +868,12 @@ msgid "Fullscreen mode"
 msgstr "Volledig-scherm modus"
 
 #: gui/options.cpp:811
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Gebruik kleurenafbeeldingen"
+msgstr "Filter afbeeldingen"
 
 #: gui/options.cpp:811
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Gebruik lineair filteren tijdens het schalen van afbeeldingen"
 
 #: gui/options.cpp:814
 msgid "Aspect ratio correction"
@@ -1316,7 +1314,7 @@ msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
 msgstr ""
-"De thema die u heeft geselecteerd ondersteund uw gekozen taal niet. Als u "
+"Het thema dat u heeft geselecteerd ondersteunt uw gekozen taal niet. Als u "
 "dit thema wilt gebruiken dient u eerst een andere taal te selecteren."
 
 #: gui/options.cpp:1884
@@ -1591,7 +1589,7 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
-"ScummVM ondersteund nu automatische updates.\n"
+"ScummVM ondersteunt nu automatische updates.\n"
 "Hiervoor is wel internet toegang nodig.\n"
 "\n"
 "Wilt u deze functie inschakelen?"
@@ -1882,9 +1880,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Kon volledig-scherminstelling niet toepassen."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Kon volledig-scherminstelling niet toepassen."
+msgstr "Filterinstelling kon niet toegepast worden."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2197,14 +2194,12 @@ msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klikken Aangezet"
+msgstr "Filteren aangezet"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klikken Uitgeschakeld"
+msgstr "Filteren uitgeschakeld"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2407
 msgid "Active graphics filter:"
@@ -3058,7 +3053,7 @@ msgstr ""
 "Het lijkt erop dat u een General MIDI apparaat gebruikt,\n"
 "maar het spel ondersteunt alleen Roland MT32 MIDI.\n"
 "We zullen proberen te Roland MT32 instrumenten te vertalen naar General MIDI "
-"instrumenten. Het is mogelijk dat somige tracks niet goed klinken."
+"instrumenten. Het is mogelijk dat sommige tracks niet goed klinken."
 
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
@@ -4273,10 +4268,3 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Gebruik de MPEG video van de DVD versie, in plaats van de lagere resolutie "
 "AVI"
-
-#~ msgid "OpenGL (No filtering)"
-#~ msgstr "OpenGL (geen filters)"
-
-#, fuzzy
-#~ msgid "Specifies where Files Manager can access to"
-#~ msgstr "Bepaalt waar opgeslagen spellen worden bewaard."
