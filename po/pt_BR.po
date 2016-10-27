@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-10-12 23:37+0100\n"
+"POT-Creation-Date: 2016-10-27 21:26+0200\n"
 "PO-Revision-Date: 2011-10-21 21:30-0300\n"
 "Last-Translator: Saulo Benigno <saulobenigno@gmail.com>\n"
 "Language-Team: ScummBR (www.scummbr.com) <scummbr@yahoo.com.br>\n"
@@ -232,7 +232,7 @@ msgid ""
 "English"
 msgstr "Idioma do jogo. Isto não irá passar seu jogo Inglês para Português"
 
-#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:114
+#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:116
 #: gui/options.cpp:785 gui/options.cpp:798 gui/options.cpp:1261
 #: audio/null.cpp:41
 msgid "<default>"
@@ -383,19 +383,19 @@ msgstr "Pasta para Salvar"
 #: gui/options.cpp:1204 gui/options.cpp:1213 gui/options.cpp:1414
 #: gui/options.cpp:1420 gui/options.cpp:1428 gui/options.cpp:1451
 #: gui/options.cpp:1467 gui/options.cpp:1473 gui/options.cpp:1480
-#: gui/options.cpp:1488 gui/options.cpp:1640 gui/options.cpp:1643
-#: gui/options.cpp:1650 gui/options.cpp:1660
+#: gui/options.cpp:1488 gui/options.cpp:1643 gui/options.cpp:1646
+#: gui/options.cpp:1653 gui/options.cpp:1663
 msgctxt "path"
 msgid "None"
 msgstr "Nenhum(a)"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:406
 #: gui/editgamedialog.cpp:524 gui/options.cpp:1408 gui/options.cpp:1461
-#: gui/options.cpp:1646 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:1649 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Padrão"
 
-#: gui/editgamedialog.cpp:452 gui/options.cpp:1654
+#: gui/editgamedialog.cpp:452 gui/options.cpp:1657
 msgid "Select SoundFont"
 msgstr "Selecione o SoundFont"
 
@@ -403,7 +403,7 @@ msgstr "Selecione o SoundFont"
 msgid "Select additional game directory"
 msgstr "Selecione a pasta adicional do jogo"
 
-#: gui/editgamedialog.cpp:504 gui/options.cpp:1577
+#: gui/editgamedialog.cpp:504 gui/options.cpp:1580
 msgid "Select directory for saved games"
 msgstr "Selecione a pasta para os jogos salvos"
 
@@ -546,15 +546,15 @@ msgstr "Fechar"
 msgid "Mouse click"
 msgstr "Clique do mouse"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:337
+#: gui/gui-manager.cpp:126 base/main.cpp:339
 msgid "Display keyboard"
 msgstr "Mostrar teclado"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:341
+#: gui/gui-manager.cpp:130 base/main.cpp:343
 msgid "Remap keys"
 msgstr "Remapear teclas"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:344 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:346 engines/scumm/help.cpp:87
 #, fuzzy
 msgid "Toggle fullscreen"
 msgstr "Habilita Tela Cheia"
@@ -678,7 +678,7 @@ msgid "Search:"
 msgstr "Pesquisar:"
 
 #: gui/launcher.cpp:176 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:733
+#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 msgid "Load game:"
 msgstr "Carregar jogo:"
@@ -687,7 +687,7 @@ msgstr "Carregar jogo:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
-#: engines/mohawk/riven.cpp:733 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601
 msgid "Load"
@@ -785,43 +785,43 @@ msgstr "Trocar"
 msgid "Fast replay"
 msgstr "Modo rápido"
 
-#: gui/options.cpp:112 common/updates.cpp:56
+#: gui/options.cpp:114 common/updates.cpp:56
 msgid "Never"
 msgstr "Nunca"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:114
 msgid "every 5 mins"
 msgstr "a cada 5 mins"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:114
 msgid "every 10 mins"
 msgstr "a cada 10 mins"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:114
 msgid "every 15 mins"
 msgstr "a cada 15 mins"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:114
 msgid "every 30 mins"
 msgstr "a cada 30 mins"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:116
 msgid "8 kHz"
 msgstr "8 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:116
 msgid "11 kHz"
 msgstr "11 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:116
 msgid "22 kHz"
 msgstr "22 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:116
 msgid "44 kHz"
 msgstr "44 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:116
 msgid "48 kHz"
 msgstr "48 kHz"
 
@@ -864,8 +864,8 @@ msgstr "Renderização"
 msgid "Special dithering modes supported by some games"
 msgstr "Modos especiais de dithering suportados por alguns jogos"
 
-#: gui/options.cpp:808
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
+#: gui/options.cpp:808 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Fullscreen mode"
 msgstr "Modo Tela Cheia"
 
@@ -1188,7 +1188,7 @@ msgstr ""
 msgid "Active cloud storage"
 msgstr ""
 
-#: gui/options.cpp:1326 gui/options.cpp:1877
+#: gui/options.cpp:1326 gui/options.cpp:1880
 msgid "<none>"
 msgstr ""
 
@@ -1249,7 +1249,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:1344 gui/options.cpp:1987
+#: gui/options.cpp:1344 gui/options.cpp:1990
 #, fuzzy
 msgid "Not running"
 msgstr "Erro ao executar o jogo:"
@@ -1285,37 +1285,37 @@ msgstr ""
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Você tem que reiniciar o ScummVM para funcionar."
 
-#: gui/options.cpp:1543
+#: gui/options.cpp:1544
 #, fuzzy
 msgid "Failed to change cloud storage!"
 msgstr "Falha ao salvar o jogo"
 
-#: gui/options.cpp:1546
+#: gui/options.cpp:1547
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:1584
+#: gui/options.cpp:1587
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "O diretório escolhido não pode ser usado. Por favor, selecione outro."
 
-#: gui/options.cpp:1593
+#: gui/options.cpp:1596
 msgid "Select directory for GUI themes"
 msgstr "Selecione a pasta para os temas da Interface de Uso Gráfico"
 
-#: gui/options.cpp:1603
+#: gui/options.cpp:1606
 msgid "Select directory for extra files"
 msgstr "Selecione a pasta para os arquivos extras"
 
-#: gui/options.cpp:1614
+#: gui/options.cpp:1617
 msgid "Select directory for plugins"
 msgstr "Selecione a pasta para os plugins"
 
-#: gui/options.cpp:1626
+#: gui/options.cpp:1629
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "Selecione a pasta para os arquivos extras"
 
-#: gui/options.cpp:1688
+#: gui/options.cpp:1691
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -1323,30 +1323,30 @@ msgstr ""
 "O tema que você selecionou não suporta seu idioma atual. Se você quiser usar "
 "este tema você precisa mudar para outro idioma."
 
-#: gui/options.cpp:1884
+#: gui/options.cpp:1887
 #, c-format
 msgid "%llu bytes"
 msgstr ""
 
-#: gui/options.cpp:1892
+#: gui/options.cpp:1895
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:1894
+#: gui/options.cpp:1897
 #, fuzzy
 msgid "<never>"
 msgstr "Nunca"
 
-#: gui/options.cpp:1978
+#: gui/options.cpp:1981
 #, fuzzy
 msgid "Stop server"
 msgstr "Servidor:"
 
-#: gui/options.cpp:1979
+#: gui/options.cpp:1982
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2068
+#: gui/options.cpp:2071
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1629,35 +1629,35 @@ msgstr ""
 msgid "Clear value"
 msgstr "Limpar valor"
 
-#: base/main.cpp:250
+#: base/main.cpp:252
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Esse programa não suporta o nível de debug '%s'"
 
-#: base/main.cpp:324
+#: base/main.cpp:326
 msgid "Menu"
 msgstr "Menu"
 
-#: base/main.cpp:327 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:329 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Pular"
 
-#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:332 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pausar"
 
-#: base/main.cpp:333
+#: base/main.cpp:335
 msgid "Skip line"
 msgstr "Pula linha"
 
-#: base/main.cpp:542
+#: base/main.cpp:544
 msgid "Error running game:"
 msgstr "Erro ao executar o jogo:"
 
-#: base/main.cpp:589
+#: base/main.cpp:591
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Não foi possível encontrar qualquer programa capaz de rodar o jogo "
@@ -2199,6 +2199,38 @@ msgstr ""
 msgid "OpenGL"
 msgstr "Abrir"
 
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2462
+msgid "Windowed mode"
+msgstr "Modo janela"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
+#, c-format
+msgid "Resolution: %dx%d"
+msgstr ""
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
+msgid "Enabled aspect ratio correction"
+msgstr "Correção de proporção habilitada"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2344
+msgid "Disabled aspect ratio correction"
+msgstr "Correção de proporção desabilitada"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
+#, fuzzy
+msgid "Filtering enabled"
+msgstr "Clicando Habilitado"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
+#, fuzzy
+msgid "Filtering disabled"
+msgstr "Clicando Desabilitado"
+
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
@@ -2210,31 +2242,9 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sem escala)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2329
-msgid "Enabled aspect ratio correction"
-msgstr "Correção de proporção habilitada"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2335
-msgid "Disabled aspect ratio correction"
-msgstr "Correção de proporção desabilitada"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2353
-#, fuzzy
-msgid "Filtering enabled"
-msgstr "Clicando Habilitado"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
-#, fuzzy
-msgid "Filtering disabled"
-msgstr "Clicando Desabilitado"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2407
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
 msgstr "Ativa os filtros gráficos"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2452
-msgid "Windowed mode"
-msgstr "Modo janela"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
@@ -3159,6 +3169,39 @@ msgstr "~M~enu Principal ScummVM"
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "Modo ~E~feitos de água ativado"
+
+#: engines/mohawk/riven.cpp:150
+msgid ""
+"You're missing a Riven executable. The Windows executable is 'riven.exe' or "
+"'rivendmo.exe'. "
+msgstr ""
+
+#: engines/mohawk/riven.cpp:151
+msgid ""
+"Using the 'arcriven.z' installer file also works. In addition, you can use "
+"the Mac 'Riven' executable."
+msgstr ""
+
+#: engines/mohawk/riven.cpp:162
+msgid ""
+"You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
+"works."
+msgstr ""
+
+#: engines/mohawk/riven_external.cpp:213
+msgid ""
+"Exploration beyond this point available only within the full version of\n"
+"the game."
+msgstr ""
+
+#: engines/mohawk/riven_external.cpp:655
+msgid ""
+"At this point, the Riven Demo would\n"
+"ask if you would like to open a web browser\n"
+"to bring you to the Red Orb store to buy\n"
+"the game. ScummVM cannot do that and\n"
+"the site no longer exists."
+msgstr ""
 
 #: engines/mohawk/mohawk.cpp:61
 #, fuzzy
