@@ -93,8 +93,6 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 		g_system->quit();
 	}
 
-	SDL_SetSurfaceBlendMode(_screen, SDL_BLENDMODE_NONE);
-
 	SDL_PixelFormat *f = _screen->format;
 	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, effectiveWidth, effectiveHeight, f->BitsPerPixel,
 	                                      f->Rmask, f->Gmask, f->Bmask, f->Amask);
@@ -115,7 +113,10 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 
 	if (gameRenderTarget == kSubScreen) {
 		_subScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, gameWidth, gameHeight, f->BitsPerPixel, f->Rmask, f->Gmask, f->Bmask, f->Amask);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_SetSurfaceBlendMode(_subScreen, SDL_BLENDMODE_NONE);
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
 	}
 }
 
@@ -432,6 +433,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	} else {
+		SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_NONE);
 		return screen;
 	}
 }
