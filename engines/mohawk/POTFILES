@@ -2,4 +2,5 @@ engines/mohawk/detection.cpp
 engines/mohawk/dialogs.cpp
 engines/mohawk/myst.cpp
 engines/mohawk/riven.cpp
+engines/mohawk/riven_external.cpp
 engines/mohawk/mohawk.cpp
