@@ -132,7 +132,9 @@ public:
 	/**
 	 * Return true if a video is currently playing
 	 */
-	virtual bool isPlaying() const { return _decoder->isPlaying(); }
+	virtual bool isPlaying() const {
+		return _decoder->isPlaying() && !_decoder->endOfVideo();
+	}
 
 	/**
 	 * Handle any movie events relevent for the frame
