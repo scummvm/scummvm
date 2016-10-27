@@ -2190,8 +2190,27 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 #pragma mark -
 #pragma mark Leisure Suit Larry 6 Hires
 
+// When entering room 270 (diving board) from room 230, a typo in the game
+// script means that `setScale` is called accidentally instead of `setScaler`.
+// In SSCI this did not do much because the first argument happened to be
+// smaller than the y-position of `ego`, but in ScummVM the first argument is
+// larger and so a debug message "y value less than vanishingY" is displayed.
+static const uint16 larry6HiresSignatureSetScale[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x14b), // pushi 014b (setStyle)
+	0x38, SIG_UINT16(0x05),  // pushi 0005
+	0x51, 0x2c,              // class 2c (Styler)
+	SIG_END
+};
+
+static const uint16 larry6HiresPatchSetScale[] = {
+	0x38, SIG_UINT16(0x14f), // pushi 014f (setStyler)
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
+	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
