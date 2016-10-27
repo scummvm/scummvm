@@ -371,11 +371,12 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 tag = subStream.readUint32();
 		uint32 size = subStream.readUint32();
 		uint32 offset = subStream.readUint32();
-		/*uint16 flags = */ subStream.readUint16();
-		/*uint16 unk1 = */ subStream.readUint16();
-		/*uint32 unk2 = */ subStream.readUint32();
+		uint16 flags = subStream.readUint16();
+		uint16 unk1 = subStream.readUint16();
+		uint32 unk2 = subStream.readUint32();
 
-		debug(3, "Found RIFX resource index %d: '%s', %d @ 0x%08x", i, tag2str(tag), size, offset);
+		debug(3, "Found RIFX resource index %d: '%s', %d @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
+			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
 
 		Resource res;
 		res.offset = offset;
@@ -438,7 +439,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		}
 
 		const Resource &res = resources[index];
-		debug(3, "Found RIFX resource: '%s' 0x%04x, %d @ 0x%08x", tag2str(resTag), id, res.size, res.offset);
+		debug(3, "Found RIFX resource: '%s' 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
 		_types[resTag][id] = res;
 	}
 
