@@ -158,7 +158,7 @@ public:
 	 */
 	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) = 0;
 
-	virtual void setupCameraPerspective(float pitch, float heading, float fov);
+	void setupCameraPerspective(float pitch, float heading, float fov);
 
 	bool isCubeFaceVisible(uint face);
 

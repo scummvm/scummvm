@@ -40,7 +40,6 @@ public:
 
 	virtual void clear() override;
 	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
-	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;

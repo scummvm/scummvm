@@ -109,7 +109,13 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 		//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 	}
 
-	if (!is3D) {
+	if (is3D) {
+		tglMatrixMode(TGL_PROJECTION);
+		tglLoadMatrixf(_projectionMatrix.getData());
+
+		tglMatrixMode(TGL_MODELVIEW);
+		tglLoadMatrixf(_modelViewMatrix.getData());
+	} else {
 		tglMatrixMode(TGL_PROJECTION);
 		tglLoadIdentity();
 
@@ -132,16 +138,6 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 		tglMatrixMode(TGL_MODELVIEW);
 		tglLoadIdentity();
 	}
-}
-
-void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	Renderer::setupCameraPerspective(pitch, heading, fov);
-
-	tglMatrixMode(TGL_PROJECTION);
-	tglLoadMatrixf(_projectionMatrix.getData());
-
-	tglMatrixMode(TGL_MODELVIEW);
-	tglLoadMatrixf(_modelViewMatrix.getData());
 }
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {

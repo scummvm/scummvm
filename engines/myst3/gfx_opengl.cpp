@@ -104,7 +104,13 @@ void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 		glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 	}
 
-	if (!is3D) {
+	if (is3D) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(_projectionMatrix.getData());
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(_modelViewMatrix.getData());
+	} else {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
@@ -127,16 +133,6 @@ void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}
-}
-
-void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	Renderer::setupCameraPerspective(pitch, heading, fov);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(_projectionMatrix.getData());
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(_modelViewMatrix.getData());
 }
 
 void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
