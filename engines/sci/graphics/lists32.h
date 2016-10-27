@@ -170,6 +170,13 @@ public:
 	}
 
 	/**
+	 * The maximum number of elements the container is able to hold.
+	 */
+	size_type max_size() const {
+		return N;
+	}
+
+	/**
 	 * The number of populated slots in the array. The size
 	 * of the array will only go down once `pack` is called.
 	 */

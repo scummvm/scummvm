@@ -778,7 +778,7 @@ bool GfxTransitions32::processPixelDissolve21Mid(const PlaneShowStyle &showStyle
 	int seq = 1;
 
 	uint iteration = 0;
-	const uint numIterationsPerTick = ARRAYSIZE(g_sci->_gfxFrameout->_showList);
+	const uint numIterationsPerTick = g_sci->_gfxFrameout->_showList.max_size();
 
 	clearShowRects();
 
