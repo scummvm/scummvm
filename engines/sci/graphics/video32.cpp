@@ -68,7 +68,8 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	// mechanism that is very similar to that used by the VMD player, which
 	// allows the SEQ to be drawn into a bitmap ScreenItem and displayed using
 	// the normal graphics system.
-	_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
@@ -262,7 +263,8 @@ void AVIPlayer::init() {
 	g_sci->_gfxFrameout->addPlane(*_plane);
 
 	if (_decoder->getPixelFormat().bytesPerPixel == 1) {
-		_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, xRes, yRes, 0, false, false);
+		SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, xRes, yRes, 0, false, false);
+		bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
 
 		CelInfo32 celInfo;
 		celInfo.type = kCelTypeMem;
@@ -705,6 +707,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		reg_t bitmapId;
 		SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&bitmapId, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
+		vmdBitmap.getBuffer().fillRect(Common::Rect(vmdRect.width(), vmdRect.height()), 0);
 
 		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
 			mulru(vmdRect, Ratio(scriptWidth, screenWidth), Ratio(scriptHeight, screenHeight), 1);
