@@ -164,49 +164,37 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 	_pixelDouble = false;
 
 	if (!width || !height) {
-		width = _decoder->getWidth();
-		height = _decoder->getHeight();
-	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
-		// KQ7 1.51 provides an explicit width and height when it wants scaling,
-		// though the width and height it provides are not scaled
-		_pixelDouble = true;
-		width *= 2;
-		height *= 2;
+		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		const Ratio screenToScriptX(scriptWidth, screenWidth);
+		const Ratio screenToScriptY(scriptHeight, screenHeight);
+		width = (_decoder->getWidth() * screenToScriptX).toInt();
+		height = (_decoder->getHeight() * screenToScriptY).toInt();
 	}
 
-	// QFG4CD gives non-multiple-of-2 values for width and height,
-	// which would normally be OK except the source video is a pixel bigger
-	// in each dimension
+	// QFG4CD gives non-multiple-of-2 values for width and height of the intro
+	// video, which would normally be OK except the source video is a pixel
+	// bigger in each dimension so it just causes part of the video to get cut
+	// off
 	width = (width + 1) & ~1;
 	height = (height + 1) & ~1;
 
-	_drawRect.left = x;
-	_drawRect.top = y;
-	_drawRect.right = x + width;
-	_drawRect.bottom = y + height;
-
-	// SCI2.1mid uses init2x to draw a pixel-doubled AVI, but SCI2 has only the
-	// one play routine which automatically pixel-doubles in hi-res mode
-	if (getSciVersion() == SCI_VERSION_2) {
-		// This is somewhat of a hack; credits.avi from GK1 is not
-		// rendered correctly in SSCI because it is a 640x480 video, but the
-		// game script gives the wrong dimensions. Since this is the only
-		// high-resolution AVI ever used, just set the draw rectangle to draw
-		// the entire screen
-		if (_decoder->getWidth() > 320) {
-			_drawRect.left = 0;
-			_drawRect.top = 0;
-			_drawRect.right = 320;
-			_drawRect.bottom = 200;
-		}
-
-		// In hi-res mode, video will be pixel doubled, so the origin (which
-		// corresponds to the correct position without pixel doubling) needs to
-		// be corrected
-		if (g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() <= 320) {
-			_drawRect.left /= 2;
-			_drawRect.top /= 2;
-		}
+	// GK1 CREDITS.AVI is not rendered correctly in SSCI because it is a 640x480
+	// video and the game script gives the wrong dimensions.
+	// Since this is the only high-resolution AVI ever used by any SCI game,
+	// just set the draw rectangle to draw across the entire screen
+	if (g_sci->getGameId() == GID_GK1 && _decoder->getWidth() > 320) {
+		_drawRect.left = 0;
+		_drawRect.top = 0;
+		_drawRect.right = 320;
+		_drawRect.bottom = 200;
+	} else {
+		_drawRect.left = x;
+		_drawRect.top = y;
+		_drawRect.right = x + width;
+		_drawRect.bottom = y + height;
 	}
 
 	init();
@@ -223,8 +211,8 @@ AVIPlayer::IOStatus AVIPlayer::init2x(const int16 x, const int16 y) {
 	_drawRect.top = y;
 	_drawRect.right = x + _decoder->getWidth() * 2;
 	_drawRect.bottom = y + _decoder->getHeight() * 2;
-
 	_pixelDouble = true;
+
 	init();
 
 	return kIOSuccess;
@@ -234,29 +222,24 @@ void AVIPlayer::init() {
 	int16 xRes;
 	int16 yRes;
 
-	bool useScreenDimensions = false;
-	if (g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) {
-		useScreenDimensions = true;
-	}
-
-	// KQ7 1.51 gives video position in screen coordinates, not game
-	// coordinates, because in SSCI they are passed to Video for Windows, which
-	// renders as an overlay on the game video. Because we put the video into a
-	// ScreenItem instead of rendering directly to the hardware surface, the
-	// coordinates need to be converted to game script coordinates
-	if (g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY) {
-		useScreenDimensions = !_pixelDouble;
-		// This y-translation is arbitrary, based on what roughly centers the
-		// videos in the game window
-		_drawRect.translate(-_drawRect.left / 2, -_drawRect.top * 2 / 3);
-	}
-
-	if (useScreenDimensions) {
+	// GK1 CREDITS.AVI or KQ7 1.51 half-size videos
+	if ((g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) ||
+		(g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY && _drawRect.width() <= 160)) {
 		xRes = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 		yRes = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 	} else {
 		xRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		yRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+		const Ratio videoRatio(_decoder->getWidth(), _decoder->getHeight());
+		const Ratio screenRatio(4, 3);
+
+		// Videos that already have a 4:3 aspect ratio should not receive any
+		// aspect ratio correction
+		if (videoRatio == screenRatio) {
+			yRes = 240;
+		} else {
+			yRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		}
 	}
 
 	_plane = new Plane(_drawRect);
@@ -270,7 +253,7 @@ void AVIPlayer::init() {
 		celInfo.type = kCelTypeMem;
 		celInfo.bitmap = _bitmap;
 
-		_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(_drawRect.left, _drawRect.top), ScaleInfo());
+		_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(), ScaleInfo());
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
 	} else {
@@ -386,7 +369,7 @@ void AVIPlayer::renderFrame() const {
 			const uint8 *end = (const uint8 *)surface->getPixels() + surface->w * surface->h;
 
 			while (source != end) {
-				uint8 value = *source++;
+				const uint8 value = *source++;
 				*target++ = value == 0 ? 255 : value;
 			}
 		} else {
@@ -416,12 +399,19 @@ void AVIPlayer::renderFrame() const {
 	} else {
 		assert(surface->format.bytesPerPixel == 4);
 
+		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
 		Common::Rect drawRect(_drawRect);
+		mulru(drawRect, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 1);
 
 		if (_pixelDouble) {
 			const uint32 *source = (const uint32 *)surface->getPixels();
 			uint32 *target = (uint32 *)_scaleBuffer;
-			// target pitch here is in uint32s, not bytes
+			// target pitch here is in uint32s, not bytes, because the surface
+			// bpp is 4
 			const uint16 pitch = surface->pitch / 2;
 			for (int y = 0; y < surface->h; ++y) {
 				for (int x = 0; x < surface->w; ++x) {
@@ -436,17 +426,12 @@ void AVIPlayer::renderFrame() const {
 				target += pitch;
 			}
 
-			g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
+			g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, drawRect.left, drawRect.top, _drawRect.width(), _drawRect.height());
 		} else {
-			const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-			const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-			const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-			const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-			mulinc(drawRect, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight));
-
 			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, drawRect.left, drawRect.top, surface->w, surface->h);
 		}
+
+		g_system->updateScreen();
 	}
 }
 
