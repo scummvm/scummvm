@@ -447,4 +447,22 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	return true;
 }
 
+Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id) {
+	if (!_types.contains(tag))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const Resource &res = resMap[id];
+
+	uint32 offset = res.offset + 8;
+	uint32 size = res.size;
+
+	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
+}
+
+
 } // End of namespace Director

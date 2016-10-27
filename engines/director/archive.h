@@ -102,6 +102,7 @@ public:
 	~RIFXArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
+	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
 };
 
 } // End of namespace Director
