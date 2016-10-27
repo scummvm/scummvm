@@ -2197,14 +2197,14 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 // larger and so a debug message "y value less than vanishingY" is displayed.
 static const uint16 larry6HiresSignatureSetScale[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x14b), // pushi 014b (setStyle)
+	0x38, SIG_UINT16(0x14b), // pushi 014b (setScale)
 	0x38, SIG_UINT16(0x05),  // pushi 0005
-	0x51, 0x2c,              // class 2c (Styler)
+	0x51, 0x2c,              // class 2c (Scaler)
 	SIG_END
 };
 
 static const uint16 larry6HiresPatchSetScale[] = {
-	0x38, SIG_UINT16(0x14f), // pushi 014f (setStyler)
+	0x38, SIG_UINT16(0x14f), // pushi 014f (setScaler)
 	PATCH_END
 };
 
