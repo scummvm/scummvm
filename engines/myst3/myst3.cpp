@@ -491,10 +491,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
-					_system->lockMouse(false);
 					_console->attach();
 					_console->onFrame();
-					_system->lockMouse(_cursor->isPositionLocked());
 				}
 				break;
 			default:
@@ -1767,6 +1765,11 @@ void Myst3Engine::pauseEngineIntern(bool pause) {
 	}
 
 	_state->pauseEngine(pause);
+
+	// Unlock the mouse so that the cursor is visible when the GMM opens
+	if (_state->getViewType() == kCube && _cursor->isPositionLocked()) {
+		_system->lockMouse(!pause);
+	}
 }
 
 } // end of namespace Myst3
