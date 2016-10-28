@@ -54,7 +54,7 @@ Frame::Frame(DirectorEngine *vm) {
 
 	_palette = NULL;
 
-	_sprites.resize(CHANNEL_COUNT);
+	_sprites.resize(CHANNEL_COUNT + 1);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {
 		Sprite *sp = new Sprite();
@@ -80,9 +80,9 @@ Frame::Frame(const Frame &frame) {
 
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
 
-	_sprites.resize(CHANNEL_COUNT);
+	_sprites.resize(CHANNEL_COUNT + 1);
 
-	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+	for (uint16 i = 0; i < CHANNEL_COUNT + 1; i++) {
 		_sprites[i] = new Sprite(*frame._sprites[i]);
 	}
 }
@@ -109,6 +109,104 @@ void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offs
 		}
 	} else {
 		readMainChannels(stream, offset, size);
+	}
+}
+
+void Frame::readChannels(Common::ReadStreamEndian *stream) {
+	_actionId = stream->readByte();
+	_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
+	uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
+
+	if (transFlags & 0x80)
+		_transArea = 1;
+	else
+		_transArea = 0;
+	_transDuration = transFlags & 0x7f;
+
+	_transChunkSize = stream->readByte();
+	_tempo = stream->readByte();
+	_transType = static_cast<TransitionType>(stream->readByte());
+	_sound1 = stream->readUint16();
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		_sound2 = stream->readUint16();
+		_soundType2 = stream->readByte();
+	} else {
+		byte unk[3];
+		stream->read(unk, 3);
+		warning("unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+	}
+	_skipFrameFlag = stream->readByte();
+	_blend = stream->readByte();
+
+	if (_vm->getPlatform() != Common::kPlatformMacintosh) {
+		_sound2 = stream->readUint16();
+		_soundType2 = stream->readByte();
+	}
+
+	uint16 palette = stream->readUint16();
+
+	if (palette) {
+		warning("STUB: Palette info");
+	}
+
+	debugC(kDebugLoading, 8, "%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+
+	_palette = new PaletteInfo();
+	_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
+	_palette->lastColor = stream->readByte();
+	_palette->flags = stream->readByte();
+	_palette->speed = stream->readByte();
+	_palette->frameCount = stream->readUint16();
+
+	_palette->cycleCount = stream->readUint16();
+
+	byte unk[11];
+	stream->read(unk, 9);
+	//Common::hexdump(unk, 6);
+
+	#if 0
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		stream->read(unk, 11);
+		//Common::hexdump(unk, 11);
+
+		if (_vm->getVersion() >= 5) {
+			stream->read(unk, 7);
+			//Common::hexdump(unk, 7);
+		}
+	}
+	#endif
+
+	for (int i = 0; i < CHANNEL_COUNT; i++) {
+		Sprite &sprite = *_sprites[i + 1];
+
+		sprite._x1 = stream->readByte();
+		sprite._enabled = (stream->readByte() != 0);
+		sprite._x2 = stream->readUint16();
+
+		sprite._flags = stream->readUint16();
+		sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
+
+		if (sprite._flags & 0x40)
+			sprite._trails = 1;
+		else
+			sprite._trails = 0;
+
+		sprite._castId = stream->readUint16();
+		sprite._startPoint.y = stream->readUint16();
+		sprite._startPoint.x = stream->readUint16();
+		sprite._height = stream->readUint16();
+		sprite._width = stream->readUint16();
+
+		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+
+		if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() >= 4) {
+			sprite._scriptId = stream->readUint16();
+			sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
+			sprite._unk2 = stream->readByte();
+
+			if (_vm->getVersion() >= 5)
+				sprite._unk3 = stream->readUint32();
+		}
 	}
 }
 

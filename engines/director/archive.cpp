@@ -347,6 +347,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // imap length
 	subStream.readUint32(); // unknown
 	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
+	uint32 version = subStream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
+	warning("RIFX: version: %x", version);
 
 	subStream.seek(mmapOffset);
 

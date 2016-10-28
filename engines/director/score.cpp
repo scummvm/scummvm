@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/memstream.h"
 
 #include "engines/util.h"
 #include "graphics/font.h"
@@ -262,10 +263,15 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	size -= 4;
 
 	if (_vm->getVersion() > 3) {
-		stream.skip(16);
+		uint32 unk1 = stream.readUint32();
+		uint32 unk2 = stream.readUint32();
+		uint16 unk3 = stream.readUint16();
+		uint16 unk4 = stream.readUint16();
+		uint16 unk5 = stream.readUint16();
+		uint16 unk6 = stream.readUint16();
 		size -= 16;
 
-		warning("STUB: Score::loadFrames. Skipping initial bytes");
+		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 		//Unknown, some bytes - constant (refer to contuinity).
 	}
 
@@ -275,12 +281,20 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	Frame *initial = new Frame(_vm);
 	_frames.push_back(initial);
 
+	// This is a representation of the channelData. It gets overridden
+	// partically by channels, hence we keep it and read the score from left to right
+	//
+	// TODO Merge it with shared cast
+	byte channelData[kChannelDataSize];
+	memset(channelData, 0, kChannelDataSize);
+
 	while (size != 0) {
 		uint16 frameSize = stream.readUint16();
-		warning("++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 		size -= frameSize;
 		frameSize -= 2;
-		Frame *frame = new Frame(*_frames.back());
+
+		Frame *frame = new Frame(_vm);
 
 		while (frameSize != 0) {
 			if (_vm->getVersion() < 4) {
@@ -292,8 +306,16 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 				channelOffset = stream.readUint16();
 				frameSize -= channelSize + 4;
 			}
-			frame->readChannel(stream, channelOffset, channelSize);
+
+			assert(channelOffset + channelSize < kChannelDataSize);
+
+			stream.read(&channelData[channelOffset], channelSize);
 		}
+
+		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
+		frame->readChannels(str);
+
+		delete str;
 
 		_frames.push_back(frame);
 	}

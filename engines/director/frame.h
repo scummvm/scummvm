@@ -35,6 +35,10 @@ class Sprite;
 
 #define CHANNEL_COUNT 24
 
+enum {
+	kChannelDataSize = (25 * 50)
+};
+
 enum TransitionType {
 	kTransNone,
 	kTransWipeRight,
@@ -97,6 +101,7 @@ struct PaletteInfo {
 	uint8 flags;
 	uint8 speed;
 	uint16 frameCount;
+	uint16 cycleCount;
 };
 
 
@@ -105,6 +110,7 @@ public:
 	Frame(DirectorEngine *vm);
 	Frame(const Frame &frame);
 	~Frame();
+	void readChannels(Common::ReadStreamEndian *stream);
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
@@ -123,7 +129,9 @@ private:
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
+
 public:
+	byte _channelData[kChannelDataSize];
 	uint8 _actionId;
 	uint8 _transDuration;
 	uint8 _transArea; //1 - Whole Stage, 0 - Changing Area
