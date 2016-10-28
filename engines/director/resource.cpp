@@ -197,6 +197,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
 
+		_sharedCasts = new Common::HashMap<int, Cast *>;
+
 		return;
 	}
 
