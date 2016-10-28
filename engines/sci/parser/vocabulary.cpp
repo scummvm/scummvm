@@ -365,7 +365,7 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 				}
 			}
 		}
-	} while (changed && loopCount < 10);
+	} while (changed && loopCount++ < 10);
 
 	return ret;
 }
