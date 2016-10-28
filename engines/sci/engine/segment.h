@@ -552,8 +552,17 @@ public:
 		case kArrayTypeID:
 			return ((reg_t *)_data)[index];
 		case kArrayTypeByte:
-		case kArrayTypeString:
-			return make_reg(0, ((byte *)_data)[index]);
+		case kArrayTypeString: {
+			int16 value;
+
+			if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+				value = ((int8 *)_data)[index];
+			} else {
+				value = ((uint8 *)_data)[index];
+			}
+
+			return make_reg(0, value);
+		}
 		default:
 			error("Invalid array type %d", _type);
 		}
