@@ -277,6 +277,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	while (size != 0) {
 		uint16 frameSize = stream.readUint16();
+		warning("++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 		size -= frameSize;
 		frameSize -= 2;
 		Frame *frame = new Frame(*_frames.back());

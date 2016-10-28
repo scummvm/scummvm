@@ -179,6 +179,8 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			break;
 		}
 	}
+
+	warning("%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 }
 
 void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
@@ -198,11 +200,13 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 	uint16 finishPosition = fieldPosition + size;
 
 	Sprite &sprite = *_sprites[spritePosition];
+	int x1 = 0;
+	int x2 = 0;
 
 	while (fieldPosition < finishPosition) {
 		switch (fieldPosition) {
 		case kSpritePositionUnk1:
-			/*byte x1 = */ stream.readByte();
+			x1 = stream.readByte();
 			fieldPosition++;
 			break;
 		case kSpritePositionEnabled:
@@ -210,7 +214,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			fieldPosition++;
 			break;
 		case kSpritePositionUnk2:
-			/*byte x2 = */ stream.readUint16();
+			x2 = stream.readUint16();
 			fieldPosition += 2;
 			break;
 		case kSpritePositionFlags:
@@ -251,6 +255,8 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			break;
 		}
 	}
+	warning("%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+
 }
 
 void Frame::prepareFrame(Score *score) {
