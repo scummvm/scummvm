@@ -263,6 +263,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	if (_vm->getVersion() > 3) {
 		stream.skip(16);
+		size -= 16;
 
 		warning("STUB: Score::loadFrames. Skipping initial bytes");
 		//Unknown, some bytes - constant (refer to contuinity).
@@ -286,8 +287,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 				channelOffset = stream.readByte() * 2;
 				frameSize -= channelSize + 2;
 			} else {
-				channelSize = stream.readByte();
-				channelOffset = stream.readByte();
+				channelSize = stream.readUint16();
+				channelOffset = stream.readUint16();
 				frameSize -= channelSize + 4;
 			}
 			frame->readChannel(stream, channelOffset, channelSize);
