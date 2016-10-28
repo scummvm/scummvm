@@ -161,20 +161,21 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	_palette->cycleCount = stream->readUint16();
 
 	byte unk[11];
-	stream->read(unk, 9);
-	//Common::hexdump(unk, 6);
+	stream->read(unk, 6);
 
-	#if 0
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		stream->read(unk, 11);
-		//Common::hexdump(unk, 11);
+		if (_vm->getVersion() < 4) {
+			stream->read(unk, 3);
+		} else {
+			stream->read(unk, 11);
+			//Common::hexdump(unk, 11);
 
-		if (_vm->getVersion() >= 5) {
-			stream->read(unk, 7);
-			//Common::hexdump(unk, 7);
+			if (_vm->getVersion() >= 5) {
+				stream->read(unk, 7);
+				//Common::hexdump(unk, 7);
+			}
 		}
 	}
-	#endif
 
 	for (int i = 0; i < CHANNEL_COUNT; i++) {
 		Sprite &sprite = *_sprites[i + 1];
