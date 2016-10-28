@@ -100,8 +100,8 @@ CTimeEventInfo::CTimeEventInfo() : ListItem(), _lockCounter(0),
 CTimeEventInfo::CTimeEventInfo(uint ticks, bool repeated, uint firstDuration,
 		uint repeatDuration, CTreeItem *target, int endVal, const CString &action) :
 		ListItem(), _lockCounter(0), _repeated(repeated), _firstDuration(firstDuration),
-		_repeatDuration(repeatDuration), _target(target), _actionVal(endVal), _done(false),
-		_timerCtr(0), _lastTimerTicks(ticks), _relativeTicks(0), _persisent(true) {
+		_repeatDuration(repeatDuration), _target(target), _actionVal(endVal), _action(action),
+		_done(false), _timerCtr(0), _lastTimerTicks(ticks), _relativeTicks(0), _persisent(true) {
 	_id = _nextId++;
 }
 

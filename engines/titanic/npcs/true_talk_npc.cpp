@@ -130,7 +130,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *m
 	_speechDuration = 0;
 
 	if (!(_npcFlags & NPCFLAG_8)) {
-		CNPCPlayTalkingAnimationMsg msg1(0, 2, 0);
+		CNPCPlayTalkingAnimationMsg msg1(0, 2, nullptr);
 		msg1.execute(this);
 		CNPCQueueIdleAnimMsg msg2;
 		msg2.execute(this);
