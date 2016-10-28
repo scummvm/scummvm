@@ -60,7 +60,12 @@ void QMixer::qsWaveMixFreeWave(Audio::SoundHandle &handle) {
 }
 
 void QMixer::qsWaveMixFlushChannel(int iChannel, uint flags) {
-	// Not currently implemented in ScummVM
+	Common::List<SoundEntry>::iterator i;
+	Common::List<SoundEntry> &sounds = _channels[iChannel]._sounds;
+	for (i = sounds.begin(); i != sounds.end(); ++i)
+		_mixer->stopHandle((*i)._soundHandle);
+
+	sounds.clear();
 }
 
 void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
