@@ -556,7 +556,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
-	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
+	    || allFiles.contains("resmap.000") || allFiles.contains("resmap.001")) {
 		foundResMap = true;
 	}
 
