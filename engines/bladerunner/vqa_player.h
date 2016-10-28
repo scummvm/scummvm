@@ -55,6 +55,9 @@ class VQAPlayer {
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
+	void (*_callbackLoopEnded)(void*, int frame, int loopId);
+	void  *_callbackData;
+
 public:
 
 	VQAPlayer(BladeRunnerEngine *vm)
@@ -69,7 +72,8 @@ public:
 		  _loopEnd(-1),
 		  _nextFrameTime(0),
 		  _hasAudio(false),
-		  _audioStarted(false) {
+		  _audioStarted(false),
+		  _callbackLoopEnded(nullptr) {
 	}
 
 	~VQAPlayer() {
@@ -85,9 +89,7 @@ public:
 	void updateView(View *view);
 	void updateLights(Lights *lights);
 
-	bool setLoop(int loop);
-	// void setLoopSpecial(int loop, bool wait);
-	// void setLoopDefault(int loop);
+	bool setLoop(int loop, int unknown, int loopMode, void(*callback)(void*, int, int), void* callbackData);
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);

@@ -44,10 +44,10 @@ public:
 	VQAPlayer  *_vqaPlayer;
 
 	int         _defaultLoop;
-	int         _defaultLoopSet;
-	int         _field_20_loop_stuff;
+	bool        _defaultLoopSet;
 	int         _specialLoopMode;
 	int         _specialLoop;
+	bool        _specialLoopAtEnd;
 	int         _introFinished;
 	int         _nextSetId;
 	int         _nextSceneId;
@@ -83,9 +83,7 @@ public:
 		delete _set;
 		delete _regions;
 		delete _exits;
-		if (_vqaPlayer != nullptr) {
-			delete _vqaPlayer;
-		}
+		delete _vqaPlayer;
 	}
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
@@ -109,6 +107,10 @@ public:
 	void objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded);
 	void objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded);
 	const char *objectGetName(int objectId);
+
+private:
+	void loopEnded(int frame, int loopId);
+	static void loopEndedStatic(void* data, int frame, int loopId);
 };
 
 } // End of namespace BladeRunner

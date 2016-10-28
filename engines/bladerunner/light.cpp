@@ -27,9 +27,13 @@
 namespace BladeRunner {
 
 Light::Light() {
+	_animationData = nullptr;
 }
 
 Light::~Light() {
+	if (_animationData != nullptr) {
+		delete[] _animationData;
+	}
 }
 
 void Light::read(Common::ReadStream *stream, int framesCount, int frame, int animated) {
@@ -43,6 +47,9 @@ void Light::read(Common::ReadStream *stream, int framesCount, int frame, int ani
 
 	_animatedParameters = stream->readUint32LE();
 
+	if (_animationData != nullptr) {
+		delete[] _animationData;
+	}
 	int floatsCount = size / 4;
 	_animationData = new float[floatsCount];
 	for (int i = 0; i < floatsCount; i++) {
@@ -79,6 +86,10 @@ void Light::readVqa(Common::ReadStream *stream, int framesCount, int frame, int 
 	_animatedParameters = stream->readUint32LE();
 
 	int size = stream->readUint32LE();
+
+	if(_animationData != nullptr) {
+		delete[] _animationData;
+	}
 
 	int floatsCount = size / 4;
 	_animationData = new float[floatsCount];

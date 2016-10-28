@@ -121,7 +121,7 @@ void VQAPlayer::updateLights(Lights *lights) {
 	_decoder.decodeLights(lights);
 }
 
-bool VQAPlayer::setLoop(int loop) {
+bool VQAPlayer::setLoop(int loop, int unknown, int loopMode, void(*callback)(void*, int, int), void *callbackData) {
 	int begin, end;
 	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
 		return false;
@@ -130,6 +130,9 @@ bool VQAPlayer::setLoop(int loop) {
 	_curLoop   = loop;
 	_loopBegin = begin;
 	_loopEnd   = end;
+
+	_callbackLoopEnded = callback;
+	_callbackData = callbackData;
 
 	// warning("\t\t\tActive Loop: %d - %d\n", begin, end);
 
@@ -158,6 +161,9 @@ int VQAPlayer::calcNextFrame(int frame) const {
 
 	if (_curLoop != -1 && frame >= _loopEnd) {
 		frame = _loopBegin;
+		if (_callbackLoopEnded != nullptr) {
+			_callbackLoopEnded(_callbackData, 0, _curLoop);
+		}
 	} else {
 		frame++;
 	}

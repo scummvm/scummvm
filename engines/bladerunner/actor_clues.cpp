@@ -67,9 +67,7 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType) {
 }
 
 ActorClues::~ActorClues() {
-	if (_clues) {
-		delete[] _clues;
-	}
+	delete[] _clues;
 
 	_maxCount = 0;
 	_count = 0;
@@ -78,7 +76,7 @@ ActorClues::~ActorClues() {
 void ActorClues::acquire(int clueId, char flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
 	_clues[clueIndex]._flags |= 0x01;
-	_clues[_count]._flags = (_clues[_count]._flags & ~0x02) | ((flag2 << 1) & 0x02);
+	_clues[clueIndex]._flags = (_clues[clueIndex]._flags & ~0x02) | ((flag2 << 1) & 0x02);
 	_clues[clueIndex]._fromActorId = fromActorId;
 
 	debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);

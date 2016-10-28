@@ -65,6 +65,7 @@ void SceneObjects::clear() {
 		_sceneObjects[i]._isMoving = 0;
 		_sceneObjects[i]._isRetired = 0;
 	}
+	_count = 0;
 }
 
 bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isMoving, uint8 isTarget, uint8 isRetired) {
@@ -207,7 +208,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 			break;
 		}
 	}
-	for (int j = _count - 1; j >= i; --j) {
+	for (int j = _count - 2; j >= i; --j) {
 		_sceneObjectsSortedByDistance[j + 1] = _sceneObjectsSortedByDistance[j];
 	}
 

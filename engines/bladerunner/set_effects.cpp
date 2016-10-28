@@ -38,7 +38,7 @@ SetEffects::SetEffects(BladeRunnerEngine *vm) {
 	_fadeDensity = 0.0f;
 
 	_fogsCount = 0;
-	_fogs = NULL;
+	_fogs = nullptr;
 }
 
 SetEffects::~SetEffects() {
@@ -55,7 +55,7 @@ void SetEffects::read(Common::ReadStream *stream, int framesCount) {
 	int i;
 	for (i = 0; i < _fogsCount; i++) {
 		int type = stream->readUint32LE();
-		Fog *fog = NULL;
+		Fog *fog = nullptr;
 		switch (type) {
 		case 0:
 			fog = new FogCone();

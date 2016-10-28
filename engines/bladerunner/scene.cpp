@@ -29,6 +29,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/items.h"
+#include "bladerunner/settings.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/slice_renderer.h"
@@ -56,8 +57,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		// TODO: Clear regions
 		// TODO: Destroy all overlays
 		_defaultLoop = 0;
-		_defaultLoopSet = 0;
-		_field_20_loop_stuff = 0;
+		_defaultLoopSet = false;
+		_specialLoopAtEnd = false;
 		_specialLoopMode = -1;
 		_specialLoop = -1;
 		_frame = -1;
@@ -75,9 +76,6 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		delete _vqaPlayer;
 
 	_vqaPlayer = new VQAPlayer(_vm);
-
-	if (!_vqaPlayer->open(vqaName))
-		return false;
 
 	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
 	if (!_vm->_script->open(sceneName))
@@ -99,8 +97,15 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		return true;
 	}
 
-	// TODO: set VQADecoder parameters
-	//_vm->_scene->advanceFrame(0, 0);
+	if (!_vqaPlayer->open(vqaName))
+		return false;
+
+	if (_specialLoop == -1) {
+		_vqaPlayer->setLoop(_defaultLoop, -1, 2, nullptr, nullptr);
+		_defaultLoopSet = true;
+		_specialLoopAtEnd = false;
+	}
+	_vm->_scene->advanceFrame(_vm->_surface1, _vm->_zBuffer1);
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	//_vm->_playerActor->setSetId(setId);
@@ -148,6 +153,7 @@ bool Scene::close(bool isLoadingGame) {
 	if (isLoadingGame) {
 		_vm->_script->PlayerWalkedOut();
 	}
+
 	//	if (SceneScript_isLoaded() && !SceneScript_unload()) {
 	//		result = false;
 	//	}
@@ -171,18 +177,26 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
 
-	if (frame < 0) {
-		return frame;
-	}
-	_frame = frame;
-
-	if (_specialLoopMode == 0 && frame == _vqaPlayer->getLoopEndFrame(_specialLoop)) {
-		_playerWalkedIn = true;
-		_specialLoopMode = -1;
-	}
-	if (_specialLoopMode == 0 && !_defaultLoopSet) {
-		_vqaPlayer->setLoop(_defaultLoop + 1);
+	if (_specialLoopMode && _specialLoopMode != 2 && _specialLoopMode != 3) {
+		if (_specialLoopMode == 1) {
+			if (frame == -3) { // TODO: when will this happen? bad data in/eof of vqa
+				_vm->_settings->setNewSetAndScene(_nextSetId, _nextSceneId);
+				_vm->playerGainsControl();
+			}
+		} else if (!_specialLoopAtEnd) {
+			_vqaPlayer->setLoop(_defaultLoop + 1, -1, 0, &Scene::loopEndedStatic, this);
+			_specialLoopAtEnd = true;
+		}
+	} else if (!this->_defaultLoopSet) {
+		_vqaPlayer->setLoop(_defaultLoop, -1, 1, &Scene::loopEndedStatic, this);
 		_defaultLoopSet = true;
+		if (_specialLoopMode == 0) {
+			_vm->playerLosesControl();
+		}
+	}
+
+	if (frame >= 0) {
+		_frame = frame;
 	}
 
 	return frame;
@@ -193,25 +207,32 @@ void Scene::setActorStart(Vector3 position, int facing) {
 	_actorStartFacing = facing;
 }
 
-void Scene::loopSetDefault(int a) {
-	// warning("\t\t\tScene::loopSetDefault(%d)", a);
-	_defaultLoop = a;
+void Scene::loopSetDefault(int loopId) {
+	_defaultLoop = loopId;
 }
 
-void Scene::loopStartSpecial(int a, int b, int c) {
-	// warning("\t\t\tScene::loopStartSpecial(%d, %d, %d)", a, b, c);
-	_specialLoopMode = a;
-	_specialLoop = b;
+void Scene::loopStartSpecial(int specialLoopMode, int loopId, int flags) {
+	_specialLoopMode = specialLoopMode;
+	_specialLoop = loopId;
 
-	if (_specialLoop == 1) {
-		// a1->on_loop_end_switch_to_set_id = sub_42BE08_options_get_set_enter_arg_1(&unk_48E910_options);
-		// a1->on_loop_end_switch_to_scene_id = sub_42BE00_options_get_set_enter_arg_2(&unk_48E910_options);
+	int unknown = -1;
+	if (_specialLoopMode == 1) {
+		unknown = 0;
 	}
 
-	if (c) {
-		// _field_20_loop_stuff = 1;
-		// v6 = a1->_field_28_loop_special_loop_number;
-		// sub_453434_scene_method_loop(a1);
+	int loopMode = 1;
+	if (flags) {
+		loopMode = 2;
+	}
+
+	_vqaPlayer->setLoop(_specialLoop, unknown, loopMode, &Scene::loopEndedStatic, this);
+	if (_specialLoopMode == 1) {
+		this->_nextSetId = _vm->_settings->getNewSet();
+		this->_nextSceneId = _vm->_settings->getNewScene();
+	}
+	if (flags) {
+		this->_specialLoopAtEnd = true;
+		loopEnded(0, _specialLoop);
 	}
 }
 
@@ -265,4 +286,37 @@ const char *Scene::objectGetName(int objectId) {
 	return _set->objectGetName(objectId);
 }
 
+void Scene::loopEnded(int frame, int loopId) {
+	if (_specialLoopMode && _specialLoopMode != 2 && _specialLoopMode != 3) {
+		if (_specialLoopMode == 1) {
+			_defaultLoopSet = true;
+			_specialLoopAtEnd = false;
+			_vm->playerLosesControl();
+		}
+	} else if (_specialLoopAtEnd) {
+		_vqaPlayer->setLoop(_defaultLoop, -1, 1, &Scene::loopEndedStatic, this);
+		_defaultLoopSet = true;
+		_specialLoopAtEnd = false;
+		if (_specialLoopMode == 0) {
+			_vm->playerLosesControl();
+		}
+	} else {
+		if (_specialLoopMode == 0) {
+			_vm->playerGainsControl();
+			_playerWalkedIn = true;
+		}
+		if (_specialLoopMode == 3) {
+			//TODO:
+			//spinner::open(Spinner);
+		}
+		_specialLoopMode = -1;
+		_specialLoop = -1;
+		_vqaPlayer->setLoop(_defaultLoop + 1, -1, 0, nullptr, nullptr);
+		_specialLoopAtEnd = true;
+	}
+}
+
+void Scene::loopEndedStatic(void *data, int frame, int loopId) {
+	((Scene*)data)->loopEnded(frame, loopId);
+}
 } // End of namespace BladeRunner

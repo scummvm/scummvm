@@ -457,6 +457,8 @@ void BladeRunnerEngine::shutdown() {
 	// TODO: Delete sine and cosine lookup tables
 
 	// TODO: Unload AI dll
+	delete _aiScripts;
+	_aiScripts = nullptr;
 
 	delete[] _gameVars;
 	_gameVars = nullptr;
@@ -481,7 +483,12 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete datetime - not used
 
-	// TODO: Delete actors
+	int actorCount = (int)_gameInfo->getActorCount();
+	for (int i = 0; i != actorCount; ++i) {
+		delete _actors[i];
+		_actors[i] = nullptr;
+	}
+	_playerActor = nullptr;
 
 	// TODO: Delete proper ZBuf class
 	delete[] _zBuffer1;

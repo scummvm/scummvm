@@ -55,13 +55,11 @@ namespace BladeRunner {
 bool Script::open(const Common::String &name) {
 	delete _currentScript;
 
-
 	if (name == "RC01") { _currentScript = new ScriptRC01(_vm); return true; }
 	if (name == "RC02") { _currentScript = new ScriptRC02(_vm); return true; }
 	if (name == "RC03") { _currentScript = new ScriptRC03(_vm); return true; }
 	if (name == "RC04") { _currentScript = new ScriptRC04(_vm); return true; }
 	if (name == "RC51") { _currentScript = new ScriptRC51(_vm); return true; }
-
 
 	return false;
 }
@@ -916,18 +914,18 @@ void ScriptBase::Overlay_Remove(const char *overlay) {
 	warning("Overlay_Remove(%s)", overlay);
 }
 
-void ScriptBase::Scene_Loop_Set_Default(int a) {
-	// debug("Scene_Loop_Set_Default(%d)", a);
-
-	_vm->_scene->loopSetDefault(a);
-	// _vm->_scene->_defaultLoop = a;
+void ScriptBase::Scene_Loop_Set_Default(int loopId) {
+	_vm->_scene->loopSetDefault(loopId);
 }
 
-void ScriptBase::Scene_Loop_Start_Special(int a, int b, int c) {
-	// debug("Scene_Loop_Start_Special(%d, %d, %d)", a, b, c);
-
-	_vm->_scene->loopStartSpecial(a, b, c);
-	// _vm->_scene->_field_24_loop_start_special_param_1 = a;
+void ScriptBase::Scene_Loop_Start_Special(int sceneLoopMode, int loopId, int c) {
+	if (sceneLoopMode == 1) {
+		c = 1;
+	}
+	_vm->_scene->loopStartSpecial(sceneLoopMode, loopId, c);
+	if (sceneLoopMode == 1) {
+		_vm->_settings->clearNewSetAndScene();
+	}
 }
 
 void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
@@ -1427,10 +1425,17 @@ void ScriptBase::VK_Play_Speech_Line(int actorIndex, int a2, float a3) {
 
 AIScripts::AIScripts(BladeRunnerEngine *vm) : _vm(vm), _inScriptCounter(0) {
 	for (int i = 0; i != 100; ++i)
-		_AIScripts[i] = 0;
+		_AIScripts[i] = nullptr;
 
 	_AIScripts[0]  = new AIScript_McCoy(_vm);
 	_AIScripts[23] = new AIScript_Officer_Leroy(_vm);
+}
+
+AIScripts::~AIScripts() {
+	for (int i = 0; i != 100; ++i) {
+		delete _AIScripts[i];
+		_AIScripts[i] = nullptr;
+	}
 }
 
 void AIScripts::Initialize(int actor) {
