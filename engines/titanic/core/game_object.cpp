@@ -403,8 +403,11 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 
 void CGameObject::loadFrame(int frameNumber) {
 	_frameNumber = -1;
-	if (!_resource.empty())
+
+	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
+		_resource.clear();
+	}
 
 	if (_surface)
 		_surface->setMovieFrame(frameNumber);
@@ -612,9 +615,8 @@ void CGameObject::playMovie(uint flags) {
 void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
 	_frameNumber = -1;
 
-	if (!_surface) {
-		if (!_resource.empty())
-			loadResource(_resource);
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
 		_resource.clear();
 	}
 
@@ -630,9 +632,8 @@ void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
 void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint flags) {
 	_frameNumber = -1;
 
-	if (!_surface) {
-		if (!_resource.empty())
-			loadResource(_resource);
+	if (!_surface && !_resource.empty()) {
+		loadResource(_resource);
 		_resource.clear();
 	}
 
