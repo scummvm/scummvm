@@ -219,14 +219,15 @@ void OptionsDialog::open() {
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-		// Aspect ratio setting - ResidualVM specific condition
+		// Aspect ratio setting - ResidualVM specific changes
 		if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState()) {
-			_aspectCheckbox->setState(false);
+			_aspectCheckbox->setState(true);
 			_aspectCheckbox->setEnabled(false);
 		} else {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
+		// Aspect ratio setting - End of ResidualVM specific changes
 #endif // SMALL_SCREEN_DEVICE
 
 		// Renderer selection setting - ResidualVM specific lines
