@@ -69,6 +69,7 @@ static const char HELP_STRING[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
+	"                           Use --path=PATH before --auto-detect to specify a directory.\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
