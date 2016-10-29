@@ -390,7 +390,7 @@ SimpleMovie::SimpleMovie(Myst3Engine *vm, uint16 id) :
 	_startEngineTick = _vm->_state->getTickCount();
 }
 
-bool SimpleMovie::update() {
+void SimpleMovie::update() {
 	if (_bink.getCurFrame() < (_startFrame - 1)) {
 		_bink.seekToFrame(_startFrame - 1);
 	}
@@ -428,8 +428,10 @@ bool SimpleMovie::update() {
 			drawNextFrameToTexture();
 		}
 	}
+}
 
-	return !_bink.endOfVideo() && _bink.getCurFrame() < _endFrame;
+bool SimpleMovie::endOfVideo() {
+	return _bink.endOfVideo() || _bink.getCurFrame() >= _endFrame;
 }
 
 void SimpleMovie::playStartupSound() {

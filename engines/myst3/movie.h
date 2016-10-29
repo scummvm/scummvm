@@ -154,7 +154,8 @@ public:
 	SimpleMovie(Myst3Engine *vm, uint16 id);
 	virtual ~SimpleMovie();
 
-	bool update();
+	void update();
+	bool endOfVideo();
 
 	void playStartupSound();
 

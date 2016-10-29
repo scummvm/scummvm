@@ -1160,7 +1160,9 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 
 	bool skip = false;
 
-	while (!skip && !shouldQuit() && movie.update()) {
+	while (!skip && !shouldQuit() && !movie.endOfVideo()) {
+		movie.update();
+
 		// Process events
 		Common::Event event;
 		while (getEventManager()->pollEvent(event))
