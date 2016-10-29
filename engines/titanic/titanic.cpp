@@ -60,6 +60,12 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_scriptHandler = nullptr;
 	_script = nullptr;
 	CMusicRoom::_musicHandler = nullptr;
+
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 }
 
 TitanicEngine::~TitanicEngine() {
@@ -78,12 +84,6 @@ void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 void TitanicEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	_debugger = new Debugger(this);
 	_filesManager = new CFilesManager(this);
 

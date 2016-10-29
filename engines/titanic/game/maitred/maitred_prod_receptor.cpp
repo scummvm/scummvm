@@ -81,7 +81,7 @@ bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
 		prodMsg._value = 125;
 
 	CMaitreD *maitreD = dynamic_cast<CMaitreD *>(findRoomObject("MaitreD"));
-	if (maitreD && maitreD->_field100 <= 0)
+	if (maitreD && maitreD->_speechCounter == 0)
 		prodMsg.execute(this);
 
 	return true;
@@ -90,7 +90,7 @@ bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
 bool CMaitreDProdReceptor::ProdMaitreDMsg(CProdMaitreDMsg *msg) {
 	if (_fieldC4) {
 		CMaitreD *maitreD = static_cast<CMaitreD *>(findRoomObject("MaitreD"));
-		if (maitreD->_field100 <= 0) {
+		if (maitreD->_speechCounter == 0) {
 			CViewItem *view = findView();
 			startTalking(maitreD, msg->_value, view);
 

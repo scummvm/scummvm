@@ -24,6 +24,7 @@
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -41,7 +42,7 @@ END_MESSAGE_MAP()
 
 CTrueTalkNPC::CTrueTalkNPC() : _assetName("z451.dlg"),
 	_assetNumber(0x11170), _fieldE4(0), _npcFlags(0), _speechDuration(0), _startTicks(0),
-	_fieldF4(0), _fieldF8(0), _speechTimerId(0), _field100(0), _field104(0) {
+	_fieldF4(0), _fieldF8(0), _speechTimerId(0), _speechCounter(0), _field104(0) {
 }
 
 void CTrueTalkNPC::save(SimpleFile *file, int indent) {
@@ -55,7 +56,7 @@ void CTrueTalkNPC::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldF4, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeNumberLine(_speechTimerId, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_speechCounter, indent);
 	file->writeNumberLine(_field104, indent);
 
 	CCharacter::save(file, indent);
@@ -72,7 +73,7 @@ void CTrueTalkNPC::load(SimpleFile *file) {
 	_fieldF4 = file->readNumber();
 	_fieldF8 = file->readNumber();
 	_speechTimerId = file->readNumber();
-	_field100 = file->readNumber();
+	_speechCounter = file->readNumber();
 	_field104 = file->readNumber();
 
 	CCharacter::load(file);
@@ -95,8 +96,10 @@ bool CTrueTalkNPC::DismissBotMsg(CDismissBotMsg *msg) {
 }
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
+	debugC(ERROR_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechStartedMsg flags=%x", getName().c_str(), _npcFlags);
+
 	_npcFlags |= NPCFLAG_SPEAKING;
-	++_field100;
+	++_speechCounter;
 
 	if (!(_npcFlags & NPCFLAG_8)) {
 		// Stop any previous animation
@@ -125,8 +128,9 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 }
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
+	debugC(ERROR_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechEndedMsg flags=%x dialogId=%d", getName().c_str(), _npcFlags, msg->_dialogueId);
 	_npcFlags &= ~NPCFLAG_SPEAKING;
-	--_field100;
+	--_speechCounter;
 	_speechDuration = 0;
 
 	if (!(_npcFlags & NPCFLAG_8)) {
@@ -171,7 +175,7 @@ bool CTrueTalkNPC::NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg) {
 
 bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 	if (_npcFlags & NPCFLAG_4) {
-		if (_field100 > 0)
+		if (_speechCounter > 0)
 			return false;
 
 		CNPCPlayIdleAnimationMsg idleMsg;

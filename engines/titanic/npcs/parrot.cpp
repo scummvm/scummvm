@@ -202,7 +202,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 }
 
 bool CParrot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!(_npcFlags & NPCFLAG_2000000) && _field100 <= 0) {
+	if (!(_npcFlags & NPCFLAG_2000000) && _speechCounter == 0) {
 		CTrueTalkTriggerActionMsg triggerMsg(280250, 280250, 1);
 		triggerMsg.execute(this);
 	}
@@ -354,7 +354,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		loadFrame(0);
 		endTalking(this, true, findView());
 
-		if (_field100 > 0) {
+		if (_speechCounter > 0) {
 			playRandomClip(NAMES, MOVIE_NOTIFY_OBJECT);
 		} else {
 			startTalking(this, 280258, findView());
@@ -425,7 +425,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 	}
 
 	// Don't have the parrot speak too often
-	if ((getTicksCount() - _field120) < 20000 || _field100)
+	if ((getTicksCount() - _field120) < 20000 || _speechCounter)
 		return true;
 
 	playSound("z#475.wav", 50);

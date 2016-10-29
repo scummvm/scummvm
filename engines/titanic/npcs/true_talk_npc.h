@@ -66,7 +66,7 @@ protected:
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
 public:
-	int _field100;
+	int _speechCounter;
 public:
 	CLASSDEF;
 	CTrueTalkNPC();

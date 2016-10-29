@@ -22,6 +22,7 @@
 
 #include "titanic/npcs/doorbot.h"
 #include "titanic/core/room_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -81,6 +82,8 @@ void CDoorbot::load(SimpleFile *file) {
 }
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
+	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d", _npcFlags, _field108);
+
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		switch (_field108) {
 		case 3:
@@ -539,13 +542,15 @@ bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CDoorbot::ActMsg(CActMsg *msg) {
+	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot ActMsg action=%s v108=%d v110=%d v114=%d",
+		msg->_action.c_str(), _field108, _field110, _field114);
+
 	if (msg->_action == "DoorbotPlayerPressedTopButton") {
 		disableMouse();
 		startTalking(this, 221471);
 	} else if (msg->_action == "DoorbotPlayerPressedMiddleButton") {
 		startTalking(this, 221470);
-	}
-	else if (msg->_action == "DoorbotPlayerPressedBottomButton") {
+	} else if (msg->_action == "DoorbotPlayerPressedBottomButton") {
 		startTalking(this, 221469);
 	} else if (msg->_action == "DoorbotReachedEmbLobby") {
 		startTalking(this, 221472);
