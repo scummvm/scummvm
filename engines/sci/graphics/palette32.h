@@ -23,7 +23,6 @@
 #ifndef SCI_GRAPHICS_PALETTE32_H
 #define SCI_GRAPHICS_PALETTE32_H
 
-#include "sci/graphics/palette.h"
 namespace Sci {
 
 #pragma mark HunkPalette
