@@ -340,11 +340,17 @@ bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 	if (msg->_value2 != 2) {
 		if (_npcFlags & NPCFLAG_200000) {
-			if (_introMovieNum == 8 || _field110) {
+			switch (_introMovieNum) {
+			case 8:
+			case 10:
 				msg->_names = NAMES2;
-			} else if (_introMovieNum == 9) {
+				break;
+			case 9:
 				msg->_names = NAMES3;
 				_introMovieNum = 10;
+				break;
+			default:
+				break;
 			}
 		} else if (_npcFlags & (NPCFLAG_100000 | NPCFLAG_400000)) {
 			msg->_names = NAMES1;
