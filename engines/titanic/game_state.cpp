@@ -139,7 +139,7 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 	} else {
 		oldView->preEnterView(newView);
 		_gameManager->_gameView->setView(newView);
-		CRoomItem *oldRoom = newView->findNode()->findRoom();
+		CRoomItem *oldRoom = oldView->findNode()->findRoom();
 		CRoomItem *newRoom = newView->findNode()->findRoom();
 
 		// If a transition clip is defined, play it
