@@ -164,8 +164,8 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 	_currentFrame += _isReversed ? -1 : 1;
 
 	int newFrame = _currentFrame;
-	if ((info->_isReversed && newFrame <= info->_endFrame) ||
-		(!info->_isReversed && newFrame >= info->_endFrame)) {
+	if ((info->_isReversed && newFrame < info->_endFrame) ||
+		(!info->_isReversed && newFrame > info->_endFrame)) {
 		if (info->_isRepeat) {
 			newFrame = info->_startFrame;
 		} else {
@@ -180,6 +180,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
 				newFrame = info->_startFrame;
+				setReversed(info->_isReversed);
 			}
 		}
 	}
