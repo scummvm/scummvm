@@ -111,8 +111,8 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 		_speechDuration = msg->_speechDuration;
 		_startTicks = getTicksCount();
 
-		if (!hasActiveMovie() || (_npcFlags & NPCFLAG_2)) {
-			_npcFlags &= ~NPCFLAG_2;
+		if (!hasActiveMovie() || (_npcFlags & NPCFLAG_IDLING)) {
+			_npcFlags &= ~NPCFLAG_IDLING;
 			stopMovie();
 
 			CNPCPlayTalkingAnimationMsg msg1(_speechDuration, 0, nullptr);
@@ -145,8 +145,8 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *m
 }
 
 bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_npcFlags & NPCFLAG_2) {
-		_npcFlags &= ~NPCFLAG_2;
+	if (_npcFlags & NPCFLAG_IDLING) {
+		_npcFlags &= ~NPCFLAG_IDLING;
 		CNPCQueueIdleAnimMsg idleMsg;
 		idleMsg.execute(this);
 		return true;
@@ -175,7 +175,7 @@ bool CTrueTalkNPC::NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg) {
 }
 
 bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
-	if (_npcFlags & NPCFLAG_4) {
+	if (_npcFlags & NPCFLAG_START_IDLING) {
 		if (_speechCounter > 0)
 			return false;
 
@@ -186,7 +186,7 @@ bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 				animMsg.execute(this);
 			}
 
-			_npcFlags &= ~NPCFLAG_2;
+			_npcFlags &= ~NPCFLAG_IDLING;
 		}
 	}
 

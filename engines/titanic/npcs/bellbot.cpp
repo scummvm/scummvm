@@ -99,7 +99,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 bool CBellBot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_npcFlags & NPCFLAG_10000) {
 		performAction(1);
-		_npcFlags &= ~NPCFLAG_4;
+		_npcFlags &= ~NPCFLAG_START_IDLING;
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
 	}
@@ -113,7 +113,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 	} else if (clipExistsByEnd("Walk On", msg->_endFrame)) {
 		setPosition(Point(80, 10));
 		loadFrame(543);
-		_npcFlags |= NPCFLAG_4;
+		_npcFlags |= NPCFLAG_START_IDLING;
 		if (_npcFlags & NPCFLAG_40000) {
 			startTalking(this, 157);
 			_npcFlags &= ~NPCFLAG_40000;
@@ -142,8 +142,8 @@ bool CBellBot::Use(CUse *msg) {
 bool CBellBot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_10000) {
 		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-		if (_npcFlags & NPCFLAG_4) {
-			_npcFlags &= ~NPCFLAG_4;
+		if (_npcFlags & NPCFLAG_START_IDLING) {
+			_npcFlags &= ~NPCFLAG_START_IDLING;
 			performAction(true);
 		} else {
 			performAction(false);
@@ -160,7 +160,7 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	switch (msg->_action) {
 	case 1:
 	case 28: {
-		_npcFlags &= ~NPCFLAG_2;
+		_npcFlags &= ~NPCFLAG_IDLING;
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
 		break;
@@ -203,7 +203,7 @@ bool CBellBot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 bool CBellBot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 	petMoveToHiddenRoom();
-	_npcFlags &= ~NPCFLAG_4;
+	_npcFlags &= ~NPCFLAG_START_IDLING;
 	return true;
 }
 

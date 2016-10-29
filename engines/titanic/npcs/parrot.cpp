@@ -362,7 +362,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 
 		petSetArea(PET_CONVERSATION);
 		_field12C = 0;
-		_npcFlags |= NPCFLAG_4;
+		_npcFlags |= NPCFLAG_START_IDLING;
 	}
 
 	return true;
@@ -404,7 +404,7 @@ bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 bool CParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	performAction(true);
-	_npcFlags &= ~NPCFLAG_4;
+	_npcFlags &= ~NPCFLAG_START_IDLING;
 
 	return true;
 }

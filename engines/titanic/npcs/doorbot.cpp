@@ -82,7 +82,8 @@ void CDoorbot::load(SimpleFile *file) {
 }
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d", _npcFlags, _introMovieNum);
+	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d, start=%d, end=%d",
+		_npcFlags, _introMovieNum, msg->_startFrame, msg->_endFrame);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		switch (_introMovieNum) {
@@ -121,7 +122,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		CTrueTalkNPC::MovieEndMsg(msg);
 	} else if (_npcFlags & NPCFLAG_100000) {
 		if (clipExistsByEnd("Cloak Off", msg->_endFrame)) {
-			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_4;
+			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_START_IDLING;
 			endTalking(this, false);
 			startTalking(this, 221474);
 			_npcFlags |= NPCFLAG_DOORBOT_INTRO;
@@ -139,7 +140,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			setPosition(Point((600 - _bounds.width()) / 2 + 18, 42));
 			loadFrame(0);
 			endTalking(this, true);
-			_npcFlags |= NPCFLAG_4;
+			_npcFlags |= NPCFLAG_START_IDLING;
 			petSetArea(PET_CONVERSATION);
 		} else if (clipExistsByEnd("Whizz Off Left", msg->_endFrame)
 				|| clipExistsByEnd("Whizz Off Right", msg->_endFrame)) {
@@ -198,12 +199,12 @@ bool CDoorbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		break;
 
 	case 4:
-		_npcFlags = (_npcFlags & ~NPCFLAG_2) | NPCFLAG_4000000;
+		_npcFlags = (_npcFlags & ~NPCFLAG_IDLING) | NPCFLAG_4000000;
 		playClip("Whizz Off Left", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		break;
 
 	case 28: {
-		_npcFlags &= ~(NPCFLAG_2 | NPCFLAG_4);
+		_npcFlags &= ~(NPCFLAG_IDLING | NPCFLAG_START_IDLING);
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
 		break;
@@ -245,7 +246,7 @@ bool CDoorbot::DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg) {
 bool CDoorbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (!(_npcFlags & NPCFLAG_DOORBOT_INTRO) && (_npcFlags & NPCFLAG_400000)) {
 		performAction(true);
-		_npcFlags &= ~NPCFLAG_4;
+		_npcFlags &= ~NPCFLAG_START_IDLING;
 	}
 
 	return true;
@@ -367,7 +368,7 @@ bool CDoorbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 
 bool CDoorbot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 	petMoveToHiddenRoom();
-	_npcFlags &= ~(NPCFLAG_4 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_DOORBOT_INTRO);
+	_npcFlags &= ~(NPCFLAG_START_IDLING | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_DOORBOT_INTRO);
 	if (msg->_value)
 		performAction(true);
 
@@ -380,8 +381,8 @@ bool CDoorbot::DismissBotMsg(CDismissBotMsg *msg) {
 			MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		movieEvent();
 
-		if (_npcFlags & NPCFLAG_4) {
-			_npcFlags &= ~NPCFLAG_4;
+		if (_npcFlags & NPCFLAG_START_IDLING) {
+			_npcFlags &= ~NPCFLAG_START_IDLING;
 			performAction(true);
 		} else {
 			performAction(false);

@@ -145,7 +145,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
 		endTalking(this, 1, findView());
 
-		_npcFlags |= NPCFLAG_4;
+		_npcFlags |= NPCFLAG_START_IDLING;
 		flag = true;
 	}
 
@@ -300,7 +300,7 @@ bool CDeskbot::TurnOff(CTurnOff *msg) {
 		stopMovie();
 		performAction(1, findView());
 
-		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_2 | NPCFLAG_4)) | NPCFLAG_40000;
+		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_IDLING | NPCFLAG_START_IDLING)) | NPCFLAG_40000;
 		playClip("Closing", 0x14);
 	}
 
