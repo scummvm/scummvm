@@ -124,7 +124,7 @@ void Renderer::computeScreenViewport() {
 
 	if (ConfMan.getBool("widescreen_mod")) {
 		_screenViewport = Common::Rect(screenWidth, screenHeight);
-	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+	} else {
 		// Aspect ratio correction
 		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
 		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
@@ -133,9 +133,6 @@ void Renderer::computeScreenViewport() {
 		// Pillarboxing
 		_screenViewport.translate((screenWidth - viewportWidth) / 2,
 			(screenHeight - viewportHeight) / 2);
-	} else {
-		// Aspect ratio correction disabled, just stretch
-		_screenViewport = Common::Rect(screenWidth, screenHeight);
 	}
 }
 
