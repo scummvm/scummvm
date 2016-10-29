@@ -371,7 +371,7 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_movieFrameSurface[0]->h != r.height();
 
 	startAtFrame(startFrame);
-	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
+	while (!_decoder->endOfVideo() && _currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
 			_currentFrame = _decoder->getCurFrame();
