@@ -53,6 +53,7 @@
 #ifdef ENABLE_SCI32
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/palette32.h"
 #include "video/coktel_decoder.h"
 #endif
 
@@ -228,6 +229,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	registerCmd("view_reference",		WRAP_METHOD(Console, cmdViewReference));
 	registerCmd("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
+	registerCmd("dump_reference",		WRAP_METHOD(Console, cmdDumpReference));
+	registerCmd("dr",					WRAP_METHOD(Console, cmdDumpReference));			// alias
 	registerCmd("view_object",		WRAP_METHOD(Console, cmdViewObject));
 	registerCmd("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
 	registerCmd("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
@@ -446,6 +449,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" value_type - Determines the type of a value\n");
 	debugPrintf(" view_listnode - Examines the list node at the given address\n");
 	debugPrintf(" view_reference / vr - Examines an arbitrary reference\n");
+	debugPrintf(" dump_reference / dr - Dumps an arbitrary reference to disk\n");
 	debugPrintf(" view_object / vo - Examines the object at the given address\n");
 	debugPrintf(" active_object - Shows information on the currently active object or class\n");
 	debugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
@@ -2840,6 +2844,125 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
+	return true;
+}
+
+bool Console::cmdDumpReference(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps an arbitrary reference to disk.\n");
+		debugPrintf("Usage: %s <start address> [<end address>]\n", argv[0]);
+		debugPrintf("Where <start address> is the starting address to dump\n");
+		debugPrintf("<end address>, if provided, is the address where the dump ends\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t reg = NULL_REG;
+	reg_t reg_end = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end, false)) {
+			debugPrintf("Invalid address passed.\n");
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
+		debugPrintf("Register is null.\n");
+		return true;
+	}
+
+	if (g_sci->getKernel()->findRegType(reg) != SIG_TYPE_REFERENCE) {
+		debugPrintf("%04x:%04x is not a reference\n", PRINT_REG(reg));
+		return true;
+	}
+
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
+		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	Common::DumpFile out;
+	Common::String outFileName;
+	uint32 bytesWritten;
+
+	switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_BITMAP: {
+		outFileName = Common::String::format("%04x_%04x.tga", PRINT_REG(reg));
+		out.open(outFileName);
+		SciBitmap &bitmap = *_engine->_gamestate->_segMan->lookupBitmap(reg);
+		const Color *color = g_sci->_gfxPalette32->getCurrentPalette().colors;
+		const uint16 numColors = ARRAYSIZE(g_sci->_gfxPalette32->getCurrentPalette().colors);
+
+		out.writeByte(0); // image id length
+		out.writeByte(1); // color map type (present)
+		out.writeByte(1); // image type (uncompressed color-mapped)
+		out.writeSint16LE(0);         // index of first color map entry
+		out.writeSint16LE(numColors); // number of color map entries
+		out.writeByte(24);            // number of bits per color entry (RGB24)
+		out.writeSint16LE(0);                      // bottom-left x-origin
+		out.writeSint16LE(bitmap.getHeight() - 1); // bottom-left y-origin
+		out.writeSint16LE(bitmap.getWidth());  // width
+		out.writeSint16LE(bitmap.getHeight()); // height
+		out.writeByte(8); // bits per pixel
+		out.writeByte(1 << 5); // origin of pixel data (top-left)
+
+		bytesWritten = 18;
+
+		for (int i = 0; i < numColors; ++i) {
+			out.writeByte(color->b);
+			out.writeByte(color->g);
+			out.writeByte(color->r);
+			++color;
+		}
+
+		bytesWritten += numColors * 3;
+		bytesWritten += out.write(bitmap.getPixels(), bitmap.getWidth() * bitmap.getHeight());
+		break;
+	}
+#endif
+
+	default: {
+		const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+		uint32 size = block.maxSize;
+
+		if (size == 0) {
+			debugPrintf("Size of reference is zero.\n");
+			return true;
+		}
+
+		if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+			debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+			reg_end = NULL_REG;
+		}
+
+		if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset())) {
+			size = reg_end.getOffset() - reg.getOffset();
+		}
+
+		if (reg_end.getSegment() != 0) {
+			debugPrintf("Block size less than or equal to %d\n", size);
+		}
+
+		outFileName = Common::String::format("%04x_%04x.dmp", PRINT_REG(reg));
+		out.open(outFileName);
+		bytesWritten = out.write(block.raw, size);
+		break;
+	}
+	}
+
+	out.finalize();
+	out.close();
+
+	debugPrintf("Wrote %u bytes to %s\n", bytesWritten, outFileName.c_str());
 	return true;
 }
 
