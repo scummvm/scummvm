@@ -868,7 +868,8 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 	if (project) {
 		if (room->getName() != roomName) {
 			// Scan for the correct room
-			for (room = project->findFirstRoom(); room && room->getName() != roomName;
+			for (room = project->findFirstRoom();
+					room && room->getName() != roomName;
 					room = project->findNextRoom(room)) ;
 		}
 	}

@@ -372,15 +372,20 @@ CTreeItem *CProjectItem::findChildInstance(ClassDef *classDef) const {
 }
 
 CRoomItem *CProjectItem::findNextRoom(CRoomItem *priorRoom) const {
-	return dynamic_cast<CRoomItem *>(findSiblingInstanceOf(CRoomItem::_type, priorRoom));
+	return dynamic_cast<CRoomItem *>(findSiblingChildInstanceOf(CRoomItem::_type, priorRoom));
 }
 
-CTreeItem *CProjectItem::findSiblingInstanceOf(ClassDef *classDef, CTreeItem *startItem) const {
-	CTreeItem *treeItem = startItem->getParent()->getNextSibling();
-	if (treeItem == nullptr)
-		return nullptr;
+CTreeItem *CProjectItem::findSiblingChildInstanceOf(ClassDef *classDef, CTreeItem *startItem) const {
+	for (CTreeItem *treeItem = startItem->getParent()->getNextSibling();
+			treeItem; treeItem = treeItem->getNextSibling()) {
+		for (CTreeItem *childItem = treeItem->getFirstChild();
+				childItem; childItem = childItem->getNextSibling()) {
+			if (childItem->isInstanceOf(classDef))
+				return childItem;
+		}
+	}
 
-	return findChildInstance(classDef);
+	return nullptr;
 }
 
 CDontSaveFileItem *CProjectItem::getDontSaveFileItem() const {
