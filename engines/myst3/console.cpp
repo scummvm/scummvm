@@ -65,12 +65,14 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	}
 
 	if (argc >= 3) {
-		roomId = _vm->_db->getRoomId(argv[2]);
-
-		if (roomId == 0) {
+		RoomKey roomKey = _vm->_db->getRoomKey(argv[2]);
+		if (roomKey.roomID == 0 || roomKey.ageID == 0) {
 			debugPrintf("Unknown room name %s\n", argv[2]);
 			return true;
 		}
+
+		roomId = roomKey.roomID;
+		ageID = roomKey.ageID;
 	}
 
 	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId, ageID);
@@ -176,16 +178,18 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ListNodes(int argc, const char **argv) {
-	uint32 ageID = _vm->_state->getLocationAge();
 	uint32 roomID = _vm->_state->getLocationRoom();
+	uint32 ageID = _vm->_state->getLocationAge();
 
 	if (argc == 2) {
-		roomID = _vm->_db->getRoomId(argv[1]);
-
-		if (roomID == 0) {
+		RoomKey roomKey = _vm->_db->getRoomKey(argv[1]);
+		if (roomKey.roomID == 0 || roomKey.ageID == 0) {
 			debugPrintf("Unknown room name %s\n", argv[1]);
 			return true;
 		}
+
+		roomID = roomKey.roomID;
+		ageID = roomKey.ageID;
 	}
 
 	debugPrintf("Nodes:\n");
@@ -200,22 +204,26 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 
 bool Console::Cmd_Run(int argc, const char **argv) {
 	uint16 nodeId = _vm->_state->getLocationNode();
-	uint32 roomId = 0;
+	uint32 roomId = _vm->_state->getLocationRoom();
+	uint32 ageId = _vm->_state->getLocationAge();
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
 	}
 
 	if (argc >= 3) {
-		roomId = _vm->_db->getRoomId(argv[2]);
+		RoomKey roomKey = _vm->_db->getRoomKey(argv[2]);
 
-		if (roomId == 0) {
+		if (roomKey.roomID == 0 || roomKey.ageID == 0) {
 			debugPrintf("Unknown room name %s\n", argv[2]);
 			return true;
 		}
+
+		roomId = roomKey.roomID;
+		ageId = roomKey.ageID;
 	}
 
-	_vm->runScriptsFromNode(nodeId, roomId);
+	_vm->runScriptsFromNode(nodeId, roomId, ageId);
 
 	return false;
 }
@@ -249,15 +257,16 @@ bool Console::Cmd_Go(int argc, const char **argv) {
 		return true;
 	}
 
-	uint32 roomID = _vm->_db->getRoomId(argv[1]);
-	uint16 nodeId = atoi(argv[2]);
-
-	if (roomID == 0) {
+	RoomKey roomKey = _vm->_db->getRoomKey(argv[1]);
+	if (roomKey.roomID == 0 || roomKey.ageID == 0) {
 		debugPrintf("Unknown room name %s\n", argv[1]);
 		return true;
 	}
 
-	_vm->_state->setLocationNextRoom(roomID);
+	uint16 nodeId = atoi(argv[2]);
+
+	_vm->_state->setLocationNextAge(roomKey.ageID);
+	_vm->_state->setLocationNextRoom(roomKey.roomID);
 	_vm->_state->setLocationNextNode(nodeId);
 
 	_vm->goToNode(0, kTransitionFade);

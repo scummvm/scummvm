@@ -661,15 +661,15 @@ Common::String Database::getRoomName(uint32 roomID, uint32 ageID) const {
 	return data->name;
 }
 
-uint32 Database::getRoomId(const char *name) {
+RoomKey Database::getRoomKey(const char *name) {
 	for (uint i = 0; i < ARRAYSIZE(_ages); i++)
 		for (uint j = 0; j < _ages[i].roomCount; j++) {
 			if (scumm_stricmp(_ages[i].rooms[j].name, name) == 0) {
-				return _ages[i].rooms[j].id;
+				return RoomKey(_ages[i].rooms[j].id, _ages[i].id);
 			}
 		}
 
-	return 0;
+	return RoomKey(0, 0);
 }
 
 uint32 Database::getAgeLabelId(uint32 ageID) {

@@ -69,6 +69,17 @@ struct RoomData {
 	const char *name;
 };
 
+struct RoomKey {
+	uint16 ageID;
+	uint16 roomID;
+
+	RoomKey(uint16 room, uint16 age) : roomID(room), ageID(age) {};
+
+	bool operator==(const RoomKey &k) const {
+		return ageID == k.ageID && roomID == k.roomID;
+	}
+};
+
 struct AgeData {
 	uint32 id;
 	uint32 disk;
@@ -147,7 +158,7 @@ public:
 	/**
 	 * Returns the id of a room from its name
 	 */
-	uint32 getRoomId(const char *name);
+	RoomKey getRoomKey(const char *name);
 
 	/**
 	 * Returns the list of the nodes of a room
@@ -170,18 +181,8 @@ public:
 	const AmbientCue &getAmbientCue(uint16 id);
 
 	int16 getGameLanguageCode() const;
+
 private:
-	struct RoomKey {
-		uint16 ageID;
-		uint16 roomID;
-
-		RoomKey(uint16 room, uint16 age) : roomID(room), ageID(age) {};
-
-		bool operator==(const RoomKey &k) const {
-			return ageID == k.ageID && roomID == k.roomID;
-		}
-	};
-
 	struct RoomKeyHash {
 		uint operator()(const RoomKey &v) const {
 			return v.ageID + (v.roomID << 16);
