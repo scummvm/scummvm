@@ -192,7 +192,7 @@ void Score::loadArchive() {
 
 	if (_vm->getVersion() < 4) {
 		assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
-		loadCastData(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+		loadCastDataD2(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
@@ -209,10 +209,14 @@ void Score::loadArchive() {
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
 	if (vwci.size() > 0) {
-		Common::Array<uint16>::iterator iterator;
-
-		for (iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
+		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator), *iterator);
+	}
+
+	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C','A','S','t'));
+	if (cast.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
+			loadCastData(*_movieArchive->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
 	}
 
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
@@ -343,7 +347,7 @@ void Score::readVersion(uint32 rid) {
 	debug("Version: %d.%d", _versionMajor, _versionMinor);
 }
 
-void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
+void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "Score::loadCastData(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
@@ -386,6 +390,9 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
 				_frames[i]->_sprites[j]->_cast = _casts.find(castId)->_value;
 		}
 	}
+}
+
+void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
 }
 
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {

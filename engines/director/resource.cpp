@@ -210,7 +210,15 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Score *castScore = new Score(this, shardcst);
 
 	castScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
-	castScore->loadCastData(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+
+	if (getVersion() < 4)
+		castScore->loadCastDataD2(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+
+	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
+	if (cast.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
+			castScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
+	}
 
 	_sharedCasts = &castScore->_casts;
 

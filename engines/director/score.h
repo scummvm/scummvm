@@ -186,7 +186,8 @@ public:
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
+	void loadCastDataD2(Common::SeekableSubReadStreamEndian &stream);
+	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	int getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
