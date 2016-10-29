@@ -49,7 +49,7 @@ int CDoorbot::_v1;
 int CDoorbot::_v2;
 
 CDoorbot::CDoorbot() : CTrueTalkNPC() {
-	_field108 = 0;
+	_introMovieNum = 0;
 	_timerId = 0;
 	_field110 = 0;
 	_field114 = 0;
@@ -60,7 +60,7 @@ void CDoorbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
 
-	file->writeNumberLine(_field108, indent);
+	file->writeNumberLine(_introMovieNum, indent);
 	file->writeNumberLine(_timerId, indent);
 	file->writeNumberLine(_field110, indent);
 	file->writeNumberLine(_field114, indent);
@@ -73,7 +73,7 @@ void CDoorbot::load(SimpleFile *file) {
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
 
-	_field108 = file->readNumber();
+	_introMovieNum = file->readNumber();
 	_timerId = file->readNumber();
 	_field110 = file->readNumber();
 	_field114 = file->readNumber();
@@ -82,13 +82,13 @@ void CDoorbot::load(SimpleFile *file) {
 }
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d", _npcFlags, _field108);
+	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d", _npcFlags, _introMovieNum);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
-		switch (_field108) {
+		switch (_introMovieNum) {
 		case 3:
 			startTalking(this, 221482);
-			_field108 = 4;
+			_introMovieNum = 4;
 			break;
 
 		case 6:
@@ -102,7 +102,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 
 		case 7:
 			startTalking(this, 221467);
-			_field108 = 8;
+			_introMovieNum = 8;
 			break;
 
 		case 9:
@@ -125,7 +125,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			endTalking(this, false);
 			startTalking(this, 221474);
 			_npcFlags |= NPCFLAG_DOORBOT_INTRO;
-			_field108 = 0;
+			_introMovieNum = 0;
 		} else if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 			petShow();
 			setState1C(true);
@@ -230,7 +230,7 @@ bool CDoorbot::DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg) {
 	setPosition(Point(100, 42));
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
-		_field108 = 7;
+		_introMovieNum = 7;
 		_npcFlags |= NPCFLAG_200000;
 		loadFrame(797);
 	} else {
@@ -255,6 +255,8 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "NPCIdleAnim") {
 		return CTrueTalkNPC::TimerMsg(msg);
 	} else if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
+		_timerId = 0;
+
 		switch (msg->_actionVal) {
 		case 0:
 			startTalking(this, 221475);
@@ -273,7 +275,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 			playClip("DoubleTake End", 0);
 			playClip("DoubleTake Start", 0);
 			playClip("DoubleTake End", MOVIE_NOTIFY_OBJECT);
-			_field108 = 3;
+			_introMovieNum = 3;
 			break;
 
 		case 4:
@@ -337,11 +339,11 @@ bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 	if (msg->_value2 != 2) {
 		if (_npcFlags & NPCFLAG_200000) {
-			if (_field108 == 8 || _field110) {
+			if (_introMovieNum == 8 || _field110) {
 				msg->_names = NAMES2;
-			} else if (_field108 == 9) {
+			} else if (_introMovieNum == 9) {
 				msg->_names = NAMES3;
-				_field108 = 10;
+				_introMovieNum = 10;
 			}
 		} else if (_npcFlags & (NPCFLAG_100000 | NPCFLAG_400000)) {
 			msg->_names = NAMES1;
@@ -412,7 +414,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		switch (msg->_dialogueId) {
 		case 10552:
 			playClip("SE Try Buttons", MOVIE_NOTIFY_OBJECT);
-			_field108 = 9;
+			_introMovieNum = 9;
 			break;
 
 		case 10553:
@@ -421,7 +423,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 		case 10557:
 			playClip("SE Move To Right", MOVIE_NOTIFY_OBJECT);
-			_field108 = 11;
+			_introMovieNum = 11;
 			break;
 
 		case 10559:
@@ -438,13 +440,13 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 		case 10561:
 			enableMouse();
-			_field108 = 1;
+			_introMovieNum = 1;
 			stopAnimTimer(_timerId);
 			_timerId = addTimer(2, 10000, 0);
 			break;
 
 		case 10562:
-			if (_field108 == 1) {
+			if (_introMovieNum == 1) {
 				stopAnimTimer(_timerId);
 				_timerId = addTimer(2, getRandomNumber(5000), 0);
 			}
@@ -465,7 +467,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 			_timerId = 0;
 			if (_field110 == 2) {
 				playClip("Cloak On", MOVIE_NOTIFY_OBJECT);
-				_field108 = 6;
+				_introMovieNum = 6;
 			} else {
 				_timerId = addTimer(3, 2000, 0);
 			}
@@ -500,7 +502,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 		case 10571:
 			playClip("Cloak On", MOVIE_NOTIFY_OBJECT);
-			_field108 = 6;
+			_introMovieNum = 6;
 			break;
 
 		default:
@@ -515,9 +517,9 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 	if (!(_npcFlags & NPCFLAG_DOORBOT_INTRO))
 		return CTrueTalkNPC::TextInputMsg(msg);
 
-	if (_field108 == 1) {
+	if (_introMovieNum == 1) {
 		stopAnimTimer(_timerId);
-		_field108 = 2;
+		_introMovieNum = 2;
 		_timerId = 0;
 
 		if (msg->_input == "yes" || msg->_input == "yeah"
@@ -535,7 +537,7 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 }
 
 bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
-	if ((_npcFlags & NPCFLAG_DOORBOT_INTRO) && _field108 == 7)
+	if ((_npcFlags & NPCFLAG_DOORBOT_INTRO) && _introMovieNum == 7)
 		playClip("SE Move And Turn", MOVIE_NOTIFY_OBJECT);
 
 	return true;
@@ -543,7 +545,7 @@ bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CDoorbot::ActMsg(CActMsg *msg) {
 	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot ActMsg action=%s v108=%d v110=%d v114=%d",
-		msg->_action.c_str(), _field108, _field110, _field114);
+		msg->_action.c_str(), _introMovieNum, _field110, _field114);
 
 	if (msg->_action == "DoorbotPlayerPressedTopButton") {
 		disableMouse();
@@ -556,15 +558,15 @@ bool CDoorbot::ActMsg(CActMsg *msg) {
 		startTalking(this, 221472);
 	} else if (msg->_action == "PlayerPicksUpPhoto") {
 		_field110 = 1;
-		if (!_field114 && _field108 == 4) {
+		if (!_field114 && _introMovieNum == 4) {
 			stopAnimTimer(_timerId);
 			_timerId = 0;
-			_field108 = 5;
+			_introMovieNum = 5;
 			startTalking(this, 221484);
 		}
 	} else if (msg->_action == "PlayerPutsPhotoInPet") {
 		_field110 = 2;
-		if (!_field114 && _field108 == 5) {
+		if (!_field114 && _introMovieNum == 5) {
 			stopAnimTimer(_timerId);
 			_timerId = 0;
 			startTalking(this, 221486);

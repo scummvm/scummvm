@@ -25,6 +25,7 @@
 #include "titanic/npcs/character.h"
 #include "titanic/npcs/succubus.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -98,6 +99,7 @@ void CCarry::load(SimpleFile *file) {
 
 bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	CString name = getName();
+	debugC(ERROR_BASIC, kDebugScripts, "MosueDragStartMsg - %s", name.c_str());
 
 	if (_fieldE0) {
 		if (checkStartDragging(msg)) {
@@ -121,6 +123,7 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	debugC(ERROR_BASIC, kDebugScripts, "MosueDragEndMsg");
 	showMouse();
 
 	if (msg->_dropTarget) {
