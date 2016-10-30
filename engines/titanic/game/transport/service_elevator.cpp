@@ -207,10 +207,10 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 
 	if (doorbot && _v3 == 0) {
 		_soundHandle1 = playSound("z#415.wav", 50);
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else if (doorbot && _v3 == 1) {
 		_soundHandle1 = playSound("z#417.wav", 50);
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else if (_fieldDC == _v3) {
 		switch (_v3) {
 		case 0:
@@ -226,7 +226,7 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			break;
 		}
 
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else {
 		switch (_v3) {
 		case 0:
@@ -242,7 +242,7 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			break;
 		}
 
-		addTimer(0, 1000, 500);
+		_timerId = addTimer(0, 1000, 500);
 	}
 
 	return true;

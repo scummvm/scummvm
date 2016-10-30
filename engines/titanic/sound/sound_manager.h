@@ -123,12 +123,12 @@ public:
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(int handle) const = 0;
+	virtual bool isActive(int handle) = 0;
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const CWaveFile *waveFile) const { return false; }
+	virtual bool isActive(const CWaveFile *waveFile) { return false; }
 
 	/**
 	 * Handles regularly updating the mixer
@@ -395,12 +395,12 @@ public:
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(int handle) const;
+	virtual bool isActive(int handle);
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const CWaveFile *waveFile) const;
+	virtual bool isActive(const CWaveFile *waveFile);
 
 	/**
 	 * Handles regularly updating the mixer

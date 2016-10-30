@@ -311,7 +311,9 @@ void QSoundManager::setPolarPosition(int handle, double range, double azimuth, d
 	}
 }
 
-bool QSoundManager::isActive(int handle) const {
+bool QSoundManager::isActive(int handle) {
+	resetChannel(10);
+
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		if (_slots[idx]._handle == handle)
 			return true;
@@ -320,7 +322,7 @@ bool QSoundManager::isActive(int handle) const {
 	return false;
 }
 
-bool QSoundManager::isActive(const CWaveFile *waveFile) const {
+bool QSoundManager::isActive(const CWaveFile *waveFile) {
 	return _sounds.contains(waveFile);
 }
 

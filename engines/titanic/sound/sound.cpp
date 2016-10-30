@@ -57,7 +57,7 @@ void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
 	_soundManager.setListenerPosition(xp, yp, zp, cosVal, sinVal, 0, isNewRoom);
 }
 
-bool CSound::isActive(int handle) const {
+bool CSound::isActive(int handle) {
 	if (handle != 0 && handle != -1)
 		return _soundManager.isActive(handle);
 
