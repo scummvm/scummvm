@@ -81,6 +81,10 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
+	
+	virtual void build();
+	virtual void clean();
+	void rebuild();
 
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
@@ -206,7 +210,6 @@ public:
 	GlobalOptionsDialog(LauncherDialog *launcher);
 	~GlobalOptionsDialog();
 
-	void open();
 	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
@@ -215,6 +218,9 @@ public:
 	virtual void reflowLayout();
 
 protected:
+	virtual void build();
+	virtual void clean();
+
 	Common::String _newTheme;
 	LauncherDialog *_launcher;
 #ifdef GUI_ENABLE_KEYSDIALOG

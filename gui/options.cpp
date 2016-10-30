@@ -193,13 +193,8 @@ void OptionsDialog::init() {
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 }
-
-void OptionsDialog::open() {
-	Dialog::open();
-
-	// Reset result value
-	setResult(0);
-
+	
+void OptionsDialog::build() {
 	// Retrieve game GUI options
 	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
@@ -353,6 +348,34 @@ void OptionsDialog::open() {
 		_subSpeedSlider->setValue(speed);
 		_subSpeedLabel->setValue(speed);
 	}
+}
+	
+void OptionsDialog::clean() {
+	delete _subToggleGroup;
+	while (_firstWidget) {
+		Widget* w = _firstWidget;
+		removeWidget(w);
+		delete w;
+	}
+	init();
+}
+	
+void OptionsDialog::rebuild() {
+	int currentTab = _tabWidget->getActiveTab();
+	clean();
+	build();
+	reflowLayout();
+	_tabWidget->setActiveTab(currentTab);
+	setFocusWidget(_firstWidget);
+}
+
+void OptionsDialog::open() {
+	build();
+
+	Dialog::open();
+
+	// Reset result value
+	setResult(0);
 }
 
 void OptionsDialog::apply() {
@@ -1130,7 +1153,75 @@ void OptionsDialog::reflowLayout() {
 
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), _launcher(launcher) {
+#ifdef GUI_ENABLE_KEYSDIALOG
+	_keysDialog = 0;
+#endif
+#ifdef USE_FLUIDSYNTH
+	_fluidSynthSettingsDialog = 0;
+#endif
+	_savePath = 0;
+	_savePathClearButton = 0;
+	_themePath = 0;
+	_themePathClearButton = 0;
+	_extraPath = 0;
+	_extraPathClearButton = 0;
+#ifdef DYNAMIC_MODULES
+	_pluginsPath = 0;
+#endif
+	_curTheme = 0;
+	_rendererPopUpDesc = 0;
+	_rendererPopUp = 0;
+	_autosavePeriodPopUpDesc = 0;
+	_autosavePeriodPopUp = 0;
+	_guiLanguagePopUpDesc = 0;
+	_guiLanguagePopUp = 0;
+#ifdef USE_UPDATES
+	_updatesPopUpDesc = 0;
+	_updatesPopUp = 0;
+#endif
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+	_selectedStorageIndex = CloudMan.getStorageIndex();
+#else
+	_selectedStorageIndex = 0;
+#endif
+	_storagePopUpDesc = 0;
+	_storagePopUp = 0;
+	_storageUsernameDesc = 0;
+	_storageUsername = 0;
+	_storageUsedSpaceDesc = 0;
+	_storageUsedSpace = 0;
+	_storageLastSyncDesc = 0;
+	_storageLastSync = 0;
+	_storageConnectButton = 0;
+	_storageRefreshButton = 0;
+	_storageDownloadButton = 0;
+	_runServerButton = 0;
+	_serverInfoLabel = 0;
+	_rootPathButton = 0;
+	_rootPath = 0;
+	_rootPathClearButton = 0;
+	_serverPortDesc = 0;
+	_serverPort = 0;
+	_serverPortClearButton = 0;
+	_redrawCloudTab = false;
+#ifdef USE_SDL_NET
+	_serverWasRunning = false;
+#endif
+#endif
+}
 
+GlobalOptionsDialog::~GlobalOptionsDialog() {
+#ifdef GUI_ENABLE_KEYSDIALOG
+	delete _keysDialog;
+#endif
+
+#ifdef USE_FLUIDSYNTH
+	delete _fluidSynthSettingsDialog;
+#endif
+}
+	
+void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
 
@@ -1313,12 +1404,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
 
-#ifdef USE_LIBCURL
-	_selectedStorageIndex = CloudMan.getStorageIndex();
-#else
-	_selectedStorageIndex = 0;
-#endif
-
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
 #ifdef USE_LIBCURL
@@ -1365,10 +1450,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_serverPortClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.ServerPortClearButton", kServerPortClearCmd);
 
 	setupCloudTab();
-	_redrawCloudTab = false;
-#ifdef USE_SDL_NET
-	_serverWasRunning = false;
-#endif
 #endif // USE_CLOUD
 
 	// Activate the first tab
@@ -1387,20 +1468,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 #ifdef USE_FLUIDSYNTH
 	_fluidSynthSettingsDialog = new FluidSynthSettingsDialog();
 #endif
-}
 
-GlobalOptionsDialog::~GlobalOptionsDialog() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-#endif
-
-#ifdef USE_FLUIDSYNTH
-	delete _fluidSynthSettingsDialog;
-#endif
-}
-
-void GlobalOptionsDialog::open() {
-	OptionsDialog::open();
+	OptionsDialog::build();
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// Set _savePath to the current save path
@@ -1458,6 +1527,20 @@ void GlobalOptionsDialog::open() {
 	}
 #endif
 }
+
+void GlobalOptionsDialog::clean() {
+#ifdef GUI_ENABLE_KEYSDIALOG
+	delete _keysDialog;
+	_keysDialog = 0;
+#endif
+
+#ifdef USE_FLUIDSYNTH
+	delete _fluidSynthSettingsDialog;
+	_fluidSynthSettingsDialog = 0;
+#endif
+
+	OptionsDialog::clean();
+}
 	
 void GlobalOptionsDialog::apply() {
 	Common::String savePath(_savePath->getLabel());
@@ -1465,19 +1548,19 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
-	
+
 	Common::String themePath(_themePath->getLabel());
 	if (!themePath.empty() && (themePath != _c("None", "path")))
 		ConfMan.set("themepath", themePath, _domain);
 	else
 		ConfMan.removeKey("themepath", _domain);
-	
+
 	Common::String extraPath(_extraPath->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
-	
+
 #ifdef DYNAMIC_MODULES
 	Common::String pluginsPath(_pluginsPath->getLabel());
 	if (!pluginsPath.empty() && (pluginsPath != _c("None", "path")))
@@ -1485,7 +1568,7 @@ void GlobalOptionsDialog::apply() {
 	else
 		ConfMan.removeKey("pluginspath", _domain);
 #endif
-	
+
 #ifdef USE_CLOUD
 	Common::String rootPath(_rootPath->getLabel());
 	if (!rootPath.empty() && (rootPath != _c("None", "path")))
@@ -1493,9 +1576,9 @@ void GlobalOptionsDialog::apply() {
 	else
 		ConfMan.removeKey("rootpath", "cloud");
 #endif
-	
+
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-	
+
 	GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 	const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
 	if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
@@ -1507,9 +1590,9 @@ void GlobalOptionsDialog::apply() {
 #ifdef USE_TRANSLATION
 	Common::String oldLang = ConfMan.get("gui_language");
 	int selLang = _guiLanguagePopUp->getSelectedTag();
-	
+
 	ConfMan.set("gui_language", TransMan.getLangById(selLang));
-	
+
 	Common::String newLang = ConfMan.get("gui_language").c_str();
 	if (newLang != oldLang) {
 #if 0
@@ -1519,16 +1602,17 @@ void GlobalOptionsDialog::apply() {
 		// FIXME: We need to update the labels for all the existing widget after
 		// the language has been changed.
 		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
+		rebuild();
 #else
 		MessageDialog error(_("You have to restart ScummVM before your changes will take effect."));
 		error.runModal();
 #endif
 	}
 #endif // USE_TRANSLATION
-	
+
 #ifdef USE_UPDATES
 	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
-	
+
 	if (g_system->getUpdateManager()) {
 		if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
 			g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
@@ -1538,7 +1622,7 @@ void GlobalOptionsDialog::apply() {
 		}
 	}
 #endif
-	
+
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
@@ -1554,7 +1638,7 @@ void GlobalOptionsDialog::apply() {
 		}
 	}
 #endif // USE_LIBCURL
-	
+
 #ifdef USE_SDL_NET
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 	// save server's port
@@ -1595,7 +1679,7 @@ void GlobalOptionsDialog::apply() {
 		draw();
 		_newTheme.clear();
 	}
-	
+
 	OptionsDialog::apply();
 }
 
