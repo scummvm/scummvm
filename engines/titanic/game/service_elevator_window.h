@@ -34,7 +34,7 @@ class CServiceElevatorWindow : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
 	int _fieldE0;
-	int _fieldE4;
+	bool _notifyFlag;
 	int _fieldE8;
 	int _fieldEC;
 public:

@@ -168,7 +168,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 				// Elevator in motion after pressing button
 				_fieldF8 = true;
 				CServiceElevatorFloorChangeMsg changeMsg(_fieldDC, _v3);
-				changeMsg.execute(getRoom());
+				changeMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
 				_soundHandle2 = playSound("z#424.wav");
 
 				if (doorbot) {

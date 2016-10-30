@@ -35,13 +35,13 @@ END_MESSAGE_MAP()
 static const int FACTORS[4] = { 0, 20, 100, 0 };
 
 CServiceElevatorWindow::CServiceElevatorWindow() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0) {
+	_fieldE0(0), _notifyFlag(false), _fieldE8(0), _fieldEC(0) {
 }
 
 void CServiceElevatorWindow::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_notifyFlag, indent);
 	file->writeNumberLine(_fieldE8, indent);
 	file->writeNumberLine(_fieldEC, indent);
 
@@ -51,7 +51,7 @@ void CServiceElevatorWindow::save(SimpleFile *file, int indent) {
 void CServiceElevatorWindow::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_notifyFlag = file->readNumber();
 	_fieldE8 = file->readNumber();
 	_fieldEC = file->readNumber();
 
@@ -73,7 +73,7 @@ bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloor
 		int startFrame = clip->_startFrame + count * FACTORS[msg->_value1] / 100;
 		int endFrame = clip->_startFrame + count * FACTORS[msg->_value2] / 100;
 
-		if (_fieldE4) {
+		if (_notifyFlag) {
 			playMovie(startFrame, endFrame, MOVIE_NOTIFY_OBJECT);
 		} else {
 			playMovie(startFrame, endFrame, 0);
