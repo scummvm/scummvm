@@ -40,6 +40,10 @@ struct TTnpcScriptResponse {
 	uint _tag;
 	uint _values[4];
 
+	TTnpcScriptResponse() : _tag(0) {
+		_values[0] = _values[1] = _values[2] = _values[3] = 0;
+	}
+
 	/**
 	 * Returns the size of the values list plus 1
 	 */
@@ -58,7 +62,6 @@ struct TTscriptRange {
 	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom,
 		bool isSequential);
 };
-
 
 struct TTsentenceEntry {
 	int _field0;
