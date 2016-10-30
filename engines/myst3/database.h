@@ -38,7 +38,7 @@ namespace Myst3 {
 enum GameLocalizationType {
 	kLocMonolingual,
 	kLocMulti2,
-	kLocMulti6,
+	kLocMulti6
 };
 
 enum MystLanguage {
