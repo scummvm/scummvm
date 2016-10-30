@@ -236,7 +236,7 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			_soundHandle1 = playSound(_fieldDC ? "z#419.wav" : "z#418.wav", 50);
 			break;
 		case 2:
-			_soundHandle1 = playSound("z#414.wav", 50);
+			_soundHandle1 = playSound("z#409.wav", 50);
 			break;
 		default:
 			break;
