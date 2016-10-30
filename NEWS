@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.9.1 (YYYY-MM-DD)
  General:
    - Added bilinear filtering option for SDL2 fullscreen mode.
+   - Fixed a bug that caused a crash in the options dialog of the GUI.
 
  Kyra:
    - Fixed a buffer overflow in Lands of Lore.
