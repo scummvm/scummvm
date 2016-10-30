@@ -67,6 +67,7 @@ public:
 	void init();
 
 	void open();
+	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const Common::String& getDomain() const { return _domain; }
@@ -211,6 +212,7 @@ public:
 	~GlobalOptionsDialog();
 
 	void open();
+	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	void handleTickle();
