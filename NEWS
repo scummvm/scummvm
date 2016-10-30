@@ -7,6 +7,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Added bilinear filtering option for SDL2 fullscreen mode.
 
+ Kyra:
+   - Fixed a buffer overflow in Lands of Lore.
+
+ MADS:
+   - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
+
 1.9.0 (2016-10-17)
  New Games:
    - Added support for Myst.
