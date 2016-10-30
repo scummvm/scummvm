@@ -393,6 +393,69 @@ void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
+	// d4+ variant
+	if (stream.size() == 0)
+		return;
+
+	if (stream.size() < 26) {
+		warning("CAST data id %d is too small", id);
+		return;
+	}
+
+	uint castId = id - 1024;
+
+	uint32 size1, size2, size3, castType;
+	byte blob[3];
+
+	if (_vm->getVersion() < 5) {
+		size1 = stream.readUint16();
+		size2 = stream.readUint32();
+		size3 = 0;
+		castType = stream.readByte();
+		stream.read(blob, 3);
+	} else {
+		// FIXME: only the cast type and the strings are good
+		castType = stream.readUint32();
+		size2 = stream.readUint32();
+		size3 = stream.readUint32();
+		size1 = stream.readUint32();
+		assert(size1 == 0x14);
+		size1 = 0;
+		blob[0] = blob[1] = blob[2] = 0;
+	}
+
+	warning("type: %x", castType);
+
+	Score::readRect(stream);
+	Score::readRect(stream);
+
+	//member.initialRect = readRect(data)
+	//member.boundingRect = readRect(data)
+	//member.regX = 0 // FIXME: HACK
+	//member.regY = 0 // FIXME: HACK
+
+	byte *data = (byte *)calloc(size1, 1);
+	stream.read(data, size1);
+	Common::hexdump(data, size1);
+	free(data);
+
+	if (size2) {
+		uint32 entryType = 0;
+		Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
+
+		CastInfo *ci = new CastInfo();
+
+		ci->script = castStrings[0];
+		ci->name = castStrings[1];
+		ci->directory = castStrings[2];
+		ci->fileName = castStrings[3];
+		ci->type = castStrings[4];
+
+		_castsInfo[id] = ci;
+	}
+
+	if (size3)
+		warning("size3: %x", size3);
 }
 
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
