@@ -376,10 +376,11 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_movieFrameSurface[0]->h != r.height();
 
 	startAtFrame(startFrame);
-	while (!_decoder->endOfVideo() && _currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
+	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
-			_currentFrame = _decoder->getCurFrame();
+			_currentFrame = _decoder->endOfVideo() ? _decoder->getFrameCount() :
+				_decoder->getCurFrame();
 
 			if (isDifferent) {
 				// Clear the destination area, and use the transBlitFrom method,
