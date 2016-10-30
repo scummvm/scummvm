@@ -286,7 +286,7 @@ MESSAGE0(CReplaceBowlAndNutsMsg);
 MESSAGE1(CRestaurantMusicChanged, CString, value, "");
 MESSAGE2(CSendCCarryMsg, CString, strValue, "", int, numValue, 0);
 MESSAGE1(CSenseWorkingMsg, CString, value, "Not Working");
-MESSAGE2(CServiceElevatorFloorChangeMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CServiceElevatorFloorChangeMsg, int, startFloor, 0, int, endFloor, 0);
 MESSAGE0(CServiceElevatorFloorRequestMsg);
 MESSAGE1(CServiceElevatorMsg, int, value, 4);
 MESSAGE2(CSetChevButtonImageMsg, int, value1, 0, int, value2, 0);
