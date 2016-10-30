@@ -55,7 +55,7 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
-		_hiddenCount(0), _cursorSuppressed(false), _setCursorCount(0), _fieldE4(0), _fieldE8(0) {
+		_hiddenCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 	CursorMan.showMouse(true);
@@ -162,13 +162,13 @@ void CMouseCursor::update() {
 	// No implementation needed
 }
 
-void CMouseCursor::lockE4() {
-	_fieldE4 = 0;
+void CMouseCursor::disableControl() {
+	_inputEnabled = false;
 	CScreenManager::_screenManagerPtr->_inputHandler->incLockCount();
 }
 
-void CMouseCursor::unlockE4() {
-	_fieldE4 = 1;
+void CMouseCursor::enableControl() {
+	_inputEnabled = true;
 	_fieldE8 = 0;
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
 }

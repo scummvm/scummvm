@@ -69,7 +69,7 @@ private:
 	int _hideCounter;
 	int _hiddenCount;
 	bool _cursorSuppressed;
-	int _fieldE4;
+	bool _inputEnabled;
 	int _fieldE8;
 
 	/**
@@ -128,8 +128,15 @@ public:
 	 */
 	uint getChangeCount() const { return _setCursorCount; }
 
-	void lockE4();
-	void unlockE4();
+	/**
+	 * Disables user control of the mouse
+	 */
+	void disableControl();
+
+	/**
+	 * Re-enables user control of the mouse
+	 */
+	void enableControl();
 
 	/**
 	 * Sets the mouse to a new position

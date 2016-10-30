@@ -287,7 +287,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 
 		case 5:
 			lockInputHandler();
-			mouseLockE4();
+			mouseDisableControl();
 			_field114 = true;
 			startTalking(this, 221485);
 			break;
@@ -301,7 +301,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 		case 7:
 			CMouseButtonDownMsg::generate();
 			startTalking(this, 221486);
-			mouseUnlockE4();
+			mouseEnableControl();
 			unlockInputHandler();
 			_field114 = false;
 			disableMouse();
@@ -490,7 +490,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		}
 
 		case 10568:
-			mouseLockE4();
+			mouseDisableControl();
 			mouseSetPosition(Point(600, 250), 2500);
 			_timerId = addTimer(6, 2500, 0);
 			break;

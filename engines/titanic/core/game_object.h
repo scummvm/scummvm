@@ -165,8 +165,15 @@ protected:
 	 */
 	void enableMouse();
 
-	void mouseLockE4();
-	void mouseUnlockE4();
+	/**
+	 * Disables user control of the mouse
+	 */
+	void mouseDisableControl();
+
+	/**
+	 * Re-enables user control of the mouse
+	 */
+	void mouseEnableControl();
 
 	/**
 	 * Sets the mouse to a new position

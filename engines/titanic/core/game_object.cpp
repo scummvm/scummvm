@@ -1165,12 +1165,12 @@ void CGameObject::enableMouse() {
 	showMouse();
 }
 
-void CGameObject::mouseLockE4() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->lockE4();
+void CGameObject::mouseDisableControl() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->disableControl();
 }
 
-void CGameObject::mouseUnlockE4() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->unlockE4();
+void CGameObject::mouseEnableControl() {
+	CScreenManager::_screenManagerPtr->_mouseCursor->enableControl();
 }
 
 void CGameObject::mouseSetPosition(const Point &pt, double rate) {
