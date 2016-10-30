@@ -46,7 +46,7 @@ CTransparencySurface::CTransparencySurface(const Graphics::Surface *surface,
 		_flag1 = false;
 		break;
 	case TRANS_DEFAULT:
-		if (*(byte *)surface->getPixels() < 0x80) {
+		if (*(const byte *)surface->getPixels() < 0x80) {
 			_flag1 = true;
 			_flag2 = false;
 		}

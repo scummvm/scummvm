@@ -225,7 +225,7 @@ void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
 }
 
 void CStarControlSub13::reset() {
-	const double FACTOR = 3.1415927 * 0.0055555557;
+	//const double FACTOR = 3.1415927 * 0.0055555557;
 	error("TODO: CStarControlSub13::reset");
 }
 

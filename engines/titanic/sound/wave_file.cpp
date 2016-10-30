@@ -51,9 +51,9 @@ uint CWaveFile::getDurationTicks() const {
 	// a desired size. Since I have no idea how the system API
 	// method works, for now I'm using a simple ratio of a
 	// sample output to input value
-	uint size = _size - 0x46;
-	double newSize = (double)size * (1475712.0 / 199836.0);
-	return newSize * 1000.0 / _stream->getRate();
+	uint dataSize = _size - 0x46;
+	double newSize = (double)dataSize * (1475712.0 / 199836.0);
+	return (uint)(newSize * 1000.0 / _stream->getRate());
 }
 
 bool CWaveFile::loadSound(const CString &name) {
