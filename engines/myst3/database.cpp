@@ -503,7 +503,7 @@ void Database::preloadCommonRooms() {
 	for (uint i = 0; i < ARRAYSIZE(_ages); i++) {
 		const AgeData &age = _ages[i];
 
-		for (uint j = 0; j < ARRAYSIZE(age.rooms); j++) {
+		for (uint j = 0; j < age.roomCount; j++) {
 			const RoomData &room = age.rooms[j];
 
 			if (isCommonRoom(room.id, age.id)) {
