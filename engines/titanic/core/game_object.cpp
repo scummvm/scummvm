@@ -758,7 +758,7 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	if (gameManager && !name.empty()) {
 		g_vm->_filesManager->preload(name);
 
-		gameManager->_sound.playSound(name, prox);
+		return gameManager->_sound.playSound(name, prox);
 	}
 
 	return -1;
