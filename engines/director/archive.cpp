@@ -21,6 +21,7 @@
  */
 
 #include "director/archive.h"
+#include "director/director.h"
 
 #include "common/debug.h"
 #include "common/macresman.h"
@@ -414,8 +415,11 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
 		casEntries.resize(casRes->size / 4);
 
-		for (uint32 i = 0; i < casEntries.size(); i++)
+		for (uint32 i = 0; i < casEntries.size(); i++) {
 			casEntries[i] = casStream.readUint32();
+
+			debugC(2, kDebugLoading, "CAS*: %d", casEntries[i]);
+		}
 	}
 
 	// Parse the KEY*
@@ -429,6 +433,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 index = keyStream.readUint32();
 		uint32 id = keyStream.readUint32();
 		uint32 resTag = keyStream.readUint32();
+
+		debugC(2, kDebugLoading, "KEY*: index: %d id: %d resTag: %s", index, id, tag2str(resTag));
 
 		// Handle CAS*/CASt nonsense
 		if (resTag == MKTAG('C', 'A', 'S', 't')) {
