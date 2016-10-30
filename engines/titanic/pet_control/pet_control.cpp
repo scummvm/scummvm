@@ -463,7 +463,7 @@ void CPetControl::moveToHiddenRoom(CTreeItem *item) {
 	CRoomItem *room = getHiddenRoom();
 	if (room) {
 		item->detach();
-		room->addUnder(item);
+		item->addUnder(room);
 	}
 }
 
