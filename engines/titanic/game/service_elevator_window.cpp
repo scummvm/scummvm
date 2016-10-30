@@ -61,14 +61,14 @@ void CServiceElevatorWindow::load(SimpleFile *file) {
 bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloorChangeMsg *msg) {
 	if (getView() == findView()) {
 		CDoorbot *doorbot = dynamic_cast<CDoorbot *>(findRoom()->findByName("Doorbot"));
-		int val = (_fieldE8 && doorbot) ? 65 : 15;
+		int fps = (_fieldE8 && doorbot) ? 65 : 15;
 		CMovieClip *clip = _movieClips.findByName("Going Up");
 
 		if (!clip)
 			return true;
 
-		int count = _endFrame - _startFrame;
-		setMovieFrameRate(1.0 * count / val);
+		int count = clip->_endFrame - clip->_startFrame;
+		setMovieFrameRate(1.0 * count / fps);
 
 		int startFrame = clip->_startFrame + count * FACTORS[msg->_value1] / 100;
 		int endFrame = clip->_startFrame + count * FACTORS[msg->_value2] / 100;

@@ -116,6 +116,7 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		break;
 
 	case 5:
+		// Reaching destination floor
 		_fieldF8 = false;
 		_fieldDC = _v3;
 		loadSound("z#423.wav");
@@ -164,6 +165,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 		if (!isSoundActive(_soundHandle1)) {
 			stopAnimTimer(_timerId);
 			if (msg->_actionVal == 0) {
+				// Elevator in motion after pressing button
 				_fieldF8 = true;
 				CServiceElevatorFloorChangeMsg changeMsg(_fieldDC, _v3);
 				changeMsg.execute(getRoom());
@@ -174,6 +176,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 					actMsg.execute(doorbot);
 				}
 			} else {
+				// Finished playing message for bottom/middle floor disabled
 				enableMouse();
 				if (doorbot) {
 					CActMsg actMsg;

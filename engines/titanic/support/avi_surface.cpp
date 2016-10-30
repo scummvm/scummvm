@@ -348,7 +348,10 @@ bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
 }
 
 void AVISurface::setFrameRate(double rate) {
-	_decoder->setRate(Common::Rational((int)rate));
+	// Convert rate from fps to relative to 1.0 (normal speed)
+	double playRate = rate / 15.0;	// Standard 15 FPS
+
+	_decoder->setRate(playRate);
 }
 
 Graphics::ManagedSurface *AVISurface::getSecondarySurface() {
