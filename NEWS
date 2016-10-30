@@ -2,10 +2,20 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.10.0 (YYYY-MM-DD)
+ General:
+   - Added a command-line option to automatically scan for supported games in
+     the current or a specified directory.
+
+ AGOS:
+   - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
+
+ iOS port:
+   - Added bilinear filtering option on iOS devices.
 
 1.9.1 (YYYY-MM-DD)
  General:
    - Added bilinear filtering option for SDL2 fullscreen mode.
+   - Fixed a bug that caused a crash in the options dialog of the GUI.
 
  Kyra:
    - Fixed a buffer overflow in Lands of Lore.
