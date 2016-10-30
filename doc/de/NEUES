@@ -5,6 +5,7 @@ Programmcodes finden Sie auf Englisch unter:
 1.9.1 (DD.MM.YYYY)
  Allgemein:
    - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
+   - Fehler behoben, der einen Absturz im Optionen-Dialog der Benutzeroberfläche verursacht.
 
  Kyra:
    - Pufferüberlauf in "Lands of Lore" behoben.
