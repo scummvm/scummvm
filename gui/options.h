@@ -195,11 +195,6 @@ protected:
 	Common::String _guioptionsString;
 
 	//
-	//Theme Options
-	//
-	Common::String _oldTheme;
-
-	//
 	// Engine-specific controls
 	//
 	CheckboxWidgetList _engineCheckboxes;
@@ -220,6 +215,7 @@ public:
 	virtual void reflowLayout();
 
 protected:
+	Common::String _newTheme;
 	LauncherDialog *_launcher;
 #ifdef GUI_ENABLE_KEYSDIALOG
 	KeysDialog *_keysDialog;

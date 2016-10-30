@@ -186,8 +186,6 @@ void OptionsDialog::init() {
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
 
-	_oldTheme = g_gui.theme()->getThemeId();
-
 	// Retrieve game GUI options
 	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
@@ -644,10 +642,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		close();
 		break;
 	case kCloseCmd:
-		if (g_gui.theme()->getThemeId() != _oldTheme) {
-			g_gui.loadNewTheme(_oldTheme);
-			ConfMan.set("gui_theme", _oldTheme);
-		}
 		close();
 		break;
 	default:
@@ -1522,8 +1516,8 @@ void GlobalOptionsDialog::apply() {
 		// Activate the selected language
 		TransMan.setLanguage(selLang);
 		
-		// FIXME: Actually, any changes (including the theme change) should
-		// only become active *after* the options dialog has closed.
+		// FIXME: We need to update the labels for all the existing widget after
+		// the language has been changed.
 		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 #else
 		MessageDialog error(_("You have to restart ScummVM before your changes will take effect."));
@@ -1574,6 +1568,33 @@ void GlobalOptionsDialog::apply() {
 #endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
+	
+	if (!_newTheme.empty()) {
+#ifdef USE_TRANSLATION
+		Common::String lang = TransMan.getCurrentLanguage();
+#endif
+		Common::String oldTheme = g_gui.theme()->getThemeId();
+		if (g_gui.loadNewTheme(_newTheme)) {
+#ifdef USE_TRANSLATION
+			// If the charset has changed, it means the font were not found for the
+			// new theme. Since for the moment we do not support change of translation
+			// language without restarting, we let the user know about this.
+			if (lang != TransMan.getCurrentLanguage()) {
+				TransMan.setLanguage(lang.c_str());
+				g_gui.loadNewTheme(oldTheme);
+				_curTheme->setLabel(g_gui.theme()->getThemeName());
+				MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
+				error.runModal();
+			} else {
+#endif
+				ConfMan.set("gui_theme", _newTheme);
+#ifdef USE_TRANSLATION
+			}
+#endif
+		}
+		draw();
+		_newTheme.clear();
+	}
 	
 	OptionsDialog::apply();
 }
@@ -1687,31 +1708,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {
 			// User made his choice...
-			Common::String theme = browser.getSelected();
-			// FIXME: Actually, any changes (including the theme change) should
-			// only become active *after* the options dialog has closed.
-#ifdef USE_TRANSLATION
-			Common::String lang = TransMan.getCurrentLanguage();
-#endif
-			if (g_gui.loadNewTheme(theme)) {
-#ifdef USE_TRANSLATION
-				// If the charset has changed, it means the font were not found for the
-				// new theme. Since for the moment we do not support change of translation
-				// language without restarting, we let the user know about this.
-				if (lang != TransMan.getCurrentLanguage()) {
-					TransMan.setLanguage(lang.c_str());
-					g_gui.loadNewTheme(_oldTheme);
-					MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
-					error.runModal();
-				} else {
-#endif
-					_curTheme->setLabel(g_gui.theme()->getThemeName());
-					ConfMan.set("gui_theme", theme);
-#ifdef USE_TRANSLATION
-				}
-#endif
-			}
-			draw();
+			_newTheme = browser.getSelected();
+			_curTheme->setLabel(browser.getSelectedName());
 		}
 		break;
 	}
