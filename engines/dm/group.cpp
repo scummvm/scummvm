@@ -1672,7 +1672,10 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
 				poisonAttack = championMan.getStatisticAdjustedAttack(curChampion, kDMStatVitality, poisonAttack);
-				if (poisonAttack >= 0)
+
+				// Strangerke: In the original, the check was on >= 0, which is pretty useless for a unsigned variable.
+				// I changed the check to > 0 because, considering the code of championPoison, it avoids a potential bug.
+				if (poisonAttack > 0)
 					championMan.championPoison(champIndex, poisonAttack);
 			}
 			return damage;
