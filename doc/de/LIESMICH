@@ -1394,6 +1394,10 @@ gestartet werden -- siehe nächster Abschnitt.
   -t, --list-targets       Zeigt Liste konfigurierter Ziele und beendet.
   --list-saves=ZIEL        Zeigt Liste von Spielständen für das festgelegte
                            Spiel (ZIEL)
+  --auto-detect            Zeigt eine Liste unterstützter Spiele im aktuellen
+                           oder in einem anderen gewählten Verzeichnis an.
+                           Verwenden Sie --path=PFAD vor --auto-detect, um
+                           ein Verzeichnis zu wählen.
   --console                Aktiviert das Konsolenfenster
                            (standardmäßig aktiviert) (nur Windows)
 
