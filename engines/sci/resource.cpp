@@ -2459,38 +2459,6 @@ void ResourceManager::detectSciVersion() {
 	}
 }
 
-bool ResourceManager::detectHires() {
-	// SCI 1.1 and prior is never hires
-	if (getSciVersion() <= SCI_VERSION_1_1)
-		return false;
-
-#ifdef ENABLE_SCI32
-	for (int i = 0; i < 32768; i++) {
-		Resource *res = findResource(ResourceId(kResourceTypePic, i), 0);
-
-		if (res) {
-			if (READ_SCI11ENDIAN_UINT16(res->data) == 0x0e) {
-				// SCI32 picture
-				uint16 width = READ_SCI11ENDIAN_UINT16(res->data + 10);
-				uint16 height = READ_SCI11ENDIAN_UINT16(res->data + 12);
-				// Surely lowres (e.g. QFG4CD)
-				if ((width == 320) && ((height == 190) || (height == 200)))
-					return false;
-				// Surely hires
-				if ((width >= 600) || (height >= 400))
-					return true;
-			}
-		}
-	}
-
-	// We haven't been able to find hires content
-
-	return false;
-#else
-	error("no sci32 support");
-#endif
-}
-
 bool ResourceManager::detectFontExtended() {
 
 	Resource *res = findResource(ResourceId(kResourceTypeFont, 0), 0);

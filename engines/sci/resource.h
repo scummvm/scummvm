@@ -424,7 +424,6 @@ private:
 public:
 #endif
 
-	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging
