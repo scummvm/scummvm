@@ -6,6 +6,12 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
 
+ Kyra:
+   - Pufferüberlauf in "Lands of Lore" behoben.
+
+ MADS:
+   - Fehler behoben, der einen Absturz verursacht, wenn "Rex Nebular and the Cosmic Gender Bender" gestartet wird.
+
 1.9.0 (17.10.2016)
  Neue Spiele:
    - Unterstützung für Myst hinzugefügt.
