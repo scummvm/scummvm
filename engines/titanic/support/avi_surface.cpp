@@ -41,6 +41,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
 	_framePixels = nullptr;
+	_priorFrameTime = 0;
 
 	// Reset current frame. We need to keep track of frames separately from the decoder,
 	// since it needs to be able to go beyond the frame count or to negative to allow
@@ -287,8 +288,20 @@ void AVISurface::setFrame(int frameNumber) {
 	renderFrame();
 }
 
-bool AVISurface::isNextFrame() const {
-	return _decoder->getTimeToNextFrame() == 0;
+bool AVISurface::isNextFrame() {
+	if (!_decoder->endOfVideo())
+		return _decoder->getTimeToNextFrame() == 0;
+
+	// We're at the end of the video, so we need to manually
+	// keep track of frame delays. Hardcoded at the moment for 15FPS
+	const uint FRAME_TIME = 1000 / 15;
+	uint32 currTime = g_system->getMillis();
+	if (currTime >= (_priorFrameTime + FRAME_TIME)) {
+		_priorFrameTime = currTime;
+		return true;
+	}
+
+	return false;
 }
 
 bool AVISurface::renderFrame() {
@@ -376,11 +389,12 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_movieFrameSurface[0]->h != r.height();
 
 	startAtFrame(startFrame);
+	_currentFrame = startFrame;
+
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
-			_currentFrame = _decoder->endOfVideo() ? _decoder->getFrameCount() :
-				_decoder->getCurFrame();
+			++_currentFrame;
 
 			if (isDifferent) {
 				// Clear the destination area, and use the transBlitFrom method,

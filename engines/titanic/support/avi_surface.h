@@ -66,6 +66,7 @@ private:
 	Graphics::ManagedSurface *_framePixels;
 	bool _isReversed;
 	int _currentFrame;
+	uint32 _priorFrameTime;
 private:
 	/**
 	 * Render a frame to the video surface
@@ -196,7 +197,7 @@ public:
 	/**
 	 * Returns true if it's time for the next
 	 */
-	bool isNextFrame() const;
+	bool isNextFrame();
 
 	/**
 	 * Plays an interruptable cutscene
