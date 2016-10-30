@@ -28,6 +28,7 @@
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
 #include "gui/ThemeEval.h"
+#include "gui/launcher.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -1595,18 +1596,14 @@ void GlobalOptionsDialog::apply() {
 
 	Common::String newLang = ConfMan.get("gui_language").c_str();
 	if (newLang != oldLang) {
-#if 0
 		// Activate the selected language
 		TransMan.setLanguage(selLang);
-		
-		// FIXME: We need to update the labels for all the existing widget after
-		// the language has been changed.
+
+		// Rebuild the Launcher and Options dialogs
 		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
 		rebuild();
-#else
-		MessageDialog error(_("You have to restart ScummVM before your changes will take effect."));
-		error.runModal();
-#endif
+		if (_launcher != 0)
+			_launcher->rebuild();
 	}
 #endif // USE_TRANSLATION
 
