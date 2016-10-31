@@ -415,19 +415,24 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
 		casEntries.resize(casRes->size / 4);
 
+		debugCN(2, kDebugLoading, "CAS*: %d [", casEntries.size());
+
 		for (uint32 i = 0; i < casEntries.size(); i++) {
 			casEntries[i] = casStream.readUint32();
 
-			debugC(2, kDebugLoading, "CAS*: %d", casEntries[i]);
+			debugCN(2, kDebugLoading, "%d ", casEntries[i]);
 		}
+		debugC(2, kDebugLoading, "]");
 	}
 
 	// Parse the KEY*
 	Common::SeekableSubReadStreamEndian keyStream(stream, keyRes->offset + 8, keyRes->offset + 8 + keyRes->size, _isBigEndian, DisposeAfterUse::NO);
-	/*uint16 unk1 = */ keyStream.readUint16();
-	/*uint16 unk2 = */ keyStream.readUint16();
-	/*uint32 unk3 = */ keyStream.readUint32();
+	uint16 unk1 = keyStream.readUint16();
+	uint16 unk2 = keyStream.readUint16();
+	uint32 unk3 = keyStream.readUint32();
 	uint32 keyCount = keyStream.readUint32();
+
+	debugC(2, kDebugLoading, "KEY*: unk1: %d unk2: %d unk3: %d keyCount: %d", unk1, unk2, unk3, keyCount);
 
 	for (uint32 i = 0; i < keyCount; i++) {
 		uint32 index = keyStream.readUint32();
