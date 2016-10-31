@@ -138,6 +138,16 @@ public:
 	 * Wait for a mouse or keypress
 	 */
 	bool waitForPress(uint expiry);
+
+	/**
+	 * Get the mouse position
+	 */
+	Common::Point getMousePos() const { return _mousePos; }
+
+	/**
+	 * Sets the mouse position
+	 */
+	void setMousePos(const Common::Point &pt);
 };
 
 } // End of namespace Titanic

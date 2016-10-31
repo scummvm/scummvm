@@ -159,7 +159,26 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 }
 
 void CMouseCursor::update() {
-	// No implementation needed
+	if (!_inputEnabled && _moveStartTime) {
+		uint32 time = CLIP(g_system->getMillis(), _moveStartTime, _moveEndTime);
+		Common::Point pt(
+			_moveStartPos.x + (_moveDestPos.x - _moveStartPos.x) *
+				(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime),
+			_moveStartPos.y + (_moveDestPos.y - _moveStartPos.y) *
+			(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime)
+		);
+
+		if (pt != g_vm->_events->getMousePos()) {
+			g_vm->_events->setMousePos(pt);
+
+			CInputHandler &inputHandler = *CScreenManager::_screenManagerPtr->_inputHandler;
+			CMouseMoveMsg msg(pt, 0);
+			inputHandler.handleMessage(msg, false);
+		}
+
+		if (time == _moveEndTime)
+			_moveStartTime = _moveEndTime = 0;
+	}
 }
 
 void CMouseCursor::disableControl() {
@@ -173,11 +192,12 @@ void CMouseCursor::enableControl() {
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
 }
 
-void CMouseCursor::setPosition(const Point &pt, double rate) {
-	assert(rate >= 0.0 && rate <= 1.0);
-
-	// TODO: Figure out use of the rate parameter
-	g_system->warpMouse(pt.x, pt.y);
+void CMouseCursor::setPosition(const Point &pt, double duration) {
+	_moveStartPos = g_vm->_events->getMousePos();
+	_moveDestPos = pt;
+	_moveStartTime = g_system->getMillis();
+	_moveEndTime = _moveStartTime + duration;
+	update();
 }
 
 } // End of namespace Titanic

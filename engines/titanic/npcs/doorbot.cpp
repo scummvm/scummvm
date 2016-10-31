@@ -293,13 +293,15 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 			break;
 
 		case 6:
+			// Start dragging photograph to PET
 			CMouseButtonDownMsg::generate();
 			mouseSetPosition(Point(200, 430), 2500);
 			_timerId = addTimer(7, 2500, 0);
 			break;
 
 		case 7:
-			CMouseButtonDownMsg::generate();
+			// Drop photograph in PET
+			CMouseButtonUpMsg::generate();
 			startTalking(this, 221486);
 			mouseEnableControl();
 			unlockInputHandler();
@@ -490,6 +492,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		}
 
 		case 10568:
+			// Start moving cursor to photograph
 			mouseDisableControl();
 			mouseSetPosition(Point(600, 250), 2500);
 			_timerId = addTimer(6, 2500, 0);

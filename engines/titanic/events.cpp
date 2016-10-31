@@ -152,4 +152,10 @@ bool Events::waitForPress(uint expiry) {
 	return false;
 }
 
+void Events::setMousePos(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+	_mousePos = pt;
+	eventTarget()->mouseMove(_mousePos);
+}
+
 } // End of namespace Titanic

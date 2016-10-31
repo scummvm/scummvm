@@ -74,8 +74,12 @@ private:
 	void leftButtonDoubleClick(const Point &mousePos);
 	void middleButtonDoubleClick(const Point &mousePos);
 	void rightButtonDoubleClick(const Point &mousePos);
-	void charPress(char c);
 	void handleKbdSpecial(Common::KeyState keyState);
+
+	/**
+	 * Returns true if the player can control the mouse
+	 */
+	bool isMouseControlEnabled() const;
 public:
 	CGameView *_gameView;
 	CGameManager *_gameManager;

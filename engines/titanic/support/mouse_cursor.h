@@ -69,13 +69,18 @@ private:
 	int _hideCounter;
 	int _hiddenCount;
 	bool _cursorSuppressed;
-	bool _inputEnabled;
 	int _fieldE8;
+	uint32 _priorMoveTime;
+	Common::Point _moveStartPos;
+	Common::Point _moveDestPos;
+	uint _moveStartTime, _moveEndTime;
 
 	/**
 	 * Load the images for each cursor
 	 */
 	void loadCursorImages();
+public:
+	bool _inputEnabled;
 public:
 	CMouseCursor(CScreenManager *screenManager);
 	~CMouseCursor();
@@ -139,9 +144,9 @@ public:
 	void enableControl();
 
 	/**
-	 * Sets the mouse to a new position
+	 * Move the mouse to a new position
 	 */
-	void setPosition(const Point &pt, double rate);
+	void setPosition(const Point &pt, double duration);
 };
 
 

@@ -241,7 +241,7 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		_tempPos = msg->_mousePos - _bounds;
 	}
 
-	setPosition(_tempPos - getMousePos());
+	setPosition(getMousePos() - _tempPos);
 	return true;
 }
 
