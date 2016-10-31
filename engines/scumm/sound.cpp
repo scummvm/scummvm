@@ -359,7 +359,7 @@ void Sound::playSound(int soundID) {
 			_currentCDSound = soundID;
 		} else {
 			// All other sound types are ignored
-			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
+			warning("Scumm::Sound::playSound: encountered audio resource with chunk type 'SOUN' and sound type %d", type);
 		}
 	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && READ_BE_UINT16(ptr + 8) == 0x1C) {
