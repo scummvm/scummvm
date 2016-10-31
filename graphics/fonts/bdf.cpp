@@ -702,7 +702,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	if (!src) {
-		warning("Emtpy font reference in scale font");
+		warning("Empty font reference in scale font");
 		return NULL;
 	}
 
