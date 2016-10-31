@@ -213,11 +213,9 @@ void TTconcept::copyFrom(TTconcept *src) {
 }
 
 int TTconcept::setOwner(TTconcept *src) {
-	if (this) {
-		if (src->_wordP) {
-			TTword *newWord = src->_wordP->copy();
-			return setOwner(newWord, 1);
-		}
+	if (src->_wordP) {
+		TTword *newWord = src->_wordP->copy();
+		return setOwner(newWord, 1);
 	}
 
 	return 0;
@@ -302,7 +300,7 @@ bool TTconcept::isWordId(int id) const {
 }
 
 int TTconcept::getWordId() const {
-	return this && _wordP ? _wordP->_id : 0;
+	return _wordP ? _wordP->_id : 0;
 }
 
 } // End of namespace Titanic
