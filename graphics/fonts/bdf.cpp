@@ -759,7 +759,7 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 			byte *ptr = bitmaps[i];
 
 			for (int y = 0; y < box.height; y++) {
-				byte *srcd = (byte *)&src->_data.bitmaps[i][((int)((float)y / scale)) * srcPitch];
+				const byte *srcd = (const byte *)&src->_data.bitmaps[i][((int)((float)y / scale)) * srcPitch];
 				byte *dst = ptr;
 				byte b = 0;
 
