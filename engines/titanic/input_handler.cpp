@@ -110,6 +110,7 @@ void CInputHandler::processMessage(CMessage *msg) {
 
 				_dragging = false;
 				_dragItem = nullptr;
+				_gameManager->_dragItem = nullptr;
 			}
 		} else if (_buttonDown) {
 			if (!mouseMsg->isMouseMoveMsg()) {
