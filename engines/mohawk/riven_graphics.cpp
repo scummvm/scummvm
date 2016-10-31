@@ -35,12 +35,9 @@ namespace Mohawk {
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
 
-	// Give me the best you've got!
-	initGraphics(608, 436, true, NULL);
-	_pixelFormat = _vm->_system->getScreenFormat();
-
-	if (_pixelFormat.bytesPerPixel == 1)
-		error("Riven requires greater than 256 colors to run");
+	// Restrict ourselves to a single pixel format to simplify the effects implementation
+	_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	initGraphics(608, 436, true, &_pixelFormat);
 
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.
