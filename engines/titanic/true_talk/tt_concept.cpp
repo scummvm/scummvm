@@ -296,7 +296,7 @@ TTconcept *TTconcept::findBy20(int val) {
 }
 
 bool TTconcept::isWordId(int id) const {
-	return this && _wordP && _wordP->_id == id;
+	return _wordP && _wordP->_id == id;
 }
 
 int TTconcept::getWordId() const {
