@@ -28,10 +28,46 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * Boiler Island
+ */
 class BSpit : public DomeSpit {
 public:
 	BSpit(MohawkEngine_Riven *vm);
 
+	// External commands - Gehn's Lab Journal
+	void xblabopenbook(uint16 argc, uint16 *argv);
+	void xblabbooknextpage(uint16 argc, uint16 *argv);
+	void xblabbookprevpage(uint16 argc, uint16 *argv);
+
+	// External commands - Boiler Puzzle
+	void xsoundplug(uint16 argc, uint16 *argv);
+	void xbchangeboiler(uint16 argc, uint16 *argv);
+	void xbupdateboiler(uint16 argc, uint16 *argv);
+
+	// External commands - Frog Trap
+	void xbsettrap(uint16 argc, uint16 *argv);
+	void xbcheckcatch(uint16 argc, uint16 *argv);
+	void xbait(uint16 argc, uint16 *argv);
+	void xbfreeytram(uint16 argc, uint16 *argv);
+	void xbaitplate(uint16 argc, uint16 *argv);
+
+	// External commands - Dome
+	void xbisland190_opencard(uint16 argc, uint16 *argv);
+	void xbisland190_resetsliders(uint16 argc, uint16 *argv);
+	void xbisland190_slidermd(uint16 argc, uint16 *argv);
+	void xbisland190_slidermw(uint16 argc, uint16 *argv);
+	void xbscpbtn(uint16 argc, uint16 *argv);
+	void xbisland_domecheck(uint16 argc, uint16 *argv);
+
+	// External commands - Water Control
+	void xvalvecontrol(uint16 argc, uint16 *argv);
+
+	// External commands - Run the Wood Chipper
+	void xbchipper(uint16 argc, uint16 *argv);
+
+	// Time callback
+	void checkYtramCatch(bool playSound);
 };
 
 } // End of namespace RivenStacks

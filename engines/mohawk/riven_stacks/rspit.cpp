@@ -22,7 +22,9 @@
 
 #include "mohawk/riven_stacks/rspit.h"
 
-#include "engines/mohawk/riven.h"
+#include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
+#include "mohawk/riven_graphics.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -30,7 +32,83 @@ namespace RivenStacks {
 RSpit::RSpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackRspit) {
 
+	REGISTER_COMMAND(RSpit, xrshowinventory);
+	REGISTER_COMMAND(RSpit, xrhideinventory);
+	REGISTER_COMMAND(RSpit, xrcredittime);
+	REGISTER_COMMAND(RSpit, xrwindowsetup);
 }
+
+void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
+	// Nice going, you used the trap book on Tay.
+
+	// The game chooses what ending based on agehn for us,
+	// so we just have to play the video and credits.
+	// For the record, when agehn == 4, Gehn will thank you for
+	// showing him the rebel age and then leave you to die.
+	// Otherwise, the rebels burn the book. Epic fail either way.
+	runEndGame(1, 1500);
+}
+
+void RSpit::xrshowinventory(uint16 argc, uint16 *argv) {
+	// Give the trap book and Catherine's journal to the player
+	_vm->_vars["atrapbook"] = 1;
+	_vm->_vars["acathbook"] = 1;
+	_vm->_gfx->showInventory();
+}
+
+void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
+	_vm->_gfx->hideInventory();
+}
+
+static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
+	// Randomize a video out in the middle of Tay
+	uint16 movie = vm->_rnd->getRandomNumberRng(2, 13);
+	vm->_video->activateMLST(vm->getCard()->getMovie(movie));
+	VideoEntryPtr handle = vm->_video->playMovieRiven(movie);
+
+	// Ensure the next video starts after this one ends
+	uint32 timeUntilNextVideo = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+
+	// Save the time in case we leave the card and return
+	vm->_vars["rvillagetime"] = timeUntilNextVideo + vm->getTotalPlayTime();
+
+	// Reinstall this timer with the new time
+	vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
+}
+
+void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
+	// Randomize what effect happens when you look out into the middle of Tay
+
+	uint32 villageTime = _vm->_vars["rvillagetime"];
+
+	// If we have time leftover from a previous run, set up the timer again
+	if (_vm->getTotalPlayTime() < villageTime) {
+		_vm->installTimer(&rebelPrisonWindowTimer, villageTime - _vm->getTotalPlayTime());
+		return;
+	}
+
+	uint32 timeUntilNextVideo;
+
+	// Randomize the time until the next video
+	if (_vm->_rnd->getRandomNumber(2) == 0 && _vm->_vars["rrichard"] == 0) {
+		// In this case, a rebel is placed on a bridge
+		// The video itself is handled by the scripts later on
+		_vm->_vars["rrebelview"] = 0;
+		timeUntilNextVideo = _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	} else {
+		// Otherwise, just a random video from the timer
+		_vm->_vars["rrebelview"] = 1;
+		timeUntilNextVideo = _vm->_rnd->getRandomNumber(20) * 1000;
+	}
+
+	// We don't set rvillagetime here because the scripts later just reset it to 0
+	// Of course, because of this, you can't return to the window twice and expect
+	// the timer to reinstall itself...
+
+	// Install our timer and we're on our way
+	_vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
+}
+
 
 } // End of namespace RivenStacks
 } // End of namespace Mohawk

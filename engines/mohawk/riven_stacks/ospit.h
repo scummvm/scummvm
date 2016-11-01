@@ -28,9 +28,30 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * 233rd Age / Gehn's Office
+ */
 class OSpit : public RivenStack {
 public:
 	OSpit(MohawkEngine_Riven *vm);
+
+	// External commands - Death!
+	void xorollcredittime(uint16 argc, uint16 *argv);
+
+	// External commands - Trap Book Puzzle
+	void xbookclick(uint16 argc, uint16 *argv); // Four params -- movie_sref, start_time, end_time, u0
+
+	// External commands - Blank Linking Book
+	void xooffice30_closebook(uint16 argc, uint16 *argv);
+
+	// External commands - Gehn's Journal
+	void xobedroom5_closedrawer(uint16 argc, uint16 *argv);
+	void xogehnopenbook(uint16 argc, uint16 *argv);
+	void xogehnbookprevpage(uint16 argc, uint16 *argv);
+	void xogehnbooknextpage(uint16 argc, uint16 *argv);
+
+	// External commands - Elevator Combination
+	void xgwatch(uint16 argc, uint16 *argv);
 
 };
 

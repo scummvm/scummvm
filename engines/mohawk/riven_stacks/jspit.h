@@ -28,10 +28,61 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * Jungle Island
+ */
 class JSpit : public DomeSpit {
 public:
 	JSpit(MohawkEngine_Riven *vm);
 
+	// External commands - Rebel Tunnel Puzzle
+	void xreseticons(uint16 argc, uint16 *argv);
+	void xicon(uint16 argc, uint16 *argv);
+	void xcheckicons(uint16 argc, uint16 *argv);
+	void xtoggleicon(uint16 argc, uint16 *argv);
+	void xjtunnel103_pictfix(uint16 argc, uint16 *argv);
+	void xjtunnel104_pictfix(uint16 argc, uint16 *argv);
+	void xjtunnel105_pictfix(uint16 argc, uint16 *argv);
+	void xjtunnel106_pictfix(uint16 argc, uint16 *argv);
+
+	// External commands - Lower the gallows carriage
+	void xvga1300_carriage(uint16 argc, uint16 *argv);
+
+	// External commands - Dome
+	void xjdome25_resetsliders(uint16 argc, uint16 *argv);
+	void xjdome25_slidermd(uint16 argc, uint16 *argv);
+	void xjdome25_slidermw(uint16 argc, uint16 *argv);
+	void xjscpbtn(uint16 argc, uint16 *argv);
+	void xjisland3500_domecheck(uint16 argc, uint16 *argv);
+
+	// External commands - Whark Elevator
+	void xhandlecontroldown(uint16 argc, uint16 *argv);
+	void xhandlecontrolmid(uint16 argc, uint16 *argv);
+	void xhandlecontrolup(uint16 argc, uint16 *argv);
+
+	// External commands - Beetle
+	void xjplaybeetle_550(uint16 argc, uint16 *argv);
+	void xjplaybeetle_600(uint16 argc, uint16 *argv);
+	void xjplaybeetle_950(uint16 argc, uint16 *argv);
+	void xjplaybeetle_1050(uint16 argc, uint16 *argv);
+	void xjplaybeetle_1450(uint16 argc, uint16 *argv);
+
+	// External commands - Creatures in the Lagoon
+	void xjlagoon700_alert(uint16 argc, uint16 *argv);
+	void xjlagoon800_alert(uint16 argc, uint16 *argv);
+	void xjlagoon1500_alert(uint16 argc, uint16 *argv);
+
+	// External commands - Play the Whark Game
+	void xschool280_playwhark(uint16 argc, uint16 *argv);
+	void xjschool280_resetleft(uint16 argc, uint16 *argv); // DVD only
+	void xjschool280_resetright(uint16 argc, uint16 *argv); // DVD only
+
+	// External commands - Demo-specific
+	void xjatboundary(uint16 argc, uint16 *argv);
+
+private:
+	int jspitElevatorLoop();
+	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
 };
 
 } // End of namespace RivenStacks

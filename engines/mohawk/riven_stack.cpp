@@ -22,9 +22,15 @@
 
 #include "mohawk/riven_stack.h"
 
+#include "mohawk/cursors.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
+#include "mohawk/riven_graphics.h"
 #include "mohawk/resource.h"
+
+#include "common/events.h"
+
+#include "gui/message.h"
 
 namespace Mohawk {
 
@@ -34,6 +40,8 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 	loadResourceNames();
 	loadCardIdMap();
 	setCurrentStackVariable();
+
+	REGISTER_COMMAND(RivenStack, xflies);
 }
 
 RivenStack::~RivenStack() {
@@ -138,6 +146,77 @@ void RivenStack::dump() const {
 		card->dump();
 		delete card;
 	}
+}
+
+void RivenStack::runCommand(uint16 argc, uint16 *argv) {
+	Common::String externalCommandName = getName(kExternalCommandNames, argv[0]);
+
+	if (!_commands.contains(externalCommandName)) {
+		error("Unknown external command \'%s\'", externalCommandName.c_str());
+	}
+
+	(*_commands[externalCommandName])(argv[1], argv[1] ? argv + 2 : nullptr);
+}
+
+void RivenStack::registerCommand(const Common::String &name, ExternalCommand *command) {
+	_commands[name] = Common::SharedPtr<ExternalCommand>(command);
+}
+
+void RivenStack::xflies(uint16 argc, uint16 *argv) {
+	_vm->_gfx->setFliesEffect(argv[1], argv[0] == 1);
+}
+
+uint16 RivenStack::getComboDigit(uint32 correctCombo, uint32 digit) {
+	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
+	return (correctCombo % powers[digit]) / powers[digit + 1];
+}
+
+void RivenStack::runDemoBoundaryDialog() {
+	GUI::MessageDialog dialog("Exploration beyond this point available only within the full version of\n"
+			                          "the game.");
+	dialog.runModal();
+}
+
+void RivenStack::runEndGame(uint16 video, uint32 delay) {
+	_vm->_sound->stopAllSLST();
+	_vm->_video->playMovieRiven(video);
+	runCredits(video, delay);
+}
+
+void RivenStack::runCredits(uint16 video, uint32 delay) {
+	// Initialize our credits state
+	_vm->_cursor->hideCursor();
+	_vm->_gfx->beginCredits();
+	uint nextCreditsFrameStart = 0;
+
+	VideoEntryPtr videoPtr = _vm->_video->findVideoRiven(video);
+
+	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
+		if (videoPtr->getCurFrame() >= (int32)videoPtr->getFrameCount() - 1) {
+			if (nextCreditsFrameStart == 0) {
+				// Set us up to start after delay ms
+				nextCreditsFrameStart = _vm->_system->getMillis() + delay;
+			} else if (_vm->_system->getMillis() >= nextCreditsFrameStart) {
+				// the first two frames stay on for 4 seconds
+				// the rest of the scroll updates happen at 30Hz
+				if (_vm->_gfx->getCurCreditsImage() < 304)
+					nextCreditsFrameStart = _vm->_system->getMillis() + 4000;
+				else
+					nextCreditsFrameStart = _vm->_system->getMillis() + 1000 / 30;
+
+				_vm->_gfx->updateCredits();
+			}
+		} else if (_vm->_video->updateMovies())
+			_vm->_system->updateScreen();
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
+
+	_vm->setGameOver();
 }
 
 RivenNameList::RivenNameList() {

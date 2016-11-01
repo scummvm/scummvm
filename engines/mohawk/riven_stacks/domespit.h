@@ -32,6 +32,19 @@ class DomeSpit : public RivenStack {
 public:
 	DomeSpit(MohawkEngine_Riven *vm, uint16 id);
 
+	uint32 getDomeSliderState() const;
+	void setDomeSliderState(uint32 sliderState);
+
+protected:
+	void runDomeCheck();
+	void runDomeButtonMovie();
+	void resetDomeSliders(uint16 soundId, uint16 startHotspot);
+	void checkDomeSliders();
+	void checkSliderCursorChange(uint16 startHotspot);
+	void dragDomeSlider(uint16 soundId, uint16 startHotspot);
+	void drawDomeSliders(uint16 startHotspot);
+
+	uint32 _sliderState;
 };
 
 } // End of namespace RivenStacks

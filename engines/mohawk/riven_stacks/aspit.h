@@ -28,10 +28,45 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * Main Menu, Books, Setup
+ */
 class ASpit : public RivenStack {
 public:
 	ASpit(MohawkEngine_Riven *vm);
 
+	// External commands - Main Menu
+	void xastartupbtnhide(uint16 argc, uint16 *argv);
+	void xasetupcomplete(uint16 argc, uint16 *argv);
+
+	// External commands - Atrus' Journal
+	void xaatrusopenbook(uint16 argc, uint16 *argv);
+	void xaatrusbookback(uint16 argc, uint16 *argv);
+	void xaatrusbookprevpage(uint16 argc, uint16 *argv);
+	void xaatrusbooknextpage(uint16 argc, uint16 *argv);
+
+	// External commands - Catherine's Journal
+	void xacathopenbook(uint16 argc, uint16 *argv);
+	void xacathbookback(uint16 argc, uint16 *argv);
+	void xacathbookprevpage(uint16 argc, uint16 *argv);
+	void xacathbooknextpage(uint16 argc, uint16 *argv);
+
+	// External commands - Trap Book
+	void xtrapbookback(uint16 argc, uint16 *argv);
+	void xatrapbookclose(uint16 argc, uint16 *argv);
+	void xatrapbookopen(uint16 argc, uint16 *argv);
+
+	// External commands - DVD-specific
+	void xarestoregame(uint16 argc, uint16 *argv);
+
+	// External commands - Demo-specific
+	void xadisablemenureturn(uint16 argc, uint16 *argv);
+	void xaenablemenureturn(uint16 argc, uint16 *argv);
+	void xalaunchbrowser(uint16 argc, uint16 *argv);
+	void xadisablemenuintro(uint16 argc, uint16 *argv);
+	void xaenablemenuintro(uint16 argc, uint16 *argv);
+	void xademoquit(uint16 argc, uint16 *argv);
+	void xaexittomain(uint16 argc, uint16 *argv);
 };
 
 } // End of namespace RivenStacks
