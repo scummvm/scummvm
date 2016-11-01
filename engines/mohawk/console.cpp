@@ -42,9 +42,9 @@
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_external.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_stacks/domespit.h"
 #endif
 
 namespace Mohawk {
@@ -675,11 +675,11 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 
 	debugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
+		debugPrintf("%d ", _vm->getStack()->getComboDigit(teleCombo, i));
 
 	debugPrintf("\nPrison Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(prisonCombo, i));
+		debugPrintf("%d ", _vm->getStack()->getComboDigit(prisonCombo, i));
 
 	debugPrintf("\nDome Combo:\n  ");
 	for (int i = 1; i <= 25; i++)
@@ -691,10 +691,16 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
-	if (argc > 1)
-		_vm->_externalScriptHandler->setDomeSliderState((uint32)atoi(argv[1]));
+	RivenStacks::DomeSpit *domeSpit = dynamic_cast<RivenStacks::DomeSpit *>(_vm->getStack());
+	if (!domeSpit) {
+		debugPrintf("No dome in this stack\n");
+		return true;
+	}
 
-	debugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
+	if (argc > 1)
+		domeSpit->setDomeSliderState((uint32)atoi(argv[1]));
+
+	debugPrintf("Dome Slider State = %08x\n", domeSpit->getDomeSliderState());
 	return true;
 }
 

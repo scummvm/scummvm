@@ -37,7 +37,6 @@ namespace Mohawk {
 struct MohawkGameDescription;
 class MohawkArchive;
 class RivenGraphics;
-class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
@@ -97,7 +96,6 @@ public:
 
 	RivenSoundManager *_sound;
 	RivenGraphics *_gfx;
-	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;
 	RivenScriptManager *_scriptMan;
 

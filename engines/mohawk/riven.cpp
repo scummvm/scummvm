@@ -32,7 +32,6 @@
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/riven_sound.h"
@@ -69,7 +68,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_stack = nullptr;
 	_gfx = nullptr;
 	_sound = nullptr;
-	_externalScriptHandler = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
 	_console = nullptr;
@@ -106,7 +104,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _sound;
 	delete _gfx;
 	delete _console;
-	delete _externalScriptHandler;
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
@@ -137,7 +134,6 @@ Common::Error MohawkEngine_Riven::run() {
 	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
-	_externalScriptHandler = new RivenExternal(this);
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
 

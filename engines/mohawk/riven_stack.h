@@ -23,6 +23,8 @@
 #ifndef RIVEN_STACK_H
 #define RIVEN_STACK_H
 
+#include "common/hash-str.h"
+#include "common/ptr.h"
 #include "common/str-array.h"
 
 namespace Mohawk {
@@ -99,14 +101,41 @@ public:
 	/** Get the global id of a card in the stack */
 	uint32 getCardGlobalId(uint16 cardId) const;
 
+	/** Run an external command with the specified parameters */
+	void runCommand(uint16 argc, uint16 *argv);
+
 	/** Write all of the stack's data including its cards to standard output */
 	void dump() const;
+
+	// Common external commands
+	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
+
+	// TODO: Misc stuff move elsewhere
+	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
+	void runDemoBoundaryDialog();
+	void runEndGame(uint16 video, uint32 delay);
+	void runCredits(uint16 video, uint32 delay);
+
+protected:
+	typedef Common::Functor2<uint16, uint16 *, void> ExternalCommand;
+
+	MohawkEngine_Riven *_vm;
+
+	/** Register an external command for use by the scripts */
+	void registerCommand(const Common::String &name, ExternalCommand *command);
+
 private:
+	typedef Common::HashMap<Common::String, Common::SharedPtr<ExternalCommand>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
+
+#define REGISTER_COMMAND(cls, method) \
+		registerCommand( \
+			#method, new Common::Functor2Mem<uint16, uint16 *, void, cls>(this, &cls::method) \
+		)
+
 	void loadResourceNames();
 	void loadCardIdMap();
 	void setCurrentStackVariable();
 
-	MohawkEngine_Riven *_vm;
 
 	uint16 _id;
 
@@ -118,6 +147,8 @@ private:
 	RivenNameList _stackNames;
 
 	Common::Array<uint32> _cardIdMap;
+
+	CommandsMap _commands;
 };
 
 } // End of namespace Mohawk

@@ -23,7 +23,6 @@
 #include "mohawk/cursors.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
-#include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
@@ -444,7 +443,7 @@ void RivenSimpleCommand::delay(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 17: call external command
 void RivenSimpleCommand::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_externalScriptHandler->runCommand(argc, argv);
+	_vm->getStack()->runCommand(argc, argv);
 }
 
 // Command 18: transition

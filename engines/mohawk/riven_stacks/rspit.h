@@ -28,9 +28,18 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * Rebel Age / Tay
+ */
 class RSpit : public RivenStack {
 public:
 	RSpit(MohawkEngine_Riven *vm);
+
+	// External commands
+	void xrcredittime(uint16 argc, uint16 *argv);
+	void xrshowinventory(uint16 argc, uint16 *argv);
+	void xrhideinventory(uint16 argc, uint16 *argv);
+	void xrwindowsetup(uint16 argc, uint16 *argv);
 
 };
 

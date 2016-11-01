@@ -28,10 +28,45 @@
 namespace Mohawk {
 namespace RivenStacks {
 
+/**
+ * Garden Island
+ */
 class GSpit : public DomeSpit {
 public:
 	GSpit(MohawkEngine_Riven *vm);
 
+	// External commands - Pins
+	void xgresetpins(uint16 argc, uint16 *argv);
+	void xgrotatepins(uint16 argc, uint16 *argv);
+	void xgpincontrols(uint16 argc, uint16 *argv);
+
+	// External commands - Dome
+	void xgisland25_opencard(uint16 argc, uint16 *argv);
+	void xgisland25_resetsliders(uint16 argc, uint16 *argv);
+	void xgisland25_slidermd(uint16 argc, uint16 *argv);
+	void xgisland25_slidermw(uint16 argc, uint16 *argv);
+	void xgscpbtn(uint16 argc, uint16 *argv);
+	void xgisland1490_domecheck(uint16 argc, uint16 *argv);
+
+	// External commands - Mapping
+	void xgplateau3160_dopools(uint16 argc, uint16 *argv);
+
+	// External commands - Scribe Taking the Tram
+	void xgwt200_scribetime(uint16 argc, uint16 *argv);
+	void xgwt900_scribe(uint16 argc, uint16 *argv);
+
+	// External commands - Periscope/Prison Viewer
+	void xgplaywhark(uint16 argc, uint16 *argv);
+	void xgrviewer(uint16 argc, uint16 *argv);
+	void xgwharksnd(uint16 argc, uint16 *argv);
+	void xglview_prisonoff(uint16 argc, uint16 *argv);
+	void xglview_villageoff(uint16 argc, uint16 *argv);
+	void xglviewer(uint16 argc, uint16 *argv);
+	void xglview_prisonon(uint16 argc, uint16 *argv);
+	void xglview_villageon(uint16 argc, uint16 *argv);
+
+private:
+	void lowerPins();
 };
 
 } // End of namespace RivenStacks
