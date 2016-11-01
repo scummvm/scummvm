@@ -60,7 +60,16 @@ MODULE_OBJS += \
 	riven_scripts.o \
 	riven_sound.o \
 	riven_stack.o \
-	riven_vars.o
+	riven_vars.o \
+	riven_stacks/aspit.o \
+	riven_stacks/bspit.o \
+	riven_stacks/domespit.o \
+	riven_stacks/gspit.o \
+	riven_stacks/jspit.o \
+	riven_stacks/ospit.o \
+	riven_stacks/pspit.o \
+	riven_stacks/rspit.o \
+	riven_stacks/tspit.o
 endif
 
 # This module can be built as a plugin

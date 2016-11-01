@@ -37,6 +37,14 @@
 #include "mohawk/riven_saveload.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_stacks/aspit.h"
+#include "mohawk/riven_stacks/bspit.h"
+#include "mohawk/riven_stacks/gspit.h"
+#include "mohawk/riven_stacks/jspit.h"
+#include "mohawk/riven_stacks/ospit.h"
+#include "mohawk/riven_stacks/pspit.h"
+#include "mohawk/riven_stacks/rspit.h"
+#include "mohawk/riven_stacks/tspit.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/video.h"
 #include "mohawk/console.h"
@@ -341,7 +349,30 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_sound->stopAllSLST();
 
 	delete _stack;
-	_stack = new RivenStack(this, n);
+	_stack = constructStackById(n);
+}
+
+RivenStack *MohawkEngine_Riven::constructStackById(uint16 id) {
+	switch (id) {
+		case kStackAspit:
+			return new RivenStacks::ASpit(this);
+		case kStackBspit:
+			return new RivenStacks::BSpit(this);
+		case kStackGspit:
+			return new RivenStacks::GSpit(this);
+		case kStackJspit:
+			return new RivenStacks::JSpit(this);
+		case kStackOspit:
+			return new RivenStacks::OSpit(this);
+		case kStackPspit:
+			return new RivenStacks::PSpit(this);
+		case kStackRspit:
+			return new RivenStacks::RSpit(this);
+		case kStackTspit:
+			return new RivenStacks::TSpit(this);
+		default:
+			error("Unknown stack id '%d'", id);
+	}
 }
 
 // Riven uses some hacks to change stacks for linking books
