@@ -172,6 +172,8 @@ public:
 	void installCardTimer();
 	void checkTimer();
 	void removeTimer();
+
+	RivenStack *constructStackById(uint16 id);
 };
 
 } // End of namespace Mohawk
