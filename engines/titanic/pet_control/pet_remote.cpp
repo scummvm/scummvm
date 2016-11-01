@@ -314,8 +314,8 @@ bool CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
 	const byte *p = &REMOTE_DATA[0];
 	for (int idx = 0; idx < TOTAL_ROOMS; ++idx) {
 		if (*p == roomIndex) {
-			for (int ctr = 0; ctr < *p; ++ctr)
-				indexes.push_back(p[ctr + 1]);
+			for (int ctr = 0; ctr < p[1]; ++ctr)
+				indexes.push_back(p[ctr + 2]);
 			return true;
 		}
 
