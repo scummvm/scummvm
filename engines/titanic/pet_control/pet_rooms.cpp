@@ -165,7 +165,8 @@ void CPetRooms::enter(PetArea oldArea) {
 }
 
 void CPetRooms::enterRoom(CRoomItem *room) {
-
+	if (room)
+		resetHighlight();
 }
 
 CPetText *CPetRooms::getText() {
