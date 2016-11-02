@@ -58,7 +58,7 @@ void CBackground::load(SimpleFile *file) {
 bool CBackground::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
 	if (_fieldDC) {
-		playMovie(_startFrame, _endFrame, 16);
+		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
 	} else {
 		playMovie(_startFrame, _endFrame, 0);
 	}

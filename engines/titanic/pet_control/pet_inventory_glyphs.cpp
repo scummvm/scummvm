@@ -295,7 +295,7 @@ void CPetInventoryGlyph::startBackgroundMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_background, 1);
+			section->playMovie(_background, MOVIE_REPEAT);
 	}
 }
 
@@ -303,7 +303,7 @@ void CPetInventoryGlyph::startForegroundMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_image, 1);
+			section->playMovie(_image, MOVIE_REPEAT);
 	}
 }
 
@@ -311,7 +311,7 @@ void CPetInventoryGlyph::stopMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(nullptr, 1);
+			section->playMovie(nullptr, MOVIE_REPEAT);
 	}
 }
 

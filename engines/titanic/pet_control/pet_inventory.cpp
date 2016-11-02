@@ -242,7 +242,7 @@ void CPetInventory::playMovie(CGameObject *movie, int flag) {
 
 	if (_movie) {
 		if (flag)
-			_movie->playMovie(0, 14, 1);
+			_movie->playMovie(0, 14, MOVIE_REPEAT);
 		else
 			_movie->playMovie(0);
 	}
