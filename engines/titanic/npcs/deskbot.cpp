@@ -78,7 +78,7 @@ void CDeskbot::load(SimpleFile *file) {
 bool CDeskbot::TurnOn(CTurnOn *msg) {
 	if (!_deskbotActive) {
 		setVisible(true);
-		playClip("BellRinging", 4);
+		playClip("BellRinging", MOVIE_NOTIFY_OBJECT);
 		playSound("b#69.wav");
 		petSetArea(PET_CONVERSATION);
 

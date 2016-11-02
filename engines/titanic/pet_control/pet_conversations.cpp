@@ -285,7 +285,7 @@ void CPetConversations::displayNPCName(CGameObject *npc) {
 
 		if (name.contains("Doorbot")) {
 			msg += "the DoorBot";
-		} else if (name.contains("DeskBot")) {
+		} else if (name.contains("Deskbot")) {
 			id = 2;
 			msg += "the DeskBot";
 		} else if (name.contains("LiftBot")) {
