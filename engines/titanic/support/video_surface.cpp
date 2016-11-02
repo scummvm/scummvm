@@ -246,9 +246,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				transSurface.setCol(srcRect.left);
 
 				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
-					if (!transSurface.isPixelTransparent()) {
-						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha(), srcSurface->format, isAlpha);
-					}
+					copyPixel(lineDestP, lineSrcP, transSurface.getAlpha() >> 3, srcSurface->format, isAlpha);
 
 					++lineSrcP;
 					++lineDestP;

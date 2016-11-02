@@ -136,7 +136,7 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
 		const uint16 *srcP = srcSurface.getPixels();
-		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_DEFAULT);
+		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_ALPHA0);
 		uint16 *destP = (uint16 *)surface.getPixels();
 
 		for (int y = 0; y < CURSOR_SIZE; ++y) {
