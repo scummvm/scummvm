@@ -835,6 +835,7 @@ DEFFN(CMouseDragMsg);
 DEFFN(CMouseDragStartMsg);
 DEFFN(CMouseDragMoveMsg);
 DEFFN(CMouseDragEndMsg);
+DEFFN(CMouseWheelMsg);
 DEFFN(CMoveToStartPosMsg);
 DEFFN(CMovieEndMsg);
 DEFFN(CMovieFrameMsg);
@@ -1426,6 +1427,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMouseDragStartMsg, CMouseDragMsg);
 	ADDFN(CMouseDragMoveMsg, CMouseDragMsg);
 	ADDFN(CMouseDragEndMsg, CMouseDragMsg);
+	ADDFN(CMouseWheelMsg, CMouseMsg);
 	ADDFN(CMoveToStartPosMsg, CMessage);
 	ADDFN(CMovieEndMsg, CMessage);
 	ADDFN(CMovieFrameMsg, CMessage);

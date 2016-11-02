@@ -101,6 +101,20 @@ public:
 	static void generate();
 };
 
+class CMouseWheelMsg : public CMouseMsg {
+public:
+	bool _wheelUp;
+public:
+	CLASSDEF;
+	CMouseWheelMsg() : CMouseMsg(), _wheelUp(false) {}
+	CMouseWheelMsg(const Point &pt, bool wheelUp) :
+		CMouseMsg(pt, 0), _wheelUp(wheelUp) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+};
+
 class CMouseDoubleClickMsg : public CMouseButtonMsg {
 public:
 	CLASSDEF;

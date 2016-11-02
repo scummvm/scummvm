@@ -106,6 +106,7 @@ public:
 	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg) { return false; }
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) { return false; }
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg) { return false; }
 	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 

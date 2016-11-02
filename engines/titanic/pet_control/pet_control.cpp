@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 	ON_MESSAGE(MouseDragEndMsg)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(MouseDoubleClickMsg)
+	ON_MESSAGE(MouseWheelMsg)
 	ON_MESSAGE(KeyCharMsg)
 	ON_MESSAGE(VirtualKeyCharMsg)
 	ON_MESSAGE(TimerMsg)
@@ -315,6 +316,13 @@ bool CPetControl::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 		return false;
 
 	return _sections[_currentArea]->MouseDoubleClickMsg(msg);
+}
+
+bool CPetControl::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (!containsPt(msg->_mousePos) || isInputLocked())
+		return false;
+
+	return _sections[_currentArea]->MouseWheelMsg(msg);
 }
 
 bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {

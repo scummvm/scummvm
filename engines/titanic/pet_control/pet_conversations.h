@@ -164,6 +164,7 @@ public:
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 	virtual bool KeyCharMsg(CKeyCharMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 

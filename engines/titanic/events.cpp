@@ -70,6 +70,11 @@ void Events::pollEvents() {
 		_mousePos = event.mouse;
 		eventTarget()->rightButtonUp(_mousePos);
 		break;
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+		_mousePos = event.mouse;
+		eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
+		break;
 	case Common::EVENT_KEYDOWN:
 		eventTarget()->keyDown(event.kbd);
 		break;

@@ -65,6 +65,7 @@ public:
 	virtual void middleButtonDoubleClick(const Point &mousePos) {}
 	virtual void rightButtonDown(const Point &mousePos) {}
 	virtual void rightButtonUp(const Point &mousePos) {}
+	virtual void mouseWheel(const Point &mousePos, bool wheelUp) {}
 	virtual void keyDown(Common::KeyState keyState) {}
 	virtual void keyUp(Common::KeyState keyState) {}
 };

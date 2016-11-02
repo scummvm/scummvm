@@ -341,6 +341,14 @@ void CMainGameWindow::rightButtonUp(const Point &mousePos) {
 	HANDLE_MESSAGE(rightButtonUp)
 }
 
+void CMainGameWindow::mouseWheel(const Point &mousePos, bool wheelUp) {
+	if (!isMouseControlEnabled())
+		return;
+
+	_gameManager->_inputTranslator.mouseWheel(wheelUp, mousePos);
+	mouseChanged();
+}
+
 void CMainGameWindow::rightButtonDoubleClick(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;

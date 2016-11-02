@@ -50,6 +50,7 @@ public:
 	void middleButtonDoubleClick(int special, const Point &pt);
 	void rightButtonDown(int special, const Point &pt);
 	void rightButtonUp(int special, const Point &pt);
+	void mouseWheel(bool wheelUp, const Point &pt);
 	void rightButtonDoubleClick(int special, const Point &pt);
 	void keyDown(const Common::KeyState &keyState);
 

@@ -116,6 +116,7 @@ protected:
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	bool MouseWheelMsg(CMouseWheelMsg *msg);
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);

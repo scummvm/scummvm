@@ -203,6 +203,15 @@ bool CPetConversations::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 		|| _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
 }
 
+bool CPetConversations::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (msg->_wheelUp)
+		scrollUp();
+	else
+		scrollDown();
+
+	return true;
+}
+
 bool CPetConversations::KeyCharMsg(CKeyCharMsg *msg) {
 	Common::KeyState keyState;
 	keyState.ascii = msg->_key;
