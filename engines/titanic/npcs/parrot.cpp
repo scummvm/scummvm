@@ -291,7 +291,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 					return true;
 
 				} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
-					playClip("Eat Chicken", 0);
+					playClip("Eat Chicken");
 					playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
 					_v1 = 1;
 

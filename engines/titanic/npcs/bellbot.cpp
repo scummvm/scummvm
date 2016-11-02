@@ -229,7 +229,7 @@ bool CBellBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	};
 
 	if (msg->_value2 == 2)
-		playClip("Mother Frame", 0);
+		playClip("Mother Frame");
 	else
 		msg->_names = NAMES;
 

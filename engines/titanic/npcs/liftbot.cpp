@@ -164,7 +164,7 @@ bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	};
 
 	if (msg->_value2 == 2)
-		playClip("At Rest", 0);
+		playClip("At Rest");
 	else
 		msg->_names = NAMES;
 	return true;

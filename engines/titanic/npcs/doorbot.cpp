@@ -272,9 +272,9 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 			break;
 
 		case 3:
-			playClip("DoubleTake Start", 0);
-			playClip("DoubleTake End", 0);
-			playClip("DoubleTake Start", 0);
+			playClip("DoubleTake Start");
+			playClip("DoubleTake End");
+			playClip("DoubleTake Start");
 			playClip("DoubleTake End", MOVIE_NOTIFY_OBJECT);
 			_introMovieNum = 3;
 			break;

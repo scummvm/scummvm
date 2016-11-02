@@ -154,8 +154,8 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		moveToView();
 		setPosition(Point(0, 0));
 		setVisible(true);
-		playClip("Pick Up", 2);
-		playClip("Flapping", 1);
+		playClip("Pick Up", MOVIE_STOP_PREVIOUS);
+		playClip("Flapping", MOVIE_REPEAT);
 
 		stopTimer(_timerId);
 		_timerId = addTimer(1000, 1000);

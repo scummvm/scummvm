@@ -170,7 +170,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		inc54();
 		lockMouse();
 		petSetArea(PET_CONVERSATION);
-		playClip("ReprogramPETInHand", 4);
+		playClip("ReprogramPETInHand", MOVIE_NOTIFY_OBJECT);
 		_npcFlags |= NPCFLAG_10000;
 		_classNum = msg->_param1;
 
@@ -301,7 +301,7 @@ bool CDeskbot::TurnOff(CTurnOff *msg) {
 		performAction(1, findView());
 
 		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_IDLING | NPCFLAG_START_IDLING)) | NPCFLAG_40000;
-		playClip("Closing", 0x14);
+		playClip("Closing", MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;
