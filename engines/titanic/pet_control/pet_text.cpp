@@ -87,7 +87,7 @@ CString CPetText::getColorText(byte r, byte g, byte b) {
 void CPetText::load(SimpleFile *file, int param) {
 	if (!param) {
 		uint numLines = file->readNumber();
-		uint charsPerLine = file->readNumber();
+		int charsPerLine = file->readNumber();
 		uint count = file->readNumber();
 		_bounds = file->readRect();
 		_unused1 = file->readNumber();
@@ -102,8 +102,9 @@ void CPetText::load(SimpleFile *file, int param) {
 		_hasBorder = file->readNumber() != 0;
 		_scrollTop = file->readNumber();
 
-		resize(numLines);
 		setMaxCharsPerLine(charsPerLine);
+		resize(numLines);
+		_lineCount = (count == 0) ? 0 : count - 1;
 
 		assert(_array.size() >= count);
 		for (uint idx = 0; idx < count; ++idx) {
