@@ -301,32 +301,30 @@ ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) 
 // Resource manager constructors and operations
 
 bool Resource::loadPatch(Common::SeekableReadStream *file) {
-	Resource *res = this;
-
-	// We assume that the resource type matches res->type
+	// We assume that the resource type matches `type`
 	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
-	res->data = new byte[res->size];
+	data = new byte[size];
 
-	if (res->_headerSize > 0)
-		res->_header = new byte[res->_headerSize];
+	if (_headerSize > 0)
+		_header = new byte[_headerSize];
 
-	if ((res->data == NULL) || ((res->_headerSize > 0) && (res->_header == NULL))) {
-		error("Can't allocate %d bytes needed for loading %s", res->size + res->_headerSize, res->_id.toString().c_str());
+	if (data == nullptr || (_headerSize > 0 && _header == nullptr)) {
+		error("Can't allocate %d bytes needed for loading %s", size + _headerSize, _id.toString().c_str());
 	}
 
 	uint32 really_read;
-	if (res->_headerSize > 0) {
-		really_read = file->read(res->_header, res->_headerSize);
-		if (really_read != res->_headerSize)
-			error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->_headerSize);
+	if (_headerSize > 0) {
+		really_read = file->read(_header, _headerSize);
+		if (really_read != _headerSize)
+			error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), _headerSize);
 	}
 
-	really_read = file->read(res->data, res->size);
-	if (really_read != res->size)
-		error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->size);
+	really_read = file->read(data, size);
+	if (really_read != size)
+		error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
-	res->_status = kResStatusAllocated;
+	_status = kResStatusAllocated;
 	return true;
 }
 
