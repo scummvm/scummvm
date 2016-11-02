@@ -643,20 +643,33 @@ void SoundCommandParser::reconstructPlayList() {
 	_music->_mutex.unlock();
 
 	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
-		initSoundResource(*i);
+		MusicEntry *entry = *i;
+		initSoundResource(entry);
 
-		if ((*i)->status == kSoundPlaying) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY && entry->isSample) {
+			const reg_t &soundObj = entry->soundObj;
+
+			if ((int)readSelectorValue(_segMan, soundObj, SELECTOR(loop)) != -1 &&
+				readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
+
+				writeSelector(_segMan, soundObj, SELECTOR(handle), NULL_REG);
+				processPlaySound(soundObj, entry->playBed);
+			}
+		} else
+#endif
+		if (entry->status == kSoundPlaying) {
 			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
 			// sound object directly without going through DoSound.
 			// Since we re-read this selector when re-playing the sound after loading,
 			// this will lead to unexpected behaviour. As a workaround we
 			// sync the sound object's selectors here. (See bug #5501)
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(loop), entry->loop);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(priority), entry->priority);
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
-				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
+				writeSelectorValue(_segMan, entry->soundObj, SELECTOR(vol), entry->volume);
 
-			processPlaySound((*i)->soundObj, (*i)->playBed);
+			processPlaySound(entry->soundObj, entry->playBed);
 		}
 	}
 }
