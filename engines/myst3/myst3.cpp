@@ -424,6 +424,8 @@ void Myst3Engine::processInput(bool lookOnly) {
 		_state->setGamePadRightPressed(false);
 	}
 
+	bool shouldInteractWithHoveredElement = false;
+
 	while (getEventManager()->pollEvent(event)) {
 		if (_state->hasVarGamePadUpPressed()) {
 			processEventForGamepad(event);
@@ -438,7 +440,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			_cursor->updatePosition(event.mouse);
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-			interactWithHoveredElement(lookOnly);
+			shouldInteractWithHoveredElement = true;
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			// Skip the event when in look only mode
 			if (lookOnly)
@@ -467,7 +469,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				_inputEnterPressed = true;
-				interactWithHoveredElement(lookOnly);
+				shouldInteractWithHoveredElement = true;
 				break;
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
@@ -513,6 +515,16 @@ void Myst3Engine::processInput(bool lookOnly) {
 		}
 	}
 
+	// The input state variables need to be set before calling the scripts
+	_state->setInputMousePressed(inputValidatePressed());
+	_state->setInputTildePressed(_inputTildePressed);
+	_state->setInputSpacePressed(_inputSpacePressed);
+	_state->setInputEscapePressed(_inputEscapePressed);
+
+	if (shouldInteractWithHoveredElement) {
+		interactWithHoveredElement(lookOnly);
+	}
+
 	// Open main menu
 	// This is not checked directly in the event handling code
 	// because menu open requests done while in lookOnly mode
@@ -528,11 +540,6 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_state->setMenuEscapePressed(1);
 		}
 	}
-
-	_state->setInputMousePressed(inputValidatePressed());
-	_state->setInputTildePressed(_inputTildePressed);
-	_state->setInputSpacePressed(_inputSpacePressed);
-	_state->setInputEscapePressed(_inputEscapePressed);
 }
 
 void Myst3Engine::processEventForGamepad(const Common::Event &event) {
