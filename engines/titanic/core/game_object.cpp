@@ -1660,7 +1660,7 @@ void CGameObject::startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	}
 }
 
-void CGameObject::endTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view) {
+void CGameObject::setTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view) {
 	CPetControl *pet = getPetControl();
 	if (pet)
 		pet->setActiveNPC(npc);

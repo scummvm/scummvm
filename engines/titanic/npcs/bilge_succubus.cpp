@@ -431,7 +431,7 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 		CSUBTransition transMsg;
 		transMsg.execute(this);
 
-		endTalking(this, true);
+		setTalking(this, true);
 		petSetArea(PET_REMOTE);
 		petHighlightGlyph(16);
 	}

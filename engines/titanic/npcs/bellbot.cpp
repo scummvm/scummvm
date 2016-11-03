@@ -119,7 +119,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 			_npcFlags &= ~NPCFLAG_40000;
 		}
 
-		endTalking(this, true);
+		setTalking(this, true);
 		petSetArea(PET_CONVERSATION);
 	} else if (clipExistsByEnd("Walk Off", msg->_endFrame)) {
 		CPutBotBackInHisBoxMsg boxMsg;

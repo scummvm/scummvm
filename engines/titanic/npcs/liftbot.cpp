@@ -82,7 +82,7 @@ bool CLiftBot::EnterViewMsg(CEnterViewMsg *msg) {
 	} else if (!_flag) {
 		if (getName() != "LiftBot") {
 			CViewItem *view = findView();
-			endTalking(this, true, view);
+			setTalking(this, true, view);
 			petSetArea(PET_CONVERSATION);
 			_flag = 1;
 		}
@@ -124,7 +124,7 @@ bool CLiftBot::TurnOn(CTurnOn *msg) {
 	_enabled = true;
 	if (!_flag) {
 		if (isEquals("LiftBotTalking")) {
-			endTalking(this, MOVIE_REPEAT, findView());
+			setTalking(this, MOVIE_REPEAT, findView());
 			petSetArea(PET_CONVERSATION);
 			_flag = true;
 		}
@@ -174,7 +174,7 @@ bool CLiftBot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "ActivateLift") {
 		_enabled = true;
 		CViewItem *view = findView();
-		endTalking(this, true, view);
+		setTalking(this, true, view);
 		startTalking(this, 155, view);
 	} else if (msg->_action == "LiftArrive") {
 		CViewItem *view = findView();

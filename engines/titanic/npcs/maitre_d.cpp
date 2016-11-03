@@ -114,7 +114,7 @@ bool CMaitreD::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
-	endTalking(this, true, findView());
+	setTalking(this, true, findView());
 	_field12C = _field134;
 
 	if (_string3 == "STMusic" && (!_field11C || _string2 == _string3))

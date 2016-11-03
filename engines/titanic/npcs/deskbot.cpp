@@ -145,7 +145,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (_npcFlags & NPCFLAG_20000) {
 		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
-		endTalking(this, 1, findView());
+		setTalking(this, true, findView());
 
 		_npcFlags |= NPCFLAG_START_IDLING;
 		flag = true;

@@ -932,11 +932,6 @@ public:
 	/*--- CTrueTalkManager Methods ---*/
 
 	/**
-	 * Stop a conversation with the NPC
-	 */
-	void endTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view = nullptr);
-
-	/**
 	 * Start a conversation with the NPC
 	 */
 	void startTalking(CTrueTalkNPC *npc, uint id, CViewItem *view = nullptr);
@@ -945,6 +940,12 @@ public:
 	 * Start a conversation with the NPC
 	 */
 	void startTalking(const CString &name, uint id, CViewItem *view = nullptr);
+
+	/**
+	 * Start a conversation with the NPC
+	 */
+	void setTalking(CTrueTalkNPC *npc, bool viewFlag, CViewItem *view = nullptr);
+
 
 	/**
 	 * Sets a dial region for a given NPC

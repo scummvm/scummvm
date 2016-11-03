@@ -123,7 +123,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 	} else if (_npcFlags & NPCFLAG_100000) {
 		if (clipExistsByEnd("Cloak Off", msg->_endFrame)) {
 			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_START_IDLING;
-			endTalking(this, false);
+			setTalking(this, false);
 			startTalking(this, 221474);
 			_npcFlags |= NPCFLAG_DOORBOT_INTRO;
 			_introMovieNum = 0;
@@ -139,7 +139,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 				|| clipExistsByEnd("Whizz On Right", msg->_endFrame)) {
 			setPosition(Point((600 - _bounds.width()) / 2 + 18, 42));
 			loadFrame(0);
-			endTalking(this, true);
+			setTalking(this, true);
 			_npcFlags |= NPCFLAG_START_IDLING;
 			petSetArea(PET_CONVERSATION);
 		} else if (clipExistsByEnd("Whizz Off Left", msg->_endFrame)
@@ -237,7 +237,7 @@ bool CDoorbot::DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg) {
 	} else {
 		_npcFlags = 0;
 		if (msg->_value)
-			endTalking(this, true);
+			setTalking(this, true);
 	}
 
 	return true;

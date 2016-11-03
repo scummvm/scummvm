@@ -336,7 +336,7 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 		_fieldC4 = 1;
 		++_v0;
 		petSetArea(PET_CONVERSATION);
-		endTalking(this, true);
+		setTalking(this, true);
 	}
 
 	return true;

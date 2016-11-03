@@ -352,7 +352,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		_field118 = 1;
 		_npcFlags &= ~(NPCFLAG_10000  |  NPCFLAG_20000  |  NPCFLAG_40000  |  NPCFLAG_80000  |  NPCFLAG_100000  |  NPCFLAG_200000  |  NPCFLAG_400000);
 		loadFrame(0);
-		endTalking(this, true, findView());
+		setTalking(this, true, findView());
 
 		if (_speechCounter > 0) {
 			playRandomClip(NAMES, MOVIE_NOTIFY_OBJECT);
