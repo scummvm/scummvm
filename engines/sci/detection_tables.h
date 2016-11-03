@@ -3398,7 +3398,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
-	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy (supplied by alonzotg in bug report #3206006)
+	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.001 Int#0.000.566 (supplied by alonzotg in bug report #3206006)
 	{"qfg1", "", {
 		{"resource.map", 0, "85512508ed4e4ef1e3b309adabceeda9", 6486},
 		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
