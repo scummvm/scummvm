@@ -245,7 +245,7 @@ void CTrueTalkManager::start4(CTrueTalkNPC *npc, CViewItem *view) {
 TTnpcScript *CTrueTalkManager::getTalker(const CString &name) const {
 	if (name.contains("Doorbot"))
 		return _scripts.getNpcScript(104);
-	else if (name.contains("DeskBot"))
+	else if (name.contains("Deskbot"))
 		return _scripts.getNpcScript(103);
 	else if (name.contains("LiftBot"))
 		return _scripts.getNpcScript(105);
@@ -271,6 +271,7 @@ TTnpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 
 	if (!script) {
 		// Fall back on the default NPC script
+		warning("Could not find NPC script for %s, using fallback", npc->getName().c_str());
 		script = _scripts.getNpcScript(101);
 	}
 
