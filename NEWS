@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
 
+ Composer:
+   - Added save/load from General Main Menu.
+
  iOS port:
    - Added bilinear filtering option on iOS devices.
 
