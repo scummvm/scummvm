@@ -199,6 +199,12 @@ void TabWidget::setActiveTab(int tabID) {
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
+		
+		// Also ensure the tab is visible in the tab bar
+		if (_firstVisibleTab > tabID)
+			_firstVisibleTab = tabID;
+		else if (_firstVisibleTab + _w / _tabWidth <= tabID)
+			_firstVisibleTab = tabID - _w / _tabWidth + 1;
 
 		_boss->draw();
 	}
