@@ -5,6 +5,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Added a command-line option to automatically scan for supported games in
      the current or a specified directory.
+   - Many options in GUI could be applied without closing the dialog.
+   - On-the-fly language switching was implemented.
 
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
