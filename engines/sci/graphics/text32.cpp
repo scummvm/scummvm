@@ -527,7 +527,7 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 				--length;
 			}
 		} else {
-			width += font->getCharWidth(currentChar);
+			width += font->getCharWidth((unsigned char)currentChar);
 		}
 
 		if (length > 0) {
