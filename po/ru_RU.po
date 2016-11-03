@@ -842,9 +842,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "полноэкранный режим не может быть изменён"
 
 #: gui/options.cpp:462
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "полноэкранный режим не может быть изменён"
+msgstr "режим масштабирования не может быть изменён"
 
 #: gui/options.cpp:782
 msgid "Graphics mode:"
@@ -864,13 +863,12 @@ msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
 #: gui/options.cpp:811
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Использовать цветную графику"
+msgstr "Масштабировать графику"
 
 #: gui/options.cpp:811
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Использовать линейное масштабирования для увеличения разрешения"
 
 #: gui/options.cpp:814
 msgid "Aspect ratio correction"
@@ -1880,9 +1878,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Не могу применить полноэкранный режим."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Не могу применить полноэкранный режим."
+msgstr "Не могу применить настройки масштабирования."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2184,7 +2181,7 @@ msgstr "Оконный режим"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Разрешение: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -2198,15 +2195,13 @@ msgstr "Коррекция соотношения сторон выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Щелчки включены"
+msgstr "Масштабирование включено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Щелчки выключены"
+msgstr "Масштабирование выключено"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -3148,24 +3143,30 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Вам не хватает исполнимого файла Riven. Windows-файл называется 'riven.exe', "
+"либо 'rivendmo.exe'."
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Использование файла 'arcriven.z' также достаточно. Кроме того, вы можете "
+"использовать исполнимый файл для Мака 'Riven'."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Не хватает файла 'extras.mhk'. Вместо него можно использовать файл 'arcriven.z'."
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"Исследование далее данного положеня возможно только в полной версии игры."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3175,6 +3176,10 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"В этой точке демо Riven попросила бы вас\n"
+"открыть браузер и перейти в магазин Red Orb.\n"
+"ScummVM не умент это делать, да и магазин\n"
+"больше не существует."
 
 #: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
