@@ -538,12 +538,16 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
-
+#if 0
+		// TODO: Figure out if these below are needed. It kinda looks like they were
+		// simply playing the same speech at different spatial co-ordinates. And since
+		// we don't support spatial processing in ScummVM yet, they're being left disabled
 		p3._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
 		p2._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
+#endif
 	}
 }
 
