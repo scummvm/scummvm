@@ -40,7 +40,8 @@ void CTitleEngine::setup(int val1, int val2) {
 
 /*------------------------------------------------------------------------*/
 
-STtitleEngine::STtitleEngine(): CTitleEngine(), _responseP(nullptr) {
+STtitleEngine::STtitleEngine(): CTitleEngine(),
+		_responseP(nullptr), _stream(nullptr) {
 }
 
 STtitleEngine::~STtitleEngine() {

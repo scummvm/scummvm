@@ -489,7 +489,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 			break;
 
 		TTword *srcWord = nullptr;
-		TTword *word = _owner->_vocab->getWord(wordString, &word);
+		TTword *word = _owner->_vocab->getWord(wordString, &srcWord);
 		sentence->storeVocabHit(srcWord);
 
 		if (!word && ctr == 1) {
