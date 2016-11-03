@@ -29,6 +29,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/serializer.h"
 #include "common/textconsole.h"
 #include "common/rect.h"
 
@@ -114,6 +115,7 @@ struct Library {
 	uint _id;
 	Archive *_archive;
 
+	Common::String _group;
 	Common::List<Button> _buttons;
 	Common::List<KeyboardHandler> _keyboardHandlers;
 };
@@ -150,6 +152,19 @@ class ComposerEngine : public Engine {
 protected:
 	Common::Error run();
 
+	template <typename T>
+	void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void syncList(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	template <typename T>
+	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
+	bool canLoadGameStateCurrently() { return true; }
+	Common::Error loadGameState(int slot);
+	bool canSaveGameStateCurrently() { return true; }
+	Common::Error saveGameState(int slot, const Common::String &desc);
+
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
 	virtual ~ComposerEngine();
@@ -173,7 +188,7 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 	uint16 _currSoundPriority;
 
-	uint32 _currentTime, _lastTime;
+	uint32 _currentTime, _lastTime, _timeDelta, _lastSaveTime;
 
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;
@@ -210,6 +225,7 @@ private:
 	uint16 _mouseSpriteId;
 	Common::Point _mouseOffset;
 
+	Common::String makeSaveGameName(int slot);
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getFilename(const Common::String &section, uint id);
 	Common::String mangleFilename(Common::String filename);
@@ -231,6 +247,7 @@ private:
 	void tickOldScripts();
 	bool tickOldScript(OldScript *script);
 
+	void loadAnimation(Animation *&anim, uint16 animId, int16 x, int16 y, int16 eventParam, int32 size = 0);
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
 	void playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly);

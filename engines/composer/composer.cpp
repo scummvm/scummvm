@@ -21,6 +21,7 @@
  */
 #include "common/scummsys.h"
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/random.h"
 #include "common/keyboard.h"
@@ -120,6 +121,9 @@ Common::Error ComposerEngine::run() {
 	else
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
+	_lastSaveTime = _system->getMillis();
+	
+	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
@@ -169,7 +173,12 @@ Common::Error ComposerEngine::run() {
 		} else if (_needsUpdate) {
 			redraw();
 		}
-
+		if (loadFromLauncher) {
+			loadGameState(ConfMan.getInt("save_slot"));
+			loadFromLauncher = false;
+		}
+		if (shouldPerformAutoSave(_lastSaveTime))
+			saveGameState(0, "Autosave");
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
@@ -378,7 +387,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	}
 
 	Common::String filename;
-
+	Common::String oldGroup = _bookGroup;
 	if (getGameType() == GType_ComposerV1) {
 		if (!id || _bookGroup.empty())
 			filename = getStringFromConfig("Common", "StartPage");
@@ -412,6 +421,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	Library library;
 
 	library._id = id;
+	library._group = oldGroup;
 	library._archive = new ComposerArchive();
 	if (!library._archive->openFile(filename))
 		error("failed to open '%s'", filename.c_str());

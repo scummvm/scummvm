@@ -21,6 +21,9 @@
  */
 
 #include "base/plugins.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/str-array.h"
 #include "engines/advancedDetector.h"
 
 #include "composer/composer.h"
@@ -448,6 +451,8 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual SaveStateList listSaves(const char* target) const;
 };
 
 bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -459,11 +464,52 @@ bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 bool ComposerMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return ((f == kSupportsListSaves) || (f == kSupportsLoadingDuringStartup));
+}
+
+Common::String getSaveName(Common::InSaveFile *in) {
+	Common::Serializer ser(in, NULL);
+	Common::String name;
+	uint32 tmp;
+	ser.syncAsUint32LE(tmp);
+	ser.syncAsUint32LE(tmp);
+	ser.syncString(name);
+	return name;
+}
+int ComposerMetaEngine::getMaximumSaveSlot() const {
+	return 99;
+}
+SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String saveDesc;
+	Common::String pattern = Common::String::format("%s.??", target);
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				saveDesc = getSaveName(in);
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL);
+	return (f == kSupportsRTL 
+		|| f == kSupportsSavingDuringRuntime 
+		|| f == kSupportsLoadingDuringRuntime);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(COMPOSER)
