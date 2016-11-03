@@ -1166,7 +1166,9 @@ void SciEngine::syncIngameAudioOptions() {
 void SciEngine::updateScummVMAudioOptions() {
 	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
 	// depending on the in-game settings
-	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
+	if ((isCD() && getSciVersion() == SCI_VERSION_1_1) ||
+		getSciVersion() >= SCI_VERSION_2) {
+
 		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType].getOffset();
 
 		switch (ingameSetting) {
