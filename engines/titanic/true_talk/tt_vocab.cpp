@@ -552,7 +552,6 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 			word->_text = str;
 	}
 
-	delete tempStr;
 	return word;
 }
 

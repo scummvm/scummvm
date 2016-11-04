@@ -499,8 +499,10 @@ int TTparser::findFrames(TTsentence *sentence) {
 		for (TTword *currP = word; currP && status <= 1; currP = currP->_nextP)
 			status = processRequests(currP);
 
-		word->deleteSiblings();
-		delete word;
+		if (word) {
+			word->deleteSiblings();
+			delete word;
+		}
 	}
 
 	if (!status) {

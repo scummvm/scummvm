@@ -90,7 +90,7 @@ int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) cons
 				strP += 4;
 			} else {
 				if (*strP == ' ') {
-					// Check fo rline wrapping
+					// Check for line wrapping
 					checkLineWrap(textSize, maxWidth, strP);
 				}
 
