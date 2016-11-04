@@ -196,10 +196,12 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	TTword *newWord = nullptr;
 	TTword *vocabP;
 
-	if (!Common::isDigit(c)) {
+	if (Common::isDigit(c)) {
+		// Number
 		vocabP = _headP;
 		newWord = new TTword(str, WC_ABSTRACT, 300);
 	} else {
+		// Standard word
 		for (vocabP = _headP; vocabP && !newWord; vocabP = vocabP->_nextP) {
 			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
 				newWord = vocabP->copy();

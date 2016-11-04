@@ -482,7 +482,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 	TTstring *line = sentence->_normalizedLine.copy();
 	TTstring wordString;
 	int status = 0;
-	for (int ctr = 1; !status; ++ctr) {
+	for (int ctr = 1; status <= 1; ++ctr) {
 		// Keep stripping words off the start of the passed input
 		wordString = line->tokenize(" \n");
 		if (wordString.empty())
@@ -496,7 +496,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 			word = new TTword(wordString, WC_UNKNOWN, 0);
 		}
 
-		for (TTword *currP = word; currP && !status; currP = currP->_nextP)
+		for (TTword *currP = word; currP && status <= 1; currP = currP->_nextP)
 			status = processRequests(currP);
 
 		word->deleteSiblings();
@@ -514,7 +514,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 int TTparser::loadRequests(TTword *word) {
 	int status = 0;
 
-	if (word->_tag != MKTAG('Z', 'Z', 'Z', 'T'))
+	if (word->_tag != MKTAG('Z', 'Z', 'Z', '['))
 		addNode(word->_tag);
 
 	switch (word->_wordClass) {
