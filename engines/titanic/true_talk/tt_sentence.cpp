@@ -265,7 +265,9 @@ TTconcept *TTsentence::getFrameEntry(int slotIndex, const TTconceptNode *concept
 TTconcept *TTsentence::getFrameSlot(int slotIndex, const TTconceptNode *conceptNode) const {
 	TTconcept *newConcept = new TTconcept();
 	TTconcept *concept = getFrameEntry(slotIndex, conceptNode);
-	newConcept->copyFrom(concept);
+
+	if (concept)
+		newConcept->copyFrom(concept);
 
 	if (!newConcept->isValid()) {
 		delete newConcept;
