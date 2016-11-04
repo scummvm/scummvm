@@ -806,8 +806,11 @@ Common::String format(const Common::String &source, int argc, const reg_t *argv)
 				continue;
 			}
 
-			assert(argIndex < argc);
-			out += readPlaceholder(in, argv[argIndex++]);
+			if (argIndex < argc) {
+				out += readPlaceholder(in, argv[argIndex++]);
+			} else {
+				out += readPlaceholder(in, NULL_REG);
+			}
 		} else {
 			out += *in++;
 		}
