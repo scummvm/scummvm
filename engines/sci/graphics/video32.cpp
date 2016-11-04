@@ -487,6 +487,7 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 
 	_isOpen(false),
 	_isInitialized(false),
+	_yieldFrame(0),
 	_yieldInterval(0),
 	_lastYieldedFrameNo(0),
 
@@ -612,12 +613,12 @@ VMDPlayer::VMDStatus VMDPlayer::getStatus() const {
 VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval) {
 	assert(lastFrameNo >= -1);
 
-	const int32 maxFrameNo = (int32)(_decoder->getFrameCount() - 1);
+	const int32 maxFrameNo = _decoder->getFrameCount() - 1;
 
-	if ((flags & kEventFlagToFrame) && lastFrameNo > 0) {
-		_decoder->setEndFrame(MIN<int32>(lastFrameNo, maxFrameNo));
+	if (flags & kEventFlagToFrame) {
+		_yieldFrame = MIN<int32>(lastFrameNo, maxFrameNo);
 	} else {
-		_decoder->setEndFrame(maxFrameNo);
+		_yieldFrame = maxFrameNo;
 	}
 
 	if (flags & kEventFlagYieldToVM) {
@@ -754,6 +755,11 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		}
 
 		const int currentFrameNo = _decoder->getCurFrame();
+
+		if (currentFrameNo == _yieldFrame) {
+			stopFlag = kEventFlagEnd;
+			break;
+		}
 
 		if (_yieldInterval > 0 &&
 			currentFrameNo != _lastYieldedFrameNo &&

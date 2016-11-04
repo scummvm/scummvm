@@ -326,6 +326,12 @@ private:
 	bool _isInitialized;
 
 	/**
+	 * For VMDs played with the `kEventFlagToFrame` flag,
+	 * the target frame for yielding back to the SCI VM.
+	 */
+	int32 _yieldFrame;
+
+	/**
 	 * For VMDs played with the `kEventFlagYieldToVM` flag,
 	 * the number of frames that should be rendered until
 	 * yielding back to the SCI VM.
