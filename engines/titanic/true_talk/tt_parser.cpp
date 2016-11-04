@@ -1277,7 +1277,7 @@ int TTparser::considerRequests(TTword *word) {
 
 		TTparserNode *nextP = dynamic_cast<TTparserNode *>(nodeP->_nextP);
 		if (flag)
-			delete nodeP;
+			removeNode(nodeP);
 		nodeP = nextP;
 	}
 
