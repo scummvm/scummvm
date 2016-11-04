@@ -733,11 +733,12 @@ namespace {
 	}
 
 	bool isSignedType(const char type) {
-		return type == 'd' || type == 'i';
+		// For whatever reason, %d ends up being treated as unsigned in SSCI
+		return type == 'i';
 	}
 
 	bool isUnsignedType(const char type) {
-		return strchr("uxXoc", type);
+		return strchr("duxXoc", type);
 	}
 
 	bool isStringType(const char type) {
