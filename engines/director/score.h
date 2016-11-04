@@ -244,6 +244,6 @@ private:
 	DirectorEngine *_vm;
 };
 
-} //End of namespace Director
+} // End of namespace Director
 
 #endif

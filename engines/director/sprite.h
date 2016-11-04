@@ -51,18 +51,18 @@ enum InkType {
 
 //Director v4
 enum SpriteType {
-	kInactiveSprite, //turns the sprite off
+	kInactiveSprite, // turns the sprite off
 	kBitmapSprite,
 	kRectangleSprite,
 	kRoundedRectangleSprite,
 	kOvalSprite,
-	kLineTopBottomSprite, //line from top left to bottom right
-	kLineBottomTopSprite, //line from bottom left to top right
+	kLineTopBottomSprite, // line from top left to bottom right
+	kLineBottomTopSprite, // line from bottom left to top right
 	kTextSprite,
 	kButtonSprite,
 	kCheckboxSprite,
 	kRadioButtonSprite,
-	kUndeterminedSprite = 16 //use castType property to examine the type of cast member associated with sprite
+	kUndeterminedSprite = 16 // use castType property to examine the type of cast member associated with sprite
 };
 
 enum SpritePosition {
@@ -114,8 +114,8 @@ public:
 	Common::Point _startPoint;
 	uint16 _width;
 	uint16 _height;
-	//TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
-	//As i know, constrainted != 0 only if sprite moveable
+	// TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
+	// As i know, constrainted != 0 only if sprite moveable
 	byte _constraint;
 	byte _moveable;
 	byte _backColor;
@@ -127,19 +127,19 @@ public:
 	byte _blend;
 	bool _visible;
 	SpriteType _type;
-	//Using in digital movie sprites
+	// Using in digital movie sprites
 	byte _movieRate;
 	uint16 _movieTime;
 	uint16 _startTime;
 	uint16 _stopTime;
 	byte _volume;
 	byte _stretch;
-	//Using in shape sprites
+	// Using in shape sprites
 	byte _lineSize;
-	//Using in text sprites
+	// Using in text sprites
 	Common::String _editableText;
 };
 
-} //End of namespace Director
+} // End of namespace Director
 
 #endif

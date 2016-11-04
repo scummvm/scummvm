@@ -276,7 +276,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		size -= 16;
 
 		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
-		//Unknown, some bytes - constant (refer to contuinity).
+		// Unknown, some bytes - constant (refer to contuinity).
 	}
 
 	uint16 channelSize;
@@ -324,7 +324,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		_frames.push_back(frame);
 	}
 
-	//remove initial frame
+	// Remove initial frame
 	_frames.remove_at(0);
 }
 
@@ -381,7 +381,7 @@ void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 		}
 	}
 
-	//Set cast pointers to sprites
+	// Set cast pointers to sprites
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			byte castId = _frames[i]->_sprites[j]->_castId;
@@ -473,9 +473,11 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 
 		stream.seek(stringPos);
 		Common::String label;
+
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
 			label += stream.readByte();
 		}
+
 		_labels->insert(new Label(label, frame));
 		stream.seek(streamPos);
 
@@ -499,7 +501,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 offset = count * 4 + 2;
 
 	byte id = stream.readByte();
-	/*byte subId = */ stream.readByte(); //I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
+	/*byte subId = */ stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
 	uint16 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
@@ -1024,4 +1026,4 @@ Sprite *Score::getSpriteById(uint16 id) {
 	}
 }
 
-} //End of namespace Director
+} // End of namespace Director
