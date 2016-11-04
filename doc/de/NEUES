@@ -11,9 +11,6 @@ Programmcodes finden Sie auf Englisch unter:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
      "Simon the Sorcerer 1" korrigiert.
 
- iOS-Portierung:
-   - Option für bilineare Filterung auf iOS-Geräten hinzugefügt.
-
 1.9.1 (DD.MM.YYYY)
  Allgemein:
    - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
