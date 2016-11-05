@@ -324,7 +324,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	_mhk.clear();
 
 	// Get the prefix character for the destination stack
-	char prefix = getStackName(n)[0];
+	char prefix = RivenStacks::getName(n)[0];
 
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
@@ -339,7 +339,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Make sure we have loaded files
 	if (_mhk.empty())
-		error("Could not load stack %s", getStackName(n).c_str());
+		error("Could not load stack %s", RivenStacks::getName(n));
 
 	// Stop any currently playing sounds
 	_sound->stopAllSLST();
@@ -552,25 +552,6 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
 	return _saveLoad->saveGame(slot, desc);
-}
-
-Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
-	static const char *rivenStackNames[] = {
-		"<unknown>",
-		"ospit",
-		"pspit",
-		"rspit",
-		"tspit",
-		"bspit",
-		"gspit",
-		"jspit",
-		"aspit"
-	};
-
-	// Sanity check.
-	assert(stack < ARRAYSIZE(rivenStackNames));
-
-	return rivenStackNames[stack];
 }
 
 void MohawkEngine_Riven::installTimer(TimerProc proc, uint32 time) {

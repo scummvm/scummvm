@@ -766,20 +766,16 @@ RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_
 }
 
 void RivenStackChangeCommand::execute() {
-	int16 stackID = -1;
+	uint16 stackID;
 	if (_byStackId) {
 		stackID = _stackId;
 	} else {
 		Common::String stackName = _vm->getStack()->getName(kStackNames, _stackId);
 
-		for (byte i = kStackFirst; i < kStackLast; i++)
-			if (_vm->getStackName(i).equalsIgnoreCase(stackName)) {
-				stackID = i;
-				break;
-			}
-
-		if (stackID == -1)
+		stackID = RivenStacks::getId(stackName.c_str());
+		if (stackID == kStackUnknown) {
 			error ("'%s' is not a stack name!", stackName.c_str());
+		}
 	}
 
 	_vm->changeToStack(stackID);

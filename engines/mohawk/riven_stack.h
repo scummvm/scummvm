@@ -151,6 +151,14 @@ private:
 	CommandsMap _commands;
 };
 
+namespace RivenStacks {
+	/** Get a stack name from an id */
+	const char *getName(uint16 stackId);
+
+	/** Get a stack id from a name */
+	uint16 getId(const char *stackName);
+}
+
 } // End of namespace Mohawk
 
 #endif

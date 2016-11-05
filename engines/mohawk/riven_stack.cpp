@@ -136,7 +136,7 @@ uint32 RivenStack::getCardGlobalId(uint16 cardId) const {
 void RivenStack::dump() const {
 	debug("= Stack =");
 	debug("id: %d", _id);
-	debug("name: %s", _vm->getStackName(_id).c_str());
+	debug("name: %s", RivenStacks::getName(_id));
 	debugN("\n");
 
 	for (uint i = 0; i < _cardIdMap.size(); i++) {
@@ -290,5 +290,36 @@ int16 RivenNameList::getNameId(const Common::String &name) const {
 
 	return -1;
 }
+
+namespace RivenStacks {
+static const char *names[] = {
+		"<unknown>",
+		"ospit",
+		"pspit",
+		"rspit",
+		"tspit",
+		"bspit",
+		"gspit",
+		"jspit",
+		"aspit"
+};
+
+const char *getName(uint16 stackId) {
+	// Sanity check.
+	assert(stackId < ARRAYSIZE(names));
+
+	return names[stackId];
+}
+
+uint16 getId(const char *stackName) {
+	for (byte i = 0; i < ARRAYSIZE(names); i++) {
+		if (scumm_stricmp(stackName, names[i]) == 0) {
+			return i;
+		}
+	}
+
+	return kStackUnknown;
+}
+} // End of namespace RivenStacks
 
 } // End of namespace Mohawk
