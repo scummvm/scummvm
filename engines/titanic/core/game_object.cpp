@@ -918,12 +918,12 @@ Point CGameObject::getMousePos() const {
 }
 
 bool CGameObject::compareViewNameTo(const CString &name) const {
-	return getViewFullName().compareToIgnoreCase(name);
+	return !getViewFullName().compareToIgnoreCase(name);
 }
 
 int CGameObject::compareRoomNameTo(const CString &name) {
 	CRoomItem *room = getGameManager()->getRoom();
-	return room->getName().compareToIgnoreCase(name);
+	return !room->getName().compareToIgnoreCase(name);
 }
 
 CString CGameObject::getRoomName() const {
