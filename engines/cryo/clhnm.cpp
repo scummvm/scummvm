@@ -39,11 +39,11 @@ static bool use_sound_sync = false;
 static int16 pending_sounds = 0;
 static bool sound_started = false;
 static bool preserve_color0 = false;
-static soundchannel_t *soundChannel_adpcm = 0;
-static soundgroup_t *soundGroup_adpcm = 0;
-static soundchannel_t *soundChannel = 0;
+static soundchannel_t *soundChannel_adpcm = nullptr;
+static soundgroup_t *soundGroup_adpcm = nullptr;
+static soundchannel_t *soundChannel = nullptr;
 static soundgroup_t *soundGroup = 0;
-static void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7) = 0;
+static void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7) = nullptr;
 static int16 decomp_table[256];
 
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
@@ -190,7 +190,7 @@ void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
 }
 
 void CLHNM_Init() {
-	custom_chunk_handler = 0;
+	custom_chunk_handler = nullptr;
 	preserve_color0 = false;
 }
 
@@ -226,20 +226,20 @@ void CLHNM_CloseSound() {
 	if (soundChannel) {
 		CLSoundChannel_Stop(soundChannel);
 		CLSoundChannel_Free(soundChannel);
-		soundChannel = 0;
+		soundChannel = nullptr;
 	}
 	if (soundGroup) {
 		CLSoundGroup_Free(soundGroup);
-		soundGroup = 0;
+		soundGroup = nullptr;
 	}
 	if (soundChannel_adpcm) {
 		CLSoundChannel_Stop(soundChannel_adpcm);
 		CLSoundChannel_Free(soundChannel_adpcm);
-		soundChannel = 0;
+		soundChannel = nullptr;
 	}
 	if (soundGroup_adpcm) {
 		CLSoundGroup_Free(soundGroup_adpcm);
-		soundGroup = 0;
+		soundGroup = nullptr;
 	}
 }
 
@@ -438,14 +438,14 @@ void CLHNM_Reset(hnm_t *hnm) {
 	CLHNM_ResetInternalTimer();
 }
 
-int16 CLHNM_LoadFrame(hnm_t *hnm) {
+bool CLHNM_LoadFrame(hnm_t *hnm) {
 	int chunk;
 	CLHNM_TryRead(hnm, 4);
 	chunk = *(int *)hnm->_readBuffer;
 	chunk = LE32(chunk);
 	chunk &= 0xFFFFFF;  // upper bit - keyframe mark?
 	if (!chunk)
-		return 0;
+		return false;
 
 	if (chunk - 4 > hnm->_header._bufferSize)
 		error("CLHNM_LoadFrame - Chunk size");
@@ -453,7 +453,7 @@ int16 CLHNM_LoadFrame(hnm_t *hnm) {
 	CLHNM_TryRead(hnm, chunk - 4);
 	hnm->_dataPtr = hnm->_readBuffer;
 	hnm->_totalRead += chunk;
-	return 1;
+	return true;
 }
 
 void CLHNM_WantsSound(bool sound) {

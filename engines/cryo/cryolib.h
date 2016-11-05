@@ -290,7 +290,7 @@ soundchannel_t *CLHNM_GetSoundChannel();
 void CLHNM_TryRead(hnm_t *hnm, int size);
 void CLHNM_ResetInternalTimer();
 void CLHNM_Reset(hnm_t *hnm);
-int16 CLHNM_LoadFrame(hnm_t *hnm);
+bool CLHNM_LoadFrame(hnm_t *hnm);
 void CLHNM_WantsSound(int16 sound);
 void CLHNM_LoadDecompTable(int16 *buffer);
 void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size);

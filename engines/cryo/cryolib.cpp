@@ -203,7 +203,7 @@ void CLPalette_BeSystem() {
 ///// CLBlitter
 static uint16 newPaletteCount, newPaletteFirst;
 static color_t *pNewPalette;
-static uint16 useNewPalette;
+static bool useNewPalette;
 
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2) {
 	int dy = rect2->top;
@@ -223,7 +223,7 @@ void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Commo
 
 void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count) {
 	pNewPalette = palette;
-	useNewPalette = 1;
+	useNewPalette = true;
 	newPaletteFirst = first;
 	newPaletteCount = count;
 }
@@ -262,7 +262,7 @@ void CLBlitter_CopyView2Screen(View *view) {
 		color_t palette[256];
 		CLPalette_GetLastPalette(palette);
 		CLPalette_Send2Screen(pNewPalette, newPaletteFirst, newPaletteCount);
-		useNewPalette = 0;
+		useNewPalette = false;
 	}
 
 	//TODO: quick hack to force screen update
