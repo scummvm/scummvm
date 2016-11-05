@@ -143,7 +143,6 @@ public:
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
 	void refreshCard();
-	Common::String getStackName(uint16 stack) const;
 	RivenCard *getCard() const { return _card; }
 	RivenStack *getStack() const { return _stack; }
 

@@ -474,7 +474,7 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getStack()->getId()).c_str());
+	debugPrintf("Current Stack: %s\n", RivenStacks::getName(_vm->getStack()->getId()));
 
 	return true;
 }
@@ -485,28 +485,20 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 		debugPrintf("Stacks:\n=======\n");
 
 		for (uint i = kStackFirst; i <= kStackLast; i++)
-			debugPrintf(" %s\n", _vm->getStackName(i).c_str());
+			debugPrintf(" %s\n", RivenStacks::getName(i));
 
 		debugPrintf("\n");
 
 		return true;
 	}
 
-	uint stack = kStackUnknown;
-
-	for (uint i = kStackFirst; i <= kStackLast; i++) {
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
-			stack = i;
-			break;
-		}
-	}
-
-	if (stack == kStackUnknown) {
+	uint stackId = RivenStacks::getId(argv[1]);
+	if (stackId == kStackUnknown) {
 		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
-	_vm->changeToStack(stack);
+	_vm->changeToStack(stackId);
 	_vm->changeToCard((uint16)atoi(argv[2]));
 
 	return false;
@@ -577,15 +569,8 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	}
 
 	uint16 oldStack = _vm->getStack()->getId();
-	uint newStack = kStackUnknown;
 
-	for (uint i = kStackFirst; i <= kStackLast; i++) {
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
-			newStack = i;
-			break;
-		}
-	}
-
+	uint newStack = RivenStacks::getId(argv[1]);
 	if (newStack == kStackUnknown) {
 		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
@@ -659,7 +644,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
 	uint32 rmapCode = _vm->getStack()->getCurrentCardGlobalId();
-	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getStack()->getId()).c_str(), _vm->getCard()->getId(), rmapCode);
+	debugPrintf("RMAP for %s %d = %08x\n", RivenStacks::getName(_vm->getStack()->getId()), _vm->getCard()->getId(), rmapCode);
 	return true;
 }
 
