@@ -503,6 +503,7 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 	_blackLines(false),
 	_leaveScreenBlack(false),
 	_leaveLastFrame(false),
+	_ignorePalettes(false),
 
 	_blackoutPlane(nullptr),
 
@@ -566,6 +567,7 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	_decoder->close();
 	_isOpen = false;
 	_isInitialized = false;
+	_ignorePalettes = false;
 
 	if (!_planeIsOwned && _screenItem != nullptr) {
 		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
@@ -827,7 +829,7 @@ void VMDPlayer::renderFrame() const {
 	// we are just submitting it directly here because the decoder exposes
 	// this information a little bit differently than the one in SSCI
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
-	if (dirtyPalette) {
+	if (dirtyPalette && !_ignorePalettes) {
 		Palette palette;
 		palette.timestamp = g_sci->getTickCount();
 		for (uint16 i = 0; i < _startColor; ++i) {

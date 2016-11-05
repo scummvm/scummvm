@@ -353,6 +353,13 @@ private:
 
 #pragma mark -
 #pragma mark VMDPlayer - Rendering
+public:
+	/**
+	 * Causes the VMD player to ignore all palettes in
+	 * the currently playing video.
+	 */
+	void ignorePalettes() { _ignorePalettes = true; }
+
 private:
 	/**
 	 * The location of the VMD plane, in game script
@@ -412,6 +419,11 @@ private:
 	 * displaying the final frame of the video.
 	 */
 	bool _leaveLastFrame;
+
+	/**
+	 * Whether or not palettes from the VMD should be ignored.
+	 */
+	bool _ignorePalettes;
 
 	/**
 	 * Renders a frame of video to the output bitmap.

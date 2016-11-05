@@ -466,6 +466,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDIgnorePalettes(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);

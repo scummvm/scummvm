@@ -428,6 +428,11 @@ reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_video32->getVMDPlayer().close());
 }
 
+reg_t kPlayVMDIgnorePalettes(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().ignorePalettes();
+	return s->r_acc;
+}
+
 reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_video32->getVMDPlayer().getStatus());
 }
