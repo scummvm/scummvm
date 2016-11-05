@@ -153,6 +153,14 @@ RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...
 	return readScript(&readStream);
 }
 
+RivenScriptPtr RivenScriptManager::createScriptWithCommand(RivenCommand *command) {
+	assert(command);
+
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
+	script->addCommand(command);
+	return script;
+}
+
 RivenScript::RivenScript() {
 	_continueRunning = true;
 }
