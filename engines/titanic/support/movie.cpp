@@ -126,19 +126,12 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 	if (!_movieSurface)
 		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 
-	bool widthLess = _videoSurface->getWidth() < 600;
-	bool heightLess = _videoSurface->getHeight() < 340;
-	Rect r(drawRect.left, drawRect.top,
-		drawRect.left + (widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH),
-		drawRect.top + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
-	);
-
 	// Set a new event target whilst the clip plays, so standard scene drawing isn't called
 	CEventTarget eventTarget;
 	g_vm->_events->addTarget(&eventTarget);
 
 	_aviSurface.setFrame(startFrame);
-	_aviSurface.playCutscene(r, startFrame, endFrame);
+	_aviSurface.playCutscene(drawRect, startFrame, endFrame);
 
 	g_vm->_events->removeTarget();
 }
