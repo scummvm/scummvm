@@ -473,7 +473,7 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 	// Set the return stack/card id's.
 	_vars["returnstackid"] = _stack->getId();
-	_vars["returncardid"] = _card->getId();
+	_vars["returncardid"] = _stack->getCardGlobalId(_card->getId());
 
 	// See RivenGraphics::showInventory() for an explanation
 	// of the variables' meanings.
