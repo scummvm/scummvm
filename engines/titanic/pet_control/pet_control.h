@@ -422,14 +422,14 @@ public:
 	/**
 	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void reassignRoom(int passClassNum) {
+	void reassignRoom(PassengerClass passClassNum) {
 		_rooms.reassignRoom(passClassNum);
 	}
 
 	/**
 	 * Change the current location passenger class
 	 */
-	bool changeLocationClass(int newClassNum) {
+	bool changeLocationClass(PassengerClass newClassNum) {
 		return _rooms.changeLocationClass(newClassNum);
 	}
 

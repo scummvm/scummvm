@@ -696,7 +696,7 @@ void CPetControl::resetDials0() {
 
 int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {
 	if (!roomFlags.isSuccUBusRoomFlags())
-		return roomFlags.getPassengerClassNum();
+		return (int)roomFlags.getPassengerClassNum();
 
 	return roomFlags.getSuccUBusNum(roomFlags.getSuccUBusRoomName());
 }

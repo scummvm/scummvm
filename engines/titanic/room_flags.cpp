@@ -112,7 +112,7 @@ int CRoomFlags::getRoomArea() const {
 				uint v6 = getElevatorNum();
 
 				if (v6 >= 1 && v6 <= 4) {
-					uint v7 = getPassengerClassNum() - 1;
+					uint v7 = (int)getPassengerClassNum() - 1;
 					if (v7) {
 						uint v8 = v7 - 1;
 						if (v8) {
@@ -241,14 +241,14 @@ uint CRoomFlags::getPassengerClassBits() const {
 }
 
 CString CRoomFlags::getPassengerClassDesc() const {
-	int classNum = getPassengerClassNum();
+	PassengerClass classNum = getPassengerClassNum();
 
 	switch (classNum) {
-	case 1:
+	case FIRST_CLASS:
 		return "1st class";
-	case 2:
+	case SECOND_CLASS:
 		return "2nd class";
-	case 3:
+	case THIRD_CLASS:
 		return "SGT class";
 	default:
 		return "no class";
@@ -373,25 +373,25 @@ void CRoomFlags::changeLocation(int action) {
 	uint floorNum = getFloorNum();
 	uint roomNum = getRoomNum();
 	uint elevatorNum = getElevatorNum();
-	uint classNum = getPassengerClassNum();
+	PassengerClass classNum = getPassengerClassNum();
 	uint v10, v11, v12, v13;
 
 	switch (classNum) {
-	case 1:
+	case FIRST_CLASS:
 		v10 = 2;
 		v11 = 19;
 		v12 = 1;
 		v13 = 3;
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		v10 = 20;
 		v11 = 27;
 		v12 = 1;
 		v13 = (elevatorNum & 1) ? 3 : 4;
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		v10 = 28;
 		v11 = 38;
 		v12 = 1;
@@ -442,16 +442,16 @@ bool CRoomFlags::compareClassElevator(uint flags1, uint flags2) {
 
 	uint elev1 = f1.getElevatorNum();
 	uint elev2 = f2.getElevatorNum();
-	uint class1 = f1.getPassengerClassNum();
-	uint class2 = f2.getPassengerClassNum();
+	PassengerClass class1 = f1.getPassengerClassNum();
+	PassengerClass class2 = f2.getPassengerClassNum();
 
-	if (class1 > 0 && class1 < 3) {
+	if (class1 == FIRST_CLASS || class1 == SECOND_CLASS) {
 		if (elev1 == 2)
 			elev1 = 1;
 		else if (elev1 == 4)
 			elev1 = 3;
 	}
-	if (class2 > 0 && class2 < 3) {
+	if (class2 == FIRST_CLASS || class2 == SECOND_CLASS) {
 		if (elev2 == 2)
 			elev2 = 1;
 		else if (elev2 == 4)

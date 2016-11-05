@@ -1336,17 +1336,17 @@ CMusicRoom *CGameObject::getMusicRoom() const {
 	return gameManager ? &gameManager->_musicRoom : nullptr;
 }
 
-int CGameObject::getPassengerClass() const {
+PassengerClass CGameObject::getPassengerClass() const {
 	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->_gameState._passengerClass : 3;
+	return gameManager ? gameManager->_gameState._passengerClass : THIRD_CLASS;
 }
 
-int CGameObject::getPriorClass() const {
+PassengerClass CGameObject::getPriorClass() const {
 	CGameManager *gameManager = getGameManager();
-	return gameManager ? gameManager->_gameState._priorClass : 3;
+	return gameManager ? gameManager->_gameState._priorClass : THIRD_CLASS;
 }
 
-void CGameObject::setPassengerClass(int newClass) {
+void CGameObject::setPassengerClass(PassengerClass newClass) {
 	if (newClass >= 1 && newClass <= 4) {
 		// Change the passenger class
 		CGameManager *gameMan = getGameManager();
@@ -1581,7 +1581,7 @@ void CGameObject::petMoveToHiddenRoom() {
 	}
 }
 
-void CGameObject::petReassignRoom(int passClassNum) {
+void CGameObject::petReassignRoom(PassengerClass passClassNum) {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
 		petControl->reassignRoom(passClassNum);

@@ -64,8 +64,8 @@ public:
 	CGameManager *_gameManager;
 	CGameLocation _gameLocation;
 	CGameStateMovieList _movieList;
-	int _passengerClass;
-	int _priorClass;
+	PassengerClass _passengerClass;
+	PassengerClass _priorClass;
 	GameStateMode _mode;
 	Season _seasonNum;
 	bool _petActive;

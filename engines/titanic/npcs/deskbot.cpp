@@ -52,7 +52,8 @@ END_MESSAGE_MAP()
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
-CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _classNum(0) {
+CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false),
+		_classNum(NO_CLASS) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) {
@@ -70,7 +71,7 @@ void CDeskbot::load(SimpleFile *file) {
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
 	_deskbotActive = file->readNumber();
-	_classNum = file->readNumber();
+	_classNum = (PassengerClass)file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
@@ -116,7 +117,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			dec54();
 			unlockMouse();
 			playSound("z#47.wav");
-			_classNum = false;
+			_classNum = NO_CLASS;
 		}
 
 		_npcFlags &= ~NPCFLAG_10000;
@@ -174,21 +175,21 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		petSetArea(PET_CONVERSATION);
 		playClip("ReprogramPETInHand", MOVIE_NOTIFY_OBJECT);
 		_npcFlags |= NPCFLAG_10000;
-		_classNum = msg->_param1;
+		_classNum = (PassengerClass)msg->_param1;
 
 		switch (_classNum) {
-		case 1:
+		case FIRST_CLASS:
 			petDisplayMessage(UPGRADED_TO_FIRST_CLASS);
 			setPassengerClass(_classNum);
 			petReassignRoom(_classNum);
 			break;
-		case 2:
+		case SECOND_CLASS:
 			petDisplayMessage(UPGRADED_TO_SECOND_CLASS);
 			setPassengerClass(_classNum);
 			petReassignRoom(_classNum);
 			break;
-		case 3:
-			setPassengerClass(3);
+		case THIRD_CLASS:
+			setPassengerClass(THIRD_CLASS);
 			petReassignRoom(_classNum);
 			break;
 		default:
@@ -199,31 +200,31 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(4);
+				petControl->changeLocationClass(UNCHECKED);
 		}
 		break;
 
 	case 21:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(3);
+				petControl->changeLocationClass(THIRD_CLASS);
 		}
 		break;
 
 	case 22:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(2);
+				petControl->changeLocationClass(SECOND_CLASS);
 		}
 		break;
 
 	case 23:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(1);
+				petControl->changeLocationClass(FIRST_CLASS);
 		}
 		break;
 

@@ -277,7 +277,7 @@ uint CPetRooms::getRoomFlags() const {
 	return roomFlags.get();
 }
 
-void CPetRooms::reassignRoom(int passClassNum) {
+void CPetRooms::reassignRoom(PassengerClass passClassNum) {
 	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (glyph)
 		// Flag the old assigned room as no longer assigned
@@ -330,7 +330,7 @@ CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight_) {
 	}
 }
 
-bool CPetRooms::changeLocationClass(int newClassNum) {
+bool CPetRooms::changeLocationClass(PassengerClass newClassNum) {
 	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (!glyph)
 		return 0;

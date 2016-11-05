@@ -26,6 +26,7 @@
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
 #include "titanic/pet_control/pet_rooms_glyphs.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -155,12 +156,12 @@ public:
 	/**
 	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void reassignRoom(int passClassNum);
+	void reassignRoom(PassengerClass passClassNum);
 
 	/**
 	 * Change the current location passenger class
 	 */
-	bool changeLocationClass(int newClassNum);
+	bool changeLocationClass(PassengerClass newClassNum);
 
 	/**
 	 * Returns true if a room glyph exists with the given flags

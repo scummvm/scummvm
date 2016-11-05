@@ -30,6 +30,11 @@
 
 namespace Titanic {
 
+enum PassengerClass {
+	UNCHECKED = 4, THIRD_CLASS = 3, SECOND_CLASS = 2, FIRST_CLASS = 1,
+	NO_CLASS = 0
+};
+
 class CGameState;
 
 class CGameLocation {

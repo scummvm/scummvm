@@ -24,6 +24,7 @@
 #define TITANIC_ROOM_FLAGS_H
 
 #include "titanic/support/string.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -142,7 +143,9 @@ public:
 	/**
 	 * Gets the passenger class number
 	 */
-	uint getPassengerClassNum() const { return getPassengerClassBits(); }
+	PassengerClass getPassengerClassNum() const {
+		return (PassengerClass)getPassengerClassBits();
+	}
 
 	/**
 	 * Get a description for the passenger class

@@ -180,7 +180,7 @@ bool CTitania::ActMsg(CActMsg *msg) {
 			CActMsg actMsg("Woken");
 			actMsg.execute("MouthSlot");
 			actMsg.execute("VisionCentreSlot");
-			setPassengerClass(4);
+			setPassengerClass(UNCHECKED);
 
 			addTimer(1000);
 		} else {

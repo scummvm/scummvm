@@ -427,7 +427,7 @@ int CPetConversations::canSummonBot(const CString &name) {
 
 void CPetConversations::summonBot(const CString &name) {
 	if (_petControl) {
-		if (_petControl->getPassengerClass() >= 4) {
+		if (_petControl->getPassengerClass() >= UNCHECKED) {
 			_petControl->displayMessage(AT_LEAST_3RD_CLASS_FOR_HELP);
 		} else {
 			_petControl->summonBot(name, 0);

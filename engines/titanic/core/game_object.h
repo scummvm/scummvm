@@ -452,7 +452,7 @@ protected:
 	/**
 	 * Set's the player's passenger class
 	 */
-	void setPassengerClass(int newClass);
+	void setPassengerClass(PassengerClass newClass);
 
 	/**
 	 * Overrides whether the object's movie has audio timing
@@ -712,12 +712,12 @@ public:
 	/**
 	 * Return the player's passenger class
 	 */
-	int getPassengerClass() const;
+	PassengerClass getPassengerClass() const;
 
 	/**
 	 * Return the player's previous passenger class
 	 */
-	int getPriorClass() const;
+	PassengerClass getPriorClass() const;
 
 	/**
 	 * Sets the mail identifier for an object
@@ -884,7 +884,7 @@ public:
 	/**
 	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void petReassignRoom(int passClassNum);
+	void petReassignRoom(PassengerClass passClassNum);
 
 	/**
 	 * Sets a new area in the PET
