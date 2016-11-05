@@ -1420,6 +1420,11 @@ androidsdl-x86)
 	_host_cpu=i686
 	_host_alias=i686-linux-android
 	;;
+androidsdl-x86_64)
+	_host_os=androidsdl
+	_host_cpu=x86_64
+	_host_alias=x86_64-linux-android
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
