@@ -120,7 +120,7 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 		if (startIndex >= 0) {
 			int npcNum = _log.getNPCNum(1, startIndex);
 			if (npcNum > 0 && npcNum < 10)
-				_npcNum = npcNum;
+				_npcNum = npcNum - 1;
 		}
 
 		_logChanged = false;

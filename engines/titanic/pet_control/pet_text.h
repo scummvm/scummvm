@@ -247,7 +247,7 @@ public:
 	 * Get an NPC Number embedded within on-screen text.
 	 * Used by the PET log to encode which NPC spoke
 	 */
-	int getNPCNum(uint npcId, uint startIndex);
+	int getNPCNum(uint ident, uint startIndex);
 
 	/**
 	 * Replaces any occurances of line colors that appear in the

@@ -173,7 +173,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 	tempRect.grow(-2);
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 
-	screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
+	_linesStart = screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
 
 	screenManager->setFontNumber(oldFontNumber);
 }
@@ -450,7 +450,7 @@ void CPetText::hideCursor() {
 	}
 }
 
-int CPetText::getNPCNum(uint npcId, uint startIndex) {
+int CPetText::getNPCNum(uint ident, uint startIndex) {
 	if (!_stringsMerged) {
 		mergeStrings();
 		if (!_stringsMerged)
@@ -461,18 +461,20 @@ int CPetText::getNPCNum(uint npcId, uint startIndex) {
 	if (startIndex < 5 || startIndex >= size)
 		return -1;
 
-	// Loop through string
-	for (const char *strP = _lines.c_str(); size >= 5; ++strP, --size) {
+	// Loop backwards from the starting index to find an NPC ident sequence
+	for (const char *strP = _lines.c_str() + startIndex;
+			strP >= (_lines.c_str() + 5); --strP) {
 		if (*strP == 26) {
 			byte id = *(strP - 2);
-			if (id == npcId)
+			if (id == ident)
 				return *(strP - 1);
+			strP -= 3;
 		} else if (*strP == 27) {
-			strP += 4;
+			strP -= 4;
 		}
 	}
 
-	return - 1;
+	return -1;
 }
 
 void CPetText::setFontNumber(int fontNumber) {
