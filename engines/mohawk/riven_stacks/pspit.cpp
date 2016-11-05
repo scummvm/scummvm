@@ -22,7 +22,9 @@
 
 #include "mohawk/riven_stacks/pspit.h"
 
+#include "mohawk/cursors.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_sound.h"
 
 namespace Mohawk {
@@ -38,6 +40,45 @@ PSpit::PSpit(MohawkEngine_Riven *vm) :
 	REGISTER_COMMAND(PSpit, xpisland25_resetsliders);
 	REGISTER_COMMAND(PSpit, xpisland25_slidermd);
 	REGISTER_COMMAND(PSpit, xpisland25_slidermw);
+}
+
+void PSpit::catherineIdleTimer() {
+	uint32 &cathCheck = _vm->_vars["pcathcheck"];
+	uint32 &cathState = _vm->_vars["acathstate"];
+	uint16 movie;
+
+	// Choose a random movie based on where Catherine is
+	if (cathCheck == 0) {
+		static const int movieList[] = { 5, 6, 7, 8 };
+		cathCheck = 1;
+		movie = movieList[_vm->_rnd->getRandomNumber(3)];
+	} else if (cathState == 1) {
+		static const int movieList[] = { 11, 14 };
+		movie = movieList[_vm->_rnd->getRandomBit()];
+	} else {
+		static const int movieList[] = { 9, 10, 12, 13 };
+		movie = movieList[_vm->_rnd->getRandomNumber(3)];
+	}
+
+	// Update her state if she moves from left/right or right/left, resp.
+	if (movie == 5 || movie == 7 || movie == 11 || movie == 14)
+		cathState = 2;
+	else
+		cathState = 1;
+
+	// Play the movie, blocking
+	_vm->_video->activateMLST(_vm->getCard()->getMovie(movie));
+	_vm->_cursor->hideCursor();
+	_vm->_video->playMovieBlockingRiven(movie);
+	_vm->_cursor->showCursor();
+	_vm->_system->updateScreen();
+
+	// Install the next timer for the next video
+	uint32 timeUntilNextMovie = _vm->_rnd->getRandomNumber(120) * 1000;
+
+	_vm->_vars["pcathtime"] = timeUntilNextMovie + _vm->getTotalPlayTime();
+
+	_vm->installTimer(TIMER(PSpit, catherineIdleTimer), timeUntilNextMovie);
 }
 
 void PSpit::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
@@ -82,6 +123,16 @@ void PSpit::xpisland25_slidermd(uint16 argc, uint16 *argv) {
 
 void PSpit::xpisland25_slidermw(uint16 argc, uint16 *argv) {
 	checkSliderCursorChange(14);
+}
+
+void PSpit::installCardTimer() {
+	if (getCurrentCardGlobalId() == 0x3a85) {
+		// Top of elevator on prison island
+		// Handle Catherine hardcoded videos
+		_vm->installTimer(TIMER(PSpit, catherineIdleTimer), _vm->_rnd->getRandomNumberRng(1, 33) * 1000);
+	} else {
+		RivenStack::installCardTimer();
+	}
 }
 
 } // End of namespace RivenStacks

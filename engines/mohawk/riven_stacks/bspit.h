@@ -67,6 +67,7 @@ public:
 	void xbchipper(uint16 argc, uint16 *argv);
 
 	// Time callback
+	void ytramTrapTimer();
 	void checkYtramCatch(bool playSound);
 };
 

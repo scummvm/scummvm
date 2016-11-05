@@ -41,6 +41,8 @@ public:
 	void xrhideinventory(uint16 argc, uint16 *argv);
 	void xrwindowsetup(uint16 argc, uint16 *argv);
 
+	// Timer callbacks
+	void rebelPrisonWindowTimer();
 };
 
 } // End of namespace RivenStacks

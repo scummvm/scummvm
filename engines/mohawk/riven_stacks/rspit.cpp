@@ -60,20 +60,20 @@ void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
 	_vm->_gfx->hideInventory();
 }
 
-static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
+void RSpit::rebelPrisonWindowTimer() {
 	// Randomize a video out in the middle of Tay
-	uint16 movie = vm->_rnd->getRandomNumberRng(2, 13);
-	vm->_video->activateMLST(vm->getCard()->getMovie(movie));
-	VideoEntryPtr handle = vm->_video->playMovieRiven(movie);
+	uint16 movie = _vm->_rnd->getRandomNumberRng(2, 13);
+	_vm->_video->activateMLST(_vm->getCard()->getMovie(movie));
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(movie);
 
 	// Ensure the next video starts after this one ends
-	uint32 timeUntilNextVideo = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	uint32 timeUntilNextVideo = handle->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
 
 	// Save the time in case we leave the card and return
-	vm->_vars["rvillagetime"] = timeUntilNextVideo + vm->getTotalPlayTime();
+	_vm->_vars["rvillagetime"] = timeUntilNextVideo + _vm->getTotalPlayTime();
 
 	// Reinstall this timer with the new time
-	vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
+	_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
 
 void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
@@ -83,7 +83,7 @@ void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
 
 	// If we have time leftover from a previous run, set up the timer again
 	if (_vm->getTotalPlayTime() < villageTime) {
-		_vm->installTimer(&rebelPrisonWindowTimer, villageTime - _vm->getTotalPlayTime());
+		_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), villageTime - _vm->getTotalPlayTime());
 		return;
 	}
 
@@ -106,7 +106,7 @@ void RSpit::xrwindowsetup(uint16 argc, uint16 *argv) {
 	// the timer to reinstall itself...
 
 	// Install our timer and we're on our way
-	_vm->installTimer(&rebelPrisonWindowTimer, timeUntilNextVideo);
+	_vm->installTimer(TIMER(RSpit, rebelPrisonWindowTimer), timeUntilNextVideo);
 }
 
 

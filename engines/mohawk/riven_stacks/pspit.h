@@ -35,6 +35,9 @@ class PSpit : public DomeSpit {
 public:
 	PSpit(MohawkEngine_Riven *vm);
 
+	// RivenStack API
+	virtual void installCardTimer() override;
+
 	// External commands - Prison Elevator
 	void xpisland990_elevcombo(uint16 argc, uint16 *argv);	// Param1: button
 
@@ -46,6 +49,8 @@ public:
 	void xpisland25_slidermd(uint16 argc, uint16 *argv);
 	void xpisland25_slidermw(uint16 argc, uint16 *argv);
 
+	// Timer callbacks
+	void catherineIdleTimer();
 };
 
 } // End of namespace RivenStacks

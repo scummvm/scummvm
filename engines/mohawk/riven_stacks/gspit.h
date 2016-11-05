@@ -65,6 +65,9 @@ public:
 	void xglview_prisonon(uint16 argc, uint16 *argv);
 	void xglview_villageon(uint16 argc, uint16 *argv);
 
+	// Timer handlers
+	void catherineViewerIdleTimer();
+
 private:
 	void lowerPins();
 };

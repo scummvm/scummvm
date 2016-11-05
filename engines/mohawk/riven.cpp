@@ -434,7 +434,7 @@ void MohawkEngine_Riven::refreshCard() {
 	updateCurrentHotspot();
 
 	// Finally, install any hardcoded timer
-	installCardTimer();
+	_stack->installCardTimer();
 }
 
 void MohawkEngine_Riven::updateCurrentHotspot() {
@@ -554,9 +554,9 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 	return _saveLoad->saveGame(slot, desc);
 }
 
-void MohawkEngine_Riven::installTimer(TimerProc proc, uint32 time) {
+void MohawkEngine_Riven::installTimer(TimerProc *proc, uint32 time) {
 	removeTimer();
-	_timerProc = proc;
+	_timerProc = Common::SharedPtr<TimerProc>(proc);
 	_timerTime = time + getTotalPlayTime();
 }
 
@@ -566,206 +566,13 @@ void MohawkEngine_Riven::checkTimer() {
 
 	// NOTE: If the specified timer function is called, it is its job to remove the timer!
 	if (getTotalPlayTime() >= _timerTime) {
-		TimerProc proc = _timerProc;
-		proc(this);
+		(*_timerProc)();
 	}
 }
 
 void MohawkEngine_Riven::removeTimer() {
-	_timerProc = 0;
+	_timerProc.reset();
 	_timerTime = 0;
-}
-
-static void catherineIdleTimer(MohawkEngine_Riven *vm) {
-	uint32 &cathCheck = vm->_vars["pcathcheck"];
-	uint32 &cathState = vm->_vars["acathstate"];
-	uint16 movie;
-
-	// Choose a random movie based on where Catherine is
-	if (cathCheck == 0) {
-		static const int movieList[] = { 5, 6, 7, 8 };
-		cathCheck = 1;
-		movie = movieList[vm->_rnd->getRandomNumber(3)];
-	} else if (cathState == 1) {
-		static const int movieList[] = { 11, 14 };
-		movie = movieList[vm->_rnd->getRandomBit()];
-	} else {
-		static const int movieList[] = { 9, 10, 12, 13 };
-		movie = movieList[vm->_rnd->getRandomNumber(3)];
-	}
-
-	// Update her state if she moves from left/right or right/left, resp.
-	if (movie == 5 || movie == 7 || movie == 11 || movie == 14)
-		cathState = 2;
-	else
-		cathState = 1;
-
-	// Play the movie, blocking
-	vm->_video->activateMLST(vm->getCard()->getMovie(movie));
-	vm->_cursor->hideCursor();
-	vm->_video->playMovieBlockingRiven(movie);
-	vm->_cursor->showCursor();
-	vm->_system->updateScreen();
-
-	// Install the next timer for the next video
-	uint32 timeUntilNextMovie = vm->_rnd->getRandomNumber(120) * 1000;
-
-	vm->_vars["pcathtime"] = timeUntilNextMovie + vm->getTotalPlayTime();
-
-	vm->installTimer(&catherineIdleTimer, timeUntilNextMovie);
-}
-
-static void sunnersTopStairsTimer(MohawkEngine_Riven *vm) {
-	// If the sunners are gone, we have no video to play
-	if (vm->_vars["jsunners"] != 0) {
-		vm->removeTimer();
-		return;
-	}
-
-	// Play a random sunners video if the script one is not playing already
-	// and then set a new timer for when the new video should be played
-
-	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
-	uint32 timerTime = 500;
-
-	if (!oldVideo || oldVideo->endOfVideo()) {
-		uint32 &sunnerTime = vm->_vars["jsunnertime"];
-
-		if (sunnerTime == 0) {
-			timerTime = vm->_rnd->getRandomNumberRng(2, 15) * 1000;
-		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			VideoEntryPtr video = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(1, 3));
-
-			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
-		}
-
-		sunnerTime = timerTime + vm->getTotalPlayTime();
-	}
-
-	vm->installTimer(&sunnersTopStairsTimer, timerTime);
-}
-
-static void sunnersMidStairsTimer(MohawkEngine_Riven *vm) {
-	// If the sunners are gone, we have no video to play
-	if (vm->_vars["jsunners"] != 0) {
-		vm->removeTimer();
-		return;
-	}
-
-	// Play a random sunners video if the script one is not playing already
-	// and then set a new timer for when the new video should be played
-
-	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
-	uint32 timerTime = 500;
-
-	if (!oldVideo || oldVideo->endOfVideo()) {
-		uint32 &sunnerTime = vm->_vars["jsunnertime"];
-
-		if (sunnerTime == 0) {
-			timerTime = vm->_rnd->getRandomNumberRng(1, 10) * 1000;
-		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			// Randomize the video
-			int randValue = vm->_rnd->getRandomNumber(5);
-			uint16 movie = 4;
-			if (randValue == 4)
-				movie = 2;
-			else if (randValue == 5)
-				movie = 3;
-
-			VideoEntryPtr video = vm->_video->playMovieRiven(movie);
-
-			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
-		}
-
-		sunnerTime = timerTime + vm->getTotalPlayTime();
-	}
-
-	vm->installTimer(&sunnersMidStairsTimer, timerTime);
-}
-
-static void sunnersLowerStairsTimer(MohawkEngine_Riven *vm) {
-	// If the sunners are gone, we have no video to play
-	if (vm->_vars["jsunners"] != 0) {
-		vm->removeTimer();
-		return;
-	}
-
-	// Play a random sunners video if the script one is not playing already
-	// and then set a new timer for when the new video should be played
-
-	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
-	uint32 timerTime = 500;
-
-	if (!oldVideo || oldVideo->endOfVideo()) {
-		uint32 &sunnerTime = vm->_vars["jsunnertime"];
-
-		if (sunnerTime == 0) {
-			timerTime = vm->_rnd->getRandomNumberRng(1, 30) * 1000;
-		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			VideoEntryPtr video = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(3, 5));
-
-			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
-		}
-
-		sunnerTime = timerTime + vm->getTotalPlayTime();
-	}
-
-	vm->installTimer(&sunnersLowerStairsTimer, timerTime);
-}
-
-static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
-	// If the sunners are gone, we have no video to play
-	if (vm->_vars["jsunners"] != 0) {
-		vm->removeTimer();
-		return;
-	}
-
-	// Play a random sunners video if the script one is not playing already
-	// and then set a new timer for when the new video should be played
-
-	VideoEntryPtr oldvideo = vm->_video->findVideoRiven(3);
-	uint32 timerTime = 500;
-
-	if (!oldvideo || oldvideo->endOfVideo()) {
-		uint32 &sunnerTime = vm->_vars["jsunnertime"];
-
-		if (sunnerTime == 0) {
-			timerTime = vm->_rnd->getRandomNumberRng(1, 30) * 1000;
-		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			// Unlike the other cards' scripts which automatically
-			// activate the MLST, we have to set it manually here.
-			uint16 mlstID = vm->_rnd->getRandomNumberRng(3, 8);
-			vm->_video->activateMLST(vm->getCard()->getMovie(mlstID));
-			VideoEntryPtr video = vm->_video->playMovieRiven(mlstID);
-
-			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
-		}
-
-		sunnerTime = timerTime + vm->getTotalPlayTime();
-	}
-
-	vm->installTimer(&sunnersBeachTimer, timerTime);
-}
-
-void MohawkEngine_Riven::installCardTimer() {
-	switch (_stack->getCurrentCardGlobalId()) {
-	case 0x3a85: // Top of elevator on prison island
-		// Handle Catherine hardcoded videos
-		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
-		break;
-	case 0x77d6: // Sunners, top of stairs
-		installTimer(&sunnersTopStairsTimer, 500);
-		break;
-	case 0x79bd: // Sunners, middle of stairs
-		installTimer(&sunnersMidStairsTimer, 500);
-		break;
-	case 0x7beb: // Sunners, bottom of stairs
-		installTimer(&sunnersLowerStairsTimer, 500);
-		break;
-	case 0xb6ca: // Sunners, shoreline
-		installTimer(&sunnersBeachTimer, 500);
-		break;
-	}
 }
 
 void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {

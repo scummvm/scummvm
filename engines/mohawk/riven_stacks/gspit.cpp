@@ -368,20 +368,20 @@ void GSpit::xglview_villageoff(uint16 argc, uint16 *argv) {
 	_vm->getCard()->drawPicture(1);
 }
 
-static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
-	uint32 &cathState = vm->_vars["gcathstate"];
+void GSpit::catherineViewerIdleTimer() {
+	uint32 &cathState = _vm->_vars["gcathstate"];
 	uint16 movie;
 
 	// Choose a new movie
 	if (cathState == 1) {
 		static const int movieList[] = { 9, 10, 19, 19, 21, 21 };
-		movie = movieList[vm->_rnd->getRandomNumber(5)];
+		movie = movieList[_vm->_rnd->getRandomNumber(5)];
 	} else if (cathState == 2) {
 		static const int movieList[] = { 18, 20, 22 };
-		movie = movieList[vm->_rnd->getRandomNumber(2)];
+		movie = movieList[_vm->_rnd->getRandomNumber(2)];
 	} else {
 		static const int movieList[] = { 11, 11, 12, 17, 17, 17, 17, 23 };
-		movie = movieList[vm->_rnd->getRandomNumber(7)];
+		movie = movieList[_vm->_rnd->getRandomNumber(7)];
 	}
 
 	// Update Catherine's state
@@ -393,11 +393,11 @@ static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
 		cathState = 3;
 
 	// Begin playing the new movie
-	vm->_video->activateMLST(vm->getCard()->getMovie(movie));
-	VideoEntryPtr video = vm->_video->playMovieRiven(30);
+	_vm->_video->activateMLST(_vm->getCard()->getMovie(movie));
+	VideoEntryPtr video = _vm->_video->playMovieRiven(30);
 
 	// Reset the timer
-	vm->installTimer(&catherineViewerIdleTimer, video->getDuration().msecs() + vm->_rnd->getRandomNumber(60) * 1000);
+	_vm->installTimer(TIMER(GSpit, catherineViewerIdleTimer), video->getDuration().msecs() + _vm->_rnd->getRandomNumber(60) * 1000);
 }
 
 void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
@@ -445,7 +445,7 @@ void GSpit::xglview_prisonon(uint16 argc, uint16 *argv) {
 	}
 
 	// Create the timer for the next video
-	_vm->installTimer(&catherineViewerIdleTimer, timeUntilNextMovie);
+	_vm->installTimer(TIMER(GSpit, catherineViewerIdleTimer), timeUntilNextMovie);
 }
 
 void GSpit::xglview_prisonoff(uint16 argc, uint16 *argv) {
