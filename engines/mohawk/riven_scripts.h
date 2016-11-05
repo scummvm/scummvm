@@ -130,6 +130,13 @@ public:
 	/** Create a script from the caller provided arguments containing raw data */
 	RivenScriptPtr createScriptFromData(uint16 commandCount, ...);
 
+	/**
+	 * Create a script with a single user provided command
+	 *
+	 * The script takes ownership of the command.
+	 */
+	RivenScriptPtr createScriptWithCommand(RivenCommand *command);
+
 	/** Read a list of typed scripts from a stream */
 	RivenScriptList readScripts(Common::ReadStream *stream);
 
