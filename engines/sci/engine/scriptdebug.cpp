@@ -68,7 +68,7 @@ const char *opcodeNames[] = {
 #endif	// REDUCE_MEMORY_USAGE
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	const byte *scr;
@@ -127,8 +127,10 @@ reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printByteco
 		debugN("[%c] ", opsize ? 'B' : 'W');
 
 #ifndef REDUCE_MEMORY_USAGE
-	debugN("%s", opcodeNames[opcode]);
+	debugN("%-5s", opcodeNames[opcode]);
 #endif
+
+	static const char *defaultSeparator = "\t\t; ";
 
 	i = 0;
 	while (g_sci->_opcode_formats[opcode][i]) {
@@ -140,14 +142,21 @@ reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printByteco
 		case Script_SByte:
 		case Script_Byte:
 			param_value = scr[retval.getOffset()];
-			debugN(" %02x", scr[retval.getOffset()]);
+			debugN("\t%02x", param_value);
+			if (param_value > 9) {
+				debugN("%s%u", defaultSeparator, param_value);
+			}
 			retval.incOffset(1);
 			break;
 
 		case Script_Word:
 		case Script_SWord:
 			param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
-			debugN(" %04x", READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]));
+			debugN("\t%04x", param_value);
+			if (param_value > 9) {
+				debugN("%s%u", defaultSeparator, param_value);
+			}
+
 			retval.incOffset(2);
 			break;
 
@@ -166,12 +175,38 @@ reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printByteco
 				retval.incOffset(2);
 			}
 
-			if (opcode == op_callk)
-				debugN(" %s[%x]", (param_value < kernel->_kernelFuncs.size()) ?
+			if (opcode == op_callk) {
+				debugN("\t%s[%x],", (param_value < kernel->_kernelFuncs.size()) ?
 							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
-			else
-				debugN(opsize ? " %02x" : " %04x", param_value);
+			} else if (opcode == op_super) {
+				Object *obj;
+				if (objAddr != NULL_REG && (obj = s->_segMan->getObject(objAddr)) != nullptr) {
+					debugN("\t%s", s->_segMan->getObjectName(obj->getSuperClassSelector()));
+					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
+				} else {
+					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
+				}
+
+				debugN(",");
+			} else {
+				const char *separator = defaultSeparator;
+
+				debugN(opsize ? "\t%02x" : "\t%04x", param_value);
+				if (param_value > 9) {
+					debugN("%s%u", separator, param_value);
+					separator = ", ";
+				}
+
+				if (param_value >= 0x20 && param_value <= 0x7e) {
+					debugN("%s'%c'", separator, param_value);
+					separator = ", ";
+				}
+
+				if (opcode == op_pushi && param_value < kernel->getSelectorNamesSize()) {
+					debugN("%s%s", separator, kernel->getSelectorName(param_value).c_str());
+				}
+			}
 
 			break;
 
@@ -183,19 +218,27 @@ reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printByteco
 				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
 			}
-			debugN(opsize ? " %02x" : " %04x", param_value);
+
+			if (opcode == op_lofsa || opcode == op_lofss) {
+				reg_t addr = make_reg(pos.getSegment(), findOffset(param_value, script_entity, pos.getOffset()));
+				debugN("\t%s", s->_segMan->getObjectName(addr));
+				debugN(opsize ? "[%02x]" : "[%04x]", param_value);
+			} else {
+				debugN(opsize ? "\t%02x" : "\t%04x", param_value);
+			}
+
 			break;
 
 		case Script_SRelative:
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
-				debugN(" %02x  [%04x]", 0xff & offset, 0xffff & (retval.getOffset() + offset));
+				debugN("\t%02x  [%04x]", 0xff & offset, 0xffff & (retval.getOffset() + offset));
 			}
 			else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
-				debugN(" %04x  [%04x]", 0xffff & offset, 0xffff & (retval.getOffset() + offset));
+				debugN("\t%04x  [%04x]", 0xffff & offset, 0xffff & (retval.getOffset() + offset));
 			}
 			break;
 
@@ -396,7 +439,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, false, true);
+	disassemble(s, s->xs->addr.pc, s->xs->objp, false, true);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;

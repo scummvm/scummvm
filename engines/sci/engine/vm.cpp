@@ -567,6 +567,31 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset) {
+	uint32 offset;
+
+	switch (g_sci->_features->detectLofsType()) {
+	case SCI_VERSION_0_EARLY:
+		offset = (uint16)pcOffset + relOffset;
+		break;
+	case SCI_VERSION_1_MIDDLE:
+		offset = relOffset;
+		break;
+	case SCI_VERSION_1_1:
+		offset = relOffset + scr->getScriptSize();
+		break;
+	case SCI_VERSION_3:
+		// In theory this can break if the variant with a one-byte argument is
+		// used. For now, assume it doesn't happen.
+		offset = scr->relocateOffsetSci3(pcOffset - 2);
+		break;
+	default:
+		error("Unknown lofs type");
+	}
+
+	return offset;
+}
+
 void run_vm(EngineState *s) {
 	assert(s);
 
@@ -1169,38 +1194,22 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_lofsa: // 0x39 (57)
-		case op_lofss: // 0x3a (58)
+		case op_lofss: { // 0x3a (58)
 			// Load offset to accumulator or push to stack
+			Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
+
 			r_temp.setSegment(s->xs->addr.pc.getSegment());
-
-			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_0_EARLY:
-				r_temp.setOffset((uint16)s->xs->addr.pc.getOffset() + opparams[0]);
-				break;
-			case SCI_VERSION_1_MIDDLE:
-				r_temp.setOffset(opparams[0]);
-				break;
-			case SCI_VERSION_1_1:
-				r_temp.setOffset(opparams[0] + local_script->getScriptSize());
-				break;
-			case SCI_VERSION_3:
-				// In theory this can break if the variant with a one-byte argument is
-				// used. For now, assume it doesn't happen.
-				r_temp.setOffset(local_script->relocateOffsetSci3(s->xs->addr.pc.getOffset() - 2));
-				break;
-			default:
-				error("Unknown lofs type");
-			}
-
+			r_temp.setOffset(findOffset(opparams[0], local_script, s->xs->addr.pc.getOffset()));
 			if (r_temp.getOffset() >= scr->getBufSize())
 				error("VM: lofsa/lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
+						  " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 
 			if (opcode == op_lofsa)
 				s->r_acc = r_temp;
 			else
 				PUSH32(r_temp);
 			break;
+		}
 
 		case op_push0: // 0x3b (59)
 			PUSH(0);

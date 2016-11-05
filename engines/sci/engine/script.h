@@ -266,7 +266,7 @@ public:
 	 * Resolve a relocation in an SCI3 script
 	 * @param offset        The offset to relocate from
 	 */
-	int relocateOffsetSci3(uint32 offset);
+	int relocateOffsetSci3(uint32 offset) const;
 
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI3 script

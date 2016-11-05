@@ -704,7 +704,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 	return true;
 }
 
-int Script::relocateOffsetSci3(uint32 offset) {
+int Script::relocateOffsetSci3(uint32 offset) const {
 	int relocStart = READ_LE_UINT32(_buf + 8);
 	int relocCount = READ_LE_UINT16(_buf + 18);
 	const byte *seeker = _buf + relocStart;

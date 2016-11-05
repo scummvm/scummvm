@@ -36,6 +36,7 @@ class SegManager;
 struct EngineState;
 class Object;
 class ResourceManager;
+class Script;
 
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
@@ -385,6 +386,16 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
  *       into trouble if we encounter high value words. *If* those exist at all.
  */
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]);
+
+/**
+ * Finds the script-absolute offset of a relative object offset.
+ *
+ * @param[in] relOffset the relative object offset
+ * @param[in] scr the owner script object, used by SCI1.1+
+ * @param[in] pcOffset the offset of the program counter, used by SCI0early and
+ *                     SCI3
+ */
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset);
 
 } // End of namespace Sci
 
