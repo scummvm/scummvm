@@ -222,7 +222,6 @@ private:
 	DECLARE_OPCODE(playScriptSLST);
 	DECLARE_OPCODE(playSound);
 	DECLARE_OPCODE(setVariable);
-	DECLARE_OPCODE(mohawkSwitch);
 	DECLARE_OPCODE(enableHotspot);
 	DECLARE_OPCODE(disableHotspot);
 	DECLARE_OPCODE(stopSound);
@@ -234,7 +233,6 @@ private:
 	DECLARE_OPCODE(beginScreenUpdate);
 	DECLARE_OPCODE(applyScreenUpdate);
 	DECLARE_OPCODE(incrementVariable);
-	DECLARE_OPCODE(changeStack);
 	DECLARE_OPCODE(disableMovie);
 	DECLARE_OPCODE(disableAllMovies);
 	DECLARE_OPCODE(enableMovie);
@@ -285,6 +283,30 @@ private:
 
 	uint16 _variableId;
 	Common::Array<Branch> _branches;
+};
+
+/**
+ * A command to go to a different stack
+ *
+ * Changes the active stack and sets the initial card.
+ * The stack can be specified by global id or name id in the initial stack.
+ * The destination card must be specified by global id.
+ */
+class RivenStackChangeCommand : public RivenCommand {
+public:
+	RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId);
+
+	static RivenStackChangeCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	virtual ~RivenStackChangeCommand();
+
+	// RivenCommand API
+	virtual void dump(byte tabs) override;
+	virtual void execute() override;
+
+private:
+	uint16 _stackId;
+	uint32 _cardId;
+	bool _byStackId; // Otherwise by stack name id
 };
 
 } // End of namespace Mohawk
