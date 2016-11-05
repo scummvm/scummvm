@@ -61,9 +61,9 @@ private:
 	uint getStateDialogueId() const;
 
 	/**
-	 * Sets state data in flags 17
+	 * Sets the current state for what the Deskbot is doing/asking
 	 */
-	void setFlags17(uint newId, uint index);
+	void setCurrentState(uint newId, uint index);
 
 	/**
 	 * Does preprocessing for the sentence

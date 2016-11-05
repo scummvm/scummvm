@@ -29,6 +29,8 @@ namespace Titanic {
 
 int DeskbotScript::_oldId;
 
+#define CURRENT_STATE 17
+
 DeskbotScript::DeskbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0) {
@@ -73,7 +75,7 @@ int DeskbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 	if (preprocess(roomScript, sentence) != 1)
 		return 1;
 
-	CTrueTalkManager::setFlags(17, 0);
+	CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 	setState(0);
 	updateCurrentDial(false);
 
@@ -344,7 +346,7 @@ int DeskbotScript::updateState(uint oldId, uint newId, int index) {
 
 exit:
 	_oldId = oldId;
-	setFlags17(newId, index);
+	setCurrentState(newId, index);
 
 	return newId;
 }
@@ -509,8 +511,8 @@ uint DeskbotScript::getStateDialogueId() const {
 	}
 }
 
-void DeskbotScript::setFlags17(uint newId, uint index) {
-	int newValue = getValue(17);
+void DeskbotScript::setCurrentState(uint newId, uint index) {
+	int newValue = getValue(CURRENT_STATE);
 
 	for (uint idx = 0; idx < _states.size(); ++idx) {
 		const TTupdateState &us = _states[idx];
@@ -528,7 +530,7 @@ void DeskbotScript::setFlags17(uint newId, uint index) {
 		}
 	}
 
-	CTrueTalkManager::setFlags(17, newValue);
+	CTrueTalkManager::setFlags(CURRENT_STATE, newValue);
 }
 
 int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *sentence) {
@@ -536,7 +538,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		return 1;
 
 	bool stateFlag = true, applyFlag = false;
-	switch (getValue(17)) {
+	switch (getValue(CURRENT_STATE)) {
 	case 1:
 		if (sentence->_field2C != 3 && sentence->_field2C != 4
 				&& sentence->_field2C != 6 && sentence->_field2C != 10
@@ -1146,7 +1148,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		case 3:
 			addAssignedRoom();
 			setState(0);
-			CTrueTalkManager::setFlags(17, 0);
+			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 			return 2;
 		default:
 			addResponse(getDialogueId(241267));
@@ -1162,7 +1164,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		addResponse(getDialogueId(sentence->_field2C == 12 ? 240602 : 241337));
 		applyResponse();
 		setState(0);
-		CTrueTalkManager::setFlags(17, 0);
+		CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 		return 2;
 
 	case 82:
@@ -1362,7 +1364,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		} else if (sentence->_field2C == 12) {
 			addAssignedRoom();
 			setState(0);
-			CTrueTalkManager::setFlags(17, 0);
+			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 			return 2;
 		} else if (g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine.c_str())
 				== MKTAG('F', 'I', 'S', 'H')) {
@@ -1391,7 +1393,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| sentence->contains("same room")) {
 			addAssignedRoom();
 			setState(0);
-			CTrueTalkManager::setFlags(17, 0);
+			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 			return 2;
 		} else {
 			if (getRandomNumber(100) < 80 && sentence2C(sentence))
@@ -1437,7 +1439,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		applyResponse();
 	if (stateFlag) {
 		setState(0);
-		CTrueTalkManager::setFlags(17, 0);
+		CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 	}
 
 	return applyFlag ? 2 : 1;
