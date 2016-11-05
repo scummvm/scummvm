@@ -107,6 +107,9 @@ public:
 	/** Write all of the stack's data including its cards to standard output */
 	void dump() const;
 
+	/** Install a timer for the current card if one is defined */
+	virtual void installCardTimer();
+
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
 

@@ -219,6 +219,10 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 	_vm->setGameOver();
 }
 
+void RivenStack::installCardTimer() {
+
+}
+
 RivenNameList::RivenNameList() {
 
 }

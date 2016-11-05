@@ -35,6 +35,9 @@ class JSpit : public DomeSpit {
 public:
 	JSpit(MohawkEngine_Riven *vm);
 
+	// RivenStack API
+	virtual void installCardTimer() override;
+
 	// External commands - Rebel Tunnel Puzzle
 	void xreseticons(uint16 argc, uint16 *argv);
 	void xicon(uint16 argc, uint16 *argv);
@@ -79,6 +82,12 @@ public:
 
 	// External commands - Demo-specific
 	void xjatboundary(uint16 argc, uint16 *argv);
+
+	// Timer callbacks
+	void sunnersTopStairsTimer();
+	void sunnersMidStairsTimer();
+	void sunnersLowerStairsTimer();
+	void sunnersBeachTimer();
 
 private:
 	int jspitElevatorLoop();

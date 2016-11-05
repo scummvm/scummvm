@@ -451,6 +451,138 @@ void JSpit::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 	}
 }
 
+void JSpit::sunnersTopStairsTimer() {
+	// If the sunners are gone, we have no video to play
+	if (_vm->_vars["jsunners"] != 0) {
+		_vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	uint32 timerTime = 500;
+
+	if (!oldVideo || oldVideo->endOfVideo()) {
+		uint32 &sunnerTime = _vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = _vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+		} else if (sunnerTime < _vm->getTotalPlayTime()) {
+			VideoEntryPtr video = _vm->_video->playMovieRiven(_vm->_rnd->getRandomNumberRng(1, 3));
+
+			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+		}
+
+		sunnerTime = timerTime + _vm->getTotalPlayTime();
+	}
+
+	_vm->installTimer(TIMER(JSpit, sunnersTopStairsTimer), timerTime);
+}
+
+void JSpit::sunnersMidStairsTimer() {
+	// If the sunners are gone, we have no video to play
+	if (_vm->_vars["jsunners"] != 0) {
+		_vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	uint32 timerTime = 500;
+
+	if (!oldVideo || oldVideo->endOfVideo()) {
+		uint32 &sunnerTime = _vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = _vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+		} else if (sunnerTime < _vm->getTotalPlayTime()) {
+			// Randomize the video
+			int randValue = _vm->_rnd->getRandomNumber(5);
+			uint16 movie = 4;
+			if (randValue == 4)
+				movie = 2;
+			else if (randValue == 5)
+				movie = 3;
+
+			VideoEntryPtr video = _vm->_video->playMovieRiven(movie);
+
+			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+		}
+
+		sunnerTime = timerTime + _vm->getTotalPlayTime();
+	}
+
+	_vm->installTimer(TIMER(JSpit, sunnersMidStairsTimer), timerTime);
+}
+
+void JSpit::sunnersLowerStairsTimer() {
+	// If the sunners are gone, we have no video to play
+	if (_vm->_vars["jsunners"] != 0) {
+		_vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	uint32 timerTime = 500;
+
+	if (!oldVideo || oldVideo->endOfVideo()) {
+		uint32 &sunnerTime = _vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		} else if (sunnerTime < _vm->getTotalPlayTime()) {
+			VideoEntryPtr video = _vm->_video->playMovieRiven(_vm->_rnd->getRandomNumberRng(3, 5));
+
+			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		}
+
+		sunnerTime = timerTime + _vm->getTotalPlayTime();
+	}
+
+	_vm->installTimer(TIMER(JSpit, sunnersLowerStairsTimer), timerTime);
+}
+
+void JSpit::sunnersBeachTimer() {
+	// If the sunners are gone, we have no video to play
+	if (_vm->_vars["jsunners"] != 0) {
+		_vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoEntryPtr oldvideo = _vm->_video->findVideoRiven(3);
+	uint32 timerTime = 500;
+
+	if (!oldvideo || oldvideo->endOfVideo()) {
+		uint32 &sunnerTime = _vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		} else if (sunnerTime < _vm->getTotalPlayTime()) {
+			// Unlike the other cards' scripts which automatically
+			// activate the MLST, we have to set it manually here.
+			uint16 mlstID = _vm->_rnd->getRandomNumberRng(3, 8);
+			_vm->_video->activateMLST(_vm->getCard()->getMovie(mlstID));
+			VideoEntryPtr video = _vm->_video->playMovieRiven(mlstID);
+
+			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		}
+
+		sunnerTime = timerTime + _vm->getTotalPlayTime();
+	}
+
+	_vm->installTimer(TIMER(JSpit, sunnersBeachTimer), timerTime);
+}
+
 void JSpit::xjschool280_resetleft(uint16 argc, uint16 *argv) {
 	// Dummy function. This resets the unneeded video timing variable (dropLeftStart) in
 	// the DVD version.
@@ -531,6 +663,25 @@ void JSpit::xschool280_playwhark(uint16 argc, uint16 *argv) {
 
 void JSpit::xjatboundary(uint16 argc, uint16 *argv) {
 	runDemoBoundaryDialog();
+}
+
+void JSpit::installCardTimer() {
+	switch (getCurrentCardGlobalId()) {
+		case 0x77d6: // Sunners, top of stairs
+			_vm->installTimer(TIMER(JSpit, sunnersTopStairsTimer), 500);
+			break;
+		case 0x79bd: // Sunners, middle of stairs
+			_vm->installTimer(TIMER(JSpit, sunnersMidStairsTimer), 500);
+			break;
+		case 0x7beb: // Sunners, bottom of stairs
+			_vm->installTimer(TIMER(JSpit, sunnersLowerStairsTimer), 500);
+			break;
+		case 0xb6ca: // Sunners, shoreline
+			_vm->installTimer(TIMER(JSpit, sunnersBeachTimer), 500);
+			break;
+		default:
+			RivenStack::installCardTimer();
+	}
 }
 
 } // End of namespace RivenStacks

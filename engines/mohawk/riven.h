@@ -107,7 +107,10 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
-	typedef void (*TimerProc)(MohawkEngine_Riven *vm);
+	typedef Common::Functor0<void> TimerProc;
+
+#define TIMER(cls, method) \
+		new Common::Functor0Mem<void, cls>(this, &cls::method)
 
 	void doVideoTimer(VideoHandle handle, bool force);
 
@@ -131,7 +134,7 @@ private:
 	void initVars();
 
 	// Timer
-	TimerProc _timerProc;
+	Common::SharedPtr<TimerProc> _timerProc;
 	uint32 _timerTime;
 
 	// Miscellaneous
@@ -165,8 +168,7 @@ public:
 	void delayAndUpdate(uint32 ms);
 
 	// Timer
-	void installTimer(TimerProc proc, uint32 time);
-	void installCardTimer();
+	void installTimer(TimerProc *proc, uint32 time);
 	void checkTimer();
 	void removeTimer();
 
