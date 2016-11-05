@@ -43,6 +43,7 @@ void CPetSection::displayMessage(const CString &msg) {
 
 	if (text) {
 		text->setColor(getColor(1));
+		text->setText(msg);
 		_petControl->makeDirty();
 		removeText(5000);
 	}
