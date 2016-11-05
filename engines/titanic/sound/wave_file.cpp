@@ -106,4 +106,8 @@ uint CWaveFile::getFrequency() const {
 	return _stream->getRate();
 }
 
+void CWaveFile::reset() {
+	_stream->rewind();
+}
+
 } // End of namespace Titanic z

@@ -81,6 +81,11 @@ public:
 	 * Return the frequency of the loaded wave file
 	 */
 	uint getFrequency() const;
+
+	/**
+	 * Resets the music stream
+	 */
+	void reset();
 };
 
 } // End of namespace Titanic
