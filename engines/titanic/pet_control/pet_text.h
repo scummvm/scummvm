@@ -43,7 +43,7 @@ private:
 	Rect _bounds;
 	int _maxCharsPerLine;
 	int _lineCount;
-	int _linesStart;
+	int _displayEndCharIndex;
 	int _unused1;
 	int _unused2;
 	int _unused3;
@@ -176,9 +176,10 @@ public:
 	void setNPC(int npcFlag, int npcId);
 
 	/**
-	 * Get the index into _lines where on-screen text starts
+	 * Returns the character index into _lines of the last
+	 * character to be displayed on-screen
 	 */
-	int getLinesStart() const { return _linesStart; }
+	int displayEndIndex() const { return _displayEndCharIndex; }
 
 	/**
 	 * Scroll the text up
@@ -246,6 +247,9 @@ public:
 	/**
 	 * Get an NPC Number embedded within on-screen text.
 	 * Used by the PET log to encode which NPC spoke
+	 * @param ident			Npc Type. Always passed as 1
+	 * @param startIndex	Starting index to scan backwards
+	 *		through the log text to find an NPC ident sequence
 	 */
 	int getNPCNum(uint ident, uint startIndex);
 

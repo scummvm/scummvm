@@ -116,9 +116,9 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 	_textInput.draw(screenManager);
 
 	if (_logChanged) {
-		int startIndex = _log.getLinesStart();
-		if (startIndex >= 0) {
-			int npcNum = _log.getNPCNum(1, startIndex);
+		int endIndex = _log.displayEndIndex();
+		if (endIndex >= 0) {
+			int npcNum = _log.getNPCNum(1, endIndex);
 			if (npcNum > 0 && npcNum < 10)
 				_npcNum = npcNum - 1;
 		}

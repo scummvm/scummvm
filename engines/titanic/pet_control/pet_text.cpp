@@ -26,7 +26,7 @@ namespace Titanic {
 
 CPetText::CPetText(uint count) :
 		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
-		_linesStart(-1), _unused1(0), _unused2(0), _unused3(0),
+		_displayEndCharIndex(-1), _unused1(0), _unused2(0), _unused3(0),
 		_backR(0xff), _backG(0xff), _backB(0xff),
 		_textR(0), _textG(0), _textB(200),
 		_fontNumber(0), _npcFlag(0), _npcId(0), _hasBorder(true),
@@ -173,7 +173,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 	tempRect.grow(-2);
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 
-	_linesStart = screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
+	_displayEndCharIndex = screenManager->writeString(SURFACE_BACKBUFFER, tempRect, _scrollTop, _lines, _textCursor);
 
 	screenManager->setFontNumber(oldFontNumber);
 }
