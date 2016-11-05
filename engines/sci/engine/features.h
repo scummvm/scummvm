@@ -117,6 +117,17 @@ public:
 	inline bool hasNewPaletteCode() const {
 		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7;
 	}
+
+	inline bool VMDOpenStopsAudio() const {
+		// Of the games that use VMDs:
+		// Yes: Phant1, Shivers, Torin
+		// No: SQ6
+		// TODO: Optional extra flag to kPlayVMD which defaults to Yes: PQ:SWAT
+		// TODO: SCI3, GK2 (GK2's VMD code is closer to SCI3 than SCI21)
+		return getSciVersion() == SCI_VERSION_2_1_MIDDLE &&
+			g_sci->getGameId() != GID_SQ6 &&
+			g_sci->getGameId() != GID_GK2;
+	}
 #endif
 
 	/**

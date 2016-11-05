@@ -28,6 +28,7 @@
 #include "engine.h"                      // for Engine, g_engine
 #include "engines/util.h"                // for initGraphics
 #include "sci/console.h"                 // for Console
+#include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState
 #include "sci/engine/vm_types.h"         // for reg_t
 #include "sci/event.h"                   // for SciEvent, EventManager, SCI_...
@@ -39,10 +40,12 @@
 #include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
 #include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
-#include "sci/graphics/video32.h"
+#include "sci/sound/audio32.h"           // for Audio32
 #include "sci/video/seq_decoder.h"       // for SEQDecoder
 #include "video/avi_decoder.h"           // for AVIDecoder
 #include "video/coktel_decoder.h"        // for AdvancedVMDDecoder
+#include "sci/graphics/video32.h"
+
 namespace Graphics { struct Surface; }
 
 namespace Sci {
@@ -524,6 +527,10 @@ VMDPlayer::~VMDPlayer() {
 VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFlags flags) {
 	if (_isOpen) {
 		error("Attempted to play %s, but another VMD was loaded", fileName.c_str());
+	}
+
+	if (g_sci->_features->VMDOpenStopsAudio()) {
+		g_sci->_audio32->stop(kAllChannels);
 	}
 
 	if (_decoder->loadFile(fileName)) {
