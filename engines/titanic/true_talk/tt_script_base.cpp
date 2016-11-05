@@ -129,7 +129,7 @@ void TTscriptBase::appendResponse(int index, int *maxP, int id) {
 	if (id && (!maxP || index <= *maxP)) {
 		if (_respTailP) {
 			// Prior fragments already exist, so append to end of chain
-			_respTailP = new TTresponse(_respTailP);
+			_respTailP = _respTailP->appendResponse(id);
 		} else {
 			// Currently no tail
 			_respTailP = new TTresponse(id, 3);

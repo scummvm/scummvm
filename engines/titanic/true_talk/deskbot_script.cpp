@@ -1116,14 +1116,18 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		}
 
 	case 78:
+		// "Do you have a reservation?"
 		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			// Player said they have a reservation
 			addResponse(getDialogueId(241262));
 		} else if (sentence->_field2C == 12 || sentence->contains("do not")) {
+			// Player said they don't have a reservation
 			setDialRegion(0, 0);
 			setDialRegion(1, 0);
 			addResponse(getDialogueId(241268));
-			add241716();
+			addAskBreakfast();
 		} else {
+			// Player didn't say yes or no
 			addResponse(getDialogueId(240745));
 		}
 
@@ -1149,7 +1153,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			break;
 		}
 
-		add241716();
+		addAskBreakfast();
 		applyFlag = true;
 		stateFlag = false;
 		break;
@@ -1480,7 +1484,7 @@ int DeskbotScript::checkCommonWords(const TTsentence *sentence) {
 	return 0;
 }
 
-void DeskbotScript::add241716() {
+void DeskbotScript::addAskBreakfast() {
 	addResponse(getDialogueId(241716));
 }
 

@@ -49,6 +49,12 @@ TTresponse::~TTresponse() {
 	}
 }
 
+TTresponse *TTresponse::appendResponse(int id) {
+	TTresponse *resp = new TTresponse(id, 3);
+	_nextP = resp;
+	return resp;
+}
+
 TTresponse *TTresponse::copyChain() const {
 	TTresponse *returnResponseP = new TTresponse(this);
 
