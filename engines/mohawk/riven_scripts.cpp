@@ -66,10 +66,13 @@ RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
 RivenCommand *RivenScriptManager::readCommand(Common::ReadStream *stream) {
 	uint16 type = stream->readUint16BE();
 
-	if (type == 8) {
-		return RivenSwitchCommand::createFromStream(_vm, type, stream);
-	} else {
-		return RivenSimpleCommand::createFromStream(_vm, type, stream);
+	switch (type) {
+		case 8:
+			return RivenSwitchCommand::createFromStream(_vm, type, stream);
+		case 27:
+			return RivenStackChangeCommand::createFromStream(_vm, type, stream);
+		default:
+			return RivenSimpleCommand::createFromStream(_vm, type, stream);
 	}
 }
 
@@ -267,7 +270,7 @@ void RivenSimpleCommand::setupOpcodes() {
 		OPCODE(empty),						// Complex animation (not used)
 		OPCODE(setVariable),
 		// 0x08 (8 decimal)
-		OPCODE(mohawkSwitch),
+		OPCODE(empty),                      // Not a SimpleCommand
 		OPCODE(enableHotspot),
 		OPCODE(disableHotspot),
 		OPCODE(empty),						// Empty
@@ -290,7 +293,7 @@ void RivenSimpleCommand::setupOpcodes() {
 		OPCODE(incrementVariable),
 		OPCODE(empty),						// Empty
 		OPCODE(empty),						// Empty
-		OPCODE(changeStack),
+		OPCODE(empty),                      // Not a SimpleCommand
 		// 0x1C (28 decimal)
 		OPCODE(disableMovie),
 		OPCODE(disableAllMovies),
@@ -383,11 +386,6 @@ void RivenSimpleCommand::playSound(uint16 op, uint16 argc, uint16 *argv) {
 // Command 7: set variable value (variable, value)
 void RivenSimpleCommand::setVariable(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->getStackVar(argv[0]) = argv[1];
-}
-
-// Command 8: conditional branch
-void RivenSimpleCommand::mohawkSwitch(uint16 op, uint16 argc, uint16 *argv) {
-	// dummy function, this opcode does logic checking in processCommands()
 }
 
 // Command 9: enable hotspot (blst_id)
@@ -486,26 +484,6 @@ void RivenSimpleCommand::applyScreenUpdate(uint16 op, uint16 argc, uint16 *argv)
 // Command 24: increment variable (variable, value)
 void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->getStackVar(argv[0]) += argv[1];
-}
-
-// Command 27: go to stack (stack name, code high, code low)
-void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
-	Common::String stackName = _vm->getStack()->getName(kStackNames, argv[0]);
-	int8 index = -1;
-
-	for (byte i = 0; i < 8; i++)
-		if (_vm->getStackName(i).equalsIgnoreCase(stackName)) {
-			index = i;
-			break;
-		}
-
-	if (index == -1)
-		error ("'%s' is not a stack name!", stackName.c_str());
-
-	_vm->changeToStack(index);
-	uint32 rmapCode = (argv[1] << 16) + argv[2];
-	uint16 cardID = _vm->getStack()->getCardStackId(rmapCode);
-	_vm->changeToCard(cardID);
 }
 
 // Command 28: disable a movie
@@ -765,6 +743,53 @@ void RivenSwitchCommand::execute() {
 			return;
 		}
 	}
+}
+
+RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId) :
+		RivenCommand(vm),
+		_stackId(stackId),
+		_cardId(globalCardId),
+		_byStackId(byStackId) {
+
+}
+
+RivenStackChangeCommand::~RivenStackChangeCommand() {
+
+}
+
+RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream) {
+	/* argumentsSize = */ stream->readUint16BE();
+	uint16 stackId = stream->readUint16BE();
+	uint32 globalCardId = stream->readUint32BE();
+
+	return new RivenStackChangeCommand(vm, stackId, globalCardId, false);
+}
+
+void RivenStackChangeCommand::execute() {
+	int16 stackID = -1;
+	if (_byStackId) {
+		stackID = _stackId;
+	} else {
+		Common::String stackName = _vm->getStack()->getName(kStackNames, _stackId);
+
+		for (byte i = kStackFirst; i < kStackLast; i++)
+			if (_vm->getStackName(i).equalsIgnoreCase(stackName)) {
+				stackID = i;
+				break;
+			}
+
+		if (stackID == -1)
+			error ("'%s' is not a stack name!", stackName.c_str());
+	}
+
+	_vm->changeToStack(stackID);
+	uint16 cardID = _vm->getStack()->getCardStackId(_cardId);
+	_vm->changeToCard(cardID);
+}
+
+void RivenStackChangeCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("changeStack(%d, %d);\n", _stackId, _cardId);
 }
 
 } // End of namespace Mohawk
