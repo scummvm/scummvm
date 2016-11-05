@@ -152,7 +152,7 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 			setColor(r, g, b);
 		} else {
 			if (*srcP == ' ') {
-				// Check fo rline wrapping
+				// Check for line wrapping
 				checkLineWrap(textSize, rect1.width(), srcP);
 				if (!*srcP)
 					return endP - str.c_str();
@@ -315,7 +315,7 @@ void STFont::extendBounds(Point &textSize, byte c, int maxWidth) const {
 void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) const {
 	bool flag = false;
 	int totalWidth = 0;
-	for (const char *srcPtr = str; *srcPtr && *srcPtr != ' '; ++srcPtr) {
+	for (const char *srcPtr = str + 1; *srcPtr && *srcPtr != ' '; ++srcPtr) {
 		if (*srcPtr == ' ' && flag)
 			break;
 
