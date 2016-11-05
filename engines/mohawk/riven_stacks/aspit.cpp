@@ -95,9 +95,20 @@ void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
 }
 
 void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
+	inventoryBackFromItemScript();
+}
+
+void ASpit::inventoryBackFromItemScript() const {
+	RivenScriptPtr stopSoundScript = _vm->_scriptMan->createScriptFromData(1, 12, 1, 1);
+	_vm->_scriptMan->runScript(stopSoundScript, false);
+
+	uint16 backStackId = _vm->_vars["returnstackid"];
+	uint32 backCardId = _vm->_vars["returncardid"];
+
 	// Return to where we were before entering the book
-	_vm->changeToStack(_vm->_vars["returnstackid"]);
-	_vm->changeToCard(_vm->_vars["returncardid"]);
+	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true);
+	RivenScriptPtr backScript = _vm->_scriptMan->createScriptWithCommand(back);
+	_vm->_scriptMan->runScript(backScript, false);
 }
 
 void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
@@ -187,9 +198,7 @@ void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
 }
 
 void ASpit::xacathbookback(uint16 argc, uint16 *argv) {
-	// Return to where we were before entering the book
-	_vm->changeToStack(_vm->_vars["returnstackid"]);
-	_vm->changeToCard(_vm->_vars["returncardid"]);
+	inventoryBackFromItemScript();
 }
 
 void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
@@ -229,8 +238,7 @@ void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
 void ASpit::xtrapbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
 	_vm->_vars["atrap"] = 0;
-	_vm->changeToStack(_vm->_vars["returnstackid"]);
-	_vm->changeToCard(_vm->_vars["returncardid"]);
+	inventoryBackFromItemScript();
 }
 
 void ASpit::xatrapbookclose(uint16 argc, uint16 *argv) {
