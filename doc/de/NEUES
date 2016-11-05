@@ -6,10 +6,16 @@ Programmcodes finden Sie auf Englisch unter:
  Allgemein:
    - Kommandozeilen-Option hinzugefügt, mit der das aktuelle oder ein gewähltes
      Verzeichnis nach unterstützten Spielen durchsucht werden kann.
+   - Viele Optionen der Benutzeroberfläche können nun übernommen werden, ohne
+     den Optionen-Dialog zu schließen.
+   - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
 
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
      "Simon the Sorcerer 1" korrigiert.
+
+ Composer:
+   - Unterstützung für das Speichern und Laden von Spielständen aus dem Hauptmenü heraus hinzugefügt.
 
 1.9.1 (DD.MM.YYYY)
  Allgemein:
