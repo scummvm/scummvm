@@ -505,7 +505,7 @@ int TTparser::findFrames(TTsentence *sentence) {
 		}
 	}
 
-	if (!status) {
+	if (status <= 1) {
 		status = checkForAction();
 	}
 
