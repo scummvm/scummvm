@@ -152,6 +152,7 @@ private:
 	bool cmdBreakpointWrite(int argc, const char **argv);
 	bool cmdBreakpointKernel(int argc, const char **argv);
 	bool cmdBreakpointFunction(int argc, const char **argv);
+	bool cmdBreakpointAddress(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdScriptObjects(int argc, const char **argv);

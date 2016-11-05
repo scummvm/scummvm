@@ -631,6 +631,22 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 	return false;
 }
 
+bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
+	if (_debugState._activeBreakpointTypes & BREAK_ADDRESS) {
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_ADDRESS && bp->regAddress == address) {
+				_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
 	const char *objectName = segMan->getObjectName(send_obj);

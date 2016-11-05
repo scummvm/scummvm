@@ -201,6 +201,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bp_address",			WRAP_METHOD(Console, cmdBreakpointAddress));
+	registerCmd("bpa",					WRAP_METHOD(Console, cmdBreakpointAddress));		// alias
 	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
 	registerCmd("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
 	registerCmd("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
@@ -435,6 +437,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	debugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
+	debugPrintf(" bp_address / bpa - Sets a breakpoint on a script address\n");
 	debugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
 	debugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
 	debugPrintf(" bp_write / bpw - Sets a breakpoint on writing to a specified selector\n");
@@ -3738,6 +3741,8 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 			bpdata = bp->address;
 			debugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
 			break;
+		case BREAK_ADDRESS:
+			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->regAddress));
 		}
 
 		i++;
@@ -3890,6 +3895,31 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
+
+	return true;
+}
+
+bool Console::cmdBreakpointAddress(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Sets a breakpoint on the execution of the specified code address.\n");
+		debugPrintf("Usage: %s <address>\n", argv[0]);
+		return true;
+	}
+
+	reg_t addr;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_ADDRESS;
+	bp.regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
 
 	return true;
 }

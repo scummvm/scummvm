@@ -334,6 +334,7 @@ public:
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
+	bool checkAddressBreakpoint(const reg32_t &address);
 
 	void patchGameSaveRestore();
 

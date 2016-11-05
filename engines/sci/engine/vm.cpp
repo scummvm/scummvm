@@ -634,6 +634,8 @@ void run_vm(EngineState *s) {
 		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
+		g_sci->checkAddressBreakpoint(s->xs->addr.pc);
+
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
 		if (g_sci->_debugState.debugging /* sci_debug_flags*/) {
