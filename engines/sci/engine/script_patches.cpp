@@ -4553,6 +4553,40 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark Shivers
+
+// In room 35170, there is a CCTV control station with a joystick that must be
+// clicked and dragged to pan the camera. In order to enable dragging, on
+// mousedown, the vJoystick::handleEvent method calls vJoystick::doVerb(1),
+// which enables the drag functionality of the joystick. However,
+// vJoystick::handleEvent then makes a super call to ShiversProp::handleEvent,
+// which calls vJoystick::doVerb(). This second call, which fails to pass an
+// argument, causes an uninitialized read off the stack for the first parameter.
+// In SSCI, this happens to work because the uninitialized value on the stack
+// happens to be 1. Disabling the super call avoids the bad doVerb call without
+// any apparent ill effect.
+static const uint16 shiversSignatureJoystickFix[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0xa5),    // pushi handleEvent
+	0x78,                      // push1
+	0x8f, 0x01,                // lsp 1
+	0x59, 0x02,                // &rest 2
+	0x57, 0x7f, SIG_UINT16(6), // super ShiversProp[7f], 6
+	SIG_END
+};
+
+static const uint16 shiversPatchJoystickFix[] = {
+	0x48,                      // ret
+	PATCH_END
+};
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry shiversSignatures[] = {
+	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureJoystickFix,     shiversPatchJoystickFix },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Space Quest 6
 
 // After the explosion in the Quarters of Deepship 86, the game tries to perform
@@ -5118,6 +5152,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 #ifdef ENABLE_SCI32
 	case GID_QFG4:
 		signatureTable = qfg4Signatures;
+		break;
+	case GID_SHIVERS:
+		signatureTable = shiversSignatures;
 		break;
 #endif
 	case GID_SQ1:
