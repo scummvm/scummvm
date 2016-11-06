@@ -241,6 +241,7 @@ private:
 	int _smushHeight;
 	GLuint _smushTexId;
 	bool _smushSwizzle;
+	bool _smushSwap;
 	void setupTexturedQuad();
 	void setupQuadEBO();
 

@@ -48,7 +48,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#ifdef USE_OPENGL_SHADERS
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
@@ -1899,20 +1899,52 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 
 	GLenum frameType, frameFormat;
 
-	switch (frame->format.bytesPerPixel) {
-	case 2:
-		frameType = GL_UNSIGNED_SHORT_5_6_5;
-		frameFormat = GL_RGB;
-		_smushSwizzle = false;
-		break;
-	case 4:
+	// GLES2 support is needed here, so:
+	// - frameFormat GL_BGRA is not supported, so use GL_RGBA
+	// - no format conversion, so same format is used for internal storage, so swizzle in shader
+	// - GL_UNSIGNED_INT_8_8_8_8[_REV] do not exist, so use _BYTE and fix
+	//   endianness in shader.
+	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0) || frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) {
+		// frame->format: GBRA
+		// read in little endian: {A, R, G, B}, swap: {B, G, R, A}, swizzle: {R, G, B, A}
+		// read in big endian: {B, G, R, A}, swizzle: {R, G, B, A}
 		frameType = GL_UNSIGNED_BYTE;
 		frameFormat = GL_RGBA;
 		_smushSwizzle = true;
-		break;
-	default:
-		error("Video decoder returned invalid pixel format!");
-		return;
+#ifdef SCUMM_LITTLE_ENDIAN
+		_smushSwap = true;
+#else
+		_smushSwap = false;
+#endif
+
+	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0) || frame->format == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) {
+		// frame->format: ARGB
+		// read in little endian: {B, G, R, A}, swizzle: {R, G, B, A}
+		// read in big endian: {A, R, G, B}, swap: {B, G, R, A}, swizzle: {R, G, B, A}
+		frameType = GL_UNSIGNED_BYTE;
+		frameFormat = GL_RGBA;
+		_smushSwizzle = true;
+#ifdef SCUMM_LITTLE_ENDIAN
+		_smushSwap = false;
+#else
+		_smushSwap = true;
+#endif
+	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
+		frameType = GL_UNSIGNED_SHORT_5_6_5;
+		frameFormat = GL_RGB;
+		_smushSwizzle = false;
+		_smushSwap = false;
+	} else {
+		error("Unknown pixelformat: Bpp: %d RBits: %d GBits: %d BBits: %d ABits: %d RShift: %d GShift: %d BShift: %d AShift: %d",
+			frame->format.bytesPerPixel,
+			-(frame->format.rLoss - 8),
+			-(frame->format.gLoss - 8),
+			-(frame->format.bLoss - 8),
+			-(frame->format.aLoss - 8),
+			frame->format.rShift,
+			frame->format.gShift,
+			frame->format.bShift,
+			frame->format.aShift);
 	}
 
 	// create texture
@@ -1942,6 +1974,7 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	_smushProgram->setUniform("texcrop", Math::Vector2d(float(_smushWidth) / nextHigher2(_smushWidth), float(_smushHeight) / nextHigher2(_smushHeight)));
 	_smushProgram->setUniform("scale", Math::Vector2d(float(_smushWidth)/ float(_gameWidth), float(_smushHeight) / float(_gameHeight)));
 	_smushProgram->setUniform("offset", Math::Vector2d(float(offsetX) / float(_gameWidth), float(offsetY) / float(_gameHeight)));
+	_smushProgram->setUniform("swap", _smushSwap);
 	_smushProgram->setUniform("swizzle", _smushSwizzle);
 	glBindTexture(GL_TEXTURE_2D, _smushTexId);
 
