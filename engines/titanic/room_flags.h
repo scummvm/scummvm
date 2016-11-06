@@ -221,7 +221,7 @@ public:
 	/**
 	 * Returns what passenger class a particular floor number belongs to
 	 */
-	static int whatPassengerClass(int floorNum);
+	static PassengerClass whatPassengerClass(int floorNum);
 
 	bool not5() const { return getConditionally() != 5; }
 

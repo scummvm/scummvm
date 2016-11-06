@@ -580,14 +580,14 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 		return 1;
 	}
 
-	int classNum = 1;
+	PassengerClass classNum = FIRST_CLASS;
 	bool classSet = true;
 	if (sentence->localWord("firstclass"))
-		classNum = 1;
+		classNum = FIRST_CLASS;
 	else if (sentence->localWord("secondclass"))
-		classNum = 2;
+		classNum = SECOND_CLASS;
 	else if (sentence->localWord("thirdclass"))
-		classNum = 3;
+		classNum = THIRD_CLASS;
 	else
 		classSet = false;
 

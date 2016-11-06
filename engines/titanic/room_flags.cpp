@@ -479,7 +479,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 
 	do {
 		switch (classNum) {
-		case 1:
+		case FIRST_CLASS:
 			minFloor = 2;
 			maxFloor = 19;
 			minRoom = 1;
@@ -487,7 +487,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
 			break;
 
-		case 2:
+		case SECOND_CLASS:
 			minFloor = 20;
 			maxFloor = 27;
 			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
@@ -495,7 +495,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 			maxRoom = ((elevNum - 1) & 1) ? 3 : 4;
 			break;
 
-		case 3:
+		case THIRD_CLASS:
 			minRoom = 1;
 			minFloor = 28;
 			maxFloor = 38;
@@ -517,11 +517,11 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 	} while (_data == 0x59706);
 }
 
-int CRoomFlags::whatPassengerClass(int floorNum) {
+PassengerClass CRoomFlags::whatPassengerClass(int floorNum) {
 	if (is2To19(floorNum))
-		return 1;
+		return FIRST_CLASS;
 
-	return is20To27(floorNum) ? 2 : 3;
+	return is20To27(floorNum) ? SECOND_CLASS : THIRD_CLASS;
 }
 
 } // End of namespace Titanic

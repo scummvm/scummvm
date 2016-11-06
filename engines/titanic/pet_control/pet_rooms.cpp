@@ -241,17 +241,17 @@ uint CPetRooms::getRoomFlags() const {
 	if (flags)
 		return flags;
 
-	int classNum = roomFlags.whatPassengerClass(_floorNum);
+	PassengerClass classNum = roomFlags.whatPassengerClass(_floorNum);
 	roomFlags.setPassengerClassBits(classNum);
 	roomFlags.setFloorNum(_floorNum);
 
 	switch (classNum) {
-	case 1:
+	case FIRST_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
 		roomFlags.setRoomBits(_roomNum);
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		if (_roomNum > 0) {
 			if (_roomNum >= 3) {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 1 : 3);
@@ -265,7 +265,7 @@ uint CPetRooms::getRoomFlags() const {
 		}
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
 		roomFlags.setRoomBits(_roomNum + _field1CC * 6 - 6);
 		break;
