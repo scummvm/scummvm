@@ -296,7 +296,7 @@ int CPetText::getTextWidth(CScreenManager *screenManager) {
 int CPetText::getTextHeight(CScreenManager *screenManager) {
 	mergeStrings();
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
-	int textHeight = screenManager->getTextBounds(_lines, _bounds.width());
+	int textHeight = screenManager->getTextBounds(_lines, _bounds.width() - 4);
 	screenManager->setFontNumber(oldFontNumber);
 
 	return textHeight;

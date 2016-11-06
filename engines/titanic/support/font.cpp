@@ -315,10 +315,10 @@ void STFont::extendBounds(Point &textSize, byte c, int maxWidth) const {
 void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) const {
 	bool flag = false;
 	int totalWidth = 0;
-	for (const char *srcPtr = str + 1; *srcPtr && *srcPtr != ' '; ++srcPtr) {
-		if (*srcPtr == ' ' && flag)
-			break;
 
+	// Loop forward getting the width of the word (including preceding space)
+	// until a space is encountered following at least one character
+	for (const char *srcPtr = str; *srcPtr && (*srcPtr != ' ' || !flag); ++srcPtr) {
 		if (*srcPtr == TEXTCMD_NPC) {
 			srcPtr += 3;
 		} else if (*srcPtr == TEXTCMD_SET_COLOR) {
