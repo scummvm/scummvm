@@ -131,7 +131,7 @@ void TTconcept::setScriptType(ScriptType scriptType) {
 
 int TTconcept::initializeWordRef(TTword *word) {
 	delete _wordP;
-	_wordP = word;
+	_wordP = word->copy();
 	return 0;
 }
 
