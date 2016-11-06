@@ -1358,19 +1358,25 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 92:
 	case 93:
+		// "Fish?"
 		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+			// Yes
 			addResponse(getDialogueId(241077));
 			addResponse(getDialogueId(241706));
 		} else if (sentence->_field2C == 12) {
+			// No
 			addAssignedRoom();
 			setState(0);
 			CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 			return 2;
-		} else if (g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine.c_str())
+		} else if (g_vm->_trueTalkManager->_quotes.find(sentence->_initialLine.c_str())
 				== MKTAG('F', 'I', 'S', 'H')) {
+			// WORKAROUND: Original passed _normalizedLine, but "fish" is one of the common
+			// phrases replaced with with alternative text "completelyrandom"
 			addResponse(getDialogueId(240877));
 			addResponse(getDialogueId(241706));
 		}else {
+			// All other responses
 			if (getRandomNumber(100) < 80 && sentence2C(sentence))
 				addResponse(getDialogueId(241707));
 
