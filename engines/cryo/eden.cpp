@@ -8851,7 +8851,7 @@ void EdenGame::affiche_ligne_mapping(int16 r3, int16 r4, byte *target, byte *tex
 
 cubeCursor pc_cursors[9] = {
 		{ { 0, 0, 0, 0, 0, 0 }, 3, 2 },
-		{ { 1, 1, 0, 1, 1, 0 }, 1, -2 },
+		{ { 1, 1, 0, 1, 1, 0 }, 2, -2 },
 		{ { 2, 2, 2, 2, 2, 2 }, 1, 2 },
 		{ { 3, 3, 3, 3, 3, 3 }, 1, -2 },
 		{ { 4, 4, 4, 4, 4, 4 }, 2, 2 },
@@ -9009,7 +9009,7 @@ void EdenGame::PaintFace5(XYZ *point) {
 	for (y = -15; y < 15; y++)
 		for (x = -15; x < 15; x++) {
 			point->x = x;
-			point->z = -y;
+			point->z = y;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[5][tab1[x + 15] + tab2[y + 15]]);
 		}
