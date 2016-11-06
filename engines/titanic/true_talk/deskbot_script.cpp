@@ -1509,6 +1509,7 @@ void DeskbotScript::addAssignedRoom() {
 	addResponse(getDialogueId(241271 + floorNum));
 	addResponse(getDialogueId(241317 + roomNum));
 	addResponse(getDialogueId(241698));
+	applyResponse();
 }
 
 } // End of namespace Titanic
