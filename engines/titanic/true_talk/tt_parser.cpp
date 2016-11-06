@@ -1634,7 +1634,7 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 	TTconcept *newConcept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
 
 	// Cycles through each word
-	for (TTword *currP = _currentWordP; currP != word; currP = _currentWordP) {
+	for (TTword *currP = _currentWordP; currP && currP != word; currP = _currentWordP) {
 		if ((modifier == 2 && currP->_wordClass == WC_ADJECTIVE) ||
 				(modifier == 1 && currP->_wordClass == WC_ADVERB)) {
 			newConcept->_string2 += ' ';
