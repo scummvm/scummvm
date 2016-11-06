@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-05 12:43+0100\n"
-"PO-Revision-Date: 2016-09-17 22:36+0200\n"
+"PO-Revision-Date: 2016-11-06 01:03+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
 "Language: Ukrainian\n"
@@ -1275,7 +1275,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Застосувати"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
