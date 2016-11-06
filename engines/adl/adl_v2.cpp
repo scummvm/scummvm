@@ -182,8 +182,8 @@ Common::String AdlEngine_v2::loadMessage(uint idx) const {
 
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
-	int endPos = TEXT_WIDTH - 1;
-	int pos = 0;
+	uint endPos = TEXT_WIDTH - 1;
+	uint pos = 0;
 
 	while (true) {
 		while (pos <= endPos && pos != s.size()) {
