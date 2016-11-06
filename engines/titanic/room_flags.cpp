@@ -369,7 +369,7 @@ CString CRoomFlags::getSuccUBusRoomName() const {
 	return CString();
 }
 
-void CRoomFlags::changeLocation(int action) {
+void CRoomFlags::changeClass(PassengerClass newClassNum) {
 	uint floorNum = getFloorNum();
 	uint roomNum = getRoomNum();
 	uint elevatorNum = getElevatorNum();
@@ -407,23 +407,23 @@ void CRoomFlags::changeLocation(int action) {
 	}
 
 	// Perform action to change room or floor
-	switch (action) {
-	case 1:
+	switch (newClassNum) {
+	case FIRST_CLASS:
 		if (--roomNum < v12)
 			roomNum = v12;
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		if (++roomNum > v13)
 			roomNum = v13;
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		if (--floorNum < v10)
 			floorNum = v10;
 		break;
 
-	case 4:
+	case UNCHECKED:
 		if (++floorNum > v11)
 			floorNum = v11;
 	}

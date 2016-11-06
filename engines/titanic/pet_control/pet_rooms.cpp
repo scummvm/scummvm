@@ -67,7 +67,7 @@ bool CPetRooms::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!_glyphItem.contains(getGlyphPos(), msg->_mousePos))
 		return false;
 
-	_glyphItem.MouseButtonDownMsg(msg->_mousePos);
+	_glyphItem.selectGlyph(getGlyphPos(), msg->_mousePos);
 	return true;
 }
 
@@ -335,7 +335,7 @@ bool CPetRooms::changeLocationClass(PassengerClass newClassNum) {
 	if (!glyph)
 		return 0;
 
-	glyph->changeLocation(newClassNum);
+	glyph->changeClass(newClassNum);
 	return true;
 }
 

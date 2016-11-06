@@ -25,6 +25,7 @@
 
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -119,7 +120,10 @@ public:
 	 */
 	void setMode(RoomGlyphMode mode) { _mode = mode; }
 
-	void changeLocation(int newClassNum);
+	/**
+	 * Change the current class
+	 */
+	void changeClass(PassengerClass newClassNum);
 
 	/**
 	 * Returns true if the room is either currently or previously assigned

@@ -201,7 +201,7 @@ public:
 	/**
 	 * Change the passenger class
 	 */
-	void changeLocation(int action);
+	void changeClass(PassengerClass newClassNum);
 
 	/**
 	 * Sets a random destination in the flags

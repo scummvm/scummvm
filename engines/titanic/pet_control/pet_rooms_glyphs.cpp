@@ -102,7 +102,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 }
 
 void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
-	if (isAssigned()) {
+	if (!isAssigned()) {
 		bool isShiftPressed = g_vm->_window->getSpecialButtons() & MK_SHIFT;
 
 		if (isShiftPressed) {
@@ -183,9 +183,9 @@ void CPetRoomsGlyph::loadFlags(SimpleFile *file, int val) {
 	}
 }
 
-void CPetRoomsGlyph::changeLocation(int newClassNum) {
+void CPetRoomsGlyph::changeClass(PassengerClass newClassNum) {
 	CRoomFlags roomFlags(_roomFlags);
-	roomFlags.changeLocation(newClassNum);
+	roomFlags.changeClass(newClassNum);
 	_roomFlags = roomFlags.get();
 }
 
