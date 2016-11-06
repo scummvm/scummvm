@@ -547,7 +547,6 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
 	Node *curNode = s->_segMan->lookupNode(list->first);
-	reg_t curObject;
 	Selector slc = argv[1].toUint16();
 
 	ObjVarRef address;
@@ -564,7 +563,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		// needs to be able to adjust the location of the next node, which is
 		// why it is stored on the list instead of on the stack
 		list->nextNodes[list->numRecursions] = curNode->succ;
-		curObject = curNode->value;
+		reg_t curObject = curNode->value;
 
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
@@ -595,37 +594,51 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
 	Node *curNode = s->_segMan->lookupNode(list->first);
-	reg_t curObject;
 	Selector slc = argv[1].toUint16();
 
 	ObjVarRef address;
 
-	s->r_acc = NULL_REG;	// reset the accumulator
+	s->r_acc = NULL_REG;
+
+	++list->numRecursions;
+
+	if (list->numRecursions >= ARRAYSIZE(list->nextNodes)) {
+		error("Too much recursion in kListFirstTrue");
+	}
 
 	while (curNode) {
-		reg_t nextNode = curNode->succ;
-		curObject = curNode->value;
+		// We get the next node here as the current node might be deleted by the
+		// invoke. In the case that the next node is also deleted, kDeleteKey
+		// needs to be able to adjust the location of the next node, which is
+		// why it is stored on the list instead of on the stack
+		list->nextNodes[list->numRecursions] = curNode->succ;
+		reg_t curObject = curNode->value;
 
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// If it's a variable selector, check its value.
 			// Example: script 64893 in Torin, MenuHandler::isHilited checks
 			// all children for variable selector 0x03ba (bHilited).
-			if (!readSelector(s->_segMan, curObject, slc).isNull())
-				return curObject;
+			if (!readSelector(s->_segMan, curObject, slc).isNull()) {
+				s->r_acc = curObject;
+				break;
+			}
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result is true
-			if (!s->r_acc.isNull())
-				return curObject;
+			if (!s->r_acc.isNull()) {
+				s->r_acc = curObject;
+				break;
+			}
 		}
 
-		curNode = s->_segMan->lookupNode(nextNode);
+		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
 
-	// No selector returned true
-	return NULL_REG;
+	--list->numRecursions;
+
+	return s->r_acc;
 }
 
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
@@ -637,10 +650,20 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 
 	ObjVarRef address;
 
-	s->r_acc = make_reg(0, 1);	// reset the accumulator
+	s->r_acc = TRUE_REG;
+
+	++list->numRecursions;
+
+	if (list->numRecursions >= ARRAYSIZE(list->nextNodes)) {
+		error("Too much recursion in kListAllTrue");
+	}
 
 	while (curNode) {
-		reg_t nextNode = curNode->succ;
+		// We get the next node here as the current node might be deleted by the
+		// invoke. In the case that the next node is also deleted, kDeleteKey
+		// needs to be able to adjust the location of the next node, which is
+		// why it is stored on the list instead of on the stack
+		list->nextNodes[list->numRecursions] = curNode->succ;
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
@@ -655,8 +678,10 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 		if (s->r_acc.isNull())
 			break;
 
-		curNode = s->_segMan->lookupNode(nextNode);
+		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
+
+	--list->numRecursions;
 
 	return s->r_acc;
 }
