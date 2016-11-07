@@ -79,7 +79,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 		for (idx = 0; idx < 8; ++idx) {
 			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {
 				playSound(ROOM_WAVES[idx][1]);
-
+				break;
 			}
 		}
 		if (idx == 8)

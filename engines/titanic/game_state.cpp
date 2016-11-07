@@ -35,7 +35,6 @@ bool CGameStateMovieList::clear() {
 			++i;
 		} else {
 			i = erase(i);
-			delete movieItem;
 		}
 	}
 
