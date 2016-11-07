@@ -620,10 +620,13 @@ bool CPetControl::dismissBot(const CString &name) {
 	CDismissBotMsg dismissMsg;
 	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
 			treeItem = treeItem->scan(view)) {
-		if (!treeItem->getName().compareToIgnoreCase(name))
-			dismissMsg.execute(treeItem);
-		else
-			result = true;
+		CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
+		if (obj) {
+			if (!obj->getName().compareToIgnoreCase(name))
+				result = true;
+			else
+				dismissMsg.execute(treeItem);
+		}
 	}
 
 	return result;
