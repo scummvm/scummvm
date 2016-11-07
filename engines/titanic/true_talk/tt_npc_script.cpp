@@ -338,12 +338,13 @@ uint TTnpcScript::getRangeValue(uint id) {
 	case SF_RANDOM: {
 		uint count = range->_values.size();
 
-		uint index = getRandomNumber(count) - 1;
+		int index = (int)getRandomNumber(count) - 1;
 		if (count > 1 && range->_values[index] == range->_priorIndex) {
 			for (int retry = 0; retry < 8 && index != range->_priorIndex; ++retry)
-				index = getRandomNumber(count) - 1;
+				index = (int)getRandomNumber(count) - 1;
 		}
 
+		assert(index >= 0);
 		range->_priorIndex = index;
 		return range->_values[index];
 	}

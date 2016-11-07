@@ -238,8 +238,6 @@ bool CBellBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 bool CBellBot::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "SummonDoorbot") {
-		CTrueTalkNPC::TimerMsg(msg);
-	} else {
 		CRoomItem *room = getRoom();
 		if (room) {
 			CSummonBotMsg botMsg;
@@ -249,6 +247,8 @@ bool CBellBot::TimerMsg(CTimerMsg *msg) {
 		}
 
 		_npcFlags &= ~NPCFLAG_20000;
+	} else {
+		CTrueTalkNPC::TimerMsg(msg);
 	}
 
 	return true;

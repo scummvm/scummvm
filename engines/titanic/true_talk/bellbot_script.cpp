@@ -527,7 +527,7 @@ int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 
 int BellbotScript::updateState(uint oldId, uint newId, int index) {
 	if (!getValue(25)) {
-		newId = 202043 - getValue(1) <= 2 ? 994 : 0;
+		newId = 202043 - (getValue(1) <= 2 ? 994 : 0);
 		CTrueTalkManager::setFlags(25, 1);
 	}
 
