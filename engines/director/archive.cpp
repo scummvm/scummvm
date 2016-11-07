@@ -410,17 +410,20 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	}
 
 	// Parse the CAS*, if present
-	Common::Array<uint32> casEntries;
 	if (casRes) {
 		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
-		casEntries.resize(casRes->size / 4);
 
-		debugCN(2, kDebugLoading, "CAS*: %d [", casEntries.size());
+		uint casSize = casRes->size / 4;
 
-		for (uint32 i = 0; i < casEntries.size(); i++) {
-			casEntries[i] = casStream.readUint32();
+		debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
 
-			debugCN(2, kDebugLoading, "%d ", casEntries[i]);
+		for (uint i = 0; i < casSize; i++) {
+			uint32 index = casStream.readUint32();
+
+			const Resource &res = resources[index];
+			_types[MKTAG('C', 'A', 'S', 't')][index] = res;
+
+			debugCN(2, kDebugLoading, "%d ", index);
 		}
 		debugC(2, kDebugLoading, "]");
 	}
@@ -440,16 +443,6 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint32 resTag = keyStream.readUint32();
 
 		debugC(2, kDebugLoading, "KEY*: index: %d id: %d resTag: %s", index, id, tag2str(resTag));
-
-		// Handle CAS*/CASt nonsense
-		if (resTag == MKTAG('C', 'A', 'S', 't')) {
-			for (uint32 j = 0; j < casEntries.size(); j++) {
-				if (casEntries[j] == index) {
-					id += j + 1;
-					break;
-				}
-			}
-		}
 
 		const Resource &res = resources[index];
 		debug(3, "Found RIFX resource: '%s' 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
