@@ -604,6 +604,7 @@ void CPetControl::onSummonBot(const CString &name, int val) {
 
 		COnSummonBotMsg summonMsg(val);
 		summonMsg.execute(bot);
+		makeDirty();
 	}
 }
 

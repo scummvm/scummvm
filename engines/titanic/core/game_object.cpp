@@ -1613,7 +1613,7 @@ void CGameObject::petSetRooms1D4(int v) {
 void CGameObject::petOnSummonBot(const CString &name, int val) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->summonBot(name, val);
+		pet->onSummonBot(name, val);
 }
 
 void CGameObject::petUnlockInput() {
