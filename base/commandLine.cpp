@@ -69,7 +69,8 @@ static const char HELP_STRING[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
-	"                           Use --path=PATH before --auto-detect to specify a directory.\n"
+	"                           and start the first one. Use --path=PATH before --auto-detect\n"
+	"                           to specify a directory.\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -777,7 +778,7 @@ static void listAudioDevices() {
 }
 
 /** Display all games in the given directory, or current directory if empty */
-static void autoDetect(Common::String path) {
+static bool autoDetect(Common::String path) {
 	if (path.empty())
 		path = ".";
 	//Current directory
@@ -791,13 +792,18 @@ static void autoDetect(Common::String path) {
 	GameList candidates(EngineMan.detectGames(files));
 	if (candidates.empty()) {
 		printf("ScummVM could not find any game in %s\n", path.c_str());
-	} else {
-		printf("ID                   Description\n");
-		printf("-------------------- ---------------------------------------------------------\n");
-		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
-		}
+		return false;
 	}
+
+	// Print all the candidate found
+	printf("ID                   Description\n");
+	printf("-------------------- ---------------------------------------------------------\n");
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+	}
+	// Set the active domain to the first one to start it.
+	ConfMan.setActiveDomain(candidates.begin()->gameid());
+	return true;
 }
 
 #ifdef DETECTOR_TESTING_HACK
@@ -1026,8 +1032,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf(HELP_STRING, s_appName);
 		return true;
 	} else if (command == "auto-detect") {
-		autoDetect(settings["path"]);
-		return true;
+		// If auto-detects succeed, we want to return false so that the game is started
+		return !autoDetect(settings["path"]);
+		//return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {

@@ -1309,8 +1309,10 @@ arguments -- see the next section.
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
   --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified
-  --auto-detect            Display a list of games from current or specified directory.
-                           Use --path=PATH before --auto-detect to specify a directory.
+  --auto-detect            Display a list of games from current or specified
+                           directory and start the first one found. Use
+                           --path=PATH before--auto-detect to specify a
+                           directory.
   --console                Enable the console window (default: enabled) (Windows only)
 
   -c, --config=CONFIG      Use alternate configuration file
