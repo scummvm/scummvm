@@ -340,7 +340,7 @@ uint TTnpcScript::getRangeValue(uint id) {
 
 		int index = (int)getRandomNumber(count) - 1;
 		if (count > 1 && range->_values[index] == range->_priorIndex) {
-			for (int retry = 0; retry < 8 && index != range->_priorIndex; ++retry)
+			for (int retry = 0; retry < 8 && index != (int)range->_priorIndex; ++retry)
 				index = (int)getRandomNumber(count) - 1;
 		}
 

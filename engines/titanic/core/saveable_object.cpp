@@ -421,15 +421,14 @@ CSaveableObject *ClassDef::create() {
 
 /*------------------------------------------------------------------------*/
 
-CSaveableObject::ClassListMap *CSaveableObject::_classList = nullptr;
+CSaveableObject::ClassListMap *CSaveableObject::_classList;
 CSaveableObject::ClassDefList *CSaveableObject::_classDefs;
-CSaveableObject::VoidArray *CSaveableObject::_typesToFree;
 
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); } \
 	ClassDef *T::_type
 #define ADDFN(CHILD, PARENT) \
 	CHILD::_type = new TypeTemplate<CHILD>(#CHILD, PARENT::_type); \
-	_typesToFree->push_back(CHILD::_type); \
+	_classDefs->push_back(CHILD::_type); \
 	(*_classList)[#CHILD] = Function##CHILD
 
 DEFFN(CArm);
@@ -1023,7 +1022,6 @@ DEFFN(CTimeEventInfo);
 void CSaveableObject::initClassList() {
 	_classDefs = new ClassDefList();
 	_classList = new ClassListMap();
-	_typesToFree = new VoidArray();
 	ADDFN(CArm, CCarry);
 	ADDFN(CAuditoryCentre, CBrain);
 	ADDFN(CBowlEar, CEar);
@@ -1623,12 +1621,8 @@ void CSaveableObject::freeClassList() {
 	for (i = _classDefs->begin(); i != _classDefs->end(); ++i)
 		delete *i;
 
-	for (uint idx = 0; idx < _typesToFree->size(); ++idx)
-		delete (*_typesToFree)[idx];
-
 	delete _classDefs;
 	delete _classList;
-	delete _typesToFree;
 }
 
 CSaveableObject *CSaveableObject::createInstance(const Common::String &name) {
