@@ -66,7 +66,7 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CRestrictedMove::EnterViewMsg(CEnterViewMsg *msg) {
 	int classNum = getPassengerClass();
-	bool flag = classNum > _classNum;
+	bool flag = classNum <= _classNum;
 
 	if (classNum == UNCHECKED) {
 		if (compareRoomNameTo("EmbLobby"))
