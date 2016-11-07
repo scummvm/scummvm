@@ -206,7 +206,7 @@ public:
 	/**
 	 * Sets a random destination in the flags
 	 */
-	void setRandomLocation(int classNum, bool flag);
+	void setRandomLocation(PassengerClass classNum, bool flag);
 
 	/**
 	 * Gets the succubus number associated with a given room

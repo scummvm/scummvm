@@ -148,7 +148,7 @@ CString CRoomFlags::getRoomDesc() const {
 		result += ", ";
 		result += getElevatorDesc();
 		result += ", ";
-		result += getRoomDesc();
+		result += getRoomNumDesc();
 		return result;
 	}
 
@@ -269,21 +269,20 @@ uint CRoomFlags::decodeFloorBits(uint bits) const {
 	int offset = bits & 0xF;
 
 	switch ((bits >> 4) & 0xF) {
-	case 1:
-	case 2:
-	case 3:
-		base = 40;
+	case 9:
+		base = 0;
 		break;
-	case 4:
+	case 0xD:
 		base = 10;
 		break;
-	case 5:
+	case 0xE:
 		base = 20;
 		break;
-	case 6:
+	case 0xF:
 		base = 30;
 		break;
 	default:
+		base = 40;
 		break;
 	}
 
@@ -474,7 +473,7 @@ bool CRoomFlags::isTitania(uint flags1, uint flags2) {
 	return flags2 == 0x8A397;
 }
 
-void CRoomFlags::setRandomLocation(int classNum, bool flag) {
+void CRoomFlags::setRandomLocation(PassengerClass classNum, bool flag) {
 	uint minRoom, elevNum, maxRoom, maxFloor, minFloor;
 
 	do {
@@ -500,9 +499,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 			minFloor = 28;
 			maxFloor = 38;
 			maxRoom = 18;
-			elevNum = g_vm->getRandomNumber(1);
-			if (elevNum == 1)
-				elevNum = 2;
+			elevNum = g_vm->getRandomNumber(1) ? 2 : 0;
 			break;
 
 		default:
@@ -514,6 +511,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 		setElevatorBits(elevNum);
 		setRoomBits(roomNum);
 		setFloorNum(floorNum);
+		setPassengerClassBits(classNum);
 	} while (_data == 0x59706);
 }
 
