@@ -462,6 +462,10 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 cas
 	//member.regX = 0 // FIXME: HACK
 	//member.regY = 0 // FIXME: HACK
 
+	byte *data = (byte *)malloc(size1);
+	stream.read(data, size1);
+	free(data);
+
 	if (size2) {
 		uint32 entryType = 0;
 		Common::Array<Common::String> castStrings = loadStrings(stream, entryType, false);
