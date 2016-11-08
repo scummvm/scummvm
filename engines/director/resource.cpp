@@ -212,7 +212,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	castScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
 
 	if (getVersion() < 4)
-		castScore->loadCastDataD2(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+		castScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
 
 	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {

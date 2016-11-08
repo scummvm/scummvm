@@ -49,7 +49,7 @@ struct Cast {
 };
 
 struct BitmapCast : Cast {
-	BitmapCast(Common::SeekableSubReadStreamEndian &stream);
+	BitmapCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	Common::Rect boundingRect;
 	uint16 regX;
@@ -67,7 +67,7 @@ enum ShapeType {
 };
 
 struct ShapeCast : Cast {
-	ShapeCast(Common::SeekableSubReadStreamEndian &stream);
+	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ShapeType shapeType;
 	uint16 pattern;
@@ -106,7 +106,7 @@ enum SizeType {
 };
 
 struct TextCast : Cast {
-	TextCast(Common::SeekableSubReadStreamEndian &stream);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	SizeType borderSize;
 	SizeType gutterSize;
@@ -129,12 +129,16 @@ enum ButtonType {
 };
 
 struct ButtonCast : TextCast {
-	ButtonCast(Common::SeekableSubReadStreamEndian &stream) : TextCast(stream) {
-		buttonType = static_cast<ButtonType>(stream.readUint16BE());
-	}
+	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ButtonType buttonType;
 };
+
+struct ScriptCast : Cast {
+	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+};
+
+
 
 struct CastInfo {
 	Common::String script;

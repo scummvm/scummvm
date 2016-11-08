@@ -193,7 +193,7 @@ void Score::loadArchive() {
 
 	if (_vm->getVersion() < 4) {
 		assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
-		loadCastDataD2(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
@@ -348,8 +348,8 @@ void Score::readVersion(uint32 rid) {
 	debug("Version: %d.%d", _versionMajor, _versionMinor);
 }
 
-void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "Score::loadCastData(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
+void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
@@ -376,7 +376,7 @@ void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 			_casts[id]->type = kCastButton;
 			break;
 		default:
-			warning("Unhandled cast type: %d", castType);
+			warning("Score::loadCastDataVWCR(): Unhandled cast type: %d", castType);
 			stream.skip(size - 1);
 			break;
 		}
@@ -393,17 +393,17 @@ void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
-void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 castId) {
+void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
 	// d4+ variant
 	if (stream.size() == 0)
 		return;
 
 	if (stream.size() < 26) {
-		warning("CAST data id %d is too small", castId);
+		warning("CAST data id %d is too small", id);
 		return;
 	}
 
-	debugC(3, kDebugLoading, "CASt: id: %d", castId);
+	debugC(3, kDebugLoading, "CASt: id: %d", id);
 
 	if (debugChannelSet(5, kDebugLoading))
 		stream.hexdump(stream.size());
@@ -428,43 +428,52 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 cas
 		blob[0] = blob[1] = blob[2] = 0;
 	}
 
-	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d", castId, castType, size1, size2, size2, size3);
+	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d", id, castType, size1, size2, size2, size3);
 
-#if 0
+	byte *data = (byte *)malloc(size1 + 16);
+	stream.read(data, size1 + 16);
+
+	Common::MemoryReadStreamEndian castStream(data, size1 + 16, stream.isBE());
+
 	switch (castType) {
 	case kCastBitmap:
-		_casts[id] = new BitmapCast(stream);
+		warning("CASt: Bitmap");
+		Common::hexdump(data, size1 + 16);
+		_casts[id] = new BitmapCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastBitmap;
 		break;
 	case kCastText:
-		_casts[id] = new TextCast(stream);
+		warning("CASt: Text");
+		Common::hexdump(data, size1 + 16);
+		_casts[id] = new TextCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastText;
 		break;
 	case kCastShape:
-		_casts[id] = new ShapeCast(stream);
+		warning("CASt: Shape");
+		Common::hexdump(data, size1 + 16);
+
+		_casts[id] = new ShapeCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastShape;
 		break;
 	case kCastButton:
-		_casts[id] = new ButtonCast(stream);
+		warning("CASt: Button");
+		Common::hexdump(data, size1 + 16);
+
+		_casts[id] = new ButtonCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastButton;
 		break;
+	case kCastScript:
+		warning("CASt: Script");
+		Common::hexdump(data, size1 + 16);
+
+		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
+		_casts[id]->type = kCastScript;
+		break;
 	default:
-		warning("Unhandled cast type: %d", castType);
-		stream.skip(size - 1);
+		warning("Score::loadCastData(): Unhandled cast type: %d", castType);
 		break;
 	}
-#endif
 
-	Score::readRect(stream);
-	Score::readRect(stream);
-
-	//member.initialRect = readRect(data)
-	//member.boundingRect = readRect(data)
-	//member.regX = 0 // FIXME: HACK
-	//member.regY = 0 // FIXME: HACK
-
-	byte *data = (byte *)malloc(size1);
-	stream.read(data, size1);
 	free(data);
 
 	if (size2) {
@@ -488,7 +497,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 cas
 		ci->fileName = castStrings[3];
 		ci->type = castStrings[4];
 
-		_castsInfo[castId] = ci;
+		_castsInfo[id] = ci;
 	}
 
 	if (size3)
@@ -794,7 +803,10 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 		Common::String entryString;
 
 		for (uint j = entries[i]; j < entries[i + 1]; j++)
-			entryString += data[j];
+			if (data[j] == '\r')
+				entryString += '\n';
+			else
+				entryString += data[j];
 
 		strings.push_back(entryString);
 	}
@@ -830,7 +842,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
-Common::Rect Score::readRect(Common::SeekableSubReadStreamEndian &stream) {
+Common::Rect Score::readRect(Common::ReadStreamEndian &stream) {
 	Common::Rect *rect = new Common::Rect();
 	rect->top = stream.readUint16();
 	rect->left = stream.readUint16();

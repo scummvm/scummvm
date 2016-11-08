@@ -28,66 +28,103 @@
 
 namespace Director {
 
-BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
-	flags = stream.readByte();
-	someFlaggyThing = stream.readUint16();
-	initialRect = Score::readRect(stream);
-	boundingRect = Score::readRect(stream);
-	regY = stream.readUint16();
-	regX = stream.readUint16();
-	unk1 = unk2 = 0;
+BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
+	if (version < 4) {
+		flags = stream.readByte();
+		someFlaggyThing = stream.readUint16();
+		initialRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
+		regY = stream.readUint16();
+		regX = stream.readUint16();
+		unk1 = unk2 = 0;
 
-	if (someFlaggyThing & 0x8000) {
-		unk1 = stream.readUint16();
-		unk2 = stream.readUint16();
+		if (someFlaggyThing & 0x8000) {
+			unk1 = stream.readUint16();
+			unk2 = stream.readUint16();
+		}
+	} else {
+		initialRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
+		regX = 0; // FIXME: HACK
+		regY = 0; // FIXME: HACK
 	}
 	modified = 0;
 }
 
-TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
-	flags1 = stream.readByte();
-	borderSize = static_cast<SizeType>(stream.readByte());
-	gutterSize = static_cast<SizeType>(stream.readByte());
-	boxShadow = static_cast<SizeType>(stream.readByte());
-	textType = static_cast<TextType>(stream.readByte());
-	textAlign = static_cast<TextAlignType>(stream.readUint16());
-	palinfo1 = stream.readUint16();
-	palinfo2 = stream.readUint16();
-	palinfo3 = stream.readUint16();
+TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
+	if (version < 4) {
+		flags1 = stream.readByte();
+		borderSize = static_cast<SizeType>(stream.readByte());
+		gutterSize = static_cast<SizeType>(stream.readByte());
+		boxShadow = static_cast<SizeType>(stream.readByte());
+		textType = static_cast<TextType>(stream.readByte());
+		textAlign = static_cast<TextAlignType>(stream.readUint16());
+		palinfo1 = stream.readUint16();
+		palinfo2 = stream.readUint16();
+		palinfo3 = stream.readUint16();
 
-	int t = stream.readUint32();
-	assert(t == 0); // So far we saw only 0 here
+		int t = stream.readUint32();
+		assert(t == 0); // So far we saw only 0 here
 
-	initialRect = Score::readRect(stream);
-	textShadow = static_cast<SizeType>(stream.readByte());
-	byte flags = stream.readByte();
-	if (flags & 0x1)
-		textFlags.push_back(kTextFlagEditable);
-	if (flags & 0x2)
-		textFlags.push_back(kTextFlagAutoTab);
-	if (flags & 0x4)
-		textFlags.push_back(kTextFlagDoNotWrap);
-	if (flags & 0xf8)
-		warning("Unproxessed text cast flags: %x", flags & 0xf8);
+		initialRect = Score::readRect(stream);
+		textShadow = static_cast<SizeType>(stream.readByte());
+		byte flags = stream.readByte();
+		if (flags & 0x1)
+			textFlags.push_back(kTextFlagEditable);
+		if (flags & 0x2)
+			textFlags.push_back(kTextFlagAutoTab);
+		if (flags & 0x4)
+			textFlags.push_back(kTextFlagDoNotWrap);
+		if (flags & 0xf8)
+			warning("Unproxessed text cast flags: %x", flags & 0xf8);
 
-	// TODO: FIXME: guesswork
-	fontId = stream.readByte();
-	fontSize = stream.readByte();
+		// TODO: FIXME: guesswork
+		fontId = stream.readByte();
+		fontSize = stream.readByte();
+	} else {
+		initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
+	}
 
 	modified = 0;
 }
 
-ShapeCast::ShapeCast(Common::SeekableSubReadStreamEndian &stream) {
-	/*byte flags = */ stream.readByte();
-	/*unk1 = */ stream.readByte();
-	shapeType = static_cast<ShapeType>(stream.readByte());
-	initialRect = Score::readRect(stream);
-	pattern = stream.readUint16BE();
-	fgCol = stream.readByte();
-	bgCol = stream.readByte();
-	fillType = stream.readByte();
-	lineThickness = stream.readByte();
-	lineDirection = stream.readByte();
+ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
+	if (version < 4) {
+		/*byte flags = */ stream.readByte();
+		/*unk1 = */ stream.readByte();
+		shapeType = static_cast<ShapeType>(stream.readByte());
+		initialRect = Score::readRect(stream);
+		pattern = stream.readUint16BE();
+		fgCol = stream.readByte();
+		bgCol = stream.readByte();
+		fillType = stream.readByte();
+		lineThickness = stream.readByte();
+		lineDirection = stream.readByte();
+	} else {
+		initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
+	}
+	modified = 0;
+}
+
+ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+	if (version < 4) {
+		buttonType = static_cast<ButtonType>(stream.readUint16BE());
+	} else {
+		initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
+	}
+	modified = 0;
+}
+
+ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
+	if (version < 4) {
+		error("Unhandled Script cast");
+	} else {
+		initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
+	}
 	modified = 0;
 }
 

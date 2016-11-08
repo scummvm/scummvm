@@ -55,7 +55,7 @@ public:
 	Score(DirectorEngine *vm, Archive *);
 	~Score();
 
-	static Common::Rect readRect(Common::SeekableSubReadStreamEndian &stream);
+	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static int compareLabels(const void *a, const void *b);
 	void loadArchive();
 	void setStartToLabel(Common::String label);
@@ -66,7 +66,7 @@ public:
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastDataD2(Common::SeekableSubReadStreamEndian &stream);
+	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	int getCurrentFrame() { return _currentFrame; }
