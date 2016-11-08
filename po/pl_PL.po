@@ -21,6 +21,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: POLAND\n"
+"X-Language-name: Polski\n"
 
 #: gui/about.cpp:94
 #, c-format

@@ -18,6 +18,7 @@ msgstr ""
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.7\n"
+"X-Language-name: Norsk (nynorsk)\n"
 
 #: gui/about.cpp:94
 #, c-format

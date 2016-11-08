@@ -19,6 +19,7 @@ msgstr ""
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-Basepath: ..\n"
+"X-Language-name: Cesky\n"
 
 #: gui/about.cpp:94
 #, c-format

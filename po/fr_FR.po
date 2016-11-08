@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-05 12:43+0100\n"
-"PO-Revision-Date: 2016-09-05 21:34+0100\n"
+"PO-Revision-Date: 2016-11-08 02:08+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.scummvm.org>\n"
 "Language: Francais\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 "X-Generator: Poedit 1.8.6\n"
+"X-Language-name: Francais\n"
 
 #: gui/about.cpp:94
 #, c-format

@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.6\n"
+"X-Language-name: Galego\n"
 
 #: gui/about.cpp:94
 #, c-format
