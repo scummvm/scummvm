@@ -60,12 +60,19 @@ void QMixer::qsWaveMixFreeWave(Audio::SoundHandle &handle) {
 }
 
 void QMixer::qsWaveMixFlushChannel(int iChannel, uint flags) {
-	Common::List<SoundEntry>::iterator i;
-	Common::List<SoundEntry> &sounds = _channels[iChannel]._sounds;
-	for (i = sounds.begin(); i != sounds.end(); ++i)
-		_mixer->stopHandle((*i)._soundHandle);
+	if (flags & QMIX_OPENALL) {
+		// Ignore channel, and flush all the channels
+		for (uint idx = 0; idx < _channels.size(); ++idx)
+			qsWaveMixFlushChannel(idx, 0);
+	} else {
+		// Flush the specified channel
+		Common::List<SoundEntry>::iterator i;
+		Common::List<SoundEntry> &sounds = _channels[iChannel]._sounds;
+		for (i = sounds.begin(); i != sounds.end(); ++i)
+			_mixer->stopHandle((*i)._soundHandle);
 
-	sounds.clear();
+		sounds.clear();
+	}
 }
 
 void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
