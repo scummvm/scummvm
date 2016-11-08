@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-05 12:43+0100\n"
-"PO-Revision-Date: 2016-11-08 02:08+0000\n"
+"PO-Revision-Date: 2016-11-08 02:19+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.scummvm.org>\n"
-"Language: Francais\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -845,9 +845,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "le mode plein écran n'a pu être changé."
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "le mode plein écran n'a pu être changé."
+msgstr "le mode de filtrage n'a pu être changé."
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -867,13 +866,14 @@ msgid "Fullscreen mode"
 msgstr "Plein écran"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Utiliser les graphiques en couleurs"
+msgstr "Filtrer les graphiques"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
 msgstr ""
+"Utiliser une interpolation bi-linéaire lors du changement d'échelle des "
+"graphiques"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1283,7 +1283,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Appliquer"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
@@ -1891,9 +1891,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Impossible d'appliquer l'option plein écran."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Impossible d'appliquer l'option plein écran."
+msgstr "Impossible d'appliquer l'option de filtrage."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2193,7 +2192,7 @@ msgstr "Mode Fenêtre"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Résolution : %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -2207,15 +2206,13 @@ msgstr "Désactiver la correction du rapport d'aspect"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Clic Activé"
+msgstr "Filtrage Activé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Clic Désactivé"
+msgstr "Filtrage Désactivé"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -3161,24 +3158,30 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Il vous manque l'exécutable de Riven. L'exécutable pour Windows se nomme "
+"'rivent.exe' ou 'rivendmo.exe'."
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Utiliser le fichier archive 'arcriven.z' marche également. Vous pouvez "
+"également utiliser l'exécutable pour Mac qui se nomme 'Riven'."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Il vous manque le fichier 'extras.mhk'. Utiliser le fichier archive "
+"'arcriven.z' marche également."
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr ""
+msgstr "L'exploration au delà de ce point nécessite d'avoir le jeu complet."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3188,6 +3191,12 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"A ce point la démo de Riven vous\n"
+"demanderais si vous voulez ouvrir un\n"
+"navigateur web pour vous amener sur\n"
+"la page de Red Orb et acheter le jeu.\n"
+"ScummVM ne peut pas faire ça et le\n"
+"site n'existe plus."
 
 #: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
