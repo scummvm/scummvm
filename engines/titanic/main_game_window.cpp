@@ -150,6 +150,14 @@ void CMainGameWindow::draw() {
 		scrManager->clearSurface(SURFACE_BACKBUFFER, &_gameManager->_bounds);
 
 		switch (_gameManager->_gameState._mode) {
+		case GSMODE_PENDING_LOAD:
+			// Pending savegame to load
+			_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
+			_project->loadGame(_pendingLoadSlot);
+			_pendingLoadSlot = -1;
+
+			// Deliberate fall-through to draw loaded game
+
 		case GSMODE_INTERACTIVE:
 		case GSMODE_CUTSCENE:
 			if (_gameManager->_gameState._petActive)
@@ -163,12 +171,6 @@ void CMainGameWindow::draw() {
 		case GSMODE_INSERT_CD:
 			scrManager->drawCursors();
 			_vm->_filesManager->insertCD(scrManager);
-			break;
-
-		case GSMODE_PENDING_LOAD:
-			// Pending savegame to load
-			_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
-			_vm->_window->_project->loadGame(_pendingLoadSlot);
 			break;
 
 		default:
