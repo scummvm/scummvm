@@ -392,17 +392,20 @@ void Score::loadCastDataD2(Common::SeekableSubReadStreamEndian &stream) {
 	}
 }
 
-void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
+void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 castId) {
 	// d4+ variant
 	if (stream.size() == 0)
 		return;
 
 	if (stream.size() < 26) {
-		warning("CAST data id %d is too small", id);
+		warning("CAST data id %d is too small", castId);
 		return;
 	}
 
-	uint castId = id - 1024;
+	debugC(3, kDebugLoading, "CASt: id: %d", castId);
+
+	if (debugChannelSet(5, kDebugLoading))
+		stream.hexdump(stream.size());
 
 	uint32 size1, size2, size3, castType;
 	byte blob[3];
@@ -424,7 +427,32 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		blob[0] = blob[1] = blob[2] = 0;
 	}
 
-	warning("type: %x", castType);
+	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d", castId, castType, size1, size2, size2, size3);
+
+#if 0
+	switch (castType) {
+	case kCastBitmap:
+		_casts[id] = new BitmapCast(stream);
+		_casts[id]->type = kCastBitmap;
+		break;
+	case kCastText:
+		_casts[id] = new TextCast(stream);
+		_casts[id]->type = kCastText;
+		break;
+	case kCastShape:
+		_casts[id] = new ShapeCast(stream);
+		_casts[id]->type = kCastShape;
+		break;
+	case kCastButton:
+		_casts[id] = new ButtonCast(stream);
+		_casts[id]->type = kCastButton;
+		break;
+	default:
+		warning("Unhandled cast type: %d", castType);
+		stream.skip(size - 1);
+		break;
+	}
+#endif
 
 	Score::readRect(stream);
 	Score::readRect(stream);
@@ -434,14 +462,18 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	//member.regX = 0 // FIXME: HACK
 	//member.regY = 0 // FIXME: HACK
 
-	byte *data = (byte *)calloc(size1, 1);
-	stream.read(data, size1);
-	Common::hexdump(data, size1);
-	free(data);
-
 	if (size2) {
 		uint32 entryType = 0;
-		Common::Array<Common::String> castStrings = loadStrings(stream, entryType);
+		Common::Array<Common::String> castStrings = loadStrings(stream, entryType, false);
+
+		debugCN(4, kDebugLoading, "str(%d): '", castStrings.size());
+
+		for (uint i = 0; i < castStrings.size(); i++) {
+			debugCN(4, kDebugLoading, "%s'", castStrings[i].c_str());
+			if (i != castStrings.size() - 1)
+				debugCN(4, kDebugLoading, ", '");
+		}
+		debugC(4, kDebugLoading, "'");
 
 		CastInfo *ci = new CastInfo();
 
@@ -451,7 +483,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		ci->fileName = castStrings[3];
 		ci->type = castStrings[4];
 
-		_castsInfo[id] = ci;
+		_castsInfo[castId] = ci;
 	}
 
 	if (size3)

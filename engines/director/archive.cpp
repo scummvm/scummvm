@@ -421,7 +421,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			uint32 index = casStream.readUint32();
 
 			const Resource &res = resources[index];
-			_types[MKTAG('C', 'A', 'S', 't')][index] = res;
+			_types[MKTAG('C', 'A', 'S', 't')][i + 1] = res;
 
 			debugCN(2, kDebugLoading, "%d ", index);
 		}

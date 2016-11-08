@@ -42,16 +42,16 @@ class Sprite;
 
 enum CastType {
 	kCastBitmap = 1,
-	kCastFilmLoop,
-	kCastText,
-	kCastPalette,
-	kCastPicture,
-	kCastSound,
-	kCastButton,
-	kCastShape,
-	kCastMovie,
-	kCastDigitalVideo,
-	kCastScript
+	kCastFilmLoop = 2,
+	kCastText = 3,
+	kCastPalette = 4,
+	kCastPicture = 5,
+	kCastSound = 6,
+	kCastButton = 7,
+	kCastShape = 8,
+	kCastMovie = 9,
+	kCastDigitalVideo = 10,
+	kCastScript = 11
 };
 
 enum ScriptType {
