@@ -54,9 +54,10 @@ CContinueSaveDialog::~CContinueSaveDialog() {
 }
 
 void CContinueSaveDialog::addSavegame(int slot, const CString &name) {
-	assert(_saves.size() < SAVEGAME_SLOTS_COUNT);
-	_slotNames[_saves.size()].setText(name);
-	_saves.push_back(SaveEntry(slot, name));
+	if (_saves.size() < SAVEGAME_SLOTS_COUNT) {
+		_slotNames[_saves.size()].setText(name);
+		_saves.push_back(SaveEntry(slot, name));
+	}
 }
 
 Rect CContinueSaveDialog::getSlotBounds(int index) {
