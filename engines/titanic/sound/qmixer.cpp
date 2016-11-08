@@ -88,11 +88,28 @@ void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
-	// Not currently implemented in ScummVM
+	ChannelEntry &channel = _channels[iChannel];
+
+	// Flag whether distance should reset when a new sound is started
+	channel._resetDistance = (flags & QMIX_USEONCE) != 0;
+
+	// Currently, we only do a basic simulation of spatial positioning by
+	// getting the distance, and proportionately reducing the volume the
+	// further away the source is
+	channel._distance = sqrt(position.x * position.x + position.y * position.y
+		+ position.z * position.z);
 }
 
 void QMixer::qsWaveMixSetPolarPosition(int iChannel, uint flags, const QSPOLAR &position) {
-	// Not currently implemented in ScummVM
+	ChannelEntry &channel = _channels[iChannel];
+
+	// Flag whether distance should reset when a new sound is started
+	channel._resetDistance = (flags & QMIX_USEONCE) != 0;
+
+	// Currently, we only do a basic simulation of spatial positioning by
+	// getting the distance, and proportionately reducing the volume the
+	// further away the source is
+	channel._distance = position.range;
 }
 
 void QMixer::qsWaveMixSetListenerPosition(const QSVECTOR &position, uint flags) {
@@ -168,7 +185,8 @@ void QMixer::qsWaveMixPump() {
 
 			if (channel._volume != oldVolume && !channel._sounds.empty()
 					&& channel._sounds.front()._started) {
-				_mixer->setChannelVolume(channel._sounds.front()._soundHandle, channel._volume);
+				_mixer->setChannelVolume(channel._sounds.front()._soundHandle,
+					channel.getRawVolume());
 			}
 		}
 
@@ -182,7 +200,7 @@ void QMixer::qsWaveMixPump() {
 					sound._waveFile->_stream->rewind();
 					_mixer->playStream(sound._waveFile->_soundType,
 						&sound._soundHandle, sound._waveFile->_stream,
-						-1, channel._volume, 0, DisposeAfterUse::NO);
+						-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
 				} else {
 					// Sound is finished
 					if (sound._callback)
@@ -200,13 +218,30 @@ void QMixer::qsWaveMixPump() {
 		if (!channel._sounds.empty()) {
 			SoundEntry &sound = channel._sounds.front();
 			if (!sound._started) {
+				if (channel._resetDistance)
+					channel._distance = 0.0;
+
+				// Calculate an effective volume based on distance of source
 				_mixer->playStream(sound._waveFile->_soundType,
 					&sound._soundHandle, sound._waveFile->_stream,
-					-1, channel._volume, 0, DisposeAfterUse::NO);
+					-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
 				sound._started = true;
 			}
 		}
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+byte QMixer::ChannelEntry::getRawVolume() const {
+	// Emperically decided adjustment divisor for distances
+	const double ADJUSTMENT_FACTOR = 5.0;
+
+	double r = 1.0 + (_distance / ADJUSTMENT_FACTOR);
+	double percent = 1.0 / (r * r);
+
+	double newVolume = _volume * percent;
+	return (byte)newVolume;
 }
 
 } // End of namespace Titanic
