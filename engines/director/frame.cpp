@@ -27,6 +27,7 @@
 #include "image/bmp.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/frame.h"
 #include "director/images.h"
 #include "director/archive.h"

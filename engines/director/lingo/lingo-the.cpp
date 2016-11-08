@@ -21,6 +21,7 @@
  */
 
 #include "director/lingo/lingo.h"
+#include "director/cast.h"
 #include "director/sprite.h"
 
 namespace Director {
