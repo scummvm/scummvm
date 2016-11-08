@@ -155,7 +155,7 @@ void CPetControl::postLoad() {
 	if (!_remoteTargetName.empty() && root)
 		_remoteTarget = dynamic_cast<CGameObject *>(root->findByName(_remoteTargetName));
 
-	setArea(_currentArea);
+	setArea(_currentArea, true);
 	loaded();
 }
 
@@ -210,8 +210,8 @@ void CPetControl::resetActiveNPC() {
 	_activeNPCName = "";
 }
 
-PetArea CPetControl::setArea(PetArea newArea) {
-	if (newArea == _currentArea || !isAreaActive())
+PetArea CPetControl::setArea(PetArea newArea, bool forceChange) {
+	if ((!forceChange && newArea == _currentArea) || !isAreaActive())
 		return _currentArea;
 
 	// Signal the currently active area that it's being left

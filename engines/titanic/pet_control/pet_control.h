@@ -181,7 +181,7 @@ public:
 	/**
 	 * Sets the currently viewed area within the PET
 	 */
-	PetArea setArea(PetArea newSection);
+	PetArea setArea(PetArea newSection, bool forceChange = false);
 
 	/**
 	 * Hides the text cursor in the current section, if applicable
