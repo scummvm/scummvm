@@ -779,27 +779,27 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 		stream.seek(offset);
 	}
 
-	uint16 count = stream.readUint16();
-	offset += (count + 1) * 4 + 2; // positions info + uint16 count
-	uint32 startPos = stream.readUint32() + offset;
+	uint16 count = stream.readUint16() + 1;
 
-	for (uint16 i = 0; i < count; i++) {
+	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
+
+	for (uint i = 0; i < count; i++)
+		entries[i] = stream.readUint32();
+
+	byte *data = (byte *)malloc(entries[count - 1]);
+	stream.read(data, entries[count - 1]);
+
+	for (uint i = 0; i < count - 1; i++) {
 		Common::String entryString;
-		uint32 nextPos = stream.readUint32() + offset;
-		uint32 streamPos = stream.pos();
 
-		stream.seek(startPos);
-
-		while (startPos != nextPos) {
-			entryString += stream.readByte();
-			++startPos;
-		}
+		for (uint j = entries[i]; j < entries[i + 1]; j++)
+			entryString += data[j];
 
 		strings.push_back(entryString);
-
-		stream.seek(streamPos);
-		startPos = nextPos;
 	}
+
+	free(data);
+	free(entries);
 
 	return strings;
 }
