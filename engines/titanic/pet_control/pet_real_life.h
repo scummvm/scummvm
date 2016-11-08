@@ -87,11 +87,6 @@ public:
 	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
 
 	/**
-	 * Display a message
-	 */
-	virtual void displayMessage(const CString &msg) {}
-
-	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);

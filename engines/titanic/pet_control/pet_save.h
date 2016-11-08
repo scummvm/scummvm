@@ -40,6 +40,11 @@ public:
 	virtual bool MouseButtonUpMsg(const Point &pt);
 
 	/**
+	 * Handles keypresses when the glyph is focused
+	 */
+	virtual bool KeyCharMsg(int key);
+
+	/**
 	 * Unhighlight any currently highlighted element
 	 */
 	virtual void unhighlightCurrent() { unhighlightSave(_savegameSlotNum); }
