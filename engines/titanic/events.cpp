@@ -138,7 +138,6 @@ void Events::sleep(uint time) {
 }
 
 bool Events::waitForPress(uint expiry) {
-	CGameManager *gameManager = g_vm->_window->_gameManager;
 	uint32 delayEnd = g_system->getMillis() + expiry;
 	CPressTarget pressTarget;
 	addTarget(&pressTarget);

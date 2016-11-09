@@ -425,6 +425,9 @@ void CRoomFlags::changeClass(PassengerClass newClassNum) {
 	case UNCHECKED:
 		if (++floorNum > v11)
 			floorNum = v11;
+
+	default:
+		break;
 	}
 
 	// Set new floor and room
