@@ -37,11 +37,16 @@ enum Direction {
 
 namespace Cryo {
 
+class CryoEngine;
+
 class EdenGame {
+private:
+	CryoEngine *_vm;
+
 public:
 	void run();
 
-	EdenGame();
+	EdenGame(CryoEngine *vm);
 
 private:
 	void removeConsole();

@@ -216,11 +216,7 @@ void CLPalette_BeBlack();
 void CLPalette_BeSystem();
 
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
-void CLFile_Create(filespec_t *fs);
-void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle);
-void CLFile_Close(file_t &handle);
 void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos);
-void CLFile_Read(file_t &handle, void *buffer, int32 *size);
 void CLFile_Write(file_t &handle, void *buffer, int32 *size);
 
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
@@ -254,7 +250,6 @@ void CLView_InitDatas(View *view, int w, int h, void *buffer);
 View *CLView_New(int w, int h);
 void CLView_CenterIn(View *parent, View *child);
 
-void CLScreenView_Init();
 void CLScreenView_CenterIn(View *view);
 
 void CRYOLib_ManagersInit();
@@ -280,14 +275,12 @@ void CLHNM_SetFile(hnm_t *hnm, file_t *file);
 void CLHNM_SetFinalBuffer(hnm_t *hnm, byte *buffer);
 void CLHNM_AllocMemory(hnm_t *hnm);
 void CLHNM_DeallocMemory(hnm_t *hnm);
-void CLHNM_Read(hnm_t *hnm, int size);
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop);
 void CLHNM_SelectBuffers(hnm_t *hnm);
 void CLHNM_ChangePalette(hnm_t *hnm);
 void CLHNM_Desentrelace(hnm_t *hnm);
 void CLHNM_FlushPreloadBuffer(hnm_t *hnm);
 soundchannel_t *CLHNM_GetSoundChannel();
-void CLHNM_TryRead(hnm_t *hnm, int size);
 void CLHNM_ResetInternalTimer();
 void CLHNM_Reset(hnm_t *hnm);
 bool CLHNM_LoadFrame(hnm_t *hnm);

@@ -315,11 +315,6 @@ void CLHNM_DeallocMemory(hnm_t *hnm) {
 	hnm->_readBuffer = nullptr;
 }
 
-void CLHNM_Read(hnm_t *hnm, int size) {
-	int32 size_ = size;
-	CLFile_Read(*hnm->_file, hnm->_readBuffer, &size_);
-}
-
 void CLHNM_GiveTime(hnm_t *hnm) {
 }
 
@@ -419,9 +414,8 @@ soundchannel_t *CLHNM_GetSoundChannel() {
 	return soundChannel;
 }
 
-
 void CLHNM_TryRead(hnm_t *hnm, int size) {
-	CLHNM_Read(hnm, size);
+	hnm->_file->read(hnm->_readBuffer, size);
 }
 
 void CLHNM_ResetInternalTimer() {
@@ -609,7 +603,7 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 
 void CLHNM_ReadHeader(hnm_t *hnm) {
 	int32 size = sizeof(hnm->_header);
-	CLFile_Read(*hnm->_file, &hnm->_header, &size);
+	hnm->_file->read(&hnm->_header, size);
 
 	hnm->_header._width = LE16(hnm->_header._width);
 	hnm->_header._height = LE16(hnm->_header._height);

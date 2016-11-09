@@ -55,7 +55,7 @@ int16       word_2C304 = 0;
 byte   allow_doubled = 1;
 int     curs_center = 11;
 
-EdenGame::EdenGame() {
+EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_adamMapMarkPos = Common::Point(-1, -1);
 
 	_scrollPos = _oldScrollPos = 0;
@@ -154,7 +154,7 @@ EdenGame::EdenGame() {
 	curs_old_tick = 0;
 
 	invIconsBase = 19;
-//	invIconsCount = (g_ed->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
+//	invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	invIconsCount = 11;
 	roomIconsBase = invIconsBase + invIconsCount;
 
@@ -342,7 +342,7 @@ void EdenGame::gametomiroir(byte arg1) {
 	}
 	int16 bank = p_global->roomBgBankNum;
 	unsigned int resNum = bank + 326;
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		if (bank == 76 || bank == 128)
 			resNum = 2487;				// PCIMG.HSQ
 	}
@@ -1789,16 +1789,16 @@ bool EdenGame::canMoveThere(char loc, perso_t *perso) {
 
 // Original name: melange1
 void EdenGame::scramble1(char elem[4]) {
-	if (g_ed->_rnd->getRandomNumber(1) & 1)
+	if (_vm->_rnd->getRandomNumber(1) & 1)
 		SWAP(elem[1], elem[2]);
 }
 
 // Original name melange2
 void EdenGame::scramble2(char elem[4]) {
-	if (g_ed->_rnd->getRandomNumber(1) & 1)
+	if (_vm->_rnd->getRandomNumber(1) & 1)
 		SWAP(elem[0], elem[1]);
 
-	if (g_ed->_rnd->getRandomNumber(1) & 1)
+	if (_vm->_rnd->getRandomNumber(1) & 1)
 		SWAP(elem[2], elem[3]);
 }
 
@@ -2182,7 +2182,7 @@ void EdenGame::vivredino() {
 				int16 loc;
 				perso->_lastLoc = 0;
 				do {
-					loc = (g_ed->_rnd->getRandomNumber(63) & 63) + 16;
+					loc = (_vm->_rnd->getRandomNumber(63) & 63) + 16;
 					if ((loc & 0xF) >= 12)
 						loc &= ~4;  //TODO: ??? same as -= 4
 				} while (!canMoveThere(loc, perso));
@@ -2304,7 +2304,7 @@ void EdenGame::anim_perso() {
 void EdenGame::getanimrnd() {
 	int16 rnd;
 	animationDelay = 8;
-	rnd = g_ed->_rnd->getRandomNumber(65535) & (byte)~0x18;    //TODO
+	rnd = _vm->_rnd->getRandomNumber(65535) & (byte)~0x18;    //TODO
 	dword_30724 = p_global->persoSpritePtr + 16;    //TODO
 	p_global->curPersoAnimPtr = p_global->persoSpritePtr + ((dword_30724[1] << 8) + dword_30724[0]);
 	p_global->animationFlags = 1;
@@ -4665,19 +4665,20 @@ void EdenGame::openbigfile() {
 	assert(sizeof(pakfile_t) == 25);
 	int32 size = 0x10000;
 	CLFile_MakeStruct(0, 0, "EDEN.DAT", &bigfilespec);
-	CLFile_Open(&bigfilespec, 1, h_bigfile);
-	CLFile_Read(h_bigfile, bigfile_header, &size);
+	h_bigfile.open(bigfilespec.name);
+	h_bigfile.read(bigfile_header, size);
+
 	_hnmContext = CLHNM_New(128);
 	CLHNM_SetFile(_hnmContext, &h_bigfile);
 }
 
 void EdenGame::closebigfile() {
-	CLFile_Close(h_bigfile);
+	h_bigfile.close();
 }
 
 void EdenGame::loadFile(uint16 num, void *buffer) {
-	if (g_ed->getPlatform() == Common::kPlatformDOS) {
-		if ((g_ed->isDemo() && num > 2204) || num > 2472) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if ((_vm->isDemo() && num > 2204) || num > 2472) {
 			error("Trying to read invalid game resource");
 		}
 	}
@@ -4688,7 +4689,7 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 	int32 offs = PLE32(&file->offs);
 	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
 	CLFile_SetPosition(h_bigfile, fsFromStart, offs);
-	CLFile_Read(h_bigfile, buffer, &size);
+	h_bigfile.read(buffer, size);
 }
 
 void EdenGame::shnmfl(uint16 num) {
@@ -4702,7 +4703,7 @@ void EdenGame::shnmfl(uint16 num) {
 }
 
 int EdenGame::ssndfl(uint16 num) {
-	unsigned int resNum = num - 1 + ((g_ed->getPlatform() == Common::kPlatformDOS && g_ed->isDemo()) ? 656 : 661);
+	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	assert(resNum < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[resNum];
 	int32 size = PLE32(&file->size);
@@ -4718,40 +4719,34 @@ int EdenGame::ssndfl(uint16 num) {
 	}
 	CLFile_SetPosition(h_bigfile, 1, offs);
 	//For PC loaded data is a VOC file, on Mac version this is a raw samples
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh)
-		CLFile_Read(h_bigfile, voiceSamplesBuffer, &size);
+	if (_vm->getPlatform() == Common::kPlatformMacintosh)
+		h_bigfile.read(voiceSamplesBuffer, size);
 	else {
 		// VOC files also include extra information for lipsync
 		// 1. Standard VOC header
-		int32 newlen = 0x1A;
-		CLFile_Read(h_bigfile, voiceSamplesBuffer, &newlen);
+		h_bigfile.read(voiceSamplesBuffer, 0x1A);
+
 		// 2. Lipsync?
-		unsigned char chunkType;
-		unsigned int chunkLen = 0;
-		newlen = 1;
-		CLFile_Read(h_bigfile, &chunkType, &newlen);
-		newlen = 3;	// chunk len is stored as a 3-bytes value
-		CLFile_Read(h_bigfile, &chunkLen, &newlen);
-		chunkLen = LE32(chunkLen);
+		unsigned char chunkType = h_bigfile.readByte();
+
+		uint32 val;
+		h_bigfile.read(&val, 3);
+		unsigned int chunkLen = LE32(val);
+
 		if (chunkType == 5) {
-			newlen = chunkLen;
-			CLFile_Read(h_bigfile, gameLipsync + 7260, &newlen);
+			h_bigfile.read(gameLipsync + 7260, chunkLen);
 //			anim_buffer_ptr = gameLipsync + 7260 + 2;
 
-			chunkLen = 0;
-			newlen = 1;
-			CLFile_Read(h_bigfile, &chunkType, &newlen);
-			newlen = 3;
-			CLFile_Read(h_bigfile, &chunkLen, &newlen);
-			chunkLen = LE32(chunkLen);
+			chunkType = h_bigfile.readByte();
+			h_bigfile.read(&val, 3);
+			unsigned int chunkLen = LE32(val);
 		}
+
 		// 3. Normal sound data
 		if (chunkType == 1) {
-			unsigned short freq;
-			newlen = 2;
-			CLFile_Read(h_bigfile, &freq, &newlen);
+			unsigned short freq = h_bigfile.readUint16LE();
 			size = chunkLen - 2;
-			CLFile_Read(h_bigfile, voiceSamplesBuffer, &size);
+			h_bigfile.read(voiceSamplesBuffer, size);
 		}
 	}
 
@@ -4790,7 +4785,7 @@ void EdenGame::ConvertMacToPC() {
 #endif
 
 void EdenGame::loadpermfiles() {
-	switch (g_ed->getPlatform()) {
+	switch (_vm->getPlatform()) {
 	case Common::kPlatformDOS:
 	{
 		// Since PC version stores hotspots and rooms info in the executable, load them from premade resource file
@@ -4825,7 +4820,7 @@ void EdenGame::loadpermfiles() {
 }
 
 char EdenGame::ReadDataSyncVOC(unsigned int num) {
-	unsigned int resNum = num - 1 + ((g_ed->getPlatform() == Common::kPlatformDOS && g_ed->isDemo()) ? 656 : 661);
+	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	unsigned char vocHeader[0x1A];
 	loadpartoffile(resNum, vocHeader, 0, sizeof(vocHeader));
 	unsigned char chunkType = 0;
@@ -4843,7 +4838,7 @@ char EdenGame::ReadDataSyncVOC(unsigned int num) {
 char EdenGame::ReadDataSync(uint16 num) {
 	long pos, len;
 
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		pos = PLE32(gameLipsync + num * 4);
 		len = 1024;
 		if (pos != -1) {
@@ -4862,7 +4857,7 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	int32 offs = PLE32(&file->offs);
 	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
 	CLFile_SetPosition(h_bigfile, 1, offs + pos);
-	CLFile_Read(h_bigfile, buffer, &len);
+	h_bigfile.read(buffer, len);
 }
 
 void EdenGame::Expand_hsq(void *input, void *output) {
@@ -5597,7 +5592,7 @@ void EdenGame::run() {
 		assert(0);
 	}
 
-	invIconsCount = (g_ed->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
+	invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
 	roomIconsBase = invIconsBase + invIconsCount;
 
 	word_378CE = 0;
@@ -5609,8 +5604,8 @@ void EdenGame::run() {
 	hnmsound_ch = CLHNM_GetSoundChannel();
 	CLSound_SetWantsDesigned(1); // CHECKME: Used?
 
-	_musicChannel = new CSoundChannel(g_ed->_mixer, 11025, false);
-	_voiceChannel = new CSoundChannel(g_ed->_mixer, 11025, false);
+	_musicChannel = new CSoundChannel(_vm->_mixer, 11025, false);
+	_voiceChannel = new CSoundChannel(_vm->_mixer, 11025, false);
 
 	allocateBuffers();
 	openbigfile();
@@ -5619,7 +5614,7 @@ void EdenGame::run() {
 
 	if (!bufferAllocationErrorFl) {
 		LostEdenMac_InitPrefs();
-		if (g_ed->getPlatform() == Common::kPlatformMacintosh)
+		if (_vm->getPlatform() == Common::kPlatformMacintosh)
 			initCubeMac();
 		else
 			initCubePC();
@@ -5712,7 +5707,7 @@ void EdenGame::intro() {
 	return;
 #endif
 
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		// Play intro videos in HQ
 		CLSoundChannel_Stop(hnmsound_ch);
 		CLHNM_CloseSound();
@@ -5934,7 +5929,7 @@ void EdenGame::update_cursor() {
 		sundcurs(curs_x + _scrollPos, curs_y);
 		if (current_cursor != 53 && current_cursor < 10) { //TODO: cond
 //			moteur();
-			if (g_ed->getPlatform() == Common::kPlatformMacintosh)
+			if (_vm->getPlatform() == Common::kPlatformMacintosh)
 				moteur();
 			else
 				pc_moteur();
@@ -6457,7 +6452,7 @@ void EdenGame::startmusique(byte num) {
 	freq = PLE16(mus_samples_ptr - 2);
 
 	delete _musicChannel;
-	_musicChannel = new CSoundChannel(g_ed->_mixer, freq == 166 ? 11025 : 22050, false);
+	_musicChannel = new CSoundChannel(_vm->_mixer, freq == 166 ? 11025 : 22050, false);
 	mus_enabled = true;
 
 	musicSequencePos = 0;
@@ -6501,7 +6496,7 @@ int EdenGame::loadmusicfile(int16 num) {
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const
 		numread = 0x140000;
-	CLFile_Read(h_bigfile, music_buf, &numread);
+	h_bigfile.read(music_buf, numread);
 	return size;
 }
 
@@ -8475,7 +8470,7 @@ void EdenGame::affiche_objet(cube_t *cubep) {
 }
 
 void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh) {
+	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		loadpartoffile(file_id, buffer, 32, 256 * 3);
 
 		for (int i = 0; i < 256; i++) {
@@ -8520,7 +8515,7 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
 	cubeface_t **tmp4;
 	int16 *vertices, *projection;
 	tmp1 = (char *)malloc(454);
-	if (g_ed->getPlatform() == Common::kPlatformMacintosh)
+	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		loadpartoffile(file_id, tmp1, 0, 454);
 	else {
 #if 0

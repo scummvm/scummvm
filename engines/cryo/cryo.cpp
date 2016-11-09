@@ -59,6 +59,7 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("cryo");
+	_game = nullptr;
 
 	debug("CryoEngine::CryoEngine");
 
@@ -70,12 +71,15 @@ CryoEngine::~CryoEngine() {
 
 	// Dispose your resources here
 	delete _rnd;
+	delete _game;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error CryoEngine::run() {
+	_game = new EdenGame(this);
+
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 	_screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -95,7 +99,7 @@ Common::Error CryoEngine::run() {
 	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 	debugC(3, kCryoDebugExample | kCryoDebugExample2, "Example debug call two");
 
-	_game.run();
+	_game->run();
 
 	return Common::kNoError;
 }

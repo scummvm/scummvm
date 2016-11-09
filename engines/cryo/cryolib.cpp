@@ -115,13 +115,6 @@ void CLView_CenterIn(View *parent, View *child) {
 ///// CLScreenView
 View ScreenView;
 
-void CLScreenView_Init() {
-	// ScreenView is the game's target screen (a pc display)
-	// we use a dedicated surface for it, which at some point will be
-	// presented to user by System::copyRectToScreen call
-	CLView_InitDatas(&ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
-}
-
 void CLScreenView_CenterIn(View *view) {
 	CLView_CenterIn(&ScreenView, view);
 }
@@ -374,25 +367,9 @@ void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
 	fs->create = 0;
 }
 
-void CLFile_Create(filespec_t *fs) {
-	fs->create = 1;
-}
-
-void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle) {
-	handle.open(fs->name);
-}
-
-void CLFile_Close(file_t &handle) {
-	handle.close();
-}
-
 void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos) {
 	assert(mode == 1);
 	handle.seek(pos, 0);
-}
-
-void CLFile_Read(file_t &handle, void *buffer, int32 *size) {
-	handle.read(buffer, *size);
 }
 
 void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
@@ -438,7 +415,7 @@ void CLSoundChannel_Free(soundchannel_t *ch) {
 }
 
 void CLSoundChannel_Stop(soundchannel_t *ch) {
-	//  g_ed->_mixer->stopHandle(ch->ch);
+	//  _vm->_mixer->stopHandle(ch->ch);
 }
 
 void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound) {
@@ -474,22 +451,14 @@ void CLTimer_Action(void *arg) {
 	TimerTicks++;
 }
 
-void CLTimer_Init() {
-	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
-}
-
-void CLTimer_Done() {
-	g_system->getTimerManager()->removeTimerProc(CLTimer_Action);
-}
-
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
-	CLTimer_Init();
-	CLScreenView_Init();
+	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
+	CLView_InitDatas(&ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
 void CRYOLib_ManagersDone() {
-	CLTimer_Done();
+	g_system->getTimerManager()->removeTimerProc(CLTimer_Action);
 }
 
 ///// CLDesktop
