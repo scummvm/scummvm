@@ -409,14 +409,16 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		stream.hexdump(stream.size());
 
 	uint32 size1, size2, size3, castType;
-	byte blob[3];
+	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	if (_vm->getVersion() < 5) {
 		size1 = stream.readUint16();
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
-		stream.read(blob, 3);
+		unk1 = stream.readByte();
+		unk2 = stream.readByte();
+		unk3 = stream.readByte();
 	} else {
 		// FIXME: only the cast type and the strings are good
 		castType = stream.readUint32();
@@ -425,12 +427,12 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		size1 = stream.readUint32();
 		assert(size1 == 0x14);
 		size1 = 0;
-		blob[0] = blob[1] = blob[2] = 0;
 	}
 
-	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d", id, castType, size1, size2, size2, size3);
+	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
+				id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)malloc(size1 + 16);
+	byte *data = (byte *)calloc(size1 + 16, 1);
 	stream.read(data, size1 + 16);
 
 	Common::MemoryReadStreamEndian castStream(data, size1 + 16, stream.isBE());
