@@ -133,6 +133,8 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 
 			if (msg->execute(chevron))
 				return true;
+
+			petControl->moveToHiddenRoom(chevron);
 		}
 	}
 
