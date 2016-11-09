@@ -20,9 +20,7 @@
  *
  */
 
-#include "common/array.h"
-#include "common/hashmap.h"
-
+#include "director/director.h"
 #include "director/cast.h"
 #include "director/score.h"
 
@@ -45,8 +43,8 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 	} else {
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
-		regX = 0; // FIXME: HACK
-		regY = 0; // FIXME: HACK
+		regX = stream.readUint16();
+		regY = stream.readUint16();
 	}
 	modified = 0;
 }
@@ -83,7 +81,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontSize = stream.readByte();
 	} else {
 		initialRect = Score::readRect(stream);
-		//boundingRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
 	}
 
 	modified = 0;
@@ -103,7 +101,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		lineDirection = stream.readByte();
 	} else {
 		initialRect = Score::readRect(stream);
-		//boundingRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
 	}
 	modified = 0;
 }
@@ -113,7 +111,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	} else {
 		initialRect = Score::readRect(stream);
-		//boundingRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
 	}
 	modified = 0;
 }
@@ -123,7 +121,14 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 		error("Unhandled Script cast");
 	} else {
 		initialRect = Score::readRect(stream);
-		//boundingRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
+
+		id = stream.readUint32();
+
+		debugC(4, kDebugLoading, "CASt: Script id: %d", id);
+
+		stream.readByte(); // There should be no more data
+		assert(stream.eos());
 	}
 	modified = 0;
 }

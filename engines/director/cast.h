@@ -45,13 +45,14 @@ enum CastType {
 struct Cast {
 	CastType type;
 	Common::Rect initialRect;
+	Common::Rect boundingRect;
+
 	byte modified;
 };
 
 struct BitmapCast : Cast {
 	BitmapCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
-	Common::Rect boundingRect;
 	uint16 regX;
 	uint16 regY;
 	uint8 flags;
@@ -136,6 +137,8 @@ struct ButtonCast : TextCast {
 
 struct ScriptCast : Cast {
 	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+
+	uint32 id;
 };
 
 

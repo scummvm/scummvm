@@ -463,9 +463,6 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		_casts[id]->type = kCastButton;
 		break;
 	case kCastScript:
-		warning("CASt: Script");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastScript;
 		break;
