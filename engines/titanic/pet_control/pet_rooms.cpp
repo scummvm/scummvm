@@ -56,6 +56,7 @@ bool CPetRooms::reset() {
 void CPetRooms::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 6);
 	_plinth.draw(screenManager);
+	_glyphs.draw(screenManager);
 	_glyphItem.drawAt(screenManager, getGlyphPos(), false);
 	_text.draw(screenManager);
 }
