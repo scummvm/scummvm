@@ -153,36 +153,6 @@ CString CRoomFlags::getRoomDesc() const {
 	}
 
 	case 4:
-		if (isTransportRoom()) {
-			switch (_data) {
-			case 0x68797:
-				return "The Service Elevator";
-			case 0x5D3AD:
-				return "The Super Galactic Leisure Lounge";
-			case 0x96E45:
-				return "The Elevator";
-			case 0xAD171:
-				return "The Dome";
-			case 0xC95E9:
-				return "The Pellerator";
-			case 0xDF4D1:
-				return  "The Top of the Well";
-			default:
-				break;
-			}
-		}
-
-		if (getRoomCategory() == 0) {
-			return "Nowhere you're likely to want to go.";
-		} else {
-			CString result = getPassengerClassDesc();
-			result += ", ";
-			result += getFloorDesc();
-			return result;
-		}
-		break;
-
-	case 5:
 		switch (_data) {
 		case 0x1D0D9:
 			return "The Parrot Lobby";
@@ -214,6 +184,36 @@ CString CRoomFlags::getRoomDesc() const {
 			break;
 		}
 		return "Unknown Room";
+
+	case 5:
+		if (isTransportRoom()) {
+			switch (_data) {
+			case 0x68797:
+				return "The Service Elevator";
+			case 0x5D3AD:
+				return "The Super Galactic Leisure Lounge";
+			case 0x96E45:
+				return "The Elevator";
+			case 0xAD171:
+				return "The Dome";
+			case 0xC95E9:
+				return "The Pellerator";
+			case 0xDF4D1:
+				return  "The Top of the Well";
+			default:
+				break;
+			}
+		}
+
+		if (getRoomCategory() == 0) {
+			return "Nowhere you're likely to want to go.";
+		} else {
+			CString result = getPassengerClassDesc();
+			result += ", ";
+			result += getFloorDesc();
+			return result;
+		}
+		break;
 
 	default:
 		break;
