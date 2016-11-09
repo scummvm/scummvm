@@ -113,7 +113,7 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 }
 
 bool CInputTranslator::isMousePressed() const {
-	return g_vm->_window->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
+	return g_vm->_events->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
 }
 
 } // End of namespace Titanic

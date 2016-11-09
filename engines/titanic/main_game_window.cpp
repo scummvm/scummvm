@@ -32,8 +32,7 @@
 namespace Titanic {
 
 CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm),
-		_specialButtons(0), _priorLeftDownTime(0),
-		_priorMiddleDownTime(0), _priorRightDownTime(0) {
+		_priorLeftDownTime(0), _priorMiddleDownTime(0), _priorRightDownTime(0) {
 	_gameView = nullptr;
 	_gameManager = nullptr;
 	_project = nullptr;
@@ -248,7 +247,7 @@ void CMainGameWindow::onIdle() {
 }
 
 #define HANDLE_MESSAGE(METHOD) 	if (_inputAllowed) { \
-	_gameManager->_inputTranslator.METHOD(_specialButtons, mousePos); \
+	_gameManager->_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
 	mouseChanged(); \
 	}
 
@@ -264,8 +263,6 @@ void CMainGameWindow::leftButtonDown(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons |= MK_LBUTTON;
-
 	if ((_vm->_events->getTicksCount() - _priorLeftDownTime) < DOUBLE_CLICK_TIME) {
 		_priorLeftDownTime = 0;
 		leftButtonDoubleClick(mousePos);
@@ -279,7 +276,6 @@ void CMainGameWindow::leftButtonUp(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons &= ~MK_LBUTTON;
 	HANDLE_MESSAGE(leftButtonUp)
 }
 
@@ -294,8 +290,6 @@ void CMainGameWindow::middleButtonDown(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons |= MK_MBUTTON;
-
 	if ((_vm->_events->getTicksCount() - _priorMiddleDownTime) < DOUBLE_CLICK_TIME) {
 		_priorMiddleDownTime = 0;
 		middleButtonDoubleClick(mousePos);
@@ -309,7 +303,6 @@ void CMainGameWindow::middleButtonUp(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons &= ~MK_MBUTTON;
 	HANDLE_MESSAGE(middleButtonUp)
 }
 
@@ -324,8 +317,6 @@ void CMainGameWindow::rightButtonDown(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons |= MK_RBUTTON;
-
 	if ((_vm->_events->getTicksCount() - _priorRightDownTime) < DOUBLE_CLICK_TIME) {
 		_priorRightDownTime = 0;
 		rightButtonDoubleClick(mousePos);
@@ -339,7 +330,6 @@ void CMainGameWindow::rightButtonUp(const Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_specialButtons &= ~MK_RBUTTON;
 	HANDLE_MESSAGE(rightButtonUp)
 }
 
@@ -359,8 +349,6 @@ void CMainGameWindow::rightButtonDoubleClick(const Point &mousePos) {
 }
 
 void CMainGameWindow::keyDown(Common::KeyState keyState) {
-	handleKbdSpecial(keyState);
-
 	if (keyState.keycode == Common::KEYCODE_d && (keyState.flags & Common::KBD_CTRL)) {
 		// Attach to the debugger
 		_vm->_debugger->attach();
@@ -369,22 +357,6 @@ void CMainGameWindow::keyDown(Common::KeyState keyState) {
 
 	if (_inputAllowed)
 		_gameManager->_inputTranslator.keyDown(keyState);
-}
-
-void CMainGameWindow::keyUp(Common::KeyState keyState) {
-	handleKbdSpecial(keyState);
-}
-
-void CMainGameWindow::handleKbdSpecial(Common::KeyState keyState) {
-	if (keyState.flags & Common::KBD_CTRL)
-		_specialButtons |= MK_CONTROL;
-	else
-		_specialButtons &= ~MK_CONTROL;
-
-	if (keyState.flags & Common::KBD_SHIFT)
-		_specialButtons |= MK_SHIFT;
-	else
-		_specialButtons &= ~MK_SHIFT;
 }
 
 bool CMainGameWindow::isMouseControlEnabled() const {

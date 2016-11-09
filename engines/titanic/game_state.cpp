@@ -129,7 +129,7 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 	oldView->leaveView(newView);
 
 	// If Shift key is pressed, skip showing the transition clip
-	if (g_vm->_window->isSpecialPressed(MK_SHIFT))
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT))
 		clip = nullptr;
 
 	if (_mode == GSMODE_CUTSCENE) {

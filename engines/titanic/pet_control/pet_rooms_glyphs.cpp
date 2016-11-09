@@ -103,7 +103,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 
 void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
 	if (!isAssigned()) {
-		bool isShiftPressed = g_vm->_window->getSpecialButtons() & MK_SHIFT;
+		bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 
 		if (isShiftPressed) {
 			int selection = getSelection(topLeft, pt);
@@ -116,7 +116,7 @@ void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
 }
 
 bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
-	bool isShiftPressed = g_vm->_window->getSpecialButtons() & MK_SHIFT;
+	bool isShiftPressed = g_vm->_events->getSpecialButtons() & MK_SHIFT;
 	CPetControl *petControl = getPetControl();
 
 	if (!isShiftPressed && petControl) {
