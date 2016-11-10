@@ -4653,7 +4653,7 @@ int Console::printObject(reg_t pos) {
 	uint i;
 
 	if (!obj) {
-		debugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
 		return 1;
 	}
 
