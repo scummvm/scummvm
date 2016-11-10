@@ -270,7 +270,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 		if (gameObjects.size() == 0)
 			return false;
 
-		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
+		for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
 			if (gameObjects[idx]->_cursorId != CURSOR_IGNORE) {
 				CScreenManager::_screenManagerPtr->_mouseCursor->setCursor(gameObjects[idx]->_cursorId);
 				break;
