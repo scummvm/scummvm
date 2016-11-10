@@ -729,6 +729,8 @@ void Lingo::c_repeatwithcode(void) {
 
 	if (!g_lingo->_returning)
 		g_lingo->_pc = end; /* next stmt */
+
+	delete counter;
 }
 
 void Lingo::c_exitRepeat(void) {
@@ -972,6 +974,8 @@ void Lingo::c_global() {
 	s->global = true;
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+
+	delete s;
 }
 
 void Lingo::c_instance() {

@@ -842,13 +842,13 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 Common::Rect Score::readRect(Common::ReadStreamEndian &stream) {
-	Common::Rect *rect = new Common::Rect();
-	rect->top = stream.readUint16();
-	rect->left = stream.readUint16();
-	rect->bottom = stream.readUint16();
-	rect->right = stream.readUint16();
+	Common::Rect rect;
+	rect.top = stream.readUint16();
+	rect.left = stream.readUint16();
+	rect.bottom = stream.readUint16();
+	rect.right = stream.readUint16();
 
-	return *rect;
+	return rect;
 }
 
 void Score::startLoop() {

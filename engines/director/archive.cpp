@@ -445,7 +445,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debugC(2, kDebugLoading, "KEY*: index: %d id: %d resTag: %s", index, id, tag2str(resTag));
 
 		const Resource &res = resources[index];
-		debug(3, "Found RIFX resource: '%s' 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
+		debug(3, "Found RIFX resource: '%s' id: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
 		_types[resTag][id] = res;
 	}
 
