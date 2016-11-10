@@ -69,10 +69,10 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	uint roomBits = roomFlags.getRoomBits();
 
 	// Save a copy of object pointers that may be modified
-	CGameObject *obj0 = _chevLeftOnDim;
-	CGameObject *obj1 = _chevLeftOffDim;
-	CGameObject *obj4 = _chevRightOnDim;
-	CGameObject *obj5 = _chevRightOffDim;
+	CGameObject *leftOnDim = _chevLeftOnDim;
+	CGameObject *leftOffDim = _chevLeftOffDim;
+	CGameObject *rightOnDim = _chevRightOnDim;
+	CGameObject *rightOffDim = _chevRightOffDim;
 
 	if (_mailFlag || isHighlighted_) {
 		_chevLeftOnDim = _chevLeftOnLit;
@@ -81,7 +81,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 		_chevRightOffDim = _chevRightOffLit;
 	}
 
-	// Draw the images
+	// Draw the chevron fragments for each line
 	Point destPt = pt;
 	drawObjects(classBits + elevBits * 4, destPt, screenManager);
 	destPt.y += 10;
@@ -94,11 +94,11 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
 		destPt, screenManager);
 
-	// Restore original object pointers
-	_chevLeftOnDim = obj0;
-	_chevLeftOffDim = obj1;
-	_chevRightOnDim = obj4;
-	_chevRightOffDim = obj5;
+	// Restore original image pointers
+	_chevLeftOnDim = leftOnDim;
+	_chevLeftOffDim = leftOffDim;
+	_chevRightOnDim = rightOnDim;
+	_chevRightOffDim = rightOffDim;
 }
 
 void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
@@ -216,7 +216,7 @@ int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
 void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *screenManager) {
 	if (_chevLeftOnDim && _chevLeftOffDim && _chevRightOnDim && _chevRightOffDim) {
 		Point destPos = pt;
-		((flags & 8) ? _chevLeftOnDim : _chevRightOffDim)->draw(screenManager, destPos);
+		((flags & 8) ? _chevLeftOnDim : _chevLeftOffDim)->draw(screenManager, destPos);
 		destPos.x += 13;
 		((flags & 4) ? _chevRightOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 		destPos.x += 13;
