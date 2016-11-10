@@ -215,7 +215,6 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeSystem();
 
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
-void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos);
 void CLFile_Write(file_t &handle, void *buffer, int32 *size);
 
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
@@ -293,7 +292,6 @@ void CLHNM_ReadHeader(hnm_t *hnm);
 int16 CLHNM_GetVersion(hnm_t *hnm);
 int CLHNM_GetFrameNum(hnm_t *hnm);
 void CLHNM_Prepare2Read(hnm_t *hnm, int mode);
-void CLHNM_SetPosIntoFile(hnm_t *hnm, int32 pos);
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 
 

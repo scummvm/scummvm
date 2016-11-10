@@ -362,11 +362,6 @@ void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
 	fs->create = 0;
 }
 
-void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos) {
-	assert(mode == 1);
-	handle.seek(pos, 0);
-}
-
 void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
 	assert(0);
 }

@@ -633,10 +633,6 @@ void CLHNM_DeactivatePreloadBuffer() {
 void CLHNM_Prepare2Read(hnm_t *hnm, int mode) {
 }
 
-void CLHNM_SetPosIntoFile(hnm_t *hnm, int32 pos) {
-	CLFile_SetPosition(*hnm->_file, 1, pos);
-}
-
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height) {
 	unsigned int *input = (unsigned int *)frame_buffer;
 	unsigned int *line0 = (unsigned int *)final_buffer;

@@ -4688,7 +4688,7 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 	int32 size = PLE32(&file->size);
 	int32 offs = PLE32(&file->offs);
 	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
-	CLFile_SetPosition(h_bigfile, fsFromStart, offs);
+	h_bigfile.seek(offs, SEEK_SET);
 	h_bigfile.read(buffer, size);
 }
 
@@ -4699,7 +4699,7 @@ void EdenGame::shnmfl(uint16 num) {
 	int size = PLE32(&file->size);
 	int offs = PLE32(&file->offs);
 	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
-	CLHNM_SetPosIntoFile(_hnmContext, offs);
+	_hnmContext->_file->seek(offs, SEEK_SET);
 }
 
 int EdenGame::ssndfl(uint16 num) {
@@ -4717,7 +4717,8 @@ int EdenGame::ssndfl(uint16 num) {
 		voiceSamplesBuffer = malloc(size);
 		_soundAllocated = true;
 	}
-	CLFile_SetPosition(h_bigfile, 1, offs);
+
+	h_bigfile.seek(offs, SEEK_SET);
 	//For PC loaded data is a VOC file, on Mac version this is a raw samples
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		h_bigfile.read(voiceSamplesBuffer, size);
@@ -4855,7 +4856,7 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	pakfile_t *file = &bigfile_header->files[num];
 	int32 offs = PLE32(&file->offs);
 	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
-	CLFile_SetPosition(h_bigfile, 1, offs + pos);
+	h_bigfile.seek(offs + pos, SEEK_SET);
 	h_bigfile.read(buffer, len);
 }
 
@@ -6491,7 +6492,7 @@ int EdenGame::loadmusicfile(int16 num) {
 	pakfile_t *file = &bigfile_header->files[num + 435];
 	int32 size = PLE32(&file->size);
 	int32 offs = PLE32(&file->offs);
-	CLFile_SetPosition(h_bigfile, 1, offs);
+	h_bigfile.seek(offs, SEEK_SET);
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const
 		numread = 0x140000;
