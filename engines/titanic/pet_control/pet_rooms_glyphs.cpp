@@ -108,7 +108,7 @@ void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
 		if (isShiftPressed) {
 			int selection = getSelection(topLeft, pt);
 			if (selection >= 0)
-				_roomFlags |= 1 << selection;
+				_roomFlags ^= 1 << selection;
 		}
 
 		updateTooltip();
