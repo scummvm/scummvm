@@ -186,10 +186,6 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) 
 	CLPalette_SetLastPalette(palette, first, count);
 }
 
-void CLPalette_BeBlack() {
-	CLPalette_Send2Screen(black_palette, 0, 256);
-}
-
 void CLPalette_BeSystem() {
 }
 
@@ -246,9 +242,8 @@ void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 		CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft, view->_normal._width, srcpitch, view->_normal._height,
 		                                  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft, dest->_normal._width, dstpitch, dest->_normal._height);
 
-	} else {
+	} else
 		assert(0);
-	}
 }
 void CLBlitter_CopyView2Screen(View *view) {
 	if (useNewPalette) {

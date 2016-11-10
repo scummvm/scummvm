@@ -212,7 +212,6 @@ void CLPalette_Macintize(int16 macintize);
 void CLPalette_SetInterval(uint16 first, uint16 last);
 void CLPalette_DeactivateInterval();
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
-void CLPalette_BeBlack();
 void CLPalette_BeSystem();
 
 void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
