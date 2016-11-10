@@ -4739,7 +4739,7 @@ int EdenGame::ssndfl(uint16 num) {
 
 			chunkType = h_bigfile.readByte();
 			h_bigfile.read(&val, 3);
-			unsigned int chunkLen = LE32(val);
+			chunkLen = LE32(val);
 		}
 
 		// 3. Normal sound data
