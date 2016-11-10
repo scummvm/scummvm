@@ -359,7 +359,7 @@ protected:
 	// Game state
 	State _state;
 
-	bool _isRestarting, _isRestoring;
+	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _skipOneCommand;
 
 private:

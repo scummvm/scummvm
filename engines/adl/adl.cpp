@@ -58,6 +58,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_graphics(nullptr),
 		_isRestarting(false),
 		_isRestoring(false),
+		_isQuitting(false),
 		_skipOneCommand(false),
 		_gameDescription(gd),
 		_saveVerb(0),
@@ -553,7 +554,7 @@ Common::Error AdlEngine::run() {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	while (1) {
+	while (!_isQuitting) {
 		uint verb = 0, noun = 0;
 		_isRestarting = false;
 
@@ -1101,7 +1102,8 @@ int AdlEngine::o1_quit(ScriptEnv &e) {
 	OP_DEBUG_0("\tQUIT_GAME()");
 
 	printMessage(_messageIds.thanksForPlaying);
-	quitGame();
+	// We use _isRestarting to abort the current game loop iteration
+	_isQuitting = _isRestarting = true;
 	return -1;
 }
 
