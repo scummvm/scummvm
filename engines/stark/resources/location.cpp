@@ -27,9 +27,12 @@
 
 #include "engines/stark/movement/movement.h"
 
+#include "engines/stark/resources/container.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
+#include "engines/stark/resources/level.h"
 #include "engines/stark/resources/scroll.h"
+#include "engines/stark/resources/sound.h"
 
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
@@ -333,6 +336,38 @@ void Location::resetAnimationBlending() {
 	for (uint i = 0; i < items.size(); i++) {
 		items[i]->resetAnimationBlending();
 	}
+}
+
+Sound *Location::findStockSound(uint32 stockSoundType) const {
+	Sound *sound = findStockSound(this, stockSoundType);
+
+	if (!sound) {
+		Level *currentLevel = StarkGlobal->getCurrent()->getLevel();
+		sound = findStockSound(currentLevel, stockSoundType);
+	}
+
+	if (!sound) {
+		Level *globalLevel = StarkGlobal->getLevel();
+		sound = findStockSound(globalLevel, stockSoundType);
+	}
+
+	return sound;
+}
+
+Sound *Location::findStockSound(const Object *parent, uint32 stockSoundType) const {
+	Container *stockSoundContainer = parent->findChildWithSubtype<Container>(Container::kStockSounds);
+	if (stockSoundContainer) {
+		Common::Array<Sound *> stockSounds = stockSoundContainer->listChildren<Sound>(Sound::kSoundStock);
+
+		for (uint i = 0; i < stockSounds.size(); i++) {
+			Sound *sound = stockSounds[i];
+			if (sound->getStockSoundType() == stockSoundType) {
+				return sound;
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Resources

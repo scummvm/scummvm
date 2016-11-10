@@ -78,7 +78,7 @@ const char *Type::getName() const {
 			{ Type::kScroll,                 "Scroll"                 },
 			{ Type::kFMV,                    "FMV"                    },
 			{ Type::kLipSync,                "LipSynch"               },
-			{ Type::kAnimScriptBonesTrigger, "AnimScriptBonesTrigger" },
+			{ Type::kAnimSoundTrigger,       "AnimSoundTrigger"       },
 			{ Type::kString,                 "String"                 },
 			{ Type::kTextureSet,             "TextureSet"             }
 	};
@@ -235,7 +235,7 @@ Object *Object::cast<Object>(Object *resource) {
 }
 
 template<>
-Common::Array<Object *> Object::listChildren<Object>(int subType) {
+Common::Array<Object *> Object::listChildren<Object>(int subType) const {
 	assert(subType == -1);
 
 	Common::Array<Object *> list;

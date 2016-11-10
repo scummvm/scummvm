@@ -71,7 +71,7 @@ public:
 		kScroll                 = 33,
 		kFMV                    = 34,
 		kLipSync                = 35,
-		kAnimScriptBonesTrigger = 36,
+		kAnimSoundTrigger       = 36,
 		kString                 = 37,
 		kTextureSet             = 38
 	};
@@ -233,7 +233,7 @@ public:
 
 	/** Find a child matching the template parameter type and the specified subtype */
 	template<class T>
-	T *findChildWithSubtype(int subType, bool mustBeUnique = true);
+	T *findChildWithSubtype(int subType, bool mustBeUnique = true) const;
 
 	/** Find a child matching the template parameter type and the specified index */
 	template<class T>
@@ -245,7 +245,7 @@ public:
 
 	/** List children matching the template parameter type and the specified subtype */
 	template<class T>
-	Common::Array<T *> listChildren(int subType = -1);
+	Common::Array<T *> listChildren(int subType = -1) const;
 
 	/** List children recursively matching the template parameter type and the specified subtype */
 	template<class T>
@@ -320,7 +320,7 @@ template<>
 Object *Object::findParent();
 
 template <class T>
-Common::Array<T *> Object::listChildren(int subType) {
+Common::Array<T *> Object::listChildren(int subType) const {
 	Common::Array<T *> list;
 
 	for (uint i = 0; i < _children.size(); i++) {
@@ -353,7 +353,7 @@ Common::Array<T *> Object::listChildrenRecursive(int subType) {
 }
 
 template<>
-Common::Array<Object *> Object::listChildren<Object>(int subType);
+Common::Array<Object *> Object::listChildren<Object>(int subType) const;
 
 template<class T>
 T *Object::findChild(bool mustBeUnique) {
@@ -361,7 +361,7 @@ T *Object::findChild(bool mustBeUnique) {
 }
 
 template <class T>
-T *Object::findChildWithSubtype(int subType, bool mustBeUnique) {
+T *Object::findChildWithSubtype(int subType, bool mustBeUnique) const {
 	Common::Array<T *> list = listChildren<T>(subType);
 
 	if (list.empty()) {

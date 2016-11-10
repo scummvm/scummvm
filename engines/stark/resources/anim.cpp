@@ -514,6 +514,15 @@ uint32 AnimSkeleton::getDuration() const {
 	return _totalTime;
 }
 
+uint32 AnimSkeleton::getCurrentTime() const {
+	return _currentTime;
+}
+
+uint32 AnimSkeleton::getRemainingTime() const {
+	int32 remainingTime = _totalTime - _currentTime;
+	return CLIP<int32>(remainingTime, 0, _totalTime);
+}
+
 void AnimSkeleton::playAsAction(ItemVisual *item) {
 	_actionItem = item;
 

@@ -181,5 +181,9 @@ void Sound::onGameLoop() {
 		}
 	}
 }
+
+uint32 Sound::getStockSoundType() const {
+	return _stockSoundType;
+}
 } // End of namespace Resources
 } // End of namespace Stark

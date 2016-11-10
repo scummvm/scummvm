@@ -48,6 +48,10 @@ class Sound : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kSoundItem;
 
+	enum SubType {
+		kSoundStock = 5
+	};
+
 	enum SoundType {
 		kSoundTypeVoice  = 0,
 		kSoundTypeEffect = 1,
@@ -70,6 +74,9 @@ public:
 
 	/** Stop the sound */
 	void stop();
+
+	/** Get the type for stock sounds */
+	uint32 getStockSoundType() const;
 
 protected:
 	void printData() override;

@@ -26,6 +26,7 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/animscript.h"
+#include "engines/stark/resources/animsoundtrigger.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/camera.h"
@@ -275,6 +276,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 	case Resources::Type::kLipSync:
 		resource = new Resources::LipSync(parent, subType, index, name);
         break;
+	case Resources::Type::kAnimSoundTrigger:
+		resource = new Resources::AnimSoundTrigger(parent, subType, index, name);
+		break;
 	case Resources::Type::kString:
 		resource = new Resources::String(parent, subType, index, name);
         break;

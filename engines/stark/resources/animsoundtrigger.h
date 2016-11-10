@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_RESOURCES_CONTAINER_H
-#define STARK_RESOURCES_CONTAINER_H
+#ifndef STARK_RESOURCES_ANIM_SOUND_TRIGGER_H
+#define STARK_RESOURCES_ANIM_SOUND_TRIGGER_H
 
 #include "common/str.h"
 
@@ -29,25 +29,46 @@
 
 namespace Stark {
 
+namespace Formats {
+class XRCReadStream;
+}
+
 namespace Resources {
 
+class AnimSkeleton;
+
 /**
- * Containers are holder resources for other resources of various kinds
+ * An AnimSoundTrigger plays a sound when a certain time of an animation is reached
+ *
+ * The sound is played at most once per animation loop.
  */
-class Container : public Object {
+class AnimSoundTrigger : public Object {
 public:
-	static const Type::ResourceType TYPE = Type::kContainer;
+	static const Type::ResourceType TYPE = Type::kAnimSoundTrigger;
 
 	enum SubType {
-		kSounds = 5,
-		kStockSounds = 8
+		kAnimTriggerSound = 1
 	};
 
-	Container(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Container();
+	AnimSoundTrigger(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimSoundTrigger();
+
+	// Resource API
+	void readData(Formats::XRCReadStream *stream) override;
+	void printData() override;
+	void onAllLoaded() override;
+	void onGameLoop() override;
+
+private:
+	uint32 _soundStockType;
+	uint32 _soundTriggerTime;
+
+	AnimSkeleton *_anim;
+	bool _alreadyPlayed;
+	uint _timeRemainingBeforeLoop;
 };
 
 } // End of namespace Resources
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_CONTAINER_H
+#endif // STARK_RESOURCES_ANIM_SOUND_TRIGGER_H

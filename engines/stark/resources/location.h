@@ -41,6 +41,7 @@ namespace Resources {
 class ItemVisual;
 class Layer;
 class ModelItem;
+class Sound;
 
 /**
  * A location is a scene of the game
@@ -115,6 +116,9 @@ public:
 	/** Reset animation blending for all the items in the location */
 	void resetAnimationBlending();
 
+	/** Find a stock sound by its type in the location, the level, or the global level */
+	Sound *findStockSound(uint32 stockSoundType) const;
+
 protected:
 	void printData() override;
 
@@ -124,6 +128,8 @@ private:
 	Common::Point getCharacterScrollPosition(ModelItem *item);
 	uint getScrollStepFollow();
 	Common::Point getScrollPointFromCoordinate(uint32 coordinate) const;
+
+	Sound *findStockSound(const Object *parent, uint32 stockSoundType) const;
 
 	Common::Array<Layer *> _layers;
 	Layer *_currentLayer;

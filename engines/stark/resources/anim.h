@@ -260,6 +260,12 @@ public:
 	bool isAtTime(uint32 time) const override;
 	uint32 getMovementSpeed() const override;
 
+	/** Get the position in the animation loop in milliseconds */
+	uint32 getCurrentTime() const;
+
+	/** Get the duration in milliseconds before the animation loops ends */
+	uint32 getRemainingTime() const;
+
 protected:
 	void printData() override;
 
