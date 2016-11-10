@@ -128,7 +128,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	showVideoSubtitle = 0;
 	specialTextMode = false;
 	voiceSamplesSize = 0;
-	animateTalking = 0;
+	_animateTalking = false;
 	_personTalking = false;
 	_musicFadeFlag = 0;
 	musicPlaying = 0;
@@ -2251,7 +2251,7 @@ void EdenGame::anim_perso() {
 	}
 	cur_anim_frame_num = (TimerTicks - _lastAnimTicks) >> 2;   // TODO: check me!!!
 	if (cur_anim_frame_num > num_anim_frames)               // TODO: bug?
-		animateTalking = 0;
+		_animateTalking = false;
 	if (p_global->curPersoAnimPtr && !p_global->animationFlags && cur_anim_frame_num != last_anim_frame_num) {
 		last_anim_frame_num = cur_anim_frame_num;
 		if (*p_global->curPersoAnimPtr == 0xFF)
@@ -2276,7 +2276,7 @@ void EdenGame::anim_perso() {
 		getanimrnd();
 		//TODO: no reload?
 	}
-	if (animateTalking) {
+	if (_animateTalking) {
 		if (!animationTable) {
 			animationTable = gameLipsync + 7262;    //TODO: fix me
 			if (!fond_saved)
@@ -2286,7 +2286,7 @@ void EdenGame::anim_perso() {
 			cur_anim_frame_num = num_anim_frames - 1;
 		animationIndex = animationTable[cur_anim_frame_num];
 		if (animationIndex == 0xFF)
-			animateTalking = 0;
+			_animateTalking = false;
 		else if (animationIndex != lastAnimationIndex) {
 			bank_data_ptr = perso_img_bank_data_ptr;
 			restaurefondbouche();
@@ -2766,8 +2766,8 @@ void EdenGame::getdatasync() {
 		num += 707;
 	if (num == 144)
 		num = 142;
-	animateTalking = ReadDataSync(num - 1);
-	if (animateTalking)
+	_animateTalking = ReadDataSync(num - 1);
+	if (_animateTalking)
 		num_anim_frames = ReadNombreFrames();
 	else
 		num_anim_frames = 0;
@@ -4753,7 +4753,6 @@ int EdenGame::ssndfl(uint16 num) {
 	return size;
 }
 
-#if 1
 void EdenGame::ConvertIcons(icon_t *icon, int count) {
 	for (int i = 0; i < count; i++, icon++) {
 		icon->sx = BE16(icon->sx);
@@ -4782,7 +4781,6 @@ void EdenGame::ConvertMacToPC() {
 	for (int i = 0; i < 7240 / 4; i++)
 		p[i] = BE32(p[i]);
 }
-#endif
 
 void EdenGame::loadpermfiles() {
 	switch (_vm->getPlatform()) {
@@ -4819,36 +4817,37 @@ void EdenGame::loadpermfiles() {
 	loadFile(403, gameConditions);
 }
 
-char EdenGame::ReadDataSyncVOC(unsigned int num) {
+bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	unsigned char vocHeader[0x1A];
-	loadpartoffile(resNum, vocHeader, 0, sizeof(vocHeader));
+	int filePos = 0;
+	loadpartoffile(resNum, vocHeader, filePos, sizeof(vocHeader));
+	filePos += sizeof(vocHeader);
 	unsigned char chunkType = 0;
 	loadpartoffile(resNum, &chunkType, sizeof(vocHeader), 1);
+	filePos++;
 	if (chunkType == 5) {
 		unsigned int chunkLen = 0;
-		loadpartoffile(resNum, &chunkLen, sizeof(vocHeader) + 1, 3);
+		loadpartoffile(resNum, &chunkLen, filePos, 3);
+		filePos += 3;
 		chunkLen = LE32(chunkLen);
-		loadpartoffile(resNum, gameLipsync + 7260, sizeof(vocHeader) + 1 + 3, chunkLen);
-		return 1;
+		loadpartoffile(resNum, gameLipsync + 7260, filePos, chunkLen);
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-char EdenGame::ReadDataSync(uint16 num) {
-	long pos, len;
-
+bool EdenGame::ReadDataSync(uint16 num) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		pos = PLE32(gameLipsync + num * 4);
-		len = 1024;
+		long pos = PLE32(gameLipsync + num * 4);
+		long len = 1024;
 		if (pos != -1) {
 			loadpartoffile(1936, gameLipsync + 7260, pos, len);
-			return 1;
+			return true;
 		}
-	}
-	else
+	} else
 		return ReadDataSyncVOC(num + 1);	//TODO: remove -1 in caller
-	return 0;
+	return false;
 }
 
 void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
@@ -7012,7 +7011,7 @@ void EdenGame::initafterload() {
 	kPersoRoomBankTable[30] = 27;
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
-	animateTalking = 0;
+	_animateTalking = false;
 	animationActive = false;
 	p_global->ff_100 = 0;
 	p_global->eventType = EventType::etEventC;
@@ -7070,7 +7069,7 @@ void EdenGame::panelrestart() {
 	kPersoRoomBankTable[30] = 27;
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
-	animateTalking = 0;
+	_animateTalking = false;
 	animationActive = false;
 	p_global->ff_100 = 0;
 	p_global->eventType = 0;

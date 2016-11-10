@@ -287,8 +287,8 @@ private:
 	void ConvertLinks(room_t *room, int count);
 	void ConvertMacToPC();
 	void loadpermfiles();
-	char ReadDataSyncVOC(unsigned int num);
-	char ReadDataSync(uint16 num);
+	bool ReadDataSyncVOC(unsigned int num);
+	bool ReadDataSync(uint16 num);
 	void loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len);
 	void Expand_hsq(void *input, void *output);
 	void ajouinfo(byte info);
@@ -688,7 +688,7 @@ private:
 	int16           mus_vol_left;
 
 
-	byte   animateTalking;
+	bool _animateTalking;
 	bool _personTalking;
 	byte   _musicFadeFlag;
 
