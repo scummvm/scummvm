@@ -1102,6 +1102,11 @@ int AdlEngine::o1_quit(ScriptEnv &e) {
 	OP_DEBUG_0("\tQUIT_GAME()");
 
 	printMessage(_messageIds.thanksForPlaying);
+	// Wait for a key here to ensure that the user gets a chance
+	// to read the thank-you message
+	_display->printAsciiString("PRESS ANY KEY TO QUIT");
+	inputKey();
+
 	// We use _isRestarting to abort the current game loop iteration
 	_isQuitting = _isRestarting = true;
 	return -1;
