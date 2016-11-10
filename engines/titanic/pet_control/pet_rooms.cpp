@@ -223,7 +223,7 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	_glyphs.setup(6, this);
 	_glyphs.setFlags(GFLAG_16);
 	_glyphItem.setup(petControl, &_glyphs);
-	_glyphItem.set38(1);
+	_glyphItem.setFlag(1);
 	return true;
 }
 

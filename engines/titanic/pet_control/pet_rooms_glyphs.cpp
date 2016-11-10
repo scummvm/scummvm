@@ -30,15 +30,15 @@
 namespace Titanic {
 
 CPetRoomsGlyph::CPetRoomsGlyph() : CPetGlyph(),
-	_roomFlags(0), _field38(0), _mode(RGM_UNASSIGNED),
-	_object0(nullptr), _object1(nullptr), _object2(nullptr), _object3(nullptr),
-	_object4(nullptr), _object5(nullptr), _object6(nullptr), _object7(nullptr) {
+		_roomFlags(0), _mailFlag(0), _mode(RGM_UNASSIGNED),
+		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
+		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
 }
 
 CPetRoomsGlyph::CPetRoomsGlyph(uint flags) : CPetGlyph(),
-	_roomFlags(flags), _field38(0), _mode(RGM_UNASSIGNED),
-	_object0(nullptr), _object1(nullptr), _object2(nullptr), _object3(nullptr),
-	_object4(nullptr), _object5(nullptr), _object6(nullptr), _object7(nullptr) {
+		_roomFlags(flags), _mailFlag(0), _mode(RGM_UNASSIGNED),
+		_chevLeftOnDim(nullptr), _chevLeftOffDim(nullptr), _chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
+		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr), _chevRightOnLit(nullptr), _chevRightOffLit(nullptr) {
 }
 
 bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -46,14 +46,14 @@ bool CPetRoomsGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 		return false;
 
 	CPetSection *section = owner->getOwner();
-	_object0 = section->getBackground(9);
-	_object1 = section->getBackground(12);
-	_object4 = section->getBackground(13);
-	_object5 = section->getBackground(10);
-	_object2 = section->getBackground(11);
-	_object3 = section->getBackground(14);
-	_object6 = section->getBackground(15);
-	_object7 = _object6;
+	_chevLeftOnDim = section->getBackground(8);
+	_chevLeftOffDim = section->getBackground(9);
+	_chevRightOnDim = section->getBackground(12);
+	_chevRightOffDim = section->getBackground(13);
+	_chevLeftOnLit = section->getBackground(10);
+	_chevLeftOffLit = section->getBackground(11);
+	_chevRightOnLit = section->getBackground(14);
+	_chevRightOffLit = section->getBackground(15);
 	return true;
 }
 
@@ -69,16 +69,16 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	uint roomBits = roomFlags.getRoomBits();
 
 	// Save a copy of object pointers that may be modified
-	CGameObject *obj0 = _object0;
-	CGameObject *obj1 = _object1;
-	CGameObject *obj4 = _object4;
-	CGameObject *obj5 = _object5;
+	CGameObject *obj0 = _chevLeftOnDim;
+	CGameObject *obj1 = _chevLeftOffDim;
+	CGameObject *obj4 = _chevRightOnDim;
+	CGameObject *obj5 = _chevRightOffDim;
 
-	if (_field38 == 1 || isHighlighted_) {
-		_object0 = _object2;
-		_object1 = _object3;
-		_object4 = _object6;
-		_object5 = _object7;
+	if (_mailFlag || isHighlighted_) {
+		_chevLeftOnDim = _chevLeftOnLit;
+		_chevLeftOffDim = _chevLeftOffLit;
+		_chevRightOnDim = _chevRightOnLit;
+		_chevRightOffDim = _chevRightOffLit;
 	}
 
 	// Draw the images
@@ -95,10 +95,10 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 		destPt, screenManager);
 
 	// Restore original object pointers
-	_object0 = obj0;
-	_object1 = obj1;
-	_object4 = obj4;
-	_object5 = obj5;
+	_chevLeftOnDim = obj0;
+	_chevLeftOffDim = obj1;
+	_chevRightOnDim = obj4;
+	_chevRightOffDim = obj5;
 }
 
 void CPetRoomsGlyph::selectGlyph(const Point &topLeft, const Point &pt) {
@@ -124,7 +124,7 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 
 		if (chevron) {
 			chevron->_id = _roomFlags;
-			chevron->_isMail = _field38;
+			chevron->_isMail = _mailFlag != 0;
 			petControl->removeFromInventory(chevron, false, false);
 			chevron->loadSurface();
 
@@ -150,9 +150,9 @@ void CPetRoomsGlyph::getTooltip(CPetText *text) {
 		msg = "Your assigned room: ";
 	} else if (isPreviouslyAssigned()) {
 		msg = "A previously assigned room: ";
-	} else if (!_field38) {
+	} else if (!_mailFlag) {
 		msg = "Saved Chevron: ";
-	} else if (_field38 == 1 && owner->getRoomFlags() == _roomFlags) {
+	} else if (_mailFlag == 1 && owner->getRoomFlags() == _roomFlags) {
 		msg = "Current location: ";
 	}
 
@@ -214,15 +214,15 @@ int CPetRoomsGlyph::getSelection(const Point &topLeft, const Point &pt) {
 }
 
 void CPetRoomsGlyph::drawObjects(uint flags, const Point &pt, CScreenManager *screenManager) {
-	if (_object0 && _object1 && _object4 && _object5) {
+	if (_chevLeftOnDim && _chevLeftOffDim && _chevRightOnDim && _chevRightOffDim) {
 		Point destPos = pt;
-		((flags & 8) ? _object0 : _object5)->draw(screenManager, destPos);
+		((flags & 8) ? _chevLeftOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 		destPos.x += 13;
-		((flags & 4) ? _object4 : _object5)->draw(screenManager, destPos);
+		((flags & 4) ? _chevRightOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 		destPos.x += 13;
-		((flags & 2) ? _object0 : _object1)->draw(screenManager, destPos);
+		((flags & 2) ? _chevLeftOnDim : _chevLeftOffDim)->draw(screenManager, destPos);
 		destPos.x += 13;
-		((flags & 1) ? _object4 : _object5)->draw(screenManager, destPos);
+		((flags & 1) ? _chevRightOnDim : _chevRightOffDim)->draw(screenManager, destPos);
 	}
 }
 
