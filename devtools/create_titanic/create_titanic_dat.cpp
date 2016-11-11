@@ -416,7 +416,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[107] = {
+static const char *const STRINGS_EN[108] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -493,7 +493,7 @@ static const char *const STRINGS_EN[107] = {
 	"the BellBot",
 	"the Maitre d'Bot",
 	"a Succ-U-Bus",
-	"Unknown"
+	"Unknown",
 	"The arm is already holding something.",
 	"You can't get this.",
 	"That doesn't seem to do anything.",
@@ -1191,7 +1191,7 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 107);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 108);
 	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 152);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
