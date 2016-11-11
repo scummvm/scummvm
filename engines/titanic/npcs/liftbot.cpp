@@ -79,13 +79,12 @@ bool CLiftBot::EnterViewMsg(CEnterViewMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (!_enabled && pet->getRoomsElevatorNum() == 4) {
 		loadFrame(700);
-	} else if (!_flag) {
-		if (getName() != "LiftBot") {
-			CViewItem *view = findView();
-			setTalking(this, true, view);
-			petSetArea(PET_CONVERSATION);
-			_flag = 1;
-		}
+	} else if (!_flag && getName() == "LiftBot") {
+		// First time meeting the LiftBot
+		CViewItem *view = findView();
+		setTalking(this, true, view);
+		petSetArea(PET_CONVERSATION);
+		_flag = 1;
 	}
 
 	return true;
