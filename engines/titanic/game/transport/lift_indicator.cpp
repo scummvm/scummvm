@@ -38,15 +38,15 @@ BEGIN_MESSAGE_MAP(CLiftindicator, CLift)
 END_MESSAGE_MAP()
 
 CLiftindicator::CLiftindicator() : CLift(),
-		_fieldFC(0), _start(0), _end(0) {
+		_fieldFC(0), _startY(0), _endY(0) {
 }
 
 void CLiftindicator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldFC, indent);
 	file->writePoint(_indicatorPos, indent);
-	file->writeNumberLine(_start, indent);
-	file->writeNumberLine(_end, indent);
+	file->writeNumberLine(_startY, indent);
+	file->writeNumberLine(_endY, indent);
 
 	CLift::save(file, indent);
 }
@@ -55,8 +55,8 @@ void CLiftindicator::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldFC = file->readNumber();
 	_indicatorPos = file->readPoint();
-	_start = file->readNumber();
-	_end = file->readNumber();
+	_startY = file->readNumber();
+	_endY = file->readNumber();
 
 	CLift::load(file);
 }
@@ -155,8 +155,8 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
 				petDisplayMessage(1, ELEVATOR_NON_FUNCTIONAL);
 			} else {
-				_start = _indicatorPos.y + (int)(_startFrame * multiplier);
-				_end = _indicatorPos.y + (int)(_endFrame * multiplier);
+				_startY = _indicatorPos.y + (int)(_startFrame * multiplier);
+				_endY = _indicatorPos.y + (int)(_endFrame * multiplier);
 				lockMouse();
 				addTimer(100);
 
@@ -213,15 +213,15 @@ bool CLiftindicator::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 }
 
 bool CLiftindicator::TimerMsg(CTimerMsg *msg) {
-	debugC(kDebugScripts, "Start %d, End %d", _start, _end);
+	debugC(kDebugScripts, "Start %d, End %d", _startY, _endY);
 
-	if (_start > _end) {
+	if (_startY > _endY) {
 		setPosition(Point(_bounds.left, _bounds.top - 1));
-		--_start;
+		--_startY;
 		addTimer(20);
-	} else if (_start < _end) {
+	} else if (_startY < _endY) {
 		setPosition(Point(_bounds.left, _bounds.top + 1));
-		++_start;
+		++_startY;
 		addTimer(20);
 	} else {
 		CMovieEndMsg endMsg(0, 0);

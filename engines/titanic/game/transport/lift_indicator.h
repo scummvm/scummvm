@@ -41,8 +41,8 @@ class CLiftindicator : public CLift {
 private:
 	int _fieldFC;
 	Point _indicatorPos;
-	int _start;
-	int _end;
+	int _startY;
+	int _endY;
 public:
 	CLASSDEF;
 	CLiftindicator();
