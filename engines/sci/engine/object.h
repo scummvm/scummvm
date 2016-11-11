@@ -47,10 +47,10 @@ enum infoSelectorFlags {
 	 * When set, indicates to game scripts that a screen
 	 * item can be updated.
 	 */
-	kInfoFlagViewVisible  = 0x0008, // TODO: "dirty" ?
+	kInfoFlagViewVisible  = 0x0008,
 
 	/**
-	 * When set, the object has an associated screen item in
+	 * When set, the VM object has an associated ScreenItem in
 	 * the rendering tree.
 	 */
 	kInfoFlagViewInserted = 0x0010,
