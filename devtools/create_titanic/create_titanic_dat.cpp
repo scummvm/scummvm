@@ -779,12 +779,16 @@ void writeNumbers() {
 }
 
 void writeString(uint offset) {
-	inputFile.seek(offset - FILE_DIFF[_version]);
-	char c;
-	do {
-		c = inputFile.readByte();
-		outputFile.writeByte(c);
-	} while (c);
+	if (offset == 0) {
+		outputFile.writeByte(0);
+	} else {
+		inputFile.seek(offset - FILE_DIFF[_version]);
+		char c;
+		do {
+			c = inputFile.readByte();
+			outputFile.writeByte(c);
+		} while (c);
+	}
 }
 
 void writeResponseTree() {
@@ -818,7 +822,7 @@ void writeResponseTree() {
 void writeSentenceEntries(const char *name, uint tableOffset) {
 	outputFile.seek(dataOffset);
 
-	uint v1, v2, v9, v11, v12, v13;
+	uint v1, category, v4, v9, v11, v12, v13;
 	uint offset3, offset5, offset6, offset7, offset8, offset10;
 
 	for (uint idx = 0; ; ++idx) {
@@ -829,9 +833,9 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 			break;
 
 		// Read data fields
-		v2 = inputFile.readLong();
+		category = inputFile.readLong();
 		offset3 = inputFile.readLong();
-		/* v4 = */inputFile.readLong();
+		v4 = inputFile.readLong();
 		offset5 = inputFile.readLong();
 		offset6 = inputFile.readLong();
 		offset7 = inputFile.readLong();
@@ -843,9 +847,9 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 		v13 = inputFile.readLong();
 
 		outputFile.writeLong(v1);
-		outputFile.writeLong(v2);
+		outputFile.writeLong(category);
 		writeString(offset3);
-		outputFile.writeLong(v1);
+		outputFile.writeLong(v4);
 		writeString(offset5);
 		writeString(offset6);
 		writeString(offset7);
