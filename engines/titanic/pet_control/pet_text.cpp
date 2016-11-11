@@ -57,7 +57,7 @@ void CPetText::setup() {
 }
 
 void CPetText::setLineColor(uint lineNum, uint col) {
-	setLineColor(lineNum, col & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff);
+	setLineColor(lineNum, col & 0xff, (col >> 8) & 0xff, (col >> 16) & 0xff);
 }
 
 void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
