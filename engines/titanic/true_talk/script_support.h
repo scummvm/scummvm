@@ -65,7 +65,7 @@ struct TTscriptRange {
 
 struct TTsentenceEntry {
 	int _field0;
-	int _field4;
+	int _category;
 	CString _string8;
 	int _fieldC;
 	CString _string10;
@@ -78,7 +78,7 @@ struct TTsentenceEntry {
 	int _field2C;
 	int _field30;
 
-	TTsentenceEntry() : _field0(0), _field4(0), _fieldC(0),
+	TTsentenceEntry() : _field0(0), _category(0), _fieldC(0),
 		_field20(0), _field28(0), _field2C(0), _field30(0) {}
 
 	/**

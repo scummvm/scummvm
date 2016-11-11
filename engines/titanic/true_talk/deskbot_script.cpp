@@ -540,9 +540,9 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	bool stateFlag = true, applyFlag = false;
 	switch (getValue(CURRENT_STATE)) {
 	case 1:
-		if (sentence->_field2C != 3 && sentence->_field2C != 4
-				&& sentence->_field2C != 6 && sentence->_field2C != 10
-				&& sentence->_field2C != 2) {
+		if (sentence->_category != 3 && sentence->_category != 4
+				&& sentence->_category != 6 && sentence->_category != 10
+				&& sentence->_category != 2) {
 			addResponse(getDialogueId(240423));
 			applyFlag = true;
 		}
@@ -556,15 +556,15 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 3:
-		if (sentence->_field2C == 11 || sentence->_field2C == 13
-				|| sentence->_field2C == 3 || sentence->localWord("upgrade")) {
+		if (sentence->_category == 11 || sentence->_category == 13
+				|| sentence->_category == 3 || sentence->localWord("upgrade")) {
 			addResponse(getDialogueId(240433));
 			applyFlag = true;
 		}
 		break;
 
 	case 4:
-		addResponse(getDialogueId(sentence->_field2C == 11 || sentence->_field2C == 13
+		addResponse(getDialogueId(sentence->_category == 11 || sentence->_category == 13
 			? 240495 : 240494));
 		applyFlag = true;
 		break;
@@ -596,7 +596,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				stateFlag = true;
 			} else if (sentence->localWord("name")
 				|| sentence->localWord("called")
-				|| sentence->_field2C == 11) {
+				|| sentence->_category == 11) {
 				addResponse(getDialogueId(240448));
 				stateFlag = true;
 			} else {
@@ -607,7 +607,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 7:
-		if (sentence->_field2C == 11 || sentence->_field2C == 13
+		if (sentence->_category == 11 || sentence->_category == 13
 				|| (sentence->localWord("what") && sentence->localWord("wrong"))
 				|| sentence->localWord("clothes")) {
 			addResponse(getDialogueId(240489));
@@ -618,7 +618,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 8:
 		if (isDial1Low() && getValue(1) == 4) {
-			if (sentence->_field2C == 12 || sentence->_field2C == 13
+			if (sentence->_category == 12 || sentence->_category == 13
 					|| sentence->contains("do not")) {
 
 				addResponse(getDialogueId(240447));
@@ -628,7 +628,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				CTrueTalkManager::triggerAction(19, 3);
 				CTrueTalkManager::setFlags(22, 1);
 				applyFlag = true;
-			} else if (sentence->_field2C == 11) {
+			} else if (sentence->_category == 11) {
 				addResponse(getDialogueId(240746));
 				applyFlag = true;
 				stateFlag = false;
@@ -1091,7 +1091,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 74:
 	case 75:
-		if (sentence->_field2C == 24) {
+		if (sentence->_category == 24) {
 			addResponse(getDialogueId(240972));
 			applyFlag = true;
 		} else if (sentence->localWord("good") || sentence->localWord("yes")
@@ -1103,7 +1103,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 76:
-		if (sentence->_field2C == 6) {
+		if (sentence->_category == 6) {
 			addResponse(getDialogueId(240767));
 			applyFlag = true;
 			stateFlag = false;
@@ -1111,7 +1111,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 77:
-		if (sentence->_field2C == 3) {
+		if (sentence->_category == 3) {
 			addResponse(getDialogueId(241109));
 			applyFlag = true;
 			stateFlag = false;
@@ -1119,10 +1119,10 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 78:
 		// "Do you have a reservation?"
-		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+		if (sentence->_category == 11 || sentence->_category == 13) {
 			// Player said they have a reservation
 			addResponse(getDialogueId(241262));
-		} else if (sentence->_field2C == 12 || sentence->contains("do not")) {
+		} else if (sentence->_category == 12 || sentence->contains("do not")) {
 			// Player said they don't have a reservation
 			setDialRegion(0, 0);
 			setDialRegion(1, 0);
@@ -1161,14 +1161,14 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 81:
-		addResponse(getDialogueId(sentence->_field2C == 12 ? 240602 : 241337));
+		addResponse(getDialogueId(sentence->_category == 12 ? 240602 : 241337));
 		applyResponse();
 		setState(0);
 		CTrueTalkManager::setFlags(CURRENT_STATE, 0);
 		return 2;
 
 	case 82:
-		if (sentence->_field2C == 2) {
+		if (sentence->_category == 2) {
 			addResponse(getDialogueId(241339));
 			applyFlag = true;
 		}
@@ -1187,7 +1187,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 84:
-		if (sentence->_field2C == 12 || sentence->contains("vegetarian")
+		if (sentence->_category == 12 || sentence->contains("vegetarian")
 				|| sentence->contains("vegitarian")) {
 			addResponse(getDialogueId(241718));
 			addResponse(getDialogueId(241709));
@@ -1214,7 +1214,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 85:
-		if (sentence->_field2C == 12 || sentence->contains("bugle")
+		if (sentence->_category == 12 || sentence->contains("bugle")
 				|| sentence->contains("buggle") || sentence->contains("trumpet")
 				|| sentence->contains("saxophone") || sentence->contains("kazoo")
 				|| sentence->contains("blerontin 1") || sentence->contains("the 1")
@@ -1235,7 +1235,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 86:
-		if (sentence->_field2C == 12 || sentence->_field2C == 11 || sentence->contains("view")) {
+		if (sentence->_category == 12 || sentence->_category == 11 || sentence->contains("view")) {
 			addResponse(getDialogueId(241714));
 			addResponse(getDialogueId(241699));
 		} else {
@@ -1359,11 +1359,11 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	case 92:
 	case 93:
 		// "Fish?"
-		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+		if (sentence->_category == 11 || sentence->_category == 13) {
 			// Yes
 			addResponse(getDialogueId(241077));
 			addResponse(getDialogueId(241706));
-		} else if (sentence->_field2C == 12) {
+		} else if (sentence->_category == 12) {
 			// No
 			addAssignedRoom();
 			setState(0);
@@ -1422,7 +1422,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 96:
-		if (sentence->_field2C == 2) {
+		if (sentence->_category == 2) {
 			addResponse(getDialogueId(241350));
 			applyFlag = true;
 			stateFlag = false;

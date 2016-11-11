@@ -57,7 +57,7 @@ bool TTsentenceEntry::load(Common::SeekableReadStream *s) {
 		return false;
 
 	_field0 = s->readUint32LE();
-	_field4 = s->readUint32LE();
+	_category = s->readUint32LE();
 	_string8 = readStringFromStream(s);
 	_fieldC = s->readUint32LE();
 	_string10 = readStringFromStream(s);

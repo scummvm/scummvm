@@ -85,7 +85,7 @@ int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *se
 
 	int currState = getState();
 	if (currState) {
-		int currMode = sentence->_field2C;
+		int currMode = sentence->_category;
 		bool modeFlag1 = currMode == 11 || currMode == 13;
 		bool modeFlag2 = currMode == 12;
 		setState(0);

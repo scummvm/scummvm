@@ -41,7 +41,7 @@ TTsentenceConcept *TTsentenceConcept::addSibling() {
 
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
-		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
+		_owner(owner), _category(1), _inputCtr(inputCtr), _field34(0),
 		_field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
 		_npcScript(npcScript), _field58(0), _field5C(0) {
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
@@ -77,7 +77,7 @@ void TTsentence::copyFrom(const TTsentence &src) {
 	_field5C = src._field5C;
 	_field34 = src._field34;
 	_field38 = src._field38;
-	_field2C = src._field2C;
+	_category = src._category;
 	_nodesP = nullptr;
 
 	if (src._nodesP) {

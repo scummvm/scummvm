@@ -622,7 +622,7 @@ int TTparser::loadRequests(TTword *word) {
 		break;
 
 	case WC_CONJUNCTION:
-		if (_sentence->check2C()) {
+		if (_sentence->checkCategory()) {
 			_sentenceConcept->_field1C = 1;
 			_sentenceConcept = _sentenceConcept->addSibling();
 			delete this;
@@ -676,7 +676,7 @@ int TTparser::loadRequests(TTword *word) {
 		case 901:
 		case 902:
 		case 904:
-			if (_sentence->_field2C == 9) {
+			if (_sentence->_category == 9) {
 				_sentenceConcept->_field1C = 1;
 				_sentenceConcept = _sentenceConcept->addSibling();
 				addNode(1);
@@ -738,7 +738,7 @@ int TTparser::considerRequests(TTword *word) {
 	for (TTparserNode *nodeP = _nodesP; nodeP; ) {
 		switch (nodeP->_tag) {
 		case CHECK_COMMAND_FORM:
-			if (_sentenceConcept->_concept1P && _sentence->_field2C == 1 &&
+			if (_sentenceConcept->_concept1P && _sentence->_category == 1 &&
 					!_sentenceConcept->_concept0P) {
 				concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
 				_sentenceConcept->_concept0P = concept;
@@ -1032,7 +1032,7 @@ int TTparser::considerRequests(TTword *word) {
 				addNode(15);
 			}
 
-			if (_sentence->check2C() && word->_id == 113)
+			if (_sentence->checkCategory() && word->_id == 113)
 				addNode(4);
 
 			if (word->_wordClass == WC_ACTION)
@@ -1055,10 +1055,10 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case WORD_TYPE_IS_SENTENCE_TYPE:
-			if (_sentence->_field2C == 1 || _sentence->_field2C == 10) {
+			if (_sentence->_category == 1 || _sentence->_category == 10) {
 				for (TTword *wordP = _currentWordP; wordP; wordP = wordP->_nextP) {
 					if (wordP->_id == 906) {
-						_sentence->_field2C = 12;
+						_sentence->_category = 12;
 						flag = true;
 						break;
 					}
@@ -1068,44 +1068,44 @@ int TTparser::considerRequests(TTword *word) {
 				TTconcept *newConceptP;
 				switch (word->_id) {
 				case 108:
-					_sentence->_field2C = 8;
+					_sentence->_category = 8;
 					break;
 				case 113:
 					if (!_sentenceConcept->_concept3P)
-						_sentence->_field2C = 22;
-					break;
-				case 304:
-					_sentence->_field2C = 25;
-					break;
-				case 305:
-					_sentence->_field2C = 24;
+						_sentence->_category = 22;
 					break;
 				case 306:
-					_sentence->_field2C = 7;
+					_sentence->_category = 7;
+					break;
+				case 307:
+					_sentence->_category = 24;
+					break;
+				case 308:
+					_sentence->_category = 25;
 					break;
 				case 501:
-					_sentence->_field2C = 9;
+					_sentence->_category = 9;
 					break;
 				case 900:
-					_sentence->_field2C = 5;
+					_sentence->_category = 5;
 					break;
 				case 901:
-					_sentence->_field2C = 4;
+					_sentence->_category = 4;
 					break;
 				case 904:
-					_sentence->_field2C = 6;
+					_sentence->_category = 6;
 					break;
 				case 905:
-					_sentence->_field2C = 11;
+					_sentence->_category = 11;
 					break;
 				case 906:
-					_sentence->_field2C = 12;
+					_sentence->_category = 12;
 					break;
 				case 907:
-					_sentence->_field2C = 13;
+					_sentence->_category = 13;
 					break;
 				case 908:
-					_sentence->_field2C = 2;
+					_sentence->_category = 2;
 					if (!_sentenceConcept->_concept0P) {
 						newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
 						newConceptP = new TTconcept(newPictP);
@@ -1116,7 +1116,7 @@ int TTparser::considerRequests(TTword *word) {
 					}
 					break;
 				case 909:
-					_sentence->_field2C = 3;
+					_sentence->_category = 3;
 					newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
 					newConceptP = new TTconcept(newPictP);
 
@@ -1154,8 +1154,8 @@ int TTparser::considerRequests(TTword *word) {
 			addNode(5);
 			addNode(21);
 
-			if (!_sentence->_field2C)
-				_sentence->_field2C = 15;
+			if (!_sentence->_category)
+				_sentence->_category = 15;
 			break;
 
 		case MKTAG('C', 'U', 'R', 'S'):
@@ -1170,8 +1170,8 @@ int TTparser::considerRequests(TTword *word) {
 			addNode(5);
 			addNode(21);
 
-			if (!_sentence->_field2C)
-				_sentence->_field2C = 14;
+			if (!_sentence->_category)
+				_sentence->_category = 14;
 			break;
 
 		case MKTAG('F', 'A', 'R', 'R'):
@@ -1188,15 +1188,15 @@ int TTparser::considerRequests(TTword *word) {
 			addNode(5);
 			addNode(21);
 
-			if (_sentence->_field2C == 1)
-				_sentence->_field2C = 14;
+			if (_sentence->_category == 1)
+				_sentence->_category = 14;
 
 			flag = true;
 			break;
 
 		case MKTAG('H', 'E', 'L', 'P'):
-			if (_sentence->_field2C == 1)
-				_sentence->_field2C = 18;
+			if (_sentence->_category == 1)
+				_sentence->_category = 18;
 
 			flag = true;
 			break;
@@ -1259,8 +1259,8 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('T', 'E', 'A', 'C'):
-			if (_sentence->_field2C == 1)
-				_sentence->_field2C = 10;
+			if (_sentence->_category == 1)
+				_sentence->_category = 10;
 
 			flag = true;
 			break;
@@ -1404,8 +1404,8 @@ int TTparser::checkForAction() {
 		} else {
 			// No chain, so singular word can simply be removed
 			_currentWordP = nullptr;
-			if (word->_id == 906 && _sentence->_field2C == 1)
-				_sentence->_field2C = 12;
+			if (word->_id == 906 && _sentence->_category == 1)
+				_sentence->_category = 12;
 		}
 
 		if (word->_text == "do" || word->_text == "doing" || word->_text == "does" ||
@@ -1455,28 +1455,28 @@ int TTparser::checkForAction() {
 
 	if (_sentence->fn2(3, TTstring("thePlayer"), _sentenceConcept) && !flag) {
 		if (_sentenceConcept->concept1WordId() == 101) {
-			_sentence->_field2C = 16;
-		} else if (_sentence->_field2C != 18 && _sentenceConcept->concept1WordId() == 102) {
+			_sentence->_category = 16;
+		} else if (_sentence->_category != 18 && _sentenceConcept->concept1WordId() == 102) {
 			if (_sentence->fn2(0, TTstring("targetNpc"), _sentenceConcept))
-				_sentence->_field2C = 15;
+				_sentence->_category = 15;
 		}
 	}
 
 	if (_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
 			_sentenceConcept->concept1WordId() == 101 && flag)
-		_sentence->_field2C = 17;
+		_sentence->_category = 17;
 
 	if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
 			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P && !flag) {
 		if (_conceptP)
 			filterConcepts(5, 2);
 
-		if (!_sentenceConcept->_concept2P && _sentence->_field2C == 1)
-			_sentence->_field2C = 0;
+		if (!_sentenceConcept->_concept2P && _sentence->_category == 1)
+			_sentence->_category = 0;
 	}
 
-	if (_sentence->_field58 < 5 && _sentence->_field2C == 1 && !flag)
-		_sentence->_field2C = 19;
+	if (_sentence->_field58 < 5 && _sentence->_category == 1 && !flag)
+		_sentence->_category = 19;
 
 	for (TTconceptNode *nodeP = &_sentence->_sentenceConcept; nodeP; nodeP = nodeP->_nextP) {
 		if (nodeP->_field18 == 0 && nodeP->_concept1P) {
@@ -1492,15 +1492,15 @@ int TTparser::checkForAction() {
 		}
 	}
 
-	if (_sentence->_field2C == 1 && _sentenceConcept->_concept5P &&
+	if (_sentence->_category == 1 && _sentenceConcept->_concept5P &&
 			_sentenceConcept->_concept2P) {
 		if (_sentence->fn4(1, 113, nullptr)) {
 			if (_sentence->fn2(2, TTstring("targetNpc"), nullptr)) {
-				_sentence->_field2C = 20;
+				_sentence->_category = 20;
 			} else if (_sentence->fn2(2, TTstring("thePlayer"), nullptr)) {
-				_sentence->_field2C = 21;
+				_sentence->_category = 21;
 			} else {
-				_sentence->_field2C = 22;
+				_sentence->_category = 22;
 			}
 		}
 	} else if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
@@ -1508,8 +1508,8 @@ int TTparser::checkForAction() {
 		if (_conceptP)
 			filterConcepts(5, 2);
 
-		if (!_sentenceConcept->_concept2P && _sentence->_field2C == 1)
-			_sentence->_field2C = 0;
+		if (!_sentenceConcept->_concept2P && _sentence->_category == 1)
+			_sentence->_category = 0;
 	}
 
 	return status;
@@ -1660,8 +1660,8 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 
 			case 204:
 				newConcept->_field34 = 1;
-				if (_sentence->_field2C == 1)
-					_sentence->_field2C = 12;
+				if (_sentence->_category == 1)
+					_sentence->_category = 12;
 				newConcept->_field14 = 1;
 				break;
 

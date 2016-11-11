@@ -700,12 +700,12 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 	if (!entryCount)
 		// No count specified, so use entire list
 		entryCount = entries->size();
-	int entryId = _field2C;
+	int categoryNum = sentence->_category;
 
 	for (uint loopCtr = 0; loopCtr < 2; ++loopCtr) {
 		for (uint entryCtr = 0; entryCtr < entryCount; ++entryCtr) {
 			const TTsentenceEntry &entry = (*entries)[entryCtr];
-			if (entry._field4 != entryId && (loopCtr == 0 || entry._field4))
+			if (entry._category != categoryNum && (loopCtr == 0 || entry._category))
 				continue;
 
 			bool flag;
@@ -956,7 +956,7 @@ bool TTnpcScript::getStateValue() const {
 }
 
 bool TTnpcScript::sentence2C(const TTsentence *sentence) {
-	return sentence->_field2C >= 2 && sentence->_field2C <= 7;
+	return sentence->_category >= 2 && sentence->_category <= 7;
 }
 
 void TTnpcScript::getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum) const {

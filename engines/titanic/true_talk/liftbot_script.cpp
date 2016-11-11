@@ -92,7 +92,7 @@ int LiftbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 	checkItems(roomScript, sentence);
 	int currState = getState();
-	int sentMode = sentence->_field2C;
+	int sentMode = sentence->_category;
 	TTtreeResult treeResult;
 
 	if (currState) {
@@ -651,7 +651,7 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 		return 1;
 	}
 
-	if (sentence->_field2C == 4 || sentence->localWord("find")
+	if (sentence->_category == 4 || sentence->localWord("find")
 			|| sentence->contains("get to")) {
 		if (getCurrentFloor() != diff) {
 			selectResponse(diff == 1 ? 210769 : 210764);

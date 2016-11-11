@@ -167,7 +167,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			dialogueId = ARRAY2[0];
 			_arrIndex = 1;
 		} else if (getRandomNumber(100) > 60) {
-			switch (sentence->_field2C) {
+			switch (sentence->_category) {
 			case 2:
 				dialogueId = 51914;
 				break;
@@ -209,7 +209,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	int val34 = getState();
 	setState(0);
 
-	int val2C = sentence->_field2C;
+	int val2C = sentence->_category;
 	bool flag = val2C == 11 || val2C == 13;
 	bool flag2 = val2C == 12;
 
