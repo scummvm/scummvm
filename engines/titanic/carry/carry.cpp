@@ -49,8 +49,8 @@ CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
 		_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
 	_string1("None"),
 	_fullViewName("NULL"),
-	_string3("That doesn't seem to do anything."),
-	_string4("It doesn't seem to want this.") {
+	_string3(g_vm->_strings[DOESNT_DO_ANYTHING]),
+	_string4(g_vm->_strings[DOESNT_WANT_THIS]) {
 }
 
 void CCarry::save(SimpleFile *file, int indent) {
@@ -109,7 +109,7 @@ bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		}
 	} else {
 		if (_visible) {
-			CShowTextMsg textMsg("You can't get this.");
+			CShowTextMsg textMsg(YOU_CANT_GET_THIS);
 			textMsg.execute("PET");
 		}
 	}

@@ -27,6 +27,7 @@
 #include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -387,7 +388,7 @@ bool CPetControl::checkDragEnd(CGameObject *item) const {
 }
 
 void CPetControl::displayMessage(StringId stringId, int param) const {
-	CString msg = CString::format(_strings[stringId].c_str(), param);
+	CString msg = CString::format(g_vm->_strings[stringId].c_str(), param);
 	_sections[_currentArea]->displayMessage(msg);
 }
 
@@ -398,7 +399,7 @@ void CPetControl::displayMessage(const CString &str, int param) const {
 
 void CPetControl::addTranslation(StringId id1, StringId id2) {
 	setArea(PET_TRANSLATION);
-	_translation.addTranslation(_strings[id1], _strings[id2]);
+	_translation.addTranslation(g_vm->_strings[id1], g_vm->_strings[id2]);
 }
 
 void CPetControl::clearTranslation() {

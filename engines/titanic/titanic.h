@@ -122,6 +122,7 @@ public:
 	CString _itemObjects[TOTAL_ITEMS];
 	StringArray _itemIds;
 	StringArray _roomNames;
+	Strings _strings;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

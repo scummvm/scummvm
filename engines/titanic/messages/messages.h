@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/support/strings.h"
 
 namespace Titanic {
 
@@ -182,6 +183,20 @@ public:
 	}
 };
 
+class CShowTextMsg : public CMessage {
+public:
+	CString _message;
+public:
+	CLASSDEF;
+	CShowTextMsg();
+	CShowTextMsg(const CString &msg);
+	CShowTextMsg(StringId stringId);
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+};
+
 MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");
 MESSAGE1(CAddHeadPieceMsg, CString, value, "NULL");
@@ -301,7 +316,6 @@ MESSAGE0(CSetMusicControlsMsg);
 MESSAGE2(CSetVarMsg, CString, varName, "", int, value, 0);
 MESSAGE2(CSetVolumeMsg, int, volume, 70, int, secondsTransition, 0);
 MESSAGE2(CShipSettingMsg, int, value, 0, CString, name, "");
-MESSAGE1(CShowTextMsg, CString, value, "NO TEXT INCLUDED!!!");
 MESSAGE2(CSignalObject, CString, strValue, "", int, numValue, 0);
 MESSAGE1(CSpeechFallsFromTreeMsg, Point, pos, Point());
 MESSAGE1(CStartMusicMsg, CMusicPlayer *, musicPlayer, (CMusicPlayer *)nullptr);

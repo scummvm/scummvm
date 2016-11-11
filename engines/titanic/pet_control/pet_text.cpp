@@ -21,6 +21,7 @@
  */
 
 #include "titanic/pet_control/pet_text.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -210,6 +211,10 @@ CString CPetText::getText() const {
 void CPetText::setText(const CString &str) {
 	setup();
 	appendText(str);
+}
+
+void CPetText::setText(StringId stringId) {
+	setText(g_vm->_strings[stringId]);
 }
 
 void CPetText::appendText(const CString &str) {

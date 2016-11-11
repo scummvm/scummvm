@@ -107,6 +107,7 @@ void TitanicEngine::initialize() {
 	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
+	_strings.load();
 
 	setItemNames();
 	setRoomNames();

@@ -23,6 +23,7 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -164,7 +165,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
 		switch (canSummonBot("DoorBot")) {
 		case SUMMON_CANT:
-			_log.addLine("Sadly, it is not possible to summon the DoorBot from this location.", getColor(1));
+			_log.addLine(g_vm->_strings[CANT_SUMMON_DOORBOT], getColor(1));
 			break;
 		case SUMMON_CAN:
 			summonBot("DoorBot");
@@ -181,7 +182,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_bellBot.MouseButtonUpMsg(msg->_mousePos)) {
 		switch (canSummonBot("BellBot")) {
 		case SUMMON_CANT:
-			_log.addLine("Sadly, it is not possible to summon the BellBot from this location.", getColor(1));
+			_log.addLine(g_vm->_strings[CANT_SUMMON_BELLBOT], getColor(1));
 			break;
 		case SUMMON_CAN:
 			summonBot("BellBot");
@@ -277,40 +278,42 @@ void CPetConversations::timerExpired(int val) {
 }
 
 void CPetConversations::displayNPCName(CGameObject *npc) {
+	const Strings &strings = g_vm->_strings;
+
 	if (npc) {
 		displayMessage(CString());
-		CString msg = "Talking to ";
+		CString msg = strings[TALKING_TO];
 		CString name = npc->getName();
 		int id = 1;
 
 		if (name.contains("Doorbot")) {
-			msg += "the DoorBot";
+			msg += strings[DOORBOT_NAME];
 		} else if (name.contains("Deskbot")) {
 			id = 2;
-			msg += "the DeskBot";
+			msg += strings[DESKBOT_NAME];
 		} else if (name.contains("LiftBot")) {
 			id = 3;
-			msg += "a LiftBot";
+			msg += strings[LIFTBOT_NAME];
 		} else if (name.contains("Parrot")) {
 			id = 4;
-			msg += "the Parrot";
+			msg += strings[PARROT_NAME];
 		} else if (name.contains("BarBot")) {
 			id = 5;
-			msg += "the BarBot";
+			msg += strings[BARBOT_NAME];
 		} else if (name.contains("ChatterBot")) {
 			id = 6;
-			msg += "a ChatterBot";
+			msg += strings[CHATTERBOT_NAME];
 		} else if (name.contains("BellBot")) {
 			id = 7;
-			msg += "the BellBot";
+			msg += strings[BELLBOT_NAME];
 		} else if (name.contains("Maitre")) {
 			id = 8;
-			msg += "the Maitre d'Bot";
+			msg += strings[MAITRED_NAME];
 		} else if (name.contains("Succubus") || name.contains("Sub")) {
 			id = 9;
-			msg += "a Succ-U-Bus";
+			msg += strings[SUCCUBUS_NAME];
 		} else {
-			msg += "Unknown";
+			msg += strings[UNKNOWN_NAME];
 		}
 
 		_log.setNPC(1, id);
@@ -507,7 +510,7 @@ void CPetConversations::textLineEntered(const CString &textLine) {
 		if (!inputMsg._response.empty())
 			_log.addLine(inputMsg._response);
 	} else {
-		_log.addLine("There is no one here to talk to", getColor(1));
+		_log.addLine(g_vm->_strings[NO_ONE_TO_TALK_TO], getColor(1));
 	}
 
 	// Clear input line and scroll log down to end to show response

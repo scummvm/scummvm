@@ -108,7 +108,7 @@ bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
 
 bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (_string6 != "None") {
-		CShowTextMsg textMsg("The arm is already holding something.");
+		CShowTextMsg textMsg(ARM_ALREADY_HOLDING);
 		textMsg.execute("PET");
 		return false;
 	} else if (msg->_other->getName() == "GondolierLeftLever") {
@@ -138,7 +138,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 
 bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!_fieldE0) {
-		CShowTextMsg textMsg("You can't get this.");
+		CShowTextMsg textMsg(YOU_CANT_GET_THIS);
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
 		hideMouse();

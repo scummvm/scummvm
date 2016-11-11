@@ -46,7 +46,7 @@ void CGondolier::load(SimpleFile *file) {
 }
 
 bool CGondolier::StatusChangeMsg(CStatusChangeMsg *msg) {
-	CShowTextMsg textMsg("Only First Class passengers are allowed to use the Gondoliers.");
+	CShowTextMsg textMsg(GONDOLIERS_FIRST_CLASS_ONLY);
 	textMsg.execute("PET");
 	return true;
 }

@@ -136,6 +136,11 @@ public:
 	void setText(const CString &str);
 
 	/**
+	 * Set the text
+	 */
+	void setText(StringId stringId);
+
+	/**
 	 * Set text color
 	 */
 	void setColor(uint col);

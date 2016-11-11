@@ -22,6 +22,7 @@
 
 #include "titanic/carry/hose.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -44,7 +45,7 @@ void CHose::deinit() {
 }
 
 CHose::CHose() : CCarry(),
-	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
+	_string6(g_vm->_strings[HOSE_INCOMPATIBLE]) {
 }
 
 void CHose::save(SimpleFile *file, int indent) {

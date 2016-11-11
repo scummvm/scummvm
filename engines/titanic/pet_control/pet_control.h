@@ -68,7 +68,6 @@ private:
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
 	PetEventInfo _timers[2];
-	Strings _strings;
 private:
 	/**
 	 * Returns true if the control is in a valid state

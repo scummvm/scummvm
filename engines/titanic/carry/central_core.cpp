@@ -47,7 +47,7 @@ bool CCentralCore::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		CPuzzleSolvedMsg solvedMsg;
 		solvedMsg.execute("BigHammer");
 	} else if (name == "SpeechCentre") {
-		CShowTextMsg textMsg("This does not reach.");
+		CShowTextMsg textMsg(DOES_NOT_REACH);
 		textMsg.execute("PET");
 	}
 

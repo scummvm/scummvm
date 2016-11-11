@@ -40,7 +40,7 @@ void CPerch::load(SimpleFile *file) {
 
 bool CPerch::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (msg->_other->isEquals("SpeechCentre")) {
-		CShowTextMsg textMsg("This does not reach.");
+		CShowTextMsg textMsg(DOES_NOT_REACH);
 		textMsg.execute("PET");
 	}
 

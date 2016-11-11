@@ -257,11 +257,11 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		if (_turnOn)
 			loadFrame(502);
 		else
-			warning("There is currently nothing available for your viewing pleasure on this channel.");
+			petDisplayMessage(NOTHING_ON_CHANNEL);
 	} else if (_fieldE0 == 5 && *CGetLiftEye2::_destObject != "NULL") {
 		loadFrame(393 + _v4);
 	} else {
-		warning("There is currently nothing available for your viewing pleasure on this channel.");
+		petDisplayMessage(NOTHING_ON_CHANNEL);
 	}
 
 	return true;

@@ -74,7 +74,7 @@ bool CChicken::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			actMsg.execute(this);
 			petAddToInventory();
 		} else {
-			CShowTextMsg textMsg("The chicken is already clean.");
+			CShowTextMsg textMsg(CHICKEN_ALREADY_CLEAN);
 			textMsg.execute("PET");
 		}
 

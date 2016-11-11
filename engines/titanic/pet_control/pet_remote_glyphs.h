@@ -186,14 +186,12 @@ public:
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
 public:
-	CSummonElevatorGlyph() : CBasicRemoteGlyph(
-		"3PetLift", "Summon Elevator", "Lift") {}
+	CSummonElevatorGlyph();
 };
 
 class CSummonPelleratorGlyph : public CBasicRemoteGlyph {
 public:
-	CSummonPelleratorGlyph() : CBasicRemoteGlyph(
-		"3PetPellerator", "Summon Pellerator", "Pellerator") {}
+	CSummonPelleratorGlyph();
 };
 
 class CTelevisionControlGlyph : public CPetRemoteGlyph {
@@ -664,50 +662,42 @@ public:
 
 class CGotoBottomOfWellGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoBottomOfWellGlyph() : CRemoteGotoGlyph("3PetBotOfWell",
-		"Go to the Bottom of the Well") {}
+	CGotoBottomOfWellGlyph();
 };
 
 class CGotoTopOfWellGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoTopOfWellGlyph() : CRemoteGotoGlyph("3PetTopOfWell",
-		"Go to the Top of the Well") {}
+	CGotoTopOfWellGlyph();
 };
 
 class CGotoStateroomGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoStateroomGlyph() : CRemoteGotoGlyph("3PetRoom",
-		"Go to your stateroom") {}
+	CGotoStateroomGlyph();
 };
 
 class CGotoBarGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoBarGlyph() : CRemoteGotoGlyph("3PetBar",
-		"Go to the Bar") {}
+	CGotoBarGlyph();
 };
 
 class CGotoPromenadeDeckGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoPromenadeDeckGlyph() : CRemoteGotoGlyph("3PetPromDeck",
-		"Go to the Promenade Deck") {}
+	CGotoPromenadeDeckGlyph();
 };
 
 class CGotoArboretumGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoArboretumGlyph() : CRemoteGotoGlyph("3PetArboretum",
-		"Go to the Arboretum") {}
+	CGotoArboretumGlyph();
 };
 
 class CGotoMusicRoomGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
-		"Go to the Music Room") {}
+	CGotoMusicRoomGlyph();
 };
 
 class CGotoRestaurantGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
-		"Go to the First Class Restaurant") {}
+	CGotoRestaurantGlyph();
 };
 
 } // End of namespace Titanic

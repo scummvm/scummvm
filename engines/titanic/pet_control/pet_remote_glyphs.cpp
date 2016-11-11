@@ -24,6 +24,7 @@
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/support/strings.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -216,7 +217,7 @@ bool CTelevisionControlGlyph::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CTelevisionControlGlyph::getTooltip(CPetText *text) {
-	text->setText("Television control");
+	text->setText(TELEVISION_CONTROL);
 }
 
 /*------------------------------------------------------------------------*/
@@ -280,7 +281,7 @@ bool CEntertainmentDeviceGlyph::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CEntertainmentDeviceGlyph::getTooltip(CPetText *text) {
-	text->setText("Operate visual entertainment device");
+	text->setText(OPERATE_ENTERTAINMENT);
 }
 
 /*------------------------------------------------------------------------*/
@@ -334,7 +335,7 @@ bool COperateLightsGlyph::MouseButtonUpMsg(const Point &pt) {
 }
 
 void COperateLightsGlyph::getTooltip(CPetText *text) {
-	text->setText("Operate the lights");
+	text->setText(OPERATE_LIGHTS);
 }
 
 /*------------------------------------------------------------------------*/
@@ -346,7 +347,7 @@ bool CDeployFloralGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 }
 
 void CDeployFloralGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy floral enhancement");
+	text->setText(DEPLOY_FLORAL_ENHANCEMENT);
 }
 
 
@@ -359,7 +360,7 @@ bool CDeployFullyRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 }
 
 void CDeployFullyRelaxationGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy fully recumbent relaxation device");
+	text->setText(DEPLOY_FULLY_RELAXATION);
 }
 
 /*------------------------------------------------------------------------*/
@@ -371,7 +372,7 @@ bool CDeployComfortGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 }
 
 void CDeployComfortGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy comfort workstation");
+	text->setText(DEPLOY_COMFORT_WORKSTATION);
 }
 
 /*------------------------------------------------------------------------*/
@@ -383,7 +384,7 @@ bool CDeployMinorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner)
 }
 
 void CDeployMinorStorageGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy minor horizontally mobile storage compartment");
+	text->setText(DEPLOY_MINOR_STORAGE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -395,7 +396,7 @@ bool CDeployMajorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 }
 
 void CDeployMajorRelaxationGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy major semi-recumbent relaxation device");
+	text->setText(DEPLOY_MAJOR_RELAXATION);
 }
 
 /*------------------------------------------------------------------------*/
@@ -407,7 +408,7 @@ bool CInflateRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 }
 
 void CInflateRelaxationGlyph::getTooltip(CPetText *text) {
-	text->setText("Inflate fully recumbent relaxation device ");
+	text->setText(INFLATE_RELAXATION_DEVICE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -419,7 +420,7 @@ bool CDeployMaintenanceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 }
 
 void CDeployMaintenanceGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy personal maintenance hub");
+	text->setText(DEPLOY_MAINTENANCE_HUB);
 }
 
 /*------------------------------------------------------------------------*/
@@ -431,7 +432,7 @@ bool CDeployWorkSurfaceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 }
 
 void CDeployWorkSurfaceGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy executive horizontal worksurface");
+	text->setText(DEPLOY_EXECUTIVE_SURFACE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -443,7 +444,7 @@ bool CDeployMinorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 }
 
 void CDeployMinorRelaxationGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy minor semi-recumbent relaxation device");
+	text->setText(DEPLOY_MINOR_RELAXATION);
 }
 
 /*------------------------------------------------------------------------*/
@@ -455,7 +456,7 @@ bool CDeploySinkGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 }
 
 void CDeploySinkGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy aqueous cleansing receptacle");
+	text->setText(DEPLOY_SINK);
 }
 
 /*------------------------------------------------------------------------*/
@@ -467,7 +468,7 @@ bool CDeployMajorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner)
 }
 
 void CDeployMajorStorageGlyph::getTooltip(CPetText *text) {
-	text->setText("Deploy major horizontally mobile storage compartment");
+	text->setText(DEPLOY_MAJOR_STORAGE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -515,7 +516,7 @@ bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CSuccubusDeliveryGlyph::getTooltip(CPetText *text) {
-	text->setText("Succ-U-Bus delivery system control");
+	text->setText(SUCCUBUS_DELIVERY_SYSTEM);
 }
 
 /*------------------------------------------------------------------------*/
@@ -554,9 +555,67 @@ bool CNavigationControllerGlyph::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CNavigationControllerGlyph::getTooltip(CPetText *text) {
-	text->setText("Navigation controller");
+	text->setText(NAVIGATION_CONTROLLER);
 }
 
 /*------------------------------------------------------------------------*/
+
+CSummonElevatorGlyph::CSummonElevatorGlyph() : CBasicRemoteGlyph(
+		"3PetLift", g_vm->_strings[SUMMON_ELEVATOR], "Lift") {
+}
+
+/*------------------------------------------------------------------------*/
+
+CSummonPelleratorGlyph::CSummonPelleratorGlyph() : CBasicRemoteGlyph(
+		"3PetPellerator", g_vm->_strings[SUMMON_PELLERATOR], "Pellerator") {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoBottomOfWellGlyph::CGotoBottomOfWellGlyph() : CRemoteGotoGlyph("3PetBotOfWell",
+		g_vm->_strings[GO_TO_BOTTOM_OF_WELL]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoTopOfWellGlyph::CGotoTopOfWellGlyph() : CRemoteGotoGlyph("3PetTopOfWell",
+		g_vm->_strings[GO_TO_TOP_OF_WELL]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoStateroomGlyph::CGotoStateroomGlyph() : CRemoteGotoGlyph("3PetRoom",
+		g_vm->_strings[GO_TO_STATEROOM]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoBarGlyph::CGotoBarGlyph() : CRemoteGotoGlyph("3PetBar",
+		g_vm->_strings[GO_TO_BAR]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoPromenadeDeckGlyph::CGotoPromenadeDeckGlyph() : CRemoteGotoGlyph("3PetPromDeck",
+		g_vm->_strings[GO_TO_PROMENADE_DECK]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoArboretumGlyph::CGotoArboretumGlyph() : CRemoteGotoGlyph("3PetArboretum",
+		g_vm->_strings[GO_TO_ARBORETUM]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoMusicRoomGlyph::CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
+		g_vm->_strings[GO_TO_MUSIC_ROOM]) {
+}
+
+/*------------------------------------------------------------------------*/
+
+CGotoRestaurantGlyph::CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
+		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT]) {
+}
 
 } // End of namespace Titanic
