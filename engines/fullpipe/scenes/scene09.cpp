@@ -108,17 +108,19 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_sceneBalls.clear();
 
-	StaticANIObject *newball = new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
-	newball->setAlpha(0xc8);
+	StaticANIObject *newball1 = new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
+	newball1->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
-		newball = new StaticANIObject(newball);
+		StaticANIObject *newball = new StaticANIObject(newball1);
 
 		newball->setAlpha(0xc8);
 		g_vars->scene09_sceneBalls.push_back(newball);
 
 		sc->addStaticANIObject(newball, 1);
 	}
+
+	delete newball1;
 
 	g_fp->setObjectState(sO_RightStairs_9, g_fp->getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
 
