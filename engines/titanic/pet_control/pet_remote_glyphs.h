@@ -65,9 +65,9 @@ public:
 
 class CPetRemoteGlyph : public CPetGlyph {
 protected:
-	CPetGfxElement *_gfxElement;
+	CPetGfxElement *_callButton;
 protected:
-	CPetRemoteGlyph() : CPetGlyph(), _gfxElement(nullptr) {}
+	CPetRemoteGlyph() : CPetGlyph(), _callButton(nullptr) {}
 
 	/**
 	 * Set defaults for the glyph

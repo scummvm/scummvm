@@ -59,22 +59,22 @@ bool CBasicRemoteGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetRemoteGlyph::setup(petControl, owner);
 	setDefaults(_gfxName, petControl);
 	if (owner)
-		_gfxElement = getElement(18);
+		_callButton = getElement(18);
 	return true;
 }
 
 void CBasicRemoteGlyph::draw2(CScreenManager *screenManager) {
-	if (_gfxElement)
-		_gfxElement->draw(screenManager);
+	if (_callButton)
+		_callButton->draw(screenManager);
 }
 
 bool CBasicRemoteGlyph::MouseButtonDownMsg(const Point &pt) {
-	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt);
+	return _callButton && _callButton->MouseButtonDownMsg(pt);
 }
 
 bool CBasicRemoteGlyph::MouseButtonUpMsg(const Point &pt) {
-	if (_gfxElement && _gfxElement->MouseButtonUpMsg(pt)) {
-		getOwner()->generateMessage(RMSG_ACTIVATE, "Lift");
+	if (_callButton && _callButton->MouseButtonUpMsg(pt)) {
+		getOwner()->generateMessage(RMSG_ACTIVATE, _msgString);
 		return true;
 	}
 
