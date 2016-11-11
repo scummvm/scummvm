@@ -416,7 +416,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[] = {
+static const char *const STRINGS_EN[107] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -478,11 +478,62 @@ static const char *const STRINGS_EN[] = {
 	"Go where?",
 	"It would be nice if you could take that but you can't.",
 	"A bowl of pistachio nuts.",
-	"Not a bowl of pistachio nuts."
+	"Not a bowl of pistachio nuts.",
+	
+	"Sadly, it is not possible to summon the DoorBot from this location.",
+	"Sadly, it is not possible to summon the BellBot from this location.",
+	"There is no one here to talk to",
+	"Talking to ",
+	"the DoorBot",
+	"the DeskBot",
+	"a LiftBot",
+	"the Parrot",
+	"the BarBot",
+	"a ChatterBot",
+	"the BellBot",
+	"the Maitre d'Bot",
+	"a Succ-U-Bus",
+	"Unknown"
+	"The arm is already holding something.",
+	"You can't get this.",
+	"That doesn't seem to do anything.",
+	"It doesn't seem to want this.",
+	"This does not reach.",
+	"The chicken is already clean.",
+	"Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.",
+	"This item is incorrectly calibrated.",
+	"Only First Class passengers are allowed to use the Gondoliers.",
+	"There is currently nothing available for your viewing pleasure on this channel.",
+	"Television control",
+	"Operate visual entertainment device",
+	"Operate the lights",
+	"Deploy floral enhancement",
+	"Deploy fully recumbent relaxation device",
+	"Deploy comfort workstation",
+	"Deploy minor horizontally mobile storage compartment",
+	"Deploy major semi-recumbent relaxation device",
+	"Inflate fully recumbent relaxation device ",
+	"Deploy personal maintenance hub",
+	"Deploy executive horizontal worksurface",
+	"Deploy minor semi-recumbent relaxation device",
+	"Deploy aqueous cleansing receptacle",
+	"Deploy major horizontally mobile storage compartment",
+	"Succ-U-Bus delivery system control",
+	"Navigation controller",
+	"Summon Elevator",
+	"Summon Pellerator",
+	"Go to the Bottom of the Well",
+	"Go to the Top of the Well",
+	"Go to your stateroom",
+	"Go to the Bar",
+	"Go to the Promenade Deck",
+	"Go to the Arboretum",
+	"Go to the Music Room",
+	"Go to the First Class Restaurant"
 };
 
-static const char *const STRINGS_DE[] = {
-	// TODO: Translate these to their German versions
+static const char *const STRINGS_DE[152] = {
+	// TODO: Still many strings to translate to German
 	"",
 	"Sie befinden sich vor dem Pellerator.",
 	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
@@ -560,6 +611,57 @@ static const char *const STRINGS_DE[] = {
 		"aber das k\xF6nnen Sie eben nicht.",
 	"Eine Schale Pistazien.",
 	"Keine Schale Pistazien.",
+
+	"Sadly, it is not possible to summon the DoorBot from this location.",
+	"Sadly, it is not possible to summon the BellBot from this location.",
+	"There is no one here to talk to",
+	"Talking to ",
+	"the DoorBot",
+	"the DeskBot",
+	"a LiftBot",
+	"the Parrot",
+	"the BarBot",
+	"a ChatterBot",
+	"the BellBot",
+	"the Maitre d'Bot",
+	"a Succ-U-Bus",
+	"Unknown"
+	"The arm is already holding something.",
+	"You can't get this.",
+	"That doesn't seem to do anything.",
+	"It doesn't seem to want this.",
+	"This does not reach.",
+	"The chicken is already clean.",
+	"Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.",
+	"This item is incorrectly calibrated.",
+	"Only First Class passengers are allowed to use the Gondoliers.",
+	"There is currently nothing available for your viewing pleasure on this channel.",
+	"Television control",
+	"Operate visual entertainment device",
+	"Operate the lights",
+	"Deploy floral enhancement",
+	"Deploy fully recumbent relaxation device",
+	"Deploy comfort workstation",
+	"Deploy minor horizontally mobile storage compartment",
+	"Deploy major semi-recumbent relaxation device",
+	"Inflate fully recumbent relaxation device ",
+	"Deploy personal maintenance hub",
+	"Deploy executive horizontal worksurface",
+	"Deploy minor semi-recumbent relaxation device",
+	"Deploy aqueous cleansing receptacle",
+	"Deploy major horizontally mobile storage compartment",
+	"Succ-U-Bus delivery system control",
+	"Navigation controller",
+	"Summon Elevator",
+	"Summon Pellerator",
+	"Go to the Bottom of the Well",
+	"Go to the Top of the Well",
+	"Go to your stateroom",
+	"Go to the Bar",
+	"Go to the Promenade Deck",
+	"Go to the Arboretum",
+	"Go to the Music Room",
+	"Go to the First Class Restaurant"
 
 	"Sommer",
 	"Herbst",
@@ -1089,8 +1191,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 58);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 104);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 107);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 152);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
