@@ -66,7 +66,7 @@ void CLiftBot::load(SimpleFile *file) {
 bool CLiftBot::TextInputMsg(CTextInputMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (_enabled || pet->getRoomsElevatorNum() != 4) {
-		if (getName() != "LiftBot") {
+		if (getName() == "LiftBot") {
 			CViewItem *view = findView();
 			processInput(msg, view);
 		}
@@ -108,7 +108,7 @@ bool CLiftBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CLiftBot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (getName() != "LiftBot")
+	if (getName() == "LiftBot")
 		performAction(false);
 
 	return true;
