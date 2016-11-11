@@ -514,7 +514,9 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	_gameManager->_sound.stopChannel(p1._channelMode);
 	if (view) {
 		p1._positioningMode = POSMODE_VECTOR;
+#if 0
 		view->getPosition(p1._posX, p1._posY, p1._posZ);
+#endif
 	}
 
 	// Loop through adding each of the speech portions in. We use the
