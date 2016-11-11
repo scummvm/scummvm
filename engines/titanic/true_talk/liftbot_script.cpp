@@ -180,6 +180,7 @@ ScriptChangedResult LiftbotScript::scriptChanged(const TTroomScript *roomScript,
 			addResponse(getDialogueId(210033));
 		}
 		CTrueTalkManager::setFlags(27, 1);
+		applyResponse();
 		break;
 
 	case 155:
