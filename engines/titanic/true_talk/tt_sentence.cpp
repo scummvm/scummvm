@@ -109,10 +109,10 @@ int TTsentence::storeVocabHit(TTword *word) {
 
 bool TTsentence::fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
 		const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const {
-	if (node)
+	if (!node)
 		node = &_sentenceConcept;
 
-	if (!node && !node)
+	if (!node)
 		return false;
 	if (val1 && !is18(val1, node))
 		return false;
