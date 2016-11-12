@@ -92,7 +92,7 @@ bool CRoomFlags::isTransportRoom() const {
 }
 
 int CRoomFlags::getRoomCategory() const {
-	if (getRoomNum() == 0)
+	if (getRoomNum() != 0)
 		return false;
 
 	CRoomFlags tempFlags = _data;

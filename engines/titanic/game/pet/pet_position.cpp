@@ -155,6 +155,7 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 		if (pet) {
 			pet->setRooms1CC(1);
 			pet->setRoomsRoomNum(roomNum);
+			pet->resetRoomsHighlight();
 
 			if (viewStr == "Node 1.S")
 				pet->setRoomsWellEntry(pet->getRoomsElevatorNum());
