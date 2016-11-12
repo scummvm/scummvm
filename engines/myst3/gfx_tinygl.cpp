@@ -181,8 +181,8 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	}
 
 	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
-	int viewport[4];
-	tglGetIntegerv(TGL_VIEWPORT, viewport);
+	int viewPort[4];
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
 
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
