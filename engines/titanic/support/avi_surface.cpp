@@ -175,7 +175,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			delete info;
 
 			if (_movieRangeInfo.empty()) {
-				// NO more ranges, so stop playback
+				// No more ranges, so stop playback
 				stop();
 			} else {
 				// Not empty, so move onto new first one

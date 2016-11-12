@@ -164,17 +164,15 @@ bool OSMovie::handleEvents(CMovieEventList &events) {
 
 	if (!_aviSurface.isPlaying())
 		return false;
-	if (!_aviSurface.isNextFrame())
-		return _aviSurface.isPlaying();
 
 	// Handle updating the frame
 	while (_aviSurface.isPlaying() && _aviSurface.isNextFrame()) {
 		_aviSurface.handleEvents(events);
 		_videoSurface->setTransparencySurface(_aviSurface.getSecondarySurface());
-	}
 
-	// Flag there's a video frame
-	_hasVideoFrame = true;
+		// Flag there's a video frame
+		_hasVideoFrame = true;
+	}
 
 	return _aviSurface.isPlaying();
 }

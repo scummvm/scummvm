@@ -178,7 +178,7 @@ bool CChickenDispensor::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CChickenDispensor::TurnOff(CTurnOff *msg) {
-	if (getMovieFrame() == 16)
+	if (getMovieFrame() != 16)
 		setVisible(false);
 	playMovie(16, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	_fieldE8 = 0;
