@@ -138,6 +138,8 @@ int CRoomFlags::getRoomArea() const {
 }
 
 CString CRoomFlags::getRoomDesc() const {
+	Strings &str = g_vm->_strings;
+
 	switch (getRoomArea()) {
 	case 1:
 	case 2:
@@ -155,58 +157,58 @@ CString CRoomFlags::getRoomDesc() const {
 	case 4:
 		switch (_data) {
 		case 0x1D0D9:
-			return "The Parrot Lobby";
+			return str[THE_PARROT_LOBBY];
 		case 0x2F86D:
-			return "The Creators' Chamber";
+			return str[THE_CREATORS_CHAMBER];
 		case 0x39FCB:
-			return "The Bridge";
+			return str[THE_BRIDGE];
 		case 0x3D94B:
-			return "The Bilge Room";
+			return str[THE_BILGE_ROOM];
 		case 0x465FB:
-			return "The Sculpture Chamber";
+			return str[THE_SCULPTURE_CHAMBER];
 		case 0x4D6AF:
-			return "The Arboretum";
+			return str[THE_ARBORETUM];
 		case 0x59FAD:
-			return "The Bottom of the Well";
+			return str[THE_BOTTOM_OF_THE_WELL];
 		case 0x79C45:
-			return "The Promenade Deck";
+			return str[THE_PROMENADE_DECK];
 		case 0x896B9:
-			return "The 1st class restaurant";
+			return str[RESTAURANT_1ST_CLASS];
 		case 0x8A397:
-			return "Titania's Room";
+			return str[TITANIAS_ROOM];
 		case 0xB3D97:
-			return "The Bar";
+			return str[THE_BAR];
 		case 0xCC971:
-			return "The Embarkation Lobby";
+			return str[THE_EMBARKATION_LOBBY];
 		case 0xF34DB:
-			return  "The Music Room";
+			return  str[THE_MUSIC_ROOM];
 		default:
 			break;
 		}
-		return "Unknown Room";
+		return str[UNKNOWN_ROOM];
 
 	case 5:
 		if (isTransportRoom()) {
 			switch (_data) {
 			case 0x68797:
-				return "The Service Elevator";
+				return str[THE_SERVICE_ELEVATOR];
 			case 0x5D3AD:
-				return "The Super Galactic Leisure Lounge";
+				return str[SGT_LEISURE_LOUNGE];
 			case 0x96E45:
-				return "The Elevator";
+				return str[THE_ELEVATOR];
 			case 0xAD171:
-				return "The Dome";
+				return str[THE_DOME];
 			case 0xC95E9:
-				return "The Pellerator";
+				return str[THE_PELLERATOR];
 			case 0xDF4D1:
-				return  "The Top of the Well";
+				return str[THE_TOP_OF_THE_WELL];
 			default:
 				break;
 			}
 		}
 
 		if (getRoomCategory() == 0) {
-			return "Nowhere you're likely to want to go.";
+			return str[NOWHERE_TO_GO];
 		} else {
 			CString result = getPassengerClassDesc();
 			result += ", ";
@@ -219,7 +221,7 @@ CString CRoomFlags::getRoomDesc() const {
 		break;
 	}
 
-	return "Unknown Room";
+	return str[UNKNOWN_ROOM];
 }
 
 void CRoomFlags::setElevatorBits(uint val) {
@@ -242,16 +244,17 @@ uint CRoomFlags::getPassengerClassBits() const {
 
 CString CRoomFlags::getPassengerClassDesc() const {
 	PassengerClass classNum = getPassengerClassNum();
+	Strings &str = g_vm->_strings;
 
 	switch (classNum) {
 	case FIRST_CLASS:
-		return "1st class";
+		return str[CLASS_1];
 	case SECOND_CLASS:
-		return "2nd class";
+		return str[CLASS_2];
 	case THIRD_CLASS:
-		return "SGT class";
+		return str[CLASS_3];
 	default:
-		return "no class";
+		return str[CLASS_NONE];
 	}
 }
 
