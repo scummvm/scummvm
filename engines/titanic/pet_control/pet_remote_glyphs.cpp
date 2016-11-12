@@ -125,22 +125,22 @@ bool CRemoteGotoGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	setDefaults(_gfxName, petControl);
 
 	if (owner)
-		_gfxElement = getElement(7);
+		_goButton = getElement(7);
 
 	return true;
 }
 
 void CRemoteGotoGlyph::draw2(CScreenManager *screenManager) {
-	if (_gfxElement)
-		_gfxElement->draw(screenManager);
+	if (_goButton)
+		_goButton->draw(screenManager);
 }
 
 bool CRemoteGotoGlyph::MouseButtonDownMsg(const Point &pt) {
-	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt);
+	return _goButton && _goButton->MouseButtonDownMsg(pt);
 }
 
 bool CRemoteGotoGlyph::MouseButtonUpMsg(const Point &pt) {
-	if (!_gfxElement || !_gfxElement->MouseButtonUpMsg(pt))
+	if (!_goButton || !_goButton->MouseButtonUpMsg(pt))
 		return false;
 
 	CPetControl *petControl = getPetControl();
@@ -573,49 +573,49 @@ CSummonPelleratorGlyph::CSummonPelleratorGlyph() : CBasicRemoteGlyph(
 /*------------------------------------------------------------------------*/
 
 CGotoBottomOfWellGlyph::CGotoBottomOfWellGlyph() : CRemoteGotoGlyph("3PetBotOfWell",
-		g_vm->_strings[GO_TO_BOTTOM_OF_WELL]) {
+		g_vm->_strings[GO_TO_BOTTOM_OF_WELL], 10) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoTopOfWellGlyph::CGotoTopOfWellGlyph() : CRemoteGotoGlyph("3PetTopOfWell",
-		g_vm->_strings[GO_TO_TOP_OF_WELL]) {
+		g_vm->_strings[GO_TO_TOP_OF_WELL], 32) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoStateroomGlyph::CGotoStateroomGlyph() : CRemoteGotoGlyph("3PetRoom",
-		g_vm->_strings[GO_TO_STATEROOM]) {
+		g_vm->_strings[GO_TO_STATEROOM], 33) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoBarGlyph::CGotoBarGlyph() : CRemoteGotoGlyph("3PetBar",
-		g_vm->_strings[GO_TO_BAR]) {
+		g_vm->_strings[GO_TO_BAR], 7) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoPromenadeDeckGlyph::CGotoPromenadeDeckGlyph() : CRemoteGotoGlyph("3PetPromDeck",
-		g_vm->_strings[GO_TO_PROMENADE_DECK]) {
+		g_vm->_strings[GO_TO_PROMENADE_DECK], 23) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoArboretumGlyph::CGotoArboretumGlyph() : CRemoteGotoGlyph("3PetArboretum",
-		g_vm->_strings[GO_TO_ARBORETUM]) {
+		g_vm->_strings[GO_TO_ARBORETUM], 5) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoMusicRoomGlyph::CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
-		g_vm->_strings[GO_TO_MUSIC_ROOM]) {
+		g_vm->_strings[GO_TO_MUSIC_ROOM], 20) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CGotoRestaurantGlyph::CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
-		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT]) {
+		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT], 1) {
 }
 
 } // End of namespace Titanic

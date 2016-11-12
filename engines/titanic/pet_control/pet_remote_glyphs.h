@@ -150,13 +150,13 @@ public:
 class CRemoteGotoGlyph : public CPetRemoteGlyph {
 protected:
 	int _roomIndex;
-	CPetGfxElement *_gfxElement;
+	CPetGfxElement *_goButton;
 	CString _gfxName, _tooltip;
 public:
-	CRemoteGotoGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21) {}
-	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip) :
-		CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21),
-		_gfxName(gfxName), _tooltip(tooltip) {}
+	CRemoteGotoGlyph() : CPetRemoteGlyph(), _goButton(nullptr), _roomIndex(21) {}
+	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip, int roomIndex) :
+		CPetRemoteGlyph(), _gfxName(gfxName), _tooltip(tooltip), _roomIndex(roomIndex),
+		_goButton(nullptr) {}
 
 	/**
 	 * Setup the glyph
