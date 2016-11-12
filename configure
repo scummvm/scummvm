@@ -4308,7 +4308,8 @@ else
 		_GLEW_LIBS="-lGLEW"
 		;;
 	mingw*)
-		_GLEW_LIBS="-lglu32 -lglew32"
+		_GLEW_CFLAGS="-DGLEW_STATIC"
+		_GLEW_LIBS="-lglu32 -lglew32 -lopengl32"
 		;;
 	*)
 		_GLEW_LIBS="-lGLU -lGLEW"
@@ -4324,12 +4325,12 @@ int main(void) {
 	return 0;
 }
 EOF
-		cc_check $DEFINES $GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS && _glew=yes
+		cc_check $DEFINES $GLEW_CFLAGS $_GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS && _glew=yes
 	fi
 
 	if test "$_glew" = yes ; then
 		append_var LIBS "$GLEW_LIBS $_GLEW_LIBS"
-		append_var INCLUDES "$GLEW_CFLAGS"
+		append_var INCLUDES "$GLEW_CFLAGS $_GLEW_CFLAGS"
 	fi
 
 	echo "$_glew"
