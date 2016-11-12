@@ -28,6 +28,7 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
@@ -109,8 +110,8 @@ uint32 Anim::getDuration() const {
 }
 
 void Anim::playAsAction(ItemVisual *item) {
-	// TODO: Implement for each anim type
-	warning("Anim::playAsAction is not implemented");
+	AnimScript *animScript = findChild<AnimScript>();
+	animScript->goToScriptItem(0);
 }
 
 bool Anim::isAtTime(uint32 time) const {
