@@ -344,7 +344,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
-	cp /usr/local/bin/SDL.dll $(WIN32PATH)
+	cp /usr/local/bin/SDL2.dll $(WIN32PATH)
 	cp $(srcdir)/icons/residualvm.ico $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt

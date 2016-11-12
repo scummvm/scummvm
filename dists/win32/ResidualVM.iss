@@ -74,4 +74,4 @@ Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
 Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: residualvm.exe; DestDir: {app}; Flags: ignoreversion
-Source: SDL.dll; DestDir: {app}; Flags: replacesameversion
+Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
