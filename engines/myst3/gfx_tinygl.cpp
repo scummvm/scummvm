@@ -187,7 +187,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	Graphics::BlitTransform transform(sLeft + viewport[0], sTop + viewport[1]);
+	Graphics::BlitTransform transform(sLeft + viewPort[0], sTop + viewPort[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
