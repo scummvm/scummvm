@@ -326,10 +326,13 @@ void GuiManager::runLoop() {
 			//
 			// This hopefully fixes strange behavior/crashes with pop-up widgets. (Most easily
 			// triggered in 3x mode or when running ScummVM under Valgrind.)
-			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
-				continue;
-
+			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED) {
+				processEvent(event, getTopDialog());
+				continue;		
+			}
+			
 			processEvent(event, activeDialog);
+			
 
 			if (lastRedraw + waitTime < _system->getMillis(true)) {
 				lastRedraw = _system->getMillis(true);
@@ -504,6 +507,8 @@ void GuiManager::screenChange() {
 }
 
 void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDialog) {
+	if (activeDialog == 0)
+		return;
 	int button;
 	uint32 time;
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
