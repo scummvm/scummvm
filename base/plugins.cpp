@@ -141,9 +141,6 @@ public:
 		#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
 		#endif
-		#if PLUGIN_ENABLED_STATIC(STARK)
-		LINK_PLUGIN(STARK)
-		#endif
 
 		return pl;
 	}

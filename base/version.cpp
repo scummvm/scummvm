@@ -51,7 +51,7 @@
  * header file, analog to internal_version.h, maybe called svn_rev.h or so.)
  *
  * Drawback: This only works on systems which can run suitable scripts as part
- * of the build proces (so I guess Visual C++ would be out of the game here?
+ * of the build process (so I guess Visual C++ would be out of the game here?
  * I don't know VC enough to be sure). And of course it must be robust enough
  * to properly work in exports (i.e. release tar balls etc.).
  */

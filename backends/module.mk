@@ -3,6 +3,7 @@ MODULE := backends
 MODULE_OBJS := \
 	base-backend.o \
 	modular-backend.o \
+	audiocd/audiocd-stream.o \
 	audiocd/default/default-audiocd.o \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
@@ -90,6 +91,7 @@ endif
 
 ifdef MACOSX
 MODULE_OBJS += \
+	audiocd/macosx/macosx-audiocd.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
@@ -98,11 +100,13 @@ endif
 
 ifdef WIN32
 MODULE_OBJS += \
+	audiocd/win32/win32-audiocd.o \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
 	plugins/win32/win32-provider.o \
 	saves/windows/windows-saves.o \
+	updates/win32/win32-updates.o \
 	taskbar/win32/win32-taskbar.o
 endif
 
@@ -119,6 +123,11 @@ MODULE_OBJS += \
 	fs/posix/posix-fs-factory.o \
 	fs/ps3/ps3-fs-factory.o \
 	events/ps3sdl/ps3sdl-events.o
+endif
+
+ifdef USE_LINUXCD
+MODULE_OBJS += \
+	audiocd/linux/linux-audiocd.o
 endif
 
 ifeq ($(BACKEND),tizen)

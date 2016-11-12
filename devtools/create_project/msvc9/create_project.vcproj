@@ -170,6 +170,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\cmake.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\codeblocks.cpp"
 				>
 			</File>
@@ -197,6 +201,10 @@
 			>
 			<File
 				RelativePath="..\create_project.h"
+				>
+			</File>
+			<File
+				RelativePath="..\cmake.h"
 				>
 			</File>
 			<File

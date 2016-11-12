@@ -27,7 +27,6 @@
 #include "common/textconsole.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
 
 namespace Audio {
 

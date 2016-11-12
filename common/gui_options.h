@@ -56,6 +56,7 @@
 #define GUIO_RENDERPC9801    "\040"
 #define GUIO_RENDERAPPLE2GS  "\041"
 #define GUIO_RENDERATARIST   "\042"
+#define GUIO_RENDERMACINTOSH "\043"
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
@@ -67,6 +68,7 @@
 #define GUIO_GAMEOPTIONS6    "\055"
 #define GUIO_GAMEOPTIONS7    "\056"
 #define GUIO_GAMEOPTIONS8    "\057"
+#define GUIO_GAMEOPTIONS9    "\058"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)

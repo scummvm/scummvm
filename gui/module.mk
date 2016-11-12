@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	widgets/list.o \
 	widgets/popup.o \
 	widgets/scrollbar.o \
+	widgets/scrollcontainer.o \
 	widgets/tab.o
 
 # HACK: create_project's XCode generator relies on the following ifdef
@@ -63,6 +64,11 @@ endif
 ifdef USE_FLUIDSYNTH
 MODULE_OBJS += \
 	fluidsynth-dialog.o
+endif
+
+ifdef USE_UPDATES
+MODULE_OBJS += \
+	updates-dialog.o
 endif
 
 # Include common rules

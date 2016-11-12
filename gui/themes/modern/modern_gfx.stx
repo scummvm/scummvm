@@ -178,7 +178,7 @@
 				color = '128, 128, 128'
 		/>
 
-		<text_color id = 'color_button_hover'
+		<text_color	id = 'color_button_hover'
 				color = 'white'
 		/>
 	

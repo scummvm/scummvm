@@ -9,6 +9,7 @@ lib*.a
 /config.log
 /residualvm
 /residualvm-static
+/ResidualVMDockTilePlugin*
 /config.h
 /config.mk
 /.gdb_history
@@ -19,6 +20,7 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ResidualVM.app
+/residualvm.docktileplugin
 /residualvm-ps3.pkg
 /*.ipk
 /*.dmg
@@ -29,6 +31,7 @@ lib*.a
 /Icon.*
 /*.m4b
 /*.lab
+/*.dat
 
 /build
 /staging
@@ -79,6 +82,7 @@ project.xcworkspace
 /test/*.dSYM
 
 /devtools/create_project/create_project
+/devtools/create_translations/create_translations
 
 #ignore thumbnails created by windows
 Thumbs.db
@@ -113,10 +117,15 @@ ipch/
 *.vcxproj*
 *.bat
 *.tss
+*.VC.db
 
 #Ignore default Visual Studio build folders
-[Dd]ebug*/
-[Rr]elease*/
+[Dd]ebug/
+[Rr]elease/
+[Dd]ebug32/
+[Rr]elease32/
+[Dd]ebug64/
+[Rr]elease64/
 LLVM32/
 LLVM64/
 

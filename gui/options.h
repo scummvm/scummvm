@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "audio/mididrv.h"
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
@@ -212,7 +212,7 @@ public:
 	virtual void reflowLayout();
 
 protected:
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	KeysDialog *_keysDialog;
 #endif
 #ifdef USE_FLUIDSYNTH
@@ -238,6 +238,11 @@ protected:
 	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
+
+#ifdef USE_UPDATES
+	StaticTextWidget *_updatesPopUpDesc;
+	PopUpWidget *_updatesPopUp;
+#endif
 };
 
 } // End of namespace GUI

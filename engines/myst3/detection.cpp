@@ -180,8 +180,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
 	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
-		_singleid = "myst3";
-		_guioptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
+		_singleId = "myst3";
+		_guiOptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

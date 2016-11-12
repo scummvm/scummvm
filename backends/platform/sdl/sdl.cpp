@@ -49,9 +49,10 @@
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
-#ifdef  USE_OPENGL
+#ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "graphics/opengl/context.h"
+//#include "graphics/cursorman.h" // ResidualVM
+#include "graphics/opengl/context.h" // ResidualVM specific
 #endif
 
 #include <time.h>	// for getTimeAndDate()
@@ -169,10 +170,12 @@ void OSystem_SDL::initBackend() {
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
+// ResidualVM specific code start
 	detectDesktopResolution();
 #ifdef USE_OPENGL
 	detectFramebufferSupport();
 #endif
+// ResidualVM specific code end
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
@@ -203,15 +206,7 @@ void OSystem_SDL::initBackend() {
 		_timerManager = new SdlTimerManager();
 #endif
 
-	if (_audiocdManager == 0) {
-		// Audio CD support was removed with SDL 2.0
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		_audiocdManager = new DefaultAudioCDManager();
-#else
-		_audiocdManager = new SdlAudioCDManager();
-#endif
-
-	}
+	_audiocdManager = createAudioCDManager();
 
 	// Setup a custom program icon.
 	_window->setupIcon();
@@ -345,6 +340,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	_window->setWindowCaption(cap);
 }
 
+// ResidualVM specific code
 void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) {
 #ifdef USE_OPENGL
 	bool switchedManager = false;
@@ -374,6 +370,7 @@ void OSystem_SDL::setupScreen(uint screenW, uint screenH, bool fullscreen, bool 
 void OSystem_SDL::launcherInitSize(uint w, uint h) {
 	setupScreen(w, h, false, false);
 }
+// End of ResidualVM specific code
 
 void OSystem_SDL::quit() {
 	delete this;
@@ -528,6 +525,15 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 	return g_eventRec.getTimerManager();
 #else
 	return _timerManager;
+#endif
+}
+
+AudioCDManager *OSystem_SDL::createAudioCDManager() {
+	// Audio CD support was removed with SDL 2.0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return new DefaultAudioCDManager();
+#else
+	return new SdlAudioCDManager();
 #endif
 }
 

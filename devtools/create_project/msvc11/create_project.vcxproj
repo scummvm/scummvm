@@ -101,6 +101,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\cmake.cpp" />
     <ClCompile Include="..\codeblocks.cpp" />
     <ClCompile Include="..\create_project.cpp" />
     <ClCompile Include="..\msbuild.cpp" />
@@ -109,6 +110,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     <ClCompile Include="..\xcode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\cmake.h" />
     <ClInclude Include="..\codeblocks.h" />
     <ClInclude Include="..\config.h" />
     <ClInclude Include="..\create_project.h" />

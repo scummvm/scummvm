@@ -83,6 +83,7 @@ public:
 
 	// ResidualVM specific code
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
+	// ResidualVM specific code
 	virtual void launcherInitSize(uint w, uint h) override;
 
 protected:
@@ -118,6 +119,11 @@ protected:
 	 * Initialze the SDL library.
 	 */
 	virtual void initSDL();
+
+	/**
+	 * Create the audio CD manager
+	 */
+	virtual AudioCDManager *createAudioCDManager();
 
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }

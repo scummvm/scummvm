@@ -28,7 +28,7 @@
 class OSystem_POSIX : public OSystem_SDL {
 public:
 	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_POSIX(Common::String baseConfigName = ".residualvmrc");
+	OSystem_POSIX(Common::String baseConfigName = "residualvm.ini");
 	virtual ~OSystem_POSIX() {}
 
 	virtual bool hasFeature(Feature f);
@@ -59,6 +59,8 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual Common::WriteStream *createLogFile();
+
+	virtual AudioCDManager *createAudioCDManager();
 };
 
 #endif

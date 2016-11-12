@@ -2,7 +2,6 @@
 # included by the default (main) Makefile.
 #
 
-
 #
 # POSIX specific
 #
@@ -69,9 +68,41 @@ deb:
 	debian/prepare
 	fakeroot debian/rules binary
 
-# Special target to create a application wrapper for Mac OS X
+ifdef USE_DOCKTILEPLUGIN
+
+# The NsDockTilePlugIn needs to be compiled in both 32 and 64 bits irrespective of how ScummVM itself is compiled.
+# Therefore do not use $(CXXFLAGS) and $(LDFLAGS).
+
+ScummVMDockTilePlugin32.o:
+	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
+
+ScummVMDockTilePlugin32: ScummVMDockTilePlugin32.o
+	$(CXX) -mmacosx-version-min=10.6 -arch i386 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin32.o -o ScummVMDockTilePlugin32
+
+ScummVMDockTilePlugin64.o:
+	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin64.o
+
+ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
+	$(CXX) -mmacosx-version-min=10.6 -arch x86_64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin64.o -o ScummVMDockTilePlugin64
+
+ResidualVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
+	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ResidualVMDockTilePlugin
+
+residualvm.docktileplugin: ResidualVMDockTilePlugin
+	mkdir -p residualvm.docktileplugin/Contents
+	cp $(srcdir)/dists/macosx/dockplugin/Info.plist residualvm.docktileplugin/Contents
+	mkdir -p residualvm.docktileplugin/Contents/MacOS
+	cp ResidualVMDockTilePlugIn residualvm.docktileplugin/Contents/MacOS/
+	chmod 644 residualvm.docktileplugin/Contents/MacOS/ResidualVMDockTilePlugIn
+
+endif
+
 bundle_name = ResidualVM.app
+ifdef USE_DOCKTILEPLUGIN
+bundle: residualvm-static residualvm.docktileplugin
+else
 bundle: residualvm-static
+endif
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -79,7 +110,8 @@ bundle: residualvm-static
 ifdef USE_SPARKLE
 	mkdir -p $(bundle_name)/Contents/Frameworks
 	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
-	cp -R $(STATICLIBPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
+	cp -R $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
 	cp $(srcdir)/icons/residualvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
@@ -99,6 +131,10 @@ endif
 	cp residualvm-static $(bundle_name)/Contents/MacOS/residualvm
 	chmod 755 $(bundle_name)/Contents/MacOS/residualvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/residualvm
+ifdef USE_DOCKTILEPLUGIN
+	mkdir -p $(bundle_name)/Contents/PlugIns
+	cp -r residualvm.docktileplugin $(bundle_name)/Contents/PlugIns/
+endif
 
 iphonebundle: iphone
 	mkdir -p $(bundle_name)
@@ -120,6 +156,8 @@ endif
 ifneq ($(BACKEND), iphone)
 # Static libaries, used for the residualvm-static and iphone targets
 OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
+# With sdl2-config we don't always get the OpenGL framework
+OSX_STATIC_LIBS += -framework OpenGL
 endif
 
 ifdef USE_FREETYPE2
@@ -184,7 +222,10 @@ OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
-OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
+ifneq ($(SPARKLEPATH),)
+OSX_STATIC_LIBS += -F$(SPARKLEPATH)
+endif
+OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 
 # ResidualVM specific:
@@ -218,6 +259,7 @@ iphone: $(OBJS)
 # TODO: Replace AUTHORS by Credits.rtf
 osxsnap: bundle
 	mkdir ResidualVM-snapshot
+	$(srcdir)/devtools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./ResidualVM-snapshot/Authors
 	cp $(srcdir)/COPYING ./ResidualVM-snapshot/License\ \(GPL\)
 	cp $(srcdir)/COPYING.BSD ./ResidualVM-snapshot/License\ \(BSD\)
@@ -244,6 +286,8 @@ osxsnap: bundle
 					-volname "ResidualVM" \
 					ResidualVM-snapshot.dmg
 	rm -rf ResidualVM-snapshot
+publish-appcast:
+	scp dists/macosx/residualvm_appcast.xml www.residualvm.org:/var/www/appcasts/macosx/release.xml
 
 #
 # Windows specific
@@ -297,12 +341,12 @@ CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
 
 ideprojects: devtools/create_project
 ifeq ($(VER_DIRTY), -dirty)
-	$(error You have uncommitted changes) 
-endif 
+	$(error You have uncommitted changes)
+endif
 ifeq "$(CUR_BRANCH)" "heads/master"
-	$(error You cannot do it on master) 
+	$(error You cannot do it on master)
 else ifeq "$(CUR_BRANCH)" ""
-	$(error You must be on a release branch) 
+	$(error You must be on a release branch)
 endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/plugins_table.h *.workspace *.cbp

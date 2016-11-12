@@ -38,6 +38,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <errno.h>
 
 #ifdef __OS2__
 #define INCL_DOS
@@ -250,5 +251,68 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
+
+namespace Posix {
+
+bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
+	struct stat sb;
+
+	// Check whether the prefix exists if one is supplied.
+	if (prefix) {
+		if (stat(prefix, &sb) != 0) {
+			return false;
+		} else if (!S_ISDIR(sb.st_mode)) {
+			return false;
+		}
+	}
+
+	// Obtain absolute path.
+	Common::String path;
+	if (prefix) {
+		path = prefix;
+		path += '/';
+		path += dir;
+	} else {
+		path = dir;
+	}
+
+	path = Common::normalizePath(path, '/');
+
+	const Common::String::iterator end = path.end();
+	Common::String::iterator cur = path.begin();
+	if (*cur == '/')
+		++cur;
+
+	do {
+		if (cur + 1 != end) {
+			if (*cur != '/') {
+				continue;
+			}
+
+			// It is kind of ugly and against the purpose of Common::String to
+			// insert 0s inside, but this is just for a local string and
+			// simplifies the code a lot.
+			*cur = '\0';
+		}
+
+		if (mkdir(path.c_str(), 0755) != 0) {
+			if (errno == EEXIST) {
+				if (stat(path.c_str(), &sb) != 0) {
+					return false;
+				} else if (!S_ISDIR(sb.st_mode)) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		*cur = '/';
+	} while (cur++ != end);
+
+	return true;
+}
+
+} // End of namespace Posix
 
 #endif //#if defined(POSIX)

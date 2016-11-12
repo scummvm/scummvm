@@ -29,6 +29,7 @@
 #include "common/md5.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
+#include "common/archive.h"
 
 #ifdef MACOSX
 #include "common/config-manager.h"
@@ -261,6 +262,76 @@ bool MacResManager::exists(const String &fileName) {
 	return false;
 }
 
+void MacResManager::listFiles(StringArray &files, const String &pattern) {
+	// Base names discovered so far.
+	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> BaseNameSet;
+	BaseNameSet baseNames;
+
+	// List files itself.
+	ArchiveMemberList memberList;
+	SearchMan.listMatchingMembers(memberList, pattern);
+	SearchMan.listMatchingMembers(memberList, pattern + ".rsrc");
+	SearchMan.listMatchingMembers(memberList, pattern + ".bin");
+	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern));
+
+	for (ArchiveMemberList::const_iterator i = memberList.begin(), end = memberList.end(); i != end; ++i) {
+		String filename = (*i)->getName();
+
+		// For raw resource forks and MacBinary files we strip the extension
+		// here to obtain a valid base name.
+		int lastDotPos = filename.size() - 1;
+		for (; lastDotPos >= 0; --lastDotPos) {
+			if (filename[lastDotPos] == '.') {
+				break;
+			}
+		}
+
+		if (lastDotPos != -1) {
+			const char *extension = filename.c_str() + lastDotPos + 1;
+			bool removeExtension = false;
+
+			// TODO: Should we really keep filenames suggesting raw resource
+			// forks or MacBinary files but not being such around? This might
+			// depend on the pattern the client requests...
+			if (!scumm_stricmp(extension, "rsrc")) {
+				SeekableReadStream *stream = (*i)->createReadStream();
+				removeExtension = stream && isRawFork(*stream);
+				delete stream;
+			} else if (!scumm_stricmp(extension, "bin")) {
+				SeekableReadStream *stream = (*i)->createReadStream();
+				removeExtension = stream && isMacBinary(*stream);
+				delete stream;
+			}
+
+			if (removeExtension) {
+				filename.erase(lastDotPos);
+			}
+		}
+
+		// Strip AppleDouble '._' prefix if applicable.
+		bool isAppleDoubleName = false;
+		const String filenameAppleDoubleStripped = disassembleAppleDoubleName(filename, &isAppleDoubleName);
+
+		if (isAppleDoubleName) {
+			SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream->readUint32BE() == 0x00051607) {
+				filename = filenameAppleDoubleStripped;
+			}
+			// TODO: Should we really keep filenames suggesting AppleDouble
+			// but not being AppleDouble around? This might depend on the
+			// pattern the client requests...
+			delete stream;
+		}
+
+		baseNames[filename] = true;
+	}
+
+	// Append resulting base names to list to indicate found files.
+	for (BaseNameSet::const_iterator i = baseNames.begin(), end = baseNames.end(); i != end; ++i) {
+		files.push_back(i->_key);
+	}
+}
+
 bool MacResManager::loadFromAppleDouble(SeekableReadStream &stream) {
 	if (stream.readUint32BE() != 0x00051607) // tag
 		return false;
@@ -312,6 +383,18 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 		return false;
 
 	return true;
+}
+
+bool MacResManager::isRawFork(SeekableReadStream &stream) {
+	// TODO: Is there a better way to detect whether this is a raw fork?
+	const uint32 dataOffset = stream.readUint32BE();
+	const uint32 mapOffset = stream.readUint32BE();
+	const uint32 dataLength = stream.readUint32BE();
+	const uint32 mapLength = stream.readUint32BE();
+
+	return    !stream.eos() && !stream.err()
+	       && dataOffset < (uint32)stream.size() && dataOffset + dataLength <= (uint32)stream.size()
+	       && mapOffset < (uint32)stream.size() && mapOffset + mapLength <= (uint32)stream.size();
 }
 
 bool MacResManager::loadFromMacBinary(SeekableReadStream &stream) {
@@ -585,6 +668,34 @@ String MacResManager::constructAppleDoubleName(String name) {
 		} else if (name[i] == '/') {
 			name.insertChar('_', i + 1);
 			name.insertChar('.', i + 1);
+			break;
+		}
+	}
+
+	return name;
+}
+
+String MacResManager::disassembleAppleDoubleName(String name, bool *isAppleDouble) {
+	if (isAppleDouble) {
+		*isAppleDouble = false;
+	}
+
+	// Remove "._" before the last portion of a path name.
+	for (int i = name.size() - 1; i >= 0; --i) {
+		if (i == 0) {
+			if (name.size() > 2 && name[0] == '.' && name[1] == '_') {
+				name.erase(0, 2);
+				if (isAppleDouble) {
+					*isAppleDouble = true;
+				}
+			}
+		} else if (name[i] == '/') {
+			if ((uint)(i + 2) < name.size() && name[i + 1] == '.' && name[i + 2] == '_') {
+				name.erase(i + 1, 2);
+				if (isAppleDouble) {
+					*isAppleDouble = true;
+				}
+			}
 			break;
 		}
 	}

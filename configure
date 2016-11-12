@@ -132,6 +132,7 @@ _timidity=no
 _zlib=auto
 _mpeg2=auto
 _sparkle=auto
+_osxdockplugin=auto
 _jpeg=auto
 _png=auto
 _theoradec=auto
@@ -165,10 +166,12 @@ _bink=yes
 _vkeybd=no
 _keymapper=no
 _eventrec=no
+# GUI translation options
 _translation=yes
 # Default platform settings
 _backend=sdl
 _16bit=auto
+_highres=auto
 _savegame_timestamp=auto
 _dynamic_modules=no
 _elf_loader=no
@@ -188,6 +191,8 @@ _stagingpath="staging"
 _win32path="C:/residualvm"
 _amigaospath="Games:ResidualVM"
 _staticlibpath=
+_xcodetoolspath=
+_sparklepath=
 _sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
@@ -208,6 +213,7 @@ add_feature 16bit "16bit color" "_16bit"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
+add_feature highres "high resolution" "_highres"
 add_feature mad "MAD" "_mad"
 add_feature jpeg "JPEG" "_jpeg"
 add_feature png "PNG" "_png"
@@ -443,7 +449,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
+	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gph-linux)
@@ -600,7 +606,7 @@ engine_enable() {
 		parent=`get_subengine_parent ${engine}`
 		if test `get_engine_build ${parent}` = "no" ; then
 			set_var _engine_${parent}_build "yes"
-		fi		
+		fi
 	fi
 
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
@@ -812,12 +818,6 @@ get_subengines_build_string() {
 }
 
 #
-# Greet user
-#
-echo "Running ResidualVM configure..."
-echo "Configure run on" `date` > $TMPLOG
-
-#
 # Check any parameters we received
 #
 # TODO:
@@ -877,7 +877,7 @@ Game engines:
   --disable-all-engines    disable all engines
   --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
   --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
-  --enable-engine-static=<engine name>[,<engine name>...] 
+  --enable-engine-static=<engine name>[,<engine name>...]
       enable engine(s) listed as static builtin (when plugins are enabled)
   --enable-engine-dynamic=<engine name>[,<engine name>...]
       enable engine(s) listed as dynamic plugin (when plugins are enabled)
@@ -953,8 +953,10 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
-  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (Mac OS X only - optional)
-  --disable-sparkle        disable sparkle automatic update support [Mac OS X only - autodetect]
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (OS X/Windows only - optional)
+  --disable-sparkle        disable sparkle automatic update support [OS X/Windows only - autodetect]
+
+  --disable-osx-dock-plugin disable the NSDockTilePlugin support [Mac OS X only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
@@ -993,9 +995,25 @@ EOF
 	fi
 done # for parm in ...
 
+
+#
+# If we're not showing help, greet the user and start the log file
+#
+echo "Running ResidualVM configure..."
+echo "Configure run on" `date` > $TMPLOG
+cat >> $TMPLOG <<EOF
+Invocation command line was:
+$0 $@
+Saved environment variables:
+LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
+EOF
+
+
 for ac_option in $@; do
 	case "$ac_option" in
 #	--disable-16bit)          _16bit=no       ;; #ResidualVM: not supported
+#	--enable-highres)         _highres=yes    ;; #ResidualVM: not supported
+#	--disable-highres)        _highres=no     ;; #ResidualVM: not supported
 	--disable-savegame-timestamp) _savegame_timestamp=no ;;
 #	--disable-scalers)        _build_scalers=no ;; #ResidualVM: not supported
 #	--disable-hq-scalers)     _build_hq_scalers=no ;; #ResidualVM: not supported
@@ -1019,6 +1037,8 @@ for ac_option in $@; do
 	--disable-zlib)           _zlib=no        ;;
 	--enable-sparkle)         _sparkle=yes    ;;
 	--disable-sparkle)        _sparkle=no     ;;
+	--enable-osx-dock-plugin) _osxdockplugin=yes;;
+	--disable-osx-dock-plugin) _osxdockplugin=no;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
@@ -1141,8 +1161,7 @@ for ac_option in $@; do
 		;;
 	--with-sparkle-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
-		SPARKLE_CFLAGS="-F$arg"
-		SPARKLE_LIBS="-F$arg"
+		_sparklepath=$arg
 		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1225,6 +1244,9 @@ for ac_option in $@; do
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
 		;;
+	--with-xcodetools-path=*)
+		_xcodetoolspath=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
@@ -1289,6 +1311,11 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
+3ds)
+	_host_os=3ds
+	_host_cpu=arm
+	_host_alias=arm-none-eabi
+	;;
 android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_os=android
 	_host_cpu=arm
@@ -1304,6 +1331,26 @@ android-x86)
 	_host_cpu=i686
 	_host_alias=i686-linux-android
 	;;
+androidsdl-armeabi | androidsdl-armeabi-v7a)
+	_host_os=androidsdl
+	_host_cpu=arm
+	_host_alias=arm-linux-androideabi
+	;;
+androidsdl-arm64-v8a)
+	_host_os=androidsdl
+	_host_cpu=aarch64
+	_host_alias=aarch64-linux-android
+	;;
+androidsdl-mips)
+	_host_os=androidsdl
+	_host_cpu=mipsel
+	_host_alias=mipsel-linux-android
+	;;
+androidsdl-x86)
+	_host_os=androidsdl
+	_host_cpu=i686
+	_host_alias=i686-linux-android
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -1313,7 +1360,7 @@ raspberrypi)
 	_host_cpu=arm
 	# This tuple is the one used by the official Rpi toolchain.
 	# It may change in the future.
-	_host_alias=bcm2708hardfp
+	_host_alias=arm-linux-gnueabihf
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -1570,7 +1617,7 @@ android)
 		exit 1
 	fi
 	;;
-ds | gamecube | wii)
+3ds | ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1826,7 +1873,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -1862,7 +1909,7 @@ echo $_use_cxx11
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | gamecube | psp | tizen | wii | webos)
+android | androidsdl | gamecube | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2126,6 +2173,27 @@ esac
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
+	3ds)
+		_optimization_level=-O2
+		append_var DEFINES "-D__3DS__"
+		append_var DEFINES "-DARM"
+		append_var DEFINES "-DARM11"
+		append_var CXXFLAGS "-march=armv6k"
+		append_var CXXFLAGS "-mtune=mpcore"
+		append_var CXXFLAGS "-mword-relocations"
+		append_var CXXFLAGS "-mfloat-abi=hard"
+		append_var CXXFLAGS "-ffunction-sections"
+		append_var CXXFLAGS "-fomit-frame-pointer"
+		append_var CXXFLAGS "-I$DEVKITPRO/libctru/include"
+		append_var CXXFLAGS "-I$DEVKITPRO/portlibs/3ds/include"
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+		fi
+		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
+		append_var LIBS "-lcitro3d -lctru"
+		;;
 	amigaos*)
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
@@ -2280,7 +2348,7 @@ case $_host_os in
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
 			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
-			
+
 			if test -z "$_staticlibpath"; then
 				_staticlibpath=${macport_prefix}
 				echo "Set staticlib-prefix to ${_staticlibpath}"
@@ -2340,6 +2408,17 @@ case $_host_os in
 				echo "Set staticlib-prefix to ${_staticlibpath}"
 			else
 				echo "Could not determine prefix for static libraries"
+			fi
+		fi
+
+		# If _xcodetoolspath is not set yet use xcode-select to get the path
+		if test -z "$_xcodetoolspath"; then
+			_xcodetoolspath=`xcode-select -print-path`/Tools
+			if test -d "$_xcodetoolspath"; then
+				echo "Set xcodetools-path to ${_xcodetoolspath}"
+			else
+				_xcodetoolspath=
+				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
 		;;
@@ -2434,6 +2513,10 @@ case $_host_os in
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	msys)
+		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
+		exit 1
 		;;
 	n64)
 		append_var DEFINES "-D__N64__"
@@ -2550,6 +2633,18 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
+		3ds)
+			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_SID"
+			append_var DEFINES "-DDISABLE_NES_APU"
+			_backend="3ds"
+			_build_scalers=no
+			_vkeybd=yes
+			_mt32emu=no
+			# Should use Tremor instead of Vorbis
+			_vorbis=no
+			_port_mk="backends/platform/3ds/3ds.mk"
+			;;
 		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
@@ -2562,6 +2657,15 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_mt32emu=no
 			_timidity=no
+			;;
+		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a)
+			DEFINES="$DEFINES -DANDROIDSDL"
+			_unix=yes
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
+			_backend="androidsdl"
+			_port_mk="backends/platform/androidsdl/androidsdl.mk"
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
@@ -2601,7 +2705,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
-			_alsa=no 
+			_alsa=no
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
@@ -2628,14 +2732,15 @@ if test -n "$_host"; then
 			_eventrec=no
 			_build_scalers=no
 			_build_hq_scalers=no
-			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it 
+			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
 			# since SDL2 manages dispmanx/GLES2 very well internally.
 			# SDL1 is bit-rotten on this platform.
 			_sdlconfig=sdl2-config
-			# OpenGL(ES) support is mature enough as to be the best option on
+			# OpenGL ES support is mature enough as to be the best option on
 			# the Raspberry Pi, so it's enabled by default.
-			_opengl=yes
-			_opengles=yes
+			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
+			# take advantage of those.
+			_opengl_mode=gles2
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
@@ -2656,7 +2761,11 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_mad=yes
 			_zlib=yes
-			add_line_to_config_mk 'ronindir = /usr/local/ronin'
+			if test -z "$RONINDIR"; then
+				add_line_to_config_mk "ronindir := /usr/local/ronin"
+			else
+				add_line_to_config_mk "ronindir := $RONINDIR"
+			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
@@ -2689,22 +2798,22 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
-               gcw0)
-			append_var DEFINES "-DDINGUX -DGCW0"
+		gcw0)
+			_sysroot=`$CXX --print-sysroot`
+			_sdlpath=$_sysroot/usr/bin
+			append_var DEFINES "-DDINGUX -DGCW0 -DGUI_ONLY_FULLSCREEN"
 			append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
-			_mt32emu=no
-			_optimization_level=-O3
-			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
-			_vkeybd=yes
-			_build_hq_scalers=no
-			_keymapper=yes
-			# Force disable vorbis on dingux, it has terrible performance compared to tremor
-			_vorbis=no
-			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_mt32emu=no
 			_seq_midi=no
+			_timidity=no
+			_build_scalers=no
+			_optimization_level=-O3
+			_vkeybd=yes
+			_keymapper=yes
+			_vorbis=no
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
@@ -2746,11 +2855,8 @@ if test -n "$_host"; then
 			;;
 		ios7)
 			append_var DEFINES "-DIPHONE"
-			append_var CFLAGS "-Wno-shift-count-overflow"
-			append_var CXXFLAGS "-Wno-shift-count-overflow"
 			_backend="ios7"
 			_build_scalers=no
-			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
 			;;
@@ -2767,7 +2873,7 @@ if test -n "$_host"; then
 			append_var INCLUDES "-I/usr/X11R6/include"
 			append_var LIBS "-lX11"
 			append_var LIBS "-L/usr/lib"
-			
+
 			_backend="maemo"
 			_vkeybd=yes
 			_keymapper=yes
@@ -2960,6 +3066,8 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			_vkeybd=yes
+			# Tizen relies on the OpenGL ES output thus we always enable it.
+			_opengl_mode=gles
 			;;
 		webos)
 			_backend="webos"
@@ -3005,12 +3113,16 @@ fi
 # Backend related stuff
 #
 case $_backend in
+	3ds)
+		;;
 	android)
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
 		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
+	androidsdl)
+		;;		
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
 		append_var INCLUDES '-isystem $(ronindir)/include'
@@ -3107,6 +3219,8 @@ case $_backend in
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
 		;;
+	sdl)
+		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		append_var DEFINES "-DTIZEN -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
@@ -3155,8 +3269,6 @@ case $_backend in
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		;;
-	sdl)
-		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -3168,7 +3280,7 @@ append_var MODULES "backends/platform/$_backend"
 # Setup SDL specifics for SDL based backends
 #
 case $_backend in
-	dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
+	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -3191,7 +3303,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3200,6 +3312,26 @@ case $_backend in
 		;;
 	*)
 		_16bit=no
+		;;
+esac
+
+#
+# Enable High resolution engines (>320x240) support only for backends which support it
+#
+case $_host in
+	gcw0)
+		if test "$_highres" = yes ; then
+			_highres=yes
+		else
+			_highres=no
+		fi
+		;;
+	*)
+		if test "$_highres" = no ; then
+			_highres=no
+		else
+			_highres=yes
+		fi
 		;;
 esac
 
@@ -3250,7 +3382,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -3514,6 +3646,11 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 # Check whether 16bit color support is requested
 #
 define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
+
+#
+# Check whether High resolution graphics support is requested
+#
+define_in_config_if_yes "$_highres" 'USE_HIGHRES'
 
 #
 # Check whether save games use the current time as default description
@@ -3873,39 +4010,100 @@ echo "$_mpeg2"
 #
 # Check for Sparkle if updates support is enabled
 #
-echocheck "Sparkle"
-if test "$_updates" = no; then
-	_sparkle=no
-else
-if test "$_sparkle" = auto ; then
-	_sparkle=no
-	cat > $TMPC << EOF
+#
+# Check is NSDockTilePlugIn protocol is supported
+#
+case $_host_os in
+	darwin*)
+		echocheck "Sparkle"
+		if test "$_updates" = no; then
+			_sparkle=no
+		else
+			if test ! -z $_sparklepath ; then
+				SPARKLE_CFLAGS="-F$_sparklepath"
+				SPARKLE_LIBS="-F$_sparklepath"
+			fi
+			if test "$_sparkle" = auto ; then
+				_sparkle=no
+				cat > $TMPC << EOF
 #include <Cocoa/Cocoa.h>
 #include <Sparkle/Sparkle.h>
 int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
 EOF
-	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
-fi
-if test "$_sparkle" = yes ; then
-	append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
-	append_var INCLUDES "$SPARKLE_CFLAGS"
-fi
-define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
-fi
-echo "$_sparkle"
+				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+			fi
+			if test "$_sparkle" = yes ; then
+				append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
+				append_var INCLUDES "$SPARKLE_CFLAGS"
+			fi
+			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+		fi
+		echo "$_sparkle"
+	;;
+	mingw*)
+		echocheck "Sparkle"
+		if test "$_updates" = no; then
+			_sparkle=no
+		else
+			if test ! -z $_sparklepath ; then
+				SPARKLE_CFLAGS="-I$_sparklepath/include"
+				SPARKLE_LIBS="-L$_sparklepath/Release -L$_sparklepath/x64/Release"
+			fi
+			if test "$_sparkle" = auto ; then
+				_sparkle=no
+				cat > $TMPC << EOF
+#include <winsparkle.h>
+int main(void) { win_sparkle_get_update_check_interval(); return 0; }
+EOF
+				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -lWinSparkle && _sparkle=yes
+			fi
+			if test "$_sparkle" = yes ; then
+				append_var LIBS "$SPARKLE_LIBS -lWinSparkle"
+				append_var INCLUDES "$SPARKLE_CFLAGS"
+			fi
+			define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+		fi
+		echo "$_sparkle"
+	;;
+	*)
+		_sparkle=no
+	;;
+esac
 
 #
-# Check for FluidSynth 
+# Check is NSDockTilePlugIn protocol is supported
+#
+case $_host_os in
+	darwin*)
+		# NSDockTilePlugIn was added in OS X 10.6, so will not be available when compiling on older OS X versions.
+		echocheck "DockTilePlugin"
+		if test "$_osxdockplugin" = auto ; then
+			_osxdockplugin=no
+			cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+@interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
+}
+@end
+EOF
+			cc_check -c -ObjC++ && _osxdockplugin=yes
+		fi
+		define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
+		echo "$_osxdockplugin"
+	;;
+	*)
+		_osxdockplugin=no
+	;;
+esac
+
+#
+# Check for FluidSynth
 #
 echocheck "FluidSynth"
 
 append_var FLUIDSYNTH_LIBS "-lfluidsynth"
 case $_host_os in
 	mingw*)
-		# NOTE: Windows builds use an older FluidSynth version (1.0.9)
-		# which doesn't require glib, to avoid bundling the complete glib
-		# libraries with Windows builds.
-		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -ldsound -lwinmm"
+		FLUIDSYNTH_STATIC_LIBS="$FLUIDSYNTH_LIBS -lglib-2.0 -lintl -liconv -lws2_32 -lole32 -lshlwapi -lpcre -ldsound -lwinmm"
 	;;
 
 	darwin*)
@@ -4138,87 +4336,7 @@ EOF
 fi
 
 define_in_config_if_yes "$_glew" "USE_GLEW"
-# ResidualVM specific end <-
 
-#
-# Check for iconv
-#
-echo_n "Checking whether iconv.h is present... "
-if test "$_iconv" = auto ; then
-	_iconv=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	return 0;
-}
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
-fi
-
-create_iconv_test() {
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	iconv_t iconv = iconv_open("UTF-32", "SJIS");
-	iconv_close(iconv);
-	return 0;
-}
-EOF
-}
-echo "$_iconv"
-
-if test "$_iconv" = yes ; then
-	echo_n "Checking whether iconv needs linking against libiconv... "
-
-	needs_iconvlib='auto'
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
-	# We do check linking without -liconv here too, just in case
-	# it would fail otherwise too
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
-
-	if test "$needs_iconvlib" = auto ; then
-		_iconv=no
-		echo "does not link at all"
-	else
-		if test "$needs_iconvlib" = yes ; then
-			append_var ICONV_LIBS "-liconv"
-		fi
-		echo "$needs_iconvlib"
-
-		echo_n "Checking signature of iconv... "
-		uses_const=no
-
-		cat > $TMPC << EOF
-#include <iconv.h>
-int main(int argc, char **argv) {
-	iconv_t iconvP;
-	const char **inbuf = 0;
-	iconv(iconvP, inbuf, 0, 0, 0);
-	return 0;
-}
-EOF
-		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
-
-		if test "$uses_const" = yes ; then
-			echo "iconv_t, const char **, size_t *, char **, size_t *"
-		else
-			echo "iconv_t, char **, size_t *, char **, size_t *"
-		fi
-
-		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
-	fi
-fi
-
-if test "$_iconv" = yes ; then
-	append_var LIBS "$ICONV_LIBS"
-	append_var INCLUDES "$ICONV_CFLAGS"
-fi
-
-echocheck "iconv"
-define_in_config_if_yes "$_iconv" 'USE_ICONV'
-echo "$_iconv"
 
 #
 # Check for OpenGL (ES)
@@ -4239,7 +4357,6 @@ case $_backend in
 		;;
 esac
 
-# ResidualVM specific start ->
 if test "$_opengl" = auto ; then
 	_opengl=no
 	if test "$_backend" = "sdl" || test "$_backend" = "android"; then
@@ -4340,19 +4457,10 @@ EOF
 	fi
 	cc_check_clean
 fi
-# ResidualVM specific end <-
 
-case $_host_os in
-	tizen)
-		# components live in non-standard locations so just assume sane SDK
-		_opengl=yes
-		_opengles=yes
-		;;
-esac
 
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
-# ResidualVM specific start here ->
 elif test "$_opengles2" = "yes" ; then
 	echo "yes (OpenGL ES2)"
 else
@@ -4369,7 +4477,111 @@ define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 define_in_config_if_yes "$_opengles2" "USE_GLES2"
 define_in_config_if_yes "$_opengl_shaders" "USE_OPENGL_SHADERS"
+
+#
+# Check for iconv
+#
+echo_n "Checking whether iconv.h is present... "
+if test "$_iconv" = auto ; then
+	_iconv=no
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	return 0;
+}
+EOF
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
+fi
+
+create_iconv_test() {
+	cat > $TMPC << EOF
+#include <iconv.h>
+int main(int, char **) {
+	iconv_t iconv = iconv_open("UTF-32", "SJIS");
+	iconv_close(iconv);
+	return 0;
+}
+EOF
+}
+echo "$_iconv"
+
+if test "$_iconv" = yes ; then
+	echo_n "Checking whether iconv needs linking against libiconv... "
+
+	needs_iconvlib='auto'
+	create_iconv_test
+	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
+	# We do check linking without -liconv here too, just in case
+	# it would fail otherwise too
+	create_iconv_test
+	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
+
+	if test "$needs_iconvlib" = auto ; then
+		_iconv=no
+		echo "does not link at all"
+	else
+		if test "$needs_iconvlib" = yes ; then
+			append_var ICONV_LIBS "-liconv"
+		fi
+		echo "$needs_iconvlib"
+
+		echo_n "Checking signature of iconv... "
+		uses_const=no
+
+		cat > $TMPC << EOF
+#include <iconv.h>
+int main(int argc, char **argv) {
+	iconv_t iconvP;
+	const char **inbuf = 0;
+	iconv(iconvP, inbuf, 0, 0, 0);
+	return 0;
+}
+EOF
+		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
+
+		if test "$uses_const" = yes ; then
+			echo "iconv_t, const char **, size_t *, char **, size_t *"
+		else
+			echo "iconv_t, char **, size_t *, char **, size_t *"
+		fi
+
+		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
+	fi
+fi
+
+if test "$_iconv" = yes ; then
+	append_var LIBS "$ICONV_LIBS"
+	append_var INCLUDES "$ICONV_CFLAGS"
+fi
+
+echocheck "iconv"
+define_in_config_if_yes "$_iconv" 'USE_ICONV'
+echo "$_iconv"
 # ResidualVM specific ends here <-
+
+
+#
+# Check for Linux CD-ROM support
+#
+case $_host_os in
+	*linux*)
+		echocheck "Linux CD-ROM"
+		linuxcd=no
+		cat > $TMPC << EOF
+#include <linux/cdrom.h>
+#include <sys/types.h>
+int main(void) {
+	int x = CDROMREADAUDIO;
+	dev_t dev;
+	return major(dev) + x;
+}
+EOF
+		cc_check && linuxcd=yes
+		define_in_config_if_yes "$linuxcd" 'USE_LINUXCD'
+		echo "$linuxcd"
+		;;
+esac
+
 
 #
 # Check for nasm
@@ -4605,6 +4817,10 @@ if test "$_16bit" = yes ; then
 	: # residualvm not use it
 fi
 
+if test "$_highres" = yes ; then
+	: # residualvm not use it
+fi
+
 if test "$_savegame_timestamp" = yes ; then
 	echo_n ", savegame timestamp"
 fi
@@ -4618,7 +4834,7 @@ if test "$_build_scalers" = yes ; then
 fi
 
 if test "$_mt32emu" = yes ; then
-	echo_n ", MT-32 emu"
+	echo_n ", MT-32 emulator"
 fi
 
 if test "$_text_console" = yes ; then
@@ -4644,6 +4860,14 @@ fi
 # after all of CXXFLAGS, LDFLAGS, LIBS etc. have been setup
 #
 case $_backend in
+	3ds)
+		if test "$_freetype2" = yes -a "$_png" = yes; then
+			append_var LIBS "-lpng"
+		fi
+		if test "$_tremor" = yes -o "$_flac" = yes; then
+			append_var LIBS "-logg"
+		fi
+		;;
 	android)
 		# ssp at this point so the cxxtests link
 		if test "$_debug_build" = yes; then
@@ -4875,6 +5099,8 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
+XCODETOOLSPATH=$_xcodetoolspath
+SPARKLEPATH=$_sparklepath
 SDLCONFIG=$_sdlconfig
 
 ABI := $ABI

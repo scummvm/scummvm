@@ -298,8 +298,8 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames) {
-		_singleid = "stark";
-		_guioptions = GUIO1(GUIO_NOMIDI);
+		_singleId = "stark";
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	const char *getName() const override {

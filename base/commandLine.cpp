@@ -42,7 +42,7 @@
 
 #include "audio/musicplugin.h"
 
-#include "graphics/renderer.h"
+#include "graphics/renderer.h" // ResidualVM
 
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
@@ -59,7 +59,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -99,8 +99,9 @@ static const char HELP_STRING[] =
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
-	"  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first\n"
-	"                           drive)\n"
+	"  --cdrom=DRIVE            CD drive to play CD audio from; can either be a\n"
+	"                           drive, path, or numeric index (default: 0 = best\n"
+	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
 	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
 	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
@@ -339,6 +340,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// We defer checking whether this is a valid target to a later point.
 			return s;
 		} else {
+			// On MacOS X prior to 10.9 the OS is sometimes adding a -psn_X_XXXXXX argument (where X are digits)
+			// to pass the process serial number. We need to ignore it to avoid an error.
+#ifdef MACOSX
+			if (strncmp(s, "-psn_", 5) == 0)
+				continue;
+#endif
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 
@@ -489,7 +496,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION("gamma")
 			END_OPTION
-
+// ResidualVM specific start
 			DO_LONG_OPTION("renderer")
 				Graphics::RendererType renderer = Graphics::parseRendererTypeCode(option);
 				if (renderer == Graphics::kRendererTypeDefault)
@@ -497,6 +504,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("show-fps")
+// ResidualVM specific end
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")

@@ -75,6 +75,9 @@
 #include "gui/launcher.h"
 #endif
 
+#ifdef USE_UPDATES
+#include "gui/updates-dialog.h"
+#endif
 
 static bool launcherDialog() {
 
@@ -134,9 +137,26 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
 
+// Disabled in ResidualVM:
+#if 0//defined(SDL_BACKEND) && defined(USE_OPENGL) && defined(USE_RGB_COLOR)
+	// HACK: We set up the requested graphics mode setting here to allow the
+	// backend to switch from Surface SDL to OpenGL if necessary. This is
+	// needed because otherwise the g_system->getSupportedFormats might return
+	// bad values.
+	g_system->beginGFXTransaction();
+		g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+	if (g_system->endGFXTransaction() != OSystem::kTransactionSuccess) {
+		warning("Switching graphics mode to '%s' failed", ConfMan.get("gfx_mode").c_str());
+		return Common::kUnknownError;
+	}
+#endif
+
 	// Verify that the game path refers to an actual directory
-	if (!(dir.exists() && dir.isDirectory()))
+        if (!dir.exists()) {
+		err = Common::kPathDoesNotExist;
+        } else if (!dir.isDirectory()) {
 		err = Common::kPathNotDirectory;
+        }
 
 	// Create the game engine
 	if (err.getCode() == Common::kNoError) {
@@ -370,7 +390,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
-	}
+	} else if (ConfMan.hasKey("debugflags"))
+		specialDebug = ConfMan.get("debugflags");
 
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
@@ -445,6 +466,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
+
+#ifdef USE_UPDATES
+	if (!ConfMan.hasKey("updates_check")) {
+		GUI::UpdatesDialog dlg;
+		dlg.runModal();
+	}
+#endif
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())

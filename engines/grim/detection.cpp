@@ -593,11 +593,11 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	GrimMetaEngine() : AdvancedMetaEngine(Grim::gameDescriptions, sizeof(Grim::GrimGameDescription), grimGames, gameGuiOptions) {
-		_guioptions = GUIO_NOMIDI;
+		_guiOptions = GUIO_NOMIDI;
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const override {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+		return Engines::findGameID(gameid, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const override {

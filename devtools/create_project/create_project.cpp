@@ -31,6 +31,7 @@
 #include "config.h"
 #include "create_project.h"
 
+#include "cmake.h"
 #include "codeblocks.h"
 #include "msvc.h"
 #include "visualstudio.h"
@@ -53,7 +54,7 @@
 #define USE_WIN32_API
 #endif
 
-#ifdef USE_WIN32_API
+#if (defined(_WIN32) || defined(WIN32))
 #include <windows.h>
 #else
 #include <sstream>
@@ -83,10 +84,18 @@ std::string unifyPath(const std::string &path);
  * @param exe Name of the executable.
  */
 void displayHelp(const char *exe);
+
+/**
+ * Build a list of options to enable or disable GCC warnings
+ *
+ * @param globalWarnings Resulting list of warnings
+ */
+void addGCCWarnings(StringList &globalWarnings);
 } // End of anonymous namespace
 
 enum ProjectType {
 	kProjectNone,
+	kProjectCMake,
 	kProjectCodeBlocks,
 	kProjectMSVC,
 	kProjectXcode
@@ -125,7 +134,6 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 12;
-	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -141,6 +149,14 @@ int main(int argc, char *argv[]) {
 			cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 
 			return 0;
+
+		} else if (!std::strcmp(argv[i], "--cmake")) {
+			if (projectType != kProjectNone) {
+				std::cerr << "ERROR: You cannot pass more than one project type!\n";
+				return -1;
+			}
+
+			projectType = kProjectCMake;
 
 		} else if (!std::strcmp(argv[i], "--codeblocks")) {
 			if (projectType != kProjectNone) {
@@ -269,7 +285,7 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
 		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			useSDL2 = true;
+			setup.useSDL2 = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -335,10 +351,7 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
-	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
-	if (projectType != kProjectXcode) {
-		setup.defines.push_back("WIN32");
-	} else {
+	if (projectType == kProjectXcode) {
 		setup.defines.push_back("POSIX");
 		// Define both MACOSX, and IPHONE, but only one of them will be associated to the
 		// correct target by the Xcode project provider.
@@ -347,13 +360,42 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
+		// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
+		setup.defines.push_back("WIN32");
+	} else {
+		// As a last resort, select the backend files to build based on the platform used to build create_project.
+		// This is broken when cross compiling.
+#if defined(_WIN32) || defined(WIN32)
+		setup.defines.push_back("WIN32");
+#else
+		setup.defines.push_back("POSIX");
+#endif
 	}
+
+	bool updatesEnabled = false;
+	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
+		if (i->enable && !strcmp(i->name, "updates"))
+			updatesEnabled = true;
+	}
+	if (updatesEnabled) {
+		setup.defines.push_back("USE_SPARKLE");
+		if (projectType != kProjectXcode)
+			setup.libraries.push_back("winsparkle");
+		else
+			setup.libraries.push_back("sparkle");
+	}
+
 	setup.defines.push_back("SDL_BACKEND");
-	if (!useSDL2) {
-		cout << "\nLinking to SDL 1.2\n\n";
+	if (!setup.useSDL2) {
+		cout << "\nBuilding against SDL 1.2\n\n";
 		setup.libraries.push_back("sdl");
 	} else {
-		cout << "\nLinking to SDL 2.0\n\n";
+		cout << "\nBuilding against SDL 2.0\n\n";
+		// TODO: This also defines USE_SDL2 in the preprocessor, we don't do
+		// this in our configure/make based build system. Adapt create_project
+		// to replicate this behavior.
+		setup.defines.push_back("USE_SDL2");
 		setup.libraries.push_back("sdl2");
 	}
 	setup.libraries.push_back("winmm");
@@ -380,49 +422,25 @@ int main(int argc, char *argv[]) {
 		std::cerr << "ERROR: No project type has been specified!\n";
 		return -1;
 
+	case kProjectCMake:
+		if (setup.devTools || setup.tests) {
+			std::cerr << "ERROR: Building tools or tests is not supported for the CMake project type!\n";
+			return -1;
+		}
+
+		addGCCWarnings(globalWarnings);
+
+		provider = new CreateProjectTool::CMakeProvider(globalWarnings, projectWarnings);
+
+		break;
+
 	case kProjectCodeBlocks:
 		if (setup.devTools || setup.tests) {
 			std::cerr << "ERROR: Building tools or tests is not supported for the CodeBlocks project type!\n";
 			return -1;
 		}
 
-		////////////////////////////////////////////////////////////////////////////
-		// Code::Blocks is using GCC behind the scenes, so we need to pass a list
-		// of options to enable or disable warnings
-		////////////////////////////////////////////////////////////////////////////
-		//
-		// -Wall
-		//   enable all warnings
-		//
-		// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
-		//   disable annoying and not-so-useful warnings
-		//
-		// -Wpointer-arith -Wcast-qual -Wcast-align
-		// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
-		//   enable even more warnings...
-		//
-		// -fno-rtti -fno-exceptions -fcheck-new
-		//   disable RTTI and exceptions, and enable checking of pointers returned
-		//   by "new"
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		globalWarnings.push_back("-Wall");
-		globalWarnings.push_back("-Wno-long-long");
-		globalWarnings.push_back("-Wno-multichar");
-		globalWarnings.push_back("-Wno-unknown-pragmas");
-		globalWarnings.push_back("-Wno-reorder");
-		globalWarnings.push_back("-Wpointer-arith");
-		globalWarnings.push_back("-Wcast-qual");
-		globalWarnings.push_back("-Wcast-align");
-		globalWarnings.push_back("-Wshadow");
-		globalWarnings.push_back("-Wimplicit");
-		globalWarnings.push_back("-Wnon-virtual-dtor");
-		globalWarnings.push_back("-Wwrite-strings");
-		// The following are not warnings at all... We should consider adding them to
-		// a different list of parameters.
-		globalWarnings.push_back("-fno-exceptions");
-		globalWarnings.push_back("-fcheck-new");
+		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::CodeBlocksProvider(globalWarnings, projectWarnings);
 
@@ -636,6 +654,7 @@ void displayHelp(const char *exe) {
 	        " Additionally there are the following switches for changing various settings:\n"
 	        "\n"
 	        "Project specific settings:\n"
+	        " --cmake                  build CMake project files\n"
 	        " --codeblocks             build Code::Blocks project files\n"
 	        " --msvc                   build Visual Studio project files\n"
 	        " --xcode                  build XCode project files\n"
@@ -688,6 +707,41 @@ void displayHelp(const char *exe) {
 	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i)
 		cout << ' ' << (i->enable ? " enabled" : "disabled") << " | " << std::setw((std::streamsize)15) << i->name << std::setw((std::streamsize)0) << " | " << i->description << '\n';
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
+}
+
+void addGCCWarnings(StringList &globalWarnings) {
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// -Wall
+	//   enable all warnings
+	//
+	// -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+	//   disable annoying and not-so-useful warnings
+	//
+	// -Wpointer-arith -Wcast-qual -Wcast-align
+	// -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
+	//   enable even more warnings...
+	//
+	// -fno-exceptions -fcheck-new
+	//   disable exceptions, and enable checking of pointers returned by "new"
+	//
+	////////////////////////////////////////////////////////////////////////////
+
+	globalWarnings.push_back("-Wall");
+	globalWarnings.push_back("-Wno-long-long");
+	globalWarnings.push_back("-Wno-multichar");
+	globalWarnings.push_back("-Wno-unknown-pragmas");
+	globalWarnings.push_back("-Wno-reorder");
+	globalWarnings.push_back("-Wpointer-arith");
+	globalWarnings.push_back("-Wcast-qual");
+	globalWarnings.push_back("-Wcast-align");
+	globalWarnings.push_back("-Wshadow");
+	globalWarnings.push_back("-Wnon-virtual-dtor");
+	globalWarnings.push_back("-Wwrite-strings");
+	// The following are not warnings at all... We should consider adding them to
+	// a different list of parameters.
+	globalWarnings.push_back("-fno-exceptions");
+	globalWarnings.push_back("-fcheck-new");
 }
 
 /**
@@ -937,12 +991,12 @@ const Feature s_features[] = {
 	// Libraries
 	{      "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
 	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
-	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", false, "Ogg Vorbis support" },
-	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   false, "FLAC support" },
+	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", false, "Ogg Vorbis support" }, // ResidualVM change
+	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   false, "FLAC support" }, // ResidualVM change
 	{       "png",         "USE_PNG", "libpng",           false, "libpng support" },
 	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
-	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" },
-	{    "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" },
+	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" }, // ResidualVM change
+	{    "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" }, // ResidualVM change
 	{  "freetype",   "USE_FREETYPE2", "freetype",         true, "FreeType support" },
 	{      "jpeg",        "USE_JPEG", "jpeg-static",      true, "libjpeg support" },
 	{"fluidsynth",  "USE_FLUIDSYNTH", "libfluidsynth",    true, "FluidSynth support" },
@@ -952,29 +1006,22 @@ const Feature s_features[] = {
 	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
 	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
 	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
-	{         "mt32emu",          "USE_MT32EMU",         "", false, "integrated MT-32 emulator" },
+	{         "mt32emu",          "USE_MT32EMU",         "", false, "integrated MT-32 emulator" }, // ResidualVM change
 	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",           "USE_OPENGL", "opengl32", true,  "OpenGL support" },
+	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
+	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
 	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
 	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
 	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
 	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
+	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
 	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                                      // is just no current way of properly detecting this...
 };
 
 const Tool s_tools[] = {
-	{ "create_drascula",     true},
-	{ "create_hugo",         true},
-	{ "create_kyradat",      true},
-	{ "create_lure",         true},
-	{ "create_neverhood",    true},
-	{ "create_teenagent",    true},
-	{ "create_tony",         true},
-	{ "create_toon",         true},
 	{ "create_translations", true},
-	{ "qtable",              true}
 };
 } // End of anonymous namespace
 
@@ -1156,7 +1203,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#ifdef USE_WIN32_API
+#if defined(_WIN32) || defined(WIN32)
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
@@ -1359,7 +1406,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
-		in.push_back(setup.srcDir + "/README.md");
+		in.push_back(setup.srcDir + "/README.md"); // ResidualVM change
 		in.push_back(setup.srcDir + "/TODO");
 
 		// Create the main project file.

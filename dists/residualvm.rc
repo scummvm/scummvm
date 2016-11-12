@@ -80,6 +80,7 @@ BEGIN
         BLOCK "040904b0" // US English, Unicode
         BEGIN
             VALUE "Comments", "\0"
+            VALUE "CompanyName", "residualvm.org\0"
             VALUE "FileDescription", "http://www.residualvm.org/\0"
             VALUE "FileVersion", "0.3.0git\0"
             VALUE "InternalName", "residualvm\0"

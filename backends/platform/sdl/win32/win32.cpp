@@ -35,11 +35,13 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 
+#include "backends/audiocd/win32/win32-audiocd.h"
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
+#include "backends/updates/win32/win32-updates.h"
 
 #include "common/memstream.h"
 
@@ -80,6 +82,11 @@ void OSystem_Win32::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new WindowsSaveFileManager();
+
+#if defined(USE_SPARKLE)
+	// Initialize updates manager
+	_updateManager = new Win32UpdateManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
@@ -316,6 +323,10 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 	s.add("Win32Res", new Win32ResourceArchive(), priority);
 
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
+}
+
+AudioCDManager *OSystem_Win32::createAudioCDManager() {
+	return createWin32AudioCDManager();
 }
 
 #endif

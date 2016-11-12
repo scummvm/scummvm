@@ -21,12 +21,12 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
+#include "audio/decoders/raw.h" // ResidualVM
 #include "audio/decoders/mp3.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
-#include "common/memstream.h"
+#include "common/memstream.h" // ResidualVM
 #include "common/system.h"
 #include "common/textconsole.h"
 

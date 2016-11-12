@@ -12,9 +12,12 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	maccursor.o \
+	managed_surface.o \
+	nine_patch.o \
 	pixelformat.o \
 	primitives.o \
 	renderer.o \
+	screen.o \
 	sjis.o \
 	surface.o \
 	transform_struct.o \

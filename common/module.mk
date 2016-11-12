@@ -59,9 +59,15 @@ MODULE_OBJS += \
 	recorderfile.o
 endif
 
+# ResidualVM specific
 ifdef USE_ICONV
 MODULE_OBJS += \
 	iconv.o
+endif
+
+ifdef USE_UPDATES
+MODULE_OBJS += \
+	updates.o
 endif
 
 # Include common rules

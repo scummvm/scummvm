@@ -43,6 +43,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "pc9801", _s("PC-9801 (16 Colors)"), kRenderPC9801 },
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
 	{ "atari", "Atari ST", kRenderAtariST },
+	{ "macintosh", "Macintosh", kRenderMacintosh },
 	{0, 0, kRenderDefault}
 };
 
@@ -65,7 +66,8 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderPC9821,    GUIO_RENDERPC9821 },
 	{ kRenderPC9801,    GUIO_RENDERPC9801 },
 	{ kRenderApple2GS,  GUIO_RENDERAPPLE2GS },
-	{ kRenderAtariST,   GUIO_RENDERATARIST }
+	{ kRenderAtariST,   GUIO_RENDERATARIST },
+	{ kRenderMacintosh, GUIO_RENDERMACINTOSH }
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")

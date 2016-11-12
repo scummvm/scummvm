@@ -672,6 +672,7 @@ public:
 	 * Return a Graphics::PixelBuffer representing the framebuffer.
 	 * The caller can then perform arbitrary graphics transformations
 	 * on the framebuffer (blitting, scrolling, etc.).
+	 * !!! ResidualVM specific method: !!!
 	 */
 	virtual Graphics::PixelBuffer getScreenPixelBuffer() = 0;
 

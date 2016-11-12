@@ -27,6 +27,7 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/fs.h"
+#include "common/hashmap.h"
 
 /**
  * Provides a default savefile manager implementation for common platforms.
@@ -54,6 +55,30 @@ protected:
 	 * Sets the internal error and error message accordingly.
 	 */
 	virtual void checkPath(const Common::FSNode &dir);
+
+	/**
+	 * Assure that the given save path is cached.
+	 *
+	 * @param savePathName  String representation of save path to cache.
+	 */
+	void assureCached(const Common::String &savePathName);
+
+	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SaveFileCache;
+
+	/**
+	 * Cache of all the save files in the currently cached directory.
+	 *
+	 * Modify with caution because we only re-cache when the save path changed!
+	 * This needs to be updated inside at least openForSaving and
+	 * removeSavefile.
+	 */
+	SaveFileCache _saveFileCache;
+
+private:
+	/**
+	 * The currently cached directory.
+	 */
+	Common::String _cachedDirectory;
 };
 
 #endif

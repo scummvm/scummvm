@@ -142,6 +142,9 @@ PredictiveDialog::PredictiveDialog() : Dialog("Predictive") {
 	_numMemory = 0;
 
 	_navigationWithKeys = false;
+
+	_curPressedButton = kNoAct;
+	_needRefresh = true;
 }
 
 PredictiveDialog::~PredictiveDialog() {
@@ -190,7 +193,7 @@ void PredictiveDialog::saveUserDictToFile() {
 
 void PredictiveDialog::handleKeyUp(Common::KeyState state) {
 	if (_curPressedButton != kNoAct && !_needRefresh) {
-		_button[_curPressedButton]->startAnimatePressedState();
+		_button[_curPressedButton]->setUnpressedState();
 		processButton(_curPressedButton);
 	}
 }
@@ -352,7 +355,7 @@ void PredictiveDialog::handleKeyDown(Common::KeyState state) {
 	}
 
 	if (_lastButton != _curPressedButton)
-		_button[_lastButton]->stopAnimatePressedState();
+		_button[_lastButton]->setUnpressedState();
 
 	if (_curPressedButton != kNoAct && !_needRefresh)
 		_button[_curPressedButton]->setPressedState();
@@ -604,18 +607,6 @@ void PredictiveDialog::processButton(ButtonId button) {
 	}
 }
 
-void PredictiveDialog::handleTickle() {
-	if (_lastTime) {
-		if ((_curTime - _lastTime) > kRepeatDelay) {
-			_lastTime = 0;
-		}
-	}
-
-	if (getTickleWidget()) {
-		getTickleWidget()->handleTickle();
-	}
-}
-
 void PredictiveDialog::mergeDicts() {
 	_unitedDict.dictLineCount  = _predictiveDict.dictLineCount + _userDict.dictLineCount;
 	_unitedDict.dictLine = (char **)calloc(_unitedDict.dictLineCount, sizeof(char *));
@@ -724,6 +715,10 @@ int PredictiveDialog::binarySearch(const char *const *const dictLine, const Comm
 }
 
 bool PredictiveDialog::matchWord() {
+	// If there is no dictionary, then there is no match.
+	if (_unitedDict.dictLineCount <= 0)
+		return false;
+
 	// If no text has been entered, then there is no match.
 	if (_currentCode.empty())
 		return false;
@@ -981,6 +976,7 @@ void PredictiveDialog::loadAllDictionary(Dict &dict) {
 		Common::File *inFile = new Common::File();
 		if (!inFile->open(ConfMan.get(dict.nameDict))) {
 			warning("Predictive Dialog: cannot read file: %s", dict.defaultFilename.c_str());
+			delete inFile;
 			return;
 		}
 		loadDictionary(inFile, dict);

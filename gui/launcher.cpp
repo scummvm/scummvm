@@ -282,6 +282,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 6) The MIDI tab
 	//
+	_globalMIDIOverride = NULL;
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MIDI"));
 
@@ -296,6 +297,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 7) The MT-32 tab
 	//
+	_globalMT32Override = NULL;
 	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		tab->addTab(_("MT-32"));
 

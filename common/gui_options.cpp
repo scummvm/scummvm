@@ -64,6 +64,7 @@ const struct GameOpt {
 	{ GUIO_RENDERPC9801,    "pc9801" },
 	{ GUIO_RENDERAPPLE2GS,  "2gs" },
 	{ GUIO_RENDERATARIST,   "atari" },
+	{ GUIO_RENDERMACINTOSH, "macintosh" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
@@ -73,6 +74,7 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS6, "gameOption6" },
 	{ GUIO_GAMEOPTIONS7, "gameOption7" },
 	{ GUIO_GAMEOPTIONS8, "gameOption8" },
+	{ GUIO_GAMEOPTIONS9, "gameOption9" },
 
 	{ GUIO_NONE, 0 }
 };

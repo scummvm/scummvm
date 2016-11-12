@@ -25,7 +25,6 @@
 
 #include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
-#include "gui/gui-manager.h"
 
 #include "engines/metaengine.h"
 

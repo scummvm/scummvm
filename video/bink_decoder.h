@@ -161,11 +161,13 @@ private:
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time) { return true; }
 		void setCurFrame(uint32 frame) { _curFrame = frame; }
-		Common::Rational getFrameRate() const { return _frameRate; }
 // End of ResidualVM-specific
 
 		/** Decode a video packet. */
 		void decodePacket(VideoFrame &frame);
+
+	public: // ResidualVM
+		Common::Rational getFrameRate() const { return _frameRate; }
 
 	private:
 		/** A decoder state. */

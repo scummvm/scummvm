@@ -19,6 +19,7 @@ gui/recorderdialog.cpp
 gui/saveload-dialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
+gui/updates-dialog.cpp
 gui/widget.cpp
 gui/fluidsynth-dialog.cpp
 
@@ -26,6 +27,7 @@ base/main.cpp
 
 common/error.cpp
 common/rendermode.cpp
+common/updates.cpp
 common/util.cpp
 
 engines/advancedDetector.cpp

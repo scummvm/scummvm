@@ -36,13 +36,14 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/updates.h"
 
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 
-#include "graphics/renderer.h"
+#include "graphics/renderer.h"  // ResidualVM specific
 
 namespace GUI {
 
@@ -64,6 +65,7 @@ enum {
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf',
+	kUpdatesCheckCmd		= 'updc',
 	kFullscreenToggled		= 'oful'  // ResidualVM specific
 };
 
@@ -73,7 +75,7 @@ enum {
 	kSubtitlesBoth
 };
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 enum {
 	kChooseKeyMappingCmd    = 'chma'
 };
@@ -115,6 +117,7 @@ void OptionsDialog::init() {
 	_rendererTypePopUpDesc = 0; // ResidualVM specific
 	_rendererTypePopUp = 0; // ResidualVM specific
 	_enableAudioSettings = false;
+	_midiTabId = 0;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
@@ -147,6 +150,7 @@ void OptionsDialog::init() {
 	_speechVolumeSlider = 0;
 	_speechVolumeLabel = 0;
 	_muteCheckbox = 0;
+	_enableSubtitleSettings = false;
 	_subToggleDesc = 0;
 	_subToggleGroup = 0;
 	_subToggleSubOnly = 0;
@@ -155,6 +159,8 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
+
+	_pathsTabId = 0;
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
@@ -210,29 +216,27 @@ void OptionsDialog::open() {
 			_renderModePopUp->setSelectedTag(sel);
 		}
 #endif
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ONLY_FULLSCREEN
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
-		_aspectCheckbox->setState(false);
+		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		_aspectCheckbox->setEnabled(false);
-#else // !SMALL_SCREEN_DEVICE
+#else // !GUI_ONLY_FULLSCREEN
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
-		// Aspect ratio setting - ResidualVM specific changes
-		if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState()) {
-			_aspectCheckbox->setState(true);
+		// Aspect ratio setting
+		if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState()) { // ResidualVM specific change
+			_aspectCheckbox->setState(true); // ResidualVM specific change
 			_aspectCheckbox->setEnabled(false);
 		} else {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
-		// Aspect ratio setting - End of ResidualVM specific changes
-#endif // SMALL_SCREEN_DEVICE
+#endif // GUI_ONLY_FULLSCREEN
 
-		// Renderer selection setting - ResidualVM specific lines
-		_rendererTypePopUp->setEnabled(true);
-		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain)));
+		_rendererTypePopUp->setEnabled(true); // ResidualVM specific
+		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain))); // ResidualVM specific
 	}
 
 	// Audio options
@@ -634,7 +638,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
 #endif
-#ifndef SMALL_SCREEN_DEVICE
+#ifndef GUI_ENABLE_KEYSDIALOG
 	_fullscreenCheckbox->setEnabled(enabled);
 	if (_guioptions.contains(GUIO_NOASPECT) || !_fullscreenCheckbox->getState())
 		_aspectCheckbox->setEnabled(false);
@@ -916,10 +920,6 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
 
-#ifdef USE_FLUIDSYNTH
-	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
-#endif
-
 	_enableMIDISettings = true;
 }
 
@@ -1159,6 +1159,10 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_midiTabId = tab->addTab(_("MIDI"));
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
+#ifdef USE_FLUIDSYNTH
+	new ButtonWidget(tab, "GlobalOptions_MIDI.mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+#endif
+
 	//
 	// 4) The MT-32 tab
 	//
@@ -1245,7 +1249,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
 	}
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), 0, kChooseKeyMappingCmd);
 #endif
 
@@ -1280,6 +1284,22 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 #endif // USE_TRANSLATION
 
+#ifdef USE_UPDATES
+	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ResidualVM updates"));
+	_updatesPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.UpdatesPopup");
+
+	const int *vals = Common::UpdateManager::getUpdateIntervals();
+
+	while (*vals != -1) {
+		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
+		vals++;
+	}
+
+	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
+
+	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
+#endif
+
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
@@ -1288,7 +1308,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), 0, kOKCmd);
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	_keysDialog = new KeysDialog();
 #endif
 
@@ -1298,7 +1318,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
 #endif
 
@@ -1418,6 +1438,19 @@ void GlobalOptionsDialog::close() {
 		}
 #endif // USE_TRANSLATION
 
+#ifdef USE_UPDATES
+		ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
+
+		if (g_system->getUpdateManager()) {
+			if (_updatesPopUp->getSelectedTag() == Common::UpdateManager::kUpdateIntervalNotSupported) {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateDisabled);
+			} else {
+				g_system->getUpdateManager()->setAutomaticallyChecksForUpdates(Common::UpdateManager::kUpdateStateEnabled);
+				g_system->getUpdateManager()->setUpdateCheckInterval(_updatesPopUp->getSelectedTag());
+			}
+		}
+#endif
+
 	}
 	OptionsDialog::close();
 }
@@ -1529,7 +1562,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	case kChooseKeyMappingCmd:
 		_keysDialog->runModal();
 		break;
@@ -1537,6 +1570,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();
+		break;
+#endif
+#ifdef USE_UPDATES
+	case kUpdatesCheckCmd:
+		if (g_system->getUpdateManager())
+			g_system->getUpdateManager()->checkForUpdates();
 		break;
 #endif
 	default:

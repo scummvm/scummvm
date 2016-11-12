@@ -52,6 +52,21 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define strncasecmp FAKE_strncasecmp
 #endif
 
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
+#undef exit
+#define exit FAKE_exit
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_abort)
+#undef abort
+#define abort FAKE_abort
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
+#undef system
+#define system FAKE_system
+#endif
+
 // HACK: SDL might include windows.h which defines its own ARRAYSIZE.
 // However, we want to use the version from common/util.h. Thus, we make sure
 // that we actually have this definition after including the SDL headers.
@@ -129,7 +144,7 @@ typedef struct { int FAKE; } FAKE_FILE;
 #endif
 
 // In a moment of brilliance Xlib.h included by SDL_syswm.h #defines the
-// following names. In a moment of mental breakdown, which occured upon
+// following names. In a moment of mental breakdown, which occurred upon
 // gazing at Xlib.h, LordHoto decided to undefine them to prevent havoc.
 #ifdef Status
 #undef Status
@@ -161,6 +176,21 @@ typedef struct { int FAKE; } FAKE_FILE;
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp)
 #undef strncasecmp
 #define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
+#undef exit
+#define exit(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_abort)
+#undef abort
+#define abort() FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
+#undef system
+#define system(a) FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 // SDL 2 has major API changes. We redefine constants which got renamed to

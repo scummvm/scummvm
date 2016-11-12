@@ -36,6 +36,7 @@ my @subs_files = qw(
 	dists/residualvm.rc
 	dists/slackware/residualvm.SlackBuild
 	dists/macosx/Info.plist
+	dists/macosx/dockplugin/Info.plist
 	dists/irix/residualvm.spec
 	dists/android/AndroidManifest.xml
 	);

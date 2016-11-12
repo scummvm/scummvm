@@ -932,6 +932,8 @@ SavenameDialog::SavenameDialog()
 	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), 0, kOKCmd);
 
 	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), 0, 0, kOKCmd);
+
+	_targetSlot = 0;
 }
 
 void SavenameDialog::setDescription(const Common::String &desc) {

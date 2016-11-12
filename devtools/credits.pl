@@ -287,7 +287,7 @@ sub begin_section {
 			# headlines...
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -295,7 +295,7 @@ sub begin_section {
 		} else {
 			my $ascii_title = html_entities_to_ascii($title);
 			$title = html_entities_to_cpp($title);
-			if ($ascii_title ne $title) {	
+			if ($ascii_title ne $title) {
 				print '"A1""'.$ascii_title.'",' . "\n";
 			}
 			print '"C1""'.$title.'",' . "\n";
@@ -428,7 +428,7 @@ sub add_person {
 		if (length $desc > 0) {
 			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_desc ne $desc) {	
+			if ($ascii_desc ne $desc) {
 				print '"A2""'.$ascii_desc.'",' . "\n";
 			}
 			print '"C2""'.$desc.'",' . "\n";
@@ -578,7 +578,7 @@ begin_credits("Credits");
     begin_section("ScummVM code");
 	  add_paragraph(
 	  "ResidualVM uses a lot of ScummVM code. ".
-	  "For a list of authors look into COPYRIGHT file. ");
+	  "For a list of authors look into COPYRIGHT file.");
     end_section();
 
   begin_section("Website code");
@@ -593,7 +593,7 @@ begin_credits("Credits");
   begin_section("Special thanks to");
 
 	  add_paragraph(
-	  "The LUA developers, for creating a nice compact script interpreter. ");
+	  "The LUA developers, for creating a nice compact script interpreter.");
 
 	  add_paragraph(
 	  "Tim Schafer, for obvious reasons, and everybody else who helped make ".
@@ -605,7 +605,7 @@ begin_credits("Credits");
 	  "and avoiding the horrible hack it could have been.");
 
 	  add_paragraph(
-	  "Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from. ");
+	  "Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.");
 
   end_section();
 

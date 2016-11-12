@@ -281,14 +281,9 @@ void GuiManager::runLoop() {
 		redraw();
 	}
 
-	_lastMousePosition.x = _lastMousePosition.y = -1;
-	_lastMousePosition.time = 0;
-
 	Common::EventManager *eventMan = _system->getEventManager();
 	uint32 lastRedraw = 0;
-	const uint32 waitTime = 1000 / 45;
-
-	bool tooltipCheck = false;
+	const uint32 waitTime = 1000 / 60;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit()) {
 		redraw();
@@ -304,9 +299,9 @@ void GuiManager::runLoop() {
 //		_system->updateScreen();
 
 		if (lastRedraw + waitTime < _system->getMillis(true)) {
+			lastRedraw = _system->getMillis(true);
 			_theme->updateScreen();
 			_system->updateScreen();
-			lastRedraw = _system->getMillis(true);
 		}
 
 		Common::Event event;
@@ -336,19 +331,14 @@ void GuiManager::runLoop() {
 
 			processEvent(event, activeDialog);
 
-			if (event.type == Common::EVENT_MOUSEMOVE) {
-				tooltipCheck = true;
-			}
-
-
 			if (lastRedraw + waitTime < _system->getMillis(true)) {
+				lastRedraw = _system->getMillis(true);
 				_theme->updateScreen();
 				_system->updateScreen();
-				lastRedraw = _system->getMillis(true);
 			}
 		}
 
-		if (tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
+		if (_lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
 				Tooltip *tooltip = new Tooltip();
@@ -415,7 +405,7 @@ void GuiManager::restoreState() {
 }
 
 void GuiManager::openDialog(Dialog *dialog) {
-	dialog->receivedFocus();
+	giveFocusToDialog(dialog);
 
 	if (!_dialogStack.empty())
 		getTopDialog()->lostFocus();
@@ -439,8 +429,10 @@ void GuiManager::closeTopDialog() {
 	// Remove the dialog from the stack
 	_dialogStack.pop()->lostFocus();
 
-	if (!_dialogStack.empty())
-		getTopDialog()->receivedFocus();
+	if (!_dialogStack.empty()) {
+		Dialog *dialog = getTopDialog();
+		giveFocusToDialog(dialog);
+	}
 
 	if (_redrawStatus != kRedrawFull)
 		_redrawStatus = kRedrawCloseDialog;
@@ -515,6 +507,7 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	int button;
 	uint32 time;
 	Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		activeDialog->handleKeyDown(event.kbd);
@@ -523,12 +516,12 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 		activeDialog->handleKeyUp(event.kbd);
 		break;
 	case Common::EVENT_MOUSEMOVE:
+		_globalMousePosition.x = event.mouse.x;
+		_globalMousePosition.y = event.mouse.y;
 		activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
 
 		if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
-			_lastMousePosition.x = mouse.x;
-			_lastMousePosition.y = mouse.y;
-			_lastMousePosition.time = _system->getMillis(true);
+			setLastMousePos(mouse.x, mouse.y);
 		}
 
 		break;
@@ -569,6 +562,25 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	#endif
 		break;
 	}
+}
+
+void GuiManager::doFullRedraw() {
+	_redrawStatus = kRedrawFull;
+	redraw();
+	_system->updateScreen();
+}
+
+void GuiManager::giveFocusToDialog(Dialog *dialog) {
+	int16 dialogX = _globalMousePosition.x - dialog->_x;
+	int16 dialogY = _globalMousePosition.y - dialog->_y;
+	dialog->receivedFocus(dialogX, dialogY);
+	setLastMousePos(dialogX, dialogY);
+}
+
+void GuiManager::setLastMousePos(int16 x, int16 y) {
+	_lastMousePosition.x = x;
+	_lastMousePosition.y = y;
+	_lastMousePosition.time = _system->getMillis(true);
 }
 
 } // End of namespace GUI

@@ -49,6 +49,10 @@ protected:
 
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::WriteStream *createLogFile();
+
+	// Override createAudioCDManager() to get our Mac-specific
+	// version.
+	virtual AudioCDManager *createAudioCDManager();
 };
 
 #endif

@@ -236,7 +236,7 @@
 
 	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
 				<space/>
 				<widget name = 'Cancel'
@@ -531,6 +531,17 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'UpdatesPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'UpdatesPopup'
+						type = 'PopUp'
+				/>
+				<widget name = 'UpdatesCheckManuallyButton'
+						type = 'Button'
+				/>
+			</layout>
 			<widget name='KeysButton'
  				     type='Button'
 			/>
@@ -564,7 +575,7 @@
 
 	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 4'>
 				<space/>
 				<widget name = 'Cancel'
@@ -863,7 +874,7 @@
 
 	<dialog name = 'FluidSynthSettings' overlays = 'GlobalOptions' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
-			<widget name = 'TabWidget'/>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
 				<space/>
 				<widget name = 'ResetSettings'
