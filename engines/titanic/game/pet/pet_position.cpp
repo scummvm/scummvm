@@ -171,8 +171,8 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CPETPosition::LeaveViewMsg(CLeaveViewMsg *msg) {
 	CPetControl *pet = getPetControl();
-	CString oldView = msg->_oldView->getName();
-	CString newView = msg->_newView->getName();
+	CString oldView = msg->_oldView->getFullViewName();
+	CString newView = msg->_newView->getFullViewName();
 
 	if (pet && newView == "Lift.Node 1.N") {
 		int elevatorNum = pet->getRoomsElevatorNum();
