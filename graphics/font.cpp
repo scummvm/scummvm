@@ -164,7 +164,16 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 
 	typename StringType::unsigned_type last = 0;
 	for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
-		const typename StringType::unsigned_type c = *x;
+		typename StringType::unsigned_type c = *x;
+
+		// Convert Windows and Mac line breaks into plain \n
+		if (c == '\r') {
+			if (x != str.end() && *(x + 1) == '\n') {
+				++x;
+			}
+			c = '\n';
+		}
+
 		const int w = font.getCharWidth(c) + font.getKerningOffset(last, c);
 		last = c;
 		const bool wouldExceedWidth = (lineWidth + tmpWidth + w > maxWidth);

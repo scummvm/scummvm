@@ -45,6 +45,11 @@ credits:
 #	$(srcdir)/devtools/credits.pl --xml-docbook > $(srcdir)/../../docs/trunk/docbook/credits.xml
 
 
+# Rule to explicitly rebuild the wwwroot archive
+wwwroot:
+	$(srcdir)/devtools/make-www-archive.py $(srcdir)/dists/networking/
+	
+
 #
 # Rules which automatically and implicitly rebuild the credits and
 # MD5 tables when needed.

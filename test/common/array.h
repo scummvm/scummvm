@@ -362,7 +362,7 @@ struct ListElement {
 };
 
 static int compareInts(const void *a, const void *b) {
-	return ((ListElement *)a)->value - ((ListElement *)b)->value;
+	return ((const ListElement *)a)->value - ((const ListElement *)b)->value;
 }
 
 class SortedArrayTestSuite : public CxxTest::TestSuite {

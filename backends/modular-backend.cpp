@@ -262,6 +262,10 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
 
+void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	_graphicsManager->displayActivityIconOnOSD(icon);
+}
+
 void ModularBackend::quit() {
 	exit(0);
 }

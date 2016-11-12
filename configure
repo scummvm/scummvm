@@ -70,13 +70,23 @@ get_var() {
 }
 
 append_var() {
-    VAR=${1}
-    shift
-    if eval test -z \"\$${VAR}\" ; then
-        eval ${VAR}='$@'
-    else
-        eval ${VAR}=\"\$${VAR} \"'$@'
-    fi
+	VAR=${1}
+	shift
+	if eval test -z \"\$${VAR}\" ; then
+		eval ${VAR}='$@'
+	else
+		eval ${VAR}=\"\$${VAR} \"'$@'
+	fi
+}
+
+prepend_var() {
+	VAR=${1}
+	shift
+	if eval test -z \"\$${VAR}\" ; then
+		eval ${VAR}='$@'
+	else
+		eval ${VAR}='$@'\" \$${VAR}\"
+	fi
 }
 
 # Add an engine: id name build subengines base-games dependencies
@@ -117,10 +127,12 @@ done
 #
 #ResidualVM defaults: faad=no, opengles=no, tremor=no mt32emu=no, translation=no,
 # flac=no, seq_midi=no, snd_io=no, timidity=no fluidsynth=no, opengles2=no
-# eventrec=no, build_scalers=no, build_hq_scalers=no
+# eventrec=no, build_scalers=no, build_hq_scalers=no, sdlnet=no, libcurl=no, cloud=no
 #
 # Default lib behaviour yes/no/auto
 _vorbis=auto
+_sdlnet=no
+_libcurl=no
 _tremor=no
 _tremolo=no
 _flac=no
@@ -162,6 +174,7 @@ _build_hq_scalers=no
 _enable_prof=no
 _global_constructors=no
 _bink=yes
+_cloud=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
@@ -193,10 +206,12 @@ _amigaospath="Games:ResidualVM"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
-_sdlconfig=sdl-config
+_sdlconfig=sdl2-config
+_libcurlconfig=curl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
 _freetypepath="$PATH"
+_libcurlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
@@ -210,6 +225,7 @@ _have_x86=no
 
 # Add (virtual) features
 add_feature 16bit "16bit color" "_16bit"
+add_feature cloud "cloud" "_cloud"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature freetype2 "FreeType2" "_freetype2"
@@ -377,7 +393,7 @@ define_in_config_if_yes() {
 # TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
-	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl2-config:sdl12-config:sdl11-config:sdl-config"
 	_sdlconfig=
 
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
@@ -437,6 +453,40 @@ find_freetypeconfig() {
 	IFS="$ac_save_ifs"
 
 	if test -z "$_freetypeconfig"; then
+		echo "none found!"
+	fi
+}
+
+#
+# Determine curl-config
+#
+find_libcurlconfig() {
+	echo_n "Looking for curl-config... "
+	libcurlconfigs="$_libcurlconfig"
+	_libcurlconfig=
+
+	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
+	for path_dir in $_libcurlpath; do
+		#reset separator to parse sdlconfigs
+		IFS=":"
+		for libcurlconfig in $libcurlconfigs; do
+			if test -f "$path_dir/$libcurlconfig" ; then
+				_libcurlconfig="$path_dir/$libcurlconfig"
+				echo $_libcurlconfig
+				# Save the prefix
+				_libcurlpath=$path_dir
+				if test `basename $path_dir` = bin ; then
+					_libcurlpath=`dirname $path_dir`
+				fi
+				# break at first curl-config found in path
+				break 2
+			fi
+		done
+	done
+
+	IFS="$ac_save_ifs"
+
+	if test -z "$_libcurlconfig"; then
 		echo "none found!"
 	fi
 }
@@ -898,6 +948,7 @@ Optional Features:
   --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --disable-cloud          don't build cloud support
   --enable-vkeybd          build virtual keyboard support
   --enable-keymapper       build key mapper support
   --enable-updates         build support for updates
@@ -980,6 +1031,11 @@ Optional Libraries:
   --with-sndio-prefix=DIR  Prefix where sndio is installed (optional)
   --disable-sndio          disable sndio MIDI driver [autodetect]
 
+  --with-sdlnet-prefix=DIR  Prefix where SDL_Net is
+                           installed (optional)
+  --disable-sdlnet         disable SDL_Net networking library [autodetect]
+  --disable-libcurl        disable libcurl networking library [autodetect]
+
 Some influential environment variables:
   LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
                  nonstandard directory <lib dir>
@@ -1061,6 +1117,12 @@ for ac_option in $@; do
 	--disable-iconv)          _iconv=no       ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-sdlnet)          _sdlnet=yes     ;;
+	--disable-sdlnet)         _sdlnet=no      ;;
+	--enable-libcurl)         _libcurl=yes     ;;
+	--disable-libcurl)        _libcurl=no      ;;
+	--enable-cloud)           _cloud=yes      ;;
+	--disable-cloud)          _cloud=no       ;;
 	--enable-updates)         _updates=yes    ;;
 	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
@@ -1187,6 +1249,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ICONV_CFLAGS="-I$arg/include"
 		ICONV_LIBS="-L$arg/lib"
+		;;
+	--with-sdlnet-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SDL_NET_CFLAGS="-I$arg/include"
+		SDL_NET_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -1350,6 +1417,11 @@ androidsdl-x86)
 	_host_os=androidsdl
 	_host_cpu=i686
 	_host_alias=i686-linux-android
+	;;
+androidsdl-x86_64)
+	_host_os=androidsdl
+	_host_cpu=x86_64
+	_host_alias=x86_64-linux-android
 	;;
 arm-riscos)
 	_host_os=riscos
@@ -2248,7 +2320,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var CXXFLAGS "-mfpu=neon"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
@@ -2540,13 +2612,15 @@ case $_host_os in
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
-		_sdlconfig=sdl2-config
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+		_libcurlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		append_var DEFINES "-DPLAYSTATION3"
 		append_var CXXFLAGS "-mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		append_var LDFLAGS "-L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
+		# The network libraries are statically linked and need to be specified in the following order
+		append_var SDL_NET_LIBS "-lSDL_net -lnet -lsysmodule"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
@@ -2662,7 +2736,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DANDROIDSDL"
 			_unix=yes
 			_seq_midi=no
-			_mt32emu=no
 			_timidity=no
 			_backend="androidsdl"
 			_port_mk="backends/platform/androidsdl/androidsdl.mk"
@@ -2706,6 +2779,10 @@ if test -n "$_host"; then
 			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
+			# Disable cloud and SDL_Net due to outdated toolchain
+			_cloud=no
+			_sdlnet=no
+			_libcurl=no
 			_vkeybd=yes
 			_build_hq_scalers=no
 			_keymapper=no
@@ -2755,8 +2832,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-fschedule-insns2"
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fdelete-null-pointer-checks"
-			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
-			append_var CXXFLAGS "-fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -2809,11 +2884,12 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_seq_midi=no
 			_timidity=no
-			_build_scalers=no
+			_build_scalers=yes
 			_optimization_level=-O3
 			_vkeybd=yes
 			_keymapper=yes
 			_vorbis=no
+			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
@@ -3122,7 +3198,7 @@ case $_backend in
 		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
-		;;		
+		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
 		append_var INCLUDES '-isystem $(ronindir)/include'
@@ -3291,10 +3367,31 @@ case $_backend in
 		case $_sdlversion in
 			2.0.*)
 				add_line_to_config_mk "USE_SDL2 = 1"
+				append_var SDL_NET_LIBS "-lSDL2_net"
 				;;
 			*)
+				append_var SDL_NET_LIBS "-lSDL_net"
 				;;
 		esac
+
+		# Check for SDL_Net
+		echocheck "SDL_Net"
+		if test "$_sdlnet" = auto ; then
+			_sdlnet=no
+			cat > $TMPC << EOF
+#include "SDL_net.h"
+int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
+EOF
+			cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
+		fi
+		if test "$_sdlnet" = yes ; then
+			# Some platforms require SDL to be after SDL_Net, thus we prepend var
+			prepend_var LIBS "$SDL_NET_LIBS"
+			append_var INCLUDES "$SDL_NET_CFLAGS"
+		fi
+		define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
+		echo "$_sdlnet"
+
 		;;
 esac
 
@@ -4069,6 +4166,102 @@ EOF
 		_sparkle=no
 	;;
 esac
+
+#
+# Check for libcurl to be present
+#
+if test "$_libcurl" != "no"; then
+
+	# Look for the curl-config script
+	find_libcurlconfig
+
+	if test -z "$_libcurlconfig"; then
+		_libcurl=no
+	else
+		LIBCURL_LIBS=`$_libcurlconfig --libs`
+		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
+
+		case $_host_os in
+			amigaos*)
+				append_var LIBCURL_LIBS "-lpthread"
+			;;
+		esac
+
+		if test "$_libcurl" = "auto"; then
+			_libcurl=no
+
+			cat > $TMPC << EOF
+			#include <curl/curl.h>
+			int main(int argc, char *argv[]) {
+				int x;
+				curl_easy_setopt(NULL,CURLOPT_URL,NULL);
+				x=CURL_ERROR_SIZE;
+				x=CURLOPT_WRITEFUNCTION;
+				x=CURLOPT_WRITEDATA;
+				x=CURLOPT_ERRORBUFFER;
+				x=CURLOPT_STDERR;
+				x=CURLOPT_VERBOSE;
+
+				curl_version_info_data *data = curl_version_info(CURLVERSION_NOW);
+				if (data->features & CURL_VERSION_SSL)
+					return 0;
+				return 1;
+			}
+EOF
+
+			cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS
+			if test "$?" -eq 0; then
+				if test -n "$_host"; then
+					# In cross-compiling mode, we cannot run the result, assume SSL is available
+					_libcurl=yes
+				else
+					$TMPO$HOSTEXEEXT
+					if test "$?" -eq 0; then
+						_libcurl=yes
+					else
+						_libcurl="no SSL support"
+					fi
+				fi
+			fi
+			cc_check_clean
+		fi
+
+		if test "$_libcurl" = "yes"; then
+			append_var LIBS "$LIBCURL_LIBS"
+			append_var INCLUDES "$LIBCURL_CFLAGS"
+		fi
+	fi
+
+fi
+
+echocheck "libcurl"
+echo "$_libcurl"
+
+define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
+
+#
+# Check whether to build cloud integration support
+#
+echo_n "Cloud integration... "
+if test "$_cloud" = "no"; then
+	echo "no"
+else
+	_cloud=no
+	if test "$_sdlnet" = "yes"; then
+		_cloud=yes
+		echo_n "local"
+	fi
+	if test "$_libcurl" = "yes"; then
+		if test "$_cloud" = "yes"; then echo_n ", "; fi
+		_cloud=yes
+		echo_n "servers"
+	fi
+	if test "$_cloud" = "no"; then
+		echo_n "no"
+	fi
+	echo  # newline
+fi
+define_in_config_if_yes $_cloud 'USE_CLOUD'
 
 #
 # Check is NSDockTilePlugIn protocol is supported
@@ -4851,7 +5044,11 @@ if test "$_keymapper" = yes ; then
 fi
 
 if test "$_eventrec" = yes ; then
-	echo ", event recorder"
+	echo_n ", event recorder"
+fi
+
+if test "$_cloud" = yes ; then
+	echo ", cloud"
 else
 	echo
 fi

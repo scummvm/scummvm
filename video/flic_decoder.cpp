@@ -85,18 +85,9 @@ void FlicDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((FlicVideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
-FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height) {
+FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader) {
 	_fileStream = stream;
 	_frameCount = frameCount;
-
-	_fileStream->readUint16LE();	// flags
-	// Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
-	// the frame delay is the FLIC "speed", in milliseconds.
-	_frameDelay = _startFrameDelay = _fileStream->readUint32LE();
-
-	_fileStream->seek(80);
-	_offsetFrame1 = _fileStream->readUint32LE();
-	_offsetFrame2 = _fileStream->readUint32LE();
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -108,8 +99,8 @@ FlicDecoder::FlicVideoTrack::FlicVideoTrack(Common::SeekableReadStream *stream, 
 	_nextFrameStartTime = 0;
 	_atRingFrame = false;
 
-	// Seek to the first frame
-	_fileStream->seek(_offsetFrame1);
+	if (!skipHeader)
+		readHeader();
 }
 
 FlicDecoder::FlicVideoTrack::~FlicVideoTrack() {
@@ -118,6 +109,20 @@ FlicDecoder::FlicVideoTrack::~FlicVideoTrack() {
 
 	_surface->free();
 	delete _surface;
+}
+
+void FlicDecoder::FlicVideoTrack::readHeader() {
+	_fileStream->readUint16LE();	// flags
+	// Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
+	// the frame delay is the FLIC "speed", in milliseconds.
+	_frameDelay = _startFrameDelay = _fileStream->readUint32LE();
+
+	_fileStream->seek(80);
+	_offsetFrame1 = _fileStream->readUint32LE();
+	_offsetFrame2 = _fileStream->readUint32LE();
+
+	// Seek to the first frame
+	_fileStream->seek(_offsetFrame1);
 }
 
 bool FlicDecoder::FlicVideoTrack::endOfTrack() const {
@@ -158,75 +163,17 @@ Graphics::PixelFormat FlicDecoder::FlicVideoTrack::getPixelFormat() const {
 
 const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	// Read chunk
-	uint32 frameSize = _fileStream->readUint32LE();
+	/*uint32 frameSize = */ _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
-	uint16 chunkCount = 0;
 
 	switch (frameType) {
 	case FRAME_TYPE:
-		{
-			chunkCount = _fileStream->readUint16LE();
-			// Note: The overridden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
-			// the frame delay is the FLIC "speed", in milliseconds.
-			uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
-			if (newFrameDelay > 0)
-				_frameDelay = newFrameDelay;
-
-			_fileStream->readUint16LE();	// reserved, always 0
-			uint16 newWidth = _fileStream->readUint16LE();
-			uint16 newHeight = _fileStream->readUint16LE();
-
-			if ((newWidth != 0) || (newHeight != 0)) {
-				if (newWidth == 0)
-					newWidth = _surface->w;
-				if (newHeight == 0)
-					newHeight = _surface->h;
-
-				_surface->free();
-				delete _surface;
-				_surface = new Graphics::Surface();
-				_surface->create(newWidth, newHeight, Graphics::PixelFormat::createFormatCLUT8());
-			}
-		}
+		handleFrame();
 		break;
 	default:
 		error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
 		break;
 	 }
-
-	// Read subchunks
-	if (frameType == FRAME_TYPE) {
-		for (uint32 i = 0; i < chunkCount; ++i) {
-			frameSize = _fileStream->readUint32LE();
-			frameType = _fileStream->readUint16LE();
-			uint8 *data = new uint8[frameSize - 6];
-			_fileStream->read(data, frameSize - 6);
-
-			switch (frameType) {
-			case FLI_SETPAL:
-				unpackPalette(data);
-				_dirtyPalette = true;
-				break;
-			case FLI_SS2:
-				decodeDeltaFLC(data);
-				break;
-			case FLI_BRUN:
-				decodeByteRun(data);
-				break;
-			case FLI_COPY:
-				copyFrame(data);
-				break;
-			case PSTAMP:
-				/* PSTAMP - skip for now */
-				break;
-			default:
-				error("FlicDecoder::decodeNextFrame(): unknown subchunk type (type = 0x%02X)", frameType);
-				break;
-			 }
-
-			delete[] data;
-		}
-	}
 
 	_curFrame++;
 	_nextFrameStartTime += _frameDelay;
@@ -238,6 +185,63 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 	}
 
 	return _surface;
+}
+
+void FlicDecoder::FlicVideoTrack::handleFrame() {
+	uint16 chunkCount = _fileStream->readUint16LE();
+	// Note: The overridden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
+	// the frame delay is the FLIC "speed", in milliseconds.
+	uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
+	if (newFrameDelay > 0)
+		_frameDelay = newFrameDelay;
+
+	_fileStream->readUint16LE();	// reserved, always 0
+	uint16 newWidth = _fileStream->readUint16LE();
+	uint16 newHeight = _fileStream->readUint16LE();
+
+	if ((newWidth != 0) || (newHeight != 0)) {
+		if (newWidth == 0)
+			newWidth = _surface->w;
+		if (newHeight == 0)
+			newHeight = _surface->h;
+
+		_surface->free();
+		delete _surface;
+		_surface = new Graphics::Surface();
+		_surface->create(newWidth, newHeight, Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	// Read subchunks
+	for (uint32 i = 0; i < chunkCount; ++i) {
+		uint32 frameSize = _fileStream->readUint32LE();
+		uint16 frameType = _fileStream->readUint16LE();
+		uint8 *data = new uint8[frameSize - 6];
+		_fileStream->read(data, frameSize - 6);
+
+		switch (frameType) {
+		case FLI_SETPAL:
+			unpackPalette(data);
+			_dirtyPalette = true;
+			break;
+		case FLI_SS2:
+			decodeDeltaFLC(data);
+			break;
+		case FLI_BRUN:
+			decodeByteRun(data);
+			break;
+		case FLI_COPY:
+			copyFrame(data);
+			break;
+		case PSTAMP:
+			/* PSTAMP - skip for now */
+			break;
+		default:
+			error("FlicDecoder::decodeNextFrame(): unknown subchunk type (type = 0x%02X)", frameType);
+			break;
+		}
+
+		delete[] data;
+	}
 }
 
 void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {

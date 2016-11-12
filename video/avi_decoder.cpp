@@ -76,12 +76,13 @@ enum {
 };
 
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) : _frameRateOverride(0), _soundType(soundType) {
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) :
+		_frameRateOverride(0), _soundType(soundType) {
 	initCommon();
 }
 
-AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType)
-		: _frameRateOverride(frameRateOverride), _soundType(soundType) {
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType) :
+	_frameRateOverride(frameRateOverride), _soundType(soundType) {
 	initCommon();
 }
 
@@ -93,12 +94,31 @@ AVIDecoder::AVIAudioTrack *AVIDecoder::createAudioTrack(AVIStreamHeader sHeader,
 	return new AVIAudioTrack(sHeader, wvInfo, _soundType);
 }
 
+bool AVIDecoder::seekToFrame(uint frame) {
+	if (!isSeekable())
+		return false;
+
+	// If we didn't find a video track, we can't seek by frame (of course)
+	if (_videoTracks.empty())
+		return false;
+
+	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks.front().track);
+	Audio::Timestamp time = track->getFrameTime(frame);
+
+	if (time < 0)
+		return false;
+
+	return seek(time);
+}
+
 void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
 	_movieListStart = 0;
 	_movieListEnd = 0;
 	_fileStream = 0;
+	_videoTrackCounter = _audioTrackCounter = 0;
+	_lastAddedTrack = nullptr;
 	memset(&_header, 0, sizeof(_header));
 }
 
@@ -106,6 +126,14 @@ bool AVIDecoder::isSeekable() const {
 	// Only videos with an index can seek
 	// Anyone else who wants to seek is crazy.
 	return isVideoLoaded() && !_indexEntries.empty();
+}
+
+const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
+	if (_videoTracks.size() != 2)
+		return nullptr;
+
+	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks[1].track);
+	return track->decodeNextFrame();
 }
 
 bool AVIDecoder::parseNextChunk() {
@@ -145,9 +173,11 @@ bool AVIDecoder::parseNextChunk() {
 	case ID_JUNQ: // Same as JUNK, safe to ignore
 	case ID_ISFT: // Metadata, safe to ignore
 	case ID_DISP: // Metadata, should be safe to ignore
-	case ID_STRN: // Metadata, safe to ignore
 	case ID_DMLH: // OpenDML extension, contains an extra total frames field, safe to ignore
 		skipChunk(size);
+		break;
+	case ID_STRN: // Metadata, safe to ignore
+		readStreamName(size);
 		break;
 	case ID_IDX1:
 		readOldIndex(size);
@@ -287,6 +317,33 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 	_fileStream->seek(startPos + strfSize);
 }
 
+void AVIDecoder::addTrack(Track *track, bool isExternal) {
+	VideoDecoder::addTrack(track, isExternal);
+	_lastAddedTrack = track;
+}
+
+void AVIDecoder::readStreamName(uint32 size) {
+	if (!_lastAddedTrack) {
+		skipChunk(size);
+	} else {
+		// Get in the name
+		assert(size > 0 && size < 64);
+		char buffer[64];
+		_fileStream->read(buffer, size);
+		if (size & 1)
+			_fileStream->skip(1);
+
+		// Apply it to the most recently read stream
+		assert(_lastAddedTrack);
+		AVIVideoTrack *vidTrack = dynamic_cast<AVIVideoTrack *>(_lastAddedTrack);
+		AVIAudioTrack *audTrack = dynamic_cast<AVIAudioTrack *>(_lastAddedTrack);
+		if (vidTrack)
+			vidTrack->getName() = Common::String(buffer);
+		else if (audTrack)
+			audTrack->getName() = Common::String(buffer);
+	}
+}
+
 bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
@@ -296,7 +353,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	/* uint32 fileSize = */ stream->readUint32LE();
+	int32 fileSize = stream->readUint32LE();
 	uint32 riffType = stream->readUint32BE();
 
 	if (riffType != ID_AVI) {
@@ -307,7 +364,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_fileStream = stream;
 
 	// Go through all chunks in the file
-	while (parseNextChunk())
+	while (_fileStream->pos() < fileSize && parseNextChunk())
 		;
 
 	if (!_decodedHeader) {
@@ -330,16 +387,19 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		status.index = index;
 		status.chunkSearchOffset = _movieListStart;
 
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
-			_videoTracks.push_back(status);
-		else
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
 			_audioTracks.push_back(status);
-	}
+		} else if (_videoTracks.empty()) {
+			_videoTracks.push_back(status);
+		} else {
+			// Secondary video track
+			assert(_videoTracks.size() == 1);
+			status.chunkSearchOffset = getVideoTrackOffset(index);
+			assert(status.chunkSearchOffset != 0);
 
-	if (_videoTracks.size() != 1) {
-		warning("Unhandled AVI video track count: %d", _videoTracks.size());
-		close();
-		return false;
+			// Add the video track to the list
+			_videoTracks.push_back(status);
+		}
 	}
 
 	// Check if this is a special Duck Truemotion video
@@ -370,12 +430,13 @@ void AVIDecoder::readNextPacket() {
 	if (_videoTracks.empty())
 		return;
 
-	// Get the video frame first
-	handleNextPacket(_videoTracks[0]);
+	// Handle the video first
+	for (uint idx = 0; idx < _videoTracks.size(); ++idx)
+		handleNextPacket(_videoTracks[idx]);
 
 	// Handle audio tracks next
-	for (uint32 i = 0; i < _audioTracks.size(); i++)
-		handleNextPacket(_audioTracks[i]);
+	for (uint idx = 0; idx < _audioTracks.size(); ++idx)
+		handleNextPacket(_audioTracks[idx]);
 }
 
 void AVIDecoder::handleNextPacket(TrackStatus &status) {
@@ -487,12 +548,21 @@ bool AVIDecoder::rewind() {
 		return false;
 
 	for (uint32 i = 0; i < _videoTracks.size(); i++)
-		_videoTracks[i].chunkSearchOffset = _movieListStart;
+		_videoTracks[i].chunkSearchOffset = getVideoTrackOffset(_videoTracks[i].index);
 
 	for (uint32 i = 0; i < _audioTracks.size(); i++)
 		_audioTracks[i].chunkSearchOffset = _movieListStart;
 
 	return true;
+}
+
+uint AVIDecoder::getVideoTrackOffset(uint trackIndex, uint frameNumber) {
+	if (trackIndex == _videoTracks.front().index && frameNumber == 0)
+		return _movieListStart;
+
+	OldIndex *entry = _indexEntries.find(trackIndex, frameNumber);
+	assert(entry);
+	return entry->offset;
 }
 
 bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
@@ -629,6 +699,26 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		videoTrack->decodeFrame(chunk);
 	}
 
+	// Update any secondary video track for transparencies
+	if (_videoTracks.size() == 2) {
+		// Set it's frame number
+		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
+		videoTrack2->setCurFrame((int)frame - 1);
+
+		// Find the index entry for the frame and read it in
+		OldIndex *entry = _indexEntries.find(_videoTracks.back().index, frame);
+		assert(entry);
+
+		Common::SeekableReadStream *chunk = nullptr;
+		_fileStream->seek(entry->offset + 8);
+		_videoTracks.back().chunkSearchOffset = entry->offset;
+
+		if (entry->size != 0)
+			chunk = _fileStream->readStream(entry->size);
+
+		videoTrack2->decodeFrame(chunk);
+	}
+
 	// Set the video track's frame
 	videoTrack->setCurFrame((int)frame - 1);
 
@@ -637,7 +727,7 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 	return true;
 }
 
-byte AVIDecoder::getStreamIndex(uint32 tag) const {
+byte AVIDecoder::getStreamIndex(uint32 tag) {
 	char string[3];
 	WRITE_BE_UINT16(string, tag >> 16);
 	string[2] = 0;
@@ -936,6 +1026,18 @@ void AVIDecoder::AVIAudioTrack::createAudioStream() {
 }
 
 AVIDecoder::TrackStatus::TrackStatus() : track(0), chunkSearchOffset(0) {
+}
+
+AVIDecoder::OldIndex *AVIDecoder::IndexEntries::find(uint index, uint frameNumber) {
+	for (uint idx = 0, frameCtr = 0; idx < size(); ++idx) {
+		if ((*this)[idx].id != ID_REC &&
+				AVIDecoder::getStreamIndex((*this)[idx].id) == index) {
+			if (frameCtr++ == frameNumber)
+				return &(*this)[idx];
+		}
+	}
+
+	return nullptr;
 }
 
 } // End of namespace Video

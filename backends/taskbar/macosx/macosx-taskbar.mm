@@ -112,11 +112,11 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 		[_dockTile performSelector:@selector(display)];
 		return;
 	}
-	
+
 	Common::String path = getIconPath(name);
 	if (path.empty())
 		return;
-	
+
 	initOverlayIconView();
 
 	CFStringRef imageFile = CFStringCreateWithCString(0, path.c_str(), kCFStringEncodingASCII);
@@ -136,7 +136,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 		_progress = (double)completed / (double)total;
 	else if (_progress < 0)
 		_progress = 0.0;
-	
+
 	 NSImage *mainIcon = [[NSApp applicationIconImage] copy];
 	double barSize = [mainIcon size].width;
 	double progressSize = barSize * _progress;
@@ -150,7 +150,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 	initApplicationIconView();
 	[_applicationIconView setImage:mainIcon];
 	[mainIcon release];
-	
+
 	[_dockTile performSelector:@selector(display)];
 }
 
@@ -207,50 +207,50 @@ Common::String MacOSXTaskbarManager::getIconPath(const Common::String& target) {
 	// fallback to the extra path
 	//
 	// Icons can be either in a subfolder named "icons" or directly in the path
-	
+
 	Common::String iconsPath = ConfMan.get("iconspath");
 	Common::String extraPath = ConfMan.get("extrapath");
-	
+
 #define TRY_ICON_PATH(path) { \
 Common::FSNode node((path)); \
 if (node.exists()) \
 return (path); \
 }
-	
+
 	if (!iconsPath.empty()) {
 		TRY_ICON_PATH(iconsPath + "/" + target + ".png");
 		TRY_ICON_PATH(iconsPath + "/" + ConfMan.get("gameid") + ".png");
 		TRY_ICON_PATH(iconsPath + "/icons/" + target + ".png");
 		TRY_ICON_PATH(iconsPath + "/icons/" + ConfMan.get("gameid") + ".png");
 	}
-	
+
 	if (!extraPath.empty()) {
 		TRY_ICON_PATH(extraPath + "/" + target + ".png");
 		TRY_ICON_PATH(extraPath + "/" + ConfMan.get("gameid") + ".png");
 		TRY_ICON_PATH(extraPath + "/icons/" + target + ".png");
 		TRY_ICON_PATH(extraPath + "/icons/" + ConfMan.get("gameid") + ".png");
 	}
-	
+
 	return "";
 }
 
 void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
 	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
-	
+
 	if (_dockTile == nil)
 		return;
-	
+
 	// Store the game, description and icon in user preferences.
 	// The NSDockTilePlugin will retrieve them there to list them in the dock tile menu.
-	
+
 	CFStringRef gameName = CFStringCreateWithCString(0, name.c_str(), kCFStringEncodingASCII);
 	CFStringRef desc = CFStringCreateWithCString(0, description.c_str(), kCFStringEncodingASCII);
-	
+
 	// First build the dictionary for this game.
 	NSMutableDictionary *dict = [[NSMutableDictionary  alloc] init];
 	[dict setObject:(NSString *)gameName forKey:@"game"];
 	[dict setObject:(NSString *)desc forKey:@"description"];
-	
+
 	// Icon
 	Common::String iconPath = getIconPath(name);
 	if (!iconPath.empty()) {
@@ -258,7 +258,7 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 		[dict setObject:(NSString *)icon forKey:@"icon"];
 		CFRelease(icon);
 	}
-	
+
 	// Retrieve the current list of recent items and update it.
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSArray *oldArray = [defaults arrayForKey:@"recentGames"];

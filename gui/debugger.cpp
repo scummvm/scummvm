@@ -584,7 +584,7 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			length = atoi(argv[2]);
 			paramOffset = 2;
 		}
-		
+
 		// Assume that spaces are part of a single filename.
 		Common::String filename = argv[1 + paramOffset];
 		for (int i = 2 + paramOffset; i < argc; i++) {
@@ -624,7 +624,7 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 			length = atoi(argv[2]);
 			paramOffset = 2;
 		}
-		
+
 		// Assume that spaces are part of a single filename.
 		Common::String filename = argv[1 + paramOffset];
 		for (int i = 2 + paramOffset; i < argc; i++) {

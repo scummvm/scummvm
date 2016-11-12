@@ -70,6 +70,9 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
+	"  --auto-detect            Display a list of games from current or specified directory\n"
+	"                           and start the first one. Use --path=PATH before --auto-detect\n"
+	"                           to specify a directory.\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -96,6 +99,7 @@ static const char HELP_STRING[] =
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
 	"                           (separated by commas)\n"
+	"  --debug-channels-only    Show only the specified debug channels\n"
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
@@ -160,6 +164,7 @@ void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("aspect_ratio", false);
 
@@ -361,6 +366,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("auto-detect")
+			END_COMMAND
+
 #ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
@@ -392,6 +400,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("debugflags")
 			END_OPTION
 
+			DO_LONG_OPTION_BOOL("debug-channels-only")
+			END_OPTION
+
 			DO_OPTION('e', "music-driver")
 			END_OPTION
 
@@ -402,6 +413,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
 
 #ifdef ENABLE_EVENTRECORDER
@@ -714,6 +728,34 @@ static void listAudioDevices() {
 	}
 }
 
+/** Display all games in the given directory, or current directory if empty */
+static bool autoDetect(Common::String path) {
+	if (path.empty())
+		path = ".";
+	//Current directory
+	Common::FSNode dir(path);
+
+	Common::FSList files;
+
+	//Collect all files from directory
+	dir.getChildren(files, Common::FSNode::kListAll);
+
+	GameList candidates(EngineMan.detectGames(files));
+	if (candidates.empty()) {
+		printf("ScummVM could not find any game in %s\n", path.c_str());
+		return false;
+	}
+
+	// Print all the candidate found
+	printf("ID                   Description\n");
+	printf("-------------------- ---------------------------------------------------------\n");
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+	}
+	// Set the active domain to the first one to start it.
+	ConfMan.setActiveDomain(candidates.begin()->gameid());
+	return true;
+}
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -940,6 +982,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
 		return true;
+	} else if (command == "auto-detect") {
+		// If auto-detects succeed, we want to return false so that the game is started
+		return !autoDetect(settings["path"]);
+		//return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {

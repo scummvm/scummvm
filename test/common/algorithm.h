@@ -28,8 +28,8 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 	/**
 	 * Auxiliary function to check the equality of two generic collections (A and B), from one_first to one_last.
 	 *
-	 * @note: It assumes that other has at least (one_last - one-first) lenght, starting from other_first. 
-	 * 
+	 * @note: It assumes that other has at least (one_last - one-first) lenght, starting from other_first.
+	 *
 	 * @param one_first: The first element of the first collection to be compared.
 	 * @param one_last: The last element of the first collection to be compared.
 	 * @param other_first: The first element of the collection to be compared.
@@ -37,19 +37,19 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 	 */
 	template<typename It>
 	bool checkEqual(It one_first, It one_last, It other_first) {
-		if (one_first == one_last) 
+		if (one_first == one_last)
 			return true;
 
 		// Check whether two containers have the same items in the same order,
 		// starting from some iterators one_first and other_first
-		// 
+		//
 		// It iterates through the containers, comparing the elements one by one.
 		// If it finds a discrepancy, it returns false. Otherwise, it returns true.
 
-		for (; one_first != one_last; ++one_first, ++other_first) 
-			if (*one_first != *other_first) 			
+		for (; one_first != one_last; ++one_first, ++other_first)
+			if (*one_first != *other_first)
 				return false;
-		
+
 		return true;
 	}
 
@@ -125,19 +125,19 @@ public:
 		Common::sort(list.begin(), list.end());
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 	}
-	
+
 	void test_string_replace() {
 
 		Common::String original = "Hello World";
 		Common::String expected = "Hells Wsrld";
 
 		Common::replace(original.begin(), original.end(), 'o', 's');
-		
-		TS_ASSERT_EQUALS(original, expected);		
+
+		TS_ASSERT_EQUALS(original, expected);
 	}
 
 	void test_container_replace() {
-		
+
 		Common::List<int> original;
 		Common::List<int> expected;
 		for (int i = 0; i < 6; ++i) {
@@ -150,7 +150,7 @@ public:
 		}
 
 		Common::replace(original.begin(), original.end(), 3, 5);
-		
+
 		TS_ASSERT_EQUALS(checkEqual(original.begin(), original.end(), expected.begin()), true);
 	}
 };

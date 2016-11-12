@@ -398,25 +398,28 @@ void ButtonWidget::setUnpressedState() {
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _gfx(), _alpha(256), _transparency(false) {
+	  _alpha(255), _transparency(false), _showButton(true), _isAlpha(false) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
+	_mode = ThemeEngine::kAutoScaleNone;
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
-	  _gfx(), _alpha(256), _transparency(false) {
+	  _alpha(255), _transparency(false), _showButton(true), _isAlpha(false) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
+	_mode = ThemeEngine::kAutoScaleNone;
 }
 
 PicButtonWidget::~PicButtonWidget() {
-	_gfx.free();
+	for (int i = 0; i < kPicButtonStateMax + 1; i++)
+		_gfx[i].free();
 }
 
-void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
-	_gfx.free();
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
+	_gfx[statenum].free();
 
 	if (!gfx || !gfx->getPixels())
 		return;
@@ -432,10 +435,27 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	_gfx.copyFrom(*gfx);
+	_gfx[statenum].copyFrom(*gfx);
 }
 
-void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
+void PicButtonWidget::setAGfx(const Graphics::TransparentSurface *gfx, int statenum, ThemeEngine::AutoScaleMode mode) {
+	_agfx[statenum].free();
+
+	if (!gfx || !gfx->getPixels())
+		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("PicButtonWidget::setGfx got paletted surface passed");
+		return;
+	}
+
+	_agfx[statenum].copyFrom(*gfx);
+
+	_isAlpha = true;
+	_mode = mode;
+}
+
+void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 	if (w == -1)
 		w = _w;
 	if (h == -1)
@@ -443,26 +463,69 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx.free();
-	_gfx.create(w, h, requiredFormat);
-	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
+	_gfx[statenum].free();
+	_gfx[statenum].create(w, h, requiredFormat);
+	_gfx[statenum].fillRect(Common::Rect(0, 0, w, h), _gfx[statenum].format.RGBToColor(r, g, b));
 }
 
 void PicButtonWidget::drawWidget() {
-	g_gui.theme()->drawButtonClip(Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(), "", _state, getFlags());
+	if (_showButton)
+		g_gui.theme()->drawButtonClip(Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(), "", _state, getFlags());
 
-	if (_gfx.getPixels()) {
+	if (!_isAlpha) {
+		Graphics::Surface *gfx;
+
+		if (_state == ThemeEngine::kStateHighlight)
+			gfx = &_gfx[kPicButtonHighlight];
+		else if (_state == ThemeEngine::kStateDisabled)
+			gfx = &_gfx[kPicButtonStateDisabled];
+		else if (_state == ThemeEngine::kStatePressed)
+			gfx = &_gfx[kPicButtonStatePressed];
+		else
+			gfx = &_gfx[kPicButtonStateEnabled];
+
+		if (!gfx->getPixels())
+			gfx = &_gfx[kPicButtonStateEnabled];
+
+		if (gfx->getPixels()) {
 		// Check whether the set up surface needs to be converted to the GUI
 		// color format.
-		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-		if (_gfx.format != requiredFormat) {
-			_gfx.convertToInPlace(requiredFormat);
+			const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+			if (gfx->format != requiredFormat) {
+				gfx->convertToInPlace(requiredFormat);
+			}
+
+			const int x = _x + (_w - gfx->w) / 2;
+			const int y = _y + (_h - gfx->h) / 2;
+
+			g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + gfx->w,  y + gfx->h), getBossClipRect(), *gfx, _state, _alpha, _transparency);
 		}
+	} else {
+		Graphics::TransparentSurface *gfx;
 
-		const int x = _x + (_w - _gfx.w) / 2;
-		const int y = _y + (_h - _gfx.h) / 2;
+		if (_state == ThemeEngine::kStateHighlight)
+			gfx = &_agfx[kPicButtonHighlight];
+		else if (_state == ThemeEngine::kStateDisabled)
+			gfx = &_agfx[kPicButtonStateDisabled];
+		else if (_state == ThemeEngine::kStatePressed)
+			gfx = &_agfx[kPicButtonStatePressed];
+		else
+			gfx = &_agfx[kPicButtonStateEnabled];
 
-		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), getBossClipRect(), _gfx, _state, _alpha, _transparency);
+		if (!gfx->getPixels())
+			gfx = &_agfx[kPicButtonStateEnabled];
+
+		if (gfx->getPixels()) {
+			if (_mode == GUI::ThemeEngine::kAutoScaleNone) {
+				const int x = _x + (_w - gfx->w) / 2;
+				const int y = _y + (_h - gfx->h) / 2;
+
+				g_gui.theme()->drawASurface(Common::Rect(x, y, x + gfx->w,  y + gfx->h), *gfx, _mode, _alpha);
+
+			} else {
+				g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), *gfx, _mode, _alpha);
+			}
+		}
 	}
 }
 
@@ -652,13 +715,13 @@ int SliderWidget::posToValue(int pos) {
 #pragma mark -
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
-	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip)
-	: Widget(boss, name, tooltip), _gfx(), _alpha(256), _transparency(false) {
+	: Widget(boss, name, tooltip), _gfx(), _alpha(255), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
@@ -684,6 +747,26 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	}
 
 	_gfx.copyFrom(*gfx);
+}
+
+void GraphicsWidget::setAGfx(const Graphics::TransparentSurface *gfx, ThemeEngine::AutoScaleMode mode) {
+	_agfx.free();
+
+	if (!gfx || !gfx->getPixels())
+		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("GraphicsWidget::setGfx got paletted surface passed");
+		return;
+	}
+
+	if ((gfx->w > _w || gfx->h > _h) && mode == ThemeEngine::kAutoScaleNone) {
+		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
+		return;
+	}
+
+	_agfx.copyFrom(*gfx);
+	_mode = mode;
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
@@ -712,6 +795,23 @@ void GraphicsWidget::drawWidget() {
 		const int y = _y + (_h - _gfx.h) / 2;
 
 		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), getBossClipRect(), _gfx, _state, _alpha, _transparency);
+	} else if (_agfx.getPixels()) {
+		// Check whether the set up surface needs to be converted to the GUI
+		// color format.
+		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+		if (_agfx.format != requiredFormat) {
+			_agfx.convertToInPlace(requiredFormat);
+		}
+
+		if (_mode == GUI::ThemeEngine::kAutoScaleNone) {
+			const int x = _x + (_w - _agfx.w) / 2;
+			const int y = _y + (_h - _agfx.h) / 2;
+
+			g_gui.theme()->drawASurface(Common::Rect(x, y, x + _agfx.w,  y + _agfx.h), _agfx, _mode, _alpha);
+
+		} else {
+			g_gui.theme()->drawASurface(Common::Rect(_x, _y, _x + _w,  _y + _h), _agfx, _mode, _alpha);
+		}
 	}
 }
 

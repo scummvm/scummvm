@@ -94,6 +94,8 @@ public:
 	virtual bool lockMouse(bool lock) = 0;
 
 	virtual void displayMessageOnOSD(const char *msg) {}
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
+
 
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;

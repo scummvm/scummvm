@@ -47,7 +47,7 @@ public:
 	/**
 	 * Resets keyboard emulation after a video screen change
 	 */
-	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
+	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
 protected:
 	/** @name Keyboard mouse emulation
@@ -127,7 +127,7 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status

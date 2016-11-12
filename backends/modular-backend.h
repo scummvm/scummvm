@@ -131,6 +131,7 @@ public:
 
 	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon);
 
 	//@}
 

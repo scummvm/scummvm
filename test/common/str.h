@@ -438,16 +438,16 @@ class StringTestSuite : public CxxTest::TestSuite
 
 		// Using iterators (also a terribly useless program as a test).
 		testString.replace(testString.begin(), testString.end(), "That is the supernew string.");
-		TS_ASSERT_EQUALS(testString, Common::String("That is the supernew string."));        
-       		
+		TS_ASSERT_EQUALS(testString, Common::String("That is the supernew string."));
+
 		// With sub strings of character arrays.
 		testString.replace(21, 6, "That phrase is new.", 5, 6);
 		TS_ASSERT_EQUALS(testString, Common::String("That is the supernew phrase."));
 
-		// Now with substrings.		
+		// Now with substrings.
 		testString.replace(12, 2, Common::String("That hy is new."), 5, 2);
 		TS_ASSERT_EQUALS(testString, Common::String("That is the hypernew phrase."));
-		
+
 		// --------------------------
 		// Tests with displacement
 		// --------------------------
@@ -463,20 +463,20 @@ class StringTestSuite : public CxxTest::TestSuite
 
 		// Using iterators (also a terribly useless program as a test)
 		testString.replace(testString.begin() + 4, testString.begin() + 5, " coffee ");
-		TS_ASSERT_EQUALS(testString, Common::String("Good coffee friends"));  
+		TS_ASSERT_EQUALS(testString, Common::String("Good coffee friends"));
 
 		// With sub strings of character arrays
 		testString.replace(4, 0, "Lorem ipsum expresso dolor sit amet", 11, 9);
 		TS_ASSERT_EQUALS(testString, Common::String("Good expresso coffee friends"));
-		
-		// Now with substrings	
+
+		// Now with substrings
 		testString.replace(5, 9, Common::String("Displaced ristretto string"), 10, 10);
 		TS_ASSERT_EQUALS(testString, Common::String("Good ristretto coffee friends"));
-        
+
         // -----------------------
         // Deep copy compliance
         // -----------------------
-        
+
         // Makes a deep copy without changing the length of the original
         Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
         Common::String s2(s1);

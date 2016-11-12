@@ -28,7 +28,7 @@ namespace Graphics {
 
 const int SCALE_THRESHOLD = 0x100;
 
-ManagedSurface::ManagedSurface() : 
+ManagedSurface::ManagedSurface() :
 		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
 		_disposeAfterUse(DisposeAfterUse::NO), _owner(nullptr) {
 }
@@ -104,7 +104,7 @@ void ManagedSurface::create(uint16 width, uint16 height, const PixelFormat &pixe
 
 void ManagedSurface::create(ManagedSurface &surf, const Common::Rect &bounds) {
 	free();
-	
+
 	_offsetFromOwner = Common::Point(bounds.left, bounds.top);
 	_innerSurface.setPixels(surf.getBasePtr(bounds.left, bounds.top));
 	_innerSurface.pitch = surf.pitch;
@@ -164,7 +164,7 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Point &destPos) 
 void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 		const Common::Point &destPos) {
 	Common::Rect srcBounds = srcRect;
-	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(), 
+	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(),
 		destPos.y + srcRect.height());
 	assert(src.format.bytesPerPixel == format.bytesPerPixel);
 

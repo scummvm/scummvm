@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	iff_container.o \
 	ini-file.o \
 	installshield_cab.o \
+	json.o \
 	language.o \
 	localization.o \
 	macresman.o \
@@ -23,6 +24,7 @@ MODULE_OBJS := \
 	md5.o \
 	mdct.o \
 	mutex.o \
+	osd_message_queue.o \
 	platform.o \
 	quicktime.o \
 	random.o \

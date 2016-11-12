@@ -30,8 +30,6 @@
 #include "graphics/surface.h"
 #include "graphics/scaler.h"
 
-#ifdef ENABLE_EVENTRECORDER
-
 #define RECORD_VERSION 1
 
 namespace Common {
@@ -716,5 +714,3 @@ void PlaybackFile::checkRecordedMD5() {
 
 
 }
-
-#endif // ENABLE_EVENTRECORDER

@@ -63,10 +63,21 @@
 #endif // !WIN32
 #endif
 
+#ifdef USE_SDL_NET
+#include <SDL_net.h>
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#include <SDL_clipboard.h>
+#endif
+
 OSystem_SDL::OSystem_SDL()
 	:
 	_inited(false),
 	_initedSDL(false),
+#ifdef USE_SDL_NET
+	_initedSDLnet(false),
+#endif
 	_logger(0),
 	_mixerManager(0),
 	_eventSource(0),
@@ -114,6 +125,10 @@ OSystem_SDL::~OSystem_SDL() {
 	delete _logger;
 	_logger = 0;
 
+#ifdef USE_SDL_NET
+	if (_initedSDLnet) SDLNet_Quit();
+#endif
+
 	SDL_Quit();
 }
 
@@ -152,6 +167,17 @@ void OSystem_SDL::init() {
 		_taskbarManager = new Common::TaskbarManager();
 #endif
 
+}
+
+bool OSystem_SDL::hasFeature(Feature f) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (f == kFeatureClipboardSupport) return true;
+#endif
+	// ResidualVM specific code:
+	if (f == kFeatureSideTextures)
+		return true;
+
+	return ModularBackend::hasFeature(f);
 }
 
 void OSystem_SDL::initBackend() {
@@ -307,6 +333,17 @@ void OSystem_SDL::initSDL() {
 
 		_initedSDL = true;
 	}
+
+#ifdef USE_SDL_NET
+	// Check if SDL_net has not been initialized
+	if (!_initedSDLnet) {
+		// Initialize SDL_net
+		if (SDLNet_Init() == -1)
+			error("Could not initialize SDL_net: %s", SDLNet_GetError());
+
+		_initedSDLnet = true;
+	}
+#endif
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -476,6 +513,30 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
+bool OSystem_SDL::hasTextInClipboard() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_HasClipboardText() == SDL_TRUE;
+#else
+	return false;
+#endif
+}
+
+Common::String OSystem_SDL::getTextFromClipboard() {
+	if (!hasTextInClipboard()) return "";
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	char *text = SDL_GetClipboardText();
+	Common::String strText = text;
+	SDL_free(text);
+
+	// FIXME: The string returned by SDL is in UTF-8, it is not clear
+	// what encoding should be used for the returned string.
+	return strText;
+#else
+	return "";
+#endif
+}
+
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
 
@@ -537,9 +598,10 @@ AudioCDManager *OSystem_SDL::createAudioCDManager() {
 #endif
 }
 
-// ResidualVM specific code
-bool OSystem_SDL::hasFeature(Feature f) {
-	if (f == kFeatureSideTextures)
-		return true;
-	return ModularBackend::hasFeature(f);
+Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
+#ifdef ENABLE_EVENTRECORDER
+    return g_eventRec.getSaveManager(_savefileManager);
+#else
+    return _savefileManager;
+#endif
 }

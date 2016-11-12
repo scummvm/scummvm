@@ -386,7 +386,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	byte *huffmanTrees = (byte *) malloc(_header.treesSize);
 	_fileStream->read(huffmanTrees, _header.treesSize);
 
-	Common::BitStream8LSB bs(new Common::MemoryReadStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), true);
+	Common::BitStream8LSB bs(new Common::MemoryReadStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
 	videoTrack->readTrees(bs, _header.mMapSize, _header.mClrSize, _header.fullSize, _header.typeSize);
 
 	_firstFrameStart = _fileStream->pos();
@@ -469,7 +469,7 @@ void SmackerDecoder::readNextPacket() {
 
 	_fileStream->read(frameData, frameDataSize);
 
-	Common::BitStream8LSB bs(new Common::MemoryReadStream(frameData, frameDataSize + 1, DisposeAfterUse::YES), true);
+	Common::BitStream8LSB bs(new Common::MemoryReadStream(frameData, frameDataSize + 1, DisposeAfterUse::YES), DisposeAfterUse::YES);
 	videoTrack->decodeFrame(bs);
 
 	_fileStream->seek(startPos + frameSize);
@@ -773,7 +773,7 @@ Audio::AudioStream *SmackerDecoder::SmackerAudioTrack::getAudioStream() const {
 }
 
 void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize) {
-	Common::BitStream8LSB audioBS(new Common::MemoryReadStream(buffer, bufferSize), true);
+	Common::BitStream8LSB audioBS(new Common::MemoryReadStream(buffer, bufferSize), DisposeAfterUse::YES);
 	bool dataPresent = audioBS.getBit();
 
 	if (!dataPresent)

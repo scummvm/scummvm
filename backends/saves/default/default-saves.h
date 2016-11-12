@@ -27,7 +27,8 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/fs.h"
-#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include <limits.h>
 
 /**
  * Provides a default savefile manager implementation for common platforms.
@@ -37,10 +38,23 @@ public:
 	DefaultSaveFileManager();
 	DefaultSaveFileManager(const Common::String &defaultSavepath);
 
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles);
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
+	virtual Common::InSaveFile *openRawFile(const Common::String &filename);
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual bool removeSavefile(const Common::String &filename);
+
+#ifdef USE_LIBCURL
+
+	static const uint32 INVALID_TIMESTAMP = UINT_MAX;
+	static const char *TIMESTAMPS_FILENAME;
+
+	static Common::HashMap<Common::String, uint32> loadTimestamps();
+	static void saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps);
+	static Common::String concatWithSavesPath(Common::String name);
+
+#endif
 
 protected:
 	/**
@@ -73,6 +87,12 @@ protected:
 	 * removeSavefile.
 	 */
 	SaveFileCache _saveFileCache;
+
+	/**
+	 * List of "locked" files. These cannot be used for saving/loading
+	 * because CloudManager is downloading those.
+	 */
+	Common::StringArray _lockedFiles;
 
 private:
 	/**

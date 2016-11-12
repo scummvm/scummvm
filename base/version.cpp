@@ -57,7 +57,7 @@
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
 #ifdef __amigaos4__
-static const char *version_cookie __attribute__((used)) = "$VER: ResidualVM " SCUMMVM_VERSION " (" __DATE__ ", " __TIME__ ")";
+static const char *version_cookie __attribute__((used)) = "$VER: ResidualVM " SCUMMVM_VERSION " (" AMIGA_DATE ")";
 #endif
 #ifdef __PLAYSTATION2__
 const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
@@ -153,5 +153,26 @@ const char *gScummVMFeatures = ""
 
 #ifdef ENABLE_VKEYBD
 	"virtual keyboard "
+#endif
+
+#ifdef USE_CLOUD
+	"cloud ("
+#ifdef USE_LIBCURL
+	"servers"
+#ifdef USE_SDL_NET
+	", "
+#endif
+#endif
+#ifdef USE_SDL_NET
+	"local"
+#endif
+	") "
+#else
+#ifdef USE_LIBCURL
+	"libcurl "
+#endif
+#ifdef USE_SDL_NET
+	"SDL_net "
+#endif
 #endif
 	;

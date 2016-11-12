@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	console.o \
 	debugger.o \
 	dialog.o \
+	editgamedialog.o \
 	error.o \
 	EventRecorder.o \
 	filebrowser-dialog.o \
@@ -24,6 +25,9 @@ MODULE_OBJS := \
 	ThemeLayout.o \
 	ThemeParser.o \
 	Tooltip.o \
+	animation/Animation.o \
+	animation/RepeatAnimationWrapper.o \
+	animation/SequenceAnimationComposite.o \
 	widget.o \
 	widgets/editable.o \
 	widgets/edittext.o \
@@ -51,6 +55,15 @@ MODULE_OBJS += \
 else
 MODULE_OBJS += \
 	browser.o
+endif
+endif
+
+ifdef USE_CLOUD
+ifdef USE_LIBCURL
+MODULE_OBJS += \
+	downloaddialog.o \
+	remotebrowser.o \
+	storagewizarddialog.o
 endif
 endif
 

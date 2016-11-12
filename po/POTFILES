@@ -4,6 +4,8 @@ gui/about.cpp
 gui/browser.cpp
 gui/browser_osx.mm
 gui/chooser.cpp
+gui/downloaddialog.cpp
+gui/editgamedialog.cpp
 gui/editrecorddialog.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
@@ -16,7 +18,9 @@ gui/onscreendialog.cpp
 gui/options.cpp
 gui/predictivedialog.cpp
 gui/recorderdialog.cpp
+gui/remotebrowser.cpp
 gui/saveload-dialog.cpp
+gui/storagewizarddialog.cpp
 gui/themebrowser.cpp
 gui/ThemeEngine.cpp
 gui/updates-dialog.cpp
@@ -41,6 +45,7 @@ audio/null.h
 audio/null.cpp
 audio/softsynth/mt32.cpp
 
+backends/cloud/storage.cpp
 backends/events/default/default-events.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp

@@ -39,6 +39,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #ifdef __OS2__
 #define INCL_DOS
@@ -250,6 +251,35 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 
 Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
+}
+
+bool POSIXFilesystemNode::create(bool isDir) {
+	bool success;
+
+	if (isDir) {
+		success = mkdir(_path.c_str(), 0755) == 0;
+	} else {
+		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
+		success = fd >= 0;
+
+		if (fd >= 0) {
+			close(fd);
+		}
+	}
+
+	if (success) {
+		setFlags();
+		if (_isValid) {
+			if (_isDirectory != isDir) warning("failed to create %s: got %s", isDir ? "directory" : "file", _isDirectory ? "directory" : "file");
+			return _isDirectory == isDir;
+		}
+
+		warning("POSIXFilesystemNode: %s() was a success, but stat indicates there is no such %s",
+			isDir ? "mkdir" : "creat", isDir ? "directory" : "file");
+		return false;
+	}
+
+	return false;
 }
 
 namespace Posix {

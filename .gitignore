@@ -64,6 +64,10 @@ project.xcworkspace
 /dists/msvc*/*.dll
 /dists/msvc*/test_runner.cpp
 
+/dists/engine-data/testbed-audiocd-files/testbed.config
+/dists/engine-data/testbed-audiocd-files/testbed.out
+
+
 /doc/*.aux
 /doc/*.dvi
 /doc/*.log
@@ -147,6 +151,16 @@ ResidualVM.includes
 #Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
 dists/msvc*/**
 !dists/msvc*/create_project.bat
+
+#Ignore bison debug output
+*.output
+
+#Ignore Xcode output/project files
+out/
+residualvm.xcodeproj
+
+#Ignore gmon.out created by gprof
+gmon.out
 
 # Emacs files
 *~

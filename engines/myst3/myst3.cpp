@@ -342,7 +342,7 @@ bool Myst3Engine::checkDatafiles() {
 						  "Please install the official update corresponding to your game's language.\n"
 						  "The updates can be downloaded from:\n"
 						  "http://www.residualvm.org/downloads/");
-		warning(updateMessage);
+		warning("%s", updateMessage);
 		GUI::displayErrorDialog(updateMessage);
 		return false;
 	}

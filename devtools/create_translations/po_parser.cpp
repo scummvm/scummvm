@@ -108,7 +108,7 @@ const char *PoMessageList::operator[](int index) const {
 }
 
 PoMessageEntryList::PoMessageEntryList(const char *lang) :
-	_lang(NULL), _charset(NULL), _langName(NULL),
+	_lang(NULL), _charset(NULL), _langName(NULL), _langNameAlt(NULL),
 	_list(NULL), _size(0), _allocated(0)
 {
 	_lang = new char[1 + strlen(lang)];
@@ -117,14 +117,15 @@ PoMessageEntryList::PoMessageEntryList(const char *lang) :
 	_charset = new char[1];
 	_charset[0] = '\0';
 	// Set default langName to lang
-	_langName = new char[1 + strlen(lang)];
-	strcpy(_langName, lang);
+	_langNameAlt = new char[1 + strlen(lang)];
+	strcpy(_langNameAlt, lang);
 }
 
 PoMessageEntryList::~PoMessageEntryList() {
 	delete[] _lang;
 	delete[] _charset;
 	delete[] _langName;
+	delete[] _langNameAlt;
 	for (int i = 0; i < _size; ++i)
 		delete _list[i];
 	delete[] _list;
@@ -134,10 +135,15 @@ void PoMessageEntryList::addMessageEntry(const char *translation, const char *me
 	if (*message == '\0') {
 		// This is the header.
 		// We get the charset and the language name from the translation string
-		char *str = parseLine(translation, "Language:");
+		char *str = parseLine(translation, "X-Language-name:");
 		if (str != NULL) {
 			delete[] _langName;
 			_langName = str;
+		}
+		str = parseLine(translation, "Language:");
+		if (str != NULL) {
+			delete[] _langNameAlt;
+			_langNameAlt = str;
 		}
 		str = parseLine(translation, "charset=");
 		if (str != NULL) {
@@ -236,7 +242,7 @@ const char *PoMessageEntryList::language() const {
 }
 
 const char *PoMessageEntryList::languageName() const {
-	return _langName;
+	return _langName ? _langName : _langNameAlt;
 }
 
 const char *PoMessageEntryList::charset() const {

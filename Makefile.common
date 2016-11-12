@@ -167,6 +167,11 @@ VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
+ifdef AMIGAOS
+# Amiga needs date in specific format for the version cookie
+AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
 
 ######################################################################
 # Get git's working copy information
@@ -246,6 +251,12 @@ ifdef USE_TRANSLATION
 DIST_FILES_THEMES+=translations.dat
 endif
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
+
+# Networking files
+DIST_FILES_NETWORKING=
+ifdef USE_SDL_NET
+DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
+endif
 
 # Engine data files
 DIST_FILES_ENGINEDATA=

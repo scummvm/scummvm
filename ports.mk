@@ -17,7 +17,11 @@ install:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.desktop" "$(DESTDIR)$(datarootdir)/applications/residualvm.desktop"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
+#	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.appdata.xml" "$(DESTDIR)$(datarootdir)/appdata/residualvm.appdata.xml"
 	# ResidualVM specific
 ifdef USE_OPENGL_SHADERS
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
@@ -40,7 +44,11 @@ install-strip:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.desktop" "$(DESTDIR)$(datarootdir)/applications/residualvm.desktop"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/appdata"
+#	$(INSTALL) -c -m 644 "$(srcdir)/dists/residualvm.appdata.xml" "$(DESTDIR)$(datarootdir)/appdata/residualvm.appdata.xml"
 	# ResidualVM specific
 ifdef USE_OPENGL_SHADERS
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
@@ -58,6 +66,8 @@ uninstall:
 	rm -f "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/residualvm.svg"
 	rm -rf "$(DESTDIR)$(docdir)"
 	rm -rf "$(DESTDIR)$(datadir)"
+	rm -f "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
+	rm -f "$(DESTDIR)$(datarootdir)/appdata/scummvm.appdata.xml"
 ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/residualvm/"
 endif
@@ -116,6 +126,9 @@ endif
 	cp $(srcdir)/icons/residualvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
+ifdef DIST_FILES_NETWORKING
+	cp $(DIST_FILES_NETWORKING) $(bundle_name)/Contents/Resources/
+endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
@@ -141,6 +154,9 @@ iphonebundle: iphone
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
+ifdef DIST_FILES_NETWORKING
+	cp $(DIST_FILES_NETWORKING) $(bundle_name)/
+endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 endif
@@ -156,8 +172,19 @@ endif
 ifneq ($(BACKEND), iphone)
 # Static libaries, used for the residualvm-static and iphone targets
 OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
+ifdef USE_SDL_NET
+ifdef USE_SDL2
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
+else
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL_net.a
+endif
+endif
 # With sdl2-config we don't always get the OpenGL framework
 OSX_STATIC_LIBS += -framework OpenGL
+endif
+
+ifdef USE_LIBCURL
+OSX_STATIC_LIBS += -lcurl
 endif
 
 ifdef USE_FREETYPE2
@@ -293,7 +320,7 @@ publish-appcast:
 # Windows specific
 #
 
-residualvmwinres.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/residualvm.rc
+residualvmwinres.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/residualvm.rc
 	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/residualvm.rc residualvmwinres.o
 
 # Special target to create a win32 snapshot binary (for Inno Setup)

@@ -2779,6 +2779,7 @@ void VMDDecoder::setAutoStartSound(bool autoStartSound) {
 AdvancedVMDDecoder::AdvancedVMDDecoder(Audio::Mixer::SoundType soundType) {
 	_decoder = new VMDDecoder(g_system->getMixer(), soundType);
 	_decoder->setAutoStartSound(false);
+	_useAudioSync = true;
 }
 
 AdvancedVMDDecoder::~AdvancedVMDDecoder() {

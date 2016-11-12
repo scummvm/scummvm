@@ -25,6 +25,8 @@
 #include "common/frac.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
+#include "graphics/nine_patch.h"
 #include "graphics/colormasks.h"
 
 #include "gui/ThemeEngine.h"
@@ -849,7 +851,7 @@ blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
+blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	int16 x = r.left;
 	int16 y = r.top;
 
@@ -885,9 +887,43 @@ blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
+blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale,
+			Graphics::DrawStep::VectorAlignment xAlign, Graphics::DrawStep::VectorAlignment yAlign, int alpha) {
+	if (autoscale == GUI::ThemeEngine::kAutoScaleStretch) {
+		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
+			nullptr, TS_ARGB(alpha, 255, 255, 255),
+			  r.width(), r.height());
+	} else if (autoscale == GUI::ThemeEngine::kAutoScaleFit) {
+		double ratio = (double)r.width() / source->w;
+		double ratio2 = (double)r.height() / source->h;
+
+		if (ratio2 < ratio)
+			ratio = ratio2;
+
+		int offx = 0, offy = 0;
+		if (xAlign == Graphics::DrawStep::kVectorAlignCenter)
+			offx = (r.width() - (int)(source->w * ratio)) >> 1;
+
+		if (yAlign == Graphics::DrawStep::kVectorAlignCenter)
+			offy = (r.height() - (int)(source->h * ratio)) >> 1;
+
+		source->blit(*_activeSurface, r.left + offx, r.top + offy, Graphics::FLIP_NONE,
+			nullptr, TS_ARGB(alpha, 255, 255, 255),
+	                  (int)(source->w * ratio), (int)(source->h * ratio));
+
+	} else if (autoscale == GUI::ThemeEngine::kAutoScaleNinePatch) {
+		Graphics::NinePatchBitmap nine(source, false);
+		nine.blit(*_activeSurface, r.left, r.top, r.width(), r.height());
+	} else {
+		source->blit(*_activeSurface, r.left, r.top);
+	}
+}
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) {
 	if (clipping.isEmpty() || clipping.contains(r)) {
-		blitAlphaBitmap(source, r);
+		blitKeyBitmap(source, r);
 		return;
 	}
 
@@ -3089,7 +3125,7 @@ drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType co
 
 	PixelType color1 = color;
 	PixelType color2 = color;
-	
+
 	while (sw++ < Base::_strokeWidth) {
 		blendFillClip(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t,
 			x1 + r, y1 + sp/pitch); // top
@@ -3261,7 +3297,7 @@ drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType 
 				x1 + r - x, y1 + h - r + y);
 			gradientFillClip(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x,
 				x1 + r - y, y1 + h - r + x);
-	
+
 			BE_DRAWCIRCLE_XCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py,
 				x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
 		}

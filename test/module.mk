@@ -26,7 +26,6 @@ endif
 #TEST_LDFLAGS += -L/usr/X11R6/lib -lX11
 
 
-test: CXXFLAGS +=  -DCOMPILING_TESTS=1
 test: test/runner
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS)

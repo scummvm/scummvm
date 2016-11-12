@@ -32,11 +32,12 @@
 #include "common/rect.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.21"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.23"
 
 class OSystem;
 
@@ -140,6 +141,7 @@ enum TextColor {
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -169,7 +171,8 @@ public:
 		kDialogBackgroundSpecial,
 		kDialogBackgroundPlain,
 		kDialogBackgroundTooltip,
-		kDialogBackgroundDefault
+		kDialogBackgroundDefault,
+		kDialogBackgroundNone
 	};
 
 	/// State of the widget to be drawn
@@ -223,6 +226,14 @@ public:
 		kShadingLuminance   ///< Converting colors to luminance for unused areas
 	};
 
+	/// AlphaBitmap scale mode selector
+	enum AutoScaleMode {
+		kAutoScaleNone = 0,		///< Use image dimensions
+		kAutoScaleStretch = 1,	///< Stretch image to full widget size
+		kAutoScaleFit = 2,		///< Scale image to widget size but keep aspect ratio
+		kAutoScaleNinePatch = 3 ///< 9-patch image
+	};
+
 	// Special image ids for images used in the GUI
 	static const char *const kImageLogo;      ///< ScummVM logo used in the launcher
 	static const char *const kImageLogoSmall; ///< ScummVM logo used in the GMM
@@ -239,6 +250,10 @@ public:
 	static const char *const kImageEditSmallButton; ///< Edit recording metadata in recorder onscreen dialog (for 320xY)
 	static const char *const kImageSwitchModeSmallButton; ///< Switch mode button in recorder onscreen dialog (for 320xY)
 	static const char *const kImageFastReplaySmallButton; ///< Fast playback mode button in recorder onscreen dialog (for 320xY)
+	static const char *const kImageDropboxLogo;      ///< Dropbox logo used in the StorageWizardDialog
+	static const char *const kImageOneDriveLogo;      ///< OneDrive logo used in the StorageWizardDialog
+	static const char *const kImageGoogleDriveLogo;      ///< Google Drive logo used in the StorageWizardDialog
+	static const char *const kImageBoxLogo;      ///< Box logo used in the StorageWizardDialog
 
 	/**
 	 * Graphics mode enumeration.
@@ -352,6 +367,8 @@ public:
 	                 WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
 		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
+
+	void drawASurface(const Common::Rect &r, Graphics::TransparentSurface &surface, AutoScaleMode autoscale, int alpha);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
@@ -483,6 +500,14 @@ public:
 	bool addBitmap(const Common::String &filename);
 
 	/**
+	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
+	 * The filename is also used as its identifier.
+	 *
+	 * @param filename Name of the bitmap file.
+	 */
+	bool addAlphaBitmap(const Common::String &filename);
+
+	/**
 	 * Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 * new Font API is in place. FIXME: Is that so ???
 	 */
@@ -526,8 +551,16 @@ public:
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
+	Graphics::TransparentSurface *getAlphaBitmap(const Common::String &name) {
+		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
+	}
+
 	const Graphics::Surface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
+	}
+
+	const Graphics::TransparentSurface *getAImageSurface(const Common::String &name) const {
+		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
 	/**
@@ -616,6 +649,7 @@ protected:
 					 bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0, const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 	void queueBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &clippingRect, const Common::Rect &r, bool alpha);
+	void queueABitmap(Graphics::TransparentSurface *bitmap, const Common::Rect &r, AutoScaleMode autoscale, int alpha);
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.
@@ -656,10 +690,10 @@ protected:
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
-	Graphics::Surface _screen;
+	Graphics::TransparentSurface _screen;
 
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
-	Graphics::Surface _backBuffer;
+	Graphics::TransparentSurface _backBuffer;
 
 	/** Sets whether the current drawing is being buffered (stored for later
 	    processing) or drawn directly to the screen. */
@@ -688,6 +722,7 @@ protected:
 	TextColorData *_textColors[kTextColorMAX];
 
 	ImagesMap _bitmaps;
+	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;

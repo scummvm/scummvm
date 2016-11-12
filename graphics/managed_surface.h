@@ -95,12 +95,12 @@ public:
 	 * Create the managed surface
 	 */
 	ManagedSurface(int width, int height);
-	
+
 	/**
 	 * Create the managed surface
 	 */
 	ManagedSurface(int width, int height, const Graphics::PixelFormat &pixelFormat);
-	
+
 	/**
 	 * Create the managed surface
 	 */
@@ -211,7 +211,7 @@ public:
 	const Common::Rect getBounds() const {
 		return Common::Rect(0, 0, this->w, this->h);
 	}
-	
+
 	/**
 	 * Copies another surface into this one
 	 */
