@@ -49,6 +49,8 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
 		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
 		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
+		{ "opengl",    kSDLVersionAny, "FindOpenGL",   "OpenGL",   "OPENGL_INCLUDE_DIR",    "OPENGL_gl_LIBRARY",   0            }, // ResidualVM specific
+		{ "glew",      kSDLVersionAny, "FindGLEW",     "GLEW",     "GLEW_INCLUDE_DIR",      "GLEW_LIBRARIES",      0            }, // ResidualVM specific
 		{ "libcurl",   kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
 		{ "sdlnet",    kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
 		{ "sdlnet",    kSDLVersion2,   0,              0,          0,                       0,                     "SDL2_net"   }
@@ -247,6 +249,7 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 	output << "endif()\n";
 
 	output << "add_definitions(-DSDL_BACKEND)\n\n";
+	output << "add_definitions(-DHAVE_INT64)\n\n"; // ResidualVM specific
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
