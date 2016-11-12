@@ -29,6 +29,7 @@
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/container.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/sound.h"
 
 #include "engines/stark/services/global.h"
@@ -104,10 +105,15 @@ void AnimScript::onGameLoop() {
 			goToNextItem();
 			break;
 		}
-		case AnimScriptItem::kPlayStockSound:
-			// TODO
+		case AnimScriptItem::kPlayStockSound: {
+			Location *location = StarkGlobal->getCurrent()->getLocation();
+			Sound *sound = location->findStockSound(item->getOperand());
+			if (sound) {
+				sound->play();
+			}
 			goToNextItem();
 			break;
+		}
 		default:
 			error("Unknown anim script type %d", item->getOpcode());
 		}
