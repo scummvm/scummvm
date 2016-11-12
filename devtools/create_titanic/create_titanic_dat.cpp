@@ -416,7 +416,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[108] = {
+static const char *const STRINGS_EN[133] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -512,7 +512,7 @@ static const char *const STRINGS_EN[108] = {
 	"Deploy comfort workstation",
 	"Deploy minor horizontally mobile storage compartment",
 	"Deploy major semi-recumbent relaxation device",
-	"Inflate fully recumbent relaxation device ",
+	"Inflate fully recumbent relaxation device",
 	"Deploy personal maintenance hub",
 	"Deploy executive horizontal worksurface",
 	"Deploy minor semi-recumbent relaxation device",
@@ -529,10 +529,35 @@ static const char *const STRINGS_EN[108] = {
 	"Go to the Promenade Deck",
 	"Go to the Arboretum",
 	"Go to the Music Room",
-	"Go to the First Class Restaurant"
+	"Go to the First Class Restaurant",
+	"The Parrot Lobby",
+	"The Creators' Chamber",
+	"The Bridge",
+	"The Bilge Room",
+	"The Sculpture Chamber",
+	"The Arboretum",
+	"The Bottom of the Well",
+	"The Promenade Deck",
+	"The 1st class restaurant",
+	"Titania's Room",
+	"The Bar",
+	"The Embarkation Lobby",
+	"The Music Room",
+	"Unknown Room",
+	"The Service Elevator",
+	"The Super Galactic Leisure Lounge",
+	"The Elevator",
+	"The Dome",
+	"The Pellerator",
+	"The Top of the Well",
+	"Nowhere you're likely to want to go.",
+	"1st class",
+	"2nd class",
+	"SGT class",
+	"no class"
 };
 
-static const char *const STRINGS_DE[152] = {
+static const char *const STRINGS_DE[177] = {
 	// TODO: Still many strings to translate to German
 	"",
 	"Sie befinden sich vor dem Pellerator.",
@@ -662,6 +687,31 @@ static const char *const STRINGS_DE[152] = {
 	"Go to the Arboretum",
 	"Go to the Music Room",
 	"Go to the First Class Restaurant"
+	"The Parrot Lobby",
+	"The Creators' Chamber",
+	"The Bridge",
+	"The Bilge Room",
+	"The Sculpture Chamber",
+	"The Arboretum",
+	"The Bottom of the Well",
+	"The Promenade Deck",
+	"The 1st class restaurant",
+	"Titania's Room",
+	"The Bar",
+	"The Embarkation Lobby",
+	"The Music Room",
+	"Unknown Room",
+	"The Service Elevator",
+	"The Super Galactic Leisure Lounge",
+	"The Elevator",
+	"The Dome",
+	"The Pellerator",
+	"The Top of the Well",
+	"Nowhere you're likely to want to go.",
+	"1st class",
+	"2nd class",
+	"SGT class",
+	"no class",
 
 	"Sommer",
 	"Herbst",
@@ -1191,8 +1241,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 108);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 152);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 133);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 177);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
