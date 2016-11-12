@@ -39,7 +39,7 @@ class CLiftindicator : public CLift {
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 private:
-	int _fieldFC;
+	int _multiplier;
 	Point _indicatorPos;
 	int _startY;
 	int _endY;
