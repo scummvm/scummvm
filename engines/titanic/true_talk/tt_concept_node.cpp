@@ -86,32 +86,34 @@ TTconcept **TTconceptNode::setConcept(int conceptIndex, TTconcept *src) {
 		break;
 	}
 
-	bool isPronoun = false;
-	StringArray &pronouns = g_vm->_scriptHandler->_parser._pronouns;
-	for (uint idx = 0; idx < pronouns.size() && !isPronoun; ++idx) {
-		isPronoun = pronouns[idx] == src->getText();
-	}
+	if (src) {
+		bool isPronoun = false;
+		StringArray &pronouns = g_vm->_scriptHandler->_parser._pronouns;
+		for (uint idx = 0; idx < pronouns.size() && !isPronoun; ++idx) {
+			isPronoun = pronouns[idx] == src->getText();
+		}
 
-	CScriptHandler &scrHandler = *g_vm->_exeResources._owner;
-	if (!isPronoun) {
-		switch (conceptIndex) {
-		case 0:
-			delete scrHandler._concept2P;
-			scrHandler._concept2P = new TTconcept(*src);
-			break;
+		CScriptHandler &scrHandler = *g_vm->_exeResources._owner;
+		if (!isPronoun) {
+			switch (conceptIndex) {
+			case 0:
+				delete scrHandler._concept2P;
+				scrHandler._concept2P = new TTconcept(*src);
+				break;
 
-		case 1:
-			delete scrHandler._concept4P;
-			scrHandler._concept4P = new TTconcept(*src);
-			break;
+			case 1:
+				delete scrHandler._concept4P;
+				scrHandler._concept4P = new TTconcept(*src);
+				break;
 
-		case 2:
-			delete scrHandler._concept1P;
-			scrHandler._concept1P = new TTconcept(*src);
-			break;
+			case 2:
+				delete scrHandler._concept1P;
+				scrHandler._concept1P = new TTconcept(*src);
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 	}
 
