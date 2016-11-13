@@ -28,7 +28,7 @@
 namespace Titanic {
 
 TTconcept::TTconcept() : _string1(" "), _string2(" "),
-		_scriptP(nullptr), _wordP(nullptr) {
+		_scriptP(nullptr), _wordP(nullptr), _status(SS_VALID) {
 	if (setStatus())
 		setScriptType(ST_UNKNOWN_SCRIPT);
 	else
@@ -36,7 +36,8 @@ TTconcept::TTconcept() : _string1(" "), _string2(" "),
 }
 
 TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
-		_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr) {
+		_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr),
+		_status(SS_VALID) {
 	if (!script->getStatus()) {
 		setScriptType(scriptType);
 		_scriptP = script;
@@ -50,8 +51,8 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 }
 
 TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
-	_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr) {
-
+		_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr),
+		_status(SS_VALID) {
 	if (!word || !setStatus() || word->getStatus()) {
 		_status = SS_5;
 	} else {
@@ -66,8 +67,7 @@ TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 
 TTconcept::TTconcept(TTconcept &src) :
 		_string1(src._string1), _string2(src._string2),
-		_wordP(nullptr), _scriptP(nullptr) {
-
+		_wordP(nullptr), _scriptP(nullptr), _status(SS_VALID) {
 	if (src.getStatus()) {
 		_status = SS_5;
 	} else {

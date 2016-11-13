@@ -33,7 +33,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int state,
 		_field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _state(0), _hist2P(nullptr), _field3C(0),
 		_respHeadP(nullptr), _respTailP(nullptr), _oldResponseP(nullptr) {
-	if (!isValid()) {
+	if (isValid()) {
 		if (!v7 || !getStatus()) {
 			_id = scriptId;
 			_field20 = v3;
@@ -43,7 +43,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int state,
 			_field30 = v7;
 			_state = state;
 		} else {
-			_status = 5;
+			_status = SS_5;
 		}
 	}
 
@@ -65,9 +65,13 @@ TTscriptBase::~TTscriptBase() {
 }
 
 bool TTscriptBase::isValid() {
-	bool result = !_charName.isValid() && !_charClass.isValid();
-	_status = result ? 0 : 11;
-	return result;
+	if (!_charName.empty() && !_charClass.empty()) {
+		_status = SS_VALID;
+		return true;
+	} else {
+		_status = SS_11;
+		return false;
+	}
 }
 
 void TTscriptBase::reset() {
