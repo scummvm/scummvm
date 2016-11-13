@@ -58,7 +58,7 @@ bool SGTNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			offMsg.execute("Toilet");
 
 		changeView("SGTState.Node 2.E");
-	} else if (_statics->_v1 == "Open") {
+	} else if (_statics->_v1 != "Open") {
 		petDisplayMessage(1, YOUR_STATEROOM);
 	} else if (_statics->_v6 == "Closed") {
 		petDisplayMessage(1, BED_NOT_SUPPORT_YOUR_WEIGHT);
