@@ -41,9 +41,9 @@ void CDesk::load(SimpleFile *file) {
 }
 
 bool CDesk::TurnOn(CTurnOn *msg) {
-	if (_statics->_v5 == "Closed" && _statics->_v1 != "RestingG"
-			&& _statics->_v1 != "OpenWrong") {
-		_statics->_v5 = "Open";
+	if (_statics->_desk == "Closed" && _statics->_bedhead != "RestingG"
+			&& _statics->_bedhead != "OpenWrong") {
+		_statics->_desk = "Open";
 		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 26;
@@ -55,12 +55,12 @@ bool CDesk::TurnOn(CTurnOn *msg) {
 }
 
 bool CDesk::TurnOff(CTurnOff *msg) {
-	if (_statics->_v5 == "Open" && _statics->_v6 == "Closed"
-			&& _statics->_v1 == "Open") {
+	if (_statics->_desk == "Open" && _statics->_chestOfDrawers == "Closed"
+			&& _statics->_bedhead == "Open") {
 		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("ChestOfDrawers");
 
-		_statics->_v5 = "Closed";
+		_statics->_desk = "Closed";
 		_isClosed = true;
 		_startFrame = 26;
 		_endFrame = 51;
@@ -72,7 +72,7 @@ bool CDesk::TurnOff(CTurnOff *msg) {
 }
 
 bool CDesk::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_statics->_v5 == "Open") {
+	if (_statics->_desk == "Open") {
 		CVisibleMsg visibleMsg(true);
 		visibleMsg.execute("ChestOfDrawers");
 	}

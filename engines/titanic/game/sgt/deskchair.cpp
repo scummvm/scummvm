@@ -42,9 +42,9 @@ void CDeskchair::load(SimpleFile *file) {
 }
 
 bool CDeskchair::TurnOn(CTurnOn *msg) {
-	if (_statics->_v8 == "Closed" && _statics->_v9 == "Closed") {
+	if (_statics->_armchair == "Closed" && _statics->_deskchair == "Closed") {
 		setVisible(true);
-		_statics->_v9 = "Open";
+		_statics->_deskchair = "Open";
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 16;
@@ -56,8 +56,8 @@ bool CDeskchair::TurnOn(CTurnOn *msg) {
 }
 
 bool CDeskchair::TurnOff(CTurnOff *msg) {
-	if (_statics->_v9 == "Open") {
-		_statics->_v9 = "Closed";
+	if (_statics->_deskchair == "Open") {
+		_statics->_deskchair = "Closed";
 		_isClosed = true;
 		_startFrame = 16;
 		_endFrame = 32;
@@ -71,7 +71,7 @@ bool CDeskchair::TurnOff(CTurnOff *msg) {
 bool CDeskchair::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Smash") {
 		setVisible(false);
-		_statics->_v9 = "Closed";
+		_statics->_deskchair = "Closed";
 		_isClosed = true;
 		loadFrame(0);
 		return true;
@@ -81,7 +81,7 @@ bool CDeskchair::ActMsg(CActMsg *msg) {
 }
 
 bool CDeskchair::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_statics->_v9 == "Closed")
+	if (_statics->_deskchair == "Closed")
 		setVisible(false);
 	return true;
 }
