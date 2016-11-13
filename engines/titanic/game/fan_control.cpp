@@ -65,7 +65,7 @@ bool CFanControl::ActMsg(CActMsg *msg) {
 		_enabled = false;
 	else if (msg->_action == "StarlingsDead") {
 		_fieldC4 = 0;
-		dec54();
+		decTransitions();
 		_fieldCC = 0;
 	}
 
@@ -116,7 +116,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 						break;
 					case 2:
 						if (_fieldC4) {
-							inc54();
+							incTransitions();
 							_fieldCC = 1;
 							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 						} else {

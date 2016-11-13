@@ -112,7 +112,7 @@ void CGameState::enterView() {
 	_gameManager->playClip(_movieList._movieClip, oldRoom, newRoom);
 
 	_gameManager->_sound.preEnterView(newView, newRoom != oldRoom);
-	_gameManager->dec54();
+	_gameManager->decTransitions();
 	oldView->enterView(newView);
 
 	_movieList._view = nullptr;
@@ -135,6 +135,7 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 	if (_mode == GSMODE_CUTSCENE) {
 		_movieList._view = newView;
 		_movieList._movieClip = clip;
+		_gameManager->incTransitions();
 	} else {
 		oldView->preEnterView(newView);
 		_gameManager->_gameView->setView(newView);

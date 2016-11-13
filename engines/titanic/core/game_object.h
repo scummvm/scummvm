@@ -132,8 +132,15 @@ protected:
 	 */
 	void loadImage(const CString &name, bool pendingFlag = true);
 
-	void inc54();
-	void dec54();
+	/**
+	 * Increments the number of active transitions
+	 */
+	void incTransitions();
+
+	/**
+	 * Decrements the number of active transitions
+	 */
+	void decTransitions();
 
 	/**
 	 * Locks/hides the mouse

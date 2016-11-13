@@ -114,7 +114,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 	if (_npcFlags & NPCFLAG_10000) {
 		if (_classNum) {
 			petSetArea(PET_ROOMS);
-			dec54();
+			decTransitions();
 			unlockMouse();
 			playSound("z#47.wav");
 			_classNum = NO_CLASS;
@@ -170,7 +170,7 @@ bool CDeskbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	switch (msg->_action) {
 	case 19:
-		inc54();
+		incTransitions();
 		lockMouse();
 		petSetArea(PET_CONVERSATION);
 		playClip("ReprogramPETInHand", MOVIE_NOTIFY_OBJECT);

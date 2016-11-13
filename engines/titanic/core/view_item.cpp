@@ -181,7 +181,7 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (msg->_buttons & MB_LEFT) {
 		if (!handleMouseMsg(msg, true)) {
 			CGameManager *gm = getGameManager();
-			if (gm->test54()) {
+			if (gm->isntTransitioning()) {
 				findNode()->findRoom();
 
 				CLinkItem *linkItem = dynamic_cast<CLinkItem *>(

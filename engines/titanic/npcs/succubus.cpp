@@ -411,7 +411,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		_field158 = 0;
 		_field188 = 0;
 		_field1D8 = 1;
-		inc54();
+		incTransitions();
 
 		if (_isFeathers) {
 			_field19C = 0;
@@ -496,7 +496,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			if (_startFrame4 >= 0) {
 				_field158 = 1;
 				_field1D8 = 1;
-				inc54();
+				incTransitions();
 				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT);
 			}
 		}
@@ -600,7 +600,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		if (_field1D8) {
 			_field1D8 = 0;
-			dec54();
+			decTransitions();
 		}
 
 		CSUBTransition transMsg;
@@ -616,7 +616,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		_mailP = 0;
 		if (_field1D8) {
 			_field1D8 = 0;
-			dec54();
+			decTransitions();
 		}
 
 		CSUBTransition transMsg;

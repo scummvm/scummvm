@@ -142,7 +142,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_startFrame12, _endFrame12, MOVIE_GAMESTATE);
 				playMovie(_bilgeStartFrame2, _bilgeEndFrame2, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 				playMovie(_bilgeStartFrame1, _bilgeEndFrame1, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-				inc54();
+				incTransitions();
 			}
 		} else {
 			startTalking(this, 230012);
@@ -270,7 +270,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			startTalking(this, 150);
 			CBodyInBilgeRoomMsg bodyMsg;
 			bodyMsg.execute("Service Elevator Entity");
-			dec54();
+			decTransitions();
 			_field158 = 0;
 
 		} else {

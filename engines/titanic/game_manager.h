@@ -48,7 +48,7 @@ private:
 	CBackgroundSoundMaker *_soundMaker;
 	CMovie *_movie;
 	CRoomItem *_movieRoom;
-	int _field54;
+	int _transitionCtr;
 	CVideoSurface *_movieSurface;
 	uint _lastDiskTicksCount;
 	uint _tickCount2;
@@ -166,11 +166,20 @@ public:
 	 */
 	void viewChange();
 
-	bool test54() const { return !_field54; }
+	/**
+	 * Returns true if no transition is currently in progress
+	 */
+	bool isntTransitioning() const { return !_transitionCtr; }
 
-	void inc54() { ++_field54; }
+	/**
+	 * Increments the number of active transitions
+	 */
+	void incTransitions() { ++_transitionCtr; }
 
-	void dec54() { --_field54; }
+	/**
+	 * Decremenst the number of active transitions
+	 */
+	void decTransitions() { --_transitionCtr; }
 
 	/**
 	 * Extends the bounds of the currently affected game display area

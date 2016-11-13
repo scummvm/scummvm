@@ -1066,12 +1066,12 @@ void CGameObject::quitGame() {
 	getGameManager()->_gameState._quitGame = true;
 }
 
-void CGameObject::inc54() {
-	getGameManager()->inc54();
+void CGameObject::incTransitions() {
+	getGameManager()->incTransitions();
 }
 
-void CGameObject::dec54() {
-	getGameManager()->dec54();
+void CGameObject::decTransitions() {
+	getGameManager()->decTransitions();
 }
 
 void CGameObject::setMovieFrameRate(double rate) {

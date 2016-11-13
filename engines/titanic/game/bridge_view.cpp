@@ -90,7 +90,7 @@ bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
 	case 0:
 	case 1:
 		setVisible(false);
-		dec54();
+		decTransitions();
 		break;
 
 	case 2: {
