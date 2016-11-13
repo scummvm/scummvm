@@ -445,8 +445,4 @@ void CRYOLib_ManagersDone() {
 	g_system->getTimerManager()->removeTimerProc(CLTimer_Action);
 }
 
-///// CLDesktop
-void CLDesktop_TestOpenFileAtStartup() {
-}
-
 } // End of namespace Cryo

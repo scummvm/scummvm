@@ -464,7 +464,8 @@ void CLHNM_LoadDecompTable(int16 *buffer) {
 }
 
 void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size) {
-	int16 l = pred_l, r = pred_r;
+	int16 l = pred_l;
+	int16 r = pred_r;
 	size &= ~1;
 	while (size--) {
 		*output++ = l += decomp_table[*buffer++];
@@ -625,12 +626,6 @@ int16 CLHNM_GetVersion(hnm_t *hnm) {
 
 int CLHNM_GetFrameNum(hnm_t *hnm) {
 	return hnm->_frameNum;
-}
-
-void CLHNM_DeactivatePreloadBuffer() {
-}
-
-void CLHNM_Prepare2Read(hnm_t *hnm, int mode) {
 }
 
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height) {

@@ -604,7 +604,7 @@ private:
 	int16           word_30AFC;
 	bool parlemoiNormalFlag;
 
-	byte   byte_30B00;
+	bool byte_30B00;
 	int             dword_30B04;
 
 	char            lastPhrasesFile;
@@ -638,7 +638,6 @@ private:
 	byte   *p_underSubtitlesView_buf;
 	global_t *p_global;
 	uint16  mouse_y_center, mouse_x_center;
-	uint16  machine_speed;
 	bool    bufferAllocationErrorFl;
 	bool    quit_flag2;
 	bool    quit_flag3;
@@ -670,7 +669,7 @@ private:
 	int16           curs_x_pan;
 	int16           _inventoryScrollDelay;
 	int16           curs_y, curs_x;
-	int16           current_cursor;
+	int16           _currCursor;
 	icon_t          *current_spot;
 	icon_t          *current_spot2;
 	bool pomme_q;
@@ -678,7 +677,7 @@ private:
 	bool mouse_held;
 	bool normalCursor;
 	byte   *p_hnmview_buf;
-	byte   showVideoSubtitle;
+	bool showVideoSubtitle;
 	byte   videoCanceled;  //TODO: hnm_canceled
 	bool   specialTextMode;
 	int             hnm_position;
@@ -692,7 +691,7 @@ private:
 	byte   _musicFadeFlag;
 
 	char            musicSequencePos;
-	byte   musicPlaying;
+	bool musicPlaying;
 
 	byte   *mus_samples_ptr;
 	byte   *mus_patterns_ptr;  //TODO: sndblock_t ?
@@ -702,8 +701,8 @@ private:
 	byte   own_objects[128];
 	bool   byte_31D64;
 
-	byte   no_palette;
-	byte   gameLoaded;
+	bool _noPalette;
+	bool _gameLoaded;
 #define MAX_TAPES 16
 	tape_t          tapes[MAX_TAPES];
 	byte   confirmMode;

@@ -252,9 +252,6 @@ void CLScreenView_CenterIn(View *view);
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 
-void CLDesktop_TestOpenFileAtStartup();
-
-
 void CLHNM_DecompLempelZiv(byte *buffer, byte *output);
 void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
                      byte *input, int width, char flags);
@@ -290,7 +287,6 @@ bool CLHNM_NextElement(hnm_t *hnm);
 void CLHNM_ReadHeader(hnm_t *hnm);
 int16 CLHNM_GetVersion(hnm_t *hnm);
 int CLHNM_GetFrameNum(hnm_t *hnm);
-void CLHNM_Prepare2Read(hnm_t *hnm, int mode);
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 
 

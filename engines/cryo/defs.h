@@ -681,16 +681,13 @@ struct global_t {
 	byte   ff_6D;  //TODO: pad?
 	byte   labyrinthDirections;
 	byte   labyrinthRoom;
-	void            *__UNUSED_70;   //TODO: pad?
 	dial_t          *_dialogPtr;
 	tape_t          *tape_ptr;
-	dial_t          *next_dialog_ptr;
+	dial_t          *_nextDialogPtr;
 	dial_t          *narrator_dialog_ptr;
 	dial_t          *last_dialog_ptr;
 	icon_t          *nextRoomIcon;
 	byte   *phraseBufferPtr;
-	byte   *__UNUSED_90;   //TODO: write-only?
-	byte   *__UNUSED_94;   //TODO: write-only?
 	room_t          *room_ptr;
 	area_t          *area_ptr;
 	area_t          *last_area_ptr;
@@ -738,7 +735,6 @@ struct global_t {
 	byte   ff_F9;  //TODO: pad?
 	byte   ff_FA;  //TODO: pad?
 	byte   animationFlags;
-	byte   __UNUSED_FC;    //TODO: pad?
 	byte   giveobj1;
 	byte   giveobj2;
 	byte   giveobj3;
@@ -751,7 +747,6 @@ struct global_t {
 	byte   updatePaletteFlag;
 	byte   inventoryScrollPos;
 	byte   obj_count;
-	byte   ff_109; //TODO: write-only?
 	byte   textBankIndex;
 	byte   pref_language;
 	byte   pref_10C[2];    //TODO: volume
