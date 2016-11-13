@@ -43,7 +43,7 @@ void CSGTStateRoom::deinit() {
 	delete _statics;
 }
 
-CSGTStateRoom::CSGTStateRoom() : CBackground(), _fieldE0(1),
+CSGTStateRoom::CSGTStateRoom() : CBackground(), _isClosed(1),
 	_fieldE4(1), _fieldE8(0), _fieldEC(1), _fieldF0(1) {
 }
 
@@ -62,7 +62,7 @@ void CSGTStateRoom::save(SimpleFile *file, int indent) {
 	file->writeQuotedLine(_statics->_v11, indent);
 	file->writeQuotedLine(_statics->_v12, indent);
 
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_isClosed, indent);
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_statics->_v13, indent);
 	file->writeNumberLine(_statics->_v14, indent);
@@ -88,7 +88,7 @@ void CSGTStateRoom::load(SimpleFile *file) {
 	_statics->_v11 = file->readString();
 	_statics->_v12 = file->readString();
 
-	_fieldE0 = file->readNumber();
+	_isClosed = file->readNumber();
 	_fieldE4 = file->readNumber();
 	_statics->_v13 = file->readNumber();
 	_statics->_v14 = file->readNumber();
@@ -106,7 +106,7 @@ bool CSGTStateRoom::ActMsg(CActMsg *msg) {
 
 	if (roomFlags != assignedRoom) {
 		petDisplayMessage(NOT_YOUR_ASSIGNED_ROOM);
-	} else if (_fieldE0) {
+	} else if (_isClosed) {
 		CTurnOn onMsg;
 		onMsg.execute(this);
 	} else {
@@ -129,7 +129,7 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 	if (roomFlags == assignedRoom) {
 		loadFrame(_fieldE8);
-		_fieldE0 = _fieldEC;
+		_isClosed = _fieldEC;
 		setVisible(_fieldF0);
 
 		if (isEquals("Desk") && _statics->_v5 == "Closed")
@@ -146,7 +146,7 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 		_statics->_v7 = "Closed";
 		setVisible(false);
-		_fieldE0 = true;
+		_isClosed = true;
 	} else if (roomFlags != assignedRoom) {
 		loadFrame(0);
 		if (_fieldE4) {
@@ -168,7 +168,7 @@ bool CSGTStateRoom::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 	if (roomFlags == assignedRoom) {
 		_fieldE8 = getMovieFrame();
-		_fieldEC = _fieldE0;
+		_fieldEC = _isClosed;
 		_fieldF0 = _visible;
 	}
 

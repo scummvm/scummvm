@@ -42,7 +42,7 @@ void CChestOfDrawers::load(SimpleFile *file) {
 
 bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 	if (_statics->_v6 == "Closed" && _statics->_v5 == "Open") {
-		_fieldE0 = false;
+		_isClosed = false;
 		_statics->_v6 = "Open";
 		_startFrame = 1;
 		_endFrame = 14;
@@ -57,7 +57,7 @@ bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("Drawer");
 		_statics->_v6 = "Closed";
-		_fieldE0 = true;
+		_isClosed = true;
 
 		_startFrame = 14;
 		_endFrame = 27;

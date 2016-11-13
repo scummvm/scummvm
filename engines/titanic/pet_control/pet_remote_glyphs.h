@@ -121,10 +121,10 @@ public:
 
 class CToggleRemoteGlyph : public CPetRemoteGlyph {
 protected:
-	CPetGfxElement *_gfxElement;
-	bool _flag;
+	CPetGfxElement *_toggle;
+	bool _toggleFlag;
 public:
-	CToggleRemoteGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _flag(false) {}
+	CToggleRemoteGlyph() : CPetRemoteGlyph(), _toggle(nullptr), _toggleFlag(false) {}
 
 	/**
 	 * Setup the glyph
@@ -231,10 +231,10 @@ public:
 class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
 public:
 	bool _flag2;
-	CPetGfxElement *_gfxElement2, *_gfxElement3;
+	CPetGfxElement *_up, *_down;
 public:
 	CEntertainmentDeviceGlyph() : CToggleRemoteGlyph(),
-		_flag2(false), _gfxElement2(nullptr), _gfxElement3(nullptr) {}
+		_flag2(false), _up(nullptr), _down(nullptr) {}
 
 	/**
 	 * Setup the glyph

@@ -45,7 +45,7 @@ bool CBasin::TurnOn(CTurnOn *msg) {
 			&& _statics->_v2 == "Closed") {
 		setVisible(true);
 		_statics->_v11 = "Open";
-		_fieldE0 = 0;
+		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 6;
 		playMovie(0, 6, MOVIE_GAMESTATE);
@@ -58,7 +58,7 @@ bool CBasin::TurnOn(CTurnOn *msg) {
 bool CBasin::TurnOff(CTurnOff *msg) {
 	if (_statics->_v11 == "Open") {
 		_statics->_v11 = "Closed";
-		_fieldE0 = 1;
+		_isClosed = true;
 		_startFrame = 8;
 		_endFrame = 14;
 		playMovie(8, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);

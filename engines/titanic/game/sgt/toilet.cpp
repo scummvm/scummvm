@@ -47,7 +47,7 @@ bool CToilet::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 		CSGTStateRoom::_statics->_v12 = "Open";
 
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 11;
 		playMovie(0, 11, MOVIE_GAMESTATE);
@@ -61,7 +61,7 @@ bool CToilet::TurnOff(CTurnOff *msg) {
 	if (CSGTStateRoom::_statics->_v12 == "Open") {
 		CSGTStateRoom::_statics->_v12 = "Closed";
 
-		_fieldE0 = true;
+		_isClosed = true;
 		_startFrame = 11;
 		_endFrame = 18;
 		playMovie(11, 18, MOVIE_GAMESTATE);

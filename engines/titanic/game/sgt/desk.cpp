@@ -44,7 +44,7 @@ bool CDesk::TurnOn(CTurnOn *msg) {
 	if (_statics->_v5 == "Closed" && _statics->_v1 != "RestingG"
 			&& _statics->_v1 != "OpenWrong") {
 		_statics->_v5 = "Open";
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 26;
 		playMovie(1, 26, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -61,7 +61,7 @@ bool CDesk::TurnOff(CTurnOff *msg) {
 		visibleMsg.execute("ChestOfDrawers");
 
 		_statics->_v5 = "Closed";
-		_fieldE0 = true;
+		_isClosed = true;
 		_startFrame = 26;
 		_endFrame = 51;
 		playMovie(26, 51, MOVIE_GAMESTATE);

@@ -48,7 +48,7 @@ void CDrawer::load(SimpleFile *file) {
 bool CDrawer::TurnOn(CTurnOn *msg) {
 	if (_statics->_v7 == "Closed" && _statics->_v6 == "Open") {
 		_statics->_v7 = "Open";
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 50;
 		_endFrame = 75;
 		setVisible(true);
@@ -65,7 +65,7 @@ bool CDrawer::TurnOff(CTurnOff *msg) {
 		_statics->_v7 = "Closed";
 		_startFrame = 75;
 		_endFrame = 100;
-		_fieldE0 = true;
+		_isClosed = true;
 		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		playSound("b#10.wav");
 	}

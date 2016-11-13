@@ -41,7 +41,7 @@ void CBedfoot::load(SimpleFile *file) {
 
 bool CBedfoot::TurnOn(CTurnOn *msg) {
 	if (_statics->_v2 == "Closed" && _statics->_v11 == "Closed") {
-		_fieldE0 = 0;
+		_isClosed = false;
 		_startFrame = 0;
 		if (_statics->_v10 == "Open") {
 			_endFrame = 13;
@@ -55,7 +55,7 @@ bool CBedfoot::TurnOn(CTurnOn *msg) {
 
 		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
 	} else if (_statics->_v2 == "RestingUnderTV") {
-		_fieldE0 = 0;
+		_isClosed = false;
 		_startFrame = 8;
 		if (_statics->_v10 == "Open") {
 			_statics->_v2 = "Open";
@@ -84,7 +84,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 	}
 
 	if (_statics->_v2 == "Open" && _statics->_v1 == "Closed") {
-		_fieldE0 = 0;
+		_isClosed = false;
 		_startFrame = 20;
 		if (_statics->_v4 == "Closed") {
 			_statics->_v2 = "Closed";
@@ -98,7 +98,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 		playSound("b#7.wav");
 
 	} else if (_statics->_v2 == "NotOnWashstand" && _statics->_v1 == "ClosedWrong") {
-		_fieldE0 = 0;
+		_isClosed = false;
 		_startFrame = 17;
 
 		if (_statics->_v4 == "Closed") {

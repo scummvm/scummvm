@@ -44,7 +44,7 @@ bool CVase::TurnOn(CTurnOn *msg) {
 	if (CSGTStateRoom::_statics->_v3 == "Closed") {
 		CSGTStateRoom::_statics->_v3 = "Open";
 		setVisible(true);
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 12;
 		playMovie(1, 12, MOVIE_GAMESTATE);
@@ -58,7 +58,7 @@ bool CVase::TurnOff(CTurnOff *msg) {
 			&& CSGTStateRoom::_statics->_v1 != "RestingV"
 			&& CSGTStateRoom::_statics->_v1 != "RestingUV") {
 		CSGTStateRoom::_statics->_v3 = "Closed";
-		_fieldE0 = true;
+		_isClosed = true;
 		_startFrame = 12;
 		_endFrame = 25;
 		playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);

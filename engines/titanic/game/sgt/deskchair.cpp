@@ -45,7 +45,7 @@ bool CDeskchair::TurnOn(CTurnOn *msg) {
 	if (_statics->_v8 == "Closed" && _statics->_v9 == "Closed") {
 		setVisible(true);
 		_statics->_v9 = "Open";
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 16;
 		playMovie(0, 16, MOVIE_GAMESTATE);
@@ -58,7 +58,7 @@ bool CDeskchair::TurnOn(CTurnOn *msg) {
 bool CDeskchair::TurnOff(CTurnOff *msg) {
 	if (_statics->_v9 == "Open") {
 		_statics->_v9 = "Closed";
-		_fieldE0 = true;
+		_isClosed = true;
 		_startFrame = 16;
 		_endFrame = 32;
 		playMovie(16, 32, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -72,7 +72,7 @@ bool CDeskchair::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Smash") {
 		setVisible(false);
 		_statics->_v9 = "Closed";
-		_fieldE0 = true;
+		_isClosed = true;
 		loadFrame(0);
 		return true;
 	} else {

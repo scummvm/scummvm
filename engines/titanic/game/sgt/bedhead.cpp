@@ -114,7 +114,7 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 			_statics->_v1 = entry._name4;
 			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("b#6.wav");
-			_fieldE0 = false;
+			_isClosed = false;
 		}
 	}
 
@@ -160,7 +160,7 @@ bool CBedhead::TurnOff(CTurnOff *msg) {
 			_statics->_v1 = entry._name4;
 			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("193_436_bed fold up 1.wav");
-			_fieldE0 = false;
+			_isClosed = false;
 		}
 	}
 

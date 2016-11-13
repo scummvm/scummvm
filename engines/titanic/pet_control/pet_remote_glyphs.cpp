@@ -90,29 +90,29 @@ void CBasicRemoteGlyph::getTooltip(CPetText *text) {
 bool CToggleRemoteGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CPetGlyph::setup(petControl, owner);
 	if (owner)
-		_gfxElement = getElement(0);
+		_toggle = getElement(0);
 	return true;
 }
 
 void CToggleRemoteGlyph::draw2(CScreenManager *screenManager) {
-	_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
-	_gfxElement->draw(screenManager);
+	_toggle->setMode(_toggleFlag ? MODE_SELECTED : MODE_UNSELECTED);
+	_toggle->draw(screenManager);
 }
 
 bool CToggleRemoteGlyph::elementMouseButtonDownMsg(const Point &pt, int petNum) {
-	return _gfxElement->MouseButtonDownMsg(pt);
+	return _toggle->MouseButtonDownMsg(pt);
 }
 
 bool CToggleRemoteGlyph::elementMouseButtonUpMsg(const Point &pt, int petNum) {
-	if (!_gfxElement->MouseButtonUpMsg(pt))
+	if (!_toggle->MouseButtonUpMsg(pt))
 		return false;
 
 	CTreeItem *target = getPetControl()->_remoteTarget;
 	if (target) {
 		CPETActivateMsg msg("SGTSelector", petNum);
 		msg.execute(target);
-		_flag = !_flag;
-		_gfxElement->setMode(_flag ? MODE_SELECTED : MODE_UNSELECTED);
+		_toggleFlag = !_toggleFlag;
+		_toggle->setMode(_toggleFlag ? MODE_SELECTED : MODE_UNSELECTED);
 	}
 
 	return true;
@@ -223,10 +223,11 @@ void CTelevisionControlGlyph::getTooltip(CPetText *text) {
 /*------------------------------------------------------------------------*/
 
 bool CEntertainmentDeviceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
-	CPetRemoteGlyph::setup(petControl, owner);
+	CToggleRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetSGTtv", petControl);
 	if (owner) {
-		_gfxElement2 = getElement(1);
-		_gfxElement3 = getElement(2);
+		_up = getElement(1);
+		_down = getElement(2);
 	}
 
 	return true;
@@ -235,13 +236,13 @@ bool CEntertainmentDeviceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner
 void CEntertainmentDeviceGlyph::draw2(CScreenManager *screenManager) {
 	CString viewName = getPetControl()->getFullViewName();
 	if (viewName == "SGTState.Node 1.S") {
-		_gfxElement->setSelected(_flag);
-		_gfxElement->draw(screenManager);
+		_toggle->setSelected(_toggleFlag);
+		_toggle->draw(screenManager);
 	} else if (viewName == "SGTState.Node 4.E") {
-		_gfxElement->setSelected(_flag2);
-		_gfxElement->draw(screenManager);
-		_gfxElement2->draw(screenManager);
-		_gfxElement3->draw(screenManager);
+		_toggle->setSelected(_flag2);
+		_toggle->draw(screenManager);
+		_up->draw(screenManager);
+		_down->draw(screenManager);
 	}
 }
 
@@ -250,9 +251,9 @@ bool CEntertainmentDeviceGlyph::MouseButtonDownMsg(const Point &pt) {
 	if (viewName == "SGTState.Node 1.S") {
 		return elementMouseButtonDownMsg(pt, 4);
 	} else if (viewName == "SGTState.Node 4.E") {
-		return _gfxElement->MouseButtonDownMsg(pt)
-			|| _gfxElement2->MouseButtonDownMsg(pt)
-			|| _gfxElement3->MouseButtonDownMsg(pt);
+		return _toggle->MouseButtonDownMsg(pt)
+			|| _up->MouseButtonDownMsg(pt)
+			|| _down->MouseButtonDownMsg(pt);
 	}
 
 	return false;
@@ -263,15 +264,14 @@ bool CEntertainmentDeviceGlyph::MouseButtonUpMsg(const Point &pt) {
 	if (viewName == "SGTState.Node 1.S") {
 		return elementMouseButtonUpMsg(pt, 4);
 	} else if (viewName == "SGTState.Node 4.E") {
-		if (_gfxElement->MouseButtonUpMsg(pt)) {
+		if (_toggle->MouseButtonUpMsg(pt)) {
 			_flag2 = !_flag2;
 			getOwner()->generateMessage(RMSG_ACTIVATE, "Television");
 			return true;
-		} else if (_gfxElement2->MouseButtonUpMsg(pt)) {
+		} else if (_up->MouseButtonUpMsg(pt)) {
 			getOwner()->generateMessage(RMSG_UP, "Television");
 			return true;
-		}
-		else if (_gfxElement3->MouseButtonUpMsg(pt)) {
+		} else if (_down->MouseButtonUpMsg(pt)) {
 			getOwner()->generateMessage(RMSG_DOWN, "Television");
 			return true;
 		}

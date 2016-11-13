@@ -54,7 +54,7 @@ class CSGTStateRoom : public CBackground {
 protected:
 	static CSGTStateRoomStatics *_statics;
 protected:
-	bool _fieldE0;
+	bool _isClosed;
 	int _fieldE4;
 	int _fieldE8;
 	bool _fieldEC;
