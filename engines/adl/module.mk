@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	hires1.o \
 	hires2.o \
 	hires4.o \
+	hires5.o \
 	hires6.o \
 	speaker.o
 
