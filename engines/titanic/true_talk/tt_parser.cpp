@@ -740,8 +740,8 @@ int TTparser::considerRequests(TTword *word) {
 		case CHECK_COMMAND_FORM:
 			if (_sentenceConcept->_concept1P && _sentence->_category == 1 &&
 					!_sentenceConcept->_concept0P) {
-				concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
-				_sentenceConcept->_concept0P = concept;
+				TTconcept *newConcept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
+				_sentenceConcept->_concept0P = newConcept;
 				_sentenceConcept->_field18 = 3;
 			}
 
