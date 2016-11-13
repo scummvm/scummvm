@@ -134,7 +134,7 @@ void CPetRooms::load(SimpleFile *file, int param) {
 			glyph->setMode((RoomGlyphMode)file->readNumber());
 		}
 
-		_glyphItem.setMode((RoomGlyphMode)file->readNumber());
+		_glyphItem.setRoomFlags(file->readNumber());
 		file->readNumber();
 		_floorNum = file->readNumber();
 		_elevatorNum = file->readNumber();
