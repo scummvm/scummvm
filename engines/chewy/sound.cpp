@@ -100,7 +100,7 @@ void Sound::playMusic(int num, bool loop) {
 	uint32 musicNum = _soundRes->getChunkCount() - 1 - num;
 	Chunk *chunk = _soundRes->getChunk(musicNum);
 	byte *data = _soundRes->getChunkData(musicNum);
-	
+
 	playMusic(data, chunk->size, loop);
 
 	delete[] data;
@@ -252,6 +252,8 @@ void Sound::convertTMFToMod(byte *tmfData, uint32 tmfSize, byte *modData, uint32
 	// TODO: 31 bytes instrument positions
 
 	// TODO: notes
+
+	free(modData);
 }
 
 } // End of namespace Chewy

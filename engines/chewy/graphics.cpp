@@ -140,6 +140,9 @@ void Graphics::playVideo(uint num) {
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
 	_vm->_cursor->showCursor();
+
+	delete videoResource;
+	delete cfoDecoder;
 }
 
 } // End of namespace Chewy

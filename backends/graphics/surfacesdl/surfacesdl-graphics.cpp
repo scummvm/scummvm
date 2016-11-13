@@ -345,7 +345,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		} else if (_videoMode.filtering != _oldVideoMode.filtering) {
 			errors |= OSystem::kTransactionFilteringFailed;
-			
+
 			_videoMode.filtering = _oldVideoMode.filtering;
 #endif
 #ifdef USE_RGB_COLOR
@@ -2350,7 +2350,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		internUpdateScreen();
 		return true;
 	}
-	
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Ctrl-Alt-f toggles filtering
 	if (key == 'f') {
@@ -2595,7 +2595,7 @@ void SurfaceSdlGraphicsManager::recreateScreenTexture() {
 		return;
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
-	
+
 	SDL_Texture *oldTexture = _screenTexture;
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	if (_screenTexture)
@@ -2627,7 +2627,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 
 	SDL_GetWindowSize(_window->getSDLWindow(), &_windowWidth, &_windowHeight);
 	setWindowResolution(_windowWidth, _windowHeight);
-	
+
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
 
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
