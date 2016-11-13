@@ -137,7 +137,7 @@ private:
 	void restoreAdamMapMark();
 	void saveAdamMapMark(int16 x, int16 y);
 	bool istrice(int16 roomNum);
-	char istyran(int16 roomNum);
+	bool istyran(int16 roomNum);
 	void istyranval(area_t *area);
 	char getDirection(perso_t *perso);
 	bool canMoveThere(char loc, perso_t *perso);
@@ -255,9 +255,9 @@ private:
 	byte *gettxtad(int16 id);
 	void gotocarte();
 	void record();
-	char dial_scan(dial_t *dial);
-	char dialoscansvmas(dial_t *dial);
-	char dialo_even(perso_t *perso);
+	bool dial_scan(dial_t *dial);
+	bool dialoscansvmas(dial_t *dial);
+	bool dialo_even(perso_t *perso);
 	void stay_here();
 	void mort(int16 vid);
 	void evenchrono();
@@ -617,7 +617,7 @@ private:
 	void            *voiceSamplesBuffer;    //TODO: sound sample buffer
 	file_t          h_bigfile;
 	byte   info_list[16];
-	byte   needToFade;
+	bool needToFade;
 	byte   lastMusicNum;
 	byte   *main_bank_buf;
 	byte   *music_buf;
