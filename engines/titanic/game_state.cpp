@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-bool CGameStateMovieList::clear() {
+bool CGameStateMovieList::empty() {
 	for (CGameStateMovieList::iterator i = begin(); i != end(); ) {
 		CMovieListItem *movieItem = *i;
 
@@ -38,7 +38,7 @@ bool CGameStateMovieList::clear() {
 		}
 	}
 
-	return !empty();
+	return List<CMovieListItem>::empty();
 }
 
 /*------------------------------------------------------------------------*/
@@ -103,7 +103,7 @@ void CGameState::enterNode() {
 
 void CGameState::enterView() {
 	CViewItem *oldView = _gameLocation.getView();
-	CViewItem *newView = _movieList._view;
+	CViewItem *newView = _movieList._destView;
 	oldView->preEnterView(newView);
 
 	_gameManager->_gameView->setView(newView);
@@ -115,7 +115,7 @@ void CGameState::enterView() {
 	_gameManager->decTransitions();
 	oldView->enterView(newView);
 
-	_movieList._view = nullptr;
+	_movieList._destView = nullptr;
 	_movieList._movieClip = nullptr;
 }
 
@@ -133,7 +133,7 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 		clip = nullptr;
 
 	if (_mode == GSMODE_CUTSCENE) {
-		_movieList._view = newView;
+		_movieList._destView = newView;
 		_movieList._movieClip = clip;
 		_gameManager->incTransitions();
 	} else {
@@ -153,9 +153,9 @@ void CGameState::changeView(CViewItem *newView, CMovieClip *clip) {
 }
 
 void CGameState::checkForViewChange() {
-	if (_mode == GSMODE_CUTSCENE && _movieList.clear()) {
+	if (_mode == GSMODE_CUTSCENE && _movieList.empty()) {
 		setMode(GSMODE_INTERACTIVE);
-		if (_movieList._view)
+		if (_movieList._destView)
 			enterView();
 	}
 }

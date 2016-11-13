@@ -48,15 +48,15 @@ enum Season {
 PTR_LIST_ITEM(CMovie);
 class CGameStateMovieList : public List<CMovieListItem> {
 public:
-	CViewItem *_view;
+	CViewItem *_destView;
 	CMovieClip *_movieClip;
 public:
-	CGameStateMovieList() : List<CMovieListItem>(), _view(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList() : List<CMovieListItem>(), _destView(nullptr), _movieClip(nullptr) {}
 
 	/**
-	 * Clear the movie list
+	 * Returns true if there are no movies in the list
 	 */
-	bool clear();
+	bool empty();
 };
 
 class CGameState {
