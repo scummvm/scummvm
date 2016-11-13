@@ -72,6 +72,7 @@ public:
 	int getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
+	void setSpriteCasts();
 
 private:
 	void update();

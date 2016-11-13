@@ -559,6 +559,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 			}
 
+			assert(_sprites[i]->_cast);
+
 			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
 			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
 			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
@@ -646,9 +648,10 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	}
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		warning("************");
 		Common::SeekableReadStream *pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 
-		if (_vm->getVersion() < 4) {
+		if (_vm->getVersion() <= 4) {
 			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 

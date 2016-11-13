@@ -220,6 +220,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			castScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
 	}
 
+	castScore->setSpriteCasts();
+
 	_sharedCasts = &castScore->_casts;
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));

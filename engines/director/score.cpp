@@ -381,7 +381,9 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			break;
 		}
 	}
+}
 
+void Score::setSpriteCasts() {
 	// Set cast pointers to sprites
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
