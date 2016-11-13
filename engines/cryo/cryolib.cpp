@@ -356,12 +356,6 @@ uint16 CLMouse_IsDown() {
 }
 
 ///// CLFile
-
-void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
-	strcpy(fs->name, name);
-	fs->create = 0;
-}
-
 void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
 	assert(0);
 }

@@ -4664,8 +4664,7 @@ void EdenGame::verifh(void *ptr) {
 void EdenGame::openbigfile() {
 	assert(sizeof(pakfile_t) == 25);
 	int32 size = 0x10000;
-	CLFile_MakeStruct(0, 0, "EDEN.DAT", &bigfilespec);
-	h_bigfile.open(bigfilespec.name);
+	h_bigfile.open("EDEN.DAT");
 	h_bigfile.read(bigfile_header, size);
 
 	_hnmContext = CLHNM_New(128);
@@ -4678,9 +4677,8 @@ void EdenGame::closebigfile() {
 
 void EdenGame::loadFile(uint16 num, void *buffer) {
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
-		if ((_vm->isDemo() && num > 2204) || num > 2472) {
+		if ((_vm->isDemo() && num > 2204) || num > 2472)
 			error("Trying to read invalid game resource");
-		}
 	}
 
 	assert(num < bigfile_header->count);

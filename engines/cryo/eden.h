@@ -657,7 +657,6 @@ private:
 	View          *p_mainview;
 	View          *p_hnmview;
 	hnm_t           *_hnmContext;
-	filespec_t      bigfilespec;
 	Common::Rect _underSubtitlesBackupRect;
 	Common::Rect _underSubtitlesScreenRect;
 	Common::Rect _underBottomBarBackupRect;

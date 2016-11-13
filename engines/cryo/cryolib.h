@@ -214,7 +214,6 @@ void CLPalette_DeactivateInterval();
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeSystem();
 
-void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
 void CLFile_Write(file_t &handle, void *buffer, int32 *size);
 
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
