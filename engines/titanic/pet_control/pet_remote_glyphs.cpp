@@ -451,7 +451,7 @@ void CDeployMinorRelaxationGlyph::getTooltip(CPetText *text) {
 
 bool CDeploySinkGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	CToggleRemoteGlyph::setup(petControl, owner);
-	setDefaults("3PetDeskchair", petControl);
+	setDefaults("3PetBasin", petControl);
 	return true;
 }
 
