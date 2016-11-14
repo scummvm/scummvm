@@ -479,7 +479,7 @@ static const char *const STRINGS_EN[133] = {
 	"It would be nice if you could take that but you can't.",
 	"A bowl of pistachio nuts.",
 	"Not a bowl of pistachio nuts.",
-	
+
 	"Sadly, it is not possible to summon the DoorBot from this location.",
 	"Sadly, it is not possible to summon the BellBot from this location.",
 	"There is no one here to talk to",
@@ -616,7 +616,7 @@ static const char *const STRINGS_DE[178] = {
 	"Melden Sie sich bitte an der Rezeption an.",
 	"Dieses Nahrungsmittel ist bereits ausreichend garniert.",
 	"Leider ist dieser Automat gegenwSrtig leer.",
-	"Bei So¯enbedarf positionieren Sie bitte die Nahrungsquelle direkt "
+	"Bei So\xAF" "enbedarf positionieren Sie bitte die Nahrungsquelle direkt "
 		"unter den Automaten.",
 	"Der Jahreszeitenschalter befindet sich zur Zeit au\xDF" "er Betrieb.",
 	"Dies ist Ihre Kabine. Sie dient zum Schlafen. Wenn Sie Unterhaltung "
@@ -629,7 +629,7 @@ static const char *const STRINGS_DE[178] = {
 		"Aufenthalt bitte nicht.",
 	"Leider ist dies f\xFCr Sie au\xDF" "er Reichweite.",
 	"Der Sukk-U-Bus ist ein Einzel-St\xFC" "ck-Lieferger\xE4t.",
-	"Leider ist das Gro¯e-Kanal-Bef\xF6rderungssystem im Winter geschlossen.",
+	"Leider ist das Gro\xAF" "e-Kanal-Bef\xF6rderungssystem im Winter geschlossen.",
 	"Passagieren ist der Zutritt zu diesem Bereich nicht gestattet.",
 	"Wohin m\xF6" "chten Sie gehen?",
 	"Es wSre zwar ganz nett, wenn Sie das mitnehmen k\xF6nnten, "
