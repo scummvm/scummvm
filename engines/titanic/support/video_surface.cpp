@@ -267,10 +267,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 }
 
 uint CVideoSurface::getTransparencyColor() {
-	uint32 val = -(getPixelDepth() - 2);
-	val &= 0xFFFF8400;
-	val += 0xF81F;
-	return val;
+	return getPixelDepth() == 2 ? 0xf81f : 0x7c1f;
 }
 
 bool CVideoSurface::hasFrame() {
