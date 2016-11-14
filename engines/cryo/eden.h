@@ -343,7 +343,7 @@ private:
 	void winobject(int16 id);
 	void loseObject(int16 id);
 	void lostobject();
-	char objecthere(int16 id);
+	bool objecthere(int16 id);
 	void objectmain(int16 id);
 	void getobject(int16 id);
 	void putobject();

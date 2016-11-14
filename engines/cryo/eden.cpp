@@ -5749,7 +5749,6 @@ void EdenGame::testPommeQ() {
 }
 
 void EdenGame::FRDevents() {
-	int16 max_y;
 	CLKeyboard_Read();
 	if (_allowDoubled) {
 		if (CLKeyboard_IsScanCodeDown(0x30)) { //TODO: const
@@ -5774,7 +5773,8 @@ void EdenGame::FRDevents() {
 	if (curs_x > 292)
 		curs_x = 292;
 	curs_y += mouseY;
-	max_y = p_global->displayFlags == DisplayFlags::dfFlag2 ? 190 : 170;
+
+	int16 max_y = p_global->displayFlags == DisplayFlags::dfFlag2 ? 190 : 170;
 	if (curs_y < 4)
 		curs_y = 4;
 	if (curs_y > max_y)
@@ -5896,7 +5896,6 @@ void EdenGame::update_cursor() {
 		use_main_bank();
 		sundcurs(curs_x + _scrollPos, curs_y);
 		if (_currCursor != 53 && _currCursor < 10) { //TODO: cond
-//			moteur();
 			if (_vm->getPlatform() == Common::kPlatformMacintosh)
 				moteur();
 			else
@@ -6379,32 +6378,31 @@ void EdenGame::displayHNMSubtitles() {
 
 ////// sound.c
 void EdenGame::musique() {
-	byte flag, hidx, lidx, mus;
-	dial_t *dial;
 	if (p_global->newMusicType == MusicType::mtDontChange)
 		return;
-	dial = (dial_t *)getElem(gameDialogs, 128);
-	for (;; dial++) {
+
+	dial_t *dial = (dial_t *)getElem(gameDialogs, 128);
+	for (;;dial++) {
 		if (dial->_flags == -1 && dial->_condNumLow == -1)
 			return;
-		flag = dial->_flags;
-		hidx = (dial->_textCondHiMask & 0xC0) >> 6;
-		lidx = dial->_condNumLow;            //TODO: fixme - unsigned = signed
+		byte flag = dial->_flags;
+		byte hidx = (dial->_textCondHiMask & 0xC0) >> 6;
+		byte lidx = dial->_condNumLow;            //TODO: fixme - unsigned = signed
 		if (flag & 0x10)
 			hidx |= 4;
 		if (testcondition(((hidx << 8) | lidx) & 0x7FF))
 			break;
 	}
-	mus = dial->_textNumLow;
+	byte mus = dial->_textNumLow;
 	p_global->newMusicType = MusicType::mtDontChange;
 	if (mus != 0 && mus != 2 && mus < 50)
 		startmusique(mus);
 }
 
 void EdenGame::startmusique(byte num) {
-	int16 seq_size, pat_size, freq;
 	if (num == p_global->currentMusicNum)
 		return;
+
 	if (musicPlaying) {
 		fademusica0(1);
 		_musicChannel->stop();
@@ -6412,11 +6410,11 @@ void EdenGame::startmusique(byte num) {
 	loadmusicfile(num);
 	p_global->currentMusicNum = num;
 	mus_sequence_ptr = music_buf + 32;  //TODO: rewrite it properly
-	seq_size = PLE16(music_buf + 30);
+	int16 seq_size = PLE16(music_buf + 30);
 	mus_patterns_ptr = music_buf + 30 + seq_size;
-	pat_size = PLE16(music_buf + 27);
+	int16 pat_size = PLE16(music_buf + 27);
 	mus_samples_ptr = music_buf + 32 + 4 + pat_size;
-	freq = PLE16(mus_samples_ptr - 2);
+	int16 freq = PLE16(mus_samples_ptr - 2);
 
 	delete _musicChannel;
 	_musicChannel = new CSoundChannel(_vm->_mixer, freq == 166 ? 11025 : 22050, false);
@@ -6429,8 +6427,6 @@ void EdenGame::startmusique(byte num) {
 }
 
 void EdenGame::musicspy() {
-	byte patnum, *patptr;
-	int ofs, len;
 	if (!mus_enabled)
 		return;
 	mus_vol_left = p_global->pref_10C[0];
@@ -6440,16 +6436,16 @@ void EdenGame::musicspy() {
 	if (_personTalking && !_voiceChannel->numQueued())
 		_musicFadeFlag = 3;
 	if (_musicChannel->numQueued() < 3) {
-		patnum = mus_sequence_ptr[(int)musicSequencePos];
+		byte patnum = mus_sequence_ptr[(int)musicSequencePos];
 		if (patnum == 0xFF) {
 			// rewind
 			musicSequencePos = 0;
 			patnum = mus_sequence_ptr[(int)musicSequencePos];
 		}
 		musicSequencePos++;
-		patptr = mus_patterns_ptr + patnum * 6;
-		ofs = patptr[0] + (patptr[1] << 8) + (patptr[2] << 16);
-		len = patptr[3] + (patptr[4] << 8) + (patptr[5] << 16);
+		byte *patptr = mus_patterns_ptr + patnum * 6;
+		int ofs = patptr[0] + (patptr[1] << 8) + (patptr[2] << 16);
+		int len = patptr[3] + (patptr[4] << 8) + (patptr[5] << 16);
 		_musicChannel->queueBuffer(mus_samples_ptr + ofs, len);
 		musicPlaying = true;
 	}
@@ -6588,12 +6584,11 @@ show_all_objects:
 }
 
 void EdenGame::showObjects() {
-	int16 i, total, index;
 	icon_t *icon = &gameIcons[invIconsBase];
 	p_global->drawFlags &= ~(DrawFlags::drDrawInventory | DrawFlags::drDrawFlag2);
 	countobjects();
-	total = p_global->obj_count;
-	for (i = invIconsCount; i--; icon++) {
+	int16 total = p_global->obj_count;
+	for (int16 i = invIconsCount; i--; icon++) {
 		if (total) {
 			icon->cursor_id &= ~0x8000;
 			total--;
@@ -6604,8 +6599,8 @@ void EdenGame::showObjects() {
 	noclipax(55, 0, 176);
 	icon = &gameIcons[invIconsBase];
 	total = p_global->obj_count;
-	index = p_global->inventoryScrollPos;
-	for (i = invIconsCount; total-- && i--; icon++) {
+	int16 index = p_global->inventoryScrollPos;
+	for (int16 i = invIconsCount; total-- && i--; icon++) {
 		char obj = own_objects[index++];
 		icon->object_id = obj;
 		noclipax(obj + 9, icon->sx, 178);
@@ -6652,13 +6647,13 @@ void EdenGame::lostobject() {
 		loseObject(p_global->curObjectId);
 }
 
-char EdenGame::objecthere(int16 id) {
+bool EdenGame::objecthere(int16 id) {
 	object_t *object = getobjaddr(id);
 	for (pCurrentObjectLocation = &kObjectLocations[object->_locations]; *pCurrentObjectLocation != -1; pCurrentObjectLocation++) {
 		if (*pCurrentObjectLocation == p_global->roomNum)
-			return 1;
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 void EdenGame::objectmain(int16 id) {
@@ -6688,11 +6683,10 @@ void EdenGame::getobject(int16 id) {
 }
 
 void EdenGame::putobject() {
-	object_t *object;
 	if (!p_global->curObjectId)
 		return;
 	gameIcons[16].cursor_id |= 0x8000;
-	object = getobjaddr(p_global->curObjectId);
+	object_t *object = getobjaddr(p_global->curObjectId);
 	p_global->curObjectCursor = 9;
 	p_global->curObjectId = 0;
 	p_global->curObjectFlags = 0;
@@ -6729,8 +6723,7 @@ void EdenGame::giveobjectal(int16 id) {
 }
 
 void EdenGame::giveobject() {
-	byte id;
-	id = p_global->giveobj1;
+	byte id = p_global->giveobj1;
 	if (id) {
 		p_global->giveobj1 = 0;
 		giveobjectal(id);
@@ -6765,13 +6758,11 @@ void EdenGame::newchampi() {
 }
 
 void EdenGame::newnidv() {
-	int16 *ptr;
-	object_t *obj;
 	room_t *room = p_global->cita_area_firstRoom;
 	if (objects[Objects::obNest - 1]._count)
 		return;
-	obj = getobjaddr(Objects::obNest);
-	for (ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
+	object_t *obj = getobjaddr(Objects::obNest);
+	for (int16 *ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
 		if ((*ptr & ~0x8000) >> 8 != p_global->cita_area_num)
 			continue;
 		*ptr &= ~0x8000;
@@ -6788,15 +6779,13 @@ void EdenGame::newnidv() {
 }
 
 void EdenGame::newnido() {
-	int16 *ptr;
-	object_t *obj;
 	room_t *room = p_global->cita_area_firstRoom;
 	if (objects[Objects::obFullNest - 1]._count)
 		return;
 	if (objects[Objects::obNest - 1]._count)
 		return;
-	obj = getobjaddr(Objects::obFullNest);
-	for (ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
+	object_t *obj = getobjaddr(Objects::obFullNest);
+	for (int16 *ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
 		if ((*ptr & ~0x8000) >> 8 != p_global->cita_area_num)
 			continue;
 		*ptr &= ~0x8000;
@@ -6838,7 +6827,6 @@ void EdenGame::gotopanel() {
 }
 
 void EdenGame::noclicpanel() {
-	byte num;
 	if (p_global->menuFlags & MenuFlags::mfFlag4) {
 		depcurstape();
 		return;
@@ -6849,6 +6837,7 @@ void EdenGame::noclicpanel() {
 		changervol();
 		return;
 	}
+	byte num;
 	if (current_spot2 >= &gameIcons[119]) {
 		debug("noclic: objid = %p, glob3,2 = %2X %2X", (void *)current_spot2, p_global->menuItemIdHi, p_global->menuItemIdLo);
 		if (current_spot2->object_id == (p_global->menuItemIdLo + p_global->menuItemIdHi) << 8) //TODO: check me
@@ -6882,12 +6871,11 @@ skip:
 }
 
 void EdenGame::generique() {
-	int oldmusic;
 	drawBlackBars();
 	afficher();
 	fadetoblack(3);
 	ClearScreen();
-	oldmusic = p_global->currentMusicNum;
+	int oldmusic = p_global->currentMusicNum;
 	playHNM(95);
 	affpanel();
 	afftoppano();
@@ -6904,11 +6892,10 @@ void EdenGame::cancel2() {
 }
 
 void EdenGame::testvoice() {
-	int16 num;
 	p_global->frescoNumber = 0;
 	p_global->perso_ptr = kPersons;
 	p_global->dialogType = DialogType::dtInspect;
-	num = (kPersons[0]._id << 3) | p_global->dialogType;
+	int16 num = (kPersons[0]._id << 3) | p_global->dialogType;
 	dialoscansvmas((dial_t *)getElem(gameDialogs, num));
 	restaurefondbulle();
 	af_subtitle();
@@ -6921,9 +6908,8 @@ void EdenGame::testvoice() {
 
 void EdenGame::load() {
 	char name[132];
-	byte oldMusic, talk;
 	_gameLoaded = false;
-	oldMusic = p_global->currentMusicNum;   //TODO: from ush to byte?!
+	byte oldMusic = p_global->currentMusicNum;   //TODO: from ush to byte?!
 	fademusica0(1);
 	desktopcolors();
 	FlushEvents(-1, 0);
@@ -6951,7 +6937,7 @@ void EdenGame::load() {
 		_musicFadeFlag = 3;
 		musicspy();
 	}
-	talk = p_global->autoDialog;    //TODO check me
+	bool talk = p_global->autoDialog;    //TODO check me
 	initafterload();
 	fadetoblack(3);
 	CLBlitter_FillScreenView(0);
@@ -7018,10 +7004,9 @@ void EdenGame::desktopcolors() {
 }
 
 void EdenGame::panelrestart() {
-	byte curmus, curlng;
 	_gameLoaded = false;
-	curmus = p_global->currentMusicNum;
-	curlng = p_global->pref_language;
+	byte curmus = p_global->currentMusicNum;
+	byte curlng = p_global->pref_language;
 	loadrestart();
 	p_global->pref_language = curlng;
 	if (!_gameLoaded) //TODO always?
@@ -7127,10 +7112,9 @@ void EdenGame::reglervol() {
 }
 
 void EdenGame::changervol() {
-	int16 delta;
 	if (mouse_held) {
 		limitezonecurs(cur_slider_x - 1, cur_slider_x + 3, 40, 110);
-		delta = cur_slider_y - curs_y;
+		int16 delta = cur_slider_y - curs_y;
 		if (delta == 0)
 			return;
 		newvol(cur_slider_value_ptr, delta);
@@ -7155,9 +7139,6 @@ void EdenGame::newvol(byte *volptr, int16 delta) {
 }
 
 void EdenGame::playtape() {
-	uint16 oldRoomNum, oldParty;
-	byte oldBack;
-	perso_t *oldPerso;
 	if (p_global->menuItemIdHi & 8)
 		p_global->tape_ptr++;
 	for (;; p_global->tape_ptr++) {
@@ -7171,10 +7152,10 @@ void EdenGame::playtape() {
 	}
 	p_global->menuFlags |= MenuFlags::mfFlag8;
 	p_global->drawFlags &= ~DrawFlags::drDrawMenu;
-	oldRoomNum = p_global->roomNum;
-	oldParty = p_global->party;
-	oldBack = p_global->roomBgBankNum;
-	oldPerso = p_global->perso_ptr;
+	uint16 oldRoomNum = p_global->roomNum;
+	uint16 oldParty = p_global->party;
+	byte oldBack = p_global->roomBgBankNum;
+	perso_t *oldPerso = p_global->perso_ptr;
 	p_global->party = p_global->tape_ptr->_party;
 	p_global->roomNum = p_global->tape_ptr->_roomNum;
 	p_global->roomBgBankNum = p_global->tape_ptr->_bgBankNum;
@@ -7615,11 +7596,10 @@ void EdenGame::incphase1() {
 		{ -1, nullptr }
 	};
 
-	phase_t *phase = phases;
 	p_global->phaseNum++;
 	debug("!!! next phase - %4X , room %4X", p_global->phaseNum, p_global->roomNum);
 	p_global->phaseActionsCount = 0;
-	for (; phase->_id != -1; phase++) {
+	for (phase_t *phase = phases; phase->_id != -1; phase++) {
 		if (p_global->phaseNum == phase->_id) {
 			(this->*phase->disp)();
 			break;
@@ -8394,14 +8374,13 @@ void EdenGame::make_matrice_fix() {
 
 void EdenGame::projection_fix(cube_t *cubep, int n) {
 	for (int i = 0; i < n; i++) {
-		int r24, r25, r26, r27, r28, r29;
-		r28 = cubep->vertices[i * 4];
-		r27 = cubep->vertices[i * 4 + 1];
-		r26 = cubep->vertices[i * 4 + 2];
+		int r28 = cubep->vertices[i * 4];
+		int r27 = cubep->vertices[i * 4 + 1];
+		int r26 = cubep->vertices[i * 4 + 2];
 
-		r25 = dword_32424 * r28 + dword_32428 * r27 + dword_3242C * r26 + (int)(flt_32454 * 256.0f);
-		r24 = dword_32430 * r28 + dword_32434 * r27 + dword_32438 * r26 + (int)(flt_32450 * 256.0f);
-		r29 = dword_3243C * r28 + dword_32440 * r27 + dword_32444 * r26 + (int)(flt_2DF7C * 256.0f);
+		int r25 = dword_32424 * r28 + dword_32428 * r27 + dword_3242C * r26 + (int)(flt_32454 * 256.0f);
+		int r24 = dword_32430 * r28 + dword_32434 * r27 + dword_32438 * r26 + (int)(flt_32450 * 256.0f);
+		int r29 = dword_3243C * r28 + dword_32440 * r27 + dword_32444 * r26 + (int)(flt_2DF7C * 256.0f);
 
 		r29 >>= 8;
 		if (r29 == -256)
@@ -8476,10 +8455,7 @@ void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
 }
 
 void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
-	char *tmp1, *next, error;
-	cubeface_t **tmp4;
-	int16 *vertices, *projection;
-	tmp1 = (char *)malloc(454);
+	char *tmp1 = (char *)malloc(454);
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		loadpartoffile(file_id, tmp1, 0, 454);
 	else {
@@ -8495,17 +8471,18 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
 #endif
 	}
 
-	next = tmp1;
+	char *next = tmp1;
+	char error;
 	cube_faces = next_val(&next, &error);
-	vertices = (int16 *)malloc(cube_faces * 4 * sizeof(*vertices));
-	projection = (int16 *)malloc(cube_faces * 4 * sizeof(*projection));
+	int16 *vertices = (int16 *)malloc(cube_faces * 4 * sizeof(*vertices));
+	int16 *projection = (int16 *)malloc(cube_faces * 4 * sizeof(*projection));
 	for (int i = 0; i < cube_faces; i++) {
 		vertices[i * 4] = next_val(&next, &error);
 		vertices[i * 4 + 1] = next_val(&next, &error);
 		vertices[i * 4 + 2] = next_val(&next, &error);
 	}
 	int count2 = next_val(&next, &error);
-	tmp4 = (cubeface_t **)malloc(count2 * sizeof(*tmp4));
+	cubeface_t **tmp4 = (cubeface_t **)malloc(count2 * sizeof(*tmp4));
 	for (int i = 0; i < count2; i++) {
 		char textured;
 		tmp4[i] = (cubeface_t *)malloc(sizeof(cubeface_t));
@@ -8538,34 +8515,33 @@ int EdenGame::next_val(char **ptr, char *error) {
 	char c = 0;
 	char *p = *ptr;
 	int val = strtol(p, 0, 10);
-	while ((*p >= '0' && *p <= '9' && *p != 0) || *p == '-') p++;
-	while ((*p == 13 || *p == 10 || *p == ',' || *p == ' ') && *p) c = *p++;
+	while ((*p >= '0' && *p <= '9' && *p != 0) || *p == '-')
+		p++;
+	while ((*p == 13 || *p == 10 || *p == ',' || *p == ' ') && *p)
+		c = *p++;
 	*error = c == 10;
 	*ptr = p;
 	return val;
 }
 
 void EdenGame::selectmap(int16 num) {
-	int i, j;
-	int16 k, x, y;
-	int mode;
 	curs_cur_map = num;
-	k = 0;
-	mode = tab_2E138[num];
-	x = (num & 7) * 32;
-	y = (num & 0x18) * 4;
-	for (i = 0; i < 6 * 2; i++)
-		for (j = 0; j < 3; j++) {
+	int16 k = 0;
+	int mode = tab_2E138[num];
+	int16 x = (num & 7) * 32;
+	int16 y = (num & 0x18) * 4;
+	for (int i = 0; i < 6 * 2; i++) {
+		for (int j = 0; j < 3; j++) {
 			cube.faces[i]->uv[j * 2    ] = x + cube_texcoords[mode][k];
 			k++;
 			cube.faces[i]->uv[j * 2 + 1] = y + cube_texcoords[mode][k];
 			k++;
 		}
+	}
 }
 
 void EdenGame::Eden_dep_and_rot() {
-	int16 curs;
-	curs = _currCursor;
+	int16 curs = _currCursor;
 	if (normalCursor && (p_global->drawFlags & DrawFlags::drDrawFlag20))
 		curs = 10;
 	selectmap(curs);
