@@ -84,7 +84,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 	}
 
 	if (_statics->_bedfoot == "Open" && _statics->_bedhead == "Closed") {
-		_isClosed = false;
+		_isClosed = true;
 		_startFrame = 20;
 		if (_statics->_tv == "Closed") {
 			_statics->_bedfoot = "Closed";
@@ -98,7 +98,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 		playSound("b#7.wav");
 
 	} else if (_statics->_bedfoot == "NotOnWashstand" && _statics->_bedhead == "ClosedWrong") {
-		_isClosed = false;
+		_isClosed = true;
 		_startFrame = 17;
 
 		if (_statics->_tv == "Closed") {
