@@ -556,7 +556,7 @@ msgstr "Yingshe"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Xuanze Yige Xingwei bing Danji âYingsheâ"
+msgstr "Xuanze Yige Xingwei bing Danji 'Yingshe'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
@@ -1600,7 +1600,7 @@ msgstr "Qingchu Zhi"
 #: base/main.cpp:253
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "Yinqing Buzhichi Tiaoshi Jibie ‘%s’"
+msgstr "Yinqing Buzhichi Tiaoshi Jibie '%s'"
 
 #: base/main.cpp:327
 msgid "Menu"
