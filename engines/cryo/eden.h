@@ -544,7 +544,7 @@ private:
 	signed char *cos_y, *sin_y;
 	signed char *cos_z, *sin_z;
 
-	unsigned char *face[6], *newface[6];
+	unsigned char *_face[6], *_newface[6];
 	short faceskip;
 
 	unsigned char cursor[40 * 40];
@@ -731,7 +731,7 @@ private:
 	float flt_32450, flt_32454;
 	cube_t cube;
 	int16 curs_cur_map;
-	int16 lines[200 * 8];
+	int16 _lines[200 * 8];
 	byte cube_texture[0x4000];
 	int cube_faces;
 	int32 curs_old_tick, curs_new_tick;

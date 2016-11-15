@@ -5347,7 +5347,7 @@ void EdenGame::animpiece() {
 
 void EdenGame::getdino(room_t *room) {
 	assert(tab_2CEF0[4] == 0x25);
-	
+
 	room->flags &= ~0xC;
 	for (perso_t *perso = &kPersons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_flags & PersonFlags::pf80)
@@ -8659,7 +8659,7 @@ void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
 			ymin = r31;
 		if (r31 > ymax)
 			ymax = r31;
-		trace_ligne_mapping(r20, r30, r26, r31, r19, r18, r25, r24, lines);
+		trace_ligne_mapping(r20, r30, r26, r31, r19, r18, r25, r24, _lines);
 		r20 = r26;
 		r30 = r31;
 		r19 = r25;
@@ -8679,7 +8679,7 @@ void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
 		ymin = r31;
 	if (r31 > ymax)
 		ymax = r31;
-	trace_ligne_mapping(r20, r30, r26, r31, r19, r18, r25, r24, lines);
+	trace_ligne_mapping(r20, r30, r26, r31, r19, r18, r25, r24, _lines);
 	affiche_ligne_mapping(ymin, ymax, p_mainview->_bufferPtr, face->texptr);
 }
 
@@ -8742,7 +8742,7 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 void EdenGame::affiche_ligne_mapping(int16 r3, int16 r4, byte *target, byte *texture) {
 	int16 height = r4 - r3;
 	byte *trg_line = p_mainview->_bufferPtr + r3 * 640;    //TODO: target??
-	int16 *line = &lines[r3 * 8];
+	int16 *line = &_lines[r3 * 8];
 	//	debug("curs: beg draw %d - %d", r3, r4);
 	for (int r22 = height; r22; r22--, line += 8, trg_line += 640) {
 		int16 r29 = line[0];
@@ -8875,7 +8875,7 @@ void EdenGame::PaintFace0(XYZ *point) {
 			point->x = x;
 			point->y = y;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[0][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[0][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8887,7 +8887,7 @@ void EdenGame::PaintFace1(XYZ *point) {
 			point->y = y;
 			point->z = -x;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[1][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[1][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8899,7 +8899,7 @@ void EdenGame::PaintFace2(XYZ *point) {
 			point->x = x;
 			point->z = -y;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[2][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[2][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8911,7 +8911,7 @@ void EdenGame::PaintFace3(XYZ *point) {
 			point->x = -x;
 			point->y = -y;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[3][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[3][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8923,7 +8923,7 @@ void EdenGame::PaintFace4(XYZ *point) {
 			point->y = y;
 			point->z = x;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[4][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[4][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8935,7 +8935,7 @@ void EdenGame::PaintFace5(XYZ *point) {
 			point->x = x;
 			point->z = y;
 			RotatePoint(point, &rpoint);
-			PaintPixel(&rpoint, face[5][tab1[x + 15] + tab2[y + 15]]);
+			PaintPixel(&rpoint, _face[5][tab1[x + 15] + tab2[y + 15]]);
 		}
 	}
 }
@@ -8980,7 +8980,7 @@ void EdenGame::RenderCube() {
 	for (int i = 0; i < 6; i++) {
 		int area = CalcFaceArea(pc_cube[i]);
 		if (area <= 0) {
-			face[i] = newface[i];	// set new texture for invisible area,
+			_face[i] = _newface[i];	// set new texture for invisible area,
 			faceskip |= 1 << i;	// but don't draw it just yet
 		} else
 			faceskip &= ~(1 << i);
@@ -9062,9 +9062,9 @@ void EdenGame::pc_selectmap(int16 num) {
 		pc_cursor = &pc_cursors[num];
 		unsigned char *bank = main_bank_buf + PLE16(main_bank_buf);
 		for (int i = 0; i < 6; i++) {
-			newface[i] = 4 + (unsigned char*)getElem(bank, pc_cursor->sides[i]);
+			_newface[i] = 4 + (unsigned char*)getElem(bank, pc_cursor->sides[i]);
 			if (curs_cur_map == -1)
-				face[i] = newface[i];
+				_face[i] = _newface[i];
 		}
 		curs_cur_map = num;
 	}
@@ -9099,7 +9099,7 @@ void EdenGame::pc_moteur() {
 		IncAngleY(step);
 		break;
 	case 4: // zoom in-out
-		face[0] = newface[0];
+		_face[0] = _newface[0];
 		DecAngleY();
 		DecAngleX();
 		IncZoom();
