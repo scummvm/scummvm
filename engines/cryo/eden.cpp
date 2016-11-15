@@ -4634,7 +4634,7 @@ void EdenGame::verifh(void *ptr) {
 	head -= 6;
 	uint16 h0 = PLE16(head);
 	head += 2;
-	char unused = *head++;
+	/*char unused = * */head++;
 	uint16 h3 = PLE16(head);
 	head += 2;
 	byte *data = h0 + head + 26;
@@ -4729,7 +4729,7 @@ int EdenGame::ssndfl(uint16 num) {
 
 		// 3. Normal sound data
 		if (chunkType == 1) {
-			unsigned short freq = h_bigfile.readUint16LE();
+			/*unsigned short freq = */h_bigfile.readUint16LE();
 			size = chunkLen - 2;
 			h_bigfile.read(voiceSamplesBuffer, size);
 		}
