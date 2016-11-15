@@ -8620,41 +8620,37 @@ void EdenGame::restoreZDEP() {
 }
 
 void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
-	int16 r20, r30, r26, r31, r19, r18, /*r25,*/ r24, ymin, ymax, v46, v48, v4A, v4C, v4E, v50;
-	int16 *uv;
-	uint16 r25;
 	uint16 *indices = face->indices;
-	int r17, r29;
-	r29 = indices[0] * 4;
-	v46 = cubep->projection[r29];
-	v48 = cubep->projection[r29 + 1];
+	int idx = indices[0] * 4;
+	int16 v46 = cubep->projection[idx];
+	int16 v48 = cubep->projection[idx + 1];
 
-	r29 = indices[1] * 4;
-	v4A = cubep->projection[r29];
-	v4C = cubep->projection[r29 + 1];
+	idx = indices[1] * 4;
+	int16 v4A = cubep->projection[idx];
+	int16 v4C = cubep->projection[idx + 1];
 
-	r29 = indices[2] * 4;
-	v4E = cubep->projection[r29];
-	v50 = cubep->projection[r29 + 1];
+	idx = indices[2] * 4;
+	int16 v4E = cubep->projection[idx];
+	int16 v50 = cubep->projection[idx + 1];
 
 	if ((v4C - v48) * (v4E - v46) - (v50 - v48) * (v4A - v46) > 0)
 		return;
 
-	uv = face->uv;
-	ymin = 200; // min y
-	ymax = 0;   // max y
-	r29 = indices[0] * 4;
-	r20 = cubep->projection[r29];
-	r30 = cubep->projection[r29 + 1];
-	r19 = *uv++;
-	r18 = *uv++;
+	int16 *uv = face->uv;
+	int16 ymin = 200; // min y
+	int16 ymax = 0;   // max y
+	idx = indices[0] * 4;
+	int16 r20 = cubep->projection[idx];
+	int16 r30 = cubep->projection[idx + 1];
+	int16 r19 = *uv++;
+	int16 r18 = *uv++;
 	indices++;
-	for (r17 = 0; r17 < face->tri - 1; r17++, indices++) {
-		r29 = indices[0] * 4;
-		r26 = cubep->projection[r29];
-		r31 = cubep->projection[r29 + 1];
-		r25 = *uv++;    //TODO: unsigned
-		r24 = *uv++;    //TODO: unsigned
+	for (int r17 = 0; r17 < face->tri - 1; r17++, indices++) {
+		idx = indices[0] * 4;
+		int16 r26 = cubep->projection[idx];
+		int16 r31 = cubep->projection[idx + 1];
+		uint16 r25 = *uv++;    //TODO: unsigned
+		int16 r24 = *uv++;    //TODO: unsigned
 		if (r30 < ymin)
 			ymin = r30;
 		if (r30 > ymax)
@@ -8669,12 +8665,12 @@ void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
 		r19 = r25;
 		r18 = r24;
 	}
-	r29 = face->indices[0] * 4;
-	r26 = cubep->projection[r29];
-	r31 = cubep->projection[r29 + 1];
+	idx = face->indices[0] * 4;
+	int16 r26 = cubep->projection[idx];
+	int16 r31 = cubep->projection[idx + 1];
 	uv = face->uv;
-	r25 = *uv++;    //TODO: this is unsigned
-	r24 = *uv;      //TODO: this is signed
+	uint16 r25 = *uv++;   //TODO: this is unsigned
+	int16 r24 = *uv;      //TODO: this is signed
 	if (r30 < ymin)
 		ymin = r30;
 	if (r30 > ymax)
@@ -8688,11 +8684,7 @@ void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
 }
 
 void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *linesp) {
-	int16 t;
-	int16 r26;
-	int r30, r29, r28, r23, r24, r25;
-	int i;
-	r26 = r6 - r4;
+	int16 r26 = r6 - r4;
 	if (r26 <= 0) {
 		if (r26 == 0) {
 			linesp += r4 * 8;
@@ -8713,7 +8705,7 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 			}
 			return;
 		}
-		t = r3;
+		int16 t = r3;
 		r3 = r5;
 		r5 = t;
 		t = r7;
@@ -8727,15 +8719,15 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 	} else
 		linesp += r4 * 8 + 1;    //TODO wha???
 
-	r30 = r3 << 16;
-	r29 = r7 << 16;
-	r28 = r8 << 16;
+	int r30 = r3 << 16;
+	int r29 = r7 << 16;
+	int r28 = r8 << 16;
 
-	r25 = ((r5 - r3) << 16) / r26;
-	r24 = ((r9 - r7) << 16) / r26;
-	r23 = ((r10 - r8) << 16) / r26;
+	int r25 = ((r5 - r3) << 16) / r26;
+	int r24 = ((r9 - r7) << 16) / r26;
+	int r23 = ((r10 - r8) << 16) / r26;
 
-	for (i = 0; i < r26; i++) {
+	for (int i = 0; i < r26; i++) {
 		linesp[0] = r30 >> 16;
 		linesp[4] = r29 >> 16;
 		linesp[6] = r28 >> 16;
@@ -8748,31 +8740,29 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 }
 
 void EdenGame::affiche_ligne_mapping(int16 r3, int16 r4, byte *target, byte *texture) {
-	int16 r21, r20, r26, r25, r29, r28, len;
-	int r22;
-	uint16 r31, r30;
 	int16 height = r4 - r3;
-	byte *trg, *trg_line = p_mainview->_bufferPtr + r3 * 640;    //TODO: target??
+	byte *trg_line = p_mainview->_bufferPtr + r3 * 640;    //TODO: target??
 	int16 *line = &lines[r3 * 8];
 	//	debug("curs: beg draw %d - %d", r3, r4);
-	for (r22 = height; r22; r22--, line += 8, trg_line += 640) {
-		r29 = line[0];
-		r28 = line[1];
-		len = r28 - r29;
+	for (int r22 = height; r22; r22--, line += 8, trg_line += 640) {
+		int16 r29 = line[0];
+		int16 r28 = line[1];
+		int16 len = r28 - r29;
 		if (len < 0)
 			break;
 		if (len == 0)
 			continue;
+
 		//	debug("curs: lin draw %d", r4 - height);
-		r31 = line[4] << 8;
-		r30 = line[6] << 8;
+		uint16 r31 = line[4] << 8;
+		uint16 r30 = line[6] << 8;
 
-		r21 = line[5] - line[4];
-		r20 = line[7] - line[6];
+		int16 r21 = line[5] - line[4];
+		int16 r20 = line[7] - line[6];
 
-		r26 = (r21 << 8) / len;
-		r25 = (r20 << 8) / len;
-		trg = trg_line + r29;
+		int16 r26 = (r21 << 8) / len;
+		int16 r25 = (r20 << 8) / len;
+		byte *trg = trg_line + r29;
 #if 1
 		while (r29++ < r28) {
 			*trg++ = texture[(r30 & 0xFF00) | (r31 >> 8)];
@@ -8784,7 +8774,6 @@ void EdenGame::affiche_ligne_mapping(int16 r3, int16 r4, byte *target, byte *tex
 }
 
 // PC cursor
-
 cubeCursor pc_cursors[9] = {
 		{ { 0, 0, 0, 0, 0, 0 }, 3, 2 },
 		{ { 1, 1, 0, 1, 1, 0 }, 2, -2 },
@@ -8815,30 +8804,32 @@ signed short cosine[] = {
 };
 
 void EdenGame::MakeTables() {
-	int i, j;
-	for (i = -15; i < 15; i++) {
+	for (int i = -15; i < 15; i++) {
 		int v = (i * 11) / 15 + 11;
 		tab1[i + 15] = v;
 		tab2[i + 15] = v * 22;
 	}
 
-	for (i = 0; i < 36; i++)
-		for (j = -35; j < 36; j++)
+	for (int i = 0; i < 36; i++) {
+		for (int j = -35; j < 36; j++)
 			tab3[i][j + 35] = (cosine[i] * j) >> 7;
+	}
 }
 
 void EdenGame::GetSinCosTables(unsigned short angle, signed char **cos_table, signed char **sin_table) {
-	angle = angle / 2;
+	angle /= 2;
 	*cos_table = tab3[angle] + 35;
 
-	angle = angle + 9; if (angle >= 36) angle -= 36;
+	angle += 9;
+	if (angle >= 36)
+		angle -= 36;
+
 	*sin_table = tab3[angle] + 35;
 }
 
 
 void EdenGame::RotatePoint(XYZ *point, XYZ *rpoint) {
 	// see http://www.cprogramming.com/tutorial/3d/rotation.html
-
 	XYZ xrot;
 
 	xrot.x = point->x;
@@ -8860,15 +8851,13 @@ void EdenGame::MapPoint(XYZ *point, short *x, short *y) {
 short EdenGame::CalcFaceArea(XYZ *face) {
 	XYZ rpoint;
 	short x[3], y[3];
-	short area;
-	int i;
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		RotatePoint(&face[i], &rpoint);
 		MapPoint(&rpoint, &x[i], &y[i]);
 	}
 
-	area = (y[1] - y[0]) * (x[2] - x[0]) - (y[2] - y[0]) * (x[1] - x[0]);
+	short area = (y[1] - y[0]) * (x[2] - x[0]) - (y[2] - y[0]) * (x[1] - x[0]);
 
 	return area;
 }
@@ -8880,75 +8869,75 @@ void EdenGame::PaintPixel(XYZ *point, unsigned char pixel) {
 }
 
 void EdenGame::PaintFace0(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->x = x;
 			point->y = y;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[0][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFace1(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->y = y;
 			point->z = -x;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[1][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFace2(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->x = x;
 			point->z = -y;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[2][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFace3(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->x = -x;
 			point->y = -y;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[3][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFace4(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->y = y;
 			point->z = x;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[4][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFace5(XYZ *point) {
-	int x, y;
 	XYZ rpoint;
-	for (y = -15; y < 15; y++)
-		for (x = -15; x < 15; x++) {
+	for (int y = -15; y < 15; y++) {
+		for (int x = -15; x < 15; x++) {
 			point->x = x;
 			point->z = y;
 			RotatePoint(point, &rpoint);
 			PaintPixel(&rpoint, face[5][tab1[x + 15] + tab2[y + 15]]);
 		}
+	}
 }
 
 void EdenGame::PaintFaces() {
@@ -8980,9 +8969,7 @@ void EdenGame::PaintFaces() {
 }
 
 void EdenGame::RenderCube() {
-	int i;
-
-	for (i = 0; i < sizeof(cursor); i++)
+	for (int i = 0; i < sizeof(cursor); i++)
 		cursor[i] = 0;
 	cursorcenter = &cursor[40 * 20 + 20];
 
@@ -8990,13 +8977,12 @@ void EdenGame::RenderCube() {
 	GetSinCosTables(angle_y, &cos_y, &sin_y);
 	GetSinCosTables(angle_z, &cos_z, &sin_z);
 
-	for (i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		int area = CalcFaceArea(pc_cube[i]);
 		if (area <= 0) {
 			face[i] = newface[i];	// set new texture for invisible area,
 			faceskip |= 1 << i;	// but don't draw it just yet
-		}
-		else
+		} else
 			faceskip &= ~(1 << i);
 	}
 
@@ -9021,8 +9007,10 @@ void EdenGame::RenderCube() {
 
 void EdenGame::IncAngleX(int step) {
 	angle_x += step;
-	if (angle_x == 70 + 2) angle_x = 0;
-	if (angle_x == 0 - 2) angle_x = 70;
+	if (angle_x == 70 + 2)
+		angle_x = 0;
+	if (angle_x == 0 - 2)
+		angle_x = 70;
 }
 
 void EdenGame::DecAngleX() {
@@ -9032,8 +9020,10 @@ void EdenGame::DecAngleX() {
 
 void EdenGame::IncAngleY(int step) {
 	angle_y += step;
-	if (angle_y == 70 + 2) angle_y = 0;
-	if (angle_y == 0 - 2) angle_y = 70;
+	if (angle_y == 70 + 2)
+		angle_y = 0;
+	if (angle_y == 0 - 2)
+		angle_y = 70;
 }
 
 void EdenGame::DecAngleY() {
@@ -9081,8 +9071,7 @@ void EdenGame::pc_selectmap(int16 num) {
 }
 
 void EdenGame::pc_moteur() {
-	int16 curs;
-	curs = _currCursor;
+	int16 curs = _currCursor;
 	if (normalCursor && (p_global->drawFlags & DrawFlags::drDrawFlag20))
 		curs = 9;
 	pc_selectmap(curs);
