@@ -314,8 +314,14 @@ bool AVISurface::renderFrame() {
 		const Graphics::Surface *frame = (idx == 0) ?
 			_decoder->decodeNextFrame() : _decoder->decodeNextTransparency();
 
-		assert(_movieFrameSurface[idx]->format == frame->format);
-		_movieFrameSurface[idx]->blitFrom(*frame);
+		if (_movieFrameSurface[idx]->format == frame->format) {
+			_movieFrameSurface[idx]->blitFrom(*frame);
+		} else {
+			Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
+				_decoder->getPalette());
+			_movieFrameSurface[idx]->blitFrom(*s);
+			delete s;
+		}
 	}
 
 	if (!_framePixels) {
