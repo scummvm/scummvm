@@ -356,6 +356,7 @@ class OSVideoSurface : public CVideoSurface {
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
+	~OSVideoSurface();
 
 	/**
 	 * Load the surface with the passed resource

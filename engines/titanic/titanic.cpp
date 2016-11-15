@@ -71,10 +71,10 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 TitanicEngine::~TitanicEngine() {
 	delete _debugger;
 	delete _events;
-	delete _screen;
 	delete _window;
 	delete _screenManager;
 	delete _filesManager;
+	delete _screen;
 	CSaveableObject::freeClassList();
 }
 

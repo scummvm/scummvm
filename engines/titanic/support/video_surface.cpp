@@ -41,8 +41,6 @@ CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 }
 
 CVideoSurface::~CVideoSurface() {
-	if (_ddSurface)
-		_videoSurfaceCounter -= freeSurface();
 	--_videoSurfaceCounter;
 
 	if (_freeTransparencySurface == DisposeAfterUse::YES)
@@ -332,6 +330,11 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 		_resourceKey = key;
 		load();
 	}
+}
+
+OSVideoSurface::~OSVideoSurface() {
+	if (_ddSurface)
+		_videoSurfaceCounter -= OSVideoSurface::freeSurface();
 }
 
 void OSVideoSurface::loadResource(const CResourceKey &key) {
