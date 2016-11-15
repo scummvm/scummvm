@@ -220,6 +220,8 @@ void Score::loadArchive() {
 			loadCastData(*_movieArchive->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
 	}
 
+	setSpriteCasts();
+
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 	if (stxt.size() > 0) {
 		loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));

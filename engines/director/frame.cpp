@@ -648,7 +648,6 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	}
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		warning("************");
 		Common::SeekableReadStream *pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 
 		if (_vm->getVersion() <= 4) {
