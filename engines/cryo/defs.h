@@ -813,11 +813,11 @@ extern char kPersoRoomBankTable[];
 
 // area transition descriptors
 extern goto_t gotos[];
-extern int16 tab_2D24C[];
-extern int16 tab_2D28E[];
-extern int16 tab_2D298[];
-extern int16 tab_2D2AA[];
-extern int16 tab_2D2C4[];
+extern int16 kFramesVid170[];
+extern int16 kFramesVid83[];
+extern int16 kFramesVid88[];
+extern int16 kFramesVid89[];
+extern int16 kFramesVid94[];
 extern object_t objects[];
 extern int16 kObjectLocations[100];
 extern perso_t kPersons[];

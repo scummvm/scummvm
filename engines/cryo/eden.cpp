@@ -6329,23 +6329,23 @@ void EdenGame::displayHNMSubtitles() {
 	perso_t *perso;
 	switch (p_global->curVideoNum) {
 	case 170:
-		frames = tab_2D24C;
+		frames = kFramesVid170;
 		perso = &kPersons[PER_UNKN_156];
 		break;
 	case 83:
-		frames = tab_2D28E;
+		frames = kFramesVid83;
 		perso = &kPersons[PER_MORKUS];
 		break;
 	case 88:
-		frames = tab_2D298;
+		frames = kFramesVid88;
 		perso = &kPersons[PER_MORKUS];
 		break;
 	case 89:
-		frames = tab_2D2AA;
+		frames = kFramesVid89;
 		perso = &kPersons[PER_MORKUS];
 		break;
 	case 94:
-		frames = tab_2D2C4;
+		frames = kFramesVid94;
 		perso = &kPersons[PER_MORKUS];
 		break;
 	default:
@@ -8532,10 +8532,8 @@ void EdenGame::selectmap(int16 num) {
 	int16 y = (num & 0x18) * 4;
 	for (int i = 0; i < 6 * 2; i++) {
 		for (int j = 0; j < 3; j++) {
-			cube.faces[i]->uv[j * 2    ] = x + cube_texcoords[mode][k];
-			k++;
-			cube.faces[i]->uv[j * 2 + 1] = y + cube_texcoords[mode][k];
-			k++;
+			cube.faces[i]->uv[j * 2    ] = x + cube_texcoords[mode][k++];
+			cube.faces[i]->uv[j * 2 + 1] = y + cube_texcoords[mode][k++];
 		}
 	}
 }

@@ -239,7 +239,7 @@ goto_t gotos[] = {
 #define SUB_LINE(start, end) \
 	(start), (end) | 0x8000
 
-int16 tab_2D24C[] = {
+int16 kFramesVid170[] = {
 	SUB_LINE(  68,  120),
 	SUB_LINE( 123,  196),
 	SUB_LINE( 199,  274),
@@ -259,13 +259,13 @@ int16 tab_2D24C[] = {
 	-1
 };
 
-int16 tab_2D28E[] = {
+int16 kFramesVid83[] = {
 	SUB_LINE(99, 155),
 	SUB_LINE(157, 256),
 	-1
 };
 
-int16 tab_2D298[] = {
+int16 kFramesVid88[] = {
 	SUB_LINE(106, 173),
 	SUB_LINE(175, 244),
 	SUB_LINE(246, 350),
@@ -273,7 +273,7 @@ int16 tab_2D298[] = {
 	-1
 };
 
-int16 tab_2D2AA[] = {
+int16 kFramesVid89[] = {
 	SUB_LINE(126, 176),
 	SUB_LINE(178, 267),
 	SUB_LINE(269, 342),
@@ -283,7 +283,7 @@ int16 tab_2D2AA[] = {
 	-1
 };
 
-int16 tab_2D2C4[] = {
+int16 kFramesVid94[] = {
 	SUB_LINE(101, 213),
 	SUB_LINE(215, 353),
 	SUB_LINE(355, 455),

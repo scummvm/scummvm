@@ -25,9 +25,7 @@
 namespace Cryo {
 
 sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode) {
-	sound_t *sound;
-
-	sound = (sound_t *)malloc(sizeof(*sound));
+	sound_t *sound = (sound_t *)malloc(sizeof(*sound));
 	if (sound) {
 		sound->_maxLength = length;
 		sound->_rate = rate;
@@ -51,10 +49,9 @@ void CLSoundRaw_Free(sound_t *sound) {
 }
 
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {
-	char *buf;
 	CLSound_SetLength(sound, length);
 	sound->_length = length;
-	buf = bufferOffs + (char *)buffer;
+	char *buf = bufferOffs + (char *)buffer;
 //	if(CLSound_GetWantsDesigned())
 //		CLSound_Signed2NonSigned(buf, length);
 	sound->_buffer = buf;

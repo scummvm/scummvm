@@ -380,15 +380,14 @@ void CLSound_SetLength(sound_t *sound, int length) {
 ///// CLSoundChannel
 /// sound output device that plays queue of sounds
 soundchannel_t *CLSoundChannel_New(int arg1) {
-	int16 i;
 	soundchannel_t *ch = (soundchannel_t *)malloc(sizeof(*ch));
 	if (!ch)
-		return 0;
+		return nullptr;
 
 	ch->_volumeLeft = ch->_volumeRight = 255;
 	ch->_numSounds = 0;
 
-	for (i = 0; i < kCryoMaxChSounds; i++)
+	for (int16 i = 0; i < kCryoMaxChSounds; i++)
 		ch->_sounds[i] = 0;
 
 	return ch;

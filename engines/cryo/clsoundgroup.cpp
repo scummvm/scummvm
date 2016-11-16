@@ -38,7 +38,7 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, 
 	}
 	sg->_soundIndex = 0;
 	sg->_playIndex = 0;
-	sg->ff_106 = 1;
+	sg->_forceWait = true;
 
 	return sg;
 }
@@ -56,14 +56,14 @@ void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
 
 void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg) {
 	sound_t *sound = sg->_sound[sg->_soundIndex];
-	if (sg->ff_106)
+	if (sg->_forceWait)
 		while (sound->_locked) ;
 	return sound->sndHandle + sound->_headerLen;
 }
 
 bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool isSigned) {
 	sound_t *sound = sg->_sound[sg->_soundIndex];
-	if (sg->ff_106)
+	if (sg->_forceWait)
 		while (sound->_locked) ;
 	else if (sound->_locked)
 		return false;
@@ -83,17 +83,16 @@ bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool i
 }
 
 bool CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, bool isSigned) {
-	void *buffer;
 	sound_t *sound = sg->_sound[sg->_soundIndex];
 	if (length >= sound->_maxLength)
 		error("CLSoundGroup_SetDatas - Unexpected length");
 
-	if (sg->ff_106)
+	if (sg->_forceWait)
 		while (sound->_locked) ;
 	else if (sound->_locked)
 		return false;
 
-	buffer = sound->sndHandle + sound->_headerLen;
+	void *buffer = sound->sndHandle + sound->_headerLen;
 	sound->_buffer = (char *)buffer;
 	memcpy(buffer, data, length);
 	CLSound_SetLength(sound, length);
@@ -116,7 +115,6 @@ void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch) {
 		sg->_playIndex = 0;
 	else
 		sg->_playIndex++;
-
 }
 
 } // End of namespace Cryo

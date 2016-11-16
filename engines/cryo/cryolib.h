@@ -150,10 +150,10 @@ typedef struct sound_t sound_t;
 
 struct soundgroup_t {
 	sound_t *_sound[kCryoMaxClSounds];
-	int16   _numSounds;
-	int16   _soundIndex;
-	int16   _playIndex;
-	int16   ff_106;
+	int16 _numSounds;
+	int16 _soundIndex;
+	int16 _playIndex;
+	bool _forceWait;
 };
 typedef struct soundgroup_t soundgroup_t;
 
