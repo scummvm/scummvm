@@ -73,7 +73,12 @@ public:
 
 	StringResource() :
 		_nbStrings(0),
-		_lastId(-1) {
+		_lastId(-1),
+		_lastString(NULL) {
+		for (int i = 0; i < MAX_STRINGS; i++) {
+			_strings[i].id = 0;
+			_strings[i].string = NULL;
+		}
 	}
 	~StringResource() {
 		for (int32 i = 0; i < _nbStrings; i++) {
