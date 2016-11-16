@@ -75,6 +75,8 @@ int CContinueSaveDialog::show() {
 	while (!g_vm->shouldQuit() && _selectedSlot == -999) {
 		g_vm->_events->pollEventsAndWait();
 	}
+	if (g_vm->shouldQuit())
+		_selectedSlot = -2;
 
 	return _selectedSlot;
 }
