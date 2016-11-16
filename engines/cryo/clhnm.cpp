@@ -210,16 +210,16 @@ void CLHNM_WaitLoop(hnm_t *hnm) {
 	time_drift = TimerTicks - next_frame_time;
 }
 
-void CLHNM_SetupSound(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode) {
+void CLHNM_SetupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	soundChannel = CLSoundChannel_New(mode);
-	soundGroup = CLSoundGroup_New(numSounds, arg4, sampleSize, rate, mode);
+	soundGroup = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
 	if (sampleSize == 16)
 		CLSoundGroup_Reverse16All(soundGroup);
 }
 
-void CLHNM_SetupSoundADPCM(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode) {
+void CLHNM_SetupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	soundChannel_adpcm = CLSoundChannel_New(mode);
-	soundGroup_adpcm = CLSoundGroup_New(numSounds, arg4, sampleSize, rate, mode);
+	soundGroup_adpcm = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
 }
 
 void CLHNM_CloseSound() {
@@ -568,7 +568,7 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 				if (!h6) {
 					int sound_size = sz - 8;
 					if (!use_adpcm) {
-						CLSoundGroup_SetDatas(soundGroup, hnm->_dataPtr, sound_size - 2, 0);
+						CLSoundGroup_SetDatas(soundGroup, hnm->_dataPtr, sound_size - 2, false);
 						if (sound_started)
 							CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
 						else
@@ -579,10 +579,10 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 							const int kDecompTableSize = 256 * sizeof(int16);
 							CLHNM_LoadDecompTable((int16 *)hnm->_dataPtr);
 							CLHNM_DecompADPCM(hnm->_dataPtr + kDecompTableSize, sound_buffer, sound_size - kDecompTableSize);
-							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, 0);
+							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, false);
 						} else {
 							CLHNM_DecompADPCM(hnm->_dataPtr, sound_buffer, sound_size);
-							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, sound_size * 2, 0);
+							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, sound_size * 2, false);
 						}
 						pending_sounds++;
 						if (sound_started)

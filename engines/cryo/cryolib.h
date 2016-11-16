@@ -132,7 +132,7 @@ struct sound_t {
 
 	char    *_buffer;
 	int     ff_16;
-	int16   ff_1A;
+	int16   _maxLength;
 	float   _rate;
 	int16   _sampleSize;
 	int     _length;
@@ -177,15 +177,15 @@ extern volatile int32 TimerTicks;
 extern View ScreenView;
 
 
-soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
+soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
 void CLSoundGroup_Free(soundgroup_t *sg);
 void CLSoundGroup_Reverse16All(soundgroup_t *sg);
 void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg);
-int16 CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, int16 isSigned);
-int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSigned);
+bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool isSigned);
+bool CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, bool isSigned);
 void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch);
 
-sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode);
+sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode);
 void CLSoundRaw_Free(sound_t *sound);
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length);
 
@@ -259,8 +259,8 @@ void CLHNM_Init();
 void CLHNM_Done();
 void CLHNM_SetupTimer(float rate);
 void CLHNM_WaitLoop(hnm_t *hnm);
-void CLHNM_SetupSound(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
-void CLHNM_SetupSoundADPCM(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
+void CLHNM_SetupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+void CLHNM_SetupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
 void CLHNM_CloseSound();
 void CLHNM_SetForceZero2Black(bool forceblack);
 hnm_t *CLHNM_New(int preload_size);
