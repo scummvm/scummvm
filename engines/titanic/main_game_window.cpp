@@ -46,6 +46,7 @@ CMainGameWindow::CMainGameWindow(TitanicEngine *vm): _vm(vm),
 }
 
 CMainGameWindow::~CMainGameWindow() {
+	delete _project;
 }
 
 void CMainGameWindow::applicationStarting() {

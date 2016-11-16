@@ -152,6 +152,7 @@ public:
 public:
 	CLASSDEF;
 	CProjectItem();
+	virtual ~CProjectItem() { destroyChildren(); }
 
 	/**
 	 * Save the data for the class to file

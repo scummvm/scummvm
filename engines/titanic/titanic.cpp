@@ -69,13 +69,6 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 }
 
 TitanicEngine::~TitanicEngine() {
-	delete _debugger;
-	delete _events;
-	delete _window;
-	delete _screenManager;
-	delete _filesManager;
-	delete _screen;
-	CSaveableObject::freeClassList();
 }
 
 void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
@@ -116,10 +109,16 @@ void TitanicEngine::initialize() {
 }
 
 void TitanicEngine::deinitialize() {
+	delete _debugger;
+	delete _events;
+	delete _window;
+	delete _screenManager;
+	delete _filesManager;
+	delete _screen;
+
 	CEnterExitFirstClassState::deinit();
 	CGetLiftEye2::deinit();
 	CHose::deinit();
-	CMovie::deinit();
 	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();
 	CExitPellerator::deinit();
@@ -127,6 +126,8 @@ void TitanicEngine::deinitialize() {
 	CGameObject::deinit();
 	CTelevision::deinit();
 	TTnpcScript::deinit();
+	CMovie::deinit();
+	CSaveableObject::freeClassList();
 }
 
 Common::Error TitanicEngine::run() {
