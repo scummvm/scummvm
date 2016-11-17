@@ -53,7 +53,7 @@ bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 }
 
 bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
-	if (_statics->_chestOfDrawers == "Open" && _statics->_desk == "Closed") {
+	if (_statics->_chestOfDrawers == "Open" && _statics->_drawer == "Closed") {
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("Drawer");
 		_statics->_chestOfDrawers = "Closed";

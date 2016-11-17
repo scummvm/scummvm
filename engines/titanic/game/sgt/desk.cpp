@@ -56,7 +56,7 @@ bool CDesk::TurnOn(CTurnOn *msg) {
 
 bool CDesk::TurnOff(CTurnOff *msg) {
 	if (_statics->_desk == "Open" && _statics->_chestOfDrawers == "Closed"
-			&& _statics->_bedhead == "Open") {
+			&& _statics->_bedhead != "Open") {
 		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("ChestOfDrawers");
 
