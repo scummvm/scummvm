@@ -87,34 +87,33 @@ void CBedhead::load(SimpleFile *file) {
 }
 
 bool CBedhead::TurnOn(CTurnOn *msg) {
-	if (_statics->_bedfoot == "Closed" || _statics->_bedfoot == "RestingUnderTV")
-		return true;
+	if (_statics->_bedfoot != "Closed" && _statics->_bedfoot != "RestingUnderTV") {
+		const BedheadEntries *data = nullptr;
+		if (_statics->_bedhead == "Closed")
+			data = &_on._closed;
+		else if (_statics->_bedhead == "RestingTV")
+			data = &_on._restingTV;
+		else if (_statics->_bedhead == "RestingUV")
+			data = &_on._restingUV;
+		else if (_statics->_bedhead == "ClosedWrong")
+			data = &_on._closedWrong;
+		else
+			return true;
 
-	const BedheadEntries *data = nullptr;
-	if (_statics->_bedhead == "Closed")
-		data = &_on._closed;
-	else if (_statics->_bedhead == "RestingTV")
-		data = &_on._restingTV;
-	else if (_statics->_bedhead == "RestingUV")
-		data = &_on._restingUV;
-	else if (_statics->_bedhead == "ClosedWrong")
-		data = &_on._closedWrong;
-	else
-		return true;
+		for (uint idx = 0; idx < data->size(); ++idx) {
+			const BedheadEntry &entry = (*data)[idx];
+			if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
+					&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
+					&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
+				CVisibleMsg visibleMsg(false);
+				visibleMsg.execute("Bedfoot");
+				setVisible(true);
 
-	for (uint idx = 0; idx < data->size(); ++idx) {
-		const BedheadEntry &entry = (*data)[idx];
-		if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
-				&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
-				&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
-			CVisibleMsg visibleMsg(false);
-			visibleMsg.execute("Bedfoot");
-			setVisible(true);
-
-			_statics->_bedhead = entry._name4;
-			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playSound("b#6.wav");
-			_isClosed = false;
+				_statics->_bedhead = entry._name4;
+				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				playSound("b#6.wav");
+				_isClosed = false;
+			}
 		}
 	}
 

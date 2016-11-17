@@ -54,7 +54,7 @@ bool CSGTTV::TurnOff(CTurnOff *msg) {
 
 bool CSGTTV::TurnOn(CTurnOn *msg) {
 	if (CSGTStateRoom::_statics->_tv == "Closed" &&
-		CSGTStateRoom::_statics->_bedfoot == "Closed") {
+			CSGTStateRoom::_statics->_bedfoot != "Closed") {
 		CSGTStateRoom::_statics->_tv = "Open";
 		setVisible(true);
 		_isClosed = false;
