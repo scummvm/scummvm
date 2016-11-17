@@ -110,7 +110,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	gameStarted = false;
 	_soundAllocated = false;
 	_musicChannel = _voiceChannel = nullptr;
-	hnmsound_ch = nullptr;
+	_hnmSoundChannel = nullptr;
 	voiceSound = nullptr;
 	p_view2 = p_underSubtitlesView = p_subtitlesview = p_underBarsView = p_mainview = p_hnmview = nullptr;
 	_hnmContext = nullptr;
@@ -5574,7 +5574,7 @@ void EdenGame::run() {
 	CLHNM_SetForceZero2Black(true);
 	CLHNM_SetupTimer(12.5);
 	voiceSound = CLSoundRaw_New(0, 11025 * 65536.0, 8, 0);
-	hnmsound_ch = CLHNM_GetSoundChannel();
+	_hnmSoundChannel = CLHNM_GetSoundChannel();
 	CLSound_SetWantsDesigned(1); // CHECKME: Used?
 
 	_musicChannel = new CSoundChannel(_vm->_mixer, 11025, false);
@@ -5677,19 +5677,19 @@ void EdenGame::edmain() {
 void EdenGame::intro() {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		// Play intro videos in HQ
-		CLSoundChannel_Stop(hnmsound_ch);
+		CLSoundChannel_Stop(_hnmSoundChannel);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
-		hnmsound_ch = CLHNM_GetSoundChannel();
+		_hnmSoundChannel = CLHNM_GetSoundChannel();
 		playHNM(2012);
 		playHNM(171);
 		CLBlitter_FillScreenView(0);
 		specialTextMode = false;
 		playHNM(2001);
-		CLSoundChannel_Stop(hnmsound_ch);
+		CLSoundChannel_Stop(_hnmSoundChannel);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
-		hnmsound_ch = CLHNM_GetSoundChannel();
+		_hnmSoundChannel = CLHNM_GetSoundChannel();
 	} else {
 		playHNM(98);	// Cryo logo
 		playHNM(171);	// Virgin logo
@@ -6211,8 +6211,8 @@ void EdenGame::showMovie(char arg1) {
 	CLHNM_ReadHeader(_hnmContext);
 	if (p_global->curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
-		CLSoundChannel_SetVolumeLeft(hnmsound_ch, 0);
-		CLSoundChannel_SetVolumeRight(hnmsound_ch, 0);
+		CLSoundChannel_SetVolumeLeft(_hnmSoundChannel, 0);
+		CLSoundChannel_SetVolumeRight(_hnmSoundChannel, 0);
 	}
 	bool playing = true;
 	if (CLHNM_GetVersion(_hnmContext) != 4)

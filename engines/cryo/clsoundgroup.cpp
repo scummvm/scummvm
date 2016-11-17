@@ -33,7 +33,7 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, 
 
 	for (int i = 0; i < sg->_numSounds; i++) {
 		sound_t *sound = CLSoundRaw_New(length, rate, sampleSize, mode);
-		sg->_sound[i] = sound;
+		sg->_sounds[i] = sound;
 		sound->_maxLength = length;
 	}
 	sg->_soundIndex = 0;
@@ -45,24 +45,24 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, 
 
 void CLSoundGroup_Free(soundgroup_t *sg) {
 	for (int16 i = 0; i < sg->_numSounds; i++)
-		CLSoundRaw_Free(sg->_sound[i]);
+		CLSoundRaw_Free(sg->_sounds[i]);
 	free(sg);
 }
 
 void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
 	for (int16 i = 0; i < sg->_numSounds; i++)
-		sg->_sound[i]->_reversed = true;
+		sg->_sounds[i]->_reversed = true;
 }
 
 void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg) {
-	sound_t *sound = sg->_sound[sg->_soundIndex];
+	sound_t *sound = sg->_sounds[sg->_soundIndex];
 	if (sg->_forceWait)
 		while (sound->_locked) ;
 	return sound->sndHandle + sound->_headerLen;
 }
 
 bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool isSigned) {
-	sound_t *sound = sg->_sound[sg->_soundIndex];
+	sound_t *sound = sg->_sounds[sg->_soundIndex];
 	if (sg->_forceWait)
 		while (sound->_locked) ;
 	else if (sound->_locked)
@@ -83,7 +83,7 @@ bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool i
 }
 
 bool CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, bool isSigned) {
-	sound_t *sound = sg->_sound[sg->_soundIndex];
+	sound_t *sound = sg->_sounds[sg->_soundIndex];
 	if (length >= sound->_maxLength)
 		error("CLSoundGroup_SetDatas - Unexpected length");
 
@@ -110,7 +110,7 @@ bool CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, bool isSign
 }
 
 void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch) {
-	CLSoundChannel_Play(ch, sg->_sound[sg->_playIndex]);
+	CLSoundChannel_Play(ch, sg->_sounds[sg->_playIndex]);
 	if (sg->_playIndex == sg->_numSounds - 1)
 		sg->_playIndex = 0;
 	else

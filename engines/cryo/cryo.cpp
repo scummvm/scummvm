@@ -39,7 +39,7 @@
 
 namespace Cryo {
 
-CryoEngine *g_ed = 0;
+CryoEngine *g_ed = nullptr;
 
 CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
 	// Put your engine in a sane state, but do nothing big yet;

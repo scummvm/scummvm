@@ -646,7 +646,7 @@ private:
 
 	CSoundChannel *_musicChannel;
 	CSoundChannel *_voiceChannel;
-	soundchannel_t  *hnmsound_ch;
+	soundchannel_t *_hnmSoundChannel;
 	sound_t         *voiceSound;
 
 	View          *p_view2;

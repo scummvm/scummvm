@@ -388,7 +388,7 @@ soundchannel_t *CLSoundChannel_New(int arg1) {
 	ch->_numSounds = 0;
 
 	for (int16 i = 0; i < kCryoMaxChSounds; i++)
-		ch->_sounds[i] = 0;
+		ch->_sounds[i] = nullptr;
 
 	return ch;
 }

@@ -149,7 +149,7 @@ typedef struct sound_t sound_t;
 #define kCryoMaxClSounds 64
 
 struct soundgroup_t {
-	sound_t *_sound[kCryoMaxClSounds];
+	sound_t *_sounds[kCryoMaxClSounds];
 	int16 _numSounds;
 	int16 _soundIndex;
 	int16 _playIndex;
