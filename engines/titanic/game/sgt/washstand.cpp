@@ -41,7 +41,7 @@ void CWashstand::load(SimpleFile *file) {
 }
 
 bool CWashstand::TurnOn(CTurnOn *msg) {
-	if (_statics->_washstand == "Closed" && _statics->_bedfoot == "NotOnWashstand") {
+	if (_statics->_washstand == "Closed" && _statics->_bedfoot != "NotOnWashstand") {
 		setVisible(true);
 		_statics->_washstand = "Open";
 		_isClosed = false;
@@ -55,8 +55,8 @@ bool CWashstand::TurnOn(CTurnOn *msg) {
 }
 
 bool CWashstand::TurnOff(CTurnOff *msg) {
-	if (_statics->_washstand == "Open" && _statics->_desk == "Closed"
-			&& _statics->_toilet == "Closed" && _statics->_bedfoot == "Open") {
+	if (_statics->_washstand == "Open" && _statics->_basin == "Closed"
+			&& _statics->_toilet == "Closed" && _statics->_bedfoot != "Open") {
 		_statics->_washstand = "Closed";
 		_isClosed = true;
 		_startFrame = 14;
