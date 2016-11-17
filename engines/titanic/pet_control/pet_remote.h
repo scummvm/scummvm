@@ -112,6 +112,7 @@ public:
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 
 	/**
 	 * Returns true if the object is in a valid state

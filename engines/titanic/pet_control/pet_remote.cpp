@@ -161,6 +161,15 @@ bool CPetRemote::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	return _items.VirtualKeyCharMsg(msg);
 }
 
+bool CPetRemote::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (msg->_wheelUp)
+		_items.scrollLeft();
+	else
+		_items.scrollRight();
+
+	return true;
+}
+
 bool CPetRemote::isValid(CPetControl *petControl) {
 	return setupControl(petControl);
 }

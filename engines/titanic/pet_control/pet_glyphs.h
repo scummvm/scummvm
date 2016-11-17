@@ -275,16 +275,6 @@ private:
 	CPetGlyph *getGlyph(int index) const;
 
 	/**
-	 * Scrolls the glyphs to the left
-	 */
-	void scrollLeft();
-
-	/**
-	 * Scrolls the glyphs to the right
-	 */
-	void scrollRight();
-
-	/**
 	 * Set the first visible glyph index
 	 */
 	void setFirstVisible(int index);
@@ -454,6 +444,16 @@ public:
 	 * Resets the scrolling of the glyphs list back to the start
 	 */
 	void scrollToStart() { _firstVisibleIndex = 0; }
+
+	/**
+	 * Scrolls the glyphs to the left
+	 */
+	void scrollLeft();
+
+	/**
+	 * Scrolls the glyphs to the right
+	 */
+	void scrollRight();
 
 	/**
 	 * Increment the currently selected index
