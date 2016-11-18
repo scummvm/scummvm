@@ -357,7 +357,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 	// event is processed after recreating the window at the new resolution.
 	int currentWidth, currentHeight;
 	getWindowDimensions(&currentWidth, &currentHeight);
-	if (width != currentWidth || height != currentHeight)
+	if (width != (uint)currentWidth || height != (uint)currentHeight)
 		return;
 	setActualScreenSize(width, height);
 	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
