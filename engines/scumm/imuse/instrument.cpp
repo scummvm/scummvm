@@ -398,6 +398,7 @@ Instrument_Program::Instrument_Program(byte program, bool mt32) :
 
 Instrument_Program::Instrument_Program(Serializer *s) {
 	_program = 255;
+	_mt32 = false;
 	if (!s->isSaving())
 		saveOrLoad(s);
 }
