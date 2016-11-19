@@ -466,8 +466,8 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 
 /*------------------------------------------------------------------------*/
 
-IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bytesPerPixel) : Codec() {
-	switch (bytesPerPixel) {
+IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel) : Codec() {
+	switch (bitsPerPixel) {
 	case 16:
 		_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;
@@ -484,7 +484,7 @@ IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bytesPerPix
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, _pixelFormat);
-	_surface->fillRect(Common::Rect(0, 0, width, height), (bytesPerPixel == 4) ? 0xff : 0);
+	_surface->fillRect(Common::Rect(0, 0, width, height), (bitsPerPixel == 32) ? 0xff : 0);
 	_ctx._bRefBuf = 3; // buffer 2 is used for scalability mode
 }
 
