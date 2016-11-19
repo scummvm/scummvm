@@ -335,6 +335,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argp += argc + 1;
 	}	// while (framesize > 0)
 
+	// Perform all varselector actions at the top of the stack immediately.
+	// Note that there may be some behind method selector calls as well;
+	// those will get executed by op_ret later.
 	_exec_varselectors(s);
 
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
@@ -956,9 +959,13 @@ void run_vm(EngineState *s) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					reg_t *var = old_xs->getVarPointer(s->_segMan);
-					if (old_xs->argc) // write?
+					if (old_xs->argc) { // write?
 						*var = old_xs->variables_argp[1];
-					else // No, read
+
+#ifdef ENABLE_SCI32
+						updateInfoFlagViewVisible(s->_segMan->getObject(old_xs->addr.varp.obj), old_xs->addr.varp.varindex);
+#endif
+					} else // No, read
 						s->r_acc = *var;
 				}
 
