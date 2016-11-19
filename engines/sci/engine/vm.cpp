@@ -142,11 +142,13 @@ static reg_t read_var(EngineState *s, int type, int index) {
 				s->variables[type][index] = make_reg(0, solution.value);
 				break;
 			}
-			case VAR_PARAM:
+			case VAR_PARAM: {
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				debugC(kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				const SciCallOrigin origin = s->getCurrentCallOrigin();
+				warning("Uninitialized read for parameter %d from %s", index, origin.toString().c_str());
 				return NULL_REG;
+			}
 			default:
 				break;
 			}
