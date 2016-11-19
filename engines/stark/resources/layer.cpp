@@ -71,6 +71,14 @@ void Layer::setScrollPosition(const Common::Point &position) {
 	_scroll.y = (_scrollScale + 1.0) * (float) position.y;
 }
 
+Common::Point Layer::getScroll() const {
+	return _scroll;
+}
+
+void Layer::setScroll(const Common::Point &scroll) {
+	_scroll = scroll;
+}
+
 bool Layer::isEnabled() const {
 	return _enabled;
 }

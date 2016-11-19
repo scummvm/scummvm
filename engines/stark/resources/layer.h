@@ -74,6 +74,12 @@ public:
 	/** Scroll the layer to the specified position */
 	void setScrollPosition(const Common::Point &position);
 
+	/** Get the current scroll for this layer */
+	Common::Point getScroll() const;
+
+	/** Set the current scroll for this layer */
+	void setScroll(const Common::Point &scroll);
+
 	/** Enable the layer */
 	void enable(bool enabled);
 

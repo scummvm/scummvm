@@ -119,6 +119,9 @@ public:
 	/** Find a stock sound by its type in the location, the level, or the global level */
 	Sound *findStockSound(uint32 stockSoundType) const;
 
+	/** Set remaining frames to rumble on this lcation */
+	void setRumbleFramesRemaining(int32 rumbleFramesRemaining);
+
 protected:
 	void printData() override;
 
@@ -141,6 +144,8 @@ private:
 	Common::Point _maxScroll;
 
 	Common::HashMap<int32, ItemVisual *> _characterItemMap;
+
+	int32 _rumbleFramesRemaining;
 
 	uint getScrollStep();
 };

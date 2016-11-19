@@ -38,6 +38,8 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/global.h"
 
+#include "common/random.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -49,7 +51,8 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_canScroll(false),
 		_currentLayer(nullptr),
 		_hasActiveScroll(false),
-		_scrollFollowCharacter(false) {
+		_scrollFollowCharacter(false),
+		_rumbleFramesRemaining(0) {
 	_type = TYPE;
 }
 
@@ -76,6 +79,10 @@ void Location::onGameLoop() {
 			_scrollFollowCharacter = false;
 		}
 	}
+
+	if (_rumbleFramesRemaining > 0) {
+		_rumbleFramesRemaining--;
+	}
 }
 
 bool Location::has3DLayer() {
@@ -88,7 +95,22 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 	for (uint i = 0; i < _layers.size(); i++) {
 		Layer *layer = _layers[i];
 		if (layer->isEnabled()) {
+			Common::Point baseScroll;
+
+			if (_rumbleFramesRemaining > 0) {
+				baseScroll = layer->getScroll();
+				Common::Point offsetScroll = baseScroll;
+				offsetScroll.x = StarkRandomSource->getRandomBit() - 1;
+				offsetScroll.y = StarkRandomSource->getRandomBit() - 1;
+
+				layer->setScroll(offsetScroll);
+			}
+
 			renderEntries.push_back(layer->listRenderEntries());
+
+			if (_rumbleFramesRemaining > 0) {
+				layer->setScroll(baseScroll);
+			}
 		}
 	}
 
@@ -368,6 +390,10 @@ Sound *Location::findStockSound(const Object *parent, uint32 stockSoundType) con
 	}
 
 	return nullptr;
+}
+
+void Location::setRumbleFramesRemaining(int32 rumbleFramesRemaining) {
+	_rumbleFramesRemaining = rumbleFramesRemaining;
 }
 
 } // End of namespace Resources

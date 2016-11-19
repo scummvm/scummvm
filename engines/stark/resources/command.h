@@ -208,7 +208,7 @@ protected:
 	Command *opScriptAbort(ResourceReference scriptRef, bool disable);
 	Command *opExit2DLocation();
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
-	Command *opRumbleScene(int32 unknown1, int32 unknown2);
+	Command *opRumbleScene(Script *script, int32 rumbleDuration, int32 pause);
 	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);

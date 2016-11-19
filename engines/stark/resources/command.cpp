@@ -101,7 +101,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kGoto2DLocation:
 		return opGoto2DLocation(_arguments[0].stringValue, _arguments[1].stringValue);
 	case kRumbleScene:
-		return opRumbleScene(_arguments[1].intValue, _arguments[2].intValue);
+		return opRumbleScene(script, _arguments[1].intValue, _arguments[2].intValue);
 	case kFadeScene:
 		return opFadeScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kGameEnd:
@@ -360,10 +360,20 @@ Command *Command::opGoto2DLocation(const Common::String &level, const Common::St
 	return nullptr;
 }
 
-Command *Command::opRumbleScene(int32 unknown1, int32 unknown2) {
-	warning("(TODO: Implement) opRumble(%d, %d)", unknown1, unknown2);
+Command *Command::opRumbleScene(Script *script, int32 rumbleDuration, int32 pause) {
+	uint gameloopDuration = StarkGlobal->getMillisecondsPerGameloop();
+	int32 rumbleFrames = rumbleDuration / gameloopDuration;
 
-	return nextCommand();
+	Current *current = StarkGlobal->getCurrent();
+	Location *location = current->getLocation();
+	location->setRumbleFramesRemaining(rumbleFrames);
+
+	if (pause) {
+		script->pause(rumbleDuration);
+		return this; // Stay on this command while the script is suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3) {
