@@ -48,7 +48,8 @@ enum {
 
 #define IVI5_PIC_SIZE_ESC       15
 
-Indeo5Decoder::Indeo5Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
+Indeo5Decoder::Indeo5Decoder(uint16 width, uint16 height, uint bytesPerPixel) :
+		IndeoDecoderBase(width, height, bytesPerPixel) {
 	_ctx._isIndeo4 = false;
 	_ctx._refBuf = 1;
 	_ctx._bRefBuf = 3;

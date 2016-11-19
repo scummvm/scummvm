@@ -37,7 +37,8 @@ namespace Image {
 
 #define IVI4_PIC_SIZE_ESC   7
 
-Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
+Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height, uint bytesPerPixel) :
+		IndeoDecoderBase(width, height, bytesPerPixel) {
 	_ctx._isIndeo4 = true;
 	_ctx._refBuf = 1;
 	_ctx._bRefBuf = 3;

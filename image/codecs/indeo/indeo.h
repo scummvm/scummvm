@@ -574,7 +574,7 @@ protected:
 	 */
 	int scaleMV(int mv, int mvScale);
 public:
-	IndeoDecoderBase(uint16 width, uint16 height);
+	IndeoDecoderBase(uint16 width, uint16 height, uint bytesPerPixel);
 	virtual ~IndeoDecoderBase();
 };
 
