@@ -215,7 +215,7 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 	case MKTAG('I', 'V', '4', '2'):
 		return new Indeo4Decoder(width, height, bitsPerPixel);
 	case MKTAG('I', 'V', '5', '0'):
-		return new Indeo5Decoder(width, height);
+		return new Indeo5Decoder(width, height, bitsPerPixel);
 #ifdef IMAGE_CODECS_TRUEMOTION1_H
 	case MKTAG('D','U','C','K'):
 	case MKTAG('d','u','c','k'):
