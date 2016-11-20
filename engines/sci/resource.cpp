@@ -1399,7 +1399,20 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	}
 
 	byte patchType = convertResType(fileStream->readByte());
-	byte patchDataOffset = fileStream->readByte();
+	int32 patchDataOffset;
+	if (_volVersion < kResVersionSci2) {
+		patchDataOffset = fileStream->readByte();
+	} else if (patchType == kResourceTypeView) {
+		fileStream->seek(3, SEEK_SET);
+		patchDataOffset = fileStream->readByte() + 22 + 2;
+	} else if (patchType == kResourceTypePic) {
+		patchDataOffset = 2;
+	} else if (patchType == kResourceTypePalette) {
+		fileStream->seek(3, SEEK_SET);
+		patchDataOffset = fileStream->readByte() + 2;
+	} else {
+		patchDataOffset = 0;
+	}
 
 	delete fileStream;
 
