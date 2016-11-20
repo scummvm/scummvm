@@ -147,6 +147,7 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = 0;
 	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
+	_vsyncCheckbox = 0;  // ResidualVM specific
 	_rendererTypePopUpDesc = 0; // ResidualVM specific
 	_rendererTypePopUp = 0; // ResidualVM specific
 	_enableAudioSettings = false;
@@ -262,6 +263,8 @@ void OptionsDialog::build() {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
+
+		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain)); // ResidualVM specific
 
 		_rendererTypePopUp->setEnabled(true); // ResidualVM specific
 		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain))); // ResidualVM specific
@@ -398,10 +401,13 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
+			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState()) // ResidualVM specific
+				graphicsModeChanged = true; // ResidualVM specific
 			
 			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 			ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
+			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain); // ResidualVM specific
 			
 #if 0 // ResidualVM specific
 			bool isSet = false;
@@ -432,6 +438,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("aspect_ratio", _domain);
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
+			ConfMan.removeKey("vsync", _domain); // ResidualVM specific
 		}
 	}
 	
@@ -705,6 +712,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(enabled);
 #endif
 	// ResidualVM specific:
+	_vsyncCheckbox->setEnabled(enabled);
 	_rendererTypePopUp->setEnabled(enabled);
 }
 
@@ -858,6 +866,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Preserve aspect ratio"), _("Preserve the aspect ratio in fullscreen mode"));
 
 	// ResidualVM specific -- Start
+	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync"), _("Wait for the vertical sync to refresh the screen"));
+
 	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game Renderer:"));
 	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
 	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
