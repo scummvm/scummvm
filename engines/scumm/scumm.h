@@ -172,7 +172,8 @@ enum {
 	DEBUG_SOUND	=	1 << 7,		// General Sound Debug
 	DEBUG_ACTORS	=	1 << 8,		// General Actor Debug
 	DEBUG_INSANE	=	1 << 9,		// Track INSANE
-	DEBUG_SMUSH	=	1 << 10		// Track SMUSH
+	DEBUG_SMUSH	=	1 << 10,		// Track SMUSH
+	DEBUG_MOONBASE_AI = 1 << 11		// Moonbase AI
 };
 
 struct VerbSlot;

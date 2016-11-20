@@ -316,7 +316,7 @@ IContainedObject *Sortie::duplicate() {
 
 void Sortie::printEnemyDefenses() {
 	for (Common::Array<DefenseUnit *>::iterator i = _enemyDefenses.begin(); i != _enemyDefenses.end(); i++) {
-		warning("Unit %d - Type: %d, Armor: %d, Status: %d", (*i)->getID(), (*i)->getType(), static_cast<int>((*i)->getArmor()), (*i)->getState());
+		debugC(DEBUG_MOONBASE_AI, "Unit %d - Type: %d, Armor: %d, Status: %d", (*i)->getID(), (*i)->getType(), static_cast<int>((*i)->getArmor()), (*i)->getState());
 	}
 }
 
@@ -457,7 +457,7 @@ int Defender::calculateDefenseUnitPosition(int targetX, int targetY, int index) 
 
 			//if valid, return
 			if (coords > 0) {
-				//warning("The prospective launching hub for this defensive unit is: %d", hubArray[i]);
+				//debugC(DEBUG_MOONBASE_AI, "The prospective launching hub for this defensive unit is: %d", hubArray[i]);
 
 				setSourceX(hubX);
 				setSourceY(hubY);

@@ -164,7 +164,7 @@ AI::AI(ScummEngine_v100he *vm) : _vm(vm) {
 
 void AI::resetAI() {
 	_aiState = STATE_CHOOSE_BEHAVIOR;
-	warning("----------------------> Resetting AI");
+	debugC(DEBUG_MOONBASE_AI, "----------------------> Resetting AI");
 
 	for (int i = 1; i != 5; i++) {
 		if (_aiType[i]) {
@@ -186,7 +186,7 @@ void AI::resetAI() {
 }
 
 void AI::cleanUpAI() {
-	warning("----------------------> Cleaning Up AI");
+	debugC(DEBUG_MOONBASE_AI, "----------------------> Cleaning Up AI");
 
 	for (int i = 1; i != 5; i++) {
 		if (_aiType[i]) {
@@ -217,7 +217,7 @@ void AI::setAIType(const int paramCount, const int32 *params) {
 		_energyHogType = 0;
 	}
 
-	warning("AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], _aiType[params[AI_TYPE_PLAYER_NUM]]->getNameString());
+	debugC(DEBUG_MOONBASE_AI, "AI for player %d is %s", params[AI_TYPE_PLAYER_NUM], _aiType[params[AI_TYPE_PLAYER_NUM]]->getNameString());
 }
 
 int AI::masterControlProgram(const int paramCount, const int32 *params) {
@@ -309,14 +309,14 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 	static int old_aiState = 0;
 
 	if (old_aiState != _aiState) {
-		warning("<<%d>>", _aiState);
+		debugC(DEBUG_MOONBASE_AI, "<<%d>>", _aiState);
 		old_aiState = _aiState;
 	}
 
 	switch (_aiState) {
 	case STATE_CHOOSE_BEHAVIOR:
 		_behavior = chooseBehavior();
-		warning("Behavior mode: %d", _behavior);
+		debugC(DEBUG_MOONBASE_AI, "Behavior mode: %d", _behavior);
 
 		if ((int)_vm->_rnd.getRandomNumber(99) < _aiType[getCurrentPlayer()]->getBehaviorVariation() * AI_VAR_BASE_BEHAVIOR + 1) {
 			if (_vm->_rnd.getRandomNumber(1)) {
@@ -331,7 +331,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 					_behavior = ENERGY_MODE;
 			}
 
-			warning("Alternative behavior: %d", _behavior);
+			debugC(DEBUG_MOONBASE_AI, "Alternative behavior: %d", _behavior);
 		}
 
 		if (_behavior == ENERGY_MODE)
@@ -365,7 +365,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			targetY = getHubY(target);
 		}
 
-		warning("Target (%d, %d) id: %d", targetX, targetY, target);
+		debugC(DEBUG_MOONBASE_AI, "Target (%d, %d) id: %d", targetX, targetY, target);
 
 		if (getFOW())
 			_aiState = STATE_ATTEMPT_SEARCH;
@@ -569,7 +569,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			launchAction = new int[4];
 			launchAction[0] = sourceHub;
 			launchAction[1] = ITEM_CRAWLER;
-			warning("CRAWLER DECISION is launching a crawler");
+			debugC(DEBUG_MOONBASE_AI, "CRAWLER DECISION is launching a crawler");
 			launchAction[2] = angle;
 			launchAction[3] = power;
 			retNodeFlag = 0;
@@ -600,7 +600,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		if (launchAction != NULL) {
 			if (launchAction[0] == -1) {
-				warning("Creating fake target approach hub");
+				debugC(DEBUG_MOONBASE_AI, "Creating fake target approach hub");
 				TAflag = 1;
 				int closestHub = getClosestUnit(targetX, targetY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1);
 				targetX = getHubX(closestHub);
@@ -689,7 +689,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 					if (TAflag) {
 						TAflag = 0;
-						warning("replacing defense unit %d with a hub", launchAction[LAUNCH_UNIT]);
+						debugC(DEBUG_MOONBASE_AI, "replacing defense unit %d with a hub", launchAction[LAUNCH_UNIT]);
 						launchAction[LAUNCH_UNIT] = ITEM_HUB;
 					}
 				}
@@ -729,7 +729,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		if (!retNodeFlag) {
 			tempLaunchAction = acquireTarget(targetX, targetY, myTree, errCod);
 		} else {
-			warning("NOT acquiring target!!!!!!!");
+			debugC(DEBUG_MOONBASE_AI, "NOT acquiring target!!!!!!!");
 			_acquireTarget = 101;
 		}
 
@@ -751,7 +751,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		if ((tempLaunchAction != NULL) || (errCod == 1) || (_acquireTarget > 100)) {
 			if (tempLaunchAction == NULL) {
-				warning("\nABORTING acquire target!!!!!");
+				debugC(DEBUG_MOONBASE_AI, "\nABORTING acquire target!!!!!");
 			}
 
 			assert(launchAction != NULL);
@@ -780,7 +780,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		if ((lastSource[currentPlayer] == launchAction[LAUNCH_SOURCE_HUB]) && (lastAngle[currentPlayer] == launchAction[LAUNCH_ANGLE]) && (lastPower[currentPlayer] == launchAction[LAUNCH_POWER])) {
 			randomAttenuation -= .2f;
 			randomAttenuation = MAX(randomAttenuation, 0.0f);
-			warning("Attenuating...");
+			debugC(DEBUG_MOONBASE_AI, "Attenuating...");
 		} else {
 			randomAttenuation = 1;
 		}
@@ -791,7 +791,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 		_vm->writeVar(_vm->VAR_U32_USER_VAR_A, launchAction[LAUNCH_SOURCE_HUB]);
 		int energy = getPlayerEnergy();
-		warning("Computer's energy: %d", energy);
+		debugC(DEBUG_MOONBASE_AI, "Computer's energy: %d", energy);
 
 		// Check if there's enough energy to launch this item
 		int n = (launchAction[1] / 6);
@@ -842,7 +842,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 
 			if (!safeAngle) angleAdjustment = 0;
 
-			warning("Angle adjustment = %d", angleAdjustment);
+			debugC(DEBUG_MOONBASE_AI, "Angle adjustment = %d", angleAdjustment);
 			_vm->writeVar(_vm->VAR_U32_USER_VAR_C, launchAction[LAUNCH_ANGLE] + angleAdjustment);
 		}
 
@@ -854,7 +854,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 			powerAdjustment *= ((_vm->_rnd.getRandomNumber(1) * 2) - 1);
 			powerAdjustment *= randomAttenuation;
 
-			warning("Power adjustment = %d", powerAdjustment);
+			debugC(DEBUG_MOONBASE_AI, "Power adjustment = %d", powerAdjustment);
 			int newPower = MIN(getMaxPower(), launchAction[LAUNCH_POWER] + powerAdjustment);
 			newPower = MAX(getMinPower(), launchAction[LAUNCH_POWER] + powerAdjustment);
 			_vm->writeVar(_vm->VAR_U32_USER_VAR_D, newPower);
@@ -942,7 +942,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		rP = _vm->readVar(_vm->VAR_U32_USER_VAR_D);
 		rA = _vm->readVar(_vm->VAR_U32_USER_VAR_C);
 
-		warning("su: %d  unit: %d  power: %d  angle: %d", rSh, rU, rP, rA);
+		debugC(DEBUG_MOONBASE_AI, "su: %d  unit: %d  power: %d  angle: %d", rSh, rU, rP, rA);
 
 		{
 			// Checking for patterns
@@ -956,7 +956,7 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 				patternFound = 0;
 
 			if (patternFound) {
-				warning("------------------------------------------>Eliminating pattern");
+				debugC(DEBUG_MOONBASE_AI, "------------------------------------------>Eliminating pattern");
 
 				if (_vm->_rnd.getRandomNumber(1)) {
 					_behavior--;
@@ -1109,7 +1109,7 @@ int AI::chooseBehavior() {
 
 	// energy mode
 	{
-		warning("Starting Energy Behavior Selection");
+		debugC(DEBUG_MOONBASE_AI, "Starting Energy Behavior Selection");
 		int minEnergy = 8;
 		int maxEnergy = 14;
 
@@ -1192,7 +1192,7 @@ int AI::chooseBehavior() {
 
 	// offense mode
 	{
-		warning("Starting Offense Behavior Selection");
+		debugC(DEBUG_MOONBASE_AI, "Starting Offense Behavior Selection");
 
 		if (dominantMode == OFFENSE_MODE) offCon = 3;
 		else offCon = 5;
@@ -1312,7 +1312,7 @@ int AI::chooseBehavior() {
 
 	// defense mode
 	{
-		warning("Starting Defense Behavior Selection");
+		debugC(DEBUG_MOONBASE_AI, "Starting Defense Behavior Selection");
 
 		if (dominantMode == DEFENSE_MODE)
 			defCon = 3;
@@ -1412,7 +1412,7 @@ int AI::chooseBehavior() {
 			defCon += 2;
 	}
 
-	warning("%s-------------------------------> Energy: %d     Offense: %d     Defense: %d", _aiType[currentPlayer]->getNameString(), eneCon, offCon, defCon);
+	debugC(DEBUG_MOONBASE_AI, "%s-------------------------------> Energy: %d     Offense: %d     Defense: %d", _aiType[currentPlayer]->getNameString(), eneCon, offCon, defCon);
 
 	if (dominantMode == DEFENSE_MODE)
 		if ((defCon <= offCon) && (defCon <= eneCon))
@@ -1456,7 +1456,7 @@ int AI::chooseTarget(int behavior) {
 
 			if (numPoolSpots == 0) {
 				// put this one in the middle
-				warning("Empty pool #%d", i);
+				debugC(DEBUG_MOONBASE_AI, "Empty pool #%d", i);
 				selectionValues[i] = 2;
 			} else {
 				// get units w/in radius of pool
@@ -1503,7 +1503,7 @@ int AI::chooseTarget(int behavior) {
 
 		}
 
-		warning("Pool selected: %d   dist: %d", selection, selectionDist);
+		debugC(DEBUG_MOONBASE_AI, "Pool selected: %d   dist: %d", selection, selectionDist);
 		return selection;
 	}
 
@@ -1633,7 +1633,7 @@ int AI::chooseTarget(int behavior) {
 			}
 		}
 
-		warning("Attack target: %d", returnBuilding);
+		debugC(DEBUG_MOONBASE_AI, "Attack target: %d", returnBuilding);
 
 		assert(returnBuilding);
 		return returnBuilding;
@@ -1830,10 +1830,10 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 	Node *retNode = myTree->aStarSearch_singlePass();
 
 	if (*currentNode != NULL)
-		warning("########################################### Got a possible solution");
+		debugC(DEBUG_MOONBASE_AI, "########################################### Got a possible solution");
 
 	if (myTree->IsBaseNode(retNode)) {
-		warning("########################################### Returning Base Node");
+		debugC(DEBUG_MOONBASE_AI, "########################################### Returning Base Node");
 		retVal = new int[4];
 		retVal[0] = -1;
 		return retVal;
@@ -1867,7 +1867,7 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 			retVal[2] = angle;
 			retVal[3] = power;
 
-			warning("Target Bridge Coords: <%d, %d> ", retTraveller->getWaterDestX(), retTraveller->getWaterDestY());
+			debugC(DEBUG_MOONBASE_AI, "Target Bridge Coords: <%d, %d> ", retTraveller->getWaterDestX(), retTraveller->getWaterDestY());
 		} else {
 			retVal[1] = ITEM_HUB;
 			retVal[2] = retTraveller->getAngleTo();
@@ -1889,7 +1889,7 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 		int temp2 = static_cast<int>(retTraveller->getValueG());
 		int x = static_cast<int>(retTraveller->getPosX());
 		int y = static_cast<int>(retTraveller->getPosY());
-		warning("Target Coords: <%d, %d>  G-value: %d    T-value: %d", x, y, temp2, temp);
+		debugC(DEBUG_MOONBASE_AI, "Target Coords: <%d, %d>  G-value: %d    T-value: %d", x, y, temp2, temp);
 		xTarget = x;
 		yTarget = y;
 	}
@@ -1899,7 +1899,7 @@ int *AI::approachTarget(Tree *myTree, int &xTarget, int &yTarget, Node **current
 
 Tree *AI::initAcquireTarget(int targetX, int targetY, Node **retNode) {
 	int sourceHub = getClosestUnit(targetX, targetY, getMaxX(), getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, MIN_DIST);
-	warning("My coords (%d): %d %d", sourceHub, getHubX(sourceHub), getHubY(sourceHub));
+	debugC(DEBUG_MOONBASE_AI, "My coords (%d): %d %d", sourceHub, getHubX(sourceHub), getHubY(sourceHub));
 
 	Sortie::setSourcePos(getHubX(sourceHub), getHubY(sourceHub));
 	Sortie::setTargetPos(targetX, targetY);
@@ -1911,7 +1911,7 @@ Tree *AI::initAcquireTarget(int targetX, int targetY, Node **retNode) {
 
 	int unitsArray = getUnitsWithinRadius(targetX + 7, targetY, 211);
 
-	warning("Target Coords: <%d, %d>    Source Coords: <%d, %d>", targetX, targetY, getHubX(sourceHub) , getHubY(sourceHub));
+	debugC(DEBUG_MOONBASE_AI, "Target Coords: <%d, %d>    Source Coords: <%d, %d>", targetX, targetY, getHubX(sourceHub) , getHubY(sourceHub));
 
 	myBaseTarget->setEnemyDefenses(unitsArray, targetX, targetY);
 
@@ -1953,7 +1953,7 @@ int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	}
 
 	if (unitToShoot == ITEM_CRAWLER) {
-		warning("target acquisition is launching a crawler");
+		debugC(DEBUG_MOONBASE_AI, "target acquisition is launching a crawler");
 	}
 
 	int shotTargetX = thisSortie->getShotPosX();
@@ -1978,7 +1978,7 @@ int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	if (!sourceHub) sourceHub = getClosestUnit(sourceX + 5, sourceY, getMaxX(), currentPlayer, 1, BUILDING_MAIN_BASE, 1, 0);
 
 	int powAngle = getPowerAngleFromPoint(sourceX, sourceY, shotTargetX, shotTargetY, 15, sourceOL);
-	warning("The source (%d: <%d, %d>)    The target (%d: <%d, %d>)", sourceHub, sourceX, sourceY, theTarget, shotTargetX, shotTargetY);
+	debugC(DEBUG_MOONBASE_AI, "The source (%d: <%d, %d>)    The target (%d: <%d, %d>)", sourceHub, sourceX, sourceY, theTarget, shotTargetX, shotTargetY);
 
 	powAngle = abs(powAngle);
 	int power = powAngle / 360;
@@ -1991,7 +1991,7 @@ int *AI::acquireTarget(int targetX, int targetY, Tree *myTree, int &errorCode) {
 	retVal[2] = angle;
 	retVal[3] = power;
 
-	warning("Unit to shoot: %d", unitToShoot);
+	debugC(DEBUG_MOONBASE_AI, "Unit to shoot: %d", unitToShoot);
 
 	return retVal;
 }
@@ -2027,7 +2027,7 @@ int *AI::energizeTarget(int &targetX, int &targetY, int index) {
 	static int attempt = 0;
 
 	if (!index) {
-		warning("index is 0!");
+		debugC(DEBUG_MOONBASE_AI, "index is 0!");
 		currentPlayer = getCurrentPlayer();
 		pool = 0;
 
@@ -2236,7 +2236,7 @@ int *AI::offendTarget(int &targetX, int &targetY, int index) {
 	if (!target)
 		target = getClosestUnit(targetX + 10, targetY, 0, 0, 0, 0, 0);
 
-	warning("The target inside the offendTarget routine is: %d", target);
+	debugC(DEBUG_MOONBASE_AI, "The target inside the offendTarget routine is: %d", target);
 	int type = getBuildingType(target);
 	int unit = 0;
 
@@ -2307,8 +2307,8 @@ int *AI::offendTarget(int &targetX, int &targetY, int index) {
 	}
 
 	if (unit == ITEM_CRAWLER) {
-		warning("******** offense is launching a crawler ********");
-		warning("The defensive unit is: %d", unit);
+		debugC(DEBUG_MOONBASE_AI, "******** offense is launching a crawler ********");
+		debugC(DEBUG_MOONBASE_AI, "The defensive unit is: %d", unit);
 	}
 
 	Common::Point *targetCoords;
@@ -2391,7 +2391,7 @@ int *AI::defendTarget(int &targetX, int &targetY, int index) {
 	assert(targetX >= 0 && targetY >= 0);
 
 	if (retVal[1] == ITEM_CRAWLER) {
-		warning("defend target is launching a crawler");
+		debugC(DEBUG_MOONBASE_AI, "defend target is launching a crawler");
 	}
 
 	delete thisDefender;

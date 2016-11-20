@@ -106,7 +106,8 @@ static const dbgChannelDesc debugChannels[] = {
 	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
 	{"SOUND", "Sound related debug", DEBUG_SOUND},
 	{"INSANE", "Track INSANE", DEBUG_INSANE},
-	{"SMUSH", "Track SMUSH", DEBUG_SMUSH}
+	{"SMUSH", "Track SMUSH", DEBUG_SMUSH},
+	{"MOONBASEAI", "Track Moonbase AI", DEBUG_MOONBASE_AI}
 };
 
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
