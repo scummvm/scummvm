@@ -737,14 +737,6 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 
-		// HACK: When VMD playback is allowed to yield back to the VM, this
-		// causes the VMD decoder to freak out for some reason and video output
-		// starts jittering horribly. This problem does not happen if audio sync
-		// is disabled, but this causes some audible clicking between frames
-		// of audio (and, presumably, will cause some AV sync problems). Still,
-		// that's better than really bad jitter.
-		_decoder->setAudioSync(!(flags & kEventFlagYieldToVM));
-
 		_decoder->start();
 	}
 
