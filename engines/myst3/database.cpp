@@ -93,7 +93,7 @@ public :
 	NodeWalker(NodeTransform *transform);
 	~NodeWalker();
 
-	void read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes);
+	void read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes, bool createMissingSharedNodes);
 
 private:
 	NodeTransform *_transform;
@@ -283,7 +283,7 @@ void NodeTransformAddBackgroundSoundScripts::apply(NodePtr &node) {
 NodeWalker::NodeWalker(NodeTransform *transform) : _transform(transform) {
 }
 
-void NodeWalker::read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes) {
+void NodeWalker::read(Common::SeekableReadStream *file, Common::Array<NodePtr> &allNodes, bool createMissingSharedNodes) {
 	while (!file->eos()) {
 		int16 id = file->readUint16LE();
 
@@ -349,9 +349,17 @@ void NodeWalker::read(Common::SeekableReadStream *file, Common::Array<NodePtr> &
 					}
 				}
 
-				// Node not found, skip it
-				if (!node)
-					continue;
+				if (!node) {
+					if (createMissingSharedNodes) {
+						// Node not found, create a new one
+						node = NodePtr(new NodeData());
+						node->id = scriptNodeIds[i];
+						allNodes.push_back(node);
+					} else {
+						// Node not found, skip it
+						continue;
+					}
+				}
 
 				_transform->apply(node);
 			}
@@ -607,7 +615,7 @@ Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 	Common::SeekableReadStream *scriptsStream = getRoomScriptStream(room->name, kScriptTypeNode);
 	if (scriptsStream) {
 		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddHotspots());
-		scriptWalker.read(scriptsStream, nodes);
+		scriptWalker.read(scriptsStream, nodes, true);
 
 		delete scriptsStream;
 	}
@@ -616,7 +624,7 @@ Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 	Common::SeekableReadStream *ambientSoundsStream = getRoomScriptStream(room->name, kScriptTypeAmbientSound);
 	if (ambientSoundsStream) {
 		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddSoundScripts());
-		scriptWalker.read(ambientSoundsStream, nodes);
+		scriptWalker.read(ambientSoundsStream, nodes, false);
 
 		delete ambientSoundsStream;
 	}
@@ -624,7 +632,7 @@ Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 	Common::SeekableReadStream *backgroundSoundsStream = getRoomScriptStream(room->name, kScriptTypeBackgroundSound);
 	if (backgroundSoundsStream) {
 		NodeWalker scriptWalker = NodeWalker(new NodeTransformAddBackgroundSoundScripts());
-		scriptWalker.read(backgroundSoundsStream, nodes);
+		scriptWalker.read(backgroundSoundsStream, nodes, false);
 
 		delete backgroundSoundsStream;
 	}
