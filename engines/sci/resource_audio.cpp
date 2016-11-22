@@ -511,10 +511,8 @@ void ResourceManager::setAudioLanguage(int language) {
 		_audioMapSCI1 = NULL;
 	}
 
-	char filename[9];
-	snprintf(filename, 9, "AUDIO%03d", language);
-
-	Common::String fullname = Common::String(filename) + ".MAP";
+	Common::String filename = Common::String::format("AUDIO%03d", language);
+	Common::String fullname = filename + ".MAP";
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
 		return;
@@ -524,7 +522,7 @@ void ResourceManager::setAudioLanguage(int language) {
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, Common::String(filename) + ".0??");
+	SearchMan.listMatchingMembers(files, filename + ".0??");
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
 		const char *dot = strrchr(name.c_str(), '.');
