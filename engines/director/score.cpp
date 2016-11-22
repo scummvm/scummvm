@@ -436,7 +436,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 				id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(size1 + 16, 1);
+	byte *data = (byte *)calloc(size1, 1); // 16 is for bounding rects
 	stream.read(data, size1 + 16);
 
 	Common::MemoryReadStreamEndian castStream(data, size1 + 16, stream.isBE());

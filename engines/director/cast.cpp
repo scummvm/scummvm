@@ -45,6 +45,15 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		boundingRect = Score::readRect(stream);
 		regX = stream.readUint16();
 		regY = stream.readUint16();
+
+		int tail = 0;
+
+		while (!stream.eos()) {
+			stream.readByte();
+			tail++;
+		}
+
+		warning("BitmapCast: %d bytes left", tail);
 	}
 	modified = 0;
 }
