@@ -320,6 +320,7 @@ bool AVISurface::renderFrame() {
 			Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
 				_decoder->getPalette());
 			_movieFrameSurface[idx]->blitFrom(*s);
+			s->free();
 			delete s;
 		}
 	}
