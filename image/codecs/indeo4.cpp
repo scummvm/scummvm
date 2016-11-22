@@ -595,6 +595,54 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 	return 0;
 }
 
+void Indeo4Decoder::decodeTransparency() {
+	// FIXME: Since I don't currently know how to decode the transparency layer,
+	// I'm currently doing a hack where I take the color of the top left corner,
+	// and mark the range of pixels of that color from the start and end of
+	// each line as transparent
+	assert(_surface->format.bytesPerPixel == 4);
+	byte r, g, b, a;
+
+	if (_surface->format.aBits() == 0) {
+		// Surface is 4 bytes per pixel, but only RGB. So promote the
+		// surface to full RGBA, and convert all the existing pixels
+		Graphics::PixelFormat oldFormat = _pixelFormat;
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_surface->format = _pixelFormat;
+
+		for (int y = 0; y < _surface->h; ++y) {
+			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
+			for (int x = 0; x < _surface->w; ++x, ++lineP) {
+				oldFormat.colorToRGB(*lineP, r, g, b);
+				*lineP = _pixelFormat.ARGBToColor(0xff, r, g, b);
+			}
+		}
+	} else {
+		// Working on a frame when the surface is already RGBA. In which case,
+		// start of by defaulting all pixels of the frame to fully opaque
+		for (int y = 0; y < _surface->h; ++y) {
+			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
+			for (int x = 0; x < _surface->w; ++x, ++lineP)
+				*lineP |= 0xff;
+		}
+	}
+
+	// Use the top-left pixel as the key color, and figure out the
+	// equivalent value as fully transparent
+	uint32 keyColor = *(const uint32 *)_surface->getPixels();
+	uint32 transColor = keyColor & ~0xff;
+
+	for (int y = 0; y < _surface->h; ++y) {
+		uint32 *startP = (uint32 *)_surface->getBasePtr(0, y);
+		uint32 *endP = (uint32 *)_surface->getBasePtr(_surface->w - 1, y);
+
+		while (startP <= endP && *startP == keyColor)
+			*startP++ = transColor;
+		while (endP > startP && *endP == keyColor)
+			*endP-- = transColor;
+	}
+}
+
 int Indeo4Decoder::scaleTileSize(int defSize, int sizeFactor) {
 	return sizeFactor == 15 ? defSize : (sizeFactor + 1) << 5;
 }

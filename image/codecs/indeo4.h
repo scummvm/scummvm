@@ -89,6 +89,11 @@ protected:
 	 *  @returns       result code: 0 = OK, negative number = error
 	 */
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
+
+	/**
+	 * Decodes optional transparency data within Indeo frames
+	 */
+	virtual void decodeTransparency();
 private:
 	int scaleTileSize(int defSize, int sizeFactor);
 

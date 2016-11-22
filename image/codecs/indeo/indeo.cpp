@@ -607,6 +607,10 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	// Free the now un-needed frame data
 	frame->freeFrame();
 
+	// If there's any transparency data, decode it
+	if (_ctx._hasTransp)
+		decodeTransparency();
+
 	return 0;
 }
 
