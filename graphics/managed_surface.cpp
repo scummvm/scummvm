@@ -166,15 +166,60 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 	Common::Rect srcBounds = srcRect;
 	Common::Rect destBounds(destPos.x, destPos.y, destPos.x + srcRect.width(),
 		destPos.y + srcRect.height());
-	assert(src.format.bytesPerPixel == format.bytesPerPixel);
+	uint destPixel;
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest, gDest, bDest;
+	double alpha;
 
 	if (!srcRect.isValidRect() || !clip(srcBounds, destBounds))
 		return;
 
+	if (format != src.format) {
+		// When the pixel format differs, both source an dest must be
+		// 2 or 4 bytes per pixel
+		assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4);
+		assert(src.format.bytesPerPixel == 2 || src.format.bytesPerPixel == 4);
+	}
+
 	for (int y = 0; y < srcBounds.height(); ++y) {
 		const byte *srcP = (const byte *)src.getBasePtr(srcBounds.left, srcBounds.top + y);
 		byte *destP = (byte *)getBasePtr(destBounds.left, destBounds.top + y);
-		Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
+
+		if (src.format == format && format.bytesPerPixel <= 2) {
+			// Matching 8-bit or 16-bit surfaces (no alpha), so we can do a straight copy
+			Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
+		} else {
+			for (int x = 0; x < srcBounds.width(); ++x,
+					srcP += src.format.bytesPerPixel,
+					destP += format.bytesPerPixel) {
+				src.format.colorToARGB(src.format.bytesPerPixel == 2 ? *(const uint16 *)srcP : *(const uint32 *)srcP,
+					aSrc, rSrc, gSrc, bSrc);
+				format.colorToRGB(format.bytesPerPixel == 2 ? *(const uint16 *)destP : *(const uint32 *)destP,
+					rDest, gDest, bDest);
+
+				if (aSrc == 0) {
+					// Completely transparent, so skip
+					continue;
+				} else if (aSrc == 0xff) {
+					// Completely opaque, so copy RGB values over
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+				} else {
+					// Partially transparent, so calculate new pixel colors
+					alpha = (double)aSrc / 255.0;
+					rDest = (rSrc * alpha) + (rDest * (1.0 - alpha));
+					gDest = (gSrc * alpha) + (gDest * (1.0 - alpha));
+					bDest = (bSrc * alpha) + (bDest * (1.0 - alpha));
+				}
+
+				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
+				if (format.bytesPerPixel == 2)
+					*(uint16 *)destP = destPixel;
+				else
+					*(uint32 *)destP = destPixel;
+			}
+		}
 	}
 
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
