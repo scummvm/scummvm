@@ -227,13 +227,11 @@ void AVISurface::setupDecompressor() {
 		return;
 
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		// Setup frame surface
-		_movieFrameSurface[idx] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-			_decoder->getVideoTrack(idx).getPixelFormat());
-
+		Graphics::PixelFormat format = _decoder->getVideoTrack(idx).getPixelFormat();
+		int decoderPitch = _decoder->getWidth() * format.bytesPerPixel;
 		bool flag = false;
-		if (idx == 0 && _videoSurface &&
-				_videoSurface->getPitch() == _movieFrameSurface[idx]->pitch) {
+
+		if (idx == 0 && _videoSurface && _videoSurface->getPitch() == decoderPitch) {
 			const uint bitCount = _decoder->getVideoTrack(0).getBitCount();
 			const int vDepth = _videoSurface->getPixelDepth();
 
@@ -313,6 +311,12 @@ bool AVISurface::renderFrame() {
 	for (int idx = 0; idx < _streamCount; ++idx) {
 		const Graphics::Surface *frame = (idx == 0) ?
 			_decoder->decodeNextFrame() : _decoder->decodeNextTransparency();
+
+		if (!_movieFrameSurface[idx]) {
+			// Setup frame surface
+			_movieFrameSurface[idx] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
+				_decoder->getVideoTrack(idx).getPixelFormat());
+		}
 
 		if (_movieFrameSurface[idx]->format == frame->format) {
 			_movieFrameSurface[idx]->blitFrom(*frame);
