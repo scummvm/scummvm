@@ -338,14 +338,22 @@ bool AVISurface::renderFrame() {
 			_videoSurface->unlock();
 		}
 	} else {
-		// Blit the primary video track's frame to the video surface
-		Graphics::Surface *s = _movieFrameSurface[0]->rawSurface().convertTo(
-			g_system->getScreenFormat(), _decoder->getPalette());
+		const Graphics::Surface &frameSurface = _movieFrameSurface[0]->rawSurface();
 		_videoSurface->lock();
-		_videoSurface->getRawSurface()->blitFrom(*s);
+
+		if (frameSurface.format.bytesPerPixel == 1) {
+			// For paletted 8-bit surfaces, we need to convert it to 16-bit,
+			// since the blitting method we're using doesn't support palettes
+			Graphics::Surface *s = frameSurface.convertTo(g_system->getScreenFormat(),
+				_decoder->getPalette());
+			_videoSurface->getRawSurface()->blitFrom(*s);
+			s->free();
+			delete s;
+		} else {
+			_videoSurface->getRawSurface()->blitFrom(frameSurface);
+		}
+
 		_videoSurface->unlock();
-		s->free();
-		delete s;
 	}
 
 	return false;
