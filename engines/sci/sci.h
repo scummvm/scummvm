@@ -35,7 +35,7 @@ struct ADGameDescription;
 /**
  * This is the namespace of the SCI engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Awesome
  *
  * Games using this engine:
  * - Newer Sierra adventure games (based on FreeSCI)
