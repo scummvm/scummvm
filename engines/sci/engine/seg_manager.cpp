@@ -962,7 +962,7 @@ void SegManager::freeBitmap(const reg_t addr) {
 #endif
 
 void SegManager::createClassTable() {
-	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), false);
 
 	if (!vocab996)
 		error("SegManager: failed to open vocab 996");
@@ -976,8 +976,6 @@ void SegManager::createClassTable() {
 		_classTable[classNr].reg = NULL_REG;
 		_classTable[classNr].script = scriptNr;
 	}
-
-	_resMan->unlockResource(vocab996);
 }
 
 reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment) {
