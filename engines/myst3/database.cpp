@@ -322,7 +322,7 @@ void NodeWalker::read(Common::SeekableReadStream *file, Common::Array<NodePtr> &
 					id = file->readUint16LE();
 					if (id < 0) {
 						uint16 end = file->readUint16LE();
-						for (int i = -id; i < end; i++)
+						for (int i = -id; i <= end; i++)
 							scriptNodeIds.push_back(i);
 
 					} else if (id > 0) {
