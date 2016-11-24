@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	adl_v2.o \
 	adl_v3.o \
 	adl_v4.o \
+	adl_v5.o \
 	console.o \
 	detection.o \
 	disk.o \

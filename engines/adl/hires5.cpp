@@ -26,7 +26,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 
-#include "adl/adl_v3.h"
+#include "adl/adl_v4.h"
 #include "adl/detection.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
@@ -34,9 +34,9 @@
 
 namespace Adl {
 
-class HiRes5Engine : public AdlEngine_v3 {
+class HiRes5Engine : public AdlEngine_v4 {
 public:
-	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
+	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v4(syst, gd) { }
 
 private:
 	// AdlEngine

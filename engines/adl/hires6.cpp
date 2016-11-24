@@ -27,7 +27,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 
-#include "adl/adl_v4.h"
+#include "adl/adl_v5.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
@@ -55,10 +55,10 @@ struct DiskDataDesc {
 	byte volume;
 };
 
-class HiRes6Engine : public AdlEngine_v4 {
+class HiRes6Engine : public AdlEngine_v5 {
 public:
 	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v4(syst, gd),
+			AdlEngine_v5(syst, gd),
 			_boot(nullptr),
 			_currVerb(0),
 			_currNoun(0) {
