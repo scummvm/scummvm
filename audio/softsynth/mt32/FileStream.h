@@ -15,48 +15,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_TABLES_H
-#define MT32EMU_TABLES_H
+#ifndef MT32EMU_FILE_STREAM_H
+#define MT32EMU_FILE_STREAM_H
+
+#include <fstream>
 
 #include "globals.h"
 #include "Types.h"
+#include "File.h"
 
 namespace MT32Emu {
 
-class Tables {
-private:
-	Tables();
-	Tables(Tables &);
-	~Tables() {}
-
+class FileStream : public AbstractFile {
 public:
-	static const Tables &getInstance();
+	MT32EMU_EXPORT FileStream();
+	MT32EMU_EXPORT ~FileStream();
+	MT32EMU_EXPORT size_t getSize();
+	MT32EMU_EXPORT const Bit8u *getData();
+	MT32EMU_EXPORT bool open(const char *filename);
+	MT32EMU_EXPORT void close();
 
-	// Constant LUTs
-
-	// CONFIRMED: This is used to convert several parameters to amp-modifying values in the TVA envelope:
-	// - PatchTemp.outputLevel
-	// - RhythmTemp.outlevel
-	// - PartialParam.tva.level
-	// - expression
-	// It's used to determine how much to subtract from the amp envelope's target value
-	Bit8u levelToAmpSubtraction[101];
-
-	// CONFIRMED: ...
-	Bit8u envLogarithmicTime[256];
-
-	// CONFIRMED: ...
-	Bit8u masterVolToAmpSubtraction[101];
-
-	// CONFIRMED:
-	Bit8u pulseWidth100To255[101];
-
-	Bit16u exp9[512];
-	Bit16u logsin9[512];
-
-	const Bit8u *resAmpDecayFactor;
-}; // class Tables
+private:
+	std::ifstream &ifsp;
+	const Bit8u *data;
+	size_t size;
+};
 
 } // namespace MT32Emu
 
-#endif // #ifndef MT32EMU_TABLES_H
+#endif // #ifndef MT32EMU_FILE_STREAM_H

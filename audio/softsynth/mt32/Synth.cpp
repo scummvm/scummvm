@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,42 +15,138 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <cerrno>
-//#include <cmath>
-//#include <cstdlib>
-//#include <cstring>
+#include <cstdio>
 
-#include "mt32emu.h"
-#include "mmath.h"
 #include "internals.h"
 
+#include "Synth.h"
 #include "Analog.h"
 #include "BReverbModel.h"
+#include "File.h"
 #include "MemoryRegion.h"
 #include "MidiEventQueue.h"
+#include "Part.h"
+#include "Partial.h"
 #include "PartialManager.h"
+#include "Poly.h"
+#include "ROMInfo.h"
+#include "TVA.h"
 
 namespace MT32Emu {
 
 // MIDI interface data transfer rate in samples. Used to simulate the transfer delay.
 static const double MIDI_DATA_TRANSFER_RATE = (double)SAMPLE_RATE / 31250.0 * 8.0;
 
+// FIXME: there should be more specific feature sets for various MT-32 control ROM versions
+static const ControlROMFeatureSet OLD_MT32_COMPATIBLE = { true, true, true };
+static const ControlROMFeatureSet CM32L_COMPATIBLE = { false, false, false };
+
 static const ControlROMMap ControlROMMaps[7] = {
-	// ID    IDc IDbytes                     PCMmap  PCMc  tmbrA   tmbrAO, tmbrAC tmbrB   tmbrBO, tmbrBC tmbrR   trC  rhythm  rhyC  rsrv    panpot  prog    rhyMax  patMax  sysMax  timMax
-	{0x4014, 22, "\000 ver1.04 14 July 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x73A6,  85,  0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A},
-	{0x4014, 22, "\000 ver1.05 06 Aug, 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x7414,  85,  0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A},
-	{0x4014, 22, "\000 ver1.06 31 Aug, 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x7414,  85,  0x57D9, 0x57F4, 0x57E2, 0x5264, 0x5270, 0x5280, 0x521C},
-	{0x4010, 22, "\000 ver1.07 10 Oct, 87 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x73fe,  85,  0x57B1, 0x57CC, 0x57BA, 0x523C, 0x5248, 0x5258, 0x51F4}, // MT-32 revision 1
-	{0x4010, 22, "\000verX.XX  30 Sep, 88 ", 0x3000,  128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200,  30, 0x741C,  85,  0x57E5, 0x5800, 0x57EE, 0x5270, 0x527C, 0x528C, 0x5228}, // MT-32 Blue Ridge mod
-	{0x2205, 22, "\000CM32/LAPC1.00 890404", 0x8100,  256, 0x8000, 0x8000, false, 0x8080, 0x8000, false, 0x8500,  64, 0x8580,  85,  0x4F65, 0x4F80, 0x4F6E, 0x48A1, 0x48A5, 0x48BE, 0x48D5},
-	{0x2205, 22, "\000CM32/LAPC1.02 891205", 0x8100,  256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500,  64, 0x8580,  85,  0x4F93, 0x4FAE, 0x4F9C, 0x48CB, 0x48CF, 0x48E8, 0x48FF}  // CM-32L
+	//     ID                Features        PCMmap  PCMc  tmbrA  tmbrAO, tmbrAC tmbrB   tmbrBO  tmbrBC tmbrR   trC rhythm rhyC  rsrv   panpot   prog   rhyMax  patMax  sysMax  timMax  sndGrp sGC
+	{ "ctrl_mt32_1_04", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x73A6, 85, 0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A, 0x7064, 19 },
+	{ "ctrl_mt32_1_05", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x7414, 85, 0x57C7, 0x57E2, 0x57D0, 0x5252, 0x525E, 0x526E, 0x520A, 0x70CA, 19 },
+	{ "ctrl_mt32_1_06", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x7414, 85, 0x57D9, 0x57F4, 0x57E2, 0x5264, 0x5270, 0x5280, 0x521C, 0x70CA, 19 },
+	{ "ctrl_mt32_1_07", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x73fe, 85, 0x57B1, 0x57CC, 0x57BA, 0x523C, 0x5248, 0x5258, 0x51F4, 0x70B0, 19 }, // MT-32 revision 1
+	{"ctrl_mt32_bluer", OLD_MT32_COMPATIBLE, 0x3000, 128, 0x8000, 0x0000, false, 0xC000, 0x4000, false, 0x3200, 30, 0x741C, 85, 0x57E5, 0x5800, 0x57EE, 0x5270, 0x527C, 0x528C, 0x5228, 0x70CE, 19 }, // MT-32 Blue Ridge mod
+	{"ctrl_cm32l_1_00",  CM32L_COMPATIBLE,   0x8100, 256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500, 64, 0x8580, 85, 0x4F65, 0x4F80, 0x4F6E, 0x48A1, 0x48A5, 0x48BE, 0x48D5, 0x5A6C, 19 },
+	{"ctrl_cm32l_1_02",  CM32L_COMPATIBLE,   0x8100, 256, 0x8000, 0x8000, true,  0x8080, 0x8000, true,  0x8500, 64, 0x8580, 85, 0x4F93, 0x4FAE, 0x4F9C, 0x48CB, 0x48CF, 0x48E8, 0x48FF, 0x5A96, 19 }  // CM-32L
 	// (Note that all but CM-32L ROM actually have 86 entries for rhythmTemp)
 };
 
-static inline void advanceStreamPosition(Sample *&stream, Bit32u posDelta) {
-	if (stream != NULL) {
-		stream += posDelta;
+static const PartialState PARTIAL_PHASE_TO_STATE[8] = {
+	PartialState_ATTACK, PartialState_ATTACK, PartialState_ATTACK, PartialState_ATTACK,
+	PartialState_SUSTAIN, PartialState_SUSTAIN, PartialState_RELEASE, PartialState_INACTIVE
+};
+
+static inline PartialState getPartialState(PartialManager *partialManager, unsigned int partialNum) {
+	const Partial *partial = partialManager->getPartial(partialNum);
+	return partial->isActive() ? PARTIAL_PHASE_TO_STATE[partial->getTVA()->getPhase()] : PartialState_INACTIVE;
+}
+
+static inline Bit16s convertSample(float sample) {
+	return Synth::clipSampleEx(Bit32s(sample * 16384.0f)); // This multiplier takes into account the DAC bit shift
+}
+
+static inline float convertSample(Bit16s sample) {
+	return float(sample) / 16384.0f; // This multiplier takes into account the DAC bit shift
+}
+
+class SampleFormatConverter {
+protected:
+#if MT32EMU_USE_FLOAT_SAMPLES
+	Bit16s *outBuffer;
+#else
+	float *outBuffer;
+#endif
+
+public:
+	Sample *sampleBuffer;
+
+	SampleFormatConverter(Sample *buffer) : outBuffer(NULL), sampleBuffer(buffer) {}
+
+	inline bool isConversionNeeded() {
+		return outBuffer != NULL;
 	}
+
+	inline void convert(Bit32u len) {
+		if (sampleBuffer == NULL) return;
+		if (outBuffer == NULL) {
+			sampleBuffer += len;
+			return;
+		}
+		Sample *inBuffer = sampleBuffer;
+		while (len--) {
+			*(outBuffer++) = convertSample(*(inBuffer++));
+		}
+	}
+
+	inline void addSilence(Bit32u len) {
+		if (outBuffer != NULL) {
+			Synth::muteSampleBuffer(outBuffer, len);
+			outBuffer += len;
+		} else if (sampleBuffer != NULL) {
+			Synth::muteSampleBuffer(sampleBuffer, len);
+			sampleBuffer += len;
+		}
+	}
+};
+
+template <int BUFFER_SIZE_MULTIPLIER = 1>
+class BufferedSampleFormatConverter : public SampleFormatConverter {
+	Sample renderingBuffer[BUFFER_SIZE_MULTIPLIER * MAX_SAMPLES_PER_RUN];
+
+public:
+#if MT32EMU_USE_FLOAT_SAMPLES
+	BufferedSampleFormatConverter(Bit16s *buffer)
+#else
+	BufferedSampleFormatConverter(float *buffer)
+#endif
+		: SampleFormatConverter(renderingBuffer)
+	{
+		outBuffer = buffer;
+		if (buffer == NULL) sampleBuffer = NULL;
+	}
+};
+
+class Renderer {
+	Synth &synth;
+
+public:
+	Renderer(Synth &useSynth) : synth(useSynth) {}
+
+	void render(SampleFormatConverter &converter, Bit32u len);
+	void renderStreams(SampleFormatConverter &nonReverbLeft, SampleFormatConverter &nonReverbRight, SampleFormatConverter &reverbDryLeft, SampleFormatConverter &reverbDryRight, SampleFormatConverter &reverbWetLeft, SampleFormatConverter &reverbWetRight, Bit32u len);
+	void produceLA32Output(Sample *buffer, Bit32u len);
+	void convertSamplesToOutput(Sample *buffer, Bit32u len);
+	void doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len);
+};
+
+Bit32u Synth::getLibraryVersionInt() {
+	return (MT32EMU_VERSION_MAJOR << 16) | (MT32EMU_VERSION_MINOR << 8) | (MT32EMU_VERSION_PATCH);
+}
+
+const char *Synth::getLibraryVersionString() {
+	return MT32EMU_VERSION;
 }
 
 Bit8u Synth::calcSysexChecksum(const Bit8u *data, const Bit32u len, const Bit8u initChecksum) {
@@ -61,10 +157,17 @@ Bit8u Synth::calcSysexChecksum(const Bit8u *data, const Bit32u len, const Bit8u 
 	return Bit8u(checksum & 0x7f);
 }
 
-Synth::Synth(ReportHandler *useReportHandler) : mt32ram(*new MemParams()), mt32default(*new MemParams()) {
-	isOpen = false;
+Bit32u Synth::getStereoOutputSampleRate(AnalogOutputMode analogOutputMode) {
+	static const unsigned int SAMPLE_RATES[] = {SAMPLE_RATE, SAMPLE_RATE, SAMPLE_RATE * 3 / 2, SAMPLE_RATE * 3};
+
+	return SAMPLE_RATES[analogOutputMode];
+}
+
+Synth::Synth(ReportHandler *useReportHandler) : mt32ram(*new MemParams), mt32default(*new MemParams), renderer(*new Renderer(*this)) {
+	opened = false;
 	reverbOverridden = false;
 	partialCount = DEFAULT_MAX_PARTIALS;
+	controlROMMap = NULL;
 	controlROMFeatures = NULL;
 
 	if (useReportHandler == NULL) {
@@ -85,11 +188,27 @@ Synth::Synth(ReportHandler *useReportHandler) : mt32ram(*new MemParams()), mt32d
 	setOutputGain(1.0f);
 	setReverbOutputGain(1.0f);
 	setReversedStereoEnabled(false);
+
+	patchTempMemoryRegion = NULL;
+	rhythmTempMemoryRegion = NULL;
+	timbreTempMemoryRegion = NULL;
+	patchesMemoryRegion = NULL;
+	timbresMemoryRegion = NULL;
+	systemMemoryRegion = NULL;
+	displayMemoryRegion = NULL;
+	resetMemoryRegion = NULL;
+	paddedTimbreMaxTable = NULL;
+
 	partialManager = NULL;
+	pcmWaves = NULL;
+	pcmROMData = NULL;
+	soundGroupNames = NULL;
 	midiQueue = NULL;
 	lastReceivedMIDIEventTimestamp = 0;
 	memset(parts, 0, sizeof(parts));
 	renderedSampleCount = 0;
+
+	reserved = NULL;
 }
 
 Synth::~Synth() {
@@ -99,47 +218,52 @@ Synth::~Synth() {
 	}
 	delete &mt32ram;
 	delete &mt32default;
+	delete &renderer;
 }
 
 void ReportHandler::showLCDMessage(const char *data) {
-	// We cannot use printf here. Since we already implement our own
-	// ReportHandler we simply disable the default implementation since it is
-	// never called anyway.
-#if 0
-	printf("WRITE-LCD: %s", data);
-	printf("\n");
-#endif
+	printf("WRITE-LCD: %s\n", data);
 }
 
 void ReportHandler::printDebug(const char *fmt, va_list list) {
-	// We cannot use (v)printf here. Since we already implement our own
-	// ReportHandler we simply disable the default implementation since it is
-	// never called anyway.
-#if 0
 	vprintf(fmt, list);
 	printf("\n");
-#endif
 }
 
-void Synth::polyStateChanged(int partNum) {
-	reportHandler->onPolyStateChanged(partNum);
-}
-
-void Synth::newTimbreSet(int partNum, Bit8u timbreGroup, const char patchName[]) {
-	reportHandler->onProgramChanged(partNum, timbreGroup, patchName);
+void Synth::newTimbreSet(Bit8u partNum, Bit8u timbreGroup, Bit8u timbreNumber, const char patchName[]) {
+	const char *soundGroupName;
+	switch (timbreGroup) {
+	case 1:
+		timbreNumber += 64;
+		// Fall-through
+	case 0:
+		soundGroupName = soundGroupNames[soundGroupIx[timbreNumber]];
+		break;
+	case 2:
+		soundGroupName = soundGroupNames[controlROMMap->soundGroupsCount - 2];
+		break;
+	case 3:
+		soundGroupName = soundGroupNames[controlROMMap->soundGroupsCount - 1];
+		break;
+	default:
+		soundGroupName = NULL;
+		break;
+	}
+	reportHandler->onProgramChanged(partNum, soundGroupName, patchName);
 }
 
 void Synth::printDebug(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
 #if MT32EMU_DEBUG_SAMPLESTAMPS > 0
-	reportHandler->printDebug("[%u] ", (char *)&renderedSampleCount);
+	reportHandler->printDebug("[%u]", (va_list)&renderedSampleCount);
 #endif
 	reportHandler->printDebug(fmt, ap);
 	va_end(ap);
 }
 
 void Synth::setReverbEnabled(bool newReverbEnabled) {
+	if (!opened) return;
 	if (isReverbEnabled() == newReverbEnabled) return;
 	if (newReverbEnabled) {
 		bool oldReverbOverridden = reverbOverridden;
@@ -167,30 +291,23 @@ bool Synth::isReverbOverridden() const {
 }
 
 void Synth::setReverbCompatibilityMode(bool mt32CompatibleMode) {
-	if (reverbModels[REVERB_MODE_ROOM] != NULL) {
-		if (isMT32ReverbCompatibilityMode() == mt32CompatibleMode) return;
-		setReverbEnabled(false);
-		for (int i = 0; i < 4; i++) {
-			delete reverbModels[i];
-		}
+	if (!opened || (isMT32ReverbCompatibilityMode() == mt32CompatibleMode)) return;
+	bool oldReverbEnabled = isReverbEnabled();
+	setReverbEnabled(false);
+	for (int i = 0; i < 4; i++) {
+		delete reverbModels[i];
 	}
-	reverbModels[REVERB_MODE_ROOM] = new BReverbModel(REVERB_MODE_ROOM, mt32CompatibleMode);
-	reverbModels[REVERB_MODE_HALL] = new BReverbModel(REVERB_MODE_HALL, mt32CompatibleMode);
-	reverbModels[REVERB_MODE_PLATE] = new BReverbModel(REVERB_MODE_PLATE, mt32CompatibleMode);
-	reverbModels[REVERB_MODE_TAP_DELAY] = new BReverbModel(REVERB_MODE_TAP_DELAY, mt32CompatibleMode);
-#if !MT32EMU_REDUCE_REVERB_MEMORY
-	for (int i = REVERB_MODE_ROOM; i <= REVERB_MODE_TAP_DELAY; i++) {
-		reverbModels[i]->open();
-	}
-#endif
-	if (isOpen) {
-		setReverbOutputGain(reverbOutputGain);
-		setReverbEnabled(true);
-	}
+	initReverbModels(mt32CompatibleMode);
+	setReverbEnabled(oldReverbEnabled);
+	setReverbOutputGain(reverbOutputGain);
 }
 
 bool Synth::isMT32ReverbCompatibilityMode() const {
-	return isOpen && (reverbModels[REVERB_MODE_ROOM]->isMT32Compatible(REVERB_MODE_ROOM));
+	return opened && (reverbModels[REVERB_MODE_ROOM]->isMT32Compatible(REVERB_MODE_ROOM));
+}
+
+bool Synth::isDefaultReverbMT32Compatible() const {
+	return opened && controlROMFeatures->defaultReverbMT32Compatible;
 }
 
 void Synth::setDACInputMode(DACInputMode mode) {
@@ -239,22 +356,18 @@ void Synth::setReversedStereoEnabled(bool enabled) {
 	reversedStereoEnabled = enabled;
 }
 
-bool Synth::isReversedStereoEnabled() {
+bool Synth::isReversedStereoEnabled() const {
 	return reversedStereoEnabled;
 }
 
 bool Synth::loadControlROM(const ROMImage &controlROMImage) {
-	Common::File *file = controlROMImage.getFile();
+	File *file = controlROMImage.getFile();
 	const ROMInfo *controlROMInfo = controlROMImage.getROMInfo();
 	if ((controlROMInfo == NULL)
 			|| (controlROMInfo->type != ROMInfo::Control)
 			|| (controlROMInfo->pairType != ROMInfo::Full)) {
-		return false;
-	}
-	controlROMFeatures = controlROMImage.getROMInfo()->controlROMFeatures;
-	if (controlROMFeatures == NULL) {
 #if MT32EMU_MONITOR_INIT
-		printDebug("Invalid Control ROM Info provided without feature set");
+		printDebug("Invalid Control ROM Info provided");
 #endif
 		return false;
 	}
@@ -262,13 +375,16 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Found Control ROM: %s, %s", controlROMInfo->shortName, controlROMInfo->description);
 #endif
-	file->read(controlROMData, CONTROL_ROM_SIZE);
+	const Bit8u *fileData = file->getData();
+	memcpy(controlROMData, fileData, CONTROL_ROM_SIZE);
 
 	// Control ROM successfully loaded, now check whether it's a known type
 	controlROMMap = NULL;
+	controlROMFeatures = NULL;
 	for (unsigned int i = 0; i < sizeof(ControlROMMaps) / sizeof(ControlROMMaps[0]); i++) {
-		if (memcmp(&controlROMData[ControlROMMaps[i].idPos], ControlROMMaps[i].idBytes, ControlROMMaps[i].idLen) == 0) {
+		if (strcmp(controlROMInfo->shortName, ControlROMMaps[i].shortName) == 0) {
 			controlROMMap = &ControlROMMaps[i];
+			controlROMFeatures = &controlROMMap->featureSet;
 			return true;
 		}
 	}
@@ -279,7 +395,7 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 }
 
 bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
-	Common::File *file = pcmROMImage.getFile();
+	File *file = pcmROMImage.getFile();
 	const ROMInfo *pcmROMInfo = pcmROMImage.getROMInfo();
 	if ((pcmROMInfo == NULL)
 			|| (pcmROMInfo->type != ROMInfo::PCM)
@@ -289,24 +405,21 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 #if MT32EMU_MONITOR_INIT
 	printDebug("Found PCM ROM: %s, %s", pcmROMInfo->shortName, pcmROMInfo->description);
 #endif
-	size_t fileSize = file->size();
+	size_t fileSize = file->getSize();
 	if (fileSize != (2 * pcmROMSize)) {
 #if MT32EMU_MONITOR_INIT
 		printDebug("PCM ROM file has wrong size (expected %d, got %d)", 2 * pcmROMSize, fileSize);
 #endif
 		return false;
 	}
-
-	byte *buffer = new byte[file->size()];
-	file->read(buffer, file->size());
-	const byte *fileData = buffer;
+	const Bit8u *fileData = file->getData();
 	for (size_t i = 0; i < pcmROMSize; i++) {
 		Bit8u s = *(fileData++);
 		Bit8u c = *(fileData++);
 
 		int order[16] = {0, 9, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 8};
 
-		signed short log = 0;
+		Bit16s log = 0;
 		for (int u = 0; u < 15; u++) {
 			int bit;
 			if (order[u] < 8) {
@@ -314,13 +427,10 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 			} else {
 				bit = (c >> (7 - (order[u] - 8))) & 0x1;
 			}
-			log = log | (short)(bit << (15 - u));
+			log = log | (Bit16s)(bit << (15 - u));
 		}
 		pcmROMData[i] = log;
 	}
-
-	delete[] buffer;
-
 	return true;
 }
 
@@ -345,7 +455,7 @@ bool Synth::initPCMList(Bit16u mapAddress, Bit16u count) {
 	return false;
 }
 
-bool Synth::initCompressedTimbre(int timbreNum, const Bit8u *src, unsigned int srcLen) {
+bool Synth::initCompressedTimbre(Bit16u timbreNum, const Bit8u *src, Bit32u srcLen) {
 	// "Compressed" here means that muted partials aren't present in ROM (except in the case of partial 0 being muted).
 	// Instead the data from the previous unmuted partial is used.
 	if (srcLen < sizeof(TimbreParam::CommonParam)) {
@@ -369,7 +479,7 @@ bool Synth::initCompressedTimbre(int timbreNum, const Bit8u *src, unsigned int s
 	return true;
 }
 
-bool Synth::initTimbres(Bit16u mapAddress, Bit16u offset, int count, int startTimbre, bool compressed) {
+bool Synth::initTimbres(Bit16u mapAddress, Bit16u offset, Bit16u count, Bit16u startTimbre, bool compressed) {
 	const Bit8u *timbreMap = &controlROMData[mapAddress];
 	for (Bit16u i = 0; i < count * 2; i += 2) {
 		Bit16u address = (timbreMap[i + 1] << 8) | timbreMap[i];
@@ -391,12 +501,32 @@ bool Synth::initTimbres(Bit16u mapAddress, Bit16u offset, int count, int startTi
 	return true;
 }
 
+void Synth::initReverbModels(bool mt32CompatibleMode) {
+	reverbModels[REVERB_MODE_ROOM] = new BReverbModel(REVERB_MODE_ROOM, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_HALL] = new BReverbModel(REVERB_MODE_HALL, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_PLATE] = new BReverbModel(REVERB_MODE_PLATE, mt32CompatibleMode);
+	reverbModels[REVERB_MODE_TAP_DELAY] = new BReverbModel(REVERB_MODE_TAP_DELAY, mt32CompatibleMode);
+#if !MT32EMU_REDUCE_REVERB_MEMORY
+	for (int i = REVERB_MODE_ROOM; i <= REVERB_MODE_TAP_DELAY; i++) {
+		reverbModels[i]->open();
+	}
+#endif
+}
+
+void Synth::initSoundGroups(char newSoundGroupNames[][9]) {
+	memcpy(soundGroupIx, &controlROMData[controlROMMap->soundGroupsTable - sizeof(soundGroupIx)], sizeof(soundGroupIx));
+	const SoundGroup *table = (SoundGroup *)&controlROMData[controlROMMap->soundGroupsTable];
+	for (unsigned int i = 0; i < controlROMMap->soundGroupsCount; i++) {
+		memcpy(&newSoundGroupNames[i][0], table[i].name, sizeof(table[i].name));
+	}
+}
+
 bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, AnalogOutputMode analogOutputMode) {
 	return open(controlROMImage, pcmROMImage, DEFAULT_MAX_PARTIALS, analogOutputMode);
 }
 
 bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, unsigned int usePartialCount, AnalogOutputMode analogOutputMode) {
-	if (isOpen) {
+	if (opened) {
 		return false;
 	}
 	partialCount = usePartialCount;
@@ -411,6 +541,7 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	if (!loadControlROM(controlROMImage)) {
 		printDebug("Init Error - Missing or invalid Control ROM image");
 		reportHandler->onErrorControlROM();
+		dispose();
 		return false;
 	}
 
@@ -428,22 +559,24 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	if (!loadPCMROM(pcmROMImage)) {
 		printDebug("Init Error - Missing PCM ROM image");
 		reportHandler->onErrorPCMROM();
+		dispose();
 		return false;
 	}
 
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Reverb Models");
 #endif
-	bool mt32CompatibleReverb = controlROMFeatures->isDefaultReverbMT32Compatible();
+	bool mt32CompatibleReverb = controlROMFeatures->defaultReverbMT32Compatible;
 #if MT32EMU_MONITOR_INIT
 	printDebug("Using %s Compatible Reverb Models", mt32CompatibleReverb ? "MT-32" : "CM-32L");
 #endif
-	setReverbCompatibilityMode(mt32CompatibleReverb);
+	initReverbModels(mt32CompatibleReverb);
 
 #if MT32EMU_MONITOR_INIT
 	printDebug("Initialising Timbre Bank A");
 #endif
 	if (!initTimbres(controlROMMap->timbreAMap, controlROMMap->timbreAOffset, 0x40, 0, controlROMMap->timbreACompressed)) {
+		dispose();
 		return false;
 	}
 
@@ -451,6 +584,7 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	printDebug("Initialising Timbre Bank B");
 #endif
 	if (!initTimbres(controlROMMap->timbreBMap, controlROMMap->timbreBOffset, 0x40, 64, controlROMMap->timbreBCompressed)) {
+		dispose();
 		return false;
 	}
 
@@ -458,6 +592,7 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	printDebug("Initialising Timbre Bank R");
 #endif
 	if (!initTimbres(controlROMMap->timbreRMap, 0, controlROMMap->timbreRCount, 192, true)) {
+		dispose();
 		return false;
 	}
 
@@ -519,6 +654,10 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	refreshSystem();
 	reverbOverridden = oldReverbOverridden;
 
+	char(*writableSoundGroupNames)[9] = new char[controlROMMap->soundGroupsCount][9];
+	soundGroupNames = writableSoundGroupNames;
+	initSoundGroups(writableSoundGroupNames);
+
 	for (int i = 0; i < 9; i++) {
 		MemParams::PatchTemp *patchTemp = &mt32ram.patchTemp[i];
 
@@ -550,12 +689,12 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 
 	midiQueue = new MidiEventQueue();
 
-	analog = new Analog(analogOutputMode, controlROMFeatures);
+	analog = new Analog(analogOutputMode, controlROMFeatures->oldMT32AnalogLPF);
 	setOutputGain(outputGain);
 	setReverbOutputGain(reverbOutputGain);
 
-	isOpen = true;
-	isEnabled = false;
+	opened = true;
+	activated = false;
 
 #if MT32EMU_MONITOR_INIT
 	printDebug("*** Initialisation complete ***");
@@ -563,10 +702,8 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage, u
 	return true;
 }
 
-void Synth::close(bool forced) {
-	if (!forced && !isOpen) {
-		return;
-	}
+void Synth::dispose() {
+	opened = false;
 
 	delete midiQueue;
 	midiQueue = NULL;
@@ -582,8 +719,14 @@ void Synth::close(bool forced) {
 		parts[i] = NULL;
 	}
 
+	delete[] soundGroupNames;
+	soundGroupNames = NULL;
+
 	delete[] pcmWaves;
+	pcmWaves = NULL;
+
 	delete[] pcmROMData;
+	pcmROMData = NULL;
 
 	deleteMemoryRegions();
 
@@ -593,7 +736,17 @@ void Synth::close(bool forced) {
 	}
 	reverbModel = NULL;
 	controlROMFeatures = NULL;
-	isOpen = false;
+	controlROMMap = NULL;
+}
+
+void Synth::close() {
+	if (opened) {
+		dispose();
+	}
+}
+
+bool Synth::isOpen() const {
+	return opened;
 }
 
 void Synth::flushMIDIQueue() {
@@ -664,12 +817,19 @@ bool Synth::playMsg(Bit32u msg) {
 }
 
 bool Synth::playMsg(Bit32u msg, Bit32u timestamp) {
+	if ((msg & 0xF8) == 0xF8) {
+		reportHandler->onMIDISystemRealtime((Bit8u)msg);
+		return true;
+	}
 	if (midiQueue == NULL) return false;
 	if (midiDelayMode != MIDIDelayMode_IMMEDIATE) {
 		timestamp = addMIDIInterfaceDelay(getShortMessageLength(msg), timestamp);
 	}
-	if (!isEnabled) isEnabled = true;
-	return midiQueue->pushShortMessage(msg, timestamp);
+	if (!activated) activated = true;
+	do {
+		if (midiQueue->pushShortMessage(msg, timestamp)) return true;
+	} while (reportHandler->onMIDIQueueOverflow());
+	return false;
 }
 
 bool Synth::playSysex(const Bit8u *sysex, Bit32u len) {
@@ -681,24 +841,28 @@ bool Synth::playSysex(const Bit8u *sysex, Bit32u len, Bit32u timestamp) {
 	if (midiDelayMode == MIDIDelayMode_DELAY_ALL) {
 		timestamp = addMIDIInterfaceDelay(len, timestamp);
 	}
-	if (!isEnabled) isEnabled = true;
-	return midiQueue->pushSysex(sysex, len, timestamp);
+	if (!activated) activated = true;
+	do {
+		if (midiQueue->pushSysex(sysex, len, timestamp)) return true;
+	} while (reportHandler->onMIDIQueueOverflow());
+	return false;
 }
 
 void Synth::playMsgNow(Bit32u msg) {
+	if (!opened) return;
+
 	// NOTE: Active sense IS implemented in real hardware. However, realtime processing is clearly out of the library scope.
 	//       It is assumed that realtime consumers of the library respond to these MIDI events as appropriate.
 
-	unsigned char code     = (unsigned char)((msg & 0x0000F0) >> 4);
-	unsigned char chan     = (unsigned char)(msg & 0x00000F);
-	unsigned char note     = (unsigned char)((msg & 0x007F00) >> 8);
-	unsigned char velocity = (unsigned char)((msg & 0x7F0000) >> 16);
-	if (!isEnabled) isEnabled = true;
+	Bit8u code = (Bit8u)((msg & 0x0000F0) >> 4);
+	Bit8u chan = (Bit8u)(msg & 0x00000F);
+	Bit8u note = (Bit8u)((msg & 0x007F00) >> 8);
+	Bit8u velocity = (Bit8u)((msg & 0x7F0000) >> 16);
 
 	//printDebug("Playing chan %d, code 0x%01x note: 0x%02x", chan, code, note);
 
-	char part = chantable[chan];
-	if (part < 0 || part > 8) {
+	Bit8u part = chantable[chan];
+	if (part > 8) {
 #if MT32EMU_MONITOR_MIDI > 0
 		printDebug("Play msg on unreg chan %d (%d): code=0x%01x, vel=%d", chan, part, code, velocity);
 #endif
@@ -707,9 +871,12 @@ void Synth::playMsgNow(Bit32u msg) {
 	playMsgOnPart(part, code, note, velocity);
 }
 
-void Synth::playMsgOnPart(unsigned char part, unsigned char code, unsigned char note, unsigned char velocity) {
+void Synth::playMsgOnPart(Bit8u part, Bit8u code, Bit8u note, Bit8u velocity) {
+	if (!opened) return;
+
 	Bit32u bend;
 
+	if (!activated) activated = true;
 	//printDebug("Synth::playMsgOnPart(%02x, %02x, %02x, %02x)", part, code, note, velocity);
 	switch (code) {
 	case 0x8:
@@ -849,7 +1016,7 @@ void Synth::playSysexWithoutFraming(const Bit8u *sysex, Bit32u len) {
 	playSysexWithoutHeader(sysex[1], sysex[3], sysex + 4, len - 4);
 }
 
-void Synth::playSysexWithoutHeader(unsigned char device, unsigned char command, const Bit8u *sysex, Bit32u len) {
+void Synth::playSysexWithoutHeader(Bit8u device, Bit8u command, const Bit8u *sysex, Bit32u len) {
 	if (device > 0x10) {
 		// We have device ID 0x10 (default, but changeable, on real MT-32), < 0x10 is for channels
 		printDebug("playSysexWithoutHeader: Message is not intended for this device ID (provided: %02x, expected: 0x10 or channel)", (int)device);
@@ -859,6 +1026,13 @@ void Synth::playSysexWithoutHeader(unsigned char device, unsigned char command, 
 	// FIXME: Response to SYSEX_CMD_DAT reset with partials active (and in general) is untested.
 	if ((command == SYSEX_CMD_DT1 || command == SYSEX_CMD_DAT) && sysex[0] == 0x7F) {
 		reset();
+		return;
+	}
+
+	if (command == SYSEX_CMD_EOD) {
+#if MT32EMU_MONITOR_SYSEX > 0
+		printDebug("playSysexWithoutHeader: Ignored unsupported command %02x", command);
+#endif
 		return;
 	}
 	if (len < 4) {
@@ -872,12 +1046,19 @@ void Synth::playSysexWithoutHeader(unsigned char device, unsigned char command, 
 	}
 	len -= 1; // Exclude checksum
 	switch (command) {
+	case SYSEX_CMD_WSD:
+#if MT32EMU_MONITOR_SYSEX > 0
+		printDebug("playSysexWithoutHeader: Ignored unsupported command %02x", command);
+#endif
+		break;
 	case SYSEX_CMD_DAT:
+		/* Outcommented until we (ever) actually implement handshake communication
 		if (hasActivePartials()) {
 			printDebug("playSysexWithoutHeader: Got SYSEX_CMD_DAT but partials are active - ignoring");
 			// FIXME: We should send SYSEX_CMD_RJC in this case
 			break;
 		}
+		*/
 		// Deliberate fall-through
 	case SYSEX_CMD_DT1:
 		writeSysex(device, sysex, len);
@@ -898,11 +1079,12 @@ void Synth::playSysexWithoutHeader(unsigned char device, unsigned char command, 
 	}
 }
 
-void Synth::readSysex(unsigned char /*device*/, const Bit8u * /*sysex*/, Bit32u /*len*/) const {
+void Synth::readSysex(Bit8u /*device*/, const Bit8u * /*sysex*/, Bit32u /*len*/) const {
 	// NYI
 }
 
-void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
+void Synth::writeSysex(Bit8u device, const Bit8u *sysex, Bit32u len) {
+	if (!opened) return;
 	reportHandler->onMIDIMessagePlayed();
 	Bit32u addr = (sysex[0] << 16) | (sysex[1] << 8) | (sysex[2]);
 	addr = MT32EMU_MEMADDR(addr);
@@ -918,7 +1100,7 @@ void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
 #endif
 		if (/*addr >= MT32EMU_MEMADDR(0x000000) && */addr < MT32EMU_MEMADDR(0x010000)) {
 			int offset;
-			if (chantable[device] == -1) {
+			if (chantable[device] > 8) {
 #if MT32EMU_MONITOR_SYSEX > 0
 				printDebug(" (Channel not mapped to a part... 0 offset)");
 #endif
@@ -939,7 +1121,7 @@ void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
 			addr += MT32EMU_MEMADDR(0x030110) - MT32EMU_MEMADDR(0x010000);
 		} else if (/*addr >= MT32EMU_MEMADDR(0x020000) && */ addr < MT32EMU_MEMADDR(0x030000)) {
 			int offset;
-			if (chantable[device] == -1) {
+			if (chantable[device] > 8) {
 #if MT32EMU_MONITOR_SYSEX > 0
 				printDebug(" (Channel not mapped to a part... 0 offset)");
 #endif
@@ -986,6 +1168,7 @@ void Synth::writeSysex(unsigned char device, const Bit8u *sysex, Bit32u len) {
 }
 
 void Synth::readMemory(Bit32u addr, Bit32u len, Bit8u *data) {
+	if (!opened) return;
 	const MemoryRegion *region = findMemoryRegion(addr);
 	if (region != NULL) {
 		readMemoryRegion(region, addr, len, data);
@@ -1279,16 +1462,16 @@ void Synth::writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u le
 			if(firstPart < 0)
 				firstPart = 0;
 			int lastPart = off + len - SYSTEM_CHAN_ASSIGN_START_OFF;
-			if(lastPart > 9)
-				lastPart = 9;
-			refreshSystemChanAssign(firstPart, lastPart);
+			if(lastPart > 8)
+				lastPart = 8;
+			refreshSystemChanAssign((Bit8u)firstPart, (Bit8u)lastPart);
 		}
 		if (off <= SYSTEM_MASTER_VOL_OFF && off + len > SYSTEM_MASTER_VOL_OFF) {
 			refreshSystemMasterVol();
 		}
 		break;
 	case MR_Display:
-		char buf[MAX_SYSEX_SIZE];
+		char buf[SYSEX_BUFFER_SIZE];
 		memcpy(&buf, &data[0], len);
 		buf[len] = 0;
 #if MT32EMU_MONITOR_SYSEX > 0
@@ -1361,19 +1544,19 @@ void Synth::refreshSystemReserveSettings() {
 	partialManager->setReserve(rset);
 }
 
-void Synth::refreshSystemChanAssign(unsigned int firstPart, unsigned int lastPart) {
-	memset(chantable, -1, sizeof(chantable));
+void Synth::refreshSystemChanAssign(Bit8u firstPart, Bit8u lastPart) {
+	memset(chantable, 0xFF, sizeof(chantable));
 
 	// CONFIRMED: In the case of assigning a channel to multiple parts, the lower part wins.
-	for (unsigned int i = 0; i <= 8; i++) {
+	for (Bit32u i = 0; i <= 8; i++) {
 		if (parts[i] != NULL && i >= firstPart && i <= lastPart) {
 			// CONFIRMED: Decay is started for all polys, and all controllers are reset, for every part whose assignment was touched by the sysex write.
 			parts[i]->allSoundOff();
 			parts[i]->resetAllControllers();
 		}
-		int chan = mt32ram.system.chanAssign[i];
-		if (chan != 16 && chantable[chan] == -1) {
-			chantable[chan] = i;
+		Bit8u chan = mt32ram.system.chanAssign[i];
+		if (chan < 16 && chantable[chan] > 8) {
+			chantable[chan] = (Bit8u)i;
 		}
 	}
 
@@ -1398,6 +1581,7 @@ void Synth::refreshSystem() {
 }
 
 void Synth::reset() {
+	if (!opened) return;
 #if MT32EMU_MONITOR_SYSEX > 0
 	printDebug("RESET");
 #endif
@@ -1413,7 +1597,7 @@ void Synth::reset() {
 		}
 	}
 	refreshSystem();
-	isEnabled = false;
+	isActive();
 }
 
 MidiEvent::~MidiEvent() {
@@ -1477,7 +1661,7 @@ bool MidiEventQueue::pushSysex(const Bit8u *sysexData, Bit32u sysexLength, Bit32
 }
 
 const MidiEvent *MidiEventQueue::peekMidiEvent() {
-	return (startPosition == endPosition) ? NULL : &ringBuffer[startPosition];
+	return isEmpty() ? NULL : &ringBuffer[startPosition];
 }
 
 void MidiEventQueue::dropMidiEvent() {
@@ -1491,15 +1675,24 @@ bool MidiEventQueue::isFull() const {
 	return startPosition == ((endPosition + 1) & ringBufferMask);
 }
 
-unsigned int Synth::getStereoOutputSampleRate() const {
+bool MidiEventQueue::isEmpty() const {
+	return startPosition == endPosition;
+}
+
+Bit32u Synth::getStereoOutputSampleRate() const {
 	return (analog == NULL) ? SAMPLE_RATE : analog->getOutputSampleRate();
 }
 
-void Synth::render(Sample *stream, Bit32u len) {
-	if (!isEnabled) {
-		renderedSampleCount += analog->getDACStreamsLength(len);
-		analog->process(NULL, NULL, NULL, NULL, NULL, NULL, NULL, len);
-		muteSampleBuffer(stream, len << 1);
+void Renderer::render(SampleFormatConverter &converter, Bit32u len) {
+	if (!synth.opened) {
+		converter.addSilence(len << 1);
+		return;
+	}
+
+	if (!synth.activated) {
+		synth.renderedSampleCount += synth.analog->getDACStreamsLength(len);
+		synth.analog->process(NULL, NULL, NULL, NULL, NULL, NULL, NULL, len);
+		converter.addSilence(len << 1);
 		return;
 	}
 
@@ -1510,19 +1703,53 @@ void Synth::render(Sample *stream, Bit32u len) {
 
 	while (len > 0) {
 		Bit32u thisPassLen = len > MAX_SAMPLES_PER_RUN ? MAX_SAMPLES_PER_RUN : len;
-		renderStreams(tmpNonReverbLeft, tmpNonReverbRight, tmpReverbDryLeft, tmpReverbDryRight, tmpReverbWetLeft, tmpReverbWetRight, analog->getDACStreamsLength(thisPassLen));
-		analog->process(&stream, tmpNonReverbLeft, tmpNonReverbRight, tmpReverbDryLeft, tmpReverbDryRight, tmpReverbWetLeft, tmpReverbWetRight, thisPassLen);
+		synth.renderStreams(tmpNonReverbLeft, tmpNonReverbRight, tmpReverbDryLeft, tmpReverbDryRight, tmpReverbWetLeft, tmpReverbWetRight, synth.analog->getDACStreamsLength(thisPassLen));
+		synth.analog->process(converter.sampleBuffer, tmpNonReverbLeft, tmpNonReverbRight, tmpReverbDryLeft, tmpReverbDryRight, tmpReverbWetLeft, tmpReverbWetRight, thisPassLen);
+		converter.convert(thisPassLen << 1);
 		len -= thisPassLen;
 	}
 }
 
-void Synth::renderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len) {
+void Synth::render(Bit16s *stream, Bit32u len) {
+#if MT32EMU_USE_FLOAT_SAMPLES
+	BufferedSampleFormatConverter<2> converter(stream);
+#else
+	SampleFormatConverter converter(stream);
+#endif
+	renderer.render(converter, len);
+}
+
+void Synth::render(float *stream, Bit32u len) {
+#if MT32EMU_USE_FLOAT_SAMPLES
+	SampleFormatConverter converter(stream);
+#else
+	BufferedSampleFormatConverter<2> converter(stream);
+#endif
+	renderer.render(converter, len);
+}
+
+void Renderer::renderStreams(
+	SampleFormatConverter &nonReverbLeft, SampleFormatConverter &nonReverbRight,
+	SampleFormatConverter &reverbDryLeft, SampleFormatConverter &reverbDryRight,
+	SampleFormatConverter &reverbWetLeft, SampleFormatConverter &reverbWetRight,
+	Bit32u len)
+{
+	if (!synth.opened) {
+		nonReverbLeft.addSilence(len);
+		nonReverbRight.addSilence(len);
+		reverbDryLeft.addSilence(len);
+		reverbDryRight.addSilence(len);
+		reverbWetLeft.addSilence(len);
+		reverbWetRight.addSilence(len);
+		return;
+	}
+
 	while (len > 0) {
 		// We need to ensure zero-duration notes will play so add minimum 1-sample delay.
 		Bit32u thisLen = 1;
-		if (!isAbortingPoly()) {
-			const MidiEvent *nextEvent = midiQueue->peekMidiEvent();
-			Bit32s samplesToNextEvent = (nextEvent != NULL) ? Bit32s(nextEvent->timestamp - renderedSampleCount) : MAX_SAMPLES_PER_RUN;
+		if (!synth.isAbortingPoly()) {
+			const MidiEvent *nextEvent = synth.midiQueue->peekMidiEvent();
+			Bit32s samplesToNextEvent = (nextEvent != NULL) ? Bit32s(nextEvent->timestamp - synth.renderedSampleCount) : MAX_SAMPLES_PER_RUN;
 			if (samplesToNextEvent > 0) {
 				thisLen = len > MAX_SAMPLES_PER_RUN ? MAX_SAMPLES_PER_RUN : len;
 				if (thisLen > (Bit32u)samplesToNextEvent) {
@@ -1530,37 +1757,85 @@ void Synth::renderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample 
 				}
 			} else {
 				if (nextEvent->sysexData == NULL) {
-					playMsgNow(nextEvent->shortMessageData);
+					synth.playMsgNow(nextEvent->shortMessageData);
 					// If a poly is aborting we don't drop the event from the queue.
 					// Instead, we'll return to it again when the abortion is done.
-					if (!isAbortingPoly()) {
-						midiQueue->dropMidiEvent();
+					if (!synth.isAbortingPoly()) {
+						synth.midiQueue->dropMidiEvent();
 					}
 				} else {
-					playSysexNow(nextEvent->sysexData, nextEvent->sysexLength);
-					midiQueue->dropMidiEvent();
+					synth.playSysexNow(nextEvent->sysexData, nextEvent->sysexLength);
+					synth.midiQueue->dropMidiEvent();
 				}
 			}
 		}
-		doRenderStreams(nonReverbLeft, nonReverbRight, reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, thisLen);
-		advanceStreamPosition(nonReverbLeft, thisLen);
-		advanceStreamPosition(nonReverbRight, thisLen);
-		advanceStreamPosition(reverbDryLeft, thisLen);
-		advanceStreamPosition(reverbDryRight, thisLen);
-		advanceStreamPosition(reverbWetLeft, thisLen);
-		advanceStreamPosition(reverbWetRight, thisLen);
+		doRenderStreams(
+			nonReverbLeft.sampleBuffer, nonReverbRight.sampleBuffer,
+			reverbDryLeft.sampleBuffer, reverbDryRight.sampleBuffer,
+			reverbWetLeft.sampleBuffer, reverbWetRight.sampleBuffer,
+			thisLen);
+		nonReverbLeft.convert(thisLen);
+		nonReverbRight.convert(thisLen);
+		reverbDryLeft.convert(thisLen);
+		reverbDryRight.convert(thisLen);
+		reverbWetLeft.convert(thisLen);
+		reverbWetRight.convert(thisLen);
 		len -= thisLen;
 	}
 }
 
+void Synth::renderStreams(
+	Bit16s *nonReverbLeft, Bit16s *nonReverbRight,
+	Bit16s *reverbDryLeft, Bit16s *reverbDryRight,
+	Bit16s *reverbWetLeft, Bit16s *reverbWetRight,
+	Bit32u len)
+{
+#if MT32EMU_USE_FLOAT_SAMPLES
+	BufferedSampleFormatConverter<> convNonReverbLeft(nonReverbLeft), convNonReverbRight(nonReverbRight);
+	BufferedSampleFormatConverter<> convReverbDryLeft(reverbDryLeft), convReverbDryRight(reverbDryRight);
+	BufferedSampleFormatConverter<> convReverbWetLeft(reverbWetLeft), convReverbWetRight(reverbWetRight);
+#else
+	SampleFormatConverter convNonReverbLeft(nonReverbLeft), convNonReverbRight(nonReverbRight);
+	SampleFormatConverter convReverbDryLeft(reverbDryLeft), convReverbDryRight(reverbDryRight);
+	SampleFormatConverter convReverbWetLeft(reverbWetLeft), convReverbWetRight(reverbWetRight);
+#endif
+	renderer.renderStreams(
+		convNonReverbLeft, convNonReverbRight,
+		convReverbDryLeft, convReverbDryRight,
+		convReverbWetLeft, convReverbWetRight,
+		len);
+}
+
+void Synth::renderStreams(
+	float *nonReverbLeft, float *nonReverbRight,
+	float *reverbDryLeft, float *reverbDryRight,
+	float *reverbWetLeft, float *reverbWetRight,
+	Bit32u len)
+{
+#if MT32EMU_USE_FLOAT_SAMPLES
+	SampleFormatConverter convNonReverbLeft(nonReverbLeft), convNonReverbRight(nonReverbRight);
+	SampleFormatConverter convReverbDryLeft(reverbDryLeft), convReverbDryRight(reverbDryRight);
+	SampleFormatConverter convReverbWetLeft(reverbWetLeft), convReverbWetRight(reverbWetRight);
+#else
+	BufferedSampleFormatConverter<> convNonReverbLeft(nonReverbLeft), convNonReverbRight(nonReverbRight);
+	BufferedSampleFormatConverter<> convReverbDryLeft(reverbDryLeft), convReverbDryRight(reverbDryRight);
+	BufferedSampleFormatConverter<> convReverbWetLeft(reverbWetLeft), convReverbWetRight(reverbWetRight);
+#endif
+	renderer.renderStreams(
+		convNonReverbLeft, convNonReverbRight,
+		convReverbDryLeft, convReverbDryRight,
+		convReverbWetLeft, convReverbWetRight,
+		len);
+}
+
 // In GENERATION2 units, the output from LA32 goes to the Boss chip already bit-shifted.
 // In NICE mode, it's also better to increase volume before the reverb processing to preserve accuracy.
-void Synth::produceLA32Output(Sample *buffer, Bit32u len) {
+void Renderer::produceLA32Output(Sample *buffer, Bit32u len) {
 #if MT32EMU_USE_FLOAT_SAMPLES
 	(void)buffer;
 	(void)len;
 #else
-	switch (dacInputMode) {
+	switch (synth.dacInputMode) {
 		case DACInputMode_GENERATION2:
 			while (len--) {
 				*buffer = (*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE) | ((*buffer >> 14) & 0x0001);
@@ -1569,7 +1844,7 @@ void Synth::produceLA32Output(Sample *buffer, Bit32u len) {
 			break;
 		case DACInputMode_NICE:
 			while (len--) {
-				*buffer = clipSampleEx(SampleEx(*buffer) << 1);
+				*buffer = Synth::clipSampleEx(SampleEx(*buffer) << 1);
 				++buffer;
 			}
 			break;
@@ -1579,12 +1854,12 @@ void Synth::produceLA32Output(Sample *buffer, Bit32u len) {
 #endif
 }
 
-void Synth::convertSamplesToOutput(Sample *buffer, Bit32u len) {
+void Renderer::convertSamplesToOutput(Sample *buffer, Bit32u len) {
 #if MT32EMU_USE_FLOAT_SAMPLES
 	(void)buffer;
 	(void)len;
 #else
-	if (dacInputMode == DACInputMode_GENERATION1) {
+	if (synth.dacInputMode == DACInputMode_GENERATION1) {
 		while (len--) {
 			*buffer = Sample((*buffer & 0x8000) | ((*buffer << 1) & 0x7FFE));
 			++buffer;
@@ -1593,7 +1868,7 @@ void Synth::convertSamplesToOutput(Sample *buffer, Bit32u len) {
 #endif
 }
 
-void Synth::doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len) {
+void Renderer::doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sample *reverbDryLeft, Sample *reverbDryRight, Sample *reverbWetLeft, Sample *reverbWetRight, Bit32u len) {
 	// Even if LA32 output isn't desired, we proceed anyway with temp buffers
 	Sample tmpBufNonReverbLeft[MAX_SAMPLES_PER_RUN], tmpBufNonReverbRight[MAX_SAMPLES_PER_RUN];
 	if (nonReverbLeft == NULL) nonReverbLeft = tmpBufNonReverbLeft;
@@ -1603,30 +1878,30 @@ void Synth::doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sampl
 	if (reverbDryLeft == NULL) reverbDryLeft = tmpBufReverbDryLeft;
 	if (reverbDryRight == NULL) reverbDryRight = tmpBufReverbDryRight;
 
-	if (isEnabled) {
-		muteSampleBuffer(nonReverbLeft, len);
-		muteSampleBuffer(nonReverbRight, len);
-		muteSampleBuffer(reverbDryLeft, len);
-		muteSampleBuffer(reverbDryRight, len);
+	if (synth.activated) {
+		Synth::muteSampleBuffer(nonReverbLeft, len);
+		Synth::muteSampleBuffer(nonReverbRight, len);
+		Synth::muteSampleBuffer(reverbDryLeft, len);
+		Synth::muteSampleBuffer(reverbDryRight, len);
 
-		for (unsigned int i = 0; i < getPartialCount(); i++) {
-			if (partialManager->shouldReverb(i)) {
-				partialManager->produceOutput(i, reverbDryLeft, reverbDryRight, len);
+		for (unsigned int i = 0; i < synth.getPartialCount(); i++) {
+			if (synth.partialManager->shouldReverb(i)) {
+				synth.partialManager->produceOutput(i, reverbDryLeft, reverbDryRight, len);
 			} else {
-				partialManager->produceOutput(i, nonReverbLeft, nonReverbRight, len);
+				synth.partialManager->produceOutput(i, nonReverbLeft, nonReverbRight, len);
 			}
 		}
 
 		produceLA32Output(reverbDryLeft, len);
 		produceLA32Output(reverbDryRight, len);
 
-		if (isReverbEnabled()) {
-			reverbModel->process(reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, len);
+		if (synth.isReverbEnabled()) {
+			synth.reverbModel->process(reverbDryLeft, reverbDryRight, reverbWetLeft, reverbWetRight, len);
 			if (reverbWetLeft != NULL) convertSamplesToOutput(reverbWetLeft, len);
 			if (reverbWetRight != NULL) convertSamplesToOutput(reverbWetRight, len);
 		} else {
-			muteSampleBuffer(reverbWetLeft, len);
-			muteSampleBuffer(reverbWetRight, len);
+			Synth::muteSampleBuffer(reverbWetLeft, len);
+			Synth::muteSampleBuffer(reverbWetRight, len);
 		}
 
 		// Don't bother with conversion if the output is going to be unused
@@ -1642,29 +1917,32 @@ void Synth::doRenderStreams(Sample *nonReverbLeft, Sample *nonReverbRight, Sampl
 		if (reverbDryRight != tmpBufReverbDryRight) convertSamplesToOutput(reverbDryRight, len);
 	} else {
 		// Avoid muting buffers that wasn't requested
-		if (nonReverbLeft != tmpBufNonReverbLeft) muteSampleBuffer(nonReverbLeft, len);
-		if (nonReverbRight != tmpBufNonReverbRight) muteSampleBuffer(nonReverbRight, len);
-		if (reverbDryLeft != tmpBufReverbDryLeft) muteSampleBuffer(reverbDryLeft, len);
-		if (reverbDryRight != tmpBufReverbDryRight) muteSampleBuffer(reverbDryRight, len);
-		muteSampleBuffer(reverbWetLeft, len);
-		muteSampleBuffer(reverbWetRight, len);
+		if (nonReverbLeft != tmpBufNonReverbLeft) Synth::muteSampleBuffer(nonReverbLeft, len);
+		if (nonReverbRight != tmpBufNonReverbRight) Synth::muteSampleBuffer(nonReverbRight, len);
+		if (reverbDryLeft != tmpBufReverbDryLeft) Synth::muteSampleBuffer(reverbDryLeft, len);
+		if (reverbDryRight != tmpBufReverbDryRight) Synth::muteSampleBuffer(reverbDryRight, len);
+		Synth::muteSampleBuffer(reverbWetLeft, len);
+		Synth::muteSampleBuffer(reverbWetRight, len);
 	}
 
-	partialManager->clearAlreadyOutputed();
-	renderedSampleCount += len;
+	synth.partialManager->clearAlreadyOutputed();
+	synth.renderedSampleCount += len;
 }
 
-void Synth::printPartialUsage(unsigned long sampleOffset) {
+void Synth::printPartialUsage(Bit32u sampleOffset) {
 	unsigned int partialUsage[9];
 	partialManager->getPerPartPartialUsage(partialUsage);
 	if (sampleOffset > 0) {
-		printDebug("[+%lu] Partial Usage: 1:%02d 2:%02d 3:%02d 4:%02d 5:%02d 6:%02d 7:%02d 8:%02d R: %02d  TOTAL: %02d", sampleOffset, partialUsage[0], partialUsage[1], partialUsage[2], partialUsage[3], partialUsage[4], partialUsage[5], partialUsage[6], partialUsage[7], partialUsage[8], getPartialCount() - partialManager->getFreePartialCount());
+		printDebug("[+%u] Partial Usage: 1:%02d 2:%02d 3:%02d 4:%02d 5:%02d 6:%02d 7:%02d 8:%02d R: %02d  TOTAL: %02d", sampleOffset, partialUsage[0], partialUsage[1], partialUsage[2], partialUsage[3], partialUsage[4], partialUsage[5], partialUsage[6], partialUsage[7], partialUsage[8], getPartialCount() - partialManager->getFreePartialCount());
 	} else {
 		printDebug("Partial Usage: 1:%02d 2:%02d 3:%02d 4:%02d 5:%02d 6:%02d 7:%02d 8:%02d R: %02d  TOTAL: %02d", partialUsage[0], partialUsage[1], partialUsage[2], partialUsage[3], partialUsage[4], partialUsage[5], partialUsage[6], partialUsage[7], partialUsage[8], getPartialCount() - partialManager->getFreePartialCount());
 	}
 }
 
 bool Synth::hasActivePartials() const {
+	if (!opened) {
+		return false;
+	}
 	for (unsigned int partialNum = 0; partialNum < getPartialCount(); partialNum++) {
 		if (partialManager->getPartial(partialNum)->isActive()) {
 			return true;
@@ -1673,46 +1951,76 @@ bool Synth::hasActivePartials() const {
 	return false;
 }
 
-bool Synth::isAbortingPoly() const {
-	return abortingPoly != NULL;
-}
-
-bool Synth::isActive() const {
-	if (hasActivePartials()) {
+bool Synth::isActive() {
+	if (!opened) {
+		return false;
+	}
+	if (!midiQueue->isEmpty() || hasActivePartials()) {
 		return true;
 	}
-	if (isReverbEnabled()) {
-		return reverbModel->isActive();
+	if (isReverbEnabled() && reverbModel->isActive()) {
+		return true;
 	}
+	activated = false;
 	return false;
 }
 
-unsigned int Synth::getPartialCount() const {
+Bit32u Synth::getPartialCount() const {
 	return partialCount;
 }
 
 void Synth::getPartStates(bool *partStates) const {
+	if (!opened) {
+		memset(partStates, 0, 9 * sizeof(bool));
+		return;
+	}
 	for (int partNumber = 0; partNumber < 9; partNumber++) {
 		const Part *part = parts[partNumber];
 		partStates[partNumber] = part->getActiveNonReleasingPartialCount() > 0;
 	}
 }
 
-void Synth::getPartialStates(PartialState *partialStates) const {
-	static const PartialState partialPhaseToState[8] = {
-		PartialState_ATTACK, PartialState_ATTACK, PartialState_ATTACK, PartialState_ATTACK,
-		PartialState_SUSTAIN, PartialState_SUSTAIN, PartialState_RELEASE, PartialState_INACTIVE
-	};
+Bit32u Synth::getPartStates() const {
+	if (!opened) return 0;
+	bool partStates[9];
+	getPartStates(partStates);
+	Bit32u bitSet = 0;
+	for (int partNumber = 8; partNumber >= 0; partNumber--) {
+		bitSet = (bitSet << 1) | (partStates[partNumber] ? 1 : 0);
+	}
+	return bitSet;
+}
 
-	for (unsigned int partialNum = 0; partialNum < getPartialCount(); partialNum++) {
-		const Partial *partial = partialManager->getPartial(partialNum);
-		partialStates[partialNum] = partial->isActive() ? partialPhaseToState[partial->getTVA()->getPhase()] : PartialState_INACTIVE;
+void Synth::getPartialStates(PartialState *partialStates) const {
+	if (!opened) {
+		memset(partialStates, 0, partialCount * sizeof(PartialState));
+		return;
+	}
+	for (unsigned int partialNum = 0; partialNum < partialCount; partialNum++) {
+		partialStates[partialNum] = getPartialState(partialManager, partialNum);
 	}
 }
 
-unsigned int Synth::getPlayingNotes(unsigned int partNumber, Bit8u *keys, Bit8u *velocities) const {
-	unsigned int playingNotes = 0;
-	if (isOpen && (partNumber < 9)) {
+void Synth::getPartialStates(Bit8u *partialStates) const {
+	if (!opened) {
+		memset(partialStates, 0, ((partialCount + 3) >> 2));
+		return;
+	}
+	for (unsigned int quartNum = 0; (4 * quartNum) < partialCount; quartNum++) {
+		Bit8u packedStates = 0;
+		for (unsigned int i = 0; i < 4; i++) {
+			unsigned int partialNum = (4 * quartNum) + i;
+			if (partialCount <= partialNum) break;
+			PartialState partialState = getPartialState(partialManager, partialNum);
+			packedStates |= (partialState & 3) << (2 * i);
+		}
+		partialStates[quartNum] = packedStates;
+	}
+}
+
+Bit32u Synth::getPlayingNotes(Bit8u partNumber, Bit8u *keys, Bit8u *velocities) const {
+	Bit32u playingNotes = 0;
+	if (opened && (partNumber < 9)) {
 		const Part *part = parts[partNumber];
 		const Poly *poly = part->getFirstActivePoly();
 		while (poly != NULL) {
@@ -1725,11 +2033,11 @@ unsigned int Synth::getPlayingNotes(unsigned int partNumber, Bit8u *keys, Bit8u 
 	return playingNotes;
 }
 
-const char *Synth::getPatchName(unsigned int partNumber) const {
-	return (!isOpen || partNumber > 8) ? NULL : parts[partNumber]->getCurrentInstr();
+const char *Synth::getPatchName(Bit8u partNumber) const {
+	return (!opened || partNumber > 8) ? NULL : parts[partNumber]->getCurrentInstr();
 }
 
-const Part *Synth::getPart(unsigned int partNum) const {
+const Part *Synth::getPart(Bit8u partNum) const {
 	if (partNum > 8) {
 		return NULL;
 	}
@@ -1807,4 +2115,4 @@ void MemoryRegion::write(unsigned int entry, unsigned int off, const Bit8u *src,
 	}
 }
 
-}
+} // namespace MT32Emu

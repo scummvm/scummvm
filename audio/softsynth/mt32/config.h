@@ -15,32 +15,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_LA32RAMP_H
-#define MT32EMU_LA32RAMP_H
+#ifndef MT32EMU_CONFIG_H
+#define MT32EMU_CONFIG_H
 
-#include "globals.h"
-#include "Types.h"
+#define MT32EMU_VERSION      "2.0.0"
+#define MT32EMU_VERSION_MAJOR 2
+#define MT32EMU_VERSION_MINOR 0
+#define MT32EMU_VERSION_PATCH 0
 
-namespace MT32Emu {
+#define MT32EMU_EXPORTS_TYPE  0
 
-class LA32Ramp {
-private:
-	Bit32u current;
-	unsigned int largeTarget;
-	unsigned int largeIncrement;
-	bool descending;
-
-	int interruptCountdown;
-	bool interruptRaised;
-
-public:
-	LA32Ramp();
-	void startRamp(Bit8u target, Bit8u increment);
-	Bit32u nextValue();
-	bool checkInterrupt();
-	void reset();
-};
-
-} // namespace MT32Emu
-
-#endif // #ifndef MT32EMU_LA32RAMP_H
+#endif
