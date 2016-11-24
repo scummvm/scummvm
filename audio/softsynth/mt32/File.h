@@ -15,48 +15,59 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_TABLES_H
-#define MT32EMU_TABLES_H
+#ifndef MT32EMU_FILE_H
+#define MT32EMU_FILE_H
+
+#include <cstddef>
 
 #include "globals.h"
 #include "Types.h"
 
 namespace MT32Emu {
 
-class Tables {
-private:
-	Tables();
-	Tables(Tables &);
-	~Tables() {}
-
+class MT32EMU_EXPORT File {
 public:
-	static const Tables &getInstance();
+	// Includes terminator char.
+	typedef char SHA1Digest[41];
 
-	// Constant LUTs
+	virtual ~File() {}
+	virtual size_t getSize() = 0;
+	virtual const Bit8u *getData() = 0;
+	virtual const SHA1Digest &getSHA1() = 0;
 
-	// CONFIRMED: This is used to convert several parameters to amp-modifying values in the TVA envelope:
-	// - PatchTemp.outputLevel
-	// - RhythmTemp.outlevel
-	// - PartialParam.tva.level
-	// - expression
-	// It's used to determine how much to subtract from the amp envelope's target value
-	Bit8u levelToAmpSubtraction[101];
+	virtual void close() = 0;
+};
 
-	// CONFIRMED: ...
-	Bit8u envLogarithmicTime[256];
+class MT32EMU_EXPORT AbstractFile : public File {
+public:
+	const SHA1Digest &getSHA1();
 
-	// CONFIRMED: ...
-	Bit8u masterVolToAmpSubtraction[101];
+protected:
+	AbstractFile();
+	AbstractFile(const SHA1Digest &sha1Digest);
 
-	// CONFIRMED:
-	Bit8u pulseWidth100To255[101];
+private:
+	bool sha1DigestCalculated;
+	SHA1Digest sha1Digest;
 
-	Bit16u exp9[512];
-	Bit16u logsin9[512];
+	// Binary compatibility helper.
+	void *reserved;
+};
 
-	const Bit8u *resAmpDecayFactor;
-}; // class Tables
+class MT32EMU_EXPORT ArrayFile : public AbstractFile {
+public:
+	ArrayFile(const Bit8u *data, size_t size);
+	ArrayFile(const Bit8u *data, size_t size, const SHA1Digest &sha1Digest);
+
+	size_t getSize();
+	const Bit8u *getData();
+	void close() {}
+
+private:
+	const Bit8u *data;
+	size_t size;
+};
 
 } // namespace MT32Emu
 
-#endif // #ifndef MT32EMU_TABLES_H
+#endif // #ifndef MT32EMU_FILE_H
