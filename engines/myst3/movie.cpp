@@ -305,7 +305,11 @@ void ScriptedMovie::update() {
 			drawNextFrameToTexture();
 
 		} else {
-			_bink.pauseVideo(true);
+			// Make sure not to pause the video twice. VideoDecoder handles pause levels.
+			// The video may have already been paused if _disableWhenComplete is set.
+			if (!_bink.isPaused()) {
+				_bink.pauseVideo(true);
+			}
 		}
 	}
 
