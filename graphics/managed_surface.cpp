@@ -185,8 +185,8 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 		const byte *srcP = (const byte *)src.getBasePtr(srcBounds.left, srcBounds.top + y);
 		byte *destP = (byte *)getBasePtr(destBounds.left, destBounds.top + y);
 
-		if (src.format == format && format.bytesPerPixel <= 2) {
-			// Matching 8-bit or 16-bit surfaces (no alpha), so we can do a straight copy
+		if (src.format == format) {
+			// Matching surface formats, so we can do a straight copy
 			Common::copy(srcP, srcP + srcBounds.width() * format.bytesPerPixel, destP);
 		} else {
 			for (int x = 0; x < srcBounds.width(); ++x,
