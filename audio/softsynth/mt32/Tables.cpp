@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,10 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "internals.h"
+//#include <cmath>
 
-#include "Tables.h"
+#include "mt32emu.h"
 #include "mmath.h"
+#include "Tables.h"
 
 namespace MT32Emu {
 
@@ -47,9 +48,7 @@ Tables::Tables() {
 		envLogarithmicTime[lf] = (Bit8u)ceil(64.0f + LOG2F((float)lf) * 8.0f);
 	}
 
-#if 0
-	// The table below is to be used in conjunction with emulation of VCA of newer generation units which is currently missing.
-	// These relatively small values are rather intended to fine-tune the overall amplification of the VCA.
+#ifdef EMULATE_LAPC_I // Dummy #ifdef - we'll have runtime emulation mode selection in future.
 	// CONFIRMED: Based on a table found by Mok in the LAPC-I control ROM
 	// Note that this matches the MT-32 table, but with the values clamped to a maximum of 8.
 	memset(masterVolToAmpSubtraction, 8, 71);
@@ -65,12 +64,12 @@ Tables::Tables() {
 	// CONFIRMED: Based on a table found by Mok in the MT-32 control ROM
 	masterVolToAmpSubtraction[0] = 255;
 	for (int masterVol = 1; masterVol <= 100; masterVol++) {
-		masterVolToAmpSubtraction[masterVol] = (Bit8u)(106.31 - 16.0f * LOG2F((float)masterVol));
+		masterVolToAmpSubtraction[masterVol] = (int)(106.31 - 16.0f * LOG2F((float)masterVol));
 	}
 #endif
 
 	for (int i = 0; i <= 100; i++) {
-		pulseWidth100To255[i] = (Bit8u)(i * 255 / 100.0f + 0.5f);
+		pulseWidth100To255[i] = (int)(i * 255 / 100.0f + 0.5f);
 		//synth->printDebug("%d: %d", i, pulseWidth100To255[i]);
 	}
 
@@ -95,4 +94,4 @@ Tables::Tables() {
 	resAmpDecayFactor = resAmpDecayFactorTable;
 }
 
-} // namespace MT32Emu
+}

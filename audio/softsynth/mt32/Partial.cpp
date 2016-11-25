@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,18 +15,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstddef>
+//#include <cmath>
+//#include <cstdlib>
+//#include <cstring>
 
+#include "mt32emu.h"
+#include "mmath.h"
 #include "internals.h"
-
-#include "Partial.h"
-#include "Part.h"
-#include "Poly.h"
-#include "Synth.h"
-#include "Tables.h"
-#include "TVA.h"
-#include "TVF.h"
-#include "TVP.h"
 
 namespace MT32Emu {
 
@@ -59,7 +54,7 @@ int Partial::debugGetPartialNum() const {
 }
 
 // Only used for debugging purposes
-Bit32u Partial::debugGetSampleNum() const {
+unsigned long Partial::debugGetSampleNum() const {
 	return sampleNum;
 }
 
@@ -271,7 +266,7 @@ void Partial::backupCache(const PatchCache &cache) {
 	}
 }
 
-bool Partial::produceOutput(Sample *leftBuf, Sample *rightBuf, Bit32u length) {
+bool Partial::produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length) {
 	if (!isActive() || alreadyOutputed || isRingModulatingSlave()) {
 		return false;
 	}
@@ -346,4 +341,4 @@ void Partial::startDecayAll() {
 	tvf->startDecay();
 }
 
-} // namespace MT32Emu
+}

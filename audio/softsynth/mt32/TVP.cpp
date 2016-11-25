@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,16 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>
+//#include <cmath>
+//#include <cstdlib>
 
+#include "mt32emu.h"
 #include "internals.h"
-
-#include "TVP.h"
-#include "Part.h"
-#include "Partial.h"
-#include "Poly.h"
-#include "Synth.h"
-#include "TVA.h"
 
 namespace MT32Emu {
 
@@ -52,7 +47,7 @@ static Bit16u keyToPitchTable[] = {
 };
 
 TVP::TVP(const Partial *usePartial) :
-	partial(usePartial), system(&usePartial->getSynth()->mt32ram.system) {
+	partial(usePartial), system_(&usePartial->getSynth()->mt32ram.system) {
 	// We want to do processing 4000 times per second. FIXME: This is pretty arbitrary.
 	maxCounter = SAMPLE_RATE / 4000;
 	// The timer runs at 500kHz. We only need to bother updating it every maxCounter samples, before we do processing.
@@ -145,7 +140,7 @@ void TVP::reset(const Part *usePart, const TimbreParam::PartialParam *usePartial
 	phase = 0;
 
 	if (partialParam->pitchEnv.timeKeyfollow) {
-		timeKeyfollowSubtraction = (Bit32s)(key - 60) >> (5 - partialParam->pitchEnv.timeKeyfollow); // PORTABILITY NOTE: Assumes arithmetic shift
+		timeKeyfollowSubtraction = (key - 60) >> (5 - partialParam->pitchEnv.timeKeyfollow); // PORTABILITY NOTE: Assumes arithmetic shift
 	} else {
 		timeKeyfollowSubtraction = 0;
 	}
@@ -168,7 +163,7 @@ void TVP::updatePitch() {
 	if (!partial->isPCM() || (partial->getControlROMPCMStruct()->len & 0x01) == 0) { // FIXME: Use !partial->pcmWaveEntry->unaffectedByMasterTune instead
 		// FIXME: masterTune recalculation doesn't really happen here, and there are various bugs not yet emulated
 		// 171 is ~half a semitone.
-		newPitch += ((system->masterTune - 64) * 171) >> 6; // PORTABILITY NOTE: Assumes arithmetic shift.
+		newPitch += ((system_->masterTune - 64) * 171) >> 6; // PORTABILITY NOTE: Assumes arithmetic shift.
 	}
 	if ((partialParam->wg.pitchBenderEnabled & 1) != 0) {
 		newPitch += part->getPitchBend();
@@ -177,12 +172,13 @@ void TVP::updatePitch() {
 		newPitch = 0;
 	}
 
-	// Skipping this check seems about right emulation of MT-32 GEN0 quirk exploited in Colonel's Bequest timbre "Lightning"
-	if (partial->getSynth()->controlROMFeatures->quirkPitchEnvelopeOverflow == 0) {
-		if (newPitch > 59392) {
-			newPitch = 59392;
-		}
+// Note: Temporary #ifdef until we have proper "quirk" configuration
+// This is about right emulation of MT-32 GEN0 quirk exploited in Colonel's Bequest timbre "Lightning"
+#ifndef MT32EMU_QUIRK_PITCH_ENVELOPE_OVERFLOW_MT32
+	if (newPitch > 59392) {
+		newPitch = 59392;
 	}
+#endif
 	pitch = (Bit16u)newPitch;
 
 	// FIXME: We're doing this here because that's what the CM-32L does - we should probably move this somewhere more appropriate in future.
@@ -327,4 +323,4 @@ void TVP::process() {
 	updatePitch();
 }
 
-} // namespace MT32Emu
+}

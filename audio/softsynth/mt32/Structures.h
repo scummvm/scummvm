@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -17,9 +17,6 @@
 
 #ifndef MT32EMU_STRUCTURES_H
 #define MT32EMU_STRUCTURES_H
-
-#include "globals.h"
-#include "Types.h"
 
 namespace MT32Emu {
 
@@ -105,8 +102,8 @@ struct TimbreParam {
 			Bit8u envTime[5]; // 0-100
 			Bit8u envLevel[4]; // 0-100 // [3]: SUSTAIN LEVEL
 		} MT32EMU_ALIGN_PACKED tva;
-	} MT32EMU_ALIGN_PACKED partial[4]; // struct PartialParam
-} MT32EMU_ALIGN_PACKED; // struct TimbreParam
+	} MT32EMU_ALIGN_PACKED partial[4];
+} MT32EMU_ALIGN_PACKED;
 
 struct PatchParam {
 	Bit8u timbreGroup; // TIMBRE GROUP  0-3 (group A, group B, Memory, Rhythm)
@@ -166,16 +163,7 @@ struct MemParams {
 		Bit8u chanAssign[9]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		Bit8u masterVol; // MASTER VOLUME 0-100
 	} MT32EMU_ALIGN_PACKED system;
-}; // struct MemParams
-
-struct SoundGroup {
-	Bit8u timbreNumberTableAddrLow;
-	Bit8u timbreNumberTableAddrHigh;
-	Bit8u displayPosition;
-	Bit8u name[9];
-	Bit8u timbreCount;
-	Bit8u pad;
-} MT32EMU_ALIGN_PACKED;
+};
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #pragma pack(pop)
@@ -183,17 +171,10 @@ struct SoundGroup {
 #pragma pack()
 #endif
 
-struct ControlROMFeatureSet {
-	unsigned int quirkPitchEnvelopeOverflow : 1;
-
-	// Features below don't actually depend on control ROM version, which is used to identify hardware model
-	unsigned int defaultReverbMT32Compatible : 1;
-	unsigned int oldMT32AnalogLPF : 1;
-};
-
 struct ControlROMMap {
-	const char *shortName;
-	const ControlROMFeatureSet &featureSet;
+	Bit16u idPos;
+	Bit16u idLen;
+	const char *idBytes;
 	Bit16u pcmTable; // 4 * pcmCount bytes
 	Bit16u pcmCount;
 	Bit16u timbreAMap; // 128 bytes
@@ -213,8 +194,6 @@ struct ControlROMMap {
 	Bit16u patchMaxTable; // 16 bytes
 	Bit16u systemMaxTable; // 23 bytes
 	Bit16u timbreMaxTable; // 72 bytes
-	Bit16u soundGroupsTable; // 14 bytes each entry
-	Bit16u soundGroupsCount;
 };
 
 struct ControlROMPCMStruct {
@@ -236,7 +215,7 @@ struct PatchCache {
 	bool playPartial;
 	bool PCMPartial;
 	int pcm;
-	Bit8u waveform;
+	char waveform;
 
 	Bit32u structureMix;
 	int structurePosition;
@@ -254,6 +233,6 @@ struct PatchCache {
 	const TimbreParam::PartialParam *partialParam;
 };
 
-} // namespace MT32Emu
+}
 
-#endif // #ifndef MT32EMU_STRUCTURES_H
+#endif

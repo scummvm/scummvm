@@ -20,18 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_vfprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_vprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -39,7 +27,6 @@
 
 #include "audio/softsynth/mt32/mt32emu.h"
 #include "audio/softsynth/mt32/ROMInfo.h"
-#include "audio/softsynth/mt32/sha1/sha1.h"
 
 #include "audio/softsynth/emumidi.h"
 #include "audio/musicplugin.h"
@@ -66,53 +53,6 @@
 #include "gui/message.h"
 
 namespace MT32Emu {
-
-class ScummVMFile : public MT32Emu::File {
-public:
-	ScummVMFile() {}
-
-	~ScummVMFile() {
-		close();
-	}
-
-	bool open(const char *fileName) {
-		if (!_file.open(fileName)) {
-			return false;
-		}
-
-		_data = (Bit8u *)malloc(getSize());
-		_file.read(_data, getSize());
-
-		Bit8u rawHash[20];
-		sha1::calc(_data, getSize(), rawHash);
-		sha1::toHexString(rawHash, _digest);
-
-		return true;
-	}
-
-	size_t getSize() {
-		return _file.size();
-	}
-
-	const Bit8u *getData() {
-		return _data;
-	}
-
-	const SHA1Digest &getSHA1() {
-		return _digest;
-	}
-
-	virtual void close() {
-		delete _data;
-		_data = nullptr;
-		_file.close();
-	}
-
-private:
-	byte *_data;
-	Common::File _file;
-	SHA1Digest _digest;
-};
 
 class ReportHandlerScummVM : public ReportHandler {
 friend class Synth;
@@ -158,7 +98,7 @@ private:
 	MT32Emu::Synth *_synth;
 	MT32Emu::ReportHandlerScummVM *_reportHandler;
 	const MT32Emu::ROMImage *_controlROM, *_pcmROM;
-	MT32Emu::ScummVMFile *_controlFile, *_pcmFile;
+	Common::File *_controlFile, *_pcmFile;
 	void deleteMuntStructures();
 
 	int _outputRate;
@@ -255,10 +195,10 @@ int MidiDriver_MT32::open() {
 
 	_initializing = true;
 	debug(4, _s("Initializing MT-32 Emulator"));
-	_controlFile = new MT32Emu::ScummVMFile();
+	_controlFile = new Common::File();
 	if (!_controlFile->open("CM32L_CONTROL.ROM") && !_controlFile->open("MT32_CONTROL.ROM"))
 		error("Error opening MT32_CONTROL.ROM / CM32L_CONTROL.ROM");
-	_pcmFile = new MT32Emu::ScummVMFile();
+	_pcmFile = new Common::File();
 	if (!_pcmFile->open("CM32L_PCM.ROM") && !_pcmFile->open("MT32_PCM.ROM"))
 		error("Error opening MT32_PCM.ROM / CM32L_PCM.ROM");
 	_controlROM = MT32Emu::ROMImage::makeROMImage(_controlFile);
