@@ -182,6 +182,7 @@ public:
 	void playSound(int id, int flag);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	int getSceneTrack();
+	void updateTrackDelay();
 	void startSceneTrack();
 	void startSoundStream1(char *trackName);
 	void stopSoundStream2();
@@ -327,7 +328,12 @@ public:
 	void lift_openLift();
 
 	GameVar *_musicGameVar;
-	Audio::SoundHandle *_sceneTrackHandle;
+	Audio::SoundHandle *_soundStream1;
+	Audio::SoundHandle *_soundStream2;
+	Audio::SoundHandle *_soundStream3;
+	Audio::SoundHandle *_soundStream4;
+
+	bool _stream2playing;
 
 public:
 

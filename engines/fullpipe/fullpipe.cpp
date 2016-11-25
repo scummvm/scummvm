@@ -123,7 +123,12 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_musicLocal = 0;
 	_trackStartDelay = 0;
 
-	_sceneTrackHandle = new Audio::SoundHandle();
+	_soundStream1 = new Audio::SoundHandle();
+	_soundStream2 = new Audio::SoundHandle();
+	_soundStream3 = new Audio::SoundHandle();
+	_soundStream4 = new Audio::SoundHandle();
+
+	_stream2playing = false;
 
 	memset(_sceneTracks, 0, sizeof(_sceneTracks));
 	memset(_trackName, 0, sizeof(_trackName));
@@ -205,7 +210,10 @@ FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
 	delete _console;
 	delete _globalMessageQueueList;
-	delete _sceneTrackHandle;
+	delete _soundStream1;
+	delete _soundStream2;
+	delete _soundStream3;
+	delete _soundStream4;
 }
 
 void FullpipeEngine::initialize() {

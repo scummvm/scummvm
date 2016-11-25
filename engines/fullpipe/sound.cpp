@@ -249,9 +249,9 @@ void Sound::stop() {
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
-#if 0
 	stopSoundStream2();
 
+#if 0
 	if (soundStream3)
 		FSOUND_Stream_Stop(soundStream4);
 #endif
@@ -305,11 +305,15 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 		_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
 }
 
+void FullpipeEngine::updateTrackDelay() {
+	_sceneTrackIsPlaying = false;
+	_trackStartDelay = _musicMinDelay + (_musicMaxDelay - _musicMinDelay) * (_updateTicks % 10) / 9;
+}
+
 void FullpipeEngine::startSceneTrack() {
 	if (_sceneTrackIsPlaying) {
-		if (!_mixer->isSoundHandleActive(*_sceneTrackHandle)) { // Simulate end of sound callback
-			_sceneTrackIsPlaying = false;
-			_trackStartDelay = _musicMinDelay + (_musicMaxDelay - _musicMinDelay) * (_updateTicks % 10) / 9;
+		if (!_mixer->isSoundHandleActive(*_soundStream1)) { // Simulate end of sound callback
+			updateTrackDelay();
 		}
 	}
 
@@ -369,7 +373,7 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS
-	if (_mixer->isSoundHandleActive(*_sceneTrackHandle))
+	if (_mixer->isSoundHandleActive(*_soundStream1))
 		return;
 
 	Common::File *track = new Common::File();
@@ -379,17 +383,17 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _sceneTrackHandle, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundStream1, ogg);
 #endif
 }
 
 void FullpipeEngine::stopAllSounds() {
-	// _mixer->stopAll();
+	_mixer->stopHandle(*_soundStream1);
+	_mixer->stopHandle(*_soundStream2);
+	_mixer->stopHandle(*_soundStream3);
+	_mixer->stopHandle(*_soundStream4);
 
-	for (int i = 0; i < _currSoundListCount; i++)
-		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
-			_currSoundList1[i]->getSoundByIndex(j)->stop();
-		}
+	_stream2playing = false;
 }
 
 void FullpipeEngine::toggleMute() {
@@ -420,9 +424,9 @@ void FullpipeEngine::playSound(int id, int flag) {
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
 	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
-#if 0
 	stopSoundStream2();
 
+#if 0
 	if (soundStream3)
 		FSOUND_Stream_Stop(soundStream4);
 #endif
@@ -511,10 +515,17 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 }
 
 void FullpipeEngine::stopSoundStream2() {
-	warning("STUB: FullpipeEngine::stopSoundStream2()");
+	_stream2playing = false;
+
+	if (_mixer->isSoundHandleActive(*_soundStream3)) {
+		_mixer->stopHandle(*_soundStream2);
+		_mixer->stopHandle(*_soundStream3);
+	}
 }
 
 void FullpipeEngine::stopAllSoundStreams() {
+	warning("STUB: stopAllSoundStreams()");
+
 	// TODO: Differences from stopAllSounds()
 	_mixer->stopAll();
 }
