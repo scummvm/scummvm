@@ -368,8 +368,6 @@ int FullpipeEngine::getSceneTrack() {
 }
 
 void FullpipeEngine::startSoundStream1(char *trackName) {
-	warning("STUB: FullpipeEngine::startSoundStream1(%s)", trackName);
-
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS

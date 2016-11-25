@@ -70,8 +70,8 @@ void sceneHandlerFinal_endFinal() {
 	g_vars->sceneFinal_var01 = 0;
 }
 
-void sceneHandlerFinal_startMusic(const char *track) {
-	warning("STUB: sceneHandlerFinal_startMusic()");
+void sceneHandlerFinal_startMusic(char *track) {
+	g_fp->startSoundStream1(track);
 }
 
 void sceneHandlerFinal_goto4() {
