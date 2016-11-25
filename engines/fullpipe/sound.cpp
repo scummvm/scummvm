@@ -306,6 +306,13 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 }
 
 void FullpipeEngine::startSceneTrack() {
+	if (_sceneTrackIsPlaying) {
+		if (!_mixer->isSoundHandleActive(*_sceneTrackHandle)) { // Simulate end of sound callback
+			_sceneTrackIsPlaying = false;
+			_trackStartDelay = _musicMinDelay + (_musicMaxDelay - _musicMinDelay) * (_updateTicks % 10) / 9;
+		}
+	}
+
 	if (!_sceneTrackIsPlaying && _numSceneTracks > 0) {
 		if (_trackStartDelay > 0) {
 			_trackStartDelay--;
