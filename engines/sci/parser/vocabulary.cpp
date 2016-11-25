@@ -208,7 +208,7 @@ bool Vocabulary::loadSuffixes() {
 		suffix_t suffix;
 
 		suffix.alt_suffix = (const char *)resource->data + seeker;
-		suffix.alt_suffix_length = strlen(suffix.alt_suffix);
+		suffix.alt_suffix_length = Common::strnlen(suffix.alt_suffix, resource->size - seeker);
 		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
 		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
@@ -218,7 +218,7 @@ bool Vocabulary::loadSuffixes() {
 		seeker++;
 
 		suffix.word_suffix = (const char *)resource->data + seeker;
-		suffix.word_suffix_length = strlen(suffix.word_suffix);
+		suffix.word_suffix_length = Common::strnlen(suffix.word_suffix, resource->size - seeker);
 		seeker += suffix.word_suffix_length + 1;
 
 		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
@@ -288,12 +288,12 @@ bool Vocabulary::loadAltInputs() {
 		AltInput t;
 		t._input = data;
 
-		uint32 l = strlen(data);
+		uint32 l = Common::strnlen(data, data_end - data);
 		t._inputLength = l;
 		data += l + 1;
 
 		t._replacement = data;
-		l = strlen(data);
+		l = Common::strnlen(data, data_end - data);
 		data += l + 1;
 
 		if (data < data_end && strncmp(data, t._input, t._inputLength) == 0)

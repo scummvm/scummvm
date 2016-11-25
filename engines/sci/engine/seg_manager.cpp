@@ -786,7 +786,7 @@ size_t SegManager::strlen(reg_t str) {
 	}
 
 	if (str_r.isRaw) {
-		return ::strlen((const char *)str_r.raw);
+		return Common::strnlen((const char *)str_r.raw, str_r.maxSize);
 	} else {
 		int i = 0;
 		while (getChar(str_r, i))
@@ -807,19 +807,23 @@ Common::String SegManager::getString(reg_t pointer) {
 		return ret;
 	}
 
-	if (src_r.isRaw)
-		ret = (char *)src_r.raw;
-	else {
+	if (src_r.isRaw) {
+		// There is no guarantee that raw strings are zero-terminated; for
+		// example, Phant1 reads "\r\n" from a pointer of size 2 during the
+		// chase
+		const uint size = Common::strnlen((const char *)src_r.raw, src_r.maxSize);
+		ret = Common::String((const char *)src_r.raw, size);
+	} else {
 		uint i = 0;
-		for (;;) {
-			char c = getChar(src_r, i);
+		while (i < (uint)src_r.maxSize) {
+			const char c = getChar(src_r, i);
 
 			if (!c)
 				break;
 
 			i++;
 			ret += c;
-		};
+		}
 	}
 	return ret;
 }
