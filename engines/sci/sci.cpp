@@ -317,16 +317,21 @@ Common::Error SciEngine::run() {
 
 	// Must be called after game_init(), as they use _features
 	_kernel->loadKernelNames(_features);
-	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
-
-	syncSoundSettings();
-	syncIngameAudioOptions();
 
 	// Load our Mac executable here for icon bar palettes and high-res fonts
 	loadMacExecutable();
 
 	// Initialize all graphics related subsystems
 	initGraphics();
+
+	// Sound must be initialized after graphics because SysEx transfers at the
+	// start of the game must pump the event loop to avoid making the OS think
+	// that ScummVM is hanged, and pumping the event loop requires GfxCursor to
+	// be initialized
+	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
+
+	syncSoundSettings();
+	syncIngameAudioOptions();
 
 	// Patch in our save/restore code, so that dialogs are replaced
 	patchGameSaveRestore();
