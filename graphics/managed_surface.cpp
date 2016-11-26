@@ -242,48 +242,84 @@ void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRe
 		destPos.x + src.w, destPos.y + src.h), transColor, false, overrideColor);
 }
 
-template<typename T>
-void transBlit(const Surface &src, const Common::Rect &srcRect, Surface *dest, const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
+template<typename TSRC, typename TDEST>
+void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, const Common::Rect &destRect, TSRC transColor, bool flipped, uint overrideColor) {
 	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
 	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
+	const Graphics::PixelFormat &srcFormat = src.format;
+	const Graphics::PixelFormat &destFormat = dest.format;
+	byte aSrc, rSrc, gSrc, bSrc;
+	byte rDest, gDest, bDest;
+	double alpha;
 
 	// Loop through drawing output lines
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
-		if (destY < 0 || destY >= dest->h)
+		if (destY < 0 || destY >= dest.h)
 			continue;
-		const T *srcLine = (const T *)src.getBasePtr(0, scaleYCtr / SCALE_THRESHOLD);
-		T *destLine = (T *)dest->getBasePtr(destRect.left, destY);
+		const TSRC *srcLine = (const TSRC *)src.getBasePtr(0, scaleYCtr / SCALE_THRESHOLD);
+		TDEST *destLine = (TDEST *)dest.getBasePtr(destRect.left, destY);
 
 		// Loop through drawing the pixels of the row
 		for (int destX = destRect.left, xCtr = 0, scaleXCtr = 0; destX < destRect.right; ++destX, ++xCtr, scaleXCtr += scaleX) {
-			if (destX < 0 || destX >= dest->w)
+			if (destX < 0 || destX >= dest.w)
 				continue;
 
-			T srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
-			if (srcVal != transColor) {
+			TSRC srcVal = srcLine[flipped ? src.w - scaleXCtr / SCALE_THRESHOLD - 1 : scaleXCtr / SCALE_THRESHOLD];
+			if (srcVal == transColor)
+				continue;
+
+			if (srcFormat == destFormat) {
+				// Matching formats, so we can do a straight copy
 				destLine[xCtr] = overrideColor ? overrideColor : srcVal;
+			} else {
+				// Otherwise we have to manually decode and re-encode each pixel
+				srcFormat.colorToARGB(*srcLine, aSrc, rSrc, gSrc, bSrc);
+				destFormat.colorToRGB(destLine[xCtr], rDest, gDest, bDest);
+
+				if (aSrc == 0) {
+					// Completely transparent, so skip
+					continue;
+				} else if (aSrc == 0xff) {
+					// Completely opaque, so copy RGB values over
+					rDest = rSrc;
+					gDest = gSrc;
+					bDest = bSrc;
+				} else {
+					// Partially transparent, so calculate new pixel colors
+					alpha = (double)aSrc / 255.0;
+					rDest = (rSrc * alpha) + (rDest * (1.0 - alpha));
+					gDest = (gSrc * alpha) + (gDest * (1.0 - alpha));
+					bDest = (bSrc * alpha) + (bDest * (1.0 - alpha));
+				}
+
+				destLine[xCtr] = destFormat.ARGBToColor(0xff, rDest, gDest, bDest);
 			}
 		}
 	}
 }
+
+#define HANDLE_BLIT(SRC_BYTES, DEST_BYTES, SRC_TYPE, DEST_TYPE) \
+	if (src.format.bytesPerPixel == SRC_BYTES && format.bytesPerPixel == DEST_BYTES) \
+		transBlit<SRC_TYPE, DEST_TYPE>(src, srcRect, _innerSurface, destRect, transColor, flipped, overrideColor); \
+	else
 
 void ManagedSurface::transBlitFrom(const Surface &src, const Common::Rect &srcRect,
 	const Common::Rect &destRect, uint transColor, bool flipped, uint overrideColor) {
 	if (src.w == 0 || src.h == 0 || destRect.width() == 0 || destRect.height() == 0)
 		return;
 
-	if (format.bytesPerPixel == 1)
-		transBlit<byte>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else if (format.bytesPerPixel == 2)
-		transBlit<uint16>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else if (format.bytesPerPixel == 4)
-		transBlit<uint32>(src, srcRect, &_innerSurface, destRect, transColor, flipped, overrideColor);
-	else
+	HANDLE_BLIT(1, 1, byte, byte)
+	HANDLE_BLIT(2, 2, uint16, uint16)
+	HANDLE_BLIT(4, 4, uint32, uint32)
+	HANDLE_BLIT(2, 4, uint16, uint32)
+	HANDLE_BLIT(4, 2, uint32, uint16)
 		error("Surface::transBlitFrom: bytesPerPixel must be 1, 2, or 4");
 
 	// Mark the affected area
 	addDirtyRect(destRect);
 }
+
+#undef HANDLE_BLIT
 
 void ManagedSurface::markAllDirty() {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
