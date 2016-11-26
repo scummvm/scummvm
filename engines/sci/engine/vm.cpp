@@ -1207,7 +1207,6 @@ void run_vm(EngineState *s) {
 		case op_lofsa: // 0x39 (57)
 		case op_lofss: { // 0x3a (58)
 			// Load offset to accumulator or push to stack
-			Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 
 			r_temp.setSegment(s->xs->addr.pc.getSegment());
 			r_temp.setOffset(findOffset(opparams[0], local_script, s->xs->addr.pc.getOffset()));
