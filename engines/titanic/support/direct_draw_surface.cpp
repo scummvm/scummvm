@@ -38,8 +38,12 @@ void DirectDrawSurface::create(Graphics::ManagedSurface *surface) {
 	_disposeAfterUse = DisposeAfterUse::NO;
 }
 
-void DirectDrawSurface::create(int w, int h) {
-	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+void DirectDrawSurface::create(int w, int h, int bpp) {
+	assert(bpp == 16 || bpp == 32);
+	Graphics::PixelFormat pixelFormat = (bpp == 32) ?
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0) :
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
 	_surface = new Graphics::ManagedSurface(w, h, pixelFormat);
 	_disposeAfterUse = DisposeAfterUse::YES;
 }

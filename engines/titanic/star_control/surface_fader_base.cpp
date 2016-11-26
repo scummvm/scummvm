@@ -49,7 +49,7 @@ bool CSurfaceFaderBase::setupSurface(CScreenManager *screenManager, CVideoSurfac
 		delete _videoSurface;
 	}
 
-	_videoSurface = screenManager->createSurface(width, height);
+	_videoSurface = screenManager->createSurface(width, height, 16);
 	return true;
 }
 

@@ -67,6 +67,7 @@ private:
 	bool _isReversed;
 	int _currentFrame;
 	uint32 _priorFrameTime;
+	Common::String _movieName;
 private:
 	/**
 	 * Render a frame to the video surface
@@ -203,6 +204,11 @@ public:
 	 * Plays an interruptable cutscene
 	 */
 	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
+
+	/**
+	 * Returns the pixel depth of the movie in bits
+	 */
+	uint getBitDepth() const;
 };
 
 } // End of namespace Titanic

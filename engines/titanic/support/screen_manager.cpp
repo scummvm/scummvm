@@ -293,13 +293,13 @@ void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {
 		_directDrawManager._backSurfaces[surfaceNum]->fill(bounds, 0);
 }
 
-void OSScreenManager::resizeSurface(CVideoSurface *surface, int width, int height) {
-	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(width, height, 0);
+void OSScreenManager::resizeSurface(CVideoSurface *surface, int width, int height, int bpp) {
+	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(width, height, bpp, 0);
 	surface->setSurface(this, ddSurface);
 }
 
-CVideoSurface *OSScreenManager::createSurface(int w, int h) {
-	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(w, h, 0);
+CVideoSurface *OSScreenManager::createSurface(int w, int h, int bpp) {
+	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(w, h, bpp, 0);
 	return new OSVideoSurface(this, ddSurface);
 }
 

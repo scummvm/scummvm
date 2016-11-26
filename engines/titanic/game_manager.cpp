@@ -39,7 +39,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mi
 
 	CTimeEventInfo::_nextId = 0;
 	_movie = nullptr;
-	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340, 16);
 	_project->setGameManager(this);
 	g_vm->_filesManager->setGameManager(this);
 }
@@ -264,7 +264,7 @@ void CGameManager::viewChange() {
 	delete _movieSurface;
 
 	_movie = nullptr;
-	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+	_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340, 16);
 	_trueTalkManager.clear();
 
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))

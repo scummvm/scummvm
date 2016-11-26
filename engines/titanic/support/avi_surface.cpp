@@ -36,7 +36,7 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack(uint idx) {
 	return *track;
 }
 
-AVISurface::AVISurface(const CResourceKey &key) {
+AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
@@ -51,7 +51,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 
 	// Create a decoder
 	_decoder = new AVIDecoder(Audio::Mixer::kPlainSoundType);
-	if (!_decoder->loadFile(key.getString()))
+	if (!_decoder->loadFile(_movieName))
 		error("Could not open video - %s", key.getString().c_str());
 
 	_streamCount = _decoder->videoTrackCount();
@@ -435,6 +435,10 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	}
 
 	stop();
+}
+
+uint AVISurface::getBitDepth() const {
+	return _decoder->getVideoTrack(0).getBitCount();
 }
 
 } // End of namespace Titanic

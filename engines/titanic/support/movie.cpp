@@ -88,7 +88,8 @@ OSMovie::OSMovie(const CResourceKey &name, CVideoSurface *surface) :
 	_field28 = 0;
 	_field2C = 0;
 
-	surface->resize(_aviSurface.getWidth(), _aviSurface.getHeight());
+	surface->resize(_aviSurface.getWidth(), _aviSurface.getHeight(),
+		_aviSurface.getBitDepth() == 32 ? 32 : 16);
 	_aviSurface.setVideoSurface(surface);
 }
 
@@ -118,7 +119,7 @@ void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags
 
 void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
 	if (!_movieSurface)
-		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
+		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340, 16);
 
 	// Set a new event target whilst the clip plays, so standard scene drawing isn't called
 	CEventTarget eventTarget;
