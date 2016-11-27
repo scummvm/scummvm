@@ -252,27 +252,13 @@ void CLScreenView_CenterIn(View *view);
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 
-void CLHNM_DecompLempelZiv(byte *buffer, byte *output);
-void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
-                     byte *input, int width, char flags);
 void CLHNM_Done();
 hnm_t *CLHNM_New(int preload_size);
 void CLHNM_Dispose(hnm_t *hnm);
 void CLHNM_SetFile(hnm_t *hnm, file_t *file);
-void CLHNM_SetFinalBuffer(hnm_t *hnm, byte *buffer);
-void CLHNM_AllocMemory(hnm_t *hnm);
-void CLHNM_DeallocMemory(hnm_t *hnm);
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop);
-void CLHNM_SelectBuffers(hnm_t *hnm);
-void CLHNM_ChangePalette(hnm_t *hnm);
-void CLHNM_Desentrelace(hnm_t *hnm);
-bool CLHNM_LoadFrame(hnm_t *hnm);
 void CLHNM_WantsSound(int16 sound);
 void CLHNM_SoundMono(int16 is_mono);
-void CLHNM_ReadHeader(hnm_t *hnm);
-int16 CLHNM_GetVersion(hnm_t *hnm);
-int CLHNM_GetFrameNum(hnm_t *hnm);
-void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 
 
 } // End of namespace Cryo

@@ -36,6 +36,14 @@ private:
 	void decompADPCM(byte *buffer, int16 *output, int size);
 	void loadDecompTable(int16 *buffer);
 	void soundInADPCM(bool is_adpcm); // Unused
+	bool loadFrame(hnm_t *hnm);
+	void tryRead(hnm_t *hnm, int size); // TODO: remove this function
+	void changePalette(hnm_t *hnm);
+	void selectBuffers(hnm_t *hnm);
+	void decompLempelZiv(byte *buffer, byte *output);
+	void desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
+	void desentrelace(hnm_t *hnm);
+	void decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags);
 
 	bool sound_started;
 	int16 pending_sounds;
@@ -50,6 +58,7 @@ private:
 	bool use_adpcm;
 	bool preserve_color0;
 	int16 decomp_table[256];
+	bool safe_palette;
 
 	void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7);
 
@@ -73,6 +82,13 @@ public:
 	bool nextElement(hnm_t *hnm);
 	void init();
 	void setForceZero2Black(bool forceblack);
+	void readHeader(hnm_t *hnm);
+	int16 getVersion(hnm_t *hnm);
+	void allocMemory(hnm_t *hnm);
+	void deallocMemory(hnm_t *hnm);
+	void setFinalBuffer(hnm_t *hnm, byte *buffer);
+	int getFrameNum(hnm_t *hnm);
+
 	soundchannel_t *getSoundChannel();
 };
 

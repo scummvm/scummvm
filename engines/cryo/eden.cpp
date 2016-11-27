@@ -6207,18 +6207,18 @@ void EdenGame::mouse() {
 ////// film.c
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
-	CLHNM_ReadHeader(_hnmContext);
+	_vm->_video->readHeader(_hnmContext);
 	if (_vm->_video->curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		CLSoundChannel_SetVolumeLeft(_hnmSoundChannel, 0);
 		CLSoundChannel_SetVolumeRight(_hnmSoundChannel, 0);
 	}
 
-	if (CLHNM_GetVersion(_hnmContext) != 4)
+	if (_vm->_video->getVersion(_hnmContext) != 4)
 		return;
 
 	bool playing = true;
-	CLHNM_AllocMemory(_hnmContext);
+	_vm->_video->allocMemory(_hnmContext);
 	p_hnmview = CLView_New(_hnmContext->_header._width, _hnmContext->_header._height);
 	CLView_SetSrcZoomValues(p_hnmview, 0, 0);
 	CLView_SetDisplayZoomValues(p_hnmview, _hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
@@ -6230,10 +6230,10 @@ void EdenGame::showMovie(char arg1) {
 		p_hnmview->_normal._dstTop = p_mainview->_normal._dstTop + 16;
 		p_hnmview->_zoom._dstTop = p_mainview->_zoom._dstTop + 32;
 	}
-	CLHNM_SetFinalBuffer(_hnmContext, p_hnmview->_bufferPtr);
+	_vm->_video->setFinalBuffer(_hnmContext, p_hnmview->_bufferPtr);
 	p_hnmview->_doubled = _doubledScreen;
 	do {
-		hnm_position = CLHNM_GetFrameNum(_hnmContext);
+		hnm_position = _vm->_video->getFrameNum(_hnmContext);
 		_vm->_video->waitLoop(_hnmContext);
 		playing = _vm->_video->nextElement(_hnmContext);
 		if (specialTextMode)
@@ -6265,7 +6265,7 @@ void EdenGame::showMovie(char arg1) {
 		}
 	} while (playing && !videoCanceled);
 	CLView_Free(p_hnmview);
-	CLHNM_DeallocMemory(_hnmContext);
+	_vm->_video->deallocMemory(_hnmContext);
 }
 
 void EdenGame::playHNM(int16 num) {
