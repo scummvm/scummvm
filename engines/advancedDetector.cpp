@@ -331,10 +331,10 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	//
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
-	Common::String report = Common::String::format(_("The game in '%s' seems to be unknown."), path.getPath().c_str()) + "\n";
-	report += _("Please, report the following data to the ScummVM team along with name");
-	report += "\n";
-	report += _("of the game you tried to add and its version/language/etc.:");
+	Common::String report = Common::String::format(
+			_("The game in '%s' seems to be unknown.\n"
+			  "Please, report the following data to the ScummVM team along with name\n"
+			  "of the game you tried to add and its version/language/etc.:"), path.getPath().c_str()) + "\n";
 	report += "\n";
 
 	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
