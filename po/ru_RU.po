@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2016-11-27 12:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1754,19 +1754,13 @@ msgstr "Ежемесячно"
 msgid "<Bad value>"
 msgstr "<Неправильное значение>"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Кажется, что игра '%s' ещё неизвестна."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
 msgstr ""
-"Пожалуйста, передайте следующие данные команде ScummVM вместе с названием"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "игры, которую вы пытаетесь добавить, и укажите её версию, язык и т.д.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4470,6 +4464,18 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Кажется, что игра '%s' ещё неизвестна."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Пожалуйста, передайте следующие данные команде ScummVM вместе с названием"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr ""
+#~ "игры, которую вы пытаетесь добавить, и укажите её версию, язык и т.д.:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Вы должны перезапустить ScummVM, чтобы применить изменения."

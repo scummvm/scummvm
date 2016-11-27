@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1707,17 +1707,12 @@ msgstr ""
 msgid "<Bad value>"
 msgstr ""
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr ""
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
-msgstr ""
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
 msgstr ""
 
 #: engines/dialogs.cpp:85

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2013-05-05 14:16+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.scummvm.org>\n"
@@ -1762,19 +1762,13 @@ msgstr ""
 msgid "<Bad value>"
 msgstr "Neteja el valor"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "El joc a '%s' sembla ser desconegut."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
 msgstr ""
-"Informeu de la següent informació a l'equip de ScummVM juntament amb el"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "nom del joc que heu provat d'afegir i la seva versió/llengua/etc.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4463,6 +4457,17 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "El joc a '%s' sembla ser desconegut."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Informeu de la següent informació a l'equip de ScummVM juntament amb el"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr "nom del joc que heu provat d'afegir i la seva versió/llengua/etc.:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Heu de reiniciar ScummVM perquè tots els canvis tinguin efecte."

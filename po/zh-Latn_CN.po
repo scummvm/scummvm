@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2016-03-15 04:09-0700\n"
 "Last-Translator: Chenbo Li <lichenbo1949@gmail.com>\n"
 "Language-Team: Chenbo Li <lichenbo1949@gmail.com>\n"
@@ -1740,18 +1740,13 @@ msgstr ""
 msgid "<Bad value>"
 msgstr "Qingchu Zhi"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "'%s' Zhong de Youxi Weizhi."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
-msgstr "Qing JIang Xialie Shuju Yiji Youxi Baogao Gei ScummVM Tuandui"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "BingQie Fushang Shitu Tianjia de Youximing Yiji Banben/Yuyan Deng"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
+msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4417,6 +4412,16 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "'%s' Zhong de Youxi Weizhi."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr "Qing JIang Xialie Shuju Yiji Youxi Baogao Gei ScummVM Tuandui"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr "BingQie Fushang Shitu Tianjia de Youximing Yiji Banben/Yuyan Deng"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Nin Xuyao Chongqi ScummVM Lai Shi Genggai Shengxiao"

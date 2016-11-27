@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2016-10-07 19:14+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
@@ -1752,19 +1752,13 @@ msgstr "Штомесяц"
 msgid "<Bad value>"
 msgstr "<Хібнае значэнне>"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Здаецца, што гульня '%s' яшчэ невядома."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
 msgstr ""
-"Калі ласка, перадайце наступныя дадзеныя камандзе ScummVM разам з назвай"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "гульні, якую вы спрабуеце дадаць, і азначце яе версію, мову і г.д."
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4463,6 +4457,17 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Здаецца, што гульня '%s' яшчэ невядома."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Калі ласка, перадайце наступныя дадзеныя камандзе ScummVM разам з назвай"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr "гульні, якую вы спрабуеце дадаць, і азначце яе версію, мову і г.д."
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Вы павінны перазапусціць ScummVM, каб ужыць змены."

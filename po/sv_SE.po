@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2016-10-06 19:01+0200\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -1754,19 +1754,13 @@ msgstr "Varje månad"
 msgid "<Bad value>"
 msgstr "<Dåligt värde>"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Spelet i '%s' verkar vara okänt."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
 msgstr ""
-"Var god rapportera följande data till ScummVM-teamet tillsammans med namnet"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "på spelet du försökte lägga till och dess version/språk/etc.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4443,6 +4437,18 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Spelet i '%s' verkar vara okänt."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Var god rapportera följande data till ScummVM-teamet tillsammans med "
+#~ "namnet"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr "på spelet du försökte lägga till och dess version/språk/etc.:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Du måste starta om ScummVM för att ändringarna ska få effekt."

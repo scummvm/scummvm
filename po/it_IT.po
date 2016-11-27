@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2014-07-03 17:59-0600\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -1757,18 +1757,13 @@ msgstr ""
 msgid "<Bad value>"
 msgstr "Cancella"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Il gioco in '%s' sembra essere sconosciuto."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
-msgstr "Per favore, riporta i seguenti dati al team di ScummVM con il nome"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "del gioco che hai provato ad aggiungere e la sua versione/lingua/ecc.:"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
+msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4460,6 +4455,17 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Il gioco in '%s' sembra essere sconosciuto."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr "Per favore, riporta i seguenti dati al team di ScummVM con il nome"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr ""
+#~ "del gioco che hai provato ad aggiungere e la sua versione/lingua/ecc.:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Devi riavviare ScummVM affinché le modifiche abbiano effetto."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 13:22+0100\n"
+"POT-Creation-Date: 2016-11-27 18:24+0100\n"
 "PO-Revision-Date: 2016-11-27 12:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1755,18 +1755,13 @@ msgstr "Щомісяця"
 msgid "<Bad value>"
 msgstr "<Невірне значення>"
 
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Гра у '%s' невідома."
-
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
-msgstr "Будь ласка, передайте нижченаведену інформацію команді ScummVM разом з"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version/language/etc.:"
+msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -4459,6 +4454,18 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Гра у '%s' невідома."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Будь ласка, передайте нижченаведену інформацію команді ScummVM разом з"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr ""
+#~ "назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Ви повинні перезапустити ScummVM щоб застосувати зміни."
