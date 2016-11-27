@@ -235,9 +235,8 @@ void HnmPlayer::tryRead(hnm_t *hnm, int size) {
 
 // Original name: CLHNM_LoadFrame
 bool HnmPlayer::loadFrame(hnm_t *hnm) {
-	int chunk;
 	tryRead(hnm, 4);
-	chunk = *(int *)hnm->_readBuffer;
+	int chunk = *(int *)hnm->_readBuffer;
 	chunk = LE32(chunk);
 	chunk &= 0xFFFFFF;  // upper bit - keyframe mark?
 	if (!chunk)
@@ -335,14 +334,14 @@ void HnmPlayer::desentrelace(hnm_t *hnm) {
 
 // Original name: CLHNM_DecompUBA
 void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags) {
-	unsigned int code;
-	byte mode, count, color;
-	uint16 offs;
-	byte *ref;
-	byte *out_start = output;
-	byte swap;
-	int shft1, shft2;
 	 //	return;
+	byte *out_start = output;
+	byte count;
+	unsigned int code;
+	uint16 offs;
+	byte mode;
+	byte swap;
+
 	if ((flags & 1) == 0) {
 		//HNM4 classic
 		int twolinesabove = -(width * 2);
@@ -351,11 +350,12 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 			count = code & 0x1F;
 			if (count) {
 				input += 3;
-				mode = (code >> 5) & 0xF;
 				offs = code >> 9;
 				//
+				mode = (code >> 5) & 0xF;
 				swap = mode >> 3;
-				ref = ((mode & 1) ? prev_buffer : curr_buffer) + (output - out_start) + (offs * 2) - 32768;
+				byte *ref = ((mode & 1) ? prev_buffer : curr_buffer) + (output - out_start) + (offs * 2) - 32768;
+				int shft1, shft2;
 				if (mode & 2) {
 					// ref += twolinesabove;
 					shft1 = twolinesabove + 1;
@@ -388,14 +388,15 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 					output += 2 * (code >> 8);
 					input += 2;
 					break;
-				case 0x60:
+				case 0x60: {
 					count = *(input++);
-					color = *(input++);
+					byte color = *(input++);
 					while (count--) {
 						*(output++) = color;
 						*(output++) = color;
 					}
 					break;
+					}
 				default:
 					return;
 				}
@@ -405,7 +406,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 		assert(0);
 		//HNM4 hires
 		for (;;) {
-			code = PLE32(input) & 0xFFFFFF;
+			unsigned int code = PLE32(input) & 0xFFFFFF;
 			input++;
 			count = code & 0x3F;
 			if (count) {
@@ -435,10 +436,6 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 
 // Original name: CLHNM_NextElement
 bool HnmPlayer::nextElement(hnm_t *hnm) {
-	int sz;
-	int16 id;
-	char h6, h7;
-	int16 i;
 	if (hnm->_frameNum == 0) {
 		resetInternalTimer();
 		pred_l = pred_r = 0;
@@ -450,13 +447,13 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 		return false;
 
 	for (;;) {
-		sz = PLE32(hnm->_dataPtr) & 0xFFFFFF;
+		int sz = PLE32(hnm->_dataPtr) & 0xFFFFFF;
 		hnm->_dataPtr += 4;
-		id = *(int16 *)hnm->_dataPtr;
+		int16 id = *(int16 *)hnm->_dataPtr;
 		hnm->_dataPtr += 2;
-		h6 = *hnm->_dataPtr;
+		char h6 = *hnm->_dataPtr;
 		hnm->_dataPtr += 1;
-		h7 = *hnm->_dataPtr;
+		char h7 = *hnm->_dataPtr;
 		hnm->_dataPtr += 1;
 		hnm->_chunkId = id;
 		switch (id) {
@@ -486,12 +483,12 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 			}
 			if (use_adpcm) {
 				if (!sound_started) {
-					for (i = 0; i < pending_sounds; i++)
+					for (int16 i = 0; i < pending_sounds; i++)
 						CLSoundGroup_PlayNextSample(soundGroup_adpcm, soundChannel);
 					sound_started = true;
 				}
 			} else if (!sound_started) {
-				for (i = 0; i < pending_sounds; i++)
+				for (int16 i = 0; i < pending_sounds; i++)
 					CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
 				sound_started = true;
 			}
@@ -562,19 +559,16 @@ void HnmPlayer::flushPreloadBuffer(hnm_t *hnm) {
 
 // Original name: CLHNM_ChangePalette
 void HnmPlayer::changePalette(hnm_t *hnm) {
-	int16 mincolor, maxcolor;
-	uint16 fst, cnt;
-	byte *pal;
-	color_t *color;
 	CLPalette_GetLastPalette(hnm->_palette);
-	pal = hnm->_dataPtr;
+	byte *pal = hnm->_dataPtr;
 	if (*(uint16 *)pal == 0xFFFF)
 		return;
-	mincolor = 255;
-	maxcolor = 0;
+
+	int16 mincolor = 255;
+	int16 maxcolor = 0;
 	do {
-		fst = *pal++;
-		cnt = *pal++;
+		uint16 fst = *pal++;
+		uint16 cnt = *pal++;
 		if (cnt == 0)
 			cnt = 256;
 		debug("hnm: setting palette, fst = %d, cnt = %d, last = %d", fst, cnt, fst + cnt - 1);
@@ -583,7 +577,7 @@ void HnmPlayer::changePalette(hnm_t *hnm) {
 			mincolor = fst;
 		if (maxcolor < fst + cnt)
 			maxcolor = fst + cnt;
-		color = hnm->_palette + fst;
+		color_t *color = hnm->_palette + fst;
 		if (safe_palette) {
 			while (cnt--) {
 				byte r = *pal++;
