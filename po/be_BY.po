@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-10-07 19:14+0300\n"
-"Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
-"Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
-"Language: Belarusian\n"
+"PO-Revision-Date: 2016-11-27 18:01+0000\n"
+"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
+"Language-Team: Belarusian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/be/>\n"
+"Language: be_BY\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.8.9\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Belarusian\n"
 
 #: gui/about.cpp:94
@@ -88,11 +89,11 @@ msgstr "Абярыце дырэкторыю з файламі гульні"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Ад:"
+msgstr "Ад: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Да:"
+msgstr "Да: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -1131,7 +1132,7 @@ msgstr "Рознае"
 
 #: gui/options.cpp:1320
 msgid "Theme:"
-msgstr "Тэма"
+msgstr "Тэма:"
 
 #: gui/options.cpp:1324
 msgid "GUI Renderer:"
@@ -1201,7 +1202,7 @@ msgstr "Імя карыстача ў гэтым воблаку"
 
 #: gui/options.cpp:1422
 msgid "Used space:"
-msgstr "Карыстаны аб'ём"
+msgstr "Карыстаны аб'ём:"
 
 #: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
@@ -1262,7 +1263,7 @@ msgstr "Паказвае шлях да дырэкторыі, куды будзе мець доступ Менеджар файлаў"
 #: gui/options.cpp:1439
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Корань"
+msgstr "Корань:"
 
 #: gui/options.cpp:1449
 msgid "Server's port:"
@@ -1401,12 +1402,12 @@ msgstr "Рэдагаваць"
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr "Аўтар:"
+msgstr "Аўтар: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr "Нататкі:"
+msgstr "Нататкі: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1500,7 +1501,7 @@ msgstr "Атрымайце код ад воблака, а потым увядзіце яго"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "ў палі, размешчаныя ніжэй, і націсніце 'Далучыць'"
+msgstr "ў палі, размешчаныя ніжэй, і націсніце 'Далучыць':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -3040,9 +3041,8 @@ msgid "Turn Right"
 msgstr "Паварот направа"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Інвентар"
+msgstr "Адкрыць/Закрыць інвентар"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
@@ -4038,7 +4038,7 @@ msgstr "  насамрэч гэта ўкл/выкл кіраванне мышшу"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Кіраванне боем (лічбавыя клавішы)"
+msgstr "Кіраванне боем (лічбавыя клавішы):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4091,7 +4091,7 @@ msgstr "9, 6 і 3 адпаведна."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Кіраванне самалётам (лічбавыя клавішы)"
+msgstr "Кіраванне самалётам (лічбавыя клавішы):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
