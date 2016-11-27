@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 12:47+0100\n"
-"PO-Revision-Date: 2016-11-27 12:15+0000\n"
+"PO-Revision-Date: 2016-11-27 12:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
@@ -3170,7 +3170,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "Вам не хватает исполнимого файла Riven. Windows-файл называется 'riven.exe', "
-"либо 'rivendmo.exe'."
+"либо 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -3975,7 +3975,7 @@ msgstr "  на самом деле это вкл/выкл управление мышью"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Управление боем (цифровые клавиши)"
+msgstr "Управление боем (цифровые клавиши):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4028,7 +4028,7 @@ msgstr "9, 6 и 3 соответственно."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Управление самолётом (цифровые клавиши)"
+msgstr "Управление самолётом (цифровые клавиши):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
