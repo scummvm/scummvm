@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 12:47+0100\n"
-"PO-Revision-Date: 2016-11-06 01:04+0200\n"
+"PO-Revision-Date: 2016-11-27 12:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Russian\n"
-"Language: Russian\n"
+"Language-Team: Russian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
+"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.8.9\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Russian\n"
 
 #: gui/about.cpp:94
@@ -1199,7 +1200,7 @@ msgstr "Имя пользователя в этом облаке"
 
 #: gui/options.cpp:1422
 msgid "Used space:"
-msgstr "Используемый объём"
+msgstr "Используемый объём:"
 
 #: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
@@ -1762,7 +1763,7 @@ msgstr ""
 
 #: engines/advancedDetector.cpp:337
 msgid "of the game you tried to add and its version/language/etc.:"
-msgstr "игры, которую вы пытаетесь добавить, и укажите её версию, язык и т.д."
+msgstr "игры, которую вы пытаетесь добавить, и укажите её версию, язык и т.д.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -3111,24 +3112,23 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Простой интерфейс мыши"
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Показывает названия объектов при наведении курсора мыши"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Анимированные объекты инвентаря"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Анимированный интерфейс игры"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Откровенный режим игры"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
