@@ -34,7 +34,9 @@
 #include "gui/debugger.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
+
 #include "cryo/eden.h"
+#include "cryo/video.h"
 
 namespace Cryo {
 
@@ -66,6 +68,7 @@ public:
 
 	Graphics::Surface _screen;
 	EdenGame *_game;
+	HnmPlayer *_video;
 
 private:
 	Console *_console;

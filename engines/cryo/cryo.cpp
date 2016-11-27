@@ -60,6 +60,7 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("cryo");
 	_game = nullptr;
+	_video = nullptr;
 
 	debug("CryoEngine::CryoEngine");
 
@@ -72,6 +73,7 @@ CryoEngine::~CryoEngine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete _game;
+	delete _video;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -79,6 +81,7 @@ CryoEngine::~CryoEngine() {
 
 Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
+	_video = new HnmPlayer(this);
 
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);

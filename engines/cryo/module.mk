@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	eden.o \
 	cryo.o \
 	detection.o \
-	staticdata.o
+	staticdata.o \
+	video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRYO), DYNAMIC_PLUGIN)

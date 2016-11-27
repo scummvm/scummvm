@@ -4976,7 +4976,6 @@ void EdenGame::init_globals() {
 	p_global->roomPersoItems = 0;
 	p_global->roomPersoPowers = 0;
 	p_global->gameFlags = 0;
-	p_global->curVideoNum = 0;
 	p_global->morkusSpyVideoNum1 = 89;
 	p_global->morkusSpyVideoNum2 = 88;
 	p_global->morkusSpyVideoNum3 = 83;
@@ -5570,11 +5569,11 @@ void EdenGame::run() {
 
 	word_378CE = 0;
 	CRYOLib_ManagersInit();
-	CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
-	CLHNM_SetForceZero2Black(true);
-	CLHNM_SetupTimer(12.5);
+	_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
+	_vm->_video->setForceZero2Black(true);
+	_vm->_video->setupTimer(12.5);
 	voiceSound = CLSoundRaw_New(0, 11025 * 65536.0, 8, 0);
-	_hnmSoundChannel = CLHNM_GetSoundChannel();
+	_hnmSoundChannel = _vm->_video->getSoundChannel();
 	CLSound_SetWantsDesigned(1); // CHECKME: Used?
 
 	_musicChannel = new CSoundChannel(_vm->_mixer, 11025, false);
@@ -5678,18 +5677,18 @@ void EdenGame::intro() {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		// Play intro videos in HQ
 		CLSoundChannel_Stop(_hnmSoundChannel);
-		CLHNM_CloseSound();
-		CLHNM_SetupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
-		_hnmSoundChannel = CLHNM_GetSoundChannel();
+		_vm->_video->closeSound();
+		_vm->_video->setupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
+		_hnmSoundChannel = _vm->_video->getSoundChannel();
 		playHNM(2012);
 		playHNM(171);
 		CLBlitter_FillScreenView(0);
 		specialTextMode = false;
 		playHNM(2001);
 		CLSoundChannel_Stop(_hnmSoundChannel);
-		CLHNM_CloseSound();
-		CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
-		_hnmSoundChannel = CLHNM_GetSoundChannel();
+		_vm->_video->closeSound();
+		_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
+		_hnmSoundChannel = _vm->_video->getSoundChannel();
 	} else {
 		playHNM(98);	// Cryo logo
 		playHNM(171);	// Virgin logo
@@ -6209,14 +6208,16 @@ void EdenGame::mouse() {
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
 	CLHNM_ReadHeader(_hnmContext);
-	if (p_global->curVideoNum == 92) {
+	if (_vm->_video->curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		CLSoundChannel_SetVolumeLeft(_hnmSoundChannel, 0);
 		CLSoundChannel_SetVolumeRight(_hnmSoundChannel, 0);
 	}
-	bool playing = true;
+
 	if (CLHNM_GetVersion(_hnmContext) != 4)
 		return;
+
+	bool playing = true;
 	CLHNM_AllocMemory(_hnmContext);
 	p_hnmview = CLView_New(_hnmContext->_header._width, _hnmContext->_header._height);
 	CLView_SetSrcZoomValues(p_hnmview, 0, 0);
@@ -6233,8 +6234,8 @@ void EdenGame::showMovie(char arg1) {
 	p_hnmview->_doubled = _doubledScreen;
 	do {
 		hnm_position = CLHNM_GetFrameNum(_hnmContext);
-		CLHNM_WaitLoop(_hnmContext);
-		playing = CLHNM_NextElement(_hnmContext);
+		_vm->_video->waitLoop(_hnmContext);
+		playing = _vm->_video->nextElement(_hnmContext);
 		if (specialTextMode)
 			displayHNMSubtitles();
 		else
@@ -6270,7 +6271,7 @@ void EdenGame::showMovie(char arg1) {
 void EdenGame::playHNM(int16 num) {
 	perso_t *perso = nullptr;
 	int16 oldDialogType = -1;
-	p_global->curVideoNum = num;
+	_vm->_video->curVideoNum = num;
 	if (num != 2001 && num != 2012 && num != 98 && num != 171) {
 		byte oldMusicType = p_global->newMusicType;
 		p_global->newMusicType = MusicType::mtEvent;
@@ -6289,8 +6290,8 @@ void EdenGame::playHNM(int16 num) {
 	showVideoSubtitle = false;
 	videoCanceled = 0;
 	shnmfl(num);
-	CLHNM_Reset(_hnmContext);
-	CLHNM_FlushPreloadBuffer(_hnmContext);
+	_vm->_video->reset(_hnmContext);
+	_vm->_video->flushPreloadBuffer(_hnmContext);
 	if (needToFade) {
 		fadetoblack(4);
 		ClearScreen();
@@ -6311,15 +6312,15 @@ void EdenGame::playHNM(int16 num) {
 	}
 	if (videoCanceled)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (p_global->curVideoNum == 167)
+	if (_vm->_video->curVideoNum == 167)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (p_global->curVideoNum == 104)
+	if (_vm->_video->curVideoNum == 104)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (p_global->curVideoNum == 102)
+	if (_vm->_video->curVideoNum == 102)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (p_global->curVideoNum == 77)
+	if (_vm->_video->curVideoNum == 77)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (p_global->curVideoNum == 149)
+	if (_vm->_video->curVideoNum == 149)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 }
 
@@ -6327,7 +6328,7 @@ void EdenGame::playHNM(int16 num) {
 void EdenGame::displayHNMSubtitles() {
 	int16 *frames;
 	perso_t *perso;
-	switch (p_global->curVideoNum) {
+	switch (_vm->_video->curVideoNum) {
 	case 170:
 		frames = kFramesVid170;
 		perso = &kPersons[PER_UNKN_156];
