@@ -217,11 +217,11 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		uint tempVersion = header.version;
 		GUI::MessageDialog dialog(
 			Common::String::format(
-				"This save file uses version %u, but this engine only "
-				"supports up to version %d. You will need an updated version "
-				"of the engine to use this save file.", tempVersion, SAVE_VERSION
+				_("This save file uses version %u, but this engine only "
+				  "supports up to version %d. You will need an updated version "
+				  "of the engine to use this save file."), tempVersion, SAVE_VERSION
 			),
-		"OK");
+		_("OK"));
 		dialog.runModal();
 	}
 
