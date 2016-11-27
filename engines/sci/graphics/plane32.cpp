@@ -80,10 +80,17 @@ _moved(0) {
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
 	_vanishingPoint.y = readSelectorValue(segMan, object, SELECTOR(vanishingY));
 
-	_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-	_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-	_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-	_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	}
 	convertGameRectToPlaneRect();
 
 	_back = readSelectorValue(segMan, object, SELECTOR(back));
@@ -829,10 +836,18 @@ void Plane::update(const reg_t object) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
 	_vanishingPoint.y = readSelectorValue(segMan, object, SELECTOR(vanishingY));
-	_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-	_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-	_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-	_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	}
 	convertGameRectToPlaneRect();
 
 	_priority = readSelectorValue(segMan, object, SELECTOR(priority));

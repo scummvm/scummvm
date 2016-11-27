@@ -35,6 +35,7 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -1368,10 +1369,18 @@ bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	}
 
 	Common::Rect result = screenItem->getNowSeenRect(*plane);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), result.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), result.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), result.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), result.bottom - 1);
+	} else {
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+	}
 	return true;
 }
 

@@ -22,6 +22,7 @@
 
 #include "sci/console.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
@@ -238,14 +239,26 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 	_z = readSelectorValue(segMan, object, SELECTOR(z));
 	_position.y -= _z;
 
-	if (readSelectorValue(segMan, object, SELECTOR(useInsetRect))) {
-		_useInsetRect = true;
-		_insetRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-		_insetRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-		_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-		_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		if (readSelectorValue(segMan, object, SELECTOR(seenRect))) {
+			_useInsetRect = true;
+			_insetRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+			_insetRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+			_insetRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+			_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+		} else {
+			_useInsetRect = false;
+		}
 	} else {
-		_useInsetRect = false;
+		if (readSelectorValue(segMan, object, SELECTOR(useInsetRect))) {
+			_useInsetRect = true;
+			_insetRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+			_insetRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+			_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+			_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+		} else {
+			_useInsetRect = false;
+		}
 	}
 
 	segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewVisible);

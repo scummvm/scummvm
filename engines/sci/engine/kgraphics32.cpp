@@ -484,10 +484,18 @@ reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
 	const reg_t plane = readSelector(segMan, object, SELECTOR(plane));
 
 	Common::Rect rect;
-	rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
-	rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
-	rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
-	rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+	}
 	const Common::Point position(rect.left, rect.top);
 
 	return g_sci->_gfxControls32->makeScrollWindow(rect, position, plane, foreColor, backColor, fontId, alignment, borderColor, maxNumEntries);

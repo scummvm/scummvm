@@ -128,6 +128,10 @@ public:
 			g_sci->getGameId() != GID_SQ6 &&
 			g_sci->getGameId() != GID_GK2;
 	}
+
+	inline bool usesAlternateSelectors() const {
+		return g_sci->getGameId() == GID_PHANTASMAGORIA2;
+	}
 #endif
 
 	/**

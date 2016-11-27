@@ -21,6 +21,7 @@
  */
 
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
@@ -949,6 +950,9 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	_width = READ_SCI11ENDIAN_UINT16(celHeader);
 	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
 	_origin.x = _width / 2 - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
+	if (g_sci->_features->usesAlternateSelectors() && _mirrorX) {
+		_origin.x = _width - _origin.x - 1;
+	}
 	_origin.y = _height - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6) - 1;
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];

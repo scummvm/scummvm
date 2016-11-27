@@ -21,6 +21,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -57,11 +58,11 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(nsTop);
 	FIND_SELECTOR(nsLeft);
 	FIND_SELECTOR(nsBottom);
+	FIND_SELECTOR(nsRight);
 	FIND_SELECTOR(lsTop);
 	FIND_SELECTOR(lsLeft);
 	FIND_SELECTOR(lsBottom);
 	FIND_SELECTOR(lsRight);
-	FIND_SELECTOR(nsRight);
 	FIND_SELECTOR(signal);
 	FIND_SELECTOR(illegalBits);
 	FIND_SELECTOR(brTop);
@@ -173,6 +174,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(left);
 	FIND_SELECTOR(bottom);
 	FIND_SELECTOR(right);
+	FIND_SELECTOR(seenRect);
 	FIND_SELECTOR(resY);
 	FIND_SELECTOR(resX);
 	FIND_SELECTOR(dimmed);
@@ -214,9 +216,16 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 
 #ifdef ENABLE_SCI32
 void updateInfoFlagViewVisible(Object *obj, int index) {
-	// TODO: Make this correct for all SCI versions
-	// Selectors 26 through 44 are selectors for View script objects in SQ6
-	if (index >= 26 && index <= 44 && getSciVersion() >= SCI_VERSION_2) {
+	int minIndex, maxIndex;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		minIndex = 24;
+		maxIndex = 43;
+	} else {
+		minIndex = 26;
+		maxIndex = 44;
+	}
+
+	if (index >= minIndex && index <= maxIndex && getSciVersion() >= SCI_VERSION_2) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }
