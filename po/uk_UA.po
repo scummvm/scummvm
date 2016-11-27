@@ -9,15 +9,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 12:47+0100\n"
-"PO-Revision-Date: 2016-11-06 01:03+0200\n"
+"PO-Revision-Date: 2016-11-27 12:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Ukrainian\n"
-"Language: Ukrainian\n"
+"Language-Team: Ukrainian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
+"Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Ukrainian\n"
 
 #: gui/about.cpp:94
@@ -299,7 +301,7 @@ msgstr "Гучність"
 #: gui/editgamedialog.cpp:212 gui/options.cpp:1245
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Гучн."
+msgstr "Гучн"
 
 #: gui/editgamedialog.cpp:215
 msgid "Override global volume settings"
@@ -530,7 +532,7 @@ msgstr "Скинути"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Скинути всі налаштування FluidSynth до їх значень за замовченням"
+msgstr "Скинути всі налаштування FluidSynth до їх значень за замовченням."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -610,7 +612,7 @@ msgstr "Про ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~Н~алаштування"
+msgstr "~Н~алаштування..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
@@ -642,7 +644,7 @@ msgstr "Утримуйте клавішу Shift для того, щоб додати декілька ігор"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr "Реда~г~увати гру"
+msgstr "Реда~г~увати гру..."
 
 #: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
@@ -1196,7 +1198,7 @@ msgstr "Користувач для цього сердовища"
 
 #: gui/options.cpp:1422
 msgid "Used space:"
-msgstr "Використаний об'єм"
+msgstr "Використаний об'єм:"
 
 #: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
@@ -1498,7 +1500,7 @@ msgstr "Після отримання коду від хмарного середовища, введіть"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "його до комірок нижче і натисніть 'Під'єднатись'"
+msgstr "його до комірок нижче і натисніть 'Під'єднатись':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1808,7 +1810,7 @@ msgstr "~П~овер.в головне меню"
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
-msgstr "Зберегти гру: "
+msgstr "Зберегти гру:"
 
 #: engines/dialogs.cpp:116 backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
@@ -2036,7 +2038,7 @@ msgstr "C64 Аудіо Емулятор"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "Синхронизацію збережених станів закінчено!"
+msgstr "Синхронизацію збережених станів закінчено."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
@@ -2141,7 +2143,7 @@ msgstr "Ви дійсно хочете вийти?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "Режим трекпаду включено."
+msgstr "Режим трекпаду"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -2779,7 +2781,7 @@ msgid ""
 "behavior"
 msgstr ""
 "Використовувати альтернативну палітру, звичайну для ігор з Amiga. Це була "
-"стара поведінка."
+"стара поведінка"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -2800,7 +2802,7 @@ msgstr "Використовувати шрифт Hercules"
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
 "Використовує шрифт високого розгалуження Hercules, якщо файл з шрифтом є "
-"досупний"
+"доступний."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
@@ -3109,24 +3111,23 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Простий інтерфейс для миші"
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Показувати мітки для об'єктів при наведенні миші"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Анімований інвентар"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Анімований інтерфейс гри"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Відвертий режим гри"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -3134,7 +3135,7 @@ msgstr "Показувати ролік польоту над Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr "Ролік польоту над Myst не показувався оригінальним движком"
+msgstr "Ролік польоту над Myst не показувався оригінальним движком."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -3168,7 +3169,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "У вам немає файлу для виконання Riven. Файл виконання для Windows має "
-"назву'riven.exe' або 'rivendemo.exe'"
+"назву'riven.exe' або 'rivendemo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -3955,7 +3956,7 @@ msgstr "Перемкнути керування бійкою Клавіатура/Миша (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* Управління клавіатурою завжди влючене, тому, "
+msgstr "* Управління клавіатурою завжди влючене, тому,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
@@ -3963,7 +3964,7 @@ msgstr "  незважаючи на повідомлення гри, це налаштування"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  насправді включає та виключає управління мишею."
+msgstr "  насправді включає та виключає управління мишею"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -4192,7 +4193,7 @@ msgstr "Використовувати дискетні версії введення (тільки CD версія)"
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr " ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
+msgstr "ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
