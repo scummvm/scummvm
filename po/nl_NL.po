@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 12:47+0100\n"
+"POT-Creation-Date: 2016-11-27 13:22+0100\n"
 "PO-Revision-Date: 2016-10-26 16:06+0200\n"
 "Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
@@ -122,6 +122,7 @@ msgstr "Uw verbinding lijkt beperkt. Wilt u echt bestanden ermee downloaden?"
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "Yes"
 msgstr "Ja"
 
@@ -134,6 +135,7 @@ msgstr "Ja"
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "No"
 msgstr "Nee"
 
@@ -157,15 +159,15 @@ msgstr ""
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1882
-#: engines/scumm/players/player_v3m.cpp:130
+#: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
+#: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
 #: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
 #: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
 #: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
 #: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471
+#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "OK"
 
@@ -683,6 +685,7 @@ msgstr "Zoeken:"
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Laad spel:"
 
@@ -692,7 +695,7 @@ msgstr "Laad spel:"
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
 #: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
-#: engines/tsage/scenes.cpp:601
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Laden"
 
@@ -1803,12 +1806,14 @@ msgstr "S~t~artmenu"
 #: engines/cge2/events.cpp:65 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
-#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
+#: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:892 engines/sci/engine/kfile.cpp:1168
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Spel opslaan:"
 
@@ -1821,13 +1826,15 @@ msgstr "Spel opslaan:"
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:65
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:364
-#: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
+#: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
+#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:892 engines/sci/engine/kfile.cpp:1168
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Opslaan"
 
@@ -2825,11 +2832,12 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:269
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
-#: engines/dreamweb/saveload.cpp:170 engines/hugo/file.cpp:400
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1011
 #: engines/sci/engine/kfile.cpp:1240 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Laad opgeslagen spel:"
 
@@ -2837,11 +2845,12 @@ msgstr "Laad opgeslagen spel:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:269
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
-#: engines/dreamweb/saveload.cpp:170 engines/hugo/file.cpp:400
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1011
 #: engines/sci/engine/kfile.cpp:1240 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Laad"
 
@@ -3009,6 +3018,76 @@ msgstr "HP balk grafieken"
 msgid "Enable hit point bar graphs"
 msgstr "Hitpoints balkgrafieken inschakelen"
 
+#: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
+msgid "Move Forward"
+msgstr "Beweeg Vooruit"
+
+#: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
+msgid "Move Back"
+msgstr "Beweeg Terug"
+
+#: engines/kyra/eobcommon.cpp:333
+#, fuzzy
+msgid "Move Left"
+msgstr "Schuif Links"
+
+#: engines/kyra/eobcommon.cpp:334
+#, fuzzy
+msgid "Move Right"
+msgstr "Schuif Rechts"
+
+#: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
+#: engines/pegasus/pegasus.cpp:2509
+msgid "Turn Left"
+msgstr "Draai Linksom"
+
+#: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
+#: engines/pegasus/pegasus.cpp:2510
+msgid "Turn Right"
+msgstr "Draai Rechtsom"
+
+#: engines/kyra/eobcommon.cpp:337
+#, fuzzy
+msgid "Open/Close Inventory"
+msgstr "Inventaris"
+
+#: engines/kyra/eobcommon.cpp:338
+msgid "Switch Inventory/Character screen"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:339
+msgid "Camp"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:340
+#, fuzzy
+msgid "Cast Spell"
+msgstr "Kies Spreuk"
+
+#: engines/kyra/eobcommon.cpp:343
+msgid "Spell Level 1"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:344
+msgid "Spell Level 2"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:345
+msgid "Spell Level 3"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:346
+msgid "Spell Level 4"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:347
+msgid "Spell Level 5"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:356
+msgid "Spell Level 6"
+msgstr ""
+
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr "Aanval 1"
@@ -3021,14 +3100,6 @@ msgstr "Aanval 2"
 msgid "Attack 3"
 msgstr "Aanval 3"
 
-#: engines/kyra/lol.cpp:481
-msgid "Move Forward"
-msgstr "Beweeg Vooruit"
-
-#: engines/kyra/lol.cpp:482
-msgid "Move Back"
-msgstr "Beweeg Terug"
-
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
 msgstr "Schuif Links"
@@ -3036,14 +3107,6 @@ msgstr "Schuif Links"
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
 msgstr "Schuif Rechts"
-
-#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2509
-msgid "Turn Left"
-msgstr "Draai Linksom"
-
-#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2510
-msgid "Turn Right"
-msgstr "Draai Rechtsom"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
@@ -3402,6 +3465,21 @@ msgid ""
 msgstr ""
 "Gebruik de alternative set van zilveren cursors, in plaats van de normale "
 "gouden"
+
+#: engines/scumm/detection.cpp:1120
+msgid ""
+"Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+"version (in particular, not a fan-made translation), please, report the\n"
+"following data to the ScummVM team along with name of the game you tried\n"
+"to add and its version/language/etc.:\n"
+msgstr ""
+
+#: engines/scumm/detection.cpp:1138
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -4290,6 +4368,49 @@ msgstr ""
 "Het \"teenagent.dat\" bestand is gecomprimeerd en zlib is niet meegenomen in "
 "deze versie van ScummVM. Decomprimeer a.u.b. het bestand."
 
+#: engines/toon/toon.cpp:222
+#, fuzzy, c-format
+msgid "Saved game in slot #%d "
+msgstr ""
+"Spel opslaan in slot %i mislukt\n"
+"\n"
+
+#: engines/toon/toon.cpp:226
+#, c-format
+msgid "Could not quick save into slot #%d"
+msgstr ""
+
+#: engines/toon/toon.cpp:239
+#, c-format
+msgid "Savegame #%d quick loaded"
+msgstr ""
+
+#: engines/toon/toon.cpp:243
+#, c-format
+msgid "Could not quick load the savegame #%d"
+msgstr ""
+
+#: engines/toon/toon.cpp:4917
+#, fuzzy
+msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+msgstr ""
+"Het 'teenagent.dat' bestand ontbreekt. U kunt die vinden op de ScummVM "
+"website."
+
+#: engines/toon/toon.cpp:4929
+#, fuzzy
+msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+msgstr ""
+"Het 'teenagent.dat' bestand ontbreekt. U kunt die vinden op de ScummVM "
+"website."
+
+#: engines/toon/toon.cpp:4939
+#, c-format
+msgid ""
+"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
+"the ScummVM website"
+msgstr ""
+
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
 msgstr "Toon FPS-teller"
@@ -4337,6 +4458,13 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Gebruik de MPEG video van de DVD versie, in plaats van de lagere resolutie "
 "AVI"
+
+#: engines/zvision/file/save_manager.cpp:220
+#, c-format
+msgid ""
+"This save file uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this save file."
+msgstr ""
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 12:47+0100\n"
+"POT-Creation-Date: 2016-11-27 13:22+0100\n"
 "PO-Revision-Date: 2016-02-20 23:43+0100\n"
 "Last-Translator: Micha³ Zi±bkowski <mziab@o2.pl>\n"
 "Language-Team: Grajpopolsku.pl <grajpopolsku@gmail.com>\n"
@@ -126,6 +126,7 @@ msgstr ""
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "Yes"
 msgstr "Tak"
 
@@ -138,6 +139,7 @@ msgstr "Tak"
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "No"
 msgstr "Nie"
 
@@ -159,15 +161,15 @@ msgstr ""
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1882
-#: engines/scumm/players/player_v3m.cpp:130
+#: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
+#: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
 #: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
 #: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
 #: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
 #: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471
+#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "OK"
 
@@ -675,6 +677,7 @@ msgstr "Szukaj"
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Wczytaj grê:"
 
@@ -684,7 +687,7 @@ msgstr "Wczytaj grê:"
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
 #: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
-#: engines/tsage/scenes.cpp:601
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Wczytaj"
 
@@ -1794,12 +1797,14 @@ msgstr "~P~owrót do launchera"
 #: engines/cge2/events.cpp:65 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
-#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
+#: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:892 engines/sci/engine/kfile.cpp:1168
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Zapis:"
 
@@ -1812,13 +1817,15 @@ msgstr "Zapis:"
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:65
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:364
-#: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
+#: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
+#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
 #: engines/sci/engine/kfile.cpp:892 engines/sci/engine/kfile.cpp:1168
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Zapisz"
 
@@ -2805,11 +2812,12 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:269
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
-#: engines/dreamweb/saveload.cpp:170 engines/hugo/file.cpp:400
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1011
 #: engines/sci/engine/kfile.cpp:1240 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Wznów grê:"
 
@@ -2817,11 +2825,12 @@ msgstr "Wznów grê:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:269
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
-#: engines/dreamweb/saveload.cpp:170 engines/hugo/file.cpp:400
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1011
 #: engines/sci/engine/kfile.cpp:1240 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Wznów"
 
@@ -2988,6 +2997,76 @@ msgstr "Histogramy HP"
 msgid "Enable hit point bar graphs"
 msgstr "W³±cz histogramy punktów ¿ycia"
 
+#: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
+msgid "Move Forward"
+msgstr "Ruch naprzód"
+
+#: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
+msgid "Move Back"
+msgstr "Ruch wstecz"
+
+#: engines/kyra/eobcommon.cpp:333
+#, fuzzy
+msgid "Move Left"
+msgstr "¦lizg w lewo"
+
+#: engines/kyra/eobcommon.cpp:334
+#, fuzzy
+msgid "Move Right"
+msgstr "¦lizg w prawo"
+
+#: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
+#: engines/pegasus/pegasus.cpp:2509
+msgid "Turn Left"
+msgstr "Obrót w lewo"
+
+#: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
+#: engines/pegasus/pegasus.cpp:2510
+msgid "Turn Right"
+msgstr "Obrót w prawo"
+
+#: engines/kyra/eobcommon.cpp:337
+#, fuzzy
+msgid "Open/Close Inventory"
+msgstr "Ekwipunek"
+
+#: engines/kyra/eobcommon.cpp:338
+msgid "Switch Inventory/Character screen"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:339
+msgid "Camp"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:340
+#, fuzzy
+msgid "Cast Spell"
+msgstr "Wybierz zaklêcie"
+
+#: engines/kyra/eobcommon.cpp:343
+msgid "Spell Level 1"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:344
+msgid "Spell Level 2"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:345
+msgid "Spell Level 3"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:346
+msgid "Spell Level 4"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:347
+msgid "Spell Level 5"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:356
+msgid "Spell Level 6"
+msgstr ""
+
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr "Atak 1"
@@ -3000,14 +3079,6 @@ msgstr "Atak 2"
 msgid "Attack 3"
 msgstr "Atak 3"
 
-#: engines/kyra/lol.cpp:481
-msgid "Move Forward"
-msgstr "Ruch naprzód"
-
-#: engines/kyra/lol.cpp:482
-msgid "Move Back"
-msgstr "Ruch wstecz"
-
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
 msgstr "¦lizg w lewo"
@@ -3015,14 +3086,6 @@ msgstr "¦lizg w lewo"
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
 msgstr "¦lizg w prawo"
-
-#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2509
-msgid "Turn Left"
-msgstr "Obrót w lewo"
-
-#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2510
-msgid "Turn Right"
-msgstr "Obrót w prawo"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
@@ -3375,6 +3438,21 @@ msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
 "U¿yj alternatywnego zestawu srebrnych kursorów zamiast zwyk³ych z³otych"
+
+#: engines/scumm/detection.cpp:1120
+msgid ""
+"Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+"version (in particular, not a fan-made translation), please, report the\n"
+"following data to the ScummVM team along with name of the game you tried\n"
+"to add and its version/language/etc.:\n"
+msgstr ""
+
+#: engines/scumm/detection.cpp:1138
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
 
 #: engines/scumm/detection.cpp:1341
 #, fuzzy
@@ -4266,6 +4344,45 @@ msgstr ""
 "Plik teenagent.dat jest skompresowany, a ScummVM nie zawiera obs³ugi zlib. "
 "Rozpakuj plik."
 
+#: engines/toon/toon.cpp:222
+#, fuzzy, c-format
+msgid "Saved game in slot #%d "
+msgstr ""
+"Nie mo¿na zapisaæ w slocie %i\n"
+"\n"
+
+#: engines/toon/toon.cpp:226
+#, c-format
+msgid "Could not quick save into slot #%d"
+msgstr ""
+
+#: engines/toon/toon.cpp:239
+#, c-format
+msgid "Savegame #%d quick loaded"
+msgstr ""
+
+#: engines/toon/toon.cpp:243
+#, c-format
+msgid "Could not quick load the savegame #%d"
+msgstr ""
+
+#: engines/toon/toon.cpp:4917
+#, fuzzy
+msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+msgstr "Nie masz pliku \"teenagent.dat\". Pobierz go ze strony ScummVM"
+
+#: engines/toon/toon.cpp:4929
+#, fuzzy
+msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+msgstr "Nie masz pliku \"teenagent.dat\". Pobierz go ze strony ScummVM"
+
+#: engines/toon/toon.cpp:4939
+#, c-format
+msgid ""
+"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
+"the ScummVM website"
+msgstr ""
+
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
 msgstr "Poka¿ licznik klatek na sekundê"
@@ -4309,6 +4426,13 @@ msgstr "U¿yj wideo MPEG w wysokiej rozdzielczo¶ci"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr "U¿yj wideo MPEG z wersji DVD zamiast AVI ni¿szej rozdzielczo¶ci"
+
+#: engines/zvision/file/save_manager.cpp:220
+#, c-format
+msgid ""
+"This save file uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this save file."
+msgstr ""
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
 #~ msgstr "Musisz zrestartowaæ ScummVM, by zmiany zosta³y uwzglêdnione."
