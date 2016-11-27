@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 12:47+0100\n"
-"PO-Revision-Date: 2016-11-08 02:19+0000\n"
+"PO-Revision-Date: 2016-11-27 12:00+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <scummvm-devel@lists.scummvm.org>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
-"X-Generator: Poedit 1.8.6\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Francais\n"
 
 #: gui/about.cpp:94
@@ -2693,7 +2694,7 @@ msgstr "Voulez-vous charger ou enregistrer le jeu ?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "Voulez-vous vraiment quitter ?"
+msgstr "   Voulez-vous vraiment quitter ?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2705,11 +2706,11 @@ msgstr "Pivoter"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Utilise le pilote SDL"
+msgstr "Utilise le pilote SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Affichage"
+msgstr "Affichage "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -3184,7 +3185,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "Il vous manque l'exécutable de Riven. L'exécutable pour Windows se nomme "
-"'rivent.exe' ou 'rivendmo.exe'."
+"'rivent.exe' ou 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -4089,11 +4090,11 @@ msgstr "Défilement régulier"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Volume Musique :"
+msgstr "Volume Musique : "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Vitesse des ST :"
+msgstr "Vitesse des ST : "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
