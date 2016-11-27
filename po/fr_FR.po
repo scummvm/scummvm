@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-27 17:08+0000\n"
+"PO-Revision-Date: 2016-11-27 17:47+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -143,7 +143,7 @@ msgstr "Non"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM n'a pas pu ouvrir le répertoire sélectionné."
+msgstr "ScummVM n'a pas pu ouvrir le répertoire sélectionné !"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
@@ -180,7 +180,7 @@ msgid ""
 "Do you really want to download files into that directory?"
 msgstr ""
 "Le répertoire \"%s\" existe déjà localement.\n"
-"Êtes-vous sûr de vouloir télécharger dans ce répertoire?"
+"Êtes-vous sûr de vouloir télécharger dans ce répertoire ?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
@@ -628,7 +628,7 @@ msgstr "Démarre le jeu sélectionné"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
-msgstr "~C~harger"
+msgstr "~C~harger..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
@@ -728,11 +728,11 @@ msgstr ""
 
 #: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM n'a pas pu trouvé de moteur pour lancer le jeu sélectionné."
+msgstr "ScummVM n'a pas pu trouvé de moteur pour lancer le jeu sélectionné !"
 
 #: gui/launcher.cpp:577
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM n'a pas trouvé de jeux dans le répertoire sélectionné."
+msgstr "ScummVM n'a pas trouvé de jeux dans le répertoire sélectionné !"
 
 #: gui/launcher.cpp:590
 msgid "Pick the game:"
@@ -842,15 +842,15 @@ msgstr "le mode vidéo n'a pu être changé."
 
 #: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
-msgstr "la correction de rapport d'aspect n'a pu être changée."
+msgstr "la correction de rapport d'aspect n'a pu être changée"
 
 #: gui/options.cpp:480
 msgid "the fullscreen setting could not be changed"
-msgstr "le mode plein écran n'a pu être changé."
+msgstr "le mode plein écran n'a pu être changé"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr "le mode de filtrage n'a pu être changé."
+msgstr "le mode de filtrage n'a pu être changé"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -1208,11 +1208,11 @@ msgstr "Nom d'utilisateur pour ce service"
 
 #: gui/options.cpp:1422
 msgid "Used space:"
-msgstr "Espace utilisé"
+msgstr "Espace utilisé :"
 
 #: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "Espace utilisé par les sauvegardes de ScummVM sur ce stockage."
+msgstr "Espace utilisé par les sauvegardes de ScummVM sur ce stockage"
 
 #: gui/options.cpp:1425
 msgid "Last sync time:"
@@ -1262,7 +1262,7 @@ msgstr "Arrêté"
 
 #: gui/options.cpp:1437
 msgid "/root/ Path:"
-msgstr "Chemin /racine/:"
+msgstr "Chemin /racine/ :"
 
 #: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
 msgid "Specifies which directory the Files Manager can access"
@@ -1271,7 +1271,7 @@ msgstr "Indique le répertoire que le gestionnaire de fichier peut accéder"
 #: gui/options.cpp:1439
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "/racine/:"
+msgstr "/racine/ :"
 
 #: gui/options.cpp:1449
 msgid "Server's port:"
@@ -1485,7 +1485,7 @@ msgstr "Nouvelle Sauvegarde"
 
 #: gui/saveload-dialog.cpp:924
 msgid "Create a new saved game"
-msgstr "Crée une nouvelle sauvegarde."
+msgstr "Crée une nouvelle sauvegarde"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
@@ -1494,7 +1494,7 @@ msgstr "Nom: "
 #: gui/saveload-dialog.cpp:1131
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Entrez une description pour l'emplacement %d:"
+msgstr "Entrez une description pour l'emplacement %d :"
 
 #: gui/storagewizarddialog.cpp:55
 #, c-format
@@ -1607,7 +1607,7 @@ msgstr ""
 "ScummVM peut maintenant rechercher les mises à jour\n"
 "automatiquement, ce qui necessite un accès internet.\n"
 "\n"
-"Voulez-vous activer cette options?"
+"Voulez-vous activer cette options ?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
@@ -1767,17 +1767,17 @@ msgid "<Bad value>"
 msgstr "<Valeur invalide>"
 
 #: engines/advancedDetector.cpp:335
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be unknown.\n"
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version/language/etc.:"
 msgstr ""
-"Votre version du jeu n'est pas reconnue. Si ce n'est pas une version\n"
-"modifié (par exemple traduite par des fans), veuillez reporter les "
-"informations\n"
-"ci-dessous à l'équipe de ScummVM ainsi que le nom du jeu que vous avez\n"
-"essayé d'ajouter, sa version, le language, etc... :\n"
+"Votre version du jeu dans '%s' n'est pas reconnue.\n"
+"Veuillez reporter les informations ci-dessous à l'équipe de ScummVM ainsi "
+"que\n"
+"le nom du jeu que vous avez essayé d'ajouter, sa version, le language, "
+"etc... :"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2081,7 +2081,7 @@ msgstr ""
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Téléchargement terminé !"
+msgstr "Téléchargement terminé."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
@@ -2235,31 +2235,31 @@ msgstr "Normal"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
-msgstr "Mode graphique actif:"
+msgstr "Mode graphique actif :"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
-msgstr "Affectation des touches:"
+msgstr "Affectation des touches :"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr "(Effectif)"
+msgstr " (Effectif)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr "(Actif)"
+msgstr " (Actif)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr "(Bloqué)"
+msgstr " (Bloqué)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr "(Global)"
+msgstr " (Global)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr "(Jeu)"
+msgstr " (Jeu)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2312,11 +2312,11 @@ msgstr "Sensibilité"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr "Échelle initiale de l'écran du haut"
+msgstr "Échelle initiale de l'écran du haut :"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "Échelle de l'écran principal"
+msgstr "Échelle de l'écran principal :"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
@@ -2346,25 +2346,25 @@ msgstr "Désactivé l'extinction"
 #: backends/platform/ios7/ios7_osys_events.cpp:519
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Mode souris-cliquer-et-déplacer activé"
+msgstr "Mode souris cliquer-et-déplacer activé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:311
 #: backends/platform/ios7/ios7_osys_events.cpp:521
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Mode souris-cliquer-et-déplacer désactivé"
+msgstr "Mode souris cliquer-et-déplacer désactivé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:322
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Mode touchpad activé"
+msgstr "Mode touchpad activé."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Mode touchpad désactivé"
+msgstr "Mode touchpad désactivé."
 
 #: backends/platform/maemo/maemo.cpp:208
 msgid "Click Mode"
@@ -2519,7 +2519,7 @@ msgstr "Vidéo"
 
 #: backends/platform/wii/options.cpp:54
 msgid "Current video mode:"
-msgstr "Mode vidéo actuel"
+msgstr "Mode vidéo actuel :"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
@@ -2527,11 +2527,11 @@ msgstr "Coup double"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Underscan horizontal:"
+msgstr "Underscan horizontal :"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Underscan vertical:"
+msgstr "Underscan vertical :"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -2539,11 +2539,11 @@ msgstr "Entrée"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "Sensibilité du pad GC:"
+msgstr "Sensibilité du pad GC :"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "Acceleration du pad GC:"
+msgstr "Acceleration du pad GC :"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2571,7 +2571,7 @@ msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
-msgstr "Serveur:"
+msgstr "Serveur :"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
@@ -2958,7 +2958,7 @@ msgstr "Joue les vidéos plus rapidement"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Échec de la sauvegarde."
+msgstr "Échec de la sauvegarde"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3291,17 +3291,17 @@ msgstr "Sauter les scènes storyboard de la Salle des Archives"
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Permet au joueur de sauter les scènes de storyboard de la Salle des Archives."
+"Permet au joueur de sauter les scènes de storyboard de la Salle des Archives"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
-msgstr "Afficher les vidéos du 'making of' en plein écran."
+msgstr "Afficher les vidéos du 'making of' en plein écran"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr ""
 "Redimensionne les vidéos du 'making of' pour qu'elles s'affichent en plein "
-"écran."
+"écran"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3427,7 +3427,7 @@ msgstr "Activer les vidéos avec traits noirs"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Affiche des lignes noirs sur les vidéos pour les rendre plus nets."
+msgstr "Affiche des lignes noirs sur les vidéos pour les rendre plus nets"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3996,11 +3996,11 @@ msgstr "Sauvegarder / Charger / Options"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr "Autres controles du jeu:"
+msgstr "Autres controles du jeu :"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr "Inventaires:"
+msgstr "Inventaire :"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
@@ -4036,7 +4036,7 @@ msgstr "Élément au milieu à droite"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
-msgstr "Changer de personnage"
+msgstr "Changer de personnage :"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
@@ -4068,7 +4068,7 @@ msgstr "  active/désactive le combat à la souris"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Controles de combat (pavet numérique):"
+msgstr "Contrôles de combat (pavet numérique) :"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4121,7 +4121,7 @@ msgstr "respectivement."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Controles du biplane (paver numérique):"
+msgstr "Contrôles du biplane (paver numérique) :"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
