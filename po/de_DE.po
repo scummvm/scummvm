@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-05 13:06+0100\n"
+"PO-Revision-Date: 2016-11-27 17:35+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
-"<rootfather@scummvm.org>\n"
-"Language: de\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Deutsch\n"
 
 #: gui/about.cpp:94
@@ -91,11 +91,11 @@ msgstr "Verzeichnis mit Spieldateien auswählen"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Von:"
+msgstr "Von: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Nach:"
+msgstr "Nach: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -1422,12 +1422,12 @@ msgstr "Bearbeiten"
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr "Autor:"
+msgstr "Autor: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr "Notizen:"
+msgstr "Notizen: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -2171,7 +2171,7 @@ msgstr "Möchten Sie beenden?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "Trackpad-Modus ist jetzt "
+msgstr "Trackpad-Modus ist jetzt"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -2192,7 +2192,7 @@ msgstr "Zum Umschalten mit zwei Fingern nach rechts wischen."
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr "Automatisches Ziehen ist jetzt "
+msgstr "Automatisches Ziehen ist jetzt"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
@@ -2709,7 +2709,7 @@ msgstr "Möchten Sie ein Spiel laden oder speichern?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Möchten Sie wirklich beenden?    "
+msgstr "   Möchten Sie wirklich beenden?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -4186,11 +4186,11 @@ msgstr "Blättern ausschalten"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Musiklautstärke:"
+msgstr "Musiklautstärke: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Untertitel-Tempo:"
+msgstr "Untertitel-Tempo: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
