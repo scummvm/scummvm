@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-28 08:12+0000\n"
+"PO-Revision-Date: 2016-11-28 19:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
@@ -3466,6 +3466,10 @@ msgid ""
 "following data to the ScummVM team along with name of the game you tried\n"
 "to add and its version/language/etc.:\n"
 msgstr ""
+"Здається, що ваша версія гри невідома. Якщо вона НЕ Є зміненою\n"
+"фанами (у тому числі не є фанатським перекладом), будь-ласка, повідомте\n"
+"ніжченаведені дані команді ScummVM разом з назвою гри, яку ви намагаєтесь\n"
+"додати, а також її версію, мову та інше:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3473,6 +3477,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Задля запобігання піратства, Lite-версія гри Putt-Putt Save the Zoo для iOS\n"
+"не підтримуєтся. Повну версію можна придбати у iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -4367,17 +4373,17 @@ msgstr "Стан гри записано у слот %d "
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Не вдалося зробити швидке зберігання стану гри у слот №%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Savegame #%d quick loaded"
-msgstr ""
+msgstr "Стан гри №%d завантажено"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the savegame #%d"
-msgstr ""
+msgstr "Не вдалося швидко завантажити стан гри №%d"
 
 #: engines/toon/toon.cpp:4917
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
@@ -4393,6 +4399,8 @@ msgid ""
 "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
 "the ScummVM website"
 msgstr ""
+"Файл 'toon.dat' має невірну версію. Очікувана %d.%d, а отрімана %d.%d. "
+"Завантажте його с вебсайту ScummVM"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4447,6 +4455,9 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+"Цей файл збереженого стану гри використовує версію %u, але гра підтримує "
+"версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
+"файлу."
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "Гра у '%s' невідома."
