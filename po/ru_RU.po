@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-28 08:18+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-11-28 11:23+0000\n"
+"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -3055,27 +3055,27 @@ msgstr "Применить заклинание"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Заклинание 1-го уровня"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Заклинание 2-го уровня"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Заклинание 3-го уровня"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Заклинание 4-го уровня"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Заклинание 5-го уровня"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Заклинание 6-го уровня"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3472,6 +3472,10 @@ msgid ""
 "following data to the ScummVM team along with name of the game you tried\n"
 "to add and its version/language/etc.:\n"
 msgstr ""
+"Похоже, ваша версия игры неизвестна. Если она НЕ была\n"
+"модифицирована фанатами (в частности, не является фанатским\n"
+"переводом), пожалуйста, сообщите команде ScummVM следующие\n"
+"данные вместе с именем игры, её версией, языком и т. д.:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3479,6 +3483,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Во избежание пиратства Lite-версия игры Putt-Putt Saves the Zoo для iOS\n"
+"не поддерживается. Полную версию игры можно купить в iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -4376,17 +4382,17 @@ msgstr "Игра сохранена в слот №%d "
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Не удалось быстро сохранить игру в слот №%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Savegame #%d quick loaded"
-msgstr ""
+msgstr "Сохранённая игра №%d загружена"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the savegame #%d"
-msgstr ""
+msgstr "Не удалось быстро загрузить сохранённую игру №%d"
 
 #: engines/toon/toon.cpp:4917
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
@@ -4402,6 +4408,8 @@ msgid ""
 "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
 "the ScummVM website"
 msgstr ""
+"Неправильная версия файла 'toon.dat': ожидалась %d.%d, в наличии %d.%d. "
+"Скачайте его с веб-сайта ScummVM"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4457,6 +4465,8 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+"Этот файл сохранения имеет версию %u, но движок поддерживает только версии "
+"не выше %d. Для использования этого файла необходима свежая версия движка."
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "Кажется, что игра '%s' ещё неизвестна."
