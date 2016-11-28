@@ -9,16 +9,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-27 12:13+0000\n"
+"PO-Revision-Date: 2016-11-28 08:12+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/uk/>\n"
+"Language-Team: Ukrainian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
 "Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Ukrainian\n"
 
@@ -1762,6 +1762,9 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version/language/etc.:"
 msgstr ""
+"Гра у '%s' невідома.\n"
+"Будь ласка, передайте нижченаведену інформацію команді ScummVM разом з\n"
+"назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -3016,14 +3019,12 @@ msgid "Move Back"
 msgstr "Рухатись назад"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
-msgstr "Ковзати наліво"
+msgstr "Йти наліво"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
-msgstr "Ковзати направо"
+msgstr "Йти направо"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2509
@@ -3036,46 +3037,44 @@ msgid "Turn Right"
 msgstr "Повернутися направо"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Інвентар"
+msgstr "Відкрити/закрити інвентар"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Переключити екран Інвентар/Герой"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr ""
+msgstr "Табір"
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Вибрати закляття"
+msgstr "Використати закляття"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Закляття 1-го рівня"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Закляття 2-го рівня"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Закляття 3-го рівня"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Закляття 4-го рівня"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Закляття 5-го рівня"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Закляття 6-го рівня"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -4361,11 +4360,9 @@ msgstr ""
 "ласка розпакуйте його"
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Не можу зберегти стан гри у слот %i\n"
-"\n"
+msgstr "Стан гри записано у слот %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
@@ -4383,16 +4380,12 @@ msgid "Could not quick load the savegame #%d"
 msgstr ""
 
 #: engines/toon/toon.cpp:4917
-#, fuzzy
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr ""
-"У вас відстуній файл 'teenagent.dat'. Візьміть його на вебсайті ScummVM"
+msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на вебсайті ScummVM"
 
 #: engines/toon/toon.cpp:4929
-#, fuzzy
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr ""
-"У вас відстуній файл 'teenagent.dat'. Візьміть його на вебсайті ScummVM"
+msgstr "Файл 'toon.dat' пошкоджено. Візьміть його на вебсайті ScummVM"
 
 #: engines/toon/toon.cpp:4939
 #, c-format
