@@ -506,7 +506,7 @@ void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool
 }
 #else
 template<typename T>
-void Scene::objectList_sortByPriority(Common::Array<T *> &list, int startIndex) {
+void Scene::objectList_sortByPriority(Common::Array<T *> &list, uint startIndex) {
 	if (list.size() > startIndex) {
 		int lastIndex = list.size() - 1;
 		bool changed;

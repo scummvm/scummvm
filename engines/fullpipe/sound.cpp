@@ -367,7 +367,7 @@ int FullpipeEngine::getSceneTrack() {
 	return res;
 }
 
-void FullpipeEngine::startSoundStream1(char *trackName) {
+void FullpipeEngine::startSoundStream1(const char *trackName) {
 	stopAllSoundStreams();
 
 #ifdef USE_VORBIS

@@ -70,7 +70,7 @@ void sceneHandlerFinal_endFinal() {
 	g_vars->sceneFinal_var01 = 0;
 }
 
-void sceneHandlerFinal_startMusic(char *track) {
+void sceneHandlerFinal_startMusic(const char *track) {
 	g_fp->startSoundStream1(track);
 }
 

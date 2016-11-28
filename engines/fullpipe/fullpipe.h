@@ -184,7 +184,7 @@ public:
 	int getSceneTrack();
 	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(char *trackName);
+	void startSoundStream1(const char *trackName);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);

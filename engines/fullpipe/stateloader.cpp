@@ -77,7 +77,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	delete saveFile;
 
 	// Deobfuscate the data
-	for (uint i = 0; i < header.encSize; i++)
+	for (int i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
 	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
@@ -100,7 +100,7 @@ bool GameLoader::readSavegame(const char *fname) {
 
 	getGameLoaderInventory()->loadPartial(*archive);
 
-	int32 arrSize = archive->readUint32LE();
+	uint32 arrSize = archive->readUint32LE();
 
 	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
 
@@ -113,7 +113,7 @@ bool GameLoader::readSavegame(const char *fname) {
 		free(_sc2array[i]._picAniInfos);
 		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
 
-		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
 			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
 			_sc2array[i]._picAniInfos[j]->load(*archive);
 		}
@@ -196,7 +196,7 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 
 	in->seek(-4, SEEK_END);
 
-	uint headerOffset = in->readUint32LE();
+	int headerOffset = in->readUint32LE();
 
 	// Sanity check
 	if (headerOffset >= in->pos() || headerOffset == 0) {

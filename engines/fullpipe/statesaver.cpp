@@ -93,7 +93,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		if (_sc2array[i]._picAniInfosCount)
 			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
 
-		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
 			_sc2array[i]._picAniInfos[j]->save(*archive);
 		}
 	}
@@ -101,7 +101,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	header.encSize = stream.size();
 
 	// Now obfuscate the data
-	for (uint i = 0; i < header.encSize; i++)
+	for (int i = 0; i < header.encSize; i++)
 		stream.getData()[i] += i & 0x7f;
 
 	if (_savegameCallback)
