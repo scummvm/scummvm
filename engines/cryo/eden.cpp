@@ -4653,7 +4653,7 @@ void EdenGame::openbigfile() {
 	h_bigfile.open("EDEN.DAT");
 	h_bigfile.read(bigfile_header, size);
 
-	_hnmContext = _vm->_video->resetInternals(128);
+	_hnmContext = _vm->_video->resetInternals();
 	_vm->_video->setFile(_hnmContext, &h_bigfile);
 }
 
@@ -6208,7 +6208,7 @@ void EdenGame::mouse() {
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
 	_vm->_video->readHeader(_hnmContext);
-	if (_vm->_video->curVideoNum == 92) {
+	if (_vm->_video->_curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		CLSoundChannel_SetVolumeLeft(_hnmSoundChannel, 0);
 		CLSoundChannel_SetVolumeRight(_hnmSoundChannel, 0);
@@ -6271,7 +6271,7 @@ void EdenGame::showMovie(char arg1) {
 void EdenGame::playHNM(int16 num) {
 	perso_t *perso = nullptr;
 	int16 oldDialogType = -1;
-	_vm->_video->curVideoNum = num;
+	_vm->_video->_curVideoNum = num;
 	if (num != 2001 && num != 2012 && num != 98 && num != 171) {
 		byte oldMusicType = p_global->newMusicType;
 		p_global->newMusicType = MusicType::mtEvent;
@@ -6312,15 +6312,15 @@ void EdenGame::playHNM(int16 num) {
 	}
 	if (videoCanceled)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->curVideoNum == 167)
+	if (_vm->_video->_curVideoNum == 167)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->curVideoNum == 104)
+	if (_vm->_video->_curVideoNum == 104)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->curVideoNum == 102)
+	if (_vm->_video->_curVideoNum == 102)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->curVideoNum == 77)
+	if (_vm->_video->_curVideoNum == 77)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->curVideoNum == 149)
+	if (_vm->_video->_curVideoNum == 149)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 }
 
@@ -6328,7 +6328,7 @@ void EdenGame::playHNM(int16 num) {
 void EdenGame::displayHNMSubtitles() {
 	int16 *frames;
 	perso_t *perso;
-	switch (_vm->_video->curVideoNum) {
+	switch (_vm->_video->_curVideoNum) {
 	case 170:
 		frames = kFramesVid170;
 		perso = &kPersons[PER_UNKN_156];

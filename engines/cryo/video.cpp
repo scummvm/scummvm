@@ -25,31 +25,32 @@
 
 namespace Cryo {
 HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
-	curVideoNum = 0;
-	sound_started = false;
-	pending_sounds = 0;
-	time_drift = 0.0;
-	next_frame_time = 0.0;
-	expected_frame_time = 0.0;
-	hnm_rate = 0.0;
-	use_sound_sync = false;
-	use_sound = false;
-	soundChannel = nullptr;
-	soundGroup = nullptr;
-	soundChannel_adpcm = nullptr;
-	soundGroup_adpcm = nullptr;
-	pred_r = pred_l = 0;
-	use_adpcm = false;
-	custom_chunk_handler = nullptr;
-	preserve_color0 = false;
-	safe_palette = false;
+	_curVideoNum = 0;
+	_soundStarted = false;
+	_pendingSounds = 0;
+	_timeDrift = 0.0;
+	_nextFrameTime = 0.0;
+	_expectedFrameTime = 0.0;
+	_rate = 0.0;
+	_useSoundSync = false;
+	_useSound = false;
+	_soundChannel = nullptr;
+	_soundGroup = nullptr;
+	_soundChannelAdpcm = nullptr;
+	_soundGroupAdpcm = nullptr;
+	_prevRight = _prevLeft = 0;
+	_useAdpcm = false;
+	_customChunkHandler = nullptr;
+	_preserveColor0 = false;
+	_safePalette = false;
 
 	for (int i = 0; i < 256; i++)
-		decomp_table[i] = 0;
+		decompTable[i] = 0;
 }
 
 // Original name: CLHNM_New
-hnm_t *HnmPlayer::resetInternals(int preload_size) {
+hnm_t *HnmPlayer::resetInternals() {
+
 	hnm_t *hnm = (hnm_t *)malloc(sizeof(*hnm));
 
 	hnm->_frameNum = 0;
@@ -78,13 +79,13 @@ void HnmPlayer::setFile(hnm_t *hnm, file_t *file) {
 
 // Original name: CLHNM_SetupTimer
 void HnmPlayer::setupTimer(float rate) {
-	hnm_rate = 100.0 / rate;
+	_rate = 100.0 / rate;
 }
 
 // Original name: CLHNM_ResetInternalTimer
 void HnmPlayer::resetInternalTimer() {
-	time_drift = 0.0;
-	next_frame_time = expected_frame_time = TimerTicks;
+	_timeDrift = 0.0;
+	_nextFrameTime = _expectedFrameTime = TimerTicks;
 }
 
 // Original name: CLHNM_Reset
@@ -92,75 +93,75 @@ void HnmPlayer::reset(hnm_t *hnm) {
 	hnm->_frameNum = 0;
 	hnm->ff_4 = 0;
 	hnm->_totalRead = 0;
-	sound_started = false;
-	pending_sounds = 0;
+	_soundStarted = false;
+	_pendingSounds = 0;
 	resetInternalTimer();
 }
 
 // Original name: CLHNM_Init
 void HnmPlayer::init() {
-	custom_chunk_handler = nullptr;
-	preserve_color0 = false;
+	_customChunkHandler = nullptr;
+	_preserveColor0 = false;
 }
 
 // Original name: CLHNM_SetForceZero2Black
 void HnmPlayer::setForceZero2Black(bool forceblack) {
-	preserve_color0 = forceblack;
+	_preserveColor0 = forceblack;
 }
 
 // Original name: CLHNM_WaitLoop
 void HnmPlayer::waitLoop(hnm_t *hnm) {
-	expected_frame_time += hnm_rate;
-	next_frame_time = expected_frame_time - time_drift;
-	if (use_sound_sync && TimerTicks > 1000.0 + next_frame_time)
-		use_sound = false;
-	while (TimerTicks < next_frame_time) ;  // waste time
-	time_drift = TimerTicks - next_frame_time;
+	_expectedFrameTime += _rate;
+	_nextFrameTime = _expectedFrameTime - _timeDrift;
+	if (_useSoundSync && TimerTicks > 1000.0 + _nextFrameTime)
+		_useSound = false;
+	while (TimerTicks < _nextFrameTime) ;  // waste time
+	_timeDrift = TimerTicks - _nextFrameTime;
 }
 
 // Original name: CLHNM_WantsSound
 void HnmPlayer::wantsSound(bool sound) {
-	use_sound = sound;
+	_useSound = sound;
 }
 
 // Original name: CLHNM_SetupSound
 void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	soundChannel = CLSoundChannel_New(mode);
-	soundGroup = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
+	_soundChannel = CLSoundChannel_New(mode);
+	_soundGroup = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
 	if (sampleSize == 16)
-		CLSoundGroup_Reverse16All(soundGroup);
+		CLSoundGroup_Reverse16All(_soundGroup);
 }
 
 // Original name: CLHNM_SetupSoundADPCM
 void HnmPlayer::setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	soundChannel_adpcm = CLSoundChannel_New(mode);
-	soundGroup_adpcm = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
+	_soundChannelAdpcm = CLSoundChannel_New(mode);
+	_soundGroupAdpcm = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
 }
 
 // Original name: CLHNM_SoundInADPCM
 void HnmPlayer::soundInADPCM(bool isAdpcm) {
-	use_adpcm = isAdpcm;
+	_useAdpcm = isAdpcm;
 }
 
 // Original name: CLHNM_CloseSound
 void HnmPlayer::closeSound() {
-	if (soundChannel) {
-		CLSoundChannel_Stop(soundChannel);
-		CLSoundChannel_Free(soundChannel);
-		soundChannel = nullptr;
+	if (_soundChannel) {
+		CLSoundChannel_Stop(_soundChannel);
+		CLSoundChannel_Free(_soundChannel);
+		_soundChannel = nullptr;
 	}
-	if (soundGroup) {
-		CLSoundGroup_Free(soundGroup);
-		soundGroup = nullptr;
+	if (_soundGroup) {
+		CLSoundGroup_Free(_soundGroup);
+		_soundGroup = nullptr;
 	}
-	if (soundChannel_adpcm) {
-		CLSoundChannel_Stop(soundChannel_adpcm);
-		CLSoundChannel_Free(soundChannel_adpcm);
-		soundChannel = nullptr;
+	if (_soundChannelAdpcm) {
+		CLSoundChannel_Stop(_soundChannelAdpcm);
+		CLSoundChannel_Free(_soundChannelAdpcm);
+		_soundChannel = nullptr;
 	}
-	if (soundGroup_adpcm) {
-		CLSoundGroup_Free(soundGroup_adpcm);
-		soundGroup = nullptr;
+	if (_soundGroupAdpcm) {
+		CLSoundGroup_Free(_soundGroupAdpcm);
+		_soundGroup = nullptr;
 	}
 }
 
@@ -168,23 +169,23 @@ void HnmPlayer::closeSound() {
 void HnmPlayer::loadDecompTable(int16 *buffer) {
 	for (int16 i = 0; i < 256; i++) {
 		int16 e = *buffer++;
-		decomp_table[i] = LE16(e);
+		decompTable[i] = LE16(e);
 	}
 }
 
 // Original name: CLHNM_DecompADPCM
 void HnmPlayer::decompADPCM(byte *buffer, int16 *output, int size) {
-	int16 l = pred_l;
-	int16 r = pred_r;
+	int16 l = _prevLeft;
+	int16 r = _prevRight;
 	size &= ~1;
 	while (size--) {
-		*output++ = l += decomp_table[*buffer++];
-		*output++ = r += decomp_table[*buffer++];
+		*output++ = l += decompTable[*buffer++];
+		*output++ = r += decompTable[*buffer++];
 		if (l > 512 || r > 512)
 			error("decompADPCM - Unexpected values");
 	}
-	pred_l = l;
-	pred_r = r;
+	_prevLeft = l;
+	_prevRight = r;
 }
 
 // Original name: CLHNM_ReadHeader
@@ -466,7 +467,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 bool HnmPlayer::nextElement(hnm_t *hnm) {
 	if (hnm->_frameNum == 0) {
 		resetInternalTimer();
-		pred_l = pred_r = 0;
+		_prevLeft = _prevRight = 0;
 	}
 	if (hnm->_frameNum == hnm->_header._numbFrame)
 		return false;
@@ -509,16 +510,16 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 				//				else
 				memcpy(hnm->finalBuffer, hnm->_newFrameBuffer, hnm->_header._height);   //TODO: wrong size?
 			}
-			if (use_adpcm) {
-				if (!sound_started) {
-					for (int16 i = 0; i < pending_sounds; i++)
-						CLSoundGroup_PlayNextSample(soundGroup_adpcm, soundChannel);
-					sound_started = true;
+			if (_useAdpcm) {
+				if (!_soundStarted) {
+					for (int16 i = 0; i < _pendingSounds; i++)
+						CLSoundGroup_PlayNextSample(_soundGroupAdpcm, _soundChannel);
+					_soundStarted = true;
 				}
-			} else if (!sound_started) {
-				for (int16 i = 0; i < pending_sounds; i++)
-					CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
-				sound_started = true;
+			} else if (!_soundStarted) {
+				for (int16 i = 0; i < _pendingSounds; i++)
+					CLSoundGroup_PlayNextSample(_soundGroup, _soundChannel);
+				_soundStarted = true;
 			}
 
 			return true;
@@ -538,29 +539,29 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 
 		case BE16('sd'):
 		case BE16('SD'):
-			if (use_sound) {
+			if (_useSound) {
 				if (!h6) {
 					int sound_size = sz - 8;
-					if (!use_adpcm) {
-						CLSoundGroup_SetDatas(soundGroup, hnm->_dataPtr, sound_size - 2, false);
-						if (sound_started)
-							CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
+					if (!_useAdpcm) {
+						CLSoundGroup_SetDatas(_soundGroup, hnm->_dataPtr, sound_size - 2, false);
+						if (_soundStarted)
+							CLSoundGroup_PlayNextSample(_soundGroup, _soundChannel);
 						else
-							pending_sounds++;
+							_pendingSounds++;
 					} else {
-						int16 *sound_buffer = (int16 *)CLSoundGroup_GetNextBuffer(soundGroup_adpcm);
-						if (!pending_sounds) {
+						int16 *sound_buffer = (int16 *)CLSoundGroup_GetNextBuffer(_soundGroupAdpcm);
+						if (!_pendingSounds) {
 							const int kDecompTableSize = 256 * sizeof(int16);
 							loadDecompTable((int16 *)hnm->_dataPtr);
 							decompADPCM(hnm->_dataPtr + kDecompTableSize, sound_buffer, sound_size - kDecompTableSize);
-							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, false);
+							CLSoundGroup_AssignDatas(_soundGroupAdpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, false);
 						} else {
 							decompADPCM(hnm->_dataPtr, sound_buffer, sound_size);
-							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, sound_size * 2, false);
+							CLSoundGroup_AssignDatas(_soundGroupAdpcm, sound_buffer, sound_size * 2, false);
 						}
-						pending_sounds++;
-						if (sound_started)
-							CLSoundGroup_PlayNextSample(soundGroup_adpcm, soundChannel);
+						_pendingSounds++;
+						if (_soundStarted)
+							CLSoundGroup_PlayNextSample(_soundGroupAdpcm, _soundChannel);
 					}
 				} else
 					error("nextElement - unexpected flag");
@@ -568,8 +569,8 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 			hnm->_dataPtr += sz - 8;
 			break;
 		default:
-			if (custom_chunk_handler)
-				custom_chunk_handler(hnm->_dataPtr, sz - 8, id, h6, h7);
+			if (_customChunkHandler)
+				_customChunkHandler(hnm->_dataPtr, sz - 8, id, h6, h7);
 			hnm->_dataPtr += sz - 8;
 		}
 	}
@@ -578,7 +579,7 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 
 // Original name: CLHNM_GetSoundChannel
 soundchannel_t *HnmPlayer::getSoundChannel() {
-	return soundChannel;
+	return _soundChannel;
 }
 
 // Original name: CLHNM_FlushPreloadBuffer
@@ -606,7 +607,7 @@ void HnmPlayer::changePalette(hnm_t *hnm) {
 		if (maxcolor < fst + cnt)
 			maxcolor = fst + cnt;
 		color_t *color = hnm->_palette + fst;
-		if (safe_palette) {
+		if (_safePalette) {
 			while (cnt--) {
 				byte r = *pal++;
 				byte g = *pal++;

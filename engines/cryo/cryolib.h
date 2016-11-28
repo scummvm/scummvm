@@ -255,7 +255,6 @@ void CRYOLib_ManagersDone();
 void CLHNM_Done();
 void CLHNM_Dispose(hnm_t *hnm);
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop);
-void CLHNM_WantsSound(int16 sound);
 void CLHNM_SoundMono(int16 is_mono);
 
 

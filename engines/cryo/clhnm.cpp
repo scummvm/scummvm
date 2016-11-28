@@ -35,9 +35,6 @@ void CLHNM_Dispose(hnm_t *hnm) {
 	free(hnm);
 }
 
-void CLHNM_GiveTime(hnm_t *hnm) {
-}
-
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop) {
 	hnm->_canLoop = canLoop;
 }

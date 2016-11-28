@@ -37,7 +37,7 @@ private:
 	void loadDecompTable(int16 *buffer);
 	void soundInADPCM(bool is_adpcm); // Unused
 	bool loadFrame(hnm_t *hnm);
-	void tryRead(hnm_t *hnm, int size); // TODO: remove this function
+	void tryRead(hnm_t *hnm, int size);
 	void changePalette(hnm_t *hnm);
 	void selectBuffers(hnm_t *hnm);
 	void decompLempelZiv(byte *buffer, byte *output);
@@ -45,30 +45,30 @@ private:
 	void desentrelace(hnm_t *hnm);
 	void decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags);
 
-	bool sound_started;
-	int16 pending_sounds;
-	float time_drift;
-	float next_frame_time;
-	float expected_frame_time;
-	float hnm_rate;
-	bool use_sound_sync;
-	bool use_sound;
-	int16 pred_r;
-	int16 pred_l;
-	bool use_adpcm;
-	bool preserve_color0;
-	int16 decomp_table[256];
-	bool safe_palette;
+	bool _soundStarted;
+	int16 _pendingSounds;
+	float _timeDrift;
+	float _nextFrameTime;
+	float _expectedFrameTime;
+	float _rate;
+	bool _useSoundSync;
+	bool _useSound;
+	int16 _prevRight;
+	int16 _prevLeft;
+	bool _useAdpcm;
+	bool _preserveColor0;
+	int16 decompTable[256];
+	bool _safePalette;
 
-	void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7);
+	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
-	soundchannel_t *soundChannel;
-	soundgroup_t *soundGroup;
-	soundchannel_t *soundChannel_adpcm;
-	soundgroup_t *soundGroup_adpcm;
+	soundchannel_t *_soundChannel;
+	soundgroup_t *_soundGroup;
+	soundchannel_t *_soundChannelAdpcm;
+	soundgroup_t *_soundGroupAdpcm;
 
 public:
-	uint16 curVideoNum;
+	uint16 _curVideoNum;
 
 	HnmPlayer(CryoEngine *vm);
 
@@ -88,7 +88,7 @@ public:
 	void deallocMemory(hnm_t *hnm);
 	void setFinalBuffer(hnm_t *hnm, byte *buffer);
 	int getFrameNum(hnm_t *hnm);
-	hnm_t *resetInternals(int preload_size); // TODO: Remove useless parameter
+	hnm_t *resetInternals();
 	void setFile(hnm_t *hnm, file_t *file);
 
 	soundchannel_t *getSoundChannel();
