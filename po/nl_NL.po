@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-10-26 16:06+0200\n"
-"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
-"Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
-"Language: Nederlands\n"
+"PO-Revision-Date: 2016-11-28 11:59+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
+"Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Language-name: Nederlands\n"
 
 #: gui/about.cpp:94
@@ -1282,7 +1283,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Toepassen"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
@@ -2186,7 +2187,7 @@ msgstr "Venstermodus"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Resolutie: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -3021,14 +3022,12 @@ msgid "Move Back"
 msgstr "Beweeg Terug"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
-msgstr "Schuif Links"
+msgstr "Verplaats naar links"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
-msgstr "Schuif Rechts"
+msgstr "Verplaats naar rechts"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2509
@@ -3041,9 +3040,8 @@ msgid "Turn Right"
 msgstr "Draai Rechtsom"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Inventaris"
+msgstr "Open/Sluit Inventaris"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
@@ -3175,7 +3173,6 @@ msgid "Easy mouse interface"
 msgstr ""
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Toon labels voor objecten als de muis er over zweeft"
 
@@ -3189,7 +3186,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Ondeugende spelmodus"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -4363,11 +4360,9 @@ msgstr ""
 "deze versie van ScummVM. Decomprimeer a.u.b. het bestand."
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Spel opslaan in slot %i mislukt\n"
-"\n"
+msgstr "Spel opgeslagen in slot #%d"
 
 #: engines/toon/toon.cpp:226
 #, c-format
@@ -4385,18 +4380,14 @@ msgid "Could not quick load the savegame #%d"
 msgstr ""
 
 #: engines/toon/toon.cpp:4917
-#, fuzzy
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 msgstr ""
-"Het 'teenagent.dat' bestand ontbreekt. U kunt die vinden op de ScummVM "
-"website."
+"Het 'toon.dat' bestand ontbreekt. U kunt die vinden op de ScummVM website."
 
 #: engines/toon/toon.cpp:4929
-#, fuzzy
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
 msgstr ""
-"Het 'teenagent.dat' bestand ontbreekt. U kunt die vinden op de ScummVM "
-"website."
+"Het 'toon.dat' bestand is corrupt. U kunt die vinden op de ScummVM website."
 
 #: engines/toon/toon.cpp:4939
 #, c-format
