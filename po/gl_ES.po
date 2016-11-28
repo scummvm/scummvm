@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-28 15:26+0000\n"
+"PO-Revision-Date: 2016-11-28 15:51+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/gl/>\n"
@@ -845,7 +845,7 @@ msgstr "non se puido cambiar a configuración de pantalla completa."
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr "Non se puido cambiar a configuración de filtrado."
+msgstr "non se puido cambiar a configuración de filtrado."
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -1276,7 +1276,7 @@ msgid ""
 "Auth with server is not available with non-default port"
 msgstr ""
 "O porto empregado polo servidor.\n"
-"Autorización non dispoñible con portos non predeterminados."
+"Autenticación non dispoñible con portos non predeterminados."
 
 #: gui/options.cpp:1462
 msgid "Apply"
@@ -1763,7 +1763,7 @@ msgid ""
 msgstr ""
 "O xogo en %s semella descoñecido.\n"
 "Por favor, envía estes datos ao equipo de ScummVM xunto co nome\n"
-"do xogo que queres engadir, a súa versión, lingua, etc."
+"do xogo que queres engadir, a súa versión, lingua, etc.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -3222,7 +3222,7 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"Falta un executábel de Riven. O executábel de Windows é riven.exe ou "
+"Falta un executable de Riven. O executable de Windows é riven.exe ou "
 "rivendmo.exe. "
 
 #: engines/mohawk/riven.cpp:151
@@ -3230,7 +3230,7 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Tamén podes empregar o ficheiro do instalador arcriven.z ou o executábel de "
+"Tamén podes empregar o ficheiro do instalador arcriven.z ou o executable de "
 "Mac."
 
 #: engines/mohawk/riven.cpp:162
@@ -3246,7 +3246,7 @@ msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
-"A exploración alén deste punto só está dispoñíbel coa versión\n"
+"A exploración alén deste punto só está dispoñible coa versión\n"
 "completa do xogo.\n"
 
 #: engines/mohawk/riven_external.cpp:655
@@ -4407,8 +4407,8 @@ msgid ""
 "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
 "the ScummVM website"
 msgstr ""
-"A versión do ficheiro toon.dat é incorrecta. Versión esperada: %d.&d. "
-"Versión dispoñíbel: %d.&d. Descárgao dende o sitio web de ScummVM."
+"A versión do ficheiro toon.dat é incorrecta. Versión esperada: %d.%d. "
+"Versión dispoñíbel: %d.%d. Descárgao dende o sitio web de ScummVM."
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4455,7 +4455,7 @@ msgstr "Empregar modo de vídeo MPEG de alta resolución"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
-"Emprega o vídeo MPEG da versión en DVD, no canto da AVI de baixa resolución."
+"Emprega o vídeo MPEG da versión en DVD, no canto do AVI de baixa resolución."
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
@@ -4463,9 +4463,9 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
-"Este ficheiro de gardado emprega a versión %u. No entanto, o motor só é "
+"Estes datos gardados empregan a versión %u. No entanto, o motor só é "
 "compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
-"motor para empregar este ficheiro de gardado."
+"motor para empregar estes datos gardados."
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "O xogo de %s semella ser descoñecido."
