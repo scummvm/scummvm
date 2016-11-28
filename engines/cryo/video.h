@@ -88,6 +88,8 @@ public:
 	void deallocMemory(hnm_t *hnm);
 	void setFinalBuffer(hnm_t *hnm, byte *buffer);
 	int getFrameNum(hnm_t *hnm);
+	hnm_t *resetInternals(int preload_size); // TODO: Remove useless parameter
+	void setFile(hnm_t *hnm, file_t *file);
 
 	soundchannel_t *getSoundChannel();
 };

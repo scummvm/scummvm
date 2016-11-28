@@ -4653,8 +4653,8 @@ void EdenGame::openbigfile() {
 	h_bigfile.open("EDEN.DAT");
 	h_bigfile.read(bigfile_header, size);
 
-	_hnmContext = CLHNM_New(128);
-	CLHNM_SetFile(_hnmContext, &h_bigfile);
+	_hnmContext = _vm->_video->resetInternals(128);
+	_vm->_video->setFile(_hnmContext, &h_bigfile);
 }
 
 void EdenGame::closebigfile() {

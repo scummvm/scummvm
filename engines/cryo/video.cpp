@@ -48,6 +48,34 @@ HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
 		decomp_table[i] = 0;
 }
 
+// Original name: CLHNM_New
+hnm_t *HnmPlayer::resetInternals(int preload_size) {
+	hnm_t *hnm = (hnm_t *)malloc(sizeof(*hnm));
+
+	hnm->_frameNum = 0;
+	hnm->ff_4 = 0;
+	hnm->_file = nullptr;
+	hnm->tmpBuffer[0] = nullptr;
+	hnm->tmpBuffer[1] = nullptr;
+	hnm->finalBuffer = nullptr;
+	hnm->_readBuffer = nullptr;
+	hnm->ff_896 = 0;
+	hnm->_totalRead = 0;
+	for (int i = 0; i < 256; i++) {
+		hnm->_palette[i].a = 0;
+		hnm->_palette[i].r = 0;
+		hnm->_palette[i].g = 0;
+		hnm->_palette[i].b = 0;
+	}
+
+	return hnm;
+}
+
+// Original name: CLHNM_SetFile
+void HnmPlayer::setFile(hnm_t *hnm, file_t *file) {
+	hnm->_file = file;
+}
+
 // Original name: CLHNM_SetupTimer
 void HnmPlayer::setupTimer(float rate) {
 	hnm_rate = 100.0 / rate;
@@ -406,7 +434,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 		assert(0);
 		//HNM4 hires
 		for (;;) {
-			unsigned int code = PLE32(input) & 0xFFFFFF;
+			code = PLE32(input) & 0xFFFFFF;
 			input++;
 			count = code & 0x3F;
 			if (count) {

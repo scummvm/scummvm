@@ -253,9 +253,7 @@ void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 
 void CLHNM_Done();
-hnm_t *CLHNM_New(int preload_size);
 void CLHNM_Dispose(hnm_t *hnm);
-void CLHNM_SetFile(hnm_t *hnm, file_t *file);
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop);
 void CLHNM_WantsSound(int16 sound);
 void CLHNM_SoundMono(int16 is_mono);
