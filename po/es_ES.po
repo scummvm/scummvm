@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 22:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-11-29 22:52+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -143,7 +143,7 @@ msgstr "No"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM no ha podido abrir el directorio."
+msgstr "¡ScummVM no ha podido abrir el directorio!"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
@@ -468,7 +468,7 @@ msgstr "Atenuación:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr "Amplitud"
+msgstr "Anchura:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
@@ -492,7 +492,7 @@ msgstr "Profundidad:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr "Tipo"
+msgstr "Tipo:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
@@ -532,7 +532,7 @@ msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Volver a los valores por defecto de las opciones de FluidSynth"
+msgstr "Volver a los valores por defecto de las opciones de FluidSynth."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -604,7 +604,7 @@ msgstr "Salir de ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr "Acerca ~d~e"
+msgstr "Acerca ~d~e..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
@@ -709,8 +709,8 @@ msgstr ""
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Este directorio se está utilizando para una descarga y todavía no puede "
-"usarse."
+"¡Este directorio se está utilizando para una descarga y todavía no puede "
+"usarse!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
@@ -727,11 +727,11 @@ msgstr "Este juego no permite cargar partidas desde el lanzador."
 #: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"ScummVM no ha podido encontrar ningún motor capaz de ejecutar el juego."
+"¡ScummVM no ha podido encontrar ningún motor capaz de ejecutar el juego!"
 
 #: gui/launcher.cpp:577
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM no ha encontrado ningún juego en el directorio."
+msgstr "¡ScummVM no ha encontrado ningún juego en el directorio!"
 
 #: gui/launcher.cpp:590
 msgid "Pick the game:"
@@ -751,7 +751,7 @@ msgstr "... progreso..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
-msgstr "Búsqueda completada."
+msgstr "¡Búsqueda completada!"
 
 #: gui/massadd.cpp:262
 #, c-format
@@ -847,9 +847,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "no se ha podido cambiar el ajuste de pantalla completa"
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "no se ha podido cambiar el ajuste de pantalla completa"
+msgstr "no se han podido cambiar los ajustes de filtrado"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -869,9 +868,8 @@ msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Usar gráficos en color"
+msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
