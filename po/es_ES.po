@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:02+0000\n"
-"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
+"PO-Revision-Date: 2016-11-29 23:03+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4401,18 +4401,13 @@ msgid "Could not quick load the saved game #%d"
 msgstr "¿Quieres cargar la partida guardada?"
 
 #: engines/toon/toon.cpp:4917
-#, fuzzy
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 msgstr ""
-"No se encuentra el archivo 'teenagent.dat'. Descárgalo de la página de "
-"ScummVM"
+"No se encuentra el archivo 'toon.dat'. Descárgalo de la página de ScummVM"
 
 #: engines/toon/toon.cpp:4929
-#, fuzzy
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr ""
-"No se encuentra el archivo 'teenagent.dat'. Descárgalo de la página de "
-"ScummVM"
+msgstr "El archivo 'toon.dat' está corrupto. Descárgalo de la página de ScummVM"
 
 #: engines/toon/toon.cpp:4939
 #, c-format
@@ -4420,6 +4415,8 @@ msgid ""
 "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
 "the ScummVM website"
 msgstr ""
+"Encontrada una versión equivocada del fichero 'toon.dat'. Se esperaba la %d.%"
+"d pero se encontró la %d.%d. Descárgalo de la página web de ScummVM"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
