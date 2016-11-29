@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-11-29 22:57+0000\n"
-"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
+"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -2689,7 +2689,7 @@ msgstr "¿Quieres cargar o guardar el juego?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "¿Seguro que quieres salir?"
+msgstr "  ¿Seguro que quieres salir?  "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2701,11 +2701,11 @@ msgstr "Rotar"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Usando el controlador SDL"
+msgstr "Usando el controlador SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Pantalla"
+msgstr "Pantalla "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
