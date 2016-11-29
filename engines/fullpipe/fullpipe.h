@@ -185,6 +185,7 @@ public:
 	void updateTrackDelay();
 	void startSceneTrack();
 	void startSoundStream1(const char *trackName);
+	void playOggSound(const char *trackName, Audio::SoundHandle *stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);

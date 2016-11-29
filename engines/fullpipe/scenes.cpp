@@ -68,6 +68,7 @@ Vars::Vars() {
 	scene04_mamasha = 0;
 	scene04_boot = 0;
 	scene04_speaker = 0;
+	scene04_musicStage = 0;
 
 	scene04_ladder = 0;
 	scene04_coinPut = false;

@@ -123,7 +123,7 @@ void sceneHandlerFinal_fallCoin() {
 	}
 }
 
-void checkMusic() {
+void updateMusic() {
 	if (g_vars->sceneFinal_trackHasStarted && !g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream1)) { // loop music
 		sceneHandlerFinal_startMusic("track16.ogg");
 	}
@@ -177,7 +177,7 @@ int sceneHandlerFinal(ExCommand *cmd) {
 		break;
 	}
 
-	checkMusic();
+	updateMusic();
 
 	return 0;
 }

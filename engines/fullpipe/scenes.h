@@ -288,6 +288,8 @@ public:
 	int scene04_springOffset;
 	StaticANIObject *scene04_lastKozyawka;
 	int scene04_springDelay;
+	int scene04_musicStage;
+
 
 	StaticANIObject *scene05_handle;
 	StaticANIObject *scene05_wacko;

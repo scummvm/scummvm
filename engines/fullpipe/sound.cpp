@@ -367,8 +367,12 @@ int FullpipeEngine::getSceneTrack() {
 void FullpipeEngine::startSoundStream1(const char *trackName) {
 	stopAllSoundStreams();
 
+	playOggSound(trackName, _soundStream1);
+}
+
+void FullpipeEngine::playOggSound(const char *trackName, Audio::SoundHandle *stream) {
 #ifdef USE_VORBIS
-	if (_mixer->isSoundHandleActive(*_soundStream1))
+	if (_mixer->isSoundHandleActive(*stream))
 		return;
 
 	Common::File *track = new Common::File();
@@ -378,7 +382,7 @@ void FullpipeEngine::startSoundStream1(const char *trackName) {
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundStream1, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, stream, ogg);
 #endif
 }
 

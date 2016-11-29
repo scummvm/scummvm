@@ -35,6 +35,8 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
 
+#include "audio/mixer.h"
+
 namespace Fullpipe {
 
 static const int scene04_speakerPhases[] = {
@@ -213,6 +215,8 @@ void scene04_initScene(Scene *sc) {
 
 	g_vars->scene04_speakerVariant = 0;
 	g_vars->scene04_speakerPhase = 0;
+
+	g_vars->scene04_musicStage = 0;
 
 	g_fp->initArcadeKeys("SC_4");
 }
@@ -1071,13 +1075,36 @@ void sceneHandler04_liftBottle() {
 }
 
 void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *snd3) {
-	warning("STUB: sceneHandler04_startSounds()");
-
-	// playFile(snd1);
-	// playFile(snd2);
-	// playFile(snd3);
+	g_fp->playOggSound(snd1, g_fp->_soundStream2);
 
 	g_fp->_stream2playing = true;
+
+	g_vars->scene04_musicStage = 1;
+}
+
+void updateSound() {
+	switch (g_vars->scene04_musicStage) {
+	case 0:
+		return;
+
+	case 1:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream2)) {
+			g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
+			g_vars->scene04_musicStage = 2;
+		}
+		break;
+	case 2:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream3)) {
+			g_fp->playOggSound("sc4_stop2.ogg", g_fp->_soundStream4);
+			g_vars->scene04_musicStage = 3;
+		}
+		break;
+	case 3:
+		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream4)) {
+			g_vars->scene04_musicStage = 0;
+		}
+		break;
+	}
 }
 
 void sceneHandler04_goClock() {
@@ -1605,6 +1632,8 @@ int sceneHandler04(ExCommand *ex) {
 		g_vars->scene04_coinPut = true;
 		break;
 	}
+
+	updateSound();
 
 	return 0;
 }
