@@ -2680,13 +2680,16 @@ void EdenGame::af_fondperso() {
 }
 
 void EdenGame::setpersoicon() {
-	icon_t *icon = gameIcons, *icon2 = &gameIcons[roomIconsBase];
 	if (p_global->iconsIndex == 4)
 		return;
+
 	if (p_global->perso_ptr == &kPersons[PER_MESSAGER] && p_global->eventType == EventType::etEventE) {
 		p_global->iconsIndex = 123;
 		return;
 	}
+	icon_t *icon = gameIcons;
+	icon_t *icon2 = &gameIcons[roomIconsBase];
+
 	*icon2++ = *icon++; //TODO: is this ok?
 	*icon2++ = *icon++;
 	icon2->sx = -1;
@@ -2805,12 +2808,12 @@ void EdenGame::waitendspeak() {
 }
 
 void EdenGame::my_bulle() {
-	int16 words_on_line, word_width, line_width;
+	if (!p_global->textNum)
+		return;
+
 	byte *icons = phraseIconsBuffer;
 	byte *linesp = phraseCoordsBuffer;
 	byte *phrasePtr = phraseBuffer;
-	if (!p_global->textNum)
-		return;
 	p_global->numGiveObjs = 0;
 	p_global->giveobj1 = 0;
 	p_global->giveobj2 = 0;
@@ -2818,9 +2821,9 @@ void EdenGame::my_bulle() {
 	p_global->textWidthLimit = subtitles_x_width;
 	text_ptr = gettxtad(p_global->textNum);
 	num_text_lines = 0;
-	words_on_line = 0;
-	word_width = 0;
-	line_width = 0;
+	int16 words_on_line = 0;
+	int16 word_width = 0;
+	int16 line_width = 0;
 	byte c;
 	while ((c = *text_ptr++) != 0xFF) {
 		if (c == 0x11 || c == 0x13) {
@@ -2921,11 +2924,12 @@ void EdenGame::my_bulle() {
 }
 
 void EdenGame::my_pr_bulle() {
-	byte *coo = phraseCoordsBuffer;
-	bool done = false;
 	CLBlitter_FillView(p_subtitlesview, 0);
 	if (p_global->pref_language == 0)
 		return;
+
+	byte *coo = phraseCoordsBuffer;
+	bool done = false;
 	textout = p_subtitlesview_buf;
 	text_ptr = phraseBuffer;
 	int16 lines = 1;
