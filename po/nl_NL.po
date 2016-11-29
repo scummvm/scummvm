@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 08:03+0000\n"
-"Last-Translator: Martin Schoenmakers <aiviru@gmail.com>\n"
+"PO-Revision-Date: 2016-11-29 10:56+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -503,7 +503,7 @@ msgstr "Driehoek"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1316
 msgid "Misc"
-msgstr "Misc"
+msgstr "Overig"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
@@ -599,7 +599,7 @@ msgstr "~S~toppen"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
-msgstr "Hiermee verlaat u ScummVM."
+msgstr "Hiermee verlaat u ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
@@ -954,8 +954,8 @@ msgstr "SoundFont:"
 #: gui/options.cpp:934 gui/options.cpp:936 gui/options.cpp:937
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"SoundFont wordt ondersteund door FluidSynth en Timidity en sommige "
-"geluidskaarten."
+"SoundFont wordt ondersteund door FluidSynth, Timidity en sommige "
+"geluidskaarten"
 
 #: gui/options.cpp:936
 msgctxt "lowres"
@@ -1010,7 +1010,7 @@ msgid ""
 "GS device"
 msgstr ""
 "Selecteer dit als u patchmappings wilt om een MT-32 op een Roland GS "
-"apparaat te emuleren."
+"apparaat te emuleren"
 
 #: gui/options.cpp:974
 msgid "Don't use Roland MT-32 music"
@@ -1128,7 +1128,7 @@ msgstr "Plugins Pad:"
 #: gui/options.cpp:1318
 msgctxt "lowres"
 msgid "Misc"
-msgstr "Misc"
+msgstr "Overig"
 
 #: gui/options.cpp:1320
 msgid "Theme:"
@@ -2487,7 +2487,7 @@ msgstr "[ Data ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr "[ Resources ]"
+msgstr "[ Bronnen ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
@@ -3178,7 +3178,7 @@ msgstr "Toon labels voor objecten als de muis er over zweeft"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Geanimeerde inventaris"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
@@ -3227,18 +3227,24 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Een Riven executable ontbreekt. De Windows executable heet 'riven.exe' of "
+"'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Het installatiebestand 'arcriven.z' werkt ook. U kunt ook de Mac executable "
+"'Riven' gebruiken."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Het bestand 'extras.mhk' ontbreekt. Het installatiebestand 'arcriven.z' kan "
+"ook gebruikt worden."
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
@@ -3254,6 +3260,11 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"Op dit moment zou de Riven demo vragen\n"
+"of u een web browser wilt openen om naar\n"
+"de Red Orb winkel te gaan om daar het spel\n"
+"te kopen. ScummVM kan dat niet, en de site\n"
+"bestaat niet meer."
 
 #: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
@@ -3471,6 +3482,9 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"De Lite-versie van Putt-Putt Saves the Zoo iOS wordt niet ondersteund om "
+"piraterij te voorkomen.\n"
+"De volledige versie is te koop in de iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -4034,7 +4048,7 @@ msgstr "  dus ondanks het bericht in het spel dit"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  schakelt eigenlijk Muis vechten uit/aan."
+msgstr "  schakelt eigenlijk Muis vechten uit/aan"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
