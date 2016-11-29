@@ -386,12 +386,10 @@ void FullpipeEngine::startSoundStream1(const char *trackName) {
 }
 
 void FullpipeEngine::stopAllSounds() {
-	_mixer->stopHandle(*_soundStream1);
-	_mixer->stopHandle(*_soundStream2);
-	_mixer->stopHandle(*_soundStream3);
-	_mixer->stopHandle(*_soundStream4);
-
-	_stream2playing = false;
+	for (int i = 0; i < _currSoundListCount; i++)
+		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
+			_currSoundList1[i]->getSoundByIndex(j)->stop();
+		}
 }
 
 void FullpipeEngine::toggleMute() {
@@ -522,10 +520,12 @@ void FullpipeEngine::stopSoundStream2() {
 }
 
 void FullpipeEngine::stopAllSoundStreams() {
-	warning("STUB: stopAllSoundStreams()");
+	_mixer->stopHandle(*_soundStream1);
+	_mixer->stopHandle(*_soundStream2);
+	_mixer->stopHandle(*_soundStream3);
+	_mixer->stopHandle(*_soundStream4);
 
-	// TODO: Differences from stopAllSounds()
-	_mixer->stopAll();
+	_stream2playing = false;
 }
 
 void FullpipeEngine::stopAllSoundInstances(int id) {
