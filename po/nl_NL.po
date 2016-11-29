@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-28 11:59+0000\n"
+"PO-Revision-Date: 2016-11-29 07:54+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -3052,9 +3052,8 @@ msgid "Camp"
 msgstr ""
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Kies Spreuk"
+msgstr "Spreek spreuk uit"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
