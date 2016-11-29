@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 07:54+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2016-11-29 07:58+0000\n"
+"Last-Translator: Martin Schoenmakers <aiviru@gmail.com>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -40,7 +40,7 @@ msgstr "Toon verborgen bestanden"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr "Toon bestanden die het verborgen kenmerk hebben."
+msgstr "Toon bestanden die het verborgen kenmerk hebben"
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -93,7 +93,7 @@ msgstr "Van: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Naar:"
+msgstr "Naar: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -206,7 +206,7 @@ msgid ""
 "from the command line"
 msgstr ""
 "Korte identifier die gebruikt wordt voor opgeslagen spellen en voor het "
-"starten van een spel vanaf de opdrachtprompt."
+"starten van een spel vanaf de opdrachtprompt"
 
 #: gui/editgamedialog.cpp:138
 msgctxt "lowres"
@@ -236,8 +236,7 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"De taal van het spel. Dit verandert een Engels spel niet naar een "
-"Nederlandse."
+"De taal van het spel. Dit verandert een Engels spel niet naar een Nederlandse"
 
 #: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:121
 #: gui/options.cpp:812 gui/options.cpp:825 gui/options.cpp:1356
@@ -252,7 +251,7 @@ msgstr "Platform:"
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:163
 #: gui/editgamedialog.cpp:164
 msgid "Platform the game was originally designed for"
-msgstr "Het platform waar het spel oorspronkelijk voor ontworpen was."
+msgstr "Het platform waar het spel oorspronkelijk voor ontworpen was"
 
 #: gui/editgamedialog.cpp:163
 msgctxt "lowres"
@@ -377,7 +376,7 @@ msgstr "Bewaar Pad:"
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1280 gui/options.cpp:1282
 #: gui/options.cpp:1283
 msgid "Specifies where your saved games are put"
-msgstr "Bepaalt waar opgeslagen spellen worden bewaard."
+msgstr "Bepaalt waar opgeslagen spellen worden bewaard"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1282
 msgctxt "lowres"
@@ -608,7 +607,7 @@ msgstr "O~v~er..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
-msgstr "Geeft informatie over ScummVM."
+msgstr "Over ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
@@ -624,7 +623,7 @@ msgstr "~S~tarten"
 
 #: gui/launcher.cpp:145
 msgid "Start selected game"
-msgstr "Start het geselecteerde spel."
+msgstr "Start het geselecteerde spel"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
@@ -632,7 +631,7 @@ msgstr "~L~aad Spel..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
-msgstr "Laad een eerder opgeslagen spel voor het geselecteerde spel."
+msgstr "Laad een eerder opgeslagen spel voor het geselecteerde spel"
 
 #: gui/launcher.cpp:153
 msgid "~A~dd Game..."
@@ -640,8 +639,7 @@ msgstr "Spel ~T~oevoegen..."
 
 #: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
-msgstr ""
-"Houd Shift ingedrukt voor het toevoegen van grote hoeveelheden spellen."
+msgstr "Houd Shift ingedrukt voor het toevoegen van grote hoeveelheden spellen"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
@@ -657,8 +655,7 @@ msgstr "Spel ~V~erwijderen"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
-"Verwijder dit spel uit de lijst. De spel data bestanden blijven intact."
+msgstr "Verwijder dit spel uit de lijst. De spel data bestanden blijven intact"
 
 #: gui/launcher.cpp:160
 msgctxt "lowres"
@@ -740,7 +737,7 @@ msgstr "Kies het spel:"
 
 #: gui/launcher.cpp:708
 msgid "Mass Add..."
-msgstr "Mass Add..."
+msgstr "Voeg Meerdere Toe..."
 
 #: gui/launcher.cpp:710
 msgid "Record..."
@@ -865,7 +862,7 @@ msgstr "Render modus:"
 
 #: gui/options.cpp:823 gui/options.cpp:824
 msgid "Special dithering modes supported by some games"
-msgstr "Speciale ditheringmodi die door sommige games ondersteund worden."
+msgstr "Speciale ditheringmodi die door sommige games ondersteund worden"
 
 #: gui/options.cpp:835 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
@@ -886,7 +883,7 @@ msgstr "Pixelverhoudingcorrectie"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corrigeer de pixelverhouding voor 320x200 spellen."
+msgstr "Corrigeer de pixelverhouding voor 320x200 spellen"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
@@ -932,7 +929,7 @@ msgid ""
 "soundcard"
 msgstr ""
 "Hogere waarden geven betere geluidskwaliteit maar worden mogelijk niet "
-"ondersteund door uw geluidskaart."
+"ondersteund door uw geluidskaart"
 
 #: gui/options.cpp:900
 msgid "GM Device:"
@@ -1117,7 +1114,7 @@ msgstr "Thema Pad:"
 #: gui/options.cpp:1296 gui/options.cpp:1298 gui/options.cpp:1299
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Specificeert het pad for aanvullende data voor ScummVM zelf of de spellen."
+"Specificeert het pad for aanvullende data voor ScummVM zelf of de spellen"
 
 #: gui/options.cpp:1305
 msgid "Plugins Path:"
@@ -1217,7 +1214,7 @@ msgstr "Laatste synchronisatie:"
 
 #: gui/options.cpp:1425
 msgid "When the last saved games sync for this storage occured"
-msgstr "Wanneer de laatste synchronisatie voor deze opslag is geweest."
+msgstr "Wanneer de laatste synchronisatie voor deze opslag is geweest"
 
 #: gui/options.cpp:1428 gui/storagewizarddialog.cpp:71
 msgid "Connect"
@@ -1405,12 +1402,12 @@ msgstr "Bewerken"
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr "Auteur:"
+msgstr "Auteur: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr "Notities"
+msgstr "Notities: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1504,7 +1501,7 @@ msgstr "Verkrijg de code van de opslag, voer het in"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "in het volgende veld, en druk op 'Verbind';"
+msgstr "in het volgende veld, en druk op 'Verbind':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1524,7 +1521,7 @@ msgstr "U wordt doorgestuurd naar ScummVM's pagina waar"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr "u zou het toegang moeten geven tot uw opslag"
+msgstr "u zou het toegang moeten geven tot uw opslag."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
@@ -3057,27 +3054,27 @@ msgstr "Spreek spreuk uit"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Spreuk Niveau 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Spreuk Niveau 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Spreuk Niveau 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Spreuk Niveau 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Spreuk Niveau 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Spreuk Niveau 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3169,7 +3166,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Makkelijke muis interface"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
