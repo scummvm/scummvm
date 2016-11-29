@@ -198,7 +198,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 
 static const ExtraGuiOption toltecsExtraGuiOption = {
 	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
 	false
 };
