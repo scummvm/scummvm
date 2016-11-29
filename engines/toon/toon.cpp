@@ -236,11 +236,11 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
-						Common::String buf = Common::String::format(_("Savegame #%d quick loaded"), slotNum);
+						Common::String buf = Common::String::format(_("Saved game #%d quick loaded"), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format(_("Could not quick load the savegame #%d"), slotNum);
+						Common::String buf = Common::String::format(_("Could not quick load the saved game #%d"), slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
 						warning("%s", buf.c_str());
 						dialog.runModal();
@@ -3362,7 +3362,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	saveFile->writeSint32BE(TOON_SAVEGAME_VERSION);
 
 	if (savegameDescription == "") {
-		savegameDescription = "Untitled savegame";
+		savegameDescription = "Untitled saved game";
 	}
 
 	saveFile->writeSint16BE(savegameDescription.size() + 1);
