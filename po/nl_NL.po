@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 10:56+0000\n"
+"PO-Revision-Date: 2016-11-29 15:08+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -972,7 +972,7 @@ msgstr "Gebruik zowel MIDI als AdLib geluid"
 
 #: gui/options.cpp:945
 msgid "MIDI gain:"
-msgstr "MIDI gain:"
+msgstr "MIDI versterking:"
 
 #: gui/options.cpp:955
 msgid "MT-32 Device:"
@@ -1140,12 +1140,12 @@ msgstr "GUI Renderer:"
 
 #: gui/options.cpp:1336
 msgid "Autosave:"
-msgstr "Autosave:"
+msgstr "Auto opslaan:"
 
 #: gui/options.cpp:1338
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Autosave:"
+msgstr "Auto opslaan:"
 
 #: gui/options.cpp:1346
 msgid "Keys"
@@ -2040,7 +2040,7 @@ msgstr "IBM PCjr Emulator"
 
 #: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
-msgstr "C64 Audio Emulator"
+msgstr "C64 Geluid Emulator"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
@@ -3251,6 +3251,7 @@ msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"Verder ontdekken is alleen mogelijk met de volledige versie van het spel."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3475,6 +3476,10 @@ msgid ""
 "following data to the ScummVM team along with name of the game you tried\n"
 "to add and its version/language/etc.:\n"
 msgstr ""
+"Uw versie van het spel lijkt onbekend te zijn. Als dit *GEEN* fan-"
+"gemodificeerde versie is (in het bijzonder geen fan-made translatie), "
+"rapporteer a.u.b. de volgende data aan het ScummVM team, samen met naam van "
+"het spel die u probeerde toe te voegen, zijn versie, de taal, etc.:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -4381,17 +4386,17 @@ msgstr "Spel opgeslagen in slot #%d "
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Snel opslaan in slot #%d mislukt"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Savegame #%d quick loaded"
-msgstr ""
+msgstr "Opgeslagen spel #%d snel geladen"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the savegame #%d"
-msgstr ""
+msgstr "Snel laden van opgeslagen spel #%d mislukt"
 
 #: engines/toon/toon.cpp:4917
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
@@ -4410,6 +4415,8 @@ msgid ""
 "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
 "the ScummVM website"
 msgstr ""
+"Bestand 'toon.dat' heeft de verkeerde versie. Verwacht wordt %d.%d maar dit "
+"is %d.%d. Download hem van de ScummVM website"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4465,6 +4472,9 @@ msgid ""
 "This save file uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this save file."
 msgstr ""
+"Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
+"tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
+"opgeslagen te gebruiken."
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "Het spel in '%s' lijkt onbekend te zijn."
