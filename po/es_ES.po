@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:03+0000\n"
-"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
+"PO-Revision-Date: 2016-11-29 23:11+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1267,7 +1267,7 @@ msgstr "Especifica los directorios accesibles para el gestor de archivos"
 #: gui/options.cpp:1439
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr " /raíz/:"
+msgstr "/raíz/:"
 
 #: gui/options.cpp:1449
 msgid "Server's port:"
@@ -1814,7 +1814,7 @@ msgstr "~V~olver al lanzador"
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
-msgstr "Guardar partida"
+msgstr "Guardar partida:"
 
 #: engines/dialogs.cpp:116 backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
@@ -2233,23 +2233,23 @@ msgstr "Asignación de teclas:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr "(Activa)"
+msgstr " (Activa)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr "(Activa)"
+msgstr " (Activa)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr "(Bloqueado)"
+msgstr " (Bloqueado)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr "(General)"
+msgstr " (General)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr "(Juego)"
+msgstr " (Juego)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2689,7 +2689,7 @@ msgstr "¿Quieres cargar o guardar el juego?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "  ¿Seguro que quieres salir?  "
+msgstr "   ¿Seguro que quieres salir?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -3231,7 +3231,7 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"Falta el ejecutable de Riven. El ejecutable de Windos es 'riven.exe' o "
+"Falta el ejecutable de Riven. El ejecutable de Windows es 'riven.exe' o "
 "'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
@@ -3240,7 +3240,7 @@ msgid ""
 "the Mac 'Riven' executable."
 msgstr ""
 "También es posible usar el instalador 'arcriven.z'. Además, puedes usar el "
-"ejecutable de Mac 'Riven'.\n"
+"ejecutable de Mac 'Riven'."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
@@ -3248,7 +3248,7 @@ msgid ""
 "works."
 msgstr ""
 "Falta el fichero 'extras.mhk'. También es posible usar el fichero instalador "
-"'arcriven.z'.\n"
+"'arcriven.z'."
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
@@ -3256,7 +3256,7 @@ msgid ""
 "the game."
 msgstr ""
 "La exploración a partir de este punto solo está disponible en la versión\n"
-"completa del juego"
+"completa del juego."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -4114,7 +4114,7 @@ msgstr "9, 6 y 3, respectivamente."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Controles del biplano (tecl. num.)"
+msgstr "Controles del biplano (tecl. num.):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
@@ -4166,7 +4166,7 @@ msgstr "Volumen de la música: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Vel. de subtítulos:  "
+msgstr "Vel. de subtítulos: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
