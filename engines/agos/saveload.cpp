@@ -156,7 +156,7 @@ void AGOSEngine::quickLoadOrSave() {
 		Subroutine *sub;
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
-			buf = Common::String::format(_("Failed to load game state from file:\n\n%s"), filename.c_str());
+			buf = Common::String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
 			setBitFlag(97, true);
@@ -191,7 +191,7 @@ void AGOSEngine::quickLoadOrSave() {
 	} else {
 		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			buf = Common::String::format(_("Failed to save game state to file:\n\n%s"), filename.c_str());
+			buf = Common::String::format(_("Failed to save game to file:\n\n%s"), filename.c_str());
 	}
 
 	if (!success) {
@@ -199,7 +199,7 @@ void AGOSEngine::quickLoadOrSave() {
 		dialog.runModal();
 
 	} else if (_saveLoadType == 1) {
-		buf = Common::String::format(_("Successfully saved game state in file:\n\n%s"), filename.c_str());
+		buf = Common::String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 

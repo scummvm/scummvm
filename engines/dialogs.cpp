@@ -231,7 +231,7 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate save failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
