@@ -40,6 +40,7 @@ HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
 	_soundGroupAdpcm = nullptr;
 	_prevRight = _prevLeft = 0;
 	_useAdpcm = false;
+	_useMono = false;
 	_customChunkHandler = nullptr;
 	_preserveColor0 = false;
 	_safePalette = false;
@@ -136,11 +137,6 @@ void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, floa
 void HnmPlayer::setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	_soundChannelAdpcm = CLSoundChannel_New(mode);
 	_soundGroupAdpcm = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
-}
-
-// Original name: CLHNM_SoundInADPCM
-void HnmPlayer::soundInADPCM(bool isAdpcm) {
-	_useAdpcm = isAdpcm;
 }
 
 // Original name: CLHNM_CloseSound
@@ -655,6 +651,30 @@ void HnmPlayer::selectBuffers(hnm_t *hnm) {
 		hnm->_newFrameBuffer = hnm->tmpBuffer[0];
 		hnm->_oldFrameBuffer = hnm->tmpBuffer[1];
 	}
+}
+
+// Original name: CLHNM_Done
+void HnmPlayer::done() {
+}
+
+// Original name: CLHNM_Dispose
+void HnmPlayer::dispose(hnm_t *hnm) {
+	free(hnm);
+}
+
+// Original name: CLHNM_CanLoop
+void HnmPlayer::canLoop(hnm_t *hnm, bool canLoop) {
+	hnm->_canLoop = canLoop;
+}
+
+// Original name: CLHNM_SoundInADPCM
+void HnmPlayer::soundInADPCM(bool isAdpcm) {
+	_useAdpcm = isAdpcm;
+}
+
+// Original name: CLHNM_SoundMono
+void HnmPlayer::soundMono(bool isMono) {
+	_useMono = isMono;
 }
 
 }   // namespace Cryo

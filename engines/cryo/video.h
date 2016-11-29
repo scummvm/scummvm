@@ -35,7 +35,6 @@ private:
 	void wantsSound(bool sound);
 	void decompADPCM(byte *buffer, int16 *output, int size);
 	void loadDecompTable(int16 *buffer);
-	void soundInADPCM(bool is_adpcm); // Unused
 	bool loadFrame(hnm_t *hnm);
 	void tryRead(hnm_t *hnm, int size);
 	void changePalette(hnm_t *hnm);
@@ -44,6 +43,14 @@ private:
 	void desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 	void desentrelace(hnm_t *hnm);
 	void decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags);
+
+	// Unused
+	void done();
+	void dispose(hnm_t *hnm);
+	void canLoop(hnm_t *hnm, bool canLoop);
+	void soundInADPCM(bool is_adpcm);
+	void soundMono(bool is_mono);
+	//
 
 	bool _soundStarted;
 	int16 _pendingSounds;
@@ -56,6 +63,7 @@ private:
 	int16 _prevRight;
 	int16 _prevLeft;
 	bool _useAdpcm;
+	bool _useMono;
 	bool _preserveColor0;
 	int16 decompTable[256];
 	bool _safePalette;

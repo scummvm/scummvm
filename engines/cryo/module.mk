@@ -1,7 +1,6 @@
 MODULE := engines/cryo
 
 MODULE_OBJS = \
-	clhnm.o \
 	clsoundgroup.o \
 	clsoundraw.o \
 	cryolib.o \
