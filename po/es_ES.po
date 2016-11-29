@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 22:54+0000\n"
-"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
+"PO-Revision-Date: 2016-11-29 22:55+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1423,7 +1423,7 @@ msgstr "Autor desconocido"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM no ha podido acceder al directorio."
+msgstr "¡ScummVM no ha podido acceder al directorio!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
