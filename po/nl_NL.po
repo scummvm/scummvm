@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 15:08+0000\n"
+"PO-Revision-Date: 2016-11-29 18:26+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -451,7 +451,7 @@ msgstr "Wilt u dit bestand echt overschrijven?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
-msgstr "Reverb"
+msgstr "Galm"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
@@ -463,7 +463,7 @@ msgstr "Kamer:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr "Damp:"
+msgstr "Demping:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
@@ -2000,7 +2000,7 @@ msgstr ""
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
-msgstr "Amiga Audio Emulator"
+msgstr "Amiga Geluid Emulator"
 
 #: audio/null.h:44
 msgid "No music"
