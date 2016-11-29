@@ -663,6 +663,7 @@ public:
 	int sceneFinal_var01;
 	int sceneFinal_var02;
 	int sceneFinal_var03;
+	bool sceneFinal_trackHasStarted;
 
 	PictureObject *selector;
 };

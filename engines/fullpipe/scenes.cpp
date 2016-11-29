@@ -472,6 +472,7 @@ Vars::Vars() {
 	sceneFinal_var01 = 0;
 	sceneFinal_var02 = 0;
 	sceneFinal_var03 = 0;
+	sceneFinal_trackHasStarted = false;
 
 	selector = 0;
 }
