@@ -185,12 +185,12 @@ public:
 	/**
 	 * Resize the passed surface
 	 */
-	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp) = 0;
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16) = 0;
 
 	/**
 	 * Creates a surface of a given size
 	 */
-	virtual CVideoSurface *createSurface(int w, int h, int bpp) = 0;
+	virtual CVideoSurface *createSurface(int w, int h, int bpp = 16) = 0;
 
 	/**
 	 * Creates a surface from a specified resource
@@ -367,12 +367,12 @@ public:
 	/**
 	 * Resize the passed surface
 	 */
-	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp);
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16);
 
 	/**
 	 * Creates a surface of a given size
 	 */
-	virtual CVideoSurface *createSurface(int w, int h, int bpp);
+	virtual CVideoSurface *createSurface(int w, int h, int bpp = 16);
 
 	/**
 	 * Creates a surface from a specified resource

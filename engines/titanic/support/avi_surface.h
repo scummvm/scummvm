@@ -78,6 +78,16 @@ private:
 	 * Sets up for video decompression
 	 */
 	void setupDecompressor();
+
+	/**
+	 * Copys a movie frame into a local 16-bit frame surface
+	 * @param src	Source raw movie frame
+	 * @param dest	Destination 16-bit copy of the frame
+	 * @remarks		The important thing this methods different from a straight
+	 * copy is that any pixels marked as fully transparent are replaced with
+	 * the special transparent color value.
+	 */
+	void copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest);
 protected:
 	/**
 	 * Start playback at the specified frame

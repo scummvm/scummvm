@@ -265,6 +265,33 @@ void AVISurface::setupDecompressor() {
 	}
 }
 
+void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest) {
+	assert(src.w == dest.w && src.h == dest.h);
+
+	if (src.format.bytesPerPixel == 1) {
+		Graphics::Surface *s = src.convertTo(dest.format, _decoder->getPalette());
+		dest.blitFrom(*s);
+		s->free();
+		delete s;
+	} else {
+		byte a, r, g, b;
+		assert(src.format.bytesPerPixel == 4 && dest.format.bytesPerPixel == 2);
+		uint16 transPixel = _videoSurface->getTransparencyColor();
+
+		for (uint y = 0; y < src.h; ++y) {
+			const uint32 *pSrc = (const uint32 *)src.getBasePtr(0, y);
+			uint16 *pDest = (uint16 *)dest.getBasePtr(0, y);
+
+			for (uint x = 0; x < src.w; ++x, ++pSrc, ++pDest) {
+				src.format.colorToARGB(*pSrc, a, r, g, b);
+				assert(a == 0 || a == 0xff);
+
+				*pDest = (a == 0) ? transPixel : dest.format.RGBToColor(r, g, b);
+			}
+		}
+	}
+}
+
 uint AVISurface::getWidth() const {
 	return _decoder->getWidth();
 }
@@ -309,23 +336,22 @@ bool AVISurface::renderFrame() {
 
 	// Make a copy of each decoder's video frame
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		const Graphics::Surface *frame = (idx == 0) ?
-			_decoder->decodeNextFrame() : _decoder->decodeNextTransparency();
+		const Graphics::Surface *frame;
 
-		if (!_movieFrameSurface[idx]) {
-			// Setup frame surface
-			_movieFrameSurface[idx] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-				_decoder->getVideoTrack(idx).getPixelFormat());
-		}
+		if (idx == 0) {
+			frame = _decoder->decodeNextFrame();
+			if (!_movieFrameSurface[0])
+				_movieFrameSurface[0] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
+					g_system->getScreenFormat());
 
-		if (_movieFrameSurface[idx]->format == frame->format) {
-			_movieFrameSurface[idx]->blitFrom(*frame);
+			copyMovieFrame(*frame, *_movieFrameSurface[0]);
 		} else {
-			Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
-				_decoder->getPalette());
-			_movieFrameSurface[idx]->blitFrom(*s);
-			s->free();
-			delete s;
+			frame = _decoder->decodeNextTransparency();
+			if (!_movieFrameSurface[1])
+				_movieFrameSurface[1] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
+					Graphics::PixelFormat::createFormatCLUT8());
+
+			_movieFrameSurface[1]->blitFrom(*frame);
 		}
 	}
 
@@ -397,7 +423,7 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 		return nullptr;
 	} else {
 		Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(_movieFrameSurface[1]->w,
-			_movieFrameSurface[1]->h, _movieFrameSurface[1]->format);
+			_movieFrameSurface[1]->h, Graphics::PixelFormat::createFormatCLUT8());
 		dest->blitFrom(*_movieFrameSurface[1]);
 		return dest;
 	}

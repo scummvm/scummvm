@@ -74,7 +74,7 @@ void CMouseCursor::loadCursorImages() {
 			CURSOR_DATA[idx][3]);
 
 		// Create the surface
-		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE, 16);
+		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
 		_cursors[idx]._videoSurface = surface;
 
 		// Open the cursors video and move to the given frame
