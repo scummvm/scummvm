@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 22:57+0000\n"
-"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
+"PO-Revision-Date: 2016-11-29 23:01+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -2792,7 +2792,7 @@ msgid ""
 "behavior"
 msgstr ""
 "Usar una paleta alternativa, común para todos los juegos de Amiga. Esta es "
-"la opción que se usaba antes."
+"la opción que se usaba antes"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -3027,14 +3027,12 @@ msgid "Move Back"
 msgstr "Retroceder"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
-msgstr "Deslizarse a la izquierda"
+msgstr "Mover a la izquierda"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
-msgstr "Deslizarse a la derecha"
+msgstr "Mover a la derecha"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2509
@@ -3047,46 +3045,44 @@ msgid "Turn Right"
 msgstr "Girar a la derecha"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Inventario"
+msgstr "Abrir/Cerrar Inventario"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Intercambiar pantalla de Inventario/Personaje"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
 msgstr ""
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Elegir hechizo"
+msgstr "Invocar hechizo"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Nivel de Hechizo 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Nivel de Hechizo 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Nivel de Hechizo 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Nivel de Hechizo 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Nivel de Hechizo 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Nivel de Hechizo 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3177,16 +3173,15 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Interfaz de ratón fácil"
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Muestra las etiquetas de los objetos al pasar el ratón"
+msgstr "Muestra los nombres de los objetos al pasar el ratón"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Objetos del inventario animados"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
@@ -3194,7 +3189,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Modo de juego travieso"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -3236,24 +3231,32 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
+"Falta el ejecutable de Riven. El ejecutable de Windos es 'riven.exe' o "
+"'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"También es posible usar el instalador 'arcriven.z'. Además, puedes usar el "
+"ejecutable de Mac 'Riven'.\n"
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
+"Falta el fichero 'extras.mhk'. También es posible usar el fichero instalador "
+"'arcriven.z'.\n"
 
 #: engines/mohawk/riven_external.cpp:213
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
+"La exploración a partir de este punto solo está disponible en la versión\n"
+"completa del juego"
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3263,6 +3266,11 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"En este punto, la Demo de Riven\n"
+"preguntaría si quieres abrir un navegador\n"
+"para llevarte a la Red Orb store para comprar\n"
+"el juego. ScummVM no puede hacer eso y\n"
+"la página ya no existe."
 
 #: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
@@ -3481,6 +3489,9 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"La versión Lite de Putt-Putt Saves the Zoo iOS no está soportada para evitar "
+"la piratería.\n"
+"La versión completa está disponible para comprar en la tienda iTunes."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -3588,7 +3599,7 @@ msgstr "Solo subtítulos"
 #: engines/scumm/dialogs.cpp:608
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Voces y sub."
+msgstr "Voces y subtítulos"
 
 #: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
