@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 18:24+0100\n"
+"POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-11-06 07:24+0200\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -1447,7 +1447,8 @@ msgid "Playtime: "
 msgstr "Játékidõ:"
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-msgid "Untitled savestate"
+#, fuzzy
+msgid "Untitled saved game"
 msgstr "Névtelen játékállás"
 
 #: gui/saveload-dialog.cpp:718
@@ -1688,7 +1689,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Nem található alkalmas motor plugin"
 
 #: common/error.cpp:68
-msgid "Engine plugin does not support save states"
+#, fuzzy
+msgid "Engine plugin does not support saved games"
 msgstr "A motor nem támogatja a játékállás mentését"
 
 #: common/error.cpp:71
@@ -1747,7 +1749,7 @@ msgstr "<Rossz érték>"
 msgid ""
 "The game in '%s' seems to be unknown.\n"
 "Please, report the following data to the ScummVM team along with name\n"
-"of the game you tried to add and its version/language/etc.:"
+"of the game you tried to add and its version, language, etc.:"
 msgstr ""
 
 #: engines/dialogs.cpp:85
@@ -1830,9 +1832,9 @@ msgstr ""
 "README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Gamestate save failed (%s)! Please consult the README for basic information, "
+"Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 "(%s) játékmentés nem sikerült!. Olvassd el a README-t az alap "
@@ -1901,10 +1903,10 @@ msgstr ""
 "Nézd meg a README fájlt a részletekért."
 
 #: engines/engine.cpp:542
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Gamestate load failed (%s)! Please consult the README for basic information, "
-"and for instructions on how to obtain further assistance."
+"Failed to load saved game (%s)! Please consult the README for basic "
+"information, and for instructions on how to obtain further assistance."
 msgstr ""
 "(%s) játékállás betöltése nem sikerült!. Olvassd el a README-t az alap "
 "információkról, és hogy hogyan segíthetsz a késõbbiekben."
@@ -2743,15 +2745,17 @@ msgstr "Pászta megjelenítés"
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:430
-#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
+#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
+#: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Eredeti ment/tölt képernyõk használata"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
-#: engines/toltecs/detection.cpp:201
-msgid "Use the original save/load screens, instead of the ScummVM ones"
+#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#, fuzzy
+msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Az eredeti mentés/betöltés képernyõ használata a ScummVM képek helyett"
 
 #: engines/agi/detection.cpp:157
@@ -2824,9 +2828,9 @@ msgid "Restore"
 msgstr "Visszaállítás"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Failed to load game state from file:\n"
+"Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2835,9 +2839,9 @@ msgstr ""
 "%s fájlból nem sikerült"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Failed to save game state to file:\n"
+"Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2846,9 +2850,9 @@ msgstr ""
 "%s fájlba nem sikerült"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Successfully saved game state in file:\n"
+"Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2870,8 +2874,9 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Szinvak mód engedélyezve alapértelmezett"
 
 #: engines/drascula/saveload.cpp:47
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Drascula that should be "
+"ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
@@ -2896,12 +2901,14 @@ msgstr "Grafikus megjelenítésre használja a játék fényes palettáját"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-msgid "Failed to load game state from file."
+#, fuzzy
+msgid "Failed to load saved game from file."
 msgstr "Játékállás betöltése fájlból nem sikerült."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-msgid "Failed to save game state to file."
+#, fuzzy
+msgid "Failed to save game to file."
 msgstr "Játékállás mentése fájlba nem sikerült."
 
 #: engines/gob/inter_v5.cpp:107
@@ -3129,11 +3136,10 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%d original saved game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original saved game files later you "
-"will\n"
+"%d original saved games have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game later you will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
@@ -3291,8 +3297,9 @@ msgid "Saving game..."
 msgstr "Játék mentés..."
 
 #: engines/parallaction/saveload.cpp:269
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
 "The old names are no longer supported, so you will not be able to load your "
 "games if you don't convert them.\n"
@@ -3307,7 +3314,8 @@ msgstr ""
 "játékot.\n"
 
 #: engines/parallaction/saveload.cpp:316
-msgid "ScummVM successfully converted all your savefiles."
+#, fuzzy
+msgid "ScummVM successfully converted all your saved games."
 msgstr "ScummVM konvertálta az összes játékállásodat."
 
 #: engines/parallaction/saveload.cpp:318
@@ -3323,8 +3331,9 @@ msgstr ""
 "Légyszíves jelentsd a csapatnak."
 
 #: engines/pegasus/pegasus.cpp:714
-msgid "Invalid save file name"
-msgstr "Érvénytelen mentés fájlnév"
+#, fuzzy
+msgid "Invalid file name for saving"
+msgstr "Írd be a fájlnevet mentéshez"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3433,16 +3442,18 @@ msgid "Use silver cursors"
 msgstr "Ezüst kurzor használata"
 
 #: engines/sci/detection.cpp:474
+#, fuzzy
 msgid ""
-"Use the alternate set of silver cursors, instead of the normal golden ones"
+"Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Alternatív ezüst kurzorszett használata, a normál arany helyett"
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
-"following data to the ScummVM team along with name of the game you tried\n"
-"to add and its version/language/etc.:\n"
+"following data to the ScummVM team along with the name of the game you "
+"tried\n"
+"to add and its version, language, etc.:\n"
 msgstr ""
 
 #: engines/scumm/detection.cpp:1138
@@ -3613,7 +3624,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-msgid "Load game state 1-10"
+#, fuzzy
+msgid "Load saved game 1-10"
 msgstr "1-10 Játékállás betöltése"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
@@ -3623,7 +3635,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-msgid "Save game state 1-10"
+#, fuzzy
+msgid "Save game 1-10"
 msgstr "1-10 Játékállás mentése"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
@@ -4160,18 +4173,6 @@ msgstr ""
 "Nem található a 'Monkey Island' Macintosh futtató állomány, hogy \n"
 "beolvassa a hangszereket. Zene le lessz tiltva."
 
-#: engines/sherlock/detection.cpp:71
-msgid "Use original savegame dialog"
-msgstr "Eredeti játékmentés párbeszéd használata"
-
-#: engines/sherlock/detection.cpp:72
-msgid ""
-"Files button in-game shows original savegame dialog rather than the ScummVM "
-"menu"
-msgstr ""
-"Fájl gomb a játékban, az eredeti játékmentés párbeszédet jeleníti meg a "
-"ScummVM-é helyett"
-
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
 msgstr "Pixeles képátmenetek"
@@ -4263,9 +4264,10 @@ msgid "Cutscene '%s' not found"
 msgstr "'%s' átvezetõ nem található"
 
 #: engines/sword1/control.cpp:863
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
-"converted.\n"
+"ScummVM found that you have old saved games for Broken Sword 1 that should "
+"be converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
@@ -4352,14 +4354,16 @@ msgid "Could not quick save into slot #%d"
 msgstr ""
 
 #: engines/toon/toon.cpp:239
-#, c-format
-msgid "Savegame #%d quick loaded"
+#, fuzzy, c-format
+msgid "Saved game #%d quick loaded"
 msgstr ""
+"Játékállás nem menthetõ %i slotba\n"
+"\n"
 
 #: engines/toon/toon.cpp:243
-#, c-format
-msgid "Could not quick load the savegame #%d"
-msgstr ""
+#, fuzzy, c-format
+msgid "Could not quick load the saved game #%d"
+msgstr "Akarod hogy betöltésem a játékállást?"
 
 #: engines/toon/toon.cpp:4917
 #, fuzzy
@@ -4420,15 +4424,29 @@ msgid "Use high resolution MPEG video"
 msgstr "Nagyfelbontású MPEG videó használat"
 
 #: engines/zvision/detection_tables.h:92
-msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
+#, fuzzy
+msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "MPEG videót használ DVD verziónál, a kisebb felbontású AVI helyett"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
 msgid ""
-"This save file uses version %u, but this engine only supports up to version "
-"%d. You will need an updated version of the engine to use this save file."
+"This saved game uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid "Invalid save file name"
+#~ msgstr "Érvénytelen mentés fájlnév"
+
+#~ msgid "Use original savegame dialog"
+#~ msgstr "Eredeti játékmentés párbeszéd használata"
+
+#~ msgid ""
+#~ "Files button in-game shows original savegame dialog rather than the "
+#~ "ScummVM menu"
+#~ msgstr ""
+#~ "Fájl gomb a játékban, az eredeti játékmentés párbeszédet jeleníti meg a "
+#~ "ScummVM-é helyett"
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "A '%s' játék ismeretlennek tûnik."

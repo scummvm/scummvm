@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-27 18:24+0100\n"
+"POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-11-27 17:47+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
+"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1468,7 +1468,8 @@ msgid "Playtime: "
 msgstr "Durée de jeu : "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-msgid "Untitled savestate"
+#, fuzzy
+msgid "Untitled saved game"
 msgstr "Sauvegarde sans nom"
 
 #: gui/saveload-dialog.cpp:718
@@ -1712,7 +1713,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Aucun plugin n'a pu être trouvé pour ce jeu"
 
 #: common/error.cpp:68
-msgid "Engine plugin does not support save states"
+#, fuzzy
+msgid "Engine plugin does not support saved games"
 msgstr "Ce moteur de jeu ne supporte pas les sauvegardes"
 
 #: common/error.cpp:71
@@ -1767,11 +1769,11 @@ msgid "<Bad value>"
 msgstr "<Valeur invalide>"
 
 #: engines/advancedDetector.cpp:335
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "The game in '%s' seems to be unknown.\n"
 "Please, report the following data to the ScummVM team along with name\n"
-"of the game you tried to add and its version/language/etc.:"
+"of the game you tried to add and its version, language, etc.:"
 msgstr ""
 "Votre version du jeu dans '%s' n'est pas reconnue.\n"
 "Veuillez reporter les informations ci-dessous à l'équipe de ScummVM ainsi "
@@ -1860,9 +1862,9 @@ msgstr ""
 "obtenir de l'aide supplémentaire."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Gamestate save failed (%s)! Please consult the README for basic information, "
+"Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 "Echec de la sauvegarde (%s)! Lisez le fichier README pour les informations "
@@ -1931,10 +1933,10 @@ msgstr ""
 "Lisez le fichier README pour plus de détails."
 
 #: engines/engine.cpp:542
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Gamestate load failed (%s)! Please consult the README for basic information, "
-"and for instructions on how to obtain further assistance."
+"Failed to load saved game (%s)! Please consult the README for basic "
+"information, and for instructions on how to obtain further assistance."
 msgstr ""
 "Echec du chargement (%s) ! Lisez le fichier README pour les informations de "
 "base et les instructions pour obtenir de l'aide supplémentaire."
@@ -2779,15 +2781,17 @@ msgstr "Afficher le tracé par ligne"
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:430
-#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
+#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
+#: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Dialogues sauvegarde/chargement d'origine"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
-#: engines/toltecs/detection.cpp:201
-msgid "Use the original save/load screens, instead of the ScummVM ones"
+#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#, fuzzy
+msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Utiliser les dialogues sauvegarde/chargement d'origine plutôt que ceux de "
 "ScummVM"
@@ -2863,9 +2867,9 @@ msgid "Restore"
 msgstr "Charger"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Failed to load game state from file:\n"
+"Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2874,9 +2878,9 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Failed to save game state to file:\n"
+"Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2885,9 +2889,9 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Successfully saved game state in file:\n"
+"Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2909,8 +2913,9 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Activer le mode Daltonien par défaut"
 
 #: engines/drascula/saveload.cpp:47
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Drascula that should be "
+"ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
@@ -2936,12 +2941,14 @@ msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-msgid "Failed to load game state from file."
+#, fuzzy
+msgid "Failed to load saved game from file."
 msgstr "Échec du chargement de l'état du jeu depuis le disque."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-msgid "Failed to save game state to file."
+#, fuzzy
+msgid "Failed to save game to file."
 msgstr "Échec de l'enregistrement de l'état du jeu sur le disque."
 
 #: engines/gob/inter_v5.cpp:107
@@ -3166,11 +3173,10 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%d original saved game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original saved game files later you "
-"will\n"
+"%d original saved games have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game later you will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
@@ -3329,8 +3335,9 @@ msgid "Saving game..."
 msgstr "Sauvegarde en cours..."
 
 #: engines/parallaction/saveload.cpp:269
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
 "The old names are no longer supported, so you will not be able to load your "
 "games if you don't convert them.\n"
@@ -3346,7 +3353,8 @@ msgstr ""
 "s'affichera la prochaine fois que vous démarrerez le jeu.\n"
 
 #: engines/parallaction/saveload.cpp:316
-msgid "ScummVM successfully converted all your savefiles."
+#, fuzzy
+msgid "ScummVM successfully converted all your saved games."
 msgstr "ScummVM a converti avec succès vos anciennes sauvegardes."
 
 #: engines/parallaction/saveload.cpp:318
@@ -3360,8 +3368,9 @@ msgstr ""
 "console et ne peut pas garantir que tous les fichiers ont été convertis."
 
 #: engines/pegasus/pegasus.cpp:714
-msgid "Invalid save file name"
-msgstr "Nom de sauvegarde invalide"
+#, fuzzy
+msgid "Invalid file name for saving"
+msgstr "Choisir le nom de fichier pour la sauvegarde"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3475,16 +3484,19 @@ msgid "Use silver cursors"
 msgstr "Utiliser les curseurs argentés"
 
 #: engines/sci/detection.cpp:474
+#, fuzzy
 msgid ""
-"Use the alternate set of silver cursors, instead of the normal golden ones"
+"Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Utiliser les curseurs argentés au lieu des curseurs normaux  dorés"
 
 #: engines/scumm/detection.cpp:1120
+#, fuzzy
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
-"following data to the ScummVM team along with name of the game you tried\n"
-"to add and its version/language/etc.:\n"
+"following data to the ScummVM team along with the name of the game you "
+"tried\n"
+"to add and its version, language, etc.:\n"
 msgstr ""
 "Votre version du jeu n'est pas reconnue. Si ce n'est pas une version\n"
 "modifié (par exemple traduite par des fans), veuillez reporter les "
@@ -3663,7 +3675,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-msgid "Load game state 1-10"
+#, fuzzy
+msgid "Load saved game 1-10"
 msgstr "Charger sauvegarde 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
@@ -3673,7 +3686,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-msgid "Save game state 1-10"
+#, fuzzy
+msgid "Save game 1-10"
 msgstr "Écrire sauvegarde 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
@@ -4211,18 +4225,6 @@ msgstr ""
 "L'exécutable Macintosh de 'Monkey Island' n'a pas été trouvé pour\n"
 "y lire les instruments. La musique sera désactivée."
 
-#: engines/sherlock/detection.cpp:71
-msgid "Use original savegame dialog"
-msgstr "Utiliser le dialogue de sauvegarde d'origine"
-
-#: engines/sherlock/detection.cpp:72
-msgid ""
-"Files button in-game shows original savegame dialog rather than the ScummVM "
-"menu"
-msgstr ""
-"Le bouton Fichiers du jeu ouvre le dialogue de sauvegarde d'origine au lieu "
-"d'ouvrir celui de ScummVM"
-
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
 msgstr "Transitions de scènes pixélisées"
@@ -4320,9 +4322,10 @@ msgid "Cutscene '%s' not found"
 msgstr "Séquence '%s' non trouvé"
 
 #: engines/sword1/control.cpp:863
+#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
-"converted.\n"
+"ScummVM found that you have old saved games for Broken Sword 1 that should "
+"be converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
@@ -4410,13 +4413,13 @@ msgid "Could not quick save into slot #%d"
 msgstr "Erreur de la sauvegarde rapide dans l'emplacement #%d"
 
 #: engines/toon/toon.cpp:239
-#, c-format
-msgid "Savegame #%d quick loaded"
+#, fuzzy, c-format
+msgid "Saved game #%d quick loaded"
 msgstr "Chargement rapide depuis l'emplacement #%d"
 
 #: engines/toon/toon.cpp:243
-#, c-format
-msgid "Could not quick load the savegame #%d"
+#, fuzzy, c-format
+msgid "Could not quick load the saved game #%d"
 msgstr "Erreur lors du chargement rapide depuis l'emplacement #%d"
 
 #: engines/toon/toon.cpp:4917
@@ -4485,20 +4488,34 @@ msgid "Use high resolution MPEG video"
 msgstr "Utiliser les vidéos MPEG haute résolution"
 
 #: engines/zvision/detection_tables.h:92
-msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
+#, fuzzy
+msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "Utiliser les vidéos MPEG du DVD à la place des vidéos AVI de plus basse "
 "résolution"
 
 #: engines/zvision/file/save_manager.cpp:220
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"This save file uses version %u, but this engine only supports up to version "
-"%d. You will need an updated version of the engine to use this save file."
+"This saved game uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
 "Ce fichier de sauvegarde est en version %u, mais ce moteur ne supporte que "
 "les versions %d ou inférieure. Vous devez utiliser une version plus récente "
 "de ScummVM pour pouvoir charger cette sauvegarde."
+
+#~ msgid "Invalid save file name"
+#~ msgstr "Nom de sauvegarde invalide"
+
+#~ msgid "Use original savegame dialog"
+#~ msgstr "Utiliser le dialogue de sauvegarde d'origine"
+
+#~ msgid ""
+#~ "Files button in-game shows original savegame dialog rather than the "
+#~ "ScummVM menu"
+#~ msgstr ""
+#~ "Le bouton Fichiers du jeu ouvre le dialogue de sauvegarde d'origine au "
+#~ "lieu d'ouvrir celui de ScummVM"
 
 #~ msgid "The game in '%s' seems to be unknown."
 #~ msgstr "Le jeu dans '%s' n'est pas reconnu."
