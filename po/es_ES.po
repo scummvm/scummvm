@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-11-29 23:01+0000\n"
-"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
+"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4162,11 +4162,11 @@ msgstr "Desplazamiento normal"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Volumen de la música:"
+msgstr "Volumen de la música: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Vel. de subtítulos:"
+msgstr "Vel. de subtítulos:  "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
