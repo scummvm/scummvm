@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:01+0000\n"
-"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
+"PO-Revision-Date: 2016-11-29 23:02+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4221,7 +4221,7 @@ msgid ""
 "button"
 msgstr ""
 "El nombre de los puntos interactivos solo aparece al hacer clic en uno de "
-"ellos o en un botón de acción."
+"ellos o en un botón de acción"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
@@ -4360,7 +4360,8 @@ msgstr "Usar voces en inglés"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Usa las voces inglesas en vez de las alemanas para todos los otros idiomas."
+"Usa las voces inglesas en vez de las alemanas para todos los idiomas "
+"distintos al Alemán"
 
 #: engines/teenagent/resources.cpp:96
 msgid ""
@@ -4375,13 +4376,13 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "El archivo teenagent.dat está comprimido y este ejecutable no incluye zlib. "
-"Es necesario que lo descomprimas."
+"Es necesario que lo descomprimas"
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
 msgstr ""
-"No se puede guardar en la ranura %i\n"
+"No se puede guardar en la ranura %d\n"
 "\n"
 
 #: engines/toon/toon.cpp:226
