@@ -248,13 +248,10 @@ void Sound::stop() {
 }
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
-	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
 	stopSoundStream2();
 
-#if 0
-	if (soundStream3)
-		FSOUND_Stream_Stop(soundStream4);
-#endif
+	if (_mixer->isSoundHandleActive(*_soundStream3))
+		_mixer->stopHandle(*_soundStream4);
 
 	if (_musicLocal)
 		stopAllSoundStreams();
@@ -419,13 +416,10 @@ void FullpipeEngine::playSound(int id, int flag) {
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
-	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
-	stopSoundStream2();
+	if (_mixer->isSoundHandleActive(*_soundStream3))
+		_mixer->stopHandle(*_soundStream4);
 
-#if 0
-	if (soundStream3)
-		FSOUND_Stream_Stop(soundStream4);
-#endif
+	stopSoundStream2();
 
 	if (_musicLocal)
 		stopAllSoundStreams();
