@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:21+0000\n"
-"Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
+"PO-Revision-Date: 2016-11-29 23:23+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -701,7 +701,7 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Chcesz uruchomiæ masowy detektor gier? Mo¿e dodaæ wiele tytu³ów do listy"
+"Chcesz uruchomiæ masowy detektor gier? Mo¿e dodaæ wiele tytu³ów do listy."
 
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
@@ -1301,7 +1301,7 @@ msgstr "Ten katalog jest zabezpieczony przed zapisem. Wybierz inny."
 
 #: gui/options.cpp:1711
 msgid "Select directory for GUI themes"
-msgstr "Wybierz katalog dla stylów GUI."
+msgstr "Wybierz katalog dla stylów GUI"
 
 #: gui/options.cpp:1721
 msgid "Select directory for extra files"
@@ -4344,7 +4344,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "Plik teenagent.dat jest skompresowany, a ScummVM nie zawiera obs³ugi zlib. "
-"Rozpakuj plik."
+"Rozpakuj plik"
 
 #: engines/toon/toon.cpp:222
 #, fuzzy, c-format
