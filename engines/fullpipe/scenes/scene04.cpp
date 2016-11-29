@@ -1076,6 +1076,8 @@ void sceneHandler04_startSounds(const char *snd1, const char *snd2, const char *
 	// playFile(snd1);
 	// playFile(snd2);
 	// playFile(snd3);
+
+	g_fp->_stream2playing = true;
 }
 
 void sceneHandler04_goClock() {
