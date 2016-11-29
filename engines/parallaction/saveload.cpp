@@ -266,7 +266,7 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 
 static bool askRenameOldSavefiles() {
 	GUI::MessageDialog dialog0(
-		_("ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
+		_("ScummVM found that you have old saved games for Nippon Safes that should be renamed.\n"
 		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 		"Press OK to convert them now, otherwise you will be asked next time.\n"), _("OK"), _("Cancel"));
 
@@ -313,7 +313,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 
 	Common::String msg;
 	if (success == numOldSaves) {
-		msg = _("ScummVM successfully converted all your savefiles.");
+		msg = _("ScummVM successfully converted all your saved games.");
 	} else {
 		msg = _("ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
 			"Please report to the team.");

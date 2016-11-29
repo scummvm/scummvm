@@ -529,7 +529,7 @@ static bool DoRestore() {
 	delete f;
 
 	if (failed) {
-		GUI::MessageDialog dialog(_("Failed to load game state from file."));
+		GUI::MessageDialog dialog(_("Failed to load saved game from file."));
 		dialog.runModal();
 	}
 
@@ -542,7 +542,7 @@ static void SaveFailure(Common::OutSaveFile *f) {
 		_vm->getSaveFileMan()->removeSavefile(g_SaveSceneName);
 	}
 	g_SaveSceneName = NULL;	// Invalidate save name
-	GUI::MessageDialog dialog(_("Failed to save game state to file."));
+	GUI::MessageDialog dialog(_("Failed to save game to file."));
 	dialog.runModal();
 }
 

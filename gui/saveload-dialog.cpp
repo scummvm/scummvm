@@ -574,7 +574,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		if (startEditMode) {
 			_list->startEditMode();
 
-			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled savestate") &&
+			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game") &&
 					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
 				_list->setEditString("");
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
@@ -657,12 +657,12 @@ void SaveLoadChooserSimple::updateSaveList() {
 			}
 		}
 
-		// Show "Untitled savestate" for empty/whitespace saved game descriptions
+		// Show "Untitled saved game" for empty/whitespace saved game descriptions
 		Common::String description = x->getDescription();
 		Common::String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
-			description = _("Untitled savestate");
+			description = _("Untitled saved game");
 			colors.push_back(ThemeEngine::kFontColorAlternate);
 		} else {
 			colors.push_back((x->getLocked() ? ThemeEngine::kFontColorAlternate : ThemeEngine::kFontColorNormal));
