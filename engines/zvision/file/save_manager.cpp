@@ -205,7 +205,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		return true;
 	}
 	if (tag != SAVEGAME_ID) {
-		warning("File is not a Z-Vision save file. Aborting load");
+		warning("File is not a Z-Vision saved game. Aborting load");
 		return false;
 	}
 
@@ -217,9 +217,9 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		uint tempVersion = header.version;
 		GUI::MessageDialog dialog(
 			Common::String::format(
-				_("This save file uses version %u, but this engine only "
+				_("This saved game uses version %u, but this engine only "
 				  "supports up to version %d. You will need an updated version "
-				  "of the engine to use this save file."), tempVersion, SAVE_VERSION
+				  "of the engine to use this saved game."), tempVersion, SAVE_VERSION
 			),
 		_("OK"));
 		dialog.runModal();

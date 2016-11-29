@@ -860,7 +860,7 @@ void Control::checkForOldSaveGames() {
 		return;
 
 	GUI::MessageDialog dialog0(
-	    _("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
+	    _("ScummVM found that you have old saved games for Broken Sword 1 that should be converted.\n"
 	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
