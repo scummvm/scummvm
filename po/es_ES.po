@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-11-29 22:55+0000\n"
-"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
+"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1484,7 +1484,7 @@ msgstr "Guarda una nueva partida"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
-msgstr "Nombre:"
+msgstr "Nombre: "
 
 #: gui/saveload-dialog.cpp:1131
 #, c-format
