@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 07:58+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2016-11-29 08:00+0000\n"
+"Last-Translator: Martin Schoenmakers <aiviru@gmail.com>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -2619,7 +2619,7 @@ msgstr "Network initialiseren"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr "Timeout tijdens netwerkinitialisatie "
+msgstr "Timeout tijdens netwerkinitialisatie"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
@@ -2687,7 +2687,7 @@ msgstr "Wilt u het spel laden of opslaan?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "Weet u zeker dat u wilt stoppen?"
+msgstr "   Weet u zeker dat u wilt stoppen?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2699,11 +2699,11 @@ msgstr "Roteer"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Gebruik SDL stuurprogramma"
+msgstr "Gebruik SDL stuurprogramma "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Scherm"
+msgstr "Scherm "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2717,7 +2717,7 @@ msgstr "Koppel 'Rechter klik' actie"
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "U moet een toets koppelen aan de 'Rechter klik' actie om dit spel te kunnen "
-"spelen."
+"spelen"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
@@ -2727,7 +2727,7 @@ msgstr "Koppel 'Verberg werkbalk' actie"
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "U moet een toets koppelen aan de 'Verberg werkbalk' actie om dit spel te "
-"kunnen spelen."
+"kunnen spelen"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
@@ -2742,7 +2742,7 @@ msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
 "Vergeet niet de 'Verberg werkbalk' te koppelen aan een toets om de hele "
-"inventaris te zien."
+"inventaris te zien"
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
@@ -2920,7 +2920,7 @@ msgstr "Gebruik heldere palet modus"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Gebruik het heldere palet van het spel voor grafische zaken."
+msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
@@ -2946,7 +2946,7 @@ msgstr "Speel films sneller af"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Opslaan van spel mislukt."
+msgstr "Opslaan van spel mislukt"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
