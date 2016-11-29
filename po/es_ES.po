@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 22:55+0000\n"
-"Last-Translator: John Doe <felipino@hotmail.com.ar>\n"
+"PO-Revision-Date: 2016-11-29 22:57+0000\n"
+"Last-Translator: Víctor Martínez Pajares <vmpajares@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1548,7 +1548,7 @@ msgstr "Las casilllas %s contienen errores."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr "Todo correcto."
+msgstr "¡Todo correcto!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
@@ -1881,16 +1881,15 @@ msgstr "No se ha podido cambiar al modo de video: '"
 
 #: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
-msgstr "No se ha podido aplicar el ajuste de corrección de aspecto"
+msgstr "No se ha podido aplicar el ajuste de corrección de aspecto."
 
 #: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
 msgstr "No se ha podido aplicar el ajuste de pantalla completa."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "No se ha podido aplicar el ajuste de pantalla completa."
+msgstr "No se puede aplicar la configuración de filtrado."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2191,7 +2190,7 @@ msgstr "Modo ventana"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Resolución: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -2205,15 +2204,13 @@ msgstr "Desactivar la corrección de aspecto"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Clic activado"
+msgstr "Filtrado activado"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Clic desactivado"
+msgstr "Filtrado desactivado"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
