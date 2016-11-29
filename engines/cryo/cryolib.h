@@ -173,10 +173,6 @@ struct soundchannel_t {
 };
 typedef struct soundchannel_t soundchannel_t;
 
-extern volatile int32 TimerTicks;
-extern View ScreenView;
-
-
 soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
 void CLSoundGroup_Free(soundgroup_t *sg);
 void CLSoundGroup_Reverse16All(soundgroup_t *sg);

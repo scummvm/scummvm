@@ -51,6 +51,8 @@ enum {
 };
 
 class CryoEngine : public Engine {
+private:
+
 public:
 	CryoEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~CryoEngine();
@@ -69,6 +71,9 @@ public:
 	Graphics::Surface _screen;
 	EdenGame *_game;
 	HnmPlayer *_video;
+
+	View ScreenView;
+	volatile int32 TimerTicks;
 
 private:
 	Console *_console;

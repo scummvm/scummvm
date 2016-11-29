@@ -604,7 +604,7 @@ private:
 	int16           word_30AFC;
 	bool parlemoiNormalFlag;
 
-	bool byte_30B00;
+	bool closeCharacterDialog;
 	int             dword_30B04;
 
 	char            lastPhrasesFile;
