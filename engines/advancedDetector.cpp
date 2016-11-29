@@ -334,7 +334,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	Common::String report = Common::String::format(
 			_("The game in '%s' seems to be unknown.\n"
 			  "Please, report the following data to the ScummVM team along with name\n"
-			  "of the game you tried to add and its version/language/etc.:"), path.getPath().c_str()) + "\n";
+			  "of the game you tried to add and its version, language, etc.:"), path.getPath().c_str()) + "\n";
 	report += "\n";
 
 	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
