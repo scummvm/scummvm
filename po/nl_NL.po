@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-27 18:24+0100\n"
-"PO-Revision-Date: 2016-11-29 08:01+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2016-11-29 08:03+0000\n"
+"Last-Translator: Martin Schoenmakers <aiviru@gmail.com>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -3182,7 +3182,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Geanimeerde spel interface"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
@@ -3433,7 +3433,7 @@ msgstr "Gebruik CD audio"
 
 #: engines/sci/detection.cpp:452
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Gebruik CD audio in plaats van in-game audio, als dat beschikbaar is."
+msgstr "Gebruik CD audio in plaats van in-game audio, als dat beschikbaar is"
 
 #: engines/sci/detection.cpp:462
 msgid "Use Windows cursors"
@@ -3478,7 +3478,7 @@ msgstr "Toon Object Regel"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Toon de namen van de objecten onderaan het scherm."
+msgstr "Toon de namen van de objecten onderaan het scherm"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3547,7 +3547,7 @@ msgstr "Geef uw spel een naam"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr "Selecteer welk opgeslagen spel u wilt laden."
+msgstr "Selecteer welk opgeslagen spel u wilt laden"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
@@ -4030,11 +4030,11 @@ msgstr "Toetsenbord vechten is altijd aan,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr " dus ondanks het bericht in het spel dit"
+msgstr "  dus ondanks het bericht in het spel dit"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr " schakelt eigenlijk Muis vechten uit/aan."
+msgstr "  schakelt eigenlijk Muis vechten uit/aan."
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -4139,11 +4139,11 @@ msgstr "Snap scroll uit"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Muziek volume:"
+msgstr "Muziek volume: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Snelheid ondertitels:"
+msgstr "Snelheid ondertitels: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
@@ -4318,7 +4318,7 @@ msgstr "Houd de nieuwe"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Dit is het einde van de Broken Sword 1 demo."
+msgstr "Dit is het einde van de Broken Sword 1 demo"
 
 #: engines/sword2/animation.cpp:425
 msgid ""
@@ -4349,7 +4349,7 @@ msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
 "Het 'teenagent.dat' bestand ontbreekt. U kunt die vinden op de ScummVM "
-"website."
+"website"
 
 #: engines/teenagent/resources.cpp:117
 msgid ""
@@ -4357,12 +4357,12 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "Het \"teenagent.dat\" bestand is gecomprimeerd en zlib is niet meegenomen in "
-"deze versie van ScummVM. Decomprimeer a.u.b. het bestand."
+"deze versie van ScummVM. Decomprimeer a.u.b. het bestand"
 
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Spel opgeslagen in slot #%d"
+msgstr "Spel opgeslagen in slot #%d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
@@ -4382,12 +4382,13 @@ msgstr ""
 #: engines/toon/toon.cpp:4917
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
 msgstr ""
-"Het 'toon.dat' bestand ontbreekt. U kunt die vinden op de ScummVM website."
+"Het 'toon.dat' bestand ontbreekt. U kunt die vinden op de ScummVM website"
 
 #: engines/toon/toon.cpp:4929
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
 msgstr ""
-"Het 'toon.dat' bestand is corrupt. U kunt die vinden op de ScummVM website."
+"Het 'toon.dat' bestand is corrupt. U kunt een nieuwe vinden op de ScummVM "
+"website"
 
 #: engines/toon/toon.cpp:4939
 #, c-format
