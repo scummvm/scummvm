@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:14+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2016-11-29 23:19+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -88,11 +88,11 @@ msgstr "Játékok helyének kiválasztása"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Ebbõl:"
+msgstr "Ebbõl: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Ide:"
+msgstr "Ide: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -601,7 +601,7 @@ msgstr "ScummVM bezárása"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr "Névjegy"
+msgstr "Névjegy..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
@@ -633,7 +633,7 @@ msgstr "Kimentett játékállás betöltése"
 
 #: gui/launcher.cpp:153
 msgid "~A~dd Game..."
-msgstr "Játék hozzáadás"
+msgstr "Játék hozzáadás..."
 
 #: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
@@ -641,7 +641,7 @@ msgstr "Tratsd lenyomva a Shift-et a Masszív módhoz"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr "Játékopciók"
+msgstr "Játékopciók..."
 
 #: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
@@ -658,12 +658,12 @@ msgstr "Törli a játék nevét a listáról. A játékfájlok megmaradnak"
 #: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "Játék hozzáadás"
+msgstr "Játék hozzáadás..."
 
 #: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "Játékopciók"
+msgstr "Játékopciók..."
 
 #: gui/launcher.cpp:164
 msgctxt "lowres"
@@ -860,7 +860,7 @@ msgstr "Néhány játék támogatja a speciális árnyalási módokat"
 #: gui/options.cpp:835 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Fullscreen mode"
-msgstr "Teljesképernyõs mód:"
+msgstr "Teljesképernyõs mód"
 
 #: gui/options.cpp:838
 msgid "Filter graphics"
@@ -1103,7 +1103,7 @@ msgstr "Téma Mappa:"
 
 #: gui/options.cpp:1296 gui/options.cpp:1298 gui/options.cpp:1299
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr "Minden jéték és ScummVM kiegészítõ fájljainak mappája:"
+msgstr "Minden jéték és ScummVM kiegészítõ fájljainak mappája"
 
 #: gui/options.cpp:1305
 msgid "Plugins Path:"
@@ -1289,7 +1289,7 @@ msgstr ""
 
 #: gui/options.cpp:1702
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "A kiválasztott mappába nem lehet írni, válassz egy másikat"
+msgstr "A kiválasztott mappába nem lehet írni, válassz egy másikat."
 
 #: gui/options.cpp:1711
 msgid "Select directory for GUI themes"
@@ -1392,12 +1392,12 @@ msgstr "Javít"
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr "Szerzõ:"
+msgstr "Szerzõ: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr "Megjegyzés:"
+msgstr "Megjegyzés: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1437,15 +1437,15 @@ msgstr "Biztos hogy törölni akarod ezt a játékállást?"
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
-msgstr "Dátum:"
+msgstr "Dátum: "
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1066
 msgid "Time: "
-msgstr "Idõ:"
+msgstr "Idõ: "
 
 #: gui/saveload-dialog.cpp:564 gui/saveload-dialog.cpp:1074
 msgid "Playtime: "
-msgstr "Játékidõ:"
+msgstr "Játékidõ: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
 #, fuzzy
@@ -1470,7 +1470,7 @@ msgstr "Új játékmentés készítése"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
-msgstr "Név:"
+msgstr "Név: "
 
 #: gui/saveload-dialog.cpp:1131
 #, c-format
@@ -1857,11 +1857,11 @@ msgstr "Billentyük"
 
 #: engines/engine.cpp:346
 msgid "Could not initialize color format."
-msgstr "Szín formátum nincs alkalmazva"
+msgstr "Szín formátum nincs alkalmazva."
 
 #: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
-msgstr "Videómód nincs átállítva: ' "
+msgstr "Videómód nincs átállítva: '"
 
 #: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
@@ -1869,7 +1869,7 @@ msgstr "Méretarány korrekció nem változott."
 
 #: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
-msgstr "Teljesképernyõs beállítás nincs alkalmazva"
+msgstr "Teljesképernyõs beállítás nincs alkalmazva."
 
 #: engines/engine.cpp:373
 msgid "Could not apply filtering setting."
@@ -2682,11 +2682,11 @@ msgstr "Forgatás"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "SDL meghajtó használata"
+msgstr "SDL meghajtó használata "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Kijelzõ"
+msgstr "Kijelzõ "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2864,7 +2864,7 @@ msgstr ""
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "'%s' átvezetõ fájl nem található"
+msgstr "'%s' átvezetõ fájl nem található!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
@@ -3207,7 +3207,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "Hiányzik a Riven futtatható állomány. A Windows fájlok neve 'riven.exe' vagy "
-"'rivendmo.exe'."
+"'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -3431,7 +3431,7 @@ msgstr "Windows kurzorok használata"
 #: engines/sci/detection.cpp:463
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr "Windows kurzorok használata (kisebb és monokróm) a DOS-osok helyett "
+msgstr "Windows kurzorok használata (kisebb és monokróm) a DOS-osok helyett"
 
 #: engines/sci/detection.cpp:473
 msgid "Use silver cursors"
@@ -3713,7 +3713,7 @@ msgstr "  mert rendszerösszeomlást vagy"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr " vagy hibás játékmûködést okoz."
+msgstr "  vagy hibás játékmûködést okoz."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
@@ -4128,11 +4128,11 @@ msgstr "Finomgörgetés ki"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Zene hangereje:"
+msgstr "Zene hangereje: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Felirat sebesség:"
+msgstr "Felirat sebesség: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
