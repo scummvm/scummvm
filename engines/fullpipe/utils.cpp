@@ -182,7 +182,7 @@ void MemoryObject::loadFile(char *filename) {
 
 			delete s;
 		} else {
-			warning("MemoryObject::loadFile(): reading failure");
+			// We have no object to read. This is fine
 		}
 
 		g_fp->_currArchive = arr;
