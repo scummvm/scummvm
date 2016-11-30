@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 09:24+0000\n"
-"Last-Translator: Michael D. <michael@drueing.de>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2016-11-30 08:57+0000\n"
+"Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1478,9 +1478,8 @@ msgid "Playtime: "
 msgstr "Spieldauer: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Unbenannt"
+msgstr "Unbenannter Spielstand"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
@@ -1725,9 +1724,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Konnte kein passendes Engine-Plugin finden."
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Engine-Plugin unterstützt keine Speicherstände."
+msgstr "Engine-Plugin unterstützt keine Spielstände"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1871,12 +1869,12 @@ msgstr ""
 "Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Speichern des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-"
+"Speichern des Spielstands %s fehlgeschlagen! Bitte lesen Sie die LIESMICH-"
 "Datei für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
@@ -1945,12 +1943,12 @@ msgstr ""
 "Liesmich-Datei für weitere Informationen."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die Liesmich-Datei "
+"Laden des Spielstands %s fehlgeschlagen! Bitte lesen Sie die LIESMICH-Datei "
 "für grundlegende Informationen und Anweisungen zu weiterer Hilfe."
 
 #: engines/engine.cpp:555
