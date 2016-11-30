@@ -815,7 +815,13 @@ MovGraph::MovGraph() {
 }
 
 MovGraph::~MovGraph() {
-	warning("STUB: MovGraph::~MovGraph()");
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i)
+		delete *i;
+
+	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		delete *i;
+
+	detachAllObjects();
 }
 
 bool MovGraph::load(MfcArchive &file) {
