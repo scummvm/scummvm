@@ -919,7 +919,7 @@ void sceneHandler04_showCoin() {
 void sceneHandler04_stopSound() {
 	g_vars->scene04_soundPlaying = false;
 
-	warning("STUB: sceneHandler04_stopSound()");
+	g_fp->stopSoundStream2();
 }
 
 void sceneHandler04_animOutOfBottle(ExCommand *ex) {
@@ -1095,8 +1095,12 @@ void updateSound() {
 		break;
 	case 2:
 		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream3)) {
-			g_fp->playOggSound("sc4_stop2.ogg", g_fp->_soundStream4);
-			g_vars->scene04_musicStage = 3;
+			if (g_fp->_stream2playing) { // Looop it
+				g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
+			} else {
+				g_fp->playOggSound("sc4_stop2.ogg", g_fp->_soundStream4);
+				g_vars->scene04_musicStage = 3;
+			}
 		}
 		break;
 	case 3:
