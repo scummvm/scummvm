@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-30 08:32+0000\n"
+"PO-Revision-Date: 2016-11-30 08:33+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -4452,8 +4452,7 @@ msgstr "Gebruik hoge resolutie MPEG video"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Gebruik de MPEG video van de DVD versie, in plaats van de lagere resolutie "
-"AVI"
+"Gebruik de MPEG video van de DVD versie in plaats van de lagere resolutie AVI"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
