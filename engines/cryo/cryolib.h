@@ -224,8 +224,6 @@ void CLView_InitDatas(View *view, int w, int h, void *buffer);
 View *CLView_New(int w, int h);
 void CLView_CenterIn(View *parent, View *child);
 
-void CLScreenView_CenterIn(View *view);
-
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 

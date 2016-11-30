@@ -83,6 +83,9 @@ Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
 	_video = new HnmPlayer(this);
 
+	///// CLTimer
+	TimerTicks = 0;   // incremented in realtime
+
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 	_screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());

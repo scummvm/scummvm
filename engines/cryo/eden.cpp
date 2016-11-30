@@ -5550,7 +5550,7 @@ void EdenGame::openwindow() {
 	CLBlitter_FillView(p_mainview, 0xFFFFFFFF);
 	CLView_SetSrcZoomValues(p_mainview, 0, 0);
 	CLView_SetDisplayZoomValues(p_mainview, 640, 400);
-	CLScreenView_CenterIn(p_mainview);
+	CLView_CenterIn(&_vm->ScreenView, p_mainview);
 	p_mainview_buf = p_mainview->_bufferPtr;
 
 	mouse_x_center = p_mainview->_normal._dstLeft + p_mainview->_normal._width / 2;
@@ -6225,7 +6225,7 @@ void EdenGame::showMovie(char arg1) {
 	p_hnmview = CLView_New(_hnmContext->_header._width, _hnmContext->_header._height);
 	CLView_SetSrcZoomValues(p_hnmview, 0, 0);
 	CLView_SetDisplayZoomValues(p_hnmview, _hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
-	CLScreenView_CenterIn(p_hnmview);
+	CLView_CenterIn(&_vm->ScreenView, p_hnmview);
 	p_hnmview_buf = p_hnmview->_bufferPtr;
 	if (arg1) {
 		p_hnmview->_normal._height = 160;

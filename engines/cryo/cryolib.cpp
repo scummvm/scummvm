@@ -53,9 +53,6 @@ int32 TickCount() {
 	return g_system->getMillis();
 }
 
-///// CLTimer
-volatile int32 TimerTicks = 0;   // incremented in realtime
-
 ///// CLView
 void CLView_SetSrcZoomValues(View *view, int x, int y) {
 	view->_zoom._srcLeft = x;
@@ -110,13 +107,6 @@ void CLView_CenterIn(View *parent, View *child) {
 	child->_normal._dstTop = (parent->_height - child->_normal._height) / 2;
 	child->_zoom._dstLeft = (parent->_width - child->_zoom._width) / 2;
 	child->_zoom._dstTop = (parent->_height - child->_zoom._height) / 2;
-}
-
-///// CLScreenView
-View ScreenView;
-
-void CLScreenView_CenterIn(View *view) {
-	CLView_CenterIn(&ScreenView, view);
 }
 
 ///// CLPalette
@@ -229,9 +219,10 @@ void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 
 		dst += dstp - dstw;
 	}
 }
+
 void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	if (!view->_doubled) {
-		View *dest = &ScreenView;
+		View *dest = &g_ed->ScreenView;
 		int16 srcpitch = view->_pitch;
 		int16 dstpitch = dest->_pitch;
 
@@ -245,6 +236,7 @@ void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	} else
 		assert(0);
 }
+
 void CLBlitter_CopyView2Screen(View *view) {
 	if (useNewPalette) {
 		color_t palette[256];
@@ -257,9 +249,10 @@ void CLBlitter_CopyView2Screen(View *view) {
 	if (view)
 		CLBlitter_CopyView2ScreenCUSTOM(view);
 
-	g_system->copyRectToScreen(ScreenView._bufferPtr, ScreenView._pitch, 0, 0, ScreenView._width, ScreenView._height);
+	g_system->copyRectToScreen(g_ed->ScreenView._bufferPtr, g_ed->ScreenView._pitch, 0, 0, g_ed->ScreenView._width, g_ed->ScreenView._height);
 	g_system->updateScreen();
 }
+
 void CLBlitter_UpdateScreen() {
 	CLBlitter_CopyView2Screen(nullptr);
 }
@@ -274,10 +267,10 @@ void CLBlitter_FillView(View *view, unsigned int fill) {
 		d += view->_pitch - view->_width;
 	}
 }
-void CLBlitter_FillScreenView(unsigned int fill) {
-	CLBlitter_FillView(&ScreenView, fill);
-}
 
+void CLBlitter_FillScreenView(unsigned int fill) {
+	CLBlitter_FillView(&g_ed->ScreenView, fill);
+}
 
 ///// events wrapper
 int _mouseButton;
@@ -431,13 +424,13 @@ void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
 void CLTimer_Action(void *arg) {
 	//  long& counter = *((long*)arg);
 	//  counter++;
-	TimerTicks++;
+	g_ed->TimerTicks++;
 }
 
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
 	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
-	CLView_InitDatas(&ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
+	CLView_InitDatas(&g_ed->ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
 void CRYOLib_ManagersDone() {
