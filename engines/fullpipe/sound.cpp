@@ -222,8 +222,9 @@ void Sound::setPanAndVolume(int vol, int pan) {
 void Sound::play(int flag) {
 	Audio::SoundHandle *handle = getHandle();
 
-	if (g_fp->_mixer->isSoundHandleActive(*handle))
-		return;
+	if (g_fp->_mixer->isSoundHandleActive(*handle)) { // We need to restart the music
+		g_fp->_mixer->stopHandle(*handle);
+	}
 
 	byte *soundData = loadData();
 	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, getDataSize());
