@@ -71,9 +71,9 @@ private:
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
 	soundchannel_t *_soundChannel;
-	soundgroup_t *_soundGroup;
+	SoundGroup *_soundGroup;
 	soundchannel_t *_soundChannelAdpcm;
-	soundgroup_t *_soundGroupAdpcm;
+	SoundGroup *_soundGroupAdpcm;
 
 public:
 	uint16 _curVideoNum;

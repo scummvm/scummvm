@@ -68,4 +68,103 @@ void CSoundChannel::applyVolumeChange() {
 	_mixer->setChannelBalance(_soundHandle, balance);
 }
 
+/****************************************************************/
+
+SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) : _vm(vm) {
+	if (numSounds < kCryoMaxClSounds)
+		_numSounds = numSounds;
+	else
+		error("CLSoundGroup_New - numSounds >= kCryoMaxClSounds");
+
+	for (int i = 0; i < _numSounds; i++) {
+		_sounds[i] = CLSoundRaw_New(length, rate, sampleSize, mode);
+		_sounds[i]->_maxLength = length;
+	}
+	_soundIndex = 0;
+	_playIndex = 0;
+	_forceWait = true;
+}
+
+// Original name: CLSoundGroup_Free
+SoundGroup::~SoundGroup() {
+	for (int16 i = 0; i < _numSounds; i++)
+		CLSoundRaw_Free(_sounds[i]);
+}
+
+// Original name: CLSoundGroup_Reverse16All
+void SoundGroup::reverse16All() {
+	for (int16 i = 0; i < _numSounds; i++)
+		_sounds[i]->_reversed = true;
+}
+
+// Original name: CLSoundGroup_GetNextBuffer
+void *SoundGroup::getNextBuffer() {
+	sound_t *sound = _sounds[_soundIndex];
+	if (_forceWait)
+		while (sound->_locked) ;
+	return sound->sndHandle + sound->_headerLen;
+}
+
+// Original name: CLSoundGroup_AssignDatas
+bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
+	sound_t *sound = _sounds[_soundIndex];
+	if (_forceWait)
+		while (sound->_locked)
+			;
+	else if (sound->_locked)
+		return false;
+
+	sound->_buffer = (char *)buffer;
+	CLSound_SetLength(sound, length);
+	sound->_length = length;
+	//	if(sound->reversed && sound->sampleSize == 16)
+	//		ReverseBlock16(buffer, length);
+	//	if(isSigned)
+	//		CLSound_Signed2NonSigned(buffer, length);
+	if (_soundIndex == _numSounds - 1)
+		_soundIndex = 0;
+	else
+		_soundIndex++;
+
+	return true;
+}
+
+// Original name: CLSoundGroup_SetDatas
+bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
+	sound_t *sound = _sounds[_soundIndex];
+	if (length >= sound->_maxLength)
+		error("CLSoundGroup_SetDatas - Unexpected length");
+
+	if (_forceWait)
+		while (sound->_locked) ;
+	else if (sound->_locked)
+		return false;
+
+	void *buffer = sound->sndHandle + sound->_headerLen;
+	sound->_buffer = (char *)buffer;
+	memcpy(buffer, data, length);
+	CLSound_SetLength(sound, length);
+	sound->_length = length;
+	//	if(sound->reversed && sound->sampleSize == 16)
+	//		ReverseBlock16(buffer, length);
+	//	if(isSigned)
+	//		CLSound_Signed2NonSigned(buffer, length);
+	if (_soundIndex == _numSounds - 1)
+		_soundIndex = 0;
+	else
+		_soundIndex++;
+
+	return true;
+}
+
+// Original name: CLSoundGroup_PlayNextSample
+void SoundGroup::playNextSample(soundchannel_t *ch) {
+	CLSoundChannel_Play(ch, _sounds[_playIndex]);
+	if (_playIndex == _numSounds - 1)
+		_playIndex = 0;
+	else
+		_playIndex++;
+}
+
+
 }

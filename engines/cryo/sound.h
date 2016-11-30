@@ -4,7 +4,11 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+#include "cryo/cryolib.h"
+
 namespace Cryo {
+
+class CryoEngine;
 
 class CSoundChannel {
 private:
@@ -36,6 +40,29 @@ public:
 
 private:
 	void applyVolumeChange();
+};
+
+#define kCryoMaxClSounds 64
+
+class SoundGroup {
+private:
+	CryoEngine *_vm;
+
+public:
+	SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+	~SoundGroup();
+
+	void reverse16All();
+	void *getNextBuffer();
+	bool assignDatas(void *buffer, int length, bool isSigned);
+	bool setDatas(void *data, int length, bool isSigned);
+	void playNextSample(soundchannel_t *ch);
+
+	sound_t *_sounds[kCryoMaxClSounds];
+	int16 _numSounds;
+	int16 _soundIndex;
+	int16 _playIndex;
+	bool _forceWait;
 };
 
 }

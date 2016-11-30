@@ -146,17 +146,6 @@ struct sound_t {
 };
 typedef struct sound_t sound_t;
 
-#define kCryoMaxClSounds 64
-
-struct soundgroup_t {
-	sound_t *_sounds[kCryoMaxClSounds];
-	int16 _numSounds;
-	int16 _soundIndex;
-	int16 _playIndex;
-	bool _forceWait;
-};
-typedef struct soundgroup_t soundgroup_t;
-
 #define kCryoMaxChSounds 10
 
 struct soundchannel_t {
@@ -172,14 +161,6 @@ struct soundchannel_t {
 	int16   ff_536;
 };
 typedef struct soundchannel_t soundchannel_t;
-
-soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-void CLSoundGroup_Free(soundgroup_t *sg);
-void CLSoundGroup_Reverse16All(soundgroup_t *sg);
-void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg);
-bool CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, bool isSigned);
-bool CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, bool isSigned);
-void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch);
 
 sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode);
 void CLSoundRaw_Free(sound_t *sound);

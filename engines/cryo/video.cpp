@@ -128,15 +128,15 @@ void HnmPlayer::wantsSound(bool sound) {
 // Original name: CLHNM_SetupSound
 void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	_soundChannel = CLSoundChannel_New(mode);
-	_soundGroup = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
+	_soundGroup = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
 	if (sampleSize == 16)
-		CLSoundGroup_Reverse16All(_soundGroup);
+		_soundGroup->reverse16All();
 }
 
 // Original name: CLHNM_SetupSoundADPCM
 void HnmPlayer::setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	_soundChannelAdpcm = CLSoundChannel_New(mode);
-	_soundGroupAdpcm = CLSoundGroup_New(numSounds, length, sampleSize, rate, mode);
+	_soundGroupAdpcm = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
 }
 
 // Original name: CLHNM_CloseSound
@@ -147,7 +147,7 @@ void HnmPlayer::closeSound() {
 		_soundChannel = nullptr;
 	}
 	if (_soundGroup) {
-		CLSoundGroup_Free(_soundGroup);
+		delete(_soundGroup);
 		_soundGroup = nullptr;
 	}
 	if (_soundChannelAdpcm) {
@@ -156,8 +156,8 @@ void HnmPlayer::closeSound() {
 		_soundChannel = nullptr;
 	}
 	if (_soundGroupAdpcm) {
-		CLSoundGroup_Free(_soundGroupAdpcm);
-		_soundGroup = nullptr;
+		delete(_soundGroupAdpcm);
+		_soundGroupAdpcm = nullptr;
 	}
 }
 
@@ -509,12 +509,12 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 			if (_useAdpcm) {
 				if (!_soundStarted) {
 					for (int16 i = 0; i < _pendingSounds; i++)
-						CLSoundGroup_PlayNextSample(_soundGroupAdpcm, _soundChannel);
+						_soundGroupAdpcm->playNextSample(_soundChannel);
 					_soundStarted = true;
 				}
 			} else if (!_soundStarted) {
 				for (int16 i = 0; i < _pendingSounds; i++)
-					CLSoundGroup_PlayNextSample(_soundGroup, _soundChannel);
+					_soundGroup->playNextSample(_soundChannel);
 				_soundStarted = true;
 			}
 
@@ -539,25 +539,25 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 				if (!h6) {
 					int sound_size = sz - 8;
 					if (!_useAdpcm) {
-						CLSoundGroup_SetDatas(_soundGroup, hnm->_dataPtr, sound_size - 2, false);
+						_soundGroup->setDatas(hnm->_dataPtr, sound_size - 2, false);
 						if (_soundStarted)
-							CLSoundGroup_PlayNextSample(_soundGroup, _soundChannel);
+							_soundGroup->playNextSample(_soundChannel);
 						else
 							_pendingSounds++;
 					} else {
-						int16 *sound_buffer = (int16 *)CLSoundGroup_GetNextBuffer(_soundGroupAdpcm);
+						int16 *sound_buffer = (int16 *)_soundGroupAdpcm->getNextBuffer();
 						if (!_pendingSounds) {
 							const int kDecompTableSize = 256 * sizeof(int16);
 							loadDecompTable((int16 *)hnm->_dataPtr);
 							decompADPCM(hnm->_dataPtr + kDecompTableSize, sound_buffer, sound_size - kDecompTableSize);
-							CLSoundGroup_AssignDatas(_soundGroupAdpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, false);
+							_soundGroupAdpcm->assignDatas(sound_buffer, (sound_size - kDecompTableSize) * 2, false);
 						} else {
 							decompADPCM(hnm->_dataPtr, sound_buffer, sound_size);
-							CLSoundGroup_AssignDatas(_soundGroupAdpcm, sound_buffer, sound_size * 2, false);
+							_soundGroupAdpcm->assignDatas(sound_buffer, sound_size * 2, false);
 						}
 						_pendingSounds++;
 						if (_soundStarted)
-							CLSoundGroup_PlayNextSample(_soundGroupAdpcm, _soundChannel);
+							_soundGroupAdpcm->playNextSample(_soundChannel);
 					}
 				} else
 					error("nextElement - unexpected flag");
