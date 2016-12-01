@@ -54,59 +54,56 @@ int32 TickCount() {
 }
 
 ///// CLView
-void CLView_SetSrcZoomValues(View *view, int x, int y) {
-	view->_zoom._srcLeft = x;
-	view->_zoom._srcTop = y;
+
+View::View(CryoEngine *vm, int w, int h) : _vm(vm) {
+	void *buffer = (byte *)malloc(w * h);
+	if (buffer) {
+		_allocated = true;
+		CLView_InitDatas(w, h, buffer);
+	} else
+		error("Unable to allocate view buffer");
 }
-void CLView_SetDisplayZoomValues(View *view, int w, int h) {
-	view->_zoom._width = w;
-	view->_zoom._height = h;
+
+View::~View() {
+	if (_bufferPtr && _allocated)
+		free(_bufferPtr);
 }
-void CLView_Free(View *view) {
-	if (view->_bufferPtr && view->_allocated)
-		free(view->_bufferPtr);
-	if (view)
-		free(view);
+
+void View::CLView_SetSrcZoomValues(int x, int y) {
+	_zoom._srcLeft = x;
+	_zoom._srcTop = y;
 }
-void CLView_InitDatas(View *view, int w, int h, void *buffer) {
-	view->_bufferPtr = (byte *)buffer;
-	view->_width = w;
-	view->_height = h;
-	view->_pitch = w;
-	view->_doubled = false;
-	view->_normal._srcLeft = 0;
-	view->_normal._srcTop = 0;
-	view->_normal._dstLeft = 0;
-	view->_normal._dstTop = 0;
-	view->_normal._width = w;
-	view->_normal._height = h;
-	view->_zoom._srcLeft = 0;
-	view->_zoom._srcTop = 0;
-	view->_zoom._dstLeft = 0;
-	view->_zoom._dstTop = 0;
-	view->_zoom._width = w;
-	view->_zoom._height = h;
+
+void View::CLView_SetDisplayZoomValues(int w, int h) {
+	_zoom._width = w;
+	_zoom._height = h;
 }
-View *CLView_New(int w, int h) {
-	View *view = (View *)malloc(sizeof(View));
-	if (view) {
-		void *buffer = (byte *)malloc(w * h);
-		if (buffer) {
-			view->_allocated = true;
-			CLView_InitDatas(view, w, h, buffer);
-		} else {
-			view->_allocated = false;
-			free(view);
-			view = 0;
-		}
-	}
-	return view;
+
+void View::CLView_InitDatas(int w, int h, void *buffer) {
+	_bufferPtr = (byte *)buffer;
+	_width = w;
+	_height = h;
+	_pitch = w;
+	_doubled = false;
+	_normal._srcLeft = 0;
+	_normal._srcTop = 0;
+	_normal._dstLeft = 0;
+	_normal._dstTop = 0;
+	_normal._width = w;
+	_normal._height = h;
+	_zoom._srcLeft = 0;
+	_zoom._srcTop = 0;
+	_zoom._dstLeft = 0;
+	_zoom._dstTop = 0;
+	_zoom._width = w;
+	_zoom._height = h;
 }
-void CLView_CenterIn(View *parent, View *child) {
-	child->_normal._dstLeft = (parent->_width - child->_normal._width) / 2;
-	child->_normal._dstTop = (parent->_height - child->_normal._height) / 2;
-	child->_zoom._dstLeft = (parent->_width - child->_zoom._width) / 2;
-	child->_zoom._dstTop = (parent->_height - child->_zoom._height) / 2;
+
+void View::CLView_CenterIn(View *parent) {
+	_normal._dstLeft = (parent->_width - _normal._width) / 2;
+	_normal._dstTop = (parent->_height - _normal._height) / 2;
+	_zoom._dstLeft = (parent->_width - _zoom._width) / 2;
+	_zoom._dstTop = (parent->_height - _zoom._height) / 2;
 }
 
 ///// CLPalette
@@ -222,7 +219,7 @@ void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 
 
 void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	if (!view->_doubled) {
-		View *dest = &g_ed->ScreenView;
+		View *dest = g_ed->ScreenView;
 		int16 srcpitch = view->_pitch;
 		int16 dstpitch = dest->_pitch;
 
@@ -249,7 +246,7 @@ void CLBlitter_CopyView2Screen(View *view) {
 	if (view)
 		CLBlitter_CopyView2ScreenCUSTOM(view);
 
-	g_system->copyRectToScreen(g_ed->ScreenView._bufferPtr, g_ed->ScreenView._pitch, 0, 0, g_ed->ScreenView._width, g_ed->ScreenView._height);
+	g_system->copyRectToScreen(g_ed->ScreenView->_bufferPtr, g_ed->ScreenView->_pitch, 0, 0, g_ed->ScreenView->_width, g_ed->ScreenView->_height);
 	g_system->updateScreen();
 }
 
@@ -269,7 +266,7 @@ void CLBlitter_FillView(View *view, unsigned int fill) {
 }
 
 void CLBlitter_FillScreenView(unsigned int fill) {
-	CLBlitter_FillView(&g_ed->ScreenView, fill);
+	CLBlitter_FillView(g_ed->ScreenView, fill);
 }
 
 ///// events wrapper
@@ -430,7 +427,7 @@ void CLTimer_Action(void *arg) {
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
 	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
-	CLView_InitDatas(&g_ed->ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
+	g_ed->ScreenView->CLView_InitDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
 void CRYOLib_ManagersDone() {

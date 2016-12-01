@@ -72,7 +72,7 @@ public:
 	EdenGame *_game;
 	HnmPlayer *_video;
 
-	View ScreenView;
+	View *ScreenView;
 	volatile int32 TimerTicks;
 
 private:

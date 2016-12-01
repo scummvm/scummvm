@@ -30,6 +30,8 @@
 
 namespace Cryo {
 
+class CryoEngine;
+
 #define SW16(n) ( (((n) & 0xFF) << 8) | (((n) >> 8) & 0xFF) )
 #define SW32(n) ( (((n) & 0xFF) << 24) | (((n) >> 24) & 0xFF) | (((n) & 0xFF00) << 8) | (((n) >> 8) & 0xFF00))
 #if 0
@@ -61,13 +63,26 @@ struct BlitView{
 	int     _height;
 };
 
-struct View {
-	byte    *_bufferPtr;
+class View {
+private:
+	CryoEngine *_vm;
+
+	bool     _allocated;
+
+public:
+	View(CryoEngine *vm, int w, int h);
+	~View();
+
+	void CLView_SetSrcZoomValues(int x, int y);
+	void CLView_SetDisplayZoomValues(int w, int h);
+	void CLView_InitDatas(int w, int h, void *buffer);
+	void CLView_CenterIn(View *parent);
+
 	int      _width;
 	int      _height;
+	byte    *_bufferPtr;
 	int16    _pitch;
 	bool     _doubled;
-	bool     _allocated;
 	BlitView _normal;
 	BlitView _zoom;
 };
@@ -216,13 +231,6 @@ void CLMouse_Show();
 void CLMouse_GetPosition(int16 *x, int16 *y);
 void CLMouse_SetPosition(int16 x, int16 y);
 uint16 CLMouse_IsDown();
-
-void CLView_SetSrcZoomValues(View *view, int x, int y);
-void CLView_SetDisplayZoomValues(View *view, int w, int h);
-void CLView_Free(View *view);
-void CLView_InitDatas(View *view, int w, int h, void *buffer);
-View *CLView_New(int w, int h);
-void CLView_CenterIn(View *parent, View *child);
 
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
