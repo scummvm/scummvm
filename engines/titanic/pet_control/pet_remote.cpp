@@ -303,7 +303,7 @@ int CPetRemote::getHighlightIndex(RemoteGlyph val) {
 
 	// Loop through the data for the room
 	for (uint idx = 0; idx < remoteData.size(); ++idx) {
-		if ((RemoteGlyph)remoteData[idx + 1] == val)
+		if ((RemoteGlyph)remoteData[idx] == val)
 			return idx;
 	}
 
