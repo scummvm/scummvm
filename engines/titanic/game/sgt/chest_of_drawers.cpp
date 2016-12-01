@@ -46,6 +46,7 @@ bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 		_statics->_chestOfDrawers = "Open";
 		_startFrame = 1;
 		_endFrame = 14;
+		playMovie(1, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		playSound("b#11.wav");
 	}
 
