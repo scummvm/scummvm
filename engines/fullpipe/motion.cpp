@@ -779,6 +779,9 @@ MovGraphItem::MovGraphItem() {
 }
 
 void MovGraphItem::free() {
+	if (!mi_movitems)
+		return;
+
 	for (uint i = 0; i < mi_movitems->size(); i++) {
 		(*mi_movitems)[i]->movarr->_movSteps.clear();
 		delete (*mi_movitems)[i]->movarr;
@@ -914,6 +917,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 			Common::Array<MovItem *> *movitems = getPaths(&_items[idx]->movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
+				_items[idx]->mi_movitems = new Common::Array<MovItem *>;
 				for (int j = 0; j < sz; j++)
 					_items[idx]->mi_movitems->push_back(movitems[j]);
 			}
