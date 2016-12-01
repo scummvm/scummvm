@@ -102,7 +102,7 @@ int scene32_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_objectIdAtCursor == PIC_SC32_LADDER && g_fp->_cursorId == PIC_CSR_ITN)
-		g_fp->_cursorId = g_vars->scene32_dudeOnLadder ? PIC_CSR_GOD : PIC_CSR_GOU; // TODO FIXME doublecheck
+		g_fp->_cursorId = g_vars->scene32_dudeOnLadder ? PIC_CSR_GOD : PIC_CSR_GOU;
 
 	return g_fp->_cursorId;
 }
