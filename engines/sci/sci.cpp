@@ -1123,7 +1123,20 @@ void SciEngine::syncIngameAudioOptions() {
 
 #ifdef ENABLE_SCI32
 		if (getSciVersion() >= SCI_VERSION_2) {
-			_gamestate->variables[VAR_GLOBAL][kGlobalVarTextSpeed] = make_reg(0, 8 - ConfMan.getInt("talkspeed") * 8 / 255);
+			GlobalVar index;
+			uint16 textSpeed;
+
+			switch (g_sci->getGameId()) {
+			case GID_LSL6HIRES:
+				index = kGlobalVarLSL6HiresTextSpeed;
+				textSpeed = 14 - ConfMan.getInt("talkspeed") * 14 / 255 + 1;
+				break;
+			default:
+				index = kGlobalVarTextSpeed;
+				textSpeed = 8 - ConfMan.getInt("talkspeed") * 8 / 255;
+			}
+
+			_gamestate->variables[VAR_GLOBAL][index] = make_reg(0, textSpeed);
 		}
 #endif
 

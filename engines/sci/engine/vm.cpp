@@ -199,6 +199,23 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
+#ifdef ENABLE_SCI32
+		if (type == VAR_GLOBAL && getSciVersion() >= SCI_VERSION_2 && g_sci->getEngineState()->_syncedAudioOptions) {
+
+			switch (g_sci->getGameId()) {
+			case GID_LSL6HIRES:
+				if (index == kGlobalVarLSL6HiresTextSpeed) {
+					ConfMan.setInt("talkspeed", (14 - value.toSint16()) * 255 / 13);
+				}
+				break;
+			default:
+				if (index == kGlobalVarTextSpeed) {
+					ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
+				}
+			}
+		}
+#endif
+
 		if (type == VAR_GLOBAL && index == kGlobalVarMessageType) {
 			// The game is trying to change its speech/subtitle settings
 			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kGlobalVarQuit] == TRUE_REG) {
@@ -212,12 +229,6 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 				g_sci->updateScummVMAudioOptions();
 			}
 		}
-
-#ifdef ENABLE_SCI32
-		if (type == VAR_GLOBAL && index == kGlobalVarTextSpeed && getSciVersion() >= SCI_VERSION_2) {
-			ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
-		}
-#endif
 	}
 }
 
