@@ -173,7 +173,6 @@ bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 		if (--_channelNum < 1)
 			_channelNum += _channelsCount;
 
-		_channelNum = (_channelNum % _channelsCount) - 1;
 		stopMovie();
 		playMovie(START_FRAMES[_channelNum], END_FRAMES[_channelNum], MOVIE_NOTIFY_OBJECT);
 	}
