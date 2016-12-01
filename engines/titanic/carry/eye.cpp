@@ -121,7 +121,7 @@ bool CEye::ActMsg(CActMsg *msg) {
 
 bool CEye::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	if (isEquals("Eye1"))
-		CTelevision::_v5 = 0;
+		CTelevision::_channel4Glyph = false;
 
 	return CHeadPiece::PETGainedObjectMsg(msg);
 }
@@ -129,9 +129,9 @@ bool CEye::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 bool CEye::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	setVisible(true);
 	if (_eyeFlag)
-		CTelevision::_v6 = 0;
+		CTelevision::_eyeFlag = false;
 	else if (isEquals("Eye1"))
-		CTelevision::_v5 = 0;
+		CTelevision::_channel4Glyph = false;
 
 	return CHeadPiece::PassOnDragStartMsg(msg);
 }
