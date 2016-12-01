@@ -235,7 +235,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		parrotMsg.execute("PerchedParrot");
 	}
 
-	if (_channelNum == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
+	if (_channelNum == 3 && compareRoomNameTo("SGTState") && getPassengerClass() == THIRD_CLASS) {
 		playSound("z#47.wav");
 		_soundHandle = playSound("b#20.wav");
 		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
