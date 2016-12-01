@@ -1429,14 +1429,9 @@ bool ModalQuery::init(int counterdiff) {
 				if (_bgScene)
 					g_fp->sceneFade(_bgScene, false);
 
-				warning("STUB: ModalQuery::init()");
+				g_fp->_gameContinue = false;
 
-				// Quit game
-				//if (inputArFlag) {
-				//	g_needRestart = 1;
-				//	return 0;
-				//}
-				//SendMessageA(hwndCallback, WM_DESTROY, 0, 0);
+				return false;
 			}
 		}
 	}
