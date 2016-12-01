@@ -286,30 +286,30 @@ void CPetConversations::displayNPCName(CGameObject *npc) {
 		CString name = npc->getName();
 		int id = 1;
 
-		if (name.contains("Doorbot")) {
+		if (name.containsIgnoreCase("Doorbot")) {
 			msg += strings[DOORBOT_NAME];
-		} else if (name.contains("Deskbot")) {
+		} else if (name.containsIgnoreCase("Deskbot")) {
 			id = 2;
 			msg += strings[DESKBOT_NAME];
-		} else if (name.contains("LiftBot")) {
+		} else if (name.containsIgnoreCase("LiftBot")) {
 			id = 3;
 			msg += strings[LIFTBOT_NAME];
-		} else if (name.contains("Parrot")) {
+		} else if (name.containsIgnoreCase("Parrot")) {
 			id = 4;
 			msg += strings[PARROT_NAME];
-		} else if (name.contains("BarBot")) {
+		} else if (name.containsIgnoreCase("BarBot")) {
 			id = 5;
 			msg += strings[BARBOT_NAME];
-		} else if (name.contains("ChatterBot")) {
+		} else if (name.containsIgnoreCase("ChatterBot")) {
 			id = 6;
 			msg += strings[CHATTERBOT_NAME];
-		} else if (name.contains("BellBot")) {
+		} else if (name.containsIgnoreCase("BellBot")) {
 			id = 7;
 			msg += strings[BELLBOT_NAME];
-		} else if (name.contains("Maitre")) {
+		} else if (name.containsIgnoreCase("Maitre")) {
 			id = 8;
 			msg += strings[MAITRED_NAME];
-		} else if (name.contains("Succubus") || name.contains("Sub")) {
+		} else if (name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub")) {
 			id = 9;
 			msg += strings[SUCCUBUS_NAME];
 		} else {

@@ -681,7 +681,8 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
 			if (node) {
 				CString nodeName = node->getName();
-				if (nodeName == "5" || nodeName == "6" || nodeName == "7") {
+				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+						|| nodeName.containsIgnoreCase("7")) {
 					CTrueTalkManager::triggerAction(29, 2);
 					selectResponse(201571);
 					applyResponse();
@@ -707,7 +708,8 @@ int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
 			if (node) {
 				CString nodeName = node->getName();
-				if (nodeName == "5" || nodeName == "6" || nodeName != "7") {
+				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+						|| nodeName.containsIgnoreCase("7")) {
 					CTrueTalkManager::triggerAction(29, 2);
 					selectResponse(201571);
 					applyResponse();

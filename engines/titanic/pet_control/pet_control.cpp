@@ -645,7 +645,7 @@ bool CPetControl::isDoorOrBellbotPresent() const {
 			treeItem = treeItem->scan(view)) {
 		CString name = treeItem->getName();
 		if (dynamic_cast<CGameObject *>(treeItem) &&
-				(name.contains("Doorbot") || name.contains("BellBot")))
+				(name.containsIgnoreCase("Doorbot") || name.containsIgnoreCase("BellBot")))
 			return true;
 	}
 
@@ -687,7 +687,7 @@ bool CPetControl::isSuccUBusActive() const {
 		return false;
 
 	CString name = getName();
-	return name.contains("Succubus") || name.contains("Sub");
+	return name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub");
 }
 
 void CPetControl::convResetDials(int flag) {
