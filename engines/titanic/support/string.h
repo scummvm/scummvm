@@ -96,6 +96,11 @@ public:
 	int lastIndexOf(char c) const;
 
 	/**
+	 * Returns true if the string contains a specified substring, ignoring case
+	 */
+	bool containsIgnoreCase(const CString &str) const;
+
+	/**
 	 * Returns the type of a filename based on it's extension
 	 */
 	FileType fileTypeSuffix() const;

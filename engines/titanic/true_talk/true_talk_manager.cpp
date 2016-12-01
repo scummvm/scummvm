@@ -243,23 +243,23 @@ void CTrueTalkManager::start4(CTrueTalkNPC *npc, CViewItem *view) {
 }
 
 TTnpcScript *CTrueTalkManager::getTalker(const CString &name) const {
-	if (name.contains("Doorbot"))
+	if (name.containsIgnoreCase("Doorbot"))
 		return _scripts.getNpcScript(104);
-	else if (name.contains("Deskbot"))
+	else if (name.containsIgnoreCase("Deskbot"))
 		return _scripts.getNpcScript(103);
-	else if (name.contains("LiftBot"))
+	else if (name.containsIgnoreCase("LiftBot"))
 		return _scripts.getNpcScript(105);
-	else if (name.contains("Parrot"))
+	else if (name.containsIgnoreCase("Parrot"))
 		return _scripts.getNpcScript(107);
-	else if (name.contains("BarBot"))
+	else if (name.containsIgnoreCase("BarBot"))
 		return _scripts.getNpcScript(100);
-	else if (name.contains("ChatterBot"))
+	else if (name.containsIgnoreCase("ChatterBot"))
 		return _scripts.getNpcScript(102);
-	else if (name.contains("BellBot"))
+	else if (name.containsIgnoreCase("BellBot"))
 		return _scripts.getNpcScript(101);
-	else if (name.contains("MaitreD"))
+	else if (name.containsIgnoreCase("MaitreD"))
 		return _scripts.getNpcScript(112);
-	else if (name.contains("Succubus") || name.contains("Sub"))
+	else if (name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub"))
 		return _scripts.getNpcScript(111);
 
 	return nullptr;
