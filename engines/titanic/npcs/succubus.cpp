@@ -526,7 +526,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _endFrame9) {
 		bool flag = false;
 
-		if (pet && mailExists(petRoomFlags)) {
+		if (pet && !mailExists(petRoomFlags)) {
 			CGameObject *mailObject = _v3 && compareRoomNameTo("Titania") ?
 				findMailByFlags(3, petRoomFlags) :
 				findMailByFlags(_field140, petRoomFlags);
@@ -666,6 +666,7 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 
 		uint petRoomFlags = pet->getRoomFlags();
 		if (mailExists(petRoomFlags) && _endFrame1 >= 0)
+			// Mail canister present
 			playMovie(_endFrame1, _endFrame1, 0);
 
 		_enabled = true;

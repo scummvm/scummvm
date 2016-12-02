@@ -1426,11 +1426,11 @@ void CGameObject::setState1C(bool flag) {
 	getGameManager()->_gameState._field1C = flag;
 }
 
-void CGameObject::addMail(int mailId) {
+void CGameObject::addMail(uint destRoomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan) {
 		makeDirty();
-		mailMan->addMail(this, mailId);
+		mailMan->addMail(this, destRoomFlags);
 	}
 }
 

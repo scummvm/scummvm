@@ -794,7 +794,7 @@ public:
 	/**
 	 * Adds an object to the mail list
 	 */
-	void addMail(int mailId);
+	void addMail(uint destRoomFlags);
 
 	/**
 	 * Remove an object from the mail list
