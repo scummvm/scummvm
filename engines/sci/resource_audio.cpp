@@ -405,7 +405,9 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
-			if (n & 0x40) {
+			// Checking for this 0x40 flag breaks at least Laura Bow 2 CD 1.1
+			// map 448
+			if (g_sci->getGameId() == GID_KQ6 && (n & 0x40)) {
 				// This seems to define the size of raw lipsync data (at least
 				// in KQ6 CD Windows).
 				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
