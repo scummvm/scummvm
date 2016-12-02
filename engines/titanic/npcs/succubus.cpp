@@ -479,8 +479,8 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			break;
 		}
 	} else {
-		CGameObject *mailObject = findMailByFlags(compareRoomNameTo("Titania")
-			? 3 : _field140, petRoomFlags);
+		CGameObject *mailObject = findMailByFlags(
+			_v3 && compareRoomNameTo("Titania") ? 3 : _field140, petRoomFlags);
 		if (!mailObject) {
 			if (getRandomNumber(1) == 0) {
 				startTalking(this, 70104, findView());
@@ -492,6 +492,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			playMovie(_startFrame7, _endFrame7, 0);
 			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		} else {
+			_mailP = mailObject;
 			startTalking(this, 230004, findView());
 
 			if (_startFrame4 >= 0) {
