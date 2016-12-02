@@ -239,7 +239,7 @@ goto_t gotos[] = {
 #define SUB_LINE(start, end) \
 	(start), (end) | 0x8000
 
-int16 kFramesVid170[] = {
+uint16 kFramesVid170[] = {
 	SUB_LINE(  68,  120),
 	SUB_LINE( 123,  196),
 	SUB_LINE( 199,  274),
@@ -256,41 +256,41 @@ int16 kFramesVid170[] = {
 	SUB_LINE(2254, 2320),
 	SUB_LINE(3038, 3094),
 	SUB_LINE(3096, 3160),
-	-1
+	0xFFFF
 };
 
-int16 kFramesVid83[] = {
+uint16 kFramesVid83[] = {
 	SUB_LINE(99, 155),
 	SUB_LINE(157, 256),
-	-1
+	0xFFFF
 };
 
-int16 kFramesVid88[] = {
+uint16 kFramesVid88[] = {
 	SUB_LINE(106, 173),
 	SUB_LINE(175, 244),
 	SUB_LINE(246, 350),
 	SUB_LINE(352, 467),
-	-1
+	0xFFFF
 };
 
-int16 kFramesVid89[] = {
+uint16 kFramesVid89[] = {
 	SUB_LINE(126, 176),
 	SUB_LINE(178, 267),
 	SUB_LINE(269, 342),
 	SUB_LINE(344, 398),
 	SUB_LINE(400, 458),
 	SUB_LINE(460, 558),
-	-1
+	0xFFFF
 };
 
-int16 kFramesVid94[] = {
+uint16 kFramesVid94[] = {
 	SUB_LINE(101, 213),
 	SUB_LINE(215, 353),
 	SUB_LINE(355, 455),
 	SUB_LINE(457, 518),
 	SUB_LINE(520, 660),
 	SUB_LINE(662, 768),
-	-1
+	0xFFFF
 };
 #undef SUB_LINE
 
@@ -344,19 +344,19 @@ object_t objects[] = {
 	{ 42, 0,  3, 0x8000,     0, 0}      // Tablet #6 (Castra)
 };
 
-int16 kObjectLocations[100] = {
-	0x112, -1,
-	0x202, -1,
-	0x120, -1,
-	0x340, 0x44B, 0x548, 0x640, 0x717, 0x830, -1,
-	0x340, 0x44B, 0x548, 0x640, 0x717, 0x830, -1,
-	0, -1,
-	0x344, 0x53A, 0x831, -1,
-	0x331, 0x420, 0x54B, 0x637, 0x716, 0x840, -1,
-	0x834A, 0x8430, 0x8531, 0x644, 0x745, 0x838, -1,
-	0x510, -1,
-	0xC04, -1,
-	-1
+uint16 kObjectLocations[100] = {
+	0x112, 0xFFFF,
+	0x202, 0xFFFF,
+	0x120, 0xFFFF,
+	0x340, 0x44B, 0x548, 0x640, 0x717, 0x830, 0xFFFF,
+	0x340, 0x44B, 0x548, 0x640, 0x717, 0x830, 0xFFFF,
+	0, 0xFFFF,
+	0x344, 0x53A, 0x831, 0xFFFF,
+	0x331, 0x420, 0x54B, 0x637, 0x716, 0x840, 0xFFFF,
+	0x834A, 0x8430, 0x8531, 0x644, 0x745, 0x838, 0xFFFF,
+	0x510, 0xFFFF,
+	0xC04, 0xFFFF,
+	0xFFFF
 };
 
 perso_t kPersons[] = {

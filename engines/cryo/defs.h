@@ -354,8 +354,8 @@ struct object_t {
 	byte   _id;
 	byte   _flags;
 	int    _locations;      // index in kObjectLocations
-	int16  _itemMask;
-	int16  _powerMask;          // object of power bitmask
+	uint16  _itemMask;
+	uint16  _powerMask;          // object of power bitmask
 	int16  _count;
 };
 typedef struct object_t object_t;
@@ -812,13 +812,13 @@ extern char kPersoRoomBankTable[];
 
 // area transition descriptors
 extern goto_t gotos[];
-extern int16 kFramesVid170[];
-extern int16 kFramesVid83[];
-extern int16 kFramesVid88[];
-extern int16 kFramesVid89[];
-extern int16 kFramesVid94[];
+extern uint16 kFramesVid170[];
+extern uint16 kFramesVid83[];
+extern uint16 kFramesVid88[];
+extern uint16 kFramesVid89[];
+extern uint16 kFramesVid94[];
 extern object_t objects[];
-extern int16 kObjectLocations[100];
+extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
 extern cita_t cita_list[];
 extern int16 tab_2CB16[];

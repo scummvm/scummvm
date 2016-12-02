@@ -697,7 +697,7 @@ private:
 	byte   *mus_patterns_ptr;  //TODO: sndblock_t ?
 	byte   *mus_sequence_ptr;
 	bool   mus_enabled;
-	int16           *pCurrentObjectLocation;
+	uint16 *pCurrentObjectLocation;
 	byte   own_objects[128];
 	bool   byte_31D64;
 

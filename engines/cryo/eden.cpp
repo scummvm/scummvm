@@ -6329,7 +6329,7 @@ void EdenGame::playHNM(int16 num) {
 
 // Original name bullehnm
 void EdenGame::displayHNMSubtitles() {
-	int16 *frames;
+	uint16 *frames;
 	perso_t *perso;
 	switch (_vm->_video->_curVideoNum) {
 	case 170:
@@ -6355,13 +6355,13 @@ void EdenGame::displayHNMSubtitles() {
 	default:
 		return;
 	}
-	int16 *frames_start = frames;
-	int16 frame;
-	while ((frame = *frames++) != -1) {
+	uint16 *frames_start = frames;
+	uint16 frame;
+	while ((frame = *frames++) != 0xFFFF) {
 		if ((frame & ~0x8000) == hnm_position)
 			break;
 	}
-	if (frame == -1) {
+	if (frame == 0xFFFF) {
 		if (showVideoSubtitle)
 			af_subtitlehnm();
 		return;
@@ -6653,7 +6653,7 @@ void EdenGame::lostobject() {
 
 bool EdenGame::objecthere(int16 id) {
 	object_t *object = getobjaddr(id);
-	for (pCurrentObjectLocation = &kObjectLocations[object->_locations]; *pCurrentObjectLocation != -1; pCurrentObjectLocation++) {
+	for (pCurrentObjectLocation = &kObjectLocations[object->_locations]; *pCurrentObjectLocation != 0xFFFF; pCurrentObjectLocation++) {
 		if (*pCurrentObjectLocation == p_global->roomNum)
 			return true;
 	}
@@ -6704,8 +6704,8 @@ void EdenGame::putobject() {
 
 void EdenGame::newobject(int16 id, int16 arg2) {
 	object_t *object = getobjaddr(id);
-	int16 e, *t = &kObjectLocations[object->_locations];
-	while ((e = *t) != -1) {
+	uint16 e, *t = &kObjectLocations[object->_locations];
+	while ((e = *t) != 0xFFFF) {
 		e &= ~0x8000;
 		if ((e >> 8) == arg2)
 			*t = e;
@@ -6766,7 +6766,7 @@ void EdenGame::newnidv() {
 	if (objects[Objects::obNest - 1]._count)
 		return;
 	object_t *obj = getobjaddr(Objects::obNest);
-	for (int16 *ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
+	for (uint16 *ptr = kObjectLocations + obj->_locations; *ptr != 0xFFFF; ptr++) {
 		if ((*ptr & ~0x8000) >> 8 != p_global->cita_area_num)
 			continue;
 		*ptr &= ~0x8000;
@@ -6789,7 +6789,7 @@ void EdenGame::newnido() {
 	if (objects[Objects::obNest - 1]._count)
 		return;
 	object_t *obj = getobjaddr(Objects::obFullNest);
-	for (int16 *ptr = kObjectLocations + obj->_locations; *ptr != -1; ptr++) {
+	for (uint16 *ptr = kObjectLocations + obj->_locations; *ptr != 0xFFFF; ptr++) {
 		if ((*ptr & ~0x8000) >> 8 != p_global->cita_area_num)
 			continue;
 		*ptr &= ~0x8000;
