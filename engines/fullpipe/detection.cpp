@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"fullpipe",
 		0,
 		AD_ENTRY1s("0654.sc2", "d8743351fc53d205f42d91f6d791e51b", 2272),
-		Common::RU_RUS,
+		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
