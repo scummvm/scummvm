@@ -478,32 +478,32 @@ bool CSuccubusDeliveryGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	setDefaults("3PetSuccubus", petControl);
 
 	if (owner) {
-		_gfxElement1 = getElement(16);
-		_gfxElement2 = getElement(17);
+		_send = getElement(16);
+		_receive = getElement(17);
 	}
 
 	return true;
 }
 
 void CSuccubusDeliveryGlyph::draw2(CScreenManager *screenManager) {
-	_gfxElement1->draw(screenManager);
-	_gfxElement2->draw(screenManager);
+	_send->draw(screenManager);
+	_receive->draw(screenManager);
 }
 
 bool CSuccubusDeliveryGlyph::MouseButtonDownMsg(const Point &pt) {
-	return _gfxElement1->MouseButtonDownMsg(pt)
-		|| _gfxElement2->MouseButtonDownMsg(pt);
+	return _send->MouseButtonDownMsg(pt)
+		|| _receive->MouseButtonDownMsg(pt);
 }
 
 bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
 	CTreeItem *target = getPetControl()->_remoteTarget;
 
-	if (_gfxElement1 && _gfxElement1->MouseButtonUpMsg(pt)) {
+	if (_send && _send->MouseButtonUpMsg(pt)) {
 		if (target) {
 			CPETDeliverMsg msg;
 			msg.execute(target);
 		}
-	} else if (_gfxElement2 && _gfxElement2->MouseButtonUpMsg(pt)) {
+	} else if (_receive && _receive->MouseButtonUpMsg(pt)) {
 		if (target) {
 			CPETReceiveMsg msg;
 			msg.execute(target);

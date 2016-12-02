@@ -595,10 +595,10 @@ public:
 
 class CSuccubusDeliveryGlyph : public CPetRemoteGlyph {
 private:
-	CPetGfxElement *_gfxElement1, *_gfxElement2;
+	CPetGfxElement *_send, *_receive;
 public:
 	CSuccubusDeliveryGlyph() : CPetRemoteGlyph(),
-		_gfxElement1(nullptr), _gfxElement2(nullptr) {}
+		_send(nullptr), _receive(nullptr) {}
 
 	/**
 	 * Setup the glyph
