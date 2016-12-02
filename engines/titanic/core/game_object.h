@@ -486,12 +486,12 @@ protected:
 	/**
 	 * Returns true if a mail with a specified Id exists
 	 */
-	bool mailExists(int id) const;
+	bool mailExists(uint roomFlags) const;
 
 	/**
 	 * Returns a specified mail, if one exists
 	 */
-	CGameObject *findMail(int id) const;
+	CGameObject *findMail(uint roomFlags) const;
 
 	/**
 	 * Resets the Mail Man value
@@ -570,7 +570,7 @@ protected:
 public:
 	Rect _bounds;
 	bool _isMail;
-	int _id;
+	uint _destRoomFlags;
 	uint _roomFlags;
 	int _field60;
 	CursorId _cursorId;
@@ -729,7 +729,7 @@ public:
 	/**
 	 * Sets the mail identifier for an object
 	 */
-	void setMailId(int mailId);
+	void setMailDest(uint roomFlags);
 
 	/**
 	 * Returns true if there's an attached surface which has a frame
@@ -799,7 +799,7 @@ public:
 	/**
 	 * Remove an object from the mail list
 	 */
-	void removeMail(int id, int v);
+	void removeMail(uint destRoomFlags, uint newRoomFlags);
 
 	/**
 	 * Return the full Id of the current view in a

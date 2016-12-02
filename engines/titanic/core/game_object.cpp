@@ -64,7 +64,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field48 = 0xF0;
 	_field4C = 0xFF;
 	_isMail = false;
-	_id = 0;
+	_destRoomFlags = 0;
 	_roomFlags = 0;
 	_visible = true;
 	_field60 = 0;
@@ -120,7 +120,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldB8, indent + 1);
 	file->writeNumberLine(_visible, indent + 1);
 	file->writeNumberLine(_isMail, indent + 1);
-	file->writeNumberLine(_id, indent + 1);
+	file->writeNumberLine(_destRoomFlags, indent + 1);
 	file->writeNumberLine(_roomFlags, indent + 1);
 
 	if (_surface) {
@@ -175,7 +175,7 @@ void CGameObject::load(SimpleFile *file) {
 		_fieldB8 = file->readNumber();
 		_visible = file->readNumber() != 0;
 		_isMail = file->readNumber();
-		_id = file->readNumber();
+		_destRoomFlags = file->readNumber();
 		_roomFlags = file->readNumber();
 
 		resourceKey.load(file);
@@ -1434,27 +1434,27 @@ void CGameObject::addMail(int mailId) {
 	}
 }
 
-void CGameObject::setMailId(int mailId) {
+void CGameObject::setMailDest(uint roomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan) {
 		makeDirty();
-		mailMan->setMailId(this, mailId);
+		mailMan->setMailDest(this, roomFlags);
 	}
 }
 
-bool CGameObject::mailExists(int id) const {
-	return findMail(id) != nullptr;
+bool CGameObject::mailExists(uint roomFlags) const {
+	return findMail(roomFlags) != nullptr;
 }
 
-CGameObject *CGameObject::findMail(int id) const {
+CGameObject *CGameObject::findMail(uint roomFlags) const {
 	CMailMan *mailMan = getMailMan();
-	return mailMan ? mailMan->findMail(id) : nullptr;
+	return mailMan ? mailMan->findMail(roomFlags) : nullptr;
 }
 
-void CGameObject::removeMail(int id, int v) {
+void CGameObject::removeMail(uint destRoomFlags, uint newRoomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan)
-		mailMan->removeMail(id, v);
+		mailMan->removeMail(destRoomFlags, newRoomFlags);
 }
 
 void CGameObject::resetMail() {

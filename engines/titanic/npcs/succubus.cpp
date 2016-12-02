@@ -378,7 +378,8 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	if (!pet)
 		return true;
 
-	CGameObject *mailObject = findMail(pet->getRoomFlags());
+	uint destRoomFlags = pet->getRoomFlags();
+	CGameObject *mailObject = findMail(destRoomFlags);
 	if (!mailObject) {
 		switch (getRandomNumber(2)) {
 		case 0:
@@ -415,7 +416,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 		if (_isFeathers) {
 			_field19C = 0;
-			removeMail(roomFlags, roomFlags);
+			removeMail(destRoomFlags, roomFlags);
 			pet->phonographAction("");
 
 			if (_startFrame2 >= 0) {
@@ -609,7 +610,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _endFrame4) {
 		if (pet && _mailP) {
-			_mailP->setMailId(petRoomFlags);
+			_mailP->setMailDest(petRoomFlags);
 		}
 
 		_field188 = 1;
@@ -726,7 +727,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 	if (_enabled) {
-		_roomFlags = msg->_roomNum;
+		_roomFlags = msg->_roomFlags;
 		playSound("z#98.wav", 100);
 	}
 

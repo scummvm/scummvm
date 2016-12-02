@@ -310,7 +310,7 @@ MESSAGE1(CSetChevFloorBits, int, floorNum, 0);
 MESSAGE1(CSetChevLiftBits, int, liftNum, 0);
 MESSAGE2(CSetChevPanelBitMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CSetChevPanelButtonsMsg, int, chevCode, 0);
-MESSAGE1(CSetChevRoomBits, int, roomNum, 0);
+MESSAGE1(CSetChevRoomBits, int, roomFlags, 0);
 MESSAGE1(CSetFrameMsg, int, frameNumber, 0);
 MESSAGE0(CSetMusicControlsMsg);
 MESSAGE2(CSetVarMsg, CString, varName, "", int, value, 0);

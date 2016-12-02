@@ -123,7 +123,7 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 		CGameObject *chevron = petControl->getHiddenObject("3PetChevron");
 
 		if (chevron) {
-			chevron->_id = _roomFlags;
+			chevron->_destRoomFlags = _roomFlags;
 			chevron->_isMail = _mailFlag != 0;
 			petControl->removeFromInventory(chevron, false, false);
 			chevron->loadSurface();

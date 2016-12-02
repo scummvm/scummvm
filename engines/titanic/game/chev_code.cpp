@@ -94,8 +94,8 @@ bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 
 bool CChevCode::SetChevRoomBits(CSetChevRoomBits *msg) {
 	_chevCode &= ~0xff;
-	if (msg->_roomNum > 0 && msg->_roomNum < 128)
-		_chevCode |= msg->_roomNum * 2;
+	if (msg->_roomFlags > 0 && msg->_roomFlags < 128)
+		_chevCode |= msg->_roomFlags * 2;
 
 	return true;
 }

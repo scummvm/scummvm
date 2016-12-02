@@ -101,7 +101,7 @@ bool CPetRooms::checkDragEnd(CGameObject *item) {
 	if (!item->_isMail)
 		return false;
 
-	uint roomFlags = item->_id;
+	uint roomFlags = item->_destRoomFlags;
 	CPetRoomsGlyph *glyph = _glyphs.findGlyphByFlags(roomFlags);
 	if (glyph) {
 		if (_glyphs.findGlyphByFlags(0)) {
