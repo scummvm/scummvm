@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-12-02 20:04+0000\n"
-"Last-Translator: selmiak <faqs@gmx.de>\n"
+"Last-Translator: Michael D. <michael@drueing.de>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
@@ -1494,7 +1494,7 @@ msgstr "Neuer Spielstand"
 
 #: gui/saveload-dialog.cpp:924
 msgid "Create a new saved game"
-msgstr "Erstellt einen neuen Spielstand."
+msgstr "Neuen Spielstand erstellen"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
