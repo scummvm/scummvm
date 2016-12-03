@@ -50,7 +50,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"fullpipe",
 		0,
-		AD_ENTRY1s("0654.sc2", "099f54f86d33ad2395f3b854b7e05058", 2272),
+		AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
@@ -61,10 +61,21 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"fullpipe",
 		0,
-		AD_ENTRY1s("0654.sc2", "d8743351fc53d205f42d91f6d791e51b", 2272),
+		AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Fullpipe German Demo version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 
