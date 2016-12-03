@@ -298,9 +298,9 @@ void EdenGame::characterInMirror() {
 	icon->sy = icon1->sy;
 	icon->ex = icon1->ex;
 	icon->ey = 170;
-	icon->cursor_id = icon1->cursor_id;
-	icon->action_id = icon1->action_id;
-	icon->object_id = icon1->object_id;
+	icon->_cursorId = icon1->_cursorId;
+	icon->_actionId = icon1->_actionId;
+	icon->_objectId = icon1->_objectId;
 	icon--;
 	displayFollower(suiveur, suiveur->sx, suiveur->sy);
 	for (; suiveur->_id != -1; suiveur++) {
@@ -322,8 +322,8 @@ void EdenGame::characterInMirror() {
 			icon->sy = suiveur->sy;
 			icon->ex = suiveur->ex;
 			icon->ey = suiveur->ey;
-			icon->cursor_id = 8;
-			icon->action_id = perso->_actionId;
+			icon->_cursorId = 8;
+			icon->_actionId = perso->_actionId;
 			icon--;
 			displayFollower(suiveur, suiveur->sx, suiveur->sy);
 			break;
@@ -657,7 +657,7 @@ void EdenGame::tetesquel() {
 	if (p_global->curObjectId == Objects::obTooth) {
 		gameRooms[22].exits[0] = 16;
 		gameRooms[26].exits[2] = 13;
-		gameIcons[16].cursor_id |= 0x8000;
+		gameIcons[16]._cursorId |= 0x8000;
 		loseObject(Objects::obTooth);
 		move(kCryoNorth);
 	}
@@ -669,7 +669,7 @@ void EdenGame::squelmoorkong() {
 }
 
 void EdenGame::choisir() {
-	byte objid = current_spot2->object_id;
+	byte objid = current_spot2->_objectId;
 	byte obj;
 	switch (objid) {
 	case 0:
@@ -833,7 +833,7 @@ void EdenGame::getplaque() {
 	p_global->curObjectFlags = 0;
 	p_global->inventoryScrollPos = 0;
 	p_global->curObjectCursor = 9;
-	gameIcons[16].cursor_id |= 0x8000;
+	gameIcons[16]._cursorId |= 0x8000;
 	showObjects();
 	gameRooms[131].video = 0;
 	bars_out();
@@ -908,7 +908,7 @@ void EdenGame::gotoval() {
 	rundcurs();
 	afficher();
 	_scrollPos = 0;
-	obj = current_spot2->object_id - 14;    //TODO
+	obj = current_spot2->_objectId - 14;    //TODO
 	p_global->prevLocation = target & 0xFF;
 	deplaval((target & 0xFF00) | obj);  //TODO careful!
 }
@@ -3619,7 +3619,7 @@ void EdenGame::SpcInstru(perso_t *perso) {
 void EdenGame::SpcOeuf(perso_t *perso) {
 	if (!verif_oui())
 		return;
-	gameIcons[131].cursor_id &= ~0x8000;
+	gameIcons[131]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 62;
 	dialautoon();
 }
@@ -3697,9 +3697,9 @@ void EdenGame::follow() {
 		p_global->room_perso->_flags |= PersonFlags::pf80;
 		p_global->room_perso->_roomNum = 0;
 		p_global->gameFlags |= GameFlags::gfFlag8;
-		gameIcons[123].object_id = 18;
-		gameIcons[124].object_id = 35;
-		gameIcons[125].cursor_id &= ~0x8000;
+		gameIcons[123]._objectId = 18;
+		gameIcons[124]._objectId = 35;
+		gameIcons[125]._cursorId &= ~0x8000;
 		p_global->persoBackgroundBankIdx = 56;
 	} else
 		suis_moi5();
@@ -3806,7 +3806,7 @@ byte *EdenGame::gettxtad(int16 id) {
 }
 
 void EdenGame::gotocarte() {
-	goto_t *go = &gotos[current_spot2->object_id];
+	goto_t *go = &gotos[current_spot2->_objectId];
 	endpersovox();
 	char newArea = go->areaNum;
 	p_global->newRoomNum = (go->areaNum << 8) | 1;
@@ -4743,9 +4743,9 @@ void EdenGame::ConvertIcons(icon_t *icon, int count) {
 		icon->sy = BE16(icon->sy);
 		icon->ex = BE16(icon->ex);
 		icon->ey = BE16(icon->ey);
-		icon->cursor_id = BE16(icon->cursor_id);
-		icon->object_id = BE32(icon->object_id);
-		icon->action_id = BE32(icon->action_id);
+		icon->_cursorId = BE16(icon->_cursorId);
+		icon->_objectId = BE32(icon->_objectId);
+		icon->_actionId = BE32(icon->_actionId);
 	}
 }
 
@@ -4943,7 +4943,7 @@ void EdenGame::updateinfolist() {
 }
 
 void EdenGame::init_globals() {
-	gameIcons[16].cursor_id |= 0x8000;
+	gameIcons[16]._cursorId |= 0x8000;
 
 	p_global->areaNum = Areas::arMo;
 	p_global->areaVisitCount = 1;
@@ -5159,9 +5159,9 @@ void EdenGame::displaySingleRoom(room_t *room) {
 				} else
 					addIcon = 1;
 				if (addIcon) {
-					icon->action_id = b0;
-					icon->object_id = b0;
-					icon->cursor_id = kActionCursors[b0];
+					icon->_actionId = b0;
+					icon->_objectId = b0;
+					icon->_cursorId = kActionCursors[b0];
 					int16 x = PLE16(ptr);
 					ptr += 2;
 					int16 y = PLE16(ptr);
@@ -5332,7 +5332,7 @@ void EdenGame::animpiece() {
 		        || room->level == p_global->ff_100) {
 			bars_out();
 			p_global->updatePaletteFlag = 16;
-			if (!p_global->narratorSequence & 0x80) //TODO: bug? !() @ 100DC
+			if (!(p_global->narratorSequence & 0x80)) //TODO: bug? !() @ 100DC
 				p_global->ff_102 = 0;
 			if (!needToFade)
 				needToFade = room->flags & RoomFlags::rf02;
@@ -5418,7 +5418,7 @@ room_t *EdenGame::getsalle(int16 loc) { //TODO: byte?
 // Original name: initlieu
 void EdenGame::initPlace(int16 roomNum) {
 	p_global->gameFlags |= GameFlags::gfFlag4000;
-	gameIcons[18].cursor_id |= 0x8000;
+	gameIcons[18]._cursorId |= 0x8000;
 	p_global->last_area_ptr = p_global->area_ptr;
 	p_global->area_ptr = &kAreasTable[((roomNum >> 8) & 0xFF) - 1];
 	area_t *area = p_global->area_ptr;
@@ -5428,7 +5428,7 @@ void EdenGame::initPlace(int16 roomNum) {
 	p_global->curAreaType = area->type;
 	p_global->curCitadelLevel = area->citadelLevel;
 	if (p_global->curAreaType == AreaType::atValley)
-		gameIcons[18].cursor_id &= ~0x8000;
+		gameIcons[18]._cursorId &= ~0x8000;
 	loadPlace(area->salNum);
 }
 
@@ -5784,7 +5784,7 @@ void EdenGame::FRDevents() {
 		_currCursor = 0;
 		current_spot = scan_icon_list(curs_x_pan + _cursCenter, curs_y + _cursCenter, p_global->iconsIndex);
 		if (current_spot)
-			_currCursor = current_spot->cursor_id;
+			_currCursor = current_spot->_cursorId;
 	}
 	if (_cursCenter == 0 && _currCursor != 53) {
 		_cursCenter = 11;
@@ -5799,7 +5799,7 @@ void EdenGame::FRDevents() {
 		//fix me here or above?
 		if (current_spot) { // ok, plug it here
 			current_spot2 = current_spot;
-			displayAdamMapMark(current_spot2->action_id - 14);
+			displayAdamMapMark(current_spot2->_actionId - 14);
 		}
 	}
 	if (p_global->displayFlags == DisplayFlags::dfFlag2 && current_spot)
@@ -5857,7 +5857,7 @@ void EdenGame::FRDevents() {
 icon_t *EdenGame::scan_icon_list(int16 x, int16 y, int16 index) {
 	icon_t *icon;
 	for (icon = &gameIcons[index]; icon->sx >= 0; icon++) {
-		if (icon->cursor_id & 0x8000)
+		if (icon->_cursorId & 0x8000)
 			continue;
 #if 0
 		// MAC version use this check. Same check is present in PC version, but never used
@@ -6198,9 +6198,9 @@ void EdenGame::mouse() {
 	                                    curs_y + _cursCenter, p_global->iconsIndex)))
 		return;
 	current_spot2 = current_spot;
-	debug("invoking mouse action %d", current_spot->action_id);
-	if (mouse_actions[current_spot->action_id])
-		(this->*mouse_actions[current_spot->action_id])();
+	debug("invoking mouse action %d", current_spot->_actionId);
+	if (mouse_actions[current_spot->_actionId])
+		(this->*mouse_actions[current_spot->_actionId])();
 }
 
 ////// film.c
@@ -6590,10 +6590,10 @@ void EdenGame::showObjects() {
 	int16 total = p_global->obj_count;
 	for (int16 i = invIconsCount; i--; icon++) {
 		if (total) {
-			icon->cursor_id &= ~0x8000;
+			icon->_cursorId &= ~0x8000;
 			total--;
 		} else
-			icon->cursor_id |= 0x8000;
+			icon->_cursorId |= 0x8000;
 	}
 	use_main_bank();
 	noclipax(55, 0, 176);
@@ -6602,7 +6602,7 @@ void EdenGame::showObjects() {
 	int16 index = p_global->inventoryScrollPos;
 	for (int16 i = invIconsCount; total-- && i--; icon++) {
 		char obj = own_objects[index++];
-		icon->object_id = obj;
+		icon->_objectId = obj;
 		noclipax(obj + 9, icon->sx, 178);
 	}
 	needPaletteUpdate = true;
@@ -6634,7 +6634,7 @@ void EdenGame::loseObject(int16 id) {
 	p_global->curObjectId = 0;
 	p_global->curObjectFlags = 0;
 	p_global->curObjectCursor = 9;
-	gameIcons[16].cursor_id |= 0x8000;
+	gameIcons[16]._cursorId |= 0x8000;
 	object->_flags &= ~ObjectFlags::ofInHands;
 	normalCursor = true;
 	_currCursor = 0;
@@ -6658,7 +6658,7 @@ bool EdenGame::objecthere(int16 id) {
 
 void EdenGame::objectmain(int16 id) {
 	object_t *object = getobjaddr(id);
-	gameIcons[16].cursor_id &= ~0x8000;
+	gameIcons[16]._cursorId &= ~0x8000;
 	p_global->curObjectId = object->_id;
 	p_global->curObjectCursor = p_global->curObjectId + 9;
 	object->_flags |= ObjectFlags::ofInHands;
@@ -6685,7 +6685,7 @@ void EdenGame::getobject(int16 id) {
 void EdenGame::putobject() {
 	if (!p_global->curObjectId)
 		return;
-	gameIcons[16].cursor_id |= 0x8000;
+	gameIcons[16]._cursorId |= 0x8000;
 	object_t *object = getobjaddr(p_global->curObjectId);
 	p_global->curObjectCursor = 9;
 	p_global->curObjectId = 0;
@@ -6741,7 +6741,7 @@ void EdenGame::giveobject() {
 }
 
 void EdenGame::takeobject() {
-	objectmain(current_spot2->object_id);
+	objectmain(current_spot2->_objectId);
 	p_global->_nextDialogPtr = nullptr;
 	closeCharacterDialog = false;
 	p_global->dialogType = DialogType::dtTalk;
@@ -6840,7 +6840,7 @@ void EdenGame::noclicpanel() {
 	byte num;
 	if (current_spot2 >= &gameIcons[119]) {
 		debug("noclic: objid = %p, glob3,2 = %2X %2X", (void *)current_spot2, p_global->menuItemIdHi, p_global->menuItemIdLo);
-		if (current_spot2->object_id == (p_global->menuItemIdLo + p_global->menuItemIdHi) << 8) //TODO: check me
+		if (current_spot2->_objectId == (uint16)((p_global->menuItemIdLo + p_global->menuItemIdHi) << 8)) //TODO: check me
 			return;
 	} else {
 		int idx = current_spot2 - &gameIcons[105];
@@ -6857,10 +6857,10 @@ void EdenGame::noclicpanel() {
 		p_global->ff_43 = 0;
 	}
 	num = p_global->menuItemIdLo;
-	p_global->menuItemIdLo = current_spot2->object_id & 0xFF;
+	p_global->menuItemIdLo = current_spot2->_objectId & 0xFF;
 skip:
 	;
-	p_global->menuItemIdHi = (current_spot2->object_id & 0xFF00) >> 8;
+	p_global->menuItemIdHi = (current_spot2->_objectId & 0xFF00) >> 8;
 	debug("noclic: new glob3,2 = %2X %2X", p_global->menuItemIdHi, p_global->menuItemIdLo);
 	affresult();
 	num &= 0xF0;
@@ -6958,9 +6958,9 @@ void EdenGame::initafterload() {
 	p_global->perso_img_bank = 0;
 	p_global->lastSalNum = 0;
 	loadPlace(p_global->area_ptr->salNum);
-	gameIcons[18].cursor_id |= 0x8000;
+	gameIcons[18]._cursorId |= 0x8000;
 	if (p_global->curAreaType == AreaType::atValley)
-		gameIcons[18].cursor_id &= ~0x8000;
+		gameIcons[18]._cursorId &= ~0x8000;
 	kPersoRoomBankTable[30] = 27;
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
@@ -7015,9 +7015,9 @@ void EdenGame::panelrestart() {
 	p_global->lastSalNum = 0;
 	loadPlace(p_global->area_ptr->salNum);
 	p_global->displayFlags = DisplayFlags::dfFlag1;
-	gameIcons[18].cursor_id |= 0x8000;
+	gameIcons[18]._cursorId |= 0x8000;
 	if (p_global->curAreaType == AreaType::atValley)
-		gameIcons[18].cursor_id &= ~0x8000;
+		gameIcons[18]._cursorId &= ~0x8000;
 	kPersoRoomBankTable[30] = 27;
 	if (p_global->phaseNum >= 352)
 		kPersoRoomBankTable[30] = 26;
@@ -7052,7 +7052,7 @@ void EdenGame::reallyquit() {
 
 void EdenGame::confirmer(char mode, char yesId) {
 	p_global->iconsIndex = 119;
-	gameIcons[119].object_id = yesId;
+	gameIcons[119]._objectId = yesId;
 	confirmMode = mode;
 	useBank(65);
 	noclipax(12, 117, 74);
@@ -7082,15 +7082,15 @@ void EdenGame::confirmno() {
 }
 
 void EdenGame::restart() {
-	confirmer(1, current_spot2->object_id);
+	confirmer(1, current_spot2->_objectId);
 }
 
 void EdenGame::EdenQuit() {
-	confirmer(2, current_spot2->object_id);
+	confirmer(2, current_spot2->_objectId);
 }
 
 void EdenGame::choixsubtitle() {
-	byte lang = current_spot2->object_id & 0xF;
+	byte lang = current_spot2->_objectId & 0xF;
 	if (lang == p_global->pref_language)
 		return;
 	if (lang > 5)
@@ -7101,11 +7101,11 @@ void EdenGame::choixsubtitle() {
 }
 
 void EdenGame::reglervol() {
-	byte *valptr = &p_global->pref_10C[current_spot2->object_id & 7];
+	byte *valptr = &p_global->pref_10C[current_spot2->_objectId & 7];
 	curs_y = 104 - ((*valptr >> 2) & 0x3F); // TODO: check me
 	cur_slider_value_ptr = valptr;
 	p_global->menuFlags |= MenuFlags::mfFlag1;
-	if (current_spot2->object_id & 8)
+	if (current_spot2->_objectId & 8)
 		p_global->menuFlags |= MenuFlags::mfFlag2;
 	cur_slider_x = current_spot2->sx;
 	cur_slider_y = curs_y;
@@ -7636,7 +7636,7 @@ void EdenGame::phase226() {
 }
 
 void EdenGame::phase257() {
-	gameIcons[127].cursor_id &= ~0x8000;
+	gameIcons[127]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 58;
 	dialautooff();
 }
@@ -7656,16 +7656,16 @@ void EdenGame::phase369() {
 
 void EdenGame::phase371() {
 	eloirevient();
-	gameIcons[128].cursor_id &= ~0x8000;
-	gameIcons[129].cursor_id &= ~0x8000;
-	gameIcons[127].cursor_id |= 0x8000;
+	gameIcons[128]._cursorId &= ~0x8000;
+	gameIcons[129]._cursorId &= ~0x8000;
+	gameIcons[127]._cursorId |= 0x8000;
 	p_global->persoBackgroundBankIdx = 59;
 	gameRooms[334].exits[0] = 0xFF;
 	gameRooms[335].exits[0] = 0xFF;
-	gameIcons[123].object_id = 9;
-	gameIcons[124].object_id = 26;
-	gameIcons[125].object_id = 42;
-	gameIcons[126].object_id = 56;
+	gameIcons[123]._objectId = 9;
+	gameIcons[124]._objectId = 26;
+	gameIcons[125]._objectId = 42;
+	gameIcons[126]._objectId = 56;
 }
 
 void EdenGame::phase385() {
@@ -7696,7 +7696,7 @@ void EdenGame::phase434() {
 	p_global->roomNum = 275;
 	gameRooms[16].bank = 44;
 	gameRooms[18].bank = 44;
-	gameIcons[132].cursor_id &= ~0x8000;
+	gameIcons[132]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 61;
 	gameRooms[118].exits[2] = 0xFF;
 	abortdial();
@@ -7720,7 +7720,7 @@ void EdenGame::phase514() {
 }
 
 void EdenGame::phase529() {
-	gameIcons[133].cursor_id &= ~0x8000;
+	gameIcons[133]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 63;
 }
 
@@ -7846,7 +7846,7 @@ void EdenGame::phase208() {
 }
 
 void EdenGame::phase224() {
-	gameIcons[126].cursor_id &= ~0x8000;
+	gameIcons[126]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 57;
 	dialautooff();
 }
@@ -7936,7 +7936,7 @@ void EdenGame::phase400() {
 
 void EdenGame::phase416() {
 	suis_moi(3);
-	gameIcons[130].cursor_id &= ~0x8000;
+	gameIcons[130]._cursorId &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 60;
 	gameRooms[0].exits[0] = 138;
 }

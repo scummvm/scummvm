@@ -412,13 +412,13 @@ struct Follower {      // Characters on Mirror screen
 typedef struct Follower Follower;
 
 struct icon_t {
-	int16       sx;
-	int16       sy;
-	int16       ex;
-	int16       ey;
-	uint16  cursor_id;          // & 0x8000 - inactive/hidden
-	unsigned int    action_id;
-	unsigned int    object_id;
+	int16  sx;
+	int16  sy;
+	int16  ex;
+	int16  ey;
+	uint16 _cursorId;          // & 0x8000 - inactive/hidden
+	uint32 _actionId;
+	uint32 _objectId;
 };
 typedef struct icon_t icon_t;
 
