@@ -558,8 +558,8 @@ void CPetGlyphs::removeInvalid() {
 			}
 		}
 
-		_firstVisibleIndex = CLIP(_firstVisibleIndex, 0,
-			(int)size() - _numVisibleGlyphs);
+		int max = MAX((int)size() - _numVisibleGlyphs, 0);
+		_firstVisibleIndex = CLIP(_firstVisibleIndex, 0, max);
 	}
 }
 
