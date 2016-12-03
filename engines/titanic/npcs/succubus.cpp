@@ -610,6 +610,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _endFrame4) {
+		// SuccUBus disgorged mail
 		if (pet && _mailP) {
 			_mailP->setMailDest(petRoomFlags);
 		}
