@@ -141,8 +141,8 @@ private:
 	void istyranval(area_t *area);
 	char getDirection(perso_t *perso);
 	bool canMoveThere(char loc, perso_t *perso);
-	void scramble1(char elem[4]);
-	void scramble2(char elem[4]);
+	void scramble1(uint8 elem[4]);
+	void scramble2(uint8 elem[4]);
 	void melangedir();
 	bool naitredino(char persoType);
 	void newcita(char arg1, int16 arg2, room_t *room);

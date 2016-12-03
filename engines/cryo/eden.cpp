@@ -1790,13 +1790,13 @@ bool EdenGame::canMoveThere(char loc, perso_t *perso) {
 }
 
 // Original name: melange1
-void EdenGame::scramble1(char elem[4]) {
+void EdenGame::scramble1(uint8 elem[4]) {
 	if (_vm->_rnd->getRandomNumber(1) & 1)
 		SWAP(elem[1], elem[2]);
 }
 
 // Original name melange2
-void EdenGame::scramble2(char elem[4]) {
+void EdenGame::scramble2(uint8 elem[4]) {
 	if (_vm->_rnd->getRandomNumber(1) & 1)
 		SWAP(elem[0], elem[1]);
 
@@ -1959,9 +1959,9 @@ void EdenGame::depladino(perso_t *perso) {
 	int dir = getDirection(perso);
 	if (dir != -1) {
 		melangedir();
-		char *dirs = tab_2CB1E[dir];
+		uint8 *dirs = tab_2CB1E[dir];
 		byte loc = perso->_roomNum & 0xFF;
-		char dir2 = *dirs++;
+		uint8 dir2 = *dirs++;
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
@@ -4517,25 +4517,21 @@ void EdenGame::wait(int howlong) {
 }
 
 void EdenGame::effetpix() {
-	byte *scr, *pix;
-	int16 x, y;
-	int16 r25, r18, r31, r30;  //TODO: change to xx/yy
+	byte *scr;
+	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
 
-//	Unused
-//	int16 w = _vm->ScreenView->_width;
-//	int16 h = _vm->ScreenView->_height;
-	int16 ww = _vm->ScreenView->_pitch;
+	uint16 ww = _vm->ScreenView->_pitch;
 	r25 = ww * 80;
 	r18 = 640 * 80;
-	pix = p_mainview->_bufferPtr + 16 * 640;
+	byte *pix = p_mainview->_bufferPtr + 16 * 640;
 	if (!_doubledScreen) {
-		x = p_mainview->_normal._dstLeft;
-		y = p_mainview->_normal._dstTop;
+		int x = p_mainview->_normal._dstLeft;
+		int y = p_mainview->_normal._dstTop;
 		scr = _vm->ScreenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 	} else {
-		x = p_mainview->_zoom._dstLeft;
-		y = p_mainview->_zoom._dstTop;
+		int x = p_mainview->_zoom._dstLeft;
+		int y = p_mainview->_zoom._dstTop;
 		scr = _vm->ScreenView->_bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		r25 *= 2;
@@ -8529,9 +8525,71 @@ int EdenGame::next_val(char **ptr, char *error) {
 }
 
 void EdenGame::selectmap(int16 num) {
+	static const char mapMode[12] = { 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 2, 0 };
+	// Cube faces to texture coords mapping
+	// each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
+
+	static const int16 cube_texcoords[3][6 * 2 * 3 * 2] = {
+		{
+			32, 32,  0, 32,  0,  0,
+			32, 32,  0,  0, 32,  0,
+
+			0, 32,  0,  0, 32,  0,
+			0, 32, 32,  0, 32, 32,
+
+			32, 32,  0, 32,  0,  0,
+			32, 32,  0,  0, 32,  0,
+
+			32,  0, 32, 32,  0, 32,
+			32,  0,  0, 32,  0,  0,
+
+			0,  0, 32,  0, 32, 32,
+			0,  0, 32, 32,  0, 32,
+
+			0, 32,  0,  0, 32,  0,
+			0, 32, 32,  0, 32, 32
+		}, {
+			32, 32,  0, 32,  0,  0,
+			32, 32,  0,  0, 32,  0,
+
+			32,  0, 32, 32,  0, 32,
+			32,  0,  0, 32,  0,  0,
+
+			32,  0, 32, 32,  0, 32,
+			32,  0,  0, 32,  0,  0,
+
+			0, 32,  0,  0, 32,  0,
+			0, 32, 32,  0, 32, 32,
+
+			32,  0, 32, 32,  0, 32,
+			32,  0,  0, 32,  0,  0,
+
+			32,  0, 32, 32,  0, 32,
+			32,  0,  0, 32,  0,  0
+		}, {
+			30, 30,  2, 30,  2,  2,
+			30, 30,  2,  2, 30,  2,
+
+			2, 30,  2,  2, 30,  2,
+			2, 30, 30,  2, 30, 30,
+
+			30, 30,  2, 30,  2,  2,
+			30, 30,  2,  2, 30,  2,
+
+			30,  2, 30, 30,  2, 30,
+			30,  2,  2, 30,  2,  2,
+
+			2,  2, 30,  2, 30, 30,
+			2,  2, 30, 30,  2, 30,
+
+			2, 30,  2,  2, 30,  2,
+			2, 30, 30,  2, 30, 30
+		}
+	};
+
 	curs_cur_map = num;
 	int16 k = 0;
-	int mode = tab_2E138[num];
+	int mode = mapMode[num];
 	int16 x = (num & 7) * 32;
 	int16 y = (num & 0x18) * 4;
 	for (int i = 0; i < 6 * 2; i++) {

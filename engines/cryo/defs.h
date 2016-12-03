@@ -822,7 +822,7 @@ extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
 extern cita_t cita_list[];
 extern int16 tab_2CB16[];
-extern char tab_2CB1E[8][4];
+extern uint8 tab_2CB1E[8][4];
 
 struct prect_t {
 	int16   sx, sy, ex, ey;
@@ -858,14 +858,6 @@ typedef struct cube_t cube_t;
 extern float flt_2DF7C;
 extern float flt_2DF80;
 extern float flt_2DF84;
-
-// Cube faces to texture coords mapping
-// each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
-
-extern int16 cube_texcoords[3][6 * 2 * 3 * 2];
-extern char tab_2E138[4 * 3];
-
-//
 
 struct XYZ {
 	signed short x, y, z;
