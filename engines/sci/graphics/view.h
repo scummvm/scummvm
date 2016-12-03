@@ -48,7 +48,6 @@ struct CelInfo {
 
 struct LoopInfo {
 	bool mirrorFlag;
-	uint16 celCount;
 	Common::Array<CelInfo> cel;
 };
 
@@ -80,7 +79,7 @@ public:
 	const SciSpan<const byte> &getBitmap(int16 loopNo, int16 celNo);
 	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires);
 	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY);
-	uint16 getLoopCount() const { return _loopCount; }
+	uint16 getLoopCount() const { return _loop.size(); }
 	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
 
@@ -103,7 +102,6 @@ private:
 	GuiResourceId _resourceId;
 	Resource *_resource;
 
-	uint16 _loopCount;
 	Common::Array<LoopInfo> _loop;
 	bool _embeddedPal;
 	Palette _viewPalette;
