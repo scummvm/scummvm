@@ -112,6 +112,7 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 		return false;
 
 	CGameObject *carryParcel = petControl->getHiddenObject("CarryParcel");
+	CGameObject *item = _item;
 
 	if (petControl->isSuccUBusActive() && carryParcel) {
 		petControl->removeFromInventory(_item, carryParcel, false, true);
@@ -119,17 +120,18 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 
 		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
 			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
-		_item->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
+		carryParcel->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
+		item = carryParcel;
 	} else {
 		petControl->removeFromInventory(_item, false, true);
 
-		_item->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
-			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
+		_item->setPosition(Point(msg->_mousePos.x - _item->getBounds().width() / 2,
+			msg->_mousePos.y - _item->getBounds().height() / 2));
 		_item->setVisible(true);
 	}
 
 	msg->_handled = true;
-	if (msg->execute(carryParcel)) {
+	if (msg->execute(item)) {
 		_item = nullptr;
 		_background = nullptr;
 		_field34 = 0;
