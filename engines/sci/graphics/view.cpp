@@ -110,13 +110,13 @@ void GfxView::initData(GuiResourceId resourceId) {
 	uint32 palOffset = 0;
 	uint16 headerSize = 0;
 	uint16 loopSize = 0, celSize = 0;
-	int loopNo, celNo, EGAmapNr;
+	uint loopNo, celNo, EGAmapNr;
 	byte seekEntry;
 	bool isEGA = false;
 	bool isCompressed = true;
 	ViewType curViewType = _resMan->getViewType();
 
-	_loopCount = 0;
+	_loop.resize(0);
 	_embeddedPal = false;
 	_EGAmapping.clear();
 	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
@@ -146,7 +146,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
-		_loopCount = _resource->getUint8At(0);
+		_loop.resize(_resource->getUint8At(0));
 		// bit 0x8000 of _resourceData[1] means palette is set
 		if (_resource->getUint8At(1) & 0x40)
 			isCompressed = false;
@@ -183,18 +183,16 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 		}
 
-		_loop.resize(_loopCount);
-		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+		for (loopNo = 0; loopNo < _loop.size(); loopNo++) {
 			loopData = _resource->subspan(_resource->getUint16LEAt(8 + loopNo * 2));
 			// CelCount:WORD Unknown:WORD CelOffset0:WORD CelOffset1:WORD...
 
 			celCount = loopData.getUint16LEAt(0);
-			_loop[loopNo].celCount = celCount;
+			_loop[loopNo].cel.resize(celCount);
 			_loop[loopNo].mirrorFlag = mirrorBits & 1 ? true : false;
 			mirrorBits >>= 1;
 
 			// read cel info
-			_loop[loopNo].cel.resize(celCount);
 			for (celNo = 0; celNo < celCount; celNo++) {
 				celOffset = loopData.getUint16LEAt(4 + celNo * 2);
 				celData = _resource->subspan(celOffset);
@@ -244,20 +242,13 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 		break;
 
-	case kViewVga11: // View-format SCI1.1+
+	case kViewVga11: { // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Flags:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
 		headerSize = _resource->getUint16SEAt(0) + 2; // headerSize is not part of the header, so it's added
 		assert(headerSize >= 16);
-		_loopCount = _resource->getUint8At(2);
-		assert(_loopCount);
+		const uint8 loopCount = _resource->getUint8At(2);
+		assert(loopCount);
 		palOffset = _resource->getUint32SEAt(8);
-
-		// For SCI32, this is a scale flag
-		if (getSciVersion() >= SCI_VERSION_2) {
-			_sci2ScaleRes = (Sci32ViewNativeResolution)_resource->getUint8At(5);
-			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
-				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
-		}
 
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
@@ -289,13 +280,13 @@ void GfxView::initData(GuiResourceId resourceId) {
 			_embeddedPal = true;
 		}
 
-		_loop.resize(_loopCount);
-		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+		_loop.resize(loopCount);
+		for (loopNo = 0; loopNo < loopCount; loopNo++) {
 			loopData = _resource->subspan(headerSize + (loopNo * loopSize));
 
 			seekEntry = loopData[0];
 			if (seekEntry != 255) {
-				if (seekEntry >= _loopCount)
+				if (seekEntry >= loopCount)
 					error("Bad loop-pointer in sci 1.1 view");
 				_loop[loopNo].mirrorFlag = true;
 				loopData = _resource->subspan(headerSize + (seekEntry * loopSize));
@@ -304,12 +295,11 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 
 			celCount = loopData[2];
-			_loop[loopNo].celCount = celCount;
+			_loop[loopNo].cel.resize(celCount);
 
 			const uint32 celDataOffset = loopData.getUint32SEAt(12);
 
 			// read cel info
-			_loop[loopNo].cel.resize(celCount);
 			for (celNo = 0; celNo < celCount; celNo++) {
 				celData = _resource->subspan(celDataOffset + celNo * celSize, celSize);
 
@@ -338,6 +328,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 		}
 		break;
+	}
 
 	default:
 		error("ViewType was not detected, can't continue");
@@ -351,7 +342,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 995, Loop 13, Cel 0 = "TEXT"
 		// View 995, Loop 13, Cel 1 = "SPEECH"
 		// View 995, Loop 13, Cel 2 = "DUAL" (<- our injected view)
-		if ((g_sci->isCD()) && (resourceId == 995)) {
+		if (g_sci->isCD() && resourceId == 995) {
 			// security checks
 			if (_loop.size() >= 14 &&
 				_loop[13].cel.size() == 2 &&
@@ -373,7 +364,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 947, Loop 9, Cel 1 = "TEXT" (pressed)
 		// View 947, Loop 12, Cel 0 = "DUAL" (not pressed) (<- our injected view)
 		// View 947, Loop 12, Cel 1 = "DUAL" (pressed) (<- our injected view)
-		if ((g_sci->isCD()) && (resourceId == 947)) {
+		if (g_sci->isCD() && resourceId == 947) {
 			// security checks
 			if (_loop.size() == 12 &&
 				_loop[8].cel.size() == 2 &&
@@ -400,24 +391,24 @@ GuiResourceId GfxView::getResourceId() const {
 }
 
 int16 GfxView::getWidth(int16 loopNo, int16 celNo) const {
-	return _loopCount ? getCelInfo(loopNo, celNo)->width : 0;
+	return _loop.size() ? getCelInfo(loopNo, celNo)->width : 0;
 }
 
 int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
-	return _loopCount ? getCelInfo(loopNo, celNo)->height : 0;
+	return _loop.size() ? getCelInfo(loopNo, celNo)->height : 0;
 }
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
-	assert(_loopCount);
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
+	assert(_loop.size());
+	loopNo = CLIP<int16>(loopNo, 0, _loop.size() - 1);
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].cel.size() - 1);
 	return &_loop[loopNo].cel[celNo];
 }
 
 uint16 GfxView::getCelCount(int16 loopNo) const {
-	assert(_loopCount);
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	return _loop[loopNo].celCount;
+	assert(_loop.size());
+	loopNo = CLIP<int16>(loopNo, 0, _loop.size() - 1);
+	return _loop[loopNo].cel.size();
 }
 
 Palette *GfxView::getPalette() {
