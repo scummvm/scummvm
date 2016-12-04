@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 13:12+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-04 13:13+0000\n"
+"Last-Translator: Peter Johansson <rossolis8240@telia.com>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -3044,36 +3044,35 @@ msgstr "Växla Inventarie/Karaktär skärm"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr ""
+msgstr "Läger"
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Välj trollformel"
+msgstr "Kasta besvärjelse"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Besvärjelse Nivå 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Besvärjelse Nivå 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Besvärjelse Nivå 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Besvärjelse Nivå 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Besvärjelse Nivå 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Besvärjelse Nivå 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3165,12 +3164,11 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Enkelt musgränssnitt"
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Visar etiketter för objekten som musen pekar på"
+msgstr "Visar objektets  namn när muspekaren flyttas över dom"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
