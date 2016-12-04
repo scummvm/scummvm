@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
 "PO-Revision-Date: 2016-12-04 13:13+0000\n"
-"Last-Translator: Peter Johansson <rossolis8240@telia.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -3168,7 +3168,7 @@ msgstr "Enkelt musgränssnitt"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Visar objektets  namn när muspekaren flyttas över dom"
+msgstr "Visar objektets namn när muspekaren flyttas över dom"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
