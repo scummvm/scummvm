@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 13:14+0000\n"
-"Last-Translator: Peter Johansson <rossolis8240@telia.com>\n"
+"PO-Revision-Date: 2016-12-04 13:18+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -89,11 +89,11 @@ msgstr "Välj katalog med speldata"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Från:"
+msgstr "Från: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Till:"
+msgstr "Till: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -102,7 +102,7 @@ msgstr "Avbryt nedladdning"
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Avbryt nedladdning "
+msgstr "Avbryt nedladdning"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
@@ -658,7 +658,7 @@ msgstr "~R~adera spel"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Radera spelet från listan. Spelets datafiler påverkas inte."
+msgstr "Radera spelet från listan. Spelets datafiler påverkas inte"
 
 #: gui/launcher.cpp:160
 msgctxt "lowres"
@@ -841,11 +841,11 @@ msgstr "videoläget kunde inte ändras."
 
 #: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
-msgstr "inställningen för bildförhållandet kunde inte ändras."
+msgstr "inställningen för bildförhållandet kunde inte ändras"
 
 #: gui/options.cpp:480
 msgid "the fullscreen setting could not be changed"
-msgstr "fullskärmsinställningen kunde inte ändras."
+msgstr "fullskärmsinställningen kunde inte ändras"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
@@ -1365,7 +1365,7 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:575
 msgid "*  Pre"
-msgstr "* Pre."
+msgstr "* Pre"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:578
@@ -1446,15 +1446,15 @@ msgstr "Vill du verkligen radera den här spardatan?"
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
-msgstr "Datum:"
+msgstr "Datum: "
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1066
 msgid "Time: "
-msgstr "Tid:"
+msgstr "Tid: "
 
 #: gui/saveload-dialog.cpp:564 gui/saveload-dialog.cpp:1074
 msgid "Playtime: "
-msgstr "Speltid:"
+msgstr "Speltid: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
 msgid "Untitled saved game"
@@ -1478,7 +1478,7 @@ msgstr "Skapa ett nytt sparat spel"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
-msgstr "Namn:"
+msgstr "Namn: "
 
 #: gui/saveload-dialog.cpp:1131
 #, c-format
@@ -1882,7 +1882,7 @@ msgstr "Kunde inte applicera fullskärmsinställning."
 
 #: engines/engine.cpp:373
 msgid "Could not apply filtering setting."
-msgstr "Kunde inte ändra filterinställningen"
+msgstr "Kunde inte ändra filterinställningen."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2061,7 +2061,7 @@ msgstr "Nedladdningen är färdig. Kunde inte ladda ner %u filer."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Nedladdning färdig!"
+msgstr "Nedladdning färdig."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
@@ -2141,7 +2141,7 @@ msgstr "Vill du avsluta?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "Trackpad-läge "
+msgstr "Trackpad-läge"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -2162,7 +2162,7 @@ msgstr "Svep åt höger med två fingrar för att byta läge."
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr "Automatiskt dragläge "
+msgstr "Automatiskt dragläge"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
@@ -2223,23 +2223,23 @@ msgstr "Tangenter:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr "(Effektiv)"
+msgstr " (Effektiv)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr "(Aktiv)"
+msgstr " (Aktiv)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr "(Blockerad)"
+msgstr " (Blockerad)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr "(Global)"
+msgstr " (Global)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr "(Spel)"
+msgstr " (Spel)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2447,7 +2447,7 @@ msgstr "Virtuellt tangentbord"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Key mapper"
-msgstr "Tangentinst."
+msgstr "Tangentinst"
 
 #: backends/platform/tizen/form.cpp:263
 msgid "Right Click Once"
@@ -2679,7 +2679,7 @@ msgstr "Vill du ladda eller spara spelet?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "Är du säker på att du vill avsluta?"
+msgstr "   Är du säker på att du vill avsluta?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2691,11 +2691,11 @@ msgstr "Rotera"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Använd SDL-driver"
+msgstr "Använd SDL-driver "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Skärm"
+msgstr "Skärm "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2940,7 +2940,7 @@ msgstr "Spela filmer i högre hastighet"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Kunde inte spara spelet."
+msgstr "Kunde inte spara spelet"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3380,7 +3380,7 @@ msgstr "Skippa EGA-gitterpass (bakgrunder i full färg)"
 
 #: engines/sci/detection.cpp:391
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr "Skippa gitterpass i EGA-spel. Grafik visas i full färg."
+msgstr "Skippa gitterpass i EGA-spel. Grafik visas i full färg"
 
 #: engines/sci/detection.cpp:400
 msgid "Enable high resolution graphics"
@@ -3709,15 +3709,15 @@ msgstr "* Observera att användning av ctrl-f"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "och ctrl-g inte rekommenderas"
+msgstr "  och ctrl-g inte rekommenderas"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr "då detta kan orsaka krascher"
+msgstr "  då detta kan orsaka krascher"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr " eller felaktigt spelbeteende."
+msgstr "  eller felaktigt spelbeteende."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
@@ -3955,7 +3955,7 @@ msgstr "Comm"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr "Spara / Ladda / Inst."
+msgstr "Spara / Ladda / Inst"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
@@ -4023,15 +4023,15 @@ msgstr "(*) Slagsmål med tangentbord är alltid på,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "så trots meddelandet i spelet"
+msgstr "  så trots meddelandet i spelet"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "aktiverar det här endast slagsmål med mus."
+msgstr "  aktiverar det här endast slagsmål med mus"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Slagsmålskontroller (nr. tangenter)"
+msgstr "Slagsmålskontroller (nr. tangenter):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4084,7 +4084,7 @@ msgstr "9, 6 och 3."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Biplanskontroller (nr. tangenter)"
+msgstr "Biplanskontroller (nr. tangenter):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
