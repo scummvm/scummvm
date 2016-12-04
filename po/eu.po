@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2011-12-15 14:53+0100\n"
-"Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
-"Language-Team: Librezale <librezale@librezale.org>\n"
-"Language: Euskara\n"
+"PO-Revision-Date: 2016-12-04 13:27+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Basque "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/eu/>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Euskara\n"
 
 #: gui/about.cpp:94
@@ -521,7 +524,7 @@ msgstr "Berrezarri"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Berrazarri FluidSynth-en ezarpen guztiak bere balio lehenetsietara"
+msgstr "Berrazarri FluidSynth-en ezarpen guztiak bere balio lehenetsietara."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -599,7 +602,7 @@ msgstr "ScummVM-i buruz"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~A~ukerak"
+msgstr "~A~ukerak..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
@@ -615,7 +618,7 @@ msgstr "Aukeraturiko jokora jolastu"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
-msgstr "~K~argatu"
+msgstr "~K~argatu..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
@@ -743,7 +746,7 @@ msgstr "Bilaketa amaitua!"
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
-"%d joko berri aurkitu dira, aurretik gehituriko %d ez dira kontuan hartu"
+"%d joko berri aurkitu dira, aurretik gehituriko %d ez dira kontuan hartu."
 
 #: gui/massadd.cpp:266
 #, c-format
@@ -754,7 +757,7 @@ msgstr "%d direktorio eskaneatu dira ..."
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
-"%d joko berri aurkitu dira, aurretik gehituriko %d ez dira kontuan hartu"
+"%d joko berri aurkitu dira, aurretik gehituriko %d ez dira kontuan hartu ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
@@ -1142,7 +1145,7 @@ msgstr "Teklak"
 
 #: gui/options.cpp:1353
 msgid "GUI Language:"
-msgstr "Hizkuntza"
+msgstr "Hizkuntza:"
 
 #: gui/options.cpp:1353
 msgid "Language of ScummVM GUI"
@@ -1423,7 +1426,7 @@ msgstr "Zerrenda ikuspegia"
 
 #: gui/saveload-dialog.cpp:335
 msgid "Grid view"
-msgstr "Sareta ikuspegia "
+msgstr "Sareta ikuspegia"
 
 #: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:528
 msgid "No date saved"
@@ -1443,7 +1446,7 @@ msgstr "Ezabatu partida gorde hau?"
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
-msgstr "Data:"
+msgstr "Data: "
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1066
 msgid "Time: "
@@ -1481,7 +1484,7 @@ msgstr "Izena: "
 #: gui/saveload-dialog.cpp:1131
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Sartu deskribapena %d zirrikiturako: "
+msgstr "Sartu deskribapena %d zirrikiturako:"
 
 #: gui/storagewizarddialog.cpp:55
 #, c-format
@@ -1605,7 +1608,7 @@ msgstr ""
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
-msgstr "Balioa kendu:"
+msgstr "Balioa kendu"
 
 #: base/main.cpp:253
 #, c-format
@@ -1953,7 +1956,7 @@ msgid ""
 "disconnected)."
 msgstr ""
 "Aukeraturiko '%s' soinu gailua ez da aurkitu (baliteke itzalita edo "
-"konektatu gabe egotea)"
+"konektatu gabe egotea)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
@@ -1976,7 +1979,7 @@ msgid ""
 "disconnected)."
 msgstr ""
 "'%s' gogoko soinu gailua ez da aurkitu (baliteke itzalita edo konektatu gabe "
-"egotea)"
+"egotea)."
 
 #: audio/mididrv.cpp:272
 #, c-format
@@ -2137,7 +2140,7 @@ msgstr "Benetan irten?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "Trackpad modua orain:"
+msgstr "Trackpad modua orain"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -2158,7 +2161,7 @@ msgstr "Pasatu bi atzamara eskuinean gaitu/desgaitzeko."
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr "Auto-arrastatzea orain:"
+msgstr "Auto-arrastatzea orain"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
@@ -2221,23 +2224,23 @@ msgstr "Teklen esleipena:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr "(Egiazkoa)"
+msgstr " (Egiazkoa)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr "(Aktiboa)"
+msgstr " (Aktiboa)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr "(Blokeaturik)"
+msgstr " (Blokeaturik)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr "(Orokorra)"
+msgstr " (Orokorra)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr "(Jokoa)"
+msgstr " (Jokoa)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2505,7 +2508,7 @@ msgstr "Kolpe bikoitza"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Underscan horizontala"
+msgstr "Underscan horizontala:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
@@ -2517,7 +2520,7 @@ msgstr "Sarrrera"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "GC Pad-aren sentikortasuna"
+msgstr "GC Pad-aren sentikortasuna:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
@@ -2525,7 +2528,7 @@ msgstr "GC Pad-aren azelerazioa:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
-msgstr "DVD:"
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
@@ -2677,7 +2680,7 @@ msgstr "Jokoa kargatu edo gorde nahi duzu?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "  Ziur irten nahi duzula?"
+msgstr "   Ziur irten nahi duzula?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2689,11 +2692,11 @@ msgstr "Biratu"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "SDL kontrolatzailea erabiltzen"
+msgstr "SDL kontrolatzailea erabiltzen "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Pantaila"
+msgstr "Pantaila "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2793,7 +2796,7 @@ msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 "Saguaren euskarria giatzen du. Sagua mugitzeko eta jokoko menuetan "
-"erabiltzea ahalbidetzen du"
+"erabiltzea ahalbidetzen du."
 
 #: engines/agi/detection.cpp:177
 #, fuzzy
@@ -2927,7 +2930,7 @@ msgstr "Ezin izan da jokoa fitxategira gorde."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
-msgstr "Ezin izan da fitxategia ezabatu"
+msgstr "Ezin izan da fitxategia ezabatu."
 
 #: engines/groovie/detection.cpp:312
 msgid "Fast movie speed"
@@ -3287,7 +3290,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:194
 msgid "Load file"
-msgstr "Kargatu fitxategia:"
+msgstr "Kargatu fitxategia"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
@@ -3491,7 +3494,7 @@ msgstr "%c diskoa sartu eta sakatu botoi bat jarraitzeko."
 #: engines/scumm/dialogs.cpp:173
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "Ezin izan da %s, (%c%d) aurkitu. Sakatu botoi bat"
+msgstr "Ezin izan da %s, (%c%d) aurkitu. Sakatu botoi bat."
 
 #: engines/scumm/dialogs.cpp:174
 #, c-format
@@ -3581,7 +3584,7 @@ msgstr "Azpitituluak bakarrik"
 #: engines/scumm/dialogs.cpp:608
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Ahotsak & azpit."
+msgstr "Ahotsak & azpit"
 
 #: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
@@ -3721,15 +3724,15 @@ msgstr "* Ktrl-F eta Ktrl-G"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "erabiltzea ez da gomendagarria"
+msgstr "  erabiltzea ez da gomendagarria"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr "kraskadurak eta jokoaren jokabide"
+msgstr "  kraskadurak eta jokoaren jokabide"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr "desegokia sor dezaketelako."
+msgstr "  desegokia sor dezaketelako."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
@@ -4035,15 +4038,15 @@ msgstr "* Teklatu bidezko borroka beti dago gaituta"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr " beraz, nahiz eta honelako mezuak erakutsi"
+msgstr "  beraz, nahiz eta honelako mezuak erakutsi"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr " benetan sagu bidezko borroka gaitu/desgaitzen du"
+msgstr "  benetan sagu bidezko borroka gaitu/desgaitzen du"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Borroka-kontrolak (tekl. num.)"
+msgstr "Borroka-kontrolak (tekl. num.):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4080,7 +4083,7 @@ msgstr "Ukabilkada inuzentea"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr "Indy ezkerrean dagoenerako dira,"
+msgstr "Indy ezkerrean dagoenerako dira."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
@@ -4096,7 +4099,7 @@ msgstr "9, 6 eta 3rekin, hurrenez hurren."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Biplanoaren kontrolak (tekl. num.)"
+msgstr "Biplanoaren kontrolak (tekl. num.):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
@@ -4148,7 +4151,7 @@ msgstr "Musika: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Azpitit. abiadura:"
+msgstr "Azpitit. abiadura: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
@@ -4203,7 +4206,7 @@ msgid ""
 "button"
 msgstr ""
 "Erakutsi puntu interesgarrien izenak haien gainean edota ekintza botoiaren "
-"gainean klik egin eta gero bakarrik "
+"gainean klik egin eta gero bakarrik"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
