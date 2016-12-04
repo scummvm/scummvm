@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 16:08+0000\n"
+"PO-Revision-Date: 2016-12-04 16:38+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -179,7 +179,7 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"%s esiste già nella cartella selezionata\n"
+"%s esiste già nella cartella selezionata.\n"
 "Sei sicuro di voler scaricare i file in questa cartella? "
 
 #: gui/downloaddialog.cpp:251
@@ -1257,25 +1257,21 @@ msgid "Not running"
 msgstr "Errore nell'avvio del gioco:"
 
 #: gui/options.cpp:1437
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Percorso extra:"
+msgstr "Percorso base:"
 
 #: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Specifica dove archiviare i salvataggi"
+msgstr "Specifica quali cartelle sono accessibili dal File Manager "
 
 #: gui/options.cpp:1439
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Percorso extra:"
+msgstr "Percorso base:"
 
 #: gui/options.cpp:1449
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Porta del Server:"
 
 #: gui/options.cpp:1449
 msgid ""
@@ -1290,9 +1286,8 @@ msgid "Apply"
 msgstr "Applica"
 
 #: gui/options.cpp:1628
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Impossibile salvare il gioco"
+msgstr "Impossibile cambiare dispositivo di archiviazione Cloud"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
@@ -1323,9 +1318,8 @@ msgid "Select directory for plugins"
 msgstr "Seleziona la cartella dei plugin"
 
 #: gui/options.cpp:1744
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Seleziona la cartella dei file aggiuntivi"
+msgstr "Seleziona la cartella di partenza del File Manager"
 
 #: gui/options.cpp:1979
 #, c-format
@@ -1337,14 +1331,12 @@ msgid "<right now>"
 msgstr "<adesso>"
 
 #: gui/options.cpp:1989
-#, fuzzy
 msgid "<never>"
-msgstr "Mai"
+msgstr "<mai>"
 
 #: gui/options.cpp:2073
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Arresta server:"
 
 #: gui/options.cpp:2074
 msgid "Stop local webserver"
@@ -1368,9 +1360,8 @@ msgid "add"
 msgstr "aggiungi"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
-#, fuzzy
 msgid "Delete char"
-msgstr "Elimina"
+msgstr "Elimina carattere"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
@@ -1405,9 +1396,8 @@ msgid "Record"
 msgstr ""
 
 #: gui/recorderdialog.cpp:71
-#, fuzzy
 msgid "Playback"
-msgstr "Gioca"
+msgstr "Riproduzione "
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
@@ -1424,17 +1414,14 @@ msgid "Notes: "
 msgstr ""
 
 #: gui/recorderdialog.cpp:154
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Sei sicuro di voler eliminare questo salvataggio?"
+msgstr "Sei sicuro di voler eliminare questa registrazione?"
 
 #: gui/recorderdialog.cpp:173
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Errore sconosciuto"
+msgstr "Autore sconosciuto"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM non ha potuto aprire la cartella specificata!"
 
@@ -1475,7 +1462,6 @@ msgid "Playtime: "
 msgstr "Tempo di gioco: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
 msgstr "Salvataggio senza titolo"
 
@@ -1522,9 +1508,8 @@ msgid "in the following field and press 'Connect':"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Apri URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
@@ -1565,9 +1550,8 @@ msgid "All OK!"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:201
-#, fuzzy
 msgid "Invalid code"
-msgstr "Percorso non valido"
+msgstr "Codice non valido"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
@@ -1617,9 +1601,8 @@ msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Cerca aggiornamenti..."
+msgstr "Controlla aggiornamenti automaticamente"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
