@@ -533,9 +533,9 @@ byte *transCyrillic(byte *s) {
 #ifdef WIN32
 		// translate from cp1251 to cp866
 		byte c = *p;
-		if (c >= 0xC0)
+		if (c >= 0xC0 && c <= 0xEF)
 			c = c - 0xC0 + 0x80;
-		else if (c >= 0xF0 && c <= 0xFF)
+		else if (c >= 0xF0)
 			c = c - 0xF0 + 0xE0;
 		else if (c == 0xA8)
 			c = 0xF0;
