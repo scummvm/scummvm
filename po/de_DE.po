@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 14:23+0000\n"
+"PO-Revision-Date: 2016-12-04 14:29+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -2886,7 +2886,7 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
@@ -3364,7 +3364,6 @@ msgstr ""
 "gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
 
 #: engines/parallaction/saveload.cpp:316
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
 msgstr "ScummVM hat alle Speicherstände erfolgreich umgewandelt."
 
@@ -3381,7 +3380,6 @@ msgstr ""
 "Bitte berichten Sie dies dem Team auf Englisch."
 
 #: engines/pegasus/pegasus.cpp:714
-#, fuzzy
 msgid "Invalid file name for saving"
 msgstr "Dateiname zum Speichern eingeben"
 
@@ -3496,15 +3494,13 @@ msgid "Use silver cursors"
 msgstr "Silberne Mauszeiger verwenden"
 
 #: engines/sci/detection.cpp:474
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Verwendet alternativen Satz silberner Mauszeiger anstatt der normalen "
-"goldenen."
+"goldenen"
 
 #: engines/scumm/detection.cpp:1120
-#, fuzzy
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -3513,9 +3509,9 @@ msgid ""
 "to add and its version, language, etc.:\n"
 msgstr ""
 "Ihre Spiel-Version ist offenbar unbekannt. Wenn es sich *NICHT* um eine\n"
-"von Fans modifizierte Version (z.B. eine Fan-Uebersetzung) handelt, melden\n"
+"von Fans modifizierte Version (z.B. eine Fan-Uebersetzung) handelt, teilen\n"
 "Sie bitte dem ScummVM-Team die folgenden Daten sowie den Namen des Spiels,\n"
-"welches Sie hinzufuegen wollten, dessen Version, Sprache usw.:\n"
+"welches Sie hinzufuegen wollten, dessen Version, Sprache usw. mit:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3689,7 +3685,6 @@ msgid "Ctrl"
 msgstr "Strg"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
 msgstr "Spielstand 1-10 laden"
 
@@ -3700,7 +3695,6 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
 msgstr "Spielstand 1-10 speichern"
 
@@ -4334,7 +4328,6 @@ msgid "Cutscene '%s' not found"
 msgstr "Zwischensequenz \"%s\" nicht gefunden"
 
 #: engines/sword1/control.cpp:863
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4346,7 +4339,7 @@ msgid ""
 msgstr ""
 "ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 haben, "
 "die umgewandelt werden sollten.\n"
-"Das alte Speicherformat wird nicht mehr unterstützt, also können Sie diese "
+"Das alte Speicherformat wird nicht mehr unterstützt, daher können Sie diese "
 "Spielstände unkonvertiert nicht laden.\n"
 "\n"
 "Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
@@ -4425,12 +4418,12 @@ msgid "Could not quick save into slot #%d"
 msgstr "Speichern des Spielstandes in Position #%d nicht möglich"
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Spielstand #%d geladen"
 
 #: engines/toon/toon.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Schnellladen des Spielstandes #%d nicht möglich"
 
@@ -4499,13 +4492,12 @@ msgid "Use high resolution MPEG video"
 msgstr "Nutze hochauflösende MPEG-Filme"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "Verwende hochauflösende MPEG-Filme der DVD-Version anstelle der AVI-Filme"
 
 #: engines/zvision/file/save_manager.cpp:220
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
