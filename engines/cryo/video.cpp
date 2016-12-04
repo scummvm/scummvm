@@ -86,7 +86,7 @@ void HnmPlayer::setupTimer(float rate) {
 // Original name: CLHNM_ResetInternalTimer
 void HnmPlayer::resetInternalTimer() {
 	_timeDrift = 0.0;
-	_nextFrameTime = _expectedFrameTime = _vm->TimerTicks;
+	_nextFrameTime = _expectedFrameTime = _vm->_timerTicks;
 }
 
 // Original name: CLHNM_Reset
@@ -114,10 +114,10 @@ void HnmPlayer::setForceZero2Black(bool forceblack) {
 void HnmPlayer::waitLoop(hnm_t *hnm) {
 	_expectedFrameTime += _rate;
 	_nextFrameTime = _expectedFrameTime - _timeDrift;
-	if (_useSoundSync && _vm->TimerTicks > 1000.0 + _nextFrameTime)
+	if (_useSoundSync && _vm->_timerTicks > 1000.0 + _nextFrameTime)
 		_useSound = false;
-	while (_vm->TimerTicks < _nextFrameTime) ;  // waste time
-	_timeDrift = _vm->TimerTicks - _nextFrameTime;
+	while (_vm->_timerTicks < _nextFrameTime) ;  // waste time
+	_timeDrift = _vm->_timerTicks - _nextFrameTime;
 }
 
 // Original name: CLHNM_WantsSound

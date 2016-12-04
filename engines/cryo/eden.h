@@ -165,14 +165,14 @@ private:
 	void anim_perso();
 	void getanimrnd();
 	void addanim();
-	void virespritebouche();
+	void removeMouthSprite();
 	void anim_perfin();
 	void perso_spr(byte *spr);
-	void af_image();
+	void displayImage();
 	void af_perso1();
 	void af_perso();
 	void ef_perso();
-	void load_perso(perso_t *perso);
+	void loadCharacter(perso_t *perso);
 	void load_perso_cour();
 	void fin_perso();
 	void no_perso();
@@ -180,8 +180,8 @@ private:
 	void displayBackgroundFollower();
 	void af_fondperso1();
 	void af_fondperso();
-	void setpersoicon();
-	void show_perso();
+	void setCharacterIcon();
+	void showCharacter();
 	void showpersopanel();
 	void getdatasync();
 	int16 ReadNombreFrames();
@@ -193,7 +193,7 @@ private:
 	void sauvefondbulle(int16 y);
 	void restaurefondbulle();
 	void af_subtitlehnm();
-	void patchphrase();
+	void patchPhrase();
 	void vavapers();
 	void citadelle();
 	void choixzone();
@@ -230,18 +230,18 @@ private:
 	bool isAnswerYes();
 	void specialMushroom(perso_t *perso);
 	void specialNidv(perso_t *perso);
-	void SpcNido(perso_t *perso);
-	void SpcPomme(perso_t *perso);
-	void SpcOr(perso_t *perso);
-	void SpcPrisme(perso_t *perso);
-	void SpcTalisman(perso_t *perso);
-	void SpcMasque(perso_t *perso);
-	void SpcSac(perso_t *perso);
-	void SpcTrompet(perso_t *perso);
-	void SpcArmes(perso_t *perso);
-	void SpcInstru(perso_t *perso);
-	void SpcOeuf(perso_t *perso);
-	void TyranMeurt(perso_t *perso);
+	void specialNido(perso_t *perso);
+	void specialApple(perso_t *perso);
+	void specialGold(perso_t *perso);
+	void specialPrism(perso_t *perso);
+	void specialTalisman(perso_t *perso);
+	void specialMask(perso_t *perso);
+	void specialBag(perso_t *perso);
+	void specialTrumpet(perso_t *perso);
+	void specialWeapons(perso_t *perso);
+	void specialInstrument(perso_t *perso);
+	void specialEgg(perso_t *perso);
+	void tyranDies(perso_t *perso);
 	void SpecialObjets(perso_t *perso, char objid);
 	void dialautoon();
 	void dialautooff();
@@ -338,7 +338,7 @@ private:
 	object_t *getobjaddr(int16 id);
 	void countobjects();
 	void showObjects();
-	void winobject(int16 id);
+	void winObject(int16 id);
 	void loseObject(int16 id);
 	void lostobject();
 	bool objecthere(int16 id);
@@ -347,7 +347,7 @@ private:
 	void putObject();
 	void newobject(int16 id, int16 arg2);
 	void giveobjectal(int16 id);
-	void giveobject();
+	void giveObject();
 	void takeobject();
 	void newchampi();
 	void newnidv();
@@ -407,7 +407,7 @@ private:
 	void eloipart();
 	bool eloirevientq();
 	void eloirevient();
-	void incphase1();
+	void incPhase1();
 	void incphase();
 	void phase113();
 	void phase130();
@@ -567,29 +567,29 @@ private:
 	bool curs_saved;
 	bool showBlackBars;
 	bool fond_saved;
-	byte *bank_data_ptr;
+	byte *_bankData;
 	color3_t        pal_entry;
 	color_t         global_palette[256];    //TODO palette_t
 	perso_t         *tyranPtr;
-	int             last_anim_frame_num;
-	int             cur_anim_frame_num;
+	int             _lastAnimFrameNumb;
+	int             _curAnimFrameNumb;
 	int             _lastAnimTicks;
 	prect_t         *cur_perso_rect;
-	int16           num_anim_frames;
+	int16           _numAnimFrames;
 	int16           max_perso_desc;
 	int16           num_img_desc;
-	bool restartAnimation;
+	bool _restartAnimation;
 	bool animationActive;
-	byte animationDelay;
+	byte _animationDelay;
 	byte animationIndex;
 	byte lastAnimationIndex;
 
 	byte   *dword_30724;
 	byte   *dword_30728;   //TODO: rename - something amim-related
-	byte   *dword_3072C;   //TODO ditto
+	byte   *_mouthAnimations;
 	byte   *animationTable;
-	byte   imagedesc[512];
-	byte   *perso_img_bank_data_ptr;
+	byte   _imageDesc[512];
+	byte   *_characterBankData;
 	bool savedUnderSubtitles;
 	int16           num_text_lines;
 	byte   phraseBuffer[400];
@@ -598,7 +598,7 @@ private:
 	byte   phraseCoordsBuffer[22];
 	byte   *textoutptr;
 	byte   *textout;
-	object_t        *currentSpecialObject;
+	object_t        *_curSpecialObject;
 	bool  _lastDialogChoice;
 	bool parlemoiNormalFlag;
 
@@ -625,7 +625,7 @@ private:
 	byte   *gameConditions;
 	void   *sal_buf;   //TODO: fixme
 	byte   *bank_data_buf;
-	icon_t *gameIcons;
+	icon_t *_gameIcons;
 	room_t *gameRooms;
 	pak_t  *bigfile_header;
 	byte   *glow_buffer;

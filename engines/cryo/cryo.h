@@ -73,7 +73,7 @@ public:
 	HnmPlayer *_video;
 
 	View *ScreenView;
-	volatile int32 TimerTicks;
+	volatile int32 _timerTicks;
 
 private:
 	Console *_console;

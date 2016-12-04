@@ -87,7 +87,7 @@ Common::Error CryoEngine::run() {
 	ScreenView = new View(this, 320, 200);
 
 	///// CLTimer
-	TimerTicks = 0;   // incremented in realtime
+	_timerTicks = 0;   // incremented in realtime
 
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);

@@ -294,7 +294,7 @@ uint16 kFramesVid94[] = {
 };
 #undef SUB_LINE
 
-object_t objects[] = {
+object_t _objects[] = {
 	//id,fl,loc,masklow,maskhi,ct
 	{  1, 0,  3,      1,     0, 0},     // Eve's Way Stone
 	{  2, 0,  3,      2,     0, 0},     // Thau's Seashell

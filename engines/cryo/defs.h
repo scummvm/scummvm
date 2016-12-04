@@ -486,7 +486,7 @@ enum AreaType {
 struct area_t {
 	byte   num;
 	byte   type;
-	uint16  flags;
+	uint16  _flags;
 	uint16  firstRoomIndex;
 	byte   citadelLevel;
 	byte   salNum;
@@ -580,6 +580,7 @@ enum EventType {
 
 namespace GameFlags {
 enum GameFlags {
+	gfNone = 0,
 	gfMummyOpened = 1,
 	gfFlag2 = 2,
 	gfFlag4 = 4,
@@ -600,36 +601,36 @@ enum GameFlags {
 }
 
 struct global_t {
-	byte   areaNum;
+	byte   _areaNum;
 	byte   areaVisitCount;
 	byte   menuItemIdLo;
 	byte   menuItemIdHi;   //TODO: pad?
 	uint16  randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
 	uint16  gameTime;
-	uint16  gameDays;
+	uint16  _gameDays;
 	uint16  chrono;
 	uint16  eloiDepartureDay;
 	uint16  roomNum;        // current room number
 	uint16  newRoomNum;     // target room number selected on world map
-	uint16  phaseNum;
+	uint16  _phaseNum;
 	uint16  metPersonsMask1;
 	uint16  party;
-	uint16  partyOutside;
+	uint16  _partyOutside;
 	uint16  metPersonsMask2;
 	uint16  __UNUSED_1C;    //TODO: write-only?
 	uint16  phaseActionsCount;
-	uint16  curAreaFlags;
+	uint16  _curAreaFlags;
 	uint16  curItemsMask;
 	uint16  curPowersMask;
 	uint16  curPersoItems;
-	uint16  curPersoPowers;
+	uint16  _curCharacterPowers;
 	uint16  wonItemsMask;
 	uint16  wonPowersMask;
 	uint16  stepsToFindAppleFast;
 	uint16  stepsToFindAppleNormal;
-	uint16  roomPersoItems; //TODO: write-only?
-	uint16  roomPersoPowers;    //TODO: write-only?
-	uint16  gameFlags;
+	uint16  _roomPersoItems; //TODO: write-only?
+	uint16  _roomCharacterPowers;    //TODO: write-only?
+	uint16  _gameFlags;
 	uint16  morkusSpyVideoNum1; //TODO: pad?
 	uint16  morkusSpyVideoNum2; //TODO: pad?
 	uint16  morkusSpyVideoNum3; //TODO: pad?
@@ -637,9 +638,9 @@ struct global_t {
 	byte   newMusicType;
 	byte   ff_43;
 	byte   videoSubtitleIndex;
-	byte   partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
-	byte   monkGotRing;
-	byte   chrono_on;
+	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
+	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
+	byte   _chronoFlag;
 	byte   curRoomFlags;
 	byte   endGameFlag;
 	byte   _lastInfo;
@@ -652,9 +653,9 @@ struct global_t {
 	byte   worldHasVelociraptors;
 	byte   worldHasTyrann;
 	byte   ff_53;
-	byte   ff_54;
+	byte   ff_54;  //CHEKME: Used?
 	byte   ff_55;  //TODO: pad?
-	byte   ff_56;
+	byte   _gameHours;
 	byte   textToken1;
 	byte   textToken2; //TODO: pad?
 	byte   eloiHaveNews;
@@ -670,8 +671,8 @@ struct global_t {
 	byte   _curObjectId;
 	byte   curObjectFlags;
 	byte   ff_65;  //TODO: pad?
-	byte   roomPersoType;
-	byte   roomPersoFlags;
+	byte   _roomCharacterType;
+	byte   _roomCharacterFlags;
 	byte   narratorSequence;
 	byte   ff_69;
 	byte   ff_6A;
@@ -688,25 +689,25 @@ struct global_t {
 	icon_t          *nextRoomIcon;
 	byte   *phraseBufferPtr;
 	room_t          *room_ptr;
-	area_t          *area_ptr;
+	area_t          *_areaPtr;
 	area_t          *last_area_ptr;
 	area_t          *cur_area_ptr;
 	room_t          *cita_area_firstRoom;
-	perso_t         *perso_ptr;
-	perso_t         *room_perso;
+	perso_t         *_characterPtr;
+	perso_t         *_roomCharacter;
 	byte   last_info_idx;
 	byte   next_info_idx;
 	byte   *persoSpritePtr;
 	byte   *persoSpritePtr2;
-	byte   *curPersoAnimPtr;
+	byte   *_curCharacterAnimPtr;
 	byte   *ff_C2; //TODO: image desc arr
 	int16           _iconsIndex;
 	int16           curObjectCursor;    // TODO: useless?
 	int16           ff_CA;
 	int16           __UNUSED_CC;        //TODO: unused/pad
-	int16           perso_img_bank; //TODO: unsigned?
+	int16           _characterImageBank; //TODO: unsigned?
 	uint16  roomImgBank;
-	uint16  persoBackgroundBankIdx;
+	uint16  _characterBackgroundBankIdx;
 	uint16  ff_D4;  //TODO: unsigned?
 	uint16  fresqWidth;
 	uint16  fresqImgBank;
@@ -722,7 +723,7 @@ struct global_t {
 	uint16  ff_EC;  //TODO: pad?
 	byte   _displayFlags;
 	byte   oldDisplayFlags;
-	byte   drawFlags;
+	byte   _drawFlags;
 	byte   ff_F1;
 	byte   ff_F2;
 	byte   menuFlags;
@@ -733,7 +734,7 @@ struct global_t {
 	byte   ff_F8;  //TODO: pad?
 	byte   ff_F9;  //TODO: pad?
 	byte   ff_FA;  //TODO: pad?
-	byte   animationFlags;
+	byte   _animationFlags;
 	byte   giveobj1;
 	byte   giveobj2;
 	byte   giveobj3;
@@ -817,7 +818,7 @@ extern uint16 kFramesVid83[];
 extern uint16 kFramesVid88[];
 extern uint16 kFramesVid89[];
 extern uint16 kFramesVid94[];
-extern object_t objects[];
+extern object_t _objects[];
 extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
 extern cita_t cita_list[];

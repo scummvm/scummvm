@@ -421,7 +421,7 @@ void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
 void CLTimer_Action(void *arg) {
 	//  long& counter = *((long*)arg);
 	//  counter++;
-	g_ed->TimerTicks++;
+	g_ed->_timerTicks++;
 }
 
 ///// CRYOLib
