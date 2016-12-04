@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:19+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-04 12:59+0000\n"
+"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -1690,9 +1690,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Nem található alkalmas motor plugin"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "A motor nem támogatja a játékállás mentését"
+msgstr "A motor plugin nem támogatja a játékállás mentését"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1752,6 +1751,9 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"A '%s' játék ismeretlennek tûnik.\n"
+"Kérlek jelezd a ScummVM csapatnak a következõ adatokat, együtt a játék\n"
+"címével és megbízható adataival játékverzió/nyelv(ek)/stb.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1833,13 +1835,13 @@ msgstr ""
 "README-t az alap információkról, és hogy hogyan segíthetsz a késõbbiekben."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"(%s) játékmentés nem sikerült!. Olvassd el a README-t az alap "
-"információkról, és hogy hogyan segíthetsz a késõbbiekben."
+"A (%s)! játék mentése nem sikerült. Kérlek olvasd el a README-t az alap "
+"információkról és az utasításokat, hogy hogyan segíthetsz a késõbbiekben.."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:112
@@ -1904,13 +1906,14 @@ msgstr ""
 "Nézd meg a README fájlt a részletekért."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"(%s) játékállás betöltése nem sikerült!. Olvassd el a README-t az alap "
-"információkról, és hogy hogyan segíthetsz a késõbbiekben."
+"A (%s)! játékállás betöltése nem sikerült. Kérlek olvasd el a README-t az "
+"alap információkról és az utasításokat, hogy hogyan segíthetsz a "
+"késõbbiekben."
 
 #: engines/engine.cpp:555
 msgid ""
@@ -2755,9 +2758,8 @@ msgstr "Eredeti ment/tölt képernyõk használata"
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
-msgstr "Az eredeti mentés/betöltés képernyõ használata a ScummVM képek helyett"
+msgstr "Használd az eredeti mentés/betöltés képernyõt a ScummVM féle helyett"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2829,37 +2831,37 @@ msgid "Restore"
 msgstr "Visszaállítás"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
-"Játékállás betöltése:\n"
+"Nem sikerült a mentett állás betöltése:\n"
 "\n"
-"%s fájlból nem sikerült"
+"%s fájlból"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
-"Játékállás mentése:\n"
+"Nem sikerült a játék mentése:\n"
 "\n"
-"%s fájlba nem sikerült"
+"%s fájlba"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Játékállás mentése:\n"
+"Sikerült a játékállás mentése:\n"
 "\n"
-"%s fájlba elkészült"
+"%s fájlba"
 
 #: engines/agos/animation.cpp:558
 #, c-format
@@ -2902,15 +2904,13 @@ msgstr "Grafikus megjelenítésre használja a játék fényes palettáját"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Játékállás betöltése fájlból nem sikerült."
+msgstr "Nem sikerült a mentett játékállás betöltése fájlból."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr "Játékállás mentése fájlba nem sikerült."
+msgstr "Nem sikerült a játékállás mentése fájlba."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -3310,9 +3310,8 @@ msgstr ""
 "játékot.\n"
 
 #: engines/parallaction/saveload.cpp:316
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM konvertálta az összes játékállásodat."
+msgstr "ScummVM sikeresen konvertálta az összes játékállásodat."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3327,9 +3326,8 @@ msgstr ""
 "Légyszíves jelentsd a csapatnak."
 
 #: engines/pegasus/pegasus.cpp:714
-#, fuzzy
 msgid "Invalid file name for saving"
-msgstr "Írd be a fájlnevet mentéshez"
+msgstr "Érvénytelen fájlnév a mentéshez"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3438,10 +3436,9 @@ msgid "Use silver cursors"
 msgstr "Ezüst kurzor használata"
 
 #: engines/sci/detection.cpp:474
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "Alternatív ezüst kurzorszett használata, a normál arany helyett"
+msgstr "Használd az alternatív ezüst kurzorokat, a normál arany helyett"
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
