@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 09:47+0000\n"
+"PO-Revision-Date: 2016-12-04 10:11+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -418,6 +418,9 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"La funzionalità di sincronizzazione dei salvataggi non funziona con i "
+"percorsi personalizzati. Per sinconizzare i salvataggi, usa la cartella "
+"predefinita.  "
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -425,28 +428,27 @@ msgstr "Questo ID di gioco è già in uso. Si prega di sceglierne un'altro."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Autore: "
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Note: "
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Seleziona il file da caricare"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Digitare il nome del salvataggio"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Sei sicuro di voler eliminare questo salvataggio?"
+msgstr "Sei sicuro di voler sovrascrivere questo salvataggio?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -708,6 +710,7 @@ msgstr ""
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"Questa cartella è in fase di scaricamento e non può essere ancora utilizzata!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
@@ -743,11 +746,11 @@ msgstr "Agg. in massa..."
 
 #: gui/launcher.cpp:710
 msgid "Record..."
-msgstr ""
+msgstr "Registra"
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
-msgstr "... progresso ..."
+msgstr "... in corso..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
