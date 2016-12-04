@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-10-06 19:01+0200\n"
-"Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
-"Language-Team: \n"
-"Language: Svenska\n"
+"PO-Revision-Date: 2016-12-04 13:11+0000\n"
+"Last-Translator: Peter Johansson <rossolis8240@telia.com>\n"
+"Language-Team: Swedish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
+"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.8.9\n"
 "X-Language-name: Svenska\n"
 
 #: gui/about.cpp:94
@@ -847,9 +848,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "fullskärmsinställningen kunde inte ändras."
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "fullskärmsinställningen kunde inte ändras."
+msgstr "filterinställningen kunde inte ändras"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -869,13 +869,12 @@ msgid "Fullscreen mode"
 msgstr "Fullskärmsläge"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Använd färggrafik"
+msgstr "Filtergrafik"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Använd linjärt filter för att förstora bilden"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1278,7 +1277,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Verkställ"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
@@ -1458,9 +1457,8 @@ msgid "Playtime: "
 msgstr "Speltid:"
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Namnlös spardata"
+msgstr "Namnlös sparfil"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
@@ -1701,9 +1699,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Kunde inte hitta lämpligt motortillägg"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Motortillägget stöder inte spardata"
+msgstr "Aktuell plugin kan inte spara spel"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1884,9 +1881,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Kunde inte applicera fullskärmsinställning."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Kunde inte applicera fullskärmsinställning."
+msgstr "Kunde inte ändra filterinställningen"
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2184,7 +2180,7 @@ msgstr "Fönsterläge"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Upplösning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -2198,15 +2194,13 @@ msgstr "Korrektion av bildförhållande av"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klickning aktiverad"
+msgstr "Filtrering är aktiverat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klickning deaktiverad"
+msgstr "Filtrering är inaktiverat"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -3023,14 +3017,12 @@ msgid "Move Back"
 msgstr "Steg bakåt"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
-msgstr "Glid vänster"
+msgstr "Flytta åt vänster"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
-msgstr "Glid höger"
+msgstr "Flytta till höger"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2509
@@ -3043,9 +3035,8 @@ msgid "Turn Right"
 msgstr "Sväng höger"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Inventarie"
+msgstr "Öppna/Stäng  Inventarie"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
