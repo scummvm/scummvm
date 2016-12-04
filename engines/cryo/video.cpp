@@ -371,7 +371,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 		//HNM4 classic
 		int twolinesabove = -(width * 2);
 		for (;;) {
-			code = PLE32(input) & 0xFFFFFF; //input++;
+			code = READ_LE_UINT32(input) & 0xFFFFFF; //input++;
 			count = code & 0x1F;
 			if (count) {
 				input += 3;
@@ -431,7 +431,7 @@ void HnmPlayer::decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, by
 		assert(0);
 		//HNM4 hires
 		for (;;) {
-			code = PLE32(input) & 0xFFFFFF;
+			code = READ_LE_UINT32(input) & 0xFFFFFF;
 			input++;
 			count = code & 0x3F;
 			if (count) {
@@ -472,9 +472,9 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 		return false;
 
 	for (;;) {
-		int sz = PLE32(hnm->_dataPtr) & 0xFFFFFF;
+		int sz = READ_LE_UINT32(hnm->_dataPtr) & 0xFFFFFF;
 		hnm->_dataPtr += 4;
-		int16 id = *(int16 *)hnm->_dataPtr;
+		int16 id = READ_LE_UINT16(hnm->_dataPtr);
 		hnm->_dataPtr += 2;
 		char h6 = *hnm->_dataPtr;
 		hnm->_dataPtr += 1;
@@ -482,11 +482,11 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 		hnm->_dataPtr += 1;
 		hnm->_chunkId = id;
 		switch (id) {
-		case BE16('PL'):
+		case MKTAG16('L', 'P'):
 			changePalette(hnm);
 			hnm->_dataPtr += sz - 8;
 			break;
-		case BE16('IZ'):
+		case MKTAG16('Z', 'I'):
 			hnm->_frameNum++;
 			selectBuffers(hnm);
 			decompLempelZiv(hnm->_dataPtr + 4, hnm->_newFrameBuffer);
@@ -519,7 +519,7 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 			}
 
 			return true;
-		case BE16('IU'):
+		case MKTAG16('U', 'I'):
 			hnm->_frameNum++;
 			selectBuffers(hnm);
 			decompUBA(hnm->_newFrameBuffer, hnm->_newFrameBuffer, hnm->_oldFrameBuffer, hnm->_dataPtr, hnm->_header._width, h6);
@@ -533,8 +533,8 @@ bool HnmPlayer::nextElement(hnm_t *hnm) {
 			}
 			return true;
 
-		case BE16('sd'):
-		case BE16('SD'):
+		case MKTAG16('d', 's'):
+		case MKTAG16('D', 'S'):
 			if (_useSound) {
 				if (!h6) {
 					int sound_size = sz - 8;

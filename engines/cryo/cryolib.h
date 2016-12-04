@@ -47,7 +47,6 @@ class CryoEngine;
 #define BE16(n) SW16(n)
 #define BE32(n) SW32(n)
 #endif
-#define PLE32(p) ( (((byte*)(p))[3] << 24) | (((byte*)(p))[2] << 16) | (((byte*)(p))[1] << 8) | ((byte*)(p))[0] )
 
 enum {
 	fsFromStart = 1

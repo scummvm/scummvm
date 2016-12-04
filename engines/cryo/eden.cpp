@@ -4681,8 +4681,8 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
-	int32 size = PLE32(&file->size);
-	int32 offs = PLE32(&file->offs);
+	int32 size = READ_LE_UINT32(&file->size);
+	int32 offs = READ_LE_UINT32(&file->offs);
 	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
 	h_bigfile.seek(offs, SEEK_SET);
 	h_bigfile.read(buffer, size);
@@ -4692,8 +4692,8 @@ void EdenGame::shnmfl(uint16 num) {
 	unsigned int resNum = num - 1 + 485;
 	assert(resNum < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[resNum];
-	int size = PLE32(&file->size);
-	int offs = PLE32(&file->offs);
+	int size = READ_LE_UINT32(&file->size);
+	int offs = READ_LE_UINT32(&file->offs);
 	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
 	_hnmContext->_file->seek(offs, SEEK_SET);
 }
@@ -4702,8 +4702,8 @@ int EdenGame::ssndfl(uint16 num) {
 	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	assert(resNum < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[resNum];
-	int32 size = PLE32(&file->size);
-	int32 offs = PLE32(&file->offs);
+	int32 size = READ_LE_UINT32(&file->size);
+	int32 offs = READ_LE_UINT32(&file->offs);
 	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
 	if (_soundAllocated) {
 		free(voiceSamplesBuffer);
@@ -4836,7 +4836,7 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 
 bool EdenGame::ReadDataSync(uint16 num) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		long pos = PLE32(gameLipsync + num * 4);
+		long pos = READ_LE_UINT32(gameLipsync + num * 4);
 		long len = 1024;
 		if (pos != -1) {
 			loadpartoffile(1936, gameLipsync + 7260, pos, len);
@@ -4850,7 +4850,7 @@ bool EdenGame::ReadDataSync(uint16 num) {
 void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
-	int32 offs = PLE32(&file->offs);
+	int32 offs = READ_LE_UINT32(&file->offs);
 	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
 	h_bigfile.seek(offs + pos, SEEK_SET);
 	h_bigfile.read(buffer, len);
@@ -6466,8 +6466,8 @@ void EdenGame::musicspy() {
 
 int EdenGame::loadmusicfile(int16 num) {
 	pakfile_t *file = &bigfile_header->files[num + 435];
-	int32 size = PLE32(&file->size);
-	int32 offs = PLE32(&file->offs);
+	int32 size = READ_LE_UINT32(&file->size);
+	int32 offs = READ_LE_UINT32(&file->offs);
 	h_bigfile.seek(offs, SEEK_SET);
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const
