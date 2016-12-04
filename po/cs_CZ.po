@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-10-09 11:46+0200\n"
-"Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
-"Language-Team: \n"
-"Language: Cesky\n"
+"PO-Revision-Date: 2016-12-04 15:34+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Czech "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/cs/>\n"
+"Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-Basepath: ..\n"
 "X-Language-name: Cesky\n"
 
@@ -89,11 +90,11 @@ msgstr "Vyberte adresáø s daty hry"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Z:"
+msgstr "Z: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "Do:"
+msgstr "Do: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -217,7 +218,7 @@ msgstr "ID:"
 
 #: gui/editgamedialog.cpp:143 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr "Jméno"
+msgstr "Jméno:"
 
 #: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
 #: gui/editgamedialog.cpp:146
@@ -703,7 +704,7 @@ msgid ""
 "a huge number of games."
 msgstr ""
 "Opravdu chcete spustit hromadnou detekci her? Toto by mohlo potenciálnì "
-"pøidat velkou spoustu her. "
+"pøidat velkou spoustu her."
 
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
@@ -719,7 +720,7 @@ msgstr "Chcete naèíst ulo¾enou pozici?"
 
 #: gui/launcher.cpp:522
 msgid "This game does not support loading games from the launcher."
-msgstr "Tato hra nepodporuje spou¹tìní her ze spou¹tìèe"
+msgstr "Tato hra nepodporuje spou¹tìní her ze spou¹tìèe."
 
 #: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
@@ -887,7 +888,7 @@ msgstr "Prioritní Zaøízení:"
 
 #: gui/options.cpp:849
 msgid "Music Device:"
-msgstr "Hudební zaøízení"
+msgstr "Hudební zaøízení:"
 
 #: gui/options.cpp:849 gui/options.cpp:851
 msgid "Specifies preferred sound device or sound card emulator"
