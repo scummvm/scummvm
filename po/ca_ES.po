@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2013-05-05 14:16+0100\n"
-"Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
-"Language-Team: Catalan <scummvm-devel@lists.scummvm.org>\n"
-"Language: Catalan\n"
+"PO-Revision-Date: 2016-12-04 15:46+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Catalan "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
+"Language: ca_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Catalan\n"
 
 #: gui/about.cpp:94
@@ -832,7 +835,7 @@ msgstr "No s'han pogut aplicar alguns canvis de les opcions gràfiques:"
 
 #: gui/options.cpp:468
 msgid "the video mode could not be changed."
-msgstr "no s'ha pogut canviar el mode de vídeo"
+msgstr "no s'ha pogut canviar el mode de vídeo."
 
 #: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
@@ -2697,7 +2700,7 @@ msgstr "Voleu carregar o desar el joc?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "    Esteu segur de voler sortir?     "
+msgstr "   Esteu segur de voler sortir?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -3980,7 +3983,7 @@ msgstr "Desa / Carrega / Opcions"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr "Altres controls del joc"
+msgstr "Altres controls del joc:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
@@ -4362,7 +4365,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "El fitxer teenagent.dat està comprimit però aquest executable no conté zlib. "
-"Descomprimiu-lo, si us plau."
+"Descomprimiu-lo, si us plau"
 
 #: engines/toon/toon.cpp:222
 #, fuzzy, c-format
