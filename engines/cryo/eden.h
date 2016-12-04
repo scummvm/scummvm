@@ -185,7 +185,7 @@ private:
 	void showpersopanel();
 	void getdatasync();
 	int16 ReadNombreFrames();
-	void waitendspeak();
+	void waitEndSpeak();
 	void my_bulle();
 	void my_pr_bulle();
 	void charsurbulle(byte c, byte color, int16 width);
@@ -225,13 +225,11 @@ private:
 	void morkus();
 	void comment();
 	void adam();
-	void init_oui();
-	void init_non();
-	void oui();
-	void non();
-	char verif_oui();
-	void SpcChampi(perso_t *perso);
-	void SpcNidv(perso_t *perso);
+	void setChoiceYes();
+	void setChoiceNo();
+	bool isAnswerYes();
+	void specialMushroom(perso_t *perso);
+	void specialNidv(perso_t *perso);
 	void SpcNido(perso_t *perso);
 	void SpcPomme(perso_t *perso);
 	void SpcOr(perso_t *perso);
@@ -346,7 +344,7 @@ private:
 	bool objecthere(int16 id);
 	void objectmain(int16 id);
 	void getobject(int16 id);
-	void putobject();
+	void putObject();
 	void newobject(int16 id, int16 arg2);
 	void giveobjectal(int16 id);
 	void giveobject();
@@ -601,10 +599,10 @@ private:
 	byte   *textoutptr;
 	byte   *textout;
 	object_t        *currentSpecialObject;
-	int16           word_30AFC;
+	bool  _lastDialogChoice;
 	bool parlemoiNormalFlag;
 
-	bool closeCharacterDialog;
+	bool _closeCharacterDialog;
 	int             dword_30B04;
 
 	char            lastPhrasesFile;

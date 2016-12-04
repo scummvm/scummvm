@@ -642,8 +642,8 @@ struct global_t {
 	byte   chrono_on;
 	byte   curRoomFlags;
 	byte   endGameFlag;
-	byte   last_info;
-	bool   autoDialog;
+	byte   _lastInfo;
+	bool   _autoDialog;
 	byte   worldTyrannSighted;
 	byte   ff_4D;
 	byte   ff_4E;
@@ -665,9 +665,9 @@ struct global_t {
 	byte   prevLocation;
 	byte   curPersoFlags;
 	bool ff_60;
-	byte   eventType;
+	byte   _eventType;
 	byte   ff_62;  //TODO: pad?
-	byte   curObjectId;
+	byte   _curObjectId;
 	byte   curObjectFlags;
 	byte   ff_65;  //TODO: pad?
 	byte   roomPersoType;
@@ -700,7 +700,7 @@ struct global_t {
 	byte   *persoSpritePtr2;
 	byte   *curPersoAnimPtr;
 	byte   *ff_C2; //TODO: image desc arr
-	int16           iconsIndex;
+	int16           _iconsIndex;
 	int16           curObjectCursor;    // TODO: useless?
 	int16           ff_CA;
 	int16           __UNUSED_CC;        //TODO: unused/pad
@@ -714,13 +714,13 @@ struct global_t {
 	uint16  ff_DC;  //TODO: pad?
 	uint16  room_x_base;
 	uint16  ff_E0;  //TODO: pad?
-	uint16  dialogType;
+	uint16  _dialogType;
 	uint16  ff_E4;  //TODO: pad?
 	uint16  currentMusicNum;
 	int16           textNum;
 	uint16  travelTime;
 	uint16  ff_EC;  //TODO: pad?
-	byte   displayFlags;
+	byte   _displayFlags;
 	byte   oldDisplayFlags;
 	byte   drawFlags;
 	byte   ff_F1;
