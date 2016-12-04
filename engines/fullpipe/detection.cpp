@@ -46,7 +46,7 @@ namespace Fullpipe {
 
 static const ADGameDescription gameDescriptions[] = {
 
-	// Fullpipe Russian version
+	// Full Pipe Russian version
 	{
 		"fullpipe",
 		0,
@@ -57,7 +57,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Fullpipe German version
+	// Full Pipe German version
 	{
 		"fullpipe",
 		0,
@@ -68,7 +68,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Fullpipe Estonian version
+	// Full Pipe Estonian version
 	{
 		"fullpipe",
 		0,
@@ -79,7 +79,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
-	// Fullpipe German Demo version
+	// Full Pipe Russian Demo version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Full Pipe German Demo version
 	{
 		"fullpipe",
 		0,
