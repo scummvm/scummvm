@@ -44,6 +44,7 @@ public:
 
 	// GraphicsManager API - Features
 	virtual bool hasFeature(OSystem::Feature f) override;
+	virtual bool getFeatureState(OSystem::Feature f) override;
 
 	// GraphicsManager API - Graphics mode
 	virtual void setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) override;
@@ -101,6 +102,7 @@ protected:
 	bool createScreen(uint effectiveWidth, uint effectiveHeight, GameRenderTarget gameRenderTarget);
 
 	int _antialiasing;
+	bool _vsync;
 
 	OpenGL::TiledSurface *_overlayScreen;
 	OpenGL::TiledSurface *_overlayBackground;
@@ -114,6 +116,8 @@ protected:
 
 	OpenGL::FrameBuffer *_frameBuffer;
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
+
+	bool isVSyncEnabled();
 };
 
 #endif

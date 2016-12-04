@@ -43,6 +43,7 @@ ResVmSdlGraphicsManager::ResVmSdlGraphicsManager(SdlEventSource *source, SdlWind
 		_capabilities(capabilities) {
 	ConfMan.registerDefault("fullscreen_res", "desktop");
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("vsync", true);
 }
 
 ResVmSdlGraphicsManager::~ResVmSdlGraphicsManager() {

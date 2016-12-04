@@ -121,6 +121,7 @@ private:
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+	CheckboxWidget *_vsyncCheckbox; // ResidualVM specific
 	StaticTextWidget *_rendererTypePopUpDesc; // ResidualVM specific
 	PopUpWidget *_rendererTypePopUp; // ResidualVM specific
 	StaticTextWidget *_renderModePopUpDesc;

@@ -323,6 +323,13 @@ public:
 		kFeatureSideTextures,
 
 		/**
+		 * If supported, this feature flag can be used to enable or disable
+		 * waiting for vertical sync before refreshing the screen to reduce
+		 * tearing.
+		 */
+		kFeatureVSync,
+
+		/**
 		 * The presence of this feature indicates whether the displayLogFile()
 		 * call is supported.
 		 *

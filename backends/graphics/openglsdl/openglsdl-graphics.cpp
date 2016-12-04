@@ -63,8 +63,18 @@ bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureOpenGL) ||
+		(f == OSystem::kFeatureVSync) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureOverlaySupportsAlpha && _overlayFormat.aBits() > 3);
+}
+
+bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+	switch (f) {
+		case OSystem::kFeatureVSync:
+			return isVSyncEnabled();
+		default:
+			return ResVmSdlGraphicsManager::getFeatureState(f);
+	}
 }
 
 void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool fullscreen, bool accel3d) {
@@ -74,6 +84,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 	_antialiasing = ConfMan.getInt("antialiasing");
 	_fullscreen = fullscreen;
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
+	_vsync = ConfMan.getBool("vsync");
 
 	bool engineSupportsArbitraryResolutions = g_engine && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
 
@@ -180,6 +191,12 @@ void OpenGLSdlGraphicsManager::initializeOpenGLContext() const {
 #endif
 
 	OpenGLContext.initialize(type);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (SDL_GL_SetSwapInterval(_vsync ? 1 : 0)) {
+		warning("Unable to %s VSync: %s", _vsync ? "enable" : "disable", SDL_GetError());
+	}
+#endif
 }
 
 OpenGLSdlGraphicsManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenBytesPerPixel, uint red, uint blue, uint green, uint alpha, int samples) :
@@ -221,6 +238,9 @@ bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveH
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, it->multisampleSamples > 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, it->multisampleSamples);
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, _vsync ? 1 : 0);
+#endif
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #ifdef USE_GLES2
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -271,6 +291,16 @@ bool OpenGLSdlGraphicsManager::createScreen(uint effectiveWidth, uint effectiveH
 	}
 
 	return it != pixelFormats.end();
+}
+
+bool OpenGLSdlGraphicsManager::isVSyncEnabled() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_GL_GetSwapInterval() != 0;
+#else
+	int swapControl = 0;
+	SDL_GL_GetAttribute(SDL_GL_SWAP_CONTROL, &swapControl);
+	return swapControl != 0;
+#endif
 }
 
 void OpenGLSdlGraphicsManager::drawOverlay() {

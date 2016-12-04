@@ -208,6 +208,7 @@ public:
 private:
 	OSystem *_system;
 
+	bool _enabled;
 	uint _speedLimitMs;
 	uint _startFrameTime;
 };

@@ -286,7 +286,8 @@ FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
 	_system(system),
 	_speedLimitMs(1000 / framerate),
 	_startFrameTime(0) {
-
+	// The frame limiter is disabled when vsync is enabled.
+	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync);
 }
 
 void FrameLimiter::startFrame() {
@@ -297,7 +298,7 @@ void FrameLimiter::delayBeforeSwap() {
 	uint endFrameTime = _system->getMillis();
 	uint frameDuration = endFrameTime - _startFrameTime;
 
-	if (frameDuration < _speedLimitMs) {
+	if (_enabled && frameDuration < _speedLimitMs) {
 		_system->delayMillis(_speedLimitMs - frameDuration);
 	}
 }

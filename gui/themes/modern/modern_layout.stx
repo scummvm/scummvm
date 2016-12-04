@@ -254,6 +254,7 @@
 
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<!-- ResidualVM - Unused
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'grModePopupDesc'
 						type = 'OptionsLabel'
@@ -270,12 +271,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			-->
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'
 			/>
 			<widget name = 'grFullscreenCheckbox'
 					type = 'Checkbox'
 			/>
+			<!-- ResidualVM specific - Start -->
+			<widget name = 'grVSyncCheckbox'
+					type = 'Checkbox'
+			/>
+			<!-- ResidualVM specific - End -->
 			<widget name = 'grFilteringCheckbox'
 					type = 'Checkbox'
 			/>
