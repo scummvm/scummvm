@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 22:43+0000\n"
+"PO-Revision-Date: 2016-12-04 19:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
@@ -115,7 +115,7 @@ msgid ""
 "files with it?"
 msgstr ""
 "Виглядає, що ваше поточне з'єднання лімітовано. Ви насправді хочете зараз "
-"завантажувати файи на цьому з'єднанні?"
+"завантажувати файли на цьому з'єднанні?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -208,8 +208,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Короткий ідентифікатор, який використовується для назв збережений станів "
-"ігор і для запуску з командної стрічки"
+"Короткий ідентифікатор, який використовується для назв збережених ігор і для "
+"запуску з командної стрічки"
 
 #: gui/editgamedialog.cpp:138
 msgctxt "lowres"
@@ -325,7 +325,7 @@ msgstr "Перекрити глобальні налаштування MIDI"
 #: gui/editgamedialog.cpp:231
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Перекрити глобальні нааштування MIDI"
+msgstr "Перекрити глобальні налаштування MIDI"
 
 #: gui/editgamedialog.cpp:241 gui/options.cpp:1263
 msgid "MT-32"
@@ -380,7 +380,7 @@ msgstr "Шлях збер.:"
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1280 gui/options.cpp:1282
 #: gui/options.cpp:1283
 msgid "Specifies where your saved games are put"
-msgstr "Вказує шлях до збережених станів ігор"
+msgstr "Вказує шлях до збережених ігор"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1282
 msgctxt "lowres"
@@ -396,7 +396,7 @@ msgstr "Шлях збер.:"
 #: gui/options.cpp:1768 gui/options.cpp:1778
 msgctxt "path"
 msgid "None"
-msgstr "Не завданий"
+msgstr "Не завдано"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
 #: gui/editgamedialog.cpp:522 gui/options.cpp:1482 gui/options.cpp:1548
@@ -414,15 +414,16 @@ msgstr "Виберіть додаткову папку гри"
 
 #: gui/editgamedialog.cpp:502 gui/options.cpp:1695
 msgid "Select directory for saved games"
-msgstr "Виберіть папку для збережених станів ігор"
+msgstr "Виберіть папку для збережених ігор"
 
 #: gui/editgamedialog.cpp:508
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"Запис станів ігор працює тільки з папкою за замовченням. Якщо ви хочете, щоб "
-"ваші стани ігр синхронізувалися, використовуйте папку за замовченням."
+"Синхронізація збережених ігор працює тільки з папкою за замовченням. Якщо ви "
+"хочете, щоб ваші збережені ігри синхронізувалися, використовуйте папку за "
+"замовченням."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -450,7 +451,7 @@ msgstr "Надайте ім'я файлу для запису"
 
 #: gui/filebrowser-dialog.cpp:132
 msgid "Do you really want to overwrite the file?"
-msgstr "Ви дійсно хочете замінити цей файл?"
+msgstr "Чи ви дійсно хочете замінити цей файл?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -478,7 +479,7 @@ msgstr "Рівень:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr "Хор"
+msgstr "Приспів"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
@@ -722,12 +723,11 @@ msgstr "Ви хочете завантажити збережений стан гри?"
 
 #: gui/launcher.cpp:522
 msgid "This game does not support loading games from the launcher."
-msgstr ""
-"Ця гра не підтримує завантаження збережених станів ігор через головне меню."
+msgstr "Ця гра не підтримує завантаження збережених ігор через головне меню."
 
 #: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM не зміг знайти движок для запуску вибраної гри!"
+msgstr "ScummVM не може знайти движок для запуску вибраної гри!"
 
 #: gui/launcher.cpp:577
 msgid "ScummVM could not find any game in the specified directory!"
@@ -774,7 +774,7 @@ msgstr "Стоп"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr "Редагвати опис запису"
+msgstr "Редагувати опис запису"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
@@ -869,11 +869,11 @@ msgstr "Повноекранний режим"
 
 #: gui/options.cpp:838
 msgid "Filter graphics"
-msgstr "Фільрування графіки"
+msgstr "Фільтрування графіки"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr "Використовувати лінійну фільрація для збільшення графіки"
+msgstr "Використовувати лінійну фільтрацію для збільшення графіки"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -915,7 +915,7 @@ msgstr "Емулятор AdLib:"
 
 #: gui/options.cpp:878 gui/options.cpp:879
 msgid "AdLib is used for music in many games"
-msgstr "Звукова карта AdLib використовується багатьма іграми"
+msgstr "Звукова карта AdLib використовується багатьма іграми для музики"
 
 #: gui/options.cpp:889
 msgid "Output rate:"
@@ -926,7 +926,7 @@ msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
-"Великі значення задають кращу якість звуку, проте вони можуть не "
+"Великі значення надають кращу якість звуку, проте вони можуть не "
 "підтримуватися вашою звуковою картою"
 
 #: gui/options.cpp:900
@@ -978,8 +978,8 @@ msgstr "Пристрій MT-32:"
 #: gui/options.cpp:955
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Вказує звуковий пристрій за умовчанням для виводу на Roland MT-32/LAPC1/"
-"CM32l/CM64"
+"Вказує звуковий пристрій за замовченням для виводу на Roland "
+"MT-32/LAPC1/CM32l/CM64"
 
 #: gui/options.cpp:960
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1007,7 +1007,7 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Відмітьте, якщо хочете включити латки для іструментів для емуляції MT-32 на "
+"Відмітьте, якщо хочете включити латки для інструментів для емуляції MT-32 на "
 "Roland"
 
 #: gui/options.cpp:974
@@ -1197,7 +1197,7 @@ msgstr "Користувач:"
 
 #: gui/options.cpp:1419
 msgid "Username used by this storage"
-msgstr "Користувач для цього сердовища"
+msgstr "Користувач для цього середовища"
 
 #: gui/options.cpp:1422
 msgid "Used space:"
@@ -1248,7 +1248,7 @@ msgstr "Запустити сервер"
 
 #: gui/options.cpp:1432
 msgid "Run local webserver"
-msgstr "Запускає локвальний веб-сервер"
+msgstr "Запускає локальний веб-сервер"
 
 #: gui/options.cpp:1433 gui/options.cpp:2082
 msgid "Not running"
@@ -1260,7 +1260,7 @@ msgstr "Шлях /root/:"
 
 #: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Вказує шлях до якого можна мати доступ через Керування файлами"
+msgstr "Вказує шлях, до якого можна мати доступ через Керування файлами"
 
 #: gui/options.cpp:1439
 msgctxt "lowres"
@@ -1276,8 +1276,8 @@ msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
-"Порт, который будет использован сервером\n"
-"Аутентификация с сервером доступна только для порта по умолчанию"
+"Порт, який буде використано сервером\n"
+"Аутентифікация з сервером неможлива для портів, інших від замовчуваного"
 
 #: gui/options.cpp:1462
 msgid "Apply"
@@ -1285,11 +1285,11 @@ msgstr "Застосувати"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
-msgstr "Не вдалося змінити змарне середовище!"
+msgstr "Не вдалося змінити хмарне середовище!"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr "Другое облако уже активно."
+msgstr "Інше хмарне середовище вже активне."
 
 #: gui/options.cpp:1667
 msgid ""
@@ -1359,7 +1359,7 @@ msgstr "дод"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
 msgid "Delete char"
-msgstr "Видалити сммвол"
+msgstr "Видалити символ"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
@@ -1382,7 +1382,7 @@ msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
-msgstr "Записувати або відтворити процес гри"
+msgstr "Записувати або відтворювати процес гри"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:443
@@ -1445,7 +1445,7 @@ msgstr "Час гри не записано"
 
 #: gui/saveload-dialog.cpp:442
 msgid "Do you really want to delete this saved game?"
-msgstr "Ви дійсно хочете видалити цей збережений стан гри?"
+msgstr "Ви дійсно хочете видалити цю збережену гру?"
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
@@ -1465,7 +1465,7 @@ msgstr "Збережена гра без імені"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
-msgstr "Насутпний"
+msgstr "Наступний"
 
 #: gui/saveload-dialog.cpp:721
 msgid "Prev"
@@ -1527,7 +1527,7 @@ msgstr "вам буде потрібно дозволити доступ до вашої хмари."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr "Активна інше хмарне середовище. Чи ви хочете припинити процес?"
+msgstr "Інше хмарне середовище вже є активним. Чи ви хочете припинити процес?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
@@ -1545,7 +1545,7 @@ msgstr "Комірки %s мають похибки."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr "Все добре!"
+msgstr "Все гаразд!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
@@ -1606,7 +1606,7 @@ msgstr "(Ви завжди можете включити її у Налаштуваннях на закладці Інше)"
 
 #: gui/updates-dialog.cpp:92
 msgid "Check for updates automatically"
-msgstr "Автоматычно перевіряти оновлення"
+msgstr "Автоматично перевіряти оновлення"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
@@ -1843,7 +1843,7 @@ msgid ""
 "further assistance."
 msgstr ""
 "Вибачте, цей движок не підтримує довідку по іграм. Будь-ласка, дивіться файл "
-"README для основної інормації, а також інструкцій, як отримати подальшу "
+"README для основної інформації, а також інструкцій, як отримати подальшу "
 "допомогу."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
@@ -1933,8 +1933,8 @@ msgid ""
 "might not work in future versions of ScummVM."
 msgstr ""
 "ПОПЕРЕДЖЕННЯ: Гра, яку ви хочете запустити, ще не підтримується повністю "
-"ScummVM. Скорше за все вона не буде працювати стабільно, і збережені стани "
-"ігор, які ви зробите, можуть не працювати у подальших версіях ScummVM."
+"ScummVM. Скорше за все вона не буде працювати стабільно, і збережені ігри, "
+"які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
 #: engines/engine.cpp:558
 msgid "Start anyway"
@@ -1954,7 +1954,7 @@ msgstr "Емулятор DOSBox OPL"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr "Беспосередній ALSA FM"
+msgstr "Безпосередній ALSA FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1976,7 +1976,7 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Вибраний звуковий пристрій '%s' не може бути використаний. Дивіться файл "
+"Вибраний звуковий пристрій '%s' не може бути використано. Дивіться файл "
 "протоколу для додаткової інформації."
 
 #: audio/mididrv.cpp:257
@@ -1994,7 +1994,7 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Уподобаний звуковий пристрій '%s' не може бути використаний. Дивіться файл "
+"Уподобаний звуковий пристрій '%s' не може бути використано. Дивіться файл "
 "протоколу для додаткової інформації."
 
 #: audio/mods/paula.cpp:196
@@ -2043,18 +2043,18 @@ msgstr "C64 Аудіо Емулятор"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "Синхронизацію збережених станів закінчено."
+msgstr "Синхронизацію збережених ігор закінчено."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr "Синхронизацію збережених станів припинено."
+msgstr "Синхронизацію збережених ігор припинено."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"Помилка синхронизації збережених станів.\n"
+"Помилка синхронизації збережених ігор.\n"
 "Перевірте ваше з'єднання з інтернет."
 
 #: backends/cloud/storage.cpp:328
@@ -2164,7 +2164,7 @@ msgstr "ВИМК"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr "Проведіть двома пальцяму направо для переключення."
+msgstr "Проведіть двома пальцями направо для переключення."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
@@ -2238,7 +2238,7 @@ msgstr " (Активна)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr " (Заблокований)"
+msgstr " (Заблоковано)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
@@ -2542,7 +2542,7 @@ msgstr "Стан:"
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
 msgid "Unknown"
-msgstr "Невідомо"
+msgstr "Невідомий"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
@@ -2627,7 +2627,7 @@ msgstr "Мережу не налаштовано (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
-msgstr "Заховати панель інструментів"
+msgstr "Сховати панель інструментів"
 
 #: backends/platform/wince/CEActionsPocket.cpp:47
 msgid "Show Keyboard"
@@ -2767,7 +2767,7 @@ msgstr "Показувати скан-лінії"
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr "Використовувати ориг. збереження/завантаження екрани"
+msgstr "Використовувати ориг. екрани збереження/завантаження"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
@@ -2819,7 +2819,7 @@ msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"Показує вікно для вводу команди та ставить гру на паузу (подібно до SCI),"
+"Показує вікно для вводу команди та ставить гру на паузу (подібно до SCI), "
 "замість безпосереднього вводу."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
@@ -2904,7 +2904,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM знайшов, що ви маєте старі збережені стани ігор для Drascula.\n"
+"ScummVM знайшов, що ви маєте старі збережені ігри для Drascula.\n"
 "Збережені у старому форматі ігри не підтримуються, і ви не зможете їх "
 "завантажити, якщо не переведете у новий формат.\n"
 "\n"
@@ -2913,7 +2913,7 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Використовувати яскравий режим палітри"
+msgstr "Використовувати режим яскравої палітри"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
@@ -2957,16 +2957,16 @@ msgstr "Увімкнути режим з кров'ю, якщо є доступний"
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr "Студія аудиторії"
+msgstr "Аудіторія в студії"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr "Увімкнути студію аудиторії"
+msgstr "Додати аудіторію у студію"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr "Підтримувати Пропустити"
+msgstr "Дозволити пропуски"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
@@ -2975,11 +2975,11 @@ msgstr "Дозволити пропускати текст і ролики"
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr "Режим Геліум"
+msgstr "Режим гелію"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "Увімкнути режим Геліум"
+msgstr "Увімкнути режим гелієвих голосів"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -2989,7 +2989,7 @@ msgstr "Плавна прокрутка"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr "Увімкнути плавну прокрутку при ходьбі"
+msgstr "Увімкнути плавну прокрутку під час ходіння"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -3009,7 +3009,7 @@ msgstr "Стовпчики здоров'я"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr "Уиімкнути графічні стовпички здоров'я"
+msgstr "Уиімкнути графічні стовпчики здоров'я"
 
 #: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
 msgid "Move Forward"
@@ -3021,11 +3021,11 @@ msgstr "Рухатись назад"
 
 #: engines/kyra/eobcommon.cpp:333
 msgid "Move Left"
-msgstr "Йти наліво"
+msgstr "Рухатись наліво"
 
 #: engines/kyra/eobcommon.cpp:334
 msgid "Move Right"
-msgstr "Йти направо"
+msgstr "Рухатись направо"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2509
@@ -3117,8 +3117,8 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Здається, що Ви використовуєте пристрій General\n"
-"MIDI, але Ваша гра підтримує тільки Roland MT32\n"
+"Здається, що ви використовуєте пристрій General\n"
+"MIDI, але ваша гра підтримує тільки Roland MT32\n"
 "MIDI. Ми спробуємо замапити інструменти Roland\n"
 "MT32 на General MIDI. Але в результаті може\n"
 "статися, що деякі треки будуть грати неправильно."
@@ -3133,12 +3133,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Наступний оригінальний файл збереженого стану гри було знайдено у вашій "
-"папці з грою:\n"
+"Наступний оригінальний файл збереженої гри було знайдено у вашій папці з "
+"грою:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Чи ви бажаєте використовувати цей збережений стан гри зі ScummVM?\n"
+"Чи ви бажаєте використовувати цю збережену гру зі ScummVM?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:590
@@ -3147,7 +3147,7 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Файл збереженого стану гри було знайдено у вказаній позиції %d. Перетерти?\n"
+"Файл збереженої гри було знайдено у вказаній позиції %d. Перетерти?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
@@ -3233,7 +3233,7 @@ msgid ""
 "the Mac 'Riven' executable."
 msgstr ""
 "Використання файлу 'arcriven.z' також є припустимим. Також ви можете "
-"використовуватифайл 'Riven' для Mac."
+"використовувати файл 'Riven' для Mac."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
@@ -3247,7 +3247,7 @@ msgstr ""
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr "Дослідування поза цією межою доступне тільки за повної версії гри."
+msgstr "Дослідування поза цією межою доступне тільки у повнії версії гри."
 
 #: engines/mohawk/riven_external.cpp:655
 msgid ""
@@ -3277,11 +3277,11 @@ msgstr "Дозволяє гравцеві перескакувати через сцени у Залі Рекордів"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
-msgstr "Розтягувати відео про створення ігри"
+msgstr "Розтягувати відео про створення ігри на весь екран"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Розтягувати відео про створення ігри так, що воно займатиме весь екран"
+msgstr "Розтягувати відео про створення ігри так, щоб воно займало весь екран"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3289,7 +3289,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Не можу зберегти стан гри у слот %i\n"
+"Не можу зберегти гру у слот %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -3336,7 +3336,7 @@ msgid ""
 "Please report to the team."
 msgstr ""
 "ScummVM надрукував деякі попередження у вікні консолі, і немає гарантії, що "
-"усі Ваші файли було переведено.\n"
+"усі ваші файли було переведено.\n"
 "\n"
 "Будь ласка, повідомте про це команді."
 
@@ -3366,7 +3366,7 @@ msgstr "Дія/Вибір"
 
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Toggle Center Data Display"
-msgstr "Перемкнути показування в центрі екрану"
+msgstr "Перемкнути показування даних в центрі екрану"
 
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Display/Hide Info Screen"
@@ -3378,11 +3378,11 @@ msgstr "Показувати/Сховати меню паузи"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
-msgstr "Алтернативний вступ"
+msgstr "Альтернативний вступ"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Використовувати альтернативний вступ гри (тільки CD версія)"
+msgstr "Використовувати альтернативний вступ гри (тільки в CD версії)"
 
 #: engines/sci/detection.cpp:390
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -3391,8 +3391,7 @@ msgstr "Не робити растрування EGA (фони у повному кольорі)"
 #: engines/sci/detection.cpp:391
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Не робити крок растрування у іграх EGA, графіку буде показано у повному "
-"кольорі"
+"Не робити растрування у іграх EGA, графіку буде показано у повному кольорі"
 
 #: engines/sci/detection.cpp:400
 msgid "Enable high resolution graphics"
@@ -3408,7 +3407,7 @@ msgstr "Увімкнути відео з чорними лініями"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Малювати чорні лінії поверху відео щоб посилити їхню чіткість"
+msgstr "Малювати чорні лінії поверху відео щоб посилити їхню наявну чіткість"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3427,8 +3426,8 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Використовувати дляв виводу MIDI режим карти IBM Feature або FM сінтез "
-"Yamaha FB-01"
+"Використовувати для виводу MIDI режим карти IBM Feature або FM сінтез Yamaha "
+"FB-01"
 
 #: engines/sci/detection.cpp:451
 msgid "Use CD audio"
@@ -3436,7 +3435,7 @@ msgstr "Використовувати CD аудіо"
 
 #: engines/sci/detection.cpp:452
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Використовувати CD аудіо замість у-грі аудіо, якщо такі є"
+msgstr "Використовувати CD аудіо замість ігрового аудіо, якщо такі є"
 
 #: engines/sci/detection.cpp:462
 msgid "Use Windows cursors"
@@ -3478,7 +3477,7 @@ msgid ""
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
 "Задля запобігання піратства, Lite-версія гри Putt-Putt Save the Zoo для iOS\n"
-"не підтримуєтся. Повну версію можна придбати у iTunes Store."
+"не підтримується. Повну версію можна придбати у iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -3486,7 +3485,7 @@ msgstr "Показувати лінії об'єктів"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Показувати назви об'єктив внизу екрану"
+msgstr "Показувати назви об'єктів внизу екрану"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3512,12 +3511,12 @@ msgstr "Ігру призупинено.  Натисніть пробіл для продовження."
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:179
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Ви упевнені, що хочете розпочати спочатку?  (Y/N)Y"
+msgstr "Ви впевнені, що хочете розпочати спочатку?  (Y/N)Y"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Ви упевнені, що хочете вийти?  (Y/N)Y"
+msgstr "Ви впевнені, що хочете вийти?  (Y/N)Y"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
@@ -3525,7 +3524,7 @@ msgstr "Грати"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr "Вставте диск зі збереженими станами ігор"
+msgstr "Вставте диск зі збереженими іграми"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
@@ -3533,7 +3532,7 @@ msgstr "Ви мусите ввести ім'я"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Гру НЕ БУЛО записано (диск повний?)"
+msgstr "Гру НЕ БУЛО записано (повний диск?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
@@ -3551,7 +3550,7 @@ msgstr "Завантажую '%s'"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "Name your SAVE game"
-msgstr "Назовіть свій збережений стан ігри"
+msgstr "Назовіть цю збережену гру"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
@@ -3598,7 +3597,7 @@ msgstr "За допомогою звертайтеся до інструкції Loom(TM)."
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Practice"
-msgstr "Практика"
+msgstr "Практикант"
 
 #: engines/scumm/dialogs.cpp:661
 msgid "Expert"
@@ -3622,7 +3621,7 @@ msgstr "Esc"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
-msgstr "Пропустити ролик"
+msgstr "Пропустити ролік"
 
 #: engines/scumm/help.cpp:79
 msgid "Space"
@@ -3630,7 +3629,7 @@ msgstr "Space"
 
 #: engines/scumm/help.cpp:79
 msgid "Pause game"
-msgstr "Пауза"
+msgstr "Пауза гри"
 
 #: engines/scumm/help.cpp:80 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
@@ -3668,7 +3667,7 @@ msgstr "Швидкість тексту повільніше / швидше"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
-msgstr "Симулювати лівий клік"
+msgstr "Симулювати лівий клік миші"
 
 #: engines/scumm/help.cpp:91
 msgid "Tab"
@@ -3676,7 +3675,7 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
-msgstr "Симулювати правий клік"
+msgstr "Симулювати правий клік миші"
 
 #: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
@@ -3704,7 +3703,7 @@ msgstr "Виконати в дуже швидкому режимі (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
-msgstr "Увімкнути захоплення миші"
+msgstr "Перекоючення захоплення миші"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
@@ -3720,7 +3719,7 @@ msgstr "Корекція співвідношення сторін"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
-msgstr "* Зауважимо, що використання ctrl-f і"
+msgstr "* Зауважимо, що використання ctrl-f та"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
@@ -3745,12 +3744,12 @@ msgstr "Основні опції керування:"
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162
 msgid "Push"
-msgstr "Натиск"
+msgstr "Штовхати"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163
 msgid "Pull"
-msgstr "Тягти"
+msgstr "Тягнути"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:198
@@ -3814,7 +3813,7 @@ msgstr "Що є"
 
 #: engines/scumm/help.cpp:147
 msgid "Unlock"
-msgstr "Розблокувати"
+msgstr "Відкрити"
 
 #: engines/scumm/help.cpp:150
 msgid "Put on"
@@ -3908,7 +3907,7 @@ msgstr "Вимкнути"
 
 #: engines/scumm/help.cpp:218
 msgid "KeyUp"
-msgstr "Натиснути"
+msgstr "Догори"
 
 #: engines/scumm/help.cpp:218
 msgid "Highlight prev dialogue"
@@ -3916,7 +3915,7 @@ msgstr "Виділити попередній діалог"
 
 #: engines/scumm/help.cpp:219
 msgid "KeyDown"
-msgstr "Відпустити"
+msgstr "Донизу"
 
 #: engines/scumm/help.cpp:219
 msgid "Highlight next dialogue"
@@ -3937,7 +3936,7 @@ msgstr "Об'єкт"
 
 #: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
-msgstr "Чорнобілий / Кольоровий"
+msgstr "Чорно-білий / Кольоровий"
 
 #: engines/scumm/help.cpp:233
 msgid "Eyes"
@@ -3990,27 +3989,27 @@ msgstr "Прокручення списку донизу"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr "Верхня зліва річ"
+msgstr "Верхня ліва річ"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr "Нижня зліва річ"
+msgstr "Нижня ліва річ"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr "Верхня справа річ"
+msgstr "Верхня права річ"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr "Нижня справа річ"
+msgstr "Нижня права річ"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr "Середня зліва річ"
+msgstr "Середня ліва річ"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr "Середня справа річ"
+msgstr "Середня права річ"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
@@ -4170,14 +4169,14 @@ msgid ""
 msgstr ""
 "Зазвичай, зараз би запустився Maniac Mansion. Але, щоб це могло працювати, "
 "вам потрібно переписати файли гри Maniac Manssion у папку Maniac всередині "
-"пвпки з грою Tentacle, а також додати саму гру у ScummVM."
+"папки з грою Tentacle, а також додати саму гру у ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Не вадлося знайти файл програми 'Loom' Macintosh аби прочитати\n"
+"Не вдалося знайти файл програми 'Loom' Macintosh аби прочитати\n"
 "з нього інструменти. Музику було вимкнено."
 
 #: engines/scumm/players/player_v5m.cpp:107
@@ -4185,12 +4184,12 @@ msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Не вадлося знайти файл програми 'Monkey Island' Macintosh аби прочитати\n"
+"Не вдалося знайти файл програми 'Monkey Island' Macintosh аби прочитати\n"
 "з нього інструменти. Музику було вимкнено."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr "Піесельовані переходи між сценами"
+msgstr "Піксельовані переходи між сценами"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
@@ -4250,26 +4249,26 @@ msgstr ""
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Дискетне введення"
+msgstr "Вступ з флоппі-версії"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Використовувати дискетні версії введення (тільки CD версія)"
+msgstr "Використовувати введення з флоппі-версії (тільки для CD версії гри)"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "ролик PSX потоку '%s' не можуть бути відтворені у режимі палітри"
+msgstr "Ролик PSX потоку '%s' не може бути відтвореним у режимі палітри"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr "Знайдено ролики DXA, але ScummVM був побудований без підтримки zlib"
+msgstr "Знайдено ролики DXA, але ScummVM було побудовано без підтримки zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Знайдено ролики MPEG-2, але ScummVM був побудований без підтримки MPEG-2"
+"Знайдено ролики MPEG-2, але ScummVM було побудовано без підтримки MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -4299,16 +4298,16 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"Збереження гри з такою назвою вже існує!\n"
-"Чи ви хочете лишити старий збережений стан (%s) або нове (%s)?\n"
+"Збережена гра з такою назвою вже існує!\n"
+"Чи ви хочете лишити стару збережену гру (%s) або нову (%s)?\n"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
-msgstr "Лишити старе"
+msgstr "Лишити стару"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the new one"
-msgstr "Взяти нове"
+msgstr "Взяти нову"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
@@ -4318,15 +4317,15 @@ msgstr "На цьому закінчується демо Broken Sword 1"
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Знайдені PSX ролики, але ScummVM був зібраний без підтримки RGB кольорів"
+"Знайдено PSX ролики, але ScummVM було зібрано без підтримки кольорів RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr "Показувати мітки об'єктів"
+msgstr "Показувати назви об'єктів"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Показувати мітки для об'єктів при наведенні миші"
+msgstr "Показувати назви для об'єктів при наведенні миші"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
@@ -4336,32 +4335,32 @@ msgstr "Використовувати озвучення англійською"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Використовувати озвучення англійскою замість німецького для всіх мов окрім "
+"Використовувати озвучення англійскою замість німецької для всіх мов окрім "
 "німецької"
 
 #: engines/teenagent/resources.cpp:96
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
-"У вас відстуній файл 'teenagent.dat'. Візьміть його на вебсайті ScummVM"
+"У вас відстуній файл 'teenagent.dat'. Завантажте його з веб-сайту ScummVM"
 
 #: engines/teenagent/resources.cpp:117
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Файл teenagent.dat запаковано, але zlib не було включено в цю программу.Будь-"
-"ласка розпакуйте його"
+"Файл teenagent.dat запаковано, але zlib не було включено в цю программу. "
+"Будь-ласка розпакуйте його"
 
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Стан гри записано у слот %d "
+msgstr "Гру записано у слот %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "Не вдалося зробити швидке зберігання стану гри у слот №%d"
+msgstr "Не вдалося швидко зберегти гру у слот №%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
@@ -4375,11 +4374,11 @@ msgstr "Не вдалося завантажити збережену гру №%d"
 
 #: engines/toon/toon.cpp:4917
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на вебсайті ScummVM"
+msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на веб-сайті ScummVM"
 
 #: engines/toon/toon.cpp:4929
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr "Файл 'toon.dat' пошкоджено. Візьміть його на вебсайті ScummVM"
+msgstr "Файл 'toon.dat' пошкоджено. Завантажте його з веб-сайту ScummVM"
 
 #: engines/toon/toon.cpp:4939
 #, c-format
@@ -4388,11 +4387,11 @@ msgid ""
 "the ScummVM website"
 msgstr ""
 "Файл 'toon.dat' має невірну версію. Очікувана %d.%d, а отрімана %d.%d. "
-"Завантажте його с вебсайту ScummVM"
+"Завантажте його с веб-сайту ScummVM"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr "Показати лічильник кадріи"
+msgstr "Показати лічильник кадрів"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
@@ -4401,7 +4400,8 @@ msgstr "Показує у верньому лівому куті поточну кількість кадрів на секунду"
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
-"Використовувати оригінальні екрани збереження/завантаження замість ScummVM"
+"Використовувати оригінальні екрани збереження/завантаження замість екранів "
+"зі ScummVM"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
@@ -4421,11 +4421,11 @@ msgstr "Увімкнути допоміжну систему Venus"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr "Виключити анімацію під час поворотів"
+msgstr "Вимкнути анімацію під час поворотів"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr "Виключає анімацію під ча поворотів у режимі панорами"
+msgstr "Вимикає анімацію під час поворотів у режимі панорами"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
@@ -4443,8 +4443,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Цей файл зі збереженою грою використовує версію %u, але гра підтримує версію "
-"до %d. Вам потрібна поновлена версія ScummVM для завантаження цього файлу."
+"Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
+"версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
+"файлу."
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Неправильна назва файлу збереження стану"
