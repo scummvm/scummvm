@@ -91,8 +91,8 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	voiceSamplesBuffer = nullptr;
 	needToFade = false;
 	lastMusicNum = 0;
-	main_bank_buf = nullptr;
-	music_buf = nullptr;
+	_mainBankBuf = nullptr;
+	_musicBuf = nullptr;
 	gameLipsync = nullptr;
 	gamePhrases = nullptr;
 	gameDialogs = nullptr;
@@ -131,7 +131,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_personTalking = false;
 	_musicFadeFlag = 0;
 	musicPlaying = false;
-	mus_samples_ptr = mus_patterns_ptr = mus_sequence_ptr = nullptr;
+	mus_samples_ptr = mus_patterns_ptr = _musSequencePtr = nullptr;
 	mus_enabled = false;
 	pCurrentObjectLocation = nullptr;
 	byte_31D64 = false;
@@ -1031,7 +1031,7 @@ void EdenGame::restoreBottomFrieze() {
 }
 
 void EdenGame::use_main_bank() {
-	_bankData = main_bank_buf;
+	_bankData = _mainBankBuf;
 }
 
 // Original name: use_bank
@@ -1079,11 +1079,11 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	byte h0, h1, mode;
 	int16 w, h;
 	if (_curBankNum != 117 && !_noPalette) {
-		if (PLE16(pix) > 2)
+		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
 	}
-	pix += PLE16(pix);
-	pix += PLE16(pix + index * 2);
+	pix += READ_LE_UINT16(pix);
+	pix += READ_LE_UINT16(pix + index * 2);
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
@@ -1163,11 +1163,11 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	byte h0, h1, mode;
 	int16 w, h;
 	if (_curBankNum != 117) {
-		if (PLE16(pix) > 2)
+		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
 	}
-	pix += PLE16(pix);
-	pix += PLE16(pix + index * 2);
+	pix += READ_LE_UINT16(pix);
+	pix += READ_LE_UINT16(pix + index * 2);
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
@@ -1259,8 +1259,8 @@ void EdenGame::glow(int16 index) {
 	byte *pix = _bankData;
 
 	index += 9;
-	pix += PLE16(pix);
-	pix += PLE16(pix + index * 2);
+	pix += READ_LE_UINT16(pix);
+	pix += READ_LE_UINT16(pix + index * 2);
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
@@ -1353,11 +1353,11 @@ void EdenGame::readPalette(byte *ptr) {
 void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 	byte *pix = _bankData;
 	byte *scr = p_subtitlesview_buf + x + y * subtitles_x_width;
-	if ((_curBankNum != 117) && (PLE16(pix) > 2))
+	if ((_curBankNum != 117) && (READ_LE_UINT16(pix) > 2))
 		readPalette(pix + 2);
 
-	pix += PLE16(pix);
-	pix += PLE16(pix + index * 2);
+	pix += READ_LE_UINT16(pix);
+	pix += READ_LE_UINT16(pix + index * 2);
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
@@ -2328,7 +2328,7 @@ void EdenGame::addanim() {
 	animationActive = true;
 	if (p_global->_characterPtr == &kPersons[PER_ROI])
 		return;
-	perso_spr(p_global->persoSpritePtr + PLE16(p_global->persoSpritePtr));  //TODO: GetElem(0)
+	perso_spr(p_global->persoSpritePtr + READ_LE_UINT16(p_global->persoSpritePtr));  //TODO: GetElem(0)
 	_mouthAnimations = _imageDesc + 200;
 	if (p_global->_characterPtr->_id != PersonId::pidCabukaOfCantura && p_global->_characterPtr->_targetLoc != 7) //TODO: targetLoc is minisprite idx
 		removeMouthSprite();
@@ -2386,7 +2386,7 @@ void EdenGame::perso_spr(byte *spr) {
 			index = max_perso_desc;
 		index *= 2;         //TODO: src = GetElem(ff_C2, index)
 		src = p_global->ff_C2;
-		src = src + PLE16(src + index);
+		src += READ_LE_UINT16(src + index);
 		while ((c = *src++)) {
 			*img++ = c;
 			*img++ = *src++;
@@ -2400,18 +2400,21 @@ void EdenGame::perso_spr(byte *spr) {
 
 // Original name: af_image
 void EdenGame::displayImage() {
-	byte *img = _imageDesc + 200, *img_start, *curimg = _imageDesc;
+	byte *img = _imageDesc + 200;
 
-	int16 count = PLE16(img);
+	int16 count = READ_LE_UINT16(img);
 	if (!count)
 		return;
-	img_start = img;
+
+	byte *img_start = img;
+	byte *curimg = _imageDesc;
+
 	img += 2;
 	count *= 3;
 	while (count--)
 		*curimg++ = *img++;
 	img = img_start;
-	count = PLE16(img);
+	count = READ_LE_UINT16(img);
 	img += 2;
 	/////// draw it
 	while (count--) {
@@ -2420,21 +2423,19 @@ void EdenGame::displayImage() {
 		uint16 y = *img++ + _gameIcons[0].sy;
 		byte *pix = _bankData;
 		byte *scr = p_mainview_buf + x + y * 640;
-		byte h0, h1, mode;
-		int16 w, h;
 		index--;
-		if (PLE16(pix) > 2)
+		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
-		pix += PLE16(pix);
-		pix += PLE16(pix + index * 2);
+		pix += READ_LE_UINT16(pix);
+		pix += READ_LE_UINT16(pix + index * 2);
 		//  int16   height:9
 		//  int16   pad:6;
 		//  int16   flag:1;
-		h0 = *pix++;
-		h1 = *pix++;
-		w = ((h1 & 1) << 8) | h0;
-		h = *pix++;
-		mode = *pix++;
+		byte h0 = *pix++;
+		byte h1 = *pix++;
+		int16 w = ((h1 & 1) << 8) | h0;
+		int16 h = *pix++;
+		byte mode = *pix++;
 		if (mode != 0xFF && mode != 0xFE)
 			continue;   //TODO: enclosing block?
 		if (h1 & 0x80) {
@@ -2498,7 +2499,7 @@ void EdenGame::displayImage() {
 }
 
 void EdenGame::af_perso1() {
-	perso_spr(p_global->persoSpritePtr + PLE16(p_global->persoSpritePtr));
+	perso_spr(p_global->persoSpritePtr + READ_LE_UINT16(p_global->persoSpritePtr));
 	displayImage();
 }
 
@@ -2525,22 +2526,22 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		useBank(p_global->_characterImageBank);
 		_characterBankData = _bankData;
 		byte *ptr = _bankData;
-		ptr += PLE16(ptr);
+		ptr += READ_LE_UINT16(ptr);
 		byte *baseptr = ptr;
-		ptr += PLE16(ptr) - 2;
-		ptr = baseptr + PLE16(ptr) + 4;
-		_gameIcons[0].sx = PLE16(ptr);
-		_gameIcons[0].sy = PLE16(ptr + 2);
-		_gameIcons[0].ex = PLE16(ptr + 4);
-		_gameIcons[0].ey = PLE16(ptr + 6);
+		ptr += READ_LE_UINT16(ptr) - 2;
+		ptr = baseptr + READ_LE_UINT16(ptr) + 4;
+		_gameIcons[0].sx = READ_LE_UINT16(ptr);
+		_gameIcons[0].sy = READ_LE_UINT16(ptr + 2);
+		_gameIcons[0].ex = READ_LE_UINT16(ptr + 4);
+		_gameIcons[0].ey = READ_LE_UINT16(ptr + 6);
 		ptr += 8;
 		p_global->ff_C2 = ptr + 2;
-		max_perso_desc = PLE16(ptr) / 2;
-		ptr += PLE16(ptr);
+		max_perso_desc = READ_LE_UINT16(ptr) / 2;
+		ptr += READ_LE_UINT16(ptr);
 		baseptr = ptr;
-		ptr += PLE16(ptr) - 2;
+		ptr += READ_LE_UINT16(ptr) - 2;
 		p_global->persoSpritePtr = baseptr;
-		p_global->persoSpritePtr2 = baseptr + PLE16(ptr);
+		p_global->persoSpritePtr2 = baseptr + READ_LE_UINT16(ptr);
 		debug("load perso: b6 len is %ld", p_global->persoSpritePtr2 - p_global->persoSpritePtr);
 	} else {
 		useBank(p_global->_characterImageBank);
@@ -4643,10 +4644,10 @@ void EdenGame::verifh(void *ptr) {
 
 	debug("* Begin unpacking resource");
 	head -= 6;
-	uint16 h0 = PLE16(head);
+	uint16 h0 = READ_LE_UINT16(head);
 	head += 2;
 	/*char unused = * */head++;
-	uint16 h3 = PLE16(head);
+	uint16 h3 = READ_LE_UINT16(head);
 	head += 2;
 	byte *data = h0 + head + 26;
 	h3 -= 6;
@@ -4807,7 +4808,7 @@ void EdenGame::loadpermfiles() {
 		error("Unsupported platform");
 	}
 
-	loadFile(0, main_bank_buf);
+	loadFile(0, _mainBankBuf);
 	loadFile(402, gameFont);
 	loadFile(404, gameDialogs);
 	loadFile(403, gameConditions);
@@ -5174,13 +5175,13 @@ void EdenGame::displaySingleRoom(room_t *room) {
 					icon->_actionId = b0;
 					icon->_objectId = b0;
 					icon->_cursorId = kActionCursors[b0];
-					int16 x = PLE16(ptr);
+					int16 x = READ_LE_UINT16(ptr);
 					ptr += 2;
-					int16 y = PLE16(ptr);
+					int16 y = READ_LE_UINT16(ptr);
 					ptr += 2;
-					int16 ex = PLE16(ptr);
+					int16 ex = READ_LE_UINT16(ptr);
 					ptr += 2;
-					int16 ey = PLE16(ptr);
+					int16 ey = READ_LE_UINT16(ptr);
 					ptr += 2;
 					x += p_global->room_x_base;
 					ex += p_global->room_x_base;
@@ -5515,11 +5516,11 @@ void EdenGame::allocateBuffers() {
 	ALLOC(gameConditions, 0x4800, byte);
 	ALLOC(gameDialogs, 0x2800, byte);
 	ALLOC(gamePhrases, 0x10000, byte);
-	ALLOC(main_bank_buf, 0x9400, byte);
+	ALLOC(_mainBankBuf, 0x9400, byte);
 	ALLOC(glow_buffer, 0x2800, byte);
 	ALLOC(gameFont, 0x900, byte);
 	ALLOC(gameLipsync, 0x205C, byte);
-	ALLOC(music_buf, 0x140000, byte);
+	ALLOC(_musicBuf, 0x140000, byte);
 #undef ALLOC
 }
 
@@ -5533,11 +5534,11 @@ void EdenGame::freebuf() {
 	free(gameConditions);
 	free(gameDialogs);
 	free(gamePhrases);
-	free(main_bank_buf);
+	free(_mainBankBuf);
 	free(glow_buffer);
 	free(gameFont);
 	free(gameLipsync);
-	free(music_buf);
+	free(_musicBuf);
 }
 
 void EdenGame::openwindow() {
@@ -6421,12 +6422,12 @@ void EdenGame::startmusique(byte num) {
 	}
 	loadmusicfile(num);
 	p_global->currentMusicNum = num;
-	mus_sequence_ptr = music_buf + 32;  //TODO: rewrite it properly
-	int16 seq_size = PLE16(music_buf + 30);
-	mus_patterns_ptr = music_buf + 30 + seq_size;
-	int16 pat_size = PLE16(music_buf + 27);
-	mus_samples_ptr = music_buf + 32 + 4 + pat_size;
-	int16 freq = PLE16(mus_samples_ptr - 2);
+	_musSequencePtr = _musicBuf + 32;  //TODO: rewrite it properly
+	int16 seq_size = READ_LE_UINT16(_musicBuf + 30);
+	mus_patterns_ptr = _musicBuf + 30 + seq_size;
+	int16 pat_size = READ_LE_UINT16(_musicBuf + 27);
+	mus_samples_ptr = _musicBuf + 32 + 4 + pat_size;
+	int16 freq = READ_LE_UINT16(mus_samples_ptr - 2);
 
 	delete _musicChannel;
 	_musicChannel = new CSoundChannel(_vm->_mixer, freq == 166 ? 11025 : 22050, false);
@@ -6448,11 +6449,11 @@ void EdenGame::musicspy() {
 	if (_personTalking && !_voiceChannel->numQueued())
 		_musicFadeFlag = 3;
 	if (_musicChannel->numQueued() < 3) {
-		byte patnum = mus_sequence_ptr[(int)musicSequencePos];
+		byte patnum = _musSequencePtr[(int)musicSequencePos];
 		if (patnum == 0xFF) {
 			// rewind
 			musicSequencePos = 0;
-			patnum = mus_sequence_ptr[(int)musicSequencePos];
+			patnum = _musSequencePtr[(int)musicSequencePos];
 		}
 		musicSequencePos++;
 		byte *patptr = mus_patterns_ptr + patnum * 6;
@@ -6471,7 +6472,7 @@ int EdenGame::loadmusicfile(int16 num) {
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const
 		numread = 0x140000;
-	h_bigfile.read(music_buf, numread);
+	h_bigfile.read(_musicBuf, numread);
 	return size;
 }
 
@@ -8347,7 +8348,7 @@ uint16 EdenGame::cher_valeur() {
 	} else if (typ == 0x80)
 		val = *code_ptr++;
 	else {
-		val = PLE16(code_ptr);
+		val = READ_LE_UINT16(code_ptr);
 		code_ptr += 2;
 	}
 	return val;
@@ -9132,9 +9133,9 @@ void EdenGame::initCubePC() {
 void EdenGame::pc_selectmap(int16 num) {
 	if (num != curs_cur_map) {
 		pc_cursor = &pc_cursors[num];
-		unsigned char *bank = main_bank_buf + PLE16(main_bank_buf);
+		unsigned char *bank = _mainBankBuf + READ_LE_UINT16(_mainBankBuf);
 		for (int i = 0; i < 6; i++) {
-			_newface[i] = 4 + (unsigned char*)getElem(bank, pc_cursor->sides[i]);
+			_newface[i] = 4 + (unsigned char*)getElem(bank, pc_cursor->_sides[i]);
 			if (curs_cur_map == -1)
 				_face[i] = _newface[i];
 		}

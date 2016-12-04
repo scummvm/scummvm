@@ -617,8 +617,8 @@ private:
 	byte   info_list[16];
 	bool needToFade;
 	byte   lastMusicNum;
-	byte   *main_bank_buf;
-	byte   *music_buf;
+	byte   *_mainBankBuf;
+	byte   *_musicBuf;
 	byte   *gameLipsync;
 	byte   *gamePhrases;
 	byte   *gameDialogs;   //TODO: rename to dialogs?
@@ -693,7 +693,7 @@ private:
 
 	byte   *mus_samples_ptr;
 	byte   *mus_patterns_ptr;  //TODO: sndblock_t ?
-	byte   *mus_sequence_ptr;
+	byte   *_musSequencePtr;
 	bool   mus_enabled;
 	uint16 *pCurrentObjectLocation;
 	byte   own_objects[128];

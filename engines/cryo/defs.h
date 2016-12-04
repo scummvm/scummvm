@@ -28,7 +28,7 @@
 namespace Cryo {
 
 #define getElem(array, idx) \
-	( (char *)(array) + PLE16((idx) * 2 + (char *)(array)) )
+	( (char *)(array) + READ_LE_UINT16((idx) * 2 + (char *)(array)) )
 /*
 static inline void* AGetElem(byte *arr, int16 index)
 {
@@ -865,7 +865,7 @@ struct XYZ {
 };
 
 struct cubeCursor {
-	unsigned char	sides[6];	// spr idx for each side
+	unsigned char	_sides[6];	// spr idx for each side
 	unsigned char	kind;
 	signed char	speed;
 };
