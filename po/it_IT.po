@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 13:49+0000\n"
+"PO-Revision-Date: 2016-12-04 14:23+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -1224,37 +1224,37 @@ msgstr "Connetti"
 
 #: gui/options.cpp:1428
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Apri assistente di connessione all'account di archiviazione su Cloud"
 
 #: gui/options.cpp:1429
 msgid "Refresh"
-msgstr ""
+msgstr "Aggiorna"
 
 #: gui/options.cpp:1429
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
+"Aggiorna le informazioni del servizio di archiviazione su Cloud (nome utente "
+"e spazio utilizzato)"
 
 #: gui/options.cpp:1430
-#, fuzzy
 msgid "Download"
-msgstr "Giù"
+msgstr "Scarica"
 
 #: gui/options.cpp:1430
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Apri finestra di gestione dei download "
 
 #: gui/options.cpp:1432
 msgid "Run server"
-msgstr ""
+msgstr "Avvia server"
 
 #: gui/options.cpp:1432
 msgid "Run local webserver"
-msgstr ""
+msgstr "Avvia webserver locale"
 
 #: gui/options.cpp:1433 gui/options.cpp:2082
-#, fuzzy
 msgid "Not running"
-msgstr "Errore nell'esecuzione del gioco:"
+msgstr "Errore nell'avvio del gioco:"
 
 #: gui/options.cpp:1437
 #, fuzzy
@@ -1282,10 +1282,12 @@ msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Porta utillizzata dal server\n"
+"L'autenticazione non è disponibile tramite una porta personalizzata"
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Applica"
 
 #: gui/options.cpp:1628
 #, fuzzy
@@ -1294,7 +1296,7 @@ msgstr "Impossibile salvare il gioco"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Un altro servizio di archiviazione cloud è già attivo. "
 
 #: gui/options.cpp:1667
 msgid ""
@@ -1328,11 +1330,11 @@ msgstr "Seleziona la cartella dei file aggiuntivi"
 #: gui/options.cpp:1979
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%lIu bytes"
 
 #: gui/options.cpp:1987
 msgid "<right now>"
-msgstr ""
+msgstr "<adesso>"
 
 #: gui/options.cpp:1989
 #, fuzzy
