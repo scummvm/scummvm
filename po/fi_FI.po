@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 15:51+0000\n"
-"Last-Translator: Alex Jakovleff <alex.jakovleff@gmail.com>\n"
+"PO-Revision-Date: 2016-12-04 15:56+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -234,7 +234,7 @@ msgid ""
 "English"
 msgstr ""
 "Pelin kieli. T‰m‰ ei muuta esimerkiksi espanjankielist‰ versiota pelist‰ "
-"englanninkieliseksi."
+"englanninkieliseksi"
 
 #: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:121
 #: gui/options.cpp:812 gui/options.cpp:825 gui/options.cpp:1356
@@ -609,7 +609,7 @@ msgstr "Tietoa ScummVM:st‰"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~A~setukset"
+msgstr "~A~setukset..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
@@ -668,7 +668,7 @@ msgstr "Muokkaa peli‰..."
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "Poista peli..."
+msgstr "Poista peli"
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
@@ -932,7 +932,7 @@ msgid ""
 "soundcard"
 msgstr ""
 "Isommat taajuudet merkitsev‰t parempaa ‰‰nenlaatua, mutta ‰‰nikorttisi ei "
-"ehk‰ tue niit‰."
+"ehk‰ tue niit‰"
 
 #: gui/options.cpp:900
 msgid "GM Device:"
@@ -1133,7 +1133,7 @@ msgstr "Muut"
 
 #: gui/options.cpp:1320
 msgid "Theme:"
-msgstr "Teema"
+msgstr "Teema:"
 
 #: gui/options.cpp:1324
 msgid "GUI Renderer:"
@@ -1879,7 +1879,7 @@ msgstr "~N~‰pp‰imet"
 
 #: engines/engine.cpp:346
 msgid "Could not initialize color format."
-msgstr "V‰riformaattia ei voitu alustaa"
+msgstr "V‰riformaattia ei voitu alustaa."
 
 #: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
@@ -2317,7 +2317,7 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "P‰‰ruudun skaalaus"
+msgstr "P‰‰ruudun skaalaus:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
@@ -2359,13 +2359,13 @@ msgstr "Hiiren ved‰-ja-pudota tila pois k‰ytˆst‰."
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Touchad tila p‰‰ll‰"
+msgstr "Touchad tila p‰‰ll‰."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Touchpad tila pois p‰‰lt‰"
+msgstr "Touchpad tila pois p‰‰lt‰."
 
 #: backends/platform/maemo/maemo.cpp:208
 msgid "Click Mode"
@@ -2529,11 +2529,11 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Horisontaalinenunderscan"
+msgstr "Horisontaalinenunderscan:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Vertikaalinen underscan"
+msgstr "Vertikaalinen underscan:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -2541,11 +2541,11 @@ msgstr "Syˆte"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "GC Padin herkkyys"
+msgstr "GC Padin herkkyys:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "GC PAdin kiihtyvyys"
+msgstr "GC PAdin kiihtyvyys:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2701,7 +2701,7 @@ msgstr "Haluatko tallentaa vai ladata pelin?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Haluatko varmasti lopettaa?"
+msgstr "   Haluatko varmasti lopettaa?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2713,11 +2713,11 @@ msgstr "K‰‰nn‰"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "K‰ytet‰‰n SDL:n ajuria"
+msgstr "K‰ytet‰‰n SDL:n ajuria "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "N‰yttˆ"
+msgstr "N‰yttˆ "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2960,7 +2960,7 @@ msgstr ""
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Pelin tallentaminen ep‰onnistui."
+msgstr "Pelin tallentaminen ep‰onnistui"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3415,12 +3415,12 @@ msgstr ""
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
-msgstr "K‰yt‰ mieluiten digitaalisia ‰‰nitehosteita."
+msgstr "K‰yt‰ mieluiten digitaalisia ‰‰nitehosteita"
 
 #: engines/sci/detection.cpp:421
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
-"K‰yt‰ mieluiten digitaalisia ‰‰nitehosteita synteettisten tehosteiden sijaan."
+"K‰yt‰ mieluiten digitaalisia ‰‰nitehosteita synteettisten tehosteiden sijaan"
 
 #: engines/sci/detection.cpp:440
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -3439,7 +3439,7 @@ msgstr "K‰yt‰ CD:n ‰‰nt‰"
 
 #: engines/sci/detection.cpp:452
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "K‰yt‰ CD:n audiota pelin audion sijaan, jos mahdollista."
+msgstr "K‰yt‰ CD:n audiota pelin audion sijaan, jos mahdollista"
 
 #: engines/sci/detection.cpp:462
 msgid "Use Windows cursors"
@@ -4048,7 +4048,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Tappeluohjaimet (numpad)"
+msgstr "Tappeluohjaimet (numpad):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4089,7 +4089,7 @@ msgstr "N‰m‰ ovat Indylle vasemmalla."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr "Kun Indy on oikealla, "
+msgstr "Kun Indy on oikealla,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
@@ -4239,7 +4239,7 @@ msgid ""
 "Please download it from www.scummvm.org"
 msgstr ""
 "Tiedostoa \"sky.cpt\" ei lˆydy!\n"
-"Hae se ScummVM:n verkkosivulta."
+"Hae se ScummVM:n verkkosivulta"
 
 #: engines/sky/compact.cpp:141
 msgid ""
@@ -4247,7 +4247,7 @@ msgid ""
 "Please (re)download it from www.scummvm.org"
 msgstr ""
 "Tiedosto \"sky.cpt\" on v‰‰r‰n kokoinen.\n"
-"Hae uusi versio ScummVM:n verkkosivuilta."
+"Hae uusi versio ScummVM:n verkkosivuilta"
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4352,7 +4352,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "Tiedosto teenagent.dat on pakattu, mutta zlib-kirjastoa ei ole k‰‰nnetty "
-"ScummVM:‰‰n. Pura teenagent.dat."
+"ScummVM:‰‰n. Pura teenagent.dat"
 
 #: engines/toon/toon.cpp:222
 #, fuzzy, c-format
