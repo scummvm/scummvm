@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 12:59+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2016-12-04 13:00+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -1448,7 +1448,6 @@ msgid "Playtime: "
 msgstr "Játékidõ: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
 msgstr "Névtelen játékállás"
 
@@ -2877,7 +2876,6 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Szinvak mód engedélyezve alapértelmezett"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -3133,7 +3131,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
 "ScummVM. If you want to manually import original saved game later you will\n"
@@ -3293,7 +3291,6 @@ msgid "Saving game..."
 msgstr "Játék mentés..."
 
 #: engines/parallaction/saveload.cpp:269
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -3617,7 +3614,6 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
 msgstr "1-10 Játékállás betöltése"
 
@@ -3628,7 +3624,6 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
 msgstr "1-10 Játékállás mentése"
 
@@ -4257,7 +4252,6 @@ msgid "Cutscene '%s' not found"
 msgstr "'%s' átvezetõ nem található"
 
 #: engines/sword1/control.cpp:863
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -4267,8 +4261,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM régi játékmentést talált a Broken Sword 1 hez, ezt át kell "
-"alakítani.\n"
+"ScummVM régi játékmentést talált a Broken Sword 1 hez, ezt át kell alakítani."
+"\n"
 "A régi játékmentés nem támogatott, ezért a játék nem töltõdik be átalakítás "
 "nélkül.\n"
 "\n"
@@ -4335,11 +4329,9 @@ msgstr ""
 "állománynak. Kérlek tömörítsd ki"
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Játékállás nem menthetõ %i slotba\n"
-"\n"
+msgstr "Játékállás nem menthetõ %d slotba "
 
 #: engines/toon/toon.cpp:226
 #, c-format
@@ -4347,11 +4339,9 @@ msgid "Could not quick save into slot #%d"
 msgstr ""
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"Játékállás nem menthetõ %i slotba\n"
-"\n"
+msgstr "Játékállás nem menthetõ %d slotba"
 
 #: engines/toon/toon.cpp:243
 #, fuzzy, c-format
