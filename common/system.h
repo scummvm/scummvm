@@ -323,9 +323,11 @@ public:
 		kFeatureSideTextures,
 
 		/**
-		 * If supported, this feature flag can be used to enable or disable
+		 * If supported, this feature flag can be used to check if
 		 * waiting for vertical sync before refreshing the screen to reduce
-		 * tearing.
+		 * tearing is enabled.
+		 *
+		 * ResidualVM specific
 		 */
 		kFeatureVSync,
 
