@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 14:29+0000\n"
+"PO-Revision-Date: 2016-12-05 20:36+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -1015,8 +1015,8 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Wählen Sie dies aus, wenn Sie ausbessernde Instrumentzuweisungen aktivieren "
-"möchten, um MT-32 auf einem Roland-GS-Gerät zu emulieren"
+"Auswählen, wenn Sie ausbessernde Instrumentzuweisungen aktivieren möchten, "
+"um MT-32 auf einem Roland-GS-Gerät zu emulieren"
 
 #: gui/options.cpp:974
 msgid "Don't use Roland MT-32 music"
@@ -1560,7 +1560,7 @@ msgstr "Fehler in Feld %s."
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr "Fehler in den Feldern %s."
+msgstr "Die Felder %s enthalten fehlerhafte Eingaben."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
