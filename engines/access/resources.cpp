@@ -24,6 +24,7 @@
 #include "access/access.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "common/translation.h"
 
 namespace Access {
 
@@ -38,8 +39,9 @@ Resources *Resources::init(AccessEngine *vm) {
 
 bool Resources::load(Common::String &errorMessage) {
 	Common::File f;
-	if (!f.open("access.dat")) {
-		errorMessage = "Could not locate required access.dat file";
+	Common::String filename = "access.dat";
+	if (!f.open(filename.c_str())) {
+		errorMessage = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
 		return false;
 	}
 

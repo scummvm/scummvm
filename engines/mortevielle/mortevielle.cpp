@@ -37,6 +37,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -302,7 +303,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	// Open the mort.dat file
 	if (!f.open(MORT_DAT)) {
-		GUIErrorMessage("Could not locate 'mort.dat'.");
+		Common::String msg = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), MORT_DAT);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 

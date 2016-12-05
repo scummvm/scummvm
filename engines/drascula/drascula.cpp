@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -955,12 +956,13 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 
 bool DrasculaEngine::loadDrasculaDat() {
 	Common::File in;
+	Common::String filename = "drascula.dat";
 	int i;
 
-	in.open("drascula.dat");
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = "You're missing the 'drascula.dat' file. Get it from the ScummVM website";
+		Common::String errorMessage = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 

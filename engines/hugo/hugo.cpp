@@ -27,6 +27,7 @@
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "hugo/hugo.h"
 #include "hugo/console.h"
@@ -429,10 +430,11 @@ void HugoEngine::runMachine() {
  */
 bool HugoEngine::loadHugoDat() {
 	Common::File in;
-	in.open("hugo.dat");
+	Common::String filename = "hugo.dat";
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = "You're missing the 'hugo.dat' file. Get it from the ScummVM website";
+		Common::String errorMessage = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 		return false;

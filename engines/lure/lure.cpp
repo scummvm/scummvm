@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 
@@ -60,7 +61,7 @@ Common::Error LureEngine::init() {
 	Common::File f;
 	VersionStructure version;
 	if (!f.open(SUPPORT_FILENAME)) {
-		GUIError("Could not locate Lure support file");
+		GUIError(_("You're missing the '%s' file. Get it from the ScummVM website"), SUPPORT_FILENAME);
 		return Common::kUnknownError;
 	}
 

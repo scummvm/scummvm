@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/installshield_cab.h"
+#include "common/translation.h"
 #include "tony/tony.h"
 #include "tony/custom.h"
 #include "tony/debugger.h"
@@ -189,11 +190,12 @@ Common::ErrorCode TonyEngine::init() {
 bool TonyEngine::loadTonyDat() {
 	Common::String msg;
 	Common::File in;
+	Common::String filename = "tony.dat";
 
-	in.open("tony.dat");
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = "You're missing the 'tony.dat' file. Get it from the ScummVM website";
+		msg = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;

@@ -126,11 +126,11 @@ static const uint32 turnTableOffsets[] = {
 
 SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
-	if (!_cptFile->open("sky.cpt")) {
-		GUI::MessageDialog dialog(_("Unable to find \"sky.cpt\" file!\n"
-								  "Please download it from www.scummvm.org"), _("OK"), NULL);
-		dialog.runModal();
-		error("Unable to find \"sky.cpt\" file\nPlease download it from www.scummvm.org");
+	Common::String filename = "sky.cpt";
+	if (!_cptFile->open(filename.c_str())) {
+                Common::String msg = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
+                GUIErrorMessage(msg);
+                error("%s", msg.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();
