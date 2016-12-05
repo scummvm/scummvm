@@ -71,10 +71,10 @@ public:
 	View(CryoEngine *vm, int w, int h);
 	~View();
 
-	void CLView_SetSrcZoomValues(int x, int y);
-	void CLView_SetDisplayZoomValues(int w, int h);
-	void CLView_InitDatas(int w, int h, void *buffer);
-	void CLView_CenterIn(View *parent);
+	void setSrcZoomValues(int x, int y);
+	void setDisplayZoomValues(int w, int h);
+	void initDatas(int w, int h, void *buffer);
+	void centerIn(View *parent);
 
 	int      _width;
 	int      _height;

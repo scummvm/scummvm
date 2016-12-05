@@ -3649,11 +3649,13 @@ void EdenGame::tyranDies(perso_t *perso) {
 }
 
 void EdenGame::SpecialObjets(perso_t *perso, char objid) {
+#pragma pack(push, 1)
 	struct SpecialObject {
 		int8  _characterType;
 		int8  _objectId;
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
+#pragma pack(pop)
 
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
@@ -5557,9 +5559,9 @@ void EdenGame::openwindow() {
 	p_mainview = new View(_vm, 640, 200);
 	p_mainview->_normal._width = 320;
 	CLBlitter_FillView(p_mainview, 0xFFFFFFFF);
-	p_mainview->CLView_SetSrcZoomValues(0, 0);
-	p_mainview->CLView_SetDisplayZoomValues(640, 400);
-	p_mainview->CLView_CenterIn(_vm->ScreenView);
+	p_mainview->setSrcZoomValues(0, 0);
+	p_mainview->setDisplayZoomValues(640, 400);
+	p_mainview->centerIn(_vm->ScreenView);
 	p_mainview_buf = p_mainview->_bufferPtr;
 
 	mouse_x_center = p_mainview->_normal._dstLeft + p_mainview->_normal._width / 2;
@@ -6232,9 +6234,9 @@ void EdenGame::showMovie(char arg1) {
 	bool playing = true;
 	_vm->_video->allocMemory(_hnmContext);
 	p_hnmview = new View(_vm, _hnmContext->_header._width, _hnmContext->_header._height);
-	p_hnmview->CLView_SetSrcZoomValues(0, 0);
-	p_hnmview->CLView_SetDisplayZoomValues(_hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
-	p_hnmview->CLView_CenterIn(_vm->ScreenView);
+	p_hnmview->setSrcZoomValues(0, 0);
+	p_hnmview->setDisplayZoomValues(_hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
+	p_hnmview->centerIn(_vm->ScreenView);
 	p_hnmview_buf = p_hnmview->_bufferPtr;
 	if (arg1) {
 		p_hnmview->_normal._height = 160;

@@ -59,7 +59,7 @@ View::View(CryoEngine *vm, int w, int h) : _vm(vm) {
 	void *buffer = (byte *)malloc(w * h);
 	if (buffer) {
 		_allocated = true;
-		CLView_InitDatas(w, h, buffer);
+		initDatas(w, h, buffer);
 	} else
 		error("Unable to allocate view buffer");
 }
@@ -69,17 +69,20 @@ View::~View() {
 		free(_bufferPtr);
 }
 
-void View::CLView_SetSrcZoomValues(int x, int y) {
+// Original name: CLView_SetSrcZoomValues
+void View::setSrcZoomValues(int x, int y) {
 	_zoom._srcLeft = x;
 	_zoom._srcTop = y;
 }
 
-void View::CLView_SetDisplayZoomValues(int w, int h) {
+// Original name: CLView_SetDisplayZoomValues
+void View::setDisplayZoomValues(int w, int h) {
 	_zoom._width = w;
 	_zoom._height = h;
 }
 
-void View::CLView_InitDatas(int w, int h, void *buffer) {
+// Original name: CLView_InitDatas
+void View::initDatas(int w, int h, void *buffer) {
 	_bufferPtr = (byte *)buffer;
 	_width = w;
 	_height = h;
@@ -99,7 +102,8 @@ void View::CLView_InitDatas(int w, int h, void *buffer) {
 	_zoom._height = h;
 }
 
-void View::CLView_CenterIn(View *parent) {
+// Original name: CLView_CenterIn
+void View::centerIn(View *parent) {
 	_normal._dstLeft = (parent->_width - _normal._width) / 2;
 	_normal._dstTop = (parent->_height - _normal._height) / 2;
 	_zoom._dstLeft = (parent->_width - _zoom._width) / 2;
@@ -427,7 +431,7 @@ void CLTimer_Action(void *arg) {
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
 	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
-	g_ed->ScreenView->CLView_InitDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
+	g_ed->ScreenView->initDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
 void CRYOLib_ManagersDone() {
