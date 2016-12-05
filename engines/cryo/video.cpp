@@ -186,24 +186,31 @@ void HnmPlayer::decompADPCM(byte *buffer, int16 *output, int size) {
 
 // Original name: CLHNM_ReadHeader
 void HnmPlayer::readHeader(hnm_t *hnm) {
-	int32 size = sizeof(hnm->_header);
-	hnm->_file->read(&hnm->_header, size);
+	hnm->_header._signature = hnm->_file->readUint32BE();
+	hnm->_header._unusedFlag1 = hnm->_file->readByte();
+	hnm->_header._unusedFlag2 = hnm->_file->readByte();
+	hnm->_header._unusedReserved = hnm->_file->readByte();
+	hnm->_header._unusedBpp = hnm->_file->readByte();
+	hnm->_header._width = hnm->_file->readUint16LE();
+	hnm->_header._height = hnm->_file->readUint16LE();
+	hnm->_header._unusedFileSize = hnm->_file->readSint32LE();
+	hnm->_header._numbFrame = hnm->_file->readSint32LE();
+	hnm->_header._unusedTableOffset = hnm->_file->readSint32LE();
+	hnm->_header._unusedSpeed = hnm->_file->readSint16LE();
+	hnm->_header._unusedMaxBuffer = hnm->_file->readSint16LE();
+	hnm->_header._bufferSize = hnm->_file->readSint32LE();
+	hnm->_header._unusedUnknown = hnm->_file->readSint16LE();
+	for (int i = 0; i < 14; i++)
+		hnm->_header._unusedReserved2[i] = hnm->_file->readSByte();
+	for (int i = 0; i < 16; i++)
+		hnm->_header._unusedCopyright[i] = hnm->_file->readSByte();
 
-	hnm->_header._width = LE16(hnm->_header._width);
-	hnm->_header._height = LE16(hnm->_header._height);
-	hnm->_header._unusedFileSize = LE32(hnm->_header._unusedFileSize);
-	hnm->_header._numbFrame = LE32(hnm->_header._numbFrame);
-	hnm->_header._unusedTableOffset = LE32(hnm->_header._unusedTableOffset);
-	hnm->_header._unusedSpeed = LE16(hnm->_header._unusedSpeed);
-	hnm->_header._unusedMaxBuffer = LE16(hnm->_header._unusedMaxBuffer);
-	hnm->_header._bufferSize = LE32(hnm->_header._bufferSize);
-	hnm->_header._unusedUnknown = LE16(hnm->_header._unusedUnknown);
 	hnm->_header._bufferSize += 4096; //TODO: checkme
 }
 
 // Original name: CLHNM_GetVersion
 int16 HnmPlayer::getVersion(hnm_t *hnm) {
-	if (hnm->_header._signature == BE32('HNM4'))
+	if (hnm->_header._signature == MKTAG('H','N','M','4'))
 		return 4;
 	return -1;
 }
