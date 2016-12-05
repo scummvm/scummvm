@@ -49,7 +49,7 @@ bool Resources::load(Common::String &errorMessage) {
 	char buffer[4];
 	f.read(buffer, 4);
 	if (strncmp(buffer, "SVMA", 4)) {
-		errorMessage = "Located access.dat file had invalid contents";
+		errorMessage = Common::String::format(_("File '%s' is corrupt. Get it from the ScummVM website"), filename.c_str());
 		return false;
 	}
 

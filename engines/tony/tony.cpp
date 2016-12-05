@@ -207,7 +207,7 @@ bool TonyEngine::loadTonyDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TONY")) {
-		msg = "File 'tony.dat' is corrupt. Get it from the ScummVM website";
+		msg = Common::String::format(_("File '%s' is corrupt. Get it from the ScummVM website"), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;

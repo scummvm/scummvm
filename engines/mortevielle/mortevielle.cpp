@@ -312,7 +312,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	char fileId[4];
 	f.read(fileId, 4);
 	if (strncmp(fileId, "MORT", 4) != 0) {
-		GUIErrorMessage("The located mort.dat data file is invalid");
+		Common::String msg = Common::String::format(_("File '%s' is corrupt. Get it from the ScummVM website"), MORT_DAT);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 

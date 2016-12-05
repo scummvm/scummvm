@@ -70,7 +70,7 @@ Common::Error LureEngine::init() {
 	f.close();
 
 	if (READ_LE_UINT16(&version.id) != 0xffff) {
-		GUIError("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
+		GUIError(_("File '%s' is corrupt. Get it from the ScummVM website"), SUPPORT_FILENAME);
 		return Common::kUnknownError;
 	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
 		GUIError("Incorrect version of %s file - expected %d.%d but got %d.%d",

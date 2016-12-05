@@ -445,7 +445,7 @@ bool HugoEngine::loadHugoDat() {
 	in.read(buf, 4);
 
 	if (memcmp(buf, "HUGO", 4)) {
-		Common::String errorMessage = "File 'hugo.dat' is corrupt. Get it from the ScummVM website";
+		Common::String errorMessage = Common::String::format(_("File '%s' is corrupt. Get it from the ScummVM website"), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		return false;
 	}
