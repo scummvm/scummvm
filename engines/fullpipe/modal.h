@@ -117,6 +117,7 @@ class ModalMap : public BaseModalObject {
 
 	void initMap();
 	PictureObject *getScenePicture();
+	PictureObject *getSceneHPicture(PictureObject *obj);
 };
 
 class ModalFinal : public BaseModalObject {

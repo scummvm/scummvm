@@ -551,6 +551,93 @@ PictureObject *ModalMap::getScenePicture() {
 	error("ModalMap::getScenePicture(): Unknown scene id: %d", g_fp->_currentScene->_sceneId);
 }
 
+PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
+	if (!obj)
+		return NULL;
+
+	switch (obj->_id) {
+	case PIC_MAP_S01:
+ 		return _mapScene->getPictureObjectById(PIC_MAP_H01, 0);
+	case PIC_MAP_S02:
+		return _mapScene->getPictureObjectById(PIC_MAP_H02, 0);
+	case PIC_MAP_S03:
+		return _mapScene->getPictureObjectById(PIC_MAP_H03, 0);
+	case PIC_MAP_S04:
+		return _mapScene->getPictureObjectById(PIC_MAP_H04, 0);
+	case PIC_MAP_S05:
+		return _mapScene->getPictureObjectById(PIC_MAP_H05, 0);
+	case PIC_MAP_S06:
+		return _mapScene->getPictureObjectById(PIC_MAP_H06, 0);
+	case PIC_MAP_S07:
+		return _mapScene->getPictureObjectById(PIC_MAP_H07, 0);
+	case PIC_MAP_S09:
+		return _mapScene->getPictureObjectById(PIC_MAP_H09, 0);
+	case PIC_MAP_S08:
+		return _mapScene->getPictureObjectById(PIC_MAP_H08, 0);
+	case PIC_MAP_S10:
+		return _mapScene->getPictureObjectById(PIC_MAP_H10, 0);
+	case PIC_MAP_S11:
+		return _mapScene->getPictureObjectById(PIC_MAP_H11, 0);
+	case PIC_MAP_S12:
+		return _mapScene->getPictureObjectById(PIC_MAP_H12, 0);
+	case PIC_MAP_S13:
+		return _mapScene->getPictureObjectById(PIC_MAP_H13, 0);
+	case PIC_MAP_S14:
+		return _mapScene->getPictureObjectById(PIC_MAP_H14, 0);
+	case PIC_MAP_S15:
+		return _mapScene->getPictureObjectById(PIC_MAP_H15, 0);
+	case PIC_MAP_S16:
+		return _mapScene->getPictureObjectById(PIC_MAP_H16, 0);
+	case PIC_MAP_S17:
+		return _mapScene->getPictureObjectById(PIC_MAP_H17, 0);
+	case PIC_MAP_S1819:
+		return _mapScene->getPictureObjectById(PIC_MAP_H18, 0);
+	case PIC_MAP_S20:
+		return _mapScene->getPictureObjectById(PIC_MAP_H20, 0);
+	case PIC_MAP_S21:
+		return _mapScene->getPictureObjectById(PIC_MAP_H21, 0);
+	case PIC_MAP_S22:
+		return _mapScene->getPictureObjectById(PIC_MAP_H22, 0);
+	case PIC_MAP_S23_1:
+	case PIC_MAP_S23_2:
+		return _mapScene->getPictureObjectById(PIC_MAP_H23, 0);
+	case PIC_MAP_S24:
+		return _mapScene->getPictureObjectById(PIC_MAP_H24, 0);
+	case PIC_MAP_S25:
+		return _mapScene->getPictureObjectById(PIC_MAP_H25, 0);
+	case PIC_MAP_S26:
+		return _mapScene->getPictureObjectById(PIC_MAP_H26, 0);
+	case PIC_MAP_S27:
+		return _mapScene->getPictureObjectById(PIC_MAP_H27, 0);
+	case PIC_MAP_S28:
+		return _mapScene->getPictureObjectById(PIC_MAP_H28, 0);
+	case PIC_MAP_S29:
+		return _mapScene->getPictureObjectById(PIC_MAP_H29, 0);
+	case PIC_MAP_S30:
+		return _mapScene->getPictureObjectById(PIC_MAP_H30, 0);
+	case PIC_MAP_S31_1:
+	case PIC_MAP_S31_2:
+		return _mapScene->getPictureObjectById(PIC_MAP_H31, 0);
+	case PIC_MAP_S32_1:
+	case PIC_MAP_S32_2:
+		return _mapScene->getPictureObjectById(PIC_MAP_H32, 0);
+	case PIC_MAP_S33:
+		return _mapScene->getPictureObjectById(PIC_MAP_H33, 0);
+	case PIC_MAP_S34:
+		return _mapScene->getPictureObjectById(PIC_MAP_H34, 0);
+	case PIC_MAP_S35:
+		return _mapScene->getPictureObjectById(PIC_MAP_H35, 0);
+	case PIC_MAP_S36:
+		return _mapScene->getPictureObjectById(PIC_MAP_H36, 0);
+	case PIC_MAP_S37:
+		return _mapScene->getPictureObjectById(PIC_MAP_H37, 0);
+	case PIC_MAP_S38:
+		return _mapScene->getPictureObjectById(PIC_MAP_H38, 0);
+	default:
+		return NULL;
+	}
+}
+
 void FullpipeEngine::openMap() {
 	if (!_modalObject) {
 		ModalMap *map = new ModalMap;
