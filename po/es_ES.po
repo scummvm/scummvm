@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 22:49+0000\n"
+"PO-Revision-Date: 2016-12-06 22:08+0000\n"
 "Last-Translator: Timofonic <timofonic@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
@@ -766,11 +766,13 @@ msgstr "Se ha buscado en %d directorios..."
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "%d juegos nuevos encontrados. %d juegos ignorados (ya añadidos)..."
+msgstr ""
+"%d juegos nuevos encontrados. Se han ignorado %d juegos, anteriormente ya "
+"añadidos..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr "Detener"
+msgstr "Parar"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
@@ -873,15 +875,15 @@ msgstr "Filtros de gráficos"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usar filtrado linear cuando se escalan graficos"
+msgstr "Usar filtrado lineal para escalar gráficos"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
-msgstr "Corrección de aspecto"
+msgstr "Corrección de la relación de aspecto"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregir relación de aspecto en juegos 320x200"
+msgstr "Corregir relación de aspecto en juegos de 320x200"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
@@ -894,8 +896,8 @@ msgstr "Disp. de música:"
 #: gui/options.cpp:849 gui/options.cpp:851
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr ""
-"Especifica qué dispositivo de sonido o emulador de tarjeta de sonido "
-"prefieres"
+"Especifica el dispositivo de sonido o emulador de tarjeta de sonido "
+"prefierido"
 
 #: gui/options.cpp:849 gui/options.cpp:851 gui/options.cpp:852
 msgid "Specifies output sound device or sound card emulator"
@@ -918,7 +920,7 @@ msgstr "Emul. de AdLib:"
 
 #: gui/options.cpp:878 gui/options.cpp:879
 msgid "AdLib is used for music in many games"
-msgstr "AdLib se usa para la música en muchos juegos"
+msgstr "AdLib es usado para la música en muchos juegos"
 
 #: gui/options.cpp:889
 msgid "Output rate:"
@@ -929,8 +931,8 @@ msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
-"Los valores más altos ofrecen mayor calidad, pero puede que tu tarjeta de "
-"sonido no sea compatible"
+"Los valores más altos ofrecen mayor calidad, pero puede que la tarjeta de "
+"sonido no lo soporte"
 
 #: gui/options.cpp:900
 msgid "GM Device:"
@@ -938,7 +940,9 @@ msgstr "Dispositivo GM:"
 
 #: gui/options.cpp:900
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Especifica el dispositivo de salida General MIDI por defecto"
+msgstr ""
+"Especifique el dispositivo de salidapor defecto para la salida de General "
+"MIDI"
 
 #: gui/options.cpp:911
 msgid "Don't use General MIDI music"
@@ -1764,6 +1768,9 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"El juego en '%s 1' parece ser desconocido.\n"
+"Porfavor, informe de ello al equipo de ScummVM junto al nombre\n"
+"del juego que ha intentado añadir y su versión, lenguaje, etc.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
