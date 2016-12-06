@@ -132,6 +132,8 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	if (frameNumber == -1)
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
+	if (_isReversed && frameNumber == _decoder->getFrameCount())
+		--frameNumber;
 
 	// Get the initial frame
 	seekToFrame(frameNumber);
@@ -139,11 +141,16 @@ bool AVISurface::startAtFrame(int frameNumber) {
 
 	// Start the playback
 	_decoder->start();
+	if (_isReversed)
+		_decoder->setRate(-1.0);
 
 	return true;
 }
 
 void AVISurface::seekToFrame(uint frameNumber) {
+	if (_isReversed && frameNumber == _decoder->getFrameCount())
+		--frameNumber;
+
 	if ((int)frameNumber != getFrame()) {
 		_decoder->seekToFrame(frameNumber);
 		_currentFrame = (int)frameNumber;
@@ -378,6 +385,7 @@ bool AVISurface::renderFrame() {
 			// since the blitting method we're using doesn't support palettes
 			Graphics::Surface *s = frameSurface.convertTo(g_system->getScreenFormat(),
 				_decoder->getPalette());
+
 			_videoSurface->getRawSurface()->blitFrom(*s);
 			s->free();
 			delete s;
