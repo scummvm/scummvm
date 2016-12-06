@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-06 22:08+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-06 22:11+0000\n"
+"Last-Translator: Timofonic <timofonic@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -1853,14 +1853,13 @@ msgstr ""
 "obtener más ayuda."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Ha habido un fallo al guardar la partida (%s). Consulta el archivo README "
-"para encontrar información básica e instrucciones sobre cómo obtener más "
-"ayuda."
+"Ha habido un fallo al guardar la partida (%s). Consulte el archivo README "
+"con información básica y como obtener más ayuda."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:112
@@ -1925,14 +1924,13 @@ msgstr ""
 "Consulta el archivo README para más detalles."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Ha habido un fallo al cargar la partida (%s). Consulta el archivo README "
-"para encontrar información básica e instrucciones sobre cómo obtener más "
-"ayuda."
+"Hubo un fallo al cargar la partida (%s). Consulte el archivo README para "
+"información básica y cómo obtener más ayuda."
 
 #: engines/engine.cpp:555
 msgid ""
@@ -2782,10 +2780,8 @@ msgstr "Usar pantallas de guardar/cargar originales"
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
-msgstr ""
-"Utilizar las pantallas de guardar/cargar originales, en vez de las de ScummVM"
+msgstr "Usar los menús originales de guardar/cargar en vez de los de ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2857,25 +2853,24 @@ msgid "Restore"
 msgstr "Cargar"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
-"Fallo al cargar desde el archivo:\n"
+"Falló la carga de partida guardada desde el archivo:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
-"Fallo al guardar en el archivo:\n"
-"\n"
+"Fallo al guardar la partida al archivo:\n"
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
@@ -2903,7 +2898,6 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Activar por defecto el modo para daltónicos"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -2913,13 +2907,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM ha detectado que tienes partidas guardadas antiguas de Drascula, que "
-"deben ser actualizadas.\n"
-"El formato antiguo ya no es compatible, así que no podrás cargar tus "
-"partidos si no las actualizas.\n"
+"ScummVM ha detectado partidas guardadas antiguas de Drascula que deben "
+"actualizarse.\n"
+"El formato antiguo ya no es compatible, no podrán cargarse hasta "
+"actualizarlas.\n"
 "\n"
-"Pulsa Aceptar para actualizarlas, si no lo haces este mensaje volverá a "
-"aparecer la próxima vez.\n"
+"Pulse Aceptar para actualizarlas. Si no lo hace, el mensaje aparecerá cada "
+"vez que se inicie el juego."
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
@@ -2931,15 +2925,13 @@ msgstr "Utilizar los niveles de brillo originales del juego"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Fallo al cargar el estado del juego desde el archivo."
+msgstr "Falló al cargar partida guardada desde el archivo."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr "Fallo al guardar el estado del juego en el archivo."
+msgstr "Fallo al guardar partida en el archivo."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
