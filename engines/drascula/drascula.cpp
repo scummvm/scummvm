@@ -986,7 +986,9 @@ bool DrasculaEngine::loadDrasculaDat() {
 	ver = in.readByte();
 
 	if (ver != DRASCULA_DAT_VER) {
-		Common::String errorMessage = Common::String::format("File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
+		Common::String errorMessage = Common::String::format(
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 

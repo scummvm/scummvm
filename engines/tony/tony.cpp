@@ -217,7 +217,9 @@ bool TonyEngine::loadTonyDat() {
 	int minVer = in.readByte();
 
 	if ((majVer != TONY_DAT_VER_MAJ) || (minVer != TONY_DAT_VER_MIN)) {
-		msg = Common::String::format("File 'tony.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
+		msg = Common::String::format(
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 

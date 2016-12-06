@@ -318,11 +318,16 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	}
 
 	// Check the version
-	if (f.readByte() < MORT_DAT_REQUIRED_VERSION) {
-		GUIErrorMessage("The located mort.dat data file is too old, please download an updated version on scummvm.org");
+	int majVer = f.readByte();
+	int minVer = f.readByte();
+
+	if (majVer < MORT_DAT_REQUIRED_VERSION) {
+		Common::String msg = Common::String::format(
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
-	f.readByte();		// Minor version
 
 	// Loop to load resources from the data file
 	while (f.pos() < f.size()) {

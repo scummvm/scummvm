@@ -454,7 +454,9 @@ bool HugoEngine::loadHugoDat() {
 	int minVer = in.readByte();
 
 	if ((majVer != HUGO_DAT_VER_MAJ) || (minVer != HUGO_DAT_VER_MIN)) {
-		Common::String errorMessage = Common::String::format("File 'hugo.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
+		Common::String errorMessage = Common::String::format(
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			filename.c_str(),HUGO_DAT_VER_MAJ, HUGO_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(errorMessage);
 		return false;
 	}

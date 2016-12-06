@@ -4937,7 +4937,9 @@ bool ToonEngine::loadToonDat() {
 	minVer = in.readByte();
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
-		msg = Common::String::format(_("File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website"), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		msg = Common::String::format(
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 

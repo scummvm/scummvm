@@ -58,8 +58,8 @@ bool Resources::load(Common::String &errorMessage) {
 	uint version = f.readUint16LE();
 	if (version != expectedVersion) {
 		errorMessage = Common::String::format(
-			"Incorrect version of access.dat found. Expected %d but got %d",
-			expectedVersion, version);
+			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			filename.c_str(), expectedVersion, 0, version, 0);
 		return false;
 	}
 

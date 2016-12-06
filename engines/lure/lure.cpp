@@ -73,7 +73,7 @@ Common::Error LureEngine::init() {
 		GUIError(_("File '%s' is corrupt. Get it from the ScummVM website"), SUPPORT_FILENAME);
 		return Common::kUnknownError;
 	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
-		GUIError("Incorrect version of %s file - expected %d.%d but got %d.%d",
+		GUIError(_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
 			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 			version.vMajor, version.vMinor);
 		return Common::kUnknownError;
