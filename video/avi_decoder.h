@@ -210,6 +210,25 @@ protected:
 		bool isRewindable() const { return true; }
 		bool rewind();
 
+		/**
+		 * Set the video track to play in reverse or forward.
+		 *
+		 * By default, a VideoTrack must decode forward.
+		 *
+		 * @param reverse true for reverse, false for forward
+		 * @return true for success, false for failure
+		 */
+		virtual bool setReverse(bool reverse);
+
+		/**
+		 * Is the video track set to play in reverse?
+		 */
+		virtual bool isReversed() const { return _reversed; }
+
+		/**
+		 * Returns true if at the end of the video track
+		 */
+		virtual bool endOfTrack() const;
 	protected:
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
@@ -220,6 +239,7 @@ protected:
 		byte *_initialPalette;
 		mutable bool _dirtyPalette;
 		int _frameCount, _curFrame;
+		bool _reversed;
 
 		Image::Codec *_videoCodec;
 		const Graphics::Surface *_lastFrame;
