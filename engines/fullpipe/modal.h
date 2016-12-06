@@ -93,6 +93,7 @@ public:
 class ModalMap : public BaseModalObject {
 	Scene *_mapScene;
 	PictureObject *_pic;
+	PictureObject *_picI03;
 	bool _isRunning;
 	Common::Rect _rect1;
 	int _x;

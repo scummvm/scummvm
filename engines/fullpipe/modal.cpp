@@ -272,7 +272,8 @@ void ModalVideoPlayer::play(const char *filename) {
 
 ModalMap::ModalMap() {
 	_mapScene = 0;
-	_pic = 0;
+	_pic = NULL;
+	_picI03 = NULL;
 	_isRunning = false;
 	_rect1 = g_fp->_sceneRect;
 	_x = g_fp->_currentScene->_x;
@@ -420,6 +421,18 @@ void ModalMap::initMap() {
 		_pic->setOXY(pic->_ox + point.x / 2 - point2.x / 2, point.y - point2.y / 2 + pic->_oy - 25);
 		_pic->_flags |= 4;
 	}
+
+	_picI03 = _mapScene->getPictureObjectById(PIC_MAP_I03, 0);
+
+	if (_picI03) {
+		_picI03->_flags &= 0xFFFB;
+	} else {
+		warning("No PIC_MAP_I03");
+	}
+
+	g_system->warpMouse(400, 300);
+	g_fp->_mouseScreenPos.x = 400;
+	g_fp->_mouseScreenPos.y = 300;
 
 	g_fp->setArcadeOverlay(PIC_CSR_MAP);
 }
