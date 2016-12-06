@@ -79,6 +79,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Full Pipe English version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Full Pipe Russian Demo version
 	{
 		"fullpipe",
