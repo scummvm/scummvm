@@ -48,7 +48,7 @@ static void blitDistortionCore(
 		if (!clipRect.intersects(*optionalclipRectPtr))
 			return;
 
-			clipRect.clip(*optionalclipRectPtr);
+		clipRect.clip(*optionalclipRectPtr);
 	}
 
 	Common::Rect distortionRect(distortionBitmap->w, distortionBitmap->h);
