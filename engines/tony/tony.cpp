@@ -255,7 +255,7 @@ bool TonyEngine::loadTonyDat() {
 
 	int numVariant = in.readUint16BE();
 	if (expectedLangVariant > numVariant - 1) {
-		msg = Common::String::format("Font variant not present in 'tony.dat'. Get it from the ScummVM website");
+		msg = Common::String::format(_("Font variant not present in '%s' engine data file. Read the README for instructions."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 
