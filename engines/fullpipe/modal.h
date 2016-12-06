@@ -101,9 +101,9 @@ class ModalMap : public BaseModalObject {
 	int _flag;
 	int _mouseX;
 	int _mouseY;
-	int _field_38;
-	int _field_3C;
-	int _field_40;
+	int _dragX;
+	int _dragY;
+	int _hotSpotDelay;
 	Common::Rect _rect2;
 
  public:

@@ -281,9 +281,9 @@ ModalMap::ModalMap() {
 	_flag = 0;
 	_mouseX = 0;
 	_mouseY = 0;
-	_field_38 = 0;
-	_field_3C = 0;
-	_field_40 = 12;
+	_dragX = 0;
+	_dragY = 0;
+	_hotSpotDelay = 12;
 	_rect2.top = 0;
 	_rect2.left = 0;
 	_rect2.bottom = 600;
@@ -303,8 +303,8 @@ bool ModalMap::init(int counterdiff) {
 	g_fp->setCursor(PIC_CSR_ITN);
 
 	if (_flag) {
-		_rect2.left = _mouseX + _field_38 - g_fp->_mouseScreenPos.x;
-		_rect2.top = _mouseY + _field_3C - g_fp->_mouseScreenPos.y;
+		_rect2.left = _mouseX + _dragX - g_fp->_mouseScreenPos.x;
+		_rect2.top = _mouseY + _dragY - g_fp->_mouseScreenPos.y;
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
@@ -315,10 +315,10 @@ bool ModalMap::init(int counterdiff) {
 		_rect2 = g_fp->_sceneRect;
 	}
 
-	_field_40--;
+	_hotSpotDelay--;
 
-	if (_field_40 <= 0) {
-		_field_40 = 12;
+	if (_hotSpotDelay <= 0) {
+		_hotSpotDelay = 12;
 
 		if (_pic)
 			_pic->_flags ^= 4;
@@ -345,8 +345,8 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		_mouseX = g_fp->_mouseScreenPos.x;
 		_mouseY = g_fp->_mouseScreenPos.y;
 
-		_field_38 = _rect2.left;
-		_field_3C = _rect2.top;
+		_dragX = _rect2.left;
+		_dragY = _rect2.top;
 
 		return false;
 
