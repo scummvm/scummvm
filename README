@@ -1742,6 +1742,28 @@ Broken Sword
     cz  - Czech
 
 
+5.6) Common issues:
+---- --------------
+"Engine data file missing/corrupt/wrong version"
+
+Some engines require some additional data (besides the game itself) to run
+a game. This data usually is included in the ScummVM installation package to
+ensure you always have the right version. But if for some reason you get an
+error about the engine data file, here are a few things you can try:
+
+- (Re)download and install the latest version of ScummVM package
+Because the package should contain the required data, this should fix it.
+
+- Download the engine data file manually from github
+On https://github.com/scummvm/scummvm/blob/master/dists/engine-data/ you can
+find the latest versions of all engine data files.
+
+- Check your path settings
+ScummVM will scan it's own directory and the Extra Path directory for the
+engine data files. Try moving the engine data file into those one of those
+directories.
+
+
 6.0) Saved Games:
 ---- ----------
 Saved games are by default put in the current directory on some platforms

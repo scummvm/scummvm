@@ -303,7 +303,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	// Open the mort.dat file
 	if (!f.open(MORT_DAT)) {
-		Common::String msg = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), MORT_DAT);
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file. Read the README for instructions."), MORT_DAT);
 		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
@@ -312,7 +312,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	char fileId[4];
 	f.read(fileId, 4);
 	if (strncmp(fileId, "MORT", 4) != 0) {
-		Common::String msg = Common::String::format(_("File '%s' is corrupt. Get it from the ScummVM website"), MORT_DAT);
+		Common::String msg = Common::String::format(_("The '%s' engine data file is corrupt. Read the README for instructions."), MORT_DAT);
 		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
@@ -323,7 +323,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	if (majVer < MORT_DAT_REQUIRED_VERSION) {
 		Common::String msg = Common::String::format(
-			_("Incorrect version of the '%s' file found. Expected %d.%d but got %d.%d. Get it from the ScummVM website"),
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d. Read the README for instructions."),
 			MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
 		GUIErrorMessage(msg);
 		return Common::kReadingFailed;

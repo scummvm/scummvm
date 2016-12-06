@@ -128,7 +128,7 @@ SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
 	Common::String filename = "sky.cpt";
 	if (!_cptFile->open(filename.c_str())) {
-                Common::String msg = Common::String::format(_("You're missing the '%s' file. Get it from the ScummVM website"), filename.c_str());
+                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file. Read the README for instructions."), filename.c_str());
                 GUIErrorMessage(msg);
                 error("%s", msg.c_str());
 	}
