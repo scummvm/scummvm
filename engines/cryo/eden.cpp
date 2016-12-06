@@ -8023,7 +8023,7 @@ void EdenGame::phase560() {
 //// saveload.c
 void EdenGame::savegame(char *name) {
 //	filespec_t fs;
-//	file_t handle;
+//	Common::File handle;
 	int32 size;
 //	CLFile_MakeStruct(0, 0, name, &fs);
 //	CLFile_Create(&fs);
@@ -8121,7 +8121,7 @@ void EdenGame::loadrestart() {
 
 void EdenGame::loadgame(char *name) {
 //	filespec_t fs;
-//	file_t handle;
+//	Common::File handle;
 //	CLFile_MakeStruct(0, 0, name, &fs);
 //	CLFile_Open(&fs, 3, handle);
 

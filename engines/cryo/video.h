@@ -97,7 +97,7 @@ public:
 	void setFinalBuffer(hnm_t *hnm, byte *buffer);
 	int getFrameNum(hnm_t *hnm);
 	hnm_t *resetInternals();
-	void setFile(hnm_t *hnm, file_t *file);
+	void setFile(hnm_t *hnm, Common::File *file);
 
 	soundchannel_t *getSoundChannel();
 };

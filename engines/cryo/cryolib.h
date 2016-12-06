@@ -120,7 +120,7 @@ typedef struct HNMHeader HNMHeader;
 struct hnm_t {
 	int  _frameNum;
 	int  ff_4;
-	file_t  *_file;
+	Common::File *_file;
 	HNMHeader     _header;
 	byte   *tmpBuffer[2];
 	byte   *finalBuffer;
@@ -204,7 +204,7 @@ void CLPalette_DeactivateInterval();
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeSystem();
 
-void CLFile_Write(file_t &handle, void *buffer, int32 *size);
+void CLFile_Write(Common::File &handle, void *buffer, int32 *size);
 
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
 void CLSound_SetWantsDesigned(int16 designed);

@@ -613,7 +613,7 @@ private:
 	color_t         newPalette[256];
 	Common::Rect          rect_dst, rect_src;
 	void            *voiceSamplesBuffer;    //TODO: sound sample buffer
-	file_t          h_bigfile;
+	Common::File h_bigfile;
 	byte   info_list[16];
 	bool needToFade;
 	byte   lastMusicNum;

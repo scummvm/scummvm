@@ -74,7 +74,7 @@ hnm_t *HnmPlayer::resetInternals() {
 }
 
 // Original name: CLHNM_SetFile
-void HnmPlayer::setFile(hnm_t *hnm, file_t *file) {
+void HnmPlayer::setFile(hnm_t *hnm, Common::File *file) {
 	hnm->_file = file;
 }
 

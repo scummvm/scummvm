@@ -350,7 +350,7 @@ uint16 CLMouse_IsDown() {
 }
 
 ///// CLFile
-void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
+void CLFile_Write(Common::File &handle, void *buffer, int32 *size) {
 	assert(0);
 }
 

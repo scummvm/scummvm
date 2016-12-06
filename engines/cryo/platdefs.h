@@ -28,8 +28,6 @@
 
 namespace Cryo {
 
-typedef Common::File file_t;
-
 #if 1
 const int subtitles_x_margin = 16;          //PC
 const int subtitles_x_scr_margin = 16;
