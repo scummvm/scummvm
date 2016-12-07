@@ -101,7 +101,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	bank_data_buf = nullptr;
 	_gameIcons = nullptr;
 	gameRooms = nullptr;
-	bigfile_header = nullptr;
 	glow_buffer = nullptr;
 	gameFont = nullptr;
 	p_global = nullptr;
@@ -4662,10 +4661,19 @@ void EdenGame::verifh(void *ptr) {
 }
 
 void EdenGame::openbigfile() {
-	assert(sizeof(pakfile_t) == 25);
-	int32 size = 0x10000;
 	h_bigfile.open("EDEN.DAT");
-	h_bigfile.read(bigfile_header, size);
+
+	char buf[16];
+	int count = h_bigfile.readUint16LE();
+	bigfile_header = new PakHeaderNode(count);
+	for (int j = 0; j < count; j++) {
+		for (int k = 0; k < 16; k++)
+			buf[k] = h_bigfile.readByte();
+		bigfile_header->_files[j]._name = Common::String(buf);
+		bigfile_header->_files[j]._size = h_bigfile.readUint32LE();
+		bigfile_header->_files[j]._offs = h_bigfile.readUint32LE();
+		bigfile_header->_files[j]._flag = h_bigfile.readByte();
+	}
 
 	_hnmContext = _vm->_video->resetInternals();
 	_vm->_video->setFile(_hnmContext, &h_bigfile);
@@ -4681,32 +4689,32 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 			error("Trying to read invalid game resource");
 	}
 
-	assert(num < bigfile_header->count);
-	pakfile_t *file = &bigfile_header->files[num];
-	int32 size = READ_LE_UINT32(&file->size);
-	int32 offs = READ_LE_UINT32(&file->offs);
-	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
+	assert(num < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[num];
+	int32 size = READ_LE_UINT32(&file->_size);
+	int32 offs = READ_LE_UINT32(&file->_offs);
+	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	h_bigfile.seek(offs, SEEK_SET);
 	h_bigfile.read(buffer, size);
 }
 
 void EdenGame::shnmfl(uint16 num) {
 	unsigned int resNum = num - 1 + 485;
-	assert(resNum < bigfile_header->count);
-	pakfile_t *file = &bigfile_header->files[resNum];
-	int size = READ_LE_UINT32(&file->size);
-	int offs = READ_LE_UINT32(&file->offs);
-	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
+	assert(resNum < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[resNum];
+	int size = READ_LE_UINT32(&file->_size);
+	int offs = READ_LE_UINT32(&file->_offs);
+	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_hnmContext->_file->seek(offs, SEEK_SET);
 }
 
 int EdenGame::ssndfl(uint16 num) {
 	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
-	assert(resNum < bigfile_header->count);
-	pakfile_t *file = &bigfile_header->files[resNum];
-	int32 size = READ_LE_UINT32(&file->size);
-	int32 offs = READ_LE_UINT32(&file->offs);
-	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
+	assert(resNum < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[resNum];
+	int32 size = READ_LE_UINT32(&file->_size);
+	int32 offs = READ_LE_UINT32(&file->_offs);
+	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	if (_soundAllocated) {
 		free(voiceSamplesBuffer);
 		voiceSamplesBuffer = nullptr;
@@ -4850,10 +4858,10 @@ bool EdenGame::ReadDataSync(uint16 num) {
 }
 
 void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
-	assert(num < bigfile_header->count);
-	pakfile_t *file = &bigfile_header->files[num];
-	int32 offs = READ_LE_UINT32(&file->offs);
-	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
+	assert(num < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[num];
+	int32 offs = READ_LE_UINT32(&file->_offs);
+	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->_name.c_str(), offs, pos, len);
 	h_bigfile.seek(offs + pos, SEEK_SET);
 	h_bigfile.read(buffer, len);
 }
@@ -5509,7 +5517,6 @@ void EdenGame::maj_salle(uint16 roomNum) {
 // Original name: initbuf
 void EdenGame::allocateBuffers() {
 #define ALLOC(ptr, size, typ) if (!((ptr) = (typ*)malloc(size))) bufferAllocationErrorFl = true;
-	ALLOC(bigfile_header, 0x10000, pak_t);
 	ALLOC(gameRooms, 0x4000, room_t);
 	ALLOC(_gameIcons, 0x4000, icon_t);
 	ALLOC(bank_data_buf, 0x10000, byte);
@@ -5527,7 +5534,9 @@ void EdenGame::allocateBuffers() {
 }
 
 void EdenGame::freebuf() {
-	free(bigfile_header);
+	delete(bigfile_header);
+	bigfile_header = nullptr;
+
 	free(gameRooms);
 	free(_gameIcons);
 	free(bank_data_buf);
@@ -6467,9 +6476,9 @@ void EdenGame::musicspy() {
 }
 
 int EdenGame::loadmusicfile(int16 num) {
-	pakfile_t *file = &bigfile_header->files[num + 435];
-	int32 size = READ_LE_UINT32(&file->size);
-	int32 offs = READ_LE_UINT32(&file->offs);
+	PakHeaderItem *file = &bigfile_header->_files[num + 435];
+	int32 size = READ_LE_UINT32(&file->_size);
+	int32 offs = READ_LE_UINT32(&file->_offs);
 	h_bigfile.seek(offs, SEEK_SET);
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const

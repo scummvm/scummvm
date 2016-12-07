@@ -762,19 +762,22 @@ struct global_t {
 };
 typedef struct global_t global_t;
 
-struct pakfile_t {
-	char            name[16];
-	int32            size;
-	int32            offs;
-	char            flag;
+struct PakHeaderItem {
+	Common::String _name; //[16];
+	int32 _size;
+	int32 _offs;
+	char  _flag;
 };
-typedef struct pakfile_t pakfile_t;
+typedef struct PakHeaderItem PakHeaderItem;
 
-struct pak_t {
-	uint16  count;
-	pakfile_t       files[10];
+class PakHeaderNode {
+public:
+	PakHeaderNode(int count);
+	~PakHeaderNode();
+
+	uint16    _count;
+	PakHeaderItem* _files;
 };
-typedef struct pak_t pak_t;
 #pragma pack(pop)
 
 struct cita_t {

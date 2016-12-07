@@ -438,4 +438,14 @@ void CRYOLib_ManagersDone() {
 	g_system->getTimerManager()->removeTimerProc(CLTimer_Action);
 }
 
+PakHeaderNode::PakHeaderNode(int count) {
+	_count = count;
+	_files = new PakHeaderItem[count];
+};
+
+PakHeaderNode::~PakHeaderNode() {
+	_count = 0;
+	delete[] _files;
+};
+
 } // End of namespace Cryo

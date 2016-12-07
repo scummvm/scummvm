@@ -627,7 +627,7 @@ private:
 	byte   *bank_data_buf;
 	icon_t *_gameIcons;
 	room_t *gameRooms;
-	pak_t  *bigfile_header;
+	PakHeaderNode *bigfile_header;
 	byte   *glow_buffer;
 	byte   *p_mainview_buf;
 	byte   *p_view2_buf;
