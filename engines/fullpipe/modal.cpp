@@ -30,6 +30,7 @@
 #include "fullpipe/modal.h"
 
 #include "fullpipe/constants.h"
+#include "fullpipe/objectnames.h"
 
 #include "graphics/palette.h"
 #include "video/avi_decoder.h"
@@ -649,6 +650,72 @@ PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 	default:
 		return NULL;
 	}
+}
+
+bool ModalMap::isSceneEnabled(int sceneId) {
+	warning("STUB: ModalMap::isSceneEnabled()");
+	return false;
+}
+
+bool ModalMap::checkScenePass(PreloadItem *item) {
+	bool res = true;
+
+	switch (item->preloadId1) {
+	case SC_13:
+		if (!isSceneEnabled(SC_14))
+			res = false;
+		break;
+
+	case SC_27:
+		if (item->sceneId == SC_25) {
+			item->param = TrubaRight;
+		} else {
+			res = false;
+		}
+		break;
+
+	case SC_25:
+		if (g_fp->getObjectState(sO_Board_25) != g_fp->getObjectEnumState(sO_Board_25, sO_NearDudesStairs)) {
+			res = false;
+		}
+	}
+
+	switch (item->sceneId) {
+	case SC_13:
+		if (isSceneEnabled(SC_14)) {
+			item->param = TrubaLeft;
+			break;
+		}
+		item->param = TrubaUp;
+		break;
+
+	case SC_27:
+		res = false;
+		break;
+
+	case SC_25:
+		if (g_fp->getObjectState(sO_Pool) != g_fp->getObjectEnumState(sO_Pool, sO_Empty)) {
+			if (g_fp->getObjectState(sO_Pool) != g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
+				res = false;
+		}
+		break;
+
+	case SC_29:
+		if (isSceneEnabled(SC_30)) {
+			item->param = TrubaLeft;
+			break;
+		}
+		item->param = TrubaUp;
+		break;
+	}
+
+	if ((item->sceneId != SC_37 && item->preloadId1 != SC_37)
+		|| (g_fp->getObjectState(sO_Jawcrucnher) != g_fp->getObjectEnumState(sO_Jawcrucnher, sO_WithoutCarpet))) {
+			return res;
+	} else {
+		res = false;
+	}
+	return res;
 }
 
 void FullpipeEngine::openMap() {

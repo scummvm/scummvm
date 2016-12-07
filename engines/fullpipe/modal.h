@@ -117,8 +117,13 @@ class ModalMap : public BaseModalObject {
 	virtual void saveload() {}
 
 	void initMap();
+
+private:
 	PictureObject *getScenePicture();
 	PictureObject *getSceneHPicture(PictureObject *obj);
+	bool checkScenePass(PreloadItem *item);
+	bool isSceneEnabled(int sceneId);
+
 };
 
 class ModalFinal : public BaseModalObject {
