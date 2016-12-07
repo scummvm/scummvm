@@ -235,6 +235,7 @@ public:
 
 	void enableSaves() { _isSaveAllowed = true; }
 	void disableSaves(ExCommand *ex);
+	bool isSaveAllowed();
 
 	void initObjectStates();
 	void setLevelStates();

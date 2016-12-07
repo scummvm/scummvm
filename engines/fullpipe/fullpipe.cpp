@@ -603,5 +603,19 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 	}
 }
 
+bool FullpipeEngine::isSaveAllowed() {
+	if (!g_fp->_isSaveAllowed)
+		return false;
+
+	bool allowed = true;
+
+	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+			allowed = false;
+	}
+
+	return allowed;
+}
+
 
 } // End of namespace Fullpipe
