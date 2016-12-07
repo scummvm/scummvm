@@ -119,7 +119,7 @@ class ModalMap : public BaseModalObject {
 	void initMap();
 
 private:
-	PictureObject *getScenePicture();
+	PictureObject *getScenePicture(int sceneId);
 	PictureObject *getSceneHPicture(PictureObject *obj);
 	bool checkScenePass(PreloadItem *item);
 	bool isSceneEnabled(int sceneId);

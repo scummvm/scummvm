@@ -395,7 +395,7 @@ void ModalMap::initMap() {
 			pic->_flags &= 0xfffb;
 	}
 
-	pic = getScenePicture();
+	pic = getScenePicture(g_fp->_currentScene->_sceneId);
 
 	Common::Point point;
 	Common::Point point2;
@@ -438,10 +438,10 @@ void ModalMap::initMap() {
 	g_fp->setArcadeOverlay(PIC_CSR_MAP);
 }
 
-PictureObject *ModalMap::getScenePicture() {
+PictureObject *ModalMap::getScenePicture(int sceneId) {
 	int picId = 0;
 
-	switch (g_fp->_currentScene->_sceneId) {
+	switch (sceneId) {
 	case SC_1:
 		picId = PIC_MAP_S01;
 		break;
@@ -653,7 +653,17 @@ PictureObject *ModalMap::getSceneHPicture(PictureObject *obj) {
 }
 
 bool ModalMap::isSceneEnabled(int sceneId) {
-	warning("STUB: ModalMap::isSceneEnabled()");
+	int id = getScenePicture(sceneId)->_id;
+
+	for (int i = 0; i < 200; i++) {
+		int mapPic = g_fp->_mapTable[i] >> 16;
+		if (!mapPic)
+			return false;
+
+		if (mapPic == id)
+			return (g_fp->_mapTable[i] & 0xffff) == 1;
+	}
+
 	return false;
 }
 
