@@ -1040,7 +1040,7 @@ void EdenGame::useBank(int16 bank) {
 
 	_bankData = bank_data_buf;
 	if (_curBankNum != bank) {
-		loadFile(bank, bank_data_buf);
+		loadRawFile(bank, bank_data_buf);
 		verifh(bank_data_buf);
 		_curBankNum = bank;
 	}
@@ -3810,7 +3810,7 @@ void EdenGame::vrf_phrases_file() {
 		return;
 	lastPhrasesFile = num;
 	num += 404;
-	loadFile(num, gamePhrases);
+	loadRawFile(num, gamePhrases);
 	verifh(gamePhrases);
 }
 
@@ -4683,7 +4683,7 @@ void EdenGame::closebigfile() {
 	h_bigfile.close();
 }
 
-void EdenGame::loadFile(uint16 num, void *buffer) {
+void EdenGame::loadRawFile(uint16 num, byte *buffer) {
 	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		if ((_vm->isDemo() && num > 2204) || num > 2472)
 			error("Trying to read invalid game resource");
@@ -4691,19 +4691,73 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 
 	assert(num < bigfile_header->_count);
 	PakHeaderItem *file = &bigfile_header->_files[num];
-	int32 size = READ_LE_UINT32(&file->_size);
-	int32 offs = READ_LE_UINT32(&file->_offs);
+	int32 size = file->_size;
+	int32 offs = file->_offs;
+
+	h_bigfile.seek(offs, SEEK_SET);
+	h_bigfile.read(buffer, size);
+}
+
+void EdenGame::loadIconFile(uint16 num, icon_t *buffer) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if ((_vm->isDemo() && num > 2204) || num > 2472)
+			error("Trying to read invalid game resource");
+	}
+
+	assert(num < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[num];
+	int32 size = file->_size;
+	int32 offs = file->_offs;
+	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	h_bigfile.seek(offs, SEEK_SET);
+
+	int count = size / sizeof(icon_t);
+	for (int i = 0; i < count; i++) {
+		buffer[i].sx = h_bigfile.readSint16LE();
+		buffer[i].sy = h_bigfile.readSint16LE();
+		buffer[i].ex = h_bigfile.readSint16LE();
+		buffer[i].ey = h_bigfile.readSint16LE();
+		buffer[i]._cursorId = h_bigfile.readUint16LE();;
+		buffer[i]._actionId= h_bigfile.readUint32LE();;
+		buffer[i]._objectId= h_bigfile.readUint32LE();;
+	}
+}
+
+void EdenGame::loadRoomFile(uint16 num, room_t *buffer) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		if ((_vm->isDemo() && num > 2204) || num > 2472)
+			error("Trying to read invalid game resource");
+	}
+
+	assert(num < bigfile_header->_count);
+	PakHeaderItem *file = &bigfile_header->_files[num];
+	int32 size = file->_size;
+	int32 offs = file->_offs;
 	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	h_bigfile.seek(offs, SEEK_SET);
 	h_bigfile.read(buffer, size);
+
+	int count = size / sizeof(room_t);
+	for (int i = 0; i < count; i++) {
+		buffer[i].ff_0 = h_bigfile.readByte();
+		for (int j = 0; j < 4; j++)
+			buffer[i].exits[j] = h_bigfile.readByte();
+		buffer[i].flags = h_bigfile.readByte();
+		buffer[i].bank = h_bigfile.readUint16LE();
+		buffer[i].party = h_bigfile.readUint16LE();
+		buffer[i].level = h_bigfile.readByte();
+		buffer[i].video = h_bigfile.readByte();
+		buffer[i].location = h_bigfile.readByte();
+		buffer[i].background = h_bigfile.readByte();
+	}
 }
 
 void EdenGame::shnmfl(uint16 num) {
 	unsigned int resNum = num - 1 + 485;
 	assert(resNum < bigfile_header->_count);
 	PakHeaderItem *file = &bigfile_header->_files[resNum];
-	int size = READ_LE_UINT32(&file->_size);
-	int offs = READ_LE_UINT32(&file->_offs);
+	int size = file->_size;
+	int offs = file->_offs;
 	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	_hnmContext->_file->seek(offs, SEEK_SET);
 }
@@ -4712,8 +4766,8 @@ int EdenGame::ssndfl(uint16 num) {
 	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	assert(resNum < bigfile_header->_count);
 	PakHeaderItem *file = &bigfile_header->_files[resNum];
-	int32 size = READ_LE_UINT32(&file->_size);
-	int32 offs = READ_LE_UINT32(&file->_offs);
+	int32 size = file->_size;
+	int32 offs = file->_offs;
 	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	if (_soundAllocated) {
 		free(voiceSamplesBuffer);
@@ -4801,27 +4855,48 @@ void EdenGame::loadpermfiles() {
 			const int kNumRooms = 424;
 			if (f.size() != kNumIcons * sizeof(icon_t) + kNumRooms * sizeof(room_t))
 				error("Mismatching aux data");
-			f.read(_gameIcons, kNumIcons * sizeof(icon_t));
-			f.read(gameRooms, kNumRooms * sizeof(room_t));
+			for (int i = 0; i < kNumIcons; i++) {
+				_gameIcons[i].sx = f.readSint16LE();
+				_gameIcons[i].sy = f.readSint16LE();
+				_gameIcons[i].ex = f.readSint16LE();
+				_gameIcons[i].ey = f.readSint16LE();
+				_gameIcons[i]._cursorId = f.readUint16LE();
+				_gameIcons[i]._actionId = f.readUint32LE();
+				_gameIcons[i]._objectId = f.readUint32LE();
+			}
+
+			for (int i = 0; i <kNumRooms; i++) {
+				gameRooms[i].ff_0 = f.readByte();
+				for (int j = 0; j < 4; j++)
+					gameRooms[i].exits[j] = f.readByte();
+				gameRooms[i].flags = f.readByte();
+				gameRooms[i].bank = f.readUint16LE();
+				gameRooms[i].party = f.readUint16LE();
+				gameRooms[i].level = f.readByte();
+				gameRooms[i].video = f.readByte();
+				gameRooms[i].location = f.readByte();
+				gameRooms[i].background = f.readByte();
+			}
+
 			f.close();
 		} else
 			error("Can not load aux data");
 	}
 		break;
 	case Common::kPlatformMacintosh:
-		loadFile(2498, _gameIcons);
-		loadFile(2497, gameRooms);
-		loadFile(2486, gameLipsync);
+		loadIconFile(2498, _gameIcons);
+		loadRoomFile(2497, gameRooms);
+		loadRawFile(2486, gameLipsync);
 		ConvertMacToPC();
 		break;
 	default:
 		error("Unsupported platform");
 	}
 
-	loadFile(0, _mainBankBuf);
-	loadFile(402, gameFont);
-	loadFile(404, gameDialogs);
-	loadFile(403, gameConditions);
+	loadRawFile(0, _mainBankBuf);
+	loadRawFile(402, gameFont);
+	loadRawFile(404, gameDialogs);
+	loadRawFile(403, gameConditions);
 }
 
 bool EdenGame::ReadDataSyncVOC(unsigned int num) {
@@ -5266,7 +5341,7 @@ void EdenGame::loadPlace(int16 num) {
 	if (num == p_global->lastSalNum)
 		return;
 	p_global->lastSalNum = num;
-	loadFile(num + 419, sal_buf);
+	loadRawFile(num + 419, sal_buf);
 }
 
 void EdenGame::specialoutside() {
@@ -5521,7 +5596,7 @@ void EdenGame::allocateBuffers() {
 	ALLOC(_gameIcons, 0x4000, icon_t);
 	ALLOC(bank_data_buf, 0x10000, byte);
 	ALLOC(p_global, sizeof(*p_global), global_t);
-	ALLOC(sal_buf, 2048, void);
+	ALLOC(sal_buf, 2048, byte);
 	ALLOC(gameConditions, 0x4800, byte);
 	ALLOC(gameDialogs, 0x2800, byte);
 	ALLOC(gamePhrases, 0x10000, byte);
@@ -5879,8 +5954,7 @@ void EdenGame::FRDevents() {
 }
 
 icon_t *EdenGame::scan_icon_list(int16 x, int16 y, int16 index) {
-	icon_t *icon;
-	for (icon = &_gameIcons[index]; icon->sx >= 0; icon++) {
+	for (icon_t *icon = &_gameIcons[index]; icon->sx >= 0; icon++) {
 		if (icon->_cursorId & 0x8000)
 			continue;
 #if 0
@@ -6477,8 +6551,8 @@ void EdenGame::musicspy() {
 
 int EdenGame::loadmusicfile(int16 num) {
 	PakHeaderItem *file = &bigfile_header->_files[num + 435];
-	int32 size = READ_LE_UINT32(&file->_size);
-	int32 offs = READ_LE_UINT32(&file->_offs);
+	int32 size = file->_size;
+	int32 offs = file->_offs;
 	h_bigfile.seek(offs, SEEK_SET);
 	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const

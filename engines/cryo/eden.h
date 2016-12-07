@@ -278,7 +278,9 @@ private:
 	void verifh(void *ptr);
 	void openbigfile();
 	void closebigfile();
-	void loadFile(uint16 num, void *buffer);
+	void loadRawFile(uint16 num, byte *buffer);
+	void loadIconFile(uint16 num, icon_t *buffer);
+	void loadRoomFile(uint16 num, room_t *buffer);
 	void shnmfl(uint16 num);
 	int ssndfl(uint16 num);
 	void ConvertIcons(icon_t *icon, int count);
@@ -623,7 +625,7 @@ private:
 	byte   *gamePhrases;
 	byte   *gameDialogs;   //TODO: rename to dialogs?
 	byte   *gameConditions;
-	void   *sal_buf;   //TODO: fixme
+	byte *sal_buf;   //TODO: fixme
 	byte   *bank_data_buf;
 	icon_t *_gameIcons;
 	room_t *gameRooms;
