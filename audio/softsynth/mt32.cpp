@@ -104,6 +104,7 @@ private:
 	MT32Emu::ScummVMReportHandler *_reportHandler;
 	byte *_controlData, *_pcmData;
 	void deleteMuntStructures();
+	Common::Mutex _mutex;
 
 	int _outputRate;
 
@@ -236,6 +237,7 @@ int MidiDriver_MT32::open() {
 }
 
 void MidiDriver_MT32::send(uint32 b) {
+	Common::StackLock lock(_mutex);
 	_service->playMsg(b);
 }
 
@@ -246,11 +248,13 @@ void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 		warning("setPitchBendRange() called with range > 24: %d", range);
 	}
 	byte benderRangeSysex[4] = { 0, 0, 4, (uint8)range };
+	Common::StackLock lock(_mutex);
 	_service->writeSysex(channel, benderRangeSysex, 4);
 }
 
 void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
 	if (msg[0] == 0xf0) {
+		Common::StackLock lock(_mutex);
 		_service->playSysex(msg, length);
 	} else {
 		enum {
@@ -259,6 +263,7 @@ void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
 		};
 
 		if (msg[3] == SYSEX_CMD_DT1 || msg[3] == SYSEX_CMD_DAT) {
+			Common::StackLock lock(_mutex);
 			_service->writeSysex(msg[1], msg + 4, length - 5);
 		} else {
 			warning("Unused sysEx command %d", msg[3]);
@@ -276,11 +281,13 @@ void MidiDriver_MT32::close() {
 	// Detach the mixer callback handler
 	_mixer->stopHandle(_mixerSoundHandle);
 
+	Common::StackLock lock(_mutex);
 	_service->closeSynth();
 	deleteMuntStructures();
 }
 
 void MidiDriver_MT32::generateSamples(int16 *data, int len) {
+	Common::StackLock lock(_mutex);
 	_service->renderBit16s(data, len);
 }
 
