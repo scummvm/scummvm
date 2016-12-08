@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CTurnOnTurnOff, CBackground)
 END_MESSAGE_MAP()
 
 CTurnOnTurnOff::CTurnOnTurnOff() : CBackground(), _startFrameOn(0),
-	_endFrameOn(0), _startFrameOff(0), _endFrameOff(0), _fieldF0(false) {
+	_endFrameOn(0), _startFrameOff(0), _endFrameOff(0), _isOn(false) {
 }
 
 void CTurnOnTurnOff::save(SimpleFile *file, int indent) {
@@ -39,7 +39,7 @@ void CTurnOnTurnOff::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrameOn, indent);
 	file->writeNumberLine(_startFrameOff, indent);
 	file->writeNumberLine(_endFrameOff, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_isOn, indent);
 
 	CBackground::save(file, indent);
 }
@@ -50,30 +50,30 @@ void CTurnOnTurnOff::load(SimpleFile *file) {
 	_endFrameOn = file->readNumber();
 	_startFrameOff = file->readNumber();
 	_endFrameOff = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_isOn = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CTurnOnTurnOff::TurnOn(CTurnOn *msg) {
-	if (!_fieldF0) {
-		if (_fieldDC)
+	if (!_isOn) {
+		if (_isBlocking)
 			playMovie(_startFrameOn, _endFrameOn, MOVIE_GAMESTATE);
 		else
 			playMovie(_startFrameOn, _endFrameOn, MOVIE_NOTIFY_OBJECT);
-		_fieldF0 = true;
+		_isOn = true;
 	}
 
 	return true;
 }
 
 bool CTurnOnTurnOff::TurnOff(CTurnOff *msg) {
-	if (!_fieldF0) {
-		if (_fieldDC)
+	if (!_isOn) {
+		if (_isBlocking)
 			playMovie(_startFrameOff, _endFrameOff, MOVIE_GAMESTATE);
 		else
 			playMovie(_startFrameOff, _endFrameOff, MOVIE_NOTIFY_OBJECT);
-		_fieldF0 = true;
+		_isOn = false;
 	}
 
 	return true;

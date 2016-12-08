@@ -36,7 +36,7 @@ private:
 	int _endFrameOn;
 	int _startFrameOff;
 	int _endFrameOff;
-	bool _fieldF0;
+	bool _isOn;
 public:
 	CLASSDEF;
 	CTurnOnTurnOff();
