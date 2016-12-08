@@ -132,17 +132,20 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	if (frameNumber == -1)
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
-	if (_isReversed && frameNumber == _decoder->getFrameCount())
+	if (_isReversed && frameNumber == (int)_decoder->getFrameCount())
 		--frameNumber;
-
-	// Get the initial frame
-	seekToFrame(frameNumber);
-	renderFrame();
 
 	// Start the playback
 	_decoder->start();
+
+	// Seek to the starting frame
+	seekToFrame(frameNumber);
+
+	// If we're in reverse playback, set the decoder to play in reverse
 	if (_isReversed)
 		_decoder->setRate(-1.0);
+
+	renderFrame();
 
 	return true;
 }
@@ -155,12 +158,9 @@ void AVISurface::seekToFrame(uint frameNumber) {
 		_decoder->seekToFrame(frameNumber);
 		_currentFrame = (int)frameNumber;
 	}
-
-	renderFrame();
 }
 
 void AVISurface::setReversed(bool isReversed) {
-	_decoder->setReverse(isReversed);
 	_isReversed = isReversed;
 }
 
@@ -196,8 +196,8 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 	if (isPlaying()) {
 		if (newFrame != getFrame()) {
 			// The frame has been changed, so move to new position
-			setReversed(info->_isReversed);
 			seekToFrame(newFrame);
+			renderFrame();
 		}
 
 		// Get any events for the given position

@@ -179,6 +179,11 @@ public:
 	int getFrame() const { return _currentFrame; }
 
 	/**
+	 * Returns true if the surface is playing in reverse
+	 */
+	bool isReversed() const { return _isReversed; }
+
+	/**
 	 * Add a movie event
 	 */
 	bool addEvent(int frameNumber, CGameObject *obj);
