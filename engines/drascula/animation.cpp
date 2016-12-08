@@ -1836,6 +1836,8 @@ void DrasculaEngine::animation_13_2() {
 
 	if (flags[41] == 0) {
 		playTalkSequence(13);	// sequence 13, chapter 2
+	} else {
+		converse(2);
 	}
 
 	loadPic(964, frontSurface);
