@@ -14,13 +14,13 @@ For a more comprehensive changelog of the latest experimental code, see:
  Composer:
    - Added save/load from General Main Menu.
 
- Drascula:
-   - Fix bug that made it impossible to talk to the drunkard more than once in the inn.
-
 1.9.1 (YYYY-MM-DD)
  General:
    - Added bilinear filtering option for SDL2 fullscreen mode.
    - Fixed a bug that caused a crash in the options dialog of the GUI.
+
+ Drascula:
+  - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
 
  Kyra:
    - Fixed a buffer overflow in Lands of Lore.
