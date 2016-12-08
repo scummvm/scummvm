@@ -94,6 +94,7 @@ class ModalMap : public BaseModalObject {
 	Scene *_mapScene;
 	PictureObject *_pic;
 	PictureObject *_picI03;
+	PictureObject *_highlightedPic;
 	bool _isRunning;
 	Common::Rect _rect1;
 	int _x;
@@ -113,6 +114,7 @@ class ModalMap : public BaseModalObject {
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
+	virtual bool init2(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
 
@@ -124,6 +126,7 @@ private:
 	bool checkScenePass(PreloadItem *item);
 	bool isSceneEnabled(int sceneId);
 
+	int findMapSceneId(int picId);
 };
 
 class ModalFinal : public BaseModalObject {

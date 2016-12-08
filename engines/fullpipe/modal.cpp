@@ -275,6 +275,7 @@ ModalMap::ModalMap() {
 	_mapScene = 0;
 	_pic = NULL;
 	_picI03 = NULL;
+	_highlightedPic = NULL;
 	_isRunning = false;
 	_rect1 = g_fp->_sceneRect;
 	_x = g_fp->_currentScene->_x;
@@ -327,6 +328,98 @@ bool ModalMap::init(int counterdiff) {
 
 	return _isRunning;
 }
+
+bool ModalMap::init2(int counterdiff) {
+	g_fp->setCursor(PIC_CSR_DEFAULT);
+
+	_dragX = (int)((double)_dragX * 0.6666666666666666);
+	_dragY = (int)((double)_dragY * 0.6666666666666666);
+
+	if (800 - g_fp->_mouseScreenPos.x < 67) {
+		g_fp->setCursor(PIC_CSR_GOR);
+
+		_dragX = g_fp->_mouseScreenPos.x - 733;
+		_dragY = (int)((double)_dragY * 0.6666666666666666);
+	}
+
+	if (g_fp->_mouseScreenPos.x < 67) {
+		g_fp->setCursor(PIC_CSR_GOL);
+
+		this->_dragX = g_fp->_mouseScreenPos.x - 67;
+		this->_dragY = (int)((double)_dragY * 0.6666666666666666);
+	}
+
+	if (g_fp->_mouseScreenPos.y < 67) {
+		g_fp->setCursor(PIC_CSR_GOU);
+
+		_dragX = (int)((double)_dragX * 0.6666666666666666);
+		_dragY = g_fp->_mouseScreenPos.y - 67;
+	}
+
+	if (600 - g_fp->_mouseScreenPos.y < 87) {
+		g_fp->setCursor(PIC_CSR_GOD);
+
+		_dragX = (int)((double)_dragX * 0.6666666666666666);
+		_dragY = g_fp->_mouseScreenPos.y - 513;
+	}
+
+	g_fp->_sceneRect.translate(_dragX, _dragY);
+	_mapScene->updateScrolling2();
+	_rect2 = g_fp->_sceneRect;
+
+	PictureObject *hpic = getSceneHPicture(_mapScene->getPictureObjectAtPos(g_fp->_mouseVirtX, g_fp->_mouseVirtY));
+
+	if (hpic != _highlightedPic) {
+		if (_highlightedPic) {
+			_highlightedPic->_flags &= 0xFFFB;
+			_picI03->_flags &= 0xFFFB;
+		}
+
+		_highlightedPic = hpic;
+
+		if (hpic) {
+			PreloadItem pitem;
+
+			pitem.preloadId1 = g_fp->_currentScene->_sceneId;
+			pitem.sceneId = findMapSceneId(hpic->_id);
+
+			if (pitem.preloadId1 == pitem.sceneId || checkScenePass(&pitem)) {
+				_highlightedPic->_flags |= 4;
+
+				g_fp->playSound(SND_CMN_070, 0);
+			} else {
+				Common::Point p1, p2;
+
+				_picI03->getDimensions(&p1);
+				_highlightedPic->getDimensions(&p2);
+
+				_picI03->setOXY(_highlightedPic->_ox + p2.x / 2 - p1.x / 2, _highlightedPic->_oy + p2.y / 2 - p1.y / 2);
+				_picI03->_flags |= 4;
+			}
+		}
+	}
+
+	if (this->_highlightedPic) {
+		g_fp->setCursor(PIC_CSR_ITN);
+
+		_hotSpotDelay--;
+
+		if (_hotSpotDelay <= 0) {
+			_hotSpotDelay = 12;
+
+			if (_pic)
+				_pic->_flags ^= 4;
+		}
+	}
+
+	return _isRunning;
+}
+
+int ModalMap::findMapSceneId(int picId) {
+	warning("STUB: ModalMap::findMapSceneId()");
+	return 0;
+}
+
 
 void ModalMap::update() {
 	g_fp->_sceneRect = _rect2;
