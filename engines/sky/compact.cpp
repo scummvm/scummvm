@@ -128,7 +128,7 @@ SkyCompact::SkyCompact() {
 	_cptFile = new Common::File();
 	Common::String filename = "sky.cpt";
 	if (!_cptFile->open(filename.c_str())) {
-                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file. Read the README for instructions."), filename.c_str());
+                Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
                 GUIErrorMessage(msg);
                 error("%s", msg.c_str());
 	}
@@ -138,7 +138,7 @@ SkyCompact::SkyCompact() {
 		error("unknown \"sky.cpt\" version");
 
 	if (SKY_CPT_SIZE != _cptFile->size()) {
-		GUI::MessageDialog dialog(_("The \"sky.cpt\" file has an incorrect size.\nPlease (re)download it from www.scummvm.org"), _("OK"), NULL);
+		GUI::MessageDialog dialog(_("The \"sky.cpt\" engine data file has an incorrect size."), _("OK"), NULL);
 		dialog.runModal();
 		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
 	}

@@ -195,7 +195,7 @@ bool TonyEngine::loadTonyDat() {
 	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = Common::String::format(_("Unable to locate the '%s' engine data file. Read the README for instructions."), filename.c_str());
+		msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -207,7 +207,7 @@ bool TonyEngine::loadTonyDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TONY")) {
-		msg = Common::String::format(_("The '%s' engine data file is corrupt. Read the README for instructions."), filename.c_str());
+		msg = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -218,7 +218,7 @@ bool TonyEngine::loadTonyDat() {
 
 	if ((majVer != TONY_DAT_VER_MAJ) || (minVer != TONY_DAT_VER_MIN)) {
 		msg = Common::String::format(
-			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d. Read the README for instructions."),
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			filename.c_str(), TONY_DAT_VER_MAJ, TONY_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
@@ -255,7 +255,7 @@ bool TonyEngine::loadTonyDat() {
 
 	int numVariant = in.readUint16BE();
 	if (expectedLangVariant > numVariant - 1) {
-		msg = Common::String::format(_("Font variant not present in '%s' engine data file. Read the README for instructions."), filename.c_str());
+		msg = Common::String::format(_("Font variant not present in '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 

@@ -61,7 +61,7 @@ Common::Error LureEngine::init() {
 	Common::File f;
 	VersionStructure version;
 	if (!f.open(SUPPORT_FILENAME)) {
-		GUIError(_("Unable to locate the '%s' engine data file. Read the README for instructions."), SUPPORT_FILENAME);
+		GUIError(_("Unable to locate the '%s' engine data file."), SUPPORT_FILENAME);
 		return Common::kUnknownError;
 	}
 
@@ -70,10 +70,10 @@ Common::Error LureEngine::init() {
 	f.close();
 
 	if (READ_LE_UINT16(&version.id) != 0xffff) {
-		GUIError(_("The '%s' engine data file is corrupt. Read the README for instructions."), SUPPORT_FILENAME);
+		GUIError(_("The '%s' engine data file is corrupt."), SUPPORT_FILENAME);
 		return Common::kUnknownError;
 	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
-		GUIError(_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d. Read the README for instructions."),
+		GUIError(_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 			version.vMajor, version.vMinor);
 		return Common::kUnknownError;
