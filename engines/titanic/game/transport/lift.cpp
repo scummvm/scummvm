@@ -76,15 +76,15 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	int oldFloorNum = msg->_oldStatus;
 	int floorNum = msg->_newStatus;
-	int oldClass = 0, newClass = 0;
-	if (oldFloorNum == 19)
-		oldClass = 2;
-	if (oldFloorNum == 27)
+	int oldClass = 1, newClass = 1;
+	if (oldFloorNum > 27)
 		oldClass = 3;
-	if (floorNum == 19)
-		newClass = 2;
-	if (floorNum == 27)
+	else if (oldFloorNum > 19)
+		oldClass = 2;
+	if (floorNum > 27)
 		newClass = 3;
+	else if (floorNum > 19)
+		newClass = 2;
 
 	static const int UP_FRAME_NUMBERS[40] = {
 		0, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58,
