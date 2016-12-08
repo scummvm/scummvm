@@ -302,6 +302,9 @@ ModalMap::~ModalMap() {
 }
 
 bool ModalMap::init(int counterdiff) {
+	if (_picI03)
+		return init2(counterdiff);
+
 	g_fp->setCursor(PIC_CSR_ITN);
 
 	if (_flag) {
@@ -416,7 +419,14 @@ bool ModalMap::init2(int counterdiff) {
 }
 
 int ModalMap::findMapSceneId(int picId) {
-	warning("STUB: ModalMap::findMapSceneId()");
+	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++) {
+		PreloadItem *pitem = g_fp->_gameLoader->_preloadItems[i];
+
+		if (pitem->preloadId1 == SC_MAP && pitem->preloadId2 == picId) {
+			return pitem->sceneId;
+		}
+	}
+
 	return 0;
 }
 
@@ -520,8 +530,6 @@ void ModalMap::initMap() {
 
 	if (_picI03) {
 		_picI03->_flags &= 0xFFFB;
-	} else {
-		warning("No PIC_MAP_I03");
 	}
 
 	g_system->warpMouse(400, 300);
