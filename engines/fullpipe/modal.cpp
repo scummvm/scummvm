@@ -445,6 +445,13 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 
 	switch (cmd->_messageNum) {
 	case 29:
+		if (_picI03) {
+			if (_highlightedPic)
+				clickButton(_highlightedPic);
+
+			return false;
+		}
+
 		_flag = 1;
 		_mouseX = g_fp->_mouseScreenPos.x;
 		_mouseY = g_fp->_mouseScreenPos.y;
@@ -455,6 +462,9 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		return false;
 
 	case 30:
+		if (_picI03)
+			return false;
+
 		_flag = 0;
 		return false;
 
@@ -537,6 +547,57 @@ void ModalMap::initMap() {
 	g_fp->_mouseScreenPos.y = 300;
 
 	g_fp->setArcadeOverlay(PIC_CSR_MAP);
+}
+
+void ModalMap::clickButton(PictureObject *pic) {
+	if (g_fp->_currentScene == g_fp->_loaderScene) {
+		_isRunning = 0;
+		return;
+	}
+
+	PreloadItem *pitem = 0;
+
+	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
+		if (g_fp->_gameLoader->_preloadItems[i]->preloadId2 == SC_MAP) {
+			pitem = g_fp->_gameLoader->_preloadItems[i];
+			break;
+		}
+
+	if (!pitem) {
+		PreloadItem preload;
+
+		preload.preloadId2 = SC_MAP;
+		g_fp->_gameLoader->addPreloadItem(&preload);
+		pitem = g_fp->_gameLoader->_preloadItems[g_fp->_gameLoader->_preloadItems.size() - 1];
+	}
+
+	PreloadItem *pitem2 = 0;
+
+	for (uint i = 0; i < g_fp->_gameLoader->_preloadItems.size(); i++)
+		if (g_fp->_gameLoader->_preloadItems[i]->preloadId1 == SC_MAP &&
+				g_fp->_gameLoader->_preloadItems[i]->preloadId2 == pic->_id) {
+			pitem2 = g_fp->_gameLoader->_preloadItems[i];
+			break;
+		}
+
+	if (pitem && pitem2) {
+		pitem->preloadId1 = g_fp->_currentScene->_sceneId;
+		pitem->sceneId = pitem2->sceneId;
+		pitem->param = pitem2->param;
+
+		if (pitem->preloadId1 == pitem2->sceneId) {
+			_isRunning = 0;
+		} else if (checkScenePass(pitem)) {
+			_isRunning = 0;
+
+			if (!g_fp->isSaveAllowed()) {
+				//g_fp->_gameLoader->loadAndDecryptSave("savetmp.sav");
+			}
+			g_fp->_gameLoader->preloadScene(pitem->preloadId1, SC_MAP);
+		} else {
+			g_fp->playSound(SND_CMN_056, 0);
+		}
+	}
 }
 
 PictureObject *ModalMap::getScenePicture(int sceneId) {

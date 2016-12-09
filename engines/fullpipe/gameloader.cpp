@@ -355,6 +355,10 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 	return true;
 }
 
+void GameLoader::addPreloadItem(PreloadItem *item) {
+	_preloadItems.push_back(new PreloadItem(*item));
+}
+
 bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	debugC(0, kDebugLoading, "preloadScene(%d, %d), ", sceneId, entranceId);
 

@@ -259,6 +259,7 @@ namespace Fullpipe {
 #define SND_CMN_032 3517
 #define SND_CMN_054 4762
 #define SND_CMN_055 4763
+#define SND_CMN_056 4772
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199

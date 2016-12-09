@@ -127,6 +127,7 @@ private:
 	bool isSceneEnabled(int sceneId);
 
 	int findMapSceneId(int picId);
+	void clickButton(PictureObject *pic);
 };
 
 class ModalFinal : public BaseModalObject {

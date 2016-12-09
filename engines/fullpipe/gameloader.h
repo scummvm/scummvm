@@ -105,6 +105,8 @@ class GameLoader : public CObject {
 	bool preloadScene(int sceneId, int entranceId);
 	bool unloadScene(int sceneId);
 
+	void addPreloadItem(PreloadItem *item);
+
 	void updateSystems(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
