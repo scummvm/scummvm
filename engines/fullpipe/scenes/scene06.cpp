@@ -707,6 +707,8 @@ int sceneHandler06(ExCommand *ex) {
 				}
 
 				res = 1;
+
+				g_fp->sceneAutoScrolling();
 			}
 			if (g_vars->scene06_arcadeEnabled) {
 				if (g_vars->scene06_mumsyPos > -3)

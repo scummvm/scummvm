@@ -475,6 +475,8 @@ int sceneHandler09(ExCommand *cmd) {
 					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
 
 				res = 1;
+
+				g_fp->sceneAutoScrolling();
 			} else {
 				if (g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id != MV_MAN9_SHOOT)
 					g_fp->_aniMan2 = g_fp->_aniMan;

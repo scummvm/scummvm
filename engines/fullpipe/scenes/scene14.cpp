@@ -788,6 +788,8 @@ int sceneHandler14(ExCommand *cmd) {
 
 				if (x > g_fp->_sceneRect.right - g_vars->scene14_sceneDeltaX)
 					g_fp->_currentScene->_x = x + g_vars->scene14_sceneDiffX - g_fp->_sceneRect.right;
+
+				g_fp->sceneAutoScrolling();
 			}
 
 			if (g_vars->scene14_ballIsFlying)

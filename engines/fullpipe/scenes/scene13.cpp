@@ -348,6 +348,8 @@ int sceneHandler13(ExCommand *cmd) {
 					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
 
 				res = 1;
+
+				g_fp->sceneAutoScrolling();
 			} else {
 				x = g_vars->scene13_dudeX;
 			}

@@ -1447,7 +1447,11 @@ int sceneHandler04(ExCommand *ex) {
 				}
 
 				res = 1;
+			}
 
+			g_fp->sceneAutoScrolling();
+
+			if (g_fp->_aniMan2) {
 				if (g_vars->scene04_soundPlaying) {
 					if (g_fp->_aniMan->_movement) {
 						if (g_fp->_aniMan->_movement->_id == MV_MAN_TOLADDER) {

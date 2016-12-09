@@ -277,6 +277,7 @@ public:
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
 
+	void sceneAutoScrolling();
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
