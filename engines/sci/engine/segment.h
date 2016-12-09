@@ -1171,6 +1171,8 @@ public:
 	}
 };
 
+#undef BITMAP_PROPERTY
+
 struct BitmapTable : public SegmentObjTable<SciBitmap> {
 	BitmapTable() : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
 
