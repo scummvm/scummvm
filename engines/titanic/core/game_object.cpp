@@ -867,10 +867,10 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 
 	// Ensure we have the specified room
 	if (project) {
-		if (room->getName() != roomName) {
+		if (room->getName().compareToIgnoreCase(roomName)) {
 			// Scan for the correct room
 			for (room = project->findFirstRoom();
-					room && room->getName() != roomName;
+					room && room->getName().compareToIgnoreCase(roomName);
 					room = project->findNextRoom(room)) ;
 		}
 	}
@@ -879,13 +879,13 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 
 	// Find the designated node within the room
 	CNodeItem *node = dynamic_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
-	while (node && node->getName() != nodeName)
+	while (node && node->getName().compareToIgnoreCase(nodeName))
 		node = dynamic_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
 	if (!node)
 		return nullptr;
 
 	CViewItem *view = dynamic_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
-	while (view && view->getName() != viewName)
+	while (view && view->getName().compareToIgnoreCase(viewName))
 		view = dynamic_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
 	if (!view)
 		return nullptr;
