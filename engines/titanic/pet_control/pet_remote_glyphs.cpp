@@ -172,7 +172,7 @@ bool CTelevisionControlGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 	if (owner) {
 		_up = getElement(1);
 		_down = getElement(2);
-		_onOff = getElement(4);
+		_onOff = getElement(0);
 	}
 
 	return true;
