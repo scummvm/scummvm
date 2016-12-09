@@ -301,8 +301,10 @@ void CRoomFlags::setFloorNum(uint floorNum) {
 		break;
 	case 1:
 		base = 0xD0;
+		break;
 	case 2:
 		base = 0xE0;
+		break;
 	case 3:
 		base = 0xF0;
 		break;
