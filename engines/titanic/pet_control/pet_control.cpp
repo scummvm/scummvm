@@ -212,7 +212,7 @@ void CPetControl::resetActiveNPC() {
 }
 
 PetArea CPetControl::setArea(PetArea newArea, bool forceChange) {
-	if ((!forceChange && newArea == _currentArea) || !isAreaActive())
+	if ((!forceChange && newArea == _currentArea) || !isAreaUnlocked())
 		return _currentArea;
 
 	// Signal the currently active area that it's being left
@@ -271,7 +271,7 @@ bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		return false;
 
 	bool result = false;
-	if (isAreaActive())
+	if (isAreaUnlocked())
 		result = _frame.MouseButtonDownMsg(msg);
 
 	if (!result) {
@@ -302,7 +302,7 @@ bool CPetControl::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 		return false;
 
 	bool result = false;
-	if (isAreaActive())
+	if (isAreaUnlocked())
 		result = _frame.MouseButtonUpMsg(msg);
 
 	if (!result)

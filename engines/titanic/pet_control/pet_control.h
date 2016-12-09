@@ -354,7 +354,7 @@ public:
 	/**
 	 * Returns true if the PET is currently unlocked
 	 */
-	bool isAreaActive() const { return _areaLockCount == 0; }
+	bool isAreaUnlocked() const { return _areaLockCount == 0; }
 
 	/**
 	 * Increment the number of PET area (tab) locks

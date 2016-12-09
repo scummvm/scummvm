@@ -41,6 +41,7 @@
 #include "titanic/moves/enter_exit_first_class_state.h"
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_npc_script.h"
 
@@ -169,11 +170,20 @@ void TitanicEngine::setRoomNames() {
 
 
 bool TitanicEngine::canLoadGameStateCurrently() {
-	return _window->_inputAllowed;
+	if (!_window->_inputAllowed)
+		return false;
+	CProjectItem *project = _window->_gameManager->_project;
+	if (project) {
+		CPetControl *pet = project->getPetControl();
+		if (pet && !pet->isAreaUnlocked())
+			return false;
+	}
+
+	return true;
 }
 
 bool TitanicEngine::canSaveGameStateCurrently() {
-	return _window->_inputAllowed;
+	return canLoadGameStateCurrently();
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {
