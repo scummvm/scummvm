@@ -415,7 +415,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 		"Lift", "ServiceElevator", "Dome", "Home", "MoonEmbLobby", nullptr
 	};
 
-	if (!stateGet24() || _v4 == 3 || compareViewNameTo("Titania.Node 18.N"))
+	if (!stateGetParrotMet() || _v4 == 3 || compareViewNameTo("Titania.Node 18.N"))
 		return true;
 
 	// Check for rooms not to speak in

@@ -44,7 +44,7 @@ void CPETSounds::load(SimpleFile *file) {
 bool CPETSounds::PETPlaySoundMsg(CPETPlaySoundMsg *msg) {
 	if (msg->_soundNum == 1) {
 		playSound("z#65.wav");
-	} else if (msg->_soundNum == 2 && stateGet24()) {
+	} else if (msg->_soundNum == 2 && stateGetParrotMet()) {
 		uint ticks = getTicksCount();
 		if (!_ticks || ticks > (_ticks + 12000)) {
 			playSound("z#36.wav");

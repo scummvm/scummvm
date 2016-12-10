@@ -991,8 +991,16 @@ public:
 	 */
 	Season stateGetSeason() const;
 
-	void stateSet24();
-	int stateGet24() const;
+	/**
+	 * Sets the flag for the parrot having been met
+	 */
+	void stateSetParrotMet();
+
+	/**
+	 * Returns whether the parrot has been met
+	 */
+	bool stateGetParrotMet() const;
+
 	void stateInc38();
 	int stateGet38() const;
 

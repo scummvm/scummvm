@@ -1046,12 +1046,12 @@ Season CGameObject::stateGetSeason() const {
 	return getGameManager()->_gameState._seasonNum;
 }
 
-void CGameObject::stateSet24() {
-	getGameManager()->_gameState.set24(1);
+void CGameObject::stateSetParrotMet() {
+	getGameManager()->_gameState.setParrotMet(true);
 }
 
-int CGameObject::stateGet24() const {
-	return getGameManager()->_gameState.get24();
+bool CGameObject::stateGetParrotMet() const {
+	return getGameManager()->_gameState.getParrotMet();
 }
 
 void CGameObject::stateInc38() {
