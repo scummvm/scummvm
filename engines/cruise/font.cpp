@@ -30,7 +30,7 @@
 
 namespace Cruise {
 
-const int SPACE_WIDTH = 4;
+const int SPACE_WIDTH = 5;
 
 /**
  * Determines the line size by finding the highest character in the given font set
