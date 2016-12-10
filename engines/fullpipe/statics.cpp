@@ -137,8 +137,8 @@ StaticANIObject::StaticANIObject() {
 	_movement = 0;
 	_statics = 0;
 	_flags = 0;
-	_callback1 = 0;
-	_callback2 = 0;
+	_callback1 = 0; // Really NULL
+	_callback2 = 0; // Really NULL
 	_sceneId = -1;
 	_someDynamicPhaseIndex = -1;
 

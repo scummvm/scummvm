@@ -308,7 +308,7 @@ int global_messageHandler2(ExCommand *cmd) {
 				ani->_callback2 = staticANIObjectCallback;
 			} else {
 				ani->setFlags40(false);
-				ani->_callback2 = 0;
+				ani->_callback2 = 0; // Really NULL
 			}
 		}
 		break;

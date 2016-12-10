@@ -60,7 +60,7 @@ void scene13_initScene(Scene *sc) {
 
 		g_fp->playSound(SND_13_018, 1);
 
-		g_vars->scene13_whirlgig->_callback2 = 0;
+		g_vars->scene13_whirlgig->_callback2 = 0; // Really NULL
 	} else {
 		g_vars->scene13_bridge->changeStatics2(ST_BDG_OPEN2);
 
@@ -167,7 +167,7 @@ void sceneHandler13_stopWhirlgig() {
 }
 
 void sceneHandler13_startWhirlgig() {
-	g_vars->scene13_whirlgig->_callback2 = 0;
+	g_vars->scene13_whirlgig->_callback2 = 0; // Really NULL
 
 	g_fp->playSound(SND_13_018, 1);
 	g_fp->playSound(SND_13_034, 0);

@@ -416,6 +416,10 @@ void sceneHandler09_hangerStartCycle() {
 	}
 }
 
+void scene09_visCallback(int *phase) {
+	// do nothing
+}
+
 int sceneHandler09(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;
@@ -499,7 +503,7 @@ int sceneHandler09(ExCommand *cmd) {
 	case 30:
 		if (g_vars->scene09_interactingHanger >= 0)  {
 			if (ABS(g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase) < 15) {
-				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = 0;
+				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->_callback2 = 0; // Really NULL
 				g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->ani->changeStatics2(ST_VSN_NORMAL);
 			}
 		}
@@ -540,7 +544,7 @@ int sceneHandler09(ExCommand *cmd) {
 						if (!g_vars->scene09_hangers[hng]->ani->_movement || g_vars->scene09_hangers[hng]->ani->_movement->_id != MV_VSN_CYCLE2) {
 							g_vars->scene09_hangers[hng]->ani->changeStatics2(ST_VSN_NORMAL);
 							g_vars->scene09_hangers[hng]->ani->startAnim(MV_VSN_CYCLE2, 0, -1);
-							g_vars->scene09_hangers[hng]->ani->_callback2 = 0;
+							g_vars->scene09_hangers[hng]->ani->_callback2 = scene09_visCallback;
 						}
 
 						ExCommand *ex = new ExCommand(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);

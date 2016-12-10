@@ -380,7 +380,7 @@ void sceneHandler14_startArcade() {
 }
 
 void sceneHandler14_clearCallback() {
-	g_fp->_aniMan->_callback2 = 0;
+	g_fp->_aniMan->_callback2 = 0; // Really NULL
 	g_vars->scene14_dudeIsKicking = false;
 }
 

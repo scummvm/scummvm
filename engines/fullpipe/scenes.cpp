@@ -553,8 +553,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_aniMan->setOXY(0, 0);
 	_aniMan->clearFlags();
-	_aniMan->_callback1 = 0;
-	_aniMan->_callback2 = 0;
+	_aniMan->_callback1 = 0; // Really NULL
+	_aniMan->_callback2 = 0; // Really NULL
 	_aniMan->_shadowsOn = 1;
 
 	_scrollSpeed = 8;
