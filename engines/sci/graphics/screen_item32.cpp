@@ -178,7 +178,7 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 			// single location
 			Resource *view = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _celInfo.resourceId), false);
 			if (!view) {
-				error("Failed to load resource %d", _celInfo.resourceId);
+				error("Failed to load %s", _celInfo.toString().c_str());
 			}
 
 			// NOTE: +2 because the header size field itself is excluded from
@@ -514,30 +514,8 @@ void ScreenItem::printDebugInfo(Console *con) const {
 		con->debugPrintf("    inset rect: (%d, %d, %d, %d)\n", PRINT_RECT(_insetRect));
 	}
 
-	Common::String celType;
-	switch (_celInfo.type) {
-		case kCelTypePic:
-			celType = "pic";
-			break;
-		case kCelTypeView:
-			celType = "view";
-			break;
-		case kCelTypeColor:
-			celType = "color";
-			break;
-		case kCelTypeMem:
-			celType = "mem";
-			break;
-	}
+	con->debugPrintf("    %s\n", _celInfo.toString().c_str());
 
-	con->debugPrintf("    type: %s, res %d, loop %d, cel %d, bitmap %04x:%04x, color: %d\n",
-		celType.c_str(),
-		_celInfo.resourceId,
-		_celInfo.loopNo,
-		_celInfo.celNo,
-		PRINT_REG(_celInfo.bitmap),
-		_celInfo.color
-	);
 	if (_celObj != nullptr) {
 		con->debugPrintf("    width %d, height %d, x-resolution %d, y-resolution %d\n",
 			_celObj->_width,
