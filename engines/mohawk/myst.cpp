@@ -401,6 +401,25 @@ bool MohawkEngine_Myst::skippableWait(uint32 duration) {
 	return skipped;
 }
 
+void MohawkEngine_Myst::pollAndDiscardEvents() {
+	// Poll the events to update the mouse cursor position
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+					case Common::KEYCODE_SPACE:
+						pauseGame();
+						break;
+					default:
+						break;
+				}
+			default:
+				break;
+		}
+	}
+}
+
 void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
 	debug(2, "changeToStack(%d)", stack);
 

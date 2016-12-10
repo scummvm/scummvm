@@ -243,6 +243,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.right = area.left + step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -266,6 +267,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.left = area.right - step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -309,6 +311,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.bottom = area.top + step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -332,6 +335,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.top = area.bottom - step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -456,6 +460,7 @@ void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 	}
 
 	_vm->_system->unlockScreen();
+	_vm->pollAndDiscardEvents();
 	_vm->_system->updateScreen();
 }
 
@@ -475,6 +480,7 @@ void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -500,6 +506,7 @@ void MystGraphics::transitionSlideToRight(Common::Rect rect, uint16 steps, uint1
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -525,6 +532,7 @@ void MystGraphics::transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -551,6 +559,7 @@ void MystGraphics::transitionSlideToBottom(Common::Rect rect, uint16 steps, uint
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -575,6 +584,7 @@ void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uin
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -596,6 +606,7 @@ void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 

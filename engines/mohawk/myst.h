@@ -187,6 +187,7 @@ public:
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
 	MystArea *updateCurrentResource();
+	void pollAndDiscardEvents();
 	bool skippableWait(uint32 duration);
 
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
