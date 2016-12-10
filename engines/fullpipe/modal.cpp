@@ -225,7 +225,9 @@ void ModalIntro::update() {
 }
 
 void ModalIntro::finish() {
-	g_fp->_gameLoader->unloadScene(SC_INTRO2);
+	if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS)) {
+		g_fp->_gameLoader->unloadScene(SC_INTRO2);
+
 	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
 	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 
