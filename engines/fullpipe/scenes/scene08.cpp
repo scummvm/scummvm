@@ -20,6 +20,8 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
@@ -33,6 +35,7 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/modal.h"
 
 namespace Fullpipe {
 
@@ -408,6 +411,15 @@ void sceneHandler08_checkEndArcade() {
 
 		if (y < 80) {
 			sceneHandler08_finishArcade();
+
+			if (g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::DE_DEU) {
+				ModalDemo *demo = new ModalDemo;
+				demo->launch();
+
+				g_fp->_modalObject = demo;
+
+				return;
+			}
 
 			ExCommand *ex = new ExCommand(SC_8, 17, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_messageNum = 61;

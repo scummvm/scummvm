@@ -31,8 +31,12 @@
 
 namespace Fullpipe {
 
-const char *FullpipeEngine::getGameId() const {
-	return _gameDescription->gameId;
+uint32 FullpipeEngine::getFeatures() const {
+	return _gameDescription->flags;
+}
+
+Common::Language FullpipeEngine::getLanguage() const {
+	return _gameDescription->language;
 }
 
 }

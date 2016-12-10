@@ -300,6 +300,26 @@ public:
 	int _queryRes;
 };
 
+class ModalDemo : public BaseModalObject {
+	PictureObject *_bg;
+	PictureObject *_button;
+	PictureObject *_text;
+	int _clickedQuit;
+	int _countdown;
+
+ public:
+	ModalDemo();
+	virtual ~ModalDemo();
+
+	bool launch();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+};
+
 
 } // End of namespace Fullpipe
 

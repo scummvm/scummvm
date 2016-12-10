@@ -2132,6 +2132,101 @@ void ModalSaveGame::saveload() {
 	}
 }
 
+ModalDemo::ModalDemo() {
+	_bg = 0;
+	_button = 0;
+	_text = 0;
+	_clickedQuit = -1;
+	_countdown = 1000;
+}
+
+ModalDemo::~ModalDemo() {
+	_bg->_flags &= 0xFFFB;
+	_button->_flags &= 0xFFFB;
+	_text->_flags &= 0xFFFB;
+}
+
+bool ModalDemo::launch() {
+	Scene *sc = g_fp->accessScene(SC_MAINMENU);
+
+	_bg = sc->getPictureObjectById(PIC_POST_BGR, 0);
+
+	if (!_bg)
+		return false;
+
+	_button = sc->getPictureObjectById(PIC_POST_BUTTON, 0);
+	_text = sc->getPictureObjectById(PIC_POST_TEXT, 0);
+
+	_clickedQuit = -1;
+
+	// fadeout
+	warning("STUB: ModelDemo: fadeout");
+	update();
+
+	g_fp->stopAllSoundStreams();
+	g_fp->stopAllSounds();
+	g_fp->playSound(SND_CMN_056, 0);
+	g_fp->playSound(SND_CMN_069, 1);
+
+	return true;
+}
+
+bool ModalDemo::init(int counterDiff) {
+	g_fp->_cursorId = PIC_CSR_DEFAULT;
+
+	if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+		if (!(_button->_flags & 4))
+			g_fp->playSound(SND_CMN_070, 0);
+
+		_button->_flags |= 4;
+
+		g_fp->_cursorId = PIC_CSR_ITN;
+	} else {
+		_button->_flags &= 0xFFFB;
+	}
+
+	g_fp->setCursor(g_fp->_cursorId);
+
+	_countdown -= counterDiff;
+
+	if (_countdown <= 0)
+		_countdown = 1000;
+
+	if (_clickedQuit == -1)
+		return true;
+
+	// open URL
+	// http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1?ie=UTF8&s=videogames&qid=1279207213&sr=8-1
+
+	g_fp->_gameContinue = false;
+
+	return false;
+}
+
+void ModalDemo::update() {
+	_bg->draw();
+
+	if (_button->_flags & 4)
+		_button->draw();
+
+	if (_text->_flags & 4)
+		_text->draw();
+}
+
+bool ModalDemo::handleMessage(ExCommand *cmd) {
+	if (cmd->_messageKind != 17)
+		return false;
+
+	if (cmd->_messageNum == 29) {
+		if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
+			_clickedQuit = 1;
+	} else if (cmd->_messageNum == 36 && cmd->_param == 27) {
+		_clickedQuit = 1;
+	}
+
+	return false;
+}
+
 void FullpipeEngine::openHelp() {
 	if (!_modalObject) {
 		ModalHelp *help = new ModalHelp;

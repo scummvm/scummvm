@@ -112,8 +112,8 @@ public:
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
-	const char *getGameId() const;
-	Common::Platform getPlatform() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
 
 	Common::RandomSource *_rnd;
 

@@ -368,6 +368,12 @@ namespace Fullpipe {
 #define PIC_MSV_SPACE_D 5190
 #define PIC_MSV_SPACE_L 5191
 
+// Demo screen
+#define PIC_POST_BGR 5396
+#define PIC_POST_TEXT 5397
+#define PIC_POST_BUTTON 5398
+#define SND_CMN_069 4969
+
 // Intro
 #define ANI_IN1MAN 5110
 #define MSG_INTR_ENDINTRO 5139
