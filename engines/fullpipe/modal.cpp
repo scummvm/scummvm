@@ -36,6 +36,7 @@
 #include "video/avi_decoder.h"
 
 #include "engines/savestate.h"
+#include "engines/advancedDetector.h"
 
 namespace Fullpipe {
 
@@ -225,7 +226,7 @@ void ModalIntro::update() {
 }
 
 void ModalIntro::finish() {
-	if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS)) {
+	if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS))
 		g_fp->_gameLoader->unloadScene(SC_INTRO2);
 
 	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
