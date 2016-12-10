@@ -36,6 +36,10 @@
 
 namespace Fullpipe {
 
+void scene08_clockCallback(int *phase) {
+	// do nothing
+}
+
 void scene08_initScene(Scene *sc) {
 	g_vars->scene08_inArcade = false;
 	g_vars->scene08_inAir = false;
@@ -80,7 +84,7 @@ void scene08_initScene(Scene *sc) {
 		g_vars->scene08_snoringCountdown = 71;
 	}
 
-	g_vars->scene08_clock->_callback2 = 0;
+	g_vars->scene08_clock->_callback2 = scene08_clockCallback;
 
 	if (g_fp->getObjectState(sO_StairsUp_8) == g_fp->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_stairsVisible = false;
