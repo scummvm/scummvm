@@ -265,7 +265,7 @@ void CPetConversations::leave() {
 }
 
 void CPetConversations::timerExpired(int val) {
-	if (val == 1) {
+	if (val != 1) {
 		CPetSection::timerExpired(val);
 	} else {
 		CString name = _field418 ? _npcName : getActiveNPCName();
