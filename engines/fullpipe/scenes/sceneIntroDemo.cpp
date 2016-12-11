@@ -81,24 +81,12 @@ int sceneHandlerIntroDemo(ExCommand *ex) {
 		return 0;
 
 	case 33:
-		// fall through
+		g_fp->startSceneTrack();
 		break;
 
 	default:
 		return 0;
 	}
-
-	if (g_vars->sceneIntro_needSleep) {
-		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
-			g_vars->sceneIntro_aniin1man->startAnim(MV_IN1MAN_SLEEP, 0, -1);
-	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
-				g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
-		g_vars->sceneIntro_needGetup = 0;
-
-		chainQueue(QU_INTR_GETUPMAN, 0);
-	}
-
-	g_fp->startSceneTrack();
 
 	return 0;
 }
