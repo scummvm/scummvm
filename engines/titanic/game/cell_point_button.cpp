@@ -30,33 +30,33 @@ BEGIN_MESSAGE_MAP(CCellPointButton, CBackground)
 END_MESSAGE_MAP()
 
 CCellPointButton::CCellPointButton() : CBackground() {
-	_fieldE0 = 0;
-	_fieldE4 = 0;
-	_fieldE8 = 0;
-	_fieldEC = 0;
+	_unused1 = 0;
+	_unused2 = 0;
+	_unused3 = 0;
+	_unused4 = 0;
 	_regionNum = 0;
-	_fieldF4 = 0;
-	_fieldF8 = 0;
-	_fieldFC = 0;
-	_field100 = 0;
-	_field104 = 0;
-	_field108 = 1;
+	_unused5 = 0;
+	_unused6 = 0;
+	_unused7 = 0;
+	_unused8 = 0;
+	_unused9 = 0;
+	_unused10 = 1;
 }
 
 void CCellPointButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_unused1, indent);
+	file->writeNumberLine(_unused2, indent);
+	file->writeNumberLine(_unused3, indent);
+	file->writeNumberLine(_unused4, indent);
 	file->writeNumberLine(_regionNum, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeNumberLine(_field100, indent);
-	file->writeNumberLine(_field104, indent);
-	file->writeNumberLine(_field108, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeNumberLine(_unused5, indent);
+	file->writeNumberLine(_unused6, indent);
+	file->writeNumberLine(_unused7, indent);
+	file->writeNumberLine(_unused8, indent);
+	file->writeNumberLine(_unused9, indent);
+	file->writeNumberLine(_unused10, indent);
+	file->writeQuotedLine(_npcName, indent);
 	file->writeNumberLine(_dialNum, indent);
 
 	CBackground::save(file, indent);
@@ -64,18 +64,18 @@ void CCellPointButton::save(SimpleFile *file, int indent) {
 
 void CCellPointButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
+	_unused1 = file->readNumber();
+	_unused2 = file->readNumber();
+	_unused3 = file->readNumber();
+	_unused4 = file->readNumber();
 	_regionNum = file->readNumber();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
-	_field100 = file->readNumber();
-	_field104 = file->readNumber();
-	_field108 = file->readNumber();
-	_string3 = file->readString();
+	_unused5 = file->readNumber();
+	_unused6 = file->readNumber();
+	_unused7 = file->readNumber();
+	_unused8 = file->readNumber();
+	_unused9 = file->readNumber();
+	_unused10 = file->readNumber();
+	_npcName = file->readString();
 	_dialNum = file->readNumber();
 
 	CBackground::load(file);
@@ -83,20 +83,20 @@ void CCellPointButton::load(SimpleFile *file) {
 
 bool CCellPointButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getRandomNumber(2) == 0) {
-		CParrotSpeakMsg speakMsg("Cellpoints", _string3);
+		CParrotSpeakMsg speakMsg("Cellpoints", _npcName);
 		speakMsg.execute("PerchedParrot");
 	}
 
 	playMovie(0);
 	_regionNum = _regionNum ? 0 : 1;
 	playSound("z#425.wav");
-	talkSetDialRegion(_string3, _dialNum, _regionNum);
+	talkSetDialRegion(_npcName, _dialNum, _regionNum);
 
 	return true;
 }
 
 bool CCellPointButton::EnterViewMsg(CEnterViewMsg *msg) {
-	_regionNum = talkGetDialRegion(_string3, _dialNum);
+	_regionNum = talkGetDialRegion(_npcName, _dialNum);
 	return true;
 }
 
