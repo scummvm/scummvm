@@ -326,6 +326,7 @@ class ModalDemo : public BaseModalObject {
 	PictureObject *_text;
 	int _clickedQuit;
 	int _countdown;
+	Scene *_scene;
 
  public:
 	ModalDemo();
@@ -336,6 +337,7 @@ class ModalDemo : public BaseModalObject {
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
+	bool init2(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
 };

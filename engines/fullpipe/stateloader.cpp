@@ -288,8 +288,13 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	addMessageHandlerByIndex(global_messageHandler1, 0, 4);
 
 	_inventory = getGameLoaderInventory();
-	_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
-	_inventory->addItem(ANI_INV_MAP, 1);
+
+	if (isDemo() && getLanguage() == Common::RU_RUS) {
+		_inventory->addItem(ANI_INV_HAMMER, 1);
+	} else {
+		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
+		_inventory->addItem(ANI_INV_MAP, 1);
+	}
 
 	_inventory->rebuildItemRects();
 

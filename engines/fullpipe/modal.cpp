@@ -1803,6 +1803,28 @@ ModalQuery::~ModalQuery() {
 }
 
 bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
+	if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+		_bg = sc->getPictureObjectById(386, 0);
+
+		if (!_bg)
+			return false;
+
+		_okBtn = sc->getPictureObjectById(392, 0);
+
+		if (!_okBtn)
+			return false;
+
+		_cancelBtn = sc->getPictureObjectById(396, 0);
+
+		if (!_cancelBtn)
+			return 0;
+
+		_queryResult = -1;
+		_bgScene = bgScene;
+
+		return true;
+	}
+
 	if (id == PIC_MEX_BGR) {
 		_bg = sc->getPictureObjectById(PIC_MEX_BGR, 0);
 
@@ -1817,7 +1839,7 @@ bool ModalQuery::create(Scene *sc, Scene *bgScene, int id) {
 		_cancelBtn = sc->getPictureObjectById(PIC_MEX_CANCEL, 0);
 
 		if (!_cancelBtn)
-			return 0;
+			return false;
 	} else {
 		if (id != PIC_MOV_BGR)
 			return false;
@@ -1892,6 +1914,18 @@ bool ModalQuery::init(int counterdiff) {
 	if (_queryResult == -1) {
 		return true;
 	} else {
+		if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
+			if (!_queryResult)
+				return false;
+
+			ModalDemo *demo = new ModalDemo;
+			demo->launch();
+
+			g_fp->_modalObject = demo;
+
+			return true;
+		}
+
 		if (_bg->_id == PIC_MEX_BGR) {
 			_cancelBtn->_flags &= 0xFFFB;
 			_okBtn->_flags &= 0xFFFB;
@@ -2268,18 +2302,45 @@ ModalDemo::ModalDemo() {
 	_bg = 0;
 	_button = 0;
 	_text = 0;
-	_clickedQuit = -1;
-	_countdown = 1000;
+
+	if (g_fp->getLanguage() == Common::RU_RUS) {
+		_clickedQuit = 0;
+		_countdown = -10;
+	} else {
+		_clickedQuit = -1;
+		_countdown = 1000;
+	}
+	_scene = 0;
 }
 
 ModalDemo::~ModalDemo() {
-	_bg->_flags &= 0xFFFB;
+	if (_bg)
+		_bg->_flags &= 0xFFFB;
+
 	_button->_flags &= 0xFFFB;
 	_text->_flags &= 0xFFFB;
 }
 
 bool ModalDemo::launch() {
 	Scene *sc = g_fp->accessScene(SC_MAINMENU);
+
+	if (g_fp->getLanguage() == Common::RU_RUS) {
+		_scene = sc;
+
+		for (uint i = 1; i < sc->_picObjList.size(); i++) {
+			if (((PictureObject *)sc->_picObjList[i])->_id == 399)
+				sc->_picObjList[i]->_flags |= 4;
+			else
+				sc->_picObjList[i]->_flags &= 0xFFFB;
+		}
+
+		_button = sc->getPictureObjectById(443, 0);
+		_text = sc->getPictureObjectById(402, 0);
+
+		_countdown = -10;
+
+		return true;
+	}
 
 	_bg = sc->getPictureObjectById(PIC_POST_BGR, 0);
 
@@ -2304,6 +2365,9 @@ bool ModalDemo::launch() {
 }
 
 bool ModalDemo::init(int counterDiff) {
+	if (g_fp->getLanguage() == Common::RU_RUS)
+		return init2(counterDiff);
+
 	g_fp->_cursorId = PIC_CSR_DEFAULT;
 
 	if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
@@ -2335,7 +2399,46 @@ bool ModalDemo::init(int counterDiff) {
 	return false;
 }
 
+bool ModalDemo::init2(int counterDiff) {
+	if (_clickedQuit) {
+		// open URL
+		// http://pipestudio.ru/fullpipe/
+
+		g_fp->_gameContinue = false;
+
+		return false;
+	}
+
+	if (_countdown > 0) {
+		_countdown--;
+	} else {
+		_text->_flags ^= 4;
+		_countdown = 24;
+	}
+
+	if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y)) {
+		_button->_flags |= 4;
+
+		g_fp->_cursorId = PIC_CSR_ITN;
+	} else {
+		_button->_flags &= 0xFFFB;
+
+		g_fp->_cursorId = PIC_CSR_DEFAULT;
+	}
+
+	return true;
+}
+
 void ModalDemo::update() {
+	if (g_fp->getLanguage() == Common::RU_RUS) {
+		if (_countdown == -10)
+			g_fp->sceneFade(_scene, true);
+
+		_scene->draw();
+
+		return;
+	}
+
 	_bg->draw();
 
 	if (_button->_flags & 4)
@@ -2352,7 +2455,7 @@ bool ModalDemo::handleMessage(ExCommand *cmd) {
 	if (cmd->_messageNum == 29) {
 		if (_button->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
 			_clickedQuit = 1;
-	} else if (cmd->_messageNum == 36 && cmd->_param == 27) {
+	} else if (cmd->_messageNum == 36 && (cmd->_param == 27 || g_fp->getLanguage() == Common::RU_RUS)) {
 		_clickedQuit = 1;
 	}
 
@@ -2370,6 +2473,17 @@ void FullpipeEngine::openHelp() {
 }
 
 void FullpipeEngine::openMainMenu() {
+	if (isDemo() && getLanguage() == Common::RU_RUS) {
+		ModalQuery *q = new ModalQuery;
+
+		Scene *sc = accessScene(SC_MAINMENU);
+
+		q->create(sc, 0, 0);
+
+		g_fp->_modalObject = q;
+
+		return;
+	}
 	ModalMainMenu *menu = new ModalMainMenu;
 
 	menu->_parentObj = g_fp->_modalObject;

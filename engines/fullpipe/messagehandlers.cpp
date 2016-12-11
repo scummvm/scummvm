@@ -188,6 +188,10 @@ int global_messageHandler1(ExCommand *cmd) {
 				}
 				break;
 			case '\t':
+				// Demo has no map
+				if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)
+					break;
+
 				if (g_fp->_flgCanOpenMap)
 					g_fp->openMap();
 				cmd->_messageKind = 0;
