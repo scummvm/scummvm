@@ -650,6 +650,8 @@ void ModalMap::initMap() {
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
+		g_fp->_sceneRect = _rect2;
+
 		_mapScene->updateScrolling2();
 
 		_pic = _mapScene->getPictureObjectById(PIC_MAP_I02, 0);
