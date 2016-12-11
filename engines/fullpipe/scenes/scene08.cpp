@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/advancedDetector.h"
-
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
@@ -412,7 +410,7 @@ void sceneHandler08_checkEndArcade() {
 		if (y < 80) {
 			sceneHandler08_finishArcade();
 
-			if (g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::DE_DEU) {
+			if (g_fp->isDemo() && g_fp->getLanguage() == Common::DE_DEU) {
 				ModalDemo *demo = new ModalDemo;
 				demo->launch();
 

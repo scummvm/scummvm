@@ -35,6 +35,10 @@ uint32 FullpipeEngine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
+bool FullpipeEngine::isDemo() {
+	return _gameDescription->flags & ADGF_DEMO;
+}
+
 Common::Language FullpipeEngine::getLanguage() const {
 	return _gameDescription->language;
 }

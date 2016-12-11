@@ -113,6 +113,7 @@ public:
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
 	uint32 getFeatures() const;
+	bool isDemo();
 	Common::Language getLanguage() const;
 
 	Common::RandomSource *_rnd;

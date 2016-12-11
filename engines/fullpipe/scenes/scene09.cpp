@@ -33,8 +33,6 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
-#include "engines/advancedDetector.h"
-
 namespace Fullpipe {
 
 struct Hanger {
@@ -465,7 +463,7 @@ int sceneHandler09(ExCommand *cmd) {
 		break;
 
 	case 367:
-		if (g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS) {
+		if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
 			g_fp->_needRestart = true;
 			return 0;
 		}

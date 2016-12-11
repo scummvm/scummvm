@@ -35,8 +35,6 @@
 #include "fullpipe/scenes.h"
 #include "fullpipe/interaction.h"
 
-#include "engines/advancedDetector.h"
-
 namespace Fullpipe {
 
 Vars::Vars() {
@@ -619,7 +617,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
 
-		if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS))
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS))
 			sceneIntro_initScene(scene);
 		else
 			sceneIntroDemo_initScene(scene);
@@ -628,7 +626,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene->initObjectCursors("SC_INTRO1");
 		setSceneMusicParameters(sceneVar);
 
-		if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS)) {
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)) {
 			addMessageHandler(sceneHandlerIntro, 2);
 			_updateCursorCallback = sceneIntro_updateCursor;
 		} else {

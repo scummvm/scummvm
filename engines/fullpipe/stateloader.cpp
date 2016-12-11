@@ -27,8 +27,6 @@
 #include "common/list.h"
 #include "common/memstream.h"
 
-#include "engines/advancedDetector.h"
-
 #include "graphics/thumbnail.h"
 
 #include "fullpipe/objects.h"
@@ -335,7 +333,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 			_gameLoader->loadScene(SC_INTRO1);
 			_gameLoader->gotoScene(SC_INTRO1, TrubaUp);
 		} else {
-			if (g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS) {
+			if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS) {
 				_gameLoader->loadScene(SC_9);
 				_gameLoader->gotoScene(SC_9, TrubaDown);
 			} else {
