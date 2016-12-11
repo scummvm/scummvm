@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-04 13:00+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-11 04:46+0000\n"
+"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -4349,14 +4349,12 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Akarod hogy betöltésem a játékállást?"
 
 #: engines/toon/toon.cpp:4917
-#, fuzzy
 msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr "Hiányzik a 'teenagent.dat' fájl. Szerezd be a ScummVM website-ról"
+msgstr "Hiányzik a 'toon.dat' fájl. Szerezd be a ScummVM honlapjáról"
 
 #: engines/toon/toon.cpp:4929
-#, fuzzy
 msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr "Hiányzik a 'teenagent.dat' fájl. Szerezd be a ScummVM website-ról"
+msgstr "A 'toon.dat' fájl hibás. Szerezd be a ScummVM honlapról"
 
 #: engines/toon/toon.cpp:4939
 #, c-format
@@ -4407,9 +4405,9 @@ msgid "Use high resolution MPEG video"
 msgstr "Nagyfelbontású MPEG videó használat"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr "MPEG videót használ DVD verziónál, a kisebb felbontású AVI helyett"
+msgstr ""
+"A DVD verzió MPEG videójának használata, a kisebb felbontású AVI helyett"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
