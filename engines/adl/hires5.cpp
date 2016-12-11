@@ -108,6 +108,9 @@ void HiRes5Engine::init() {
 	stream.reset(_disk->createReadStream(0xe, 0x1, 0x13, 4));
 	loadItemDescriptions(*stream, kItems);
 
+	stream.reset(_disk->createReadStream(0x8, 0xd, 0xfd, 1));
+	loadDroppedItemOffsets(*stream, 16);
+
 	stream.reset(_disk->createReadStream(0xb, 0xa, 0x05, 1));
 	loadItemPicIndex(*stream, kItems);
 
