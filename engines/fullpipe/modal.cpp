@@ -1780,7 +1780,10 @@ void ModalHelp::launch() {
 	_mainMenuScene = g_fp->accessScene(SC_MAINMENU);
 
 	if (_mainMenuScene) {
-		_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
+		if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)
+			_bg = _mainMenuScene->getPictureObjectById(364, 0)->_picture;
+		else
+			_bg = _mainMenuScene->getPictureObjectById(PIC_HLP_BGR, 0)->_picture;
 		_isRunning = 1;
 	}
 }

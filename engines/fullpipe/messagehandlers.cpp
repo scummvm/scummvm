@@ -192,7 +192,7 @@ int global_messageHandler1(ExCommand *cmd) {
 					g_fp->openMap();
 				cmd->_messageKind = 0;
 				break;
-			case 'p':
+			case Common::KEYCODE_F1:
 				if (g_fp->_flgCanOpenMap)
 					g_fp->openHelp();
 				cmd->_messageKind = 0;
