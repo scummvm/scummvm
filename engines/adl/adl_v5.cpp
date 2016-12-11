@@ -94,7 +94,7 @@ void AdlEngine_v5::setupOpcodeTables() {
 	Opcode(o1_varSub);
 	Opcode(o1_varSet);
 	// 0x04
-	Opcode(o5_listInv);
+	Opcode(o1_listInv);
 	Opcode(o5_moveItem);
 	Opcode(o1_setRoom);
 	Opcode(o2_setCurPic);
@@ -181,18 +181,6 @@ int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
 		}
 
 	return 1;
-}
-
-int AdlEngine_v5::o5_listInv(ScriptEnv &e) {
-	OP_DEBUG_0("\tLIST_INVENTORY()");
-
-	Common::List<Item>::const_iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == IDI_ANY)
-			printString(_itemDesc[item->id - 1]);
-
-	return 0;
 }
 
 int AdlEngine_v5::o5_moveItem(ScriptEnv &e) {

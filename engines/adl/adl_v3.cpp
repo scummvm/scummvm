@@ -62,8 +62,6 @@ void AdlEngine_v3::setupOpcodeTables() {
 	AdlEngine_v2::setupOpcodeTables();
 	delete _condOpcodes[0x04];
 	_condOpcodes[0x04] = new OpcodeV3(this, &AdlEngine_v3::o3_isNounNotInRoom);
-	delete _actOpcodes[0x04];
-	_actOpcodes[0x04] = new OpcodeV3(this, &AdlEngine_v3::o3_listInv);
 }
 
 int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
@@ -83,18 +81,6 @@ int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
 	}
 
 	return (isAnItem ? 1 : -1);
-}
-
-int AdlEngine_v3::o3_listInv(ScriptEnv &e) {
-	OP_DEBUG_0("\tLIST_INVENTORY()");
-
-	Common::List<Item>::const_iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item)
-		if (item->room == IDI_ANY)
-			printString(_itemDesc[item->description - 1]);
-
-	return 0;
 }
 
 } // End of namespace Adl

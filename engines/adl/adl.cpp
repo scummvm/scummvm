@@ -1009,7 +1009,7 @@ int AdlEngine::o1_listInv(ScriptEnv &e) {
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item)
 		if (item->room == IDI_ANY)
-			printMessage(item->description);
+			printString(getItemDescription(*item));
 
 	return 0;
 }

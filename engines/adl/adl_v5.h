@@ -58,7 +58,6 @@ protected:
 	int o5_isItemInRoom(ScriptEnv &e);
 	int o5_isNounNotInRoom(ScriptEnv &e);
 	int o5_skipOneCommand(ScriptEnv &e);
-	int o5_listInv(ScriptEnv &e);
 	int o5_moveItem(ScriptEnv &e);
 	int o5_dummy(ScriptEnv &e);
 	int o5_setTextMode(ScriptEnv &e);
