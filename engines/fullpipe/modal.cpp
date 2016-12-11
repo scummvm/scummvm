@@ -226,9 +226,135 @@ void ModalIntro::update() {
 }
 
 void ModalIntro::finish() {
-	if (!(g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS))
-		g_fp->_gameLoader->unloadScene(SC_INTRO2);
+	g_fp->_gameLoader->unloadScene(SC_INTRO2);
 
+	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
+	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
+
+	if (g_fp->_currentScene)
+		g_fp->_gameLoader->updateSystems(42);
+}
+
+ModalIntroDemo::ModalIntroDemo() {
+	_field_8 = 0;
+	_countDown = 50;
+	_stillRunning = 0;
+	_introFlags = 9;
+	g_vars->sceneIntro_skipIntro = false;
+	_sfxVolume = g_fp->_sfxVolume;
+}
+
+ModalIntroDemo::~ModalIntroDemo() {
+	g_fp->stopAllSounds();
+	g_fp->_sfxVolume = _sfxVolume;
+}
+
+bool ModalIntroDemo::handleMessage(ExCommand *message) {
+	if (message->_messageKind != 17)
+		return false;
+
+	if (message->_messageNum != 36)
+		return false;
+
+	if (message->_param != 13 && message->_param != 27 && message->_param != 32)
+		return false;
+
+	if (_introFlags & 0x8) {
+		_countDown = 0;
+		g_vars->sceneIntro_needBlackout = true;
+		return true;
+	} else if (_stillRunning) {
+		g_vars->sceneIntro_playing = false;
+		g_vars->sceneIntro_needBlackout = true;
+	}
+
+	return true;
+}
+
+bool ModalIntroDemo::init(int counterdiff) {
+	if (!g_vars->sceneIntro_playing) {
+		if (!_stillRunning) {
+			finish();
+			return false;
+		}
+
+		if (_introFlags & 0x10)
+			g_fp->_gameLoader->updateSystems(42);
+
+		_introFlags |= 2;
+
+		return true;
+	}
+
+	if (_introFlags & 8) {
+		_countDown--;
+
+		if (_countDown > 0)
+			return true;
+
+		if (_stillRunning > 0) {
+			_introFlags |= 2;
+			return true;
+		}
+
+		_countDown = 150;
+		_introFlags = (_introFlags & 0xf7) | 0x21;
+		g_fp->accessScene(SC_INTRO1)->getPictureObjectById(522, 0)->_flags &= 0xfffb;
+	} else {
+		if (!(_introFlags & 0x20))
+			return true;
+
+		_countDown--;
+
+		if (_countDown > 0)
+			return true;
+
+		if (_stillRunning > 0) {
+			_introFlags |= 2;
+			return true;
+		}
+
+		_introFlags &= 0xDF;
+
+		g_vars->sceneIntro_playing = false;
+		_stillRunning = 0;
+	}
+
+	return true;
+}
+
+void ModalIntroDemo::update() {
+	if (g_fp->_currentScene) {
+		if (_introFlags & 1) {
+			if (g_vars->sceneIntro_needBlackout) {
+				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
+				g_vars->sceneIntro_needBlackout = 0;
+			} else {
+				g_fp->sceneFade(g_fp->_currentScene, true);
+			}
+			_stillRunning = 255;
+			_introFlags &= 0xfe;
+
+			if (_introFlags & 0x20)
+				g_fp->playSound(SND_INTR_019, 0);
+		} else if (_introFlags & 2) {
+			if (g_vars->sceneIntro_needBlackout) {
+				g_fp->drawAlphaRectangle(0, 0, 800, 600, 0);
+				g_vars->sceneIntro_needBlackout = 0;
+				_stillRunning = 0;
+				_introFlags &= 0xfd;
+			} else {
+				g_fp->sceneFade(g_fp->_currentScene, false);
+				_stillRunning = 0;
+				_introFlags &= 0xfd;
+			}
+		} else if (_stillRunning) {
+			g_fp->_currentScene->draw();
+		}
+	}
+}
+
+void ModalIntroDemo::finish() {
 	g_fp->_currentScene = g_fp->accessScene(SC_INTRO1);
 	g_fp->_gameLoader->preloadScene(SC_INTRO1, TrubaDown);
 

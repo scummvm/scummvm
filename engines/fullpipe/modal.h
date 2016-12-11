@@ -78,6 +78,26 @@ class ModalIntro : public BaseModalObject {
 	void finish();
 };
 
+class ModalIntroDemo : public BaseModalObject {
+	int _field_8;
+	int _introFlags;
+	int _countDown;
+	int _stillRunning;
+	int _sfxVolume;
+
+ public:
+	ModalIntroDemo();
+	virtual ~ModalIntroDemo();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void finish();
+};
+
 class ModalVideoPlayer : public BaseModalObject {
 public:
 

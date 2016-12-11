@@ -41,6 +41,10 @@ int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
 int sceneHandlerIntro(ExCommand *cmd);
 
+int sceneIntroDemo_updateCursor();
+void sceneIntroDemo_initScene(Scene *sc);
+int sceneHandlerIntroDemo(ExCommand *cmd);
+
 void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 int sceneHandler01(ExCommand *cmd);
