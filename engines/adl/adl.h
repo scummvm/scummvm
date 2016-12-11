@@ -159,18 +159,30 @@ struct Time {
 	Time() : hours(12), minutes(0) { }
 };
 
+struct RoomState {
+	byte picture;
+	byte isFirstTime;
+};
+
+struct Region {
+	Common::Array<byte> vars;
+	Common::Array<RoomState> rooms;
+};
+
 struct State {
+	Common::Array<Region> regions;
 	Common::Array<Room> rooms;
 	Common::List<Item> items;
 	Common::Array<byte> vars;
 
+	byte region;
 	byte room;
 	byte curPicture;
 	uint16 moves;
 	bool isDark;
 	Time time;
 
-	State() : room(1), curPicture(0), moves(1), isDark(false) { }
+	State() : region(0), room(1), curPicture(0), moves(1), isDark(false) { }
 };
 
 typedef Common::List<Command> Commands;
@@ -362,8 +374,10 @@ protected:
 	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _skipOneCommand;
 
+	const AdlGameDescription *_gameDescription;
+
 private:
-	virtual void runIntro() const { }
+	virtual void runIntro() { }
 	virtual void init() = 0;
 	virtual void initGameState() = 0;
 	virtual void drawItems() = 0;
@@ -385,7 +399,6 @@ private:
 
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
-	const AdlGameDescription *_gameDescription;
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 	bool _canSaveNow, _canRestoreNow;
 };

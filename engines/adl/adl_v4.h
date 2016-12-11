@@ -27,12 +27,47 @@
 
 namespace Adl {
 
+// Base track/sector for a region
+struct RegionLocation {
+	byte track;
+	byte sector;
+};
+
+// Location of the 7 initial data blocks, relative to RegionLocation
+struct RegionInitDataOffset {
+	byte track;
+	byte sector;
+	byte offset;
+	byte volume;
+};
+
 class AdlEngine_v4 : public AdlEngine_v3 {
 public:
-	virtual ~AdlEngine_v4() { }
+	virtual ~AdlEngine_v4();
 
 protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
+
+	// AdlEngine
+	virtual Common::String loadMessage(uint idx) const;
+	virtual Common::String getItemDescription(const Item &item) const;
+
+	// AdlEngine_v2
+	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+
+	DiskImage *loadDisk(byte volume) const;
+	void insertDisk(byte volume);
+	void loadRegionLocations(Common::ReadStream &stream, uint regions);
+	void loadRegionInitDataOffsets(Common::ReadStream &stream, uint regions);
+	void initRegions(const byte *roomsPerRegion, uint regions);
+	void fixupDiskOffset(byte &track, byte &sector) const;
+	void loadRegion(byte region);
+	void loadItemPicIndex(Common::ReadStream &stream, uint items);
+
+	byte _currentVolume;
+	Common::Array<RegionLocation> _regionLocations;
+	Common::Array<RegionInitDataOffset> _regionInitDataOffsets;
+	Common::SeekableReadStream *_itemPicIndex;
 };
 
 } // End of namespace Adl

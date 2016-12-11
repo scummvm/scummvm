@@ -98,7 +98,7 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro() const;
+	void runIntro();
 	void init();
 	void initGameState();
 	void restartGame();
@@ -126,7 +126,7 @@ private:
 	} _gameStrings;
 };
 
-void HiRes1Engine::runIntro() const {
+void HiRes1Engine::runIntro() {
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
 
 	stream->seek(IDI_HR1_OFS_LOGO_0);

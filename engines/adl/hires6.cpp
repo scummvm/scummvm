@@ -68,7 +68,7 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro() const;
+	void runIntro();
 	void init();
 	void initGameState();
 	void printRoomDescription();
@@ -120,7 +120,7 @@ static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte s
 	return new Common::MemoryReadStream(buf, bufSize, DisposeAfterUse::YES);
 }
 
-void HiRes6Engine::runIntro() const {
+void HiRes6Engine::runIntro() {
 	DiskImage *boot(new DiskImage());
 
 	if (!boot->open(disks[0]))
