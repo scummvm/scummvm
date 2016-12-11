@@ -33,6 +33,7 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
+#include "engines/advancedDetector.h"
 
 namespace Fullpipe {
 
@@ -461,6 +462,13 @@ int sceneHandler09(ExCommand *cmd) {
 
 	case MSG_SC9_SHOWBALL:
 		sceneHandler09_showBall();
+		break;
+
+	case 367:
+		if (g_fp->getFeatures() & ADGF_DEMO && g_fp->getLanguage() == Common::RU_RUS) {
+			g_fp->_needRestart = true;
+			return 0;
+		}
 		break;
 
 	case 33:
