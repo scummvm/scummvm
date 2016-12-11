@@ -1561,6 +1561,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 5 - English DOS Floppy (from telanus, bug report Trac#9624)
+	// Game version 0.000.062
+	{"kq5", "", {
+		{"resource.map", 0, "86a4ae3fafb1bbcc81b78cf427e45ba0", 8184},
+		{"resource.001", 0, "51797b784eccab97d1d4b1f8dc3ef671", 1099768},
+		{"resource.002", 0, "93c6f0fc7682fda52a632f34bcc1c975", 1060941},
+		{"resource.003", 0, "44388574401a25938f660dca90bdd040", 1109594},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276351},
+		{"resource.007", 0, "a4cb2eba783a7b05f5b005d47bd94936", 1133814},
+		{"resource.004", 0, "464109fa0fd76f722fff73fd26e98271", 1153791},
+		{"resource.005", 0, "3c292d392c3cc3b532e9063d0d1fb7aa", 1032802},
+		{"resource.006", 0, "0380ee8181b39a8d7b66daf61a5b7d51", 921308},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest V DOS 0.000.062 EGA (5 x 5.25" disks)
 	// Supplied by ssburnout in bug report #3046780
 	{"kq5", "EGA", {
