@@ -393,7 +393,7 @@ struct tape_t {
 	perso_t     *_perso;
 	int16       _party;
 	int16       _roomNum;
-	int16       _bgBankNum;
+	int16       _backgroundBankNum;
 	dial_t      *_dialog;
 };
 typedef struct tape_t tape_t;
@@ -602,162 +602,162 @@ enum GameFlags {
 
 struct global_t {
 	byte   _areaNum;
-	byte   areaVisitCount;
-	byte   menuItemIdLo;
-	byte   menuItemIdHi;   //TODO: pad?
-	uint16  randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
-	uint16  gameTime;
+	byte   _menuItemIdLo;
+	byte   _menuItemIdHi;   //TODO: pad?
+	uint16  _randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+	uint16  _gameTime;
 	uint16  _gameDays;
-	uint16  chrono;
-	uint16  eloiDepartureDay;
-	uint16  roomNum;        // current room number
-	uint16  newRoomNum;     // target room number selected on world map
+	uint16  _chrono;
+	uint16  _eloiDepartureDay;
+	uint16  _roomNum;        // current room number
+	uint16  _newRoomNum;     // target room number selected on world map
 	uint16  _phaseNum;
-	uint16  metPersonsMask1;
-	uint16  party;
+	uint16  _party;
 	uint16  _partyOutside;
-	uint16  metPersonsMask2;
-	uint16  __UNUSED_1C;    //TODO: write-only?
-	uint16  phaseActionsCount;
 	uint16  _curAreaFlags;
-	uint16  curItemsMask;
-	uint16  curPowersMask;
-	uint16  curPersoItems;
-	uint16  _curCharacterPowers;
-	uint16  wonItemsMask;
-	uint16  wonPowersMask;
-	uint16  stepsToFindAppleFast;
-	uint16  stepsToFindAppleNormal;
-	uint16  _roomPersoItems; //TODO: write-only?
-	uint16  _roomCharacterPowers;    //TODO: write-only?
+	uint16  _curItemsMask;
 	uint16  _gameFlags;
-	uint16  morkusSpyVideoNum1; //TODO: pad?
-	uint16  morkusSpyVideoNum2; //TODO: pad?
-	uint16  morkusSpyVideoNum3; //TODO: pad?
-	uint16  morkusSpyVideoNum4; //TODO: pad?
-	byte   newMusicType;
-	byte   ff_43;
-	byte   videoSubtitleIndex;
-	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
-	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
+	byte   _newMusicType;
 	byte   _chronoFlag;
-	byte   curRoomFlags;
-	byte   endGameFlag;
+	byte   _curRoomFlags;
+	byte   _endGameFlag;
 	byte   _lastInfo;
 	bool   _autoDialog;
-	byte   worldTyrannSighted;
-	byte   ff_4D;
-	byte   ff_4E;
-	byte   worldGaveGold;
-	byte   worldHasTriceraptors;
-	byte   worldHasVelociraptors;
-	byte   worldHasTyrann;
-	byte   ff_53;
-	byte   ff_54;  //CHEKME: Used?
-	byte   ff_55;  //TODO: pad?
+	byte   _worldTyranSighted;
 	byte   _gameHours;
-	byte   textToken1;
-	byte   textToken2; //TODO: pad?
-	byte   eloiHaveNews;
-	byte   dialogFlags;
-	byte   curAreaType;
-	byte   curCitadelLevel;
-	byte   newLocation;
-	byte   prevLocation;
-	byte   curPersoFlags;
+	byte   _textToken1;
+	byte   _eloiHaveNews;
+	byte   _curAreaType;
+	byte   _newLocation;
+	byte   _prevLocation;
 	bool ff_60;
 	byte   _eventType;
-	byte   ff_62;  //TODO: pad?
 	byte   _curObjectId;
-	byte   curObjectFlags;
-	byte   ff_65;  //TODO: pad?
 	byte   _roomCharacterType;
-	byte   _roomCharacterFlags;
-	byte   narratorSequence;
+	byte   _narratorSequence;
 	byte   ff_69;
 	byte   ff_6A;
-	byte   frescoNumber;
-	byte   ff_6C;  //TODO: pad?
-	byte   ff_6D;  //TODO: pad?
-	byte   labyrinthDirections;
-	byte   labyrinthRoom;
-	dial_t          *_dialogPtr;
-	tape_t          *tape_ptr;
-	dial_t          *_nextDialogPtr;
-	dial_t          *narrator_dialog_ptr;
-	dial_t          *last_dialog_ptr;
-	icon_t          *nextRoomIcon;
-	byte   *phraseBufferPtr;
-	room_t          *room_ptr;
-	area_t          *_areaPtr;
-	area_t          *last_area_ptr;
-	area_t          *cur_area_ptr;
-	room_t          *cita_area_firstRoom;
-	perso_t         *_characterPtr;
-	perso_t         *_roomCharacter;
-	byte   last_info_idx;
-	byte   next_info_idx;
-	byte   *persoSpritePtr;
-	byte   *persoSpritePtr2;
+	byte   _frescoNumber;
+	dial_t *_dialogPtr;
+	tape_t *_tapePtr;
+	dial_t *_nextDialogPtr;
+	dial_t *_narratorDialogPtr;
+	dial_t *_lastDialogPtr;
+	icon_t *_nextRoomIcon;
+	byte   *_sentenceBufferPtr;
+	room_t *_roomPtr;
+	area_t *_areaPtr;
+	area_t *_lastAreaPtr;
+	area_t *_curAreaPtr;
+	room_t *_citaAreaFirstRoom;
+	perso_t *_characterPtr;
+	perso_t *_roomCharacterPtr;
+	byte   _lastInfoIdx;
+	byte   _nextInfoIdx;
+	byte   *_persoSpritePtr;
+	byte   *_persoSpritePtr2;
 	byte   *_curCharacterAnimPtr;
 	byte   *ff_C2; //TODO: image desc arr
-	int16           _iconsIndex;
-	int16           curObjectCursor;    // TODO: useless?
-	int16           ff_CA;
-	int16           __UNUSED_CC;        //TODO: unused/pad
-	int16           _characterImageBank; //TODO: unsigned?
-	uint16  roomImgBank;
+	int16  _iconsIndex;
+	int16  _characterImageBank; //TODO: unsigned?
+	uint16  _roomImgBank;
 	uint16  _characterBackgroundBankIdx;
-	uint16  ff_D4;  //TODO: unsigned?
-	uint16  fresqWidth;
-	uint16  fresqImgBank;
-	uint16  ff_DA;  //TODO: pad?
-	uint16  ff_DC;  //TODO: pad?
-	uint16  room_x_base;
-	uint16  ff_E0;  //TODO: pad?
+	uint16  _frescoeWidth;
+	uint16  _frescoeImgBank;
+	uint16  _roomBaseX;
 	uint16  _dialogType;
-	uint16  ff_E4;  //TODO: pad?
-	uint16  currentMusicNum;
-	int16           textNum;
-	uint16  travelTime;
-	uint16  ff_EC;  //TODO: pad?
+	uint16  _currMusicNum;
+	int16   _textNum;
+	uint16  _travelTime;
 	byte   _displayFlags;
-	byte   oldDisplayFlags;
+	byte   _oldDisplayFlags;
 	byte   _drawFlags;
 	byte   ff_F1;
 	byte   ff_F2;
 	byte   menuFlags;
+	byte   ff_F6;
+	bool   ff_F7;
+	byte   _animationFlags;
+	byte   _giveObj1;
+	byte   _giveObj2;
+	byte   _giveObj3;
+	byte   ff_100;
+	byte   _roomVidNum;
+	byte   ff_102;
+	byte   ff_103;
+	byte   _roomBackgroundBankNum;
+	byte   _valleyVidNum;
+	byte   _updatePaletteFlag;
+	byte   _inventoryScrollPos;
+	byte   _objCount;
+	byte   _textBankIndex;
+	byte   _prefLanguage;
+	byte   _prefMusicVol[2];
+	byte   _prefVoiceVol[2];
+	byte   _prefSoundVolume[2];
+	byte   _citaAreaNum;
+	byte   ff_113;
+	byte   _lastPlaceNum;
+	byte   save_end; // TODO: This has to be removed
+	int16  _textWidthLimit;
+	byte   _numGiveObjs;
+
+	// CHECKME: Useless variables?
+	uint16  metPersonsMask1;
+	uint16  metPersonsMask2;
+	uint16  phaseActionsCount;
+	uint16  curPowersMask;
+	uint16  curPersoItems;
+	uint16  wonItemsMask;
+	uint16  wonPowersMask;
+	uint16  _curCharacterPowers;
+	uint16  stepsToFindAppleFast;
+	uint16  stepsToFindAppleNormal;
+	uint16  _roomPersoItems; //TODO: write-only?
+	uint16  _roomCharacterPowers;    //TODO: write-only?
+	uint16  morkusSpyVideoNum1; //TODO: pad?
+	uint16  morkusSpyVideoNum2; //TODO: pad?
+	uint16  morkusSpyVideoNum3; //TODO: pad?
+	uint16  morkusSpyVideoNum4; //TODO: pad?
+	byte   ff_43;
+	byte   videoSubtitleIndex;
+	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
+	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
+	byte   ff_4D;
+	byte   ff_4E;
+	byte   _worldGaveGold;
+	byte   _worldHasTriceraptors;
+	byte   _worldHasVelociraptors;
+	byte   _worldHasTyran;
+	byte   ff_53;
+	byte   ff_54;  //CHEKME: Used?
+	byte   ff_55;  //TODO: pad?
+	byte   _textToken2; //TODO: pad?
+	byte   _dialogFlags;
+	byte   _curCitadelLevel;
+	byte   _curPersoFlags;
+	byte   ff_62;  //TODO: pad?
+	byte   curObjectFlags;
+	byte   ff_65;  //TODO: pad?
+	byte   _roomCharacterFlags;
+	byte   ff_6C;  //TODO: pad?
+	byte   ff_6D;  //TODO: pad?
+	byte   labyrinthDirections;
+	byte   labyrinthRoom;
+	int16  curObjectCursor;    // TODO: useless?
+	int16  ff_CA;
+	int16  __UNUSED_CC;        //TODO: unused/pad
+	uint16  ff_D4;  //TODO: unsigned?
+	uint16  ff_DA;  //TODO: pad?
+	uint16  ff_DC;  //TODO: pad?
+	uint16  ff_E0;  //TODO: pad?
+	uint16  ff_E4;  //TODO: pad?
+	uint16  ff_EC;  //TODO: pad?
 	byte   ff_F4;  //TODO: write-only?
 	byte   ff_F5;
-	byte   ff_F6;
-	byte   ff_F7;
 	byte   ff_F8;  //TODO: pad?
 	byte   ff_F9;  //TODO: pad?
 	byte   ff_FA;  //TODO: pad?
-	byte   _animationFlags;
-	byte   giveobj1;
-	byte   giveobj2;
-	byte   giveobj3;
-	byte   ff_100;
-	byte   roomVidNum;
-	byte   ff_102;
-	byte   ff_103;
-	byte   roomBgBankNum;
-	byte   valleyVidNum;
-	byte   updatePaletteFlag;
-	byte   inventoryScrollPos;
-	byte   obj_count;
-	byte   textBankIndex;
-	byte   pref_language;
-	byte   pref_10C[2];    //TODO: volume
-	byte   pref_10E[2];    // -//-
-	byte   pref_110[2];    // -//-
-	byte   cita_area_num;
-	byte   ff_113;
-	byte   lastSalNum;
-	byte   save_end;
-	int16           textWidthLimit;
-	byte   numGiveObjs;
 	byte   ff_119;     // unused
 };
 typedef struct global_t global_t;

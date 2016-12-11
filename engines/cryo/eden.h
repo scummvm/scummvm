@@ -259,7 +259,7 @@ private:
 	void stay_here();
 	void mort(int16 vid);
 	void evenchrono();
-	void chronoon(int16 t);
+	void setChrono(int16 t);
 	void prechargephrases(int16 vid);
 	void effet1();
 	void effet2();
@@ -291,11 +291,11 @@ private:
 	bool ReadDataSync(uint16 num);
 	void loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len);
 	void Expand_hsq(void *input, void *output);
-	void ajouinfo(byte info);
-	void unlockinfo();
-	void nextinfo();
-	void delinfo(byte info);
-	void updateinfolist();
+	void addInfo(byte info);
+	void unlockInfo();
+	void nextInfo();
+	void removeInfo(byte info);
+	void updateInfoList();
 	void init_globals();
 	void initRects();
 	void closesalle();
@@ -594,7 +594,7 @@ private:
 	byte   *_characterBankData;
 	bool savedUnderSubtitles;
 	int16           num_text_lines;
-	byte   phraseBuffer[400];
+	byte   _sentenceBuffer[400];
 	byte   *text_ptr;
 	byte   phraseIconsBuffer[10];
 	byte   phraseCoordsBuffer[22];
@@ -616,7 +616,7 @@ private:
 	Common::Rect          rect_dst, rect_src;
 	void            *voiceSamplesBuffer;    //TODO: sound sample buffer
 	Common::File h_bigfile;
-	byte   info_list[16];
+	byte   _infoList[16];
 	bool needToFade;
 	byte   lastMusicNum;
 	byte   *_mainBankBuf;
