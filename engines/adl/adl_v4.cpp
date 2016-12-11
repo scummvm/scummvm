@@ -87,16 +87,16 @@ void AdlEngine_v4::loadRegionLocations(Common::ReadStream &stream, uint regions)
 
 void AdlEngine_v4::loadRegionInitDataOffsets(Common::ReadStream &stream, uint regions) {
 	for (uint r = 0; r < regions; ++r) {
-		RegionInitDataOffset init;
-		init.track = stream.readByte();
-		init.sector = stream.readByte();
-		init.offset = stream.readByte();
-		init.volume = stream.readByte();
+		RegionInitDataOffset initOfs;
+		initOfs.track = stream.readByte();
+		initOfs.sector = stream.readByte();
+		initOfs.offset = stream.readByte();
+		initOfs.volume = stream.readByte();
 
 		if (stream.eos() || stream.err())
 			error("Failed to read region init data offsets");
 
-		_regionInitDataOffsets.push_back(init);
+		_regionInitDataOffsets.push_back(initOfs);
 	}
 }
 
