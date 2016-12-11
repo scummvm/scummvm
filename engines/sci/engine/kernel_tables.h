@@ -743,7 +743,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Platform),          SIG_SCI16, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
 	{ "Platform", kPlatform32,     SIG_SCI32, SIGFOR_MAC,    "(.*)",                  NULL,            NULL },
-	{ "Platform", kPlatform32,     SIG_SCI32, SIGFOR_ALL,    "(i)",                   NULL,            NULL },
+	{ "Platform", kPlatform32,     SIG_SCI32, SIGFOR_ALL,    "(i)",                   NULL,            kPlatform32_workarounds },
 #endif
 	{ MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
 	{ MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },

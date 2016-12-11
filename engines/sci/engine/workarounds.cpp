@@ -692,6 +692,12 @@ const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kPlatform32_workarounds[] = {
+	{ GID_HOYLE5,         -1,     0,  0,             "hoyle4", "newRoom",                   NULL,     0, { WORKAROUND_FAKE,      1 } }, // at the start of the game, incorrectly uses SCI16 calling convention for kPlatform
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kRandom_workarounds[] = {
 	{ GID_TORIN,        51400,64928,  0,               "Blink", "init",                     NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
 	{ GID_TORIN,        51400,64928,  0,               "Blink", "cycleDone",                NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
