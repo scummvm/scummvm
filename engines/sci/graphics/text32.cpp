@@ -505,12 +505,12 @@ int16 GfxText32::getTextWidth(const uint index, uint length) const {
 
 			if (length > 0 && currentChar == 'f') {
 				GuiResourceId fontId = 0;
-				do {
+				while (length > 0 && *text >= '0' && *text <= '9') {
 					currentChar = *text++;
 					--length;
 
 					fontId = fontId * 10 + currentChar - '0';
-				} while (length > 0 && *text >= '0' && *text <= '9');
+				}
 
 				if (length > 0) {
 					font = _cache->getFont(fontId);
