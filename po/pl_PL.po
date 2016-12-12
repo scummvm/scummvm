@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:23+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-12 00:18+0000\n"
+"Last-Translator: Rafa³ Rzepecki <divided.mind@gmail.com>\n"
 "Language-Team: Polish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -93,15 +93,15 @@ msgstr "Wybierz katalog z plikami gry"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "¬ród³o:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Cel:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Przerwij pobieranie"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
@@ -184,6 +184,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"Katalog \"%s\" ju¿ istnieje w wybranej ¶cie¿ce.\n"
+"Czy na pewno pobraæ pliki do tego katalogu?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
@@ -420,6 +422,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Synchronizacja zapisanych stanów dzia³a wy³±cznie przy standardowych "
+"¶cie¿kach. Aby z niej korzystaæ nale¿y u¿ywaæ domy¶lnych katalogów."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -705,7 +709,7 @@ msgstr ""
 
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Z tego katalogu nie mo¿na jeszcze korzystaæ, trwa pobieranie!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
