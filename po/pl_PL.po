@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-12 00:18+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-12 08:18+0000\n"
+"Last-Translator: Rafa³ Rzepecki <divided.mind@gmail.com>\n"
 "Language-Team: Polish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -845,9 +845,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "nie uda³o siê zmieniæ trybu pe³noekranowego"
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "nie uda³o siê zmieniæ trybu pe³noekranowego"
+msgstr "nie uda³o siê zmieniæ trybu filtrowania"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -867,13 +866,12 @@ msgid "Fullscreen mode"
 msgstr "Pe³ny ekran"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Grafika"
+msgstr "Filtrowanie obrazu"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "U¿ywa filtrowania dwuliniowego przy skalowaniu obrazu"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1158,36 +1156,36 @@ msgstr "Jêzyk interfejsu ScummVM"
 
 #: gui/options.cpp:1381
 msgid "Update check:"
-msgstr ""
+msgstr "Sprawd¼ aktualizacje:"
 
 #: gui/options.cpp:1381
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Czêstotliwo¶æ automatycznego wyszukiwania aktualizacji ScummVM"
 
 #: gui/options.cpp:1393
 msgid "Check now"
-msgstr ""
+msgstr "Sprawd¼ teraz"
 
 #: gui/options.cpp:1401
 msgid "Cloud"
-msgstr ""
+msgstr "Chmura"
 
 #: gui/options.cpp:1403
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Chmura"
 
 #: gui/options.cpp:1408
 msgid "Storage:"
-msgstr ""
+msgstr "Dostawca:"
 
 #: gui/options.cpp:1408
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Wybrany dostawca przechowywania w chmurze"
 
 #: gui/options.cpp:1415 gui/options.cpp:1972
 msgid "<none>"
-msgstr ""
+msgstr "<brak>"
 
 #: gui/options.cpp:1419 backends/platform/wii/options.cpp:114
 msgid "Username:"
