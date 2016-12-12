@@ -55,6 +55,8 @@ Background::~Background() {
 	}
 
 	free(_bigPictureArray);
+
+	free(_bgname);
 }
 
 bool Background::load(MfcArchive &file) {
