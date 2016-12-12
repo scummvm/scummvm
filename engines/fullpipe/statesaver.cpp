@@ -55,7 +55,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	header.updateCounter = _updateCounter;
 	header.unkField = 1;
 
-	Common::MemoryWriteStreamDynamic stream;
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 
 	MfcArchive *archive = new MfcArchive(&stream);
 

@@ -45,6 +45,9 @@ Background::Background() {
 }
 
 Background::~Background() {
+	for (uint i = 1; i < _picObjList.size(); i++)
+		delete _picObjList[i];
+
 	_picObjList.clear();
 
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
