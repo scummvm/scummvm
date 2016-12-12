@@ -99,17 +99,6 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 
 	debugN("%04x:%04x: ", PRINT_REG(pos));
 
-	if (opcode == op_pushSelf) { // 0x3e (62)
-		if ((opsize & 1) && g_sci->getGameId() != GID_FANMADE) {
-			// Debug opcode op_file
-			debugN("file \"%s\"\n", scr + pos.getOffset() + 1);	// +1: op_pushSelf size
-			retval.incOffset(bytecount - 1);
-			return retval;
-		}
-	}
-
-	opsize &= 1; // byte if true, word if false
-
 	if (printBytecode) {
 		if (pos.getOffset() + bytecount > scr_size) {
 			warning("Operation arguments extend beyond end of script");
@@ -123,8 +112,17 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 			debugN("   ");
 	}
 
+	opsize &= 1; // byte if true, word if false
+
 	if (printBWTag)
 		debugN("[%c] ", opsize ? 'B' : 'W');
+
+	if (opcode == op_pushSelf && opsize && g_sci->getGameId() != GID_FANMADE) { // 0x3e (62)
+		// Debug opcode op_file
+		debugN("file \"%s\"\n", scr + pos.getOffset() + 1);	// +1: op_pushSelf size
+		retval.incOffset(bytecount - 1);
+		return retval;
+	}
 
 #ifndef REDUCE_MEMORY_USAGE
 	debugN("%-5s", opcodeNames[opcode]);
