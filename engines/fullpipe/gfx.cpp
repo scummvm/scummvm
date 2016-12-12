@@ -486,6 +486,7 @@ void Picture::freePicture() {
 	}
 
 	if (_bitmap) {
+		delete _bitmap;
 		_bitmap = 0;
 		_data = 0;
 	}
