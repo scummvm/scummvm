@@ -125,6 +125,23 @@ static const uint16 sig_uninitread_hoyle4_1[] = {
 	SIG_END
 };
 
+//                Game: Hoyle 5
+//      Calling method: export 2
+//   Subroutine offset: 0x2fb2 (script 300)
+// Applies to at least: English PC demo
+static const uint16 sig_uninitread_hoyle5_1[] = {
+
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x7d, 0x68, 0x65, 0x61, 0x72,
+	      0x74, 0x73, 0x2e, 0x73,
+		  0x63, 0x00,                // file "hearts.sc"
+	0x3f, 0x01,                      // link 01
+	0x7e, SIG_ADDTOOFFSET(2),        // line N
+	0x39, 0x4b,                      // pushi 4bh
+	0x78,                            // push1
+	SIG_END
+};
+
 //                Game: Jones in the fast lane
 //      Calling method: weekendText::draw
 //   Subroutine offset: 0x03d3 (script 232)
@@ -283,6 +300,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE5,         -1,    14, -1,                 NULL, "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // dragging the sliders in game settings
 	{ GID_HOYLE5,         -1, 64937, -1,                 NULL, "select",                          NULL,     7, { WORKAROUND_FAKE,   0 } }, // clicking the "control" and "options" buttons in the icon bar
 	{ GID_HOYLE5,         -1, 64937, -1,            "IconBar", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // clicking on any button in the icon bar
+	{ GID_HOYLE5,        300,   300,  0,                   "", "export 2",     sig_uninitread_hoyle5_1,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
