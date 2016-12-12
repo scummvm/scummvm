@@ -612,7 +612,7 @@ Sc2::~Sc2() {
 		delete _entranceData[i];
 	free(_entranceData);
 
-	for (uint i = 0; i < _picAniInfosCount; i++)
+	for (int i = 0; i < _picAniInfosCount; i++)
 		delete _picAniInfos[i];
 	free(_picAniInfos);
 }
