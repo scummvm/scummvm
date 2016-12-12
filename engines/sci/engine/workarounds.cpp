@@ -280,6 +280,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",                             NULL,   504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662
 	{ GID_HOYLE4,        800,   870,  0,     "EuchreStrategy", "thinkLead",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // while playing Euchre, happens at least on 2nd or 3rd turn - bug #6602
 	{ GID_HOYLE4,         -1,   937,  0,            "IconBar", "dispatchEvent",                   NULL,   408, { WORKAROUND_FAKE,   0 } }, // pressing ENTER on scoreboard while mouse is not on OK button, may not happen all the time - bug #6603
+	{ GID_HOYLE5,         -1,    14, -1,                 NULL, "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // dragging the sliders in game settings
+	{ GID_HOYLE5,         -1, 64937, -1,                 NULL, "select",                          NULL,     7, { WORKAROUND_FAKE,   0 } }, // clicking the "control" and "options" buttons in the icon bar
+	{ GID_HOYLE5,         -1, 64937, -1,            "IconBar", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // clicking on any button in the icon bar
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",                   NULL,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",                            NULL,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
@@ -663,6 +666,12 @@ const SciWorkaroundEntry kIsObject_workarounds[] = {
 	{ GID_GK1DEMO,       50,   999,  0,                "List", "eachElementDo",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // GK1 demo, when asking Grace for messages it gets called with an invalid parameter (type "error") - bug #4950
 	{ GID_ISLANDBRAIN,   -1,   999,  0,                "List", "eachElementDo",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when going to the game options, choosing "Info" and selecting anything from the list, gets called with an invalid parameter (type "error") - bug #4989
 	{ GID_QFG3,          -1,   999,  0,                "List", "eachElementDo",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when asking for something, gets called with type error parameter
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    local-call-signature, index,                workaround
+const SciWorkaroundEntry kListAt_workarounds[] = {
+	{ GID_HOYLE5,        100, 64999,  0,           "theHands", "at",                           NULL,     0, { WORKAROUND_FAKE, 0 } }, // After the first hand is dealt in Crazy Eights game in demo, an object is passed instead of a number
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

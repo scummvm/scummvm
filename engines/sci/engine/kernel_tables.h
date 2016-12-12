@@ -429,7 +429,7 @@ static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SINCE_SCI21,    14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
 	{ SIG_SINCE_SCI21,    15, MAP_CALL(FindKey),                   "l.",                   NULL },
 	{ SIG_SINCE_SCI21,    16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
-	{ SIG_SINCE_SCI21,    17, MAP_CALL(ListAt),                    "li",                   NULL },
+	{ SIG_SINCE_SCI21,    17, MAP_CALL(ListAt),                    "li",                   kListAt_workarounds },
 	{ SIG_SINCE_SCI21,    18, MAP_CALL(ListIndexOf) ,              "l[io]",                NULL },
 	{ SIG_SINCE_SCI21,    19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
 	{ SIG_SINCE_SCI21,    20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
