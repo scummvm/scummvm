@@ -302,14 +302,14 @@ reg_t kAddToEnd(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
-	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
-	Node *newnode = s->_segMan->lookupNode(argv[2]);
+	Node *firstNode = s->_segMan->lookupNode(argv[1]);
+	Node *newNode = s->_segMan->lookupNode(argv[2]);
 
 #ifdef CHECK_LISTS
 	checkListPointer(s->_segMan, argv[0]);
 #endif
 
-	if (!newnode) {
+	if (!newNode) {
 		error("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
@@ -320,22 +320,64 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (argc == 4)
-		newnode->key = argv[3];
+		newNode->key = argv[3];
 
-	if (firstnode) { // We're really appending after
-		reg_t oldnext = firstnode->succ;
+	if (firstNode) { // We're really appending after
+		const reg_t oldNext = firstNode->succ;
 
-		newnode->pred = argv[1];
-		firstnode->succ = argv[2];
-		newnode->succ = oldnext;
+		newNode->pred = argv[1];
+		firstNode->succ = argv[2];
+		newNode->succ = oldNext;
 
-		if (oldnext.isNull())  // Appended after last node?
+		if (oldNext.isNull())  // Appended after last node?
 			// Set new node as last list node
 			list->last = argv[2];
 		else
-			s->_segMan->lookupNode(oldnext)->pred = argv[2];
+			s->_segMan->lookupNode(oldNext)->pred = argv[2];
 
-	} else { // !firstnode
+	} else {
+		addToFront(s, argv[0], argv[2]); // Set as initial list node
+	}
+
+	return s->r_acc;
+}
+
+reg_t kAddBefore(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+	Node *firstNode = s->_segMan->lookupNode(argv[1]);
+	Node *newNode = s->_segMan->lookupNode(argv[2]);
+
+#ifdef CHECK_LISTS
+	checkListPointer(s->_segMan, argv[0]);
+#endif
+
+	if (!newNode) {
+		error("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
+		return NULL_REG;
+	}
+
+	if (argc != 3 && argc != 4) {
+		error("kAddBefore: Haven't got 3 or 4 arguments, aborting");
+		return NULL_REG;
+	}
+
+	if (argc == 4)
+		newNode->key = argv[3];
+
+	if (firstNode) { // We're really appending before
+		const reg_t oldPred = firstNode->pred;
+
+		newNode->succ = argv[1];
+		firstNode->pred = argv[2];
+		newNode->pred = oldPred;
+
+		if (oldPred.isNull())  // Appended before first node?
+			// Set new node as first list node
+			list->first = argv[2];
+		else
+			s->_segMan->lookupNode(oldPred)->succ = argv[2];
+
+	} else {
 		addToFront(s, argv[0], argv[2]); // Set as initial list node
 	}
 
@@ -686,15 +728,54 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kListSort(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+	const int16 selector = argv[1].toSint16();
+	const bool isDescending = argc > 2 ? (bool)argv[2].toUint16() : false;
+
+	reg_t firstNode = list->first;
+	for (reg_t node = firstNode; node != NULL_REG; node = s->_segMan->lookupNode(firstNode)->succ) {
+
+		reg_t a;
+		if (selector == -1) {
+			a = s->_segMan->lookupNode(node)->value;
+		} else {
+			a = readSelector(s->_segMan, s->_segMan->lookupNode(node)->value, selector);
+		}
+
+		firstNode = node;
+		for (reg_t newNode = s->_segMan->lookupNode(node)->succ; newNode != NULL_REG; newNode = s->_segMan->lookupNode(newNode)->succ) {
+			reg_t b;
+			if (selector == -1) {
+				b = s->_segMan->lookupNode(newNode)->value;
+			} else {
+				b = readSelector(s->_segMan, s->_segMan->lookupNode(newNode)->value, selector);
+			}
+
+			if ((!isDescending && b < a) || (isDescending && a < b)) {
+				firstNode = newNode;
+				a = b;
+			}
+		}
+
+		if (firstNode != node) {
+			reg_t buf[4] = { argv[0], s->_segMan->lookupNode(firstNode)->key };
+			kDeleteKey(s, 2, buf);
+
+			buf[1] = node;
+			buf[2] = firstNode;
+			buf[3] = s->_segMan->lookupNode(firstNode)->value;
+			kAddBefore(s, 4, buf);
+		}
+	}
+
+	return s->r_acc;
+}
+
 reg_t kList(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());
 	error("not supposed to call this");
-}
-
-reg_t kAddBefore(EngineState *s, int argc, reg_t *argv) {
-	error("Unimplemented function kAddBefore called");
-	return s->r_acc;
 }
 
 reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv) {

@@ -591,6 +591,7 @@ reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv);
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv);
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
+reg_t kListSort(EngineState *s, int argc, reg_t *argv);
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);

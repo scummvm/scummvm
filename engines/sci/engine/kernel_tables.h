@@ -434,7 +434,7 @@ static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SINCE_SCI21,    19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
 	{ SIG_SINCE_SCI21,    20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
 	{ SIG_SINCE_SCI21,    21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
-	{ SIG_SINCE_SCI21,    22, MAP_CALL(Sort),                      "ooo",                  NULL },
+	{ SIG_SINCE_SCI21,    22, MAP_CALL(ListSort),                  "li(i)",                NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
