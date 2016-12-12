@@ -4601,7 +4601,7 @@ static const uint16 sq6SlowTransitionSignature1[] = {
 };
 
 static const uint16 sq6SlowTransitionPatch1[] = {
-	0x38, SIG_UINT16(180), // pushi 180
+	0x38, SIG_UINT16(500), // pushi 500
 	PATCH_END
 };
 

@@ -41,8 +41,7 @@ static int16 divisionsDefaults[2][16] = {
 };
 
 GfxTransitions32::GfxTransitions32(SegManager *segMan) :
-	_segMan(segMan),
-	_throttleState(0) {
+	_segMan(segMan) {
 	for (int i = 0; i < 236; i += 2) {
 		_styleRanges[i] = 0;
 		_styleRanges[i + 1] = -1;
@@ -67,17 +66,8 @@ GfxTransitions32::~GfxTransitions32() {
 	_scrolls.clear();
 }
 
-void GfxTransitions32::throttle() {
-	uint8 throttleTime;
-	if (_throttleState == 2) {
-		throttleTime = 34;
-		_throttleState = 0;
-	} else {
-		throttleTime = 33;
-		++_throttleState;
-	}
-
-	g_sci->getEngineState()->speedThrottler(throttleTime);
+void GfxTransitions32::throttle(const uint32 ms) {
+	g_sci->getEngineState()->speedThrottler(ms);
 	g_sci->getEngineState()->_throttleTrigger = true;
 }
 
@@ -936,7 +926,7 @@ void GfxTransitions32::processScrolls() {
 		}
 	}
 
-	throttle();
+	throttle(33);
 }
 
 void GfxTransitions32::kernelSetScroll(const reg_t planeId, const int16 deltaX, const int16 deltaY, const GuiResourceId pictureId, const bool animate, const bool mirrorX) {
@@ -1005,7 +995,7 @@ void GfxTransitions32::kernelSetScroll(const reg_t planeId, const int16 deltaX, 
 		while (!finished && !g_engine->shouldQuit()) {
 			finished = processScroll(*scroll);
 			g_sci->_gfxFrameout->frameOut(true);
-			throttle();
+			throttle(33);
 		}
 	}
 

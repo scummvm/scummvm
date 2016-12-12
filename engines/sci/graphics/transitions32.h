@@ -239,11 +239,20 @@ private:
 	SegManager *_segMan;
 
 	/**
-	 * Throttles transition playback to prevent transitions from being instant
-	 * on fast computers.
+	 * Throttles transition playback to prevent transitions from being
+	 * instantaneous on modern computers.
+	 *
+	 * kSetShowStyle transitions are throttled at 10ms intervals, under the
+	 * assumption that the default fade transition of 101 divisions was designed
+	 * to finish in one second. Empirically, this seems to roughly match the
+	 * speed of DOSBox, and feels reasonable.
+	 *
+	 * Transitions using kSetScroll (used in the LSL6hires intro) need to be
+	 * slower, so they get throttled at 33ms instead of 10ms. This value was
+	 * chosen by gut feel, as these scrolling transitions are instantaneous in
+	 * DOSBox.
 	 */
-	void throttle();
-	int8 _throttleState;
+	void throttle(const uint32 ms = 10);
 
 	void clearShowRects();
 	void addShowRect(const Common::Rect &rect);
