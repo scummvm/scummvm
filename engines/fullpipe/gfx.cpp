@@ -603,6 +603,8 @@ void Picture::getDibInfo() {
 	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
 
 	_bitmap->_pixels = 0;
+
+	delete s;
 }
 
 Bitmap *Picture::getPixelData() {

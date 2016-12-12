@@ -1539,7 +1539,7 @@ Movement::~Movement() {
 	for (uint i = 0; i < _dynamicPhases.size(); i++)
 		delete _framePosOffsets[i];
 
-	if (!_currMovement ) {
+	if (!_currMovement) {
 		if (_updateFlag1)
 			_dynamicPhases.remove_at(0);
 
