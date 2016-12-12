@@ -617,6 +617,19 @@ Sc2::Sc2() {
 	_entranceDataCount = 0;
 }
 
+Sc2::~Sc2() {
+	delete _motionController;
+	free(_data1);
+
+	for (int i = 0; i < _defPicAniInfosCount; i++)
+		delete _defPicAniInfos[i];
+	free(_defPicAniInfos);
+
+	for (int i = 0; i < _entranceDataCount; i++)
+		delete _entranceData[i];
+	free(_entranceData);
+}
+
 bool Sc2::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "Sc2::load()");
 

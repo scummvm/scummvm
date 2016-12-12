@@ -154,6 +154,8 @@ StaticANIObject::~StaticANIObject() {
 
 	_staticsList.clear();
 
+	freeMovementsPixelData();
+
 	for (uint i = 0; i < _movements.size(); i++)
 		delete _movements[i];
 

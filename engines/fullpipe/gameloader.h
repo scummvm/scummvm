@@ -57,6 +57,7 @@ class Sc2 : public CObject {
 
  public:
 	Sc2();
+	virtual ~Sc2();
 	virtual bool load(MfcArchive &file);
 };
 

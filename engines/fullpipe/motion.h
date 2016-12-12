@@ -106,6 +106,7 @@ public:
 	MctlCompoundArray _motionControllers;
 
 	MctlCompound() { _objtype = kObjTypeMctlCompound; }
+	virtual ~MctlCompound();
 
 	virtual bool load(MfcArchive &file);
 
