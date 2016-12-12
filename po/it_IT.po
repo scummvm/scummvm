@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-12 15:19+0000\n"
+"PO-Revision-Date: 2016-12-12 15:26+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -1706,9 +1706,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Impossibile trovare un plugin idoneo"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Il plugin del motore non supporta i salvataggi"
+msgstr "Il plugin del motore di gioco non supporta i salvataggi"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1729,11 +1728,11 @@ msgstr "Hercules ambra"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 colori)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 colori)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
@@ -1747,20 +1746,19 @@ msgstr "Hercules ambra"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Una volta al giorno"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Una volta a settimana"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Una volta al mese"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Cancella"
+msgstr "<Valore non valido>"
 
 #: engines/advancedDetector.cpp:335
 #, c-format
