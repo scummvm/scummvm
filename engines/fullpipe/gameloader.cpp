@@ -85,23 +85,6 @@ GameLoader::~GameLoader() {
 
 	g_fp->_gameLoader = 0;
 
-	for (uint i = 0; i < _sc2array.size(); i++) {
-		if (_sc2array[i]._defPicAniInfos)
-			free(_sc2array[i]._defPicAniInfos);
-
-		if (_sc2array[i]._picAniInfos)
-			free(_sc2array[i]._picAniInfos);
-
-		if (_sc2array[i]._motionController)
-			delete _sc2array[i]._motionController;
-
-		if (_sc2array[i]._data1)
-			free(_sc2array[i]._data1);
-
-		if (_sc2array[i]._entranceData)
-			free(_sc2array[i]._entranceData);
-	}
-
 	delete _gameVar;
 	_gameVar = 0;
 
@@ -628,6 +611,10 @@ Sc2::~Sc2() {
 	for (int i = 0; i < _entranceDataCount; i++)
 		delete _entranceData[i];
 	free(_entranceData);
+
+	for (uint i = 0; i < _picAniInfosCount; i++)
+		delete _picAniInfos[i];
+	free(_picAniInfos);
 }
 
 bool Sc2::load(MfcArchive &file) {
