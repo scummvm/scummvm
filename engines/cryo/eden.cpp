@@ -646,7 +646,7 @@ void EdenGame::tetemomie() {
 			move(kCryoNorth);
 		else {
 			p_global->_eventType = EventType::etEvent6;
-			persoparle(PersonId::pidMonk);
+			handleCharacterDialog(PersonId::pidMonk);
 			p_global->_eventType = 0;
 		}
 	}
@@ -720,12 +720,14 @@ void EdenGame::dinaparle() {
 	}
 }
 
-void EdenGame::roiparle() {
+// Original name: roiparle
+void EdenGame::handleKingDialog() {
 	if (p_global->_phaseNum <= 400)
-		persoparle(0);
+		handleCharacterDialog(0);
 }
 
-void EdenGame::roiparle1() {
+// Original name: roiparle1
+void EdenGame::kingDialog1() {
 	if (p_global->_curObjectId == Objects::obSword) {
 		p_global->_gameFlags |= GameFlags::gfFlag80;
 		bars_out();
@@ -733,45 +735,47 @@ void EdenGame::roiparle1() {
 		move2(kCryoNorth);
 	} else {
 		p_global->_frescoNumber = 1;
-		roiparle();
+		handleKingDialog();
 	}
 }
 
-void EdenGame::roiparle2() {
+// Original name: roiparle2
+void EdenGame::kingDialog2() {
 	p_global->_frescoNumber = 2;
-	roiparle();
+	handleKingDialog();
 }
 
-void EdenGame::roiparle3() {
+// Original name: roiparle3
+void EdenGame::kingDialog3() {
 	p_global->_frescoNumber = 3;
-	roiparle();
+	handleKingDialog();
 }
 
 void EdenGame::getcouteau() {
 	if (p_global->_phaseNum >= 80) {
 		gameRooms[113].video = 0;
-		getobject(Objects::obKnife);
+		getObject(Objects::obKnife);
 	}
 	p_global->_eventType = EventType::etEvent7;
 	showEvents();
 }
 
 void EdenGame::getprisme() {
-	getobject(Objects::obPrism);
+	getObject(Objects::obPrism);
 	p_global->_eventType = EventType::etEvent7;
 	showEvents();
 }
 
 void EdenGame::getchampb() {
-	getobject(Objects::obShroom);
+	getObject(Objects::obShroom);
 }
 
 void EdenGame::getchampm() {
-	getobject(Objects::obBadShroom);
+	getObject(Objects::obBadShroom);
 }
 
 void EdenGame::getor() {
-	getobject(Objects::obGold);
+	getObject(Objects::obGold);
 }
 
 void EdenGame::getnido() {
@@ -781,7 +785,7 @@ void EdenGame::getnido() {
 	p_global->_roomPtr--;
 	p_global->_roomPtr->bank = 281; //TODO: fix me
 	p_global->_roomPtr->ff_0 = 3;
-	getobject(Objects::obFullNest);
+	getObject(Objects::obFullNest);
 }
 
 void EdenGame::getnidv() {
@@ -791,13 +795,13 @@ void EdenGame::getnidv() {
 	p_global->_roomPtr--;
 	p_global->_roomPtr->bank = 281; //TODO: fix me
 	p_global->_roomPtr->ff_0 = 3;
-	getobject(Objects::obNest);
+	getObject(Objects::obNest);
 }
 
 void EdenGame::getcorne() {
 	if (p_global->_curObjectId != 0)
 		return;
-	getobject(Objects::obHorn);
+	getObject(Objects::obHorn);
 	p_global->_eventType = EventType::etEvent7;
 	showEvents();
 	bigphase1();
@@ -810,7 +814,7 @@ void EdenGame::getsoleil() {
 		return;
 	gameRooms[238].video = 0;
 	gameRooms[238].flags = RoomFlags::rf80;
-	getobject(Objects::obSunStone);
+	getObject(Objects::obSunStone);
 }
 
 void EdenGame::getoeuf() {
@@ -818,14 +822,14 @@ void EdenGame::getoeuf() {
 		return;
 	p_global->_roomPtr->flags = 0;
 	p_global->_roomPtr->video = 0;
-	getobject(Objects::obEgg);
+	getObject(Objects::obEgg);
 }
 
 void EdenGame::getplaque() {
 	if (p_global->_curObjectId != 0 && p_global->_curObjectId < Objects::obTablet1)
 		return;
 	p_global->_curObjectId = 0;
-	getobject(Objects::obTablet2);
+	getObject(Objects::obTablet2);
 	putObject();
 	for (int i = 0; i < 6; i++)
 		_objects[Objects::obTablet1 - 1 + i]._count = 0;
@@ -3113,7 +3117,7 @@ void EdenGame::parle_mfin() {
 			perso->_powers |= obj->_powerMask;
 		}
 		perso->_items |= obj->_itemMask;
-		SpecialObjets(perso, curobj);
+		specialObjects(perso, curobj);
 		return;
 	}
 	if (!isAnswerYes())
@@ -3240,7 +3244,8 @@ void EdenGame::perso_normal(perso_t *perso) {
 	perso1(perso);
 }
 
-void EdenGame::persoparle(int16 pers) {
+// Original name: persoparle
+void EdenGame::handleCharacterDialog(int16 pers) {
 	perso_t *perso = &kPersons[pers];
 	p_global->_characterPtr = perso;
 	p_global->_dialogType = DialogType::dtInspect;
@@ -3647,7 +3652,7 @@ void EdenGame::tyranDies(perso_t *perso) {
 	p_global->_chronoFlag = 0;
 }
 
-void EdenGame::SpecialObjets(perso_t *perso, char objid) {
+void EdenGame::specialObjects(perso_t *perso, char objid) {
 #pragma pack(push, 1)
 	struct SpecialObject {
 		int8  _characterType;
@@ -3683,12 +3688,12 @@ void EdenGame::SpecialObjets(perso_t *perso, char objid) {
 		{ PersonFlags::pfType0, Objects::obEgg, &EdenGame::specialEgg },
 		{ -1, -1, nullptr }
 	};
-	SpecialObject *spcobj = kSpecialObjectActions;
+	
 	char characterType = perso->_flags & PersonFlags::pfTypeMask;
 	_curSpecialObject = &_objects[objid - 1];
-	for (; spcobj->_characterType != -1; spcobj++) {
-		if (spcobj->_objectId == objid && spcobj->_characterType == characterType) {
-			(this->*spcobj->dispFct)(perso);
+	for (SpecialObject *spcObj = kSpecialObjectActions; spcObj->_characterType != -1; spcObj++) {
+		if (spcObj->_objectId == objid && spcObj->_characterType == characterType) {
+			(this->*spcObj->dispFct)(perso);
 			break;
 		}
 	}
@@ -3963,7 +3968,7 @@ no_perso:
 			&EdenGame::bigphase,
 			&EdenGame::giveObject,
 			&EdenGame::choixzone,
-			&EdenGame::lostobject
+			&EdenGame::lostObject
 		};
 		char pnum = p_global->_dialogPtr->_flags & 0xF;
 		if (pnum)
@@ -6024,9 +6029,9 @@ void EdenGame::mouse() {
 		&EdenGame::tetesquel,
 		&EdenGame::tetemomie,
 		&EdenGame::moveNorth,
-		&EdenGame::roiparle1,
-		&EdenGame::roiparle2,
-		&EdenGame::roiparle3,
+		&EdenGame::kingDialog1,
+		&EdenGame::kingDialog2,
+		&EdenGame::kingDialog3,
 		&EdenGame::gotohall,
 		&EdenGame::demitourlabi,
 		&EdenGame::squelmoorkong,
@@ -6262,7 +6267,7 @@ void EdenGame::mouse() {
 		&EdenGame::ret,
 		&EdenGame::parle_moi,
 		&EdenGame::adam,
-		&EdenGame::takeobject,
+		&EdenGame::takeObject,
 		&EdenGame::putObject,
 		&EdenGame::clictimbre,
 		&EdenGame::dinaparle,
@@ -6740,7 +6745,7 @@ void EdenGame::loseObject(int16 id) {
 	torchCursor = false;
 }
 
-void EdenGame::lostobject() {
+void EdenGame::lostObject() {
 	parlemoiNormalFlag = true;
 	if (p_global->_curObjectId)
 		loseObject(p_global->_curObjectId);
@@ -6766,7 +6771,7 @@ void EdenGame::objectmain(int16 id) {
 	normalCursor = false;
 }
 
-void EdenGame::getobject(int16 id) {
+void EdenGame::getObject(int16 id) {
 	room_t *room = p_global->_roomPtr;
 	if (p_global->_curObjectId)
 		return;
@@ -6797,7 +6802,7 @@ void EdenGame::putObject() {
 	normalCursor = true;
 }
 
-void EdenGame::newobject(int16 id, int16 arg2) {
+void EdenGame::newObject(int16 id, int16 arg2) {
 	object_t *object = getobjaddr(id);
 	uint16 e, *t = &kObjectLocations[object->_locations];
 	while ((e = *t) != 0xFFFF) {
@@ -6839,7 +6844,7 @@ void EdenGame::giveObject() {
 	}
 }
 
-void EdenGame::takeobject() {
+void EdenGame::takeObject() {
 	objectmain(current_spot2->_objectId);
 	p_global->_nextDialogPtr = nullptr;
 	_closeCharacterDialog = false;
@@ -6851,8 +6856,8 @@ void EdenGame::takeobject() {
 ////
 void EdenGame::newchampi() {
 	if (_objects[Objects::obShroom - 1]._count == 0) {
-		newobject(Objects::obShroom, p_global->_citaAreaNum);
-		newobject(Objects::obBadShroom, p_global->_citaAreaNum);
+		newObject(Objects::obShroom, p_global->_citaAreaNum);
+		newObject(Objects::obBadShroom, p_global->_citaAreaNum);
 	}
 }
 
@@ -6902,7 +6907,7 @@ void EdenGame::newnido() {
 
 void EdenGame::newor() {
 	if (_objects[Objects::obGold - 1]._count == 0) {
-		newobject(Objects::obGold, p_global->_citaAreaNum);
+		newObject(Objects::obGold, p_global->_citaAreaNum);
 	}
 }
 
@@ -7729,9 +7734,9 @@ void EdenGame::phase161() {
 }
 
 void EdenGame::phase226() {
-	newobject(16, 3);
-	newobject(16, 4);
-	newobject(16, 5);
+	newObject(16, 3);
+	newObject(16, 4);
+	newObject(16, 5);
 }
 
 void EdenGame::phase257() {
