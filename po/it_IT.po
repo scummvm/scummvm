@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-12 14:39+0000\n"
+"PO-Revision-Date: 2016-12-12 15:19+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -884,7 +884,7 @@ msgstr "Correzione proporzioni"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregge le proporzioni dei giochi 320x200"
+msgstr "Corregge le proporzioni dei giochi con risoluzione a 320x200"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
@@ -1538,16 +1538,16 @@ msgstr "Aspetta che il Cloud abbia terminato l'operazione e prova di nuovo"
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Errore nel campo %s."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Errori nel campi %s."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Tutto OK!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
@@ -1558,6 +1558,8 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Errore nell'apertura dell'URL!\n"
+"Accedere a questa pagina manualmente."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1595,10 +1597,16 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM supporta la verifica automatica degli aggiornamenti.\n"
+"E' richiesto l'accesso a Internet.\n"
+"\n"
+"Desideri abilitare questa funzionalità?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
+"(E' possibile attivarla in qualsiasi momento tramite la scheda \"Varie\" "
+"della finestra Opzioni)"
 
 #: gui/updates-dialog.cpp:92
 msgid "Check for updates automatically"
@@ -1606,7 +1614,7 @@ msgstr "Controlla aggiornamenti automaticamente"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Procedi"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
@@ -1713,7 +1721,7 @@ msgstr "Errore sconosciuto"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules verde"
+msgstr "Hercules Green"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
