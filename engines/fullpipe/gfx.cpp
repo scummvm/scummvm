@@ -779,6 +779,8 @@ Bitmap::Bitmap() {
 	_flags = 0;
 	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
+
+	_skipDelete = false;
 }
 
 Bitmap::Bitmap(Bitmap *src) {
@@ -792,14 +794,21 @@ Bitmap::Bitmap(Bitmap *src) {
 	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
 	_flipping = src->_flipping;
+
+	_skipDelete = true;
 }
 
 Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
 
-	_surface->free();
-	delete _surface;
+	if (!_skipDelete) {
+		if (_surface)
+			_surface->free();
+		delete _surface;
+	}
+
+	_surface = 0;
 
 	_pixels = 0;
 }

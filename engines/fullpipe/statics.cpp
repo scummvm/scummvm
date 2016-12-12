@@ -572,6 +572,8 @@ void Movement::draw(bool flipFlag, int angle) {
 			}
 		}
 	}
+
+	delete bmp;
 }
 
 void StaticANIObject::loadMovementsPixelData() {
