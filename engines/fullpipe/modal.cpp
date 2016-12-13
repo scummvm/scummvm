@@ -378,7 +378,11 @@ void ModalVideoPlayer::play(const char *filename) {
 		if (aviDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = aviDecoder->decodeNextFrame();
 			if (frame) {
-				g_fp->_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+				Graphics::Surface *frameCopy = frame->convertTo(g_system->getScreenFormat());
+				g_fp->_system->copyRectToScreen(frameCopy->getPixels(), frameCopy->pitch,
+					x, y, frameCopy->w, frameCopy->h);
+				frameCopy->free();
+				delete frameCopy;
 
 				if (aviDecoder->hasDirtyPalette())
 					g_fp->_system->getPaletteManager()->setPalette(aviDecoder->getPalette(), 0, 256);
