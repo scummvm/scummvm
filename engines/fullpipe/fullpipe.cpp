@@ -214,9 +214,6 @@ FullpipeEngine::~FullpipeEngine() {
 	delete _soundStream2;
 	delete _soundStream3;
 	delete _soundStream4;
-	delete _floaters;
-	delete _aniHandler;
-	delete _behaviorManager;
 }
 
 void FullpipeEngine::initialize() {

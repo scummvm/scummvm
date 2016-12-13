@@ -45,9 +45,6 @@ Background::Background() {
 }
 
 Background::~Background() {
-	for (uint i = 1; i < _picObjList.size(); i++)
-		delete _picObjList[i];
-
 	_picObjList.clear();
 
 	for (int i = 0; i < _bigPictureArray1Count; i++) {
@@ -58,8 +55,6 @@ Background::~Background() {
 	}
 
 	free(_bigPictureArray);
-
-	free(_bgname);
 }
 
 bool Background::load(MfcArchive &file) {
@@ -483,13 +478,12 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
+			//free(_bitmap);
 			_bitmap = 0;
 		}
 	}
 
 	if (_bitmap) {
-		delete _bitmap;
 		_bitmap = 0;
 		_data = 0;
 	}
@@ -607,8 +601,6 @@ void Picture::getDibInfo() {
 	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
 
 	_bitmap->_pixels = 0;
-
-	delete s;
 }
 
 Bitmap *Picture::getPixelData() {
@@ -779,8 +771,6 @@ Bitmap::Bitmap() {
 	_flags = 0;
 	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
-
-	_skipDelete = false;
 }
 
 Bitmap::Bitmap(Bitmap *src) {
@@ -794,21 +784,14 @@ Bitmap::Bitmap(Bitmap *src) {
 	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
 	_flipping = src->_flipping;
-
-	_skipDelete = true;
 }
 
 Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
 
-	if (!_skipDelete) {
-		if (_surface)
-			_surface->free();
-		delete _surface;
-	}
-
-	_surface = 0;
+	_surface->free();
+	delete _surface;
 
 	_pixels = 0;
 }

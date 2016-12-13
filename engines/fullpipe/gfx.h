@@ -40,7 +40,6 @@ struct Bitmap {
 	int _flags;
 	Graphics::TransparentSurface *_surface;
 	int _flipping;
-	bool _skipDelete;
 
 	Bitmap();
 	Bitmap(Bitmap *src);

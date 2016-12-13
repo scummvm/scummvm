@@ -105,11 +105,6 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 	return 0;
 }
 
-MctlCompound::~MctlCompound() {
-	for (uint i = 0; i < _motionControllers.size(); i++)
-		delete _motionControllers[i];
-}
-
 bool MctlCompound::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MctlCompound::load()");
 
