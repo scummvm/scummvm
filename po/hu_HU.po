@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-11 04:46+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2016-12-13 20:01+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -2253,7 +2253,7 @@ msgstr "~B~alkezes mód"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr "~I~ndy fight controls"
+msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
@@ -4011,7 +4011,7 @@ msgstr "* Harc billentyûzetrõl mindíg aktív,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "  so despite the in-game message this"
+msgstr ""
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
@@ -4223,6 +4223,7 @@ msgstr ""
 "Töltsd le a www.scummvm.org oldaláról"
 
 #: engines/sky/detection.cpp:44
+#, fuzzy
 msgid "Floppy intro"
 msgstr "Floppy intro"
 
