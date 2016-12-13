@@ -602,6 +602,7 @@ enum GameFlags {
 
 struct global_t {
 	byte   _areaNum;
+	byte   _areaVisitCount;
 	byte   _menuItemIdLo;
 	byte   _menuItemIdHi;   //TODO: pad?
 	uint16  _randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
@@ -612,32 +613,74 @@ struct global_t {
 	uint16  _roomNum;        // current room number
 	uint16  _newRoomNum;     // target room number selected on world map
 	uint16  _phaseNum;
+	uint16  _metPersonsMask1;
 	uint16  _party;
 	uint16  _partyOutside;
+	uint16  _metPersonsMask2;
+	uint16  __UNUSED_1C;    //TODO: write-only?	
+	uint16  _phaseActionsCount;
 	uint16  _curAreaFlags;
 	uint16  _curItemsMask;
+	uint16  _curPowersMask;
+	uint16  _curPersoItems;
+	uint16  _curCharacterPowers;
+	uint16  _wonItemsMask;
+	uint16  _wonPowersMask;
+	uint16  _stepsToFindAppleFast;
+	uint16  _stepsToFindAppleNormal;
+	uint16  _roomPersoItems; //TODO: write-only?
+	uint16  _roomCharacterPowers;    //TODO: write-only?
 	uint16  _gameFlags;
+	uint16  _morkusSpyVideoNum1; //TODO: pad?
+	uint16  _morkusSpyVideoNum2; //TODO: pad?
+	uint16  _morkusSpyVideoNum3; //TODO: pad?
+	uint16  _morkusSpyVideoNum4; //TODO: pad?
 	byte   _newMusicType;
+	byte   ff_43;
+	byte   _videoSubtitleIndex;
+	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
+	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
 	byte   _chronoFlag;
 	byte   _curRoomFlags;
 	byte   _endGameFlag;
 	byte   _lastInfo;
 	bool   _autoDialog;
 	byte   _worldTyranSighted;
+	byte   ff_4D;
+	byte   ff_4E;
+	byte   _worldGaveGold;
+	byte   _worldHasTriceraptors;
+	byte   _worldHasVelociraptors;
+	byte   _worldHasTyran;
+	byte   ff_53;
+	byte   ff_54;  //CHEKME: Used?
+	byte   ff_55;  //TODO: pad?
 	byte   _gameHours;
 	byte   _textToken1;
+	byte   _textToken2; //TODO: pad?
 	byte   _eloiHaveNews;
+	byte   _dialogFlags;
 	byte   _curAreaType;
+	byte   _curCitadelLevel;
 	byte   _newLocation;
 	byte   _prevLocation;
+	byte   _curPersoFlags;
 	bool ff_60;
 	byte   _eventType;
+	byte   ff_62;  //TODO: pad?
 	byte   _curObjectId;
+	byte   _curObjectFlags;
+	byte   ff_65;  //TODO: pad?
 	byte   _roomCharacterType;
+	byte   _roomCharacterFlags;
 	byte   _narratorSequence;
 	byte   ff_69;
 	byte   ff_6A;
 	byte   _frescoNumber;
+	byte   ff_6C;  //TODO: pad?
+	byte   ff_6D;  //TODO: pad?
+	byte   _labyrinthDirections;
+	byte   _labyrinthRoom;
 	dial_t *_dialogPtr;
 	tape_t *_tapePtr;
 	dial_t *_nextDialogPtr;
@@ -659,24 +702,38 @@ struct global_t {
 	byte   *_curCharacterAnimPtr;
 	byte   *ff_C2; //TODO: image desc arr
 	int16  _iconsIndex;
+	int16  _curObjectCursor;    // TODO: useless?
+	int16  ff_CA;
+	int16  __UNUSED_CC;        //TODO: unused/pad
 	int16  _characterImageBank; //TODO: unsigned?
 	uint16  _roomImgBank;
 	uint16  _characterBackgroundBankIdx;
+	uint16  ff_D4;  //TODO: unsigned?
 	uint16  _frescoeWidth;
 	uint16  _frescoeImgBank;
+	uint16  ff_DA;  //TODO: pad?
+	uint16  ff_DC;  //TODO: pad?
 	uint16  _roomBaseX;
+	uint16  ff_E0;  //TODO: pad?
 	uint16  _dialogType;
+	uint16  ff_E4;  //TODO: pad?
 	uint16  _currMusicNum;
 	int16   _textNum;
 	uint16  _travelTime;
+	uint16  ff_EC;  //TODO: pad?
 	byte   _displayFlags;
 	byte   _oldDisplayFlags;
 	byte   _drawFlags;
 	byte   ff_F1;
 	byte   ff_F2;
-	byte   menuFlags;
+	byte   _menuFlags;
+	byte   ff_F4;  //TODO: write-only?
+	byte   ff_F5;
 	byte   ff_F6;
 	bool   ff_F7;
+	byte   ff_F8;  //TODO: pad?
+	byte   ff_F9;  //TODO: pad?
+	byte   ff_FA;  //TODO: pad?
 	byte   _animationFlags;
 	byte   _giveObj1;
 	byte   _giveObj2;
@@ -698,66 +755,9 @@ struct global_t {
 	byte   _citaAreaNum;
 	byte   ff_113;
 	byte   _lastPlaceNum;
-	byte   save_end; // TODO: This has to be removed
+	byte   _saveEnd; // TODO: This has to be removed
 	int16  _textWidthLimit;
 	byte   _numGiveObjs;
-
-	// CHECKME: Useless variables?
-	uint16  metPersonsMask1;
-	uint16  metPersonsMask2;
-	uint16  phaseActionsCount;
-	uint16  curPowersMask;
-	uint16  curPersoItems;
-	uint16  wonItemsMask;
-	uint16  wonPowersMask;
-	uint16  _curCharacterPowers;
-	uint16  stepsToFindAppleFast;
-	uint16  stepsToFindAppleNormal;
-	uint16  _roomPersoItems; //TODO: write-only?
-	uint16  _roomCharacterPowers;    //TODO: write-only?
-	uint16  morkusSpyVideoNum1; //TODO: pad?
-	uint16  morkusSpyVideoNum2; //TODO: pad?
-	uint16  morkusSpyVideoNum3; //TODO: pad?
-	uint16  morkusSpyVideoNum4; //TODO: pad?
-	byte   ff_43;
-	byte   videoSubtitleIndex;
-	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
-	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
-	byte   ff_4D;
-	byte   ff_4E;
-	byte   _worldGaveGold;
-	byte   _worldHasTriceraptors;
-	byte   _worldHasVelociraptors;
-	byte   _worldHasTyran;
-	byte   ff_53;
-	byte   ff_54;  //CHEKME: Used?
-	byte   ff_55;  //TODO: pad?
-	byte   _textToken2; //TODO: pad?
-	byte   _dialogFlags;
-	byte   _curCitadelLevel;
-	byte   _curPersoFlags;
-	byte   ff_62;  //TODO: pad?
-	byte   curObjectFlags;
-	byte   ff_65;  //TODO: pad?
-	byte   _roomCharacterFlags;
-	byte   ff_6C;  //TODO: pad?
-	byte   ff_6D;  //TODO: pad?
-	byte   labyrinthDirections;
-	byte   labyrinthRoom;
-	int16  curObjectCursor;    // TODO: useless?
-	int16  ff_CA;
-	int16  __UNUSED_CC;        //TODO: unused/pad
-	uint16  ff_D4;  //TODO: unsigned?
-	uint16  ff_DA;  //TODO: pad?
-	uint16  ff_DC;  //TODO: pad?
-	uint16  ff_E0;  //TODO: pad?
-	uint16  ff_E4;  //TODO: pad?
-	uint16  ff_EC;  //TODO: pad?
-	byte   ff_F4;  //TODO: write-only?
-	byte   ff_F5;
-	byte   ff_F8;  //TODO: pad?
-	byte   ff_F9;  //TODO: pad?
-	byte   ff_FA;  //TODO: pad?
 	byte   ff_119;     // unused
 };
 typedef struct global_t global_t;
