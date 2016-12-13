@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-13 17:58+0000\n"
+"PO-Revision-Date: 2016-12-13 19:35+0000\n"
 "Last-Translator: Fernando Sarmento <nando_sarmento@hotmail.com>\n"
 "Language-Team: Portuguese (Portugal) "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
@@ -376,7 +376,7 @@ msgstr "Caminho para Salvar:"
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1280 gui/options.cpp:1282
 #: gui/options.cpp:1283
 msgid "Specifies where your saved games are put"
-msgstr "Especifica o caminho onde os jogos são salvos"
+msgstr "Especifica onde os jogos salvos são colocados"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1282
 msgctxt "lowres"
@@ -406,7 +406,7 @@ msgstr "Seleccione o SoundFont"
 
 #: gui/editgamedialog.cpp:489
 msgid "Select additional game directory"
-msgstr "Seleccione outra directoria para o jogo"
+msgstr "Seleccione uma directoria adicional para o jogo"
 
 #: gui/editgamedialog.cpp:502 gui/options.cpp:1695
 msgid "Select directory for saved games"
@@ -424,110 +424,112 @@ msgstr ""
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
+"O código deste jogo já se encontra em utilização. Por favor, escolha outro "
+"código."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notas:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Escolher ficheiro para carregar"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Introduzir nome para salvar"
 
 #: gui/filebrowser-dialog.cpp:132
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "Deseja mesmo substituir o ficheiro?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
-msgstr ""
+msgstr "Reverberação"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr ""
+msgstr "Espaço:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr ""
+msgstr "Supressão:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr ""
+msgstr "Amplitude:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr ""
+msgstr "Nível:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr ""
+msgstr "Coro"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:118
 msgid "Speed:"
-msgstr ""
+msgstr "Velocidade:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
-msgstr ""
+msgstr "Intensidade:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr ""
+msgstr "Tipo:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
-msgstr ""
+msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Triangle"
-msgstr ""
+msgstr "Triângulo"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1316
 msgid "Misc"
-msgstr ""
+msgstr "Vários"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolação:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr ""
+msgstr "Nenhum (acelerado)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr ""
+msgstr "Quarta"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr ""
+msgstr "Sétima"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset"
-msgstr ""
+msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
