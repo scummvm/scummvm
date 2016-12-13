@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-12 15:26+0000\n"
-"Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
+"PO-Revision-Date: 2016-12-13 19:58+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -92,7 +92,7 @@ msgstr "Da: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr "A:"
+msgstr "A: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -344,7 +344,7 @@ msgstr "Percorsi"
 #: gui/editgamedialog.cpp:257 gui/options.cpp:1272
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Perc."
+msgstr "Perc"
 
 #: gui/editgamedialog.cpp:264
 msgid "Game Path:"
@@ -420,7 +420,7 @@ msgid ""
 msgstr ""
 "La funzionalità di sincronizzazione dei salvataggi non funziona con i "
 "percorsi personalizzati. Per sinconizzare i salvataggi, usa la cartella "
-"predefinita.  "
+"predefinita."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -428,11 +428,11 @@ msgstr "Questo ID di gioco è già in uso. Si prega di sceglierne un'altro."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr "Autore: "
+msgstr "Autore:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr "Note: "
+msgstr "Note:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
@@ -746,7 +746,7 @@ msgstr "Agg. in massa..."
 
 #: gui/launcher.cpp:710
 msgid "Record..."
-msgstr "Registra"
+msgstr "Registra..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -835,7 +835,7 @@ msgstr "Nessuno"
 
 #: gui/options.cpp:456
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Impossibile applicare alcuni dei cambiamenti nelle opzioni grafiche."
+msgstr "Impossibile applicare alcuni dei cambiamenti nelle opzioni grafiche:"
 
 #: gui/options.cpp:468
 msgid "the video mode could not be changed."
@@ -872,11 +872,11 @@ msgstr "Modalità a schermo intero"
 
 #: gui/options.cpp:838
 msgid "Filter graphics"
-msgstr "Applica filtro grafico "
+msgstr "Applica filtro grafico"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usa filtro lineare per lo scaling della grafica "
+msgstr "Usa filtro lineare per lo scaling della grafica"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1162,7 +1162,7 @@ msgstr "Lingua dell'interfaccia grafica di ScummVM"
 
 #: gui/options.cpp:1381
 msgid "Update check:"
-msgstr "Controlla la presenza di aggiornarmenti: "
+msgstr "Controlla la presenza di aggiornarmenti:"
 
 #: gui/options.cpp:1381
 msgid "How often to check ScummVM updates"
@@ -1242,7 +1242,7 @@ msgstr "Scarica"
 
 #: gui/options.cpp:1430
 msgid "Open downloads manager dialog"
-msgstr "Apri finestra di gestione dei download "
+msgstr "Apri finestra di gestione dei download"
 
 #: gui/options.cpp:1432
 msgid "Run server"
@@ -1254,7 +1254,7 @@ msgstr "Avvia webserver locale"
 
 #: gui/options.cpp:1433 gui/options.cpp:2082
 msgid "Not running"
-msgstr "Errore nell'avvio del gioco:"
+msgstr ""
 
 #: gui/options.cpp:1437
 msgid "/root/ Path:"
@@ -1262,7 +1262,7 @@ msgstr "Percorso base:"
 
 #: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Specifica quali cartelle sono accessibili dal File Manager "
+msgstr "Specifica quali cartelle sono accessibili dal File Manager"
 
 #: gui/options.cpp:1439
 msgctxt "lowres"
@@ -1287,11 +1287,11 @@ msgstr "Applica"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
-msgstr "Impossibile cambiare dispositivo di archiviazione Cloud"
+msgstr "Impossibile cambiare dispositivo di archiviazione Cloud!"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr "Un altro servizio di archiviazione cloud è già attivo. "
+msgstr "Un altro servizio di archiviazione cloud è già attivo."
 
 #: gui/options.cpp:1667
 msgid ""
@@ -1336,7 +1336,7 @@ msgstr "<mai>"
 
 #: gui/options.cpp:2073
 msgid "Stop server"
-msgstr "Arresta server:"
+msgstr "Arresta server"
 
 #: gui/options.cpp:2074
 msgid "Stop local webserver"
@@ -1348,7 +1348,7 @@ msgid ""
 "Check your Internet connection."
 msgstr ""
 "Richiesta fallita\n"
-"Verifica il funzionamento della connessione Internet"
+"Verifica il funzionamento della connessione Internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1397,7 +1397,7 @@ msgstr "Registra"
 
 #: gui/recorderdialog.cpp:71
 msgid "Playback"
-msgstr "Riproduzione "
+msgstr "Riproduzione"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
@@ -1406,12 +1406,12 @@ msgstr "Modifica"
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr "Autore:"
+msgstr "Autore: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr "Note:"
+msgstr "Note: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1517,7 +1517,7 @@ msgstr "Incolla"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr "Incolla il contenuto degli appunti nei campi di testo "
+msgstr "Incolla il contenuto degli appunti nei campi di testo"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
@@ -1533,7 +1533,7 @@ msgstr "Un altro spazio di archiviazione è attivo. Vuoi interromperlo?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Aspetta che il Cloud abbia terminato l'operazione e prova di nuovo"
+msgstr "Aspetta che il Cloud abbia terminato l'operazione e prova di nuovo."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
@@ -1882,7 +1882,7 @@ msgstr "Impossibile cambiare la modalità video: '"
 
 #: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
-msgstr "Impossibile applicare l'impostazione proporzioni"
+msgstr "Impossibile applicare l'impostazione proporzioni."
 
 #: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
@@ -4089,7 +4089,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr "Questi sono i controlli quando"
+msgstr ""
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
