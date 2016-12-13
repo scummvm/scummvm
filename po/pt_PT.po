@@ -8,49 +8,52 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2016-12-13 17:58+0000\n"
+"Last-Translator: Fernando Sarmento <nando_sarmento@hotmail.com>\n"
+"Language-Team: Portuguese (Portugal) "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Language-name: Portugues (Portugal)\n"
 
 #: gui/about.cpp:94
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(desenvolvido em %s)"
 
 #: gui/about.cpp:101
 msgid "Features compiled in:"
-msgstr ""
+msgstr "Recursos compilados em:"
 
 #: gui/about.cpp:110
 msgid "Available engines:"
-msgstr ""
+msgstr "Suportes disponíveis:"
 
 #: gui/browser.cpp:68 gui/browser_osx.mm:104
 msgid "Show hidden files"
-msgstr ""
+msgstr "Mostrar ficheiros ocultos"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Mostrar ficheiros marcados como ocultos"
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr ""
+msgstr "Acima"
 
 #: gui/browser.cpp:72 gui/browser.cpp:74 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "Ir para a directoria anterior"
 
 #: gui/browser.cpp:74 gui/remotebrowser.cpp:58
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "Acima"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editgamedialog.cpp:292
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:64
@@ -67,48 +70,48 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:865
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr ""
+msgstr "Escolher"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "Seleccione a directoria de descarga dos arquivos do jogo"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr ""
+msgstr "Seleccione a directoria com os arquivos do jogo"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "De: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Para: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancelar descarga"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancelar descarga"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Esconder"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "Parece que a sua conexão é limitada. Deseja mesmo fazer esta descarga?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -121,7 +124,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:827
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -134,17 +137,19 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:827
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM não conseguiu abrir a directoria específica!"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Não é possível criar uma directoria para a descarga - a directoria "
+"especificada possui um arquivo com o mesmo nome."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:522
@@ -164,7 +169,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
 #: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -172,24 +177,26 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"O \"%s\" já existe na directoria especificada.\n"
+"Deseja mesmo descarregar ficheiros nessa directoria?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Descarregado %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
 #, c-format
 msgid "Download speed: %s %s"
-msgstr ""
+msgstr "Velocidade de descarga: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
-msgstr ""
+msgstr "Jogo"
 
 #: gui/editgamedialog.cpp:136
 msgid "ID:"
-msgstr ""
+msgstr "Código:"
 
 #: gui/editgamedialog.cpp:136 gui/editgamedialog.cpp:138
 #: gui/editgamedialog.cpp:139
@@ -197,180 +204,184 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
+"Código usado para identificar os jogos salvos e para executar o jogo a "
+"partir da linha de comandos"
 
 #: gui/editgamedialog.cpp:138
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "Código:"
 
 #: gui/editgamedialog.cpp:143 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "Nome:"
 
 #: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
 #: gui/editgamedialog.cpp:146
 msgid "Full title of the game"
-msgstr ""
+msgstr "Título completo do jogo"
 
 #: gui/editgamedialog.cpp:145
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "Nome:"
 
 #: gui/editgamedialog.cpp:149
 msgid "Language:"
-msgstr ""
+msgstr "Idioma:"
 
 #: gui/editgamedialog.cpp:149 gui/editgamedialog.cpp:150
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
+"Idioma do jogo. Esta opção não muda a sua versão do jogo de Português para "
+"Inglês"
 
 #: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:121
 #: gui/options.cpp:812 gui/options.cpp:825 gui/options.cpp:1356
 #: audio/null.cpp:41
 msgid "<default>"
-msgstr ""
+msgstr "<padrão>"
 
 #: gui/editgamedialog.cpp:161
 msgid "Platform:"
-msgstr ""
+msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:163
 #: gui/editgamedialog.cpp:164
 msgid "Platform the game was originally designed for"
-msgstr ""
+msgstr "Plataforma para a qual o jogo foi originalmente desenvolvido"
 
 #: gui/editgamedialog.cpp:163
 msgctxt "lowres"
 msgid "Platform:"
-msgstr ""
+msgstr "Plataforma:"
 
 #: gui/editgamedialog.cpp:176
 msgid "Engine"
-msgstr ""
+msgstr "Recursos"
 
 #: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "Graphics"
-msgstr ""
+msgstr "Gráficos"
 
 #: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "GFX"
-msgstr ""
+msgstr "GFX"
 
 #: gui/editgamedialog.cpp:187
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "Substituir configurações globais de gráficos"
 
 #: gui/editgamedialog.cpp:189
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "Substituir configurações globais de gráficos"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1238
 msgid "Audio"
-msgstr ""
+msgstr "Áudio"
 
 #: gui/editgamedialog.cpp:199
 msgid "Override global audio settings"
-msgstr ""
+msgstr "Substituir configurações globais de áudio"
 
 #: gui/editgamedialog.cpp:201
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr ""
+msgstr "Substituir configurações globais de áudio"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1243
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #: gui/editgamedialog.cpp:212 gui/options.cpp:1245
 msgctxt "lowres"
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #: gui/editgamedialog.cpp:215
 msgid "Override global volume settings"
-msgstr ""
+msgstr "Substituir configurações globais de volume"
 
 #: gui/editgamedialog.cpp:217
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr ""
+msgstr "Substituir configurações globais de volume"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1253
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:229
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "Substituir configurações globais de MIDI"
 
 #: gui/editgamedialog.cpp:231
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "Substituir configurações globais de MIDI"
 
 #: gui/editgamedialog.cpp:241 gui/options.cpp:1263
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:244
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "Substituir configurações globais de MT-32"
 
 #: gui/editgamedialog.cpp:246
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "Substituir configurações globais de MT-32"
 
 #: gui/editgamedialog.cpp:255 gui/options.cpp:1270
 msgid "Paths"
-msgstr ""
+msgstr "Caminhos"
 
 #: gui/editgamedialog.cpp:257 gui/options.cpp:1272
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "Caminhos"
 
 #: gui/editgamedialog.cpp:264
 msgid "Game Path:"
-msgstr ""
+msgstr "Caminho do Jogo:"
 
 #: gui/editgamedialog.cpp:266
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "Caminho do Jogo:"
 
 #: gui/editgamedialog.cpp:271 gui/options.cpp:1296
 msgid "Extra Path:"
-msgstr ""
+msgstr "Caminho de Extras:"
 
 #: gui/editgamedialog.cpp:271 gui/editgamedialog.cpp:273
 #: gui/editgamedialog.cpp:274
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "Especifica o caminho para dados adicionais usados pelo jogo"
 
 #: gui/editgamedialog.cpp:273 gui/options.cpp:1298
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr ""
+msgstr "Caminho de Extras:"
 
 #: gui/editgamedialog.cpp:280 gui/options.cpp:1280
 msgid "Save Path:"
-msgstr ""
+msgstr "Caminho para Salvar:"
 
 #: gui/editgamedialog.cpp:280 gui/editgamedialog.cpp:282
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1280 gui/options.cpp:1282
 #: gui/options.cpp:1283
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "Especifica o caminho onde os jogos são salvos"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1282
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "Caminho para Salvar:"
 
 #: gui/editgamedialog.cpp:301 gui/editgamedialog.cpp:398
 #: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1291
@@ -381,31 +392,34 @@ msgstr ""
 #: gui/options.cpp:1768 gui/options.cpp:1778
 msgctxt "path"
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
 #: gui/editgamedialog.cpp:522 gui/options.cpp:1482 gui/options.cpp:1548
 #: gui/options.cpp:1764 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr ""
+msgstr "Padrão"
 
 #: gui/editgamedialog.cpp:450 gui/options.cpp:1772
 msgid "Select SoundFont"
-msgstr ""
+msgstr "Seleccione o SoundFont"
 
 #: gui/editgamedialog.cpp:489
 msgid "Select additional game directory"
-msgstr ""
+msgstr "Seleccione outra directoria para o jogo"
 
 #: gui/editgamedialog.cpp:502 gui/options.cpp:1695
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "Seleccione uma directoria para salvar o jogo"
 
 #: gui/editgamedialog.cpp:508
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"A funcionalidade de sincronização de jogos guardados não funciona com "
+"directorias que não sejam predefinidas. Se quiser que os seus jogos salvos "
+"sejam sincronizados, use a directoria padrão."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
