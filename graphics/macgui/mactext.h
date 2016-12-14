@@ -31,10 +31,23 @@ class MacText {
 public:
 	MacText(Common::String s, Graphics::Font *font, int maxWidth = -1);
 
+	void setInterLinear(int interLinear) { _interLinear = interLinear; }
+
+private:
+	void splitString();
+	void render();
+	void calcMaxWidth();
+
 private:
 	Common::String _str;
 	Graphics::Font *_font;
 	int _maxWidth;
+	int _interLinear;
+
+	Common::Array<Common::String> _text;
+	Common::Array<int> _widths;
+
+	int _textMaxWidth;
 };
 
 } // End of namespace Graphics

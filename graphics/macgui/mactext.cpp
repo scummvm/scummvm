@@ -20,6 +20,7 @@
  */
 
 #include "graphics/macgui/mactext.h"
+#include "graphics/font.h"
 
 namespace Graphics {
 
@@ -27,6 +28,54 @@ MacText::MacText(Common::String s, Graphics::Font *font, int maxWidth) {
 	_str = s;
 	_font = font;
 	_maxWidth = maxWidth;
+	_interLinear = 2; // 2 pixels by default
+
+	_textMaxWidth = -1;
+
+	splitString();
+}
+
+void MacText::splitString() {
+	const char *s = _str.c_str();
+
+	Common::String tmp;
+	bool prevCR;
+
+	while (*s) {
+		if (*s == '\n' && prevCR) {	// trean \r\n as one
+			prevCR = false;
+			continue;
+		}
+
+		if (*s == '\r')
+			prevCR = true;
+
+		if (*s == '\r' || *s == '\n') {
+			_text.push_back(tmp);
+			_widths.push_back(_font->getStringWidth(tmp));
+
+			tmp.clear();
+
+			continue;
+		}
+
+		tmp += *s;
+	}
+
+	calcMaxWidth();
+}
+
+void MacText::calcMaxWidth() {
+	int max = -1;
+
+	for (uint i = 0; i < _widths.size(); i++)
+		if (max < _widths[i])
+			max = _widths[i];
+
+	_textMaxWidth = max;
+}
+
+void MacText::render() {
 }
 
 } // End of namespace Graphics
