@@ -430,8 +430,20 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				}
 			}
 
+			const ResourceId id = ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f);
+
+			// At least version 1.00 of GK2 has multiple invalid audio36 map
+			// entries on CD 6
+			if (g_sci->getGameId() == GID_GK2 &&
+				map->_volumeNumber == 6 &&
+				offset + syncSize >= srcSize) {
+
+				debugC(kDebugLevelResMan, "Invalid offset %u for %s in map %d for disc %d", offset + syncSize, id.toPatchNameBase36().c_str(), map->_mapNumber, map->_volumeNumber);
+				continue;
+			}
+
 			assert(offset + syncSize < srcSize);
-			addResource(ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize);
+			addResource(id, src, offset + syncSize);
 		}
 	}
 

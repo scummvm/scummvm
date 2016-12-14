@@ -185,7 +185,7 @@ public:
 	}
 
 	// Convert from a resource ID to a base36 patch name
-	Common::String toPatchNameBase36() {
+	Common::String toPatchNameBase36() const {
 		Common::String output;
 
 		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
