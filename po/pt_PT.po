@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-12-13 19:35+0000\n"
+"PO-Revision-Date: 2016-12-14 00:22+0000\n"
 "Last-Translator: Fernando Sarmento <nando_sarmento@hotmail.com>\n"
 "Language-Team: Portuguese (Portugal) "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
@@ -31,7 +31,7 @@ msgstr "Recursos compilados em:"
 
 #: gui/about.cpp:110
 msgid "Available engines:"
-msgstr "Suportes disponíveis:"
+msgstr "Motores de jogo disponíveis:"
 
 #: gui/browser.cpp:68 gui/browser_osx.mm:104
 msgid "Show hidden files"
@@ -111,7 +111,9 @@ msgstr "Esconder"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "Parece que a sua conexão é limitada. Deseja mesmo fazer esta descarga?"
+msgstr ""
+"Parece que a sua conexão é limitada. Deseja mesmo assim fazer a descarga dos "
+"ficheiros?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -141,7 +143,7 @@ msgstr "Não"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM não conseguiu abrir a directoria específica!"
+msgstr "ScummVM não conseguiu abrir a directoria especificada!"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
@@ -272,12 +274,12 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:187
 msgid "Override global graphic settings"
-msgstr "Substituir configurações globais de gráficos"
+msgstr "Substituir configurações gerais de gráficos"
 
 #: gui/editgamedialog.cpp:189
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Substituir configurações globais de gráficos"
+msgstr "Substituir configurações gerais de gráficos"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1238
 msgid "Audio"
@@ -285,12 +287,12 @@ msgstr "Áudio"
 
 #: gui/editgamedialog.cpp:199
 msgid "Override global audio settings"
-msgstr "Substituir configurações globais de áudio"
+msgstr "Substituir configurações gerais de áudio"
 
 #: gui/editgamedialog.cpp:201
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Substituir configurações globais de áudio"
+msgstr "Substituir configurações gerais de áudio"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1243
 msgid "Volume"
@@ -303,12 +305,12 @@ msgstr "Volume"
 
 #: gui/editgamedialog.cpp:215
 msgid "Override global volume settings"
-msgstr "Substituir configurações globais de volume"
+msgstr "Substituir configurações gerais de volume"
 
 #: gui/editgamedialog.cpp:217
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Substituir configurações globais de volume"
+msgstr "Substituir configurações gerais de volume"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1253
 msgid "MIDI"
@@ -316,12 +318,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:229
 msgid "Override global MIDI settings"
-msgstr "Substituir configurações globais de MIDI"
+msgstr "Substituir configurações gerais de MIDI"
 
 #: gui/editgamedialog.cpp:231
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Substituir configurações globais de MIDI"
+msgstr "Substituir configurações gerais de MIDI"
 
 #: gui/editgamedialog.cpp:241 gui/options.cpp:1263
 msgid "MT-32"
@@ -329,12 +331,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:244
 msgid "Override global MT-32 settings"
-msgstr "Substituir configurações globais de MT-32"
+msgstr "Substituir configurações gerais de MT-32"
 
 #: gui/editgamedialog.cpp:246
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Substituir configurações globais de MT-32"
+msgstr "Substituir configurações gerais de MT-32"
 
 #: gui/editgamedialog.cpp:255 gui/options.cpp:1270
 msgid "Paths"
@@ -533,159 +535,162 @@ msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Restaurar todas as configurações FluidSynth para os valores de origem."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
+"Deseja mesmo restaurar todas as configurações FluidSynth para os valores de "
+"origem?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
-msgstr ""
+msgstr "Fechar"
 
 #: gui/gui-manager.cpp:122
 msgid "Mouse click"
-msgstr ""
+msgstr "Clique do rato"
 
 #: gui/gui-manager.cpp:126 base/main.cpp:340
 msgid "Display keyboard"
-msgstr ""
+msgstr "Mostrar teclado"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:344
 msgid "Remap keys"
-msgstr ""
+msgstr "Redefinir teclas"
 
 #: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Mudar para ecrã inteiro"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
-msgstr ""
+msgstr "Definir"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr ""
+msgstr "Seleccione uma acção e clique 'Definir'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
 msgid "Associated key : %s"
-msgstr ""
+msgstr "Teclas associadas : %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
 #, c-format
 msgid "Associated key : none"
-msgstr ""
+msgstr "Teclas associadas : nenhuma"
 
 #: gui/KeysDialog.cpp:90
 msgid "Please select an action"
-msgstr ""
+msgstr "Por favor, seleccione uma acção"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
-msgstr ""
+msgstr "Pressione a tecla para associar"
 
 #: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
 msgid "Choose an action to map"
-msgstr ""
+msgstr "Escolha uma acção para definir"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
 msgid "~Q~uit"
-msgstr ""
+msgstr "~S~air"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "Sair do ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr ""
+msgstr "So~b~re..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
-msgstr ""
+msgstr "Sobre o ScumnmVM"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr ""
+msgstr "~O~pções..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "Alterar opções gerais do ScummVM"
 
 #: gui/launcher.cpp:145
 msgid "~S~tart"
-msgstr ""
+msgstr "~I~niciar"
 
 #: gui/launcher.cpp:145
 msgid "Start selected game"
-msgstr ""
+msgstr "Iniciar jogo seleccionado"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
-msgstr ""
+msgstr "~C~arregar..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "Carregar jogo salvo do jogo selecionado"
 
 #: gui/launcher.cpp:153
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~A~dicionar Jogo..."
 
 #: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
-msgstr ""
+msgstr "Pressionar Shift para Adição em Massa"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "~E~ditar Jogo..."
 
 #: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
-msgstr ""
+msgstr "Alterar opções do jogo"
 
 #: gui/launcher.cpp:157
 msgid "~R~emove Game"
-msgstr ""
+msgstr "~R~emover Jogo"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
+"Remover jogo da lista. Os ficheiros de dados do jogo permanecem intactos"
 
 #: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~A~dicionar Jogo..."
 
 #: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "~E~ditar Jogo..."
 
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr ""
+msgstr "~R~emover Jogo"
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
-msgstr ""
+msgstr "Pesquisar na lista de jogos"
 
 #: gui/launcher.cpp:176 gui/launcher.cpp:771
 msgid "Search:"
-msgstr ""
+msgstr "Pesquisar:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
-msgstr ""
+msgstr "Carregar jogo:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -695,187 +700,198 @@ msgstr ""
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
-msgstr ""
+msgstr "Carregar"
 
 #: gui/launcher.cpp:306
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
+"Deseja mesmo executar o detector de adição em massa? Tal poderá, "
+"potencialmente, adicionar um elevado número de jogos."
 
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"De momento, esta directoria não pode ser utilizada, existe uma descarga em "
+"curso!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
-msgstr ""
+msgstr "Deseja mesmo remover a configuração deste jogo?"
 
 #: gui/launcher.cpp:473
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "Deseja carregar o jogo salvo?"
 
 #: gui/launcher.cpp:522
 msgid "This game does not support loading games from the launcher."
-msgstr ""
+msgstr "Este jogo não permite carregar jogos a partir do menu principal."
 
 #: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
+"O ScummVM não conseguiu encontrar nenhum motor de jogo capaz de correr o "
+"jogo seleccionado!"
 
 #: gui/launcher.cpp:577
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
+"O ScummVM não conseguiu encontrar nenhum jogo na directoria especificada!"
 
 #: gui/launcher.cpp:590
 msgid "Pick the game:"
-msgstr ""
+msgstr "Escolha o jogo:"
 
 #: gui/launcher.cpp:708
 msgid "Mass Add..."
-msgstr ""
+msgstr "Adição em Massa..."
 
 #: gui/launcher.cpp:710
 msgid "Record..."
-msgstr ""
+msgstr "Gravar..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
-msgstr ""
+msgstr "... progressão ..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
-msgstr ""
+msgstr "Busca completa!"
 
 #: gui/massadd.cpp:262
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
+"Encontrado(s) %d novo(s) jogo(s), ignorado(s) %d jogo(s) adicionado(s) "
+"anteriormente."
 
 #: gui/massadd.cpp:266
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr ""
+msgstr "Pesquisada(s) %d directoria(s) ..."
 
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
+"Encontrado(s) %d novo(s) jogo(s), ignorado(s) %d jogo(s) adicionado(s) "
+"anteriormente ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Parar"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Editar descrição da gravação"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
-msgstr ""
+msgstr "Mudar para o Jogo"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr ""
+msgstr "Repetição rápida"
 
 #: gui/options.cpp:119 common/updates.cpp:56
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #: gui/options.cpp:119
 msgid "every 5 mins"
-msgstr ""
+msgstr "a cada 5 mins"
 
 #: gui/options.cpp:119
 msgid "every 10 mins"
-msgstr ""
+msgstr "a cada 10 mins"
 
 #: gui/options.cpp:119
 msgid "every 15 mins"
-msgstr ""
+msgstr "a cada 15 mins"
 
 #: gui/options.cpp:119
 msgid "every 30 mins"
-msgstr ""
+msgstr "a cada 30 mins"
 
 #: gui/options.cpp:121
 msgid "8 kHz"
-msgstr ""
+msgstr "8 kHz"
 
 #: gui/options.cpp:121
 msgid "11 kHz"
-msgstr ""
+msgstr "11 kHz"
 
 #: gui/options.cpp:121
 msgid "22 kHz"
-msgstr ""
+msgstr "22 kHz"
 
 #: gui/options.cpp:121
 msgid "44 kHz"
-msgstr ""
+msgstr "44 kHz"
 
 #: gui/options.cpp:121
 msgid "48 kHz"
-msgstr ""
+msgstr "48 kHz"
 
 #: gui/options.cpp:289 gui/options.cpp:552 gui/options.cpp:657
 #: gui/options.cpp:726 gui/options.cpp:937
 msgctxt "soundfont"
 msgid "None"
-msgstr ""
+msgstr "Nenhuma"
 
 #: gui/options.cpp:456
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "Falha ao aplicar algumas mudanças nas opções de gráficos:"
 
 #: gui/options.cpp:468
 msgid "the video mode could not be changed."
-msgstr ""
+msgstr "o modo de vídeo não pôde ser alterado."
 
 #: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "a taxa de proporção não pôde ser alterada"
 
 #: gui/options.cpp:480
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "a configuração de ecrã inteiro não pôde ser alterada"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr ""
+msgstr "a configuração de filtragem não pôde ser alterada"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
-msgstr ""
+msgstr "Modelo de gráficos:"
 
 #: gui/options.cpp:823
 msgid "Render mode:"
-msgstr ""
+msgstr "Renderização:"
 
 #: gui/options.cpp:823 gui/options.cpp:824
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "Modos especiais de pontilhado suportados por alguns jogos"
 
 #: gui/options.cpp:835 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "Modo de ecrã inteiro"
 
 #: gui/options.cpp:838
 msgid "Filter graphics"
-msgstr ""
+msgstr "Filtros gráficos"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Usar filtragem linear quando dimensionar gráficos"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "Correção da taxa de proporção"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr ""
+msgstr "Corrigir taxa de proporção em jogos de 320x200"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
