@@ -24,15 +24,20 @@
 
 namespace Graphics {
 
-MacText::MacText(Common::String s, Graphics::Font *font, int maxWidth) {
+MacText::MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth) {
 	_str = s;
 	_font = font;
+	_fgcolor = fgcolor;
+	_bgcolor = bgcolor;
 	_maxWidth = maxWidth;
-	_interLinear = 2; // 2 pixels by default
+
+	_interLinear = 0; // 0 pixels between the lines by default
 
 	_textMaxWidth = -1;
 
 	splitString();
+
+	_fullRefresh = true;
 }
 
 void MacText::splitString() {
@@ -62,6 +67,9 @@ void MacText::splitString() {
 		tmp += *s;
 	}
 
+	if (_text.size())
+		_text.push_back(tmp);
+
 	calcMaxWidth();
 }
 
@@ -76,6 +84,21 @@ void MacText::calcMaxWidth() {
 }
 
 void MacText::render() {
+	if (_fullRefresh) {
+		_surface.create(_textMaxWidth, _text.size() * (_font->getFontHeight() + _interLinear));
+
+		_surface.clear(_bgcolor);
+
+		int y = 0;
+
+		for (uint i = 0; i < _text.size(); i++) {
+			_font->drawString(&_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
+
+			y += _font->getFontHeight() + _interLinear;
+		}
+
+		_fullRefresh = false;
+	}
 }
 
 } // End of namespace Graphics

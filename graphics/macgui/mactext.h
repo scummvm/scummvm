@@ -24,12 +24,13 @@
 #define GRAPHICS_MACGUI_MACTEXT_H
 
 #include "graphics/fontman.h"
+#include "graphics/managed_surface.h"
 
 namespace Graphics {
 
 class MacText {
 public:
-	MacText(Common::String s, Graphics::Font *font, int maxWidth = -1);
+	MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1);
 
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
@@ -41,6 +42,8 @@ private:
 private:
 	Common::String _str;
 	Graphics::Font *_font;
+	int _fgcolor, _bgcolor;
+
 	int _maxWidth;
 	int _interLinear;
 
@@ -48,6 +51,9 @@ private:
 	Common::Array<int> _widths;
 
 	int _textMaxWidth;
+
+	Graphics::ManagedSurface _surface;
+	bool _fullRefresh;
 };
 
 } // End of namespace Graphics
