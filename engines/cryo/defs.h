@@ -617,7 +617,7 @@ struct global_t {
 	uint16  _party;
 	uint16  _partyOutside;
 	uint16  _metPersonsMask2;
-	uint16  __UNUSED_1C;    //TODO: write-only?	
+	uint16  _var1C;    //TODO: write-only?	
 	uint16  _phaseActionsCount;
 	uint16  _curAreaFlags;
 	uint16  _curItemsMask;
@@ -636,25 +636,25 @@ struct global_t {
 	uint16  _morkusSpyVideoNum3; //TODO: pad?
 	uint16  _morkusSpyVideoNum4; //TODO: pad?
 	byte   _newMusicType;
-	byte   ff_43;
+	byte   _var43;
 	byte   _videoSubtitleIndex;
 	byte   _partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
-	byte   _monkGotRing; // Bool? TODO: Check why it's set but never used
+	byte   _monkGotRing;
 	byte   _chronoFlag;
 	byte   _curRoomFlags;
 	byte   _endGameFlag;
 	byte   _lastInfo;
 	bool   _autoDialog;
 	byte   _worldTyranSighted;
-	byte   ff_4D;
-	byte   ff_4E;
+	byte   _var4D;
+	byte   _var4E;
 	byte   _worldGaveGold;
 	byte   _worldHasTriceraptors;
 	byte   _worldHasVelociraptors;
 	byte   _worldHasTyran;
-	byte   ff_53;
-	byte   ff_54;  //CHEKME: Used?
-	byte   ff_55;  //TODO: pad?
+	byte   _var53;
+	byte   _var54;  //CHEKME: Used?
+	byte   _var55;  //TODO: pad?
 	byte   _gameHours;
 	byte   _textToken1;
 	byte   _textToken2; //TODO: pad?
@@ -665,20 +665,20 @@ struct global_t {
 	byte   _newLocation;
 	byte   _prevLocation;
 	byte   _curPersoFlags;
-	bool ff_60;
+	byte   _var60;
 	byte   _eventType;
-	byte   ff_62;  //TODO: pad?
+	byte   _var62;  //TODO: pad?
 	byte   _curObjectId;
 	byte   _curObjectFlags;
-	byte   ff_65;  //TODO: pad?
+	byte   _var65;  //TODO: pad?
 	byte   _roomCharacterType;
 	byte   _roomCharacterFlags;
 	byte   _narratorSequence;
-	byte   ff_69;
-	byte   ff_6A;
+	byte   _var69;
+	byte   _var6A;
 	byte   _frescoNumber;
-	byte   ff_6C;  //TODO: pad?
-	byte   ff_6D;  //TODO: pad?
+	byte   _var6C;  //TODO: pad?
+	byte   _var6D;  //TODO: pad?
 	byte   _labyrinthDirections;
 	byte   _labyrinthRoom;
 	dial_t *_dialogPtr;
@@ -700,48 +700,48 @@ struct global_t {
 	byte   *_persoSpritePtr;
 	byte   *_persoSpritePtr2;
 	byte   *_curCharacterAnimPtr;
-	byte   *ff_C2; //TODO: image desc arr
+	byte   *_varC2; //TODO: image desc arr
 	int16  _iconsIndex;
 	int16  _curObjectCursor;    // TODO: useless?
-	int16  ff_CA;
-	int16  __UNUSED_CC;        //TODO: unused/pad
+	int16  _varCA;
+	int16  _varCC;        //TODO: unused/pad
 	int16  _characterImageBank; //TODO: unsigned?
 	uint16  _roomImgBank;
 	uint16  _characterBackgroundBankIdx;
-	uint16  ff_D4;  //TODO: unsigned?
+	uint16  _varD4;  //TODO: unsigned?
 	uint16  _frescoeWidth;
 	uint16  _frescoeImgBank;
-	uint16  ff_DA;  //TODO: pad?
-	uint16  ff_DC;  //TODO: pad?
+	uint16  _varDA;  //TODO: pad?
+	uint16  _varDC;  //TODO: pad?
 	uint16  _roomBaseX;
-	uint16  ff_E0;  //TODO: pad?
+	uint16  _varE0;  //TODO: pad?
 	uint16  _dialogType;
-	uint16  ff_E4;  //TODO: pad?
+	uint16  _varE4;  //TODO: pad?
 	uint16  _currMusicNum;
 	int16   _textNum;
 	uint16  _travelTime;
-	uint16  ff_EC;  //TODO: pad?
+	uint16  _varEC;  //TODO: pad?
 	byte   _displayFlags;
 	byte   _oldDisplayFlags;
 	byte   _drawFlags;
-	byte   ff_F1;
-	byte   ff_F2;
+	byte   _varF1;
+	byte   _varF2;
 	byte   _menuFlags;
-	byte   ff_F4;  //TODO: write-only?
-	byte   ff_F5;
-	byte   ff_F6;
-	bool   ff_F7;
-	byte   ff_F8;  //TODO: pad?
-	byte   ff_F9;  //TODO: pad?
-	byte   ff_FA;  //TODO: pad?
+	byte   _varF4;  //TODO: write-only?
+	byte   _varF5;
+	byte   _varF6;
+	byte   _varF7;
+	byte   _varF8;  //TODO: pad?
+	byte   _varF9;  //TODO: pad?
+	byte   _varFA;  //TODO: pad?
 	byte   _animationFlags;
 	byte   _giveObj1;
 	byte   _giveObj2;
 	byte   _giveObj3;
-	byte   ff_100;
+	byte   _var100;
 	byte   _roomVidNum;
-	byte   ff_102;
-	byte   ff_103;
+	byte   _var102;
+	byte   _var103;
 	byte   _roomBackgroundBankNum;
 	byte   _valleyVidNum;
 	byte   _updatePaletteFlag;
@@ -753,14 +753,13 @@ struct global_t {
 	byte   _prefVoiceVol[2];
 	byte   _prefSoundVolume[2];
 	byte   _citaAreaNum;
-	byte   ff_113;
+	byte   _var113;
 	byte   _lastPlaceNum;
 	byte   _saveEnd; // TODO: This has to be removed
 	int16  _textWidthLimit;
 	byte   _numGiveObjs;
-	byte   ff_119;     // unused
+	byte   _var119;     // unused
 };
-typedef struct global_t global_t;
 
 struct PakHeaderItem {
 	Common::String _name; //[16];

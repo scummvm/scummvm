@@ -209,7 +209,7 @@ void EdenGame::doFrescoes() {
 	glow_x = -1;
 	glow_y = -1;
 	p_global->_gameFlags |= GameFlags::gfFlag20;
-	p_global->ff_D4 = 0;
+	p_global->_varD4 = 0;
 	p_global->_curObjectId = 0;
 	p_global->_iconsIndex = 13;
 	p_global->_autoDialog = false;
@@ -223,7 +223,7 @@ void EdenGame::endFrescoes() {
 	curs_saved = true;
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
 	resetScroll();
-	p_global->ff_100 = 0xFF;
+	p_global->_var100 = 0xFF;
 	maj_salle(p_global->_roomNum);
 	if (p_global->_phaseNum == 114)
 		p_global->_narratorSequence = 1;
@@ -353,7 +353,7 @@ void EdenGame::gametomiroir(byte arg1) {
 	p_global->_iconsIndex = 16;
 	p_global->_autoDialog = false;
 	p_global->_displayFlags = DisplayFlags::dfMirror;
-	p_global->ff_102 = arg1;
+	p_global->_var102 = arg1;
 }
 
 void EdenGame::flipMode() {
@@ -397,9 +397,9 @@ void EdenGame::quitMirror() {
 	resetScroll();
 	saveFriezes();
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
-	p_global->ff_100 = 0xFF;
+	p_global->_var100 = 0xFF;
 	p_global->_eventType = EventType::etEventC;
-	p_global->ff_102 = 1;
+	p_global->_var102 = 1;
 }
 
 void EdenGame::clictimbre() {
@@ -430,7 +430,7 @@ void EdenGame::gotolieu(goto_t *go) {
 	showEvents();
 	if (!isAnswerYes())
 		return;
-	if (p_global->ff_113) {
+	if (p_global->_var113) {
 		waitEndSpeak();
 		if (!pomme_q)
 			close_perso();
@@ -447,7 +447,7 @@ void EdenGame::gotolieu(goto_t *go) {
 	_adamMapMarkPos.x = -1;
 	_adamMapMarkPos.y = -1;
 	temps_passe(p_global->_travelTime);
-	p_global->ff_100 = p_global->_roomPtr->ff_0;
+	p_global->_var100 = p_global->_roomPtr->ff_0;
 	p_global->_roomNum = p_global->_newRoomNum;
 	p_global->_areaNum = p_global->_roomNum >> 8;
 	p_global->_eventType = EventType::etEvent5;
@@ -476,7 +476,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 		showEvents();
 		if (!isAnswerYes())
 			return;
-		if (p_global->ff_113) {
+		if (p_global->_var113) {
 			waitEndSpeak();
 			if (!pomme_q)
 				close_perso();
@@ -488,7 +488,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 			p_global->_stepsToFindAppleNormal++;
 		}
 		faire_suivre((roomNum & 0xFF00) | p_global->_newLocation);
-		p_global->ff_100 = p_global->_roomPtr->ff_0;
+		p_global->_var100 = p_global->_roomPtr->ff_0;
 		p_global->_roomNum = roomNum;
 		p_global->_areaNum = roomNum >> 8;
 		p_global->_eventType = EventType::etEvent5;
@@ -498,7 +498,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 		majsalle1(roomNum);
 		p_global->_chronoFlag = 0;
 		p_global->_chrono = 0;
-		p_global->ff_54 = 0;
+		p_global->_var54 = 0;
 		if (p_global->_roomCharacterType == PersonFlags::pftTyrann)
 			setChrono(3000);
 		return;
@@ -688,7 +688,7 @@ void EdenGame::choisir() {
 	winObject(obj);
 	p_global->_iconsIndex = 16;
 	p_global->_autoDialog = false;
-	p_global->ff_60 = false;
+	p_global->_var60 = 0;
 	parle_moi();
 }
 
@@ -713,7 +713,7 @@ void EdenGame::dinaparle() {
 				_frescoTalk = true;
 				persovox();
 			}
-			p_global->ff_CA = 0;
+			p_global->_varCA = 0;
 			p_global->_dialogType = DialogType::dtTalk;
 		} else
 			endFrescoes();
@@ -841,7 +841,7 @@ void EdenGame::getplaque() {
 	gameRooms[131].video = 0;
 	bars_out();
 	playHNM(149);
-	p_global->ff_F1 = RoomFlags::rf04;
+	p_global->_varF1 = RoomFlags::rf04;
 	p_global->_drawFlags = DrawFlags::drDrawFlag20;
 	normalCursor = true;
 	maj2();
@@ -885,7 +885,7 @@ void EdenGame::gotohall() {
 void EdenGame::demitourlabi() {
 	uint16 target;
 	p_global->_prevLocation = p_global->_roomNum & 0xFF;
-	p_global->ff_100 = 0xFF;
+	p_global->_var100 = 0xFF;
 	target = (p_global->_roomNum & 0xFF00) | p_global->_roomPtr->exits[2];
 	faire_suivre(target);
 	p_global->_roomNum = target;
@@ -899,9 +899,9 @@ void EdenGame::gotonido() {
 	p_global->_roomImgBank = p_global->_roomPtr->bank;
 	p_global->_roomVidNum = p_global->_roomPtr->video;
 	p_global->_curRoomFlags = p_global->_roomPtr->flags;
-	p_global->ff_F1 = p_global->_roomPtr->flags;
+	p_global->_varF1 = p_global->_roomPtr->flags;
 	animpiece();
-	p_global->ff_100 = 0;
+	p_global->_var100 = 0;
 	maj2();
 }
 
@@ -919,7 +919,7 @@ void EdenGame::gotoval() {
 void EdenGame::visiter() {
 	bars_out();
 	playHNM(144);
-	p_global->ff_F1 = RoomFlags::rf04;
+	p_global->_varF1 = RoomFlags::rf04;
 	maj2();
 }
 
@@ -961,20 +961,20 @@ void EdenGame::moveWest() {
 }
 
 void EdenGame::afficher() {
-	if (!p_global->ff_102 && !p_global->ff_103) {
+	if (!p_global->_var102 && !p_global->_var103) {
 		if (needPaletteUpdate) {
 			needPaletteUpdate = false;
 			CLPalette_Send2Screen(global_palette, 0, 256);
 		}
 		CLBlitter_CopyView2Screen(p_mainview);
 	} else {
-		if (p_global->ff_102)
+		if (p_global->_var102)
 			effet3();
 		else
 			effet2();
 
-		p_global->ff_103 = 0;
-		p_global->ff_102 = 0;
+		p_global->_var103 = 0;
+		p_global->_var102 = 0;
 	}
 }
 
@@ -1902,8 +1902,8 @@ void EdenGame::buildcita() {
 	p_global->_curAreaPtr = p_global->_areaPtr;
 	if (area->citadelRoom)
 		citacapoute(p_global->_roomNum);
-	p_global->ff_6A = p_global->ff_69;
-	p_global->_narratorSequence = p_global->ff_69 | 0x80;
+	p_global->_var6A = p_global->_var69;
+	p_global->_narratorSequence = p_global->_var69 | 0x80;
 	area->citadelRoom = p_global->_roomPtr;
 	p_global->_roomPtr->flags &= ~RoomFlags::rf01;
 	p_global->_roomPtr->flags |= RoomFlags::rfHasCitadel;
@@ -2079,17 +2079,17 @@ void EdenGame::lieuvava(area_t *area) {
 			area->citadelLevel = p_global->_citaAreaFirstRoom->level;  //TODO: no search?
 		byte mask = ~(1 << (area->num - Areas::arChamaar));
 		p_global->_worldTyranSighted &= mask;
-		p_global->ff_4E &= mask;
+		p_global->_var4E &= mask;
 		p_global->_worldGaveGold &= mask;
 		p_global->_worldHasVelociraptors &= mask;
 		p_global->_worldHasTriceraptors &= mask;
 		p_global->_worldHasTyran &= mask;
-		p_global->ff_53 &= mask;
+		p_global->_var53 &= mask;
 		mask = ~mask;
 		if (area->_flags & AreaFlags::TyrannSighted)
 			p_global->_worldTyranSighted |= mask;
 		if (area->_flags & AreaFlags::afFlag4)
-			p_global->ff_4E |= mask;
+			p_global->_var4E |= mask;
 		if (area->_flags & AreaFlags::HasTriceraptors)
 			p_global->_worldHasTriceraptors |= mask;
 		if (area->_flags & AreaFlags::afGaveGold)
@@ -2099,13 +2099,13 @@ void EdenGame::lieuvava(area_t *area) {
 		if (area->_flags & AreaFlags::HasTyrann)
 			p_global->_worldHasTyran |= mask;
 		if (area->_flags & AreaFlags::afFlag20)
-			p_global->ff_53 |= mask;
+			p_global->_var53 |= mask;
 		if (area == p_global->_areaPtr) {
 			p_global->_curAreaFlags = area->_flags;
 			p_global->_curCitadelLevel = area->citadelLevel;
 		}
 	}
-	p_global->ff_4D &= p_global->_worldTyranSighted;
+	p_global->_var4D &= p_global->_worldTyranSighted;
 }
 
 void EdenGame::vivredino() {
@@ -2388,7 +2388,7 @@ void EdenGame::perso_spr(byte *spr) {
 		if (index > max_perso_desc)
 			index = max_perso_desc;
 		index *= 2;         //TODO: src = GetElem(ff_C2, index)
-		src = p_global->ff_C2;
+		src = p_global->_varC2;
 		src += READ_LE_UINT16(src + index);
 		while ((c = *src++)) {
 			*img++ = c;
@@ -2538,7 +2538,7 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		_gameIcons[0].ex = READ_LE_UINT16(ptr + 4);
 		_gameIcons[0].ey = READ_LE_UINT16(ptr + 6);
 		ptr += 8;
-		p_global->ff_C2 = ptr + 2;
+		p_global->_varC2 = ptr + 2;
 		max_perso_desc = READ_LE_UINT16(ptr) / 2;
 		ptr += READ_LE_UINT16(ptr);
 		baseptr = ptr;
@@ -2559,7 +2559,7 @@ void EdenGame::load_perso_cour() {
 void EdenGame::fin_perso() {
 	p_global->_animationFlags &= 0x3F;
 	p_global->_curCharacterAnimPtr = nullptr;
-	p_global->ff_CA = 0;
+	p_global->_varCA = 0;
 	p_global->_characterImageBank = -1;
 	anim_perfin();
 }
@@ -2579,13 +2579,13 @@ void EdenGame::close_perso() {
 		savedUnderSubtitles = true;
 		restaurefondbulle();
 		afficher();
-		p_global->ff_103 = 16;
+		p_global->_var103 = 16;
 	}
 	if (p_global->_characterPtr->_id == PersonId::pidNarrator)
-		p_global->ff_103 = 69;
+		p_global->_var103 = 69;
 	p_global->_eloiHaveNews &= 1;
-	p_global->ff_CA = 0;
-	p_global->ff_F6 = 0;
+	p_global->_varCA = 0;
+	p_global->_varF6 = 0;
 	if (p_global->_displayFlags == DisplayFlags::dfPerson) {
 		p_global->_displayFlags = p_global->_oldDisplayFlags;
 		p_global->_animationFlags &= 0x3F;
@@ -2602,14 +2602,14 @@ void EdenGame::close_perso() {
 				showObjects();
 			p_global->_numGiveObjs = 0;
 		}
-		if (p_global->ff_F2 & 1) {
-			p_global->ff_102 = 6;
-			p_global->ff_F2 &= ~1;
+		if (p_global->_varF2 & 1) {
+			p_global->_var102 = 6;
+			p_global->_varF2 &= ~1;
 		}
 		char oldLoc = p_global->_newLocation;
 		p_global->_newLocation = 0;
 		if (!(p_global->_narratorSequence & 0x80))
-			p_global->ff_100 = 0xFF;
+			p_global->_var100 = 0xFF;
 		maj_salle(p_global->_roomNum);
 		p_global->_newLocation = oldLoc;
 	}
@@ -2641,7 +2641,7 @@ void EdenGame::af_fondperso1() {
 		perso_rects[PER_MESSAGER].sx = 2;
 		bank = p_global->_characterBackgroundBankIdx;
 		if (p_global->_eventType == EventType::etEventE) {
-			p_global->ff_103 = 1;
+			p_global->_var103 = 1;
 			goto no_suiveur;
 		}
 		_gameIcons[0].sx = 60;
@@ -2838,7 +2838,7 @@ void EdenGame::my_bulle() {
 		if (c == 0x11 || c == 0x13) {
 			if (p_global->_phaseNum <= 272 || p_global->_phaseNum == 386) {
 				p_global->_eloiHaveNews = c & 0xF;
-				p_global->ff_4D = p_global->_worldTyranSighted;
+				p_global->_var4D = p_global->_worldTyranSighted;
 			}
 		} else if (c >= 0x80 && c < 0x90)
 			SysBeep(1);
@@ -3078,8 +3078,8 @@ void EdenGame::vavapers() {
 }
 
 void EdenGame::citadelle() {
-	p_global->ff_69++;
-	p_global->ff_F6++;
+	p_global->_var69++;
+	p_global->_varF6++;
 	parlemoiNormalFlag = true;
 	_closeCharacterDialog = true;
 }
@@ -3094,7 +3094,7 @@ void EdenGame::choixzone() {
 }
 
 void EdenGame::showevents1() {
-	p_global->ff_113 = 0;
+	p_global->_var113 = 0;
 	perso_ici(3);
 }
 
@@ -3163,8 +3163,8 @@ void EdenGame::parle_moi() {
 	char ok;
 	dial_t *dial;
 	endpersovox();
-	r28 = p_global->ff_F6;
-	p_global->ff_F6 = 0;
+	r28 = p_global->_varF6;
+	p_global->_varF6 = 0;
 	if (!r28) {
 		setChoiceNo();
 		if (p_global->_drawFlags & DrawFlags::drDrawInventory)
@@ -3201,7 +3201,7 @@ void EdenGame::parle_moi() {
 		parlemoiNormalFlag = false;
 		if (!ok) {
 			parlemoiNormalFlag = true;
-			if (p_global->ff_60) {
+			if (p_global->_var60) {
 				if (p_global->_characterPtr == &kPersons[PER_MESSAGER]) {
 					p_global->_dialogType = DialogType::dtTalk;
 					if (p_global->_eloiHaveNews)
@@ -3224,7 +3224,7 @@ void EdenGame::init_perso_ptr(perso_t *perso) {
 	p_global->_nextDialogPtr = nullptr;
 	_closeCharacterDialog = false;
 	dialogSkipFlags = DialogFlags::dfSpoken;
-	p_global->ff_60 = false;
+	p_global->_var60 = 0;
 	p_global->_textToken1 = 0;
 }
 
@@ -3254,7 +3254,7 @@ void EdenGame::handleCharacterDialog(int16 pers) {
 	displayPlace();
 	af_subtitle();
 	persovox();
-	p_global->ff_CA = 0;
+	p_global->_varCA = 0;
 	p_global->_dialogType = DialogType::dtTalk;
 }
 
@@ -3338,7 +3338,7 @@ void EdenGame::dino() {
 	debug("end dino talk");
 	if (p_global->_areaNum == Areas::arWhiteArch)
 		return;
-	if (p_global->ff_60)
+	if (p_global->_var60)
 		waitEndSpeak();
 	if (pomme_q)
 		return;
@@ -3417,7 +3417,7 @@ void EdenGame::adam() {
 		        && p_global->_phaseNum > 496 && p_global->_phaseNum < 512) {
 			bigphase1();
 			loseObject(Objects::obRoot);
-			p_global->ff_100 = 0xFF;
+			p_global->_var100 = 0xFF;
 			quitMirror();
 			maj_salle(p_global->_roomNum);
 			reste_ici(5);
@@ -3432,7 +3432,7 @@ void EdenGame::adam() {
 			p_global->_areaNum = Areas::arWhiteArch;
 			p_global->_eventType = EventType::etEvent5;
 			p_global->_valleyVidNum = 0;
-			p_global->ff_102 = 6;
+			p_global->_var102 = 6;
 			p_global->_newMusicType = MusicType::mtNormal;
 			maj_salle(p_global->_roomNum);
 		} else {
@@ -3471,7 +3471,7 @@ void EdenGame::adam() {
 		specialTextMode = true;
 		playHNM(vid);
 		needPaletteUpdate = true;
-		p_global->ff_102 = 16;
+		p_global->_var102 = 16;
 		showBars();
 		gametomiroir(0);
 		}
@@ -3596,7 +3596,7 @@ void EdenGame::specialBag(perso_t *perso) {
 void EdenGame::specialTrumpet(perso_t *perso) {
 	if (!isAnswerYes())
 		return;
-	p_global->ff_54 = 4;
+	p_global->_var54 = 4;
 	winObject(Objects::obTrumpet);
 	p_global->_drawFlags |= DrawFlags::drDrawInventory;
 	_closeCharacterDialog = true;
@@ -3731,7 +3731,7 @@ void EdenGame::dialonfollow() {
 }
 
 void EdenGame::abortdial() {
-	p_global->ff_F6++;
+	p_global->_varF6++;
 	if (p_global->_roomCharacterType != PersonFlags::pftTriceraptor || p_global->_characterPtr != &kPersons[PER_EVE])
 		return;
 	p_global->_areaPtr->_flags |= AreaFlags::afFlag4;
@@ -3745,20 +3745,20 @@ void EdenGame::narrateur() {
 	if (!(p_global->_displayFlags & DisplayFlags::dfFlag1))
 		return;
 	if (!p_global->_narratorSequence) {
-		if (p_global->ff_6A == p_global->ff_69)
+		if (p_global->_var6A == p_global->_var69)
 			goto skip;
 		buildcita();
 	}
-	p_global->ff_F5 |= 0x80;
-	p_global->ff_F2 &= ~1;  //TODO: check me
+	p_global->_varF5 |= 0x80;
+	p_global->_varF2 &= ~1;  //TODO: check me
 	p_global->_characterPtr = &kPersons[PER_UNKN_156];
-	p_global->ff_60 = false;
+	p_global->_var60 = 0;
 	p_global->_eventType = 0;
-	p_global->ff_103 = 69;
+	p_global->_var103 = 69;
 	if (dialo_even(&kPersons[PER_UNKN_156])) {
 		p_global->_narratorDialogPtr = p_global->_dialogPtr;
 		dialautoon();
-		p_global->ff_F2 |= 1;
+		p_global->_varF2 |= 1;
 		waitEndSpeak();
 		if (pomme_q)
 			return;
@@ -3771,14 +3771,14 @@ void EdenGame::narrateur() {
 			endpersovox();
 		}
 		p_global->_narratorDialogPtr = p_global->_dialogPtr;
-		p_global->ff_102 = 0;
-		p_global->ff_103 = 0;
+		p_global->_var102 = 0;
+		p_global->_var103 = 0;
 		close_perso();
 		lieuvava(p_global->_areaPtr);
 		if (p_global->_narratorSequence == 8)
 			deplaval(134);
 	}
-	p_global->ff_103 = 0;
+	p_global->_var103 = 0;
 	if (p_global->_narratorSequence == 10) {
 		suis_moi(5);
 		suis_moi(7);
@@ -3790,10 +3790,10 @@ void EdenGame::narrateur() {
 	}
 	p_global->_eventType = EventType::etEventD;
 	showEvents();
-	p_global->ff_F5 &= ~0x80;
+	p_global->_varF5 &= ~0x80;
 skip:
 	;
-	p_global->ff_F2 &= ~1;  //TODO: check me
+	p_global->_varF2 &= ~1;  //TODO: check me
 	if (p_global->_narratorSequence > 50 && p_global->_narratorSequence <= 80)
 		p_global->_endGameFlag = 50;
 	if (p_global->_narratorSequence == 3)
@@ -3973,7 +3973,7 @@ no_perso:
 		char pnum = p_global->_dialogPtr->_flags & 0xF;
 		if (pnum)
 			(this->*talk_subject[pnum - 1])();
-		p_global->ff_60 = true;
+		p_global->_var60 = 1;
 		p_global->_dialogPtr->_flags |= DialogFlags::dfSpoken;
 		p_global->_dialogPtr++;
 	}
@@ -4140,7 +4140,7 @@ void EdenGame::effet1() {
 	p_mainview->_zoom._srcTop = 0;
 	p_mainview->_normal._dstTop = ny;
 	p_mainview->_zoom._dstTop = dy;
-	p_global->ff_F1 = 0;
+	p_global->_varF1 = 0;
 }
 
 void EdenGame::effet2() {
@@ -4150,7 +4150,7 @@ void EdenGame::effet2() {
 	static int16 pattern4[] = {0, 3, 15, 12, 1, 7, 14, 8, 2, 11, 13, 4, 5, 6, 10, 9};
 
 	static int eff2pat = 0;
-	if (p_global->ff_103 == 69) {
+	if (p_global->_var103 == 69) {
 		effet4();
 		return;
 	}
@@ -5086,7 +5086,7 @@ void EdenGame::init_globals() {
 	p_global->_morkusSpyVideoNum3 = 83;
 	p_global->_morkusSpyVideoNum4 = 94;
 	p_global->_newMusicType = MusicType::mtDontChange;
-	p_global->ff_43 = 0;
+	p_global->_var43 = 0;
 	p_global->_videoSubtitleIndex = 0;
 	p_global->_partyInstruments = 0;
 	p_global->_monkGotRing = 0;
@@ -5096,15 +5096,15 @@ void EdenGame::init_globals() {
 	p_global->_lastInfo = 0;
 	p_global->_autoDialog = false;
 	p_global->_worldTyranSighted = 0;
-	p_global->ff_4D = 0;
-	p_global->ff_4E = 0;
+	p_global->_var4D = 0;
+	p_global->_var4E = 0;
 	p_global->_worldGaveGold = 0;
 	p_global->_worldHasTriceraptors = 0;
 	p_global->_worldHasVelociraptors = 0;
 	p_global->_worldHasTyran = 0;
-	p_global->ff_53 = 0;
-	p_global->ff_54 = 0;
-	p_global->ff_55 = 0;
+	p_global->_var53 = 0;
+	p_global->_var54 = 0;
+	p_global->_var55 = 0;
 	p_global->_gameHours = 0;
 	p_global->_textToken1 = 0;
 	p_global->_textToken2 = 0;
@@ -5115,59 +5115,59 @@ void EdenGame::init_globals() {
 	p_global->_newLocation = 0;
 	p_global->_prevLocation = 0;
 	p_global->_curPersoFlags = 0;
-	p_global->ff_60 = false;
+	p_global->_var60 = 0;
 	p_global->_eventType = EventType::etEvent5;
-	p_global->ff_62 = 0;
+	p_global->_var62 = 0;
 	p_global->_curObjectId = 0;
 	p_global->_curObjectFlags = 0;
-	p_global->ff_65 = 1;
+	p_global->_var65 = 1;
 	p_global->_roomCharacterType = 0;
 	p_global->_roomCharacterFlags = 0;
 	p_global->_narratorSequence = 0;
-	p_global->ff_69 = 0;
-	p_global->ff_6A = 0;
+	p_global->_var69 = 0;
+	p_global->_var6A = 0;
 	p_global->_frescoNumber = 0;
-	p_global->ff_6C = 0;
-	p_global->ff_6D = 0;
+	p_global->_var6C = 0;
+	p_global->_var6D = 0;
 	p_global->_labyrinthDirections = 0;
 	p_global->_labyrinthRoom = 0;
 	p_global->_curCharacterAnimPtr = nullptr;
 	p_global->_characterImageBank = 0;
 	p_global->_roomImgBank = 0;
 	p_global->_characterBackgroundBankIdx = 55;
-	p_global->ff_D4 = 0;
+	p_global->_varD4 = 0;
 	p_global->_frescoeWidth = 0;
 	p_global->_frescoeImgBank = 0;
-	p_global->ff_DA = 0;
-	p_global->ff_DC = 0;
+	p_global->_varDA = 0;
+	p_global->_varDC = 0;
 	p_global->_roomBaseX = 0;
-	p_global->ff_E0 = 0;
+	p_global->_varE0 = 0;
 	p_global->_dialogType = DialogType::dtTalk;
-	p_global->ff_E4 = 0;
+	p_global->_varE4 = 0;
 	p_global->_currMusicNum = 0;
 	p_global->_textNum = 0;
 	p_global->_travelTime = 0;
-	p_global->ff_EC = 0;
+	p_global->_varEC = 0;
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
 	p_global->_oldDisplayFlags = 1;
 	p_global->_drawFlags = 0;
-	p_global->ff_F1 = 0;
-	p_global->ff_F2 = 0;
+	p_global->_varF1 = 0;
+	p_global->_varF2 = 0;
 	p_global->_menuFlags = 0;
-	p_global->ff_F5 = 0;
-	p_global->ff_F6 = 0;
-	p_global->ff_F7 = false;
-	p_global->ff_F8 = 0;
-	p_global->ff_F9 = 0;
-	p_global->ff_FA = 0;
+	p_global->_varF5 = 0;
+	p_global->_varF6 = 0;
+	p_global->_varF7 = 0;
+	p_global->_varF8 = 0;
+	p_global->_varF9 = 0;
+	p_global->_varFA = 0;
 	p_global->_animationFlags = 0;
 	p_global->_giveObj1 = 0;
 	p_global->_giveObj2 = 0;
 	p_global->_giveObj3 = 0;
-	p_global->ff_100 = 0;
+	p_global->_var100 = 0;
 	p_global->_roomVidNum = 0;
-	p_global->ff_102 = 0;
-	p_global->ff_103 = 0;
+	p_global->_var102 = 0;
+	p_global->_var103 = 0;
 	p_global->_roomBackgroundBankNum = 0;
 	p_global->_valleyVidNum = 0;
 	p_global->_updatePaletteFlag = 0;
@@ -5175,7 +5175,7 @@ void EdenGame::init_globals() {
 	p_global->_objCount = 0;
 	p_global->_textBankIndex = 69;
 	p_global->_citaAreaNum = 0;
-	p_global->ff_113 = 0;
+	p_global->_var113 = 0;
 	p_global->_lastPlaceNum = 0;
 	p_global->_dialogPtr = nullptr;
 	p_global->_tapePtr = tapes;
@@ -5240,30 +5240,30 @@ void EdenGame::displaySingleRoom(room_t *room) {
 			ptr++;
 			index &= 0x1FF;
 			if (!(p_global->_displayFlags & 0x80)) {
-				if (index == 1 || p_global->ff_F7)
+				if (index == 1 || p_global->_varF7)
 					noclipax_avecnoir(index - 1, x, y);
 			}
-			p_global->ff_F7 = false;
+			p_global->_varF7 = 0;
 			continue;
 		}
 		if (b1 & 0x40) {
 			if (b1 & 0x20) {
-				char addIcon = 0;
+				bool addIcon = false;
 				icon_t *icon = p_global->_nextRoomIcon;
 				if (b0 < 4) {
 					if (p_global->_roomPtr->exits[b0])
-						addIcon = 1;
+						addIcon = true;
 				} else if (b0 > 229) {
 					if (p_global->_partyOutside & (1 << (b0 - 230)))
-						addIcon = 1;
+						addIcon = true;
 				} else if (b0 >= 100) {
 					debug("add object %d", b0 - 100);
 					if (objecthere(b0 - 100)) {
-						addIcon = 1;
-						p_global->ff_F7 = true;
+						addIcon = true;
+						p_global->_varF7 = 1;
 					}
 				} else
-					addIcon = 1;
+					addIcon = true;
 				if (addIcon) {
 					icon->_actionId = b0;
 					icon->_objectId = b0;
@@ -5311,7 +5311,7 @@ void EdenGame::displayRoom() {
 		if (room->flags & RoomFlags::rfPanable) {
 		// Scrollable room on 2 screens
 			p_global->_displayFlags |= DisplayFlags::dfPanable;
-			p_global->ff_F4 = 0;
+			p_global->_varF4 = 0;
 			rundcurs();
 			saveFriezes();
 			useBank(room->bank - 1);
@@ -5433,20 +5433,20 @@ void EdenGame::specialin() {
 
 void EdenGame::animpiece() {
 	room_t *room = p_global->_roomPtr;
-	if (p_global->_roomVidNum && p_global->ff_100 != 0xFF) {
+	if (p_global->_roomVidNum && p_global->_var100 != 0xFF) {
 		if (p_global->_valleyVidNum || !room->level || (room->flags & RoomFlags::rfHasCitadel)
-		        || room->level == p_global->ff_100) {
+		        || room->level == p_global->_var100) {
 			bars_out();
 			p_global->_updatePaletteFlag = 16;
 			if (!(p_global->_narratorSequence & 0x80)) //TODO: bug? !() @ 100DC
-				p_global->ff_102 = 0;
+				p_global->_var102 = 0;
 			if (!needToFade)
 				needToFade = room->flags & RoomFlags::rf02;
 			playHNM(p_global->_roomVidNum);
 			return;
 		}
 	}
-	p_global->ff_F1 &= ~RoomFlags::rf04;
+	p_global->_varF1 &= ~RoomFlags::rf04;
 }
 
 void EdenGame::getdino(room_t *room) {
@@ -5542,7 +5542,7 @@ void EdenGame::maj2() {
 	displayPlace();
 	assert(_vm->ScreenView->_pitch == 320);
 	if (p_global->_roomNum == 273 && p_global->_prevLocation == 18)
-		p_global->ff_102 = 1;
+		p_global->_var102 = 1;
 	if (p_global->_eventType == EventType::etEventC) {
 		drawTopScreen();
 		showObjects();
@@ -5554,18 +5554,18 @@ void EdenGame::maj2() {
 		r30 = true;
 	//TODO: ^^ inlined func?
 
-	if (p_global->ff_102 || p_global->ff_103)
+	if (p_global->_var102 || p_global->_var103)
 		afficher();
-	else if (p_global->ff_F1 == (RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01)) {
+	else if (p_global->_varF1 == (RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01)) {
 		drawBlackBars();
 		effet1();
-	} else if (p_global->ff_F1 && !(p_global->ff_F1 & RoomFlags::rf04) && !r30) {
+	} else if (p_global->_varF1 && !(p_global->_varF1 & RoomFlags::rf04) && !r30) {
 		if (!(p_global->_displayFlags & DisplayFlags::dfPanable))
 			drawBlackBars();
 		else if (p_global->_valleyVidNum)
 			drawBlackBars();
 		effet1();
-	} else if (r30 && !(p_global->ff_F1 & RoomFlags::rf04))
+	} else if (r30 && !(p_global->_varF1 & RoomFlags::rf04))
 		effetpix();
 	else
 		afficher128();
@@ -5585,9 +5585,9 @@ void EdenGame::majsalle1(int16 roomNum) {
 	p_global->_roomPtr = room;
 	debug("DrawRoom: room 0x%X, arg = 0x%X", p_global->_roomNum, roomNum);
 	p_global->_curRoomFlags = room->flags;
-	p_global->ff_F1 = room->flags;
+	p_global->_varF1 = room->flags;
 	animpiece();
-	p_global->ff_100 = 0;
+	p_global->_var100 = 0;
 	maj2();
 }
 
@@ -5813,7 +5813,7 @@ void EdenGame::entergame() {
 	if (!_gameLoaded) {
 		p_global->_roomNum = 279;
 		p_global->_areaNum = Areas::arMo;
-		p_global->ff_100 = 0xFF;
+		p_global->_var100 = 0xFF;
 		initPlace(p_global->_roomNum);
 		p_global->_currMusicNum = 0;
 		startmusique(1);
@@ -5830,7 +5830,7 @@ void EdenGame::entergame() {
 	drawTopScreen();
 	saveFriezes();
 	showBlackBars = true;
-	p_global->ff_102 = 1;
+	p_global->_var102 = 1;
 	maj_salle(p_global->_roomNum);
 	if (flag) {
 		p_global->_iconsIndex = 4;
@@ -6416,17 +6416,17 @@ void EdenGame::playHNM(int16 num) {
 		specialTextMode = false;
 	}
 	if (videoCanceled)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_vm->_video->_curVideoNum == 167)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_vm->_video->_curVideoNum == 104)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_vm->_video->_curVideoNum == 102)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_vm->_video->_curVideoNum == 77)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 	if (_vm->_video->_curVideoNum == 149)
-		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
+		p_global->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 }
 
 // Original name bullehnm
@@ -6958,9 +6958,9 @@ void EdenGame::noclicpanel() {
 		num = idx & 0x7F + 1;
 		if (num >= 5)
 			num = 1;
-		if (num == p_global->ff_43)
+		if (num == p_global->_var43)
 			return;
-		p_global->ff_43 = 0;
+		p_global->_var43 = 0;
 	}
 	num = p_global->_menuItemIdLo;
 	p_global->_menuItemIdLo = current_spot2->_objectId & 0xFF;
@@ -7008,7 +7008,7 @@ void EdenGame::testvoice() {
 	persovox();
 	waitEndSpeak();
 	endpersovox();
-	p_global->ff_CA = 0;
+	p_global->_varCA = 0;
 	p_global->_dialogType = DialogType::dtTalk;
 }
 
@@ -7072,7 +7072,7 @@ void EdenGame::initafterload() {
 		kPersoRoomBankTable[30] = 26;
 	_animateTalking = false;
 	animationActive = false;
-	p_global->ff_100 = 0;
+	p_global->_var100 = 0;
 	p_global->_eventType = EventType::etEventC;
 	p_global->_valleyVidNum = 0;
 	p_global->_drawFlags &= ~DrawFlags::drDrawMenu;
@@ -7129,7 +7129,7 @@ void EdenGame::panelrestart() {
 		kPersoRoomBankTable[30] = 26;
 	_animateTalking = false;
 	animationActive = false;
-	p_global->ff_100 = 0;
+	p_global->_var100 = 0;
 	p_global->_eventType = 0;
 	p_global->_valleyVidNum = 0;
 	p_global->_drawFlags &= ~DrawFlags::drDrawMenu;
@@ -7273,7 +7273,7 @@ void EdenGame::playtape() {
 	        || p_global->_roomNum != lastTapeRoomNum) {
 		lastTapeRoomNum = p_global->_roomNum;
 		p_global->_curCharacterAnimPtr = nullptr;
-		p_global->ff_CA = 0;
+		p_global->_varCA = 0;
 		p_global->_characterImageBank = -1;
 		anim_perfin();
 		load_perso_cour();
@@ -7434,7 +7434,7 @@ void EdenGame::affresult() {
 	int16 num = (kPersons[19]._id << 3) | p_global->_dialogType;
 	if (dialoscansvmas((dial_t *)getElem(gameDialogs, num)))
 		af_subtitle();
-	p_global->ff_CA = 0;
+	p_global->_varCA = 0;
 	p_global->_dialogType = DialogType::dtTalk;
 	p_global->_characterPtr = nullptr;
 }
@@ -7453,7 +7453,7 @@ void EdenGame::PommeQ() {
 			close_perso();
 		p_global->_displayFlags = DisplayFlags::dfFlag1;
 		resetScroll();
-		p_global->ff_100 = 0xFF;
+		p_global->_var100 = 0xFF;
 		maj_salle(p_global->_roomNum);
 	}
 	if (p_global->_displayFlags & DisplayFlags::dfPerson)
@@ -7466,8 +7466,8 @@ void EdenGame::PommeQ() {
 		stoptape();
 	if (_personTalking)
 		endpersovox();
-	p_global->ff_103 = 0;
-	p_global->ff_102 = 0;
+	p_global->_var103 = 0;
+	p_global->_var102 = 0;
 	putObject();
 	_currCursor = 53;
 	if (p_global->_displayFlags != DisplayFlags::dfFlag2)
@@ -7502,7 +7502,7 @@ void EdenGame::suiveurs(perso_t *perso) {
 }
 
 void EdenGame::evenements(perso_t *perso) {
-	if (p_global->ff_113)
+	if (p_global->_var113)
 		return;
 
 	if (perso >= &kPersons[PER_UNKN_18C])
@@ -7511,12 +7511,12 @@ void EdenGame::evenements(perso_t *perso) {
 	if (!dialo_even(perso))
 		return;
 
-	p_global->ff_113++;
+	p_global->_var113++;
 	p_global->_oldDisplayFlags = 1;
 	perso = p_global->_characterPtr;
 	init_perso_ptr(perso);
 	if (!(perso->_partyMask & PersonMask::pmLeader))
-		p_global->ff_60 = true;
+		p_global->_var60 = 1;
 	p_global->_eventType = 0;
 }
 
