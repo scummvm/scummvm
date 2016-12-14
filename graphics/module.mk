@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	maccursor.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
+	macgui/mactext.o \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
 	macgui/macwindowmanager.o \
