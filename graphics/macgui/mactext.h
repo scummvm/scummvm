@@ -48,7 +48,6 @@ private:
 	int _interLinear;
 
 	Common::Array<Common::String> _text;
-	Common::Array<int> _widths;
 
 	int _textMaxWidth;
 

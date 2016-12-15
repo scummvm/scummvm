@@ -33,7 +33,10 @@ MacText::MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolo
 
 	_interLinear = 0; // 0 pixels between the lines by default
 
-	_textMaxWidth = -1;
+	if (_maxWidth == -1)
+		_textMaxWidth = 1000000; // Some big value
+	else
+		_textMaxWidth = -1;
 
 	splitString();
 
@@ -46,6 +49,8 @@ void MacText::splitString() {
 	Common::String tmp;
 	bool prevCR;
 
+	_text.clear();
+
 	while (*s) {
 		if (*s == '\n' && prevCR) {	// trean \r\n as one
 			prevCR = false;
@@ -56,8 +61,7 @@ void MacText::splitString() {
 			prevCR = true;
 
 		if (*s == '\r' || *s == '\n') {
-			_text.push_back(tmp);
-			_widths.push_back(_font->getStringWidth(tmp));
+			_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
 
 			tmp.clear();
 
@@ -68,24 +72,13 @@ void MacText::splitString() {
 	}
 
 	if (_text.size())
-		_text.push_back(tmp);
-
-	calcMaxWidth();
-}
-
-void MacText::calcMaxWidth() {
-	int max = -1;
-
-	for (uint i = 0; i < _widths.size(); i++)
-		if (max < _widths[i])
-			max = _widths[i];
-
-	_textMaxWidth = max;
+		_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
 }
 
 void MacText::render() {
 	if (_fullRefresh) {
-		_surface.create(_textMaxWidth, _text.size() * (_font->getFontHeight() + _interLinear));
+		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth,
+					_text.size() * (_font->getFontHeight() + _interLinear));
 
 		_surface.clear(_bgcolor);
 
