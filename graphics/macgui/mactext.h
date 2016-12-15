@@ -34,6 +34,9 @@ public:
 
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
+	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
+
+
 private:
 	void splitString();
 	void render();

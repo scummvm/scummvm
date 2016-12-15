@@ -94,4 +94,15 @@ void MacText::render() {
 	}
 }
 
+void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
+	render();
+
+	if (x + w < _surface.w || y + h < _surface.h) {
+		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
+	}
+
+	g->blitFrom(_surface, Common::Rect(MIN<int>(_surface.w, x), MIN<int>(_surface.h, y),
+									   MIN<int>(_surface.w, x + w), MIN<int>(_surface.w, y + w)), Common::Point(xoff, yoff));
+}
+
 } // End of namespace Graphics
