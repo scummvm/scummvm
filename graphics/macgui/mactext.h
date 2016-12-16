@@ -35,12 +35,14 @@ public:
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
+	void appendText(Common::String str);
 
 
 private:
-	void splitString();
+	void splitString(Common::String &s);
 	void render();
 	void calcMaxWidth();
+	void reallocSurface();
 
 private:
 	Common::String _str;

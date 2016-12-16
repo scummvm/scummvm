@@ -38,18 +38,16 @@ MacText::MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolo
 	else
 		_textMaxWidth = -1;
 
-	splitString();
+	splitString(_str);
 
 	_fullRefresh = true;
 }
 
-void MacText::splitString() {
-	const char *s = _str.c_str();
+void MacText::splitString(Common::String &str) {
+	const char *s = str.c_str();
 
 	Common::String tmp;
 	bool prevCR;
-
-	_text.clear();
 
 	while (*s) {
 		if (*s == '\n' && prevCR) {	// trean \r\n as one
@@ -75,10 +73,19 @@ void MacText::splitString() {
 		_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
 }
 
+void MacText::reallocSurface() {
+	int lineHeight = _font->getFontHeight() + _interLinear;
+	int requiredHeight = (_text.size() + (_text.size() * 10 + 9) / 10) * lineHeight;
+
+	if (_surface.w < requiredHeight) {
+		// realloc surface
+		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth, requiredHeight);
+	}
+}
+
 void MacText::render() {
 	if (_fullRefresh) {
-		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth,
-					_text.size() * (_font->getFontHeight() + _interLinear));
+		reallocSurface();
 
 		_surface.clear(_bgcolor);
 
@@ -103,6 +110,16 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	g->blitFrom(_surface, Common::Rect(MIN<int>(_surface.w, x), MIN<int>(_surface.h, y),
 									   MIN<int>(_surface.w, x + w), MIN<int>(_surface.w, y + w)), Common::Point(xoff, yoff));
+}
+
+void MacText::appendText(Common::String str) {
+	//int oldLen = _text.size();
+
+	splitString(str);
+
+	reallocSurface();
+
+	//render(oldLen + 1, _text.size());
 }
 
 } // End of namespace Graphics
