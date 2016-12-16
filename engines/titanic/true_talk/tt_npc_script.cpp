@@ -406,9 +406,10 @@ void TTnpcScript::save(SimpleFile *file) {
 	file->writeNumber(_dialDelta);
 	file->writeNumber(_field7C);
 
+	// Write out the dial values
 	file->writeNumber(10);
 	for (int idx = 0; idx < 10; ++idx)
-		file->writeNumber(_data[idx]);
+		file->writeNumber(_dialValues[idx]);
 }
 
 void TTnpcScript::load(SimpleFile *file) {
@@ -423,11 +424,12 @@ void TTnpcScript::load(SimpleFile *file) {
 	for (int idx = count; idx > 4; --idx)
 		file->readNumber();
 
+	// Read in the dial values
 	count = file->readNumber();
 	for (int idx = 0; idx < count; ++idx) {
 		int v = file->readNumber();
 		if (idx < 10)
-			_data[idx] = v;
+			_dialValues[idx] = v;
 	}
 }
 
