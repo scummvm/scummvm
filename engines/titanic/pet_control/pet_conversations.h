@@ -122,12 +122,12 @@ private:
 	/**
 	 * Get a dial level
 	 */
-	uint getDialLevel(uint dialNum, TTnpcScript *script, int v = 1);
+	uint getDialLevel(uint dialNum, TTnpcScript *script, bool flag = true);
 
 	/**
 	 * Called when the dial for an NPC is being changed
 	 */
-	void npcDialChange(uint dialNum, int oldLevel, int newLevel);
+	void npcDialChange(uint dialNum, uint oldLevel, uint newLevel);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}

@@ -532,30 +532,31 @@ void CPetConversations::updateDial(uint dialNum, const CString &npcName) {
 	_npcLevels[dialNum] = newLevel;
 }
 
-uint CPetConversations::getDialLevel(uint dialNum, TTnpcScript *script, int v) {
-	bool flag = v != 0;
-
+uint CPetConversations::getDialLevel(uint dialNum, TTnpcScript *script, bool flag) {
 	if (!script)
 		return 0;
 	else
 		return MAX(script->getDialLevel(dialNum, flag), 15);
 }
 
-void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) {
-	const uint range1[2] = { 0, 21 };
-	const uint range2[2] = { 22, 43 };
+void CPetConversations::npcDialChange(uint dialNum, uint oldLevel, uint newLevel) {
+	const uint ascending[2] = { 0, 21 };
+	const uint descending[2] = { 43, 22 };
+	assert(oldLevel <= 100 && newLevel <= 100);
 
 	if (newLevel != oldLevel) {
-		uint src = range1[0], dest = range1[1];
-		if (oldLevel < newLevel) {
-			src = range2[0];
-			dest = range2[1];
+		debugC(ERROR_DETAILED, kDebugScripts, "Dial %d change from %d to %d",
+			dialNum, oldLevel, newLevel);
+		uint src = ascending[0], dest = ascending[1];
+		if (newLevel < oldLevel) {
+			src = descending[0];
+			dest = descending[1];
 		}
 
-		int64 val1 = (oldLevel * dest) + (100 - oldLevel) * src;
+		uint val1 = (oldLevel * dest) + (100 - oldLevel) * src;
 		uint startFrame = val1 / 100;
 
-		int64 val2 = (newLevel * dest) + (100 - newLevel) * src;
+		uint val2 = (newLevel * dest) + (100 - newLevel) * src;
 		uint endFrame = val2 / 100;
 
 		if (startFrame != endFrame)
