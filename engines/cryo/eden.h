@@ -147,8 +147,8 @@ private:
 	bool naitredino(char persoType);
 	void newcita(char arg1, int16 arg2, room_t *room);
 	void citaevol(int16 level);
-	void citacapoute(int16 roomNum);
-	void buildcita();
+	void destroyCitadelRoom(int16 roomNum);
+	void buildCitadel();
 	void citatombe(char level);
 	void constcita();
 	void depladino(perso_t *perso);

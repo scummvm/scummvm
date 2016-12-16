@@ -420,16 +420,14 @@ struct icon_t {
 	uint32 _actionId;
 	uint32 _objectId;
 };
-typedef struct icon_t icon_t;
 
 struct goto_t {
-	byte   areaNum;    // target area
-	byte   curAreaNum; // current area
-	byte   departVid;
-	byte   travelTime;     // time to skip while in travel
-	byte   arriveVid;
+	byte   _areaNum;    // target area
+	byte   _curAreaNum; // current area
+	byte   _enterVideoNum;
+	byte   _travelTime;     // time to skip while in travel
+	byte   _arriveVideoNum;
 };
-typedef struct goto_t goto_t;
 
 namespace RoomFlags {
 enum RoomFlags {
@@ -445,17 +443,16 @@ enum RoomFlags {
 }
 
 struct room_t {
-	byte   ff_0;
-	byte   exits[4];   //TODO: signed?
-	byte   flags;
-	uint16  bank;
-	uint16  party;
-	byte   level;      // Citadel level
-	byte   video;
-	byte   location;
-	byte   background; // bg/mirror image number (relative)
+	byte    _id;
+	byte    _exits[4];   //TODO: signed?
+	byte    _flags;
+	uint16  _bank;
+	uint16  _party;
+	byte    _level;      // Citadel level
+	byte    _video;
+	byte    _location;
+	byte    _backgroundBankNum; // bg/mirror image number (relative)
 };
-typedef struct room_t room_t;
 
 namespace AreaFlags {
 enum AreaFlags {
@@ -484,16 +481,15 @@ enum AreaType {
 }
 
 struct area_t {
-	byte   num;
-	byte   type;
+	byte    _num;
+	byte    _type;
 	uint16  _flags;
-	uint16  firstRoomIndex;
-	byte   citadelLevel;
-	byte   salNum;
-	room_t          *citadelRoom;
-	int16           visitCount;
+	uint16  _firstRoomIdx;
+	byte    _citadelLevel;
+	byte    _placeNum;
+	room_t *_citadelRoomPtr;
+	int16   _visitCount;
 };
-typedef struct area_t area_t;
 
 namespace ValleyNews {
 enum ValleyNews {

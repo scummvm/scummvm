@@ -422,8 +422,8 @@ void EdenGame::clicplanval() {
 }
 
 void EdenGame::gotolieu(goto_t *go) {
-	p_global->_valleyVidNum = go->arriveVid;
-	p_global->_travelTime = go->travelTime * 256;
+	p_global->_valleyVidNum = go->_arriveVideoNum;
+	p_global->_travelTime = go->_travelTime * 256;
 	p_global->_stepsToFindAppleFast = 0;
 	p_global->_eventType = EventType::etEvent2;
 	setChoiceYes();
@@ -435,9 +435,9 @@ void EdenGame::gotolieu(goto_t *go) {
 		if (!pomme_q)
 			close_perso();
 	}
-	if (go->departVid) {
+	if (go->_enterVideoNum) {
 		bars_out();
-		playHNM(go->departVid);
+		playHNM(go->_enterVideoNum);
 		needToFade = true;
 	}
 	initPlace(p_global->_newRoomNum);
@@ -447,7 +447,7 @@ void EdenGame::gotolieu(goto_t *go) {
 	_adamMapMarkPos.x = -1;
 	_adamMapMarkPos.y = -1;
 	temps_passe(p_global->_travelTime);
-	p_global->_var100 = p_global->_roomPtr->ff_0;
+	p_global->_var100 = p_global->_roomPtr->_id;
 	p_global->_roomNum = p_global->_newRoomNum;
 	p_global->_areaNum = p_global->_roomNum >> 8;
 	p_global->_eventType = EventType::etEvent5;
@@ -482,13 +482,13 @@ void EdenGame::deplaval(uint16 roomNum) {
 				close_perso();
 		}
 		specialout();
-		if (p_global->_areaPtr->type == AreaType::atValley) {
+		if (p_global->_areaPtr->_type == AreaType::atValley) {
 			temps_passe(32);
 			p_global->_stepsToFindAppleFast++;
 			p_global->_stepsToFindAppleNormal++;
 		}
 		faire_suivre((roomNum & 0xFF00) | p_global->_newLocation);
-		p_global->_var100 = p_global->_roomPtr->ff_0;
+		p_global->_var100 = p_global->_roomPtr->_id;
 		p_global->_roomNum = roomNum;
 		p_global->_areaNum = roomNum >> 8;
 		p_global->_eventType = EventType::etEvent5;
@@ -524,8 +524,8 @@ void EdenGame::deplaval(uint16 roomNum) {
 	if (newAreaNum == Areas::arTausCave)
 		gotolieu(&gotos[0]);
 	else {
-		for (goto_t *go = gotos + 1; go->curAreaNum != 0xFF; go++) {
-			if (go->curAreaNum == curAreaNum) {
+		for (goto_t *go = gotos + 1; go->_curAreaNum != 0xFF; go++) {
+			if (go->_curAreaNum == curAreaNum) {
 				gotolieu(go);
 				break;
 			}
@@ -544,16 +544,16 @@ void EdenGame::move(Direction dir) {
 	p_global->_prevLocation = roomNum & 0xFF;
 	switch (dir) {
 	case kCryoNorth:
-		newLoc = room->exits[0];
+		newLoc = room->_exits[0];
 		break;
 	case kCryoEast:
-		newLoc = room->exits[1];
+		newLoc = room->_exits[1];
 		break;
 	case kCryoSouth:
-		newLoc = room->exits[2];
+		newLoc = room->_exits[2];
 		break;
 	case kCryoWest:
-		newLoc = room->exits[3];
+		newLoc = room->_exits[3];
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
@@ -567,16 +567,16 @@ void EdenGame::move2(Direction dir) {
 	p_global->_prevLocation = roomNum & 0xFF;
 	switch (dir) {
 	case kCryoNorth:
-		newLoc = room->exits[0];
+		newLoc = room->_exits[0];
 		break;
 	case kCryoEast:
-		newLoc = room->exits[1];
+		newLoc = room->_exits[1];
 		break;
 	case kCryoSouth:
-		newLoc = room->exits[2];
+		newLoc = room->_exits[2];
 		break;
 	case kCryoWest:
-		newLoc = room->exits[3];
+		newLoc = room->_exits[3];
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
@@ -631,8 +631,8 @@ void EdenGame::fresqueslasc() {
 
 void EdenGame::pushpierre() {
 	if (p_global->_curObjectId == 0) {
-		gameRooms[22].exits[0] = 17;
-		gameRooms[26].exits[2] = 9;
+		gameRooms[22]._exits[0] = 17;
+		gameRooms[26]._exits[2] = 9;
 		move(kCryoNorth);
 	}
 }
@@ -654,8 +654,8 @@ void EdenGame::tetemomie() {
 
 void EdenGame::tetesquel() {
 	if (p_global->_curObjectId == Objects::obTooth) {
-		gameRooms[22].exits[0] = 16;
-		gameRooms[26].exits[2] = 13;
+		gameRooms[22]._exits[0] = 16;
+		gameRooms[26]._exits[2] = 13;
 		_gameIcons[16]._cursorId |= 0x8000;
 		loseObject(Objects::obTooth);
 		move(kCryoNorth);
@@ -753,7 +753,7 @@ void EdenGame::kingDialog3() {
 
 void EdenGame::getcouteau() {
 	if (p_global->_phaseNum >= 80) {
-		gameRooms[113].video = 0;
+		gameRooms[113]._video = 0;
 		getObject(Objects::obKnife);
 	}
 	p_global->_eventType = EventType::etEvent7;
@@ -781,20 +781,20 @@ void EdenGame::getor() {
 void EdenGame::getnido() {
 	if (p_global->_curObjectId != 0)
 		return;
-	p_global->_roomPtr->bank = 282; //TODO: fix me
+	p_global->_roomPtr->_bank = 282; //TODO: fix me
 	p_global->_roomPtr--;
-	p_global->_roomPtr->bank = 281; //TODO: fix me
-	p_global->_roomPtr->ff_0 = 3;
+	p_global->_roomPtr->_bank = 281; //TODO: fix me
+	p_global->_roomPtr->_id = 3;
 	getObject(Objects::obFullNest);
 }
 
 void EdenGame::getnidv() {
 	if (p_global->_curObjectId != 0)
 		return;
-	p_global->_roomPtr->bank = 282; //TODO: fix me
+	p_global->_roomPtr->_bank = 282; //TODO: fix me
 	p_global->_roomPtr--;
-	p_global->_roomPtr->bank = 281; //TODO: fix me
-	p_global->_roomPtr->ff_0 = 3;
+	p_global->_roomPtr->_bank = 281; //TODO: fix me
+	p_global->_roomPtr->_id = 3;
 	getObject(Objects::obNest);
 }
 
@@ -812,16 +812,16 @@ void EdenGame::getcorne() {
 void EdenGame::getsoleil() {
 	if (p_global->_curObjectId != 0)
 		return;
-	gameRooms[238].video = 0;
-	gameRooms[238].flags = RoomFlags::rf80;
+	gameRooms[238]._video = 0;
+	gameRooms[238]._flags = RoomFlags::rf80;
 	getObject(Objects::obSunStone);
 }
 
 void EdenGame::getoeuf() {
 	if (p_global->_curObjectId != 0)
 		return;
-	p_global->_roomPtr->flags = 0;
-	p_global->_roomPtr->video = 0;
+	p_global->_roomPtr->_flags = 0;
+	p_global->_roomPtr->_video = 0;
 	getObject(Objects::obEgg);
 }
 
@@ -838,7 +838,7 @@ void EdenGame::getplaque() {
 	p_global->_curObjectCursor = 9;
 	_gameIcons[16]._cursorId |= 0x8000;
 	showObjects();
-	gameRooms[131].video = 0;
+	gameRooms[131]._video = 0;
 	bars_out();
 	playHNM(149);
 	p_global->_varF1 = RoomFlags::rf04;
@@ -865,7 +865,7 @@ void EdenGame::voirlac() {
 		perso->_flags &= ~PersonFlags::pf80; //TODO: useless? see above
 		area->_flags |= AreaFlags::afFlag8;
 		p_global->_curAreaFlags |= AreaFlags::afFlag8;
-		room->ff_0 = 3;
+		room->_id = 3;
 	}
 	debug("sea monster: room = %X, d0 = %X\n", p_global->_roomNum, p_global->_roomImgBank);
 	bars_out();
@@ -886,7 +886,7 @@ void EdenGame::demitourlabi() {
 	uint16 target;
 	p_global->_prevLocation = p_global->_roomNum & 0xFF;
 	p_global->_var100 = 0xFF;
-	target = (p_global->_roomNum & 0xFF00) | p_global->_roomPtr->exits[2];
+	target = (p_global->_roomNum & 0xFF00) | p_global->_roomPtr->_exits[2];
 	faire_suivre(target);
 	p_global->_roomNum = target;
 	p_global->_eventType = EventType::etEvent5;
@@ -896,10 +896,10 @@ void EdenGame::demitourlabi() {
 void EdenGame::gotonido() {
 	p_global->_roomPtr++;
 	p_global->_eventType = 0;
-	p_global->_roomImgBank = p_global->_roomPtr->bank;
-	p_global->_roomVidNum = p_global->_roomPtr->video;
-	p_global->_curRoomFlags = p_global->_roomPtr->flags;
-	p_global->_varF1 = p_global->_roomPtr->flags;
+	p_global->_roomImgBank = p_global->_roomPtr->_bank;
+	p_global->_roomVidNum = p_global->_roomPtr->_video;
+	p_global->_curRoomFlags = p_global->_roomPtr->_flags;
+	p_global->_varF1 = p_global->_roomPtr->_flags;
 	animpiece();
 	p_global->_var100 = 0;
 	maj2();
@@ -1579,7 +1579,7 @@ void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 	p_global->_drawFlags &= ~DrawFlags::drDrawTopScreen;
 	useBank(314);
 	noclipax(36, 83, 0);
-	noclipax(p_global->_areaPtr->num - 1, 0, 0);
+	noclipax(p_global->_areaPtr->_num - 1, 0, 0);
 	noclipax(23, 145, 0);
 	for (perso_t *perso = &kPersons[PER_DINA]; perso != &kPersons[PER_UNKN_156]; perso++) {
 		if ((perso->_flags & PersonFlags::pfInParty) && !(perso->_flags & PersonFlags::pf80))
@@ -1593,15 +1593,15 @@ void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 
 // Original name: affplanval
 void EdenGame::displayValleyMap() { // Draw mini-map
-	if (p_global->_areaPtr->type == AreaType::atValley) {
-		noclipax(p_global->_areaPtr->num + 9, 266, 1);
+	if (p_global->_areaPtr->_type == AreaType::atValley) {
+		noclipax(p_global->_areaPtr->_num + 9, 266, 1);
 		for (perso_t *perso = &kPersons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 			if (((perso->_roomNum >> 8) == p_global->_areaNum)
 			        && !(perso->_flags & PersonFlags::pf80) && (perso->_flags & PersonFlags::pf20))
 				displayMapMark(33, perso->_roomNum & 0xFF);
 		}
-		if (p_global->_areaPtr->citadelLevel)
-			displayMapMark(34, p_global->_areaPtr->citadelRoom->location);
+		if (p_global->_areaPtr->_citadelLevel)
+			displayMapMark(34, p_global->_areaPtr->_citadelRoomPtr->_location);
 		saveTopFrieze(0);
 		int16 loc = p_global->_roomNum & 0xFF;
 		if (loc >= 16)
@@ -1726,7 +1726,7 @@ bool EdenGame::istyran(int16 roomNum) {
 }
 
 void EdenGame::istyranval(area_t *area) {
-	byte areaNum = area->num;
+	byte areaNum = area->_num;
 	area->_flags &= ~AreaFlags::HasTyrann;
 	for (perso_t *perso = &kPersons[PER_UNKN_372]; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_flags & PersonFlags::pf80)
@@ -1774,10 +1774,10 @@ bool EdenGame::canMoveThere(char loc, perso_t *perso) {
 	if (roomNum == p_global->_roomNum)
 		return false;
 
-	for (; room->ff_0 != 0xFF; room++) {
-		if (room->location != loc)
+	for (; room->_id != 0xFF; room++) {
+		if (room->_location != loc)
 			continue;
-		if (!(room->flags & RoomFlags::rf01))
+		if (!(room->_flags & RoomFlags::rf01))
 			return false;
 		for (perso = &kPersons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 			if (perso->_flags & PersonFlags::pf80)
@@ -1836,39 +1836,39 @@ void EdenGame::newcita(char arg1, int16 arg2, room_t *room) {
 	while (cita->ff_0 < arg2)
 		cita++;
 
-	uint16 index = ((room->flags & 0xC0) >> 6);    //TODO: this is very wrong
+	uint16 index = ((room->_flags & 0xC0) >> 6);    //TODO: this is very wrong
 	int16 *ptr = cita->ff_2 + index * 2;
 	if (arg1 == 4 || arg1 == 6)
 		ptr++;
 
-	room->bank = ptr[0];
-	room->video = ptr[8];
-	room->flags |= RoomFlags::rf02;
+	room->_bank = ptr[0];
+	room->_video = ptr[8];
+	room->_flags |= RoomFlags::rf02;
 }
 
 void EdenGame::citaevol(int16 level) {
-	room_t *room = p_global->_curAreaPtr->citadelRoom;
+	room_t *room = p_global->_curAreaPtr->_citadelRoomPtr;
 	perso_t *perso = &kPersons[PER_UNKN_372];
-	byte loc = room->location;
+	byte loc = room->_location;
 	if (level >= 80 && !istrice((p_global->_citaAreaNum << 8) | loc)) {
-		room->level = 79;
+		room->_level = 79;
 		return;
 	}
 
 	if (level > 160)
 		level = 160;
 
-	if (room->level < 64 && level >= 64 && naitredino(PersonFlags::pftTriceraptor)) {
+	if (room->_level < 64 && level >= 64 && naitredino(PersonFlags::pftTriceraptor)) {
 		p_global->_curAreaPtr->_flags |= AreaFlags::HasTriceraptors;
 		addInfo(p_global->_citaAreaNum + ValleyNews::vnTriceraptorsIn);
 	}
-	if (room->level < 40 && level >= 40 && naitredino(PersonFlags::pftVelociraptor)) {
+	if (room->_level < 40 && level >= 40 && naitredino(PersonFlags::pftVelociraptor)) {
 		p_global->_curAreaPtr->_flags |= AreaFlags::HasVelociraptors;
 		addInfo(p_global->_citaAreaNum + ValleyNews::vnVelociraptorsIn);
 	}
-	room->level = level;
+	room->_level = level;
 	newcita(p_global->_citaAreaNum, level, room);
-	byte speed = kDinoSpeedForCitaLevel[room->level >> 4];
+	byte speed = kDinoSpeedForCitaLevel[room->_level >> 4];
 	for (; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_flags & PersonFlags::pf80)
 			continue;
@@ -1877,17 +1877,18 @@ void EdenGame::citaevol(int16 level) {
 	}
 }
 
-void EdenGame::citacapoute(int16 roomNum) {
+// Original name: citacapoute
+void EdenGame::destroyCitadelRoom(int16 roomNum) {
 	perso_t *perso = &kPersons[PER_UNKN_18C];
-	room_t *room = p_global->_curAreaPtr->citadelRoom;
-	room->flags |= RoomFlags::rf01;
-	room->flags &= ~RoomFlags::rfHasCitadel;
-	room->bank = 193;
-	room->video = 0;
-	room->level = 0;
-	p_global->_curAreaPtr->citadelLevel = 0;
-	p_global->_curAreaPtr->citadelRoom = 0;
-	roomNum = (roomNum & ~0xFF) | room->location;
+	room_t *room = p_global->_curAreaPtr->_citadelRoomPtr;
+	room->_flags |= RoomFlags::rf01;
+	room->_flags &= ~RoomFlags::rfHasCitadel;
+	room->_bank = 193;
+	room->_video = 0;
+	room->_level = 0;
+	p_global->_curAreaPtr->_citadelLevel = 0;
+	p_global->_curAreaPtr->_citadelRoomPtr = 0;
+	roomNum = (roomNum & ~0xFF) | room->_location;
 	for (; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_roomNum == roomNum) {
 			perso->_flags &= ~PersonFlags::pf80;
@@ -1897,17 +1898,18 @@ void EdenGame::citacapoute(int16 roomNum) {
 	}
 }
 
-void EdenGame::buildcita() {
+// Original name: buildcita
+void EdenGame::buildCitadel() {
 	area_t *area = p_global->_areaPtr;
 	p_global->_curAreaPtr = p_global->_areaPtr;
-	if (area->citadelRoom)
-		citacapoute(p_global->_roomNum);
+	if (area->_citadelRoomPtr)
+		destroyCitadelRoom(p_global->_roomNum);
 	p_global->_var6A = p_global->_var69;
 	p_global->_narratorSequence = p_global->_var69 | 0x80;
-	area->citadelRoom = p_global->_roomPtr;
-	p_global->_roomPtr->flags &= ~RoomFlags::rf01;
-	p_global->_roomPtr->flags |= RoomFlags::rfHasCitadel;
-	p_global->_roomPtr->level = 32;
+	area->_citadelRoomPtr = p_global->_roomPtr;
+	p_global->_roomPtr->_flags &= ~RoomFlags::rf01;
+	p_global->_roomPtr->_flags |= RoomFlags::rfHasCitadel;
+	p_global->_roomPtr->_level = 32;
 	newcita(p_global->_areaNum, 32, p_global->_roomPtr);
 	area->_flags &= ~AreaFlags::TyrannSighted;
 	if (!(area->_flags & AreaFlags::afFlag8000)) {
@@ -1926,9 +1928,9 @@ void EdenGame::buildcita() {
 
 void EdenGame::citatombe(char level) {
 	if (level)
-		newcita(p_global->_citaAreaNum, level, p_global->_curAreaPtr->citadelRoom);
+		newcita(p_global->_citaAreaNum, level, p_global->_curAreaPtr->_citadelRoomPtr);
 	else {
-		citacapoute(p_global->_citaAreaNum << 8);
+		destroyCitadelRoom(p_global->_citaAreaNum << 8);
 		addInfo(p_global->_citaAreaNum + ValleyNews::vnCitadelLost);
 	}
 }
@@ -1936,25 +1938,25 @@ void EdenGame::citatombe(char level) {
 void EdenGame::constcita() {
 	//	room_t *room = p_global->cur_area_ptr->room_ptr; //TODO: wrong? chk below
 	//	byte id = room->ff_C;
-	if (!p_global->_curAreaPtr->citadelLevel || !p_global->_curAreaPtr->citadelRoom)
+	if (!p_global->_curAreaPtr->_citadelLevel || !p_global->_curAreaPtr->_citadelRoomPtr)
 		return;
 
-	room_t *room = p_global->_curAreaPtr->citadelRoom; //TODO: copied here by me
-	byte loc = room->location;
+	room_t *room = p_global->_curAreaPtr->_citadelRoomPtr; //TODO: copied here by me
+	byte loc = room->_location;
 	tyranPtr = &kPersons[PER_UNKN_372];
 	if (istyran((p_global->_citaAreaNum << 8) | loc)) {
 		if (!(p_global->_curAreaPtr->_flags & AreaFlags::TyrannSighted)) {
 			addInfo(p_global->_citaAreaNum + ValleyNews::vnTyrannIn);
 			p_global->_curAreaPtr->_flags |= AreaFlags::TyrannSighted;
 		}
-		byte level = room->level - 1;
+		byte level = room->_level - 1;
 		if (level < 32)
 			level = 32;
-		room->level = level;
+		room->_level = level;
 		citatombe(level);
 	} else {
 		p_global->_curAreaPtr->_flags &= ~AreaFlags::TyrannSighted;
-		citaevol(room->level + 1);
+		citaevol(room->_level + 1);
 	}
 }
 
@@ -2045,10 +2047,10 @@ void EdenGame::newvallee() {
 
 char EdenGame::whereiscita() {
 	char res = -1;
-	for (room_t *room = p_global->_citaAreaFirstRoom; room->ff_0 != 0xFF; room++) {
-		if (!(room->flags & RoomFlags::rfHasCitadel))
+	for (room_t *room = p_global->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
+		if (!(room->_flags & RoomFlags::rfHasCitadel))
 			continue;
-		res = room->location;
+		res = room->_location;
 		break;
 	}
 	return res;
@@ -2056,28 +2058,28 @@ char EdenGame::whereiscita() {
 
 bool EdenGame::iscita(int16 loc) {
 	loc &= 0xFF;
-	for (room_t *room = p_global->_citaAreaFirstRoom; room->ff_0 != 0xFF; room++) {
-		if (!(room->flags & RoomFlags::rfHasCitadel))
+	for (room_t *room = p_global->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
+		if (!(room->_flags & RoomFlags::rfHasCitadel))
 			continue;
-		if (room->location == loc + 16)
+		if (room->_location == loc + 16)
 			return true;
-		if (room->location == loc - 16)
+		if (room->_location == loc - 16)
 			return true;
-		if (room->location == loc - 1)
+		if (room->_location == loc - 1)
 			return true;
-		if (room->location == loc + 1)
+		if (room->_location == loc + 1)
 			return true;
 	}
 	return false;
 }
 
 void EdenGame::lieuvava(area_t *area) {
-	if (area->type == AreaType::atValley) {
+	if (area->_type == AreaType::atValley) {
 		istyranval(area);
-		area->citadelLevel = 0;
-		if (area->citadelRoom)
-			area->citadelLevel = p_global->_citaAreaFirstRoom->level;  //TODO: no search?
-		byte mask = ~(1 << (area->num - Areas::arChamaar));
+		area->_citadelLevel = 0;
+		if (area->_citadelRoomPtr)
+			area->_citadelLevel = p_global->_citaAreaFirstRoom->_level;  //TODO: no search?
+		byte mask = ~(1 << (area->_num - Areas::arChamaar));
 		p_global->_worldTyranSighted &= mask;
 		p_global->_var4E &= mask;
 		p_global->_worldGaveGold &= mask;
@@ -2102,7 +2104,7 @@ void EdenGame::lieuvava(area_t *area) {
 			p_global->_var53 |= mask;
 		if (area == p_global->_areaPtr) {
 			p_global->_curAreaFlags = area->_flags;
-			p_global->_curCitadelLevel = area->citadelLevel;
+			p_global->_curCitadelLevel = area->_citadelLevel;
 		}
 	}
 	p_global->_var4D &= p_global->_worldTyranSighted;
@@ -2200,7 +2202,7 @@ void EdenGame::vivredino() {
 void EdenGame::vivreval(int16 areaNum) {
 	p_global->_citaAreaNum = areaNum;
 	p_global->_curAreaPtr = &kAreasTable[areaNum - 1];
-	p_global->_citaAreaFirstRoom = &gameRooms[p_global->_curAreaPtr->firstRoomIndex];
+	p_global->_citaAreaFirstRoom = &gameRooms[p_global->_curAreaPtr->_firstRoomIdx];
 	deplaalldino();
 	constcita();
 	vivredino();
@@ -3747,7 +3749,7 @@ void EdenGame::narrateur() {
 	if (!p_global->_narratorSequence) {
 		if (p_global->_var6A == p_global->_var69)
 			goto skip;
-		buildcita();
+		buildCitadel();
 	}
 	p_global->_varF5 |= 0x80;
 	p_global->_varF2 &= ~1;  //TODO: check me
@@ -3827,20 +3829,20 @@ byte *EdenGame::gettxtad(int16 id) {
 void EdenGame::gotocarte() {
 	goto_t *go = &gotos[current_spot2->_objectId];
 	endpersovox();
-	byte newArea = go->areaNum;
-	p_global->_newRoomNum = (go->areaNum << 8) | 1;
+	byte newArea = go->_areaNum;
+	p_global->_newRoomNum = (go->_areaNum << 8) | 1;
 	p_global->_newLocation = 1;
 	p_global->_prevLocation = p_global->_roomNum & 0xFF;
 	char curArea = p_global->_roomNum >> 8;
-	if (curArea == go->areaNum)
+	if (curArea == go->_areaNum)
 		newArea = 0;
 	else {
-		for (; go->curAreaNum != 0xFF; go++) {
-			if (go->curAreaNum == curArea)
+		for (; go->_curAreaNum != 0xFF; go++) {
+			if (go->_curAreaNum == curArea)
 				break;
 		}
 
-		if (go->areaNum == 0xFF)
+		if (go->_areaNum == 0xFF)
 			return;
 	}
 	p_global->_eventType = EventType::etGotoArea | newArea;
@@ -4745,16 +4747,16 @@ void EdenGame::loadRoomFile(uint16 num, room_t *buffer) {
 
 	int count = size / sizeof(room_t);
 	for (int i = 0; i < count; i++) {
-		buffer[i].ff_0 = h_bigfile.readByte();
+		buffer[i]._id = h_bigfile.readByte();
 		for (int j = 0; j < 4; j++)
-			buffer[i].exits[j] = h_bigfile.readByte();
-		buffer[i].flags = h_bigfile.readByte();
-		buffer[i].bank = h_bigfile.readUint16LE();
-		buffer[i].party = h_bigfile.readUint16LE();
-		buffer[i].level = h_bigfile.readByte();
-		buffer[i].video = h_bigfile.readByte();
-		buffer[i].location = h_bigfile.readByte();
-		buffer[i].background = h_bigfile.readByte();
+			buffer[i]._exits[j] = h_bigfile.readByte();
+		buffer[i]._flags = h_bigfile.readByte();
+		buffer[i]._bank = h_bigfile.readUint16LE();
+		buffer[i]._party = h_bigfile.readUint16LE();
+		buffer[i]._level = h_bigfile.readByte();
+		buffer[i]._video = h_bigfile.readByte();
+		buffer[i]._location = h_bigfile.readByte();
+		buffer[i]._backgroundBankNum = h_bigfile.readByte();
 	}
 }
 
@@ -4834,8 +4836,8 @@ void EdenGame::ConvertIcons(icon_t *icon, int count) {
 
 void EdenGame::ConvertLinks(room_t *room, int count) {
 	for (int i = 0; i < count; i++, room++) {
-		room->bank = BE16(room->bank);
-		room->party = BE16(room->party);
+		room->_bank = BE16(room->_bank);
+		room->_party = BE16(room->_party);
 	}
 }
 
@@ -4872,16 +4874,16 @@ void EdenGame::loadpermfiles() {
 			}
 
 			for (int i = 0; i <kNumRooms; i++) {
-				gameRooms[i].ff_0 = f.readByte();
+				gameRooms[i]._id = f.readByte();
 				for (int j = 0; j < 4; j++)
-					gameRooms[i].exits[j] = f.readByte();
-				gameRooms[i].flags = f.readByte();
-				gameRooms[i].bank = f.readUint16LE();
-				gameRooms[i].party = f.readUint16LE();
-				gameRooms[i].level = f.readByte();
-				gameRooms[i].video = f.readByte();
-				gameRooms[i].location = f.readByte();
-				gameRooms[i].background = f.readByte();
+					gameRooms[i]._exits[j] = f.readByte();
+				gameRooms[i]._flags = f.readByte();
+				gameRooms[i]._bank = f.readUint16LE();
+				gameRooms[i]._party = f.readUint16LE();
+				gameRooms[i]._level = f.readByte();
+				gameRooms[i]._video = f.readByte();
+				gameRooms[i]._location = f.readByte();
+				gameRooms[i]._backgroundBankNum = f.readByte();
 			}
 
 			f.close();
@@ -5226,7 +5228,7 @@ void EdenGame::closesalle() {
 
 // Original name afsalle1
 void EdenGame::displaySingleRoom(room_t *room) {
-	byte *ptr = (byte *)getElem(sal_buf, room->ff_0 - 1);
+	byte *ptr = (byte *)getElem(sal_buf, room->_id - 1);
 	ptr++;
 	for (;;) {
 		byte b0 = *ptr++;
@@ -5251,7 +5253,7 @@ void EdenGame::displaySingleRoom(room_t *room) {
 				bool addIcon = false;
 				icon_t *icon = p_global->_nextRoomIcon;
 				if (b0 < 4) {
-					if (p_global->_roomPtr->exits[b0])
+					if (p_global->_roomPtr->_exits[b0])
 						addIcon = true;
 				} else if (b0 > 229) {
 					if (p_global->_partyOutside & (1 << (b0 - 230)))
@@ -5305,18 +5307,18 @@ void EdenGame::displayRoom() {
 	room_t *room = p_global->_roomPtr;
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
 	p_global->_roomBaseX = 0;
-	p_global->_roomBackgroundBankNum = room->background;
-	if (room->flags & RoomFlags::rf08) {
+	p_global->_roomBackgroundBankNum = room->_backgroundBankNum;
+	if (room->_flags & RoomFlags::rf08) {
 		p_global->_displayFlags |= DisplayFlags::dfFlag80;
-		if (room->flags & RoomFlags::rfPanable) {
+		if (room->_flags & RoomFlags::rfPanable) {
 		// Scrollable room on 2 screens
 			p_global->_displayFlags |= DisplayFlags::dfPanable;
 			p_global->_varF4 = 0;
 			rundcurs();
 			saveFriezes();
-			useBank(room->bank - 1);
+			useBank(room->_bank - 1);
 			noclipax_avecnoir(0, 0, 16);
-			useBank(room->bank);
+			useBank(room->_bank);
 			noclipax_avecnoir(0, 320, 16);
 			displaySingleRoom(room);
 			p_global->_roomBaseX = 320;
@@ -5353,7 +5355,7 @@ void EdenGame::loadPlace(int16 num) {
 }
 
 void EdenGame::specialoutside() {
-	if (p_global->_lastAreaPtr->type == AreaType::atValley && (p_global->_party & PersonMask::pmLeader))
+	if (p_global->_lastAreaPtr->_type == AreaType::atValley && (p_global->_party & PersonMask::pmLeader))
 		perso_ici(5);
 }
 
@@ -5401,8 +5403,8 @@ void EdenGame::specialin() {
 		if (p_global->_curItemsMask & 0x2000) { // Morkus' tablet
 			bars_out();
 			playHNM(92);
-			gameRooms[129].exits[0] = 0;
-			gameRooms[129].exits[2] = 1;
+			gameRooms[129]._exits[0] = 0;
+			gameRooms[129]._exits[2] = 1;
 			p_global->_roomNum = 3074;
 			kPersons[PER_MANGO]._roomNum = 3074;
 			p_global->_eventType = EventType::etEvent5;
@@ -5434,14 +5436,14 @@ void EdenGame::specialin() {
 void EdenGame::animpiece() {
 	room_t *room = p_global->_roomPtr;
 	if (p_global->_roomVidNum && p_global->_var100 != 0xFF) {
-		if (p_global->_valleyVidNum || !room->level || (room->flags & RoomFlags::rfHasCitadel)
-		        || room->level == p_global->_var100) {
+		if (p_global->_valleyVidNum || !room->_level || (room->_flags & RoomFlags::rfHasCitadel)
+		        || room->_level == p_global->_var100) {
 			bars_out();
 			p_global->_updatePaletteFlag = 16;
 			if (!(p_global->_narratorSequence & 0x80)) //TODO: bug? !() @ 100DC
 				p_global->_var102 = 0;
 			if (!needToFade)
-				needToFade = room->flags & RoomFlags::rf02;
+				needToFade = room->_flags & RoomFlags::rf02;
 			playHNM(p_global->_roomVidNum);
 			return;
 		}
@@ -5452,7 +5454,7 @@ void EdenGame::animpiece() {
 void EdenGame::getdino(room_t *room) {
 	assert(tab_2CEF0[4] == 0x25);
 
-	room->flags &= ~0xC;
+	room->_flags &= ~0xC;
 	for (perso_t *perso = &kPersons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 		if (perso->_flags & PersonFlags::pf80)
 			continue;
@@ -5467,7 +5469,7 @@ void EdenGame::getdino(room_t *room) {
 		int16 *tab = tab_2CF70;
 		if (p_global->_areaNum != Areas::arUluru && p_global->_areaNum != Areas::arTamara)
 			tab = tab_2CEF0;
-		byte r27 = (room->flags & 0xC0) >> 2;    //TODO: check me (like pc)
+		byte r27 = (room->_flags & 0xC0) >> 2;    //TODO: check me (like pc)
 		persoType = perso->_flags & PersonFlags::pfTypeMask;
 		if (persoType == PersonFlags::pftTyrann)
 			persoType = 13;
@@ -5477,38 +5479,38 @@ void EdenGame::getdino(room_t *room) {
 		int16 bank = *tab;
 		if (bank & 0x8000) {
 			bank &= ~0x8000;
-			room->flags |= RoomFlags::rf08;
+			room->_flags |= RoomFlags::rf08;
 		}
-		room->flags |= RoomFlags::rf04 | RoomFlags::rf02;
+		room->_flags |= RoomFlags::rf04 | RoomFlags::rf02;
 		p_global->_roomImgBank = bank;
 		break;
 	}
 }
 
 room_t *EdenGame::getsalle(int16 loc) { //TODO: byte?
-	debug("get room for %X, starting from %d, looking for %X", loc, p_global->_areaPtr->firstRoomIndex, p_global->_partyOutside);
-	room_t *room = &gameRooms[p_global->_areaPtr->firstRoomIndex];
+	debug("get room for %X, starting from %d, looking for %X", loc, p_global->_areaPtr->_firstRoomIdx, p_global->_partyOutside);
+	room_t *room = &gameRooms[p_global->_areaPtr->_firstRoomIdx];
 	loc &= 0xFF;
 	for (;; room++) {
-		for (; room->location != loc; room++) {
-			if (room->ff_0 == 0xFF)
+		for (; room->_location != loc; room++) {
+			if (room->_id == 0xFF)
 				return 0;
 		}
-		if (p_global->_partyOutside == room->party || room->party == 0xFFFF)
+		if (p_global->_partyOutside == room->_party || room->_party == 0xFFFF)
 			break;
 	}
-	debug("found room: party = %X, bank = %X", room->party, room->bank);
-	p_global->_roomImgBank = room->bank;
+	debug("found room: party = %X, bank = %X", room->_party, room->_bank);
+	p_global->_roomImgBank = room->_bank;
 	p_global->_labyrinthRoom = 0;
 	if (p_global->_roomImgBank > 104 && p_global->_roomImgBank <= 112)
 		p_global->_labyrinthRoom = p_global->_roomImgBank - 103;
 	if (p_global->_valleyVidNum)
 		p_global->_roomVidNum = p_global->_valleyVidNum;
 	else
-		p_global->_roomVidNum = room->video;
-	if ((room->flags & 0xC0) == RoomFlags::rf40 || (room->flags & RoomFlags::rf01))
+		p_global->_roomVidNum = room->_video;
+	if ((room->_flags & 0xC0) == RoomFlags::rf40 || (room->_flags & RoomFlags::rf01))
 		getdino(room);
-	if (room->flags & RoomFlags::rfHasCitadel) {
+	if (room->_flags & RoomFlags::rfHasCitadel) {
 		removeInfo(p_global->_areaNum + ValleyNews::vnCitadelLost);
 		removeInfo(p_global->_areaNum + ValleyNews::vnTyrannIn);
 		removeInfo(p_global->_areaNum + ValleyNews::vnTyrannLost);
@@ -5528,14 +5530,14 @@ void EdenGame::initPlace(int16 roomNum) {
 	p_global->_lastAreaPtr = p_global->_areaPtr;
 	p_global->_areaPtr = &kAreasTable[((roomNum >> 8) & 0xFF) - 1];
 	area_t *area = p_global->_areaPtr;
-	area->visitCount++;
-	p_global->_areaVisitCount = area->visitCount;
+	area->_visitCount++;
+	p_global->_areaVisitCount = area->_visitCount;
 	p_global->_curAreaFlags = area->_flags;
-	p_global->_curAreaType = area->type;
-	p_global->_curCitadelLevel = area->citadelLevel;
+	p_global->_curAreaType = area->_type;
+	p_global->_curCitadelLevel = area->_citadelLevel;
 	if (p_global->_curAreaType == AreaType::atValley)
 		_gameIcons[18]._cursorId &= ~0x8000;
-	loadPlace(area->salNum);
+	loadPlace(area->_placeNum);
 }
 
 void EdenGame::maj2() {
@@ -5584,8 +5586,8 @@ void EdenGame::majsalle1(int16 roomNum) {
 	room_t *room = getsalle(roomNum & 0xFF);
 	p_global->_roomPtr = room;
 	debug("DrawRoom: room 0x%X, arg = 0x%X", p_global->_roomNum, roomNum);
-	p_global->_curRoomFlags = room->flags;
-	p_global->_varF1 = room->flags;
+	p_global->_curRoomFlags = room->_flags;
+	p_global->_varF1 = room->_flags;
 	animpiece();
 	p_global->_var100 = 0;
 	maj2();
@@ -6783,8 +6785,8 @@ void EdenGame::getObject(int16 id) {
 	objectmain(id);
 	winObject(id);
 	showObjects();
-	p_global->_roomImgBank = room->bank;
-	p_global->_roomVidNum = room->video;
+	p_global->_roomImgBank = room->_bank;
+	p_global->_roomVidNum = room->_video;
 	displayPlace();
 }
 
@@ -6872,12 +6874,12 @@ void EdenGame::newnidv() {
 		if ((*ptr & ~0x8000) >> 8 != p_global->_citaAreaNum)
 			continue;
 		*ptr &= ~0x8000;
-		for (; room->ff_0 != 0xFF; room++) {
-			if (room->location == (*ptr & 0xFF)) {
-				room->bank = 279;
-				room->ff_0 = 9;
+		for (; room->_id != 0xFF; room++) {
+			if (room->_location == (*ptr & 0xFF)) {
+				room->_bank = 279;
+				room->_id = 9;
 				room++;
-				room->bank = 280;
+				room->_bank = 280;
 				return;
 			}
 		}
@@ -6895,12 +6897,12 @@ void EdenGame::newnido() {
 		if ((*ptr & ~0x8000) >> 8 != p_global->_citaAreaNum)
 			continue;
 		*ptr &= ~0x8000;
-		for (; room->ff_0 != 0xFF; room++) {
-			if (room->location == (*ptr & 0xFF)) {
-				room->bank = 277;
-				room->ff_0 = 9;
+		for (; room->_id != 0xFF; room++) {
+			if (room->_location == (*ptr & 0xFF)) {
+				room->_bank = 277;
+				room->_id = 9;
 				room++;
-				room->bank = 278;
+				room->_bank = 278;
 				return;
 			}
 		}
@@ -7063,7 +7065,7 @@ void EdenGame::load() {
 void EdenGame::initafterload() {
 	p_global->_characterImageBank = 0;
 	p_global->_lastPlaceNum = 0;
-	loadPlace(p_global->_areaPtr->salNum);
+	loadPlace(p_global->_areaPtr->_placeNum);
 	_gameIcons[18]._cursorId |= 0x8000;
 	if (p_global->_curAreaType == AreaType::atValley)
 		_gameIcons[18]._cursorId &= ~0x8000;
@@ -7119,7 +7121,7 @@ void EdenGame::panelrestart() {
 		return;
 	p_global->_characterImageBank = 0;
 	p_global->_lastPlaceNum = 0;
-	loadPlace(p_global->_areaPtr->salNum);
+	loadPlace(p_global->_areaPtr->_placeNum);
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
 	_gameIcons[18]._cursorId |= 0x8000;
 	if (p_global->_curAreaType == AreaType::atValley)
@@ -7531,18 +7533,18 @@ void EdenGame::rangermammi(perso_t *perso, room_t *room) {
 	room_t *found_room = nullptr;
 	if (!(perso->_partyMask & PersonMask::pmLeader))
 		return;
-	for (; room->ff_0 != 0xFF; room++) {
-		if (room->flags & RoomFlags::rfHasCitadel) {
+	for (; room->_id != 0xFF; room++) {
+		if (room->_flags & RoomFlags::rfHasCitadel) {
 			found_room = room;
 			break;
 		}
-		if (room->party != 0xFFFF && (room->party & PersonMask::pmLeader))
+		if (room->_party != 0xFFFF && (room->_party & PersonMask::pmLeader))
 			found_room = room;  //TODO: no brk?
 	}
 	if (!found_room)
 		return;
 	perso->_roomNum &= ~0xFF;
-	perso->_roomNum |= found_room->location;
+	perso->_roomNum |= found_room->_location;
 	perso->_flags &= ~PersonFlags::pfInParty;
 	p_global->_party &= ~perso->_partyMask;
 }
@@ -7564,7 +7566,7 @@ void EdenGame::perso_ici(int16 action) {
 		followme(perso);
 		break;
 	case 5:
-		rangermammi(perso, p_global->_lastAreaPtr->citadelRoom);
+		rangermammi(perso, p_global->_lastAreaPtr->_citadelRoomPtr);
 		break;
 	}
 	perso = kPersons;
@@ -7584,7 +7586,7 @@ void EdenGame::perso_ici(int16 action) {
 				followme(perso);
 				break;
 			case 5:
-				rangermammi(perso, p_global->_lastAreaPtr->citadelRoom);
+				rangermammi(perso, p_global->_lastAreaPtr->_citadelRoomPtr);
 				break;
 			}
 		}
@@ -7670,7 +7672,7 @@ bool EdenGame::eloirevientq() {
 }
 
 void EdenGame::eloirevient() {
-	if (p_global->_areaPtr->type == AreaType::atValley && !kPersons[PER_MESSAGER]._roomNum)
+	if (p_global->_areaPtr->_type == AreaType::atValley && !kPersons[PER_MESSAGER]._roomNum)
 		kPersons[PER_MESSAGER]._roomNum = (p_global->_roomNum & 0xFF00) + 1;
 }
 //// phase.c
@@ -7756,8 +7758,8 @@ void EdenGame::phase353() {
 void EdenGame::phase369() {
 	suis_moi(5);
 	p_global->_narratorSequence = 2;
-	gameRooms[334].exits[0] = 134;
-	gameRooms[335].exits[0] = 134;
+	gameRooms[334]._exits[0] = 134;
+	gameRooms[335]._exits[0] = 134;
 }
 
 void EdenGame::phase371() {
@@ -7766,8 +7768,8 @@ void EdenGame::phase371() {
 	_gameIcons[129]._cursorId &= ~0x8000;
 	_gameIcons[127]._cursorId |= 0x8000;
 	p_global->_characterBackgroundBankIdx = 59;
-	gameRooms[334].exits[0] = 0xFF;
-	gameRooms[335].exits[0] = 0xFF;
+	gameRooms[334]._exits[0] = 0xFF;
+	gameRooms[335]._exits[0] = 0xFF;
 	_gameIcons[123]._objectId = 9;
 	_gameIcons[124]._objectId = 26;
 	_gameIcons[125]._objectId = 42;
@@ -7800,13 +7802,13 @@ void EdenGame::phase433() {
 
 void EdenGame::phase434() {
 	p_global->_roomNum = 275;
-	gameRooms[16].bank = 44;
-	gameRooms[18].bank = 44;
+	gameRooms[16]._bank = 44;
+	gameRooms[18]._bank = 44;
 	_gameIcons[132]._cursorId &= ~0x8000;
 	p_global->_characterBackgroundBankIdx = 61;
-	gameRooms[118].exits[2] = 0xFF;
+	gameRooms[118]._exits[2] = 0xFF;
 	abortdial();
-	gameRooms[7].bank = 322;
+	gameRooms[7]._bank = 322;
 	reste_ici(7);
 	reste_ici(3);
 	reste_ici(5);
@@ -7822,7 +7824,7 @@ void EdenGame::phase513() {
 }
 
 void EdenGame::phase514() {
-	gameRooms[123].exits[2] = 1;
+	gameRooms[123]._exits[2] = 1;
 }
 
 void EdenGame::phase529() {
@@ -7900,7 +7902,7 @@ void EdenGame::phase32() {
 }
 
 void EdenGame::phase48() {
-	gameRooms[8].exits[1] = 22;
+	gameRooms[8]._exits[1] = 22;
 	dialautoon();
 }
 
@@ -7927,8 +7929,8 @@ void EdenGame::phase128() {
 
 void EdenGame::phase144() {
 	suis_moi(5);
-	gameRooms[113].video = 0;
-	gameRooms[113].bank = 317;
+	gameRooms[113]._video = 0;
+	gameRooms[113]._bank = 317;
 }
 
 void EdenGame::phase160() {
@@ -7997,8 +7999,8 @@ void EdenGame::phase320() {
 }
 
 void EdenGame::phase336() {
-	gameRooms[288].exits[0] = 135;
-	gameRooms[289].exits[0] = 135;
+	gameRooms[288]._exits[0] = 135;
+	gameRooms[289]._exits[0] = 135;
 	loseObject(p_global->_curObjectId);
 	dialautoon();
 }
@@ -8009,10 +8011,10 @@ void EdenGame::phase352() {
 	kPersons[PER_EVE]._targetLoc = 8;
 	followerList[13]._spriteNum = 2;
 	dialautoon();
-	gameRooms[288].exits[0] = 0xFF;
-	gameRooms[289].exits[0] = 0xFF;
-	gameRooms[288].flags &= ~RoomFlags::rf02;
-	gameRooms[289].flags &= ~RoomFlags::rf02;
+	gameRooms[288]._exits[0] = 0xFF;
+	gameRooms[289]._exits[0] = 0xFF;
+	gameRooms[288]._flags &= ~RoomFlags::rf02;
+	gameRooms[289]._flags &= ~RoomFlags::rf02;
 }
 
 void EdenGame::phase368() {
@@ -8044,7 +8046,7 @@ void EdenGame::phase416() {
 	suis_moi(3);
 	_gameIcons[130]._cursorId &= ~0x8000;
 	p_global->_characterBackgroundBankIdx = 60;
-	gameRooms[0].exits[0] = 138;
+	gameRooms[0]._exits[0] = 138;
 }
 
 void EdenGame::phase432() {
@@ -8052,7 +8054,7 @@ void EdenGame::phase432() {
 	kPersons[PER_MAMMI_4]._flags |= PersonFlags::pf80;
 	kPersons[PER_BOURREAU]._flags |= PersonFlags::pf80;
 	kPersons[PER_MESSAGER]._roomNum = 257;
-	gameRooms[0].exits[0] = 0xFF;
+	gameRooms[0]._exits[0] = 0xFF;
 	p_global->_drawFlags |= DrawFlags::drDrawTopScreen;
 }
 
@@ -8108,7 +8110,7 @@ void EdenGame::phase544() {
 
 void EdenGame::phase560() {
 	kPersons[PER_MESSAGER]._roomNum = 3073;
-	gameRooms[127].exits[1] = 0;
+	gameRooms[127]._exits[1] = 0;
 }
 
 //// saveload.c
@@ -8295,12 +8297,12 @@ void EdenGame::vavaoffsetin() {
 
 void EdenGame::lieuoffsetout() {
 	for (int i = 0; i < 12; i++)
-		OFSOUT(kAreasTable[i].citadelRoom, gameRooms, room_t);
+		OFSOUT(kAreasTable[i]._citadelRoomPtr, gameRooms, room_t);
 }
 
 void EdenGame::lieuoffsetin() {
 	for (int i = 0; i < 12; i++)
-		OFSIN(kAreasTable[i].citadelRoom, gameRooms, room_t);
+		OFSIN(kAreasTable[i]._citadelRoomPtr, gameRooms, room_t);
 }
 
 void EdenGame::bandeoffsetout() {
