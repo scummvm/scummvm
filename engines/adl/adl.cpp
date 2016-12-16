@@ -510,25 +510,24 @@ void AdlEngine::takeItem(byte noun) {
 	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != _state.room)
-			continue;
-
-		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printMessage(_messageIds.itemDoesntMove);
-			return;
-		}
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			item->room = IDI_ANY;
-			return;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture) {
-				item->room = IDI_ANY;
-				item->state = IDI_ITEM_DROPPED;
+		if (item->noun == noun && item->room == _state.room && item->region == _state.region) {
+			if (item->state == IDI_ITEM_DOESNT_MOVE) {
+				printMessage(_messageIds.itemDoesntMove);
 				return;
+			}
+
+			if (item->state == IDI_ITEM_DROPPED) {
+				item->room = IDI_ANY;
+				return;
+			}
+
+			Common::Array<byte>::const_iterator pic;
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (*pic == getCurRoom().curPicture) {
+					item->room = IDI_ANY;
+					item->state = IDI_ITEM_DROPPED;
+					return;
+				}
 			}
 		}
 	}
@@ -540,12 +539,12 @@ void AdlEngine::dropItem(byte noun) {
 	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != IDI_ANY)
-			continue;
-
-		item->room = _state.room;
-		item->state = IDI_ITEM_DROPPED;
-		return;
+		if (item->noun == noun && item->room == IDI_ANY) {
+			item->room = _state.room;
+			item->region = _state.region;
+			item->state = IDI_ITEM_DROPPED;
+			return;
+		}
 	}
 
 	printMessage(_messageIds.dontUnderstand);

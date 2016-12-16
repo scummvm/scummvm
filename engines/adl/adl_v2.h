@@ -58,6 +58,7 @@ protected:
 	void loadMessages(Common::ReadStream &stream, byte count);
 	void loadPictures(Common::ReadStream &stream);
 	void loadItemPictures(Common::ReadStream &stream, byte count);
+	virtual bool isInventoryFull() { return false; }
 
 	void checkTextOverflow(char c);
 

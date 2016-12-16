@@ -286,31 +286,33 @@ void AdlEngine_v2::showRoom() {
 	_linesPrinted = 0;
 }
 
+// TODO: Merge this into AdlEngine?
 void AdlEngine_v2::takeItem(byte noun) {
 	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != _state.room)
-			continue;
+		if (item->noun == noun && item->room == _state.room && item->region == _state.region) {
+			if (item->state == IDI_ITEM_DOESNT_MOVE) {
+				printMessage(_messageIds.itemDoesntMove);
+				return;
+			}
 
-		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printMessage(_messageIds.itemDoesntMove);
-			return;
-		}
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			item->room = IDI_ANY;
-			_itemRemoved = true;
-			return;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+			if (item->state == IDI_ITEM_DROPPED) {
 				item->room = IDI_ANY;
 				_itemRemoved = true;
-				item->state = IDI_ITEM_DROPPED;
 				return;
+			}
+
+			Common::Array<byte>::const_iterator pic;
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+					if (!isInventoryFull()) {
+						item->room = IDI_ANY;
+						_itemRemoved = true;
+						item->state = IDI_ITEM_DROPPED;
+					}
+					return;
+				}
 			}
 		}
 	}
@@ -323,24 +325,20 @@ void AdlEngine_v2::drawItems() {
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
 		// Skip items not in this room
-		if (item->room != _state.room)
-			continue;
+		if (item->region == _state.region && item->room == _state.room && !item->isOnScreen) {
+			if (item->state == IDI_ITEM_DROPPED) {
+				// Draw dropped item if in normal view
+				if (getCurRoom().picture == getCurRoom().curPicture)
+					drawItem(*item, _itemOffsets[_itemsOnScreen++]);
+			} else {
+				// Draw fixed item if current view is in the pic list
+				Common::Array<byte>::const_iterator pic;
 
-		if (item->isOnScreen)
-			continue;
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			// Draw dropped item if in normal view
-			if (getCurRoom().picture == getCurRoom().curPicture)
-				drawItem(*item, _itemOffsets[_itemsOnScreen++]);
-		} else {
-			// Draw fixed item if current view is in the pic list
-			Common::Array<byte>::const_iterator pic;
-
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == _state.curPicture || *pic == IDI_ANY) {
-					drawItem(*item, item->position);
-					break;
+				for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+					if (*pic == _state.curPicture || *pic == IDI_ANY) {
+						drawItem(*item, item->position);
+						break;
+					}
 				}
 			}
 		}

@@ -266,58 +266,6 @@ void AdlEngine_v4::switchRegion(byte region) {
 	_picOnScreen = _roomOnScreen = 0;
 }
 
-// TODO: Merge this into v2?
-void AdlEngine_v4::takeItem(byte noun) {
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != _state.room || item->region != _state.region)
-			continue;
-
-		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printMessage(_messageIds.itemDoesntMove);
-			return;
-		}
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			item->room = IDI_ANY;
-			_itemRemoved = true;
-			return;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
-				if (!isInventoryFull()) {
-					item->room = IDI_ANY;
-					_itemRemoved = true;
-					item->state = IDI_ITEM_DROPPED;
-				}
-				return;
-			}
-		}
-	}
-
-	printMessage(_messageIds.itemNotHere);
-}
-
-// TODO: Merge this into v2?
-void AdlEngine_v4::dropItem(byte noun) {
-	Common::List<Item>::iterator item;
-
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != IDI_ANY)
-			continue;
-
-		item->room = _state.room;
-		item->region = _state.region;
-		item->state = IDI_ITEM_DROPPED;
-		return;
-	}
-
-	printMessage(_messageIds.dontUnderstand);
-}
-
 int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 

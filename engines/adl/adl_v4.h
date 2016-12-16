@@ -68,9 +68,6 @@ protected:
 	void backupVars();
 	void restoreVars();
 	void switchRegion(byte region);
-	virtual bool isInventoryFull() { return false; }
-	virtual void takeItem(byte noun);
-	virtual void dropItem(byte noun);
 
 	int o4_isItemInRoom(ScriptEnv &e);
 	int o4_isVarGT(ScriptEnv &e);
