@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-11-29 23:07+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-16 21:50+0000\n"
+"Last-Translator: Gilles <draky@draky.net>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -885,7 +885,7 @@ msgstr "Correction du rapport d'aspect"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corrige le rapport d'aspect pour les jeu 320x200"
+msgstr "Corrige le rapport d'aspect pour les jeux en 320x200"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
