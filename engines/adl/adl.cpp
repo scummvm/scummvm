@@ -428,6 +428,20 @@ void AdlEngine::bell(uint count) const {
 	_speaker->bell(count);
 }
 
+const Region &AdlEngine::getRegion(uint i) const {
+	if (i < 1 || i > _state.regions.size())
+		error("Region %i out of range [1, %i]", i, _state.regions.size());
+
+	return _state.regions[i - 1];
+}
+
+Region &AdlEngine::getRegion(uint i) {
+	if (i < 1 || i > _state.regions.size())
+		error("Region %i out of range [1, %i]", i, _state.regions.size());
+
+	return _state.regions[i - 1];
+}
+
 const Room &AdlEngine::getRoom(uint i) const {
 	if (i < 1 || i > _state.rooms.size())
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
@@ -440,6 +454,14 @@ Room &AdlEngine::getRoom(uint i) {
 		error("Room %i out of range [1, %i]", i, _state.rooms.size());
 
 	return _state.rooms[i - 1];
+}
+
+const Region &AdlEngine::getCurRegion() const {
+	return getRegion(_state.region);
+}
+
+Region &AdlEngine::getCurRegion() {
+	return getRegion(_state.region);
 }
 
 const Room &AdlEngine::getCurRoom() const {

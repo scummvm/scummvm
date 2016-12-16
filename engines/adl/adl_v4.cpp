@@ -195,12 +195,13 @@ void AdlEngine_v4::loadRegion(byte region) {
 			break;
 		}
 		case 0x7b00:
-			// Global commands
-			readCommands(*stream, _globalCommands);
-			break;
-		case 0x9500:
+			// TODO: hires6 has global and room lists swapped
 			// Room commands
 			readCommands(*stream, _roomCommands);
+			break;
+		case 0x9500:
+			// Global commands
+			readCommands(*stream, _globalCommands);
 			break;
 		default:
 			error("Unknown data block found (addr %04x; size %04x)", addr, size);
@@ -216,6 +217,8 @@ void AdlEngine_v4::loadRegion(byte region) {
 			}
 		}
 	}
+
+	restoreVars();
 }
 
 void AdlEngine_v4::loadItemPicIndex(Common::ReadStream &stream, uint items) {
@@ -223,6 +226,207 @@ void AdlEngine_v4::loadItemPicIndex(Common::ReadStream &stream, uint items) {
 
 	if (stream.eos() || stream.err())
 		error("Error reading item index");
+}
+
+void AdlEngine_v4::backupRoomState(byte room) {
+	RoomState &backup = getCurRegion().rooms[room - 1];
+
+	backup.isFirstTime = getRoom(room).isFirstTime;
+	backup.picture = getRoom(room).picture;
+}
+
+void AdlEngine_v4::restoreRoomState(byte room) {
+	const RoomState &backup = getCurRegion().rooms[room - 1];
+
+	getRoom(room).isFirstTime = backup.isFirstTime;
+	getRoom(room).picture = backup.picture;
+}
+
+void AdlEngine_v4::backupVars() {
+	Region &region = getCurRegion();
+
+	for (uint i = 0; i < region.vars.size(); ++i)
+		region.vars[i] = getVar(i);
+}
+
+void AdlEngine_v4::restoreVars() {
+	const Region &region = getCurRegion();
+
+	for (uint i = 0; i < region.vars.size(); ++i)
+		setVar(i, region.vars[i]);
+}
+
+void AdlEngine_v4::switchRegion(byte region) {
+	backupVars();
+	backupRoomState(_state.room);
+	_state.prevRegion = _state.region;
+	_state.region = region;
+	loadRegion(region);
+	_state.room = 1;
+	_picOnScreen = _roomOnScreen = 0;
+}
+
+// TODO: Merge this into v2?
+void AdlEngine_v4::takeItem(byte noun) {
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != _state.room || item->region != _state.region)
+			continue;
+
+		if (item->state == IDI_ITEM_DOESNT_MOVE) {
+			printMessage(_messageIds.itemDoesntMove);
+			return;
+		}
+
+		if (item->state == IDI_ITEM_DROPPED) {
+			item->room = IDI_ANY;
+			_itemRemoved = true;
+			return;
+		}
+
+		Common::Array<byte>::const_iterator pic;
+		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+			if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+				if (!isInventoryFull()) {
+					item->room = IDI_ANY;
+					_itemRemoved = true;
+					item->state = IDI_ITEM_DROPPED;
+				}
+				return;
+			}
+		}
+	}
+
+	printMessage(_messageIds.itemNotHere);
+}
+
+// TODO: Merge this into v2?
+void AdlEngine_v4::dropItem(byte noun) {
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->noun != noun || item->room != IDI_ANY)
+			continue;
+
+		item->room = _state.room;
+		item->region = _state.region;
+		item->state = IDI_ITEM_DROPPED;
+		return;
+	}
+
+	printMessage(_messageIds.dontUnderstand);
+}
+
+int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
+	const Item &item = getItem(e.arg(1));
+
+	if (e.arg(2) != IDI_ANY && item.region != _state.region)
+		return -1;
+
+	if (item.room == roomArg(e.arg(2)))
+		return 2;
+
+	return -1;
+}
+
+int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
+	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
+
+	if (getVar(e.arg(1)) > e.arg(2))
+		return 2;
+
+	return -1;
+}
+
+int AdlEngine_v4::o4_moveItem(ScriptEnv &e) {
+	o2_moveItem(e);
+	getItem(e.arg(1)).region = _state.region;
+	return 2;
+}
+
+int AdlEngine_v4::o4_setRoom(ScriptEnv &e) {
+	OP_DEBUG_1("\tROOM = %d", e.arg(1));
+
+	getCurRoom().curPicture = getCurRoom().picture;
+	getCurRoom().isFirstTime = false;
+	backupRoomState(_state.room);
+	_state.room = e.arg(1);
+	restoreRoomState(_state.room);
+	return 1;
+}
+
+int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {
+	OP_DEBUG_0("\tREGION = PREV_REGION");
+
+	switchRegion(_state.prevRegion);
+	// Long jump
+	_isRestarting = true;
+	return -1;
+}
+
+int AdlEngine_v4::o4_moveAllItems(ScriptEnv &e) {
+	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%s, %s)", itemRoomStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+
+	byte room1 = roomArg(e.arg(1));
+
+	if (room1 == _state.room)
+		_picOnScreen = 0;
+
+	byte room2 = roomArg(e.arg(2));
+
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (room1 != item->room)
+			continue;
+
+		if (room1 != IDI_ANY) {
+			if (_state.region != item->region)
+				continue;
+			if (room2 == IDI_ANY) {
+				if (isInventoryFull())
+					break;
+				if (item->state == IDI_ITEM_DOESNT_MOVE)
+					continue;
+			}
+		}
+
+		item->room = room2;
+		item->region = _state.region;
+
+		if (room1 == IDI_ANY)
+			item->state = IDI_ITEM_DROPPED;
+	}
+
+	return 2;
+}
+
+int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
+	OP_DEBUG_1("\tREGION = %d", e.arg(1));
+
+	switchRegion(e.arg(1));
+	// Long jump
+	_isRestarting = true;
+	return -1;
+}
+
+int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
+
+	switchRegion(e.arg(1));
+	_state.room = e.arg(2);
+	// Long jump
+	_isRestarting = true;
+	return -1;
+}
+
+int AdlEngine_v4::o4_setRoomPic(ScriptEnv &e) {
+	o1_setRoomPic(e);
+	backupRoomState(e.arg(1));
+	return 2;
 }
 
 } // End of namespace Adl

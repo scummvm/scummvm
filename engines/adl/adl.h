@@ -143,6 +143,7 @@ enum {
 struct Item {
 	byte id;
 	byte noun;
+	byte region;
 	byte room;
 	byte picture;
 	bool isLineArt;
@@ -175,14 +176,14 @@ struct State {
 	Common::List<Item> items;
 	Common::Array<byte> vars;
 
-	byte region;
+	byte region, prevRegion;
 	byte room;
 	byte curPicture;
 	uint16 moves;
 	bool isDark;
 	Time time;
 
-	State() : region(0), room(1), curPicture(0), moves(1), isDark(false) { }
+	State() : region(0), prevRegion(0), room(1), curPicture(0), moves(1), isDark(false) { }
 };
 
 typedef Common::List<Command> Commands;
@@ -300,8 +301,12 @@ protected:
 	void bell(uint count = 1) const;
 
 	// Game state functions
+	const Region &getRegion(uint i) const;
+	Region &getRegion(uint i);
 	const Room &getRoom(uint i) const;
 	Room &getRoom(uint i);
+	const Region &getCurRegion() const;
+	Region &getCurRegion();
 	const Room &getCurRoom() const;
 	Room &getCurRoom();
 	const Item &getItem(uint i) const;
@@ -309,7 +314,7 @@ protected:
 	byte getVar(uint i) const;
 	void setVar(uint i, byte value);
 	virtual void takeItem(byte noun);
-	void dropItem(byte noun);
+	virtual void dropItem(byte noun);
 	bool matchCommand(ScriptEnv &env) const;
 	void doActions(ScriptEnv &env);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);

@@ -63,6 +63,24 @@ protected:
 	void fixupDiskOffset(byte &track, byte &sector) const;
 	void loadRegion(byte region);
 	void loadItemPicIndex(Common::ReadStream &stream, uint items);
+	void backupRoomState(byte room);
+	void restoreRoomState(byte room);
+	void backupVars();
+	void restoreVars();
+	void switchRegion(byte region);
+	virtual bool isInventoryFull() { return false; }
+	virtual void takeItem(byte noun);
+	virtual void dropItem(byte noun);
+
+	int o4_isItemInRoom(ScriptEnv &e);
+	int o4_isVarGT(ScriptEnv &e);
+	int o4_moveItem(ScriptEnv &e);
+	int o4_setRoom(ScriptEnv &e);
+	int o4_setRegionToPrev(ScriptEnv &e);
+	int o4_moveAllItems(ScriptEnv &e);
+	int o4_setRegion(ScriptEnv &e);
+	int o4_setRegionRoom(ScriptEnv &e);
+	int o4_setRoomPic(ScriptEnv &e);
 
 	byte _currentVolume;
 	Common::Array<RegionLocation> _regionLocations;

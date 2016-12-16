@@ -372,7 +372,7 @@ void AdlEngine_v2::loadItems(Common::ReadStream &stream) {
 		item.noun = stream.readByte();
 		item.room = stream.readByte();
 		item.picture = stream.readByte();
-		item.isLineArt = stream.readByte(); // Disk number in later games
+		item.region = stream.readByte();
 		item.position.x = stream.readByte();
 		item.position.y = stream.readByte();
 		item.state = stream.readByte();

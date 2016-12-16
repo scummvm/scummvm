@@ -41,13 +41,158 @@ public:
 
 private:
 	// AdlEngine
+	void setupOpcodeTables();
 	void runIntro();
 	void init();
 	void initGameState();
 
+	// AdlEngine_v4
+	bool isInventoryFull();
+
+	int o_checkItemTimeLimits(ScriptEnv &e);
+	int o_startAnimation(ScriptEnv &e);
+	int o_winGame(ScriptEnv &e);
+
 	static const uint kRegions = 41;
 	static const uint kItems = 69;
+
+	Common::Array<byte> _itemTimeLimits;
+	Common::String _itemTimeLimitMsg;
+
+	struct {
+		Common::String itemTimeLimit;
+		Common::String carryingTooMuch;
+	} _gameStrings;
 };
+
+typedef Common::Functor1Mem<ScriptEnv &, int, HiRes5Engine> OpcodeH5;
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeH5(this, &HiRes5Engine::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeH5(this, 0))
+
+void HiRes5Engine::setupOpcodeTables() {
+	Common::Array<const Opcode *> *table = 0;
+
+	SetOpcodeTable(_condOpcodes);
+	// 0x00
+	OpcodeUnImpl();
+	Opcode(o2_isFirstTime);
+	Opcode(o2_isRandomGT);
+	Opcode(o4_isItemInRoom);
+	// 0x04
+	Opcode(o3_isNounNotInRoom);
+	Opcode(o1_isMovesGT);
+	Opcode(o1_isVarEQ);
+	Opcode(o2_isCarryingSomething);
+	// 0x08
+	Opcode(o4_isVarGT);
+	Opcode(o1_isCurPicEQ);
+	OpcodeUnImpl();
+
+	SetOpcodeTable(_actOpcodes);
+	// 0x00
+	OpcodeUnImpl();
+	Opcode(o1_varAdd);
+	Opcode(o1_varSub);
+	Opcode(o1_varSet);
+	// 0x04
+	Opcode(o1_listInv);
+	Opcode(o4_moveItem);
+	Opcode(o4_setRoom);
+	Opcode(o2_setCurPic);
+	// 0x08
+	Opcode(o2_setPic);
+	Opcode(o1_printMsg);
+	Opcode(o4_setRegionToPrev);
+	Opcode(o_checkItemTimeLimits);
+	// 0x0c
+	Opcode(o4_moveAllItems);
+	Opcode(o1_quit);
+	Opcode(o4_setRegion);
+	Opcode(o2_save); // TODO
+	// 0x10
+	Opcode(o2_restore); // TODO
+	Opcode(o1_restart); // TODO
+	Opcode(o4_setRegionRoom);
+	Opcode(o_startAnimation);
+	// 0x14
+	Opcode(o1_resetPic);
+	Opcode(o1_goDirection<IDI_DIR_NORTH>);
+	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
+	Opcode(o1_goDirection<IDI_DIR_EAST>);
+	// 0x18
+	Opcode(o1_goDirection<IDI_DIR_WEST>);
+	Opcode(o1_goDirection<IDI_DIR_UP>);
+	Opcode(o1_goDirection<IDI_DIR_DOWN>);
+	Opcode(o1_takeItem);
+	// 0x1c
+	Opcode(o1_dropItem);
+	Opcode(o4_setRoomPic);
+	Opcode(o_winGame);
+	OpcodeUnImpl();
+	// 0x20
+	Opcode(o2_initDisk);
+}
+
+bool HiRes5Engine::isInventoryFull() {
+	Common::List<Item>::const_iterator item;
+	byte weight = 0;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		if (item->room == IDI_ANY)
+			weight += item->description;
+	}
+
+	if (weight >= 100) {
+		printString(_gameStrings.carryingTooMuch);
+		inputString();
+		return true;
+	}
+
+	return false;
+}
+
+int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
+	OP_DEBUG_1("\tCHECK_ITEM_TIME_LIMITS(VARS[%d])", e.arg(1));
+
+	bool lostAnItem = false;
+	Common::List<Item>::iterator item;
+
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		const byte room = item->room;
+		const byte region = item->region;
+
+		if (room == IDI_ANY || room == IDI_CUR_ROOM || (room == _state.room && region == _state.region)) {
+			if (getVar(e.arg(1)) < _itemTimeLimits[item->id - 1]) {
+				item->room = IDI_VOID_ROOM;
+				lostAnItem = true;
+			}
+		}
+	}
+
+	if (lostAnItem) {
+		printString(_gameStrings.itemTimeLimit);
+		inputString();
+	}
+
+	return 1;
+}
+
+int HiRes5Engine::o_startAnimation(ScriptEnv &e) {
+	OP_DEBUG_0("\tSTART_ANIMATION()");
+
+	// TODO: sets a flag that triggers an animation
+
+	return 0;
+}
+
+int HiRes5Engine::o_winGame(ScriptEnv &e) {
+	OP_DEBUG_0("\tWIN_GAME()");
+
+	// TODO: draws room and plays music
+
+	return o1_quit(e);
+}
 
 void HiRes5Engine::runIntro() {
 	insertDisk(2);
@@ -114,8 +259,18 @@ void HiRes5Engine::init() {
 	stream.reset(_disk->createReadStream(0xb, 0xa, 0x05, 1));
 	loadItemPicIndex(*stream, kItems);
 
+	stream.reset(_disk->createReadStream(0x7, 0x8, 0x01));
+	for (uint i = 0; i < kItems; ++i)
+		_itemTimeLimits.push_back(stream->readByte());
+
 	if (stream->eos() || stream->err())
-		error("Error reading item index");
+		error("Failed to read item time limits");
+
+	stream.reset(_disk->createReadStream(0x8, 0x2, 0x2d));
+	_gameStrings.itemTimeLimit = readString(*stream);
+
+	stream.reset(_disk->createReadStream(0x8, 0x7, 0x02));
+	_gameStrings.carryingTooMuch = readString(*stream);
 }
 
 void HiRes5Engine::initGameState() {
