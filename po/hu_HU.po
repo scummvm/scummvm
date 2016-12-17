@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-29 23:17+0100\n"
+"POT-Creation-Date: 2016-12-17 12:45+0100\n"
 "PO-Revision-Date: 2016-12-13 20:02+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
-"Language-Team: Hungarian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
+"Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/hu/>\n"
 "Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -163,13 +163,13 @@ msgstr ""
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
 #: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "OK"
 
@@ -2729,6 +2729,33 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Frissítések keresése..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:965
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr ""
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr ""
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
 msgstr "Szines mód"
@@ -4206,21 +4233,9 @@ msgstr "Átlátszó ablakok"
 msgid "Show windows with a partially transparent background"
 msgstr "Ablakok megjelenítése részben átlászó háttérrel"
 
-#: engines/sky/compact.cpp:130
-msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
-msgstr ""
-"A \"sky.cpt\" fájl nem található!\n"
-"Töltsd le a www.scummvm.org oldaláról"
-
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
-"A \"sky.cpt\" fájl mérete nem megfelelõ.\n"
-"Töltsd le a www.scummvm.org oldaláról"
 
 #: engines/sky/detection.cpp:44
 #, fuzzy
@@ -4262,8 +4277,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM régi játékmentést talált a Broken Sword 1 hez, ezt át kell alakítani."
-"\n"
+"ScummVM régi játékmentést talált a Broken Sword 1 hez, ezt át kell "
+"alakítani.\n"
 "A régi játékmentés nem támogatott, ezért a játék nem töltõdik be átalakítás "
 "nélkül.\n"
 "\n"
@@ -4316,18 +4331,18 @@ msgid ""
 msgstr ""
 "Angol beszéd használata a Német helyett minden nyelven, a Németen kívül"
 
-#: engines/teenagent/resources.cpp:96
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr "Hiányzik a 'teenagent.dat' fájl. Szerezd be a ScummVM website-ról"
-
-#: engines/teenagent/resources.cpp:117
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "A teenagent.dat fájl tömörített és a zlib nem része ennek a futtatható "
 "állománynak. Kérlek tömörítsd ki"
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr ""
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4348,21 +4363,6 @@ msgstr "Játékállás nem menthetõ %d slotba"
 #, fuzzy, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Akarod hogy betöltésem a játékállást?"
-
-#: engines/toon/toon.cpp:4917
-msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr "Hiányzik a 'toon.dat' fájl. Szerezd be a ScummVM honlapjáról"
-
-#: engines/toon/toon.cpp:4929
-msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr "A 'toon.dat' fájl hibás. Szerezd be a ScummVM honlapjáról"
-
-#: engines/toon/toon.cpp:4939
-#, c-format
-msgid ""
-"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
-"the ScummVM website"
-msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4416,6 +4416,30 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "A \"sky.cpt\" fájl nem található!\n"
+#~ "Töltsd le a www.scummvm.org oldaláról"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "A \"sky.cpt\" fájl mérete nem megfelelõ.\n"
+#~ "Töltsd le a www.scummvm.org oldaláról"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr "Hiányzik a 'teenagent.dat' fájl. Szerezd be a ScummVM website-ról"
+
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr "Hiányzik a 'toon.dat' fájl. Szerezd be a ScummVM honlapjáról"
+
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr "A 'toon.dat' fájl hibás. Szerezd be a ScummVM honlapjáról"
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Érvénytelen mentés fájlnév"

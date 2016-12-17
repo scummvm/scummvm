@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-29 23:17+0100\n"
+"POT-Creation-Date: 2016-12-17 12:45+0100\n"
 "PO-Revision-Date: 2016-12-16 21:50+0000\n"
 "Last-Translator: Gilles <draky@draky.net>\n"
-"Language-Team: French "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
+"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -163,13 +163,13 @@ msgstr ""
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
 #: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "OK"
 
@@ -2760,6 +2760,33 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Recherche des mises à jour..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:965
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr ""
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr ""
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
 msgstr "Mode Couleurs"
@@ -4259,21 +4286,9 @@ msgstr "Fenêtres transparentes"
 msgid "Show windows with a partially transparent background"
 msgstr "Afficher les fenêtres avec un fond partiellement transparent"
 
-#: engines/sky/compact.cpp:130
-msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
-msgstr ""
-"Fichier \"sky.cpt\" manquant\n"
-"Vous pouvez le télécharger sur www.scummvm.org"
-
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
-"Le fichier \"sky.cpt\" a une taille incorrecte.\n"
-"Vous pouvez le (re)télécharger sur www.scummvm.org"
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4372,20 +4387,18 @@ msgstr ""
 "Utilise les voix anglaises au lieu des voix allemandes pour tous les autres "
 "langages"
 
-#: engines/teenagent/resources.cpp:96
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Il vous manque le fichier 'teenagent.dat'. Téléchargez le depuis le site web "
-"de ScummVM."
-
-#: engines/teenagent/resources.cpp:117
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "Le fichier teenagent.dat est compressé et cet exécutable n'inclus pas zlib. "
 "Veuillez le décompresser."
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr ""
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4406,28 +4419,6 @@ msgstr "Chargement rapide depuis l'emplacement #%d"
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Erreur lors du chargement rapide depuis l'emplacement #%d"
-
-#: engines/toon/toon.cpp:4917
-msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Il vous manque le fichier 'toon.dat'. Téléchargez le depuis le site web de "
-"ScummVM."
-
-#: engines/toon/toon.cpp:4929
-msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr ""
-"Le fichier 'toon.dat' est corrompu. Téléchargez le depuis le site web de "
-"ScummVM."
-
-#: engines/toon/toon.cpp:4939
-#, c-format
-msgid ""
-"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
-"the ScummVM website"
-msgstr ""
-"La version du fichier 'toon.dat' est incorrect. Version attendue : %d.%d, "
-"version trouvée : %d.%d. Télécharger le fichier depuis le site web de "
-"ScummVM."
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4487,6 +4478,44 @@ msgstr ""
 "Ce fichier de sauvegarde est en version %u, mais ce moteur ne supporte que "
 "les versions %d ou inférieure. Vous devez utiliser une version plus récente "
 "de ScummVM pour pouvoir charger cette sauvegarde."
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Fichier \"sky.cpt\" manquant\n"
+#~ "Vous pouvez le télécharger sur www.scummvm.org"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Le fichier \"sky.cpt\" a une taille incorrecte.\n"
+#~ "Vous pouvez le (re)télécharger sur www.scummvm.org"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Il vous manque le fichier 'teenagent.dat'. Téléchargez le depuis le site "
+#~ "web de ScummVM."
+
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Il vous manque le fichier 'toon.dat'. Téléchargez le depuis le site web "
+#~ "de ScummVM."
+
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Le fichier 'toon.dat' est corrompu. Téléchargez le depuis le site web de "
+#~ "ScummVM."
+
+#~ msgid ""
+#~ "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it "
+#~ "from the ScummVM website"
+#~ msgstr ""
+#~ "La version du fichier 'toon.dat' est incorrect. Version attendue : %d.%d, "
+#~ "version trouvée : %d.%d. Télécharger le fichier depuis le site web de "
+#~ "ScummVM."
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Nom de sauvegarde invalide"

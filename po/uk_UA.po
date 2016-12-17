@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-29 23:17+0100\n"
+"POT-Creation-Date: 2016-12-17 12:45+0100\n"
 "PO-Revision-Date: 2016-12-04 19:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Ukrainian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
+"Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/uk/>\n"
 "Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Ukrainian\n"
 
@@ -165,13 +165,13 @@ msgstr ""
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
 #: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "OK"
 
@@ -978,8 +978,8 @@ msgstr "Пристрій MT-32:"
 #: gui/options.cpp:955
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Вказує звуковий пристрій за замовченням для виводу на Roland "
-"MT-32/LAPC1/CM32l/CM64"
+"Вказує звуковий пристрій за замовченням для виводу на Roland MT-32/LAPC1/"
+"CM32l/CM64"
 
 #: gui/options.cpp:960
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -2745,6 +2745,33 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Перевірити оновлення..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:965
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr ""
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr ""
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
 msgstr "Кольоровий режим"
@@ -4231,21 +4258,9 @@ msgstr "Прозорі вікна"
 msgid "Show windows with a partially transparent background"
 msgstr "Показувати вікна з частково прозорим тлом"
 
-#: engines/sky/compact.cpp:130
-msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
-msgstr ""
-"Не вдалося знайти файл sky.cpt!\n"
-"Будь ласка, завантажте його з www.scummvm.org"
-
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
-"Файл sky.cpt має невірний розмір.\n"
-"Будь ласка, (пере)завантажте його з www.scummvm.org"
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4338,19 +4353,18 @@ msgstr ""
 "Використовувати озвучення англійскою замість німецької для всіх мов окрім "
 "німецької"
 
-#: engines/teenagent/resources.cpp:96
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
-"У вас відстуній файл 'teenagent.dat'. Завантажте його з веб-сайту ScummVM"
-
-#: engines/teenagent/resources.cpp:117
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "Файл teenagent.dat запаковано, але zlib не було включено в цю программу. "
 "Будь-ласка розпакуйте його"
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr ""
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4371,23 +4385,6 @@ msgstr "Збережену гру №%d завантажено"
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Не вдалося завантажити збережену гру №%d"
-
-#: engines/toon/toon.cpp:4917
-msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на веб-сайті ScummVM"
-
-#: engines/toon/toon.cpp:4929
-msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr "Файл 'toon.dat' пошкоджено. Завантажте його з веб-сайту ScummVM"
-
-#: engines/toon/toon.cpp:4939
-#, c-format
-msgid ""
-"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
-"the ScummVM website"
-msgstr ""
-"Файл 'toon.dat' має невірну версію. Очікувана %d.%d, а отрімана %d.%d. "
-"Завантажте його с веб-сайту ScummVM"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4446,6 +4443,38 @@ msgstr ""
 "Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
 "версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
 "файлу."
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Не вдалося знайти файл sky.cpt!\n"
+#~ "Будь ласка, завантажте його з www.scummvm.org"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Файл sky.cpt має невірний розмір.\n"
+#~ "Будь ласка, (пере)завантажте його з www.scummvm.org"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "У вас відстуній файл 'teenagent.dat'. Завантажте його з веб-сайту ScummVM"
+
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr "У вас відстуній файл 'toon.dat'. Візьміть його на веб-сайті ScummVM"
+
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr "Файл 'toon.dat' пошкоджено. Завантажте його з веб-сайту ScummVM"
+
+#~ msgid ""
+#~ "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it "
+#~ "from the ScummVM website"
+#~ msgstr ""
+#~ "Файл 'toon.dat' має невірну версію. Очікувана %d.%d, а отрімана %d.%d. "
+#~ "Завантажте його с веб-сайту ScummVM"
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Неправильна назва файлу збереження стану"

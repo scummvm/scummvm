@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-11-29 23:17+0100\n"
+"POT-Creation-Date: 2016-12-17 12:45+0100\n"
 "PO-Revision-Date: 2016-03-15 04:09-0700\n"
 "Last-Translator: Chenbo Li <lichenbo1949@gmail.com>\n"
 "Language-Team: Chenbo Li <lichenbo1949@gmail.com>\n"
@@ -158,13 +158,13 @@ msgstr ""
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
 #: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471 engines/zvision/file/save_manager.cpp:224
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
 msgstr "Queding"
 
@@ -2728,6 +2728,33 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Jiancha Gengxin..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:965
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr ""
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr ""
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 #, fuzzy
 msgid "Color mode"
@@ -4206,21 +4233,9 @@ msgstr "Touming Chuangkou"
 msgid "Show windows with a partially transparent background"
 msgstr "Xianshi Diayou Bantouming Beijing de Chuangkou"
 
-#: engines/sky/compact.cpp:130
-msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
-msgstr ""
-"Wufa Zhaodao \"sky.cpt\" Wenjian\n"
-"Qing Cong www.cummvm.org Xiazai"
-
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
-"Wenjian \"sky.cpt\" Chicun Cuowu.\n"
-"Qing Cong www.scummvm.org Chongxin Xiazai"
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4310,19 +4325,18 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
 
-#: engines/teenagent/resources.cpp:96
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
-
-#: engines/teenagent/resources.cpp:117
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "teenagent.dat Wenjian Yibeiyasuo Bingqie zlib Bingmeiyou Zai chengxu Zhong. "
 "Qing jieya."
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr ""
 
 #: engines/toon/toon.cpp:222
 #, fuzzy, c-format
@@ -4347,25 +4361,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Nin Yao Zairu Baocun de Youxi ma?"
-
-#: engines/toon/toon.cpp:4917
-#, fuzzy
-msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
-
-#: engines/toon/toon.cpp:4929
-#, fuzzy
-msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-msgstr ""
-"Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
-
-#: engines/toon/toon.cpp:4939
-#, c-format
-msgid ""
-"File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from "
-"the ScummVM website"
-msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4418,6 +4413,35 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Wufa Zhaodao \"sky.cpt\" Wenjian\n"
+#~ "Qing Cong www.cummvm.org Xiazai"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Wenjian \"sky.cpt\" Chicun Cuowu.\n"
+#~ "Qing Cong www.scummvm.org Chongxin Xiazai"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
+
+#, fuzzy
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
+
+#, fuzzy
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Zhaobudao 'teenagent.dat' Wenjian. Cong ScummVM wangzhan Shangmian Dedao"
 
 #~ msgid "Invalid save file name"
 #~ msgstr "Wuxiao Baocun Wenjianming"
