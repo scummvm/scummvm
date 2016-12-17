@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-11-29 23:17+0100\n"
-"PO-Revision-Date: 2016-10-05 23:47+0200\n"
-"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
-"Language-Team: somaen <einarjohants@gmail.com>\n"
-"Language: Norsk (bokmaal)\n"
+"PO-Revision-Date: 2016-12-17 11:35+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Norwegian Bokmål "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nb_NO/>\n"
+"Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.8.9\n"
 "X-Language-name: Norsk (bokmaal)\n"
 
 #: gui/about.cpp:94
@@ -532,7 +533,7 @@ msgstr "Nullstill"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Nullstill alle FluidSynth-instillinger til standardverdier"
+msgstr "Nullstill alle FluidSynth-instillinger til standardverdier."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -928,7 +929,7 @@ msgid ""
 "soundcard"
 msgstr ""
 "Høyere verdier gir bedre lydkvalitet, men støttes kanskje ikke av ditt "
-"lydkort "
+"lydkort"
 
 #: gui/options.cpp:900
 msgid "GM Device:"
@@ -989,7 +990,7 @@ msgid ""
 "connected to your computer"
 msgstr ""
 "Velg hvis du har et ekte Roland-kompatible lydkort tilkoblet maskinen, og "
-"vil bruke dette."
+"vil bruke dette"
 
 #: gui/options.cpp:962
 msgctxt "lowres"
@@ -1205,11 +1206,11 @@ msgstr "Plass brukt av ScummVM's lagrede spill på denne lagringsmåten"
 
 #: gui/options.cpp:1425
 msgid "Last sync time:"
-msgstr "Forrige synctidspunkt"
+msgstr "Forrige synctidspunkt:"
 
 #: gui/options.cpp:1425
 msgid "When the last saved games sync for this storage occured"
-msgstr "Når forrige sync av lagrede spill til denne lagringsmåten skjedde."
+msgstr "Når forrige sync av lagrede spill til denne lagringsmåten skjedde"
 
 #: gui/options.cpp:1428 gui/storagewizarddialog.cpp:71
 msgid "Connect"
@@ -1282,7 +1283,7 @@ msgstr "Klarte ikke å kontakte skylagring!"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr "En annen skylagring er allerede aktiv"
+msgstr "En annen skylagring er allerede aktiv."
 
 #: gui/options.cpp:1667
 msgid ""
@@ -1471,11 +1472,11 @@ msgstr "Nytt lagret spill"
 
 #: gui/saveload-dialog.cpp:924
 msgid "Create a new saved game"
-msgstr "Opprett ett nytt lagret spill."
+msgstr "Opprett ett nytt lagret spill"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
-msgstr "Navn:"
+msgstr "Navn: "
 
 #: gui/saveload-dialog.cpp:1131
 #, c-format
@@ -1497,7 +1498,7 @@ msgstr "Skaff koden fra lagringsmåten, skriv den inn"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "i følgende felt og trykk 'Koble til'"
+msgstr "i følgende felt og trykk 'Koble til':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1530,7 +1531,7 @@ msgstr "Vent til gjeldende lagringsmåte fullfører og prøv igjen."
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr "Felt %s har en feil"
+msgstr "Felt %s har en feil."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
@@ -2036,7 +2037,7 @@ msgstr "C64 Lydemulator"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "Sync av lagrede spill fullført"
+msgstr "Sync av lagrede spill fullført."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
@@ -2061,11 +2062,11 @@ msgstr ""
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Nedlasting fullført"
+msgstr "Nedlasting fullført."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "Nedlasting feilet"
+msgstr "Nedlasting feilet."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2157,7 +2158,7 @@ msgstr "AV"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr "Sveip to fingre til høyre for å slå av/på"
+msgstr "Sveip to fingre til høyre for å slå av/på."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
@@ -2166,7 +2167,7 @@ msgstr "Auto-dramodus er nå"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr "Sveip tre fingre til høyre for å veksle"
+msgstr "Sveip tre fingre til høyre for å veksle."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:146
 msgid "OpenGL"
@@ -2681,7 +2682,7 @@ msgstr "Vil du åpne eller lagre spillet?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Er du sikker på at du vil avslutte ?"
+msgstr "   Er du sikker på at du vil avslutte ?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2693,11 +2694,11 @@ msgstr "Roter"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Bruk SDL-driver"
+msgstr "Bruk SDL-driver "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Skjerm"
+msgstr "Skjerm "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2938,7 +2939,7 @@ msgstr "Spill filmer med økt hastighet"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Klarte ikke å lagre spill."
+msgstr "Klarte ikke å lagre spill"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3257,11 +3258,11 @@ msgstr "Spillet er satt på pause. Trykk en tast for å fortsette."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Hopp over Hall of Records storyboard scenene."
+msgstr "Hopp over Hall of Records storyboard scenene"
 
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Tillater spilleren å hoppe forbi Hall of Records storyboard scener. "
+msgstr "Tillater spilleren å hoppe forbi Hall of Records storyboard scener"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
@@ -3269,7 +3270,7 @@ msgstr "Skaler «making of»-videoer til fullskjerm"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Skaler «making of»-videoene, slik at de bruker hele skjermen."
+msgstr "Skaler «making of»-videoene, slik at de bruker hele skjermen"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3574,7 +3575,7 @@ msgstr "Tekst & Tale"
 
 #: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
-msgstr "Velg ferdighetsnivå"
+msgstr "Velg ferdighetsnivå."
 
 #: engines/scumm/dialogs.cpp:656
 msgid "Refer to your Loom(TM) manual for help."
@@ -3960,7 +3961,7 @@ msgstr "Lagre / Åpne / Valg"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr "Andre spillkontroller"
+msgstr "Andre spillkontroller:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
@@ -4032,7 +4033,7 @@ msgstr "  dette faktisk slå musslåssing av/på"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Kampkontroller (talltastatur)"
+msgstr "Kampkontroller (talltastatur):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4085,7 +4086,7 @@ msgstr "henholdsvis 9, 6, og 3."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Flykontroller (talltastatur)"
+msgstr "Flykontroller (talltastatur):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
@@ -4321,7 +4322,7 @@ msgstr "Bruk engelsk tale"
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr "Bruk engelsk tale istedenfor tysk for alle andre språk enn tysk."
+msgstr "Bruk engelsk tale istedenfor tysk for alle andre språk enn tysk"
 
 #: engines/teenagent/resources.cpp:96
 msgid ""
