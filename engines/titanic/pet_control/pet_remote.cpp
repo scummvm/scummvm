@@ -112,12 +112,12 @@ bool CPetRemote::reset() {
 		_up.reset("PetUp", _petControl, MODE_UNSELECTED);
 		_down.reset("PetDown", _petControl, MODE_UNSELECTED);
 
-		_left.reset("PetLeftUp", _petControl, MODE_SELECTED);
-		_left.reset("PetLeft", _petControl, MODE_UNSELECTED);
-		_right.reset("PetRightUp", _petControl, MODE_SELECTED);
-		_right.reset("PetRight", _petControl, MODE_UNSELECTED);
-		_top.reset("PetTopUp", _petControl, MODE_SELECTED);
-		_top.reset("PetTop", _petControl, MODE_UNSELECTED);
+		_left.reset("PetLeftUp", _petControl, MODE_UNSELECTED);
+		_left.reset("PetLeft", _petControl, MODE_SELECTED);
+		_right.reset("PetRightUp", _petControl, MODE_UNSELECTED);
+		_right.reset("PetRight", _petControl, MODE_SELECTED);
+		_top.reset("PetTopUp", _petControl, MODE_UNSELECTED);
+		_top.reset("PetTop", _petControl, MODE_SELECTED);
 		_bottom.reset("PetBottomUp", _petControl, MODE_UNSELECTED);
 		_bottom.reset("PetBottom", _petControl, MODE_SELECTED);
 		_action.reset("PetActionUp", _petControl, MODE_UNSELECTED);

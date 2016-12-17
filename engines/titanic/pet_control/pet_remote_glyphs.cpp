@@ -328,7 +328,7 @@ bool COperateLightsGlyph::MouseButtonUpMsg(const Point &pt) {
 		getOwner()->generateMessage(RMSG_UP, "Light");
 	else if (_down && _down->MouseButtonUpMsg(pt))
 		getOwner()->generateMessage(RMSG_DOWN, "Light");
-	else
+	else if (_activate && _activate->MouseButtonUpMsg(pt))
 		getOwner()->generateMessage(RMSG_ACTIVATE, "Light");
 
 	return true;
