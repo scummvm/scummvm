@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-12-17 12:46+0100\n"
+"POT-Creation-Date: 2016-12-17 20:32+0100\n"
 "PO-Revision-Date: 2016-12-04 19:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2021,11 +2021,11 @@ msgstr "Аудіо FM-Towns"
 msgid "PC-98 Audio"
 msgstr "Аудіо PC-98"
 
-#: audio/softsynth/mt32.cpp:183
+#: audio/softsynth/mt32.cpp:187
 msgid "Initializing MT-32 Emulator"
 msgstr "Налаштовую емулятор MT-32"
 
-#: audio/softsynth/mt32.cpp:443
+#: audio/softsynth/mt32.cpp:447
 msgid "MT-32 Emulator"
 msgstr "Емулятор MT-32"
 

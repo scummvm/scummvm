@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-12-17 12:46+0100\n"
+"POT-Creation-Date: 2016-12-17 20:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1942,11 +1942,11 @@ msgstr ""
 msgid "PC-98 Audio"
 msgstr ""
 
-#: audio/softsynth/mt32.cpp:183
+#: audio/softsynth/mt32.cpp:187
 msgid "Initializing MT-32 Emulator"
 msgstr ""
 
-#: audio/softsynth/mt32.cpp:443
+#: audio/softsynth/mt32.cpp:447
 msgid "MT-32 Emulator"
 msgstr ""
 
