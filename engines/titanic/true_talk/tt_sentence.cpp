@@ -43,7 +43,7 @@ TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
 		_owner(owner), _category(1), _inputCtr(inputCtr), _field34(0),
 		_field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
-		_npcScript(npcScript), _field58(0), _field5C(0) {
+		_npcScript(npcScript), _field58(5), _field5C(5) {
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
 
