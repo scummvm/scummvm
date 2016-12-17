@@ -68,7 +68,7 @@ bool CTurnOnTurnOff::TurnOn(CTurnOn *msg) {
 }
 
 bool CTurnOnTurnOff::TurnOff(CTurnOff *msg) {
-	if (!_isOn) {
+	if (_isOn) {
 		if (_isBlocking)
 			playMovie(_startFrameOff, _endFrameOff, MOVIE_GAMESTATE);
 		else
