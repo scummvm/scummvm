@@ -707,7 +707,7 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 	for (uint loopCtr = 0; loopCtr < 2; ++loopCtr) {
 		for (uint entryCtr = 0; entryCtr < entryCount; ++entryCtr) {
 			const TTsentenceEntry &entry = (*entries)[entryCtr];
-			if (entry._category == categoryNum && (loopCtr == 0 || entry._category))
+			if (entry._category != categoryNum && (loopCtr == 0 || entry._category))
 				continue;
 
 			bool flag;
