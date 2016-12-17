@@ -37,6 +37,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -302,7 +303,8 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	// Open the mort.dat file
 	if (!f.open(MORT_DAT)) {
-		GUIErrorMessage("Could not locate 'mort.dat'.");
+		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), MORT_DAT);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 
@@ -310,16 +312,22 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	char fileId[4];
 	f.read(fileId, 4);
 	if (strncmp(fileId, "MORT", 4) != 0) {
-		GUIErrorMessage("The located mort.dat data file is invalid");
+		Common::String msg = Common::String::format(_("The '%s' engine data file is corrupt."), MORT_DAT);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 
 	// Check the version
-	if (f.readByte() < MORT_DAT_REQUIRED_VERSION) {
-		GUIErrorMessage("The located mort.dat data file is too old, please download an updated version on scummvm.org");
+	int majVer = f.readByte();
+	int minVer = f.readByte();
+
+	if (majVer < MORT_DAT_REQUIRED_VERSION) {
+		Common::String msg = Common::String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
+		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
-	f.readByte();		// Minor version
 
 	// Loop to load resources from the data file
 	while (f.pos() < f.size()) {

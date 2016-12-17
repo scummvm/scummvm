@@ -4909,12 +4909,13 @@ void ToonEngine::createShadowLUT() {
 bool ToonEngine::loadToonDat() {
 	Common::File in;
 	Common::String msg;
+	Common::String filename = "toon.dat";
 	int majVer, minVer;
 
-	in.open("toon.dat");
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = _("You're missing the 'toon.dat' file. Get it from the ScummVM website");
+		msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4926,7 +4927,7 @@ bool ToonEngine::loadToonDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TOON")) {
-		msg = _("File 'toon.dat' is corrupt. Get it from the ScummVM website");
+		msg = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4936,7 +4937,9 @@ bool ToonEngine::loadToonDat() {
 	minVer = in.readByte();
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
-		msg = Common::String::format(_("File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website"), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		msg = Common::String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 
