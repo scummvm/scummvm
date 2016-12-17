@@ -66,7 +66,7 @@ private:
 	void quitMirror();
 	void clictimbre();
 	void clicplanval();
-	void gotolieu(goto_t *go);
+	void gotolieu(Goto *go);
 	void deplaval(uint16 roomNum);
 	void move(Direction dir);
 	void move2(Direction dir);
@@ -138,14 +138,14 @@ private:
 	void saveAdamMapMark(int16 x, int16 y);
 	bool istrice(int16 roomNum);
 	bool istyran(int16 roomNum);
-	void istyranval(area_t *area);
+	void istyranval(Area *area);
 	char getDirection(perso_t *perso);
 	bool canMoveThere(char loc, perso_t *perso);
 	void scramble1(uint8 elem[4]);
 	void scramble2(uint8 elem[4]);
 	void melangedir();
 	bool naitredino(char persoType);
-	void newcita(char arg1, int16 arg2, room_t *room);
+	void newCitadel(char area, int16 level, Room *room);
 	void citaevol(int16 level);
 	void destroyCitadelRoom(int16 roomNum);
 	void buildCitadel();
@@ -156,7 +156,7 @@ private:
 	void newvallee();
 	char whereiscita();
 	bool iscita(int16 loc);
-	void lieuvava(area_t *area);
+	void lieuvava(Area *area);
 	void vivredino();
 	void vivreval(int16 areaNum);
 	void chaquejour();
@@ -279,12 +279,12 @@ private:
 	void openbigfile();
 	void closebigfile();
 	void loadRawFile(uint16 num, byte *buffer);
-	void loadIconFile(uint16 num, icon_t *buffer);
-	void loadRoomFile(uint16 num, room_t *buffer);
+	void loadIconFile(uint16 num, Icon *buffer);
+	void loadRoomFile(uint16 num, Room *buffer);
 	void shnmfl(uint16 num);
 	int ssndfl(uint16 num);
-	void ConvertIcons(icon_t *icon, int count);
-	void ConvertLinks(room_t *room, int count);
+	void ConvertIcons(Icon *icon, int count);
+	void ConvertLinks(Room *room, int count);
 	void ConvertMacToPC();
 	void loadpermfiles();
 	bool ReadDataSyncVOC(unsigned int num);
@@ -299,7 +299,7 @@ private:
 	void init_globals();
 	void initRects();
 	void closesalle();
-	void displaySingleRoom(room_t *room);
+	void displaySingleRoom(Room *room);
 	void displayRoom();
 	void displayPlace();
 	void loadPlace(int16 num);
@@ -307,8 +307,8 @@ private:
 	void specialout();
 	void specialin();
 	void animpiece();
-	void getdino(room_t *room);
-	room_t *getsalle(int16 loc);
+	void getdino(Room *room);
+	Room *getsalle(int16 loc);
 	void initPlace(int16 roomNum);
 	void maj2();
 	void majsalle1(int16 roomNum);
@@ -323,7 +323,7 @@ private:
 	void signon(const char *s);
 	void testPommeQ();
 	void FRDevents();
-	icon_t *scan_icon_list(int16 x, int16 y, int16 index);
+	Icon *scan_icon_list(int16 x, int16 y, int16 index);
 	void update_cursor();
 	void mouse();
 	void showMovie(char arg1);
@@ -398,7 +398,7 @@ private:
 	void suiveurs(perso_t *perso);
 	void evenements(perso_t *perso);
 	void followme(perso_t *perso);
-	void rangermammi(perso_t *perso, room_t *room);
+	void rangermammi(perso_t *perso, Room *room);
 	void perso_ici(int16 action);
 	void setpersohere();
 	void faire_suivre(int16 roomNum);
@@ -627,8 +627,8 @@ private:
 	byte   *gameConditions;
 	byte *sal_buf;   //TODO: fixme
 	byte   *bank_data_buf;
-	icon_t *_gameIcons;
-	room_t *gameRooms;
+	Icon *_gameIcons;
+	Room *gameRooms;
 	PakHeaderNode *bigfile_header;
 	byte   *glow_buffer;
 	byte   *p_mainview_buf;
@@ -670,8 +670,8 @@ private:
 	int16           _inventoryScrollDelay;
 	int16           curs_y, curs_x;
 	int16           _currCursor;
-	icon_t          *current_spot;
-	icon_t          *current_spot2;
+	Icon          *current_spot;
+	Icon          *current_spot2;
 	bool pomme_q;
 	bool keybd_held;
 	bool mouse_held;

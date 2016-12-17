@@ -411,7 +411,7 @@ struct Follower {      // Characters on Mirror screen
 };
 typedef struct Follower Follower;
 
-struct icon_t {
+struct Icon {
 	int16  sx;
 	int16  sy;
 	int16  ex;
@@ -421,7 +421,7 @@ struct icon_t {
 	uint32 _objectId;
 };
 
-struct goto_t {
+struct Goto {
 	byte   _areaNum;    // target area
 	byte   _curAreaNum; // current area
 	byte   _enterVideoNum;
@@ -442,7 +442,7 @@ enum RoomFlags {
 };
 }
 
-struct room_t {
+struct Room {
 	byte    _id;
 	byte    _exits[4];   //TODO: signed?
 	byte    _flags;
@@ -480,15 +480,15 @@ enum AreaType {
 };
 }
 
-struct area_t {
-	byte    _num;
-	byte    _type;
-	uint16  _flags;
-	uint16  _firstRoomIdx;
-	byte    _citadelLevel;
-	byte    _placeNum;
-	room_t *_citadelRoomPtr;
-	int16   _visitCount;
+struct Area {
+	byte   _num;
+	byte   _type;
+	uint16 _flags;
+	uint16 _firstRoomIdx;
+	byte   _citadelLevel;
+	byte   _placeNum;
+	Room  *_citadelRoomPtr;
+	int16  _visitCount;
 };
 
 namespace ValleyNews {
@@ -682,13 +682,13 @@ struct global_t {
 	dial_t *_nextDialogPtr;
 	dial_t *_narratorDialogPtr;
 	dial_t *_lastDialogPtr;
-	icon_t *_nextRoomIcon;
+	Icon *_nextRoomIcon;
 	byte   *_sentenceBufferPtr;
-	room_t *_roomPtr;
-	area_t *_areaPtr;
-	area_t *_lastAreaPtr;
-	area_t *_curAreaPtr;
-	room_t *_citaAreaFirstRoom;
+	Room *_roomPtr;
+	Area *_areaPtr;
+	Area *_lastAreaPtr;
+	Area *_curAreaPtr;
+	Room *_citaAreaFirstRoom;
 	perso_t *_characterPtr;
 	perso_t *_roomCharacterPtr;
 	byte   _lastInfoIdx;
@@ -775,11 +775,11 @@ public:
 };
 #pragma pack(pop)
 
-struct cita_t {
-	int16   ff_0;
-	int16   ff_2[8 * 2];
+struct Citadel {
+	int16 _id;
+	int16 _bank[8];
+	int16 _video[8];
 };
-typedef struct cita_t cita_t;
 
 /////////////// vars
 
@@ -810,7 +810,7 @@ extern char kTabletView[];
 extern char kPersoRoomBankTable[];
 
 // area transition descriptors
-extern goto_t gotos[];
+extern Goto gotos[];
 extern uint16 kFramesVid170[];
 extern uint16 kFramesVid83[];
 extern uint16 kFramesVid88[];
@@ -819,7 +819,7 @@ extern uint16 kFramesVid94[];
 extern object_t _objects[];
 extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
-extern cita_t cita_list[];
+extern Citadel _citadelList[];
 extern int16 tab_2CB16[];
 extern uint8 tab_2CB1E[8][4];
 
@@ -830,7 +830,7 @@ typedef struct prect_t prect_t;
 
 extern prect_t perso_rects[];
 extern byte tab_persxx[][5];
-extern area_t kAreasTable[];
+extern Area kAreasTable[];
 extern int16 tab_2CEF0[64];
 extern int16 tab_2CF70[64];
 extern int16 kActionCursors[299];
