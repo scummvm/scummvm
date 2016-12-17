@@ -153,7 +153,7 @@ private:
 	void constcita();
 	void depladino(perso_t *perso);
 	void deplaalldino();
-	void newvallee();
+	void newValley();
 	char whereiscita();
 	bool iscita(int16 loc);
 	void lieuvava(Area *area);
@@ -267,7 +267,7 @@ private:
 	void effet4();
 	void ClearScreen();
 	void colimacon(int16 pattern[16]);
-	void fadetoblack(int delay);
+	void fadeToBlack(int delay);
 	void fadetoblack128(int delay);
 	void fadefromblack128(int delay);
 	void rectanglenoir32();
@@ -406,7 +406,7 @@ private:
 	void suis_moi(int16 index);
 	void reste_ici5();
 	void reste_ici(int16 index);
-	void eloipart();
+	void handleEloiDeparture();
 	bool eloirevientq();
 	void eloirevient();
 	void incPhase1();
