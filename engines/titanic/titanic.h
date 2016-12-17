@@ -123,6 +123,7 @@ public:
 	StringArray _itemIds;
 	StringArray _roomNames;
 	Strings _strings;
+	CString _stateRoomExitView;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();

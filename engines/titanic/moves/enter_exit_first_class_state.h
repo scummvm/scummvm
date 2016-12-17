@@ -30,8 +30,6 @@ namespace Titanic {
 class CEnterExitFirstClassState : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-private:
-	CString _viewName;
 public:
 	CLASSDEF;
 
