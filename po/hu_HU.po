@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-12-17 12:45+0100\n"
+"POT-Creation-Date: 2016-12-17 12:46+0100\n"
 "PO-Revision-Date: 2016-12-13 20:02+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2007,11 +2007,11 @@ msgstr "FM-Towns Hang"
 msgid "PC-98 Audio"
 msgstr "PC-98 Hang"
 
-#: audio/softsynth/mt32.cpp:197
+#: audio/softsynth/mt32.cpp:183
 msgid "Initializing MT-32 Emulator"
 msgstr "MT-32 Emulátor inicializálása"
 
-#: audio/softsynth/mt32.cpp:435
+#: audio/softsynth/mt32.cpp:443
 msgid "MT-32 Emulator"
 msgstr "MT-32 Emulátor"
 
