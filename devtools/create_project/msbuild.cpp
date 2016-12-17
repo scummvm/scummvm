@@ -514,7 +514,9 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 	if (!_compileFiles.empty()) {
 		projectFile << "\t<ItemGroup>\n";
 		for (std::list<FileEntry>::const_iterator entry = _compileFiles.begin(); entry != _compileFiles.end(); ++entry) {
-			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
+			std::string fileName = (*entry).name + ".o";
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
+			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), fileName) != duplicate.end());
 
 			// Deal with duplicated file names
 			if (isDuplicate) {
