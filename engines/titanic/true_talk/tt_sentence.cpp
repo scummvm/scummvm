@@ -212,7 +212,7 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 
 	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 ||
 		slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
-		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
+		if (str == g_vm->_exeResources._owner->_concept1P->getText() &&
 			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
 				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
 				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
@@ -221,7 +221,7 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 	}
 
 	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 || slotIndex == 2)) {
-		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept2P->getText()) {
+		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept1P->getText()) {
 			delete concept;
 			concept = getFrameSlot(5, node);
 			conceptText = concept->getText();
