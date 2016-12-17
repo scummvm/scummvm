@@ -143,6 +143,7 @@ void AdlEngine_v4::loadRegion(byte region) {
 		// implementation choices made earlier on for DataBlockPtr and DiskImage.
 		_state.region = 0; // To avoid region offset being applied
 		_itemPics.clear();
+		_itemPicIndex->seek(0);
 		loadItemPictures(*_itemPicIndex, _itemPicIndex->size() / 5);
 	}
 
