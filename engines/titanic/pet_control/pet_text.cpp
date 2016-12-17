@@ -249,20 +249,21 @@ void CPetText::setColor(byte r, byte g, byte b) {
 }
 
 void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
-	if (_lineCount >= 0) {
-		for (int lineNum = 0; lineNum <= _lineCount; ++lineNum) {
-			// Get the rgb values
-			uint r = _array[lineNum]._rgb[1];
-			uint g = _array[lineNum]._rgb[2];
-			uint b = _array[lineNum]._rgb[3];
-			uint color = r | (g << 8) | (b << 16);
+	for (int lineNum = 0; lineNum <= _lineCount; ++lineNum) {
+		if (_array[lineNum]._rgb.empty())
+			continue;
 
-			for (uint index = 0; index < count; ++index) {
-				if (color == srcColors[index]) {
-					// Found a match, so replace the color
-					setLineColor(lineNum, destColors[lineNum]);
-					break;
-				}
+		// Get the rgb values
+		uint r = _array[lineNum]._rgb[1];
+		uint g = _array[lineNum]._rgb[2];
+		uint b = _array[lineNum]._rgb[3];
+		uint color = r | (g << 8) | (b << 16);
+
+		for (uint index = 0; index < count; ++index) {
+			if (color == srcColors[index]) {
+				// Found a match, so replace the color
+				setLineColor(lineNum, destColors[lineNum]);
+				break;
 			}
 		}
 	}
