@@ -49,6 +49,10 @@
 
 #include "gui/message.h"
 
+// prevents load of unused FileStream API because it includes a standard library
+// include, per _sev
+#define MT32EMU_FILE_STREAM_H
+
 #include "audio/softsynth/mt32/c_interface/cpp_interface.h"
 
 namespace MT32Emu {
