@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -26,14 +26,6 @@ typedef unsigned short int Bit16u;
 typedef   signed short int Bit16s;
 typedef unsigned char      Bit8u;
 typedef   signed char      Bit8s;
-
-#if MT32EMU_USE_FLOAT_SAMPLES
-typedef float Sample;
-typedef float SampleEx;
-#else
-typedef Bit16s Sample;
-typedef Bit32s SampleEx;
-#endif
 
 }
 

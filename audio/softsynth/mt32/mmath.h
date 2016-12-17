@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,12 +18,7 @@
 #ifndef MT32EMU_MMATH_H
 #define MT32EMU_MMATH_H
 
-#define FIXEDPOINT_UDIV(x, y, point) (((x) << (point)) / ((y)))
-#define FIXEDPOINT_SDIV(x, y, point) (((x) * (1 << point)) / ((y)))
-#define FIXEDPOINT_UMULT(x, y, point) (((x) * (y)) >> point)
-#define FIXEDPOINT_SMULT(x, y, point) (((x) * (y)) / (1 << point))
-
-#define FIXEDPOINT_MAKE(x, point) ((Bit32u)((1 << point) * x))
+#include <cmath>
 
 namespace MT32Emu {
 
@@ -46,7 +41,7 @@ static inline float EXPF(float x) {
 static inline float EXP2F(float x) {
 #ifdef __APPLE__
 	// on OSX exp2f() is 1.59 times faster than "exp() and the multiplication with FLOAT_LN_2"
-	return exp2(x);
+	return exp2f(x);
 #else
 	return exp(FLOAT_LN_2 * x);
 #endif
@@ -68,6 +63,6 @@ static inline float LOG10F(float x) {
 	return log10(x);
 }
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_MMATH_H

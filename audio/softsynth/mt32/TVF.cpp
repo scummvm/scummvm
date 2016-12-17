@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,11 +15,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <cmath>
-
-#include "mt32emu.h"
-#include "mmath.h"
 #include "internals.h"
+
+#include "TVF.h"
+#include "LA32Ramp.h"
+#include "Partial.h"
+#include "Poly.h"
+#include "Tables.h"
 
 namespace MT32Emu {
 
@@ -60,7 +62,7 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 	static const Bit8s keyfollowMult21[] = {-21, -10, -5, 0, 2, 5, 8, 10, 13, 16, 18, 21, 26, 32, 42, 21, 21};
 	int baseCutoff = keyfollowMult21[partialParam->tvf.keyfollow] - keyfollowMult21[partialParam->wg.pitchKeyfollow];
 	// baseCutoff range now: -63 to 63
-	baseCutoff *= (int)key - 60;
+	baseCutoff *= int(key) - 60;
 	// baseCutoff range now: -3024 to 3024
 	int biasPoint = partialParam->tvf.biasPoint;
 	if ((biasPoint & 0x40) == 0) {
@@ -75,7 +77,7 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 		// biasPoint range here: 64 to 127
 		int bias = biasPoint - 31 - key; // bias range here: -75 to 84
 		if (bias < 0) {
-			baseCutoff += bias * biasLevelToBiasMult[partialParam->tvf.biasLevel]; // Calculation range: −6375 to 6375
+			baseCutoff += bias * biasLevelToBiasMult[partialParam->tvf.biasLevel]; // Calculation range: -6375 to 6375
 			// baseCutoff range now: -9399 to 9399
 		}
 	}
@@ -96,7 +98,7 @@ static int calcBaseCutoff(const TimbreParam::PartialParam *partialParam, Bit32u 
 	if (baseCutoff > 255) {
 		baseCutoff = 255;
 	}
-	return (Bit8u)baseCutoff;
+	return Bit8u(baseCutoff);
 }
 
 TVF::TVF(const Partial *usePartial, LA32Ramp *useCutoffModifierRamp) :
@@ -128,7 +130,7 @@ void TVF::reset(const TimbreParam::PartialParam *newPartialParam, unsigned int b
 	int newLevelMult = velocity * newPartialParam->tvf.envVeloSensitivity;
 	newLevelMult >>= 6;
 	newLevelMult += 109 - newPartialParam->tvf.envVeloSensitivity;
-	newLevelMult += ((signed)key - 60) >> (4 - newPartialParam->tvf.envDepthKeyfollow);
+	newLevelMult += (signed(key) - 60) >> (4 - newPartialParam->tvf.envDepthKeyfollow);
 	if (newLevelMult < 0) {
 		newLevelMult = 0;
 	}
@@ -140,7 +142,7 @@ void TVF::reset(const TimbreParam::PartialParam *newPartialParam, unsigned int b
 	levelMult = newLevelMult;
 
 	if (newPartialParam->tvf.envTimeKeyfollow != 0) {
-		keyTimeSubtraction = ((signed)key - 60) >> (5 - newPartialParam->tvf.envTimeKeyfollow);
+		keyTimeSubtraction = (signed(key) - 60) >> (5 - newPartialParam->tvf.envTimeKeyfollow);
 	} else {
 		keyTimeSubtraction = 0;
 	}
@@ -228,4 +230,4 @@ void TVF::nextPhase() {
 	startRamp(newTarget, newIncrement, newPhase);
 }
 
-}
+} // namespace MT32Emu

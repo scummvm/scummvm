@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,9 +18,14 @@
 #ifndef MT32EMU_PART_H
 #define MT32EMU_PART_H
 
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+#include "Structures.h"
+
 namespace MT32Emu {
 
-class PartialManager;
+class Poly;
 class Synth;
 
 class PolyList {
@@ -123,7 +128,7 @@ public:
 	// Abort the first poly in PolyState_HELD, or if none exists, the first active poly in any state.
 	bool abortFirstPolyPreferHeld();
 	bool abortFirstPoly();
-};
+}; // class Part
 
 class RhythmPart: public Part {
 	// Pointer to the area of the MT-32's memory dedicated to rhythm
@@ -143,5 +148,6 @@ public:
 	void setProgram(unsigned int patchNum);
 };
 
-}
-#endif
+} // namespace MT32Emu
+
+#endif // #ifndef MT32EMU_PART_H
