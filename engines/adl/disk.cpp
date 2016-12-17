@@ -117,8 +117,11 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 			track = read44(buffer, pos);
 			sector = read44(buffer, pos);
 			uint8 checksum = read44(buffer, pos);
-			if ((volNo ^ track ^ sector) != checksum)
-				error("invalid NIB checksum");
+			if ((volNo ^ track ^ sector) != checksum) {
+				warning("invalid NIB checksum (volNo %d, track %d, sector %d)", volNo, track, sector);
+				sawAddress = false;
+				continue;
+			}
 
 			if (!firstGoodTrackPos)
 				firstGoodTrackPos = pos;
