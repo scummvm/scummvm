@@ -1091,8 +1091,9 @@ void writeStarfieldPoints2() {
 }
 
 void writePhrases(const char *name, const CommonPhrase *phrases) {
+	outputFile.seek(dataOffset);
+
 	for (uint idx = 0; phrases->_str; ++idx, ++phrases) {
-		outputFile.seek(dataOffset + idx * 4);
 		outputFile.writeString(phrases->_str);
 		outputFile.writeLong(phrases->_dialogueId);
 		outputFile.writeLong(phrases->_roomNum);
