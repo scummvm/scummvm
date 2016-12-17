@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-17 20:32+0100\n"
-"PO-Revision-Date: 2016-12-12 08:25+0000\n"
+"PO-Revision-Date: 2016-12-17 22:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/ru/>\n"
+"Language-Team: Russian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Russian\n"
 
@@ -2752,7 +2752,7 @@ msgstr "Проверить обновления..."
 #: engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "Не удалось найти файл движка %s."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2760,7 +2760,7 @@ msgstr ""
 #: engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "Файл движка %s повреждён."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2770,7 +2770,7 @@ msgstr ""
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
-msgstr ""
+msgstr "Неверная версия файла движка %s. Ожидается %d.%d, а найдена %d.%d."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
@@ -4270,7 +4270,7 @@ msgstr "Показывать окна с частично прозрачным фоном"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Файл данных движка sky.cpt имеет неверный размер."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4377,7 +4377,7 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Вариант шрифта отсутвтует в файле движка %s."
 
 #: engines/toon/toon.cpp:222
 #, c-format
