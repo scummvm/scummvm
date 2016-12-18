@@ -1136,6 +1136,16 @@ public:
 			*pixel++ = (uint8)color;
 		}
 	}
+
+	Common::String toString() const {
+		return Common::String::format("%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s):\n",
+			getWidth(), getHeight(),
+			getXResolution(), getYResolution(),
+			getOrigin().x, getOrigin().y,
+			getSkipColor(),
+			getRemap() ? "remap" : "no remap",
+			getShouldGC() ? "GC" : "no GC");
+	}
 };
 
 struct BitmapTable : public SegmentObjTable<SciBitmap> {

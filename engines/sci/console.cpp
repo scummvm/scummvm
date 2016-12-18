@@ -2216,9 +2216,17 @@ bool Console::segmentInfo(int nr) {
 	case SEG_TYPE_ARRAY:
 		debugPrintf("SCI32 arrays\n");
 		break;
-	case SEG_TYPE_BITMAP:
-		debugPrintf("SCI32 bitmaps\n");
+
+	case SEG_TYPE_BITMAP: {
+		BitmapTable &table = *(BitmapTable *)mobj;
+		debugPrintf("SCI32 bitmaps (total %d)\n", table.entries_used);
+		for (uint i = 0; i < table.size(); ++i) {
+			if (table.isValidEntry(i)) {
+				debugPrintf("    [%04x] %s", i, table[i].toString().c_str());
+			}
+		}
 		break;
+	}
 #endif
 
 	default :
@@ -4663,13 +4671,7 @@ void Console::printBitmap(reg_t reg) {
 
 	const SciBitmap &bitmap = table->at(reg.getOffset());
 
-	debugPrintf("SCI32 bitmap (%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s):\n",
-				bitmap.getWidth(), bitmap.getHeight(),
-				bitmap.getXResolution(), bitmap.getYResolution(),
-				bitmap.getOrigin().x, bitmap.getOrigin().y,
-				bitmap.getSkipColor(),
-				bitmap.getRemap() ? "remap" : "no remap",
-				bitmap.getShouldGC() ? "GC" : "no GC");
+	debugPrintf("SCI32 bitmap (%s):\n", bitmap.toString().c_str());
 
 	Common::hexdump((const byte *) bitmap.getRawData(), bitmap.getRawSize(), 16, 0);
 }
