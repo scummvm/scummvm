@@ -659,22 +659,21 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
-	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
+	int16 offset = argv[1].toSint16();
 	uint16 whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
 	if (f && f->_in) {
-		// Backward seeking isn't supported in zip file streams, thus adapt the
-		// parameters accordingly if games ask for such a seek mode. A known
-		// case where this is requested is the save file manager in Phantasmagoria
-		if (whence == SEEK_END) {
-			whence = SEEK_SET;
-			offset = f->_in->size() - offset;
+		const bool success = f->_in->seek(offset, whence);
+		if (getSciVersion() >= SCI_VERSION_2) {
+			if (success) {
+				return make_reg(0, f->_in->pos());
+			}
+			return SIGNAL_REG;
 		}
-
-		return make_reg(0, f->_in->seek(offset, whence));
+		return make_reg(0, success);
 	} else if (f && f->_out) {
 		error("kFileIOSeek: Unsupported seek operation on a writeable stream (offset: %d, whence: %d)", offset, whence);
 	}
