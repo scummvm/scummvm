@@ -796,7 +796,7 @@ size_t SegManager::strlen(reg_t str) {
 }
 
 
-Common::String SegManager::getString(reg_t pointer, int entries) {
+Common::String SegManager::getString(reg_t pointer) {
 	Common::String ret;
 	if (pointer.isNull())
 		return ret;	// empty text
@@ -806,10 +806,7 @@ Common::String SegManager::getString(reg_t pointer, int entries) {
 		warning("SegManager::getString(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return ret;
 	}
-	if (entries > src_r.maxSize) {
-		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
-		return ret;
-	}
+
 	if (src_r.isRaw)
 		ret = (char *)src_r.raw;
 	else {

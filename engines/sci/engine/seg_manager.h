@@ -304,11 +304,10 @@ public:
 	 * Return the string referenced by pointer.
 	 * pointer can point to either a raw or non-raw segment.
 	 * @param pointer The pointer to dereference
-	 * @parm entries The number of values expected (for checking)
 	 * @return The string referenced, or an empty string if not enough
 	 * entries were available.
 	 */
-	Common::String getString(reg_t pointer, int entries = 0);
+	Common::String getString(reg_t pointer);
 
 
 	/**
