@@ -91,6 +91,8 @@ public:
 	virtual void onNewReverbLevel(Bit8u /* level */) {}
 	virtual void onPolyStateChanged(Bit8u /* part_num */) {}
 	virtual void onProgramChanged(Bit8u /* part_num */, const char * /* sound_group_name */, const char * /* patch_name */) {}
+
+	virtual ~ScummVMReportHandler() {}
 };
 
 }	// end of namespace MT32Emu
