@@ -526,12 +526,12 @@ private:
 	void PaintFaces();
 	void RenderCube();
 
-	void IncAngleX(int step);
-	void DecAngleX();
-	void IncAngleY(int step);
-	void DecAngleY();
-	void IncZoom();
-	void DecZoom();
+	void incAngleX(int step);
+	void decAngleX();
+	void incAngleY(int step);
+	void decAngleY();
+	void incZoom();
+	void decZoom();
 
 	cubeCursor *pc_cursor;
 
@@ -565,10 +565,10 @@ private:
 	int16           glow_w;
 	int16           glow_y;
 	int16           glow_x;
-	bool needPaletteUpdate;
+	bool _paletteUpdateRequired;
 	bool _cursorSaved;
-	bool showBlackBars;
-	bool fond_saved;
+	bool _showBlackBars;
+	bool _backgroundSaved;
 	byte *_bankData;
 	color3_t        pal_entry;
 	color_t         global_palette[256];    //TODO palette_t
@@ -625,46 +625,47 @@ private:
 	byte   *gamePhrases;
 	byte   *gameDialogs;   //TODO: rename to dialogs?
 	byte   *gameConditions;
-	byte *sal_buf;   //TODO: fixme
-	byte   *bank_data_buf;
+	byte *_placeRawBuf;   //TODO: fixme
+	byte *_bankDataBuf;
 	Icon *_gameIcons;
-	Room *gameRooms;
+	Room *_gameRooms;
 	PakHeaderNode *bigfile_header;
-	byte   *glow_buffer;
-	byte   *p_mainview_buf;
-	byte   *p_view2_buf;
-	byte   *gameFont;  //TODO: rename to font?
-	byte   *p_subtitlesview_buf;
-	byte   *p_underSubtitlesView_buf;
+	byte *_glowBuffer;
+	byte *p_mainview_buf;
+	byte *p_view2_buf;
+	byte *_gameFont;  //TODO: rename to font?
+	byte *p_subtitlesview_buf;
+	byte *p_underSubtitlesView_buf;
 	global_t *p_global;
-	uint16  mouse_y_center, mouse_x_center;
-	bool    bufferAllocationErrorFl;
-	bool    quit_flag2;
-	bool    quit_flag3;
-	bool    _gameStarted;
+	uint16 _mouseCenterX;
+	uint16 _mouseCenterY;
+	bool bufferAllocationErrorFl;
+	bool _quitFlag2;
+	bool _quitFlag3;
+	bool _gameStarted;
 	bool _soundAllocated;
 
-	CSoundChannel *_musicChannel;
-	CSoundChannel *_voiceChannel;
+	CSoundChannel  *_musicChannel;
+	CSoundChannel  *_voiceChannel;
 	soundchannel_t *_hnmSoundChannel;
-	sound_t         *voiceSound;
+	sound_t        *_voiceSound;
 
-	View          *p_view2;
-	View          *p_underSubtitlesView;
-	View          *p_subtitlesview;
-	View          *p_underBarsView;
-	View          *p_mainview;
-	View          *p_hnmview;
-	hnm_t           *_hnmContext;
+	View  *p_view2;
+	View  *p_underSubtitlesView;
+	View  *p_subtitlesview;
+	View  *p_underBarsView;
+	View  *_mainView;
+	View  *_hnmView;
+	hnm_t *_hnmContext;
 	Common::Rect _underSubtitlesBackupRect;
 	Common::Rect _underSubtitlesScreenRect;
 	Common::Rect _underBottomBarBackupRect;
 	Common::Rect _underBottomBarScreenRect;
 	Common::Rect _underTopBarBackupRect;
 	Common::Rect _underTopBarScreenRect;
-	int    demoCurrentTicks;
-	int    demoStartTicks;
-	int   currentTime;
+	int   _demoCurrentTicks;
+	int   _demoStartTicks;
+	int   _currentTime;
 	bool  _doubledScreen;
 	int16 _cirsorPanX;
 	int16 _inventoryScrollDelay;
@@ -674,30 +675,30 @@ private:
 	Icon *_currSpot;
 	Icon *_currSpot2;
 	bool pomme_q;
-	bool keybd_held;
+	bool _keyboardHeld;
 	bool _mouseHeld;
 	bool _normalCursor;
-	byte   *p_hnmview_buf;
-	bool showVideoSubtitle;
-	byte   videoCanceled;  //TODO: hnm_canceled
-	bool   specialTextMode;
-	int             hnm_position;
-	int             voiceSamplesSize;   //TODO: perso vox sample data len
-	int16           mus_vol_right;
-	int16           mus_vol_left;
+	byte *_hnmViewBuf;
+	bool _showVideoSubtitle;
+	bool _videoCanceledFlag;  //TODO: hnm_canceled
+	bool _specialTextMode;
+	int  _hnmFrameNum;
+	int  _voiceSamplesSize;   //TODO: perso vox sample data len
+	int16 _musicRightVol;
+	int16 _musicLeftVol;
 
 
 	bool _animateTalking;
 	bool _personTalking;
 	byte _musicFadeFlag;
 
-	char musicSequencePos;
-	bool musicPlaying;
+	char _musicSequencePos;
+	bool _musicPlayingFlag;
 
-	byte *mus_samples_ptr;
-	byte *mus_patterns_ptr;  //TODO: sndblock_t ?
+	byte *_musicSamplesPtr;
+	byte *_musicPatternsPtr;  //TODO: sndblock_t ?
 	byte *_musSequencePtr;
-	bool mus_enabled;
+	bool _musicEnabledFlag;
 	uint16 *pCurrentObjectLocation;
 	byte   own_objects[128];
 	bool   byte_31D64;
