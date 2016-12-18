@@ -416,6 +416,7 @@ void TTnpcScript::load(SimpleFile *file) {
 	loadBody(file);
 
 	int count = file->readNumber();
+	assert(count == 4);
 	_rangeResetCtr = file->readNumber();
 	_currentDialNum = file->readNumber();
 	_dialDelta = file->readNumber();
@@ -434,13 +435,13 @@ void TTnpcScript::load(SimpleFile *file) {
 }
 
 void TTnpcScript::saveBody(SimpleFile *file) {
-	int count = proc31();
+	int count = getRangesCount();
 	file->writeNumber(count);
 
 	if (count > 0) {
 		for (uint idx = 0; idx < _ranges.size(); ++idx) {
 			const TTscriptRange &item = _ranges[idx];
-			if (item._mode == SF_RANDOM && item._priorIndex) {
+			if (item._mode != SF_RANDOM && item._priorIndex) {
 				file->writeNumber(item._id);
 				file->writeNumber(item._priorIndex);
 			}
@@ -466,7 +467,7 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 	}
 }
 
-int TTnpcScript::proc31() const {
+int TTnpcScript::getRangesCount() const {
 	int count = 0;
 	for (uint idx = 0; idx < _ranges.size(); ++idx) {
 		const TTscriptRange &item = _ranges[idx];
