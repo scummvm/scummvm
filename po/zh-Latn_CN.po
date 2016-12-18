@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-12-18 17:20+0100\n"
+"POT-Creation-Date: 2016-12-18 17:26+0100\n"
 "PO-Revision-Date: 2016-03-15 04:09-0700\n"
 "Last-Translator: Chenbo Li <lichenbo1949@gmail.com>\n"
 "Language-Team: Chenbo Li <lichenbo1949@gmail.com>\n"
@@ -2005,11 +2005,11 @@ msgstr "FM-Towns Yinpin"
 msgid "PC-98 Audio"
 msgstr "PC-98 Yinpin"
 
-#: audio/softsynth/mt32.cpp:173
+#: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
 msgstr "Chushihua MT-32 Moniqi"
 
-#: audio/softsynth/mt32.cpp:435
+#: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
 msgstr "MT-32 Moniqi"
 
