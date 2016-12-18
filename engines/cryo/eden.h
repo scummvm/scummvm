@@ -151,8 +151,8 @@ private:
 	void buildCitadel();
 	void citatombe(char level);
 	void constcita();
-	void depladino(perso_t *perso);
-	void deplaalldino();
+	void moveDino(perso_t *perso);
+	void moveAllDino();
 	void newValley();
 	char whereiscita();
 	bool iscita(int16 loc);
@@ -337,8 +337,8 @@ private:
 	void endpersovox();
 	void fademusicup();
 	void fademusica0(int16 delay);
-	object_t *getobjaddr(int16 id);
-	void countobjects();
+	object_t *getObjectPtr(int16 id);
+	void countObjects();
 	void showObjects();
 	void winObject(int16 id);
 	void loseObject(int16 id);
@@ -351,7 +351,7 @@ private:
 	void giveobjectal(int16 id);
 	void giveObject();
 	void takeObject();
-	void newchampi();
+	void newMushroom();
 	void newnidv();
 	void newnido();
 	void newor();
@@ -559,14 +559,14 @@ private:
 	Common::Point _adamMapMarkPos;
 	byte   _cursKeepBuf[2500];
 	Common::Point _cursKeepPos;
-	bool  torchCursor;
+	bool  _torchCursor;
 	int16           _curBankNum;
 	int16           glow_h;
 	int16           glow_w;
 	int16           glow_y;
 	int16           glow_x;
 	bool needPaletteUpdate;
-	bool curs_saved;
+	bool _cursorSaved;
 	bool showBlackBars;
 	bool fond_saved;
 	byte *_bankData;
@@ -641,7 +641,7 @@ private:
 	bool    bufferAllocationErrorFl;
 	bool    quit_flag2;
 	bool    quit_flag3;
-	bool    gameStarted;
+	bool    _gameStarted;
 	bool _soundAllocated;
 
 	CSoundChannel *_musicChannel;
@@ -664,18 +664,19 @@ private:
 	Common::Rect _underTopBarScreenRect;
 	int    demoCurrentTicks;
 	int    demoStartTicks;
-	int    currentTime;
-	bool   _doubledScreen;
-	int16           curs_x_pan;
-	int16           _inventoryScrollDelay;
-	int16           curs_y, curs_x;
-	int16           _currCursor;
-	Icon          *current_spot;
-	Icon          *current_spot2;
+	int   currentTime;
+	bool  _doubledScreen;
+	int16 _cirsorPanX;
+	int16 _inventoryScrollDelay;
+	int16 _cursorPosX;
+	int16 _cursorPosY;
+	int16 _currCursor;
+	Icon *_currSpot;
+	Icon *_currSpot2;
 	bool pomme_q;
 	bool keybd_held;
-	bool mouse_held;
-	bool normalCursor;
+	bool _mouseHeld;
+	bool _normalCursor;
 	byte   *p_hnmview_buf;
 	bool showVideoSubtitle;
 	byte   videoCanceled;  //TODO: hnm_canceled
@@ -688,15 +689,15 @@ private:
 
 	bool _animateTalking;
 	bool _personTalking;
-	byte   _musicFadeFlag;
+	byte _musicFadeFlag;
 
-	char            musicSequencePos;
+	char musicSequencePos;
 	bool musicPlaying;
 
-	byte   *mus_samples_ptr;
-	byte   *mus_patterns_ptr;  //TODO: sndblock_t ?
-	byte   *_musSequencePtr;
-	bool   mus_enabled;
+	byte *mus_samples_ptr;
+	byte *mus_patterns_ptr;  //TODO: sndblock_t ?
+	byte *_musSequencePtr;
+	bool mus_enabled;
 	uint16 *pCurrentObjectLocation;
 	byte   own_objects[128];
 	bool   byte_31D64;

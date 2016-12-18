@@ -748,7 +748,7 @@ struct global_t {
 	byte   _prefMusicVol[2];
 	byte   _prefVoiceVol[2];
 	byte   _prefSoundVolume[2];
-	byte   _citaAreaNum;
+	byte   _citadelAreaNum;
 	byte   _var113;
 	byte   _lastPlaceNum;
 	byte   _saveEnd; // TODO: This has to be removed
