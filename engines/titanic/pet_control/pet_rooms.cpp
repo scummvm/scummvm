@@ -30,8 +30,8 @@ CPetRooms::CPetRooms() :
 		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_floorNum(0), _elevatorNum(0), _roomNum(0), _field1CC(0),
-		_wellEntry(0), _field1D4(0) {
+		_floorNum(1), _elevatorNum(0), _roomNum(0), _field1CC(1),
+		_wellEntry(0), _elevatorBroken(true) {
 }
 
 bool CPetRooms::setup(CPetControl *petControl) {
@@ -141,7 +141,7 @@ void CPetRooms::load(SimpleFile *file, int param) {
 		_roomNum = file->readNumber();
 		_field1CC = file->readNumber();
 		_wellEntry = file->readNumber();
-		_field1D4 = file->readNumber();
+		_elevatorBroken = file->readNumber();
 	}
 }
 
@@ -157,7 +157,7 @@ void CPetRooms::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_roomNum, indent);
 	file->writeNumberLine(_field1CC, indent);
 	file->writeNumberLine(_wellEntry, indent);
-	file->writeNumberLine(_field1D4, indent);
+	file->writeNumberLine(_elevatorBroken, indent);
 }
 
 void CPetRooms::enter(PetArea oldArea) {
@@ -285,7 +285,7 @@ void CPetRooms::reassignRoom(PassengerClass passClassNum) {
 		glyph->setMode(RGM_PREV_ASSIGNED_ROOM);
 
 	CRoomFlags roomFlags;
-	roomFlags.setRandomLocation(passClassNum, _field1D4);
+	roomFlags.setRandomLocation(passClassNum, _elevatorBroken);
 	glyph = addRoom(roomFlags, true);
 	if (glyph) {
 		// Flag the new room as assigned to the player, and highlight it

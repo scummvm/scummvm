@@ -908,8 +908,10 @@ public:
 	 */
 	void petSetRoomsWellEntry(int entryNum);
 
-	void petSetRooms1D4(int v);
-
+	/**
+	 * Sets the flag for whether elevator 4 has yet been fixed
+	 */
+	void petSetRoomsElevatorBroken(bool flag);
 
 	/**
 	 * Show the PET

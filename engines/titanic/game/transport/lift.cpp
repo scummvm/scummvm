@@ -300,7 +300,7 @@ bool CLift::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "AddRightHead") {
 		_hasHead = true;
 		_hasCorrectHead = true;
-		petSetRooms1D4(0);
+		petSetRoomsElevatorBroken(false);
 
 		CActMsg actMsg1("Lift.Node 1.N");
 		actMsg1.execute("RPanInLiftW");

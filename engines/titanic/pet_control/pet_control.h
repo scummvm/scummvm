@@ -551,8 +551,11 @@ public:
 		return _rooms.getAssignedElevatorNum();
 	}
 
-	void setRooms1D4(int val) {
-		_rooms.set1D4(val);
+	/**
+	 * Sets the flag for whether elevator 4 has yet been fixed
+	 */
+	void setRoomsElevatorBroken(bool flag) {
+		_rooms.setElevatorBroken(flag);
 	}
 
 	bool isRoom59706() const {

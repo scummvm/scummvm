@@ -1604,10 +1604,10 @@ int CGameObject::petGetRoomsWellEntry() const {
 	return petControl ? petControl->getRoomsWellEntry() : 0;
 }
 
-void CGameObject::petSetRooms1D4(int v) {
+void CGameObject::petSetRoomsElevatorBroken(bool flag) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->setRooms1D4(v);
+		pet->setRoomsElevatorBroken(flag);
 }
 
 void CGameObject::petOnSummonBot(const CString &name, int val) {

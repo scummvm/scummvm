@@ -49,7 +49,7 @@ private:
 	int _roomNum;
 	int _field1CC;
 	int _wellEntry;
-	int _field1D4;
+	bool _elevatorBroken;
 private:
 	/**
 	 * Setup the control
@@ -212,7 +212,7 @@ public:
 	 */
 	int getWellEntry() const { return _wellEntry; }
 
-	void set1D4(int val) { _field1D4 = val; }
+	void setElevatorBroken(bool flag) { _elevatorBroken = flag; }
 };
 
 } // End of namespace Titanic
