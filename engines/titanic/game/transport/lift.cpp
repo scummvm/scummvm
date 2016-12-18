@@ -273,7 +273,7 @@ bool CLift::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 	CPetControl *pet = getPetControl();
 	if (pet->getRoomsElevatorNum() == 4 && _v1 == 1 && !_v6) {
-		CVisibleMsg visibleMsg;
+		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("Eye2");
 	}
 
