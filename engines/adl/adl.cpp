@@ -246,6 +246,10 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::Stri
 		if (synonyms == 0xff)
 			break;
 
+		// WORKAROUND: Missing noun list terminator in hires5 region 15
+		if (_gameDescription->gameType == GAME_TYPE_HIRES5 && _state.region == 15 && index == 81)
+			return;
+
 		for (uint i = 0; i < synonyms; ++i) {
 			if (stream.read((char *)buf, IDI_WORD_SIZE) < IDI_WORD_SIZE)
 				error("Error reading word list");
