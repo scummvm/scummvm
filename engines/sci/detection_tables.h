@@ -2889,14 +2889,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_PHANTASMAGORIA_DEMO GUIO6(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                                        GUIO_NOSPEECH, \
                                        GUIO_NOASPECT, \
+                                       GUIO_NOLAUNCHLOAD, \
                                        GAMEOPTION_PREFER_DIGITAL_SFX, \
-                                       GAMEOPTION_ORIGINAL_SAVELOAD, \
                                        GAMEOPTION_FB01_MIDI)
 #define GUIO_PHANTASMAGORIA      GUIO_PHANTASMAGORIA_DEMO
 #define GUIO_PHANTASMAGORIA_MAC  GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                                        GUIO_NOASPECT, \
+                                       GUIO_NOLAUNCHLOAD, \
                                        GAMEOPTION_PREFER_DIGITAL_SFX, \
-                                       GAMEOPTION_ORIGINAL_SAVELOAD, \
                                        GAMEOPTION_FB01_MIDI)
 
 	// Phantasmagoria - English DOS/Windows (from csnover)
