@@ -96,7 +96,7 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 		598, 589, 584, 579, 574, 569, 564, 559, 554, 549,
 		544, 539, 534, 529, 524, 519, 514, 509, 504, 479,
 		474, 469, 464, 459, 454, 449, 444, 369, 364, 359,
-		354, 349, 344, 339, 334, 329, 324, 319
+		354, 349, 344, 339, 334, 329, 324, 319, 299
 	};
 
 	if (pet)
@@ -139,8 +139,8 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	if (floorNum < oldFloorNum) {
 		// Animate lift going down
-		_startFrame = DOWN_FRAME_NUMBERS[floorNum - 1];
-		_endFrame = DOWN_FRAME_NUMBERS[oldFloorNum - 1];
+		_startFrame = DOWN_FRAME_NUMBERS[oldFloorNum - 1];
+		_endFrame = DOWN_FRAME_NUMBERS[floorNum - 1];
 
 		if (oldClass == newClass) {
 			debugStr = CString::format("Same (%d-%d)", _startFrame, _endFrame);
