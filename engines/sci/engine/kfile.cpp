@@ -645,7 +645,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
-	if (f) {
+	if (f && f->_out) {
 		f->_out->write(str.c_str(), str.size());
 		if (getSciVersion() <= SCI_VERSION_0_LATE)
 			return s->r_acc;	// SCI0 semantics: no value returned
