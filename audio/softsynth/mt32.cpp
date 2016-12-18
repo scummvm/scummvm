@@ -104,10 +104,9 @@ class MidiDriver_MT32 : public MidiDriver_Emulated {
 private:
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
-	MT32Emu::Service *_service;
-	MT32Emu::ScummVMReportHandler *_reportHandler;
+	MT32Emu::Service _service;
+	MT32Emu::ScummVMReportHandler _reportHandler;
 	byte *_controlData, *_pcmData;
-	void deleteMuntStructures();
 	Common::Mutex _mutex;
 
 	int _outputRate;
@@ -146,26 +145,13 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	for (i = 0; i < ARRAYSIZE(_midiChannels); ++i) {
 		_midiChannels[i].init(this, i);
 	}
-	_service = nullptr;
-	_reportHandler = nullptr;
 	_outputRate = 0;
 	_controlData = nullptr;
 	_pcmData = nullptr;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
-	deleteMuntStructures();
-}
-
-void MidiDriver_MT32::deleteMuntStructures() {
-	delete _service;
-	_service = nullptr;
-	delete _reportHandler;
-	_reportHandler = nullptr;
-	delete _controlData;
-	_controlData = nullptr;
-	delete _pcmData;
-	_pcmData = nullptr;
+	close();
 }
 
 int MidiDriver_MT32::open() {
@@ -199,39 +185,37 @@ int MidiDriver_MT32::open() {
 	_pcmData = new byte[pcmFile.size()];
 	pcmFile.read(_pcmData, pcmFile.size());
 
-	_reportHandler = new MT32Emu::ScummVMReportHandler();
-	_service = new MT32Emu::Service();
-	_service->createContext(*_reportHandler);
+	_service.createContext(_reportHandler);
 
-	if (_service->addROMData(_controlData, controlFile.size()) != MT32EMU_RC_ADDED_CONTROL_ROM) {
+	if (_service.addROMData(_controlData, controlFile.size()) != MT32EMU_RC_ADDED_CONTROL_ROM) {
 		error("Adding control ROM failed. Check that your control ROM is valid");
 	}
 
 	controlFile.close();
 
-	if (_service->addROMData(_pcmData, pcmFile.size()) != MT32EMU_RC_ADDED_PCM_ROM) {
+	if (_service.addROMData(_pcmData, pcmFile.size()) != MT32EMU_RC_ADDED_PCM_ROM) {
 		error("Adding PCM ROM failed. Check that your PCM ROM is valid");
 	}
 
 	pcmFile.close();
 
-	if (_service->openSynth() != MT32EMU_RC_OK)
+	if (_service.openSynth() != MT32EMU_RC_OK)
 		return MERR_DEVICE_NOT_AVAILABLE;
 
 	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
-	_service->setOutputGain(1.0f * gain);
-	_service->setReverbOutputGain(1.0f * gain);
+	_service.setOutputGain(1.0f * gain);
+	_service.setReverbOutputGain(1.0f * gain);
 	// We let the synthesizer play MIDI messages immediately. Our MIDI
 	// handling is synchronous to sample generation. This makes delaying MIDI
 	// events result in odd sound output in some cases. For example, the
 	// shattering window in the Indiana Jones and the Fate of Atlantis intro
 	// will sound like a bell if we use any delay here.
 	// Bug #6242 "AUDIO: Built-In MT-32 MUNT Produces Wrong Sounds".
-	_service->setMIDIDelayMode(MT32Emu::MIDIDelayMode_IMMEDIATE);
+	_service.setMIDIDelayMode(MT32Emu::MIDIDelayMode_IMMEDIATE);
 
 	// We need to report the sample rate MUNT renders at as sample rate of our
 	// AudioStream.
-	_outputRate = _service->getActualStereoOutputSamplerate();
+	_outputRate = _service.getActualStereoOutputSamplerate();
 
 	MidiDriver_Emulated::open();
 
@@ -242,7 +226,7 @@ int MidiDriver_MT32::open() {
 
 void MidiDriver_MT32::send(uint32 b) {
 	Common::StackLock lock(_mutex);
-	_service->playMsg(b);
+	_service.playMsg(b);
 }
 
 // Indiana Jones and the Fate of Atlantis (including the demo) uses
@@ -253,13 +237,13 @@ void MidiDriver_MT32::setPitchBendRange(byte channel, uint range) {
 	}
 	byte benderRangeSysex[4] = { 0, 0, 4, (uint8)range };
 	Common::StackLock lock(_mutex);
-	_service->writeSysex(channel, benderRangeSysex, 4);
+	_service.writeSysex(channel, benderRangeSysex, 4);
 }
 
 void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
 	if (msg[0] == 0xf0) {
 		Common::StackLock lock(_mutex);
-		_service->playSysex(msg, length);
+		_service.playSysex(msg, length);
 	} else {
 		enum {
 			SYSEX_CMD_DT1 = 0x12,
@@ -268,7 +252,7 @@ void MidiDriver_MT32::sysEx(const byte *msg, uint16 length) {
 
 		if (msg[3] == SYSEX_CMD_DT1 || msg[3] == SYSEX_CMD_DAT) {
 			Common::StackLock lock(_mutex);
-			_service->writeSysex(msg[1], msg + 4, length - 5);
+			_service.writeSysex(msg[1], msg + 4, length - 5);
 		} else {
 			warning("Unused sysEx command %d", msg[3]);
 		}
@@ -286,13 +270,17 @@ void MidiDriver_MT32::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	Common::StackLock lock(_mutex);
-	_service->closeSynth();
-	deleteMuntStructures();
+	_service.closeSynth();
+	_service.freeContext();
+	delete[] _controlData;
+	_controlData = nullptr;
+	delete[] _pcmData;
+	_pcmData = nullptr;
 }
 
 void MidiDriver_MT32::generateSamples(int16 *data, int len) {
 	Common::StackLock lock(_mutex);
-	_service->renderBit16s(data, len);
+	_service.renderBit16s(data, len);
 }
 
 uint32 MidiDriver_MT32::property(int prop, uint32 param) {
