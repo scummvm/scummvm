@@ -63,7 +63,7 @@ bool CEye::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			headMsg.execute(isEquals("Eye1") ? "Eye1Slot" : "Eye2Slot");
 	} else if (msg->_other->isEquals("LiftbotWithoutHead")) {
 		CPetControl *pet = getPetControl();
-		if (!CLift::_v1 && pet->getRoomsElevatorNum() == 4) {
+		if (!CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_eyeFlag = true;
 			setPosition(_origPos);
 			setVisible(false);
@@ -84,7 +84,7 @@ bool CEye::UseWithCharMsg(CUseWithCharMsg *msg) {
 	CLift *lift = dynamic_cast<CLift *>(msg->_character);
 	if (lift && lift->getName() == "Well") {
 		CPetControl *pet = getPetControl();
-		if (!CLift::_v1 && pet->getRoomsElevatorNum() == 4) {
+		if (!CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_eyeFlag = true;
 			setPosition(_origPos);
 			setVisible(false);

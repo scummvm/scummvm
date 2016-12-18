@@ -151,7 +151,7 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 		} else {
 			_endFrame = pet->getRoomsFloorNum();
 
-			if (petGetRoomsWellEntry() == 4 && !CLift::_v6
+			if (petGetRoomsWellEntry() == 4 && !CLift::_hasCorrectHead
 					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
 				petDisplayMessage(1, ELEVATOR_NON_FUNCTIONAL);
 			} else {

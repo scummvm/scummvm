@@ -123,7 +123,7 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	debugC(ERROR_BASIC, kDebugScripts, "MosueDragEndMsg");
+	debugC(ERROR_BASIC, kDebugScripts, "MouseDragEndMsg");
 	showMouse();
 
 	if (msg->_dropTarget) {

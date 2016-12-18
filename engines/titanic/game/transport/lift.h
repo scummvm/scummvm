@@ -37,12 +37,12 @@ class CLift : public CTransport {
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool ActMsg(CActMsg *msg);
 public:
-	static int _v1;
+	static bool _hasHead;
+	static bool _hasCorrectHead;
 	static int _elevator1Floor;
 	static int _elevator2Floor;
 	static int _elevator3Floor;
 	static int _elevator4Floor;
-	static int _v6;
 
 	int _liftNum;
 public:

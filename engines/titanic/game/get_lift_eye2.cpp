@@ -64,7 +64,7 @@ bool CGetLiftEye2::ActMsg(CActMsg *msg) {
 
 bool CGetLiftEye2::EnterRoomMsg(CEnterRoomMsg *msg) {
 	CPetControl *pet = getPetControl();
-	if (pet->getRoomsElevatorNum() == 4 && CLift::_v1 == 1 && !CLift::_v6) {
+	if (pet->getRoomsElevatorNum() == 4 && CLift::_hasHead && !CLift::_hasCorrectHead) {
 		_cursorId = CURSOR_HAND;
 		setVisible(true);
 	} else {

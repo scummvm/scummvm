@@ -35,43 +35,43 @@ BEGIN_MESSAGE_MAP(CLift, CTransport)
 	ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-int CLift::_v1;
+bool CLift::_hasHead;
+bool CLift::_hasCorrectHead;
 int CLift::_elevator1Floor;
 int CLift::_elevator2Floor;
 int CLift::_elevator3Floor;
 int CLift::_elevator4Floor;
-int CLift::_v6;
 
 void CLift::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_hasHead, indent);
 	file->writeNumberLine(_elevator1Floor, indent);
 	file->writeNumberLine(_elevator2Floor, indent);
 	file->writeNumberLine(_elevator3Floor, indent);
 	file->writeNumberLine(_elevator4Floor, indent);
 	file->writeNumberLine(_liftNum, indent);
-	file->writeNumberLine(_v6, indent);
+	file->writeNumberLine(_hasCorrectHead, indent);
 
 	CTransport::save(file, indent);
 }
 
 void CLift::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
+	_hasHead = file->readNumber();
 	_elevator1Floor = file->readNumber();
 	_elevator2Floor = file->readNumber();
 	_elevator3Floor = file->readNumber();
 	_elevator4Floor = file->readNumber();
 	_liftNum = file->readNumber();
-	_v6 = file->readNumber();
+	_hasCorrectHead = file->readNumber();
 
 	CTransport::load(file);
 }
 
 bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
-	if ((!_v1 && pet->getRoomsElevatorNum() == 4) ||
-			(!_v6 && pet->getRoomsElevatorNum() == 4))
+	if ((!_hasHead && pet->getRoomsElevatorNum() == 4) ||
+			(!_hasCorrectHead && pet->getRoomsElevatorNum() == 4))
 		return true;
 
 	int oldFloorNum = msg->_oldStatus;
@@ -245,7 +245,7 @@ bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 		loadSound("z#519.wav");
 		loadSound("z#518.wav");
 
-		if (elevNum == 4 && _v1 == 1 && !_v6) {
+		if (elevNum == 4 && _hasHead && !_hasCorrectHead) {
 			CVisibleMsg visibleMsg;
 			visibleMsg.execute("GetLiftEye");
 		}
@@ -272,7 +272,7 @@ bool CLift::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 	stopGlobalSound(true, -1);
 
 	CPetControl *pet = getPetControl();
-	if (pet->getRoomsElevatorNum() == 4 && _v1 == 1 && !_v6) {
+	if (pet->getRoomsElevatorNum() == 4 && _hasHead && !_hasCorrectHead) {
 		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("Eye2");
 	}
@@ -282,24 +282,24 @@ bool CLift::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 bool CLift::ActMsg(CActMsg *msg) {
 	if (msg->_action == "LoseHead") {
-		_v1 = 0;
-		_v6 = 0;
+		_hasHead = false;
+		_hasCorrectHead = false;
 
 		CActMsg actMsg1("Lift.Node 2.N");
 		actMsg1.execute("RPanInLiftW");
 		CActMsg actMsg2("Lift.Node 2.S");
 		actMsg2.execute("LPanInLiftW");
 	} else if (msg->_action == "AddWrongHead") {
-		_v1 = 1;
-		_v6 = 0;
+		_hasHead = true;
+		_hasCorrectHead = false;
 
 		CActMsg actMsg1("Lift.Node 1.N");
 		actMsg1.execute("RPanInLiftW");
 		CActMsg actMsg2("Lift.Node 1.S");
 		actMsg2.execute("LPanInLiftW");
 	} else if (msg->_action == "AddRightHead") {
-		_v1 = 1;
-		_v6 = 1;
+		_hasHead = true;
+		_hasCorrectHead = true;
 		petSetRooms1D4(0);
 
 		CActMsg actMsg1("Lift.Node 1.N");
