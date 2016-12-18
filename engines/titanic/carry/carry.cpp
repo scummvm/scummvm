@@ -149,8 +149,7 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			return true;
 	}
 
-	CString viewName = getViewFullName();
-	if (viewName.empty() || msg->_mousePos.y >= 360) {
+	if (!compareViewNameTo(_fullViewName) || msg->_mousePos.y >= 360) {
 		sleep(250);
 		petAddToInventory();
 	} else {
@@ -184,8 +183,7 @@ bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CShowTextMsg textMsg(_string3);
 	textMsg.execute("PET");
 
-	_fullViewName = getViewFullName();
-	if (_fullViewName.empty() || _bounds.top >= 360) {
+	if (!compareViewNameTo(_fullViewName) || _bounds.top >= 360) {
 		sleep(250);
 		petAddToInventory();
 	} else {

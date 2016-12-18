@@ -155,7 +155,7 @@ CGameObject *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
 	if (!view)
 		return nullptr;
 
-	// Scan through the view items to find the item being dropped on
+	// Scan through the view items to find the element being dropped on
 	CGameObject *target = nullptr;
 	for (CTreeItem *treeItem = view->scan(view); treeItem; treeItem = treeItem->scan(view)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
