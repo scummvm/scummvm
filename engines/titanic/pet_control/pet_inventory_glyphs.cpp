@@ -118,15 +118,15 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 		petControl->removeFromInventory(_item, carryParcel, false, true);
 		petControl->removeFromInventory(_item, false, false);
 
-		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
-			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
+		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->_bounds.width() / 2,
+			msg->_mousePos.y - carryParcel->_bounds.height() / 2));
 		carryParcel->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
 		item = carryParcel;
 	} else {
 		petControl->removeFromInventory(_item, false, true);
 
-		_item->setPosition(Point(msg->_mousePos.x - _item->getBounds().width() / 2,
-			msg->_mousePos.y - _item->getBounds().height() / 2));
+		_item->setPosition(Point(msg->_mousePos.x - _item->_bounds.width() / 2,
+			msg->_mousePos.y - _item->_bounds.height() / 2));
 		_item->setVisible(true);
 	}
 
