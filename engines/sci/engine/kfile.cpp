@@ -46,7 +46,7 @@
 
 namespace Sci {
 
-extern reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename);
+extern reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename);
 extern FileHandle *getFileFromHandle(EngineState *s, uint handle);
 extern int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
 extern void listSavegames(Common::Array<SavegameDesc> &saves);
@@ -283,7 +283,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
-	int mode = argv[1].toUint16();
+	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
 	bool unwrapFilename = true;
 
 	// SQ4 floppy prepends /\ to the filenames

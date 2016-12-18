@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-enum {
+enum kFileOpenMode {
 	_K_FILE_MODE_OPEN_OR_CREATE = 0,
 	_K_FILE_MODE_OPEN_OR_FAIL = 1,
 	_K_FILE_MODE_CREATE = 2

@@ -78,7 +78,7 @@ class SaveFileRewriteStream : public MemoryDynamicRWStream {
 public:
 	SaveFileRewriteStream(Common::String fileName,
 	                      Common::SeekableReadStream *inFile,
-	                      bool truncate, bool compress);
+	                      kFileOpenMode mode, bool compress);
 	virtual ~SaveFileRewriteStream();
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
@@ -93,16 +93,21 @@ protected:
 
 SaveFileRewriteStream::SaveFileRewriteStream(Common::String fileName,
                                              Common::SeekableReadStream *inFile,
-                                             bool truncate,
+                                             kFileOpenMode mode,
                                              bool compress)
 : MemoryDynamicRWStream(DisposeAfterUse::YES),
   _fileName(fileName), _compress(compress)
 {
+	const bool truncate = mode == _K_FILE_MODE_CREATE;
+	const bool seekToEnd = mode == _K_FILE_MODE_OPEN_OR_CREATE;
+
 	if (!truncate && inFile) {
 		unsigned int s = inFile->size();
 		ensureCapacity(s);
 		inFile->read(_data, s);
-		seek(0, SEEK_END);
+		if (seekToEnd) {
+			seek(0, SEEK_END);
+		}
 		_changed = false;
 	} else {
 		_changed = true;
@@ -163,7 +168,7 @@ uint findFreeFileHandle(EngineState *s) {
  * for reading only.
  */
 
-reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
+reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
 	englishName.toLowercase();
 
@@ -200,9 +205,8 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 	}
 
 #ifdef ENABLE_SCI32
-	if (mode != _K_FILE_MODE_OPEN_OR_FAIL && (
-	    (g_sci->getGameId() == GID_PHANTASMAGORIA && (filename == "phantsg.dir" || filename == "chase.dat")) ||
-	    (g_sci->getGameId() == GID_PQSWAT && filename == "swat.dat"))) {
+	if ((g_sci->getGameId() == GID_PHANTASMAGORIA && (filename == "phantsg.dir" || filename == "chase.dat" || filename == "tmp.dat")) ||
+	    (g_sci->getGameId() == GID_PQSWAT && filename == "swat.dat")) {
 		debugC(kDebugLevelFile, "  -> file_open opening %s for rewriting", wrappedName.c_str());
 
 		inFile = saveFileMan->openForLoading(wrappedName);
@@ -211,8 +215,13 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
+		if (mode == _K_FILE_MODE_OPEN_OR_FAIL && !inFile) {
+			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
+			return SIGNAL_REG;
+		}
+
 		SaveFileRewriteStream *stream;
-		stream = new SaveFileRewriteStream(wrappedName, inFile, mode == _K_FILE_MODE_CREATE, isCompressed);
+		stream = new SaveFileRewriteStream(wrappedName, inFile, mode, isCompressed);
 
 		delete inFile;
 
