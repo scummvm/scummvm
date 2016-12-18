@@ -73,14 +73,9 @@ private:
 	ScreenItem *_screenItem;
 
 	/**
-	 * The bitmap used to render video output.
-	 */
-	reg_t _bitmap;
-
-	/**
 	 * Renders a single frame of video.
 	 */
-	void renderFrame() const;
+	void renderFrame(SciBitmap &bitmap) const;
 };
 
 #pragma mark -

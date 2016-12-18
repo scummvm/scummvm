@@ -71,12 +71,13 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	// mechanism that is very similar to that used by the VMD player, which
 	// allows the SEQ to be drawn into a bitmap ScreenItem and displayed using
 	// the normal graphics system.
-	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	reg_t bitmapId;
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
 	bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
-	celInfo.bitmap = _bitmap;
+	celInfo.bitmap = bitmapId;
 
 	_plane = new Plane(Common::Rect(kLowResX, kLowResY), kPlanePicColored);
 	g_sci->_gfxFrameout->addPlane(*_plane);
@@ -94,20 +95,19 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
 		g_sci->sleep(_decoder->getTimeToNextFrame());
-		renderFrame();
+		renderFrame(bitmap);
 	}
 
-	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
+	_segMan->freeBitmap(bitmapId);
 	g_sci->_gfxFrameout->deletePlane(*_plane);
 	g_sci->_gfxFrameout->frameOut(true);
 	_screenItem = nullptr;
 	_plane = nullptr;
 }
 
-void SEQPlayer::renderFrame() const {
+void SEQPlayer::renderFrame(SciBitmap &bitmap) const {
 	const Graphics::Surface *surface = _decoder->decodeNextFrame();
 
-	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
 
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
@@ -326,6 +326,8 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 
 	_decoder->close();
 	_status = kAVINotOpen;
+	_segMan->freeBitmap(_bitmap);
+	_bitmap = NULL_REG;
 	g_sci->_gfxFrameout->deletePlane(*_plane);
 	_plane = nullptr;
 	_screenItem = nullptr;
@@ -569,9 +571,10 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	_isInitialized = false;
 	_ignorePalettes = false;
 
+	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
+
 	if (!_planeIsOwned && _screenItem != nullptr) {
 		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
-		_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
 		_screenItem = nullptr;
 	} else if (_plane != nullptr) {
 		g_sci->_gfxFrameout->deletePlane(*_plane);
