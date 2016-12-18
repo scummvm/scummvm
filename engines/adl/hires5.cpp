@@ -45,6 +45,8 @@ private:
 	void runIntro();
 	void init();
 	void initGameState();
+	void applyRegionWorkarounds();
+	void applyRoomWorkarounds(byte roomNr);
 
 	// AdlEngine_v4
 	bool isInventoryFull();
@@ -295,6 +297,36 @@ void HiRes5Engine::initGameState() {
 
 	loadRegion(1);
 	_state.room = 5;
+}
+
+void HiRes5Engine::applyRegionWorkarounds() {
+	// WORKAROUND: Remove/fix buggy commands
+	switch (_state.region) {
+	case 3:
+		// "USE PIN" references a missing message, but cannot
+		// be triggered due to shadowing of the "USE" verb.
+		// We remove it anyway to allow script dumping to proceed.
+		// TODO: Investigate if we should fix this command instead
+		// of removing it.
+		removeCommand(_roomCommands, 12);
+		break;
+	case 14:
+		// "WITH SHOVEL" references a missing message. This bug
+		// is game-breaking in the original, but unlikely to occur
+		// in practice due to the "DIG" command not asking for what
+		// to dig with. Probably a remnant of an earlier version
+		// of the script.
+		removeCommand(_roomCommands, 0);
+	}
+}
+
+void HiRes5Engine::applyRoomWorkarounds(byte roomNr) {
+	// WORKAROUND: Remove/fix buggy commands
+	if (_state.region == 17 && roomNr == 49) {
+		// "GET WATER" references a missing message when you already
+		// have water. This message should be 117 instead of 17.
+		getCommand(_roomData.commands, 8).script[4] = 117;
+	}
 }
 
 Engine *HiRes5Engine_create(OSystem *syst, const AdlGameDescription *gd) {

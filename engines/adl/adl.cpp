@@ -300,6 +300,30 @@ void AdlEngine::readCommands(Common::ReadStream &stream, Commands &commands) {
 	}
 }
 
+void AdlEngine::removeCommand(Commands &commands, uint idx) {
+	Commands::iterator cmds;
+	uint i = 0;
+	for (cmds = commands.begin(); cmds != commands.end(); ++cmds) {
+		if (i++ == idx) {
+			commands.erase(cmds);
+			return;
+		}
+	}
+
+	error("Command %d not found", idx);
+}
+
+Command &AdlEngine::getCommand(Commands &commands, uint idx) {
+	Commands::iterator cmds;
+	uint i = 0;
+	for (cmds = commands.begin(); cmds != commands.end(); ++cmds) {
+		if (i++ == idx)
+			return *cmds;
+	}
+
+	error("Command %d not found", idx);
+}
+
 void AdlEngine::checkInput(byte verb, byte noun) {
 	// Try room-local command list first
 	if (doOneCommand(_roomData.commands, verb, noun))
@@ -1343,14 +1367,14 @@ Common::String AdlEngine::verbStr(uint i) const {
 	if (i == IDI_ANY)
 		return "*";
 	else
-		return Common::String::format("%d/%s", i, _priVerbs[i - 1].c_str());
+		return Common::String::format("%d/%s", i, (i - 1 < _priVerbs.size() ? _priVerbs[i - 1].c_str() : "<INVALID>"));
 }
 
 Common::String AdlEngine::nounStr(uint i) const {
 	if (i == IDI_ANY)
 		return "*";
 	else
-		return Common::String::format("%d/%s", i, _priNouns[i - 1].c_str());
+		return Common::String::format("%d/%s", i, (i - 1 < _priNouns.size() ? _priNouns[i - 1].c_str() : "<INVALID>"));
 }
 
 Common::String AdlEngine::msgStr(uint i) const {

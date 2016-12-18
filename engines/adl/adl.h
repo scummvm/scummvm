@@ -252,9 +252,13 @@ protected:
 	virtual Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
+	void removeCommand(Commands &commands, uint idx);
+	Command &getCommand(Commands &commands, uint idx);
 	void checkInput(byte verb, byte noun);
 	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
+	virtual void applyRoomWorkarounds(byte roomNr) { }
+	virtual void applyRegionWorkarounds() { }
 
 	virtual void setupOpcodeTables();
 	virtual void initState();

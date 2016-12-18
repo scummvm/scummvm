@@ -219,6 +219,7 @@ void AdlEngine_v4::loadRegion(byte region) {
 		}
 	}
 
+	applyRegionWorkarounds();
 	restoreVars();
 }
 

@@ -245,6 +245,8 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 		stream->seek(commandOffset);
 		readCommands(*stream, _roomData.commands);
 	}
+
+	applyRoomWorkarounds(roomNr);
 }
 
 void AdlEngine_v2::showRoom() {
