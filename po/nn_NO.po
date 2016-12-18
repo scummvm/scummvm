@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-18 17:26+0100\n"
-"PO-Revision-Date: 2016-02-26 00:37+0100\n"
-"Last-Translator: Einar Johan TrÃ¸an SÃ¸mÃ¥en <einarjohants@gmail.com>\n"
-"Language-Team: somaen <einarjohants@gmail.com>\n"
-"Language: Norsk (nynorsk)\n"
+"PO-Revision-Date: 2016-12-18 18:23+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Language-Team: Norwegian Nynorsk "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nn/>\n"
+"Language: nn_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7\n"
 "X-Language-name: Norsk (nynorsk)\n"
 
 #: gui/about.cpp:94
@@ -216,7 +217,7 @@ msgstr "Namn:"
 #: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
 #: gui/editgamedialog.cpp:146
 msgid "Full title of the game"
-msgstr "Full speltittel:"
+msgstr "Full speltittel"
 
 #: gui/editgamedialog.cpp:145
 msgctxt "lowres"
@@ -525,7 +526,7 @@ msgstr "Nullstill"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Nullstill alle FluidSynth-instillingar til standardverdiar"
+msgstr "Nullstill alle FluidSynth-instillingar til standardverdiar."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -584,7 +585,7 @@ msgstr "Trykk tasten du vil kople"
 
 #: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
 msgid "Choose an action to map"
-msgstr "Vel ei handling for kopling:"
+msgstr "Vel ei handling for kopling"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
 msgid "~Q~uit"
@@ -980,7 +981,7 @@ msgid ""
 "connected to your computer"
 msgstr ""
 "Vel om du vil nytte din Roland-kompatible lydeining som du har tilkopla "
-"datamaskina di."
+"datamaskina di"
 
 #: gui/options.cpp:962
 msgctxt "lowres"
@@ -1292,7 +1293,7 @@ msgstr "Den velde mappa kan ikkje skrivast til. Vennlegst vel ein annan."
 
 #: gui/options.cpp:1711
 msgid "Select directory for GUI themes"
-msgstr "Vel ei mappe for GUI-tema:"
+msgstr "Vel ei mappe for GUI-tema"
 
 #: gui/options.cpp:1721
 msgid "Select directory for extra files"
@@ -1471,7 +1472,7 @@ msgstr "Lag eit nytt lagra spel"
 
 #: gui/saveload-dialog.cpp:1053
 msgid "Name: "
-msgstr "Namn:"
+msgstr "Namn: "
 
 #: gui/saveload-dialog.cpp:1131
 #, c-format
@@ -1633,7 +1634,7 @@ msgstr "Feil under køyring av spel:"
 
 #: base/main.cpp:594
 msgid "Could not find any engine capable of running the selected game"
-msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet."
+msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -1858,7 +1859,7 @@ msgstr "~T~astar"
 
 #: engines/engine.cpp:346
 msgid "Could not initialize color format."
-msgstr "Høgkvalitetslyd (treigare) (omstart)"
+msgstr "Høgkvalitetslyd (treigare) (omstart)."
 
 #: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
@@ -1866,7 +1867,7 @@ msgstr "Kunne ikkje veksle til videomodus: '"
 
 #: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
-msgstr "Kunne ikkje slå på aspekt-korrigering"
+msgstr "Kunne ikkje slå på aspekt-korrigering."
 
 #: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
@@ -1947,7 +1948,7 @@ msgid ""
 "disconnected)."
 msgstr ""
 "Den valde lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått eller "
-"fråkopla)"
+"fråkopla)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
@@ -1970,7 +1971,7 @@ msgid ""
 "disconnected)."
 msgstr ""
 "Den foretrukne lydeininga '%s' vart ikkje funne (t.d. kan den vere avslått "
-"eller fråkopla)"
+"eller fråkopla)."
 
 #: audio/mididrv.cpp:272
 #, c-format
@@ -2156,7 +2157,7 @@ msgstr ""
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr "Sveip tre fingre til høgre for å veksle"
+msgstr "Sveip tre fingre til høgre for å veksle."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:146
 msgid "OpenGL"
@@ -2511,7 +2512,7 @@ msgstr "Input"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "GC Pad Sensitivitet"
+msgstr "GC Pad Sensitivitet:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
@@ -2671,7 +2672,7 @@ msgstr "Vil du åpne eller lagre spelet?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "Er du sikker på at du vil avslutte?"
+msgstr "   Er du sikker på at du vil avslutte?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2683,11 +2684,11 @@ msgstr "Roter"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Nyttar SDL-drivar"
+msgstr "Nyttar SDL-drivar "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Skjerm"
+msgstr "Skjerm "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -3274,7 +3275,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:194
 msgid "Load file"
-msgstr "Last fil:"
+msgstr "Last fil"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
@@ -3282,7 +3283,7 @@ msgstr "Lastar spel..."
 
 #: engines/parallaction/saveload.cpp:209
 msgid "Save file"
-msgstr "Lagra fil:"
+msgstr "Lagra fil"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
@@ -3825,7 +3826,7 @@ msgstr "Til Henry / Til Indy"
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
-msgstr "spel C moll på distaffen "
+msgstr "spel C moll på distaffen"
 
 #: engines/scumm/help.cpp:181
 msgid "play D on distaff"
@@ -4020,7 +4021,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Kampkontrollar (taltastatur)"
+msgstr "Kampkontrollar (taltastatur):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4073,7 +4074,7 @@ msgstr "9, 6, og 3, henhaldsvis."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Flykontrollar (taltastatur)"
+msgstr "Flykontrollar (taltastatur):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
@@ -4121,7 +4122,7 @@ msgstr ""
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Musikkvolum:"
+msgstr "Musikkvolum: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
@@ -4302,7 +4303,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 "Fila teenagent.dat er komprimert og zlib er ikkje inkludert i binærfila, "
-"vennlegs dekomprimer den."
+"vennlegs dekomprimer den"
 
 #: engines/tony/tony.cpp:258
 #, c-format
