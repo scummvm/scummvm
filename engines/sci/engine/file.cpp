@@ -102,6 +102,7 @@ SaveFileRewriteStream::SaveFileRewriteStream(Common::String fileName,
 		unsigned int s = inFile->size();
 		ensureCapacity(s);
 		inFile->read(_data, s);
+		seek(0, SEEK_END);
 		_changed = false;
 	} else {
 		_changed = true;
