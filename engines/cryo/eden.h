@@ -79,22 +79,22 @@ private:
 	void tetesquel();
 	void squelmoorkong();
 	void choisir();
-	void dinaparle();
+	void handleDinaDialog();
 	void handleKingDialog();
 	void kingDialog1();
 	void kingDialog2();
 	void kingDialog3();
-	void getcouteau();
-	void getprisme();
-	void getchampb();
-	void getchampm();
-	void getor();
-	void getnido();
-	void getnidv();
-	void getcorne();
-	void getsoleil();
-	void getoeuf();
-	void getplaque();
+	void getKnife();
+	void getPrism();
+	void getMushroom();
+	void getBadMushroom();
+	void getGold();
+	void getFullNest();
+	void getNest();
+	void getHorn();
+	void getSunStone();
+	void getEgg();
+	void getTablet();
 	void voirlac();
 	void gotohall();
 	void demitourlabi();
@@ -308,14 +308,14 @@ private:
 	void specialin();
 	void animpiece();
 	void getdino(Room *room);
-	Room *getsalle(int16 loc);
+	Room *getRoom(int16 loc);
 	void initPlace(int16 roomNum);
 	void maj2();
-	void majsalle1(int16 roomNum);
-	void maj_salle(uint16 roomNum);
+	void updateRoom1(int16 roomNum);
+	void updateRoom(uint16 roomNum);
 	void allocateBuffers();
 	void freebuf();
-	void openwindow();
+	void openWindow();
 	void EmergencyExit();
 	void edmain();
 	void intro();
@@ -719,7 +719,7 @@ private:
 	int16           word_378CC; //TODO: set by CLComputer_Init to 0
 	int16           word_378CE;
 
-	int		invIconsCount;
+	int		_invIconsCount;
 	int		invIconsBase;
 	int		roomIconsBase;
 
