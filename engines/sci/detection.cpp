@@ -887,7 +887,8 @@ bool SciEngine::canLoadGameStateCurrently() {
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase;
+	// see comment about kSupportsSavingDuringRuntime in SciEngine::hasFeature
+	return false;
 }
 
 } // End of namespace Sci
