@@ -71,7 +71,7 @@ bool CBackground::SetFrameMsg(CSetFrameMsg *msg) {
 }
 
 bool CBackground::VisibleMsg(CVisibleMsg *msg) {
-	setVisible(msg->_visible);
+	setVisible(!_visible);
 	return true;
 }
 
