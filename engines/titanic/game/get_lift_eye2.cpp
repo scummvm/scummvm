@@ -59,6 +59,7 @@ void CGetLiftEye2::load(SimpleFile *file) {
 bool CGetLiftEye2::ActMsg(CActMsg *msg) {
 	*_destObject = msg->_action;
 	setVisible(true);
+	_cursorId = CURSOR_HAND;
 	return true;
 }
 

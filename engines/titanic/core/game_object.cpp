@@ -59,7 +59,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field34 = 0;
 	_field38 = 0;
 	_field3C = 0;
-	_field40 = 0;
+	_nonvisual = false;
 	_field44 = 0xF0;
 	_field48 = 0xF0;
 	_field4C = 0xFF;
@@ -106,7 +106,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_cursorId, indent + 1);
 	_movieClips.save(file, indent + 1);
 	file->writeNumberLine(_field60, indent + 1);
-	file->writeNumberLine(_field40, indent + 1);
+	file->writeNumberLine(_nonvisual, indent + 1);
 	file->writeQuotedLine(_resource, indent + 1);
 	file->writeBounds(_bounds, indent + 1);
 
@@ -157,7 +157,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 3:
-		_field40 = file->readNumber();
+		_nonvisual = file->readNumber();
 		// Deliberate fall-through
 
 	case 2:
@@ -203,8 +203,8 @@ void CGameObject::draw(CScreenManager *screenManager) {
 		return;
 	}
 
-	if (_field40) {
-		// If a text object is defined, handle drawing it
+	if (_nonvisual) {
+		// If a text is defined, handle drawing it
 		if (_text && _bounds.intersects(getGameManager()->_bounds))
 			_text->draw(screenManager);
 
@@ -265,11 +265,11 @@ void CGameObject::stopMovie() {
 		_surface->stopMovie();
 }
 
-bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
+bool CGameObject::checkPoint(const Point &pt, bool ignoreSurface, bool visibleOnly) {
 	if ((!_visible && visibleOnly) || !_bounds.contains(pt))
 		return false;
 
-	if (ignore40 || _field40)
+	if (ignoreSurface || _nonvisual)
 		return true;
 
 	if (!_surface) {

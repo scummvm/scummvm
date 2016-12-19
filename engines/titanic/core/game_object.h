@@ -79,7 +79,7 @@ protected:
 	double _field34;
 	double _field38;
 	double _field3C;
-	int _field40;
+	bool _nonvisual;
 	int _field44;
 	int _field48;
 	int _field4C;
@@ -644,7 +644,7 @@ public:
 	 * Checks the passed point is validly in the object,
 	 * with extra checking of object flags status
 	 */
-	bool checkPoint(const Point &pt, bool ignore40 = false, bool visibleOnly = false);
+	bool checkPoint(const Point &pt, bool ignoreSurface = false, bool visibleOnly = false);
 
 	/**
 	 * Set the position of the object

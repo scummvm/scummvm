@@ -70,6 +70,7 @@ bool CEye::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			CActMsg actMsg1(getName());
 			actMsg1.execute("GetLiftEye");
 
+			CTelevision::_eyeFlag = true;
 			CActMsg actMsg2("AddWrongHead");
 			actMsg2.execute("FaultyLiftbot");
 		}
