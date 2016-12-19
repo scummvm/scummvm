@@ -47,7 +47,7 @@ void MacText::splitString(Common::String &str) {
 	const char *s = str.c_str();
 
 	Common::String tmp;
-	bool prevCR;
+	bool prevCR = false;
 
 	while (*s) {
 		if (*s == '\n' && prevCR) {	// trean \r\n as one
