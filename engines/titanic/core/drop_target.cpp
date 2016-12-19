@@ -134,7 +134,7 @@ bool CDropTarget::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		msg->_dragItem = obj;
 		CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
 		passMsg.execute(obj);
-		setVisible(true);
+		obj->setVisible(true);
 	}
 
 	return true;
