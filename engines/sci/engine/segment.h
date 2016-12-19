@@ -855,6 +855,29 @@ public:
 		Common::strlcpy((char *)_data, string.c_str(), string.size() + 1);
 	}
 
+	Common::String toDebugString() const {
+		const char *type;
+		switch(_type) {
+		case kArrayTypeID:
+			type = "reg_t";
+			break;
+		case kArrayTypeByte:
+			type = "byte";
+			break;
+		case kArrayTypeInt16:
+			type = "int16";
+			break;
+		case kArrayTypeString:
+			type = "string";
+			break;
+		case kArrayTypeInvalid:
+			type = "invalid";
+			break;
+		}
+
+		return Common::String::format("type %s; %u entries; %u bytes", type, size(), byteSize());
+	}
+
 protected:
 	void *_data;
 	SciArrayType _type;

@@ -2213,9 +2213,16 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 #ifdef ENABLE_SCI32
-	case SEG_TYPE_ARRAY:
+	case SEG_TYPE_ARRAY: {
+		ArrayTable &table = *(ArrayTable *)mobj;
 		debugPrintf("SCI32 arrays\n");
+		for (uint i = 0; i < table.size(); ++i) {
+			if (table.isValidEntry(i)) {
+				debugPrintf("    [%04x] %s\n", i, table[i].toDebugString().c_str());
+			}
+		}
 		break;
+	}
 
 	case SEG_TYPE_BITMAP: {
 		BitmapTable &table = *(BitmapTable *)mobj;
