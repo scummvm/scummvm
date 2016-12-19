@@ -38,7 +38,9 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 
 	_resource = resMan->findResource(ResourceId(kResourceTypeFont, resourceId), true);
 	if (!_resource) {
-		error("font resource %d not found", resourceId);
+		// The Lighthouse demo does not contain any fonts
+		warning("font resource %d not found", resourceId);
+		return;
 	}
 	_resourceData = _resource->data;
 
@@ -54,8 +56,10 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 }
 
 GfxFontFromResource::~GfxFontFromResource() {
-	delete[] _chars;
-	_resMan->unlockResource(_resource);
+	if (_resource) {
+		delete[] _chars;
+		_resMan->unlockResource(_resource);
+	}
 }
 
 GuiResourceId GfxFontFromResource::getResourceId() {
