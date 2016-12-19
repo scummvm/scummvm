@@ -100,8 +100,8 @@ void CInputHandler::processMessage(CMessage *msg) {
 					CMouseDragMoveMsg moveMsg(_mousePos);
 					moveMsg.execute(_dragItem);
 				}
-			} else {
-				if (mouseMsg->isButtonUpMsg() && _dragItem) {
+			} else if (mouseMsg->isButtonUpMsg()) {
+				if (_dragItem) {
 					// Mouse drag ended
 					CGameObject *target = dragEnd(_mousePos, _dragItem);
 					CMouseDragEndMsg endMsg(_mousePos, target);
