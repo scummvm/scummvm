@@ -1161,7 +1161,7 @@ public:
 	}
 
 	Common::String toString() const {
-		return Common::String::format("%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s):\n",
+		return Common::String::format("%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s)",
 			getWidth(), getHeight(),
 			getXResolution(), getYResolution(),
 			getOrigin().x, getOrigin().y,

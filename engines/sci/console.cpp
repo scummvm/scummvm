@@ -2229,7 +2229,7 @@ bool Console::segmentInfo(int nr) {
 		debugPrintf("SCI32 bitmaps (total %d)\n", table.entries_used);
 		for (uint i = 0; i < table.size(); ++i) {
 			if (table.isValidEntry(i)) {
-				debugPrintf("    [%04x] %s", i, table[i].toString().c_str());
+				debugPrintf("    [%04x] %s\n", i, table[i].toString().c_str());
 			}
 		}
 		break;
