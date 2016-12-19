@@ -34,8 +34,10 @@ namespace Sci {
 #pragma mark ScreenItem
 
 uint16 ScreenItem::_nextObjectId = 20000;
+uint32 ScreenItem::_nextCreationId = 0;
 
 ScreenItem::ScreenItem(const reg_t object) :
+_creationId(_nextCreationId++),
 _celObj(nullptr),
 _object(object),
 _pictureId(-1),
@@ -51,6 +53,7 @@ _drawBlackLines(false) {
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _useInsetRect(false),
 _z(0),
@@ -67,6 +70,7 @@ _mirrorX(false),
 _drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _useInsetRect(false),
 _z(0),
@@ -87,6 +91,7 @@ _drawBlackLines(false) {
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _scale(scaleInfo),
 _useInsetRect(false),
@@ -104,6 +109,7 @@ _mirrorX(false),
 _drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const ScreenItem &other) :
+_creationId(other._creationId),
 _plane(other._plane),
 _scale(other._scale),
 _useInsetRect(other._useInsetRect),
@@ -131,6 +137,7 @@ void ScreenItem::operator=(const ScreenItem &other) {
 		_celObj = nullptr;
 	}
 
+	_creationId = other._creationId;
 	_screenRect = other._screenRect;
 	_mirrorX = other._mirrorX;
 	_useInsetRect = other._useInsetRect;
@@ -148,6 +155,7 @@ ScreenItem::~ScreenItem() {
 
 void ScreenItem::init() {
 	_nextObjectId = 20000;
+	_nextCreationId = 0;
 }
 
 void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const bool updateCel, const bool updateBitmap) {
@@ -476,10 +484,11 @@ CelObj &ScreenItem::getCelObj() const {
 }
 
 void ScreenItem::printDebugInfo(Console *con) const {
-	con->debugPrintf("%04x:%04x (%s), prio %d, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
+	con->debugPrintf("%04x:%04x (%s), prio %d, ins %u, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
 		_object.getSegment(), _object.getOffset(),
 		g_sci->getEngineState()->_segMan->getObjectName(_object),
 		_priority,
+		_creationId,
 		_position.x,
 		_position.y,
 		_z,

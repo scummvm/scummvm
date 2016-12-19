@@ -44,8 +44,10 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 #pragma mark -
 #pragma mark Plane
 uint16 Plane::_nextObjectId = 20000;
+uint32 Plane::_nextCreationId = 0;
 
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
+_creationId(_nextCreationId++),
 _pictureId(pictureId),
 _mirrored(false),
 _type(kPlaneTypeColored),
@@ -65,6 +67,7 @@ _gameRect(gameRect) {
 }
 
 Plane::Plane(reg_t object) :
+_creationId(_nextCreationId++),
 _type(kPlaneTypeColored),
 _priorityChanged(false),
 _object(object),
@@ -94,6 +97,7 @@ _moved(0) {
 }
 
 Plane::Plane(const Plane &other) :
+_creationId(other._creationId),
 _pictureId(other._pictureId),
 _mirrored(other._mirrored),
 _type(other._type),
@@ -106,6 +110,7 @@ _screenRect(other._screenRect),
 _screenItemList(other._screenItemList) {}
 
 void Plane::operator=(const Plane &other) {
+	_creationId = other._creationId;
 	_gameRect = other._gameRect;
 	_planeRect = other._planeRect;
 	_vanishingPoint = other._vanishingPoint;
@@ -120,6 +125,7 @@ void Plane::operator=(const Plane &other) {
 
 void Plane::init() {
 	_nextObjectId = 20000;
+	_nextCreationId = 0;
 }
 
 void Plane::convertGameRectToPlaneRect() {
@@ -144,11 +150,12 @@ void Plane::printDebugInfo(Console *con) const {
 		name = g_sci->getEngineState()->_segMan->getObjectName(_object);
 	}
 
-	con->debugPrintf("%04x:%04x (%s): type %d, prio %d, pic %d, mirror %d, back %d\n",
+	con->debugPrintf("%04x:%04x (%s): type %d, prio %d, ins %u, pic %d, mirror %d, back %d\n",
 		PRINT_REG(_object),
 		name.c_str(),
 		_type,
 		_priority,
+		_creationId,
 		_pictureId,
 		_mirrored,
 		_back
@@ -508,7 +515,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 					const ScreenItem *drawnItem = drawListEntry->screenItem;
 
 					if (
-						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_object > drawnItem->_object)) &&
+						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_creationId > drawnItem->_creationId)) &&
 						drawListEntry->rect.intersects(newItem->_screenRect)
 					) {
 						mergeToDrawList(j, drawListEntry->rect.findIntersectingRect(newItem->_screenRect), drawList);

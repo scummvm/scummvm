@@ -110,6 +110,20 @@ private:
 	static uint16 _nextObjectId;
 
 	/**
+	 * A serial used to identify the creation order of
+	 * planes, to ensure a stable sort order for planes
+	 * with identical priorities.
+	 */
+	static uint32 _nextCreationId;
+
+	/**
+	 * The creation order number, which ensures a stable
+	 * sort when planes with identical priorities are added
+	 * to the plane list.
+	 */
+	uint32 _creationId;
+
+	/**
 	 * For planes that are used to render picture data, the
 	 * resource ID of the picture to be displayed. This
 	 * value may also be one of the special
@@ -261,7 +275,9 @@ public:
 		}
 
 		if (_priority == other._priority) {
-			return _object < other._object;
+			// This is different than SSCI; see ScreenItem::operator< for an
+			// explanation
+			return _creationId < other._creationId;
 		}
 
 		return false;
