@@ -369,7 +369,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CParrot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
-	if (_v4) {
+	if (_v4 != 3) {
 		CViewItem *view = msg->_param2 ? findView() : nullptr;
 		startTalking(this, msg->_action, view);
 	}
@@ -396,10 +396,11 @@ bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 			CActMsg actMsg("LoseParrot");
 			actMsg.execute("ParrotLobbyController");
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 bool CParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
