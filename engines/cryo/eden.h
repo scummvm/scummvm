@@ -560,11 +560,11 @@ private:
 	byte   _cursKeepBuf[2500];
 	Common::Point _cursKeepPos;
 	bool  _torchCursor;
-	int16           _curBankNum;
-	int16           glow_h;
-	int16           glow_w;
-	int16           glow_y;
-	int16           glow_x;
+	int16 _curBankNum;
+	int16 _glowX;
+	int16 _glowY;
+	int16 _glowW;
+	int16 _glowH;
 	bool _paletteUpdateRequired;
 	bool _cursorSaved;
 	bool _showBlackBars;
@@ -572,12 +572,12 @@ private:
 	byte *_bankData;
 	color3_t        pal_entry;
 	color_t         global_palette[256];    //TODO palette_t
-	perso_t         *tyranPtr;
-	int             _lastAnimFrameNumb;
-	int             _curAnimFrameNumb;
-	int             _lastAnimTicks;
+	perso_t *_tyranPtr;
+	int     _lastAnimFrameNumb;
+	int     _curAnimFrameNumb;
+	int     _lastAnimTicks;
 	prect_t         *cur_perso_rect;
-	int16           _numAnimFrames;
+	int16   _numAnimFrames;
 	int16           max_perso_desc;
 	int16           num_img_desc;
 	bool _restartAnimation;

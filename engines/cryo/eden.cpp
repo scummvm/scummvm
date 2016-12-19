@@ -62,13 +62,13 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_frescoTalk = false;
 	_torchCursor = false;
 	_curBankNum = 0;
-	glow_h = glow_w = glow_y = glow_x = 0;
+	_glowH = _glowW = _glowY = _glowX = 0;
 	_paletteUpdateRequired = false;
 	_cursorSaved = false;
 	_showBlackBars = false;
 	_backgroundSaved = false;
 	_bankData = nullptr;
-	tyranPtr = nullptr;
+	_tyranPtr = nullptr;
 	_lastAnimFrameNumb = _curAnimFrameNumb = 0;
 	_lastAnimTicks = 0;
 	cur_perso_rect = nullptr;
@@ -206,8 +206,8 @@ void EdenGame::gametofresques() {
 void EdenGame::doFrescoes() {
 	_cursorSaved = false;
 	_torchCursor = true;
-	glow_x = -1;
-	glow_y = -1;
+	_glowX = -1;
+	_glowY = -1;
 	p_global->_gameFlags |= GameFlags::gfFlag20;
 	p_global->_varD4 = 0;
 	p_global->_curObjectId = 0;
@@ -1232,10 +1232,10 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
 	byte *scr = p_mainview_buf + x + y * 640;
 	byte *gl = _glowBuffer;
-	glow_x = x;
-	glow_y = y;
-	glow_w = w;
-	glow_h = h;
+	_glowX = x;
+	_glowY = y;
+	_glowW = w;
+	_glowH = h;
 	for (; h--;) {
 		int16 ww;
 		for (ww = w; ww--;)
@@ -1246,14 +1246,14 @@ void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
 
 void EdenGame::unglow() {
 	byte *gl = _glowBuffer;
-	byte *scr = p_mainview_buf + glow_x + glow_y * 640;
-	if (glow_x < 0 || glow_y < 0)   //TODO: move it up
+	byte *scr = p_mainview_buf + _glowX + _glowY * 640;
+	if (_glowX < 0 || _glowY < 0)   //TODO: move it up
 		return;
-	for (; glow_h--;) {
+	for (; _glowH--;) {
 		int16 ww;
-		for (ww = glow_w; ww--;)
+		for (ww = _glowW; ww--;)
 			*scr++ = *gl++;
-		scr += 640 - glow_w;
+		scr += 640 - _glowW;
 	}
 }
 
@@ -1707,19 +1707,19 @@ bool EdenGame::istyran(int16 roomNum) {
 	int16 area = roomNum & 0xFF00;
 	// TODO: orig bug: this ptr is not initialized when first called from getsalle
 	// PC version scans kPersons[] directly and is not affected
-	if (!tyranPtr)
+	if (!_tyranPtr)
 		return false;
 
-	for (; tyranPtr->_roomNum != 0xFFFF; tyranPtr++) {
-		if (tyranPtr->_flags & PersonFlags::pf80)
+	for (; _tyranPtr->_roomNum != 0xFFFF; _tyranPtr++) {
+		if (_tyranPtr->_flags & PersonFlags::pf80)
 			continue;
-		if (tyranPtr->_roomNum == (area | (loc - 16)))
+		if (_tyranPtr->_roomNum == (area | (loc - 16)))
 			return true;
-		if (tyranPtr->_roomNum == (area | (loc + 16)))
+		if (_tyranPtr->_roomNum == (area | (loc + 16)))
 			return true;
-		if (tyranPtr->_roomNum == (area | (loc - 1)))
+		if (_tyranPtr->_roomNum == (area | (loc - 1)))
 			return true;
-		if (tyranPtr->_roomNum == (area | (loc + 1)))
+		if (_tyranPtr->_roomNum == (area | (loc + 1)))
 			return true;
 	}
 	return false;
@@ -1943,7 +1943,7 @@ void EdenGame::constcita() {
 
 	Room *room = p_global->_curAreaPtr->_citadelRoomPtr; //TODO: copied here by me
 	byte loc = room->_location;
-	tyranPtr = &kPersons[PER_UNKN_372];
+	_tyranPtr = &kPersons[PER_UNKN_372];
 	if (istyran((p_global->_citadelAreaNum << 8) | loc)) {
 		if (!(p_global->_curAreaPtr->_flags & AreaFlags::TyrannSighted)) {
 			addInfo(p_global->_citadelAreaNum + ValleyNews::vnTyrannIn);
@@ -2166,11 +2166,11 @@ void EdenGame::vivredino() {
 					if (found)
 						continue;
 				} else {
-					tyranPtr = &kPersons[PER_UNKN_372];
+					_tyranPtr = &kPersons[PER_UNKN_372];
 					if (istyran(perso->_roomNum)) {
 						if (p_global->_phaseNum < 481 && (perso->_powers & (1 << (p_global->_citadelAreaNum - 3)))) {
-							tyranPtr->_flags |= PersonFlags::pf80;
-							tyranPtr->_roomNum = 0;
+							_tyranPtr->_flags |= PersonFlags::pf80;
+							_tyranPtr->_roomNum = 0;
 							perso->_flags &= ~PersonFlags::pf10;
 							perso->_flags |= PersonFlags::pfInParty;
 							addInfo(p_global->_citadelAreaNum + ValleyNews::vnTyrannLost);
@@ -5878,18 +5878,13 @@ void EdenGame::FRDevents() {
 	mouseY -= _mouseCenterY;
 	CLMouse_SetPosition(_mouseCenterX , _mouseCenterY);
 	_cursorPosX += mouseX;
-	if (_cursorPosX < 4)
-		_cursorPosX = 4;
-	if (_cursorPosX > 292)
-		_cursorPosX = 292;
+	_cursorPosX = CLIP<int16>(_cursorPosX, 4, 292);
 	_cursorPosY += mouseY;
 
-	int16 max_y = p_global->_displayFlags == DisplayFlags::dfFlag2 ? 190 : 170;
-	if (_cursorPosY < 4)
-		_cursorPosY = 4;
-	if (_cursorPosY > max_y)
-		_cursorPosY = max_y;
+	int16 maxY = p_global->_displayFlags == DisplayFlags::dfFlag2 ? 190 : 170;
+	_cursorPosY = CLIP<int16>(_cursorPosY, 4, maxY);
 	_cirsorPanX = _cursorPosX;
+
 	if (_cursorPosY >= 10 && _cursorPosY <= 164 && !(p_global->_displayFlags & DisplayFlags::dfFrescoes))
 		_cirsorPanX += _scrollPos;
 	if (_normalCursor) {
@@ -5922,7 +5917,7 @@ void EdenGame::FRDevents() {
 		if (_currCursor == 9 && !_torchCursor) {
 			rundcurs();
 			_torchCursor = true;
-			glow_x = -1;
+			_glowX = -1;
 		}
 		if (_currCursor != 9 && _torchCursor) {
 			unglow();
@@ -6011,7 +6006,7 @@ void EdenGame::update_cursor() {
 				pc_moteur();
 		} else
 			noclipax(_currCursor, _cursorPosX + _scrollPos, _cursorPosY);
-		glow_x = 1;
+		_glowX = 1;
 	} else {
 		useBank(117);
 		if (_cursorPosX > 294)
