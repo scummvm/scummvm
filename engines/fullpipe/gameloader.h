@@ -133,7 +133,7 @@ class GameLoader : public CObject {
 	int16 _field_FA;
 	PreloadItems _preloadItems;
 	GameVar *_gameVar;
-	char *_gameName;
+	Common::String _gameName;
 	ExCommand _exCommand;
 	int _updateCounter;
 	int _preloadSceneId;
