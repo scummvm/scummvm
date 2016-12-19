@@ -352,7 +352,7 @@ void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, 
 	TTtalker *talker = new TTtalker(this, npc);
 	_talkers.push_back(talker);
 
-	bool isParrot = npc->getName().contains("parrot");
+	bool isParrot = npc->getName().containsIgnoreCase("parrot");
 	triggerNPC(npc);
 	playSpeech(talker, roomScript, view, isParrot);
 	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], speechDuration);
