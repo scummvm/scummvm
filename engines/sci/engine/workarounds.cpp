@@ -421,8 +421,7 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kArraySetElements_workarounds[] = {
 	{ GID_GK1,           302, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when erasing a letter on the wall in St Louis Cemetery
-	{ GID_PHANTASMAGORIA,902, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when starting a new game and selecting a chapter above 1
-	{ GID_PHANTASMAGORIA,47480, 64918,0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // after completing the chase successfully
+	{ GID_PHANTASMAGORIA, -1, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when starting a new game and selecting a chapter above 1, or when quitting the chase (in every chase room), or when completing chase successfully
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
