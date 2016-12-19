@@ -390,7 +390,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		divisions = argc > 7 ? argv[7].toSint16() : -1;
 	}
 	// SCI 2.1mid–2.1late
-	else if (getSciVersion() < SCI_VERSION_3) {
+	else if (getSciVersion() < SCI_VERSION_3 && g_sci->getGameId() != GID_LSL7) {
 		blackScreen = 0;
 		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
 		divisions = argc > 8 ? argv[8].toSint16() : -1;
