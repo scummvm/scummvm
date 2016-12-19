@@ -443,7 +443,7 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 	case 3:
 	case 4:
 	case 5:
-		volume = (24525 * volume) / 100;
+		volume = (75 * volume) / 100;
 		break;
 	case 6:
 	case 7:
