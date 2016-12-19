@@ -220,6 +220,9 @@ void CGameManager::updateMovies() {
 			if (movie->_handled)
 				continue;
 
+			// Flag the movie to have been handled
+			movie->_handled = true;
+
 			CMovieEventList eventsList;
 			if (!movie->handleEvents(eventsList))
 				movie->removeFromPlayingMovies();
@@ -247,8 +250,6 @@ void CGameManager::updateMovies() {
 				eventsList.remove(movieEvent);
 			}
 
-			// Flag the movie as having been handled
-			movie->_handled = true;
 			repeatFlag = true;
 			break;
 		}
