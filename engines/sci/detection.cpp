@@ -883,6 +883,18 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		switch (getGameId()) {
+		case GID_PHANTASMAGORIA:
+		case GID_HOYLE5:
+			return false;
+		default:
+			break;
+		}
+	}
+#endif
+
 	return !_gamestate->executionStackBase;
 }
 
