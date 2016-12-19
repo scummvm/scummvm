@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-19 02:13+0100\n"
-"PO-Revision-Date: 2016-12-11 10:03+0000\n"
-"Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2016-12-19 08:19+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2778,7 +2778,7 @@ msgstr "Suche nach Aktualisierungen..."
 #: engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "Engine-Datendatei '%s' kann nicht gefunden werden."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2786,7 +2786,7 @@ msgstr ""
 #: engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "Die Engine-Datendatei '%s' ist beschädigt."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2797,6 +2797,8 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Falsche Version der Engine-Datendatei '%s' gefunden. %d.%d erwartet, aber "
+"%d.%d bekommen."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
@@ -4306,7 +4308,7 @@ msgstr "Zeigt Fenster mit teilweise transparentem Hintergrund"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "Die Engine-Datendatei \"sky.cpt\" hat eine falsche Größe."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4416,7 +4418,7 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Schriftartvariante in Engine-Datendatei '%s' nicht vorhanden."
 
 #: engines/toon/toon.cpp:222
 #, c-format
