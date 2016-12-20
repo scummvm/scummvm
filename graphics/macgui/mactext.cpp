@@ -74,12 +74,12 @@ void MacText::splitString(Common::String &str) {
 }
 
 void MacText::reallocSurface() {
-	int lineHeight = _font->getFontHeight() + _interLinear;
-	int requiredHeight = (_text.size() + (_text.size() * 10 + 9) / 10) * lineHeight;
+	int lineH = _font->getFontHeight() + _interLinear;
+	int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH;
 
-	if (_surface.w < requiredHeight) {
+	if (_surface.w < requiredH) {
 		// realloc surface
-		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth, requiredHeight);
+		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth, requiredH);
 	}
 }
 
@@ -89,16 +89,28 @@ void MacText::render() {
 
 		_surface.clear(_bgcolor);
 
-		int y = 0;
-
-		for (uint i = 0; i < _text.size(); i++) {
-			_font->drawString(&_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
-
-			y += _font->getFontHeight() + _interLinear;
-		}
+		render(0, _text.size());
 
 		_fullRefresh = false;
 	}
+}
+
+void MacText::render(int from, int to) {
+	from = MAX<int>(0, from);
+	to = MIN<int>(to, _text.size());
+
+	int lineH = _font->getFontHeight() + _interLinear;
+	int y = from * lineH;
+
+	// Clear the screen
+	_surface.fillRect(Common::Rect(0, y, _surface.w, to * lineH), _bgcolor);
+
+	for (uint i = from; i < to; i++) {
+		_font->drawString(&_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
+
+		y += _font->getFontHeight() + _interLinear;
+	}
+
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {

@@ -41,6 +41,7 @@ public:
 private:
 	void splitString(Common::String &s);
 	void render();
+	void render(int from, int to);
 	void calcMaxWidth();
 	void reallocSurface();
 
