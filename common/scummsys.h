@@ -132,6 +132,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include <stdarg.h>
+	#include <stddef.h>
 	#include <assert.h>
 	#include <ctype.h>
 	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
