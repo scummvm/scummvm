@@ -370,9 +370,9 @@ private:
 	void confirmyes();
 	void confirmno();
 	void restart();
-	void EdenQuit();
-	void choixsubtitle();
-	void reglervol();
+	void edenQuit();
+	void choseSubtitleOption();
+	void changeVolume();
 	void changervol();
 	void newvol(byte *volptr, int16 delta);
 	void playtape();
@@ -385,15 +385,15 @@ private:
 	void paneltobuf();
 	void cursbuftopanel();
 	void langbuftopanel();
-	void affpanel();
-	void afflangue();
-	void affcursvol(int16 x, int16 vol1, int16 vol2);
-	void affcurseurs();
-	void curseurselect(int itemId);
-	void afftoppano();
-	void affresult();
-	void limitezonecurs(int16 xmin, int16 xmax, int16 ymin, int16 ymax);
-	void PommeQ();
+	void displayPanel();
+	void displayLanguage();
+	void displayVolCursor(int16 x, int16 vol1, int16 vol2);
+	void displayCursors();
+	void selectCursor(int itemId);
+	void displayTopPanel();
+	void displayResult();
+	void restrictCursorArea(int16 xmin, int16 xmax, int16 ymin, int16 ymax);
+	void edenShudown();
 	void habitants(perso_t *perso);
 	void suiveurs(perso_t *perso);
 	void evenements(perso_t *perso);
@@ -402,15 +402,14 @@ private:
 	void perso_ici(int16 action);
 	void setpersohere();
 	void faire_suivre(int16 roomNum);
-	void suis_moi5();
-	void suis_moi(int16 index);
-	void reste_ici5();
-	void reste_ici(int16 index);
+	void AddCharacterToParty();
+	void AddToParty(int16 index);
+	void removeCharacterFromParty();
+	void removeFromParty(int16 index);
 	void handleEloiDeparture();
-	bool eloirevientq();
-	void eloirevient();
-	void incPhase1();
-	void incphase();
+	bool checkEloiReturn();
+	void handleEloiReturn();
+	void incPhase();
 	void phase113();
 	void phase130();
 	void phase161();
@@ -673,7 +672,7 @@ private:
 	int16 _cursorPosY;
 	int16 _currCursor;
 	Icon *_currSpot;
-	Icon *_currSpot2;
+	Icon *_curSpot2;
 	bool pomme_q;
 	bool _keyboardHeld;
 	bool _mouseHeld;
@@ -706,22 +705,22 @@ private:
 	bool _noPalette;
 	bool _gameLoaded;
 #define MAX_TAPES 16
-	tape_t          tapes[MAX_TAPES];
+	tape_t tapes[MAX_TAPES];
 	byte   confirmMode;
 	byte   *cur_slider_value_ptr;
-	byte   lastMenuItemIdLo;
-	int16           lastTapeRoomNum;
-	int16           cur_slider_x;
+	byte   _lastMenuItemIdLo;
+	int16  _lastTapeRoomNum;
+	int16  _curSliderX;
 	int16           cur_slider_y;
 	int16           destinationRoom;
 	int16           word_31E7A;
 
-	int16           word_378CC; //TODO: set by CLComputer_Init to 0
-	int16           word_378CE;
+	int16           word_378CC; // TODO: set by CLComputer_Init to 0
+	int16           word_378CE; // CHECKME: Unused
 
 	int		_invIconsCount;
-	int		invIconsBase;
-	int		roomIconsBase;
+	int		_invIconsBase;
+	int		_roomIconsBase;
 
 	//// cube.c
 	int16 tabcos[361 * 2];
