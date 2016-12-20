@@ -538,9 +538,10 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		if (!milli)
 			continue;
 
+#ifdef SPATIAL_SOUND
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
-#ifdef SPATIAL_SOUND
+
 		// TODO: Figure out if these below are needed. It kinda looks like they were
 		// simply playing the same speech at different spatial co-ordinates. And since
 		// we don't support spatial processing in ScummVM yet, they're being left disabled
