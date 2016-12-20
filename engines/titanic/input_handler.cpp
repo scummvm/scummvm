@@ -32,7 +32,7 @@ namespace Titanic {
 CInputHandler::CInputHandler(CGameManager *owner) :
 		_gameManager(owner), _inputTranslator(nullptr), _dragging(false),
 		_buttonDown(false), _dragItem(nullptr),  _lockCount(0),
-		_singleton(false) {
+		_abortMessage(false) {
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
@@ -59,7 +59,7 @@ void CInputHandler::decLockCount() {
 		}
 
 		_buttonDown = _inputTranslator->isMousePressed();
-		_singleton = true;
+		_abortMessage = true;
 	}
 }
 
@@ -75,11 +75,11 @@ void CInputHandler::handleMessage(CMessage &msg, bool respectLock) {
 
 void CInputHandler::processMessage(CMessage *msg) {
 	const CMouseMsg *mouseMsg = dynamic_cast<const CMouseMsg *>(msg);
-	_singleton = false;
+	_abortMessage = false;
 	dispatchMessage(msg);
 
-	if (_singleton) {
-		_singleton = false;
+	if (_abortMessage) {
+		_abortMessage = false;
 	} else if (mouseMsg) {
 		// Keep the game state mouse position up to date
 		if (_mousePos != mouseMsg->_mousePos) {
