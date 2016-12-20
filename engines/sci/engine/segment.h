@@ -797,9 +797,9 @@ public:
 		if (flags & kArrayTrimRight) {
 			source = data + strlen((char *)data) - 1;
 			while (source > data && *source != showChar && *source <= kWhitespaceBoundary) {
+				*source = '\0';
 				--source;
 			}
-			*source = '\0';
 		}
 
 		if (flags & kArrayTrimCenter) {
