@@ -31,7 +31,6 @@ namespace Fullpipe {
 
 class Sound : public MemoryObject {
 	int _id;
-	char *_description;
 	int _directSoundBuffer;
 	int _directSoundBuffers[7];
 	byte *_soundData;
