@@ -30,6 +30,7 @@ MacText::MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolo
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
 	_maxWidth = maxWidth;
+	_surface = nullptr;
 
 	_interLinear = 0; // 0 pixels between the lines by default
 
@@ -75,11 +76,23 @@ void MacText::splitString(Common::String &str) {
 
 void MacText::reallocSurface() {
 	int lineH = _font->getFontHeight() + _interLinear;
+	// round to closest 10
 	int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH;
+	int surfW = _maxWidth == -1 ? _textMaxWidth : _maxWidth;
 
-	if (_surface.w < requiredH) {
-		// realloc surface
-		_surface.create(_maxWidth == -1 ? _textMaxWidth : _maxWidth, requiredH);
+	if (!_surface) {
+		_surface = new ManagedSurface(surfW, requiredH);
+
+		return;
+	}
+
+	if (_surface->h < requiredH) {
+		// realloc surface and copy old content
+		ManagedSurface *n = new ManagedSurface(surfW, requiredH);
+		n->blitFrom(*_surface, Common::Point(0, 0));
+
+		delete _surface;
+		_surface = n;
 	}
 }
 
@@ -87,7 +100,7 @@ void MacText::render() {
 	if (_fullRefresh) {
 		reallocSurface();
 
-		_surface.clear(_bgcolor);
+		_surface->clear(_bgcolor);
 
 		render(0, _text.size());
 
@@ -103,10 +116,10 @@ void MacText::render(int from, int to) {
 	int y = from * lineH;
 
 	// Clear the screen
-	_surface.fillRect(Common::Rect(0, y, _surface.w, to * lineH), _bgcolor);
+	_surface->fillRect(Common::Rect(0, y, _surface->w, to * lineH), _bgcolor);
 
 	for (uint i = from; i < to; i++) {
-		_font->drawString(&_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
+		_font->drawString(_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
 
 		y += _font->getFontHeight() + _interLinear;
 	}
@@ -116,22 +129,22 @@ void MacText::render(int from, int to) {
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
 	render();
 
-	if (x + w < _surface.w || y + h < _surface.h) {
+	if (x + w < _surface->w || y + h < _surface->h) {
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
 	}
 
-	g->blitFrom(_surface, Common::Rect(MIN<int>(_surface.w, x), MIN<int>(_surface.h, y),
-									   MIN<int>(_surface.w, x + w), MIN<int>(_surface.w, y + w)), Common::Point(xoff, yoff));
+	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
+									   MIN<int>(_surface->w, x + w), MIN<int>(_surface->w, y + w)), Common::Point(xoff, yoff));
 }
 
 void MacText::appendText(Common::String str) {
-	//int oldLen = _text.size();
+	int oldLen = _text.size();
 
 	splitString(str);
 
 	reallocSurface();
 
-	//render(oldLen + 1, _text.size());
+	render(oldLen + 1, _text.size());
 }
 
 } // End of namespace Graphics

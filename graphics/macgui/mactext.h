@@ -57,7 +57,7 @@ private:
 
 	int _textMaxWidth;
 
-	Graphics::ManagedSurface _surface;
+	Graphics::ManagedSurface *_surface;
 	bool _fullRefresh;
 };
 
