@@ -1473,6 +1473,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CEnterNodeMsg, CMessage);
 	ADDFN(CEnterRoomMsg, CMessage);
 	ADDFN(CEnterViewMsg, CMessage);
+	ADDFN(CPreEnterNodeMsg, CMessage);
+	ADDFN(CPreEnterRoomMsg, CMessage);
+	ADDFN(CPreEnterViewMsg, CMessage);
 	ADDFN(CPreSaveMsg, CMessage);
 	ADDFN(CProdMaitreDMsg, CMessage);
 	ADDFN(CPumpingMsg, CMessage);
