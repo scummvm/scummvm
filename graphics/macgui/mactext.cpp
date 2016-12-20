@@ -70,7 +70,7 @@ void MacText::splitString(Common::String &str) {
 		tmp += *s;
 	}
 
-	if (_text.size())
+	if (tmp.size())
 		_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
 }
 
@@ -98,10 +98,6 @@ void MacText::reallocSurface() {
 
 void MacText::render() {
 	if (_fullRefresh) {
-		reallocSurface();
-
-		_surface->clear(_bgcolor);
-
 		render(0, _text.size());
 
 		_fullRefresh = false;
@@ -109,6 +105,8 @@ void MacText::render() {
 }
 
 void MacText::render(int from, int to) {
+	reallocSurface();
+
 	from = MAX<int>(0, from);
 	to = MIN<int>(to, _text.size());
 
@@ -133,16 +131,15 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
 	}
 
-	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y),
-									   MIN<int>(_surface->w, x + w), MIN<int>(_surface->w, y + w)), Common::Point(xoff, yoff));
+	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x),     MIN<int>(_surface->h, y),
+									    MIN<int>(_surface->w, x + w), MIN<int>(_surface->w, y + w)),
+										Common::Point(xoff, yoff));
 }
 
 void MacText::appendText(Common::String str) {
 	int oldLen = _text.size();
 
 	splitString(str);
-
-	reallocSurface();
 
 	render(oldLen + 1, _text.size());
 }
