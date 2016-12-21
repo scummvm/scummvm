@@ -145,15 +145,15 @@ void CPetRoomsGlyph::getTooltip(CPetText *text) {
 	CRoomFlags roomFlags(_roomFlags);
 	CPetRooms *owner = static_cast<CPetRooms *>(getPetSection());
 
-	CString msg;
+	CString prefix;
 	if (isCurrentlyAssigned()) {
-		msg = "Your assigned room: ";
+		prefix = "Your assigned room: ";
 	} else if (isPreviouslyAssigned()) {
-		msg = "A previously assigned room: ";
+		prefix = "A previously assigned room: ";
 	} else if (!_mailFlag) {
-		msg = "Saved Chevron: ";
+		prefix = "Saved Chevron: ";
 	} else if (_mailFlag == 1 && owner->getRoomFlags() == _roomFlags) {
-		msg = "Current location: ";
+		prefix = "Current location: ";
 	}
 
 	// Get the room description
@@ -165,7 +165,7 @@ void CPetRoomsGlyph::getTooltip(CPetText *text) {
 	}
 
 	roomStr += " (shift-click edits)";
-	text->setText(roomStr);
+	text->setText(prefix + roomStr);
 }
 
 void CPetRoomsGlyph::saveGlyph(SimpleFile *file, int indent) {
