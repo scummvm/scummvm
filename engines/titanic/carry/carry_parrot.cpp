@@ -105,10 +105,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 
 	if (msg->_mousePos.y >= 360) {
 		petAddToInventory();
-		return true;
-	}
-
-	if (compareViewNameTo("ParrotLobby.Node 1.N")) {
+	} else if (compareViewNameTo("ParrotLobby.Node 1.N")) {
 		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 &&
 				!CParrot::_v2 && !CCage::_open) {
 			setVisible(false);
