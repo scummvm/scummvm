@@ -42,13 +42,13 @@ BEGIN_MESSAGE_MAP(CCarryParrot, CCarry)
 	ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CCarryParrot::CCarryParrot() : CCarry(), _string6("PerchedParrot"),
+CCarryParrot::CCarryParrot() : CCarry(), _parrotName("PerchedParrot"),
 		_timerId(0), _freeCounter(0), _feathersFlag(false) {
 }
 
 void CCarryParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_parrotName, indent);
 	file->writeNumberLine(_timerId, indent);
 	file->writeNumberLine(_freeCounter, indent);
 	file->writeNumberLine(_feathersFlag, indent);
@@ -58,7 +58,7 @@ void CCarryParrot::save(SimpleFile *file, int indent) {
 
 void CCarryParrot::load(SimpleFile *file) {
 	file->readNumber();
-	_string6 = file->readString();
+	_parrotName = file->readString();
 	_timerId = file->readNumber();
 	_freeCounter = file->readNumber();
 	_feathersFlag = file->readNumber();
@@ -164,7 +164,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		return CCarry::PassOnDragStartMsg(msg);
 	}
 
-	CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
+	CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_parrotName));
 	if (npc)
 		startTalking(npc, 0x446BF);
 
@@ -195,7 +195,7 @@ bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
 
 bool CCarryParrot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "FreeParrot" && (CParrot::_v4 == 4 || CParrot::_v4 == 1)) {
-		CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
+		CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_parrotName));
 		if (npc)
 			startTalking(npc, 0x446BF);
 
@@ -203,9 +203,6 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 		_fieldE0 = 0;
 
 		if (CParrot::_v4 == 4) {
-			CActMsg actMsg("Shut");
-			actMsg.execute("ParrotCage");
-		} else {
 			playSound("z#475.wav");
 
 			if (!_feathersFlag) {
@@ -218,13 +215,17 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 				_feathersFlag = true;
 			}
 
-			getPetControl()->removeFromInventory(this);
-			getPetControl()->setAreaChangeType(1);
+			CPetControl *pet = getPetControl();
+			pet->removeFromInventory(this);
+			pet->setAreaChangeType(1);
 			moveUnder(getRoom());
+		} else {
+			CActMsg actMsg("Shut");
+			actMsg.execute("ParrotCage");
 		}
 
 		CParrot::_v4 = 2;
-		stopTimer(_timerId);
+		stopAnimTimer(_timerId);
 		_timerId = 0;
 	}
 

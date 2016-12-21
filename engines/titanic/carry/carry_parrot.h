@@ -42,7 +42,7 @@ class CCarryParrot : public CCarry {
 	bool UseWithCharMsg(CUseWithCharMsg *msg);
 	bool ActMsg(CActMsg *msg);
 private:
-	CString _string6;
+	CString _parrotName;
 	int _timerId;
 	int _freeCounter;
 	bool _feathersFlag;
