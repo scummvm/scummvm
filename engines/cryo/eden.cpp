@@ -4931,7 +4931,7 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 	loadpartoffile(resNum, &chunkType, sizeof(vocHeader), 1);
 	filePos++;
 	if (chunkType == 5) {
-		uint16 chunkLen = 0;
+		uint32 chunkLen = 0;
 		loadpartoffile(resNum, &chunkLen, filePos, 3);
 		filePos += 3;
 		chunkLen = LE32(chunkLen);
