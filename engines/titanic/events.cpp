@@ -127,7 +127,7 @@ bool Events::checkForNextFrameCounter() {
 }
 
 uint32 Events::getTicksCount() const {
-	return g_system->getMillis();
+	return _frameCounter * GAME_FRAME_TIME;
 }
 
 void Events::sleep(uint time) {
