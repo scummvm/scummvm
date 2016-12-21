@@ -57,11 +57,11 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_field118 = 1;
 	_field11C = 25;
 	_field120 = 0;
-	_field124 = 73;
-	_field128 = 58;
+	_newXp = 73;
+	_newXc = 58;
 	_field12C = 0;
 	_field130 = 0;
-	_field134 = nullptr;
+	_panTarget = nullptr;
 	_field138 = 851;
 	_field13C = 851;
 	_field140 = 265;
@@ -127,8 +127,8 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field118, indent);
 	file->writeNumberLine(_field11C, indent);
 	file->writeNumberLine(_field120, indent);
-	file->writeNumberLine(_field124, indent);
-	file->writeNumberLine(_field128, indent);
+	file->writeNumberLine(_newXp, indent);
+	file->writeNumberLine(_newXc, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_field130, indent);
 	file->writeNumberLine(_v4, indent);
@@ -151,8 +151,8 @@ void CParrot::load(SimpleFile *file) {
 	_field118 = file->readNumber();
 	_field11C = file->readNumber();
 	_field120 = file->readNumber();
-	_field124 = file->readNumber();
-	_field128 = file->readNumber();
+	_newXp = file->readNumber();
+	_newXc = file->readNumber();
 	_field12C = file->readNumber();
 	_field130 = file->readNumber();
 	_v4 = file->readNumber();
@@ -219,10 +219,10 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 		CActMsg actMsg1("LoseParrot");
 		actMsg1.execute("ParrotLobbyController");
 
-		if (_field134) {
+		if (_panTarget) {
 			CActMsg actMsg2("PanAwayFromParrot");
-			actMsg2.execute(_field134);
-			_field134 = nullptr;
+			actMsg2.execute(_panTarget);
+			_panTarget = nullptr;
 		} else {
 			CActMsg actMsg2("Shut");
 			actMsg2.execute("ParrotCage");
@@ -243,7 +243,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			int xp = _bounds.left + _bounds.width() / 2;
 
 			if (_npcFlags & NPCFLAG_100000) {
-				if ((xp - _field128) > 32) {
+				if ((xp - _newXc) > 32) {
 					setPosition(Point(_bounds.left - 40, _bounds.top));
 					playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
 					movieEvent(236);
@@ -253,7 +253,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 					_npcFlags = (_npcFlags & ~NPCFLAG_40000) | NPCFLAG_80000;
 				}
 			} else {
-				if ((_field128 - xp) > 32) {
+				if ((_newXc - xp) > 32) {
 					playClip("Walk Right Loop", MOVIE_NOTIFY_OBJECT);
 					movieEvent(244);
 				} else {
@@ -348,7 +348,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 	};
 
 	if (!_v4) {
-		setPosition(Point(_field124, _bounds.top));
+		setPosition(Point(_newXp, _bounds.top));
 		_field118 = 1;
 		_npcFlags &= ~(NPCFLAG_10000  |  NPCFLAG_20000  |  NPCFLAG_40000  |  NPCFLAG_80000  |  NPCFLAG_100000  |  NPCFLAG_200000  |  NPCFLAG_400000);
 		loadFrame(0);
@@ -564,7 +564,7 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 }
 
 bool CParrot::FrameMsg(CFrameMsg *msg) {
-	if (compareViewNameTo("ParrotLobby.Node 1.N"))
+	if (!compareViewNameTo("ParrotLobby.Node 1.N"))
 		return false;
 	if (_v4)
 		return true;
@@ -574,12 +574,14 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	int xp = _bounds.left + _bounds.width() / 2;
 
 	if ((_npcFlags & NPCFLAG_400000) && !hasActiveMovie()) {
-		_field128 = xp - (_field124 + _bounds.width() / 2);
+		_newXc =  _newXp + _bounds.width() / 2;
+		int xDiff = ABS(xp - _newXc);
 
-		if (xp < 64) {
-			if (_field134) {
+		if (xDiff < 64) {
+			if (_panTarget) {
 				CActMsg actMsg("PanAwayFromParrot");
-				actMsg.execute(_field134);
+				actMsg.execute(_panTarget);
+				_panTarget = nullptr;
 			}
 
 			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000
@@ -601,14 +603,14 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			return false;
 	}
 
-	_field128 = CLIP((int)pt.x, 230, 480);
+	_newXc = CLIP((int)pt.x, 230, 480);
 	if ((_npcFlags & NPCFLAG_10000) || hasActiveMovie())
 		return true;
 
-	if (_field128 > 64) {
+	if (_newXc > 64) {
 		_npcFlags |= NPCFLAG_10000 | NPCFLAG_20000;
 
-		if (_field128 >= xp) {
+		if (_newXc >= xp) {
 			setPosition(Point(_bounds.left + 30, _bounds.top));
 			_npcFlags |= NPCFLAG_200000;
 			playClip("Walk Right Intro", MOVIE_NOTIFY_OBJECT);
@@ -731,16 +733,16 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 	if (_v4) {
 		CActMsg actMsg("PanAwayFromParrot");
 		actMsg.execute(msg->_target);
-		_field134 = 0;
+		_panTarget = nullptr;
 	} else if (_v2) {
-		_field134 = msg->_target;
+		_panTarget = msg->_target;
 		loadMovie("z168.avi", false);
 		stopMovie();
 		playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 		_npcFlags |= NPCFLAG_2000000;
 	} else {
 		_npcFlags |= NPCFLAG_400000;
-		_field134 = msg->_target;
+		_panTarget = msg->_target;
 		stopMovie();
 	}
 

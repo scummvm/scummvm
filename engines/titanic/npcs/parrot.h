@@ -24,6 +24,7 @@
 #define TITANIC_PARROT_H
 
 #include "titanic/npcs/true_talk_npc.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 
@@ -57,11 +58,11 @@ private:
 	int _field118;
 	int _field11C;
 	int _field120;
-	int _field124;
-	int _field128;
+	int _newXp;
+	int _newXc;
 	int _field12C;
 	int _field130;
-	CTreeItem *_field134;
+	CMovePlayerTo *_panTarget;
 	int _field138;
 	int _field13C;
 	int _field140;
