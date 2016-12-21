@@ -59,6 +59,7 @@ bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (succubus) {
 		CSetChevRoomBits chevMsg(_destRoomFlags);
 		chevMsg.execute(succubus);
+		petMoveToHiddenRoom();
 	} else {
 		CPetControl *petControl = getPetControl();
 		if (!petControl || !petControl->contains(msg->_mousePos)
