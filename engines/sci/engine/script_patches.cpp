@@ -1488,6 +1488,7 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 // Additional patch specifically for King's Quest 6
 //  Fixes special windows, used for example in the Pawn shop (room 280),
 //   when the man in a robe complains about no more mints.
+//   Or also in room 300 at the cliffs (aka copy protection), when Alexander falls down the cliffs.
 //  We have to change even more code, because the game uses PODialog class for
 //   text windows and myDialog class for audio. Both are saved to KQ6Print::dialog
 //  Sadly PODialog is created during KQ6Print::addText, myDialog is set during
@@ -1514,13 +1515,34 @@ static const uint16 kq6CDSignatureAudioTextSupport3[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupport3[] = {
-	0x31, 0x5c,                         // adjust jump to reuse audio mode addText-calling code
-	PATCH_ADDTOOFFSET(102),
-	0x48,                               // ret
-	0x48,                               // ret (waste byte)
+	0x31, 0x68,                         // adjust jump to reuse audio mode addText-calling code
+	PATCH_ADDTOOFFSET(+85),             // right at the MAGIC_DWORD
+	// check, if text is supposed to be shown. If yes, skip the follow-up check (param[1])
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x2f, 0x07,                         // bt [skip over param check]
+	// original code, checks param[1]
+	0x8f, 0x01,                         // lsp param[1]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x10,                         // bnt [code to set property repressText to 1], adjusted
+	// use myDialog class, so that text box automatically disappears (this is not done for text only mode, like in the original)
 	0x72, 0x0e, 0x00,                   // lofsa myDialog
 	0x65, 0x12,                         // aTop dialog
-	0x33, 0xed,                         // jump back to audio mode addText-calling code
+	// followed by original addText-calling code
+	0x38,
+	PATCH_GETORIGINALBYTE(+95),
+	PATCH_GETORIGINALBYTE(+96),         // pushi addText
+	0x78,                               // push1
+	0x8f, 0x02,                         // lsp param[2]
+	0x59, 0x03,                         // &rest 03
+	0x54, 0x06,                         // self 06
+	0x48,                               // ret
+
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x2e,                         // aTop repressText
+	0x48,                               // ret
 	PATCH_END
 };
 
