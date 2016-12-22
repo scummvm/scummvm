@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-19 02:13+0100\n"
-"PO-Revision-Date: 2016-12-22 21:48+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-22 21:50+0000\n"
+"Last-Translator: Alexandre Folle de Menezes <afmenez@terra.com.br>\n"
 "Language-Team: Portuguese (Brazil) "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -95,7 +95,7 @@ msgstr "De: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Para: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
@@ -108,13 +108,14 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Parece que a sua conexão é limitada. Deseja baixar os arquivos mesmo assim?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -151,6 +152,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Não é possível criar uma pasta para baixar - a pasta especificada possui um "
+"arquivo com o mesmo nome."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:522
@@ -178,11 +181,13 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"O \"%s\" já existe na pasta especificada.\n"
+"Deseja mesmo baixar arquivos nessa pasta?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Baixado %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
 #, fuzzy, c-format
@@ -4464,11 +4469,11 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Usar vídeos MPEG de alta resolução"
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "Usar vídeo MPEG da versão em DVD em vez do AVi de resolução mais baixa"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
