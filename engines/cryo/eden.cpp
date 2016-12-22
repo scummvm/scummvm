@@ -4735,13 +4735,23 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 
 	int count = size / sizeof(Icon);
 	for (int i = 0; i < count; i++) {
-		buffer[i].sx = h_bigfile.readSint16LE();
-		buffer[i].sy = h_bigfile.readSint16LE();
-		buffer[i].ex = h_bigfile.readSint16LE();
-		buffer[i].ey = h_bigfile.readSint16LE();
-		buffer[i]._cursorId = h_bigfile.readUint16LE();;
-		buffer[i]._actionId= h_bigfile.readUint32LE();;
-		buffer[i]._objectId= h_bigfile.readUint32LE();;
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+			buffer[i].sx = h_bigfile.readSint16BE();
+			buffer[i].sy = h_bigfile.readSint16BE();
+			buffer[i].ex = h_bigfile.readSint16BE();
+			buffer[i].ey = h_bigfile.readSint16BE();
+			buffer[i]._cursorId = h_bigfile.readUint16BE();;
+			buffer[i]._actionId= h_bigfile.readUint32BE();;
+			buffer[i]._objectId= h_bigfile.readUint32BE();;
+		} else {
+			buffer[i].sx = h_bigfile.readSint16LE();
+			buffer[i].sy = h_bigfile.readSint16LE();
+			buffer[i].ex = h_bigfile.readSint16LE();
+			buffer[i].ey = h_bigfile.readSint16LE();
+			buffer[i]._cursorId = h_bigfile.readUint16LE();;
+			buffer[i]._actionId= h_bigfile.readUint32LE();;
+			buffer[i]._objectId= h_bigfile.readUint32LE();;
+		}
 	}
 }
 
