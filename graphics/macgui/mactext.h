@@ -36,7 +36,7 @@ public:
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str);
-
+	void replaceLastLine(Common::String str);
 
 private:
 	void splitString(Common::String &s);

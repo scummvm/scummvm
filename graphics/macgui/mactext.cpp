@@ -144,4 +144,15 @@ void MacText::appendText(Common::String str) {
 	render(oldLen + 1, _text.size());
 }
 
+void MacText::replaceLastLine(Common::String str) {
+	int oldLen = MAX<int>(0, _text.size() - 1);
+
+	if (_text.size())
+		_text.pop_back();
+
+	splitString(str);
+
+	render(oldLen, _text.size());
+}
+
 } // End of namespace Graphics
