@@ -51,6 +51,7 @@ protected:
 	// AdlEngine
 	virtual Common::String loadMessage(uint idx) const;
 	virtual Common::String getItemDescription(const Item &item) const;
+	virtual void switchRegion(byte region);
 
 	// AdlEngine_v2
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
@@ -67,7 +68,6 @@ protected:
 	void restoreRoomState(byte room);
 	void backupVars();
 	void restoreVars();
-	void switchRegion(byte region);
 
 	int o4_isItemInRoom(ScriptEnv &e);
 	int o4_isVarGT(ScriptEnv &e);

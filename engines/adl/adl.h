@@ -393,6 +393,7 @@ private:
 	virtual void drawItem(Item &item, const Common::Point &pos) = 0;
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
+	virtual void switchRegion(byte region) { }
 
 	// Engine
 	Common::Error run();

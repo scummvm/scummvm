@@ -56,6 +56,7 @@ private:
 
 	void printItem(const Item &item);
 	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
+	void dumpScripts(const Common::String &prefix = Common::String());
 
 	AdlEngine *_engine;
 };

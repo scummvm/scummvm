@@ -112,6 +112,26 @@ bool Console::Cmd_ValidCommands(int argc, const char **argv) {
 	return true;
 }
 
+void Console::dumpScripts(const Common::String &prefix) {
+	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
+		_engine->loadRoom(roomNr);
+		if (_engine->_roomData.commands.size() != 0) {
+			_engine->_dumpFile->open(prefix + Common::String::format("%03d.ADL", roomNr).c_str());
+			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
+			_engine->_dumpFile->close();
+		}
+	}
+	_engine->loadRoom(_engine->_state.room);
+
+	_engine->_dumpFile->open(prefix + "GLOBAL.ADL");
+	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+
+	_engine->_dumpFile->open(prefix + "RESPONSE.ADL");
+	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+}
+
 bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
@@ -124,23 +144,23 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 
 	_engine->_dumpFile = new Common::DumpFile();
 
-	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
-		_engine->loadRoom(roomNr);
-		if (_engine->_roomData.commands.size() != 0) {
-			_engine->_dumpFile->open(Common::String::format("%03d.ADL", roomNr).c_str());
-			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
-			_engine->_dumpFile->close();
+	if (_engine->_state.regions.empty()) {
+		dumpScripts();
+	} else {
+		const byte oldRegion = _engine->_state.region;
+		const byte oldPrevRegion = _engine->_state.prevRegion;
+		const byte oldRoom = _engine->_state.room;
+
+		for (byte regionNr = 1; regionNr <= _engine->_state.regions.size(); ++regionNr) {
+			_engine->switchRegion(regionNr);
+			dumpScripts(Common::String::format("%03d-", regionNr));
 		}
+
+		_engine->switchRegion(oldRegion);
+		_engine->_state.prevRegion = oldPrevRegion;
+		_engine->_state.room = oldRoom;
+		_engine->loadRoom(oldRoom);
 	}
-	_engine->loadRoom(_engine->_state.room);
-
-	_engine->_dumpFile->open("GLOBAL.ADL");
-	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
-	_engine->_dumpFile->close();
-
-	_engine->_dumpFile->open("RESPONSE.ADL");
-	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
-	_engine->_dumpFile->close();
 
 	delete _engine->_dumpFile;
 	_engine->_dumpFile = nullptr;
