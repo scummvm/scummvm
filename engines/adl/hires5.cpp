@@ -100,7 +100,7 @@ void HiRes5Engine::setupOpcodeTables() {
 	// 0x04
 	Opcode(o1_listInv);
 	Opcode(o4_moveItem);
-	Opcode(o4_setRoom);
+	Opcode(o1_setRoom);
 	Opcode(o2_setCurPic);
 	// 0x08
 	Opcode(o2_setPic);

@@ -427,6 +427,11 @@ void AdlEngine::initState() {
 	initGameState();
 }
 
+void AdlEngine::switchRoom(byte roomNr) {
+	getCurRoom().curPicture = getCurRoom().picture;
+	_state.room = roomNr;
+}
+
 byte AdlEngine::roomArg(byte room) const {
 	return room;
 }
@@ -1073,8 +1078,7 @@ int AdlEngine::o1_moveItem(ScriptEnv &e) {
 int AdlEngine::o1_setRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\tROOM = %d", e.arg(1));
 
-	getCurRoom().curPicture = getCurRoom().picture;
-	_state.room = e.arg(1);
+	switchRoom(e.arg(1));
 	return 1;
 }
 

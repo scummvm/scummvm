@@ -268,6 +268,14 @@ void AdlEngine_v4::switchRegion(byte region) {
 	_picOnScreen = _roomOnScreen = 0;
 }
 
+void AdlEngine_v4::switchRoom(byte roomNr) {
+	getCurRoom().curPicture = getCurRoom().picture;
+	getCurRoom().isFirstTime = false;
+	backupRoomState(_state.room);
+	_state.room = roomNr;
+	restoreRoomState(_state.room);
+}
+
 int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
@@ -295,17 +303,6 @@ int AdlEngine_v4::o4_moveItem(ScriptEnv &e) {
 	o2_moveItem(e);
 	getItem(e.arg(1)).region = _state.region;
 	return 2;
-}
-
-int AdlEngine_v4::o4_setRoom(ScriptEnv &e) {
-	OP_DEBUG_1("\tROOM = %d", e.arg(1));
-
-	getCurRoom().curPicture = getCurRoom().picture;
-	getCurRoom().isFirstTime = false;
-	backupRoomState(_state.room);
-	_state.room = e.arg(1);
-	restoreRoomState(_state.room);
-	return 1;
 }
 
 int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {

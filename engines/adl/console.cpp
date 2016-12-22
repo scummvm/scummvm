@@ -227,7 +227,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 			return true;
 		}
 
-		_engine->_state.room = room;
+		_engine->switchRoom(room);
 		prepareGame();
 	}
 

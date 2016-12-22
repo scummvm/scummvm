@@ -52,6 +52,7 @@ protected:
 	virtual Common::String loadMessage(uint idx) const;
 	virtual Common::String getItemDescription(const Item &item) const;
 	virtual void switchRegion(byte region);
+	virtual void switchRoom(byte roomNr);
 
 	// AdlEngine_v2
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
@@ -72,7 +73,6 @@ protected:
 	int o4_isItemInRoom(ScriptEnv &e);
 	int o4_isVarGT(ScriptEnv &e);
 	int o4_moveItem(ScriptEnv &e);
-	int o4_setRoom(ScriptEnv &e);
 	int o4_setRegionToPrev(ScriptEnv &e);
 	int o4_moveAllItems(ScriptEnv &e);
 	int o4_setRegion(ScriptEnv &e);

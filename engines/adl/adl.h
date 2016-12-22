@@ -262,6 +262,7 @@ protected:
 
 	virtual void setupOpcodeTables();
 	virtual void initState();
+	virtual void switchRoom(byte roomNr);
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
