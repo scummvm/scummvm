@@ -51,7 +51,7 @@ void CNoseHolder::load(SimpleFile *file) {
 }
 
 bool CNoseHolder::ActMsg(CActMsg *msg) {
-	if (msg->_action == "Sneeze" && !_itemName.empty() && _fieldF4) {
+	if (msg->_action == "Sneeze" && !_itemName.empty() && _dropEnabled) {
 		CProximity prox;
 		prox._positioningMode = POSMODE_VECTOR;
 		playSound("z#35.wav", prox);
@@ -93,7 +93,7 @@ bool CNoseHolder::FrameMsg(CFrameMsg *msg) {
 bool CNoseHolder::LeaveViewMsg(CLeaveViewMsg *msg) {
 	_draggingFeather = false;
 	_dragObject = nullptr;
-	if (_fieldF4) {
+	if (_dropEnabled) {
 		loadFrame(_dropFrame);
 		setVisible(false);
 	}
@@ -102,7 +102,7 @@ bool CNoseHolder::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CNoseHolder::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_fieldF4) {
+	if (_dropEnabled) {
 		loadFrame(_dropFrame);
 		setVisible(false);
 	}
@@ -111,7 +111,7 @@ bool CNoseHolder::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CNoseHolder::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_fieldF4)
+	if (_dropEnabled)
 		setVisible(false);
 
 	return CDropTarget::EnterViewMsg(msg);

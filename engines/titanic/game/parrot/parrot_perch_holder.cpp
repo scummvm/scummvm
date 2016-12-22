@@ -59,7 +59,7 @@ bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CParrotPerchHolder::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_fieldF4 = msg->_newStatus;
+	_dropEnabled = msg->_newStatus;
 	return true;
 }
 

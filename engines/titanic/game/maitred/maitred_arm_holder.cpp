@@ -40,7 +40,7 @@ void CMaitreDArmHolder::load(SimpleFile *file) {
 }
 
 bool CMaitreDArmHolder::MaitreDArmHolder(CMaitreDArmHolder *msg) {
-	_fieldF4 = 0;
+	_dropEnabled = false;
 	return true;
 }
 

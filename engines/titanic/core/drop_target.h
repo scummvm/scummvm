@@ -42,7 +42,7 @@ protected:
 	CString _soundName;
 	bool _showItem;
 	CString _itemName;
-	int _fieldF4;
+	bool _dropEnabled;
 	int _dropFrame;
 	int _dragFrame;
 	CString _clipName;
