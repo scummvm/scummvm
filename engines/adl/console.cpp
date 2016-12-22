@@ -35,6 +35,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
 	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
 	registerCmd("valid_cmds", WRAP_METHOD(Console, Cmd_ValidCommands));
+	registerCmd("region", WRAP_METHOD(Console, Cmd_Region));
 	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("items", WRAP_METHOD(Console, Cmd_Items));
 	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
@@ -171,6 +172,42 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 	return true;
 }
 
+void Console::prepareGame() {
+	_engine->clearScreen();
+	_engine->loadRoom(_engine->_state.room);
+	_engine->showRoom();
+	_engine->_display->updateTextScreen();
+	_engine->_display->updateHiResScreen();
+}
+
+bool Console::Cmd_Region(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [<new_region>]\n", argv[0]);
+		return true;
+	}
+
+	if (argc == 2) {
+		if (!_engine->_canRestoreNow) {
+			debugPrintf("Cannot change regions right now\n");
+			return true;
+		}
+
+		uint regionCount = _engine->_state.regions.size();
+		uint region = strtoul(argv[1], NULL, 0);
+		if (region < 1 || region > regionCount) {
+			debugPrintf("Region %u out of valid range [1, %u]\n", region, regionCount);
+			return true;
+		}
+
+		_engine->switchRegion(region);
+		prepareGame();
+	}
+
+	debugPrintf("Current region: %u\n", _engine->_state.region);
+
+	return true;
+}
+
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc > 2) {
 		debugPrintf("Usage: %s [<new_room>]\n", argv[0]);
@@ -191,11 +228,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		}
 
 		_engine->_state.room = room;
-		_engine->clearScreen();
-		_engine->loadRoom(_engine->_state.room);
-		_engine->showRoom();
-		_engine->_display->updateTextScreen();
-		_engine->_display->updateHiResScreen();
+		prepareGame();
 	}
 
 	debugPrintf("Current room: %u\n", _engine->_state.room);
