@@ -4730,7 +4730,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	PakHeaderItem *file = &bigfile_header->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	h_bigfile.seek(offs, SEEK_SET);
 
 	int count = size / sizeof(Icon);
@@ -4765,9 +4765,8 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	PakHeaderItem *file = &bigfile_header->_files[num];
 	int32 size = file->_size;
 	int32 offs = file->_offs;
-	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
+	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	h_bigfile.seek(offs, SEEK_SET);
-	h_bigfile.read(buffer, size);
 
 	int count = size / sizeof(Room);
 	for (int i = 0; i < count; i++) {
@@ -4775,8 +4774,13 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 		for (int j = 0; j < 4; j++)
 			buffer[i]._exits[j] = h_bigfile.readByte();
 		buffer[i]._flags = h_bigfile.readByte();
-		buffer[i]._bank = h_bigfile.readUint16LE();
-		buffer[i]._party = h_bigfile.readUint16LE();
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+			buffer[i]._bank = h_bigfile.readUint16BE();
+			buffer[i]._party = h_bigfile.readUint16BE();
+		} else {
+			buffer[i]._bank = h_bigfile.readUint16LE();
+			buffer[i]._party = h_bigfile.readUint16LE();
+		}
 		buffer[i]._level = h_bigfile.readByte();
 		buffer[i]._video = h_bigfile.readByte();
 		buffer[i]._location = h_bigfile.readByte();
