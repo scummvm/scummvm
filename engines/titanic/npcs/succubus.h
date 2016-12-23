@@ -60,10 +60,10 @@ protected:
 	int _endFrame3;
 	int _startFrame4;
 	int _endFrame4;
-	int _startFrame9;
-	int _endFrame9;
-	int _startFrame10;
-	int _endFrame10;
+	int _onStartFrame;
+	int _onEndFrame;
+	int _offStartFrame;
+	int _offEndFrame;
 	int _startFrame2;
 	int _endFrame2;
 	int _field140;

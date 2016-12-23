@@ -182,13 +182,13 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	CPetControl *pet = getPetControl();
 
 	if (msg->_endFrame == _endFrame12) {
-		if (_startFrame10 >= 0)
+		if (_offStartFrame >= 0)
 			playSound("z#27.wav");
-	} else if (msg->_endFrame == _endFrame10) {
+	} else if (msg->_endFrame == _offEndFrame) {
 		if (_startFrame11 >= 0)
 			playSound("z#30.wav");
 	} else {
-		if (_endFrame9 == _endFrame10 && pet) {
+		if (_onEndFrame == _offEndFrame && pet) {
 			if (_v2) {
 				startTalking(this, getRandomNumber(1) ? 230062 : 230063);
 			} else if (!findMail(pet->getRoomFlags())) {
@@ -397,7 +397,7 @@ bool CBilgeSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 	if (_enabled) {
 		_enabled = false;
-		if (_startFrame10 >= 0)
+		if (_offStartFrame >= 0)
 			playSound("z#27.wav");
 	}
 
@@ -419,8 +419,8 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 	CPetControl *pet = getPetControl();
 
 	if (pet) {
-		if (_startFrame9 >= 0) {
-			playMovie(_startFrame9, _endFrame9, MOVIE_NOTIFY_OBJECT);
+		if (_onStartFrame >= 0) {
+			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
 			playSound("z#26.wav");
 		}
 
@@ -452,8 +452,8 @@ bool CBilgeSuccUBus::TurnOff(CTurnOff *msg) {
 		_soundHandle = -1;
 	}
 
-	if (_startFrame10 >= 0)
-		playMovie(_startFrame10, _endFrame10, MOVIE_NOTIFY_OBJECT);
+	if (_offStartFrame >= 0)
+		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT);
 
 	_enabled = false;
 	performAction(true);

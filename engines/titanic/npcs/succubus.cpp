@@ -61,10 +61,10 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_endFrame3 = 168;
 	_startFrame4 = 168;
 	_endFrame4 = 248;
-	_startFrame9 = 0;
-	_endFrame9 = 0x0E;
-	_startFrame10 = 0x0E;
-	_endFrame10 = 27;
+	_onStartFrame = 0;
+	_onEndFrame = 0x0E;
+	_offStartFrame = 0x0E;
+	_offEndFrame = 27;
 	_startFrame2 = 40;
 	_endFrame2 = 68;
 	_field140 = 1;
@@ -112,10 +112,10 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrame3, indent);
 	file->writeNumberLine(_startFrame4, indent);
 	file->writeNumberLine(_endFrame4, indent);
-	file->writeNumberLine(_startFrame9, indent);
-	file->writeNumberLine(_endFrame9, indent);
-	file->writeNumberLine(_startFrame10, indent);
-	file->writeNumberLine(_endFrame10, indent);
+	file->writeNumberLine(_onStartFrame, indent);
+	file->writeNumberLine(_onEndFrame, indent);
+	file->writeNumberLine(_offStartFrame, indent);
+	file->writeNumberLine(_offEndFrame, indent);
 	file->writeNumberLine(_startFrame2, indent);
 	file->writeNumberLine(_endFrame2, indent);
 	file->writeNumberLine(_field140, indent);
@@ -176,10 +176,10 @@ void CSuccUBus::load(SimpleFile *file) {
 	_endFrame3 = file->readNumber();
 	_startFrame4 = file->readNumber();
 	_endFrame4 = file->readNumber();
-	_startFrame9 = file->readNumber();
-	_endFrame9 = file->readNumber();
-	_startFrame10 = file->readNumber();
-	_endFrame10 = file->readNumber();
+	_onStartFrame = file->readNumber();
+	_onEndFrame = file->readNumber();
+	_offStartFrame = file->readNumber();
+	_offEndFrame = file->readNumber();
 	_startFrame2 = file->readNumber();
 	_endFrame2 = file->readNumber();
 	_field140 = file->readNumber();
@@ -340,8 +340,8 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	petDisplayMessage(2, BLANK);
 	if (_startFrame8 >= 0)
 		loadFrame(_startFrame8);
-	else if (!_field15C && _startFrame9 >= 0)
-		loadFrame(_startFrame9);
+	else if (!_field15C && _onStartFrame >= 0)
+		loadFrame(_onStartFrame);
 
 	petClear();
 	if (_soundHandle != -1) {
@@ -351,7 +351,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 	if (_enabled) {
 		_enabled = false;
-		if (_startFrame10 >= 0)
+		if (_offStartFrame >= 0)
 			playSound("z#27.wav", 100);
 
 		if (_field15C)
@@ -511,7 +511,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	CPetControl *pet = getPetControl();
 	uint petRoomFlags = pet ? pet->getRoomFlags() : 0;
 
-	if (msg->_endFrame == _endFrame10) {
+	if (msg->_endFrame == _offEndFrame) {
 		if (_startFrame11 >= 0)
 			playSound("z#30.wav", 100);
 
@@ -524,7 +524,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		}
 	}
 
-	if (msg->_endFrame == _endFrame9) {
+	if (msg->_endFrame == _onEndFrame) {
 		bool flag = false;
 
 		if (pet && !mailExists(petRoomFlags)) {
@@ -661,8 +661,8 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 			playSound("z#30.wav", 100);
 		}
 
-		if (_startFrame9 >= 0) {
-			playMovie(_startFrame9, _endFrame9, MOVIE_NOTIFY_OBJECT);
+		if (_onStartFrame >= 0) {
+			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
 			playSound("z#26.wav", 100);
 		}
 
@@ -689,9 +689,9 @@ bool CSuccUBus::TurnOff(CTurnOff *msg) {
 		_soundHandle = -1;
 	}
 
-	if (_startFrame10 >= 0) {
+	if (_offStartFrame >= 0) {
 		playSound("z#27.wav", 100);
-		playMovie(_startFrame10, _endFrame10, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	}
 
 	if (!_field15C && _startFrame11 >= 0)

@@ -78,7 +78,7 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 		if (_enabled) {
 			_enabled = false;
 		} else {
-			playMovie(_startFrame9, _endFrame9, 0);
+			playMovie(_onStartFrame, _onEndFrame, 0);
 			playSound("z#26.wav");
 		}
 
