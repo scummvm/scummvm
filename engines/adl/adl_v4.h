@@ -49,6 +49,8 @@ protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
+	virtual void loadState(Common::ReadStream &stream);
+	virtual void saveState(Common::WriteStream &stream);
 	virtual Common::String loadMessage(uint idx) const;
 	virtual Common::String getItemDescription(const Item &item) const;
 	virtual void switchRegion(byte region);

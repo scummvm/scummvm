@@ -36,6 +36,98 @@ AdlEngine_v4::~AdlEngine_v4() {
 	delete _itemPicIndex;
 }
 
+void AdlEngine_v4::loadState(Common::ReadStream &stream) {
+	_state.room = stream.readByte();
+	_state.region = stream.readByte();
+	_state.prevRegion = stream.readByte();
+
+	uint32 size = stream.readUint32BE();
+	if (size != _state.regions.size())
+		error("Region count mismatch (expected %i; found %i)", _state.regions.size(), size);
+
+	Common::Array<Region>::iterator region;
+	for (region = _state.regions.begin(); region != _state.regions.end(); ++region) {
+		size = stream.readUint32BE();
+		if (size != region->rooms.size())
+			error("Room count mismatch (expected %i; found %i)", region->rooms.size(), size);
+
+		Common::Array<RoomState>::iterator room;
+		for (room = region->rooms.begin(); room != region->rooms.end(); ++room) {
+			room->picture = stream.readByte();
+			room->isFirstTime = stream.readByte();
+		}
+
+		size = stream.readUint32BE();
+		if (size != region->vars.size())
+			error("Variable count mismatch (expected %i; found %i)", region->vars.size(), size);
+
+		for (uint i = 0; i < region->vars.size(); ++i)
+			region->vars[i] = stream.readByte();
+	}
+
+	size = stream.readUint32BE();
+	if (size != _state.items.size())
+		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
+
+	Common::List<Item>::iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		item->room = stream.readByte();
+		item->region = stream.readByte();
+		item->state = stream.readByte();
+	}
+
+	size = stream.readUint32BE();
+	const uint expectedSize = _state.vars.size() - getRegion(1).vars.size();
+	if (size != expectedSize)
+		error("Variable count mismatch (expected %i; found %i)", expectedSize, size);
+
+	for (uint i = getRegion(1).vars.size(); i < size; ++i)
+		_state.vars[i] = stream.readByte();
+
+	if (stream.err() || stream.eos())
+		return;
+
+	loadRegion(_state.region);
+	restoreRoomState(_state.room);
+	_roomOnScreen = _picOnScreen = 0;
+}
+
+void AdlEngine_v4::saveState(Common::WriteStream &stream) {
+	backupVars();
+	backupRoomState(_state.room);
+
+	stream.writeByte(_state.room);
+	stream.writeByte(_state.region);
+	stream.writeByte(_state.prevRegion);
+
+	stream.writeUint32BE(_state.regions.size());
+	Common::Array<Region>::const_iterator region;
+	for (region = _state.regions.begin(); region != _state.regions.end(); ++region) {
+		stream.writeUint32BE(region->rooms.size());
+		Common::Array<RoomState>::const_iterator room;
+		for (room = region->rooms.begin(); room != region->rooms.end(); ++room) {
+			stream.writeByte(room->picture);
+			stream.writeByte(room->isFirstTime);
+		}
+
+		stream.writeUint32BE(region->vars.size());
+		for (uint i = 0; i < region->vars.size(); ++i)
+			stream.writeByte(region->vars[i]);
+	}
+
+	stream.writeUint32BE(_state.items.size());
+	Common::List<Item>::const_iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		stream.writeByte(item->room);
+		stream.writeByte(item->region);
+		stream.writeByte(item->state);
+	}
+
+	stream.writeUint32BE(_state.vars.size() - getRegion(1).vars.size());
+	for (uint i = getRegion(1).vars.size(); i < _state.vars.size(); ++i)
+		stream.writeByte(_state.vars[i]);
+}
+
 Common::String AdlEngine_v4::loadMessage(uint idx) const {
 	Common::String str = AdlEngine_v3::loadMessage(idx);
 

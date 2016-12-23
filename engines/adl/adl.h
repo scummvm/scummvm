@@ -42,6 +42,7 @@
 
 namespace Common {
 class ReadStream;
+class WriteStream;
 class SeekableReadStream;
 class File;
 struct Event;
@@ -235,6 +236,8 @@ protected:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
+	virtual void loadState(Common::ReadStream &stream);
+	virtual void saveState(Common::WriteStream &stream);
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void openFile(Common::File &file, const Common::String &name) const;

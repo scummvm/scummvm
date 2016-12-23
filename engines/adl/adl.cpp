@@ -676,6 +676,49 @@ bool AdlEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
+void AdlEngine::loadState(Common::ReadStream &stream) {
+	_state.room = stream.readByte();
+	_state.moves = stream.readByte();
+	_state.isDark = stream.readByte();
+	_state.time.hours = stream.readByte();
+	_state.time.minutes = stream.readByte();
+
+	uint32 size = stream.readUint32BE();
+	if (size != _state.rooms.size())
+		error("Room count mismatch (expected %i; found %i)", _state.rooms.size(), size);
+
+	for (uint i = 0; i < size; ++i) {
+		_state.rooms[i].picture = stream.readByte();
+		_state.rooms[i].curPicture = stream.readByte();
+		_state.rooms[i].isFirstTime = stream.readByte();
+	}
+
+	// NOTE: _state.curPicture is part of the save state in the original engine. We
+	// reconstruct it instead. This is believed to be safe for at least hires 0-2, but
+	// this may need to be re-evaluated for later games.
+	_state.curPicture = getCurRoom().curPicture;
+
+	size = stream.readUint32BE();
+	if (size != _state.items.size())
+		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
+
+	Common::List<Item>::iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		item->room = stream.readByte();
+		item->picture = stream.readByte();
+		item->position.x = stream.readByte();
+		item->position.y = stream.readByte();
+		item->state = stream.readByte();
+	}
+
+	size = stream.readUint32BE();
+	if (size != _state.vars.size())
+		error("Variable count mismatch (expected %i; found %i)", _state.vars.size(), size);
+
+	for (uint i = 0; i < size; ++i)
+		_state.vars[i] = stream.readByte();
+}
+
 Common::Error AdlEngine::loadGameState(int slot) {
 	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	Common::InSaveFile *inFile = getSaveFileManager()->openForLoading(fileName);
@@ -708,47 +751,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	Graphics::skipThumbnail(*inFile);
 
 	initState();
-
-	_state.room = inFile->readByte();
-	_state.moves = inFile->readByte();
-	_state.isDark = inFile->readByte();
-	_state.time.hours = inFile->readByte();
-	_state.time.minutes = inFile->readByte();
-
-	uint32 size = inFile->readUint32BE();
-	if (size != _state.rooms.size())
-		error("Room count mismatch (expected %i; found %i)", _state.rooms.size(), size);
-
-	for (uint i = 0; i < size; ++i) {
-		_state.rooms[i].picture = inFile->readByte();
-		_state.rooms[i].curPicture = inFile->readByte();
-		_state.rooms[i].isFirstTime = inFile->readByte();
-	}
-
-	// NOTE: _state.curPicture is part of the save state in the original engine. We
-	// reconstruct it instead. This is believed to be safe for at least hires 0-2, but
-	// this may need to be re-evaluated for later games.
-	_state.curPicture = getCurRoom().curPicture;
-
-	size = inFile->readUint32BE();
-	if (size != _state.items.size())
-		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
-
-	Common::List<Item>::iterator item;
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		item->room = inFile->readByte();
-		item->picture = inFile->readByte();
-		item->position.x = inFile->readByte();
-		item->position.y = inFile->readByte();
-		item->state = inFile->readByte();
-	}
-
-	size = inFile->readUint32BE();
-	if (size != _state.vars.size())
-		error("Variable count mismatch (expected %i; found %i)", _state.vars.size(), size);
-
-	for (uint i = 0; i < size; ++i)
-		_state.vars[i] = inFile->readByte();
+	loadState(*inFile);
 
 	if (inFile->err() || inFile->eos())
 		error("Failed to load game '%s'", fileName.c_str());
@@ -763,6 +766,35 @@ Common::Error AdlEngine::loadGameState(int slot) {
 
 bool AdlEngine::canLoadGameStateCurrently() {
 	return _canRestoreNow;
+}
+
+void AdlEngine::saveState(Common::WriteStream &stream) {
+	stream.writeByte(_state.room);
+	stream.writeByte(_state.moves);
+	stream.writeByte(_state.isDark);
+	stream.writeByte(_state.time.hours);
+	stream.writeByte(_state.time.minutes);
+
+	stream.writeUint32BE(_state.rooms.size());
+	for (uint i = 0; i < _state.rooms.size(); ++i) {
+		stream.writeByte(_state.rooms[i].picture);
+		stream.writeByte(_state.rooms[i].curPicture);
+		stream.writeByte(_state.rooms[i].isFirstTime);
+	}
+
+	stream.writeUint32BE(_state.items.size());
+	Common::List<Item>::const_iterator item;
+	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
+		stream.writeByte(item->room);
+		stream.writeByte(item->picture);
+		stream.writeByte(item->position.x);
+		stream.writeByte(item->position.y);
+		stream.writeByte(item->state);
+	}
+
+	stream.writeUint32BE(_state.vars.size());
+	for (uint i = 0; i < _state.vars.size(); ++i)
+		stream.writeByte(_state.vars[i]);
 }
 
 Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
@@ -802,34 +834,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	outFile->writeUint32BE(playTime);
 
 	_display->saveThumbnail(*outFile);
-
-	outFile->writeByte(_state.room);
-	outFile->writeByte(_state.moves);
-	outFile->writeByte(_state.isDark);
-	outFile->writeByte(_state.time.hours);
-	outFile->writeByte(_state.time.minutes);
-
-	outFile->writeUint32BE(_state.rooms.size());
-	for (uint i = 0; i < _state.rooms.size(); ++i) {
-		outFile->writeByte(_state.rooms[i].picture);
-		outFile->writeByte(_state.rooms[i].curPicture);
-		outFile->writeByte(_state.rooms[i].isFirstTime);
-	}
-
-	outFile->writeUint32BE(_state.items.size());
-	Common::List<Item>::const_iterator item;
-	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		outFile->writeByte(item->room);
-		outFile->writeByte(item->picture);
-		outFile->writeByte(item->position.x);
-		outFile->writeByte(item->position.y);
-		outFile->writeByte(item->state);
-	}
-
-	outFile->writeUint32BE(_state.vars.size());
-	for (uint i = 0; i < _state.vars.size(); ++i)
-		outFile->writeByte(_state.vars[i]);
-
+	saveState(*outFile);
 	outFile->finalize();
 
 	if (outFile->err()) {
