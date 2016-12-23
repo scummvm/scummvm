@@ -367,7 +367,8 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 void AdlEngine_v2::loadItems(Common::ReadStream &stream) {
 	byte id;
 	while ((id = stream.readByte()) != 0xff && !stream.eos() && !stream.err()) {
-		Item item = Item();
+		Item item;
+
 		item.id = id;
 		item.noun = stream.readByte();
 		item.room = stream.readByte();

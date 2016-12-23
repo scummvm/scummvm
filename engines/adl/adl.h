@@ -85,7 +85,8 @@ struct Room {
 	Room() :
 			description(0),
 			picture(0),
-			curPicture(0) {
+			curPicture(0),
+			isFirstTime(true) {
 		memset(connections, 0, sizeof(connections));
 	}
 
@@ -153,6 +154,8 @@ struct Item {
 	byte description;
 	Common::Array<byte> roomPictures;
 	bool isOnScreen;
+
+	Item() : id(0), noun(0), region(0), room(0), picture(0), isLineArt(false), state(0), description(0), isOnScreen(false) { }
 };
 
 struct Time {

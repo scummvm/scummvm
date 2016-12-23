@@ -318,7 +318,8 @@ void HiRes1Engine::initGameState() {
 	stream->seek(IDI_HR1_OFS_ITEMS);
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
-		Item item = Item();
+		Item item;
+
 		item.id = id;
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
