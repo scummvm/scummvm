@@ -2397,8 +2397,7 @@ bool ModalDemo::init(int counterDiff) {
 	if (_clickedQuit == -1)
 		return true;
 
-	// open URL
-	// http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1?ie=UTF8&s=videogames&qid=1279207213&sr=8-1
+	g_system->openUrl("http://www.amazon.de/EuroVideo-Bildprogramm-GmbH-Full-Pipe/dp/B003TO51YE/ref=sr_1_1?ie=UTF8&s=videogames&qid=1279207213&sr=8-1");
 
 	g_fp->_gameContinue = false;
 
@@ -2407,8 +2406,7 @@ bool ModalDemo::init(int counterDiff) {
 
 bool ModalDemo::init2(int counterDiff) {
 	if (_clickedQuit) {
-		// open URL
-		// http://pipestudio.ru/fullpipe/
+		g_system->openUrl("http://pipestudio.ru/fullpipe/");
 
 		g_fp->_gameContinue = false;
 
