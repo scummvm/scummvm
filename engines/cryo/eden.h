@@ -283,8 +283,6 @@ private:
 	void loadRoomFile(uint16 num, Room *buffer);
 	void shnmfl(uint16 num);
 	int ssndfl(uint16 num);
-	void ConvertIcons(Icon *icon, int count);
-	void ConvertLinks(Room *room, int count);
 	void ConvertMacToPC();
 	void loadpermfiles();
 	bool ReadDataSyncVOC(unsigned int num);

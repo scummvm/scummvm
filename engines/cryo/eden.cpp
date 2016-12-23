@@ -4850,29 +4850,8 @@ int EdenGame::ssndfl(uint16 num) {
 	return size;
 }
 
-void EdenGame::ConvertIcons(Icon *icon, int count) {
-	for (int i = 0; i < count; i++, icon++) {
-		icon->sx = BE16(icon->sx);
-		icon->sy = BE16(icon->sy);
-		icon->ex = BE16(icon->ex);
-		icon->ey = BE16(icon->ey);
-		icon->_cursorId = BE16(icon->_cursorId);
-		icon->_objectId = BE32(icon->_objectId);
-		icon->_actionId = BE32(icon->_actionId);
-	}
-}
-
-void EdenGame::ConvertLinks(Room *room, int count) {
-	for (int i = 0; i < count; i++, room++) {
-		room->_bank = BE16(room->_bank);
-		room->_party = BE16(room->_party);
-	}
-}
-
 void EdenGame::ConvertMacToPC() {
 	// Convert all mac (big-endian) resources to native format
-	ConvertIcons(_gameIcons, 136);
-	ConvertLinks(_gameRooms, 424);
 	// Array of longs
 	int *p = (int *)gameLipsync;
 	for (int i = 0; i < 7240 / 4; i++)
