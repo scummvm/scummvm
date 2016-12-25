@@ -424,9 +424,6 @@ CSaveableObject *ClassDef::create() {
 CSaveableObject::ClassListMap *CSaveableObject::_classList;
 CSaveableObject::ClassDefList *CSaveableObject::_classDefs;
 
-ClassDef **types[1000];
-static int tctr = 0;
-
 #define DEFFN(T) CSaveableObject *Function##T() { return new T(); } \
 	ClassDef *T::_type
 #define ADDFN(CHILD, PARENT) \
