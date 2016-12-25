@@ -491,7 +491,7 @@ private:
 	void make_matrice_fix();
 	void projection_fix(cube_t *cube, int n);
 	void initCubeMac();
-	void moteur();
+	void engineMac();
 	void affiche_objet(cube_t *cube);
 	void NEWcharge_map(int file_id, byte *buffer);
 	void NEWcharge_objet_mob(cube_t *cube, int file_id, byte *texptr);
@@ -506,23 +506,23 @@ private:
 	void LostEdenMac_InitPrefs();
 
 	void initCubePC();
-	void pc_moteur();
-	void pc_selectmap(int16 num);
+	void enginePC();
+	void selectPCMap(int16 num);
 
-	void MakeTables();
-	void GetSinCosTables(unsigned short angle, signed char **cos_table, signed char **sin_table);
-	void RotatePoint(XYZ *point, XYZ *rpoint);
-	void MapPoint(XYZ *point, short *x, short *y);
-	short CalcFaceArea(XYZ *face);
-	void PaintPixel(XYZ *point, unsigned char pixel);
-	void PaintFace0(XYZ *point);
-	void PaintFace1(XYZ *point);
-	void PaintFace2(XYZ *point);
-	void PaintFace3(XYZ *point);
-	void PaintFace4(XYZ *point);
-	void PaintFace5(XYZ *point);
-	void PaintFaces();
-	void RenderCube();
+	void makeTables();
+	void getSinCosTables(unsigned short angle, signed char **cos_table, signed char **sin_table);
+	void rotatePoint(XYZ *point, XYZ *rpoint);
+	void mapPoint(XYZ *point, short *x, short *y);
+	short calcFaceArea(XYZ *face);
+	void paintPixel(XYZ *point, unsigned char pixel);
+	void paintFace0(XYZ *point);
+	void paintFace1(XYZ *point);
+	void paintFace2(XYZ *point);
+	void paintFace3(XYZ *point);
+	void paintFace4(XYZ *point);
+	void paintFace5(XYZ *point);
+	void paintFaces();
+	void renderCube();
 
 	void incAngleX(int step);
 	void decAngleX();
@@ -531,31 +531,31 @@ private:
 	void incZoom();
 	void decZoom();
 
-	cubeCursor *pc_cursor;
+	cubeCursor *_pcCursor;
 
-	signed short tab1[30];
-	signed short tab2[30];
-	signed char tab3[36][71];
-	short angle_x, angle_y, angle_z, zoom, zoom_step;
+	int8 tab1[30];
+	int8 tab2[30];
+	int8 tab3[36][71];
+	short _angleX, _angleY, _angleZ, _zoomZ, _zoomZStep;
 
-	signed char *cos_x, *sin_x;
-	signed char *cos_y, *sin_y;
-	signed char *cos_z, *sin_z;
+	int8 *_cosX, *_sinX;
+	int8 *_cosY, *_sinY;
+	int8 *_cosZ, *_sinZ;
 
-	unsigned char *_face[6], *_newface[6];
-	short faceskip;
+	uint8 *_face[6], *_newface[6];
+	int8 _faceSkip;
 
-	unsigned char cursor[40 * 40];
-	unsigned char *cursorcenter;
+	uint8 _cursor[40 * 40];
+	uint8 *_cursorCenter;
 
 
 private:
-	int16  _scrollPos;
-	int16  _oldScrollPos;
-	bool   _frescoTalk;
-	byte   _oldPix[8];
+	int16 _scrollPos;
+	int16 _oldScrollPos;
+	bool  _frescoTalk;
+	byte  _oldPix[8];
 	Common::Point _adamMapMarkPos;
-	byte   _cursKeepBuf[2500];
+	byte  _cursKeepBuf[2500];
 	Common::Point _cursKeepPos;
 	bool  _torchCursor;
 	int16 _curBankNum;
@@ -563,37 +563,35 @@ private:
 	int16 _glowY;
 	int16 _glowW;
 	int16 _glowH;
-	bool _paletteUpdateRequired;
-	bool _cursorSaved;
-	bool _showBlackBars;
-	bool _backgroundSaved;
+	bool  _paletteUpdateRequired;
+	bool  _cursorSaved;
+	bool  _showBlackBars;
+	bool  _backgroundSaved;
 	byte *_bankData;
-	color3_t        pal_entry;
-	color_t         global_palette[256];    //TODO palette_t
+	color_t _globalPalette[256];    //TODO palette_t
 	perso_t *_tyranPtr;
-	int     _lastAnimFrameNumb;
-	int     _curAnimFrameNumb;
-	int     _lastAnimTicks;
+	int   _lastAnimFrameNumb;
+	int   _curAnimFrameNumb;
+	int   _lastAnimTicks;
 	prect_t *_curPersoRect;
 	int16 _numAnimFrames;
 	int16 _maxPersoDesc;
 	int16 _numImgDesc;
-	bool _restartAnimation;
-	bool _animationActive;
-	byte _animationDelay;
-	byte _animationIndex;
-	byte _lastAnimationIndex;
+	bool  _restartAnimation;
+	bool  _animationActive;
+	byte  _animationDelay;
+	byte  _animationIndex;
+	byte  _lastAnimationIndex;
 
-	byte   *dword_30724;
-	byte   *dword_30728;   //TODO: rename - something amim-related
-	byte   *_mouthAnimations;
-	byte   *animationTable;
-	byte   _imageDesc[512];
-	byte   *_characterBankData;
-	bool _savedUnderSubtitles;
-	int16           num_text_lines;
-	byte   _sentenceBuffer[400];
-	byte   *text_ptr;
+	byte *dword_30724;
+	byte *dword_30728;   //TODO: rename - something amim-related
+	byte *_mouthAnimations;
+	byte *_animationTable;
+	byte  _imageDesc[512];
+	byte *_characterBankData;
+	bool  _savedUnderSubtitles;
+	int16 _numTextLines;
+	byte  _sentenceBuffer[400];
 	byte   phraseIconsBuffer[10];
 	byte   phraseCoordsBuffer[22];
 	byte   *textoutptr;

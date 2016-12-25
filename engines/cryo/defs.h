@@ -823,7 +823,7 @@ extern Citadel _citadelList[];
 extern uint8 tab_2CB1E[8][4];
 
 struct prect_t {
-	int16   sx, sy, ex, ey;
+	int16   left, top, right, bottom;
 };
 typedef struct prect_t prect_t;
 
