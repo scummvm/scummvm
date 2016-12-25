@@ -155,6 +155,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_invIconsCount = 11;
 	_roomIconsBase = _invIconsBase + _invIconsCount;
 
+	_codePtr = nullptr;
 }
 
 void EdenGame::removeConsole() {
@@ -3941,7 +3942,7 @@ bool EdenGame::dial_scan(dial_t *dial) {
 				lidx = p_global->_dialogPtr->_condNumLow;
 				if (flags & 0x10)
 					hidx |= 4;
-				if (testcondition(((hidx << 8) | lidx) & 0x7FF))
+				if (testCondition(((hidx << 8) | lidx) & 0x7FF))
 					break;
 			} else {
 				if (flags & dialogSkipFlags)
@@ -3950,7 +3951,7 @@ bool EdenGame::dial_scan(dial_t *dial) {
 				lidx = p_global->_dialogPtr->_condNumLow;
 				if (flags & 0x10)
 					hidx |= 4;
-				if (testcondition(((hidx << 8) | lidx) & 0x7FF))
+				if (testCondition(((hidx << 8) | lidx) & 0x7FF))
 					break;
 			}
 		}
@@ -6511,7 +6512,7 @@ void EdenGame::musique() {
 		byte lidx = dial->_condNumLow;            //TODO: fixme - unsigned = signed
 		if (flag & 0x10)
 			hidx |= 4;
-		if (testcondition(((hidx << 8) | lidx) & 0x7FF))
+		if (testCondition(((hidx << 8) | lidx) & 0x7FF))
 			break;
 	}
 	byte mus = dial->_textNumLow;
@@ -8352,19 +8353,17 @@ void EdenGame::bandeoffsetin() {
 
 //// cond.c
 
-byte *code_ptr;
-
-char EdenGame::testcondition(int16 index) {
+char EdenGame::testCondition(int16 index) {
 	char end = 0;
 	byte op;
 	uint16 value, value2;
 	uint16 stack[32], *sp = stack, *sp2;
 	assert(index > 0);
-	code_ptr = (byte *)getElem(gameConditions, (index - 1));
+	_codePtr = (byte *)getElem(gameConditions, (index - 1));
 	do {
 		value = cher_valeur();
 		for (;;) {
-			op = *code_ptr++;
+			op = *_codePtr++;
 			if (op == 0xFF) {
 				end = 1;
 				break;
@@ -8397,85 +8396,97 @@ char EdenGame::testcondition(int16 index) {
 	return value != 0;
 }
 
-uint16 EdenGame::opera_add(uint16 v1, uint16 v2)  {
+// Original name: opera_add
+uint16 EdenGame::operAdd(uint16 v1, uint16 v2)  {
 	return v1 + v2;
 }
 
-uint16 EdenGame::opera_sub(uint16 v1, uint16 v2)  {
+// Original name: opera_sub
+uint16 EdenGame::operSub(uint16 v1, uint16 v2)  {
 	return v1 - v2;
 }
 
-uint16 EdenGame::opera_and(uint16 v1, uint16 v2)  {
+// Original name: opera_and
+uint16 EdenGame::operLogicalAnd(uint16 v1, uint16 v2)  {
 	return v1 & v2;
 }
-uint16 EdenGame::opera_or(uint16 v1, uint16 v2)   {
+
+// Original name: opera_or
+uint16 EdenGame::operLogicalOr(uint16 v1, uint16 v2)   {
 	return v1 | v2;
 }
 
-uint16 EdenGame::opera_egal(uint16 v1, uint16 v2)     {
+// Original name: opera_egal
+uint16 EdenGame::operIsEqual(uint16 v1, uint16 v2)     {
 	return v1 == v2 ? -1 : 0;
 }
 
-uint16 EdenGame::opera_petit(uint16 v1, uint16 v2)    {
+// Original name: opera_petit
+uint16 EdenGame::operIsSmaller(uint16 v1, uint16 v2)    {
 	return v1 < v2 ? -1 : 0;    //TODO: all comparisons are unsigned!
 }
 
-uint16 EdenGame::opera_grand(uint16 v1, uint16 v2)    {
+// Original name: opera_grand
+uint16 EdenGame::operIsGreater(uint16 v1, uint16 v2)    {
 	return v1 > v2 ? -1 : 0;
 }
 
-uint16 EdenGame::opera_diff(uint16 v1, uint16 v2)     {
+// Original name: opera_diff
+uint16 EdenGame::operIsDifferent(uint16 v1, uint16 v2)     {
 	return v1 != v2 ? -1 : 0;
 }
 
-uint16 EdenGame::opera_petega(uint16 v1, uint16 v2)   {
+// Original name: opera_petega
+uint16 EdenGame::operIsSmallerOrEqual(uint16 v1, uint16 v2)   {
 	return v1 <= v2 ? -1 : 0;
 }
 
-uint16 EdenGame::opera_graega(uint16 v1, uint16 v2)   {
+// Original name: opera_graega
+uint16 EdenGame::operIsGreaterOrEqual(uint16 v1, uint16 v2)   {
 	return v1 >= v2 ? -1 : 0;
 }
 
-uint16 EdenGame::opera_faux(uint16 v1, uint16 v2)     {
+// Original name: opera_faux
+uint16 EdenGame::operFalse(uint16 v1, uint16 v2)     {
 	return 0;
 }
 
 uint16 EdenGame::operation(byte op, uint16 v1, uint16 v2) {
 	static uint16(EdenGame::*operations[16])(uint16, uint16) = {
-		&EdenGame::opera_egal,
-		&EdenGame::opera_petit,
-		&EdenGame::opera_grand,
-		&EdenGame::opera_diff,
-		&EdenGame::opera_petega,
-		&EdenGame::opera_graega,
-		&EdenGame::opera_add,
-		&EdenGame::opera_sub,
-		&EdenGame::opera_and,
-		&EdenGame::opera_or,
-		&EdenGame::opera_faux,
-		&EdenGame::opera_faux,
-		&EdenGame::opera_faux,
-		&EdenGame::opera_faux,
-		&EdenGame::opera_faux,
-		&EdenGame::opera_faux
+		&EdenGame::operIsEqual,
+		&EdenGame::operIsSmaller,
+		&EdenGame::operIsGreater,
+		&EdenGame::operIsDifferent,
+		&EdenGame::operIsSmallerOrEqual,
+		&EdenGame::operIsGreaterOrEqual,
+		&EdenGame::operAdd,
+		&EdenGame::operSub,
+		&EdenGame::operLogicalAnd,
+		&EdenGame::operLogicalOr,
+		&EdenGame::operFalse,
+		&EdenGame::operFalse,
+		&EdenGame::operFalse,
+		&EdenGame::operFalse,
+		&EdenGame::operFalse,
+		&EdenGame::operFalse
 	};
 	return (this->*operations[(op & 0x1F) >> 1])(v1, v2);
 }
 
 uint16 EdenGame::cher_valeur() {
 	uint16 val;
-	byte typ = *code_ptr++;
+	byte typ = *_codePtr++;
 	if (typ < 0x80) {
-		byte ofs = *code_ptr++;
+		byte ofs = *_codePtr++;
 		if (typ == 1)
 			val = *(byte *)(ofs + (byte *)p_global);
 		else
 			val = *(uint16 *)(ofs + (byte *)p_global);
 	} else if (typ == 0x80)
-		val = *code_ptr++;
+		val = *_codePtr++;
 	else {
-		val = READ_LE_UINT16(code_ptr);
-		code_ptr += 2;
+		val = READ_LE_UINT16(_codePtr);
+		_codePtr += 2;
 	}
 	return val;
 }

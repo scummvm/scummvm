@@ -472,18 +472,18 @@ private:
 	void lieuoffsetin();
 	void bandeoffsetout();
 	void bandeoffsetin();
-	char testcondition(int16 index);
-	uint16 opera_add(uint16 v1, uint16 v2);
-	uint16 opera_sub(uint16 v1, uint16 v2);
-	uint16 opera_and(uint16 v1, uint16 v2);
-	uint16 opera_or(uint16 v1, uint16 v2);
-	uint16 opera_egal(uint16 v1, uint16 v2);
-	uint16 opera_petit(uint16 v1, uint16 v2);
-	uint16 opera_grand(uint16 v1, uint16 v2);
-	uint16 opera_diff(uint16 v1, uint16 v2);
-	uint16 opera_petega(uint16 v1, uint16 v2);
-	uint16 opera_graega(uint16 v1, uint16 v2);
-	uint16 opera_faux(uint16 v1, uint16 v2);
+	char testCondition(int16 index);
+	uint16 operAdd(uint16 v1, uint16 v2);
+	uint16 operSub(uint16 v1, uint16 v2);
+	uint16 operLogicalAnd(uint16 v1, uint16 v2);
+	uint16 operLogicalOr(uint16 v1, uint16 v2);
+	uint16 operIsEqual(uint16 v1, uint16 v2);
+	uint16 operIsSmaller(uint16 v1, uint16 v2);
+	uint16 operIsGreater(uint16 v1, uint16 v2);
+	uint16 operIsDifferent(uint16 v1, uint16 v2);
+	uint16 operIsSmallerOrEqual(uint16 v1, uint16 v2);
+	uint16 operIsGreaterOrEqual(uint16 v1, uint16 v2);
+	uint16 operFalse(uint16 v1, uint16 v2);
 	uint16 operation(byte op, uint16 v1, uint16 v2);
 	uint16 cher_valeur();
 	void ret();
@@ -733,8 +733,7 @@ private:
 	byte cube_texture[0x4000];
 	int cube_faces;
 	int32 curs_old_tick, curs_new_tick;
-
-
+	byte *_codePtr;
 };
 
 }
