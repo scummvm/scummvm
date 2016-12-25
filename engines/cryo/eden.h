@@ -114,7 +114,8 @@ private:
 	void restoreFriezes();
 	void restoreTopFrieze();
 	void restoreBottomFrieze();
-	void use_main_bank();
+	void useMainBank();
+	void useCharacterBank();
 	void useBank(int16 bank);
 	void sundcurs(int16 x, int16 y);
 	void rundcurs();
@@ -182,16 +183,16 @@ private:
 	void af_fondperso();
 	void setCharacterIcon();
 	void showCharacter();
-	void showpersopanel();
-	void getdatasync();
+	void displayCharacterPanel();
+	void getDataSync();
 	int16 ReadNombreFrames();
 	void waitEndSpeak();
 	void my_bulle();
 	void my_pr_bulle();
 	void charsurbulle(byte c, byte color, int16 width);
-	void af_subtitle();
-	void sauvefondbulle(int16 y);
-	void restaurefondbulle();
+	void displaySubtitles();
+	void savePhylacteryBackground(int16 y);
+	void restorePhylacteryBackground();
 	void af_subtitlehnm();
 	void patchPhrase();
 	void vavapers();
@@ -573,15 +574,15 @@ private:
 	int     _lastAnimFrameNumb;
 	int     _curAnimFrameNumb;
 	int     _lastAnimTicks;
-	prect_t         *cur_perso_rect;
-	int16   _numAnimFrames;
-	int16           max_perso_desc;
-	int16           num_img_desc;
+	prect_t *_curPersoRect;
+	int16 _numAnimFrames;
+	int16 _maxPersoDesc;
+	int16 _numImgDesc;
 	bool _restartAnimation;
-	bool animationActive;
+	bool _animationActive;
 	byte _animationDelay;
-	byte animationIndex;
-	byte lastAnimationIndex;
+	byte _animationIndex;
+	byte _lastAnimationIndex;
 
 	byte   *dword_30724;
 	byte   *dword_30728;   //TODO: rename - something amim-related
@@ -589,7 +590,7 @@ private:
 	byte   *animationTable;
 	byte   _imageDesc[512];
 	byte   *_characterBankData;
-	bool savedUnderSubtitles;
+	bool _savedUnderSubtitles;
 	int16           num_text_lines;
 	byte   _sentenceBuffer[400];
 	byte   *text_ptr;
