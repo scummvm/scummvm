@@ -57,7 +57,7 @@ private:
 	CString _string2;
 	int _field118;
 	int _field11C;
-	int _field120;
+	uint _lastSpeakTime;
 	int _newXp;
 	int _newXc;
 	int _field12C;

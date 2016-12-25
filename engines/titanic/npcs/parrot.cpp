@@ -56,7 +56,7 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_string2 = "CarryParrot";
 	_field118 = 1;
 	_field11C = 25;
-	_field120 = 0;
+	_lastSpeakTime = 0;
 	_newXp = 73;
 	_newXc = 58;
 	_field12C = 0;
@@ -126,7 +126,7 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_field118, indent);
 	file->writeNumberLine(_field11C, indent);
-	file->writeNumberLine(_field120, indent);
+	file->writeNumberLine(_lastSpeakTime, indent);
 	file->writeNumberLine(_newXp, indent);
 	file->writeNumberLine(_newXc, indent);
 	file->writeNumberLine(_field12C, indent);
@@ -150,7 +150,7 @@ void CParrot::load(SimpleFile *file) {
 	_string2 = file->readString();
 	_field118 = file->readNumber();
 	_field11C = file->readNumber();
-	_field120 = file->readNumber();
+	_lastSpeakTime = file->readNumber();
 	_newXp = file->readNumber();
 	_newXc = file->readNumber();
 	_field12C = file->readNumber();
@@ -426,7 +426,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 	}
 
 	// Don't have the parrot speak too often
-	if ((getTicksCount() - _field120) < 20000 || _speechCounter)
+	if ((getTicksCount() - _lastSpeakTime) < 20000 || _speechCounter)
 		return true;
 
 	playSound("z#475.wav", 50);
@@ -473,7 +473,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 		}
 	}
 
-	_field120 = getTicksCount();
+	_lastSpeakTime = getTicksCount();
 	return true;
 }
 
