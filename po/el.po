@@ -2,20 +2,19 @@
 # Copyright (C) YEAR ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2016-12-26 21:20+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Language-name: Greek\n
+"X-Language-name: Greek\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -28,11 +27,11 @@ msgstr ""
 
 #: gui/about.cpp:110
 msgid "Available engines:"
-msgstr ""
+msgstr "Διαθέσιμες μηχανές:"
 
 #: gui/browser.cpp:68 gui/browser_osx.mm:104
 msgid "Show hidden files"
-msgstr ""
+msgstr "Εμφάνιση κρυφών αρχείων"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
@@ -40,12 +39,12 @@ msgstr ""
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr ""
+msgstr "Μετάβαση πάνω"
 
 #: gui/browser.cpp:72 gui/browser.cpp:74 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
 
 #: gui/browser.cpp:74 gui/remotebrowser.cpp:58
 msgctxt "lowres"
@@ -67,13 +66,13 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:865
 msgid "Cancel"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: gui/browser.cpp:76 gui/browser_osx.mm:103 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
 #: gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr ""
+msgstr "Επιλογή"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
@@ -85,15 +84,15 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Από:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Έως:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Ακύρωση λήψης"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
@@ -102,7 +101,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Απόκρυψη"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
@@ -121,7 +120,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:827
 msgid "Yes"
-msgstr ""
+msgstr "Ναι"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -134,7 +133,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:827
 msgid "No"
-msgstr ""
+msgstr "Όχι"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
@@ -164,7 +163,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -205,7 +204,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:143 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "Όνομα:"
 
 #: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
 #: gui/editgamedialog.cpp:146
@@ -219,7 +218,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:149
 msgid "Language:"
-msgstr ""
+msgstr "Γλώσσα:"
 
 #: gui/editgamedialog.cpp:149 gui/editgamedialog.cpp:150
 msgid ""
@@ -235,7 +234,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:161
 msgid "Platform:"
-msgstr ""
+msgstr "Πλατφόρμα:"
 
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:163
 #: gui/editgamedialog.cpp:164
@@ -249,11 +248,11 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:176
 msgid "Engine"
-msgstr ""
+msgstr "Μηχανή"
 
 #: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "Graphics"
-msgstr ""
+msgstr "Γραφικά"
 
 #: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "GFX"
@@ -274,7 +273,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:199
 msgid "Override global audio settings"
-msgstr ""
+msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
 
 #: gui/editgamedialog.cpp:201
 msgctxt "lowres"
@@ -301,7 +300,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1253
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:229
 msgid "Override global MIDI settings"
@@ -314,7 +313,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:241 gui/options.cpp:1263
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:244
 msgid "Override global MT-32 settings"
@@ -387,7 +386,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:522 gui/options.cpp:1482 gui/options.cpp:1548
 #: gui/options.cpp:1764 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr ""
+msgstr "Προκαθορισμένο"
 
 #: gui/editgamedialog.cpp:450 gui/options.cpp:1772
 msgid "Select SoundFont"
@@ -413,15 +412,15 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Συγγραφέας:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Σημειώσεις:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
@@ -441,7 +440,7 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
-msgstr ""
+msgstr "Ενεργό"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
@@ -563,11 +562,11 @@ msgstr ""
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
 #, c-format
 msgid "Associated key : none"
-msgstr ""
+msgstr "Συσχετισμένο κλειδί: κανένα"
 
 #: gui/KeysDialog.cpp:90
 msgid "Please select an action"
-msgstr ""
+msgstr "Παρακαλώ επιλέξτε μια ενέργεια"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
@@ -662,14 +661,14 @@ msgstr ""
 
 #: gui/launcher.cpp:176 gui/launcher.cpp:771
 msgid "Search:"
-msgstr ""
+msgstr "Αναζήτηση:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
-msgstr ""
+msgstr "Φόρτωση παιχνιδιού:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -679,7 +678,7 @@ msgstr ""
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
-msgstr ""
+msgstr "Φόρτωση"
 
 #: gui/launcher.cpp:306
 msgid ""
@@ -768,39 +767,39 @@ msgstr ""
 
 #: gui/options.cpp:119
 msgid "every 5 mins"
-msgstr ""
+msgstr "κάθε 5 λεπτά"
 
 #: gui/options.cpp:119
 msgid "every 10 mins"
-msgstr ""
+msgstr "κάθε 10 λεπτά"
 
 #: gui/options.cpp:119
 msgid "every 15 mins"
-msgstr ""
+msgstr "κάθε 15 λεπτά"
 
 #: gui/options.cpp:119
 msgid "every 30 mins"
-msgstr ""
+msgstr "κάθε 30 λεπτά"
 
 #: gui/options.cpp:121
 msgid "8 kHz"
-msgstr ""
+msgstr "8 kHz"
 
 #: gui/options.cpp:121
 msgid "11 kHz"
-msgstr ""
+msgstr "11 kHz"
 
 #: gui/options.cpp:121
 msgid "22 kHz"
-msgstr ""
+msgstr "22 kHz"
 
 #: gui/options.cpp:121
 msgid "44 kHz"
-msgstr ""
+msgstr "44 kHz"
 
 #: gui/options.cpp:121
 msgid "48 kHz"
-msgstr ""
+msgstr "48 kHz"
 
 #: gui/options.cpp:289 gui/options.cpp:552 gui/options.cpp:657
 #: gui/options.cpp:726 gui/options.cpp:937
@@ -851,7 +850,7 @@ msgstr ""
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -863,7 +862,7 @@ msgstr ""
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
-msgstr ""
+msgstr "Προτιμώμενη συσκευή:"
 
 #: gui/options.cpp:849
 msgid "Music Device:"
@@ -948,7 +947,7 @@ msgstr ""
 
 #: gui/options.cpp:955
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "Συσκευή MT-32:"
 
 #: gui/options.cpp:955
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -985,23 +984,23 @@ msgstr ""
 
 #: gui/options.cpp:1001
 msgid "Text and Speech:"
-msgstr ""
+msgstr "Κείμενο και Ομιλία:"
 
 #: gui/options.cpp:1005 gui/options.cpp:1015
 msgid "Speech"
-msgstr ""
+msgstr "Ομιλία"
 
 #: gui/options.cpp:1006 gui/options.cpp:1016
 msgid "Subtitles"
-msgstr ""
+msgstr "Υπότιτλοι"
 
 #: gui/options.cpp:1007
 msgid "Both"
-msgstr ""
+msgstr "Και τα δυο"
 
 #: gui/options.cpp:1009
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "Ταχύτητα υποτίτλων:"
 
 #: gui/options.cpp:1011
 msgctxt "lowres"
@@ -1032,7 +1031,7 @@ msgstr ""
 
 #: gui/options.cpp:1035
 msgid "Music volume:"
-msgstr ""
+msgstr "Ένταση μουσικής:"
 
 #: gui/options.cpp:1037
 msgctxt "lowres"
@@ -1243,7 +1242,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Εφαρμογή"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
@@ -1357,12 +1356,12 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
-msgstr ""
+msgstr "Διόρθωση"
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr ""
+msgstr "Συγγραφέας:"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
@@ -1407,11 +1406,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
-msgstr ""
+msgstr "Ημερομηνία:"
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1066
 msgid "Time: "
-msgstr ""
+msgstr "Ώρα:"
 
 #: gui/saveload-dialog.cpp:564 gui/saveload-dialog.cpp:1074
 msgid "Playtime: "
@@ -1423,11 +1422,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
-msgstr ""
+msgstr "Επόμενο"
 
 #: gui/saveload-dialog.cpp:721
 msgid "Prev"
-msgstr ""
+msgstr "Προηγούμενο"
 
 #: gui/saveload-dialog.cpp:924
 msgid "New Save"
@@ -1469,7 +1468,7 @@ msgstr ""
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Επικόλληση"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
@@ -1503,7 +1502,7 @@ msgstr ""
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Όλα OK!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
@@ -1575,7 +1574,7 @@ msgstr ""
 
 #: base/main.cpp:327
 msgid "Menu"
-msgstr ""
+msgstr "Μενού"
 
 #: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
@@ -1586,7 +1585,7 @@ msgstr ""
 #: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
-msgstr ""
+msgstr "Παύση"
 
 #: base/main.cpp:336
 msgid "Skip line"
@@ -2167,7 +2166,7 @@ msgstr ""
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
-msgstr ""
+msgstr "Windows MIDI"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
@@ -2303,12 +2302,12 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:98
 msgid "Show All"
-msgstr ""
+msgstr "Προβολή όλων"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:120
 #: backends/platform/sdl/macosx/appmenu_osx.mm:131
 msgid "Window"
-msgstr ""
+msgstr "Παράθυρο"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:125
 msgid "Minimize"
@@ -2337,7 +2336,7 @@ msgstr ""
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
-msgstr ""
+msgstr "Ζώνη"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:54
@@ -2451,7 +2450,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
@@ -2459,7 +2458,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
 msgid "Unknown"
-msgstr ""
+msgstr "¶γνωστο"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
@@ -2475,7 +2474,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
-msgstr ""
+msgstr "Εξυπηρετητής:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
@@ -3624,11 +3623,11 @@ msgstr ""
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Open"
-msgstr ""
+msgstr "¶νοιγμα"
 
 #: engines/scumm/help.cpp:127
 msgid "Go to"
-msgstr ""
+msgstr "Μετάβαση σε"
 
 #: engines/scumm/help.cpp:128
 msgid "Get"
@@ -3643,11 +3642,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
-msgstr ""
+msgstr "Ανάγνωση"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:148
 msgid "New kid"
-msgstr ""
+msgstr "Νέο παιδί"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
 #: engines/scumm/help.cpp:172
@@ -3672,11 +3671,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 msgid "What is"
-msgstr ""
+msgstr "Τι είναι"
 
 #: engines/scumm/help.cpp:147
 msgid "Unlock"
-msgstr ""
+msgstr "Ξεκλείδωμα"
 
 #: engines/scumm/help.cpp:150
 msgid "Put on"
