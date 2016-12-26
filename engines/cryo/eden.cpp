@@ -148,7 +148,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 
 	word_32448 = word_3244A = word_3244C = 0;
 	flt_32450 = flt_32454 = 0.0;	//TODO: never changed, make consts?
-	curs_old_tick = 0;
+	_cursorOldTick = 0;
 
 	_invIconsBase = 19;
 //	invIconsCount = (_vm->getPlatform() == Common::kPlatformMacintosh) ? 9 : 11;
@@ -590,7 +590,8 @@ void EdenGame::dinosoufle() {
 	}
 }
 
-void EdenGame::plaquemonk() {
+// Original name: plaquemonk
+void EdenGame::actionPlateMonk() {
 	if (p_global->_curObjectId != 0) {
 		if (p_global->_curObjectId == Objects::obPrism) {
 			loseObject(Objects::obPrism);
@@ -612,7 +613,8 @@ void EdenGame::plaquemonk() {
 	}
 }
 
-void EdenGame::fresquesgraa() {
+// Original name: fresquesgraa
+void EdenGame::actionGraaFrescoe() {
 	if (p_global->_curObjectId == 0) {
 		p_global->_frescoeWidth = 320;
 		p_global->_frescoeImgBank = 113;
@@ -621,7 +623,8 @@ void EdenGame::fresquesgraa() {
 	}
 }
 
-void EdenGame::fresqueslasc() {
+// Original name: fresqueslasc
+void EdenGame::actionLascFrescoe() {
 	if (p_global->_curObjectId == 0) {
 		p_global->_frescoeWidth = 112;
 		p_global->_frescoeImgBank = 315;
@@ -629,7 +632,8 @@ void EdenGame::fresqueslasc() {
 	}
 }
 
-void EdenGame::pushpierre() {
+// Original name: pushpierre
+void EdenGame::actionPushStone() {
 	if (p_global->_curObjectId == 0) {
 		_gameRooms[22]._exits[0] = 17;
 		_gameRooms[26]._exits[2] = 9;
@@ -637,7 +641,8 @@ void EdenGame::pushpierre() {
 	}
 }
 
-void EdenGame::tetemomie() {
+// Original name: tetemomie
+void EdenGame::actionMummyHead() {
 	if (p_global->_curObjectId == Objects::obTooth) {
 		p_global->_gameFlags |= GameFlags::gfMummyOpened;
 		move(kCryoNorth);
@@ -652,7 +657,8 @@ void EdenGame::tetemomie() {
 	}
 }
 
-void EdenGame::tetesquel() {
+// Original name: tetesquel
+void EdenGame::actionSquelHead() {
 	if (p_global->_curObjectId == Objects::obTooth) {
 		_gameRooms[22]._exits[0] = 16;
 		_gameRooms[26]._exits[2] = 13;
@@ -662,7 +668,8 @@ void EdenGame::tetesquel() {
 	}
 }
 
-void EdenGame::squelmoorkong() {
+// Original name: squelmoorkong
+void EdenGame::actionSquelMoorkong() {
 	p_global->_eventType = EventType::etEvent9;
 	showEvents();
 }
@@ -728,7 +735,7 @@ void EdenGame::handleKingDialog() {
 }
 
 // Original name: roiparle1
-void EdenGame::kingDialog1() {
+void EdenGame::actionKingDialog1() {
 	if (p_global->_curObjectId == Objects::obSword) {
 		p_global->_gameFlags |= GameFlags::gfFlag80;
 		bars_out();
@@ -741,13 +748,13 @@ void EdenGame::kingDialog1() {
 }
 
 // Original name: roiparle2
-void EdenGame::kingDialog2() {
+void EdenGame::actionKingDialog2() {
 	p_global->_frescoNumber = 2;
 	handleKingDialog();
 }
 
 // Original name: roiparle3
-void EdenGame::kingDialog3() {
+void EdenGame::actionKingDialog3() {
 	p_global->_frescoNumber = 3;
 	handleKingDialog();
 }
@@ -859,7 +866,8 @@ void EdenGame::getTablet() {
 	maj2();
 }
 
-void EdenGame::voirlac() {
+// Original name: voirlac
+void EdenGame::actionLookLake() {
 	perso_t *perso = &kPersons[PER_MORKUS];
 	Room *room = p_global->_roomPtr;
 	Area *area = p_global->_areaPtr;
@@ -889,12 +897,14 @@ void EdenGame::voirlac() {
 	showEvents();
 }
 
-void EdenGame::gotohall() {
+// Original name: gotohall
+void EdenGame::actionGotoHall() {
 	p_global->_prevLocation = p_global->_roomNum & 0xFF;
 	deplaval((p_global->_roomNum & 0xFF00) | 6);
 }
 
-void EdenGame::demitourlabi() {
+// Original name: demitourlabi
+void EdenGame::actionLabyrinthTurnAround() {
 	p_global->_prevLocation = p_global->_roomNum & 0xFF;
 	p_global->_var100 = 0xFF;
 	uint16 target = (p_global->_roomNum & 0xFF00) | p_global->_roomPtr->_exits[2];
@@ -904,7 +914,8 @@ void EdenGame::demitourlabi() {
 	updateRoom(p_global->_roomNum);
 }
 
-void EdenGame::gotonido() {
+// Original name: gotonido
+void EdenGame::actionGotoNido() {
 	p_global->_roomPtr++;
 	p_global->_eventType = 0;
 	p_global->_roomImgBank = p_global->_roomPtr->_bank;
@@ -948,25 +959,25 @@ void EdenGame::final() {
 }
 
 // Original name: goto_nord
-void EdenGame::moveNorth() {
+void EdenGame::actionMoveNorth() {
 	if (p_global->_curObjectId == 0)
 		move(kCryoNorth);
 }
 
 // Original name: goto_est
-void EdenGame::moveEast() {
+void EdenGame::actionMoveEast() {
 	if (p_global->_curObjectId == 0)
 		move(kCryoEast);
 }
 
 // Original name: goto_sud
-void EdenGame::moveSouth() {
+void EdenGame::actionMoveSouth() {
 	if (p_global->_curObjectId == 0)
 		move(kCryoSouth);
 }
 
 // Original name: goto_ouest
-void EdenGame::moveWest() {
+void EdenGame::actionMoveWest() {
 	if (p_global->_curObjectId == 0)
 		move(kCryoWest);
 }
@@ -6037,36 +6048,36 @@ void EdenGame::update_cursor() {
 
 void EdenGame::mouse() {
 	static void (EdenGame::*mouse_actions[])() = {
-		&EdenGame::moveNorth,
-		&EdenGame::moveEast,
-		&EdenGame::moveSouth,
-		&EdenGame::moveWest,
-		&EdenGame::plaquemonk,
-		&EdenGame::fresquesgraa,
-		&EdenGame::pushpierre,
-		&EdenGame::tetesquel,
-		&EdenGame::tetemomie,
-		&EdenGame::moveNorth,
-		&EdenGame::kingDialog1,
-		&EdenGame::kingDialog2,
-		&EdenGame::kingDialog3,
-		&EdenGame::gotohall,
-		&EdenGame::demitourlabi,
-		&EdenGame::squelmoorkong,
-		&EdenGame::gotonido,
-		&EdenGame::voirlac,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionMoveNorth,
+		&EdenGame::actionMoveEast,
+		&EdenGame::actionMoveSouth,
+		&EdenGame::actionMoveWest,
+		&EdenGame::actionPlateMonk,
+		&EdenGame::actionGraaFrescoe,
+		&EdenGame::actionPushStone,
+		&EdenGame::actionSquelHead,
+		&EdenGame::actionMummyHead,
+		&EdenGame::actionMoveNorth,
+		&EdenGame::actionKingDialog1,
+		&EdenGame::actionKingDialog2,
+		&EdenGame::actionKingDialog3,
+		&EdenGame::actionGotoHall,
+		&EdenGame::actionLabyrinthTurnAround,
+		&EdenGame::actionSquelMoorkong,
+		&EdenGame::actionGotoNido,
+		&EdenGame::actionLookLake,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		&EdenGame::final,
-		&EdenGame::moveNorth,
-		&EdenGame::moveSouth,
+		&EdenGame::actionMoveNorth,
+		&EdenGame::actionMoveSouth,
 		&EdenGame::visiter,
 		&EdenGame::dinosoufle,
-		&EdenGame::fresqueslasc,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionLascFrescoe,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		&EdenGame::gotoval,
 		&EdenGame::gotoval,
 		&EdenGame::gotoval,
@@ -6137,17 +6148,17 @@ void EdenGame::mouse() {
 		nullptr,
 		nullptr,
 		nullptr,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		&EdenGame::getPrism,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		&EdenGame::getEgg,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		&EdenGame::getMushroom,
 		&EdenGame::getBadMushroom,
 		&EdenGame::getKnife,
@@ -6155,16 +6166,16 @@ void EdenGame::mouse() {
 		&EdenGame::getFullNest,
 		&EdenGame::getGold,
 		nullptr,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
 		&EdenGame::getSunStone,
 		&EdenGame::getHorn,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
+		&EdenGame::actionNop,
 		nullptr,
 		nullptr,
 		nullptr,
@@ -6282,7 +6293,7 @@ void EdenGame::mouse() {
 		&EdenGame::dino,
 		&EdenGame::tyran,
 		&EdenGame::morkus,
-		&EdenGame::ret,
+		&EdenGame::actionNop,
 		&EdenGame::parle_moi,
 		&EdenGame::adam,
 		&EdenGame::takeObject,
@@ -8491,14 +8502,16 @@ uint16 EdenGame::cher_valeur() {
 	return val;
 }
 
-void EdenGame::ret() {
+// Original name: ret
+void EdenGame::actionNop() {
 }
 
 //// cube.c
-void EdenGame::make_tabcos() {
+// Original name: make_tabcos
+void EdenGame::initCosTable() {
 	for (int i = 0; i < 361; i++) {
-		tabcos[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
-		tabcos[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
+		_cosTable[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
+		_cosTable[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
 	}
 }
 
@@ -8507,19 +8520,19 @@ void EdenGame::make_matrice_fix() {
 	int16 r28 = word_3244A;
 	int16 r29 = word_32448;
 
-	dword_32424 = (tabcos[r29 * 2] * tabcos[r28 * 2]) >> 8;
-	dword_32430 = (tabcos[r29 * 2 + 1] * tabcos[r28 * 2]) >> 8;
-	dword_3243C = -tabcos[r28 * 2 + 1];
-	dword_32428 = ((-tabcos[r29 * 2 + 1] * tabcos[r30 * 2]) >> 8)
-	              + ((tabcos[r30 * 2 + 1] * ((tabcos[r29 * 2] * tabcos[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32434 = ((tabcos[r29 * 2] * tabcos[r30 * 2]) >> 8)
-	              + ((tabcos[r30 * 2 + 1] * ((tabcos[r29 * 2 + 1] * tabcos[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32440 = (tabcos[r28 * 2] * tabcos[r30 * 2 + 1]) >> 8;
-	dword_3242C = ((tabcos[r29 * 2 + 1] * tabcos[r30 * 2 + 1]) >> 8)
-	              + ((tabcos[r30 * 2] * ((tabcos[r29 * 2] * tabcos[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32438 = ((-tabcos[r29 * 2] * tabcos[r30 * 2 + 1]) >> 8)
-	              + ((tabcos[r30 * 2] * ((tabcos[r29 * 2 + 1] * tabcos[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32444 = (tabcos[r28 * 2] * tabcos[r30 * 2]) >> 8;
+	dword_32424 = (_cosTable[r29 * 2] * _cosTable[r28 * 2]) >> 8;
+	dword_32430 = (_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2]) >> 8;
+	dword_3243C = -_cosTable[r28 * 2 + 1];
+	dword_32428 = ((-_cosTable[r29 * 2 + 1] * _cosTable[r30 * 2]) >> 8)
+	              + ((_cosTable[r30 * 2 + 1] * ((_cosTable[r29 * 2] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
+	dword_32434 = ((_cosTable[r29 * 2] * _cosTable[r30 * 2]) >> 8)
+	              + ((_cosTable[r30 * 2 + 1] * ((_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
+	dword_32440 = (_cosTable[r28 * 2] * _cosTable[r30 * 2 + 1]) >> 8;
+	dword_3242C = ((_cosTable[r29 * 2 + 1] * _cosTable[r30 * 2 + 1]) >> 8)
+	              + ((_cosTable[r30 * 2] * ((_cosTable[r29 * 2] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
+	dword_32438 = ((-_cosTable[r29 * 2] * _cosTable[r30 * 2 + 1]) >> 8)
+	              + ((_cosTable[r30 * 2] * ((_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
+	dword_32444 = (_cosTable[r28 * 2] * _cosTable[r30 * 2]) >> 8;
 }
 
 void EdenGame::projection_fix(cube_t *cubep, int n) {
@@ -8546,24 +8559,26 @@ void EdenGame::projection_fix(cube_t *cubep, int n) {
 
 // Original name init_cube
 void EdenGame::initCubeMac() {
-	NEWcharge_map(2493, cube_texture);
+	loadMap(2493, cube_texture);
 	NEWcharge_objet_mob(&cube, 2494, cube_texture);
-	make_tabcos();
+	initCosTable();
 }
 
 void EdenGame::engineMac() {
 	Eden_dep_and_rot();
 	make_matrice_fix();
 	projection_fix(&cube, cube_faces);
-	affiche_objet(&cube);
+	displayObject(&cube);
 }
 
-void EdenGame::affiche_objet(cube_t *cubep) {
+// Original name: affiche_objet
+void EdenGame::displayObject(cube_t *cubep) {
 	for (int i = 0; i < cubep->num; i++)
 		affiche_polygone_mapping(cubep, cubep->faces[i]);
 }
 
-void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
+// Original name: NEWcharge_map
+void EdenGame::loadMap(int file_id, byte *buffer) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		loadpartoffile(file_id, buffer, 32, 256 * 3);
 
@@ -8674,7 +8689,7 @@ int EdenGame::next_val(char **ptr, char *error) {
 	return val;
 }
 
-void EdenGame::selectmap(int16 num) {
+void EdenGame::selectMap(int16 num) {
 	static const char mapMode[12] = { 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 2, 0 };
 	// Cube faces to texture coords mapping
 	// each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
@@ -8754,11 +8769,12 @@ void EdenGame::Eden_dep_and_rot() {
 	int16 curs = _currCursor;
 	if (_normalCursor && (p_global->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 10;
-	selectmap(curs);
-	curs_new_tick = TickCount();
-	if (curs_new_tick - curs_old_tick < 1)
+	selectMap(curs);
+	_cursorNewTick = TickCount();
+	if (_cursorNewTick - _cursorOldTick < 1)
 		return;
-	curs_old_tick = curs_new_tick;
+
+	_cursorOldTick = _cursorNewTick;
 	switch (_currCursor) {
 	case 0:
 		word_3244C = (word_3244C + 2) % 360;
@@ -9285,10 +9301,10 @@ void EdenGame::enginePC() {
 	if (_normalCursor && (p_global->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 9;
 	selectPCMap(curs);
-	curs_new_tick = TickCount();
-	if (curs_new_tick - curs_old_tick < 1)
+	_cursorNewTick = TickCount();
+	if (_cursorNewTick - _cursorOldTick < 1)
 		return;
-	curs_old_tick = curs_new_tick;
+	_cursorOldTick = _cursorNewTick;
 	int step = _pcCursor->speed;
 	switch (_pcCursor->kind) {
 	case 0:
