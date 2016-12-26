@@ -62,9 +62,9 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			Graphics::TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp;
 			if (owner->_gameRef->getBilinearFiltering()) {
-				temp = src.rotoscale<Graphics::FILTER_BILINEAR>(transform);
+				temp = src.rotoscaleT<Graphics::FILTER_BILINEAR>(transform);
 			} else {
-				temp = src.rotoscale<Graphics::FILTER_NEAREST>(transform);
+				temp = src.rotoscaleT<Graphics::FILTER_NEAREST>(transform);
 			}
 			_surface->free();
 			delete _surface;
@@ -75,9 +75,9 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 			Graphics::TransparentSurface src(*_surface, false);
 			Graphics::Surface *temp;
 			if (owner->_gameRef->getBilinearFiltering()) {
-				temp = src.scale<Graphics::FILTER_BILINEAR>(dstRect->width(), dstRect->height());
+				temp = src.scaleT<Graphics::FILTER_BILINEAR>(dstRect->width(), dstRect->height());
 			} else {
-				temp = src.scale<Graphics::FILTER_NEAREST>(dstRect->width(), dstRect->height());
+				temp = src.scaleT<Graphics::FILTER_NEAREST>(dstRect->width(), dstRect->height());
 			}
 			_surface->free();
 			delete _surface;

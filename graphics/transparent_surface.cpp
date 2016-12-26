@@ -677,7 +677,7 @@ systems.
 struct tColorRGBA { byte r; byte g; byte b; byte a; };
 
 template <TFilteringMode filteringMode>
-TransparentSurface *TransparentSurface::rotoscale_(const TransformStruct &transform) const {
+TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transform) const {
 
 	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
@@ -791,7 +791,7 @@ TransparentSurface *TransparentSurface::rotoscale_(const TransformStruct &transf
 }
 
 template <TFilteringMode filteringMode>
-TransparentSurface *TransparentSurface::scale_(uint16 newWidth, uint16 newHeight) const {
+TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
 
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
@@ -1054,17 +1054,17 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 }
 
 
-template TransparentSurface *TransparentSurface::rotoscale_<FILTER_NEAREST>(const TransformStruct &transform) const;
-template TransparentSurface *TransparentSurface::rotoscale_<FILTER_BILINEAR>(const TransformStruct &transform) const;
-template TransparentSurface *TransparentSurface::scale_<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
-template TransparentSurface *TransparentSurface::scale_<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
-	return rotoscale_<FILTER_BILINEAR>(transform);
+	return rotoscaleT<FILTER_BILINEAR>(transform);
 }
 
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
-	return scale_<FILTER_NEAREST>(newWidth, newHeight);
+	return scaleT<FILTER_NEAREST>(newWidth, newHeight);
 }
 
 } // End of namespace Graphics

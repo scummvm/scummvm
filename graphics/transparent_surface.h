@@ -147,7 +147,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @see TransformStruct
 	 */
 	template <TFilteringMode filteringMode>
-	TransparentSurface *scale_(uint16 newWidth, uint16 newHeight) const;
+	TransparentSurface *scaleT(uint16 newWidth, uint16 newHeight) const;
 
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 	/**
@@ -158,7 +158,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 *
 	 */
 	template <TFilteringMode filteringMode>
-	TransparentSurface *rotoscale_(const TransformStruct &transform) const;
+	TransparentSurface *rotoscaleT(const TransformStruct &transform) const;
 
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
 
