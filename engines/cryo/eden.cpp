@@ -218,7 +218,7 @@ void EdenGame::doFrescoes() {
 }
 
 // Original name: finfresques
-void EdenGame::endFrescoes() {
+void EdenGame::actionEndFrescoes() {
 	_torchCursor = false;
 	_cursorSaved = true;
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
@@ -421,7 +421,8 @@ void EdenGame::clicplanval() {
 	deplaval((p_global->_roomNum & 0xFF00) | 1); //TODO: check me
 }
 
-void EdenGame::gotolieu(Goto *go) {
+// Original name: gotolieu
+void EdenGame::gotoPlace(Goto *go) {
 	p_global->_valleyVidNum = go->_arriveVideoNum;
 	p_global->_travelTime = go->_travelTime * 256;
 	p_global->_stepsToFindAppleFast = 0;
@@ -522,11 +523,11 @@ void EdenGame::deplaval(uint16 roomNum) {
 		newRoomNum |= 1;
 	p_global->_newRoomNum = newRoomNum;
 	if (newAreaNum == Areas::arTausCave)
-		gotolieu(&gotos[0]);
+		gotoPlace(&gotos[0]);
 	else {
 		for (Goto *go = gotos + 1; go->_curAreaNum != 0xFF; go++) {
 			if (go->_curAreaNum == curAreaNum) {
-				gotolieu(go);
+				gotoPlace(go);
 				break;
 			}
 		}
@@ -582,7 +583,8 @@ void EdenGame::move2(Direction dir) {
 	deplaval((roomNum & 0xFF00) | newLoc);
 }
 
-void EdenGame::dinosoufle() {
+// Original name: dinosoufle
+void EdenGame::actionDinoBreath() {
 	if (p_global->_curObjectId == 0) {
 		bars_out();
 		playHNM(148);
@@ -658,7 +660,7 @@ void EdenGame::actionMummyHead() {
 }
 
 // Original name: tetesquel
-void EdenGame::actionSquelHead() {
+void EdenGame::actionSkelettonHead() {
 	if (p_global->_curObjectId == Objects::obTooth) {
 		_gameRooms[22]._exits[0] = 16;
 		_gameRooms[26]._exits[2] = 13;
@@ -669,12 +671,13 @@ void EdenGame::actionSquelHead() {
 }
 
 // Original name: squelmoorkong
-void EdenGame::actionSquelMoorkong() {
+void EdenGame::actionSkelettonMoorkong() {
 	p_global->_eventType = EventType::etEvent9;
 	showEvents();
 }
 
-void EdenGame::choisir() {
+// Original name: choisir
+void EdenGame::actionChoose() {
 	byte objid = _curSpot2->_objectId;
 	byte obj;
 	switch (objid) {
@@ -688,7 +691,7 @@ void EdenGame::choisir() {
 		obj = p_global->_giveObj3;
 		break;
 	default:
-		warning("Unexpected object_id in choisir()");
+		warning("Unexpected object_id in actionChoose()");
 		return;
 	}
 	objectmain(obj);
@@ -724,7 +727,7 @@ void EdenGame::handleDinaDialog() {
 			p_global->_varCA = 0;
 			p_global->_dialogType = DialogType::dtTalk;
 		} else
-			endFrescoes();
+			actionEndFrescoes();
 	}
 }
 
@@ -760,7 +763,7 @@ void EdenGame::actionKingDialog3() {
 }
 
 // Original name: getcouteau
-void EdenGame::getKnife() {
+void EdenGame::actionGetKnife() {
 	if (p_global->_phaseNum >= 80) {
 		_gameRooms[113]._video = 0;
 		getObject(Objects::obKnife);
@@ -770,29 +773,29 @@ void EdenGame::getKnife() {
 }
 
 // Original name: getprisme
-void EdenGame::getPrism() {
+void EdenGame::actionGetPrism() {
 	getObject(Objects::obPrism);
 	p_global->_eventType = EventType::etEvent7;
 	showEvents();
 }
 
 // Original name: getchampb
-void EdenGame::getMushroom() {
+void EdenGame::actionGetMushroom() {
 	getObject(Objects::obShroom);
 }
 
 // Original name: getchampm
-void EdenGame::getBadMushroom() {
+void EdenGame::actionGetBadMushroom() {
 	getObject(Objects::obBadShroom);
 }
 
 // Original name: getor
-void EdenGame::getGold() {
+void EdenGame::actionGetGold() {
 	getObject(Objects::obGold);
 }
 
 // Original name: getnido
-void EdenGame::getFullNest() {
+void EdenGame::actionGetFullNest() {
 	if (p_global->_curObjectId != 0)
 		return;
 	p_global->_roomPtr->_bank = 282; //TODO: fix me
@@ -803,7 +806,7 @@ void EdenGame::getFullNest() {
 }
 
 // Original name: getnidv
-void EdenGame::getNest() {
+void EdenGame::actionGetEmptyNest() {
 	if (p_global->_curObjectId != 0)
 		return;
 	p_global->_roomPtr->_bank = 282; //TODO: fix me
@@ -814,7 +817,7 @@ void EdenGame::getNest() {
 }
 
 // Original name: getcorne
-void EdenGame::getHorn() {
+void EdenGame::actionGetHorn() {
 	if (p_global->_curObjectId != 0)
 		return;
 	getObject(Objects::obHorn);
@@ -826,7 +829,7 @@ void EdenGame::getHorn() {
 }
 
 // Original name: getsoleil
-void EdenGame::getSunStone() {
+void EdenGame::actionGetSunStone() {
 	if (p_global->_curObjectId != 0)
 		return;
 	_gameRooms[238]._video = 0;
@@ -835,7 +838,7 @@ void EdenGame::getSunStone() {
 }
 
 // Original name: getoueuf
-void EdenGame::getEgg() {
+void EdenGame::actionGetEgg() {
 	if (p_global->_curObjectId != 0)
 		return;
 	p_global->_roomPtr->_flags = 0;
@@ -844,7 +847,7 @@ void EdenGame::getEgg() {
 }
 
 // Original name: getplaque
-void EdenGame::getTablet() {
+void EdenGame::actionGetTablet() {
 	if (p_global->_curObjectId != 0 && p_global->_curObjectId < Objects::obTablet1)
 		return;
 	p_global->_curObjectId = 0;
@@ -915,7 +918,7 @@ void EdenGame::actionLabyrinthTurnAround() {
 }
 
 // Original name: gotonido
-void EdenGame::actionGotoNido() {
+void EdenGame::actionGotoFullNest() {
 	p_global->_roomPtr++;
 	p_global->_eventType = 0;
 	p_global->_roomImgBank = p_global->_roomPtr->_bank;
@@ -927,7 +930,8 @@ void EdenGame::actionGotoNido() {
 	maj2();
 }
 
-void EdenGame::gotoval() {
+// Original name: gotoval
+void EdenGame::actionGotoVal() {
 	uint16 target = p_global->_roomNum;
 	char obj;
 	rundcurs();
@@ -938,16 +942,19 @@ void EdenGame::gotoval() {
 	deplaval((target & 0xFF00) | obj);  //TODO careful!
 }
 
-void EdenGame::visiter() {
+// Original name: visiter
+void EdenGame::actionVisit() {
 	bars_out();
 	playHNM(144);
 	p_global->_varF1 = RoomFlags::rf04;
 	maj2();
 }
 
-void EdenGame::final() {
+// Original name: final
+void EdenGame::actionFinal() {
 	if (p_global->_curObjectId != 0)
 		return;
+
 	bars_out();
 	*(int16 *)(_gameRooms + 0x6DC) = 319; //TODO
 	p_global->_roomImgBank = 319;
@@ -2077,7 +2084,7 @@ void EdenGame::newValley() {
 	p_global->_worldHasTyran = 32;
 }
 
-char EdenGame::whereiscita() {
+char EdenGame::whereIsCita() {
 	char res = -1;
 	for (Room *room = p_global->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
 		if (!(room->_flags & RoomFlags::rfHasCitadel))
@@ -2088,7 +2095,7 @@ char EdenGame::whereiscita() {
 	return res;
 }
 
-bool EdenGame::iscita(int16 loc) {
+bool EdenGame::isCita(int16 loc) {
 	loc &= 0xFF;
 	for (Room *room = p_global->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
 		if (!(room->_flags & RoomFlags::rfHasCitadel))
@@ -2105,7 +2112,8 @@ bool EdenGame::iscita(int16 loc) {
 	return false;
 }
 
-void EdenGame::lieuvava(Area *area) {
+// Original name: lieuvava
+void EdenGame::placeVava(Area *area) {
 	if (area->_type == AreaType::atValley) {
 		istyranval(area);
 		area->_citadelLevel = 0;
@@ -2150,10 +2158,10 @@ void EdenGame::vivredino() {
 			continue;
 		switch (perso->_flags & PersonFlags::pfTypeMask) {
 		case PersonFlags::pftTyrann:
-			if (iscita(perso->_roomNum))
+			if (isCita(perso->_roomNum))
 				perso->_targetLoc = 0;
 			else if (!perso->_targetLoc) {
-				char cita = whereiscita();
+				char cita = whereIsCita();
 				if (cita != -1) {
 					perso->_targetLoc = cita;
 					perso->_speed = 2;
@@ -2163,10 +2171,10 @@ void EdenGame::vivredino() {
 			break;
 		case PersonFlags::pftTriceraptor:
 			if (perso->_flags & PersonFlags::pfInParty) {
-				if (iscita(perso->_roomNum))
+				if (isCita(perso->_roomNum))
 					perso->_targetLoc = 0;
 				else if (!perso->_targetLoc) {
-					char cita = whereiscita();
+					char cita = whereIsCita();
 					if (cita != -1) {
 						perso->_targetLoc = cita;
 						perso->_speed = 3;
@@ -2239,11 +2247,11 @@ void EdenGame::vivreval(int16 areaNum) {
 	constcita();
 	vivredino();
 	newMushroom();
-	newnido();
-	newnidv();
+	newNestWithEggs();
+	newEmptyNest();
 	if (p_global->_phaseNum >= 226)
 		newor();
-	lieuvava(p_global->_curAreaPtr);
+	placeVava(p_global->_curAreaPtr);
 }
 
 void EdenGame::chaquejour() {
@@ -3396,7 +3404,7 @@ void EdenGame::dino() {
 	perso1(perso);
 	if (p_global->_roomCharacterType == PersonFlags::pftMosasaurus && !p_global->_curObjectId) {
 		p_global->_areaPtr->_flags |= AreaFlags::afFlag20;
-		lieuvava(p_global->_areaPtr);
+		placeVava(p_global->_areaPtr);
 	}
 }
 
@@ -3553,7 +3561,7 @@ void EdenGame::specialMushroom(perso_t *perso) {
 }
 
 // Original name: SpcNidv
-void EdenGame::specialNidv(perso_t *perso) {
+void EdenGame::specialEmptyNest(perso_t *perso) {
 	if (!isAnswerYes())
 		return;
 	perso->_flags |= PersonFlags::pf10;
@@ -3564,7 +3572,7 @@ void EdenGame::specialNidv(perso_t *perso) {
 		p_global->_curAreaFlags |= AreaFlags::afFlag4;
 		perso->_flags |= PersonFlags::pfInParty;
 		p_global->_roomCharacterFlags |= PersonFlags::pfInParty;
-		lieuvava(p_global->_areaPtr);
+		placeVava(p_global->_areaPtr);
 	} else {
 		perso->_flags &= ~PersonFlags::pf10;
 		p_global->_roomCharacterFlags &= ~PersonFlags::pf10;
@@ -3572,7 +3580,7 @@ void EdenGame::specialNidv(perso_t *perso) {
 }
 
 // Original name: SpcNido
-void EdenGame::specialNido(perso_t *perso) {
+void EdenGame::specialNestWithEggs(perso_t *perso) {
 	if (perso == &kPersons[PER_GARDES])
 		giveObject();
 }
@@ -3702,8 +3710,8 @@ void EdenGame::specialObjects(perso_t *perso, char objid) {
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
 		{ PersonFlags::pfType8, Objects::obShroom, &EdenGame::specialMushroom },
-		{ PersonFlags::pftTriceraptor, Objects::obNest, &EdenGame::specialNidv },
-		{ PersonFlags::pfType0, Objects::obFullNest, &EdenGame::specialNido },
+		{ PersonFlags::pftTriceraptor, Objects::obNest, &EdenGame::specialEmptyNest },
+		{ PersonFlags::pfType0, Objects::obFullNest, &EdenGame::specialNestWithEggs },
 		{ PersonFlags::pftMosasaurus, Objects::obApple, &EdenGame::specialApple },
 		{ PersonFlags::pftVelociraptor, Objects::obGold, &EdenGame::specialGold },
 		{ PersonFlags::pfType0, Objects::obPrism, &EdenGame::specialPrism },
@@ -3776,7 +3784,7 @@ void EdenGame::abortdial() {
 	p_global->_curAreaFlags |= AreaFlags::afFlag4;
 	p_global->_roomCharacterPtr->_flags |= PersonFlags::pfInParty;
 	p_global->_roomCharacterFlags |= PersonFlags::pfInParty;
-	lieuvava(p_global->_areaPtr);
+	placeVava(p_global->_areaPtr);
 }
 
 void EdenGame::narrateur() {
@@ -3812,7 +3820,7 @@ void EdenGame::narrateur() {
 		p_global->_var102 = 0;
 		p_global->_var103 = 0;
 		close_perso();
-		lieuvava(p_global->_areaPtr);
+		placeVava(p_global->_areaPtr);
 		if (p_global->_narratorSequence == 8)
 			deplaval(134);
 	}
@@ -3890,7 +3898,7 @@ void EdenGame::gotocarte() {
 
 	close_perso();
 	if (isAnswerYes())
-		gotolieu(go);
+		gotoPlace(go);
 }
 
 void EdenGame::record() {
@@ -6055,7 +6063,7 @@ void EdenGame::mouse() {
 		&EdenGame::actionPlateMonk,
 		&EdenGame::actionGraaFrescoe,
 		&EdenGame::actionPushStone,
-		&EdenGame::actionSquelHead,
+		&EdenGame::actionSkelettonHead,
 		&EdenGame::actionMummyHead,
 		&EdenGame::actionMoveNorth,
 		&EdenGame::actionKingDialog1,
@@ -6063,81 +6071,81 @@ void EdenGame::mouse() {
 		&EdenGame::actionKingDialog3,
 		&EdenGame::actionGotoHall,
 		&EdenGame::actionLabyrinthTurnAround,
-		&EdenGame::actionSquelMoorkong,
-		&EdenGame::actionGotoNido,
+		&EdenGame::actionSkelettonMoorkong,
+		&EdenGame::actionGotoFullNest,
 		&EdenGame::actionLookLake,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		&EdenGame::final,
+		&EdenGame::actionFinal,
 		&EdenGame::actionMoveNorth,
 		&EdenGame::actionMoveSouth,
-		&EdenGame::visiter,
-		&EdenGame::dinosoufle,
+		&EdenGame::actionVisit,
+		&EdenGame::actionDinoBreath,
 		&EdenGame::actionLascFrescoe,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
 		nullptr,
 		nullptr,
 		nullptr,
 		nullptr,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
 		nullptr,
 		nullptr,
 		nullptr,
 		nullptr,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
 		nullptr,
 		nullptr,
 		nullptr,
 		nullptr,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
-		&EdenGame::gotoval,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
+		&EdenGame::actionGotoVal,
 		nullptr,
 		nullptr,
 		nullptr,
@@ -6153,22 +6161,22 @@ void EdenGame::mouse() {
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		&EdenGame::getPrism,
+		&EdenGame::actionGetPrism,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		&EdenGame::getEgg,
+		&EdenGame::actionGetEgg,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		&EdenGame::getMushroom,
-		&EdenGame::getBadMushroom,
-		&EdenGame::getKnife,
-		&EdenGame::getNest,
-		&EdenGame::getFullNest,
-		&EdenGame::getGold,
+		&EdenGame::actionGetMushroom,
+		&EdenGame::actionGetBadMushroom,
+		&EdenGame::actionGetKnife,
+		&EdenGame::actionGetEmptyNest,
+		&EdenGame::actionGetFullNest,
+		&EdenGame::actionGetGold,
 		nullptr,
 		&EdenGame::actionNop,
-		&EdenGame::getSunStone,
-		&EdenGame::getHorn,
+		&EdenGame::actionGetSunStone,
+		&EdenGame::actionGetHorn,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
@@ -6176,8 +6184,6 @@ void EdenGame::mouse() {
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
-		nullptr,
-		nullptr,
 		nullptr,
 		nullptr,
 		nullptr,
@@ -6186,10 +6192,12 @@ void EdenGame::mouse() {
 		nullptr,
 		nullptr,
 		nullptr,
-		&EdenGame::getTablet,
+		nullptr,
+		nullptr,
+		&EdenGame::actionGetTablet,
 		&EdenGame::clicplanval,
-		&EdenGame::endFrescoes,
-		&EdenGame::choisir,
+		&EdenGame::actionEndFrescoes,
+		&EdenGame::actionChoose,
 		nullptr,
 		nullptr,
 		nullptr,
@@ -6894,7 +6902,8 @@ void EdenGame::newMushroom() {
 	}
 }
 
-void EdenGame::newnidv() {
+// Original name: newnidv
+void EdenGame::newEmptyNest() {
 	Room *room = p_global->_citaAreaFirstRoom;
 	if (_objects[Objects::obNest - 1]._count)
 		return;
@@ -6915,7 +6924,8 @@ void EdenGame::newnidv() {
 	}
 }
 
-void EdenGame::newnido() {
+// Original name: newnido
+void EdenGame::newNestWithEggs() {
 	Room *room = p_global->_citaAreaFirstRoom;
 	if (_objects[Objects::obFullNest - 1]._count)
 		return;
