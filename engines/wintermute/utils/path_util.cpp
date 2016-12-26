@@ -71,7 +71,11 @@ bool PathUtil::hasTrailingSlash(const Common::String &path) {
 Common::String PathUtil::getDirectoryName(const Common::String &path) {
 	Common::String newPath = unifySeparators(path);
 	Common::String filename = getFileName(path);
-	return Common::String(path.c_str(), path.size() - filename.size());
+	if (hasTrailingSlash(newPath)) {
+		return path;
+	} else {
+		return Common::String(path.c_str(), path.size() - filename.size());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

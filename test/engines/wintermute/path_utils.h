@@ -23,6 +23,8 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 	const Common::String mixedSlashesPath2;
 	const Common::String unixRelativePath;
 	const Common::String windowsRelativePath;
+	const Common::String unixDirPath;
+	const Common::String windowsDirPath;
 	PathUtilTestSuite () :
 		unixPath("/some/file.ext"),
 		unixCapPath("/SOME/FILE.EXT"),
@@ -34,7 +36,9 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		mixedSlashesPath1("C:\\this/IS_REALLY\\weird.exe"),
 		mixedSlashesPath2("/pretty\\weird/indeed.txt"),
 		unixRelativePath("some/file.ext"),
-		windowsRelativePath("some\\file.ext")
+		windowsRelativePath("some\\file.ext"),
+		unixDirPath("/some/dir/"),
+		windowsDirPath("C:\\some\\dir\\")
 	{}
 	void test_getdirectoryname() {
 		TS_ASSERT_EQUALS(
@@ -56,6 +60,14 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getDirectoryName(emptyString),
 				Common::String("")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getDirectoryName(unixDirPath),
+				Common::String("/some/dir/")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getDirectoryName(windowsDirPath),
+				Common::String("C:\\some\\dir\\")
 				);
 	}
 
