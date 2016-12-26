@@ -2912,17 +2912,15 @@ void EdenGame::my_bulle() {
 		} else if (c >= 0xE0 && c < 0xFF)
 			SysBeep(1);
 		else if (c != '\r') {
-			byte width;
-			int16 overrun;
 			*sentencePtr++ = c;
-			width = _gameFont[c];
+			byte width = _gameFont[c];
 #ifdef FAKE_DOS_VERSION
 			if (c == ' ')
 				width = _spaceWidth;
 #endif
 			word_width += width;
 			line_width += width;
-			overrun = line_width - p_global->_textWidthLimit;
+			int16 overrun = line_width - p_global->_textWidthLimit;
 			if (overrun > 0) {
 				_numTextLines++;
 				if (c != ' ') {
@@ -2984,7 +2982,7 @@ void EdenGame::my_pr_bulle() {
 		if (lines == _numTextLines)
 			extraSpacing = 0;
 		byte c = *textPtr++;
-		while (!done & (num_words > 0)) { //TODO: bug - missed & ?
+		while (!done && (num_words > 0)) {
 			if (c < 0x80 && c != '\r') {
 				if (c == ' ') {
 					num_words--;
@@ -3196,11 +3194,8 @@ void EdenGame::parlemoi_normal() {
 }
 
 void EdenGame::parle_moi() {
-	byte r28;
-	char ok;
-	dial_t *dial;
 	endpersovox();
-	r28 = p_global->_varF6;
+	byte r28 = p_global->_varF6;
 	p_global->_varF6 = 0;
 	if (!r28) {
 		setChoiceNo();
@@ -3226,6 +3221,8 @@ void EdenGame::parle_moi() {
 			parlemoi_normal();
 			return;
 		}
+		dial_t *dial;
+
 		if (!p_global->_lastDialogPtr) {
 			int16 num = 160;
 			if (p_global->_phaseNum >= 400)
@@ -3233,7 +3230,7 @@ void EdenGame::parle_moi() {
 			dial = (dial_t *)getElem(gameDialogs, num);
 		} else
 			dial = p_global->_lastDialogPtr;
-		ok = dial_scan(dial);
+		char ok = dial_scan(dial);
 		p_global->_lastDialogPtr = p_global->_dialogPtr;
 		parlemoiNormalFlag = false;
 		if (!ok) {
@@ -4956,8 +4953,8 @@ bool EdenGame::ReadDataSyncVOC(unsigned int num) {
 bool EdenGame::ReadDataSync(uint16 num) {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		long pos = READ_LE_UINT32(gameLipsync + num * 4);
-		long len = 1024;
 		if (pos != -1) {
+			long len = 1024;
 			loadpartoffile(1936, gameLipsync + 7260, pos, len);
 			return true;
 		}
@@ -6700,14 +6697,16 @@ void EdenGame::countObjects() {
 		int16 count = _objects[i]._count;
 #ifdef EDEN_DEBUG
 		count = 1;
-		goto show_all_objects;  //DEBUG
+		goto show_all_objects;
 #endif
 		if (count == 0)
 			continue;
 		if (_objects[i]._flags & ObjectFlags::ofInHands)
 			count--;
+#ifdef EDEN_DEBUG
 show_all_objects:
 		;
+#endif
 		if (count) {
 			total += count;
 			while (count--)
@@ -7047,7 +7046,7 @@ void EdenGame::testvoice() {
 void EdenGame::load() {
 	char name[132];
 	_gameLoaded = false;
-	byte oldMusic = p_global->_currMusicNum;   //TODO: from ush to byte?!
+	byte oldMusic = p_global->_currMusicNum;   //TODO: from uint16 to byte?!
 	fademusica0(1);
 	desktopcolors();
 	FlushEvents(-1, 0);
@@ -8366,22 +8365,22 @@ void EdenGame::bandeoffsetin() {
 //// cond.c
 
 char EdenGame::testCondition(int16 index) {
-	char end = 0;
-	byte op;
-	uint16 value, value2;
-	uint16 stack[32], *sp = stack, *sp2;
+	bool endFl = false;
+	uint16 stack[32];
+	uint16 *sp = stack;
 	assert(index > 0);
 	_codePtr = (byte *)getElem(gameConditions, (index - 1));
+	uint16 value;
 	do {
 		value = cher_valeur();
 		for (;;) {
-			op = *_codePtr++;
+			byte op = *_codePtr++;
 			if (op == 0xFF) {
-				end = 1;
+				endFl = true;
 				break;
 			}
 			if ((op & 0x80) == 0) {
-				value2 = cher_valeur();
+				uint16 value2 = cher_valeur();
 				value = operation(op, value, value2);
 			} else {
 				assert(sp < stack + 32);
@@ -8390,15 +8389,15 @@ char EdenGame::testCondition(int16 index) {
 				break;
 			}
 		}
-	} while (!end);
+	} while (!endFl);
 
 	if (sp != stack) {
 		*sp++ = value;
-		sp2 = stack;
+		uint16 *sp2 = stack;
 		value = *sp2++;
 		do {
-			op = *sp2++;
-			value2 = *sp2++;
+			byte op = *sp2++;
+			uint16 value2 = *sp2++;
 			value = operation(op, value, value2);
 		} while (sp2 != sp);
 	}
@@ -8409,57 +8408,57 @@ char EdenGame::testCondition(int16 index) {
 }
 
 // Original name: opera_add
-uint16 EdenGame::operAdd(uint16 v1, uint16 v2)  {
+uint16 EdenGame::operAdd(uint16 v1, uint16 v2) {
 	return v1 + v2;
 }
 
 // Original name: opera_sub
-uint16 EdenGame::operSub(uint16 v1, uint16 v2)  {
+uint16 EdenGame::operSub(uint16 v1, uint16 v2) {
 	return v1 - v2;
 }
 
 // Original name: opera_and
-uint16 EdenGame::operLogicalAnd(uint16 v1, uint16 v2)  {
+uint16 EdenGame::operLogicalAnd(uint16 v1, uint16 v2) {
 	return v1 & v2;
 }
 
 // Original name: opera_or
-uint16 EdenGame::operLogicalOr(uint16 v1, uint16 v2)   {
+uint16 EdenGame::operLogicalOr(uint16 v1, uint16 v2) {
 	return v1 | v2;
 }
 
 // Original name: opera_egal
-uint16 EdenGame::operIsEqual(uint16 v1, uint16 v2)     {
+uint16 EdenGame::operIsEqual(uint16 v1, uint16 v2) {
 	return v1 == v2 ? -1 : 0;
 }
 
 // Original name: opera_petit
-uint16 EdenGame::operIsSmaller(uint16 v1, uint16 v2)    {
+uint16 EdenGame::operIsSmaller(uint16 v1, uint16 v2) {
 	return v1 < v2 ? -1 : 0;    //TODO: all comparisons are unsigned!
 }
 
 // Original name: opera_grand
-uint16 EdenGame::operIsGreater(uint16 v1, uint16 v2)    {
+uint16 EdenGame::operIsGreater(uint16 v1, uint16 v2) {
 	return v1 > v2 ? -1 : 0;
 }
 
 // Original name: opera_diff
-uint16 EdenGame::operIsDifferent(uint16 v1, uint16 v2)     {
+uint16 EdenGame::operIsDifferent(uint16 v1, uint16 v2) {
 	return v1 != v2 ? -1 : 0;
 }
 
 // Original name: opera_petega
-uint16 EdenGame::operIsSmallerOrEqual(uint16 v1, uint16 v2)   {
+uint16 EdenGame::operIsSmallerOrEqual(uint16 v1, uint16 v2) {
 	return v1 <= v2 ? -1 : 0;
 }
 
 // Original name: opera_graega
-uint16 EdenGame::operIsGreaterOrEqual(uint16 v1, uint16 v2)   {
+uint16 EdenGame::operIsGreaterOrEqual(uint16 v1, uint16 v2) {
 	return v1 >= v2 ? -1 : 0;
 }
 
 // Original name: opera_faux
-uint16 EdenGame::operFalse(uint16 v1, uint16 v2)     {
+uint16 EdenGame::operFalse(uint16 v1, uint16 v2) {
 	return 0;
 }
 
