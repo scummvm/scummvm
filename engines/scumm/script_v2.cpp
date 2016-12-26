@@ -1131,9 +1131,6 @@ void ScummEngine_v2::o2_putActor() {
 	x = getVarOrDirectByte(PARAM_2);
 	y = getVarOrDirectByte(PARAM_3);
 
-	if (_game.id == GID_MANIAC && _game.version <= 1 && _game.platform != Common::kPlatformNES)
-		a->setFacing(180);
-
 	a->putActor(x, y);
 }
 
