@@ -1240,8 +1240,8 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 		return false;
 
 	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript)) {
-		op_debug("IF\n\tROOM == %s", roomStr(env.getCommand().room).c_str());
-		op_debug("\t&& SAID(%s, %s)", verbStr(env.getCommand().verb).c_str(), nounStr(env.getCommand().noun).c_str());
+		(void)op_debug("IF\n\tROOM == %s", roomStr(env.getCommand().room).c_str());
+		(void)op_debug("\t&& SAID(%s, %s)", verbStr(env.getCommand().verb).c_str(), nounStr(env.getCommand().noun).c_str());
 	}
 
 	for (uint i = 0; i < env.getCondCount(); ++i) {
@@ -1254,7 +1254,7 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 
 		if (numArgs < 0) {
 			if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
-				op_debug("FAIL\n");
+				(void)op_debug("FAIL\n");
 			return false;
 		}
 
@@ -1266,7 +1266,7 @@ bool AdlEngine::matchCommand(ScriptEnv &env) const {
 
 void AdlEngine::doActions(ScriptEnv &env) {
 	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
-		op_debug("THEN");
+		(void)op_debug("THEN");
 
 	for (uint i = 0; i < env.getActCount(); ++i) {
 		byte op = env.op();
@@ -1278,7 +1278,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 
 		if (numArgs < 0) {
 			if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
-				op_debug("ABORT\n");
+				(void)op_debug("ABORT\n");
 			return;
 		}
 
@@ -1286,7 +1286,7 @@ void AdlEngine::doActions(ScriptEnv &env) {
 	}
 
 	if (DebugMan.isDebugChannelEnabled(kDebugChannelScript))
-		op_debug("END\n");
+		(void)op_debug("END\n");
 }
 
 bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
