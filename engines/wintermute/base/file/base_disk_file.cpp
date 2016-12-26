@@ -150,7 +150,14 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	}
 	// File wasn't found in SearchMan, try to parse the path as a relative path.
 	if (!file) {
-		Common::FSNode searchNode = getNodeForRelativePath(filename);
+		Common::String filenameBackSlash = filename;
+		for (size_t i = 0; i < filenameBackSlash.size(); i++) {
+			if (filenameBackSlash[i] == '/') {
+				filenameBackSlash.setChar('\\', i);
+			}
+		}
+
+		Common::FSNode searchNode = getNodeForRelativePath(filenameBackSlash);
 		if (searchNode.exists() && !searchNode.isDirectory() && searchNode.isReadable()) {
 			file = searchNode.createReadStream();
 		}
