@@ -63,6 +63,10 @@ Common::String PathUtil::combine(const Common::String &path1, const Common::Stri
 	return newPath1 + newPath2;
 }
 
+bool PathUtil::hasTrailingSlash(const Common::String &path) {
+	return (path.size() > 0 && path[path.size() - 1 ] == '/');
+}
+
 //////////////////////////////////////////////////////////////////////////
 Common::String PathUtil::getDirectoryName(const Common::String &path) {
 	Common::String newPath = unifySeparators(path);
@@ -74,10 +78,10 @@ Common::String PathUtil::getDirectoryName(const Common::String &path) {
 Common::String PathUtil::getFileName(const Common::String &path) {
 	Common::String newPath = unifySeparators(path);
 	Common::String lastPart = Common::lastPathComponent(newPath, '/');
-	if (lastPart[lastPart.size() - 1 ] != '/') {
-		return lastPart;
+	if (hasTrailingSlash(newPath)) {
+		return Common::String("");
 	} else {
-		return path;
+		return lastPart;
 	}
 }
 

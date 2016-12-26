@@ -53,6 +53,10 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 				Wintermute::PathUtil::getDirectoryName(windowsCapPath),
 				Common::String("C:\\SOME\\")
 				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getDirectoryName(emptyString),
+				Common::String("")
+				);
 	}
 
 	void test_getfilename() {
@@ -73,12 +77,24 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 				Common::String("FILE.EXT")
 				);
 		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getFileName(emptyString),
+				Common::String("")
+				);
+		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getFileName(unixRelativePath),
 				Common::String("file.ext")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getFileName(windowsRelativePath),
 				Common::String("file.ext")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getFileName(windowsDirPath),
+				Common::String("")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getFileName(unixDirPath),
+				Common::String("")
 				);
 	}
 
@@ -90,6 +106,10 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(windowsCapPath),
 				Common::String("EXT")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getExtension(emptyString),
+				Common::String("")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getExtension(dualExtPath),
@@ -117,6 +137,10 @@ class PathUtilTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getFileNameWithoutExtension(windowsCapPath),
 				Common::String("FILE")
+				);
+		TS_ASSERT_EQUALS(
+				Wintermute::PathUtil::getFileNameWithoutExtension(emptyString),
+				Common::String("")
 				);
 		TS_ASSERT_EQUALS(
 				Wintermute::PathUtil::getFileNameWithoutExtension(dualExtPath),
