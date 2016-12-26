@@ -472,7 +472,7 @@ bool CRoomFlags::compareLocation(uint flags1, uint flags2) {
 	CRoomFlags f1(flags1);
 	CRoomFlags f2(flags2);
 
-	return f1.getElevatorNum() == f2.getElevatorBits() &&
+	return f1.getElevatorNum() == f2.getElevatorNum() &&
 		f1.getFloorNum() == f2.getFloorNum() &&
 		f1.getRoomNum() == f2.getRoomNum();
 }

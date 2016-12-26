@@ -413,6 +413,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		incTransitions();
 
 		if (_isFeathers) {
+			// The feather has special handling to be rejected by the SuccUBus
 			_sendLost = false;
 			sendMail(destRoomFlags, roomFlags);
 			pet->phonographAction("");
@@ -435,6 +436,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, 0);
 			}
 		} else {
+			// Send the mail to the destination
 			sendMail(pet->getRoomFlags(), roomFlags);
 			pet->phonographAction("");
 
