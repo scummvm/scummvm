@@ -124,7 +124,7 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 
 		if (chevron) {
 			chevron->_destRoomFlags = _roomFlags;
-			chevron->_isMail = _mailFlag != 0;
+			chevron->_isPendingMail = _mailFlag != 0;
 			petControl->removeFromInventory(chevron, false, false);
 			chevron->loadSurface();
 

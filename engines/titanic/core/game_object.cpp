@@ -63,7 +63,7 @@ CGameObject::CGameObject(): CNamedItem() {
 	_field44 = 0xF0;
 	_field48 = 0xF0;
 	_field4C = 0xFF;
-	_isMail = false;
+	_isPendingMail = false;
 	_destRoomFlags = 0;
 	_roomFlags = 0;
 	_visible = true;
@@ -119,7 +119,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field4C, indent + 1);
 	file->writeNumberLine(_fieldB8, indent + 1);
 	file->writeNumberLine(_visible, indent + 1);
-	file->writeNumberLine(_isMail, indent + 1);
+	file->writeNumberLine(_isPendingMail, indent + 1);
 	file->writeNumberLine(_destRoomFlags, indent + 1);
 	file->writeNumberLine(_roomFlags, indent + 1);
 
@@ -174,7 +174,7 @@ void CGameObject::load(SimpleFile *file) {
 		_field4C = file->readNumber();
 		_fieldB8 = file->readNumber();
 		_visible = file->readNumber() != 0;
-		_isMail = file->readNumber();
+		_isPendingMail = file->readNumber();
 		_destRoomFlags = file->readNumber();
 		_roomFlags = file->readNumber();
 
@@ -1451,10 +1451,10 @@ CGameObject *CGameObject::findMail(uint roomFlags) const {
 	return mailMan ? mailMan->findMail(roomFlags) : nullptr;
 }
 
-void CGameObject::removeMail(uint destRoomFlags, uint newRoomFlags) {
+void CGameObject::sendMail(uint currRoomFlags, uint newRoomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (mailMan)
-		mailMan->removeMail(destRoomFlags, newRoomFlags);
+		mailMan->sendMail(currRoomFlags, newRoomFlags);
 }
 
 void CGameObject::resetMail() {

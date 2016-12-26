@@ -56,22 +56,22 @@ void CMailMan::addMail(CGameObject *obj, uint destRoomFlags) {
 void CMailMan::setMailDest(CGameObject *obj, uint roomFlags) {
 	obj->_destRoomFlags = roomFlags;
 	obj->_roomFlags = 0;
-	obj->_isMail = true;
+	obj->_isPendingMail = true;
 }
 
 CGameObject *CMailMan::findMail(uint roomFlags) const {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
-		if (obj->_isMail && obj->_destRoomFlags == roomFlags)
+		if (obj->_isPendingMail && obj->_destRoomFlags == roomFlags)
 			return obj;
 	}
 
 	return nullptr;
 }
 
-void CMailMan::removeMail(uint destRoomFlags, uint newRoomFlags) {
+void CMailMan::sendMail(uint currRoomFlags, uint newRoomFlags) {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
-		if (obj->_isMail && obj->_destRoomFlags == destRoomFlags) {
-			obj->_isMail = false;
+		if (obj->_isPendingMail && obj->_destRoomFlags == currRoomFlags) {
+			obj->_isPendingMail = false;
 			obj->_roomFlags = newRoomFlags;
 			break;
 		}

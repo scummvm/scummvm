@@ -414,7 +414,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 		if (_isFeathers) {
 			_sendLost = false;
-			removeMail(destRoomFlags, roomFlags);
+			sendMail(destRoomFlags, roomFlags);
 			pet->phonographAction("");
 
 			if (_okStartFrame >= 0) {
@@ -435,7 +435,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, 0);
 			}
 		} else {
-			removeMail(pet->getRoomFlags(), roomFlags);
+			sendMail(pet->getRoomFlags(), roomFlags);
 			pet->phonographAction("");
 
 			if (_okStartFrame >= 0) {

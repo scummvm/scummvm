@@ -97,8 +97,8 @@ bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 }
 
 bool CPetRooms::checkDragEnd(CGameObject *item) {
-	// Ignore any item drops except valid mail items
-	if (!item->_isMail)
+	// Ignore any item drops except onto mail items
+	if (!item->_isPendingMail)
 		return false;
 
 	uint roomFlags = item->_destRoomFlags;

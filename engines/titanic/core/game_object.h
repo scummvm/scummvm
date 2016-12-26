@@ -569,7 +569,7 @@ protected:
 	int getRandomNumber(int max, int *oldVal = nullptr);
 public:
 	Rect _bounds;
-	bool _isMail;
+	bool _isPendingMail;
 	uint _destRoomFlags;
 	uint _roomFlags;
 	int _field60;
@@ -797,9 +797,9 @@ public:
 	void addMail(uint destRoomFlags);
 
 	/**
-	 * Remove an object from the mail list
+	 * Sends a pending mail object to a given destination
 	 */
-	void removeMail(uint destRoomFlags, uint newRoomFlags);
+	void sendMail(uint currRoomFlags, uint newRoomFlags);
 
 	/**
 	 * Return the full Id of the current view in a

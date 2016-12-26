@@ -71,9 +71,9 @@ public:
 	CGameObject *findMail(uint roomFlags) const;
 
 	/**
-	 * Remove a mail item
+	 * Sends a pending mail object to a given destination
 	 */
-	void removeMail(uint destRoomFlags, uint newRoomFlags);
+	void sendMail(uint currRoomFlags, uint newRoomFlags);
 
 	void resetValue() { _value = 0; }
 };

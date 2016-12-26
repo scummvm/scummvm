@@ -246,7 +246,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 
 			debugC(kDebugScripts, "Assigned room - %d", roomFlags);
 			magazine->addMail(roomFlags);
-			magazine->removeMail(roomFlags, roomFlags);
+			magazine->sendMail(roomFlags, roomFlags);
 		}
 
 		loadFrame(561);

@@ -165,7 +165,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			if (_afterReceiveStartFrame >= 0)
 				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		} else {
-			removeMail(petRoomFlags, roomFlags);
+			sendMail(petRoomFlags, roomFlags);
 			startTalking(this, 230012);
 			if (_sendStartFrame >= 0) {
 				_field158 = 4;
