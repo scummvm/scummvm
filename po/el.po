@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-27 01:19+0200\n"
+"PO-Revision-Date: 2016-12-27 01:28+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -654,7 +654,7 @@ msgstr "Αλλαγή επιλογών παιχνιδιού"
 
 #: gui/launcher.cpp:157
 msgid "~R~emove Game"
-msgstr "~Α~φαίρεση Παιχνιδιού..."
+msgstr "~Α~φαίρεση Παιχνιδιού"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
@@ -675,7 +675,7 @@ msgstr "~Δ~ιόρθ. Παιχν..."
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν..."
+msgstr "~Α~φαίρ. Παιχν."
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
@@ -1123,7 +1123,7 @@ msgstr "Διαδρομή Πρόσθετων:"
 #: gui/options.cpp:1307
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Διαδρ. Πρόσθ."
+msgstr "Διαδρ. Πρόσθ.:"
 
 #: gui/options.cpp:1318
 msgctxt "lowres"
@@ -1145,7 +1145,7 @@ msgstr "Αυτόματη αποθήκευση:"
 #: gui/options.cpp:1338
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Αυτόμ. αποθ."
+msgstr "Αυτόμ. αποθ.:"
 
 #: gui/options.cpp:1346
 msgid "Keys"
@@ -1165,7 +1165,7 @@ msgstr "Έλεγχος αναβαθμίσεων:"
 
 #: gui/options.cpp:1381
 msgid "How often to check ScummVM updates"
-msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM."
+msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM"
 
 #: gui/options.cpp:1393
 msgid "Check now"
@@ -1435,7 +1435,7 @@ msgstr "Χωρίς αποθηκ. ώρα"
 
 #: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:530
 msgid "No playtime saved"
-msgstr "Χωρίς αποθηκ. ώρα παιχν."
+msgstr "Χωρίς αποθηκ. ώρα παιχνιδιού"
 
 #: gui/saveload-dialog.cpp:442
 msgid "Do you really want to delete this saved game?"
@@ -1451,7 +1451,7 @@ msgstr "Ώρα: "
 
 #: gui/saveload-dialog.cpp:564 gui/saveload-dialog.cpp:1074
 msgid "Playtime: "
-msgstr "Ώρα παιχνιδιού:"
+msgstr "Ώρα παιχνιδιού: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
 msgid "Untitled saved game"
@@ -4047,11 +4047,11 @@ msgstr ""
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Ένταση μουσικής:"
+msgstr "Ένταση μουσικής: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Ταχύτητα υποτίτλων:"
+msgstr "Ταχύτητα υποτίτλων: "
 
 #: engines/scumm/scumm.cpp:1880
 #, c-format
