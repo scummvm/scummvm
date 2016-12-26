@@ -29,6 +29,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/utils/path_util.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/file.h"
@@ -36,6 +37,7 @@
 #include "common/archive.h"
 #include "common/tokenizer.h"
 #include "common/config-manager.h"
+
 
 namespace Wintermute {
 
@@ -150,7 +152,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	}
 	// File wasn't found in SearchMan, try to parse the path as a relative path.
 	if (!file) {
-		Common::FSNode searchNode = getNodeForRelativePath(filename);
+		Common::FSNode searchNode = getNodeForRelativePath(PathUtil::normalizeFileName(filename));
 		if (searchNode.exists() && !searchNode.isDirectory() && searchNode.isReadable()) {
 			file = searchNode.createReadStream();
 		}
