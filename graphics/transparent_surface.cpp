@@ -809,10 +809,6 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	if (filteringMode == FILTER_BILINEAR) {
 
-		// NB: The actual order of these bytes may not be correct, but
-		// since all values are treated equal, that does not matter.
-		struct tColorRGBA { byte r; byte g; byte b; byte a; };
-
 		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
 
