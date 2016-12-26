@@ -130,7 +130,7 @@ Display::Display() :
 	_frameBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 	_textBuf = new byte[TEXT_BUF_SIZE];
-	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
+	memset(_textBuf, (byte)APPLECHAR(' '), TEXT_BUF_SIZE);
 	_textBufSurface = new Graphics::Surface;
 	// For ease of copying, also use 2x scaling here
 	_textBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -267,7 +267,7 @@ void Display::clear(byte color) {
 }
 
 void Display::home() {
-	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
+	memset(_textBuf, (byte)APPLECHAR(' '), TEXT_BUF_SIZE);
 	_cursorPos = 0;
 }
 
@@ -546,7 +546,7 @@ void Display::createFont() {
 
 void Display::scrollUp() {
 	memmove(_textBuf, _textBuf + TEXT_WIDTH, TEXT_BUF_SIZE - TEXT_WIDTH);
-	memset(_textBuf + TEXT_BUF_SIZE - TEXT_WIDTH, APPLECHAR(' '), TEXT_WIDTH);
+	memset(_textBuf + TEXT_BUF_SIZE - TEXT_WIDTH, (byte)APPLECHAR(' '), TEXT_WIDTH);
 	if (_cursorPos >= TEXT_WIDTH)
 		_cursorPos -= TEXT_WIDTH;
 }
