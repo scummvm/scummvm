@@ -522,11 +522,14 @@ public:
 	}
 
 	/**
-	 * Get mail destination given the specified flags
+	 * Get the passenger class of the specified room flags
 	 */
-	int getMailDest(const CRoomFlags &roomFlags) const;
+	PassengerClass getMailDestClass(const CRoomFlags &roomFlags) const;
 
-	bool testRooms5(uint roomFlags) {
+	/**
+	 * Returns whether the given room flags specify a location with a SuccUBus
+	 */
+	bool isSuccUBusDest(uint roomFlags) {
 		return CRoomFlags(roomFlags).not5();
 	}
 

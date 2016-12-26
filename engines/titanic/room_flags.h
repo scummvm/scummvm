@@ -209,9 +209,9 @@ public:
 	void setRandomLocation(PassengerClass classNum, bool flag);
 
 	/**
-	 * Gets the succubus number associated with a given room
+	 * Gets the passenger class for a succubus associated with a given room
 	 */
-	uint getSuccUBusNum(const CString &roomName) const;
+	PassengerClass getSuccUBusClass(const CString &roomName) const;
 
 	/**
 	 * Gets the succubus room name associated with the current room flags

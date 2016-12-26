@@ -699,11 +699,11 @@ void CPetControl::resetDials0() {
 	_conversations.resetDials0();
 }
 
-int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {
+PassengerClass CPetControl::getMailDestClass(const CRoomFlags &roomFlags) const {
 	if (!roomFlags.isSuccUBusRoomFlags())
-		return (int)roomFlags.getPassengerClassNum();
+		return roomFlags.getPassengerClassNum();
 
-	return roomFlags.getSuccUBusNum(roomFlags.getSuccUBusRoomName());
+	return roomFlags.getSuccUBusClass(roomFlags.getSuccUBusRoomName());
 }
 
 void CPetControl::starsSetButtons(int val1, int val2) {

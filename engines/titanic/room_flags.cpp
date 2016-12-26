@@ -41,7 +41,7 @@ struct TransportFlagsEntry {
 struct SuccUBusFlagsEntry {
 	const char *const _roomName;
 	uint _roomFlags;
-	uint _succubusNum;
+	PassengerClass _classNum;
 };
 
 #define TRANSPORT_ROOMS_SIZE 6
@@ -56,23 +56,23 @@ const TransportFlagsEntry TRANSPORT_ROOMS[TRANSPORT_ROOMS_SIZE] = {
 
 #define SUCCUBUS_ROOMS_SIZE 17
 const SuccUBusFlagsEntry SUCCUBUS_ROOMS[SUCCUBUS_ROOMS_SIZE] = {
-	{ "ParrotLobby", 0x1D0D9, 3 },
-	{ "SculptureChamber", 0x465FB, 2 },
-	{ "Bar", 0x0B3D97, 2 },
-	{ "EmbLobby", 0x0CC971, 3 },
-	{ "MoonEmbLobby", 0x0CC971, 3 },
-	{ "MusicRoom", 0x0F34DB, 2 },
-	{ "MusicRoomLobby", 0x0F34DB, 2 },
-	{ "Titania", 0x8A397, 3 },
-	{ "BottomOfWell", 0x59FAD, 3 },
-	{ "Arboretum", 0x4D6AF, 1 },
-	{ "PromenadeDeck", 0x79C45, 2 },
-	{ "1stClassRestaurant", 0x896B9, 1 },
-	{ "CreatorsChamber", 0x2F86D, 2 },
-	{ "CreatorsChamberOn", 0x2F86D, 2 },
-	{ "BilgeRoom", 0x3D94B, 3 },
-	{ "BilgeRoomWith", 0x3D94B, 3 },
-	{ "Bridge", 0x39FCB, 3 }
+	{ "ParrotLobby", 0x1D0D9, THIRD_CLASS },
+	{ "SculptureChamber", 0x465FB, SECOND_CLASS },
+	{ "Bar", 0x0B3D97, SECOND_CLASS },
+	{ "EmbLobby", 0x0CC971, THIRD_CLASS },
+	{ "MoonEmbLobby", 0x0CC971, THIRD_CLASS },
+	{ "MusicRoom", 0x0F34DB, SECOND_CLASS },
+	{ "MusicRoomLobby", 0x0F34DB, SECOND_CLASS },
+	{ "Titania", 0x8A397, THIRD_CLASS },
+	{ "BottomOfWell", 0x59FAD, THIRD_CLASS },
+	{ "Arboretum", 0x4D6AF, FIRST_CLASS },
+	{ "PromenadeDeck", 0x79C45, SECOND_CLASS },
+	{ "1stClassRestaurant", 0x896B9, FIRST_CLASS },
+	{ "CreatorsChamber", 0x2F86D, SECOND_CLASS },
+	{ "CreatorsChamberOn", 0x2F86D, SECOND_CLASS },
+	{ "BilgeRoom", 0x3D94B, THIRD_CLASS },
+	{ "BilgeRoomWith", 0x3D94B, THIRD_CLASS },
+	{ "Bridge", 0x39FCB, THIRD_CLASS }
 };
 
 int CRoomFlags::getConditionally() const {
@@ -355,13 +355,13 @@ uint CRoomFlags::getSpecialRoomFlags(const CString &roomName) {
 	return 0;
 }
 
-uint CRoomFlags::getSuccUBusNum(const CString &roomName) const {
+PassengerClass CRoomFlags::getSuccUBusClass(const CString &roomName) const {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
 		if (roomName == SUCCUBUS_ROOMS[idx]._roomName)
-			return SUCCUBUS_ROOMS[idx]._succubusNum;
+			return SUCCUBUS_ROOMS[idx]._classNum;
 	}
 
-	return 0;
+	return NO_CLASS;
 }
 
 CString CRoomFlags::getSuccUBusRoomName() const {

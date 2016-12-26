@@ -116,14 +116,13 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		return true;
 	}
 
-	_field19C = 0;
+	_sendLost = false;
 	_mailP = mailObject;
 
 	uint roomFlags = _roomFlags;
-	if (!pet->testRooms5(roomFlags) ||
-			getPassengerClass() > pet->getMailDest(roomFlags)) {
+	if (!pet->isSuccUBusDest(roomFlags) || pet->getMailDestClass(roomFlags) < getPassengerClass()) {
 		roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
-		_field19C = 1;
+		_sendLost = true;
 	}
 
 	_isChicken = mailObject->getName() == "Chicken";

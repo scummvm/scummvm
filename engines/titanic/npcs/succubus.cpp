@@ -82,7 +82,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_field184 = 15;
 	_field188 = 0;
 	_rect2 = Rect(0, 0, 240, 340);
-	_field19C = 0;
+	_sendLost = false;
 	_soundHandle = -1;
 	_isChicken = false;
 	_isFeathers = false;
@@ -141,7 +141,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_rect2.top, indent);
 	file->writeNumberLine(_rect2.right, indent);
 	file->writeNumberLine(_rect2.bottom, indent);
-	file->writeNumberLine(_field19C, indent);
+	file->writeNumberLine(_sendLost, indent);
 	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_isChicken, indent);
 	file->writeNumberLine(_isFeathers, indent);
@@ -205,7 +205,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_rect2.top = file->readNumber();
 	_rect2.right = file->readNumber();
 	_rect2.bottom = file->readNumber();
-	_field19C = file->readNumber();
+	_sendLost = file->readNumber();
 	_soundHandle = file->readNumber();
 	_isChicken = file->readNumber();
 	_isFeathers = file->readNumber();
@@ -397,14 +397,12 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 		petDisplayMessage(2, NOTHING_IN_SUCCUBUS_TRAY);
 	} else {
-		_field19C = 0;
+		_sendLost = false;
 
 		CRoomFlags roomFlags = _roomFlags;
-		if (!pet->testRooms5(roomFlags) || getPassengerClass() > 0) {
+		if (!pet->isSuccUBusDest(roomFlags) || pet->getMailDestClass(roomFlags) < getPassengerClass()) {
 			roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
-			_field19C = 1;
-		} else {
-			pet->getMailDest(roomFlags);
+			_sendLost = true;
 		}
 
 		_isFeathers = mailObject->getName() == "Feathers";
@@ -415,7 +413,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		incTransitions();
 
 		if (_isFeathers) {
-			_field19C = 0;
+			_sendLost = false;
 			removeMail(destRoomFlags, roomFlags);
 			pet->phonographAction("");
 
@@ -593,9 +591,9 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			startTalking(this, 230022, findView());
 		} else if (_field158 == 2) {
 			startTalking(this, 230017, findView());
-		} else if (_field19C) {
+		} else if (_sendLost) {
 			startTalking(this, 230019, findView());
-			_field19C = 0;
+			_sendLost = false;
 		} else if (_isChicken) {
 			startTalking(this, 230018, findView());
 			_isChicken = false;

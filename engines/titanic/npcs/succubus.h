@@ -84,7 +84,7 @@ protected:
 	int _field190;
 	int _field194;
 	int _field198;
-	int _field19C;
+	bool _sendLost;
 	int _soundHandle;
 	bool _isChicken;
 	bool _isFeathers;
