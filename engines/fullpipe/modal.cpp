@@ -33,6 +33,7 @@
 #include "fullpipe/objectnames.h"
 
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 #include "video/avi_decoder.h"
 
 #include "engines/savestate.h"

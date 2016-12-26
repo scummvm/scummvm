@@ -25,6 +25,8 @@
 #include "engines/advancedDetector.h"
 #include "common/file.h"
 
+#include "graphics/surface.h"
+
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
 

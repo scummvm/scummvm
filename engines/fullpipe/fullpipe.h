@@ -30,8 +30,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "graphics/transparent_surface.h"
-
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
@@ -123,7 +121,7 @@ public:
 
 	void updateEvents();
 
-	Graphics::Surface _backgroundSurface;
+	Graphics::Surface *_backgroundSurface;
 	Graphics::PixelFormat *_origFormat;
 
 	GameLoader *_gameLoader;

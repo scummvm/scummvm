@@ -28,6 +28,7 @@
 #include "audio/mixer.h"
 
 #include "engines/util.h"
+#include "graphics/surface.h"
 
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
@@ -285,7 +286,8 @@ Common::Error FullpipeEngine::run() {
 	// Initialize backend
 	initGraphics(800, 600, true, &format);
 
-	_backgroundSurface.create(800, 600, format);
+	_backgroundSurface = new Graphics::Surface;
+	_backgroundSurface->create(800, 600, format);
 
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
@@ -502,7 +504,9 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 
 	delete _origFormat;
-	_backgroundSurface.free();
+	_backgroundSurface->free();
+
+	delete _backgroundSurface;
 }
 
 void FullpipeEngine::updateScreen() {
