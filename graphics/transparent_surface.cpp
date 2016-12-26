@@ -674,6 +674,7 @@ systems.
 
 
 
+struct tColorRGBA { byte r; byte g; byte b; byte a; };
 
 template <TFilteringMode filteringMode>
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
@@ -703,7 +704,6 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 
-	struct tColorRGBA { byte r; byte g; byte b; byte a; };
 	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
