@@ -21,12 +21,7 @@
  */
 
 /* Common structures, macros, and base class shared by both Indeo4 and
- * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5
- * decoding, but just in case we eventually need it, this is kept as a separate
- * file like it is in ffmpeg.
- *
- * Original copyright note: * Intel Indeo 4 (IV41, IV42, etc.) video decoder for ffmpeg
- * written, produced, and directed by Alan Smithee
+ * Indeo5 decoders, derived from ffmpeg.
  */
 
 #include "image/codecs/indeo/indeo.h"

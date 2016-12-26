@@ -22,7 +22,7 @@
 
 /* Intel Indeo 4 decompressor, derived from ffmpeg.
  *
- * Original copyright note: * Intel Indeo 3 (IV41, IV42, etc.) video decoder for ffmpeg
+ * Original copyright note: * Intel Indeo 4 (IV41, IV42, etc.) video decoder for ffmpeg
  * written, produced, and directed by Alan Smithee
  */
 
