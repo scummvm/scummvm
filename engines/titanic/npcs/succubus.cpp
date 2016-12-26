@@ -57,20 +57,20 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_endFrame8 = -1;
 	_startFrame11 = -1;
 	_endFrame11 = -1;
-	_startFrame3 = 68;
-	_endFrame3 = 168;
-	_startFrame4 = 168;
-	_endFrame4 = 248;
+	_sendStartFrame = 68;
+	_sendEndFrame = 168;
+	_receiveStartFrame = 168;
+	_receiveEndFrame = 248;
 	_onStartFrame = 0;
 	_onEndFrame = 0x0E;
 	_offStartFrame = 0x0E;
 	_offEndFrame = 27;
-	_startFrame2 = 40;
-	_endFrame2 = 68;
+	_okStartFrame = 40;
+	_okEndFrame = 68;
 	_field140 = 1;
 	_mailP = nullptr;
-	_startFrame5 = 0;
-	_endFrame5 = 0;
+	_afterReceiveStartFrame = 0;
+	_afterReceiveEndFrame = 0;
 	_startFrame12 = 224;
 	_endFrame12 = 248;
 	_field158 = 0;
@@ -88,10 +88,10 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_isFeathers = false;
 	_field1AC = 0;
 	_field1B0 = 0;
-	_startFrame6 = 303;
-	_endFrame6 = 312;
-	_startFrame7 = 313;
-	_endFrame7 = 325;
+	_emptyStartFrame = 303;
+	_emptyEndFrame = 312;
+	_smokeStartFrame = 313;
+	_smokeEndFrame = 325;
 	_field1C4 = 326;
 	_field1C8 = 347;
 	_field1CC = 348;
@@ -108,21 +108,21 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrame8, indent);
 	file->writeNumberLine(_startFrame11, indent);
 	file->writeNumberLine(_endFrame11, indent);
-	file->writeNumberLine(_startFrame3, indent);
-	file->writeNumberLine(_endFrame3, indent);
-	file->writeNumberLine(_startFrame4, indent);
-	file->writeNumberLine(_endFrame4, indent);
+	file->writeNumberLine(_sendStartFrame, indent);
+	file->writeNumberLine(_sendEndFrame, indent);
+	file->writeNumberLine(_receiveStartFrame, indent);
+	file->writeNumberLine(_receiveEndFrame, indent);
 	file->writeNumberLine(_onStartFrame, indent);
 	file->writeNumberLine(_onEndFrame, indent);
 	file->writeNumberLine(_offStartFrame, indent);
 	file->writeNumberLine(_offEndFrame, indent);
-	file->writeNumberLine(_startFrame2, indent);
-	file->writeNumberLine(_endFrame2, indent);
+	file->writeNumberLine(_okStartFrame, indent);
+	file->writeNumberLine(_okEndFrame, indent);
 	file->writeNumberLine(_field140, indent);
 
 	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_startFrame5, indent);
-	file->writeNumberLine(_endFrame5, indent);
+	file->writeNumberLine(_afterReceiveStartFrame, indent);
+	file->writeNumberLine(_afterReceiveEndFrame, indent);
 	file->writeNumberLine(_startFrame12, indent);
 	file->writeNumberLine(_endFrame12, indent);
 	file->writeNumberLine(_field158, indent);
@@ -147,10 +147,10 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isFeathers, indent);
 	file->writeNumberLine(_field1AC, indent);
 	file->writeNumberLine(_field1B0, indent);
-	file->writeNumberLine(_startFrame6, indent);
-	file->writeNumberLine(_endFrame6, indent);
-	file->writeNumberLine(_startFrame7, indent);
-	file->writeNumberLine(_endFrame7, indent);
+	file->writeNumberLine(_emptyStartFrame, indent);
+	file->writeNumberLine(_emptyEndFrame, indent);
+	file->writeNumberLine(_smokeStartFrame, indent);
+	file->writeNumberLine(_smokeEndFrame, indent);
 	file->writeNumberLine(_field1C4, indent);
 	file->writeNumberLine(_field1C8, indent);
 	file->writeNumberLine(_field1CC, indent);
@@ -172,21 +172,21 @@ void CSuccUBus::load(SimpleFile *file) {
 	_endFrame8 = file->readNumber();
 	_startFrame11 = file->readNumber();
 	_endFrame11 = file->readNumber();
-	_startFrame3 = file->readNumber();
-	_endFrame3 = file->readNumber();
-	_startFrame4 = file->readNumber();
-	_endFrame4 = file->readNumber();
+	_sendStartFrame = file->readNumber();
+	_sendEndFrame = file->readNumber();
+	_receiveStartFrame = file->readNumber();
+	_receiveEndFrame = file->readNumber();
 	_onStartFrame = file->readNumber();
 	_onEndFrame = file->readNumber();
 	_offStartFrame = file->readNumber();
 	_offEndFrame = file->readNumber();
-	_startFrame2 = file->readNumber();
-	_endFrame2 = file->readNumber();
+	_okStartFrame = file->readNumber();
+	_okEndFrame = file->readNumber();
 	_field140 = file->readNumber();
 
 	_v2 = file->readNumber();
-	_startFrame5 = file->readNumber();
-	_endFrame5 = file->readNumber();
+	_afterReceiveStartFrame = file->readNumber();
+	_afterReceiveEndFrame = file->readNumber();
 	_startFrame12 = file->readNumber();
 	_endFrame12 = file->readNumber();
 	_field158 = file->readNumber();
@@ -211,10 +211,10 @@ void CSuccUBus::load(SimpleFile *file) {
 	_isFeathers = file->readNumber();
 	_field1AC = file->readNumber();
 	_field1B0 = file->readNumber();
-	_startFrame6 = file->readNumber();
-	_endFrame6 = file->readNumber();
-	_startFrame7 = file->readNumber();
-	_endFrame7 = file->readNumber();
+	_emptyStartFrame = file->readNumber();
+	_emptyEndFrame = file->readNumber();
+	_smokeStartFrame = file->readNumber();
+	_smokeEndFrame = file->readNumber();
 	_field1C4 = file->readNumber();
 	_field1C8 = file->readNumber();
 	_field1CC = file->readNumber();
@@ -297,13 +297,13 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 			CSUBTransition transMsg;
 			transMsg.execute(this);
 		} else {
-			if (_startFrame2 >= 0) {
+			if (_okStartFrame >= 0) {
 				startTalking(this, 70219, findView());
-				playMovie(_startFrame2, _endFrame2, 0);
+				playMovie(_okStartFrame, _okEndFrame, 0);
 			}
 
-			if (_startFrame3 >= 0) {
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT);
+			if (_sendStartFrame >= 0) {
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 				_field158 = 2;
 			}
 
@@ -419,34 +419,34 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			removeMail(destRoomFlags, roomFlags);
 			pet->phonographAction("");
 
-			if (_startFrame2 >= 0) {
-				playMovie(_startFrame2, _endFrame2, 0);
+			if (_okStartFrame >= 0) {
+				playMovie(_okStartFrame, _okEndFrame, 0);
 				startTalking(this, 230022, findView());
 			}
 
 			_field158 = 1;
-			if (_startFrame3 >= 0)
-				playMovie(_startFrame3, _endFrame3, 0);
+			if (_sendStartFrame >= 0)
+				playMovie(_sendStartFrame, _sendEndFrame, 0);
 
-			if (_startFrame4 >= 0) {
+			if (_receiveStartFrame >= 0) {
 				_mailP = mailObject;
-				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT);
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
 			}
 
-			if (_startFrame5 >= 0) {
-				playMovie(_startFrame5, _endFrame5, 0);
+			if (_afterReceiveStartFrame >= 0) {
+				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, 0);
 			}
 		} else {
 			removeMail(pet->getRoomFlags(), roomFlags);
 			pet->phonographAction("");
 
-			if (_startFrame2 >= 0) {
-				playMovie(_startFrame2, _endFrame2, 0);
+			if (_okStartFrame >= 0) {
+				playMovie(_okStartFrame, _okEndFrame, 0);
 				startTalking(this, 230012, findView());
 			}
 
-			if (_startFrame3 >= 0)
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT);
+			if (_sendStartFrame >= 0)
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 		}
 	}
 
@@ -465,6 +465,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 	uint petRoomFlags = pet->getRoomFlags();
 	if (mailExists(petRoomFlags)) {
+		// There's already something to send in the tray, so you can't receive
 		switch (getRandomNumber(2)) {
 		case 0:
 			startTalking(this, 70080, findView());
@@ -482,24 +483,26 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		CGameObject *mailObject = findMailByFlags(
 			_v3 && compareRoomNameTo("Titania") ? 3 : _field140, petRoomFlags);
 		if (!mailObject) {
+			// No mail for this SuccUBus
 			if (getRandomNumber(1) == 0) {
 				startTalking(this, 70104, findView());
 			} else {
 				startTalking(this, 70105, findView());
 			}
 
-			playMovie(_startFrame6, _endFrame6, 0);
-			playMovie(_startFrame7, _endFrame7, 0);
+			playMovie(_emptyStartFrame, _emptyEndFrame, 0);
+			playMovie(_smokeStartFrame, _smokeEndFrame, 0);
 			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		} else {
+			// Receive the mail addressed to this SuccUBus
 			_mailP = mailObject;
 			startTalking(this, 230004, findView());
 
-			if (_startFrame4 >= 0) {
+			if (_receiveStartFrame >= 0) {
 				_field158 = 1;
 				_field1D8 = 1;
 				incTransitions();
-				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT);
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
 			}
 		}
 	}
@@ -585,7 +588,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		}
 	}
 
-	if (msg->_endFrame == _endFrame3) {
+	if (msg->_endFrame == _sendEndFrame) {
 		if (_field158 == 1) {
 			startTalking(this, 230022, findView());
 		} else if (_field158 == 2) {
@@ -609,7 +612,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		transMsg.execute(this);
 	}
 
-	if (msg->_endFrame == _endFrame4) {
+	if (msg->_endFrame == _receiveEndFrame) {
 		// SuccUBus disgorged mail
 		if (pet && _mailP) {
 			_mailP->setMailDest(petRoomFlags);

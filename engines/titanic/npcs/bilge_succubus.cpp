@@ -74,10 +74,10 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	CPetControl *pet = getPetControl();
 
 	if (_v2) {
-		if (_startFrame4 >= 0)
-			playMovie(_startFrame4, _endFrame4, MOVIE_GAMESTATE);
-		if (_startFrame5 >= 0)
-			playMovie(_startFrame5, _endFrame5, MOVIE_GAMESTATE);
+		if (_receiveStartFrame >= 0)
+			playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_GAMESTATE);
+		if (_afterReceiveStartFrame >= 0)
+			playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_GAMESTATE);
 
 		playSound("z#28.wav", 70);
 	} else if (!_enabled) {
@@ -93,8 +93,8 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 		if (mailObject) {
 			_mailP = mailObject;
-			if (_startFrame4 >= 0)
-				playMovie(_startFrame4, _endFrame4, MOVIE_GAMESTATE);
+			if (_receiveStartFrame >= 0)
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_GAMESTATE);
 		} else {
 			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		}
@@ -135,8 +135,8 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			startTalking(this, 230022);
 			_field158 = 1;
 
-			if (_startFrame3 >= 0)
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT);
+			if (_sendStartFrame >= 0)
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 
 			if (_bilgeStartFrame1 >= 0) {
 				playMovie(_startFrame12, _endFrame12, MOVIE_GAMESTATE);
@@ -147,30 +147,30 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		} else {
 			startTalking(this, 230012);
 			_field158 = 2;
-			if (_startFrame3 >= 0)
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			if (_startFrame4 >= 0)
-				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			if (_startFrame5 >= 0)
-				playMovie(_startFrame5, _endFrame5, MOVIE_GAMESTATE);
+			if (_sendStartFrame >= 0)
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_receiveStartFrame >= 0)
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_afterReceiveStartFrame >= 0)
+				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_GAMESTATE);
 		}
 	} else {
 		if (_isFeathers) {
 			startTalking(this, 230022);
 			_field158 = 3;
 
-			if (_startFrame3 >= 0)
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			if (_startFrame4 >= 0)
-				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			if (_startFrame5 >= 0)
-				playMovie(_startFrame5, _endFrame5, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_sendStartFrame >= 0)
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_receiveStartFrame >= 0)
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_afterReceiveStartFrame >= 0)
+				playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		} else {
 			removeMail(petRoomFlags, roomFlags);
 			startTalking(this, 230012);
-			if (_startFrame3 >= 0) {
+			if (_sendStartFrame >= 0) {
 				_field158 = 4;
-				playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 		}
 
-		if (msg->_endFrame == _endFrame3) {
+		if (msg->_endFrame == _sendEndFrame) {
 			switch (_field158) {
 			case 1:
 				stopSound(_soundHandle);
@@ -240,7 +240,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			playSound("z#25.wav", 70);
 			playSound("z#24.wav", 70);
 
-		} else if (msg->_endFrame == _endFrame4) {
+		} else if (msg->_endFrame == _receiveEndFrame) {
 			if (_mailP) {
 				_mailP->petAddToInventory();
 				CVisibleMsg visibleMsg(true);
@@ -342,14 +342,14 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	bool chickenFlag = chicken ? chicken->_string6 == "None" : false;
 
 	if (chickenFlag) {
-		if (_startFrame2 >= 0) {
+		if (_okStartFrame >= 0) {
 			startTalking(this, 70219);
-			playMovie(_startFrame2, _endFrame2, 0);
+			playMovie(_okStartFrame, _okEndFrame, 0);
 		}
 
-		if (_startFrame3 >= 0) {
+		if (_sendStartFrame >= 0) {
 			_field158 = 5;
-			playMovie(_startFrame3, _endFrame3, MOVIE_NOTIFY_OBJECT);
+			playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 		}
 
 		CViewItem *view = parseView(item->_fullViewName);
@@ -365,8 +365,8 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 		}
 	} else {
 		item->addMail(petRoomFlags);
-		if (_startFrame2 >= 0)
-			playMovie(_startFrame2, _endFrame2, 0);
+		if (_okStartFrame >= 0)
+			playMovie(_okStartFrame, _okEndFrame, 0);
 
 		petSetArea(PET_REMOTE);
 		CSUBTransition transMsg;
@@ -424,8 +424,8 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 			playSound("z#26.wav");
 		}
 
-		if (mailExists(pet->getRoomFlags()) && _startFrame2 >= 0)
-			playMovie(_startFrame2, _endFrame2, 0);
+		if (mailExists(pet->getRoomFlags()) && _okStartFrame >= 0)
+			playMovie(_okStartFrame, _okEndFrame, 0);
 
 		_enabled = true;
 		CSUBTransition transMsg;
