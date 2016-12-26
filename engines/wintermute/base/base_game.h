@@ -101,7 +101,7 @@ public:
 	virtual bool displayDebugInfo();
 
 	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
-
+	bool getBilinearFiltering() { return _bilinearFiltering; }
 	bool getSuspendedRendering() const { return _suspendedRendering; }
 
 	TTextEncoding _textEncoding;
@@ -279,6 +279,7 @@ protected:
 	VideoTheoraPlayer *_theoraPlayer;
 private:
 	bool _debugShowFPS;
+	bool _bilinearFiltering;
 	void *_debugLogFile;
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = nullptr);
