@@ -393,7 +393,7 @@ void EdenGame::flipMode() {
 // Original name: quitmiroir
 void EdenGame::quitMirror() {
 	rundcurs();
-	afficher();
+	display();
 	resetScroll();
 	saveFriezes();
 	p_global->_displayFlags = DisplayFlags::dfFlag1;
@@ -415,7 +415,7 @@ void EdenGame::clicplanval() {
 	if (p_global->_roomNum == 8 || p_global->_roomNum < 16)
 		return;
 	rundcurs();
-	afficher();
+	display();
 	if (p_global->_displayFlags == DisplayFlags::dfMirror)
 		quitMirror();
 	deplaval((p_global->_roomNum & 0xFF00) | 1); //TODO: check me
@@ -541,7 +541,7 @@ void EdenGame::move(Direction dir) {
 	debug("move: from room %4X", roomNum);
 	char newLoc = 0;
 	rundcurs();
-	afficher();
+	display();
 	p_global->_prevLocation = roomNum & 0xFF;
 	switch (dir) {
 	case kCryoNorth:
@@ -720,7 +720,7 @@ void EdenGame::handleDinaDialog() {
 			bool res = dialoscansvmas((dial_t *)getElem(gameDialogs, num));
 			_frescoTalk = false;
 			if (res) {
-				restorePhylacteryBackground();
+				restoreUnderSubtitles();
 				_frescoTalk = true;
 				persovox();
 			}
@@ -935,7 +935,7 @@ void EdenGame::actionGotoVal() {
 	uint16 target = p_global->_roomNum;
 	char obj;
 	rundcurs();
-	afficher();
+	display();
 	_scrollPos = 0;
 	obj = _curSpot2->_objectId - 14;    //TODO
 	p_global->_prevLocation = target & 0xFF;
@@ -989,7 +989,8 @@ void EdenGame::actionMoveWest() {
 		move(kCryoWest);
 }
 
-void EdenGame::afficher() {
+// Original name: afficher
+void EdenGame::display() {
 	if (!p_global->_var102 && !p_global->_var103) {
 		if (_paletteUpdateRequired) {
 			_paletteUpdateRequired = false;
@@ -1112,8 +1113,6 @@ void EdenGame::rundcurs() {
 void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	byte *pix = _bankData;
 	byte *scr = p_mainview_buf + x + y * 640;
-	byte h0, h1, mode;
-	int16 w, h;
 	if (_curBankNum != 117 && !_noPalette) {
 		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
@@ -1123,11 +1122,11 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
-	h0 = *pix++;
-	h1 = *pix++;
-	w = ((h1 & 1) << 8) | h0;
-	h = *pix++;
-	mode = *pix++;
+	byte h0 = *pix++;
+	byte h1 = *pix++;
+	int16 w = ((h1 & 1) << 8) | h0;
+	int16 h = *pix++;
+	byte mode = *pix++;
 	debug("- draw sprite %d at %d:%d, %dx%d", index, x, y, w, h);
 	if (mode != 0xFF && mode != 0xFE)
 		return;
@@ -1136,8 +1135,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	if (h1 & 0x80) {
 		// compressed
 		for (; h-- > 0;) {
-			int16 ww;
-			for (ww = w; ww > 0;) {
+			for (int16 ww = w; ww > 0;) {
 				byte c = *pix++;
 				if (c >= 0x80) {
 					if (c == 0x80) {
@@ -1180,8 +1178,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	} else {
 		// uncompressed
 		for (; h--;) {
-			int16 ww;
-			for (ww = w; ww--;) {
+			for (int16 ww = w; ww--;) {
 				byte p = *pix++;
 				if (p == 0)
 					scr++;
@@ -1196,8 +1193,6 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	byte *pix = _bankData;
 	byte *scr = p_mainview_buf + x + y * 640;
-	byte h0, h1, mode;
-	int16 w, h;
 	if (_curBankNum != 117) {
 		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
@@ -1207,11 +1202,11 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
-	h0 = *pix++;
-	h1 = *pix++;
-	w = ((h1 & 1) << 8) | h0;
-	h = *pix++;
-	mode = *pix++;
+	byte h0 = *pix++;
+	byte h1 = *pix++;
+	int16 w = ((h1 & 1) << 8) | h0;
+	int16 h = *pix++;
+	byte mode = *pix++;
 	if (mode != 0xFF && mode != 0xFE)
 		return;
 	if (y + h > 200)
@@ -1219,8 +1214,7 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	if (h1 & 0x80) {
 		// compressed
 		for (; h-- > 0;) {
-			int16 ww;
-			for (ww = w; ww > 0;) {
+			for (int16 ww = w; ww > 0;) {
 				byte c = *pix++;
 				if (c >= 0x80) {
 					if (c == 0x80) {
@@ -1252,8 +1246,7 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	} else {
 		// uncompressed
 		for (; h--;) {
-			int16 ww;
-			for (ww = w; ww--;) {
+			for (int16 ww = w; ww--;) {
 				byte p = *pix++;
 				*scr++ = p;
 			}
@@ -1270,8 +1263,7 @@ void EdenGame::getglow(int16 x, int16 y, int16 w, int16 h) {
 	_glowW = w;
 	_glowH = h;
 	for (; h--;) {
-		int16 ww;
-		for (ww = w; ww--;)
+		for (int16 ww = w; ww--;)
 			*gl++ = *scr++;
 		scr += 640 - w;
 	}
@@ -1283,8 +1275,7 @@ void EdenGame::unglow() {
 	if (_glowX < 0 || _glowY < 0)   //TODO: move it up
 		return;
 	for (; _glowH--;) {
-		int16 ww;
-		for (ww = _glowW; ww--;)
+		for (int16 ww = _glowW; ww--;)
 			*scr++ = *gl++;
 		scr += 640 - _glowW;
 	}
@@ -1324,14 +1315,12 @@ void EdenGame::glow(int16 index) {
 	else
 		dx = 0;
 
-	int16 dy;
+	int16 dy = 0;
 	if (y < 16) {
 		dy = 16 - y;
 		y = 16;
 	} else if (y + h > 175)
 		dy = y + h - 175;
-	else
-		dy = 0;
 
 	int16 pstride = dx;
 	int16 sstride = 640 - (w - dx);
@@ -1389,7 +1378,7 @@ void EdenGame::readPalette(byte *ptr) {
 // Original name: spritesurbulle
 void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 	byte *pix = _bankData;
-	byte *scr = p_subtitlesview_buf + x + y * subtitles_x_width;
+	byte *scr = p_subtitlesview_buf + x + y * _subtitlesXWidth;
 	if ((_curBankNum != 117) && (READ_LE_UINT16(pix) > 2))
 		readPalette(pix + 2);
 
@@ -1447,7 +1436,7 @@ void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 					}
 				}
 			}
-			scr += subtitles_x_width - w;
+			scr += _subtitlesXWidth - w;
 		}
 	} else {
 		// uncompressed
@@ -1459,7 +1448,7 @@ void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 				else
 					*scr++ = p;
 			}
-			scr += subtitles_x_width - w;
+			scr += _subtitlesXWidth - w;
 		}
 	}
 }
@@ -1468,7 +1457,7 @@ void EdenGame::bars_out() {
 	if (_showBlackBars)
 		return;
 
-	afficher();
+	display();
 	_underTopBarScreenRect.left = _scrollPos;
 	_underTopBarScreenRect.right = _scrollPos + 320 - 1;
 	CLBlitter_CopyViewRect(_mainView, p_underBarsView, &_underTopBarScreenRect, &_underTopBarBackupRect);
@@ -1515,7 +1504,7 @@ void EdenGame::bars_out() {
 		r20 += 3;
 		r25 -= 2;
 		r24 -= 3;
-		afficher();
+		display();
 	}
 	scr40 = (unsigned int *)p_mainview_buf;
 	scr41 = scr40 + 640 / 4;
@@ -1531,7 +1520,7 @@ void EdenGame::bars_out() {
 		*scr41++ = 0;
 		*scr42++ = 0;
 	}
-	afficher();
+	display();
 	initRects();
 	_showBlackBars = true;
 }
@@ -1563,7 +1552,7 @@ void EdenGame::showBars() {
 		CLBlitter_CopyViewRect(p_underBarsView, _mainView, &_underTopBarScreenRect, &_underTopBarBackupRect);
 		r29 += 2;
 		r28 += 3;
-		afficher();
+		display();
 	}
 	initRects();
 	_showBlackBars = false;
@@ -1841,7 +1830,8 @@ void EdenGame::scramble2(uint8 elem[4]) {
 		SWAP(elem[2], elem[3]);
 }
 
-void EdenGame::melangedir() {
+// Original name: melangedir
+void EdenGame::scrambleDirections() {
 	scramble1(tab_2CB1E[0]);
 	scramble1(tab_2CB1E[1]);
 	scramble1(tab_2CB1E[2]);
@@ -1880,7 +1870,8 @@ void EdenGame::newCitadel(char area, int16 level, Room *room) {
 	room->_flags |= RoomFlags::rf02;
 }
 
-void EdenGame::citaevol(int16 level) {
+// Original name: citaevol
+void EdenGame::evolveCitadel(int16 level) {
 	Room *room = p_global->_curAreaPtr->_citadelRoomPtr;
 	perso_t *perso = &kPersons[PER_UNKN_372];
 	byte loc = room->_location;
@@ -1990,7 +1981,7 @@ void EdenGame::constcita() {
 		citatombe(level);
 	} else {
 		p_global->_curAreaPtr->_flags &= ~AreaFlags::TyrannSighted;
-		citaevol(room->_level + 1);
+		evolveCitadel(room->_level + 1);
 	}
 }
 
@@ -1998,7 +1989,7 @@ void EdenGame::constcita() {
 void EdenGame::moveDino(perso_t *perso) {
 	int dir = getDirection(perso);
 	if (dir != -1) {
-		melangedir();
+		scrambleDirections();
 		uint8 *dirs = tab_2CB1E[dir];
 		byte loc = perso->_roomNum & 0xFF;
 		uint8 dir2 = *dirs++;
@@ -2289,7 +2280,7 @@ void EdenGame::heurepasse() {
 void EdenGame::anim_perso() {
 	if (_curBankNum != p_global->_characterImageBank)
 		loadCharacter(p_global->_characterPtr);
-	restorePhylacteryBackground();
+	restoreUnderSubtitles();
 	if (_restartAnimation) {
 		_lastAnimTicks = _vm->_timerTicks;
 		_restartAnimation = false;
@@ -2619,8 +2610,8 @@ void EdenGame::close_perso() {
 	if (p_global->_displayFlags == DisplayFlags::dfPerson && p_global->_characterPtr->_id != PersonId::pidNarrator && p_global->_eventType != EventType::etEventE) {
 		rundcurs();
 		_savedUnderSubtitles = true;
-		restorePhylacteryBackground();
-		afficher();
+		restoreUnderSubtitles();
+		display();
 		p_global->_var103 = 16;
 	}
 	if (p_global->_characterPtr->_id == PersonId::pidNarrator)
@@ -2762,7 +2753,7 @@ void EdenGame::showCharacter() {
 				displaySubtitles();
 				update_cursor();
 				_paletteUpdateRequired = true;
-				afficher();
+				display();
 				rundcurs();
 				return;
 			}
@@ -2780,7 +2771,7 @@ void EdenGame::showCharacter() {
 		_paletteUpdateRequired = true;
 		if (perso != &kPersons[PER_UNKN_156])
 			rundcurs();
-		afficher();
+		display();
 	} else {
 		displayPlace();
 		displaySubtitles();
@@ -2803,7 +2794,7 @@ void EdenGame::displayCharacterPanel() {
 	anim_perso();
 	if (perso != &kPersons[PER_UNKN_156])
 		update_cursor();
-	afficher();
+	display();
 	if (perso != &kPersons[PER_UNKN_156])
 		rundcurs();
 	p_global->_drawFlags |= DrawFlags::drDrawFlag8;
@@ -2841,7 +2832,7 @@ void EdenGame::waitEndSpeak() {
 		if (_animationActive)
 			anim_perso();
 		musicspy();
-		afficher();
+		display();
 		CLKeyboard_Read();
 		testPommeQ();
 		if (pomme_q) {
@@ -2870,7 +2861,7 @@ void EdenGame::my_bulle() {
 	p_global->_giveObj1 = 0;
 	p_global->_giveObj2 = 0;
 	p_global->_giveObj3 = 0;
-	p_global->_textWidthLimit = subtitles_x_width;
+	p_global->_textWidthLimit = _subtitlesXWidth;
 	byte *textPtr = gettxtad(p_global->_textNum);
 	_numTextLines = 0;
 	int16 words_on_line = 0;
@@ -2898,7 +2889,7 @@ void EdenGame::my_bulle() {
 #ifdef FAKE_DOS_VERSION
 				p_global->_textWidthLimit = c1 + 160;
 #else
-				p_global->_textWidthLimit = c1 + subtitles_x_center; //TODO: signed? 160 in pc ver
+				p_global->_textWidthLimit = c1 + _subtitlesXCenter; //TODO: signed? 160 in pc ver
 #endif
 			else {
 				byte c2 = *textPtr++;
@@ -2927,7 +2918,7 @@ void EdenGame::my_bulle() {
 			width = _gameFont[c];
 #ifdef FAKE_DOS_VERSION
 			if (c == ' ')
-				width = space_width;
+				width = _spaceWidth;
 #endif
 			word_width += width;
 			line_width += width;
@@ -2936,11 +2927,11 @@ void EdenGame::my_bulle() {
 				_numTextLines++;
 				if (c != ' ') {
 					*linesp++ = words_on_line;
-					*linesp++ = word_width + space_width - overrun;
+					*linesp++ = word_width + _spaceWidth - overrun;
 					line_width = word_width;
 				} else {
 					*linesp++ = words_on_line + 1;
-					*linesp++ = space_width - overrun;   //TODO: checkme
+					*linesp++ = _spaceWidth - overrun;   //TODO: checkme
 					line_width = 0;
 				}
 				word_width = 0;
@@ -2970,8 +2961,8 @@ void EdenGame::my_bulle() {
 		byte x = *icons++;
 		byte y = *icons++;
 		byte s = *icons++;
-		spriteOnSubtitle(52, x + subtitles_x_center, y - 1);
-		spriteOnSubtitle(s + 9, x + subtitles_x_center + 1, y);
+		spriteOnSubtitle(52, x + _subtitlesXCenter, y - 1);
+		spriteOnSubtitle(s + 9, x + _subtitlesXCenter + 1, y);
 	}
 }
 
@@ -2998,22 +2989,22 @@ void EdenGame::my_pr_bulle() {
 				if (c == ' ') {
 					num_words--;
 					if (pad_size >= extraSpacing) {
-						textout += extraSpacing + space_width;
+						textout += extraSpacing + _spaceWidth;
 						pad_size -= extraSpacing;
 					} else {
-						textout += pad_size + space_width;
+						textout += pad_size + _spaceWidth;
 						pad_size = 0;
 					}
 				} else {
 					int16 char_width = _gameFont[c];
 					if (!(p_global->_drawFlags & DrawFlags::drDrawMenu)) {
-						textout += subtitles_x_width;
+						textout += _subtitlesXWidth;
 						if (!_specialTextMode)
 							charsurbulle(c, 195, char_width);
 						textout++;
 						if (!_specialTextMode)
 							charsurbulle(c, 195, char_width);
-						textout -= subtitles_x_width + 1;
+						textout -= _subtitlesXWidth + 1;
 					}
 					if (_specialTextMode)
 						charsurbulle(c, 250, char_width);
@@ -3028,7 +3019,7 @@ void EdenGame::my_pr_bulle() {
 			if (c == 0xFF)
 				done = true;
 		}
-		textout = cur_out + subtitles_x_width * FONT_HEIGHT;
+		textout = cur_out + _subtitlesXWidth * FONT_HEIGHT;
 		lines++;
 		textPtr--;
 	}
@@ -3046,7 +3037,7 @@ void EdenGame::charsurbulle(byte c, byte color, int16 width) {
 			textoutptr++;
 			mask >>= 1;
 		}
-		textoutptr += subtitles_x_width - width;
+		textoutptr += _subtitlesXWidth - width;
 	}
 }
 
@@ -3059,30 +3050,30 @@ void EdenGame::displaySubtitles() {
 		y = 174;
 		if ((p_global->_drawFlags & DrawFlags::drDrawMenu) && _numTextLines == 1)
 			y = 167;
-		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + subtitles_x_scr_margin;
+		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _subtitlesXScrMargin;
 	} else {
 		y = 174;
-		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _scrollPos + subtitles_x_scr_margin;
+		dst += 640 * (y - _numTextLines * FONT_HEIGHT) + _scrollPos + _subtitlesXScrMargin;
 	}
 	if (_animationActive && !_personTalking)
 		return;
-	savePhylacteryBackground(y);
+	saveUnderSubtitles(y);
 	for (int16 h = 0; h < _numTextLines * FONT_HEIGHT + 1; h++) {
-		for (int16 w = 0; w < subtitles_x_width; w++) {
+		for (int16 w = 0; w < _subtitlesXWidth; w++) {
 			byte c = *src++;
 			if (c)
 				*dst = c;
 			dst++;
 		}
-		dst += 640 - subtitles_x_width;
+		dst += 640 - _subtitlesXWidth;
 	}
 }
 
 // Original name: sauvefondbulle
-void EdenGame::savePhylacteryBackground(int16 y) {
+void EdenGame::saveUnderSubtitles(int16 y) {
 	_underSubtitlesScreenRect.top = y - _numTextLines * FONT_HEIGHT;
-	_underSubtitlesScreenRect.left = _scrollPos + subtitles_x_scr_margin;
-	_underSubtitlesScreenRect.right = _scrollPos + subtitles_x_scr_margin + subtitles_x_width - 1;
+	_underSubtitlesScreenRect.left = _scrollPos + _subtitlesXScrMargin;
+	_underSubtitlesScreenRect.right = _scrollPos + _subtitlesXScrMargin + _subtitlesXWidth - 1;
 	_underSubtitlesScreenRect.bottom = y;
 	_underSubtitlesBackupRect.top = 0;
 	_underSubtitlesBackupRect.bottom = _numTextLines * FONT_HEIGHT;
@@ -3091,7 +3082,7 @@ void EdenGame::savePhylacteryBackground(int16 y) {
 }
 
 // Original name: restaurefondbulle
-void EdenGame::restorePhylacteryBackground() {
+void EdenGame::restoreUnderSubtitles() {
 	if (!_savedUnderSubtitles)
 		return;
 	CLBlitter_CopyViewRect(p_underSubtitlesView, _mainView, &_underSubtitlesBackupRect, &_underSubtitlesScreenRect);
@@ -3100,15 +3091,15 @@ void EdenGame::restorePhylacteryBackground() {
 
 void EdenGame::af_subtitlehnm() {
 	byte *src = p_subtitlesview_buf;
-	byte *dst = _hnmViewBuf + subtitles_x_scr_margin + (158 - _numTextLines * FONT_HEIGHT) * 320;
+	byte *dst = _hnmViewBuf + _subtitlesXScrMargin + (158 - _numTextLines * FONT_HEIGHT) * 320;
 	for (int16 y = 0; y < _numTextLines * FONT_HEIGHT; y++) {
-		for (int16 x = 0; x < subtitles_x_width; x++) {
+		for (int16 x = 0; x < _subtitlesXWidth; x++) {
 			char c = *src++;
 			if (c)
 				*dst = c;
 			dst++;
 		}
-		dst += 320 - subtitles_x_width;
+		dst += 320 - _subtitlesXWidth;
 	}
 }
 
@@ -5237,13 +5228,13 @@ void EdenGame::init_globals() {
 	initRects();
 
 	_underSubtitlesScreenRect.top = 0;
-	_underSubtitlesScreenRect.left = subtitles_x_scr_margin;
-	_underSubtitlesScreenRect.right = subtitles_x_scr_margin + subtitles_x_width - 1;
+	_underSubtitlesScreenRect.left = _subtitlesXScrMargin;
+	_underSubtitlesScreenRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
 	_underSubtitlesScreenRect.bottom = 176 - 1;
 
 	_underSubtitlesBackupRect.top = 0;
-	_underSubtitlesBackupRect.left = subtitles_x_scr_margin;
-	_underSubtitlesBackupRect.right = subtitles_x_scr_margin + subtitles_x_width - 1;
+	_underSubtitlesBackupRect.left = _subtitlesXScrMargin;
+	_underSubtitlesBackupRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
 	_underSubtitlesBackupRect.bottom = 60 - 1;
 }
 
@@ -5593,7 +5584,7 @@ void EdenGame::maj2() {
 	//TODO: ^^ inlined func?
 
 	if (p_global->_var102 || p_global->_var103)
-		afficher();
+		display();
 	else if (p_global->_varF1 == (RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01)) {
 		drawBlackBars();
 		effet1();
@@ -5681,10 +5672,10 @@ void EdenGame::openWindow() {
 	p_view2 = new View(_vm, 32, 32);
 	p_view2_buf = p_view2->_bufferPtr;
 
-	p_subtitlesview = new View(_vm, subtitles_x_width, 60);
+	p_subtitlesview = new View(_vm, _subtitlesXWidth, 60);
 	p_subtitlesview_buf = p_subtitlesview->_bufferPtr;
 
-	p_underSubtitlesView = new View(_vm, subtitles_x_width, 60);
+	p_underSubtitlesView = new View(_vm, _subtitlesXWidth, 60);
 	p_underSubtitlesView_buf = p_underSubtitlesView->_bufferPtr;
 
 	_mainView = new View(_vm, 640, 200);
@@ -5748,7 +5739,7 @@ void EdenGame::run() {
 			edmain();
 			startmusique(1);
 			drawBlackBars();
-			afficher();
+			display();
 			fadeToBlack(3);
 			ClearScreen();
 			playHNM(95);
@@ -5782,7 +5773,7 @@ void EdenGame::edmain() {
 			_demoCurrentTicks = _vm->_timerTicks;
 			if (_demoCurrentTicks - _demoStartTicks > 3000) {
 				rundcurs();
-				afficher();
+				display();
 				fademusica0(2);
 				fadeToBlack(3);
 				CLBlitter_FillScreenView(0);
@@ -5814,7 +5805,7 @@ void EdenGame::edmain() {
 		if (_animationActive)
 			anim_perso();
 		update_cursor();
-		afficher();
+		display();
 	}
 }
 
@@ -5948,7 +5939,7 @@ void EdenGame::FRDevents() {
 		_curSpot2 = _currSpot;
 	if (p_global->_displayFlags & DisplayFlags::dfFrescoes) {
 		if (_frescoTalk)
-			restorePhylacteryBackground();
+			restoreUnderSubtitles();
 		if (_currCursor == 9 && !_torchCursor) {
 			rundcurs();
 			_torchCursor = true;
@@ -6631,7 +6622,7 @@ void EdenGame::persovox() {
 }
 
 void EdenGame::endpersovox() {
-	restorePhylacteryBackground();
+	restoreUnderSubtitles();
 	if (_personTalking) {
 		_voiceChannel->stop();
 		_personTalking = false;
@@ -7019,7 +7010,7 @@ skip:
 
 void EdenGame::generique() {
 	drawBlackBars();
-	afficher();
+	display();
 	fadeToBlack(3);
 	ClearScreen();
 	int oldmusic = p_global->_currMusicNum;
@@ -7044,7 +7035,7 @@ void EdenGame::testvoice() {
 	p_global->_dialogType = DialogType::dtInspect;
 	int16 num = (kPersons[PER_ROI]._id << 3) | p_global->_dialogType;
 	dialoscansvmas((dial_t *)getElem(gameDialogs, num));
-	restorePhylacteryBackground();
+	restoreUnderSubtitles();
 	displaySubtitles();
 	persovox();
 	waitEndSpeak();
@@ -7478,7 +7469,7 @@ void EdenGame::displayTopPanel() {
 
 // Original name: affresult
 void EdenGame::displayResult() {
-	restorePhylacteryBackground();
+	restoreUnderSubtitles();
 	p_global->_characterPtr = &kPersons[19];
 	p_global->_dialogType = DialogType::dtInspect;
 	int16 num = (kPersons[PER_UNKN_156]._id << 3) | p_global->_dialogType;

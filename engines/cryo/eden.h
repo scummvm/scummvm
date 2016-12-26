@@ -106,7 +106,7 @@ private:
 	void actionMoveEast();
 	void actionMoveSouth();
 	void actionMoveWest();
-	void afficher();
+	void display();
 	void afficher128();
 	void saveFriezes();
 	void saveTopFrieze(int16 x);
@@ -144,10 +144,10 @@ private:
 	bool canMoveThere(char loc, perso_t *perso);
 	void scramble1(uint8 elem[4]);
 	void scramble2(uint8 elem[4]);
-	void melangedir();
+	void scrambleDirections();
 	bool naitredino(char persoType);
 	void newCitadel(char area, int16 level, Room *room);
-	void citaevol(int16 level);
+	void evolveCitadel(int16 level);
 	void destroyCitadelRoom(int16 roomNum);
 	void buildCitadel();
 	void citatombe(char level);
@@ -191,8 +191,8 @@ private:
 	void my_pr_bulle();
 	void charsurbulle(byte c, byte color, int16 width);
 	void displaySubtitles();
-	void savePhylacteryBackground(int16 y);
-	void restorePhylacteryBackground();
+	void saveUnderSubtitles(int16 y);
+	void restoreUnderSubtitles();
 	void af_subtitlehnm();
 	void patchPhrase();
 	void vavapers();

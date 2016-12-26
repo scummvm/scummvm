@@ -29,17 +29,17 @@
 namespace Cryo {
 
 #if 1
-const int subtitles_x_margin = 16;          //PC
-const int subtitles_x_scr_margin = 16;
-const int space_width = 6;
+const int _subtitlesXMargin = 16;          //PC
+const int _subtitlesXScrMargin = 16;
+const int _spaceWidth = 6;
 #define FAKE_DOS_VERSION
 #else
-const int subtitles_x_margin = 16;          //MAC
-const int subtitles_x_scr_margin = 16;          //MAC
-const int space_width = 4;
+const int _subtitlesXMargin = 16;          //MAC
+const int _subtitlesXScrMargin = 16;          //MAC
+const int _spaceWidth = 4;
 #endif
-const int subtitles_x_width = (320 - subtitles_x_margin * 2);
-const int subtitles_x_center = subtitles_x_width / 2;
+const int _subtitlesXWidth = (320 - _subtitlesXMargin * 2);
+const int _subtitlesXCenter = _subtitlesXWidth / 2;
 
 #endif
 
