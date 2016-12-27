@@ -4842,7 +4842,7 @@ int EdenGame::ssndfl(uint16 num) {
 		// 2. Lipsync?
 		unsigned char chunkType = h_bigfile.readByte();
 
-		uint32 val;
+		uint32 val = 0;
 		h_bigfile.read(&val, 3);
 		unsigned int chunkLen = LE32(val);
 
