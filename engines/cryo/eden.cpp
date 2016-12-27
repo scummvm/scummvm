@@ -87,7 +87,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	dword_30B04 = 0;
 	lastPhrasesFile = 0;
 	dialogSkipFlags = 0;
-	voiceSamplesBuffer = nullptr;
+	_voiceSamplesBuffer = nullptr;
 	needToFade = false;
 	lastMusicNum = 0;
 	_mainBankBuf = nullptr;
@@ -4822,22 +4822,22 @@ int EdenGame::ssndfl(uint16 num) {
 	int32 offs = file->_offs;
 	debug("* Loading sound %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
 	if (_soundAllocated) {
-		free(voiceSamplesBuffer);
-		voiceSamplesBuffer = nullptr;
+		free(_voiceSamplesBuffer);
+		_voiceSamplesBuffer = nullptr;
 		_soundAllocated = false; //TODO: bug??? no alloc
 	} else {
-		voiceSamplesBuffer = malloc(size);
+		_voiceSamplesBuffer = (byte *)malloc(size);
 		_soundAllocated = true;
 	}
 
 	h_bigfile.seek(offs, SEEK_SET);
 	//For PC loaded data is a VOC file, on Mac version this is a raw samples
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
-		h_bigfile.read(voiceSamplesBuffer, size);
+		h_bigfile.read(_voiceSamplesBuffer, size);
 	else {
 		// VOC files also include extra information for lipsync
 		// 1. Standard VOC header
-		h_bigfile.read(voiceSamplesBuffer, 0x1A);
+		h_bigfile.read(_voiceSamplesBuffer, 0x1A);
 
 		// 2. Lipsync?
 		unsigned char chunkType = h_bigfile.readByte();
@@ -4859,7 +4859,7 @@ int EdenGame::ssndfl(uint16 num) {
 		if (chunkType == 1) {
 			/*unsigned short freq = */h_bigfile.readUint16LE();
 			size = chunkLen - 2;
-			h_bigfile.read(voiceSamplesBuffer, size);
+			h_bigfile.read(_voiceSamplesBuffer, size);
 		}
 	}
 
@@ -6612,7 +6612,7 @@ void EdenGame::persovox() {
 	volumeLeft = p_global->_prefVoiceVol[0];
 	volumeRight = p_global->_prefVoiceVol[1];
 	_voiceChannel->setVolume(volumeLeft, volumeRight);
-	_voiceChannel->queueBuffer((byte*)voiceSamplesBuffer, _voiceSamplesSize, true);
+	_voiceChannel->queueBuffer(_voiceSamplesBuffer, _voiceSamplesSize, true);
 	_personTalking = true;
 	_musicFadeFlag = 0;
 	_lastAnimTicks = _vm->_timerTicks;
@@ -6627,8 +6627,8 @@ void EdenGame::endpersovox() {
 	}
 
 	if (_soundAllocated) {
-		free(voiceSamplesBuffer);
-		voiceSamplesBuffer = nullptr;
+		free(_voiceSamplesBuffer);
+		_voiceSamplesBuffer = nullptr;
 		_soundAllocated = false;
 	}
 }
