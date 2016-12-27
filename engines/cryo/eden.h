@@ -271,9 +271,9 @@ private:
 	void fadeToBlack(int delay);
 	void fadetoblack128(int delay);
 	void fadefromblack128(int delay);
-	void rectanglenoir32();
-	void setRS1(int16 sx, int16 sy, int16 ex, int16 ey);
-	void setRD1(int16 sx, int16 sy, int16 ex, int16 ey);
+	void blackRect32();
+	void setSrcRect(int16 sx, int16 sy, int16 ex, int16 ey);
+	void setDestRect(int16 sx, int16 sy, int16 ex, int16 ey);
 	void wait(int howlong);
 	void effetpix();
 	void verifh(void *ptr);

@@ -4120,28 +4120,28 @@ void EdenGame::prechargephrases(int16 vid) {
 }
 
 void EdenGame::effet1() {
-	rectanglenoir32();
+	blackRect32();
 	if (!_doubledScreen) {
-		setRS1(0, 0, 16 - 1, 4 - 1);
+		setSrcRect(0, 0, 16 - 1, 4 - 1);
 		int y = _mainView->_normal._dstTop;
 		for (int16 i = 16; i <= 96; i += 4) {
 			for (int x = _mainView->_normal._dstLeft; x < _mainView->_normal._dstLeft + 320; x += 16) {
-				setRD1(x, y + i, x + 16 - 1, y + i + 4 - 1);
+				setDestRect(x, y + i, x + 16 - 1, y + i + 4 - 1);
 				CLBlitter_CopyViewRect(p_view2, _vm->ScreenView, &rect_src, &rect_dst);
-				setRD1(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
+				setDestRect(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
 				CLBlitter_CopyViewRect(p_view2, _vm->ScreenView, &rect_src, &rect_dst);
 			}
 			CLBlitter_UpdateScreen();
 			wait(1);
 		}
 	} else {
-		setRS1(0, 0, 16 * 2 - 1, 4 * 2 - 1);
+		setSrcRect(0, 0, 16 * 2 - 1, 4 * 2 - 1);
 		int y = _mainView->_zoom._dstTop;
 		for (int16 i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
 			for (int x = _mainView->_zoom._dstLeft; x < _mainView->_zoom._dstLeft + 320 * 2; x += 16 * 2) {
-				setRD1(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
+				setDestRect(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
 				CLBlitter_CopyViewRect(p_view2, _vm->ScreenView, &rect_src, &rect_dst);
-				setRD1(x, y + 192 * 2 - i, x + 16 * 2 - 1, y + 192 * 2 - i + 4 * 2 - 1);
+				setDestRect(x, y + 192 * 2 - i, x + 16 * 2 - 1, y + 192 * 2 - i + 4 * 2 - 1);
 				CLBlitter_CopyViewRect(p_view2, _vm->ScreenView, &rect_src, &rect_dst);
 			}
 			wait(1);
@@ -4529,7 +4529,8 @@ void EdenGame::fadefromblack128(int delay) {
 	}
 }
 
-void EdenGame::rectanglenoir32() {
+// Original name: rectanglenoir32
+void EdenGame::blackRect32() {
 	// blacken 32x32 rectangle
 	int *pix = (int *)p_view2_buf;
 	for (int16 i = 0; i < 32; i++) {
@@ -4545,18 +4546,12 @@ void EdenGame::rectanglenoir32() {
 	}
 }
 
-void EdenGame::setRS1(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_src.left = sx;
-	rect_src.top = sy;
-	rect_src.right = ex;
-	rect_src.bottom = ey;
+void EdenGame::setSrcRect(int16 sx, int16 sy, int16 ex, int16 ey) {
+	rect_src = Common::Rect(sx, sy, ex, ey);
 }
 
-void EdenGame::setRD1(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_dst.left = sx;
-	rect_dst.top = sy;
-	rect_dst.right = ex;
-	rect_dst.bottom = ey;
+void EdenGame::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
+	rect_dst = Common::Rect(sx, sy, ex, ey);
 }
 
 void EdenGame::wait(int howlong) {
@@ -7392,20 +7387,20 @@ void EdenGame::cliccurstape() {
 }
 
 void EdenGame::paneltobuf() {
-	setRS1(0, 16, 320 - 1, 169 - 1);
-	setRD1(320, 16, 640 - 1, 169 - 1);
+	setSrcRect(0, 16, 320 - 1, 169 - 1);
+	setDestRect(320, 16, 640 - 1, 169 - 1);
 	CLBlitter_CopyViewRect(_mainView, _mainView, &rect_src, &rect_dst);
 }
 
 void EdenGame::cursbuftopanel() {
-	setRS1(434, 40, 525 - 1, 111 - 1);
-	setRD1(114, 40, 205 - 1, 111 - 1);
+	setSrcRect(434, 40, 525 - 1, 111 - 1);
+	setDestRect(114, 40, 205 - 1, 111 - 1);
 	CLBlitter_CopyViewRect(_mainView, _mainView, &rect_src, &rect_dst);
 }
 
 void EdenGame::langbuftopanel() {
-	setRS1(328, 42, 407 - 1, 97 - 1);
-	setRD1(8, 42,  87 - 1, 97 - 1);
+	setSrcRect(328, 42, 407 - 1, 97 - 1);
+	setDestRect(8, 42,  87 - 1, 97 - 1);
 	CLBlitter_CopyViewRect(_mainView, _mainView, &rect_src, &rect_dst);
 }
 
