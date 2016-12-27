@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 int CParrot::_v1;
 int CParrot::_v2;
 int CParrot::_v3;
-int CParrot::_v4;
+ParrotState CParrot::_state;
 int CParrot::_v5;
 
 CParrot::CParrot() : CTrueTalkNPC() {
@@ -131,7 +131,7 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_newXc, indent);
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_field130, indent);
-	file->writeNumberLine(_v4, indent);
+	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_v5, indent);
 
 	CTrueTalkNPC::save(file, indent);
@@ -155,7 +155,7 @@ void CParrot::load(SimpleFile *file) {
 	_newXc = file->readNumber();
 	_field12C = file->readNumber();
 	_field130 = file->readNumber();
-	_v4 = file->readNumber();
+	_state = (ParrotState)file->readNumber();
 	_v5 = file->readNumber();
 
 	CTrueTalkNPC::load(file);
@@ -175,13 +175,13 @@ bool CParrot::ActMsg(CActMsg *msg) {
 			statusMsg.execute("PerchCoreHolder");
 		}
 	} else if (msg->_action == "StartChickenDrag") {
-		if (!_v4) {
+		if (_state == PARROT_IN_CAGE) {
 			stopMovie();
 			startTalking(this, 280275, findView());
 			_field12C = 0;
 		}
 	} else if (msg->_action == "EnteringFromTOW" &&
-			(_v4 == 0 || _v4 == 2)) {
+			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
 		if (_v2) {
 			_v2 = 2;
 		} else {
@@ -190,7 +190,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 			detach();
 			attach(cageBar);
 
-			_v4 = 0;
+			_state = PARROT_IN_CAGE;
 			CActMsg actMsg1("OpenNow");
 			actMsg1.execute("ParrotCage");
 			CActMsg actMsg2("GainParrot");
@@ -229,7 +229,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 		}
 
 		_npcFlags &= ~NPCFLAG_2000000;
-		_v4 = 2;
+		_state = PARROT_ESCAPED;
 	} else if (_npcFlags & NPCFLAG_10000) {
 		if (_npcFlags & NPCFLAG_20000) {
 			_npcFlags = (_npcFlags & ~NPCFLAG_20000) | NPCFLAG_40000;
@@ -347,7 +347,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		"Talking5", "Talking6", "Talking7", nullptr
 	};
 
-	if (!_v4) {
+	if (_state == PARROT_IN_CAGE) {
 		setPosition(Point(_newXp, _bounds.top));
 		_field118 = 1;
 		_npcFlags &= ~(NPCFLAG_10000  |  NPCFLAG_20000  |  NPCFLAG_40000  |  NPCFLAG_80000  |  NPCFLAG_100000  |  NPCFLAG_200000  |  NPCFLAG_400000);
@@ -369,7 +369,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CParrot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
-	if (_v4 != 3) {
+	if (_state != PARROT_MAILED) {
 		CViewItem *view = msg->_param2 ? findView() : nullptr;
 		startTalking(this, msg->_action, view);
 	}
@@ -378,7 +378,7 @@ bool CParrot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_field118 && !_v4 && checkPoint(msg->_mousePos, false, true)) {
+	if (_field118 && _state == PARROT_IN_CAGE && checkPoint(msg->_mousePos, false, true)) {
 		setVisible(false);
 		CRoomItem *room = findRoom();
 
@@ -416,7 +416,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 		"Lift", "ServiceElevator", "Dome", "Home", "MoonEmbLobby", nullptr
 	};
 
-	if (!stateGetParrotMet() || _v4 == 3 || compareViewNameTo("Titania.Node 18.N"))
+	if (!stateGetParrotMet() || _state == PARROT_MAILED || compareViewNameTo("Titania.Node 18.N"))
 		return true;
 
 	// Check for rooms not to speak in
@@ -484,7 +484,7 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	};
 
 	if (!(_npcFlags & (NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000))
-			&& _visible && !_v4) {
+			&& _visible && _state == PARROT_IN_CAGE) {
 		if (!compareViewNameTo("ParrotLobby.Node 1.N"))
 			msg->_names = NAMES;
 	}
@@ -499,7 +499,7 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 	};
 
 	if (!(_npcFlags & (NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000))
-			&& _visible && !_v4 && !compareViewNameTo("ParrotLobby.Node 1.N")) {
+			&& _visible && _state == PARROT_IN_CAGE && !compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
 			if (!_v5 ||getRandomNumber(3) != 0) {
@@ -566,7 +566,7 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 bool CParrot::FrameMsg(CFrameMsg *msg) {
 	if (!compareViewNameTo("ParrotLobby.Node 1.N"))
 		return false;
-	if (_v4)
+	if (_state != PARROT_IN_CAGE)
 		return true;
 
 	Point pt = getMousePos();
@@ -709,7 +709,7 @@ bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
 	int xp = CLIP(msg->_value, 230, 480);
 	setVisible(true);
 	moveToView();
-	_v4 = 0;
+	_state = PARROT_IN_CAGE;
 
 	setPosition(Point(xp - _bounds.width() / 2, _bounds.top));
 	playRandomClip(NAMES, MOVIE_NOTIFY_OBJECT);
@@ -721,7 +721,7 @@ bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
 }
 
 bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
-	if (!_v4) {
+	if (_state == PARROT_IN_CAGE) {
 		loadMovie("z167.avi", false);
 		loadFrame(0);
 	}
@@ -730,7 +730,7 @@ bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 }
 
 bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
-	if (_v4) {
+	if (_state != PARROT_IN_CAGE) {
 		CActMsg actMsg("PanAwayFromParrot");
 		actMsg.execute(msg->_target);
 		_panTarget = nullptr;
@@ -750,7 +750,7 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 }
 
 bool CParrot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (!_v4)
+	if (_state == PARROT_IN_CAGE)
 		startTalking(this, 280259);
 
 	return true;

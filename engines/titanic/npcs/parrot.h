@@ -28,6 +28,11 @@
 
 namespace Titanic {
 
+enum ParrotState {
+	PARROT_IN_CAGE = 0, PARROT_1 = 1, PARROT_ESCAPED = 2,
+	PARROT_MAILED = 3, PARROT_4 = 4
+};
+
 class CParrot : public CTrueTalkNPC {
 	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
@@ -50,7 +55,7 @@ public:
 	static int _v1;
 	static int _v2;
 	static int _v3;
-	static int _v4;
+	static ParrotState _state;
 	static int _v5;
 private:
 	int _field108;

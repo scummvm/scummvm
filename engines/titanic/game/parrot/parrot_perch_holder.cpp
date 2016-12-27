@@ -48,7 +48,7 @@ bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!CParrot::_v1) {
 		if (CCage::_open) {
 			petDisplayMessage(CANNOT_TAKE_CAGE_LOCKED);
-		} else if (!CParrot::_v4) {
+		} else if (CParrot::_state == PARROT_IN_CAGE) {
 			CTrueTalkTriggerActionMsg triggerMsg(280252, 0, 0);
 			triggerMsg.execute(getRoot(), CParrot::_type,
 				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);

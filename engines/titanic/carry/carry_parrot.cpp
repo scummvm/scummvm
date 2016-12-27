@@ -67,7 +67,7 @@ void CCarryParrot::load(SimpleFile *file) {
 }
 
 bool CCarryParrot::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
-	CParrot::_v4 = 4;
+	CParrot::_state = PARROT_4;
 	CActMsg actMsg("Shut");
 	actMsg.execute("ParrotCage");
 
@@ -75,7 +75,7 @@ bool CCarryParrot::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 }
 
 bool CCarryParrot::TimerMsg(CTimerMsg *msg) {
-	if (CParrot::_v4 == 1 || CParrot::_v4 == 4) {
+	if (CParrot::_state == PARROT_1 || CParrot::_state == PARROT_4) {
 		if (++_freeCounter >= 30) {
 			CActMsg actMsg("FreeParrot");
 			actMsg.execute(this);
@@ -94,7 +94,7 @@ bool CCarryParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_visible) {
 		setVisible(false);
 		_fieldE0 = 0;
-		CParrot::_v4 = 2;
+		CParrot::_state = PARROT_ESCAPED;
 	}
 
 	return true;
@@ -120,7 +120,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		} else {
 			setVisible(false);
 			_fieldE0 = 0;
-			CParrot::_v4 = 2;
+			CParrot::_state = PARROT_ESCAPED;
 			playSound("z#475.wav");
 			sound8(true);
 			moveUnder(findRoom());
@@ -147,7 +147,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
-	if (CParrot::_v4 != 3) {
+	if (CParrot::_state != PARROT_MAILED) {
 		moveToView();
 		setPosition(Point(0, 0));
 		setVisible(true);
@@ -158,7 +158,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		_timerId = addTimer(1000, 1000);
 
 		_freeCounter = 0;
-		CParrot::_v4 = 1;
+		CParrot::_state = PARROT_1;
 		msg->_value3 = 1;
 
 		return CCarry::PassOnDragStartMsg(msg);
@@ -171,7 +171,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	_fieldE0 = 0;
 	playSound("z#475.wav");
 	moveUnder(findRoom());
-	CParrot::_v4 = 2;
+	CParrot::_state = PARROT_ESCAPED;
 
 	msg->_value4 = 1;
 	return true;
@@ -189,13 +189,13 @@ bool CCarryParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
 	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_character);
 	if (succubus)
-		CParrot::_v4 = 3;
+		CParrot::_state = PARROT_MAILED;
 
 	return CCarry::UseWithCharMsg(msg);
 }
 
 bool CCarryParrot::ActMsg(CActMsg *msg) {
-	if (msg->_action == "FreeParrot" && (CParrot::_v4 == 4 || CParrot::_v4 == 1)) {
+	if (msg->_action == "FreeParrot" && (CParrot::_state == PARROT_4 || CParrot::_state == PARROT_1)) {
 		CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_parrotName));
 		if (npc)
 			startTalking(npc, 0x446BF);
@@ -203,7 +203,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 		setVisible(false);
 		_fieldE0 = 0;
 
-		if (CParrot::_v4 == 4) {
+		if (CParrot::_state == PARROT_4) {
 			playSound("z#475.wav");
 
 			if (!_feathersFlag) {
@@ -225,7 +225,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 			actMsg.execute("ParrotCage");
 		}
 
-		CParrot::_v4 = 2;
+		CParrot::_state = PARROT_ESCAPED;
 		stopAnimTimer(_timerId);
 		_timerId = 0;
 	}
