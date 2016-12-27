@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-27 11:09+0200\n"
+"PO-Revision-Date: 2016-12-27 12:09+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -849,7 +849,7 @@ msgstr "Δεν ήταν δυνατή η εφαρμογή ορισμένων αλλαγών στις επιλογές γραφικών:"
 
 #: gui/options.cpp:468
 msgid "the video mode could not be changed."
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο"
+msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο."
 
 #: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
@@ -1810,7 +1810,7 @@ msgstr "Επισ~τ~ροφή στον Οδηγητή"
 #: engines/dialogs.cpp:107 engines/dialogs.cpp:183
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "Επισ~τ~ρ. στον Οδηγ."
+msgstr "Επισ~τ~ρ. στον Οδηγητή"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
 #: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
@@ -3534,7 +3534,7 @@ msgstr "Μόνο Υπότιτλοι"
 #: engines/scumm/dialogs.cpp:608
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Ομιλία & Υπότ."
+msgstr "Ομιλία & Υπότ"
 
 #: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
