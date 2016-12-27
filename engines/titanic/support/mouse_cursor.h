@@ -144,6 +144,17 @@ public:
 	void enableControl();
 
 	/**
+	 * Shows the busy cursor
+	 */
+	void setBusy();
+
+	/**
+	 * Resets the cursor back to normal
+	 */
+	void clearBusy();
+
+
+	/**
 	 * Move the mouse to a new position
 	 */
 	void setPosition(const Point &pt, double duration);

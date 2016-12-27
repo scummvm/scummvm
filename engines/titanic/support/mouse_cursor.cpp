@@ -192,6 +192,14 @@ void CMouseCursor::enableControl() {
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
 }
 
+void CMouseCursor::setBusy() {
+	setCursor(CURSOR_HOURGLASS);
+}
+
+void CMouseCursor::clearBusy() {
+	setCursor(CURSOR_ARROW);
+}
+
 void CMouseCursor::setPosition(const Point &pt, double duration) {
 	_moveStartPos = g_vm->_events->getMousePos();
 	_moveDestPos = pt;
