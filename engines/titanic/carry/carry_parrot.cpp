@@ -171,8 +171,9 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	_fieldE0 = 0;
 	playSound("z#475.wav");
 	moveUnder(findRoom());
-	msg->_value4 = 1;
+	CParrot::_v4 = 2;
 
+	msg->_value4 = 1;
 	return true;
 }
 
