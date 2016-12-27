@@ -73,6 +73,11 @@ int CScreenManager::setFontNumber(int fontNumber) {
 	return oldFontNumber;
 }
 
+void CScreenManager::preLoad() {
+	if (_textCursor)
+		_textCursor->hide();
+}
+
 /*------------------------------------------------------------------------*/
 
 OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),

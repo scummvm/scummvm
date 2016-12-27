@@ -309,6 +309,10 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 void CProjectItem::preLoad() {
 	if (_gameManager)
 		_gameManager->preLoad();
+
+	CScreenManager *scrManager = CScreenManager::_currentScreenManagerPtr;
+	if (scrManager)
+		scrManager->preLoad();
 }
 
 void CProjectItem::postLoad() {

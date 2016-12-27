@@ -228,6 +228,11 @@ public:
 	 * Set the current font number
 	 */
 	int setFontNumber(int fontNumber);
+
+	/**
+	 * Called when a game is about to be loaded
+	 */
+	void preLoad();
 };
 
 class OSScreenManager: CScreenManager {
