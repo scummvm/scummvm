@@ -48,7 +48,7 @@ bool CSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
 bool CSweetBowl::EnterViewMsg(CEnterViewMsg *msg) {
 	setVisible(false);
 	loadSound("b#43.wav");
-	playSound("b#42.wav");
+	loadSound("b#42.wav");
 	return true;
 }
 
