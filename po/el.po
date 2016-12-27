@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-27 12:09+0200\n"
+"PO-Revision-Date: 2016-12-27 22:10+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -1778,6 +1778,11 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Το παιχνίδι στο '% s' φαίνεται να είναι άγνωστο.\n"
+"Παρακαλούμε, αναφέρετε τα ακόλουθα στοιχεία στην ομάδα ScummVM μαζί με το "
+"όνομα\n"
+"του παιχνιδιού που προσπαθήσατε να προσθέσετε και την έκδοση, τη γλώσσα του, "
+"κλπ.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1855,6 +1860,10 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Λυπούμαστε, αυτή η μηχανή δεν παρέχει προς το παρόν βοήθεια εντός "
+"παιχνιδιού. Παρακαλούμε συμβουλευτείτε το αρχείο README για βασικές "
+"πληροφορίες, καθώς και για οδηγίες σχετικά με το πώς να λάβετε περαιτέρω "
+"βοήθεια."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
 #, c-format
@@ -1862,6 +1871,9 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
+"Αποτυχία αποθήκευσης του παιχνιδιού (%s)! Παρακαλούμε συμβουλευτείτε το "
+"αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με το "
+"πώς να λάβετε περαιτέρω βοήθεια."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:112
@@ -1905,6 +1917,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"Φαίνετε ότι παίζετε το παιχνίδι απευθείας\n"
+"από το CD. Αυτό είναι γνωστό ότι προκαλεί προβλήματα,\n"
+"και ως εκ τούτου συνιστάται να αντιγράψετε αντ'αυτού\n"
+"τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
+"Δείτε το αρχείο README για λεπτομέρειες."
 
 #: engines/engine.cpp:484
 msgid ""
@@ -1914,6 +1931,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"Αυτό το παιχνίδι έχει κομμάτια ήχου στο δίσκο του. Αυτά τα\n"
+"κομμάτια πρέπει να αντιγραφούν από το δίσκο με τη χρήση\n"
+"ενός κατάλληλου εργαλείου εξαγωγής ήχου CD ώστε\n"
+"να ακούσετε τη μουσική του παιχνιδιού.\n"
+"Δείτε το αρχείο README για λεπτομέρειες."
 
 #: engines/engine.cpp:542
 #, c-format
@@ -1921,6 +1943,9 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
+"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού (%s)! Παρακαλούμε συμβουλευτείτε "
+"το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
+"το πώς να λάβετε περαιτέρω βοήθεια."
 
 #: engines/engine.cpp:555
 msgid ""
@@ -2260,11 +2285,11 @@ msgstr "Κεντρικό Μενού ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
-msgstr ""
+msgstr "~Λ~ειτουργία για αριστερόχειρες"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr ""
+msgstr "~Χ~ειρισμοί μάχης Ίντυ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
@@ -2284,11 +2309,11 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
-msgstr ""
+msgstr "Χρήση ελέγχου δρομέα τύπου laptop trackpad"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
-msgstr ""
+msgstr "Πατήστε για αριστερό click, πατήστε διπλά για δεξί click"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
@@ -2591,7 +2616,7 @@ msgstr "Το DVD δεν προσαρτήθηκε"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "Δίκτυο ενεργό, ο κοινόχρηστος φάκελος προσαρτήθηκε"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up"
@@ -2599,11 +2624,11 @@ msgstr "Δίκτυο ενεργό"
 
 #: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
-msgstr ""
+msgstr ", σφάλμα κατά την προσάρτηση του κοινόχρηστου φακέλου"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
-msgstr ""
+msgstr ", ο κοινόχρηστος φάκελος δεν προσαρτήθηκε"
 
 #: backends/platform/wii/options.cpp:174
 msgid "Network down"
@@ -2611,7 +2636,7 @@ msgstr "Δίκτυο ανενεργό"
 
 #: backends/platform/wii/options.cpp:178
 msgid "Initializing network"
-msgstr ""
+msgstr "Αρχικοποίηση δικτύου"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
@@ -2620,7 +2645,7 @@ msgstr ""
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "Το δίκτυο δεν αρχικοποιήθηκε (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
@@ -2683,7 +2708,7 @@ msgstr "Θέλετε να φορτώσετε ή να αποθηκεύσετε το παιχνίδι;"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr ""
+msgstr "  Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα;  "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2703,7 +2728,7 @@ msgstr "Απεικόνιση "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
-msgstr ""
+msgstr "Θέλετε να πραγματοποιηθεί αυτοματοποιημένη σάρωση ;"
 
 #: backends/platform/wince/wince-sdl.cpp:516
 msgid "Map right click action"
@@ -2764,6 +2789,8 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
+"αλλά βρέθηκε η %d.%d."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
 msgid "Color mode"
@@ -2771,15 +2798,15 @@ msgstr "Λειτουργία χρώματος"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Χρήση έγχρωμων γραφικών"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Γραμμές σάρωσης"
 
 #: engines/adl/detection.cpp:66
 msgid "Show scanlines"
-msgstr ""
+msgstr "Προβολή γραμμών σάρωσης"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2787,7 +2814,7 @@ msgstr ""
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr ""
+msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
@@ -2795,6 +2822,7 @@ msgstr ""
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
+"Χρήση των αρχικών οθονών αποθήκευσης/φόρτωσης αντί για αυτές του ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2805,6 +2833,8 @@ msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Χρήση εναλλακτικής παλέτας, κοινής για όλα τα παιχνίδια Amiga. Αυτή ήταν η "
+"παλιά συμπεριφορά"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -2814,24 +2844,30 @@ msgstr "Υποστήριξη ποντικιού"
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
+"Ενεργοποίηση της υποστήριξης του ποντικιού. Επιτρέπει τη χρήση του ποντικιού "
+"για κίνηση και τα μενού του παιχνιδιού."
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "Χρήση γραμματοσειράς Hercules υψηλής ευκρίνειας"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Χρήση γραμματοσειράς Hercules υψηλής ευκρίνειας, όταν η γραμματοσειρά είναι "
+"διαθέσιμη"
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Παύση κατά την εισαγωγή εντολών"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Εμφανίζει ένα παράθυρο γραμμής εντολών και παύει το παιχνίδι (όπως και το "
+"SCI) αντί της γραμμής εντολών πραγματικού χρόνου."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2866,6 +2902,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Αποτυχία φόρτωσης παιχνιδιού από το αρχείο:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
 #, c-format
@@ -2874,6 +2913,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Αποτυχία αποθήκευσης παιχνιδιού στο αρχείο:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
 #, c-format
@@ -2882,6 +2924,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Επιτυχής αποθήκευση παιχνιδιού στο αρχείο:\n"
+"\n"
+"%s"
 
 #: engines/agos/animation.cpp:558
 #, c-format
@@ -2890,11 +2935,11 @@ msgstr ""
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
-msgstr ""
+msgstr "Λειτουργία για Άτομα με Αχρωματοψία"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Ενεργοποίηση λειτουργίας για Άτομα με Αχρωματοψία εξ'ορισμού"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -3144,7 +3189,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Εύκολη διεπαφή ποντικιού"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
@@ -3286,6 +3331,13 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια του Nippon "
+"Safes τα οποία θα πρέπει να μετονομαστούν.\n"
+"Τα παλιά ονόματα δεν υποστηρίζονται πλέον, οπότε δε θα είστε σε θέση να "
+"φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"\n"
+"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί την επόμενη "
+"φορά.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
@@ -3298,6 +3350,10 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"Το ScummVM τύπωσε κάποιες προειδοποιήσεις στο παράθυρο της κονσόλας σας και "
+"δεν μπορεί να εγγυηθεί ότι όλα τα αρχεία σας έχουν μετατραπεί.\n"
+"\n"
+"Παρακαλούμε αναφέρετε στην ομάδα."
 
 #: engines/pegasus/pegasus.cpp:714
 msgid "Invalid file name for saving"
@@ -3305,11 +3361,11 @@ msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Πάνω/Μεγέθυνση/Μετακίνηση Εμπρός/Άνοιγμα Θυρών"
 
 #: engines/pegasus/pegasus.cpp:2508
 msgid "Down/Zoom Out"
-msgstr ""
+msgstr "Κάτω/Σμίκρυνση"
 
 #: engines/pegasus/pegasus.cpp:2511
 msgid "Display/Hide Inventory Tray"
@@ -3317,7 +3373,7 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Εμφάνιση/Απόκρυψη Δίσκου Biochip"
 
 #: engines/pegasus/pegasus.cpp:2513
 msgid "Action/Select"
@@ -3366,6 +3422,7 @@ msgstr "Ενεργοποίηση βίντεο με μαύρες γραμμές"
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
+"Σχεδιασμός μαύρων γραμμών πάνω στα βίντεο για την αύξηση της οξύτητας τους"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3373,7 +3430,7 @@ msgstr "Προτίμηση ψηφιακών ακουστικών εφε"
 
 #: engines/sci/detection.cpp:421
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "Προτίμηση ψηφιακών ηχητικών εφέ αντί για εφέ δυναμικής σύνθεσης"
 
 #: engines/sci/detection.cpp:440
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -3384,6 +3441,8 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
+"Χρήση μιας κάρτας IBM Music Feature ή μια μονάδα σύνθεσης FM Yamaha FB-01 "
+"για έξοδο MIDI"
 
 #: engines/sci/detection.cpp:451
 msgid "Use CD audio"
@@ -3411,6 +3470,7 @@ msgstr "Χρήση ασημένιων δρομέων"
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
+"Χρήση των εναλλακτικών ασημένιων δρομέων αντί των προκαθορισμένων χρυσών"
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
@@ -3420,6 +3480,13 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
+"Η έκδοση του παιχνιδιού σας φαίνεται να είναι άγνωστη. Αν αυτή είναι *ΔΕΝ* "
+"είναι έκδοση τροποποιημένη\n"
+"από θαυμαστές (ειδικότερα, δεν είναι μια μετάφραση φτιαγμένη από θαυμαστές), "
+"παρακαλώ, αναφέρετε τα\n"
+"ακόλουθα δεδομένα στην ομάδα του ScummVM μαζί με το όνομα του παιχνιδιού που "
+"προσπαθήσατε\n"
+"να προσθέσετε και την έκδοσή του, τη γλώσσα του, κλπ.:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3427,6 +3494,9 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"Η Lite έκδοση του Putt-Putt Saves the Zoo για iOS δεν υποστηρίζεται για "
+"αποφυγή πειρατείας.\n"
+"Η πλήρης έκδοση είναι διαθέσιμη για αγορά από το Κατάστημα iTunes."
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
@@ -3465,7 +3535,7 @@ msgstr "Είστε σίγουροι ότι θέλετε να γίνει επανεκκίνηση; (Ν/Ο)Ν"
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr ""
+msgstr "Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα; (N/O)N"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
@@ -3656,15 +3726,15 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "Εναλλαγή μεταξύ φίλτρων γραφικών"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr ""
+msgstr "Αύξηση / Μείωση συντελεστή κλίμακας"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr ""
+msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -4128,10 +4198,12 @@ msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
+"το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Πιξελιασμένες μεταβάσεις σκηνής"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
@@ -4181,7 +4253,7 @@ msgstr "Εισαγωγή έκδοσης δισκέτας"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -4196,6 +4268,7 @@ msgstr ""
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
+"Βρέθηκαν βίντεο MPEG-2 αλλά το ScummVM κατασκευάστηκε χωρίς υποστήριξη MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -4212,6 +4285,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια για το Broken "
+"Sword 1 που θα πρέπει να μετατραπούν.\n"
+"Η παλιά αποθηκευμένη μορφή παιχνιδιού δεν υποστηρίζεται πλέον, οπότε δε θα "
+"είστε σε θέση να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"\n"
+"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
+"επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -4238,6 +4318,8 @@ msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
+"Βρέθηκαν βίντεο PSX αλλά το ScummVM δημιουργήθηκε χωρίς υποστήριξη χρώματος "
+"RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
@@ -4245,7 +4327,7 @@ msgstr "Προβολή ετικετών αντικειμένων"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr ""
+msgstr "Εμφάνιση ετικετών για αντικείμενα κατά την αιώρηση του ποντικιού"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
@@ -4255,6 +4337,8 @@ msgstr "Χρήση Αγγλικής ομιλίας"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Χρήση Αγγλικής ομιλίας αντί για Γερμανική για κάθε γλώσσα εκτός της "
+"Γερμανικής"
 
 #: engines/teenagent/resources.cpp:118
 msgid ""
@@ -4266,6 +4350,7 @@ msgstr ""
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
+"H παραλλαγή γραμματοσειράς δεν υπάρχει στο αρχείο δεδομένων '%s' της μηχανής."
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4275,17 +4360,17 @@ msgstr "Αποθήκευση παιχνιδιού στη θυρίδα #%d "
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η γρήγορη αποθήκευση στη θυρίδα #%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
+msgstr "Το αποθηκευμένη παιχνίδι #%d φορτώθηκε γρήγορα"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η γρήγορη φόρτωση του αποθηκευμένου παιχνιδιού #%d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
@@ -4299,11 +4384,11 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Διγραμμικό φιλτράρισμα στοιχείων (ΑΡΓΟ)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Εφαρμογή διγραμμικού φιλτραρίσματος σε μεμονωμένα στοιχεία"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
@@ -4340,6 +4425,7 @@ msgstr "Χρήση MPEG βίντεο υψηλής ανάλυσης"
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
+"Χρήση βίντεο MPEG από την έκδοση DVD αντί για το χαμηλότερης ανάλυσης AVI"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
@@ -4347,3 +4433,6 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση%u, αλλά η μηχανή αυτή "
+"υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
+"της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
