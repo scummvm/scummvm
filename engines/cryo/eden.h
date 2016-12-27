@@ -276,7 +276,7 @@ private:
 	void setDestRect(int16 sx, int16 sy, int16 ex, int16 ey);
 	void wait(int howlong);
 	void effetpix();
-	void verifh(void *ptr);
+	void verifh(byte *ptr);
 	void openbigfile();
 	void closebigfile();
 	void loadRawFile(uint16 num, byte *buffer);
@@ -289,7 +289,7 @@ private:
 	bool ReadDataSyncVOC(unsigned int num);
 	bool ReadDataSync(uint16 num);
 	void loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len);
-	void Expand_hsq(void *input, void *output);
+	void Expand_hsq(byte *input, byte *output);
 	void addInfo(byte info);
 	void unlockInfo();
 	void nextInfo();

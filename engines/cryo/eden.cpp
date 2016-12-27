@@ -4666,9 +4666,9 @@ void EdenGame::effetpix() {
 }
 
 ////// datfile.c
-void EdenGame::verifh(void *ptr) {
+void EdenGame::verifh(byte *ptr) {
 	byte sum = 0;
-	byte *head = (byte *)ptr;
+	byte *head = ptr;
 
 	for (int8 i = 0; i < 6; i++)
 		sum += *head++;
@@ -4689,7 +4689,7 @@ void EdenGame::verifh(void *ptr) {
 	for (; h3; h3--)
 		*data-- = *head--;
 	head = data + 1;
-	data = (byte *)ptr;
+	data = ptr;
 	Expand_hsq(head, data);
 }
 
@@ -4967,14 +4967,14 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	h_bigfile.read(buffer, len);
 }
 
-void EdenGame::Expand_hsq(void *input, void *output) {
-	byte   *src = (byte *)input;
-	byte   *dst = (byte *)output;
-	byte   *ptr;
-	uint16  bit;        // bit
-	uint16  queue = 0;  // queue
-	uint16  len = 0;
-	int16       ofs;
+void EdenGame::Expand_hsq(byte *input, byte *output) {
+	byte *src = input;
+	byte *dst = output;
+	byte *ptr;
+	uint16 bit;        // bit
+	uint16 queue = 0;  // queue
+	uint16 len = 0;
+	int16  ofs;
 #define GetBit										\
 	bit = queue & 1;								\
 	queue >>= 1;									\
