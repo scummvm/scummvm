@@ -21,6 +21,7 @@
  */
 
 #include "adl/adl_v4.h"
+#include "adl/display.h"
 #include "adl/detection.h"
 
 namespace Adl {
@@ -450,6 +451,68 @@ int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
 	// Long jump
 	_isRestarting = true;
 	return -1;
+}
+
+int AdlEngine_v4::o4_save(ScriptEnv &e) {
+	OP_DEBUG_0("\tSAVE_GAME()");
+
+	_display->printString(_strings_v2.saveReplace);
+	const char key = inputKey();
+
+	if (shouldQuit())
+		return -1;
+
+	if (key != APPLECHAR('Y'))
+		return 0;
+
+	const int slot = askForSlot(_strings_v2.saveInsert);
+
+	if (slot < 0)
+		return -1;
+
+	saveGameState(slot, "");
+	return 0;
+}
+
+int AdlEngine_v4::o4_restore(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESTORE_GAME()");
+
+	const int slot = askForSlot(_strings_v2.restoreInsert);
+
+	if (slot < 0)
+		return -1;
+
+	loadGameState(slot);
+	_isRestoring = false;
+
+	_picOnScreen = 0;
+	_roomOnScreen = 0;
+
+	// Long jump
+	_isRestarting = true;
+	return -1;
+}
+
+int AdlEngine_v4::o4_restart(ScriptEnv &e) {
+	OP_DEBUG_0("\tRESTART_GAME()");
+
+	while (true) {
+		_display->printString(_strings.playAgain);
+		const Common::String input(inputString());
+
+		if (shouldQuit())
+			return -1;
+
+		if (input.firstChar() == APPLECHAR('N')) {
+			return o1_quit(e);
+		} else if (input.firstChar() == APPLECHAR('Y')) {
+			// The original game loads a special save game from volume 3
+			initState();
+			// Long jump
+			_isRestarting = true;
+			return -1;
+		}
+	}
 }
 
 int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {

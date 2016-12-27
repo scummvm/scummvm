@@ -111,10 +111,10 @@ void HiRes5Engine::setupOpcodeTables() {
 	Opcode(o4_moveAllItems);
 	Opcode(o1_quit);
 	Opcode(o4_setRegion);
-	Opcode(o2_save); // TODO
+	Opcode(o4_save);
 	// 0x10
-	Opcode(o2_restore); // TODO
-	Opcode(o1_restart); // TODO
+	Opcode(o4_restore);
+	Opcode(o4_restart);
 	Opcode(o4_setRegionRoom);
 	Opcode(o_startAnimation);
 	// 0x14
@@ -244,7 +244,11 @@ void HiRes5Engine::init() {
 	stream.reset(_disk->createReadStream(0x7, 0xc));
 	_strings.lineFeeds = readString(*stream);
 
-	// TODO: opcode strings
+	stream.reset(_disk->createReadStream(0x8, 0x3, 0x00, 2));
+	_strings_v2.saveInsert = readStringAt(*stream, 0x66);
+	_strings_v2.saveReplace = readStringAt(*stream, 0x112);
+	_strings_v2.restoreInsert = readStringAt(*stream, 0x180);
+	_strings.playAgain = readStringAt(*stream, 0x247, 0xff);
 
 	_messageIds.cantGoThere = 110;
 	_messageIds.dontUnderstand = 112;

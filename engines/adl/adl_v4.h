@@ -78,6 +78,9 @@ protected:
 	int o4_setRegionToPrev(ScriptEnv &e);
 	int o4_moveAllItems(ScriptEnv &e);
 	int o4_setRegion(ScriptEnv &e);
+	int o4_save(ScriptEnv &e);
+	int o4_restore(ScriptEnv &e);
+	int o4_restart(ScriptEnv &e);
 	int o4_setRegionRoom(ScriptEnv &e);
 	int o4_setRoomPic(ScriptEnv &e);
 
