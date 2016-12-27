@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-27 01:28+0200\n"
+"PO-Revision-Date: 2016-12-27 02:00+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -675,7 +675,7 @@ msgstr "~Δ~ιόρθ. Παιχν..."
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν."
+msgstr "~Α~φαίρ. Παιχν"
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
@@ -1238,7 +1238,7 @@ msgstr "Μεταφόρτωση"
 
 #: gui/options.cpp:1430
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Άνοιγμα διαλόγου διαχείρισης μεταφορτώσεων"
 
 #: gui/options.cpp:1432
 msgid "Run server"
@@ -1376,7 +1376,7 @@ msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Εγγραφή ή Αναπαραγωγή Gameplay"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:443
@@ -1485,7 +1485,7 @@ msgstr "Εισάγετε περιγραφή για τη θυρίδα %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "%s Οδηγός Σύνδεσης Αποθήκευσης"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
@@ -1509,7 +1509,7 @@ msgstr "Επικόλληση"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Επικόλληση περιεχόμενου πρόχειρου σε πεδία"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
@@ -1566,11 +1566,11 @@ msgstr "Απενεργ. γραφικά"
 
 #: gui/ThemeEngine.cpp:453
 msgid "Standard Renderer"
-msgstr ""
+msgstr "Κανονική Απεικόνιση"
 
 #: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
 msgid "Standard"
-msgstr ""
+msgstr "Κανονικό"
 
 #: gui/ThemeEngine.cpp:455
 msgid "Antialiased Renderer"
@@ -1587,14 +1587,20 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"Το ScummVM τώρα υποστηρίζει αυτόματο έλεγχο για ενημερώσεις\n"
+"το οποίο απαιτεί πρόσβαση στο Internet.\n"
+"\n"
+"Θέλετε να ενεργοποιήσετε αυτή τη δυνατότητα;"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
+"(Μπορείτε πάντα να την ενεργοποιήσετε στο παράθυρο διαλόγου Επιλογές στην "
+"καρτέλα Διάφορα)"
 
 #: gui/updates-dialog.cpp:92
 msgid "Check for updates automatically"
-msgstr ""
+msgstr "Αυτόματος έλεγχος ενημερώσεων"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
@@ -1635,6 +1641,8 @@ msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
 #: base/main.cpp:594
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
+"Δεν ήταν δυνατή η εύρεση μηχανής η οποία να μπορεί να εκτελέσει το "
+"συγκεκριμένο παιχνίδι"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -1650,7 +1658,7 @@ msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "Μη υποστηριζόμενη λειτουργία χρώματος"
 
 #: common/error.cpp:47
 msgid "Read permission denied"
@@ -1863,7 +1871,7 @@ msgstr ""
 
 #: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης πλήρους οθόνης."
 
 #: engines/engine.cpp:373
 msgid "Could not apply filtering setting."
@@ -1939,6 +1947,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"Η επιλεγμένη συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
+"αρχείο καταγραφής για περισσότερες πληροφορίες."
 
 #: audio/mididrv.cpp:257
 #, c-format
@@ -1953,6 +1963,8 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
+"Η επιθυμητή συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
+"αρχείο καταγραφής για περισσότερες πληροφορίες."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
@@ -2000,17 +2012,19 @@ msgstr "Εξομοιωτής Ήχου C64"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr ""
+msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ολοκληρώθηκε."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ακυρώθηκε."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Ο συγχρονισμός αποθηκευμένων παιχνιδιών απέτυχε.\n"
+"Ελέγξτε τη σύνδεσή σας στο Internet."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
@@ -2168,16 +2182,16 @@ msgstr "Απενεργοποίηση φιλτραρίσματος"
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
-msgstr ""
+msgstr "Κανονικό (χωρίς κλιμάκωση)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr ""
+msgstr "Κανονικό (χωρίς κλιμάκωση)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
-msgstr ""
+msgstr "Ενεργό φίλτρο γραφικών:"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
@@ -2258,7 +2272,7 @@ msgstr ""
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr ""
+msgstr "Κύρια κλιμάκωση της οθόνης:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
@@ -2413,7 +2427,7 @@ msgstr ""
 
 #: backends/platform/tizen/form.cpp:263
 msgid "Right Click Once"
-msgstr ""
+msgstr "Δεξί Click Μια Φορά"
 
 #: backends/platform/tizen/form.cpp:271
 msgid "Move Only"
@@ -2429,7 +2443,7 @@ msgstr "Μενού Παιχνιδιού"
 
 #: backends/platform/tizen/form.cpp:304
 msgid "Show Keypad"
-msgstr ""
+msgstr "Προβολή Αριθμητικού Πληκτρολογίου"
 
 #: backends/platform/tizen/form.cpp:309
 msgid "Control Mouse"
@@ -2465,7 +2479,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "Διπλό-κτύπημα"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
@@ -2501,11 +2515,11 @@ msgstr "Άγνωστο"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr ""
+msgstr "Προσάρτηση DVD"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr ""
+msgstr "Αποπροσάρτηση DVD"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
@@ -2529,11 +2543,11 @@ msgstr "Προετοιμασία δικτύου"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr ""
+msgstr "Προσάρτηση SMB"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr ""
+msgstr "Αποπροσάρτηση SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
@@ -2590,7 +2604,7 @@ msgstr "Προβολή Πληκτρολογίου"
 
 #: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Sound on/off"
-msgstr ""
+msgstr "Ήχος ανοικτός/κλειστός"
 
 #: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Right click"
@@ -2602,7 +2616,7 @@ msgstr "Εμφάνιση/Απόκρυψη Δρομέα"
 
 #: backends/platform/wince/CEActionsPocket.cpp:51
 msgid "Free look"
-msgstr ""
+msgstr "Ελεύθερη περιήγηση"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom up"
@@ -2615,7 +2629,7 @@ msgstr "Μεγέθυνση κάτω"
 #: backends/platform/wince/CEActionsPocket.cpp:55
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Bind Keys"
-msgstr ""
+msgstr "Δέσμευση Πλήκτρων"
 
 #: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Up"
@@ -2636,7 +2650,7 @@ msgstr "Δρομέας Δεξιά"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
-msgstr ""
+msgstr "Θέλετε να φορτώσετε ή να αποθηκεύσετε το παιχνίδι;"
 
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -2653,11 +2667,11 @@ msgstr "Περιστροφή"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr ""
+msgstr "Χρήση οδηγού SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr ""
+msgstr "Απεικόνιση"
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2867,21 +2881,21 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Χρήση λαμπερής φωτεινότητας"
+msgstr "Χρήση λαμπερής παλέτας"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr ""
+msgstr "Προβολή γραφικών με χρήση της λαμπερής παλέτας του παιχνιδιού"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
 msgid "Failed to load saved game from file."
-msgstr ""
+msgstr "Η ανάγνωση αποθηκευμένου παιχνιδιού από αρχείο απέτυχε."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
 msgid "Failed to save game to file."
-msgstr ""
+msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε αρχείο απέτυχε."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -2893,7 +2907,7 @@ msgstr "Γρήγορη ταχύτητα ταινιών"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Αναπαραγωγή ταινιών με αυξημένη ταχύτητα"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
@@ -2901,11 +2915,11 @@ msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Λειτουργία Αίματος"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2920,11 +2934,11 @@ msgstr "Ενεργοποίηση κοινού στούντιο"
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr ""
+msgstr "Υποστήριξη παράλειψης"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr ""
+msgstr "Να επιτρέπεται η παράλειψη κειμένου και ταινιών"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -3213,6 +3227,8 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"Δεν ήταν δυνατή η αποθήκευση παιχνιδιού στη θυρίδα %i\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:194
 msgid "Load file"
@@ -3344,7 +3360,7 @@ msgstr "Χρήση ήχου CD"
 
 #: engines/sci/detection.cpp:452
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "Χρήση ήχου CD αντί για ήχο παιχνιδιού, όπου είναι διαθέσιμο"
 
 #: engines/sci/detection.cpp:462
 msgid "Use Windows cursors"
@@ -3354,6 +3370,7 @@ msgstr "Χρήση δρομέων Windows"
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
+"Χρήση δρομέων Windows (μικρότεροι και ασπρόμαυροι) αντί για τους δρομείς DOS"
 
 #: engines/sci/detection.cpp:473
 msgid "Use silver cursors"
@@ -3382,7 +3399,7 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:1341
 msgid "Show Object Line"
-msgstr ""
+msgstr "Προβολή Γραμμής Αντικειμένων"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
@@ -3421,11 +3438,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
-msgstr ""
+msgstr "Παίξε"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr ""
+msgstr "Εισάγετε δισκέτα αποθήκευσης/φόρτωσης παιχνιδιού"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
@@ -3455,11 +3472,11 @@ msgstr "Ονομάστε το παιχνίδι ΑΠΟΘΗΚΕΥΣΗΣ"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr ""
+msgstr "Επιλέξτε ένα παιχνίδι για ΦΟΡΤΩΣΗ"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
-msgstr ""
+msgstr "τίτλου Παιχνιδιού)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:284
@@ -3490,11 +3507,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:654
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "Επιλέξτε Επίπεδο Ικανότητας."
 
 #: engines/scumm/dialogs.cpp:656
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "Ανατρέξτε στο εγχειρίδιο Loom(TM) σας για βοήθεια."
 
 #: engines/scumm/dialogs.cpp:660
 msgid "Practice"
@@ -3510,11 +3527,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
-msgstr ""
+msgstr "Διάλογος Αποθήκευσης / Φόρτωσης"
 
 #: engines/scumm/help.cpp:77
 msgid "Skip line of text"
-msgstr ""
+msgstr "Παράλειψη γραμμής κειμένου"
 
 #: engines/scumm/help.cpp:78
 msgid "Esc"
@@ -3522,7 +3539,7 @@ msgstr "Esc"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
-msgstr ""
+msgstr "Παράλειψη ταινίας"
 
 #: engines/scumm/help.cpp:79
 msgid "Space"
@@ -3542,7 +3559,7 @@ msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
 msgid "Load saved game 1-10"
-msgstr ""
+msgstr "Φόρτωση αποθηκευμένου παιχνιδιού 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3552,7 +3569,7 @@ msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
 msgid "Save game 1-10"
-msgstr ""
+msgstr "Αποθήκευση παιχνιδιού 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -3564,7 +3581,7 @@ msgstr "Ένταση μουσικής πάνω / κάτω"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
-msgstr ""
+msgstr "Ταχύτητα κειμένου πιο αργή / πιο γρήγορη"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
@@ -3576,7 +3593,7 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
-msgstr ""
+msgstr "Εξομοίωση δεξιού κουμπιού ποντικιού"
 
 #: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
@@ -3584,7 +3601,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
-msgstr ""
+msgstr "Εμφάνιση / Απόκρυψη κονσόλας"
 
 #: engines/scumm/help.cpp:96
 msgid "Start the debugger"
@@ -3640,7 +3657,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
-msgstr ""
+msgstr "Κύριοι χειρισμοί παιχνιδιού:"
 
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162
@@ -3829,7 +3846,7 @@ msgstr "Περπάτησε"
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
 #: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
-msgstr ""
+msgstr "Αντικείμενα"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
@@ -3866,7 +3883,7 @@ msgstr "Κανονικός δρομέας"
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:244
 msgid "Comm"
-msgstr ""
+msgstr "Διαβίβαση"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
@@ -3874,11 +3891,11 @@ msgstr "Αποθήκευση / Φόρτωση / Επιλογές"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr ""
+msgstr "Άλλοι χειρισμοί του παιχνιδιού:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr ""
+msgstr "Αντικείμενα:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
@@ -3926,7 +3943,7 @@ msgstr "Τρίτο παιδί"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "Εναλλαγή Αντικειμένων/προβολή Πόντων IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -3983,23 +4000,23 @@ msgstr "Αιφνιδιαστικό χτύπημα"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "Αυτά ισχύουν όταν ο Ίντυ είναι στα αριστερά."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "Όταν ο Ίντυ είναι στα δεξιά,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "τα 7, 4 και 1 εναλλάσσονται με τα"
 
 #: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "9, 6 και 3, αντίστοιχα."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "Χειρισμός δίπτερου (αριθ. πληκτρ.):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
