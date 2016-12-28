@@ -195,6 +195,8 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 					linkItem = dynamic_cast<CLinkItem *>(
 						findNextInstanceOf(CLinkItem::_type, linkItem));
 				}
+
+				handleMouseMsg(msg, false);
 			}
 		}
 	}
