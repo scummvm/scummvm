@@ -586,6 +586,60 @@ void AdlEngine::dropItem(byte noun) {
 	printMessage(_messageIds.dontUnderstand);
 }
 
+void AdlEngine::gameLoop() {
+	uint verb = 0, noun = 0;
+	_isRestarting = false;
+
+	// When restoring from the launcher, we don't read
+	// input on the first iteration. This is needed to
+	// ensure that restoring from the launcher and
+	// restoring in-game brings us to the same game state.
+	// (Also see comment below.)
+	if (!_isRestoring) {
+		showRoom();
+
+		if (_isRestarting)
+			return;
+
+		_canSaveNow = _canRestoreNow = true;
+		getInput(verb, noun);
+		_canSaveNow = _canRestoreNow = false;
+
+		if (shouldQuit())
+			return;
+
+		// If we just restored from the GMM, we skip this command
+		// set, as no command has been input by the user
+		if (!_isRestoring)
+			checkInput(verb, noun);
+	}
+
+	if (_isRestoring) {
+		// We restored from the GMM or launcher. As restoring
+		// with "RESTORE GAME" does not end command processing,
+		// we don't break it off here either. This essentially
+		// means that restoring a game will always run through
+		// the global commands and increase the move counter
+		// before the first user input.
+		_display->printAsciiString("\r");
+		_isRestoring = false;
+		verb = _restoreVerb;
+		noun = _restoreNoun;
+	}
+
+	// Restarting does end command processing
+	if (_isRestarting)
+		return;
+
+	doAllCommands(_globalCommands, verb, noun);
+
+	if (_isRestarting)
+		return;
+
+	advanceClock();
+	_state.moves++;
+}
+
 Common::Error AdlEngine::run() {
 	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
 
@@ -611,59 +665,8 @@ Common::Error AdlEngine::run() {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	while (!_isQuitting) {
-		uint verb = 0, noun = 0;
-		_isRestarting = false;
-
-		// When restoring from the launcher, we don't read
-		// input on the first iteration. This is needed to
-		// ensure that restoring from the launcher and
-		// restoring in-game brings us to the same game state.
-		// (Also see comment below.)
-		if (!_isRestoring) {
-			showRoom();
-
-			if (_isRestarting)
-				continue;
-
-			_canSaveNow = _canRestoreNow = true;
-			getInput(verb, noun);
-			_canSaveNow = _canRestoreNow = false;
-
-			if (shouldQuit())
-				break;
-
-			// If we just restored from the GMM, we skip this command
-			// set, as no command has been input by the user
-			if (!_isRestoring)
-				checkInput(verb, noun);
-		}
-
-		if (_isRestoring) {
-			// We restored from the GMM or launcher. As restoring
-			// with "RESTORE GAME" does not end command processing,
-			// we don't break it off here either. This essentially
-			// means that restoring a game will always run through
-			// the global commands and increase the move counter
-			// before the first user input.
-			_display->printAsciiString("\r");
-			_isRestoring = false;
-			verb = _restoreVerb;
-			noun = _restoreNoun;
-		}
-
-		// Restarting does end command processing
-		if (_isRestarting)
-			continue;
-
-		doAllCommands(_globalCommands, verb, noun);
-
-		if (_isRestarting)
-			continue;
-
-		advanceClock();
-		_state.moves++;
-	}
+	while (!(_isQuitting || shouldQuit()))
+		gameLoop();
 
 	return Common::kNoError;
 }

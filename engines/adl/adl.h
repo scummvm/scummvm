@@ -239,6 +239,7 @@ protected:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
+	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
@@ -253,6 +254,7 @@ protected:
 
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
+	void getInput(uint &verb, uint &noun);
 
 	virtual Common::String formatVerbError(const Common::String &verb) const;
 	virtual Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
@@ -388,6 +390,7 @@ protected:
 	State _state;
 
 	bool _isRestarting, _isRestoring, _isQuitting;
+	bool _canSaveNow, _canRestoreNow;
 	bool _skipOneCommand;
 
 	const AdlGameDescription *_gameDescription;
@@ -412,12 +415,10 @@ private:
 	byte convertKey(uint16 ascii) const;
 	Common::String getLine() const;
 	Common::String getWord(const Common::String &line, uint &index) const;
-	void getInput(uint &verb, uint &noun);
 
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
-	bool _canSaveNow, _canRestoreNow;
 };
 
 } // End of namespace Adl

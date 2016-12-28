@@ -37,6 +37,51 @@ AdlEngine_v4::~AdlEngine_v4() {
 	delete _itemPicIndex;
 }
 
+void AdlEngine_v4::gameLoop() {
+	uint verb = 0, noun = 0;
+	_isRestarting = false;
+
+	if (_isRestoring) {
+		// Game restored from launcher. As this version of ADL long jumps to
+		// the game loop after restoring, no special action is required.
+		_isRestoring = false;
+	}
+
+	showRoom();
+
+	if (_isRestarting || shouldQuit())
+		return;
+
+	_canSaveNow = _canRestoreNow = true;
+	getInput(verb, noun);
+	_canSaveNow = _canRestoreNow = false;
+
+	if (_isRestoring) {
+		// Game restored from GMM. Move cursor to next line and jump to
+		// start of game loop.
+		_display->printAsciiString("\r");
+		_isRestoring = false;
+		return;
+	}
+
+	if (_isRestarting || shouldQuit())
+		return;
+
+	_linesPrinted = 0;
+
+	checkInput(verb, noun);
+
+	if (_isRestarting || shouldQuit())
+		return;
+
+	doAllCommands(_globalCommands, verb, noun);
+
+	if (_isRestarting || shouldQuit())
+		return;
+
+	_state.moves++;
+}
+
 void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 	_state.room = stream.readByte();
 	_state.region = stream.readByte();

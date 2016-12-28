@@ -49,6 +49,7 @@ protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
+	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
 	virtual Common::String loadMessage(uint idx) const;
