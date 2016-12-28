@@ -182,12 +182,12 @@ enum Objects {
 }
 
 enum PERSO {
-	PER_ROI = 0,
+	PER_KING = 0,
 	PER_DINA,       // 0x12
 	PER_THOO,       // 0x24
 	PER_MONK,       // 0x36
-	PER_BOURREAU,   // 0x48
-	PER_MESSAGER,   // 0x5A
+	PER_TORMENTOR,   // 0x48
+	PER_MESSENGER,   // 0x5A
 	PER_MANGO,      // 0x6C
 	PER_EVE,        // 0x7E
 	PER_AZIA,       // 0x90
@@ -200,7 +200,7 @@ enum PERSO {
 	PER_MAMMI_6,    // 0x10E
 	PER_BAMBOO,     // 0x120
 	PER_KABUKA,     // 0x132
-	PER_GARDES,     // 0x144
+	PER_GUARDS,     // 0x144
 	PER_UNKN_156,   // 0x156
 	PER_FISHER,     // 0x168
 	PER_MORKUS,     // 0x17A
@@ -839,7 +839,7 @@ struct cubeface_t {
 	char            ff_4;
 	char            ff_5;
 
-	byte   *texptr;
+	byte   *_texturePtr;
 	uint16  *indices;
 	int16           *uv;
 };
