@@ -187,7 +187,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		if (_startFrame11 >= 0)
 			playSound("z#30.wav");
 	} else {
-		if (_onEndFrame == _offEndFrame && pet) {
+		if (msg->_endFrame == _onEndFrame && pet) {
 			if (_v2) {
 				startTalking(this, getRandomNumber(1) ? 230062 : 230063);
 			} else if (!findMail(pet->getRoomFlags())) {
@@ -205,9 +205,8 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 					break;
 				}
 			}
-		}
 
-		if (msg->_endFrame == _sendEndFrame) {
+		} else if (msg->_endFrame == _sendEndFrame) {
 			switch (_field158) {
 			case 1:
 				stopSound(_soundHandle);
