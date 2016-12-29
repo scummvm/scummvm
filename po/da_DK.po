@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
 "PO-Revision-Date: 2016-12-29 07:28+0000\n"
-"Last-Translator: poulsen93 <poulsen93@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/da/>\n"
 "Language: da_DK\n"
@@ -89,7 +89,7 @@ msgstr "Vælg bibliotek med spil data"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr "Fra:"
+msgstr "Fra: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
