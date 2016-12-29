@@ -185,16 +185,16 @@ private:
 	void showCharacter();
 	void displayCharacterPanel();
 	void getDataSync();
-	int16 ReadNombreFrames();
+	int16 readFrameNumber();
 	void waitEndSpeak();
 	void my_bulle();
 	void my_pr_bulle();
-	void charsurbulle(byte c, byte color, int16 width);
+	void drawSubtitleChar(byte c, byte color, int16 width);
 	void displaySubtitles();
 	void saveUnderSubtitles(int16 y);
 	void restoreUnderSubtitles();
-	void af_subtitlehnm();
-	void patchPhrase();
+	void displayHNMSubtitle();
+	void patchSentence();
 	void vavapers();
 	void citadelle();
 	void choixzone();
@@ -257,7 +257,7 @@ private:
 	bool dial_scan(dial_t *dial);
 	bool dialoscansvmas(dial_t *dial);
 	bool dialo_even(perso_t *perso);
-	void stay_here();
+	void subjectStayHere();
 	void mort(int16 vid);
 	void evenchrono();
 	void setChrono(int16 t);
@@ -327,7 +327,7 @@ private:
 	void mouse();
 	void showMovie(char arg1);
 	void playHNM(int16 num);
-	void displayHNMSubtitles();
+	void handleHNMSubtitles();
 	void musique();
 	void startmusique(byte num);
 	void musicspy();
@@ -593,8 +593,8 @@ private:
 	int16 _numTextLines;
 	byte  _sentenceBuffer[400];
 	byte   phraseIconsBuffer[10];
-	byte   phraseCoordsBuffer[22];
-	byte   *textoutptr;
+	byte   _sentenceCoordsBuffer[22];
+	byte   *_textOutPtr;
 	byte   *textout;
 	object_t        *_curSpecialObject;
 	bool  _lastDialogChoice;
@@ -627,10 +627,10 @@ private:
 	Room *_gameRooms;
 	PakHeaderNode *bigfile_header;
 	byte *_glowBuffer;
-	byte *p_mainview_buf;
+	byte *_mainViewBuf;
 	byte *p_view2_buf;
 	byte *_gameFont;  //TODO: rename to font?
-	byte *p_subtitlesview_buf;
+	byte *_subtitlesViewBuf;
 	byte *p_underSubtitlesView_buf;
 	global_t *p_global;
 	uint16 _mouseCenterX;
@@ -648,7 +648,7 @@ private:
 
 	View  *p_view2;
 	View  *p_underSubtitlesView;
-	View  *p_subtitlesview;
+	View  *_subtitlesView;
 	View  *p_underBarsView;
 	View  *_mainView;
 	View  *_hnmView;
