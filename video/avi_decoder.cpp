@@ -721,18 +721,31 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
 		videoTrack2->setCurFrame((int)frame - 1);
 
-		// Find the index entry for the frame and read it in
-		OldIndex *entry = _indexEntries.find(_videoTracks.back().index, frame);
+		// Find the index entry for the frame
+		int indexFrame = frame;
+		OldIndex *entry = nullptr;
+		do {
+			entry = _indexEntries.find(_videoTracks.back().index, indexFrame);
+		} while (!entry && --indexFrame >= 0);
 		assert(entry);
 
+		// Read in the frame
 		Common::SeekableReadStream *chunk = nullptr;
 		_fileStream->seek(entry->offset + 8);
 		_videoTracks.back().chunkSearchOffset = entry->offset;
 
 		if (entry->size != 0)
 			chunk = _fileStream->readStream(entry->size);
-
 		videoTrack2->decodeFrame(chunk);
+
+		if (indexFrame < frame) {
+			TrackStatus &status = _videoTracks.back();
+			while (indexFrame++ < frame) {
+				// There was no index entry for the desired frame, so an earlier one was decoded.
+				// We now have to sequentially decode frames until we get to the desired frame
+				handleNextPacket(status);
+			}
+		}
 	}
 
 	// Set the video track's frame
