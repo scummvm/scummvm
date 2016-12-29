@@ -70,8 +70,8 @@ protected:
 	CGameObject *_mailP;
 	int _afterReceiveStartFrame;
 	int _afterReceiveEndFrame;
-	int _startFrame12;
-	int _endFrame12;
+	int _trayOutStartFrame;
+	int _trayOutEndFrame;
 	int _field158;
 	bool _field15C;
 	CString _string2;

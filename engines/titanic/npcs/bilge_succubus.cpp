@@ -42,26 +42,26 @@ BEGIN_MESSAGE_MAP(CBilgeSuccUBus, CSuccUBus)
 END_MESSAGE_MAP()
 
 CBilgeSuccUBus::CBilgeSuccUBus() : CSuccUBus(),
-		_bilgeStartFrame1(-1), _bilgeEndFrame1(-1),
-		_bilgeStartFrame2(-1), _bilgeEndFrame2(-1) {
+		_sneezing2StartFrame(-1), _sneezing2EndFrame(-1),
+		_sneezing1StartFrame(-1), _sneezing1EndFrame(-1) {
 }
 
 void CBilgeSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_bilgeStartFrame1, indent);
-	file->writeNumberLine(_bilgeEndFrame1, indent);
-	file->writeNumberLine(_bilgeStartFrame2, indent);
-	file->writeNumberLine(_bilgeEndFrame2, indent);
+	file->writeNumberLine(_sneezing2StartFrame, indent);
+	file->writeNumberLine(_sneezing2EndFrame, indent);
+	file->writeNumberLine(_sneezing1StartFrame, indent);
+	file->writeNumberLine(_sneezing1EndFrame, indent);
 
 	CSuccUBus::save(file, indent);
 }
 
 void CBilgeSuccUBus::load(SimpleFile *file) {
 	file->readNumber();
-	_bilgeStartFrame1 = file->readNumber();
-	_bilgeEndFrame1 = file->readNumber();
-	_bilgeStartFrame2 = file->readNumber();
-	_bilgeEndFrame2 = file->readNumber();
+	_sneezing2StartFrame = file->readNumber();
+	_sneezing2EndFrame = file->readNumber();
+	_sneezing1StartFrame = file->readNumber();
+	_sneezing1EndFrame = file->readNumber();
 
 	CSuccUBus::load(file);
 }
@@ -137,10 +137,10 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			if (_sendStartFrame >= 0)
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 
-			if (_bilgeStartFrame1 >= 0) {
-				playMovie(_startFrame12, _endFrame12, MOVIE_GAMESTATE);
-				playMovie(_bilgeStartFrame2, _bilgeEndFrame2, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-				playMovie(_bilgeStartFrame1, _bilgeEndFrame1, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			if (_sneezing2StartFrame >= 0) {
+				playMovie(_trayOutStartFrame, _trayOutEndFrame, MOVIE_GAMESTATE);
+				playMovie(_sneezing1StartFrame, _sneezing1EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				playMovie(_sneezing2StartFrame, _sneezing2EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 				incTransitions();
 			}
 		} else {
@@ -180,7 +180,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (msg->_endFrame == _endFrame12) {
+	if (msg->_endFrame == _trayOutEndFrame) {
 		if (_offStartFrame >= 0)
 			playSound("z#27.wav");
 	} else if (msg->_endFrame == _offEndFrame) {
@@ -234,10 +234,6 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			CSUBTransition transMsg;
 			transMsg.execute(this);
 
-		} else if (msg->_endFrame == _bilgeEndFrame2) {
-			playSound("z#25.wav", 70);
-			playSound("z#24.wav", 70);
-
 		} else if (msg->_endFrame == _receiveEndFrame) {
 			if (_mailP) {
 				_mailP->petAddToInventory();
@@ -251,7 +247,11 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 				transMsg.execute(this);
 			}
 
-		} else if (msg->_endFrame == _bilgeEndFrame1) {
+		} else if (msg->_endFrame == _sneezing1EndFrame) {
+			playSound("z#25.wav", 70);
+			playSound("z#24.wav", 70);
+
+		} else if (msg->_endFrame == _sneezing2EndFrame) {
 			changeView("BilgeRoomWith.Node 1.N", "");
 			_v2 = 0;
 			resetMail();
@@ -440,10 +440,10 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 bool CBilgeSuccUBus::TurnOff(CTurnOff *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (pet && mailExists(pet->getRoomFlags()) && _startFrame12 >= 0)
-		playMovie(_startFrame12, _endFrame12, MOVIE_NOTIFY_OBJECT);
-	else if (_endFrame12 >= 0)
-		playMovie(_endFrame12, _endFrame12, MOVIE_NOTIFY_OBJECT);
+	if (pet && mailExists(pet->getRoomFlags()) && _trayOutStartFrame >= 0)
+		playMovie(_trayOutStartFrame, _trayOutEndFrame, MOVIE_NOTIFY_OBJECT);
+	else if (_trayOutEndFrame >= 0)
+		playMovie(_trayOutEndFrame, _trayOutEndFrame, MOVIE_NOTIFY_OBJECT);
 
 	if (_soundHandle != -1) {
 		stopSound(_soundHandle);

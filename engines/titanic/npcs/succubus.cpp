@@ -71,8 +71,8 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_mailP = nullptr;
 	_afterReceiveStartFrame = 0;
 	_afterReceiveEndFrame = 0;
-	_startFrame12 = 224;
-	_endFrame12 = 248;
+	_trayOutStartFrame = 224;
+	_trayOutEndFrame = 248;
 	_field158 = 0;
 	_field15C = 0;
 	_string2 = "NULL";
@@ -123,8 +123,8 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_afterReceiveStartFrame, indent);
 	file->writeNumberLine(_afterReceiveEndFrame, indent);
-	file->writeNumberLine(_startFrame12, indent);
-	file->writeNumberLine(_endFrame12, indent);
+	file->writeNumberLine(_trayOutStartFrame, indent);
+	file->writeNumberLine(_trayOutEndFrame, indent);
 	file->writeNumberLine(_field158, indent);
 	file->writeNumberLine(_field15C, indent);
 
@@ -187,8 +187,8 @@ void CSuccUBus::load(SimpleFile *file) {
 	_v2 = file->readNumber();
 	_afterReceiveStartFrame = file->readNumber();
 	_afterReceiveEndFrame = file->readNumber();
-	_startFrame12 = file->readNumber();
-	_endFrame12 = file->readNumber();
+	_trayOutStartFrame = file->readNumber();
+	_trayOutEndFrame = file->readNumber();
 	_field158 = file->readNumber();
 	_field15C = file->readNumber();
 

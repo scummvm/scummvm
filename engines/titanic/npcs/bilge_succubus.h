@@ -41,10 +41,10 @@ class CBilgeSuccUBus : public CSuccUBus {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 public:
-	int _bilgeStartFrame1;
-	int _bilgeEndFrame1;
-	int _bilgeStartFrame2;
-	int _bilgeEndFrame2;
+	int _sneezing2StartFrame;
+	int _sneezing2EndFrame;
+	int _sneezing1StartFrame;
+	int _sneezing1EndFrame;
 public:
 	CLASSDEF;
 	CBilgeSuccUBus();
