@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-29 07:28+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-29 07:29+0000\n"
+"Last-Translator: poulsen93 <poulsen93@gmail.com>\n"
 "Language-Team: Danish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/da/>\n"
 "Language: da_DK\n"
@@ -97,16 +97,16 @@ msgstr "Til: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Annuller download"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Annuller download"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Skjul"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
@@ -701,7 +701,7 @@ msgstr ""
 
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Denne mappe kan ikke bruges endnu, der downloades filer til den!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
