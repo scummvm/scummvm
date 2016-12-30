@@ -479,7 +479,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			//free(_bitmap);
+			free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -772,6 +772,7 @@ Bitmap::Bitmap() {
 	_flags = 0;
 	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
+	_copied_surface = false;
 }
 
 Bitmap::Bitmap(Bitmap *src) {
@@ -784,15 +785,16 @@ Bitmap::Bitmap(Bitmap *src) {
 	_height = src->_height;
 	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
+	_copied_surface = true;
 	_flipping = src->_flipping;
 }
 
 Bitmap::~Bitmap() {
-	if (_pixels)
-		free(_pixels);
 
-	_surface->free();
+	if (!_copied_surface)
+		_surface->free();
 	delete _surface;
+	_surface = 0;
 
 	_pixels = 0;
 }

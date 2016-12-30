@@ -552,6 +552,8 @@ void Movement::draw(bool flipFlag, int angle) {
 	} else {
 		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	}
+	//Prevent memory leak after new was used to create bmp in reverseImage()
+	delete bmp;
 
 	if (_currDynamicPhase->_rect->top) {
 		if (!_currDynamicPhase->_convertedBitmap) {

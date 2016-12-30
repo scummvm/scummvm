@@ -45,6 +45,7 @@ struct Bitmap {
 	int _flags;
 	Graphics::TransparentSurface *_surface;
 	int _flipping;
+	bool _copied_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);
