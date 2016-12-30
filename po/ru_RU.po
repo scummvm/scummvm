@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-30 21:55+0000\n"
-"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
+"PO-Revision-Date: 2016-12-30 22:33+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -848,7 +848,7 @@ msgstr "полноэкранный режим не может быть изменён"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr "режим фильтрования не может быть изменён"
+msgstr "режим фильтрации не может быть изменён"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -873,7 +873,7 @@ msgstr "Масштабировать графику"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr "Использовать линейное масштабирования для увеличения разрешения"
+msgstr "Использовать линейную фильтрацию для увеличения разрешения"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1887,7 +1887,7 @@ msgstr "Не могу применить полноэкранный режим."
 
 #: engines/engine.cpp:373
 msgid "Could not apply filtering setting."
-msgstr "Не могу применить настройки масштабирования."
+msgstr "Не могу применить настройки фильтрации."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2204,12 +2204,12 @@ msgstr "Коррекция соотношения сторон выключена"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
 msgid "Filtering enabled"
-msgstr "Масштабирование включено"
+msgstr "Фильтрация включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
 msgid "Filtering disabled"
-msgstr "Масштабирование выключено"
+msgstr "Фильрация выключена"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
