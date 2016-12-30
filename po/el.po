@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-27 22:13+0200\n"
+"PO-Revision-Date: 2016-12-30 13:17+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -1296,11 +1296,11 @@ msgstr "Εφαρμογή"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
-msgstr ""
+msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
 
 #: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Μια άλλη αποθήκευση σύννεφου είναι ήδη ενεργή."
 
 #: gui/options.cpp:1667
 msgid ""
@@ -1541,7 +1541,7 @@ msgstr "θα πρέπει να επιτρέψετε την πρόσβαση στον αποθηκευτικό χώρο σας."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Κάποια άλλη Αποθήκευση είναι ενεργή. Επιθυμείτε να τη διακόψετε;"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
@@ -1633,7 +1633,7 @@ msgstr "Σβήσιμο τιμής"
 #: base/main.cpp:253
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr ""
+msgstr "Η μηχανή δεν υποστηρίζει επίπεδο εντοπισμού σφαλμάτων '%s'"
 
 #: base/main.cpp:327
 msgid "Menu"
@@ -1895,7 +1895,7 @@ msgstr "Δεν ήταν δυνατή η προετοιμασία μορφής χρώματος."
 
 #: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
 
 #: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
@@ -2121,13 +2121,13 @@ msgstr "Έξοδος"
 #: backends/events/gph/gph-events.cpp:428
 #: backends/events/openpandora/op-events.cpp:168
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr "Touchscreen 'Λειτουργία Tap' - Αριστερό Click"
+msgstr "'Λειτουργία Tap' οθόνης αφής - Αριστερό Click"
 
 #: backends/events/gph/gph-events.cpp:387
 #: backends/events/gph/gph-events.cpp:430
 #: backends/events/openpandora/op-events.cpp:170
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr "Touchscreen 'Λειτουργία Tap' - Δεξί Click"
+msgstr "'Λειτουργία Tap' οθόνης αφής - Δεξί Click"
 
 #: backends/events/gph/gph-events.cpp:389
 #: backends/events/gph/gph-events.cpp:432
@@ -2297,7 +2297,7 @@ msgstr "Προβολή δρομέα ποντικιού"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr ""
+msgstr "Συγκράτηση στις άκρες"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
@@ -2321,7 +2321,7 @@ msgstr "Ευαισθησία"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr ""
+msgstr "Αρχική πάνω κλίμακα οθόνης:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
@@ -2329,15 +2329,15 @@ msgstr "Κύρια κλιμάκωση της οθόνης:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
-msgstr ""
+msgstr "Κλίμακα υλικού (γρήγορη, αλλά χαμηλής ποιότητας)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
-msgstr ""
+msgstr "Κλίμακα λογισμικού (καλή ποιότητα, αλλά πιο αργή)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr ""
+msgstr "Χωρίς κλίμακα (πρέπει να κυλίσετε την οθόνη αριστερά και δεξιά)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
@@ -2345,7 +2345,7 @@ msgstr "Φωτεινότητα:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
-msgstr ""
+msgstr "Ήχος υψηλής ποιότητας (πιο αργό) (επανεκκίνηση)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
@@ -2464,7 +2464,7 @@ msgstr "Γρήγορη λειτουργία"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Debugger"
-msgstr ""
+msgstr "Εντοπιστής σφαλμάτων"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 msgid "Global menu"
@@ -2640,7 +2640,7 @@ msgstr "Αρχικοποίηση δικτύου"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "Εξάντληση χρονικού ορίου κατά την αρχικοποίηση δικτύου"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
@@ -2951,6 +2951,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια για το Drascula "
+"που θα πρέπει να μετατραπούν.\n"
+"Η παλιά αποθηκευμένη μορφή παιχνιδιών δεν υποστηρίζεται πλέον, οπότε δε θα "
+"είστε σε θέση να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"\n"
+"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
+"επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
@@ -3050,7 +3057,7 @@ msgstr ""
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr ""
+msgstr "Ενεργοποίηση ραβδογραμμάτων για hit points"
 
 #: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
 msgid "Move Forward"
@@ -3158,6 +3165,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
+"Φαίνεται πως χρησιμοποιείτε μια συσκευή General MIDI,\n"
+"αλλά το παιχνίδι σας υποστηρίζει μόνο Roland MT32 MIDI.\n"
+"Προσπαθούμε να χαρτογραφήσουμε τα όργανα της\n"
+"Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
+"ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
@@ -3169,6 +3181,13 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Το ακόλουθο αποθηκευμένο αρχείο του αρχικού παιχνιδιού έχει βρεθεί στο "
+"φάκελο του παιχνιδιού σας:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Θέλετε να χρησιμοποιήσετε αυτό το αποθηκευμένο αρχείο παιχνιδιού με το "
+"ScummVM;\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -3194,6 +3213,7 @@ msgstr "Εύκολη διεπαφή ποντικιού"
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
 msgstr ""
+"Εμφανίζει τα ονόματα των αντικειμένων όταν αιωρείται το ποντίκι πάνω τους"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
@@ -3201,7 +3221,7 @@ msgstr ""
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Κινούμενη διεπαφή παιχνιδιού"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
@@ -3254,6 +3274,8 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
+"Η χρήση του αρχείου εγκατάστασης 'arcriven.z' λειτουργεί επίσης. Επιπλέον, "
+"μπορείτε να χρησιμοποιήσετε το εκτελέσιμο του Mac 'Riven'."
 
 #: engines/mohawk/riven.cpp:162
 msgid ""
@@ -4229,11 +4251,11 @@ msgstr "Εμφάνιση πορτρέτων χαρακτήρων κατά τη διάρκεια συνομιλίας"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Κύλιση διαλόγων όταν εμφανίζονται"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "Κύλιση διαλόγων διεπαφής όταν εμφανίζονται, αντί να εμφανίζονται άμεσα"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
@@ -4263,6 +4285,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr ""
+"Βρέθηκαν ταινίες DXA αλλά το ScummVM έχει φτιαχτεί χωρίς υποστήριξη zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
 msgid ""
@@ -4345,6 +4368,8 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Το αρχείο teenagent.dat είναι συμπιεσμένο και η zlib δεν έχει συμπεριληφθεί "
+"σε αυτό το εκτελέσιμο. Παρακαλώ αποσυμπιέστε το"
 
 #: engines/tony/tony.cpp:258
 #, c-format
