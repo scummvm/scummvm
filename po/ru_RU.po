@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-29 07:33+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-30 21:55+0000\n"
+"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -848,7 +848,7 @@ msgstr "полноэкранный режим не может быть изменён"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr "режим масштабирования не может быть изменён"
+msgstr "режим фильтрования не может быть изменён"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
