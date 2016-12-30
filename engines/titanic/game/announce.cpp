@@ -30,14 +30,14 @@ BEGIN_MESSAGE_MAP(CAnnounce, CGameObject)
 	ON_MESSAGE(ActMsg)
 END_MESSAGE_MAP()
 
-CAnnounce::CAnnounce() : _nameIndex(0), _soundHandle(0), _leaveFlag(1), _enabled(false) {
+CAnnounce::CAnnounce() : _nameIndex(0), _soundHandle(0), _notActivatedFlag(true), _enabled(false) {
 }
 
 void CAnnounce::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_nameIndex, indent);
 	file->writeNumberLine(_soundHandle, indent);
-	file->writeNumberLine(_leaveFlag, indent);
+	file->writeNumberLine(_notActivatedFlag, indent);
 	file->writeNumberLine(_enabled, indent);
 
 	CGameObject::save(file, indent);
@@ -47,7 +47,7 @@ void CAnnounce::load(SimpleFile *file) {
 	file->readNumber();
 	_nameIndex = file->readNumber();
 	_soundHandle = file->readNumber();
-	_leaveFlag = file->readNumber();
+	_notActivatedFlag = file->readNumber();
 	_enabled = file->readNumber();
 
 	CGameObject::load(file);
@@ -97,6 +97,7 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 			break;
 		}
 
+		// Schedule another announcement for a random future time
 		addTimer(1, 300000 + getRandomNumber(30000), 0);
 		if (getRandomNumber(3) == 0)
 			addTimer(2, 4000, 0);
@@ -111,9 +112,10 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CAnnounce::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (_leaveFlag) {
+	// The very first time the player leaves the Embarklation Lobby, start announcements
+	if (_notActivatedFlag) {
 		addTimer(1, 1000, 0);
-		_leaveFlag = 0;
+		_notActivatedFlag = false;
 		_enabled = true;
 	}
 
@@ -121,6 +123,7 @@ bool CAnnounce::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 }
 
 bool CAnnounce::ActMsg(CActMsg *msg) {
+	// Handle enabling or disabling announcements
 	if (msg->_action == "Enable")
 		_enabled = true;
 	else if (msg->_action == "Disable")
