@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
 "PO-Revision-Date: 2016-12-30 20:22+0000\n"
-"Last-Translator: Luis <luissagasta@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -2767,7 +2767,7 @@ msgstr "No se puede localizar el archivo de datos del motor '%s'."
 #: engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "El archivo de datos del motor '%1' está corrupto."
+msgstr "El archivo de datos del motor '%s' está corrupto."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
