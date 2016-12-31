@@ -97,12 +97,13 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		editMsg.execute(loginControl);
 
 		if (editMsg._param == 1000) {
+			// Get the username
 			editMsg._mode = 3;
 			editMsg.execute(loginControl);
-
 			_username = editMsg._text;
 			_username.toLowercase();
 
+			// Next ask for the password
 			if (!_username.empty()) {
 				loadFrame(2);
 				_mode = MMODE_PASSWORD;
@@ -126,9 +127,13 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		editMsg.execute(loginControl);
 
 		if (editMsg._param == 1000) {
+			// Get the password
+			editMsg._mode = 3;
+			editMsg.execute(loginControl);
 			_password = editMsg._text;
 			_password.toLowercase();
 
+			// Handle special variations of the names
 			if (_username == "droot scraliontis") {
 				_username = "scraliontis";
 			} else if (_username == "antar brobostigon") {
@@ -137,6 +142,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				_username = "leovinus";
 			}
 
+			// Check whether a valid username and password has been entered
 			bool validFlag = false;
 			if (_username == "leovinus" && _password == "other") {
 				validFlag = true;
@@ -150,6 +156,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			}
 
 			if (validFlag) {
+				// Credentials were valid, so log in
 				_mode = MMODE_LOGGED_IN;
 				loadFrame(4);
 				editMsg._mode = 1;
@@ -171,6 +178,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				editMsg.execute(welcome);
 				editMsg.execute(scrollUp);
 			} else {
+				// Credentials were invalid, so access denied
 				_mode = MMODE_DENIED;
 				loadFrame(3);
 				addTimer(1500);
