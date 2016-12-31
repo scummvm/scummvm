@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-29 07:32+0000\n"
+"PO-Revision-Date: 2016-12-31 19:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
@@ -2510,7 +2510,7 @@ msgstr "Поточний відеорежим:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr "Подвійний удар"
+msgstr "Подвійний"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
