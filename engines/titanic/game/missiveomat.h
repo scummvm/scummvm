@@ -33,6 +33,18 @@ enum MissiveOMatAction {
 	MESSAGE_9 = 9
 };
 
+enum MissiveOMatMode {
+	MMODE_USERNAME = 1,
+	MMODE_PASSWORD = 2,
+	MMODE_3 = 3,
+	MMODE_4 = 4,
+	MMODE_5 = 5
+};
+
+enum MissiveOMatAccount {
+	NO_ACCOUNT = -1, LEOVINUS = 0, SCRALIONTIS = 1, BROBOSTIGON = 2
+};
+
 class CMissiveOMat : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
@@ -48,12 +60,12 @@ private:
 private:
 	void loadArray(CString *arr, const CString &resName, int count);
 public:
-	int _mode;
+	MissiveOMatMode _mode;
 	int _totalMessages;
 	int _messageNum;
-	CString _string1;
-	CString _string2;
-	int _personIndex;
+	CString _username;
+	CString _password;
+	MissiveOMatAccount _account;
 public:
 	CLASSDEF;
 	CMissiveOMat();

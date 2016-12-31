@@ -34,8 +34,8 @@ BEGIN_MESSAGE_MAP(CMissiveOMat, CGameObject)
 	ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-CMissiveOMat::CMissiveOMat() : CGameObject(), _mode(1),
-		_totalMessages(0), _messageNum(0), _personIndex(-1) {
+CMissiveOMat::CMissiveOMat() : CGameObject(), _mode(MMODE_USERNAME),
+		_totalMessages(0), _messageNum(0), _account(NO_ACCOUNT) {
 	// Load data for the messages, their from and to names
 	loadArray(_welcomeMessages, "TEXT/MISSIVEOMAT/WELCOME", 3);
 	loadArray(_messages, "TEXT/MISSIVEOMAT/MESSAGES", 58);
@@ -55,21 +55,21 @@ void CMissiveOMat::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_mode, indent);
 	file->writeNumberLine(_totalMessages, indent);
 	file->writeNumberLine(_messageNum, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_personIndex, indent);
+	file->writeQuotedLine(_username, indent);
+	file->writeQuotedLine(_password, indent);
+	file->writeNumberLine(_account, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CMissiveOMat::load(SimpleFile *file) {
 	file->readNumber();
-	_mode = file->readNumber();
+	_mode = (MissiveOMatMode)file->readNumber();
 	_totalMessages = file->readNumber();
 	_messageNum = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
-	_personIndex = file->readNumber();
+	_username = file->readString();
+	_password = file->readString();
+	_account = (MissiveOMatAccount)file->readNumber();
 
 	CGameObject::load(file);
 }
@@ -87,7 +87,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 	CEditControlMsg editMsg;
 
 	switch (_mode) {
-	case 1: {
+	case MMODE_USERNAME:
 		playSound("z#228.wav");
 		editMsg._mode = 6;
 		editMsg._param = msg->_key;
@@ -97,10 +97,12 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			editMsg._mode = 3;
 			editMsg.execute(loginControl);
 
-			_string1 = editMsg._text;
-			if (!_string1.empty()) {
+			_username = editMsg._text;
+			_username.toLowercase();
+
+			if (!_username.empty()) {
 				loadFrame(2);
-				_mode = 2;
+				_mode = MMODE_PASSWORD;
 
 				editMsg._mode = 1;
 				editMsg.execute(loginControl);
@@ -110,74 +112,70 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			}
 		}
 		break;
-	}
 
-	case 2: {
+	case MMODE_PASSWORD:
 		playSound("z#228.wav");
 		editMsg._mode = 6;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
 
-		_string2 = editMsg._text;
-		if (_string1 == "Droot Scraliontis") {
-			_string1 = "Scraliontis";
-		} else if (_string1 == "Antar Brobostigon") {
-			_string1 = "Brobostigon";
-		} else if (_string1 == "colin") {
-			_string1 = "Leovinus";
-		}
+		if (editMsg._param == 1000) {
+			_password = editMsg._text;
+			_password.toLowercase();
 
-		bool flag = false;
-		if (_string1 == "Leovinus") {
-			if (_string2 == "Other") {
-				flag = true;
-				_personIndex = 0;
+			if (_username == "droot scraliontis") {
+				_username = "scraliontis";
+			} else if (_username == "antar brobostigon") {
+				_username = "brobostigon";
+			} else if (_username == "colin") {
+				_username = "leovinus";
 			}
-		} else if (_string1 == "Scraliontis") {
-			if (_string2 == "This") {
-				flag = true;
-				_personIndex = 1;
+
+			bool validFlag = false;
+			if (_username == "leovinus" && _password == "other") {
+				validFlag = true;
+				_account = LEOVINUS;
+			} else if (_username == "scraliontis" && _password == "this") {
+				validFlag = true;
+				_account = SCRALIONTIS;
+			} else if (_username == "brobostigon" && _password == "that") {
+				validFlag = true;
+				_account = BROBOSTIGON;
 			}
-		} else if (_string1 == "Brobostigon") {
-			if (_string2 == "That") {
-				flag = true;
-				_personIndex = 2;
+
+			if (validFlag) {
+				_mode = MMODE_4;
+				loadFrame(4);
+				editMsg._mode = 1;
+				editMsg.execute(loginControl);
+
+				getTextCursor()->hide();
+				editMsg._mode = 13;
+				editMsg.execute(loginControl);
+
+				editMsg._mode = 12;
+				editMsg.execute(welcome);
+
+				editMsg._mode = 2;
+				editMsg._text = _welcomeMessages[_account];
+				editMsg.execute(welcome);
+
+				editMsg._mode = 12;
+				editMsg._text = "MissiveOMat OK Button";
+				editMsg.execute(welcome);
+				editMsg.execute(scrollUp);
+			} else {
+				_mode = MMODE_3;
+				loadFrame(3);
+				addTimer(1500);
+
+				editMsg._mode = 1;
+				editMsg.execute(loginControl);
+
+				getTextCursor()->hide();
 			}
-		}
-
-		if (flag) {
-			_mode = 4;
-			loadFrame(4);
-			editMsg._mode = 1;
-			editMsg.execute(loginControl);
-
-			getTextCursor()->hide();
-			editMsg._mode = 13;
-			editMsg.execute(loginControl);
-
-			editMsg._mode = 12;
-			editMsg.execute(welcome);
-
-			editMsg._mode = 2;
-			editMsg._text = _welcomeMessages[_personIndex];
-			editMsg.execute(welcome);
-
-			editMsg._mode = 12;
-			editMsg._text = "MissiveOMat OK Button";
-			editMsg.execute(welcome);
-			editMsg.execute(scrollUp);
-		} else {
-			_mode = 3;
-			loadFrame(3);
-			addTimer(1500);
-
-			editMsg._mode = 1;
-			editMsg.execute(loginControl);
-
-			getTextCursor()->hide();
 		}
 		break;
-	}
 
 	default:
 		break;
@@ -208,7 +206,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		CTreeItem *btnPrev = findRoom()->findByName("MissiveOMat Prev Button");
 		CTreeItem *btnLogout = findRoom()->findByName("MissiveOMat Logout Button");
 
-		_mode = MESSAGE_5;
+		_mode = MMODE_5;
 		CVisibleMsg visibleMsg;
 		visibleMsg._visible = false;
 		visibleMsg.execute(btnOk);
@@ -219,7 +217,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 		_messageNum = 0;
 		_totalMessages = 0;
-		CString *strP = &_messages[_personIndex * 19];
+		CString *strP = &_messages[_account * 19];
 		for (_totalMessages = 0; !strP->empty(); ++strP, ++_totalMessages)
 			;
 
@@ -277,8 +275,8 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	case MESSAGE_9: {
 		loadFrame(1);
-		_mode = MESSAGE_NONE;
-		_personIndex = -1;
+		_mode = MMODE_USERNAME;
+		_account = NO_ACCOUNT;
 
 		static const char *const WIDGETS[7] = {
 			"MissiveOMat Login Control", "MissiveOMat OK Button",
@@ -306,8 +304,8 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		editMsg._mode = 8;
 		editMsg.execute("MissiveOMat Login Control");
 
-		_string1.clear();
-		_string2.clear();
+		_username.clear();
+		_password.clear();
 		break;
 	}
 
