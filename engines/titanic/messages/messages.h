@@ -153,18 +153,18 @@ enum EditControlAction {
 	EDIT_INIT = 0,
 	EDIT_CLEAR = 1,
 	EDIT_SET_TEXT = 2,
-	EDIT_3 = 3,
-	EDIT_4 = 4,
-	EDIT_5 = 5,
-	EDIT_6 = 6,
-	EDIT_7 = 7,
-	EDIT_8 = 8,
-	EDIT_9 = 9,
-	EDIT_10 = 10,
-	EDIT_11 = 11,
-	EDIT_12 = 12,
-	EDIT_13 = 13,
-	EDIT_14 = 14
+	EDIT_GET_TEXT = 3,
+	EDIT_LENGTH = 4,
+	EDIT_MAX_LENGTH = 5,
+	EDIT_KEYPRESS = 6,
+	EDIT_SET_FONT = 7,
+	EDIT_SHOW_CURSOR = 8,
+	EDIT_HIDE_CURSOR = 9,
+	EDIT_BORDERS = 10,
+	EDIT_SET_COLOR = 11,
+	EDIT_SHOW = 12,
+	EDIT_HIDE = 13,
+	EDIT_RENDER = 14
 };
 
 class CEditControlMsg : public CMessage {

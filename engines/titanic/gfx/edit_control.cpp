@@ -28,13 +28,13 @@ BEGIN_MESSAGE_MAP(CEditControl, CGameObject)
 	ON_MESSAGE(EditControlMsg)
 END_MESSAGE_MAP()
 
-CEditControl::CEditControl() : CGameObject(), _fieldBC(false),  _fontNumber(0), _fieldD4(2),
+CEditControl::CEditControl() : CGameObject(), _showCursor(false),  _fontNumber(0), _fieldD4(2),
 		_textR(0), _textG(0), _textB(0), _fieldF0(0), _isPassword(false) {
 }
 
 void CEditControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_showCursor, indent);
 	file->writeNumberLine(_editLeft, indent);
 	file->writeNumberLine(_editBottom, indent);
 	file->writeNumberLine(_editHeight, indent);
@@ -53,7 +53,7 @@ void CEditControl::save(SimpleFile *file, int indent) {
 
 void CEditControl::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_showCursor = file->readNumber();
 	_editLeft = file->readNumber();
 	_editBottom = file->readNumber();
 	_editHeight = file->readNumber();
@@ -82,11 +82,11 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		setTextFontNumber(_fontNumber);
 
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = EDIT_10;
+		ctlMsg._mode = EDIT_BORDERS;
 		ctlMsg._param = _fieldD4;
 		ctlMsg.execute(this);
 
-		ctlMsg._mode = EDIT_11;
+		ctlMsg._mode = EDIT_SET_COLOR;
 		ctlMsg._textR = _textR;
 		ctlMsg._textG = _textG;
 		ctlMsg._textB = _textB;
@@ -97,7 +97,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 	case EDIT_CLEAR: {
 		_text = "";
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = EDIT_14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
@@ -105,28 +105,28 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 	case EDIT_SET_TEXT: {
 		_text = msg->_text;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = EDIT_14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case EDIT_3:
+	case EDIT_GET_TEXT:
 		msg->_text = _text;
 		break;
 
-	case EDIT_4:
+	case EDIT_LENGTH:
 		msg->_param = _text.size();
 		break;
 
-	case EDIT_5:
+	case EDIT_MAX_LENGTH:
 		_maxTextChars = msg->_param;
 		break;
 
-	case EDIT_6:
+	case EDIT_KEYPRESS:
 		if (msg->_param == 8 && !_text.empty()) {
 			_text = _text.left(_text.size() - 1);
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = EDIT_14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		} else if (msg->_param == 13) {
 			msg->_param = 1000;
@@ -136,32 +136,32 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 			_text += c;
 
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = EDIT_14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case EDIT_7:
+	case EDIT_SET_FONT:
 		setTextFontNumber(msg->_param);
 		break;
 
-	case EDIT_8:
-		if (!_fieldBC) {
-			_fieldBC = true;
+	case EDIT_SHOW_CURSOR:
+		if (!_showCursor) {
+			_showCursor = true;
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = EDIT_14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case EDIT_9:
-		if (_fieldBC) {
-			_fieldBC = false;
+	case EDIT_HIDE_CURSOR:
+		if (_showCursor) {
+			_showCursor = false;
 			getTextCursor()->hide();
 		}
 		break;
 
-	case EDIT_10: {
+	case EDIT_BORDERS: {
 		setTextHasBorders((msg->_param & 1) != 0);
 		if (msg->_param & 4)
 			_fieldF0 = 1;
@@ -172,24 +172,24 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 
 		_isPassword = (msg->_param & 0x10) != 0;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = EDIT_14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case EDIT_11:
+	case EDIT_SET_COLOR:
 		setTextColor(msg->_textR, msg->_textG, msg->_textB);
 		break;
 
-	case EDIT_12:
+	case EDIT_SHOW:
 		setVisible(true);
 		break;
 
-	case EDIT_13:
+	case EDIT_HIDE:
 		setVisible(false);
 		break;
 
-	case EDIT_14: {
+	case EDIT_RENDER: {
 		makeDirty();
 		CString str = _isPassword ? CString('*', _text.size()) : _text;
 		setText(str);
@@ -202,7 +202,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 			makeDirty();
 		}
 
-		if (_fieldBC) {
+		if (_showCursor) {
 			CTextCursor *textCursor = getTextCursor();
 			textCursor->show();
 			textCursor->setPos(Point(_bounds.left + textWidth + 1, _bounds.top + 3));

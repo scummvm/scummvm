@@ -92,13 +92,13 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			return true;
 
 		playSound("z#228.wav");
-		editMsg._mode = EDIT_6;
+		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
 
 		if (editMsg._param == 1000) {
 			// Get the username
-			editMsg._mode = EDIT_3;
+			editMsg._mode = EDIT_GET_TEXT;
 			editMsg.execute(loginControl);
 			_username = editMsg._text;
 			_username.toLowercase();
@@ -110,7 +110,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 
 				editMsg._mode = EDIT_CLEAR;
 				editMsg.execute(loginControl);
-				editMsg._mode = EDIT_10;
+				editMsg._mode = EDIT_BORDERS;
 				editMsg._param = 24;
 				editMsg.execute(loginControl);
 			}
@@ -122,13 +122,13 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			return true;
 
 		playSound("z#228.wav");
-		editMsg._mode = EDIT_6;
+		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
 
 		if (editMsg._param == 1000) {
 			// Get the password
-			editMsg._mode = EDIT_3;
+			editMsg._mode = EDIT_GET_TEXT;
 			editMsg.execute(loginControl);
 			_password = editMsg._text;
 			_password.toLowercase();
@@ -163,17 +163,17 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				editMsg.execute(loginControl);
 
 				getTextCursor()->hide();
-				editMsg._mode = EDIT_13;
+				editMsg._mode = EDIT_HIDE;
 				editMsg.execute(loginControl);
 
-				editMsg._mode = EDIT_12;
+				editMsg._mode = EDIT_SHOW;
 				editMsg.execute(welcome);
 
 				editMsg._mode = EDIT_SET_TEXT;
 				editMsg._text = _welcomeMessages[_account];
 				editMsg.execute(welcome);
 
-				editMsg._mode = EDIT_12;
+				editMsg._mode = EDIT_SHOW;
 				editMsg._text = "MissiveOMat OK Button";
 				editMsg.execute(welcome);
 				editMsg.execute(scrollUp);
@@ -206,7 +206,7 @@ bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
 
 		CTreeItem *loginControl = findRoom()->findByName("MissiveOMat Login Control");
 		CEditControlMsg editMsg;
-		editMsg._mode = EDIT_10;
+		editMsg._mode = EDIT_BORDERS;
 		editMsg._param = 8;
 		editMsg.execute(loginControl);
 	}
@@ -310,16 +310,16 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 			editMsg.execute(WIDGETS[idx]);
 			editMsg._mode = EDIT_CLEAR;
 			editMsg.execute(WIDGETS[idx]);
-			editMsg._mode = EDIT_13;
+			editMsg._mode = EDIT_HIDE;
 			editMsg.execute(WIDGETS[idx]);
 		}
 
-		editMsg._mode = EDIT_12;
+		editMsg._mode = EDIT_SHOW;
 		editMsg.execute("MissiveOMat Login Control");
-		editMsg._mode = EDIT_10;
+		editMsg._mode = EDIT_BORDERS;
 		editMsg._param = 8;
 		editMsg.execute("MissiveOMat Login Control");
-		editMsg._mode = EDIT_8;
+		editMsg._mode = EDIT_SHOW_CURSOR;
 		editMsg.execute("MissiveOMat Login Control");
 
 		_username.clear();
@@ -336,7 +336,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 bool CMissiveOMat::LeaveViewMsg(CLeaveViewMsg *msg) {
 	CEditControlMsg editMsg;
-	editMsg._mode = EDIT_9;
+	editMsg._mode = EDIT_HIDE_CURSOR;
 	editMsg.execute("MissiveOMat Login Control");
 	petShowCursor();
 

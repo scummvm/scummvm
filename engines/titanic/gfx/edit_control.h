@@ -31,7 +31,7 @@ class CEditControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EditControlMsg(CEditControlMsg *msg);
 protected:
-	bool _fieldBC;
+	bool _showCursor;
 	int _editLeft;
 	int _editBottom;
 	int _editHeight;
