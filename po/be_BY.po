@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-31 11:44+0000\n"
+"PO-Revision-Date: 2016-12-31 15:15+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/be/>\n"
@@ -866,13 +866,12 @@ msgid "Fullscreen mode"
 msgstr "Поўнаэкранны рэжым"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Выкарыстоўваць каляровую графіку"
+msgstr "Фільтраванне графікі"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Выкарыстоўваць лінейную фільтрацыю для павелічэння адрознення"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -1278,7 +1277,7 @@ msgstr ""
 
 #: gui/options.cpp:1462
 msgid "Apply"
-msgstr ""
+msgstr "Ужыць"
 
 #: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
@@ -1457,9 +1456,8 @@ msgid "Playtime: "
 msgstr "Час гульні: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Захаванне без імя"
+msgstr "Захаваная гульня без імя"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
@@ -1699,9 +1697,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Не магу знайсці падыходны плагін для рухавічка"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Рухавічок не падтрымлівае захаванні"
+msgstr "Рухавічок не падтрымлівае захаванне гульняў"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1761,6 +1758,9 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Здаецца, гульня ў '%s' невядомая.\n"
+"Калі ласка, перадайце камандзе ScummVM наступныя дадзеныя разам\n"
+"з назвай гульні, яе версіяй, мовай і інш.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1843,13 +1843,13 @@ msgstr ""
 "інструкцыямі пра тое, як атрымаць далейшую дапамогу."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
 "Не атрымалася захаваць гульню (%s)! Калі ласка, звярніцеся да файла README "
-"за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую "
+"за асноўнай інфармацыяй, а таксама інструкцыямі, як атрымаць далейшую "
 "дапамогу."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
@@ -1883,9 +1883,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Не магу ўжыць поўнаэкранны рэжым."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Не магу ўжыць поўнаэкранны рэжым."
+msgstr "Не магу ўжыць налады фільтрацыі."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -1917,14 +1916,14 @@ msgstr ""
 "файле README."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Не атрымалася прачытаць захаванне гульні (%s)! Калі ласка, звярніцеся ў файл "
-"README за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць "
-"далейшую дапамогу."
+"Не атрымалася загрузіць гульню (%s)! Калі ласка, звярніцеся да файла README "
+"за асноўнай інфармацыяй, а таксама інструкцыямі, як атрымаць далейшую "
+"дапамогу."
 
 #: engines/engine.cpp:555
 msgid ""
@@ -2187,7 +2186,7 @@ msgstr "Аконны рэжым"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Адрозненне: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
@@ -2201,15 +2200,13 @@ msgstr "Карэкцыя суадносін бакоў выключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Пстрычкі ўключаны"
+msgstr "Фільтрацыя ўключана"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Пстрычкі выключаны"
+msgstr "Фільтрацыя выключаная"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
