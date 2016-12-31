@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CEditControl, CGameObject)
 END_MESSAGE_MAP()
 
 CEditControl::CEditControl() : CGameObject(), _fieldBC(false),  _fontNumber(0), _fieldD4(2),
-		_textR(0), _textG(0), _textB(0), _fieldF0(0), _fieldF4(0) {
+		_textR(0), _textG(0), _textB(0), _fieldF0(0), _isPassword(false) {
 }
 
 void CEditControl::save(SimpleFile *file, int indent) {
@@ -46,7 +46,7 @@ void CEditControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_textB, indent);
 	file->writeQuotedLine(_text, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_isPassword, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -65,33 +65,34 @@ void CEditControl::load(SimpleFile *file) {
 	_textB = file->readNumber();
 	_text = file->readString();
 	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_isPassword = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 	switch (msg->_mode) {
-	case 0:
-		if (!_editLeft) {
-			_editHeight = _bounds.height();
-			_editBottom = _bounds.bottom;
-			_editLeft = _bounds.left + _bounds.width() / 2;
-			_maxTextChars = msg->_param;
-			setTextFontNumber(_fontNumber);
+	case 0: {
+		// WORKAROUND: Fix original bug where MissiveOMat username & password
+		// text weren't initialised after the first time you use the MissiveOMat
+		_editHeight = _bounds.height();
+		_editBottom = _bounds.bottom;
+		_editLeft = _bounds.left + _bounds.width() / 2;
+		_maxTextChars = msg->_param;
+		setTextFontNumber(_fontNumber);
 
-			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 10;
-			ctlMsg._param = _fieldD4;
-			ctlMsg.execute(this);
+		CEditControlMsg ctlMsg;
+		ctlMsg._mode = 10;
+		ctlMsg._param = _fieldD4;
+		ctlMsg.execute(this);
 
-			ctlMsg._mode = 11;
-			ctlMsg._textR = _textR;
-			ctlMsg._textG = _textG;
-			ctlMsg._textB = _textB;
-			ctlMsg.execute(this);
-		}
+		ctlMsg._mode = 11;
+		ctlMsg._textR = _textR;
+		ctlMsg._textG = _textG;
+		ctlMsg._textB = _textB;
+		ctlMsg.execute(this);
 		break;
+	}
 
 	case 1: {
 		_text = "";
@@ -169,7 +170,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		else
 			_fieldF0 = 0;
 
-		_fieldF4 = msg->_param & 0x10;
+		_isPassword = (msg->_param & 0x10) != 0;
 		CEditControlMsg ctlMsg;
 		ctlMsg._mode = 14;
 		ctlMsg.execute(this);
@@ -190,7 +191,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 
 	case 14: {
 		makeDirty();
-		CString str = _fieldF4 ? CString('*', _text.size()) : _text;
+		CString str = _isPassword ? CString('*', _text.size()) : _text;
 		setText(str);
 
 		int textWidth = getTextWidth();

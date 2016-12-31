@@ -43,7 +43,7 @@ protected:
 	byte _textB;
 	CString _text;
 	int _fieldF0;
-	int _fieldF4;
+	bool _isPassword;
 public:
 	CLASSDEF;
 	CEditControl();
