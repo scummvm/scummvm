@@ -149,9 +149,27 @@ public:
 	virtual bool isLeaveViewMsg() const;
 };
 
+enum EditControlAction {
+	EDIT_INIT = 0,
+	EDIT_CLEAR = 1,
+	EDIT_SET_TEXT = 2,
+	EDIT_3 = 3,
+	EDIT_4 = 4,
+	EDIT_5 = 5,
+	EDIT_6 = 6,
+	EDIT_7 = 7,
+	EDIT_8 = 8,
+	EDIT_9 = 9,
+	EDIT_10 = 10,
+	EDIT_11 = 11,
+	EDIT_12 = 12,
+	EDIT_13 = 13,
+	EDIT_14 = 14
+};
+
 class CEditControlMsg : public CMessage {
 public:
-	int _mode;
+	EditControlAction _mode;
 	int _param;
 	CString _text;
 	byte _textR;
@@ -159,7 +177,7 @@ public:
 	byte _textB;
 public:
 	CLASSDEF;
-	CEditControlMsg() : _mode(0), _param(0), _textR(0), _textG(0), _textB(0) {}
+	CEditControlMsg() : _mode(EDIT_INIT), _param(0), _textR(0), _textG(0), _textB(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return CMessage::supports(item, _type);

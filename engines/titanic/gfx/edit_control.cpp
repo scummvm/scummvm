@@ -72,7 +72,7 @@ void CEditControl::load(SimpleFile *file) {
 
 bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 	switch (msg->_mode) {
-	case 0: {
+	case EDIT_INIT: {
 		// WORKAROUND: Fix original bug where MissiveOMat username & password
 		// text weren't initialised after the first time you use the MissiveOMat
 		_editHeight = _bounds.height();
@@ -82,11 +82,11 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		setTextFontNumber(_fontNumber);
 
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 10;
+		ctlMsg._mode = EDIT_10;
 		ctlMsg._param = _fieldD4;
 		ctlMsg.execute(this);
 
-		ctlMsg._mode = 11;
+		ctlMsg._mode = EDIT_11;
 		ctlMsg._textR = _textR;
 		ctlMsg._textG = _textG;
 		ctlMsg._textB = _textB;
@@ -94,39 +94,39 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		break;
 	}
 
-	case 1: {
+	case EDIT_CLEAR: {
 		_text = "";
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_14;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 2: {
+	case EDIT_SET_TEXT: {
 		_text = msg->_text;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_14;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 3:
+	case EDIT_3:
 		msg->_text = _text;
 		break;
 
-	case 4:
+	case EDIT_4:
 		msg->_param = _text.size();
 		break;
 
-	case 5:
+	case EDIT_5:
 		_maxTextChars = msg->_param;
 		break;
 
-	case 6:
+	case EDIT_6:
 		if (msg->_param == 8 && !_text.empty()) {
 			_text = _text.left(_text.size() - 1);
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_14;
 			ctlMsg.execute(this);
 		} else if (msg->_param == 13) {
 			msg->_param = 1000;
@@ -136,32 +136,32 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 			_text += c;
 
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_14;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case 7:
+	case EDIT_7:
 		setTextFontNumber(msg->_param);
 		break;
 
-	case 8:
+	case EDIT_8:
 		if (!_fieldBC) {
 			_fieldBC = true;
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_14;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case 9:
+	case EDIT_9:
 		if (_fieldBC) {
 			_fieldBC = false;
 			getTextCursor()->hide();
 		}
 		break;
 
-	case 10: {
+	case EDIT_10: {
 		setTextHasBorders((msg->_param & 1) != 0);
 		if (msg->_param & 4)
 			_fieldF0 = 1;
@@ -172,24 +172,24 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 
 		_isPassword = (msg->_param & 0x10) != 0;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_14;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 11:
+	case EDIT_11:
 		setTextColor(msg->_textR, msg->_textG, msg->_textB);
 		break;
 
-	case 12:
+	case EDIT_12:
 		setVisible(true);
 		break;
 
-	case 13:
+	case EDIT_13:
 		setVisible(false);
 		break;
 
-	case 14: {
+	case EDIT_14: {
 		makeDirty();
 		CString str = _isPassword ? CString('*', _text.size()) : _text;
 		setText(str);
