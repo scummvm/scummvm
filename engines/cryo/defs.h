@@ -736,7 +736,7 @@ struct global_t {
 	byte   _giveObj3;
 	byte   _var100;
 	byte   _roomVidNum;
-	byte   _var102;
+	byte   _mirrorEffect;
 	byte   _var103;
 	byte   _roomBackgroundBankNum;
 	byte   _valleyVidNum;
