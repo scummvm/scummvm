@@ -36,8 +36,8 @@ enum MissiveOMatAction {
 enum MissiveOMatMode {
 	MMODE_USERNAME = 1,
 	MMODE_PASSWORD = 2,
-	MMODE_3 = 3,
-	MMODE_4 = 4,
+	MMODE_DENIED = 3,
+	MMODE_LOGGED_IN = 4,
 	MMODE_5 = 5
 };
 

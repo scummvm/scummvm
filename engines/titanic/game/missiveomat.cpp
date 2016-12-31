@@ -88,6 +88,9 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 
 	switch (_mode) {
 	case MMODE_USERNAME:
+		if (!msg->_key)
+			return true;
+
 		playSound("z#228.wav");
 		editMsg._mode = 6;
 		editMsg._param = msg->_key;
@@ -114,6 +117,9 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		break;
 
 	case MMODE_PASSWORD:
+		if (!msg->_key)
+			return true;
+
 		playSound("z#228.wav");
 		editMsg._mode = 6;
 		editMsg._param = msg->_key;
@@ -144,7 +150,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			}
 
 			if (validFlag) {
-				_mode = MMODE_4;
+				_mode = MMODE_LOGGED_IN;
 				loadFrame(4);
 				editMsg._mode = 1;
 				editMsg.execute(loginControl);
@@ -165,7 +171,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				editMsg.execute(welcome);
 				editMsg.execute(scrollUp);
 			} else {
-				_mode = MMODE_3;
+				_mode = MMODE_DENIED;
 				loadFrame(3);
 				addTimer(1500);
 
@@ -185,7 +191,11 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 }
 
 bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
-	if (_mode == 3) {
+	if (_mode == MMODE_DENIED) {
+		// Reset back to asking for a login username
+		_mode = MMODE_USERNAME;
+		loadFrame(1);
+
 		CTreeItem *loginControl = findRoom()->findByName("MissiveOMat Login Control");
 		CEditControlMsg editMsg;
 		editMsg._mode = 10;
