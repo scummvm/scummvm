@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-31 20:58+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2016-12-31 21:00+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -1013,7 +1013,7 @@ msgid ""
 "GS device"
 msgstr ""
 "Valitse jos haluat k‰ytt‰‰ patch mappingia MT-32:n emultointiin Roland GS "
-"laitteella."
+"laitteella"
 
 #: gui/options.cpp:974
 msgid "Don't use Roland MT-32 music"
@@ -1210,7 +1210,7 @@ msgstr "K‰ytetty tila:"
 
 #: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "ScummVM:n pelitallennusten k‰ytt‰m‰ tila tallennustilassa."
+msgstr "ScummVM:n pelitallennusten k‰ytt‰m‰ tila tallennustilassa"
 
 #: gui/options.cpp:1425
 msgid "Last sync time:"
@@ -1218,7 +1218,7 @@ msgstr "Viimeisin synkronointi:"
 
 #: gui/options.cpp:1425
 msgid "When the last saved games sync for this storage occured"
-msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan."
+msgstr "Milloin pelitallennukset viimeksi synkronoitiin t‰h‰n tallennustilaan"
 
 #: gui/options.cpp:1428 gui/storagewizarddialog.cpp:71
 msgid "Connect"
@@ -1556,7 +1556,7 @@ msgstr "%s-kent‰ss‰ on virhe."
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr "Seuraavissa kentiss‰ on virheit‰: %s"
+msgstr "Seuraavissa kentiss‰ on virheit‰: %s."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
@@ -1784,7 +1784,7 @@ msgid ""
 msgstr ""
 "Peli kansiossa \"%s\" n‰ytt‰‰ olevan tuntematon.\n"
 "Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehitt‰jille pelin nimen,\n"
-"version, kielen, yms. kera."
+"version, kielen, yms. kera:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2840,7 +2840,7 @@ msgid ""
 "behavior"
 msgstr ""
 "K‰yt‰ vaihtoehtoista v‰ripalettia, joka on yleinen kaikissa Amigapeleiss‰. "
-"T‰m‰ on vanha toimintamalli."
+"T‰m‰ on vanha toimintamalli"
 
 #: engines/agi/detection.cpp:167
 #, fuzzy
@@ -2854,7 +2854,7 @@ msgstr "Aktivoi hiirituen. Mahdollistaa hiiren k‰ytt‰misen pelivalikoissa."
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr "K‰yt‰ korkearesoluutioista Hercules-fonttia."
+msgstr "K‰yt‰ korkearesoluutioista Hercules-fonttia"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
@@ -3213,7 +3213,8 @@ msgid ""
 msgstr ""
 "%d alkuper‰ist‰ pelitallennusta onnistuneesti ladattu ScummVM:‰‰n.\n"
 "Jos haluat myˆhemmin ladata pelitallennuksia k‰sin, joudut avaamaan\n"
-"ScummVM:n debug konsolin ja k‰ytt‰m‰‰n komentoa \"import_savefile\"."
+"ScummVM:n debug konsolin ja k‰ytt‰m‰‰n komentoa \"import_savefile\".\n"
+"\n"
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
@@ -3278,7 +3279,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "Sinulta puuttuu Riven ohjelmatiedosto. WIndowsissa tiedosto on nimelt‰‰n \""
-"riven.exe\" tai \"rivendmo.exe\"."
+"riven.exe\" tai \"rivendmo.exe\". "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -3529,7 +3530,7 @@ msgstr ""
 "Peliversiosi vaikuttaa olevan tuntematon. Jos t‰m‰ *EI* ole faniversio\n"
 "(esim. fanik‰‰nnˆs), ole kiltti ja raportoi seuraavat tiedot ScummVM:n "
 "kehitt‰jille pelin nimen,\n"
-"version, kielen, yms. kera."
+"version, kielen, yms. kera.\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -4100,7 +4101,7 @@ msgstr "N‰pp‰imistˆ/Hiiritappelu (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* N‰pp‰imistˆtappelu on aina p‰‰ll‰."
+msgstr "* N‰pp‰imistˆtappelu on aina p‰‰ll‰,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
@@ -4462,7 +4463,7 @@ msgstr "Tupla FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "Kasvata ruudunp‰ivitysnopeus 60 FPS:‰‰n 30 FPS:st‰."
+msgstr "Kasvata ruudunp‰ivitysnopeus 60 FPS:‰‰n 30 FPS:st‰"
 
 #: engines/zvision/detection_tables.h:71
 #, fuzzy
