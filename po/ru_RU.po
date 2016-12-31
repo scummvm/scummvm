@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-31 19:05+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2016-12-31 21:04+0000\n"
+"Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Russian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -1460,7 +1460,7 @@ msgstr "Время игры: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
 msgid "Untitled saved game"
-msgstr "Сохранение без имени"
+msgstr "Сохранённая игра без имени"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
@@ -1763,7 +1763,7 @@ msgid ""
 msgstr ""
 "Похоже, что игра в '%s' неизвестна.\n"
 "Пожалуйста, сообщите команде ScummVM следующие данные вместе\n"
-"с названием игры, её версией, языком и т. д.:"
+"с названием игры, её версией, языком и др.:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
