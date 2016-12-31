@@ -94,6 +94,15 @@ bool CPetInventory::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	return _items.VirtualKeyCharMsg(msg);
 }
 
+bool CPetInventory::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (msg->_wheelUp)
+		_items.scrollLeft();
+	else
+		_items.scrollRight();
+
+	return true;
+}
+
 CGameObject *CPetInventory::dragEnd(const Point &pt) const {
 	return _items.getObjectAt(pt);
 }

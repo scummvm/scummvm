@@ -94,6 +94,7 @@ public:
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
