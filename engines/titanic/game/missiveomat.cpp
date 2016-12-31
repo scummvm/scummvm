@@ -75,15 +75,13 @@ void CMissiveOMat::load(SimpleFile *file) {
 }
 
 bool CMissiveOMat::EnterViewMsg(CEnterViewMsg *msg) {
-	CMissiveOMatActionMsg actionMsg(9);
+	CMissiveOMatActionMsg actionMsg(MESSAGE_9);
 	actionMsg.execute(this);
 	return true;
 }
 
 bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 	CTreeItem *loginControl = findRoom()->findByName("MissiveOMat Login Control");
-	CTreeItem *welcome = findRoom()->findByName("MissiveOMat Welcome");
-	CTreeItem *scrollUp = findRoom()->findByName("MissiveOMat ScrollUp Button");
 	CEditControlMsg editMsg;
 
 	switch (_mode) {
@@ -162,6 +160,12 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				editMsg._mode = EDIT_CLEAR;
 				editMsg.execute(loginControl);
 
+				CRoomItem *room = findRoom();
+				CTreeItem *welcome = room->findByName("MissiveOMat Welcome");
+				CTreeItem *scrollUp = room->findByName("MissiveOMat ScrollUp Button");
+				CTreeItem *scrollDown = room->findByName("MissiveOMat ScrollDown Button");
+				CTreeItem *ok = room->findByName("MissiveOMat OK Button");
+
 				getTextCursor()->hide();
 				editMsg._mode = EDIT_HIDE;
 				editMsg.execute(loginControl);
@@ -174,9 +178,9 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 				editMsg.execute(welcome);
 
 				editMsg._mode = EDIT_SHOW;
-				editMsg._text = "MissiveOMat OK Button";
-				editMsg.execute(welcome);
+				editMsg.execute(ok);
 				editMsg.execute(scrollUp);
+				editMsg.execute(scrollDown);
 			} else {
 				// Credentials were invalid, so access denied
 				_mode = MMODE_DENIED;
@@ -296,15 +300,15 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		_mode = MMODE_USERNAME;
 		_account = NO_ACCOUNT;
 
-		static const char *const WIDGETS[7] = {
-			"MissiveOMat Login Control", "MissiveOMat OK Button",
-			"MissiveOMat Next Button", "MissiveOMat Prev Button",
-			"MissiveOMat Logout Button", "MissiveOMat ScrollDown Button",
-			"MissiveOMat ScrollUp Button"
+		static const char *const WIDGETS[8] = {
+			"MissiveOMat Login Control", "MissiveOMat Welcome",
+			"MissiveOMat OK Button", "MissiveOMat Next Button",
+			"MissiveOMat Prev Button", "MissiveOMat Logout Button",
+			"MissiveOMat ScrollDown Button", "MissiveOMat ScrollUp Button"
 		};
 		CEditControlMsg editMsg;
 
-		for (int idx = 0; idx < 7; ++idx) {
+		for (int idx = 0; idx < 8; ++idx) {
 			editMsg._mode = EDIT_INIT;
 			editMsg._param = 12;
 			editMsg.execute(WIDGETS[idx]);

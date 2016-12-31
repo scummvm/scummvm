@@ -24,6 +24,7 @@
 #define TITANIC_MISSIVEOMAT_BUTTON_H
 
 #include "titanic/gfx/edit_control.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -33,10 +34,10 @@ class CMissiveOMatButton : public CEditControl {
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 public:
-	int _buttonId;
+	MissiveOMatAction _buttonId;
 public:
 	CLASSDEF;
-	CMissiveOMatButton() : CEditControl(), _buttonId(2) {}
+	CMissiveOMatButton() : CEditControl(), _buttonId(MESSAGE_SHOW) {}
 
 	/**
 	 * Save the data for the class to file
