@@ -554,16 +554,6 @@ protected:
 	CTextCursor *getTextCursor() const;
 
 	/**
-	 * Scroll text up
-	 */
-	void scrollTextUp();
-
-	/**
-	 * Scroll text down
-	 */
-	void scrollTextDown();
-
-	/**
 	 * Gets a new random number
 	 */
 	int getRandomNumber(int max, int *oldVal = nullptr);
@@ -751,6 +741,16 @@ public:
 	 * Sets up credits text
 	 */
 	void createCredits();
+
+	/**
+	 * Scroll text up
+	 */
+	void scrollTextUp();
+
+	/**
+	 * Scroll text down
+	 */
+	void scrollTextDown();
 
 	/**
 	 * Support function for drag moving

@@ -220,14 +220,15 @@ bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
-	CTreeItem *welcome = findByName("MissiveOMat Welcome");
+	CGameObject *welcome = static_cast<CGameObject *>(findByName("MissiveOMat Welcome"));
 
 	switch (msg->_action) {
 	case MESSAGE_SHOW: {
-		CTreeItem *btnOk = findRoom()->findByName("MissiveOMat OK Button");
-		CTreeItem *btnNext = findRoom()->findByName("MissiveOMat Next Button");
-		CTreeItem *btnPrev = findRoom()->findByName("MissiveOMat Prev Button");
-		CTreeItem *btnLogout = findRoom()->findByName("MissiveOMat Logout Button");
+		CRoomItem *room = findRoom();
+		CTreeItem *btnOk = room->findByName("MissiveOMat OK Button");
+		CTreeItem *btnNext = room->findByName("MissiveOMat Next Button");
+		CTreeItem *btnPrev = room->findByName("MissiveOMat Prev Button");
+		CTreeItem *btnLogout = room->findByName("MissiveOMat Logout Button");
 
 		_mode = MMODE_5;
 		CVisibleMsg visibleMsg;
@@ -277,12 +278,12 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	case MESSAGE_DOWN:
 		if (welcome)
-			scrollTextDown();
+			welcome->scrollTextDown();
 		break;
 
 	case MESSAGE_UP:
 		if (welcome)
-			scrollTextUp();
+			welcome->scrollTextUp();
 		break;
 
 	case REDRAW_MESSAGE:
