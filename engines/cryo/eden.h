@@ -499,7 +499,7 @@ private:
 	void selectMap(int16 num);
 	void Eden_dep_and_rot();
 	void restoreZDEP();
-	void affiche_polygone_mapping(cube_t *cube, cubeface_t *face);
+	void displayPolygoneMapping(cube_t *cube, cubeface_t *face);
 	void drawMappingLine(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *lines);
 	void displayMappingLine(int16 r3, int16 r4, byte *target, byte *texture);
 	int16 OpenDialog(void *arg1, void *arg2);
@@ -611,31 +611,30 @@ private:
 	color_t         newPalette[256];
 	Common::Rect          rect_dst, rect_src;
 	byte *_voiceSamplesBuffer;    //TODO: sound sample buffer
-	Common::File h_bigfile;
-	byte   _infoList[16];
-	bool needToFade;
-	byte   lastMusicNum;
-	byte   *_mainBankBuf;
-	byte   *_musicBuf;
-	byte   *gameLipsync;
-	byte   *gamePhrases;
-	byte   *_gameDialogs;   //TODO: rename to dialogs?
-	byte   *_gameConditions;
+	Common::File _bigfile;
+	byte  _infoList[16];
+	bool  _needToFade;
+	byte *_mainBankBuf;
+	byte *_musicBuf;
+	byte *_gameLipsync;
+	byte *_gamePhrases;
+	byte *_gameDialogs;   //TODO: rename to dialogs?
+	byte *_gameConditions;
 	byte *_placeRawBuf;   //TODO: fixme
 	byte *_bankDataBuf;
 	Icon *_gameIcons;
 	Room *_gameRooms;
-	PakHeaderNode *bigfile_header;
+	PakHeaderNode *_bigfileHeader;
 	byte *_glowBuffer;
 	byte *_mainViewBuf;
-	byte *p_view2_buf;
+	byte *_view2Buf;
 	byte *_gameFont;  //TODO: rename to font?
 	byte *_subtitlesViewBuf;
-	byte *p_underSubtitlesView_buf;
-	global_t *p_global;
+	byte *_underSubtitlesViewBuf; // CHECKME: Useless?
+	global_t *_globals;
 	uint16 _mouseCenterX;
 	uint16 _mouseCenterY;
-	bool bufferAllocationErrorFl;
+	bool _bufferAllocationErrorFl;
 	bool _quitFlag2;
 	bool _quitFlag3;
 	bool _gameStarted;
@@ -646,10 +645,10 @@ private:
 	soundchannel_t *_hnmSoundChannel;
 	sound_t        *_voiceSound;
 
-	View  *p_view2;
-	View  *p_underSubtitlesView;
+	View  *_view2;
+	View  *_underSubtitlesView;
 	View  *_subtitlesView;
-	View  *p_underBarsView;
+	View  *_underBarsView;
 	View  *_mainView;
 	View  *_hnmView;
 	hnm_t *_hnmContext;
@@ -671,49 +670,49 @@ private:
 	Icon *_currSpot;
 	Icon *_curSpot2;
 	bool pomme_q;
-	bool _keyboardHeld;
-	bool _mouseHeld;
-	bool _normalCursor;
+	bool  _keyboardHeld;
+	bool  _mouseHeld;
+	bool  _normalCursor;
 	byte *_hnmViewBuf;
-	bool _showVideoSubtitle;
-	bool _videoCanceledFlag;  //TODO: hnm_canceled
-	bool _specialTextMode;
-	int  _hnmFrameNum;
-	int  _voiceSamplesSize;   //TODO: perso vox sample data len
+	bool  _showVideoSubtitle;
+	bool  _videoCanceledFlag;  //TODO: hnm_canceled
+	bool  _specialTextMode;
+	int   _hnmFrameNum;
+	int   _voiceSamplesSize;   //TODO: perso vox sample data len
 	int16 _musicRightVol;
 	int16 _musicLeftVol;
 
 
-	bool _animateTalking;
-	bool _personTalking;
-	byte _musicFadeFlag;
+	bool  _animateTalking;
+	bool  _personTalking;
+	byte  _musicFadeFlag;
 
-	char _musicSequencePos;
-	bool _musicPlayingFlag;
+	char  _musicSequencePos;
+	bool  _musicPlayingFlag;
 
 	byte *_musicSamplesPtr;
 	byte *_musicPatternsPtr;  //TODO: sndblock_t ?
 	byte *_musSequencePtr;
-	bool _musicEnabledFlag;
-	uint16 *pCurrentObjectLocation;
-	byte   own_objects[128];
-	bool   byte_31D64;
+	bool  _musicEnabledFlag;
+	uint16 *_currentObjectLocation;
+	byte  _ownObjects[128];
+	bool  byte_31D64;
 
-	bool _noPalette;
-	bool _gameLoaded;
+	bool  _noPalette;
+	bool  _gameLoaded;
 #define MAX_TAPES 16
-	tape_t tapes[MAX_TAPES];
-	byte   confirmMode;
-	byte   *cur_slider_value_ptr;
+	tape_t _tapes[MAX_TAPES];
+	byte   _confirmMode;
+	byte  *_curSliderValuePtr;
 	byte   _lastMenuItemIdLo;
 	int16  _lastTapeRoomNum;
 	int16  _curSliderX;
-	int16           cur_slider_y;
-	int16           destinationRoom;
-	int16           word_31E7A;
+	int16  _curSliderY;
+	int16  _destinationRoom;
+	int16  word_31E7A; // CHECKME: Unused?
 
-	int16           word_378CC; // TODO: set by CLComputer_Init to 0
-	int16           word_378CE; // CHECKME: Unused
+	int16  word_378CC; // TODO: set by CLComputer_Init to 0
+	int16  word_378CE; // CHECKME: Unused
 
 	int		_invIconsCount;
 	int		_invIconsBase;
@@ -724,14 +723,14 @@ private:
 	int dword_32424, dword_32428, dword_3242C;
 	int dword_32430, dword_32434, dword_32438;
 	int dword_3243C, dword_32440, dword_32444;
-	int16 word_32448;
+	int16 word_32448; // CHECKME: USeless?
 	int16 word_3244A, word_3244C;
-	float flt_32450, flt_32454;
-	cube_t cube;
-	int16 curs_cur_map;
+	float flt_32450, flt_32454; // CHECKME: Useless?
+	cube_t _cube;
+	int16 _cursCurPCMap;
 	int16 _lines[200 * 8];
-	byte cube_texture[0x4000];
-	int cube_faces;
+	byte  _cubeTexture[0x4000];
+	int   _cubeFaces;
 	int32 _cursorOldTick, _cursorNewTick;
 	byte *_codePtr;
 };

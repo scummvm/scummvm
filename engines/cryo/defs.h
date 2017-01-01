@@ -835,23 +835,21 @@ extern int16 tab_2CF70[64];
 extern int16 kActionCursors[299];
 
 struct cubeface_t {
-	int             tri;
-	char            ff_4;
-	char            ff_5;
+	int    tri;
+	char   ff_4;
+	char   ff_5;
 
 	byte   *_texturePtr;
-	uint16  *indices;
-	int16           *uv;
+	uint16 *_indices;
+	int16  *_uv;
 };
-typedef struct cubeface_t cubeface_t;
 
 struct cube_t {
-	int             num;
-	cubeface_t      **faces;
-	int16           *projection;    // projected XYZ coords
-	int16           *vertices;
+	int          _num;
+	cubeface_t **_faces;
+	int16       *_projection;    // projected XYZ coords
+	int16       *_vertices;
 };
-typedef struct cube_t cube_t;
 
 extern float flt_2DF7C;
 extern float flt_2DF80;
@@ -862,9 +860,9 @@ struct XYZ {
 };
 
 struct cubeCursor {
-	unsigned char	_sides[6];	// spr idx for each side
-	unsigned char	kind;
-	signed char	speed;
+	uint8 _sides[6];	// spr idx for each side
+	uint8 _kind;
+	int8  _speed;
 };
 
 } // End of namespace Cryo
