@@ -1,7 +1,7 @@
-# LANGUAGE translation for ScummVM.
-# Copyright (C) YEAR ScummVM Team
+# Greek translation for ScummVM.
+# Copyright (C) 2016-2017 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Filippos Karapetis <md5@scummvm.org>, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"

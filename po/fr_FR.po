@@ -1,5 +1,5 @@
 # French translation for ScummVM.
-# Copyright (C) 2010-2016 The ScummVM Team
+# Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Thierry Crozat <criezy@scummvm.org>, 2011.
 #

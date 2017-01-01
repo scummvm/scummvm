@@ -1,5 +1,5 @@
-# LANGUAGE translation for ScummVM.
-# Copyright (C) YEAR ScummVM Team
+# Chinese Pinyin (Mandarin) translation for ScummVM.
+# Copyright (C) 2016-2017 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Chenbo Li <lichenbo1949@gmail.com>, 2016.
 #
