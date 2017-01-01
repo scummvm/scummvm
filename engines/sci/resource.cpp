@@ -192,27 +192,25 @@ ResourceType ResourceManager::convertResType(byte type) {
 }
 
 //-- Resource main functions --
-Resource::Resource(ResourceManager *resMan, ResourceId id) : _resMan(resMan), _id(id) {
-	data = NULL;
-	size = 0;
+Resource::Resource(ResourceManager *resMan, ResourceId id) : SciSpan<const byte>(nullptr, 0, id.toString()), _resMan(resMan), _id(id) {
 	_fileOffset = 0;
 	_status = kResStatusNoMalloc;
 	_lockers = 0;
-	_source = NULL;
-	_header = NULL;
+	_source = nullptr;
+	_header = nullptr;
 	_headerSize = 0;
 }
 
 Resource::~Resource() {
-	delete[] data;
+	delete[] _data;
 	delete[] _header;
 	if (_source && _source->getSourceType() == kSourcePatch)
 		delete _source;
 }
 
 void Resource::unalloc() {
-	delete[] data;
-	data = NULL;
+	delete[] _data;
+	_data = nullptr;
 	_status = kResStatusNoMalloc;
 }
 
@@ -221,12 +219,12 @@ void Resource::writeToStream(Common::WriteStream *stream) const {
 	stream->writeByte(_headerSize);
 	if (_headerSize > 0)
 		stream->write(_header, _headerSize);
-	stream->write(data, size);
+	stream->write(_data, _size);
 }
 
 #ifdef ENABLE_SCI32
 Common::SeekableReadStream *Resource::makeStream() const {
-	return new Common::MemoryReadStream(data, size, DisposeAfterUse::NO);
+	return new Common::MemoryReadStream(_data, _size, DisposeAfterUse::NO);
 }
 #endif
 
@@ -304,25 +302,26 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 	// We assume that the resource type matches `type`
 	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
-	data = new byte[size];
+	byte *ptr = new byte[size()];
+	_data = ptr;
 
 	if (_headerSize > 0)
 		_header = new byte[_headerSize];
 
-	if (data == nullptr || (_headerSize > 0 && _header == nullptr)) {
-		error("Can't allocate %d bytes needed for loading %s", size + _headerSize, _id.toString().c_str());
+	if (data() == nullptr || (_headerSize > 0 && _header == nullptr)) {
+		error("Can't allocate %lu bytes needed for loading %s", size() + _headerSize, _id.toString().c_str());
 	}
 
-	uint32 really_read;
+	uint32 bytesRead;
 	if (_headerSize > 0) {
-		really_read = file->read(_header, _headerSize);
-		if (really_read != _headerSize)
-			error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), _headerSize);
+		bytesRead = file->read(_header, _headerSize);
+		if (bytesRead != _headerSize)
+			error("Read %d bytes from %s but expected %d", bytesRead, _id.toString().c_str(), _headerSize);
 	}
 
-	really_read = file->read(data, size);
-	if (really_read != size)
-		error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
+	bytesRead = file->read(ptr, size());
+	if (bytesRead != size())
+		error("Read %d bytes from %s but expected %lu", bytesRead, _id.toString().c_str(), size());
 
 	_status = kResStatusAllocated;
 	return true;
@@ -425,10 +424,12 @@ bool MacResourceForkResourceSource::isCompressableResource(ResourceType type) co
 }
 
 #define OUTPUT_LITERAL() \
+	assert(ptr + literalLength <= bufferEnd); \
 	while (literalLength--) \
 		*ptr++ = stream->readByte();
 
 #define OUTPUT_COPY() \
+	assert(ptr + copyLength <= bufferEnd); \
 	while (copyLength--) { \
 		byte value = ptr[-offset]; \
 		*ptr++ = value; \
@@ -450,27 +451,29 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 
 	// Get the uncompressed size from the end of the resource
 	if (canBeCompressed && stream->size() > 4) {
-		stream->seek(stream->size() - 4);
+		stream->seek(-4, SEEK_END);
 		uncompressedSize = stream->readUint32BE();
 		stream->seek(0);
 	}
 
 	if (uncompressedSize == 0) {
 		// Not compressed
-		resource->size = stream->size();
+		resource->_size = stream->size();
 
 		// Cut out the 'non-compressed marker' (four zeroes) at the end
 		if (canBeCompressed)
-			resource->size -= 4;
+			resource->_size -= 4;
 
-		resource->data = new byte[resource->size];
-		stream->read(resource->data, resource->size);
+		byte *ptr = new byte[resource->size()];
+		resource->_data = ptr;
+		stream->read(ptr, resource->size());
 	} else {
 		// Decompress
-		resource->size = uncompressedSize;
-		resource->data = new byte[uncompressedSize];
+		resource->_size = uncompressedSize;
+		byte *ptr = new byte[uncompressedSize];
+		resource->_data = ptr;
 
-		byte *ptr = resource->data;
+		const byte *const bufferEnd = resource->data() + uncompressedSize;
 
 		while (stream->pos() < stream->size()) {
 			byte code = stream->readByte();
@@ -812,7 +815,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 	if (!chunk)
 		error("Trying to load non-existent chunk");
 
-	byte *ptr = chunk->data;
+	const byte *ptr = chunk->data();
 	uint32 firstOffset = 0;
 
 	for (;;) {
@@ -838,7 +841,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 		if (!firstOffset)
 			firstOffset = entry.offset;
 
-		if ((size_t)(ptr - chunk->data) >= firstOffset)
+		if ((size_t)(ptr - chunk->data()) >= firstOffset)
 			break;
 	}
 }
@@ -850,14 +853,16 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 		error("Trying to load non-existent resource from chunk %d: %s %d", _number, getResourceTypeName(res->_id.getType()), res->_id.getNumber());
 
 	ResourceEntry entry = _resMap[res->_id];
-	res->data = new byte[entry.length];
-	res->size = entry.length;
+	assert(entry.offset + entry.length <= chunk->_size);
+	byte *ptr = new byte[entry.length];
+	res->_data = ptr;
+	res->_size = entry.length;
 	res->_header = 0;
 	res->_headerSize = 0;
 	res->_status = kResStatusAllocated;
 
 	// Copy the resource data over
-	memcpy(res->data, chunk->data + entry.offset, entry.length);
+	memcpy(ptr, chunk->data() + entry.offset, entry.length);
 }
 
 void ResourceManager::addResourcesFromChunk(uint16 id) {
@@ -996,7 +1001,7 @@ void ResourceManager::removeFromLRU(Resource *res) {
 		return;
 	}
 	_LRU.remove(res);
-	_memoryLRU -= res->size;
+	_memoryLRU -= res->size();
 	res->_status = kResStatusAllocated;
 }
 
@@ -1006,7 +1011,7 @@ void ResourceManager::addToLRU(Resource *res) {
 		return;
 	}
 	_LRU.push_front(res);
-	_memoryLRU += res->size;
+	_memoryLRU += res->size();
 #if SCI_VERBOSE_RESMAN
 	debug("Adding %s (%d bytes) to lru control: %d bytes total",
 	      res->_id.toString().c_str(), res->size,
@@ -1023,8 +1028,8 @@ void ResourceManager::printLRU() {
 
 	while (it != _LRU.end()) {
 		res = *it;
-		debug("\t%s: %d bytes", res->_id.toString().c_str(), res->size);
-		mem += res->size;
+		debug("\t%s: %lu bytes", res->_id.toString().c_str(), res->size());
+		mem += res->size();
 		++entries;
 		++it;
 	}
@@ -1082,7 +1087,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 		if (retval->_status == kResStatusAllocated) {
 			retval->_status = kResStatusLocked;
 			retval->_lockers = 0;
-			_memoryLocked += retval->size;
+			_memoryLocked += retval->_size;
 		}
 		retval->_lockers++;
 	} else if (retval->_status != kResStatusLocked) { // Don't lock it
@@ -1090,11 +1095,11 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 			addToLRU(retval);
 	}
 
-	if (retval->data)
+	if (retval->data())
 		return retval;
 	else {
 		warning("resMan: Failed to read %s", retval->_id.toString().c_str());
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -1108,7 +1113,7 @@ void ResourceManager::unlockResource(Resource *res) {
 
 	if (!--res->_lockers) { // No more lockers?
 		res->_status = kResStatusAllocated;
-		_memoryLocked -= res->size;
+		_memoryLocked -= res->size();
 		addToLRU(res);
 	}
 
@@ -1780,7 +1785,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 					}
 					resource->_source = source;
 					resource->_fileOffset = fileOffset;
-					resource->size = 0;
+					resource->_size = 0;
 				}
 			}
 
@@ -1913,7 +1918,7 @@ void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 
 		_resMap.setVal(resId, res);
 		res->_source = src;
 		res->_fileOffset = offset;
-		res->size = size;
+		res->_size = size;
 	}
 }
 
@@ -1931,7 +1936,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	res->_status = kResStatusNoMalloc;
 	res->_source = src;
 	res->_headerSize = 0;
-	res->size = size;
+	res->_size = size;
 
 	return res;
 }
@@ -2001,7 +2006,7 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		return SCI_ERROR_IO_ERROR;
 
 	_id = ResourceId(type, number);
-	size = szUnpacked;
+	_size = szUnpacked;
 
 	// checking compression method
 	switch (wCompression) {
@@ -2075,9 +2080,10 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-	data = new byte[size];
+	byte *ptr = new byte[_size];
+	_data = ptr;
 	_status = kResStatusAllocated;
-	errorNum = data ? dec->unpack(file, data, szPacked, size) : SCI_ERROR_RESOURCE_TOO_BIG;
+	errorNum = ptr ? dec->unpack(file, ptr, szPacked, _size) : SCI_ERROR_RESOURCE_TOO_BIG;
 	if (errorNum)
 		unalloc();
 
@@ -2136,7 +2142,7 @@ ViewType ResourceManager::detectViewType() {
 			if (res->_source->getSourceType() == kSourcePatch)
 				continue;
 
-			switch (res->data[1]) {
+			switch (res->getUint8At(1)) {
 			case 128:
 				// If the 2nd byte is 128, it's a VGA game.
 				// However, Longbow Amiga (AGA, 64 colors), also sets this byte
@@ -2149,28 +2155,28 @@ ViewType ResourceManager::detectViewType() {
 			case 0:
 				// EGA or Amiga, try to read as Amiga view
 
-				if (res->size < 10)
+				if (res->size() < 10)
 					return kViewUnknown;
 
 				// Read offset of first loop
-				uint16 offset = READ_LE_UINT16(res->data + 8);
+				uint16 offset = res->getUint16LEAt(8);
 
-				if (offset + 6U >= res->size)
+				if (offset + 6U >= res->size())
 					return kViewUnknown;
 
 				// Read offset of first cel
-				offset = READ_LE_UINT16(res->data + offset + 4);
+				offset = res->getUint16LEAt(offset + 4);
 
-				if (offset + 4U >= res->size)
+				if (offset + 4U >= res->size())
 					return kViewUnknown;
 
 				// Check palette offset, amiga views have no palette
-				if (READ_LE_UINT16(res->data + 6) != 0)
+				if (res->getUint16LEAt(6) != 0)
 					return kViewEga;
 
-				uint16 width = READ_LE_UINT16(res->data + offset);
+				uint16 width = res->getUint16LEAt(offset);
 				offset += 2;
-				uint16 height = READ_LE_UINT16(res->data + offset);
+				uint16 height = res->getUint16LEAt(offset);
 				offset += 6;
 
 				// To improve the heuristic, we skip very small views
@@ -2182,8 +2188,8 @@ ViewType ResourceManager::detectViewType() {
 				for (y = 0; y < height; y++) {
 					int x = 0;
 
-					while ((x < width) && (offset < res->size)) {
-						byte op = res->data[offset++];
+					while ((x < width) && (offset < res->size())) {
+						byte op = res->getUint8At(offset++);
 						x += (op & 0x07) ? op & 0x07 : op >> 3;
 					}
 
@@ -2226,26 +2232,25 @@ static const byte detectSci21NewStringSignature[] = {
 
 bool ResourceManager::checkResourceDataForSignature(Resource *resource, const byte *signature) {
 	byte signatureSize = *signature;
-	const byte *resourceData = resource->data;
 
 	signature++; // skip over size byte
 	if (signatureSize < 4)
 		error("resource signature is too small, internal error");
-	if (signatureSize > resource->size)
+	if (signatureSize > resource->size())
 		return false;
 
 	const uint32 signatureDWord = READ_UINT32(signature);
 	signature += 4; signatureSize -= 4;
 
-	const uint32 searchLimit = resource->size - signatureSize + 1;
+	const uint32 searchLimit = resource->size() - signatureSize + 1;
 	uint32 DWordOffset = 0;
 	while (DWordOffset < searchLimit) {
-		if (signatureDWord == READ_UINT32(resourceData + DWordOffset)) {
+		if (signatureDWord == resource->getUint32At(DWordOffset)) {
 			// magic DWORD found, check if the rest matches as well
 			uint32 offset = DWordOffset + 4;
 			uint32 signaturePos  = 0;
 			while (signaturePos < signatureSize) {
-				if (resourceData[offset] != signature[signaturePos])
+				if (resource->getUint8At(offset) != signature[signaturePos])
 					break;
 				offset++;
 				signaturePos++;
@@ -2474,8 +2479,8 @@ bool ResourceManager::detectFontExtended() {
 
 	Resource *res = findResource(ResourceId(kResourceTypeFont, 0), 0);
 	if (res) {
-		if (res->size >= 4) {
-			uint16 numChars = READ_LE_UINT16(res->data + 2);
+		if (res->size() >= 4) {
+			uint16 numChars = READ_LE_UINT16(res->data() + 2);
 			if (numChars > 0x80)
 				return true;
 		}
@@ -2488,35 +2493,39 @@ bool ResourceManager::detectPaletteMergingSci11() {
 	// Load palette 999 (default palette)
 	Resource *res = findResource(ResourceId(kResourceTypePalette, 999), false);
 
-	if ((res) && (res->size > 30)) {
-		byte *data = res->data;
+	if (res && res->size() > 30) {
 		// Old palette format used in palette resource? -> it's merging
-		if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0))
+		if ((res->getUint8At(0) == 0 && res->getUint8At(1) == 1) ||
+			(res->getUint8At(0) == 0 && res->getUint8At(1) == 0 && res->getUint16LEAt(29) == 0)) {
 			return true;
+		}
+
 		// Hardcoded: Laura Bow 2 floppy uses new palette resource, but still palette merging + 16 bit color matching
-		if ((g_sci->getGameId() == GID_LAURABOW2) && (!g_sci->isCD()) && (!g_sci->isDemo()))
+		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && !g_sci->isDemo()) {
 			return true;
-		return false;
+		}
 	}
+
 	return false;
 }
 
 // is called on SCI0EARLY games to make sure that sound resources are in fact also SCI0EARLY
 bool ResourceManager::detectEarlySound() {
-	Resource *res = findResource(ResourceId(kResourceTypeSound, 1), 0);
-	if (res) {
-		if (res->size >= 0x22) {
-			if (READ_LE_UINT16(res->data + 0x1f) == 0) // channel 15 voice count + play mask is 0 in SCI0LATE
-				if (res->data[0x21] == 0) // last byte right before actual data is 0 as well
-					return false;
-		}
+	Resource *res = findResource(ResourceId(kResourceTypeSound, 1), false);
+	if (res &&
+		res->size() >= 0x22 &&
+		res->getUint16LEAt(0x1f) == 0 && // channel 15 voice count + play mask is 0 in SCI0LATE
+		res->getUint8At(0x21) == 0) { // last byte right before actual data is 0 as well
+
+		return false;
 	}
+
 	return true;
 }
 
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
 bool ResourceManager::hasOldScriptHeader() {
-	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
+	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), false);
 
 	if (!res) {
 		// Script 0 missing -> corrupted / non-SCI resource files.
@@ -2528,13 +2537,13 @@ bool ResourceManager::hasOldScriptHeader() {
 	uint offset = 2;
 	const int objTypes = 17;
 
-	while (offset < res->size) {
-		uint16 objType = READ_LE_UINT16(res->data + offset);
+	while (offset < res->size()) {
+		uint16 objType = res->getUint16LEAt(offset);
 
 		if (!objType) {
 			offset += 2;
 			// We should be at the end of the resource now
-			return offset == res->size;
+			return offset == res->size();
 		}
 
 		if (objType >= objTypes) {
@@ -2542,7 +2551,7 @@ bool ResourceManager::hasOldScriptHeader() {
 			return false;
 		}
 
-		int skip = READ_LE_UINT16(res->data + offset + 2);
+		int skip = res->getUint16LEAt(offset + 2);
 
 		if (skip < 2) {
 			// Invalid size
@@ -2556,34 +2565,34 @@ bool ResourceManager::hasOldScriptHeader() {
 }
 
 bool ResourceManager::hasSci0Voc999() {
-	Resource *res = findResource(ResourceId(kResourceTypeVocab, 999), 0);
+	Resource *res = findResource(ResourceId(kResourceTypeVocab, 999), false);
 
 	if (!res) {
 		// No vocab present, possibly a demo version
 		return false;
 	}
 
-	if (res->size < 2)
+	if (res->size() < 2)
 		return false;
 
-	uint16 count = READ_LE_UINT16(res->data);
+	uint16 count = res->getUint16LEAt(0);
 
 	// Make sure there's enough room for the pointers
-	if (res->size < (uint)count * 2)
+	if (res->size() < (uint)count * 2)
 		return false;
 
 	// Iterate over all pointers
 	for (uint i = 0; i < count; i++) {
 		// Offset to string
-		uint16 offset = READ_LE_UINT16(res->data + 2 + count * 2);
+		uint16 offset = res->getUint16LEAt(2 + count * 2);
 
 		// Look for end of string
 		do {
-			if (offset >= res->size) {
+			if (offset >= res->size()) {
 				// Out of bounds
 				return false;
 			}
-		} while (res->data[offset++]);
+		} while (res->getUint8At(offset++));
 	}
 
 	return true;
@@ -2595,62 +2604,62 @@ bool ResourceManager::hasSci1Voc900() {
 	if (!res )
 		return false;
 
-	if (res->size < 0x1fe)
+	if (res->size() < 0x1fe)
 		return false;
 
 	uint16 offset = 0x1fe;
 
-	while (offset < res->size) {
+	while (offset < res->size()) {
 		offset++;
 		do {
-			if (offset >= res->size) {
+			if (offset >= res->size()) {
 				// Out of bounds;
 				return false;
 			}
-		} while (res->data[offset++]);
+		} while (res->getUint8At(offset++));
 		offset += 3;
 	}
 
-	return offset == res->size;
+	return offset == res->size();
 }
 
 // Same function as Script::findBlockSCI0(). Slight code
 // duplication here, but this has been done to keep the resource
 // manager independent from the rest of the engine
-static byte *findSci0ExportsBlock(byte *buffer) {
-	byte *buf = buffer;
+static SciSpan<const byte>::const_iterator findSci0ExportsBlock(const SciSpan<const byte> &buffer) {
+	SciSpan<const byte>::const_iterator buf = buffer.cbegin();
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (oldScriptHeader)
 		buf += 2;
 
-	do {
-		int seekerType = READ_LE_UINT16(buf);
+	for (;;) {
+		int seekerType = buf.getUint16LE();
 
 		if (seekerType == 0)
 			break;
 		if (seekerType == 7)	// exports
 			return buf;
 
-		int seekerSize = READ_LE_UINT16(buf + 2);
+		int seekerSize = (buf + 2).getUint16LE();
 		assert(seekerSize > 0);
 		buf += seekerSize;
-	} while (1);
+	}
 
-	return NULL;
+	return buffer.cend();
 }
 
 // This code duplicates Script::relocateOffsetSci3, but we can't use
 // that here since we can't instantiate scripts at this point.
-static int relocateOffsetSci3(const byte *buf, uint32 offset) {
-	int relocStart = READ_LE_UINT32(buf + 8);
-	int relocCount = READ_LE_UINT16(buf + 18);
-	const byte *seeker = buf + relocStart;
+static int relocateOffsetSci3(const SciSpan<const byte> &buf, uint32 offset) {
+	int relocStart = buf.getUint32LEAt(8);
+	int relocCount = buf.getUint16LEAt(18);
+	SciSpan<const byte>::const_iterator seeker = buf.cbegin() + relocStart;
 
 	for (int i = 0; i < relocCount; ++i) {
-		if (READ_SCI11ENDIAN_UINT32(seeker) == offset) {
+		if (seeker.getUint32SE() == offset) {
 			// TODO: Find out what UINT16 at (seeker + 8) means
-			return READ_SCI11ENDIAN_UINT16(buf + offset) + READ_SCI11ENDIAN_UINT32(seeker + 4);
+			return buf.getUint16SEAt(offset) + (seeker + 4).getUint32SE();
 		}
 		seeker += 10;
 	}
@@ -2664,41 +2673,41 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	if (!script)
 		return NULL_REG;
 
-	byte *offsetPtr = 0;
+	SciSpan<const byte>::const_iterator offsetPtr;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		byte *buf = (getSciVersion() == SCI_VERSION_0_EARLY) ? script->data + 2 : script->data;
+		SciSpan<const byte> buf = (getSciVersion() == SCI_VERSION_0_EARLY) ? script->subspan(2) : *script;
 
 		// Check if the first block is the exports block (in most cases, it is)
-		bool exportsIsFirst = (READ_LE_UINT16(buf + 4) == 7);
+		bool exportsIsFirst = buf.getUint16LEAt(4) == 7;
 		if (exportsIsFirst) {
-			offsetPtr = buf + 4 + 2;
+			offsetPtr = buf.subspan(4 + 2).cbegin();
 		} else {
-			offsetPtr = findSci0ExportsBlock(script->data);
-			if (!offsetPtr)
+			offsetPtr = findSci0ExportsBlock(*script);
+			if (offsetPtr == buf.cend())
 				error("Unable to find exports block from script 0");
 			offsetPtr += 4 + 2;
 		}
 
-		int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+		int16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
 		return make_reg(1, offset);
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		offsetPtr = script->data + 4 + 2 + 2;
+		offsetPtr = script->cbegin() + 4 + 2 + 2;
 
 		// In SCI1.1 - SCI2.1, the heap is appended at the end of the script,
 		// so adjust the offset accordingly if requested
-		int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
+		int16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
 		if (addSci11ScriptOffset) {
-			offset += script->size;
+			offset += script->size();
 
 			// Ensure that the start of the heap is word-aligned - same as in Script::init()
-			if (script->size & 2)
+			if (script->size() & 2)
 				offset++;
 		}
 
 		return make_reg(1, offset);
 	} else {
-		return make_reg(1, relocateOffsetSci3(script->data, 22));
+		return make_reg(1, relocateOffsetSci3(*script, 22));
 	}
 }
 
@@ -2726,13 +2735,9 @@ Common::String ResourceManager::findSierraGameId() {
 		return "";
 
 	// Seek to the name selector of the first export
-	byte *offsetPtr = heap->data + gameObjectOffset + nameSelector * 2;
-	uint16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
-	byte *seeker = heap->data + offset;
-	Common::String sierraId;
-	sierraId += (const char *)seeker;
-
-	return sierraId;
+	SciSpan<const byte>::const_iterator offsetPtr = heap->cbegin() + gameObjectOffset + nameSelector * 2;
+	uint16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
+	return heap->getStringAt(offset);
 }
 
 const Common::String &Resource::getResourceLocation() const {

@@ -648,18 +648,18 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// As far as we know, these games store the messages of each language in separate
 	// resources, and it's not possible to detect that easily
 	// Also look for "%J" which is used in japanese games
-	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), 0);
+	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), false);
 	uint seeker = 0;
 	if (text) {
-		while (seeker < text->size) {
-			if (text->data[seeker] == '#')  {
-				if (seeker + 1 < text->size)
-					s_fallbackDesc.language = charToScummVMLanguage(text->data[seeker + 1]);
+		while (seeker < text->size()) {
+			if (text->getUint8At(seeker) == '#')  {
+				if (seeker + 1 < text->size())
+					s_fallbackDesc.language = charToScummVMLanguage(text->getUint8At(seeker + 1));
 				break;
 			}
-			if (text->data[seeker] == '%') {
-				if ((seeker + 1 < text->size) && (text->data[seeker + 1] == 'J')) {
-					s_fallbackDesc.language = charToScummVMLanguage(text->data[seeker + 1]);
+			if (text->getUint8At(seeker) == '%') {
+				if ((seeker + 1 < text->size()) && (text->getUint8At(seeker + 1) == 'J')) {
+					s_fallbackDesc.language = charToScummVMLanguage(text->getUint8At(seeker + 1));
 					break;
 				}
 			}

@@ -4975,7 +4975,7 @@ ScriptPatcher::~ScriptPatcher() {
 }
 
 // will actually patch previously found signature area
-void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
+void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<byte> scriptData, int32 signatureOffset) {
 	const uint16 *patchData = patchEntry->patchData;
 	byte orgData[PATCH_VALUELIMIT];
 	int32 offset = signatureOffset;
@@ -4983,10 +4983,10 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 	uint16 patchSelector = 0;
 
 	// Copy over original bytes from script
-	uint32 orgDataSize = scriptSize - offset;
+	uint32 orgDataSize = scriptData.size() - offset;
 	if (orgDataSize > PATCH_VALUELIMIT)
 		orgDataSize = PATCH_VALUELIMIT;
-	memcpy(&orgData, &scriptData[offset], orgDataSize);
+	scriptData.subspan(offset, orgDataSize).unsafeCopyDataTo(orgData);
 
 	while (patchWord != PATCH_END) {
 		uint16 patchCommand = patchWord & PATCH_COMMANDMASK;
@@ -5082,7 +5082,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 	}
 }
 
-bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const byte *scriptData, const uint32 scriptSize) {
+bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const SciSpan<const byte> &scriptData) {
 	uint16 sigSelector = 0;
 
 	uint16 sigWord = *signatureData;
@@ -5097,7 +5097,7 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 		}
 		case SIG_CODE_UINT16:
 		case SIG_CODE_SELECTOR16: {
-			if ((byteOffset + 1) < scriptSize) {
+			if (byteOffset + 1 < scriptData.size()) {
 				byte byte1;
 				byte byte2;
 
@@ -5134,7 +5134,7 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 			break;
 		}
 		case SIG_CODE_SELECTOR8: {
-			if (byteOffset < scriptSize) {
+			if (byteOffset < scriptData.size()) {
 				sigSelector = _selectorIdTable[sigValue];
 				if (sigSelector & 0xFF00)
 					error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty signature: '%s'", signatureDescription);
@@ -5147,7 +5147,7 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 			break;
 		}
 		case SIG_CODE_BYTE:
-			if (byteOffset < scriptSize) {
+			if (byteOffset < scriptData.size()) {
 				if (scriptData[byteOffset] != sigWord)
 					sigWord = SIG_MISMATCH;
 				byteOffset++;
@@ -5169,20 +5169,20 @@ bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureDa
 }
 
 // will return -1 if no match was found, otherwise an offset to the start of the signature match
-int32 ScriptPatcher::findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const byte *scriptData, const uint32 scriptSize) {
-	if (scriptSize < 4) // we need to find a DWORD, so less than 4 bytes is not okay
+int32 ScriptPatcher::findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const SciSpan<const byte> &scriptData) {
+	if (scriptData.size() < 4) // we need to find a DWORD, so less than 4 bytes is not okay
 		return -1;
 
 	// magicDWord is in platform-specific BE/LE form, so that the later match will work, this was done for performance
-	const uint32 searchLimit = scriptSize - 3;
+	const uint32 searchLimit = scriptData.size() - 3;
 	uint32 DWordOffset = 0;
 	// first search for the magic DWORD
 	while (DWordOffset < searchLimit) {
-		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
+		if (magicDWord == scriptData.getUint32At(DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
 			uint32 offset = DWordOffset + magicOffset;
 
-			if (verifySignature(offset, signatureData, patchDescription, scriptData, scriptSize))
+			if (verifySignature(offset, signatureData, patchDescription, scriptData))
 				return offset;
 		}
 		DWordOffset++;
@@ -5191,8 +5191,8 @@ int32 ScriptPatcher::findSignature(uint32 magicDWord, int magicOffset, const uin
 	return -1;
 }
 
-int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize) {
-	return findSignature(runtimeEntry->magicDWord, runtimeEntry->magicOffset, patchEntry->signatureData, patchEntry->description, scriptData, scriptSize);
+int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const SciSpan<const byte> &scriptData) {
+	return findSignature(runtimeEntry->magicDWord, runtimeEntry->magicOffset, patchEntry->signatureData, patchEntry->description, scriptData);
 }
 
 // Attention: Magic DWord is returned using platform specific byte order. This is done on purpose for performance.
@@ -5380,7 +5380,7 @@ void ScriptPatcher::enablePatch(const SciScriptPatcherEntry *patchTable, const c
 		error("Script-Patcher: no patch found to enable");
 }
 
-void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
+void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	const SciScriptPatcherEntry *signatureTable = NULL;
 	const SciScriptPatcherEntry *curEntry = NULL;
 	SciScriptPatcherRuntimeEntry *curRuntimeEntry = NULL;
@@ -5552,11 +5552,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 				int32 foundOffset = 0;
 				int16 applyCount = curEntry->applyCount;
 				do {
-					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData, scriptSize);
+					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData);
 					if (foundOffset != -1) {
 						// found, so apply the patch
 						debugC(kDebugLevelScriptPatcher, "Script-Patcher: '%s' on script %d offset %d", curEntry->description, scriptNr, foundOffset);
-						applyPatch(curEntry, scriptData, scriptSize, foundOffset);
+						applyPatch(curEntry, scriptData, foundOffset);
 					}
 					applyCount--;
 				} while ((foundOffset != -1) && (applyCount));

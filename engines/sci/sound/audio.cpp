@@ -365,15 +365,15 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	if (audioCompressionType) {
 #if (defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC))
 		// Compressed audio made by our tool
-		byte *compressedData = (byte *)malloc(audioRes->size);
+		byte *compressedData = (byte *)malloc(audioRes->size());
 		assert(compressedData);
 		// We copy over the compressed data in our own buffer. We have to do
 		// this, because ResourceManager may free the original data late. All
 		// other compression types already decompress completely into an
 		// additional buffer here. MP3/OGG/FLAC decompression works on-the-fly
 		// instead.
-		memcpy(compressedData, audioRes->data, audioRes->size);
-		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
+		audioRes->unsafeCopyDataTo(compressedData);
+		Common::SeekableReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size(), DisposeAfterUse::YES);
 
 		switch (audioCompressionType) {
 		case MKTAG('M','P','3',' '):
@@ -401,13 +401,13 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			// SCI1.1
 			Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
 
-			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags, audioRes->size)) {
-				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags, audioRes->size())) {
+				Common::MemoryReadStream dataStream(audioRes->toStream());
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
-		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('R','I','F','F')) {
+		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('R','I','F','F')) {
 			// WAVE detected
-			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
 
 			// Calculate samplelen from WAVE header
 			int waveSize = 0, waveRate = 0;
@@ -420,9 +420,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 			waveStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
-		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('F','O','R','M')) {
+		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('F','O','R','M')) {
 			// AIFF detected
-			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
 			Audio::RewindableAudioStream *rewindStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
 			audioSeekStream = dynamic_cast<Audio::SeekableAudioStream *>(rewindStream);
 
@@ -430,10 +430,14 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				warning("AIFF file is not seekable");
 				delete rewindStream;
 			}
-		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
-				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
+		} else if (audioRes->size() > 14 &&
+				   audioRes->getUint16BEAt(0) == 1 &&
+				   audioRes->getUint16BEAt(2) == 1 &&
+				   audioRes->getUint16BEAt(4) == 5 &&
+				   audioRes->getUint32BEAt(10) == 0x00018051) {
+
 			// Mac snd detected
-			Common::SeekableReadStream *sndStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+			Common::SeekableReadStream *sndStream = new Common::MemoryReadStream(audioRes->getUnsafeDataAt(0), audioRes->size(), DisposeAfterUse::NO);
 
 			audioSeekStream = Audio::makeMacSndStream(sndStream, DisposeAfterUse::YES);
 			if (!audioSeekStream)
@@ -441,10 +445,10 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 		} else {
 			// SCI1 raw audio
-			size = audioRes->size;
+			size = audioRes->size();
 			data = (byte *)malloc(size);
 			assert(data);
-			memcpy(data, audioRes->data, size);
+			audioRes->unsafeCopyDataTo(data);
 			flags = Audio::FLAG_UNSIGNED;
 			_audioRate = 11025;
 		}

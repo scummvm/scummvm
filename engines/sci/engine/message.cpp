@@ -39,13 +39,13 @@ struct MessageRecord {
 class MessageReader {
 public:
 	bool init() {
-		if (_headerSize > _size)
+		if (_headerSize > _data.size())
 			return false;
 
 		// Read message count from last word in header
-		_messageCount = READ_SCI11ENDIAN_UINT16(_data + _headerSize - 2);
+		_messageCount = _data.getUint16SEAt(_headerSize - 2);
 
-		if (_messageCount * _recordSize + _headerSize > _size)
+		if (_messageCount * _recordSize + _headerSize > _data.size())
 			return false;
 
 		return true;
@@ -56,11 +56,10 @@ public:
 	virtual ~MessageReader() { }
 
 protected:
-	MessageReader(const byte *data, uint size, uint headerSize, uint recordSize)
-		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize), _messageCount(0) { }
+	MessageReader(const SciSpan<const byte> &data, uint headerSize, uint recordSize)
+		: _data(data), _headerSize(headerSize), _recordSize(recordSize), _messageCount(0) { }
 
-	const byte *_data;
-	const uint _size;
+	const SciSpan<const byte> _data;
 	const uint _headerSize;
 	const uint _recordSize;
 	uint _messageCount;
@@ -68,22 +67,22 @@ protected:
 
 class MessageReaderV2 : public MessageReader {
 public:
-	MessageReaderV2(byte *data, uint size) : MessageReader(data, size, 6, 4) { }
+	MessageReaderV2(const SciSpan<const byte> &data) : MessageReader(data, 6, 4) { }
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
-		const byte *recordPtr = _data + _headerSize;
+		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.talker = 0;
-				const uint16 stringOffset = READ_LE_UINT16(recordPtr + 2);
-				const uint32 maxSize = _size - stringOffset;
-				record.string = (const char *)_data + stringOffset;
+				const uint16 stringOffset = recordPtr.getUint16LEAt(2);
+				const uint32 maxSize = _data.size() - stringOffset;
+				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -96,23 +95,22 @@ public:
 
 class MessageReaderV3 : public MessageReader {
 public:
-	MessageReaderV3(byte *data, uint size) : MessageReader(data, size, 8, 10) { }
+	MessageReaderV3(const SciSpan<const byte> &data) : MessageReader(data, 8, 10) { }
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
-		const byte *recordPtr = _data + _headerSize;
-
+		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
 				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.talker = recordPtr[4];
-				const uint16 stringOffset = READ_LE_UINT16(recordPtr + 5);
-				const uint32 maxSize = _size - stringOffset;
-				record.string = (const char *)_data + stringOffset;
+				const uint16 stringOffset = recordPtr.getUint16LEAt(5);
+				const uint32 maxSize = _data.size() - stringOffset;
+				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -125,23 +123,22 @@ public:
 
 class MessageReaderV4 : public MessageReader {
 public:
-	MessageReaderV4(byte *data, uint size) : MessageReader(data, size, 10, 11) { }
+	MessageReaderV4(const SciSpan<const byte> &data) : MessageReader(data, 10, 11) { }
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
-		const byte *recordPtr = _data + _headerSize;
-
+		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
 				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[7], recordPtr[8], recordPtr[9]);
 				record.talker = recordPtr[4];
-				const uint16 stringOffset = READ_SCI11ENDIAN_UINT16(recordPtr + 5);
-				const uint32 maxSize = _size - stringOffset;
-				record.string = (const char *)_data + stringOffset;
+				const uint16 stringOffset = recordPtr.getUint16SEAt(5);
+				const uint32 maxSize = _data.size() - stringOffset;
+				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -157,23 +154,22 @@ public:
 // the talker and the string...
 class MessageReaderV4_MacSCI32 : public MessageReader {
 public:
-	MessageReaderV4_MacSCI32(byte *data, uint size) : MessageReader(data, size, 10, 12) { }
+	MessageReaderV4_MacSCI32(const SciSpan<const byte> &data) : MessageReader(data, 10, 12) { }
 
 	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
-		const byte *recordPtr = _data + _headerSize;
-
+		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
 				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[8], recordPtr[9], recordPtr[10]);
 				record.talker = recordPtr[4];
-				const uint16 stringOffset = READ_BE_UINT16(recordPtr + 6);
-				const uint32 maxSize = _size - stringOffset;
-				record.string = (const char *)_data + stringOffset;
+				const uint16 stringOffset = recordPtr.getUint16BEAt(6);
+				const uint32 maxSize = _data.size() - stringOffset;
+				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -194,24 +190,24 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	}
 
 	MessageReader *reader;
-	int version = READ_SCI11ENDIAN_UINT32(res->data) / 1000;
+	int version = res->getUint32SEAt(0) / 1000;
 
 	switch (version) {
 	case 2:
-		reader = new MessageReaderV2(res->data, res->size);
+		reader = new MessageReaderV2(*res);
 		break;
 	case 3:
-		reader = new MessageReaderV3(res->data, res->size);
+		reader = new MessageReaderV3(*res);
 		break;
 	case 4:
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
 		// SCI32 Mac is different than SCI32 DOS/Win here
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
-			reader = new MessageReaderV4_MacSCI32(res->data, res->size);
+			reader = new MessageReaderV4_MacSCI32(*res);
 		else
 #endif
-			reader = new MessageReaderV4(res->data, res->size);
+			reader = new MessageReaderV4(*res);
 		break;
 	default:
 		error("Message: unsupported resource version %d", version);

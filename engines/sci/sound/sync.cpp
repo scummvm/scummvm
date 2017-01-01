@@ -50,14 +50,14 @@ void Sync::start(const ResourceId id, const reg_t syncObjAddr) {
 }
 
 void Sync::next(const reg_t syncObjAddr) {
-	if (_resource && (_offset < _resource->size - 1)) {
+	if (_resource && (_offset < _resource->size() - 1)) {
 		int16 syncCue = -1;
-		int16 syncTime = (int16)READ_SCI11ENDIAN_UINT16(_resource->data + _offset);
+		int16 syncTime = _resource->getInt16SEAt(_offset);
 
 		_offset += 2;
 
-		if ((syncTime != -1) && (_offset < _resource->size - 1)) {
-			syncCue = (int16)READ_SCI11ENDIAN_UINT16(_resource->data + _offset);
+		if ((syncTime != -1) && (_offset < _resource->size() - 1)) {
+			syncCue = _resource->getInt16SEAt(_offset);
 			_offset += 2;
 		}
 

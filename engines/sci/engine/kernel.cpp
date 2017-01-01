@@ -149,13 +149,13 @@ void Kernel::loadSelectorNames() {
 		return;
 	}
 
-	int count = (isBE ? READ_BE_UINT16(r->data) : READ_LE_UINT16(r->data)) + 1; // Counter is slightly off
+	int count = (isBE ? r->getUint16BEAt(0) : r->getUint16LEAt(0)) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
-		int offset = isBE ? READ_BE_UINT16(r->data + 2 + i * 2) : READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = isBE ? READ_BE_UINT16(r->data + offset) : READ_LE_UINT16(r->data + offset);
+		int offset = isBE ? r->getUint16BEAt(2 + i * 2) : r->getUint16LEAt(2 + i * 2);
+		int len = isBE ? r->getUint16BEAt(offset) : r->getUint16LEAt(offset);
 
-		Common::String tmp((const char *)r->data + offset + 2, len);
+		Common::String tmp = r->getStringAt(offset + 2, len);
 		_selectorNames.push_back(tmp);
 		//debug("%s", tmp.c_str());
 
@@ -940,33 +940,27 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 }
 
 Common::String Kernel::lookupText(reg_t address, int index) {
-	char *seeker;
-	Resource *textres;
-
 	if (address.getSegment())
 		return _segMan->getString(address);
 
-	int textlen;
-	int _index = index;
-	textres = _resMan->findResource(ResourceId(kResourceTypeText, address.getOffset()), 0);
+	Resource *textres = _resMan->findResource(ResourceId(kResourceTypeText, address.getOffset()), false);
 
 	if (!textres) {
 		error("text.%03d not found", address.getOffset());
-		return NULL; /* Will probably segfault */
 	}
 
-	textlen = textres->size;
-	seeker = (char *) textres->data;
+	int textlen = textres->size();
+	const char *seeker = (const char *)textres->getUnsafeDataAt(0);
 
+	int _index = index;
 	while (index--)
-		while ((textlen--) && (*seeker++))
+		while (textlen-- && *seeker++)
 			;
 
 	if (textlen)
 		return seeker;
 
 	error("Index %d out of bounds in text.%03d", _index, address.getOffset());
-	return NULL;
 }
 
 // TODO: script_adjust_opcode_formats should probably be part of the

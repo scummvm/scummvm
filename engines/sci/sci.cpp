@@ -361,7 +361,7 @@ Common::Error SciEngine::run() {
 		// Refer to bug #3036609.
 		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
 
-		if (buggyScript && (buggyScript->size == 12354 || buggyScript->size == 12362)) {
+		if (buggyScript && (buggyScript->size() == 12354 || buggyScript->size() == 12362)) {
 			showScummVMDialog("A known buggy game script has been detected, which could "
 			                  "prevent you from progressing later on in the game, during "
 			                  "the sequence with the Green Man's riddles. Please, apply "
@@ -477,10 +477,10 @@ bool SciEngine::gameHasFanMadePatch() {
 		if (patchInfo[curEntry].gameID == getGameId()) {
 			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[curEntry].targetScript), 0);
 
-			if (targetScript && targetScript->size + 2 == patchInfo[curEntry].targetSize) {
+			if (targetScript && targetScript->size() + 2 == patchInfo[curEntry].targetSize) {
 				if (patchInfo[curEntry].patchedByteOffset == 0)
 					return true;
-				else if (targetScript->data[patchInfo[curEntry].patchedByteOffset - 2] == patchInfo[curEntry].patchedByte)
+				else if (targetScript->getUint8At(patchInfo[curEntry].patchedByteOffset - 2) == patchInfo[curEntry].patchedByte)
 					return true;
 			}
 		}
