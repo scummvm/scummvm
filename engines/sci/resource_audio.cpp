@@ -373,7 +373,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			byte headerSize = stream->readByte();
 			assert(headerSize == 11 || headerSize == 12);
 
-			stream->skip(5);
+			stream->skip(7);
 			uint32 size = stream->readUint32LE() + headerSize + 2;
 
 			assert(offset + size <= srcSize);
