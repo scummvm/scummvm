@@ -81,7 +81,7 @@ bool CBasicRemoteGlyph::MouseButtonUpMsg(const Point &pt) {
 	return false;
 }
 
-void CBasicRemoteGlyph::getTooltip(CPetText *text) {
+void CBasicRemoteGlyph::getTooltip(CTextControl *text) {
 	text->setText(_tooltip);
 }
 
@@ -160,7 +160,7 @@ bool CRemoteGotoGlyph::MouseButtonUpMsg(const Point &pt) {
 	return true;
 }
 
-void CRemoteGotoGlyph::getTooltip(CPetText *text) {
+void CRemoteGotoGlyph::getTooltip(CTextControl *text) {
 	text->setText(_tooltip);
 }
 
@@ -216,7 +216,7 @@ bool CTelevisionControlGlyph::MouseButtonUpMsg(const Point &pt) {
 	return false;
 }
 
-void CTelevisionControlGlyph::getTooltip(CPetText *text) {
+void CTelevisionControlGlyph::getTooltip(CTextControl *text) {
 	text->setText(TELEVISION_CONTROL);
 }
 
@@ -280,7 +280,7 @@ bool CEntertainmentDeviceGlyph::MouseButtonUpMsg(const Point &pt) {
 	return false;
 }
 
-void CEntertainmentDeviceGlyph::getTooltip(CPetText *text) {
+void CEntertainmentDeviceGlyph::getTooltip(CTextControl *text) {
 	text->setText(OPERATE_ENTERTAINMENT);
 }
 
@@ -334,7 +334,7 @@ bool COperateLightsGlyph::MouseButtonUpMsg(const Point &pt) {
 	return true;
 }
 
-void COperateLightsGlyph::getTooltip(CPetText *text) {
+void COperateLightsGlyph::getTooltip(CTextControl *text) {
 	text->setText(OPERATE_LIGHTS);
 }
 
@@ -346,7 +346,7 @@ bool CDeployFloralGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CDeployFloralGlyph::getTooltip(CPetText *text) {
+void CDeployFloralGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_FLORAL_ENHANCEMENT);
 }
 
@@ -359,7 +359,7 @@ bool CDeployFullyRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 	return true;
 }
 
-void CDeployFullyRelaxationGlyph::getTooltip(CPetText *text) {
+void CDeployFullyRelaxationGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_FULLY_RELAXATION);
 }
 
@@ -371,7 +371,7 @@ bool CDeployComfortGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CDeployComfortGlyph::getTooltip(CPetText *text) {
+void CDeployComfortGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_COMFORT_WORKSTATION);
 }
 
@@ -383,7 +383,7 @@ bool CDeployMinorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner)
 	return true;
 }
 
-void CDeployMinorStorageGlyph::getTooltip(CPetText *text) {
+void CDeployMinorStorageGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_MINOR_STORAGE);
 }
 
@@ -395,7 +395,7 @@ bool CDeployMajorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 	return true;
 }
 
-void CDeployMajorRelaxationGlyph::getTooltip(CPetText *text) {
+void CDeployMajorRelaxationGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_MAJOR_RELAXATION);
 }
 
@@ -407,7 +407,7 @@ bool CInflateRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 	return true;
 }
 
-void CInflateRelaxationGlyph::getTooltip(CPetText *text) {
+void CInflateRelaxationGlyph::getTooltip(CTextControl *text) {
 	text->setText(INFLATE_RELAXATION_DEVICE);
 }
 
@@ -419,7 +419,7 @@ bool CDeployMaintenanceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 	return true;
 }
 
-void CDeployMaintenanceGlyph::getTooltip(CPetText *text) {
+void CDeployMaintenanceGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_MAINTENANCE_HUB);
 }
 
@@ -431,7 +431,7 @@ bool CDeployWorkSurfaceGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 	return true;
 }
 
-void CDeployWorkSurfaceGlyph::getTooltip(CPetText *text) {
+void CDeployWorkSurfaceGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_EXECUTIVE_SURFACE);
 }
 
@@ -443,7 +443,7 @@ bool CDeployMinorRelaxationGlyph::setup(CPetControl *petControl, CPetGlyphs *own
 	return true;
 }
 
-void CDeployMinorRelaxationGlyph::getTooltip(CPetText *text) {
+void CDeployMinorRelaxationGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_MINOR_RELAXATION);
 }
 
@@ -455,7 +455,7 @@ bool CDeploySinkGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	return true;
 }
 
-void CDeploySinkGlyph::getTooltip(CPetText *text) {
+void CDeploySinkGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_SINK);
 }
 
@@ -467,7 +467,7 @@ bool CDeployMajorStorageGlyph::setup(CPetControl *petControl, CPetGlyphs *owner)
 	return true;
 }
 
-void CDeployMajorStorageGlyph::getTooltip(CPetText *text) {
+void CDeployMajorStorageGlyph::getTooltip(CTextControl *text) {
 	text->setText(DEPLOY_MAJOR_STORAGE);
 }
 
@@ -515,7 +515,7 @@ bool CSuccubusDeliveryGlyph::MouseButtonUpMsg(const Point &pt) {
 	return true;
 }
 
-void CSuccubusDeliveryGlyph::getTooltip(CPetText *text) {
+void CSuccubusDeliveryGlyph::getTooltip(CTextControl *text) {
 	text->setText(SUCCUBUS_DELIVERY_SYSTEM);
 }
 
@@ -554,7 +554,7 @@ bool CNavigationControllerGlyph::MouseButtonUpMsg(const Point &pt) {
 	return true;
 }
 
-void CNavigationControllerGlyph::getTooltip(CPetText *text) {
+void CNavigationControllerGlyph::getTooltip(CTextControl *text) {
 	text->setText(NAVIGATION_CONTROLLER);
 }
 

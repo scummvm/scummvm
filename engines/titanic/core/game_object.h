@@ -34,7 +34,7 @@
 #include "titanic/support/strings.h"
 #include "titanic/support/movie_clip.h"
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/game_state.h"
 
 namespace Titanic {
@@ -87,7 +87,7 @@ protected:
 	int _initialFrame;
 	CMovieRangeInfoList _movieRangeInfoList;
 	int _frameNumber;
-	CPetText *_text;
+	CTextControl *_text;
 	uint _textBorder;
 	uint _textBorderRight;
 	int _field9C;

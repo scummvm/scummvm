@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CPetText::CPetText(uint count) :
+CTextControl::CTextControl(uint count) :
 		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
 		_displayEndCharIndex(-1), _unused1(0), _unused2(0), _unused3(0),
 		_backR(0xff), _backG(0xff), _backB(0xff),
@@ -35,18 +35,18 @@ CPetText::CPetText(uint count) :
 	setupArrays(count);
 }
 
-void CPetText::setupArrays(int count) {
+void CTextControl::setupArrays(int count) {
 	freeArrays();
 	if (count < 10 || count > 60)
 		count = 10;
 	_array.resize(count);
 }
 
-void CPetText::freeArrays() {
+void CTextControl::freeArrays() {
 	_array.clear();
 }
 
-void CPetText::setup() {
+void CTextControl::setup() {
 	for (int idx = 0; idx < (int)_array.size(); ++idx) {
 		_array[idx]._line.clear();
 		setLineColor(idx, _textR, _textG, _textB);
@@ -57,16 +57,16 @@ void CPetText::setup() {
 	_stringsMerged = false;
 }
 
-void CPetText::setLineColor(uint lineNum, uint col) {
+void CTextControl::setLineColor(uint lineNum, uint col) {
 	setLineColor(lineNum, col & 0xff, (col >> 8) & 0xff, (col >> 16) & 0xff);
 }
 
-void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
+void CTextControl::setLineColor(uint lineNum, byte r, byte g, byte b) {
 	_array[lineNum]._rgb = getColorText(r, g, b);
 	_stringsMerged = false;
 }
 
-CString CPetText::getColorText(byte r, byte g, byte b) {
+CString CTextControl::getColorText(byte r, byte g, byte b) {
 	char buffer[6];
 	if (!r)
 		r = 1;
@@ -85,7 +85,7 @@ CString CPetText::getColorText(byte r, byte g, byte b) {
 	return CString(buffer);
 }
 
-void CPetText::load(SimpleFile *file, int param) {
+void CTextControl::load(SimpleFile *file, int param) {
 	if (!param) {
 		uint numLines = file->readNumber();
 		int charsPerLine = file->readNumber();
@@ -116,7 +116,7 @@ void CPetText::load(SimpleFile *file, int param) {
 	}
 }
 
-void CPetText::save(SimpleFile *file, int indent) {
+void CTextControl::save(SimpleFile *file, int indent) {
 	int numLines = _lineCount + 1;
 
 	file->writeNumberLine(_array.size(), indent);
@@ -143,7 +143,7 @@ void CPetText::save(SimpleFile *file, int indent) {
 	}
 }
 
-void CPetText::draw(CScreenManager *screenManager) {
+void CTextControl::draw(CScreenManager *screenManager) {
 	Rect tempRect = _bounds;
 
 	if (_hasBorder) {
@@ -179,7 +179,7 @@ void CPetText::draw(CScreenManager *screenManager) {
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::mergeStrings() {
+void CTextControl::mergeStrings() {
 	if (!_stringsMerged) {
 		_lines.clear();
 
@@ -193,14 +193,14 @@ void CPetText::mergeStrings() {
 	}
 }
 
-void CPetText::resize(uint count) {
+void CTextControl::resize(uint count) {
 	if (!count || _array.size() == count)
 		return;
 	_array.clear();
 	_array.resize(count);
 }
 
-CString CPetText::getText() const {
+CString CTextControl::getText() const {
 	CString result = "";
 	for (int idx = 0; idx <= _lineCount; ++idx)
 		result += _array[idx]._line;
@@ -208,16 +208,16 @@ CString CPetText::getText() const {
 	return result;
 }
 
-void CPetText::setText(const CString &str) {
+void CTextControl::setText(const CString &str) {
 	setup();
 	appendText(str);
 }
 
-void CPetText::setText(StringId stringId) {
+void CTextControl::setText(StringId stringId) {
 	setText(g_vm->_strings[stringId]);
 }
 
-void CPetText::appendText(const CString &str) {
+void CTextControl::appendText(const CString &str) {
 	int lineSize = _array[_lineCount]._line.size();
 	int strSize = str.size();
 
@@ -236,19 +236,19 @@ void CPetText::appendText(const CString &str) {
 	_stringsMerged = false;
 }
 
-void CPetText::setColor(uint col) {
+void CTextControl::setColor(uint col) {
 	_textR = col & 0xff;
 	_textG = (col >> 8) & 0xff;
 	_textB = (col >> 16) & 0xff;
 }
 
-void CPetText::setColor(byte r, byte g, byte b) {
+void CTextControl::setColor(byte r, byte g, byte b) {
 	_textR = r;
 	_textG = g;
 	_textB = b;
 }
 
-void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
+void CTextControl::remapColors(uint count, uint *srcColors, uint *destColors) {
 	for (int lineNum = 0; lineNum <= _lineCount; ++lineNum) {
 		if (_array[lineNum]._rgb.empty())
 			continue;
@@ -271,12 +271,12 @@ void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
 	_stringsMerged = false;
 }
 
-void CPetText::setMaxCharsPerLine(int maxChars) {
+void CTextControl::setMaxCharsPerLine(int maxChars) {
 	if (maxChars >= -1 && maxChars < 257)
 		_maxCharsPerLine = maxChars;
 }
 
-void CPetText::updateStr3(int lineNum) {
+void CTextControl::updateStr3(int lineNum) {
 	if (_npcFlag > 0 && _npcId > 0) {
 		char line[5];
 		line[0] = line[3] = TEXTCMD_NPC;
@@ -290,7 +290,7 @@ void CPetText::updateStr3(int lineNum) {
 	}
 }
 
-int CPetText::getTextWidth(CScreenManager *screenManager) {
+int CTextControl::getTextWidth(CScreenManager *screenManager) {
 	mergeStrings();
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	int textWidth = screenManager->stringWidth(_lines);
@@ -299,7 +299,7 @@ int CPetText::getTextWidth(CScreenManager *screenManager) {
 	return textWidth;
 }
 
-int CPetText::getTextHeight(CScreenManager *screenManager) {
+int CTextControl::getTextHeight(CScreenManager *screenManager) {
 	mergeStrings();
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	int textHeight = screenManager->getTextBounds(_lines, _bounds.width() - 4);
@@ -308,63 +308,63 @@ int CPetText::getTextHeight(CScreenManager *screenManager) {
 	return textHeight;
 }
 
-void CPetText::deleteLastChar() {
+void CTextControl::deleteLastChar() {
 	if (!_array[_lineCount]._line.empty()) {
 		_array[_lineCount]._line.deleteLastChar();
 		_stringsMerged = false;
 	}
 }
 
-void CPetText::setNPC(int npcFlag, int npcId) {
+void CTextControl::setNPC(int npcFlag, int npcId) {
 	_npcFlag = npcFlag;
 	_npcId = npcId;
 }
 
-void CPetText::scrollUp(CScreenManager *screenManager) {
+void CTextControl::scrollUp(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop -= screenManager->getFontHeight();
 	constrainScrollUp(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::scrollDown(CScreenManager *screenManager) {
+void CTextControl::scrollDown(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop += screenManager->getFontHeight();
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::scrollUpPage(CScreenManager *screenManager) {
+void CTextControl::scrollUpPage(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop -= getPageHeight(screenManager);
 	constrainScrollUp(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::scrollDownPage(CScreenManager *screenManager) {
+void CTextControl::scrollDownPage(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop += getPageHeight(screenManager);
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::scrollToTop(CScreenManager *screenManager) {
+void CTextControl::scrollToTop(CScreenManager *screenManager) {
 	_scrollTop = 0;
 }
 
-void CPetText::scrollToBottom(CScreenManager *screenManager) {
+void CTextControl::scrollToBottom(CScreenManager *screenManager) {
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	_scrollTop = getTextHeight(screenManager);
 	constrainScrollDown(screenManager);
 	screenManager->setFontNumber(oldFontNumber);
 }
 
-void CPetText::constrainScrollUp(CScreenManager *screenManager) {
+void CTextControl::constrainScrollUp(CScreenManager *screenManager) {
 	if (_scrollTop < 0)
 		_scrollTop = 0;
 }
 
-void CPetText::constrainScrollDown(CScreenManager *screenManager) {
+void CTextControl::constrainScrollDown(CScreenManager *screenManager) {
 	// Figure out the maximum scroll amount allowed
 	int maxScroll = getTextHeight(screenManager) - _bounds.height() - 4;
 	if (maxScroll < 0)
@@ -374,7 +374,7 @@ void CPetText::constrainScrollDown(CScreenManager *screenManager) {
 		_scrollTop = maxScroll;
 }
 
-int CPetText::getPageHeight(CScreenManager *screenManager) {
+int CTextControl::getPageHeight(CScreenManager *screenManager) {
 	int textHeight = _bounds.height();
 	int oldFontNumber = screenManager->setFontNumber(_fontNumber);
 	int fontHeight = screenManager->getFontHeight();
@@ -390,16 +390,16 @@ int CPetText::getPageHeight(CScreenManager *screenManager) {
 	}
 }
 
-void CPetText::addLine(const CString &str) {
+void CTextControl::addLine(const CString &str) {
 	addLine(str, _textR, _textG, _textB);
 }
 
-void CPetText::addLine(const CString &str, uint color) {
+void CTextControl::addLine(const CString &str, uint color) {
 	addLine(str, color & 0xff, (color >> 8) & 0xff,
 		(color >> 16) & 0xff);
 }
 
-void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
+void CTextControl::addLine(const CString &str, byte r, byte g, byte b) {
 	if (_lineCount == ((int)_array.size() - 1)) {
 		// Lines array is full
 		if (_array.size() > 1) {
@@ -416,7 +416,7 @@ void CPetText::addLine(const CString &str, byte r, byte g, byte b) {
 	++_lineCount;
 }
 
-bool CPetText::handleKey(char c) {
+bool CTextControl::handleKey(char c) {
 	switch (c) {
 	case (char)Common::KEYCODE_BACKSPACE:
 		deleteLastChar();
@@ -434,7 +434,7 @@ bool CPetText::handleKey(char c) {
 	return false;
 }
 
-void CPetText::showCursor(int mode) {
+void CTextControl::showCursor(int mode) {
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	_textCursor = screenManager->_textCursor;
 	if (_textCursor) {
@@ -448,7 +448,7 @@ void CPetText::showCursor(int mode) {
 	}
 }
 
-void CPetText::hideCursor() {
+void CTextControl::hideCursor() {
 	if (_textCursor) {
 		_textCursor->setMode(-1);
 		_textCursor->hide();
@@ -456,7 +456,7 @@ void CPetText::hideCursor() {
 	}
 }
 
-int CPetText::getNPCNum(uint ident, uint startIndex) {
+int CTextControl::getNPCNum(uint ident, uint startIndex) {
 	if (!_stringsMerged) {
 		mergeStrings();
 		if (!_stringsMerged)
@@ -483,7 +483,7 @@ int CPetText::getNPCNum(uint ident, uint startIndex) {
 	return -1;
 }
 
-void CPetText::setFontNumber(int fontNumber) {
+void CTextControl::setFontNumber(int fontNumber) {
 	if (fontNumber >= 0 && fontNumber <= 2)
 		_fontNumber = fontNumber;
 }

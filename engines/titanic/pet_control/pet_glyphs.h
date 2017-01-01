@@ -35,7 +35,7 @@ namespace Titanic {
 
 class CPetGlyphs;
 class CPetSection;
-class CPetText;
+class CTextControl;
 
 enum GlyphActionMode { ACTION_REMOVE = 0, ACTION_REMOVED = 1, ACTION_CHANGE = 2 };
 
@@ -177,7 +177,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text) {}
+	virtual void getTooltip(CTextControl *text) {}
 
 	/**
 	 * Saves the data for the glyph

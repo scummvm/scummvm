@@ -24,7 +24,7 @@
 #define TITANIC_PET_CONVERSATIONS_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/true_talk/true_talk_manager.h"
 
@@ -48,8 +48,8 @@ private:
 	CPetGfxElement _splitter;
 	CPetGfxElement _npcIcons[9];
 	int _npcNum;
-	CPetText _log;
-	CPetText _textInput;
+	CTextControl _log;
+	CTextControl _textInput;
 	bool _logChanged;
 	int _field418;
 	CString _npcName;

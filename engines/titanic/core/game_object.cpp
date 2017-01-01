@@ -1081,7 +1081,7 @@ void CGameObject::setMovieFrameRate(double rate) {
 
 void CGameObject::setText(const CString &str, int border, int borderRight) {
 	if (!_text)
-		_text = new CPetText();
+		_text = new CTextControl();
 	_textBorder = border;
 	_textBorderRight = borderRight;
 
@@ -1093,7 +1093,7 @@ void CGameObject::setText(const CString &str, int border, int borderRight) {
 
 void CGameObject::setTextHasBorders(bool hasBorders) {
 	if (!_text)
-		_text = new CPetText();
+		_text = new CTextControl();
 
 	_text->setHasBorder(hasBorders);
 }
@@ -1109,14 +1109,14 @@ void CGameObject::setTextBounds() {
 
 void CGameObject::setTextColor(byte r, byte g, byte b) {
 	if (!_text)
-		_text = new CPetText();
+		_text = new CTextControl();
 
 	_text->setColor(r, g, b);
 }
 
 void CGameObject::setTextFontNumber(int fontNumber) {
 	if (!_text)
-		_text = new CPetText();
+		_text = new CTextControl();
 
 	_text->setFontNumber(fontNumber);
 }

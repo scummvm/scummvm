@@ -170,7 +170,7 @@ void CPetRooms::enterRoom(CRoomItem *room) {
 		resetHighlight();
 }
 
-CPetText *CPetRooms::getText() {
+CTextControl *CPetRooms::getText() {
 	return &_text;
 }
 

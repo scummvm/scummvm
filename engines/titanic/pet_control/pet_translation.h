@@ -24,14 +24,14 @@
 #define TITANIC_PET_TRANSLATION_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
 class CPetTranslation : public CPetSection {
 private:
-	CPetText _message;
-	CPetText _tooltip;
+	CTextControl _message;
+	CTextControl _tooltip;
 private:
 	/**
 	 * Setup the control
@@ -87,7 +87,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return &_tooltip; }
+	virtual CTextControl *getText() { return &_tooltip; }
 
 	/**
 	 * Clear any current translation text

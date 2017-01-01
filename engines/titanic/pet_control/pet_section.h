@@ -35,7 +35,7 @@ enum PetArea {
 
 class CPetControl;
 class CPetElement;
-class CPetText;
+class CTextControl;
 class CScreenManager;
 class CRoomItem;
 
@@ -170,7 +170,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return nullptr; }
+	virtual CTextControl *getText() { return nullptr; }
 
 	/**
 	 * Removes text after a given duration

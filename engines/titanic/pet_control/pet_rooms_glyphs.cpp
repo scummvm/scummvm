@@ -141,7 +141,7 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 	return false;
 }
 
-void CPetRoomsGlyph::getTooltip(CPetText *text) {
+void CPetRoomsGlyph::getTooltip(CTextControl *text) {
 	CRoomFlags roomFlags(_roomFlags);
 	CPetRooms *owner = static_cast<CPetRooms *>(getPetSection());
 

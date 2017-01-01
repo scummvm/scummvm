@@ -25,13 +25,13 @@
 
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
 class CPetQuit : public CPetGlyph {
 private:
-	CPetText _text;
+	CTextControl _text;
 	CPetGfxElement _btnYes;
 public:
 	/**
@@ -62,12 +62,12 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return &_text; }
+	virtual CTextControl *getText() { return &_text; }
 };
 
 } // End of namespace Titanic

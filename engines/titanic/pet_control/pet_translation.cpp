@@ -61,8 +61,8 @@ void CPetTranslation::clearTranslation() {
 
 void CPetTranslation::addTranslation(const CString &str1, const CString &str2) {
 	CString msg = CString::format("%s%s - %s%s",
-		CPetText::getColorText(0, 0x80, 0).c_str(), str1.c_str(),
-		CPetText::getColorText(0, 0, 0).c_str(), str2.c_str());
+		CTextControl::getColorText(0, 0x80, 0).c_str(), str1.c_str(),
+		CTextControl::getColorText(0, 0, 0).c_str(), str2.c_str());
 	_message.addLine(msg);
 	_petControl->makeDirty();
 }

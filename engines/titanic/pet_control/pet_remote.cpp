@@ -202,7 +202,7 @@ void CPetRemote::enterRoom(CRoomItem *room) {
 	}
 }
 
-CPetText *CPetRemote::getText() {
+CTextControl *CPetRemote::getText() {
 	return &_text;
 }
 

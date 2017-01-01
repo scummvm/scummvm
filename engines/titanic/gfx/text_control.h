@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_PET_TEXT_H
-#define TITANIC_PET_TEXT_H
+#ifndef TITANIC_TEXT_CONTROL_H
+#define TITANIC_TEXT_CONTROL_H
 
 #include "common/keyboard.h"
 #include "titanic/support/simple_file.h"
@@ -30,7 +30,7 @@
 
 namespace Titanic {
 
-class CPetText {
+class CTextControl {
 	struct ArrayEntry {
 		CString _line;
 		CString _rgb;
@@ -91,7 +91,7 @@ private:
 	 */
 	int getPageHeight(CScreenManager *screenManager);
 public:
-	CPetText(uint count = 10);
+	CTextControl(uint count = 10);
 
 	/**
 	 * Set up the control
@@ -282,4 +282,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_TEXT_H */
+#endif /* TITANIC_TEXT_CONTROL_H */

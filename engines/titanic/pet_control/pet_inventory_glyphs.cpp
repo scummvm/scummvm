@@ -143,7 +143,7 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 	}
 }
 
-void CPetInventoryGlyph::getTooltip(CPetText *text) {
+void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 	if (text) {
 		text->setText("");
 

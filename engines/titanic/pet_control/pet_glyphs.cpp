@@ -39,7 +39,7 @@ void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHi
 }
 
 void CPetGlyph::updateTooltip() {
-	CPetText *petText = getPetSection()->getText();
+	CTextControl *petText = getPetSection()->getText();
 	if (petText) {
 		petText->setColor(getPetSection()->getColor(0));
 		getTooltip(petText);

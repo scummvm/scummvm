@@ -116,7 +116,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CToggleRemoteGlyph : public CPetRemoteGlyph {
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
@@ -225,7 +225,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
@@ -259,7 +259,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 
@@ -293,7 +293,7 @@ public:
 	/**
 	* Returns the tooltip text for when the glyph is selected
 	*/
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployFloralGlyph : public CToggleRemoteGlyph {
@@ -320,7 +320,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployFullyRelaxationGlyph : public CToggleRemoteGlyph {
@@ -347,7 +347,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployComfortGlyph : public CToggleRemoteGlyph {
@@ -374,7 +374,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMinorStorageGlyph : public CToggleRemoteGlyph {
@@ -401,7 +401,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMajorRelaxationGlyph : public CToggleRemoteGlyph {
@@ -428,7 +428,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CInflateRelaxationGlyph : public CToggleRemoteGlyph {
@@ -455,7 +455,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMaintenanceGlyph : public CToggleRemoteGlyph {
@@ -482,7 +482,7 @@ public:
 	/**
 	* Returns the tooltip text for when the glyph is selected
 	*/
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployWorkSurfaceGlyph : public CToggleRemoteGlyph {
@@ -509,7 +509,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMinorRelaxationGlyph : public CToggleRemoteGlyph {
@@ -536,7 +536,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeploySinkGlyph : public CToggleRemoteGlyph {
@@ -563,7 +563,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMajorStorageGlyph : public CToggleRemoteGlyph {
@@ -590,7 +590,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CSuccubusDeliveryGlyph : public CPetRemoteGlyph {
@@ -623,7 +623,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CNavigationControllerGlyph : public CPetRemoteGlyph {
@@ -657,7 +657,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CGotoBottomOfWellGlyph : public CRemoteGotoGlyph {
