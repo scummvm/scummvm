@@ -1085,6 +1085,7 @@ void CGameObject::setText(const CString &str, int border, int borderRight) {
 	_textBorder = border;
 	_textBorderRight = borderRight;
 
+	setTextBounds();
 	_text->setText(str);
 	CScreenManager *screenManager = getGameManager()->setScreenManager();
 	_text->scrollToTop(screenManager);
