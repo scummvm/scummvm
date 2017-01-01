@@ -141,15 +141,19 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			}
 
 			// Check whether a valid username and password has been entered
+			static const char *const PASSWORDS_EN[3] = { "other", "this", "that" };
+			static const char *const PASSWORDS_DE[3] = { "t'ok", "t'ik", "t'ak" };
+			static const char *const *pwds = g_vm->isGerman() ? PASSWORDS_DE : PASSWORDS_EN;
+
 			bool validFlag = false;
-			if ((_username == "leovinus" && _password == "other") ||
+			if ((_username == "leovinus" && _password == pwds[0]) ||
 					(_username == "scummvm")) {
 				validFlag = true;
 				_account = LEOVINUS;
-			} else if (_username == "scraliontis" && _password == "this") {
+			} else if (_username == "scraliontis" && _password == pwds[1]) {
 				validFlag = true;
 				_account = SCRALIONTIS;
-			} else if (_username == "brobostigon" && _password == "that") {
+			} else if (_username == "brobostigon" && _password == pwds[2]) {
 				validFlag = true;
 				_account = BROBOSTIGON;
 			}
