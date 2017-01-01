@@ -26,6 +26,7 @@ namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEditControl, CGameObject)
 	ON_MESSAGE(EditControlMsg)
+	ON_MESSAGE(MouseWheelMsg)
 END_MESSAGE_MAP()
 
 CEditControl::CEditControl() : CGameObject(), _showCursor(false),  _fontNumber(0), _fieldD4(2),
@@ -217,6 +218,17 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		break;
 	}
 
+	return true;
+}
+
+bool CEditControl::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (_name != "MissiveOMat Welcome")
+		return false;
+
+	if (msg->_wheelUp)
+		scrollTextUp();
+	else
+		scrollTextDown();
 	return true;
 }
 
