@@ -104,14 +104,14 @@ bool Vocabulary::loadParserWords() {
 	VocabularyVersions resourceType = _vocabVersion;
 
 	if (resourceType == kVocabularySCI0) {
-		if (resource->size < 26 * 2) {
+		if (resource->size() < 26 * 2) {
 			warning("Invalid main vocabulary encountered: Much too small");
 			return false;
 		}
 		// Check the alphabet-offset table for any content
 		int alphabetNr;
 		for (alphabetNr = 0; alphabetNr < 26; alphabetNr++) {
-			if (READ_LE_UINT16(resource->data + alphabetNr * 2))
+			if (resource->getUint16LEAt(alphabetNr * 2))
 				break;
 		}
 		// If all of them were empty, we are definitely seeing SCI01 vocab in disguise (e.g. pq2 japanese)
@@ -127,7 +127,7 @@ bool Vocabulary::loadParserWords() {
 	else
 		seeker = 26 * 2; // vocab.000 starts with 26 16-bit pointers which we don't use
 
-	if (resource->size < seeker) {
+	if (resource->size() < seeker) {
 		warning("Invalid main vocabulary encountered: Too small");
 		return false;
 		// Now this ought to be critical, but it'll just cause parse() and said() not to work
@@ -135,25 +135,25 @@ bool Vocabulary::loadParserWords() {
 
 	_parserWords.clear();
 
-	while (seeker < resource->size) {
+	while (seeker < resource->size()) {
 		byte c;
 
-		currentWordPos = resource->data[seeker++]; // Parts of previous words may be re-used
+		currentWordPos = resource->getUint8At(seeker++); // Parts of previous words may be re-used
 
 		if (resourceType == kVocabularySCI1) {
 			c = 1;
-			while (seeker < resource->size && currentWordPos < 255 && c) {
-				c = resource->data[seeker++];
+			while (seeker < resource->size() && currentWordPos < 255 && c) {
+				c = resource->getUint8At(seeker++);
 				currentWord[currentWordPos++] = c;
 			}
-			if (seeker == resource->size) {
+			if (seeker == resource->size()) {
 				warning("SCI1: Vocabulary not usable, disabling");
 				_parserWords.clear();
 				return false;
 			}
 		} else {
 			do {
-				c = resource->data[seeker++];
+				c = resource->getUint8At(seeker++);
 				currentWord[currentWordPos++] = c & 0x7f; // 0x80 is used to terminate the string
 			} while (c < 0x80);
 		}
@@ -161,10 +161,10 @@ bool Vocabulary::loadParserWords() {
 		currentWord[currentWordPos] = 0;
 
 		// Now decode class and group:
-		c = resource->data[seeker + 1];
+		c = resource->getUint8At(seeker + 1);
 		ResultWord newWord;
-		newWord._class = ((resource->data[seeker]) << 4) | ((c & 0xf0) >> 4);
-		newWord._group = (resource->data[seeker + 2]) | ((c & 0x0f) << 8);
+		newWord._class = ((resource->getUint8At(seeker)) << 4) | ((c & 0xf0) >> 4);
+		newWord._group = (resource->getUint8At(seeker + 2)) | ((c & 0x0f) << 8);
 
 		// SCI01 was the first version to support multiple class/group pairs
 		// per word, so we clear the list in earlier versions
@@ -198,38 +198,38 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 
 bool Vocabulary::loadSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
-	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), 1);
+	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), true);
 	if (!resource)
 		return false; // No vocabulary found
 
 	uint32 seeker = 1;
 
-	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
+	while (seeker < resource->size() - 1 && resource->getUint8At(seeker + 1) != 0xff) {
 		suffix_t suffix;
 
-		int maxSize = resource->size - seeker;
-		suffix.alt_suffix = (const char *)resource->data + seeker;
+		int maxSize = resource->size() - seeker;
+		suffix.alt_suffix = (const char *)resource->getUnsafeDataAt(seeker, maxSize);
 		suffix.alt_suffix_length = Common::strnlen(suffix.alt_suffix, maxSize);
 		if (suffix.alt_suffix_length == maxSize) {
-			error("Vocabulary alt appears truncated for suffix %d in resource %d at %u", _parserSuffixes.size(), resource->getNumber(), seeker);
+			error("Vocabulary alt from %s appears truncated for suffix %d at %u", resource->name().c_str(), _parserSuffixes.size(), seeker);
 		}
 		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
-		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
+		suffix.result_class = resource->getInt16BEAt(seeker);
 		seeker += 2;
 
 		// Beginning of next string - skip leading '*'
 		seeker++;
 
-		maxSize = resource->size - seeker;
-		suffix.word_suffix = (const char *)resource->data + seeker;
+		maxSize = resource->size() - seeker;
+		suffix.word_suffix = (const char *)resource->getUnsafeDataAt(seeker, maxSize);
 		suffix.word_suffix_length = Common::strnlen(suffix.word_suffix, maxSize);
 		if (suffix.word_suffix_length == maxSize) {
-			error("Vocabulary word appears truncated for suffix %d in resource %d at %u", _parserSuffixes.size(), resource->getNumber(), seeker);
+			error("Vocabulary word from %s appears truncated for suffix %d at %u", resource->name().c_str(), _parserSuffixes.size(), seeker);
 		}
 		seeker += suffix.word_suffix_length + 1;
 
-		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
+		suffix.class_mask = resource->getUint16BEAt(seeker);
 		seeker += 3; // Next entry
 
 		_parserSuffixes.push_back(suffix);
@@ -239,7 +239,7 @@ bool Vocabulary::loadSuffixes() {
 }
 
 void Vocabulary::freeSuffixes() {
-	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), 0);
+	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), false);
 	if (resource)
 		_resMan->unlockResource(resource);
 
@@ -254,7 +254,7 @@ bool Vocabulary::loadBranches() {
 	if (!resource)
 		return false;		// No parser tree data found
 
-	int branches_nr = resource->size / 20;
+	int branches_nr = resource->size() / 20;
 
 	if (branches_nr == 0) {
 		warning("Parser tree data is empty");
@@ -264,12 +264,12 @@ bool Vocabulary::loadBranches() {
 	_parserBranches.resize(branches_nr);
 
 	for (int i = 0; i < branches_nr; i++) {
-		byte *base = resource->data + i * 20;
+		const SciSpan<const byte> base = resource->subspan(i * 20);
 
-		_parserBranches[i].id = (int16)READ_LE_UINT16(base);
+		_parserBranches[i].id = base.getInt16LEAt(0);
 
 		for (int k = 0; k < 9; k++)
-			_parserBranches[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
+			_parserBranches[i].data[k] = base.getUint16LEAt(2 + 2 * k);
 
 		_parserBranches[i].data[9] = 0; // Always terminate
 	}
@@ -281,38 +281,38 @@ bool Vocabulary::loadBranches() {
 }
 
 bool Vocabulary::loadAltInputs() {
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 1);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), true);
 
 	if (!resource)
 		return true; // it's not a problem if this resource doesn't exist
 
-	const char *data = (const char*)resource->data;
-	const char *data_end = data + resource->size;
+	Resource::const_iterator it = resource->cbegin();
+	const Resource::const_iterator end = resource->cend();
 
 	_altInputs.clear();
 	_altInputs.resize(256);
 
-	while (data < data_end && *data) {
+	while (it != end && *it) {
 		AltInput t;
-		t._input = data;
+		t._input = (const char *)&*it;
 
-		uint32 maxSize = data_end - data;
-		uint32 l = Common::strnlen(data, maxSize);
+		uint32 maxSize = end - it;
+		uint32 l = Common::strnlen(t._input, maxSize);
 		if (l == maxSize) {
-			error("Alt input from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
+			error("Alt input from %s appears truncated at %ld", resource->name().c_str(), it - resource->cbegin());
 		}
 		t._inputLength = l;
-		data += l + 1;
+		it += l + 1;
 
-		t._replacement = data;
-		maxSize = data_end - data;
-		l = Common::strnlen(data, maxSize);
+		t._replacement = (const char *)&*it;
+		maxSize = end - it;
+		l = Common::strnlen(t._replacement, maxSize);
 		if (l == maxSize) {
-			error("Alt input replacement from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
+			error("Alt input replacement from %s appears truncated at %ld", resource->name().c_str(), it - resource->cbegin());
 		}
-		data += l + 1;
+		it += l + 1;
 
-		if (data < data_end && strncmp(data, t._input, t._inputLength) == 0)
+		if (it < end && strncmp((const char *)&*it, t._input, t._inputLength) == 0)
 			t._prefix = true;
 		else
 			t._prefix = false;
@@ -325,7 +325,7 @@ bool Vocabulary::loadAltInputs() {
 }
 
 void Vocabulary::freeAltInputs() {
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), 0);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_ALT_INPUTS), false);
 	if (resource)
 		_resMan->unlockResource(resource);
 
@@ -466,9 +466,11 @@ void Vocabulary::lookupWord(ResultWordList& retval, const char *word, int word_l
 	}
 }
 
-void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
+void Vocabulary::debugDecipherSaidBlock(const SciSpan<const byte> &data) {
 	bool first = true;
 	uint16 nextItem;
+
+	SciSpan<const byte>::const_iterator addr = data.cbegin();
 
 	do {
 		nextItem = *addr++;
@@ -515,7 +517,7 @@ void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
 					break;
 			}
 		}
-	} while (nextItem != 0xff);
+	} while (nextItem != 0xff && addr != data.cend());
 }
 
 static const byte lowerCaseMap[256] = {

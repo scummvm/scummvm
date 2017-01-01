@@ -58,7 +58,6 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_zoomPicView = 0;
 	_zoomColor = 0;
 	_zoomMultiplier = 0;
-	_cursorSurface = 0;
 
 	if (g_sci && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformWindows)
 		_useOriginalKQ6WinCursors = ConfMan.getBool("windows_cursors");
@@ -110,20 +109,17 @@ void GfxCursor::purgeCache() {
 
 void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	Resource *resource;
-	byte *resourceData;
 	Common::Point hotspot = Common::Point(0, 0);
 	byte colorMapping[4];
 	int16 x, y;
 	byte color;
 	int16 maskA, maskB;
 	byte *pOut;
-	byte *rawBitmap = new byte[SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH];
 	int16 heightWidth;
 
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
 		kernelHide();
-		delete[] rawBitmap;
 		return;
 	}
 
@@ -131,20 +127,18 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	resource = _resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
 	if (!resource)
 		error("cursor resource %d not found", resourceId);
-	if (resource->size != SCI_CURSOR_SCI0_RESOURCESIZE)
+	if (resource->size() != SCI_CURSOR_SCI0_RESOURCESIZE)
 		error("cursor resource %d has invalid size", resourceId);
-
-	resourceData = resource->data;
 
 	if (getSciVersion() <= SCI_VERSION_01) {
 		// SCI0 cursors contain hotspot flags, not actual hotspot coordinates.
 		// If bit 0 of resourceData[3] is set, the hotspot should be centered,
 		// otherwise it's in the top left of the mouse cursor.
-		hotspot.x = hotspot.y = resourceData[3] ? SCI_CURSOR_SCI0_HEIGHTWIDTH / 2 : 0;
+		hotspot.x = hotspot.y = resource->getUint8At(3) ? SCI_CURSOR_SCI0_HEIGHTWIDTH / 2 : 0;
 	} else {
 		// Cursors in newer SCI versions contain actual hotspot coordinates.
-		hotspot.x = READ_LE_UINT16(resourceData);
-		hotspot.y = READ_LE_UINT16(resourceData + 2);
+		hotspot.x = resource->getUint16LEAt(0);
+		hotspot.y = resource->getUint16LEAt(2);
 	}
 
 	// Now find out what colors we are supposed to use
@@ -160,13 +154,13 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	if (g_sci->getGameId() == GID_LONGBOW)
 		colorMapping[3] = _palette->matchColor(223, 223, 223) & SCI_PALETTE_MATCH_COLORMASK; // Light Grey
 
-	// Seek to actual data
-	resourceData += 4;
+	Common::SpanOwner<SciSpan<byte> > rawBitmap;
+	rawBitmap->allocate(SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH, resource->name() + " copy");
 
-	pOut = rawBitmap;
+	pOut = rawBitmap->getUnsafeDataAt(0, SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH);
 	for (y = 0; y < SCI_CURSOR_SCI0_HEIGHTWIDTH; y++) {
-		maskA = READ_LE_UINT16(resourceData + (y << 1));
-		maskB = READ_LE_UINT16(resourceData + 32 + (y << 1));
+		maskA = resource->getUint16LEAt(4 + (y << 1));
+		maskB = resource->getUint16LEAt(4 + 32 + (y << 1));
 
 		for (x = 0; x < SCI_CURSOR_SCI0_HEIGHTWIDTH; x++) {
 			color = (((maskA << x) & 0x8000) | (((maskB << x) >> 1) & 0x4000)) >> 14;
@@ -181,9 +175,10 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		heightWidth *= 2;
 		hotspot.x *= 2;
 		hotspot.y *= 2;
-		byte *upscaledBitmap = new byte[heightWidth * heightWidth];
-		_screen->scale2x(rawBitmap, upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
-		delete[] rawBitmap;
+
+		Common::SpanOwner<SciSpan<byte> > upscaledBitmap;
+		upscaledBitmap->allocate(heightWidth * heightWidth, "upscaled cursor bitmap");
+		_screen->scale2x(*rawBitmap, *upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
 		rawBitmap = upscaledBitmap;
 	}
 
@@ -192,10 +187,8 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 				resourceId, hotspot.x, hotspot.y, heightWidth, heightWidth);
 	}
 
-	CursorMan.replaceCursor(rawBitmap, heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+	CursorMan.replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 	kernelShow();
-
-	delete[] rawBitmap;
 }
 
 void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
@@ -261,19 +254,19 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		return;
 	}
 
-	const byte *rawBitmap = cursorView->getBitmap(loopNum, celNum);
+	const SciSpan<const byte> &rawBitmap = cursorView->getBitmap(loopNum, celNum);
 	if (_upscaledHires && !_useOriginalKQ6WinCursors) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
 		cursorHotspot->x *= 2;
 		cursorHotspot->y *= 2;
-		byte *cursorBitmap = new byte[width * height];
-		_screen->scale2x(rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
-		CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
-		delete[] cursorBitmap;
+		Common::SpanOwner<SciSpan<byte> > cursorBitmap;
+		cursorBitmap->allocate(width * height, "upscaled cursor bitmap");
+		_screen->scale2x(rawBitmap, *cursorBitmap, celInfo->width, celInfo->height);
+		CursorMan.replaceCursor(cursorBitmap->getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	} else {
-		CursorMan.replaceCursor(rawBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+		CursorMan.replaceCursor(rawBitmap.getUnsafeDataAt(0, width * height), width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 	}
 
 	kernelShow();
@@ -386,10 +379,10 @@ void GfxCursor::refreshPosition() {
 	if (_zoomZoneActive) {
 		// Cursor
 		const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
-		const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
+		const SciSpan<const byte> &cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
 		// Pic
 		const CelInfo *picCelInfo = _zoomPicView->getCelInfo(0, 0);
-		const byte *rawPicBitmap = _zoomPicView->getBitmap(0, 0);
+		const SciSpan<const byte> &rawPicBitmap = _zoomPicView->getBitmap(0, 0);
 
 		// Compute hotspot of cursor
 		Common::Point cursorHotspot = Common::Point((cursorCelInfo->width >> 1) - cursorCelInfo->displaceX, cursorCelInfo->height - cursorCelInfo->displaceY - 1);
@@ -426,7 +419,7 @@ void GfxCursor::refreshPosition() {
 			}
 		}
 
-		CursorMan.replaceCursor(_cursorSurface, cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
+		CursorMan.replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 	}
 }
 
@@ -449,8 +442,7 @@ void GfxCursor::kernelClearZoomZone() {
 	_zoomCursorView = 0;
 	delete _zoomPicView;
 	_zoomPicView = 0;
-	delete[] _cursorSurface;
-	_cursorSurface = 0;
+	_cursorSurface.clear();
 }
 
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
@@ -474,10 +466,7 @@ void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourc
 	_zoomCursorLoop = (byte)loopNum;
 	_zoomCursorCel = (byte)celNum;
 	_zoomPicView = new GfxView(_resMan, _screen, _palette, picNum);
-	const CelInfo *cursorCelInfo = _zoomCursorView->getCelInfo(_zoomCursorLoop, _zoomCursorCel);
-	const byte *cursorBitmap = _zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel);
-	_cursorSurface = new byte[cursorCelInfo->width * cursorCelInfo->height];
-	memcpy(_cursorSurface, cursorBitmap, cursorCelInfo->width * cursorCelInfo->height);
+	_cursorSurface->allocateFromSpan(_zoomCursorView->getBitmap(_zoomCursorLoop, _zoomCursorCel));
 
 	_zoomZone = zone;
 	kernelSetMoveZone(_zoomZone);
@@ -537,7 +526,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	assert(resource);
 
-	Common::MemoryReadStream resStream(resource->data, resource->size);
+	Common::MemoryReadStream resStream(resource->toStream());
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 
 	if (!macCursor->readFromStream(resStream)) {

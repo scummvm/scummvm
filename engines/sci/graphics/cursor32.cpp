@@ -244,7 +244,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 			debug(0, "Mac cursor %d not found", viewNum);
 			return;
 		}
-		Common::MemoryReadStream resStream(resource->data, resource->size);
+		Common::MemoryReadStream resStream(resource->toStream());
 		Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 
 		if (!macCursor->readFromStream(resStream)) {

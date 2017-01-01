@@ -33,8 +33,13 @@
 
 namespace Sci {
 
+const char *sciObjectTypeNames[] = {
+	"terminator", "object", "code", "synonyms", "said", "strings", "class",
+	"exports", "pointers", "preload text", "local vars"
+};
+
 Script::Script()
-	: SegmentObj(SEG_TYPE_SCRIPT), _buf(NULL) {
+	: SegmentObj(SEG_TYPE_SCRIPT), _buf() {
 	freeScript();
 }
 
@@ -45,16 +50,12 @@ Script::~Script() {
 void Script::freeScript() {
 	_nr = 0;
 
-	free(_buf);
-	_buf = NULL;
-	_bufSize = 0;
-	_scriptSize = 0;
-	_heapStart = NULL;
-	_heapSize = 0;
-
-	_exportTable = NULL;
+	_buf.clear();
+	_script.clear();
+	_heap.clear();
+	_exports.clear();
 	_numExports = 0;
-	_synonyms = NULL;
+	_synonyms.clear();
 	_numSynonyms = 0;
 
 	_localsOffset = 0;
@@ -80,15 +81,16 @@ enum {
 void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
 	freeScript();
 
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), false);
 	if (!script)
 		error("Script %d not found", script_nr);
 
 	_nr = script_nr;
-	_bufSize = _scriptSize = script->size;
+	uint32 scriptSize = script->size();
+	uint32 bufSize = scriptSize;
 
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
-		_bufSize += READ_LE_UINT16(script->data) * 2;
+		bufSize += script->getUint16LEAt(0) * 2;
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		// In SCI1.1 - SCI2.1, the heap was in a separate space from the script. We append
 		// it to the end of the script, and adjust addressing accordingly.
@@ -97,18 +99,17 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// worked for SCI11, SCI2 and SCI21 games. SCI3 games use a different
 		// script format, and theoretically they can exceed the 64KB boundary
 		// using relocation.
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-		_bufSize += heap->size;
-		_heapSize = heap->size;
+		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), false);
+		bufSize += heap->size();
 
 		// Ensure that the start of the heap resource can be word-aligned.
-		if (script->size & 2) {
-			_bufSize++;
-			_scriptSize++;
+		if (script->size() & 2) {
+			++bufSize;
+			++scriptSize;
 		}
 
 		// As mentioned above, the script and the heap together should not exceed 64KB
-		if (script->size + heap->size > 65535)
+		if (script->size() + heap->size() > 65535)
 			error("Script and heap sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\n"
 					"Please report this error to the ScummVM team");
@@ -125,13 +126,13 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// RAMA: 70
 		//
 		// TODO: Remove this once such a mechanism is in place
-		if (script->size > 65535)
-			warning("TODO: SCI script %d is over 64KB - it's %d bytes long. This can't "
-			      "be fully handled at the moment", script_nr, script->size);
+		if (script->size() > 65535)
+			warning("TODO: SCI script %d is over 64KB - it's %lu bytes long. This can't "
+			      "be fully handled at the moment", script_nr, script->size());
 	}
 
 	uint extraLocalsWorkaround = 0;
-	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size == 11140) {
+	if (g_sci->getGameId() == GID_FANMADE && _nr == 1 && script->size() == 11140) {
 		// WORKAROUND: Script 1 in Ocean Battle doesn't have enough locals to
 		// fit the string showing how many shots are left (a nasty script bug,
 		// corrupting heap memory). We add 10 more locals so that it has enough
@@ -139,60 +140,71 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// #3059871.
 		extraLocalsWorkaround = 10;
 	}
-	_bufSize += extraLocalsWorkaround * 2;
+	bufSize += extraLocalsWorkaround * 2;
 
-	_buf = (byte *)malloc(_bufSize);
-	assert(_buf);
-
-	assert(_bufSize >= script->size);
-	memcpy(_buf, script->data, script->size);
+	SciSpan<byte> outBuffer = _buf->allocate(bufSize, script->name() + " buffer");
+	script->copyDataTo(outBuffer);
+	// The word-aligned script size is used here because other parts of the code
+	// currently rely on finding the start of the heap by reading the script
+	// size
+	_script = _buf->subspan(0, scriptSize, script->name());
 
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
-		assert(heap != 0);
+		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), false);
+		assert(heap);
 
-		_heapStart = _buf + _scriptSize;
-
-		assert(_bufSize - _scriptSize >= heap->size);
-		memcpy(_heapStart, heap->data, heap->size);
+		SciSpan<byte> outHeap = outBuffer.subspan(scriptSize, heap->size(), heap->name(), 0);
+		heap->copyDataTo(outHeap);
+		_heap = outHeap;
 	}
 
 	// Check scripts (+ possibly SCI 1.1 heap) for matching signatures and patch those, if found
-	scriptPatcher->processScript(_nr, _buf, _bufSize);
+	scriptPatcher->processScript(_nr, outBuffer);
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
-		if (_exportTable) {
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable + 1);
-			_exportTable += 3;	// skip header plus 2 bytes (_exportTable is a uint16 pointer)
-		}
-		_synonyms = findBlockSCI0(SCI_OBJ_SYNONYMS);
-		if (_synonyms) {
-			_numSynonyms = READ_SCI11ENDIAN_UINT16(_synonyms + 2) / 4;
-			_synonyms += 4;	// skip header
-		}
-		const byte* localsBlock = findBlockSCI0(SCI_OBJ_LOCALVARS);
-		if (localsBlock) {
-			_localsOffset = localsBlock - _buf + 4;
-			_localsCount = (READ_LE_UINT16(_buf + _localsOffset - 2) - 4) >> 1;	// half block size
-		}
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		_numExports = READ_SCI11ENDIAN_UINT16(_buf + kSci11NumExportsOffset);
-		if (_numExports) {
-			_exportTable = (const uint16 *)(_buf + kSci11ExportTableOffset);
+		SciSpan<const uint16> exportTable = findBlockSCI0(SCI_OBJ_EXPORTS).subspan<const uint16>(0);
+		if (exportTable) {
+			// The export table is after the block header (4 bytes / 2 uint16s)
+			// and the number of exports (2 bytes / 1 uint16).
+			// The exports span does not need to be explicitly sized since the
+			// maximum size was already determined by findBlockSCI0
+			_exports = exportTable.subspan(3);
+			_numExports = exportTable.getUint16SEAt(2);
 		}
 
-		_localsOffset = _scriptSize + 4;
-		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
+		SciSpan<const byte> synonymTable = findBlockSCI0(SCI_OBJ_SYNONYMS);
+		if (synonymTable) {
+			// the synonyms table is after the block header (4 bytes),
+			// and each synonym entry is 4 bytes
+			_synonyms = synonymTable.subspan(4);
+			_numSynonyms = _synonyms.size() / 4;
+		}
+
+		SciSpan<const byte> localsTable = findBlockSCI0(SCI_OBJ_LOCALVARS);
+		if (localsTable) {
+			// skip header (4 bytes)
+			_localsOffset = localsTable - *_buf + 4;
+			_localsCount = (_buf->getUint16LEAt(_localsOffset - 2) - 4) >> 1; // half block size
+		}
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
+		_numExports = _buf->getUint16SEAt(kSci11NumExportsOffset);
+		if (_numExports) {
+			_exports = _buf->subspan<const uint16>(kSci11ExportTableOffset, _numExports * sizeof(uint16));
+		}
+
+		_localsOffset = _script.size() + 4;
+		_localsCount = _buf->getUint16SEAt(_localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		_localsCount = READ_LE_UINT16(_buf + 12);
-		_exportTable = (const uint16 *)(_buf + 22);
-		_numExports = READ_LE_UINT16(_buf + 20);
-		// SCI3 local variables always start dword-aligned
-		if (_numExports % 2)
-			_localsOffset = 22 + _numExports * 2;
-		else
-			_localsOffset = 24 + _numExports * 2;
+		_localsCount = _buf->getUint16LEAt(12);
+		_numExports = _buf->getUint16LEAt(20);
+		if (_numExports) {
+			_exports = _buf->subspan<const uint16>(22, _numExports * sizeof(uint16));
+			// SCI3 local variables always start dword-aligned
+			if (_numExports % 2)
+				_localsOffset = 22 + _numExports * 2;
+			else
+				_localsOffset = 24 + _numExports * 2;
+		}
 	}
 
 	// WORKAROUND: Increase locals, if needed (check above)
@@ -203,7 +215,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// Old script block. There won't be a localvar block in this case.
 		// Instead, the script starts with a 16 bit int specifying the
 		// number of locals we need; these are then allocated and zeroed.
-		_localsCount = READ_LE_UINT16(_buf);
+		_localsCount = _buf->getUint16LEAt(0);
 		_localsOffset = -_localsCount * 2; // Make sure it's invalid
 	} else {
 		// SCI0 late and newer
@@ -211,8 +223,8 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		if (!_localsCount)
 			_localsOffset = 0;
 
-		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
-			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_bufSize);
+		if (_localsOffset + _localsCount * 2 + 1 >= (int)_buf->size()) {
+			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_buf->size());
 			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
@@ -223,11 +235,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 void Script::identifyOffsets() {
 	offsetLookupArrayEntry arrayEntry;
-	const byte *scriptDataPtr  = NULL;
-	const byte *stringStartPtr = NULL;
-	const byte *stringDataPtr  = NULL;
-	uint32 scriptDataLeft   = 0;
-	uint32 stringDataLeft   = 0;
+	SciSpan<const byte> scriptDataPtr;
+	SciSpan<const byte> stringStartPtr;
+	SciSpan<const byte> stringDataPtr;
 	byte stringDataByte  = 0;
 	uint16 typeObject_id = 0;
 	uint16 typeString_id = 0;
@@ -244,38 +254,34 @@ void Script::identifyOffsets() {
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// SCI0 + SCI1
-		scriptDataPtr  = _buf;
-		scriptDataLeft = _bufSize;
+		scriptDataPtr = *_buf;
 
 		// Go through all blocks
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
-			if (scriptDataLeft < 2)
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
-			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
+			scriptDataPtr += 2;
 		}
 
-		do {
-			if (scriptDataLeft < 2)
+		for (;;) {
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
-			blockType = READ_LE_UINT16(scriptDataPtr);
-			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
+			blockType = scriptDataPtr.getUint16LEAt(0);
+			scriptDataPtr += 2;
 			if (blockType == 0) // end of blocks detected
 				break;
 
-			if (scriptDataLeft < 2)
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
-			blockSize = READ_LE_UINT16(scriptDataPtr);
+			blockSize = scriptDataPtr.getUint16LEAt(0);
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
-			blockSize      -= 4; // block size includes block-type UINT16 and block-size UINT16
-			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
+			blockSize     -= 4; // block size includes block-type UINT16 and block-size UINT16
+			scriptDataPtr += 2;
 
-			if (scriptDataLeft < blockSize)
+			if (scriptDataPtr.size() < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
 			switch (blockType) {
@@ -284,7 +290,7 @@ void Script::identifyOffsets() {
 				typeObject_id++;
 				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
 				arrayEntry.id         = typeObject_id;
-				arrayEntry.offset     = scriptDataPtr - _buf + 8; // Calculate offset inside script data (VM uses +8)
+				arrayEntry.offset     = scriptDataPtr - *_buf + 8; // Calculate offset inside script data (VM uses +8)
 				arrayEntry.stringSize = 0;
 				_offsetLookupArray.push_back(arrayEntry);
 				_offsetLookupObjectCount++;
@@ -292,18 +298,17 @@ void Script::identifyOffsets() {
 
 			case SCI_OBJ_STRINGS:
 				// string block detected, we now grab all NUL terminated strings out of this block
-				stringDataPtr  = scriptDataPtr;
-				stringDataLeft = blockSize;
+				stringDataPtr = scriptDataPtr.subspan(0, blockSize);
 
 				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
 
-				do {
-					if (stringDataLeft < 1) // no more bytes left
+				for (;;) {
+					if (stringDataPtr.size() < 1) // no more bytes left
 						break;
 
 					stringStartPtr = stringDataPtr;
 
-					if (stringDataLeft == 1) {
+					if (stringDataPtr.size() == 1) {
 						// only 1 byte left and that byte is a [00], in that case we also exit
 						stringDataByte = *stringStartPtr;
 						if (stringDataByte == 0x00)
@@ -311,46 +316,44 @@ void Script::identifyOffsets() {
 					}
 
 					// now look for terminating [NUL]
-					do {
+					for (;;) {
 						stringDataByte = *stringDataPtr;
 						stringDataPtr++;
-						stringDataLeft--;
 						if (!stringDataByte) // NUL found, exit this loop
 							break;
-						if (stringDataLeft < 1) {
+						if (stringDataPtr.size() < 1) {
 							// no more bytes left
 							warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
 							break;
 						}
-					} while (1);
+					}
 
 					if (stringDataByte)
 						break;
 
 					typeString_id++;
 					arrayEntry.id         = typeString_id;
-					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+					arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
 					arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 					_offsetLookupArray.push_back(arrayEntry);
 					_offsetLookupStringCount++;
-				} while (1);
+				}
 				break;
 
 			case SCI_OBJ_SAID:
 				// said block detected, we now try to find every single said "string" inside this block
 				// said strings are terminated with a 0xFF, the string itself may contain words (2 bytes), where
 				//  the second byte of a word may also be a 0xFF.
-				stringDataPtr  = scriptDataPtr;
-				stringDataLeft = blockSize;
+				stringDataPtr  = scriptDataPtr.subspan(0, blockSize);
 
 				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_SAID;
 
-				do {
-					if (stringDataLeft < 1) // no more bytes left
+				for (;;) {
+					if (stringDataPtr.size() < 1) // no more bytes left
 						break;
 
 					stringStartPtr = stringDataPtr;
-					if (stringDataLeft == 1) {
+					if (stringDataPtr.size() == 1) {
 						// only 1 byte left and that byte is a [00], in that case we also exit
 						// happens in some scripts, for example Conquests of Camelot, script 997
 						// may have been a bug in the compiler or just an intentional filler byte
@@ -360,30 +363,28 @@ void Script::identifyOffsets() {
 					}
 
 					// now look for terminating 0xFF
-					do {
+					for (;;) {
 						stringDataByte = *stringDataPtr;
 						stringDataPtr++;
-						stringDataLeft--;
 						if (stringDataByte == 0xFF) // Terminator found, exit this loop
 							break;
-						if (stringDataLeft < 1) // no more bytes left
+						if (stringDataPtr.size() < 1) // no more bytes left
 							error("Script::identifyOffsets(): said-string without terminator in script %d", _nr);
 						if (stringDataByte < 0xF0) {
 							// Part of a word, skip second byte
 							stringDataPtr++;
-							stringDataLeft--;
-							if (stringDataLeft < 1) // no more bytes left
+							if (stringDataPtr.size() < 1) // no more bytes left
 								error("Script::identifyOffsets(): said-string without terminator in script %d", _nr);
 						}
-					} while (1);
+					}
 
 					typeSaid_id++;
 					arrayEntry.id         = typeSaid_id;
-					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+					arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
 					arrayEntry.stringSize = 0;
 					_offsetLookupArray.push_back(arrayEntry);
 					_offsetLookupSaidCount++;
-				} while (1);
+				}
 				break;
 
 			default:
@@ -391,48 +392,44 @@ void Script::identifyOffsets() {
 			}
 
 			scriptDataPtr  += blockSize;
-			scriptDataLeft -= blockSize;
-		} while (1);
+		}
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		// Strings in SCI1.1 up to SCI2 come after the object instances
-		scriptDataPtr = _heapStart;
-		scriptDataLeft = _heapSize;
+		scriptDataPtr = _heap;
 
 		enum {
-			kExportSize = 2,
-			kPropertySize = 2,
-			kNumMethodsSize = 2,
+			kExportSize = sizeof(uint16),
+			kPropertySize = sizeof(uint16),
+			kNumMethodsSize = sizeof(uint16),
 			kPropDictEntrySize = 2,
 			kMethDictEntrySize = 4
 		};
 
-		const byte *hunkPtr = _buf + kSci11ExportTableOffset + _numExports * kExportSize;
+		SciSpan<const byte> hunkPtr = _buf->subspan(kSci11ExportTableOffset + _numExports * kExportSize);
 
-		if (scriptDataLeft < 4)
+		if (scriptDataPtr.size() < 4)
 			error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
-		uint16 endOfStringOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
-		uint16 objectStartOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr + 2) * 2 + 4;
+		uint16 endOfStringOffset = scriptDataPtr.getUint16SEAt(0);
+		uint16 objectStartOffset = scriptDataPtr.getUint16SEAt(2) * 2 + 4;
 
-		if (scriptDataLeft < objectStartOffset)
+		if (scriptDataPtr.size() < objectStartOffset)
 			error("Script::identifyOffsets(): object start is beyond heap size in script %d", _nr);
-		if (scriptDataLeft < endOfStringOffset)
+		if (scriptDataPtr.size() < endOfStringOffset)
 			error("Script::identifyOffsets(): end of string is beyond heap size in script %d", _nr);
 
-		const byte *endOfStringPtr    = scriptDataPtr + endOfStringOffset;
+		SciSpan<const byte> endOfStringPtr = scriptDataPtr.subspan(endOfStringOffset);
 
 		scriptDataPtr  += objectStartOffset;
-		scriptDataLeft -= objectStartOffset;
 
 		// go through all objects
-		do {
-			if (scriptDataLeft < 2)
+		for (;;) {
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
-			blockType = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			blockType = scriptDataPtr.getUint16SEAt(0);
 			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
 			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
 				break;
 
@@ -440,77 +437,73 @@ void Script::identifyOffsets() {
 			typeObject_id++;
 			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
 			arrayEntry.id         = typeObject_id;
-			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.offset     = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupObjectCount++;
 
-			if (scriptDataLeft < 2)
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
-			const uint16 numProperties = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			const uint16 numProperties = scriptDataPtr.getUint16SEAt(0);
 			blockSize = numProperties * kPropertySize;
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
 
-			const uint16 scriptNum = READ_SCI11ENDIAN_UINT16(scriptDataPtr + 6);
+			const uint16 scriptNum = scriptDataPtr.getUint16SEAt(6);
 
 			if (scriptNum != 0xFFFF) {
 				hunkPtr += numProperties * kPropDictEntrySize;
 			}
 
-			const uint16 numMethods = READ_SCI11ENDIAN_UINT16(hunkPtr);
+			const uint16 numMethods = hunkPtr.getUint16SEAt(0);
 			hunkPtr += kNumMethodsSize + numMethods * kMethDictEntrySize;
 
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
-			if (scriptDataLeft < blockSize)
+			if (scriptDataPtr.size() < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
 			scriptDataPtr  += blockSize;
-			scriptDataLeft -= blockSize;
-		} while (1);
+		}
 
-		_codeOffset = hunkPtr - _buf;
+		_codeOffset = hunkPtr - *_buf;
 
 		// now scriptDataPtr points to right at the start of the strings
 		if (scriptDataPtr > endOfStringPtr)
 			error("Script::identifyOffsets(): string block / end-of-string block mismatch in script %d", _nr);
 
-		stringDataPtr  = scriptDataPtr;
-		stringDataLeft = endOfStringPtr - scriptDataPtr; // Calculate byte count within string-block
+		stringDataPtr = scriptDataPtr.subspan(0, endOfStringPtr - scriptDataPtr);
 
 		arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
-		do {
-			if (stringDataLeft < 1) // no more bytes left
+		for (;;) {
+			if (stringDataPtr.size() < 1) // no more bytes left
 				break;
 
 			stringStartPtr = stringDataPtr;
 			// now look for terminating [NUL]
-			do {
+			for (;;) {
 				stringDataByte = *stringDataPtr;
 				stringDataPtr++;
-				stringDataLeft--;
 				if (!stringDataByte) // NUL found, exit this loop
 					break;
-				if (stringDataLeft < 1) {
+				if (stringDataPtr.size() < 1) {
 				    // no more bytes left
 					warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
 					break;
 				}
-			} while (1);
+			}
 
 			if (stringDataByte)
 				break;
 
 			typeString_id++;
 			arrayEntry.id         = typeString_id;
-			arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+			arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
 			arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupStringCount++;
-		} while (1);
+		}
 
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		// SCI3
@@ -518,25 +511,23 @@ void Script::identifyOffsets() {
 		uint32 sci3RelocationOffset = 0;
 		uint32 sci3BoundaryOffset = 0;
 
-		if (_bufSize < 22)
+		if (_buf->size() < 22)
 			error("Script::identifyOffsets(): script %d smaller than expected SCI3-header", _nr);
 
-		sci3StringOffset = READ_LE_UINT32(_buf + 4);
-		sci3RelocationOffset = READ_LE_UINT32(_buf + 8);
+		sci3StringOffset = _buf->getUint32LEAt(4);
+		sci3RelocationOffset = _buf->getUint32LEAt(8);
 
-		if (sci3RelocationOffset > _bufSize)
+		if (sci3RelocationOffset > _buf->size())
 			error("Script::identifyOffsets(): relocation offset is beyond end of script %d", _nr);
 
 		// First we get all the objects
 		scriptDataPtr = getSci3ObjectsPointer();
-		scriptDataLeft = _bufSize - (scriptDataPtr - _buf);
-		do {
-			if (scriptDataLeft < 2)
+		for (;;) {
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
-			blockType = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
-			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
+			blockType = scriptDataPtr.getUint16SEAt(0);
+			scriptDataPtr += 2;
 			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
 				break;
 
@@ -544,48 +535,45 @@ void Script::identifyOffsets() {
 			typeObject_id++;
 			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
 			arrayEntry.id         = typeObject_id;
-			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.offset     = scriptDataPtr - *_buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
 			_offsetLookupObjectCount++;
 
-			if (scriptDataLeft < 2)
+			if (scriptDataPtr.size() < 2)
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
-			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			blockSize = scriptDataPtr.getUint16SEAt(0);
 			if (blockSize < 4)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 			scriptDataPtr  += 2;
-			scriptDataLeft -= 2;
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
-			if (scriptDataLeft < blockSize)
+			if (scriptDataPtr.size() < blockSize)
 				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
 			scriptDataPtr  += blockSize;
-			scriptDataLeft -= blockSize;
-		} while (1);
+		}
 
 		// And now we get all the strings
 		if (sci3StringOffset > 0) {
 			// string offset set, we expect strings
-			if (sci3StringOffset > _bufSize)
+			if (sci3StringOffset > _buf->size())
 				error("Script::identifyOffsets(): string offset is beyond end of script %d", _nr);
 
 			if (sci3RelocationOffset < sci3StringOffset)
 				error("Script::identifyOffsets(): string offset points beyond relocation offset in script %d", _nr);
 
-			stringDataPtr  = _buf + sci3StringOffset;
-			stringDataLeft = sci3RelocationOffset - sci3StringOffset;
+			stringDataPtr  = _buf->subspan(sci3StringOffset, sci3RelocationOffset - sci3StringOffset);
 
 			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
 
-			do {
-				if (stringDataLeft < 1) // no more bytes left
+			for (;;) {
+				if (stringDataPtr.size() < 1) // no more bytes left
 					break;
 
 				stringStartPtr = stringDataPtr;
 
-				if (stringDataLeft == 1) {
+				if (stringDataPtr.size() == 1) {
 					// only 1 byte left and that byte is a [00], in that case we also exit
 					stringDataByte = *stringStartPtr;
 					if (stringDataByte == 0x00)
@@ -593,60 +581,57 @@ void Script::identifyOffsets() {
 				}
 
 				// now look for terminating [NUL]
-				do {
+				for (;;) {
 					stringDataByte = *stringDataPtr;
 					stringDataPtr++;
-					stringDataLeft--;
 					if (!stringDataByte) // NUL found, exit this loop
 						break;
-					if (stringDataLeft < 1) {
+					if (stringDataPtr.size() < 1) {
 						// no more bytes left
 						warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
 						break;
 					}
-				} while (1);
+				}
 
 				if (stringDataByte)
 					break;
 
 				typeString_id++;
 				arrayEntry.id         = typeString_id;
-				arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+				arrayEntry.offset     = stringStartPtr - *_buf; // Calculate offset inside script data
 				arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 				_offsetLookupArray.push_back(arrayEntry);
 				_offsetLookupStringCount++;
 
 				// SCI3 seems to have aligned all string on DWORD boundaries
-				sci3BoundaryOffset = stringDataPtr - _buf; // Calculate current offset inside script data
+				sci3BoundaryOffset = stringDataPtr - *_buf; // Calculate current offset inside script data
 				sci3BoundaryOffset = sci3BoundaryOffset & 3; // Check boundary offset
 				if (sci3BoundaryOffset) {
 					// lower 2 bits are set? Then we have to adjust the offset
 					sci3BoundaryOffset = 4 - sci3BoundaryOffset;
-					if (stringDataLeft < sci3BoundaryOffset)
+					if (stringDataPtr.size() < sci3BoundaryOffset)
 						error("Script::identifyOffsets(): SCI3 string boundary adjustment goes beyond end of string block in script %d", _nr);
-					stringDataLeft -= sci3BoundaryOffset;
 					stringDataPtr += sci3BoundaryOffset;
 				}
-			} while (1);
+			}
 		}
-		return;
 	}
 }
 
-const byte *Script::getSci3ObjectsPointer() {
-	const byte *ptr = 0;
+SciSpan<const byte> Script::getSci3ObjectsPointer() {
+	SciSpan<const byte> ptr;
 
 	// SCI3 local variables always start dword-aligned
 	if (_numExports % 2)
-		ptr = _buf + 22 + _numExports * 2;
+		ptr = _buf->subspan(22 + _numExports * sizeof(uint16));
 	else
-		ptr = _buf + 24 + _numExports * 2;
+		ptr = _buf->subspan(24 + _numExports * sizeof(uint16));
 
 	// SCI3 object structures always start dword-aligned
 	if (_localsCount % 2)
-		ptr += 2 + _localsCount * 2;
+		ptr += 2 + _localsCount * sizeof(uint16);
 	else
-		ptr += _localsCount * 2;
+		ptr += _localsCount * sizeof(uint16);
 
 	return ptr;
 }
@@ -669,13 +654,13 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
 		obj_pos.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
-	if (obj_pos.getOffset() >= _bufSize)
+	if (obj_pos.getOffset() >= _buf->size())
 		error("Attempt to initialize object beyond end of script");
 
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
 	Object *obj = &_objects[obj_pos.getOffset()];
-	obj->init(_buf, obj_pos, fullObjectInit);
+	obj->init(*_buf, obj_pos, fullObjectInit);
 
 	return obj;
 }
@@ -705,14 +690,14 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 }
 
 int Script::relocateOffsetSci3(uint32 offset) const {
-	int relocStart = READ_LE_UINT32(_buf + 8);
-	int relocCount = READ_LE_UINT16(_buf + 18);
-	const byte *seeker = _buf + relocStart;
+	int relocStart = _buf->getUint32LEAt(8);
+	int relocCount = _buf->getUint16LEAt(18);
+	SciSpan <const byte> seeker = _buf->subspan(relocStart);
 
 	for (int i = 0; i < relocCount; ++i) {
-		if (READ_SCI11ENDIAN_UINT32(seeker) == offset) {
+		if (seeker.getUint32SEAt(0) == offset) {
 			// TODO: Find out what UINT16 at (seeker + 8) means
-			return READ_SCI11ENDIAN_UINT16(_buf + offset) + READ_SCI11ENDIAN_UINT32(seeker + 4);
+			return _buf->getUint16SEAt(offset) + seeker.getUint32SEAt(4);
 		}
 		seeker += 10;
 	}
@@ -722,39 +707,37 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 
 bool Script::relocateLocal(SegmentId segment, int location) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _scriptSize);
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _script.size());
 	else
 		return false;
 }
 
 void Script::relocateSci0Sci21(reg_t block) {
-	const byte *heap = _buf;
-	uint16 heapSize = (uint16)_bufSize;
+	SciSpan<const byte> heap = *_buf;
 	uint16 heapOffset = 0;
 
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		heap = _heapStart;
-		heapSize = (uint16)_heapSize;
-		heapOffset = _scriptSize;
+		heap = _heap;
+		heapOffset = _script.size();
 	}
 
-	if (block.getOffset() >= (uint16)heapSize ||
-		READ_SCI11ENDIAN_UINT16(heap + block.getOffset()) * 2 + block.getOffset() >= (uint16)heapSize)
+	if (block.getOffset() >= (uint16)heap.size() ||
+		heap.getUint16SEAt(block.getOffset()) * 2 + block.getOffset() >= (uint16)heap.size())
 	    error("Relocation block outside of script");
 
-	int count = READ_SCI11ENDIAN_UINT16(heap + block.getOffset());
+	int count = heap.getUint16SEAt(block.getOffset());
 	int exportIndex = 0;
 	int pos = 0;
 
 	for (int i = 0; i < count; i++) {
-		pos = READ_SCI11ENDIAN_UINT16(heap + block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
+		pos = heap.getUint16SEAt(block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
 		// This occurs in SCI01/SCI1 games where usually one export value is
 		// zero. It seems that in this situation, we should skip the export and
 		// move to the next one, though the total count of valid exports remains
 		// the same
 		if (!pos) {
 			exportIndex++;
-			pos = READ_SCI11ENDIAN_UINT16(heap + block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
+			pos = heap.getUint16SEAt(block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
 			if (!pos)
 				error("Script::relocate(): Consecutive zero exports found");
 		}
@@ -768,7 +751,7 @@ void Script::relocateSci0Sci21(reg_t block) {
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
 			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
-				if (it->_value.relocateSci0Sci21(block.getSegment(), pos, _scriptSize))
+				if (it->_value.relocateSci0Sci21(block.getSegment(), pos, _script.size()))
 					break;
 		}
 
@@ -777,18 +760,18 @@ void Script::relocateSci0Sci21(reg_t block) {
 }
 
 void Script::relocateSci3(reg_t block) {
-	const byte *relocStart = _buf + READ_SCI11ENDIAN_UINT32(_buf + 8);
+	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
 	//int count = _bufSize - READ_SCI11ENDIAN_UINT32(_buf + 8);
 
 	ObjMap::iterator it;
 	for (it = _objects.begin(); it != _objects.end(); ++it) {
-		const byte *seeker = relocStart;
-		while (seeker < _buf + _bufSize) {
+		SciSpan<const byte> seeker = relocStart;
+		while (seeker.size()) {
 			// TODO: Find out what UINT16 at (seeker + 8) means
 			it->_value.relocateSci3(block.getSegment(),
-						READ_SCI11ENDIAN_UINT32(seeker),
-						READ_SCI11ENDIAN_UINT32(seeker + 4),
-						_scriptSize);
+						seeker.getUint32SEAt(0),
+						seeker.getUint32SEAt(4),
+						_script.size());
 			seeker += 10;
 		}
 	}
@@ -816,7 +799,7 @@ void Script::setLockers(int lockers) {
 uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
-	if (_numExports <= pubfunct) {
+	if (_numExports <= (uint)pubfunct) {
 		error("validateExportFunc(): pubfunct is invalid");
 		return 0;
 	}
@@ -827,10 +810,10 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	uint32 offset;
 
 	if (getSciVersion() != SCI_VERSION_3) {
-		offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
+		offset = _exports.getUint16SEAt(pubfunct);
 	} else {
 		if (!relocSci3)
-			offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct) + getCodeBlockOffsetSci3();
+			offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffsetSci3();
 		else
 			offset = relocateOffsetSci3(pubfunct * 2 + 22);
 	}
@@ -842,11 +825,11 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	// is located at a specific address, thus findBlockSCI0() won't work.
 	// Fixes bugs #3039785 and #3037595.
 	if (offset < 10 && getSciVersion() <= SCI_VERSION_1_LATE) {
-		const uint16 *secondExportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS, 0);
+		const SciSpan<const uint16> secondExportTable = findBlockSCI0(SCI_OBJ_EXPORTS, 0).subspan<const uint16>(0);
 
 		if (secondExportTable) {
-			secondExportTable += 3;	// skip header plus 2 bytes (secondExportTable is a uint16 pointer)
-			offset = READ_SCI11ENDIAN_UINT16(secondExportTable + pubfunct);
+			// 3 skips header plus 2 bytes (secondExportTable is a uint16 pointer)
+			offset = secondExportTable.getUint16SEAt(3 + pubfunct);
 		}
 	}
 
@@ -855,61 +838,58 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 		offset = _codeOffset;
 	}
 
-	if (offset >= _bufSize)
+	if (offset >= _buf->size())
 		error("Invalid export function pointer");
 
 	return offset;
 }
 
-byte *Script::findBlockSCI0(int type, int startBlockIndex) {
-	byte *buf = _buf;
+SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, int startBlockIndex) {
+	SciSpan<const byte> buf = *_buf;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	int blockIndex = 0;
 
 	if (oldScriptHeader)
 		buf += 2;
 
-	do {
-		int blockType = READ_LE_UINT16(buf);
+	for (;;) {
+		const int blockType = buf.getUint16LEAt(0);
 
 		if (blockType == 0)
 			break;
-		if (blockType == type && blockIndex > startBlockIndex)
-			return buf;
 
-		int blockSize = READ_LE_UINT16(buf + 2);
+		// the size in the block header includes the size of the header itself
+		const int blockSize = buf.getUint16LEAt(2);
 		assert(blockSize > 0);
+
+		if (blockType == type && blockIndex > startBlockIndex) {
+			return buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));
+		}
+
 		buf += blockSize;
 		blockIndex++;
-	} while (1);
+	}
 
-	return NULL;
+	return SciSpan<const byte>();
 }
 
 // memory operations
 
-void Script::mcpyInOut(int dst, const void *src, size_t n) {
-	if (_buf) {
-		assert(dst + n <= _bufSize);
-		memcpy(_buf + dst, src, n);
-	}
-}
-
 bool Script::isValidOffset(uint16 offset) const {
-	return offset < _bufSize;
+	return offset < _buf->size();
 }
 
 SegmentRef Script::dereference(reg_t pointer) {
-	if (pointer.getOffset() > _bufSize) {
-		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
-				  PRINT_REG(pointer), (uint)_bufSize);
+	if (pointer.getOffset() > _buf->size()) {
+		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%lu)",
+				  PRINT_REG(pointer), _buf->size());
 		return SegmentRef();
 	}
 
 	SegmentRef ret;
 	ret.isRaw = true;
-	ret.maxSize = _bufSize - pointer.getOffset();
-	ret.raw = _buf + pointer.getOffset();
+	ret.maxSize = _buf->size() - pointer.getOffset();
+	ret.raw = const_cast<byte *>(_buf->getUnsafeDataAt(pointer.getOffset(), ret.maxSize));
 	return ret;
 }
 
@@ -938,10 +918,10 @@ void Script::initializeLocals(SegManager *segMan) {
 	LocalVariables *locals = allocLocalsSegment(segMan);
 	if (locals) {
 		if (getSciVersion() > SCI_VERSION_0_EARLY) {
-			const byte *base = (const byte *)(_buf + getLocalsOffset());
+			const SciSpan<const byte> base = _buf->subspan(getLocalsOffset());
 
 			for (uint16 i = 0; i < getLocalsCount(); i++)
-				locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
+				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * 2));
 		} else {
 			// In SCI0 early, locals are set at run time, thus zero them all here
 			for (uint16 i = 0; i < getLocalsCount(); i++)
@@ -955,14 +935,19 @@ void Script::syncLocalsBlock(SegManager *segMan) {
 }
 
 void Script::initializeClasses(SegManager *segMan) {
-	const byte *seeker = 0;
+	SciSpan<const byte> seeker;
 	uint16 mult = 0;
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		seeker = findBlockSCI0(SCI_OBJ_CLASS);
+		seeker = _script;
 		mult = 1;
+
+		// SCI0 early has an extra two bytes of header
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			seeker += 2;
+		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+		seeker = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 		mult = 2;
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		seeker = getSci3ObjectsPointer();
@@ -977,10 +962,10 @@ void Script::initializeClasses(SegManager *segMan) {
 	uint32 classpos;
 	int16 species = 0;
 
-	while (true) {
+	for (;;) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
-		marker = READ_SCI11ENDIAN_UINT16(seeker);
-		classpos = seeker - _buf;
+		marker = seeker.getUint16SEAt(0);
+		classpos = seeker - *_buf;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
 			break;
@@ -991,14 +976,14 @@ void Script::initializeClasses(SegManager *segMan) {
 		if (getSciVersion() <= SCI_VERSION_1_LATE) {
 			isClass = (marker == SCI_OBJ_CLASS);
 			if (isClass)
-				species = READ_SCI11ENDIAN_UINT16(seeker + 12);
+				species = seeker.getUint16SEAt(12);
 			classpos += 12;
 		} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass);	// -info- selector
-			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
+			isClass = (seeker.getUint16SEAt(14) & kInfoFlagClass);	// -info- selector
+			species = seeker.getUint16SEAt(10);
 		} else if (getSciVersion() == SCI_VERSION_3) {
-			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 10) & kInfoFlagClass);
-			species = READ_SCI11ENDIAN_UINT16(seeker + 4);
+			isClass = (seeker.getUint16SEAt(10) & kInfoFlagClass);
+			species = seeker.getUint16SEAt(4);
 		}
 
 		if (isClass) {
@@ -1022,7 +1007,7 @@ void Script::initializeClasses(SegManager *segMan) {
 			segMan->setClassOffset(species, make_reg(segmentId, classpos));
 		}
 
-		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * mult;
+		seeker += seeker.getUint16SEAt(2) * mult;
 	}
 }
 
@@ -1032,10 +1017,10 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 	// We need to make two passes, as the objects in the script might be in the
 	// wrong order (e.g. in the demo of Iceman) - refer to bug #3034713
 	for (int pass = 1; pass <= 2; pass++) {
-		const byte *seeker = _buf + (oldScriptHeader ? 2 : 0);
+		SciSpan<const byte> seeker = _buf->subspan(oldScriptHeader ? 2 : 0);
 
 		do {
-			uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
+			uint16 objType = seeker.getUint16SEAt(0);
 			if (!objType)
 				break;
 
@@ -1043,7 +1028,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				{
-					reg_t addr = make_reg(segmentId, seeker - _buf + 4);
+					reg_t addr = make_reg(segmentId, seeker - *_buf + 4);
 					Object *obj = scriptObjInit(addr);
 					obj->initSpecies(segMan, addr);
 
@@ -1069,20 +1054,20 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 				break;
 			}
 
-			seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
-		} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
+			seeker += seeker.getUint16SEAt(2);
+		} while ((uint32)(seeker - *_buf) < getScriptSize() - 2);
 	}
 
-	byte *relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
+	const SciSpan<const byte> relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
 	if (relocationBlock)
-		relocateSci0Sci21(make_reg(segmentId, relocationBlock - getBuf() + 4));
+		relocateSci0Sci21(make_reg(segmentId, relocationBlock - *_buf + 4));
 }
 
 void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
-	const byte *seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+	SciSpan<const byte> seeker = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 
-	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		reg_t reg = make_reg(segmentId, seeker - _buf);
+	while (seeker.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		reg_t reg = make_reg(segmentId, seeker - *_buf);
 		Object *obj = scriptObjInit(reg);
 
 		// Copy base from species class, as we need its selector IDs
@@ -1113,26 +1098,26 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 		// to be sufficient.
 		obj->setClassScriptSelector(make_reg(0, _nr));
 
-		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
+		seeker += seeker.getUint16SEAt(2) * 2;
 	}
 
-	relocateSci0Sci21(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
+	relocateSci0Sci21(make_reg(segmentId, _heap.getUint16SEAt(0)));
 }
 
 void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
-	const byte *seeker = getSci3ObjectsPointer();
+	SciSpan<const byte> seeker = getSci3ObjectsPointer();
 
-	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+	while (seeker.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		// We call setSegment and setOffset directly here, instead of using
 		// make_reg, as in large scripts, seeker - _buf can be larger than
 		// a 16-bit integer
 		reg_t reg;
 		reg.setSegment(segmentId);
-		reg.setOffset(seeker - _buf);
+		reg.setOffset(seeker - *_buf);
 
 		Object *obj = scriptObjInit(reg);
 		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
-		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
+		seeker += seeker.getUint16SEAt(2);
 	}
 
 	relocateSci3(make_reg(segmentId, 0));
@@ -1170,7 +1155,7 @@ Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
 
 Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 	Common::Array<reg_t> tmp;
-	if (addr.getOffset() <= _bufSize && addr.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET && offsetIsObject(addr.getOffset())) {
+	if (addr.getOffset() <= _buf->size() && addr.getOffset() >= (uint)-SCRIPT_OBJECT_MAGIC_OFFSET && offsetIsObject(addr.getOffset())) {
 		const Object *obj = getObject(addr.getOffset());
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
@@ -1207,7 +1192,7 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 }
 
 bool Script::offsetIsObject(uint16 offset) const {
-	return (READ_SCI11ENDIAN_UINT16((const byte *)_buf + offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER);
+	return _buf->getUint16SEAt(offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER;
 }
 
 } // End of namespace Sci

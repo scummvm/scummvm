@@ -719,40 +719,41 @@ void GfxScreen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
+void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
 	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
 	const int newWidth = srcWidth * 2;
 	const int pitch = newWidth * bytesPerPixel;
-	const byte *srcPtr = src;
+	const byte *srcPtr = src.getUnsafeDataAt(0, srcWidth * srcHeight * bytesPerPixel);
+	byte *dstPtr = dst.getUnsafeDataAt(0, srcWidth * srcHeight * bytesPerPixel);
 
 	if (bytesPerPixel == 1) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color;
-				dst[newWidth] = color;
-				dst[newWidth + 1] = color;
-				dst += 2;
+				dstPtr[0] = color;
+				dstPtr[1] = color;
+				dstPtr[newWidth] = color;
+				dstPtr[newWidth + 1] = color;
+				dstPtr += 2;
 			}
-			dst += newWidth;
+			dstPtr += newWidth;
 		}
 	} else if (bytesPerPixel == 2) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color2;
-				dst[2] = color;
-				dst[3] = color2;
-				dst[pitch] = color;
-				dst[pitch + 1] = color2;
-				dst[pitch + 2] = color;
-				dst[pitch + 3] = color2;
-				dst += 4;
+				dstPtr[0] = color;
+				dstPtr[1] = color2;
+				dstPtr[2] = color;
+				dstPtr[3] = color2;
+				dstPtr[pitch] = color;
+				dstPtr[pitch + 1] = color2;
+				dstPtr[pitch + 2] = color;
+				dstPtr[pitch + 3] = color2;
+				dstPtr += 4;
 			}
-			dst += pitch;
+			dstPtr += pitch;
 		}
 	}
 }

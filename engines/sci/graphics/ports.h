@@ -93,8 +93,8 @@ public:
 	void clipLine(Common::Point &start, Common::Point &end);
 
 	void priorityBandsInit(int16 bandCount, int16 top, int16 bottom);
-	void priorityBandsInit(byte *data);
-	void priorityBandsInitSci11(byte *data);
+	void priorityBandsInit(const SciSpan<const byte> &data);
+	void priorityBandsInitSci11(SciSpan<const byte> data);
 
 	void kernelInitPriorityBands();
 	void kernelGraphAdjustPriority(int top, int bottom);

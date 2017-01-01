@@ -203,11 +203,11 @@ void GfxMacIconBar::setInventoryIcon(int16 icon) {
 Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
 	Resource *res = g_sci->getResMan()->findResource(id, false);
 
-	if (!res || res->size == 0)
+	if (!res || res->size() == 0)
 		return 0;
 
 	Image::PICTDecoder pictDecoder;
-	Common::MemoryReadStream stream(res->data, res->size);
+	Common::MemoryReadStream stream(res->toStream());
 	if (!pictDecoder.loadStream(stream))
 		return 0;
 
