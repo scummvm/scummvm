@@ -320,7 +320,6 @@ private:
 	void intro();
 	void enterGame();
 	void signon(const char *s);
-	void testPommeQ();
 	void FRDevents();
 	Icon *scan_icon_list(int16 x, int16 y, int16 index);
 	void updateCursor();
@@ -366,8 +365,8 @@ private:
 	void panelrestart();
 	void reallyquit();
 	void confirmer(char mode, char yesId);
-	void confirmyes();
-	void confirmno();
+	void confirmYes();
+	void confirmNo();
 	void restart();
 	void edenQuit();
 	void choseSubtitleOption();
@@ -669,7 +668,6 @@ private:
 	int16 _currCursor;
 	Icon *_currSpot;
 	Icon *_curSpot2;
-	bool pomme_q;
 	bool  _keyboardHeld;
 	bool  _mouseHeld;
 	bool  _normalCursor;

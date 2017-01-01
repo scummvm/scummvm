@@ -223,7 +223,7 @@ void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 
 
 void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 	if (!view->_doubled) {
-		View *dest = g_ed->ScreenView;
+		View *dest = g_ed->_screenView;
 		int16 srcpitch = view->_pitch;
 		int16 dstpitch = dest->_pitch;
 
@@ -250,7 +250,7 @@ void CLBlitter_CopyView2Screen(View *view) {
 	if (view)
 		CLBlitter_CopyView2ScreenCUSTOM(view);
 
-	g_system->copyRectToScreen(g_ed->ScreenView->_bufferPtr, g_ed->ScreenView->_pitch, 0, 0, g_ed->ScreenView->_width, g_ed->ScreenView->_height);
+	g_system->copyRectToScreen(g_ed->_screenView->_bufferPtr, g_ed->_screenView->_pitch, 0, 0, g_ed->_screenView->_width, g_ed->_screenView->_height);
 	g_system->updateScreen();
 }
 
@@ -270,14 +270,14 @@ void CLBlitter_FillView(View *view, unsigned int fill) {
 }
 
 void CLBlitter_FillScreenView(unsigned int fill) {
-	CLBlitter_FillView(g_ed->ScreenView, fill);
+	CLBlitter_FillView(g_ed->_screenView, fill);
 }
 
 ///// events wrapper
 int _mouseButton;
 byte _keyState[256];
 
-void pollEvents() {
+void CryoEngine::pollEvents() {
 	g_system->delayMillis(10);
 
 	Common::Event event;
@@ -310,41 +310,26 @@ void pollEvents() {
 	}
 }
 
-
-///// CLKeyboard
-int16 CLKeyboard_HasCmdDown() {
-	return 0;
+bool CryoEngine::isScanCodeDown(int16 scancode) {
+	return false;
 }
 
-void CLKeyboard_Read() {
-	pollEvents();
+void CryoEngine::hideMouse() {
 }
 
-byte CLKeyboard_GetLastASCII() {
-	return 0;
+void CryoEngine::showMouse() {
 }
 
-int16 CLKeyboard_IsScanCodeDown(int16 scancode) {
-	return 0;
-}
-
-///// CLMouse
-void CLMouse_Hide() {
-}
-
-void CLMouse_Show() {
-}
-
-void CLMouse_GetPosition(int16 *x, int16 *y) {
+void CryoEngine::getMousePosition(int16 *x, int16 *y) {
 	*x = g_system->getEventManager()->getMousePos().x;
 	*y = g_system->getEventManager()->getMousePos().y;
 }
 
-void CLMouse_SetPosition(int16 x, int16 y) {
+void CryoEngine::setMousePosition(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
 
-uint16 CLMouse_IsDown() {
+bool CryoEngine::isMouseButtonDown() {
 	pollEvents();
 	return _mouseButton != 0;
 }
@@ -431,7 +416,7 @@ void CLTimer_Action(void *arg) {
 ///// CRYOLib
 void CRYOLib_ManagersInit() {
 	g_system->getTimerManager()->installTimerProc(CLTimer_Action, 10000, nullptr, "100hz timer");
-	g_ed->ScreenView->initDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
+	g_ed->_screenView->initDatas(g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
 void CRYOLib_ManagersDone() {

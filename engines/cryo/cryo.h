@@ -51,8 +51,6 @@ enum {
 };
 
 class CryoEngine : public Engine {
-private:
-
 public:
 	CryoEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~CryoEngine();
@@ -72,8 +70,17 @@ public:
 	EdenGame *_game;
 	HnmPlayer *_video;
 
-	View *ScreenView;
+	View *_screenView;
 	volatile int32 _timerTicks;
+
+	void pollEvents();
+
+	bool isScanCodeDown(int16 scancode);
+	void hideMouse();
+	void showMouse();
+	void getMousePosition(int16 *x, int16 *y);
+	void setMousePosition(int16 x, int16 y);
+	bool isMouseButtonDown();
 
 private:
 	Console *_console;

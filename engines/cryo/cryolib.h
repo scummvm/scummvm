@@ -219,17 +219,6 @@ void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume);
 void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume);
 void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume);
 
-int16 CLKeyboard_HasCmdDown();
-void CLKeyboard_Read();
-byte CLKeyboard_GetLastASCII();
-int16 CLKeyboard_IsScanCodeDown(int16 scancode);
-
-void CLMouse_Hide();
-void CLMouse_Show();
-void CLMouse_GetPosition(int16 *x, int16 *y);
-void CLMouse_SetPosition(int16 x, int16 y);
-uint16 CLMouse_IsDown();
-
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 

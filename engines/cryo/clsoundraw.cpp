@@ -43,7 +43,8 @@ sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode) 
 }
 
 void CLSoundRaw_Free(sound_t *sound) {
-	while (sound->_locked) ;
+	while (sound->_locked)
+		;
 //	CLMemory_FreeHandle(sound->sndHandle);
 	free(sound);
 }

@@ -117,7 +117,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_cursorPosY = _cursorPosX = 0;
 	_currCursor = 0;
 	_currSpot = _curSpot2 = nullptr;
-	pomme_q = false;
 	_keyboardHeld = false;
 	_mouseHeld = false;
 	_normalCursor = false;
@@ -435,7 +434,7 @@ void EdenGame::gotoPlace(Goto *go) {
 		return;
 	if (_globals->_var113) {
 		waitEndSpeak();
-		if (!pomme_q)
+		if (!_vm->shouldQuit())
 			closeCharacterScreen();
 	}
 	if (go->_enterVideoNum) {
@@ -481,7 +480,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 			return;
 		if (_globals->_var113) {
 			waitEndSpeak();
-			if (!pomme_q)
+			if (!_vm->shouldQuit())
 				closeCharacterScreen();
 		}
 		specialout();
@@ -2839,18 +2838,17 @@ void EdenGame::waitEndSpeak() {
 			anim_perso();
 		musicspy();
 		display();
-		CLKeyboard_Read();
-		testPommeQ();
-		if (pomme_q) {
+		_vm->pollEvents();
+		if (_vm->shouldQuit()) {
 			closeCharacterScreen();
 			edenShudown();
 			break;
 		}
 		if (!_mouseHeld)
-			if (CLMouse_IsDown())
+			if (_vm->isMouseButtonDown())
 				break;
 		if (_mouseHeld)
-			if (!CLMouse_IsDown())
+			if (!_vm->isMouseButtonDown())
 				_mouseHeld = false;
 	}
 	_mouseHeld = true;
@@ -3398,7 +3396,7 @@ void EdenGame::actionDino() {
 		return;
 	if (_globals->_var60)
 		waitEndSpeak();
-	if (pomme_q)
+	if (_vm->shouldQuit())
 		return;
 	perso = &kPersons[PER_MANGO];
 	if (!(_globals->_party & PersonMask::pmMungo)) {
@@ -3485,7 +3483,7 @@ void EdenGame::actionAdam() {
 			_globals->_eventType = EventType::etEvent3;
 			showEvents();
 			waitEndSpeak();
-			if (pomme_q)
+			if (_vm->shouldQuit())
 				return;
 			closeCharacterScreen();
 			removeFromParty(PER_MESSENGER);
@@ -3821,13 +3819,13 @@ void EdenGame::narrateur() {
 		dialautoon();
 		_globals->_varF2 |= 1;
 		waitEndSpeak();
-		if (pomme_q)
+		if (_vm->shouldQuit())
 			return;
 		endCharacterSpeech();
 		while (dialoscansvmas(_globals->_narratorDialogPtr)) {
 			_globals->_narratorDialogPtr = _globals->_dialogPtr;
 			waitEndSpeak();
-			if (pomme_q)
+			if (_vm->shouldQuit())
 				return;
 			endCharacterSpeech();
 		}
@@ -3909,7 +3907,7 @@ void EdenGame::actionGotoMap() {
 	setChoiceYes();
 	showEvents1();
 	waitEndSpeak();
-	if (pomme_q)
+	if (_vm->shouldQuit())
 		return;
 
 	closeCharacterScreen();
@@ -4157,9 +4155,9 @@ void EdenGame::displayEffect1() {
 		for (int16 i = 16; i <= 96; i += 4) {
 			for (int x = _mainView->_normal._dstLeft; x < _mainView->_normal._dstLeft + 320; x += 16) {
 				setDestRect(x, y + i, x + 16 - 1, y + i + 4 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->ScreenView, &rect_src, &rect_dst);
+				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
 				setDestRect(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->ScreenView, &rect_src, &rect_dst);
+				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
 			}
 			CLBlitter_UpdateScreen();
 			wait(1);
@@ -4170,9 +4168,9 @@ void EdenGame::displayEffect1() {
 		for (int16 i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
 			for (int x = _mainView->_zoom._dstLeft; x < _mainView->_zoom._dstLeft + 320 * 2; x += 16 * 2) {
 				setDestRect(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->ScreenView, &rect_src, &rect_dst);
+				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
 				setDestRect(x, y + 192 * 2 - i, x + 16 * 2 - 1, y + 192 * 2 - i + 4 * 2 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->ScreenView, &rect_src, &rect_dst);
+				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
 			}
 			wait(1);
 		}
@@ -4270,12 +4268,12 @@ void EdenGame::displayEffect4() {
 //	Unused
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
-	int16 ww = _vm->ScreenView->_pitch;
+	int16 ww = _vm->_screenView->_pitch;
 	if (!_doubledScreen) {
 		x = _mainView->_normal._dstLeft;
 		y = _mainView->_normal._dstTop;
 		for (int16 i = 32; i > 0; i -= 2) {
-			scr = _vm->ScreenView->_bufferPtr;
+			scr = _vm->_screenView->_bufferPtr;
 			scr += (y + 16) * ww + x;
 			pix = _mainView->_bufferPtr + 16 * 640;
 			r17 = 320 / i;
@@ -4339,7 +4337,7 @@ void EdenGame::displayEffect4() {
 		x = _mainView->_zoom._dstLeft;
 		y = _mainView->_zoom._dstTop;
 		for (int16 i = 32; i > 0; i -= 2) {
-			scr = _vm->ScreenView->_bufferPtr;
+			scr = _vm->_screenView->_bufferPtr;
 			scr += (y + 16 * 2) * ww + x;
 			pix = _mainView->_bufferPtr + 16 * 640;
 			r17 = 320 / i;
@@ -4409,11 +4407,11 @@ void EdenGame::clearScreen() {
 //	Unused
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
-	int16 ww = _vm->ScreenView->_pitch;
+	int16 ww = _vm->_screenView->_pitch;
 	if (!_doubledScreen) {
 		x = _mainView->_normal._dstLeft;
 		y = _mainView->_normal._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (int16 yy = 0; yy < 160; yy++) {
 			for (int16 xx = 0; xx < 320; xx++)
@@ -4423,7 +4421,7 @@ void EdenGame::clearScreen() {
 	} else {
 		x = _mainView->_zoom._dstLeft;
 		y = _mainView->_zoom._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 32) * ww + x;
 		for (int16 yy = 0; yy < 160; yy++) {
 			for (int16 xx = 0; xx < 320; xx++) {
@@ -4447,11 +4445,11 @@ void EdenGame::colimacon(int16 pattern[16]) {
 //	Unused
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
-	int16 ww = _vm->ScreenView->_pitch;
+	int16 ww = _vm->_screenView->_pitch;
 	if (!_doubledScreen) {
 		x = _mainView->_normal._dstLeft;
 		y = _mainView->_normal._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4464,7 +4462,7 @@ void EdenGame::colimacon(int16 pattern[16]) {
 	} else {
 		x = _mainView->_zoom._dstLeft;
 		y = _mainView->_zoom._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4485,7 +4483,7 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		x = _mainView->_normal._dstLeft;
 		y = _mainView->_normal._dstTop;
 		pix += 640 * 16;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4502,7 +4500,7 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		x = _mainView->_zoom._dstLeft;
 		y = _mainView->_zoom._dstTop;
 		pix += 640 * 16;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		for (int16 i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4602,19 +4600,19 @@ void EdenGame::effetpix() {
 	byte *scr;
 	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
 
-	uint16 ww = _vm->ScreenView->_pitch;
+	uint16 ww = _vm->_screenView->_pitch;
 	r25 = ww * 80;
 	r18 = 640 * 80;
 	byte *pix = _mainView->_bufferPtr + 16 * 640;
 	if (!_doubledScreen) {
 		int x = _mainView->_normal._dstLeft;
 		int y = _mainView->_normal._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
 	} else {
 		int x = _mainView->_zoom._dstLeft;
 		int y = _mainView->_zoom._dstTop;
-		scr = _vm->ScreenView->_bufferPtr;
+		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		r25 *= 2;
 	}
@@ -4697,7 +4695,7 @@ void EdenGame::effetpix() {
 			}
 		}
 	} while (r27 != 1);
-	assert(_vm->ScreenView->_pitch == 320);
+	assert(_vm->_screenView->_pitch == 320);
 }
 
 ////// datfile.c
@@ -5384,14 +5382,14 @@ void EdenGame::displayRoom() {
 		debug("drawroom: room 0x%X using bank %d", _globals->_roomNum, _globals->_roomImgBank);
 		useBank(_globals->_roomImgBank);
 		displaySingleRoom(room);
-		assert(_vm->ScreenView->_pitch == 320);
+		assert(_vm->_screenView->_pitch == 320);
 	}
 }
 
 // Original name: aflieu
 void EdenGame::displayPlace() {
 	no_perso();
-	if (!pomme_q) {
+	if (!_vm->shouldQuit()) {
 		_globals->_iconsIndex = 16;
 		_globals->_autoDialog = false;
 	}
@@ -5597,7 +5595,7 @@ void EdenGame::initPlace(int16 roomNum) {
 
 void EdenGame::maj2() {
 	displayPlace();
-	assert(_vm->ScreenView->_pitch == 320);
+	assert(_vm->_screenView->_pitch == 320);
 	if (_globals->_roomNum == 273 && _globals->_prevLocation == 18)
 		_globals->_mirrorEffect = 1;
 	if (_globals->_eventType == EventType::etEventC) {
@@ -5605,7 +5603,7 @@ void EdenGame::maj2() {
 		showObjects();
 	}
 	FRDevents();
-	assert(_vm->ScreenView->_pitch == 320);
+	assert(_vm->_screenView->_pitch == 320);
 	bool r30 = false;
 	if (_globals->_curAreaType == AreaType::atValley && !(_globals->_displayFlags & DisplayFlags::dfPanable))
 		r30 = true;
@@ -5711,13 +5709,13 @@ void EdenGame::openWindow() {
 	CLBlitter_FillView(_mainView, 0xFFFFFFFF);
 	_mainView->setSrcZoomValues(0, 0);
 	_mainView->setDisplayZoomValues(640, 400);
-	_mainView->centerIn(_vm->ScreenView);
+	_mainView->centerIn(_vm->_screenView);
 	_mainViewBuf = _mainView->_bufferPtr;
 
 	_mouseCenterX = _mainView->_normal._dstLeft + _mainView->_normal._width / 2;
 	_mouseCenterY = _mainView->_normal._dstTop + _mainView->_normal._height / 2;
-	CLMouse_SetPosition(_mouseCenterX, _mouseCenterY);
-	CLMouse_Hide();
+	_vm->setMousePosition(_mouseCenterX, _mouseCenterY);
+	_vm->hideMouse();
 
 	_cursorPosX = 320 / 2;
 	_cursorPosY = 200 / 2;
@@ -5900,21 +5898,11 @@ void EdenGame::enterGame() {
 void EdenGame::signon(const char *s) {
 }
 
-void EdenGame::testPommeQ() {
-	if (!CLKeyboard_HasCmdDown())
-		return;
-
-	char key = CLKeyboard_GetLastASCII();
-	if (key == 'Q' || key == 'q') {
-		if (!pomme_q)
-			pomme_q = true;
-	}
-}
-
 void EdenGame::FRDevents() {
-	CLKeyboard_Read();
+	_vm->pollEvents();
 	if (_allowDoubled) {
-		if (CLKeyboard_IsScanCodeDown(0x30)) { //TODO: const
+#if 0 // CLKeyboard_IsScanCodeDown currently always returns false
+		if (_vm->isScanCodeDown(0x30)) { //TODO: const
 			if (!_keyboardHeld) {
 				_doubledScreen = !_doubledScreen;
 				_mainView->_doubled = _doubledScreen;
@@ -5922,15 +5910,16 @@ void EdenGame::FRDevents() {
 				_keyboardHeld = true;
 			}
 		} else
-			_keyboardHeld = false;
+#endif
+		_keyboardHeld = false;
 	}
 
 	int16 mouseY;
 	int16 mouseX;
-	CLMouse_GetPosition(&mouseX, &mouseY);
+	_vm->getMousePosition(&mouseX, &mouseY);
 	mouseX -= _mouseCenterX;
 	mouseY -= _mouseCenterY;
-	CLMouse_SetPosition(_mouseCenterX , _mouseCenterY);
+	_vm->setMousePosition(_mouseCenterX , _mouseCenterY);
 	_cursorPosX += mouseX;
 	_cursorPosX = CLIP<int16>(_cursorPosX, 4, 292);
 	_cursorPosY += mouseY;
@@ -5979,7 +5968,7 @@ void EdenGame::FRDevents() {
 			_cursorSaved = false;
 		}
 	}
-	if (CLMouse_IsDown()) {
+	if (_vm->isMouseButtonDown()) {
 		if (!_mouseHeld) {
 			_mouseHeld = true;
 			_gameStarted = true;
@@ -6006,13 +5995,9 @@ void EdenGame::FRDevents() {
 	}
 	if (_inventoryScrollDelay < 0)
 		_inventoryScrollDelay = 0;
-	if (!pomme_q) {
-		testPommeQ();
-		if (pomme_q) {
-			edenShudown();
-			return;     //TODO: useless
-		}
-	}
+
+	if (_vm->shouldQuit())
+		edenShudown();
 }
 
 Icon *EdenGame::scan_icon_list(int16 x, int16 y, int16 index) {
@@ -6349,8 +6334,8 @@ void EdenGame::mouse() {
 		&EdenGame::stoptape,
 		&EdenGame::rewindtape,
 		&EdenGame::forwardtape,
-		&EdenGame::confirmyes,
-		&EdenGame::confirmno,
+		&EdenGame::confirmYes,
+		&EdenGame::confirmNo,
 		&EdenGame::actionGotoMap
 	};
 
@@ -6381,7 +6366,7 @@ void EdenGame::showMovie(char arg1) {
 	_hnmView = new View(_vm, _hnmContext->_header._width, _hnmContext->_header._height);
 	_hnmView->setSrcZoomValues(0, 0);
 	_hnmView->setDisplayZoomValues(_hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
-	_hnmView->centerIn(_vm->ScreenView);
+	_hnmView->centerIn(_vm->_screenView);
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
 		_hnmView->_normal._height = 160;
@@ -6400,10 +6385,11 @@ void EdenGame::showMovie(char arg1) {
 		else
 			musicspy();
 		CLBlitter_CopyView2Screen(_hnmView);
-		assert(_vm->ScreenView->_pitch == 320);
-		CLKeyboard_Read();
+		assert(_vm->_screenView->_pitch == 320);
+		_vm->pollEvents();
 		if (_allowDoubled) {
-			if (CLKeyboard_IsScanCodeDown(0x30)) { //TODO: const
+#if 0 // CLKeyboard_IsScanCodeDown currently always returns false
+			if (_vm->isScanCodeDown(0x30)) { //TODO: const
 				if (!_keyboardHeld) {
 					_doubledScreen = !_doubledScreen;
 					_hnmView->_doubled = _doubledScreen;   //TODO: but mainview ?
@@ -6411,10 +6397,11 @@ void EdenGame::showMovie(char arg1) {
 					_keyboardHeld = true;
 				}
 			} else
-				_keyboardHeld = false;
+#endif
+			_keyboardHeld = false;
 		}
 		if (arg1) {
-			if (CLMouse_IsDown()) {
+			if (_vm->isMouseButtonDown()) {
 				if (!_mouseHeld) {
 					_mouseHeld = true;
 					_videoCanceledFlag = true;
@@ -6979,7 +6966,7 @@ void EdenGame::newor() {
 }
 
 void EdenGame::gotoPanel() {
-	if (pomme_q)
+	if (_vm->shouldQuit())
 		byte_31D64 = _globals->_autoDialog;  //TODO: check me
 	_noPalette = false;
 	_globals->_iconsIndex = 85;
@@ -6994,7 +6981,7 @@ void EdenGame::gotoPanel() {
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 	_cursorPosX = 320 / 2;
 	_cursorPosY = 200 / 2;
-	CLMouse_SetPosition(_mouseCenterX, _mouseCenterY);
+	_vm->setMousePosition(_mouseCenterX, _mouseCenterY);
 }
 
 void EdenGame::noclicpanel() {
@@ -7090,7 +7077,7 @@ void EdenGame::load() {
 		strcpy(name, "edsave1.000");
 		loadgame(name);
 	}
-	CLMouse_Hide();
+	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	fadeToBlack(3);
 	CLBlitter_FillScreenView(0);
@@ -7158,7 +7145,7 @@ void EdenGame::save() {
 	//TODO
 	strcpy(name, "edsave1.000");
 	savegame(name);
-	CLMouse_Hide();
+	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	fadeToBlack(3);
 	CLBlitter_FillScreenView(0);
@@ -7171,7 +7158,7 @@ void EdenGame::desktopcolors() {
 	fadeToBlack(3);
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	CLPalette_BeSystem();
-	CLMouse_Show();
+	_vm->showMouse();
 }
 
 void EdenGame::panelrestart() {
@@ -7228,12 +7215,12 @@ void EdenGame::confirmer(char mode, char yesId) {
 	useBank(65);
 	noclipax(12, 117, 74);
 	_cursorPosX = 156;
-	if (pomme_q)
+	if (_vm->shouldQuit())
 		_cursorPosX = 136;
 	_cursorPosY = 88;
 }
 
-void EdenGame::confirmyes() {
+void EdenGame::confirmYes() {
 	displayPanel();
 	_globals->_iconsIndex = 85;
 	switch (_confirmMode) {
@@ -7246,10 +7233,10 @@ void EdenGame::confirmyes() {
 	}
 }
 
-void EdenGame::confirmno() {
+void EdenGame::confirmNo() {
 	displayPanel();
 	_globals->_iconsIndex = 85;
-	pomme_q = false;
+//	pomme_q = false;
 }
 
 void EdenGame::restart() {
