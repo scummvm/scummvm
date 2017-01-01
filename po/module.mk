@@ -2,13 +2,13 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 CPFILES := $(wildcard $(srcdir)/po/*.cp)
 
-ENGINE_INPUT_POTFILES := $(wildcard $(srcdir)/engines/*/POTFILES)
+ENGINE_INPUT_POTFILES := $(sort $(wildcard $(srcdir)/engines/*/POTFILES))
 updatepot:
 	cat $(srcdir)/po/POTFILES $(ENGINE_INPUT_POTFILES) | \
 	xgettext -f - -D $(srcdir) -d scummvm --c++ -k_ -k_s -k_c:1,2c -k_sc:1,2c --add-comments=I18N\
 		-kDECLARE_TRANSLATION_ADDITIONAL_CONTEXT:1,2c -o $(POTFILE) \
 		--copyright-holder="ScummVM Team" --package-name=ScummVM \
-		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_
+		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.scummvm.org -o $(POTFILE)_
 
 	sed -e 's/SOME DESCRIPTIVE TITLE/LANGUAGE translation for ScummVM/' \
 		-e 's/UTF-8/CHARSET/' -e 's/PACKAGE/ScummVM/' $(POTFILE)_ > $(POTFILE).new

@@ -54,7 +54,7 @@ void nullFunc(int) {}
 
 // Function to calculate 2^x, where x is a fixedpoint number with 16 fraction bits
 // using exp would be more accurate and needs less space if mathlibrary is already linked
-// but this function should be faster and doesnt use floats
+// but this function should be faster and doesn't use floats
 #if 1
 inline uint32 pow2Fixed(int32 val) {
 	static const uint16 tablePow2[] = {
@@ -708,7 +708,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		voiceNum = pickvoice((channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
 	} else {
 		VoiceContext *voice = ARRAYEND(_voiceCtx);
-		for (voiceNum = ARRAYSIZE(_voiceCtx); voiceNum-- != 0 && --voice->channel != &channel;)
+		for (voiceNum = ARRAYSIZE(_voiceCtx); voiceNum >= 0 && voice->channel != &channel; voiceNum--, voice--)
 			;
 		if (voiceNum < 0)
 			voiceNum = pickvoice((channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);

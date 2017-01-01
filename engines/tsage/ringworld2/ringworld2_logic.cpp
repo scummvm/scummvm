@@ -351,7 +351,7 @@ SceneExt::SceneExt(): Scene() {
 	_preventSaving = false;
 
 	// Reset screen clipping area
-	R2_GLOBALS._screenSurface._clipRect = Rect();
+	R2_GLOBALS._screen._clipRect = Rect();
 
 	// WORKAROUND: In the original, playing animations don't reset the global _animationCtr
 	// counter as scene changes unless the playing animation explicitly finishes. For now,
@@ -513,7 +513,7 @@ void SceneExt::endStrip() {
 }
 
 void SceneExt::clearScreen() {
-	R2_GLOBALS._screenSurface.fillRect(R2_GLOBALS._screenSurface.getBounds(), 0);
+	R2_GLOBALS._screen.fillRect(R2_GLOBALS._screen.getBounds(), 0);
 }
 
 void SceneExt::refreshBackground(int xAmount, int yAmount) {
@@ -543,15 +543,12 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	int screenSize = g_vm->_memoryManager.getSize(dataP);
 
 	// Lock the background for update
-	Graphics::Surface s = _backSurface.lockSurface();
-	assert(screenSize == (s.w * s.h));
+	assert(screenSize == (_backSurface.w * _backSurface.h));
+	Graphics::Surface s = _backSurface.getSubArea(Common::Rect(0, 0, _backSurface.w, _backSurface.h));
 
-	// Copy the data
+	// Copy the data into the surface
 	byte *destP = (byte *)s.getPixels();
 	Common::copy(dataP, dataP + (s.w * s.h), destP);
-	_backSurface.unlockSurface();
-
-	R2_GLOBALS._screenSurface.addDirtyRect(_backSurface.getBounds());
 
 	// Free the resource data
 	DEALLOCATE(dataP);
@@ -601,7 +598,7 @@ void SceneExt::loadBlankScene() {
 	_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
 	_backSurface.fillRect(_backSurface.getBounds(), 0);
 
-	R2_GLOBALS._screenSurface.fillRect(R2_GLOBALS._screenSurface.getBounds(), 0);
+	R2_GLOBALS._screen.fillRect(R2_GLOBALS._screen.getBounds(), 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1966,10 +1963,9 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	byte *sliceData1 = sliceDataStart;
 
 	Rect playerBounds = _screenBounds;
-	int y = _screenBounds.top;
-	R2_GLOBALS._screenSurface.addDirtyRect(playerBounds);
 
-	Graphics::Surface surface = R2_GLOBALS._screenSurface.lockSurface();
+	Graphics::Surface dest = R2_GLOBALS._screen.getSubArea(playerBounds);
+	int y = 0;
 
 	// Handle different drawing modes
 	switch (slice._drawMode) {
@@ -1980,7 +1976,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 				// TODO: Check of _subData._drawType was done for two different kinds of
 				// line slice drawing in original
 				const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-				byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
+				byte *pDest = (byte *)dest.getBasePtr(0, y++);
 
 				Common::copy(pSrc, pSrc + _subData._sliceSize, pDest);
 			}
@@ -1997,7 +1993,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 
 					if (offset) {
 						const byte *pSrc = (const byte *)sliceDataStart + offset;
-						byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, playerBounds.top);
+						byte *pDest = (byte *)dest.getBasePtr(0, 0);
 
 						//Common::copy(pSrc, pSrc + playerBounds.width(), pDest);
 						rleDecode(pSrc, pDest, playerBounds.width());
@@ -2012,7 +2008,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 					// TODO: Check of _subData._drawType was done for two different kinds of
 					// line slice drawing in original
 					const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, playerBounds.top);
+					byte *pDest = (byte *)dest.getBasePtr(0, 0);
 
 					rleDecode(pSrc, pDest, _subData._sliceSize);
 				}
@@ -2027,7 +2023,7 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
 					const byte *pSrc1 = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData2 + sliceNum * 2);
 					const byte *pSrc2 = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-					byte *pDest = (byte *)surface.getBasePtr(playerBounds.left, y++);
+					byte *pDest = (byte *)dest.getBasePtr(0, y++);
 
 					if (slice2._drawMode == 0) {
 						// Uncompressed background, foreground compressed
@@ -2047,17 +2043,14 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 		break;
 	}
 
-	// Unlock the screen surface
-	R2_GLOBALS._screenSurface.unlockSurface();
-
 	if (_objectMode == ANIMOBJMODE_42) {
 		_screenBounds.expandPanes();
 
 		// Copy the drawn frame to the back surface
-		Rect srcRect = R2_GLOBALS._screenSurface.getBounds();
+		Rect srcRect = R2_GLOBALS._screen.getBounds();
 		Rect destRect = srcRect;
 		destRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
-		R2_GLOBALS._sceneManager._scene->_backSurface.copyFrom(R2_GLOBALS._screenSurface,
+		R2_GLOBALS._sceneManager._scene->_backSurface.copyFrom(R2_GLOBALS._screen,
 			srcRect, destRect);
 
 		// Draw any objects into the scene

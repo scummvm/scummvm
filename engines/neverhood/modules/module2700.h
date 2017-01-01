@@ -76,7 +76,7 @@ protected:
 	Sprite *_asCarShadow;
 	Sprite *_asCarTrackShadow;
 	Sprite *_asCarConnectorShadow;
-	int16 _newTrackDestX;
+	NPoint _newTrackDest;
 	bool _isInLight;
 	int _currTrackIndex, _newTrackIndex;
 	bool _isUpperTrack;
@@ -132,7 +132,7 @@ protected:
 	Sprite *_asCarConnector;
 	Sprite *_asCarTrackShadow;
 	Sprite *_asCarConnectorShadow;
-	int16 _newTrackDestX;
+	NPoint _newTrackDest;
 	int _currTrackIndex, _newTrackIndex;
 	Tracks _tracks;
 	NPointArray *_trackPoints;

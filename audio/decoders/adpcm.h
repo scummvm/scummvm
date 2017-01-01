@@ -45,7 +45,7 @@ class SeekableReadStream;
 namespace Audio {
 
 class PacketizedAudioStream;
-class RewindableAudioStream;
+class SeekableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here
 // For all the different encodings, refer to:
@@ -74,7 +74,7 @@ enum ADPCMType {
  * @param blockAlign        block alignment ???
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeADPCMStream(
+SeekableAudioStream *makeADPCMStream(
     Common::SeekableReadStream *stream,
     DisposeAfterUse::Flag disposeAfterUse,
     uint32 size, ADPCMType type,

@@ -367,12 +367,18 @@ MpalHandle resLoad(uint32 dwId) {
 			temp = (byte *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, nSizeComp);
 
 			nBytesRead = GLOBALS._hMpr.read(temp, nSizeComp);
-			if (nBytesRead != nSizeComp)
+			if (nBytesRead != nSizeComp) {
+				globalDestroy(temp);
+				globalDestroy(h);
 				return NULL;
+			}
 
 			lzo1x_decompress(temp, nSizeComp, buf, &nBytesRead);
-			if (nBytesRead != nSizeDecomp)
+			if (nBytesRead != nSizeDecomp) {
+				globalDestroy(temp);
+				globalDestroy(h);
 				return NULL;
+			}
 
 			globalDestroy(temp);
 			globalUnlock(h);
@@ -526,8 +532,10 @@ static LpItem getItemData(uint32 nOrdItem) {
 	globalFree(hDat);
 
 	// Check if we've got to the end of the file
-	if (i != 0xABCD)
+	if (i != 0xABCD) {
+		globalDestroy(ret);
 		return NULL;
+	}
 
 	return ret;
 }
@@ -1413,36 +1421,51 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	if (bCompress) {
 		// Get the compressed size and read the data in
 		uint32 dwSizeComp = hMpc.readUint32LE();
-		if (hMpc.err())
+		if (hMpc.err()) {
+			globalDestroy(lpMpcImage);
 			return false;
+		}
 
 		cmpbuf = (byte *)globalAlloc(GMEM_FIXED, dwSizeComp);
-		if (cmpbuf == NULL)
+		if (cmpbuf == NULL) {
+			globalDestroy(lpMpcImage);
 			return false;
+		}
 
 		nBytesRead = hMpc.read(cmpbuf, dwSizeComp);
-		if (nBytesRead != dwSizeComp)
+		if (nBytesRead != dwSizeComp) {
+			globalDestroy(cmpbuf);
+			globalDestroy(lpMpcImage);
 			return false;
+		}
 
 		// Decompress the data
 		lzo1x_decompress(cmpbuf, dwSizeComp, lpMpcImage, &nBytesRead);
-		if (nBytesRead != dwSizeDecomp)
+		if (nBytesRead != dwSizeDecomp) {
+			globalDestroy(cmpbuf);
+			globalDestroy(lpMpcImage);
 			return false;
+		}
 
 		globalDestroy(cmpbuf);
 	} else {
 		// If the file is not compressed, we directly read in the data
 		nBytesRead = hMpc.read(lpMpcImage, dwSizeDecomp);
-		if (nBytesRead != dwSizeDecomp)
+		if (nBytesRead != dwSizeDecomp) {
+			globalDestroy(lpMpcImage);
 			return false;
+		}
 	}
 
 	// Close the file
 	hMpc.close();
 
 	// Process the data
-	if (parseMpc(lpMpcImage) == false)
+	if (parseMpc(lpMpcImage) == false) {
+		globalDestroy(lpMpcImage);
+
 		return false;
+	}
 
 	globalDestroy(lpMpcImage);
 

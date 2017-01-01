@@ -247,6 +247,19 @@ uint32 SafeSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	return SeekableSubReadStream::read(dataPtr, dataSize);
 }
 
+void SeekableReadStream::hexdump(int len, int bytesPerLine, int startOffset) {
+	uint pos_ = pos();
+	uint size_ = size();
+	uint toRead = MIN<uint>(len + startOffset, size_ - pos_);
+	byte *data = (byte *)calloc(toRead, 1);
+
+	read(data, toRead);
+	Common::hexdump(data, toRead, bytesPerLine, startOffset);
+
+	free(data);
+
+	seek(pos_);
+}
 
 #pragma mark -
 
@@ -499,6 +512,8 @@ public:
 	}
 
 	virtual bool flush() { return flushBuffer(); }
+
+	virtual int32 pos() const { return _pos; }
 
 };
 

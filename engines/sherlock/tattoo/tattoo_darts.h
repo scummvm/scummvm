@@ -103,7 +103,7 @@ private:
 	int doPowerBar(const Common::Point &pt, byte color, int goToPower, int orientation);
 
 	/**
-	 * This is similar to doPowerBar, except it draws the player's hand moving across the 
+	 * This is similar to doPowerBar, except it draws the player's hand moving across the
 	 * bottom of the screen to indicate the positioning of the darts
 	 */
 	int drawHand(int goToPower, int computer);

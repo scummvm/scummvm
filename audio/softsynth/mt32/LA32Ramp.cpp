@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -47,11 +47,11 @@ We haven't fully explored:
  - Values when ramping between levels (though this is probably correct).
  - Transition timing (may not be 100% accurate, especially for very fast ramps).
 */
-//#include <cmath>
 
-#include "mt32emu.h"
-#include "mmath.h"
 #include "internals.h"
+
+#include "LA32Ramp.h"
+#include "Tables.h"
 
 namespace MT32Emu {
 
@@ -152,4 +152,4 @@ void LA32Ramp::reset() {
 	interruptRaised = false;
 }
 
-}
+} // namespace MT32Emu

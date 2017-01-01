@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,10 +23,9 @@
 #include "bbvs/minigames/bbairguitar.h"
 
 #include "common/savefile.h"
-#include "common/translation.h"
 
-#include "gui/dialog.h"
 #include "gui/message.h"
+#include "gui/filebrowser-dialog.h"
 
 namespace Bbvs {
 
@@ -1204,15 +1203,25 @@ void MinigameBbAirGuitar::stopNote(int noteNum) {
 }
 
 bool MinigameBbAirGuitar::getLoadFilename(Common::String &filename) {
-	// TODO Run dialog and return actual filename
-	filename = "test.air";
-	return true;
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeLoad);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
 }
 
 bool MinigameBbAirGuitar::getSaveFilename(Common::String &filename) {
-	// TODO Run dialog and return actual filename
-	filename = "test.air";
-	return true;
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeSave);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
 }
 
 bool MinigameBbAirGuitar::querySaveModifiedDialog() {
@@ -1220,9 +1229,9 @@ bool MinigameBbAirGuitar::querySaveModifiedDialog() {
 		Original ok button caption: "Yeah, heh, heh, save it!"
 		Original discard button caption: "Who cares?  It sucked!"
 	*/
-	GUI::MessageDialog query(_("Hey Beavis - you didn't save that last Jam!"),
-		_("Save it!"),
-		_("It sucked!"));
+	GUI::MessageDialog query("Hey Beavis - you didn't save that last Jam!",
+		"Save it!",
+		"It sucked!");
 	return query.runModal() == GUI::kMessageOK;
 }
 
@@ -1240,7 +1249,7 @@ bool MinigameBbAirGuitar::loadTracks() {
 
 	if (!querySaveModifiedTracks())
 		return false;
-	
+
 	Common::String filename;
 	if (!getLoadFilename(filename))
 		return false;

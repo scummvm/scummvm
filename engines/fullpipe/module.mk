@@ -1,6 +1,7 @@
 MODULE := engines/fullpipe
 
 MODULE_OBJS = \
+	anihandler.o \
 	behavior.o \
 	console.o \
 	detection.o \
@@ -15,7 +16,6 @@ MODULE_OBJS = \
 	lift.o \
 	messagehandlers.o \
 	messages.o \
-	mgm.o \
 	modal.o \
 	motion.o \
 	ngiarchive.o \
@@ -23,9 +23,11 @@ MODULE_OBJS = \
 	scenes.o \
 	sound.o \
 	stateloader.o \
+	statesaver.o \
 	statics.o \
 	utils.o \
 	scenes/sceneIntro.o \
+	scenes/sceneIntroDemo.o \
 	scenes/scene01.o \
 	scenes/scene02.o \
 	scenes/scene03.o \

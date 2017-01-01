@@ -240,23 +240,23 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 	}
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_OPEN, 0, 0, 0, 1, 0, 0, 0);
-	ex->_keyCode = _lift->_okeyCode;
+	ex->_param = _lift->_odelay;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 1, MV_MAN_STARTD, 0, 0, 0, 1, 0, 0, 0);
-	ex->_keyCode = _aniMan->_okeyCode;
+	ex->_param = _aniMan->_odelay;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-	ex->_keyCode = _aniMan->_okeyCode;
+	ex->_param = _aniMan->_odelay;
 	ex->_field_14 = 10;
 	ex->_x = -1;
 	ex->_y = -1;
@@ -274,7 +274,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_CLOSE, 0, 0, 0, 1, 0, 0, 0);
-	ex->_keyCode = _lift->_okeyCode;
+	ex->_param = _lift->_odelay;
 	ex->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex);
@@ -324,7 +324,7 @@ void FullpipeEngine::lift_walkAndGo() {
 	ExCommand *ex;
 
 	if (abs(_liftX - _aniMan->_ox) > 1 || abs(_liftY - _aniMan->_oy) > 1 || _aniMan->_movement || _aniMan->_statics->_staticsId != ST_MAN_UP) {
-		mq = getCurrSceneSc2MotionController()->method34(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
+		mq = getCurrSceneSc2MotionController()->startMove(_aniMan, _liftX, _liftY, 1, ST_MAN_UP);
 
 		if (mq) {
 			ex = new ExCommand(0, 17, MSG_LIFT_CLICKBUTTON, 0, 0, 0, 1, 0, 0, 0);
@@ -340,12 +340,12 @@ void FullpipeEngine::lift_walkAndGo() {
 		mq->setFlags(mq->getFlags() | 1);
 
 		ex = new ExCommand(_aniMan->_id, 2, 15, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_excFlags |= 2;
 		mq->addExCommand(ex);
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_field_14 = _lift->_priority + 1;
 		ex->_x = -1;
 		ex->_y = -1;
@@ -358,7 +358,7 @@ void FullpipeEngine::lift_walkAndGo() {
 
 		mq->chain(0);
 
-		_aniMan->_flags |= 1;
+		_aniMan->_flags |= 0x100;
 	}
 }
 
@@ -392,7 +392,8 @@ void FullpipeEngine::lift_clickButton() {
 		lift_walkAndGo();
 }
 
-void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
+void FullpipeEngine::lift_goAnimation() {
+	if (_lastLiftButton) {
 		int parentId = _currentScene->_sceneId;
 		int buttonId = lift_getButtonIdN(_lastLiftButton->_statics->_staticsId);
 
@@ -407,9 +408,9 @@ void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
 			if (pre->preloadId2 == buttonId && pre->preloadId1 == _currentScene->_sceneId) {
 				MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
 
-				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre->keyCode != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre->param != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
 
-				ex->_keyCode = -1;
+				ex->_param = -1;
 				ex->_field_24 = 1;
 				ex->_excFlags |= 2;
 
@@ -417,17 +418,19 @@ void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
 
 				ex = new ExCommand(parentId, 17, 61, 0, 0, 0, 1, 0, 0, 0);
 
-				ex->_keyCode = buttonId;
+				ex->_param = buttonId;
 				ex->_excFlags |= 3;
 
 				mq->addExCommandToEnd(ex);
 
-				_aniMan->_flags &= 0xFEFF;
+				_aniMan->_flags &= ~0x100;
 
 				if (!mq->chain(_aniMan))
 					delete mq;
 
-				_aniMan->_flags |= 1;
+				_aniMan->_flags |= 0x100;
+
+				return;
 			}
 		}
 	}
@@ -485,7 +488,7 @@ void FullpipeEngine::lift_startExitQueue() {
 
 void FullpipeEngine::lift_hoverButton(ExCommand *cmd) {
 	if (_lastLiftButton) {
-		if (!(cmd->_keyCode & 2) || _liftX != cmd->_x || _liftY != cmd->_y) {
+		if (!(cmd->_param & 2) || _liftX != cmd->_x || _liftY != cmd->_y) {
 			_lastLiftButton->_statics = _lastLiftButton->getStaticsById(lift_getButtonIdN(_lastLiftButton->_statics->_staticsId));
 			_lastLiftButton = 0;
 		}

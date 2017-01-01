@@ -24,22 +24,24 @@ namespace Agi {
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD          GUIO_GAMEOPTIONS1
 #define GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE  GUIO_GAMEOPTIONS2
-#define GAMEOPTION_DISABLE_MOUSE               GUIO_GAMEOPTIONS3
+#define GAMEOPTION_DISABLE_MOUSE              GUIO_GAMEOPTIONS3
+#define GAMEOPTION_USE_HERCULES_FONT          GUIO_GAMEOPTIONS4
+#define GAMEOPTION_COMMAND_PROMPT_WINDOW      GUIO_GAMEOPTIONS5
 // TODO: properly implement GAMEOPTIONs
 
-#define GAMEOPTIONS_DEFAULT                   GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE)
-#define GAMEOPTIONS_AMIGA                     GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE)
-#define GAMEOPTIONS_FANMADE_MOUSE             GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GAMEOPTIONS_DEFAULT                   GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_DISABLE_MOUSE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_AMIGA                     GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
+#define GAMEOPTIONS_FANMADE_MOUSE             GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD,GAMEOPTION_USE_HERCULES_FONT,GAMEOPTION_COMMAND_PROMPT_WINDOW)
 
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp,guioptions) { \
 		{ \
 			id, \
 			extra, \
-			AD_ENTRY1s(fname,md5,size),		\
+			AD_ENTRY1s(fname,md5,size), \
 			lang, \
 			platform, \
-			ADGF_NO_FLAGS,					\
-			guioptions			\
+			ADGF_NO_FLAGS, \
+			guioptions \
 		}, \
 		gid, \
 		interp, \
@@ -51,11 +53,11 @@ namespace Agi {
 		{ \
 			id, \
 			name, \
-			AD_ENTRY1s(fname,md5,size),		\
+			AD_ENTRY1s(fname,md5,size), \
 			lang, \
 			platform, \
-			ADGF_USEEXTRAASTITLE,					\
-			guioptions					\
+			ADGF_USEEXTRAASTITLE, \
+			guioptions \
 		}, \
 		gid, \
 		interp, \
@@ -238,7 +240,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
 
-	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
+	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89  # 2.316
 	GAME3_PSO("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
@@ -285,7 +287,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (CoCo3 360k/720k) [AGI 2.072]
 	GAME_PS("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
 
-	// King's Quest 1 (Amiga) 1.0U		# 2.082
+	// King's Quest 1 (Amiga) 1.0U      # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FPO("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GF_MENUS, GID_KQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
@@ -354,7 +356,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 3 (IIgs) 2.0A 8/28/88 (CE)
 	GAME_P("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS),
 
-	// King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
+	// King's Quest 3 (Amiga) 2.15 11/15/89 # 2.333
 	// Original pauses with ESC, has menus accessible with mouse.
 	// ver = 0x3086 -> menus accessible with ESC or mouse, bug #2835581 (KQ3: Game Crash When Leaving Tavern as Fly).
 	// ver = 0x3149 -> menus accessible with mouse, ESC pauses game, bug #2835581 disappears.
@@ -422,7 +424,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Leisure Suit Larry 1 (ST) 1.04 6/18/87
 	GAME_P("lsl1", "1.04 1987-06-18", "8b579f8673fe9448c2538f5ed9887cf0", 0x2440, GID_LSL1, Common::kPlatformAtariST),
 
-	// Leisure Suit Larry 1 (Amiga) 1.05 6/26/87	# x.yyy
+	// Leisure Suit Larry 1 (Amiga) 1.05 6/26/87    # x.yyy
 	GAME_PO("lsl1", "1.05 1987-06-26", "3f5d26d8834ca49c147fb60936869d56", 0x2440, GID_LSL1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Leisure Suit Larry 1 (IIgs) 1.0E
@@ -459,7 +461,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter SF (ST) 1.0 7/29/89
 	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
-	// Manhunter SF (Amiga) 3.06 8/17/89		# 2.333
+	// Manhunter SF (Amiga) 3.06 8/17/89        # 2.333
 	GAME3_PSO("mh2", "3.06 1989-08-17", "dirs", "b412e8a126368b76696696f7632d4c16", 2573, 0x3086, GF_OLDAMIGAV20, GID_MH2, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Manhunter SF (PC 5.25") 3.03 8/17/89 [AGI 3.002.149]
@@ -503,7 +505,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Police Quest 1 (IIgs) 2.0B-88421
 	GAME_P("pq1", "2.0B 1988-04-21", "e7c175918372336461e3811d594f482f", 0x2917, GID_PQ1, Common::kPlatformApple2GS),
 
-	// Police Quest 1 (Amiga) 2.0B 2/22/89	# 2.310
+	// Police Quest 1 (Amiga) 2.0B 2/22/89  # 2.310
 	GAME3_PSO("pq1", "2.0B 1989-02-22", "dirs", "cfa93e5f2aa7378bddd10ad6746a2ffb", 1613, 0x3149, 0, GID_PQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Police Quest 1 (IIgs) 2.0A-88318
@@ -540,7 +542,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformDOS),
 
-	// Space Quest 1 (Amiga) 1.2			# 2.082
+	// Space Quest 1 (Amiga) 1.2            # 2.082
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FPO("sq1", "1.2 1986", "0b216d931e95750f1f4837d6a4b821e5", 0x2440, GF_MENUS | GF_OLDAMIGAV20, GID_SQ1, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
@@ -573,7 +575,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (IIgs) 2.0A 7/25/88 (CE)
-	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2936, GID_SQ2, Common::kPlatformApple2GS),
+	// We have to see this as AGI < 2.936, because otherwise a set.pri.base call would somewhat break
+	// priority in SQ2, when entering Vohaul's vault.
+	// The Apple IIgs AGI included with SQ2 is the same as the one included with KQ3.
+	// We currently consider KQ3 IIgs to be a 2.917-equivalent.
+	// The SQ2 IIgs AGI definitely has 177 kernel functions, but it seems that Sierra shuffled the last few around / added a few extras at the end.
+	// For KQ3 set.pri.base is called with parameters that seem to be sound resources, which means
+	// set.pri.base was possibly discard.sound. For KQ4 onwards it seems this was cleaned up.
+	GAME_P("sq2", "2.0A 1988-07-25 (CE)", "5dfdac98dd3c01fcfb166529f917e911", 0x2917, GID_SQ2, Common::kPlatformApple2GS),
 
 	{
 		// Space Quest 2 (Amiga) 2.0F
@@ -726,10 +735,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
 	GAME_LVFPNF("agi-fanmade", "Groza (russian) [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
-		Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT),
+	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1,
-		Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformDOS,GType_V2,GAMEOPTIONS_DEFAULT),
+	            Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	FANMADE_FO("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),
@@ -801,7 +810,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Residence 44 Quest (English v0.99)", "fe507851fddc863d540f2bec67cc67fd"),
 	FANMADE("Residence 44 Quest (English v1.0a)", "f99e3f69dc8c77a45399da9472ef5801"),
 	FANMADE("SQ2Eye (v0.3)", "2be2519401d38ad9ce8f43b948d093a3"),
-	//	FANMADE("SQ2Eye (v0.4)", "2be2519401d38ad9ce8f43b948d093a3"),
+	//FANMADE("SQ2Eye (v0.4)", "2be2519401d38ad9ce8f43b948d093a3"),
 	FANMADE("SQ2Eye (v0.41)", "f0e82c55f10eb3542d7cd96c107ae113"),
 	FANMADE("SQ2Eye (v0.42)", "d7beae55f6328ef8b2da47b1aafea40c"),
 	FANMADE("SQ2Eye (v0.43)", "2a895f06e45de153bb4b77c982009e06"),
@@ -849,6 +858,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Tex McPhilip 2 - Road To Divinity (v1.5)", "7387e8df854440bc26620ca0ea43af9a"),
 	FANMADE("Tex McPhilip 3 - A Destiny of Sin (Demo v0.25)", "992d12031a486ad84e592ff5d7c9d782"),
 	FANMADE("The 13th Disciple (v1.00)", "887719ad59afce9a41ec057dbb73ad73"),
+	FANMADE("The 13th Disciple (v1.01)", "58e3ec1b9ac1a79901c472aaa59db832"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),
 	FANMADE("The Gourd of the Beans", "246f4d94946afb547482d44a53616d06"),
 	FANMADE("The Grateful Dead", "c2146631afacf8cb455ce24f3d2d46e7"),

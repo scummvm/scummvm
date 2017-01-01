@@ -42,6 +42,7 @@
 #include "access/font.h"
 #include "access/inventory.h"
 #include "access/player.h"
+#include "access/resources.h"
 #include "access/room.h"
 #include "access/screen.h"
 #include "access/scripts.h"
@@ -147,6 +148,7 @@ public:
 	FileManager *_files;
 	InventoryManager *_inventory;
 	Player *_player;
+	Resources *_res;
 	Room *_room;
 	Screen *_screen;
 	Scripts *_scripts;
@@ -154,8 +156,8 @@ public:
 	MusicManager *_midi;
 	VideoPlayer *_video;
 
-	ASurface *_destIn;
-	ASurface *_current;
+	BaseSurface *_destIn;
+	BaseSurface *_current;
 	ASurface _buffer1;
 	ASurface _buffer2;
 	ASurface _vidBuf;
@@ -278,8 +280,8 @@ public:
 	/**
 	 * Draw a string on a given surface and update text positioning
 	 */
-	void printText(ASurface *s, const Common::String &msg);
-	void speakText(ASurface *s, const Common::String &msg);
+	void printText(BaseSurface *s, const Common::String &msg);
+	void speakText(BaseSurface *s, const Common::String &msg);
 
 	/**
 	 * Load a savegame
@@ -313,6 +315,8 @@ public:
 
 	void SPRINTCHR(char c, int fontNum);
 	void PRINTCHR(Common::String msg, int fontNum);
+
+	bool playMovie(const Common::String &filename, const Common::Point &pos);
 };
 
 } // End of namespace Access

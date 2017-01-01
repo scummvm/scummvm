@@ -230,7 +230,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
 	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
-	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests) ? "1" : "0") << "\"\n";
+	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
 
 #if NEEDS_RTTI
 	properties << "\t\tRuntimeTypeInfo=\"true\"\n";
@@ -338,7 +338,9 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 			if (producesObjectFile(node->name)) {
 				std::string name, ext;
 				splitFilename(node->name, name, ext);
-				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name + ".o") != duplicate.end());
+				name += ".o";
+				std::transform(name.begin(), name.end(), name.begin(), tolower);
+				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name) != duplicate.end());
 
 				if (ext == "asm") {
 					std::string objFileName = "$(IntDir)\\";

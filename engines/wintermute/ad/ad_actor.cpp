@@ -958,13 +958,13 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		if (!val->isNative()) {
-			script->runtimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity reference only", name);
 			stack->pushNULL();
 			return STATUS_OK;
 		}
 		AdObject *obj = (AdObject *)val->getNative();
 		if (!obj || obj->getType() != OBJECT_ENTITY) {
-			script->runtimeError("actor.%s method accepts an entity refrence only", name);
+			script->runtimeError("actor.%s method accepts an entity reference only", name);
 			stack->pushNULL();
 			return STATUS_OK;
 		}

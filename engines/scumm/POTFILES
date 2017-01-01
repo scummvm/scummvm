@@ -1,5 +1,7 @@
+engines/scumm/detection.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
+engines/scumm/input.cpp
 engines/scumm/scumm.cpp
 engines/scumm/players/player_v3m.cpp
 engines/scumm/players/player_v5m.cpp

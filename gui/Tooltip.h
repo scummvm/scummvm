@@ -41,6 +41,8 @@ public:
 	void setup(Dialog *parent, Widget *widget, int x, int y);
 
 	void drawDialog();
+
+	virtual void receivedFocus(int x = -1, int y = -1) {}
 protected:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();
@@ -64,7 +66,6 @@ protected:
 	}
 	virtual void handleMouseMoved(int x, int y, int button) {
 		close();
-		_parent->handleMouseMoved(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button);
 	}
 
 	int _maxWidth;

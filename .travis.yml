@@ -1,0 +1,43 @@
+language:
+  - cpp
+
+sudo: required
+
+addons:
+  apt:
+    packages:
+    - g++ make
+    - libsdl2-dev
+    - libsdl2-net-dev
+    - libcurl4-openssl-dev
+    - libjpeg-turbo8-dev
+    - libmpeg2-4-dev
+    - libogg-dev
+    - libvorbis-dev
+    - libflac-dev
+    - libmad0-dev
+    - libpng-dev
+    - libtheora-dev
+    - libfaad-dev
+    - libfluidsynth-dev
+    - libfreetype6-dev
+    - zlib1g-dev
+
+branches:
+ only:
+   - master
+
+compiler:
+  - gcc
+  - clang
+
+os:
+  - linux
+
+dist: trusty
+
+script:
+  - ./configure --enable-all-engines
+  - make -j 2
+  - make test
+  - make devtools

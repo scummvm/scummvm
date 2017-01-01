@@ -1,36 +1,32 @@
 
 ##################################################################################################################
+####	sword25 ignored because of incompatible resolution 800*600
 
 	@WorkingEngines = qw(
-		agos agi cine cge composer cruise draci dreamweb
-		drascula hugo gob groovie hopkins kyra lastexpress
-		lure made mohawk mortevielle neverhood parallaction
-		pegasus queen saga sci scumm sky sword1 sword2
-		teenagent tinsel toltecs tony toon touche tsage
-		tucker voyeur wintermute
-		access avalanche bbvs cge2 fullpipe mads prince
-		testbed zvision
+		access agi agos avalanche bbvs cge cge2
+		cine composer cruise draci drascula
+		dreamweb fullpipe gob groovie hopkins
+		hugo kyra lastexpress lure made mads
+		mohawk mortevielle neverhood parallaction
+		pegasus prince queen saga sci scumm
+		sherlock sky sword1 sword2 teenagent
+		testbed tinsel toltecs tony toon touche
+		tsage tucker voyeur wintermute zvision
 	);
-	
-####	sword25 yet not added
-
-#### In progress engines are :
-####  access avalanche bbvs cge2 fullpipe mads prince
-####  testbed zvision
 
 	@WorkingEngines_1st = qw(
-		cine composer cruise drascula groovie
-		lastexpress made parallaction queen saga
-		scumm touche tucker wintermute voyeur
-		access avalanche cge2 zvision
+		access agi agos cge2 cine composer cruise
+		drascula gob groovie kyra lastexpress made
+		neverhood parallaction queen saga scumm
+		touche tucker voyeur wintermute
 	);
 
 	@WorkingEngines_2nd = qw(
-		agi agos cge draci dreamweb gob hopkins
-		hugo kyra lure mohawk mortevielle neverhood  
-		pegasus sci sky sword1 sword2 teenagent
-		tinsel tsage toltecs tony toon
-		bbvs fullpipe mads prince testbed
+		avalanche bbvs cge draci dreamweb fullpipe
+		hopkins hugo lure mads mohawk mortevielle
+		pegasus prince sci sherlock sky sword1 sword2
+		teenagent testbed tinsel toltecs tony toon
+		tsage zvision
 	);
 ####	sword25 yet not added
 

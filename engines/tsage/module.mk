@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	ringworld2/ringworld2_vampire.o \
 	saveload.o \
 	scenes.o \
+	screen.o \
 	sherlock/sherlock_logo.o \
 	sound.o \
 	staticres.o \

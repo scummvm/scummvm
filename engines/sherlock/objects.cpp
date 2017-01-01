@@ -267,7 +267,7 @@ void BaseObject::checkObject() {
 					break;
 				}
 				_frameNumber += 3;
-			
+
 			} else {
 				v -= 128;
 
@@ -306,7 +306,7 @@ void BaseObject::checkObject() {
 					}
 				} else if (IS_ROSE_TATTOO && v == 10) {
 					// Set delta for objects
-					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 
+					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]),
 						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
 					_noShapeSize = Common::Point(0, 0);
 					_frameNumber += 4;
@@ -365,8 +365,8 @@ bool BaseObject::checkEndOfSequence() {
 
 			if (seq == 99) {
 				--_frameNumber;
-				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
-				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
+				screen._backBuffer1.SHtransBlitFrom(*_imageFrame, _position);
+				screen._backBuffer2.SHtransBlitFrom(*_imageFrame, _position);
 				_type = INVALID;
 			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
 				setObjTalkSequence(_talkSeq);
@@ -539,7 +539,7 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 			// G: Have object go somewhere
 			// A: Add onto existing co-ordinates
 			Common::String sx(name.c_str() + 2, name.c_str() + 5);
-			Common::String sy(name.c_str() + 6, name.c_str() + 9);
+			Common::String sy(name.c_str() + 5, name.c_str() + 8);
 
 			if (ch == 'G')
 				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
@@ -620,6 +620,7 @@ void Sprite::clear() {
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
+	_oldWalkSequence = 0;
 	_allow = 0;
 	_frameNumber = 0;
 	_position.x = _position.y = 0;
@@ -634,13 +635,16 @@ void Sprite::clear() {
 	_misc = 0;
 	_altImages = nullptr;
 	_altSeq = 0;
-	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
+	_centerWalk = 0;
+
+	for (int i = 0; i < 8; i++)
+		_stopFrames[i] = nullptr;
 }
 
 void Sprite::setImageFrame() {
 	int frameNum = MAX(_frameNumber, 0);
 	int imageNumber = _walkSequences[_sequenceNumber][frameNum];
-	
+
 	if (IS_SERRATED_SCALPEL)
 		imageNumber = imageNumber + _walkSequences[_sequenceNumber][0] - 2;
 	else if (imageNumber > _maxFrames)
@@ -1010,7 +1014,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_oldPosition.y = s.readSint16LE();
 	_oldSize.x = s.readUint16LE();
 	_oldSize.y = s.readUint16LE();
-	
+
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 	if (!isRoseTattoo) {
@@ -1059,6 +1063,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 6; ++idx)
 			_use[idx].load(s, true);
 
+		// WORKAROUND: Fix German version using hatpin/pin in pillow in Pratt's loft
+		if (_use[1]._target == "Nadel" && _use[1]._verb == "Untersuche"
+				&& _use[2]._target == "Nadel" && _use[2]._verb == "Untersuche")
+			_use[1]._target = "Alte Nadel";
+
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
 		_requiredFlag[1] = s.readSint16LE();
@@ -1104,7 +1113,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_oldPosition.y = s.readSint16BE();
 	_oldSize.x = s.readUint16BE();
 	_oldSize.y = s.readUint16BE();
-	
+
 	_goto.x = s.readSint16BE();
 	_goto.y = s.readSint16BE();
 	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
@@ -1336,7 +1345,7 @@ void Object::adjustObject() {
 			frame = 0;
 
 		int imgNum = _sequences[frame];
-		if (imgNum > _maxFrames)
+		if (imgNum > _maxFrames || imgNum == 0)
 			imgNum = 1;
 
 		_imageFrame = &(*_images)[imgNum - 1];
@@ -1422,8 +1431,19 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 			ui.clearInfo();
 
 			Common::String itemName = _description;
-			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+
+			// It's an item, make it lowercase
+			switch (_vm->getLanguage()) {
+			case Common::DE_DEU:
+				// don't do this for German version
+				break;
+			default:
+				// do it for English + Spanish version
+				itemName.setChar(tolower(itemName[0]), 0);
+				break;
+			}
+
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, fixedText.getObjectPickedUpText(), itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}
@@ -1465,7 +1485,7 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 
 	_position.x = s.readSint16LE();
 	_position.y = s.readSint16LE();
-	
+
 	if (isRoseTattoo) {
 		_flags = s.readByte();
 		_scaleVal = s.readSint16LE();

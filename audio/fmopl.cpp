@@ -248,7 +248,7 @@ void RealOPL::onTimer() {
 	if (_baseFreq > kMaxFreq) {
 		// We run faster than our max, so run the callback multiple
 		// times to approximate the actual timer callback frequency.
-		uint totalTicks = _baseFreq + _remainingTicks;		
+		uint totalTicks = _baseFreq + _remainingTicks;
 		callbacks = totalTicks / kMaxFreq;
 		_remainingTicks = totalTicks % kMaxFreq;
 	}

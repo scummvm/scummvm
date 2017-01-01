@@ -156,7 +156,7 @@ void ImuseChannel::decode() {
 			_sbufferSize -= remaining_size;
 		} else {
 			debugC(DEBUG_SMUSH, "impossible ! : %p, %d, %d, %p(%d), %p(%d, %d)",
-				(const void *)this, _dataSize, _inData, _tbuffer, _tbufferSize, _sbuffer, _sbufferSize, _srbufferSize);
+				(const void *)this, _dataSize, _inData, (void *)_tbuffer, _tbufferSize, (void *)_sbuffer, _sbufferSize, _srbufferSize);
 			byte *old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
 			_tbuffer = (byte *)malloc(new_size);

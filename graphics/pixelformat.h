@@ -24,6 +24,7 @@
 #define GRAPHICS_PIXELFORMAT_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Graphics {
 
@@ -214,6 +215,10 @@ struct PixelFormat {
 		return (8 - aLoss);
 	}
 
+	inline byte bpp() const {
+		return rBits() + gBits() + bBits() + aBits();
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Convenience functions for getting color components' maximum values //
 	////////////////////////////////////////////////////////////////////////
@@ -260,6 +265,8 @@ struct PixelFormat {
 		// Unsupported
 		return 0;
 	}
+
+	Common::String toString() const;
 };
 
 } // End of namespace Graphics

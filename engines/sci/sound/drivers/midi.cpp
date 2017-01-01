@@ -27,7 +27,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "audio/fmopl.h"
+#include "audio/mididrv.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"
@@ -1019,7 +1019,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 				if (!isMt32GmPatch(res->data, res->size)) {
 					mapMt32ToGm(res->data, res->size);
 				} else {
-					if (getSciVersion() <= SCI_VERSION_2_1) {
+					if (getSciVersion() < SCI_VERSION_3) {
 						error("MT-32 patch has wrong type");
 					} else {
 						// Happens in the SCI3 interactive demo of Lighthouse
@@ -1053,7 +1053,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 void MidiPlayer_Midi::close() {
 	if (_isMt32) {
 		// Send goodbye message
-		sendMt32SysEx(0x200000, _goodbyeMsg, 20);
+		sendMt32SysEx(0x200000, _goodbyeMsg, 20, true);
 	}
 
 	_driver->close();
@@ -1069,8 +1069,8 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	if (_isMt32)
 		delay += 40;
 
-	g_system->delayMillis(delay);
 	g_system->updateScreen();
+	g_sci->sleep(delay);
 }
 
 byte MidiPlayer_Midi::getPlayId() const {

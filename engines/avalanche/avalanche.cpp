@@ -29,6 +29,7 @@
 
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/system.h"
 #include "graphics/thumbnail.h"
 
 namespace Avalanche {

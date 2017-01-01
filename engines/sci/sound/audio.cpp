@@ -22,12 +22,12 @@
 
 #include "sci/resource.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/system.h"
@@ -44,7 +44,7 @@
 namespace Sci {
 
 AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
-		_syncResource(NULL), _syncOffset(0), _audioCdStart(0) {
+		_audioCdStart(0), _initCD(false) {
 
 	_mixer = g_system->getMixer();
 	_wPlayFlag = false;
@@ -55,7 +55,6 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::stopAllAudio() {
-	stopSoundSync();
 	stopAudio();
 	if (_audioCdStart > 0)
 		audioCdStop();
@@ -79,15 +78,23 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 	Common::String command = segMan->getString(commandReg);
 
 	if (command == "play" || command == "playx") {
-#ifdef USE_MAD
 		reg_t fileNameReg = readSelector(segMan, sciAudioObject, kernel->findSelector("fileName"));
 		Common::String fileName = segMan->getString(fileNameReg);
 
-		int16 loopCount = (int16)readSelectorValue(segMan, sciAudioObject, kernel->findSelector("loopCount"));
-		// When loopCount is -1, we treat it as infinite looping, else no looping is done.
-		// This is observed by game scripts, which can set loopCount to all sorts of random values.
+		reg_t loopCountReg = readSelector(segMan, sciAudioObject, kernel->findSelector("loopCount"));
+		Common::String loopCountStr = segMan->getString(loopCountReg);
+		int16 loopCount = atoi(loopCountStr.c_str());
+
 		// Adjust loopCount for ScummVM's LoopingAudioStream semantics
-		loopCount = (loopCount == -1) ? 0 : 1;
+		if (loopCount == -1) {
+			loopCount = 0; // loop endlessly
+		} else if (loopCount >= 0) {
+			// sciAudio loopCount == 0 -> play 1 time  -> ScummVM's loopCount should be 1
+			// sciAudio loopCount == 1 -> play 2 times -> ScummVM's loopCount should be 2
+			loopCount++;
+		} else {
+			loopCount = 1; // play once in case the value makes no sense
+		}
 
 		// Determine sound type
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType;
@@ -96,20 +103,51 @@ void AudioPlayer::handleFanmadeSciAudio(reg_t sciAudioObject, SegManager *segMan
 		else if (fileName.hasPrefix("speech"))
 			soundType = Audio::Mixer::kSpeechSoundType;
 
-		Common::File *sciAudio = new Common::File();
+		// Determine compression
+		uint32 audioCompressionType = 0;
+		if ((fileName.hasSuffix(".mp3")) || (fileName.hasSuffix(".sciAudio")) || (fileName.hasSuffix(".sciaudio"))) {
+			audioCompressionType = MKTAG('M','P','3',' ');
+		} else if (fileName.hasSuffix(".wav")) {
+			audioCompressionType = MKTAG('W','A','V',' ');
+		} else if (fileName.hasSuffix(".aiff")) {
+			audioCompressionType = MKTAG('A','I','F','F');
+		} else {
+			error("sciAudio: unsupported file type");
+		}
+
+		Common::File *sciAudioFile = new Common::File();
 		// Replace backwards slashes
 		for (uint i = 0; i < fileName.size(); i++) {
 			if (fileName[i] == '\\')
 				fileName.setChar('/', i);
 		}
-		sciAudio->open("sciAudio/" + fileName);
+		sciAudioFile->open("sciAudio/" + fileName);
 
-		Audio::SeekableAudioStream *audioStream = Audio::makeMP3Stream(sciAudio, DisposeAfterUse::YES);
+		Audio::RewindableAudioStream *audioStream = nullptr;
+
+		switch (audioCompressionType) {
+		case MKTAG('M','P','3',' '):
+#ifdef USE_MAD
+			audioStream = Audio::makeMP3Stream(sciAudioFile, DisposeAfterUse::YES);
+#endif
+			break;
+		case MKTAG('W','A','V',' '):
+			audioStream = Audio::makeWAVStream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		case MKTAG('A','I','F','F'):
+			audioStream = Audio::makeAIFFStream(sciAudioFile, DisposeAfterUse::YES);
+			break;
+		default:
+			break;
+		}
+
+		if (!audioStream) {
+			error("sciAudio: requested compression not compiled into ScummVM");
+		}
 
 		// We only support one audio handle
 		_mixer->playStream(soundType, &_audioHandle,
 							Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audioStream, loopCount));
-#endif
 	} else if (command == "stop") {
 		_mixer->stopHandle(_audioHandle);
 	} else {
@@ -215,13 +253,7 @@ static void deDPCM16(byte *soundBuf, Common::SeekableReadStream &audioStream, ui
 
 static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
 	if (b & 8) {
-#ifdef ENABLE_SCI32
-		// SCI2.1 reverses the order of the table values here
-		if (getSciVersion() >= SCI_VERSION_2_1)
-			s -= tableDPCM8[b & 7];
-		else
-#endif
-			s -= tableDPCM8[7 - (b & 7)];
+		s -= tableDPCM8[7 - (b & 7)];
 	} else
 		s += tableDPCM8[b & 7];
 	s = CLIP<int32>(s, 0, 255);
@@ -434,44 +466,13 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	return NULL;
 }
 
-void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan) {
-	_syncResource = _resMan->findResource(id, 1);
-	_syncOffset = 0;
-
-	if (_syncResource) {
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), 0);
-	} else {
-		warning("setSoundSync: failed to find resource %s", id.toString().c_str());
-		// Notify the scripts to stop sound sync
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), SIGNAL_OFFSET);
-	}
-}
-
-void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
-	if (_syncResource && (_syncOffset < _syncResource->size - 1)) {
-		int16 syncCue = -1;
-		int16 syncTime = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
-
-		_syncOffset += 2;
-
-		if ((syncTime != -1) && (_syncOffset < _syncResource->size - 1)) {
-			syncCue = (int16)READ_SCI11ENDIAN_UINT16(_syncResource->data + _syncOffset);
-			_syncOffset += 2;
-		}
-
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncTime), syncTime);
-		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), syncCue);
-	}
-}
-
-void AudioPlayer::stopSoundSync() {
-	if (_syncResource) {
-		_resMan->unlockResource(_syncResource);
-		_syncResource = NULL;
-	}
-}
-
 int AudioPlayer::audioCdPlay(int track, int start, int duration) {
+	if (!_initCD) {
+		// Initialize CD mode if we haven't already
+		g_system->getAudioCDManager()->open();
+		_initCD = true;
+	}
+
 	if (getSciVersion() == SCI_VERSION_1_1) {
 		// King's Quest VI CD Audio format
 		_audioCdStart = g_system->getMillis();

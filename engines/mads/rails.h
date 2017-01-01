@@ -127,6 +127,10 @@ public:
 	 * Synchronize the data for the route
 	 */
 	void synchronize(Common::Serializer &s);
+
+	void disableNode(int idx);
+	void disableLine(int from, int to);
+
 };
 
 } // End of namespace MADS

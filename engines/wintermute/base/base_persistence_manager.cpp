@@ -56,7 +56,7 @@ namespace Wintermute {
 #define SAVE_MAGIC_3    0x12564154
 
 //////////////////////////////////////////////////////////////////////////
-BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
+BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix, bool deleteSingleton) {
 	_saving = false;
 	_offset = 0;
 	_saveStream = nullptr;
@@ -91,7 +91,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 
 	_thumbnailDataSize = 0;
 	_thumbnailData = nullptr;
-	if (savePrefix) {
+	if (savePrefix != "") {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
 		_savePrefix = _gameRef->getGameTargetName();
@@ -183,7 +183,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 		}
 	}
 
-	desc.setSaveDate(_savedTimestamp.tm_year, _savedTimestamp.tm_mon, _savedTimestamp.tm_mday);
+	desc.setSaveDate(_savedTimestamp.tm_year + 1900, _savedTimestamp.tm_mon + 1, _savedTimestamp.tm_mday);
 	desc.setSaveTime(_savedTimestamp.tm_hour, _savedTimestamp.tm_min);
 	desc.setPlayTime(0);
 }
@@ -215,8 +215,8 @@ bool BasePersistenceManager::getSaveExists(int slot) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BasePersistenceManager::initSave(const char *desc) {
-	if (!desc) {
+bool BasePersistenceManager::initSave(const Common::String &desc) {
+	if (desc == "") {
 		return STATUS_FAILED;
 	}
 
@@ -297,11 +297,11 @@ bool BasePersistenceManager::initSave(const char *desc) {
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
-		                    sizeof(uint32) + strlen(desc) + 1 + // description
+		                    sizeof(uint32) + strlen(desc.c_str()) + 1 + // description
 		                    sizeof(uint32); // timestamp
 
 		putDWORD(dataOffset);
-		putString(desc);
+		putString(desc.c_str());
 
 		g_system->getTimeAndDate(_savedTimestamp);
 		putTimeDate(_savedTimestamp);

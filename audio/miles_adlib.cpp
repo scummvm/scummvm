@@ -27,7 +27,6 @@
 #include "common/textconsole.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
 
 namespace Audio {
 
@@ -562,7 +561,7 @@ void MidiDriver_Miles_AdLib::noteOff(byte midiChannel, byte note) {
 					_virtualFmVoices[virtualFmVoice].sustained = true;
 					continue;
 				}
-				// 
+				//
 				releaseFmVoice(virtualFmVoice);
 			}
 		}
@@ -602,7 +601,7 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 		}
 	}
 
-	// 	
+	//
 	while (virtualFmVoicesCount) {
 		uint16 unvoicedHighestPriority = 0;
 		byte   unvoicedHighestFmVoice = 0;
@@ -689,7 +688,7 @@ void MidiDriver_Miles_AdLib::releaseFmVoice(byte virtualFmVoice) {
 
 	// One less voice active on this MIDI channel
 	assert(_midiChannels[midiChannel].currentActiveVoicesCount);
-	_midiChannels[midiChannel].currentActiveVoicesCount--;	
+	_midiChannels[midiChannel].currentActiveVoicesCount--;
 }
 
 void MidiDriver_Miles_AdLib::releaseSustain(byte midiChannel) {

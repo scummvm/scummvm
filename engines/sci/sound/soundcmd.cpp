@@ -21,6 +21,9 @@
  */
 
 #include "common/config-manager.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "sci/resource.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
@@ -44,7 +47,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	// resource number, but it's totally unrelated to the menu music).
 	// The GK1 demo (very late SCI1.1) does the same thing
 	// TODO: Check the QFG4 demo
-	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1 || ConfMan.getBool("prefer_digitalsfx"));
+	_useDigitalSFX = (getSciVersion() >= SCI_VERSION_2 || g_sci->getGameId() == GID_GK1DEMO || ConfMan.getBool("prefer_digitalsfx"));
 
 	_music = new SciMusic(_soundVersion, _useDigitalSFX);
 	_music->init();
@@ -95,12 +98,21 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 		// user wants the digital version.
 		if (_useDigitalSFX || !newSound->soundRes) {
 			int sampleLen;
-			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
-			newSound->soundType = Audio::Mixer::kSFXSoundType;
+#ifdef ENABLE_SCI32
+			if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+				newSound->isSample = g_sci->getResMan()->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId));
+			} else {
+#endif
+				newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
+				newSound->soundType = Audio::Mixer::kSFXSoundType;
+				newSound->isSample = newSound->pStreamAud != nullptr;
+#ifdef ENABLE_SCI32
+			}
+#endif
 		}
 	}
 
-	if (!newSound->pStreamAud && newSound->soundRes)
+	if (!newSound->isSample && newSound->soundRes)
 		_music->soundInitSnd(newSound);
 }
 
@@ -116,6 +128,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	newSound->resourceId = resourceId;
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	newSound->overridePriority = false;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	else
@@ -131,7 +144,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 
 	_music->pushBackSlot(newSound);
 
-	if (newSound->soundRes || newSound->pStreamAud) {
+	if (newSound->soundRes || newSound->isSample) {
 		// Notify the engine
 		if (_soundVersion <= SCI_VERSION_0_LATE)
 			writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
@@ -210,17 +223,6 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 	// Reset any left-over signals
 	musicSlot->signal = 0;
 	musicSlot->fadeStep = 0;
-}
-
-reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
-	// Called after loading, to restore the playlist
-	// We don't really use or need this
-	return acc;
-}
-
-reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
-	warning("cmdDummy invoked");	// not supposed to occur
-	return acc;
 }
 
 reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
@@ -311,10 +313,22 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	reg_t obj = argv[0];
-	uint16 value = argc > 1 ? argv[1].toUint16() : 0;
-	if (!obj.getSegment()) {		// pause the whole playlist
-		_music->pauseAll(value);
-	} else {	// pause a playlist slot
+	const bool shouldPause = argc > 1 ? argv[1].toUint16() : false;
+	if (
+		(_soundVersion < SCI_VERSION_2_1_EARLY && !obj.getSegment()) ||
+		(_soundVersion >= SCI_VERSION_2_1_EARLY && obj.isNull())
+	) {
+		_music->pauseAll(shouldPause);
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			if (shouldPause) {
+				g_sci->_audio32->pause(kAllChannels);
+			} else {
+				g_sci->_audio32->resume(kAllChannels);
+			}
+		}
+#endif
+	} else {
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
 			// This happens quite frequently
@@ -322,7 +336,23 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 			return acc;
 		}
 
-		_music->soundToggle(musicSlot, value);
+#ifdef ENABLE_SCI32
+		// NOTE: The original engine also expected a global
+		// "kernel call" flag to be true in order to perform
+		// this action, but the architecture of the ScummVM
+		// implementation is so different that it doesn't
+		// matter here
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+			const int16 channelIndex = g_sci->_audio32->findChannelById(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+
+			if (shouldPause) {
+				g_sci->_audio32->pause(channelIndex);
+			} else {
+				g_sci->_audio32->resume(channelIndex);
+			}
+		} else
+#endif
+			_music->soundToggle(musicSlot, shouldPause);
 	}
 	return acc;
 }
@@ -352,7 +382,11 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 		int vol = CLIP<int16>(argv[0].toSint16(), 0, MUSIC_MASTERVOLUME_MAX);
 		vol = vol * Audio::Mixer::kMaxMixerVolume / MUSIC_MASTERVOLUME_MAX;
 		ConfMan.setInt("music_volume", vol);
-		ConfMan.setInt("sfx_volume", vol);
+		// In SCI32, digital audio volume is controlled separately by
+		// kDoAudioVolume
+		if (_soundVersion < SCI_VERSION_2_1_EARLY) {
+			ConfMan.setInt("sfx_volume", vol);
+		}
 		g_engine->syncSoundSettings();
 	}
 	return acc;
@@ -374,6 +408,13 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	int volume = musicSlot->volume;
+
+#ifdef ENABLE_SCI32
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+		g_sci->_audio32->fadeChannel(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argc > 4 ? (bool)argv[4].toSint16() : false);
+		return acc;
+	}
+#endif
 
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
@@ -463,7 +504,18 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		return;
 	}
 
-	if (musicSlot->pStreamAud) {
+	if (musicSlot->isSample) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+			const int position = g_sci->_audio32->getPosition(g_sci->_audio32->findChannelById(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj));
+
+			if (position == -1) {
+				processStopSound(musicSlot->soundObj, true);
+			}
+
+			return;
+		}
+#endif
 		// Update digital sound effect slots
 		uint currentLoopCounter = 0;
 
@@ -666,6 +718,12 @@ reg_t SoundCommandParser::kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc) {
 
 	value = CLIP<int>(value, 0, MUSIC_VOLUME_MAX);
 
+#ifdef ENABLE_SCI32
+	// SSCI unconditionally sets volume if it is digital audio
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+		_music->soundSetVolume(musicSlot, value);
+	}
+#endif
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;
 		_music->soundSetVolume(musicSlot, value);
@@ -724,6 +782,15 @@ reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 		}
 		return acc;
 	}
+
+#ifdef ENABLE_SCI32
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
+		if (value != -1) {
+			value = 1;
+		}
+	}
+#endif
+
 	if (value == -1) {
 		musicSlot->loop = 0xFFFF;
 	} else {
@@ -731,6 +798,13 @@ reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	writeSelectorValue(_segMan, obj, SELECTOR(loop), musicSlot->loop);
+
+#ifdef ENABLE_SCI32
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+		g_sci->_audio32->setLoop(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, value == -1);
+	}
+#endif
+
 	return acc;
 }
 

@@ -39,6 +39,7 @@
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/helpers.h"
+#include "sci/graphics/menu.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
@@ -47,7 +48,10 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/remap32.h"
 #endif
 
 namespace Sci {
@@ -58,21 +62,84 @@ namespace Sci {
 
 #pragma mark -
 
-// Experimental hack: Use syncWithSerializer to sync. By default, this assume
-// the object to be synced is a subclass of Serializable and thus tries to invoke
-// the saveLoadWithSerializer() method. But it is possible to specialize this
-// template function to handle stuff that is not implementing that interface.
-template<typename T>
-void syncWithSerializer(Common::Serializer &s, T &obj) {
+// These are serialization functions for various objects.
+
+void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
 	obj.saveLoadWithSerializer(s);
 }
+
+// FIXME: Object could implement Serializable to make use of the function
+// above.
+void syncWithSerializer(Common::Serializer &s, Object &obj) {
+	obj.saveLoadWithSerializer(s);
+}
+
+void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
+	// Segment and offset are accessed directly here
+	s.syncAsUint16LE(obj._segment);
+	s.syncAsUint16LE(obj._offset);
+}
+
+void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
+	s.syncAsUint16LE(obj.replaceant);
+	s.syncAsUint16LE(obj.replacement);
+}
+
+void syncWithSerializer(Common::Serializer &s, Class &obj) {
+	s.syncAsSint32LE(obj.script);
+	syncWithSerializer(s, obj.reg);
+}
+
+void syncWithSerializer(Common::Serializer &s, List &obj) {
+	syncWithSerializer(s, obj.first);
+	syncWithSerializer(s, obj.last);
+}
+
+void syncWithSerializer(Common::Serializer &s, Node &obj) {
+	syncWithSerializer(s, obj.pred);
+	syncWithSerializer(s, obj.succ);
+	syncWithSerializer(s, obj.key);
+	syncWithSerializer(s, obj.value);
+}
+
+#pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
 template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
-	void operator()(Common::Serializer &s, T &obj) const {
-		//obj.saveLoadWithSerializer(s);
+	void operator()(Common::Serializer &s, T &obj, int) const {
 		syncWithSerializer(s, obj);
+	}
+};
+
+// Syncer for entries in a segment obj table
+template<typename T>
+struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
+	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
+		s.syncAsSint32LE(entry.next_free);
+
+		bool hasData;
+		if (s.getVersion() >= 37) {
+			if (s.isSaving()) {
+				hasData = entry.data != nullptr;
+			}
+			s.syncAsByte(hasData);
+		} else {
+			hasData = (entry.next_free == index);
+		}
+
+		if (hasData) {
+			if (s.isLoading()) {
+				entry.data = new typename T::value_type;
+			}
+			syncWithSerializer(s, *entry.data);
+		} else if (s.isLoading()) {
+			if (s.getVersion() < 37) {
+				typename T::value_type dummy;
+				syncWithSerializer(s, dummy);
+			}
+			entry.data = nullptr;
+		}
 	}
 };
 
@@ -100,9 +167,8 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 		if (s.isLoading())
 			arr.resize(len);
 
-		typename Common::Array<T>::iterator i;
-		for (i = arr.begin(); i != arr.end(); ++i) {
-			sync(s, *i);
+		for (uint i = 0; i < len; ++i) {
+			sync(s, arr[i], i);
 		}
 	}
 };
@@ -114,18 +180,10 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 	sync(s, arr);
 }
 
-
-template<>
-void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	// Segment and offset are accessed directly here
-	s.syncAsUint16LE(obj._segment);
-	s.syncAsUint16LE(obj._offset);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, synonym_t &obj) {
-	s.syncAsUint16LE(obj.replaceant);
-	s.syncAsUint16LE(obj.replacement);
+template<typename T, class Syncer>
+void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
+	ArraySyncer<T, Syncer> sync;
+	sync(s, arr);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -174,9 +232,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (type == SEG_TYPE_ARRAY) {
 			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
-		} else if (type == SEG_TYPE_STRING) {
-			// Set the correct segment for SCI32 strings
-			_stringSegId = i;
+		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
+			_bitmapSegId = i;
 #endif
 		}
 
@@ -245,12 +302,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 
-template<>
-void syncWithSerializer(Common::Serializer &s, Class &obj) {
-	s.syncAsSint32LE(obj.script);
-	syncWithSerializer(s, obj.reg);
-}
-
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
 	s.syncString(obj.name);
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
@@ -272,8 +323,34 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		if (s.getVersion() >= 26)
 			s.syncAsUint32LE(obj.playTime);
 	} else {
-		obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		if (s.getVersion() >= 34) {
+			obj.playTime = g_sci->getTickCount();
+		} else {
+			obj.playTime = g_engine->getTotalPlayTime() / 1000;
+		}
 		s.syncAsUint32LE(obj.playTime);
+	}
+
+	// Some games require additional metadata to display their restore screens
+	// correctly
+	if (s.getVersion() >= 39) {
+		if (s.isSaving()) {
+			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
+			if (g_sci->getGameId() == GID_SHIVERS) {
+				obj.lowScore = globals[kGlobalVarScore].toUint16();
+				obj.highScore = globals[kGlobalVarShivers1Score].toUint16();
+				obj.avatarId = 0;
+			} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+				obj.lowScore = obj.highScore = 0;
+				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kGlobalVarEgo], SELECTOR(view));
+			} else {
+				obj.lowScore = obj.highScore = obj.avatarId = 0;
+			}
+		}
+
+		s.syncAsUint16LE(obj.lowScore);
+		s.syncAsUint16LE(obj.highScore);
+		s.syncAsByte(obj.avatarId);
 	}
 }
 
@@ -304,7 +381,15 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
-	g_sci->_gfxPalette->saveLoadWithSerializer(s);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
+		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
+		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
+	} else
+#endif
+		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
 }
 
 void Vocabulary::saveLoadWithSerializer(Common::Serializer &s) {
@@ -324,102 +409,13 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<reg_t>(s, _variables);
 }
 
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Clone>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer<Object>(s, obj);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<List>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer(s, obj.first);
-	syncWithSerializer(s, obj.last);
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<Node>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	syncWithSerializer(s, obj.pred);
-	syncWithSerializer(s, obj.succ);
-	syncWithSerializer(s, obj.key);
-	syncWithSerializer(s, obj.value);
-}
-
-#ifdef ENABLE_SCI32
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciArray<reg_t> >::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	byte type = 0;
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		type = (byte)obj.getType();
-		size = obj.getSize();
-	}
-	s.syncAsByte(type);
-	s.syncAsUint32LE(size);
-	if (s.isLoading()) {
-		obj.setType((int8)type);
-
-		// HACK: Skip arrays that have a negative type
-		if ((int8)type < 0)
-			return;
-
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		reg_t value;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		syncWithSerializer(s, value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-template<>
-void syncWithSerializer(Common::Serializer &s, SegmentObjTable<SciString>::Entry &obj) {
-	s.syncAsSint32LE(obj.next_free);
-
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		size = obj.getSize();
-		s.syncAsUint32LE(size);
-	} else {
-		s.syncAsUint32LE(size);
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		char value = 0;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		s.syncAsByte(value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-#endif
 
 template<typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 
-	syncArray<typename T::Entry>(s, obj._table);
+	syncArray<typename T::Entry, SegmentObjTableEntrySyncer<T> >(s, obj._table);
 }
 
 void CloneTable::saveLoadWithSerializer(Common::Serializer &s) {
@@ -465,7 +461,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				break;
 		} while (1);
 
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1){
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
 		// Strings in SCI1.1 come after the object instances
 		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 
@@ -636,28 +632,44 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 }
 
 void SoundCommandParser::reconstructPlayList() {
-	Common::StackLock lock(_music->_mutex);
+	_music->_mutex.lock();
 
 	// We store all songs here because starting songs may re-shuffle their order
 	MusicList songs;
 	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i)
 		songs.push_back(*i);
 
-	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
-		initSoundResource(*i);
+	// Done with main playlist, so release lock
+	_music->_mutex.unlock();
 
-		if ((*i)->status == kSoundPlaying) {
+	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
+		MusicEntry *entry = *i;
+		initSoundResource(entry);
+
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY && entry->isSample) {
+			const reg_t &soundObj = entry->soundObj;
+
+			if ((int)readSelectorValue(_segMan, soundObj, SELECTOR(loop)) != -1 &&
+				readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
+
+				writeSelector(_segMan, soundObj, SELECTOR(handle), NULL_REG);
+				processPlaySound(soundObj, entry->playBed);
+			}
+		} else
+#endif
+		if (entry->status == kSoundPlaying) {
 			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
 			// sound object directly without going through DoSound.
 			// Since we re-read this selector when re-playing the sound after loading,
 			// this will lead to unexpected behaviour. As a workaround we
 			// sync the sound object's selectors here. (See bug #5501)
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(loop), entry->loop);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(priority), entry->priority);
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
-				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
+				writeSelectorValue(_segMan, entry->soundObj, SELECTOR(vol), entry->volume);
 
-			processPlaySound((*i)->soundObj, (*i)->playBed);
+			processPlaySound(entry->soundObj, entry->playBed);
 		}
 	}
 }
@@ -670,11 +682,60 @@ void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 	sync_Table<ArrayTable>(ser, *this);
 }
 
-void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
-	if (ser.getVersion() < 18)
-		return;
+void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
+	uint16 savedSize;
 
-	sync_Table<StringTable>(ser, *this);
+	if (s.isSaving()) {
+		savedSize = _size;
+	}
+
+	s.syncAsByte(_type);
+	s.syncAsByte(_elementSize);
+	s.syncAsUint16LE(savedSize);
+
+	if (s.isLoading()) {
+		resize(savedSize);
+	}
+
+	switch (_type) {
+	case kArrayTypeInt16:
+	case kArrayTypeID:
+		for (int i = 0; i < savedSize; ++i) {
+			syncWithSerializer(s, ((reg_t *)_data)[i]);
+		}
+		break;
+	case kArrayTypeByte:
+	case kArrayTypeString:
+		s.syncBytes((byte *)_data, savedSize);
+		break;
+	default:
+		error("Attempt to sync invalid SciArray type %d", _type);
+	}
+}
+
+void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.getVersion() < 36) {
+		return;
+	}
+
+	sync_Table(ser, *this);
+}
+
+void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 36) {
+		return;
+	}
+
+	s.syncAsByte(_gc);
+	s.syncAsUint32LE(_dataSize);
+	if (s.isLoading()) {
+		_data = (byte *)malloc(_dataSize);
+	}
+	s.syncBytes(_data, _dataSize);
+
+	if (s.isLoading()) {
+		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+	}
 }
 #endif
 
@@ -720,6 +781,155 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 }
+
+#ifdef ENABLE_SCI32
+static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
+	s.syncAsUint32LE(palette->timestamp);
+	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
+		s.syncAsByte(palette->colors[i].used);
+		s.syncAsByte(palette->colors[i].r);
+		s.syncAsByte(palette->colors[i].g);
+		s.syncAsByte(palette->colors[i].b);
+	}
+}
+
+static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+	bool hasPalette;
+	if (s.isSaving()) {
+		hasPalette = (*palette != nullptr);
+	}
+	s.syncAsByte(hasPalette);
+	if (hasPalette) {
+		if (s.isLoading()) {
+			*palette = new Palette;
+		}
+		saveLoadPalette32(s, *palette);
+	}
+}
+
+void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 34) {
+		return;
+	}
+
+	if (s.isLoading()) {
+		++_version;
+
+		for (int i = 0; i < kNumCyclers; ++i) {
+			delete _cyclers[i];
+			_cyclers[i] = nullptr;
+		}
+
+		delete _varyTargetPalette;
+		_varyTargetPalette = nullptr;
+		delete _varyStartPalette;
+		_varyStartPalette = nullptr;
+	}
+
+	s.syncAsSint16LE(_varyDirection);
+	s.syncAsSint16LE(_varyPercent);
+	s.syncAsSint16LE(_varyTargetPercent);
+	s.syncAsSint16LE(_varyFromColor);
+	s.syncAsSint16LE(_varyToColor);
+	s.syncAsUint16LE(_varyNumTimesPaused);
+	s.syncAsByte(_needsUpdate);
+	s.syncAsSint32LE(_varyTime);
+	s.syncAsUint32LE(_varyLastTick);
+
+	for (int i = 0; i < ARRAYSIZE(_fadeTable); ++i) {
+		s.syncAsByte(_fadeTable[i]);
+	}
+	for (int i = 0; i < ARRAYSIZE(_cycleMap); ++i) {
+		s.syncAsByte(_cycleMap[i]);
+	}
+
+	saveLoadOptionalPalette32(s, &_varyTargetPalette);
+	saveLoadOptionalPalette32(s, &_varyStartPalette);
+	// NOTE: _sourcePalette and _nextPalette are not saved
+	// by SCI engine
+
+	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
+		PalCycler *cycler = nullptr;
+
+		bool hasCycler;
+		if (s.isSaving()) {
+			cycler = _cyclers[i];
+			hasCycler = (cycler != nullptr);
+		}
+		s.syncAsByte(hasCycler);
+
+		if (hasCycler) {
+			if (s.isLoading()) {
+				_cyclers[i] = cycler = new PalCycler;
+			}
+
+			s.syncAsByte(cycler->fromColor);
+			s.syncAsUint16LE(cycler->numColorsToCycle);
+			s.syncAsByte(cycler->currentCycle);
+			s.syncAsByte(cycler->direction);
+			s.syncAsUint32LE(cycler->lastUpdateTick);
+			s.syncAsSint16LE(cycler->delay);
+			s.syncAsUint16LE(cycler->numTimesPaused);
+		}
+	}
+}
+
+void GfxRemap32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 35) {
+		return;
+	}
+
+	s.syncAsByte(_numActiveRemaps);
+	s.syncAsByte(_blockedRangeStart);
+	s.syncAsSint16LE(_blockedRangeCount);
+
+	for (uint i = 0; i < _remaps.size(); ++i) {
+		SingleRemap &singleRemap = _remaps[i];
+		s.syncAsByte(singleRemap._type);
+		if (s.isLoading() && singleRemap._type != kRemapNone) {
+			singleRemap.reset();
+		}
+		s.syncAsByte(singleRemap._from);
+		s.syncAsByte(singleRemap._to);
+		s.syncAsByte(singleRemap._delta);
+		s.syncAsByte(singleRemap._percent);
+		s.syncAsByte(singleRemap._gray);
+	}
+
+	if (s.isLoading()) {
+		_needsUpdate = true;
+	}
+}
+
+void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 38) {
+		return;
+	}
+
+	int32 hideCount;
+	if (s.isSaving()) {
+		hideCount = _hideCount;
+	}
+	s.syncAsSint32LE(hideCount);
+	s.syncAsSint16LE(_restrictedArea.left);
+	s.syncAsSint16LE(_restrictedArea.top);
+	s.syncAsSint16LE(_restrictedArea.right);
+	s.syncAsSint16LE(_restrictedArea.bottom);
+	s.syncAsUint16LE(_cursorInfo.resourceId);
+	s.syncAsUint16LE(_cursorInfo.loopNo);
+	s.syncAsUint16LE(_cursorInfo.celNo);
+
+	if (s.isLoading()) {
+		hide();
+		setView(_cursorInfo.resourceId, _cursorInfo.loopNo, _cursorInfo.celNo);
+		if (!hideCount) {
+			show();
+		} else {
+			_hideCount = hideCount;
+		}
+	}
+}
+#endif
 
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 	// reset() is called directly way earlier in gamestate_restore()
@@ -811,7 +1021,7 @@ void SegManager::reconstructClones() {
 				if (!isUsed)
 					continue;
 
-				CloneTable::Entry &seeker = ct->_table[j];
+				CloneTable::value_type &seeker = ct->at(j);
 				const Object *baseObj = getObject(seeker.getSpeciesSelector());
 				seeker.cloneFromObject(baseObj);
 				if (!baseObj) {
@@ -843,10 +1053,11 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
-	if (s->executionStackBase) {
-		warning("Cannot save from below kernel function");
-		return false;
-	}
+// TODO: This breaks Torin autosave, is there actually any reason for it?
+//	if (s->executionStackBase) {
+//		warning("Cannot save from below kernel function");
+//		return false;
+//	}
 
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
@@ -866,7 +1077,8 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 extern void showScummVMDialog(const Common::String &message);
 
 void gamestate_delayedrestore(EngineState *s) {
-	Common::String fileName = g_sci->getSavegameName(s->_delayedRestoreGameId);
+	int savegameId = s->_delayedRestoreGameId; // delayedRestoreGameId gets destroyed within gamestate_restore()!
+	Common::String fileName = g_sci->getSavegameName(savegameId);
 	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
 
 	if (in) {
@@ -874,11 +1086,79 @@ void gamestate_delayedrestore(EngineState *s) {
 		gamestate_restore(s, in);
 		delete in;
 		if (s->r_acc != make_reg(0, 1)) {
+			gamestate_afterRestoreFixUp(s, savegameId);
 			return;
 		}
 	}
 
 	error("Restoring gamestate '%s' failed", fileName.c_str());
+}
+
+void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
+	switch (g_sci->getGameId()) {
+	case GID_MOTHERGOOSE:
+		// WORKAROUND: Mother Goose SCI0
+		//  Script 200 / rm200::newRoom will set global C5h directly right after creating a child to the
+		//   current number of children plus 1.
+		//  We can't trust that global, that's why we set the actual savedgame id right here directly after
+		//   restoring a saved game.
+		//  If we didn't, the game would always save to a new slot
+		s->variables[VAR_GLOBAL][0xC5].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+		break;
+	case GID_MOTHERGOOSE256:
+		// WORKAROUND: Mother Goose SCI1/SCI1.1 does some weird things for
+		//  saving a previously restored game.
+		// We set the current savedgame-id directly and remove the script
+		//  code concerning this via script patch.
+		s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+		break;
+	case GID_JONES:
+		// HACK: The code that enables certain menu items isn't called when a game is restored from the
+		// launcher, or the "Restore game" option in the game's main menu - bugs #6537 and #6723.
+		// These menu entries are disabled when the game is launched, and are enabled when a new game is
+		// started. The code for enabling these entries is is all in script 1, room1::init, but that code
+		// path is never followed in these two cases (restoring game from the menu, or restoring a game
+		// from the ScummVM launcher). Thus, we perform the calls to enable the menus ourselves here.
+		// These two are needed when restoring from the launcher
+		// FIXME: The original interpreter saves and restores the menu state, so these attributes
+		// are automatically reset there. We may want to do the same.
+		g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
+		g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
+		// The rest are normally enabled from room1::init
+		g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Options -> Delete current player
+		g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Save Game
+		g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Restore Game
+		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
+		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
+		break;
+	case GID_KQ6:
+		if (g_sci->isCD()) {
+			// WORKAROUND:
+			// For the CD version of King's Quest 6, set global depending on current hires/lowres state
+			// The game sets a global at the start depending on it and some things check that global
+			// instead of checking platform like for example the game action menu.
+			// This never happened in the original interpreter, because the original DOS interpreter
+			// was only capable of lowres graphics and the original Windows 3.11 interpreter was only capable
+			// of hires graphics. Saved games were not compatible between those two.
+			// Which means saving during lowres mode, then going into hires mode and restoring that saved game,
+			// will result in some graphics being incorrect (lowres).
+			// That's why we are setting the global after restoring a saved game depending on hires/lowres state.
+			// The CD demo of KQ6 does the same and uses the exact same global.
+			if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(1);
+			} else {
+				s->variables[VAR_GLOBAL][0xA9].setOffset(0);
+			}
+		}
+		break;
+	case GID_PQ2:
+		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
+		// It gets disabled in the game's death screen.
+		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
+		break;
+	default:
+		break;
+	}
 }
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
@@ -922,13 +1202,31 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->reset();
 	// clear screen
-	if (g_sci->_gfxScreen)
-		g_sci->_gfxScreen->clearForRestoreGame();
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		// Only do clearing the screen for SCI16
+		// Both SCI16 + SCI32 did not clear the screen.
+		// We basically do it for SCI16, because of KQ6.
+		// When hires portraits are shown and the user restores during that time, the portraits
+		// wouldn't get fully removed. In original SCI, the user wasn't able to restore during that time,
+		// so this is basically a workaround, so that ScummVM features work properly.
+		// For SCI32, behavior was verified in DOSBox, that SCI32 does not clear and also not redraw the screen.
+		// It only redraws elements that have changed in comparison to the state before the restore.
+		// If we cleared the screen for SCI32, we would have issues because of this behavior.
+		if (g_sci->_gfxScreen)
+			g_sci->_gfxScreen->clearForRestoreGame();
+	}
 #ifdef ENABLE_SCI32
-	// Also clear any SCI32 planes/screen items currently showing so they
-	// don't show up after the load.
-	if (getSciVersion() >= SCI_VERSION_2)
-		g_sci->_gfxFrameout->clear();
+	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
+	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
+	// the options plane, which are not re-added and are in memory all the time right from the start of the
+	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
+	if (getSciVersion() >= SCI_VERSION_2) {
+		if (!s->_delayedRestoreFromLauncher) {
+			// Only do it, when we are restoring regulary and not from launcher
+			// As it could result in option planes etc. on the screen (happens in gk1)
+			g_sci->_gfxFrameout->syncWithScripts(false);
+		}
+	}
 #endif
 
 	s->reset(true);
@@ -944,10 +1242,21 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
-	g_engine->setTotalPlayTime(meta.playTime * 1000);
+	if (meta.version >= 34) {
+		g_sci->setTickCount(meta.playTime);
+	} else {
+		g_engine->setTotalPlayTime(meta.playTime * 1000);
+	}
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
+
+	// SCI32:
+	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
+	// We don't have to do that in here.
+	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
+	// a saved game can't be restored. That way we can restore the game screen.
+	// see _gfxFrameout->syncWithScripts()
 
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)
@@ -966,6 +1275,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
+
+	s->_delayedRestoreFromLauncher = false;
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

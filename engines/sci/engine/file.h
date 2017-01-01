@@ -28,21 +28,33 @@
 
 namespace Sci {
 
-enum {
+enum kFileOpenMode {
 	_K_FILE_MODE_OPEN_OR_CREATE = 0,
 	_K_FILE_MODE_OPEN_OR_FAIL = 1,
 	_K_FILE_MODE_CREATE = 2
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+	SCI_MAX_SAVENAME_LENGTH = 36, ///< Maximum length of a savegame name (including terminator character).
+	MAX_SAVEGAME_NR = 20 ///< Maximum number of savegames
 };
 
-#define VIRTUALFILE_HANDLE 200
-#define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
+#ifdef ENABLE_SCI32
+enum {
+	kAutoSaveId = 0,  ///< The save game slot number for autosaves
+	kNewGameId = 999, ///< The save game slot number for a "new game" save
+
+	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
+	// reserved for autosave, so non-autosave games get their IDs shifted up
+	// when saving or restoring, and shifted down when enumerating save games
+	kSaveIdShift = 1
+};
+#endif
+
+#define VIRTUALFILE_HANDLE_START 32000
+#define VIRTUALFILE_HANDLE_SCI32SAVE 32100
+#define VIRTUALFILE_HANDLE_SCIAUDIO 32300
+#define VIRTUALFILE_HANDLE_END 32300
 
 struct SavegameDesc {
 	int16 id;
@@ -51,6 +63,14 @@ struct SavegameDesc {
 	int time;
 	int version;
 	char name[SCI_MAX_SAVENAME_LENGTH];
+	Common::String gameVersion;
+#ifdef ENABLE_SCI32
+	// Used by Shivers 1
+	uint16 lowScore;
+	uint16 highScore;
+	// Used by MGDX
+	uint8 avatarId;
+#endif
 };
 
 class FileHandle {
@@ -90,50 +110,7 @@ private:
 	void addAsVirtualFiles(Common::String title, Common::String fileMask);
 };
 
-
-#ifdef ENABLE_SCI32
-
-/**
- * An implementation of a virtual file that supports basic read and write
- * operations simultaneously.
- *
- * This class has been initially implemented for Phantasmagoria, which has its
- * own custom save/load code. The load code keeps checking for the existence
- * of the save index file and keeps closing and reopening it for each save
- * slot. This is notoriously slow and clumsy, and introduces noticeable delays,
- * especially for non-desktop systems. Also, its game scripts request to open
- * the index file for reading and writing with the same parameters
- * (SaveManager::setCurrentSave and SaveManager::getCurrentSave). Moreover,
- * the game scripts reopen the index file for writing in order to update it
- * and seek within it. We do not support seeking in writeable streams, and the
- * fact that our saved games are ZIP files makes this operation even more
- * expensive. Finally, the savegame index file is supposed to be expanded when
- * a new save slot is added.
- * For the aforementioned reasons, this class has been implemented, which offers
- * the basic functionality needed by the game scripts in Phantasmagoria.
- */
-class VirtualIndexFile {
-public:
-	VirtualIndexFile(Common::String fileName);
-	VirtualIndexFile(uint32 initialSize);
-	~VirtualIndexFile();
-
-	uint32 read(char *buffer, uint32 size);
-	uint32 readLine(char *buffer, uint32 size);
-	uint32 write(const char *buffer, uint32 size);
-	bool seek(int32 offset, int whence);
-	void close();
-
-private:
-	char *_buffer;
-	uint32 _bufferSize;
-	char *_ptr;
-
-	Common::String _fileName;
-	bool _changed;
-};
-
-#endif
+uint findFreeFileHandle(EngineState *s);
 
 } // End of namespace Sci
 

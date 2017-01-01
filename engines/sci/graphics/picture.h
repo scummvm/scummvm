@@ -38,6 +38,9 @@ enum {
 class GfxPorts;
 class GfxScreen;
 class GfxPalette;
+class GfxCoordAdjuster16;
+class ResourceManager;
+class Resource;
 
 /**
  * Picture class, handles loading and displaying of picture resources
@@ -45,7 +48,7 @@ class GfxPalette;
  */
 class GfxPicture {
 public:
-	GfxPicture(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
+	GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
 	~GfxPicture();
 
 	GuiResourceId getResourceId();
@@ -81,7 +84,7 @@ private:
 	void vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 
 	ResourceManager *_resMan;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	GfxPorts *_ports;
 	GfxScreen *_screen;
 	GfxPalette *_palette;

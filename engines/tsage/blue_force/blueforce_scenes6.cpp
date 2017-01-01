@@ -21,7 +21,6 @@
  */
 
 #include "tsage/blue_force/blueforce_scenes6.h"
-#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -78,7 +77,7 @@ void Scene600::Action1::signal() {
 			pObj->animate(ANIM_MODE_NONE, NULL);
 		}
 
-		BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
+		BF_GLOBALS._screen.fillRect(BF_GLOBALS._screen.getBounds(), 0);
 		scene->loadScene(999);
 		setDelay(5);
 		break;
@@ -275,7 +274,7 @@ void Scene666::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 	loadScene(999);
-	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
+	BF_GLOBALS._screen.fillRect(BF_GLOBALS._screen.getBounds(), 0);
 
 	if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._dayNumber = 1;

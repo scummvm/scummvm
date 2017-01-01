@@ -31,9 +31,12 @@ namespace Tattoo {
 
 #define TATTOO_MAX_PEOPLE 96
 
-extern const char PORTRAITS[TATTOO_MAX_PEOPLE][5];
-extern const char *const FRENCH_NAMES[TATTOO_MAX_PEOPLE];
-extern const char *const ENGLISH_NAMES[TATTOO_MAX_PEOPLE];
+struct PeopleData {
+	const char *portrait;
+	int fixedTextId;
+};
+
+extern const PeopleData PEOPLE_DATA[TATTOO_MAX_PEOPLE];
 
 } // End of namespace Tattoo
 

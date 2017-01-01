@@ -23,8 +23,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "osys_main.h"
-#include "iphone_video.h"
+#include "backends/platform/iphone/osys_main.h"
+#include "backends/platform/iphone/iphone_video.h"
 
 #include "graphics/conversion.h"
 

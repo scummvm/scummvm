@@ -25,11 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "access/files.h"
-#include "audio/midiplayer.h"
-#include "audio/midiparser.h"
 
 namespace Sherlock {
 
@@ -61,6 +58,11 @@ private:
 	 */
 	bool playSoundResource(const Common::String &name, const Common::String &libFilename,
 		Audio::Mixer::SoundType soundType, Audio::SoundHandle &handle);
+
+	/**
+	 * Form a filename from a passed sound resource name
+	 */
+	Common::String formFilename(const Common::String &name);
 public:
 	bool _digitized;
 	int _voices;
@@ -83,7 +85,7 @@ public:
 	 * Load a sound
 	 */
 	void loadSound(const Common::String &name, int priority);
-	
+
 	/**
 	 * Play the sound in the specified resource
 	 */
@@ -98,17 +100,17 @@ public:
 	 * Stop the AIFF sound that was started with playAiff().
 	 */
 	void stopAiff();
-	
+
 	/**
 	 * Play a previously loaded sound
 	 */
 	void playLoadedSound(int bufNum, WaitType waitType);
-	
+
 	/**
 	 * Free any previously loaded sounds
 	 */
 	void freeLoadedSounds();
-	
+
 	/**
 	 * Stop playing any active sound
 	 */
@@ -116,8 +118,14 @@ public:
 
 	void freeDigiSound();
 
-	Audio::SoundHandle getFreeSoundHandle();
+	/**
+	 * Return a sound handle to use
+	 */
+	Audio::SoundHandle &getFreeSoundHandle();
 
+	/**
+	 * Set the volume
+	 */
 	void setVolume(int volume);
 
 	/**

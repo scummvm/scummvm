@@ -35,7 +35,7 @@ namespace Sci {
 
 //#define DEBUG_PICTURE_DRAW
 
-GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster16 *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
 	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
@@ -209,12 +209,12 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictu
 	}
 
 	// Header
-	// [headerSize:WORD] [celCount:BYTE] [Unknown:BYTE] [Unknown:WORD] [paletteOffset:DWORD] [Unknown:DWORD]
+	// 0[headerSize:WORD] 2[celCount:BYTE] 3[Unknown:BYTE] 4[celHeaderSize:WORD] 6[paletteOffset:DWORD] 10[Unknown:WORD] 12[Unknown:WORD]
 	// cel-header follow afterwards, each is 42 bytes
 	// Cel-Header
-	// [width:WORD] [height:WORD] [displaceX:WORD] [displaceY:WORD] [clearColor:BYTE] [compressed:BYTE]
+	// 0[width:WORD] 2[height:WORD] 4[displaceX:WORD] 6[displaceY:WORD] 8[clearColor:BYTE] 9[compressed:BYTE]
 	//  offset 10-23 is unknown
-	// [rleOffset:DWORD] [literalOffset:DWORD] [Unknown:WORD] [Unknown:WORD] [priority:WORD] [relativeXpos:WORD] [relativeYpos:WORD]
+	// 24[rleOffset:DWORD] 28[literalOffset:DWORD] 32[Unknown:WORD] 34[Unknown:WORD] 36[priority:WORD] 38[relativeXpos:WORD] 40[relativeYpos:WORD]
 
 	cel_headerPos += 42 * celNo;
 
@@ -1004,14 +1004,14 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	int16 borderRight = curPort->rect.right + curPort->left - 1;
 	int16 borderBottom = curPort->rect.bottom + curPort->top - 1;
 	int16 curToLeft, curToRight, a_set, b_set;
-	
+
 	// Translate coordinates, if required (needed for Macintosh 480x300)
 	_screen->vectorAdjustCoordinate(&borderLeft, &borderTop);
 	_screen->vectorAdjustCoordinate(&borderRight, &borderBottom);
 	//return;
 
 	stack.push(p);
-	
+
 	while (stack.size()) {
 		p = stack.pop();
 		if ((matchedMask = _screen->vectorIsFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
@@ -1212,6 +1212,7 @@ void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte pri
 
 void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
+	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
@@ -1219,29 +1220,36 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, by
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
+			if (bitNo == 8) {
+				circleData++;
+				bitmap = *circleData;
+				bitNo = 0;
+			}
 			if (bitmap & 1) {
 				_screen->vectorPutPixel(x, y, flag, color, prio, control);
 			}
 			bitNo++;
-			if (bitNo == 8) {
-				circleData++; bitmap = *circleData; bitNo = 0;
-			} else {
-				bitmap = bitmap >> 1;
-			}
+			bitmap >>= 1;
 		}
 	}
 }
 
 void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
+	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 	int y, x;
-	
+
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
+			if (bitNo == 8) {
+				circleData++;
+				bitmap = *circleData;
+				bitNo = 0;
+			}
 			if (bitmap & 1) {
 				if (*textureData) {
 					_screen->vectorPutPixel(x, y, flag, color, prio, control);
@@ -1249,11 +1257,7 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 				textureData++;
 			}
 			bitNo++;
-			if (bitNo == 8) {
-				circleData++; bitmap = *circleData; bitNo = 0;
-			} else {
-				bitmap = bitmap >> 1;
-			}
+			bitmap >>= 1;
 		}
 	}
 }

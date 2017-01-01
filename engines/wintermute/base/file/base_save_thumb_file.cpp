@@ -70,10 +70,11 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 	delete[] tempFilename;
 
 	BasePersistenceManager *pm = new BasePersistenceManager();
-	Common::String slotFilename = pm->getFilenameForSlot(slot);
 	if (!pm) {
 		return STATUS_FAILED;
 	}
+
+	Common::String slotFilename = pm->getFilenameForSlot(slot);
 
 	if (DID_FAIL(pm->initLoad(slotFilename))) {
 		delete pm;

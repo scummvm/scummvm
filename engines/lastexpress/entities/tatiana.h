@@ -129,9 +129,9 @@ public:
 	 */
 	DECLARE_FUNCTION_2(updateEntity, CarIndex car, EntityPosition entityPosition)
 
-	DECLARE_FUNCTION(function14)
-	DECLARE_FUNCTION(function15)
-	DECLARE_FUNCTION_1(function16, uint32)
+	DECLARE_FUNCTION(enterCompartment)
+	DECLARE_FUNCTION(exitCompartment)
+	DECLARE_FUNCTION_1(handleCompartment, uint32)
 
 	/**
 	 * Setup Chapter 1
@@ -145,10 +145,10 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter1Handler)
 
-	DECLARE_FUNCTION(function20)
-	DECLARE_FUNCTION(function21)
-	DECLARE_FUNCTION(function22)
-	DECLARE_FUNCTION(function23)
+	DECLARE_FUNCTION(exitDining)
+	DECLARE_FUNCTION(returnToCompartment)
+	DECLARE_FUNCTION(getSomeAir)
+	DECLARE_FUNCTION(returnToCompartmentAgain)
 	DECLARE_FUNCTION(function24)
 
 	/**
@@ -161,30 +161,26 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter2Handler)
 
-	DECLARE_FUNCTION(function27)
-	DECLARE_FUNCTION(function28)
-	DECLARE_FUNCTION(function29)
-	DECLARE_FUNCTION(function30)
+	DECLARE_FUNCTION(breakfastClick)
+	DECLARE_FUNCTION(joinAlexei)
+	DECLARE_FUNCTION(leaveBreakfast)
+	DECLARE_FUNCTION(returnToCompartment2)
 
 	/**
 	 * Setup Chapter 3
 	 */
 	DECLARE_FUNCTION(chapter3)
 
-	/**
-	 * Handle Chapter 3 events
-	 */
-	DECLARE_FUNCTION(chapter3Handler)
-
-	DECLARE_FUNCTION(function33)
-	DECLARE_FUNCTION(function34)
-	DECLARE_FUNCTION(function35)
-	DECLARE_FUNCTION(function36)
-	DECLARE_FUNCTION(function37)
-	DECLARE_FUNCTION(function38)
+	DECLARE_FUNCTION(playChess)
+	DECLARE_FUNCTION(returnToCompartment3)
+	DECLARE_FUNCTION(beforeConcert)
+	DECLARE_FUNCTION(concert)
+	DECLARE_FUNCTION(leaveConcert)
+	DECLARE_FUNCTION(afterConcert)
+	DECLARE_FUNCTION(cryAnna)
 	DECLARE_FUNCTION(function39)
 	DECLARE_FUNCTION(function40)
-	DECLARE_FUNCTION(function41)
+	DECLARE_FUNCTION(trapCath)
 
 	/**
 	 * ???
@@ -199,17 +195,13 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter4)
 
-	/**
-	 * Handle Chapter 4 events
-	 */
-	DECLARE_FUNCTION(chapter4Handler)
-
-	DECLARE_FUNCTION(function45)
-	DECLARE_FUNCTION(function46)
-	DECLARE_FUNCTION(function47)
-	DECLARE_FUNCTION(function48)
+	DECLARE_FUNCTION(inCompartment4)
+	DECLARE_FUNCTION(meetAlexei)
+	DECLARE_FUNCTION(withAlexei)
+	DECLARE_FUNCTION(thinking)
+	DECLARE_FUNCTION(seekCath)
 	DECLARE_FUNCTION(function49)
-	DECLARE_FUNCTION(function50)
+	DECLARE_FUNCTION(alexeiDead)
 	DECLARE_FUNCTION(function51)
 
 	/**
@@ -222,7 +214,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter5Handler)
 
-	DECLARE_FUNCTION(function54)
+	DECLARE_FUNCTION(autistic)
 	DECLARE_FUNCTION(function55)
 };
 

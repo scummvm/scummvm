@@ -28,6 +28,7 @@
 #include "gui/saveload.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 
 namespace DreamWeb {

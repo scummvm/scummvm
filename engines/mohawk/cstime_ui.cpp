@@ -79,6 +79,8 @@ CSTimeInterface::CSTimeInterface(MohawkEngine_CSTime *vm) : _vm(vm) {
 	_rolloverTextFeature = NULL;
 	_bubbleTextFeature = NULL;
 
+	_draggedItem = 0;
+
 	_mouseWasInScene = false;
 	_state = kCSTimeInterfaceStateNormal;
 
@@ -1033,6 +1035,8 @@ CSTimeInventoryDisplay::CSTimeInventoryDisplay(MohawkEngine_CSTime *vm, Common::
 	_state = 0;
 	_cuffsState = false;
 	_cuffsShape = 10;
+
+	_draggedItem = 0;
 
 	_invRect = baseRect;
 

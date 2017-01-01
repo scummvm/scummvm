@@ -40,6 +40,22 @@ static const AccessGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Amazon Guardians of Eden - Spanish
+		// Provided by dianiu in bug report #6958
+		{
+			"amazon",
+			0,
+			AD_ENTRY1s("c00.ap", "aeb429ff015596144c0df06886c84825", 303753),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Amazon,
+		0
+	},
+
 	// Amazon Guardians of Eden - Demo English
 	{
 		{
@@ -78,7 +94,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r01.ap", "c081daca9b0cfd710157cf946e343df6", 39352),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
 		GType_MartianMemorandum,
@@ -93,7 +109,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("r01.rm", "c2facf9c43047211289044ee39a2322a", 2313),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
 		GType_MartianMemorandum,

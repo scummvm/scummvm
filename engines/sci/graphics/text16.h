@@ -64,7 +64,7 @@ public:
 	void Box(const char *text, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
 		Box(text, 0, show, rect, alignment, fontId);
 	}
-	
+
 	void DrawString(const char *text);
 	void DrawStatus(const char *text);
 

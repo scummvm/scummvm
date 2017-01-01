@@ -72,6 +72,11 @@ protected:
 	 *		first time, or being reloaded
 	 */
 	void loadJournalFile(bool alreadyLoaded);
+
+	/**
+	 * Returns true if a given character is printable
+	 */
+	bool isPrintable(byte ch) const;
 public:
 	static Journal *init(SherlockEngine *vm);
 	virtual ~Journal() {}

@@ -68,6 +68,11 @@ private:
 	 * Show all locations on the map
 	 */
 	bool cmdLocations(int argc, const char **argv);
+
+	/**
+	 * Get or set the value of a flag
+	 */
+	bool cmdFlag(int argc, const char **argv);
 protected:
 	SherlockEngine *_vm;
 	Common::String _3doPlayMovieFile;

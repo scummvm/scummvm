@@ -25,14 +25,14 @@
 
 namespace Agi {
 
-#define ip	(_game.logics[lognum].cIP)
-#define code	(_game.logics[lognum].data)
+#define ip   (_game.logics[lognum].cIP)
+#define code (_game.logics[lognum].data)
 
 AgiInstruction logicNamesIf[] = {
-    { "OR", "", NULL },
-    { "NOT", "", NULL },
-    { "ELSE", "", NULL },
-    { "IF", "", NULL }
+	{ "OR", "", NULL },
+	{ "NOT", "", NULL },
+	{ "ELSE", "", NULL },
+	{ "IF", "", NULL }
 };
 
 void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
@@ -56,18 +56,18 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
-			    "         ",
-			    (uint8)*(code + (0 + ip)) & 0xFF,
-			    (uint8)*(code + (1 + ip)) & 0xFF,
-			    (uint8)*(code + (2 + ip)) & 0xFF,
-			    (uint8)*(code + (3 + ip)) & 0xFF,
-			    (uint8)*(code + (4 + ip)) & 0xFF,
-			    (uint8)*(code + (5 + ip)) & 0xFF,
-			    (uint8)*(code + (6 + ip)) & 0xFF,
-			    (uint8)*(code + (7 + ip)) & 0xFF,
-			    (uint8)*(code + (8 + ip)) & 0xFF);
+			       "         ",
+			       (uint8) * (code + (0 + ip)) & 0xFF,
+			       (uint8) * (code + (1 + ip)) & 0xFF,
+			       (uint8) * (code + (2 + ip)) & 0xFF,
+			       (uint8) * (code + (3 + ip)) & 0xFF,
+			       (uint8) * (code + (4 + ip)) & 0xFF,
+			       (uint8) * (code + (5 + ip)) & 0xFF,
+			       (uint8) * (code + (6 + ip)) & 0xFF,
+			       (uint8) * (code + (7 + ip)) & 0xFF,
+			       (uint8) * (code + (8 + ip)) & 0xFF);
 		}
-		debugN(0, "%s ", (x + *(code + ip) - 0xFC)->name);
+		debugN(0, "%s ", (x + * (code + ip) - 0xFC)->name);
 		break;
 	default:
 		x = mode == lCOMMAND_MODE ? logicNamesCmd : logicNamesTest;
@@ -76,24 +76,24 @@ void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
 
 		if (_debug.opcodes) {
 			debugN(0, "%02X %02X %02X %02X %02X %02X %02X %02X %02X\n"
-			    "         ",
-			    (uint8)*(code + (0 + ip)) & 0xFF,
-			    (uint8)*(code + (1 + ip)) & 0xFF,
-			    (uint8)*(code + (2 + ip)) & 0xFF,
-			    (uint8)*(code + (3 + ip)) & 0xFF,
-			    (uint8)*(code + (4 + ip)) & 0xFF,
-			    (uint8)*(code + (5 + ip)) & 0xFF,
-			    (uint8)*(code + (6 + ip)) & 0xFF,
-			    (uint8)*(code + (7 + ip)) & 0xFF,
-			    (uint8)*(code + (8 + ip)) & 0xFF);
+			       "         ",
+			       (uint8) * (code + (0 + ip)) & 0xFF,
+			       (uint8) * (code + (1 + ip)) & 0xFF,
+			       (uint8) * (code + (2 + ip)) & 0xFF,
+			       (uint8) * (code + (3 + ip)) & 0xFF,
+			       (uint8) * (code + (4 + ip)) & 0xFF,
+			       (uint8) * (code + (5 + ip)) & 0xFF,
+			       (uint8) * (code + (6 + ip)) & 0xFF,
+			       (uint8) * (code + (7 + ip)) & 0xFF,
+			       (uint8) * (code + (8 + ip)) & 0xFF);
 		}
-		debugN(0, "%s ", (x + *(code + ip))->name);
+		debugN(0, "%s ", (x + * (code + ip))->name);
 
 		for (z = 1; a > 0;) {
 			if (*c == 'n') {
 				debugN(0, "%d", *(code + (ip + z)));
 			} else {
-				debugN(0, "v%d[%d]", *(code + (ip + z)), getvar(*(code + (ip + z))));
+				debugN(0, "v%d[%d]", *(code + (ip + z)), getVar(*(code + (ip + z))));
 			}
 			c++;
 			z++;

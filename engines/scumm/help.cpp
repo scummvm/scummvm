@@ -77,8 +77,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
-		ADD_BIND(String(_("Ctrl")) + " 0-9", _("Load game state 1-10"));
-		ADD_BIND(String(_("Alt")) + " 0-9", _("Save game state 1-10"));
+		ADD_BIND(String(_("Ctrl")) + " 0-9", _("Load saved game 1-10"));
+		ADD_BIND(String(_("Alt")) + " 0-9", _("Save game 1-10"));
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else

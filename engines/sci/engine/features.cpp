@@ -40,12 +40,12 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_moveCountType = kMoveCountUninitialized;
 #ifdef ENABLE_SCI32
 	_sci21KernelType = SCI_VERSION_NONE;
-	_sci2StringFunctionType = kSci2StringFunctionUninitialized;
 #endif
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 	if (!ConfMan.getBool("use_cdaudio"))
 		_usesCdTrack = false;
 	_forceDOSTracks = false;
+	_pseudoMouseAbility = kPseudoMouseAbilityUninitialized;
 }
 
 reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
@@ -143,8 +143,8 @@ SciVersion GameFeatures::detectDoSoundType() {
 			//  SCI0LATE. Although the last SCI0EARLY game (lsl2) uses SCI0LATE resources
 			_doSoundType = g_sci->getResMan()->detectEarlySound() ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
 #ifdef ENABLE_SCI32
-		} else if (getSciVersion() >= SCI_VERSION_2_1) {
-			_doSoundType = SCI_VERSION_2_1;
+		} else if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+			_doSoundType = SCI_VERSION_2_1_EARLY;
 #endif
 		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
@@ -271,7 +271,7 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
-		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 			// SCI1.1 type, i.e. we compensate for the fact that the heap is attached
 			// to the end of the script
 			_lofsType = SCI_VERSION_1_1;
@@ -475,7 +475,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		}
 
 		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
-		_sci21KernelType = SCI_VERSION_2_1;
+		_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		return true;
 	}
 
@@ -514,7 +514,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 				_sci21KernelType = SCI_VERSION_2;
 				return true;
 			} else if (kFuncNum == 0x75) {
-				_sci21KernelType = SCI_VERSION_2_1;
+				_sci21KernelType = SCI_VERSION_2_1_EARLY;
 				return true;
 			}
 		}
@@ -532,65 +532,6 @@ SciVersion GameFeatures::detectSci21KernelType() {
 	}
 	return _sci21KernelType;
 }
-
-Sci2StringFunctionType GameFeatures::detectSci2StringFunctionType() {
-	if (_sci2StringFunctionType == kSci2StringFunctionUninitialized) {
-		if (getSciVersion() <= SCI_VERSION_1_1) {
-			error("detectSci21StringFunctionType() called from SCI1.1 or earlier");
-		} else if (getSciVersion() == SCI_VERSION_2) {
-			// SCI2 games are always using the old type
-			_sci2StringFunctionType = kSci2StringFunctionOld;
-		} else if (getSciVersion() == SCI_VERSION_3) {
-			// SCI3 games are always using the new type
-			_sci2StringFunctionType = kSci2StringFunctionNew;
-		} else {	// SCI2.1
-			if (!autoDetectSci21StringFunctionType())
-				_sci2StringFunctionType = kSci2StringFunctionOld;
-			else
-				_sci2StringFunctionType = kSci2StringFunctionNew;
-		}
-	}
-
-	debugC(1, kDebugLevelVM, "Detected SCI2 kString type: %s", (_sci2StringFunctionType == kSci2StringFunctionOld) ? "old" : "new");
-
-	return _sci2StringFunctionType;
-}
-
-bool GameFeatures::autoDetectSci21StringFunctionType() {
-	// Look up the script address
-	reg_t addr = getDetectionAddr("Str", SELECTOR(size));
-
-	if (!addr.getSegment())
-		return false;
-
-	uint16 offset = addr.getOffset();
-	Script *script = _segMan->getScript(addr.getSegment());
-
-	while (true) {
-		int16 opparams[4];
-		byte extOpcode;
-		byte opcode;
-		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
-		opcode = extOpcode >> 1;
-
-		// Check for end of script
-		if (opcode == op_ret || offset >= script->getBufSize())
-			break;
-
-		if (opcode == op_callk) {
-			uint16 kFuncNum = opparams[0];
-
-			// SCI2.1 games which use the new kString functions call kString(8).
-			// Earlier ones call the callKernel script function, but not kString
-			// directly
-			if (_kernel->getKernelName(kFuncNum) == "String")
-				return true;
-		}
-	}
-
-	return false;	// not found a call to kString
-}
-
 #endif
 
 bool GameFeatures::autoDetectMoveCountType() {
@@ -663,6 +604,52 @@ bool GameFeatures::useAltWinGMSound() {
 	} else {
 		return false;
 	}
+}
+
+// PseudoMouse was added during SCI1
+// PseudoMouseAbility is about a tiny difference in the keyboard driver, which sets the event type to either
+// 40h (old behaviour) or 44h (the keyboard driver actually added 40h to the existing value).
+// See engine/kevent.cpp, kMapKeyToDir - also script 933
+
+// SCI1EGA:
+// Quest for Glory 2 still used the old way.
+//
+// SCI1EARLY:
+// King's Quest 5 0.000.062 uses the old way.
+// Leisure Suit Larry 1 demo uses the new way, but no PseudoMouse class.
+// Fairy Tales uses the new way.
+// X-Mas 1990 uses the old way, no PseudoMouse class.
+// Space Quest 4 floppy (1.1) uses the new way.
+// Mixed Up Mother Goose uses the old way, no PseudoMouse class.
+//
+// SCI1MIDDLE:
+// Leisure Suit Larry 5 demo uses the new way.
+// Conquests of the Longbow demo uses the new way.
+// Leisure Suit Larry 1 (2.0) uses the new way.
+// Astro Chicken II uses the new way.
+PseudoMouseAbilityType GameFeatures::detectPseudoMouseAbility() {
+	if (_pseudoMouseAbility == kPseudoMouseAbilityUninitialized) {
+		if (getSciVersion() < SCI_VERSION_1_EARLY) {
+			// SCI1 EGA or earlier -> pseudo mouse ability is always disabled
+			_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+
+		} else if (getSciVersion() == SCI_VERSION_1_EARLY) {
+			// For SCI1 early some games had it enabled, some others didn't.
+			// We try to find an object called "PseudoMouse". If it's found, we enable the ability otherwise we don't.
+			reg_t pseudoMouseAddr = _segMan->findObjectByName("PseudoMouse", 0);
+
+			if (pseudoMouseAddr != NULL_REG) {
+				_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+			} else {
+				_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+			}
+
+		} else {
+			// SCI1 middle or later -> pseudo mouse ability is always enabled
+			_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+		}
+	}
+	return _pseudoMouseAbility;
 }
 
 } // End of namespace Sci

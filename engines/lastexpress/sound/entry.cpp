@@ -366,7 +366,7 @@ void SoundEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	assert(_name1.size() <= 16);
 	assert(_name2.size() <= 16);
 
-	if (_name2.matchString("NISSND?") && (_status.status & kFlagType9) != kFlag3) {
+	if (_name2.matchString("NISSND?") && ((_status.status & kFlagType9) != kFlag3)) {
 		s.syncAsUint32LE(_status.status);
 		s.syncAsUint32LE(_type);
 		s.syncAsUint32LE(_blockCount); // field_8;

@@ -449,6 +449,8 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 	}
 
 	if (_targetFixedSize) {
+		if (_bytesWritten != _targetSize)
+			warning("DCL-INFLATE Error: Inconsistent bytes written (%d) and target buffer size (%d)", _bytesWritten, _targetSize);
 		return _bytesWritten == _targetSize;
 	}
 	return true; // For targets featuring dynamic size we always succeed
@@ -468,7 +470,7 @@ bool decompressDCL(ReadStream *src, byte *dest, uint32 packedSize, uint32 unpack
 	// Read source into memory
 	src->read(sourceBufferPtr, packedSize);
 
-	Common::MemoryReadStream  *sourceStream = new MemoryReadStream(sourceBufferPtr, packedSize, DisposeAfterUse::NO);
+	Common::MemoryReadStream  *sourceStream = new MemoryReadStream(sourceBufferPtr, packedSize, DisposeAfterUse::YES);
 	Common::MemoryWriteStream *targetStream = new MemoryWriteStream(dest, unpackedSize);
 
 	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);

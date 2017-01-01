@@ -50,7 +50,7 @@ private:
 	 * Show the ScummVM Save Game dialog
 	 */
 	void showScummVMSaveDialog();
-	
+
 	/**
 	 * Show the ScummVM Load Game dialog
 	 */
@@ -67,7 +67,6 @@ private:
 	virtual Common::Rect getScrollBarBounds() const;
 public:
 	WidgetFiles(SherlockEngine *vm, const Common::String &target);
-	virtual ~WidgetFiles() {}
 
 	/**
 	 * Prompt the user whether to quit

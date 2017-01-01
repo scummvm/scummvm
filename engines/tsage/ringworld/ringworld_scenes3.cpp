@@ -532,7 +532,7 @@ void Scene2100::Action1::signal() {
 			// Wait for an event
 			Event event;
 			if (!g_globals->_events.getEvent(event)) {
-				GLOBALS._screenSurface.updateScreen();
+				GLOBALS._screen.update();
 				g_system->delayMillis(10);
 				continue;
 			}
@@ -2265,7 +2265,7 @@ void Scene2150::Action1::signal() {
 			// Wait for an event
 			Event event;
 			if (!g_globals->_events.getEvent(event)) {
-				GLOBALS._screenSurface.updateScreen();
+				GLOBALS._screen.update();
 				g_system->delayMillis(10);
 				continue;
 			}
@@ -5119,7 +5119,7 @@ void Scene2320::Action3::signal() {
 			// Wait for an event
 			Event event;
 			if (!g_globals->_events.getEvent(event)) {
-				GLOBALS._screenSurface.updateScreen();
+				GLOBALS._screen.update();
 				g_system->delayMillis(10);
 				continue;
 			}

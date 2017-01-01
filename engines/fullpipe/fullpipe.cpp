@@ -24,8 +24,11 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "audio/mixer.h"
 
 #include "engines/util.h"
+#include "graphics/surface.h"
 
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
@@ -46,13 +49,25 @@ FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
+	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
+	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
+	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
+	DebugMan.addDebugChannel(kDebugBehavior, "behavior", "Behavior");
+	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
+	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
+	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory");
+	DebugMan.addDebugChannel(kDebugSceneLogic, "scenelogic", "Scene Logic");
+	DebugMan.addDebugChannel(kDebugInteractions, "interactions", "Interactions");
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
+	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
+	_musicVolume = ConfMan.getInt("music_volume");
 
 	_rnd = new Common::RandomSource("fullpipe");
 	_console = 0;
@@ -71,9 +86,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_soundEnabled = true;
 	_flgSoundList = true;
-
-	_sfxVolume = 0;
-	_musicVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
@@ -112,6 +124,13 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_musicLocal = 0;
 	_trackStartDelay = 0;
 
+	_soundStream1 = new Audio::SoundHandle();
+	_soundStream2 = new Audio::SoundHandle();
+	_soundStream3 = new Audio::SoundHandle();
+	_soundStream4 = new Audio::SoundHandle();
+
+	_stream2playing = false;
+
 	memset(_sceneTracks, 0, sizeof(_sceneTracks));
 	memset(_trackName, 0, sizeof(_trackName));
 	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
@@ -128,7 +147,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scene3 = 0;
 	_movTable = 0;
 	_floaters = 0;
-	_mgm = 0;
+	_aniHandler = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -192,6 +211,10 @@ FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
 	delete _console;
 	delete _globalMessageQueueList;
+	delete _soundStream1;
+	delete _soundStream2;
+	delete _soundStream3;
+	delete _soundStream4;
 }
 
 void FullpipeEngine::initialize() {
@@ -204,7 +227,7 @@ void FullpipeEngine::initialize() {
 	_sceneRect.bottom = 599;
 
 	_floaters = new Floaters;
-	_mgm = new MGM;
+	_aniHandler = new AniHandler;
 }
 
 void FullpipeEngine::restartGame() {
@@ -243,12 +266,28 @@ void FullpipeEngine::restartGame() {
 	}
 }
 
+Common::Error FullpipeEngine::loadGameState(int slot) {
+	if (_gameLoader->readSavegame(getSavegameFile(slot)))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
+Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description) {
+	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot)))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
+
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
 	initGraphics(800, 600, true, &format);
 
-	_backgroundSurface.create(800, 600, format);
+	_backgroundSurface = new Graphics::Surface;
+	_backgroundSurface->create(800, 600, format);
 
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
@@ -262,8 +301,15 @@ Common::Error FullpipeEngine::run() {
 	if (ConfMan.hasKey("boot_param"))
 		scene = convertScene(ConfMan.getInt("boot_param"));
 
+	if (ConfMan.hasKey("save_slot"))
+		scene = -1;
+
 	if (!loadGam("fullpipe.gam", scene))
 		return Common::kNoGameDataFoundError;
+
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
 
 #if 0
 	loadAllScenes();
@@ -271,10 +317,21 @@ Common::Error FullpipeEngine::run() {
 
 	_gameContinue = true;
 
+	int time1 = g_fp->_system->getMillis();
+
+	// Center mouse
+	_system->warpMouse(400, 300);
+
 	while (_gameContinue) {
 		updateEvents();
 
-		updateScreen();
+		int time2 = g_fp->_system->getMillis();
+
+		// 30fps
+		if (time2 - time1 >= 33 || !_normalSpeed) {
+			time1 = time2;
+			updateScreen();
+		}
 
 		if (_needRestart) {
 			if (_modalObject) {
@@ -290,8 +347,7 @@ Common::Error FullpipeEngine::run() {
 			_needRestart = false;
 		}
 
-		if (_normalSpeed)
-			_system->delayMillis(10);
+		_system->delayMillis(5);
 		_system->updateScreen();
 	}
 
@@ -332,7 +388,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = 32;
+				ex->_param = 32;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -344,7 +400,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = event.kbd.keycode;
+				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -358,7 +414,7 @@ void FullpipeEngine::updateEvents() {
 					getDebugger()->onFrame();
 				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = event.kbd.keycode;
+				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -391,6 +447,7 @@ void FullpipeEngine::updateEvents() {
 				_lastInputTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
@@ -398,11 +455,12 @@ void FullpipeEngine::updateEvents() {
 
 				ex->_sceneClickX = _sceneRect.left + ex->_x;
 				ex->_sceneClickY = _sceneRect.top + ex->_y;
-				ex->_keyCode = getGameLoaderInventory()->getSelectedItemId();
+				ex->_param = getGameLoaderInventory()->getSelectedItemId();
 				ex->_excFlags |= 3;
 				_lastInputTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (!_inputArFlag && (_updateTicks - _lastButtonUpTicks) >= 2) {
@@ -411,6 +469,7 @@ void FullpipeEngine::updateEvents() {
 				_lastButtonUpTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		default:
 			break;
@@ -445,10 +504,13 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 
 	delete _origFormat;
+	_backgroundSurface->free();
+
+	delete _backgroundSurface;
 }
 
 void FullpipeEngine::updateScreen() {
-	debug(4, "FullpipeEngine::updateScreen()");
+	debugC(4, kDebugDrawing, "FullpipeEngine::updateScreen()");
 
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;
@@ -538,9 +600,26 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 			}
 		}
 
-		if (_currentScene)
-			_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+		// Original was makeing a save on every room entering
+		if (_currentScene) {
+			_gameLoader->saveScenePicAniInfos(_currentScene->_sceneId);
+			//	_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+		}
 	}
+}
+
+bool FullpipeEngine::isSaveAllowed() {
+	if (!g_fp->_isSaveAllowed)
+		return false;
+
+	bool allowed = true;
+
+	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+			allowed = false;
+	}
+
+	return allowed;
 }
 
 

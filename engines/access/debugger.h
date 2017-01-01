@@ -35,13 +35,14 @@ class AccessEngine;
 class Debugger : public GUI::Debugger {
 protected:
 	AccessEngine *_vm;
+	Common::String _playMovieFile;
 
 	bool Cmd_LoadScene(int argc, const char **argv);
 	bool Cmd_Cheat(int argc, const char **argv);
-	Common::String *_sceneDescr;
-	int _sceneNumb;
+	bool Cmd_PlayMovie(int argc, const char **argv);
 public:
 	static Debugger *init(AccessEngine *vm);
+	void postEnter();
 public:
 	Debugger(AccessEngine *vm);
 	virtual ~Debugger();

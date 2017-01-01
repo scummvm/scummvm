@@ -129,6 +129,8 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 			foundSSND = true;
 			/* uint32 offset = */ stream->readUint32BE();
 			/* uint32 blockAlign = */ stream->readUint32BE();
+			if (dataStream)
+				delete dataStream;
 			dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + length - 8, disposeAfterUse);
 			break;
 		case MKTAG('F', 'V', 'E', 'R'):
@@ -154,7 +156,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 			return 0;
 		default:
 			debug(1, "Skipping AIFF '%s' chunk", tag2str(tag));
-			break; 
+			break;
 		}
 
 		stream->seek(pos + length + (length & 1)); // ensure we're also word-aligned
@@ -203,7 +205,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 		if (codec == MKTAG('s', 'o', 'w', 't'))
 			rawFlags |= Audio::FLAG_LITTLE_ENDIAN;
 
-		return makeRawStream(dataStream, rate, rawFlags); 
+		return makeRawStream(dataStream, rate, rawFlags);
 	}
 	case MKTAG('i', 'm', 'a', '4'):
 		// TODO: Use QT IMA ADPCM
@@ -212,7 +214,7 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 	case MKTAG('Q', 'D', 'M', '2'):
 		// TODO: Need to figure out how to integrate this
 		// (But hopefully never needed)
-		warning("Unhandled AIFF-C QDM2 compression"); 
+		warning("Unhandled AIFF-C QDM2 compression");
 		break;
 	case MKTAG('A', 'D', 'P', '4'):
 		// ADP4 on 3DO

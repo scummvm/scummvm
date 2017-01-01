@@ -84,7 +84,7 @@ const ADGameDescription gameDescriptions[] = {
 class DraciMetaEngine : public AdvancedMetaEngine {
 public:
 	DraciMetaEngine() : AdvancedMetaEngine(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
-		_singleid = "draci";
+		_singleId = "draci";
 	}
 
 	virtual const char *getName() const {
@@ -117,10 +117,9 @@ bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
 SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern("draci.s??");
+	Common::String pattern("draci.s##");
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -143,6 +142,8 @@ SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

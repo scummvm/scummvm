@@ -84,7 +84,10 @@ enum ResourceType {
 	kResourceTypePatch,
 	kResourceTypeBitmap,
 	kResourceTypePalette,
-	kResourceTypeCdAudio,
+	kResourceTypeCdAudio = 12,
+#ifdef ENABLE_SCI32
+	kResourceTypeWave = 12,
+#endif
 	kResourceTypeAudio,
 	kResourceTypeSync,
 	kResourceTypeMessage,
@@ -171,14 +174,10 @@ public:
 	}
 
 	Common::String toString() const {
-		char buf[32];
-
-		snprintf(buf, 32, "%s.%d", getResourceTypeName(_type), _number);
-		Common::String retStr = buf;
+		Common::String retStr = Common::String::format("%s.%d", getResourceTypeName(_type), _number);
 
 		if (_tuple != 0) {
-			snprintf(buf, 32, "(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
-			retStr += buf;
+			retStr += Common::String::format("(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
 		}
 
 		return retStr;
@@ -210,6 +209,10 @@ public:
 
 	bool operator==(const ResourceId &other) const {
 		return (_type == other._type) && (_number == other._number) && (_tuple == other._tuple);
+	}
+
+	bool operator!=(const ResourceId &other) const {
+		return !operator==(other);
 	}
 
 	bool operator<(const ResourceId &other) const {
@@ -259,6 +262,10 @@ public:
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
 
+#ifdef ENABLE_SCI32
+	Common::SeekableReadStream *makeStream() const;
+#endif
+
 	const Common::String &getResourceLocation() const;
 
 	// FIXME: This audio specific method is a hack. After all, why should a
@@ -285,6 +292,7 @@ protected:
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash> ResourceMap;
 
+class IntMapResourceSource;
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
@@ -313,11 +321,6 @@ public:
 	 * Initializes the resource manager.
 	 */
 	void init();
-
-	/**
-	 * Similar to the function above, only called from the fallback detector
-	 */
-	void initForDetection();
 
 	/**
 	 * Adds all of the resource files for a game
@@ -391,9 +394,32 @@ public:
 	 * resource manager.
 	 */
 	void addResourcesFromChunk(uint16 id);
+
+	/**
+	 * Updates the currently active disc number.
+	 */
+	void findDisc(const int16 discNo);
+
+	/**
+	 * Gets the currently active disc number.
+	 */
+	int16 getCurrentDiscNo() const { return _currentDiscNo; }
+
+private:
+	/**
+	 * The currently active disc number.
+	 */
+	int16 _currentDiscNo;
+
+	/**
+	 * If true, the game has multiple audio volumes that contain different
+	 * audio files for each disc.
+	 */
+	bool _multiDiscAudio;
+
+public:
 #endif
 
-	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging
@@ -426,9 +452,7 @@ protected:
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
 	// for resources which are not explicitly locked. However, a warning will be
 	// issued whenever this limit is exceeded.
-	enum {
-		MAX_MEMORY = 256 * 1024	// 256KB
-	};
+	int _maxMemoryLRU;
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	Common::List<ResourceSource *> _sources;
@@ -516,7 +540,7 @@ protected:
 	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readAudioMapSCI11(ResourceSource *map);
+	int readAudioMapSCI11(IntMapResourceSource *map);
 
 	/**
 	 * Reads SCI1 audio map files.
@@ -559,6 +583,8 @@ protected:
 	ViewType detectViewType();
 	bool hasSci0Voc999();
 	bool hasSci1Voc900();
+	bool checkResourceDataForSignature(Resource *resource, const byte *signature);
+	bool checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2);
 	void detectSciVersion();
 };
 

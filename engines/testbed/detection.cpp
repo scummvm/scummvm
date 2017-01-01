@@ -49,7 +49,7 @@ class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
 	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
 		_md5Bytes = 512;
-		_singleid = "testbed";
+		_singleId = "testbed";
 	}
 
 	virtual const char *getName() const {

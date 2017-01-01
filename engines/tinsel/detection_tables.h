@@ -556,6 +556,27 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Russian Discworld 1. Fan translation v1.1
+		{
+			"dw",
+			"CD v1.1",
+			{
+				{"dw.scn", 0, "133041bde59d05c1bf084fd6f1bdce4b", 776524},
+				{"english.txt", 0, "317542cf2e50106d9c9421ddcf821e22", 221656},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_DW1,
+		0,
+		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// Polish fan translaction Discworld 1
 		{
 			"dw",

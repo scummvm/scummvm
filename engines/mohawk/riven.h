@@ -27,8 +27,6 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/riven_scripts.h"
 
-#include "gui/saveload.h"
-
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
@@ -43,6 +41,7 @@ class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
+class RivenSoundManager;
 
 // Riven Stack Types
 enum {
@@ -123,6 +122,7 @@ public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Riven();
 
+	RivenSoundManager *_sound;
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;

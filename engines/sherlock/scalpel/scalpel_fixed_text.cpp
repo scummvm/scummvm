@@ -28,33 +28,70 @@ namespace Sherlock {
 namespace Scalpel {
 
 static const char *const fixedTextEN[] = {
+	// Game hotkeys
+	"LMTPOCIUGJFS",
 	// SH1: Window buttons
-	"Exit",
-	"Up",
-	"Down",
+	"EExit",
+	"UUp",
+	"DDown",
 	// SH1: Inventory buttons
-	"Exit",
-	"Look",
-	"Use",
-	"Give",
+	"EExit",
+	"LLook",
+	"UUse",
+	"GGive",
 	// SH1: Journal text
 	"Watson's Journal",
 	"Page %d",
 	// SH1: Journal buttons
-	"Exit",
-	"Back 10",
-	"Up",
-	"Down",
-	"Ahead 10",
-	"Search",
-	"First Page",
-	"Last Page",
-	"Print Text",
+	"EExit",
+	"BBack 10",
+	"UUp",
+	"DDown",
+	"AAhead 10",
+	"SSearch",
+	"FFirst Page",
+	"LLast Page",
+	"PPrint Text",
 	// SH1: Journal search
-	"Exit",
-	"Backward",
-	"Forward",
+	"EExit",
+	"BBackward",
+	"FForward",
 	"Text Not Found !",
+	// SH1: Settings
+	"EExit",
+	"MMusic on",
+	"MMusic off",
+	"PPortraits on",
+	"PPortraits off",
+	"JJoystick off",
+	"NNew Font Style",
+	"SSound Effects on",
+	"SSound Effects off",
+	"WWindows Slide",
+	"WWindows Appear",
+	"CCalibrate Joystick",
+	"AAuto Help left",
+	"AAuto Help right",
+	"VVoices on",
+	"VVoices off",
+	"FFade by Pixel",
+	"FFade Directly",
+	"KKey Pad Slow",
+	"KKey Pad Fast",
+	// Load/Save
+	"EExit",
+	"LLoad",
+	"SSave",
+	"UUp",
+	"DDown",
+	"QQuit",
+	// Quit Game
+	"Are you sure you wish to Quit ?",
+	"YYes",
+	"NNo",
+	// SH1: Press key text
+	"PPress any Key for More.",
+	"PPress any Key to Continue.",
 	// SH1: Initial Inventory
 	"A message requesting help",
 	"A number of business cards",
@@ -68,11 +105,75 @@ static const char *const fixedTextEN[] = {
 	"Tarot Cards",
 	"An ornate key",
 	"A pawn ticket",
-	// SH2: Verbs
-	"Open",
-	"Look",
-	"Talk",
-	"Journal"
+	// SH1: User Interface
+	"No, thank you.",
+	"You can't do that.",
+	"Done...",
+	"Use ",
+	" on %s",
+	"Give ",
+	" to %s",
+	// SH1: People names
+	"Sherlock Holmes",
+	"Dr. Watson",
+	"Inspector Lestrade",
+	"Constable O'Brien",
+	"Constable Lewis",
+	"Sheila Parker",
+	"Henry Carruthers",
+	"Lesley",
+	"An Usher",
+	"Fredrick Epstein",
+	"Mrs. Worthington",
+	"The Coach",
+	"A Player",
+	"Tim",
+	"James Sanders",
+	"Belle",
+	"Cleaning Girl",
+	"Wiggins",
+	"Paul",
+	"The Bartender",
+	"A Dirty Drunk",
+	"A Shouting Drunk",
+	"A Staggering Drunk",
+	"The Bouncer",
+	"The Coroner",
+	"Reginald Snipes",
+	"George Blackwood",
+	"Lars",
+	"The Chemist",
+	"Inspector Gregson",
+	"Jacob Farthington",
+	"Mycroft",
+	"Old Sherman",
+	"Richard",
+	"The Barman",
+	"A Dandy Player",
+	"A Rough-looking Player",
+	"A Spectator",
+	"Robert Hunt",
+	"Violet",
+	"Pettigrew",
+	"Augie",
+	"Anna Carroway",
+	"A Guard",
+	"Antonio Caruso",
+	"Toby the Dog",
+	"Simon Kingsley",
+	"Alfred",
+	"Lady Brumwell",
+	"Madame Rosa",
+	"Joseph Moorehead",
+	"Mrs. Beale",
+	"Felix",
+	"Hollingston",
+	"Constable Callaghan",
+	"Sergeant Duncan",
+	"Lord Brumwell",
+	"Nigel Jaimeson",
+	"Jonas",
+	"Constable Dugan"
 };
 
 // sharp-s       : 0xE1 / octal 341
@@ -80,33 +181,70 @@ static const char *const fixedTextEN[] = {
 // small o-umlaut: 0x94 / octal 224
 // small u-umlaut: 0x81 / octal 201
 static const char *const fixedTextDE[] = {
+	// Game hotkeys
+	"SBRNOCTEGADU", // original: did not support hotkeys for actions
 	// SH1: Window buttons
-	"Zur\201ck",
-	"Hoch",
-	"Runter",
+	"ZZur\201ck",
+	"HHoch",
+	"RRunter",
 	// SH1: Inventory buttons
-	"Zur\201ck",
-	"Schau",
-	"Benutze",
-	"Gib",
+	"ZZur\201ck",
+	"SSchau",
+	"BBenutze",
+	"GGib",
 	// SH1: Journal text
 	"Watsons Tagebuch",
 	"Seite %d",
 	// SH1: Journal buttons
-	"Zur\201ck",
-	"10 hoch",
-	"Hoch",
-	"Runter",
-	"10 runter",
-	"Suche",
-	"Erste Seite",
-	"Letzte Seite",
-	"Drucke Text",
+	"ZZur\201ck", // original: "Zur\201ck"
+	"o10 hoch",
+	"HHoch",
+	"RRunter",
+	"u10 runter", // original: "10 runter"
+	"SSuche",
+	"EErste Seite",
+	"LLetzte Seite",
+	"DDrucke Text",
 	// SH1: Journal search
-	"Zur\201ck",
-	"R\201ckw\204rts", // original: "Backward"
-	"Vorw\204rts", // original: "Forward"
+	"ZZur\201ck",
+	"RR\201ckw\204rts", // original: "Backward"
+	"VVorw\204rts", // original: "Forward"
 	"Text nicht gefunden!",
+	// SH1: Settings
+	"ZZur\201ck", // original interpreter: "Exit"
+	"MMusik an",
+	"MMusik aus",
+	"PPortr\204ts an", // original interpreter: "Portraits"
+	"PPortr\204ts aus",
+	"JJoystick aus",
+	"NNeue Schrift",
+	"GGer\204uscheffekte on", // original interpreter: "Effekte"
+	"GGer\204uscheffekte off",
+	"FFenster gleitend",
+	"FFenster direkt",
+	"JJustiere Joystick",
+	"HHilfe links",
+	"HHilfe rechts",
+	"SSprache an",
+	"SSprache aus",
+	"cSchnitt",
+	"BBlende",
+	"CCursor langsam",
+	"CCursor schnell",
+	// Load/Save
+	"ZZur\201ck",
+	"LLaden",
+	"SSichern",
+	"HHoch",
+	"RRunter",
+	"EEnde",
+	// Quit Game
+	"Das Spiel verlassen ?",
+	"JJa",
+	"NNein",
+	// SH1: Press key text
+	"MMehr auf Tastendruck...",
+	"BBeliebige Taste dr\201cken.",
 	// SH1: Initial Inventory
 	"Ein Hilferuf von Lestrade",
 	"Holmes' Visitenkarten",
@@ -117,47 +255,149 @@ static const char *const fixedTextDE[] = {
 	"Eine offene Taschenuhr",
 	"Ein Zettel mit Zahlen drauf",
 	"Ein mehrfach gefalteter Briefbogen",
-	"Ein Tarock-Kartenspiel", // [sic]
+	"Ein Tarot-Kartenspiel", // original interpreter: "Ein Tarock-Kartenspiel" [sic]
 	"Ein verzierter Schl\201ssel",
 	"Ein Pfandschein",
-	// SH2: Verbs
-	"\231ffne",
-	"Schau",
-	"Rede",
-	"Tagebuch"
+	// SH1: User Interface
+	"Nein, vielen Dank.",
+	"Nein, das geht wirklich nicht.", // original: "Nein, das geht wirklich nicht"
+	"Fertig...",
+	"Benutze ",
+	" mit %s",
+	"Gib ", // original: "Gebe "
+	" an %s", // original: " zu %s"
+	// SH1: People names
+	"Sherlock Holmes",
+	"Dr. Watson",
+	"Inspektor Lestrade",
+	"Konstabler O'Brien",
+	"Konstabler Lewis",
+	"Sheila Parker",
+	"Henry Carruthers",
+	"Lesley",
+	"Platzanweiser",
+	"Fredrick Epstein",
+	"Mrs. Worthington",
+	"Der Trainer",
+	"Ein Spieler",
+	"Tim",
+	"James Sanders",
+	"Belle",
+	"Putzm\204dchen",
+	"Wiggins",
+	"Paul",
+	"Gastwirt",
+	"Schmutziger Betrunkener",
+	"Lallender Betrunkener",
+	"Torkelnder Betrunkener",
+	"The Bouncer",
+	"Der Leichenbeschauer",
+	"Reginald Snipes",
+	"George Blackwood",
+	"Lars",
+	"Apotheker",
+	"Inspektor Gregson",
+	"Jacob Farthington",
+	"Mycroft",
+	"Old Sherman",
+	"Richard",
+	"Barkeeper",
+	"Jock Mahoney",
+	"Nobby Charleton",
+	"Zuschauer",
+	"Robert Hunt",
+	"Violet",
+	"Pettigrew",
+	"Augie",
+	"Anna Carroway",
+	"Wache",
+	"Antonio Caruso",
+	"Toby the Dog",
+	"Simon Kingsley",
+	"Alfred",
+	"Lady Brumwell",
+	"Madame Rosa",
+	"Joseph Moorehead",
+	"Mrs. Beale",
+	"Felix",
+	"Hollingston",
+	"Konstabler Callaghan",
+	"Sergeant Duncan",
+	"Lord Brumwell",
+	"Nigel Jaimeson",
+	"Jonas",
+	"Konstabler Dugan"
 };
 
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
+// more characters see engines/sherlock/fixed_text.cpp
 static const char *const fixedTextES[] = {
+	// Game hotkeys
+	"VMHTACIUDNFO",
 	// SH1: Window buttons
-	"Exit",
-	"Subir",
-	"Bajar",
+	"aSalir", // original interpreter: "Exit"
+	"SSubir",
+	"BBajar",
 	// SH1: Inventory buttons
-	"Exit",
-	"Mirar",
-	"Usar",
-	"Dar",
+	"SSalir", // original interpreter: "Exit"
+	"MMirar",
+	"UUsar",
+	"DDar",
 	// SH1: Journal text
 	"Diario de Watson",
 	"Pagina %d",
 	// SH1: Journal buttons
-	"Exit",
-	"Retroceder",
-	"Subir",
-	"baJar",
-	"Adelante",
-	"Buscar",
-	"1a pagina",
-	"Ult pagina",
-	"Imprimir",
+	"aSalir", // original interpreter: "Exit"
+	"RRetroceder",
+	"SSubir",
+	"JbaJar",
+	"AAdelante",
+	"BBuscar",
+	"11a pagina",
+	"UUlt pagina",
+	"IImprimir",
 	// SH1: Journal search
-	"Exit",
-	"Retroceder",
-	"Avanzar",
+	"SSalir", // original interpreter: "Exit"
+	"RRetroceder",
+	"AAvanzar",
 	"Texto no encontrado!",
+	// SH1: Settings
+	"aSalir", // original interpreter: "Exit"
+	"MMusica si",
+	"MMusica no",
+	"RRetratos si",
+	"RRetratos no",
+	"JJoystick no",
+	"NNuevo fuente",
+	"Sefectos Sonido si",
+	"Sefectos Sonido no",
+	"Tven Tanas desliz.",
+	"Tven Tanas aparecen",
+	"CCalibrar Joystick",
+	"yAyuda lzq", // TODO: check this
+	"yAyuda Dcha",
+	"VVoces si",
+	"VVoces no",
+	"FFundido a pixel",
+	"FFundido directo",
+	"eTeclado lento",
+	"eTeclado rapido",
+	// Load/Save
+	"aSalir", // original interpreter: "Exit"
+	"CCargar",
+	"GGrabar",
+	"SSubir",
+	"BBajar",
+	"AAcabar",
+	// Quit Game
+	"\250Seguro que quieres Acabar?",
+	"SSi",
+	"NNo",
+	// SH1: Press key text
+	"TTecla para ver mas",
+	"TTecla para continuar",
 	// SH1: Initial Inventory
 	"Un mensaje solicitando ayuda",
 	"Unas cuantas tarjetas de visita",
@@ -171,6 +411,75 @@ static const char *const fixedTextES[] = {
 	"Unas cartas de Tarot",
 	"Una llave muy vistosa",
 	"Una papeleta de empe\244o",
+	// SH1: User Interface
+	"No, gracias.",
+	"No puedes hacerlo.", // original: "No puedes hacerlo"
+	"Hecho...",
+	"Usar ",
+	" sobre %s",
+	"Dar ",
+	" a %s",
+	// SH1: People names
+	"Sherlock Holmes",
+	"Dr. Watson",
+	"El inspector Lestrade",
+	"El agente O'Brien",
+	"El agente Lewis",
+	"Sheila Parker",
+	"Henry Carruthers",
+	"Lesley",
+	"Un ujier",
+	"Fredrick Epstein",
+	"Mrs. Worthington",
+	"El entrenador",
+	"El jugador",
+	"Tim",
+	"James Sanders",
+	"Belle",
+	"La chica de la limpieza",
+	"Wiggins",
+	"Paul",
+	"El barman",
+	"Un sucio borracho",
+	"Un borracho griton",
+	"Un tambaleante borracho",
+	"El gorila",
+	"El forense",
+	"Reginald Snipes",
+	"George Blackwood",
+	"Lars",
+	"El quimico",
+	"El inspector Gregson",
+	"Jacob Farthington",
+	"Mycroft",
+	"Old Sherman",
+	"Richard",
+	"El barman",
+	"Un jugador dandy",
+	"Un duro jugador",
+	"Un espectador",
+	"Robert Hunt",
+	"Violeta",
+	"Pettigrew",
+	"Augie",
+	"Anna Carroway",
+	"Un guarda",
+	"Antonio Caruso",
+	"El perro Toby",
+	"Simon Kingsley",
+	"Alfred",
+	"Lady Brumwell",
+	"Madame Rosa",
+	"Joseph Moorehead",
+	"Mrs. Beale",
+	"Felix",
+	"Hollingston",
+	"El agente Callaghan",
+	"El sargento Duncan",
+	"Lord Brumwell",
+	"Nigel Jaimeson",
+	"Jonas",
+	"El agente Dugan"
 };
 
 // =========================================
@@ -233,7 +542,7 @@ static const char *const fixedTextDE_ActionMove[] = {
 	"L\204\341t sich nicht bewegen",
 	"Festged\201belt in der Erde...",
 	"Oha, VIEL zu schwer",
-	"Der andere Kiste ist im Weg" // [sic]
+	"Die andere Kiste ist im Weg" // original: "Der andere Kiste ist im Weg"
 };
 
 static const char *const fixedTextES_ActionMove[] = {
@@ -332,8 +641,6 @@ static const FixedTextActionEntry fixedTextES_Actions[] = {
 
 // =========================================
 
-// TODO:
-// It seems there was a French version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE, fixedTextDE_Actions },
 	{ Common::ES_ESP,   fixedTextES, fixedTextES_Actions },

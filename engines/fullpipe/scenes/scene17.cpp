@@ -184,7 +184,7 @@ int sceneHandler17(ExCommand *cmd) {
 
 			g_vars->scene17_handPhase = true;
 		}
-        break;
+		break;
 
 	case MSG_SC17_FILLBOTTLE:
 		sceneHandler17_fillBottle();
@@ -211,11 +211,11 @@ int sceneHandler17(ExCommand *cmd) {
 			int pic = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (pic == PIC_SC17_RTRUBA2 || pic == PIC_SC17_RTRUBA) {
-				if (cmd->_keyCode == ANI_INV_COIN || cmd->_keyCode == ANI_INV_BOOT || cmd->_keyCode == ANI_INV_HAMMER) {
+				if (cmd->_param == ANI_INV_COIN || cmd->_param == ANI_INV_BOOT || cmd->_param == ANI_INV_HAMMER) {
 					if (g_vars->scene17_handPhase) {
 						if (g_fp->_aniMan->isIdle()) {
 							if (!(g_fp->_aniMan->_flags & 0x100)) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_keyCode);
+								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_param);
 								break;
 							}
 						}

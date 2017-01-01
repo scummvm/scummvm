@@ -25,55 +25,32 @@
 
 #include "common/list.h"
 #include "common/rect.h"
+#include "sherlock/image_file.h"
 #include "sherlock/surface.h"
 #include "sherlock/resources.h"
 #include "sherlock/saveload.h"
 
 namespace Sherlock {
 
-#define PALETTE_SIZE 768
-#define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 #define BG_GREYSCALE_RANGE_END 229
 #define BLACK 0
 
 class SherlockEngine;
 
-class Screen : public Surface {
+class Screen : public BaseSurface {
 private:
-	Common::List<Common::Rect> _dirtyRects;
 	uint32 _transitionSeed;
-	Surface _sceneSurface;
 
 	// Rose Tattoo fields
 	int _fadeBytesRead, _fadeBytesToRead;
 	int _oldFadePercent;
-private:
-	/**
-	 * Merges together overlapping dirty areas of the screen
-	 */
-	void mergeDirtyRects();
-
-	/**
-	 * Returns the union of two dirty area rectangles
-	 */
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 protected:
 	SherlockEngine *_vm;
+	Surface _backBuffer;
 
-	/**
-	 * Clear the current dirty rects list
-	 */
-	void clearDirtyRects() { _dirtyRects.clear(); }
-
-	/**
-	 * Adds a rectangle to the list of modified areas of the screen during the
-	 * current frame
-	 */
-	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Surface _backBuffer1, _backBuffer2;
-	Surface *_backBuffer;
 	bool _fadeStyle;
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
@@ -86,24 +63,19 @@ public:
 	virtual ~Screen();
 
 	/**
-	 * Handles updating any dirty areas of the screen Surface object to the physical screen
+	 * Obtain the currently active back buffer.
 	 */
-	void update();
+	Surface *getBackBuffer() { return &_backBuffer; }
 
 	/**
-	 * Makes the whole screen dirty
+	 * Makes first back buffer active.
 	 */
-	void makeAllDirty();
+	void activateBackBuffer1();
 
 	/**
-	 * Return the currently active palette
+	 * Makes second back buffer active.
 	 */
-	void getPalette(byte palette[PALETTE_SIZE]);
-
-	/**
-	 * Set the palette
-	 */
-	void setPalette(const byte palette[PALETTE_SIZE]);
+	void activateBackBuffer2();
 
 	/**
 	 * Fades from the currently active palette to the passed palette
@@ -160,14 +132,14 @@ public:
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
-	void flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
+	void flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
 		int16 *width, int16 *height);
 
 	/**
 	 * Similar to flushImage, this method takes in an extra parameter for the scale proporation,
 	 * which affects the calculated bounds accordingly
 	 */
-	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
+	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
 		int16 *width, int16 *height, int scaleVal);
 
 	/**

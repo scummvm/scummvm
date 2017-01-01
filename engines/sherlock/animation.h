@@ -57,7 +57,7 @@ public:
 	 * Load the prologue name array
 	 */
 	void setPrologueNames(const char *const *names, int count);
-	
+
 	/**
 	 * Load the prologue frame array
 	 */
@@ -67,7 +67,7 @@ public:
 	 * Load the title name array
 	 */
 	void setTitleNames(const char *const *names, int count);
-	
+
 	/**
 	 * Load the title frame array
 	 */

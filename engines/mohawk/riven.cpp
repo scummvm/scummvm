@@ -25,6 +25,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "gui/saveload.h"
 
 #include "mohawk/cursors.h"
 #include "mohawk/installer_archive.h"
@@ -33,8 +34,8 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
+#include "mohawk/riven_sound.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/console.h"
 
@@ -54,9 +55,20 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_gameOver = false;
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
-	_extrasFile = 0;
+	_extrasFile = nullptr;
 	_curStack = kStackUnknown;
-	_hotspots = 0;
+	_hotspots = nullptr;
+	_gfx = nullptr;
+	_sound = nullptr;
+	_externalScriptHandler = nullptr;
+	_rnd = nullptr;
+	_scriptMan = nullptr;
+	_console = nullptr;
+	_saveLoad = nullptr;
+	_optionsDialog = nullptr;
+	_curCard = 0;
+	_hotspotCount = 0;
+	_curHotspot = -1;
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
@@ -70,6 +82,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "assets1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
 
 	g_atrusJournalRect1 = new Common::Rect(295, 402, 313, 426);
 	g_atrusJournalRect2 = new Common::Rect(259, 402, 278, 426);
@@ -81,6 +94,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
+	delete _sound;
 	delete _gfx;
 	delete _console;
 	delete _externalScriptHandler;
@@ -112,6 +126,7 @@ Common::Error MohawkEngine_Riven::run() {
 		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
+	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
@@ -132,8 +147,8 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need to have a cursor source, or the game won't work
 	if (!_cursor->hasSource()) {
-		Common::String message = "You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ";
-		message += "Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.";
+		Common::String message = _("You're missing a Riven executable. The Windows executable is 'riven.exe' or 'rivendmo.exe'. ");
+		message += _("Using the 'arcriven.z' installer file also works. In addition, you can use the Mac 'Riven' executable.");
 		GUIErrorMessage(message);
 		warning("%s", message.c_str());
 		return Common::kNoGameDataFoundError;
@@ -144,7 +159,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// We need extras.mhk for inventory images, marble images, and credits images
 	if (!_extrasFile->openFile("extras.mhk")) {
-		Common::String message = "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.";
+		Common::String message = _("You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also works.");
 		GUIErrorMessage(message);
 		warning("%s", message.c_str());
 		return Common::kNoGameDataFoundError;
@@ -165,13 +180,10 @@ Common::Error MohawkEngine_Riven::run() {
 		changeToCard(6);
 	} else if (ConfMan.hasKey("save_slot")) {
 		// Load game from launcher/command line if requested
-		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
-		if (gameToLoad > savedGamesList.size())
-			error ("Could not find saved game");
+		int gameToLoad = ConfMan.getInt("save_slot");
 
 		// Attempt to load the game. On failure, just send us to the main menu.
-		if (_saveLoad->loadGame(savedGamesList[gameToLoad]).getCode() != Common::kNoError) {
+		if (_saveLoad->loadGame(gameToLoad).getCode() != Common::kNoError) {
 			changeToStack(kStackAspit);
 			changeToCard(1);
 		}
@@ -191,6 +203,7 @@ Common::Error MohawkEngine_Riven::run() {
 void MohawkEngine_Riven::handleEvents() {
 	// Update background running things
 	checkTimer();
+	_sound->updateSLST();
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
 	needsUpdate |= _video->updateMovies();
 
@@ -250,6 +263,8 @@ void MohawkEngine_Riven::handleEvents() {
 				break;
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
+				if (_optionsDialog->getLoadSlot() >= 0)
+					loadGameState(_optionsDialog->getLoadSlot());
 				updateZipMode();
 				break;
 			case Common::KEYCODE_r:
@@ -700,6 +715,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+		_sound->updateSLST();
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
 		needsUpdate |= _video->updateMovies();
 
@@ -723,16 +739,11 @@ void MohawkEngine_Riven::runLoadDialog() {
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]);
+	return _saveLoad->loadGame(slot);
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	Common::StringArray saveList = _saveLoad->generateSaveGameList();
-
-	if ((uint)slot < saveList.size())
-		_saveLoad->deleteSave(saveList[slot]);
-
-	return _saveLoad->saveGame(desc);
+	return _saveLoad->saveGame(slot, desc);
 }
 
 Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {

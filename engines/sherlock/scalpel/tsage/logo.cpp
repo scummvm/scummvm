@@ -163,6 +163,7 @@ Object::Object() {
 	_angle = _changeCtr = 0;
 	_walkStartFrame = 0;
 	_majorDiff = _minorDiff = 0;
+	_updateStartFrame = 0;
 }
 
 void Object::setVisage(int visage, int strip) {
@@ -180,7 +181,7 @@ void Object::setAnimMode(bool isAnimating) {
 }
 
 void Object::setDestination(const Common::Point &pt) {
-	_destination = pt; 
+	_destination = pt;
 
 	int moveRate = 10;
 	_walkStartFrame = _vm->_events->getFrameCounter();
@@ -214,9 +215,9 @@ void Object::setDestination(const Common::Point &pt) {
 
 void Object::erase() {
 	Screen &screen = *_vm->_screen;
-	
+
 	if (_visage.isLoaded() && !_oldBounds.isEmpty())
-		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen.SHblitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 }
 
 void Object::update() {
@@ -232,7 +233,7 @@ void Object::update() {
 				move();
 			}
 		}
-		
+
 		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
 				_frame = changeFrame();
@@ -245,9 +246,9 @@ void Object::update() {
 		_visage.getFrame(s, _frame);
 
 		// Display the frame
-		_oldBounds = Common::Rect(_position.x, _position.y, _position.x + s.w(), _position.y + s.h());
+		_oldBounds = Common::Rect(_position.x, _position.y, _position.x + s.width(), _position.y + s.height());
 		_oldBounds.translate(-s._centroid.x, -s._centroid.y);
-		screen.transBlitFrom(s, Common::Point(_oldBounds.left, _oldBounds.top));
+		screen.SHtransBlitFrom(s, Common::Point(_oldBounds.left, _oldBounds.top));
 	}
 }
 
@@ -435,7 +436,7 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	_animateFrameDelay = 0;
 	_animateFrames = NULL;
 	_animateFrame = 0;
-	
+
 	// Save a copy of the original palette
 	_vm->_screen->getPalette(_originalPalette);
 
@@ -629,7 +630,7 @@ void Logo::startAnimation(uint object, uint frameDelay, const AnimationFrame *fr
 
 void Logo::loadBackground() {
 	Screen &screen = *_vm->_screen;
-	
+
 	for (int idx = 0; idx < 4; ++idx) {
 		// Get the portion of the screen
 		Common::SeekableReadStream *stream = _lib.getResource(RES_BITMAP, 10, idx);
@@ -651,7 +652,7 @@ void Logo::loadBackground() {
 	screen.setPalette(palette);
 
 	// Copy the surface to the screen
-	screen.blitFrom(screen._backBuffer1);
+	screen.SHblitFrom(screen._backBuffer1);
 }
 
 void Logo::fade(const byte palette[PALETTE_SIZE], int step) {

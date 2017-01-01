@@ -44,7 +44,7 @@ class GameProject : public CObject {
 };
 
 struct PicAniInfo {
-	int32 type;
+	uint32 type;
 	int16 objectId;
 	int16 field_6;
 	int32 field_8;
@@ -61,6 +61,10 @@ struct PicAniInfo {
 	int32 someDynamicPhaseIndex;
 
 	bool load(MfcArchive &file);
+	void save(MfcArchive &file);
+	void print();
+
+	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };
 
 union VarValue {
@@ -85,6 +89,7 @@ class GameVar : public CObject {
 	virtual ~GameVar();
 
 	virtual bool load(MfcArchive &file);
+	virtual void save(MfcArchive &file);
 	GameVar *getSubVarByName(const char *name);
 	bool setSubVarAsInt(const char *name, int value);
 	int getSubVarAsInt(const char *name);

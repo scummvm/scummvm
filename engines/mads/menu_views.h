@@ -119,8 +119,8 @@ protected:
 	virtual void doFrame();
 
 	/**
-	* Called when the script is finished
-	*/
+	 * Called when the script is finished
+	 */
 	virtual void scriptDone();
 public:
 	/**
@@ -191,6 +191,11 @@ private:
 	int _manualFrame2;
 	int _animFrameNumber;
 	bool _nextCyclingActive;
+private:
+	void checkResource(const Common::String &resourceName);
+
+	int scanResourceIndex(const Common::String &resourceName);
+
 	uint _scrollFrameCtr;
 private:
 	void load();

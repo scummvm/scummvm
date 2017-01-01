@@ -130,4 +130,15 @@ public:
 		TS_ASSERT_EQUALS(r1 / 2, Common::Rational(1, 4));
 		TS_ASSERT_EQUALS(2 / r1, Common::Rational(4, 1));
 	}
+
+	void test_isOne() {
+		Common::Rational r0(5, 5);
+		Common::Rational r1(1, 2);
+		Common::Rational r2(2, 1);
+		Common::Rational r3(1, 1);
+		TS_ASSERT(r0.isOne());
+		TS_ASSERT(!r1.isOne());
+		TS_ASSERT(!r2.isOne());
+		TS_ASSERT(r3.isOne());
+	}
 };

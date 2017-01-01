@@ -91,6 +91,8 @@ Screen::Screen(MadeEngine *vm) : _vm(vm) {
 	_currentFontNum = 0;
 	_fontDrawCtx.clipRect = Common::Rect(320, 200);
 	_fontDrawCtx.destSurface = _backgroundScreen;
+	_outlineColor = 0;
+	_dropShadowColor = 0;
 
 	clearChannels();
 }

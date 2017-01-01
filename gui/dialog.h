@@ -82,7 +82,7 @@ public:
 
 	virtual void reflowLayout();
 	virtual void lostFocus();
-	virtual void receivedFocus() {}
+	virtual void receivedFocus(int x = -1, int y = -1) { if (x >= 0 && y >= 0) handleMouseMoved(x, y, 0); }
 
 protected:
 	virtual void open();

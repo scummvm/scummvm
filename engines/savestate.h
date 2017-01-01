@@ -27,7 +27,6 @@
 #include "common/str.h"
 #include "common/ptr.h"
 
-
 namespace Graphics {
 struct Surface;
 }
@@ -89,6 +88,24 @@ public:
 	 * Queries whether the save state is write protected.
 	 */
 	bool getWriteProtectedFlag() const { return _isWriteProtected; }
+
+	/**
+	 * Defines whether the save state is "locked" because is being synced.
+	 */
+	void setLocked(bool state) {
+		_isLocked = state;
+
+		//just in case:
+		if (state) {
+			setDeletableFlag(false);
+			setWriteProtectedFlag(true);
+		}
+	}
+
+	/**
+	* Queries whether the save state is "locked" because is being synced.
+	*/
+	bool getLocked() const { return _isLocked; }
 
 	/**
 	 * Return a thumbnail graphics surface representing the savestate visually.
@@ -181,6 +198,11 @@ private:
 	bool _isWriteProtected;
 
 	/**
+	 * Whether the save state is "locked" because is being synced.
+	 */
+	bool _isLocked;
+
+	/**
 	 * Human readable description of the date the save state was created.
 	 */
 	Common::String _saveDate;
@@ -205,5 +227,13 @@ private:
 /** List of savestates. */
 typedef Common::Array<SaveStateDescriptor> SaveStateList;
 
+/**
+ * Comparator object to compare SaveStateDescriptor's based on slot.
+ */
+struct SaveStateDescriptorSlotComparator {
+	bool operator()(const SaveStateDescriptor &x, const SaveStateDescriptor &y) const {
+		return x.getSaveSlot() < y.getSaveSlot();
+	}
+};
 
 #endif

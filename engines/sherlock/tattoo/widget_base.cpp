@@ -33,6 +33,7 @@ namespace Tattoo {
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 	_scroll = false;
 	_dialogTimer = 0;
+	_outsideMenu = false;
 }
 
 void WidgetBase::summonWindow() {
@@ -87,7 +88,7 @@ void WidgetBase::erase() {
 
 	if (_oldBounds.width() > 0) {
 		// Restore the affected area from the secondary back buffer into the first one, and then copy to screen
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 		screen.slamRect(_oldBounds);
 
 		// Reset the old bounds so it won't be erased again
@@ -105,12 +106,12 @@ void WidgetBase::draw() {
 	if (_bounds.width() > 0 && !_surface.empty()) {
 		// Get the area to draw, adjusted for scroll position
 		restrictToScreen();
-		
+
 		// Draw the background for the widget
 		drawBackground();
 
 		// Draw the widget onto the back buffer and then slam it to the screen
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+		screen._backBuffer1.SHtransBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
 		screen.slamRect(_bounds);
 
 		// Store a copy of the drawn area for later erasing
@@ -145,7 +146,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		const char *lineStartP = strP;
 
 		// Find how many characters will fit on the next line
-		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || 
+		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] ||
 				(byte)*strP == talk._opcodes[OP_NULL])) {
 			width += _surface.charWidth(*strP);
 
@@ -155,7 +156,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 			++strP;
 		}
 
-		// If the line was too wide to fit on a single line, go back to the last space 
+		// If the line was too wide to fit on a single line, go back to the last space
 		// if there was one, or otherwise simply break the line at this point
 		if (width >= maxWidth && spaceP != nullptr)
 			strP = spaceP;
@@ -166,7 +167,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] 
+	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER]
 			|| (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
@@ -182,8 +183,8 @@ void WidgetBase::restrictToScreen() {
 		_bounds.moveTo(_bounds.left, 0);
 	if (_bounds.right > (screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH))
 		_bounds.moveTo(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH - _bounds.width(), _bounds.top);
-	if (_bounds.bottom > screen._backBuffer1.h())
-		_bounds.moveTo(_bounds.left, screen._backBuffer1.h() - _bounds.height());
+	if (_bounds.bottom > screen._backBuffer1.height())
+		_bounds.moveTo(_bounds.left, screen._backBuffer1.height() - _bounds.height());
 }
 
 void WidgetBase::makeInfoArea(Surface &s) {
@@ -191,30 +192,30 @@ void WidgetBase::makeInfoArea(Surface &s) {
 	ImageFile &images = *ui._interfaceImages;
 
 	// Draw the four corners of the Info Box
-	s.transBlitFrom(images[0], Common::Point(0, 0));
-	s.transBlitFrom(images[1], Common::Point(s.w() - images[1]._width, 0));
-	s.transBlitFrom(images[2], Common::Point(0, s.h() - images[2]._height));
-	s.transBlitFrom(images[3], Common::Point(s.w() - images[3]._width, s.h()));
+	s.SHtransBlitFrom(images[0], Common::Point(0, 0));
+	s.SHtransBlitFrom(images[1], Common::Point(s.width() - images[1]._width, 0));
+	s.SHtransBlitFrom(images[2], Common::Point(0, s.height() - images[2]._height));
+	s.SHtransBlitFrom(images[3], Common::Point(s.width() - images[3]._width, s.height()));
 
 	// Draw the top of the Info Box
-	s.hLine(images[0]._width, 0, s.w() - images[1]._width, INFO_TOP);
-	s.hLine(images[0]._width, 1, s.w() - images[1]._width, INFO_MIDDLE);
-	s.hLine(images[0]._width, 2, s.w() - images[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, 0, s.width() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, 1, s.width() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, 2, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the bottom of the Info Box
-	s.hLine(images[0]._width, s.h()- 3, s.w() - images[1]._width, INFO_TOP);
-	s.hLine(images[0]._width, s.h()- 2, s.w() - images[1]._width, INFO_MIDDLE);
-	s.hLine(images[0]._width, s.h()- 1, s.w() - images[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, s.height()- 3, s.width() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, s.height()- 2, s.width() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, s.height()- 1, s.width() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the left Side of the Info Box
-	s.vLine(0, images[0]._height, s.h()- images[2]._height, INFO_TOP);
-	s.vLine(1, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
-	s.vLine(2, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
+	s.vLine(0, images[0]._height, s.height()- images[2]._height, INFO_TOP);
+	s.vLine(1, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
+	s.vLine(2, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
 
 	// Draw the right Side of the Info Box
-	s.vLine(s.w() - 3, images[0]._height, s.h()- images[2]._height, INFO_TOP);
-	s.vLine(s.w() - 2, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
-	s.vLine(s.w() - 1, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
+	s.vLine(s.width() - 3, images[0]._height, s.height()- images[2]._height, INFO_TOP);
+	s.vLine(s.width() - 2, images[0]._height, s.height()- images[2]._height, INFO_MIDDLE);
+	s.vLine(s.width() - 1, images[0]._height, s.height()- images[2]._height, INFO_BOTTOM);
 }
 
 void WidgetBase::makeInfoArea() {
@@ -265,7 +266,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	// Draw the scroll position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE + 
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE +
 		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);

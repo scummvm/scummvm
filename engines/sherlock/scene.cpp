@@ -27,6 +27,7 @@
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/3do/scalpel_3do_screen.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -216,7 +217,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 
 	_currentScene = -1;
 	_goToScene = -1;
-	_loadingSavedGame = false;
 	_walkedInScene = false;
 	_version = 0;
 	_compressed = false;
@@ -274,6 +274,8 @@ void Scene::selectScene() {
 }
 
 void Scene::freeScene() {
+	SaveManager &saves = *_vm->_saves;
+
 	if (_currentScene == -1)
 		return;
 
@@ -284,10 +286,8 @@ void Scene::freeScene() {
 	_vm->_music->freeSong();
 	_vm->_sound->freeLoadedSounds();
 
-	if (!_loadingSavedGame)
+	if (!saves._justLoaded)
 		saveSceneStatus();
-	else
-		_loadingSavedGame = false;
 
 	_sequenceBuffer.clear();
 	_descText.clear();
@@ -357,7 +357,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (IS_ROSE_TATTOO) {
 				// Resize the screen if necessary
 				int fullWidth = SHERLOCK_SCREEN_WIDTH + bgHeader._scrollSize;
-				if (screen._backBuffer1.w() != fullWidth) {
+				if (screen._backBuffer1.width() != fullWidth) {
 					screen._backBuffer1.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 					screen._backBuffer2.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 				}
@@ -374,7 +374,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				} else {
 					rrmStream->read(screen._backBuffer1.getPixels(), fullWidth * SHERLOCK_SCREEN_HEIGHT);
 				}
-			} 
+			}
 
 			// Read in the shapes header info
 			Common::Array<BgFileHeaderInfo> bgInfo;
@@ -528,7 +528,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				delete[] cAnimOffsetTablePtr;
 			}
 
-			
+
 
 			// Read in the room bounding areas
 			int size = rrmStream->readUint16LE();
@@ -563,33 +563,36 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the walk data
 			size = rrmStream->readUint16LE();
-			Common::SeekableReadStream *walkStream = !_compressed ? rrmStream :
+			Common::SeekableReadStream *walkStream = !_compressed ? rrmStream->readStream(size) :
 				res.decompress(*rrmStream, size);
-
-			int startPos = walkStream->pos();
-			while ((walkStream->pos() - startPos) < size) {
-				_walkPoints.push_back(WalkArray());
-				_walkPoints[_walkPoints.size() - 1]._fileOffset = walkStream->pos() - startPos;
-				_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
-			}
-
-			if (_compressed)
-				delete walkStream;
 
 			// Translate the file offsets of the walk directory to indexes in the loaded walk data
 			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 				for (uint idx2 = 0; idx2 < _zones.size(); ++idx2) {
-					int fileOffset = _walkDirectory[idx1][idx2];
-					if (fileOffset == -1)
+					int dataOffset = _walkDirectory[idx1][idx2];
+					if (dataOffset == -1)
 						continue;
 
+					// Check to see if we've already loaded the walk set for the given data offset
 					uint dataIndex = 0;
-					while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != fileOffset)
+					while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != dataOffset)
 						++dataIndex;
-					assert(dataIndex < _walkPoints.size());
+
+					if (dataIndex == _walkPoints.size()) {
+						// Walk data for that offset hasn't been loaded yet, so load it now
+						_walkPoints.push_back(WalkArray());
+
+						walkStream->seek(dataOffset);
+						_walkPoints[_walkPoints.size() - 1]._fileOffset = dataOffset;
+						_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
+						dataIndex = _walkPoints.size() - 1;
+					}
+
 					_walkDirectory[idx1][idx2] = dataIndex;
 				}
 			}
+
+			delete walkStream;
 
 			if (IS_ROSE_TATTOO) {
 				// Read in the entrance
@@ -624,7 +627,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (IS_ROSE_TATTOO) {
 				// Load the object sound list
 				char buffer[27];
-			
+
 				_objSoundList.resize(rrmStream->readUint16LE());
 				for (uint idx = 0; idx < _objSoundList.size(); ++idx) {
 					rrmStream->read(buffer, 27);
@@ -647,7 +650,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			}
 
 			// Backup the image and set the palette
-			screen._backBuffer2.blitFrom(screen._backBuffer1);
+			screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 			screen.setPalette(screen._cMap);
 
 			delete rrmStream;
@@ -893,27 +896,37 @@ bool Scene::loadScene(const Common::String &filename) {
 		// === WALK DATA === Read in the walk data
 		roomStream->seek(header3DO_walkData_offset);
 
-		int startPos = roomStream->pos();
-		while ((roomStream->pos() - startPos) < (int)header3DO_walkData_size) {
-			_walkPoints.push_back(WalkArray());
-			_walkPoints[_walkPoints.size() - 1]._fileOffset = roomStream->pos() - startPos;
-			_walkPoints[_walkPoints.size() - 1].load(*roomStream, false);
-		}
+		// Read in the walk data
+		Common::SeekableReadStream *walkStream = !_compressed ? roomStream->readStream(header3DO_walkData_size) :
+			res.decompress(*roomStream, header3DO_walkData_size);
 
 		// Translate the file offsets of the walk directory to indexes in the loaded walk data
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2) {
-				int fileOffset = _walkDirectory[idx1][idx2];
-				if (fileOffset == -1)
+				int dataOffset = _walkDirectory[idx1][idx2];
+				if (dataOffset == -1)
 					continue;
 
+				// Check to see if we've already loaded the walk set for the given data offset
 				uint dataIndex = 0;
-				while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != fileOffset)
+				while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != dataOffset)
 					++dataIndex;
-				assert(dataIndex < _walkPoints.size());
+
+				if (dataIndex == _walkPoints.size()) {
+					// Walk data for that offset hasn't been loaded yet, so load it now
+					_walkPoints.push_back(WalkArray());
+
+					walkStream->seek(dataOffset);
+					_walkPoints[_walkPoints.size() - 1]._fileOffset = dataOffset;
+					_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
+					dataIndex = _walkPoints.size() - 1;
+				}
+
 				_walkDirectory[idx1][idx2] = dataIndex;
 			}
 		}
+
+		delete walkStream;
 
 		// === EXITS === Read in the exits
 		roomStream->seek(header3DO_exits_offset);
@@ -984,12 +997,12 @@ bool Scene::loadScene(const Common::String &filename) {
 
 #if 0
 		// code to show the background
-		screen.blitFrom(screen._backBuffer1);
+		screen.SHblitFrom(screen._backBuffer1);
 		_vm->_events->wait(10000);
 #endif
 
 		// Backup the image
-		screen._backBuffer2.blitFrom(screen._backBuffer1);
+		screen._backBuffer2.SHblitFrom(screen._backBuffer1);
 	}
 
 	// Handle drawing any on-screen interface
@@ -1192,9 +1205,9 @@ void Scene::transitionToScene() {
 		if (hSavedFacing < 8 && !saves._justLoaded) {
 			if (IS_ROSE_TATTOO)
 				hSavedFacing = Tattoo::FS_TRANS[hSavedFacing];
-			else			
+			else
 				hSavedFacing = Scalpel::FS_TRANS[hSavedFacing];
-			
+
 			hSavedPos.x *= FIXED_INT_MULTIPLIER;
 			hSavedPos.y *= FIXED_INT_MULTIPLIER;
 		}
@@ -1222,9 +1235,9 @@ void Scene::transitionToScene() {
 		people[HOLMES]._position = Common::Point(0, 0);
 	}
 
-	// If the scene is capable of scrolling, set the current scroll so that whoever has control 
+	// If the scene is capable of scrolling, set the current scroll so that whoever has control
 	// of the scroll code is in the middle of the screen
-	if (screen._backBuffer1.w() > SHERLOCK_SCREEN_WIDTH)
+	if (screen._backBuffer1.width() > SHERLOCK_SCREEN_WIDTH)
 		people[people._walkControl].centerScreenOnPerson();
 
 	for (uint objIdx = 0; objIdx < _bgShapes.size(); ++objIdx) {
@@ -1243,7 +1256,7 @@ void Scene::transitionToScene() {
 			}
 
 			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, 
+					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
 					people[HOLMES]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the
@@ -1377,7 +1390,6 @@ void Scene::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_currentScene);
 	} else {
 		s.syncAsSint16LE(_goToScene);
-		_loadingSavedGame = true;
 	}
 
 	for (int sceneNum = 1; sceneNum < SCENES_COUNT; ++sceneNum) {

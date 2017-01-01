@@ -77,7 +77,7 @@ void Player_V2::setMusicVolume (int vol) {
 		vol = 255;
 
 	/* scale to int16, FIXME: find best value */
-	double out = vol * 128 / 3;
+	double out = vol * 128.0 / 3.0;
 
 	/* build volume table (2dB per step) */
 	for (int i = 0; i < 15; i++) {

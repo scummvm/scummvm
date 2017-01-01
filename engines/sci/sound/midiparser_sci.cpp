@@ -717,7 +717,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 						break;
 					case SCI_VERSION_1_EARLY:
 					case SCI_VERSION_1_LATE:
-					case SCI_VERSION_2_1:
+					case SCI_VERSION_2_1_EARLY:
 						inc = 1;
 						break;
 					default:
@@ -862,7 +862,7 @@ void MidiParser_SCI::setMasterVolume(byte masterVolume) {
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1:
+	case SCI_VERSION_2_1_EARLY:
 		// directly set master volume (global volume is merged with channel volumes)
 		((MidiPlayer *)_driver)->setVolume(masterVolume);
 		break;
@@ -887,7 +887,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1:
+	case SCI_VERSION_2_1_EARLY:
 		// Send previous channel volumes again to actually update the volume
 		for (int i = 0; i < 15; i++)
 			if (_channelRemap[i] != -1)

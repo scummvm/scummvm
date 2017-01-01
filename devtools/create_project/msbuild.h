@@ -49,6 +49,7 @@ protected:
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
 	int getVisualStudioVersion();
+	int getSolutionVersion();
 
 private:
 	struct FileEntry {

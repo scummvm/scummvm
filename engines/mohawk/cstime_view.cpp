@@ -243,7 +243,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 		if ((feature->_flags & kFeatureNewDisable) || (feature->_flags & kFeatureNewDisableOnReset)) {
 			feature->_data.enabled = 0;
 		}
-		feature->_dirty = 1;
+		feature->_dirty = true;
 		if (feature->_flags & kFeatureInternalRegion) {
 			// TODO: create region [+140] (if not already done)
 		}
@@ -257,7 +257,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 				// TODO: or clip with bounds
 			}
 		}
-		feature->_dirty = 1;
+		feature->_dirty = true;
 		if (feature->_flags & kFeatureNewInternalTiming) {
 			feature->_nextTime += feature->_delayTime;
 		} else {
@@ -277,7 +277,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 			}
 
 			feature->_data.currOffset = 26;
-			feature->_done = 0;
+			feature->_done = false;
 		}
 		if (feature->_flags & kFeatureNewDisable)
 			feature->_data.enabled = 0;
@@ -307,7 +307,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 			}
 		case 0:
 			// TODO: set ptr +176 to 1
-			feature->_done = 1;
+			feature->_done = true;
 			if (feature->_doneProc) {
 				(this->*(feature->_doneProc))(feature); // TODO: with -1
 			}

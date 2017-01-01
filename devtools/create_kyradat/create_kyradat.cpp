@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 86
+	kKyraDatVersion = 89
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -119,7 +119,6 @@ const ExtractFilename extractFilenames[] = {
 
 	// AUDIO filename table
 	{ k1AudioTracks, kStringList, false },
-	{ k1AudioTracks2, kStringList, false },
 	{ k1AudioTracksIntro, kStringList, false },
 
 	// AMULET anim

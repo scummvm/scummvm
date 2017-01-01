@@ -312,10 +312,10 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = {
-		g_sci->_gfxPalette->kernelFindColor(0, 255, 0),	// green
-		g_sci->_gfxPalette->kernelFindColor(0, 0, 255),	// blue
-		g_sci->_gfxPalette->kernelFindColor(255, 0, 0),	// red
-		g_sci->_gfxPalette->kernelFindColor(255, 255, 0)	// yellow
+		g_sci->_gfxPalette16->kernelFindColor(0, 255, 0),	// green
+		g_sci->_gfxPalette16->kernelFindColor(0, 0, 255),	// blue
+		g_sci->_gfxPalette16->kernelFindColor(255, 0, 0),	// red
+		g_sci->_gfxPalette16->kernelFindColor(255, 255, 0)	// yellow
 	};
 
 	// Clip
@@ -326,7 +326,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
-	g_sci->_gfxPaint->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+	g_sci->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {
@@ -334,8 +334,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	// Green: End point
 	// Blue: Starting point
 	int point_colors[2] = {
-		g_sci->_gfxPalette->kernelFindColor(0, 255, 0),	// green
-		g_sci->_gfxPalette->kernelFindColor(0, 0, 255)		// blue
+		g_sci->_gfxPalette16->kernelFindColor(0, 255, 0),	// green
+		g_sci->_gfxPalette16->kernelFindColor(0, 0, 255)		// blue
 	};
 
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
@@ -1397,10 +1397,8 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SciArray<reg_t> *array = segMan->allocateArray(&addr);
+		SciArray *array = segMan->allocateArray(kArrayTypeInt16, size * 2, &addr);
 		assert(array);
-		array->setType(0);
-		array->setSize(size * 2);
 		return addr;
 	}
 #endif
@@ -1943,14 +1941,14 @@ static int liesBefore(const Vertex *v, const Common::Point &p1, const Common::Po
 // indexp1/vertexp1 on the polygon being merged.
 // It ends with the point intersection2, being the analogous intersection.
 struct Patch {
-	unsigned int indexw1;
-	unsigned int indexp1;
+	uint32 indexw1;
+	uint32 indexp1;
 	const Vertex *vertexw1;
 	const Vertex *vertexp1;
 	Common::Point intersection1;
 
-	unsigned int indexw2;
-	unsigned int indexp2;
+	uint32 indexw2;
+	uint32 indexp2;
 	const Vertex *vertexw2;
 	const Vertex *vertexp2;
 	Common::Point intersection2;
@@ -1960,7 +1958,7 @@ struct Patch {
 
 
 // Check if the given vertex on the work polygon is bypassed by this patch.
-static bool isVertexCovered(const Patch &p, unsigned int wi) {
+static bool isVertexCovered(const Patch &p, uint32 wi) {
 
 	//         /             v       (outside)
 	//  ---w1--1----p----w2--2----
@@ -2402,7 +2400,7 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 
 	// Copy work.vertices into arrayRef
 	Vertex *vertex;
-	unsigned int n = 0;
+	uint32 n = 0;
 	CLIST_FOREACH(vertex, &work.vertices) {
 		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v)
 			writePoint(arrayRef, n++, vertex->v);

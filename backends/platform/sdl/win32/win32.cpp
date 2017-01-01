@@ -35,11 +35,13 @@
 #include "common/error.h"
 #include "common/textconsole.h"
 
+#include "backends/audiocd/win32/win32-audiocd.h"
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/platform/sdl/win32/win32-window.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/taskbar/win32/win32-taskbar.h"
+#include "backends/updates/win32/win32-updates.h"
 
 #include "common/memstream.h"
 
@@ -81,13 +83,18 @@ void OSystem_Win32::initBackend() {
 	if (_savefileManager == 0)
 		_savefileManager = new WindowsSaveFileManager();
 
+#if defined(USE_SPARKLE)
+	// Initialize updates manager
+	_updateManager = new Win32UpdateManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 }
 
 
 bool OSystem_Win32::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile)
+	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
 		return true;
 
 	return OSystem_SDL::hasFeature(f);
@@ -126,6 +133,16 @@ bool OSystem_Win32::displayLogFile() {
 		return true;
 
 	return false;
+}
+
+bool OSystem_Win32::openUrl(const Common::String &url) {
+	const uint64 result = (uint64)ShellExecute(0, 0, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), 0, 0, SW_SHOWNORMAL);
+	// ShellExecute returns a value greater than 32 if successful
+	if (result <= 32) {
+		warning("ShellExecute failed: error = %u", result);
+		return false;
+	}
+	return true;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
@@ -316,6 +333,10 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 	s.add("Win32Res", new Win32ResourceArchive(), priority);
 
 	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
+}
+
+AudioCDManager *OSystem_Win32::createAudioCDManager() {
+	return createWin32AudioCDManager();
 }
 
 #endif

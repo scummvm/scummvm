@@ -6,3 +6,4 @@ ___plugin_ctors
 ___plugin_ctors_end
 ___plugin_dtors
 ___plugin_dtors_end
+___dso_handle

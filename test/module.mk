@@ -8,6 +8,11 @@
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
 TEST_LIBS    := audio/libaudio.a common/libcommon.a
 
+ifdef ENABLE_WINTERMUTE
+	TESTS += $(srcdir)/test/engines/wintermute/*.h
+	TEST_LIBS += engines/wintermute/libwintermute.a
+endif
+
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh --include=$(srcdir)/test/cxxtest_mingw.h
 TEST_CFLAGS  := -I$(srcdir)/test/cxxtest

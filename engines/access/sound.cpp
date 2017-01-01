@@ -20,9 +20,11 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 // Miles Audio
@@ -33,10 +35,12 @@
 namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+	_effectsHandle = new Audio::SoundHandle();
 }
 
 SoundManager::~SoundManager() {
 	clearSounds();
+	delete _effectsHandle;
 }
 
 void SoundManager::clearSounds() {
@@ -47,13 +51,22 @@ void SoundManager::clearSounds() {
 
 	_soundTable.clear();
 
-	if (_mixer->isSoundHandleActive(_effectsHandle))
-		_mixer->stopHandle(_effectsHandle);
+	if (_mixer->isSoundHandleActive(*_effectsHandle))
+		_mixer->stopHandle(*_effectsHandle);
 
 	while (_queue.size()) {
-		delete _queue[0];
+		delete _queue[0]._stream;
 		_queue.remove_at(0);
 	}
+}
+
+bool SoundManager::isSoundQueued(int soundId) const {
+	for (uint idx = 0; idx < _queue.size(); ++idx) {
+		if (_queue[idx]._soundId == soundId)
+			return true;
+	}
+
+	return false;
 }
 
 void SoundManager::loadSoundTable(int idx, int fileNum, int subfile, int priority) {
@@ -77,12 +90,15 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 
 void SoundManager::playSound(int soundIndex, bool loop) {
 	debugC(1, kDebugSound, "playSound(%d, %d)", soundIndex, loop);
+	if (isSoundQueued(soundIndex))
+		// Prevent duplicate copies of a sound from being queued
+		return;
 
 	int priority = _soundTable[soundIndex]._priority;
-	playSound(_soundTable[soundIndex]._res, priority, loop);
+	playSound(_soundTable[soundIndex]._res, priority, loop, soundIndex);
 }
 
-void SoundManager::playSound(Resource *res, int priority, bool loop) {
+void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIndex) {
 	debugC(1, kDebugSound, "playSound");
 
 	byte *resourceData = res->data();
@@ -109,7 +125,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop) {
 		byte internalSampleRate = resourceData[5];
 		int sampleSize = READ_LE_UINT16(resourceData + 7);
 
-		assert( (sampleSize + 32) == res->_size);
+		assert( (sampleSize + 32) <= res->_size);
 
 		int sampleRate = 0;
 		switch (internalSampleRate) {
@@ -139,34 +155,35 @@ void SoundManager::playSound(Resource *res, int priority, bool loop) {
 		error("Unknown format");
 
 	if (loop) {
-		_queue.push_back(new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::NO));
+		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0,
+			DisposeAfterUse::NO), soundIndex));
 	} else {
-		_queue.push_back(audioStream);
+		_queue.push_back(QueuedSound(audioStream, soundIndex));
 	}
 
-	if (!_mixer->isSoundHandleActive(_effectsHandle))
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
-						_queue[0], -1, _mixer->kMaxChannelVolume, 0,
+	if (!_mixer->isSoundHandleActive(*_effectsHandle))
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
+						_queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
 						DisposeAfterUse::NO);
 }
 
 void SoundManager::checkSoundQueue() {
 	debugC(5, kDebugSound, "checkSoundQueue");
 
-	if (_queue.empty() || _mixer->isSoundHandleActive(_effectsHandle))
+	if (_queue.empty() || _mixer->isSoundHandleActive(*_effectsHandle))
 		return;
 
-	delete _queue[0];
+	delete _queue[0]._stream;
 	_queue.remove_at(0);
 
-	if (_queue.size() && _queue[0])
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
-		   _queue[0], -1, _mixer->kMaxChannelVolume, 0,
+	if (_queue.size() && _queue[0]._stream)
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle,
+		   _queue[0]._stream, -1, _mixer->kMaxChannelVolume, 0,
 		   DisposeAfterUse::NO);
 }
 
 bool SoundManager::isSFXPlaying() {
-	return _mixer->isSoundHandleActive(_effectsHandle);
+	return _mixer->isSoundHandleActive(*_effectsHandle);
 }
 
 void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
@@ -183,7 +200,7 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 void SoundManager::stopSound() {
 	debugC(3, kDebugSound, "stopSound");
 
-	_mixer->stopHandle(_effectsHandle);
+	_mixer->stopHandle(*_effectsHandle);
 }
 
 void SoundManager::freeSounds() {
@@ -213,7 +230,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	//
 	switch (musicType) {
 	case MT_ADLIB: {
-		if (_vm->getGameID() == GType_Amazon) {
+		if (_vm->getGameID() == GType_Amazon && !_vm->isDemo()) {
 			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
 			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 

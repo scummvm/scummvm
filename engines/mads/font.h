@@ -86,7 +86,7 @@ public:
 	int maxWidth() const { return _maxWidth; }
 	int getWidth(const Common::String &msg, int spaceWidth = -1);
 	int getHeight() const { return _maxHeight; }
-	int writeString(MSurface *surface, const Common::String &msg, const Common::Point &pt,
+	int writeString(BaseSurface *surface, const Common::String &msg, const Common::Point &pt,
 		int spaceWidth = 0, int width = 0);
 };
 

@@ -151,7 +151,7 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 	Common::Rect rect;
 
 	if (textReference.isNull())
-		error("kEditControl called on object that doesnt have a text reference");
+		error("kEditControl called on object that doesn't have a text reference");
 	text = _segMan->getString(textReference);
 
 	uint16 oldCursorPos = cursorPos;

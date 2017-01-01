@@ -34,19 +34,30 @@ namespace Access {
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	: _gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
 	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugPath, "path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+
+	_aboutBox = nullptr;
 	_animation = nullptr;
 	_bubbleBox = nullptr;
 	_char = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
+	_invBox = nullptr;
 	_inventory = nullptr;
+	_helpBox = nullptr;
 	_midi = nullptr;
 	_player = nullptr;
+	_res = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
 	_scripts = nullptr;
 	_sound = nullptr;
+	_travelBox = nullptr;
 	_video = nullptr;
 
 	_destIn = nullptr;
@@ -130,6 +141,7 @@ AccessEngine::~AccessEngine() {
 	delete _inventory;
 	delete _midi;
 	delete _player;
+	delete _res;
 	delete _room;
 	delete _screen;
 	delete _scripts;
@@ -145,12 +157,6 @@ void AccessEngine::setVGA() {
 }
 
 void AccessEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	if (isCD()) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		// The CD version contains two versions of the game.
@@ -204,6 +210,13 @@ void AccessEngine::initialize() {
 }
 
 Common::Error AccessEngine::run() {
+	_res = Resources::init(this);
+	Common::String errorMessage;
+	if (!_res->load(errorMessage)) {
+		GUIErrorMessage(errorMessage);
+		return Common::kNoError;
+	}
+
 	setVGA();
 	initialize();
 
@@ -231,7 +244,7 @@ void AccessEngine::freeCells() {
 	}
 }
 
-void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
+void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 	Common::String lines = msg;
 	Common::String line;
 	int curPage = 0;
@@ -312,7 +325,7 @@ void AccessEngine::speakText(ASurface *s, const Common::String &msg) {
 	}
 }
 
-void AccessEngine::printText(ASurface *s, const Common::String &msg) {
+void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 	Common::String lines = msg;
 	Common::String line;
 	int width = 0;
@@ -423,20 +436,9 @@ void AccessEngine::copyBF1BF2() {
 }
 
 void AccessEngine::copyBF2Vid() {
-	const byte *srcP = (const byte *)_buffer2.getPixels();
-	byte *destP = (byte *)_screen->getBasePtr(_screen->_windowXAdd,
-		_screen->_windowYAdd + _screen->_screenYOff);
-
-	for (int yp = 0; yp < _screen->_vWindowLinesTall; ++yp) {
-		Common::copy(srcP, srcP + _screen->_vWindowBytesWide, destP);
-		srcP += _buffer2.pitch;
-		destP += _screen->pitch;
-	}
-
-	// Add dirty rect for affected area
-	Common::Rect r(_screen->_vWindowBytesWide, _screen->_vWindowLinesTall);
-	r.moveTo(_screen->_windowXAdd, _screen->_windowYAdd + _screen->_screenYOff);
-	_screen->addDirtyRect(r);
+	_screen->blitFrom(_buffer2,
+		Common::Rect(0, 0, _screen->_vWindowBytesWide, _screen->_vWindowLinesTall),
+		Common::Point(_screen->_windowXAdd, _screen->_windowYAdd));
 }
 
 void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {

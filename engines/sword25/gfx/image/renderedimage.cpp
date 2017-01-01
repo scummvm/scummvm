@@ -126,19 +126,10 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 	}
 
 	// Uncompress the image
-	int pitch;
-	byte *dst;
-	int w, h;
 	if (isPNG)
-		result = ImgLoader::decodePNGImage(pFileData, fileSize, dst, w, h, pitch);
+		result = ImgLoader::decodePNGImage(pFileData, fileSize, &_surface);
 	else
-		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, dst, w, h, pitch);
-
-	_surface.w = w;
-	_surface.h = h;
-	_surface.pitch = w * 4;
-	_surface.setPixels(dst);
-	_surface.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		result = ImgLoader::decodeThumbnailImage(pFileData, fileSize, &_surface);
 
 	if (!result) {
 		error("Could not decode image.");
@@ -187,6 +178,9 @@ RenderedImage::RenderedImage() : _isTransparent(true) {
 // -----------------------------------------------------------------------------
 
 RenderedImage::~RenderedImage() {
+	if (_doCleanup) {
+		_surface.free();
+	}
 }
 
 // -----------------------------------------------------------------------------

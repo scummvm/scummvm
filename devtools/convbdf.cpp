@@ -21,7 +21,7 @@
  */
 
 #ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#define __has_feature(x) 0    // Compatibility with non-clang compilers.
 #endif
 
 #include <fstream>
@@ -38,7 +38,10 @@ struct BdfBoundingBox {
 };
 
 struct BdfFont {
+	char *familyName;
+	char *slant;
 	int maxAdvance;
+	int size;
 	int height;
 	BdfBoundingBox defaultBox;
 	int ascent;
@@ -51,7 +54,7 @@ struct BdfFont {
 	unsigned char *advances;
 	BdfBoundingBox *boxes;
 
-	BdfFont() : bitmaps(0), advances(0), boxes(0) {
+	BdfFont() : bitmaps(0), advances(0), boxes(0), familyName(0), slant(0) {
 	}
 
 	~BdfFont() {
@@ -62,6 +65,8 @@ struct BdfFont {
 		delete[] bitmaps;
 		delete[] advances;
 		delete[] boxes;
+		delete[] familyName;
+		delete[] slant;
 	}
 };
 
@@ -137,8 +142,9 @@ int main(int argc, char *argv[]) {
 		if (in.fail() || in.eof())
 			error("Premature end of file");
 
-		if (hasPrefix(line, "SIZE ")) {
-			// Ignore
+		if (hasPrefix(line, "PIXEL_SIZE ")) {
+			if (sscanf(line.c_str(), "PIXEL_SIZE %d", &font.size) != 1)
+				error("Invalid PIXEL_SIZE");
 		} else if (hasPrefix(line, "FONT ")) {
 			fontName = line.substr(5);
 		} else if (hasPrefix(line, "COPYRIGHT ")) {
@@ -159,6 +165,24 @@ int main(int argc, char *argv[]) {
 			memset(font.bitmaps, 0, sizeof(unsigned char *) * font.numCharacters);
 			font.advances = new unsigned char[font.numCharacters];
 			font.boxes = new BdfBoundingBox[font.numCharacters];
+		} else if (hasPrefix(line, "FAMILY_NAME \"")) {
+			font.familyName = new char[line.size()]; // We will definitely fit here
+			strncpy(font.familyName, &line.c_str()[13], line.size() - 1);
+			char *p = &font.familyName[strlen(font.familyName)];
+			while (p != font.familyName && *p != '"')
+				p--;
+			if (p == font.familyName)
+				error("Invalid FAMILY_NAME");
+			*p = '\0'; // Remove last quote
+		} else if (hasPrefix(line, "SLANT \"")) {
+			font.familyName = new char[line.size()]; // We will definitely fit here
+			strncpy(font.familyName, &line.c_str()[7], line.size() - 1);
+			char *p = &font.slant[strlen(font.slant)];
+			while (p != font.slant && *p != '"')
+				p--;
+			if (p == font.slant)
+				error("Invalid SLANT");
+			*p = '\0'; // Remove last quote
 		} else if (hasPrefix(line, "FONT_ASCENT ")) {
 			if (sscanf(line.c_str(), "FONT_ASCENT %d", &font.ascent) != 1)
 				error("Invalid FONT_ASCENT");
@@ -392,7 +416,7 @@ int main(int argc, char *argv[]) {
 
 		for (int y = 0; y < box.height; ++y) {
 			printf("// |");
-			unsigned char data;
+			unsigned char data = 0;
 			for (int x = 0; x < box.width; ++x) {
 				if (!(x % 8))
 					data = *bitmap++;
@@ -481,8 +505,11 @@ int main(int argc, char *argv[]) {
 
 	printf("// Font structure\n"
 	       "static const BdfFontData desc = {\n"
+		   "\t\"%s\", // Family name\n"
+		   "\t\"%s\", // Slant\n"
 	       "\t%d, // Max advance\n"
 	       "\t%d, // Height\n"
+		   "\t%d, // Size\n"
 	       "\t{ %d, %d, %d, %d }, // Bounding box\n"
 	       "\t%d, // Ascent\n"
 	       "\n"
@@ -491,7 +518,7 @@ int main(int argc, char *argv[]) {
 	       "\t%d, // Characters\n"
 	       "\n"
 	       "\tbitmapTable, // Bitmaps\n",
-	       font.maxAdvance, font.height, font.defaultBox.width,
+	       font.familyName, font.slant, font.maxAdvance, font.size, font.height, font.defaultBox.width,
 	       font.defaultBox.height, font.defaultBox.xOffset, font.defaultBox.yOffset,
 	       font.ascent, font.firstCharacter, font.defaultCharacter, font.numCharacters);
 

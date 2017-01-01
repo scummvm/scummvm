@@ -23,6 +23,11 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
+namespace Graphics {
+	struct Surface;
+	struct TransparentSurface;
+}
+
 namespace Fullpipe {
 
 class DynamicPhase;
@@ -40,6 +45,7 @@ struct Bitmap {
 	int _flags;
 	Graphics::TransparentSurface *_surface;
 	int _flipping;
+	bool _copied_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);
@@ -47,7 +53,7 @@ struct Bitmap {
 
 	void load(Common::ReadStream *s);
 	void decode(int32 *palette);
-	void putDib(int x, int y, int32 *palette, int alpha);
+	void putDib(int x, int y, int32 *palette, byte alpha);
 	bool putDibRB(int32 *palette);
 	void putDibCB(int32 *palette);
 
@@ -123,7 +129,7 @@ class BigPicture : public Picture {
 
 class GameObject : public CObject {
   public:
-	int16 _okeyCode;
+	int16 _odelay;
 	int _field_8;
 	int16 _flags;
 	int16 _id;

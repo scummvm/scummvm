@@ -26,12 +26,15 @@
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/timestamp.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
 #include "voyeur/files.h"
+
+namespace Audio {
+class Timestamp;
+}
 
 namespace Voyeur {
 

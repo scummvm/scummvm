@@ -152,7 +152,7 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 			// of alpha-bits, however, as the game files that use this decoder seems
 			// to ignore that fact, we force the amount to 8 for 32bpp files for now.
 			_format = Graphics::PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
-		} else if (pixelDepth == 16 && imageType == TYPE_TRUECOLOR) {
+		} else if (pixelDepth == 16) {
 			// 16bpp TGA is ARGB1555
 			_format = Graphics::PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
 		} else {
@@ -353,6 +353,13 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 #endif
 						count--;
 					}
+				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
+					const uint16 rgb = tga.readUint16LE();
+					while (rleCount-- > 0) {
+						*((uint16 *)data) = rgb;
+						data += 2;
+						count--;
+					}
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_BW) {
 					byte color = tga.readByte();
 					while (rleCount-- > 0) {
@@ -395,6 +402,12 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 						*data++ = g;
 						*data++ = r;
 #endif
+						count--;
+					}
+				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
+					while (rleCount-- > 0) {
+						*((uint16 *)data) = tga.readUint16LE();
+						data += 2;
 						count--;
 					}
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_BW) {

@@ -30,6 +30,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/dialogs.h"
 
+#include "common/system.h"
 #include "common/random.h"
 
 namespace Avalanche {

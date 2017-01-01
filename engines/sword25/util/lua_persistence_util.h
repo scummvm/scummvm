@@ -90,7 +90,6 @@ void unboxUpValue(lua_State *luaState);
 size_t appendStackToStack_reverse(lua_State *from, lua_State *to);
 void correctStack(lua_State *L, TValue *oldstack);
 void lua_reallocstack(lua_State *L, int newsize);
-void lua_growstack(lua_State *L, int n);
 
 void lua_reallocCallInfo(lua_State *lauState, int newsize);
 

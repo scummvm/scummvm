@@ -23,13 +23,17 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Optional of course.
+	#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
 // version, which is at least major.minor.
-#define GCC_ATLEAST(major, minor) (defined(__GNUC__) && (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))))
+#ifdef __GNUC__
+	#define GCC_ATLEAST(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+#else
+	#define GCC_ATLEAST(major, minor) 0
+#endif
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
@@ -46,7 +50,7 @@
 
 	#if defined(WIN32)
 
-		#ifdef _MSC_VER
+		#if defined(_MSC_VER) && _MSC_VER <= 1800
 
 		// FIXME: The placement of the workaround functions for MSVC below
 		// require us to include stdio.h and stdarg.h for MSVC here. This
@@ -128,6 +132,7 @@
 	#include <stdlib.h>
 	#include <string.h>
 	#include <stdarg.h>
+	#include <stddef.h>
 	#include <assert.h>
 	#include <ctype.h>
 	#include <stddef.h>
@@ -252,6 +257,7 @@
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
+		  defined(__3DS__) || \
 		  defined(__GP32__) || \
 		  defined(IPHONE) || \
 		  defined(__PLAYSTATION2__) || \
@@ -368,11 +374,11 @@
 #endif
 
 #ifndef STRINGBUFLEN
-  #if defined(__N64__) || defined(__DS__)
-    #define STRINGBUFLEN 256
-  #else
-    #define STRINGBUFLEN 1024
-  #endif
+	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
+		#define STRINGBUFLEN 256
+	#else
+		#define STRINGBUFLEN 1024
+	#endif
 #endif
 
 #ifndef MAXPATHLEN

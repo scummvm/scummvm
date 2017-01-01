@@ -64,7 +64,7 @@ private:
 	Common::String getIconPath(Common::String target);
 
 	// Helper functions
-	bool isWin7OrLater();
+	bool confirmWindowsVersion(uint majorVersion, uint minorVersion);
 	LPWSTR ansiToUnicode(const char *s);
 	HWND getHwnd();
 };

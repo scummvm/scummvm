@@ -29,7 +29,6 @@
 #include "mohawk/myst_stacks/slides.h"
 
 #include "common/system.h"
-#include "gui/message.h"
 
 namespace Mohawk {
 namespace MystStacks {

@@ -133,7 +133,7 @@ public:
 	 * Load the game in the specified slot
 	 */
 	void loadGame(int slot);
-	
+
 	/**
 	 * Save the game in the specified slot with the given name
 	 */

@@ -33,26 +33,38 @@ class Talk;
 
 namespace Scalpel {
 
-extern const char COMMANDS[13];
-extern const char COMMANDS_3DO[13];
 extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
-extern const char INVENTORY_COMMANDS[9];
-extern const char *const PRESS_KEY_FOR_MORE;
-extern const char *const PRESS_KEY_TO_CONTINUE;
+
+enum {
+	MAINBUTTON_LOOK = 0,
+	MAINBUTTON_MOVE,
+	MAINBUTTON_TALK,
+	MAINBUTTON_PICKUP,
+	MAINBUTTON_OPEN,
+	MAINBUTTON_CLOSE,
+	MAINBUTTON_INVENTORY,
+	MAINBUTTON_USE,
+	MAINBUTTON_GIVE,
+	MAINBUTTON_JOURNAL,
+	MAINBUTTON_FILES,
+	MAINBUTTON_SETUP,
+	MAINBUTTON_LOADGAME,
+	MAINBUTTON_SAVEGAME
+};
 
 class Settings;
 
 class ScalpelUserInterface: public UserInterface {
 	friend class Settings;
-	friend class Talk;
+	friend class Sherlock::Talk;
 private:
 	char _keyPress;
 	int _lookHelp;
 	int _help, _oldHelp;
 	int _key, _oldKey;
-	int _temp, _oldTemp;
+	int _temp, _oldTemp; // button number (0-11)
 	int _oldLook;
 	bool _keyboardInput;
 	bool _pause;
@@ -77,7 +89,7 @@ private:
 	 * have already been drawn. This simply takes care of switching the mode around
 	 * accordingly
 	 */
-	void toggleButton(int num);
+	void toggleButton(uint16 num);
 
 	/**
 	 * Print the name of an object in the scene
@@ -93,38 +105,38 @@ private:
 	 * Handles input when the file list window is being displayed
 	 */
 	void doEnvControl();
-	
+
 	/**
 	 * Handle input whilst the inventory is active
 	 */
 	void doInvControl();
-	
+
 	/**
 	 * Handles waiting whilst an object's description window is open.
 	 */
 	void doLookControl();
-	
+
 	/**
 	 * Handles input until one of the user interface buttons/commands is selected
 	 */
 	void doMainControl();
-	
+
 	/**
 	 * Handles the input for the MOVE, OPEN, and CLOSE commands
 	 */
 	void doMiscControl(int allowed);
-	
+
 	/**
 	 * Handles input for picking up items
 	 */
 	void doPickControl();
-	
+
 	/**
 	 * Handles input when in talk mode. It highlights the buttons and available statements,
 	 * and handles allowing the user to click on them
 	 */
 	void doTalkControl();
-	
+
 	/**
 	 * Handles events when the Journal is active.
 	 * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
@@ -138,7 +150,7 @@ private:
 	 */
 	void checkUseAction(const UseType *use, const Common::String &invName, FixedTextActionId fixedTextActionId,
 		int objNum, bool giveMode);
-	
+
 	/**
 	 * Print the previously selected object's decription
 	 */
@@ -147,6 +159,24 @@ public:
 	ImageFile *_controlPanel;
         ImageFile *_controls;
 	int _oldUse;
+
+	byte _hotkeyLook;
+	byte _hotkeyMove;
+	byte _hotkeyTalk;
+	byte _hotkeyPickUp;
+	byte _hotkeyOpen;
+	byte _hotkeyClose;
+	byte _hotkeyInventory;
+	byte _hotkeyUse;
+	byte _hotkeyGive;
+	byte _hotkeyJournal; // not used for 3DO
+	byte _hotkeyFiles; // not used for 3DO
+	byte _hotkeySetUp; // SetUp-button is in the spot of Journal for 3DO
+	byte _hotkeyLoadGame; // 3DO
+	byte _hotkeySaveGame; // 3DO
+
+	byte _hotkeysIndexed[14];
+
 public:
 	ScalpelUserInterface(SherlockEngine *vm);
 	virtual ~ScalpelUserInterface();
@@ -182,7 +212,7 @@ public:
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
-	 */	
+	 */
 	virtual void drawInterface(int bufferNum = 3);
 
 	/**
@@ -213,7 +243,7 @@ public:
 
 	/**
 	 * Print the previously selected object's decription
-	 */	
+	 */
 	virtual void printObjectDesc();
 };
 

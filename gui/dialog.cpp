@@ -51,6 +51,8 @@ Dialog::Dialog(int x, int y, int w, int h)
 	// will for example crash after returning to the launcher when the user
 	// started a 640x480 game with a non 1x scaler.
 	g_gui.checkScreenChange();
+
+	_result = -1;
 }
 
 Dialog::Dialog(const Common::String &name)
@@ -66,6 +68,8 @@ Dialog::Dialog(const Common::String &name)
 	// Fixes bug #1590596: "HE: When 3x graphics are choosen, F5 crashes game"
 	// and bug #1595627: "SCUMM: F5 crashes game (640x480)"
 	g_gui.checkScreenChange();
+
+	_result = -1;
 }
 
 int Dialog::runModal() {
@@ -109,16 +113,18 @@ void Dialog::reflowLayout() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
+	GuiObject::reflowLayout();
+
 	Widget *w = _firstWidget;
 	while (w) {
 		w->reflowLayout();
 		w = w->_next;
 	}
-
-	GuiObject::reflowLayout();
 }
 
 void Dialog::lostFocus() {
+	_dragWidget = NULL;
+
 	if (_tickleWidget) {
 		_tickleWidget->lostFocus();
 	}

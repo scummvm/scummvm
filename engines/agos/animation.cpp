@@ -57,6 +57,7 @@ MoviePlayer::MoviePlayer(AGOSEngine_Feeble *vm)
 	memset(baseName, 0, sizeof(baseName));
 
 	_ticks = 0;
+	_bgSoundStream = nullptr;
 }
 
 MoviePlayer::~MoviePlayer() {

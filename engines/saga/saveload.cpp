@@ -56,7 +56,7 @@ SaveFileData *SagaEngine::getSaveFile(uint idx) {
 		return &_saveFiles[_saveFilesCount - idx - 1];
 	} else {
 		if (!emptySlot.name[0])
-			strcpy(emptySlot.name, getTextString(kTextNewSave));
+			Common::strlcpy(emptySlot.name, getTextString(kTextNewSave), SAVE_TITLE_SIZE);
 
 		return (idx == 0) ? &emptySlot : &_saveFiles[_saveFilesCount - idx];
 	}
@@ -185,7 +185,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	// Original game title
 	memset(title, 0, TITLESIZE);
-	strncpy(title, _gameTitle.c_str(), TITLESIZE);
+	Common::strlcpy(title, _gameTitle.c_str(), TITLESIZE);
 	out->write(title, TITLESIZE);
 
 	// Thumbnail

@@ -15,6 +15,7 @@
 	<application
 			android:label="@string/app_name"
 			android:description="@string/app_desc"
+			android:isGame="true"
 			android:icon="@drawable/scummvm">
 		<activity android:name=".ScummVMActivity"
 				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -27,19 +28,27 @@
 				<category android:name="tv.ouya.intent.category.GAME"/>
 			</intent-filter>
 		</activity>
+		<activity android:name=".ScummVMActivity"
+				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+				android:banner="@drawable/leanback_icon">
+		  <intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+		  </intent-filter>
+		</activity>
 	</application>
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-	<!-- Always needs some sort of qwerty keyboard.
-			Can work with a D-pad / trackball -->
-	<uses-configuration android:reqFiveWayNav="true"
-			android:reqKeyboardType="qwerty"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" android:required="true"/>
 
-	<!-- .. or touchscreen -->
-	<uses-configuration android:reqTouchScreen="finger"
-			android:reqKeyboardType="qwerty"/>
+	<uses-feature android:name="android.hardware.screen.landscape"
+		        android:required="false" />
 
-	<uses-configuration android:reqTouchScreen="stylus"
-			android:reqKeyboardType="qwerty"/>
+	<uses-feature android:name="android.hardware.touchscreen"
+		        android:required="false" />
+
+	<uses-feature android:name="android.software.leanback"
+		        android:required="false" />
+
 </manifest>

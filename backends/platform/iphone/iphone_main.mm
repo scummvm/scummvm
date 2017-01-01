@@ -26,7 +26,7 @@
 #include <UIKit/UIKit.h>
 #include <Foundation/NSThread.h>
 
-#include "iphone_video.h"
+#include "backends/platform/iphone/iphone_video.h"
 
 void iphone_main(int argc, char *argv[]);
 

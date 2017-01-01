@@ -1262,6 +1262,7 @@ static const ItemDesc copyProtectElements[] = {
 	{Common::NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{Common::ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{Common::IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::RU_RUS, 57, 40, 208, 40, WORDING_HEADER, 32},
 
 	{Common::UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
 	{Common::UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},

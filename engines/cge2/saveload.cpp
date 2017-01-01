@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
@@ -36,8 +36,6 @@
 #include "cge2/snail.h"
 #include "cge2/hero.h"
 #include "cge2/text.h"
-#include "cge2/sound.h"
-#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 

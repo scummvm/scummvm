@@ -20,15 +20,14 @@
  *
  */
 
-#include "audio/audiostream.h"
 #include "audio/fmopl.h"
-#include "audio/decoders/raw.h"
 #include "common/algorithm.h"
-#include "common/debug.h"
 #include "common/md5.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace MADS {
 
@@ -195,7 +194,7 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 		_channelData[i]._freqBase = 0;
 		_channelData[i]._field6 = 0;
 	}
-	
+
 	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
 		_channels[i]._owner = this;
 
@@ -216,6 +215,8 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 }
 
 ASound::~ASound() {
+	_opl->stop();
+
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
 		delete[] (*i)._data;
@@ -2025,8 +2026,8 @@ const ASound4::CommandPtr ASound4::_commandList[61] = {
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command43,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::command57, &ASound4::nullCommand, &ASound4::command59,
+	&ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
+	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
 	&ASound4::command60
 };
 

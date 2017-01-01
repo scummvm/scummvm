@@ -89,6 +89,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
 	{"hoyle4",          "Hoyle Classic Card Games"},
+	{"inndemo",         "ImagiNation Network (INN) Demo"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
 	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up)
@@ -98,11 +99,18 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
+	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
+	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
+	{"pq4demo",         "Police Quest IV: Open Season"},
 	// === SCI2 games =========================================================
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
+	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
 	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
 	// === SCI2.1 games ========================================================
+	{"hoyle5",          "Hoyle Classic Games"},
+	{"hoyle5bridge",    "Hoyle Bridge"},
+	{"hoyle5children",  "Hoyle Children's Collection"},
+	{"hoyle5solitaire", "Hoyle Solitaire"},
 	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
@@ -146,13 +154,19 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "fairytales",      GID_FAIRYTALES },
 	{ "freddypharkas",   GID_FREDDYPHARKAS },
 	{ "funseeker",       GID_FUNSEEKER },
+	{ "gk1demo",         GID_GK1DEMO },
 	{ "gk1",             GID_GK1 },
 	{ "gk2",             GID_GK2 },
 	{ "hoyle1",          GID_HOYLE1 },
 	{ "hoyle2",          GID_HOYLE2 },
 	{ "hoyle3",          GID_HOYLE3 },
 	{ "hoyle4",          GID_HOYLE4 },
+	{ "hoyle5",          GID_HOYLE5 },
+	{ "hoyle5bridge",    GID_HOYLE5 },
+	{ "hoyle5children",  GID_HOYLE5 },
+	{ "hoyle5solitaire", GID_HOYLE5 },
 	{ "iceman",          GID_ICEMAN },
+	{ "inndemo",         GID_INNDEMO },
 	{ "islandbrain",     GID_ISLANDBRAIN },
 	{ "jones",           GID_JONES },
 	{ "kq1sci",          GID_KQ1 },
@@ -183,12 +197,14 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "pq2",             GID_PQ2 },
 	{ "pq3",             GID_PQ3 },
 	{ "pq4",             GID_PQ4 },
+	{ "pq4demo",         GID_PQ4DEMO },
 	{ "pqswat",          GID_PQSWAT },
 	{ "qfg1",            GID_QFG1 },
 	{ "qfg1vga",         GID_QFG1VGA },
 	{ "qfg2",            GID_QFG2 },
 	{ "qfg3",            GID_QFG3 },
 	{ "qfg4",            GID_QFG4 },
+	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
 	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
 	{ "shivers",         GID_SHIVERS },
@@ -356,7 +372,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 
 		// qfg4 demo has less than 50 scripts
 		if (resources.size() < 50)
-			return "qfg4";
+			return "qfg4demo";
 
 		// Otherwise it's qfg3
 		return "qfg3";
@@ -379,6 +395,26 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
+		GAMEOPTION_HIGH_RESOLUTION_GRAPHICS,
+		{
+			_s("Enable high resolution graphics"),
+			_s("Enable high resolution graphics/content"),
+			"enable_high_resolution_graphics",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_ENABLE_BLACK_LINED_VIDEO,
+		{
+			_s("Enable black-lined video"),
+			_s("Draw black lines over videos to increase their apparent sharpness"),
+			"enable_black_lined_video",
+			false
+		}
+	},
+
+	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
 			_s("Prefer digital sound effects"),
@@ -392,7 +428,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
-			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}
@@ -435,7 +471,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_SQ4_SILVER_CURSORS,
 		{
 			_s("Use silver cursors"),
-			_s("Use the alternate set of silver cursors, instead of the normal golden ones"),
+			_s("Use the alternate set of silver cursors instead of the normal golden ones"),
 			"silver_cursors",
 			false
 		}
@@ -463,7 +499,7 @@ static char s_fallbackGameIdBuf[256];
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
-		_singleid = "sci";
+		_singleId = "sci";
 	}
 
 	virtual const char *getName() const {
@@ -516,11 +552,11 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.language = Common::EN_ANY;
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
 	s_fallbackDesc.platform = Common::kPlatformDOS;	// default to PC platform
-	s_fallbackDesc.gameid = "sci";
-	s_fallbackDesc.guioptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
+	s_fallbackDesc.gameId = "sci";
+	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
-	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
+	    || allFiles.contains("resmap.000") || allFiles.contains("resmap.001")) {
 		foundResMap = true;
 	}
 
@@ -529,8 +565,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// the file should be over 10MB, as it contains all the game speech and is usually
 	// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
 	// also have a small resource.aud file
-	if (allFiles.contains("resource.aud") || allFiles.contains("audio001.002")) {
-		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] :  allFiles["audio001.002"];
+	if (allFiles.contains("resource.aud") || allFiles.contains("resaud.001") || allFiles.contains("audio001.002")) {
+		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] : (allFiles.contains("resaud.001") ? allFiles["resaud.001"] : allFiles["audio001.002"]);
 		Common::SeekableReadStream *tmpStream = file.createReadStream();
 		if (tmpStream->size() > 10 * 1024 * 1024) {
 			// We got a CD version, so set the CD flag accordingly
@@ -568,7 +604,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	ResourceManager resMan;
 	resMan.addAppropriateSourcesForDetection(fslist);
-	resMan.initForDetection();
+	resMan.init();
 	// TODO: Add error handling.
 
 #ifndef ENABLE_SCI32
@@ -600,7 +636,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
-	s_fallbackDesc.gameid = s_fallbackGameIdBuf;
+	s_fallbackDesc.gameId = s_fallbackGameIdBuf;
 
 	// Try to determine the game language
 	// Load up text 0 and start looking for "#" characters
@@ -643,7 +679,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	const bool isCD = (s_fallbackDesc.flags & ADGF_CD);
 
 	if (!isCD)
-		s_fallbackDesc.guioptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
+		s_fallbackDesc.guiOptions = GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (gameId.hasSuffix("sci")) {
 		s_fallbackDesc.extra = "SCI";
@@ -676,7 +712,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GameIdStrToEnum *g = s_gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
-		if (0 == strcmp(desc->gameid, g->gameidStr)) {
+		if (0 == strcmp(desc->gameId, g->gameidStr)) {
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
 			return true;
 		}
@@ -714,18 +750,17 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	int slotNum = 0;
+	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNum = atoi(file->c_str() + file->size() - 3);
+		slotNr = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 99) {
+		if (slotNr >= 0 && slotNr <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
@@ -734,53 +769,79 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 					delete in;
 					continue;
 				}
-				saveList.push_back(SaveStateDescriptor(slotNum, meta.name));
+				SaveStateDescriptor descriptor(slotNr, meta.name);
+
+				if (slotNr == 0) {
+					// ScummVM auto-save slot
+					descriptor.setWriteProtectedFlag(true);
+				} else {
+					descriptor.setWriteProtectedFlag(false);
+				}
+
+				saveList.push_back(descriptor);
 				delete in;
 			}
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
-SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
+SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
+	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+	SaveStateDescriptor descriptor(slotNr, "");
+
+	if (slotNr == 0) {
+		// ScummVM auto-save slot
+		descriptor.setWriteProtectedFlag(true);
+		descriptor.setDeletableFlag(false);
+	} else {
+		descriptor.setWriteProtectedFlag(false);
+		descriptor.setDeletableFlag(true);
+	}
 
 	if (in) {
 		SavegameMetadata meta;
+
 		if (!get_savegame_metadata(in, &meta)) {
 			// invalid
 			delete in;
 
-			SaveStateDescriptor desc(slot, "Invalid");
-			return desc;
+			descriptor.setDescription("*Invalid*");
+			return descriptor;
 		}
 
-		SaveStateDescriptor desc(slot, meta.name);
+		descriptor.setDescription(meta.name);
 
 		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
-		desc.setThumbnail(thumbnail);
+		descriptor.setThumbnail(thumbnail);
 
 		int day = (meta.saveDate >> 24) & 0xFF;
 		int month = (meta.saveDate >> 16) & 0xFF;
 		int year = meta.saveDate & 0xFFFF;
 
-		desc.setSaveDate(year, month, day);
+		descriptor.setSaveDate(year, month, day);
 
 		int hour = (meta.saveTime >> 16) & 0xFF;
 		int minutes = (meta.saveTime >> 8) & 0xFF;
 
-		desc.setSaveTime(hour, minutes);
+		descriptor.setSaveTime(hour, minutes);
 
-		desc.setPlayTime(meta.playTime * 1000);
+		if (meta.version >= 34) {
+			descriptor.setPlayTime(meta.playTime * 1000 / 60);
+		} else {
+			descriptor.setPlayTime(meta.playTime * 1000);
+		}
 
 		delete in;
 
-		return desc;
+		return descriptor;
 	}
-
-	return SaveStateDescriptor();
+	// Return empty descriptor
+	return descriptor;
 }
 
 int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
@@ -822,11 +883,24 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		switch (getGameId()) {
+		case GID_PHANTASMAGORIA:
+		case GID_HOYLE5:
+			return false;
+		default:
+			break;
+		}
+	}
+#endif
+
 	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase;
+	// see comment about kSupportsSavingDuringRuntime in SciEngine::hasFeature
+	return false;
 }
 
 } // End of namespace Sci

@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "access/decompress.h"
 
 namespace Access {
@@ -70,7 +70,6 @@ public:
 class FileManager {
 private:
 	AccessEngine *_vm;
-	const char * const *_filenames;
 
 	void openFile(Resource *res, const Common::String &filename);
 
@@ -78,11 +77,11 @@ private:
 	 * Handles setting up the resource with a stream for the located resource
 	 */
 	void handleFile(Resource *res);
-	
+
 	/**
 	 * Handles loading a screen surface and palette with decoded resource
 	 */
-	void handleScreen(Graphics::Surface *dest, Resource *res);
+	void handleScreen(Graphics::ManagedSurface *dest, Resource *res);
 
 	/**
 	* Open up a sub-file container file
@@ -134,7 +133,7 @@ public:
 	/**
 	 * Load a screen resource onto a designated surface
 	 */
-	void loadScreen(Graphics::Surface *dest, int fileNum, int subfile);
+	void loadScreen(Graphics::ManagedSurface *dest, int fileNum, int subfile);
 };
 
 } // End of namespace Access

@@ -28,9 +28,11 @@
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
@@ -170,7 +172,7 @@ void Talk::talkTo(const Common::String filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() && 
+	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
 			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
 		if (people._allowWalkAbort)
@@ -306,8 +308,14 @@ void Talk::talkTo(const Common::String filename) {
 	if (_scriptMoreFlag && _scriptSelect != 100)
 		select = _scriptSelect;
 
-	if (select == -1)
+	if (select == -1) {
+		if (IS_ROSE_TATTOO) {
+			static_cast<Tattoo::TattooUserInterface *>(&ui)->putMessage(
+				"%s", _vm->_fixedText->getText(Tattoo::kFixedText_NoEffect));
+			return;
+		}
 		error("Couldn't find statement to display");
+	}
 
 	// Add the statement into the journal and talk history
 	if (_talkTo != -1 && !_talkHistory[_converseNum][select])
@@ -401,7 +409,7 @@ void Talk::talkTo(const Common::String filename) {
 					_talkHistory[_converseNum][select] = true;
 				}
 
-				ui._key = ui._oldKey = Scalpel::COMMANDS[TALK_MODE - 1];
+				ui._key = ui._oldKey = 'T'; // FIXME: I'm not sure what to do here, I need ScalpelUI->_hotkeyTalk
 				ui._temp = ui._oldTemp = 0;
 				ui._menuMode = TALK_MODE;
 				_talkToFlag = 2;
@@ -575,6 +583,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	_converseNum = res.resourceIndex();
 	talkStream->skip(2);	// Skip talk file version num
 
+	_statements.clear();
 	_statements.resize(talkStream->readByte());
 	for (uint idx = 0; idx < _statements.size(); ++idx)
 		_statements[idx].load(*talkStream, IS_ROSE_TATTOO);
@@ -597,7 +606,7 @@ void Talk::stripVoiceCommands() {
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
 					statement._reply.c_str() + idx) + " " +
-					Common::String(statement._reply.c_str() + 9);
+					Common::String(statement._reply.c_str() + idx + 9);
 			}
 		}
 
@@ -751,6 +760,22 @@ void Talk::doScript(const Common::String &script) {
 			while (*str++ != '}')
 				;
 		} else if (isOpcode(c)) {
+			// the original interpreter checked for c being >= 0x80
+			// and if that is the case, it tried to process it as opcode, BUT ALSO ALWAYS skipped over it
+			// This was done inside the Spanish + German interpreters of Serrated Scalpel, not the original
+			// English interpreter (reverse engineered from the binaries).
+			//
+			// This resulted in special characters not getting shown in case they occurred at the start
+			// of sentences like for example the inverted exclamation mark and the inverted question mark.
+			// For further study see fonts.cpp
+			//
+			// We create an inverted exclamation mark for the Spanish version and we show it.
+			//
+			// Us not skipping over those characters may result in an assert() happening inside fonts.cpp
+			// in case more invalid characters exist.
+			// More information see bug #6931
+			//
+
 			// Handle control code
 			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
 			case RET_EXIT:
@@ -830,7 +855,7 @@ int Talk::waitForMore(int delay) {
 	playingSpeech = sound.isSpeechPlaying();
 
 	do {
-		if (IS_SERRATED_SCALPEL && sound._speechOn && !sound.isSpeechPlaying())
+		if (IS_SERRATED_SCALPEL && playingSpeech && !sound.isSpeechPlaying())
 			people._portrait._frameNumber = -1;
 
 		scene.doBgAnim();
@@ -874,7 +899,7 @@ int Talk::waitForMore(int delay) {
 	} while (!_vm->shouldQuit() && key2 == 254 && (delay || (playingSpeech && sound.isSpeechPlaying()))
 		&& !events._released && !events._rightReleased);
 
-	// If voices was set 2 to indicate a voice file was place, then reset it back to 1
+	// If voices was set 2 to indicate a Scalpel voice file was playing, then reset it back to 1
 	if (sound._voices == 2)
 		sound._voices = 1;
 
@@ -977,6 +1002,10 @@ OpcodeReturn Talk::cmdAdjustObjectSequence(const byte *&str) {
 	_seqCount = str[1];
 	str += (str[0] & 127) + 2;
 
+	// WORKAROUND: Original German Scalpel crash when moving box at Tobacconists
+	if (_vm->getLanguage() == Common::DE_DEU && _scriptName == "Alfr30Z")
+		_seqCount = 16;
+
 	// Copy in the new sequence
 	for (int idx = 0; idx < _seqCount; ++idx, ++str)
 		scene._bgShapes[objId]._sequences[idx] = str[0] - 1;
@@ -1023,6 +1052,7 @@ OpcodeReturn Talk::cmdEndTextWindow(const byte *&str) {
 OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 	People &people = *_vm->_people;
 	people[HOLMES]._type = REMOVE;
+	people._holmesOn = false;
 
 	return RET_SUCCESS;
 }
@@ -1030,6 +1060,7 @@ OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 OpcodeReturn Talk::cmdHolmesOn(const byte *&str) {
 	People &people = *_vm->_people;
 	people[HOLMES]._type = CHARACTER;
+	people._holmesOn = true;
 
 	return RET_SUCCESS;
 }
@@ -1164,7 +1195,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
 	people[HOLMES].walkToCoords(animation._goto[0], animation._goto[0]._facing);
-	
+
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }
 
@@ -1177,7 +1208,7 @@ void Talk::talkWait(const byte *&str) {
 		_endStr = true;
 
 	// If a key was pressed to finish the window, see if further voice files should be skipped
-	if (_wait >= 0 && _wait < 254) {
+	if (IS_SERRATED_SCALPEL && _wait >= 0 && _wait < 254) {
 		if (str[0] == _opcodes[OP_SFX_COMMAND])
 			str += 9;
 	}

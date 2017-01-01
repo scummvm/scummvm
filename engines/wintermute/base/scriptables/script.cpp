@@ -32,7 +32,9 @@
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/memstream.h"
-
+#if EXTENDED_DEBUGGER_ENABLED
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
+#endif
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(ScScript, false)
@@ -522,6 +524,9 @@ bool ScScript::executeInstruction() {
 	ScValue *op2;
 
 	uint32 inst = getDWORD();
+
+	preInstHook(inst);
+
 	switch (inst) {
 
 	case II_DEF_VAR:
@@ -1092,6 +1097,7 @@ bool ScScript::executeInstruction() {
 		ret = STATUS_FAILED;
 	} // switch(instruction)
 
+	postInstHook(inst);
 	//delete op;
 
 	return ret;
@@ -1314,8 +1320,15 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 	if (!pos) {
 		return nullptr;
 	}
-
+#if EXTENDED_DEBUGGER_ENABLED
+	// TODO: Not pretty
+	DebuggableScEngine* debuggableEngine;
+	debuggableEngine = dynamic_cast<DebuggableScEngine*>(_engine);
+	assert(debuggableEngine);
+	ScScript *thread = new DebuggableScript(_gameRef,  debuggableEngine);
+#else
 	ScScript *thread = new ScScript(_gameRef,  _engine);
+#endif
 	if (thread) {
 		bool ret = thread->createThread(this, pos, eventName);
 		if (DID_SUCCEED(ret)) {
@@ -1434,18 +1447,6 @@ bool ScScript::finishThreads() {
 	return STATUS_OK;
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-// IWmeDebugScript interface implementation
-int ScScript::dbgGetLine() {
-	return _currentLine;
-}
-
-//////////////////////////////////////////////////////////////////////////
-const char *ScScript::dbgGetFilename() {
-	return _filename;
-}
-
 //////////////////////////////////////////////////////////////////////////
 void ScScript::afterLoad() {
 	if (_buffer == nullptr) {
@@ -1465,5 +1466,9 @@ void ScScript::afterLoad() {
 		initTables();
 	}
 }
+
+void ScScript::preInstHook(uint32 inst) {}
+
+void ScScript::postInstHook(uint32 inst) {}
 
 } // End of namespace Wintermute

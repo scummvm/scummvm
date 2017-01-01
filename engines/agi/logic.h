@@ -29,12 +29,12 @@ namespace Agi {
  * AGI logic resource structure.
  */
 struct AgiLogic {
-	uint8 *data;		/**< raw resource data */
-	int size;		/**< size of data */
-	int sIP;		/**< saved IP */
-	int cIP;		/**< current IP */
-	int numTexts;		/**< number of messages */
-	const char **texts;		/**< message list */
+	uint8 *data;        /**< raw resource data */
+	int size;           /**< size of data */
+	int sIP;            /**< saved IP */
+	int cIP;            /**< current IP */
+	int numTexts;       /**< number of messages */
+	const char **texts; /**< message list */
 };
 
 } // End of namespace Agi

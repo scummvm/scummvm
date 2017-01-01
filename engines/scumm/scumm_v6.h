@@ -119,7 +119,10 @@ protected:
 	ArrayHeader *getArray(int array);
 	byte *defineArray(int array, int type, int dim2, int dim1);
 	int findFreeArrayId();
+public: // FIXME. TODO
 	void nukeArray(int array);
+
+protected:
 	virtual int readArray(int array, int index, int base);
 	virtual void writeArray(int array, int index, int base, int value);
 	void shuffleArray(int num, int minIdx, int maxIdx);

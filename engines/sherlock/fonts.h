@@ -31,7 +31,7 @@ namespace Sherlock {
 
 class SherlockEngine;
 class ImageFile;
-class Surface;
+class BaseSurface;
 
 class Fonts {
 private:
@@ -44,7 +44,7 @@ protected:
 	static int _widestChar;
 	static uint16 _charCount;
 
-	static void writeString(Surface *surface, const Common::String &str, 
+	static void writeString(BaseSurface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor = 0);
 
 	static inline byte translateChar(byte c);
@@ -57,7 +57,7 @@ public:
 	/**
 	 * Frees the font manager
 	 */
-	static void free();
+	static void freeFont();
 
 	/**
 	 * Set the font to use for writing text on the screen

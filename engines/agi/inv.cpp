@@ -22,221 +22,195 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "agi/inv.h"
+#include "agi/text.h"
 #include "agi/keyboard.h"
+#include "agi/systemui.h"
 
 namespace Agi {
 
-//
-// Messages and coordinates
-//
+InventoryMgr::InventoryMgr(AgiEngine *agi, GfxMgr *gfx, TextMgr *text, SystemUI *systemUI) {
+	_vm = agi;
+	_gfx = gfx;
+	_text = text;
+	_systemUI = systemUI;
 
-#define NOTHING_X	16
-#define NOTHING_Y	3
-#define NOTHING_MSG	"nothing"
-
-#define ANY_KEY_X	4
-#define ANY_KEY_Y	24
-#define ANY_KEY_MSG	"Press a key to return to the game"
-
-#define YOUHAVE_X	11
-#define YOUHAVE_Y	0
-#define YOUHAVE_MSG	"You are carrying:"
-
-#define SELECT_X	2
-#define SELECT_Y	24
-#define SELECT_MSG	"Press ENTER to select, ESC to cancel"
-
-#define NOTHING_X_RU	16
-#define NOTHING_Y_RU	3
-#define NOTHING_MSG_RU	"\xad\xa8\xe7\xa5\xa3\xae"
-
-#define ANY_KEY_X_RU	4
-#define ANY_KEY_Y_RU	24
-#define ANY_KEY_MSG_RU	"\x8b\xee\xa1\xa0\xef \xaa\xab\xa0\xa2\xa8\xe8\xa0 - \xa2\xae\xa7\xa2\xe0\xa0\xe2 \xa2 \xa8\xa3\xe0\xe3."
-
-#define YOUHAVE_X_RU	11
-#define YOUHAVE_Y_RU	0
-#define YOUHAVE_MSG_RU	"   \x93 \xa2\xa0\xe1 \xa5\xe1\xe2\xec:   "
-
-#define SELECT_X_RU	2
-#define SELECT_Y_RU	24
-#define SELECT_MSG_RU	"ENTER - \xa2\xeb\xa1\xe0\xa0\xe2\xec, ESC - \xae\xe2\xac\xa5\xad\xa8\xe2\xec."
-
-void AgiEngine::printItem(int n, int fg, int bg) {
-	printText(objectName(_intobj[n]), 0, ((n % 2) ? 39 - strlen(objectName(_intobj[n])) : 1),
-			(n / 2) + 2, 40, fg, bg);
+	_activeItemNr = -1;
 }
 
-int AgiEngine::findItem() {
-	int r, c;
-
-	r = _mouse.y / CHAR_LINES;
-	c = _mouse.x / CHAR_COLS;
-
-	debugC(6, kDebugLevelInventory, "r = %d, c = %d", r, c);
-
-	if (r < 2)
-		return -1;
-
-	return (r - 2) * 2 + (c > 20);
+InventoryMgr::~InventoryMgr() {
 }
 
-int AgiEngine::showItems() {
-	unsigned int x, i;
+void InventoryMgr::getPlayerInventory() {
+	AgiGame game = _vm->_game;
+	int16 selectedInventoryItem = _vm->getVar(VM_VAR_SELECTED_INVENTORY_ITEM);
+	uint16 objectNr = 0;
+	int16 curRow = 2; // starting at position 2,1
+	int16 curColumn = 1;
 
-	for (x = i = 0; x < _game.numObjects; x++) {
-		if (objectGetLocation(x) == EGO_OWNED) {
-			// add object to our list!
-			_intobj[i] = x;
-			printItem(i, STATUS_FG, STATUS_BG);
-			i++;
-		}
-	}
+	_array.clear();
+	_activeItemNr = 0;
 
-	if (i == 0) {
-		switch (getLanguage()) {
-		case Common::RU_RUS:
-			printText(NOTHING_MSG_RU, 0, NOTHING_X_RU, NOTHING_Y_RU, 40, STATUS_FG, STATUS_BG);
-			break;
-		default:
-			printText(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
-			break;
-		}
-	}
-
-	return i;
-}
-
-void AgiEngine::selectItems(int n) {
-	int fsel = 0;
-	bool exit_select = false;
-
-	while (!exit_select && !(shouldQuit() || _restartGame)) {
-		if (n > 0)
-			printItem(fsel, STATUS_BG, STATUS_FG);
-
-		switch (waitAnyKey()) {
-		case KEY_ENTER:
-			setvar(vSelItem, _intobj[fsel]);
-			exit_select = true;
-			break;
-		case KEY_ESCAPE:
-			setvar(vSelItem, 0xff);
-			exit_select = true;
-			break;
-		case KEY_UP:
-			if (fsel >= 2)
-				fsel -= 2;
-			break;
-		case KEY_DOWN:
-			if (fsel + 2 < n)
-				fsel += 2;
-			break;
-		case KEY_LEFT:
-			if (fsel % 2 == 1)
-				fsel--;
-			break;
-		case KEY_RIGHT:
-			if (fsel % 2 == 0 && fsel + 1 < n)
-				fsel++;
-			break;
-		case BUTTON_LEFT:{
-				int i = findItem();
-				if (i >= 0 && i < n) {
-					setvar(vSelItem, _intobj[fsel = i]);
-					debugC(6, kDebugLevelInventory, "item found: %d", fsel);
-					showItems();
-					printItem(fsel, STATUS_BG, STATUS_FG);
-					_gfx->doUpdate();
-					exit_select = true;
-				}
-				break;
+	for (objectNr = 0; objectNr < game.numObjects; objectNr++) {
+		if (_vm->objectGetLocation(objectNr) == EGO_OWNED) {
+			// item is in the possession of ego, so add it to our internal list
+			if (objectNr == selectedInventoryItem) {
+				// it's the currently selected inventory item, remember that
+				_activeItemNr = _array.size();
 			}
-		default:
-			break;
-		}
 
-		if (!exit_select) {
-			showItems();
-			_gfx->doUpdate();
+			InventoryEntry inventoryEntry;
+
+			inventoryEntry.objectNr = objectNr;
+			inventoryEntry.name = _vm->objectName(objectNr);
+			inventoryEntry.row = curRow;
+			inventoryEntry.column = curColumn;
+			if (inventoryEntry.column > 1) {
+				// right side, adjust column accordingly
+				inventoryEntry.column -= strlen(inventoryEntry.name);
+			}
+			_array.push_back(inventoryEntry);
+
+			// go to next position
+			if (curColumn == 1) {
+				// current position is left side, go to right side
+				curColumn = 39;
+			} else {
+				// current position is right side, so go to left side again and new row
+				curColumn = 1;
+				curRow++;
+			}
 		}
 	}
 
-	debugC(6, kDebugLevelInventory, "selected: %d", fsel);
+	if (_array.size() == 0) {
+		// empty inventory
+		InventoryEntry inventoryEntry;
+
+		inventoryEntry.objectNr = 0;
+		inventoryEntry.name = _systemUI->getInventoryTextNothing();
+		inventoryEntry.row = 2;
+		inventoryEntry.column = 19 - (strlen(inventoryEntry.name) / 2);
+		_array.push_back(inventoryEntry);
+	}
 }
 
-/*
- * Public functions
- */
+void InventoryMgr::drawAll() {
+	int16 inventoryCount = _array.size();
+	int16 inventoryNr = 0;
 
-/**
- * Display inventory items.
- */
-void AgiEngine::inventory() {
-	int oldFg, oldBg;
-	int n;
+	_text->charPos_Set(0, 11);
+	_text->displayText(_systemUI->getInventoryTextYouAreCarrying());
 
-	// screen is white with black text
-	oldFg = _game.colorFg;
-	oldBg = _game.colorBg;
-	_game.colorFg = 0;
-	_game.colorBg = 15;
-	_gfx->clearScreen(_game.colorBg);
+	for (inventoryNr = 0; inventoryNr < inventoryCount; inventoryNr++) {
+		drawItem(inventoryNr);
+	}
+}
 
-	switch (getLanguage()) {
-	case Common::RU_RUS:
-		printText(YOUHAVE_MSG_RU, 0, YOUHAVE_X_RU, YOUHAVE_Y_RU, 40, STATUS_FG, STATUS_BG);
-		break;
-	default:
-		printText(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+void InventoryMgr::drawItem(int16 itemNr) {
+	if (itemNr == _activeItemNr) {
+		_text->charAttrib_Set(15, 0);
+	} else {
+		_text->charAttrib_Set(0, 15);
+	}
+
+	_text->charPos_Set(_array[itemNr].row, _array[itemNr].column);
+	// original interpreter used printf here
+	// this doesn't really make sense, because for length calculation it's using strlen without printf
+	// which means right-aligned inventory items on the right side would not be displayed properly
+	// in case printf-formatting was actually used
+	// I have to assume that no game uses this, because behavior in original interpreter would have been buggy.
+	_text->displayText(_array[itemNr].name);
+}
+
+void InventoryMgr::show() {
+	bool selectItems = false;
+
+	// figure out current inventory of the player
+	getPlayerInventory();
+
+	if (_vm->getFlag(VM_FLAG_STATUS_SELECTS_ITEMS)) {
+		selectItems = true;
+	} else {
+		_activeItemNr = -1; // so that none is shown as active
+	}
+
+	drawAll();
+
+	_text->charAttrib_Set(0, 15);
+	if (selectItems) {
+		_text->charPos_Set(24, 2);
+		_text->displayText(_systemUI->getInventoryTextSelectItems());
+	} else {
+		_text->charPos_Set(24, 4);
+		_text->displayText(_systemUI->getInventoryTextReturnToGame());
+	}
+
+	if (selectItems) {
+		_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_INVENTORY);
+
+		do {
+			_vm->processAGIEvents();
+		} while (_vm->cycleInnerLoopIsActive() && !(_vm->shouldQuit() || _vm->_restartGame));
+
+		if (_activeItemNr >= 0) {
+			// pass selected object number
+			_vm->setVar(VM_VAR_SELECTED_INVENTORY_ITEM, _array[_activeItemNr].objectNr);
+		} else {
+			// nothing was selected
+			_vm->setVar(VM_VAR_SELECTED_INVENTORY_ITEM, 0xff);
+		}
+
+	} else {
+		// no selection is supposed to be possible, just wait for key and exit
+		_vm->waitAnyKey();
+	}
+}
+
+void InventoryMgr::keyPress(uint16 newKey) {
+	switch (newKey) {
+	case AGI_KEY_ENTER: {
+		_vm->cycleInnerLoopInactive(); // exit show-loop
 		break;
 	}
 
-	// FIXME: doesn't check if objects overflow off screen...
-
-	_intobj = (uint8 *)malloc(4 + _game.numObjects);
-	memset(_intobj, 0, (4 + _game.numObjects));
-
-	n = showItems();
-
-	switch (getLanguage()) {
-	case Common::RU_RUS:
-		if (getflag(fStatusSelectsItems)) {
-			printText(SELECT_MSG_RU, 0, SELECT_X_RU, SELECT_Y_RU, 40, STATUS_FG, STATUS_BG);
-		} else {
-			printText(ANY_KEY_MSG_RU, 0, ANY_KEY_X_RU, ANY_KEY_Y_RU, 40, STATUS_FG, STATUS_BG);
-		}
-		break;
-	default:
-		if (getflag(fStatusSelectsItems)) {
-			printText(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
-		} else {
-			printText(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
-		}
+	case AGI_KEY_ESCAPE: {
+		_vm->cycleInnerLoopInactive(); // exit show-loop
+		_activeItemNr = -1; // no item selected
 		break;
 	}
 
-	_gfx->flushScreen();
+	case AGI_KEY_UP:
+		changeActiveItem(-2);
+		break;
+	case AGI_KEY_DOWN:
+		changeActiveItem(+2);
+		break;
+	case AGI_KEY_LEFT:
+		changeActiveItem(-1);
+		break;
+	case AGI_KEY_RIGHT:
+		changeActiveItem(+1);
+		break;
 
-	// If flag 13 is set, we want to highlight & select an item.
-	// opon selection, put objnum in var 25. Then on esc put in
-	// var 25 = 0xff.
+	default:
+		break;
+	}
+}
 
-	if (getflag(fStatusSelectsItems))
-		selectItems(n);
+void InventoryMgr::changeActiveItem(int16 direction) {
+	int16 orgItemNr = _activeItemNr;
 
-	free(_intobj);
+	_activeItemNr += direction;
 
-	if (!getflag(fStatusSelectsItems))
-		waitAnyKey();
-
-	_gfx->clearScreen(0);
-	writeStatus();
-	_picture->showPic();
-	_game.colorFg = oldFg;
-	_game.colorBg = oldBg;
-	_game.hasPrompt = 0;
-	flushLines(_game.lineUserInput, 24);
+	if ((_activeItemNr >= 0) && (_activeItemNr < (int16)_array.size())) {
+		// within bounds
+		drawItem(orgItemNr);
+		drawItem(_activeItemNr);
+	} else {
+		// out of bounds, revert change
+		_activeItemNr = orgItemNr;
+	}
 }
 
 } // End of namespace Agi

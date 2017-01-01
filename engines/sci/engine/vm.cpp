@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 
@@ -124,32 +125,30 @@ static reg_t read_var(EngineState *s, int type, int index) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
 				//  We need to find correct replacements for each situation manually
-				SciTrackOriginReply originReply;
+				SciCallOrigin originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
 					// If we are running an official ScummVM release -> fake 0 in unknown cases
-					warning("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
-					originReply.scriptNr, originReply.localCallOffset);
+					warning("Uninitialized read for temp %d from %s", index, originReply.toString().c_str());
 
 					s->variables[type][index] = NULL_REG;
 					break;
 #else
-					error("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
-					originReply.scriptNr, originReply.localCallOffset);
+					error("Uninitialized read for temp %d from %s", index, originReply.toString().c_str());
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
 				s->variables[type][index] = make_reg(0, solution.value);
 				break;
 			}
-			case VAR_PARAM:
+			case VAR_PARAM: {
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				debugC(kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				const SciCallOrigin origin = s->getCurrentCallOrigin();
+				warning("Uninitialized read for parameter %d from %s", index, origin.toString().c_str());
 				return NULL_REG;
+			}
 			default:
 				break;
 			}
@@ -179,7 +178,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 		// stopGroop object, which points to ego, to the new ego object. If this is not
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
+		if (index == kGlobalVarEgo && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {
 			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
@@ -200,9 +199,26 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
-		if (type == VAR_GLOBAL && index == 90) {
+#ifdef ENABLE_SCI32
+		if (type == VAR_GLOBAL && getSciVersion() >= SCI_VERSION_2 && g_sci->getEngineState()->_syncedAudioOptions) {
+
+			switch (g_sci->getGameId()) {
+			case GID_LSL6HIRES:
+				if (index == kGlobalVarLSL6HiresTextSpeed) {
+					ConfMan.setInt("talkspeed", (14 - value.toSint16()) * 255 / 13);
+				}
+				break;
+			default:
+				if (index == kGlobalVarTextSpeed) {
+					ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
+				}
+			}
+		}
+#endif
+
+		if (type == VAR_GLOBAL && index == kGlobalVarMessageType) {
 			// The game is trying to change its speech/subtitle settings
-			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][4] == TRUE_REG) {
+			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kGlobalVarQuit] == TRUE_REG) {
 				// ScummVM audio options haven't been applied yet, so apply them.
 				// We also force the ScummVM audio options when loading a game from
 				// the launcher.
@@ -232,15 +248,16 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
+	// Check if a breakpoint is set on this method
+	g_sci->checkExportBreakpoint(script, pubfunct);
+
 	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
 	if (!exportAddr)
 		return NULL;
 
-	// Check if a breakpoint is set on this method
-	g_sci->checkExportBreakpoint(script, pubfunct);
-
+	assert(argp[0].toUint16() == argc); // The first argument is argc
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
-						seg, make_reg32(seg, exportAddr), -1, pubfunct, -1,
+						seg, make_reg32(seg, exportAddr), -1, -1, -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
 	s->_executionStack.push_back(xstack);
 	return &(s->_executionStack.back());
@@ -257,6 +274,10 @@ static void _exec_varselectors(EngineState *s) {
 			// varselector access?
 			if (xs.argc) { // write?
 				*var = xs.variables_argp[1];
+
+#ifdef ENABLE_SCI32
+				updateInfoFlagViewVisible(s->_segMan->getObject(xs.addr.varp.obj), xs.addr.varp.varindex);
+#endif
 
 			} else // No, read
 				s->r_acc = *var;
@@ -308,8 +329,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
+		assert(argp[0].toUint16() == argc); // The first argument is argc
 		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
-							0xFFFF, curFP, selector, -1, -1,
+							0xFFFF, curFP, selector, -1, -1, -1, -1,
 							origin, stackType);
 
 		if (selectorType == kSelectorVariable)
@@ -326,17 +348,20 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argp += argc + 1;
 	}	// while (framesize > 0)
 
+	// Perform all varselector actions at the top of the stack immediately.
+	// Note that there may be some behind method selector calls as well;
+	// those will get executed by op_ret later.
 	_exec_varselectors(s);
 
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
-static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
+static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kernelSubCallNr, int argc, reg_t *argv) {
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
 	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, make_reg32(0, 0),
-						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
+						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
 
@@ -355,16 +380,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	if (kernelCall.signature
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
-		SciTrackOriginReply originReply;
+		SciCallOrigin originReply;
 		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
 		switch (solution.type) {
 		case WORKAROUND_NONE: {
 			Common::String signatureDetailsStr;
 			kernel->signatureDebug(signatureDetailsStr, kernelCall.signature, argc, argv);
-			error("\n%s[VM] k%s[%x]: signature mismatch in method %s::%s (room %d, script %d, localCall 0x%x)",
-				signatureDetailsStr.c_str(),
-				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(),
-				s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+			error("\n%s[VM] k%s[%x]: signature mismatch in %s", signatureDetailsStr.c_str(), kernelCall.name, kernelCallNr, originReply.toString().c_str());
 			break;
 			}
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -382,7 +404,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
-		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		argv[-1] = make_reg(0, argc); // The first argument is argc
+		addKernelCallToExecStack(s, kernelCallNr, -1, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 
 		if (kernelCall.debugLogging)
@@ -398,6 +421,21 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			error("[VM] k%s[%x]: no subfunction ID parameter given", kernelCall.name, kernelCallNr);
 		if (argv[0].isPointer())
 			error("[VM] k%s[%x]: given subfunction ID is actually a pointer", kernelCall.name, kernelCallNr);
+
+#ifdef ENABLE_SCI32
+		// The Windows version of kShowMovie has subops, but the subop number
+		// is put in the second parameter in SCI2.1+, even though every other
+		// kcall with subops puts the subop in the first parameter. To allow use
+		// of the normal subops system, we swap the arguments so the subop
+		// number is in the usual place.
+		if (getSciVersion() > SCI_VERSION_2 &&
+			g_sci->getPlatform() == Common::kPlatformWindows &&
+			strcmp(kernelCall.name, "ShowMovie") == 0) {
+			assert(argc > 1);
+			SWAP(argv[0], argv[1]);
+		}
+#endif
+
 		const uint16 subId = argv[0].toUint16();
 		// Skip over subfunction-id
 		argc--;
@@ -407,7 +445,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
-			SciTrackOriginReply originReply;
+			SciCallOrigin originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
 			switch (solution.type) {
 			case WORKAROUND_NONE: {
@@ -416,15 +454,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("\n%s[VM] k%s(%s): signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
-						signatureDetailsStr.c_str(),
-						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(),
-						s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+					error("\n%s[VM] k%s(%s): signature mismatch in %s",
+						signatureDetailsStr.c_str(), kernelCall.name, subCallName,
+						originReply.toString().c_str());
 				}
-				error("\n%s[VM] k%s: signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
-					signatureDetailsStr.c_str(),
-					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(),
-					s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+				error("\n%s[VM] k%s: signature mismatch in %s",
+					signatureDetailsStr.c_str(), kernelSubCall.name,
+					originReply.toString().c_str());
 				break;
 			}
 			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -440,7 +476,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		}
 		if (!kernelSubCall.function)
 			error("[VM] k%s: subfunction ID %d requested, but not available", kernelCall.name, subId);
-		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
+		argv[-1] = make_reg(0, argc); // The first argument is argc
+		addKernelCallToExecStack(s, kernelCallNr, subId, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
 		if (kernelSubCall.debugLogging)
@@ -541,6 +578,31 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset) {
+	uint32 offset;
+
+	switch (g_sci->_features->detectLofsType()) {
+	case SCI_VERSION_0_EARLY:
+		offset = (uint16)pcOffset + relOffset;
+		break;
+	case SCI_VERSION_1_MIDDLE:
+		offset = relOffset;
+		break;
+	case SCI_VERSION_1_1:
+		offset = relOffset + scr->getScriptSize();
+		break;
+	case SCI_VERSION_3:
+		// In theory this can break if the variant with a one-byte argument is
+		// used. For now, assume it doesn't happen.
+		offset = scr->relocateOffsetSci3(pcOffset - 2);
+		break;
+	default:
+		error("Unknown lofs type");
+	}
+
+	return offset;
+}
+
 void run_vm(EngineState *s) {
 	assert(s);
 
@@ -607,6 +669,8 @@ void run_vm(EngineState *s) {
 
 		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
+
+		g_sci->checkAddressBreakpoint(s->xs->addr.pc);
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
@@ -830,14 +894,15 @@ void run_vm(EngineState *s) {
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + s->r_rest;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].incOffset(s->r_rest);
 
 			uint32 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
 
+			int final_argc = (call_base->requireUint16()) + s->r_rest;
+			call_base[0] = make_reg(0, final_argc); // The first argument is argc
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
-							(call_base->requireUint16()) + s->r_rest, call_base,
+							final_argc, call_base,
 							s->xs->local_segment, make_reg32(s->xs->addr.pc.getSegment(), localCallOffset),
-							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1,
+							NULL_SELECTOR, -1, -1, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);
 
 			s->_executionStack.push_back(xstack);
@@ -934,9 +999,13 @@ void run_vm(EngineState *s) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					reg_t *var = old_xs->getVarPointer(s->_segMan);
-					if (old_xs->argc) // write?
+					if (old_xs->argc) { // write?
 						*var = old_xs->variables_argp[1];
-					else // No, read
+
+#ifdef ENABLE_SCI32
+						updateInfoFlagViewVisible(s->_segMan->getObject(old_xs->addr.varp.obj), old_xs->addr.varp.varindex);
+#endif
+					} else // No, read
 						s->r_acc = *var;
 				}
 
@@ -974,21 +1043,24 @@ void run_vm(EngineState *s) {
 
 			break;
 
-		case 0x26: // (38)
-		case 0x27: // (39)
-			if (getSciVersion() == SCI_VERSION_3) {
-				if (extOpcode == 0x4c)
-					s->r_acc = obj->getInfoSelector();
-				else if (extOpcode == 0x4d)
-					PUSH32(obj->getInfoSelector());
-				else if (extOpcode == 0x4e)
-					s->r_acc = obj->getSuperClassSelector();	// TODO: is this correct?
-				// TODO: There are also opcodes in
-				// here to get the superclass, and possibly the species too.
-				else
-					error("Dummy opcode 0x%x called", opcode);	// should never happen
-			} else
+		case op_infoToa: // (38)
+			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
+
+			if (!(extOpcode & 1))
+				s->r_acc = obj->getInfoSelector();
+			else
+				PUSH32(obj->getInfoSelector());
+			break;
+
+		case op_superToa: // (39)
+			if (getSciVersion() < SCI_VERSION_3)
+				error("Dummy opcode 0x%x called", opcode);	// should never happen
+
+			if (!(extOpcode & 1))
+				s->r_acc = obj->getSuperClassSelector();
+			else
+				PUSH32(obj->getSuperClassSelector());
 			break;
 
 		case op_class: // 0x28 (40)
@@ -1092,6 +1164,9 @@ void run_vm(EngineState *s) {
 		case op_aTop: // 0x32 (50)
 			// Accumulator To Property
 			validate_property(s, obj, opparams[0]) = s->r_acc;
+#ifdef ENABLE_SCI32
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
+#endif
 			break;
 
 		case op_pTos: // 0x33 (51)
@@ -1102,6 +1177,9 @@ void run_vm(EngineState *s) {
 		case op_sTop: // 0x34 (52)
 			// Stack To Property
 			validate_property(s, obj, opparams[0]) = POP32();
+#ifdef ENABLE_SCI32
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
+#endif
 			break;
 
 		case op_ipToa: // 0x35 (53)
@@ -1116,7 +1194,9 @@ void run_vm(EngineState *s) {
 				opProperty += 1;
 			else
 				opProperty -= 1;
-
+#ifdef ENABLE_SCI32
+			updateInfoFlagViewVisible(obj, opparams[0]>>1);
+#endif
 			if (opcode == op_ipToa || opcode == op_dpToa)
 				s->r_acc = opProperty;
 			else
@@ -1125,38 +1205,21 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_lofsa: // 0x39 (57)
-		case op_lofss: // 0x3a (58)
+		case op_lofss: { // 0x3a (58)
 			// Load offset to accumulator or push to stack
+
 			r_temp.setSegment(s->xs->addr.pc.getSegment());
-
-			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_0_EARLY:
-				r_temp.setOffset((uint16)s->xs->addr.pc.getOffset() + opparams[0]);
-				break;
-			case SCI_VERSION_1_MIDDLE:
-				r_temp.setOffset(opparams[0]);
-				break;
-			case SCI_VERSION_1_1:
-				r_temp.setOffset(opparams[0] + local_script->getScriptSize());
-				break;
-			case SCI_VERSION_3:
-				// In theory this can break if the variant with a one-byte argument is
-				// used. For now, assume it doesn't happen.
-				r_temp.setOffset(local_script->relocateOffsetSci3(s->xs->addr.pc.getOffset() - 2));
-				break;
-			default:
-				error("Unknown lofs type");
-			}
-
+			r_temp.setOffset(findOffset(opparams[0], local_script, s->xs->addr.pc.getOffset()));
 			if (r_temp.getOffset() >= scr->getBufSize())
 				error("VM: lofsa/lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
+						  " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 
 			if (opcode == op_lofsa)
 				s->r_acc = r_temp;
 			else
 				PUSH32(r_temp);
 			break;
+		}
 
 		case op_push0: // 0x3b (59)
 			PUSH(0);

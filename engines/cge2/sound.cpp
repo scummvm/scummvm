@@ -26,10 +26,11 @@
  */
 
 #include "cge2/sound.h"
-#include "common/config-manager.h"
 #include "common/memstream.h"
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
 #include "cge2/cge2.h"
 
 namespace CGE2 {

@@ -30,6 +30,7 @@ CellGame::CellGame() {
 	_stack_index = _boardStackPtr = 0;
 	_flag4 = false;
 	_flag2 = false;
+	_flag1 = false;
 	_coeff3 = 0;
 
 	_moveCount = 0;

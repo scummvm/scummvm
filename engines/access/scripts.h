@@ -39,13 +39,13 @@ typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts : public Manager {
 private:
-	Resource *_resource;
 	int _specialFunction;
 
 	void clearWatch();
 	void printWatch();
 
 protected:
+	Resource *_resource;
 	Common::SeekableReadStream *_data;
 	ScriptMethodPtr COMMAND_LIST[100];
 
@@ -73,12 +73,12 @@ protected:
 	void cmdAnim();
 	void cmdSetFlag();
 	void cmdCheckFlag();
-	
+
 	/**
 	 * Jump to another script
 	 */
 	void cmdGoto();
-	
+
 	void cmdAddScore();
 	void cmdSetInventory();
 	void cmdCheckInventory();
@@ -162,7 +162,7 @@ public:
 	void freeScriptData();
 
 	void searchForSequence();
-	
+
 	int executeScript();
 
 	void findNull();

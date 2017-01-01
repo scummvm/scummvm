@@ -1,5 +1,5 @@
 [Setup]
-AppCopyright=2014
+AppCopyright=2016
 AppName=ScummVM
 AppVerName=ScummVM Git
 AppPublisher=The ScummVM Team
@@ -51,9 +51,8 @@ Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app};
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not de
-Name: {group}\Neues; Filename: {app}\Neues.txt; WorkingDir: {app}; Comment: Neues; Flags: createonlyiffileexists; Languages: de
+Name: {group}\Neues; Filename: {app}\NEUES.txt; WorkingDir: {app}; Comment: NEUES; Flags: createonlyiffileexists; Languages: de
 ;QUICKSTART
-Name: {group}\QuickStart; Filename: {app}\QUICKSTART.txt; WorkingDir: {app}; Comment: QUICKSTART; Flags: createonlyiffileexists; Languages: not (de or es or fr or it or nb or se)
 Name: {group}\Schnellstart; Filename: {app}\Schnellstart.txt; WorkingDir: {app}; Comment: Schnellstart; Flags: createonlyiffileexists; Languages: de
 Name: {group}\InicioRapido; Filename: {app}\InicioRapido.txt; WorkingDir: {app}; Comment: InicioRapido; Flags: createonlyiffileexists; Languages: es
 Name: {group}\DemarrageRapide; Filename: {app}\DemarrageRapide.txt; WorkingDir: {app}; Comment: DemarrageRapide; Flags: createonlyiffileexists; Languages: fr
@@ -63,7 +62,7 @@ Name: {group}\Snabbstart; Filename: {app}\Snabbstart.txt; WorkingDir: {app}; Com
 ;README
 Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists; Languages: not (cz or de or se)
 Name: {group}\PrectiMe; Filename: {app}\PrectiMe.txt; WorkingDir: {app}; Comment: PrectiMe; Flags: createonlyiffileexists; Languages: cz
-Name: {group}\Liesmich; Filename: {app}\Liesmich.txt; WorkingDir: {app}; Comment: Liesmich; Flags: createonlyiffileexists; Languages: de
+Name: {group}\Liesmich; Filename: {app}\LIESMICH.txt; WorkingDir: {app}; Comment: LIESMICH; Flags: createonlyiffileexists; Languages: de
 Name: {group}\LasMig; Filename: {app}\LasMig.txt; WorkingDir: {app}; Comment: LasMig; Flags: createonlyiffileexists; Languages: se
 
 Name: {group}\Saved Games\Migrate Saved Games; Filename: {app}\migration.bat; WorkingDir: {app}; Comment: Migrate Saved Games; IconIndex: 0; MinVersion: 0, 1
@@ -91,9 +90,8 @@ Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not de
-Source: doc/de/Neues.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
+Source: doc/de/NEUES.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
 ;QUICKSTART
-Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (de or es or fr or it or nb or se)
 Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
 Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: es
 Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: fr
@@ -103,11 +101,11 @@ Source: doc/se/Snabbstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; La
 ;README
 Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (cz or de or se)
 Source: doc/cz/PrectiMe.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: cz
-Source: doc/de/Liesmich.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
+Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
 Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: se
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
-Source: SDL.dll; DestDir: {app}
+Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
 ;Mirgration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1

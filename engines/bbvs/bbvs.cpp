@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,11 +34,14 @@
 #include "bbvs/minigames/minigame.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/aiff.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/timer.h"
+#include "common/translation.h"
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -116,15 +119,40 @@ BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 
 	Engine::syncSoundSettings();
 
+#ifdef USE_TRANSLATION
+	_oldGUILanguage	= TransMan.getCurrentLanguage();
+
+	if (gd->flags & GF_GUILANGSWITCH)
+		TransMan.setLanguage(getLanguageLocale(gd->language));
+#endif
 }
 
 BbvsEngine::~BbvsEngine() {
+#ifdef USE_TRANSLATION
+	if (TransMan.getCurrentLanguage() != _oldGUILanguage)
+		TransMan.setLanguage(_oldGUILanguage);
+#endif
 
 	delete _random;
 
 }
 
 void BbvsEngine::newGame() {
+	memset(_easterEggInput, 0, sizeof(_easterEggInput));
+	_gameTicks = 0;
+	_playVideoNumber = 0;
+	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
+	memset(_gameVars, 0, sizeof(_gameVars));
+	memset(_sceneVisited, 0, sizeof(_sceneVisited));
+
+	_mouseX = 160;
+	_mouseY = 120;
+	_mouseButtons = 0;
+
+	_currVerbNum = kVerbLook;
+	_currTalkObjectIndex = -1;
+	_currSceneNum = 0;
+
 	_currInventoryItem = -1;
 	_newSceneNum = 32;
 }
@@ -150,24 +178,10 @@ Common::Error BbvsEngine::run() {
 	_sound = new SoundMan();
 
 	allocSnapshot();
-	memset(_easterEggInput, 0, sizeof(_easterEggInput));
 
-	_gameTicks = 0;
-	_playVideoNumber = 0;
+	newGame();
+
 	_bootSaveSlot = -1;
-
-	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
-	memset(_gameVars, 0, sizeof(_gameVars));
-	memset(_sceneVisited, 0, sizeof(_sceneVisited));
-
-	_mouseX = 160;
-	_mouseY = 120;
-	_mouseButtons = 0;
-
-	_currVerbNum = kVerbLook;
-	_currInventoryItem = -1;
-	_currTalkObjectIndex = -1;
-	_currSceneNum = 0;
 	_newSceneNum = 31;
 
 	if (ConfMan.hasKey("save_slot"))
@@ -1376,7 +1390,7 @@ void BbvsEngine::checkEasterEgg(char key) {
 	};
 
 	if (_currSceneNum == kCredits) {
-		memcpy(&_easterEggInput[1], &_easterEggInput[0], 6);
+		memmove(&_easterEggInput[1], &_easterEggInput[0], 6);
 		_easterEggInput[0] = key;
 		for (int i = 0; i < ARRAYSIZE(kEasterEggStrings); ++i) {
 			if (!scumm_strnicmp(kEasterEggStrings[i], _easterEggInput, kEasterEggLengths[i])) {

@@ -111,8 +111,7 @@ void Room::takePicture() {
 			return;
 		}
 
-		// TODO: simplify the second part of the test when tested
-		if ((_vm->_scrollCol < 35) || ((_vm->_scrollRow >= 10) && (_vm->_scrollRow >= 20))){
+		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)){
 			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
@@ -143,7 +142,7 @@ void Room::takePicture() {
 		_vm->_player->_roomNumber = 7;
 		_vm->_room->_function = FN_CLEAR1;
 		return;
-	} else if (result >= 0) 
+	} else if (result >= 0)
 		_vm->_player->_move = (Direction)(result + 1);
 
 	_vm->_player->_scrollFlag = false;
@@ -173,12 +172,14 @@ void Room::doRoom() {
 		reloadFlag = false;
 		_vm->_startup = 8;
 		_function = FN_NONE;
+		_vm->_screen->_fadeIn = false;
 
 		while (!_vm->shouldQuit()) {
 			_vm->_images.clear();
-			if (_vm->_startup != -1 && --_vm->_startup == 0) {
+			if (_vm->_screen->_fadeIn) {
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
+				_vm->_screen->_fadeIn = false;
 			}
 
 			// Poll for events
@@ -397,6 +398,7 @@ void Room::setWallCodes() {
 
 	_vm->_player->_rawXTemp = _vm->_player->_rawPlayer.x;
 	_vm->_player->_rawYTemp = _vm->_player->_rawPlayer.y;
+	codeWalls();
 }
 
 void Room::buildScreen() {
@@ -612,6 +614,7 @@ void Room::handleCommand(int commandId) {
 
 void Room::executeCommand(int commandId) {
 	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
 	_selectCommand = commandId;
 
 	if (_vm->getGameID() == GType_MartianMemorandum) {
@@ -698,8 +701,8 @@ void Room::executeCommand(int commandId) {
 			break;
 		}
 	}
-	_vm->_screen->saveScreen();
-	_vm->_screen->setDisplayScan();
+	screen.saveScreen();
+	screen.setDisplayScan();
 
 	// Get the toolbar icons resource
 	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
@@ -707,8 +710,12 @@ void Room::executeCommand(int commandId) {
 	delete iconData;
 
 	// Draw the button as selected
-	_vm->_screen->plotImage(spr, _selectCommand + 2,
+	screen.plotImage(spr, 0, Common::Point(0, 177));
+	screen.plotImage(spr, 1, Common::Point(143, 177));
+	screen.plotImage(spr, _selectCommand + 2,
 		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
+
+	delete spr;
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;
@@ -928,16 +935,9 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
 
 	_roomFlag = stream.readByte();
 
-	if (gameType == GType_Amazon) {
-		if (isCD)
-			_estIndex = stream.readSint16LE();
-		else {
-			_estIndex = -1;
-			if (!isDemo)
-				stream.readSint16LE();
-		}
-	} else
-		_estIndex = -1;
+	_estIndex = -1;
+	if (gameType == GType_Amazon && isCD)
+		_estIndex = stream.readSint16LE();
 
 	_musicFile.load(stream);
 	_scaleH1 = stream.readByte();

@@ -55,6 +55,8 @@ public:
 	 */
 	virtual SdlMixerManager *getMixerManager();
 
+	virtual bool hasFeature(Feature f);
+
 	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
 #if defined(USE_TASKBAR)
@@ -69,6 +71,10 @@ public:
 
 	virtual Common::String getSystemLanguage() const;
 
+	// Clipboard
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
+
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual uint32 getMillis(bool skipRecord = false);
@@ -76,10 +82,14 @@ public:
 	virtual void getTimeAndDate(TimeDate &td) const;
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
+	virtual Common::SaveFileManager *getSavefileManager();
 
 protected:
 	bool _inited;
 	bool _initedSDL;
+#ifdef USE_SDL_NET
+	bool _initedSDLnet;
+#endif
 
 	/**
 	 * Mixer manager that configures and setups SDL for
@@ -103,6 +113,11 @@ protected:
 	 * Initialze the SDL library.
 	 */
 	virtual void initSDL();
+
+	/**
+	 * Create the audio CD manager
+	 */
+	virtual AudioCDManager *createAudioCDManager();
 
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }

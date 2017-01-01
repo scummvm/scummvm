@@ -81,9 +81,14 @@ class Scene : public Background {
 	void stopAllSounds();
 
   private:
+#if 0
 	static bool compareObjPriority(const void *p1, const void *p2);
 	void objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bool skipFirst = false);
 	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
+#else
+	template<typename T>
+	void objectList_sortByPriority(Common::Array<T*> &list, uint startIndex = 0);
+#endif
 };
 
 class SceneTag : public CObject {

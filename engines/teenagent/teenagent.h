@@ -20,16 +20,14 @@
  *
  */
 
-#ifndef TEENAGENT_ENGINE_H
-#define TEENAGENT_ENGINE_H
+#ifndef TEENAGENT_TEENAGENT_H
+#define TEENAGENT_TEENAGENT_H
 
 #include "engines/engine.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "common/random.h"
-#include "common/rect.h"
 #include "common/array.h"
 
 #include "gui/debugger.h"
@@ -38,6 +36,14 @@
 #include "teenagent/dialog.h"
 
 struct ADGameDescription;
+
+namespace Audio {
+class AudioStream;
+}
+
+namespace Common {
+struct Point;
+}
 
 /**
  * This is the namespace of the TeenAgent engine.
@@ -53,7 +59,6 @@ struct Object;
 struct UseHotspot;
 class Scene;
 class MusicPlayer;
-class Dialog;
 class Resources;
 class Inventory;
 

@@ -665,15 +665,15 @@ void Fader::insertionSort(int size, byte *id, byte *value) {
 
 				int moveCount = size - arrIndex - 1;
 				if (moveCount > 0) {
-					Common::copy(idP + 1, idP + moveCount + 2, idP);
-					Common::copy(valueP + 1, valueP + moveCount + 2, valueP);
+					Common::copy(idP + 1, idP + moveCount + 1, idP);
+					Common::copy(valueP + 1, valueP + moveCount + 1, valueP);
 				}
 
 				// Scan for insert spot
 				int idx = 0;
 				if (endIndex > 0) {
 					bool breakFlag = false;
-					for (; idx <= endIndex && !breakFlag; ++idx) {
+					for (; idx <= endIndex - 1 && !breakFlag; ++idx) {
 						breakFlag = savedId < id[idx];
 					}
 				}

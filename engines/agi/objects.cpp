@@ -144,28 +144,28 @@ void AgiEngine::unloadObjects() {
 	}
 }
 
-void AgiEngine::objectSetLocation(unsigned int n, int i) {
-	if (n >= _game.numObjects) {
-		warning("AgiEngine::objectSetLocation: Can't access object %d.\n", n);
+void AgiEngine::objectSetLocation(uint16 objectNr, int i) {
+	if (objectNr >= _game.numObjects) {
+		warning("AgiEngine::objectSetLocation: Can't access object %d.\n", objectNr);
 		return;
 	}
-	_objects[n].location = i;
+	_objects[objectNr].location = i;
 }
 
-int AgiEngine::objectGetLocation(unsigned int n) {
-	if (n >= _game.numObjects) {
-		warning("AgiEngine::objectGetLocation: Can't access object %d.\n", n);
+int AgiEngine::objectGetLocation(uint16 objectNr) {
+	if (objectNr >= _game.numObjects) {
+		warning("AgiEngine::objectGetLocation: Can't access object %d.\n", objectNr);
 		return 0;
 	}
-	return _objects[n].location;
+	return _objects[objectNr].location;
 }
 
-const char *AgiEngine::objectName(unsigned int n) {
-	if (n >= _game.numObjects) {
-		warning("AgiEngine::objectName: Can't access object %d.\n", n);
+const char *AgiEngine::objectName(uint16 objectNr) {
+	if (objectNr >= _game.numObjects) {
+		warning("AgiEngine::objectName: Can't access object %d.\n", objectNr);
 		return "";
 	}
-	return _objects[n].name;
+	return _objects[objectNr].name;
 }
 
 } // End of namespace Agi

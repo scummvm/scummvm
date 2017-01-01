@@ -111,7 +111,7 @@ public:
 	Common::Array<PaletteCycle> _paletteCycles;
 	Common::StringArray _vocabStrings;
 	Animation *_animationData;
-	Animation *_activeAnimation;
+	Animation *_animation[10];
 	bool _freeAnimationFlag;
 	int _depthStyle;
 	int _bandsRange;
@@ -128,7 +128,6 @@ public:
 	Common::Point _customDest;
 	Common::Array<PaletteUsage::UsageEntry> _paletteUsageF;
 	Common::Array<PaletteUsage::UsageEntry> _scenePaletteUsage;
-
 	/**
 	 * Constructor
 	 */
@@ -214,7 +213,7 @@ public:
 	/**
 	 * Load an animation
 	 */
-	void loadAnimation(const Common::String &resName, int trigger = 0);
+	int loadAnimation(const Common::String &resName, int trigger = 0);
 
 	/**
 	 * Returns a vocab entry
@@ -245,9 +244,28 @@ public:
 	void freeAnimation();
 
 	/**
+	 * Frees any given active animation for the scene
+	 */
+	void freeAnimation(int idx);
+
+	/**
 	* Synchronize the game
 	*/
 	void synchronize(Common::Serializer &s);
+
+	void setAnimFrame(int id, int val);
+	int getAnimFrame(int id);
+
+	void setDynamicAnim(int id, int anim_id, int segment);
+	void setCamera(Common::Point pos);
+	void drawToBackground(int spriteId, int frameId, Common::Point pos, int depth, int scale);
+	void deleteSequence(int idx);
+	void loadSpeech(int idx);
+	void playSpeech(int idx);
+	void sceneScale(int yFront, int maxScale, int yBack,  int minScale);
+	void animations_tick();
+
+	int _speechReady;
 };
 
 } // End of namespace MADS

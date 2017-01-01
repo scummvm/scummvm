@@ -144,6 +144,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	_rnd = new Common::RandomSource("livingbooks");
 
+	_sound = NULL;
 	_page = NULL;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -158,6 +159,7 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 	destroyPage();
 
 	delete _console;
+	delete _sound;
 	delete _gfx;
 	delete _rnd;
 	_bookInfoFile.clear();
@@ -182,6 +184,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		error("Could not find xRes/yRes variables");
 
 	_gfx = new LBGraphics(this, _screenWidth, _screenHeight);
+	_sound = new Sound(this);
 
 	if (getGameType() != GType_LIVINGBOOKSV1)
 		_cursor = new LivingBooksCursorManager_v2();
@@ -3886,7 +3889,7 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	// Go back to the menu if requested, otherwise go to the requested page
 	if (returnToMenu)
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyGoToControls, 1));
-	else 
+	else
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;

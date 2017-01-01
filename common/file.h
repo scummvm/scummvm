@@ -143,7 +143,7 @@ public:
 	DumpFile();
 	virtual ~DumpFile();
 
-	virtual bool open(const String &filename);
+	virtual bool open(const String &filename, bool createPath = false);
 	virtual bool open(const FSNode &node);
 
 	virtual void close();
@@ -161,6 +161,8 @@ public:
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 
 	virtual bool flush();
+
+	virtual int32 pos() const;
 };
 
 } // End of namespace Common

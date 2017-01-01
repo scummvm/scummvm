@@ -28,15 +28,19 @@
 class OSystem_POSIX : public OSystem_SDL {
 public:
 	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_POSIX(Common::String baseConfigName = ".scummvmrc");
+	OSystem_POSIX(Common::String baseConfigName = "scummvm.ini");
 	virtual ~OSystem_POSIX() {}
 
 	virtual bool hasFeature(Feature f);
 
 	virtual bool displayLogFile();
 
+	virtual bool openUrl(const Common::String &url);
+
 	virtual void init();
 	virtual void initBackend();
+
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
 protected:
 	/**
@@ -59,6 +63,10 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual Common::WriteStream *createLogFile();
+
+	virtual AudioCDManager *createAudioCDManager();
+
+	bool launchBrowser(const Common::String& client, const Common::String &url);
 };
 
 #endif

@@ -352,9 +352,9 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	// leaving bug number for now #1635361
 	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
 	if (!soundDesc) {
-		// it fail load open old song after switch to diffrent CDs
+		// it fail load open old song after switch to different CDs
 		// so gave up
-		error("Game not supported while playing on 2 diffrent CDs");
+		error("Game not supported while playing on 2 different CDs");
 	}
 	track->soundDesc = soundDesc;
 

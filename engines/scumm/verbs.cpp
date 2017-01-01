@@ -905,7 +905,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			}
 		}
 	}
-		
+
 	if (_drawDemo && _game.features & GF_DEMO) {
 		verbDemoMode();
 	}

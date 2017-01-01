@@ -145,8 +145,6 @@ public:
 
 class Scene {
 private:
-	bool _loadingSavedGame;
-
 	/**
 	 * Loads sounds for the scene
 	 */
@@ -229,7 +227,7 @@ public:
 	Common::Array<Exit> _exits;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
-	ObjectArray _canimShapes;
+	Common::Array<Object *> _canimShapes;
 	Common::Array<ScaleZone> _scaleZones;
 	Common::StringArray _objSoundList;
 	bool _restoreFlag;

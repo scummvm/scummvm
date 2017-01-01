@@ -40,6 +40,11 @@ const int FS_TRANS[8] = {
 
 /*----------------------------------------------------------------*/
 
+ScalpelScene::~ScalpelScene() {
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx)
+		delete _canimShapes[idx];
+}
+
 bool ScalpelScene::loadScene(const Common::String &filename) {
 	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
 	bool result = Scene::loadScene(filename);
@@ -66,27 +71,27 @@ void ScalpelScene::drawAllShapes() {
 	// Draw all active shapes which are behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame,
-			_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
+		if (_canimShapes[idx]->_type == ACTIVE_BG_SHAPE && _canimShapes[idx]->_misc == BEHIND)
+			screen.getBackBuffer()->SHtransBlitFrom(*_canimShapes[idx]->_imageFrame,
+			_canimShapes[idx]->_position, _canimShapes[idx]->_flags & OBJ_FLIPPED);
 	}
 
 	// Draw all active shapes which are normal and behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are normal and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-			_canimShapes[idx]._flags & OBJ_FLIPPED);
+		if (_canimShapes[idx]->_type == ACTIVE_BG_SHAPE && _canimShapes[idx]->_misc == NORMAL_BEHIND)
+			screen.getBackBuffer()->SHtransBlitFrom(*_canimShapes[idx]->_imageFrame, _canimShapes[idx]->_position,
+			_canimShapes[idx]->_flags & OBJ_FLIPPED);
 	}
 
 	// Draw any active characters
@@ -98,7 +103,7 @@ void ScalpelScene::drawAllShapes() {
 				p._sequenceNumber == WALK_UPLEFT || p._sequenceNumber == STOP_UPLEFT ||
 				p._sequenceNumber == WALK_DOWNRIGHT || p._sequenceNumber == STOP_DOWNRIGHT);
 
-			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / FIXED_INT_MULTIPLIER,
+			screen.getBackBuffer()->SHtransBlitFrom(*p._imageFrame, Common::Point(p._position.x / FIXED_INT_MULTIPLIER,
 				p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight()), flipped);
 		}
 	}
@@ -107,16 +112,16 @@ void ScalpelScene::drawAllShapes() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_bgShapes[idx]._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+			screen.getBackBuffer()->SHtransBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
 			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the player
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
-			_canimShapes[idx]._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-			_canimShapes[idx]._flags & OBJ_FLIPPED);
+		if ((_canimShapes[idx]->_type == ACTIVE_BG_SHAPE || _canimShapes[idx]->_type == STATIC_BG_SHAPE) &&
+			_canimShapes[idx]->_misc == NORMAL_FORWARD)
+			screen.getBackBuffer()->SHtransBlitFrom(*_canimShapes[idx]->_imageFrame, _canimShapes[idx]->_position,
+			_canimShapes[idx]->_flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active shapes that are FORWARD
@@ -127,16 +132,16 @@ void ScalpelScene::drawAllShapes() {
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_bgShapes[idx]._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+			screen.getBackBuffer()->SHtransBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
 			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are forward
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
-			_canimShapes[idx]._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-			_canimShapes[idx]._flags & OBJ_FLIPPED);
+		if ((_canimShapes[idx]->_type == ACTIVE_BG_SHAPE || _canimShapes[idx]->_type == STATIC_BG_SHAPE) &&
+			_canimShapes[idx]->_misc == FORWARD)
+			screen.getBackBuffer()->SHtransBlitFrom(*_canimShapes[idx]->_imageFrame, _canimShapes[idx]->_position,
+			_canimShapes[idx]->_flags & OBJ_FLIPPED);
 	}
 
 	screen.resetDisplayBounds();
@@ -152,7 +157,7 @@ void ScalpelScene::checkBgShapes() {
 
 	// Iterate through the canim list
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &obj = _canimShapes[idx];
+		Object &obj = *_canimShapes[idx];
 		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
 			if ((obj._flags & 5) == 1) {
 				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
@@ -221,8 +226,8 @@ void ScalpelScene::doBgAnim() {
 			people._portrait.checkObject();
 
 		for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-			if (_canimShapes[idx]._type != INVALID && _canimShapes[idx]._type != REMOVE)
-				_canimShapes[idx].checkObject();
+			if (_canimShapes[idx]->_type != INVALID && _canimShapes[idx]->_type != REMOVE)
+				_canimShapes[idx]->checkObject();
 		}
 
 		if (_currentScene == DRAWING_ROOM)
@@ -237,7 +242,7 @@ void ScalpelScene::doBgAnim() {
 		if (people[HOLMES]._type == CHARACTER)
 			screen.restoreBackground(bounds);
 		else if (people[HOLMES]._type == REMOVE)
-			screen._backBuffer->blitFrom(screen._backBuffer2, pt, bounds);
+			screen.getBackBuffer()->SHblitFrom(screen._backBuffer2, pt, bounds);
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
@@ -256,7 +261,7 @@ void ScalpelScene::doBgAnim() {
 			Object &o = _bgShapes[idx];
 			if (o._type == NO_SHAPE && ((o._flags & OBJ_BEHIND) == 0)) {
 				// Restore screen area
-				screen._backBuffer->blitFrom(screen._backBuffer2, o._position,
+				screen.getBackBuffer()->SHblitFrom(screen._backBuffer2, o._position,
 					Common::Rect(o._position.x, o._position.y,
 					o._position.x + o._noShapeSize.x, o._position.y + o._noShapeSize.y));
 
@@ -266,7 +271,7 @@ void ScalpelScene::doBgAnim() {
 		}
 
 		for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-			Object &o = _canimShapes[idx];
+			Object &o = *_canimShapes[idx];
 			if (o._type == ACTIVE_BG_SHAPE || o._type == HIDE_SHAPE || o._type == REMOVE)
 				screen.restoreBackground(Common::Rect(o._oldPosition.x, o._oldPosition.y,
 					o._oldPosition.x + o._oldSize.x, o._oldPosition.y + o._oldSize.y));
@@ -287,8 +292,8 @@ void ScalpelScene::doBgAnim() {
 		people._portrait.adjustObject();
 
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if (_canimShapes[idx]._type != INVALID)
-			_canimShapes[idx].adjustObject();
+		if (_canimShapes[idx]->_type != INVALID)
+			_canimShapes[idx]->adjustObject();
 	}
 
 	if (people[HOLMES]._type == CHARACTER && people._holmesOn)
@@ -304,14 +309,14 @@ void ScalpelScene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
+		Object &o = *_canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -319,19 +324,19 @@ void ScalpelScene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are NORMAL and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
+		Object &o = *_canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
-	// Draw the person if not animating
-	if (people[HOLMES]._type == CHARACTER && people[HOLMES]._walkLoaded) {
+	// Draw the player if he's active and his walk has been loaded into memory
+	if (people[HOLMES]._type == CHARACTER && people[HOLMES]._walkLoaded && people._holmesOn) {
 		// If Holmes is too far to the right, move him back so he's on-screen
 		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[HOLMES]._imageFrame->_frame.w;
 		int tempX = MIN(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, xRight);
@@ -339,7 +344,7 @@ void ScalpelScene::doBgAnim() {
 		bool flipped = people[HOLMES]._sequenceNumber == WALK_LEFT || people[HOLMES]._sequenceNumber == STOP_LEFT ||
 			people[HOLMES]._sequenceNumber == WALK_UPLEFT || people[HOLMES]._sequenceNumber == STOP_UPLEFT ||
 			people[HOLMES]._sequenceNumber == WALK_DOWNRIGHT || people[HOLMES]._sequenceNumber == STOP_DOWNRIGHT;
-		screen._backBuffer->transBlitFrom(*people[HOLMES]._imageFrame,
+		screen.getBackBuffer()->SHtransBlitFrom(*people[HOLMES]._imageFrame,
 			Common::Point(tempX, people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->_frame.h), flipped);
 	}
 
@@ -347,14 +352,14 @@ void ScalpelScene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
+		Object &o = *_canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -362,19 +367,19 @@ void ScalpelScene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw any active portrait
 	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-		screen._backBuffer->transBlitFrom(*people._portrait._imageFrame,
+		screen.getBackBuffer()->SHtransBlitFrom(*people._portrait._imageFrame,
 			people._portrait._position, people._portrait._flags & OBJ_FLIPPED);
 
 	// Draw all static and active canimations that are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
+		Object &o = *_canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -382,7 +387,7 @@ void ScalpelScene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == NO_SHAPE && (o._flags & OBJ_BEHIND) == 0)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
+			screen.getBackBuffer()->SHtransBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Bring the newly built picture to the screen
@@ -450,16 +455,18 @@ void ScalpelScene::doBgAnim() {
 		}
 
 		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
-			Object &o = _canimShapes[idx];
+			Object &o = *_canimShapes[idx];
 
 			if (o._type == INVALID) {
 				// Anim shape was invalidated by checkEndOfSequence, so at this point we can remove it
+				delete _canimShapes[idx];
 				_canimShapes.remove_at(idx);
 			} else  if (o._type == REMOVE) {
 				if (_goToScene == -1)
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
 				// Shape for an animation is no longer needed, so remove it completely
+				delete _canimShapes[idx];
 				_canimShapes.remove_at(idx);
 			} else if (o._type == ACTIVE_BG_SHAPE) {
 				screen.flushImage(o._imageFrame, o._position,
@@ -496,6 +503,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	int tpDir, walkDir;
 	int tFrames = 0;
 	int gotoCode = -1;
+	Object *cObj;
 
 	// Validation
 	if (cAnimNum >= (int)_cAnim.size())
@@ -533,33 +541,33 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		return 1;
 
 	// Add new anim shape entry for displaying the animation
-	_canimShapes.push_back(Object());
-	Object &cObj = _canimShapes[_canimShapes.size() - 1];
+	cObj = new Object();
+	_canimShapes.push_back(cObj);
 
 	// Copy the canimation into the bgShapes type canimation structure so it can be played
-	cObj._allow = cAnimNum + 1;				// Keep track of the parent structure
-	cObj._name = _cAnim[cAnimNum]._name;	// Copy name
+	cObj->_allow = cAnimNum + 1;				// Keep track of the parent structure
+	cObj->_name = _cAnim[cAnimNum]._name;	// Copy name
 
 	// Remove any attempt to draw object frame
 	if (cAnim._type == NO_SHAPE && cAnim._sequences[0] < 100)
 		cAnim._sequences[0] = 0;
 
-	cObj._sequences = cAnim._sequences;
-	cObj._images = nullptr;
-	cObj._position = cAnim._position;
-	cObj._delta = Common::Point(0, 0);
-	cObj._type = cAnim._type;
-	cObj._flags = cAnim._flags;
+	cObj->_sequences = cAnim._sequences;
+	cObj->_images = nullptr;
+	cObj->_position = cAnim._position;
+	cObj->_delta = Common::Point(0, 0);
+	cObj->_type = cAnim._type;
+	cObj->_flags = cAnim._flags;
 
-	cObj._maxFrames = 0;
-	cObj._frameNumber = -1;
-	cObj._sequenceNumber = cAnimNum;
-	cObj._oldPosition = Common::Point(0, 0);
-	cObj._oldSize = Common::Point(0, 0);
-	cObj._goto = Common::Point(0, 0);
-	cObj._status = 0;
-	cObj._misc = 0;
-	cObj._imageFrame = nullptr;
+	cObj->_maxFrames = 0;
+	cObj->_frameNumber = -1;
+	cObj->_sequenceNumber = cAnimNum;
+	cObj->_oldPosition = Common::Point(0, 0);
+	cObj->_oldSize = Common::Point(0, 0);
+	cObj->_goto = Common::Point(0, 0);
+	cObj->_status = 0;
+	cObj->_misc = 0;
+	cObj->_imageFrame = nullptr;
 
 	if (cAnim._name.size() > 0 && cAnim._type != NO_SHAPE) {
 		if (tpPos.x != -1)
@@ -584,25 +592,25 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 		// Now load the resource as an image
 		if (!IS_3DO) {
-			cObj._images = new ImageFile(fname);
+			cObj->_images = new ImageFile(fname);
 		} else {
-			cObj._images = new ImageFile3DO(fname, kImageFile3DOType_RoomFormat);
+			cObj->_images = new ImageFile3DO(fname, kImageFile3DOType_RoomFormat);
 		}
-		cObj._imageFrame = &(*cObj._images)[0];
-		cObj._maxFrames = cObj._images->size();
+		cObj->_imageFrame = &(*cObj->_images)[0];
+		cObj->_maxFrames = cObj->_images->size();
 
 		int frames = 0;
 		if (playRate < 0) {
 			// Reverse direction
 			// Count number of frames
-			while (frames < MAX_FRAME && cObj._sequences[frames])
+			while (frames < MAX_FRAME && cObj->_sequences[frames])
 				++frames;
 		} else {
 			// Forward direction
 			BaseObject::_countCAnimFrames = true;
 
-			while (cObj._type == ACTIVE_BG_SHAPE) {
-				cObj.checkObject();
+			while (cObj->_type == ACTIVE_BG_SHAPE) {
+				cObj->checkObject();
 				++frames;
 
 				if (frames >= 1000)
@@ -614,10 +622,10 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 			BaseObject::_countCAnimFrames = false;
 
-			cObj._type = cAnim._type;
-			cObj._frameNumber = -1;
-			cObj._position = cAnim._position;
-			cObj._delta = Common::Point(0, 0);
+			cObj->_type = cAnim._type;
+			cObj->_frameNumber = -1;
+			cObj->_position = cAnim._position;
+			cObj->_delta = Common::Point(0, 0);
 		}
 
 		// Return if animation has no frames in it
@@ -631,7 +639,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		if (playRate < 0) {
 			// Play in reverse
 			dir = -2;
-			cObj._frameNumber = frames - 3;
+			cObj->_frameNumber = frames - 3;
 		} else {
 			dir = 0;
 		}
@@ -648,14 +656,14 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 			// Repeat same frame
 			int temp = repeat;
 			while (--temp > 0) {
-				cObj._frameNumber--;
+				cObj->_frameNumber--;
 				doBgAnim();
 
 				if (_vm->shouldQuit())
 					return 0;
 			}
 
-			cObj._frameNumber += dir;
+			cObj->_frameNumber += dir;
 		}
 
 		people[HOLMES]._type = CHARACTER;
@@ -670,14 +678,18 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 	if (playRate < 0)
 		// Reverse direction - set to end sequence
-		cObj._frameNumber = tFrames - 1;
+		cObj->_frameNumber = tFrames - 1;
 
-	if (cObj._frameNumber <= 26)
-		gotoCode = cObj._sequences[cObj._frameNumber + 3];
+	if (cObj->_frameNumber <= 26)
+		gotoCode = cObj->_sequences[cObj->_frameNumber + 3];
 
-	// Unless anim shape has already been freed, set it to REMOVE so doBgAnim can free it
-	if (_canimShapes.indexOf(cObj) != -1)
-		cObj.checkObject();
+	// Unless anim shape has already been removed, do a final check to allow it to become REMOVEd
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (_canimShapes[idx] == cObj) {
+			cObj->checkObject();
+			break;
+		}
+	}
 
 	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToScene = gotoCode;
@@ -729,7 +741,7 @@ int ScalpelScene::findBgShape(const Common::Point &pt) {
 	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN
-			&& o._aType <= PERSON) {
+				&& o._type != REMOVE && o._aType <= PERSON) {
 			if (o.getNewBounds().contains(pt))
 				return idx;
 		} else if (o._type == NO_SHAPE) {

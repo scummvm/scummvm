@@ -202,23 +202,24 @@ Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_
 		memset(_soundOverride, 0, _numSoundMax * sizeof(SoundOvrParameters));
 	}
 
-	_driver = new TownsEuphonyDriver(mixer);
+	_player = new EuphonyPlayer(mixer);
+	_intf = new TownsAudioInterface(mixer, 0);
 }
 
 Player_Towns_v1::~Player_Towns_v1() {
-	delete _driver;
+	delete _intf;
+	delete _player;
 	delete[] _soundOverride;
 }
 
 bool Player_Towns_v1::init() {
-	if (!_driver)
+	if (!_player)
 		return false;
 
-	if (!_driver->init())
+	if (!_player->init())
 		return false;
 
-	_driver->reserveSoundEffectChannels(8);
-	_intf = _driver->intf();
+	_player->driver()->reserveSoundEffectChannels(8);
 
 	// Treat all 6 fm channels and all 8 pcm channels as sound effect channels
 	// since music seems to exist as CD audio only in the games which use this
@@ -231,7 +232,7 @@ bool Player_Towns_v1::init() {
 }
 
 void Player_Towns_v1::setMusicVolume(int vol) {
-	_driver->setMusicVolume(vol);
+	_player->driver()->setMusicVolume(vol);
 }
 
 void Player_Towns_v1::startSound(int sound) {
@@ -254,7 +255,9 @@ void Player_Towns_v1::startSound(int sound) {
 		uint16 len = READ_LE_UINT16(ptr) + 2;
 		playPcmTrack(sound, ptr + 6, velocity, 64, note ? note : (len > 50 ? ptr[50] : 60), READ_LE_UINT16(ptr + 10));
 
-	} else if (type == 1) {
+		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
+		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
+	} else if (type == 1 || (_vm->_game.id == GID_INDY3 && sound == 40)) {
 		playEuphonyTrack(sound, ptr + 6);
 
 	} else if (type == 2) {
@@ -275,7 +278,7 @@ void Player_Towns_v1::stopSound(int sound) {
 	if (sound != 0 && sound == _eupCurrentSound) {
 		_eupCurrentSound = 0;
 		_eupLooping = false;
-		_driver->stopParser();
+		_player->stop();
 	}
 
 	stopPcmTrack(sound);
@@ -288,7 +291,7 @@ void Player_Towns_v1::stopAllSounds() {
 
 	_eupCurrentSound = 0;
 	_eupLooping = false;
-	_driver->stopParser();
+	_player->stop();
 
 	stopPcmTrack(0);
 }
@@ -297,7 +300,7 @@ int Player_Towns_v1::getSoundStatus(int sound) const {
 	if (sound == _cdaCurrentSound)
 		return _vm->_sound->pollCD();
 	if (sound == _eupCurrentSound)
-		return _driver->parserIsPlaying() ? 1 : 0;
+		return _player->isPlaying() ? 1 : 0;
 	return Player_Towns::getSoundStatus(sound);
 }
 
@@ -306,7 +309,7 @@ int32 Player_Towns_v1::doCommand(int numargs, int args[]) {
 
 	switch (args[0]) {
 	case 2:
-		_driver->intf()->callback(73, 0);
+		_player->driver()->cdaToggle(0);
 		break;
 
 	case 3:
@@ -344,7 +347,7 @@ int32 Player_Towns_v1::doCommand(int numargs, int args[]) {
 void Player_Towns_v1::setVolumeCD(int left, int right) {
 	_cdaVolLeft = left & 0xff;
 	_cdaVolRight = right & 0xff;
-	_driver->setOutputVolume(1, left >> 1, right >> 1);
+	_player->driver()->setOutputVolume(1, left >> 1, right >> 1);
 }
 
 void Player_Towns_v1::setSoundVolume(int sound, int left, int right) {
@@ -373,7 +376,7 @@ void Player_Towns_v1::saveLoadWithSerializer(Serializer *ser) {
 
 	ser->saveLoadEntries(this, cdEntries);
 
-	if (!_eupLooping && !_driver->parserIsPlaying())
+	if (!_eupLooping && !_player->isPlaying())
 		_eupCurrentSound = 0;
 
 	static const SaveLoadEntry eupEntries[] = {
@@ -409,7 +412,9 @@ void Player_Towns_v1::restoreAfterLoad() {
 		if (_vm->_game.version != 3)
 			ptr += 2;
 
-		if (ptr[7] == 1) {
+		// WORKAROUND for bug #1873 INDY3 FMTOWNS: Music in Venice is distorted
+		// The resource for sound 40 accidently sets the sound type to 255 instead of 1.
+		if (ptr[7] == 1 || (_vm->_game.id == GID_INDY3 && _eupCurrentSound == 40)) {
 			setSoundVolume(_eupCurrentSound, _eupVolLeft, _eupVolRight);
 			playEuphonyTrack(_eupCurrentSound, ptr);
 		}
@@ -439,10 +444,10 @@ void Player_Towns_v1::restartLoopingSounds() {
 			c++;
 		}
 
-		_driver->playSoundEffect(i + 0x3f, _pcmCurrentSound[i].note, _pcmCurrentSound[i].velo, ptr);
+		_player->driver()->playSoundEffect(i + 0x3f, _pcmCurrentSound[i].note, _pcmCurrentSound[i].velo, ptr);
 	}
 
-	_driver->intf()->callback(73, 1);
+	_player->driver()->cdaToggle(1);
 }
 
 void Player_Towns_v1::startSoundEx(int sound, int velo, int pan, int note) {
@@ -492,9 +497,9 @@ void Player_Towns_v1::stopSoundSuspendLooping(int sound) {
 	} else {
 		for (int i = 1; i < 9; i++) {
 			if (sound == _pcmCurrentSound[i].index) {
-				if (!_driver->soundEffectIsPlaying(i + 0x3f))
+				if (!_player->driver()->soundEffectIsPlaying(i + 0x3f))
 					continue;
-				_driver->stopSoundEffect(i + 0x3f);
+				_player->driver()->stopSoundEffect(i + 0x3f);
 				if (_pcmCurrentSound[i].looping)
 					_pcmCurrentSound[i].paused = 1;
 				else
@@ -510,23 +515,23 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	const uint8 *trackData = src + 150;
 
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_enable(i, *src++);
+		_player->configPart_enable(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_setMode(i, 0xff);
+		_player->configPart_setType(i, 0xff);
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_remap(i, *src++);
+		_player->configPart_remap(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_adjustVolume(i, *src++);
+		_player->configPart_adjustVolume(i, *src++);
 	for (int i = 0; i < 32; i++)
-		_driver->configChan_setTranspose(i, *src++);
+		_player->configPart_setTranspose(i, *src++);
 
 	src += 8;
 	for (int i = 0; i < 6; i++)
-		_driver->assignChannel(i, *src++);
+		_player->driver()->assignPartToChannel(i, *src++);
 
 	for (int i = 0; i < data[14]; i++) {
-		_driver->loadInstrument(i, i, pos + i * 48);
-		_driver->intf()->callback(4, i, i);
+		_player->driver()->loadInstrument(i, i, pos + i * 48);
+		_player->driver()->setInstrument(i, i);
 	}
 
 	_eupVolLeft = _soundOverride[sound].vLeft;
@@ -537,18 +542,18 @@ void Player_Towns_v1::playEuphonyTrack(int sound, const uint8 *data) {
 	lvl >>= 2;
 
 	for (int i = 0; i < 6; i++)
-		_driver->chanVolume(i, lvl);
+		_player->driver()->channelVolume(i, lvl);
 
 	uint32 trackSize = READ_LE_UINT32(src);
 	src += 4;
 	uint8 startTick = *src++;
 
-	_driver->setMusicTempo(*src++);
-	_driver->startMusicTrack(trackData, trackSize, startTick);
+	_player->setTempo(*src++);
+	_player->startTrack(trackData, trackSize, startTick);
 
 	_eupLooping = (*src != 1) ? 1 : 0;
-	_driver->setMusicLoop(_eupLooping != 0);
-	_driver->continueParsing();
+	_player->setLoopStatus(_eupLooping != 0);
+	_player->resume();
 	_eupCurrentSound = sound;
 }
 

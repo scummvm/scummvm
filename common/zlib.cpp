@@ -316,6 +316,7 @@ protected:
 	ScopedPtr<WriteStream> _wrapped;
 	z_stream _stream;
 	int _zlibErr;
+	uint32 _pos;
 
 	void processData(int flushType) {
 		// This function is called by both write() and finalize().
@@ -333,7 +334,7 @@ protected:
 	}
 
 public:
-	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream() {
+	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream(), _pos(0) {
 		assert(w != 0);
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
@@ -403,8 +404,11 @@ public:
 		// ... and flush it to disk
 		processData(Z_NO_FLUSH);
 
+		_pos += dataSize - _stream.avail_in;
 		return dataSize - _stream.avail_in;
 	}
+
+	virtual int32 pos() const { return _pos; }
 };
 
 #endif	// USE_ZLIB

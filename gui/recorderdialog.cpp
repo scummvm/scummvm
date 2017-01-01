@@ -33,7 +33,6 @@
 #include "gui/editrecorddialog.h"
 #include "gui/EventRecorder.h"
 #include "gui/message.h"
-#include "gui/saveload.h"
 #include "common/system.h"
 #include "gui/ThemeEval.h"
 #include "gui/gui-manager.h"
@@ -171,7 +170,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		const EnginePlugin *plugin = 0;
 		GameDescriptor desc = EngineMan.findGame(gameId, &plugin);
 		g_system->getTimeAndDate(t);
-		EditRecordDialog editDlg("Unknown Author", Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description(), "");
+		EditRecordDialog editDlg(_("Unknown Author"), Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description(), "");
 		if (editDlg.runModal() != kOKCmd) {
 			return;
 		}

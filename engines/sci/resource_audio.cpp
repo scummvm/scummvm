@@ -25,7 +25,7 @@
 #include "common/archive.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-
+#include "common/memstream.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"
@@ -139,7 +139,7 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 		error("Can't allocate %d bytes needed for loading %s", size, _id.toString().c_str());
 	}
 
-	unsigned int really_read = file->read(data, size);
+	uint32 really_read = file->read(data, size);
 	if (really_read != size)
 		warning("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
@@ -277,7 +277,7 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 // w syncSize (iff seq has bit 7 set)
 // w syncAscSize (iff seq has bit 6 set)
 
-int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
+int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 #ifndef ENABLE_SCI32
 	// SCI32 support is not built in. Check if this is a SCI32 game
 	// and if it is abort here.
@@ -286,17 +286,19 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 #endif
 
 	uint32 offset = 0;
-	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_volumeNumber), false);
+	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_mapNumber), false);
 
 	if (!mapRes) {
-		warning("Failed to open %i.MAP", map->_volumeNumber);
+		warning("Failed to open %i.MAP", map->_mapNumber);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	ResourceSource *src = findVolume(map, 0);
+	ResourceSource *src = findVolume(map, map->_volumeNumber);
 
-	if (!src)
+	if (!src) {
+		warning("Failed to find volume for %i.MAP", map->_mapNumber);
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+	}
 
 	byte *ptr = mapRes->data;
 
@@ -309,7 +311,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 			break;
 	}
 
-	if (map->_volumeNumber == 65535) {
+	if (map->_mapNumber == 65535) {
 		while (ptr < mapRes->data + mapRes->size) {
 			uint16 n = READ_LE_UINT16(ptr);
 			ptr += 2;
@@ -327,7 +329,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset);
 		}
-	} else if (map->_volumeNumber == 0 && entrySize == 10 && ptr[3] == 0) {
+	} else if (map->_mapNumber == 0 && entrySize == 10 && ptr[3] == 0) {
 		// QFG3 demo format
 		// ptr[3] would be 'seq' in the normal format and cannot possibly be 0
 		while (ptr < mapRes->data + mapRes->size) {
@@ -344,7 +346,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
 		}
-	} else if (map->_volumeNumber == 0 && entrySize == 8 && READ_LE_UINT16(ptr + 2) == 0xffff) {
+	} else if (map->_mapNumber == 0 && entrySize == 8 && READ_LE_UINT16(ptr + 2) == 0xffff) {
 		// LB2 Floppy/Mother Goose SCI1.1 format
 		Common::SeekableReadStream *stream = getVolumeFile(src);
 
@@ -400,22 +402,24 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
 				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0)
-					addResource(ResourceId(kResourceTypeSync36, map->_volumeNumber, n & 0xffffff3f), src, offset, syncSize);
+					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
-			if (n & 0x40) {
+			// Checking for this 0x40 flag breaks at least Laura Bow 2 CD 1.1
+			// map 448
+			if (g_sci->getGameId() == GID_KQ6 && (n & 0x40)) {
 				// This seems to define the size of raw lipsync data (at least
 				// in KQ6 CD Windows).
 				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
 				ptr += 2;
 
 				if (kq6HiresSyncSize > 0) {
-					addResource(ResourceId(kResourceTypeRave, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
+					addResource(ResourceId(kResourceTypeRave, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
 					syncSize += kq6HiresSyncSize;
 				}
 			}
 
-			addResource(ResourceId(kResourceTypeAudio36, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize);
+			addResource(ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize);
 		}
 	}
 
@@ -509,10 +513,8 @@ void ResourceManager::setAudioLanguage(int language) {
 		_audioMapSCI1 = NULL;
 	}
 
-	char filename[9];
-	snprintf(filename, 9, "AUDIO%03d", language);
-
-	Common::String fullname = Common::String(filename) + ".MAP";
+	Common::String filename = Common::String::format("AUDIO%03d", language);
+	Common::String fullname = filename + ".MAP";
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
 		return;
@@ -522,7 +524,7 @@ void ResourceManager::setAudioLanguage(int language) {
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, Common::String(filename) + ".0??");
+	SearchMan.listMatchingMembers(files, filename + ".0??");
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
 		const char *dot = strrchr(name.c_str(), '.');
@@ -637,7 +639,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1:
+	case SCI_VERSION_2_1_EARLY:
 		data = resource->data;
 		// Count # of tracks
 		_trackCount = 0;
@@ -688,6 +690,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 					channel->data = resource->data + dataOffset;
 					channel->size = READ_LE_UINT16(data + 4);
+
+					if (dataOffset + channel->size > resource->size) {
+						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						channel->size = resource->size - dataOffset;
+					}
+
 					channel->curPos = 0;
 					channel->number = *channel->data;
 
@@ -863,6 +871,7 @@ void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (!fileStream)
 		return;
 
+	assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 	res->loadFromWaveFile(fileStream);
 	if (_resourceFile)
@@ -916,6 +925,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 			break;
 		}
 	} else {
+		assert(fileStream->size() == -1 || res->_fileOffset < fileStream->size());
 		// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 	}
@@ -929,13 +939,21 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 }
 
 bool ResourceManager::addAudioSources() {
+#ifdef ENABLE_SCI32
+	// Multi-disc audio is added during addAppropriateSources for those titles
+	// that require it
+	if (_multiDiscAudio) {
+		return true;
+	}
+#endif
+
 	Common::List<ResourceId> resources = listResources(kResourceTypeMap);
 	Common::List<ResourceId>::iterator itr;
 
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
-		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
+		ResourceSource *src = addSource(new IntMapResourceSource("MAP", 0, itr->getNumber()));
 
-		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
+		if (itr->getNumber() == 65535 && Common::File::exists("RESOURCE.SFX"))
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.SFX", src, 0));
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
@@ -947,6 +965,10 @@ bool ResourceManager::addAudioSources() {
 }
 
 void ResourceManager::changeAudioDirectory(Common::String path) {
+	// TODO: This implementation is broken.
+	return;
+
+#if 0
 	// Remove all of the audio map resource sources, as well as the audio resource sources
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
 		ResourceSource *source = *it;
@@ -983,12 +1005,13 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		if ((it->getNumber() == 65535))
 			continue;
 
-		ResourceSource *src = addSource(new IntMapResourceSource(mapName, it->getNumber()));
+		ResourceSource *src = addSource(new IntMapResourceSource(mapName, 0, it->getNumber()));
 		addSource(new AudioVolumeResourceSource(this, audioResourceName, src, 0));
 	}
 
 	// Rescan the newly added resources
 	scanNewSources();
+#endif
 }
 
 } // End of namespace Sci

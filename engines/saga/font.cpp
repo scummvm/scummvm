@@ -232,7 +232,7 @@ void Font::createOutline(FontData *font) {
 }
 
 int Font::translateChar(int charId) {
-	if (charId <= 127)
+	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 254))
 		return charId;					// normal character
 	else
 		return _charMap[charId - 128];	// extended character

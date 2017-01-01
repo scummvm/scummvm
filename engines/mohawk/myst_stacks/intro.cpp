@@ -28,8 +28,6 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/intro.h"
 
-#include "gui/message.h"
-
 namespace Mohawk {
 namespace MystStacks {
 
@@ -170,7 +168,7 @@ void Intro::mystLinkBook_run() {
 void Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Myst link book init", op);
 
-	_linkBookMovie = static_cast<MystResourceType6 *>(_invokingResource);
+	_linkBookMovie = getInvokingResource<MystAreaVideo>();
 	_startTime = 1;
 	_linkBookRunning = true;
 }

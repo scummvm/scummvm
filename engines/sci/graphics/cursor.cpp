@@ -80,7 +80,7 @@ GfxCursor::~GfxCursor() {
 	kernelClearZoomZone();
 }
 
-void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
+void GfxCursor::init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event) {
 	_coordAdjuster = coordAdjuster;
 	_event = event;
 }
@@ -336,6 +336,9 @@ void GfxCursor::setPosition(Common::Point pos) {
 			&& ((workaround->newPositionX == pos.x) && (workaround->newPositionY == pos.y))) {
 			EngineState *s = g_sci->getEngineState();
 			s->_cursorWorkaroundActive = true;
+			// At least on OpenPandora it seems that the cursor is actually set, but a bit afterwards
+			// touch screen controls will overwrite the position. More information see kGetEvent in kevent.cpp.
+			s->_cursorWorkaroundPosCount = 5; // should be enough for OpenPandora
 			s->_cursorWorkaroundPoint = pos;
 			s->_cursorWorkaroundRect = Common::Rect(workaround->rectLeft, workaround->rectTop, workaround->rectRight, workaround->rectBottom);
 			return;
@@ -453,6 +456,15 @@ void GfxCursor::kernelClearZoomZone() {
 void GfxCursor::kernelSetZoomZone(byte multiplier, Common::Rect zone, GuiResourceId viewNum, int loopNum, int celNum, GuiResourceId picNum, byte zoomColor) {
 	kernelClearZoomZone();
 
+	// This function is a stub in the Mac version of Freddy Pharkas.
+	// This function was only used in two games (LB2 and Pharkas), but there
+	// was no version of LB2 for the Macintosh platform.
+	// CHECKME: This wasn't verified against disassembly, one might want
+	// to check against it, in case there's some leftover code in the stubbed
+	// function (although it does seem that this was completely removed).
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+		return;
+
 	_zoomMultiplier = multiplier;
 
 	if (_zoomMultiplier != 1 && _zoomMultiplier != 2 && _zoomMultiplier != 4)
@@ -500,32 +512,18 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// automatically. The view resources may exist, but none of the games actually
 	// use them.
 
-	if (_macCursorRemap.empty()) {
-		// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
-		// KQ6 uses this mapping for its cursors
-		if (g_sci->getGameId() == GID_KQ6) {
-			if (viewNum == 990)      // Inventory Cursors
-				viewNum = loopNum * 16 + celNum + 2000;
-			else if (viewNum == 998) // Regular Cursors
-				viewNum = celNum + 1000;
-			else                     // Unknown cursor, ignored
-				return;
-		}
-		if (g_sci->hasMacIconBar())
-			g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
-	} else {
-		// If we do have the list, we'll be using a remap based on what the
-		// scripts have given us.
-		for (uint32 i = 0; i < _macCursorRemap.size(); i++) {
-			if (viewNum == _macCursorRemap[i]) {
-				viewNum = (i + 1) * 0x100 + loopNum * 0x10 + celNum;
-				break;
-			}
-
-			if (i == _macCursorRemap.size())
-				error("Unmatched Mac cursor %d", viewNum);
-		}
+	// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
+	// KQ6 uses this mapping for its cursors
+	if (g_sci->getGameId() == GID_KQ6) {
+		if (viewNum == 990)      // Inventory Cursors
+			viewNum = loopNum * 16 + celNum + 2000;
+		else if (viewNum == 998) // Regular Cursors
+			viewNum = celNum + 1000;
+		else                     // Unknown cursor, ignored
+			return;
 	}
+	if (g_sci->hasMacIconBar())
+		g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, viewNum), false);
 
@@ -554,11 +552,6 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	delete macCursor;
 	kernelShow();
-}
-
-void GfxCursor::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
-	for (int i = 0; i < cursorCount; i++)
-		_macCursorRemap.push_back(cursors[i].toUint16());
 }
 
 } // End of namespace Sci

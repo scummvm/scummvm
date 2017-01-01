@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "audio/mididrv.h"
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
@@ -37,9 +37,15 @@
 #include "gui/fluidsynth-dialog.h"
 #endif
 
+#ifdef USE_LIBCURL
+#include "backends/cloud/storage.h"
+#endif
+
 namespace GUI {
+class LauncherDialog;
 
 class CheckboxWidget;
+class EditTextWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
@@ -61,6 +67,7 @@ public:
 	void init();
 
 	void open();
+	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	const Common::String& getDomain() const { return _domain; }
@@ -74,6 +81,10 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
+	
+	virtual void build();
+	virtual void clean();
+	void rebuild();
 
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
@@ -108,6 +119,7 @@ private:
 	StaticTextWidget *_gfxPopUpDesc;
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
+	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
@@ -187,11 +199,6 @@ protected:
 	Common::String _guioptionsString;
 
 	//
-	//Theme Options
-	//
-	Common::String _oldTheme;
-
-	//
 	// Engine-specific controls
 	//
 	CheckboxWidgetList _engineCheckboxes;
@@ -200,17 +207,23 @@ protected:
 
 class GlobalOptionsDialog : public OptionsDialog {
 public:
-	GlobalOptionsDialog();
+	GlobalOptionsDialog(LauncherDialog *launcher);
 	~GlobalOptionsDialog();
 
-	void open();
+	virtual void apply();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle();
 
 	virtual void reflowLayout();
 
 protected:
-#ifdef SMALL_SCREEN_DEVICE
+	virtual void build();
+	virtual void clean();
+
+	Common::String _newTheme;
+	LauncherDialog *_launcher;
+#ifdef GUI_ENABLE_KEYSDIALOG
 	KeysDialog *_keysDialog;
 #endif
 #ifdef USE_FLUIDSYNTH
@@ -236,6 +249,49 @@ protected:
 	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
+
+#ifdef USE_UPDATES
+	StaticTextWidget *_updatesPopUpDesc;
+	PopUpWidget *_updatesPopUp;
+#endif
+
+#ifdef USE_CLOUD
+	//
+	// Cloud controls
+	//
+	uint32 _selectedStorageIndex;
+	StaticTextWidget *_storagePopUpDesc;
+	PopUpWidget *_storagePopUp;
+	StaticTextWidget *_storageUsernameDesc;
+	StaticTextWidget *_storageUsername;
+	StaticTextWidget *_storageUsedSpaceDesc;
+	StaticTextWidget *_storageUsedSpace;
+	StaticTextWidget *_storageLastSyncDesc;
+	StaticTextWidget *_storageLastSync;
+	ButtonWidget	 *_storageConnectButton;
+	ButtonWidget	 *_storageRefreshButton;
+	ButtonWidget	 *_storageDownloadButton;
+	ButtonWidget	 *_runServerButton;
+	StaticTextWidget *_serverInfoLabel;
+	ButtonWidget	 *_rootPathButton;
+	StaticTextWidget *_rootPath;
+	ButtonWidget	 *_rootPathClearButton;
+	StaticTextWidget *_serverPortDesc;
+	EditTextWidget *_serverPort;
+	ButtonWidget	 *_serverPortClearButton;
+	bool _redrawCloudTab;
+#ifdef USE_SDL_NET
+	bool _serverWasRunning;
+#endif
+
+	void setupCloudTab();
+
+#ifdef USE_LIBCURL
+	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
+	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
+	void storageErrorCallback(Networking::ErrorResponse response);
+#endif
+#endif // USE_CLOUD
 };
 
 } // End of namespace GUI

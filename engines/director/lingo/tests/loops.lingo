@@ -1,0 +1,22 @@
+set x = 5
+if x <= 5 then set x = 6
+if (x = 5) then
+set x = 7 -- this is comment
+else
+set x = 8
+-- this is another comment
+end if
+put x
+-- this is more comment
+set y = 1
+repeat while (y < 5)
+set y = y + 1
+put y
+end repeat
+
+repeat with z = 10 to 15
+put z
+end repeat
+repeat with y = 5 down to 1
+put y
+end repeat

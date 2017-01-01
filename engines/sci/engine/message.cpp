@@ -182,7 +182,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
 		// SCI32 Mac is different than SCI32 DOS/Win here
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1)
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(res->data, res->size);
 		else
 #endif
@@ -333,12 +333,14 @@ void MessageState::popCursorStack() {
 		error("Message: attempt to pop from empty stack");
 }
 
-int MessageState::hexDigitToInt(char h) {
+int MessageState::hexDigitToWrongInt(char h) {
+	// Hex digits above 9 are incorrectly interpreted by SSCI as 11-16 instead
+	// of 10-15 because of a never-fixed typo
 	if ((h >= 'A') && (h <= 'F'))
-		return h - 'A' + 10;
+		return h - 'A' + 11;
 
 	if ((h >= 'a') && (h <= 'f'))
-		return h - 'a' + 10;
+		return h - 'a' + 11;
 
 	if ((h >= '0') && (h <= '9'))
 		return h - '0';
@@ -355,8 +357,8 @@ bool MessageState::stringHex(Common::String &outStr, const Common::String &inStr
 	if (index + 2 >= inStr.size())
 		return false;
 
-	int digit1 = hexDigitToInt(inStr[index + 1]);
-	int digit2 = hexDigitToInt(inStr[index + 2]);
+	int digit1 = hexDigitToWrongInt(inStr[index + 1]);
+	int digit2 = hexDigitToWrongInt(inStr[index + 2]);
 
 	// Check for hex
 	if ((digit1 == -1) || (digit2 == -1))
@@ -439,21 +441,8 @@ Common::String MessageState::processString(const char *s) {
 void MessageState::outputString(reg_t buf, const Common::String &str) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		if (_segMan->getSegmentType(buf.getSegment()) == SEG_TYPE_STRING) {
-			SciString *sciString = _segMan->lookupString(buf);
-			sciString->setSize(str.size() + 1);
-			for (uint32 i = 0; i < str.size(); i++)
-				sciString->setValue(i, str.c_str()[i]);
-			sciString->setValue(str.size(), 0);
-		} else if (_segMan->getSegmentType(buf.getSegment()) == SEG_TYPE_ARRAY) {
-			// Happens in the intro of LSL6, we are asked to write the string
-			// into an array
-			SciArray<reg_t> *sciString = _segMan->lookupArray(buf);
-			sciString->setSize(str.size() + 1);
-			for (uint32 i = 0; i < str.size(); i++)
-				sciString->setValue(i, make_reg(0, str.c_str()[i]));
-			sciString->setValue(str.size(), NULL_REG);
-		}
+		SciArray *sciString = _segMan->lookupArray(buf);
+		sciString->fromString(str);
 	} else {
 #endif
 		SegmentRef buffer_r = _segMan->dereference(buf);

@@ -121,7 +121,7 @@ bool Vocabulary::loadParserWords() {
 		}
 	}
 
-	unsigned int seeker;
+	uint32 seeker;
 	if (resourceType == kVocabularySCI1)
 		seeker = 255 * 2; // vocab.900 starts with 255 16-bit pointers which we don't use
 	else
@@ -202,7 +202,7 @@ bool Vocabulary::loadSuffixes() {
 	if (!resource)
 		return false; // No vocabulary found
 
-	unsigned int seeker = 1;
+	uint32 seeker = 1;
 
 	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
 		suffix_t suffix;
@@ -288,7 +288,7 @@ bool Vocabulary::loadAltInputs() {
 		AltInput t;
 		t._input = data;
 
-		unsigned int l = strlen(data);
+		uint32 l = strlen(data);
 		t._inputLength = l;
 		data += l + 1;
 
@@ -325,15 +325,15 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 		return false;
 
 	bool ret = false;
-	unsigned int loopCount = 0;
+	uint32 loopCount = 0;
 	bool changed;
 	do {
 		changed = false;
 
 		const char* t = text.c_str();
-		unsigned int tlen = text.size();
+		uint32 tlen = text.size();
 
-		for (unsigned int p = 0; p < tlen && !changed; ++p) {
+		for (uint32 p = 0; p < tlen && !changed; ++p) {
 			unsigned char s = t[p];
 			if (s >= _altInputs.size() || _altInputs[s].empty())
 				continue;
@@ -351,7 +351,7 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 						cursorPos = p + strlen(i->_replacement);
 					}
 
-					for (unsigned int j = 0; j < i->_inputLength; ++j)
+					for (uint32 j = 0; j < i->_inputLength; ++j)
 						text.deleteChar(p);
 					const char *r = i->_replacement;
 					while (*r)
@@ -365,7 +365,7 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 				}
 			}
 		}
-	} while (changed && loopCount < 10);
+	} while (changed && loopCount++ < 10);
 
 	return ret;
 }

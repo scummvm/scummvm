@@ -28,9 +28,8 @@
 #include "mohawk/resource_cache.h"
 #include "mohawk/myst_scripts.h"
 
+#include "common/events.h"
 #include "common/random.h"
-
-#include "gui/saveload.h"
 
 namespace Mohawk {
 
@@ -41,9 +40,9 @@ class MystScriptParser;
 class MystConsole;
 class MystGameState;
 class MystOptionsDialog;
-class MystResource;
-class MystResourceType8;
-class MystResourceType13;
+class MystArea;
+class MystAreaImageSwitch;
+class MystAreaHover;
 
 // Engine Debug Flags
 enum {
@@ -96,8 +95,19 @@ const uint16 kMasterpieceOnly = 0xFFFF;
 
 struct MystCondition {
 	uint16 var;
-	uint16 numStates;
-	uint16 *values;
+	Common::Array<uint16> values;
+};
+
+struct MystSoundBlock {
+	struct SoundItem {
+		int16 action;
+		uint16 volume;
+	};
+
+	int16 sound;
+	uint16 soundVolume;
+	uint16 soundVar;
+	Common::Array<SoundItem> soundList;
 };
 
 // View Sound Action Type
@@ -118,29 +128,29 @@ struct MystView {
 	uint16 flags;
 
 	// Image Data
-	uint16 conditionalImageCount;
-	MystCondition *conditionalImages;
+	Common::Array<MystCondition> conditionalImages;
 	uint16 mainImage;
 
 	// Sound Data
-	int16 sound;
-	uint16 soundVolume;
-	uint16 soundVar;
-	uint16 soundCount;
-	int16 *soundList;
-	uint16 *soundListVolume;
+	MystSoundBlock soundBlock;
 
 	// Script Resources
-	uint16 scriptResCount;
+	enum ScriptResourceType {
+		kResourceImage = 1,
+		kResourceSound = 2,
+		kResourceSwitch = 3,
+		kResourceImageNoCache = 4,
+		kResourceSoundNoCache = 5
+	};
+
 	struct ScriptResource {
-		uint16 type;
-		uint16 id; // Not used by type 3
-		// TODO: Type 3 has more. Maybe use a union?
-		uint16 var; // Used by type 3 only
-		uint16 count; // Used by type 3 only
-		uint16 u0; // Used by type 3 only
-		int16 *resource_list; // Used by type 3 only
-	} *scriptResources;
+		ScriptResourceType type;
+		uint16 id;
+		uint16 switchVar;
+		ScriptResourceType switchResourceType;
+		Common::Array<int16> switchResourceIds;
+	};
+	Common::Array<ScriptResource> scriptResources;
 
 	// Resource ID's
 	uint16 rlst;
@@ -158,17 +168,16 @@ struct MystCursorHint {
 
 class MohawkEngine_Myst : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Myst();
 
-	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
+	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
-
-	void reloadSaveList();
 
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
@@ -177,46 +186,52 @@ public:
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
-	MystResource *updateCurrentResource();
+	MystArea *updateCurrentResource();
+	void pollAndDiscardEvents();
 	bool skippableWait(uint32 duration);
 
-	bool _tweaksEnabled;
+	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
+	void applySoundBlock(const MystSoundBlock &block);
+
 	bool _needsUpdate;
 	bool _needsPageDrop;
 	bool _needsShowMap;
 	bool _needsShowDemoMenu;
+	bool _needsShowCredits;
 
-	MystView _view;
+	bool _showResourceRects;
+
+	Sound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
-	Common::Array<MystResource *> _resources;
-	MystResource *_dragResource;
+	Common::Array<MystArea *> _resources;
 	Common::RandomSource *_rnd;
 
-	bool _showResourceRects;
-	MystResource *loadResource(Common::SeekableReadStream *rlstStream, MystResource *parent);
+	MystArea *loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent);
 	void setResourceEnabled(uint16 resourceId, bool enable);
 	void redrawArea(uint16 var, bool update = true);
-	void redrawResource(MystResourceType8 *resource, bool update = true);
+	void redrawResource(MystAreaImageSwitch *resource, bool update = true);
 	void drawResourceImages();
 	void drawCardBackground();
 	uint16 getCardBackgroundId();
 
+	template<class T>
+	T *getViewResource(uint index);
+
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
 
 private:
 	MystConsole *_console;
-	GUI::SaveLoadChooser *_loadDialog;
 	MystOptionsDialog *_optionsDialog;
 	MystScriptParser *_prevStack;
 	ResourceCache _cache;
@@ -224,8 +239,17 @@ private:
 
 	uint16 _curStack;
 	uint16 _curCard;
+	MystView _view;
 
 	bool _runExitScript;
+
+	/**
+	 * Saving / Loading is only allowed from the main event loop
+	 */
+	bool _canSafelySaveLoad;
+	bool hasGameSaveSupport() const;
+
+	bool pollEvent(Common::Event &event);
 
 	void dropPage();
 
@@ -240,14 +264,24 @@ private:
 	void drawResourceRects();
 	void checkCurrentResource();
 	int16 _curResource;
-	MystResourceType13 *_hoverResource;
+	MystAreaHover *_hoverResource;
 
-	uint16 _cursorHintCount;
-	MystCursorHint *_cursorHints;
+	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 };
+
+template<class T>
+T *MohawkEngine_Myst::getViewResource(uint index) {
+	T *resource = dynamic_cast<T *>(_resources[index]);
+
+	if (!resource) {
+		error("View resource '%d' has unexpected type", index);
+	}
+
+	return resource;
+}
 
 } // End of namespace Mohawk
 

@@ -139,13 +139,12 @@ bool UIWindow::display(int offsetX, int offsetY) {
 			_shieldButton->setListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
 		}
-		if (_shieldButton) {
-			_shieldButton->_posX = _shieldButton->_posY = 0;
-			_shieldButton->setWidth(_gameRef->_renderer->getWidth());
-			_shieldButton->setHeight(_gameRef->_renderer->getHeight());
 
-			_shieldButton->display();
-		}
+		_shieldButton->_posX = _shieldButton->_posY = 0;
+		_shieldButton->setWidth(_gameRef->_renderer->getWidth());
+		_shieldButton->setHeight(_gameRef->_renderer->getHeight());
+
+		_shieldButton->display();
 	}
 
 	if (!_visible) {

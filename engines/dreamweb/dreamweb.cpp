@@ -46,12 +46,13 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
 	_personText(kNumPersonTexts) {
 
+	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
+	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
+
 	_vSyncInterrupt = false;
 
 	_console = 0;
 	_sound = 0;
-	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
@@ -407,8 +408,6 @@ Common::Error DreamWebEngine::run() {
 	_console = new DreamWebConsole(this);
 	_sound = new DreamWebSound(this);
 
-	ConfMan.registerDefault("originalsaveload", "false");
-	ConfMan.registerDefault("bright_palette", true);
 	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
 	_copyProtection = ConfMan.getBool("copy_protection");

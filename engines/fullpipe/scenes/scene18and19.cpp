@@ -52,7 +52,7 @@ struct Swinger {
 #define ANGLE(x) ((x) * M_PI / 180)
 
 void scene18_preload() {
-    g_fp->_scene3 = 0;
+	g_fp->_scene3 = 0;
 
 	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
@@ -379,7 +379,7 @@ int scene19_updateCursor() {
 
 void sceneHandler18_clickBoard() {
 	if (ABS(967 - g_fp->_aniMan->_ox) > 1 || ABS(379 - g_fp->_aniMan->_oy) > 1 || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 967, 379, 1, ST_MAN_RIGHT);
 		ExCommand *ex = new ExCommand(0, 17, MSG_SC18_MANREADY, 0, 0, 0, 1, 0, 0, 0);
 
 		ex->_excFlags = 2;
@@ -538,7 +538,7 @@ void sceneHandler18and19_girlJumpTo() {
 
 void sceneHandler18and19_manStandArmchair() {
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 	g_fp->_aniMan->_priority = 35;
 	g_fp->_aniMan->startAnim(MV_MAN18_STANDKRESLO, 0, -1);
 }
@@ -735,21 +735,21 @@ int sceneHandler18(ExCommand *cmd) {
 
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
 				if (pic && pic->_id == PIC_SC18_DOMIN && g_vars->scene18_domino
 					&& (g_vars->scene18_domino->_flags & 4) && g_fp->_aniMan->isIdle()) {
 					if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene18_domino->_id) {
-						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_keyCode);
+						handleObjectInteraction(g_fp->_aniMan, g_vars->scene18_domino, cmd->_param);
 						cmd->_messageKind = 0;
 
 						break;
 					}
 				}
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
@@ -774,6 +774,8 @@ int sceneHandler18(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (g_vars->scene18_manIsReady && g_fp->_aniMan->_movement)
@@ -883,7 +885,7 @@ int sceneHandler19(ExCommand *cmd) {
 					if (!(g_fp->_aniMan->_flags & 0x100)) {
 						PictureObject *pic = g_fp->_currentScene->getPictureObjectById(PIC_SC19_RTRUBA31, 0);
 
-						handleObjectInteraction(g_fp->_aniMan, pic, cmd->_keyCode);
+						handleObjectInteraction(g_fp->_aniMan, pic, cmd->_param);
 						break;
 					}
 				}

@@ -85,7 +85,7 @@ static const PlainGameDescriptor tinselGames[] = {
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
 	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
-		_singleid = "tinsel";
+		_singleId = "tinsel";
 	}
 
 	virtual const char *getName() const {
@@ -109,7 +109,8 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
@@ -134,9 +135,8 @@ extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &t
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
-	pattern = pattern + ".???";
+	pattern = pattern + ".###";
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
-	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	int slotNum = 0;
@@ -160,6 +160,8 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -227,14 +229,14 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 
 	// Check which files are included in some dw2 ADGameDescription *and* present
 	// in fslist without a '1' suffix character. Compute MD5s and file sizes for these files.
-	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
-		if (strcmp(g->desc.gameid, "dw2") != 0)
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameId != 0; ++g) {
+		if (strcmp(g->desc.gameId, "dw2") != 0)
 			continue;
 
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
 			// Get the next filename, stripping off any '1' suffix character
 			char tempFilename[50];
-			strcpy(tempFilename, fileDesc->fileName);
+			Common::strlcpy(tempFilename, fileDesc->fileName, 50);
 			char *pOne = strchr(tempFilename, '1');
 			if (pOne) {
 				do {
@@ -264,8 +266,8 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 	int maxFilesMatched = 0;
 
 	// MD5 based matching
-	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameid != 0; ++g) {
-		if (strcmp(g->desc.gameid, "dw2") != 0)
+	for (g = &Tinsel::gameDescriptions[0]; g->desc.gameId != 0; ++g) {
+		if (strcmp(g->desc.gameId, "dw2") != 0)
 			continue;
 
 		bool fileMissing = false;
@@ -274,7 +276,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 		for (fileDesc = g->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
 			// Get the next filename, stripping off any '1' suffix character
 			char tempFilename[50];
-			strcpy(tempFilename, fileDesc->fileName);
+			Common::strlcpy(tempFilename, fileDesc->fileName, 50);
 			char *pOne = strchr(tempFilename, '1');
 			if (pOne) {
 				do {

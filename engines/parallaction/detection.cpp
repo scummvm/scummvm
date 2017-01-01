@@ -220,7 +220,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 class ParallactionMetaEngine : public AdvancedMetaEngine {
 public:
 	ParallactionMetaEngine() : AdvancedMetaEngine(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
 	virtual const char *getName() const {
@@ -271,9 +271,8 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
-	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0??");
+	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0##");
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -290,6 +289,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

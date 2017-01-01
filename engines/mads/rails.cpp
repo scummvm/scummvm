@@ -149,7 +149,7 @@ int Rails::scanPath(const Common::Point &srcPos, const Common::Point &destPos) {
 	++xDiff;
 	++yDiff;
 
-	const byte *srcP = _depthSurface->getBasePtr(srcPos.x, srcPos.y);
+	const byte *srcP = (const byte *)_depthSurface->getBasePtr(srcPos.x, srcPos.y);
 	int index = xAmount;
 
 	// Outer loop
@@ -272,6 +272,20 @@ void Rails::synchronize(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_routeIndexes.clear();
 	}
+}
+
+void Rails::disableNode(int nodeIndex) {
+	_nodes[nodeIndex]._active = false;
+
+	for (uint16 i = 0; i < _nodes.size(); i++) {
+		if (i != nodeIndex)
+			disableLine(i, nodeIndex);
+	}
+}
+
+void Rails::disableLine(int from, int to) {
+	_nodes[from]._distances[to] = 0x3FFF;
+	_nodes[to]._distances[from] = 0x3FFF;
 }
 
 } // End of namespace MADS

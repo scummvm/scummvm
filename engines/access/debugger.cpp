@@ -52,35 +52,26 @@ Debugger *Debugger::init(AccessEngine *vm) {
 	}
 }
 
+void Debugger::postEnter() {
+	if (!_playMovieFile.empty()) {
+		_vm->playMovie(_playMovieFile, Common::Point(0, 0));
+
+		_playMovieFile.clear();
+	}
+
+	_vm->pauseEngine(false);
+}
+
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("cheat", WRAP_METHOD(Debugger, Cmd_Cheat));
-
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		_sceneNumb = Amazon::ROOM_NUMB;
-		_sceneDescr = new Common::String[_sceneNumb];
-		for (int i = 0; i < _sceneNumb; i++)
-			_sceneDescr[i] = Common::String(Amazon::ROOM_DESCR[i]);
-		break;
-	case GType_MartianMemorandum:
-		_sceneNumb = Martian::ROOM_NUMB;
-		_sceneDescr = new Common::String[_sceneNumb];
-		for (int i = 0; i < _sceneNumb; i++)
-			_sceneDescr[i] = Common::String(Martian::ROOM_DESCR[i]);
-		break;
-	default:
-		_sceneDescr = nullptr;
-		_sceneNumb = 0;
-		break;
-	}
+	registerCmd("playmovie", WRAP_METHOD(Debugger, Cmd_PlayMovie));
 }
 
 Debugger::~Debugger() {
-	delete[] _sceneDescr;
 }
 
 bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
@@ -88,22 +79,22 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 	case 1:
 		debugPrintf("Current scene is: %d\n\n", _vm->_player->_roomNumber);
 
-		for (int i = 0; i < _sceneNumb; i++)
-			if (_sceneDescr[i].size())
-				debugPrintf("%d - %s\n", i, _sceneDescr[i].c_str());
+		for (uint i = 0; i < _vm->_res->ROOMTBL.size(); i++)
+			if (!_vm->_res->ROOMTBL[i]._desc.empty())
+				debugPrintf("%d - %s\n", i, _vm->_res->ROOMTBL[i]._desc.c_str());
 		return true;
 
 	case 2: {
 		int newRoom = strToInt(argv[1]);
-		if (newRoom < 0 || newRoom >= _sceneNumb) {
+		if (newRoom < 0 || newRoom >= (int)_vm->_res->ROOMTBL.size()) {
 			debugPrintf("Invalid Room Number\n");
 			return true;
 		}
-		if (!_sceneDescr[newRoom].size()) {
+		if (_vm->_res->ROOMTBL[newRoom]._desc.empty()) {
 			debugPrintf("Unused Room Number\n");
 			return true;
 		}
-			
+
 		_vm->_player->_roomNumber = newRoom;
 
 		_vm->_room->_function = FN_CLEAR1;
@@ -131,6 +122,19 @@ bool Debugger::Cmd_Cheat(int argc, const char **argv) {
 	_vm->_cheatFl = !_vm->_cheatFl;
 	debugPrintf("Cheat is now %s\n", _vm->_cheatFl ? "ON" : "OFF");
 	return true;
+}
+
+bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: playmovie <movie-file>\n");
+		return true;
+	}
+
+	// play gets postponed until debugger is closed
+	Common::String filename = argv[1];
+	_playMovieFile = filename;
+
+	return cmdExit(0, 0);
 }
 
 /*------------------------------------------------------------------------*/

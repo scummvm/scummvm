@@ -135,24 +135,29 @@ struct SelectorCache {
 	Selector bitmap; // Used to hold the text bitmap for SCI32 texts
 
 	Selector plane;
-	Selector top;
-	Selector left;
-	Selector bottom;
-	Selector right;
-	Selector resX;
-	Selector resY;
+	Selector top, left, bottom, right;
+	Selector resX, resY;
 
 	Selector fore;
 	Selector back;
 	Selector skip;
 	Selector dimmed;
+	Selector borderColor;
+	Selector width;
 
 	Selector fixPriority;
 	Selector mirrored;
 	Selector visible;
 
+	Selector seenRect;
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
+	Selector textTop, textLeft, textBottom, textRight;
+	Selector title, titleFont, titleFore, titleBack;
+
+	Selector magnifier;
+	Selector frameOut;
+	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
 #endif
 };
 
@@ -190,6 +195,16 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
  */
 void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
+
+#ifdef ENABLE_SCI32
+/**
+ * SCI32 set kInfoFlagViewVisible in the -info- selector if a certain
+ * range of properties was written to.
+ * This function checks if index is in the right range, and sets the flag
+ * on obj.-info- if it is.
+ */
+void updateInfoFlagViewVisible(Object *obj, int index);
+#endif
 
 } // End of namespace Sci
 

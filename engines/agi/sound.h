@@ -23,15 +23,18 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
-#include "audio/mixer.h"
+namespace Audio {
+class Mixer;
+class SoundHandle;
+}
 
 namespace Agi {
 
-#define SOUND_EMU_NONE	0
-#define SOUND_EMU_PC	1
-#define SOUND_EMU_PCJR	2
-#define SOUND_EMU_MAC	3
-#define SOUND_EMU_AMIGA	4
+#define SOUND_EMU_NONE  0
+#define SOUND_EMU_PC    1
+#define SOUND_EMU_PCJR  2
+#define SOUND_EMU_MAC   3
+#define SOUND_EMU_AMIGA 4
 #define SOUND_EMU_APPLE2GS 5
 #define SOUND_EMU_COCO3 6
 #define SOUND_EMU_MIDI 7
@@ -62,20 +65,17 @@ struct AgiNote {
  * starts (The first 16-bit little endian word, to be precise).
  */
 enum AgiSoundEmuType {
-	AGI_SOUND_SAMPLE	= 0x0001,
-	AGI_SOUND_MIDI		= 0x0002,
-	AGI_SOUND_4CHN		= 0x0008
+	AGI_SOUND_SAMPLE    = 0x0001,
+	AGI_SOUND_MIDI      = 0x0002,
+	AGI_SOUND_4CHN      = 0x0008
 };
 
 class SoundMgr;
 
 class SoundGen {
 public:
-	SoundGen(AgiBase *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
-		_sampleRate = pMixer->getOutputRate();
-	}
-
-	virtual ~SoundGen() {}
+	SoundGen(AgiBase *vm, Audio::Mixer *pMixer);
+	virtual ~SoundGen();
 
 	virtual void play(int resnum) = 0;
 	virtual void stop(void) = 0;
@@ -83,7 +83,7 @@ public:
 	AgiBase *_vm;
 
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle *_soundHandle;
 
 	uint32 _sampleRate;
 };

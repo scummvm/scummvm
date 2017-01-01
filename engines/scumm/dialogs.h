@@ -24,15 +24,13 @@
 #define SCUMM_DIALOGS_H
 
 #include "common/str.h"
+#include "common/keyboard.h"
 #include "gui/dialog.h"
-#include "gui/widget.h"
 #include "engines/dialogs.h"
 
-#include "scumm/detection.h"
-
 namespace GUI {
-class ListWidget;
 class CommandSender;
+class StaticTextWidget;
 }
 
 

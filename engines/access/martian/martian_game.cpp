@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -36,6 +36,8 @@ MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDes
 
 MartianEngine::~MartianEngine() {
 	_introObjects = _spec7Objects = nullptr;
+	_skipStart = false;
+	_creditsStream = nullptr;
 }
 
 void MartianEngine::initObjects() {
@@ -68,8 +70,8 @@ void MartianEngine::initVariables() {
 		_timers.push_back(te);
 	}
 
-	_player->_playerX = _player->_rawPlayer.x = _travelPos[_player->_roomNumber][0];
-	_player->_playerY = _player->_rawPlayer.y = _travelPos[_player->_roomNumber][1];
+	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
+	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
@@ -105,7 +107,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 
 	_screen->_maxChars = 40;
 	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
-	
+
 	setNoteParams();
 
 	Common::String lines = msg;
@@ -156,7 +158,7 @@ void MartianEngine::doSpecial5(int param1) {
 		msg += c;
 
 	displayNote(msg);
-	
+
 	_midi->stopSong();
 	_midi->freeMusic();
 
@@ -280,10 +282,10 @@ void MartianEngine::doCredits() {
 
 void MartianEngine::setupGame() {
 	// Load death list
-	_deaths.resize(20);
-	for (int i = 0; i < 20; ++i) {
-		_deaths[i]._screenId = Martian::DEATH_SCREENS[i];
-		_deaths[i]._msg = Martian::DEATHMESSAGE[i];
+	_deaths.resize(_res->DEATHS.size());
+	for (uint idx = 0; idx < _deaths.size(); ++idx) {
+		_deaths[idx]._screenId = _res->DEATHS[idx]._screenId;
+		_deaths[idx]._msg = _res->DEATHS[idx]._msg;
 	}
 
 	// Setup timers
@@ -297,14 +299,14 @@ void MartianEngine::setupGame() {
 	}
 
 	// Miscellaneous
-	// TODO: Replace with Martian fonts when located
-	_fonts._font1.load(Amazon::FONT6x6_INDEX, Amazon::FONT6x6_DATA);
-	_fonts._font2.load(Amazon::FONT2_INDEX, Amazon::FONT2_DATA);
+	Amazon::AmazonResources &res = *((Amazon::AmazonResources *)_res);
+	_fonts._font1.load(&res.FONT6x6_INDEX[0], &res.FONT6x6_DATA[0]);
+	_fonts._font2.load(&res.FONT2_INDEX[0], &res.FONT2_DATA[0]);
 
 	// Set player room and position
 	_player->_roomNumber = 7;
-	_player->_playerX = _player->_rawPlayer.x = _travelPos[_player->_roomNumber][0];
-	_player->_playerY = _player->_rawPlayer.y = _travelPos[_player->_roomNumber][1];
+	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
+	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 }
 
 void MartianEngine::showDeathText(Common::String msg) {
@@ -346,10 +348,10 @@ void MartianEngine::dead(int deathId) {
 	_screen->_maxChars = 50;
 	_screen->_printOrg = Common::Point(24, 18);
 	_screen->_printStart = Common::Point(24, 18);
-	
+
 	// Display death message
 	showDeathText(_deaths[deathId]._msg);
-	
+
 	_screen->forceFadeOut();
 	_room->clearRoom();
 	freeChar();

@@ -2779,6 +2779,7 @@ void VMDDecoder::setAutoStartSound(bool autoStartSound) {
 AdvancedVMDDecoder::AdvancedVMDDecoder(Audio::Mixer::SoundType soundType) {
 	_decoder = new VMDDecoder(g_system->getMixer(), soundType);
 	_decoder->setAutoStartSound(false);
+	_useAudioSync = true;
 }
 
 AdvancedVMDDecoder::~AdvancedVMDDecoder() {
@@ -2808,6 +2809,10 @@ bool AdvancedVMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 void AdvancedVMDDecoder::close() {
 	VideoDecoder::close();
 	_decoder->close();
+}
+
+void AdvancedVMDDecoder::setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp) {
+	_decoder->setSurfaceMemory(mem, width, height, bpp);
 }
 
 AdvancedVMDDecoder::VMDVideoTrack::VMDVideoTrack(VMDDecoder *decoder) : _decoder(decoder) {

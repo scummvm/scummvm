@@ -41,9 +41,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
-#include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/view.h"
@@ -54,8 +52,9 @@
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
+#include "sci/graphics/palette32.h"
 #include "video/coktel_decoder.h"
-#include "sci/video/robot_decoder.h"
 #endif
 
 #include "common/file.h"
@@ -137,8 +136,12 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("wl",                 WRAP_METHOD(Console, cmdWindowList));	// alias
 	registerCmd("plane_list",         WRAP_METHOD(Console, cmdPlaneList));
 	registerCmd("pl",                 WRAP_METHOD(Console, cmdPlaneList));	// alias
+	registerCmd("visible_plane_list", WRAP_METHOD(Console, cmdVisiblePlaneList));
+	registerCmd("vpl",                WRAP_METHOD(Console, cmdVisiblePlaneList));	// alias
 	registerCmd("plane_items",        WRAP_METHOD(Console, cmdPlaneItemList));
 	registerCmd("pi",                 WRAP_METHOD(Console, cmdPlaneItemList));	// alias
+	registerCmd("visible_plane_items", WRAP_METHOD(Console, cmdVisiblePlaneItemList));
+	registerCmd("vpi",                WRAP_METHOD(Console, cmdVisiblePlaneItemList));	// alias
 	registerCmd("saved_bits",         WRAP_METHOD(Console, cmdSavedBits));
 	registerCmd("show_saved_bits",    WRAP_METHOD(Console, cmdShowSavedBits));
 	// Segments
@@ -190,6 +193,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("send",				WRAP_METHOD(Console, cmdSend));
 	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
 	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
+	registerCmd("vocab994",          WRAP_METHOD(Console, cmdMapVocab994));
 	// Breakpoints
 	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -197,6 +201,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bp_address",			WRAP_METHOD(Console, cmdBreakpointAddress));
+	registerCmd("bpa",					WRAP_METHOD(Console, cmdBreakpointAddress));		// alias
 	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
 	registerCmd("bpx",				WRAP_METHOD(Console, cmdBreakpointMethod));			// alias
 	registerCmd("bp_read",			WRAP_METHOD(Console, cmdBreakpointRead));
@@ -225,6 +231,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	registerCmd("view_reference",		WRAP_METHOD(Console, cmdViewReference));
 	registerCmd("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
+	registerCmd("dump_reference",		WRAP_METHOD(Console, cmdDumpReference));
+	registerCmd("dr",					WRAP_METHOD(Console, cmdDumpReference));			// alias
 	registerCmd("view_object",		WRAP_METHOD(Console, cmdViewObject));
 	registerCmd("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
 	registerCmd("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
@@ -262,8 +270,6 @@ void Console::postEnter() {
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new Video::AdvancedVMDDecoder();
-		} else if (_videoFile.hasSuffix(".rbt")) {
-			videoDecoder = new RobotDecoder(_engine->getPlatform() == Common::kPlatformMacintosh);
 		} else if (_videoFile.hasSuffix(".duk")) {
 			duckMode = true;
 			videoDecoder = new Video::AVIDecoder();
@@ -330,6 +336,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("debugflag_list - Lists the available debug flags and their status\n");
 	debugPrintf("debugflag_enable - Enables a debug flag\n");
 	debugPrintf("debugflag_disable - Disables a debug flag\n");
+	debugPrintf("debuglevel - Shows or sets debug level\n");
 	debugPrintf("\n");
 	debugPrintf("Commands\n");
 	debugPrintf("--------\n");
@@ -380,7 +387,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" animate_list / al - Shows the current list of objects in kAnimate's draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" window_list / wl - Shows a list of all the windows (ports) in the draw list (SCI0 - SCI1.1)\n");
 	debugPrintf(" plane_list / pl - Shows a list of all the planes in the draw list (SCI2+)\n");
+	debugPrintf(" visible_plane_list / vpl - Shows a list of all the planes in the visible draw list (SCI2+)\n");
 	debugPrintf(" plane_items / pi - Shows a list of all items for a plane (SCI2+)\n");
+	debugPrintf(" visible_plane_items / vpi - Shows a list of all items for a plane in the visible draw list (SCI2+)\n");
 	debugPrintf(" saved_bits - List saved bits on the hunk\n");
 	debugPrintf(" show_saved_bits - Display saved bits\n");
 	debugPrintf("\n");
@@ -428,6 +437,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	debugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
+	debugPrintf(" bp_address / bpa - Sets a breakpoint on a script address\n");
 	debugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
 	debugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
 	debugPrintf(" bp_write / bpw - Sets a breakpoint on writing to a specified selector\n");
@@ -442,6 +452,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" value_type - Determines the type of a value\n");
 	debugPrintf(" view_listnode - Examines the list node at the given address\n");
 	debugPrintf(" view_reference / vr - Examines an arbitrary reference\n");
+	debugPrintf(" dump_reference / dr - Dumps an arbitrary reference to disk\n");
 	debugPrintf(" view_object / vo - Examines the object at the given address\n");
 	debugPrintf(" active_object - Shows information on the currently active object or class\n");
 	debugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
@@ -482,15 +493,19 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Lofs type: %s\n", getSciVersionDesc(_engine->_features->detectLofsType()));
 	debugPrintf("Move count type: %s\n", (_engine->_features->handleMoveCount()) ? "increment" : "ignore");
 	debugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
+	debugPrintf("PseudoMouse ability: %s\n", _engine->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue ? "yes" : "no");
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
-		debugPrintf("kString type: %s\n", (_engine->_features->detectSci2StringFunctionType() == kSci2StringFunctionOld) ? "SCI2 (old)" : "SCI2.1 (new)");
-	if (getSciVersion() == SCI_VERSION_2_1)
+	if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE))
 		debugPrintf("SCI2.1 kernel table: %s\n", (_engine->_features->detectSci21KernelType() == SCI_VERSION_2) ? "modified SCI2 (old)" : "SCI2.1 (new)");
 #endif
 	debugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
-	debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette->isMerging() ? "yes" : "no");
-	debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette->isUsing16bitColorMatch() ? "yes" : "no");
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		debugPrintf("kAnimate fastCast enabled: %s\n", g_sci->_gfxAnimate->isFastCastEnabled() ? "yes" : "no");
+	}
+	if (getSciVersion() < SCI_VERSION_2) {
+		debugPrintf("Uses palette merging: %s\n", g_sci->_gfxPalette16->isMerging() ? "yes" : "no");
+		debugPrintf("Uses 16 bit color matching: %s\n", g_sci->_gfxPalette16->isUsing16bitColorMatch() ? "yes" : "no");
+	}
 	debugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
@@ -667,7 +682,7 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 
 bool Console::parseResourceNumber36(const char *userParameter, uint16 &resourceNumber, uint32 &resourceTuple) {
 	int userParameterLen = strlen(userParameter);
-	
+
 	if (userParameterLen != 10) {
 		debugPrintf("Audio36/Sync36 resource numbers must be specified as RRRNNVVCCS\n");
 		debugPrintf("where RRR is the resource number/map\n");
@@ -752,7 +767,7 @@ void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, u
 	ResourceId resourceId;
 	Resource *resource = NULL;
 	char outFileName[50];
-	
+
 	switch (resourceType) {
 	case kResourceTypeAudio36:
 	case kResourceTypeSync36: {
@@ -869,7 +884,7 @@ bool Console::cmdList(int argc, const char **argv) {
 				currentMap = map;
 				displayCount = 0;
 			}
-			
+
 			if (displayCount % 3 == 0)
 				debugPrintf("  ");
 
@@ -996,7 +1011,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	for (; resNumber <= resMax; resNumber++) {
 		script = _engine->getResMan()->findResource(ResourceId(restype, resNumber), 0);
 		if (script) {
-			unsigned int seeker = 0, seekerold = 0;
+			uint32 seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
 
@@ -1046,7 +1061,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 		if (!script)
 			debugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
-		if (getSciVersion() <= SCI_VERSION_2_1) {
+		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 			heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
 			if (!heap)
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
@@ -1502,7 +1517,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 
 	// TODO: Maybe turn this into a proper said spec compiler
-	unsigned int len = 0;
+	uint32 len = 0;
 	for (p++; p < argc; p++) {
 		if (strcmp(argv[p], ",") == 0) {
 			spec[len++] = 0xf0;
@@ -1539,7 +1554,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			spec[len++] = 0xfe;
 			spec[len++] = 0xf6;
 		} else {
-			unsigned int s = strtol(argv[p], 0, 16);
+			uint32 s = strtol(argv[p], 0, 16);
 			if (s >= 0xf0 && s <= 0xff) {
 				spec[len++] = s;
 			} else {
@@ -1612,7 +1627,7 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 bool Console::cmdSetPalette(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Sets a palette resource\n");
+		debugPrintf("Sets a palette resource (SCI16)\n");
 		debugPrintf("Usage: %s <resourceId>\n", argv[0]);
 		debugPrintf("where <resourceId> is the number of the palette resource to set\n");
 		return true;
@@ -1620,7 +1635,14 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gfxPalette->kernelSetFromResource(resourceId, true);
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("This SCI version does not support this command\n");
+		return true;
+	}
+#endif
+
+	_engine->_gfxPalette16->kernelSetFromResource(resourceId, true);
 	return true;
 }
 
@@ -1639,7 +1661,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 #endif
 
 	uint16 resourceId = atoi(argv[1]);
-	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
+	_engine->_gfxPaint16->kernelDrawPicture(resourceId, 100, false, false, false, 0);
 	_engine->_gfxScreen->copyToScreen();
 	_engine->sleep(2000);
 
@@ -1768,6 +1790,21 @@ bool Console::cmdPlaneList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVisiblePlaneList(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneList(this);
+	} else {
+		debugPrintf("This SCI version does not have a list of planes\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
+
 bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Shows the list of items for a plane\n");
@@ -1796,6 +1833,34 @@ bool Console::cmdPlaneItemList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVisiblePlaneItemList(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Shows the list of items for a plane\n");
+		debugPrintf("Usage: %s <plane address>\n", argv[0]);
+		return true;
+	}
+
+	reg_t planeObject = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+#ifdef ENABLE_SCI32
+	if (_engine->_gfxFrameout) {
+		debugPrintf("Visible plane item list:\n");
+		_engine->_gfxFrameout->printVisiblePlaneItemList(this, planeObject);
+	} else {
+		debugPrintf("This SCI version does not have a list of plane items\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
+	return true;
+}
+
 bool Console::cmdSavedBits(int argc, const char **argv) {
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
@@ -1809,7 +1874,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 
 	for (uint i = 0; i < entries.size(); ++i) {
 		uint16 offset = entries[i].getOffset();
-		const Hunk& h = hunks->_table[offset];
+		const Hunk& h = hunks->at(offset);
 		if (strcmp(h.type, "SaveBits()") == 0) {
 			byte* memoryPtr = (byte *)h.mem;
 
@@ -1876,7 +1941,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 		return true;
 	}
 
-	const Hunk& h = hunks->_table[memoryHandle.getOffset()];
+	const Hunk& h = hunks->at(memoryHandle.getOffset());
 
 	if (strcmp(h.type, "SaveBits()") != 0) {
 		debugPrintf("Invalid address.\n");
@@ -2017,8 +2082,8 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				debugPrintf("A  SCI32 arrays (%d)", (*(ArrayTable *)mobj).entries_used);
 				break;
 
-			case SEG_TYPE_STRING:
-				debugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
+			case SEG_TYPE_BITMAP:
+				debugPrintf("T  SCI32 bitmaps (%d)", (*(BitmapTable *)mobj).entries_used);
 				break;
 #endif
 
@@ -2092,32 +2157,32 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 	case SEG_TYPE_CLONES: {
-		CloneTable *ct = (CloneTable *)mobj;
+		CloneTable &ct = *(CloneTable *)mobj;
 
 		debugPrintf("clones\n");
 
-		for (uint i = 0; i < ct->_table.size(); i++)
-			if (ct->isValidEntry(i)) {
+		for (uint i = 0; i < ct.size(); i++)
+			if (ct.isValidEntry(i)) {
 				reg_t objpos = make_reg(nr, i);
 				debugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
+				const Object *obj = _engine->_gamestate->_segMan->getObject(ct[i].getPos());
 				if (obj)
-					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
-								_engine->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
+					debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct[i].getPos()),
+								_engine->_gamestate->_segMan->getObjectName(ct[i].getPos()),
 								obj->getVarCount(), obj->getMethodCount());
 			}
 	}
 	break;
 
 	case SEG_TYPE_LISTS: {
-		ListTable *lt = (ListTable *)mobj;
+		ListTable &lt = *(ListTable *)mobj;
 
 		debugPrintf("lists\n");
-		for (uint i = 0; i < lt->_table.size(); i++)
-			if (lt->isValidEntry(i)) {
+		for (uint i = 0; i < lt.size(); i++)
+			if (lt.isValidEntry(i)) {
 				debugPrintf("  [%04x]: ", i);
-				printList(&(lt->_table[i]));
+				printList(lt[i]);
 			}
 	}
 	break;
@@ -2128,13 +2193,13 @@ bool Console::segmentInfo(int nr) {
 	}
 
 	case SEG_TYPE_HUNK: {
-		HunkTable *ht = (HunkTable *)mobj;
+		HunkTable &ht = *(HunkTable *)mobj;
 
-		debugPrintf("hunk  (total %d)\n", ht->entries_used);
-		for (uint i = 0; i < ht->_table.size(); i++)
-			if (ht->isValidEntry(i)) {
+		debugPrintf("hunk  (total %d)\n", ht.entries_used);
+		for (uint i = 0; i < ht.size(); i++)
+			if (ht.isValidEntry(i)) {
 				debugPrintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
+				          i, ht[i].size, ht[i].mem, ht[i].type);
 			}
 	}
 	break;
@@ -2148,12 +2213,27 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 #ifdef ENABLE_SCI32
-	case SEG_TYPE_STRING:
-		debugPrintf("SCI32 strings\n");
-		break;
-	case SEG_TYPE_ARRAY:
+	case SEG_TYPE_ARRAY: {
+		ArrayTable &table = *(ArrayTable *)mobj;
 		debugPrintf("SCI32 arrays\n");
+		for (uint i = 0; i < table.size(); ++i) {
+			if (table.isValidEntry(i)) {
+				debugPrintf("    [%04x] %s\n", i, table[i].toDebugString().c_str());
+			}
+		}
 		break;
+	}
+
+	case SEG_TYPE_BITMAP: {
+		BitmapTable &table = *(BitmapTable *)mobj;
+		debugPrintf("SCI32 bitmaps (total %d)\n", table.entries_used);
+		for (uint i = 0; i < table.size(); ++i) {
+			if (table.isValidEntry(i)) {
+				debugPrintf("    [%04x] %s\n", i, table[i].toString().c_str());
+			}
+		}
+		break;
+	}
 #endif
 
 	default :
@@ -2513,9 +2593,14 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3: {
-		// for global, local, temp and param, we need an index
 		if (argc < 3) {
-			debugPrintf("Variable number must be specified for requested type\n");
+			for (int i = 0; i < s->variablesMax[varType]; ++i) {
+				curValue = &s->variables[varType][i];
+				debugPrintf("%s var %d == %04x:%04x", varNames[varType], i, PRINT_REG(*curValue));
+				printBasicVarInfo(*curValue);
+				debugPrintf("\n");
+			}
+
 			return true;
 		}
 		if (argc > 4) {
@@ -2716,16 +2801,8 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		switch (type) {
 		case 0:
 			break;
-		case SIG_TYPE_LIST: {
-			List *list = _engine->_gamestate->_segMan->lookupList(reg);
-
-			debugPrintf("list\n");
-
-			if (list)
-				printList(list);
-			else
-				debugPrintf("Invalid list.\n");
-		}
+		case SIG_TYPE_LIST:
+			printList(reg);
 			break;
 		case SIG_TYPE_NODE:
 			debugPrintf("list node\n");
@@ -2738,16 +2815,12 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
-				case SEG_TYPE_STRING: {
-					debugPrintf("SCI32 string\n");
-					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
-					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
+				case SEG_TYPE_ARRAY: {
+					printArray(reg);
 					break;
 				}
-				case SEG_TYPE_ARRAY: {
-					debugPrintf("SCI32 array:\n");
-					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					hexDumpReg(array->getRawData(), array->getSize(), 4, 0, true);
+				case SEG_TYPE_BITMAP: {
+					printBitmap(reg);
 					break;
 				}
 #endif
@@ -2789,6 +2862,125 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
+	return true;
+}
+
+bool Console::cmdDumpReference(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps an arbitrary reference to disk.\n");
+		debugPrintf("Usage: %s <start address> [<end address>]\n", argv[0]);
+		debugPrintf("Where <start address> is the starting address to dump\n");
+		debugPrintf("<end address>, if provided, is the address where the dump ends\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t reg = NULL_REG;
+	reg_t reg_end = NULL_REG;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end, false)) {
+			debugPrintf("Invalid address passed.\n");
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
+		debugPrintf("Register is null.\n");
+		return true;
+	}
+
+	if (g_sci->getKernel()->findRegType(reg) != SIG_TYPE_REFERENCE) {
+		debugPrintf("%04x:%04x is not a reference\n", PRINT_REG(reg));
+		return true;
+	}
+
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
+		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	Common::DumpFile out;
+	Common::String outFileName;
+	uint32 bytesWritten;
+
+	switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_BITMAP: {
+		outFileName = Common::String::format("%04x_%04x.tga", PRINT_REG(reg));
+		out.open(outFileName);
+		SciBitmap &bitmap = *_engine->_gamestate->_segMan->lookupBitmap(reg);
+		const Color *color = g_sci->_gfxPalette32->getCurrentPalette().colors;
+		const uint16 numColors = ARRAYSIZE(g_sci->_gfxPalette32->getCurrentPalette().colors);
+
+		out.writeByte(0); // image id length
+		out.writeByte(1); // color map type (present)
+		out.writeByte(1); // image type (uncompressed color-mapped)
+		out.writeSint16LE(0);         // index of first color map entry
+		out.writeSint16LE(numColors); // number of color map entries
+		out.writeByte(24);            // number of bits per color entry (RGB24)
+		out.writeSint16LE(0);                      // bottom-left x-origin
+		out.writeSint16LE(bitmap.getHeight() - 1); // bottom-left y-origin
+		out.writeSint16LE(bitmap.getWidth());  // width
+		out.writeSint16LE(bitmap.getHeight()); // height
+		out.writeByte(8); // bits per pixel
+		out.writeByte(1 << 5); // origin of pixel data (top-left)
+
+		bytesWritten = 18;
+
+		for (int i = 0; i < numColors; ++i) {
+			out.writeByte(color->b);
+			out.writeByte(color->g);
+			out.writeByte(color->r);
+			++color;
+		}
+
+		bytesWritten += numColors * 3;
+		bytesWritten += out.write(bitmap.getPixels(), bitmap.getWidth() * bitmap.getHeight());
+		break;
+	}
+#endif
+
+	default: {
+		const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+		uint32 size = block.maxSize;
+
+		if (size == 0) {
+			debugPrintf("Size of reference is zero.\n");
+			return true;
+		}
+
+		if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+			debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+			reg_end = NULL_REG;
+		}
+
+		if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset())) {
+			size = reg_end.getOffset() - reg.getOffset();
+		}
+
+		if (reg_end.getSegment() != 0) {
+			debugPrintf("Block size less than or equal to %d\n", size);
+		}
+
+		outFileName = Common::String::format("%04x_%04x.dmp", PRINT_REG(reg));
+		out.open(outFileName);
+		bytesWritten = out.write(block.raw, size);
+		break;
+	}
+	}
+
+	out.finalize();
+	out.close();
+
+	debugPrintf("Wrote %u bytes to %s\n", bytesWritten, outFileName.c_str());
 	return true;
 }
 
@@ -2843,7 +3035,7 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show objects inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -2865,7 +3057,7 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show strings inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -2887,7 +3079,7 @@ bool Console::cmdScriptSaid(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show said-strings inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3038,7 +3230,10 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugSelector).c_str());
+			if (call.debugKernelSubFunction == -1)
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction).c_str());
+			else
+				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
@@ -3217,7 +3412,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 				farthestTarget = jumpTarget;
 		}
 		// TODO: Use a true 32-bit reg_t for the position (addr)
-		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), printBWTag, printBytecode);
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), objAddr, printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -3266,7 +3461,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 
 	do {
 		// TODO: Use a true 32-bit reg_t for the position (vpc)
-		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), printBWTag, printBytes);
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), NULL_REG, printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
@@ -3561,6 +3756,8 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 			bpdata = bp->address;
 			debugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
 			break;
+		case BREAK_ADDRESS:
+			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->regAddress));
 		}
 
 		i++;
@@ -3699,7 +3896,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		debugPrintf("Usage: %s <script number> <export number\n", argv[0]);
+		debugPrintf("Usage: %s <script number> <export number>\n", argv[0]);
 		return true;
 	}
 
@@ -3713,6 +3910,31 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
+
+	return true;
+}
+
+bool Console::cmdBreakpointAddress(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Sets a breakpoint on the execution of the specified code address.\n");
+		debugPrintf("Usage: %s <address>\n", argv[0]);
+		return true;
+	}
+
+	reg_t addr;
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Breakpoint bp;
+	bp.type = BREAK_ADDRESS;
+	bp.regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
 
 	return true;
 }
@@ -3903,6 +4125,55 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdMapVocab994(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;	// for the several defines in this function
+	reg_t reg;
+
+	if (argc != 4) {
+		debugPrintf("Attempts to map a range of vocab.994 entries to a given class\n");
+		debugPrintf("Usage: %s <class addr> <first> <last>\n", argv[0]);
+		return true;
+	}
+
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+		debugPrintf("Invalid address passed.\n");
+		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), 0);
+	const Object *obj = s->_segMan->getObject(reg);
+	uint16 *data = (uint16 *) resource->data;
+	uint32 first = atoi(argv[2]);
+	uint32 last  = atoi(argv[3]);
+	Common::Array<bool> markers;
+
+	markers.resize(_engine->getKernel()->getSelectorNamesSize());
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+		obj = s->_segMan->getObject(obj->getSuperClassSelector());
+
+	first = MIN(first, (uint32) (resource->size / 2 - 2));
+	last =  MIN(last, (uint32) (resource->size / 2 - 2));
+
+	for (uint32 i = first; i <= last; ++i) {
+		uint16 ofs = data[i];
+
+		if (obj && ofs < obj->getVarCount()) {
+			uint16 varSelector = obj->getVarSelector(ofs);
+			debugPrintf("%d: property at index %04x of %s is %s %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()),
+				    _engine->getKernel()->getSelectorName(varSelector).c_str(),
+				    markers[varSelector] ? "(repeat!)" : "");
+			markers[varSelector] = true;
+		}
+		else {
+			debugPrintf("%d: property at index %04x doesn't match up with %s\n", i, ofs,
+				    s->_segMan->derefString(obj->getNameSelector()));
+		}
+	}
+
+	return true;
+}
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
 	}
@@ -4245,8 +4516,28 @@ void Console::printBasicVarInfo(reg_t variable) {
 		debugPrintf(" IS INVALID!");
 }
 
-void Console::printList(List *list) {
-	reg_t pos = list->first;
+void Console::printList(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_LISTS);
+
+	if (!mobj) {
+		debugPrintf("list:\nCould not find list segment.\n");
+		return;
+	}
+
+	ListTable *table = static_cast<ListTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("list:\nAddress does not contain a valid list.\n");
+		return;
+	}
+
+	const List &list = table->at(reg.getOffset());
+	debugPrintf("list:\n");
+	printList(list);
+}
+
+void Console::printList(const List &list) {
+	reg_t pos = list.first;
 	reg_t my_prev = NULL_REG;
 
 	debugPrintf("\t<\n");
@@ -4256,26 +4547,24 @@ void Console::printList(List *list) {
 		NodeTable *nt = (NodeTable *)_engine->_gamestate->_segMan->getSegment(pos.getSegment(), SEG_TYPE_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.getOffset())) {
-			debugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
-			          PRINT_REG(pos));
+			debugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n", PRINT_REG(pos));
 			return;
 		}
 
-		node = &(nt->_table[pos.getOffset()]);
+		node = &nt->at(pos.getOffset());
 
 		debugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
 		if (my_prev != node->pred)
-			debugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
-			          PRINT_REG(node->pred));
+			debugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n", PRINT_REG(node->pred));
 
 		my_prev = pos;
 		pos = node->succ;
 	}
 
-	if (my_prev != list->last)
+	if (my_prev != list.last)
 		debugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-		          PRINT_REG(list->last), PRINT_REG(my_prev));
+				  PRINT_REG(list.last), PRINT_REG(my_prev));
 	debugPrintf("\t>\n");
 }
 
@@ -4291,7 +4580,7 @@ int Console::printNode(reg_t addr) {
 			return 1;
 		}
 
-		list = &(lt->_table[addr.getOffset()]);
+		list = &lt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
@@ -4310,7 +4599,7 @@ int Console::printNode(reg_t addr) {
 			debugPrintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->_table[addr.getOffset()]);
+		node = &nt->at(addr.getOffset());
 
 		debugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
@@ -4319,6 +4608,83 @@ int Console::printNode(reg_t addr) {
 	return 0;
 }
 
+#ifdef ENABLE_SCI32
+void Console::printArray(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_ARRAY);
+
+	if (!mobj) {
+		debugPrintf("SCI32 array:\nCould not find array segment.\n");
+		return;
+	}
+
+	ArrayTable *table = static_cast<ArrayTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("SCI32 array:\nAddress does not contain a valid array.\n");
+		return;
+	}
+
+	const SciArray &array = table->at(reg.getOffset());
+
+	const char *arrayType;
+	switch (array.getType()) {
+	case kArrayTypeID:
+		arrayType = "reg_t";
+		break;
+	case kArrayTypeByte:
+		arrayType = "byte";
+		break;
+	case kArrayTypeInt16:
+		arrayType = "int16 (as reg_t)";
+		break;
+	case kArrayTypeString:
+		arrayType = "string";
+		break;
+	default:
+		arrayType = "invalid";
+		break;
+	}
+	debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array.size());
+	switch (array.getType()) {
+	case kArrayTypeInt16:
+	case kArrayTypeID: {
+		hexDumpReg((const reg_t *)array.getRawData(), array.size(), 4, 0, true);
+		break;
+	}
+	case kArrayTypeByte:
+	case kArrayTypeString: {
+		Common::hexdump((const byte *)array.getRawData(), array.size(), 16, 0);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void Console::printBitmap(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_BITMAP);
+
+	if (!mobj) {
+		debugPrintf("SCI32 bitmap:\nCould not find bitmap segment.\n");
+		return;
+	}
+
+	BitmapTable *table = static_cast<BitmapTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("SCI32 bitmap:\nAddress does not contain a valid bitmap.\n");
+		return;
+	}
+
+	const SciBitmap &bitmap = table->at(reg.getOffset());
+
+	debugPrintf("SCI32 bitmap (%s):\n", bitmap.toString().c_str());
+
+	Common::hexdump((const byte *) bitmap.getRawData(), bitmap.getRawSize(), 16, 0);
+}
+
+#endif
+
 int Console::printObject(reg_t pos) {
 	EngineState *s = _engine->_gamestate;	// for the several defines in this function
 	const Object *obj = s->_segMan->getObject(pos);
@@ -4326,7 +4692,7 @@ int Console::printObject(reg_t pos) {
 	uint i;
 
 	if (!obj) {
-		debugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
 		return 1;
 	}
 
@@ -4341,7 +4707,8 @@ int Console::printObject(reg_t pos) {
 		debugPrintf("    ");
 		if (var_container && i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
-			debugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
+			// Times two commented out for now for easy parsing of vocab.994
+			debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else
 			debugPrintf("p#%x = ", i);
 

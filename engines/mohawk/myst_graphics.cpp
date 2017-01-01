@@ -40,15 +40,14 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		// High color
-		initGraphics(_viewport.width(), _viewport.height(), true, NULL);
+		initGraphics(_viewport.width(), _viewport.height(), true, nullptr);
 
 		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 			error("Myst ME requires greater than 256 colors to run");
 	} else {
 		// Paletted
 		initGraphics(_viewport.width(), _viewport.height(), true);
-		setBasePalette();
-		setPaletteToScreen();
+		clearScreenPalette();
 	}
 
 	_pixelFormat = _vm->_system->getScreenFormat();
@@ -73,7 +72,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	// if it's a PICT or WDIB resource. If it's Myst ME it's most likely a PICT, and if it's
 	// original it's definitely a WDIB. However, Myst ME throws us another curve ball in
 	// that PICT resources can contain WDIB's instead of PICT's.
-	Common::SeekableReadStream *dataStream = NULL;
+	Common::SeekableReadStream *dataStream = nullptr;
 
 	if (_vm->getFeatures() & GF_ME && _vm->hasResource(ID_PICT, id)) {
 		// The PICT resource exists. However, it could still contain a MystBitmap
@@ -86,7 +85,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 
 	bool isPict = false;
 
-	if (_vm->getFeatures() & GF_ME) {
+	if ((_vm->getFeatures() & GF_ME) && dataStream->size() > 512 + 10 + 4) {
 		// Here we detect whether it's really a PICT or a WDIB. Since a MystBitmap
 		// would be compressed, there's no way to detect for the BM without a hack.
 		// So, we search for the PICT version opcode for detection.
@@ -95,7 +94,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		dataStream->seek(0);
 	}
 
-	MohawkSurface *mhkSurface = 0;
+	MohawkSurface *mhkSurface = nullptr;
 
 	if (isPict) {
 		Image::PICTDecoder pict;
@@ -103,12 +102,17 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		if (!pict.loadStream(*dataStream))
 			error("Could not decode Myst ME PICT");
 
+		delete dataStream;
+
 		mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
 	} else {
 		mhkSurface = _bmpDecoder->decodeImage(dataStream);
 
-		if (_vm->getFeatures() & GF_ME)
+		if (_vm->getFeatures() & GF_ME) {
 			mhkSurface->convertToTrueColor();
+		} else {
+			remapSurfaceToSystemPalette(mhkSurface);
+		}
 	}
 
 	assert(mhkSurface);
@@ -202,7 +206,7 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 	if (!(_vm->getFeatures() & GF_ME)) {
 		// Make sure the palette is set
 		assert(mhkSurface->getPalette());
-		memcpy(_palette + 10 * 3, mhkSurface->getPalette() + 10 * 3, (256 - 10 * 2) * 3);
+		memcpy(_palette, mhkSurface->getPalette(), 256 * 3);
 		setPaletteToScreen();
 	}
 }
@@ -225,9 +229,8 @@ void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 
 void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
 
-	// Do not artificially delay during transitions
-	int oldEnableDrawingTimeSimulation = _enableDrawingTimeSimulation;
-	_enableDrawingTimeSimulation = 0;
+	// Transitions are barely visible without adding delays between the draw calls
+	enableDrawingTimeSimulation(true);
 
 	switch (type) {
 	case kTransitionLeftToRight:	{
@@ -240,6 +243,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.right = area.left + step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -263,6 +267,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.left = area.right - step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -288,7 +293,10 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 			debugC(kDebugView, "Dissolve");
 
 			for (int16 step = 0; step < 8; step++) {
-				simulatePreviousDrawDelay(rect);
+				// Only one eighth of the rect pixels are updated by a draw step,
+				// delay by one eighth of the regular time
+				simulatePreviousDrawDelay(Common::Rect(rect.width() / 8, rect.height()));
+
 				transitionDissolve(rect, step);
 			}
 		}
@@ -303,6 +311,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.bottom = area.top + step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -326,6 +335,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.top = area.bottom - step;
 
 				_vm->_system->delayMillis(delay);
+				_vm->pollAndDiscardEvents();
 
 				copyBackBufferToScreen(area);
 				_vm->_system->updateScreen();
@@ -367,7 +377,7 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		error("Unknown transition %d", type);
 	}
 
-	_enableDrawingTimeSimulation = oldEnableDrawingTimeSimulation;
+	enableDrawingTimeSimulation(false);
 }
 
 void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
@@ -450,6 +460,7 @@ void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 	}
 
 	_vm->_system->unlockScreen();
+	_vm->pollAndDiscardEvents();
 	_vm->_system->updateScreen();
 }
 
@@ -469,6 +480,7 @@ void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -494,6 +506,7 @@ void MystGraphics::transitionSlideToRight(Common::Rect rect, uint16 steps, uint1
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -519,6 +532,7 @@ void MystGraphics::transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -545,6 +559,7 @@ void MystGraphics::transitionSlideToBottom(Common::Rect rect, uint16 steps, uint
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -569,6 +584,7 @@ void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uin
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -590,6 +606,7 @@ void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint
 		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
+		_vm->pollAndDiscardEvents();
 		_vm->_system->updateScreen();
 	}
 
@@ -639,8 +656,10 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 		// Do not draw anything new too quickly after the previous draw call
 		// so that images stay at least a little while on screen
 		// This is enabled only for scripted draw calls
-		if (time < _nextAllowedDrawTime)
+		if (time < _nextAllowedDrawTime) {
+			debugC(kDebugView, "Delaying draw call by %d ms", _nextAllowedDrawTime - time);
 			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
+		}
 	}
 
 	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now
@@ -697,10 +716,10 @@ void MystGraphics::clearScreenPalette() {
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 }
 
-void MystGraphics::setBasePalette() {
+void MystGraphics::remapSurfaceToSystemPalette(MohawkSurface *mhkSurface) {
 	// Entries [0, 9] of the palette
 	static const byte lowPalette[] = {
-		0xFF, 0xFF, 0xFF,
+		0x00, 0x00, 0x00,
 		0x80, 0x00, 0x00,
 		0x00, 0x80, 0x00,
 		0x80, 0x80, 0x00,
@@ -723,15 +742,68 @@ void MystGraphics::setBasePalette() {
 		0x00, 0x00, 0xFF,
 		0xFF, 0x00, 0xFF,
 		0x00, 0xFF, 0xFF,
-		0x00, 0x00, 0x00
+		0xFF, 0xFF, 0xFF
 	};
 
-	// Note that 0 and 255 are different from normal Windows.
-	// Myst seems to hack that to white, resp. black (probably for Mac compat).
+	byte *originalPalette = mhkSurface->getPalette();
 
-	memcpy(_palette, lowPalette, sizeof(lowPalette));
-	memset(_palette + sizeof(lowPalette), 0, sizeof(_palette) - sizeof(lowPalette) - sizeof(highPalette));
-	memcpy(_palette + sizeof(_palette) - sizeof(highPalette), highPalette, sizeof(highPalette));
+	// The target palette is made of the Windows reserved palette, and colors 10 to 245
+	// of the bitmap palette. Entries 0 to 9 and 246 to 255 of the bitmap palette are
+	// discarded.
+	byte targetPalette[256 * 3];
+	memcpy(targetPalette, lowPalette, sizeof(lowPalette));
+	memcpy(targetPalette + sizeof(lowPalette), originalPalette + sizeof(lowPalette), sizeof(_palette) - sizeof(lowPalette) - sizeof(highPalette));
+	memcpy(targetPalette + sizeof(_palette) - sizeof(highPalette), highPalette, sizeof(highPalette));
+
+	// Remap the discarded entries from the bitmap palette using the target palette.
+	byte lowColorMap[ARRAYSIZE(lowPalette) / 3];
+	byte highColorMap[ARRAYSIZE(highPalette) / 3];
+
+	for (uint i = 0; i < ARRAYSIZE(lowColorMap); i++) {
+		uint colorIndex = 3 * i;
+		byte red = originalPalette[colorIndex + 0];
+		byte green = originalPalette[colorIndex + 1];
+		byte blue = originalPalette[colorIndex + 2];
+
+		lowColorMap[i] = getColorIndex(targetPalette, red, green, blue);
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(highColorMap); i++) {
+		uint colorIndex = 3 * (i + 246);
+		byte red = originalPalette[colorIndex + 0];
+		byte green = originalPalette[colorIndex + 1];
+		byte blue = originalPalette[colorIndex + 2];
+
+		highColorMap[i] = getColorIndex(targetPalette, red, green, blue);
+	}
+
+	// Replace the original palette with the target palette
+	memcpy(originalPalette, targetPalette, sizeof(targetPalette));
+
+	// Remap the pixel data to the target palette
+	Graphics::Surface *surface = mhkSurface->getSurface();
+	byte *pixels = (byte *) surface->getPixels();
+
+	for (int i = 0; i < surface->w * surface->h; i++) {
+		if (pixels[i] < ARRAYSIZE(lowColorMap)) {
+			pixels[i] = lowColorMap[pixels[i]];
+		} else if (pixels[i] >= 246) {
+			pixels[i] = highColorMap[pixels[i] - 246];
+		}
+	}
+}
+
+byte MystGraphics::getColorIndex(const byte *palette, byte red, byte green, byte blue) {
+	for (uint i = 0; i < 256; i++) {
+		if (palette[(3 * i) + 0] == red && palette[(3 * i) + 1] == green && palette[(3 * i) + 2] == blue) {
+			return i;
+		}
+	}
+
+	// GDI actually chooses the nearest color if no exact match is found,
+	// but this should not happen in Myst
+	debug(1, "Color (%d, %d, %d) not in target palette", red, green, blue);
+	return 0;
 }
 
 void MystGraphics::setPaletteToScreen() {

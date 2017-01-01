@@ -761,7 +761,7 @@ void Scene2702::moveCarToPoint(NPoint pt) {
 	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
 	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
 		_newTrackIndex = minMatchTrackIndex;
-		_newTrackDestX = pt.x;
+		_newTrackDest = pt;
 		if (_isUpperTrack) {
 			if (_currTrackIndex == 0)
 				sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
@@ -773,7 +773,7 @@ void Scene2702::moveCarToPoint(NPoint pt) {
 			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_asCar, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt);
 	}
 }
 
@@ -790,7 +790,7 @@ void Scene2702::changeTrack() {
 		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
 	else
 		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
-	sendMessage(_asCar, 0x2004, _newTrackDestX);
+	sendMessage(_asCar, 0x2004, _newTrackDest);
 	_newTrackIndex = -1;
 }
 
@@ -1092,14 +1092,14 @@ void Scene2706::moveCarToPoint(NPoint pt) {
 	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
 	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
 		_newTrackIndex = minMatchTrackIndex;
-		_newTrackDestX = pt.x;
+		_newTrackDest = pt;
 		if (_currTrackIndex == 0)
 			sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 		else
 			sendMessage(_asCar, 0x2003, 0);
 	} else {
 		_newTrackIndex = -1;
-		sendMessage(_asCar, 0x2004, pt.x);
+		sendMessage(_asCar, 0x2004, pt);
 	}
 }
 
@@ -1111,7 +1111,7 @@ void Scene2706::changeTrack() {
 		sendMessage(_asCar, NM_POSITION_CHANGE, _trackPoints->size() - 1);
 	else
 		sendMessage(_asCar, NM_POSITION_CHANGE, 0);
-	sendMessage(_asCar, 0x2004, _newTrackDestX);
+	sendMessage(_asCar, 0x2004, _newTrackDest);
 	_newTrackIndex = -1;
 }
 

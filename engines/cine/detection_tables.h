@@ -22,6 +22,8 @@
 
 namespace Cine {
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD   GUIO_GAMEOPTIONS1
+
 static const CINEGameDescription gameDescriptions[] = {
 	{
 		{

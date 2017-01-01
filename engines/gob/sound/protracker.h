@@ -24,7 +24,10 @@
 #define GOB_SOUND_PROTRACKER_H
 
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
+
+namespace Audio {
+class AudioStream;
+}
 
 namespace Gob {
 

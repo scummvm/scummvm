@@ -35,12 +35,36 @@ class Settings {
 private:
 	SherlockEngine *_vm;
 
-	Settings(SherlockEngine *vm) : _vm(vm) {}
+	Settings(SherlockEngine *vm) : _vm(vm) {
+		_hotkeyExit = 0;
+		_hotkeyMusic = 0;
+		_hotkeyPortraits = 0;
+		_hotkeyNewFontStyle = 0;
+		_hotkeySoundEffects = 0;
+		_hotkeyWindows = 0;
+		_hotkeyAutoHelp = 0;
+		_hotkeyVoices = 0;
+		_hotkeyFade = 0;
+
+		memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
+	}
+
+	byte _hotkeyExit;
+	byte _hotkeyMusic;
+	byte _hotkeyPortraits;
+	byte _hotkeyNewFontStyle;
+	byte _hotkeySoundEffects;
+	byte _hotkeyWindows;
+	byte _hotkeyAutoHelp;
+	byte _hotkeyVoices;
+	byte _hotkeyFade;
+
+	byte _hotkeysIndexed[12];
 
 	/**
 	 * Draws the interface for the settings window
 	 */
-	void drawInteface(bool flag);
+	void drawInterface(bool flag);
 
 	/**
 	 * Draws the buttons for the settings dialog

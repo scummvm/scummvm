@@ -253,7 +253,8 @@ void TextView::processCommand() {
 		SceneInfo *sceneInfo = SceneInfo::init(_vm);
 		sceneInfo->_width = MADS_SCREEN_WIDTH;
 		sceneInfo->_height = MADS_SCENE_HEIGHT;
-		_spareScreens[spareIndex].setSize(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+		_spareScreens[spareIndex].create(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
+
 		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE,
 			_spareScreens[spareIndex]);
 		delete sceneInfo;
@@ -345,19 +346,17 @@ void TextView::doFrame() {
 
 	// If a screen transition is in progress and it's time for another column, handle it
 	if (_spareScreen) {
-		byte *srcP = _spareScreen->getBasePtr(_translationX, 0);
-		byte *bgP = scene._backgroundSurface.getBasePtr(_translationX, 0);
-		byte *screenP = (byte *)_vm->_screen.getBasePtr(_translationX, 0);
+		const byte *srcP = (const byte *)_spareScreen->getBasePtr(_translationX, 0);
+		byte *bgP = (byte *)scene._backgroundSurface.getBasePtr(_translationX, 0);
+
+		Graphics::Surface dest = _vm->_screen->getSubArea(Common::Rect(_translationX, 0, _translationX + 1, 0));
+		byte *screenP = (byte *)dest.getBasePtr(0, 0);
 
 		for (int y = 0; y < MADS_SCENE_HEIGHT; ++y, srcP += MADS_SCREEN_WIDTH,
 			bgP += MADS_SCREEN_WIDTH, screenP += MADS_SCREEN_WIDTH) {
 			*bgP = *srcP;
 			*screenP = *srcP;
 		}
-
-		// Flag the column of the screen is modified
-		_vm->_screen.copyRectToScreen(Common::Rect(_translationX, 0,
-			_translationX + 1, MADS_SCENE_HEIGHT));
 
 		// Keep moving the column to copy to the right
 		if (++_translationX == MADS_SCREEN_WIDTH) {
@@ -570,6 +569,7 @@ void AnimationView::doFrame() {
 void AnimationView::loadNextResource() {
 	Scene &scene = _vm->_game->_scene;
 	Palette &palette = *_vm->_palette;
+	Screen &screen = *_vm->_screen;
 	ResourceEntry &resEntry = _resources[_resourceIndex];
 	Common::Array<PaletteCycle> paletteCycles;
 
@@ -586,12 +586,15 @@ void AnimationView::loadNextResource() {
 	// Handle the bars at the top/bottom
 	if (resEntry._showWhiteBars) {
 		// For animations the screen has been clipped to the middle 156 rows.
-		// So although it's slightly messy, bypass our screen class entirely,
-		// and draw the horizontal lines directly on the physiacl screen surface
-		Graphics::Surface *s = g_system->lockScreen();
-		s->hLine(0, 20, MADS_SCREEN_WIDTH, 253);
-		s->hLine(0, 179, MADS_SCREEN_WIDTH, 253);
-		g_system->unlockScreen();
+		// So although it's slightly messy, temporarily reset clip bounds
+		// so we can redraw the white lines
+		Common::Rect clipBounds = screen.getClipBounds();
+		screen.resetClipBounds();
+
+		screen.hLine(0, 20, MADS_SCREEN_WIDTH, 253);
+		screen.hLine(0, 179, MADS_SCREEN_WIDTH, 253);
+
+		screen.setClipBounds(clipBounds);
 	}
 
 	// Load the new animation
@@ -793,6 +796,42 @@ int AnimationView::getParameter() {
 	}
 
 	return result;
+}
+
+void AnimationView::checkResource(const Common::String &resourceName) {
+	//bool hasSuffix = false;
+
+}
+
+int AnimationView::scanResourceIndex(const Common::String &resourceName) {
+	int foundIndex = -1;
+
+	if (_v1) {
+		const char *chP = strchr(resourceName.c_str(), '\\');
+		if (!chP) {
+			chP = strchr(resourceName.c_str(), '*');
+		}
+
+		Common::String resName = chP ? Common::String(chP + 1) : resourceName;
+
+		if (_v2 != 3) {
+			assert(_resIndex.size() == 0);
+		}
+
+		// Scan for the resource name
+		for (uint resIndex = 0; resIndex < _resIndex.size(); ++resIndex) {
+			ResIndexEntry &resEntry = _resIndex[resIndex];
+			if (resEntry._resourceName.compareToIgnoreCase(resourceName)) {
+				foundIndex = resIndex;
+				break;
+			}
+		}
+	}
+
+	if (foundIndex >= 0) {
+		// TODO
+	}
+	return -1;
 }
 
 } // End of namespace MADS

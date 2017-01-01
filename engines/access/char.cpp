@@ -31,7 +31,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() != GType_Amazon || !vm->isCD()) {
 		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
@@ -44,7 +44,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	if (vm->getGameID() == GType_MartianMemorandum) {
 		int lastColor = s.readUint16LE();
 		_numColors = lastColor - _startColor;
-	} else 
+	} else
 		_numColors = s.readUint16LE();
 
 	// Load cells
@@ -78,25 +78,12 @@ CharEntry::CharEntry() {
 /*------------------------------------------------------------------------*/
 
 CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		// Setup character list
-		if (_vm->isDemo()) {
-			for (int i = 0; i < 27; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i], vm));
-		} else {
-			for (int i = 0; i < 37; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL[i], vm));
-		}
-		break;
-
-	case GType_MartianMemorandum:
-		for (int i = 0; i < 27; ++i)
-			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i], vm));
-		break;
-
-	default:
-		error("Unknown game");
+	// Setup character list
+	for (uint idx = 0; idx < _vm->_res->CHARTBL.size(); ++idx) {
+		if (_vm->_res->CHARTBL[idx].size() == 0)
+			_charTable.push_back(CharEntry());
+		else
+			_charTable.push_back(CharEntry(&_vm->_res->CHARTBL[idx][0], _vm));
 	}
 
 	_charFlag = 0;
@@ -144,6 +131,7 @@ void CharManager::loadChar(int charId) {
 	if (ce._animFile._fileNum != -1) {
 		Resource *data = _vm->_files->loadFile(ce._animFile);
 		_vm->_animation->loadAnimations(data);
+		delete data;
 	}
 
 	// Load script data
@@ -176,6 +164,10 @@ void CharManager::charMenu() {
 		screen.plotImage(spr, 18, Common::Point(155, 176));
 	} else
 		error("Game not supported");
+
+	// Make a backup copy of the screen including the character buttons,
+	// for restoring when erasing conversation boxes
+	screen.copyTo(&_vm->_buffer1);
 
 	screen.restoreScreen();
 	delete spr;

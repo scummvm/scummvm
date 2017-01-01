@@ -45,13 +45,13 @@ bool CObject::loadFile(const char *fname) {
 }
 
 bool ObList::load(MfcArchive &file) {
-	debug(5, "ObList::load()");
+	debugC(5, kDebugLoading, "ObList::load()");
 	int count = file.readCount();
 
-	debug(9, "ObList::count: %d:", count);
+	debugC(9, kDebugLoading, "ObList::count: %d:", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(9, "ObList::[%d]", i);
+		debugC(9, kDebugLoading, "ObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(t);
@@ -61,7 +61,7 @@ bool ObList::load(MfcArchive &file) {
 }
 
 bool ObArray::load(MfcArchive &file) {
-	debug(5, "ObArray::load()");
+	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
 
 	resize(count);
@@ -76,15 +76,15 @@ bool ObArray::load(MfcArchive &file) {
 }
 
 bool DWordArray::load(MfcArchive &file) {
-	debug(5, "DWordArray::load()");
+	debugC(5, kDebugLoading, "DWordArray::load()");
 	int count = file.readCount();
 
-	debug(9, "DWordArray::count: %d", count);
+	debugC(9, kDebugLoading, "DWordArray::count: %d", count);
 
 	resize(count);
 
 	for (int i = 0; i < count; i++) {
-		int32 t = file.readUint32LE();
+		int32 t = file.readSint32LE();
 
 		push_back(t);
 	}
@@ -104,9 +104,20 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
-	debug(9, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
+	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
 
 	return tmp;
+}
+
+void MfcArchive::writePascalString(const char *str, bool twoByte) {
+	int len = strlen(str);
+
+	if (twoByte)
+		writeUint16LE(len);
+	else
+		writeByte(len);
+
+	write(str, len);
 }
 
 MemoryObject::MemoryObject() {
@@ -128,7 +139,7 @@ MemoryObject::~MemoryObject() {
 }
 
 bool MemoryObject::load(MfcArchive &file) {
-	debug(5, "MemoryObject::load()");
+	debugC(5, kDebugLoading, "MemoryObject::load()");
 	_memfilename = file.readPascalString();
 
 	if (char *p = strchr(_memfilename, '\\')) {
@@ -147,7 +158,7 @@ bool MemoryObject::load(MfcArchive &file) {
 }
 
 void MemoryObject::loadFile(char *filename) {
-	debug(5, "MemoryObject::loadFile(<%s>)", filename);
+	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename);
 
 	if (!*filename)
 		return;
@@ -165,13 +176,13 @@ void MemoryObject::loadFile(char *filename) {
 
 			_dataSize = s->size();
 
-			debug(5, "Loading %s (%d bytes)", filename, _dataSize);
+			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename, _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
 
 			delete s;
 		} else {
-			warning("MemoryObject::loadFile(): reading failure");
+			// We have no object to read. This is fine
 		}
 
 		g_fp->_currArchive = arr;
@@ -194,7 +205,7 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
-	debug(8, "MemoryObject::freeData(): file: %s", _memfilename);
+	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename);
 
 	if (_data)
 		free(_data);
@@ -222,12 +233,12 @@ MemoryObject2::~MemoryObject2() {
 }
 
 bool MemoryObject2::load(MfcArchive &file) {
-	debug(5, "MemoryObject2::load()");
+	debugC(5, kDebugLoading, "MemoryObject2::load()");
 	MemoryObject::load(file);
 
 	_mflags |= 1;
 
-	debug(5, "MemoryObject2::load: <%s>", _memfilename);
+	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename);
 
 	if (_memfilename && *_memfilename) {
 		MemoryObject::loadFile(_memfilename);
@@ -262,15 +273,11 @@ double MfcArchive::readDouble() {
 	// http://randomascii.wordpress.com/2012/01/11/tricks-with-the-floating-point-format/
 
 	union {
-		struct {
-			int32 a;
-			int32 b;
-		} i;
+		byte b[8];
 		double d;
 	} tmp;
 
-	tmp.i.a = readUint32LE();
-	tmp.i.b = readUint32LE();
+	read(&tmp.b, 8);
 
 	return tmp.d;
 }
@@ -351,14 +358,26 @@ static CObject *createObject(int objectId) {
 }
 
 MfcArchive::MfcArchive(Common::SeekableReadStream *stream) {
+	_stream = stream;
+	_wstream = 0;
+
+	init();
+}
+
+MfcArchive::MfcArchive(Common::WriteStream *stream) {
+	_wstream = stream;
+	_stream = 0;
+
+	init();
+}
+
+void MfcArchive::init() {
 	for (int i = 0; classMap[i].name; i++) {
 		_classMap[classMap[i].name] = classMap[i].id;
 	}
 
 	_lastIndex = 1;
 	_level = 0;
-
-	_stream = stream;
 
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
@@ -381,15 +400,17 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 	uint obTag = readUint16LE();
 
-	debug(7, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
+	debugC(7, kDebugLoading, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
 
-	if (obTag == 0xffff) {
+	if (obTag == 0x0000) {
+		return NULL;
+	} else if (obTag == 0xffff) {
 		int schema = readUint16LE();
 
-		debug(7, "parseClass::schema = %d", schema);
+		debugC(7, kDebugLoading, "parseClass::schema = %d", schema);
 
 		name = readPascalString(true);
-		debug(7, "parseClass::class <%s>", name);
+		debugC(7, kDebugLoading, "parseClass::class <%s>", name);
 
 		if (!_classMap.contains(name)) {
 			error("Unknown class in MfcArchive: <%s>", name);
@@ -397,7 +418,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 		objectId = _classMap[name];
 
-		debug(7, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
+		debugC(7, kDebugLoading, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
 
 		res = createObject(objectId);
 		_objectMap.push_back(res);
@@ -411,7 +432,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		if (_objectMap.size() < obTag) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
-		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
 
 		res = _objectMap[obTag];
 
@@ -424,7 +445,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
 
-		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
 
 		objectId = _objectIdMap[obTag];
 
@@ -438,6 +459,36 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 	return res;
 }
 
+void MfcArchive::writeObject(CObject *obj) {
+	if (obj == NULL) {
+		writeUint16LE(0);
+	} else if (_objectHash.contains(obj)) {
+		int32 idx = _objectHash[obj];
+
+		if (idx < 0x7fff) {
+			writeUint16LE(idx);
+		} else {
+			writeUint16LE(0x7fff);
+			writeUint32LE(idx);
+		}
+	} else {
+		writeUint16LE(0xffff); // New class
+		_objectHash[obj] = _lastIndex++;
+
+		writeUint16LE(1); // schema
+
+		switch (obj->_objtype) {
+		case kObjTypeGameVar:
+			writePascalString(lookupObjectId(kGameVar), true); // Two byte counter
+			break;
+		default:
+			error("Unhandled save for object type: %d", obj->_objtype);
+		}
+
+		obj->save(*this);
+	}
+}
+
 char *genFileName(int superId, int sceneId, const char *ext) {
 	char *s = (char *)calloc(256, 1);
 
@@ -447,7 +498,7 @@ char *genFileName(int superId, int sceneId, const char *ext) {
 		snprintf(s, 255, "%04d.%s", sceneId, ext);
 	}
 
-	debug(7, "genFileName: %s", s);
+	debugC(7, kDebugLoading, "genFileName: %s", s);
 
 	return s;
 }
@@ -456,6 +507,7 @@ char *genFileName(int superId, int sceneId, const char *ext) {
 byte *transCyrillic(byte *s) {
 	static byte tmp[1024];
 
+#ifndef WIN32
 	static int trans[] = { 0xa8, 0xd081, 0xb8, 0xd191, 0xc0, 0xd090,
 		0xc1, 0xd091, 0xc2, 0xd092, 0xc3, 0xd093, 0xc4, 0xd094,
 		0xc5, 0xd095, 0xc6, 0xd096, 0xc7, 0xd097, 0xc8, 0xd098,
@@ -473,10 +525,24 @@ byte *transCyrillic(byte *s) {
 		0xf5, 0xd185, 0xf6, 0xd186, 0xf7, 0xd187, 0xf8, 0xd188,
 		0xf9, 0xd189, 0xfa, 0xd18a, 0xfb, 0xd18b, 0xfc, 0xd18c,
 		0xfd, 0xd18d, 0xfe, 0xd18e, 0xff, 0xd18f };
+#endif
 
 	int i = 0;
 
 	for (byte *p = s; *p; p++) {
+#ifdef WIN32
+		// translate from cp1251 to cp866
+		byte c = *p;
+		if (c >= 0xC0 && c <= 0xEF)
+			c = c - 0xC0 + 0x80;
+		else if (c >= 0xF0)
+			c = c - 0xF0 + 0xE0;
+		else if (c == 0xA8)
+			c = 0xF0;
+		else if (c == 0xB8)
+			c = 0xF1;
+		tmp[i++] = c;
+#else
 		if (*p < 128) {
 			tmp[i++] = *p;
 		} else {
@@ -491,6 +557,7 @@ byte *transCyrillic(byte *s) {
 
 			assert(trans[j]);
 		}
+#endif
 	}
 
 	tmp[i] = 0;

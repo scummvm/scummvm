@@ -55,7 +55,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
 		},
 		GType_RexNebular,
@@ -73,7 +73,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
 		},
 		GType_RexNebular,
@@ -91,7 +91,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GAMEOPTION_EASY_MOUSE)
 		},
 		GType_Phantom,
@@ -109,7 +109,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GAMEOPTION_EASY_MOUSE)
 		},
 		GType_Dragonsphere,

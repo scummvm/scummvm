@@ -33,7 +33,6 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
-
 namespace Fullpipe {
 
 void scene24_initScene(Scene *sc) {

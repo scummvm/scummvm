@@ -25,6 +25,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
@@ -350,18 +351,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 				celData += celSize;
 			}
 		}
-#ifdef ENABLE_SCI32
-		// adjust width/height returned to scripts
-		if (_sci2ScaleRes != SCI_VIEW_NATIVERES_NONE) {
-			for (loopNo = 0; loopNo < _loopCount; loopNo++)
-				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
-					_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight, _sci2ScaleRes);
-		} else if (getSciVersion() == SCI_VERSION_2_1) {
-			for (loopNo = 0; loopNo < _loopCount; loopNo++)
-				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++)
-					_coordAdjuster->fromDisplayToScript(_loop[loopNo].cel[celNo].scriptHeight, _loop[loopNo].cel[celNo].scriptWidth);
-		}
-#endif
 		break;
 
 	default:
@@ -833,19 +822,6 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
-	// WORKAROUND: EcoQuest French and German draw the fish and anemone sprites
-	// with priority 15 in scene 440. Afterwards, a dialog is shown on top of
-	// these sprites with priority 15 as well. This is undefined behavior
-	// actually, as the sprites and dialog share the same priority, so in our
-	// implementation the sprites get drawn incorrectly on top of the dialog.
-	// Perhaps this worked by mistake in SSCI because of subtle differences in
-	// how sprites are drawn. We compensate for this by resetting the priority
-	// of all sprites that have a priority of 15 in scene 440 to priority 14,
-	// so that the speech bubble can be drawn correctly on top of them. Fixes
-	// bug #3040625.
-	if (g_sci->getGameId() == GID_ECOQUEST && g_sci->getEngineState()->currentRoomNumber() == 440 && priority == 15)
-		priority = 14;
-
 	if (!_EGAmapping) {
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
@@ -855,12 +831,11 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 					const int y2 = clipRectTranslated.top + y;
 					if (!upscaledHires) {
 						if (priority >= _screen->getPriority(x2, y2)) {
-							if (!_palette->isRemapped(palette->mapping[color])) {
-								_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
-							} else {
-								byte remappedColor = _palette->remapColor(palette->mapping[color], _screen->getVisual(x2, y2));
-								_screen->putPixel(x2, y2, drawMask, remappedColor, priority, 0);
-							}
+							byte outputColor = palette->mapping[color];
+							// SCI16 remapping (QFG4 demo)
+							if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+								outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+							_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 						}
 					} else {
 						// UpscaledHires means view is hires and is supposed to
@@ -970,12 +945,11 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			const int x2 = clipRectTranslated.left + x;
 			const int y2 = clipRectTranslated.top + y;
 			if (color != clearKey && priority >= _screen->getPriority(x2, y2)) {
-				if (!_palette->isRemapped(palette->mapping[color])) {
-					_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
-				} else {
-					byte remappedColor = _palette->remapColor(palette->mapping[color], _screen->getVisual(x2, y2));
-					_screen->putPixel(x2, y2, drawMask, remappedColor, priority, 0);
-				}
+				byte outputColor = palette->mapping[color];
+				// SCI16 remapping (QFG4 demo)
+				if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+					outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+				_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
 			}
 		}
 	}
@@ -987,15 +961,6 @@ void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 
 void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
 	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
-}
-
-byte GfxView::getColorAtCoordinate(int16 loopNo, int16 celNo, int16 x, int16 y) {
-	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	const byte *bitmap = getBitmap(loopNo, celNo);
-	const int16 celWidth = celInfo->width;
-
-	bitmap += (celWidth * y);
-	return bitmap[x];
 }
 
 } // End of namespace Sci

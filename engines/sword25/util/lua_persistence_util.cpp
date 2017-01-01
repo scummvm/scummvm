@@ -280,15 +280,6 @@ void lua_reallocstack(lua_State *L, int newsize) {
 	correctStack(L, oldstack);
 }
 
-void lua_growstack(lua_State *L, int n) {
-	// Double size is enough?
-	if (n <= L->stacksize) {
-		lua_reallocstack(L, 2 * L->stacksize);
-	} else {
-		lua_reallocstack(L, L->stacksize + n);
-	}
-}
-
 void lua_reallocCallInfo(lua_State *lauState, int newsize) {
 	CallInfo *oldci = lauState->base_ci;
 	lua_reallocvector(lauState, lauState->base_ci, lauState->size_ci, newsize, CallInfo);

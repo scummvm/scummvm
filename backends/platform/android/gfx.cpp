@@ -469,7 +469,7 @@ void OSystem_Android::updateScreen() {
 		GLCALL(glTranslatex(0, -_shake_offset << 16, 0));
 	}
 
-// TODO this doesnt work on those sucky drivers, do it differently
+// TODO this doesn't work on those sucky drivers, do it differently
 //	if (_show_overlay)
 //		GLCALL(glColor4ub(0x9f, 0x9f, 0x9f, 0x9f));
 

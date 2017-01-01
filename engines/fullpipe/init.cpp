@@ -57,7 +57,10 @@ void FullpipeEngine::initObjectStates() {
 	setObjectState(sO_FriesPit, getObjectEnumState(sO_FriesPit, sO_WithApple));
 	setObjectState(sO_Jug, getObjectEnumState(sO_Jug, sO_Blocked));
 	setObjectState(sO_RightStairs_9, getObjectEnumState(sO_RightStairs_9, sO_IsClosed));
-	setObjectState(sO_Pipe_9, getObjectEnumState(sO_Pipe_9, sO_WithJug));
+	if (isDemo() && getLanguage() == Common::RU_RUS)
+		setObjectState(sO_Pipe_9, getObjectEnumState(sO_Pipe_9, sO_WithoutJug));
+	else
+		setObjectState(sO_Pipe_9, getObjectEnumState(sO_Pipe_9, sO_WithJug));
 	setObjectState(sO_Inflater, getObjectEnumState(sO_Inflater, sO_WithGum));
 	setObjectState(sO_Swingie, getObjectEnumState(sO_Swingie, sO_IsSwinging));
 	setObjectState(sO_DudeHasJumped, getObjectEnumState(sO_DudeHasJumped, sO_No));

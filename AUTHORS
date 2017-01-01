@@ -10,12 +10,6 @@ ScummVM Team
                                     Administrator
      Eugene Sandulenko            - Project Leader
 
-  Core Team
-  ---------
-     Willem Jan Palenstijn
-     Eugene Sandulenko
-     Johannes Schickel
-
   Retired Project Leaders
   -----------------------
      James Brown
@@ -47,10 +41,11 @@ ScummVM Team
 
     AGI:
        Stuart George
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Filippos Karapetis
+       Martin Kiewitz
        Pawel Kolodziejski
-       Walter van Niftrik           - (retired)
+       Walter van Niftrik
        Kari Salminen
        Eugene Sandulenko
        David Symonds                - (retired)
@@ -62,9 +57,16 @@ ScummVM Team
        Oliver Kiehl                 - (retired)
        Ludvig Strigeus              - (retired)
 
+    Access:
+       Arnaud Boutonne
+       Paul Gilbert
+
     Avalanche:
        Peter Bozso
        Arnaud Boutonne
+
+    BBVS:
+       Benjamin Haisch
 
     Buried:
        Matthew Hoops
@@ -99,6 +101,7 @@ ScummVM Team
     Drascula:
        Filippos Karapetis
        Pawel Kolodziejski
+       Thierry Crozat
 
     DreamWeb:
        Torbjorn Andersson
@@ -106,6 +109,10 @@ ScummVM Team
        Filippos Karapetis
        Vladimir Menshakov           - (retired)
        Willem Jan Palenstijn
+
+    Gnap:
+       Arnaud Boutonne
+       Benjamin Haisch
 
     Gob:
        Torbjorn Andersson
@@ -132,10 +139,10 @@ ScummVM Team
        Oystein Eftevaag
        Florian Kagerer
        Gregory Montoir              - (retired)
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     Lastexpress:
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Jordi Vilalta Prat
        Julien Templier
 
@@ -153,7 +160,7 @@ ScummVM Team
 
     Mohawk:
        Bastien Bouclet
-       Matthew Hoops
+       Matthew Hoops                - (retired)
        Filippos Karapetis
        Alyssa Milburn
        Eugene Sandulenko
@@ -171,7 +178,7 @@ ScummVM Team
        peres
 
     Pegasus:
-       Matthew Hoops
+       Matthew Hoops                - (retired)
 
     Queen:
        David Eriksson               - (retired)
@@ -192,10 +199,14 @@ ScummVM Team
        Max Horn                     - (retired)
        Filippos Karapetis
        Martin Kiewitz
-       Walter van Niftrik           - (retired)
+       Walter van Niftrik
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
+
+    Sherlock:
+       Paul Gilbert
+       Martin Kiewitz
 
     Sky:
        Robert Goeffringmann         - (retired)
@@ -272,15 +283,20 @@ ScummVM Team
     Android:
        Andre Heider
        Angus Lees
+       Lubomyr Lisen
 
     Dreamcast:
        Marcus Comstedt
 
+    GCW0:
+       Eugene Sandulenko
+
     GPH Devices (GP2X, GP2XWiz & Caanoo):
        John Willis
 
-    iPhone:
+    iPhone / iPad:
        Oystein Eftevaag
+       Vincent Benony
 
     LinuxMoto:
        Lubomyr Lisen
@@ -288,6 +304,9 @@ ScummVM Team
     Maemo:
        Frantisek Dufka              - (retired)
        Tarek Soliman
+
+    Nintendo 3DS:
+       Thomas Edvalson
 
     Nintendo 64:
        Fabio Battaglia
@@ -330,6 +349,9 @@ ScummVM Team
     Wii:
        Andre Heider
 
+    Raspberry Pi:
+       Manuel Alfayate
+
   Other subsystems
   ----------------
     Infrastructure:
@@ -337,12 +359,12 @@ ScummVM Team
                                       mixer, audiostreams, data structures,
                                       etc. (retired)
        Eugene Sandulenko
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     GUI:
        Vicent Marti
        Eugene Sandulenko
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     Miscellaneous:
        David Corrales-Lopez         - Filesystem access improvements (GSoC
@@ -385,7 +407,8 @@ ScummVM Team
      Thierry Crozat               - Numerous contributions to documentation
      Joachim Eberhard             - Numerous contributions to documentation
                                     (retired)
-     Matthew Hoops                - Wiki editor
+     Matthew Hoops                - Numerous contributions to documentation
+                                    (retired)
 
   Retired Team Members
   --------------------
@@ -428,6 +451,7 @@ Other contributions
     Mac OS X:
        Max Horn                     - (retired)
        Oystein Eftevaag
+       Thierry Crozat
 
     Mandriva:
        Dominik Scherer              - (retired)
@@ -453,7 +477,7 @@ Other contributions
 
     Win64:
        Chris Gray                   - (retired)
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
   GUI Translations
   ----------------
@@ -654,7 +678,7 @@ Special thanks to
 *****************
    Daniel Balsom     - For the original Reinherit (SAGA) code
    Sander Buskens    - For his work on the initial reversing of Monkey2
-   Canadacow         - For the original MT-32 emulator
+   Dean Beeler       - For the original MT-32 emulator
    Kevin Carnes      - For Scumm16, the basis of ScummVM's older gfx codecs
    Curt Coder        - For the original TrollVM (preAGI) code
    Patrick Combet    - For the original Gobliiins ADL player
@@ -666,12 +690,12 @@ Special thanks to
    DOSBox Team       - For their awesome OPL2 and OPL3 emulator
    Yusuke Kamiyamane - For contributing some GUI icons
    Till Kresslein    - For design of modern ScummVM GUI
-   Jezar             - For his freeverb filter implementation
+   Jezar Wakefield   - For his freeverb filter implementation
    Jim Leiterman     - Various info on his FM-TOWNS/Marty SCUMM ports
-   lloyd             - For deep tech details about C64 Zak & MM
+   Lloyd Rosen       - For deep tech details about C64 Zak & MM
    Sarien Team       - Original AGI engine code
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
-   Tristan           - For additional work on the original MT-32 emulator
+   Tristan Matthews  - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
    Anton Yartsev     - For the original re-implementation of the Z-Vision
                        engine
@@ -722,4 +746,12 @@ Special thanks to
    Bob Bell, David Black, Michel Kripalani, and Tommy Yune from Presto
    Studios for providing the source code of The Journeyman Project: Pegasus
    Prime and The Journeyman Project 2: Buried in Time.
+
+   Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and
+   Vasyl Tsvirkunov of Electronic Arts for providing the source code of the
+   two Lost Files of Sherlock Holmes games. James M. Ferguson and Barry
+   Duncan for their tenacious efforts to recover the sources.
+
+   The mindFactory team for writing Broken Sword 2.5, a splendid fan-made
+   sequel, and for sharing the source code with us.
 

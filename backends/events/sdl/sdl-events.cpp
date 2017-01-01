@@ -110,13 +110,51 @@ SdlEventSource::~SdlEventSource() {
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
+	// Keep unicode in case it's regular ASCII text or in case we didn't get a valid keycode
+	//
+	// We need to use unicode in those cases, simply because SDL1.x passes us non-layout-adjusted keycodes.
+	// So unicode is the only way to get layout-adjusted keys.
+	if (unicode < 0x20) {
+		// don't use unicode, in case it's control characters
+		unicode = 0;
+	} else {
+		// Use unicode, in case keycode is invalid.
+		// Umlauts and others will set KEYCODE_INVALID on SDL2, so in such a case always keep unicode.
+		if (key != Common::KEYCODE_INVALID) {
+			// keycode is valid, check further also depending on modifiers
+			if (mod & (KMOD_CTRL | KMOD_ALT)) {
+				// Ctrl and/or Alt is active
+				//
+				// We need to restrict unicode to only up to 0x7E, because on macOS the option/alt key will switch to
+				// an alternate keyboard, which will cause us to receive Unicode characters for some keys, which are outside
+				// of the ASCII range (e.g. alt-x will get us U+2248). We need to return 'x' for alt-x, so using unicode
+				// in that case would break alt-shortcuts.
+				if (unicode > 0x7E)
+					unicode = 0; // do not allow any characters above 0x7E
+			} else {
+				// We must not restrict as much as when Ctrl/Alt-modifiers are active, otherwise
+				// we wouldn't let umlauts through for SDL1. For SDL1 umlauts may set for example KEYCODE_QUOTE, KEYCODE_MINUS, etc.
+				if (unicode > 0xFF)
+					unicode = 0; // do not allow any characters above 0xFF
+			}
+		}
+	}
+
+	// Attention:
+	// When using SDL1.x, we will get scancodes via sdlKey, that are raw scancodes, so NOT adjusted to keyboard layout/
+	// mapping. So for example for certain locales, we will get KEYCODE_y, when 'z' is pressed and so on.
+	// When using SDL2.x however, we will get scancodes based on the keyboard layout.
+
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
+		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		if ((mod & KMOD_NUM) == 0)
+			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
+		// Return unicode in case it's stil set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -314,7 +352,7 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_y: return Common::KEYCODE_y;
 	case SDLK_z: return Common::KEYCODE_z;
 	case SDLK_DELETE: return Common::KEYCODE_DELETE;
-#if SDL_VERSION_ATLEAST(1, 3, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
 #else
 	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
@@ -517,15 +555,17 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
+	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
+
 	// Handle scroll lock as a key modifier
-	if (ev.key.keysym.sym == SDLK_SCROLLOCK)
+	if (sdlKeycode == SDLK_SCROLLOCK)
 		_scrollLock = !_scrollLock;
 
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
 	// Ctrl-m toggles mouse capture
-	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
+	if (event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'm') {
 		if (_graphicsManager) {
 			_graphicsManager->getWindow()->toggleMouseGrab();
 		}
@@ -534,26 +574,26 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 #if defined(MACOSX)
 	// On Macintosh, Cmd-Q quits
-	if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
+	if ((ev.key.keysym.mod & KMOD_META) && sdlKeycode == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 #elif defined(POSIX)
 	// On other *nix systems, Control-Q quits
-	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
+	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'q') {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 #else
-	// Ctrl-z and Alt-X quit
-	if ((event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'z') || (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 'x')) {
+	// Ctrl-z quits
+	if ((event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'z')) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
 
 	#ifdef WIN32
 	// On Windows, also use the default Alt-F4 quit combination
-	if ((ev.key.keysym.mod & KMOD_ALT) && ev.key.keysym.sym == SDLK_F4) {
+	if ((ev.key.keysym.mod & KMOD_ALT) && sdlKeycode == SDLK_F4) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
@@ -561,7 +601,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 #endif
 
 	// Ctrl-u toggles mute
-	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
+	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'u') {
 		event.type = Common::EVENT_MUTE;
 		return true;
 	}
@@ -570,8 +610,8 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
+	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
+	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
 	return true;
 }
@@ -580,6 +620,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
+	SDLKey sdlKeycode = obtainKeycode(ev.key.keysym);
 	SDLMod mod = SDL_GetModState();
 
 	// Check if this is an event handled by handleKeyDown(), and stop if it is
@@ -587,35 +628,30 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// Check if the Ctrl key is down, so that we can trap cases where the
 	// user has the Ctrl key down, and has just released a special key
 	if (mod & KMOD_CTRL) {
-		if (ev.key.keysym.sym == 'm' ||	// Ctrl-m toggles mouse capture
+		if (sdlKeycode == 'm' ||	// Ctrl-m toggles mouse capture
 #if defined(MACOSX)
 			// Meta - Q, handled below
 #elif defined(POSIX)
-			ev.key.keysym.sym == 'q' ||	// On other *nix systems, Control-Q quits
+			sdlKeycode == 'q' ||	// On other *nix systems, Control-Q quits
 #else
-			ev.key.keysym.sym == 'z' ||	// Ctrl-z quit
+			sdlKeycode == 'z' ||	// Ctrl-z quit
 #endif
-			ev.key.keysym.sym == 'u')	// Ctrl-u toggles mute
+			sdlKeycode == 'u')	// Ctrl-u toggles mute
 			return false;
 	}
 
 	// Same for other keys (Meta and Alt)
 #if defined(MACOSX)
-	if ((mod & KMOD_META) && ev.key.keysym.sym == 'q')
+	if ((mod & KMOD_META) && sdlKeycode == 'q')
 		return false;	// On Macintosh, Cmd-Q quits
-#elif defined(POSIX)
-	// Control Q has already been handled above
-#else
-	if ((mod & KMOD_ALT) && ev.key.keysym.sym == 'x')
-		return false;	// Alt-x quit
 #endif
 
 	// If we reached here, this isn't an event handled by handleKeyDown(), thus
 	// continue normally
 
 	event.type = Common::EVENT_KEYUP;
-	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, 0);
+	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
+	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, 0);
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -737,16 +773,16 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
-	if ( axis > JOY_DEADZONE) {
+	if (axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
-	} else if ( axis < -JOY_DEADZONE ) {
+	} else if (axis < -JOY_DEADZONE) {
 		axis += JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
 	} else
 		axis = 0;
 
-	if ( ev.jaxis.axis == JOY_XAXIS) {
+	if (ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
 		_km.x_vel = axis / 2000;
 		_km.x_down_count = 0;
@@ -759,7 +795,6 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 			_km.x_down_count = 0;
 		}
 #endif
-
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 #ifndef JOY_INVERT_Y
 		axis = -axis;
@@ -851,7 +886,7 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.x_max = x_max;
 	_km.y_max = y_max;
 	_km.delay_time = 25;
@@ -874,9 +909,62 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 	return false;
 }
 
+SDLKey SdlEventSource::obtainKeycode(const SDL_keysym keySym) {
+#if !SDL_VERSION_ATLEAST(2, 0, 0) && defined(WIN32) && !defined(_WIN32_WCE)
+	// WORKAROUND: SDL 1.2 on Windows does not use the user configured keyboard layout,
+	// resulting in "keySym.sym" values to always be those expected for an US keyboard.
+	// For example, SDL returns SDLK_Q when pressing the 'A' key on an AZERTY keyboard.
+	// This defeats the purpose of keycodes which is to be able to refer to a key without
+	// knowing where it is physically located.
+	// We work around this issue by querying the currently active Windows keyboard layout
+	// using the scancode provided by SDL.
+
+	if (keySym.sym >= SDLK_0 && keySym.sym <= SDLK_9) {
+		// The keycode returned by SDL is kept for the number keys.
+		// Querying the keyboard layout for those would return the base key values
+		// for AZERTY keyboards, which are not numbers. For example, SDLK_1 would
+		// map to SDLK_AMPERSAND. This is theoretically correct but practically unhelpful,
+		// because it makes it impossible to handle key combinations such as "ctrl-1".
+		return keySym.sym;
+	}
+
+	int vk = MapVirtualKey(keySym.scancode, MAPVK_VSC_TO_VK);
+	if (vk) {
+		int ch = (MapVirtualKey(vk, MAPVK_VK_TO_CHAR) & 0x7FFF);
+		// The top bit of the result of MapVirtualKey with MAPVK_VSC_TO_VK signals
+		// a dead key was pressed. In that case we keep the value of the accent alone.
+		if (ch) {
+			if (ch >= 'A' && ch <= 'Z') {
+				// Windows returns uppercase ASCII whereas SDL expects lowercase
+				return (SDLKey)(SDLK_a + (ch - 'A'));
+			} else {
+				return (SDLKey)ch;
+			}
+		}
+	}
+#endif
+
+	return keySym.sym;
+}
+
 uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Event events[2];
+
+	// Update the event queue here to give SDL a chance to insert TEXTINPUT
+	// events for KEYDOWN events. Otherwise we have a high chance that on
+	// Windows the TEXTINPUT event is not in the event queue at this point.
+	// In this case we will get two events with ascii values due to mapKey
+	// and dispatchSDLEvent. This results in nasty double input of characters
+	// in the GUI.
+	//
+	// FIXME: This is all a bit fragile because in mapKey we derive the ascii
+	// value from the key code if no unicode value is given. This is legacy
+	// behavior and should be removed anyway. If that is removed, we might not
+	// even need to do this peeking here but instead can rely on the
+	// SDL_TEXTINPUT case in dispatchSDLEvent to introduce keydown/keyup with
+	// proper ASCII values (but with KEYCODE_INVALID as keycode).
+	SDL_PumpEvents();
 
 	// In SDL2, the unicode field has been removed from the keysym struct.
 	// Instead a SDL_TEXTINPUT event is generated on key combinations that

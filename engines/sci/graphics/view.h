@@ -55,6 +55,7 @@ struct LoopInfo {
 
 class GfxScreen;
 class GfxPalette;
+class Resource;
 
 /**
  * View class, handles loading of view resources and drawing contained cels to screen
@@ -85,15 +86,13 @@ public:
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
-	byte getColorAtCoordinate(int16 loopNo, int16 celNo, int16 x, int16 y);
-
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount);
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 

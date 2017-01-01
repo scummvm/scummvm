@@ -39,6 +39,12 @@
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/testbed.h"
+#ifdef USE_LIBCURL
+#include "testbed/cloud.h"
+#endif
+#ifdef USE_SDL_NET
+#include "testbed/webserver.h"
+#endif
 
 namespace Testbed {
 
@@ -134,6 +140,16 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
+#ifdef USE_LIBCURL
+	// Cloud
+	ts = new CloudTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
+#ifdef USE_SDL_NET
+	// Webserver
+	ts = new WebserverTestSuite();
+	_testsuiteList.push_back(ts);
+#endif
 }
 
 TestbedEngine::~TestbedEngine() {
@@ -151,6 +167,9 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 	uint count = 1;
 	Common::Point pt = Testsuite::getDisplayRegionCoordinates();
 	int numSuitesEnabled = cfMan.getNumSuitesEnabled();
+
+	if (!numSuitesEnabled)
+		return;
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if (shouldQuit()) {

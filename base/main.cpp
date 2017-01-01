@@ -51,6 +51,7 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/osd_message_queue.h"
 
 #include "gui/gui-manager.h"
 #include "gui/error.h"
@@ -66,6 +67,15 @@
 #endif
 
 #include "backends/keymapper/keymapper.h"
+#ifdef USE_CLOUD
+#ifdef USE_LIBCURL
+#include "backends/cloud/cloudmanager.h"
+#include "backends/networking/curl/connectionmanager.h"
+#endif
+#ifdef USE_SDL_NET
+#include "backends/networking/sdl_net/localwebserver.h"
+#endif
+#endif
 
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
@@ -75,6 +85,9 @@
 #include "gui/launcher.h"
 #endif
 
+#ifdef USE_UPDATES
+#include "gui/updates-dialog.h"
+#endif
 
 static bool launcherDialog() {
 
@@ -148,12 +161,24 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 #endif
 
 	// Verify that the game path refers to an actual directory
-	if (!(dir.exists() && dir.isDirectory()))
+        if (!dir.exists()) {
+		err = Common::kPathDoesNotExist;
+        } else if (!dir.isDirectory()) {
 		err = Common::kPathNotDirectory;
+        }
 
 	// Create the game engine
-	if (err.getCode() == Common::kNoError)
+	if (err.getCode() == Common::kNoError) {
+		// Set default values for all of the custom engine options
+		// Appareantly some engines query them in their constructor, thus we
+		// need to set this up before instance creation.
+		const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
+		for (uint i = 0; i < engineOptions.size(); i++) {
+			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+		}
+
 		err = (*plugin)->createInstance(&system, &engine);
+	}
 
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
@@ -231,12 +256,6 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
 
-	// Set default values for all of the custom engine options
-	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
-	for (uint i = 0; i < engineOptions.size(); i++) {
-		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
-	}
-
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
@@ -274,6 +293,8 @@ static void setupGraphics(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 		if (ConfMan.hasKey("fullscreen"))
 			system.setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+		if (ConfMan.hasKey("filtering"))
+			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
@@ -379,7 +400,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
-	}
+	} else if (ConfMan.hasKey("debugflags"))
+		specialDebug = ConfMan.get("debugflags");
+
+	if (settings.contains("debug-channels-only"))
+		gDebugChannelsOnly = true;
+
 
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
@@ -452,8 +478,22 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	g_eventRec.RegisterEventSource();
 #endif
 
+	Common::OSDMessageQueue::instance().registerEventSource();
+
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
+
+#ifdef USE_UPDATES
+	if (!ConfMan.hasKey("updates_check")) {
+		GUI::UpdatesDialog dlg;
+		dlg.runModal();
+	}
+#endif
+
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	CloudMan.init();
+	CloudMan.syncSaves();
+#endif
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
@@ -563,11 +603,22 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			launcherDialog();
 		}
 	}
+#ifdef USE_CLOUD
+#ifdef USE_SDL_NET
+	Networking::LocalWebserver::destroy();
+#endif
+#ifdef USE_LIBCURL
+	Networking::ConnectionManager::destroy();
+	//I think it's important to destroy it after ConnectionManager
+	Cloud::CloudManager::destroy();
+#endif
+#endif
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::DebugManager::destroy();
+	Common::OSDMessageQueue::destroy();
 #ifdef ENABLE_EVENTRECORDER
 	GUI::EventRecorder::destroy();
 #endif

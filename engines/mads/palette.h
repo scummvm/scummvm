@@ -316,7 +316,7 @@ public:
 
 	void refreshSceneColors();
 
-	static int closestColor(const byte *matchColor, const byte *refPalette, 
+	static int closestColor(const byte *matchColor, const byte *refPalette,
 		int paletteInc, int count);
 };
 

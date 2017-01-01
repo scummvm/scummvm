@@ -23,12 +23,9 @@
 #ifndef SHERLOCK_MUSIC_H
 #define SHERLOCK_MUSIC_H
 
-#include "audio/midiplayer.h"
 #include "audio/midiparser.h"
-//#include "audio/mididrv.h"
-#include "sherlock/scalpel/drivers/mididriver.h"
+#include "audio/mididrv.h"
 // for 3DO digital music
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/str-array.h"
@@ -68,7 +65,8 @@ private:
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
-	
+	byte *_midiMusicData;
+
 	/**
 	 * Play the specified music resource
 	 */
@@ -102,7 +100,7 @@ public:
 	 * Start playing a song
 	 */
 	void startSong();
-	
+
 	/**
 	 * Free any currently loaded song
 	 */
@@ -112,7 +110,7 @@ public:
 	 * Stop playing the music
 	 */
 	void stopMusic();
-	
+
 	bool isPlaying();
 	uint32 getCurrentPosition();
 
@@ -127,6 +125,12 @@ public:
 	 * Gets the names of all the songs in the game. Used by the debugger.
 	 */
 	void getSongNames(Common::StringArray &songs);
+
+	/**
+	 * Checks to see if the currently playing song has finished, then the music specified
+	 * in _nextSongName will be started
+	 */
+	void checkSongProgress();
 };
 
 } // End of namespace Sherlock

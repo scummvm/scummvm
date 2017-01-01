@@ -184,8 +184,9 @@ void People::reset() {
 		Person &p = *_data[idx];
 
 		if (IS_SERRATED_SCALPEL) {
-			p._type = CHARACTER;
-			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
+			p._type = _holmesOn ? CHARACTER : HIDDEN;
+			if (!saves._justLoaded)
+				p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
 			p._type = (idx == 0) ? CHARACTER : INVALID;
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
@@ -243,7 +244,7 @@ bool People::freeWalk() {
 		if (_data[idx]->_walkLoaded) {
 			delete _data[idx]->_images;
 			_data[idx]->_images = nullptr;
-			
+
 			_data[idx]->_walkLoaded = false;
 			result = true;
 		}

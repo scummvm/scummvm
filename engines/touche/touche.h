@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOUCHE_ENGINE_H
-#define TOUCHE_ENGINE_H
+#ifndef TOUCHE_TOUCHE_H
+#define TOUCHE_TOUCHE_H
 
 #include "common/array.h"
 #include "common/endian.h"
@@ -31,7 +31,6 @@
 #include "common/util.h"
 
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
 
 #include "engines/engine.h"
 
@@ -102,7 +101,7 @@ struct KeyChar {
 	int16 zPosPrev;
 	int16 prevWalkDataNum;
 	uint16 textColor;
-	int16 inventoryItems[5];
+	int16 inventoryItems[4];
 	int16 money;
 	int16 pointsDataNum;
 	int16 currentWalkBox;

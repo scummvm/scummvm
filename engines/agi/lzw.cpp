@@ -42,16 +42,16 @@ class LZWDecoder {
 private:
 
 	enum {
-		MAXBITS		= 12,
-		TABLE_SIZE	= 18041,	// strange number
-		START_BITS	= 9
+		MAXBITS     = 12,
+		TABLE_SIZE  = 18041,    // strange number
+		START_BITS  = 9
 	};
 
 	int32 BITS, MAX_VALUE, MAX_CODE;
 	uint32 *prefixCode;
 	uint8 *appendCharacter;
 	uint8 *decodeStack;
-	int32 inputBitCount;	// Number of bits in input bit buffer
+	int32 inputBitCount;    // Number of bits in input bit buffer
 	uint32 inputBitBuffer;
 
 public:
@@ -70,8 +70,9 @@ LZWDecoder::LZWDecoder() {
 	decodeStack = (uint8 *)calloc(1, 8192);
 	prefixCode = (uint32 *)malloc(TABLE_SIZE * sizeof(uint32));
 	appendCharacter = (uint8 *)malloc(TABLE_SIZE * sizeof(uint8));
-	inputBitCount = 0;	// Number of bits in input bit buffer
+	inputBitCount = 0;  // Number of bits in input bit buffer
 	inputBitBuffer = 0L;
+	BITS = MAX_VALUE = MAX_CODE = 0;
 }
 
 LZWDecoder::~LZWDecoder() {
@@ -147,12 +148,12 @@ void LZWDecoder::lzwExpand(uint8 *in, uint8 *out, int32 len) {
 
 	LZWDecoder d;
 
-	setBits(START_BITS);	// Starts at 9-bits
-	lzwnext = 257;		// Next available code to define
+	setBits(START_BITS); // Starts at 9-bits
+	lzwnext = 257;       // Next available code to define
 
 	end = (uint8 *)(out + (uint32)len);
 
-	lzwold = inputCode(&in);	// Read in the first code
+	lzwold = inputCode(&in); // Read in the first code
 	c = lzwold;
 	lzwnew = inputCode(&in);
 

@@ -45,7 +45,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return false;
 	}
 	block[idx].setSegment(segment); // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
+	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
 		block[idx].incOffset(scriptSize);
 
 	return true;
@@ -63,7 +63,7 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 		for (int i = 0; i < _methodCount * 2 + 2; ++i) {
 			_baseMethod.push_back(READ_SCI11ENDIAN_UINT16(data + READ_LE_UINT16(data + kOffsetFunctionArea) + i * 2));
 		}
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
 		_baseVars = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
 		_methodCount = READ_SCI11ENDIAN_UINT16(buf + READ_SCI11ENDIAN_UINT16(data + 6));
@@ -75,7 +75,7 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 	}
 
 	if (initVariables) {
-		if (getSciVersion() <= SCI_VERSION_2_1) {
+		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 			for (uint i = 0; i < _variables.size(); i++)
 				_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
 		} else {
@@ -92,7 +92,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	const byte *buf = 0;
 	uint varnum = 0;
 
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		const Object *obj = getClass(segMan);
 		varnum = getSciVersion() <= SCI_VERSION_1_LATE ? getVarCount() : obj->getVariable(1).toUint16();
 		buf = (const byte *)obj->_baseVars;
@@ -255,6 +255,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
 		++groups;
 
+	_mustSetViewVisible.resize(groups);
+
 	methods = properties = 0;
 
 	// Selectors are divided into groups of 32, of which the first
@@ -270,7 +272,9 @@ void Object::initSelectorsSci3(const byte *buf) {
 			// This object actually has selectors belonging to this group
 			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
 
-			for (int bit = 2; bit < 32; ++bit) {
+			_mustSetViewVisible[groupNr] = (typeMask & 1);
+
+			 for (int bit = 2; bit < 32; ++bit) {
 				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
 				if (typeMask & (1 << bit)) { // Property
 					++properties;
@@ -281,7 +285,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 				}
 
 			}
-		}
+		} else
+			_mustSetViewVisible[groupNr] = false;
 	}
 
 	_variables.resize(properties);

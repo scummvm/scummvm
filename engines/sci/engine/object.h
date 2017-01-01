@@ -41,8 +41,21 @@ enum {
 };
 
 enum infoSelectorFlags {
-	kInfoFlagClone = 0x0001,
-	kInfoFlagClass = 0x8000
+	kInfoFlagClone        = 0x0001,
+#ifdef ENABLE_SCI32
+	/**
+	 * When set, indicates to game scripts that a screen
+	 * item can be updated.
+	 */
+	kInfoFlagViewVisible  = 0x0008,
+
+	/**
+	 * When set, the VM object has an associated ScreenItem in
+	 * the rendering tree.
+	 */
+	kInfoFlagViewInserted = 0x0010,
+#endif
+	kInfoFlagClass        = 0x8000
 };
 
 enum ObjectOffsets {
@@ -79,51 +92,68 @@ public:
 	}
 
 	reg_t getSpeciesSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset];
 		else	// SCI3
 			return _speciesSelectorSci3;
 	}
 
 	void setSpeciesSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset] = value;
 		else	// SCI3
 			_speciesSelectorSci3 = value;
 	}
 
 	reg_t getSuperClassSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset + 1];
 		else	// SCI3
 			return _superClassPosSci3;
 	}
 
 	void setSuperClassSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset + 1] = value;
 		else	// SCI3
 			_superClassPosSci3 = value;
 	}
 
 	reg_t getInfoSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[_offset + 2];
 		else	// SCI3
 			return _infoSelectorSci3;
 	}
 
 	void setInfoSelector(reg_t info) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[_offset + 2] = info;
 		else	// SCI3
 			_infoSelectorSci3 = info;
 	}
 
-	// No setter for the -info- selector
+#ifdef ENABLE_SCI32
+	void setInfoSelectorFlag(infoSelectorFlags flag) {
+		if (getSciVersion() < SCI_VERSION_3) {
+			_variables[_offset + 2] |= flag;
+		} else {
+			_infoSelectorSci3 |= flag;
+		}
+	}
+
+	// NOTE: In real engine, -info- is treated as byte size
+	void clearInfoSelectorFlag(infoSelectorFlags flag) {
+		if (getSciVersion() < SCI_VERSION_3) {
+			_variables[_offset + 2] &= ~flag;
+		} else {
+			_infoSelectorSci3 &= ~flag;
+		}
+	}
+#endif
 
 	reg_t getNameSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
 		else	// SCI3
 			return _variables.size() ? _variables[0] : NULL_REG;
@@ -132,7 +162,7 @@ public:
 	// No setter for the name selector
 
 	reg_t getPropDictSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[2];
 		else
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
@@ -140,7 +170,7 @@ public:
 	}
 
 	void setPropDictSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[2] = value;
 		else
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
@@ -148,14 +178,14 @@ public:
 	}
 
 	reg_t getClassScriptSelector() const {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[4];
 		else	// SCI3
 			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 6));
 	}
 
 	void setClassScriptSelector(reg_t value) {
-		if (getSciVersion() <= SCI_VERSION_2_1)
+		if (getSciVersion() < SCI_VERSION_3)
 			_variables[4] = value;
 		else	// SCI3
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
@@ -232,6 +262,8 @@ public:
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
 	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
 
+	bool mustSetViewVisibleSci3(int selector) const { return _mustSetViewVisible[selector/32]; }
+
 private:
 	void initSelectorsSci3(const byte *buf);
 
@@ -248,6 +280,7 @@ private:
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
 	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
+	Common::Array<bool> _mustSetViewVisible; /** cached bit of info to make lookup fast, SCI3 only */
 };
 
 

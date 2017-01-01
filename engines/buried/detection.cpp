@@ -473,7 +473,7 @@ static const char *directoryGlobs[] = {
 class BuriedMetaEngine : public AdvancedMetaEngine {
 public:
 	BuriedMetaEngine() : AdvancedMetaEngine(Buried::gameDescriptions, sizeof(Buried::BuriedGameDescription), buriedGames) {
-		_singleid = "buried";
+		_singleId = "buried";
 		_flags = kADFlagUseExtraAsHint;
 		_maxScanDepth = 3;
 		_directoryGlobs = Buried::directoryGlobs;

@@ -39,7 +39,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 				_numSounds = 40;
 			} else {
 				_numScripts = 160;
-				_numSounds = 70; 
+				_numSounds = 70;
 			}
 
 		} else if (_game.platform == Common::kPlatformNES) {

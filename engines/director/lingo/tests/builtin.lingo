@@ -1,0 +1,24 @@
+beep
+beep 3
+alert "Hi"
+alert "Hi" && "there"
+
+open "Hello"
+open "Hello" with "Finder"
+open "Hello" && "more" with "Finder"
+
+puppetPalette "Rainbow"
+puppetPalette "System",30
+puppetPalette "custompal", 15,4
+
+puppetSound "Air Lock Lock"
+puppetSound 0
+puppetSound midiStart
+puppetSound midiSong, 3
+puppetSound midisongPointer, 2, 120
+
+puppetSprite 15, true
+
+puppetTempo 30
+puppetTransition 1
+puppetTransition 2,4,20

@@ -59,7 +59,7 @@ echo Invalid installer parameter. Should be "0" or "1" (was %~5)!
 goto done
 
 :error_script:
-echo An error occured while running the installer script!
+echo An error occurred while running the installer script!
 goto done
 
 :done

@@ -119,7 +119,7 @@ void Resources::addToCache(const Common::String &filename) {
 	// Return immediately if the library has already been loaded
 	if (_indexes.contains(filename))
 		return;
-	
+
 	_cache.load(filename);
 
 	// Check to see if the file is a library

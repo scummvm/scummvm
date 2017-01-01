@@ -55,6 +55,7 @@ private:
 	bool Cmd_DisableInitOpcodes(int argc, const char **argv);
 	bool Cmd_Cache(int argc, const char **argv);
 	bool Cmd_Resources(int argc, const char **argv);
+	bool Cmd_QuickTest(int argc, const char **argv);
 };
 
 #endif

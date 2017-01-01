@@ -27,6 +27,9 @@
 
 class GBAMPSaveFileManager : public Common::SaveFileManager {
 public:
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles);
+	virtual Common::InSaveFile *openRawFile(const Common::String &filename);
+
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
 

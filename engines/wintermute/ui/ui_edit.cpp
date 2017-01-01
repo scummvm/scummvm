@@ -899,7 +899,7 @@ int UIEdit::deleteChars(int start, int end) {
 
 //////////////////////////////////////////////////////////////////////////
 int UIEdit::insertChars(int pos, const byte *chars, int num) {
-	if ((int)strlen(_text) + num > _maxLength) {
+	if ((_maxLength != -1) && (int)strlen(_text) + num > _maxLength) {
 		num -= (strlen(_text) + num - _maxLength);
 	}
 

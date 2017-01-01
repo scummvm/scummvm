@@ -425,7 +425,7 @@ void unpersistThread(UnSerializationInfo *info, int index) {
 
 	// First, deserialize the object stack
 	uint32 stackSize = info->readStream->readUint32LE();
-	lua_growstack(info->luaState, (int)stackSize);
+	lua_checkstack(info->luaState, (int)stackSize);
 
 	// Make sure that the first stack element (a nil, representing
 	// the imaginary top-level C function) is written to the very,

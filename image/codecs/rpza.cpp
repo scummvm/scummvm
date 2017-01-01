@@ -50,6 +50,7 @@ RPZADecoder::~RPZADecoder() {
 	}
 
 	delete[] _ditherPalette;
+	delete[] _colorMap;
 }
 
 #define ADVANCE_BLOCK() \

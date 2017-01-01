@@ -22,6 +22,7 @@
 
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
@@ -135,7 +136,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdHolmesOn,
 		(OpcodeMethod)&ScalpelTalk::cmdGotoScene,
 		(OpcodeMethod)&ScalpelTalk::cmdPlayPrologue,
-		
+
 		(OpcodeMethod)&ScalpelTalk::cmdAddItemToInventory,
 		(OpcodeMethod)&ScalpelTalk::cmdSetObject,
 		(OpcodeMethod)&ScalpelTalk::cmdCallTalkFile,
@@ -146,7 +147,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdRemoveItemFromInventory,
 		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
 		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
-		
+
 		(OpcodeMethod)&ScalpelTalk::cmdEndTextWindow,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -169,6 +170,13 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		_opcodes = opcodes;
 	}
 
+	_fixedTextWindowExit = FIXED(Window_Exit);
+	_fixedTextWindowUp   = FIXED(Window_Up);
+	_fixedTextWindowDown = FIXED(Window_Down);
+
+	_hotkeyWindowExit = toupper(_fixedTextWindowExit[0]);
+	_hotkeyWindowUp   = toupper(_fixedTextWindowUp[0]);
+	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
 void ScalpelTalk::talkTo(const Common::String filename) {
@@ -184,10 +192,12 @@ void ScalpelTalk::talkTo(const Common::String filename) {
 }
 
 void ScalpelTalk::talkInterface(const byte *&str) {
-	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		skipBadText(str);
 
 	// If the window isn't yet open, draw the window before printing starts
 	if (!ui._windowOpen && _noTextYet) {
@@ -195,12 +205,9 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		drawInterface();
 
 		if (_talkTo != -1) {
-			Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-			Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-			Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowExit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown);
 		}
 	}
 
@@ -269,7 +276,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	str += idx;
 
 	// If line wrap occurred, then move to after the separating space between the words
-	if ((!isOpcode(str[0])) && str[0] != '{')
+	if (str[0] && (!isOpcode(str[0])) && str[0] != '{')
 		++str;
 
 	_yp += 9;
@@ -380,7 +387,7 @@ OpcodeReturn ScalpelTalk::cmdClearInfoLine(const byte *&str) {
 
 OpcodeReturn ScalpelTalk::cmdClearWindow(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
-	
+
 	ui.clearWindow();
 	_yp = CONTROLS_Y + 12;
 	_charCount = _line = 0;
@@ -443,7 +450,7 @@ OpcodeReturn ScalpelTalk::cmdMoveMouse(const byte *&str) {
 	if (_talkToAbort)
 		return RET_EXIT;
 	str += 3;
-	
+
 	return RET_SUCCESS;
 }
 
@@ -508,7 +515,6 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 
 OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	Events       &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 
 	drawInterface();
@@ -517,12 +523,9 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	_noTextYet = false;
 
 	if (_speaker != -1) {
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
-		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
-		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowExit);
+		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp);
+		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown);
 	}
 
 	return RET_SUCCESS;
@@ -647,7 +650,7 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 }
 
 Common::Point ScalpelTalk::get3doPortraitPosition() const {
-	// TODO: This current method is only an assumption of how the original figured 
+	// TODO: This current method is only an assumption of how the original figured
 	// out where to place each character's portrait movie.
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -669,7 +672,7 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 
 		pt = scene._bgShapes[objNum]._position;
 	}
-	
+
 	// Adjust the top-left so the center of the portrait will be on the character,
 	// but ensure the portrait will be entirely on-screen
 	pt -= Common::Point(PORTRAIT_W / 2, PORTRAIT_H / 2);
@@ -680,9 +683,8 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 }
 
 void ScalpelTalk::drawInterface() {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 
 	bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
@@ -694,26 +696,25 @@ void ScalpelTalk::drawInterface() {
 		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	if (_talkTo != -1) {
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+		Common::String fixedText_Exit = FIXED(Window_Exit);
+		Common::String fixedText_Up   = FIXED(Window_Up);
+		Common::String fixedText_Down = FIXED(Window_Down);
 
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
-			119 - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+			119, fixedText_Exit);
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159 - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
+			159, fixedText_Up);
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
-			200 - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
+			200, fixedText_Down);
 	} else {
-		int strWidth = screen.stringWidth(Scalpel::PRESS_KEY_TO_CONTINUE);
+		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
+
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160 - strWidth / 2, Scalpel::PRESS_KEY_TO_CONTINUE);
-		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
+			160, fixedText_PressKeyToContinue);
 	}
 }
 
 bool ScalpelTalk::displayTalk(bool slamIt) {
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	int yp = CONTROLS_Y + 14;
 	int lineY = -1;
@@ -731,22 +732,20 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 	}
 
 	// Display the up arrow and enable Up button if the first option is scrolled off-screen
-	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
 	if (_moreTalkUp) {
 		if (slamIt) {
 			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextWindowUp);
 		} else {
 			screen.gPrint(Common::Point(5, CONTROLS_Y + 12), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, _fixedTextWindowUp);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, _fixedTextWindowUp);
 			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowUp);
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
 				15, CONTROLS_Y + 22), INV_BACKGROUND);
 		}
@@ -781,17 +780,17 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 
 		if (slamIt) {
 			screen.print(Common::Point(5, 190), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, _fixedTextWindowDown);
 		} else {
 			screen.gPrint(Common::Point(5, 189), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, _fixedTextWindowDown);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, _fixedTextWindowDown);
 			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, _fixedTextWindowDown);
 			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		}
 	}
@@ -888,11 +887,9 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 }
 
 void ScalpelTalk::showTalk() {
-	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
 	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
 
 	clearSequences();
@@ -912,9 +909,9 @@ void ScalpelTalk::showTalk() {
 	// If the window is already open, simply draw. Otherwise, do it
 	// to the back buffer and then summon the window
 	if (ui._windowOpen) {
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, fixedText_Exit);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, _fixedTextWindowExit);
 	} else {
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, fixedText_Exit);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, _fixedTextWindowExit);
 
 		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y,
@@ -1004,6 +1001,14 @@ void ScalpelTalk::pullSequence(int slot) {
 
 void ScalpelTalk::clearSequences() {
 	_sequenceStack.clear();
+}
+
+void ScalpelTalk::skipBadText(const byte *&msgP) {
+	// WORKAROUND: Skip over bad text in the original game
+	const char *BAD_PHRASE1 = "Change Speaker to Sherlock Holmes ";
+
+	if (!strncmp((const char *)msgP, BAD_PHRASE1, strlen(BAD_PHRASE1)))
+		msgP += strlen(BAD_PHRASE1);
 }
 
 } // End of namespace Scalpel

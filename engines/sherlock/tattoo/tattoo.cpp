@@ -63,12 +63,17 @@ void TattooEngine::initialize() {
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");
-	
+
 	// Set up list of people
+	TattooFixedText &fixedText = *(TattooFixedText *)_fixedText;
+	const char *peopleNamePtr = nullptr;
+
 	for (int idx = 0; idx < TATTOO_MAX_PEOPLE; ++idx) {
+		peopleNamePtr = fixedText.getText(PEOPLE_DATA[idx].fixedTextId);
+
 		_people->_characters.push_back(PersonData(
-			getLanguage() == Common::FR_FRA ? FRENCH_NAMES[idx] : ENGLISH_NAMES[idx],
-			PORTRAITS[idx], nullptr, nullptr));
+			peopleNamePtr,
+			PEOPLE_DATA[idx].portrait, nullptr, nullptr));
 	}
 
 	// Load the inventory
@@ -117,7 +122,7 @@ void TattooEngine::startScene() {
 		// Darts Board minigame
 		_darts.playDarts(GAME_CRICKET);
 		break;
-	
+
 	case 102:
 		// Darts Board minigame
 		_darts.playDarts(GAME_301);

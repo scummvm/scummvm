@@ -29,7 +29,9 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/statics.h"
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
+#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
@@ -42,8 +44,14 @@ SoundList::SoundList() {
 	_libHandle = 0;
 }
 
+SoundList::~SoundList() {
+	for (int i = 0; i < _soundItemsCount; i++)
+		delete _soundItems[i];
+	free(_soundItems);
+}
+
 bool SoundList::load(MfcArchive &file, char *fname) {
-	debug(5, "SoundList::load()");
+	debugC(5, kDebugLoading, "SoundList::load()");
 
 	_soundItemsCount = file.readUint32LE();
 	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
@@ -96,16 +104,17 @@ Sound::Sound() {
 	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
 	_description = 0;
 	_volume = 100;
+	_handle = new Audio::SoundHandle();
 }
 
 Sound::~Sound() {
 	freeSound();
-
 	free(_description);
+	delete _handle;
 }
 
 bool Sound::load(MfcArchive &file, NGIArchive *archive) {
-	debug(5, "Sound::load()");
+	debugC(5, kDebugLoading, "Sound::load()");
 
 	MemoryObject::load(file);
 
@@ -130,7 +139,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 }
 
 void Sound::updateVolume() {
-	debug(3, "STUB Sound::updateVolume()");
+	// not needed in our implementation
 }
 
 void Sound::setPanAndVolumeByStaticAni() {
@@ -160,7 +169,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 				dx = ani->_oy - g_fp->_sceneRect.bottom;
 			}
 
-		    par = 0;
+			par = 0;
 
 			if (dx > 800) {
 				setPanAndVolume(-3500, 0);
@@ -206,22 +215,23 @@ void Sound::setPanAndVolumeByStaticAni() {
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {
-	g_fp->_mixer->setChannelVolume(_handle, vol / 39); // 0..10000
-	g_fp->_mixer->setChannelBalance(_handle, pan / 78); // -10000..10000
+	g_fp->_mixer->setChannelVolume(*_handle, MIN((vol + 10000) / 39, 255)); // -10000..0
+	g_fp->_mixer->setChannelBalance(*_handle, CLIP(pan / 78, -127, 127)); // -10000..10000
 }
 
 void Sound::play(int flag) {
-	Audio::SoundHandle handle = getHandle();
+	Audio::SoundHandle *handle = getHandle();
 
-	if (g_fp->_mixer->isSoundHandleActive(handle))
-		return;
+	if (g_fp->_mixer->isSoundHandleActive(*handle)) { // We need to restart the music
+		g_fp->_mixer->stopHandle(*handle);
+	}
 
 	byte *soundData = loadData();
 	Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(soundData, getDataSize());
 	Audio::RewindableAudioStream *wav = Audio::makeWAVStream(dataStream, DisposeAfterUse::YES);
 	Audio::AudioStream *audioStream = new Audio::LoopingAudioStream(wav, (flag == 1) ? 0 : 1);
 
-	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	g_fp->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, audioStream);
 }
 
 void Sound::freeSound() {
@@ -231,21 +241,18 @@ void Sound::freeSound() {
 }
 
 int Sound::getVolume() {
-	return g_fp->_mixer->getChannelVolume(_handle) * 39;  // 0..10000
+	return g_fp->_mixer->getChannelVolume(*_handle) * 39;  // 0..10000
 }
 
 void Sound::stop() {
-	g_fp->_mixer->stopHandle(_handle);
+	g_fp->_mixer->stopHandle(*_handle);
 }
 
 void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
-	warning("STUB: FullpipeEngine::setSceneMusicParameters()");
-#if 0
 	stopSoundStream2();
 
-	if (soundStream3)
-		FSOUND_Stream_Stop(soundStream4);
-#endif
+	if (_mixer->isSoundHandleActive(*_soundStream3))
+		_mixer->stopHandle(*_soundStream4);
 
 	if (_musicLocal)
 		stopAllSoundStreams();
@@ -296,7 +303,18 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 		_trackStartDelay = var->getSubVarAsInt("STARTDELAY");
 }
 
+void FullpipeEngine::updateTrackDelay() {
+	_sceneTrackIsPlaying = false;
+	_trackStartDelay = _musicMinDelay + (_musicMaxDelay - _musicMinDelay) * (_updateTicks % 10) / 9;
+}
+
 void FullpipeEngine::startSceneTrack() {
+	if (_sceneTrackIsPlaying) {
+		if (!_mixer->isSoundHandleActive(*_soundStream1)) { // Simulate end of sound callback
+			updateTrackDelay();
+		}
+	}
+
 	if (!_sceneTrackIsPlaying && _numSceneTracks > 0) {
 		if (_trackStartDelay > 0) {
 			_trackStartDelay--;
@@ -347,13 +365,15 @@ int FullpipeEngine::getSceneTrack() {
 	return res;
 }
 
-void FullpipeEngine::startSoundStream1(char *trackName) {
-	warning("STUB: FullpipeEngine::startSoundStream1(%s)", trackName);
-
+void FullpipeEngine::startSoundStream1(const char *trackName) {
 	stopAllSoundStreams();
 
+	playOggSound(trackName, _soundStream1);
+}
+
+void FullpipeEngine::playOggSound(const char *trackName, Audio::SoundHandle *stream) {
 #ifdef USE_VORBIS
-	if (_mixer->isSoundHandleActive(_sceneTrackHandle))
+	if (_mixer->isSoundHandleActive(*stream))
 		return;
 
 	Common::File *track = new Common::File();
@@ -363,13 +383,11 @@ void FullpipeEngine::startSoundStream1(char *trackName) {
 		return;
 	}
 	Audio::RewindableAudioStream *ogg = Audio::makeVorbisStream(track, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_sceneTrackHandle, ogg);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, stream, ogg);
 #endif
 }
 
 void FullpipeEngine::stopAllSounds() {
-	// _mixer->stopAll();
-
 	for (int i = 0; i < _currSoundListCount; i++)
 		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j)->stop();
@@ -403,13 +421,10 @@ void FullpipeEngine::playSound(int id, int flag) {
 }
 
 void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed) {
-	warning("STUB: FullpipeEngine::playTrack(var, %s, %d)", name, delayed);
-#if 0
-	stopSoundStream2();
+	if (_mixer->isSoundHandleActive(*_soundStream3))
+		_mixer->stopHandle(*_soundStream4);
 
-	if (soundStream3)
-		FSOUND_Stream_Stop(soundStream4);
-#endif
+	stopSoundStream2();
 
 	if (_musicLocal)
 		stopAllSoundStreams();
@@ -470,7 +485,8 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 	Sound *snd = 0;
 
 	for (int i = 0; i < g_fp->_currSoundListCount; i++)
-		snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum);
+		if ((snd = g_fp->_currSoundList1[i]->getSoundItemById(cmd->_messageNum)) != NULL)
+			break;
 
 	if (!snd)
 		return;
@@ -487,19 +503,28 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 			snd->setPanAndVolume(g_fp->_sfxVolume, 0);
 
 		if (snd->getVolume() > -3500)
-			snd->play(cmd->_keyCode);
+			snd->play(cmd->_param);
 	} else if (cmd->_field_14 & 2) {
 		snd->stop();
 	}
 }
 
 void FullpipeEngine::stopSoundStream2() {
-	warning("STUB: FullpipeEngine::stopSoundStream2()");
+	_stream2playing = false;
+
+	if (_mixer->isSoundHandleActive(*_soundStream3)) {
+		_mixer->stopHandle(*_soundStream2);
+		_mixer->stopHandle(*_soundStream3);
+	}
 }
 
 void FullpipeEngine::stopAllSoundStreams() {
-	// TODO: Differences from stopAllSounds()
-	_mixer->stopAll();
+	_mixer->stopHandle(*_soundStream1);
+	_mixer->stopHandle(*_soundStream2);
+	_mixer->stopHandle(*_soundStream3);
+	_mixer->stopHandle(*_soundStream4);
+
+	_stream2playing = false;
 }
 
 void FullpipeEngine::stopAllSoundInstances(int id) {
@@ -512,8 +537,11 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 }
 
 void FullpipeEngine::updateSoundVolume() {
+	ConfMan.setInt("sfx_volume", MAX((_sfxVolume + 10000) / 39, 255));
+	syncSoundSettings();
+
 	for (int i = 0; i < _currSoundListCount; i++)
-		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(_sfxVolume, 0);
 		}
 }
@@ -521,7 +549,8 @@ void FullpipeEngine::updateSoundVolume() {
 void FullpipeEngine::setMusicVolume(int vol) {
 	_musicVolume = vol;
 
-	g_fp->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	ConfMan.setInt("music_volume", _musicVolume);
+	syncSoundSettings();
 }
 
 } // End of namespace Fullpipe

@@ -56,14 +56,14 @@ void WidgetText::load(const Common::String &str, int speaker) {
 	// See if it's only a single line long
 	if (height == _surface.fontHeight() + 10) {
 		width = _surface.widestChar() * 2 + 6;
-			
+
 		const char *strP = str.c_str();
 		while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == talk._opcodes[OP_NULL]))
 			width += _surface.charWidth(*strP++);
 	}
 
 	_bounds = Common::Rect(width, height);
-		
+
 	if (speaker == -1) {
 		// No speaker specified, so center window on look position
 		_bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
@@ -80,6 +80,7 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Common::Point pt;
 
+	speaker &= 0x7f;
 	bool flag = _vm->readFlags(FLAG_PLAYER_IS_HOLMES);
 	if (people[HOLMES]._type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag))) {
 		// Place the window centered above the player
@@ -88,11 +89,11 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 		int scaleVal = scene.getScaleVal(people[HOLMES]._position);
 		if (scaleVal == SCALE_THRESHOLD) {
 			pt.x += people[HOLMES].frameWidth() / 2;
-			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight() 
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight()
 				- _bounds.height() - _surface.fontHeight();
 		} else {
 			pt.x += people[HOLMES]._imageFrame->sDrawXSize(scaleVal) / 2;
-			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal) 
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal)
 				- _bounds.height() - _surface.fontHeight();
 		}
 	} else {
@@ -165,7 +166,7 @@ void WidgetText::render(const Common::String &str) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window
 	makeInfoArea();
@@ -194,7 +195,7 @@ void WidgetMessage::load(const Common::String &str, int time) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
+	_surface.clear(TRANSPARENCY);
 
 	// Form the background for the new window and write the line of text
 	makeInfoArea();

@@ -25,7 +25,6 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 
-#include "gui/about.h"
 #include "gui/message.h"
 
 #include "agos/agos.h"
@@ -127,14 +126,14 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 		_awaitTwoByteToken = 0;
 		uncompressText(ptr);
 		_textBuffer[_textCount] = 0;
-		strcpy((char *)dst, (const char *)_textBuffer);
+		Common::strlcpy((char *)dst, (const char *)_textBuffer, 180);
 	} else {
 		if (stringId < 0x8000) {
 			stringPtr = _stringTabPtr[stringId];
 		} else {
 			stringPtr = getLocalStringByID(stringId);
 		}
-		strcpy((char *)dst, (const char *)stringPtr);
+		Common::strlcpy((char *)dst, (const char *)stringPtr, 180);
 	}
 
 	// WORKAROUND bug #1538873: The French version of Simon 1 and the
@@ -487,6 +486,9 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		if (_variableArray[141] == 0)
 			_variableArray[141] = 9;
 		_variableArray[85] = _variableArray[141] * talkDelay;
+		
+		if (_language == Common::HE_ISR)
+			_variableArray[85] += talkDelay * 2;
 	} else {
 		if (_variableArray[86] == 0)
 			talkDelay /= 2;
@@ -797,7 +799,7 @@ void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 		if (*string2 == 0x00) {
 			if (w == 0xFFFF)
 				w = pixels;
-			strcpy(convertedString2, string);
+			Common::strlcpy(convertedString2, string, 320);
 			break;
 		}
 		while (*string2 != ' ') {

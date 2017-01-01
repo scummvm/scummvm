@@ -130,10 +130,9 @@ void WidgetOptions::handleEvents() {
 		else if (_digiSliderX > _bounds.width() - _surface.widestChar())
 			_digiSliderX = _bounds.width() - _surface.widestChar();
 
-		int temp = sound._soundVolume;
-		sound._soundVolume = (_digiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
-		if (sound._soundVolume != temp) {
-			sound.setVolume(sound._soundVolume);
+		int newVolume = (_digiSliderX - _surface.widestChar()) * 255 / (_bounds.width() - _surface.widestChar() * 2);
+		if (newVolume != sound._soundVolume) {
+			sound.setVolume(newVolume);
 			vm.saveConfig();
 		}
 
@@ -188,12 +187,12 @@ void WidgetOptions::handleEvents() {
 
 		case 5:
 			// Toggle Voices
-			sound._voices = !sound._voices;
+			sound._speechOn = !sound._speechOn;
 
 			render(OP_NAMES);
 			vm.saveConfig();
 			break;
-			
+
 		case 7:
 			// Toggle Text Windows
 			vm._textWindowsOn = !vm._textWindowsOn;
@@ -231,7 +230,7 @@ void WidgetOptions::handleEvents() {
 		default:
 			break;
 		}
-		
+
 		_oldSelector = -1;
 	}
 }
@@ -258,17 +257,17 @@ void WidgetOptions::render(OptionRenderMode mode) {
 
 		// Setup the dialog
 		_surface.create(_bounds.width(), _bounds.height());
-		_surface.fill(TRANSPARENCY);
+		_surface.clear(TRANSPARENCY);
 		makeInfoArea();
 
 		// Draw the lines separating options in the dialog
 		int yp = _surface.fontHeight() + 7;
 		for (int idx = 0; idx < 7; ++idx) {
-			_surface.transBlitFrom(images[4], Common::Point(0, yp - 1));
-			_surface.transBlitFrom(images[5], Common::Point(_surface.w() - images[5]._width, yp - 1));
-			_surface.hLine(3, yp, _surface.w() - 4, INFO_TOP);
-			_surface.hLine(3, yp + 1, _surface.w() - 4, INFO_MIDDLE);
-			_surface.hLine(3, yp + 2, _surface.w() - 4, INFO_BOTTOM);
+			_surface.SHtransBlitFrom(images[4], Common::Point(0, yp - 1));
+			_surface.SHtransBlitFrom(images[5], Common::Point(_surface.width() - images[5]._width, yp - 1));
+			_surface.hLine(3, yp, _surface.width() - 4, INFO_TOP);
+			_surface.hLine(3, yp + 1, _surface.width() - 4, INFO_MIDDLE);
+			_surface.hLine(3, yp + 2, _surface.width() - 4, INFO_BOTTOM);
 
 			yp += _surface.fontHeight() + 7;
 			if (idx == 1)
@@ -282,7 +281,7 @@ void WidgetOptions::render(OptionRenderMode mode) {
 	for (int idx = 0, yp = 5; idx < 11; ++idx, yp += _surface.fontHeight() + 7) {
 		if (mode == OP_ALL || idx == _selector || idx == _oldSelector) {
 			if (mode == OP_NAMES)
-				_surface.fillRect(Common::Rect(4, yp, _surface.w() - 5, yp + _surface.fontHeight() - 1), TRANSPARENCY);
+				_surface.fillRect(Common::Rect(4, yp, _surface.width() - 5, yp + _surface.fontHeight() - 1), TRANSPARENCY);
 			byte color = (idx == _selector) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 			Common::String str;
 
@@ -303,20 +302,20 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				int num = (_surface.fontHeight() + 4) & 0xfe;
 				int sliderY = yp + num / 2 - 8;
 
-				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.w() - 5, 
+				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
-				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, 
-					_surface.w() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar(), sliderY + 6));
-				
-				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2, 
+				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2,
+					_surface.width() - _surface.widestChar() - 1, sliderY + 3), INFO_MIDDLE);
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
+
+				_surface.fillRect(Common::Rect(_midiSliderX - 1, sliderY - (num - 6) / 2 + 2,
 					_midiSliderX + 1, sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2, 
+				drawDialogRect(Common::Rect(_midiSliderX - 3, sliderY - (num - 6) / 2,
 					_midiSliderX + 4, sliderY - (num - 6) / 2 + num));
-	
+
 				if (_midiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_midiSliderX - 4, sliderY, _midiSliderX - 4, sliderY + 4), INFO_BOTTOM);
-				if (_midiSliderX + 4 < _surface.w() - _surface.widestChar())
+				if (_midiSliderX + 4 < _surface.width() - _surface.widestChar())
 					_surface.fillRect(Common::Rect(_midiSliderX + 4, sliderY, _midiSliderX + 4, sliderY + 4), INFO_BOTTOM);
 				break;
 			}
@@ -326,25 +325,25 @@ void WidgetOptions::render(OptionRenderMode mode) {
 				break;
 
 			case 5:
-				str = Common::String::format("%s %s", FIXED(Voices), OFF_ON[sound._voices]);
+				str = Common::String::format("%s %s", FIXED(Voices), OFF_ON[sound._speechOn]);
 				break;
 
 			case 6: {
 				int num = (_surface.fontHeight() + 4) & 0xfe;
 				int sliderY = yp + num / 2 - 8;
 
-				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.w() - 5, 
+				_surface.fillRect(Common::Rect(4, sliderY - (num - 6) / 2, _surface.width() - 5,
 					sliderY - (num - 6) / 2 + num - 1), TRANSPARENCY);
-				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.w() - _surface.widestChar() - 1, 
+				_surface.fillRect(Common::Rect(_surface.widestChar(), sliderY + 2, _surface.width() - _surface.widestChar() - 1,
 					sliderY + 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.w() - _surface.widestChar(), sliderY + 6));
-				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1, 
+				drawDialogRect(Common::Rect(_surface.widestChar(), sliderY, _surface.width() - _surface.widestChar(), sliderY + 6));
+				_surface.fillRect(Common::Rect(_digiSliderX - 1, sliderY - (num - 6) / 2 + 2, _digiSliderX + 1,
 					sliderY - (num - 6) / 2 + num - 3), INFO_MIDDLE);
-				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, _digiSliderX + 4, 
+				drawDialogRect(Common::Rect(_digiSliderX - 3, sliderY - (num - 6) / 2, _digiSliderX + 4,
 					sliderY - (num - 6) / 2 + num));
 				if (_digiSliderX - 4 > _surface.widestChar())
 					_surface.fillRect(Common::Rect(_digiSliderX - 4, sliderY, _digiSliderX - 4, sliderY + 4), INFO_BOTTOM);
-				if (_digiSliderX + 4 < _surface.w() - _surface.widestChar())
+				if (_digiSliderX + 4 < _surface.width() - _surface.widestChar())
 					_surface.fillRect(Common::Rect(_digiSliderX + 4, sliderY, _digiSliderX + 4, sliderY + 4), INFO_BOTTOM);
 				break;
 			}
@@ -376,7 +375,7 @@ void WidgetOptions::render(OptionRenderMode mode) {
 
 			// Unless we're doing one of the Slider Controls, print the text for the line
 			if (idx != 3 && idx != 6) {
-				int xp = (_surface.w() - _surface.stringWidth(str)) / 2;
+				int xp = (_surface.width() - _surface.stringWidth(str)) / 2;
 				_surface.writeString(str, Common::Point(xp, yp), color);
 			}
 		}

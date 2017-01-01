@@ -38,6 +38,11 @@ namespace MADS {
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
 
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+
 	// Initialize game/engine options
 	_easyMouse = true;
 	_invObjectsAnimated = true;
@@ -46,16 +51,19 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_musicFlag = true;
 	_soundFlag = true;
 	_dithering = false;
+	_disableFastwalk = false;
 
 	_debugger = nullptr;
 	_dialogs = nullptr;
 	_events = nullptr;
 	_font = nullptr;
 	_game = nullptr;
+	_gameConv = nullptr;
 	_palette = nullptr;
 	_resources = nullptr;
 	_sound = nullptr;
 	_audio = nullptr;
+	_screen = nullptr;
 }
 
 MADSEngine::~MADSEngine() {
@@ -65,6 +73,7 @@ MADSEngine::~MADSEngine() {
 	delete _font;
 	Font::deinit();
 	delete _game;
+	delete _gameConv;
 	delete _palette;
 	delete _resources;
 	delete _sound;
@@ -74,11 +83,6 @@ MADSEngine::~MADSEngine() {
 }
 
 void MADSEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-
 	// Initial sub-system engine references
 	MSurface::setVm(this);
 	MSprite::setVm(this);
@@ -91,14 +95,15 @@ void MADSEngine::initialize() {
 	_palette = new Palette(this);
 	Font::init(this);
 	_font = new Font();
-	_screen.init();
+	_screen = new Screen();
 	_sound = new SoundManager(this, _mixer);
 	_audio = new AudioPlayer(_mixer, getGameID());
 	_game = Game::init(this);
+	_gameConv = new GameConversations(this);
 
 	loadOptions();
 
-	_screen.empty();
+	_screen->clear();
 }
 
 void MADSEngine::loadOptions() {

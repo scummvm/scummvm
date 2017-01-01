@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "common/frac.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
@@ -120,12 +121,15 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	:
 	SdlGraphicsManager(sdlEventSource, window),
 #ifdef USE_OSD
-	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
+	_osdMessageSurface(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
+	_osdIconSurface(nullptr),
 #endif
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
-#else
+	_viewport(), _windowWidth(1), _windowHeight(1),
+#endif
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	_originalBitsPerPixel(0),
 #endif
 	_screen(0), _tmpscreen(0),
@@ -186,6 +190,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #else
 	_videoMode.fullscreen = true;
 #endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_videoMode.filtering = ConfMan.getBool("filtering");
+#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -223,6 +231,9 @@ bool SurfaceSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		(f == OSystem::kFeatureFilteringMode) ||
+#endif
 		(f == OSystem::kFeatureCursorPalette) ||
 		(f == OSystem::kFeatureIconifyWindow);
 }
@@ -235,6 +246,11 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case OSystem::kFeatureFilteringMode:
+		setFilteringMode(enable);
+		break;
+#endif
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
@@ -259,6 +275,10 @@ bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 		return _videoMode.fullscreen;
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case OSystem::kFeatureFilteringMode:
+		return _videoMode.filtering;
+#endif
 	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
@@ -293,6 +313,9 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needUpdatescreen = false;
 
 	_transactionDetails.normal1xScaler = false;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_transactionDetails.needTextureUpdate = false;
+#endif
 #ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
 #endif
@@ -319,6 +342,12 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 
 			_videoMode.mode = _oldVideoMode.mode;
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		} else if (_videoMode.filtering != _oldVideoMode.filtering) {
+			errors |= OSystem::kTransactionFilteringFailed;
+
+			_videoMode.filtering = _oldVideoMode.filtering;
+#endif
 #ifdef USE_RGB_COLOR
 		} else if (_videoMode.format != _oldVideoMode.format) {
 			errors |= OSystem::kTransactionFormatNotSupported;
@@ -338,6 +367,9 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
 			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			_videoMode.filtering == _oldVideoMode.filtering &&
+#endif
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
 			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
 
@@ -391,6 +423,12 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	} else if (_transactionDetails.needTextureUpdate) {
+		setGraphicsModeIntern();
+		recreateScreenTexture();
+		internUpdateScreen();
+#endif
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 		internUpdateScreen();
@@ -799,8 +837,9 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	} else
 #endif
 	{
-		// Save the original bpp to be able to restore the video mode on unload
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+		// Save the original bpp to be able to restore the video mode on
+		// unload. See _originalBitsPerPixel documentation.
 		if (_originalBitsPerPixel == 0) {
 			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 			_originalBitsPerPixel = videoInfo->vfmt->BitsPerPixel;
@@ -875,23 +914,14 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_tmpscreen2 == NULL)
 		error("allocating _tmpscreen2 failed");
 
-#ifdef USE_OSD
-	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_hwscreen->w,
-						_hwscreen->h,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-	if (_osdSurface == NULL)
-		error("allocating _osdSurface failed");
-	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
-#endif
-
-	_eventSource->resetKeyboadEmulation(
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	// For SDL2 the output resolution might differ from the requested
+	// resolution. We handle resetting the keyboard emulation properly inside
+	// our SDL_SetVideoMode wrapper for SDL2.
+	_eventSource->resetKeyboardEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
+#endif
 
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
@@ -933,16 +963,22 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	}
 
 #ifdef USE_OSD
-	if (_osdSurface) {
-		SDL_FreeSurface(_osdSurface);
-		_osdSurface = NULL;
+	if (_osdMessageSurface) {
+		SDL_FreeSurface(_osdMessageSurface);
+		_osdMessageSurface = NULL;
+	}
+
+	if (_osdIconSurface) {
+		SDL_FreeSurface(_osdIconSurface);
+		_osdIconSurface = NULL;
 	}
 #endif
 	DestroyScalers();
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	// Reset video mode to original
-	// This will ensure that any new graphic manager will use the initial BPP when listing available modes
+#if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
+	// Reset video mode to original.
+	// This will ensure that any new graphic manager will use the initial BPP
+	// when listing available modes. See _originalBitsPerPixel documentation.
 	if (_originalBitsPerPixel != 0)
 		SDL_SetVideoMode(_videoMode.screenWidth, _videoMode.screenHeight, _originalBitsPerPixel, _videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_SWSURFACE) : SDL_SWSURFACE);
 #endif
@@ -964,11 +1000,6 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 
 	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
 	SDL_FreeSurface(_tmpscreen2); _tmpscreen2 = NULL;
-
-#ifdef USE_OSD
-	// Release the OSD surface
-	SDL_FreeSurface(_osdSurface); _osdSurface = NULL;
-#endif
 
 	// Setup the new GFX mode
 	if (!loadGFXMode()) {
@@ -1047,26 +1078,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_forceFull = true;
 	}
 
-#ifdef USE_OSD
-	// OSD visible (i.e. non-transparent)?
-	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-		// Updated alpha value
-		const int diff = SDL_GetTicks() - _osdFadeStartTime;
-		if (diff > 0) {
-			if (diff >= kOSDFadeOutDuration) {
-				// Back to full transparency
-				_osdAlpha = SDL_ALPHA_TRANSPARENT;
-			} else {
-				// Do a linear fade out...
-				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
-			}
-			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
-			_forceFull = true;
-		}
-	}
-#endif
-
 	if (!_overlayVisible) {
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
@@ -1088,6 +1099,10 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	// we have to redraw the mouse.
 	if (_mouseNeedsRedraw)
 		undrawMouse();
+
+#ifdef USE_OSD
+	updateOSD();
+#endif
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -1169,9 +1184,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
-		}
+		drawOSD();
 #endif
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
@@ -1287,6 +1300,20 @@ void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 		_transactionDetails.needHotswap = true;
 	}
 }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SurfaceSdlGraphicsManager::setFilteringMode(bool enable) {
+	Common::StackLock lock(_graphicsMutex);
+
+	if (_oldVideoMode.setup && _oldVideoMode.filtering == enable)
+		return;
+
+	if (_transactionMode == kTransactionActive) {
+		_videoMode.filtering = enable;
+		_transactionDetails.needTextureUpdate = true;
+	}
+}
+#endif
 
 void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
@@ -1756,22 +1783,30 @@ void SurfaceSdlGraphicsManager::setMousePos(int x, int y) {
 }
 
 void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
-	int y1 = y;
-
 	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
 	if (!_window->hasMouseFocus()) {
 		setMousePos(x, y); // but change game cursor position
 		return;
 	}
 
+	int x1 = x, y1 = y;
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		y1 = real2Aspect(y);
+		y1 = real2Aspect(y1);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (!_overlayVisible)
-			_window->warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
-		else
-			_window->warpMouseInWindow(x, y1);
+		if (!_overlayVisible) {
+			x1 *= _videoMode.scaleFactor;
+			y1 *= _videoMode.scaleFactor;
+		}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// Transform our coordinates in "virtual" output coordinate space into
+		// actual output coordinate space.
+		x1 = x1 * _windowWidth  / _videoMode.hardwareWidth;
+		y1 = y1 * _windowHeight / _videoMode.hardwareHeight;
+#endif
+
+		_window->warpMouseInWindow(x1, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -2029,7 +2064,7 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y - _currentShakePos, _mouseBackup.w, _mouseBackup.h);
+		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
@@ -2070,9 +2105,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	if (!_overlayVisible) {
-		dst.y += _currentShakePos;
-	}
+	dst.y += _currentShakePos;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
@@ -2105,25 +2138,10 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
-	uint i;
-
-	// Lock the OSD surface for drawing
-	if (SDL_LockSurface(_osdSurface))
-		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
-
-	Graphics::Surface dst;
-	dst.init(_osdSurface->w, _osdSurface->h, _osdSurface->pitch, _osdSurface->pixels,
-	         Graphics::PixelFormat(_osdSurface->format->BytesPerPixel,
-	                               8 - _osdSurface->format->Rloss, 8 - _osdSurface->format->Gloss,
-	                               8 - _osdSurface->format->Bloss, 8 - _osdSurface->format->Aloss,
-	                               _osdSurface->format->Rshift, _osdSurface->format->Gshift,
-	                               _osdSurface->format->Bshift, _osdSurface->format->Ashift));
+	removeOSDMessage();
 
 	// The font we are going to use:
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
-
-	// Clear everything with the "transparent" color, i.e. the colorkey
-	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
 
 	// Split the message into separate lines.
 	Common::Array<Common::String> lines;
@@ -2143,44 +2161,167 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
 	int width = 0;
 	int height = lineHeight * lines.size() + 2 * vOffset;
+	uint i;
 	for (i = 0; i < lines.size(); i++) {
 		width = MAX(width, font->getStringWidth(lines[i]) + 14);
 	}
 
 	// Clip the rect
-	if (width > dst.w)
-		width = dst.w;
-	if (height > dst.h)
-		height = dst.h;
+	if (width > _hwscreen->w)
+		width = _hwscreen->w;
+	if (height > _hwscreen->h)
+		height = _hwscreen->h;
+
+	_osdMessageSurface = SDL_CreateRGBSurface(
+		SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+		width, height, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask
+	);
+
+	// Lock the surface
+	if (SDL_LockSurface(_osdMessageSurface))
+		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
 	// Draw a dark gray rect
 	// TODO: Rounded corners ? Border?
-	SDL_Rect osdRect;
-	osdRect.x = (dst.w - width) / 2;
-	osdRect.y = (dst.h - height) / 2;
-	osdRect.w = width;
-	osdRect.h = height;
-	SDL_FillRect(_osdSurface, &osdRect, SDL_MapRGB(_osdSurface->format, 64, 64, 64));
+	SDL_FillRect(_osdMessageSurface, nullptr, SDL_MapRGB(_osdMessageSurface->format, 64, 64, 64));
+
+	Graphics::Surface dst;
+	dst.init(_osdMessageSurface->w, _osdMessageSurface->h, _osdMessageSurface->pitch, _osdMessageSurface->pixels,
+		Graphics::PixelFormat(_osdMessageSurface->format->BytesPerPixel,
+			8 - _osdMessageSurface->format->Rloss, 8 - _osdMessageSurface->format->Gloss,
+			8 - _osdMessageSurface->format->Bloss, 8 - _osdMessageSurface->format->Aloss,
+			_osdMessageSurface->format->Rshift, _osdMessageSurface->format->Gshift,
+			_osdMessageSurface->format->Bshift, _osdMessageSurface->format->Ashift));
 
 	// Render the message, centered, and in white
 	for (i = 0; i < lines.size(); i++) {
 		font->drawString(&dst, lines[i],
-							osdRect.x, osdRect.y + i * lineHeight + vOffset + lineSpacing, osdRect.w,
-							SDL_MapRGB(_osdSurface->format, 255, 255, 255),
-							Graphics::kTextAlignCenter);
+			0, 0 + i * lineHeight + vOffset + lineSpacing, width,
+			SDL_MapRGB(_osdMessageSurface->format, 255, 255, 255),
+			Graphics::kTextAlignCenter);
 	}
 
-	// Finished drawing, so unlock the OSD surface again
-	SDL_UnlockSurface(_osdSurface);
+	// Finished drawing, so unlock the OSD message surface
+	SDL_UnlockSurface(_osdMessageSurface);
 
 	// Init the OSD display parameters, and the fade out
-	_osdAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
-	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
-
-	// Ensure a full redraw takes place next time the screen is updated
-	_forceFull = true;
+	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+	_osdMessageFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
 }
+
+SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
+	SDL_Rect rect;
+	rect.x = (_hwscreen->w - _osdMessageSurface->w) / 2;
+	rect.y = (_hwscreen->h - _osdMessageSurface->h) / 2;
+	rect.w = _osdMessageSurface->w;
+	rect.h = _osdMessageSurface->h;
+	return rect;
+}
+
+void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	assert(_transactionMode == kTransactionNone);
+
+	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+
+	if (_osdIconSurface && !icon) {
+		// Force a redraw to clear the icon on the next update
+		_forceFull = true;
+	}
+
+	if (_osdIconSurface) {
+		SDL_FreeSurface(_osdIconSurface);
+		_osdIconSurface = nullptr;
+	}
+
+	if (icon) {
+		const Graphics::PixelFormat &iconFormat = icon->format;
+
+		_osdIconSurface = SDL_CreateRGBSurface(
+				SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+				icon->w, icon->h, iconFormat.bytesPerPixel * 8,
+				((0xFF >> iconFormat.rLoss) << iconFormat.rShift),
+				((0xFF >> iconFormat.gLoss) << iconFormat.gShift),
+				((0xFF >> iconFormat.bLoss) << iconFormat.bShift),
+				((0xFF >> iconFormat.aLoss) << iconFormat.aShift)
+		);
+
+		// Lock the surface
+		if (SDL_LockSurface(_osdIconSurface))
+			error("displayActivityIconOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+
+		byte *dst = (byte *) _osdIconSurface->pixels;
+		const byte *src = (const byte *) icon->getPixels();
+		for (uint y = 0; y < icon->h; y++) {
+			memcpy(dst, src, icon->w * iconFormat.bytesPerPixel);
+			src += icon->pitch;
+			dst += _osdIconSurface->pitch;
+		}
+
+		// Finished drawing, so unlock the OSD icon surface
+		SDL_UnlockSurface(_osdIconSurface);
+	}
+}
+
+SDL_Rect SurfaceSdlGraphicsManager::getOSDIconRect() const {
+	SDL_Rect dstRect;
+	dstRect.x = _hwscreen->w - _osdIconSurface->w - 10;
+	dstRect.y = 10;
+	dstRect.w = _osdIconSurface->w;
+	dstRect.h = _osdIconSurface->h;
+	return dstRect;
+}
+
+void SurfaceSdlGraphicsManager::removeOSDMessage() {
+	// Remove the previous message
+	if (_osdMessageSurface) {
+		SDL_FreeSurface(_osdMessageSurface);
+	}
+
+	_osdMessageSurface = NULL;
+	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
+}
+
+void SurfaceSdlGraphicsManager::updateOSD() {
+	// OSD message visible (i.e. non-transparent)?
+	if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT) {
+		// Updated alpha value
+		const int diff = SDL_GetTicks() - _osdMessageFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency
+				_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
+			} else {
+				// Do a linear fade out...
+				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
+			}
+			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdMessageAlpha);
+			_forceFull = true;
+		}
+
+		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
+			removeOSDMessage();
+		}
+	}
+
+	if (_osdIconSurface) {
+		// Redraw the area below the icon for the transparent blit to give correct results.
+		_forceFull = true;
+	}
+}
+
+void SurfaceSdlGraphicsManager::drawOSD() {
+	if (_osdMessageSurface) {
+		SDL_Rect dstRect = getOSDMessageRect();
+		SDL_BlitSurface(_osdMessageSurface, 0, _hwscreen, &dstRect);
+	}
+
+	if (_osdIconSurface) {
+		SDL_Rect dstRect = getOSDIconRect();
+		SDL_BlitSurface(_osdIconSurface, 0, _hwscreen, &dstRect);
+	}
+}
+
 #endif
 
 bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
@@ -2209,6 +2350,25 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		internUpdateScreen();
 		return true;
 	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Ctrl-Alt-f toggles filtering
+	if (key == 'f') {
+		beginGFXTransaction();
+		setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+			displayMessageOnOSD(_("Filtering enabled"));
+		} else {
+			displayMessageOnOSD(_("Filtering disabled"));
+		}
+#endif
+		_forceFull = true;
+		internUpdateScreen();
+		return true;
+	}
+#endif
 
 	int newMode = -1;
 	int factor = _videoMode.scaleFactor - 1;
@@ -2242,26 +2402,24 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			setGraphicsMode(newMode);
 		endGFXTransaction();
 #ifdef USE_OSD
-		if (_osdSurface) {
-			const char *newScalerName = 0;
-			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-			while (g->name) {
-				if (g->id == _videoMode.mode) {
-					newScalerName = g->description;
-					break;
-				}
-				g++;
+		const char *newScalerName = 0;
+		const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
+		while (g->name) {
+			if (g->id == _videoMode.mode) {
+				newScalerName = g->description;
+				break;
 			}
-			if (newScalerName) {
-				char buffer[128];
-				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
-					_("Active graphics filter:"),
-					newScalerName,
-					_videoMode.screenWidth, _videoMode.screenHeight,
-					_hwscreen->w, _hwscreen->h
-					);
-				displayMessageOnOSD(buffer);
-			}
+			g++;
+		}
+		if (newScalerName) {
+			char buffer[128];
+			sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+				_("Active graphics filter:"),
+				newScalerName,
+				_videoMode.screenWidth, _videoMode.screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+			displayMessageOnOSD(buffer);
 		}
 #endif
 		internUpdateScreen();
@@ -2284,6 +2442,10 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
 				return false;
 		}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (event.kbd.keycode == 'f')
+			return true;
+#endif
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
 	return false;
@@ -2352,7 +2514,25 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
 }
 
+#ifdef USE_SDL_RESIZABLE_WINDOW
+void SurfaceSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	setWindowResolution(width, height);
+#endif
+}
+#endif
+
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// In SDL2 the actual output resolution might be different from what we
+	// requested. Thus, we transform the coordinates from actual output
+	// coordinate space into the "virtual" output coordinate space.
+	// Please note that we ignore the possible existence of black bars here,
+	// this avoids the feeling of stickyness to black bars.
+	point.x = point.x * _videoMode.hardwareWidth  / _windowWidth;
+	point.y = point.y * _videoMode.hardwareHeight / _windowHeight;
+#endif
+
 	if (!_overlayVisible) {
 		point.x /= _videoMode.scaleFactor;
 		point.y /= _videoMode.scaleFactor;
@@ -2377,10 +2557,65 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 	_window->destroyWindow();
 }
 
+void SurfaceSdlGraphicsManager::setWindowResolution(int width, int height) {
+	_windowWidth  = width;
+	_windowHeight = height;
+
+	// We expect full screen resolution as inputs coming from the event system.
+	_eventSource->resetKeyboardEmulation(_windowWidth - 1, _windowHeight - 1);
+
+	// Calculate the "viewport" for the actual area we draw in. In fullscreen
+	// we can easily get a different resolution than what we requested. In
+	// this case, we add black bars if necessary to assure the aspect ratio
+	// is preserved.
+	const frac_t outputAspect  = intToFrac(_windowWidth) / _windowHeight;
+	const frac_t desiredAspect = intToFrac(_videoMode.hardwareWidth) / _videoMode.hardwareHeight;
+
+	_viewport.w = _windowWidth;
+	_viewport.h = _windowHeight;
+
+	// Adjust one dimension for mantaining the aspect ratio.
+	if (abs(outputAspect - desiredAspect) >= (int)(FRAC_ONE / 1000)) {
+		if (outputAspect < desiredAspect) {
+			_viewport.h = _videoMode.hardwareHeight * _windowWidth / _videoMode.hardwareWidth;
+		} else if (outputAspect > desiredAspect) {
+			_viewport.w = _videoMode.hardwareWidth * _windowHeight / _videoMode.hardwareHeight;
+		}
+	}
+
+	_viewport.x = (_windowWidth  - _viewport.w) / 2;
+	_viewport.y = (_windowHeight - _viewport.h) / 2;
+
+	// Force a full redraw because we changed the viewport.
+	_forceFull = true;
+}
+
+void SurfaceSdlGraphicsManager::recreateScreenTexture() {
+	if (!_renderer)
+		return;
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
+
+	SDL_Texture *oldTexture = _screenTexture;
+	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	if (_screenTexture)
+		SDL_DestroyTexture(oldTexture);
+	else
+		_screenTexture = oldTexture;
+}
+
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	if (!_window->createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+	uint32 createWindowFlags = 0;
+#ifdef USE_SDL_RESIZABLE_WINDOW
+	createWindowFlags |= SDL_WINDOW_RESIZABLE;
+#endif
+	if ((flags & SDL_FULLSCREEN) != 0) {
+		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
+	if (!_window->createWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 
@@ -2389,6 +2624,11 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	}
+
+	SDL_GetWindowSize(_window->getSDLWindow(), &_windowWidth, &_windowHeight);
+	setWindowResolution(_windowWidth, _windowHeight);
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
 
 	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {
@@ -2409,7 +2649,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
 
 	SDL_RenderClear(_renderer);
-	SDL_RenderCopy(_renderer, _screenTexture, NULL, NULL);
+	SDL_RenderCopy(_renderer, _screenTexture, NULL, &_viewport);
 	SDL_RenderPresent(_renderer);
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)

@@ -24,7 +24,7 @@
 #define BACKENDS_PLATFORM_IPHONE_OSYS_MAIN_H
 
 #include "graphics/surface.h"
-#include "iphone_common.h"
+#include "backends/platform/iphone/iphone_common.h"
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "audio/mixer_intern.h"

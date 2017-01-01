@@ -34,7 +34,11 @@
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/debugger.h"
 #include "common/events.h"
+#if EXTENDED_DEBUGGER_ENABLED
+#include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
+#endif
 
 namespace Wintermute {
 
@@ -97,7 +101,7 @@ public:
 	virtual bool displayDebugInfo();
 
 	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
-
+	bool getBilinearFiltering() { return _bilinearFiltering; }
 	bool getSuspendedRendering() const { return _suspendedRendering; }
 
 	TTextEncoding _textEncoding;
@@ -148,7 +152,11 @@ public:
 
 	BaseRenderer *_renderer;
 	BaseSoundMgr *_soundMgr;
+#if EXTENDED_DEBUGGER_ENABLED
+	DebuggableScEngine *_scEngine;
+#else
 	ScEngine *_scEngine;
+#endif
 	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
@@ -271,6 +279,7 @@ protected:
 	VideoTheoraPlayer *_theoraPlayer;
 private:
 	bool _debugShowFPS;
+	bool _bilinearFiltering;
 	void *_debugLogFile;
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = nullptr);

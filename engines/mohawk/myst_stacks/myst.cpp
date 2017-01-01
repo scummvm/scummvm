@@ -33,8 +33,6 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#include "gui/message.h"
-
 namespace Mohawk {
 namespace MystStacks {
 
@@ -50,14 +48,16 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
 	_cabinDoorOpened = 0;
+	_cabinHandleDown = 0;
 	_cabinMatchState = 2;
+	_cabinGaugeMovieEnabled = false;
 	_matchBurning = false;
-	_tree = 0;
-	_treeAlcove = 0;
+	_tree = nullptr;
+	_treeAlcove = nullptr;
 	_treeStopped = false;
 	_treeMinPosition = 0;
 	_imagerValidationStep = 0;
-	_observatoryCurrentSlider = 0;
+	_observatoryCurrentSlider = nullptr;
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
@@ -626,7 +626,7 @@ uint16 Myst::getVar(uint16 var) {
 	case 307: // Cabin Boiler Fully Pressurized
 		return _state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12;
 	case 308: // Cabin handle position
-		return 0; // Not implemented in the original
+		return _cabinHandleDown;
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -764,6 +764,9 @@ bool Myst::setVarValue(uint16 var, uint16 value) {
 	case 304: // Myst Library Image Present on Tower Rotation Map
 		_towerRotationMapInitialized = value;
 		break;
+	case 308: // Cabin handle position
+		_cabinHandleDown = value;
+		break;
 	case 309: // Tree stopped
 		_treeStopped = value;
 		break;
@@ -860,14 +863,14 @@ void Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *a
 	if (line & bitmask) {
 		// Unset button
 		for (uint i = 4795; i >= 4779; i--) {
-			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
+			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
 			_vm->_system->updateScreen();
 		}
 		_fireplaceLines[var - 17] &= ~bitmask;
 	} else {
 		// Set button
 		for (uint i = 4779; i <= 4795; i++) {
-			_vm->_gfx->copyImageToScreen(i, _invokingResource->getRect());
+			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
 			_vm->_system->updateScreen();
 		}
 		_fireplaceLines[var - 17] |= bitmask;
@@ -1251,7 +1254,7 @@ void Myst::o_imagerPlayButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 void Myst::o_imagerEraseButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager erase button", op);
 
-	_imagerRedButton = static_cast<MystResourceType8 *>(_invokingResource->_parent);
+	_imagerRedButton = static_cast<MystAreaImageSwitch *>(getInvokingResource<MystArea>()->_parent);
 	for (uint i = 0; i < 4; i++)
 		_imagerSound[i] = argv[i];
 	_imagerValidationCard = argv[4];
@@ -1351,7 +1354,7 @@ void Myst::o_towerElevatorAnimation(uint16 op, uint16 var, uint16 argc, uint16 *
 void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Generator button pressed", op);
 
-	MystResource *button = _invokingResource->_parent;
+	MystArea *button = getInvokingResource<MystArea>()->_parent;
 
 	generatorRedrawRocket();
 
@@ -1376,7 +1379,7 @@ void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *
 		if (_generatorVoltage)
 			_vm->_sound->replaceSoundMyst(6297);
 		else {
-			_vm->_sound->replaceSoundMyst(7297); // TODO: Replace with play sound and replace background 4297
+			_vm->_sound->replaceSoundMyst(7297);
 			_vm->_sound->replaceBackgroundMyst(4297);
 		}
 
@@ -1385,7 +1388,7 @@ void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *
 	}
 
 	// Redraw button
-	_vm->redrawArea(button->getType8Var());
+	_vm->redrawArea(button->getImageSwitchVar());
 
 	// Blow breaker
 	if (_state.generatorVoltage > 59)
@@ -1398,8 +1401,8 @@ void Myst::generatorRedrawRocket() {
 	_vm->redrawArea(97);
 }
 
-void Myst::generatorButtonValue(MystResource *button, uint16 &mask, uint16 &value) {
-	switch (button->getType8Var()) {
+void Myst::generatorButtonValue(MystArea *button, uint16 &mask, uint16 &value) {
+	switch (button->getImageSwitchVar()) {
 	case 52: // Generator Switch #1
 		mask = 1;
 		value = 10;
@@ -1466,7 +1469,7 @@ void Myst::o_cabinSafeHandleStartMove(uint16 op, uint16 var, uint16 argc, uint16
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle start move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	handle->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_tempVar = 0;
@@ -1476,7 +1479,7 @@ void Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 
 	if (handle->pullLeverV()) {
 		// Sound not played yet
@@ -1506,7 +1509,7 @@ void Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *
 	debugC(kDebugScript, "Opcode %d: Cabin safe handle end move", op);
 
 	// Used on Card 4100
-	MystResourceType12 *handle = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *handle = getInvokingResource<MystVideoInfo>();
 	handle->drawFrame(0);
 	_vm->checkCursorHints();
 }
@@ -1804,7 +1807,7 @@ void Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint1
 void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker start move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *breaker = getInvokingResource<MystVideoInfo>();
 	breaker->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_tempVar = 0;
@@ -1813,7 +1816,7 @@ void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 
 void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *breaker = getInvokingResource<MystVideoInfo>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	int16 maxStep = breaker->getStepsV() - 1;
@@ -1828,7 +1831,7 @@ void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		// Breaker switched
 		if (step == maxStep) {
 			// Choose breaker
-			if (breaker->getType8Var() == 93) {
+			if (breaker->getImageSwitchVar() == 93) {
 				// Voltage is still too high or not broken
 				if (_state.generatorVoltage > 59 || _state.generatorBreakers != 1) {
 					uint16 soundId = breaker->getList2(1);
@@ -1864,8 +1867,8 @@ void Myst::o_circuitBreakerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv
 void Myst::o_circuitBreakerEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Circuit breaker end move", op);
 
-	MystResourceType12 *breaker = static_cast<MystResourceType12 *>(_invokingResource);
-	_vm->redrawArea(breaker->getType8Var());
+	MystVideoInfo *breaker = getInvokingResource<MystVideoInfo>();
+	_vm->redrawArea(breaker->getImageSwitchVar());
 	_vm->checkCursorHints();
 }
 
@@ -2138,7 +2141,7 @@ void Myst::tree_run() {
 				// Check if alcove is accessible
 				treeSetAlcoveAccessible();
 
-				if (_cabinGaugeMovie) {
+				if (_cabinGaugeMovieEnabled) {
 					Common::Rational rate = boilerComputeGaugeRate(pressure, delay);
 					boilerResetGauge(rate);
 				}
@@ -2187,22 +2190,22 @@ void Myst::o_rocketSoundSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers && _rocketSliderSound)
 		_vm->_sound->stopSound();
 
-	if (_invokingResource == _rocketSlider1)
+	if (getInvokingResource<MystArea>() == _rocketSlider1)
 		_state.rocketSliderPosition[0] = _rocketSlider1->_pos.y;
-	else if (_invokingResource == _rocketSlider2)
+	else if (getInvokingResource<MystArea>() == _rocketSlider2)
 		_state.rocketSliderPosition[1] = _rocketSlider2->_pos.y;
-	else if (_invokingResource == _rocketSlider3)
+	else if (getInvokingResource<MystArea>() == _rocketSlider3)
 		_state.rocketSliderPosition[2] = _rocketSlider3->_pos.y;
-	else if (_invokingResource == _rocketSlider4)
+	else if (getInvokingResource<MystArea>() == _rocketSlider4)
 		_state.rocketSliderPosition[3] = _rocketSlider4->_pos.y;
-	else if (_invokingResource == _rocketSlider5)
+	else if (getInvokingResource<MystArea>() == _rocketSlider5)
 		_state.rocketSliderPosition[4] = _rocketSlider5->_pos.y;
 
 	_vm->_sound->resumeBackgroundMyst();
 }
 
 void Myst::rocketSliderMove() {
-	MystResourceType10 *slider = static_cast<MystResourceType10 *>(_invokingResource);
+	MystAreaSlider *slider = getInvokingResource<MystAreaSlider>();
 
 	if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
 		uint16 soundId = rocketSliderGetSound(slider->_pos.y);
@@ -2262,7 +2265,7 @@ void Myst::rocketCheckSolution() {
 
 	if (solved) {
 		// Reset lever position
-		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+		MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 		lever->drawFrame(0);
 
 		// Book appearing
@@ -2299,17 +2302,17 @@ void Myst::rocketCheckSolution() {
 void Myst::o_rocketPianoStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano start move", op);
 
-	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *key = getInvokingResource<MystAreaDrag>();
 
 	// What the hell??
-	Common::Rect src = key->_subImages[1].rect;
-	Common::Rect rect = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(1).rect;
+	Common::Rect rect = key->getSubImage(0).rect;
 	Common::Rect dest = rect;
 	dest.top = 332 - rect.bottom;
 	dest.bottom = 332 - rect.top;
 
 	// Draw pressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(1).wdib, src, dest);
 	_vm->_system->updateScreen();
 
 	// Play note
@@ -2326,29 +2329,29 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	Common::Rect piano = Common::Rect(85, 123, 460, 270);
 
 	// Unpress previous key
-	MystResourceType11 *key = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *key = getInvokingResource<MystAreaDrag>();
 
-	Common::Rect src = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
 	dest.top = 332 - src.bottom;
 	dest.bottom = 332 - src.top;
 
 	// Draw unpressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 
 	if (piano.contains(mouse)) {
-		MystResource *resource = _vm->updateCurrentResource();
-		if (resource && resource->type == kMystDragArea) {
+		MystArea *resource = _vm->updateCurrentResource();
+		if (resource && resource->type == kMystAreaDrag) {
 			// Press new key
-			key = static_cast<MystResourceType11 *>(resource);
-			src = key->_subImages[1].rect;
-			Common::Rect rect = key->_subImages[0].rect;
+			key = static_cast<MystAreaDrag *>(resource);
+			src = key->getSubImage(1).rect;
+			Common::Rect rect = key->getSubImage(0).rect;
 			dest = rect;
 			dest.top = 332 - rect.bottom;
 			dest.bottom = 332 - rect.top;
 
 			// Draw pressed piano key
-			_vm->_gfx->copyImageSectionToScreen(key->_subImages[1].wdib, src, dest);
+			_vm->_gfx->copyImageSectionToScreen(key->getSubImage(1).wdib, src, dest);
 
 			// Play note
 			if (_state.generatorVoltage == 59 && !_state.generatorBreakers) {
@@ -2368,15 +2371,15 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket piano end move", op);
 
-	MystResourceType8 *key = static_cast<MystResourceType8 *>(_invokingResource);
+	MystAreaImageSwitch *key = getInvokingResource<MystAreaImageSwitch>();
 
-	Common::Rect &src = key->_subImages[0].rect;
+	Common::Rect src = key->getSubImage(0).rect;
 	Common::Rect dest = src;
 	dest.top = 332 - src.bottom;
 	dest.bottom = 332 - src.top;
 
 	// Draw unpressed piano key
-	_vm->_gfx->copyImageSectionToScreen(key->_subImages[0].wdib, src, dest);
+	_vm->_gfx->copyImageSectionToScreen(key->getSubImage(0).wdib, src, dest);
 	_vm->_system->updateScreen();
 
 	_vm->_sound->stopSound();
@@ -2386,7 +2389,7 @@ void Myst::o_rocketPianoStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever start move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	_vm->_cursor->setCursor(700);
 	_rocketLeverPosition = 0;
@@ -2406,7 +2409,7 @@ void Myst::o_rocketOpenBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Make the lever follow the mouse
@@ -2435,7 +2438,7 @@ void Myst::o_rocketLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Myst::o_rocketLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket lever end move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	_vm->checkCursorHints();
 	_rocketLeverPosition = 0;
@@ -2712,7 +2715,7 @@ void Myst::clockWheel_run() {
 }
 
 void Myst::clockWheelStartTurn(uint16 wheel) {
-	MystResourceType11 *resource = static_cast<MystResourceType11 *>(_invokingResource);
+	MystAreaDrag *resource = getInvokingResource<MystAreaDrag>();
 	uint16 soundId = resource->getList1(0);
 
 	if (soundId)
@@ -2835,10 +2838,10 @@ void Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var, uint16 argc, ui
 	_observatoryIncrement = 0;
 
 	// Restore button and slider
-	_vm->_gfx->copyBackBufferToScreen(_invokingResource->getRect());
+	_vm->_gfx->copyBackBufferToScreen(getInvokingResource<MystArea>()->getRect());
 	if (_observatoryCurrentSlider) {
 		_vm->redrawResource(_observatoryCurrentSlider);
-		_observatoryCurrentSlider = 0;
+		_observatoryCurrentSlider = nullptr;
 	}
 	_vm->_sound->resumeBackgroundMyst();
 }
@@ -2874,7 +2877,7 @@ void Myst::o_imagerEraseStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 void Myst::o_clockLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock lever start move", op);
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 	_clockMiddleGearMovedAlone = false;
@@ -2885,7 +2888,7 @@ void Myst::o_clockLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock left lever move", op);
 
 	if (!_clockLeverPulled) {
-		MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+		MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 		// If lever pulled
 		if (lever->pullLeverV()) {
@@ -2977,7 +2980,7 @@ void Myst::o_clockLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 		_vm->_sound->replaceSoundMyst(8113);
 
 	// Release lever
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->releaseLeverV();
 
 	// Check if puzzle is solved
@@ -3021,7 +3024,7 @@ void Myst::clockGearsCheckSolution() {
 void Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever start move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 	lever->drawFrame(0);
 	_vm->_cursor->setCursor(700);
 }
@@ -3029,7 +3032,7 @@ void Myst::o_clockResetLeverStartMove(uint16 op, uint16 var, uint16 argc, uint16
 void Myst::o_clockResetLeverMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Clock reset lever move", op);
 
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	// If pulled
 	if (lever->pullLeverV() && _clockWeightPosition != 0)
@@ -3084,6 +3087,8 @@ void Myst::clockReset() {
 }
 
 void Myst::clockResetWeight() {
+	_vm->_sound->replaceSoundMyst(9113);
+
 	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack));
 	if (!_clockWeightVideo)
 		error("Failed to open cl1wlfch movie");
@@ -3125,7 +3130,7 @@ void Myst::o_clockResetLeverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *
 	debugC(kDebugScript, "Opcode %d: Clock reset lever end move", op);
 
 	// Get current lever frame
-	MystResourceType12 *lever = static_cast<MystResourceType12 *>(_invokingResource);
+	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
 
 	lever->releaseLeverV();
 
@@ -3189,8 +3194,8 @@ void Myst::towerRotationMap_run() {
 
 void Myst::o_towerRotationMap_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_towerRotationMapRunning = true;
-	_towerRotationMapTower = static_cast<MystResourceType11 *>(_invokingResource);
-	_towerRotationMapLabel = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_towerRotationMapTower = getInvokingResource<MystAreaImageSwitch>();
+	_towerRotationMapLabel = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	_tempVar = 0;
 	_startTime = 0;
 	_towerRotationMapClicked = false;
@@ -3202,7 +3207,7 @@ void Myst::towerRotationDrawBuildings() {
 
 	// Draw other resources
 	for (uint i = 1; i <= 10; i++) {
-		MystResourceType8 *resource = static_cast<MystResourceType8 *>(_vm->_resources[i]);
+		MystAreaImageSwitch *resource = _vm->getViewResource<MystAreaImageSwitch>(i);
 		_vm->redrawResource(resource, false);
 	}
 }
@@ -3266,7 +3271,7 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 			color = pf.RGBToColor(0xFF, 0, 0); // Red
 	} else {
 		if (!_towerRotationOverSpot)
-			color = 0x00; // White
+			color = 0xFF; // White
 		else
 			color = 0xF9; // Red
 	}
@@ -3313,7 +3318,7 @@ void Myst::o_forechamberDoor_init(uint16 op, uint16 var, uint16 argc, uint16 *ar
 void Myst::o_shipAccess_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Enable acces to the ship
 	if (_state.shipFloating) {
-		_invokingResource->setEnabled(true);
+		getInvokingResource<MystArea>()->setEnabled(true);
 	}
 }
 
@@ -3322,7 +3327,7 @@ void Myst::o_butterflies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 	// Used for Card 4256 (Butterfly Movie Activation)
 	if (!_butterfliesMoviePlayed) {
-		MystResourceType6 *butterflies = static_cast<MystResourceType6 *>(_invokingResource);
+		MystAreaVideo *butterflies = getInvokingResource<MystAreaVideo>();
 		butterflies->playMovie();
 
 		_butterfliesMoviePlayed = true;
@@ -3333,8 +3338,8 @@ void Myst::o_imager_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Imager init", op);
 	debugC(kDebugScript, "Var: %d", var);
 
-	MystResourceType7 *select = static_cast<MystResourceType7 *>(_invokingResource);
-	_imagerMovie = static_cast<MystResourceType6 *>(select->getSubResource(getVar(var)));
+	MystAreaActionSwitch *select = getInvokingResource<MystAreaActionSwitch>();
+	_imagerMovie = static_cast<MystAreaVideo *>(select->getSubResource(getVar(var)));
 	_imagerRunning = true;
 }
 
@@ -3377,8 +3382,8 @@ void Myst::libraryBookcaseTransform_run(void) {
 
 void Myst::o_libraryBookcaseTransform_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (_libraryBookcaseChanged) {
-		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
-		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(0)));
+		MystAreaActionSwitch *resource = getInvokingResource<MystAreaActionSwitch>();
+		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(0)));
 		_libraryBookcaseSoundId = argv[0];
 		_libraryBookcaseMoving = true;
 	}
@@ -3471,17 +3476,17 @@ void Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 	_tempVar = 0;
 	_observatoryNotInitialized = true;
-	_observatoryVisualizer = static_cast<MystResourceType8 *>(_invokingResource);
-	_observatoryGoButton = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
+	_observatoryVisualizer = getInvokingResource<MystAreaImageSwitch>();
+	_observatoryGoButton = _vm->getViewResource<MystAreaImageSwitch>(argv[0]);
 	if (observatoryIsDDMMYYYY2400()) {
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+		_observatoryDaySlider = _vm->getViewResource<MystAreaSlider>(argv[1]);
+		_observatoryMonthSlider = _vm->getViewResource<MystAreaSlider>(argv[2]);
 	} else {
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
+		_observatoryMonthSlider = _vm->getViewResource<MystAreaSlider>(argv[1]);
+		_observatoryDaySlider = _vm->getViewResource<MystAreaSlider>(argv[2]);
 	}
-	_observatoryYearSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
-	_observatoryTimeSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
+	_observatoryYearSlider = _vm->getViewResource<MystAreaSlider>(argv[3]);
+	_observatoryTimeSlider = _vm->getViewResource<MystAreaSlider>(argv[4]);
 
 	// Set date selection sliders position
 	_observatoryDaySlider->setPosition(_state.observatoryDaySlider);
@@ -3503,18 +3508,14 @@ bool Myst::observatoryIsDDMMYYYY2400() {
 }
 
 void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
-	Common::Rect &visu0 = _observatoryVisualizer->_subImages[0].rect;
-	Common::Rect &visu1 = _observatoryVisualizer->_subImages[1].rect;
+	Common::Rect visu;
+	visu.left = x;
+	visu.right = visu.left + 105;
+	visu.bottom = 512 - y;
+	visu.top = visu.bottom - 106;
 
-	visu0.left = x;
-	visu0.right = visu0.left + 105;
-	visu0.bottom = 512 - y;
-	visu0.top = visu0.bottom - 106;
-
-	visu1.left = visu0.left;
-	visu1.top = visu0.top;
-	visu1.right = visu0.right;
-	visu1.bottom = visu0.bottom;
+	_observatoryVisualizer->setSubImageRect(0, visu);
+	_observatoryVisualizer->setSubImageRect(1, visu);
 }
 
 void Myst::observatorySetTargetToSetting() {
@@ -3608,7 +3609,7 @@ void Myst::gullsFly2_run() {
 			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
 			if (!handle)
 				error("Failed to open gulls movie");
-	
+
 			handle->moveTo(424, 0);
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}
@@ -3618,13 +3619,13 @@ void Myst::gullsFly2_run() {
 void Myst::o_treeCard_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card", op);
 
-	_tree = static_cast<MystResourceType8 *>(_invokingResource);
+	_tree = getInvokingResource<MystAreaImageSwitch>();
 }
 
 void Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Enter tree card with entry", op);
 
-	_treeAlcove = static_cast<MystResourceType5 *>(_invokingResource);
+	_treeAlcove = getInvokingResource<MystArea>();
 	_treeMinAccessiblePosition = argv[0];
 	_treeMaxAccessiblePosition = argv[1];
 
@@ -3683,16 +3684,16 @@ void Myst::boilerFireUpdate(bool init) {
 void Myst::boilerGaugeInit() {
 	if (_vm->getCurCard() == 4098) {
 		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack));
-		if (!_cabinFireMovie)
+		if (!_cabinGaugeMovie)
 			error("Failed to open cabingau movie");
 
-		_cabinFireMovie->moveTo(243, 96);
+		_cabinGaugeMovie->moveTo(243, 96);
 	} else {
 		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack));
-		if (!_cabinFireMovie)
+		if (!_cabinGaugeMovie)
 			error("Failed to open cabcgfar movie");
 
-		_cabinFireMovie->moveTo(254, 136);
+		_cabinGaugeMovie->moveTo(254, 136);
 	}
 
 	Audio::Timestamp frame;
@@ -3703,16 +3704,18 @@ void Myst::boilerGaugeInit() {
 		frame = Audio::Timestamp(0, 0, 600);
 
 	_vm->_video->drawVideoFrame(_cabinGaugeMovie, frame);
+
+	_cabinGaugeMovieEnabled = true;
 }
 
 void Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Rocket sliders init", op);
 
-	_rocketSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[argv[0]]);
-	_rocketSlider2 = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-	_rocketSlider3 = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
-	_rocketSlider4 = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
-	_rocketSlider5 = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
+	_rocketSlider1 = _vm->getViewResource<MystAreaSlider>(argv[0]);
+	_rocketSlider2 = _vm->getViewResource<MystAreaSlider>(argv[1]);
+	_rocketSlider3 = _vm->getViewResource<MystAreaSlider>(argv[2]);
+	_rocketSlider4 = _vm->getViewResource<MystAreaSlider>(argv[3]);
+	_rocketSlider5 = _vm->getViewResource<MystAreaSlider>(argv[4]);
 
 	// Initialize sliders position
 	for (uint i = 0; i < 5; i++)
@@ -3828,13 +3831,13 @@ void Myst::o_bookAddSpecialPage_exit(uint16 op, uint16 var, uint16 argc, uint16 
 void Myst::o_treeCard_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card", op);
 
-	_tree = 0;
+	_tree = nullptr;
 }
 
 void Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card with entry", op);
 
-	_treeAlcove = 0;
+	_treeAlcove = nullptr;
 }
 
 void Myst::o_boiler_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3842,6 +3845,8 @@ void Myst::o_boiler_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	_cabinGaugeMovie = VideoHandle();
 	_cabinFireMovie = VideoHandle();
+
+	_cabinGaugeMovieEnabled = false;
 }
 
 void Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -99,9 +99,20 @@ enum GlobalId {
 
 	// Section #4 Variables
 	kCatacombsRoom          = 80,
-	// TODO
+	kCatacombsMisc          = 81,
+	kCatacombsFlag          = 82,
+	kCatacombsFrom          = 83,
+	kCatacombs309           = 84,
+	kCatacombs409a          = 85,
+	kCatacombs409b          = 86,
+	kCatacombs501           = 87,
+	kCatacombs309From       = 88,
+	kCatacombs409aFrom      = 89,
+	kCatacombs409bFrom      = 90,
+	kCatacombs501From       = 91,
+	kCatacombsNextRoom      = 92,
 	kDoorIn409IsOpen        = 93,
-	kUnknown                = 94,	// TODO
+	kPriestPistonPuke       = 94,
 	kCobwebIsCut            = 95,
 
 	// Section #5 Variables
@@ -124,6 +135,7 @@ class PhantomGlobals : public Globals {
 public:
 	SynchronizedList _spriteIndexes;
 	SynchronizedList _sequenceIndexes;
+	SynchronizedList _animationIndexes;
 public:
 	/**
 	 * Constructor

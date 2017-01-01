@@ -32,7 +32,7 @@ namespace GUI {
 
 
 Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1) {
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(NULL), _xdelta(0), _ydelta(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }

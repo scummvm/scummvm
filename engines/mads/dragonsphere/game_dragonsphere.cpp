@@ -28,7 +28,7 @@
 #include "mads/msurface.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/nebular/dialogs_nebular.h"
-//#include "mads/nebular/globals_nebular.h"
+#include "mads/dragonsphere/globals_dragonsphere.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
 
 namespace MADS {

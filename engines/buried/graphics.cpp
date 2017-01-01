@@ -205,7 +205,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	static const uint32 *codePageMapping = s_codePage1252;
 #endif
 
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
 
 	if (!font)
 		error("Failed to load Arial%s font", bold ? " Bold" : "");
@@ -727,7 +727,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	// TODO: Fake a bold version
 
 	// Force monochrome, since the original uses the bitmap glyphs in the font
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, Graphics::kTTFRenderModeMonochrome);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
 
 	if (!font)
 		error("Failed to load MS Gothic font");

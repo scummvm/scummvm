@@ -24,7 +24,10 @@
 #define GROOVIE_PLAYER_H
 
 #include "common/system.h"
-#include "audio/audiostream.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Groovie {
 

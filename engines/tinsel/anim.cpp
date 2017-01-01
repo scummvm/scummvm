@@ -43,7 +43,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 
 	while (1) {	// repeat until a real image
 		debugC(DEBUG_DETAILED, kTinselDebugAnimations,
-		"DoNextFrame %ph index=%d, op=%xh", (byte *)pAnim, pAnim->scriptIndex,
+		"DoNextFrame %ph index=%d, op=%xh", (const void *)pAnim, pAnim->scriptIndex,
 		FROM_32(pAni[pAnim->scriptIndex].op));
 
 		switch ((int32)FROM_32(pAni[pAnim->scriptIndex].op)) {
@@ -217,7 +217,7 @@ void InitStepAnimScript(ANIM *pAnim, OBJECT *pAniObj, SCNHANDLE hNewScript, int 
 		"InitStepAnimScript Object=(%d,%d,%xh) script=%xh aniSpeed=%d rec=%ph",
 		!pAniObj ? 0 : fracToInt(pAniObj->xPos),
 		!pAniObj ? 0 : fracToInt(pAniObj->yPos),
-		!pAniObj ? 0 : pAniObj->hImg, hNewScript, aniSpeed, (byte *)pAnim);
+		!pAniObj ? 0 : pAniObj->hImg, hNewScript, aniSpeed, (void *)pAnim);
 
 	pAnim->aniDelta = 1;		// will animate on next call to NextAnimRate
 	pAnim->pObject = pAniObj;	// set object to animate

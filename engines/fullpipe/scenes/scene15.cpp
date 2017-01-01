@@ -162,7 +162,7 @@ int sceneHandler15(ExCommand *cmd) {
 	case 29:
 		{
 			if (g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY) == PIC_SC15_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC15_DTRUBA, 0), cmd->_param);
 				cmd->_messageKind = 0;
 
 				return 0;

@@ -25,11 +25,20 @@
 
 #include "common/scummsys.h"
 #include "common/queue.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
+
+namespace OPL {
+class OPL;
+}
 
 namespace MADS {
+
+namespace Nebular {
+class ASound;
+}
 
 class MADSEngine;
 
@@ -47,6 +56,8 @@ private:
 public:
 	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
+
+	bool _preferRoland;
 
 	/**
 	 * Initializes the sound driver for a given game section
@@ -102,6 +113,7 @@ public:
 	 * Some sort of random noise generation?
 	 */
 	void noise();
+
 	//@}
 };
 

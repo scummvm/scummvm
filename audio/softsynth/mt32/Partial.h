@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,11 +18,21 @@
 #ifndef MT32EMU_PARTIAL_H
 #define MT32EMU_PARTIAL_H
 
+#include "globals.h"
+#include "internals.h"
+#include "Types.h"
+#include "Structures.h"
+#include "LA32Ramp.h"
+#include "LA32WaveGenerator.h"
+
 namespace MT32Emu {
 
-class Synth;
 class Part;
+class Poly;
+class Synth;
 class TVA;
+class TVF;
+class TVP;
 struct ControlROMPCMStruct;
 
 // A partial represents one of up to four waveform generators currently playing within a poly.
@@ -32,7 +42,7 @@ private:
 	const int debugPartialNum; // Only used for debugging
 	// Number of the sample currently being rendered by produceOutput(), or 0 if no run is in progress
 	// This is only kept available for debugging purposes.
-	unsigned long sampleNum;
+	Bit32u sampleNum;
 
 	// Actually, this is a 4-bit register but we abuse this to emulate inverted mixing.
 	// Also we double the value to enable INACCURATE_SMOOTH_PAN, with respect to MoK.
@@ -77,7 +87,7 @@ public:
 	~Partial();
 
 	int debugGetPartialNum() const;
-	unsigned long debugGetSampleNum() const;
+	Bit32u debugGetSampleNum() const;
 
 	int getOwnerPart() const;
 	const Poly *getPoly() const;
@@ -100,9 +110,9 @@ public:
 	// Returns true only if data written to buffer
 	// This function (unlike the one below it) returns processed stereo samples
 	// made from combining this single partial with its pair, if it has one.
-	bool produceOutput(Sample *leftBuf, Sample *rightBuf, unsigned long length);
-};
+	bool produceOutput(Sample *leftBuf, Sample *rightBuf, Bit32u length);
+}; // class Partial
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_PARTIAL_H

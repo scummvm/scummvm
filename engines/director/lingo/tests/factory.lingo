@@ -1,0 +1,69 @@
+--
+macro AimGun2
+global aim1
+set aim1 = aim2(mNew)
+--
+factory aim2
+method mNew
+    dontpassevent
+    global aim1
+	when mousedown then aim1(fire)
+	when keydown then aim1(mExit)
+    set the locv of sprite 24 to 540
+method mMove x, y
+    set the locH of sprite 15 to x
+    set the locV of sprite 15 to y-250
+method mAtFrame
+    dontpassevent
+    me(mMove, the mouseH, the mouseV)
+method fire
+    global fire1, targeth, targetv
+    set fire1 = fire2(mNew)
+    set the perframehook to fire1
+    me(mDispose)
+method mExit
+    set the perframehook to false
+    postfire
+    me(mDispose)
+method mDispose
+    global aim1
+    set aim1 = 1
+    when keydown then nothing
+--
+factory fire2
+method mNew
+    dontpassevent
+	when mousedown then nothing
+    set the castnum of sprite 14 to f15
+method mAtFrame
+    Global StartH, StartV, targetv, stepH, stepV, bcast
+    dontpassevent
+    set the castnum of sprite 14 to bcast
+    set the LocV of sprite 14 to (startV-stepV)
+    if sprite 14 intersects 10 and (startV-6) <=  targetV then
+        set the castnum of sprite 14 to f16
+        set the perframehook to false
+        me(hit)
+        exit
+    end if
+    if startV <  targetV  or bcast>g17 then
+        set the perframehook to false
+        set the locV of sprite 14 to 340
+        aimgun2
+        exit
+    end if
+    set startV to (startV-stepV)
+    set bcast = bcast + 1
+method hit
+    global KillLoc
+    set killloc to the loch of sprite 3
+    go "Death"
+    set the locV of sprite 14 to 400
+    aimgun2
+method mDispose
+    global fire1
+    set fire1 = 0
+--
+macro KillIt2
+global KillLoc
+set the locH of sprite 3 to KillLoc

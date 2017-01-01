@@ -81,36 +81,41 @@ struct TizenSaveFileManager : public DefaultSaveFileManager {
 };
 
 bool TizenSaveFileManager::removeSavefile(const Common::String &filename) {
-	Common::String savePathName = getSavePath();
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
+	if (getError().getCode() != Common::kNoError)
+		return false;
 
-	checkPath(Common::FSNode(savePathName));
-	if (getError().getCode() != Common::kNoError) {
+	// Obtain node if exists.
+	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
+	if (file == _saveFileCache.end()) {
+		return false;
+	} else {
+		const Common::FSNode fileNode = file->_value;
+		// Remove from cache, this invalidates the 'file' iterator.
+		_saveFileCache.erase(file);
+		file = _saveFileCache.end();
+
+		String unicodeFileName;
+		StringUtil::Utf8ToString(fileNode.getPath().c_str(), unicodeFileName);
+
+		switch (Tizen::Io::File::Remove(unicodeFileName)) {
+		case E_SUCCESS:
+			return true;
+
+		case E_ILLEGAL_ACCESS:
+			setError(Common::kWritePermissionDenied, "Search or write permission denied: " +
+						file.getName());
+			break;
+
+		default:
+			setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() +
+						"' does not exist or path is invalid");
+			break;
+		}
+
 		return false;
 	}
-
-	// recreate FSNode since checkPath may have changed/created the directory
-	Common::FSNode savePath(savePathName);
-	Common::FSNode file = savePath.getChild(filename);
-
-	String unicodeFileName;
-	StringUtil::Utf8ToString(file.getPath().c_str(), unicodeFileName);
-
-	switch (Tizen::Io::File::Remove(unicodeFileName)) {
-	case E_SUCCESS:
-		return true;
-
-	case E_ILLEGAL_ACCESS:
-		setError(Common::kWritePermissionDenied, "Search or write permission denied: " +
-					file.getName());
-		break;
-
-	default:
-		setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() +
-					"' does not exist or path is invalid");
-		break;
-	}
-
-	return false;
 }
 
 //

@@ -64,11 +64,6 @@ const int INVENTORY_POINTS[8][3] = {
 	{ 285, 315, 294 }
 };
 
-const char COMMANDS[13] = "LMTPOCIUGJFS";
-const char COMMANDS_3DO[13] = "LMTPOCIUGSFF";
-const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
-const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
-const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 const int UI_OFFSET_3DO = 16;	// (320 - 288) / 2
 
 /*----------------------------------------------------------------*/
@@ -101,6 +96,43 @@ ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm
 	_cNum = 0;
 	_find = 0;
 	_oldUse = 0;
+
+	// Set up hotkeys
+	Common::String gameHotkeys = FIXED(Game_Hotkeys);
+
+	memset(_hotkeysIndexed, 0, sizeof(_hotkeysIndexed));
+	assert(gameHotkeys.size() <= sizeof(_hotkeysIndexed));
+	memcpy(_hotkeysIndexed, gameHotkeys.c_str(), gameHotkeys.size());
+
+	_hotkeyLook = gameHotkeys[0];
+	_hotkeyMove = gameHotkeys[1];
+	_hotkeyTalk = gameHotkeys[2];
+	_hotkeyPickUp = gameHotkeys[3];
+	_hotkeyOpen = gameHotkeys[4];
+	_hotkeyClose = gameHotkeys[5];
+	_hotkeyInventory = gameHotkeys[6];
+	_hotkeyUse = gameHotkeys[7];
+	_hotkeyGive = gameHotkeys[8];
+	_hotkeyJournal = gameHotkeys[9];
+	_hotkeyFiles = gameHotkeys[10];
+	_hotkeySetUp = gameHotkeys[11];
+	_hotkeyLoadGame = 0;
+	_hotkeySaveGame = 0;
+
+	if (IS_3DO) {
+		// 3DO doesn't have a Journal nor a Files button
+		// Instead it has the setup button in place of the journal
+		// and also "Load" and "Save" buttons underneath it.
+		_hotkeyJournal = 0;
+		_hotkeyFiles = 0;
+		_hotkeyLoadGame = 'A'; // "S" already used for SetUp
+		_hotkeySaveGame = 'V'; // ditto
+
+		_hotkeysIndexed[MAINBUTTON_JOURNAL]  = 0;
+		_hotkeysIndexed[MAINBUTTON_FILES]    = 0;
+		_hotkeysIndexed[MAINBUTTON_LOADGAME] = 'A';
+		_hotkeysIndexed[MAINBUTTON_SAVEGAME] = 'V';
+	}
 }
 
 ScalpelUserInterface::~ScalpelUserInterface() {
@@ -116,23 +148,24 @@ void ScalpelUserInterface::reset() {
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
-	const ImageFrame &src = (*_controlPanel)[0];
+	const Graphics::Surface &src = (*_controlPanel)[0]._frame;
 	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
 
 	if (bufferNum & 1) {
 		if (IS_3DO)
 			screen._backBuffer1.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer1.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum & 2) {
 		if (IS_3DO)
 			screen._backBuffer2.fillRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BLACK);
-		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
+		screen._backBuffer2.SHtransBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	}
 	if (bufferNum == 3)
-		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
+		screen._backBuffer2.SHfillRect(Common::Rect(0, INFO_LINE,
+			SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10), INFO_BLACK);
 }
 
 void ScalpelUserInterface::handleInput() {
@@ -394,7 +427,7 @@ void ScalpelUserInterface::depressButton(int num) {
 	offsetButton3DO(pt, num);
 
 	ImageFrame &frame = (*_controls)[num];
-	screen._backBuffer1.transBlitFrom(frame, pt);
+	screen._backBuffer1.SHtransBlitFrom(frame, pt);
 	screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 }
 
@@ -410,7 +443,7 @@ void ScalpelUserInterface::restoreButton(int num) {
 	events.setCursor(ARROW);
 
 	// Restore the UI on the back buffer
-	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 
@@ -437,12 +470,13 @@ void ScalpelUserInterface::pushButton(int num) {
 	restoreButton(num);
 }
 
-void ScalpelUserInterface::toggleButton(int num) {
+void ScalpelUserInterface::toggleButton(uint16 num) {
 	Screen &screen = *_vm->_screen;
 
 	if (_menuMode != (MenuMode)(num + 1)) {
 		_menuMode = (MenuMode)(num + 1);
-		_oldKey = COMMANDS[num];
+		assert(num < sizeof(_hotkeysIndexed));
+		_oldKey = _hotkeysIndexed[num];
 		_oldTemp = num;
 
 		if (_keyboardInput) {
@@ -456,7 +490,7 @@ void ScalpelUserInterface::toggleButton(int num) {
 			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 			offsetButton3DO(pt, num);
-			screen._backBuffer1.transBlitFrom(frame, pt);
+			screen._backBuffer1.SHtransBlitFrom(frame, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
 	} else {
@@ -468,7 +502,7 @@ void ScalpelUserInterface::toggleButton(int num) {
 
 void ScalpelUserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE, 
+		_vm->_screen->vgaBar(Common::Rect(IS_3DO ? 33 : 16, INFO_LINE,
 			SHERLOCK_SCREEN_WIDTH - (IS_3DO ? 33 : 19), INFO_LINE + 10), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
@@ -572,74 +606,92 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 				// If inventory is active and an item is selected for a Use or Give action
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
 						(inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE)) {
-					int width1 = 0, width2 = 0;
-					int x, width;
+					int width1 = 0, width2 = 0, width3 = 0;
+					int x;
+
 					if (inv._invMode == INVMODE_USE) {
 						// Using an object
-						x = width = screen.stringWidth("Use ");
+						Common::String useText1 = FIXED(UserInterface_Use);
+						Common::String useText2;
+						Common::String useText3;
 
-						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON)
+						x = width1 = screen.stringWidth(useText1);
+
+						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON) {
 							// It's not a person, so make it lowercase
-							tempStr.setChar(tolower(tempStr[0]), 0);
-
-						x += screen.stringWidth(tempStr);
+							switch (_vm->getLanguage()) {
+							case Common::DE_DEU:
+							case Common::ES_ESP:
+								// don't do this for German + Spanish version
+								break;
+							default:
+								tempStr.setChar(tolower(tempStr[0]), 0);
+								break;
+							}
+						}
 
 						// If we're using an inventory object, add in the width
 						// of the object name and the " on "
 						if (_selector != -1) {
-							width1 = screen.stringWidth(inv[_selector]._name);
-							x += width1;
-							width2 = screen.stringWidth(" on ");
+							useText2 = inv[_selector]._name;
+							width2 = screen.stringWidth(useText2);
 							x += width2;
+
+							useText3 = Common::String::format(FIXED(UserInterface_UseOn), tempStr.c_str());
+
+						} else {
+							useText3 = tempStr;
 						}
+
+						width3 = screen.stringWidth(useText3);
+						x += width3;
 
 						// If the line will be too long, keep cutting off characters
 						// until the string will fit
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(useText3.lastChar());
+							useText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Use ");
+							INFO_FOREGROUND, "%s", useText1.c_str());
 
 						if (_selector != -1) {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-							screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-								INFO_FOREGROUND, " on ");
-							screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								TALK_FOREGROUND, "%s", useText2.c_str());
+							screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+								INFO_FOREGROUND, "%s", useText3.c_str());
 						} else {
-							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								INFO_FOREGROUND, "%s", tempStr.c_str());
+							screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+								INFO_FOREGROUND, "%s", useText3.c_str());
 						}
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
 							scene._bgShapes[temp]._aType == PERSON) {
+						Common::String giveText1 = FIXED(UserInterface_Give);
+						Common::String giveText2 = inv[_selector]._name;
+						Common::String giveText3 = Common::String::format(FIXED(UserInterface_GiveTo), tempStr.c_str());
+
 						// Giving an object to a person
-						width1 = screen.stringWidth(inv[_selector]._name);
-						x = width = screen.stringWidth("Give ");
-						x += width1;
-						width2 = screen.stringWidth(" to ");
+						x = width1 = screen.stringWidth(giveText1);
+						width2 = screen.stringWidth(giveText2);
 						x += width2;
-						x += screen.stringWidth(tempStr);
+						width3 = screen.stringWidth(giveText3);
+						x += width3;
 
 						// Ensure string will fit on-screen
 						while (x > 280) {
-							x -= screen.charWidth(tempStr.lastChar());
-							tempStr.deleteLastChar();
+							x -= screen.charWidth(giveText3.lastChar());
+							giveText3.deleteLastChar();
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
-							INFO_FOREGROUND, "Give ");
-						screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-							TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
-						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
-							INFO_FOREGROUND, " to ");
-						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-							INFO_FOREGROUND, "%s", tempStr.c_str());
+							INFO_FOREGROUND, "%s", giveText1.c_str());
+						screen.print(Common::Point(xStart + width1, INFO_LINE + 1),
+							TALK_FOREGROUND, "%s", giveText2.c_str());
+						screen.print(Common::Point(xStart + width1 + width2, INFO_LINE + 1),
+							INFO_FOREGROUND, "%s", giveText3.c_str());
 					}
 				} else {
 					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempStr.c_str());
@@ -686,7 +738,6 @@ void ScalpelUserInterface::doEnvControl() {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
-	static const char ENV_COMMANDS[7] = "ELSUDQ";
 
 	byte color;
 
@@ -725,15 +776,15 @@ void ScalpelUserInterface::doEnvControl() {
 
 		// Escape _key will close the dialog
 		if (_key == Common::KEYCODE_ESCAPE)
-			_key = 'E';
+			_key = saves._hotkeyExit;
 
-		if (_key == 'E' || _key == 'L' || _key == 'S' || _key == 'U' || _key == 'D' || _key == 'Q') {
-			const char *chP = strchr(ENV_COMMANDS, _key);
-			int btnIndex = !chP ? -1 : chP - ENV_COMMANDS;
-			saves.highlightButtons(btnIndex);
+		int buttonIndex = saves.identifyUserButton(_key);
+
+		if ((buttonIndex >= 0) || (_key >= '1' && _key <= '9')) {
+			saves.highlightButtons(buttonIndex);
 			_keyboardInput = true;
 
-			if (_key == 'E' || _key == 'Q') {
+			if (_key == saves._hotkeyExit || _key == saves._hotkeyQuit) {
 				saves._envMode = SAVEMODE_NONE;
 			} else if (_key >= '1' && _key <= '9') {
 				_keyboardInput = true;
@@ -768,25 +819,25 @@ void ScalpelUserInterface::doEnvControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if ((found == 0 && events._released) || _key == 'E') {
+		if ((found == 0 && events._released) || _key == saves._hotkeyExit) {
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
 
 			events._pressed = events._released = _keyboardInput = false;
 			_keyPress = '\0';
-		} else if ((found == 1 && events._released) || _key == 'L') {
+		} else if ((found == 1 && events._released) || _key == saves._hotkeyLoad) {
 			saves._envMode = SAVEMODE_LOAD;
 			if (_selector != -1) {
-				saves.loadGame(_selector + 1);
+				saves.loadGame(_selector);
 			}
-		} else if ((found == 2 && events._released) || _key == 'S') {
+		} else if ((found == 2 && events._released) || _key == saves._hotkeySave) {
 			saves._envMode = SAVEMODE_SAVE;
 			if (_selector != -1) {
 				if (saves.checkGameOnScreen(_selector))
 					_oldSelector = _selector;
 
 				if (saves.promptForDescription(_selector)) {
-					saves.saveGame(_selector + 1, saves._savegames[_selector]);
+					saves.saveGame(_selector, saves._savegames[_selector]);
 
 					banishWindow(1);
 					_windowBounds.top = CONTROLS_Y1;
@@ -807,7 +858,7 @@ void ScalpelUserInterface::doEnvControl() {
 					}
 				}
 			}
-		} else if (((found == 3 && events._released) || _key == 'U') && saves._savegameIndex) {
+		} else if (((found == 3 && events._released) || _key == saves._hotkeyUp) && saves._savegameIndex) {
 			bool moreKeys;
 			do {
 				saves._savegameIndex--;
@@ -826,9 +877,9 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = !saves._savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp);
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown);
 
 				// Check whether there are more pending U keys pressed
 				moreKeys = false;
@@ -836,10 +887,10 @@ void ScalpelUserInterface::doEnvControl() {
 					Common::KeyState keyState = events.getKey();
 
 					_key = toupper(keyState.keycode);
-					moreKeys = _key == 'U';
+					moreKeys = _key == saves._hotkeyUp;
 				}
 			} while ((saves._savegameIndex) && moreKeys);
-		} else if (((found == 4 && events._released) || _key == 'D') && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)) {
+		} else if (((found == 4 && events._released) || _key == saves._hotkeyDown) && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)) {
 			bool moreKeys;
 			do {
 				saves._savegameIndex++;
@@ -861,10 +912,10 @@ void ScalpelUserInterface::doEnvControl() {
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, saves._fixedTextUp);
 
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
-				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, saves._fixedTextDown);
 
 				// Check whether there are more pending D keys pressed
 				moreKeys = false;
@@ -872,16 +923,16 @@ void ScalpelUserInterface::doEnvControl() {
 					Common::KeyState keyState = events.getKey();
 					_key = toupper(keyState.keycode);
 
-					moreKeys = _key == 'D';
+					moreKeys = _key == saves._hotkeyDown;
 				}
 			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) && moreKeys);
-		} else if ((found == 5 && events._released) || _key == 'Q') {
+		} else if ((found == 5 && events._released) || _key == saves._hotkeyQuit) {
 			clearWindow();
-			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
+			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "%s", saves._fixedTextQuitGameQuestion.c_str());
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
-			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184 - screen.stringWidth("No") / 2, "No");
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136, saves._fixedTextQuitGameYes);
+			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184, saves._fixedTextQuitGameNo);
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
 			do {
@@ -905,7 +956,7 @@ void ScalpelUserInterface::doEnvControl() {
 					}
 
 					if (_key == Common::KEYCODE_ESCAPE)
-						_key = 'N';
+						_key = saves._hotkeyQuitGameNo;
 
 					if (_key == Common::KEYCODE_RETURN || _key == ' ') {
 						events._pressed = false;
@@ -920,28 +971,28 @@ void ScalpelUserInterface::doEnvControl() {
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, "Yes");
+					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, saves._fixedTextQuitGameYes);
 
 					if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9))
 						color = COMMAND_HIGHLIGHTED;
 					else
 						color = COMMAND_FOREGROUND;
-					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, "No");
+					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, saves._fixedTextQuitGameNo);
 				}
 
 				if (mousePos.x > 112 && mousePos.x < 159 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
-					_key = 'Y';
+					_key = saves._hotkeyQuitGameYes;
 
 				if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
-					_key = 'N';
-			} while (!_vm->shouldQuit() && _key != 'Y' && _key != 'N');
+					_key = saves._hotkeyQuitGameNo;
+			} while (!_vm->shouldQuit() && _key != saves._hotkeyQuitGameYes && _key != saves._hotkeyQuitGameNo);
 
-			if (_key == 'Y') {
+			if (_key == saves._hotkeyQuitGameYes) {
 				_vm->quitGame();
 				events.pollEvents();
 				return;
 			} else {
-				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "No");
+				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, saves._fixedTextQuitGameNo);
 				banishWindow(1);
 				_windowBounds.top = CONTROLS_Y1;
 				_key = -1;
@@ -950,14 +1001,14 @@ void ScalpelUserInterface::doEnvControl() {
 			if (_selector != -1) {
 				// Are we already in Load mode?
 				if (saves._envMode == SAVEMODE_LOAD) {
-					saves.loadGame(_selector + 1);
+					saves.loadGame(_selector);
 				} else if (saves._envMode == SAVEMODE_SAVE || saves.isSlotEmpty(_selector)) {
 					// We're already in save mode, or pointing to an empty save slot
 					if (saves.checkGameOnScreen(_selector))
 						_oldSelector = _selector;
 
 					if (saves.promptForDescription(_selector)) {
-						saves.saveGame(_selector + 1, saves._savegames[_selector]);
+						saves.saveGame(_selector, saves._savegames[_selector]);
 						banishWindow();
 						_windowBounds.top = CONTROLS_Y1;
 						_key = _oldKey = -1;
@@ -983,7 +1034,6 @@ void ScalpelUserInterface::doEnvControl() {
 
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Scene &scene = *_vm->_scene;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
@@ -1009,20 +1059,15 @@ void ScalpelUserInterface::doInvControl() {
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
-		Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
-		Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
-		Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
-		Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
-
 		if (found != -1)
 			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, fixedText_Exit);
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, inv._fixedTextExit);
 
 		if (found >= 0 && found <= 3) {
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, fixedText_Look);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, fixedText_Use);
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, fixedText_Give);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, inv._fixedTextLook);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, inv._fixedTextUse);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, inv._fixedTextGive);
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
@@ -1056,19 +1101,19 @@ void ScalpelUserInterface::doInvControl() {
 
 		if (_key == Common::KEYCODE_ESCAPE)
 			// Escape will also 'E'xit out of inventory display
-			_key = 'E';
+			_key = inv._hotkeyExit;
 
-		if (_key == 'E' || _key == 'L' || _key == 'U' || _key == 'G'
-				|| _key == '-' || _key == '+') {
+		int buttonIndex = inv.identifyUserButton(_key);
+
+		if ((buttonIndex >= 0) && (buttonIndex <= 5)) {
 			InvMode temp = inv._invMode;
 
-			const char *chP = strchr(INVENTORY_COMMANDS, _key);
-			inv._invMode = !chP ? INVMODE_INVALID : (InvMode)(chP - INVENTORY_COMMANDS);
+			inv._invMode = (InvMode)buttonIndex;
 			inv.invCommands(true);
 
 			inv._invMode = temp;
 			_keyboardInput = true;
-			if (_key == 'E')
+			if (_key == inv._hotkeyExit)
 				inv._invMode = INVMODE_EXIT;
 			_selector = -1;
 		} else {
@@ -1090,7 +1135,7 @@ void ScalpelUserInterface::doInvControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if ((found == 0 && events._released) || _key == 'E') {
+		if ((found == 0 && events._released) || _key == inv._hotkeyExit) {
 			inv.freeInv();
 			_infoFlag = true;
 			clearInfo();
@@ -1098,11 +1143,11 @@ void ScalpelUserInterface::doInvControl() {
 			_key = -1;
 			events.clearEvents();
 			events.setCursor(ARROW);
-		} else if ((found == 1 && events._released) || (_key == 'L')) {
+		} else if ((found == 1 && events._released) || (_key == inv._hotkeyLook)) {
 			inv._invMode = INVMODE_LOOK;
-		} else if ((found == 2 && events._released) || (_key == 'U')) {
+		} else if ((found == 2 && events._released) || (_key == inv._hotkeyUse)) {
 			inv._invMode = INVMODE_USE;
-		} else if ((found == 3 && events._released) || (_key == 'G')) {
+		} else if ((found == 3 && events._released) || (_key == inv._hotkeyGive)) {
 			inv._invMode = INVMODE_GIVE;
 		} else if (((found == 4 && events._released) || _key == ',') && inv._invIndex) {
 			if (inv._invIndex >= 6)
@@ -1228,11 +1273,11 @@ void ScalpelUserInterface::doLookControl() {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
-				screen._backBuffer2.blitFrom((*_controls)[0], pt);
+				screen._backBuffer2.SHblitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
 				_windowBounds.top = CONTROLS_Y1;
-				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_key = _oldKey = _hotkeyLook;
 				_temp = _oldTemp = 0;
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
@@ -1252,17 +1297,17 @@ void ScalpelUserInterface::doLookControl() {
 			// Looking at an inventory object
 			// Backup the user interface
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
-			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+			tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 			inv.drawInventory(INVENTORY_DONT_DISPLAY);
 			banishWindow(true);
 
 			// Restore the ui
-			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
+			screen._backBuffer2.SHblitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
 
 			_windowBounds.top = CONTROLS_Y1;
-			_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+			_key = _oldKey = _hotkeyLook;
 			_temp = _oldTemp = 0;
 			events.clearEvents();
 			_invLookFlag = false;
@@ -1278,39 +1323,83 @@ void ScalpelUserInterface::doMainControl() {
 	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
-	const char *commands = IS_3DO ? COMMANDS_3DO : COMMANDS;
+	int pressedButtonId = -1; // button id according to enum MAINBUTTON_*
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
 		events.clearKeyboard();
 		_key = -1;
+		_temp = 12; // no button currently selected
 
 		// Check whether the mouse is in any of the command areas
-		for (_temp = 0; (_temp < 12) && (_key == -1); ++_temp) {
-			Common::Rect r(MENU_POINTS[_temp][0], MENU_POINTS[_temp][1],
-				MENU_POINTS[_temp][2], MENU_POINTS[_temp][3]);
-			if (IS_3DO && _temp >= 0 && _temp <= 2) {
+		for (uint16 buttonNr = 0; buttonNr < 12; buttonNr++) {
+			Common::Rect r(MENU_POINTS[buttonNr][0], MENU_POINTS[buttonNr][1],
+				MENU_POINTS[buttonNr][2], MENU_POINTS[buttonNr][3]);
+			if (IS_3DO && buttonNr <= 2) {
 				r.left += UI_OFFSET_3DO - 1;
 				r.right += UI_OFFSET_3DO - 1;
 			}
-			if (r.contains(pt))
-				_key = commands[_temp];
+			if (r.contains(pt)) {
+				_temp = buttonNr;
+				pressedButtonId = buttonNr;
+				if (IS_3DO) {
+					// Replace some buttons according to 3DO
+					switch (pressedButtonId) {
+					case MAINBUTTON_JOURNAL:
+						pressedButtonId = MAINBUTTON_SETUP;
+						break;
+					case MAINBUTTON_FILES:
+						pressedButtonId = MAINBUTTON_LOADGAME;
+						break;
+					case MAINBUTTON_SETUP:
+						pressedButtonId = MAINBUTTON_SAVEGAME;
+						break;
+					default:
+						break;
+					}
+				}
+				// Get hotkey, that's assigned to it
+				assert(buttonNr < sizeof(_hotkeysIndexed));
+				_key = _hotkeysIndexed[buttonNr];
+				break;
+			}
 		}
-		--_temp;
 	} else if (_keyPress) {
 		// Keyboard control
 		_keyboardInput = true;
+		_temp = 12; // no button currently selected
 
-		if (_keyPress >= 'A' && _keyPress <= 'Z') {
-			const char *c = strchr(commands, _keyPress);
-			_temp = !c ? 12 : c - commands;
+		byte key = toupper(_keyPress);
+
+		for (uint16 buttonId = 0; buttonId < sizeof(_hotkeysIndexed); buttonId++) {
+			if (key == _hotkeysIndexed[buttonId]) {
+				pressedButtonId = buttonId;
+			}
+		}
+		if (pressedButtonId >= 0) {
+			_temp = pressedButtonId;
+			_key = key;
+			if (IS_3DO) {
+				// Fix up button number for 3DO
+				switch (pressedButtonId) {
+				case MAINBUTTON_SETUP:
+					_temp = 9;
+					break;
+				case MAINBUTTON_LOADGAME:
+					_temp = 10;
+					break;
+				case MAINBUTTON_SAVEGAME:
+					_temp = 11;
+					break;
+				default:
+					break;
+				}
+			}
 		} else {
-			_temp = 12;
+			_key  = -1;
 		}
 
-		if (_temp == 12)
-			_key = -1;
-
 		if (events._rightPressed) {
+			pressedButtonId = -1;
 			_temp = 12;
 			_key = -1;
 		}
@@ -1340,58 +1429,52 @@ void ScalpelUserInterface::doMainControl() {
 	}
 
 	if (!events._pressed && !_windowOpen) {
-		switch (_key) {
-		case 'L':
+		switch (pressedButtonId) {
+		case MAINBUTTON_LOOK:
 			toggleButton(0);
 			break;
-		case 'M':
+		case MAINBUTTON_MOVE:
 			toggleButton(1);
 			break;
-		case 'T':
+		case MAINBUTTON_TALK:
 			toggleButton(2);
 			break;
-		case 'P':
+		case MAINBUTTON_PICKUP:
 			toggleButton(3);
 			break;
-		case 'O':
+		case MAINBUTTON_OPEN:
 			toggleButton(4);
 			break;
-		case 'C':
+		case MAINBUTTON_CLOSE:
 			toggleButton(5);
 			break;
-		case 'I':
+		case MAINBUTTON_INVENTORY:
 			pushButton(6);
 			_selector = _oldSelector = -1;
 			_menuMode = INV_MODE;
-			inv.drawInventory(PLAIN_INVENTORY);
+			inv.drawInventory(LOOK_INVENTORY_MODE);
 			break;
-		case 'U':
+		case MAINBUTTON_USE:
 			pushButton(7);
 			_selector = _oldSelector = -1;
 			_menuMode = USE_MODE;
 			inv.drawInventory(USE_INVENTORY_MODE);
 			break;
-		case 'G':
+		case MAINBUTTON_GIVE:
 			pushButton(8);
 			_selector = _oldSelector = -1;
 			_menuMode = GIVE_MODE;
 			inv.drawInventory(GIVE_INVENTORY_MODE);
 			break;
-		case 'J':
-			pushButton(9);
-			_menuMode = JOURNAL_MODE;
-			journalControl();
+		case MAINBUTTON_JOURNAL:
+			if (!IS_3DO) {
+				pushButton(9);
+				_menuMode = JOURNAL_MODE;
+				journalControl();
+			}
 			break;
-		case 'F':
-			if (IS_3DO) {
-				if (_temp == 10) {
-					pushButton(10);
-					vm.showScummVMRestoreDialog();
-				} else if (_temp == 11) {
-					pushButton(11);
-					vm.showScummVMSaveDialog();
-				}
-			} else {
+		case MAINBUTTON_FILES:
+			if (!IS_3DO) {
 				pushButton(10);
 
 				// Create a thumbnail of the current screen before the files dialog is shown, in case
@@ -1413,7 +1496,19 @@ void ScalpelUserInterface::doMainControl() {
 				}
 			}
 			break;
-		case 'S':
+		case MAINBUTTON_LOADGAME:
+			if (IS_3DO) {
+				pushButton(10);
+				vm.showScummVMRestoreDialog();
+			}
+			break;
+		case MAINBUTTON_SAVEGAME:
+			if (IS_3DO) {
+				pushButton(11);
+				vm.showScummVMSaveDialog();
+			}
+			break;
+		case MAINBUTTON_SETUP:
 			pushButton(IS_3DO ? 9 : 11);
 			_menuMode = SETUP_MODE;
 			Settings::show(_vm);
@@ -1500,7 +1595,6 @@ void ScalpelUserInterface::doPickControl() {
 
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
-	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
@@ -1511,28 +1605,24 @@ void ScalpelUserInterface::doTalkControl() {
 	_key = _oldKey = -1;
 	_keyboardInput = false;
 
-	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
-	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
-	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
-
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
 		// Handle button printing
 		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowExit);
 		else if (_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit);
 
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowUp);
 		else if (talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowUp);
 
 		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, talk._fixedTextWindowDown);
 		else if (talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowDown);
 
 		bool found = false;
 		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
@@ -1548,7 +1638,7 @@ void ScalpelUserInterface::doTalkControl() {
 	if (_keyPress) {
 		_key = toupper(_keyPress);
 		if (_key == Common::KEYCODE_ESCAPE)
-			_key = 'E';
+			_key = talk._hotkeyWindowExit;
 
 		// Check for number press indicating reply line
 		if (_key >= '1' && _key <= ('1' + (int)talk._statements.size() - 1)) {
@@ -1561,7 +1651,7 @@ void ScalpelUserInterface::doTalkControl() {
 					break;
 				}
 			}
-		} else if (_key == 'E' || _key == 'U' || _key == 'D') {
+		} else if (_key == talk._hotkeyWindowExit || _key == talk._hotkeyWindowUp || _key == talk._hotkeyWindowDown) {
 			_keyboardInput = true;
 		} else {
 			_selector = -1;
@@ -1589,7 +1679,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 	if (events._released || _keyboardInput) {
 		if (((Common::Rect(99, CONTROLS_Y, 138, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'E') && _endKeyActive) {
+				|| _key == talk._hotkeyWindowExit) && _endKeyActive) {
 			talk.freeTalkVars();
 			talk.pullSequence();
 
@@ -1597,7 +1687,7 @@ void ScalpelUserInterface::doTalkControl() {
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
 		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'U') && talk._moreTalkUp) {
+				|| _key == talk._hotkeyWindowUp) && talk._moreTalkUp) {
 			while (talk._statements[--talk._talkIndex]._talkMap == -1)
 				;
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
@@ -1606,7 +1696,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (((Common::Rect(181, CONTROLS_Y, 220, CONTROLS_Y + 10).contains(mousePos) && events._released)
-				|| _key == 'D') && talk._moreTalkDown) {
+				|| _key == talk._hotkeyWindowDown) && talk._moreTalkDown) {
 			do {
 				++talk._talkIndex;
 			} while (talk._talkIndex < (int)talk._statements.size() && talk._statements[talk._talkIndex]._talkMap == -1);
@@ -1617,9 +1707,9 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (_selector != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowUp);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowDown);
 
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
@@ -1713,9 +1803,9 @@ void ScalpelUserInterface::doTalkControl() {
 								!talk._statements[select]._statement.hasPrefix("^")) {
 							// Not a reply first file, so display the new selections
 							if (_endKeyActive)
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, talk._fixedTextWindowExit);
 							else
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, talk._fixedTextWindowExit);
 
 							talk.displayTalk(true);
 							events.setCursor(ARROW);
@@ -1776,7 +1866,7 @@ void ScalpelUserInterface::journalControl() {
 			if (keyState.keycode == Common::KEYCODE_x && (keyState.flags & Common::KBD_ALT)) {
 				_vm->quitGame();
 				return;
-			} else if (keyState.keycode == Common::KEYCODE_e || keyState.keycode == Common::KEYCODE_ESCAPE) {
+			} else if (toupper(keyState.ascii) == journal._hotkeyExit || keyState.keycode == Common::KEYCODE_ESCAPE) {
 				doneFlag = true;
 			} else {
 				_key = toupper(keyState.keycode);
@@ -1798,7 +1888,7 @@ void ScalpelUserInterface::journalControl() {
 	// Reset the palette
 	screen.setPalette(screen._cMap);
 
-	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
@@ -1832,19 +1922,19 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
 
-				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
-				screen._backBuffer2.transBlitFrom((*_controls)[0], pt);
+				tempSurface.SHblitFrom(screen._backBuffer2, Common::Point(0, 0),
+					Common::Rect(pt.x, pt.y, pt.x + tempSurface.width(), pt.y + tempSurface.height()));
+				screen._backBuffer2.SHtransBlitFrom((*_controls)[0], pt);
 
 				banishWindow(1);
 				events.setCursor(MAGNIFY);
 				_windowBounds.top = CONTROLS_Y1;
-				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_key = _oldKey = _hotkeyLook;
 				_temp = _oldTemp = 0;
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
 
-				screen._backBuffer2.blitFrom(tempSurface, pt);
+				screen._backBuffer2.SHblitFrom(tempSurface, pt);
 			} else {
 				events.setCursor(ARROW);
 				banishWindow(true);
@@ -1866,7 +1956,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 			banishWindow(1);
 
 			_windowBounds.top = CONTROLS_Y1;
-			_key = _oldKey = COMMANDS[INV_MODE - 1];
+			_key = _oldKey = _hotkeyInventory;
 			_temp = _oldTemp = 0;
 			events.clearEvents();
 
@@ -1878,7 +1968,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 		return;
 	}
 
-	Surface &bb = *screen._backBuffer;
+	Surface &bb = *screen.getBackBuffer();
 	if (firstTime) {
 		// Only draw the border on the first call
 		_infoFlag = true;
@@ -1938,20 +2028,16 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 
 	// Handle display depending on whether all the message was shown
 	if (!endOfStr) {
+		Common::String fixedText_PressKeyForMore = FIXED(PressKey_ForMore);
+
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2,
-			PRESS_KEY_FOR_MORE);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
-			screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, "P");
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyForMore);
 		_descStr = msgP;
 	} else {
+		Common::String fixedText_PressKeyToContinue = FIXED(PressKey_ToContinue);
+
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
-			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2,
-			PRESS_KEY_TO_CONTINUE);
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
-			screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2, CONTROLS_Y),
-			COMMAND_FOREGROUND, "P");
+			SHERLOCK_SCREEN_WIDTH / 2, fixedText_PressKeyToContinue);
 		_descStr = "";
 	}
 
@@ -1986,9 +2072,9 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 
 	if (slideUp) {
 		// Gradually slide up the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
-				Common::Rect(0, 0, bgSurface.w(), idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+				Common::Rect(0, 0, bgSurface.width(), idx));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -1996,21 +2082,21 @@ void ScalpelUserInterface::summonWindow(const Surface &bgSurface, bool slideUp) 
 		}
 	} else {
 		// Gradually slide down the display of the window
-		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface,
-				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-				Common::Rect(0, bgSurface.h() - idx, bgSurface.w(), bgSurface.h()));
-			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(),
-				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h() + idx));
+		for (int idx = 1; idx <= bgSurface.height(); idx += 2) {
+			screen.getBackBuffer()->SHblitFrom(bgSurface,
+				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+				Common::Rect(0, bgSurface.height() - idx, bgSurface.width(), bgSurface.height()));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(),
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.height() + idx));
 
 			events.delay(10);
 		}
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
-		Common::Rect(0, 0, bgSurface.w(), bgSurface.h()));
-	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(), bgSurface.w(), bgSurface.h());
+	screen.getBackBuffer()->SHblitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height()),
+		Common::Rect(0, 0, bgSurface.width(), bgSurface.height()));
+	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.height(), bgSurface.width(), bgSurface.height());
 
 	_windowOpen = true;
 }
@@ -2021,10 +2107,10 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	// Extract the window that's been drawn on the back buffer
 	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
+	tempSurface.SHblitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 
 	// Remove drawn window with original user interface
-	screen._backBuffer1.blitFrom(screen._backBuffer2,
+	screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 		Common::Point(0, height), r);
 
 	// Display the window gradually on-screen
@@ -2048,7 +2134,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 					Common::copy_backward(pSrc, pSrcEnd, pDest);
 
 					// Restore lines from the ui in the secondary back buffer
-					screen._backBuffer1.blitFrom(screen._backBuffer2,
+					screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 						Common::Point(0, CONTROLS_Y),
 						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
@@ -2058,14 +2144,14 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 				}
 
 				// Restore final two old lines
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 2),
 					Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2,
 						SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH, 2);
 			} else {
 				// Restore old area to completely erase window
-				screen._backBuffer1.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2,
 					Common::Point(0, CONTROLS_Y),
 					Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
@@ -2085,7 +2171,7 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 			}
 
 			// Show entire final area
-			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
+			screen._backBuffer1.SHblitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}
@@ -2167,7 +2253,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_Done));
 				_menuCounter = 25;
 			}
 		}
@@ -2177,9 +2263,9 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		clearInfo();
 
 		if (giveMode) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_NoThankYou));
 		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", FIXED(UserInterface_YouCantDoThat));
 		} else {
 			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());

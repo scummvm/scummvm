@@ -64,7 +64,7 @@ public:
 	 */
 	DECLARE_FUNCTION(chapter1Handler)
 
-	DECLARE_FUNCTION(function6)
+	DECLARE_FUNCTION(inBed)
 	DECLARE_FUNCTION(function7)
 	DECLARE_FUNCTION(function8)
 	DECLARE_FUNCTION(function9)

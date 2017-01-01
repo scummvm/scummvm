@@ -84,6 +84,8 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
 
 	virtual void displayMessageOnOSD(const char *msg) {}
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
+
 
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;

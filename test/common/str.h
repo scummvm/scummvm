@@ -332,6 +332,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*1"));
 
+		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
+
 		TS_ASSERT(!Common::String("").matchString("*_"));
 		TS_ASSERT(Common::String("a").matchString("a***"));
 	}
@@ -415,5 +418,79 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_LESS_THAN(scumm_strnicmp("abCd", "ABCe", 4), 0);
 		TS_ASSERT_EQUALS(scumm_strnicmp("abCd", "ABCde", 4), 0);
 		TS_ASSERT_LESS_THAN(scumm_strnicmp("abCd", "ABCde", 5), 0);
+	}
+
+	void test_replace() {
+		// Tests created with the results of the STL std::string class
+
+		// --------------------------
+		// Tests without displacement
+		// --------------------------
+		Common::String testString = Common::String("This is the original string.");
+
+		// Positions and sizes as parameters, string as replacement
+		testString.replace(12, 8, Common::String("newnewne"));
+		TS_ASSERT_EQUALS(testString, Common::String("This is the newnewne string."));
+
+		// The same but with char*
+		testString.replace(0, 4, "That");
+		TS_ASSERT_EQUALS(testString, Common::String("That is the newnewne string."));
+
+		// Using iterators (also a terribly useless program as a test).
+		testString.replace(testString.begin(), testString.end(), "That is the supernew string.");
+		TS_ASSERT_EQUALS(testString, Common::String("That is the supernew string."));
+
+		// With sub strings of character arrays.
+		testString.replace(21, 6, "That phrase is new.", 5, 6);
+		TS_ASSERT_EQUALS(testString, Common::String("That is the supernew phrase."));
+
+		// Now with substrings.
+		testString.replace(12, 2, Common::String("That hy is new."), 5, 2);
+		TS_ASSERT_EQUALS(testString, Common::String("That is the hypernew phrase."));
+
+		// --------------------------
+		// Tests with displacement
+		// --------------------------
+		testString = Common::String("Hello World");
+
+		// Positions and sizes as parameters, string as replacement
+		testString.replace(6, 5, Common::String("friends"));
+		TS_ASSERT_EQUALS(testString, Common::String("Hello friends"));
+
+		// The same but with char*
+		testString.replace(0, 5, "Good");
+		TS_ASSERT_EQUALS(testString, Common::String("Good friends"));
+
+		// Using iterators (also a terribly useless program as a test)
+		testString.replace(testString.begin() + 4, testString.begin() + 5, " coffee ");
+		TS_ASSERT_EQUALS(testString, Common::String("Good coffee friends"));
+
+		// With sub strings of character arrays
+		testString.replace(4, 0, "Lorem ipsum expresso dolor sit amet", 11, 9);
+		TS_ASSERT_EQUALS(testString, Common::String("Good expresso coffee friends"));
+
+		// Now with substrings
+		testString.replace(5, 9, Common::String("Displaced ristretto string"), 10, 10);
+		TS_ASSERT_EQUALS(testString, Common::String("Good ristretto coffee friends"));
+
+        // -----------------------
+        // Deep copy compliance
+        // -----------------------
+
+        // Makes a deep copy without changing the length of the original
+        Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
+        Common::String s2(s1);
+        TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
+        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+        s1.replace(0, 4, "TEST");
+        TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
+        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+
+        // Makes a deep copy when we shorten the string
+    	Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
+		Common::String s4(s3);
+		s3.replace(0, 32, "");
+		TS_ASSERT_EQUALS(s3, "TestTestTest");
+		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
 	}
 };

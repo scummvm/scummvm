@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+	<head>
+		<title>ScummVM</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class='header'>
+				<center><img src="logo.png"/></center>
+			</div>
+			<div class="controls">
+				<table class="buttons"><tr>
+					<td><a href="javascript:show('create_directory');">{create_directory_button}</a></td>
+					<td><a href="javascript:show('upload_file');">{upload_files_button}</a></td>
+				</tr></table>
+				<div id="create_directory" class="modal">
+					<p>{create_directory_desc}</p>
+					<form action="create" id="create_directory_form" onsubmit="return createDirectory();">
+						<input type="hidden" name="path" value="{path}"/>
+						<input type="hidden" name="ajax" value="true"/>
+						<input type="text" name="directory_name" value=""/>
+						<input type="submit" value="{create_directory_button}"/>
+					</form>
+				</div>
+				<div id="upload_file" class="modal">
+					<p>{upload_file_desc}</p>
+					<form action="upload?path={path}&ajax=true" method="post" enctype="multipart/form-data" id="files_upload_form">
+						<!-- we don't need "[]" in the name, as our webserver is not using PHP -->
+						<!-- "allowdirs" is a proposal, not implemented yet -->
+						<input type="file" name="upload_file-f" allowdirs multiple/>
+						<br/><br/>
+						<p>{or_upload_directory_desc}</p>
+						<!-- "directory"/"webkitdirectory" works in Chrome only yet, "multiple" is just in case here -->
+						<input type="file" name="upload_file-d" directory webkitdirectory multiple/>
+						<input type="submit" value="{upload_file_button}"/>
+					</form>
+				</div>
+			</div>
+			<div class="content">
+				<div id="loading_message">{loading}</div>
+				<div id="error_message">{error}</div>
+				<table class="files_list" id="files_list">
+				</table>
+			</div>
+		</div>
+		<script>
+			function show(id) {
+				var e = document.getElementById(id);
+				var visible = (e.style.display == "block");
+				if (visible) id = ""; //hide
+
+				e = document.getElementById("create_directory");
+				e.style.display = (e.id == id ? "block" : "none");
+				e = document.getElementById("upload_file");
+				e.style.display = (e.id == id ? "block" : "none");
+			}
+		</script>
+		<script src="ajax.js"></script>
+		<script>
+			window.onload = function () {
+				showDirectory("{start_path}");
+			}
+
+			function showDirectory(path) {
+				if (isLoading) return;
+				showLoading();
+				ajax.getAndParseJson("./list", {"path": path}, getCallback(path));
+			}
+
+			function getCallback(path) {
+				return function (jsonResponse) {
+					if (jsonResponse.type == "error") {
+						showError();
+						return;
+					}
+
+					openDirectory(path, jsonResponse.items);
+					hideLoading();
+				};
+			}
+
+			function createDirectory() {
+				if (isLoading) return;
+				showLoading();
+
+				var data = {"answer_json": "true"};
+				var elements = document.getElementById("create_directory_form").elements;
+				for (var el in elements)
+					data[elements[el].name] = elements[el].value;
+
+				ajax.getAndParseJson("./create", data, getCreateDirectoryCallback(data["path"]));
+				show("create_directory");
+				return false; // invalidate form, so it won't submit
+			}
+
+			function getCreateDirectoryCallback(path) {
+				return function (jsonResponse) {
+					console.log(jsonResponse);
+
+					if (jsonResponse.type == "error") {
+						showError();
+						return;
+					}
+
+					hideLoading();
+					showDirectory(path);
+				};
+			}
+
+			var isLoading = false;
+
+			function showLoading() {
+				isLoading = true;
+				var e = document.getElementById("loading_message");
+				e.style.display = "block";
+				e = document.getElementById("error_message");
+				e.style.display = "none";
+			}
+
+			function showError() {
+				isLoading = false;
+				var e = document.getElementById("loading_message");
+				e.style.display = "none";
+				e = document.getElementById("error_message");
+				e.style.display = "block";
+				//TODO: pass the actual message there?
+			}
+
+			function hideLoading() {
+				isLoading = false;
+				var e = document.getElementById("loading_message");
+				e.style.display = "none";
+				e = document.getElementById("error_message");
+				e.style.display = "none";
+			}
+
+			function openDirectory(path, items) {
+				// update path
+				document.getElementById("create_directory_form").elements["path"].value = path;
+				document.getElementById("files_upload_form").action = "upload?path=" + path + "&ajax=true";
+
+				// update table contents
+				listDirectory(path, items);
+			}
+
+			function makeBreadcrumb(name, path) {
+				var a = createElementWithContents("a", name);
+				a.onclick = function () { showDirectory(path); };
+				a.href = "javascript:void(0);";
+				return a;
+			}
+
+			function makeBreadcrumbs(path) {
+				var b = document.createElement("b");
+				b.className = "directory_name";
+
+				b.appendChild(createElementWithContents("span", "{index_of}"));
+				var slashes = true;
+				var crumb = "";
+				var currentPath = "";
+				path += ' '; //so the last slash is added
+				for (var i=0; i<path.length; ++i) {
+					if (path[i] == '/' || path[i] == '\\') {
+						if (!slashes) {
+							currentPath += crumb;
+							b.appendChild(makeBreadcrumb(crumb, currentPath+'/'));
+							slashes = true;
+						}
+					} else {
+						if (slashes) {
+							currentPath += "/";
+							if (currentPath == "/") { //make special '/' crumb here
+								b.appendChild(makeBreadcrumb('/', '/'));
+							} else {
+								b.appendChild(createElementWithContents("span", "/"));
+							}
+							slashes = false;
+							crumb = "";
+						}
+						crumb += path[i];
+					}
+				}
+				return b;
+			}
+
+			function listDirectory(path, items) {
+				// cleanup the list
+				var files_list = document.getElementById("files_list");
+				while (files_list.hasChildNodes())
+					files_list.removeChild(files_list.firstChild);
+				var tbody = document.createElement("tbody");
+
+				// add header item
+				var tr = document.createElement("tr");
+				tr.appendChild(createElementWithContents("td", ""));
+				var td = document.createElement("td");
+				td.appendChild(makeBreadcrumbs(path));
+				tr.appendChild(td);
+				tr.appendChild(createElementWithContents("td", ""));
+				tbody.appendChild(tr);
+
+				// add items
+				for (var i in items)
+					addItem(tbody, items[i]);
+
+				files_list.appendChild(tbody);
+			}
+
+			function addItem(tbody, item) {
+				var tr = document.createElement("tr");
+				var td = document.createElement("td");
+				var img = document.createElement("img");
+				img.src = "./icons/" + item.icon;
+				td.appendChild(img);
+				tr.appendChild(td);
+
+				td = document.createElement("td");
+				var a = createElementWithContents("a", item.name);
+				if (item.isDirectory) {
+					a.onclick = function () { showDirectory(item.path); };
+					a.href = "javascript:void(0);";
+				} else
+					a.href = "./download?path=" + encodeURIComponent(item.path);
+				td.appendChild(a);
+				tr.appendChild(td);
+
+				tr.appendChild(createElementWithContents("td", ""));
+				tbody.appendChild(tr);
+			}
+
+			function createElementWithContents(type, innerHTML) {
+				var e = document.createElement(type);
+				e.innerHTML = innerHTML;
+				return e;
+			}
+		</script>
+	</body>
+</html>

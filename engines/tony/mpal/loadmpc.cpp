@@ -331,7 +331,7 @@ static const byte *parseItem(const byte *lpBuf, LpMpalItem lpmiItem) {
 
 	byte len = *lpBuf;
 	lpBuf++;
-	memcpy(lpmiItem->_lpszDescribe, lpBuf, MIN((byte)127, len));
+	memcpy(lpmiItem->_lpszDescribe, lpBuf, MIN((byte)MAX_DESCRIBE_SIZE, len));
 	lpBuf += len;
 
 	if (len >= MAX_DESCRIBE_SIZE)

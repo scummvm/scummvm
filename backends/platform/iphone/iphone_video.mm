@@ -23,7 +23,7 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "iphone_video.h"
+#include "backends/platform/iphone/iphone_video.h"
 
 #include "graphics/colormasks.h"
 

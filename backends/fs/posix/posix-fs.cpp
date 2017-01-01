@@ -38,6 +38,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
 
 #ifdef __OS2__
 #define INCL_DOS
@@ -250,5 +252,97 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
+
+bool POSIXFilesystemNode::create(bool isDir) {
+	bool success;
+
+	if (isDir) {
+		success = mkdir(_path.c_str(), 0755) == 0;
+	} else {
+		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
+		success = fd >= 0;
+
+		if (fd >= 0) {
+			close(fd);
+		}
+	}
+
+	if (success) {
+		setFlags();
+		if (_isValid) {
+			if (_isDirectory != isDir) warning("failed to create %s: got %s", isDir ? "directory" : "file", _isDirectory ? "directory" : "file");
+			return _isDirectory == isDir;
+		}
+
+		warning("POSIXFilesystemNode: %s() was a success, but stat indicates there is no such %s",
+			isDir ? "mkdir" : "creat", isDir ? "directory" : "file");
+		return false;
+	}
+
+	return false;
+}
+
+namespace Posix {
+
+bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
+	struct stat sb;
+
+	// Check whether the prefix exists if one is supplied.
+	if (prefix) {
+		if (stat(prefix, &sb) != 0) {
+			return false;
+		} else if (!S_ISDIR(sb.st_mode)) {
+			return false;
+		}
+	}
+
+	// Obtain absolute path.
+	Common::String path;
+	if (prefix) {
+		path = prefix;
+		path += '/';
+		path += dir;
+	} else {
+		path = dir;
+	}
+
+	path = Common::normalizePath(path, '/');
+
+	const Common::String::iterator end = path.end();
+	Common::String::iterator cur = path.begin();
+	if (*cur == '/')
+		++cur;
+
+	do {
+		if (cur + 1 != end) {
+			if (*cur != '/') {
+				continue;
+			}
+
+			// It is kind of ugly and against the purpose of Common::String to
+			// insert 0s inside, but this is just for a local string and
+			// simplifies the code a lot.
+			*cur = '\0';
+		}
+
+		if (mkdir(path.c_str(), 0755) != 0) {
+			if (errno == EEXIST) {
+				if (stat(path.c_str(), &sb) != 0) {
+					return false;
+				} else if (!S_ISDIR(sb.st_mode)) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		*cur = '/';
+	} while (cur++ != end);
+
+	return true;
+}
+
+} // End of namespace Posix
 
 #endif //#if defined(POSIX)

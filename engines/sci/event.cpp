@@ -29,6 +29,10 @@
 #include "sci/console.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
+#include "sci/graphics/frameout.h"
+#endif
 #include "sci/graphics/screen.h"
 
 namespace Sci {
@@ -38,13 +42,13 @@ struct ScancodeRow {
 	const char *keys;
 };
 
-const ScancodeRow s_scancodeRows[] = {
+static const ScancodeRow scancodeAltifyRows[] = {
 	{ 0x10, "QWERTYUIOP[]"  },
 	{ 0x1e, "ASDFGHJKL;'\\" },
 	{ 0x2c, "ZXCVBNM,./"    }
 };
 
-const byte codepagemap_88591toDOS[0x80] = {
+static const byte codePageMap88591ToDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
 	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
@@ -61,7 +65,7 @@ struct SciKeyConversion {
 	int sciKeyNumlockOn;
 };
 
-const SciKeyConversion keyMappings[] = {
+static const SciKeyConversion keyMappings[] = {
 	{ Common::KEYCODE_UP          , SCI_KEY_UP     , SCI_KEY_UP     },
 	{ Common::KEYCODE_DOWN        , SCI_KEY_DOWN   , SCI_KEY_DOWN   },
 	{ Common::KEYCODE_RIGHT       , SCI_KEY_RIGHT  , SCI_KEY_RIGHT  },
@@ -94,20 +98,23 @@ const SciKeyConversion keyMappings[] = {
 struct MouseEventConversion {
 	Common::EventType commonType;
 	short sciType;
-	short data;
 };
 
-const MouseEventConversion mouseEventMappings[] = {
-	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 1 },
-	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 2 },
-	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS, 3 },
-	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 1 },
-	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 2 },
-	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE, 3 }
+static const MouseEventConversion mouseEventMappings[] = {
+	{ Common::EVENT_LBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{ Common::EVENT_RBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{ Common::EVENT_MBUTTONDOWN,   SCI_EVENT_MOUSE_PRESS },
+	{   Common::EVENT_LBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
+	{   Common::EVENT_RBUTTONUP, SCI_EVENT_MOUSE_RELEASE },
+	{   Common::EVENT_MBUTTONUP, SCI_EVENT_MOUSE_RELEASE }
 };
 
-EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended) {
-}
+EventManager::EventManager(bool fontIsExtended) :
+	_fontIsExtended(fontIsExtended)
+#ifdef ENABLE_SCI32
+	, _hotRectanglesActive(false)
+#endif
+	{}
 
 EventManager::~EventManager() {
 }
@@ -117,9 +124,9 @@ static int altify(int ch) {
 	int row;
 	int c = toupper((char)ch);
 
-	for (row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
-		const char *keys = s_scancodeRows[row].keys;
-		int offset = s_scancodeRows[row].offset;
+	for (row = 0; row < ARRAYSIZE(scancodeAltifyRows); row++) {
+		const char *keys = scancodeAltifyRows[row].keys;
+		int offset = scancodeAltifyRows[row].offset;
 
 		while (*keys) {
 			if (*keys == c)
@@ -134,8 +141,13 @@ static int altify(int ch) {
 }
 
 SciEvent EventManager::getScummVMEvent() {
-	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
-	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, 0, Common::Point(0, 0) };
+#ifdef ENABLE_SCI32
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
+#else
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+	SciEvent noEvent = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -156,7 +168,29 @@ SciEvent EventManager::getScummVMEvent() {
 	// via pollEvent.
 	// We also adjust the position based on the scaling of the screen.
 	Common::Point mousePos = em->getMousePos();
-	g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+
+#if ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		const Buffer &screen = g_sci->_gfxFrameout->getCurrentBuffer();
+
+		// This will clamp `mousePos` according to the restricted zone,
+		// so any cursor or screen item associated with the mouse position
+		// does not bounce when it hits the edge (or ignore the edge)
+		g_sci->_gfxCursor32->deviceMoved(mousePos);
+
+		Common::Point mousePosSci = mousePos;
+		mulru(mousePosSci, Ratio(screen.scriptWidth, screen.screenWidth), Ratio(screen.scriptHeight, screen.screenHeight));
+		noEvent.mousePosSci = input.mousePosSci = mousePosSci;
+
+		if (_hotRectanglesActive) {
+			checkHotRectangles(mousePosSci);
+		}
+	} else {
+#endif
+		g_sci->_gfxScreen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
+#if ENABLE_SCI32
+	}
+#endif
 
 	noEvent.mousePos = input.mousePos = mousePos;
 
@@ -169,16 +203,55 @@ SciEvent EventManager::getScummVMEvent() {
 
 		return noEvent;
 	}
-	if (ev.type == Common::EVENT_QUIT) {
+	if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RTL) {
 		input.type = SCI_EVENT_QUIT;
 		return input;
 	}
+
+	int scummVMKeyFlags;
+
+	switch (ev.type) {
+	case Common::EVENT_KEYDOWN:
+	case Common::EVENT_KEYUP:
+		// Use keyboard modifiers directly in case this is a keyboard event
+		scummVMKeyFlags = ev.kbd.flags;
+		break;
+	default:
+		// Otherwise get them from EventManager
+		scummVMKeyFlags = em->getModifierState();
+		break;
+	}
+
+	input.modifiers =
+		((scummVMKeyFlags & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
+		((scummVMKeyFlags & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
+		((scummVMKeyFlags & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
+		// Caps lock and Scroll lock have been removed, cause we already handle upper
+		// case keys and Scroll lock doesn't seem to be used anywhere
+		//((ourModifiers & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
+		//((ourModifiers & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 
 	// Handle mouse events
 	for (int i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
 		if (mouseEventMappings[i].commonType == ev.type) {
 			input.type = mouseEventMappings[i].sciType;
-			input.data = mouseEventMappings[i].data;
+			// Sierra passed keyboard modifiers for mouse events, too.
+
+			// Sierra also set certain modifiers within their mouse interrupt handler
+			// This whole thing was probably meant for people using a mouse, that only featured 1 button
+			// So the user was able to press Ctrl and click the mouse button to create a right click.
+			switch (ev.type) {
+			case Common::EVENT_RBUTTONDOWN: // right button
+			case Common::EVENT_RBUTTONUP:
+				input.modifiers |= (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT); // this value was hardcoded in the mouse interrupt handler
+				break;
+			case Common::EVENT_MBUTTONDOWN: // middle button
+			case Common::EVENT_MBUTTONUP:
+				input.modifiers |= SCI_KEYMOD_CTRL; // this value was hardcoded in the mouse interrupt handler
+				break;
+			default:
+				break;
+			}
 			return input;
 		}
 	}
@@ -187,7 +260,7 @@ SciEvent EventManager::getScummVMEvent() {
 	if (ev.type != Common::EVENT_KEYDOWN)
 		return noEvent;
 
-	// Check for Control-D (debug console)
+	// Check for Control-Shift-D (debug console)
 	if (ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
 		// Open debug console
 		Console *con = g_sci->getSciDebugger();
@@ -197,24 +270,23 @@ SciEvent EventManager::getScummVMEvent() {
 
 	// Process keyboard events
 
-	int modifiers = em->getModifierState();
 	bool numlockOn = (ev.kbd.flags & Common::KBD_NUM);
 
-	input.data = ev.kbd.keycode;
+	Common::KeyCode scummVMKeycode = ev.kbd.keycode;
+
 	input.character = ev.kbd.ascii;
 	input.type = SCI_EVENT_KEYBOARD;
 
-	input.modifiers =
-		((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
-		((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
-		((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
+	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9) {
+		if (!(scummVMKeyFlags & Common::KBD_NUM)) {
+			// HACK: Num-Lock not enabled
+			// We shouldn't get a valid ascii code in these cases. We fix it here, so that cursor keys
+			// on the numpad work properly.
+			input.character = 0;
+		}
+	}
 
-	// Caps lock and Scroll lock have been removed, cause we already handle upper
-	// case keys ad Scroll lock doesn't seem to be used anywhere
-		//((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
-		//((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
-
-	if (!(input.data & 0xFF00)) {
+	if ((input.character) && (input.character <= 0xFF)) {
 		// Directly accept most common keys without conversion
 		if ((input.character >= 0x80) && (input.character <= 0xFF)) {
 			// If there is no extended font, we will just clear the
@@ -228,26 +300,27 @@ SciEvent EventManager::getScummVMEvent() {
 				return noEvent;
 			// Convert 8859-1 characters to DOS (cp850/437) for
 			// multilingual SCI01 games
-			input.character = codepagemap_88591toDOS[input.character & 0x7f];
+			input.character = codePageMap88591ToDOS[input.character & 0x7f];
 		}
-		if (input.data == Common::KEYCODE_TAB) {
-			input.character = input.data = SCI_KEY_TAB;
-			if (modifiers & Common::KBD_SHIFT)
+		if (scummVMKeycode == Common::KEYCODE_TAB) {
+			input.character = SCI_KEY_TAB;
+			if (scummVMKeyFlags & Common::KBD_SHIFT)
 				input.character = SCI_KEY_SHIFT_TAB;
 		}
-		if (input.data == Common::KEYCODE_DELETE)
-			input.data = input.character = SCI_KEY_DELETE;
-	} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
+		if (scummVMKeycode == Common::KEYCODE_DELETE)
+			input.character = SCI_KEY_DELETE;
+	} else if ((scummVMKeycode >= Common::KEYCODE_F1) && scummVMKeycode <= Common::KEYCODE_F10) {
 		// SCI_K_F1 == 59 << 8
 		// SCI_K_SHIFT_F1 == 84 << 8
-		input.character = input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
-		if (modifiers & Common::KBD_SHIFT)
-			input.character = input.data + 0x1900;
+		if (!(scummVMKeyFlags & Common::KBD_SHIFT))
+			input.character = SCI_KEY_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
+		else
+			input.character = SCI_KEY_SHIFT_F1 + ((scummVMKeycode - Common::KEYCODE_F1)<<8);
 	} else {
 		// Special keys that need conversion
 		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {
-			if (keyMappings[i].scummVMKey == ev.kbd.keycode) {
-				input.character = input.data = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
+			if (keyMappings[i].scummVMKey == scummVMKeycode) {
+				input.character = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
 				break;
 			}
 		}
@@ -256,14 +329,19 @@ SciEvent EventManager::getScummVMEvent() {
 	// When Ctrl AND Alt are pressed together with a regular key, Linux will give us control-key, Windows will give
 	//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
 	//  we support the other case as well
-	if ((modifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
+	if ((scummVMKeyFlags & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
 	// Scancodify if appropriate
-	if (modifiers & Common::KBD_ALT)
+	if (scummVMKeyFlags & Common::KBD_ALT)
 		input.character = altify(input.character);
-	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
+	if (getSciVersion() <= SCI_VERSION_1_MIDDLE && (scummVMKeyFlags & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2 && (scummVMKeyFlags & Common::KBD_CTRL) && input.character == 'c') {
+		input.character = SCI_KEY_ETX;
+	}
+#endif
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event
@@ -290,10 +368,16 @@ void EventManager::updateScreen() {
 	}
 }
 
-SciEvent EventManager::getSciEvent(unsigned int mask) {
-	SciEvent event = { 0, 0, 0, 0, Common::Point(0, 0) };
+SciEvent EventManager::getSciEvent(uint32 mask) {
+#ifdef ENABLE_SCI32
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point(), Common::Point(), -1 };
+#else
+	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point() };
+#endif
 
-	EventManager::updateScreen();
+	if (getSciVersion() < SCI_VERSION_2) {
+		updateScreen();
+	}
 
 	// Get all queued events from graphics driver
 	do {
@@ -304,7 +388,7 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 
 	// Search for matching event in queue
 	Common::List<SciEvent>::iterator iter = _events.begin();
-	while (iter != _events.end() && !((*iter).type & mask))
+	while (iter != _events.end() && !(iter->type & mask))
 		++iter;
 
 	if (iter != _events.end()) {
@@ -324,24 +408,43 @@ SciEvent EventManager::getSciEvent(unsigned int mask) {
 	return event;
 }
 
-void SciEngine::sleep(uint32 msecs) {
-	uint32 time;
-	const uint32 wakeup_time = g_system->getMillis() + msecs;
-
-	while (true) {
-		// let backend process events and update the screen
-		_eventMan->getSciEvent(SCI_EVENT_PEEK);
-		time = g_system->getMillis();
-		if (time + 10 < wakeup_time) {
-			g_system->delayMillis(10);
-		} else {
-			if (time < wakeup_time)
-				g_system->delayMillis(wakeup_time - time);
-			break;
-		}
-
-	}
+#ifdef ENABLE_SCI32
+void EventManager::setHotRectanglesActive(const bool active) {
+	_hotRectanglesActive = active;
 }
 
+void EventManager::setHotRectangles(const Common::Array<Common::Rect> &rects) {
+	_hotRects = rects;
+	_activeRectIndex = -1;
+}
+
+void EventManager::checkHotRectangles(const Common::Point &mousePosition) {
+	int lastActiveRectIndex = _activeRectIndex;
+	_activeRectIndex = -1;
+
+	for (int16 i = 0; i < (int16)_hotRects.size(); ++i) {
+		if (_hotRects[i].contains(mousePosition)) {
+			_activeRectIndex = i;
+			if (i != lastActiveRectIndex) {
+				SciEvent hotRectEvent;
+				hotRectEvent.type = SCI_EVENT_HOT_RECTANGLE;
+				hotRectEvent.hotRectangleIndex = i;
+				_events.push_front(hotRectEvent);
+				break;
+			}
+
+			lastActiveRectIndex = _activeRectIndex;
+		}
+	}
+
+	if (lastActiveRectIndex != _activeRectIndex && lastActiveRectIndex != -1) {
+		_activeRectIndex = -1;
+		SciEvent hotRectEvent;
+		hotRectEvent.type = SCI_EVENT_HOT_RECTANGLE;
+		hotRectEvent.hotRectangleIndex = -1;
+		_events.push_front(hotRectEvent);
+	}
+}
+#endif
 
 } // End of namespace Sci

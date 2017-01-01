@@ -47,7 +47,7 @@ public:
 	/**
 	 * Resets keyboard emulation after a video screen change
 	 */
-	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
+	virtual void resetKeyboardEmulation(int16 x_max, int16 y_max);
 
 protected:
 	/** @name Keyboard mouse emulation
@@ -125,7 +125,7 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status
@@ -147,6 +147,11 @@ protected:
 	 * May only be used for key down events.
 	 */
 	uint32 obtainUnicode(const SDL_keysym keySym);
+
+	/**
+	 * Extracts the keycode for the specified key sym.
+	 */
+	SDLKey obtainKeycode(const SDL_keysym keySym);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/**

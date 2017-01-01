@@ -66,20 +66,6 @@ public:
 		Common::String _filename;
 	};
 
-	class CScBreakpoint {
-	public:
-		CScBreakpoint(const char *filename) {
-			_filename = filename;
-		}
-
-		~CScBreakpoint() {
-			_lines.clear();
-		}
-
-		Common::String _filename;
-		BaseArray<int> _lines;
-	};
-
 public:
 	bool clearGlobals(bool includingNatives = false);
 	bool tickUnbreakable();
