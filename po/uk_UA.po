@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-31 19:04+0000\n"
+"PO-Revision-Date: 2017-01-01 00:02+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
@@ -41,7 +41,7 @@ msgstr "Показати cховані файлі"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr "Показує файли які помічено як сховані"
+msgstr "Показувати файли які помічено як сховані"
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
