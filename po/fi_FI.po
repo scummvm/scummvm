@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-01 16:31+0000\n"
+"PO-Revision-Date: 2017-01-01 16:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
@@ -79,9 +79,8 @@ msgid "Choose"
 msgstr "Valitse"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Valitse pelin kansio"
+msgstr "Valitse kansio pelilataukselle"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
@@ -455,9 +454,8 @@ msgid "Reverb"
 msgstr "Kaiku"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
-#, fuzzy
 msgid "Active"
-msgstr " (Aktiivinen)"
+msgstr "Aktiivinen"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
@@ -777,14 +775,12 @@ msgid "Edit record description"
 msgstr "Muokkaa nauhoituksen kuvausta"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Vaihda"
+msgstr "Vaihda peliin"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Nopea moodi"
+msgstr "Nopea toisto"
 
 #: gui/options.cpp:119 common/updates.cpp:56
 msgid "Never"
@@ -849,9 +845,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "kokoruututilaa ei voitu muuttaa"
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "kokoruututilaa ei voitu muuttaa"
+msgstr "Filtteröintiasetusta ei voitu muuttaa"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -871,9 +866,8 @@ msgid "Fullscreen mode"
 msgstr "Kokoruututila"
 
 #: gui/options.cpp:838
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Grafiikka"
+msgstr "Suodata grafiikka"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
@@ -1003,9 +997,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Aito Roland MT-32 (ei GM emulointia)"
 
 #: gui/options.cpp:965
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Aito Roland MT-32 (ei GM emulointia)"
+msgstr "Roland GS Laite (aktivoi MT-32 mappaukset)"
 
 #: gui/options.cpp:965
 msgid ""
@@ -1253,9 +1246,8 @@ msgid "Run local webserver"
 msgstr "Käynnistä paikallinen webserveri"
 
 #: gui/options.cpp:1433 gui/options.cpp:2082
-#, fuzzy
 msgid "Not running"
-msgstr "Virhe ajettaessa peliä:"
+msgstr "Ei päällä"
 
 #: gui/options.cpp:1437
 #, fuzzy
