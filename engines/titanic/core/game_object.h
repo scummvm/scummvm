@@ -519,41 +519,6 @@ protected:
 	void setMovieFrameRate(double rate);
 
 	/**
-	 * Set up the text and borders for the object
-	 */
-	void setText(const CString &str, int border = 0, int borderRight = 0);
-
-	/**
-	 * Sets whether the text will use borders
-	 */
-	void setTextHasBorders(bool hasBorders);
-
-	/**
-	 * Sets the bounds for a previously defined text area
-	 */
-	void setTextBounds();
-
-	/**
-	 * Sets the color for the object's text
-	 */
-	void setTextColor(byte r, byte g, byte b);
-
-	/**
-	 * Sets the font number to use for text
-	 */
-	void setTextFontNumber(int fontNumber);
-
-	/**
-	 * Gets the width of the text contents
-	 */
-	int getTextWidth() const;
-
-	/**
-	 * Returns the text cursor
-	 */
-	CTextCursor *getTextCursor() const;
-
-	/**
 	 * Gets a new random number
 	 */
 	int getRandomNumber(int max, int *oldVal = nullptr);
@@ -738,9 +703,53 @@ public:
 	CGameObject *getHiddenObject(const CString &name) const;
 
 	/**
+	 * Support function for drag moving
+	 */
+	void dragMove(const Point &pt);
+
+	/**
+	 * Returns the currently dragging item (if any) if it's a game object
+	 */
+	CGameObject *getDraggingObject() const;
+
+	bool compareRoomFlags(int mode, uint flags1, uint flags2);
+
+	/*--- Text display methods ---*/
+
+	/**
 	 * Sets up credits text
 	 */
 	void createCredits();
+
+	/**
+	 * Set up the text and borders for the object
+	 */
+	void setText(const CString &str, int border = 0, int borderRight = 0);
+
+	/**
+	 * Sets whether the text will use borders
+	 */
+	void setTextHasBorders(bool hasBorders);
+
+	/**
+	 * Sets the bounds for a previously defined text area
+	 */
+	void setTextBounds();
+
+	/**
+	 * Sets the color for the object's text
+	 */
+	void setTextColor(byte r, byte g, byte b);
+
+	/**
+	 * Sets the font number to use for text
+	 */
+	void setTextFontNumber(int fontNumber);
+
+	/**
+	 * Gets the width of the text contents
+	 */
+	int getTextWidth() const;
 
 	/**
 	 * Scroll text up
@@ -753,16 +762,9 @@ public:
 	void scrollTextDown();
 
 	/**
-	 * Support function for drag moving
+	 * Returns the text cursor
 	 */
-	void dragMove(const Point &pt);
-
-	/**
-	 * Returns the currently dragging item (if any) if it's a game object
-	 */
-	CGameObject *getDraggingObject() const;
-
-	bool compareRoomFlags(int mode, uint flags1, uint flags2);
+	CTextCursor *getTextCursor() const;
 
 	/*--- CGameManager Methods ---*/
 

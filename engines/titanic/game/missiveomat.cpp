@@ -297,7 +297,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 				_messageNum + 1, _totalMessages, _from[_messageNum].c_str(),
 				_to[_messageNum].c_str(), _messages[_messageNum].c_str());
 
-			setText(str);
+			welcome->setText(str);
 		}
 		break;
 
