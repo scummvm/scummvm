@@ -1133,11 +1133,13 @@ CTextCursor *CGameObject::getTextCursor() const {
 void CGameObject::scrollTextUp() {
 	if (_text)
 		_text->scrollUp(CScreenManager::_screenManagerPtr);
+	makeDirty();
 }
 
 void CGameObject::scrollTextDown() {
 	if (_text)
 		_text->scrollDown(CScreenManager::_screenManagerPtr);
+	makeDirty();
 }
 
 void CGameObject::lockMouse() {
