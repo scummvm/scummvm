@@ -142,7 +142,8 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 
 			// Check whether a valid username and password has been entered
 			bool validFlag = false;
-			if (_username == "leovinus" && _password == "other") {
+			if ((_username == "leovinus" && _password == "other") ||
+					(_username == "scummvm")) {
 				validFlag = true;
 				_account = LEOVINUS;
 			} else if (_username == "scraliontis" && _password == "this") {
