@@ -43,7 +43,7 @@ namespace Sci {
 
 #pragma mark RobotAudioStream
 
-extern void deDPCM16(int16 *out, const byte *in, const uint32 numBytes, int16 &sample);
+extern void deDPCM16Mono(int16 *out, const byte *in, const uint32 numBytes, int16 &sample);
 
 RobotAudioStream::RobotAudioStream(const int32 bufferSize) :
 	_loopBuffer((byte *)malloc(bufferSize)),
@@ -181,7 +181,7 @@ void RobotAudioStream::fillRobotBuffer(const RobotAudioPacket &packet, const int
 		}
 
 		int16 carry = 0;
-		deDPCM16((int16 *)_decompressionBuffer, packet.data, packet.dataSize, carry);
+		deDPCM16Mono((int16 *)_decompressionBuffer, packet.data, packet.dataSize, carry);
 		_decompressionBufferPosition = packet.position;
 	}
 

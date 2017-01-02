@@ -159,9 +159,7 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 	// mono, in which case we need to request half
 	// as many samples from the mono stream and let
 	// the converter double them for stereo output
-	if (!sourceStream->isStereo()) {
-		samplesToRead >>= 1;
-	}
+	samplesToRead >>= 1;
 
 	int samplesWritten = 0;
 
@@ -182,12 +180,10 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 
 		samplesToRead -= loopSamplesWritten;
 		samplesWritten += loopSamplesWritten;
-		targetBuffer += loopSamplesWritten << 1;
+		targetBuffer += loopSamplesWritten << (sourceStream->isStereo() ? 0 : 1);
 	} while (loop && samplesToRead > 0);
 
-	if (!sourceStream->isStereo()) {
-		samplesWritten <<= 1;
-	}
+	samplesWritten <<= 1;
 
 	return samplesWritten;
 }

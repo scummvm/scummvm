@@ -61,8 +61,8 @@ private:
 	 * The last sample from the previous DPCM decode.
 	 */
 	union {
-		int16 _dpcmCarry16;
-		uint8 _dpcmCarry8;
+		struct { int16 l; int16 r; } _dpcmCarry16;
+		struct { uint8 l; uint8 r; } _dpcmCarry8;
 	};
 
 	/**
