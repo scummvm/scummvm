@@ -840,16 +840,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_GK1_MAC },
 
-#define GUIO_GK2_DEMO GUIO5(GUIO_NOSPEECH, \
+#define GUIO_GK2_DEMO GUIO3(GUIO_NOSPEECH, \
                             GUIO_NOASPECT, \
-                            GAMEOPTION_PREFER_DIGITAL_SFX, \
-                            GAMEOPTION_ORIGINAL_SAVELOAD, \
-                            GAMEOPTION_FB01_MIDI)
-#define GUIO_GK2      GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
+                            GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_GK2      GUIO3(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                             GUIO_NOASPECT, \
-                            GAMEOPTION_PREFER_DIGITAL_SFX, \
-                            GAMEOPTION_ORIGINAL_SAVELOAD, \
-                            GAMEOPTION_FB01_MIDI)
+                            GAMEOPTION_ORIGINAL_SAVELOAD)
 #define GUIO_GK2_MAC  GUIO_GK2
 
 	// Gabriel Knight 2 - English Windows Non-Interactive Demo
