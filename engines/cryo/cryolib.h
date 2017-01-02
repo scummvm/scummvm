@@ -34,7 +34,7 @@ class CryoEngine;
 
 #define SW16(n) ( (((n) & 0xFF) << 8) | (((n) >> 8) & 0xFF) )
 #define SW32(n) ( (((n) & 0xFF) << 24) | (((n) >> 24) & 0xFF) | (((n) & 0xFF00) << 8) | (((n) >> 8) & 0xFF00))
-#if 0
+#ifdef SCUMM_BIG_ENDIAN
 //big-endian host
 #define LE16(n) SW16(n)
 #define LE32(n) SW32(n)
@@ -118,8 +118,8 @@ typedef struct HNMHeader HNMHeader;
 #pragma pack(pop)
 
 struct hnm_t {
-	int  _frameNum;
-	int  ff_4;
+	int     _frameNum;
+	int     _unused04;
 	Common::File *_file;
 	HNMHeader     _header;
 	byte   *tmpBuffer[2];
@@ -128,52 +128,44 @@ struct hnm_t {
 	byte   *_oldFrameBuffer;
 	byte   *_readBuffer;
 	byte   *_dataPtr;
-	color_t  _palette[256];
-
-	bool  _canLoop;
-	int16 ff_896;
-	int16 _chunkId;
-	int   _totalRead;
+	color_t _palette[256];
+	bool    _canLoop;
+	int16   _unused896;
+	int16   _chunkId;
+	int     _totalRead;
 };
 typedef struct hnm_t hnm_t;
 
 struct sound_t {
-	char *sndHandle;
-	int16 _headerLen;
+	char  *_sndHandle;
+	int16  _headerLen;
 	int32  _headerOffset;
-	int16   ff_A;
+	int16  _unused0A;
 
-	char    *_buffer;
-	int     ff_16;
-	int16   _maxLength;
-	float   _rate;
-	int16   _sampleSize;
-	int     _length;
-	int16   _mode;
+	char   *_buffer;
+	int    _unused16;
+	int16  _maxLength;
+	float  _rate;
+	int16  _sampleSize;
+	int    _length;
+	int16  _mode;
 	volatile int16  _locked;
-	int32    _loopStart;
-	int16   _loopTimes;
+	int32  _loopStart;
+	int16  _loopTimes;
 	bool   _reversed;
-	int16   ff_32;
-	int16   _volume;
+	int16  _unused32;
+	int16  _volume;
 };
-typedef struct sound_t sound_t;
 
 #define kCryoMaxChSounds 10
 
 struct soundchannel_t {
-	Audio::SoundHandle ch;
-	int     xx;
-
 	int16   _volumeLeft;
 	int16   _volumeRight;
 	int16   _numSounds;
 
 	sound_t *_sounds[kCryoMaxChSounds];
-
-	int16   ff_536;
 };
-typedef struct soundchannel_t soundchannel_t;
 
 sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode);
 void CLSoundRaw_Free(sound_t *sound);

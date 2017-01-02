@@ -346,7 +346,7 @@ void CLSound_PrepareSample(sound_t *sound, int16 mode) {
 	sound->_locked = 0;
 	sound->_loopTimes = 0;
 	sound->_reversed = false;
-	sound->ff_32 = 0;
+	sound->_unused32 = 0;
 	sound->_volume = 255;
 }
 

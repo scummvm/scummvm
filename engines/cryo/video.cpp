@@ -55,13 +55,13 @@ hnm_t *HnmPlayer::resetInternals() {
 	hnm_t *hnm = (hnm_t *)malloc(sizeof(*hnm));
 
 	hnm->_frameNum = 0;
-	hnm->ff_4 = 0;
+	hnm->_unused04 = 0;
 	hnm->_file = nullptr;
 	hnm->tmpBuffer[0] = nullptr;
 	hnm->tmpBuffer[1] = nullptr;
 	hnm->finalBuffer = nullptr;
 	hnm->_readBuffer = nullptr;
-	hnm->ff_896 = 0;
+	hnm->_unused896 = 0;
 	hnm->_totalRead = 0;
 	for (int i = 0; i < 256; i++) {
 		hnm->_palette[i].a = 0;
@@ -92,7 +92,7 @@ void HnmPlayer::resetInternalTimer() {
 // Original name: CLHNM_Reset
 void HnmPlayer::reset(hnm_t *hnm) {
 	hnm->_frameNum = 0;
-	hnm->ff_4 = 0;
+	hnm->_unused04 = 0;
 	hnm->_totalRead = 0;
 	_soundStarted = false;
 	_pendingSounds = 0;

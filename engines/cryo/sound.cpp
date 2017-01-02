@@ -102,7 +102,7 @@ void *SoundGroup::getNextBuffer() {
 	sound_t *sound = _sounds[_soundIndex];
 	if (_forceWait)
 		while (sound->_locked) ;
-	return sound->sndHandle + sound->_headerLen;
+	return sound->_sndHandle + sound->_headerLen;
 }
 
 // Original name: CLSoundGroup_AssignDatas
@@ -140,7 +140,7 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 	else if (sound->_locked)
 		return false;
 
-	void *buffer = sound->sndHandle + sound->_headerLen;
+	void *buffer = sound->_sndHandle + sound->_headerLen;
 	sound->_buffer = (char *)buffer;
 	memcpy(buffer, data, length);
 	CLSound_SetLength(sound, length);
