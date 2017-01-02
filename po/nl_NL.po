@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-30 08:43+0000\n"
+"PO-Revision-Date: 2017-01-02 18:38+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -2511,7 +2511,7 @@ msgstr "Huidige videomodus:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr "Dubbele-slag"
+msgstr "Double-strike"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
