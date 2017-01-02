@@ -2086,6 +2086,28 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 	errorNum = ptr ? dec->unpack(file, ptr, szPacked, _size) : SCI_ERROR_RESOURCE_TOO_BIG;
 	if (errorNum)
 		unalloc();
+	else {
+		// At least Lighthouse puts sound effects in RESSCI.00n/RESSCI.PAT
+		// instead of using a RESOURCE.SFX
+		if (getType() == kResourceTypeAudio) {
+			_headerSize = ptr[1];
+			assert(_headerSize == 12);
+			uint32 audioSize = READ_LE_UINT32(ptr + 9);
+			assert(audioSize + _headerSize + 2 == _size);
+			_size = audioSize;
+
+			// TODO: This extra memory copying is necessary because
+			// AudioVolumeResourceSource splits the audio header from the rest
+			// of the data; fix AudioVolumeResourceSource to stop doing this and
+			// then this extra copying can be eliminated too
+			byte *dataPtr = new byte[_size];
+			_data = dataPtr;
+			_header = new byte[_headerSize];
+			memcpy(_header, ptr + 2, _headerSize);
+			memcpy(dataPtr, ptr + 2 + _headerSize, _size);
+			delete[] ptr;
+		}
+	}
 
 	delete dec;
 	return errorNum;
