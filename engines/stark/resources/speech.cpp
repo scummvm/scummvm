@@ -30,9 +30,9 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/level.h"
+#include "engines/stark/resources/lipsync.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/sound.h"
-#include "lipsync.h"
 
 namespace Stark {
 namespace Resources {
