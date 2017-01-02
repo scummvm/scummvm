@@ -116,7 +116,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 
 		if (type == kResourceTypeAudio) {
 			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-				warning("Unsupported audio header");
+				warning("Unsupported audio header size %d", _headerSize);
 				unalloc();
 				return false;
 			}
