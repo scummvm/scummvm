@@ -24,6 +24,16 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/item.h"
+#include "engines/stark/resources/textureset.h"
+
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
+
+#include "engines/stark/visual/visual.h"
+#include "engines/stark/visual/actor.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -31,7 +41,13 @@ LipSync::~LipSync() {
 }
 
 LipSync::LipSync(Object *parent, byte subType, uint16 index, const Common::String &name) :
-		Object(parent, subType, index, name) {
+		Object(parent, subType, index, name),
+		_item(nullptr),
+		_sceneItem(nullptr),
+		_faceTexture(nullptr),
+		_enabled(false),
+        _checkForNewVisual(false),
+        _positionMs(0) {
 	_type = TYPE;
 }
 
@@ -59,6 +75,85 @@ void LipSync::printData() {
 	}
 
 	debug("shapes: %s", phrase.c_str());
+}
+
+void LipSync::setItem(ItemVisual *item, bool playTalkAnim) {
+	_item = item;
+	_checkForNewVisual = !playTalkAnim;
+
+	if (_item->getSubType() != Item::kItemModel) {
+		return;
+	}
+
+	_sceneItem = Object::cast<ModelItem>(item);
+	_faceTexture = _sceneItem->findTextureSet(TextureSet::kTextureFace);
+
+	if (!_faceTexture) {
+		return;
+	}
+
+	Anim *anim = _item->getAnim();
+	_visual = nullptr;
+
+	if (!anim || anim->getSubType() != Anim::kAnimSkeleton) {
+		return;
+	}
+
+	AnimSkeleton *animSkeleton = Object::cast<AnimSkeleton>(anim);
+	_visual = animSkeleton->getVisual()->get<VisualActor>();
+
+	if (!_visual) {
+		return;
+	}
+
+	_visual->setTextureFacial(_faceTexture->getTexture());
+	_enabled = true;
+	_positionMs = 0;
+}
+
+void LipSync::reset() {
+	_enabled = false;
+	_visual = nullptr;
+	_positionMs = 0;
+	_item = nullptr;
+	_sceneItem = nullptr;
+	_checkForNewVisual = false;
+	_faceTexture = nullptr;
+}
+
+void LipSync::onGameLoop() {
+	Object::onGameLoop();
+
+	if (!_enabled) {
+		return;
+	}
+
+	if (_checkForNewVisual && _sceneItem && _faceTexture) {
+		Anim *anim = _sceneItem->getAnim();
+		if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
+			AnimSkeleton *animSkeleton = Object::cast<AnimSkeleton>(anim);
+			_visual = animSkeleton->getVisual()->get<VisualActor>();
+
+			if (_visual) {
+				_visual->setTextureFacial(_faceTexture->getTexture());
+			}
+		}
+	}
+
+	if (_visual) {
+		uint32 shapeIndex = (_positionMs + 100) / 100;
+		if (shapeIndex < _shapes.size()) {
+			_visual->setNewFace(_shapes[shapeIndex]);
+		} else {
+			reset();
+		}
+
+		_positionMs += StarkGlobal->getMillisecondsPerGameloop();
+	}
+
+	if (_enabled && !_visual) {
+		reset();
+	}
 }
 
 } // End of namespace Resources

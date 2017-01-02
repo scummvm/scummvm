@@ -35,12 +35,14 @@
 namespace Stark {
 
 namespace Gfx {
+class Texture;
 class TextureSet;
 struct LightEntry;
 }
 
 class Model;
 class FaceNode;
+class MaterialNode;
 class SkeletonAnim;
 class AnimHandler;
 
@@ -54,6 +56,8 @@ public:
 
 	void setModel(Model *model);
 	void setTexture(Gfx::TextureSet *texture);
+	void setTextureFacial(Gfx::TextureSet *textureFacial);
+	void setNewFace(char shape);
 
 	void setAnimHandler(AnimHandler *animHandler);
 	void setAnim(SkeletonAnim *anim);
@@ -67,10 +71,13 @@ protected:
 	AnimHandler *_animHandler;
 	Model *_model;
 	Gfx::TextureSet *_textureSet;
+	Gfx::TextureSet *_textureSetFacial;
+	char _faceTextureName;
 	uint32 _time;
 	bool _modelIsDirty;
 
 	Math::Matrix4 getModelMatrix(const Math::Vector3d& position, float direction);
+	const Gfx::Texture *resolveTexture(const MaterialNode *material) const;
 };
 
 } // End of namespace Stark

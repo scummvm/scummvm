@@ -414,6 +414,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 	_visual->setModel(mesh->getModel());
 	_visual->setAnimHandler(mesh->getAnimHandler());
 	_visual->setTexture(texture->getTexture());
+	_visual->setTextureFacial(nullptr);
 	_visual->setAnim(_seletonAnim);
 	_visual->setTime(_currentTime);
 }

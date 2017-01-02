@@ -36,6 +36,7 @@ class XRCReadStream;
 namespace Resources {
 
 class ItemVisual;
+class LipSync;
 class Sound;
 
 /**
@@ -79,7 +80,7 @@ public:
 protected:
 	void printData() override;
 
-	void setCharacterTalkAnim() const;
+	void setCharacterTalkAnim();
 	void removeCharacterTalkAnim() const;
 	ItemVisual *getCharacterItem() const;
 
@@ -91,6 +92,7 @@ protected:
 	bool _removeTalkAnimWhenComplete;
 
 	Sound *_soundResource;
+	LipSync *_lipSync;
 };
 
 } // End of namespace Resources

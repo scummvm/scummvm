@@ -576,7 +576,11 @@ TextureSet *LevelItemTemplate::findTextureSet(uint32 textureType) {
 		}
 	} else if (textureType == TextureSet::kTextureFace) {
 		if (_textureFaceIndex == -1) {
-			return _referencedItem->findTextureSet(textureType);
+			if (_referencedItem) {
+				return _referencedItem->findTextureSet(textureType);
+			} else {
+				return nullptr;
+			}
 		} else {
 			return findChildWithIndex<TextureSet>(_textureFaceIndex);
 		}
@@ -902,7 +906,9 @@ TextureSet *ModelItem::findTextureSet(uint32 textureType) {
 			}
 		} else if (textureType == TextureSet::kTextureFace) {
 			if (_textureFaceIndex == -1) {
-				textureSet = _referencedItem->findTextureSet(textureType);
+				if (_referencedItem) {
+					textureSet = _referencedItem->findTextureSet(textureType);
+				}
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureFaceIndex);
 			}

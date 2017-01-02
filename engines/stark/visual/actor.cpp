@@ -34,8 +34,10 @@ VisualActor::VisualActor() :
 		_animHandler(nullptr),
 		_model(nullptr),
 		_textureSet(nullptr),
+		_textureSetFacial(nullptr),
 		_time(0),
-		_modelIsDirty(true) {
+		_modelIsDirty(true),
+		_faceTextureName(' ') {
 }
 
 VisualActor::~VisualActor() {
@@ -60,6 +62,32 @@ void VisualActor::setAnim(SkeletonAnim *anim) {
 
 void VisualActor::setTexture(Gfx::TextureSet *texture) {
 	_textureSet = texture;
+}
+
+void VisualActor::setTextureFacial(Gfx::TextureSet *textureFacial) {
+	_textureSetFacial = textureFacial;
+}
+
+void VisualActor::setNewFace(char shape) {
+	_faceTextureName = shape;
+}
+
+const Gfx::Texture *VisualActor::resolveTexture(const MaterialNode *material) const {
+	const Gfx::Texture *texture = nullptr;
+	if (_textureSetFacial && material->_name == "face") {
+		texture = _textureSetFacial->getTexture(Common::String::format("%c.bmp", _faceTextureName));
+
+		if (!texture) {
+			// Default face texture in case the requested shape was not found
+			texture = _textureSetFacial->getTexture("i.bmp");
+		}
+	}
+
+	if (!texture) {
+		texture = _textureSet->getTexture(material->_texName);
+	}
+
+	return texture;
 }
 
 void VisualActor::setTime(uint32 time) {

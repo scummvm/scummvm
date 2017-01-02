@@ -32,6 +32,7 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/sound.h"
+#include "lipsync.h"
 
 namespace Stark {
 namespace Resources {
@@ -44,7 +45,8 @@ Speech::Speech(Object *parent, byte subType, uint16 index, const Common::String 
 		_character(0),
 		_soundResource(nullptr),
 		_playTalkAnim(true),
-		_removeTalkAnimWhenComplete(true) {
+		_removeTalkAnimWhenComplete(true),
+		_lipSync(nullptr) {
 	_type = TYPE;
 }
 
@@ -63,10 +65,15 @@ void Speech::playSound() {
 	_soundResource->play();
 }
 
-void Speech::setCharacterTalkAnim() const {
+void Speech::setCharacterTalkAnim() {
 	ItemVisual *characterItem = getCharacterItem();
 	if (characterItem) {
 		characterItem->setAnimKind(Anim::kActorUsageTalk);
+
+		_lipSync = findChild<LipSync>();
+		if (_lipSync) {
+			_lipSync->setItem(characterItem, _playTalkAnim);
+		}
 	}
 }
 
@@ -99,6 +106,10 @@ void Speech::stop() {
 	if (_soundResource) {
 		_soundResource->stop();
 		_soundResource = nullptr;
+	}
+
+	if (_lipSync) {
+		_lipSync->reset();
 	}
 
 	if (_removeTalkAnimWhenComplete) {

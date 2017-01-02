@@ -29,11 +29,17 @@
 
 namespace Stark {
 
+class VisualActor;
+
 namespace Formats {
 class XRCReadStream;
 }
 
 namespace Resources {
+
+class ItemVisual;
+class ModelItem;
+class TextureSet;
 
 /**
  * Speech lipsync data
@@ -47,11 +53,26 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
+	void onGameLoop() override;
+
+	/** Set the item for which the facial texture should be updated according to the lipsync data */
+	void setItem(ItemVisual *item, bool playTalkAnim);
+
+	/** Removes all item related data from the LipSync object */
+	void reset();
 
 protected:
 	void printData() override;
 
 	Common::Array<char> _shapes;
+	ItemVisual *_item;
+	ModelItem *_sceneItem;
+	TextureSet *_faceTexture;
+	VisualActor *_visual;
+
+	bool _checkForNewVisual;
+	bool _enabled;
+	uint32 _positionMs;
 };
 
 } // End of namespace Resources

@@ -88,7 +88,7 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
 			// For each face draw its vertices from the VBO, indexed by the EBO
 			const MaterialNode *material = mats[(*face)->_matIdx];
-			const Gfx::Texture *tex = _textureSet->getTexture(material->_texName);
+			const Gfx::Texture *tex = resolveTexture(material);
 			if (tex) {
 				tex->bind();
 			} else {
