@@ -321,6 +321,13 @@ private:
 	bool _isInitialized;
 
 	/**
+	 * The Resource object for VMDs that are read out
+	 * of a resource bundle instead of being streamed
+	 * from the filesystem.
+	 */
+	Resource *_bundledVmd;
+
+	/**
 	 * For VMDs played with the `kEventFlagToFrame` flag,
 	 * the target frame for yielding back to the SCI VM.
 	 */

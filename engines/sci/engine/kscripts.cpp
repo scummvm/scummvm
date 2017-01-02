@@ -102,14 +102,8 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
-	Resource *res = NULL;
+	Resource *res = nullptr;
 	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
-
-	if (restype == kResourceTypeVMD) {
-		char fileName[10];
-		sprintf(fileName, "%d.vmd", argv[1].toUint16());
-		return make_reg(0, Common::File::exists(fileName));
-	}
 
 	if ((restype == kResourceTypeAudio36) || (restype == kResourceTypeSync36)) {
 		if (argc >= 6) {
@@ -124,7 +118,16 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 		res = g_sci->getResMan()->testResource(ResourceId(restype, argv[1].toUint16()));
 	}
 
-	return make_reg(0, res != NULL);
+#ifdef ENABLE_SCI32
+	// GK2 stores some VMDs inside of resource volumes, but usually they are
+	// streamed from the filesystem
+	if (res == nullptr && restype == kResourceTypeVMD) {
+		const Common::String fileName = Common::String::format("%u.vmd", argv[1].toUint16());
+		return make_reg(0, Common::File::exists(fileName));
+	}
+#endif
+
+	return make_reg(0, res != nullptr);
 }
 
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {

@@ -39,6 +39,7 @@
 #include "sci/graphics/palette32.h"      // for GfxPalette32
 #include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
+#include "sci/resource.h"                // for ResourceManager, ResourceId,...
 #include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
 #include "sci/sound/audio32.h"           // for Audio32
 #include "sci/video/seq_decoder.h"       // for SEQDecoder
@@ -492,6 +493,7 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 
 	_isOpen(false),
 	_isInitialized(false),
+	_bundledVmd(nullptr),
 	_yieldFrame(0),
 	_yieldInterval(0),
 	_lastYieldedFrameNo(0),
@@ -536,15 +538,29 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		g_sci->_audio32->stop(kAllChannels);
 	}
 
-	if (_decoder->loadFile(fileName)) {
+	Resource *bundledVmd = g_sci->getResMan()->findResource(ResourceId(kResourceTypeVMD, fileName.asUint64()), true);
+
+	if (bundledVmd != nullptr) {
+		Common::SeekableReadStream *stream = bundledVmd->makeStream();
+		if (_decoder->loadStream(stream)) {
+			_bundledVmd = bundledVmd;
+			_isOpen = true;
+		} else {
+			delete stream;
+			g_sci->getResMan()->unlockResource(bundledVmd);
+		}
+	} else if (_decoder->loadFile(fileName)) {
+		_isOpen = true;
+	}
+
+	if (_isOpen) {
 		if (flags & kOpenFlagMute) {
 			_decoder->setVolume(0);
 		}
-		_isOpen = true;
 		return kIOSuccess;
-	} else {
-		return kIOError;
 	}
+
+	return kIOError;
 }
 
 void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
@@ -570,6 +586,11 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	_isOpen = false;
 	_isInitialized = false;
 	_ignorePalettes = false;
+
+	if (_bundledVmd) {
+		g_sci->getResMan()->unlockResource(_bundledVmd);
+		_bundledVmd = nullptr;
+	}
 
 	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
 
