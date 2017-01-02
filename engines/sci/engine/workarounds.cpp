@@ -842,15 +842,6 @@ const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 };
 
 SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin) {
-	// HACK for SCI3: Temporarily ignore this
-	if (getSciVersion() == SCI_VERSION_3) {
-		warning("SCI3 HACK: trackOriginAndFindWorkaround() called, ignoring");
-		SciWorkaroundSolution sci3IgnoreForNow;
-		sci3IgnoreForNow.type = WORKAROUND_FAKE;
-		sci3IgnoreForNow.value = 0;
-		return sci3IgnoreForNow;
-	}
-
 	const EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
 	const SciGameId gameId = g_sci->getGameId();
