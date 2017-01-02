@@ -159,7 +159,7 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 
 // Original name: CLSoundGroup_PlayNextSample
 void SoundGroup::playNextSample(soundchannel_t *ch) {
-	CLSoundChannel_Play(ch, _sounds[_playIndex]);
+	ch->play(_sounds[_playIndex]);
 	if (_playIndex == _numSounds - 1)
 		_playIndex = 0;
 	else

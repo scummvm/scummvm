@@ -127,7 +127,7 @@ void HnmPlayer::wantsSound(bool sound) {
 
 // Original name: CLHNM_SetupSound
 void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	_soundChannel = CLSoundChannel_New(mode);
+	_soundChannel = new soundchannel_t(mode);
 	_soundGroup = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
 	if (sampleSize == 16)
 		_soundGroup->reverse16All();
@@ -135,15 +135,15 @@ void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, floa
 
 // Original name: CLHNM_SetupSoundADPCM
 void HnmPlayer::setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	_soundChannelAdpcm = CLSoundChannel_New(mode);
+	_soundChannelAdpcm = new soundchannel_t(mode);
 	_soundGroupAdpcm = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
 }
 
 // Original name: CLHNM_CloseSound
 void HnmPlayer::closeSound() {
 	if (_soundChannel) {
-		CLSoundChannel_Stop(_soundChannel);
-		CLSoundChannel_Free(_soundChannel);
+		_soundChannel->stop();
+		delete(_soundChannel);
 		_soundChannel = nullptr;
 	}
 	if (_soundGroup) {
@@ -151,9 +151,9 @@ void HnmPlayer::closeSound() {
 		_soundGroup = nullptr;
 	}
 	if (_soundChannelAdpcm) {
-		CLSoundChannel_Stop(_soundChannelAdpcm);
-		CLSoundChannel_Free(_soundChannelAdpcm);
-		_soundChannel = nullptr;
+		_soundChannelAdpcm->stop();
+		delete(_soundChannelAdpcm);
+		_soundChannelAdpcm = nullptr;
 	}
 	if (_soundGroupAdpcm) {
 		delete(_soundGroupAdpcm);

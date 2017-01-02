@@ -5838,7 +5838,7 @@ void EdenGame::edmain() {
 void EdenGame::intro() {
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		// Play intro videos in HQ
-		CLSoundChannel_Stop(_hnmSoundChannel);
+		_hnmSoundChannel->stop();
 		_vm->_video->closeSound();
 		_vm->_video->setupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
 		_hnmSoundChannel = _vm->_video->getSoundChannel();
@@ -5847,7 +5847,7 @@ void EdenGame::intro() {
 		CLBlitter_FillScreenView(0);
 		_specialTextMode = false;
 		playHNM(2001);
-		CLSoundChannel_Stop(_hnmSoundChannel);
+		_hnmSoundChannel->stop();
 		_vm->_video->closeSound();
 		_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
 		_hnmSoundChannel = _vm->_video->getSoundChannel();
@@ -6354,8 +6354,8 @@ void EdenGame::showMovie(char arg1) {
 	_vm->_video->readHeader(_hnmContext);
 	if (_vm->_video->_curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
-		CLSoundChannel_SetVolumeLeft(_hnmSoundChannel, 0);
-		CLSoundChannel_SetVolumeRight(_hnmSoundChannel, 0);
+		_hnmSoundChannel->setVolumeLeft(0);
+		_hnmSoundChannel->setVolumeRight(0);
 	}
 
 	if (_vm->_video->getVersion(_hnmContext) != 4)

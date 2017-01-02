@@ -159,12 +159,24 @@ struct sound_t {
 
 #define kCryoMaxChSounds 10
 
-struct soundchannel_t {
+class soundchannel_t {
+private:
 	int16   _volumeLeft;
 	int16   _volumeRight;
 	int16   _numSounds;
 
 	sound_t *_sounds[kCryoMaxChSounds];
+
+public:
+	soundchannel_t(int arg1);
+	~soundchannel_t();
+
+	void stop();
+	void play(sound_t *sound);
+	int16 getVolume();
+	void setVolume(int16 volume);
+	void setVolumeRight(int16 volume);
+	void setVolumeLeft(int16 volume);
 };
 
 sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode);
@@ -201,15 +213,6 @@ void CLFile_Write(Common::File &handle, void *buffer, int32 *size);
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
 void CLSound_SetWantsDesigned(int16 designed);
 void CLSound_SetLength(sound_t *sound, int length);
-
-soundchannel_t *CLSoundChannel_New(int arg1);
-void CLSoundChannel_Free(soundchannel_t *ch);
-void CLSoundChannel_Stop(soundchannel_t *ch);
-void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound);
-int16 CLSoundChannel_GetVolume(soundchannel_t *ch);
-void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume);
-void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume);
-void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume);
 
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();

@@ -358,52 +358,48 @@ void CLSound_SetLength(sound_t *sound, int length) {
 
 ///// CLSoundChannel
 /// sound output device that plays queue of sounds
-soundchannel_t *CLSoundChannel_New(int arg1) {
-	soundchannel_t *ch = (soundchannel_t *)malloc(sizeof(*ch));
-	if (!ch)
-		return nullptr;
-
-	ch->_volumeLeft = ch->_volumeRight = 255;
-	ch->_numSounds = 0;
+soundchannel_t::soundchannel_t(int arg1) {
+	_volumeLeft = _volumeRight = 255;
+	_numSounds = 0;
 
 	for (int16 i = 0; i < kCryoMaxChSounds; i++)
-		ch->_sounds[i] = nullptr;
-
-	return ch;
+		_sounds[i] = nullptr;
 }
 
-void CLSoundChannel_Free(soundchannel_t *ch) {
-	free(ch);
+soundchannel_t::~soundchannel_t() {
 }
 
-void CLSoundChannel_Stop(soundchannel_t *ch) {
-	//  _vm->_mixer->stopHandle(ch->ch);
+void soundchannel_t::stop() {
+	//  _vm->_mixer->stopHandle(this);
 }
 
-void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound) {
+void soundchannel_t::play(sound_t *sound) {
 }
 
-int16 CLSoundChannel_GetVolume(soundchannel_t *ch) {
-	return (ch->_volumeLeft + ch->_volumeRight) / 2;
+int16 soundchannel_t::getVolume() {
+	return (_volumeLeft + _volumeRight) / 2;
 }
 
-void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume) {
+void soundchannel_t::setVolume(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->_volumeLeft = volume;
-	ch->_volumeRight = volume;
+
+	_volumeLeft = volume;
+	_volumeRight = volume;
 }
 
-void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume) {
+void soundchannel_t::setVolumeRight(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->_volumeRight = volume;
+
+	_volumeRight = volume;
 }
 
-void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
+void soundchannel_t::setVolumeLeft(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->_volumeLeft = volume;
+
+	_volumeLeft = volume;
 }
 
 ///// CLTimer
