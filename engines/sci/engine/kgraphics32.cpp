@@ -389,13 +389,13 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		pFadeArray = NULL_REG;
 		divisions = argc > 7 ? argv[7].toSint16() : -1;
 	}
-	// SCI 2.1mid–2.1late
-	else if (getSciVersion() < SCI_VERSION_3) {
+	// SCI 2.1mid
+	else if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 		blackScreen = 0;
 		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
 		divisions = argc > 8 ? argv[8].toSint16() : -1;
 	}
-	// SCI 3
+	// SCI 2.1late-3
 	else {
 		blackScreen = argv[7].toSint16();
 		pFadeArray = argc > 8 ? argv[8] : NULL_REG;
@@ -405,14 +405,6 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
 		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
 	}
-
-// TODO: Reuse later for SCI2 and SCI3 implementation and then discard
-//	warning("kSetShowStyle: effect %d, plane: %04x:%04x (%s), sec: %d, "
-//			"dir: %d, prio: %d, animate: %d, ref frame: %d, black screen: %d, "
-//			"pFadeArray: %04x:%04x (%s), divisions: %d",
-//			type, PRINT_REG(planeObj), s->_segMan->getObjectName(planeObj), seconds,
-//			back, priority, animate, refFrame, blackScreen,
-//			PRINT_REG(pFadeArray), s->_segMan->getObjectName(pFadeArray), divisions);
 
 	// NOTE: The order of planeObj and showStyle are reversed
 	// because this is how SCI3 called the corresponding method
