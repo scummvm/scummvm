@@ -33,7 +33,7 @@ void CBrokenPellBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_exitAction, indent);
 	CBackground::save(file, indent);
 }
 
@@ -41,7 +41,7 @@ void CBrokenPellBase::load(SimpleFile *file) {
 	file->readNumber();
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
-	_fieldE0 = file->readNumber();
+	_exitAction = file->readNumber();
 	CBackground::load(file);
 }
 

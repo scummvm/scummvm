@@ -91,7 +91,7 @@ bool CPickUpHose::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 bool CPickUpHose::StatusChangeMsg(CStatusChangeMsg *msg) {
 	_cursorId = msg->_newStatus == 1 ? CURSOR_HAND : CURSOR_IGNORE;
-	return true;
+	return CPickUp::StatusChangeMsg(msg);
 }
 
 bool CPickUpHose::EnterViewMsg(CEnterViewMsg *msg) {

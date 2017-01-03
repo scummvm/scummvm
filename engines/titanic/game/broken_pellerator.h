@@ -34,8 +34,8 @@ class CBrokenPellerator : public CBrokenPellBase {
 	bool ActMsg(CActMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
-	CString _string2;
-	CString _string3;
+	CString _exitLeftView;
+	CString _exitRightView;
 	CString _string4;
 	CString _string5;
 public:
