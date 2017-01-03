@@ -32,17 +32,17 @@ BEGIN_MESSAGE_MAP(CFanControl, CGameObject)
 	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CFanControl::CFanControl() : CGameObject(), _state(-1),
-		_enabled(false), _fieldC4(0), _fieldC8(false), _fieldCC(0) {
+CFanControl::CFanControl() : CGameObject(), _state(-1), _enabled(false),
+	_starlings(false), _fanOn(false), _starlingsDying(false) {
 }
 
 void CFanControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_enabled, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_starlings, indent);
+	file->writeNumberLine(_fanOn, indent);
+	file->writeNumberLine(_starlingsDying, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -51,9 +51,9 @@ void CFanControl::load(SimpleFile *file) {
 	file->readNumber();
 	_state = file->readNumber();
 	_enabled = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
+	_starlings = file->readNumber();
+	_fanOn = file->readNumber();
+	_starlingsDying = file->readNumber();
 
 	CGameObject::load(file);
 }
@@ -64,22 +64,23 @@ bool CFanControl::ActMsg(CActMsg *msg) {
 	else if (msg->_action == "DisableObject")
 		_enabled = false;
 	else if (msg->_action == "StarlingsDead") {
-		_fieldC4 = 0;
+		_starlings = false;
 		decTransitions();
-		_fieldCC = 0;
+		_starlingsDying = false;
 	}
 
 	return true;
 }
 
 bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
-	if (!_fieldCC) {
+	if (!_starlingsDying) {
 		playSound("z#42.wav");
 		if (_enabled) {
 			switch (msg->_newStatus) {
 			case 1:
-				_fieldC8 = !_fieldC8;
-				if (_fieldC8) {
+				// Fan Power button
+				_fanOn = !_fanOn;
+				if (_fanOn) {
 					playMovie(6, 8, 0);
 					_state = 0;
 				} else {
@@ -104,7 +105,8 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 				break;
 
 			case 2:
-				if (_fieldC8) {
+				// Fan Speed button
+				if (_fanOn) {
 					_state = (_state + 1) % 4;
 					switch (_state) {
 					case 0:
@@ -115,9 +117,10 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(8, 12, 0);
 						break;
 					case 2:
-						if (_fieldC4) {
+						if (_starlings) {
+							// It's puret time
 							incTransitions();
-							_fieldCC = 1;
+							_starlingsDying = true;
 							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 						} else {
 							playMovie(12, 18, 0);

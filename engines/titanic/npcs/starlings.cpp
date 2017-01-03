@@ -29,34 +29,39 @@ BEGIN_MESSAGE_MAP(CStarlings, CCharacter)
 	ON_MESSAGE(StatusChangeMsg)
 END_MESSAGE_MAP()
 
-CStarlings::CStarlings() : CCharacter(), _enabled(false) {
+bool CStarlings::_dead;
+
+CStarlings::CStarlings() : CCharacter() {
 }
 
 void CStarlings::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_enabled, indent);
+	file->writeNumberLine(_dead, indent);
 
 	CCharacter::save(file, indent);
 }
 
 void CStarlings::load(SimpleFile *file) {
 	file->readNumber();
-	_enabled = file->readNumber();
+	_dead = file->readNumber();
 
 	CCharacter::load(file);
 }
 
 bool CStarlings::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_enabled)
+	if (_dead)
+		// Tis but a flesh wound
 		setVisible(false);
 	else
+		// Repeatedly play the starlings flying 
 		playMovie(MOVIE_REPEAT);
 	return true;
 }
 
 bool CStarlings::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_enabled = msg->_newStatus == 1;
-	setVisible(!_enabled);
+	// I'm not dead.. I'm getting better.
+	_dead = msg->_newStatus == 1;
+	setVisible(!_dead);
 	return true;
 }
 
