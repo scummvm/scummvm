@@ -997,11 +997,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
-	// SCI2.1 unmapped functions - TODO!
-
-	// SetHotRectangles - used by Phantasmagoria 1, script 64981 (used in the chase scene)
-	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
-	//     of a special HotRect type continuously when the mouse is on that rectangle
+	// Used by Phantasmagoria 1, script 64981 (used in the chase scene)
 	{ MAP_CALL(SetHotRectangles), SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(r)",             NULL,            NULL },
 
 	// Used by SQ6 to scroll through the inventory via the up/down buttons
