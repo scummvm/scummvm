@@ -637,7 +637,12 @@ reg_t kMessageBox(EngineState *s, int argc, reg_t *argv);
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv);
+
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv);
+
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv);

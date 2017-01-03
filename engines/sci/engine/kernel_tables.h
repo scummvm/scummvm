@@ -560,6 +560,16 @@ static const SciKernelMapSubEntry kString_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCelInfo_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CelInfoGetOriginX),         "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(CelInfoGetOriginY),         "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  2, MAP_EMPTY(CelInfo),                  "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  3, MAP_EMPTY(CelInfo),                  "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  4, MAP_CALL(CelInfoGetPixel),           "iiiii",                NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kScrollWindow_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
 	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "iriii(i)",             kScrollWindowAdd_workarounds },
@@ -933,7 +943,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
-	{ MAP_CALL(CelInfo),           SIG_SINCE_SCI21MID, SIGFOR_ALL, "iiiiii",          NULL,            NULL },
+	{ MAP_CALL(CelInfo),           SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",            kCelInfo_subops, NULL },
 	{ MAP_CALL(SetLanguage),       SIG_SINCE_SCI21MID, SIGFOR_ALL, "r",               NULL,            NULL },
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
 	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },

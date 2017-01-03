@@ -430,31 +430,28 @@ reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution)));
 }
 
+// Used by Shivers 1, room 23601 to determine what blocks on the red door
+// puzzle board are occupied by pieces already, and by Phantasmagoria 2 when
+// saving the game from the in-game UI
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
-	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
-	// are occupied by pieces already
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
+reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.x);
+}
 
-	int16 result = 0;
+reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.y);
+}
 
-	switch (argv[0].toUint16()) {
-	case 0:
-		result = view._origin.x;
-		break;
-	case 1:
-		result = view._origin.y;
-		break;
-	case 2:
-	case 3:
-		// null operation
-		break;
-	case 4:
-		result = view.readPixel(argv[4].toSint16(), argv[5].toSint16(), view._mirrorX);
-		break;
-	}
-
-	return make_reg(0, result);
+reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.readPixel(argv[4].toSint16(), argv[5].toSint16(), view._mirrorX));
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
