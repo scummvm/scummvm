@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CSeasonNoises, CViewAutoSoundPlayer)
 	ON_MESSAGE(LoadSuccessMsg)
 END_MESSAGE_MAP()
 
-CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _seasonNumber(0),
+CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _seasonNumber(SEASON_SUMMER),
 	_springName("NULL"), _summerName("NULL"), _autumnName("NULL"), _winterName("NULL") {
 }
 
@@ -48,7 +48,7 @@ void CSeasonNoises::save(SimpleFile *file, int indent) {
 
 void CSeasonNoises::load(SimpleFile *file) {
 	file->readNumber();
-	_seasonNumber = file->readNumber();
+	_seasonNumber = (Season)file->readNumber();
 	_springName = file->readString();
 	_summerName = file->readString();
 	_autumnName = file->readString();
@@ -58,7 +58,7 @@ void CSeasonNoises::load(SimpleFile *file) {
 }
 
 bool CSeasonNoises::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
-	_seasonNumber = (_seasonNumber + 1) % 4;
+	_seasonNumber = (Season)(((int)_seasonNumber + 1) % 4);
 	CActMsg actMsg("Update");
 	actMsg.execute(this);
 
@@ -67,6 +67,7 @@ bool CSeasonNoises::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CSeasonNoises::EnterViewMsg(CEnterViewMsg *msg) {
 	CActMsg actMsg("Update");
+	actMsg.execute(this);
 	return true;
 }
 
@@ -74,17 +75,17 @@ bool CSeasonNoises::ActMsg(CActMsg *msg) {
 	msg->_action = "Update";
 
 	switch (_seasonNumber) {
-	case 0:
-		_filename = _springName;
-		break;
-	case 1:
+	case SEASON_SUMMER:
 		_filename = _summerName;
 		break;
-	case 2:
+	case SEASON_AUTUMN:
 		_filename = _autumnName;
 		break;
-	case 3:
+	case SEASON_WINTER:
 		_filename = _winterName;
+		break;
+	case SEASON_SPRING:
+		_filename = _springName;
 		break;
 	default:
 		break;
