@@ -34,36 +34,36 @@ BEGIN_MESSAGE_MAP(CHammerDispensorButton, CStartAction)
 END_MESSAGE_MAP()
 
 CHammerDispensorButton::CHammerDispensorButton() : CStartAction(),
-	_fieldF8(0), _fieldFC(0), _field100(0), _btnPos(Point(56, 6)),
-	_field10C(nullptr), _field110(0) {
+	_active(false), _open(false), _hitCounter(0), _btnPos(Point(56, 6)),
+	_perch(nullptr), _hammerTaken(0) {
 }
 
 void CHammerDispensorButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_active, indent);
+	file->writeNumberLine(_open, indent);
+	file->writeNumberLine(_hitCounter, indent);
 	file->writeNumberLine(_btnPos.x, indent);
 	file->writeNumberLine(_btnPos.y, indent);
-	file->writeNumberLine(_field110, indent);
+	file->writeNumberLine(_hammerTaken, indent);
 
 	CStartAction::save(file, indent);
 }
 
 void CHammerDispensorButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
-	_field100 = file->readNumber();
+	_active = file->readNumber();
+	_open = file->readNumber();
+	_hitCounter = file->readNumber();
 	_btnPos.x = file->readNumber();
 	_btnPos.y = file->readNumber();
-	_field110 = file->readNumber();
+	_hammerTaken = file->readNumber();
 
 	CStartAction::load(file);
 }
 
 bool CHammerDispensorButton::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldF8 = 1;
+	_active = true;
 	return true;
 }
 
@@ -75,54 +75,47 @@ bool CHammerDispensorButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 bool CHammerDispensorButton::ActMsg(CActMsg *msg) {
 	if (msg->_action == "HammerTaken")
-		_field110 = true;
+		_hammerTaken = true;
 	return true;
 }
 
 bool CHammerDispensorButton::FrameMsg(CFrameMsg *msg) {
-	if (!_fieldF8)
+	if (!_active)
 		return true;
 
-	if (!_field10C) {
+	if (!_perch) {
 		CGameObject *obj = getDraggingObject();
 		if (obj) {
 			if (obj->isEquals("Perch") && getView() == findView())
-				_field10C = obj;
+				_perch = static_cast<CPerch *>(obj);
 		}
 	}
 
-	if (_field10C) {
-		Point pt(_btnPos.x + _bounds.left, _btnPos.y + _bounds.top);
+	if (_perch) {
+		Point pt(_btnPos.x + _perch->_bounds.left, _btnPos.y + _perch->_bounds.top);
 		bool flag = checkPoint(pt, true);
 
-		switch (_fieldFC) {
-		case 0:
+		if (!_open) {
 			if (flag) {
 				playSound("z#93.wav");
-				if (++_field100 == 5) {
-					if (!_field110) {
+				if (++_hitCounter == 5) {
+					if (!_hammerTaken) {
 						CActMsg actMsg(_msgAction);
 						actMsg.execute(_msgTarget);
 					}
 
 					setVisible(false);
-					_fieldF8 = 0;
-					_field100 = 0;
+					_active = false;
+					_hitCounter = 0;
 				}
 
-				_fieldFC = 1;
+				_open = true;
 			}
-			break;
-
-		case 1:
+		} else {
 			if (!flag) {
-				_fieldFC = 0;
-				++_field100;
+				_open = false;
+				++_hitCounter;
 			}
-			break;
-
-		default:
-			break;
 		}
 	}
 
@@ -130,15 +123,15 @@ bool CHammerDispensorButton::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CHammerDispensorButton::LeaveViewMsg(CLeaveViewMsg *msg) {
-	_field10C = nullptr;
-	_field100 = 0;
-	_fieldFC = 0;
+	_perch = nullptr;
+	_hitCounter = 0;
+	_open = false;
 	return true;
 }
 
 bool CHammerDispensorButton::EnterViewMsg(CEnterViewMsg *msg) {
 	setVisible(true);
-	_fieldF8 = 1;
+	_active = true;
 	return true;
 }
 

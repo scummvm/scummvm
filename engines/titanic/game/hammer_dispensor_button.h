@@ -24,6 +24,7 @@
 #define TITANIC_HAMMER_DISPENSOR_BUTTON_H
 
 #include "titanic/game/start_action.h"
+#include "titanic/carry/perch.h"
 
 namespace Titanic {
 
@@ -36,12 +37,12 @@ class CHammerDispensorButton : public CStartAction {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	int _fieldF8;
-	int _fieldFC;
-	int _field100;
+	bool _active;
+	bool _open;
+	int _hitCounter;
 	Point _btnPos;
-	CGameObject *_field10C;
-	int _field110;
+	CPerch *_perch;
+	bool _hammerTaken;
 public:
 	CLASSDEF;
 	CHammerDispensorButton();
