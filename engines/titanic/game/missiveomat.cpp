@@ -294,8 +294,8 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		if (welcome) {
 			CString str = CString::format(
 				"Missive %d of %d.\nFrom: %s\nTo: %s\n\n%s\n",
-				_messageNum + 1, _totalMessages, _from[_messageNum].c_str(),
-				_to[_messageNum].c_str(), _messages[_messageNum].c_str());
+				_messageNum + 1, _totalMessages, _from[_account * 19 + _messageNum].c_str(),
+				_to[_account * 19 + _messageNum].c_str(), _messages[_account * 19 + _messageNum].c_str());
 
 			welcome->setText(str);
 		}
