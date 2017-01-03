@@ -273,12 +273,14 @@ void AVISurface::setupDecompressor() {
 }
 
 void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest) {
-	assert(src.w == dest.w && src.h == dest.h);
+	// WORKAROUND: A bad video in the Promenade has a frame with a width slightly larger
+	// than the defined width for the movie it's in. Hence the assert below is >=
+	assert(src.w >= dest.w && src.h == dest.h);
 
 	if (src.format.bytesPerPixel == 1) {
 		// Paletted 8-bit, so convert to 16-bit and copy over
 		Graphics::Surface *s = src.convertTo(dest.format, _decoder->getPalette());
-		dest.blitFrom(*s);
+		dest.blitFrom(*s, Common::Rect(0, 0, dest.w, dest.h), Common::Point(0, 0));
 		s->free();
 		delete s;
 	} else if (src.format.bytesPerPixel == 2) {
