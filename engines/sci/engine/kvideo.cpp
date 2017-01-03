@@ -472,52 +472,41 @@ reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
-	Video::VideoDecoder *videoDecoder = 0;
-	bool reshowCursor = g_sci->_gfxCursor->isVisible();
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (operation) {
-	case 1:	// Play
-		// 6 params
-		s->_videoState.reset();
-		s->_videoState.fileName = Common::String::format("%d.duk", argv[1].toUint16());
+reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv) {
+	kPlayDuckOpen(s, argc, argv);
+	g_sci->_video32->getDuckPlayer().play(-1);
+	g_sci->_video32->getDuckPlayer().close();
+	return NULL_REG;
+}
 
-		videoDecoder = new Video::AVIDecoder();
+reg_t kPlayDuckSetFrameOut(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getDuckPlayer().setDoFrameOut((bool)argv[0].toUint16());
+	return NULL_REG;
+}
 
-		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
-			warning("Could not open Duck %s", s->_videoState.fileName.c_str());
-			break;
-		}
+reg_t kPlayDuckOpen(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId resourceId = argv[0].toUint16();
+	const int displayMode = argv[1].toSint16();
+	const int16 x = argv[2].toSint16();
+	const int16 y = argv[3].toSint16();
+	// argv[4] is a cache size argument that we do not use
+	g_sci->_video32->getDuckPlayer().open(resourceId, displayMode, x, y);
+	return NULL_REG;
+}
 
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelHide();
+reg_t kPlayDuckClose(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getDuckPlayer().close();
+	return NULL_REG;
+}
 
-		{
-		// Duck videos are 16bpp, so we need to change the active pixel format
-		int oldWidth = g_system->getWidth();
-		int oldHeight = g_system->getHeight();
-		Common::List<Graphics::PixelFormat> formats;
-		formats.push_back(videoDecoder->getPixelFormat());
-		initGraphics(640, 480, true, formats);
-
-		if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
-			error("Could not switch screen format for the duck video");
-
-		playVideo(videoDecoder, s->_videoState);
-
-		// Switch back to 8bpp
-		initGraphics(oldWidth, oldHeight, oldWidth > 320);
-		}
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelShow();
-		break;
-	default:
-		kStub(s, argc, argv);
-		break;
-	}
-
-	return s->r_acc;
+reg_t kPlayDuckSetVolume(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getDuckPlayer().setVolume(argv[0].toUint16());
+	return NULL_REG;
 }
 
 #endif

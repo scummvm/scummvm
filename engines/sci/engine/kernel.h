@@ -657,6 +657,11 @@ reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv);
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayDuckSetFrameOut(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayDuckOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayDuckClose(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayDuckSetVolume(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

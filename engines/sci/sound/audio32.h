@@ -160,18 +160,18 @@ public:
 	Audio32(ResourceManager *resMan);
 	~Audio32();
 
-private:
-	ResourceManager *_resMan;
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _handle;
-	Common::Mutex _mutex;
-
 	enum {
 		/**
 		 * The maximum channel volume.
 		 */
 		kMaxVolume = 127
 	};
+
+private:
+	ResourceManager *_resMan;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _handle;
+	Common::Mutex _mutex;
 
 #pragma mark -
 #pragma mark AudioStream implementation

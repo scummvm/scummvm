@@ -119,11 +119,28 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
-	// GK2 stores some VMDs inside of resource volumes, but usually they are
-	// streamed from the filesystem
-	if (res == nullptr && restype == kResourceTypeVMD) {
-		const Common::String fileName = Common::String::format("%u.vmd", argv[1].toUint16());
-		return make_reg(0, Common::File::exists(fileName));
+	// GK2 stores some VMDs inside of resource volumes, but usually videos are
+	// streamed from the filesystem.
+	if (res == nullptr) {
+		const char *format = nullptr;
+		switch (restype) {
+		case kResourceTypeRobot:
+			format = "%u.rbt";
+			break;
+		case kResourceTypeDuck:
+			format = "%u.duk";
+			break;
+		case kResourceTypeVMD:
+			format = "%u.vmd";
+			break;
+		default:
+			format = nullptr;
+		}
+
+		if (format) {
+			const Common::String fileName = Common::String::format(format, argv[1].toUint16());
+			return make_reg(0, Common::File::exists(fileName));
+		}
 	}
 #endif
 

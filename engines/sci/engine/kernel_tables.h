@@ -495,6 +495,15 @@ static const SciKernelMapSubEntry kRobot_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPlayDuck_subops[] = {
+	{ SIG_SCI3,            1, MAP_CALL(PlayDuckPlay),              "iiiii",                NULL },
+	{ SIG_SCI3,            2, MAP_CALL(PlayDuckSetFrameOut),       "i",                    NULL },
+	{ SIG_SCI3,            5, MAP_CALL(PlayDuckClose),             "",                     NULL },
+	{ SIG_SCI3,            6, MAP_CALL(PlayDuckSetVolume),         "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kRemapColors_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(RemapColorsOff),            "(i)",                  NULL },
 	{ SIG_SCI32,           1, MAP_CALL(RemapColorsByRange),        "iiii(i)",              NULL },
@@ -1008,7 +1017,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
-	{ MAP_CALL(PlayDuck),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(PlayDuck),           SIG_SCI3, SIGFOR_ALL,     "(.*)",                 kPlayDuck_subops,NULL },
 #endif
 
 	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
