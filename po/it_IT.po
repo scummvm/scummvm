@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2016-12-22 21:51+0000\n"
-"Last-Translator: edward <ed.matteucci@gmail.com>\n"
-"Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/it/>\n"
+"PO-Revision-Date: 2017-01-03 16:20+0000\n"
+"Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
+"Language-Team: Italian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1855,14 +1855,13 @@ msgstr ""
 "per le istruzioni su come ottenere ulteriore assistenza."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Salvataggio fallito (%s)! Si prega di consultare il file README per le "
-"informazioni di base e per le istruzioni su come ottenere ulteriore "
-"assistenza."
+"Salvataggio non riuscito (%s). Consultare il file README per le informazioni "
+"di base e per le istruzioni su come ottenere ulteriore assistenza."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:112
@@ -1927,13 +1926,13 @@ msgstr ""
 "Vedi il file README per i dettagli."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Caricamento salvataggio fallito (%s)! Si prega di consultare il file README "
-"per le informazioni di base e per le istruzioni su come ottenere ulteriore "
+"Caricamento salvataggio non riuscito (%s). Consultare il file README per le "
+"informazioni di base e per le istruzioni su come ottenere ulteriore "
 "assistenza."
 
 #: engines/engine.cpp:555
@@ -2021,17 +2020,15 @@ msgstr "Emulatore Apple II GS (NON IMPLEMENTATO)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Emulatore Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
-#, fuzzy
 msgid "FM-Towns Audio"
 msgstr "Emulatore FM Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Audio"
+msgstr "Audio PC-98"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -2054,19 +2051,20 @@ msgid "C64 Audio Emulator"
 msgstr "Emulatore audio C64"
 
 #: backends/cloud/storage.cpp:211
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "Scansione completa!"
+msgstr "Sincronizzazione salvataggi completata."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Sincronizzazione salvataggi annullata."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"La sincronizzazione dei salvataggi non è riuscita.\n"
+"Controllare la propria connessione Internet."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
@@ -2074,16 +2072,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Scaricamento completato.\n"
+"Scaricamento di %u file non riuscito."
 
 #: backends/cloud/storage.cpp:330
-#, fuzzy
 msgid "Download complete."
-msgstr "Scansione completa!"
+msgstr "Scaricamento completato."
 
 #: backends/cloud/storage.cpp:340
-#, fuzzy
 msgid "Download failed."
-msgstr "Carica gioco:"
+msgstr "Scaricamento non riuscito."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2167,12 +2165,12 @@ msgstr "Modalità touchpad disattivata."
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "On"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "Off"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
