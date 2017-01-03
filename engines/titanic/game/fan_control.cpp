@@ -149,16 +149,20 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CFanControl::EnterViewMsg(CEnterViewMsg *msg) {
 	switch (_state) {
-	case 0:
+	case -1:
+		// Fan off
 		loadFrame(6);
 		break;
-	case 1:
+	case 0:
+		// Low speed
 		loadFrame(4);
 		break;
-	case 2:
+	case 1:
+		// Medium speed
 		loadFrame(0);
 		break;
-	case 3:
+	case 2:
+		// High speed
 		loadFrame(18);
 		break;
 	default:
