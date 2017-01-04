@@ -1,12 +1,11 @@
 MODULE := engines/cryo
 
 MODULE_OBJS = \
-	clsoundraw.o \
-	cryolib.o \
-	sound.o \
-	eden.o \
 	cryo.o \
+	cryolib.o \
 	detection.o \
+	eden.o \
+	sound.o \
 	staticdata.o \
 	video.o
 

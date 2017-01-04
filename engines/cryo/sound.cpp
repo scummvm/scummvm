@@ -74,10 +74,10 @@ SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 samp
 	if (numSounds < kCryoMaxClSounds)
 		_numSounds = numSounds;
 	else
-		error("CLSoundGroup_New - numSounds >= kCryoMaxClSounds");
+		error("SoundGroup - numSounds >= kCryoMaxClSounds");
 
 	for (int i = 0; i < _numSounds; i++) {
-		_sounds[i] = CLSoundRaw_New(length, rate, sampleSize, mode);
+		_sounds[i] = new sound_t(length, rate, sampleSize, mode);
 		_sounds[i]->_maxLength = length;
 	}
 	_soundIndex = 0;
@@ -88,7 +88,7 @@ SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 samp
 // Original name: CLSoundGroup_Free
 SoundGroup::~SoundGroup() {
 	for (int16 i = 0; i < _numSounds; i++)
-		CLSoundRaw_Free(_sounds[i]);
+		delete(_sounds[i]);
 }
 
 // Original name: CLSoundGroup_Reverse16All
@@ -115,7 +115,7 @@ bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
 		return false;
 
 	sound->_buffer = (char *)buffer;
-	CLSound_SetLength(sound, length);
+	sound->setLength(length);
 	sound->_length = length;
 	//	if(sound->reversed && sound->sampleSize == 16)
 	//		ReverseBlock16(buffer, length);
@@ -143,7 +143,7 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 	void *buffer = sound->_sndHandle + sound->_headerLen;
 	sound->_buffer = (char *)buffer;
 	memcpy(buffer, data, length);
-	CLSound_SetLength(sound, length);
+	sound->setLength(length);
 	sound->_length = length;
 	//	if(sound->reversed && sound->sampleSize == 16)
 	//		ReverseBlock16(buffer, length);
@@ -158,7 +158,7 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 }
 
 // Original name: CLSoundGroup_PlayNextSample
-void SoundGroup::playNextSample(soundchannel_t *ch) {
+void SoundGroup::playNextSample(SoundChannel *ch) {
 	ch->play(_sounds[_playIndex]);
 	if (_playIndex == _numSounds - 1)
 		_playIndex = 0;

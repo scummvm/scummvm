@@ -136,30 +136,46 @@ struct hnm_t {
 };
 typedef struct hnm_t hnm_t;
 
-struct sound_t {
-	char  *_sndHandle;
-	int16  _headerLen;
+class sound_t {
+private:
 	int32  _headerOffset;
 	int16  _unused0A;
 
-	char   *_buffer;
 	int    _unused16;
-	int16  _maxLength;
-	float  _rate;
-	int16  _sampleSize;
-	int    _length;
 	int16  _mode;
-	volatile int16  _locked;
 	int32  _loopStart;
 	int16  _loopTimes;
-	bool   _reversed;
 	int16  _unused32;
 	int16  _volume;
+
+public:
+	sound_t(int16 length, float rate, int16 sampleSize, int16 mode);
+	~sound_t();
+
+	void assignBuffer(void *buffer, int bufferOffs, int length);
+	void prepareSample(int16 mode);
+	void setWantsDesigned(int16 designed);
+	void setLength(int length);
+
+	char  *_sndHandle;
+	char  *_buffer;
+
+	float  _rate;
+
+	int16  _maxLength;
+	int16  _headerLen;
+	int16  _sampleSize;
+
+	int    _length;
+
+	bool   _reversed;
+
+	volatile int16  _locked;
 };
 
 #define kCryoMaxChSounds 10
 
-class soundchannel_t {
+class SoundChannel {
 private:
 	int16   _volumeLeft;
 	int16   _volumeRight;
@@ -168,8 +184,8 @@ private:
 	sound_t *_sounds[kCryoMaxChSounds];
 
 public:
-	soundchannel_t(int arg1);
-	~soundchannel_t();
+	SoundChannel(int arg1);
+	~SoundChannel();
 
 	void stop();
 	void play(sound_t *sound);
@@ -178,10 +194,6 @@ public:
 	void setVolumeRight(int16 volume);
 	void setVolumeLeft(int16 volume);
 };
-
-sound_t *CLSoundRaw_New(int16 length, float rate, int16 sampleSize, int16 mode);
-void CLSoundRaw_Free(sound_t *sound);
-void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length);
 
 void SysBeep(int x);
 int32 TickCount();
@@ -209,10 +221,6 @@ void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeSystem();
 
 void CLFile_Write(Common::File &handle, void *buffer, int32 *size);
-
-void CLSound_PrepareSample(sound_t *sound, int16 mode);
-void CLSound_SetWantsDesigned(int16 designed);
-void CLSound_SetLength(sound_t *sound, int length);
 
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();

@@ -56,7 +56,7 @@ public:
 	void *getNextBuffer();
 	bool assignDatas(void *buffer, int length, bool isSigned);
 	bool setDatas(void *data, int length, bool isSigned);
-	void playNextSample(soundchannel_t *ch);
+	void playNextSample(SoundChannel *ch);
 
 	sound_t *_sounds[kCryoMaxClSounds];
 	int16 _numSounds;

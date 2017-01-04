@@ -341,24 +341,65 @@ void CLFile_Write(Common::File &handle, void *buffer, int32 *size) {
 
 ///// CLSound
 // base sound
-void CLSound_PrepareSample(sound_t *sound, int16 mode) {
-	sound->_mode = mode;
-	sound->_locked = 0;
-	sound->_loopTimes = 0;
-	sound->_reversed = false;
-	sound->_unused32 = 0;
-	sound->_volume = 255;
+
+sound_t::sound_t(int16 length, float rate, int16 sampleSize, int16 mode) {
+	_sndHandle = nullptr;
+	_headerLen = 0;
+	_headerOffset = 0;
+
+	_length = 0;
+	_mode = 0;
+	_locked = 0;
+	_loopStart = 0;
+	_loopTimes = 0;
+	_reversed = false;
+	_volume = 0;
+
+	_maxLength = length;
+	_rate = rate;
+	_sampleSize = sampleSize;
+	_buffer = nullptr;
+	//		sndHandle = CLMemory_AllocHandle(arg1 + 100);
+	//		if(!sndHandle)
+	//			error("CLSoundRaw_New - Not enough memory");
+	//		else
+	prepareSample(mode);
 }
 
-void CLSound_SetWantsDesigned(int16 designed) {
+sound_t::~sound_t() {
+	while (_locked)
+		;
 }
 
-void CLSound_SetLength(sound_t *sound, int length) {
+void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {
+	sound->setLength(length);
+	sound->_length = length;
+	char *buf = bufferOffs + (char *)buffer;
+	//	if(CLSound_GetWantsDesigned())
+	//		CLSound_Signed2NonSigned(buf, length);
+	sound->_buffer = buf;
+	//	if(sound->reversed && sound->sampleSize == 16)
+	//		ReverseBlock16(buf, length);
+}
+
+void sound_t::prepareSample(int16 mode) {
+	_mode = mode;
+	_locked = 0;
+	_loopTimes = 0;
+	_reversed = false;
+	_unused32 = 0;
+	_volume = 255;
+}
+
+void sound_t::setWantsDesigned(int16 designed) {
+}
+
+void sound_t::setLength(int length) {
 }
 
 ///// CLSoundChannel
 /// sound output device that plays queue of sounds
-soundchannel_t::soundchannel_t(int arg1) {
+SoundChannel::SoundChannel(int arg1) {
 	_volumeLeft = _volumeRight = 255;
 	_numSounds = 0;
 
@@ -366,21 +407,21 @@ soundchannel_t::soundchannel_t(int arg1) {
 		_sounds[i] = nullptr;
 }
 
-soundchannel_t::~soundchannel_t() {
+SoundChannel::~SoundChannel() {
 }
 
-void soundchannel_t::stop() {
+void SoundChannel::stop() {
 	//  _vm->_mixer->stopHandle(this);
 }
 
-void soundchannel_t::play(sound_t *sound) {
+void SoundChannel::play(sound_t *sound) {
 }
 
-int16 soundchannel_t::getVolume() {
+int16 SoundChannel::getVolume() {
 	return (_volumeLeft + _volumeRight) / 2;
 }
 
-void soundchannel_t::setVolume(int16 volume) {
+void SoundChannel::setVolume(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 
@@ -388,14 +429,14 @@ void soundchannel_t::setVolume(int16 volume) {
 	_volumeRight = volume;
 }
 
-void soundchannel_t::setVolumeRight(int16 volume) {
+void SoundChannel::setVolumeRight(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 
 	_volumeRight = volume;
 }
 
-void soundchannel_t::setVolumeLeft(int16 volume) {
+void SoundChannel::setVolumeLeft(int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 

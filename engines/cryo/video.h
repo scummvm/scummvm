@@ -70,9 +70,9 @@ private:
 
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
-	soundchannel_t *_soundChannel;
+	SoundChannel *_soundChannel;
 	SoundGroup *_soundGroup;
-	soundchannel_t *_soundChannelAdpcm;
+	SoundChannel *_soundChannelAdpcm;
 	SoundGroup *_soundGroupAdpcm;
 
 public:
@@ -99,7 +99,7 @@ public:
 	hnm_t *resetInternals();
 	void setFile(hnm_t *hnm, Common::File *file);
 
-	soundchannel_t *getSoundChannel();
+	SoundChannel *getSoundChannel();
 };
 
 } // End of namespace Cryo
