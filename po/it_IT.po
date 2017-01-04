@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-03 16:20+0000\n"
-"Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
+"PO-Revision-Date: 2017-01-04 17:04+0000\n"
+"Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -2174,12 +2174,12 @@ msgstr "Off"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Fai scivolare due dita verso destra per cambiare."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "La modalità di autotrascimento è ora"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
