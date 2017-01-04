@@ -18,6 +18,8 @@ private:
 	unsigned int _sampleRate;
 	bool _stereo;
 
+	void applyVolumeChange();
+
 public:
 	CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo);
 	~CSoundChannel();
@@ -37,9 +39,6 @@ public:
 	void setVolume(unsigned int volumeLeft, unsigned int volumeRight);
 	void setVolumeLeft(unsigned int volume);
 	void setVolumeRight(unsigned int volume);
-
-private:
-	void applyVolumeChange();
 };
 
 #define kCryoMaxClSounds 64
@@ -48,21 +47,21 @@ class SoundGroup {
 private:
 	CryoEngine *_vm;
 
-public:
-	SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-	~SoundGroup();
-
-	void reverse16All();
-	void *getNextBuffer();
-	bool assignDatas(void *buffer, int length, bool isSigned);
-	bool setDatas(void *data, int length, bool isSigned);
-	void playNextSample(SoundChannel *ch);
-
 	Sound *_sounds[kCryoMaxClSounds];
 	int16 _numSounds;
 	int16 _soundIndex;
 	int16 _playIndex;
 	bool _forceWait;
+
+public:
+	SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+	~SoundGroup();
+
+	bool assignDatas(void *buffer, int length, bool isSigned);
+	void playNextSample(SoundChannel *ch);
+	void reverse16All();
+	bool setDatas(void *data, int length, bool isSigned);
+	void *getNextBuffer();
 };
 
 }
