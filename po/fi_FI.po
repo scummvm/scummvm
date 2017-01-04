@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-01 19:42+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-01-04 21:26+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -80,11 +80,11 @@ msgstr "Valitse"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr "Valitse kansio pelilataukselle"
+msgstr "Valitse hakemisto pelilataukselle"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Valitse pelin kansio"
+msgstr "Valitse pelin hakemisto"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
@@ -170,7 +170,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
 #: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
-msgstr "Tallenna"
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -178,8 +178,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"\"%s\" on jo olemassa valitussa kansiossa. Haluatko varmasti ladata "
-"tiedostoja tähän kansioon?"
+"\"%s\" on jo olemassa valitussa hakemistossa. Haluatko varmasti ladata "
+"tiedostoja tähän hakemistoon?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
@@ -261,7 +261,7 @@ msgstr "Alusta:"
 
 #: gui/editgamedialog.cpp:176
 msgid "Engine"
-msgstr "Moottori"
+msgstr "Pelimoottori"
 
 #: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "Graphics"
@@ -403,23 +403,23 @@ msgstr "Oletus"
 
 #: gui/editgamedialog.cpp:450 gui/options.cpp:1772
 msgid "Select SoundFont"
-msgstr "Valitse äänifontti"
+msgstr "Valitse SoundFont"
 
 #: gui/editgamedialog.cpp:489
 msgid "Select additional game directory"
-msgstr "Valitse lisäkansio pelille"
+msgstr "Valitse lisähakemisto pelille"
 
 #: gui/editgamedialog.cpp:502 gui/options.cpp:1695
 msgid "Select directory for saved games"
-msgstr "Valitse kansio pelitallennuksille"
+msgstr "Valitse hakemisto pelitallennuksille"
 
 #: gui/editgamedialog.cpp:508
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"Pelitallennusten synkronointiominaisuus toimii ainoastaa vakiokansioilla. "
-"Jos haluat synkronoida pelitallennuksesi, käytä vakiokansioita."
+"Pelitallennusten synkronointiominaisuus toimii ainoastaa vakiohakemistoilla. "
+"Jos haluat synkronoida pelitallennuksesi, käytä vakiohakemistoa."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -443,7 +443,7 @@ msgstr "Valitse ladattava tiedosto"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr "Syötä tiedostonnimi tallennukselle"
+msgstr "Syötä tiedoston nimi tallennukselle"
 
 #: gui/filebrowser-dialog.cpp:132
 msgid "Do you really want to overwrite the file?"
@@ -511,7 +511,7 @@ msgstr "Interpolaatio:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr "ei päällä (nopein)"
+msgstr "Ei päällä (nopein)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
@@ -846,7 +846,7 @@ msgstr "kokoruututilaa ei voitu muuttaa"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
-msgstr "Filtteröintiasetusta ei voitu muuttaa"
+msgstr "Suodatusasetusta ei voitu muuttaa"
 
 #: gui/options.cpp:809
 msgid "Graphics mode:"
@@ -871,7 +871,7 @@ msgstr "Suodata grafiikka"
 
 #: gui/options.cpp:838
 msgid "Use linear filtering when scaling graphics"
-msgstr "Käytä bilineaarista filtteriä grafiikan skaalauksessa"
+msgstr "Käytä bilineaarista suodatinta grafiikan skaalauksessa"
 
 #: gui/options.cpp:841
 msgid "Aspect ratio correction"
@@ -947,7 +947,7 @@ msgstr "Käytä ensimmäistä laitetta"
 
 #: gui/options.cpp:934
 msgid "SoundFont:"
-msgstr "Äänifontti:"
+msgstr "SoundFont:"
 
 #: gui/options.cpp:934 gui/options.cpp:936 gui/options.cpp:937
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
@@ -957,7 +957,7 @@ msgstr ""
 #: gui/options.cpp:936
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr "Äänifontti:"
+msgstr "SoundFont:"
 
 #: gui/options.cpp:942
 msgid "Mixed AdLib/MIDI mode"
@@ -1030,7 +1030,7 @@ msgstr "Molemmat"
 
 #: gui/options.cpp:1009
 msgid "Subtitle speed:"
-msgstr "Tekstin nopeus:"
+msgstr "Tekstityksen nopeus:"
 
 #: gui/options.cpp:1011
 msgctxt "lowres"
@@ -1057,7 +1057,7 @@ msgstr "Näytä tekstitys ja käytä puhetta"
 #: gui/options.cpp:1019
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Tekstin nopeus:"
+msgstr "Tekstityksen nopeus:"
 
 #: gui/options.cpp:1035
 msgid "Music volume:"
@@ -1239,28 +1239,28 @@ msgstr "Avaa lataustenhallintadialogi"
 
 #: gui/options.cpp:1432
 msgid "Run server"
-msgstr "Käynnistä serveri"
+msgstr "Käynnistä palvelin"
 
 #: gui/options.cpp:1432
 msgid "Run local webserver"
-msgstr "Käynnistä paikallinen webserveri"
+msgstr "Käynnistä paikallinen webpalvelin"
 
 #: gui/options.cpp:1433 gui/options.cpp:2082
 msgid "Not running"
-msgstr "Ei päällä"
+msgstr "Ei käynnissä"
 
 #: gui/options.cpp:1437
 msgid "/root/ Path:"
-msgstr "/root/-kansio:"
+msgstr "/root/-polku:"
 
 #: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Määrittää kansion johon tiedostonhallinnalla on pääsy"
+msgstr "Määrittää hakemiston johon tiedostonhallinnalla on pääsy"
 
 #: gui/options.cpp:1439
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "/root/-kansio:"
+msgstr "/root/-polku:"
 
 #: gui/options.cpp:1449
 msgid "Server's port:"
@@ -1271,8 +1271,8 @@ msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
-"Serverin käyttämä portti\n"
-"Autentikaatio serverillä on mahdollista vain vakioportilla"
+"Palvelimen käyttämä portti\n"
+"Autentikaatio palvelimella on mahdollista vain vakioportilla"
 
 #: gui/options.cpp:1462
 msgid "Apply"
@@ -1333,7 +1333,7 @@ msgstr "Pysäytä palvelin"
 
 #: gui/options.cpp:2074
 msgid "Stop local webserver"
-msgstr "Pysäytä paikallinen webserveri"
+msgstr "Pysäytä paikallinen webpalvelin"
 
 #: gui/options.cpp:2163
 msgid ""
@@ -4387,11 +4387,11 @@ msgstr "Näytä tämänhetkinen kuvia/sekunti määrä vasemmassa ylänurkassa"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr "Spritejen bilineaarinen filtteröinti (HIDAS)"
+msgstr "Spritejen bilineaarinen suodatus (HIDAS)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr "Käytä bilineaarista filtteröintiä yksittäisiin spriteihin"
+msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
