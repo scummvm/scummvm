@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 21:12+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-01-04 22:18+0000\n"
+"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -3439,13 +3439,13 @@ msgid "Enable high resolution graphics/content"
 msgstr "Abilita grafica ed altri contenuti ad alta risoluzione"
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Attiva la modalità Roland GS"
+msgstr "Abilita linee di scansione nei video"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
+"Applica linee di scansione ai video per migliorarne la nitidezza (apparente)"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3505,6 +3505,12 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
+"Il tuo gioco sembra essere di una versione sconosciuta. Se *NON* si tratta "
+"di\n"
+"una versione modificata (per esempio, una traduzione amatoriale), per "
+"favore\n"
+"comunica le seguenti informazioni al team di ScummVM, indicando il nome del\n"
+"gioco e la versione, lingua, eccetera:\n"
 
 #: engines/scumm/detection.cpp:1138
 msgid ""
@@ -3512,15 +3518,17 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
+"La versione lite di \"Putt-Putt Saves the Zoo\" per iOS non è supportata per "
+"evitarne la pirateria.\n"
+"La versione completa è disponibile per l'acquisto sull'iTunes Store."
 
 #: engines/scumm/detection.cpp:1341
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Mostra etichette oggetti"
+msgstr "Mostra riga nomi oggetti"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Mostra i nomi degli oggetti nella parte inferiore dello schermo"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3545,15 +3553,13 @@ msgstr "Gioco in pausa. Premere SPAZIO per continuare."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:179
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Sei sicuro di voler riavviare? (S/N)S"
+msgstr "Sei sicuro di voler ricominciare?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Sei sicuro di voler uscire? (S/N)S"
+msgstr "Sei sicuro di voler uscire?  (S/N)S"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
@@ -3677,7 +3683,6 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
 msgstr "Carica salvataggio 1-10"
 
@@ -3688,7 +3693,6 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
 msgstr "Salva nella posizione 1-10"
 
@@ -4063,25 +4067,24 @@ msgid "Third kid"
 msgstr "Terzo ragazzo"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Mostra/nascondi schermo centrale dati"
+msgstr "Alterna tra visualizzazione Inventario e Punteggio QI"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Alterna tra Tastiera o Mouse per le fasi di combattimento (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* La tastiera è sempre attiva durante i combattimenti,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  quindi indipendentemente dai messaggi nel gioco,"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  questa opzione non fa altro che attivare/disattivare il mouse."
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -4118,11 +4121,11 @@ msgstr "Colpisci in basso"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Pugno \"a tradimento\""
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "Validi quando Indy si trova a sinistra."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
@@ -4186,12 +4189,10 @@ msgid "Snap scroll off"
 msgstr ""
 
 #: engines/scumm/input.cpp:593
-#, fuzzy
 msgid "Music volume: "
 msgstr "Volume musica:"
 
 #: engines/scumm/input.cpp:610
-#, fuzzy
 msgid "Subtitle speed: "
 msgstr "Velocità testo:"
 
@@ -4459,7 +4460,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Usa filmati MPEG ad alta risoluzione"
 
 #: engines/zvision/detection_tables.h:92
 #, fuzzy
