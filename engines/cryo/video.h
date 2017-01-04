@@ -29,21 +29,8 @@ class CryoEngine;
 
 class HnmPlayer {
 public:
-	int     _frameNum;
-	int     _unused04;
 	Common::File *_file;
 	HNMHeader     _header;
-	byte   *tmpBuffer[2];
-	byte   *_finalBuffer;
-	byte   *_newFrameBuffer;
-	byte   *_oldFrameBuffer;
-	byte   *_readBuffer;
-	byte   *_dataPtr;
-	color_t _palette[256];
-	bool    _canLoop;
-	int16   _unused896;
-	int16   _chunkId;
-	int     _totalRead;
 
 private:
 	CryoEngine *_vm;
@@ -60,6 +47,8 @@ private:
 	void desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 	void desentrelace();
 	void decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags);
+	void setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+	void init();
 
 	// Unused
 	void done();
@@ -83,6 +72,17 @@ private:
 	bool _preserveColor0;
 	int16 decompTable[256];
 	bool _safePalette;
+	int     _frameNum;
+	byte   *_tmpBuffer[2];
+	byte   *_finalBuffer;
+	byte   *_newFrameBuffer;
+	byte   *_oldFrameBuffer;
+	byte   *_readBuffer;
+	byte   *_dataPtr;
+	color_t _palette[256];
+	bool    _canLoop;
+	int16   _chunkId;
+	int     _totalRead;
 
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
@@ -96,26 +96,22 @@ public:
 
 	HnmPlayer(CryoEngine *vm);
 
-	void setupTimer(float rate);
-	void reset();
-	void closeSound();
-	void waitLoop();
-	void flushPreloadBuffer();
-	void setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-	void setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-	bool nextElement();
-	void init();
-	void setForceZero2Black(bool forceblack);
-	void readHeader();
-	int16 getVersion();
 	void allocMemory();
+	void closeSound();
 	void deallocMemory();
-	void setFinalBuffer(byte *buffer);
 	int getFrameNum();
+	SoundChannel *getSoundChannel();
+	int16 getVersion();
+	bool nextElement();
+	void reset();
+	void readHeader();
 	void resetInternals();
 	void setFile(Common::File *file);
-
-	SoundChannel *getSoundChannel();
+	void setFinalBuffer(byte *buffer);
+	void setForceZero2Black(bool forceblack);
+	void setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+	void setupTimer(float rate);
+	void waitLoop();
 };
 
 } // End of namespace Cryo

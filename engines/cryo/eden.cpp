@@ -6436,7 +6436,6 @@ void EdenGame::playHNM(int16 num) {
 	_videoCanceledFlag = false;
 	shnmfl(num);
 	_vm->_video->reset();
-	_vm->_video->flushPreloadBuffer();
 	if (_needToFade) {
 		fadeToBlack(4);
 		clearScreen();

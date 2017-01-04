@@ -52,13 +52,11 @@ HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
 // Original name: CLHNM_New
 void HnmPlayer::resetInternals() {
 	_frameNum = 0;
-	_unused04 = 0;
 	_file = nullptr;
-	tmpBuffer[0] = nullptr;
-	tmpBuffer[1] = nullptr;
+	_tmpBuffer[0] = nullptr;
+	_tmpBuffer[1] = nullptr;
 	_finalBuffer = nullptr;
 	_readBuffer = nullptr;
-	_unused896 = 0;
 	_totalRead = 0;
 	for (int i = 0; i < 256; i++) {
 		_palette[i].a = 0;
@@ -87,7 +85,6 @@ void HnmPlayer::resetInternalTimer() {
 // Original name: CLHNM_Reset
 void HnmPlayer::reset() {
 	_frameNum = 0;
-	_unused04 = 0;
 	_totalRead = 0;
 	_soundStarted = false;
 	_pendingSounds = 0;
@@ -213,36 +210,36 @@ int16 HnmPlayer::getVersion() {
 // Original name: CLHNM_AllocMemory
 void HnmPlayer::allocMemory() {
 // TODO: rework this code
-	tmpBuffer[0] = (byte *)malloc(_header._bufferSize + 2);
+	_tmpBuffer[0] = (byte *)malloc(_header._bufferSize + 2);
 
-	if (!tmpBuffer[0])
+	if (!_tmpBuffer[0])
 		return;
 
-	tmpBuffer[1] = (byte *)malloc(_header._bufferSize + 2);
+	_tmpBuffer[1] = (byte *)malloc(_header._bufferSize + 2);
 
-	if (!tmpBuffer[1]) {
-		free(tmpBuffer[0]);
-		tmpBuffer[0] = nullptr;
+	if (!_tmpBuffer[1]) {
+		free(_tmpBuffer[0]);
+		_tmpBuffer[0] = nullptr;
 		return;
 	}
 
 	_readBuffer = (byte *)malloc(_header._bufferSize + 2);
 	if (!_readBuffer) {
-		free(tmpBuffer[0]);
-		tmpBuffer[0] = nullptr;
-		free(tmpBuffer[1]);
-		tmpBuffer[1] = nullptr;
+		free(_tmpBuffer[0]);
+		_tmpBuffer[0] = nullptr;
+		free(_tmpBuffer[1]);
+		_tmpBuffer[1] = nullptr;
 	}
 }
 
 // Original name: CLHNM_DeallocMemory
 void HnmPlayer::deallocMemory() {
-	free(tmpBuffer[0]);
-	free(tmpBuffer[1]);
+	free(_tmpBuffer[0]);
+	free(_tmpBuffer[1]);
 	free(_readBuffer);
 
-	tmpBuffer[0] = nullptr;
-	tmpBuffer[1] = nullptr;
+	_tmpBuffer[0] = nullptr;
+	_tmpBuffer[1] = nullptr;
 	_readBuffer = nullptr;
 }
 
@@ -581,10 +578,6 @@ SoundChannel *HnmPlayer::getSoundChannel() {
 	return _soundChannel;
 }
 
-// Original name: CLHNM_FlushPreloadBuffer
-void HnmPlayer::flushPreloadBuffer() {
-}
-
 // Original name: CLHNM_ChangePalette
 void HnmPlayer::changePalette() {
 	CLPalette_GetLastPalette(_palette);
@@ -648,11 +641,11 @@ void HnmPlayer::changePalette() {
 // Original name: CLHNM_SelectBuffers
 void HnmPlayer::selectBuffers() {
 	if (_frameNum % 2) {
-		_newFrameBuffer = tmpBuffer[1];
-		_oldFrameBuffer = tmpBuffer[0];
+		_newFrameBuffer = _tmpBuffer[1];
+		_oldFrameBuffer = _tmpBuffer[0];
 	} else {
-		_newFrameBuffer = tmpBuffer[0];
-		_oldFrameBuffer = tmpBuffer[1];
+		_newFrameBuffer = _tmpBuffer[0];
+		_oldFrameBuffer = _tmpBuffer[1];
 	}
 }
 
