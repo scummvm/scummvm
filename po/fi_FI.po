@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 21:26+0000\n"
+"PO-Revision-Date: 2017-01-04 21:33+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
@@ -1510,7 +1510,7 @@ msgstr "Liitä"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr "Liittää lekepöydän sisällön kenttiin"
+msgstr "Liittää leikepöydän sisällön kenttiin"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
