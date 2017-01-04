@@ -77,7 +77,7 @@ SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 samp
 		error("SoundGroup - numSounds >= kCryoMaxClSounds");
 
 	for (int i = 0; i < _numSounds; i++) {
-		_sounds[i] = new sound_t(length, rate, sampleSize, mode);
+		_sounds[i] = new Sound(length, rate, sampleSize, mode);
 		_sounds[i]->_maxLength = length;
 	}
 	_soundIndex = 0;
@@ -99,7 +99,7 @@ void SoundGroup::reverse16All() {
 
 // Original name: CLSoundGroup_GetNextBuffer
 void *SoundGroup::getNextBuffer() {
-	sound_t *sound = _sounds[_soundIndex];
+	Sound *sound = _sounds[_soundIndex];
 	if (_forceWait)
 		while (sound->_locked) ;
 	return sound->_sndHandle + sound->_headerLen;
@@ -107,7 +107,7 @@ void *SoundGroup::getNextBuffer() {
 
 // Original name: CLSoundGroup_AssignDatas
 bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
-	sound_t *sound = _sounds[_soundIndex];
+	Sound *sound = _sounds[_soundIndex];
 	if (_forceWait)
 		while (sound->_locked)
 			;
@@ -131,7 +131,7 @@ bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
 
 // Original name: CLSoundGroup_SetDatas
 bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
-	sound_t *sound = _sounds[_soundIndex];
+	Sound *sound = _sounds[_soundIndex];
 	if (length >= sound->_maxLength)
 		error("CLSoundGroup_SetDatas - Unexpected length");
 

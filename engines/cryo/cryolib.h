@@ -136,7 +136,7 @@ struct hnm_t {
 };
 typedef struct hnm_t hnm_t;
 
-class sound_t {
+class Sound {
 private:
 	int32  _headerOffset;
 	int16  _unused0A;
@@ -149,8 +149,8 @@ private:
 	int16  _volume;
 
 public:
-	sound_t(int16 length, float rate, int16 sampleSize, int16 mode);
-	~sound_t();
+	Sound(int16 length, float rate, int16 sampleSize, int16 mode);
+	~Sound();
 
 	void assignBuffer(void *buffer, int bufferOffs, int length);
 	void prepareSample(int16 mode);
@@ -181,14 +181,14 @@ private:
 	int16   _volumeRight;
 	int16   _numSounds;
 
-	sound_t *_sounds[kCryoMaxChSounds];
+	Sound *_sounds[kCryoMaxChSounds];
 
 public:
 	SoundChannel(int arg1);
 	~SoundChannel();
 
 	void stop();
-	void play(sound_t *sound);
+	void play(Sound *sound);
 	int16 getVolume();
 	void setVolume(int16 volume);
 	void setVolumeRight(int16 volume);

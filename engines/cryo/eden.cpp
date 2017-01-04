@@ -5734,7 +5734,7 @@ void EdenGame::run() {
 	_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
 	_vm->_video->setForceZero2Black(true);
 	_vm->_video->setupTimer(12.5);
-	_voiceSound = new sound_t(0, 11025 * 65536.0, 8, 0);
+	_voiceSound = new Sound(0, 11025 * 65536.0, 8, 0);
 	_hnmSoundChannel = _vm->_video->getSoundChannel();
 	_voiceSound->setWantsDesigned(1); // CHECKME: Used?
 

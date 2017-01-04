@@ -342,7 +342,7 @@ void CLFile_Write(Common::File &handle, void *buffer, int32 *size) {
 ///// CLSound
 // base sound
 
-sound_t::sound_t(int16 length, float rate, int16 sampleSize, int16 mode) {
+Sound::Sound(int16 length, float rate, int16 sampleSize, int16 mode) {
 	_sndHandle = nullptr;
 	_headerLen = 0;
 	_headerOffset = 0;
@@ -366,12 +366,12 @@ sound_t::sound_t(int16 length, float rate, int16 sampleSize, int16 mode) {
 	prepareSample(mode);
 }
 
-sound_t::~sound_t() {
+Sound::~Sound() {
 	while (_locked)
 		;
 }
 
-void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {
+void CLSoundRaw_AssignBuffer(Sound *sound, void *buffer, int bufferOffs, int length) {
 	sound->setLength(length);
 	sound->_length = length;
 	char *buf = bufferOffs + (char *)buffer;
@@ -382,7 +382,7 @@ void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int l
 	//		ReverseBlock16(buf, length);
 }
 
-void sound_t::prepareSample(int16 mode) {
+void Sound::prepareSample(int16 mode) {
 	_mode = mode;
 	_locked = 0;
 	_loopTimes = 0;
@@ -391,10 +391,10 @@ void sound_t::prepareSample(int16 mode) {
 	_volume = 255;
 }
 
-void sound_t::setWantsDesigned(int16 designed) {
+void Sound::setWantsDesigned(int16 designed) {
 }
 
-void sound_t::setLength(int length) {
+void Sound::setLength(int length) {
 }
 
 ///// CLSoundChannel
@@ -414,7 +414,7 @@ void SoundChannel::stop() {
 	//  _vm->_mixer->stopHandle(this);
 }
 
-void SoundChannel::play(sound_t *sound) {
+void SoundChannel::play(Sound *sound) {
 }
 
 int16 SoundChannel::getVolume() {

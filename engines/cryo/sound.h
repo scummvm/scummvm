@@ -58,7 +58,7 @@ public:
 	bool setDatas(void *data, int length, bool isSigned);
 	void playNextSample(SoundChannel *ch);
 
-	sound_t *_sounds[kCryoMaxClSounds];
+	Sound *_sounds[kCryoMaxClSounds];
 	int16 _numSounds;
 	int16 _soundIndex;
 	int16 _playIndex;
