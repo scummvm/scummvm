@@ -117,25 +117,6 @@ struct HNMHeader {
 typedef struct HNMHeader HNMHeader;
 #pragma pack(pop)
 
-struct hnm_t {
-	int     _frameNum;
-	int     _unused04;
-	Common::File *_file;
-	HNMHeader     _header;
-	byte   *tmpBuffer[2];
-	byte   *finalBuffer;
-	byte   *_newFrameBuffer;
-	byte   *_oldFrameBuffer;
-	byte   *_readBuffer;
-	byte   *_dataPtr;
-	color_t _palette[256];
-	bool    _canLoop;
-	int16   _unused896;
-	int16   _chunkId;
-	int     _totalRead;
-};
-typedef struct hnm_t hnm_t;
-
 class Sound {
 private:
 	int32  _headerOffset;

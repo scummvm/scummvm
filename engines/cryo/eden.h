@@ -650,7 +650,6 @@ private:
 	View  *_underBarsView;
 	View  *_mainView;
 	View  *_hnmView;
-	hnm_t *_hnmContext;
 	Common::Rect _underSubtitlesBackupRect;
 	Common::Rect _underSubtitlesScreenRect;
 	Common::Rect _underBottomBarBackupRect;

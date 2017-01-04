@@ -28,6 +28,23 @@ namespace Cryo {
 class CryoEngine;
 
 class HnmPlayer {
+public:
+	int     _frameNum;
+	int     _unused04;
+	Common::File *_file;
+	HNMHeader     _header;
+	byte   *tmpBuffer[2];
+	byte   *_finalBuffer;
+	byte   *_newFrameBuffer;
+	byte   *_oldFrameBuffer;
+	byte   *_readBuffer;
+	byte   *_dataPtr;
+	color_t _palette[256];
+	bool    _canLoop;
+	int16   _unused896;
+	int16   _chunkId;
+	int     _totalRead;
+
 private:
 	CryoEngine *_vm;
 
@@ -35,19 +52,18 @@ private:
 	void wantsSound(bool sound);
 	void decompADPCM(byte *buffer, int16 *output, int size);
 	void loadDecompTable(int16 *buffer);
-	bool loadFrame(hnm_t *hnm);
-	void tryRead(hnm_t *hnm, int size);
-	void changePalette(hnm_t *hnm);
-	void selectBuffers(hnm_t *hnm);
+	bool loadFrame();
+	void tryRead(int size);
+	void changePalette();
+	void selectBuffers();
 	void decompLempelZiv(byte *buffer, byte *output);
 	void desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
-	void desentrelace(hnm_t *hnm);
+	void desentrelace();
 	void decompUBA(byte *output, byte *curr_buffer, byte *prev_buffer, byte *input, int width, char flags);
 
 	// Unused
 	void done();
-	void dispose(hnm_t *hnm);
-	void canLoop(hnm_t *hnm, bool canLoop);
+	void canLoop(bool canLoop);
 	void soundInADPCM(bool is_adpcm);
 	void soundMono(bool is_mono);
 	//
@@ -81,23 +97,23 @@ public:
 	HnmPlayer(CryoEngine *vm);
 
 	void setupTimer(float rate);
-	void reset(hnm_t *hnm);
+	void reset();
 	void closeSound();
-	void waitLoop(hnm_t *hnm);
-	void flushPreloadBuffer(hnm_t *hnm);
+	void waitLoop();
+	void flushPreloadBuffer();
 	void setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
 	void setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-	bool nextElement(hnm_t *hnm);
+	bool nextElement();
 	void init();
 	void setForceZero2Black(bool forceblack);
-	void readHeader(hnm_t *hnm);
-	int16 getVersion(hnm_t *hnm);
-	void allocMemory(hnm_t *hnm);
-	void deallocMemory(hnm_t *hnm);
-	void setFinalBuffer(hnm_t *hnm, byte *buffer);
-	int getFrameNum(hnm_t *hnm);
-	hnm_t *resetInternals();
-	void setFile(hnm_t *hnm, Common::File *file);
+	void readHeader();
+	int16 getVersion();
+	void allocMemory();
+	void deallocMemory();
+	void setFinalBuffer(byte *buffer);
+	int getFrameNum();
+	void resetInternals();
+	void setFile(Common::File *file);
 
 	SoundChannel *getSoundChannel();
 };

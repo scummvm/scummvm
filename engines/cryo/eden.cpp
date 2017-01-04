@@ -110,7 +110,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_hnmSoundChannel = nullptr;
 	_voiceSound = nullptr;
 	_view2 = _underSubtitlesView = _subtitlesView = _underBarsView = _mainView = _hnmView = nullptr;
-	_hnmContext = nullptr;
 	_doubledScreen = false;
 	_cirsorPanX = 0;
 	_inventoryScrollDelay = 0;
@@ -4741,8 +4740,8 @@ void EdenGame::openbigfile() {
 		_bigfileHeader->_files[j]._flag = _bigfile.readByte();
 	}
 
-	_hnmContext = _vm->_video->resetInternals();
-	_vm->_video->setFile(_hnmContext, &_bigfile);
+	_vm->_video->resetInternals();
+	_vm->_video->setFile(&_bigfile);
 }
 
 void EdenGame::closebigfile() {
@@ -4839,7 +4838,7 @@ void EdenGame::shnmfl(uint16 num) {
 	int size = file->_size;
 	int offs = file->_offs;
 	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), (uint)offs, size);
-	_hnmContext->_file->seek(offs, SEEK_SET);
+	_vm->_video->_file->seek(offs, SEEK_SET);
 }
 
 int EdenGame::ssndfl(uint16 num) {
@@ -6351,21 +6350,21 @@ void EdenGame::mouse() {
 ////// film.c
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
-	_vm->_video->readHeader(_hnmContext);
+	_vm->_video->readHeader();
 	if (_vm->_video->_curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		_hnmSoundChannel->setVolumeLeft(0);
 		_hnmSoundChannel->setVolumeRight(0);
 	}
 
-	if (_vm->_video->getVersion(_hnmContext) != 4)
+	if (_vm->_video->getVersion() != 4)
 		return;
 
 	bool playing = true;
-	_vm->_video->allocMemory(_hnmContext);
-	_hnmView = new View(_vm, _hnmContext->_header._width, _hnmContext->_header._height);
+	_vm->_video->allocMemory();
+	_hnmView = new View(_vm, _vm->_video->_header._width, _vm->_video->_header._height);
 	_hnmView->setSrcZoomValues(0, 0);
-	_hnmView->setDisplayZoomValues(_hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
+	_hnmView->setDisplayZoomValues(_vm->_video->_header._width * 2, _vm->_video->_header._height * 2);
 	_hnmView->centerIn(_vm->_screenView);
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
@@ -6374,12 +6373,12 @@ void EdenGame::showMovie(char arg1) {
 		_hnmView->_normal._dstTop = _mainView->_normal._dstTop + 16;
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
-	_vm->_video->setFinalBuffer(_hnmContext, _hnmView->_bufferPtr);
+	_vm->_video->setFinalBuffer(_hnmView->_bufferPtr);
 	_hnmView->_doubled = _doubledScreen;
 	do {
-		_hnmFrameNum = _vm->_video->getFrameNum(_hnmContext);
-		_vm->_video->waitLoop(_hnmContext);
-		playing = _vm->_video->nextElement(_hnmContext);
+		_hnmFrameNum = _vm->_video->getFrameNum();
+		_vm->_video->waitLoop();
+		playing = _vm->_video->nextElement();
 		if (_specialTextMode)
 			handleHNMSubtitles();
 		else
@@ -6411,7 +6410,7 @@ void EdenGame::showMovie(char arg1) {
 		}
 	} while (playing && !_videoCanceledFlag);
 	delete _hnmView;
-	_vm->_video->deallocMemory(_hnmContext);
+	_vm->_video->deallocMemory();
 }
 
 void EdenGame::playHNM(int16 num) {
@@ -6436,8 +6435,8 @@ void EdenGame::playHNM(int16 num) {
 	_showVideoSubtitle = false;
 	_videoCanceledFlag = false;
 	shnmfl(num);
-	_vm->_video->reset(_hnmContext);
-	_vm->_video->flushPreloadBuffer(_hnmContext);
+	_vm->_video->reset();
+	_vm->_video->flushPreloadBuffer();
 	if (_needToFade) {
 		fadeToBlack(4);
 		clearScreen();
