@@ -806,7 +806,7 @@ enum {
 	kKernelEntriesSci2 = 0x8b,
 	kKernelEntriesGk2Demo = 0xa0,
 	kKernelEntriesSci21 = 0x9d,
-	kKernelEntriesSci3 = 0xa1
+	kKernelEntriesSci3 = 0xa2
 };
 #endif
 

@@ -662,6 +662,8 @@ reg_t kPlayDuckSetFrameOut(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayDuckOpen(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayDuckClose(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayDuckSetVolume(EngineState *s, int argc, reg_t *argv);
+reg_t kWebConnect(EngineState *s, int argc, reg_t *argv);
+reg_t kWinExec(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

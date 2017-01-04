@@ -1018,6 +1018,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI3 Kernel Functions
 	{ MAP_CALL(PlayDuck),           SIG_SCI3, SIGFOR_ALL,     "(.*)",                 kPlayDuck_subops,NULL },
+	{ MAP_CALL(WebConnect),         SIG_SCI3, SIGFOR_ALL,     "(r)",                  NULL,            NULL },
+	{ MAP_CALL(WinExec),            SIG_SCI3, SIGFOR_ALL,     "r",                    NULL,            NULL },
 #endif
 
 	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
@@ -1499,7 +1501,8 @@ static const char *const sci21_default_knames[] = {
 	/*0x9d*/ "Dummy",
 	/*0x9e*/ "WebConnect",
 	/*0x9f*/ "Dummy",
-	/*0xa0*/ "PlayDuck"
+	/*0xa0*/ "PlayDuck",
+	/*0xa1*/ "WinExec"
 };
 
 #endif
