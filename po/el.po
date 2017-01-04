@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 23:54+0200\n"
+"PO-Revision-Date: 2017-01-04 23:55+0200\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
@@ -3792,15 +3792,15 @@ msgstr "* Να σημειωθεί ότι η χρήση του ctrl-f"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr " και του ctrl-g δε συνίσταται, μια"
+msgstr "  και του ctrl-g δε συνίσταται, μια"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr " και μπορεί να προκαλέσουν κολλήματα"
+msgstr "  και μπορεί να προκαλέσουν κολλήματα"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr " ή εσφαλμένη συμπεριφορά παιχνιδιών."
+msgstr "  ή εσφαλμένη συμπεριφορά παιχνιδιών."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
