@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 21:11+0000\n"
-"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
+"PO-Revision-Date: 2017-01-04 21:12+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -2849,7 +2849,7 @@ msgstr "Utilizza caratteri Hercules ad alta risoluzione, se disponibili."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr "Pausa per immissione comandi "
+msgstr "Pausa per immissione comandi"
 
 #: engines/agi/detection.cpp:188
 msgid ""
@@ -3194,7 +3194,8 @@ msgid ""
 msgstr ""
 "%d salvataggi originali sono stati importati con successo in ScummVM.\n"
 "Per importare ulteriori salvataggi successivamente, è possibile utilizzare\n"
-"il comando 'import_savefile' disponibile nella console di debug di ScummVM."
+"il comando 'import_savefile' disponibile nella console di debug di ScummVM.\n"
+"\n"
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
@@ -3259,7 +3260,7 @@ msgid ""
 "'rivendmo.exe'. "
 msgstr ""
 "File eseguibile di Riven non trovato. L'eseguibile per la versione Windows è "
-"'riven.exe' o 'rivendmo.exe'"
+"'riven.exe' o 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:151
 msgid ""
@@ -3427,7 +3428,7 @@ msgstr "Non applicare l'effetto dithering EGA (usa sfondi a tinta unita)"
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Non applica effetti dithering ai giochi con grafica EGA. Verranno sempre "
-"usati colori a piena intensità."
+"usati colori a piena intensità"
 
 #: engines/sci/detection.cpp:400
 msgid "Enable high resolution graphics"
