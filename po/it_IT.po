@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
 "PO-Revision-Date: 2017-01-05 07:32+0000\n"
-"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -4396,7 +4396,7 @@ msgstr "Variante del font non presente nel file dati del motore '%s'."
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Gioco salvato nella posizione %d\n"
+msgstr "Gioco salvato nella posizione %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
