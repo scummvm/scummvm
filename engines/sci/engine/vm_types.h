@@ -30,6 +30,12 @@ namespace Sci {
 // Segment ID type
 typedef uint16 SegmentId;
 
+enum {
+	kUninitializedSegment = 0x1FFF,
+	kSegmentMask = 0x1FFF,
+	kOffsetMask = 0x7FFFF
+};
+
 struct reg_t {
 	// Segment and offset. These should never be accessed directly
 	SegmentId _segment;
@@ -61,14 +67,14 @@ struct reg_t {
 	}
 
 	bool isPointer() const {
-		return getSegment() != 0 && getSegment() != 0xFFFF;
+		return getSegment() != 0 && getSegment() != kUninitializedSegment;
 	}
 
 	uint16 requireUint16() const;
 	int16 requireSint16() const;
 
 	inline bool isInitialized() const {
-		return getSegment() != 0xFFFF;
+		return getSegment() != kUninitializedSegment;
 	}
 
 	// Comparison operators
@@ -173,7 +179,7 @@ static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	return r;
 }
 
-#define PRINT_REG(r) (0xffff) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
+#define PRINT_REG(r) (kSegmentMask) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
 
 // A true 32-bit reg_t
 struct reg32_t {

@@ -120,7 +120,7 @@ extern const char *opcodeNames[]; // from scriptdebug.cpp
 
 static reg_t read_var(EngineState *s, int type, int index) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
-		if (s->variables[type][index].getSegment() == 0xffff) {
+		if (s->variables[type][index].getSegment() == kUninitializedSegment) {
 			switch (type) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
@@ -194,7 +194,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
 		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
 		//  if we don't remove the segment, we would get false-positive uninitialized reads later
-		if (type == VAR_TEMP && value.getSegment() == 0xffff)
+		if (type == VAR_TEMP && value.getSegment() == kUninitializedSegment)
 			value.setSegment(0);
 
 		s->variables[type][index] = value;
@@ -331,7 +331,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		assert(argp[0].toUint16() == argc); // The first argument is argc
 		ExecStack xstack(work_obj, send_obj, curSP, argc, argp,
-							0xFFFF, curFP, selector, -1, -1, -1, -1,
+							kUninitializedSegment, curFP, selector, -1, -1, -1, -1,
 							origin, stackType);
 
 		if (selectorType == kSelectorVariable)
@@ -360,7 +360,7 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kerne
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, make_reg32(0, 0),
+	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, kUninitializedSegment, make_reg32(0, 0),
 						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
@@ -884,7 +884,7 @@ void run_vm(EngineState *s) {
 			// We shouldn't initialize temp variables at all
 			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
-				s->xs->sp[i] = make_reg(0xffff, 0);
+				s->xs->sp[i] = make_reg(kUninitializedSegment, 0);
 
 			s->xs->sp += opparams[0];
 			break;

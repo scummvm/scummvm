@@ -116,7 +116,7 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		if (localsSegment_ != 0xFFFF)
+		if (localsSegment_ != kUninitializedSegment)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
