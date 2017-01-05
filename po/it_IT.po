@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-05 07:32+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-01-05 10:42+0000\n"
+"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -419,12 +419,12 @@ msgid ""
 "want your saved games to sync, use default directory."
 msgstr ""
 "La funzionalità di sincronizzazione dei salvataggi non funziona con i "
-"percorsi personalizzati. Per sinconizzare i salvataggi, usa la cartella "
+"percorsi personalizzati. Per sincronizzare i salvataggi, usa la cartella "
 "predefinita."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Questo ID di gioco è già in uso. Si prega di sceglierne un'altro."
+msgstr "Questo ID di gioco è già in uso. Si prega di sceglierne un altro."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -567,11 +567,11 @@ msgstr "Attiva / disattiva schermo intero"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
-msgstr "Mappa"
+msgstr "Associa"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Seleziona un'azione e clicca 'Mappa'"
+msgstr "Seleziona un'azione e clicca 'Associa'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
@@ -754,7 +754,7 @@ msgstr "... in corso..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
-msgstr "Scansione completa!"
+msgstr "Scansione completata!"
 
 #: gui/massadd.cpp:262
 #, c-format
