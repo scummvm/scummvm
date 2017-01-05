@@ -405,25 +405,25 @@ class StringTestSuite : public CxxTest::TestSuite
 
 	void test_strnlen() {
 		static const char * const testString = "123";
-		TS_ASSERT_EQUALS(Common::strnlen(testString, 0), 0);
-		TS_ASSERT_EQUALS(Common::strnlen(testString, 1), 1);
-		TS_ASSERT_EQUALS(Common::strnlen(testString, 2), 2);
-		TS_ASSERT_EQUALS(Common::strnlen(testString, 3), 3);
-		TS_ASSERT_EQUALS(Common::strnlen(testString, 4), 3);
+		TS_ASSERT_EQUALS(Common::strnlen(testString, 0), 0u);
+		TS_ASSERT_EQUALS(Common::strnlen(testString, 1), 1u);
+		TS_ASSERT_EQUALS(Common::strnlen(testString, 2), 2u);
+		TS_ASSERT_EQUALS(Common::strnlen(testString, 3), 3u);
+		TS_ASSERT_EQUALS(Common::strnlen(testString, 4), 3u);
 
 		const char testArray[4] = { '1', '2', '3', '4' };
-		TS_ASSERT_EQUALS(Common::strnlen(testArray, 0), 0);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray, 1), 1);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray, 2), 2);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray, 3), 3);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray, 4), 4);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray, 0), 0u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray, 1), 1u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray, 2), 2u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray, 3), 3u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray, 4), 4u);
 
 		const char testArray2[4] = { '1', '\0', '3', '4' };
-		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 0), 0);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 1), 1);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 2), 1);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 3), 1);
-		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 4), 1);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 0), 0u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 1), 1u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 2), 1u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 3), 1u);
+		TS_ASSERT_EQUALS(Common::strnlen(testArray2, 4), 1u);
 	}
 
 	void test_scumm_stricmp() {
