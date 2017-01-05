@@ -80,11 +80,11 @@ msgstr "Scegli"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr "Seleziona la cartella dove scaricare i file di gioco"
+msgstr "Seleziona la cartella dove scaricare i file dati del gioco"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Seleziona la cartella contenente i file di gioco"
+msgstr "Seleziona la cartella con i file dati del gioco"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
@@ -96,12 +96,12 @@ msgstr "A: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr "Annulla scaricamento"
+msgstr "Annulla download"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Annulla scaricamento"
+msgstr "Annulla download"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
@@ -190,7 +190,7 @@ msgstr "Scaricato %s %s / %s %s"
 #: gui/downloaddialog.cpp:258
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "Velocità di scaricamento: %s %s"
+msgstr "Velocità di download: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -710,7 +710,7 @@ msgstr ""
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Questa cartella è in fase di scaricamento e non può essere ancora utilizzata!"
+"Questa cartella è in fase di download e non può essere ancora utilizzata!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
@@ -1660,7 +1660,7 @@ msgstr "Nessun errore"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "Dati di gioco non trovati"
+msgstr "Dati del gioco non trovati"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
@@ -2072,16 +2072,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Scaricamento completato.\n"
-"Scaricamento di %u file non riuscito."
+"Download completato.\n"
+"Download di %u file non riuscito."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Scaricamento completato."
+msgstr "Download completato."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "Scaricamento non riuscito."
+msgstr "Download non riuscito."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2870,7 +2870,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
-msgstr "Ripristina gioco:"
+msgstr "Ripristina partita:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2892,7 +2892,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Impossibile caricare il gioco salvato nel file:\n"
+"Impossibile caricare la partita salvata nel file:\n"
 "\n"
 "%s"
 
@@ -2903,7 +2903,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Impossibile salvare il gioco nel file:\n"
+"Impossibile salvare la partita nel file:\n"
 "\n"
 "%s"
 
@@ -2914,7 +2914,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Gioco salvato con successo nel file:\n"
+"Partita salvata correttamente nel file:\n"
 "\n"
 "%s"
 
@@ -2960,12 +2960,12 @@ msgstr "Visualizza la grafica con i colori brillanti del gioco"
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
 msgid "Failed to load saved game from file."
-msgstr "Impossibile caricare il gioco dal file."
+msgstr "Impossibile caricare la partita dal file."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
 msgid "Failed to save game to file."
-msgstr "Impossibile salvare il gioco nel file."
+msgstr "Impossibile salvare la partita nel file."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -2981,7 +2981,7 @@ msgstr "Aumenta la velocità di riproduzione dei filmati"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Impossibile salvare il gioco"
+msgstr "Impossibile salvare la partita"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3415,7 +3415,7 @@ msgstr "Intro alternativa"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Usa un'intro del gioco alternativa (solo versione CD)"
+msgstr "Usa un'introduzione alternativa (solo versione CD)"
 
 #: engines/sci/detection.cpp:390
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -3571,11 +3571,11 @@ msgstr "Devi inserire un nome"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Il gioco NON è stato salvato (disco pieno?)"
+msgstr "La partita NON è stata salvata (disco pieno?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
-msgstr "Il gioco NON è stato caricato"
+msgstr "La partita NON è stata caricata"
 
 #: engines/scumm/dialogs.cpp:194
 #, c-format
@@ -3593,7 +3593,7 @@ msgstr "Dai un nome al SALVATAGGIO"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr "Seleziona un gioco da caricare"
+msgstr "Seleziona una partita da caricare"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
@@ -4390,7 +4390,7 @@ msgstr "Variante del font non presente nel file dati del motore '%s'."
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Gioco salvato nella posizione %d "
+msgstr "Partita salvata nella posizione %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
