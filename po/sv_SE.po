@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-03 16:23+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-01-05 07:33+0000\n"
+"Last-Translator: Petter Sjölund <ignalina@mac.com>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -1917,13 +1917,13 @@ msgstr ""
 "Se README-filen för detaljer."
 
 #: engines/engine.cpp:542
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Kunde inte ladda spardata (%s)! Hänvisa till README-filen för grundläggande "
-"information och instruktioner för ytterligare assistans."
+"Kunde inte ladda spardata (%s)! Hänvisa till README-filen för mer "
+"information och instruktioner för hur du får mer hjälp."
 
 #: engines/engine.cpp:555
 msgid ""
@@ -4373,10 +4373,10 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Typsnittsvarianten finns inte i datafilen '%s'."
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
 msgstr ""
-"Kan inte spara data i position %i\n"
+"Kan inte spara data på plats #%d\n"
 "\n"
 
 #: engines/toon/toon.cpp:226
@@ -4385,10 +4385,10 @@ msgid "Could not quick save into slot #%d"
 msgstr "Det gick inte att snabbspara i position #%d"
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
 msgstr ""
-"Kan inte spara data i position %i\n"
+"Sparade speldata #%d snabbladdades\n"
 "\n"
 
 #: engines/toon/toon.cpp:243
