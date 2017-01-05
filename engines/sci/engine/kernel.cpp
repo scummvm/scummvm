@@ -989,10 +989,8 @@ void script_adjust_opcode_formats() {
 	}
 
 	if (getSciVersion() >= SCI_VERSION_3) {
-		// TODO: There are also opcodes in
-		// here to get the superclass, and possibly the species too.
-		g_sci->_opcode_formats[0x4d/2][0] = Script_None;
-		g_sci->_opcode_formats[0x4e/2][0] = Script_None;
+		g_sci->_opcode_formats[op_info][0] = Script_None;
+		g_sci->_opcode_formats[op_superP][0] = Script_None;
 	}
 #endif
 }

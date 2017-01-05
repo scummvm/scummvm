@@ -1043,7 +1043,7 @@ void run_vm(EngineState *s) {
 
 			break;
 
-		case op_infoToa: // (38)
+		case op_info: // (38)
 			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
 
@@ -1053,7 +1053,7 @@ void run_vm(EngineState *s) {
 				PUSH32(obj->getInfoSelector());
 			break;
 
-		case op_superToa: // (39)
+		case op_superP: // (39)
 			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
 
