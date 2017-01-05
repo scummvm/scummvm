@@ -2870,7 +2870,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
-msgstr "Ripristina gioco:"
+msgstr "Ripristina partita:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2892,7 +2892,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Impossibile caricare il gioco salvato nel file:\n"
+"Impossibile caricare la partita salvata nel file:\n"
 "\n"
 "%s"
 
@@ -2903,7 +2903,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Impossibile salvare il gioco nel file:\n"
+"Impossibile salvare la partita nel file:\n"
 "\n"
 "%s"
 
@@ -2914,7 +2914,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Gioco salvato con successo nel file:\n"
+"Partita salvata correttamente nel file:\n"
 "\n"
 "%s"
 
@@ -2961,13 +2961,13 @@ msgstr "Visualizza la grafica con i colori brillanti del gioco"
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
 #, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Impossibile caricare il gioco dal file."
+msgstr "Impossibile caricare la partita dal file."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
 #, fuzzy
 msgid "Failed to save game to file."
-msgstr "Impossibile salvare il gioco nel file."
+msgstr "Impossibile salvare la partita nel file."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -2983,7 +2983,7 @@ msgstr "Aumenta la velocità di riproduzione dei filmati"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Impossibile salvare il gioco"
+msgstr "Impossibile salvare la partita"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
@@ -3575,11 +3575,11 @@ msgstr "Devi inserire un nome"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Il gioco NON è stato salvato (disco pieno?)"
+msgstr "La partita NON è stata salvata (disco pieno?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
-msgstr "Il gioco NON è stato caricato"
+msgstr "La partita NON è stata caricata"
 
 #: engines/scumm/dialogs.cpp:194
 #, c-format
@@ -3597,7 +3597,7 @@ msgstr "Dai un nome al SALVATAGGIO"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr "Seleziona un gioco da caricare"
+msgstr "Seleziona una partita da caricare"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
@@ -4396,7 +4396,7 @@ msgstr "Variante del font non presente nel file dati del motore '%s'."
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Gioco salvato nella posizione %d "
+msgstr "Partita salvata nella posizione %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
