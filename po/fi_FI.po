@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 21:33+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2017-01-05 21:43+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -531,7 +531,7 @@ msgstr "Tyhj‰‰ valinnat"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Palauta FluidSynth vaikoasetukset."
+msgstr "Palauta FluidSynth vakioasetukset."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
@@ -1005,7 +1005,7 @@ msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Valitse jos haluat k‰ytt‰‰ patch mappingia MT-32:n emultointiin Roland GS "
+"Valitse jos haluat k‰ytt‰‰ patch mappingia MT-32:n emulointiin Roland GS "
 "laitteella"
 
 #: gui/options.cpp:974
@@ -1162,7 +1162,7 @@ msgstr "P‰ivitystarkistus:"
 
 #: gui/options.cpp:1381
 msgid "How often to check ScummVM updates"
-msgstr "Kuinka usein tarkistaa onko ScummVM:‰‰n p‰ivityksi‰"
+msgstr "Kuinka usein tarkistetaan onko ScummVM:‰‰n p‰ivityksi‰"
 
 #: gui/options.cpp:1393
 msgid "Check now"
@@ -2309,7 +2309,7 @@ msgstr "Ohjelmistoskaalaus (hyv‰ laatu, mutta hitaampi)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr "Ei skaalattu (vieritt‰ vasemmalle ja oikealle itse)"
+msgstr "Ei skaalattu (vierit‰ vasemmalle ja oikealle itse)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
@@ -2339,7 +2339,7 @@ msgstr "Hiiren ved‰-ja-pudota tila pois k‰ytˆst‰."
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Touchad tila p‰‰ll‰."
+msgstr "Touchpad tila p‰‰ll‰."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
@@ -2508,7 +2508,7 @@ msgstr "Lomittamaton"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Horisontaalinenunderscan:"
+msgstr "Horisontaalinen underscan:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
@@ -2524,7 +2524,7 @@ msgstr "GC Padin herkkyys:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "GC PAdin kiihtyvyys:"
+msgstr "GC Padin kiihtyvyys:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -3359,7 +3359,7 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:714
 msgid "Invalid file name for saving"
-msgstr "Viallinen tiedostonnimi tallennuselle"
+msgstr "Viallinen tiedostonnimi tallennukselle"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3407,7 +3407,7 @@ msgstr "Ohita EGA dithering pass (t‰ysv‰ritaustat)"
 
 #: engines/sci/detection.cpp:391
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr "Ohita dirhering pass EGA peleiss‰, grafiikat n‰ytet‰‰n t‰ysv‰risin‰"
+msgstr "Ohita dithering pass EGA peleiss‰, grafiikat n‰ytet‰‰n t‰ysv‰risin‰"
 
 #: engines/sci/detection.cpp:400
 msgid "Enable high resolution graphics"
@@ -4041,7 +4041,7 @@ msgstr "Kolmas lapsi"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Inventorio/ƒ÷ PIsten‰yttˆ p‰‰lle/pois"
+msgstr "Inventorio/ƒ÷ Pisten‰yttˆ p‰‰lle/pois"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
