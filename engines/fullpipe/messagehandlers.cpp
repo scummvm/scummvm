@@ -519,7 +519,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
 			ObjstateCommand *c = (ObjstateCommand *)cmd;
 			result = 1;
-			g_fp->setObjectState(c->_objCommandName, c->_value);
+			g_fp->setObjectState(c->_objCommandName.c_str(), c->_value);
 		}
 		return result;
 	default:

@@ -401,7 +401,7 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 
 MessageQueue *Scene::getMessageQueueByName(char *name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(_messageQueueList[i]->_queueName, name))
+		if (!strcmp(_messageQueueList[i]->_queueName.c_str(), name))
 			return _messageQueueList[i];
 
 	return 0;

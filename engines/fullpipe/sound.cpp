@@ -102,14 +102,12 @@ Sound::Sound() {
 	_soundData = 0;
 	_objectId = 0;
 	memset(_directSoundBuffers, 0, sizeof(_directSoundBuffers));
-	_description = 0;
 	_volume = 100;
 	_handle = new Audio::SoundHandle();
 }
 
 Sound::~Sound() {
 	freeSound();
-	free(_description);
 	delete _handle;
 }
 
@@ -119,7 +117,7 @@ bool Sound::load(MfcArchive &file, NGIArchive *archive) {
 	MemoryObject::load(file);
 
 	_id = file.readUint32LE();
-	_description = file.readPascalString();
+	/*_description = */file.readPascalString();
 
 	assert(g_fp->_gameProjectVersion >= 6);
 

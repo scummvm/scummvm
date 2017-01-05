@@ -69,18 +69,21 @@ bool GameLoader::readSavegame(const char *fname) {
 	byte *map = (byte *)malloc(800);
 	saveFile->read(map, 800);
 
-	MfcArchive temp(new Common::MemoryReadStream(map, 800));
+	Common::MemoryReadStream *tempStream = new Common::MemoryReadStream(map, 800);
+	MfcArchive temp(tempStream);
 
 	if (_savegameCallback)
 		_savegameCallback(&temp, false);
 
+	delete tempStream;
 	delete saveFile;
 
 	// Deobfuscate the data
 	for (int i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
-	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
+	Common::MemoryReadStream *archiveStream = new Common::MemoryReadStream(data, header.encSize);
+	MfcArchive *archive = new MfcArchive(archiveStream);
 
 	GameVar *var = (GameVar *)archive->readClass();
 
@@ -91,6 +94,7 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		if (!v) {
 			warning("No state to save");
+			delete archiveStream;
 			delete archive;
 			return false;
 		}
@@ -121,6 +125,7 @@ bool GameLoader::readSavegame(const char *fname) {
 		_sc2array[i]._isLoaded = 0;
 	}
 
+	delete archiveStream;
 	delete archive;
 
 	getGameLoaderInventory()->rebuildItemRects();
