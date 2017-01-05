@@ -80,11 +80,11 @@ msgstr "Scegli"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr "Seleziona la cartella dove scaricare i file di gioco"
+msgstr "Seleziona la cartella dove scaricare i file dati del gioco"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Seleziona la cartella contenente i file di gioco"
+msgstr "Seleziona la cartella con i file dati del gioco"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
@@ -1660,7 +1660,7 @@ msgstr "Nessun errore"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "Dati di gioco non trovati"
+msgstr "Dati del gioco non trovati"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
