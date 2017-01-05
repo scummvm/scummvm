@@ -3418,7 +3418,7 @@ msgstr "Intro alternativa"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Usa un'intro del gioco alternativa (solo versione CD)"
+msgstr "Usa un'introduzione alternativa (solo versione CD)"
 
 #: engines/sci/detection.cpp:390
 msgid "Skip EGA dithering pass (full color backgrounds)"
