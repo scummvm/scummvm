@@ -57,7 +57,7 @@ InputController::~InputController() {
 
 	g_fp->_inputController = 0;
 
-	for (int i = 0; i < _cursorsArray.size(); i++)
+	for (uint i = 0; i < _cursorsArray.size(); i++)
 		delete _cursorsArray[i];
 }
 
