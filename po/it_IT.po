@@ -96,12 +96,12 @@ msgstr "A: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr "Annulla scaricamento"
+msgstr "Annulla download"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Annulla scaricamento"
+msgstr "Annulla download"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
@@ -190,7 +190,7 @@ msgstr "Scaricato %s %s / %s %s"
 #: gui/downloaddialog.cpp:258
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "Velocità di scaricamento: %s %s"
+msgstr "Velocità di download: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -710,7 +710,7 @@ msgstr ""
 #: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Questa cartella è in fase di scaricamento e non può essere ancora utilizzata!"
+"Questa cartella è in fase di download e non può essere ancora utilizzata!"
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
@@ -2072,16 +2072,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Scaricamento completato.\n"
-"Scaricamento di %u file non riuscito."
+"Download completato.\n"
+"Download di %u file non riuscito."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Scaricamento completato."
+msgstr "Download completato."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "Scaricamento non riuscito."
+msgstr "Download non riuscito."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
