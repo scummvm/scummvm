@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-04 22:19+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-01-05 07:32+0000\n"
+"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -4206,75 +4206,81 @@ msgstr ""
 "ma %s non è presente. Verrà usato AdLib."
 
 #: engines/scumm/scumm.cpp:2733
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Originariamente, a questo punto dovrebbe partire Maniac Mansion. Ma ScummVM "
-"non lo può ancora fare. Per giocarci, vai a \"Aggiungi gioco\" nel menu "
-"principale di ScummVM e seleziona la cartella \"Maniac\" all'interno della "
-"cartella di Day Of The Tentacle."
+"Teoricamente, a questo punto dovrebbe avviarsi Maniac Mansion. Ma perché "
+"funzioni, é necessario che i files di Maniac Mansion si trovino in una "
+"sottocartella \"MANIAC\" all'interno della cartella principale di Day Of The "
+"Tentacle. Il gioco deve inoltre essere aggiunto a ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"L'eseguibile Macintosh di 'Loom', necessario per caricare gli\n"
+"strumenti, non è stato trovato. La musica non verrà riprodotta."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"L'eseguibile Macintosh di 'Monkey Island', necessario per caricare gli\n"
+"strumenti, non è stato trovato. La musica non verrà riprodotta."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Transizioni di scena pixellate"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Nei cambi di scenario verrà applicato un effetto grafico \"pixellato\""
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Non mostrare le aree interattive al passaggio del mouse"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Mostra i nomi delle aree interattive solo dopo avere cliccato o premuto un "
+"tasto di azione"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Cambia personaggio"
+msgstr "Mostra volti dei personaggi"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Mostra i volti dei personaggi durante le conversazioni"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Animazione a scorrimento finestre dialogo"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Mostra le finestre dell'interfaccia con un'animazione a scorrimento, anziché "
+"visualizzarle immediatamente"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Finestre trasparenti"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Usa uno sfondo parzialmente trasparente per le finestre"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "La dimensione del file dati \"sky.cpt\" non è corretta."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4365,12 +4371,14 @@ msgstr "Mostra etichette per gli oggetti al passaggio del mouse"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Usa il doppiaggio inglese"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Usa il doppiaggio inglese anziché quello tedesco, per qualsiasi lingua "
+"diversa dal tedesco"
 
 #: engines/teenagent/resources.cpp:118
 msgid ""
@@ -4383,47 +4391,45 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Variante del font non presente nel file dati del motore '%s'."
 
 #: engines/toon/toon.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Impossibile salvare nella posizione %i\n"
-"\n"
+msgstr "Gioco salvato nella posizione %d\n"
 
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "Impossibile effettuare un salvataggio rapido alla posizione %d"
 
 #: engines/toon/toon.cpp:239
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"Impossibile salvare nella posizione %i\n"
-"\n"
+msgstr "Caricato salvataggio rapido #%d"
 
 #: engines/toon/toon.cpp:243
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Vuoi caricare il salvataggio?"
+msgstr "Impossibile caricare il salvataggio rapido #%d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Mostra contatore FPS"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
+"Mostra il numero di frame al secondo nell'angolo in alto a sinistra dello "
+"schermo"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Applica filtro bilineare agli sprite (LENTO)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Applica un filtro grafico bilineare ad ogni sprite"
 
 #: engines/zvision/detection_tables.h:52
 #, fuzzy
@@ -4434,39 +4440,37 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Raddoppia FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Aumenta il numero di immagini al secondo da 30 a 60"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Attiva la modalità elio"
+msgstr "Attiva Venus"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Attiva la modalità elio"
+msgstr "Abilita il sistema di aiuto Venus"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Disabilita le animazioni durante gli spostamenti"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Disabilita le animazioni durante le rotazioni in modalità panoramica"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
 msgstr "Usa filmati MPEG ad alta risoluzione"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Usa il set alternativo di cursori d'argento al posto di quelli normali d'oro"
+"Usa i filmati MPEG della versione DVD, anziché i filmati AVI a risoluzione "
+"inferiore"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
