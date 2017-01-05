@@ -586,7 +586,8 @@ reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
-	List *list = s->_segMan->lookupList(argv[0]);
+	const reg_t listReg = argv[0];
+	List *list = s->_segMan->lookupList(listReg);
 
 	Node *curNode = s->_segMan->lookupNode(list->first);
 	Selector slc = argv[1].toUint16();
@@ -627,13 +628,16 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
 
-	--list->numRecursions;
+	if (s->_segMan->isValidAddr(listReg, SEG_TYPE_LISTS)) {
+		--list->numRecursions;
+	}
 
 	return s->r_acc;
 }
 
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
-	List *list = s->_segMan->lookupList(argv[0]);
+	const reg_t listReg = argv[0];
+	List *list = s->_segMan->lookupList(listReg);
 
 	Node *curNode = s->_segMan->lookupNode(list->first);
 	Selector slc = argv[1].toUint16();
@@ -678,13 +682,16 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
 
-	--list->numRecursions;
+	if (s->_segMan->isValidAddr(listReg, SEG_TYPE_LISTS)) {
+		--list->numRecursions;
+	}
 
 	return s->r_acc;
 }
 
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
-	List *list = s->_segMan->lookupList(argv[0]);
+	const reg_t listReg = argv[0];
+	List *list = s->_segMan->lookupList(listReg);
 
 	Node *curNode = s->_segMan->lookupNode(list->first);
 	reg_t curObject;
@@ -723,7 +730,9 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
 
-	--list->numRecursions;
+	if (s->_segMan->isValidAddr(listReg, SEG_TYPE_LISTS)) {
+		--list->numRecursions;
+	}
 
 	return s->r_acc;
 }

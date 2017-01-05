@@ -432,6 +432,13 @@ public:
 	reg_t getParserPtr() const { return _parserPtr; }
 
 #ifdef ENABLE_SCI32
+	bool isValidAddr(reg_t reg, SegmentType expected) const {
+		SegmentObj *mobj = getSegmentObj(reg.getSegment());
+		return (mobj &&
+				mobj->getType() == expected &&
+				mobj->isValidOffset(reg.getOffset()));
+	}
+
 	SciArray *allocateArray(SciArrayType type, uint16 size, reg_t *addr);
 	SciArray *lookupArray(reg_t addr);
 	void freeArray(reg_t addr);

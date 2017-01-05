@@ -656,16 +656,9 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
-	const reg_t &addr = argv[0];
-	const SegmentObj *const segment = s->_segMan->getSegmentObj(addr.getSegment());
-
-	if (segment != nullptr &&
-		segment->getType() == SEG_TYPE_BITMAP &&
-		segment->isValidOffset(addr.getOffset())) {
-
-		s->_segMan->freeBitmap(addr);
+	if (s->_segMan->isValidAddr(argv[0], SEG_TYPE_BITMAP)) {
+		s->_segMan->freeBitmap(argv[0]);
 	}
-
 	return s->r_acc;
 }
 
