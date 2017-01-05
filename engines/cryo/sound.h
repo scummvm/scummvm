@@ -51,7 +51,6 @@ private:
 	int16 _numSounds;
 	int16 _soundIndex;
 	int16 _playIndex;
-	bool _forceWait;
 
 public:
 	SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);

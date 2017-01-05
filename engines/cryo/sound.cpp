@@ -82,7 +82,6 @@ SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 samp
 	}
 	_soundIndex = 0;
 	_playIndex = 0;
-	_forceWait = true;
 }
 
 // Original name: CLSoundGroup_Free
@@ -100,19 +99,12 @@ void SoundGroup::reverse16All() {
 // Original name: CLSoundGroup_GetNextBuffer
 void *SoundGroup::getNextBuffer() {
 	Sound *sound = _sounds[_soundIndex];
-	if (_forceWait)
-		while (sound->_locked) ;
 	return sound->_sndHandle + sound->_headerLen;
 }
 
 // Original name: CLSoundGroup_AssignDatas
 bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
 	Sound *sound = _sounds[_soundIndex];
-	if (_forceWait)
-		while (sound->_locked)
-			;
-	else if (sound->_locked)
-		return false;
 
 	sound->_buffer = (char *)buffer;
 	sound->setLength(length);
@@ -134,11 +126,6 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 	Sound *sound = _sounds[_soundIndex];
 	if (length >= sound->_maxLength)
 		error("CLSoundGroup_SetDatas - Unexpected length");
-
-	if (_forceWait)
-		while (sound->_locked) ;
-	else if (sound->_locked)
-		return false;
 
 	void *buffer = sound->_sndHandle + sound->_headerLen;
 	sound->_buffer = (char *)buffer;

@@ -484,7 +484,7 @@ private:
 	uint16 operIsGreaterOrEqual(uint16 v1, uint16 v2);
 	uint16 operFalse(uint16 v1, uint16 v2);
 	uint16 operation(byte op, uint16 v1, uint16 v2);
-	uint16 cher_valeur();
+	uint16 fetchValue();
 	void actionNop();
 	void initCosTable();
 	void make_matrice_fix();
@@ -728,7 +728,7 @@ private:
 	int16 _lines[200 * 8];
 	byte  _cubeTexture[0x4000];
 	int   _cubeFaces;
-	int32 _cursorOldTick, _cursorNewTick;
+	uint32 _cursorOldTick, _cursorNewTick;
 	byte *_codePtr;
 };
 

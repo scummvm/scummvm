@@ -4587,11 +4587,11 @@ void EdenGame::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
 }
 
 void EdenGame::wait(int howlong) {
-	int t = TickCount();
+	int t = g_system->getMillis();
 #ifdef EDEN_DEBUG
 	howlong *= 10;
 #endif
-	for (int t2 = t; t2 - t < howlong; t2 = TickCount())
+	for (int t2 = t; t2 - t < howlong; t2 = g_system->getMillis())
 		g_system->delayMillis(10); // waste time
 }
 
@@ -8394,7 +8394,7 @@ char EdenGame::testCondition(int16 index) {
 	_codePtr = (byte *)getElem(_gameConditions, (index - 1));
 	uint16 value;
 	do {
-		value = cher_valeur();
+		value = fetchValue();
 		for (;;) {
 			byte op = *_codePtr++;
 			if (op == 0xFF) {
@@ -8402,7 +8402,7 @@ char EdenGame::testCondition(int16 index) {
 				break;
 			}
 			if ((op & 0x80) == 0) {
-				uint16 value2 = cher_valeur();
+				uint16 value2 = fetchValue();
 				value = operation(op, value, value2);
 			} else {
 				assert(sp < stack + 32);
@@ -8506,7 +8506,8 @@ uint16 EdenGame::operation(byte op, uint16 v1, uint16 v2) {
 	return (this->*operations[(op & 0x1F) >> 1])(v1, v2);
 }
 
-uint16 EdenGame::cher_valeur() {
+// Original name: cher_valeur
+uint16 EdenGame::fetchValue() {
 	uint16 val;
 	byte typ = *_codePtr++;
 	if (typ < 0x80) {
@@ -8573,9 +8574,6 @@ void EdenGame::projectionFix(cube_t *cubep, int n) {
 		cubep->_projection[i * 4    ] = r25 / (r29 + 256) + _cursorPosX + 14 + _scrollPos;
 		cubep->_projection[i * 4 + 1] = r24 / (r29 + 256) + _cursorPosY + 14;
 		cubep->_projection[i * 4 + 2] = r29;
-
-//		assert(cube->projection[i * 4] < 640);
-//		assert(cube->projection[i * 4 + 1] < 200);
 	}
 }
 
@@ -8791,7 +8789,7 @@ void EdenGame::Eden_dep_and_rot() {
 	if (_normalCursor && (_globals->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 10;
 	selectMap(curs);
-	_cursorNewTick = TickCount();
+	_cursorNewTick = g_system->getMillis();
 	if (_cursorNewTick - _cursorOldTick < 1)
 		return;
 
@@ -9325,7 +9323,7 @@ void EdenGame::enginePC() {
 	if (_normalCursor && (_globals->_drawFlags & DrawFlags::drDrawFlag20))
 		curs = 9;
 	selectPCMap(curs);
-	_cursorNewTick = TickCount();
+	_cursorNewTick = g_system->getMillis();
 	if (_cursorNewTick - _cursorOldTick < 1)
 		return;
 	_cursorOldTick = _cursorNewTick;

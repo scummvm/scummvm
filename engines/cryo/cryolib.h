@@ -150,8 +150,6 @@ public:
 	int    _length;
 
 	bool   _reversed;
-
-	volatile int16  _locked;
 };
 
 #define kCryoMaxChSounds 10
@@ -177,7 +175,6 @@ public:
 };
 
 void SysBeep(int x);
-int32 TickCount();
 void FlushEvents(int16 arg1, int16 arg2);
 
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2);

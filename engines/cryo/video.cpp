@@ -490,14 +490,23 @@ bool HnmPlayer::nextElement() {
 			_frameNum++;
 			selectBuffers();
 			decompLempelZiv(_dataPtr + 4, _newFrameBuffer);
+#if 0
 			switch (_header._width) {
-				//			case 320: CLBlitter_RawCopy320ASM(_newFrameBuffer, _oldFrameBuffer, _header._height); break;
-				//			case 480: CLBlitter_RawCopy480ASM(_newFrameBuffer, _oldFrameBuffer, _header._height); break;
-				//			case 640: CLBlitter_RawCopy640ASM(_newFrameBuffer, _oldFrameBuffer, _header._height); break;
-				//			default: memcpy(_oldFrameBuffer, _newFrameBuffer, _header._width * _header._height);
-			default:
-				memcpy(_oldFrameBuffer, _newFrameBuffer, _header._bufferSize);  //TODO strange buffer size here
+			case 320:
+				CLBlitter_RawCopy320ASM(_newFrameBuffer, _oldFrameBuffer, _header._height);
+				break;
+			case 480:
+				CLBlitter_RawCopy480ASM(_newFrameBuffer, _oldFrameBuffer, _header._height);
+				break;
+			case 640:
+				CLBlitter_RawCopy640ASM(_newFrameBuffer, _oldFrameBuffer, _header._height);
+				break;
+			default: 
+				memcpy(_oldFrameBuffer, _newFrameBuffer, _header._width * _header._height);
 			}
+#else
+			memcpy(_oldFrameBuffer, _newFrameBuffer, _header._bufferSize);  //TODO strange buffer size here
+#endif
 			if (!(h6 & 1))
 				desentrelace();
 			else {

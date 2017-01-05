@@ -32,25 +32,11 @@
 namespace Cryo {
 
 ///// Mac APIs
-typedef int16 OSErr;
 
 void SysBeep(int x) {
 }
 
-OSErr SetFPos(int16 handle, int16 mode, int32 pos) {
-	return 0;
-}
-
-OSErr FSRead(int16 handle, int32 *size, void *buffer) {
-	return 0;
-}
-
 void FlushEvents(int16 arg1, int16 arg2) {
-}
-
-// from mw lib???
-int32 TickCount() {
-	return g_system->getMillis();
 }
 
 ///// CLView
@@ -349,7 +335,6 @@ Sound::Sound(int16 length, float rate, int16 sampleSize, int16 mode) {
 
 	_length = 0;
 	_mode = 0;
-	_locked = 0;
 	_loopStart = 0;
 	_loopTimes = 0;
 	_reversed = false;
@@ -367,8 +352,6 @@ Sound::Sound(int16 length, float rate, int16 sampleSize, int16 mode) {
 }
 
 Sound::~Sound() {
-	while (_locked)
-		;
 }
 
 void CLSoundRaw_AssignBuffer(Sound *sound, void *buffer, int bufferOffs, int length) {
@@ -384,7 +367,6 @@ void CLSoundRaw_AssignBuffer(Sound *sound, void *buffer, int bufferOffs, int len
 
 void Sound::prepareSample(int16 mode) {
 	_mode = mode;
-	_locked = 0;
 	_loopTimes = 0;
 	_reversed = false;
 	_unused32 = 0;
