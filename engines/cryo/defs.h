@@ -332,7 +332,6 @@ struct perso_t {
 	byte   _speed;      // num ticks per step
 	byte   _steps;      // current ticks
 };
-typedef struct perso_t perso_t;
 
 class EdenGame;
 
@@ -340,7 +339,6 @@ struct phase_t {
 	int16           _id;
 	void (EdenGame::*disp)();
 };
-typedef struct phase_t phase_t;
 
 namespace ObjectFlags {
 enum ObjectFlags {
@@ -358,7 +356,6 @@ struct object_t {
 	uint16  _powerMask;          // object of power bitmask
 	int16  _count;
 };
-typedef struct object_t object_t;
 
 namespace DialogFlags {
 enum DialogFlags {
@@ -386,7 +383,6 @@ struct dial_t {
 	char        _textCondHiMask; // 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
 	char        _textNumLow;     // text line index low bits
 };
-typedef struct dial_t dial_t;
 
 struct tape_t {
 	int16       _textNum;
@@ -396,7 +392,6 @@ struct tape_t {
 	int16       _backgroundBankNum;
 	dial_t      *_dialog;
 };
-typedef struct tape_t tape_t;
 
 struct Follower {      // Characters on Mirror screen
 	char        _id;         // character
@@ -409,7 +404,6 @@ struct Follower {      // Characters on Mirror screen
 	int16       ff_C;
 	int16       ff_E;
 };
-typedef struct Follower Follower;
 
 struct Icon {
 	int16  sx;
@@ -763,7 +757,6 @@ struct PakHeaderItem {
 	int32 _offs;
 	char  _flag;
 };
-typedef struct PakHeaderItem PakHeaderItem;
 
 class PakHeaderNode {
 public:
@@ -825,7 +818,6 @@ extern uint8 tab_2CB1E[8][4];
 struct prect_t {
 	int16   left, top, right, bottom;
 };
-typedef struct prect_t prect_t;
 
 extern prect_t perso_rects[];
 extern byte tab_persxx[][5];

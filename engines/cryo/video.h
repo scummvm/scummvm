@@ -50,13 +50,6 @@ private:
 	void setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
 	void init();
 
-	// Unused
-	void done();
-	void canLoop(bool canLoop);
-	void soundInADPCM(bool is_adpcm);
-	void soundMono(bool is_mono);
-	//
-
 	bool _soundStarted;
 	int16 _pendingSounds;
 	float _timeDrift;
@@ -68,7 +61,6 @@ private:
 	int16 _prevRight;
 	int16 _prevLeft;
 	bool _useAdpcm;
-	bool _useMono;
 	bool _preserveColor0;
 	int16 decompTable[256];
 	bool _safePalette;
@@ -80,16 +72,12 @@ private:
 	byte   *_readBuffer;
 	byte   *_dataPtr;
 	color_t _palette[256];
-	bool    _canLoop;
-	int16   _chunkId;
 	int     _totalRead;
 
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
 	SoundChannel *_soundChannel;
 	SoundGroup *_soundGroup;
-	SoundChannel *_soundChannelAdpcm;
-	SoundGroup *_soundGroupAdpcm;
 
 public:
 	uint16 _curVideoNum;

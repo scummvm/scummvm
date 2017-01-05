@@ -90,12 +90,6 @@ SoundGroup::~SoundGroup() {
 		delete(_sounds[i]);
 }
 
-// Original name: CLSoundGroup_Reverse16All
-void SoundGroup::reverse16All() {
-	for (int16 i = 0; i < _numSounds; i++)
-		_sounds[i]->_reversed = true;
-}
-
 // Original name: CLSoundGroup_GetNextBuffer
 void *SoundGroup::getNextBuffer() {
 	Sound *sound = _sounds[_soundIndex];

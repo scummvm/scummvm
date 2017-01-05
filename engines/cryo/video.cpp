@@ -36,11 +36,8 @@ HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
 	_useSound = false;
 	_soundChannel = nullptr;
 	_soundGroup = nullptr;
-	_soundChannelAdpcm = nullptr;
-	_soundGroupAdpcm = nullptr;
 	_prevRight = _prevLeft = 0;
 	_useAdpcm = false;
-	_useMono = false;
 	_customChunkHandler = nullptr;
 	_preserveColor0 = false;
 	_safePalette = false;
@@ -57,7 +54,6 @@ void HnmPlayer::resetInternals() {
 	_tmpBuffer[1] = nullptr;
 	_finalBuffer = nullptr;
 	_readBuffer = nullptr;
-	_totalRead = 0;
 	for (int i = 0; i < 256; i++) {
 		_palette[i].a = 0;
 		_palette[i].r = 0;
@@ -85,7 +81,6 @@ void HnmPlayer::resetInternalTimer() {
 // Original name: CLHNM_Reset
 void HnmPlayer::reset() {
 	_frameNum = 0;
-	_totalRead = 0;
 	_soundStarted = false;
 	_pendingSounds = 0;
 	resetInternalTimer();
@@ -121,14 +116,6 @@ void HnmPlayer::wantsSound(bool sound) {
 void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	_soundChannel = new SoundChannel(mode);
 	_soundGroup = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
-	if (sampleSize == 16)
-		_soundGroup->reverse16All();
-}
-
-// Original name: CLHNM_SetupSoundADPCM
-void HnmPlayer::setupSoundADPCM(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	_soundChannelAdpcm = new SoundChannel(mode);
-	_soundGroupAdpcm = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
 }
 
 // Original name: CLHNM_CloseSound
@@ -138,18 +125,10 @@ void HnmPlayer::closeSound() {
 		delete(_soundChannel);
 		_soundChannel = nullptr;
 	}
+
 	if (_soundGroup) {
 		delete(_soundGroup);
 		_soundGroup = nullptr;
-	}
-	if (_soundChannelAdpcm) {
-		_soundChannelAdpcm->stop();
-		delete(_soundChannelAdpcm);
-		_soundChannelAdpcm = nullptr;
-	}
-	if (_soundGroupAdpcm) {
-		delete(_soundGroupAdpcm);
-		_soundGroupAdpcm = nullptr;
 	}
 }
 
@@ -272,7 +251,6 @@ bool HnmPlayer::loadFrame() {
 
 	tryRead(chunk - 4);
 	_dataPtr = _readBuffer;
-	_totalRead += chunk;
 	return true;
 }
 
@@ -480,7 +458,6 @@ bool HnmPlayer::nextElement() {
 		_dataPtr += 1;
 		char h7 = *_dataPtr;
 		_dataPtr += 1;
-		_chunkId = id;
 		switch (id) {
 		case MKTAG16('L', 'P'):
 			changePalette();
@@ -515,13 +492,8 @@ bool HnmPlayer::nextElement() {
 				//				else
 				memcpy(_finalBuffer, _newFrameBuffer, _header._height);   //TODO: wrong size?
 			}
-			if (_useAdpcm) {
-				if (!_soundStarted) {
-					for (int16 i = 0; i < _pendingSounds; i++)
-						_soundGroupAdpcm->playNextSample(_soundChannel);
-					_soundStarted = true;
-				}
-			} else if (!_soundStarted) {
+
+			if (!_soundStarted) {
 				for (int16 i = 0; i < _pendingSounds; i++)
 					_soundGroup->playNextSample(_soundChannel);
 				_soundStarted = true;
@@ -554,19 +526,19 @@ bool HnmPlayer::nextElement() {
 						else
 							_pendingSounds++;
 					} else {
-						int16 *sound_buffer = (int16 *)_soundGroupAdpcm->getNextBuffer();
+						int16 *sound_buffer = (int16 *)_soundGroup->getNextBuffer();
 						if (!_pendingSounds) {
 							const int kDecompTableSize = 256 * sizeof(int16);
 							loadDecompTable((int16 *)_dataPtr);
 							decompADPCM(_dataPtr + kDecompTableSize, sound_buffer, sound_size - kDecompTableSize);
-							_soundGroupAdpcm->assignDatas(sound_buffer, (sound_size - kDecompTableSize) * 2, false);
+							_soundGroup->assignDatas(sound_buffer, (sound_size - kDecompTableSize) * 2, false);
 						} else {
 							decompADPCM(_dataPtr, sound_buffer, sound_size);
-							_soundGroupAdpcm->assignDatas(sound_buffer, sound_size * 2, false);
+							_soundGroup->assignDatas(sound_buffer, sound_size * 2, false);
 						}
 						_pendingSounds++;
 						if (_soundStarted)
-							_soundGroupAdpcm->playNextSample(_soundChannel);
+							_soundGroup->playNextSample(_soundChannel);
 					}
 				} else
 					error("nextElement - unexpected flag");
@@ -656,25 +628,6 @@ void HnmPlayer::selectBuffers() {
 		_newFrameBuffer = _tmpBuffer[0];
 		_oldFrameBuffer = _tmpBuffer[1];
 	}
-}
-
-// Original name: CLHNM_Done
-void HnmPlayer::done() {
-}
-
-// Original name: CLHNM_CanLoop
-void HnmPlayer::canLoop(bool canLoop) {
-	_canLoop = canLoop;
-}
-
-// Original name: CLHNM_SoundInADPCM
-void HnmPlayer::soundInADPCM(bool isAdpcm) {
-	_useAdpcm = isAdpcm;
-}
-
-// Original name: CLHNM_SoundMono
-void HnmPlayer::soundMono(bool isMono) {
-	_useMono = isMono;
 }
 
 }   // namespace Cryo

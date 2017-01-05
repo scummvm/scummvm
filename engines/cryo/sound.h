@@ -58,7 +58,6 @@ public:
 
 	bool assignDatas(void *buffer, int length, bool isSigned);
 	void playNextSample(SoundChannel *ch);
-	void reverse16All();
 	bool setDatas(void *data, int length, bool isSigned);
 	void *getNextBuffer();
 };

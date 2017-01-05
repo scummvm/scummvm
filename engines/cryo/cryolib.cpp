@@ -43,15 +43,14 @@ void FlushEvents(int16 arg1, int16 arg2) {
 
 View::View(CryoEngine *vm, int w, int h) : _vm(vm) {
 	void *buffer = (byte *)malloc(w * h);
-	if (buffer) {
-		_allocated = true;
+	if (buffer)
 		initDatas(w, h, buffer);
-	} else
+	else
 		error("Unable to allocate view buffer");
 }
 
 View::~View() {
-	if (_bufferPtr && _allocated)
+	if (_bufferPtr)
 		free(_bufferPtr);
 }
 
@@ -335,9 +334,6 @@ Sound::Sound(int16 length, float rate, int16 sampleSize, int16 mode) {
 
 	_length = 0;
 	_mode = 0;
-	_loopStart = 0;
-	_loopTimes = 0;
-	_reversed = false;
 	_volume = 0;
 
 	_maxLength = length;
@@ -367,9 +363,6 @@ void CLSoundRaw_AssignBuffer(Sound *sound, void *buffer, int bufferOffs, int len
 
 void Sound::prepareSample(int16 mode) {
 	_mode = mode;
-	_loopTimes = 0;
-	_reversed = false;
-	_unused32 = 0;
 	_volume = 255;
 }
 

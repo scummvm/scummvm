@@ -65,8 +65,6 @@ class View {
 private:
 	CryoEngine *_vm;
 
-	bool     _allocated;
-
 public:
 	View(CryoEngine *vm, int w, int h);
 	~View();
@@ -88,12 +86,10 @@ public:
 struct color3_t {
 	int16   r, g, b;
 };
-typedef struct color3_t color3_t;
 
 struct color_t {
 	int16   a, r, g, b;
 };
-typedef struct color_t color_t;
 
 #pragma pack(push, 1)
 struct HNMHeader {
@@ -114,19 +110,12 @@ struct HNMHeader {
 	char    _unusedReserved2[14];
 	char    _unusedCopyright[16];
 };
-typedef struct HNMHeader HNMHeader;
 #pragma pack(pop)
 
 class Sound {
 private:
 	int32  _headerOffset;
-	int16  _unused0A;
-
-	int    _unused16;
 	int16  _mode;
-	int32  _loopStart;
-	int16  _loopTimes;
-	int16  _unused32;
 	int16  _volume;
 
 public:
@@ -148,8 +137,6 @@ public:
 	int16  _sampleSize;
 
 	int    _length;
-
-	bool   _reversed;
 };
 
 #define kCryoMaxChSounds 10
