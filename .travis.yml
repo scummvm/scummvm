@@ -1,12 +1,12 @@
 language:
   - cpp
 
-sudo: required
+sudo: false
+cache: ccache
 
 addons:
   apt:
     packages:
-    - g++ make
     - libsdl2-dev
     - libsdl2-net-dev
     - libcurl4-openssl-dev
