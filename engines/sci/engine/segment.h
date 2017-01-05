@@ -542,7 +542,14 @@ public:
 	 */
 	reg_t getAsID(const uint16 index) {
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// SCI3 resizes arrays automatically when out-of-bounds indices are
+			// passed, but it has an off-by-one error, always passing the index
+			// instead of `index + 1` on a read. This happens to work in SSCI
+			// only because the resize method there actually allocates memory
+			// for `index + 25` elements when growing the array, and it always
+			// grows the array on its first resize because it decides whether to
+			// grow based on byte size including an extra array header.
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
@@ -573,7 +580,8 @@ public:
 	 */
 	void setFromID(const uint16 index, const reg_t value) {
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// This code is different from SSCI; see getAsID for an explanation
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
@@ -599,7 +607,8 @@ public:
 		assert(_type == kArrayTypeInt16);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// This code is different from SSCI; see getAsID for an explanation
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
@@ -616,6 +625,7 @@ public:
 		assert(_type == kArrayTypeInt16);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
+			// This code is different from SSCI; see getAsID for an explanation
 			resize(index + 1);
 		} else {
 			assert(index < _size);
@@ -632,7 +642,8 @@ public:
 		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// This code is different from SSCI; see getAsID for an explanation
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
@@ -648,7 +659,8 @@ public:
 		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// This code is different from SSCI; see getAsID for an explanation
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
@@ -664,7 +676,8 @@ public:
 		assert(_type == kArrayTypeID || _type == kArrayTypeInt16);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
+			// This code is different from SSCI; see getAsID for an explanation
+			resize(index + 1);
 		} else {
 			assert(index < _size);
 		}
