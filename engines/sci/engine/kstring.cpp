@@ -663,9 +663,7 @@ reg_t kStringGetChar(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kStringFree(EngineState *s, int argc, reg_t *argv) {
-	if (!argv[0].isNull()) {
-		s->_segMan->freeArray(argv[0]);
-	}
+	s->_segMan->freeArray(argv[0]);
 	return s->r_acc;
 }
 

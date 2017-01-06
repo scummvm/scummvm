@@ -892,6 +892,11 @@ SciArray *SegManager::lookupArray(reg_t addr) {
 }
 
 void SegManager::freeArray(reg_t addr) {
+	// SSCI memory manager ignores attempts to free null handles
+	if (addr.isNull()) {
+		return;
+	}
+
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_ARRAY)
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 

@@ -511,7 +511,7 @@ static const SciKernelMapSubEntry kArray_subops[] = {
 	{ SIG_SCI32,           1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
 	{ SIG_SCI32,           2, MAP_CALL(ArrayGetElement),           "ri",                   NULL },
 	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri(.*)",               kArraySetElements_workarounds },
-	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "r",                    NULL },
+	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "[0r]",                 NULL },
 	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 NULL },
 	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
 	// there is no subop 7
