@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-05 12:16+0000\n"
-"Last-Translator: Tobia Tesan <tobia.tesan@gmail.com>\n"
+"PO-Revision-Date: 2017-01-06 09:17+0000\n"
+"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -1581,7 +1581,7 @@ msgstr "Renderer standard"
 
 #: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
 msgid "Standard"
-msgstr "Medio"
+msgstr "Normale"
 
 #: gui/ThemeEngine.cpp:455
 msgid "Antialiased Renderer"
@@ -1712,7 +1712,7 @@ msgstr "Il plugin del motore di gioco non supporta i salvataggi"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr "Utente cancellato"
+msgstr "Annullato dall'utente"
 
 #: common/error.cpp:75
 msgid "Unknown error"
@@ -1721,7 +1721,7 @@ msgstr "Errore sconosciuto"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules Green"
+msgstr "Hercules verde"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -2157,19 +2157,19 @@ msgstr "Sei sicuro di voler uscire?"
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
 msgid "Trackpad mode is now"
-msgstr "la modalità touchpad è ora"
+msgstr "La modalità touchpad è ora"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr "On"
+msgstr "attiva"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr "Off"
+msgstr "disattivata"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
@@ -2239,15 +2239,15 @@ msgstr "Mappa tasti:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr " (Efficace)"
+msgstr " (Effettiva)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr " (Attivo)"
+msgstr " (Attiva)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr " (Bloccato)"
+msgstr " (Bloccata)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
@@ -2288,11 +2288,11 @@ msgstr "Aggancia ai bordi"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
-msgstr "Compensa X del tocco"
+msgstr "Compensazione X del tocco"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr "Compensa Y del tocco"
+msgstr "Compensazione Y del tocco"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
@@ -2308,11 +2308,11 @@ msgstr "Sensibilità"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr "Schermo in primo piano:"
+msgstr "Ridimensionamento schermo superiore:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "Schermo principale:"
+msgstr "Ridimensionamento schermo principale:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
@@ -2644,7 +2644,7 @@ msgstr "Mostra tastiera"
 
 #: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Sound on/off"
-msgstr "Suono on/off"
+msgstr "Suono attivato/disattivato"
 
 #: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Right click"
