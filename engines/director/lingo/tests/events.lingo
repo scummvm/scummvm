@@ -1,0 +1,7 @@
+on exitFrame
+  beep
+end
+
+on enterFrame me
+  beep
+end
