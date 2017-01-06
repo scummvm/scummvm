@@ -4233,14 +4233,14 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			// TODO: Handle 32-bit PC addresses
 			reg32_t pc = s->_executionStack.back().addr.pc;
-			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
+			dest->setSegment(pc.getSegment());
+			dest->setOffset(pc.getOffset());
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			// TODO: Handle 32-bit PC addresses
 			reg32_t pc = s->_executionStack.back().addr.pc;
-			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
+			dest->setSegment(pc.getSegment());
+			dest->setOffset(pc.getOffset());
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
