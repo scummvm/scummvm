@@ -377,9 +377,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",                       NULL,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, happens sometimes in fight scenes
 	{ GID_QFG4,          520, 64950,  0,             "fLake2", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD version, at the lake, when meeting the Rusalka and attempting to leave
 	{ GID_QFG4,          800, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar
-	{ GID_RAMA,           12, 64950, -1,   "InterfaceFeature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
-	{ GID_RAMA,           12, 64950, -1,      "hiliteOptText", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
-	{ GID_RAMA,           12, 64950, -1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Demo, right when it starts
+	{ GID_RAMA,           -1, 64950, -1,   "InterfaceFeature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the main game interface
+	{ GID_RAMA,           -1, 64950, -1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on main menu buttons
 	{ GID_SHIVERS,        -1,   952,  0,       "SoundManager", "stop",                            NULL,     2, { WORKAROUND_FAKE,   0 } }, // Just after Sierra logo
 	{ GID_SHIVERS,        -1, 64950,  0,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the locked door at the beginning
 	{ GID_SHIVERS,        -1, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the gargoyle eye at the beginning
