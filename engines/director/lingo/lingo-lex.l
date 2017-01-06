@@ -37,12 +37,12 @@ static void count() {
 	g_lingo->_colnumber += strlen(yytext);
 }
 
-#if defined(__PLAYSTATION2__) || defined(_MSC_VER)
+#if defined(__PLAYSTATION2__) || defined(_MSC_VER) || defined(__DC__)
 // Stub for missing function
 int isatty(int fileno) { return 0; }
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__DC__)
 #define YY_NO_UNISTD_H
 #endif
 
