@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
 "PO-Revision-Date: 2017-01-06 21:08+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
@@ -3817,7 +3817,7 @@ msgstr "  ή εσφαλμένη συμπεριφορά παιχνιδιών."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
-msgstr "Δημιουργία 'ηχητικού υφαντού' (spinning a draft) με το πληκτρολόγιο:"
+msgstr "Δημιουργία 'ηχητικού υφαντού' (spinning draft) με το πληκτρολόγιο:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
