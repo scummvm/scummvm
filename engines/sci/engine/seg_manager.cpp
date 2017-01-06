@@ -786,6 +786,9 @@ size_t SegManager::strlen(reg_t str) {
 	}
 
 	if (str_r.isRaw) {
+		// There is no guarantee that raw strings are zero-terminated; for
+		// example, Phant1 reads "\r\n" from a pointer of size 2 during the
+		// chase
 		return Common::strnlen((const char *)str_r.raw, str_r.maxSize);
 	} else {
 		int i = 0;

@@ -40,6 +40,11 @@ struct MessageTuple {
 
 	MessageTuple(byte noun_ = 0, byte verb_ = 0, byte cond_ = 0, byte seq_ = 1)
 		: noun(noun_), verb(verb_), cond(cond_), seq(seq_) { }
+
+	Common::String toString() const {
+		return Common::String::format("noun %d, verb %d, cond %d, seq %d",
+									  noun, verb, cond, seq);
+	}
 };
 
 class CursorStack : public Common::Stack<MessageTuple> {
