@@ -804,7 +804,7 @@ public:
 			while (*source != '\0' && *source != showChar && *source <= kWhitespaceBoundary) {
 				++source;
 			}
-			strcpy((char *)target, (char *)source);
+			memmove(target, source, Common::strnlen((char *)source, _size - 1) + 1);
 		}
 
 		if (flags & kArrayTrimRight) {
