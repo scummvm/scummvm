@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      40 - always store palvary variables
  *      39 - Accurate SCI32 arrays/strings, score metadata, avatar metadata
  *      38 - SCI32 cursor
  *      37 - Segment entry data changed to pointers
@@ -64,7 +65,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 39,
+	CURRENT_SAVEGAME_VERSION = 40,
 	MINIMUM_SAVEGAME_VERSION = 14
 };
 

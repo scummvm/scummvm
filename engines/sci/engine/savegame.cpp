@@ -764,17 +764,33 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 			palVaryRemoveTimer();
 
 		s.syncAsSint32LE(_palVaryResourceId);
-		if (_palVaryResourceId != -1) {
-			palVarySaveLoadPalette(s, &_palVaryOriginPalette);
-			palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+		if (_palVaryResourceId != -1 || s.getVersion() >= 40) {
+			if (_palVaryResourceId != -1) {
+				palVarySaveLoadPalette(s, &_palVaryOriginPalette);
+				palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+			}
 			s.syncAsSint16LE(_palVaryStep);
 			s.syncAsSint16LE(_palVaryStepStop);
 			s.syncAsSint16LE(_palVaryDirection);
 			s.syncAsUint16LE(_palVaryTicks);
 			s.syncAsSint32LE(_palVaryPaused);
+			if (s.getVersion() >= 40)
+				s.syncAsSint32LE(_palVarySignal);
 		}
 
-		_palVarySignal = 0;
+		if (s.isLoading() && s.getVersion() < 40) {
+			// Reset _palVaryPaused to 0 when loading an old savegame.
+			// Before version 40, we didn't restore or reset _palVaryPaused.
+			// In QfG3 this could get it stuck at positive values (bug #9674).
+			//
+			// Other SCI11 games don't appear to use palVaryPaused at all.
+			// (Looked at eq2, freddy, kq6, lb2, mgoose11, pq1, qg1, sq4, sq5)
+			_palVaryPaused = 0;
+
+			// Clear any pending updates, since _palVarySignal also wasn't saved
+			// before version 40.
+			_palVarySignal = 0;
+		}
 
 		if (s.isLoading() && _palVaryResourceId != -1) {
 			palVaryInstallTimer();

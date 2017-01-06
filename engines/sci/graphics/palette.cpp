@@ -852,6 +852,7 @@ void GfxPalette::palVaryCallback(void *refCon) {
 }
 
 void GfxPalette::palVaryIncreaseSignal() {
+	// FIXME: increments from another thread aren't guaranteed to be atomic
 	if (!_palVaryPaused)
 		_palVarySignal++;
 }
