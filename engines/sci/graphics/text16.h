@@ -53,9 +53,9 @@ public:
 
 	int16 GetLongest(const char *&text, int16 maxWidth, GuiResourceId orgFontId);
 	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
-	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
-	void ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
-	void DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
+	void StringWidth(const Common::String &str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void ShowString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor);
+	void DrawString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor);
 	int16 Size(Common::Rect &rect, const char *text, uint16 textLanguage, GuiResourceId fontId, int16 maxWidth);
 	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
@@ -65,8 +65,8 @@ public:
 		Box(text, 0, show, rect, alignment, fontId);
 	}
 
-	void DrawString(const char *text);
-	void DrawStatus(const char *text);
+	void DrawString(const Common::String &str);
+	void DrawStatus(const Common::String &str);
 
 	GfxFont *_font;
 

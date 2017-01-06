@@ -598,8 +598,12 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 		case SCI_OBJ_STRINGS:
 			debugN("Strings\n");
 			while (script->data [seeker]) {
-				debugN("%04x: %s\n", seeker, script->data + seeker);
-				seeker += strlen((char *)script->data + seeker) + 1;
+				debugN("%04x: %s", seeker, script->data + seeker);
+				seeker += Common::strnlen((char *)script->data + seeker, script->size - seeker) + 1;
+				if (seeker > script->size) {
+					debugN("[TRUNCATED]");
+				}
+				debugN("\n");
 			}
 			seeker++; // the ending zero byte
 			break;

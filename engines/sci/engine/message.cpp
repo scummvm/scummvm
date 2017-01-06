@@ -32,6 +32,7 @@ struct MessageRecord {
 	MessageTuple tuple;
 	MessageTuple refTuple;
 	const char *string;
+	uint32 length;
 	byte talker;
 };
 
@@ -77,7 +78,13 @@ public:
 				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.talker = 0;
-				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 2);
+				const uint16 stringOffset = READ_LE_UINT16(recordPtr + 2);
+				const uint32 maxSize = _size - stringOffset;
+				record.string = (const char *)_data + stringOffset;
+				record.length = Common::strnlen(record.string, maxSize);
+				if (record.length == maxSize) {
+					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+				}
 				return true;
 			}
 			recordPtr += _recordSize;
@@ -100,7 +107,13 @@ public:
 				record.tuple = tuple;
 				record.refTuple = MessageTuple();
 				record.talker = recordPtr[4];
-				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 5);
+				const uint16 stringOffset = READ_LE_UINT16(recordPtr + 5);
+				const uint32 maxSize = _size - stringOffset;
+				record.string = (const char *)_data + stringOffset;
+				record.length = Common::strnlen(record.string, maxSize);
+				if (record.length == maxSize) {
+					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+				}
 				return true;
 			}
 			recordPtr += _recordSize;
@@ -123,7 +136,13 @@ public:
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[7], recordPtr[8], recordPtr[9]);
 				record.talker = recordPtr[4];
-				record.string = (const char *)_data + READ_SCI11ENDIAN_UINT16(recordPtr + 5);
+				const uint16 stringOffset = READ_SCI11ENDIAN_UINT16(recordPtr + 5);
+				const uint32 maxSize = _size - stringOffset;
+				record.string = (const char *)_data + stringOffset;
+				record.length = Common::strnlen(record.string, maxSize);
+				if (record.length == maxSize) {
+					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+				}
 				return true;
 			}
 			recordPtr += _recordSize;
@@ -149,7 +168,13 @@ public:
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[8], recordPtr[9], recordPtr[10]);
 				record.talker = recordPtr[4];
-				record.string = (const char *)_data + READ_BE_UINT16(recordPtr + 6);
+				const uint16 stringOffset = READ_BE_UINT16(recordPtr + 6);
+				const uint32 maxSize = _size - stringOffset;
+				record.string = (const char *)_data + stringOffset;
+				record.length = Common::strnlen(record.string, maxSize);
+				if (record.length == maxSize) {
+					warning("Message %s appears truncated at %ld", tuple.toString().c_str(), recordPtr - _data);
+				}
 				return true;
 			}
 			recordPtr += _recordSize;
@@ -161,7 +186,7 @@ public:
 #endif
 
 bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &record) {
-	Resource *res = g_sci->getResMan()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), 0);
+	Resource *res = g_sci->getResMan()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), false);
 
 	if (!res) {
 		warning("Failed to open message resource %d", stack.getModule());
@@ -238,6 +263,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			// as the text shown in this screen is very short (one-liners).
 			// Just output an empty string here instead of showing an error.
 			record.string = "";
+			record.length = 0;
 			delete reader;
 			return true;
 		}
@@ -285,7 +311,7 @@ int MessageState::nextMessage(reg_t buf) {
 			return record.talker;
 		} else {
 			MessageTuple &t = _cursorStack.top();
-			outputString(buf, Common::String::format("Msg %d: %d %d %d %d not found", _cursorStack.getModule(), t.noun, t.verb, t.cond, t.seq));
+			outputString(buf, Common::String::format("Msg %d: %s not found", _cursorStack.getModule(), t.toString().c_str()));
 			return 0;
 		}
 	} else {
@@ -304,7 +330,7 @@ int MessageState::messageSize(int module, MessageTuple &t) {
 
 	stack.init(module, t);
 	if (getRecord(stack, true, record))
-		return strlen(record.string) + 1;
+		return record.length + 1;
 	else
 		return 0;
 }
