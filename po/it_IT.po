@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-06 09:17+0000\n"
+"PO-Revision-Date: 2017-01-06 13:58+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -2727,7 +2727,7 @@ msgstr "Devi mappare un tasto per l'azione \"Tasto destro\" per giocare"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
-msgstr "Mappa l'azione nascondi barra degli strumenti"
+msgstr "Mappa l'azione 'Nascondi barra degli strumenti'"
 
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
@@ -2737,11 +2737,11 @@ msgstr ""
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
-msgstr "Mappa l'azione Zoom Up (opzionale)"
+msgstr "Mappa l'azione 'Zoom avanti' (opzionale)"
 
 #: backends/platform/wince/wince-sdl.cpp:545
 msgid "Map Zoom Down action (optional)"
-msgstr "Mappa l'azione Zoom Down (opzionale)"
+msgstr "Mappa l'azione 'Zoom indietro' (opzionale)"
 
 #: backends/platform/wince/wince-sdl.cpp:553
 msgid ""
@@ -3047,7 +3047,7 @@ msgstr "Barre HP"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr "Attiva le barre di Hit Point"
+msgstr "Attiva le barre di energia (Hit Points)"
 
 #: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
 msgid "Move Forward"
@@ -3171,6 +3171,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Il seguente salvataggio originale è stato rilevato nel percorso del gioco:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Desideri utilizzare questo salvataggio in ScummVM?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
