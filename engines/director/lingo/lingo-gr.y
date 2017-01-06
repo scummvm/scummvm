@@ -89,6 +89,7 @@ void yyerror(const char *s) {
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
+%token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
 %type<narg> argdef arglist
@@ -518,6 +519,19 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;
+	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
+			begin nl stmtlist tEND	{
+				g_lingo->codeConst(0); // Push fake value on stack
+				g_lingo->code1(g_lingo->c_procret);
+				g_lingo->define(*$2, $4, 0);
+				g_lingo->_indef = false; }
+	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
+			begin tME nl stmtlist tEND	{
+				g_lingo->codeConst(0); // Push fake value on stack
+				g_lingo->code1(g_lingo->c_procret);
+				g_lingo->define(*$2, $4, 0);
+				g_lingo->_indef = false; }
+
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }

@@ -92,12 +92,14 @@ whitespace [\t ]
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
 (?i:macro)			{ count(); return tMACRO; }
+(?i:me)				{ count(); return tME; }
 (?i:method)			{ count(); return tMETHOD; }
 (?i:mod)			{ count(); return tMOD; }
 (?i:movie)			{ count(); return tMOVIE; }
 (?i:next)			{ count(); return tNEXT; }
 (?i:not)			{ count(); return tNOT; }
 (?i:of)				{ count(); return tOF; }
+(?i:on)				{ count(); return tON; }
 (?i:open)			{ count(); return tOPEN; }
 (?i:or)				{ count(); return tOR; }
 (?i:play)			{ count(); return tPLAY; }

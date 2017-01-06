@@ -107,7 +107,9 @@
      tSTARTS = 323,
      tSPRITE = 324,
      tINTERSECTS = 325,
-     tWITHIN = 326
+     tWITHIN = 326,
+     tON = 327,
+     tME = 328
    };
 #endif
 /* Tokens.  */
@@ -180,6 +182,8 @@
 #define tSPRITE 324
 #define tINTERSECTS 325
 #define tWITHIN 326
+#define tON 327
+#define tME 328
 
 
 
@@ -197,7 +201,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 201 "engines/director/lingo/lingo-gr.hpp"
+#line 205 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
