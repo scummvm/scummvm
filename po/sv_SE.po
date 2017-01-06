@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-05 21:42+0000\n"
+"PO-Revision-Date: 2017-01-06 09:18+0000\n"
 "Last-Translator: Petter Sjölund <ignalina@mac.com>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
@@ -882,7 +882,7 @@ msgstr "Korrektion av bildförhållande"
 
 #: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Korrigerar bildförhållanden för 320x200-spel"
+msgstr "Korrigera bildförhållandet för 320 x 200-spel"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
@@ -3286,7 +3286,7 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
-"Har skulle Riven-demon ha\n"
+"Här skulle Riven-demon ha\n"
 "frågat om du vill öppna en webbläsare\n"
 "för att gå in på Red Orb-butiken och köpa\n"
 "spelet. Det här går inte i ScummVM, och\n"
@@ -3682,9 +3682,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "Spara speldata 1-10"
+msgstr "Spara spardata 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
