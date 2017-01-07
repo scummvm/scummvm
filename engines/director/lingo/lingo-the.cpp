@@ -187,15 +187,15 @@ TheEntityField fields[] = {
 	{ kTheWindow,	"sourceRect",	kTheSourceRect },
 	{ kTheWindow,	"visible",		kTheVisible },
 
-	{ kTheMenuItem,	"checkmark",	kTheCheckMark },
-	{ kTheMenuItem, "enabled",		kTheEnabled },
-	{ kTheMenuItem, "name",			kTheName },
-	{ kTheMenuItem, "script",		kTheScript },
+	{ kTheMenuItem,	"checkmark",	kTheCheckMark },	//		D3 p
+	{ kTheMenuItem, "enabled",		kTheEnabled },		//		D3 p
+	{ kTheMenuItem, "name",			kTheName },			//		D3 p
+	{ kTheMenuItem, "script",		kTheScript },		//		D3 p
 
-	{ kTheMenu,		"name",			kTheName },
+	{ kTheMenu,		"name",			kTheName },			//		D3 p
 
-	{ kTheMenuItems,"number",		kTheNumber },
-	{ kTheMenus,	"number",		kTheNumber },
+	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
+	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };
