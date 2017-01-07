@@ -366,6 +366,7 @@ public:
 	static void b_openDA(int nargs);
 	static void b_openResFile(int nargs);
 	static void b_openXlib(int nargs);
+	static void b_setCallBack(int nargs);
 	static void b_showResFile(int nargs);
 	static void b_showXlib(int nargs);
 
@@ -374,6 +375,10 @@ public:
 	static void b_beep(int nargs);
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
+	static void b_soundFadeIn(int nargs);
+	static void b_soundFadeOut(int nargs);
+	static void b_soundPlayFile(int nargs);
+	static void b_soundStop(int nargs);
 
 	static void b_backspace(int nargs);
 	static void b_empty(int nargs);

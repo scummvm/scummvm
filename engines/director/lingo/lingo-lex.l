@@ -107,6 +107,7 @@ whitespace [\t ]
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
+(?i:sound)			{ count(); return tSOUND; }
 (?i:starts)			{ count(); return tSTARTS; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();

@@ -63,6 +63,7 @@ static struct BuiltinProto {
 	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2
 	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2
 	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2
+	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3
 	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
 	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
 	// Control
@@ -118,6 +119,10 @@ static struct BuiltinProto {
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
+	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3
+	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
+	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3
+	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
 	// Constants
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
@@ -462,6 +467,10 @@ void Lingo::b_openXlib(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_setCallBack(int nargs) {
+	warning("STUB: b_setCallBack");
+}
+
 void Lingo::b_showResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -591,7 +600,6 @@ void Lingo::b_symbolp(int nargs) {
 	d.u.i = res;
 	g_lingo->push(d);
 }
-
 
 ///////////////////
 // Score
@@ -753,6 +761,30 @@ void Lingo::b_mciwait(int nargs) {
 	g_lingo->func_mciwait(*d.u.s);
 }
 
+void Lingo::b_soundFadeIn(int nargs) {
+	g_lingo->printStubWithArglist("b_soundFadeIn", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundFadeOut(int nargs) {
+	g_lingo->printStubWithArglist("b_soundFadeOut", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundPlayFile(int nargs) {
+	g_lingo->printStubWithArglist("b_soundPlayFile", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundStop(int nargs) {
+	g_lingo->printStubWithArglist("b_soundStop", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 ///////////////////
 // Constants
 ///////////////////
@@ -833,6 +865,8 @@ void Lingo::b_field(int nargs) {
 
 void Lingo::b_me(int nargs) {
 	g_lingo->printStubWithArglist("me", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 

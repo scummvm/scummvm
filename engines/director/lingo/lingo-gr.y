@@ -89,7 +89,7 @@ void yyerror(const char *s) {
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
-%token tON tME
+%token tON tME tSOUND
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
 %type<narg> argdef arglist
@@ -428,6 +428,7 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
 	| tOPEN expr 			{ g_lingo->code2(g_lingo->c_voidpush, g_lingo->c_open); }
+	| tSOUND ID arglist		{ Common::String s("sound-"); s += *$2; g_lingo->codeFunc(&s, $3); }
 	;
 
 globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
