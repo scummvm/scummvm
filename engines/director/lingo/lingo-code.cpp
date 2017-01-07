@@ -895,9 +895,10 @@ void Lingo::call(Common::String name, int nargs) {
 		return;
 	}
 
-	if (sym->nargs != -1 && sym->nargs < nargs) {
-		warning("Incorrect number of arguments for function %s. Dropping extra %d", name.c_str(), nargs - sym->nargs);
-		for (int i = 0; i < nargs - sym->nargs; i++)
+	if (sym->nargs != -1 && sym->maxArgs < nargs) {
+		warning("Incorrect number of arguments for function %s (%d, expected %d to %d). Dropping extra %d",
+					name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
+		for (int i = 0; i < nargs - sym->maxArgs; i++)
 			g_lingo->pop();
 	}
 
