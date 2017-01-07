@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
 "PO-Revision-Date: 2017-01-07 02:26+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
@@ -4348,7 +4348,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Η ταινία '%s' δεν βρέθηκε"
+msgstr "Η ταινία '%s' δε βρέθηκε"
 
 #: engines/sword1/control.cpp:863
 msgid ""
