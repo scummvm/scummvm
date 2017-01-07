@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-06 21:08+0000\n"
-"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
+"PO-Revision-Date: 2017-01-07 02:26+0000\n"
+"Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
@@ -2947,7 +2947,7 @@ msgstr ""
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "Δε βρέθηκε το αρχείο ταινίας '%s' !"
+msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνής (cutscene) '%s' !"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
@@ -3259,7 +3259,8 @@ msgstr "Αναπαραγωγή της ταινίας εναέριας επισκόπησης του Myst"
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
-"Η ταινία εναέριας επισκόπησης του Myst δεν εμφανιζόταν στην πρωτότυπη μηχανή."
+"Η ταινία εναέριας επισκόπησης του Myst δεν αναπαράχθηκε από την πρωτότυπη "
+"μηχανή."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -4115,15 +4116,15 @@ msgstr "Εναλλαγή Πάλης Πληκτρολογίου/Ποντικιού (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Η χρήση πληκτρολογίου για τις μάχες είναι πάντα ενεργοποιημένη,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr " έτσι παρά την ειδοποίηση μέσα στο παιχνίδι, αυτή η ρύθμιση"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr " ουσιαστικά (απ)ενεργοποιεί τις μάχες με την χρήση Ποντικιού"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -4220,11 +4221,11 @@ msgstr "Πέταξε κάτω δεξιά"
 
 #: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
-msgstr ""
+msgstr "Συγκράτηση κύλισης ενεργή"
 
 #: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Συγκράτηση κύλισης ανενεργή"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
@@ -4259,6 +4260,8 @@ msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Δεν βρέθηκε το εκτελέσιμο του 'Loom' για Macintosh ώστε να \n"
+"διαβαστούν τα όργανα. Η μουσική θα είναι απενεργοποιημένη."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
@@ -4285,6 +4288,8 @@ msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Εμφάνιση των ονομάτων ενεργών σημείων μόνο αφού πατηθεί ενεργό σημείο ή "
+"κουμπί δράσης"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
@@ -4326,6 +4331,8 @@ msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
+"Το αρχείο (τύπου ροής PSX) ταινίας '%s' δεν γίνεται να αναπαραχθεί σε "
+"λειτουργία παλέτας"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -4341,7 +4348,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "Η ταινία '%s' δεν βρέθηκε"
 
 #: engines/sword1/control.cpp:863
 msgid ""
