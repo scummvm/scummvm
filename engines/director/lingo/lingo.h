@@ -304,7 +304,6 @@ public:
 	static void b_exp(int nargs);
 	static void b_float(int nargs);
 	static void b_integer(int nargs);
-	static void b_integerp(int nargs);
 	static void b_log(int nargs);
 	static void b_pi(int nargs);
 	static void b_power(int nargs);
@@ -319,16 +318,19 @@ public:
 	static void b_numToChar(int nargs);
 	static void b_offset(int nargs);
 	static void b_string(int nargs);
-	static void b_stringp(int nargs);
 
+	static void b_floatP(int nargs);
 	static void b_ilk(int nargs);
+	static void b_integerp(int nargs);
+	static void b_objectp(int nargs);
+	static void b_stringp(int nargs);
+	static void b_symbolp(int nargs);
+
 	static void b_alert(int nargs);
 	static void b_cursor(int nargs);
-	static void b_objectp(int nargs);
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
-	static void b_symbolp(int nargs);
 	static void b_value(int nargs);
 
 	static void b_constrainH(int nargs);
@@ -369,12 +371,14 @@ public:
 	static void b_setCallBack(int nargs);
 	static void b_showResFile(int nargs);
 	static void b_showXlib(int nargs);
+	static void b_xFactoryList(int nargs);
 
 	static void b_point(int nargs);
 
 	static void b_beep(int nargs);
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
+	static void b_soundBusy(int nargs);
 	static void b_soundFadeIn(int nargs);
 	static void b_soundFadeOut(int nargs);
 	static void b_soundPlayFile(int nargs);

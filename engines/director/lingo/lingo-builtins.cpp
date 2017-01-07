@@ -33,19 +33,18 @@ static struct BuiltinProto {
 } builtins[] = {
 	// Math
 	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2
-	{ "atan",			Lingo::b_atan,			1, 1, true },	// 			D4
-	{ "cos",			Lingo::b_cos,			1, 1, true },	// 			D4
-	{ "exp",			Lingo::b_exp,			1, 1, true },	// 			D4
-	{ "float",			Lingo::b_float,			1, 1, true },	// 			D4
+	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4
+	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4
+	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4
+	{ "float",			Lingo::b_float,			1, 1, true },	//			D4
 	{ "integer",		Lingo::b_integer,		1, 1, true },
-	{ "integerp",		Lingo::b_integerp,		1, 1, true },
-	{ "log",			Lingo::b_log,			1, 1, true },	// 			D4
-	{ "pi",				Lingo::b_pi,			0, 0, true },	// 			D4
-	{ "power",			Lingo::b_power,			2, 2, true },	// 			D4
+	{ "log",			Lingo::b_log,			1, 1, true },	//			D4
+	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4
+	{ "power",			Lingo::b_power,			2, 2, true },	//			D4
 	{ "random",			Lingo::b_random,		1, 1, true },	// D2
 	{ "sin",			Lingo::b_sin,			1, 1, true },
 	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2
-	{ "tan",			Lingo::b_tan,			1, 1, true },	// 			D4
+	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4
 	// String
 	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
 	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
@@ -53,7 +52,6 @@ static struct BuiltinProto {
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
-	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
@@ -66,6 +64,7 @@ static struct BuiltinProto {
 	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3
 	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
 	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
+	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3
 	// Control
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
@@ -84,17 +83,21 @@ static struct BuiltinProto {
 		// when mouseDown										// D2
 		// when mouseUp											// D2
 		// when timeOut											// D2
+	// Types
+	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	//			D4
+	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2
+	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2
+	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
+	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 			D4
 		// put													// D2
 		// set													// D2
-	{ "objectp",		Lingo::b_objectp,		1, 1, true },
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
-	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
@@ -123,6 +126,7 @@ static struct BuiltinProto {
 	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
 	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3
 	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
+	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3
 	// Constants
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
@@ -246,14 +250,6 @@ void Lingo::b_float(int nargs) {
 void Lingo::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	g_lingo->push(d);
-}
-
-void Lingo::b_integerp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == INT) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
 	g_lingo->push(d);
 }
 
@@ -394,14 +390,6 @@ void Lingo::b_string(int nargs) {
 	g_lingo->push(d);
 }
 
-void Lingo::b_stringp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == STRING) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
-}
-
 void Lingo::b_value(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
@@ -491,6 +479,16 @@ void Lingo::b_showXlib(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_xFactoryList(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_xFactoryList(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
 ///////////////////
 // Control
 ///////////////////
@@ -550,10 +548,17 @@ void Lingo::b_startTimer(int nargs) {
 	warning("STUB: b_startTimer");
 }
 
+///////////////////
+// Types
+///////////////////
+void Lingo::b_floatP(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == FLOAT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
 
-///////////////////
-// Misc
-///////////////////
 void Lingo::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
 	d.u.i = d.type;
@@ -561,6 +566,42 @@ void Lingo::b_ilk(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_integerp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == INT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_objectp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == OBJECT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_stringp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == STRING) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_symbolp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == SYMBOL) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+
+///////////////////
+// Misc
+///////////////////
 void Lingo::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -577,28 +618,12 @@ void Lingo::b_cursor(int nargs) {
 	warning("STUB: b_cursor(%d)", d.u.i);
 }
 
-void Lingo::b_objectp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == OBJECT) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
-}
-
 void Lingo::b_showGlobals(int nargs) {
 	warning("STUB: b_showGlobals");
 }
 
 void Lingo::b_showLocals(int nargs) {
 	warning("STUB: b_showLocals");
-}
-
-void Lingo::b_symbolp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == SYMBOL) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
 }
 
 ///////////////////
@@ -759,6 +784,12 @@ void Lingo::b_mciwait(int nargs) {
 	d.toString();
 
 	g_lingo->func_mciwait(*d.u.s);
+}
+
+void Lingo::b_soundBusy(int nargs) {
+	g_lingo->printStubWithArglist("b_soundBusy", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_soundFadeIn(int nargs) {
