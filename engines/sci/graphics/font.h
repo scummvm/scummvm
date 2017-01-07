@@ -28,6 +28,12 @@
 
 namespace Sci {
 
+#ifdef ENABLE_SCI32
+enum {
+	kSci32SystemFont = -1
+};
+#endif
+
 class GfxFont {
 public:
 	GfxFont() {}
@@ -68,6 +74,7 @@ private:
 	GfxScreen *_screen;
 
 	Resource *_resource;
+	SciSpan<const byte> _resourceData;
 	GuiResourceId _resourceId;
 
 	struct Charinfo {

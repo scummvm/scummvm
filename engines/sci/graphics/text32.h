@@ -57,14 +57,6 @@ private:
 	GfxCache *_cache;
 
 	/**
-	 * The resource ID of the default font used by the game.
-	 *
-	 * @todo Check all SCI32 games to learn what their
-	 * default font is.
-	 */
-	static int16 _defaultFontId;
-
-	/**
 	 * The width and height of the currently active text
 	 * bitmap, in text-system coordinates.
 	 *
