@@ -43,6 +43,7 @@ enum TheEntityType {
 
 	kTheSprite,
 	kTheCast,
+	kTheCastMembers,
 	kThePerFrameHook,
 	kTheTicks,
 	kTheTimer,

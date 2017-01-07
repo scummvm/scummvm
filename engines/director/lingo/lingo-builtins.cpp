@@ -127,6 +127,9 @@ static struct BuiltinProto {
 	{ "return",			Lingo::b_return,		0, 0, false },	// D2
 	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
+	// References
+	{ "field",			Lingo::b_field,			1, 1, false },	// D3
+
 
 	{ 0, 0, 0, 0, false }
 };
@@ -819,5 +822,13 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 		g_lingo->push(d);
 	}
 }
+
+///////////////////
+// References
+///////////////////
+void Lingo::b_field(int nargs) {
+	warning("STUB: b_field");
+}
+
 
 } // End of namespace Director

@@ -387,6 +387,8 @@ public:
 	static void b_factory(int nargs);
 	void factoryCall(Common::String &name, int nargs);
 
+	static void b_field(int nargs);
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_goto(Datum &frame, Datum &movie);
