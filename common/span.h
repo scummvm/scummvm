@@ -296,8 +296,8 @@ protected:
 	inline iterator begin();
 	inline iterator end();
 
-	inline const value_type *data() const;
-	inline value_type *data();
+	inline const_pointer data() const;
+	inline pointer data();
 
 #pragma mark -
 #pragma mark SpanBase - Data access functions
@@ -314,11 +314,12 @@ public:
 	}
 
 	inline int8 getInt8At(const index_type index) const {
-		return (int8)impl()[index];
+		return (int8)getUint8At(index);
 	}
 
 	inline uint8 getUint8At(const index_type index) const {
-		return (uint8)impl()[index];
+		impl().validate(index, sizeof(uint8));
+		return (uint8)impl().data()[index];
 	}
 
 	inline int16 getInt16BEAt(const index_type index) const {
@@ -368,12 +369,15 @@ public:
 	}
 
 	inline String getStringAt(const index_type index, size_type numEntries = kSpanMaxSize) const {
+		STATIC_ASSERT(sizeof(value_type) == 1, strings_can_only_be_read_from_byte_or_char_arrays);
+		const char *string = (const char *)impl().data();
+
 		if (numEntries == kSpanMaxSize) {
-			const char *string = (const char *)impl().data();
-			numEntries = strnlen(string, (impl().size() - index) * sizeof(value_type)) / sizeof(value_type);
+			numEntries = strnlen(string, impl().size() - index);
 		}
-		impl().validate(index, numEntries * sizeof(value_type));
-		return String((const char *)(impl().data() + index), numEntries);
+
+		impl().validate(index, numEntries);
+		return String(string + index, numEntries);
 	}
 
 	/**
@@ -387,7 +391,7 @@ public:
 			numEntries = impl().size() - index;
 		}
 
-		impl().validate(index, numEntries);
+		impl().validate(index, numEntries * sizeof(value_type));
 		return impl().data() + index;
 	}
 
@@ -396,7 +400,7 @@ public:
 			numEntries = impl().size() - index;
 		}
 
-		impl().validate(index, numEntries);
+		impl().validate(index, numEntries * sizeof(value_type));
 		return impl().data() + index;
 	}
 
@@ -493,7 +497,7 @@ protected:
 
 	inline void validate(const index_type index, const difference_type deltaInBytes, const SpanValidationMode mode = kValidateRead) const {
 		if (impl().checkInvalidBounds(index, deltaInBytes)) {
-			error("%s", impl().getValidationMessage(index, deltaInBytes, mode).c_str());
+			error("%s", impl().getValidationMessage(index, deltaInBytes, mode).c_str()); /* LCOV_EXCL_LINE */
 		}
 	}
 };
@@ -665,7 +669,9 @@ public:
 
 		assert(stream.pos() + numEntries * sizeof(value_type) <= (uint)stream.size());
 		allocate(numEntries);
-		stream.read((void *)const_cast<mutable_value_type *>(_data), numEntries * sizeof(value_type));
+		const uint32 bytesRequested = numEntries * sizeof(value_type);
+		const uint32 bytesRead = stream.read((void *)const_cast<mutable_value_type *>(_data), bytesRequested);
+		assert(bytesRead == bytesRequested);
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
 
@@ -881,7 +887,11 @@ public:
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
 
-	using super_type::allocateFromSpan;
+	template <typename OtherValueType, template <typename> class OtherDerived>
+	mutable_value_derived_type &allocateFromSpan(const SpanImpl<OtherValueType, OtherDerived> &other) {
+		super_type::allocateFromSpan(other);
+		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
+	}
 
 	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize, const String &name = String()) {
 		super_type::allocateFromStream(stream, numEntries);
@@ -890,7 +900,7 @@ public:
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
 
-	mutable_value_derived_type &allocateFromStream(File &file, size_type numEntries = kSpanMaxSize) {
+	mutable_value_derived_type &allocateFromStream(File &file, const size_type numEntries = kSpanMaxSize) {
 		return allocateFromStream(file, numEntries, file.getName());
 	}
 };
@@ -952,6 +962,8 @@ class SpanOwner : public SafeBool<SpanOwner<OwnedSpan> > {
 	typedef typename OwnedSpan::value_type value_type;
 	typedef typename OwnedSpan::size_type size_type;
 	typedef typename OwnedSpan::index_type index_type;
+	typedef typename OwnedSpan::reference reference;
+	typedef typename OwnedSpan::const_reference const_reference;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template <typename T, typename U> friend struct SafeBool;
@@ -1029,8 +1041,8 @@ public:
 	inline const OwnedSpan *operator->() const { return &_span; }
 	inline OwnedSpan *operator->() { return &_span; }
 
-	inline const value_type &operator[](const index_type index) const { return _span[index]; }
-	inline value_type &operator[](const index_type index) { return _span[index]; }
+	inline const_reference operator[](const index_type index) const { return _span[index]; }
+	inline reference operator[](const index_type index) { return _span[index]; }
 };
 
 } // End of namespace Common
