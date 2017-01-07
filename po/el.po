@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-12-26 16:14+0100\n"
-"PO-Revision-Date: 2017-01-07 02:28+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"PO-Revision-Date: 2017-01-07 02:29+0000\n"
+"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
@@ -3341,7 +3341,7 @@ msgstr ""
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Παράλειψη εικονογραφημένων σκηνών της Αίθουσας των Αρχείων  "
+msgstr "Παράλειψη εικονογραφημένων σκηνών της Αίθουσας των Αρχείων"
 
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
@@ -3469,7 +3469,7 @@ msgstr ""
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Παράλειψη του βήματος χρωματικής αντιπαράθεσης σε παιχνίδια EGA, τα γραφικά "
-"εμφανίζονται με πλήρη χρώματα\n"
+"εμφανίζονται με πλήρη χρώματα"
 
 #: engines/sci/detection.cpp:400
 msgid "Enable high resolution graphics"
@@ -4120,11 +4120,11 @@ msgstr "* Η χρήση πληκτρολογίου για τις μάχες είναι πάντα ενεργοποιημένη,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr " έτσι παρά την ειδοποίηση μέσα στο παιχνίδι, αυτή η ρύθμιση"
+msgstr "  έτσι παρά την ειδοποίηση μέσα στο παιχνίδι, αυτή η ρύθμιση"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr " ουσιαστικά (απ)ενεργοποιεί τις μάχες με την χρήση Ποντικιού"
+msgstr "  ουσιαστικά (απ)ενεργοποιεί τις μάχες με την χρήση Ποντικιού"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
