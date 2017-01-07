@@ -314,62 +314,74 @@ public:
 	}
 
 	inline int8 getInt8At(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) == sizeof(uint8), int8_can_only_be_read_from_byte_or_char_spans);
 		return (int8)getUint8At(index);
 	}
 
 	inline uint8 getUint8At(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) == sizeof(uint8), uint8_can_only_be_read_from_byte_or_char_spans);
 		impl().validate(index, sizeof(uint8));
 		return (uint8)impl().data()[index];
 	}
 
 	inline int16 getInt16BEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), int16_can_only_be_read_from_int16_or_smaller_spans);
 		return (int16)impl().getUint16BEAt(index);
 	}
 
 	inline int16 getInt16LEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), int16_can_only_be_read_from_int16_or_smaller_spans);
 		return (int16)impl().getUint16LEAt(index);
 	}
 
 	inline uint16 getUint16BEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), uint16_can_only_be_read_from_int16_or_smaller_spans);
 		impl().validate(index, sizeof(uint16));
 		return READ_BE_UINT16(impl().data() + index);
 	}
 
 	inline uint16 getUint16LEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint16), uint16_can_only_be_read_from_int16_or_smaller_spans);
 		impl().validate(index, sizeof(uint16));
 		return READ_LE_UINT16(impl().data() + index);
 	}
 
 	inline uint32 getUint24LEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= 3, uint24_can_only_be_read_from_int24_or_smaller_spans);
 		impl().validate(index, 3);
 		return READ_LE_UINT24(impl().data() + index);
 	}
 
 	inline uint32 getUint32At(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
 		impl().validate(index, sizeof(uint32));
 		return READ_UINT32(impl().data() + index);
 	}
 
 	inline int32 getInt32BEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), int32_can_only_be_read_from_int32_or_smaller_spans);
 		return (int32)impl().getUint32BEAt(index);
 	}
 
 	inline int32 getInt32LEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), int32_can_only_be_read_from_int32_or_smaller_spans);
 		return (int32)impl().getUint32LEAt(index);
 	}
 
 	inline uint32 getUint32BEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
 		impl().validate(index, sizeof(uint32));
 		return READ_BE_UINT32(impl().data() + index);
 	}
 
 	inline uint32 getUint32LEAt(const index_type index) const {
+		STATIC_ASSERT(sizeof(value_type) <= sizeof(uint32), uint32_can_only_be_read_from_int32_or_smaller_spans);
 		impl().validate(index, sizeof(uint32));
 		return READ_LE_UINT32(impl().data() + index);
 	}
 
 	inline String getStringAt(const index_type index, size_type numEntries = kSpanMaxSize) const {
-		STATIC_ASSERT(sizeof(value_type) == 1, strings_can_only_be_read_from_byte_or_char_arrays);
+		STATIC_ASSERT(sizeof(value_type) == sizeof(char), strings_can_only_be_read_from_byte_or_char_spans);
 		const char *string = (const char *)impl().data();
 
 		if (numEntries == kSpanMaxSize) {
@@ -410,7 +422,7 @@ public:
 		}
 
 		impl().validate(index, numEntries * sizeof(value_type));
-		return MemoryReadStream(impl().data() + index, numEntries, DisposeAfterUse::NO);
+		return MemoryReadStream(impl().data() + index, numEntries * sizeof(value_type), DisposeAfterUse::NO);
 	}
 
 #pragma mark -
