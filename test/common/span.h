@@ -655,6 +655,8 @@ public:
 		Common::NamedSpan<byte> span2;
 		span2 = span;
 		TS_ASSERT_EQUALS(span2, span);
+		TS_ASSERT(span2.name() == span.name());
+		TS_ASSERT(span2.sourceByteOffset() == span.sourceByteOffset());
 
 		Common::Span<byte> superclassInstance;
 		superclassInstance = span;
