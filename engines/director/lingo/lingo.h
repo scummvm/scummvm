@@ -388,6 +388,7 @@ public:
 	void factoryCall(Common::String &name, int nargs);
 
 	static void b_field(int nargs);
+	static void b_me(int nargs);
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

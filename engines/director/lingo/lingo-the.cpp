@@ -32,7 +32,7 @@ TheEntity entities[] = {
 	{ kTheBeepOn,			"beepOn",			false },	// D2 property
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },	// D3
-	{ kTheCastMembers,		"castmembers",		true  },	// D3
+	{ kTheCastMembers,		"castmembers",		true  },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false },	// D2 p
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
@@ -141,7 +141,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
 	// the number of castmembers
-	{ kTheCastMembers,	"number",	kTheNumber },		// D3 p
+	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
 
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },

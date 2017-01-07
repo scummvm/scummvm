@@ -33,19 +33,19 @@ static struct BuiltinProto {
 } builtins[] = {
 	// Math
 	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2
-	{ "atan",			Lingo::b_atan,			1, 1, true },	// 		D4
-	{ "cos",			Lingo::b_cos,			1, 1, true },	// 		D4
-	{ "exp",			Lingo::b_exp,			1, 1, true },	// 		D4
-	{ "float",			Lingo::b_float,			1, 1, true },	// 		D4
+	{ "atan",			Lingo::b_atan,			1, 1, true },	// 			D4
+	{ "cos",			Lingo::b_cos,			1, 1, true },	// 			D4
+	{ "exp",			Lingo::b_exp,			1, 1, true },	// 			D4
+	{ "float",			Lingo::b_float,			1, 1, true },	// 			D4
 	{ "integer",		Lingo::b_integer,		1, 1, true },
 	{ "integerp",		Lingo::b_integerp,		1, 1, true },
-	{ "log",			Lingo::b_log,			1, 1, true },	// 		D4
-	{ "pi",				Lingo::b_pi,			0, 0, true },	// 		D4
-	{ "power",			Lingo::b_power,			2, 2, true },	// 		D4
+	{ "log",			Lingo::b_log,			1, 1, true },	// 			D4
+	{ "pi",				Lingo::b_pi,			0, 0, true },	// 			D4
+	{ "power",			Lingo::b_power,			2, 2, true },	// 			D4
 	{ "random",			Lingo::b_random,		1, 1, true },	// D2
 	{ "sin",			Lingo::b_sin,			1, 1, true },
 	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2
-	{ "tan",			Lingo::b_tan,			1, 1, true },	// 		D4
+	{ "tan",			Lingo::b_tan,			1, 1, true },	// 			D4
 	// String
 	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
 	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
@@ -87,7 +87,7 @@ static struct BuiltinProto {
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 		D4
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 			D4
 		// put													// D2
 		// set													// D2
 	{ "objectp",		Lingo::b_objectp,		1, 1, true },
@@ -101,7 +101,7 @@ static struct BuiltinProto {
 		// go													// D2
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
-	{ "marker",			Lingo::b_marker,			1, 1, true },	// D2
+	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
 	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
 	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
@@ -128,7 +128,8 @@ static struct BuiltinProto {
 	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
 	// References
-	{ "field",			Lingo::b_field,			1, 1, false },	// D3
+	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
+	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
 
 
 	{ 0, 0, 0, 0, false }
@@ -828,6 +829,10 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 ///////////////////
 void Lingo::b_field(int nargs) {
 	warning("STUB: b_field");
+}
+
+void Lingo::b_me(int nargs) {
+	g_lingo->printStubWithArglist("me", nargs);
 }
 
 
