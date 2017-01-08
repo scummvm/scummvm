@@ -31,6 +31,18 @@
 
 namespace Common {
 
+#define COMMON_SPAN_TYPEDEFS \
+	typedef typename super_type::value_type value_type; \
+	typedef typename super_type::difference_type difference_type; \
+	typedef typename super_type::index_type index_type; \
+	typedef typename super_type::size_type size_type; \
+	typedef typename super_type::const_iterator const_iterator; \
+	typedef typename super_type::iterator iterator; \
+	typedef typename super_type::pointer pointer; \
+	typedef typename super_type::const_pointer const_pointer; \
+	typedef typename super_type::reference reference; \
+	typedef typename super_type::const_reference const_reference;
+
 enum {
 	kSpanMaxSize = 0xFFFFFFFF,
 	kSpanKeepOffset = 0xFFFFFFFF
@@ -271,10 +283,10 @@ public:
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
 #endif
-	SpanBase() {}
-	SpanBase(const SpanBase &) {}
-	void operator=(const SpanBase &) {}
-	~SpanBase() {}
+	inline SpanBase() {}
+	inline SpanBase(const SpanBase &) {}
+	inline SpanBase &operator=(const SpanBase &) { return this->impl(); }
+	inline ~SpanBase() {}
 
 	inline const_derived_type &impl() const { return static_cast<const_derived_type &>(*this); }
 	inline mutable_derived_type &impl() { return static_cast<mutable_derived_type &>(*this); }
@@ -296,8 +308,7 @@ protected:
 	inline iterator begin();
 	inline iterator end();
 
-	inline const_pointer data() const;
-	inline pointer data();
+	inline pointer data() const;
 
 #pragma mark -
 #pragma mark SpanBase - Data access functions
@@ -498,6 +509,9 @@ public:
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
 #endif
+	/**
+	 * @returns true if bounds are invalid.
+	 */
 	inline bool checkInvalidBounds(const index_type index, const difference_type deltaInBytes) const {
 		// There is a potential that large bogus values may cause arithmetic
 		// overflow, so the individual operands are checked separately first.
@@ -508,9 +522,11 @@ protected:
 	}
 
 	inline void validate(const index_type index, const difference_type deltaInBytes, const SpanValidationMode mode = kValidateRead) const {
+		/* LCOV_EXCL_START */
 		if (impl().checkInvalidBounds(index, deltaInBytes)) {
-			error("%s", impl().getValidationMessage(index, deltaInBytes, mode).c_str()); /* LCOV_EXCL_LINE */
+			error("%s", impl().getValidationMessage(index, deltaInBytes, mode).c_str());
 		}
+		/* LCOV_EXCL_STOP */
 	}
 };
 
@@ -531,16 +547,7 @@ class SpanImpl : public SpanBase<ValueType, Derived> {
 #endif
 
 public:
-	typedef typename super_type::value_type value_type;
-	typedef typename super_type::difference_type difference_type;
-	typedef typename super_type::index_type index_type;
-	typedef typename super_type::size_type size_type;
-	typedef typename super_type::const_iterator const_iterator;
-	typedef typename super_type::iterator iterator;
-	typedef typename super_type::pointer pointer;
-	typedef typename super_type::const_pointer const_pointer;
-	typedef typename super_type::reference reference;
-	typedef typename super_type::const_reference const_reference;
+	COMMON_SPAN_TYPEDEFS
 
 	inline SpanImpl() : super_type(), _data(nullptr), _size(0) {}
 
@@ -555,25 +562,13 @@ public:
 		_data(other.data()),
 		_size(other.size()) {}
 
-	template <typename Other>
-	inline mutable_derived_type &operator=(const Other &other) {
-		// TODO: Is there a better way to do this which avoids casting away
-		// const in the case that value_type is explicitly defined const?
-		_data = const_cast<typename Other::pointer>(other.data());
-		_size = other.size();
-		return this->impl();
-	}
-
-	inline ~SpanImpl() {}
-
 	inline void clear() {
 		_data = nullptr;
 		_size = 0;
 	}
 
 	inline size_type size() const { return _size; }
-	inline const_pointer data() const { return _data; }
-	inline pointer data() { return _data; }
+	inline pointer data() const { return _data; }
 
 	inline const_iterator cbegin() const { return const_iterator(&this->impl(), 0); }
 	inline const_iterator cend() const { return const_iterator(&this->impl(), size()); }
@@ -679,9 +674,9 @@ public:
 			numEntries = (stream.size() - stream.pos()) / sizeof(value_type);
 		}
 
-		assert(stream.pos() + numEntries * sizeof(value_type) <= (uint)stream.size());
-		allocate(numEntries);
 		const uint32 bytesRequested = numEntries * sizeof(value_type);
+		assert(stream.pos() + bytesRequested <= (uint)stream.size());
+		allocate(numEntries);
 		const uint32 bytesRead = stream.read((void *)const_cast<mutable_value_type *>(_data), bytesRequested);
 		assert(bytesRead == bytesRequested);
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
@@ -704,31 +699,16 @@ class Span : public SpanImpl<ValueType, Span> {
 #endif
 
 public:
-	typedef typename super_type::value_type value_type;
-	typedef typename super_type::difference_type difference_type;
-	typedef typename super_type::index_type index_type;
-	typedef typename super_type::size_type size_type;
-	typedef typename super_type::const_iterator const_iterator;
-	typedef typename super_type::iterator iterator;
-	typedef typename super_type::pointer pointer;
-	typedef typename super_type::const_pointer const_pointer;
-	typedef typename super_type::reference reference;
-	typedef typename super_type::const_reference const_reference;
+	COMMON_SPAN_TYPEDEFS
 
 	inline Span() : super_type() {}
 
 	inline Span(const pointer data_, const size_type size_) : super_type(data_, size_) {}
 
+	// Allows unrelated sibling classes like NamedSpan to assign to superclass
+	// siblings like Span
 	template <typename Other>
 	inline Span(const Other &other) : super_type(other) {}
-
-	template <typename Other>
-	inline mutable_derived_type &operator=(const Other &other) {
-		super_type::operator=(other);
-		return this->impl();
-	}
-
-	inline ~Span() {}
 };
 
 #pragma mark -
@@ -748,16 +728,7 @@ class NamedSpanImpl : public SpanImpl<ValueType, Derived> {
 #endif
 
 public:
-	typedef typename super_type::value_type value_type;
-	typedef typename super_type::difference_type difference_type;
-	typedef typename super_type::index_type index_type;
-	typedef typename super_type::size_type size_type;
-	typedef typename super_type::const_iterator const_iterator;
-	typedef typename super_type::iterator iterator;
-	typedef typename super_type::pointer pointer;
-	typedef typename super_type::const_pointer const_pointer;
-	typedef typename super_type::reference reference;
-	typedef typename super_type::const_reference const_reference;
+	COMMON_SPAN_TYPEDEFS
 
 	inline NamedSpanImpl() : super_type(), _name(), _sourceByteOffset(0) {}
 
@@ -769,35 +740,11 @@ public:
 		_name(name),
 		_sourceByteOffset(sourceByteOffset) {}
 
-	template <typename OtherValueType>
-	inline NamedSpanImpl(const NamedSpanImpl<OtherValueType, Derived> &other) :
+	template <typename Other>
+	inline NamedSpanImpl(const Other &other) :
 		super_type(other),
 		_name(other.name()),
 		_sourceByteOffset(other.sourceByteOffset()) {}
-
-	template <typename OtherValueType>
-	inline NamedSpanImpl(const SpanImpl<OtherValueType, Derived> &other) :
-		super_type(other),
-		_name(String::format("%p", const_cast<const void *>(other.data()))),
-		_sourceByteOffset(0) {}
-
-	template <typename OtherValueType>
-	inline mutable_derived_type &operator=(const NamedSpanImpl<OtherValueType, Derived> &other) {
-		super_type::operator=(other);
-		_name = other.name();
-		_sourceByteOffset = other.sourceByteOffset();
-		return this->impl();
-	}
-
-	template <typename OtherValueType>
-	inline mutable_derived_type &operator=(const SpanImpl<OtherValueType, Derived> &other) {
-		super_type::operator=(other);
-		_name = String::format("%p", const_cast<const void *>(other.data()));
-		_sourceByteOffset = 0;
-		return this->impl();
-	}
-
-	inline ~NamedSpanImpl() {}
 
 	inline void clear() {
 		super_type::clear();
@@ -923,24 +870,13 @@ public:
 template <typename ValueType>
 class NamedSpan : public NamedSpanImpl<ValueType, NamedSpan> {
 	typedef NamedSpanImpl<ValueType, ::Common::NamedSpan> super_type;
-	typedef typename AddConst<NamedSpan<ValueType> >::type const_derived_type;
-	typedef typename RemoveConst<NamedSpan<ValueType> >::type mutable_derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template <typename T> friend class NamedSpan;
 #endif
 
 public:
-	typedef typename super_type::value_type value_type;
-	typedef typename super_type::difference_type difference_type;
-	typedef typename super_type::index_type index_type;
-	typedef typename super_type::size_type size_type;
-	typedef typename super_type::const_iterator const_iterator;
-	typedef typename super_type::iterator iterator;
-	typedef typename super_type::pointer pointer;
-	typedef typename super_type::const_pointer const_pointer;
-	typedef typename super_type::reference reference;
-	typedef typename super_type::const_reference const_reference;
+	COMMON_SPAN_TYPEDEFS
 
 	inline NamedSpan() : super_type() {}
 
@@ -952,14 +888,6 @@ public:
 
 	template <typename Other>
 	inline NamedSpan(const Other &other) : super_type(other) {}
-
-	template <typename Other>
-	inline mutable_derived_type &operator=(const Other &other) {
-		super_type::operator=(other);
-		return this->impl();
-	}
-
-	inline ~NamedSpan() {}
 };
 
 #pragma mark -
@@ -974,6 +902,7 @@ class SpanOwner : public SafeBool<SpanOwner<OwnedSpan> > {
 	typedef typename OwnedSpan::value_type value_type;
 	typedef typename OwnedSpan::size_type size_type;
 	typedef typename OwnedSpan::index_type index_type;
+	typedef typename OwnedSpan::pointer pointer;
 	typedef typename OwnedSpan::reference reference;
 	typedef typename OwnedSpan::const_reference const_reference;
 
@@ -1006,6 +935,10 @@ public:
 	 * If this owner already holds another Span, the old Span will be destroyed.
 	 */
 	inline SpanOwner &operator=(SpanOwner &other) {
+		if (this == &other) {
+			return *this;
+		}
+
 		if (_span.data()) {
 			delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
 		}
@@ -1021,8 +954,8 @@ public:
 	/**
 	 * Releases the memory owned by this SpanOwner to the caller.
 	 */
-	inline value_type *release() {
-		value_type *data = _span.data();
+	inline pointer release() {
+		pointer data = _span.data();
 		_span.clear();
 		return data;
 	}

@@ -10,7 +10,75 @@ class SpanTestSuite : public CxxTest::TestSuite {
 		int a;
 	};
 
+	template <typename ValueType, template <typename> class Derived>
+	class SiblingSpanImpl : public Common::SpanImpl<ValueType, Derived> {
+		typedef Common::SpanImpl<ValueType, Derived> super_type;
+	public:
+		COMMON_SPAN_TYPEDEFS
+		SiblingSpanImpl() : super_type() {}
+		SiblingSpanImpl(pointer data_, size_type size_) : super_type(data_, size_) {}
+	};
+
+	template <typename ValueType>
+	class SiblingSpan : public SiblingSpanImpl<ValueType, SiblingSpan> {
+		typedef SiblingSpanImpl<ValueType, ::SpanTestSuite::SiblingSpan> super_type;
+	public:
+		COMMON_SPAN_TYPEDEFS
+		SiblingSpan() : super_type() {}
+		SiblingSpan(pointer data_, size_type size_) : super_type(data_, size_) {}
+	};
+
+	template <typename ValueType, template <typename> class Derived>
+	class SubSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
+		typedef Common::NamedSpanImpl<ValueType, Derived> super_type;
+	public:
+		COMMON_SPAN_TYPEDEFS
+		SubSpanImpl() : super_type() {}
+		SubSpanImpl(pointer data_,
+					size_type size_,
+					const Common::String &name_ = Common::String(),
+					const size_type sourceByteOffset_ = 0) :
+			super_type(data_, size_, name_, sourceByteOffset_) {}
+
+		template <typename Other>
+		SubSpanImpl(const Other &other) : super_type(other) {}
+	};
+
+	template <typename ValueType>
+	class SubSpan : public SubSpanImpl<ValueType, SubSpan> {
+		typedef SubSpanImpl<ValueType, ::SpanTestSuite::SubSpan> super_type;
+	public:
+		COMMON_SPAN_TYPEDEFS
+		SubSpan() : super_type() {}
+		SubSpan(pointer data_,
+				size_type size_,
+				const Common::String &name_ = Common::String(),
+				const size_type sourceByteOffset_ = 0) :
+			super_type(data_, size_, name_, sourceByteOffset_) {}
+
+		template <typename Other>
+		SubSpan(const Other &other) : super_type(other) {}
+	};
+
 public:
+	void test_sibling_span() {
+		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		SiblingSpan<byte> ss(data, sizeof(data));
+		Common::Span<byte> superInstance = ss;
+		TS_ASSERT_EQUALS(ss.data(), data);
+		TS_ASSERT_EQUALS(superInstance.data(), data);
+	}
+
+	void test_sub_span() {
+		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
+		SubSpan<byte> ss(data, sizeof(data), "custom subspan");
+		Common::NamedSpan<byte> namedSuper = ss;
+		Common::Span<byte> unnamedSuper = ss;
+		TS_ASSERT(ss.name() == "custom subspan");
+		TS_ASSERT(namedSuper.name() == ss.name());
+		TS_ASSERT(unnamedSuper.name() == Common::String::format("%p", (void *)data));
+	}
+
 	void test_span_iterator_const() {
 		byte data[] = { 'h', 'e', 'l', 'l', 'o' };
 		const Common::Span<byte> span(data, sizeof(data));
@@ -210,6 +278,11 @@ public:
 
 			// tests destruction of held pointer by reassignment
 			owner2 = owner;
+
+			// tests nullipotence of assignment to self
+			dataPtr = owner2->data();
+			owner2 = owner2;
+			TS_ASSERT(owner2->data() == dataPtr);
 		}
 
 		{
@@ -561,8 +634,9 @@ public:
 		TS_ASSERT(!span.checkInvalidBounds(6, 0));
 		TS_ASSERT(!span.checkInvalidBounds(2, -2));
 		TS_ASSERT(span.checkInvalidBounds(-2, 2)); // negative index disallowed
-		TS_ASSERT(span.checkInvalidBounds(6, 1)); // positive overflow (+7)
+		TS_ASSERT(span.checkInvalidBounds(6, 1)); // combined positive overflow (+7)
 		TS_ASSERT(span.checkInvalidBounds(2, -4)); // negative overflow (-2)
+		TS_ASSERT(span.checkInvalidBounds(0, 10)); // delta positive overflow
 
 		const ptrdiff_t big = 1L << (8 * sizeof(ptrdiff_t) - 1);
 		TS_ASSERT(span.checkInvalidBounds(big, 0));
@@ -653,7 +727,7 @@ public:
 		}
 
 		Common::NamedSpan<byte> span2;
-		span2 = span;
+		span = span2 = span;
 		TS_ASSERT_EQUALS(span2, span);
 		TS_ASSERT(span2.name() == span.name());
 		TS_ASSERT(span2.sourceByteOffset() == span.sourceByteOffset());
