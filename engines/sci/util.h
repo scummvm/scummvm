@@ -133,8 +133,6 @@ template <typename ValueType, template <typename> class Derived>
 class SciSpanImpl : public Common::NamedSpanImpl<ValueType, Derived> {
 	typedef Common::NamedSpanImpl<ValueType, Derived> super_type;
 	typedef Derived<ValueType> derived_type;
-	typedef typename Common::AddConst<Derived<ValueType> >::type const_derived_type;
-	typedef typename Common::RemoveConst<Derived<ValueType> >::type mutable_derived_type;
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template <typename T, template <typename> class U> friend class SciSpanImpl;
@@ -164,16 +162,7 @@ public:
 		super_type(data_, size_, name, sourceByteOffset) {}
 
 	template <typename Other>
-	inline SciSpanImpl(const Other &other) :
-		super_type(other) {}
-
-	template <typename Other>
-	inline mutable_derived_type &operator=(const Other &other) {
-		super_type::operator=(other);
-		return this->impl();
-	}
-
-	inline ~SciSpanImpl() {}
+	inline SciSpanImpl(const Other &other) : super_type(other) {}
 
 	inline const_iterator cbegin() const { return const_iterator(&this->impl(), 0); }
 	inline const_iterator cend() const { return const_iterator(&this->impl(), this->size()); }
@@ -227,6 +216,9 @@ public:
 // Spans that are used as ForwardIterators must not be allowed inside of
 // SpanOwner, since this will result in the wrong pointer to memory to be
 // deleted
+private:
+	typedef typename Common::RemoveConst<Derived<ValueType> >::type mutable_derived_type;
+
 public:
 	inline const_reference operator*() const {
 		this->validate(0, sizeof(value_type));
@@ -265,20 +257,9 @@ public:
 template <typename ValueType>
 class SciSpan : public SciSpanImpl<ValueType, SciSpan> {
 	typedef SciSpanImpl<ValueType, ::Sci::SciSpan> super_type;
-	typedef typename Common::AddConst<SciSpan<ValueType> >::type const_derived_type;
-	typedef typename Common::RemoveConst<SciSpan<ValueType> >::type mutable_derived_type;
 
 public:
-	typedef typename super_type::value_type value_type;
-	typedef typename super_type::difference_type difference_type;
-	typedef typename super_type::index_type index_type;
-	typedef typename super_type::size_type size_type;
-	typedef typename super_type::const_iterator const_iterator;
-	typedef typename super_type::iterator iterator;
-	typedef typename super_type::pointer pointer;
-	typedef typename super_type::const_pointer const_pointer;
-	typedef typename super_type::reference reference;
-	typedef typename super_type::const_reference const_reference;
+	COMMON_SPAN_TYPEDEFS
 
 	inline SciSpan() : super_type() {}
 
@@ -290,14 +271,6 @@ public:
 
 	template <typename Other>
 	inline SciSpan(const Other &other) : super_type(other) {}
-
-	template <typename Other>
-	inline mutable_derived_type &operator=(const Other &other) {
-		super_type::operator=(other);
-		return this->impl();
-	}
-
-	~SciSpan() {}
 };
 
 } // End of namespace Sci
