@@ -33,6 +33,8 @@
 
 namespace Director {
 
+DirectorEngine *g_director;
+
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
 		_rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
@@ -40,6 +42,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
+
+	g_director = this;
 
 	if (!_mixer->isReady())
 		error("Sound initialization failed");

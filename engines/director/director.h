@@ -139,6 +139,8 @@ private:
 	void testFont();
 };
 
+extern DirectorEngine *g_director;
+
 } // End of namespace Director
 
 #endif
