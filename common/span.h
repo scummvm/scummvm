@@ -734,11 +734,11 @@ public:
 
 	inline NamedSpanImpl(const pointer data_,
 						 const size_type size_,
-						 const String &name = String(),
-						 const size_type sourceByteOffset = 0) :
+						 const String &name_ = String(),
+						 const size_type sourceByteOffset_ = 0) :
 		super_type(data_, size_),
-		_name(name),
-		_sourceByteOffset(sourceByteOffset) {}
+		_name(name_),
+		_sourceByteOffset(sourceByteOffset_) {}
 
 	template <typename Other>
 	inline NamedSpanImpl(const Other &other) :
@@ -767,44 +767,44 @@ private:
 
 public:
 	template <typename NewValueType>
-	inline const Derived<NewValueType> subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name = String(), const size_type sourceByteOffset = kSpanKeepOffset) const {
+	inline const Derived<NewValueType> subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name_ = String(), const size_type sourceByteOffset_ = kSpanKeepOffset) const {
 		Derived<NewValueType> span;
-		populateSubspan(span, index, numEntries, name, sourceByteOffset);
+		populateSubspan(span, index, numEntries, name_, sourceByteOffset_);
 		return span;
 	}
 
 	template <typename NewValueType>
-	inline Derived<NewValueType> subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name = String(), const size_type sourceByteOffset = kSpanKeepOffset) {
+	inline Derived<NewValueType> subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name_ = String(), const size_type sourceByteOffset_ = kSpanKeepOffset) {
 		Derived<NewValueType> span;
-		populateSubspan(span, index, numEntries, name, sourceByteOffset);
+		populateSubspan(span, index, numEntries, name_, sourceByteOffset_);
 		return span;
 	}
 
-	inline const_derived_type subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name = String(), const size_type sourceByteOffset = kSpanKeepOffset) const {
-		return subspan<value_type>(index, numEntries, name, sourceByteOffset);
+	inline const_derived_type subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name_ = String(), const size_type sourceByteOffset_ = kSpanKeepOffset) const {
+		return subspan<value_type>(index, numEntries, name_, sourceByteOffset_);
 	}
 
-	inline mutable_derived_type subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name = String(), const size_type sourceByteOffset = kSpanKeepOffset) {
-		return subspan<value_type>(index, numEntries, name, sourceByteOffset);
+	inline mutable_derived_type subspan(const index_type index, const size_type numEntries = kSpanMaxSize, const String &name_ = String(), const size_type sourceByteOffset_ = kSpanKeepOffset) {
+		return subspan<value_type>(index, numEntries, name_, sourceByteOffset_);
 	}
 
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
 #endif
 	template <typename NewValueType>
-	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries, const String &name, const size_type sourceByteOffset = kSpanKeepOffset) const {
+	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries, const String &name_, const size_type sourceByteOffset_ = kSpanKeepOffset) const {
 		super_type::template populateSubspan<NewValueType>(span, index, numEntries);
 
-		if (name.empty()) {
+		if (name_.empty()) {
 			span._name = _name;
 		} else {
-			span._name = name;
+			span._name = name_;
 		}
 
-		if (sourceByteOffset == kSpanKeepOffset) {
+		if (sourceByteOffset_ == kSpanKeepOffset) {
 			span._sourceByteOffset = _sourceByteOffset + index * sizeof(value_type);
 		} else {
-			span._sourceByteOffset = sourceByteOffset;
+			span._sourceByteOffset = sourceByteOffset_;
 		}
 	}
 
@@ -831,9 +831,9 @@ private:
 	typedef Derived<mutable_value_type> mutable_value_derived_type;
 
 public:
-	mutable_value_derived_type &allocate(const size_type numEntries, const String &name = String()) {
+	mutable_value_derived_type &allocate(const size_type numEntries, const String &name_ = String()) {
 		super_type::allocate(numEntries);
-		_name = name;
+		_name = name_;
 		_sourceByteOffset = 0;
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
@@ -852,9 +852,9 @@ public:
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
 
-	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize, const String &name = String()) {
+	mutable_value_derived_type &allocateFromStream(SeekableReadStream &stream, size_type numEntries = kSpanMaxSize, const String &name_ = String()) {
 		super_type::allocateFromStream(stream, numEntries);
-		_name = name;
+		_name = name_;
 		_sourceByteOffset = 0;
 		return (mutable_value_derived_type &)const_cast<Derived<value_type> &>(this->impl());
 	}
@@ -882,9 +882,9 @@ public:
 
 	inline NamedSpan(const pointer data_,
 					 const size_type size_,
-					 const String &name = String(),
-					 const size_type sourceByteOffset = 0) :
-		super_type(data_, size_, name, sourceByteOffset) {}
+					 const String &name_ = String(),
+					 const size_type sourceByteOffset_ = 0) :
+		super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
 	inline NamedSpan(const Other &other) : super_type(other) {}
