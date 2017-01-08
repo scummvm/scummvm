@@ -28,6 +28,7 @@
 #include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/graphics.h"
+#include "chewy/scene.h"
 
 namespace Chewy {
 
@@ -56,6 +57,8 @@ void Events::processEvents() {
 			}
 		} else if (_event.type == Common::EVENT_RBUTTONUP) {
 			_vm->_cursor->nextCursor();
+		} else if (_event.type == Common::EVENT_MOUSEMOVE) {
+			_vm->_scene->updateMouse(_event.mouse);
 		}
 	}
 }
