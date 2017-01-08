@@ -114,54 +114,61 @@ void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offs
 }
 
 void Frame::readChannels(Common::ReadStreamEndian *stream) {
-	_actionId = stream->readByte();
-	_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
-	uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
+	byte unk[16];
 
-	if (transFlags & 0x80)
-		_transArea = 1;
-	else
-		_transArea = 0;
-	_transDuration = transFlags & 0x7f;
+	if (_vm->getVersion() < 4) {
+		_actionId = stream->readByte();
+		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
+		uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
 
-	_transChunkSize = stream->readByte();
-	_tempo = stream->readByte();
-	_transType = static_cast<TransitionType>(stream->readByte());
-	_sound1 = stream->readUint16();
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		_sound2 = stream->readUint16();
-		_soundType2 = stream->readByte();
-	} else {
-		byte unk[3];
-		stream->read(unk, 3);
-		warning("unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+		if (transFlags & 0x80)
+			_transArea = 1;
+		else
+			_transArea = 0;
+		_transDuration = transFlags & 0x7f;
+
+		_transChunkSize = stream->readByte();
+		_tempo = stream->readByte();
+		_transType = static_cast<TransitionType>(stream->readByte());
+		_sound1 = stream->readUint16();
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+			_sound2 = stream->readUint16();
+			_soundType2 = stream->readByte();
+		} else {
+			stream->read(unk, 3);
+			warning("unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+		}
+		_skipFrameFlag = stream->readByte();
+		_blend = stream->readByte();
+
+		if (_vm->getPlatform() != Common::kPlatformMacintosh) {
+			_sound2 = stream->readUint16();
+			_soundType2 = stream->readByte();
+		}
+
+		uint16 palette = stream->readUint16();
+
+		if (palette) {
+			warning("STUB: Palette info");
+		}
+
+		debugC(kDebugLoading, 8, "%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+
+		_palette = new PaletteInfo();
+		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
+		_palette->lastColor = stream->readByte();
+		_palette->flags = stream->readByte();
+		_palette->speed = stream->readByte();
+		_palette->frameCount = stream->readUint16();
+
+		_palette->cycleCount = stream->readUint16();
+	} else if (_vm->getVersion() < 5) {
+		stream->read(unk, 16);
+		_actionId = stream->readUint16();
+		stream->read(unk, 5);
 	}
-	_skipFrameFlag = stream->readByte();
-	_blend = stream->readByte();
 
-	if (_vm->getPlatform() != Common::kPlatformMacintosh) {
-		_sound2 = stream->readUint16();
-		_soundType2 = stream->readByte();
-	}
 
-	uint16 palette = stream->readUint16();
-
-	if (palette) {
-		warning("STUB: Palette info");
-	}
-
-	debugC(kDebugLoading, 8, "%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
-
-	_palette = new PaletteInfo();
-	_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
-	_palette->lastColor = stream->readByte();
-	_palette->flags = stream->readByte();
-	_palette->speed = stream->readByte();
-	_palette->frameCount = stream->readUint16();
-
-	_palette->cycleCount = stream->readUint16();
-
-	byte unk[11];
 	stream->read(unk, 6);
 
 	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
@@ -181,8 +188,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	for (int i = 0; i < CHANNEL_COUNT; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 
-		sprite._x1 = stream->readByte();
-		sprite._enabled = (stream->readByte() != 0);
+		sprite._scriptId = stream->readByte();
+		sprite._spriteType = stream->readByte();
+		sprite._enabled = sprite._spriteType != 0;
 		sprite._x2 = stream->readUint16();
 
 		sprite._flags = stream->readUint16();
@@ -199,8 +207,6 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		sprite._height = stream->readUint16();
 		sprite._width = stream->readUint16();
 
-		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
-
 		if (_vm->getPlatform() == Common::kPlatformMacintosh && _vm->getVersion() >= 4) {
 			sprite._scriptId = stream->readUint16();
 			sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
@@ -209,6 +215,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			if (_vm->getVersion() >= 5)
 				sprite._unk3 = stream->readUint32();
 		}
+
+		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d] script:%d",
+			sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
+			sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height, sprite._scriptId);
 	}
 }
 
@@ -360,6 +370,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 }
 
 void Frame::prepareFrame(Score *score) {
+	_drawRects.clear();
 	renderSprites(*score->_surface, false);
 	renderSprites(*score->_trailSurface, true);
 
@@ -529,82 +540,144 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 				continue;
 
+			CastType castType;
 			Cast *cast;
-			if (!_vm->_currentScore->_casts.contains(_sprites[i]->_castId)) {
-				if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
-					warning("Cast id %d not found", _sprites[i]->_castId);
-					continue;
-				} else {
-					warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
-					cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
+			if (_vm->getVersion() < 4) {
+				switch (_sprites[i]->_spriteType) {
+				case 0x01:
+				case 0x0c: //this is actually a mouse-over shape? I don't think it's a real button.
+					castType = kCastBitmap;
+					break;
+				case 0x02:
+					castType = kCastShape;
+					break;
+				case 0x07:
+					castType = kCastText;
+					break;
 				}
 			} else {
-				cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
+				if (!_vm->_currentScore->_casts.contains(_sprites[i]->_castId)) {
+					if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
+						warning("Cast id %d not found", _sprites[i]->_castId);
+						continue;
+					} else {
+						warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
+						cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
+					}
+				} else {
+					cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
+				}
+				castType = cast->type;
 			}
 
-			if (cast->type == kCastText) {
-				renderText(surface, i);
-				continue;
-			}
+			//this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
+			//I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
+			if (castType == kCastShape) {
+				renderShape(surface, i);
+			} else if (castType == kCastText) {
+				renderText(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : cast->children[0].index);
+			} else if (castType == kCastButton) {
+				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : cast->children[0].index);
+			} else {
+				Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
-			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
+				if (!img) {
+					warning("Image with id %d not found", _sprites[i]->_castId);
+					continue;
+				}
 
-			if (!img) {
-				warning("Image with id %d not found", _sprites[i]->_castId);
-				continue;
-			}
+				if (!img->getSurface()) {
+					warning("Frame::renderSprites: Could not load image %d", _sprites[i]->_castId);
+					continue;
+				}
 
-			if (!img->getSurface()) {
-				warning("Frame::renderSprites: Could not load image %d", _sprites[i]->_castId);
-				continue;
-			}
+				assert(_sprites[i]->_cast);
 
-			assert(_sprites[i]->_cast);
+				uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
+				uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
+				uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
+				uint32 rectTop = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.top;
 
-			uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
-			uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
-			uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
-			uint32 rectTop = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.top;
+				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
+				int y = _sprites[i]->_startPoint.y - regY + rectTop;
+				int height = _sprites[i]->_height;
+				int width = _sprites[i]->_width;
 
-			int x = _sprites[i]->_startPoint.x - regX + rectLeft;
-			int y = _sprites[i]->_startPoint.y - regY + rectTop;
-			int height = _sprites[i]->_height;
-			int width = _sprites[i]->_width;
+				Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
+				_drawRects[i] = drawRect;
 
-			Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
-			_drawRects.push_back(drawRect);
-
-			switch (_sprites[i]->_ink) {
-			case kInkTypeCopy:
-				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
-				break;
-			case kInkTypeTransparent:
-				// FIXME: is it always white (last entry in pallette)?
-				surface.transBlitFrom(*img->getSurface(), Common::Point(x, y), _vm->getPaletteColorCount() - 1);
-				break;
-			case kInkTypeBackgndTrans:
-				drawBackgndTransSprite(surface, *img->getSurface(), drawRect);
-				break;
-			case kInkTypeMatte:
-				drawMatteSprite(surface, *img->getSurface(), drawRect);
-				break;
-			case kInkTypeGhost:
-				drawGhostSprite(surface, *img->getSurface(), drawRect);
-				break;
-			case kInkTypeReverse:
-				drawReverseSprite(surface, *img->getSurface(), drawRect);
-				break;
-			default:
-				warning("Unhandled ink type %d", _sprites[i]->_ink);
-				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
-				break;
+				switch (_sprites[i]->_ink) {
+				case kInkTypeCopy:
+					surface.blitFrom(*img->getSurface(), Common::Point(x, y));
+					break;
+				case kInkTypeTransparent:
+					// FIXME: is it always white (last entry in pallette)?
+					surface.transBlitFrom(*img->getSurface(), Common::Point(x, y), _vm->getPaletteColorCount() - 1);
+					break;
+				case kInkTypeBackgndTrans:
+					drawBackgndTransSprite(surface, *img->getSurface(), drawRect);
+					break;
+				case kInkTypeMatte:
+					drawMatteSprite(surface, *img->getSurface(), drawRect);
+					break;
+				case kInkTypeGhost:
+					drawGhostSprite(surface, *img->getSurface(), drawRect);
+					break;
+				case kInkTypeReverse:
+					drawReverseSprite(surface, *img->getSurface(), drawRect);
+					break;
+				default:
+					warning("Unhandled ink type %d", _sprites[i]->_ink);
+					surface.blitFrom(*img->getSurface(), Common::Point(x, y));
+					break;
+				}
 			}
 		}
 	}
 }
 
-void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
-	renderText(surface, spriteId);
+void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
+	Common::Rect r = Common::Rect(_sprites[spriteID]->_startPoint.x, 
+		_sprites[spriteID]->_startPoint.y,
+		_sprites[spriteID]->_startPoint.x + _sprites[spriteID]->_width, 
+		_sprites[spriteID]->_startPoint.y + _sprites[spriteID]->_height);
+
+	Graphics::Surface tmpSurface;
+	tmpSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
+
+	tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 0);
+
+	switch (_sprites[spriteID]->_ink) {
+	case kInkTypeCopy:
+		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y));
+		break;
+	case kInkTypeTransparent:
+		// FIXME: is it always white (last entry in pallette)?
+		surface.transBlitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y), _vm->getPaletteColorCount() - 1);
+		break;
+	case kInkTypeBackgndTrans:
+		drawBackgndTransSprite(surface, tmpSurface, r);
+		break;
+	case kInkTypeMatte:
+		drawMatteSprite(surface, tmpSurface, r);
+		break;
+	case kInkTypeGhost:
+		drawGhostSprite(surface, tmpSurface, r);
+		break;
+	case kInkTypeReverse:
+		drawReverseSprite(surface, tmpSurface, r);
+		break;
+	default:
+		warning("Unhandled ink type %d", _sprites[spriteID]->_ink);
+		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y));
+		break;
+	}
+
+	_drawRects[spriteID] = r;
+}
+
+void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
+	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), true);
 
 	uint16 castID = _sprites[spriteId]->_castId;
 	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castID]);
@@ -617,13 +690,19 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	int height = _sprites[spriteId]->_height;
 	int width = _sprites[spriteId]->_width;
 
+	Common::Rect _rect;
+
 	switch (button->buttonType) {
 	case kTypeCheckBox:
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
-		surface.frameRect(Common::Rect(x - 17, y, x + 12, y + 12), 0);
+		_rect = Common::Rect(x - 17, y, x + 12, y + 12);
+		surface.frameRect(_rect, 0);
+		_drawRects[spriteId] = _rect;
 		break;
 	case kTypeButton:
-		surface.frameRect(Common::Rect(x, y, x + width, y + height), 0);
+		_rect = Common::Rect(x, y, x + width, y + height);
+		surface.frameRect(_rect, 0);
+		_drawRects[spriteId] = _rect;
 		break;
 	case kTypeRadio:
 		warning("STUB: renderButton: kTypeRadio");
@@ -633,6 +712,10 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
+
+	if (_vm->getVersion() >= 4 && _vm->_currentScore->_casts[spriteId]->children.size() > 0)
+		imgId = _vm->_currentScore->_casts[spriteId]->children[0].index;
+
 	Image::ImageDecoder *img = NULL;
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
@@ -650,13 +733,20 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		Common::SeekableReadStream *pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 
-		if (_vm->getVersion() <= 4) {
+		if (_vm->getVersion() < 4) {
 			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoder(w, h);
+		} else if (_vm->getVersion() < 6) {
+			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+			int w = bc->initialRect.width(), h = bc->initialRect.height();
+
+			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
+			img = new BITDDecoderV4(w, h);
 		} else {
 			img = new Image::BitmapDecoder();
 		}
@@ -666,6 +756,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 			byte buf[1024];
 			int n = s->read(buf, 1024);
 			Common::hexdump(buf, n);
+			s->seek(0);
 		}
 
 		img->loadStream(*pic);
@@ -683,17 +774,26 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 }
 
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
-	uint16 castID = _sprites[spriteID]->_castId;
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, uint16 castID) {
+	Common::SeekableSubReadStreamEndian *textStream = NULL;
 
-	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
-	Common::SeekableSubReadStreamEndian *textStream;
-
-	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S','T','X','T'), castID + 1024)) {
-		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S','T','X','T'), castID + 1024);
-	} else {
+	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castID)) {
+		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castID);
+	} else if (_vm->getSharedSTXT() != nullptr) {
 		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
 	}
+
+	renderText(surface, spriteID, textStream, false);
+}
+
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
+	if (textStream == NULL) return; 
+	
+	uint16 castID = _sprites[spriteID]->_castId;
+	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
+
+	
+
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
 	uint32 dataLen = textStream->readUint32();
@@ -711,11 +811,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
-	uint32 rectLeft = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.left;
-	uint32 rectTop = static_cast<TextCast *>(_sprites[spriteID]->_cast)->initialRect.top;
+	uint32 rectLeft = textCast->initialRect.left;
+	uint32 rectTop = textCast->initialRect.top;
 
-	int x = _sprites[spriteID]->_startPoint.x + rectLeft;
-	int y = _sprites[spriteID]->_startPoint.y + rectTop;
+	int x = _sprites[spriteID]->_startPoint.x;// +rectLeft;
+	int y = _sprites[spriteID]->_startPoint.y;// +rectTop;
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
 
@@ -730,7 +830,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
-	font->drawString(&surface, text, x, y, width, 0);
+	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
+	font->drawString(&surface, text, x, y, width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)textCast->textAlign);
+
+	if (isButtonLabel)
+		return;
 
 	if (textCast->borderSize != kSizeNone) {
 		uint16 size = textCast->borderSize;
@@ -884,10 +988,10 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 
 uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 	// Find first from top to bottom
-	for (uint16 i = _drawRects.size() - 1; i > 0; i--) {
-		if (_drawRects[i].contains(pos))
-			return i;
-	}
+	//TODO: THIS NEEDS TO BE REVERSED!
+	for (Common::HashMap<uint16, Common::Rect>::const_iterator dr = _drawRects.begin(); dr != _drawRects.end(); dr++)
+		if (dr->_value.contains(pos))
+			return dr->_key;
 
 	return 0;
 }
