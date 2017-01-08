@@ -401,10 +401,12 @@ public:
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
+	void func_beep(int repeats);
 	void func_goto(Datum &frame, Datum &movie);
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
+	void func_cursor(int c);
 
 public:
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
@@ -439,6 +441,8 @@ public:
 	Common::String _currentFactory;
 
 	bool _exitRepeat;
+
+	bool _cursorOnStack;
 
 private:
 	int parse(const char *code);

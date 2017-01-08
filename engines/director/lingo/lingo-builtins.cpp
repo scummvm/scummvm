@@ -615,7 +615,7 @@ void Lingo::b_alert(int nargs) {
 void Lingo::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: b_cursor(%d)", d.u.i);
+	g_lingo->func_cursor(d.u.i);
 }
 
 void Lingo::b_showGlobals(int nargs) {
@@ -767,7 +767,7 @@ void Lingo::b_point(int nargs) {
 ///////////////////
 void Lingo::b_beep(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_beep(%d)", d.u.i);
+	g_lingo->func_beep(d.u.i);
 }
 
 void Lingo::b_mci(int nargs) {
