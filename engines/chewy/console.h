@@ -48,6 +48,7 @@ private:
 	bool Cmd_ErrorMessage(int argc, const char **argv);
 	bool Cmd_Dialog(int argc, const char **argv);
 	bool Cmd_Text(int argc, const char **argv);
+	bool Cmd_Scene(int argc, const char **argv);
 };
 
 } // End of namespace Chewy

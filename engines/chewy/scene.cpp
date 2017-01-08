@@ -177,7 +177,7 @@ void Scene::loadSceneInfo() {
 	for (int i = 0; i < MAX_HOTSPOTS; i++) {
 		_sceneInfo->hotspotDescRes[i] = indexFile.readUint16LE();
 		
-		if (_sceneInfo->hotspotDescRes[i] < kATSTextMax) {
+		if (_sceneInfo->hotspotDescRes[i] < 12) {
 			// TODO: Hotspot description IDs are off... investigate why
 			_sceneInfo->hotspotDesc[i] = text->getText(_curScene + kADSTextMax, _sceneInfo->hotspotDescRes[i])->text;
 		} else {

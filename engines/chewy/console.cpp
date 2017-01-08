@@ -26,6 +26,7 @@
 #include "chewy/console.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
+#include "chewy/scene.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 
@@ -43,6 +44,7 @@ Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("error_message", WRAP_METHOD(Console, Cmd_ErrorMessage));
 	registerCmd("dialog",        WRAP_METHOD(Console, Cmd_Dialog));
 	registerCmd("text",          WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("scene",         WRAP_METHOD(Console, Cmd_Scene));
 }
 
 Console::~Console() {
@@ -233,6 +235,19 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 	delete d;
 
 	return true;
+}
+
+bool Console::Cmd_Scene(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Current scene is: %d\n", _vm->_scene->getCurScene());
+		debugPrintf("Use scene <scene num> to change the scene\n");
+		return true;
+	}
+
+	int sceneNum = atoi(argv[1]);
+	_vm->_scene->change(sceneNum);
+
+	return false;
 }
 
 } // End of namespace Chewy
