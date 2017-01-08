@@ -113,7 +113,7 @@ TextEntry *Text::getText(uint dialogNum, uint entryNum) {
 		} while (*ptr);
 
 		if (*(ptr + 1) != kEndText || *(ptr + 2) != kEndChunk)
-			error("Invalid text resource - %d", dialogNum);
+			error("Invalid text resource - %d, %d", dialogNum, entryNum);
 
 		if (!isText)
 			ptr += 3;	// 0, kEndText, kEndChunk
