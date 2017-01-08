@@ -65,12 +65,17 @@ TheEntity entities[] = {
 	{ kTheMenus,			"menus",			false },
 	{ kTheMenuItem,			"menuitem",			true  },
 	{ kTheMenuItems,		"menuitems",		false },
+	{ kTheMouseCast,		"mouseCast",		false },	//		D3 f
+	{ kTheMouseChar,		"mouseChar",		false },	//		D3 f
 	{ kTheMouseDown,		"mouseDown",		false },	// D2 f
 	{ kTheMouseDownScript,  "mouseDownScript",	false },	// D2 p
 	{ kTheMouseH,			"mouseH",			false },	// D2 f
+	{ kTheMouseItem,		"mouseItem",		false },	//		D3 f
+	{ kTheMouseLine,		"mouseLine",		false },	//		D3 f
 	{ kTheMouseUp,			"mouseUp",			false },	// D2 f
 	{ kTheMouseUpScript,  	"mouseUpScript",	false },	// D2 p
 	{ kTheMouseV,			"mouseV",			false },	// D2 f
+	{ kTheMouseWord,		"mouseWord",		false },	//		D3 f
 	{ kTheMovie,			"movie",			false },	// D2 f
 	{ kTheMultiSound,		"multiSound",		false },
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
