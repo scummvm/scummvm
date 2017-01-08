@@ -201,4 +201,122 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+/****************************
+* BITD V4+
+****************************/
+
+BITDDecoderV4::BITDDecoderV4(int w, int h) {
+	_surface = new Graphics::Surface();
+
+	// We make the surface pitch a multiple of 16.
+	int pitch = w;
+	if (w % 16)
+		pitch += 16 - (w % 16);
+
+	// HACK: Create a padded surface by adjusting w after create()
+	_surface->create(pitch, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->w = w;
+
+	_palette = new byte[256 * 3];
+
+	_palette[0] = _palette[1] = _palette[2] = 0;
+	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
+
+	_paletteColorCount = 2;
+}
+
+BITDDecoderV4::~BITDDecoderV4() {
+	destroy();
+}
+
+void BITDDecoderV4::destroy() {
+	_surface = 0;
+
+	delete[] _palette;
+	_palette = 0;
+	_paletteColorCount = 0;
+}
+
+void BITDDecoderV4::loadPalette(Common::SeekableReadStream &stream) {
+	// no op
+}
+
+bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
+	int x = 0, y = 0;
+
+	// If the stream has exactly the required number of bits for this image,
+	// we assume it is uncompressed.
+	if (stream.size() * 8 == _surface->pitch * _surface->h) {
+		debugC(3, kDebugImages, "Skipping compression");
+		for (y = 0; y < _surface->h; y++) {
+			for (x = 0; x < _surface->pitch; ) {
+				byte color = stream.readByte();
+				for (int c = 0; c < 8; c++)
+					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
+			}
+		}
+
+		return true;
+	}
+
+	Common::Array<int> pixels;
+	pixels.reserve(4096);
+
+	while (!stream.eos()) {
+		int data = stream.readByte();
+		int len = data + 1;
+		if ((data & 0x80) != 0) {
+			len = ((data ^ 0xFF) & 0xff) + 2;
+			data = stream.readByte();
+			for (int p = 0; p < len; p++) {
+				pixels.push_back(data);
+				//*((byte *)_surface->getBasePtr(x, y)) = data;
+			}
+			//data = stream.readByte();
+		} else {
+			for (int p = 0; p < len; p++) {
+				data = stream.readByte();
+				pixels.push_back(data);
+			}
+		}
+		//if (bpp == 32 && pixels.Count % (w * 3) == 0)
+		//	source += 2;
+	}
+
+	if (pixels.size() > 0) {
+		//this needs to be calculated a lot earlier!
+		int bpp = pixels.size() / (_surface->w * _surface->h);
+		switch (bpp) {
+		case 1:
+			for (uint pix = 0; pix < pixels.size(); pix++) {
+				//this calculation is wrong.. need a demo with colours.
+				*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[pix];
+				x++;
+				if (x == _surface->w) {
+					y++;
+					x = 0;
+				}
+			}
+			break;
+		/*
+		case 32:
+			SetPixel(x, y, Color.FromArgb(
+			pixels[((y * dxr.nodes[c].w) * 3) + x],
+			pixels[(((y * dxr.nodes[c].w) * 3) + (dxr.nodes[c].w)) + x],
+			pixels[(((y * dxr.nodes[c].w) * 3) + (2 * dxr.nodes[c].w)) + x]));
+			break;
+		case 16:
+			SetPixel(x, y, Color.FromArgb(
+			(pixels[((y * dxr.nodes[c].w) * 2) + x] & 0x7c) << 1,
+			(pixels[((y * dxr.nodes[c].w) * 2) + x] & 0x03) << 6 |
+			(pixels[((y * dxr.nodes[c].w) * 2) + (dxr.nodes[c].w) + x] & 0xe0) >> 2,
+			(pixels[((y * dxr.nodes[c].w) * 2) + (dxr.nodes[c].w) + x] & 0x1f) << 3));
+			break;
+		*/
+		}
+	}
+
+	return true;
+}
+
 } // End of namespace Director

@@ -33,6 +33,15 @@ class MacResManager;
 namespace Director {
 
 // Completely ripped off of Mohawk's Archive code
+	
+struct Resource {
+	uint32 index;
+	uint32 offset;
+	uint32 size;
+	uint32 castId;
+	Common::String name;
+	Common::Array<Resource> children;
+};
 
 class Archive {
 public:
@@ -50,6 +59,7 @@ public:
 	bool hasResource(uint32 tag, uint16 id) const;
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
+	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName) const;
 	Common::String getName(uint32 tag, uint16 id) const;
@@ -61,11 +71,6 @@ public:
 
 protected:
 	Common::SeekableReadStream *_stream;
-	struct Resource {
-		uint32 offset;
-		uint32 size;
-		Common::String name;
-	};
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
 	TypeMap _types;
@@ -103,6 +108,7 @@ public:
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
 	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
+	Resource getResourceDetail(uint32 tag, uint16 id);
 };
 
 } // End of namespace Director

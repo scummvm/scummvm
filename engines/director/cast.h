@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "common/substream.h"
+#include "director/archive.h"
 
 namespace Director {
 
@@ -46,6 +47,7 @@ struct Cast {
 	CastType type;
 	Common::Rect initialRect;
 	Common::Rect boundingRect;
+	Common::Array<Resource> children;
 
 	byte modified;
 };

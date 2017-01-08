@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/sound.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Director {
 
@@ -208,6 +209,40 @@ void Lingo::func_gotonext() {
 
 void Lingo::func_gotoprevious() {
 	_vm->_currentScore->gotoprevious();
+}
+
+void Lingo::func_cursor(int c) {
+	if (_cursorOnStack) {
+		//pop cursor
+		_vm->getMacWindowManager()->popCursor();
+	}
+
+	//and then push cursor.
+	switch (c) {
+	case 0:
+	case -1:
+		_vm->getMacWindowManager()->pushArrowCursor();
+		break;
+	case 1:
+		_vm->getMacWindowManager()->pushBeamCursor();
+		break;
+	case 2:
+		_vm->getMacWindowManager()->pushCrossHairCursor();
+		break;
+	case 3:
+		_vm->getMacWindowManager()->pushCrossBarCursor();
+		break;
+	case 4:
+		_vm->getMacWindowManager()->pushWatchCursor();
+		break;
+	}
+
+	warning("STUB: func_cursor(%d)", c);
+}
+
+void Lingo::func_beep(int repeats) {
+	for (int r = 0; r <= repeats; r++)
+		_vm->getSoundManager()->systemBeep();
 }
 
 }

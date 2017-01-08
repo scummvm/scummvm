@@ -146,6 +146,10 @@ public:
 	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
+	void pushBeamCursor();
+	void pushCrossHairCursor();
+	void pushCrossBarCursor();
+	void pushWatchCursor();
 	void popCursor();
 
 public:

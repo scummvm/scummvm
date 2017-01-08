@@ -41,6 +41,9 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 			unk2 = stream.readUint16();
 		}
 	} else {
+		stream.readByte();
+		stream.readByte();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
 		regX = stream.readUint16();
@@ -59,8 +62,10 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
-	if (version < 4) {
-		flags1 = stream.readByte();
+	if (version < 5) {
+		if (version <= 3)
+			flags1 = stream.readByte();
+
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
 		boxShadow = static_cast<SizeType>(stream.readByte());
@@ -109,6 +114,9 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		lineThickness = stream.readByte();
 		lineDirection = stream.readByte();
 	} else {
+		stream.readByte();
+		stream.readByte();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
 	}
@@ -119,8 +127,13 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 	if (version < 4) {
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	} else {
+		stream.readByte();
+		stream.readByte();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
+
+		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
 	modified = 0;
 }
@@ -129,6 +142,9 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else {
+		stream.readByte();
+		stream.readByte();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
 

@@ -88,6 +88,60 @@ static const byte macCursorBeam[] = {
 	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
+static const byte macCursorCrossHair[] = {
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+};
+static const byte macCursorWatch[] = {
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 
+	1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 
+	1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 
+	1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 
+	0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+};
+static const byte macCursorCrossBar[] = {
+	0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0,
+	1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,
+	1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,
+	1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+	0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
 
 MacWindowManager::MacWindowManager() {
 	_screen = 0;
@@ -325,6 +379,22 @@ void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
 /////////////////
 void MacWindowManager::pushArrowCursor() {
 	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushBeamCursor() {
+	CursorMan.pushCursor(macCursorBeam, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushCrossHairCursor() {
+	CursorMan.pushCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushCrossBarCursor() {
+	CursorMan.pushCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushWatchCursor() {
+	CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
 }
 
 void MacWindowManager::popCursor() {

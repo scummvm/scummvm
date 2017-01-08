@@ -73,6 +73,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::String getEXEName() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }
+	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }

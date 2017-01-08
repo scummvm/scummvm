@@ -106,7 +106,8 @@ public:
 	uint32 _unk3;
 
 	bool _enabled;
-	byte _castId;
+	uint16 _castId;
+	byte _spriteType;
 	InkType _ink;
 	uint16 _trails;
 	Cast *_cast;
