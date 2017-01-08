@@ -100,6 +100,18 @@ Common::SeekableSubReadStreamEndian *Archive::getResource(uint32 tag, uint16 id)
 	return new Common::SeekableSubReadStreamEndian(_stream, res.offset, res.offset + res.size, _isBigEndian, DisposeAfterUse::NO);
 }
 
+Resource Archive::getResourceDetail(uint32 tag, uint16 id) {
+	if (!_types.contains(tag))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	return resMap[id];
+}
+
 uint32 Archive::getOffset(uint32 tag, uint16 id) const {
 	if (!_types.contains(tag))
 		error("Archive does not contain '%s' %04x", tag2str(tag), id);
@@ -365,6 +377,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // unknown
 
 	Common::Array<Resource> resources;
+	resources.reserve(2048);
 
 	// Need to look for these two resources
 	const Resource *keyRes = 0;
@@ -395,6 +408,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			keyRes = &resources[resources.size() - 1];
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
 			casRes = &resources[resources.size() - 1];
+		else
+			_types[tag][i] = res;
 	}
 
 	// We need to have found the 'File' resource already
@@ -409,6 +424,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		return false;
 	}
 
+	uint castTag = MKTAG('C', 'A', 'S', 't');
+
 	// Parse the CAS*, if present
 	if (casRes) {
 		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
@@ -420,8 +437,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		for (uint i = 0; i < casSize; i++) {
 			uint32 index = casStream.readUint32();
 
-			const Resource &res = resources[index];
-			_types[MKTAG('C', 'A', 'S', 't')][i + 1] = res;
+			Resource &res = resources[index];
+			res.index = index;
+			res.castId = i + 1;
+			_types[castTag][res.castId] = res;
 
 			debugCN(2, kDebugLoading, "%d ", index);
 		}
@@ -444,10 +463,20 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		debugC(2, kDebugLoading, "KEY*: index: %d id: %d resTag: %s", index, id, tag2str(resTag));
 
-		const Resource &res = resources[index];
+		Resource &res = resources[index];
 		debug(3, "Found RIFX resource: '%s' id: 0x%04x, %d @ 0x%08x (%d)", tag2str(resTag), id, res.size, res.offset, res.offset);
 		_types[resTag][id] = res;
-		_types[resTag][1024 + i + 1] = res;
+		//_types[resTag][1024 + i + 1] = res;
+
+		if (id < 1024) {
+			for (uint cast = 0; cast < _types[castTag].size(); cast++) {
+				if (_types[castTag][cast].index == id) {
+					res.index = index;
+					_types[castTag][cast].children.push_back(res);
+					break;
+				}
+			}
+		}
 	}
 
 	_stream = stream;
@@ -469,6 +498,18 @@ Common::SeekableSubReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16
 	uint32 size = res.size;
 
 	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
+}
+
+Resource RIFXArchive::getResourceDetail(uint32 tag, uint16 id) {
+	if (!_types.contains(tag))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	const ResourceMap &resMap = _types[tag];
+
+	if (!resMap.contains(id))
+		error("Archive does not contain '%s' %04x", tag2str(tag), id);
+
+	return resMap[id];
 }
 
 

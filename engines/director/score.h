@@ -25,6 +25,7 @@
 
 #include "common/substream.h"
 #include "common/rect.h"
+#include "director/archive.h"
 
 namespace Graphics {
 	class ManagedSurface;
@@ -67,7 +68,7 @@ public:
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id);
+	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	int getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }

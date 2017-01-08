@@ -217,7 +217,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
-			castScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
+			castScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
 	}
 
 	castScore->setSpriteCasts();

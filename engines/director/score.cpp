@@ -216,16 +216,19 @@ void Score::loadArchive() {
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
-			loadCastData(*_movieArchive->getResource(MKTAG('C','A','S','t'), *iterator), *iterator);
+		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
+			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
+			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
+			loadCastData(*stream, *iterator, &res);
+		}
 	}
 
 	setSpriteCasts();
 
-	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
-	if (stxt.size() > 0) {
-		loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
-	}
+	//Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+	//if (stxt.size() > 0) {
+	//	loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
+	//}
 }
 
 Score::~Score() {
@@ -397,7 +400,7 @@ void Score::setSpriteCasts() {
 	}
 }
 
-void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id) {
+void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res) {
 	// d4+ variant
 	if (stream.size() == 0)
 		return;
@@ -415,7 +418,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	uint32 size1, size2, size3, castType;
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
-	if (_vm->getVersion() < 5) {
+	if (_vm->getVersion() < 4) {
 		size1 = stream.readUint16();
 		size2 = stream.readUint32();
 		size3 = 0;
@@ -423,6 +426,12 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		unk1 = stream.readByte();
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
+	} else if (_vm->getVersion() < 5) {
+		size1 = stream.readUint16() + 2;
+		size2 = stream.readUint32();
+		size3 = 0;
+		castType = stream.readByte();
+		unk1 = stream.readByte();
 	} else {
 		// FIXME: only the cast type and the strings are good
 		castType = stream.readUint32();
@@ -436,7 +445,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 				id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(size1, 1); // 16 is for bounding rects
+	byte *data = (byte *)calloc(size1 + 16, 1); // 16 is for bounding rects
 	stream.read(data, size1 + 16);
 
 	Common::MemoryReadStreamEndian castStream(data, size1 + 16, stream.isBE());
@@ -469,12 +478,20 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		_casts[id]->type = kCastButton;
 		break;
 	case kCastScript:
+		warning("CASt: Script");
+		Common::hexdump(data, size1 + 16);
+
 		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastScript;
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d", castType);
 		break;
+	}
+
+	if (res != NULL) {
+		for (uint child = 0; child < res->children.size(); child++)
+			_casts[id]->children.push_back(res->children[child]);
 	}
 
 	free(data);
@@ -499,6 +516,11 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 		ci->directory = castStrings[2];
 		ci->fileName = castStrings[3];
 		ci->type = castStrings[4];
+
+		if (!ci->script.empty()) {
+			//the script type here could be wrong!
+			_lingo->addCode(ci->script.c_str(), _casts[id]->type == kCastScript ? kFrameScript : kSpriteScript, id);
+		}
 
 		_castsInfo[id] = ci;
 	}
@@ -802,7 +824,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 	byte *data = (byte *)malloc(entries[count - 1]);
 	stream.read(data, entries[count - 1]);
 
-	for (uint i = 0; i < count - 1; i++) {
+	for (uint16 i = 0; i < count - 1; i++) {
 		Common::String entryString;
 
 		for (uint j = entries[i]; j < entries[i + 1]; j++)
@@ -821,6 +843,9 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 }
 
 void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
+	if (stream.size() == 0)
+		return;
+
 	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
 	uint16 currentRawPosition = offset;
@@ -908,9 +933,11 @@ void Score::update() {
 	_currentFrame++;
 
 	Common::SortedArray<Label *>::iterator i;
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->number == _currentFrame) {
-			_currentLabel = (*i)->name;
+	if (_labels != NULL) {
+		for (i = _labels->begin(); i != _labels->end(); ++i) {
+			if ((*i)->number == _currentFrame) {
+				_currentLabel = (*i)->name;
+			}
 		}
 	}
 
