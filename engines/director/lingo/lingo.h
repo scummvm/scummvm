@@ -421,6 +421,7 @@ public:
 	ScriptType _currentScriptType;
 	bool _returning;
 	bool _indef;
+	bool _ignoreMe;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;

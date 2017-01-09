@@ -98,6 +98,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_pc = 0;
 	_returning = false;
 	_indef = false;
+	_ignoreMe = false;
 
 	_linenumber = _colnumber = 0;
 

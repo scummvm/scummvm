@@ -192,6 +192,9 @@ whitespace [\t ]
 		count();
 		yylval.s = new Common::String(yytext);
 
+		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
+			return ID;
+
 		if (g_lingo->_handlers.contains(yytext)) {
 			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->parens == false) {
 				if (g_lingo->_handlers[yytext]->nargs == 0) {
