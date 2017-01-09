@@ -89,7 +89,7 @@ void yyerror(const char *s) {
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
-%token tON tME tSOUND
+%token tON tSOUND
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
 %type<narg> argdef arglist

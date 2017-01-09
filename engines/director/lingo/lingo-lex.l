@@ -92,7 +92,6 @@ whitespace [\t ]
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
 (?i:macro)			{ count(); return tMACRO; }
-(?i:me)				{ count(); return tME; }
 (?i:method)			{ count(); return tMETHOD; }
 (?i:mod)			{ count(); return tMOD; }
 (?i:movie)			{ count(); return tMOVIE; }
