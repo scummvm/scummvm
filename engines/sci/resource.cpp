@@ -1507,7 +1507,7 @@ void ResourceManager::readResourcePatchesBase36() {
 
 			// The S/T prefixes often conflict with non-patch files and generate
 			// spurious warnings about invalid patches
-			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT")) {
+			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT") || name.hasSuffix(".OLD")) {
 				continue;
 			}
 
