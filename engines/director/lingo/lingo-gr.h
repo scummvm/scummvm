@@ -46,20 +46,20 @@
      POINT = 262,
      RECT = 263,
      ARRAY = 264,
-     SYMBOL = 265,
-     OBJECT = 266,
-     INT = 267,
-     THEENTITY = 268,
-     THEENTITYWITHID = 269,
-     FLOAT = 270,
-     BLTIN = 271,
-     BLTINNOARGS = 272,
-     BLTINNOARGSORONE = 273,
-     BLTINONEARG = 274,
-     BLTINARGLIST = 275,
-     ID = 276,
-     STRING = 277,
-     HANDLER = 278,
+     OBJECT = 265,
+     INT = 266,
+     THEENTITY = 267,
+     THEENTITYWITHID = 268,
+     FLOAT = 269,
+     BLTIN = 270,
+     BLTINNOARGS = 271,
+     BLTINNOARGSORONE = 272,
+     BLTINONEARG = 273,
+     BLTINARGLIST = 274,
+     ID = 275,
+     STRING = 276,
+     HANDLER = 277,
+     SYMBOL = 278,
      tDOWN = 279,
      tELSE = 280,
      tNLELSIF = 281,
@@ -107,11 +107,12 @@
      tCONCAT = 323,
      tCONTAINS = 324,
      tSTARTS = 325,
-     tSPRITE = 326,
-     tINTERSECTS = 327,
-     tWITHIN = 328,
-     tON = 329,
-     tSOUND = 330
+     tCHAR = 326,
+     tSPRITE = 327,
+     tINTERSECTS = 328,
+     tWITHIN = 329,
+     tON = 330,
+     tSOUND = 331
    };
 #endif
 /* Tokens.  */
@@ -122,20 +123,20 @@
 #define POINT 262
 #define RECT 263
 #define ARRAY 264
-#define SYMBOL 265
-#define OBJECT 266
-#define INT 267
-#define THEENTITY 268
-#define THEENTITYWITHID 269
-#define FLOAT 270
-#define BLTIN 271
-#define BLTINNOARGS 272
-#define BLTINNOARGSORONE 273
-#define BLTINONEARG 274
-#define BLTINARGLIST 275
-#define ID 276
-#define STRING 277
-#define HANDLER 278
+#define OBJECT 265
+#define INT 266
+#define THEENTITY 267
+#define THEENTITYWITHID 268
+#define FLOAT 269
+#define BLTIN 270
+#define BLTINNOARGS 271
+#define BLTINNOARGSORONE 272
+#define BLTINONEARG 273
+#define BLTINARGLIST 274
+#define ID 275
+#define STRING 276
+#define HANDLER 277
+#define SYMBOL 278
 #define tDOWN 279
 #define tELSE 280
 #define tNLELSIF 281
@@ -183,11 +184,12 @@
 #define tCONCAT 323
 #define tCONTAINS 324
 #define tSTARTS 325
-#define tSPRITE 326
-#define tINTERSECTS 327
-#define tWITHIN 328
-#define tON 329
-#define tSOUND 330
+#define tCHAR 326
+#define tSPRITE 327
+#define tINTERSECTS 328
+#define tWITHIN 329
+#define tON 330
+#define tSOUND 331
 
 
 
@@ -205,7 +207,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 209 "engines/director/lingo/lingo-gr.hpp"
+#line 211 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

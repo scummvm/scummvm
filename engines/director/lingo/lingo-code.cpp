@@ -60,7 +60,7 @@ static struct FuncDescr {
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
 	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
-	{ Lingo::c_symbolpush,	"c_symbolpush","s" },
+	{ Lingo::c_symbolpush,	"c_symbolpush","s" },	// D3
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_assign,		"c_assign",		"" },
 	{ Lingo::c_eval,		"c_eval",		"s" },
@@ -74,13 +74,15 @@ static struct FuncDescr {
 	{ Lingo::c_mod,			"c_mod",		"" },
 	{ Lingo::c_negate,		"c_negate",		"" },
 	{ Lingo::c_ampersand,	"c_ampersand",	"" },
-	{ Lingo::c_after,		"c_after",		"" },
-	{ Lingo::c_before,		"c_before",		"" },
+	{ Lingo::c_after,		"c_after",		"" },	// D3
+	{ Lingo::c_before,		"c_before",		"" },	// D3
 	{ Lingo::c_concat,		"c_concat",		"" },
 	{ Lingo::c_contains,	"c_contains",	"" },
 	{ Lingo::c_starts,		"c_starts",		"" },
 	{ Lingo::c_intersects,	"c_intersects",	"" },
 	{ Lingo::c_within,		"c_within",		"" },
+	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
+	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
 	{ Lingo::c_and,			"c_and",		"" },
 	{ Lingo::c_or,			"c_or",			"" },
 	{ Lingo::c_not,			"c_not",		"" },
@@ -571,7 +573,7 @@ void Lingo::c_intersects() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_intersects: %d", d2.u.i);
+	warning("STUB: c_intersects: %d %d", d1.u.i, d2.u.i);
 
 	g_lingo->push(d1);
 }
@@ -580,7 +582,26 @@ void Lingo::c_within() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	warning("STUB: c_within: %d", d2.u.i);
+	warning("STUB: c_within: %d %d", d1.u.i, d2.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_charOf() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_charOf: %d %d", d1.u.i, d2.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_charToOf() {
+	Datum d3 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_charToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }

@@ -77,7 +77,7 @@ void yyerror(const char *s) {
 }
 
 %token UNARY
-%token CASTREF VOID VAR POINT RECT ARRAY SYMBOL OBJECT
+%token CASTREF VOID VAR POINT RECT ARRAY OBJECT
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
@@ -87,7 +87,7 @@ void yyerror(const char *s) {
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
-%token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
+%token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR
 %token tSPRITE tINTERSECTS tWITHIN
 %token tON tSOUND
 
@@ -412,6 +412,8 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| '(' expr ')'				{ $$ = $2; }
 	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(g_lingo->c_intersects); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(g_lingo->c_within); }
+	| tCHAR expr tOF expr				{ g_lingo->code1(g_lingo->c_charOf); }
+	| tCHAR expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_charToOf); }
 	;
 
 func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }

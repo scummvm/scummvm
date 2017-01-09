@@ -77,6 +77,7 @@ whitespace [\t ]
 (?i:after)			{ count(); return tAFTER; }		// D3
 (?i:and)			{ count(); return tAND; }
 (?i:before)			{ count(); return tBEFORE; }	// D3
+(?i:char)			{ count(); return tCHAR; }		// D3
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:done)			{ count(); return tDONE; }
 (?i:down)			{ count(); return tDOWN; }

@@ -249,6 +249,8 @@ public:
 
 	static void c_intersects();
 	static void c_within();
+	static void c_charOf();
+	static void c_charToOf();
 
 	static void c_constpush();
 	static void c_voidpush();
