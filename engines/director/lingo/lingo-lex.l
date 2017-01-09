@@ -231,7 +231,7 @@ namespace Director {
 int Lingo::parse(const char *code) {
 	YY_BUFFER_STATE bp;
 
-	if (debugChannelSet(10, kDebugLingoCompile))
+	if (debugChannelSet(-1, kDebugLingoCompile))
 		yydebug = 1;
 	else
 		yydebug = 0;
