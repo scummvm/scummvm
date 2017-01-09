@@ -2684,7 +2684,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
-	{"lighthouse", "Demo", {
+	{"lighthouse", "Non-interactive Demo", {
 		{"resource.map", 0, "543124606352bfa5e07696ddf2a669be", 64},
 		{"resource.000", 0, "5d7714416b612463d750fb9c5690c859", 28952},
 		AD_LISTEND},
