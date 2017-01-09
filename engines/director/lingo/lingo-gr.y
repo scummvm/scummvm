@@ -82,7 +82,7 @@ void yyerror(const char *s) {
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST
-%token<s> ID STRING HANDLER
+%token<s> ID STRING HANDLER SYMBOL
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
@@ -357,6 +357,9 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
+	| SYMBOL	{
+		$$ = g_lingo->code1(g_lingo->c_symbolpush);
+		g_lingo->codeString($1->c_str()); }
 	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }

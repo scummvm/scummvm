@@ -72,6 +72,8 @@ whitespace [\t ]
 ^{whitespace}+		{ count(); }
 [\t]+				{ count(); return ' '; }
 
+[#]{identifier}		{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }
+
 (?i:and)			{ count(); return tAND; }
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:done)			{ count(); return tDONE; }

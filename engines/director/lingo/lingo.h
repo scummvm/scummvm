@@ -252,6 +252,7 @@ public:
 	static void c_voidpush();
 	static void c_fconstpush();
 	static void c_stringpush();
+	static void c_symbolpush();
 	static void c_varpush();
 	static void c_assign();
 	bool verify(Symbol *s);

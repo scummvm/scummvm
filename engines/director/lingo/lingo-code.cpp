@@ -60,6 +60,7 @@ static struct FuncDescr {
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
 	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
+	{ Lingo::c_symbolpush,	"c_symbolpush","s" },
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_assign,		"c_assign",		"" },
 	{ Lingo::c_eval,		"c_eval",		"s" },
@@ -209,6 +210,16 @@ void Lingo::c_stringpush() {
 	char *s = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
 	g_lingo->_pc += g_lingo->calcStringAlignment(s);
 
+	g_lingo->push(Datum(new Common::String(s)));
+}
+
+void Lingo::c_symbolpush() {
+	char *s = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
+	g_lingo->_pc += g_lingo->calcStringAlignment(s);
+
+	warning("STUB: c_symbolpush()");
+
+	// TODO: FIXME: Must push symbol instead of string
 	g_lingo->push(Datum(new Common::String(s)));
 }
 
