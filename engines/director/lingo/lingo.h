@@ -358,6 +358,8 @@ public:
 	static void b_nothing(int nargs);
 	static void b_pause(int nargs);
 	static void b_playAccel(int nargs);
+	static void b_preLoad(int nargs);
+	static void b_preLoadCast(int nargs);
 	static void b_quit(int nargs);
 	static void b_restart(int nargs);
 	static void b_shutDown(int nargs);
@@ -393,6 +395,7 @@ public:
 	static void b_return(int nargs);
 	static void b_tab(int nargs);
 	static void b_true(int nargs);
+	static void b_version(int nargs);
 
 	static void b_factory(int nargs);
 	void factoryCall(Common::String &name, int nargs);

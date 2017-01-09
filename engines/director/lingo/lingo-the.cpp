@@ -44,7 +44,7 @@ TheEntity entities[] = {
 	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
 	{ kTheExitLock,			"exitLock",			false },	// D2 p
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
-	{ kTheFloatPrecision,	"floatPrecision",	false },
+	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
@@ -54,6 +54,7 @@ TheEntity entities[] = {
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
+	{ kTheLabelList,		"labelList",		false },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },
@@ -95,6 +96,7 @@ TheEntity entities[] = {
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
 	{ kTheStage,			"stage",			false },
 	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
+	{ kTheStageColor,		"stageColor",		false },	//		D3 p
 	{ kTheStageLeft,		"stageLeft",		false },	// D2 f
 	{ kTheStageRight,		"stageRight",		false },	// D2 f
 	{ kTheStageTop,			"stageTop",			false },	// D2 f

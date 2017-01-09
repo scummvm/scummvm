@@ -70,6 +70,7 @@ enum TheEntityType {
 	kTheKey,
 	kTheKeyDownScript,
 	kTheKeyCode,
+	kTheLabelList,
 	kTheLastClick,
 	kTheLastEvent,
 	kTheLastFrame,
@@ -107,6 +108,7 @@ enum TheEntityType {
 	kTheRomanLingo,
 	kTheStage,
 	kTheStageBottom,
+	kTheStageColor,
 	kTheStageLeft,
 	kTheStageRight,
 	kTheStageTop

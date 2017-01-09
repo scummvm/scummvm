@@ -75,6 +75,8 @@ static struct BuiltinProto {
 		// play													// D2
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
 		// play done											// D2
+	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3
+	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3
 	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2
 	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2
@@ -136,6 +138,7 @@ static struct BuiltinProto {
 	{ "return",			Lingo::b_return,		0, 0, false },	// D2
 	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
+	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
 	// References
 	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
@@ -526,6 +529,18 @@ void Lingo::b_playAccel(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void Lingo::b_preLoad(int nargs) {
+	g_lingo->printStubWithArglist("b_preLoad", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_preLoadCast(int nargs) {
+	g_lingo->printStubWithArglist("b_preLoadCast", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 void Lingo::b_printFrom(int nargs) {
 	g_lingo->printStubWithArglist("b_printFrom", nargs);
 
@@ -851,12 +866,30 @@ void Lingo::b_true(int nargs) {
 	g_lingo->push(Datum(1));
 }
 
+void Lingo::b_version(int nargs) {
+	g_lingo->push(Datum(g_director->getVersion()));
+}
+
 ///////////////////
 // Factory
 ///////////////////
 void Lingo::b_factory(int nargs) {
 	// This is intentionally empty
 }
+
+// TODO:
+// List of predefined methods in D3
+// mAtFrame
+// mDescribe
+// mDispose
+// mGet
+// mInstanceRespondsTo
+// mMessageList
+// mName
+// mNew
+// mPerform
+// mPut
+// mRespondsTo
 
 void Lingo::factoryCall(Common::String &name, int nargs) {
 	Common::String s("factoryCall: ");
