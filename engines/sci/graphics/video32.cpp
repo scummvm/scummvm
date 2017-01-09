@@ -140,6 +140,7 @@ AVIPlayer::AVIPlayer(SegManager *segMan, EventManager *eventMan) :
 	_scaleBuffer(nullptr),
 	_plane(nullptr),
 	_screenItem(nullptr),
+	_bitmap(NULL_REG),
 	_status(kAVINotOpen) {}
 
 AVIPlayer::~AVIPlayer() {
@@ -327,8 +328,10 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 
 	_decoder->close();
 	_status = kAVINotOpen;
-	_segMan->freeBitmap(_bitmap);
-	_bitmap = NULL_REG;
+	if (_bitmap != NULL_REG) {
+		_segMan->freeBitmap(_bitmap);
+		_bitmap = NULL_REG;
+	}
 	g_sci->_gfxFrameout->deletePlane(*_plane);
 	_plane = nullptr;
 	_screenItem = nullptr;
