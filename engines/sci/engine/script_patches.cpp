@@ -2864,6 +2864,43 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark Mixed-up Mother Goose Deluxe
+
+// The game uses pic 10005 to render the Sierra logo, but then it also
+// initialises a logo object with view 502 on the same priority as the pic. In
+// the original interpreter, it is dumb luck which is drawn first (based on the
+// order of the memory IDs), though usually the pic is drawn first because not
+// many objects have been created at the start of the game. In ScummVM, the
+// renderer guarantees a sort order based on the creation order of screen items,
+// and since the view is created after the pic, it wins and is drawn on top.
+// This patch stops the view object from being created at all.
+//
+// Applies to at least: English CD from King's Quest Collection
+// Responsible method: sShowLogo::changeState
+static const uint16 mothergooseHiresSignatureLogo[] = {
+	0x38, SIG_UINT16(0x8e),          // pushi $8e
+	SIG_MAGICDWORD,
+	0x76,                            // push0
+	0x72, SIG_UINT16(0x82),          // lofsa logo[82]
+	0x4a, SIG_UINT16(0x04),          // send $4
+	SIG_END
+};
+
+static const uint16 mothergooseHiresPatchLogo[] = {
+	0x18, 0x18, 0x18,                // waste bytes
+	0x18,                            // waste bytes
+	0x18, 0x18, 0x18,                // waste bytes
+	0x18, 0x18, 0x18,                // waste bytes
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
+	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Phantasmagoria
 
 //          script, description,                                      signature                        patch
@@ -5147,6 +5184,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = mothergoose256Signatures;
 		break;
 #ifdef ENABLE_SCI32
+	case GID_MOTHERGOOSEHIRES:
+		signatureTable = mothergooseHiresSignatures;
+		break;
+
 	case GID_PHANTASMAGORIA:
 		signatureTable = phantasmagoriaSignatures;
 		break;
