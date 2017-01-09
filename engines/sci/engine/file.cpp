@@ -200,6 +200,15 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 		if (s->currentRoomNumber() == 52)
 			isCompressed = false;
 		break;
+#ifdef ENABLE_SCI32
+	// Phantasmagoria game scripts create their own save files, so they are
+	// interoperable with the original interpreter just by renaming them as long
+	// as they are not compressed. They are also never larger than a couple
+	// hundred bytes, so compression does not do much here anyway
+	case GID_PHANTASMAGORIA:
+		isCompressed = false;
+		break;
+#endif
 	default:
 		break;
 	}
