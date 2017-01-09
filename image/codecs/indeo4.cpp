@@ -601,7 +601,7 @@ void Indeo4Decoder::decodeTransparency() {
 	// and mark the range of pixels of that color from the start and end of
 	// each line as transparent
 	assert(_surface->format.bytesPerPixel == 4);
-	byte r, g, b, a;
+	byte r, g, b;
 
 	if (_surface->format.aBits() == 0) {
 		// Surface is 4 bytes per pixel, but only RGB. So promote the
