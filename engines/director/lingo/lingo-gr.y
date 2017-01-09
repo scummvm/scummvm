@@ -87,7 +87,7 @@ void yyerror(const char *s) {
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
-%token tCONCAT tCONTAINS tSTARTS
+%token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
 %token tON tSOUND
 
@@ -127,6 +127,8 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $2;
 		delete $4; }
+	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(g_lingo->c_after); }		// D3
+	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(g_lingo->c_before); }		// D3
 	| tSET ID '=' expr			{
 		g_lingo->code1(g_lingo->c_varpush);
 		g_lingo->codeString($2->c_str());
@@ -357,7 +359,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
 		g_lingo->codeFloat($1); }
-	| SYMBOL	{
+	| SYMBOL	{											// D3
 		$$ = g_lingo->code1(g_lingo->c_symbolpush);
 		g_lingo->codeString($1->c_str()); }
 	| STRING		{
@@ -401,6 +403,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| expr tOR expr				{ g_lingo->code1(g_lingo->c_or); }
 	| tNOT expr  %prec UNARY	{ g_lingo->code1(g_lingo->c_not); }
 	| expr '&' expr				{ g_lingo->code1(g_lingo->c_ampersand); }
+	| expr tAFTER expr			{ g_lingo->code1(g_lingo->c_after); }
 	| expr tCONCAT expr			{ g_lingo->code1(g_lingo->c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(g_lingo->c_contains); }
 	| expr tSTARTS expr			{ g_lingo->code1(g_lingo->c_starts); }
@@ -523,7 +526,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;
-	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
+	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }			// D3
 		begin { g_lingo->_ignoreMe = true; } argdef nl argstore stmtlist tEND	{
 				g_lingo->codeConst(0); // Push fake value on stack
 				g_lingo->code1(g_lingo->c_procret);

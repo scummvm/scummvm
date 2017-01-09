@@ -241,6 +241,8 @@ public:
 	static void c_not();
 
 	static void c_ampersand();
+	static void c_after();
+	static void c_before();
 	static void c_concat();
 	static void c_contains();
 	static void c_starts();

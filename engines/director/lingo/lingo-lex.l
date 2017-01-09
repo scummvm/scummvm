@@ -72,9 +72,11 @@ whitespace [\t ]
 ^{whitespace}+		{ count(); }
 [\t]+				{ count(); return ' '; }
 
-[#]{identifier}		{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }
+[#]{identifier}		{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
 
+(?i:after)			{ count(); return tAFTER; }		// D3
 (?i:and)			{ count(); return tAND; }
+(?i:before)			{ count(); return tBEFORE; }	// D3
 (?i:contains)		{ count(); return tCONTAINS; }
 (?i:done)			{ count(); return tDONE; }
 (?i:down)			{ count(); return tDOWN; }
@@ -100,7 +102,7 @@ whitespace [\t ]
 (?i:next)			{ count(); return tNEXT; }
 (?i:not)			{ count(); return tNOT; }
 (?i:of)				{ count(); return tOF; }
-(?i:on)				{ count(); return tON; }
+(?i:on)				{ count(); return tON; }		// D3
 (?i:open)			{ count(); return tOPEN; }
 (?i:or)				{ count(); return tOR; }
 (?i:play)			{ count(); return tPLAY; }
@@ -108,7 +110,7 @@ whitespace [\t ]
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
-(?i:sound)			{ count(); return tSOUND; }
+(?i:sound)			{ count(); return tSOUND; }		// D3
 (?i:starts)			{ count(); return tSTARTS; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();

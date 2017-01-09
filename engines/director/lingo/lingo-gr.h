@@ -102,14 +102,16 @@
      tOR = 318,
      tNOT = 319,
      tMOD = 320,
-     tCONCAT = 321,
-     tCONTAINS = 322,
-     tSTARTS = 323,
-     tSPRITE = 324,
-     tINTERSECTS = 325,
-     tWITHIN = 326,
-     tON = 327,
-     tSOUND = 328
+     tAFTER = 321,
+     tBEFORE = 322,
+     tCONCAT = 323,
+     tCONTAINS = 324,
+     tSTARTS = 325,
+     tSPRITE = 326,
+     tINTERSECTS = 327,
+     tWITHIN = 328,
+     tON = 329,
+     tSOUND = 330
    };
 #endif
 /* Tokens.  */
@@ -176,14 +178,16 @@
 #define tOR 318
 #define tNOT 319
 #define tMOD 320
-#define tCONCAT 321
-#define tCONTAINS 322
-#define tSTARTS 323
-#define tSPRITE 324
-#define tINTERSECTS 325
-#define tWITHIN 326
-#define tON 327
-#define tSOUND 328
+#define tAFTER 321
+#define tBEFORE 322
+#define tCONCAT 323
+#define tCONTAINS 324
+#define tSTARTS 325
+#define tSPRITE 326
+#define tINTERSECTS 327
+#define tWITHIN 328
+#define tON 329
+#define tSOUND 330
 
 
 
@@ -201,7 +205,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 205 "engines/director/lingo/lingo-gr.hpp"
+#line 209 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

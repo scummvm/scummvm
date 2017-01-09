@@ -74,6 +74,8 @@ static struct FuncDescr {
 	{ Lingo::c_mod,			"c_mod",		"" },
 	{ Lingo::c_negate,		"c_negate",		"" },
 	{ Lingo::c_ampersand,	"c_ampersand",	"" },
+	{ Lingo::c_after,		"c_after",		"" },
+	{ Lingo::c_before,		"c_before",		"" },
 	{ Lingo::c_concat,		"c_concat",		"" },
 	{ Lingo::c_contains,	"c_contains",	"" },
 	{ Lingo::c_starts,		"c_starts",		"" },
@@ -470,6 +472,34 @@ void Lingo::c_ampersand() {
 	d2.toString();
 
 	*d1.u.s += *d2.u.s;
+
+	delete d2.u.s;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_after() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toString();
+	d2.toString();
+
+	warning("STUB: c_after");
+
+	delete d2.u.s;
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_before() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	d1.toString();
+	d2.toString();
+
+	warning("STUB: c_before");
 
 	delete d2.u.s;
 
