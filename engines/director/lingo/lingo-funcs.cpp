@@ -200,14 +200,23 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_gotoloop() {
+	if (!_vm->_currentScore)
+		return;
+
 	_vm->_currentScore->gotoloop();
 }
 
 void Lingo::func_gotonext() {
+	if (!_vm->_currentScore)
+		return;
+
 	_vm->_currentScore->gotonext();
 }
 
 void Lingo::func_gotoprevious() {
+	if (!_vm->_currentScore)
+		return;
+
 	_vm->_currentScore->gotoprevious();
 }
 
