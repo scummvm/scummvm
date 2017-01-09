@@ -269,6 +269,7 @@ ScriptType Lingo::event2script(LEvent ev) {
 }
 
 void Lingo::processEvent(LEvent event, int entityId) {
+	if (entityId <= 0) return;
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
@@ -277,7 +278,7 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	if (st != kNoneScript) {
 		executeScript(st, entityId + 1);
 	} else if (_handlers.contains(_eventHandlerTypes[event])) {
-		call(_eventHandlerTypes[event], 0);
+		call(_eventHandlerTypes[event], entityId);
 		pop();
 	} else {
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);

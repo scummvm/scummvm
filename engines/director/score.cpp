@@ -477,12 +477,12 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		_casts[id] = new ButtonCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastButton;
 		break;
-	case kCastScript:
+	case kCastLingoScript:
 		warning("CASt: Script");
 		Common::hexdump(data, size1 + 16);
 
 		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastScript;
+		_casts[id]->type = kCastLingoScript;
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d", castType);
@@ -519,7 +519,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 		if (!ci->script.empty()) {
 			//the script type here could be wrong!
-			_lingo->addCode(ci->script.c_str(), _casts[id]->type == kCastScript ? kFrameScript : kSpriteScript, id);
+			_lingo->addCode(ci->script.c_str(), kCastScript, id);
 		}
 
 		_castsInfo[id] = ci;
@@ -898,7 +898,7 @@ void Score::startLoop() {
 	_lingo->processEvent(kEventStartMovie, 0);
 	_frames[_currentFrame]->prepareFrame(this);
 
-	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
+	while (!_stopPlay && _currentFrame < _frames.size()) {
 		debugC(1, kDebugImages, "Current frame: %d", _currentFrame);
 		update();
 		processEvents();

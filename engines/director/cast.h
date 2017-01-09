@@ -40,7 +40,7 @@ enum CastType {
 	kCastShape = 8,
 	kCastMovie = 9,
 	kCastDigitalVideo = 10,
-	kCastScript = 11
+	kCastLingoScript = 11
 };
 
 struct Cast {

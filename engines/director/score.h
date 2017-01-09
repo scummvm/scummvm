@@ -47,8 +47,9 @@ enum ScriptType {
 	kMovieScript = 0,
 	kSpriteScript = 1,
 	kFrameScript = 2,
+	kCastScript = 3,
 	kNoneScript = -1,
-	kMaxScriptType = 2
+	kMaxScriptType = 3
 };
 
 class Score {
