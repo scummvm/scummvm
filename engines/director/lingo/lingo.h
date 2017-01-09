@@ -275,7 +275,7 @@ public:
 	static void c_le();
 	static void c_call();
 
-	void call(Common::String name, int entityId);
+	void call(Common::String name, int nargs);
 
 	static void c_procret();
 

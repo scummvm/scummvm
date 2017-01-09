@@ -856,7 +856,7 @@ void Lingo::c_call() {
 	g_lingo->call(name, nargs);
 }
 
-void Lingo::call(Common::String name, int entityId) {
+void Lingo::call(Common::String name, int nargs) {
 	bool dropArgs = false;
 
 	Symbol *sym;
