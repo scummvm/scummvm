@@ -127,7 +127,8 @@ void SciMusic::init() {
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
 		_dwTempo = _pMidiDrv->getBaseTempo();
 	} else {
-		if (g_sci->getGameId() == GID_FUNSEEKER) {
+		if (g_sci->getGameId() == GID_FUNSEEKER ||
+			(g_sci->getGameId() == GID_GK2 && g_sci->isDemo())) {
 			// HACK: The Fun Seeker's Guide demo doesn't have patch 3 and the version
 			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
 			// doesn't have any sound anyway, so this shouldn't be fatal.

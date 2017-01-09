@@ -85,7 +85,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
-	case GID_GK2:
 	case GID_LIGHTHOUSE:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA2:
@@ -94,6 +93,12 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	case GID_RAMA:
 		_currentBuffer.scriptWidth = 640;
 		_currentBuffer.scriptHeight = 480;
+		break;
+	case GID_GK2:
+		if (!g_sci->isDemo()) {
+			_currentBuffer.scriptWidth = 640;
+			_currentBuffer.scriptHeight = 480;
+		}
 		break;
 	default:
 		// default script width for other games is 320x200

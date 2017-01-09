@@ -553,6 +553,7 @@ const SciWorkaroundEntry kDoSoundPlay_workarounds[] = {
 	{ GID_PQ4,          -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // always passes an extra null argument
 	{ GID_KQ7,          -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // always passes an extra null argument
 	{ GID_GK1,          -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Mac version always passes an extra null argument
+	{ GID_GK2,          -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Demo passes an extra null argument when clicking on buttons
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
