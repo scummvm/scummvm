@@ -88,13 +88,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	case GID_LIGHTHOUSE:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA2:
-	case GID_PQSWAT:
 	case GID_TORIN:
 	case GID_RAMA:
 		_currentBuffer.scriptWidth = 640;
 		_currentBuffer.scriptHeight = 480;
 		break;
 	case GID_GK2:
+	case GID_PQSWAT:
 		if (!g_sci->isDemo()) {
 			_currentBuffer.scriptWidth = 640;
 			_currentBuffer.scriptHeight = 480;
