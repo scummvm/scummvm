@@ -46,10 +46,6 @@ namespace Sci {
 bool detectSolAudio(Common::SeekableReadStream &stream) {
 	const size_t initialPosition = stream.pos();
 
-// TODO: Resource manager for audio resources reads past the
-// header so even though this is the detection algorithm
-// in SSCI, ScummVM can't use it
-#if 0
 	byte header[6];
 	if (stream.read(header, sizeof(header)) != sizeof(header)) {
 		stream.seek(initialPosition);
@@ -58,26 +54,11 @@ bool detectSolAudio(Common::SeekableReadStream &stream) {
 
 	stream.seek(initialPosition);
 
-	if (header[0] != 0x8d || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
+	if ((header[0] & 0x7f) != kResourceTypeAudio || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
 		return false;
 	}
 
 	return true;
-#else
-	byte header[4];
-	if (stream.read(header, sizeof(header)) != sizeof(header)) {
-		stream.seek(initialPosition);
-		return false;
-	}
-
-	stream.seek(initialPosition);
-
-	if (READ_BE_UINT32(header) != MKTAG('S', 'O', 'L', 0)) {
-		return false;
-	}
-
-	return true;
-#endif
 }
 
 bool detectWaveAudio(Common::SeekableReadStream &stream) {
@@ -723,11 +704,10 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 		_monitoredChannelIndex = channelIndex;
 	}
 
-	Common::MemoryReadStream headerStream(resource->_header, resource->_headerSize, DisposeAfterUse::NO);
 	Common::SeekableReadStream *dataStream = channel.resourceStream = resource->makeStream();
 
-	if (detectSolAudio(headerStream)) {
-		channel.stream = makeSOLStream(&headerStream, dataStream, DisposeAfterUse::NO);
+	if (detectSolAudio(*dataStream)) {
+		channel.stream = makeSOLStream(dataStream, DisposeAfterUse::NO);
 	} else if (detectWaveAudio(*dataStream)) {
 		channel.stream = Audio::makeWAVStream(dataStream, DisposeAfterUse::NO);
 	} else {

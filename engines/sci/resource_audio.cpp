@@ -95,7 +95,6 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKTAG('R','I','F','F')) {
-		_headerSize = 0;
 		_size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
@@ -105,6 +104,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Rave-resources (King's Quest 6) don't have any header at all
 	if (getType() != kResourceTypeRave) {
 		ResourceType type = _resMan->convertResType(file->readByte());
+
 		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 			warning("Resource type mismatch loading %s", _id.toString().c_str());
@@ -112,23 +112,27 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 			return false;
 		}
 
-		_headerSize = file->readByte();
+		const uint8 headerSize = file->readByte();
 
 		if (type == kResourceTypeAudio) {
-			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-				warning("Unsupported audio header size %d", _headerSize);
+			if (headerSize != 7 && headerSize != 11 && headerSize != 12) {
+				warning("Unsupported audio header size %d", headerSize);
 				unalloc();
 				return false;
 			}
 
-			if (_headerSize != 7) { // Size is defined already from the map
+			if (headerSize != 7) { // Size is defined already from the map
 				// Load sample size
 				file->seek(7, SEEK_CUR);
-				_size = file->readUint32LE();
+				_size = file->readUint32LE() + headerSize + kResourceHeaderSize;
 				assert(!file->err() && !file->eos());
-				// Adjust offset to point at the header data again
+				// Adjust offset to point at the beginning of the audio file
+				// again
 				file->seek(-11, SEEK_CUR);
 			}
+
+			// SOL audio files are designed to require the resource header
+			file->seek(-2, SEEK_CUR);
 		}
 	}
 	return loadPatch(file);

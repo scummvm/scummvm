@@ -43,6 +43,8 @@ class SeekableReadStream;
 namespace Sci {
 
 enum {
+	kResourceHeaderSize = 2, ///< patch type + header size
+
 	/** The maximum allowed size for a compressed or decompressed resource */
 	SCI_MAX_RESOURCE_SIZE = 0x0400000
 };
