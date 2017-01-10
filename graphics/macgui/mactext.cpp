@@ -116,7 +116,7 @@ void MacText::render(int from, int to) {
 	// Clear the screen
 	_surface->fillRect(Common::Rect(0, y, _surface->w, to * lineH), _bgcolor);
 
-	for (uint i = from; i < to; i++) {
+	for (int i = from; i < to; i++) {
 		_font->drawString(_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
 
 		y += _font->getFontHeight() + _interLinear;
