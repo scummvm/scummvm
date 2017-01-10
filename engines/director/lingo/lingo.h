@@ -341,6 +341,8 @@ public:
 
 	static void b_alert(int nargs);
 	static void b_cursor(int nargs);
+	static void b_framesToHMS(int nargs);
+	static void b_HMStoFrames(int nargs);
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
