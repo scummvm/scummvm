@@ -54,7 +54,7 @@ enum {
 	kMacFontOutline = 8,
 	kMacFontShadow = 16,
 	kMacFontCondense = 32,
-	kMacFontExtend = 64,
+	kMacFontExtend = 64
 };
 
 class BdfFont;
