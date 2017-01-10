@@ -56,66 +56,66 @@
      BLTINNOARGSORONE = 272,
      BLTINONEARG = 273,
      BLTINARGLIST = 274,
-     ID = 275,
-     STRING = 276,
-     HANDLER = 277,
-     SYMBOL = 278,
-     ENDCLAUSE = 279,
-     tDOWN = 280,
-     tELSE = 281,
-     tNLELSIF = 282,
-     tEXIT = 283,
-     tFRAME = 284,
-     tGLOBAL = 285,
-     tGO = 286,
-     tIF = 287,
-     tINTO = 288,
-     tLOOP = 289,
-     tMACRO = 290,
-     tMOVIE = 291,
-     tNEXT = 292,
-     tOF = 293,
-     tPREVIOUS = 294,
-     tPUT = 295,
-     tREPEAT = 296,
-     tSET = 297,
-     tTHEN = 298,
-     tTO = 299,
-     tWHEN = 300,
-     tWITH = 301,
-     tWHILE = 302,
-     tNLELSE = 303,
-     tFACTORY = 304,
-     tMETHOD = 305,
-     tOPEN = 306,
-     tPLAY = 307,
-     tDONE = 308,
-     tPLAYACCEL = 309,
-     tINSTANCE = 310,
-     tGE = 311,
-     tLE = 312,
-     tGT = 313,
-     tLT = 314,
-     tEQ = 315,
-     tNEQ = 316,
-     tAND = 317,
-     tOR = 318,
-     tNOT = 319,
-     tMOD = 320,
-     tAFTER = 321,
-     tBEFORE = 322,
-     tCONCAT = 323,
-     tCONTAINS = 324,
-     tSTARTS = 325,
-     tCHAR = 326,
-     tITEM = 327,
-     tLINE = 328,
-     tWORD = 329,
-     tSPRITE = 330,
-     tINTERSECTS = 331,
-     tWITHIN = 332,
-     tON = 333,
-     tSOUND = 334
+     TWOWORDBUILTIN = 275,
+     ID = 276,
+     STRING = 277,
+     HANDLER = 278,
+     SYMBOL = 279,
+     ENDCLAUSE = 280,
+     tDOWN = 281,
+     tELSE = 282,
+     tNLELSIF = 283,
+     tEXIT = 284,
+     tFRAME = 285,
+     tGLOBAL = 286,
+     tGO = 287,
+     tIF = 288,
+     tINTO = 289,
+     tLOOP = 290,
+     tMACRO = 291,
+     tMOVIE = 292,
+     tNEXT = 293,
+     tOF = 294,
+     tPREVIOUS = 295,
+     tPUT = 296,
+     tREPEAT = 297,
+     tSET = 298,
+     tTHEN = 299,
+     tTO = 300,
+     tWHEN = 301,
+     tWITH = 302,
+     tWHILE = 303,
+     tNLELSE = 304,
+     tFACTORY = 305,
+     tMETHOD = 306,
+     tOPEN = 307,
+     tPLAY = 308,
+     tDONE = 309,
+     tPLAYACCEL = 310,
+     tINSTANCE = 311,
+     tGE = 312,
+     tLE = 313,
+     tGT = 314,
+     tLT = 315,
+     tEQ = 316,
+     tNEQ = 317,
+     tAND = 318,
+     tOR = 319,
+     tNOT = 320,
+     tMOD = 321,
+     tAFTER = 322,
+     tBEFORE = 323,
+     tCONCAT = 324,
+     tCONTAINS = 325,
+     tSTARTS = 326,
+     tCHAR = 327,
+     tITEM = 328,
+     tLINE = 329,
+     tWORD = 330,
+     tSPRITE = 331,
+     tINTERSECTS = 332,
+     tWITHIN = 333,
+     tON = 334
    };
 #endif
 /* Tokens.  */
@@ -136,66 +136,66 @@
 #define BLTINNOARGSORONE 272
 #define BLTINONEARG 273
 #define BLTINARGLIST 274
-#define ID 275
-#define STRING 276
-#define HANDLER 277
-#define SYMBOL 278
-#define ENDCLAUSE 279
-#define tDOWN 280
-#define tELSE 281
-#define tNLELSIF 282
-#define tEXIT 283
-#define tFRAME 284
-#define tGLOBAL 285
-#define tGO 286
-#define tIF 287
-#define tINTO 288
-#define tLOOP 289
-#define tMACRO 290
-#define tMOVIE 291
-#define tNEXT 292
-#define tOF 293
-#define tPREVIOUS 294
-#define tPUT 295
-#define tREPEAT 296
-#define tSET 297
-#define tTHEN 298
-#define tTO 299
-#define tWHEN 300
-#define tWITH 301
-#define tWHILE 302
-#define tNLELSE 303
-#define tFACTORY 304
-#define tMETHOD 305
-#define tOPEN 306
-#define tPLAY 307
-#define tDONE 308
-#define tPLAYACCEL 309
-#define tINSTANCE 310
-#define tGE 311
-#define tLE 312
-#define tGT 313
-#define tLT 314
-#define tEQ 315
-#define tNEQ 316
-#define tAND 317
-#define tOR 318
-#define tNOT 319
-#define tMOD 320
-#define tAFTER 321
-#define tBEFORE 322
-#define tCONCAT 323
-#define tCONTAINS 324
-#define tSTARTS 325
-#define tCHAR 326
-#define tITEM 327
-#define tLINE 328
-#define tWORD 329
-#define tSPRITE 330
-#define tINTERSECTS 331
-#define tWITHIN 332
-#define tON 333
-#define tSOUND 334
+#define TWOWORDBUILTIN 275
+#define ID 276
+#define STRING 277
+#define HANDLER 278
+#define SYMBOL 279
+#define ENDCLAUSE 280
+#define tDOWN 281
+#define tELSE 282
+#define tNLELSIF 283
+#define tEXIT 284
+#define tFRAME 285
+#define tGLOBAL 286
+#define tGO 287
+#define tIF 288
+#define tINTO 289
+#define tLOOP 290
+#define tMACRO 291
+#define tMOVIE 292
+#define tNEXT 293
+#define tOF 294
+#define tPREVIOUS 295
+#define tPUT 296
+#define tREPEAT 297
+#define tSET 298
+#define tTHEN 299
+#define tTO 300
+#define tWHEN 301
+#define tWITH 302
+#define tWHILE 303
+#define tNLELSE 304
+#define tFACTORY 305
+#define tMETHOD 306
+#define tOPEN 307
+#define tPLAY 308
+#define tDONE 309
+#define tPLAYACCEL 310
+#define tINSTANCE 311
+#define tGE 312
+#define tLE 313
+#define tGT 314
+#define tLT 315
+#define tEQ 316
+#define tNEQ 317
+#define tAND 318
+#define tOR 319
+#define tNOT 320
+#define tMOD 321
+#define tAFTER 322
+#define tBEFORE 323
+#define tCONCAT 324
+#define tCONTAINS 325
+#define tSTARTS 326
+#define tCHAR 327
+#define tITEM 328
+#define tLINE 329
+#define tWORD 330
+#define tSPRITE 331
+#define tINTERSECTS 332
+#define tWITHIN 333
+#define tON 334
 
 
 

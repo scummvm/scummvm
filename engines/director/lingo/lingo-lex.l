@@ -123,7 +123,6 @@ whitespace [\t ]
 (?i:put)			{ count(); return tPUT; }
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
-(?i:sound)			{ count(); return tSOUND; }		// D3
 (?i:starts)			{ count(); return tSTARTS; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();
@@ -243,6 +242,9 @@ whitespace [\t ]
 
 		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
 			return ID;
+
+		if (g_lingo->_twoWordBuiltins.contains(yytext))
+			return TWOWORDBUILTIN;
 
 		if (g_lingo->_handlers.contains(yytext)) {
 			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->parens == false) {

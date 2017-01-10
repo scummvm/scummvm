@@ -107,7 +107,9 @@ static struct BuiltinProto {
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
+	{ "duplicate-cast",	Lingo::b_duplicateCast,	1, 2, false },	//			D4
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
+	{ "erase-cast",		Lingo::b_eraseCast,		1, 2, false },	//			D4
 		// go													// D2
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
@@ -151,6 +153,13 @@ static struct BuiltinProto {
 	{ 0, 0, 0, 0, false }
 };
 
+static const char *twoWordBuiltins[] = {
+	"duplicate",
+	"erase",
+	"sound",
+	0
+};
+
 void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
 		Symbol *sym = new Symbol;
@@ -167,6 +176,9 @@ void Lingo::initBuiltIns() {
 
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
+
+	for (const char **b = twoWordBuiltins; *b; b++)
+		_twoWordBuiltins[*b] = true;
 }
 
 void Lingo::printStubWithArglist(const char *funcname, int nargs) {
@@ -708,8 +720,20 @@ void Lingo::b_constrainV(int nargs) {
 	g_lingo->push(Datum(0));
 }
 
+void Lingo::b_duplicateCast(int nargs) {
+	g_lingo->printStubWithArglist("b_duplicateCast", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 void Lingo::b_editableText(int nargs) {
 	warning("STUB: b_editableText");
+}
+
+void Lingo::b_eraseCast(int nargs) {
+	g_lingo->printStubWithArglist("b_eraseCast", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_installMenu(int nargs) {

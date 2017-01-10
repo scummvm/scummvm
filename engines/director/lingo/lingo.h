@@ -350,7 +350,9 @@ public:
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
+	static void b_duplicateCast(int nargs);
 	static void b_editableText(int nargs);
+	static void b_eraseCast(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
@@ -448,6 +450,7 @@ public:
 	Common::Array<int> _labelstack;
 
 	SymbolHash _handlers;
+	Common::HashMap<Common::String, bool> _twoWordBuiltins;
 
 	int _linenumber;
 	int _colnumber;
