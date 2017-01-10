@@ -427,6 +427,13 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				return make_reg(0, handle);
 			}
 		}
+	} else if (g_sci->getGameId() == GID_PQSWAT) {
+		// PQSWAT tries to create subdirectories for each game profile
+		for (Common::String::iterator it = name.begin(); it != name.end(); ++it) {
+			if (*it == '\\') {
+				*it = '_';
+			}
+		}
 	}
 
 	// See kMakeSaveCatName
