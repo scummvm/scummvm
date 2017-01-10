@@ -243,9 +243,12 @@ class Resource : public SciSpan<const byte> {
 	friend class ChunkResourceSource;
 #endif
 
-// NOTE : Currently most member variables lack the underscore prefix and have
-// public visibility to let the rest of the engine compile without changes.
-public:
+protected:
+	/**
+	 * Holds the extra header data from view, pic, and palette patches so that
+	 * these patches can be rewritten to disk as valid patch files by the
+	 * `diskdump` debugger command.
+	 */
 	byte *_header;
 	uint32 _headerSize;
 
