@@ -1408,7 +1408,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
-	/*0x4f*/ "Dummy",
+	/*0x4f*/ "Dummy",           // Replaced with kWait for Hoyle5 in ScummVM
 	/*0x50*/ "GetEvent",
 	/*0x51*/ "GlobalToLocal",
 	/*0x52*/ "LocalToGlobal",

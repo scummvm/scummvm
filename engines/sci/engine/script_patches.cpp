@@ -699,6 +699,43 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark Hoyle 5
+
+// Several scripts in Hoyle5 contain a subroutine which spins on kGetTime until
+// a certain number of ticks elapse. Since this wastes CPU and makes ScummVM
+// unresponsive, the kWait kernel function (which was removed in SCI2) is
+// reintroduced at 0x4f in kernel.cpp only for Hoyle5, and the spin subroutines
+// are patched here to call that function instead.
+// Applies to at least: English Demo
+static const uint16 hoyle5SignatureSpinLoop[] = {
+	SIG_MAGICDWORD,
+	0x76,                         // push0
+	0x43, 0x79, SIG_UINT16(0x00), // callk GetTime, $0
+	0x36,                         // push
+	0x87, 0x01,                   // lap param[1]
+	0x02,                         // add
+	0xa5, 0x00,                   // sat temp[0]
+	SIG_END
+};
+
+static const uint16 hoyle5PatchSpinLoop[] = {
+	0x78,                           // push1
+	0x8f, 0x01,                     // lsp param[1]
+	0x43, 0x4f, PATCH_UINT16(0x02), // callk Wait, $2
+	0x48,                           // ret
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle5Signatures[] = {
+	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Gabriel Knight 1
 
 // ===========================================================================
@@ -5170,6 +5207,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = freddypharkasSignatures;
 		break;
 #ifdef ENABLE_SCI32
+	case GID_HOYLE5:
+		signatureTable = hoyle5Signatures;
+		break;
 	case GID_GK1:
 		signatureTable = gk1Signatures;
 		break;

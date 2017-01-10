@@ -905,6 +905,11 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		} else {
 			// Normal SCI2.1 kernel table
 			_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+
+			// Used by script patcher to remove CPU spinning on kGetTime
+			if (g_sci->getGameId() == GID_HOYLE5) {
+				_kernelNames[0x4f] = "Wait";
+			}
 		}
 		break;
 
