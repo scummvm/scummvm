@@ -27,7 +27,8 @@ namespace Director {
 
 enum TheEntityType {
 	kTheNOEntity = 0,
-	kTheFrame = 1,
+	kTheDate = 1,
+	kTheFrame,
 	kTheFreeBlock,
 	kTheFreeBytes,
 	kThePathName,
@@ -125,7 +126,8 @@ enum TheEntityType {
 
 enum TheFieldType {
 	kTheNOField = 0,
-	kTheCastNum = 1,
+	kTheAbbr    = 1,
+	kTheCastNum,
 	kTheCastType,
 	kTheCheckMark,
 	kTheController,
@@ -150,6 +152,7 @@ enum TheFieldType {
 	kTheInk,
 	kTheLeft,
 	kTheLineSize,
+	kTheLong,
 	kTheLoop,
 	kTheLoaded,
 	kTheModified,
@@ -168,6 +171,7 @@ enum TheFieldType {
 	kTheRect,
 	kTheRegPoint,
 	kTheRight,
+	kTheShort,
 	kTheStopTime,
 	kTheStretch,
 	kTheStartTime,

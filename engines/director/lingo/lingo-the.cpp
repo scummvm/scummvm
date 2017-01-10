@@ -42,6 +42,7 @@ TheEntity entities[] = {
 	{ kTheColorQD,			"colorQD",			false },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false },	// D2 f
 	{ kTheControlDown,		"controlDown",		false },	// D2 f
+	{ kTheDate,				"date",				false },	//		 D3
 	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
 	{ kTheExitLock,			"exitLock",			false },	// D2 p
 	{ kTheField,			"field",			true  },	//		 D3
@@ -219,6 +220,12 @@ TheEntityField fields[] = {
 	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
 	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
 	{ kTheWords,	"number",		kTheNumber },		//		D3 p
+
+	{ kTheDate,		"short",		kTheShort },		//		D3 f
+	{ kTheDate,		"long",			kTheLong },			//		D3 f
+	{ kTheDate,		"abbreviated",	kTheAbbr },			//		D3 f
+	{ kTheDate,		"abbrev",		kTheAbbr },			//		D3 f
+	{ kTheDate,		"abbr",			kTheAbbr },			//		D3 f
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };
