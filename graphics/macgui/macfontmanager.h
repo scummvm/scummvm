@@ -48,8 +48,13 @@ enum {
 
 enum {
 	kMacFontRegular,
-	kMacFontBold,
-	kMacFontItalic
+	kMacFontBold = 1,
+	kMacFontItalic = 2,
+	kMacFontUnderline = 4,
+	kMacFontOutline = 8,
+	kMacFontShadow = 16,
+	kMacFontCondense = 32,
+	kMacFontExtend = 64,
 };
 
 class BdfFont;

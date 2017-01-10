@@ -408,7 +408,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			keyRes = &resources[resources.size() - 1];
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
 			casRes = &resources[resources.size() - 1];
-		else
+		//or the children of 
+		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
+				 tag == MKTAG('B', 'I', 'T', 'D') ||
+				 tag == MKTAG('D', 'I', 'B', ' '))
 			_types[tag][i] = res;
 	}
 

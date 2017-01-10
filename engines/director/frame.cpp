@@ -545,10 +545,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (_vm->getVersion() < 4) {
 				switch (_sprites[i]->_spriteType) {
 				case 0x01:
-				case 0x0c: //this is actually a mouse-over shape? I don't think it's a real button.
 					castType = kCastBitmap;
 					break;
 				case 0x02:
+				case 0x0c: //this is actually a mouse-over shape? I don't think it's a real button.
 					castType = kCastShape;
 					break;
 				case 0x07:
@@ -730,11 +730,19 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		Common::SeekableReadStream *pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+	Common::SeekableReadStream *pic = NULL;
+	BitmapCast *bc = NULL;
 
+	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
+		pic = _vm->getSharedBMP()->getVal(imgId);
+		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
+	} else 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+		bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+	}
+		 
+	if (pic != NULL && bc != NULL) {
 		if (_vm->getVersion() < 4) {
-			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
@@ -763,12 +771,6 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		return img;
 	}
 
-	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
-		img = new Image::BitmapDecoder();
-		img->loadStream(*_vm->getSharedBMP()->getVal(imgId));
-		return img;
-	}
-
 	warning("Image %d not found", spriteId);
 	return img;
 }
@@ -783,6 +785,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, uint1
 		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
 	}
 
+	byte buf[1024];
+	textStream->read(buf, textStream->size());
+	textStream->seek(0);
+	Common::hexdump(buf, textStream->size());
+
 	renderText(surface, spriteID, textStream, false);
 }
 
@@ -791,8 +798,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	
 	uint16 castID = _sprites[spriteID]->_castId;
 	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
-
-	
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -811,6 +816,21 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
+	if (_vm->getVersion() >= 4) {
+		uint16 a = textStream->readUint16();
+		uint32 b = textStream->readUint32();
+		uint16 c = textStream->readUint16();
+		uint16 d = textStream->readUint16();
+		textCast->fontId = textStream->readUint16();
+		textCast->textSlant = textStream->readByte();
+		textStream->readByte();
+		textCast->fontSize = textStream->readUint16();
+
+		textCast->palinfo1 = textStream->readUint16();
+		textCast->palinfo2 = textStream->readUint16();
+		textCast->palinfo3 = textStream->readUint16();
+	}
+
 	uint32 rectLeft = textCast->initialRect.left;
 	uint32 rectTop = textCast->initialRect.top;
 
@@ -819,7 +839,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
 
-	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize);
+	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
 		// Override
@@ -830,48 +850,53 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
+	uint16 boxShadow = (uint16)textCast->boxShadow;
+	uint16 borderSize = (uint16)textCast->borderSize;
+	uint16 padding = (uint16)textCast->gutterSize;
+	uint16 textShadow = (uint16)textCast->textShadow;
+
+	int alignment = (int)textCast->textAlign;
+	if (alignment == 0xff) alignment = 3;
+	else alignment++;
+	
+
+	if (textShadow > 0) {
+		font->drawString(&surface, text,
+			x + borderSize + padding + textShadow,
+			y + (borderSize / 2) + (padding / 2) + (textShadow - 1),
+			width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+	}
+
 	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
-	font->drawString(&surface, text, x, y, width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)textCast->textAlign);
+	font->drawString(&surface, text, 
+					 x + borderSize + padding, 
+					 y + (borderSize / 2) + (padding / 2) - (textShadow > 0 ? 1 : 0),
+					 width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 
 	if (isButtonLabel)
 		return;
 
-	if (textCast->borderSize != kSizeNone) {
-		uint16 size = textCast->borderSize;
+	if (borderSize != kSizeNone) {		
+		x += (borderSize / 2);
+		y += (borderSize / 2);
 
-		// Indent from borders, measured in d4
-		x -= 1;
-		y -= 4;
+		width += (padding * 2);
+		height += 6 + (padding);
 
-		height += 4;
-		width += 1;
-
-		while (size) {
-			surface.frameRect(Common::Rect(x, y, x + height, y + width), 0);
-			x--;
-			y--;
+		while (borderSize) {
 			height += 2;
 			width += 2;
-			size--;
+			x--;
+			y--;
+			surface.frameRect(Common::Rect(x, y, x + width, y + height), 0);
+			borderSize--;
 		}
 	}
 
-	if (textCast->gutterSize != kSizeNone) {
-		x -= 1;
-		y -= 4;
-
-		height += 4;
-		width += 1;
-		uint16 size = textCast->gutterSize;
-
-		surface.frameRect(Common::Rect(x, y, x + height, y + width), 0);
-
-		while (size) {
-			surface.drawLine(x + width, y, x + width, y + height, 0);
-			surface.drawLine(x, y + height, x + width, y + height, 0);
-			x++;
-			y++;
-			size--;
+	if (boxShadow > 0) {
+		for (int loop = 0; loop < boxShadow; loop++) {
+			surface.drawLine(x + boxShadow, y + height + loop, x + width, y + height + loop, 0);
+			surface.drawLine(x + width + loop, y + boxShadow, x + width + loop, y + height + boxShadow - 1, 0);
 		}
 	}
 }

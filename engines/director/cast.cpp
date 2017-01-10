@@ -62,10 +62,8 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
-	if (version < 5) {
-		if (version <= 3)
-			flags1 = stream.readByte();
-
+	if (version < 4) {
+		flags1 = stream.readByte();
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
 		boxShadow = static_cast<SizeType>(stream.readByte());
@@ -93,6 +91,24 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		// TODO: FIXME: guesswork
 		fontId = stream.readByte();
 		fontSize = stream.readByte();
+	} else if (version < 5) {
+		borderSize = static_cast<SizeType>(stream.readByte());
+		gutterSize = static_cast<SizeType>(stream.readByte());
+		boxShadow = static_cast<SizeType>(stream.readByte());
+		textType = static_cast<TextType>(stream.readByte());
+		textAlign = static_cast<TextAlignType>(stream.readSint16()); //this is because 'right' is -1? or should that be 255?
+		stream.readUint16();
+		stream.readUint16();
+		stream.readUint16();
+		stream.readUint16();
+
+		fontId = 1; //this is in STXT
+
+		initialRect = Score::readRect(stream);
+		stream.readUint16();
+		textShadow = static_cast<SizeType>(stream.readByte());
+		byte flags = stream.readByte();
+		fontSize = stream.readUint16();
 	} else {
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);

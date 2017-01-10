@@ -121,8 +121,9 @@ struct TextCast : Cast {
 	TextType textType;
 	TextAlignType textAlign;
 	SizeType textShadow;
+	byte textSlant;
 	Common::Array<TextFlag> textFlags;
-	int16 palinfo1, palinfo2, palinfo3;
+	uint16 palinfo1, palinfo2, palinfo3;
 };
 
 enum ButtonType {
