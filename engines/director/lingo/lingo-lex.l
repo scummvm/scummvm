@@ -173,18 +173,19 @@ whitespace [\t ]
 
 		warning("Unhandled the entity %s", ptr);
 	}
-(?i:the[ \t]+[[:alpha:]]+[ \t+]date)		{
+(?i:the[ \t]+[[:alpha:]]+[ \t+](date|time))		{
 		count();
 
-		const char *p = &yytext[4]; // Skip 'the '
-		while (*p == ' ' || *p == '\t')
-			p++;
+		const char *ptr = &yytext[4]; // Skip 'the '
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
 
 		Common::String field;
-		while (*p != ' ' && *p != '\t')
-			field += *p++;
+		while (*ptr != ' ' && *ptr != '\t')
+			field += *ptr++;
 
-		const char *ptr = "date";
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
 
 		field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 

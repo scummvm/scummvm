@@ -41,6 +41,7 @@ enum TheEntityType {
 	kTheMouseV,
 	kTheMouseDownScript,
 	kTheMouseUpScript,
+	kTheTime,
 
 	kTheField,
 

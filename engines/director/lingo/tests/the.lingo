@@ -7,3 +7,5 @@ set the castnum of sprite 8 to the number of cast "A Blank Castmember"
 
 put the date
 put the long date
+put the abbreviated time
+put the short time

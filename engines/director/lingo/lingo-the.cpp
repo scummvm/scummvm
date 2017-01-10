@@ -116,6 +116,7 @@ TheEntity entities[] = {
 	{ kTheTimeoutMouse,		"timeoutMouse",		false },	// D2 p
 	{ kTheTimeoutPlay,		"timeoutPlay",		false },	// D2 p
 	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
+	{ kTheTime,				"time",				false },	// 		D3 f
 	{ kTheTimer,			"timer",			false },	// D2 p
 	{ kTheWindow,			"window",			false },
 	{ kTheWords,			"words",			true  },	//		 D3
@@ -226,6 +227,11 @@ TheEntityField fields[] = {
 	{ kTheDate,		"abbreviated",	kTheAbbr },			//		D3 f
 	{ kTheDate,		"abbrev",		kTheAbbr },			//		D3 f
 	{ kTheDate,		"abbr",			kTheAbbr },			//		D3 f
+	{ kTheTime,		"short",		kTheShort },		//		D3 f
+	{ kTheTime,		"long",			kTheLong },			//		D3 f
+	{ kTheTime,		"abbreviated",	kTheAbbr },			//		D3 f
+	{ kTheTime,		"abbrev",		kTheAbbr },			//		D3 f
+	{ kTheTime,		"abbr",			kTheAbbr },			//		D3 f
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };
