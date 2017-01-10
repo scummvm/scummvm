@@ -822,6 +822,9 @@ reg_t kArrayGetSize(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kArrayGetElement(EngineState *s, int argc, reg_t *argv) {
+	if (s->_segMan->getSegmentType(argv[0].getSegment()) == SEG_TYPE_SCRIPT)
+		return kStrAt(s, 2, argv);
+
 	SciArray &array = *s->_segMan->lookupArray(argv[0]);
 	return array.getAsID(argv[1].toUint16());
 }
@@ -833,6 +836,13 @@ reg_t kArraySetElements(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kArrayFree(EngineState *s, int argc, reg_t *argv) {
+	if (s->_segMan->getSegmentType(argv[0].getSegment()) == SEG_TYPE_SCRIPT) {
+		reg_t source = make_reg(argv[0].getSegment(), argv[0].getOffset() + 1);
+		reg_t dest = argv[0];
+		s->_segMan->strcpy(dest, source);
+		return s->r_acc;
+	}
+
 	s->_segMan->freeArray(argv[0]);
 	return s->r_acc;
 }
