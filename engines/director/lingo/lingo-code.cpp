@@ -83,6 +83,12 @@ static struct FuncDescr {
 	{ Lingo::c_within,		"c_within",		"" },
 	{ Lingo::c_charOf,		"c_charOf",		"" },	// D3
 	{ Lingo::c_charToOf,	"c_charToOf",	"" },	// D3
+	{ Lingo::c_itemOf,		"c_itemOf",		"" },	// D3
+	{ Lingo::c_itemToOf,	"c_itemToOf",	"" },	// D3
+	{ Lingo::c_lineOf,		"c_lineOf",		"" },	// D3
+	{ Lingo::c_lineToOf,	"c_lineToOf",	"" },	// D3
+	{ Lingo::c_wordOf,		"c_wordOf",		"" },	// D3
+	{ Lingo::c_wordToOf,	"c_wordToOf",	"" },	// D3
 	{ Lingo::c_and,			"c_and",		"" },
 	{ Lingo::c_or,			"c_or",			"" },
 	{ Lingo::c_not,			"c_not",		"" },
@@ -602,6 +608,63 @@ void Lingo::c_charToOf() {
 	Datum d1 = g_lingo->pop();
 
 	warning("STUB: c_charToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_itemOf() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_itemOf: %d %d", d1.u.i, d2.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_itemToOf() {
+	Datum d3 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_itemToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_lineOf() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_lineOf: %d %d", d1.u.i, d2.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_lineToOf() {
+	Datum d3 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_lineToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_wordOf() {
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_wordOf: %d %d", d1.u.i, d2.u.i);
+
+	g_lingo->push(d1);
+}
+
+void Lingo::c_wordToOf() {
+	Datum d3 = g_lingo->pop();
+	Datum d2 = g_lingo->pop();
+	Datum d1 = g_lingo->pop();
+
+	warning("STUB: c_wordToOf: %d %d %d", d1.u.i, d2.u.i, d3.u.i);
 
 	g_lingo->push(d1);
 }

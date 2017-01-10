@@ -34,6 +34,7 @@ TheEntity entities[] = {
 	{ kTheCast,				"cast",				true  },	// D3
 	{ kTheCastMembers,		"castmembers",		true  },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false },	// D2 p
+	{ kTheChars,			"chars",			true  },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
 	{ kTheClickOn,			"clickOn",			false },	// D2 function
@@ -43,6 +44,7 @@ TheEntity entities[] = {
 	{ kTheControlDown,		"controlDown",		false },	// D2 f
 	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
 	{ kTheExitLock,			"exitLock",			false },	// D2 p
+	{ kTheField,			"field",			true  },	//		 D3
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
@@ -50,6 +52,7 @@ TheEntity entities[] = {
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
+	{ kTheItems,			"items",			true  },	//		 D3
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
@@ -60,6 +63,7 @@ TheEntity entities[] = {
 	{ kTheLastFrame,		"lastFrame",		false },
 	{ kTheLastKey,			"lastKey",			false },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
+	{ kTheLines,			"lines",			true  },	//		 D3
 	{ kTheMachineType,		"machineType",		false },	// D2 f
 	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
@@ -89,6 +93,8 @@ TheEntity entities[] = {
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
 	{ kTheRomanLingo,		"romanLingo",		false },
 	{ kTheSelection,		"selection",		false },	// D2 f
+	{ kTheSelEnd,			"selEnd",			false },	// D2 p
+	{ kTheSelStart,			"selStart",			false },	// D2 p
 	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false },	// D2 p
 	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
@@ -111,6 +117,7 @@ TheEntity entities[] = {
 	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
 	{ kTheTimer,			"timer",			false },	// D2 p
 	{ kTheWindow,			"window",			false },
+	{ kTheWords,			"words",			true  },	//		 D3
 	{ kTheNOEntity, NULL, false }
 };
 
@@ -184,10 +191,15 @@ TheEntityField fields[] = {
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
-	{ kTheCast,		"selEnd",		kTheSelEnd },		// D2 p
-	{ kTheCast,		"selStart",		kTheSelStart },		// D2 p
 	{ kTheCast,		"size",			kTheSize },
 	{ kTheCast,		"text",			kTheText },			// D2 p
+
+	// Field fields
+	{ kTheField,	"textAlign",	kTheTextAlign },	//		D3 p
+	{ kTheField,	"textFont",		kTheTextFont },		//		D3 p
+	{ kTheField,	"textHeight",	kTheTextheight },	//		D3 p
+	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
+	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
 
 	{ kTheWindow,	"drawRect",		kTheDrawRect },
 	{ kTheWindow,	"filename",		kTheFilename },
@@ -201,8 +213,12 @@ TheEntityField fields[] = {
 
 	{ kTheMenu,		"name",			kTheName },			//		D3 p
 
+	{ kTheChars,	"number",		kTheNumber },		//		D3 p
+	{ kTheItems,	"number",		kTheNumber },		//		D3 p
+	{ kTheLines,	"number",		kTheNumber },		//		D3 p
 	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
 	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
+	{ kTheWords,	"number",		kTheNumber },		//		D3 p
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };

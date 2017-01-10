@@ -108,11 +108,14 @@
      tCONTAINS = 324,
      tSTARTS = 325,
      tCHAR = 326,
-     tSPRITE = 327,
-     tINTERSECTS = 328,
-     tWITHIN = 329,
-     tON = 330,
-     tSOUND = 331
+     tITEM = 327,
+     tLINE = 328,
+     tWORD = 329,
+     tSPRITE = 330,
+     tINTERSECTS = 331,
+     tWITHIN = 332,
+     tON = 333,
+     tSOUND = 334
    };
 #endif
 /* Tokens.  */
@@ -185,11 +188,14 @@
 #define tCONTAINS 324
 #define tSTARTS 325
 #define tCHAR 326
-#define tSPRITE 327
-#define tINTERSECTS 328
-#define tWITHIN 329
-#define tON 330
-#define tSOUND 331
+#define tITEM 327
+#define tLINE 328
+#define tWORD 329
+#define tSPRITE 330
+#define tINTERSECTS 331
+#define tWITHIN 332
+#define tON 333
+#define tSOUND 334
 
 
 
@@ -207,7 +213,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 211 "engines/director/lingo/lingo-gr.hpp"
+#line 217 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

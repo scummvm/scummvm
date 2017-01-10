@@ -95,6 +95,8 @@ whitespace [\t ]
 (?i:instance)		{ count(); return tINSTANCE; }
 (?i:intersects)		{ count(); return tINTERSECTS; }
 (?i:into)			{ count(); return tINTO; }
+(?i:item)			{ count(); return tITEM; }
+(?i:line)			{ count(); return tLINE; }
 (?i:loop)			{ count(); return tLOOP; }
 (?i:macro)			{ count(); return tMACRO; }
 (?i:method)			{ count(); return tMETHOD; }
@@ -187,6 +189,7 @@ whitespace [\t ]
 (?i:within)			{ count(); return tWITHIN; }
 (?i:when)			{ count(); return tWHEN; }
 (?i:while)			{ count(); return tWHILE; }
+(?i:word)			{ count(); return tWORD; }
 
 [<][>]				{ count(); return tNEQ; }
 [>][=]				{ count(); return tGE; }

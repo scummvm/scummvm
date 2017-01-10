@@ -251,6 +251,12 @@ public:
 	static void c_within();
 	static void c_charOf();
 	static void c_charToOf();
+	static void c_itemOf();
+	static void c_itemToOf();
+	static void c_lineOf();
+	static void c_lineToOf();
+	static void c_wordOf();
+	static void c_wordToOf();
 
 	static void c_constpush();
 	static void c_voidpush();
@@ -319,6 +325,8 @@ public:
 
 	static void b_chars(int nargs);
 	static void b_charToNum(int nargs);
+	static void b_delete(int nargs);
+	static void b_hilite(int nargs);
 	static void b_length(int nargs);
 	static void b_numToChar(int nargs);
 	static void b_offset(int nargs);

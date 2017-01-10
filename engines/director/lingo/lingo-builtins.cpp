@@ -48,6 +48,8 @@ static struct BuiltinProto {
 	// String
 	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
 	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
+	{ "delete",			Lingo::b_delete,		1, 1, true },	//		D3
+	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3
 	{ "length",			Lingo::b_length,		1, 1, true },	// D2
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
@@ -351,6 +353,26 @@ void Lingo::b_charToNum(int nargs) {
 	d.u.i = chr;
 	d.type = INT;
 	g_lingo->push(d);
+}
+
+void Lingo::b_delete(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	warning("STUB: b_delete");
+
+	g_lingo->push(Datum((char)d.u.i));
+}
+
+void Lingo::b_hilite(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	warning("STUB: b_hilite");
+
+	g_lingo->push(Datum((char)d.u.i));
 }
 
 void Lingo::b_length(int nargs) {
