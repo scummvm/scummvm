@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-01-10 07:08+0100\n"
+"POT-Creation-Date: 2017-01-10 07:23+0100\n"
 "PO-Revision-Date: 2017-01-07 02:29+0000\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -1362,7 +1362,7 @@ msgstr "Διακοπή εξυπηρετητή"
 msgid "Stop local webserver"
 msgstr "Διακοπή τοπικού εξυπηρετητή web"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2165
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

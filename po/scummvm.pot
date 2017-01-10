@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-01-10 07:08+0100\n"
+"POT-Creation-Date: 2017-01-10 07:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1300,7 +1300,7 @@ msgstr ""
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2165
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

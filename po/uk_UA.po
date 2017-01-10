@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-01-10 07:08+0100\n"
+"POT-Creation-Date: 2017-01-10 07:23+0100\n"
 "PO-Revision-Date: 2017-01-01 00:02+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1340,7 +1340,7 @@ msgstr "Вимкнути сервер"
 msgid "Stop local webserver"
 msgstr "Вимкнути локальний веб-сервер"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2165
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
