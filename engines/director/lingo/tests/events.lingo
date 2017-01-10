@@ -4,7 +4,7 @@ end exitFrame
 
 on enterFrame me
   beep
-end enterFrame
+end
 
 on annoy howMuch
 	beep random(howMuch)

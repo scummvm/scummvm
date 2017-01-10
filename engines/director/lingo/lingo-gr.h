@@ -60,10 +60,10 @@
      STRING = 276,
      HANDLER = 277,
      SYMBOL = 278,
-     tDOWN = 279,
-     tELSE = 280,
-     tNLELSIF = 281,
-     tEND = 282,
+     ENDCLAUSE = 279,
+     tDOWN = 280,
+     tELSE = 281,
+     tNLELSIF = 282,
      tEXIT = 283,
      tFRAME = 284,
      tGLOBAL = 285,
@@ -140,10 +140,10 @@
 #define STRING 276
 #define HANDLER 277
 #define SYMBOL 278
-#define tDOWN 279
-#define tELSE 280
-#define tNLELSIF 281
-#define tEND 282
+#define ENDCLAUSE 279
+#define tDOWN 280
+#define tELSE 281
+#define tNLELSIF 282
 #define tEXIT 283
 #define tFRAME 284
 #define tGLOBAL 285
@@ -202,7 +202,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 69 "engines/director/lingo/lingo-gr.y"
+#line 79 "engines/director/lingo/lingo-gr.y"
 {
 	Common::String *s;
 	int i;
