@@ -738,9 +738,9 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 			chunk = _fileStream->readStream(entry->size);
 		videoTrack2->decodeFrame(chunk);
 
-		if (indexFrame < frame) {
+		if (indexFrame < (int)frame) {
 			TrackStatus &status = _videoTracks.back();
-			while (status.chunkSearchOffset < _movieListEnd && indexFrame++ < frame) {
+			while (status.chunkSearchOffset < _movieListEnd && indexFrame++ < (int)frame) {
 				// There was no index entry for the desired frame, so an earlier one was decoded.
 				// We now have to sequentially decode frames until we get to the desired frame
 				handleNextPacket(status);
