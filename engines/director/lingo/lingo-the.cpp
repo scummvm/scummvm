@@ -32,9 +32,9 @@ TheEntity entities[] = {
 	{ kTheBeepOn,			"beepOn",			false },	// D2 property
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },	// D3
-	{ kTheCastMembers,		"castmembers",		true  },	//		 D3
+	{ kTheCastMembers,		"castmembers",		false },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false },	// D2 p
-	{ kTheChars,			"chars",			true  },	//		 D3
+	{ kTheChars,			"chars",			false },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
 	{ kTheClickOn,			"clickOn",			false },	// D2 function
@@ -53,7 +53,7 @@ TheEntity entities[] = {
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
-	{ kTheItems,			"items",			true  },	//		 D3
+	{ kTheItems,			"items",			false },	//		 D3
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
@@ -64,7 +64,7 @@ TheEntity entities[] = {
 	{ kTheLastFrame,		"lastFrame",		false },
 	{ kTheLastKey,			"lastKey",			false },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
-	{ kTheLines,			"lines",			true  },	//		 D3
+	{ kTheLines,			"lines",			false },	//		 D3
 	{ kTheMachineType,		"machineType",		false },	// D2 f
 	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
@@ -119,7 +119,7 @@ TheEntity entities[] = {
 	{ kTheTime,				"time",				false },	// 		D3 f
 	{ kTheTimer,			"timer",			false },	// D2 p
 	{ kTheWindow,			"window",			false },
-	{ kTheWords,			"words",			true  },	//		 D3
+	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }
 };
 
