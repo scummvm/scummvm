@@ -128,7 +128,7 @@ public:
 	*
 	* @returns how many bytes were actually read
 	*/
-	uint32 addResponseHeaders(char *buffer, uint32 size);
+	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;
