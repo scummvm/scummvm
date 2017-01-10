@@ -748,7 +748,7 @@ done:
 				return 2;
 			}
 
-			addResponse(getDialogueId(250082 + getRandomNumber(100) <= 89 ? 128 : 0));
+			addResponse(getDialogueId(250082 + (getRandomNumber(100) <= 89 ? 128 : 0)));
 		}
 	}
 
@@ -776,7 +776,7 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 			resetFlags();
 		} else {
 			if (!getValue(28) || !fn10(true)) {
-				addResponse(getDialogueId(251627 + getValue(28) ? -1034 : 0));
+				addResponse(getDialogueId(251627 + (getValue(28) ? -1034 : 0)));
 				applyResponse();
 			}
 
