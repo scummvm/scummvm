@@ -35,6 +35,7 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/event.h"
 #include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
@@ -507,6 +508,14 @@ void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pi
 #pragma mark Rendering
 
 void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
+	// In SSCI, mouse events were received via hardware interrupt, so the mouse
+	// cursor would always get updated whenever the user moved the mouse. Since
+	// we must poll for mouse events instead, poll here so that the mouse gets
+	// updated with its current position at render time. If we do not do this,
+	// the mouse gets "stuck" during loops that do not make calls to kGetEvent,
+	// like transitions and the benchmarking loop at the start of every game.
+	g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+
 	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
 	const bool robotIsActive = robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
 
