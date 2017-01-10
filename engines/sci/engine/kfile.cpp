@@ -526,13 +526,14 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	uint bytesWritten = 0;
 	bool success = false;
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
-	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesWritten = f->_out->write(buf, size);
 		success = !f->_out->err();
 	}
+
+	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d (%d, %d)", handle, size, bytesWritten, success);
 
 	delete[] buf;
 
