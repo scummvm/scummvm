@@ -99,7 +99,7 @@ TheEntity entities[] = {
 	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false },	// D2 p
 	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
-	{ kTheSprite,			"sprite",			true  },
+	{ kTheSprite,			"sprite",			true  },	//				D4
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
 	{ kTheStage,			"stage",			false },
 	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
@@ -160,7 +160,7 @@ TheEntityField fields[] = {
 	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
 
 	// Common cast fields
-	{ kTheCast,		"castType",		kTheCastType },
+	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
 	{ kTheCast,		"filename",		kTheFilename },
 	{ kTheCast,		"height",		kTheHeight },
 	{ kTheCast,		"loaded",		kTheLoaded },
