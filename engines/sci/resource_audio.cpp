@@ -987,9 +987,6 @@ void ResourceManager::changeAudioDirectory(const Common::String &path) {
 			if (resource->_status == kResStatusEnqueued) {
 				removeFromLRU(resource);
 			}
-			if (resource->_status != kResStatusNoMalloc) {
-				resource->unalloc();
-			}
 			delete resource;
 			_resMap.erase(resIt);
 		}
