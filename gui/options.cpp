@@ -2120,8 +2120,10 @@ void GlobalOptionsDialog::setupCloudTab() {
 #else // USE_SDL_NET
 	if (_runServerButton)
 		_runServerButton->setVisible(false);
-	if (_serverInfoLabel)
+	if (_serverInfoLabel) {
+		_serverInfoLabel->setPos(_serverInfoLabel->getRelX(), serverLabelPosition); // Prevent compiler warning from serverLabelPosition being unused.
 		_serverInfoLabel->setVisible(false);
+	}
 	if (_rootPathButton)
 		_rootPathButton->setVisible(false);
 	if (_rootPath)
