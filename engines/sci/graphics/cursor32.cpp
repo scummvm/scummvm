@@ -278,6 +278,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	}
 
 	_cursorBack.data = (byte *)realloc(_cursorBack.data, _width * _height);
+	memset(_cursorBack.data, 0, _width * _height);
 	_drawBuff1.data = (byte *)realloc(_drawBuff1.data, _width * _height);
 	_drawBuff2.data = (byte *)realloc(_drawBuff2.data, _width * _height * 4);
 	_savedVmapRegion.data = (byte *)realloc(_savedVmapRegion.data, _width * _height);
