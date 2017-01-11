@@ -638,9 +638,9 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
-	Common::Rect r = Common::Rect(_sprites[spriteID]->_startPoint.x, 
+	Common::Rect r = Common::Rect(_sprites[spriteID]->_startPoint.x,
 		_sprites[spriteID]->_startPoint.y,
-		_sprites[spriteID]->_startPoint.x + _sprites[spriteID]->_width, 
+		_sprites[spriteID]->_startPoint.x + _sprites[spriteID]->_width,
 		_sprites[spriteID]->_startPoint.y + _sprites[spriteID]->_height);
 
 	Graphics::Surface tmpSurface;
@@ -743,7 +743,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 		bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
 	}
-		 
+
 	if (pic != NULL && bc != NULL) {
 		if (_vm->getVersion() < 4) {
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
@@ -752,7 +752,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoder(w, h);
 		} else if (_vm->getVersion() < 6) {
-			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+			bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
@@ -797,8 +797,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, uint1
 }
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
-	if (textStream == NULL) return; 
-	
+	if (textStream == NULL)
+		return;
+
 	uint16 castID = _sprites[spriteID]->_castId;
 	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
 
@@ -824,6 +825,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 		uint32 b = textStream->readUint32();
 		uint16 c = textStream->readUint16();
 		uint16 d = textStream->readUint16();
+
+		debugC(3, kDebugText, "text: a: %x b: %x c: %x d: %x", a, b, c, d);
+
 		textCast->fontId = textStream->readUint16();
 		textCast->textSlant = textStream->readByte();
 		textStream->readByte();
@@ -839,8 +843,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	uint16 padding = (uint16)textCast->gutterSize;
 	uint16 textShadow = (uint16)textCast->textShadow;
 
-	uint32 rectLeft = textCast->initialRect.left;
-	uint32 rectTop = textCast->initialRect.top;
+	//uint32 rectLeft = textCast->initialRect.left;
+	//uint32 rectTop = textCast->initialRect.top;
 
 	int x = _sprites[spriteID]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteID]->_startPoint.y; // +rectTop;
@@ -866,7 +870,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	int alignment = (int)textCast->textAlign;
 	if (alignment == -1) alignment = 3;
 	else alignment++;
-	
+
 	uint16 textX = x, textY = y;
 	if (!isButtonLabel) {
 		if (borderSize > 0) {
@@ -902,7 +906,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 		return;
 
 	uint16 borderX = x + borderSize - 1, borderY = y + borderSize - 1, borderHeight = height, borderWidth = width;
-	if (borderSize != kSizeNone) {		
+	if (borderSize != kSizeNone) {
 		while (borderSize) {
 			borderWidth += 2;
 			borderHeight += 2;

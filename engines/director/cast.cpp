@@ -86,7 +86,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		if (flags & 0x4)
 			textFlags.push_back(kTextFlagDoNotWrap);
 		if (flags & 0xf8)
-			warning("Unproxessed text cast flags: %x", flags & 0xf8);
+			warning("Unprocessed text cast flags: %x", flags & 0xf8);
 
 		// TODO: FIXME: guesswork
 		fontId = stream.readByte();
@@ -108,6 +108,10 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		stream.readUint16();
 		textShadow = static_cast<SizeType>(stream.readByte());
 		byte flags = stream.readByte();
+
+		if (flags)
+			warning("Unproxessed text cast flags: %x", flags);
+
 		fontSize = stream.readUint16();
 	} else {
 		initialRect = Score::readRect(stream);
