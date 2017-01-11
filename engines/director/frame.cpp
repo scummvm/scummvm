@@ -604,8 +604,9 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int height = _sprites[i]->_height;
 				int width = _sprites[i]->_width;
 
-				Common::Rect drawRect = Common::Rect(x, y, x + width, y + height);
-				_drawRects[i] = drawRect;
+				Common::Rect drawRect(x, y, x + width, y + height);
+
+				addDrawRect(i, drawRect);
 
 				switch (_sprites[i]->_ink) {
 				case kInkTypeCopy:
@@ -635,6 +636,13 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			}
 		}
 	}
+}
+
+void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
+	FrameEntity *fi = new FrameEntity();
+	fi->spriteId = spriteId;
+	fi->rect = rect;
+	_drawRects.push_back(fi);
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
@@ -674,7 +682,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
 		break;
 	}
 
-	_drawRects[spriteID] = r;
+	addDrawRect(spriteID, r);
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
@@ -698,13 +706,13 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
 		_rect = Common::Rect(x - 17, y, x + 12, y + 12);
 		surface.frameRect(_rect, 0);
-		_drawRects[spriteId] = _rect;
+		addDrawRect(spriteId, _rect);
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width - 1, y + height + 5);
 			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
-			_drawRects[spriteId] = _rect;
+			addDrawRect(spriteId, _rect);
 		}
 		break;
 	case kTypeRadio:
@@ -1042,11 +1050,10 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 }
 
 uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
-	// Find first from top to bottom
-	//TODO: THIS NEEDS TO BE REVERSED!
-	for (Common::HashMap<uint16, Common::Rect>::const_iterator dr = _drawRects.begin(); dr != _drawRects.end(); dr++)
-		if (dr->_value.contains(pos))
-			return dr->_key;
+	// Find first from front to back
+	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
+		if (_drawRects[dr]->rect.contains(pos))
+			return _drawRects[dr]->spriteId;
 
 	return 0;
 }

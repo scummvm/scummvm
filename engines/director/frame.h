@@ -104,6 +104,11 @@ struct PaletteInfo {
 	uint16 cycleCount;
 };
 
+struct FrameEntity {
+	uint16 spriteId;
+	Common::Rect rect;
+};
+
 
 class Frame {
 public:
@@ -131,6 +136,7 @@ private:
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
+	void addDrawRect(uint16 entityId, Common::Rect &rect);
 
 public:
 	byte _channelData[kChannelDataSize];
@@ -150,7 +156,7 @@ public:
 	uint8 _skipFrameFlag;
 	uint8 _blend;
 	Common::Array<Sprite *> _sprites;
-	Common::HashMap<uint16, Common::Rect> _drawRects;
+	Common::Array<FrameEntity *> _drawRects;
 	DirectorEngine *_vm;
 };
 

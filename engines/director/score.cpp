@@ -935,8 +935,6 @@ void Score::update() {
 	if (_vm->getVersion() >= 6)
 		_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 
-	_currentFrame++;
-
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {
 		for (i = _labels->begin(); i != _labels->end(); ++i) {
@@ -945,6 +943,8 @@ void Score::update() {
 			}
 		}
 	}
+
+	_currentFrame++;
 
 	_frames[_currentFrame]->prepareFrame(this);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
@@ -998,14 +998,19 @@ void Score::processEvents() {
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				// TODO there is dont send frame id
-				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+				//TODO: check that this is the order of script execution!
+				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
+				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->_sprites[spriteId]->_castId);
+				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 			}
 
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+				//TODO: check that this is the order of script execution!
+				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
+				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->_sprites[spriteId]->_castId);
+				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 			}
 
 			if (event.type == Common::EVENT_KEYDOWN) {
