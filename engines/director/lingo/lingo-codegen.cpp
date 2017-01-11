@@ -227,6 +227,7 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 
 	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 	sym->nargs = nargs;
+	sym->maxArgs = nargs;
 }
 
 int Lingo::codeString(const char *str) {
