@@ -465,6 +465,7 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| BLTINNOARGSORONE 		{
 		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*$1]->u.func);
 		delete $1; }
+	| BLTINARGLIST '(' arglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
 	| tOPEN expr 			{ g_lingo->code2(g_lingo->c_voidpush, g_lingo->c_open); }

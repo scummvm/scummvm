@@ -246,12 +246,6 @@ whitespace [\t ]
 		if (g_lingo->_twoWordBuiltins.contains(yytext))
 			return TWOWORDBUILTIN;
 
-		// Special treatment of 'me'. First parameter is method name
-		if (!g_lingo->_currentFactory.empty()) {
-			if (yylval.s->equalsIgnoreCase("me"))
-				return tME;
-		}
-
 		if (g_lingo->_handlers.contains(yytext)) {
 			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->parens == false) {
 				if (g_lingo->_handlers[yytext]->nargs == 0) {
