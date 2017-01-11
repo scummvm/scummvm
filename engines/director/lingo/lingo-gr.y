@@ -392,7 +392,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
 	| BLTINNOARGS 	{
-		$$ = g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
+		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
@@ -457,13 +457,13 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| tGLOBAL globallist
 	| tINSTANCE instancelist
 	| BLTINONEARG expr		{
-		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
+		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
 	| BLTINNOARGSORONE expr	{
-		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
+		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
 	| BLTINNOARGSORONE 		{
-		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*$1]->u.func);
+		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
 	| BLTINARGLIST '(' arglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }

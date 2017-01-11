@@ -34,7 +34,7 @@ Lingo *g_lingo;
 struct EventHandlerType {
 	LEvent handler;
 	const char *name;
-} static const eventHanlerDescs[] = {
+} static const eventHandlerDescs[] = {
 	{ kEventPrepareMovie,		"prepareMovie" },
 	{ kEventStartMovie,			"startMovie" },
 	{ kEventStopMovie,			"stopMovie" },
@@ -86,8 +86,10 @@ Symbol::Symbol() {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
+	for (const EventHandlerType *t = &eventHandlerDescs[0]; t->handler != kEventNone; ++t) {
+		_eventHandlerTypeIds[t->name] = t->handler;
 		_eventHandlerTypes[t->handler] = t->name;
+	}
 
 	initBuiltIns();
 	initFuncs();
@@ -161,6 +163,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_currentScript = new ScriptData;
 	_currentScriptType = type;
 	_scripts[type][id] = _currentScript;
+	_currentEntityId = id;
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;
@@ -268,8 +271,23 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
+Symbol *Lingo::getHandler(Common::String &name) {
+	if (!_eventHandlerTypeIds.contains(name))
+		return NULL;
+
+	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
+	if (!_handlers.contains(entityIndex))
+		return NULL;
+
+	return _handlers[entityIndex];
+}
+
 void Lingo::processEvent(LEvent event, int entityId) {
-	if (entityId <= 0) return;
+	if (entityId <= 0) 
+		return;
+
+	_currentEntityId = entityId;
+
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
@@ -277,8 +295,8 @@ void Lingo::processEvent(LEvent event, int entityId) {
 
 	if (st != kNoneScript) {
 		executeScript(st, entityId + 1);
-	} else if (_handlers.contains(_eventHandlerTypes[event])) {
-		call(_eventHandlerTypes[event], entityId);
+	} else if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+		call(_eventHandlerTypes[event], 0);
 		pop();
 	} else {
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);

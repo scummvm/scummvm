@@ -200,24 +200,23 @@ void Lingo::cleanLocalVars() {
 }
 
 void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
-	Symbol *sym;
-
 	if (prefix)
 		name = *prefix + "-" + name;
 
 	debugC(3, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
-	if (!_handlers.contains(name)) { // Create variable if it was not defined
+	Symbol *sym = getHandler(name);
+	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
 
 		sym->name = (char *)calloc(name.size() + 1, 1);
 		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
 		sym->type = HANDLER;
 
-		_handlers[name] = sym;
+		_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 	} else {
-		sym = g_lingo->_handlers[name];
-
+		//we don't want to be here. The getHandler call should have used the EntityId and the result
+		//should have been unique!
 		warning("Redefining handler '%s'", name.c_str());
 		delete sym->u.defn;
 	}
@@ -368,7 +367,7 @@ void Lingo::codeFactory(Common::String &name) {
 	sym->parens = true;
 	sym->u.bltin = g_lingo->b_factory;
 
-	_handlers[name] = sym;
+	_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 }
 
 }

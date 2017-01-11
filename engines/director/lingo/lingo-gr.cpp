@@ -2433,7 +2433,7 @@ yyreduce:
   case 61:
 #line 394 "engines/director/lingo/lingo-gr.y"
     {
-		(yyval.code) = g_lingo->code1(g_lingo->_handlers[*(yyvsp[(1) - (1)].s)]->u.func);
+		(yyval.code) = g_lingo->code1(g_lingo->_builtins[*(yyvsp[(1) - (1)].s)]->u.func);
 		delete (yyvsp[(1) - (1)].s); ;}
     break;
 
@@ -2647,21 +2647,21 @@ yyreduce:
   case 105:
 #line 459 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->code1(g_lingo->_handlers[*(yyvsp[(1) - (2)].s)]->u.func);
+		g_lingo->code1(g_lingo->_builtins[*(yyvsp[(1) - (2)].s)]->u.func);
 		delete (yyvsp[(1) - (2)].s); ;}
     break;
 
   case 106:
 #line 462 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->code1(g_lingo->_handlers[*(yyvsp[(1) - (2)].s)]->u.func);
+		g_lingo->code1(g_lingo->_builtins[*(yyvsp[(1) - (2)].s)]->u.func);
 		delete (yyvsp[(1) - (2)].s); ;}
     break;
 
   case 107:
 #line 465 "engines/director/lingo/lingo-gr.y"
     {
-		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_handlers[*(yyvsp[(1) - (1)].s)]->u.func);
+		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_builtins[*(yyvsp[(1) - (1)].s)]->u.func);
 		delete (yyvsp[(1) - (1)].s); ;}
     break;
 

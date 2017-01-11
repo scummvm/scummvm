@@ -1443,19 +1443,19 @@ YY_RULE_SETUP
 				return tME;
 		}
 
-		if (g_lingo->_handlers.contains(yytext)) {
-			if (g_lingo->_handlers[yytext]->type == BLTIN && g_lingo->_handlers[yytext]->parens == false) {
-				if (g_lingo->_handlers[yytext]->nargs == 0) {
-					if (g_lingo->_handlers[yytext]->maxArgs == 0)
+		if (g_lingo->_builtins.contains(yytext)) {
+			if (g_lingo->_builtins[yytext]->type == BLTIN && g_lingo->_builtins[yytext]->parens == false) {
+				if (g_lingo->_builtins[yytext]->nargs == 0) {
+					if (g_lingo->_builtins[yytext]->maxArgs == 0)
 						return BLTINNOARGS;
-					else if (g_lingo->_handlers[yytext]->maxArgs == 1)
+					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
 						return BLTINNOARGSORONE;
 					else
 						error("Incorrect setup for builtin: %s", yytext);
-				} else if (g_lingo->_handlers[yytext]->nargs == 1 &&
-							g_lingo->_handlers[yytext]->maxArgs == 1) {
+				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
+							g_lingo->_builtins[yytext]->maxArgs == 1) {
 					return BLTINONEARG;
-				} else if (g_lingo->_handlers[yytext]->nargs == -1) {
+				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
 					return BLTINARGLIST;
 				} else {
 					error("Incorrect setup for builtin: %s", yytext);

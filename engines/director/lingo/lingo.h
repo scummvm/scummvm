@@ -73,6 +73,7 @@ enum LEvent {
 
 typedef void (*inst)(void);
 #define	STOP (inst)0
+#define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
 
 typedef Common::Array<inst> ScriptData;
 typedef Common::Array<double> FloatArray;
@@ -178,6 +179,7 @@ public:
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
 
 	ScriptType event2script(LEvent ev);
+	Symbol *getHandler(Common::String &name);
 
 	void processEvent(LEvent event, int entityId);
 
@@ -440,6 +442,7 @@ public:
 public:
 	ScriptData *_currentScript;
 	ScriptType _currentScriptType;
+	uint16 _currentEntityId;
 	bool _returning;
 	bool _indef;
 	bool _ignoreMe;
@@ -450,8 +453,9 @@ public:
 	TheEntityFieldHash _theEntityFields;
 	Common::Array<int> _labelstack;
 
-	SymbolHash _handlers;
+	SymbolHash _builtins;
 	Common::HashMap<Common::String, bool> _twoWordBuiltins;
+	Common::HashMap<uint32, Symbol *> _handlers;
 
 	int _linenumber;
 	int _colnumber;
@@ -475,6 +479,7 @@ private:
 	Datum pop(void);
 
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
+	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	ScriptHash _scripts[kMaxScriptType + 1];

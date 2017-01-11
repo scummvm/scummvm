@@ -234,19 +234,19 @@ void Lingo::c_symbolpush() {
 }
 
 void Lingo::c_varpush() {
-	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
 	Datum d;
 
-	g_lingo->_pc += g_lingo->calcStringAlignment(name);
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
-	if (g_lingo->_handlers.contains(name)) {
+	if (g_lingo->getHandler(name) != NULL) {
 		d.type = HANDLER;
 		d.u.s = new Common::String(name);
 		g_lingo->push(d);
 		return;
 	}
 
-	d.u.sym = g_lingo->lookupVar(name);
+	d.u.sym = g_lingo->lookupVar(name.c_str());
 	if (d.u.sym->type == CASTREF) {
 		d.type = INT;
 		int val = d.u.sym->u.i;
@@ -984,22 +984,21 @@ void Lingo::c_call() {
 void Lingo::call(Common::String name, int nargs) {
 	bool dropArgs = false;
 
-	Symbol *sym;
+	Symbol *sym = g_lingo->getHandler(name);
 
-	if (!g_lingo->_handlers.contains(name)) {
+	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
 		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 		if (s && s->type == OBJECT) {
 			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
 			name = *s->u.s;
+			sym = g_lingo->getHandler(name);
 		}
 	}
 
-	if (!g_lingo->_handlers.contains(name)) {
+	if (sym == NULL) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
 		dropArgs = true;
 	} else {
-		sym = g_lingo->_handlers[name];
-
 		if (sym->type == BLTIN && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);

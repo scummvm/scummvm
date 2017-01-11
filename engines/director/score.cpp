@@ -511,7 +511,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 		CastInfo *ci = new CastInfo();
 
-		if (castStrings.size() == 5) {
+		if (castStrings.size() >= 5) {
 			ci->script = castStrings[0];
 			ci->name = castStrings[1];
 			ci->directory = castStrings[2];
