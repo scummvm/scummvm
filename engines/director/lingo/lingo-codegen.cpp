@@ -298,17 +298,24 @@ void Lingo::codeArgStore() {
 int Lingo::codeFunc(Common::String *s, int numpar) {
 	int ret = g_lingo->code1(g_lingo->c_call);
 
-	if (!_currentFactory.empty() && s->equalsIgnoreCase("me")) {
-		if (!g_lingo->_currentFactory.empty()) {
-			g_lingo->codeString(g_lingo->_currentFactory.c_str());
-			debugC(2, kDebugLingoCompile, "Replaced 'me' with %s", g_lingo->_currentFactory.c_str());
-		} else {
-			warning("'me' out of factory method");
-			g_lingo->codeString(s->c_str());
-		}
-	} else {
-		g_lingo->codeString(s->c_str());
-	}
+	g_lingo->codeString(s->c_str());
+
+	inst num = 0;
+	WRITE_UINT32(&num, numpar);
+	g_lingo->code1(num);
+
+	return ret;
+}
+
+int Lingo::codeMe(Common::String *method, int numpar) {
+	int ret = g_lingo->code1(g_lingo->c_call);
+
+	Common::String m(g_lingo->_currentFactory);
+
+	m += '-';
+	m += *method;
+
+	g_lingo->codeString(m.c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);

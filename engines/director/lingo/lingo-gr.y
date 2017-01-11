@@ -467,6 +467,8 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 		delete $1; }
 	| BLTINARGLIST '(' arglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
+	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
+	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
 	| tOPEN expr 			{ g_lingo->code2(g_lingo->c_voidpush, g_lingo->c_open); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }

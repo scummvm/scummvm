@@ -221,6 +221,7 @@ public:
 	void codeArg(Common::String *s);
 	void codeArgStore();
 	int codeFunc(Common::String *s, int numpar);
+	int codeMe(Common::String *method, int numpar);
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 
