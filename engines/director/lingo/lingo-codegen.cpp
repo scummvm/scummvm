@@ -104,7 +104,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 					i = (*_currentScript)[pc++];
 					double v = *((double *)&i);
 
-					res += Common::String::format(" %lf", v);
+					res += Common::String::format(" %f", v);
 					break;
 				}
 			case 'o':
