@@ -24,6 +24,7 @@
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/primitives.h"
 #include "image/bmp.h"
 
 #include "director/director.h"
@@ -699,10 +700,12 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		surface.frameRect(_rect, 0);
 		_drawRects[spriteId] = _rect;
 		break;
-	case kTypeButton:
-		_rect = Common::Rect(x, y, x + width, y + height);
-		surface.frameRect(_rect, 0);
-		_drawRects[spriteId] = _rect;
+	case kTypeButton: {
+			_rect = Common::Rect(x - 1, y - 1, x + width - 2, y + height + 4);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
+			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
+			_drawRects[spriteId] = _rect;
+		}
 		break;
 	case kTypeRadio:
 		warning("STUB: renderButton: kTypeRadio");
@@ -831,12 +834,17 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 		textCast->palinfo3 = textStream->readUint16();
 	}
 
+	uint16 boxShadow = (uint16)textCast->boxShadow;
+	uint16 borderSize = (uint16)textCast->borderSize;
+	uint16 padding = (uint16)textCast->gutterSize;
+	uint16 textShadow = (uint16)textCast->textShadow;
+
 	uint32 rectLeft = textCast->initialRect.left;
 	uint32 rectTop = textCast->initialRect.top;
 
 	int x = _sprites[spriteID]->_startPoint.x;// +rectLeft;
 	int y = _sprites[spriteID]->_startPoint.y;// +rectTop;
-	int height = _sprites[spriteID]->_height;
+	int height = _sprites[spriteID]->_height + textShadow;
 	int width = _sprites[spriteID]->_width;
 
 	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
@@ -850,35 +858,30 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
-	uint16 boxShadow = (uint16)textCast->boxShadow;
-	uint16 borderSize = (uint16)textCast->borderSize;
-	uint16 padding = (uint16)textCast->gutterSize;
-	uint16 textShadow = (uint16)textCast->textShadow;
-
 	int alignment = (int)textCast->textAlign;
-	if (alignment == 0xff) alignment = 3;
+	if (alignment == -1) alignment = 3;
 	else alignment++;
 	
 
 	if (textShadow > 0) {
 		font->drawString(&surface, text,
-			x + borderSize + padding + textShadow,
-			y + (borderSize / 2) + (padding / 2) + (textShadow - 1),
+			x + borderSize + padding + (textShadow - 1),
+			y + (borderSize > 0 ? borderSize - 1 : 0) + (padding / 2) + (textShadow),
 			width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 	}
 
 	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
 	font->drawString(&surface, text, 
-					 x + borderSize + padding, 
-					 y + (borderSize / 2) + (padding / 2) - (textShadow > 0 ? 1 : 0),
+					 x + borderSize + padding - (textShadow > 0 ? 1 : 0) - (isButtonLabel ? 1 : 0),
+					 y + (borderSize > 0 ? borderSize - 1 : 0) + (padding / 2) + (isButtonLabel ? 1 : 0),
 					 width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 
 	if (isButtonLabel)
 		return;
 
 	if (borderSize != kSizeNone) {		
-		x += (borderSize / 2);
-		y += (borderSize / 2);
+		x += borderSize - 1;
+		y += borderSize - 1;
 
 		width += (padding * 2);
 		height += 6 + (padding);

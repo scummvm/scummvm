@@ -65,6 +65,19 @@ class MacFontManager;
 
 typedef Common::Array<byte *> MacPatterns;
 
+struct MacPlotData {
+	Graphics::ManagedSurface *surface;
+	MacPatterns *patterns;
+	uint fillType;
+	int thickness;
+
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
+		surface(s), patterns(p), fillType(f), thickness(t) {
+	}
+};
+
+void macDrawPixel(int x, int y, int color, void *data);
+
 /**
  * A manager class to handle window creation, destruction,
  * drawing, moving and event handling.
@@ -143,7 +156,6 @@ public:
 	 * @return A MacPatterns object reference with the patterns.
 	 */
 	MacPatterns &getPatterns() { return _patterns; }
-	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
 	void pushBeamCursor();

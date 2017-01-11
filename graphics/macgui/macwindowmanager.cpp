@@ -217,18 +217,8 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 	_needsRemoval = true;
 }
 
-struct PlotData {
-	Graphics::ManagedSurface *surface;
-	MacPatterns *patterns;
-	uint fillType;
-	int thickness;
-
-	PlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
-		surface(s), patterns(p), fillType(f), thickness(t) {}
-};
-
-static void drawPixel(int x, int y, int color, void *data) {
-	PlotData *p = (PlotData *)data;
+void macDrawPixel(int x, int y, int color, void *data) {
+	MacPlotData *p = (MacPlotData *)data;
 
 	if (p->fillType > p->patterns->size())
 		return;
@@ -265,9 +255,9 @@ static void drawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	PlotData pd(_screen, &_patterns, kPatternCheckers, 1);
+	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1);
 
-	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, drawPixel, &pd);
+	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, macDrawPixel, &pd);
 
 	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
