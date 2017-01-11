@@ -510,14 +510,14 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		debugC(4, kDebugLoading, "'");
 
 		CastInfo *ci = new CastInfo();
-		
+
 		if (castStrings.size() == 5) {
 			ci->script = castStrings[0];
 			ci->name = castStrings[1];
 			ci->directory = castStrings[2];
 			ci->fileName = castStrings[3];
 			ci->type = castStrings[4];
-		
+
 			if (!ci->script.empty()) {
 				//the script type here could be wrong!
 				_lingo->addCode(ci->script.c_str(), kCastScript, id);
@@ -673,6 +673,9 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 		break;
 	case kSpriteScript:
 		typeName = "sprite";
+		break;
+	case kCastScript:
+		typeName = "cast";
 		break;
 	}
 
