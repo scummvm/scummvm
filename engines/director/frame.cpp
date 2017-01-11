@@ -701,7 +701,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		_drawRects[spriteId] = _rect;
 		break;
 	case kTypeButton: {
-			_rect = Common::Rect(x - 1, y - 1, x + width - 2, y + height + 4);
+			_rect = Common::Rect(x, y, x + width - 1, y + height + 5);
 			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
 			_drawRects[spriteId] = _rect;
@@ -842,10 +842,15 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	uint32 rectLeft = textCast->initialRect.left;
 	uint32 rectTop = textCast->initialRect.top;
 
-	int x = _sprites[spriteID]->_startPoint.x;// +rectLeft;
-	int y = _sprites[spriteID]->_startPoint.y;// +rectTop;
-	int height = _sprites[spriteID]->_height + textShadow;
+	int x = _sprites[spriteID]->_startPoint.x; // +rectLeft;
+	int y = _sprites[spriteID]->_startPoint.y; // +rectTop;
+
+	int height = _sprites[spriteID]->_height;
+	if (_vm->getVersion() >= 4 && !isButtonLabel) height = textCast->initialRect.bottom;
+	height += textShadow;
+
 	int width = _sprites[spriteID]->_width;
+	if (_vm->getVersion() >= 4 && !isButtonLabel) width = textCast->initialRect.right;
 
 	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
@@ -862,44 +867,62 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	if (alignment == -1) alignment = 3;
 	else alignment++;
 	
+	uint16 textX = x, textY = y;
+	if (!isButtonLabel) {
+		if (borderSize > 0) {
+			textX += (borderSize + 1);
+			textY += borderSize;
+		}
 
-	if (textShadow > 0) {
-		font->drawString(&surface, text,
-			x + borderSize + padding + (textShadow - 1),
-			y + (borderSize > 0 ? borderSize - 1 : 0) + (padding / 2) + (textShadow),
-			width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+		if (padding > 0) {
+			width += padding * 2;
+			height += padding;
+			if (textCast->textAlign == kTextAlignLeft) textX += padding;
+			else if (textCast->textAlign == kTextAlignRight) textX -= (padding + 1);
+			//TODO: alignment issue with odd-size-width center-aligned text
+			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) textX--;
+			textY += padding / 2;
+		}
+
+		if (textShadow > 0) {
+			if (borderSize == 0) textX += 1;
+			font->drawString(&surface, text, textX + textShadow, textY + textShadow,
+				width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+			height -= textShadow;
+		}
+	} else {
+		textY += 2;
 	}
 
 	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
-	font->drawString(&surface, text, 
-					 x + borderSize + padding - (textShadow > 0 ? 1 : 0) - (isButtonLabel ? 1 : 0),
-					 y + (borderSize > 0 ? borderSize - 1 : 0) + (padding / 2) + (isButtonLabel ? 1 : 0),
+	font->drawString(&surface, text, textX, textY,
 					 width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 
 	if (isButtonLabel)
 		return;
 
+	uint16 borderX = x + borderSize - 1, borderY = y + borderSize - 1, borderHeight = height, borderWidth = width;
 	if (borderSize != kSizeNone) {		
-		x += borderSize - 1;
-		y += borderSize - 1;
-
-		width += (padding * 2);
-		height += 6 + (padding);
-
 		while (borderSize) {
-			height += 2;
-			width += 2;
-			x--;
-			y--;
-			surface.frameRect(Common::Rect(x, y, x + width, y + height), 0);
+			borderWidth += 2;
+			borderHeight += 2;
+			surface.frameRect(Common::Rect(borderX, borderY, borderX + borderWidth, borderY + borderHeight), 0);
 			borderSize--;
+			borderX--;
+			borderY--;
 		}
 	}
 
 	if (boxShadow > 0) {
-		for (int loop = 0; loop < boxShadow; loop++) {
-			surface.drawLine(x + boxShadow, y + height + loop, x + width, y + height + loop, 0);
-			surface.drawLine(x + width + loop, y + boxShadow, x + width + loop, y + height + boxShadow - 1, 0);
+		borderSize = (uint16)textCast->borderSize;
+		uint baseOffsetX = x + boxShadow;
+		uint baseOffsetY = y + height + (borderSize * 2);
+		uint sideOffsetX = x + borderWidth;
+		uint sideOffsetY = y + boxShadow;
+		while (boxShadow) {
+			surface.drawLine(baseOffsetX, baseOffsetY + (boxShadow - 1), baseOffsetX + borderWidth - 1, baseOffsetY + (boxShadow - 1), 0);
+			surface.drawLine(sideOffsetX + (boxShadow - 1), sideOffsetY, sideOffsetX + (boxShadow - 1), sideOffsetY + borderHeight - 1, 0);
+			boxShadow--;
 		}
 	}
 }
