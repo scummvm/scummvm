@@ -457,7 +457,7 @@ void Lingo::runTests() {
 
 			stream->read(script, size);
 
-			debugC(2, kDebugLingoCompile, "Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
+			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
@@ -465,7 +465,7 @@ void Lingo::runTests() {
 			if (!_hadError)
 				executeScript(kMovieScript, counter);
 			else
-				debugC(2, kDebugLingoCompile, "Skipping execution");
+				debug(">> Skipping execution");
 
 			free(script);
 
