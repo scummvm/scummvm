@@ -100,7 +100,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN
-%token tON
+%token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
 %type<narg> argdef arglist

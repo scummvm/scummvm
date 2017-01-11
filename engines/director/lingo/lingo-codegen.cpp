@@ -297,7 +297,7 @@ void Lingo::codeArgStore() {
 int Lingo::codeFunc(Common::String *s, int numpar) {
 	int ret = g_lingo->code1(g_lingo->c_call);
 
-	if (s->equalsIgnoreCase("me")) {
+	if (!_currentFactory.empty() && s->equalsIgnoreCase("me")) {
 		if (!g_lingo->_currentFactory.empty()) {
 			g_lingo->codeString(g_lingo->_currentFactory.c_str());
 			debugC(2, kDebugLingoCompile, "Replaced 'me' with %s", g_lingo->_currentFactory.c_str());
