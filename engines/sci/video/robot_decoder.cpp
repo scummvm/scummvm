@@ -1436,6 +1436,14 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 			_screenItemList[i] = nullptr;
 		}
 	}
+
+	if (screenItemCount < oldScreenItemCount) {
+		_screenItemList.resize(screenItemCount);
+		_screenItemX.resize(screenItemCount);
+		_screenItemY.resize(screenItemCount);
+		_originalScreenItemX.resize(screenItemCount);
+		_originalScreenItemY.resize(screenItemCount);
+	}
 }
 
 void RobotDecoder::createCels5(const byte *rawVideoData, const int16 numCels, const bool usePalette) {
