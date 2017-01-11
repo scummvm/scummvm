@@ -436,6 +436,14 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 
 			const ResourceId id = ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f);
 
+			// Map 405 on CD 1 of the US release of PQ:SWAT 1.000 is broken
+			// and points to garbage in the RESOURCE.AUD. The affected audio36
+			// assets seem to be able to load successfully from one of the later
+			// CDs, so just ignore the map on this disc
+			if (g_sci->getGameId() == GID_PQSWAT && map->_volumeNumber == 1 && map->_mapNumber == 405) {
+				continue;
+			}
+
 			// At least version 1.00 of GK2 has multiple invalid audio36 map
 			// entries on CD 6
 			if (g_sci->getGameId() == GID_GK2 &&
