@@ -353,6 +353,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQSWAT,         -1, 64950,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using any menus in-game
+	{ GID_PQSWAT,         -1,    73,  0,   "theLashInterface", "transmit",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // Clicking the transmit button in LASH
+	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",           sig_uninitread_qfg1_1,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
 	{ GID_QFG1VGA,        16,    16,  0,        "lassoFailed", "changeState",                     NULL,    -1, { WORKAROUND_FAKE,   0 } }, // qfg1vga: casting the "fetch" spell in the screen with the flowers, temps 0 and 1 - bug #5309
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        sig_uninitread_qfg1vga_1,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
