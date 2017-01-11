@@ -122,7 +122,7 @@ void Item::setXYZ(Vector3 position) {
 	_depth = screenPosition.z * 25.5f;
 }
 
-void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy) {
+void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag) {
 	_itemId = itemId;
 	_setId = setId;
 	_animationId = animationId;
@@ -130,9 +130,9 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_angle = facing * (M_PI / 512.0f);
 	_width = width;
 	_height = height;
-	_isTargetable = isTargetable;
-	_isVisible = isVisible;
-	_isPoliceMazeEnemy = isPoliceMazeEnemy;
+	_isTargetable = isTargetableFlag;
+	_isVisible = isVisibleFlag;
+	_isPoliceMazeEnemy = isPoliceMazeEnemyFlag;
 	setXYZ(position);
 	_screenRectangle.bottom = -1;
 	_screenRectangle.right = -1;

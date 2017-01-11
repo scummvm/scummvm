@@ -43,7 +43,7 @@ public:
 	void getWidthHeight(int itemId, int *width, int *height);
 
 	void tick();
-	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy, bool b);
+	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag);
 	bool addToSet(int itemId);
 	bool remove(int itemId);
 
