@@ -21,6 +21,9 @@
  */
 
 %option noyywrap
+%option nounput
+%option noinput
+
 %{
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
