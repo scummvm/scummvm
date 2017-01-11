@@ -53,14 +53,14 @@ static struct FuncDescr {
 	const char *name;
 	const char *args;
 } funcDescr[] = {
-	{ 0,					"STOP",		"" },
+	{ 0,					"STOP",			"" },
 	{ Lingo::c_xpop,		"c_xpop",		"" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
 	{ Lingo::c_constpush,	"c_constpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
 	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
-	{ Lingo::c_symbolpush,	"c_symbolpush","s" },	// D3
+	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_assign,		"c_assign",		"" },
 	{ Lingo::c_eval,		"c_eval",		"s" },

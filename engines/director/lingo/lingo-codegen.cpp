@@ -99,6 +99,14 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 					res += Common::String::format(" %d", v);
 					break;
 				}
+			case 'f':
+				{
+					i = (*_currentScript)[pc++];
+					double v = *((double *)&i);
+
+					res += Common::String::format(" %lf", v);
+					break;
+				}
 			case 'o':
 				{
 					i = (*_currentScript)[pc++];
