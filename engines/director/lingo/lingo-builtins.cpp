@@ -55,6 +55,31 @@ static struct BuiltinProto {
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
+	// Lists
+	{ "add",			Lingo::b_add,			2, 2, false },	//			D4
+	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4
+	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4
+	{ "append",			Lingo::b_append,		2, 2, false },	//			D4
+	{ "count",			Lingo::b_count,			1, 1, true },	//			D4
+	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4
+	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4
+	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4
+	{ "findPosNear",	Lingo::b_findPosNear,	2, 2, true },	//			D4
+	{ "getaProp",		Lingo::b_getaProp,		2, 2, true },	//			D4
+	{ "getAt",			Lingo::b_getAt,			2, 2, true },	//			D4
+	{ "getLast",		Lingo::b_getLast,		1, 1, true },	//			D4
+	{ "getOne",			Lingo::b_getOne,		2, 2, true },	//			D4
+	{ "getPos",			Lingo::b_getPos,		2, 2, true },	//			D4
+	{ "getProp",		Lingo::b_getProp,		2, 2, true },	//			D4
+	{ "getPropAt",		Lingo::b_getPropAt,		2, 2, true },	//			D4
+	{ "list",			Lingo::b_list,			-1, 0, true },	//			D4
+	{ "listP",			Lingo::b_listP,			1, 1, true },	//			D4
+	{ "max",			Lingo::b_max,			1, 1, true },	//			D4
+	{ "min",			Lingo::b_min,			1, 1, true },	//			D4
+	{ "setaProp",		Lingo::b_setaProp,		3, 3, false },	//			D4
+	{ "setAt",			Lingo::b_setAt,			3, 3, false },	//			D4
+	{ "setProp",		Lingo::b_setProp,		3, 3, false },	//			D4
+	{ "sort",			Lingo::b_sort,			1, 1, false },	//			D4
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
@@ -68,6 +93,7 @@ static struct BuiltinProto {
 	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
 	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3
 	// Control
+	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
@@ -89,7 +115,7 @@ static struct BuiltinProto {
 		// when timeOut											// D2
 	// Types
 	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	//			D4
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4
 	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2
 	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2
 	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
@@ -436,6 +462,129 @@ void Lingo::b_value(int nargs) {
 	g_lingo->push(d);
 }
 
+///////////////////
+// Lists
+///////////////////
+void Lingo::b_add(int nargs) {
+	g_lingo->printStubWithArglist("b_add", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_addAt(int nargs) {
+	g_lingo->printStubWithArglist("b_addAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_addProp(int nargs) {
+	g_lingo->printStubWithArglist("b_addProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_append(int nargs) {
+	g_lingo->printStubWithArglist("b_append", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_count(int nargs) {
+	g_lingo->printStubWithArglist("b_count", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_deleteAt(int nargs) {
+	g_lingo->printStubWithArglist("b_deleteAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_deleteProp(int nargs) {
+	g_lingo->printStubWithArglist("b_deleteProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_findPos(int nargs) {
+	g_lingo->printStubWithArglist("b_findPos", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_findPosNear(int nargs) {
+	g_lingo->printStubWithArglist("b_findPosNear", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getaProp(int nargs) {
+	g_lingo->printStubWithArglist("b_getaProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getAt(int nargs) {
+	g_lingo->printStubWithArglist("b_getAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getLast(int nargs) {
+	g_lingo->printStubWithArglist("b_getLast", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getOne(int nargs) {
+	g_lingo->printStubWithArglist("b_getOne", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getPos(int nargs) {
+	g_lingo->printStubWithArglist("b_getPos", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getProp(int nargs) {
+	g_lingo->printStubWithArglist("b_getProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getPropAt(int nargs) {
+	g_lingo->printStubWithArglist("b_getPropAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_list(int nargs) {
+	g_lingo->printStubWithArglist("b_list", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_listP(int nargs) {
+	g_lingo->printStubWithArglist("b_listP", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_max(int nargs) {
+	g_lingo->printStubWithArglist("b_max", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_min(int nargs) {
+	g_lingo->printStubWithArglist("b_min", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setaProp(int nargs) {
+	g_lingo->printStubWithArglist("b_setaProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setAt(int nargs) {
+	g_lingo->printStubWithArglist("b_setAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setProp(int nargs) {
+	g_lingo->printStubWithArglist("b_setProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_sort(int nargs) {
+	g_lingo->printStubWithArglist("b_sort", nargs);
+	g_lingo->dropStack(nargs);
+}
+
 
 ///////////////////
 // Files
@@ -531,12 +680,16 @@ void Lingo::b_xFactoryList(int nargs) {
 ///////////////////
 // Control
 ///////////////////
-void Lingo::b_dontPassEvent(int nargs) {
-	warning("STUB: b_dontPassEvent");
+void Lingo::b_abort(int nargs) {
+	warning("STUB: b_continue");
 }
 
 void Lingo::b_continue(int nargs) {
 	warning("STUB: b_continue");
+}
+
+void Lingo::b_dontPassEvent(int nargs) {
+	warning("STUB: b_dontPassEvent");
 }
 
 void Lingo::b_nothing(int nargs) {

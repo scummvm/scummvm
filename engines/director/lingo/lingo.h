@@ -335,6 +335,31 @@ public:
 	static void b_offset(int nargs);
 	static void b_string(int nargs);
 
+	static void b_add(int nargs);
+	static void b_addAt(int nargs);
+	static void b_addProp(int nargs);
+	static void b_append(int nargs);
+	static void b_count(int nargs);
+	static void b_deleteAt(int nargs);
+	static void b_deleteProp(int nargs);
+	static void b_findPos(int nargs);
+	static void b_findPosNear(int nargs);
+	static void b_getaProp(int nargs);
+	static void b_getAt(int nargs);
+	static void b_getLast(int nargs);
+	static void b_getOne(int nargs);
+	static void b_getPos(int nargs);
+	static void b_getProp(int nargs);
+	static void b_getPropAt(int nargs);
+	static void b_list(int nargs);
+	static void b_listP(int nargs);
+	static void b_max(int nargs);
+	static void b_min(int nargs);
+	static void b_setaProp(int nargs);
+	static void b_setAt(int nargs);
+	static void b_setProp(int nargs);
+	static void b_sort(int nargs);
+
 	static void b_floatP(int nargs);
 	static void b_ilk(int nargs);
 	static void b_integerp(int nargs);
@@ -370,6 +395,7 @@ public:
 	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
 
+	static void b_abort(int nargs);
 	static void b_continue(int nargs);
 	static void b_dontPassEvent(int nargs);
 	static void b_delay(int nargs);

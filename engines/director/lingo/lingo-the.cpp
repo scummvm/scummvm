@@ -29,6 +29,7 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
+	{ kTheActorList,		"actorList",		false },	//				D4 property
 	{ kTheBeepOn,			"beepOn",			false },	// D2 property
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },	// D3
