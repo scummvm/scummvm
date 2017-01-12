@@ -91,7 +91,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectory);
+	virtual bool create(bool isDirectoryFlag);
 
 	/**
 	 * Returns the zip file this node points to.
@@ -132,7 +132,7 @@ public:
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
-	GBAMPFileSystemNode(const Common::String &path, bool isDirectory);
+	GBAMPFileSystemNode(const Common::String &path, bool isDirectoryFlag);
 
 	/**
 	 * Copy constructor.
@@ -157,7 +157,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
-	virtual bool create(bool isDirectory);
+	virtual bool create(bool isDirectoryFlag);
 };
 
 struct fileHandle {
