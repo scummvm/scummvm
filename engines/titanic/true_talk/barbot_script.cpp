@@ -1009,7 +1009,7 @@ uint BarbotScript::getDialsBitset() const {
 		bits = 1;
 	if (!getDialRegion(1))
 		bits |= 2;
-	if (!getDialRegion(2))
+	if (getDialRegion(2))
 		bits |= 4;
 
 	return bits;
