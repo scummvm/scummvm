@@ -594,10 +594,16 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 				assert(_sprites[i]->_cast);
 
-				uint32 regX = static_cast<BitmapCast *>(_sprites[i]->_cast)->regX;
-				uint32 regY = static_cast<BitmapCast *>(_sprites[i]->_cast)->regY;
-				uint32 rectLeft = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.left;
-				uint32 rectTop = static_cast<BitmapCast *>(_sprites[i]->_cast)->initialRect.top;
+				BitmapCast *bitmapCast = static_cast<BitmapCast *>(_sprites[i]->_cast);
+				//TODO: might want a quicker way to determine if cast is from Shared Cast.
+				if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(_sprites[i]->_castId + 1024)) {
+					bitmapCast = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(_sprites[i]->_castId));
+				}
+
+				uint32 regX = bitmapCast->regX;
+				uint32 regY = bitmapCast->regY;
+				uint32 rectLeft = bitmapCast->initialRect.left;
+				uint32 rectTop = bitmapCast->initialRect.top;
 
 				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
