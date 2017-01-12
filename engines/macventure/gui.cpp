@@ -335,7 +335,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, true);
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
-	newData.refcon = (WindowReference)ABS(_inventoryWindows.size() + kInventoryStart); // This is a HACK
+	newData.refcon = (WindowReference)(_inventoryWindows.size() + kInventoryStart); // This is a HACK
 
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
