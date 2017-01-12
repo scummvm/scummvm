@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-01-11 18:18+0100\n"
+"POT-Creation-Date: 2017-01-12 10:39+0100\n"
 "PO-Revision-Date: 2017-01-07 02:29+0000\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -583,7 +583,6 @@ msgid "Associated key : %s"
 msgstr "Συσχετισμένο κλειδί : %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
-#, c-format
 msgid "Associated key : none"
 msgstr "Συσχετισμένο κλειδί: κανένα"
 

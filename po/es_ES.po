@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-01-11 18:18+0100\n"
+"POT-Creation-Date: 2017-01-12 10:39+0100\n"
 "PO-Revision-Date: 2016-12-30 20:22+0000\n"
 "Last-Translator: Luis <luissagasta@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -578,7 +578,6 @@ msgid "Associated key : %s"
 msgstr "Tecla asociada: %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
-#, c-format
 msgid "Associated key : none"
 msgstr "Tecla asociada: ninguna"
 
