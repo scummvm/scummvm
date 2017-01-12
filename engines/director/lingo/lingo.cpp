@@ -282,8 +282,8 @@ Symbol *Lingo::getHandler(Common::String &name) {
 	return _handlers[entityIndex];
 }
 
-void Lingo::processEvent(LEvent event, int entityId) {
-	if (entityId <= 0) 
+void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
+	if (entityId <= 0)
 		return;
 
 	_currentEntityId = entityId;
@@ -291,13 +291,11 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	ScriptType st = event2script(event);
-
-	if (st != kNoneScript) {
-		executeScript(st, entityId + 1);
-	} else if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
-		call(_eventHandlerTypes[event], 0);
+	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+		call(_eventHandlerTypes[event], 0); //D4+ Events
 		pop();
+	} else if (_scripts[st].contains(entityId)) {
+		executeScript(st, entityId + 1); //D3 list of scripts.
 	} else {
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}

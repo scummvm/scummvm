@@ -143,7 +143,7 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_movieArchive = archive;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
-	_lingo->processEvent(kEventPrepareMovie, 0);
+	_lingo->processEvent(kEventPrepareMovie, kMovieScript, 0);
 	_movieScriptCount = 0;
 	_labels = NULL;
 	_font = NULL;
@@ -900,7 +900,7 @@ void Score::startLoop() {
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
-	_lingo->processEvent(kEventStartMovie, 0);
+	_lingo->processEvent(kEventStartMovie, kMovieScript, 0);
 	_frames[_currentFrame]->prepareFrame(this);
 
 	while (!_stopPlay && _currentFrame < _frames.size()) {
@@ -918,22 +918,23 @@ void Score::update() {
 	_surface->copyFrom(*_trailSurface);
 
 	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame, _frames[_currentFrame]->_actionId);
-	_lingo->processEvent(kEventExitFrame, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
 	// TODO Director 6 - another order
 
 	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 	if (_vm->getVersion() >= 6) {
 		for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 			if (_frames[_currentFrame]->_sprites[i]->_enabled) {
-				_lingo->processEvent(kEventBeginSprite, i);
+				//TODO: Check if this is also possibly a kSpriteScript?
+				_lingo->processEvent(kEventBeginSprite, kCastScript, _frames[_currentFrame]->_sprites[i]->_scriptId);
 			}
 		}
 	}
 
 	// TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	if (_vm->getVersion() >= 6)
-		_lingo->processEvent(kEventPrepareFrame, _currentFrame);
+		_lingo->processEvent(kEventPrepareFrame, kFrameScript, _currentFrame);
 
 	Common::SortedArray<Label *>::iterator i;
 	if (_labels != NULL) {
@@ -945,6 +946,7 @@ void Score::update() {
 	}
 
 	_currentFrame++;
+	if (_currentFrame >= _frames.size()) return;
 
 	_frames[_currentFrame]->prepareFrame(this);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
@@ -983,8 +985,9 @@ void Score::update() {
 }
 
 void Score::processEvents() {
-	if (_currentFrame > 0)
-		_lingo->processEvent(kEventIdle, _currentFrame - 1);
+	//TODO: re-instate when we know which script to run.
+	//if (_currentFrame > 0)
+	//	_lingo->processEvent(kEventIdle, _currentFrame - 1);
 
 	Common::Event event;
 
@@ -998,19 +1001,27 @@ void Score::processEvents() {
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				//TODO: check that this is the order of script execution!
-				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->_sprites[spriteId]->_castId);
-				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+				//D3 doesn't have both mouse up and down.
+				if (_vm->getVersion() > 3) {
+					//TODO: check that this is the order of script execution!
+					uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
+					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
+					_lingo->processEvent(kEventMouseDown, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+				}
 			}
 
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				//TODO: check that this is the order of script execution!
 				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->_sprites[spriteId]->_castId);
-				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+				if (_vm->getVersion() > 3) {
+					//TODO: check that this is the order of script execution!
+					_lingo->processEvent(kEventMouseUp, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
+					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+				} else {
+					//D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
+					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+				}
 			}
 
 			if (event.type == Common::EVENT_KEYDOWN) {
@@ -1034,7 +1045,8 @@ void Score::processEvents() {
 					warning("Keycode: %d", _vm->_keyCode);
 				}
 
-				_lingo->processEvent(kEventKeyDown, 0);
+				//TODO: is movie script correct? Can this be elsewhere?
+				_lingo->processEvent(kEventKeyDown, kMovieScript, 0);
 			}
 		}
 

@@ -181,7 +181,7 @@ public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
 
-	void processEvent(LEvent event, int entityId);
+	void processEvent(LEvent event, ScriptType st, int entityId);
 
 	void initBuiltIns();
 	void initFuncs();

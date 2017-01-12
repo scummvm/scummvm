@@ -653,8 +653,14 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
 
 	Graphics::Surface tmpSurface;
 	tmpSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
-
-	tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 0);
+	if (_vm->getVersion() <= 3 && _sprites[spriteID]->_spriteType == 0x0c) {
+		tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 255); 
+		tmpSurface.frameRect(Common::Rect(r.width(), r.height()), 0);
+		//TODO: don't override, work out how to display correctly.
+		_sprites[spriteID]->_ink = kInkTypeTransparent;
+	} else {
+		tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 0);
+	}
 
 	switch (_sprites[spriteID]->_ink) {
 	case kInkTypeCopy:
