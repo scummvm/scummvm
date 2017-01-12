@@ -69,7 +69,7 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 	byte *const diskImage = (byte *)calloc(imageSize, 1);
 
 	bool sawAddress = false;
-	uint8 volNo, track, sector;
+	uint8 volNo = 0, track = 0, sector = 0;
 	bool newStyle;
 
 	byte buffer[trackLen];
