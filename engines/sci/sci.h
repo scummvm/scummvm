@@ -282,7 +282,6 @@ public:
 	 * script patches are needed:
 	 * - King's Quest 6 CD
 	 */
-	bool speechAndSubtitlesEnabled();
 	void syncIngameAudioOptions();
 	void updateScummVMAudioOptions();
 
