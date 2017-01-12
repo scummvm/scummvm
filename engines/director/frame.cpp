@@ -541,8 +541,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 				continue;
 
-			CastType castType;
-			Cast *cast;
+			CastType castType = kCastTypeNull;
+			Cast *cast = nullptr;
 			if (_vm->getVersion() < 4) {
 				switch (_sprites[i]->_spriteType) {
 				case 0x01:

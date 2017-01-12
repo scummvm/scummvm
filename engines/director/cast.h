@@ -30,6 +30,7 @@
 namespace Director {
 
 enum CastType {
+	kCastTypeNull = 0,
 	kCastBitmap = 1,
 	kCastFilmLoop = 2,
 	kCastText = 3,
