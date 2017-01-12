@@ -810,7 +810,9 @@ bool ThemeEngine::addAlphaBitmap(const Common::String &filename) {
 	if (surf)
 		return true;
 
+#ifdef USE_PNG
 	const Graphics::TransparentSurface *srcSurface = 0;
+#endif
 
 	if (filename.hasSuffix(".png")) {
 		// Maybe it is PNG?
