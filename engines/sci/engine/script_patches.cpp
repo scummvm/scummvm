@@ -105,6 +105,7 @@ static const char *const selectorNameTable[] = {
 	"setLoop",      // Laura Bow 1 Colonel's Bequest
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
+	"scrollSelections", // GK2
 #endif
 	NULL
 };
@@ -137,7 +138,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setLoop
 #ifdef ENABLE_SCI32
 	,
-	SELECTOR_newWith
+	SELECTOR_newWith,
+	SELECTOR_scrollSelections
 #endif
 };
 
@@ -1012,11 +1014,40 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 #pragma mark -
 #pragma mark Gabriel Knight 2
 
-//          script, description,                                      signature                         patch
+// The down scroll button in GK2 jumps up a pixel on mousedown because there is
+// a send to scrollSelections using an immediate value 1, which means to scroll
+// up by 1 pixel. This patch fixes the send to scrollSelections by passing the
+// button's delta instead of 1.
+//
+// Applies to at least: English CD 1.00, English Steam 1.01
+// Responsible method: ScrollButton::track
+static const uint16 gk2InvScrollSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(2),               // line whatever
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(scrollSelections), // pushi $2c3
+	0x78,                                   // push1
+	0x78,                                   // push1
+	0x63, 0x98,                             // pToa $98
+	0x4a, SIG_UINT16(0x06),                 // send $6
+	SIG_END
+};
+
+static const uint16 gk2InvScrollPatch[] = {
+	0x38, PATCH_SELECTOR16(scrollSelections), // pushi $2c3
+	0x78,                                     // push1
+	0x67, 0x9a,                               // pTos $9a (delta)
+	0x63, 0x98,                               // pToa $98
+	0x4a, PATCH_UINT16(0x06),                 // send $6
+	0x18, 0x18,                               // waste bytes
+	PATCH_END
+};
+
+//          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
