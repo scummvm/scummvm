@@ -1147,9 +1147,10 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 	if (id) {
 		addResponse(getDialogueId(id));
 		applyResponse();
+		return 2;
 	}
 
-	return 2;
+	return 0;
 }
 
 void BarbotScript::setDialRegion(int dialNum, int region) {
