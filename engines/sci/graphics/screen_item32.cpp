@@ -455,7 +455,11 @@ void ScreenItem::calcRects(const Plane &plane) {
 
 		_screenRect = _screenItemRect;
 
-		if (_screenRect.intersects(plane._screenRect)) {
+		// PQ4CD creates screen items with invalid rects; SSCI does not care
+		// about this, but `Common::Rect::clip` does, so we need to check
+		// whether or not the rect is actually valid before clipping and only
+		// clip valid rects
+		if (_screenRect.intersects(plane._screenRect) && _screenRect.isValidRect()) {
 			_screenRect.clip(plane._screenRect);
 		} else {
 			_screenRect.right = 0;
