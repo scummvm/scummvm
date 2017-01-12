@@ -155,7 +155,7 @@ void DirtyArea::setUISlot(const UISlot *slot) {
 
 /*------------------------------------------------------------------------*/
 
-DirtyAreas::DirtyAreas(MADSEngine *vm) : _vm(vm) {
+DirtyAreas::DirtyAreas(MADSEngine *vm) /* : _vm(vm) */ {
 	DirtyArea::_vm = vm;
 
 	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
