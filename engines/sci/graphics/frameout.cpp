@@ -1168,10 +1168,13 @@ void GfxFrameout::showBits() {
 
 		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
 
-		// TODO: Sometimes transition screen items generate zero-dimension
-		// show rectangles. Is this a bug?
+		// Sometimes screen items (especially from SCI2.1early transitions, like
+		// in the asteroids minigame in PQ4) generate zero-dimension show
+		// rectangles. In SSCI, zero-dimension rectangles are OK (they just
+		// result in no copy), but OSystem::copyRectToScreen will assert on
+		// them, so we need to check for zero-dimensions rectangles and ignore
+		// them explicitly
 		if (rounded.width() == 0 || rounded.height() == 0) {
-			warning("Zero-dimension show rectangle ignored");
 			continue;
 		}
 

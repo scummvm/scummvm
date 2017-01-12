@@ -176,6 +176,10 @@ struct SCALER_Scale {
 	// so just always make the reader decompress an entire
 	// line of source data when scaling
 	_reader(celObj, celObj._width) {
+#ifndef NDEBUG
+		assert(_minX <= _maxX);
+#endif
+
 		// In order for scaling ratios to apply equally across objects that
 		// start at different positions on the screen (like the cels of a
 		// picture), the pixels that are read from the source bitmap must all
@@ -773,6 +777,14 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+	// In SSCI the checks are > because their rects are BR-inclusive;
+	// our checks are >= because our rects are BR-exclusive
+	if (g_sci->_features->hasEmptyScaleDrawHack() &&
+		(targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom)) {
+		return;
+	}
+
 	if (_drawMirrored)
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	else
@@ -780,6 +792,14 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+	// In SSCI the checks are > because their rects are BR-inclusive;
+	// our checks are >= because our rects are BR-exclusive
+	if (g_sci->_features->hasEmptyScaleDrawHack() &&
+		(targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom)) {
+		return;
+	}
+
 	if (_drawMirrored) {
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
