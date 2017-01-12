@@ -4831,7 +4831,8 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	}
 }
 
-void EdenGame::shnmfl(uint16 num) {
+// Original name: shnmfl
+void EdenGame::loadHnm(uint16 num) {
 	unsigned int resNum = num - 1 + 485;
 	assert(resNum < _bigfileHeader->_count);
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
@@ -4841,7 +4842,8 @@ void EdenGame::shnmfl(uint16 num) {
 	_vm->_video->_file->seek(offs, SEEK_SET);
 }
 
-int EdenGame::ssndfl(uint16 num) {
+// Original name: ssndfl
+int EdenGame::loadSound(uint16 num) {
 	unsigned int resNum = num - 1 + ((_vm->getPlatform() == Common::kPlatformDOS && _vm->isDemo()) ? 656 : 661);
 	assert(resNum < _bigfileHeader->_count);
 	PakHeaderItem *file = &_bigfileHeader->_files[resNum];
@@ -4875,7 +4877,7 @@ int EdenGame::ssndfl(uint16 num) {
 
 		if (chunkType == 5) {
 			_bigfile.read(_gameLipsync + 7260, chunkLen);
-//			anim_buffer_ptr = gameLipsync + 7260 + 2;
+//			_animBufferPtr = _gameLipsync + 7260 + 2;
 
 			chunkType = _bigfile.readByte();
 			_bigfile.read(&val, 3);
@@ -4884,7 +4886,7 @@ int EdenGame::ssndfl(uint16 num) {
 
 		// 3. Normal sound data
 		if (chunkType == 1) {
-			/*unsigned short freq = */_bigfile.readUint16LE();
+			/*uint8 freq = */_bigfile.readUint16LE();
 			size = chunkLen - 2;
 			_bigfile.read(_voiceSamplesBuffer, size);
 		}
@@ -6434,7 +6436,7 @@ void EdenGame::playHNM(int16 num) {
 	}
 	_showVideoSubtitle = false;
 	_videoCanceledFlag = false;
-	shnmfl(num);
+	loadHnm(num);
 	_vm->_video->reset();
 	if (_needToFade) {
 		fadeToBlack(4);
@@ -6614,7 +6616,7 @@ void EdenGame::persovox() {
 		num += 565;
 	if (_globals->_textBankIndex == 3)
 		num += 707;
-	_voiceSamplesSize = ssndfl(num);
+	_voiceSamplesSize = loadSound(num);
 	int16 volumeLeft = _globals->_prefSoundVolume[0];
 	int16 volumeRight = _globals->_prefSoundVolume[1];
 	int16 stepLeft = _musicChannel->_volumeLeft < volumeLeft ? stepLeft = 1 : -1;

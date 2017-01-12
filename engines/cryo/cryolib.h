@@ -91,26 +91,13 @@ struct color_t {
 	int16   a, r, g, b;
 };
 
-#pragma pack(push, 1)
 struct HNMHeader {
-	int     _signature;
-	char    _unusedFlag1;
-	char    _unusedFlag2;
-	char    _unusedReserved;
-	char    _unusedBpp;
+	int32   _signature;
 	uint16  _width;
 	uint16  _height;
-	int     _unusedFileSize;
-	int     _numbFrame;
-	int     _unusedTableOffset;
-	int16   _unusedSpeed;
-	int16   _unusedMaxBuffer;
-	int     _bufferSize;
-	int16   _unusedUnknown;
-	char    _unusedReserved2[14];
-	char    _unusedCopyright[16];
+	int32   _numbFrame;
+	int32   _bufferSize;
 };
-#pragma pack(pop)
 
 class Sound {
 private:

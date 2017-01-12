@@ -282,8 +282,8 @@ private:
 	void loadRawFile(uint16 num, byte *buffer);
 	void loadIconFile(uint16 num, Icon *buffer);
 	void loadRoomFile(uint16 num, Room *buffer);
-	void shnmfl(uint16 num);
-	int ssndfl(uint16 num);
+	void loadHnm(uint16 num);
+	int loadSound(uint16 num);
 	void ConvertMacToPC();
 	void loadpermfiles();
 	bool ReadDataSyncVOC(unsigned int num);

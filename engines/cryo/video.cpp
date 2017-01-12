@@ -158,23 +158,14 @@ void HnmPlayer::decompADPCM(byte *buffer, int16 *output, int size) {
 // Original name: CLHNM_ReadHeader
 void HnmPlayer::readHeader() {
 	_header._signature = _file->readUint32BE();
-	_header._unusedFlag1 = _file->readByte();
-	_header._unusedFlag2 = _file->readByte();
-	_header._unusedReserved = _file->readByte();
-	_header._unusedBpp = _file->readByte();
+	_file->skip(4);
 	_header._width = _file->readUint16LE();
 	_header._height = _file->readUint16LE();
-	_header._unusedFileSize = _file->readSint32LE();
+	_file->skip(4);
 	_header._numbFrame = _file->readSint32LE();
-	_header._unusedTableOffset = _file->readSint32LE();
-	_header._unusedSpeed = _file->readSint16LE();
-	_header._unusedMaxBuffer = _file->readSint16LE();
+	_file->skip(8);
 	_header._bufferSize = _file->readSint32LE();
-	_header._unusedUnknown = _file->readSint16LE();
-	for (int i = 0; i < 14; i++)
-		_header._unusedReserved2[i] = _file->readSByte();
-	for (int i = 0; i < 16; i++)
-		_header._unusedCopyright[i] = _file->readSByte();
+	_file->skip(32);
 
 	_header._bufferSize += 4096; //TODO: checkme
 }
