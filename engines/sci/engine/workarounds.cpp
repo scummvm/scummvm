@@ -352,6 +352,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
+	{ GID_PQ4,           275, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when Sherry walks out of the morgue on day 3
+	{ GID_PQ4,           240, 64964, -1,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // when encountering Sherry and the reporter outside the morgue at the end of day 3
 	{ GID_PQSWAT,         -1, 64950,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using any menus in-game
 	{ GID_PQSWAT,         -1,    73,  0,   "theLashInterface", "transmit",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // Clicking the transmit button in LASH
 	{ GID_PQSWAT,       2990,  2990,  0,    "talkToSchienbly", "changeState",                     NULL,     1, { WORKAROUND_FAKE,   0 } }, // When the video of Schienbly talking for the first time ends
@@ -424,6 +426,12 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 const SciWorkaroundEntry kArraySetElements_workarounds[] = {
 	{ GID_GK1,           302, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when erasing a letter on the wall in St Louis Cemetery
 	{ GID_PHANTASMAGORIA, -1, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // when starting a new game and selecting a chapter above 1, or when quitting the chase (in every chase room), or when completing chase successfully
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kArrayFill_workarounds[] = {
+	{ GID_PQ4,           540, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when clicking on Hate Crimes in the computer on day 2
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -593,6 +601,17 @@ const SciWorkaroundEntry kFindKey_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kFrameOut_workarounds[] = {
+	{ GID_PQ4,           360,   360,  0,        "copCarInset", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When clicking hand on the impounded police car on day 3
+	{ GID_PQ4,           360,   360,  0,        "copCarInset", "dispose",                   NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When exiting the impounded police car on day 3
+	{ GID_PQ4,           275,   275,  0,        "checkSherry", "changeState",               NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When encountering Sherry and Sam in the morgue on day 3
+	{ GID_PQ4,           725,   725,  0,        "fridgeInset", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When opening the refrigerator at the end of day 4
+	{ GID_PQ4,           725,   725,  0,        "fridgeInset", "dispose",                   NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When exiting the refrigerator at the end of day 4
+	{ GID_PQ4,           735,   735,  0,           "medInset", "dispose",                   NULL,     0, { WORKAROUND_STILLCALL, 1 } }, // When exiting the medicine cabinet at the end of day 4
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
 const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,         "dudeViewer", "show",                       NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when looking at the gene explanation chart, gets called with 1 extra parameter
@@ -721,6 +740,12 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 	{ GID_GK1,           370,   370,  0,        "graceComeOut", "changeState",              NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // there's an extra parameter in GK1, when changing chapters. This extra parameter seems to be a bug or just unimplemented functionality, as there's no visible change from the original in the chapter change room
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kPalVaryMergeStart_workarounds[] = {
+	{ GID_PQ4,           170,   170,  0,             "getHit", "changeState",               NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Three extra parameters passed during the gunfight at the end of day 1
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

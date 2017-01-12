@@ -287,7 +287,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	{ SIG_SCI32,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 	{ SIG_SCI32,           7, MAP_CALL(PalVarySetTarget),          "i",                    NULL },
 	{ SIG_SCI32,           8, MAP_CALL(PalVarySetStart),           "i",                    NULL },
-	{ SIG_SCI32,           9, MAP_CALL(PalVaryMergeStart),         "i",                    NULL },
+	{ SIG_SCI32,           9, MAP_CALL(PalVaryMergeStart),         "i",                    kPalVaryMergeStart_workarounds },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -512,7 +512,7 @@ static const SciKernelMapSubEntry kArray_subops[] = {
 	{ SIG_SCI32,           2, MAP_CALL(ArrayGetElement),           "ri",                   NULL },
 	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri(.*)",               kArraySetElements_workarounds },
 	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "[0r]",                 NULL },
-	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 NULL },
+	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 kArrayFill_workarounds },
 	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
 	// there is no subop 7
 	{ SIG_SCI32,           8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
@@ -531,7 +531,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_THRU_SCI21MID,   2, MAP_CALL(StringGetChar),             "ri",                   NULL },
 	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "ri(i*)",               kArraySetElements_workarounds },
 	{ SIG_THRU_SCI21MID,   4, MAP_CALL(StringFree),                "[0r]",                 NULL },
-	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "rii",                  NULL },
+	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "rii",                  kArrayFill_workarounds },
 	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
 	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "rr(i)",                NULL },
 
@@ -860,7 +860,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "[r!]",              NULL,            NULL },
-	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            kFrameOut_workarounds },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
 	{ MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },

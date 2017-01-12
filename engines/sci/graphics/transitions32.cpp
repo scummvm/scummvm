@@ -319,16 +319,20 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 	if (createNewEntry) {
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
 			switch (entry->type) {
+			case kShowStyleWipeLeft:
+			case kShowStyleWipeRight:
+				configure21EarlyHorizontalWipe(*entry, priority);
+				break;
 			case kShowStyleIrisOut:
 			case kShowStyleIrisIn:
 				configure21EarlyIris(*entry, priority);
-			break;
+				break;
 			case kShowStyleDissolve:
 				configure21EarlyDissolve(*entry, priority, plane->_gameRect);
-			break;
+				break;
 			default:
 				// do nothing
-			break;
+				break;
 			}
 		}
 
@@ -377,6 +381,8 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 			g_sci->_gfxFrameout->deleteScreenItem(*showStyle->bitmapScreenItem);
 		}
 		break;
+	case kShowStyleWipeLeft:
+	case kShowStyleWipeRight:
 	case kShowStyleIrisOut:
 	case kShowStyleIrisIn:
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
@@ -404,6 +410,33 @@ ShowStyleList::iterator GfxTransitions32::deleteShowStyle(const ShowStyleList::i
 	}
 
 	return _showStyles.erase(showStyle);
+}
+
+void GfxTransitions32::configure21EarlyHorizontalWipe(PlaneShowStyle &showStyle, const int16 priority) {
+	showStyle.numEdges = 1;
+	const int divisions = showStyle.divisions;
+	showStyle.screenItems.reserve(divisions);
+
+	CelInfo32 celInfo;
+	celInfo.type = kCelTypeColor;
+	celInfo.color = showStyle.color;
+
+	for (int i = 0; i < divisions; ++i) {
+		Common::Rect rect;
+		rect.left = showStyle.width * i / divisions;
+		rect.top = 0;
+		rect.right = showStyle.width * (i + 1) / divisions;
+		rect.bottom = showStyle.height;
+		showStyle.screenItems.push_back(new ScreenItem(showStyle.plane, celInfo, rect));
+		showStyle.screenItems.back()->_priority = priority;
+		showStyle.screenItems.back()->_fixedPriority = true;
+	}
+
+	if (showStyle.fadeUp) {
+		for (int i = 0; i < divisions; ++i) {
+			g_sci->_gfxFrameout->addScreenItem(*showStyle.screenItems[i]);
+		}
+	}
 }
 
 void GfxTransitions32::configure21EarlyIris(PlaneShowStyle &showStyle, const int16 priority) {
@@ -506,13 +539,23 @@ bool GfxTransitions32::processShowStyle(PlaneShowStyle &showStyle, uint32 now) {
 	case kShowStyleHShutterIn:
 	case kShowStyleVShutterOut:
 	case kShowStyleVShutterIn:
-	case kShowStyleWipeLeft:
-	case kShowStyleWipeRight:
 	case kShowStyleWipeUp:
 	case kShowStyleWipeDown:
 	case kShowStyleDissolveNoMorph:
 	case kShowStyleMorph:
 		return processMorph(showStyle);
+	case kShowStyleWipeLeft:
+		if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+			return processMorph(showStyle);
+		} else {
+			return processWipe(-1, showStyle);
+		}
+	case kShowStyleWipeRight:
+		if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+			return processMorph(showStyle);
+		} else {
+			return processWipe(1, showStyle);
+		}
 	case kShowStyleDissolve:
 		if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
 			return processMorph(showStyle);
@@ -608,11 +651,15 @@ void GfxTransitions32::processVShutterIn(PlaneShowStyle &showStyle) {
 }
 
 void GfxTransitions32::processWipeLeft(PlaneShowStyle &showStyle) {
-	error("WipeLeft is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+		error("WipeLeft is not known to be used by any SCI2.1mid+ game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	}
 }
 
 void GfxTransitions32::processWipeRight(PlaneShowStyle &showStyle) {
-	error("WipeRight is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	if (getSciVersion() > SCI_VERSION_2_1_EARLY) {
+		error("WipeRight is not known to be used by any SCI2.1mid+ game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
+	}
 }
 
 void GfxTransitions32::processWipeUp(PlaneShowStyle &showStyle) {

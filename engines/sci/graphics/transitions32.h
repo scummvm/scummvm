@@ -331,6 +331,12 @@ private:
 	ShowStyleList::iterator deleteShowStyle(const ShowStyleList::iterator &showStyle);
 
 	/**
+	 * Initializes the given PlaneShowStyle for a
+	 * horizontal wipe effect for SCI2 to 2.1early.
+	 */
+	void configure21EarlyHorizontalWipe(PlaneShowStyle &showStyle, const int16 priority);
+
+	/**
 	 * Initializes the given PlaneShowStyle for an
 	 * iris effect for SCI2 to 2.1early.
 	 */
