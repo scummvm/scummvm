@@ -69,7 +69,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"theapartment",
-			"",
+			"D3",
 			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
@@ -78,6 +78,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 		},
 		GID_GENERIC,
 		3
+	},
+	{
+		{
+			"theapartment",
+			"D4",
+			AD_ENTRY1s("Main Menu", "ff86181f03fe6eb060f65a985ca0580d", 160612),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
 	},
 
 	{
