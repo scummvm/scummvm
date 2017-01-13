@@ -227,7 +227,7 @@ BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel) {
 		//pf = Graphics::PixelFormat::PixelFormat(bitsPerPixel / 8, 8, 8, 8, 8, 24, 16, 8, 0);
 		break;
 	}
-	
+
 
 	// HACK: Create a padded surface by adjusting w after create()
 	_surface->create(pitch, h, pf);
@@ -305,29 +305,32 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 			for (x = 0; x < _surface->w;) {
 				switch (_bitsPerPixel) {
 				case 1: {
-					for (int c = 0; c < 8; c++)
-						*((byte *)_surface->getBasePtr(x++, y)) = (pixels[(((y * _surface->w) + x) / 8) + y] & (1 << (7 - c))) ? 0 : 0xff;
+					for (int c = 0; c < 8; c++, x++)
+						*((byte *)_surface->getBasePtr(x, y)) = (pixels[(((y * _surface->w) + x) / 8) + y] & (1 << (7 - c))) ? 0 : 0xff;
 					break;
 				}
 
 				case 8:
 					//this calculation is wrong.. need a demo with colours.
-					*((byte *)_surface->getBasePtr(x++, y)) = 0xff - pixels[(y * _surface->w) + x];
+					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x];
+					x++;
 					break;
 
 				case 16:
-					*((uint16*)_surface->getBasePtr(x++, y)) = _surface->format.RGBToColor(
+					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
 						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
 						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
 						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
 						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					x++;
 					break;
 
 				case 32:
-					*((uint32*)_surface->getBasePtr(x++, y)) = _surface->format.RGBToColor(
+					*((uint32*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
 						pixels[((y * _surface->w) * 3) + x],
 						pixels[(((y * _surface->w) * 3) + (_surface->w)) + x],
 						pixels[(((y * _surface->w) * 3) + (2 * _surface->w)) + x]);
+					x++;
 					break;
 
 				default:
