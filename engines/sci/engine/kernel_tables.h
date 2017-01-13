@@ -930,6 +930,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
+	{ "CheckCDisc", kCheckCD,      SIG_SCI21EARLY, SIGFOR_ALL, "(i)",                 NULL,            NULL },
+	{ "GetSaveCDisc", kGetSavedCD, SIG_SCI21EARLY, SIGFOR_ALL, "",                    NULL,            NULL },
 	{ MAP_CALL(CD),                SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",            kCD_subops,      NULL },
 	{ MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
 	{ MAP_CALL(List),              SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kList_subops,    NULL },
@@ -993,8 +995,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// Unused / debug functions in the in-between SCI2.1 interpreters
 	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(CheckCDisc),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
 	// Used by Phantasmagoria 1, script 64981 (used in the chase scene)

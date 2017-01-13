@@ -220,8 +220,9 @@ reg_t kCheckCD(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetSavedCD(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is wrong, CD number needs to be available prior to
-	// the save game being loaded
+	// Normally this code would read the CD number from the currently loaded
+	// save game file, but since we don't have one of those, just return the
+	// disc number from the resource manager
 	return make_reg(0, g_sci->getResMan()->getCurrentDiscNo());
 }
 
