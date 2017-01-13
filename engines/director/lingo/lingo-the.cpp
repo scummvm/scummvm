@@ -50,6 +50,7 @@ TheEntity entities[] = {
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
+	{ kTheFrameScript,		"frameScript",		false },	//				D4 p
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
@@ -157,17 +158,14 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"volume",		kTheVolume },
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
-	// the number of castmembers
-	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
-
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
 	{ kTheCast,		"filename",		kTheFilename },
 	{ kTheCast,		"height",		kTheHeight },
 	{ kTheCast,		"loaded",		kTheLoaded },
 	{ kTheCast,		"modified",		kTheModified },
-	{ kTheCast,		"name",			kTheName },
-	{ kTheCast,		"number",		kTheNumber },
+	{ kTheCast,		"name",			kTheName },			//		D3 p
+	{ kTheCast,		"number",		kTheNumber },		//		D3 p
 	{ kTheCast,		"rect",			kTheRect },
 	{ kTheCast,		"purgePriority",kThePurgePriority }, // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText },
@@ -190,7 +188,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"depth",		kTheDepth },
 	{ kTheCast,		"regPoint",		kTheRegPoint },
 	{ kTheCast,		"palette",		kThePalette },
-	{ kTheCast,		"picture",		kThePicture },
+	{ kTheCast,		"picture",		kThePicture },		//		D3 p
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
@@ -216,6 +214,7 @@ TheEntityField fields[] = {
 
 	{ kTheMenu,		"name",			kTheName },			//		D3 p
 
+	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
 	{ kTheChars,	"number",		kTheNumber },		//		D3 p
 	{ kTheItems,	"number",		kTheNumber },		//		D3 p
 	{ kTheLines,	"number",		kTheNumber },		//		D3 p

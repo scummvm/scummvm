@@ -48,6 +48,7 @@ enum TheEntityType {
 	kTheFixStageSize,
 	kTheFloatPrecision,
 	kTheFrame,
+	kTheFrameScript,
 	kTheFreeBlock,
 	kTheFreeBytes,
 	kTheFullColorPermit,
