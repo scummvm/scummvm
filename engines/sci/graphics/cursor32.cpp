@@ -291,8 +291,9 @@ void GfxCursor32::readVideo(DrawRegion &target) {
 		copy(target, _vmapRegion);
 	} else {
 		// NOTE: SSCI would read the background for the cursor directly out of
-		// video memory here, but as far as can be determined, this does not
-		// seem to actually be necessary for proper cursor rendering
+		// video memory here, but this is not necessary in ScummVM because mouse
+		// events in ScummVM are polled so can never interrupt the renderer
+		// between frames
 	}
 }
 
