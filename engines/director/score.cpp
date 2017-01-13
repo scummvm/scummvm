@@ -521,6 +521,9 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 			if (!ci->script.empty()) {
 				//the script type here could be wrong!
+				if (ConfMan.getBool("dump_scripts"))
+					dumpScript(ci->script.c_str(), kCastScript, id);
+
 				_lingo->addCode(ci->script.c_str(), kCastScript, id);
 			}
 		}
