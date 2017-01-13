@@ -130,7 +130,7 @@ Common::Error DirectorEngine::run() {
 	if (getPlatform() == Common::kPlatformWindows)
 		_sharedCastFile = "SHARDCST.MMM";
 	else
-		_sharedCastFile = "Shared Cast*";
+		_sharedCastFile = "Shared Cast";
 
 	loadSharedCastsFrom(_sharedCastFile);
 
@@ -153,7 +153,7 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	if (getPlatform() == Common::kPlatformWindows)
 		sharedMMMname = "SHARDCST.MMM";
 	else
-		sharedMMMname = "Shared Cast*";
+		sharedMMMname = "Shared Cast";
 
 
 	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
