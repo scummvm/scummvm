@@ -19,7 +19,7 @@ MODULE_OBJS := \
 	hires4.o \
 	hires5.o \
 	hires6.o \
-	speaker.o
+	sound.o
 
 MODULE_DIRS += \
 	engines/adl

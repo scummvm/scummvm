@@ -53,7 +53,6 @@ namespace Adl {
 class Console;
 class Display;
 class GraphicsMan;
-class Speaker;
 struct AdlGameDescription;
 class ScriptEnv;
 
@@ -347,7 +346,6 @@ protected:
 
 	Display *_display;
 	GraphicsMan *_graphics;
-	Speaker *_speaker;
 
 	// Opcodes
 	typedef Common::Functor1<ScriptEnv &, int> Opcode;

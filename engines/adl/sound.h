@@ -20,28 +20,45 @@
  *
  */
 
-#ifndef ADL_SPEAKER_H
-#define ADL_SPEAKER_H
+#ifndef ADL_SOUND_H
+#define ADL_SOUND_H
 
-#include "common/types.h"
+#include "audio/audiostream.h"
 
-#include "audio/mixer.h"
-
-namespace Audio {
-class AudioStream;
-}
+#include "common/array.h"
+#include "common/frac.h"
 
 namespace Adl {
 
-class Speaker {
-public:
-	Speaker();
-	~Speaker();
+class Speaker;
 
-	void bell(uint count);
+struct Tone {
+	double freq; // Hz
+	double len; // ms
+
+	Tone(double frequency, double length) : freq(frequency), len(length) { }
+};
+
+typedef Common::Array<Tone> Tones;
+
+class Sound : public Audio::AudioStream {
+public:
+	Sound(const Tones &tones);
+	~Sound();
+
+	// AudioStream
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return false; }
+	bool endOfData() const;
+	int getRate() const	{ return _rate; }
 
 private:
-	byte *_bell, *_silence;
+	const Tones &_tones;
+
+	Speaker *_speaker;
+	int _rate;
+	uint _toneIndex;
+	int _samplesRem;
 };
 
 } // End of namespace Adl

@@ -39,14 +39,13 @@
 #include "adl/display.h"
 #include "adl/detection.h"
 #include "adl/graphics.h"
-#include "adl/speaker.h"
+#include "adl/sound.h"
 
 namespace Adl {
 
 AdlEngine::~AdlEngine() {
 	delete _display;
 	delete _graphics;
-	delete _speaker;
 	delete _console;
 	delete _dumpFile;
 }
@@ -56,7 +55,6 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_dumpFile(nullptr),
 		_display(nullptr),
 		_graphics(nullptr),
-		_speaker(nullptr),
 		_isRestarting(false),
 		_isRestoring(false),
 		_isQuitting(false),
@@ -461,7 +459,25 @@ void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 }
 
 void AdlEngine::bell(uint count) const {
-	_speaker->bell(count);
+	Tones tones;
+
+	for (uint i = 0; i < count - 1; ++i) {
+		tones.push_back(Tone(940.0, 100.0));
+		tones.push_back(Tone(0.0, 12.0));
+	}
+
+	tones.push_back(Tone(940.0, 100.0));
+
+	Audio::SoundHandle handle;
+	Audio::AudioStream *stream = new Sound(tones);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+
+	while (!g_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(handle)) {
+		Common::Event event;
+		pollEvent(event);
+		g_system->delayMillis(16);
+	}
 }
 
 const Region &AdlEngine::getRegion(uint i) const {
@@ -644,7 +660,6 @@ Common::Error AdlEngine::run() {
 	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
 
 	_console = new Console(this);
-	_speaker = new Speaker();
 	_display = new Display();
 
 	setupOpcodeTables();
