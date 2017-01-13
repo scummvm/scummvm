@@ -65,7 +65,7 @@ identifier [_[:alpha:]][_[:alnum:]]*
 constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
-operator [-+*/%=^:,()><&]
+operator [-+*/%=^:,()><&\[\]]
 newline [ \t]*[\n\r]
 whitespace [\t ]
 

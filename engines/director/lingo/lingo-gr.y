@@ -436,6 +436,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lingo->c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
+	| '[' arglist ']'			{ $$ = g_lingo->codeArray($2); }
 	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(g_lingo->c_intersects); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(g_lingo->c_within); }
 	| tCHAR expr tOF expr				{ g_lingo->code1(g_lingo->c_charOf); }

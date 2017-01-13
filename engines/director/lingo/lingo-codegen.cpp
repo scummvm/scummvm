@@ -272,6 +272,15 @@ int Lingo::codeConst(int val) {
 	return res;
 }
 
+int Lingo::codeArray(int arraySize) {
+	int res = g_lingo->code1(g_lingo->c_arraypush);
+	inst i = 0;
+	WRITE_UINT32(&i, arraySize);
+	g_lingo->code1(i);
+
+	return res;
+}
+
 void Lingo::codeArg(Common::String *s) {
 	_argstack.push_back(s);
 }

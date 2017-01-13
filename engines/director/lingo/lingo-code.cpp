@@ -55,6 +55,7 @@ static struct FuncDescr {
 } funcDescr[] = {
 	{ 0,					"STOP",			"" },
 	{ Lingo::c_xpop,		"c_xpop",		"" },
+	{ Lingo::c_arraypush,	"c_arraypush",		"i" },
 	{ Lingo::c_printtop,	"c_printtop",	"" },
 	{ Lingo::c_constpush,	"c_constpush",	"i" },
 	{ Lingo::c_voidpush,	"c_voidpush",	"" },
@@ -231,6 +232,21 @@ void Lingo::c_symbolpush() {
 
 	// TODO: FIXME: Must push symbol instead of string
 	g_lingo->push(Datum(new Common::String(s)));
+}
+
+void Lingo::c_arraypush() {
+	Datum d;
+	inst v = (*g_lingo->_currentScript)[g_lingo->_pc++];
+	int arraySize = READ_UINT32(&v);
+
+	warning("STUB: c_arraypush()");
+
+	for (int i = 0; i < arraySize; i++)
+		g_lingo->pop();
+
+	d.u.i = arraySize;
+	d.type = INT;
+	g_lingo->push(d);
 }
 
 void Lingo::c_varpush() {

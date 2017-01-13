@@ -211,6 +211,7 @@ public:
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeConst(int val);
+	int codeArray(int arraySize);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);
@@ -267,6 +268,7 @@ public:
 	static void c_stringpush();
 	static void c_symbolpush();
 	static void c_varpush();
+	static void c_arraypush();
 	static void c_assign();
 	bool verify(Symbol *s);
 	static void c_eval();
