@@ -202,6 +202,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		else
 			sprite._trails = 0;
 
+		sprite._lineSize = (sprite._flags >> 8) & 0x03;
+
 		sprite._castId = stream->readUint16();
 		sprite._startPoint.y = stream->readUint16();
 		sprite._startPoint.x = stream->readUint16();
@@ -217,9 +219,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._unk3 = stream->readUint32();
 		}
 
-		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d] script:%d",
+		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d/%d] script:%d",
 			sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
-			sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height, sprite._scriptId);
+			sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height,
+			sprite._lineSize, sprite._scriptId);
 	}
 }
 
@@ -651,30 +654,38 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 	_drawRects.push_back(fi);
 }
 
-void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
-	Common::Rect r = Common::Rect(_sprites[spriteID]->_startPoint.x,
-		_sprites[spriteID]->_startPoint.y,
-		_sprites[spriteID]->_startPoint.x + _sprites[spriteID]->_width,
-		_sprites[spriteID]->_startPoint.y + _sprites[spriteID]->_height);
+void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
+	Common::Rect r = Common::Rect(_sprites[spriteId]->_startPoint.x,
+		_sprites[spriteId]->_startPoint.y,
+		_sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
+		_sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
 
-	Graphics::Surface tmpSurface;
+	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
-	if (_vm->getVersion() <= 3 && _sprites[spriteID]->_spriteType == 0x0c) {
+	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
 		tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 255); 
 		tmpSurface.frameRect(Common::Rect(r.width(), r.height()), 0);
 		//TODO: don't override, work out how to display correctly.
-		_sprites[spriteID]->_ink = kInkTypeTransparent;
+		_sprites[spriteId]->_ink = kInkTypeTransparent;
 	} else {
-		tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 0);
+		//No minus one on the pattern here! MacPlotData will do that for us!
+		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
+		Common::Rect r(r.width(), r.height());
+		Graphics::drawFilledRect(r, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
 	}
 
-	switch (_sprites[spriteID]->_ink) {
+	if (_sprites[spriteId]->_lineSize > 0) {
+		for (int rr = 0; rr < (_sprites[spriteId]->_lineSize - 1); rr++)
+			tmpSurface.frameRect(Common::Rect(rr, rr, r.width() - (rr * 2), r.height() - (rr * 2)), 0);
+	}
+
+	switch (_sprites[spriteId]->_ink) {
 	case kInkTypeCopy:
-		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y));
+		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y));
 		break;
 	case kInkTypeTransparent:
 		// FIXME: is it always white (last entry in pallette)?
-		surface.transBlitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y), _vm->getPaletteColorCount() - 1);
+		surface.transBlitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y), _vm->getPaletteColorCount() - 1);
 		break;
 	case kInkTypeBackgndTrans:
 		drawBackgndTransSprite(surface, tmpSurface, r);
@@ -689,19 +700,19 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteID) {
 		drawReverseSprite(surface, tmpSurface, r);
 		break;
 	default:
-		warning("Unhandled ink type %d", _sprites[spriteID]->_ink);
-		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteID]->_startPoint.x, _sprites[spriteID]->_startPoint.y));
+		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
+		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y));
 		break;
 	}
 
-	addDrawRect(spriteID, r);
+	addDrawRect(spriteId, r);
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
 	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), true);
 
-	uint16 castID = _sprites[spriteId]->_castId;
-	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castID]);
+	uint16 castId = _sprites[spriteId]->_castId;
+	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castId]);
 
 	uint32 rectLeft = button->initialRect.left;
 	uint32 rectTop = button->initialRect.top;
@@ -799,13 +810,13 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 }
 
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, uint16 castID) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId) {
 	Common::SeekableSubReadStreamEndian *textStream = NULL;
 
-	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castID)) {
-		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castID);
+	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
+		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
 	} else if (_vm->getSharedSTXT() != nullptr) {
-		textStream = _vm->getSharedSTXT()->getVal(spriteID + 1024);
+		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
 	}
 
 	byte buf[1024];
@@ -813,15 +824,15 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, uint1
 	textStream->seek(0);
 	Common::hexdump(buf, textStream->size());
 
-	renderText(surface, spriteID, textStream, false);
+	renderText(surface, spriteId, textStream, false);
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
 	if (textStream == NULL)
 		return;
 
-	uint16 castID = _sprites[spriteID]->_castId;
-	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castID]);
+	uint16 castId = _sprites[spriteId]->_castId;
+	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castId]);
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -866,14 +877,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 	//uint32 rectLeft = textCast->initialRect.left;
 	//uint32 rectTop = textCast->initialRect.top;
 
-	int x = _sprites[spriteID]->_startPoint.x; // +rectLeft;
-	int y = _sprites[spriteID]->_startPoint.y; // +rectTop;
+	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
+	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
 
-	int height = _sprites[spriteID]->_height;
+	int height = _sprites[spriteId]->_height;
 	if (_vm->getVersion() >= 4 && !isButtonLabel) height = textCast->initialRect.bottom;
 	height += textShadow;
 
-	int width = _sprites[spriteID]->_width;
+	int width = _sprites[spriteId]->_width;
 	if (_vm->getVersion() >= 4 && !isButtonLabel) width = textCast->initialRect.right;
 
 	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
@@ -911,7 +922,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 		if (textShadow > 0) {
 			if (borderSize == 0) textX += 1;
 			font->drawString(&surface, text, textX + textShadow, textY + textShadow,
-				width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+				width, (_sprites[spriteId]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 			height -= textShadow;
 		}
 	} else {
@@ -920,7 +931,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID, Commo
 
 	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
 	font->drawString(&surface, text, textX, textY,
-					 width, (_sprites[spriteID]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+					 width, (_sprites[spriteId]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 
 	if (isButtonLabel)
 		return;

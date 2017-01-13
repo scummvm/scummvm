@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	detection.o \
 	director.o \
 	frame.o \
+	graphics.o \
 	images.o \
 	movie.o \
 	resource.o \

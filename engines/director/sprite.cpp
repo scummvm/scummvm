@@ -38,7 +38,7 @@ Sprite::Sprite() {
 	_constraint = 0;
 	_moveable = 0;
 	_castId = 0;
-	_backColor = 0;
+	_backColor = 255;
 	_foreColor = 0;
 	_left = 0;
 	_right = 0;

@@ -70,9 +70,10 @@ struct MacPlotData {
 	MacPatterns *patterns;
 	uint fillType;
 	int thickness;
+	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
-		surface(s), patterns(p), fillType(f), thickness(t) {
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg = kColorWhite) :
+		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
 	}
 };
 

@@ -323,6 +323,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
+		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
 
 		delete str;

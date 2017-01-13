@@ -34,7 +34,8 @@ class MacResManager;
 }
 
 namespace Graphics {
-class MacWindowManager;
+class MacWindowManager; 
+typedef Common::Array<byte *> MacPatterns;
 }
 
 namespace Director {
@@ -82,6 +83,8 @@ public:
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
+	void loadPatterns();
+	Graphics::MacPatterns &getPatterns();
 
 	void loadMainArchive();
 	Archive *createArchive();
@@ -133,6 +136,9 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
+
+	Graphics::MacPatterns _director3Patterns;
+	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::String _sharedCastFile;
 

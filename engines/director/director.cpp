@@ -51,6 +51,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Setup mixer
 	syncSoundSettings();
 
+	// Load Patterns
+	loadPatterns();
+
 	_sharedCasts = nullptr;
 
 	_currentScore = nullptr;

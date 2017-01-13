@@ -232,7 +232,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 
 			*((byte *)p->surface->getBasePtr(xu, yu)) =
 				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-					color : kColorWhite;
+					color : p->bgColor;
 		}
 	} else {
 		int x1 = x;
@@ -247,7 +247,7 @@ void macDrawPixel(int x, int y, int color, void *data) {
 					uint yu = (uint)y;
 					*((byte *)p->surface->getBasePtr(xu, yu)) =
 						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-							color : kColorWhite;
+							color : p->bgColor;
 				}
 	}
 }
