@@ -1274,6 +1274,35 @@ void ScummEngine_v2::o2_putActorInRoom() {
 
 		a->putActor(0, 0, 0);
 	}
+
+	// WORKAROUND bug #2285: Caponians dont disguise after using blue crystal
+	// This is for a game scripting oversight.
+	// After first using the blue crystal, a cutscene of the two Caponians plays (script-96),
+	// locking object 344 (which prevents the cutscene playing again) and setting Var[245] to 0x18.
+	// script-5 uses this variable to set the Caponian costume
+	// On first apperance after using the blue crystal, the Caponians now will have the disguise on
+	//
+	// If you visit the spacecraft and ring the doorbell, Var[245] will be set to 0x1C (Disguise off)
+	// Using the blue crystal again, will result in the Caponian appearing without his disguise
+	// as Var[245] is never set back to 0x18. This WORKAROUND fixes the problem by ensuring
+	// Var[245] is set to have the Disguise on in most situations
+	//
+	// We don't touch the variable in the following situations
+	//  If the Caponian is being put into the space ship room, or the current room is the 
+	//  space ship and the Caponian is being put into the backroom of the telephone company (you didnt show your fan club card)
+	if (_game.id == GID_ZAK && _game.version <= 2 && act == 7) {
+		// Is script-96 cutscene done
+		if ((getState(344) & kObjectStateLocked)) {
+			// Not 'putting' in the space ship
+			if (room != 10) {
+				// not putting in telephone back room, and not in space ship
+				if (room != 16 && _currentRoom != 10) {
+					// Set caponian costume to 'disguise on'
+					writeVar(245, 0x18);
+				}
+			}
+		}
+	}
 }
 
 void ScummEngine_v2::o2_getActorElevation() {
