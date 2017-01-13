@@ -42,7 +42,7 @@ bool CMaitreDRightArm::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
 	CActMsg actMsg("LoseArm");
 	actMsg.execute("MaitreDBody");
 	actMsg.execute("MaitreD Arm Holder");
-	_fieldE0 = 1;
+	_canTake = true;
 	return true;
 }
 

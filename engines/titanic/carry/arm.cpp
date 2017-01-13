@@ -84,7 +84,7 @@ void CArm::load(SimpleFile *file) {
 
 bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 	_field138 = 0;
-	_fieldE0 = 1;
+	_canTake = true;
 
 	CString name = getName();
 	if (name == "Arm1") {
@@ -137,7 +137,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 }
 
 bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!_fieldE0) {
+	if (!_canTake) {
 		CShowTextMsg textMsg(YOU_CANT_GET_THIS);
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
@@ -178,7 +178,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 	}
 
 	_field158 = 1;
-	_fieldE0 = 1;
+	_canTake = true;
 	return true;
 }
 

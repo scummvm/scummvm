@@ -388,7 +388,7 @@ bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 		CCarry *item = dynamic_cast<CCarry *>(getRoot()->findByName(_string2));
 		if (item) {
-			item->_fieldE0 = 1;
+			item->_canTake = true;
 			CPassOnDragStartMsg passMsg;
 			passMsg._mousePos = msg->_mousePos;
 			passMsg.execute(item);

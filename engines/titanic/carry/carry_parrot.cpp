@@ -93,7 +93,7 @@ bool CCarryParrot::IsParrotPresentMsg(CIsParrotPresentMsg *msg) {
 bool CCarryParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_visible) {
 		setVisible(false);
-		_fieldE0 = 0;
+		_canTake = false;
 		CParrot::_state = PARROT_ESCAPED;
 	}
 
@@ -109,7 +109,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 &&
 				!CParrot::_v2 && !CCage::_open) {
 			setVisible(false);
-			_fieldE0 = 0;
+			_canTake = false;
 			CTreeItem *perchedParrot = findUnder(getRoot(), "PerchedParrot");
 			detach();
 			addUnder(perchedParrot);
@@ -119,7 +119,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			backMsg.execute(perchedParrot);
 		} else {
 			setVisible(false);
-			_fieldE0 = 0;
+			_canTake = false;
 			CParrot::_state = PARROT_ESCAPED;
 			playSound("z#475.wav");
 			sound8(true);
@@ -135,7 +135,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			charMsg.execute(this, nullptr, 0);
 		} else {
 			setVisible(false);
-			_fieldE0 = 0;
+			_canTake = false;
 			playSound("z#475.wav");
 			sound8(true);
 			moveUnder(findRoom());
@@ -168,7 +168,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	if (npc)
 		startTalking(npc, 0x446BF);
 
-	_fieldE0 = 0;
+	_canTake = false;
 	playSound("z#475.wav");
 	moveUnder(findRoom());
 	CParrot::_state = PARROT_ESCAPED;
@@ -181,7 +181,7 @@ bool CCarryParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	loadSurface();
 	CCarryParrot *parrot = dynamic_cast<CCarryParrot *>(getRoot()->findByName("CarryParrot"));
 	if (parrot)
-		parrot->_fieldE0 = 0;
+		parrot->_canTake = false;
 
 	return true;
 }
@@ -201,7 +201,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 			startTalking(npc, 0x446BF);
 
 		setVisible(false);
-		_fieldE0 = 0;
+		_canTake = false;
 
 		if (CParrot::_state == PARROT_4) {
 			playSound("z#475.wav");

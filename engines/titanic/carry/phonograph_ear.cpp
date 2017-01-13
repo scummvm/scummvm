@@ -43,7 +43,7 @@ void CPhonographEar::load(SimpleFile *file) {
 }
 
 bool CPhonographEar::CorrectMusicPlayedMsg(CCorrectMusicPlayedMsg *msg) {
-	_fieldE0 = true;
+	_canTake = true;
 	return true;
 }
 
