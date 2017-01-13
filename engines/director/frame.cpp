@@ -846,23 +846,21 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
-	if (_vm->getVersion() >= 4) {
-		uint16 a = textStream->readUint16();
-		uint32 b = textStream->readUint32();
-		uint16 c = textStream->readUint16();
-		uint16 d = textStream->readUint16();
+	uint16 a = textStream->readUint16();
+	uint32 b = textStream->readUint32();
+	uint16 c = textStream->readUint16();
+	uint16 d = textStream->readUint16();
 
-		debugC(3, kDebugText, "text: a: %x b: %x c: %x d: %x", a, b, c, d);
+	debugC(3, kDebugText, "text: a: %x b: %x c: %x d: %x", a, b, c, d);
 
-		textCast->fontId = textStream->readUint16();
-		textCast->textSlant = textStream->readByte();
-		textStream->readByte();
-		textCast->fontSize = textStream->readUint16();
+	textCast->fontId = textStream->readUint16();
+	textCast->textSlant = textStream->readByte();
+	textStream->readByte();
+	textCast->fontSize = textStream->readUint16();
 
-		textCast->palinfo1 = textStream->readUint16();
-		textCast->palinfo2 = textStream->readUint16();
-		textCast->palinfo3 = textStream->readUint16();
-	}
+	textCast->palinfo1 = textStream->readUint16();
+	textCast->palinfo2 = textStream->readUint16();
+	textCast->palinfo3 = textStream->readUint16();
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
@@ -886,39 +884,61 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
 		// Override
-		macFont.setName(_vm->_currentScore->_fontMap[textCast->fontId]);
+		//macFont.setName(_vm->_currentScore->_fontMap[textCast->fontId]);
+		//TODO: this still needs to take font style and size into account!
 	}
 
 	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
 
+	height = font->getFontHeight();
+
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
 	int alignment = (int)textCast->textAlign;
-	if (alignment == -1) alignment = 3;
-	else alignment++;
+	if (alignment == -1) 
+		alignment = 3;
+	else 
+		alignment++;
 
 	uint16 textX = x, textY = y;
 	if (!isButtonLabel) {
 		if (borderSize > 0) {
+			if (_vm->getVersion() <= 3)
+				height++;
+			else
+				height += borderSize;
+
 			textX += (borderSize + 1);
 			textY += borderSize;
-		}
+		} else
+			textX += 1;
 
 		if (padding > 0) {
 			width += padding * 2;
 			height += padding;
-			if (textCast->textAlign == kTextAlignLeft) textX += padding;
-			else if (textCast->textAlign == kTextAlignRight) textX -= (padding + 1);
+
+			if (textCast->textAlign == kTextAlignLeft) 
+				textX += padding;
+			else if (textCast->textAlign == kTextAlignRight) 
+				textX -= padding;
+
 			//TODO: alignment issue with odd-size-width center-aligned text
 			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) textX--;
+			
 			textY += padding / 2;
 		}
 
+		if (textCast->textAlign == kTextAlignRight) 
+			textX -= 1;
+
 		if (textShadow > 0) {
-			if (borderSize == 0) textX += 1;
+			if (borderSize == 0 && _vm->getVersion() > 3) 
+				textX += 1;
+
 			font->drawString(&surface, text, textX + textShadow, textY + textShadow,
 				width, (_sprites[spriteId]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
-			height -= textShadow;
+			if (_vm->getVersion() > 3)
+				height -= (textShadow - 1);
 		}
 	} else {
 		textY += 2;
