@@ -151,6 +151,17 @@
 	#if !defined(__SYMBIAN32__)
 	#include <new>
 	#endif
+
+	/**
+	 * Generates a compile-time assertion.
+	 *
+	 * @param expression An expression that can be evaluated at compile time.
+	 * @param message An underscore-delimited message to be presented at compile
+	 * time if the expression evaluates to false.
+	 */
+	#define STATIC_ASSERT(expression, message) \
+		extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
+		(void)(STATIC_ASSERT_##message);
 #endif
 
 // The following math constants are usually defined by the system math.h header, but
