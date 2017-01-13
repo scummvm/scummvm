@@ -300,19 +300,24 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 			stream.readUint16BE();
 	}
 
+	int offset = 0;
+	if (_surface->w < (pixels.size() / _surface->h)) 
+		offset = (pixels.size() / _surface->h) - _surface->w;
+
 	if (pixels.size() > 0) {
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->w;) {
 				switch (_bitsPerPixel) {
 				case 1: {
-					for (int c = 0; c < 8; c++, x++)
-						*((byte *)_surface->getBasePtr(x, y)) = (pixels[(((y * _surface->w) + x) / 8) + y] & (1 << (7 - c))) ? 0 : 0xff;
+					for (int c = 0; c < 8; c++, x++) {
+						*((byte *)_surface->getBasePtr(x, y)) = (pixels[(((y * _surface->pitch) + x) / 8)] & (1 << (7 - c))) ? 0 : 0xff;
+					}
 					break;
 				}
 
 				case 8:
 					//this calculation is wrong.. need a demo with colours.
-					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x];
+					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x + (y * offset)];
 					x++;
 					break;
 

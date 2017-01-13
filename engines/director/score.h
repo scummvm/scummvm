@@ -75,6 +75,7 @@ public:
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
+	Graphics::ManagedSurface *getSurface() { return _surface; }
 
 private:
 	void update();

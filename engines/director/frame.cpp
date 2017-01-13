@@ -819,11 +819,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint1
 		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
 	}
 
-	byte buf[1024];
-	textStream->read(buf, textStream->size());
-	textStream->seek(0);
-	Common::hexdump(buf, textStream->size());
-
 	renderText(surface, spriteId, textStream, false);
 }
 
