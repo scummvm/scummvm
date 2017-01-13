@@ -192,11 +192,19 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 
 void Lingo::cleanLocalVars() {
 	// Clean up current scope local variables and clean up memory
+	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _localvars->size());
+
 	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
-		if (!h->_value->global)
-			delete h->_value;
+		if (!h->_value->global) {
+			Symbol *sym = h->_value;
+			free(sym->name);
+			delete sym;
+		}
 	}
+
 	delete g_lingo->_localvars;
+
+	g_lingo->_localvars = 0;
 }
 
 void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
