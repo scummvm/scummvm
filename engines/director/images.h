@@ -83,7 +83,7 @@ private:
 
 class BITDDecoderV4 : public Image::ImageDecoder {
 public:
-	BITDDecoderV4(int w, int h);
+	BITDDecoderV4(int w, int h, uint16 bitsPerPixel);
 	virtual ~BITDDecoderV4();
 
 	// ImageDecoder API
@@ -98,6 +98,7 @@ private:
 	Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;
+	uint16 _bitsPerPixel;
 };
 
 } // End of namespace Director

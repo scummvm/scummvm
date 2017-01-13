@@ -205,7 +205,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 * BITD V4+
 ****************************/
 
-BITDDecoderV4::BITDDecoderV4(int w, int h) {
+BITDDecoderV4::BITDDecoderV4(int w, int h, uint16 bitsPerPixel) {
 	_surface = new Graphics::Surface();
 
 	// We make the surface pitch a multiple of 16.
@@ -213,8 +213,24 @@ BITDDecoderV4::BITDDecoderV4(int w, int h) {
 	if (w % 16)
 		pitch += 16 - (w % 16);
 
+	Graphics::PixelFormat pf = Graphics::PixelFormat::createFormatCLUT8();
+	switch (bitsPerPixel) {
+	case 2:
+		break;
+	case 4:
+		break;
+	case 8:
+		break;
+	case 16:
+		break;
+	case 32:
+		//pf = Graphics::PixelFormat::PixelFormat(bitsPerPixel / 8, 8, 8, 8, 8, 24, 16, 8, 0);
+		break;
+	}
+	
+
 	// HACK: Create a padded surface by adjusting w after create()
-	_surface->create(pitch, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->create(pitch, h, pf);
 	_surface->w = w;
 
 	_palette = new byte[256 * 3];
@@ -223,6 +239,8 @@ BITDDecoderV4::BITDDecoderV4(int w, int h) {
 	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
 
 	_paletteColorCount = 2;
+
+	_bitsPerPixel = bitsPerPixel;
 }
 
 BITDDecoderV4::~BITDDecoderV4() {
@@ -260,7 +278,6 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	Common::Array<int> pixels;
-	pixels.reserve(4096);
 
 	while (!stream.eos()) {
 		int data = stream.readByte();
@@ -279,40 +296,45 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 				pixels.push_back(data);
 			}
 		}
-		//if (bpp == 32 && pixels.Count % (w * 3) == 0)
-		//	source += 2;
+		if (_bitsPerPixel == 32 && pixels.size() % (_surface->w * 3) == 0)
+			stream.readUint16BE();
 	}
 
 	if (pixels.size() > 0) {
-		//this needs to be calculated a lot earlier!
-		int bpp = pixels.size() / (_surface->w * _surface->h);
-		switch (bpp) {
-		case 1:
-			for (uint pix = 0; pix < pixels.size(); pix++) {
-				//this calculation is wrong.. need a demo with colours.
-				*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[pix];
-				x++;
-				if (x == _surface->w) {
-					y++;
-					x = 0;
+		for (y = 0; y < _surface->h; y++) {
+			for (x = 0; x < _surface->w;) {
+				switch (_bitsPerPixel) {
+				case 1: {
+					for (int c = 0; c < 8; c++)
+						*((byte *)_surface->getBasePtr(x++, y)) = (pixels[(((y * _surface->w) + x) / 8) + y] & (1 << (7 - c))) ? 0 : 0xff;
+					break;
+				}
+
+				case 8:
+					//this calculation is wrong.. need a demo with colours.
+					*((byte *)_surface->getBasePtr(x++, y)) = 0xff - pixels[(y * _surface->w) + x];
+					break;
+
+				case 16:
+					*((uint16*)_surface->getBasePtr(x++, y)) = _surface->format.RGBToColor(
+						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					break;
+
+				case 32:
+					*((uint32*)_surface->getBasePtr(x++, y)) = _surface->format.RGBToColor(
+						pixels[((y * _surface->w) * 3) + x],
+						pixels[(((y * _surface->w) * 3) + (_surface->w)) + x],
+						pixels[(((y * _surface->w) * 3) + (2 * _surface->w)) + x]);
+					break;
+
+				default:
+					x++;
+					break;
 				}
 			}
-			break;
-		/*
-		case 32:
-			SetPixel(x, y, Color.FromArgb(
-			pixels[((y * dxr.nodes[c].w) * 3) + x],
-			pixels[(((y * dxr.nodes[c].w) * 3) + (dxr.nodes[c].w)) + x],
-			pixels[(((y * dxr.nodes[c].w) * 3) + (2 * dxr.nodes[c].w)) + x]));
-			break;
-		case 16:
-			SetPixel(x, y, Color.FromArgb(
-			(pixels[((y * dxr.nodes[c].w) * 2) + x] & 0x7c) << 1,
-			(pixels[((y * dxr.nodes[c].w) * 2) + x] & 0x03) << 6 |
-			(pixels[((y * dxr.nodes[c].w) * 2) + (dxr.nodes[c].w) + x] & 0xe0) >> 2,
-			(pixels[((y * dxr.nodes[c].w) * 2) + (dxr.nodes[c].w) + x] & 0x1f) << 3));
-			break;
-		*/
 		}
 	}
 

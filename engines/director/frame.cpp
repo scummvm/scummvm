@@ -788,7 +788,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
-			img = new BITDDecoderV4(w, h);
+			img = new BITDDecoderV4(w, h, bc->bitsPerPixel);
 		} else {
 			img = new Image::BitmapDecoder();
 		}

@@ -49,6 +49,9 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		regX = stream.readUint16();
 		regY = stream.readUint16();
 
+		bitsPerPixel = stream.readUint16();
+		if (bitsPerPixel == 0) bitsPerPixel = 1;
+
 		int tail = 0;
 
 		while (!stream.eos()) {
