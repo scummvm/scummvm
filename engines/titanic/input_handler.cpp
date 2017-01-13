@@ -132,7 +132,7 @@ void CInputHandler::processMessage(CMessage *msg) {
 
 					if (_dragItem) {
 						CMouseDragMoveMsg moveMsg(_dragStartPos);
-						dispatchMessage(&moveMsg);
+						moveMsg.execute(_dragItem);
 					}
 
 					_dragging = true;
