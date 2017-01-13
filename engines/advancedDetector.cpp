@@ -397,7 +397,9 @@ bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const F
 
 		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
 		fileProps.size = macResMan.getResForkDataSize();
-		return true;
+
+		if (fileProps.size != 0)
+			return true;
 	}
 
 	if (!allFiles.contains(fname))
