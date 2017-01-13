@@ -2001,32 +2001,31 @@ void EdenGame::moveDino(perso_t *perso) {
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
-		if (canMoveThere(dir2, perso))
-			goto ok;
-		dir2 = *dirs++;
-		if (dir2 & 0x80)
-			dir2 = -(dir2 & ~0x80);
-		dir2 += loc;
-		if (canMoveThere(dir2, perso))
-			goto ok;
-		dir2 = *dirs++;
-		if (dir2 & 0x80)
-			dir2 = -(dir2 & ~0x80);
-		dir2 += loc;
-		if (canMoveThere(dir2, perso))
-			goto ok;
-		dir2 = *dirs++;
-		if (dir2 & 0x80)
-			dir2 = -(dir2 & ~0x80);
-		dir2 += loc;
-		if (canMoveThere(dir2, perso))
-			goto ok;
-		dir2 = perso->_lastLoc;
-		perso->_lastLoc = 0;
-		if (!canMoveThere(dir2, perso))
-			return;
-	ok:
-		;
+		if (!canMoveThere(dir2, perso)) {
+			dir2 = *dirs++;
+			if (dir2 & 0x80)
+				dir2 = -(dir2 & ~0x80);
+			dir2 += loc;
+			if (!canMoveThere(dir2, perso)) {
+				dir2 = *dirs++;
+				if (dir2 & 0x80)
+					dir2 = -(dir2 & ~0x80);
+				dir2 += loc;
+				if (!canMoveThere(dir2, perso)) {
+					dir2 = *dirs++;
+					if (dir2 & 0x80)
+						dir2 = -(dir2 & ~0x80);
+					dir2 += loc;
+					if (!canMoveThere(dir2, perso)) {
+						dir2 = perso->_lastLoc;
+						perso->_lastLoc = 0;
+						if (!canMoveThere(dir2, perso))
+							return;
+					}
+				}
+			}
+		}
+
 		perso->_lastLoc = perso->_roomNum & 0xFF;
 		perso->_roomNum &= ~0xFF;
 		perso->_roomNum |= dir2 & 0xFF;
