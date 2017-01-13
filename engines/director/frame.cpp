@@ -655,28 +655,28 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
-	Common::Rect r = Common::Rect(_sprites[spriteId]->_startPoint.x,
+	Common::Rect shapeRect = Common::Rect(_sprites[spriteId]->_startPoint.x,
 		_sprites[spriteId]->_startPoint.y,
 		_sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
 		_sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
 
 	Graphics::ManagedSurface tmpSurface;
-	tmpSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
+	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
 	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
-		tmpSurface.fillRect(Common::Rect(r.width(), r.height()), 255); 
-		tmpSurface.frameRect(Common::Rect(r.width(), r.height()), 0);
+		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), 255);
+		tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
 		//TODO: don't override, work out how to display correctly.
 		_sprites[spriteId]->_ink = kInkTypeTransparent;
 	} else {
 		//No minus one on the pattern here! MacPlotData will do that for us!
 		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
-		Common::Rect r(r.width(), r.height());
-		Graphics::drawFilledRect(r, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
+		Common::Rect fillRect(shapeRect.width(), shapeRect.height());
+		Graphics::drawFilledRect(fillRect, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
 	}
 
 	if (_sprites[spriteId]->_lineSize > 0) {
 		for (int rr = 0; rr < (_sprites[spriteId]->_lineSize - 1); rr++)
-			tmpSurface.frameRect(Common::Rect(rr, rr, r.width() - (rr * 2), r.height() - (rr * 2)), 0);
+			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
 	}
 
 	switch (_sprites[spriteId]->_ink) {
@@ -688,16 +688,16 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		surface.transBlitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y), _vm->getPaletteColorCount() - 1);
 		break;
 	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(surface, tmpSurface, r);
+		drawBackgndTransSprite(surface, tmpSurface, shapeRect);
 		break;
 	case kInkTypeMatte:
-		drawMatteSprite(surface, tmpSurface, r);
+		drawMatteSprite(surface, tmpSurface, shapeRect);
 		break;
 	case kInkTypeGhost:
-		drawGhostSprite(surface, tmpSurface, r);
+		drawGhostSprite(surface, tmpSurface, shapeRect);
 		break;
 	case kInkTypeReverse:
-		drawReverseSprite(surface, tmpSurface, r);
+		drawReverseSprite(surface, tmpSurface, shapeRect);
 		break;
 	default:
 		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
@@ -705,7 +705,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	}
 
-	addDrawRect(spriteId, r);
+	addDrawRect(spriteId, shapeRect);
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
