@@ -560,6 +560,12 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kDoAudioResume_workarounds[] = {
+	{ GID_HOYLE5,         -1,    17,  0,                 NULL, "startAudio",                NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when a character talks during a game
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kDoSoundPlay_workarounds[] = {
 	{ GID_LSL6HIRES,    -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // always passes an extra null argument
 	{ GID_QFG4,         -1,  64989,   0,          NULL,          "play",                    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // always passes an extra null argument

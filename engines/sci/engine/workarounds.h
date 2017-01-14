@@ -68,6 +68,7 @@ extern const SciWorkaroundEntry kDeviceInfo_workarounds[];
 extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDirLoop_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
+extern const SciWorkaroundEntry kDoAudioResume_workarounds[];
 extern const SciWorkaroundEntry kDoSoundPlay_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kFileIOOpen_workarounds[];

@@ -225,7 +225,7 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)(i)(i)", NULL },
 	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)",      NULL },
 	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)",      NULL },
-	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      kDoAudioResume_workarounds },
 	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)",      NULL },
 	{ SIG_SCI32,           7, MAP_CALL(DoAudioRate),               "(i)",                  NULL },
 	{ SIG_SCI32,           8, MAP_CALL(DoAudioVolume),             "(i)(i)(i)(i)(i)(i)",   NULL },
