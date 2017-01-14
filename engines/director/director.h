@@ -34,7 +34,7 @@ class MacResManager;
 }
 
 namespace Graphics {
-class MacWindowManager; 
+class MacWindowManager;
 typedef Common::Array<byte *> MacPatterns;
 }
 
@@ -121,8 +121,6 @@ private:
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac();
-
-	Common::String readPascalString(Common::SeekableReadStream &stream);
 
 	Common::HashMap<int, Cast *> *_sharedCasts;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;

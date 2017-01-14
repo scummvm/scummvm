@@ -87,8 +87,8 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	stream->skip(5); // unknown
 
 	stream->readUint32LE(); // Main MMM size
-	Common::String mmmFileName = readPascalString(*stream);
-	Common::String directoryName = readPascalString(*stream);
+	Common::String mmmFileName = stream->readPascalString();
+	Common::String directoryName = stream->readPascalString();
 
 	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
 	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());

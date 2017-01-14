@@ -183,16 +183,6 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stream) {
-	byte length = stream.readByte();
-	Common::String x;
-
-	while (length--)
-		x += (char)stream.readByte();
-
-	return x;
-}
-
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPalette = palette;
 	_currentPaletteLength = count;
