@@ -209,9 +209,9 @@ public:
 		TS_ASSERT_EQUALS((it + 5).getInt16LE(), -255);
 		TS_ASSERT_EQUALS((it + 5).getUint16LE(), 65281U);
 		TS_ASSERT_EQUALS(it.getUint24LE(), 131583U);
-#ifdef SCUMM_LITTLE_ENDIAN
+#if defined(SCUMM_LITTLE_ENDIAN)
 		TS_ASSERT_EQUALS((it + 3).getUint32(), 4278256131U);
-#elif SCUMM_BIG_ENDIAN
+#elif defined(SCUMM_BIG_ENDIAN)
 		TS_ASSERT_EQUALS(it.getUint32(), 4278256131U);
 #else
 #error No endianness detected
@@ -480,9 +480,9 @@ public:
 		TS_ASSERT_EQUALS(span.getInt32LEAt(3), -16711165);
 		TS_ASSERT_EQUALS(span.getUint32LEAt(3), 4278256131U);
 
-#ifdef SCUMM_LITTLE_ENDIAN
+#if defined(SCUMM_LITTLE_ENDIAN)
 		TS_ASSERT_EQUALS(span.getUint32At(3), 4278256131U);
-#elif SCUMM_BIG_ENDIAN
+#elif defined(SCUMM_BIG_ENDIAN)
 		TS_ASSERT_EQUALS(span.getUint32At(0), 4278256131U);
 #else
 #error No endianness detected
@@ -529,9 +529,9 @@ public:
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0, 2).size(), 1U);
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0, 2).byteSize(), 2U);
 
-#ifdef SCUMM_LITTLE_ENDIAN
+#if defined(SCUMM_LITTLE_ENDIAN)
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0)[1], 4 << 8 | 3);
-#elif SCUMM_BIG_ENDIAN
+#elif defined(SCUMM_BIG_ENDIAN)
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0)[1], 3 << 8 | 4);
 #else
 #error No endianness detected
@@ -559,9 +559,9 @@ public:
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0, 2).size(), 1U);
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0, 2).byteSize(), 2U);
 
-#ifdef SCUMM_LITTLE_ENDIAN
+#if defined(SCUMM_LITTLE_ENDIAN)
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0)[1], 4 << 8 | 3);
-#elif SCUMM_BIG_ENDIAN
+#elif defined(SCUMM_BIG_ENDIAN)
 			TS_ASSERT_EQUALS(span.subspan<uint16>(0)[1], 3 << 8 | 4);
 #else
 #error No endianness detected
