@@ -296,7 +296,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
 	if (res != NULL) {
-		Common::StringArray *menu = Graphics::Menu::readMenuFromResource(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_aboutMenuItemName.clear();
 		Common::String string = menu->operator[](1);
 
@@ -308,7 +308,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
 	if (res != NULL) {
-		Common::StringArray *menu = Graphics::Menu::readMenuFromResource(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
 		_commandsMenu = menu->operator[](1);
 		delete menu;
@@ -316,7 +316,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
 	if (res != NULL) {
-		Common::StringArray *menu = Graphics::Menu::readMenuFromResource(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_weaponsMenuName = menu->operator[](0);
 		delete menu;
 		delete res;

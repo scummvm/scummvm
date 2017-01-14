@@ -183,7 +183,7 @@ private: // Attributes
 	Graphics::MacWindow *_exitsWindow;
 	Graphics::MacWindow *_diplomaWindow;
 	Common::Array<Graphics::MacWindow*> _inventoryWindows;
-	Graphics::Menu *_menu;
+	Graphics::MacMenu *_menu;
 	Dialog *_dialog;
 
 	Container *_graphics;

@@ -68,7 +68,7 @@ enum {
 
 const bool kLoadStaticMenus = true;
 
-static const Graphics::MenuData menuSubItems[] = {
+static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuHighLevel,	"File",				0, 0, false },
 	{ kMenuHighLevel,	"Edit",				0, 0, false },
 	{ kMenuHighLevel,	"Special",			0, 0, false },

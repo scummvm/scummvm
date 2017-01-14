@@ -61,7 +61,7 @@ enum {
 };
 
 
-struct MenuSubItem {
+struct MacMenuSubItem {
 	Common::String text;
 	int action;
 	int style;
@@ -69,21 +69,21 @@ struct MenuSubItem {
 	bool enabled;
 	Common::Rect bbox;
 
-	MenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), action(a), style(s), shortcut(sh), enabled(e) {}
+	MacMenuSubItem(const char *t, int a, int s = 0, char sh = 0, bool e = true) : text(t), action(a), style(s), shortcut(sh), enabled(e) {}
 };
 
-typedef Common::Array<MenuSubItem *> SubItemArray;
+typedef Common::Array<MacMenuSubItem *> SubItemArray;
 
-struct MenuItem {
+struct MacMenuItem {
 	Common::String name;
 	SubItemArray subitems;
 	Common::Rect bbox;
 	Common::Rect subbbox;
 
-	MenuItem(const char *n) : name(n) {}
+	MacMenuItem(const char *n) : name(n) {}
 };
 
-Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
+MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
 	_font = getMenuFont();
 
@@ -104,7 +104,7 @@ Menu::Menu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_tempSurface.create(_screen.w, _font->getFontHeight(), PixelFormat::createFormatCLUT8());
 }
 
-Menu::~Menu() {
+MacMenu::~MacMenu() {
 	for (uint i = 0; i < _items.size(); i++) {
 		for (uint j = 0; j < _items[i]->subitems.size(); j++)
 			delete _items[i]->subitems[j];
@@ -112,7 +112,7 @@ Menu::~Menu() {
 	}
 }
 
-Common::StringArray *Menu::readMenuFromResource(Common::SeekableReadStream *res) {
+Common::StringArray *MacMenu::readMenuFromResource(Common::SeekableReadStream *res) {
 	res->skip(10);
 	int enableFlags = res->readUint32BE();
 	Common::String menuName = res->readPascalString();
@@ -155,38 +155,38 @@ Common::StringArray *Menu::readMenuFromResource(Common::SeekableReadStream *res)
 	return result;
 }
 
-void Menu::addStaticMenus(const MenuData *data) {
-	MenuItem *about = new MenuItem(_wm->_fontMan->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
+void MacMenu::addStaticMenus(const MacMenuData *data) {
+	MacMenuItem *about = new MacMenuItem(_wm->_fontMan->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 
 	for (int i = 0; data[i].menunum; i++) {
-		const MenuData *m = &data[i];
+		const MacMenuData *m = &data[i];
 
 		if (m->menunum == kMenuHighLevel) {
-			MenuItem *item = new MenuItem(m->title);
+			MacMenuItem *item = new MacMenuItem(m->title);
 			_items.push_back(item);
 
 			continue;
 		}
 
-		_items[m->menunum]->subitems.push_back(new MenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
+		_items[m->menunum]->subitems.push_back(new MacMenuSubItem(m->title, m->action, 0, m->shortcut, m->enabled));
 	}
 }
 
-int Menu::addMenuItem(const char *name) {
-	MenuItem *i = new MenuItem(name);
+int MacMenu::addMenuItem(const char *name) {
+	MacMenuItem *i = new MacMenuItem(name);
 	_items.push_back(i);
 
 	return _items.size() - 1;
 }
 
-void Menu::addMenuSubItem(int id, const char *text, int action, int style, char shortcut, bool enabled) {
-	_items[id]->subitems.push_back(new MenuSubItem(text, action, style, shortcut, enabled));
+void MacMenu::addMenuSubItem(int id, const char *text, int action, int style, char shortcut, bool enabled) {
+	_items[id]->subitems.push_back(new MacMenuSubItem(text, action, style, shortcut, enabled));
 
 	calcMenuBounds(_items[id]);
 }
 
-void Menu::calcDimensions() {
+void MacMenu::calcDimensions() {
 	// Calculate menu dimensions
 	int y = 1;
 	int x = 18;
@@ -207,8 +207,8 @@ void Menu::calcDimensions() {
 	}
 }
 
-void Menu::clearSubMenu(int id) {
-	MenuItem *menu = _items[id];
+void MacMenu::clearSubMenu(int id) {
+	MacMenuItem *menu = _items[id];
 
 	for (uint j = 0; j < menu->subitems.size(); j++)
 		delete menu->subitems[j];
@@ -216,10 +216,10 @@ void Menu::clearSubMenu(int id) {
 	menu->subitems.clear();
 }
 
-void Menu::createSubMenuFromString(int id, const char *str) {
+void MacMenu::createSubMenuFromString(int id, const char *str) {
 	clearSubMenu(id);
 
-	MenuItem *menu = _items[id];
+	MacMenuItem *menu = _items[id];
 	Common::String string(str);
 
 	Common::String item;
@@ -229,7 +229,7 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 			item += string[i++];
 
 		if (item == "(-") {
-			menu->subitems.push_back(new MenuSubItem(NULL, 0));
+			menu->subitems.push_back(new MacMenuSubItem(NULL, 0));
 		} else {
 			bool enabled = true;
 			int style = 0;
@@ -278,7 +278,7 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 					}
 			}
 
-			menu->subitems.push_back(new MenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
+			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
 		}
 
 		item.clear();
@@ -287,11 +287,11 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 	calcMenuBounds(menu);
 }
 
-const Font *Menu::getMenuFont() {
+const Font *MacMenu::getMenuFont() {
 	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 }
 
-const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
+const char *MacMenu::getAcceleratorString(MacMenuSubItem *item, const char *prefix) {
 	static char res[20];
 	*res = 0;
 
@@ -301,10 +301,10 @@ const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
 	return res;
 }
 
-int Menu::calculateMenuWidth(MenuItem *menu) {
+int MacMenu::calculateMenuWidth(MacMenuItem *menu) {
 	int maxWidth = 0;
 	for (uint i = 0; i < menu->subitems.size(); i++) {
-		MenuSubItem *item = menu->subitems[i];
+		MacMenuSubItem *item = menu->subitems[i];
 		if (!item->text.empty()) {
 			Common::String text(item->text);
 			Common::String acceleratorText(getAcceleratorString(item, "  "));
@@ -321,7 +321,7 @@ int Menu::calculateMenuWidth(MenuItem *menu) {
 	return maxWidth;
 }
 
-void Menu::calcMenuBounds(MenuItem *menu) {
+void MacMenu::calcMenuBounds(MacMenuItem *menu) {
 	// TODO: cache maxWidth
 	int maxWidth = calculateMenuWidth(menu);
 	int x1 = menu->bbox.left - 1;
@@ -346,7 +346,7 @@ static void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int
 	drawRoundRect(rect, arc, color, true, drawPixelPlain, surface);
 }
 
-bool Menu::draw(ManagedSurface *g, bool forceRedraw) {
+bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	Common::Rect r(_bbox);
 
 	if (!_contentIsDirty && !forceRedraw)
@@ -367,7 +367,7 @@ bool Menu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int color = kColorBlack;
-		MenuItem *it = _items[i];
+		MacMenuItem *it = _items[i];
 
 		if ((uint)_activeItem == i) {
 			Common::Rect hbox = it->bbox;
@@ -393,7 +393,7 @@ bool Menu::draw(ManagedSurface *g, bool forceRedraw) {
 	return true;
 }
 
-void Menu::renderSubmenu(MenuItem *menu) {
+void MacMenu::renderSubmenu(MacMenuItem *menu) {
 	Common::Rect *r = &menu->subbbox;
 
 	if (r->width() == 0 || r->height() == 0)
@@ -470,7 +470,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 	//g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
 }
 
-bool Menu::processEvent(Common::Event &event) {
+bool MacMenu::processEvent(Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		return keyEvent(event);
@@ -485,7 +485,7 @@ bool Menu::processEvent(Common::Event &event) {
 	}
 }
 
-bool Menu::keyEvent(Common::Event &event) {
+bool MacMenu::keyEvent(Common::Event &event) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return false;
 
@@ -498,7 +498,7 @@ bool Menu::keyEvent(Common::Event &event) {
 	return false;
 }
 
-bool Menu::mouseClick(int x, int y) {
+bool MacMenu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++)
 			if (_items[i]->bbox.contains(x, y)) {
@@ -522,7 +522,7 @@ bool Menu::mouseClick(int x, int y) {
 				return true;
 			}
 	} else if (_menuActivated && _items[_activeItem]->subbbox.contains(x, y)) {
-		MenuItem *it = _items[_activeItem];
+		MacMenuItem *it = _items[_activeItem];
 		int numSubItem = (y - it->subbbox.top) / kMenuDropdownItemHeight;
 
 		if (numSubItem != _activeSubItem) {
@@ -541,7 +541,7 @@ bool Menu::mouseClick(int x, int y) {
 	return false;
 }
 
-bool Menu::mouseMove(int x, int y) {
+bool MacMenu::mouseMove(int x, int y) {
 	if (_menuActivated)
 		if (mouseClick(x, y))
 			return true;
@@ -549,7 +549,7 @@ bool Menu::mouseMove(int x, int y) {
 	return false;
 }
 
-bool Menu::mouseRelease(int x, int y) {
+bool MacMenu::mouseRelease(int x, int y) {
 	if (_menuActivated) {
 		_menuActivated = false;
 
@@ -568,7 +568,7 @@ bool Menu::mouseRelease(int x, int y) {
 	return false;
 }
 
-bool Menu::processMenuShortCut(byte flags, uint16 ascii) {
+bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {
 	ascii = tolower(ascii);
 
 	if (flags & (Common::KBD_CTRL | Common::KBD_META)) {
@@ -583,7 +583,7 @@ bool Menu::processMenuShortCut(byte flags, uint16 ascii) {
 	return false;
 }
 
-void Menu::enableCommand(int menunum, int action, bool state) {
+void MacMenu::enableCommand(int menunum, int action, bool state) {
 	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
 		if (_items[menunum]->subitems[i]->action == action)
 			_items[menunum]->subitems[i]->enabled = state;
@@ -591,7 +591,7 @@ void Menu::enableCommand(int menunum, int action, bool state) {
 	_contentIsDirty = true;
 }
 
-void Menu::disableAllMenus() {
+void MacMenu::disableAllMenus() {
 	for (uint i = 1; i < _items.size(); i++) // Leave About menu on
 		for (uint j = 0; j < _items[i]->subitems.size(); j++)
 			_items[i]->subitems[j]->enabled = false;
