@@ -39,6 +39,27 @@ SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
 	return new MemoryReadStream((byte *)buf, dataSize, DisposeAfterUse::YES);
 }
 
+Common::String ReadStream::readPascalString(bool transformCR) {
+	Common::String s;
+	char *buf;
+	int len;
+	int i;
+
+	len = readByte();
+	buf = (char *)malloc(len + 1);
+	for (i = 0; i < len; i++) {
+		buf[i] = readByte();
+		if (transformCR && buf[i] == 0x0d)
+			buf[i] = '\n';
+	}
+
+	buf[i] = 0;
+
+	s = buf;
+	free(buf);
+
+	return s;
+}
 
 uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Read at most as many bytes as are still available...

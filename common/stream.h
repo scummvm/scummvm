@@ -427,6 +427,14 @@ public:
 	 */
 	SeekableReadStream *readStream(uint32 dataSize);
 
+	/**
+	 * Read stream in Pascal format, that is, one byte is
+	 * string length, followed by string data
+	 *
+	 * @param transformCR	if set (default), then transform \r into \n
+	 */
+	Common::String readPascalString(bool transformCR = true);
+
 };
 
 
