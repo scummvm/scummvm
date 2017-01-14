@@ -93,12 +93,12 @@ bool CExitArboretum::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 }
 
 bool CExitArboretum::TurnOn(CTurnOn *msg) {
-	_enabled = false;
+	_enabled = true;
 	return true;
 }
 
 bool CExitArboretum::TurnOff(CTurnOff *msg) {
-	_enabled = true;
+	_enabled = false;
 	return true;
 }
 
