@@ -112,6 +112,49 @@ Menu::~Menu() {
 	}
 }
 
+Common::StringArray *Menu::readMenuFromResource(Common::SeekableReadStream *res) {
+	res->skip(10);
+	int enableFlags = res->readUint32BE();
+	Common::String menuName = res->readPascalString();
+	Common::String menuItem = res->readPascalString();
+	int menuItemNumber = 1;
+	Common::String menu;
+	byte itemData[4];
+
+	while (!menuItem.empty()) {
+		if (!menu.empty()) {
+			menu += ';';
+		}
+		if ((enableFlags & (1 << menuItemNumber)) == 0) {
+			menu += '(';
+		}
+		menu += menuItem;
+		res->read(itemData, 4);
+		static const char styles[] = {'B', 'I', 'U', 'O', 'S', 'C', 'E', 0};
+		for (int i = 0; styles[i] != 0; i++) {
+			if ((itemData[3] & (1 << i)) != 0) {
+				menu += '<';
+				menu += styles[i];
+			}
+		}
+		if (itemData[1] != 0) {
+			menu += '/';
+			menu += (char)itemData[1];
+		}
+		menuItem = res->readPascalString();
+		menuItemNumber++;
+	}
+
+	Common::StringArray *result = new Common::StringArray;
+	result->push_back(menuName);
+	result->push_back(menu);
+
+	debug(4, "menuName: %s", menuName.c_str());
+	debug(4, "menu: %s", menu.c_str());
+
+	return result;
+}
+
 void Menu::addStaticMenus(const MenuData *data) {
 	MenuItem *about = new MenuItem(_wm->_fontMan->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);

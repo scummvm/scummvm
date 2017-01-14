@@ -23,6 +23,8 @@
 #ifndef GRAPHICS_MACGUI_MACMENU_H
 #define GRAPHICS_MACGUI_MACMENU_H
 
+#include "common/str-array.h"
+
 namespace Graphics {
 
 struct MenuItem;
@@ -40,6 +42,8 @@ class Menu : public BaseMacWindow {
 public:
 	Menu(int id, const Common::Rect &bounds, MacWindowManager *wm);
 	~Menu();
+
+	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
 
