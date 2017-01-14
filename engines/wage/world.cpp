@@ -156,13 +156,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			error("Unexpected value for weapons menu");
 
 		res->skip(3);
-		_aboutMessage = readPascalString(res);
+		_aboutMessage = res->readPascalString();
 
 		if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
 			res->skip(1); // ????
 
-		_soundLibrary1 = readPascalString(res);
-		_soundLibrary2 = readPascalString(res);
+		_soundLibrary1 = res->readPascalString();
+		_soundLibrary2 = res->readPascalString();
 
 		delete res;
 	}
@@ -337,8 +337,8 @@ void World::addSound(Sound *sound) {
 Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 	res->skip(10);
 	int enableFlags = res->readUint32BE();
-	Common::String menuName = readPascalString(res);
-	Common::String menuItem = readPascalString(res);
+	Common::String menuName = res->readPascalString();
+	Common::String menuItem = res->readPascalString();
 	int menuItemNumber = 1;
 	Common::String menu;
 	byte itemData[4];
@@ -363,7 +363,7 @@ Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
 			menu += '/';
 			menu += (char)itemData[1];
 		}
-		menuItem = readPascalString(res);
+		menuItem = res->readPascalString();
 		menuItemNumber++;
 	}
 
@@ -408,7 +408,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 		for (int i = 0; i <= itemCount; i++) {
 			// int placeholder; short rect[4]; byte flags; pstring str;
 			res->skip(13);
-			Common::String message = readPascalString(res);
+			Common::String message = res->readPascalString();
 			if (i == itemIndex) {
 				Common::String *msg = new Common::String(message);
 				delete res;
