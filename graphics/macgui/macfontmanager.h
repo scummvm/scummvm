@@ -118,6 +118,7 @@ public:
 	 */
 	const char *getFontName(int id, int size, int slant = kMacFontRegular);
 	const char *getFontName(MacFont &font);
+	int getFontIdByName(Common::String name);
 
 private:
 	void loadFonts();

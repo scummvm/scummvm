@@ -207,6 +207,13 @@ const char *MacFontManager::getFontName(MacFont &font) {
 	return getFontName(font.getId(), font.getSize(), font.getSlant());
 }
 
+int MacFontManager::getFontIdByName(Common::String name) {
+	for (int f = 0; f < ARRAYSIZE(fontNames); f++)
+		if (fontNames[f] != NULL && strcmp(fontNames[f], name.c_str()) == 0)
+			return f;
+	return 1;
+}
+
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 

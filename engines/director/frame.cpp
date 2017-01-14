@@ -880,13 +880,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	int width = _sprites[spriteId]->_width;
 	if (_vm->getVersion() >= 4 && !isButtonLabel) width = textCast->initialRect.right;
 
-	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
-
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
-		// Override
-		//macFont.setName(_vm->_currentScore->_fontMap[textCast->fontId]);
-		//TODO: this still needs to take font style and size into account!
+		// We need to make sure that teh Shared Cast fonts have been loaded in?
+		//might need a mapping table here of our own.
+		textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->_currentScore->_fontMap[textCast->fontId]);
 	}
+
+	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
 	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
 
@@ -917,19 +917,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			width += padding * 2;
 			height += padding;
 
-			if (textCast->textAlign == kTextAlignLeft) 
-				textX += padding;
-			else if (textCast->textAlign == kTextAlignRight) 
-				textX -= padding;
-
+			if (textCast->textAlign == kTextAlignLeft) textX += padding;
+			else if (textCast->textAlign == kTextAlignRight) textX -= padding;
 			//TODO: alignment issue with odd-size-width center-aligned text
 			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) textX--;
-			
 			textY += padding / 2;
 		}
 
-		if (textCast->textAlign == kTextAlignRight) 
-			textX -= 1;
+		if (textCast->textAlign == kTextAlignRight) textX -= 1;
 
 		if (textShadow > 0) {
 			if (borderSize == 0 && _vm->getVersion() > 3) 
