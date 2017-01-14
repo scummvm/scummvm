@@ -101,10 +101,11 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 				}
 			case 'f':
 				{
+					Datum d;
 					i = (*_currentScript)[pc++];
-					double v = *((double *)&i);
+					d.u.i = READ_UINT32(&i);
 
-					res += Common::String::format(" %f", v);
+					res += Common::String::format(" %f", d.u.f);
 					break;
 				}
 			case 'o':

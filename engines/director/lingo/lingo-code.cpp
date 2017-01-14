@@ -209,7 +209,7 @@ void Lingo::c_voidpush() {
 void Lingo::c_fconstpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
-	d.u.f = *((double *)&i);
+	d.u.i = READ_UINT32(&i);	// d.u.f value will be read
 	d.type = FLOAT;
 
 	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(double));
