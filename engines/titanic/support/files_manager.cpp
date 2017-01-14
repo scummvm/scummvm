@@ -113,7 +113,7 @@ void CFilesManager::insertCD(CScreenManager *screenManager) {
 void CFilesManager::resetView() {
 	if (_gameManager) {
 		_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
-		_gameManager->initBounds();
+		_gameManager->markAllDirty();
 	}
 }
 

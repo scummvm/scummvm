@@ -126,10 +126,6 @@ void CGameManager::postSave() {
 	_sound.postSave();
 }
 
-void CGameManager::initBounds() {
-	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
 void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
 	delete _movie;
 	_movie = nullptr;
@@ -271,7 +267,7 @@ void CGameManager::viewChange() {
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))
 		treeItem->viewChange();
 
-	initBounds();
+	markAllDirty();
 }
 
 void CGameManager::frameMessage(CRoomItem *room) {
@@ -292,11 +288,15 @@ void CGameManager::frameMessage(CRoomItem *room) {
 	}
 }
 
-void CGameManager::extendBounds(const Rect &r) {
+void CGameManager::addDirtyRect(const Rect &r) {
 	if (_bounds.isEmpty())
 		_bounds = r;
 	else
 		_bounds.combine(r);
+}
+
+void CGameManager::markAllDirty() {
+	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 CScreenManager *CGameManager::setScreenManager() const {

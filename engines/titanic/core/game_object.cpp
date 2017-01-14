@@ -425,7 +425,7 @@ void CGameObject::processMoveRangeInfo() {
 void CGameObject::makeDirty(const Rect &r) {
 	CGameManager *gameManager = getGameManager();
 	if (gameManager)
-		gameManager->extendBounds(r);
+		gameManager->addDirtyRect(r);
 }
 
 void CGameObject::makeDirty() {
@@ -581,7 +581,7 @@ void CGameObject::petShow() {
 	if (gameManager) {
 		gameManager->_gameState._petActive = true;
 		gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
-		gameManager->initBounds();
+		gameManager->markAllDirty();
 	}
 }
 
@@ -590,7 +590,7 @@ void CGameObject::petHide() {
 	if (gameManager) {
 		gameManager->_gameState._petActive = false;
 		gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
-		gameManager->initBounds();
+		gameManager->markAllDirty();
 	}
 }
 

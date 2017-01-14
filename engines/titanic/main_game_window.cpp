@@ -96,7 +96,7 @@ void CMainGameWindow::applicationStarting() {
 	CEnterRoomMsg enterRoomMsg(nullptr, room);
 	enterRoomMsg.execute(room, nullptr, MSGFLAG_SCAN);
 
-	_gameManager->initBounds();
+	_gameManager->markAllDirty();
 }
 
 int CMainGameWindow::getSavegameSlot() {
