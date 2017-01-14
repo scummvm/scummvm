@@ -33,7 +33,7 @@ class Console;
 
 class Events {
 public:
-	Events(ChewyEngine *vm, Graphics *graphics, Console *console);
+	Events(ChewyEngine *vm, Console *console);
 	virtual ~Events() {}
 
 	void processEvents();
@@ -42,7 +42,6 @@ private:
 	Common::Event _event;
 	Common::EventManager *_eventManager;
 	ChewyEngine *_vm;
-	Graphics *_graphics;
 	Console *_console;
 };
 

@@ -53,7 +53,7 @@ const byte _cursorFrames[] = {
 	1               // 40: gun
 };
 
-Cursor::Cursor(ChewyEngine *vm) : _vm(vm) {
+Cursor::Cursor() {
 	_curCursor = 0;
 	_curCursorFrame = 0;
 	_cursorSprites = new SpriteResource("cursor.taf");

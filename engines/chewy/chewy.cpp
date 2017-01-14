@@ -69,12 +69,12 @@ ChewyEngine::~ChewyEngine() {
 
 void ChewyEngine::initialize() {
 	_console = new Console(this);
-	_cursor = new Cursor(this);
+	_cursor = new Cursor();
 	_graphics = new Graphics(this);
 	_scene = new Scene(this);
 	_sound = new Sound(_mixer);
 	_text = new Text();
-	_events = new Events(this, _graphics, _console);
+	_events = new Events(this, _console);
 
 	_curCursor = 0;
 	_elapsedFrames = 0;

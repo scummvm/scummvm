@@ -32,7 +32,7 @@ class Font;
 
 class Cursor {
 public:
-	Cursor(ChewyEngine *vm);
+	Cursor();
 	virtual ~Cursor();
 
 	void setCursor(uint num, bool newCursor = true);
@@ -42,8 +42,6 @@ public:
 	void nextCursor();
 
 private:
-	ChewyEngine *_vm;
-
 	uint _curCursor;
 	uint _curCursorFrame;
 	SpriteResource *_cursorSprites;
