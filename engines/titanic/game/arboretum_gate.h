@@ -40,13 +40,13 @@ class CArboretumGate : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TurnOn(CTurnOn *msg);
 private:
-	static int _v1;
+	static bool _gotSpeechCentre;
+	static bool _isClosed;
 	static int _initialFrame;
-	static int _v3;
 private:
-	int _seasonNum;
+	Season _seasonNum;
 	CString _viewName1;
-	int _fieldF0;
+	int _unused1;
 	int _startFrameSpringOff;
 	int _endFrameSpringOff;
 	int _startFrameSummerOff;

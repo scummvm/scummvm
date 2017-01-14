@@ -36,15 +36,15 @@ BEGIN_MESSAGE_MAP(CArboretumGate, CBackground)
 	ON_MESSAGE(TurnOn)
 END_MESSAGE_MAP()
 
-int CArboretumGate::_v1;
+bool CArboretumGate::_gotSpeechCentre;
+bool CArboretumGate::_isClosed;
 int CArboretumGate::_initialFrame;
-int CArboretumGate::_v3;
 
 CArboretumGate::CArboretumGate() : CBackground() {
 	_viewName1 = "NULL";
 	_viewName2 = "NULL";
-	_seasonNum = 0;
-	_fieldF0 = 0;
+	_seasonNum = SEASON_SUMMER;
+	_unused1 = 0;
 	_startFrameSpringOff = 244;
 	_endFrameSpringOff = 304;
 	_startFrameSummerOff = 122;
@@ -82,11 +82,11 @@ CArboretumGate::CArboretumGate() : CBackground() {
 void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_seasonNum, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_gotSpeechCentre, indent);
 	file->writeNumberLine(_initialFrame, indent);
-	file->writeNumberLine(_v3, indent);
+	file->writeNumberLine(_isClosed, indent);
 	file->writeQuotedLine(_viewName1, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_unused1, indent);
 	file->writeNumberLine(_startFrameSpringOff, indent);
 	file->writeNumberLine(_endFrameSpringOff, indent);
 	file->writeNumberLine(_startFrameSummerOff, indent);
@@ -145,12 +145,12 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 
 void CArboretumGate::load(SimpleFile *file) {
 	file->readNumber();
-	_seasonNum = file->readNumber();
-	_v1 = file->readNumber();
+	_seasonNum = (Season)file->readNumber();
+	_gotSpeechCentre = file->readNumber();
 	_initialFrame = file->readNumber();
-	_v3 = file->readNumber();
+	_isClosed = file->readNumber();
 	_viewName1 = file->readString();
-	_fieldF0 = file->readNumber();
+	_unused1 = file->readNumber();
 	_startFrameSpringOff = file->readNumber();
 	_endFrameSpringOff = file->readNumber();
 	_startFrameSummerOff = file->readNumber();
@@ -208,17 +208,17 @@ void CArboretumGate::load(SimpleFile *file) {
 }
 
 bool CArboretumGate::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
-	_seasonNum = (_seasonNum + 1) % 4;
+	_seasonNum = (Season)((_seasonNum + 1) % 4);
 	return true;
 }
 
 bool CArboretumGate::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayerGetsSpeechCentre") {
-		_v1 = 1;
+		_gotSpeechCentre = true;
 		CVisibleMsg visibleMsg(true);
 		visibleMsg.execute("SpCtrOverlay");
 	} else if (msg->_action == "ExitLFrozen") {
-		if (_v3) {
+		if (_isClosed) {
 			_viewName2 = "FrozenArboretum.Node 2.W";
 			CTurnOn onMsg;
 			onMsg.execute(this);
@@ -226,7 +226,7 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 			changeView("FrozenArboretum.Node 2.W");
 		}
 	} else if (msg->_action == "ExitRFrozen") {
-		if (_v3) {
+		if (_isClosed) {
 			_viewName2 = "FrozenArboretum.Node 2.E";
 			CTurnOn onMsg;
 			onMsg.execute(this);
@@ -234,7 +234,7 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 			changeView("FrozenArboretum.Node 2.E");
 		}
 	} else if (msg->_action == "ExitLNormal") {
-		if (_v3) {
+		if (_isClosed) {
 			_viewName2 = "Arboretum.Node 2.W";
 			CTurnOn onMsg;
 			onMsg.execute(this);
@@ -242,12 +242,11 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 			changeView("Arboretum.Node 2.W");
 		}
 	} else if (msg->_action == "ExitRNormal") {
-		if (_v3) {
+		if (_isClosed) {
 			_viewName2 = "Arboretum.Node 2.E";
 			CTurnOn onMsg;
 			onMsg.execute(this);
-		}
-		else {
+		} else {
 			changeView("Arboretum.Node 2.E");
 		}
 	}
@@ -256,7 +255,7 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 }
 
 bool CArboretumGate::MovieEndMsg(CMovieEndMsg *msg) {
-	setVisible(!_v3);
+	setVisible(!_isClosed);
 
 	if (_viewName1 != "NULL") {
 		changeView(_viewName1);
@@ -273,14 +272,14 @@ bool CArboretumGate::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CArboretumGate::TurnOff(CTurnOff *msg) {
-	if (!_v3) {
+	if (!_isClosed) {
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
 			playMovie(_startFrameSummerOff, _endFrameSummerOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		case SEASON_AUTUMN:
-			if (_v1) {
+			if (_gotSpeechCentre) {
 				playMovie(_startFrameAutumnOff2, _endFrameAutumnOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
 				playMovie(_startFrameAutumnOff1, _endFrameAutumnOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
@@ -288,7 +287,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 			break;
 
 		case SEASON_WINTER:
-			if (_v1) {
+			if (_gotSpeechCentre) {
 				playMovie(_startFrameWinterOff2, _endFrameWinterOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
 				playMovie(_startFrameWinterOff1, _endFrameWinterOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
@@ -303,7 +302,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 			break;
 		}
 
-		_v3 = 1;
+		_isClosed = true;
 		CArboretumGateMsg gateMsg;
 		gateMsg.execute("Arboretum", nullptr, MSGFLAG_SCAN);
 	}
@@ -312,7 +311,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 }
 
 bool CArboretumGate::TurnOn(CTurnOn *msg) {
-	if (_v3) {
+	if (_isClosed) {
 		CArboretumGateMsg gateMsg(0);
 		gateMsg.execute("Arboretum");
 		setVisible(true);
@@ -323,7 +322,7 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 			break;
 
 		case SEASON_AUTUMN:
-			if (_v1) {
+			if (_gotSpeechCentre) {
 				playMovie(_startFrameAutumnOn2, _endFrameAutumnOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
 				playMovie(_startFrameAutumnOn1, _endFrameAutumnOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
@@ -331,7 +330,7 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 			break;
 
 		case SEASON_WINTER:
-			if (_v1) {
+			if (_gotSpeechCentre) {
 				playMovie(_startFrameWinterOn2, _endFrameWinterOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
 				playMovie(_startFrameWinterOn1, _endFrameWinterOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
@@ -346,14 +345,14 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 			break;
 		}
 
-		_v3 = 0;
+		_isClosed = false;
 	}
 
 	return true;
 }
 
 bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_v3) {
+	if (!_isClosed) {
 		CTurnOff offMsg;
 		offMsg.execute(this);
 	}
@@ -362,18 +361,18 @@ bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
-	if (!_v3) {
+	if (!_isClosed) {
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
 			_initialFrame = _startFrameSummerOff;
 			break;
 
 		case SEASON_AUTUMN:
-			_initialFrame = _v1 ? _startFrameAutumnOff2 : _startFrameAutumnOff1;
+			_initialFrame = _gotSpeechCentre ? _startFrameAutumnOff2 : _startFrameAutumnOff1;
 			break;
 
 		case SEASON_WINTER:
-			_initialFrame = _v1 ? _startFrameWinterOff1 : _startFrameWinterOff2;
+			_initialFrame = _gotSpeechCentre ? _startFrameWinterOff1 : _startFrameWinterOff2;
 			break;
 
 		case SEASON_SPRING:
