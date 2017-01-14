@@ -15,8 +15,8 @@ endif
 
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh --include=$(srcdir)/test/cxxtest_mingw.h
-TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
-TEST_LDFLAGS := $(LIBS)
+TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
+TEST_LDFLAGS := $(LIBS) $(LDFLAGS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
 ifdef HAVE_GCC3
