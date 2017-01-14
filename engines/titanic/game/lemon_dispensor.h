@@ -34,21 +34,16 @@ class CLemonDispensor : public CBackground {
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
 	static bool _isSummer;
-	static int _v2;
-	static int _v3;
+	static bool _lemonDropped;
+	static int _hitCounter;
 	static CGameObject *_draggingObject;
 
-	int _fieldE0;
+	int _unused1;
 	Point _origPt;
-	int _fieldEC;
+	bool _onDispensor;
 public:
 	CLASSDEF;
 	CLemonDispensor();
-
-	/**
-	 * Initialize statics
-	 */
-	static void init();
 
 	/**
 	 * Save the data for the class to file
