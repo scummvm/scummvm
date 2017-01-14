@@ -151,7 +151,9 @@
 	#if !defined(__SYMBIAN32__)
 	#include <new>
 	#endif
+#endif
 
+#ifndef STATIC_ASSERT
 	/**
 	 * Generates a compile-time assertion.
 	 *
