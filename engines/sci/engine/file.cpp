@@ -201,6 +201,9 @@ reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mo
 			isCompressed = false;
 		break;
 #ifdef ENABLE_SCI32
+	// Hoyle5 has no save games, but creates very simple text-based game options
+	// files that do not need to be compressed
+	case GID_HOYLE5:
 	// Phantasmagoria game scripts create their own save files, so they are
 	// interoperable with the original interpreter just by renaming them as long
 	// as they are not compressed. They are also never larger than a couple
