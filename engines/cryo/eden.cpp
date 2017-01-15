@@ -2671,6 +2671,16 @@ void EdenGame::displayBackgroundFollower() {
 	}
 }
 
+void EdenGame::displayNoFollower(int16 bank) {
+	if (bank) {
+		useBank(bank);
+		if (_globals->_characterPtr == &kPersons[PER_UNKN_156])
+			noclipax_avecnoir(0, 0, 16);
+		else
+			noclipax(0, 0, 16);
+	}
+}
+
 // Original name: af_fondperso1
 void EdenGame::displayCharacterBackground1() {
 	byte bank;
@@ -2681,41 +2691,36 @@ void EdenGame::displayCharacterBackground1() {
 		bank = _globals->_characterBackgroundBankIdx;
 		if (_globals->_eventType == EventType::etEventE) {
 			_globals->_var103 = 1;
-			goto no_suiveur;
+			displayNoFollower(bank);
+			return;
 		}
 		_gameIcons[0].sx = 60;
 		perso_rects[PER_MESSENGER].left = 62;
 	}
 	if (_globals->_characterPtr == &kPersons[PER_THOO]) {
 		bank = 37;
-		if (_globals->_curObjectId == Objects::obShell)
-			goto no_suiveur;
+		if (_globals->_curObjectId == Objects::obShell) {
+			displayNoFollower(bank);
+			return;
+		}
 	}
 	ptab = kPersoRoomBankTable + _globals->_characterPtr->_roomBankId;
 	bank = *ptab++;
 	if (!(_globals->_characterPtr->_partyMask & _globals->_party)) {
 		while ((bank = *ptab++) != 0xFF) {
-			if (bank == (_globals->_roomNum & 0xFF)) { //TODO: signed vs unsigned - chg r31 to uns?
+			if (bank == (_globals->_roomNum & 0xFF)) { //TODO: signed vs unsigned - chg bank to uns?
 				bank = *ptab;
 				break;
 			}
 			ptab++;
 		}
-		if (bank != 0xFF)
-			goto no_suiveur;
-		ptab = kPersoRoomBankTable + _globals->_characterPtr->_roomBankId;
-		bank = *ptab++;
+		if (bank == 0xFF) {
+			ptab = kPersoRoomBankTable + _globals->_characterPtr->_roomBankId;
+			bank = *ptab++;
+		}
 	}
 	displayBackgroundFollower();
-no_suiveur:
-	;
-	if (bank) {
-		useBank(bank);
-		if (_globals->_characterPtr == &kPersons[PER_UNKN_156])
-			noclipax_avecnoir(0, 0, 16);
-		else
-			noclipax(0, 0, 16);
-	}
+	displayNoFollower(bank);
 }
 
 // Original name: af_fondperso

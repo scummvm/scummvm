@@ -179,6 +179,7 @@ private:
 	void no_perso();
 	void closeCharacterScreen();
 	void displayBackgroundFollower();
+	void displayNoFollower(int16 bank);
 	void displayCharacterBackground1();
 	void displayCharacterBackground();
 	void setCharacterIcon();
