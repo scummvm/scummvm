@@ -8,7 +8,7 @@
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h
 TEST_LIBS    := audio/libaudio.a common/libcommon.a
 
-ifdef ENABLE_WINTERMUTE
+ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h
 	TEST_LIBS += engines/wintermute/libwintermute.a
 endif
