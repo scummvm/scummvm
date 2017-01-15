@@ -127,14 +127,17 @@ bool CGlass::ActMsg(CActMsg *msg) {
 bool CGlass::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	showMouse();
 	if (msg->_dropTarget) {
-		error("TODO: See what drop target is");
-		CCharacter *npc = dynamic_cast<CCharacter *>(msg->_dropTarget);
-		if (npc) {
-			CUseWithCharMsg useMsg(npc);
-			useMsg.execute(this);
+		if (msg->_dropTarget->isPet()) {
+			petAddToInventory();
 		} else {
-			CUseWithOtherMsg otherMsg(npc);
-			otherMsg.execute(this);
+			CCharacter *npc = dynamic_cast<CCharacter *>(msg->_dropTarget);
+			if (npc) {
+				CUseWithCharMsg useMsg(npc);
+				useMsg.execute(this);
+			} else {
+				CUseWithOtherMsg otherMsg(npc);
+				otherMsg.execute(this);
+			}
 		}
 	} else if (compareViewNameTo(_fullViewName) && msg->_mousePos.y < 360) {
 		setPosition(_origPos);
