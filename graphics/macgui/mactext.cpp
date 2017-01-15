@@ -24,7 +24,7 @@
 
 namespace Graphics {
 
-MacText::MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth) {
+MacText::MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth) {
 	_str = s;
 	_font = font;
 	_fgcolor = fgcolor;
@@ -53,6 +53,8 @@ void MacText::splitString(Common::String &str) {
 	while (*s) {
 		if (*s == '\n' && prevCR) {	// trean \r\n as one
 			prevCR = false;
+
+			s++;
 			continue;
 		}
 
@@ -64,10 +66,12 @@ void MacText::splitString(Common::String &str) {
 
 			tmp.clear();
 
+			s++;
 			continue;
 		}
 
 		tmp += *s;
+		s++;
 	}
 
 	if (tmp.size())
@@ -77,7 +81,9 @@ void MacText::splitString(Common::String &str) {
 void MacText::reallocSurface() {
 	int lineH = _font->getFontHeight() + _interLinear;
 	// round to closest 10
-	int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH;
+	//TODO: work out why this rounding doesn't correctly fill the entire width
+	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
+	int requiredH = _text.size() * lineH;
 	int surfW = _maxWidth == -1 ? _textMaxWidth : _maxWidth;
 
 	if (!_surface) {
@@ -117,7 +123,8 @@ void MacText::render(int from, int to) {
 	_surface->fillRect(Common::Rect(0, y, _surface->w, to * lineH), _bgcolor);
 
 	for (int i = from; i < to; i++) {
-		_font->drawString(_surface, _text[i], 0, y, _textMaxWidth, _fgcolor);
+		//TODO: _textMaxWidth, when -1, was not rendering ANY text.
+		_font->drawString(_surface, _text[i], 0, y, _maxWidth, _fgcolor);
 
 		y += _font->getFontHeight() + _interLinear;
 	}

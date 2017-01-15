@@ -30,7 +30,7 @@ namespace Graphics {
 
 class MacText {
 public:
-	MacText(Common::String s, Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1);
+	MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1);
 
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
@@ -38,16 +38,18 @@ public:
 	void appendText(Common::String str);
 	void replaceLastLine(Common::String str);
 
+	void render();
+	Graphics::ManagedSurface *getSurface() { return _surface; }
+
 private:
 	void splitString(Common::String &s);
-	void render();
 	void render(int from, int to);
 	void calcMaxWidth();
 	void reallocSurface();
 
 private:
 	Common::String _str;
-	Graphics::Font *_font;
+	const Graphics::Font *_font;
 	int _fgcolor, _bgcolor;
 
 	int _maxWidth;

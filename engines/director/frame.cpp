@@ -24,6 +24,7 @@
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/mactext.h"
 #include "graphics/primitives.h"
 #include "image/bmp.h"
 
@@ -615,33 +616,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 				Common::Rect drawRect(x, y, x + width, y + height);
 
+				inkBasedBlit(surface, *img->getSurface(), i, drawRect);
 				addDrawRect(i, drawRect);
-
-				switch (_sprites[i]->_ink) {
-				case kInkTypeCopy:
-					surface.blitFrom(*img->getSurface(), Common::Point(x, y));
-					break;
-				case kInkTypeTransparent:
-					// FIXME: is it always white (last entry in pallette)?
-					surface.transBlitFrom(*img->getSurface(), Common::Point(x, y), _vm->getPaletteColorCount() - 1);
-					break;
-				case kInkTypeBackgndTrans:
-					drawBackgndTransSprite(surface, *img->getSurface(), drawRect);
-					break;
-				case kInkTypeMatte:
-					drawMatteSprite(surface, *img->getSurface(), drawRect);
-					break;
-				case kInkTypeGhost:
-					drawGhostSprite(surface, *img->getSurface(), drawRect);
-					break;
-				case kInkTypeReverse:
-					drawReverseSprite(surface, *img->getSurface(), drawRect);
-					break;
-				default:
-					warning("Unhandled ink type %d", _sprites[i]->_ink);
-					surface.blitFrom(*img->getSurface(), Common::Point(x, y));
-					break;
-				}
 			}
 		}
 	}
@@ -679,32 +655,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
 	}
 
-	switch (_sprites[spriteId]->_ink) {
-	case kInkTypeCopy:
-		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y));
-		break;
-	case kInkTypeTransparent:
-		// FIXME: is it always white (last entry in pallette)?
-		surface.transBlitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y), _vm->getPaletteColorCount() - 1);
-		break;
-	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(surface, tmpSurface, shapeRect);
-		break;
-	case kInkTypeMatte:
-		drawMatteSprite(surface, tmpSurface, shapeRect);
-		break;
-	case kInkTypeGhost:
-		drawGhostSprite(surface, tmpSurface, shapeRect);
-		break;
-	case kInkTypeReverse:
-		drawReverseSprite(surface, tmpSurface, shapeRect);
-		break;
-	default:
-		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
-		surface.blitFrom(tmpSurface, Common::Point(_sprites[spriteId]->_startPoint.x, _sprites[spriteId]->_startPoint.y));
-		break;
-	}
-
+	inkBasedBlit(surface, tmpSurface, spriteId, shapeRect);
 	addDrawRect(spriteId, shapeRect);
 }
 
@@ -809,6 +760,33 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	return img;
 }
 
+void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
+	switch (_sprites[spriteId]->_ink) {
+	case kInkTypeCopy:
+		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		break;
+	case kInkTypeTransparent:
+		// FIXME: is it always white (last entry in pallette)?
+		targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
+		break;
+	case kInkTypeBackgndTrans:
+		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeMatte:
+		drawMatteSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeGhost:
+		drawGhostSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeReverse:
+		drawReverseSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	default:
+		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
+		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		break;
+	}
+}
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId) {
 	Common::SeekableSubReadStreamEndian *textStream = NULL;
@@ -917,21 +895,22 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			width += padding * 2;
 			height += padding;
 
-			if (textCast->textAlign == kTextAlignLeft) textX += padding;
-			else if (textCast->textAlign == kTextAlignRight) textX -= padding;
+			if (textCast->textAlign == kTextAlignLeft) 
+				textX += padding;
+			else if (textCast->textAlign == kTextAlignRight) 
+				textX -= padding;
 			//TODO: alignment issue with odd-size-width center-aligned text
-			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) textX--;
+			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) 
+			//	textX--;
+
 			textY += padding / 2;
 		}
 
 		if (textCast->textAlign == kTextAlignRight) textX -= 1;
 
 		if (textShadow > 0) {
-			if (borderSize == 0 && _vm->getVersion() > 3) 
+			if (borderSize == 0 && _vm->getVersion() > 3)
 				textX += 1;
-
-			font->drawString(&surface, text, textX + textShadow, textY + textShadow,
-				width, (_sprites[spriteId]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
 			if (_vm->getVersion() > 3)
 				height -= (textShadow - 1);
 		}
@@ -939,37 +918,41 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		textY += 2;
 	}
 
-	//TODO: the colour is wrong here... need to determine the correct colour for all versions!
-	font->drawString(&surface, text, textX, textY,
-					 width, (_sprites[spriteId]->_ink == kInkTypeReverse ? 255 : 0), (Graphics::TextAlign)alignment);
+	Graphics::MacText mt(text, font, 0x00, 0xff, width);
+	mt.render();
+	Graphics::ManagedSurface *textSurface = mt.getSurface();
 
-	if (isButtonLabel)
-		return;
+	if (isButtonLabel) {
+		uint16 borderX = x + borderSize - 1, borderY = y + borderSize - 1, borderHeight = height, borderWidth = width;
+		if (borderSize != kSizeNone) {
+			while (borderSize) {
+				borderWidth += 2;
+				borderHeight += 2;
+				textSurface->frameRect(Common::Rect(borderX, borderY, borderX + borderWidth, borderY + borderHeight), 0);
+				borderSize--;
+				borderX--;
+				borderY--;
+			}
+		}
 
-	uint16 borderX = x + borderSize - 1, borderY = y + borderSize - 1, borderHeight = height, borderWidth = width;
-	if (borderSize != kSizeNone) {
-		while (borderSize) {
-			borderWidth += 2;
-			borderHeight += 2;
-			surface.frameRect(Common::Rect(borderX, borderY, borderX + borderWidth, borderY + borderHeight), 0);
-			borderSize--;
-			borderX--;
-			borderY--;
+		if (boxShadow > 0) {
+			borderSize = (uint16)textCast->borderSize;
+			uint baseOffsetX = x + boxShadow;
+			uint baseOffsetY = y + height + (borderSize * 2);
+			uint sideOffsetX = x + borderWidth;
+			uint sideOffsetY = y + boxShadow;
+			while (boxShadow) {
+				textSurface->drawLine(baseOffsetX, baseOffsetY + (boxShadow - 1), baseOffsetX + borderWidth - 1, baseOffsetY + (boxShadow - 1), 0);
+				textSurface->drawLine(sideOffsetX + (boxShadow - 1), sideOffsetY, sideOffsetX + (boxShadow - 1), sideOffsetY + borderHeight - 1, 0);
+				boxShadow--;
+			}
 		}
 	}
 
-	if (boxShadow > 0) {
-		borderSize = (uint16)textCast->borderSize;
-		uint baseOffsetX = x + boxShadow;
-		uint baseOffsetY = y + height + (borderSize * 2);
-		uint sideOffsetX = x + borderWidth;
-		uint sideOffsetY = y + boxShadow;
-		while (boxShadow) {
-			surface.drawLine(baseOffsetX, baseOffsetY + (boxShadow - 1), baseOffsetX + borderWidth - 1, baseOffsetY + (boxShadow - 1), 0);
-			surface.drawLine(sideOffsetX + (boxShadow - 1), sideOffsetY, sideOffsetX + (boxShadow - 1), sideOffsetY + borderHeight - 1, 0);
-			boxShadow--;
-		}
-	}
+	if (textShadow > 0)
+		inkBasedBlit(surface, *textSurface, spriteId, Common::Rect(textX + textShadow, textY + textShadow, textX + textShadow + width, textY + textShadow + height));
+
+	inkBasedBlit(surface, *textSurface, spriteId, Common::Rect(textX, textY, textX + width, textY + height));
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
