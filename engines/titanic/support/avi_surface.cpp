@@ -273,19 +273,18 @@ void AVISurface::setupDecompressor() {
 }
 
 void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest) {
-	// WORKAROUND: A bad video in the Promenade has a frame with a width slightly larger
-	// than the defined width for the movie it's in. Hence the assert below is >=
-	assert(src.w >= dest.w && src.h == dest.h);
+	// WORKAROUND: Handle rare cases where frame sizes don't match the video size
+	Common::Rect copyRect(0, 0, MIN(src.w, dest.w), MIN(src.h, dest.h));
 
 	if (src.format.bytesPerPixel == 1) {
 		// Paletted 8-bit, so convert to 16-bit and copy over
 		Graphics::Surface *s = src.convertTo(dest.format, _decoder->getPalette());
-		dest.blitFrom(*s, Common::Rect(0, 0, dest.w, dest.h), Common::Point(0, 0));
+		dest.blitFrom(*s, copyRect, Common::Point(0, 0));
 		s->free();
 		delete s;
 	} else if (src.format.bytesPerPixel == 2) {
 		// Source is already 16-bit, with no alpha, so do a straight copy
-		dest.blitFrom(src);
+		dest.blitFrom(src, copyRect, Common::Point(0, 0));
 	} else {
 		// Source is 32-bit which may have transparent pixels. Copy over each
 		// pixel, replacing transparent pixels with the special transparency color
@@ -293,11 +292,11 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 		assert(src.format.bytesPerPixel == 4 && dest.format.bytesPerPixel == 2);
 		uint16 transPixel = _videoSurface->getTransparencyColor();
 
-		for (uint y = 0; y < src.h; ++y) {
+		for (uint y = 0; y < MIN(src.h, dest.h); ++y) {
 			const uint32 *pSrc = (const uint32 *)src.getBasePtr(0, y);
 			uint16 *pDest = (uint16 *)dest.getBasePtr(0, y);
 
-			for (uint x = 0; x < src.w; ++x, ++pSrc, ++pDest) {
+			for (uint x = 0; x < MIN(src.w, dest.w); ++x, ++pSrc, ++pDest) {
 				src.format.colorToARGB(*pSrc, a, r, g, b);
 				assert(a == 0 || a == 0xff);
 
