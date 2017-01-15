@@ -222,9 +222,12 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	if (itemIndex == -1)
 		return -1;
 
+	// Some objects can be in multiple different states. These are handled 
+	// below to give each the correct inventory glyph and description
 	switch (ITEM_MODES[itemIndex]) {
 	case 0:
-		switch (subMode(item, isLoading)) {
+		// Maitre d'Bot's left arm
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 		case 1:
 			return 0;
@@ -236,7 +239,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		}
 
 	case 2:
-		switch (subMode(item, isLoading)) {
+		// Maitre d'Bot's right arm
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 			return 2;
 		default:
@@ -245,7 +249,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		break;
 
 	case 15:
-		switch (subMode(item, isLoading)) {
+		// Chicken
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 		case 1:
 			return 14;
@@ -263,7 +268,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		break;
 
 	case 26:
-		switch (subMode(item, isLoading)) {
+		// Beer glass
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 			return 26;
 		case 1:
@@ -284,14 +290,14 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	return ITEM_MODES[itemIndex];
 }
 
-int CPetInventoryGlyph::subMode(CGameObject *item, bool isLoading) {
+int CPetInventoryGlyph::getItemIndex(CGameObject *item, bool isLoading) {
 	int frameNum = item->getFrameNumber();
 	int movieFrame = item->getMovieFrame();
 
 	if (isLoading && frameNum != -1 && frameNum != movieFrame)
 		item->loadFrame(frameNum);
 
-	return frameNum;
+	return movieFrame;
 }
 
 void CPetInventoryGlyph::startBackgroundMovie() {
