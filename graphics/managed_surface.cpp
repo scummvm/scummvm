@@ -208,9 +208,9 @@ void ManagedSurface::blitFrom(const Surface &src, const Common::Rect &srcRect,
 				} else {
 					// Partially transparent, so calculate new pixel colors
 					alpha = (double)aSrc / 255.0;
-					rDest = (rSrc * alpha) + (rDest * (1.0 - alpha));
-					gDest = (gSrc * alpha) + (gDest * (1.0 - alpha));
-					bDest = (bSrc * alpha) + (bDest * (1.0 - alpha));
+					rDest = static_cast<byte>((rSrc * alpha) + (rDest * (1.0 - alpha)));
+					gDest = static_cast<byte>((gSrc * alpha) + (gDest * (1.0 - alpha)));
+					bDest = static_cast<byte>((bSrc * alpha) + (bDest * (1.0 - alpha)));
 				}
 
 				destPixel = format.ARGBToColor(0xff, rDest, gDest, bDest);
