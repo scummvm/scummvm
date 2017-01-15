@@ -273,8 +273,12 @@ ScriptType Lingo::event2script(LEvent ev) {
 }
 
 Symbol *Lingo::getHandler(Common::String &name) {
-	if (!_eventHandlerTypeIds.contains(name))
+	if (!_eventHandlerTypeIds.contains(name)) {
+		if (_builtins.contains(name))
+			return _builtins[name];
+
 		return NULL;
+	}
 
 	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
 	if (!_handlers.contains(entityIndex))
