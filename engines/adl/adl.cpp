@@ -468,10 +468,14 @@ void AdlEngine::bell(uint count) const {
 
 	tones.push_back(Tone(940.0, 100.0));
 
+	playTones(tones, false);
+}
+
+void AdlEngine::playTones(const Tones &tones, bool isMusic) const {
 	Audio::SoundHandle handle;
 	Audio::AudioStream *stream = new Sound(tones);
 
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+	g_system->getMixer()->playStream((isMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType), &handle, stream);
 
 	while (!g_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(handle)) {
 		Common::Event event;

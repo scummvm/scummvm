@@ -39,6 +39,7 @@
 
 #include "adl/console.h"
 #include "adl/disk.h"
+#include "adl/sound.h"
 
 namespace Common {
 class ReadStream;
@@ -311,6 +312,7 @@ protected:
 
 	// Sound
 	void bell(uint count = 1) const;
+	void playTones(const Tones &tones, bool isMusic) const;
 
 	// Game state functions
 	const Region &getRegion(uint i) const;

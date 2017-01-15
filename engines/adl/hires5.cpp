@@ -31,6 +31,7 @@
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
+#include "adl/sound.h"
 
 namespace Adl {
 
@@ -51,6 +52,8 @@ private:
 	// AdlEngine_v4
 	bool isInventoryFull();
 
+	void loadSong(Common::ReadStream &stream);
+
 	int o_checkItemTimeLimits(ScriptEnv &e);
 	int o_startAnimation(ScriptEnv &e);
 	int o_winGame(ScriptEnv &e);
@@ -60,6 +63,7 @@ private:
 
 	Common::Array<byte> _itemTimeLimits;
 	Common::String _itemTimeLimitMsg;
+	Tones _song;
 
 	struct {
 		Common::String itemTimeLimit;
@@ -154,6 +158,38 @@ bool HiRes5Engine::isInventoryFull() {
 	return false;
 }
 
+void HiRes5Engine::loadSong(Common::ReadStream &stream) {
+	while (true) {
+		const byte period = stream.readByte();
+
+		if (stream.err() || stream.eos())
+			error("Error loading song");
+
+		if (period == 0xff)
+			return;
+
+		byte length = stream.readByte();
+
+		if (stream.err() || stream.eos())
+			error("Error loading song");
+
+		const uint kClock = 1022727; // Apple II CPU clock rate
+		const uint kLoopCycles = 20; // Delay loop cycles
+
+		double freq = 0.0;
+
+		// This computation ignores CPU cycles spent on overflow handling and
+		// speaker control. As a result, our tone frequencies will be slightly
+		// higher than those on original hardware.
+		if (period != 0)
+			freq = kClock / 2.0 / (period * kLoopCycles);
+
+		const double len = (length > 0 ? length - 1 : 255) * 256 * kLoopCycles * 1000 / (double)kClock;
+
+		_song.push_back(Tone(freq, len));
+	}
+}
+
 int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
 	OP_DEBUG_1("\tCHECK_ITEM_TIME_LIMITS(VARS[%d])", e.arg(1));
 
@@ -191,7 +227,8 @@ int HiRes5Engine::o_startAnimation(ScriptEnv &e) {
 int HiRes5Engine::o_winGame(ScriptEnv &e) {
 	OP_DEBUG_0("\tWIN_GAME()");
 
-	// TODO: draws room and plays music
+	showRoom();
+	playTones(_song, true);
 
 	return o1_quit(e);
 }
@@ -277,6 +314,9 @@ void HiRes5Engine::init() {
 
 	stream.reset(_disk->createReadStream(0x8, 0x7, 0x02));
 	_gameStrings.carryingTooMuch = readString(*stream);
+
+	stream.reset(_disk->createReadStream(0xc, 0xb, 0x20));
+	loadSong(*stream);
 }
 
 void HiRes5Engine::initGameState() {
