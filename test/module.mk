@@ -19,6 +19,10 @@ TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
 TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
 
+ifdef N64
+TEST_LDFLAGS := $(filter-out -mno-crt0,$(TEST_LDFLAGS))
+endif
+
 ifdef HAVE_GCC3
 # In test/common/str.h, we test a zero length format string. This causes GCC
 # to generate a warning which in turn poses a problem when building with -Werror.
