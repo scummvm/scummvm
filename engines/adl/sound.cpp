@@ -55,7 +55,7 @@ Speaker::Speaker(int sampleRate) :
 void Speaker::startTone(double freq) {
 	_halfWaveLen = _halfWaveRem = doubleToFrac(_rate / freq / 2);
 
-	if (_halfWaveLen < FRAC_ONE) {
+	if (_halfWaveLen < (frac_t)FRAC_ONE) {
 		// Tone out of range at this sample rate
 		stopTone();
 	}
@@ -70,7 +70,7 @@ void Speaker::generateSamples(int16 *buffer, int numSamples) {
 	int offset = 0;
 
 	while (offset < numSamples) {
-		if (_halfWaveRem >= 0 && _halfWaveRem < FRAC_ONE) {
+		if (_halfWaveRem >= 0 && _halfWaveRem < (frac_t)FRAC_ONE) {
 			// Rising/falling edge
 			// Switch level
 			_curSample = ~_curSample;
