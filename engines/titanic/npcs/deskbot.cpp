@@ -28,11 +28,13 @@ namespace Titanic {
 static const char *const TALKING_NAMES[] = {
 	"NeutralTalking", "HandFidget1", "HandFidget2", "LookingAround",
 	"FriendlyTalking", "MoreRudeness", "HandUp", "TapFingers",
-	"WaveOn", "WaveArmsAround", "HandsOverEdge"
+	"WaveOn", "WaveArmsAround", "HandsOverEdge",
+	nullptr
 };
 
 static const char *const IDLE_NAMES[] = {
-	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge"
+	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge",
+	nullptr
 };
 
 BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
