@@ -281,7 +281,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 		pet->phonographAction("");
 
 		CChicken *chicken = dynamic_cast<CChicken *>(item);
-		bool chickenFlag = chicken ? chicken->_string6 != "None" : false;
+		bool chickenFlag = chicken ? chicken->_condiment != "None" : false;
 
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {

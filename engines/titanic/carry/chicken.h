@@ -45,7 +45,7 @@ public:
 	static int _v1;
 public:
 	int _field12C;
-	CString _string6;
+	CString _condiment;
 	int _field13C;
 	int _timerId;
 public:

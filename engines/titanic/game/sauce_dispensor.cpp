@@ -74,7 +74,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 		if (_fieldF0) {
 			playSound("b#15.wav", 50);
 
-			if (chicken->_string6 != "None") {
+			if (chicken->_condiment != "None") {
 				petDisplayMessage(1, FOODSTUFF_ALREADY_GARNISHED);
 				msg->execute("Chicken");
 			} else {
@@ -103,7 +103,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 		if (_field104 || _fieldF0) {
 			petAddToInventory();
-		} else if (glass->_string6 != "None") {
+		} else if (glass->_condiment != "None") {
 			visibleMsg.execute("BeerGlass");
 		} else if (_fieldEC) {
 			glass->setPosition(Point(

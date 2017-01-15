@@ -337,7 +337,7 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	playSound("z#23.wav");
 
 	CChicken *chicken = dynamic_cast<CChicken *>(item);
-	bool chickenFlag = chicken ? chicken->_string6 == "None" : false;
+	bool chickenFlag = chicken ? chicken->_condiment == "None" : false;
 
 	if (chickenFlag) {
 		if (_okStartFrame >= 0) {
