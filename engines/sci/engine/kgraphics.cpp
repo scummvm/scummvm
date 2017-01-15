@@ -671,7 +671,9 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	// palette animation effect slower and visible, and not have the logo screen
 	// get skipped because the scripts don't wait between animation steps. Fixes
 	// bug #3537232.
-	if (g_sci->getGameId() == GID_SQ4 && !g_sci->isCD() && s->currentRoomNumber() == 1)
+	// This problem also happens in the time pod (room#531)
+	// This problem also happens in the ending cutscene time rip (room#21)
+	if (g_sci->getGameId() == GID_SQ4 && !g_sci->isCD())
 		g_sci->sleep(10);
 
 	return s->r_acc;
