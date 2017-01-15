@@ -601,6 +601,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				BitmapCast *bitmapCast = static_cast<BitmapCast *>(_sprites[i]->_cast);
 				//TODO: might want a quicker way to determine if cast is from Shared Cast.
 				if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(_sprites[i]->_castId + 1024)) {
+					debugC(2, kDebugImages, "Shared cast sprite BMP: id: %d", _sprites[i]->_castId + 1024);
 					bitmapCast = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(_sprites[i]->_castId));
 				}
 
@@ -719,6 +720,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	BitmapCast *bc = NULL;
 
 	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
+		debugC(2, kDebugImages, "Shared cast BMP: id: %d", imgId);
 		pic = _vm->getSharedBMP()->getVal(imgId);
 		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
 	} else 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
@@ -875,9 +877,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
 	int alignment = (int)textCast->textAlign;
-	if (alignment == -1) 
+	if (alignment == -1)
 		alignment = 3;
-	else 
+	else
 		alignment++;
 
 	uint16 textX = x, textY = y;
@@ -897,12 +899,12 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			width += padding * 2;
 			height += padding;
 
-			if (textCast->textAlign == kTextAlignLeft) 
+			if (textCast->textAlign == kTextAlignLeft)
 				textX += padding;
-			else if (textCast->textAlign == kTextAlignRight) 
+			else if (textCast->textAlign == kTextAlignRight)
 				textX -= padding;
 			//TODO: alignment issue with odd-size-width center-aligned text
-			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1)) 
+			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1))
 			//	textX--;
 
 			textY += padding / 2;
