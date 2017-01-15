@@ -134,7 +134,7 @@ Common::Error DirectorEngine::run() {
 
 	loadSharedCastsFrom(_sharedCastFile);
 
-	loadMainArchive();
+	loadInitialMovie(getEXEName());
 
 	_currentScore = new Score(this, _mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());

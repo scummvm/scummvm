@@ -86,7 +86,8 @@ public:
 	void loadPatterns();
 	Graphics::MacPatterns &getPatterns();
 
-	void loadMainArchive();
+	void loadInitialMovie(const Common::String movie);
+	Archive *openMainArchive(const Common::String movie);
 	Archive *createArchive();
 	void cleanupMainArchive();
 
@@ -114,13 +115,13 @@ private:
 	const DirectorGameDescription *_gameDescription;
 
 	Common::HashMap<Common::String, Score *> *scanMovies(const Common::String &folder);
-	void loadEXE();
+	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
 	void loadEXEv5(Common::SeekableReadStream *stream);
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	void loadMac();
+	void loadMac(const Common::String movie);
 
 	Common::HashMap<int, Cast *> *_sharedCasts;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;

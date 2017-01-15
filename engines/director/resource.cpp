@@ -39,11 +39,22 @@ Archive *DirectorEngine::createArchive() {
 	}
 }
 
-void DirectorEngine::loadMainArchive() {
+void DirectorEngine::loadInitialMovie(const Common::String movie) {
 	if (getPlatform() == Common::kPlatformWindows)
-		loadEXE();
+		loadEXE(movie);
 	else
-		loadMac();
+		loadMac(movie);
+}
+
+Archive *DirectorEngine::openMainArchive(const Common::String movie) {
+	delete _mainArchive;
+
+	_mainArchive = createArchive();
+
+	if (!_mainArchive->openFile(movie))
+		error("Could not open '%s'", movie.c_str());
+
+	return _mainArchive;
 }
 
 void DirectorEngine::cleanupMainArchive() {
@@ -51,8 +62,8 @@ void DirectorEngine::cleanupMainArchive() {
 	delete _macBinary;
 }
 
-void DirectorEngine::loadEXE() {
-	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(getEXEName());
+void DirectorEngine::loadEXE(const Common::String movie) {
+	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());
 
@@ -93,10 +104,7 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
 	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
 
-	_mainArchive = new RIFFArchive();
-
-	if (!_mainArchive->openFile(mmmFileName))
-		error("Could not open '%s'", mmmFileName.c_str());
+	openMainArchive(mmmFileName);
 
 	delete stream;
 }
@@ -154,19 +162,16 @@ void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offs
 		error("Failed to load RIFX from EXE");
 }
 
-void DirectorEngine::loadMac() {
+void DirectorEngine::loadMac(const Common::String movie) {
 	if (getVersion() < 4) {
 		// The data is part of the resource fork of the executable
-		_mainArchive = new MacArchive();
-
-		if (!_mainArchive->openFile(getEXEName()))
-			error("Failed to open Mac binary '%s'", getEXEName().c_str());
+		openMainArchive(movie);
 	} else {
 		// The RIFX is located in the data fork of the executable
 		_macBinary = new Common::MacResManager();
 
-		if (!_macBinary->open(getEXEName()) || !_macBinary->hasDataFork())
-			error("Failed to open Mac binary '%s'", getEXEName().c_str());
+		if (!_macBinary->open(movie) || !_macBinary->hasDataFork())
+			error("Failed to open Mac binary '%s'", movie.c_str());
 
 		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
