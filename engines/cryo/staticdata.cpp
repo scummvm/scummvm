@@ -450,7 +450,7 @@ uint8 tab_2CB1E[8][4] = {
 	{ 0x81, 0x90,    1, 0x10}
 };
 
-prect_t perso_rects[] = {   //TODO: just an array of int16s?
+prect_t _characterRects[] = {   //TODO: just an array of int16s?
 	{  93,  69, 223, 176},
 	{ 102,  86, 162, 126},
 	{  88, 103, 168, 163},
@@ -472,7 +472,7 @@ prect_t perso_rects[] = {   //TODO: just an array of int16s?
 	{ 188,  83, 251, 158}
 };
 
-byte tab_persxx[][5] = {   //TODO: struc?
+byte _characterArray[][5] = {   //TODO: struc?
 	{  8, 15, 23, 25, 0xFF},
 	{  0,  9, 0xFF        },
 	{  0,  9, 0xFF        },

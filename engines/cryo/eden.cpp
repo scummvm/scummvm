@@ -71,7 +71,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_tyranPtr = nullptr;
 	_lastAnimFrameNumb = _curAnimFrameNumb = 0;
 	_lastAnimTicks = 0;
-	_curPersoRect = nullptr;
+	_curCharacterRect = nullptr;
 	_numAnimFrames = _maxPersoDesc = _numImgDesc = 0;
 	_restartAnimation = _animationActive = false;
 	_animationDelay = _animationIndex = _lastAnimationIndex = 0;
@@ -363,10 +363,10 @@ void EdenGame::flipMode() {
 				displaySubtitles();
 			else {
 				getDataSync();
-				load_perso_cour();
+				loadCurrCharacter();
 				addanim();
 				_restartAnimation = true;
-				anim_perso();
+				animCharacter();
 			}
 		} else
 			displaySubtitles();
@@ -447,7 +447,7 @@ void EdenGame::gotoPlace(Goto *go) {
 	closeRoom();
 	_adamMapMarkPos.x = -1;
 	_adamMapMarkPos.y = -1;
-	temps_passe(_globals->_travelTime);
+	addTime(_globals->_travelTime);
 	_globals->_var100 = _globals->_roomPtr->_id;
 	_globals->_roomNum = _globals->_newRoomNum;
 	_globals->_areaNum = _globals->_roomNum >> 8;
@@ -484,7 +484,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 		}
 		specialout();
 		if (_globals->_areaPtr->_type == AreaType::atValley) {
-			temps_passe(32);
+			addTime(32);
 			_globals->_stepsToFindAppleFast++;
 			_globals->_stepsToFindAppleNormal++;
 		}
@@ -1561,28 +1561,28 @@ void EdenGame::showBars() {
 
 // Original name: sauvefondbouche
 void EdenGame::saveMouthBackground() {
-	rect_src.left = _curPersoRect->left;
-	rect_src.top = _curPersoRect->top;
-	rect_src.right = _curPersoRect->right;
-	rect_src.bottom = _curPersoRect->bottom;
-	rect_dst.left = _curPersoRect->left + 320;
-	rect_dst.top = _curPersoRect->top;
-	rect_dst.right = _curPersoRect->right + 320;
-	rect_dst.bottom = _curPersoRect->bottom;
+	rect_src.left = _curCharacterRect->left;
+	rect_src.top = _curCharacterRect->top;
+	rect_src.right = _curCharacterRect->right;
+	rect_src.bottom = _curCharacterRect->bottom;
+	rect_dst.left = _curCharacterRect->left + 320;
+	rect_dst.top = _curCharacterRect->top;
+	rect_dst.right = _curCharacterRect->right + 320;
+	rect_dst.bottom = _curCharacterRect->bottom;
 	CLBlitter_CopyViewRect(_mainView, _mainView, &rect_src, &rect_dst);
 	_backgroundSaved = true;
 }
 
 // Original name: restaurefondbouche
 void EdenGame::restoreMouthBackground() {
-	rect_src.left = _curPersoRect->left;
-	rect_src.top = _curPersoRect->top;
-	rect_src.right = _curPersoRect->right;
-	rect_src.bottom = _curPersoRect->bottom;
-	rect_dst.left = _curPersoRect->left + 320;
-	rect_dst.top = _curPersoRect->top;
-	rect_dst.right = _curPersoRect->right + 320;
-	rect_dst.bottom = _curPersoRect->bottom;
+	rect_src.left = _curCharacterRect->left;
+	rect_src.top = _curCharacterRect->top;
+	rect_src.right = _curCharacterRect->right;
+	rect_src.bottom = _curCharacterRect->bottom;
+	rect_dst.left = _curCharacterRect->left + 320;
+	rect_dst.top = _curCharacterRect->top;
+	rect_dst.right = _curCharacterRect->right + 320;
+	rect_dst.bottom = _curCharacterRect->bottom;
 	CLBlitter_CopyViewRect(_mainView, _mainView, &rect_dst, &rect_src);
 }
 
@@ -2249,7 +2249,8 @@ void EdenGame::vivreval(int16 areaNum) {
 	placeVava(_globals->_curAreaPtr);
 }
 
-void EdenGame::chaquejour() {
+// Original name: chaquejour
+void EdenGame::handleDay() {
 	vivreval(3);
 	vivreval(4);
 	vivreval(5);
@@ -2259,7 +2260,8 @@ void EdenGame::chaquejour() {
 	_globals->_drawFlags |= DrawFlags::drDrawTopScreen;
 }
 
-void EdenGame::temps_passe(int16 t) {
+// Original name: temps_passe
+void EdenGame::addTime(int16 t) {
 	int16 days = _globals->_gameDays;
 	int16 lo = _globals->_gameHours + t;
 	if (lo > 255) {
@@ -2273,15 +2275,12 @@ void EdenGame::temps_passe(int16 t) {
 	if (t) {
 		_globals->_gameDays += t;
 		while (t--)
-			chaquejour();
+			handleDay();
 	}
 }
 
-void EdenGame::heurepasse() {
-	temps_passe(5);
-}
-
-void EdenGame::anim_perso() {
+// Original name: anim_perso
+void EdenGame::animCharacter() {
 	if (_curBankNum != _globals->_characterImageBank)
 		loadCharacter(_globals->_characterPtr);
 	restoreUnderSubtitles();
@@ -2298,7 +2297,7 @@ void EdenGame::anim_perso() {
 			getanimrnd();
 		useCharacterBank();
 		_numImgDesc = 0;
-		perso_spr(_globals->_curCharacterAnimPtr);
+		setCharacterSprite(_globals->_curCharacterAnimPtr);
 		_globals->_curCharacterAnimPtr += _numImgDesc + 1;
 		_mouthAnimations = _imageDesc + 200;
 		removeMouthSprite();
@@ -2331,7 +2330,7 @@ void EdenGame::anim_perso() {
 			useCharacterBank();
 			restoreMouthBackground();
 //			debug("perso spr %d", animationIndex);
-			perso_spr(_globals->_persoSpritePtr2 + _animationIndex * 2);  //TODO: int16s?
+			setCharacterSprite(_globals->_persoSpritePtr2 + _animationIndex * 2);  //TODO: int16s?
 			_mouthAnimations = _imageDesc + 200;
 			if (*_mouthAnimations)
 				displayImage();
@@ -2368,7 +2367,7 @@ void EdenGame::addanim() {
 	_animationActive = true;
 	if (_globals->_characterPtr == &kPersons[PER_KING])
 		return;
-	perso_spr(_globals->_persoSpritePtr + READ_LE_UINT16(_globals->_persoSpritePtr));  //TODO: GetElem(0)
+	setCharacterSprite(_globals->_persoSpritePtr + READ_LE_UINT16(_globals->_persoSpritePtr));  //TODO: GetElem(0)
 	_mouthAnimations = _imageDesc + 200;
 	if (_globals->_characterPtr->_id != PersonId::pidCabukaOfCantura && _globals->_characterPtr->_targetLoc != 7) //TODO: targetLoc is minisprite idx
 		removeMouthSprite();
@@ -2399,13 +2398,15 @@ void EdenGame::removeMouthSprite() {
 	}
 }
 
-void EdenGame::anim_perfin() {
+// Original name: anim_perfin
+void EdenGame::AnimEndCharacter() {
 	_globals->_animationFlags &= ~0x80;
 	_animationDelay = 0;
 	_animationActive = false;
 }
 
-void EdenGame::perso_spr(byte *spr) {
+// Original name: perso_spr
+void EdenGame::setCharacterSprite(byte *spr) {
 	byte *img = _imageDesc + 200 + 2;
 	int16 count = 0;
 	byte c;
@@ -2420,7 +2421,6 @@ void EdenGame::perso_spr(byte *spr) {
 		_numImgDesc++;
 		index = (cc << 8) | c;
 		index -= 2;
-		//	debug("anim sprite %d", index);
 
 		if (index > _maxPersoDesc)
 			index = _maxPersoDesc;
@@ -2538,14 +2538,16 @@ void EdenGame::displayImage() {
 	}
 }
 
-void EdenGame::af_perso1() {
-	perso_spr(_globals->_persoSpritePtr + READ_LE_UINT16(_globals->_persoSpritePtr));
+// Original name: af_perso1
+void EdenGame::displayCharacter1() {
+	setCharacterSprite(_globals->_persoSpritePtr + READ_LE_UINT16(_globals->_persoSpritePtr));
 	displayImage();
 }
 
-void EdenGame::af_perso() {
-	load_perso_cour();
-	af_perso1();
+// Original name: af_perso
+void EdenGame::displayCharacter() {
+	loadCurrCharacter();
+	displayCharacter1();
 }
 
 void EdenGame::ef_perso() {
@@ -2559,8 +2561,8 @@ void EdenGame::loadCharacter(perso_t *perso) {
 		return;
 
 	if (perso->_spriteBank != _globals->_characterImageBank) {
-		_curPersoRect = &perso_rects[perso->_id];   //TODO: array of int16?
-		dword_30728 = tab_persxx[perso->_id];
+		_curCharacterRect = &_characterRects[perso->_id];   //TODO: array of int16?
+		dword_30728 = _characterArray[perso->_id];
 		ef_perso();
 		_globals->_characterImageBank = perso->_spriteBank;
 		useBank(_globals->_characterImageBank);
@@ -2589,7 +2591,8 @@ void EdenGame::loadCharacter(perso_t *perso) {
 	}
 }
 
-void EdenGame::load_perso_cour() {
+// Original name: load_perso_cour
+void EdenGame::loadCurrCharacter() {
 	loadCharacter(_globals->_characterPtr);
 }
 
@@ -2598,7 +2601,7 @@ void EdenGame::fin_perso() {
 	_globals->_curCharacterAnimPtr = nullptr;
 	_globals->_varCA = 0;
 	_globals->_characterImageBank = -1;
-	anim_perfin();
+	AnimEndCharacter();
 }
 
 void EdenGame::no_perso() {
@@ -2628,7 +2631,7 @@ void EdenGame::closeCharacterScreen() {
 		_globals->_displayFlags = _globals->_oldDisplayFlags;
 		_globals->_animationFlags &= 0x3F;
 		_globals->_curCharacterAnimPtr = nullptr;
-		anim_perfin();
+		AnimEndCharacter();
 		if (_globals->_displayFlags & DisplayFlags::dfMirror) {
 			gameToMirror(1);
 			_scrollPos = _oldScrollPos;
@@ -2687,7 +2690,7 @@ void EdenGame::displayCharacterBackground1() {
 	char *ptab;
 	if (_globals->_characterPtr == &kPersons[PER_MESSENGER]) {
 		_gameIcons[0].sx = 0;
-		perso_rects[PER_MESSENGER].left = 2;
+		_characterRects[PER_MESSENGER].left = 2;
 		bank = _globals->_characterBackgroundBankIdx;
 		if (_globals->_eventType == EventType::etEventE) {
 			_globals->_var103 = 1;
@@ -2695,7 +2698,7 @@ void EdenGame::displayCharacterBackground1() {
 			return;
 		}
 		_gameIcons[0].sx = 60;
-		perso_rects[PER_MESSENGER].left = 62;
+		_characterRects[PER_MESSENGER].left = 62;
 	}
 	if (_globals->_characterPtr == &kPersons[PER_THOO]) {
 		bank = 37;
@@ -2770,14 +2773,14 @@ void EdenGame::showCharacter() {
 				return;
 			}
 		}
-		load_perso_cour();
+		loadCurrCharacter();
 		addanim();
 		if (!_globals->_curCharacterAnimPtr) {
-			af_perso();
+			displayCharacter();
 			displaySubtitles();
 		}
 		_restartAnimation = true;
-		anim_perso();
+		animCharacter();
 		if (perso != &kPersons[PER_UNKN_156])
 			updateCursor();
 		_paletteUpdateRequired = true;
@@ -2793,17 +2796,17 @@ void EdenGame::showCharacter() {
 // Original name: showpersopanel
 void EdenGame::displayCharacterPanel() {
 	perso_t *perso = _globals->_characterPtr;
-	load_perso_cour();
+	loadCurrCharacter();
 	addanim();
 	if (!_globals->_curCharacterAnimPtr) {
-		af_perso();
+		displayCharacter();
 		displaySubtitles();
 	}
 	_restartAnimation = true;
 	_paletteUpdateRequired = true;
 	if (_globals->_drawFlags & DrawFlags::drDrawFlag8)
 		return;
-	anim_perso();
+	animCharacter();
 	if (perso != &kPersons[PER_UNKN_156])
 		updateCursor();
 	display();
@@ -2843,7 +2846,7 @@ int16 EdenGame::readFrameNumber() {
 void EdenGame::waitEndSpeak() {
 	for (;;) {
 		if (_animationActive)
-			anim_perso();
+			animCharacter();
 		musicspy();
 		display();
 		_vm->pollEvents();
@@ -3826,7 +3829,7 @@ void EdenGame::handleNarrator() {
 	_globals->_var60 = 0;
 	_globals->_eventType = 0;
 	_globals->_var103 = 69;
-	if (dialo_even(&kPersons[PER_UNKN_156])) {
+	if (dialogEvent(&kPersons[PER_UNKN_156])) {
 		_globals->_narratorDialogPtr = _globals->_dialogPtr;
 		dialautoon();
 		_globals->_varF2 |= 1;
@@ -4068,14 +4071,15 @@ bool EdenGame::dialoscansvmas(dial_t *dial) {
 	return res;
 }
 
-bool EdenGame::dialo_even(perso_t *perso) {
+// Original name: dialo_even
+bool EdenGame::dialogEvent(perso_t *perso) {
 	_globals->_characterPtr = perso;
 	int num = (perso->_id << 3) | DialogType::dtEvent;
 	dial_t *dial = (dial_t *)getElem(_gameDialogs, num);
-	bool res = dialoscansvmas(dial);
+	bool retVal = dialoscansvmas(dial);
 	_globals->_lastDialogPtr = nullptr;
 	parlemoiNormalFlag = false;
-	return res;
+	return retVal;
 }
 
 // Original name: stay_here
@@ -4099,7 +4103,8 @@ void EdenGame::endDeath(int16 vid) {
 	musicspy();
 }
 
-void EdenGame::evenchrono() {
+// Original name: evenchrono
+void EdenGame::chronoEvent() {
 	if (!(_globals->_displayFlags & DisplayFlags::dfFlag1))
 		return;
 
@@ -4108,7 +4113,7 @@ void EdenGame::evenchrono() {
 	_globals->_gameTime = _currentTime;
 	if (_globals->_gameTime <= oldGameTime)
 		return;
-	heurepasse();
+	addTime(5);
 	if (!(_globals->_chronoFlag & 1))
 		return;
 	_globals->_chrono -= 200;
@@ -4150,7 +4155,8 @@ void EdenGame::setChrono(int16 t) {
 	_globals->_chronoFlag = 1;
 }
 
-void EdenGame::prechargephrases(int16 vid) {
+// Original name: prechargephrases
+void EdenGame::preloadDialogs(int16 vid) {
 	perso_t *perso = &kPersons[PER_MORKUS];
 	if (vid == 170)
 		perso = &kPersons[PER_UNKN_156];
@@ -5832,7 +5838,7 @@ void EdenGame::edmain() {
 		musicspy();
 		FRDevents();
 		handleNarrator();
-		evenchrono();
+		chronoEvent();
 		if (_globals->_drawFlags & DrawFlags::drDrawInventory)
 			showObjects();
 		if (_globals->_drawFlags & DrawFlags::drDrawTopScreen)
@@ -5846,7 +5852,7 @@ void EdenGame::edmain() {
 		if (_globals->_displayFlags & DisplayFlags::dfFlag2)
 			noclicpanel();
 		if (_animationActive)
-			anim_perso();
+			animCharacter();
 		updateCursor();
 		display();
 	}
@@ -6446,7 +6452,7 @@ void EdenGame::playHNM(int16 num) {
 	if (_specialTextMode) {
 		perso = _globals->_characterPtr;
 		oldDialogType = _globals->_dialogType;
-		prechargephrases(num);
+		preloadDialogs(num);
 		fademusica0(1);
 		_musicChannel->stop();
 	}
@@ -7345,8 +7351,8 @@ void EdenGame::playtape() {
 		_globals->_curCharacterAnimPtr = nullptr;
 		_globals->_varCA = 0;
 		_globals->_characterImageBank = -1;
-		anim_perfin();
-		load_perso_cour();
+		AnimEndCharacter();
+		loadCurrCharacter();
 	}
 	displayCharacterBackground();
 	_globals->_textNum = _globals->_tapePtr->_textNum;
@@ -7587,7 +7593,7 @@ void EdenGame::evenements(perso_t *perso) {
 	if (perso >= &kPersons[PER_UNKN_18C])
 		return;
 
-	if (!dialo_even(perso))
+	if (!dialogEvent(perso))
 		return;
 
 	_globals->_var113++;

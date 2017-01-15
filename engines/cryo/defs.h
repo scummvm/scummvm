@@ -819,8 +819,8 @@ struct prect_t {
 	int16   left, top, right, bottom;
 };
 
-extern prect_t perso_rects[];
-extern byte tab_persxx[][5];
+extern prect_t _characterRects[];
+extern byte _characterArray[][5];
 extern Area kAreasTable[];
 extern int16 tab_2CEF0[64];
 extern int16 tab_2CF70[64];
