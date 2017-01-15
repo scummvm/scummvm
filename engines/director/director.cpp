@@ -166,6 +166,8 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
 				_sharedCastFile = i->getName();
+
+				debugC(2, kDebugLoading, "Shared cast detected: %s", i->getName().c_str());
 				continue;
 			}
 

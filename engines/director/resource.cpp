@@ -192,7 +192,7 @@ void DirectorEngine::loadMac() {
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Archive *shardcst = createArchive();
 
-	debugC(1, kDebugLoading, "Loading Shared cast '%s'", filename.c_str());
+	debug(0, "Loading Shared cast '%s'", filename.c_str());
 
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
@@ -248,6 +248,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (bmp.size() != 0) {
 		debugC(3, kDebugLoading, "Loading %d BITDs", bmp.size());
 		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
+			debugC(3, kDebugLoading, "Shared BITD %d", *iterator);
 			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
 		}
 	}
@@ -256,6 +257,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (stxt.size() != 0) {
 		debugC(3, kDebugLoading, "Loading %d SNDs", sound.size());
 		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
+			debugC(3, kDebugLoading, "Shared SND  %d", *iterator);
 			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
 		}
 	}
