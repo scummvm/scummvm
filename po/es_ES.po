@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-01-12 10:39+0100\n"
-"PO-Revision-Date: 2016-12-30 20:22+0000\n"
-"Last-Translator: Luis <luissagasta@gmail.com>\n"
-"Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/es/>\n"
+"PO-Revision-Date: 2017-01-15 22:05+0000\n"
+"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
+"Language-Team: Spanish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -845,7 +845,7 @@ msgstr "no se ha podido cambiar el ajuste de corrección de aspecto"
 
 #: gui/options.cpp:480
 msgid "the fullscreen setting could not be changed"
-msgstr "no se ha podido cambiar el ajuste de pantalla completa"
+msgstr "no se ha podido cambiar el ajuste a pantalla completa"
 
 #: gui/options.cpp:486
 msgid "the filtering setting could not be changed"
@@ -915,7 +915,7 @@ msgstr "Disp. de música:"
 
 #: gui/options.cpp:878
 msgid "AdLib emulator:"
-msgstr "Emul. de AdLib:"
+msgstr "Emul. AdLib:"
 
 #: gui/options.cpp:878 gui/options.cpp:879
 msgid "AdLib is used for music in many games"
@@ -2902,13 +2902,13 @@ msgstr ""
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Partida guardada en el archivo:\n"
+"Partida correctamente guardada en el archivo:\n"
 "\n"
 "%s"
 
@@ -3359,9 +3359,8 @@ msgstr ""
 "cada vez que inicies el juego.\n"
 
 #: engines/parallaction/saveload.cpp:316
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM ha convertido todas las partidas guardadas correctamente."
+msgstr "ScummVM ha convertido con éxito todas tus partidas guardadas."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3681,9 +3680,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Cargar partida 1-10"
+msgstr "Cargar partida guardada 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3692,7 +3690,6 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
 msgstr "Guardar partida 1-10"
 
@@ -4278,7 +4275,7 @@ msgstr "Mostrar las ventanas con un fondo parcialmente transparente"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "El archivo de datos del motor \"sky.cpt\" tiene un tamaño incorrecto."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4388,7 +4385,7 @@ msgstr ""
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "Variación de fuente no presente en el archivo de datos del motor '%s'."
 
 #: engines/toon/toon.cpp:222
 #, c-format
@@ -4421,11 +4418,11 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "Filtrado bilineal de sprites (LENTO)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "Aplicar filtrado bilineal a sprites individuales"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
