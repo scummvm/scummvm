@@ -334,7 +334,8 @@ bool CDoorbot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		"Touch chin", "Cross hands in front", nullptr
 	};
 	static const char *const NAMES2[] = {
-		"SE Talking 1", "SE Talking 2", "SE Talking 3", "SE Talking 4"
+		"SE Talking 1", "SE Talking 2", "SE Talking 3", "SE Talking 4",
+		nullptr
 	};
 	static const char *const NAMES3[] = {
 		"SE Ask For Help", nullptr
