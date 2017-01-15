@@ -65,7 +65,7 @@ private:
 	Graphics::ManagedSurface *_movieFrameSurface[2];
 	Graphics::ManagedSurface *_framePixels;
 	bool _isReversed;
-	int _currentFrame;
+	int _currentFrame, _priorFrame;
 	uint32 _priorFrameTime;
 	Common::String _movieName;
 private:
@@ -176,7 +176,7 @@ public:
 	/**
 	 * Gets the current frame
 	 */
-	int getFrame() const { return _currentFrame; }
+	int getFrame() const { return _priorFrame; }
 
 	/**
 	 * Add a movie event

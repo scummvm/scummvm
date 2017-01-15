@@ -156,7 +156,7 @@ void AVISurface::seekToFrame(uint frameNumber) {
 
 	if ((int)frameNumber != getFrame()) {
 		_decoder->seekToFrame(frameNumber);
-		_currentFrame = (int)frameNumber;
+		_currentFrame = _priorFrame = (int)frameNumber;
 	}
 }
 
@@ -169,6 +169,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 		return true;
 
 	CMovieRangeInfo *info = _movieRangeInfo.front();
+	_priorFrame = _currentFrame;
 	_currentFrame += _isReversed ? -1 : 1;
 
 	int newFrame = _currentFrame;
