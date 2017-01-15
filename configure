@@ -2359,6 +2359,7 @@ case $_host_os in
 		fi
 
 		append_var CXXFLAGS "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
+		append_var CXXFLAGS "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
 		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
