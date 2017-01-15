@@ -36,13 +36,13 @@ BEGIN_MESSAGE_MAP(CSauceDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CSauceDispensor::CSauceDispensor() : CBackground(),
-		_fieldEC(0), _fieldF0(0), _field104(0), _field108(0) {
+		_pouringCondiment(false), _fieldF0(0), _field104(0), _field108(0) {
 }
 
 void CSauceDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_pouringCondiment, indent);
 	file->writeNumberLine(_fieldF0, indent);
 	file->writePoint(_pos1, indent);
 	file->writePoint(_pos2, indent);
@@ -55,7 +55,7 @@ void CSauceDispensor::save(SimpleFile *file, int indent) {
 void CSauceDispensor::load(SimpleFile *file) {
 	file->readNumber();
 	_string3 = file->readString();
-	_fieldEC = file->readNumber();
+	_pouringCondiment = file->readNumber();
 	_fieldF0 = file->readNumber();
 	_pos1 = file->readPoint();
 	_pos2 = file->readPoint();
@@ -80,6 +80,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 			} else {
 				setVisible(true);
 				if (chicken->_field12C) {
+					_pouringCondiment = true;
 					playMovie(_pos1.x, _pos1.y, MOVIE_NOTIFY_OBJECT);
 				} else {
 					CActMsg actMsg(_string3);
@@ -99,13 +100,14 @@ bool CSauceDispensor::Use(CUse *msg) {
 		petDisplayMessage(1, DISPENSOR_IS_EMPTY);
 	} else if (msg->_item->isEquals("BeerGlass")) {
 		CGlass *glass = dynamic_cast<CGlass *>(msg->_item);
+		assert(glass);
 		_field108 = true;
 
-		if (_field104 || _fieldF0) {
-			petAddToInventory();
+		if (_field104 != 1 || _fieldF0 != 1) {
+			glass->petAddToInventory();
 		} else if (glass->_condiment != "None") {
 			visibleMsg.execute("BeerGlass");
-		} else if (_fieldEC) {
+		} else if (_pouringCondiment) {
 			glass->setPosition(Point(
 				_bounds.left + (_bounds.width() / 2) - (glass->_bounds.width() / 2),
 				300));
@@ -121,7 +123,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 bool CSauceDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 	setVisible(false);
-	_fieldEC = false;
+	_pouringCondiment = false;
 
 	CActMsg actMsg("GoToPET");
 	if (_field104)

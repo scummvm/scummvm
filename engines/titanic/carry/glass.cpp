@@ -135,7 +135,7 @@ bool CGlass::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 				CUseWithCharMsg useMsg(npc);
 				useMsg.execute(this);
 			} else {
-				CUseWithOtherMsg otherMsg(npc);
+				CUseWithOtherMsg otherMsg(msg->_dropTarget);
 				otherMsg.execute(this);
 			}
 		}

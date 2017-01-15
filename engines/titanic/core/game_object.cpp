@@ -1511,6 +1511,8 @@ void CGameObject::petAddToCarryParcel(CGameObject *obj) {
 }
 
 void CGameObject::petAddToInventory() {
+	assert(dynamic_cast<CCarry *>(this));
+
 	CPetControl *pet = getPetControl();
 	if (pet) {
 		makeDirty();

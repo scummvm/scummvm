@@ -37,7 +37,7 @@ class CSauceDispensor : public CBackground {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
 	CString _string3;
-	int _fieldEC;
+	bool _pouringCondiment;
 	int _fieldF0;
 	Point _pos1;
 	Point _pos2;
