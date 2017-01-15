@@ -824,21 +824,23 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
-	uint16 a = textStream->readUint16();
-	uint32 b = textStream->readUint32();
-	uint16 c = textStream->readUint16();
-	uint16 d = textStream->readUint16();
+	uint16 formattingCount = textStream->readUint16();
+	while (formattingCount) {
+		uint32 formatStartOffset = textStream->readUint32();
+		textStream->readUint16();
+		textStream->readUint16();
 
-	debugC(3, kDebugText, "text: a: %x b: %x c: %x d: %x", a, b, c, d);
+		textCast->fontId = textStream->readUint16();
+		textCast->textSlant = textStream->readByte();
+		textStream->readByte();
+		textCast->fontSize = textStream->readUint16();
 
-	textCast->fontId = textStream->readUint16();
-	textCast->textSlant = textStream->readByte();
-	textStream->readByte();
-	textCast->fontSize = textStream->readUint16();
+		textCast->palinfo1 = textStream->readUint16();
+		textCast->palinfo2 = textStream->readUint16();
+		textCast->palinfo3 = textStream->readUint16();
 
-	textCast->palinfo1 = textStream->readUint16();
-	textCast->palinfo2 = textStream->readUint16();
-	textCast->palinfo3 = textStream->readUint16();
+		formattingCount--;
+	}
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
