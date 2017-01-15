@@ -165,7 +165,7 @@ CGameObject *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
 		}
 	}
 
-	if (target) {
+	if (!target) {
 		// Check if the cursor is on the PET. If so, pass to the PET
 		// to see what specific element the drag ended on
 		CProjectItem *project = view->getRoot();
