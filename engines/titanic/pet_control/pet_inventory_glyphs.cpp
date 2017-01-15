@@ -150,11 +150,12 @@ void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 		if (_field34 && _item) {
 			int itemIndex = populateItem(_item, 0);
 			if (itemIndex >= 14 && itemIndex <= 18) {
+				// Variations of the chicken
 				CPETObjectStateMsg stateMsg(0);
 				stateMsg.execute(_item);
 
 				text->setText(CString::format("%s %s",
-					stateMsg._value ? "A hot " : "A cold ",
+					stateMsg._value ? "A hot" : "A cold",
 					g_vm->_itemDescriptions[itemIndex].c_str()
 				));
 
