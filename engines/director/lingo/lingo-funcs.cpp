@@ -172,12 +172,19 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type != VOID) {
 		movie.toString();
 
-		if (!_vm->_movies || !_vm->_movies->contains(*movie.u.s)) {
+		Common::File file;
+
+		if (!file.open(*movie.u.s)) {
 			warning("Movie %s does not exist", movie.u.s->c_str());
 			return;
 		}
 
-		_vm->_currentScore = _vm->_movies->getVal(*movie.u.s);
+		delete _vm->_currentScore;
+
+		Archive *mov = _vm->openMainArchive(*movie.u.s);
+
+		_vm->_currentScore = new Score(_vm, mov);
+		debug(0, "Score name %s", _vm->_currentScore->getMacName().c_str());
 		_vm->_currentScore->loadArchive();
 	}
 
