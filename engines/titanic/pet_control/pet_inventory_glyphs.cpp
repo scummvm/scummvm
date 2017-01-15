@@ -294,8 +294,10 @@ int CPetInventoryGlyph::getItemIndex(CGameObject *item, bool isLoading) {
 	int frameNum = item->getFrameNumber();
 	int movieFrame = item->getMovieFrame();
 
-	if (isLoading && frameNum != -1 && frameNum != movieFrame)
+	if (isLoading && frameNum != -1 && frameNum != movieFrame) {
 		item->loadFrame(frameNum);
+		movieFrame = frameNum;
+	}
 
 	return movieFrame;
 }
