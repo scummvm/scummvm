@@ -93,7 +93,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
 %token<s> ID STRING HANDLER SYMBOL
-%token<s> ENDCLAUSE
+%token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
@@ -523,6 +523,9 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
 	| tPLAY gotomovie				{
 		g_lingo->codeConst(2);
 		g_lingo->code1(g_lingo->c_play); }
+	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist	{
+		g_lingo->codeSetImmediate(false);
+		g_lingo->codeFunc($1, $3); }
 	;
 
 // macro

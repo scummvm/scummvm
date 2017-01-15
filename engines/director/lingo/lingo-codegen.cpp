@@ -312,6 +312,17 @@ void Lingo::codeArgStore() {
 	}
 }
 
+int Lingo::codeSetImmediate(bool state) {
+	g_lingo->_immediateMode = state;
+
+	int res = g_lingo->code1(g_lingo->c_setImmediate);
+	inst i = 0;
+	WRITE_UINT32(&i, state);
+	g_lingo->code1(i);
+
+	return res;
+}
+
 int Lingo::codeFunc(Common::String *s, int numpar) {
 	int ret = g_lingo->code1(g_lingo->c_call);
 

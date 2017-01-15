@@ -59,6 +59,16 @@ static void countnl() {
 	g_lingo->_colnumber = strlen(p);
 }
 
+static int checkImmediate(int token) {
+	if (g_lingo->_immediateMode) {
+		yylval.s = new Common::String(yytext);
+
+		return ID;
+	}
+
+	return token;
+}
+
 %}
 
 identifier [_[:alpha:]][_[:alnum:]]*
@@ -110,7 +120,7 @@ whitespace [\t ]
 (?i:into)			{ count(); return tINTO; }
 (?i:item)			{ count(); return tITEM; }
 (?i:line)			{ count(); return tLINE; }
-(?i:loop)			{ count(); return tLOOP; }
+(?i:loop)			{ count(); return checkImmediate(tLOOP); }
 (?i:macro)			{ count(); return tMACRO; }
 (?i:method)			{ count(); return tMETHOD; }
 (?i:mod)			{ count(); return tMOD; }
@@ -122,9 +132,10 @@ whitespace [\t ]
 (?i:open)			{ count(); return tOPEN; }
 (?i:or)				{ count(); return tOR; }
 (?i:play)			{ count(); return tPLAY; }
+(?i:playAccel)		{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 (?i:previous)		{ count(); return tPREVIOUS; }
 (?i:put)			{ count(); return tPUT; }
-(?i:repeat)			{ count(); return tREPEAT; }
+(?i:repeat)			{ count(); return checkImmediate(tREPEAT); }
 (?i:set)			{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{

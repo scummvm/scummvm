@@ -62,36 +62,36 @@
      HANDLER = 278,
      SYMBOL = 279,
      ENDCLAUSE = 280,
-     tDOWN = 281,
-     tELSE = 282,
-     tNLELSIF = 283,
-     tEXIT = 284,
-     tFRAME = 285,
-     tGLOBAL = 286,
-     tGO = 287,
-     tIF = 288,
-     tINTO = 289,
-     tLOOP = 290,
-     tMACRO = 291,
-     tMOVIE = 292,
-     tNEXT = 293,
-     tOF = 294,
-     tPREVIOUS = 295,
-     tPUT = 296,
-     tREPEAT = 297,
-     tSET = 298,
-     tTHEN = 299,
-     tTO = 300,
-     tWHEN = 301,
-     tWITH = 302,
-     tWHILE = 303,
-     tNLELSE = 304,
-     tFACTORY = 305,
-     tMETHOD = 306,
-     tOPEN = 307,
-     tPLAY = 308,
-     tDONE = 309,
-     tPLAYACCEL = 310,
+     tPLAYACCEL = 281,
+     tDOWN = 282,
+     tELSE = 283,
+     tNLELSIF = 284,
+     tEXIT = 285,
+     tFRAME = 286,
+     tGLOBAL = 287,
+     tGO = 288,
+     tIF = 289,
+     tINTO = 290,
+     tLOOP = 291,
+     tMACRO = 292,
+     tMOVIE = 293,
+     tNEXT = 294,
+     tOF = 295,
+     tPREVIOUS = 296,
+     tPUT = 297,
+     tREPEAT = 298,
+     tSET = 299,
+     tTHEN = 300,
+     tTO = 301,
+     tWHEN = 302,
+     tWITH = 303,
+     tWHILE = 304,
+     tNLELSE = 305,
+     tFACTORY = 306,
+     tMETHOD = 307,
+     tOPEN = 308,
+     tPLAY = 309,
+     tDONE = 310,
      tINSTANCE = 311,
      tGE = 312,
      tLE = 313,
@@ -143,36 +143,36 @@
 #define HANDLER 278
 #define SYMBOL 279
 #define ENDCLAUSE 280
-#define tDOWN 281
-#define tELSE 282
-#define tNLELSIF 283
-#define tEXIT 284
-#define tFRAME 285
-#define tGLOBAL 286
-#define tGO 287
-#define tIF 288
-#define tINTO 289
-#define tLOOP 290
-#define tMACRO 291
-#define tMOVIE 292
-#define tNEXT 293
-#define tOF 294
-#define tPREVIOUS 295
-#define tPUT 296
-#define tREPEAT 297
-#define tSET 298
-#define tTHEN 299
-#define tTO 300
-#define tWHEN 301
-#define tWITH 302
-#define tWHILE 303
-#define tNLELSE 304
-#define tFACTORY 305
-#define tMETHOD 306
-#define tOPEN 307
-#define tPLAY 308
-#define tDONE 309
-#define tPLAYACCEL 310
+#define tPLAYACCEL 281
+#define tDOWN 282
+#define tELSE 283
+#define tNLELSIF 284
+#define tEXIT 285
+#define tFRAME 286
+#define tGLOBAL 287
+#define tGO 288
+#define tIF 289
+#define tINTO 290
+#define tLOOP 291
+#define tMACRO 292
+#define tMOVIE 293
+#define tNEXT 294
+#define tOF 295
+#define tPREVIOUS 296
+#define tPUT 297
+#define tREPEAT 298
+#define tSET 299
+#define tTHEN 300
+#define tTO 301
+#define tWHEN 302
+#define tWITH 303
+#define tWHILE 304
+#define tNLELSE 305
+#define tFACTORY 306
+#define tMETHOD 307
+#define tOPEN 308
+#define tPLAY 309
+#define tDONE 310
 #define tINSTANCE 311
 #define tGE 312
 #define tLE 313

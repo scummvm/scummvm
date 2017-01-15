@@ -223,6 +223,7 @@ public:
 
 	void codeArg(Common::String *s);
 	void codeArgStore();
+	int codeSetImmediate(bool state);
 	int codeFunc(Common::String *s, int numpar);
 	int codeMe(Common::String *method, int numpar);
 	int codeFloat(double f);
@@ -272,6 +273,7 @@ public:
 	static void c_assign();
 	bool verify(Symbol *s);
 	static void c_eval();
+	static void c_setImmediate();
 
 	static void c_swap();
 
@@ -474,6 +476,7 @@ public:
 	bool _returning;
 	bool _indef;
 	bool _ignoreMe;
+	bool _immediateMode;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;

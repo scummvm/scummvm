@@ -101,6 +101,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_returning = false;
 	_indef = false;
 	_ignoreMe = false;
+	_immediateMode = false;
 
 	_linenumber = _colnumber = 0;
 

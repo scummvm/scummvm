@@ -63,6 +63,7 @@ static struct FuncDescr {
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
 	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
+	{ Lingo::c_setImmediate,"c_setImmediate","i" },
 	{ Lingo::c_assign,		"c_assign",		"" },
 	{ Lingo::c_eval,		"c_eval",		"s" },
 	{ Lingo::c_theentitypush,"c_theentitypush","ii" }, // entity, field
@@ -255,6 +256,14 @@ void Lingo::c_varpush() {
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
+	// In immediate mode we will push variables as strings
+	// This is used for playAccel
+	if (g_lingo->_immediateMode) {
+		g_lingo->push(Datum(new Common::String(name)));
+
+		return;
+	}
+
 	if (g_lingo->getHandler(name) != NULL) {
 		d.type = HANDLER;
 		d.u.s = new Common::String(name);
@@ -275,6 +284,12 @@ void Lingo::c_varpush() {
 	}
 
 	g_lingo->push(d);
+}
+
+void Lingo::c_setImmediate() {
+	inst i = (*g_lingo->_currentScript)[g_lingo->_pc++];
+
+	g_lingo->_immediateMode = READ_UINT32(&i);
 }
 
 void Lingo::c_assign() {
