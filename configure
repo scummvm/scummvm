@@ -2358,8 +2358,8 @@ case $_host_os in
 			append_var LDFLAGS "-mthumb-interwork"
 		fi
 
-		append_var CXXFLAGS "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
-		append_var CXXFLAGS "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
 		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
@@ -3197,7 +3197,7 @@ case $_backend in
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
-		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
 		;;
