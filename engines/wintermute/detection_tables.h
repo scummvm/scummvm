@@ -68,8 +68,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"pigeons",         "Pigeons in the Park"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
-	{"reversion1",      "Reversion: The Escape"},
-	{"reversion2",      "Reversion: The Meeting"},
+	{"reversion1",      "Reversion: Chapter 1 - The Escape"},
+	{"reversion2",      "Reversion: Chapter 2 - The Meeting"},
 	{"rhiannon",        "Rhiannon: Curse of the four Branches"},
 	{"ritter",          "1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde"},
 	{"rosemary",        "Rosemary"},
@@ -480,6 +480,64 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion1", "Version 1.3.2369",
 		WME_ENTRY2s("xlanguage_pt.dcp", "886886b6b14aadac844078de856799a6", 10620797,
 					"data.dcp", "aecb5deeea7b0baa871fbd0cef35a648", 254219204), Common::PT_BRA, ADGF_UNSTABLE, LATEST_VERSION),
+	
+	// Reversion: The Escape (Steam release) (Spanish)
+	//
+	// The data for the Spanish version are all in data.dcp.
+	// Because we rely on WME_ENTRY2s to detect the languages,
+	// we have to detect data.dcp twice. For some reason, the
+	// Spanish version of the game only works if **no** xlanguage_*.dcp
+	// file is present in the game directory. If any xlanguage_*.dcp
+	// file exists in the game directory, the detection entry for the
+	// Spanish version will launch another language instead.
+	//
+	// I (rootfather) think that the problem is that there's no
+	// special xlanguage_*.dcp file for Spanish. The original game
+	// seems to switch between languages by simply copying the desired
+	// language file from /languages to the main folder. 
+	//
+	// To enable Spanish speech, remove xvoice_en.dcp from your game directory.
+	// To enable English speech, copy xvoice_en.dcp from the /languages directory
+	// to the game directory.
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (German)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_de.dcp", "d2471dceea100734afeb4ea77a0153ec", 14036212,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::DE_DEU, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (English)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_en.dcp", "bf22fff27640014127929fe5347e1460", 11336876,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (French)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_fr.dcp", "5beabe999a110f31bddbc868f743c640", 11961697,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::FR_FRA, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Italian)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_it.dcp", "a98fa205490f7205d8cc301ab05ed115", 11564269,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Latvian)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_lv.dcp", "6983daaf6bba6a496a73e272dbe274c4", 11436318,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::LV_LAT, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Chinese)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_nz.dcp", "51b9d4cb6c4a571503e1d75fc4b4024c", 13739377,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::ZH_CNA, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Polish)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_pl.dcp", "bf880fbe62c7743063b37447e228d3a8", 11551855,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::PL_POL, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Portuguese)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_pt.dcp", "44a1ec3499e968373140dfef041099af", 10642716,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::PT_BRA, ADGF_UNSTABLE, LATEST_VERSION),
+	// Reversion: The Escape (Steam release) (Russian)
+	WME_WINENTRY("reversion1", "Steam",
+		WME_ENTRY2s("xlanguage_ru.dcp", "c5860426055e72a0d1ce3467e1835572", 10843778,
+					"data.dcp", "5e4d40075f69fa7702530e38c349d2fd", 254293949), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 	// Reversion: The Meeting (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("xlanguage_nz.dcp", "8c3709474a87a7876109025dff41ff3f", 8746015,
