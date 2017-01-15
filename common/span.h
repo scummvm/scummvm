@@ -580,7 +580,7 @@ public:
 	const String name() const { return String::format("%p", static_cast<const void *>(data())); }
 
 	String getValidationMessage(const index_type index, const difference_type deltaInBytes, const SpanValidationMode mode) const {
-		const char *modeName;
+		const char *modeName = "unknown";
 		switch (mode) {
 			case kValidateRead:
 				modeName = "reading";
