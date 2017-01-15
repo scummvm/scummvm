@@ -27,7 +27,7 @@
 namespace Titanic {
 
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index) :
-		_project(project), _soundManager(soundManager) {
+		_soundManager(soundManager) {
 }
 
 void CMusicWave::setSize(uint count) {

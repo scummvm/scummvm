@@ -28,7 +28,7 @@ namespace Titanic {
 
 CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
 		_project(project), _soundManager(soundManager), _stopWaves(false),
-		_soundHandle(-1), _waveFile(nullptr), _soundVolume(100), _ticks(0),
+		_soundHandle(-1), _waveFile(nullptr), _soundVolume(100),
 		_field108(0) {
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
 }
@@ -133,6 +133,11 @@ void CMusicRoomHandler::setInversionControl(MusicControlArea area, int value) {
 void CMusicRoomHandler::setMuteControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._muteControl = value;
+}
+
+bool CMusicRoomHandler::isBusy() {
+	// TODO: stuff
+	return _field108 > 0;
 }
 
 } // End of namespace Titanic

@@ -58,9 +58,6 @@ class TTscripts {
 private:
 	TTnpcScriptList _npcScripts;
 	TTroomScriptList _roomScripts;
-	CTitleEngine *_titleEngine;
-	int _field24;
-	int _field28;
 private:
 	/**
 	 * Add a named script to the named scripts list
@@ -72,7 +69,7 @@ private:
 	 */
 	void addScript(TTroomScript *script);
 public:
-	TTscripts(CTitleEngine *titleEngine);
+	TTscripts();
 
 	/**
 	 * Return a pointer to the specified room script

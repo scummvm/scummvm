@@ -35,10 +35,12 @@ class CStarControlSub8 {
 		int _fieldC;
 	};
 private:
+#if 0
 	int _field0;
 	int _field4;
 	int _fieldC;
 	StructEntry _array[3];
+#endif
 public:
 	int _field8;
 public:

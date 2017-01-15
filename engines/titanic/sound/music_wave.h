@@ -39,7 +39,6 @@ class CMusicWave {
 		CMusicWaveFile() : _waveFile(nullptr), _value(0) {}
 	};
 private:
-	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
 private:

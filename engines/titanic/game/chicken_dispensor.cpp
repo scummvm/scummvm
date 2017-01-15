@@ -37,14 +37,14 @@ BEGIN_MESSAGE_MAP(CChickenDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CChickenDispensor::CChickenDispensor() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(0) {
+	_fieldE0(0), _fieldE4(0), _dragging(false) {
 }
 
 void CChickenDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_dragging, indent);
 	CBackground::save(file, indent);
 }
 
@@ -52,14 +52,14 @@ void CChickenDispensor::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_dragging = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 	msg->execute("SGTRestLeverAnimation");
-	int v1 = _fieldE8 ? 0 : _fieldE4;
+	int v1 = _dragging ? 0 : _fieldE4;
 	CPetControl *pet = getPetControl();
 	CGameObject *obj;
 
@@ -78,7 +78,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 	}
 
 	if (v1 == 1 || v1 == 2)
-		_fieldE8 = 1;
+		_dragging = true;
 
 	switch (v1) {
 	case 0:
@@ -92,7 +92,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			_fieldE4 = 0;
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_fieldE8 = 1;
+			_dragging = true;
 			_fieldE4 = 0;
 		}
 		break;
@@ -104,7 +104,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			playSound("z#400.wav");
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_fieldE8 = 1;
+			_dragging = true;
 		}
 		break;
 
@@ -116,17 +116,22 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
-	if (getMovieFrame() == 16) {
+	int movieFrame = getMovieFrame();
+	
+	if (movieFrame == 16) {
+		// Dispensed a chicken
+		_cursorId = CURSOR_HAND;
 		playSound("b#50.wav", 50);
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
-	} else if (_fieldE8) {
+	} else if (_dragging) {
 		_cursorId = CURSOR_ARROW;
 		loadFrame(0);
 		setVisible(false);
 		if (_fieldE4 == 2)
-			_fieldE8 = 0;
+			_dragging = false;
 	} else {
+		// Doors closing as the view is being left
 		loadFrame(0);
 		setVisible(false);
 		changeView("SgtLobby.Node 1.N");
@@ -154,7 +159,7 @@ bool CChickenDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CChickenDispensor::EnterViewMsg(CEnterViewMsg *msg) {
 	playSound("b#51.wav");
-	_fieldE8 = 0;
+	_dragging = 0;
 	_cursorId = CURSOR_ARROW;
 	return true;
 }
@@ -164,7 +169,7 @@ bool CChickenDispensor::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		setVisible(false);
 		loadFrame(0);
 		_cursorId = CURSOR_ARROW;
-		_fieldE8 = 1;
+		_dragging = 1;
 
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("Chicken");
@@ -181,7 +186,7 @@ bool CChickenDispensor::TurnOff(CTurnOff *msg) {
 	if (getMovieFrame() != 16)
 		setVisible(false);
 	playMovie(16, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-	_fieldE8 = 0;
+	_dragging = false;
 
 	return true;
 }

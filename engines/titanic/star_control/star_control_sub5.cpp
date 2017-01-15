@@ -25,7 +25,7 @@
 namespace Titanic {
 
 CStarControlSub5::CStarControlSub5() :
-	_field4(1), _field78AC(0), _field78B0(0) {
+	_field4(1) {
 }
 
 bool CStarControlSub5::setup() {

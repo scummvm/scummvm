@@ -59,7 +59,6 @@ private:
 	CWaveFile *_waveFile;
 	int _soundHandle;
 	int _soundVolume;
-	uint _ticks;
 	int _field108;
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
@@ -79,6 +78,8 @@ public:
 	 * Handles regular polling the music handler
 	 */
 	bool poll();
+
+	bool isBusy();
 
 	/**
 	 * Flags whether the loaded music waves will be stopped when the

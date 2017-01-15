@@ -70,7 +70,6 @@ private:
 	int _hiddenCount;
 	bool _cursorSuppressed;
 	int _fieldE8;
-	uint32 _priorMoveTime;
 	Common::Point _moveStartPos;
 	Common::Point _moveDestPos;
 	uint _moveStartTime, _moveEndTime;

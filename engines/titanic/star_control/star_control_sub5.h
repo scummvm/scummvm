@@ -37,11 +37,13 @@ class CStarControlSub5 {
 	};
 private:
 	int _field4;
-	SubEntry _array[5];
 	CStarControlSub6 _sub1, _sub2;
+#if 0
+	SubEntry _array[5];
 	int _field7914;
 	int _field78AC;
 	int _field78B0;
+#endif
 public:
 	CStarControlSub5();
 	virtual ~CStarControlSub5() {}

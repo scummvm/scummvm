@@ -39,7 +39,7 @@ class CChickenDispensor : public CBackground {
 public:
 	int _fieldE0;
 	int _fieldE4;
-	int _fieldE8;
+	bool _dragging;
 public:
 	CLASSDEF;
 	CChickenDispensor();
