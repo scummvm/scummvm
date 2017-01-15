@@ -29,21 +29,10 @@ namespace Cryo {
 
 #define getElem(array, idx) \
 	( (char *)(array) + READ_LE_UINT16((idx) * 2 + (char *)(array)) )
-/*
-static inline void* AGetElem(byte *arr, int16 index)
-{
-    byte *p = arr + num * 2;
-    byte o0 = *p++;
-    byte o1 = *p++;
-    uint16 ofs = (o1 << 8) | o0;
-    return arr + ofs;
-}
-*/
 
 ///////////////// Game defs
 
 #define FONT_HEIGHT 9
-
 
 /*
 Glossary
@@ -184,13 +173,13 @@ enum Objects {
 enum PERSO {
 	PER_KING = 0,
 	PER_DINA,       // 0x12
-	PER_THOO,       // 0x24
+	PER_TAU,        // 0x24
 	PER_MONK,       // 0x36
-	PER_TORMENTOR,   // 0x48
-	PER_MESSENGER,   // 0x5A
-	PER_MANGO,      // 0x6C
+	PER_JABBER,     // 0x48
+	PER_ELOI,       // 0x5A
+	PER_MUNGO,      // 0x6C
 	PER_EVE,        // 0x7E
-	PER_AZIA,       // 0x90
+	PER_SHAZIA,     // 0x90
 	PER_MAMMI,      // 0xA2
 	PER_MAMMI_1,    // 0xB4
 	PER_MAMMI_2,    // 0xC6
@@ -321,22 +310,22 @@ struct perso_t {
 	uint16  _roomNum;    // room this person currently in
 	uint16  _actionId;   // TODO: checkme
 	uint16  _partyMask;      // party bit mask
-	byte   _id;         // character
-	byte   _flags;      // flags and kind
-	byte   _roomBankId;// index in kPersoRoomBankTable for specific room banks
-	byte   _spriteBank;       // sprite bank
+	byte    _id;         // character
+	byte    _flags;      // flags and kind
+	byte    _roomBankId;// index in kPersoRoomBankTable for specific room banks
+	byte    _spriteBank;       // sprite bank
 	uint16  _items;      // inventory
 	uint16  _powers;     // obj of power bitmask
-	byte   _targetLoc;  // For party member this is mini sprite index
-	byte   _lastLoc;    // For party member this is mini sprite x offset
-	byte   _speed;      // num ticks per step
-	byte   _steps;      // current ticks
+	byte    _targetLoc;  // For party member this is mini sprite index
+	byte    _lastLoc;    // For party member this is mini sprite x offset
+	byte    _speed;      // num ticks per step
+	byte    _steps;      // current ticks
 };
 
 class EdenGame;
 
 struct phase_t {
-	int16           _id;
+	int16 _id;
 	void (EdenGame::*disp)();
 };
 

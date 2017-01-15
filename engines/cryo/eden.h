@@ -249,6 +249,7 @@ private:
 	void follow();
 	void dialonfollow();
 	void abortDialogue();
+	void subHandleNarrator();
 	void handleNarrator();
 	void checkPhraseFile();
 	byte *getPhrase(int16 id);
@@ -284,7 +285,7 @@ private:
 	void loadRoomFile(uint16 num, Room *buffer);
 	void loadHnm(uint16 num);
 	int loadSound(uint16 num);
-	void ConvertMacToPC();
+	void convertMacToPC();
 	void loadpermfiles();
 	bool ReadDataSyncVOC(unsigned int num);
 	bool ReadDataSync(uint16 num);
