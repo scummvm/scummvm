@@ -37,12 +37,12 @@ BEGIN_MESSAGE_MAP(CArboretumGate, CBackground)
 END_MESSAGE_MAP()
 
 bool CArboretumGate::_gotSpeechCentre;
-bool CArboretumGate::_isClosed;
+bool CArboretumGate::_disabled;
 int CArboretumGate::_initialFrame;
 
 CArboretumGate::CArboretumGate() : CBackground() {
-	_viewName1 = "NULL";
-	_viewName2 = "NULL";
+	_arboretumViewName = "NULL";
+	_exitViewName = "NULL";
 	_seasonNum = SEASON_SUMMER;
 	_unused1 = 0;
 	_startFrameSpringOff = 244;
@@ -84,8 +84,8 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_seasonNum, indent);
 	file->writeNumberLine(_gotSpeechCentre, indent);
 	file->writeNumberLine(_initialFrame, indent);
-	file->writeNumberLine(_isClosed, indent);
-	file->writeQuotedLine(_viewName1, indent);
+	file->writeNumberLine(_disabled, indent);
+	file->writeQuotedLine(_arboretumViewName, indent);
 	file->writeNumberLine(_unused1, indent);
 	file->writeNumberLine(_startFrameSpringOff, indent);
 	file->writeNumberLine(_endFrameSpringOff, indent);
@@ -111,7 +111,7 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrameWinterOn1, indent);
 	file->writeNumberLine(_startFrameWinterOn2, indent);
 	file->writeNumberLine(_endFrameWinterOn2, indent);
-	file->writeQuotedLine(_viewName2, indent);
+	file->writeQuotedLine(_exitViewName, indent);
 
 	if (g_vm->isGerman()) {
 		file->writeNumberLine(_field160, indent);
@@ -148,8 +148,8 @@ void CArboretumGate::load(SimpleFile *file) {
 	_seasonNum = (Season)file->readNumber();
 	_gotSpeechCentre = file->readNumber();
 	_initialFrame = file->readNumber();
-	_isClosed = file->readNumber();
-	_viewName1 = file->readString();
+	_disabled = file->readNumber();
+	_arboretumViewName = file->readString();
 	_unused1 = file->readNumber();
 	_startFrameSpringOff = file->readNumber();
 	_endFrameSpringOff = file->readNumber();
@@ -175,7 +175,7 @@ void CArboretumGate::load(SimpleFile *file) {
 	_endFrameWinterOn1 = file->readNumber();
 	_startFrameWinterOn2 = file->readNumber();
 	_endFrameWinterOn2 = file->readNumber();
-	_viewName2 = file->readString();
+	_exitViewName = file->readString();
 
 	if (g_vm->isGerman()) {
 		_field160 = file->readNumber();
@@ -218,32 +218,32 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 		CVisibleMsg visibleMsg(true);
 		visibleMsg.execute("SpCtrOverlay");
 	} else if (msg->_action == "ExitLFrozen") {
-		if (_isClosed) {
-			_viewName2 = "FrozenArboretum.Node 2.W";
+		if (_disabled) {
+			_exitViewName = "FrozenArboretum.Node 2.W";
 			CTurnOn onMsg;
 			onMsg.execute(this);
 		} else {
 			changeView("FrozenArboretum.Node 2.W");
 		}
 	} else if (msg->_action == "ExitRFrozen") {
-		if (_isClosed) {
-			_viewName2 = "FrozenArboretum.Node 2.E";
+		if (_disabled) {
+			_exitViewName = "FrozenArboretum.Node 2.E";
 			CTurnOn onMsg;
 			onMsg.execute(this);
 		} else {
 			changeView("FrozenArboretum.Node 2.E");
 		}
 	} else if (msg->_action == "ExitLNormal") {
-		if (_isClosed) {
-			_viewName2 = "Arboretum.Node 2.W";
+		if (_disabled) {
+			_exitViewName = "Arboretum.Node 2.W";
 			CTurnOn onMsg;
 			onMsg.execute(this);
 		} else {
 			changeView("Arboretum.Node 2.W");
 		}
 	} else if (msg->_action == "ExitRNormal") {
-		if (_isClosed) {
-			_viewName2 = "Arboretum.Node 2.E";
+		if (_disabled) {
+			_exitViewName = "Arboretum.Node 2.E";
 			CTurnOn onMsg;
 			onMsg.execute(this);
 		} else {
@@ -255,13 +255,13 @@ bool CArboretumGate::ActMsg(CActMsg *msg) {
 }
 
 bool CArboretumGate::MovieEndMsg(CMovieEndMsg *msg) {
-	setVisible(!_isClosed);
+	setVisible(!_disabled);
 
-	if (_viewName1 != "NULL") {
-		changeView(_viewName1);
-	} else if (_viewName2 != "NULL") {
-		changeView(_viewName2);
-		_viewName2 = "NULL";
+	if (_arboretumViewName != "NULL") {
+		changeView(_arboretumViewName);
+	} else if (_exitViewName != "NULL") {
+		changeView(_exitViewName);
+		_exitViewName = "NULL";
 	}
 
 	return true;
@@ -272,7 +272,7 @@ bool CArboretumGate::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CArboretumGate::TurnOff(CTurnOff *msg) {
-	if (!_isClosed) {
+	if (!_disabled) {
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
 			playMovie(_startFrameSummerOff, _endFrameSummerOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
@@ -302,7 +302,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 			break;
 		}
 
-		_isClosed = true;
+		_disabled = true;
 		CArboretumGateMsg gateMsg;
 		gateMsg.execute("Arboretum", nullptr, MSGFLAG_SCAN);
 	}
@@ -311,7 +311,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 }
 
 bool CArboretumGate::TurnOn(CTurnOn *msg) {
-	if (_isClosed) {
+	if (_disabled) {
 		CArboretumGateMsg gateMsg(0);
 		gateMsg.execute("Arboretum");
 		setVisible(true);
@@ -345,14 +345,14 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 			break;
 		}
 
-		_isClosed = false;
+		_disabled = false;
 	}
 
 	return true;
 }
 
 bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_isClosed) {
+	if (!_disabled) {
 		CTurnOff offMsg;
 		offMsg.execute(this);
 	}
@@ -361,7 +361,13 @@ bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
-	if (!_isClosed) {
+	setVisible(!_disabled);
+
+	if (!_disabled) {
+		// Only entered when we enter the Arboretum Gate view when in non-winter.
+		// When in winter, the landing dock by the Arboretum has a different
+		// "frozen water" view, and when the door is open, it changes to the
+		// standard Arboretum.2.N view for the Arboretum, skipping this block
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
 			_initialFrame = _startFrameSummerOff;
