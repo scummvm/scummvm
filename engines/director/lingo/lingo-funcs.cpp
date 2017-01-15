@@ -179,6 +179,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
+		restartLingo();
+
 		delete _vm->_currentScore;
 
 		Archive *mov = _vm->openMainArchive(*movie.u.s);

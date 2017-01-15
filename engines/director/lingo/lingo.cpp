@@ -306,6 +306,27 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	}
 }
 
+void Lingo::restartLingo() {
+	warning("STUB: restartLingo()");
+
+	// TODO
+	//
+	// reset the following:
+	// the keyDownScript
+	// the mouseUpScript
+	// the mouseDownScript
+	// the beepOn
+	// the constraint properties
+	// the cursor
+	// the immediate sprite properties
+	// the puppetSprite
+	// cursor commands
+	// custom menus
+	//
+	// NOTE:
+	// tuneousScript is not reset
+}
+
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
 	int opType = INT;
 

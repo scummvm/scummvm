@@ -509,6 +509,8 @@ private:
 	void push(Datum d);
 	Datum pop(void);
 
+	void restartLingo();
+
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
