@@ -204,7 +204,7 @@ void CMouseCursor::setPosition(const Point &pt, double duration) {
 	_moveStartPos = g_vm->_events->getMousePos();
 	_moveDestPos = pt;
 	_moveStartTime = g_system->getMillis();
-	_moveEndTime = _moveStartTime + duration;
+	_moveEndTime = _moveStartTime + (int)duration;
 	update();
 }
 

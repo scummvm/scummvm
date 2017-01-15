@@ -143,7 +143,7 @@ bool AVISurface::startAtFrame(int frameNumber) {
 
 	// If we're in reverse playback, set the decoder to play in reverse
 	if (_isReversed)
-		_decoder->setRate(-1.0);
+		_decoder->setRate(Common::Rational(-1));
 
 	renderFrame();
 
@@ -425,7 +425,7 @@ void AVISurface::setFrameRate(double rate) {
 	// Convert rate from fps to relative to 1.0 (normal speed)
 	const int PRECISION = 10000;
 	double playRate = rate / 15.0;	// Standard 15 FPS
-	Common::Rational pRate(playRate * PRECISION, PRECISION);
+	Common::Rational pRate((int)(playRate * PRECISION), PRECISION);
 
 	_decoder->setRate(pRate);
 }
