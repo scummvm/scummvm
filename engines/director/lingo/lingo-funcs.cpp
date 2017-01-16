@@ -255,6 +255,8 @@ void Lingo::func_cursor(int c) {
 		break;
 	}
 
+	_cursorOnStack = true;
+
 	warning("STUB: func_cursor(%d)", c);
 }
 
