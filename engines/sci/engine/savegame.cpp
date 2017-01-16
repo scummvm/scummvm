@@ -118,7 +118,7 @@ struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, t
 	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
 		s.syncAsSint32LE(entry.next_free);
 
-		bool hasData;
+		bool hasData = false;
 		if (s.getVersion() >= 37) {
 			if (s.isSaving()) {
 				hasData = entry.data != nullptr;
@@ -810,7 +810,7 @@ static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 }
 
 static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
-	bool hasPalette;
+	bool hasPalette = false;
 	if (s.isSaving()) {
 		hasPalette = (*palette != nullptr);
 	}
@@ -867,7 +867,7 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
 		PalCycler *cycler = nullptr;
 
-		bool hasCycler;
+		bool hasCycler = false;
 		if (s.isSaving()) {
 			cycler = _cyclers[i];
 			hasCycler = (cycler != nullptr);
