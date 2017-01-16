@@ -167,6 +167,8 @@ enum StringId {
 	PREVIOUSLY_ASSIGNED_ROOM,
 	SAVED_CHEVRON,
 	CURRENT_LOCATION,
+	A_HOT,
+	A_COLD,
 
 	// German version only
 	DE_SUMMER,

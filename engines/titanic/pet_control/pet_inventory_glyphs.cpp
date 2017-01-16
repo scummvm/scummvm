@@ -154,8 +154,8 @@ void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 				CPETObjectStateMsg stateMsg(0);
 				stateMsg.execute(_item);
 
-				text->setText(CString::format("%s %s",
-					stateMsg._value ? "A hot" : "A cold",
+				CString temperature = g_vm->_strings[stateMsg._value ? A_HOT : A_COLD];
+				text->setText(CString::format("%s %s", temperature.c_str(),
 					g_vm->_itemDescriptions[itemIndex].c_str()
 				));
 
