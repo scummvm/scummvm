@@ -70,7 +70,7 @@ private:
 	void deplaval(uint16 roomNum);
 	void move(Direction dir);
 	void move2(Direction dir);
-	void actionDinoBreath();
+	void actionDinoBlow();
 	void actionPlateMonk();
 	void actionGraaFrescoe();
 	void actionLascFrescoe();

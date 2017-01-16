@@ -584,7 +584,7 @@ void EdenGame::move2(Direction dir) {
 }
 
 // Original name: dinosoufle
-void EdenGame::actionDinoBreath() {
+void EdenGame::actionDinoBlow() {
 	if (_globals->_curObjectId == 0) {
 		hideBars();
 		playHNM(148);
@@ -6119,7 +6119,7 @@ void EdenGame::mouse() {
 		&EdenGame::actionMoveNorth,
 		&EdenGame::actionMoveSouth,
 		&EdenGame::actionVisit,
-		&EdenGame::actionDinoBreath,
+		&EdenGame::actionDinoBlow,
 		&EdenGame::actionLascFrescoe,
 		&EdenGame::actionNop,
 		&EdenGame::actionNop,
