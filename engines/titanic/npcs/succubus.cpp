@@ -310,15 +310,22 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 				_field158 = 2;
 			}
 
+			// WORKAROUND: The original had code below to return the chicken
+			// to the dispensor after eaten, but since _fullViewName isn't
+			// set, it didn't work. I've added code below in the else block
+			// that replicates what happens when the parrot eats the chicken
 			CViewItem *view = parseView(chicken->_fullViewName);
-			if (!view)
+			if (view) {
+				item->setPosition(item->_origPos);
+				item->moveUnder(view);
+
+				CSUBTransition transMsg;
+				transMsg.execute(this);
+			} else {
+				CActMsg actMsg("Eaten");
+				actMsg.execute(chicken);
 				return false;
-
-			item->setPosition(item->_origPos);
-			item->moveUnder(view);
-
-			CSUBTransition transMsg;
-			transMsg.execute(this);
+			}
 		}
 	}
 
