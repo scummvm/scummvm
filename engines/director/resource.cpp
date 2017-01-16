@@ -259,7 +259,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	}
 
 	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S','N','D',' '));
-	if (stxt.size() != 0) {
+	if (sound.size() != 0) {
 		debugC(3, kDebugLoading, "Loading %d SNDs", sound.size());
 		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared SND  %d", *iterator);
