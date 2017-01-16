@@ -216,7 +216,7 @@ void Reader::parseFirstLine(const Common::String &headersToParse) {
 	if (bad) _isBadRequest = true;
 }
 
-void Reader::parsePathQueryAndAnchor(Common::String parseToParse) {
+void Reader::parsePathQueryAndAnchor(Common::String pathToParse) {
 	//<path>[?query][#anchor]
 	bool readingPath = true;
 	bool readingQuery = false;
