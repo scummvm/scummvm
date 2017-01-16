@@ -139,7 +139,7 @@ void CLPalette_DeactivateInterval() {
 
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) {
 	if (gMacintize) {
-		palette[0].r = palette[0].g = palette[0].b = -1;
+		palette[0].r = palette[0].g = palette[0].b = 0xFFFF;
 		palette[255].r = palette[255].g = palette[255].b = 0;
 	}
 	if (gIntervalSet) {
