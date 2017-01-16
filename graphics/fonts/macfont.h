@@ -28,6 +28,20 @@
 
 namespace Graphics {
 
+struct AsscEntry {
+	uint16 _fontSize;
+	uint16 _fontStyle;
+	uint16 _fontID;
+};
+
+struct BBoxEntry {
+	uint16 _style;
+	uint16 _left;
+	uint16 _bottom;
+	uint16 _right;
+	uint16 _top;
+};
+
 /**
  * Processing of Mac FONT/NFNT rResources
  */
@@ -75,6 +89,15 @@ private:
 	uint16 _ffProperty[9];
 	uint16 _ffIntl[2];
 	uint16 _ffVersion;
+
+	uint16 _ffNumAssoc;
+	Common::Array<AsscEntry> _ffAssocEntries;
+
+	uint16 _ffNumOffsets;
+	uint32 *_ffOffsets;
+
+	uint16 _ffNumBBoxes;
+	Common::Array<BBoxEntry> _ffBBoxes;
 
 	byte *_bitImage;
 

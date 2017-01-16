@@ -28,12 +28,32 @@
 namespace Graphics {
 
 enum {
-	k_fontTypeImageHeightTable = (1 << 0),
-	k_fontTypeGlyphWidthTable  = (1 << 1),
-	k_fontTypeFontColorTable   = (1 << 7),
-	k_fontTypeSyntheticFont    = (1 << 8),
-	k_fontTypeFixedWidthFont   = (1 << 13),
-	k_fontTypeNotExpandable    = (1 << 14)
+	kFontTypeImageHeightTable = (1 << 0),
+	kFontTypeGlyphWidthTable  = (1 << 1),
+	kFontTypeFontColorTable   = (1 << 7),
+	kFontTypeSyntheticFont    = (1 << 8),
+	kFontTypeFixedWidthFont   = (1 << 13),
+	kFontTypeNotExpandable    = (1 << 14)
+};
+
+enum {
+	kFamilyGlyphWidthTable   = (1 << 1),
+	kFamilyFractEnable       = (1 << 12),
+	kFamilyIntegerExtra      = (1 << 13),
+	kFamilyNoFractionalTable = (1 << 14),
+	kFamilyFixedWidthFonts   = (1 << 15)
+};
+
+enum {
+	kStylePropertyPlain     = 0,
+	kStylePropertyBold      = 1,
+	kStylePropertyItalic    = 2,
+	kStylePropertyUnderline = 3,
+	kStylePropertyOutline   = 4,
+	kStylePropertyShadow    = 5,
+	kStylePropertyCondensed = 6,
+	kStylePropertyExtended  = 7,
+	kStylePropertyUnused    = 8
 };
 
 static int getDepth(uint16 _fontType) {
@@ -57,10 +77,35 @@ MacFont::MacFont() {
 	_leading = 0;
 	_rowWords = 0;
 	_bitImage = nullptr;
+
+	_ffFlags = 0;
+	_ffFamID = 0;
+	_ffFirstChar = 0;
+	_ffLastChar = 0;
+	_ffAscent = 0;
+	_ffDescent = 0;
+	_ffLeading = 0;
+	_ffWidMax = 0;
+	_ffWTabOff = 0;
+	_ffKernOff = 0;
+	_ffStylOff = 0;
+
+	for (int i = 0; i < 9; i++)
+		_ffProperty[i] = 0;
+
+	_ffIntl[0] = 0;
+	_ffIntl[1] = 0;
+	_ffVersion = 0;
+
+	_ffNumAssoc = 0;
+	_ffNumOffsets = 0;
+	_ffOffsets = nullptr;
+	_ffNumBBoxes = 0;
 }
 
 MacFont::~MacFont() {
 	free(_bitImage);
+	free(_ffOffsets);
 }
 
 bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
@@ -83,23 +128,46 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 	_ffIntl[1]   = stream.readUint16BE(); // for international use
 	_ffVersion   = stream.readUint16BE(); // version number
 
+	_ffNumAssoc     = stream.readUint16BE(); // number of entries - 1
+	_ffAssocEntries.resize(_ffNumAssoc + 1);
+	for (uint i = 0; i <= _ffNumAssoc; i++) {
+		_ffAssocEntries[i]._fontSize  = stream.readUint16BE(); // point size of font
+		_ffAssocEntries[i]._fontStyle = stream.readUint16BE(); // style of font
+		_ffAssocEntries[i]._fontID    = stream.readUint16BE(); // font resource ID
+	}
+
+	_ffNumOffsets = stream.readUint16BE(); // number of entries - 1
+	_ffOffsets = (uint32 *)calloc(_ffNumOffsets + 1, sizeof(uint32));
+	for (uint i = 0; i <= _ffNumOffsets; i++)
+		_ffOffsets[i] = stream.readUint32BE();
+
+	_ffNumBBoxes = stream.readUint16BE(); // number of entries - 1
+	_ffBBoxes.resize(_ffNumBBoxes + 1);
+	for (uint i = 0; i <= _ffNumBBoxes; i++) {
+		_ffBBoxes[i]._style  = stream.readUint16BE();
+		_ffBBoxes[i]._left   = stream.readUint16BE();
+		_ffBBoxes[i]._bottom = stream.readUint16BE();
+		_ffBBoxes[i]._right  = stream.readUint16BE();
+		_ffBBoxes[i]._top    = stream.readUint16BE();
+	}
+
 	return true;
  }
 
 bool MacFont::loadFont(Common::SeekableReadStream &stream) {
-	_fontType = stream.readUint16BE();		// font type
-	_firstChar = stream.readUint16BE();		// character code of first glyph
-	_lastChar = stream.readUint16BE();		// character code of last glyph
-	_maxWidth = stream.readUint16BE();		// maximum glyph width
-	_kernMax = stream.readSint16BE();		// maximum glyph kern
-	_nDescent = stream.readSint16BE();		// negative of descent
-	_fRectWidth = stream.readUint16BE();	// width of font rectangle
+	_fontType    = stream.readUint16BE();	// font type
+	_firstChar   = stream.readUint16BE();	// character code of first glyph
+	_lastChar    = stream.readUint16BE();	// character code of last glyph
+	_maxWidth    = stream.readUint16BE();	// maximum glyph width
+	_kernMax     = stream.readSint16BE();	// maximum glyph kern
+	_nDescent    = stream.readSint16BE();	// negative of descent
+	_fRectWidth  = stream.readUint16BE();	// width of font rectangle
 	_fRectHeight = stream.readUint16BE();	// height of font rectangle
-	_owTLoc = stream.readUint16BE();		// offset to width/offset table
-	_ascent = stream.readUint16BE();		// maximum ascent measurement
-	_descent = stream.readUint16BE();		// maximum descent measurement
-	_leading = stream.readUint16BE();		// leading measurement
-	_rowWords = stream.readUint16BE() * 2;
+	_owTLoc      = stream.readUint16BE();	// offset to width/offset table
+	_ascent      = stream.readUint16BE();	// maximum ascent measurement
+	_descent     = stream.readUint16BE();	// maximum descent measurement
+	_leading     = stream.readUint16BE();	// leading measurement
+	_rowWords    = stream.readUint16BE() * 2; // row width of bit image in 16-bit wds
 
 	if (getDepth(_fontType) != 1) {
 		warning("MacFont: %dbpp fonts are not supported", getDepth(_fontType));
@@ -109,7 +177,7 @@ bool MacFont::loadFont(Common::SeekableReadStream &stream) {
 
 	// If positive, _nDescent holds the high bits of the offset to the
 	// width/offset table.
-	// https://developer.apple.com/legacy/library/documentation/mac/Text/Text-252.html
+	// http://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Text/Text-252.html
 	if (_nDescent > 0)
 		_owTLoc |= _nDescent << 16;
 
@@ -157,14 +225,14 @@ bool MacFont::loadFont(Common::SeekableReadStream &stream) {
 	_defaultChar.kerningOffset = _kernMax + stream.readByte();
 	_defaultChar.width = _kernMax + stream.readByte();
 
-	if (_fontType & k_fontTypeGlyphWidthTable) {
+	if (_fontType & kFontTypeGlyphWidthTable) {
 		warning("Skipping glyph-width table");
 
 		for (uint16 i = 0; i < glyphCount; i++)
 			stream.readUint16BE();
 	}
 
-	if (_fontType & k_fontTypeImageHeightTable) {
+	if (_fontType & kFontTypeImageHeightTable) {
 		warning("Skipping image height table");
 
 		for (uint16 i = 0; i < glyphCount; i++)
