@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/chicken_dispensor.h"
+#include "titanic/carry/chicken.h"
 #include "titanic/core/project_item.h"
 #include "titanic/pet_control/pet_control.h"
 
@@ -92,9 +93,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			playSound("z#400.wav");
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_dispensed = true;
 		}
-		_dispenseMode = DISPENSE_NONE;
 		break;
 
 	default:
@@ -113,6 +112,17 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 		playSound("b#50.wav", 50);
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
+
+		if (_dispenseMode == DISPENSE_HOT) {
+			// A properly hot chicken is dispensed, no further ones will be
+			// until the current one is used up, and the fuse in Titania's
+			// fusebox is removed and replaced
+			_dispenseMode = DISPENSE_NONE;
+		} else {
+			// WORKAROUND: If the fuse for the dispensor is removed in Titania's fusebox,
+			// make the dispensed chicken already cold
+			CChicken::_temperature = 0;
+		}
 	} else if (_dispensed) {
 		// Chicken dispensed whilst dispensor is "disabled", which basically
 		// spits the chicken out at high speed directly into the SuccUBus
