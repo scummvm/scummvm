@@ -47,6 +47,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	// since it needs to be able to go beyond the frame count or to negative to allow
 	// correct detection of when range playbacks have finished
 	_currentFrame = -1;
+	_priorFrame = -1;
 	_isReversed = false;
 
 	// Create a decoder
@@ -55,6 +56,10 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 		error("Could not open video - %s", key.getString().c_str());
 
 	_streamCount = _decoder->videoTrackCount();
+
+	_soundManager = nullptr;
+	_hasAudio = false;
+	_frameRate = 0.0;
 }
 
 AVISurface::~AVISurface() {
