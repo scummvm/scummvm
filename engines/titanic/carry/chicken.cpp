@@ -131,8 +131,7 @@ bool CChicken::ActMsg(CActMsg *msg) {
 		loadFrame(3);
 		_field12C = 0;
 		_visibleFrame = 3;
-	}
-	else if (msg->_action == "Dispense Chicken") {
+	} else if (msg->_action == "Dispense Chicken") {
 		_condiment = "None";
 		_field13C = 0;
 		_field12C = 1;

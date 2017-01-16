@@ -281,7 +281,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 		pet->phonographAction("");
 
 		CChicken *chicken = dynamic_cast<CChicken *>(item);
-		bool chickenFlag = chicken ? chicken->_condiment != "None" : false;
+		bool chickenFlag = chicken ? chicken->_condiment == "None" : false;
 
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {
@@ -290,6 +290,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 		}
 
 		if (!chickenFlag) {
+			// Not chicken, or chicken with condiments
 			_field188 = 1;
 			item->addMail(roomFlags);
 			petSetArea(PET_REMOTE);
@@ -297,6 +298,8 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 			CSUBTransition transMsg;
 			transMsg.execute(this);
 		} else {
+			// Chicken without condiments was passed to SuccUBus, so it'll
+			// eat it immediately
 			if (_okStartFrame >= 0) {
 				startTalking(this, 70219, findView());
 				playMovie(_okStartFrame, _okEndFrame, 0);
