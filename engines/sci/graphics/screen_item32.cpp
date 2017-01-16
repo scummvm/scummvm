@@ -236,7 +236,7 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		writeSelectorValue(segMan, object, SELECTOR(priority), _position.y);
 	}
 
-	_z = readSelectorValue(segMan, object, SELECTOR(z));
+	_z = (int16)readSelectorValue(segMan, object, SELECTOR(z));
 	_position.y -= _z;
 
 	if (g_sci->_features->usesAlternateSelectors()) {
