@@ -143,8 +143,8 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	word_378CC = 0; //TODO: set by CLComputer_Init to 0
 	word_378CE = 0;
 
-	word_32448 = word_3244A = word_3244C = 0;
-	flt_32450 = flt_32454 = 0.0;	//TODO: never changed, make consts?
+	_rotationAngleY = _rotationAngleX = _rotationAngleZ = 0;
+	_translationY = _translationX = 0.0;	//TODO: never changed, make consts?
 	_cursorOldTick = 0;
 
 	_invIconsBase = 19;
@@ -8568,47 +8568,47 @@ void EdenGame::actionNop() {
 // Original name: make_tabcos
 void EdenGame::initCosTable() {
 	for (int i = 0; i < 361; i++) {
-		_cosTable[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
-		_cosTable[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
+		_cosSinTable[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
+		_cosSinTable[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
 	}
 }
 
-void EdenGame::make_matrice_fix() {
-	int16 r30 = word_3244C;
-	int16 r28 = word_3244A;
-	int16 r29 = word_32448;
+void EdenGame::makeMatriceFix() {
+	int16 rotAngleTheta = _rotationAngleX;
+	int16 rotAnglePhi = _rotationAngleY;
+	int16 rotAnglePsi = _rotationAngleZ;
 
-	dword_32424 = (_cosTable[r29 * 2] * _cosTable[r28 * 2]) >> 8;
-	dword_32430 = (_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2]) >> 8;
-	dword_3243C = -_cosTable[r28 * 2 + 1];
-	dword_32428 = ((-_cosTable[r29 * 2 + 1] * _cosTable[r30 * 2]) >> 8)
-	              + ((_cosTable[r30 * 2 + 1] * ((_cosTable[r29 * 2] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32434 = ((_cosTable[r29 * 2] * _cosTable[r30 * 2]) >> 8)
-	              + ((_cosTable[r30 * 2 + 1] * ((_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32440 = (_cosTable[r28 * 2] * _cosTable[r30 * 2 + 1]) >> 8;
-	dword_3242C = ((_cosTable[r29 * 2 + 1] * _cosTable[r30 * 2 + 1]) >> 8)
-	              + ((_cosTable[r30 * 2] * ((_cosTable[r29 * 2] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32438 = ((-_cosTable[r29 * 2] * _cosTable[r30 * 2 + 1]) >> 8)
-	              + ((_cosTable[r30 * 2] * ((_cosTable[r29 * 2 + 1] * _cosTable[r28 * 2 + 1]) >> 8)) >> 8);
-	dword_32444 = (_cosTable[r28 * 2] * _cosTable[r30 * 2]) >> 8;
+	_passMat31 = (_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2]) >> 8;
+	_passMat32 = (_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2]) >> 8;
+	_passMat33 = -_cosSinTable[rotAngleTheta * 2 + 1];
+	_passMat21 = ((-_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAnglePsi * 2]) >> 8)
+	              + ((_cosSinTable[rotAnglePsi * 2 + 1] * ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
+	_passMat22 = ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAnglePsi * 2]) >> 8)
+	              + ((_cosSinTable[rotAnglePsi * 2 + 1] * ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
+	_passMat23 = (_cosSinTable[rotAngleTheta * 2] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8;
+	_passMat11 = ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8)
+	              + ((_cosSinTable[rotAnglePsi * 2] * ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
+	_passMat12 = ((-_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8)
+	              + ((_cosSinTable[rotAnglePsi * 2] * ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
+	_passMat13 = (_cosSinTable[rotAngleTheta * 2] * _cosSinTable[rotAnglePsi * 2]) >> 8;
 }
 
 void EdenGame::projectionFix(cube_t *cubep, int n) {
 	for (int i = 0; i < n; i++) {
-		int r28 = cubep->_vertices[i * 4];
-		int r27 = cubep->_vertices[i * 4 + 1];
-		int r26 = cubep->_vertices[i * 4 + 2];
+		int x = cubep->_vertices[i * 4];
+		int y = cubep->_vertices[i * 4 + 1];
+		int z = cubep->_vertices[i * 4 + 2];
 
-		int r25 = dword_32424 * r28 + dword_32428 * r27 + dword_3242C * r26 + (int)(flt_32454 * 256.0f);
-		int r24 = dword_32430 * r28 + dword_32434 * r27 + dword_32438 * r26 + (int)(flt_32450 * 256.0f);
-		int r29 = dword_3243C * r28 + dword_32440 * r27 + dword_32444 * r26 + (int)(flt_2DF7C * 256.0f);
+		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0f);
+		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0f);
+		int transformZ = _passMat33 * x + _passMat23 * y + _passMat13 * z + (int)(_translationZ * 256.0f);
 
-		r29 >>= 8;
-		if (r29 == -256)
-			r29++;
-		cubep->_projection[i * 4    ] = r25 / (r29 + 256) + _cursorPosX + 14 + _scrollPos;
-		cubep->_projection[i * 4 + 1] = r24 / (r29 + 256) + _cursorPosY + 14;
-		cubep->_projection[i * 4 + 2] = r29;
+		transformZ >>= 8;
+		if (transformZ == -256)
+			transformZ++;
+		cubep->_projection[i * 4    ] = transformX / (transformZ + 256) + _cursorPosX + 14 + _scrollPos;
+		cubep->_projection[i * 4 + 1] = transformY / (transformZ + 256) + _cursorPosY + 14;
+		cubep->_projection[i * 4 + 2] = transformZ;
 	}
 }
 
@@ -8621,7 +8621,7 @@ void EdenGame::initCubeMac() {
 
 void EdenGame::engineMac() {
 	Eden_dep_and_rot();
-	make_matrice_fix();
+	makeMatriceFix();
 	projectionFix(&_cube, _cubeFaces);
 	displayObject(&_cube);
 }
@@ -8831,72 +8831,72 @@ void EdenGame::Eden_dep_and_rot() {
 	_cursorOldTick = _cursorNewTick;
 	switch (_currCursor) {
 	case 0:
-		word_3244C = (word_3244C + 2) % 360;
-		word_3244A = (word_3244A + 2) % 360;
+		_rotationAngleZ = (_rotationAngleZ + 2) % 360;
+		_rotationAngleX = (_rotationAngleX + 2) % 360;
 		restoreZDEP();
 		break;
 	case 1:
-		word_3244C = 0;
-		word_3244A -= 2;
-		if (word_3244A < 0)
-			word_3244A += 360;
+		_rotationAngleZ = 0;
+		_rotationAngleX -= 2;
+		if (_rotationAngleX < 0)
+			_rotationAngleX += 360;
 		restoreZDEP();
 		break;
 	case 2:
-		word_3244C = (word_3244C + 2) % 360;
-		word_3244A = 0;
+		_rotationAngleZ = (_rotationAngleZ + 2) % 360;
+		_rotationAngleX = 0;
 		restoreZDEP();
 		break;
 	case 3:
-		word_3244C -= 2;
-		if (word_3244C < 0)
-			word_3244C += 360;
-		word_3244A = 0;
+		_rotationAngleZ -= 2;
+		if (_rotationAngleZ < 0)
+			_rotationAngleZ += 360;
+		_rotationAngleX = 0;
 		restoreZDEP();
 		break;
 	case 4:
-		word_3244C = 0;
-		word_3244A = (word_3244A + 2) % 360;
+		_rotationAngleZ = 0;
+		_rotationAngleX = (_rotationAngleX + 2) % 360;
 		restoreZDEP();
 		break;
 	case 5:
-		word_3244C = 0;
-		word_3244A = 0;
-		flt_2DF7C += flt_2DF84;
-		if ((flt_2DF7C < -3600.0 + flt_2DF80) || flt_2DF7C > flt_2DF80)
+		_rotationAngleZ = 0;
+		_rotationAngleX = 0;
+		_translationZ += flt_2DF84;
+		if ((_translationZ < -3600.0 + flt_2DF80) || _translationZ > flt_2DF80)
 			flt_2DF84 = -flt_2DF84;
 		break;
 	case 6:
-		word_3244C = 0;
-		word_3244A = 0;
-		flt_2DF7C = flt_2DF80;
+		_rotationAngleZ = 0;
+		_rotationAngleX = 0;
+		_translationZ = flt_2DF80;
 		break;
 	case 7:
-		word_3244C -= 2;
-		if (word_3244C < 0)
-			word_3244C += 360;
-		word_3244A = 0;
+		_rotationAngleZ -= 2;
+		if (_rotationAngleZ < 0)
+			_rotationAngleZ += 360;
+		_rotationAngleX = 0;
 		restoreZDEP();
 		break;
 	case 8:
-		word_3244C = 0;
-		word_3244A = 0;
-		flt_2DF7C = flt_2DF80;
+		_rotationAngleZ = 0;
+		_rotationAngleX = 0;
+		_translationZ = flt_2DF80;
 		break;
 	case 9:
-		word_3244C = 0;
-		word_3244A = 0;
-		flt_2DF7C = flt_2DF80;
+		_rotationAngleZ = 0;
+		_rotationAngleX = 0;
+		_translationZ = flt_2DF80;
 		break;
 	}
 }
 
 void EdenGame::restoreZDEP() {
 	flt_2DF84 = 200.0;
-	if (flt_2DF7C < flt_2DF80)
-		flt_2DF7C += flt_2DF84;
-	if (flt_2DF7C > flt_2DF80)
-		flt_2DF7C -= flt_2DF84;
+	if (_translationZ < flt_2DF80)
+		_translationZ += flt_2DF84;
+	if (_translationZ > flt_2DF80)
+		_translationZ -= flt_2DF84;
 }
 
 // Original name: affiche_polygone_mapping

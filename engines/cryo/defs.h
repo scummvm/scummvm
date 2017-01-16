@@ -832,7 +832,7 @@ struct cube_t {
 	int16       *_vertices;
 };
 
-extern float flt_2DF7C;
+extern float _translationZ;
 extern float flt_2DF80;
 extern float flt_2DF84;
 

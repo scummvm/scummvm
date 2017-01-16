@@ -488,7 +488,7 @@ private:
 	uint16 fetchValue();
 	void actionNop();
 	void initCosTable();
-	void make_matrice_fix();
+	void makeMatriceFix();
 	void projectionFix(cube_t *cube, int n);
 	void initCubeMac();
 	void engineMac();
@@ -717,13 +717,13 @@ private:
 	int		_roomIconsBase;
 
 	//// cube.c
-	int16 _cosTable[361 * 2];
-	int dword_32424, dword_32428, dword_3242C;
-	int dword_32430, dword_32434, dword_32438;
-	int dword_3243C, dword_32440, dword_32444;
-	int16 word_32448; // CHECKME: USeless?
-	int16 word_3244A, word_3244C;
-	float flt_32450, flt_32454; // CHECKME: Useless?
+	int16 _cosSinTable[361 * 2];
+	int _passMat31, _passMat21, _passMat11;
+	int _passMat32, _passMat22, _passMat12;
+	int _passMat33, _passMat23, _passMat13;
+	int16 _rotationAngleY; // CHECKME: USeless?
+	int16 _rotationAngleX, _rotationAngleZ;
+	float _translationY, _translationX; // CHECKME: Useless?
 	cube_t _cube;
 	int16 _cursCurPCMap;
 	int16 _lines[200 * 8];

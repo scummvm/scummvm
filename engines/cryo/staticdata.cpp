@@ -557,7 +557,7 @@ int16 kActionCursors[299] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-float flt_2DF7C = -3400;
+float _translationZ = -3400;
 float flt_2DF80 = -3400;
 float flt_2DF84 =   200;
 
