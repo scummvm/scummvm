@@ -350,7 +350,7 @@ bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::Stri
 }
 
 byte Reader::readOne() {
-	byte b;
+	byte b = 0;
 	_content->read(&b, 1);
 	--_availableBytes;
 	--_bytesLeft;
