@@ -127,7 +127,7 @@ struct CelInfo32 {
 		if (type == kCelTypeView) {
 			return Common::String::format("view %u, loop %d, cel %d", resourceId, loopNo, celNo);
 		} else if (type == kCelTypePic) {
-			return Common::String::format("pic %u", resourceId);
+			return Common::String::format("pic %u, cel %d", resourceId, celNo);
 		} else if (kCelTypeColor) {
 			return Common::String::format("color %d", color);
 		} else if (type == kCelTypeMem) {
