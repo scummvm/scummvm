@@ -84,11 +84,11 @@ public:
 };
 
 struct color3_t {
-	int16   r, g, b;
+	uint16   r, g, b;
 };
 
 struct color_t {
-	int16   a, r, g, b;
+	uint16   a, r, g, b;
 };
 
 struct HNMHeader {
