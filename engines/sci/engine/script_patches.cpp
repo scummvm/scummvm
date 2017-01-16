@@ -2962,9 +2962,31 @@ static const uint16 mothergooseHiresPatchLogo[] = {
 	PATCH_END
 };
 
+// After finishing the rhyme at the fountain, a horse will appear and walk
+// across the screen. The priority of the horse is set too high, so it is
+// rendered in front of the fountain instead of behind the fountain. This patch
+// corrects the priority so the horse draws behind the fountain.
+//
+// Applies to at least: English CD from King's Quest Collection
+// Responsible method: rhymeScript::changeState
+static const uint16 mothergooseHiresSignatureHorse[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x4a,             // pushi $4a (setPri)
+	0x78,                   // push1
+	0x38, SIG_UINT16(0xb7), // pushi $b7
+	SIG_END
+};
+
+static const uint16 mothergooseHiresPatchHorse[] = {
+	PATCH_ADDTOOFFSET(3),
+	0x38, PATCH_UINT16(0x59),
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
+	{  true,   318, "bad horse z-index",                           1, mothergooseHiresSignatureHorse,   mothergooseHiresPatchHorse },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
