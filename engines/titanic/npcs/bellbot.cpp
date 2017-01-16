@@ -256,10 +256,10 @@ bool CBellBot::TimerMsg(CTimerMsg *msg) {
 
 bool CBellBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
 	if (msg->_stateNum == 7)
-		msg->_stateVal = flag ? 1 : 0;
+		msg->_stateVal = isYourStateroom ? 1 : 0;
 
 	return true;
 }

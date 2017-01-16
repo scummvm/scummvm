@@ -144,7 +144,7 @@ bool CLightSwitch::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_flag = true;
 	CPetControl *pet = getPetControl();
 	if (pet)
-		_turnOnTV = pet->isRoom59706();
+		_turnOnTV = pet->isFirstClassSuite();
 
 	return true;
 }

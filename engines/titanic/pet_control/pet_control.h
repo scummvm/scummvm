@@ -561,8 +561,11 @@ public:
 		_rooms.setElevatorBroken(flag);
 	}
 
-	bool isRoom59706() const {
-		return CRoomFlags(getRoomFlags()).is59706();
+	/**
+	 * Returns true if the player is in their 1st class stateroom
+	 */
+	bool isFirstClassSuite() const {
+		return CRoomFlags(getRoomFlags()).isFirstClassSuite();
 	}
 
 	/**

@@ -225,7 +225,12 @@ public:
 
 	bool not5() const { return getConditionally() != 5; }
 
-	bool is59706() const { return _data == 0x59706; }
+	/**
+	 * Returns true if the player is in their 1st class stateroom
+	 */
+	bool isFirstClassSuite() const {
+		return _data == 0x59706;
+	}
 };
 
 } // End of namespace Titanic

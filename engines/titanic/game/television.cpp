@@ -283,12 +283,12 @@ bool CTelevision::TurnOn(CTurnOn *msg) {
 
 bool CTelevision::LightsMsg(CLightsMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = false;
+	bool isYourStateroom = false;
 
 	if (pet)
-		flag = pet->isRoom59706();
+		isYourStateroom = pet->isFirstClassSuite();
 
-	if (msg->_topLeft || !flag)
+	if (msg->_topLeft || !isYourStateroom)
 		_turnOn = true;
 
 	return true;

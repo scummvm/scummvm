@@ -98,9 +98,9 @@ bool CLight::TurnOn(CTurnOn *msg) {
 
 bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
-	if (_eyePresent && flag) {
+	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -113,9 +113,9 @@ bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
-	if (_eyePresent && flag) {
+	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -141,8 +141,8 @@ bool CLight::EnterRoomMsg(CEnterRoomMsg *msg) {
 		CLightsMsg lightsMsg(true, true, true, true);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		bool flag = pet ? pet->isRoom59706() : false;
-		if (flag)
+		bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
+		if (isYourStateroom)
 			CTelevision::_turnOn = true;
 	}
 
