@@ -76,8 +76,15 @@ bool CLight::TurnOff(CTurnOff *msg) {
 }
 
 bool CLight::LightsMsg(CLightsMsg *msg) {
-	if ((msg->_topLeft && _topLeft) || (msg->_bottomLeft && _bottomLeft)
-			|| (msg->_topRight && _topRight) || (msg->_bottomRight && _bottomRight)) {
+	// WORKAROUND: Since solving the puzzle to get Titania's eye explicitly
+	// requires referring to the "broken light", don't allow the top left
+	// light to be turned on in the player's stateroom until it's gotten/fixed
+	if (msg->_topLeft && _topLeft) {
+		bool showFlag = !getPetControl()->isFirstClassSuite() ||
+			getRoom()->findByName("Eye1") == nullptr;
+		setVisible(showFlag);
+	} else if ((msg->_bottomLeft && _bottomLeft) || (msg->_topRight && _topRight) ||
+			(msg->_bottomRight && _bottomRight)) {
 		setVisible(true);
 	} else {
 		setVisible(false);
