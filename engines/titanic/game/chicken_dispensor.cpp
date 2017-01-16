@@ -37,21 +37,21 @@ BEGIN_MESSAGE_MAP(CChickenDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CChickenDispensor::CChickenDispensor() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _dragging(false) {
+	_disabled(false), _dispenseMode(DISPENSE_NONE), _dragging(false) {
 }
 
 void CChickenDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_disabled, indent);
+	file->writeNumberLine(_dispenseMode, indent);
 	file->writeNumberLine(_dragging, indent);
 	CBackground::save(file, indent);
 }
 
 void CChickenDispensor::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_disabled = file->readNumber();
+	_dispenseMode = (DispenseMode)file->readNumber();
 	_dragging = file->readNumber();
 
 	CBackground::load(file);
@@ -59,7 +59,7 @@ void CChickenDispensor::load(SimpleFile *file) {
 
 bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 	msg->execute("SGTRestLeverAnimation");
-	int v1 = _dragging ? 0 : _fieldE4;
+	DispenseMode dispenseMode = _dragging ? DISPENSE_NONE : _dispenseMode;
 	CPetControl *pet = getPetControl();
 	CGameObject *obj;
 
@@ -77,29 +77,29 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 		}
 	}
 
-	if (v1 == 1 || v1 == 2)
+	if (dispenseMode != DISPENSE_NONE)
 		_dragging = true;
 
-	switch (v1) {
-	case 0:
+	switch (dispenseMode) {
+	case DISPENSE_NONE:
 		petDisplayMessage(1, ONE_ALLOCATED_CHICKEN_PER_CUSTOMER);
 		break;
-	case 1:
+
+	case DISPENSE_HOT:
 		setVisible(true);
-		if (_fieldE0) {
+		if (_disabled) {
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("z#400.wav");
-			_fieldE4 = 0;
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			_dragging = true;
-			_fieldE4 = 0;
 		}
+		_dispenseMode = DISPENSE_NONE;
 		break;
 
-	case 2:
+	case DISPENSE_COLD:
 		setVisible(true);
-		if (_fieldE0) {
+		if (_disabled) {
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("z#400.wav");
 		} else {
@@ -128,7 +128,7 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 		_cursorId = CURSOR_ARROW;
 		loadFrame(0);
 		setVisible(false);
-		if (_fieldE4 == 2)
+		if (_dispenseMode == DISPENSE_COLD)
 			_dragging = false;
 	} else {
 		// Doors closing as the view is being left
@@ -142,13 +142,13 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CChickenDispensor::ActMsg(CActMsg *msg) {
 	if (msg->_action == "EnableObject")
-		_fieldE0 = 0;
+		_disabled = false;
 	else if (msg->_action == "DisableObject")
-		_fieldE0 = 1;
+		_disabled = true;
 	else if (msg->_action == "IncreaseQuantity")
-		_fieldE4 = 2;
+		_dispenseMode = DISPENSE_COLD;
 	else if (msg->_action == "DecreaseQuantity")
-		_fieldE4 = 1;
+		_dispenseMode = DISPENSE_HOT;
 
 	return true;
 }
