@@ -61,9 +61,9 @@ public:
 	static int compareLabels(const void *a, const void *b);
 	void loadArchive();
 	void setStartToLabel(Common::String label);
-	void gotoloop();
-	void gotonext();
-	void gotoprevious();
+	void gotoLoop();
+	void gotoNext();
+	void gotoPrevious();
 	void startLoop();
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
@@ -76,6 +76,10 @@ public:
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
+
+	int getPreviousLabelNumber(int referenceFrame);
+	int getCurrentLabelNumber();
+	int getNextLabelNumber(int referenceFrame);
 
 private:
 	void update();

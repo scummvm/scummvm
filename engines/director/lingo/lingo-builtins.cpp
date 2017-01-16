@@ -905,9 +905,8 @@ void Lingo::b_label(int nargs) {
 void Lingo::b_marker(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: b_marker(%d)", d.u.i);
-
-	g_lingo->push(Datum(0));
+	int marker = g_lingo->func_marker(d.u.i);
+	g_lingo->push(marker);
 }
 
 void Lingo::b_moveableSprite(int nargs) {

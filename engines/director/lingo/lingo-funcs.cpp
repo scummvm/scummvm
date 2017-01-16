@@ -212,21 +212,21 @@ void Lingo::func_gotoloop() {
 	if (!_vm->_currentScore)
 		return;
 
-	_vm->_currentScore->gotoloop();
+	_vm->_currentScore->gotoLoop();
 }
 
 void Lingo::func_gotonext() {
 	if (!_vm->_currentScore)
 		return;
 
-	_vm->_currentScore->gotonext();
+	_vm->_currentScore->gotoNext();
 }
-
+	
 void Lingo::func_gotoprevious() {
 	if (!_vm->_currentScore)
 		return;
 
-	_vm->_currentScore->gotoprevious();
+	_vm->_currentScore->gotoPrevious();
 }
 
 void Lingo::func_cursor(int c) {
@@ -263,6 +263,21 @@ void Lingo::func_cursor(int c) {
 void Lingo::func_beep(int repeats) {
 	for (int r = 0; r <= repeats; r++)
 		_vm->getSoundManager()->systemBeep();
+}
+
+int Lingo::func_marker(int m) 	{
+	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
+	if (m != 0) {
+		if (m < 0) {
+			for (int marker = 0; marker > m; marker--)
+				labelNumber = _vm->getCurrentScore()->getPreviousLabelNumber(labelNumber);
+		} else {
+			for (int marker = 0; marker < m; marker++)
+				labelNumber = _vm->getCurrentScore()->getNextLabelNumber(labelNumber);
+		}
+	}
+
+	return labelNumber;
 }
 
 }

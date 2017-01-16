@@ -157,19 +157,19 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_stopPlay = false;
 	_stageColor = 0;
 
-	if (archive->hasResource(MKTAG('M','C','N','M'), 0)) {
-		_macName = archive->getName(MKTAG('M','C','N','M'), 0).c_str();
+	if (archive->hasResource(MKTAG('M', 'C', 'N', 'M'), 0)) {
+		_macName = archive->getName(MKTAG('M', 'C', 'N', 'M'), 0).c_str();
 	} else {
 		_macName = archive->getFileName();
 	}
 
-	if (archive->hasResource(MKTAG('V','W','L','B'), 1024)) {
-		loadLabels(*archive->getResource(MKTAG('V','W','L','B'), 1024));
+	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), 1024)) {
+		loadLabels(*archive->getResource(MKTAG('V', 'W', 'L', 'B'), 1024));
 	}
 }
 
 void Score::loadArchive() {
-	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C','L','U','T'));
+	Common::Array<uint16> clutList = _movieArchive->getResourceIDList(MKTAG('C', 'L', 'U', 'T'));
 
 	if (clutList.size() > 1)
 		warning("More than one palette was found (%d)", clutList.size());
@@ -185,36 +185,36 @@ void Score::loadArchive() {
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
 
-	assert(_movieArchive->hasResource(MKTAG('V','W','S','C'), 1024));
-	assert(_movieArchive->hasResource(MKTAG('V','W','C','F'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), 1024));
 
-	loadFrames(*_movieArchive->getResource(MKTAG('V','W','S','C'), 1024));
-	loadConfig(*_movieArchive->getResource(MKTAG('V','W','C','F'), 1024));
+	loadFrames(*_movieArchive->getResource(MKTAG('V', 'W', 'S', 'C'), 1024));
+	loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
 
 	if (_vm->getVersion() < 4) {
-		assert(_movieArchive->hasResource(MKTAG('V','W','C','R'), 1024));
-		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V','W','C','R'), 1024));
+		assert(_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), 1024));
+		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), 1024));
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V','W','A','C'), 1024)) {
-		loadActions(*_movieArchive->getResource(MKTAG('V','W','A','C'), 1024));
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), 1024)) {
+		loadActions(*_movieArchive->getResource(MKTAG('V', 'W', 'A', 'C'), 1024));
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V','W','F','I'), 1024)) {
-		loadFileInfo(*_movieArchive->getResource(MKTAG('V','W','F','I'), 1024));
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), 1024)) {
+		loadFileInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'I'), 1024));
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V','W','F','M'), 1024)) {
-		loadFontMap(*_movieArchive->getResource(MKTAG('V','W','F','M'), 1024));
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), 1024)) {
+		loadFontMap(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'M'), 1024));
 	}
 
-	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
+	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
-			loadCastInfo(*_movieArchive->getResource(MKTAG('V','W','C','I'), *iterator), *iterator);
+			loadCastInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
 	}
 
-	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C','A','S','t'));
+	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (cast.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
 			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
@@ -444,7 +444,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	}
 
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
-				id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
+		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
 	byte *data = (byte *)calloc(size1 + 16, 1); // 16 is for bounding rects
 	stream.read(data, size1 + 16);
@@ -717,7 +717,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	_castsInfo[id] = ci;
 }
 
-void Score::gotoloop() {
+void Score::gotoLoop() {
 	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	Common::SortedArray<Label *>::iterator i;
@@ -730,49 +730,71 @@ void Score::gotoloop() {
 	}
 }
 
-void Score::gotonext() {
+int Score::getCurrentLabelNumber() {
+	Common::SortedArray<Label *>::iterator i;
+
+	int frame = 0;
+
+	for (i = _labels->begin(); i != _labels->end(); ++i) {
+		if ((*i)->number <= _currentFrame)
+			frame = (*i)->number;
+	}
+
+	return frame;
+}
+
+void Score::gotoNext() {
+	//we can just try to use the current frame and get the next label
+	_currentFrame = getNextLabelNumber(_currentFrame);
+}
+
+void Score::gotoPrevious() {
+	//we actually need the frame of the label prior to the most recent label.
+	_currentFrame = getPreviousLabelNumber(getCurrentLabelNumber());
+}
+
+int Score::getNextLabelNumber(int referenceFrame) {
+	if (_labels == NULL || _labels->size() == 0)
+		return 0;
+
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->name == _currentLabel) {
+		if ((*i)->number >= referenceFrame) {
 			if (i != _labels->end()) {
 				// return to the first marker to to the right
 				++i;
-				_currentFrame = (*i)->number;
-				return;
+				return (*i)->number;
 			} else {
 				// if no markers are to the right of the playback head,
 				// the playback head goes to the first marker to the left
-				_currentFrame = (*i)->number;
-				return;
+				return (*i)->number;
 			}
 		}
 	}
+
 	// If there are not markers to the left,
 	// the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
-	_currentFrame = 0;
+	return 0;
 }
 
-void Score::gotoprevious() {
+int Score::getPreviousLabelNumber(int referenceFrame) {
+	if (_labels == NULL || _labels->size() == 0)
+		return 0;
+
 	// One label
-	if (_labels->begin() == _labels->end()) {
-		_currentFrame = (*_labels->begin())->number;
-		return;
-	}
+	if (_labels->begin() == _labels->end())
+		return (*_labels->begin())->number;
 
 	Common::SortedArray<Label *>::iterator previous = _labels->begin();
-	Common::SortedArray<Label *>::iterator i = previous++;
+	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels->begin(); i != _labels->end(); ++i, ++previous) {
-		if ((*i)->name == _currentLabel) {
-			_currentFrame = (*previous)->number;
-			return;
-		} else {
-			_currentFrame = (*i)->number;
-			return;
-		}
+	for (i = (previous + 1); i != _labels->end(); ++i, ++previous) {
+		if ((*i)->number >= referenceFrame)
+			return (*previous)->number;
 	}
-	_currentFrame = 0;
+
+	return 0;
 }
 
 Common::String Score::getString(Common::String str) {

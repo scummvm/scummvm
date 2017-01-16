@@ -460,6 +460,7 @@ public:
 	void func_gotonext();
 	void func_gotoprevious();
 	void func_cursor(int c);
+	int func_marker(int m);
 
 public:
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
