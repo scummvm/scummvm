@@ -23,6 +23,12 @@ ifdef N64
 TEST_LDFLAGS := $(filter-out -mno-crt0,$(TEST_LDFLAGS))
 endif
 
+ifdef PSP
+TEST_LIBS += backends/platform/psp/memory.o \
+	backends/platform/psp/mp3.o \
+	backends/platform/psp/trace.o
+endif
+
 ifdef HAVE_GCC3
 # In test/common/str.h, we test a zero length format string. This causes GCC
 # to generate a warning which in turn poses a problem when building with -Werror.
