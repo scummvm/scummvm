@@ -37,18 +37,18 @@ BEGIN_MESSAGE_MAP(CLight, CBackground)
 	ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
-CLight::CLight() : CBackground(), _unused1(0), _upRight(false),
-	_upLeft(false), _downLeft(false), _downRight(false), _unused2(0),
+CLight::CLight() : CBackground(), _unused1(0), _topRight(false),
+	_topLeft(false), _bottomLeft(false), _bottomRight(false), _unused2(0),
 	_unused3(0), _eyePresent(false) {
 }
 
 void CLight::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_unused1, indent);
-	file->writeNumberLine(_upRight, indent);
-	file->writeNumberLine(_upLeft, indent);
-	file->writeNumberLine(_downLeft, indent);
-	file->writeNumberLine(_downRight, indent);
+	file->writeNumberLine(_topRight, indent);
+	file->writeNumberLine(_topLeft, indent);
+	file->writeNumberLine(_bottomLeft, indent);
+	file->writeNumberLine(_bottomRight, indent);
 	file->writeNumberLine(_unused2, indent);
 	file->writeNumberLine(_unused3, indent);
 	file->writeNumberLine(_eyePresent, indent);
@@ -59,10 +59,10 @@ void CLight::save(SimpleFile *file, int indent) {
 void CLight::load(SimpleFile *file) {
 	file->readNumber();
 	_unused1 = file->readNumber();
-	_upRight = file->readNumber();
-	_upLeft = file->readNumber();
-	_downLeft = file->readNumber();
-	_downRight = file->readNumber();
+	_topRight = file->readNumber();
+	_topLeft = file->readNumber();
+	_bottomLeft = file->readNumber();
+	_bottomRight = file->readNumber();
 	_unused2 = file->readNumber();
 	_unused3 = file->readNumber();
 	_eyePresent = file->readNumber();
@@ -76,8 +76,8 @@ bool CLight::TurnOff(CTurnOff *msg) {
 }
 
 bool CLight::LightsMsg(CLightsMsg *msg) {
-	if ((msg->_upLeft && _upLeft) || (msg->_downLeft && _downLeft)
-			|| (msg->_upRight && _upRight) || (msg->_downRight && _downRight)) {
+	if ((msg->_topLeft && _topLeft) || (msg->_bottomLeft && _bottomLeft)
+			|| (msg->_topRight && _topRight) || (msg->_bottomRight && _bottomRight)) {
 		setVisible(true);
 	} else {
 		setVisible(false);
@@ -138,7 +138,7 @@ bool CLight::EnterRoomMsg(CEnterRoomMsg *msg) {
 	setVisible(true);
 
 	if (isEquals("6WTL")) {
-		CLightsMsg lightsMsg(1, 1, 1, 1);
+		CLightsMsg lightsMsg(true, true, true, true);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
 		bool flag = pet ? pet->isRoom59706() : false;

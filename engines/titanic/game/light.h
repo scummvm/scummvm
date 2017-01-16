@@ -40,10 +40,10 @@ class CLight : public CBackground {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _unused1;
-	bool _upRight;
-	bool _upLeft;
-	bool _downLeft;
-	bool _downRight;
+	bool _topRight;
+	bool _topLeft;
+	bool _bottomLeft;
+	bool _bottomRight;
 	int _unused2;
 	int _unused3;
 	bool _eyePresent;
