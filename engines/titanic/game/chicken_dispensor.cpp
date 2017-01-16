@@ -77,16 +77,16 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 		}
 	}
 
-	if (dispenseMode != DISPENSE_NONE)
-		_dispensed = true;
-
 	switch (dispenseMode) {
 	case DISPENSE_NONE:
 		petDisplayMessage(1, ONE_ALLOCATED_CHICKEN_PER_CUSTOMER);
 		break;
 
 	case DISPENSE_HOT:
+	case DISPENSE_COLD:
+		_dispensed = true;
 		setVisible(true);
+
 		if (_disabled) {
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("z#400.wav");
@@ -95,17 +95,6 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			_dispensed = true;
 		}
 		_dispenseMode = DISPENSE_NONE;
-		break;
-
-	case DISPENSE_COLD:
-		setVisible(true);
-		if (_disabled) {
-			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playSound("z#400.wav");
-		} else {
-			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_dispensed = true;
-		}
 		break;
 
 	default:

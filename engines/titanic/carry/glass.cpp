@@ -60,7 +60,7 @@ bool CGlass::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		useMsg.execute(dispensor);
 	} else if (msg->_other->isEquals("Chicken") && _condiment == "None") {
 		if (chicken->_condiment != "None") {
-			if (!chicken->_field12C) {
+			if (!chicken->_greasy) {
 				CActMsg actMsg(_condiment);
 				actMsg.execute("Chicken");
 			}

@@ -36,14 +36,15 @@ BEGIN_MESSAGE_MAP(CSauceDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CSauceDispensor::CSauceDispensor() : CBackground(),
-		_pouringCondiment(false), _fieldF0(0), _field104(0), _field108(0) {
+		_pouringCondiment(false), _starlingsDead(false),
+		_field104(0), _field108(0) {
 }
 
 void CSauceDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_condimentName, indent);
 	file->writeNumberLine(_pouringCondiment, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_starlingsDead, indent);
 	file->writePoint(_pos1, indent);
 	file->writePoint(_pos2, indent);
 	file->writeNumberLine(_field104, indent);
@@ -54,9 +55,9 @@ void CSauceDispensor::save(SimpleFile *file, int indent) {
 
 void CSauceDispensor::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
+	_condimentName = file->readString();
 	_pouringCondiment = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_starlingsDead = file->readNumber();
 	_pos1 = file->readPoint();
 	_pos2 = file->readPoint();
 	_field104 = file->readNumber();
@@ -71,7 +72,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 	if (msg->_item->isEquals("Chicken")) {
 		CChicken *chicken = static_cast<CChicken *>(msg->_item);
 		_field104 = true;
-		if (_fieldF0) {
+		if (_starlingsDead) {
 			playSound("b#15.wav", 50);
 
 			if (chicken->_condiment != "None") {
@@ -79,17 +80,17 @@ bool CSauceDispensor::Use(CUse *msg) {
 				msg->execute("Chicken");
 			} else {
 				setVisible(true);
-				if (chicken->_field12C) {
+				if (chicken->_greasy) {
 					_pouringCondiment = true;
 					playMovie(_pos1.x, _pos1.y, MOVIE_NOTIFY_OBJECT);
 				} else {
-					CActMsg actMsg(_string3);
+					CActMsg actMsg(_condimentName);
 					actMsg.execute("Chicken");
 					playMovie(_pos2.x, _pos2.y, MOVIE_NOTIFY_OBJECT);
 				}
 			}
 
-			if (_fieldF0)
+			if (_starlingsDead)
 				return true;
 		}
 
@@ -103,7 +104,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 		assert(glass);
 		_field108 = true;
 
-		if (_field104 != 1 || _fieldF0 != 1) {
+		if (_field104 != 1 || !_starlingsDead) {
 			glass->petAddToInventory();
 		} else if (glass->_condiment != "None") {
 			visibleMsg.execute("BeerGlass");
@@ -113,7 +114,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 				300));
 			setVisible(true);
 
-			CActMsg actMsg(_string3);
+			CActMsg actMsg(_condimentName);
 			actMsg.execute("BeerGlass");
 		}
 	}
@@ -138,7 +139,7 @@ bool CSauceDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CSauceDispensor::ActMsg(CActMsg *msg) {
 	if (msg->_action == "StarlingsDead")
-		_fieldF0 = true;
+		_starlingsDead = true;
 
 	return true;
 }
