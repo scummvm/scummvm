@@ -56,7 +56,7 @@ Common::String encodeHtmlEntities(Common::String s) {
 			result += "&gt;";
 		else if (s[i] == '&')
 			result += "&amp;";
-		else if (s[i] > 0x7F)
+		else if (s[i] > (char)0x7F)
 			result += Common::String::format("&#%d;", (int)s[i]);
 		else result += s[i];
 	return result;
