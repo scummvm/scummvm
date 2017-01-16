@@ -97,6 +97,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
+	_currentEntityId = 0;
 	_pc = 0;
 	_returning = false;
 	_indef = false;
@@ -111,6 +112,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
+
+	_cursorOnStack = false;
 
 	_exitRepeat = false;
 
