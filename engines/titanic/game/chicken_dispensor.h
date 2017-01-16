@@ -41,7 +41,7 @@ class CChickenDispensor : public CBackground {
 public:
 	bool _disabled;
 	DispenseMode _dispenseMode;
-	bool _dragging;
+	bool _dispensed;
 public:
 	CLASSDEF;
 	CChickenDispensor();

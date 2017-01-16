@@ -37,14 +37,14 @@ BEGIN_MESSAGE_MAP(CChickenDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CChickenDispensor::CChickenDispensor() : CBackground(),
-	_disabled(false), _dispenseMode(DISPENSE_NONE), _dragging(false) {
+	_disabled(false), _dispenseMode(DISPENSE_NONE), _dispensed(false) {
 }
 
 void CChickenDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_disabled, indent);
 	file->writeNumberLine(_dispenseMode, indent);
-	file->writeNumberLine(_dragging, indent);
+	file->writeNumberLine(_dispensed, indent);
 	CBackground::save(file, indent);
 }
 
@@ -52,14 +52,14 @@ void CChickenDispensor::load(SimpleFile *file) {
 	file->readNumber();
 	_disabled = file->readNumber();
 	_dispenseMode = (DispenseMode)file->readNumber();
-	_dragging = file->readNumber();
+	_dispensed = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 	msg->execute("SGTRestLeverAnimation");
-	DispenseMode dispenseMode = _dragging ? DISPENSE_NONE : _dispenseMode;
+	DispenseMode dispenseMode = _dispensed ? DISPENSE_NONE : _dispenseMode;
 	CPetControl *pet = getPetControl();
 	CGameObject *obj;
 
@@ -78,7 +78,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 	}
 
 	if (dispenseMode != DISPENSE_NONE)
-		_dragging = true;
+		_dispensed = true;
 
 	switch (dispenseMode) {
 	case DISPENSE_NONE:
@@ -92,7 +92,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			playSound("z#400.wav");
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_dragging = true;
+			_dispensed = true;
 		}
 		_dispenseMode = DISPENSE_NONE;
 		break;
@@ -104,7 +104,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			playSound("z#400.wav");
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			_dragging = true;
+			_dispensed = true;
 		}
 		break;
 
@@ -124,12 +124,14 @@ bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
 		playSound("b#50.wav", 50);
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
-	} else if (_dragging) {
+	} else if (_dispensed) {
+		// Chicken dispensed whilst dispensor is "disabled", which basically
+		// spits the chicken out at high speed directly into the SuccUBus
 		_cursorId = CURSOR_ARROW;
 		loadFrame(0);
 		setVisible(false);
 		if (_dispenseMode == DISPENSE_COLD)
-			_dragging = false;
+			_dispensed = false;
 	} else {
 		// Doors closing as the view is being left
 		loadFrame(0);
@@ -159,7 +161,7 @@ bool CChickenDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CChickenDispensor::EnterViewMsg(CEnterViewMsg *msg) {
 	playSound("b#51.wav");
-	_dragging = 0;
+	_dispensed = false;
 	_cursorId = CURSOR_ARROW;
 	return true;
 }
@@ -169,7 +171,7 @@ bool CChickenDispensor::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		setVisible(false);
 		loadFrame(0);
 		_cursorId = CURSOR_ARROW;
-		_dragging = 1;
+		_dispensed = true;
 
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("Chicken");
@@ -186,7 +188,7 @@ bool CChickenDispensor::TurnOff(CTurnOff *msg) {
 	if (getMovieFrame() != 16)
 		setVisible(false);
 	playMovie(16, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-	_dragging = false;
+	_dispensed = false;
 
 	return true;
 }
