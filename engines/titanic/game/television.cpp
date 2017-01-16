@@ -288,7 +288,7 @@ bool CTelevision::LightsMsg(CLightsMsg *msg) {
 	if (pet)
 		flag = pet->isRoom59706();
 
-	if (msg->_flag2 || !flag)
+	if (msg->_upLeft || !flag)
 		_turnOn = true;
 
 	return true;

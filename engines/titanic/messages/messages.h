@@ -280,7 +280,7 @@ MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nul
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
 MESSAGE2(CLeaveViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
 MESSAGE1(CLemonFallsFromTreeMsg, Point, pt, Point());
-MESSAGE4(CLightsMsg, bool, flag1, false, bool, flag2, false, bool, flag3, false, bool, flag4, false);
+MESSAGE4(CLightsMsg, bool, upRight, false, bool, upLeft, false, bool, downLeft, false, bool, downRight, false);
 MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);
 MESSAGE0(CMaitreDDefeatedMsg);

@@ -37,35 +37,35 @@ BEGIN_MESSAGE_MAP(CLight, CBackground)
 	ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
-CLight::CLight() : CBackground(), _fieldE0(0), _fieldE4(0),
-	_fieldE8(0), _fieldEC(0), _fieldF0(0), _fieldF4(0),
-	_fieldF8(0), _fieldFC(0) {
+CLight::CLight() : CBackground(), _unused1(0), _upRight(false),
+	_upLeft(false), _downLeft(false), _downRight(false), _unused2(0),
+	_unused3(0), _eyePresent(false) {
 }
 
 void CLight::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_unused1, indent);
+	file->writeNumberLine(_upRight, indent);
+	file->writeNumberLine(_upLeft, indent);
+	file->writeNumberLine(_downLeft, indent);
+	file->writeNumberLine(_downRight, indent);
+	file->writeNumberLine(_unused2, indent);
+	file->writeNumberLine(_unused3, indent);
+	file->writeNumberLine(_eyePresent, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CLight::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
+	_unused1 = file->readNumber();
+	_upRight = file->readNumber();
+	_upLeft = file->readNumber();
+	_downLeft = file->readNumber();
+	_downRight = file->readNumber();
+	_unused2 = file->readNumber();
+	_unused3 = file->readNumber();
+	_eyePresent = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -76,8 +76,8 @@ bool CLight::TurnOff(CTurnOff *msg) {
 }
 
 bool CLight::LightsMsg(CLightsMsg *msg) {
-	if ((msg->_flag2 && _fieldE8) || (msg->_flag3 && _fieldEC)
-			|| (msg->_flag1 && _fieldE4) || (msg->_flag4 && _fieldF0)) {
+	if ((msg->_upLeft && _upLeft) || (msg->_downLeft && _downLeft)
+			|| (msg->_upRight && _upRight) || (msg->_downRight && _downRight)) {
 		setVisible(true);
 	} else {
 		setVisible(false);
@@ -100,7 +100,7 @@ bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
 	bool flag = pet ? pet->isRoom59706() : false;
 
-	if (_fieldFC == 1 && flag) {
+	if (_eyePresent && flag) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -115,7 +115,7 @@ bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CPetControl *pet = getPetControl();
 	bool flag = pet ? pet->isRoom59706() : false;
 
-	if (_fieldFC == 1 && flag) {
+	if (_eyePresent && flag) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -128,7 +128,7 @@ bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CLight::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Eye Removed")
-		_fieldFC = 0;
+		_eyePresent = false;
 
 	return true;
 }
