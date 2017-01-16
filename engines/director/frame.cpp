@@ -842,6 +842,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		textCast->palinfo2 = textStream->readUint16();
 		textCast->palinfo3 = textStream->readUint16();
 
+		debugC(3, kDebugText, "renderText: formattingCount: %u formatStartOffset: %d", formattingCount, formatStartOffset);
+
 		formattingCount--;
 	}
 
