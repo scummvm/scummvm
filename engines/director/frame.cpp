@@ -722,6 +722,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
 		debugC(2, kDebugImages, "Shared cast BMP: id: %d", imgId);
 		pic = _vm->getSharedBMP()->getVal(imgId);
+		pic->seek(0); //TODO: this actually gets re-read every loop... we need to rewind it!
 		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
 	} else 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
