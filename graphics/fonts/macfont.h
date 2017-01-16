@@ -28,20 +28,6 @@
 
 namespace Graphics {
 
-struct AsscEntry {
-	uint16 _fontSize;
-	uint16 _fontStyle;
-	uint16 _fontID;
-};
-
-struct BBoxEntry {
-	uint16 _style;
-	uint16 _left;
-	uint16 _bottom;
-	uint16 _right;
-	uint16 _top;
-};
-
 /**
  * Processing of Mac FONT/NFNT rResources
  */
@@ -90,14 +76,43 @@ private:
 	uint16 _ffIntl[2];
 	uint16 _ffVersion;
 
+	struct AsscEntry {
+		uint16 _fontSize;
+		uint16 _fontStyle;
+		uint16 _fontID;
+	};
+
 	uint16 _ffNumAssoc;
 	Common::Array<AsscEntry> _ffAssocEntries;
 
 	uint16 _ffNumOffsets;
 	uint32 *_ffOffsets;
 
+	struct BBoxEntry {
+		uint16 _style;
+		uint16 _left;
+		uint16 _bottom;
+		uint16 _right;
+		uint16 _top;
+	};
+
 	uint16 _ffNumBBoxes;
 	Common::Array<BBoxEntry> _ffBBoxes;
+
+	struct KernPair {
+		byte _firstChar;
+		byte _secondChar;
+		uint16 _distance;
+	};
+
+	struct KernEntry {
+		uint16 _style;
+		uint16 _entryLength;
+		Common::Array<KernPair> _kernPairs;
+	};
+
+	uint16 _ffNumKerns;
+	Common::Array<KernEntry> _ffKernEntries;
 
 	byte *_bitImage;
 

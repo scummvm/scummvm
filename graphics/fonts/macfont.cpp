@@ -136,19 +136,48 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 		_ffAssocEntries[i]._fontID    = stream.readUint16BE(); // font resource ID
 	}
 
-	_ffNumOffsets = stream.readUint16BE(); // number of entries - 1
-	_ffOffsets = (uint32 *)calloc(_ffNumOffsets + 1, sizeof(uint32));
-	for (uint i = 0; i <= _ffNumOffsets; i++)
-		_ffOffsets[i] = stream.readUint32BE();
+	if (_ffWTabOff || _ffStylOff || _ffKernOff) {
+		_ffNumOffsets = stream.readUint16BE(); // number of entries - 1
+		_ffOffsets = (uint32 *)calloc(_ffNumOffsets + 1, sizeof(uint32));
+		for (uint i = 0; i <= _ffNumOffsets; i++)
+			_ffOffsets[i] = stream.readUint32BE();
 
-	_ffNumBBoxes = stream.readUint16BE(); // number of entries - 1
-	_ffBBoxes.resize(_ffNumBBoxes + 1);
-	for (uint i = 0; i <= _ffNumBBoxes; i++) {
-		_ffBBoxes[i]._style  = stream.readUint16BE();
-		_ffBBoxes[i]._left   = stream.readUint16BE();
-		_ffBBoxes[i]._bottom = stream.readUint16BE();
-		_ffBBoxes[i]._right  = stream.readUint16BE();
-		_ffBBoxes[i]._top    = stream.readUint16BE();
+		_ffNumBBoxes = stream.readUint16BE(); // number of entries - 1
+		_ffBBoxes.resize(_ffNumBBoxes + 1);
+		for (uint i = 0; i <= _ffNumBBoxes; i++) {
+			_ffBBoxes[i]._style  = stream.readUint16BE();
+			_ffBBoxes[i]._left   = stream.readUint16BE();
+			_ffBBoxes[i]._bottom = stream.readUint16BE();
+			_ffBBoxes[i]._right  = stream.readUint16BE();
+			_ffBBoxes[i]._top    = stream.readUint16BE();
+		}
+	}
+
+	if (_ffWTabOff) {
+		// TODO: Read widths table
+	}
+
+	if (_ffStylOff) {
+		// TODO: Read styles table
+	}
+
+	if (_ffKernOff) {
+		stream.seek(_ffKernOff);
+
+		_ffNumKerns = stream.readUint16BE(); // number of entries - 1
+		_ffKernEntries.resize(_ffNumKerns + 1);
+
+		for (uint i = 0; i <= _ffNumKerns; i++) {
+			_ffKernEntries[i]._style       = stream.readUint16BE();
+			_ffKernEntries[i]._entryLength = stream.readUint16BE();
+			_ffKernEntries[i]._kernPairs.resize(_ffKernEntries[i]._entryLength / 4);
+
+			for (uint j = 0; j < _ffKernEntries[i]._entryLength / 4; j++) {
+				_ffKernEntries[i]._kernPairs[j]._firstChar = stream.readByte();
+				_ffKernEntries[i]._kernPairs[j]._secondChar = stream.readByte();
+				_ffKernEntries[i]._kernPairs[j]._distance = stream.readUint16BE();
+			}
+		}
 	}
 
 	return true;
