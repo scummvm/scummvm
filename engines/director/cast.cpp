@@ -44,13 +44,17 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		stream.readByte();
 		stream.readByte();
 
+		flags = 0;
+		someFlaggyThing = 0;
+		unk1 = unk2 = 0;
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
 		regX = stream.readUint16();
 		regY = stream.readUint16();
 
 		bitsPerPixel = stream.readUint16();
-		if (bitsPerPixel == 0) 
+		if (bitsPerPixel == 0)
 			bitsPerPixel = 1;
 
 		int tail = 0;
@@ -66,6 +70,19 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
+	borderSize = kSizeNone;
+	gutterSize = kSizeNone;
+	boxShadow = kSizeNone;
+
+	flags1 = 0;
+	fontId = 0;
+	fontSize = 12;
+	textType = kTextTypeFixed;
+	textAlign = kTextAlignLeft;
+	textShadow = kSizeNone;
+	textSlant = 0;
+	palinfo1 = palinfo2 = palinfo3 = 0;
+
 	if (version < 4) {
 		flags1 = stream.readByte();
 		borderSize = static_cast<SizeType>(stream.readByte());
@@ -95,6 +112,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		// TODO: FIXME: guesswork
 		fontId = stream.readByte();
 		fontSize = stream.readByte();
+		textSlant = 0;
 	} else if (version < 5) {
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
@@ -117,6 +135,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 			warning("Unproxessed text cast flags: %x", flags);
 
 		fontSize = stream.readUint16();
+		textSlant = 0;
 	} else {
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
@@ -143,6 +162,13 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
+
+		shapeType = kShapeRectangle;
+		pattern = 0;
+		fgCol = bgCol = 0;
+		fillType = 0;
+		lineThickness = 1;
+		lineDirection = 0;
 	}
 	modified = 0;
 }
