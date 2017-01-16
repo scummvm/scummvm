@@ -56,6 +56,14 @@ Sprite::Sprite() {
 	_cast = nullptr;
 	_blend = 0;
 	_lineSize = 1;
+
+	_x1 = 0;
+	_x2 = 0;
+	_scriptId = 0;
+	_flags2 = 0;
+	_unk2 = 0;
+	_unk3 = 0;
+	_spriteType = 0;
 }
 
 Sprite::Sprite(const Sprite &sprite) {
@@ -88,6 +96,14 @@ Sprite::Sprite(const Sprite &sprite) {
 	_blend = sprite._blend;
 	_startTime = sprite._startTime;
 	_lineSize = sprite._lineSize;
+
+	_x1 = sprite._x1;
+	_x2 = sprite._x2;
+	_scriptId = sprite._scriptId;
+	_flags2 = sprite._flags2;
+	_unk2 = sprite._unk2;
+	_unk3 = sprite._unk3;
+	_spriteType = sprite._spriteType;
 }
 
 Sprite::~Sprite() {
