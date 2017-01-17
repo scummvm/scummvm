@@ -206,6 +206,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
+			uint transColor = getTransparencyColor();
 
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
 				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
@@ -223,7 +224,8 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				transSurface.setCol(srcRect.left);
 
 				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
-					copyPixel(lineDestP, lineSrcP, transSurface.getAlpha() >> 3, srcSurface->format, isAlpha);
+					if (*lineSrcP != transColor)
+						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha() >> 3, srcSurface->format, isAlpha);
 
 					++lineSrcP;
 					++lineDestP;
