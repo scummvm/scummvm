@@ -135,7 +135,7 @@ public:
 	int _walkSoundBalance;
 	int _walkingActorId;
 private:
-	static const int kArchiveCount = 10;
+	static const uint kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
 
 public:
