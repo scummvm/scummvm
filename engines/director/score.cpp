@@ -406,7 +406,9 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	if (stream.size() == 0)
 		return;
 
-	if (stream.size() < 26) {
+	//TODO: Determine if there really is a minimum size.
+	//This value was too small for Shape Casts.
+	if (stream.size() < 10) {
 		warning("CAST data id %d is too small", id);
 		return;
 	}

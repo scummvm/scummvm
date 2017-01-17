@@ -33,7 +33,7 @@ namespace Director {
 
 class Sprite;
 
-#define CHANNEL_COUNT 24
+#define CHANNEL_COUNT 30
 
 enum {
 	kChannelDataSize = (25 * 50)

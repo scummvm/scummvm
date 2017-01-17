@@ -875,8 +875,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
 
-	height = font->getFontHeight();
-
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
 	int alignment = (int)textCast->textAlign;
@@ -885,7 +883,15 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
-	uint16 textX = x, textY = y;
+	Graphics::MacText mt(text, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+	mt.setInterLinear(1);
+	mt.render();
+	const Graphics::ManagedSurface *textSurface = mt.getSurface();
+
+	height = textSurface->h;
+
+	uint16 textX = 0, textY = 0;
+
 	if (!isButtonLabel) {
 		if (borderSize > 0) {
 			if (_vm->getVersion() <= 3)
@@ -895,71 +901,55 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 			textX += (borderSize + 1);
 			textY += borderSize;
-		} else
-			textX += 1;
+		} else {
+			x += 1;
+		}
 
 		if (padding > 0) {
 			width += padding * 2;
 			height += padding;
-
-			if (textCast->textAlign == kTextAlignLeft)
-				textX += padding;
-			else if (textCast->textAlign == kTextAlignRight)
-				textX -= padding;
-			//TODO: alignment issue with odd-size-width center-aligned text
-			//else if (textCast->textAlign == kTextAlignCenter && ((borderSize + padding) % 2 == 1))
-			//	textX--;
-
 			textY += padding / 2;
 		}
 
-		if (textCast->textAlign == kTextAlignRight) textX -= 1;
+		if (textCast->textAlign == kTextAlignRight) 
+			textX -= 1;
 
-		if (textShadow > 0) {
-			if (borderSize == 0 && _vm->getVersion() > 3)
-				textX += 1;
-			if (_vm->getVersion() > 3)
-				height -= (textShadow - 1);
-		}
+		if (textShadow > 0)
+			textX--;
 	} else {
-		textY += 2;
+		y += 2;
 	}
 
-	Graphics::MacText mt(text, font, 0x00, 0xff, width);
-	mt.render();
-	Graphics::ManagedSurface *textSurface = mt.getSurface();
+	switch (textCast->textAlign) {
+	case kTextAlignCenter:
+		textX = (width / 2) - (textSurface->w / 2) + (padding / 2) + borderSize;
+		break;
+	case kTextAlignRight:
+		textX = width - (textSurface->w + 1) + (borderSize * 2) - (textShadow * 2) - (padding);
+		break;
+	}
 
-	if (isButtonLabel) {
-		uint16 borderX = x + borderSize - 1, borderY = y + borderSize - 1, borderHeight = height, borderWidth = width;
-		if (borderSize != kSizeNone) {
-			while (borderSize) {
-				borderWidth += 2;
-				borderHeight += 2;
-				textSurface->frameRect(Common::Rect(borderX, borderY, borderX + borderWidth, borderY + borderHeight), 0);
-				borderSize--;
-				borderX--;
-				borderY--;
-			}
-		}
+	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
+	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
 
-		if (boxShadow > 0) {
-			borderSize = (uint16)textCast->borderSize;
-			uint baseOffsetX = x + boxShadow;
-			uint baseOffsetY = y + height + (borderSize * 2);
-			uint sideOffsetX = x + borderWidth;
-			uint sideOffsetY = y + boxShadow;
-			while (boxShadow) {
-				textSurface->drawLine(baseOffsetX, baseOffsetY + (boxShadow - 1), baseOffsetX + borderWidth - 1, baseOffsetY + (boxShadow - 1), 0);
-				textSurface->drawLine(sideOffsetX + (boxShadow - 1), sideOffsetY, sideOffsetX + (boxShadow - 1), sideOffsetY + borderHeight - 1, 0);
-				boxShadow--;
-			}
+	if (!isButtonLabel && boxShadow > 0) {
+		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
+	}
+
+	if (!isButtonLabel && borderSize != kSizeNone) {
+		for (int bb = 0; bb < borderSize; bb++) {
+			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
+			textWithFeatures.fillRect(borderRect, 0xff);
+			textWithFeatures.frameRect(borderRect, 0);
 		}
 	}
 
 	if (textShadow > 0)
-		inkBasedBlit(surface, *textSurface, spriteId, Common::Rect(textX + textShadow, textY + textShadow, textX + textShadow + width, textY + textShadow + height));
+		textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX + textShadow, textY + textShadow), 0xff);
 
-	inkBasedBlit(surface, *textSurface, spriteId, Common::Rect(textX, textY, textX + width, textY + height));
+	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
+	
+	inkBasedBlit(surface, textWithFeatures, spriteId, Common::Rect(x, y, x + width, y + height));
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
