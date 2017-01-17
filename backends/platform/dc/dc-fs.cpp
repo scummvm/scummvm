@@ -57,7 +57,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream() { return 0; }
-	virtual bool create(bool isDirectory) { return false; }
+	virtual bool create(bool isDirectoryFlag) { return false; }
 
 	static AbstractFSNode *makeFileNodePath(const Common::String &path);
 };
