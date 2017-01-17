@@ -59,7 +59,7 @@ class LocalWebserver : public Common::Singleton<LocalWebserver> {
 	SDLNet_SocketSet _set;
 	TCPsocket _serverSocket;
 	Client _client[MAX_CONNECTIONS];
-	int _clients;
+	uint32 _clients;
 	bool _timerStarted, _stopOnIdle, _minimalMode;
 	Common::HashMap<Common::String, BaseHandler*> _pathHandlers;
 	BaseHandler *_defaultHandler;
