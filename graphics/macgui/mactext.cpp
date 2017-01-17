@@ -24,20 +24,17 @@
 
 namespace Graphics {
 
-MacText::MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth) {
+MacText::MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
 	_str = s;
 	_font = font;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
 	_maxWidth = maxWidth;
+	_textMaxWidth = 0;
 	_surface = nullptr;
+	_textAlignment = textAlignment;
 
-	_interLinear = 0; // 0 pixels between the lines by default
-
-	if (_maxWidth == -1)
-		_textMaxWidth = 1000000; // Some big value
-	else
-		_textMaxWidth = -1;
+	_interLinear = 0; // 0 pixels between the lines by default	
 
 	splitString(_str);
 
@@ -62,7 +59,7 @@ void MacText::splitString(Common::String &str) {
 			prevCR = true;
 
 		if (*s == '\r' || *s == '\n') {
-			_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
+			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, _text), _textMaxWidth);
 
 			tmp.clear();
 
@@ -75,7 +72,7 @@ void MacText::splitString(Common::String &str) {
 	}
 
 	if (tmp.size())
-		_maxWidth = MIN(_font->wordWrapText(tmp, _maxWidth, _text), _maxWidth);
+		_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, _text), _textMaxWidth);
 }
 
 void MacText::reallocSurface() {
@@ -84,7 +81,7 @@ void MacText::reallocSurface() {
 	//TODO: work out why this rounding doesn't correctly fill the entire width
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
 	int requiredH = _text.size() * lineH;
-	int surfW = _maxWidth == -1 ? _textMaxWidth : _maxWidth;
+	int surfW = _textMaxWidth;
 
 	if (!_surface) {
 		_surface = new ManagedSurface(surfW, requiredH);
@@ -123,8 +120,12 @@ void MacText::render(int from, int to) {
 	_surface->fillRect(Common::Rect(0, y, _surface->w, to * lineH), _bgcolor);
 
 	for (int i = from; i < to; i++) {
+		int xOffset = 0;
+		if (_textAlignment == kTextAlignRight) xOffset = _textMaxWidth - _font->getStringWidth(_text[i]);
+		else if (_textAlignment == kTextAlignCenter) xOffset = (_textMaxWidth / 2) - (_font->getStringWidth(_text[i]) / 2);
+
 		//TODO: _textMaxWidth, when -1, was not rendering ANY text.
-		_font->drawString(_surface, _text[i], 0, y, _maxWidth, _fgcolor);
+		_font->drawString(_surface, _text[i], xOffset, y, _maxWidth, _fgcolor);
 
 		y += _font->getFontHeight() + _interLinear;
 	}

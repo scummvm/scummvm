@@ -25,12 +25,13 @@
 
 #include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/font.h"
 
 namespace Graphics {
 
 class MacText {
 public:
-	MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1);
+	MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft);
 
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
@@ -61,6 +62,8 @@ private:
 
 	Graphics::ManagedSurface *_surface;
 	bool _fullRefresh;
+
+	TextAlign _textAlignment;
 };
 
 } // End of namespace Graphics
