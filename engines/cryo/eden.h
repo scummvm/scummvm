@@ -487,7 +487,7 @@ private:
 	uint16 operation(byte op, uint16 v1, uint16 v2);
 	uint16 fetchValue();
 	void actionNop();
-	void initCosTable();
+	void initSinCosTable();
 	void makeMatriceFix();
 	void projectionFix(cube_t *cube, int n);
 	void initCubeMac();
@@ -717,7 +717,8 @@ private:
 	int		_roomIconsBase;
 
 	//// cube.c
-	int16 _cosSinTable[361 * 2];
+	int16 _cosTable[361];
+	int16 _sinTable[361];
 	int _passMat31, _passMat21, _passMat11;
 	int _passMat32, _passMat22, _passMat12;
 	int _passMat33, _passMat23, _passMat13;

@@ -8566,10 +8566,10 @@ void EdenGame::actionNop() {
 
 //// cube.c
 // Original name: make_tabcos
-void EdenGame::initCosTable() {
+void EdenGame::initSinCosTable() {
 	for (int i = 0; i < 361; i++) {
-		_cosSinTable[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
-		_cosSinTable[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
+		_cosTable[i] = (int)(cos(3.1416 * i / 180.0) * 255.0);
+		_sinTable[i] = (int)(sin(3.1416 * i / 180.0) * 255.0);
 	}
 }
 
@@ -8578,19 +8578,19 @@ void EdenGame::makeMatriceFix() {
 	int16 rotAnglePhi = _rotationAngleY;
 	int16 rotAnglePsi = _rotationAngleZ;
 
-	_passMat31 = (_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2]) >> 8;
-	_passMat32 = (_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2]) >> 8;
-	_passMat33 = -_cosSinTable[rotAngleTheta * 2 + 1];
-	_passMat21 = ((-_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAnglePsi * 2]) >> 8)
-	              + ((_cosSinTable[rotAnglePsi * 2 + 1] * ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
-	_passMat22 = ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAnglePsi * 2]) >> 8)
-	              + ((_cosSinTable[rotAnglePsi * 2 + 1] * ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
-	_passMat23 = (_cosSinTable[rotAngleTheta * 2] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8;
-	_passMat11 = ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8)
-	              + ((_cosSinTable[rotAnglePsi * 2] * ((_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
-	_passMat12 = ((-_cosSinTable[rotAnglePhi * 2] * _cosSinTable[rotAnglePsi * 2 + 1]) >> 8)
-	              + ((_cosSinTable[rotAnglePsi * 2] * ((_cosSinTable[rotAnglePhi * 2 + 1] * _cosSinTable[rotAngleTheta * 2 + 1]) >> 8)) >> 8);
-	_passMat13 = (_cosSinTable[rotAngleTheta * 2] * _cosSinTable[rotAnglePsi * 2]) >> 8;
+	_passMat31 = (_cosTable[rotAnglePhi] * _cosTable[rotAngleTheta]) >> 8;
+	_passMat32 = (_sinTable[rotAnglePhi] * _cosTable[rotAngleTheta]) >> 8;
+	_passMat33 = -_sinTable[rotAngleTheta];
+	_passMat21 = ((-_sinTable[rotAnglePhi] * _cosTable[rotAnglePsi]) >> 8)
+	              + ((_sinTable[rotAnglePsi] * ((_cosTable[rotAnglePhi] * _sinTable[rotAngleTheta]) >> 8)) >> 8);
+	_passMat22 = ((_cosTable[rotAnglePhi] * _cosTable[rotAnglePsi]) >> 8)
+	              + ((_sinTable[rotAnglePsi] * ((_sinTable[rotAnglePhi] * _sinTable[rotAngleTheta]) >> 8)) >> 8);
+	_passMat23 = (_cosTable[rotAngleTheta] * _sinTable[rotAnglePsi]) >> 8;
+	_passMat11 = ((_sinTable[rotAnglePhi] * _sinTable[rotAnglePsi]) >> 8)
+	              + ((_cosTable[rotAnglePsi] * ((_cosTable[rotAnglePhi] * _sinTable[rotAngleTheta]) >> 8)) >> 8);
+	_passMat12 = ((-_cosTable[rotAnglePhi] * _sinTable[rotAnglePsi]) >> 8)
+	              + ((_cosTable[rotAnglePsi] * ((_sinTable[rotAnglePhi] * _sinTable[rotAngleTheta]) >> 8)) >> 8);
+	_passMat13 = (_cosTable[rotAngleTheta] * _cosTable[rotAnglePsi]) >> 8;
 }
 
 void EdenGame::projectionFix(cube_t *cubep, int n) {
@@ -8616,7 +8616,7 @@ void EdenGame::projectionFix(cube_t *cubep, int n) {
 void EdenGame::initCubeMac() {
 	loadMap(2493, _cubeTexture);
 	NEWcharge_objet_mob(&_cube, 2494, _cubeTexture);
-	initCosTable();
+	initSinCosTable();
 }
 
 void EdenGame::engineMac() {
