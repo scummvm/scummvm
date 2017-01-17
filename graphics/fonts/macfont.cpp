@@ -132,7 +132,7 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 		_ffProperty[i] = stream.readUint16BE();
 		debugN(10, "%d ", _ffProperty[i]);
 	}
-	debug(10, "");
+	debug(10, "%s", "");
 
 	_ffIntl[0]   = stream.readUint16BE(); // for international use
 	_ffIntl[1]   = stream.readUint16BE(); // for international use
@@ -162,7 +162,7 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 			_ffOffsets[i] = stream.readUint32BE();
 			debugN(10, "%d ", _ffOffsets[i]);
 		}
-		debug(10, "");
+		debug(10, "%s", "");
 
 		_ffNumBBoxes = stream.readUint16BE(); // number of entries - 1
 		_ffBBoxes.resize(_ffNumBBoxes + 1);
