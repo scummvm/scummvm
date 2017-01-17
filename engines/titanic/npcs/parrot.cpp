@@ -684,7 +684,7 @@ bool CParrot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 	switch (msg->_frameNumber) {
 	case 244:
-		setPosition(Point(_bounds.left, _bounds.top + 45));
+		setPosition(Point(_bounds.left + 45, _bounds.top));
 		break;
 	case 261:
 	case 262:
