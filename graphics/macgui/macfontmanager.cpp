@@ -22,7 +22,9 @@
 #include "common/archive.h"
 #include "common/stream.h"
 #include "common/unzip.h"
+#include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
+#include "graphics/fonts/macfont.h"
 
 #include "graphics/macgui/macfontmanager.h"
 
@@ -80,7 +82,7 @@ MacFontManager::MacFontManager() {
 	loadFonts();
 }
 
-void MacFontManager::loadFonts() {
+void MacFontManager::loadFontsBDF() {
 	Common::Archive *dat;
 
 	dat = Common::makeZipArchive("classicmacfonts.dat");
@@ -131,6 +133,56 @@ void MacFontManager::loadFonts() {
 		_fontRegistry.setVal(fontName, macfont);
 
 		debug(2, " %s", fontName.c_str());
+	}
+
+	_builtInFonts = false;
+
+	delete dat;
+}
+
+void MacFontManager::loadFonts() {
+	Common::Archive *dat;
+
+	dat = Common::makeZipArchive("classicmacfonts.dat");
+
+	if (!dat) {
+		warning("Could not find classicmacfonts.dat. Falling back to built-in fonts");
+		_builtInFonts = true;
+
+		return;
+	}
+
+	Common::ArchiveMemberList list;
+	dat->listMembers(list);
+
+	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
+		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
+
+		Common::MacResManager *fontFile = new Common::MacResManager();
+
+		if (!fontFile->loadFromMacBinary(*stream))
+			error("Could not open %s as a resource fork", (*it)->getName().c_str());
+
+		Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+		if (fonds.size() > 0) {
+			for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
+				Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+				Graphics::MacFontFamily fontFamily;
+				fontFamily.load(*fond);
+
+				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily.getAssocTable();
+
+				for (uint i = 0; i < assoc->size(); i++) {
+					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontSize,
+											(*assoc)[i]._fontID);
+				}
+
+				delete fond;
+			}
+		}
+
+		delete stream;
 	}
 
 	_builtInFonts = false;

@@ -100,10 +100,10 @@ private:
 /**
  * Processing of Mac FONT/NFNT rResources
  */
-class MacFont : public Font {
+class MacFONTFont : public Font {
 public:
-	MacFont();
-	virtual ~MacFont();
+	MacFONTFont();
+	virtual ~MacFONTFont();
 
 	virtual int getFontHeight() const;
 	virtual int getMaxCharWidth() const;

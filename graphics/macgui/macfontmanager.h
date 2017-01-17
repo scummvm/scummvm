@@ -121,6 +121,7 @@ public:
 	int getFontIdByName(Common::String name);
 
 private:
+	void loadFontsBDF();
 	void loadFonts();
 
 	void generateFontSubstitute(MacFont &macFont);

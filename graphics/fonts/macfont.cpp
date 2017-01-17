@@ -215,7 +215,7 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
  }
 
 
- MacFont::MacFont() {
+ MacFONTFont::MacFONTFont() {
 	_fontType = 0;
 	_firstChar = 0;
 	_lastChar = 0;
@@ -236,11 +236,11 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	_style = 0;
  }
 
- MacFont::~MacFont() {
+ MacFONTFont::~MacFONTFont() {
 	free(_bitImage);
  }
 
-bool MacFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family, int size, int style) {
+bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family, int size, int style) {
 	_family = family;
 	_size = size;
 	_style = style;
@@ -260,7 +260,7 @@ bool MacFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family
 	_rowWords    = stream.readUint16BE() * 2; // row width of bit image in 16-bit wds
 
 	if (getDepth(_fontType) != 1) {
-		warning("MacFont: %dbpp fonts are not supported", getDepth(_fontType));
+		warning("MacFONTFont: %dbpp fonts are not supported", getDepth(_fontType));
 
 		return false;
 	}
@@ -332,15 +332,15 @@ bool MacFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family
 	return true;
 }
 
-int MacFont::getFontHeight() const {
+int MacFONTFont::getFontHeight() const {
 	return _fRectHeight;
 }
 
-int MacFont::getMaxCharWidth() const {
+int MacFONTFont::getMaxCharWidth() const {
 	return _maxWidth;
 }
 
-int MacFont::getCharWidth(uint32 chr) const {
+int MacFONTFont::getCharWidth(uint32 chr) const {
 	const Glyph *glyph = findGlyph(chr);
 
 	if (!glyph)
@@ -349,7 +349,7 @@ int MacFont::getCharWidth(uint32 chr) const {
 	return glyph->width;
 }
 
-void MacFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	assert(dst != 0);
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 
@@ -375,7 +375,7 @@ void MacFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	}
 }
 
-const MacFont::Glyph *MacFont::findGlyph(uint32 c) const {
+const MacFONTFont::Glyph *MacFONTFont::findGlyph(uint32 c) const {
 	if (_glyphs.empty())
 		return 0;
 
@@ -385,7 +385,7 @@ const MacFont::Glyph *MacFont::findGlyph(uint32 c) const {
 	return &_glyphs[c - _firstChar];
 }
 
-int MacFont::getKerningOffset(uint32 left, uint32 right) const {
+int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 	if (_family) {
 		int kerning = _family->getKerningOffset(_style, left, right);
 		kerning *= _size;
