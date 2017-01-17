@@ -607,7 +607,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	if ((_npcFlags & NPCFLAG_10000) || hasActiveMovie())
 		return true;
 
-	if (_newXc > 64) {
+	if (ABS(_newXc - xp) > 64) {
 		_npcFlags |= NPCFLAG_10000 | NPCFLAG_20000;
 
 		if (_newXc >= xp) {
