@@ -506,7 +506,7 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 		return 1;
 	} else if (index == getCurrentFloor()) {
 		if (index == 1) {
-			addResponse(30558 - getRandomBit() ? 290 : 0);
+			addResponse(30558 - (getRandomBit() ? 290 : 0));
 			addResponse(getDialogueId(210589));
 		} else {
 			if (index == 39)
@@ -535,7 +535,7 @@ int LiftbotScript::addResponse1(int index, bool flag, int id) {
 
 	if (flag) {
 		if (index == 1) {
-			selectResponse(30558 - getRandomBit() ? 290 : 0);
+			selectResponse(30558 - (getRandomBit() ? 290 : 0));
 		} else if (index == 39) {
 			addResponse(30346);
 		} else {
@@ -619,7 +619,7 @@ int LiftbotScript::sentence1(const TTsentence *sentence) {
 	} else if (sentence->localWord("titaniaroom")) {
 		newId = 210723;
 	} else if (sentence->localWord("restaurant")) {
-		if (classNum == 1) {
+		if (classNum == FIRST_CLASS) {
 			newId = 210719;
 			diff = 1;
 		} else {
