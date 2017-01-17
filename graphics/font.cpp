@@ -227,7 +227,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	if (lineWidth > 0) {
 		wrapper.add(line, lineWidth);
 	}
-	return MAX(wrapper.actualMaxLineWidth, maxWidth);
+	return wrapper.actualMaxLineWidth;
 }
 
 } // End of anonymous namespace
