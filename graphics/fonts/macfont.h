@@ -28,38 +28,14 @@
 
 namespace Graphics {
 
-/**
- * Processing of Mac FONT/NFNT rResources
- */
-class MacFont : public Font {
+class MacFontFamily {
 public:
-	MacFont();
-	virtual ~MacFont();
+	MacFontFamily();
+	~MacFontFamily();
 
-	virtual int getFontHeight() const;
-	virtual int getMaxCharWidth() const;
-	virtual int getCharWidth(uint32 chr) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
-
-	bool loadFont(Common::SeekableReadStream &stream);
-	bool loadFOND(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream &stream);
 
 private:
-	// FONT/NFNT
-	uint16 _fontType;
-	uint16 _firstChar;
-	uint16 _lastChar;
-	uint16 _maxWidth;
-	int16  _kernMax;
-	int16  _nDescent;
-	uint16 _fRectWidth;
-	uint16 _fRectHeight;
-	uint32 _owTLoc;
-	uint16 _ascent;
-	uint16 _descent;
-	uint16 _leading;
-	uint16 _rowWords;
-
 	// FOND
 	uint16 _ffFlags;
 	uint16 _ffFamID;
@@ -113,6 +89,38 @@ private:
 
 	uint16 _ffNumKerns;
 	Common::Array<KernEntry> _ffKernEntries;
+};
+
+/**
+ * Processing of Mac FONT/NFNT rResources
+ */
+class MacFont : public Font {
+public:
+	MacFont();
+	virtual ~MacFont();
+
+	virtual int getFontHeight() const;
+	virtual int getMaxCharWidth() const;
+	virtual int getCharWidth(uint32 chr) const;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+
+	bool loadFont(Common::SeekableReadStream &stream);
+
+private:
+	// FONT/NFNT
+	uint16 _fontType;
+	uint16 _firstChar;
+	uint16 _lastChar;
+	uint16 _maxWidth;
+	int16  _kernMax;
+	int16  _nDescent;
+	uint16 _fRectWidth;
+	uint16 _fRectHeight;
+	uint32 _owTLoc;
+	uint16 _ascent;
+	uint16 _descent;
+	uint16 _leading;
+	uint16 _rowWords;
 
 	byte *_bitImage;
 

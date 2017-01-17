@@ -77,7 +77,13 @@ MacFont::MacFont() {
 	_leading = 0;
 	_rowWords = 0;
 	_bitImage = nullptr;
+}
 
+MacFont::~MacFont() {
+	free(_bitImage);
+}
+
+MacFontFamily::MacFontFamily() {
 	_ffFlags = 0;
 	_ffFamID = 0;
 	_ffFirstChar = 0;
@@ -103,12 +109,11 @@ MacFont::MacFont() {
 	_ffNumBBoxes = 0;
 }
 
-MacFont::~MacFont() {
-	free(_bitImage);
+MacFontFamily::~MacFontFamily() {
 	free(_ffOffsets);
 }
 
-bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
+bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	_ffFlags     = stream.readUint16BE(); // flags for family
 	_ffFamID     = stream.readUint16BE(); // family ID number
 	_ffFirstChar = stream.readUint16BE(); // ASCII code of first character
@@ -201,7 +206,7 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 			_ffKernEntries[i]._entryLength = stream.readUint16BE();
 			_ffKernEntries[i]._kernPairs.resize(_ffKernEntries[i]._entryLength);
 
-			debug(10, "  style: %d kernpairs: %d", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
+			debug(10, "  style: %x kernpairs: %d", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
 
 			for (uint j = 0; j < _ffKernEntries[i]._entryLength; j++) {
 				_ffKernEntries[i]._kernPairs[j]._firstChar = stream.readByte();

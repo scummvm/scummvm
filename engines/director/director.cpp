@@ -196,7 +196,7 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 }
 
 void DirectorEngine::testFonts() {
-	Common::String fontName("San Francisco");
+	Common::String fontName("Helvetica");
 
 	Common::MacResManager *fontFile = new Common::MacResManager();
 	if (!fontFile->open(fontName))
@@ -207,8 +207,8 @@ void DirectorEngine::testFonts() {
 		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
 			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
 
-			Graphics::MacFont font;
-			font.loadFOND(*stream);
+			Graphics::MacFontFamily font;
+			font.load(*stream);
 		}
 	}
 }
