@@ -24,6 +24,9 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
+#include "common/macresman.h"
+#include "graphics/fonts/macfont.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
@@ -116,6 +119,8 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
+		testFonts();
+
 		_lingo->runTests();
 
 		return Common::kNoError;
@@ -125,7 +130,7 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	//testFont();
+	//testFontScaling();
 
 	if (getPlatform() == Common::kPlatformWindows)
 		_sharedCastFile = "SHARDCST.MMM";
@@ -188,6 +193,24 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPalette = palette;
 	_currentPaletteLength = count;
+}
+
+void DirectorEngine::testFonts() {
+	Common::String fontName("San Francisco");
+
+	Common::MacResManager *fontFile = new Common::MacResManager();
+	if (!fontFile->open(fontName))
+		error("Could not open %s as a resource fork", fontName.c_str());
+
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	if (fonds.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
+			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			Graphics::MacFont font;
+			font.loadFOND(*stream);
+		}
+	}
 }
 
 } // End of namespace Director

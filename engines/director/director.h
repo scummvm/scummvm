@@ -142,7 +142,8 @@ private:
 	Common::String _sharedCastFile;
 
 private:
-	void testFont();
+	void testFontScaling();
+	void testFonts();
 };
 
 extern DirectorEngine *g_director;

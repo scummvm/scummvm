@@ -91,7 +91,7 @@ static byte defaultPalette[768] = {
 	204,  51, 255, 204, 102, 255, 204, 153, 255, 204, 204, 255, 204, 255, 255, 255,
 	  0, 255, 255,  51, 255, 255, 102, 255, 255, 153, 255, 255, 204, 255, 255, 255 };
 
-void DirectorEngine::testFont() {
+void DirectorEngine::testFontScaling() {
 	int x = 10;
 	int y = 10;
 	int w = 640;
