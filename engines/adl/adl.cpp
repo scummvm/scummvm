@@ -471,7 +471,7 @@ void AdlEngine::bell(uint count) const {
 	playTones(tones, false);
 }
 
-void AdlEngine::playTones(const Tones &tones, bool isMusic) const {
+bool AdlEngine::playTones(const Tones &tones, bool isMusic, bool allowSkip) const {
 	Audio::SoundHandle handle;
 	Audio::AudioStream *stream = new Sound(tones);
 
@@ -480,8 +480,17 @@ void AdlEngine::playTones(const Tones &tones, bool isMusic) const {
 	while (!g_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(handle)) {
 		Common::Event event;
 		pollEvent(event);
+
+		if (allowSkip && event.type == Common::EVENT_KEYDOWN) {
+			// FIXME: Preserve this event
+			g_system->getMixer()->stopHandle(handle);
+			return true;
+		}
+
 		g_system->delayMillis(16);
 	}
+
+	return false;
 }
 
 const Region &AdlEngine::getRegion(uint i) const {
@@ -904,7 +913,7 @@ byte AdlEngine::convertKey(uint16 ascii) const {
 	return 0;
 }
 
-Common::String AdlEngine::getLine() const {
+Common::String AdlEngine::getLine() {
 	// Original engine uses a global here, which isn't reset between
 	// calls and may not match actual mode
 	bool textMode = false;

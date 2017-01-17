@@ -252,6 +252,7 @@ protected:
 	virtual Common::String getItemDescription(const Item &item) const;
 	void delay(uint32 ms) const;
 
+	virtual Common::String getLine();
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
 	void getInput(uint &verb, uint &noun);
@@ -312,7 +313,7 @@ protected:
 
 	// Sound
 	void bell(uint count = 1) const;
-	void playTones(const Tones &tones, bool isMusic) const;
+	bool playTones(const Tones &tones, bool isMusic, bool allowSkip = false) const;
 
 	// Game state functions
 	const Region &getRegion(uint i) const;
@@ -413,7 +414,6 @@ private:
 
 	// Text input
 	byte convertKey(uint16 ascii) const;
-	Common::String getLine() const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 
 	Console *_console;

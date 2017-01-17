@@ -38,7 +38,8 @@ namespace Adl {
 class HiRes5Engine : public AdlEngine_v4 {
 public:
 	HiRes5Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v4(syst, gd) { }
+			AdlEngine_v4(syst, gd),
+			_doAnimation(false) { }
 
 private:
 	// AdlEngine
@@ -48,28 +49,90 @@ private:
 	void initGameState();
 	void applyRegionWorkarounds();
 	void applyRoomWorkarounds(byte roomNr);
+	Common::String getLine();
 
 	// AdlEngine_v4
 	bool isInventoryFull();
 
 	void loadSong(Common::ReadStream &stream);
+	void drawLight(uint index, byte color) const;
+	void animateLights() const;
 
 	int o_checkItemTimeLimits(ScriptEnv &e);
 	int o_startAnimation(ScriptEnv &e);
 	int o_winGame(ScriptEnv &e);
 
+	static const uint kClock = 1022727; // Apple II CPU clock rate
 	static const uint kRegions = 41;
 	static const uint kItems = 69;
 
 	Common::Array<byte> _itemTimeLimits;
 	Common::String _itemTimeLimitMsg;
 	Tones _song;
+	bool _doAnimation;
 
 	struct {
 		Common::String itemTimeLimit;
 		Common::String carryingTooMuch;
 	} _gameStrings;
 };
+
+Common::String HiRes5Engine::getLine() {
+	if (_doAnimation) {
+		animateLights();
+		_doAnimation = false;
+	}
+
+	return AdlEngine_v4::getLine();
+}
+
+void HiRes5Engine::drawLight(uint index, byte color) const {
+	const byte xCoord[5] = { 189, 161, 133, 105, 77 };
+	const byte yCoord = 72;
+
+	assert(index < 5);
+
+	for (int yDelta = 0; yDelta < 4; ++yDelta)
+		for (int xDelta = 0; xDelta < 7; ++xDelta)
+			_display->putPixel(Common::Point(xCoord[index] + xDelta, yCoord + yDelta), color);
+
+	_display->updateHiResScreen();
+}
+
+void HiRes5Engine::animateLights() const {
+	int index;
+	byte color = 0x2a;
+
+	for (index = 4; index >= 0; --index)
+		drawLight(index, color);
+
+	index = 4;
+
+	while (!g_engine->shouldQuit()) {
+		drawLight(index, color ^ 0x7f);
+
+		// There's a delay here in the original engine. We leave it out as
+		// we're already slower than the original without any delay.
+
+		const uint kLoopCycles = 25;
+		const byte period = (index + 1) << 4;
+		const double freq = kClock / 2.0 / (period * kLoopCycles);
+		const double len = 128 * period * kLoopCycles * 1000 / (double)kClock;
+
+		Tones tone;
+		tone.push_back(Tone(freq, len));
+
+		if (playTones(tone, false, true))
+			break;
+
+		drawLight(index, color ^ 0xff);
+
+		if (--index < 0) {
+			index = 4;
+			color ^= 0xff;
+		}
+	}
+}
 
 typedef Common::Functor1Mem<ScriptEnv &, int, HiRes5Engine> OpcodeH5;
 #define SetOpcodeTable(x) table = &x;
@@ -173,7 +236,6 @@ void HiRes5Engine::loadSong(Common::ReadStream &stream) {
 		if (stream.err() || stream.eos())
 			error("Error loading song");
 
-		const uint kClock = 1022727; // Apple II CPU clock rate
 		const uint kLoopCycles = 20; // Delay loop cycles
 
 		double freq = 0.0;
@@ -219,7 +281,7 @@ int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
 int HiRes5Engine::o_startAnimation(ScriptEnv &e) {
 	OP_DEBUG_0("\tSTART_ANIMATION()");
 
-	// TODO: sets a flag that triggers an animation
+	_doAnimation = true;
 
 	return 0;
 }
@@ -341,6 +403,8 @@ void HiRes5Engine::initGameState() {
 
 	loadRegion(1);
 	_state.room = 5;
+
+	_doAnimation  = false;
 }
 
 void HiRes5Engine::applyRegionWorkarounds() {
