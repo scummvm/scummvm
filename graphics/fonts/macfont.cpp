@@ -62,27 +62,6 @@ static int getDepth(uint16 _fontType) {
 	return 1 << ((_fontType >> 2) & 3);
 }
 
-MacFont::MacFont() {
-	_fontType = 0;
-	_firstChar = 0;
-	_lastChar = 0;
-	_maxWidth = 0;
-	_kernMax = 0;
-	_nDescent = 0;
-	_fRectWidth = 0;
-	_fRectHeight = 0;
-	_owTLoc = 0;
-	_ascent = 0;
-	_descent = 0;
-	_leading = 0;
-	_rowWords = 0;
-	_bitImage = nullptr;
-}
-
-MacFont::~MacFont() {
-	free(_bitImage);
-}
-
 MacFontFamily::MacFontFamily() {
 	_ffFlags = 0;
 	_ffFamID = 0;
@@ -209,9 +188,13 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 			debug(10, "  style: %x kernpairs: %d", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
 
 			for (uint j = 0; j < _ffKernEntries[i]._entryLength; j++) {
-				_ffKernEntries[i]._kernPairs[j]._firstChar = stream.readByte();
-				_ffKernEntries[i]._kernPairs[j]._secondChar = stream.readByte();
-				_ffKernEntries[i]._kernPairs[j]._distance = stream.readSint16BE();
+				byte f, s;
+				int16 d;
+				f = _ffKernEntries[i]._kernPairs[j]._firstChar  = stream.readByte();
+				s = _ffKernEntries[i]._kernPairs[j]._secondChar = stream.readByte();
+				d = _ffKernEntries[i]._kernPairs[j]._distance   = stream.readSint16BE();
+
+				_ffKernEntries[i]._kernTable[(f << 8) | s] = d;
 			}
 		}
 	}
@@ -219,7 +202,49 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	return true;
  }
 
-bool MacFont::loadFont(Common::SeekableReadStream &stream) {
+ int MacFontFamily::getKerningOffset(uint style, int32 left, uint32 right) const {
+	uint16 idx = ((left & 0xff) << 8) | (right & 0xff);
+
+	for (uint i = 0; i < _ffKernEntries.size(); i++) {
+		if (_ffKernEntries[i]._style == style)
+			if (_ffKernEntries[i]._kernTable.contains(idx))
+				return _ffKernEntries[i]._kernTable[idx];
+	}
+
+	return 0;
+ }
+
+
+ MacFont::MacFont() {
+	_fontType = 0;
+	_firstChar = 0;
+	_lastChar = 0;
+	_maxWidth = 0;
+	_kernMax = 0;
+	_nDescent = 0;
+	_fRectWidth = 0;
+	_fRectHeight = 0;
+	_owTLoc = 0;
+	_ascent = 0;
+	_descent = 0;
+	_leading = 0;
+	_rowWords = 0;
+	_bitImage = nullptr;
+
+	_family = nullptr;
+	_size = 12;
+	_style = 0;
+ }
+
+ MacFont::~MacFont() {
+	free(_bitImage);
+ }
+
+bool MacFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family, int size, int style) {
+	_family = family;
+	_size = size;
+	_style = style;
+
 	_fontType    = stream.readUint16BE();	// font type
 	_firstChar   = stream.readUint16BE();	// character code of first glyph
 	_lastChar    = stream.readUint16BE();	// character code of last glyph
@@ -358,6 +383,17 @@ const MacFont::Glyph *MacFont::findGlyph(uint32 c) const {
 		return &_defaultChar;
 
 	return &_glyphs[c - _firstChar];
+}
+
+int MacFont::getKerningOffset(uint32 left, uint32 right) const {
+	if (_family) {
+		int kerning = _family->getKerningOffset(_style, left, right);
+		kerning *= _size;
+
+		return (int)(kerning / (double)(1 << 12));
+	}
+
+	return 0;
 }
 
 } // End of namespace Graphics

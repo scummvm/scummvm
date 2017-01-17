@@ -24,6 +24,7 @@
 #define GRAPHICS_FONTS_MACFONT_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "graphics/font.h"
 
 namespace Graphics {
@@ -34,6 +35,15 @@ public:
 	~MacFontFamily();
 
 	bool load(Common::SeekableReadStream &stream);
+	int getKerningOffset(uint style, int32 left, uint32 right) const;
+
+	struct AsscEntry {
+		uint16 _fontSize;
+		uint16 _fontStyle;
+		uint16 _fontID;
+	};
+
+	Common::Array<AsscEntry> *getAssocTable() { return &_ffAssocEntries; }
 
 private:
 	// FOND
@@ -51,12 +61,6 @@ private:
 	uint16 _ffProperty[9];
 	uint16 _ffIntl[2];
 	uint16 _ffVersion;
-
-	struct AsscEntry {
-		uint16 _fontSize;
-		uint16 _fontStyle;
-		uint16 _fontID;
-	};
 
 	uint16 _ffNumAssoc;
 	Common::Array<AsscEntry> _ffAssocEntries;
@@ -85,6 +89,8 @@ private:
 		uint16 _style;
 		uint16 _entryLength;
 		Common::Array<KernPair> _kernPairs;
+
+		Common::HashMap<uint16, int16> _kernTable;
 	};
 
 	uint16 _ffNumKerns;
@@ -104,10 +110,11 @@ public:
 	virtual int getCharWidth(uint32 chr) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
-	bool loadFont(Common::SeekableReadStream &stream);
+	bool loadFont(Common::SeekableReadStream &stream, MacFontFamily *family = nullptr, int size = 12, int style = 0);
+
+	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
 private:
-	// FONT/NFNT
 	uint16 _fontType;
 	uint16 _firstChar;
 	uint16 _lastChar;
@@ -141,6 +148,10 @@ private:
 	Common::Array<Glyph> _glyphs;
 	Glyph _defaultChar;
 	const Glyph *findGlyph(uint32 c) const;
+
+	MacFontFamily *_family;
+	int _size;
+	int _style;
 };
 
 } // End of namespace Graphics
