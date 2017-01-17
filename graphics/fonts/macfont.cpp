@@ -113,10 +113,10 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 	_ffFamID     = stream.readUint16BE(); // family ID number
 	_ffFirstChar = stream.readUint16BE(); // ASCII code of first character
 	_ffLastChar  = stream.readUint16BE(); // ASCII code of last character
-	_ffAscent    = stream.readUint16BE(); // maximum ascent for 1-pt font
-	_ffDescent   = stream.readUint16BE(); // maximum descent for 1-pt font
-	_ffLeading   = stream.readUint16BE(); // maximum leading for 1-pt font
-	_ffWidMax    = stream.readUint16BE(); // maximum glyph width for 1-pt font
+	_ffAscent    = stream.readSint16BE(); // maximum ascent for 1-pt font
+	_ffDescent   = stream.readSint16BE(); // maximum descent for 1-pt font
+	_ffLeading   = stream.readSint16BE(); // maximum leading for 1-pt font
+	_ffWidMax    = stream.readSint16BE(); // maximum glyph width for 1-pt font
 	_ffWTabOff   = stream.readUint32BE(); // offset to family glyph-width table
 	_ffKernOff   = stream.readUint32BE(); // offset to kerning table
 	_ffStylOff   = stream.readUint32BE(); // offset to style-mapping table
@@ -150,24 +150,33 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 		_ffAssocEntries[i]._fontSize = stream.readUint16BE(); // style of font
 		_ffAssocEntries[i]._fontID    = stream.readUint16BE(); // font resource ID
 
-		debug(10, "size: %d style: %d id: %d", _ffAssocEntries[i]._fontSize, _ffAssocEntries[i]._fontSize,
+		debug(10, "  size: %d style: %d id: %d", _ffAssocEntries[i]._fontSize, _ffAssocEntries[i]._fontSize,
 								_ffAssocEntries[i]._fontID);
 	}
 
 	if (_ffWTabOff || _ffStylOff || _ffKernOff) {
 		_ffNumOffsets = stream.readUint16BE(); // number of entries - 1
 		_ffOffsets = (uint32 *)calloc(_ffNumOffsets + 1, sizeof(uint32));
-		for (uint i = 0; i <= _ffNumOffsets; i++)
+		debugN(10, "offset cnt: %d, OFF: ", _ffNumOffsets + 1);
+		for (uint i = 0; i <= _ffNumOffsets; i++) {
 			_ffOffsets[i] = stream.readUint32BE();
+			debugN(10, "%d ", _ffOffsets[i]);
+		}
+		debug(10, "");
 
 		_ffNumBBoxes = stream.readUint16BE(); // number of entries - 1
 		_ffBBoxes.resize(_ffNumBBoxes + 1);
+		debug(10, "num BBoxes: %d", _ffNumBBoxes + 1);
 		for (uint i = 0; i <= _ffNumBBoxes; i++) {
 			_ffBBoxes[i]._style  = stream.readUint16BE();
-			_ffBBoxes[i]._left   = stream.readUint16BE();
-			_ffBBoxes[i]._bottom = stream.readUint16BE();
-			_ffBBoxes[i]._right  = stream.readUint16BE();
-			_ffBBoxes[i]._top    = stream.readUint16BE();
+			_ffBBoxes[i]._left   = stream.readSint16BE();
+			_ffBBoxes[i]._bottom = stream.readSint16BE();
+			_ffBBoxes[i]._right  = stream.readSint16BE();
+			_ffBBoxes[i]._top    = stream.readSint16BE();
+
+			debug(10, "style: %d left: %g bottom: %g rigth: %g top: %g", _ffBBoxes[i]._style,
+					_ffBBoxes[i]._left / (double)(1<<12), _ffBBoxes[i]._bottom / (double)(1<<12),
+					_ffBBoxes[i]._right / (double)(1<<12), _ffBBoxes[i]._top / (double)(1<<12));
 		}
 	}
 
@@ -185,15 +194,19 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 		_ffNumKerns = stream.readUint16BE(); // number of entries - 1
 		_ffKernEntries.resize(_ffNumKerns + 1);
 
+		debug(10, "kern entries: %d", _ffNumKerns + 1);
+
 		for (uint i = 0; i <= _ffNumKerns; i++) {
 			_ffKernEntries[i]._style       = stream.readUint16BE();
 			_ffKernEntries[i]._entryLength = stream.readUint16BE();
-			_ffKernEntries[i]._kernPairs.resize(_ffKernEntries[i]._entryLength / 4);
+			_ffKernEntries[i]._kernPairs.resize(_ffKernEntries[i]._entryLength);
 
-			for (uint j = 0; j < _ffKernEntries[i]._entryLength / 4; j++) {
+			debug(10, "  style: %d kernpairs: %d", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
+
+			for (uint j = 0; j < _ffKernEntries[i]._entryLength; j++) {
 				_ffKernEntries[i]._kernPairs[j]._firstChar = stream.readByte();
 				_ffKernEntries[i]._kernPairs[j]._secondChar = stream.readByte();
-				_ffKernEntries[i]._kernPairs[j]._distance = stream.readUint16BE();
+				_ffKernEntries[i]._kernPairs[j]._distance = stream.readSint16BE();
 			}
 		}
 	}

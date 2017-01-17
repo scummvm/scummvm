@@ -65,10 +65,10 @@ private:
 	uint16 _ffFamID;
 	uint16 _ffFirstChar;
 	uint16 _ffLastChar;
-	uint16 _ffAscent;
-	uint16 _ffDescent;
-	uint16 _ffLeading;
-	uint16 _ffWidMax;
+	int16 _ffAscent;
+	int16 _ffDescent;
+	int16 _ffLeading;
+	int16 _ffWidMax;
 	uint32 _ffWTabOff;
 	uint32 _ffKernOff;
 	uint32 _ffStylOff;
@@ -90,10 +90,10 @@ private:
 
 	struct BBoxEntry {
 		uint16 _style;
-		uint16 _left;
-		uint16 _bottom;
-		uint16 _right;
-		uint16 _top;
+		int16 _left;
+		int16 _bottom;
+		int16 _right;
+		int16 _top;
 	};
 
 	uint16 _ffNumBBoxes;
