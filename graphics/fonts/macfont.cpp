@@ -121,19 +121,37 @@ bool MacFont::loadFOND(Common::SeekableReadStream &stream) {
 	_ffKernOff   = stream.readUint32BE(); // offset to kerning table
 	_ffStylOff   = stream.readUint32BE(); // offset to style-mapping table
 
-	for (int i = 0; i < 9; i++)			  // style properties info
+	debug(10, "flags: %x famid: %d first: %d last: %d", _ffFlags, _ffFamID, _ffFirstChar, _ffLastChar);
+	debug(10, "ascent: %g descent: %g, leading: %g, widmax: %g", _ffAscent / (double)(1<<12),
+			_ffDescent / (double)(1<<12), _ffLeading / (double)(1<<12), _ffWidMax / (double)(1<<12));
+
+	debug(10, "wtaboff: %d kernoff: %d styloff: %d", _ffWTabOff, _ffKernOff, _ffStylOff);
+
+	debugN(10, "Extra width: ");
+	for (int i = 0; i < 9; i++) {		  // style properties info
 		_ffProperty[i] = stream.readUint16BE();
+		debugN(10, "%d ", _ffProperty[i]);
+	}
+	debug(10, "");
 
 	_ffIntl[0]   = stream.readUint16BE(); // for international use
 	_ffIntl[1]   = stream.readUint16BE(); // for international use
 	_ffVersion   = stream.readUint16BE(); // version number
 
+	debug(10, "version: %d", _ffVersion);
+
 	_ffNumAssoc     = stream.readUint16BE(); // number of entries - 1
 	_ffAssocEntries.resize(_ffNumAssoc + 1);
+
+	debug(10, "association cnt: %d", _ffNumAssoc + 1);
+
 	for (uint i = 0; i <= _ffNumAssoc; i++) {
 		_ffAssocEntries[i]._fontSize  = stream.readUint16BE(); // point size of font
-		_ffAssocEntries[i]._fontStyle = stream.readUint16BE(); // style of font
+		_ffAssocEntries[i]._fontSize = stream.readUint16BE(); // style of font
 		_ffAssocEntries[i]._fontID    = stream.readUint16BE(); // font resource ID
+
+		debug(10, "size: %d style: %d id: %d", _ffAssocEntries[i]._fontSize, _ffAssocEntries[i]._fontSize,
+								_ffAssocEntries[i]._fontID);
 	}
 
 	if (_ffWTabOff || _ffStylOff || _ffKernOff) {
