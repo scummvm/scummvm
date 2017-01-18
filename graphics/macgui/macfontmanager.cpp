@@ -168,6 +168,8 @@ void MacFontManager::loadFonts() {
 			for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
 				Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
 
+				Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
 				Graphics::MacFontFamily fontFamily;
 				fontFamily.load(*fond);
 
@@ -180,13 +182,13 @@ void MacFontManager::loadFonts() {
 					Common::SeekableReadStream *fontstream;
 					MacFont *macfont;
 					Graphics::MacFONTFont *font;
-					Common::String fontName;
 
-					if ((fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID))) {
-						fontName = fontFile->getResName(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
-					} else if ((fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID))) {
-						fontName = fontFile->getResName(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
-					} else {
+					fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+
+					if (!fontstream)
+						fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+
+					if (!fontstream) {
 						warning("Unknown FontId: %d", (*assoc)[i]._fontID);
 
 						continue;
@@ -196,6 +198,8 @@ void MacFontManager::loadFonts() {
 					font->loadFont(*fontstream);
 
 					delete fontstream;
+
+					Common::String fontName = Common::String::format("%s-%d", familyName.c_str(), (*assoc)[i]._fontSize);
 
 					macfont = new MacFont(_fontNames.getVal(fontName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
 
@@ -351,7 +355,7 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont));
 	debug("as '%s'", getFontName(fromFont));
 
-	Graphics::BdfFont *font = NULL; // = Graphics::BdfFont::scaleFont(fromFont.getFont(), toFont.getSize());
+	Font *font = fromFont.getFont(); // = Graphics::BdfFont::scaleFont(fromFont.getFont(), toFont.getSize());
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont));
