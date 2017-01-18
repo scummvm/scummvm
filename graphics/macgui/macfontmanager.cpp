@@ -174,8 +174,32 @@ void MacFontManager::loadFonts() {
 				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily.getAssocTable();
 
 				for (uint i = 0; i < assoc->size(); i++) {
-					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontSize,
+					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
 											(*assoc)[i]._fontID);
+
+					Common::SeekableReadStream *fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+					MacFont *macfont;
+					Graphics::MacFONTFont *font;
+					Common::String fontName;
+
+					if (fontstream) {
+						font = new Graphics::MacFONTFont;
+						font->loadFont(*fontstream);
+
+						delete fontstream;
+
+						fontName = fontFile->getResName(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+					} else {
+						fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+					}
+
+					macfont = new MacFont(_fontNames.getVal(fontName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+
+					FontMan.assignFontToName(fontName, font);
+					//macfont->setBdfFont(font);
+					_fontRegistry.setVal(fontName, macfont);
+
+					debug(2, " %s", fontName.c_str());
 				}
 
 				delete fond;
