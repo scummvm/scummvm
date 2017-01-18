@@ -614,6 +614,10 @@ get_subengine_parent() {
 
 # Enable *all* engines
 engine_enable_all() {
+	if test "$_release_build" == "yes"; then
+		echo "error: cannot enable all engines for release build!"
+		exit 1
+	fi
 	for engine in $_engines; do
 		set_var _engine_${engine}_build "yes"
 	done
@@ -1088,6 +1092,19 @@ Saved environment variables:
 LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
 EOF
 
+
+for ac_option in $@; do
+	case "$ac_option" in
+	--enable-release)
+		_release_build=yes
+		;;
+	--disable-release)
+		_release_build=no
+		;;
+	*)
+		;;
+	esac;
+done;
 
 for ac_option in $@; do
 	case "$ac_option" in
