@@ -306,7 +306,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
 	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
 	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
-	{ SIG_SCI3,           4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
+	{ SIG_SCI32,          4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
