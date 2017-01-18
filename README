@@ -19,7 +19,7 @@ Table of Contents:
  * 3.2 Datafiles
  * 3.3 Multi-CD games notes
  * 3.4 Known Problems
- * 3.5 Beneath a Steel Sky notes 
+ * 3.5 Beneath a Steel Sky notes
  * 3.6 Broken Sword games notes
  * * 3.6.1 Broken Sword
  * * 3.6.2 Broken Sword II
@@ -30,12 +30,12 @@ Table of Contents:
  * 3.9 Dragon History notes
  * 3.10 Flight of the Amazon Queen notes
  * 3.11 Gobliiins notes
- * 3.12 Inherit the Earth: Quest for the Orb notes 
+ * 3.12 Inherit the Earth: Quest for the Orb notes
  * 3.13 Maniac Mansion Apple II/NES notes
  * 3.14 Mickey's Space Adventure notes
  * 3.15 Nippon Safes Inc. Amiga notes
  * 3.16 Simon the Sorcerer notes
- * 3.17 The Curse of Monkey Island notes 
+ * 3.17 The Curse of Monkey Island notes
  * 3.18 The Feeble Files notes
  * 3.19 The Legend of Kyrandia notes
  * 3.20 Troll's Tale notes
@@ -43,8 +43,8 @@ Table of Contents:
  * 3.22 Sierra AGI games: Predictive Input Dialog notes
  * 3.23 Sierra SCI games: Simultaneous speech and subtitles
  * 3.24 Zork games notes
- * 3.25 Commodore64 games notes 
- * 3.26 Macintosh games notes 
+ * 3.25 Commodore64 games notes
+ * 3.26 Macintosh games notes
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -1324,7 +1324,7 @@ arguments -- see the next section.
   --filtering              Force filtered graphics mode
   --no-filtering           Force unfiltered graphics mode
 
-  
+
   --gui-theme=THEME        Select GUI theme (default, modern, classic)
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
@@ -2653,18 +2653,12 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
 
    Windows:
-   * Dev-C++
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
    * MinGW
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
    * Visual Studio (MSVC)
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
-   * Windows CE/Mobile
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC
@@ -2673,7 +2667,7 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
    AmigaOS4:
       Please refer to:
-      <http://wiki.scummvm.org/index.php/AmigaOS>
+      <http://wiki.scummvm.org/index.php/AmigaOS4>
 
    Apple iPhone:
       Please refer to:
@@ -2714,10 +2708,6 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
-   Nintendo DS:
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
-
    Nintendo Wii and Gamecube:
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
@@ -2750,7 +2740,7 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 ----- -------
 Please refer to our extensive Credits list at:
 
-  <http://www.scummvm.org/credits/>
+  <http://www.scummvm.org/credits>
 
 
 ------------------------------------------------------------------------
