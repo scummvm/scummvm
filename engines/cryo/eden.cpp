@@ -8606,9 +8606,9 @@ void EdenGame::projectionFix(cube_t *cubep, int n) {
 		transformZ >>= 8;
 		if (transformZ == -256)
 			transformZ++;
-		cubep->_projection[i * 4    ] = transformX / (transformZ + 256) + _cursorPosX + 14 + _scrollPos;
-		cubep->_projection[i * 4 + 1] = transformY / (transformZ + 256) + _cursorPosY + 14;
-		cubep->_projection[i * 4 + 2] = transformZ;
+		cubep->_projection[i].x = transformX / (transformZ + 256) + _cursorPosX + 14 + _scrollPos;
+		cubep->_projection[i].y = transformY / (transformZ + 256) + _cursorPosY + 14;
+		cubep->_projection[i].z = transformZ;
 	}
 }
 
@@ -8695,7 +8695,7 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int fileNum, byte *texturePtr)
 	char error;
 	_cubeFaces = nextVal(&next, &error);
 	int16 *vertices = (int16 *)malloc(_cubeFaces * 4 * sizeof(*vertices));
-	int16 *projection = (int16 *)malloc(_cubeFaces * 4 * sizeof(*projection));
+	Projection *projection = (Projection *)malloc(_cubeFaces * sizeof(*projection));
 	for (int i = 0; i < _cubeFaces; i++) {
 		vertices[i * 4] = nextVal(&next, &error);
 		vertices[i * 4 + 1] = nextVal(&next, &error);
@@ -8902,64 +8902,56 @@ void EdenGame::restoreZDEP() {
 // Original name: affiche_polygone_mapping
 void EdenGame::displayPolygoneMapping(cube_t *cubep, cubeface_t *face) {
 	uint16 *indices = face->_indices;
-	int idx = indices[0] * 4;
-	int16 v46 = cubep->_projection[idx];
-	int16 v48 = cubep->_projection[idx + 1];
+	int idx = indices[0];
+	int16 projX0 = cubep->_projection[idx].x;
+	int16 projY0 = cubep->_projection[idx].y;
 
-	idx = indices[1] * 4;
-	int16 v4A = cubep->_projection[idx];
-	int16 v4C = cubep->_projection[idx + 1];
+	idx = indices[1];
+	int16 projX1 = cubep->_projection[idx].x;
+	int16 projY1 = cubep->_projection[idx].y;
 
-	idx = indices[2] * 4;
-	int16 v4E = cubep->_projection[idx];
-	int16 v50 = cubep->_projection[idx + 1];
+	idx = indices[2];
+	int16 projX2 = cubep->_projection[idx].x;
+	int16 projY2 = cubep->_projection[idx].y;
 
-	if ((v4C - v48) * (v4E - v46) - (v50 - v48) * (v4A - v46) > 0)
+	if ((projY1 - projY0) * (projX2 - projX0) - (projY2 - projY0) * (projX1 - projX0) > 0)
 		return;
 
 	int16 *uv = face->_uv;
 	int16 ymin = 200; // min y
 	int16 ymax = 0;   // max y
-	idx = indices[0] * 4;
-	int16 r20 = cubep->_projection[idx];
-	int16 r30 = cubep->_projection[idx + 1];
+	idx = indices[0];
+	int16 r20 = cubep->_projection[idx].x;
+	int16 r30 = cubep->_projection[idx].y;
 	int16 r19 = *uv++;
 	int16 r18 = *uv++;
 	indices++;
 	for (int i = 0; i < face->tri - 1; i++, indices++) {
-		idx = indices[0] * 4;
-		int16 r26 = cubep->_projection[idx];
-		int16 r31 = cubep->_projection[idx + 1];
+		idx = indices[0];
+		int16 r26 = cubep->_projection[idx].x;
+		int16 r31 = cubep->_projection[idx].y;
 		uint16 r25 = *uv++;    //TODO: unsigned
 		int16 r24 = *uv++;    //TODO: unsigned
-		if (r30 < ymin)
-			ymin = r30;
-		if (r30 > ymax)
-			ymax = r30;
-		if (r31 < ymin)
-			ymin = r31;
-		if (r31 > ymax)
-			ymax = r31;
+		ymin = MIN(r30, ymin);
+		ymax = MAX(r30, ymax);
+		ymin = MIN(r31, ymin);
+		ymax = MAX(r31, ymax);
 		drawMappingLine(r20, r30, r26, r31, r19, r18, r25, r24, _lines);
 		r20 = r26;
 		r30 = r31;
 		r19 = r25;
 		r18 = r24;
 	}
-	idx = face->_indices[0] * 4;
-	int16 r26 = cubep->_projection[idx];
-	int16 r31 = cubep->_projection[idx + 1];
+	idx = face->_indices[0];
+	int16 r26 = cubep->_projection[idx].x;
+	int16 r31 = cubep->_projection[idx].y;
 	uv = face->_uv;
 	uint16 r25 = *uv++;
 	int16 r24 = *uv;
-	if (r30 < ymin)
-		ymin = r30;
-	if (r30 > ymax)
-		ymax = r30;
-	if (r31 < ymin)
-		ymin = r31;
-	if (r31 > ymax)
-		ymax = r31;
+	ymin = MIN(r30, ymin);
+	ymax = MAX(r30, ymax);
+	ymin = MIN(r31, ymin);
+	ymax = MAX(r31, ymax);
 	drawMappingLine(r20, r30, r26, r31, r19, r18, r25, r24, _lines);
 	displayMappingLine(ymin, ymax, _mainView->_bufferPtr, face->_texturePtr);
 }

@@ -825,10 +825,16 @@ struct cubeface_t {
 	int16  *_uv;
 };
 
+struct Projection {
+	int16	x;
+	int16	y;
+	int16	z;
+};
+
 struct cube_t {
 	int          _num;
 	cubeface_t **_faces;
-	int16       *_projection;    // projected XYZ coords
+	Projection  *_projection;    // projected XYZ coords
 	int16       *_vertices;
 };
 
