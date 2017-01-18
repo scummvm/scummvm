@@ -3657,7 +3657,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	// everything after the selector name is passed as an argument to the send
 	int send_argc = argc - 3;
 
-	// Create the data block for send_selecor() at the top of the stack:
+	// Create the data block for send_selector() at the top of the stack:
 	// [selector_number][argument_counter][arguments...]
 	StackPtr stackframe = _engine->_gamestate->_executionStack.back().sp;
 	stackframe[0] = make_reg(0, selectorId);
