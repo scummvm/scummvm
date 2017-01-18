@@ -572,6 +572,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	Point pt = getMousePos();
 	CGameObject *dragObject = getDraggingObject();
 	int xp = _bounds.left + _bounds.width() / 2;
+	bool chickenFlag = false;
 
 	if ((_npcFlags & NPCFLAG_400000) && !hasActiveMovie()) {
 		_newXc =  _newXp + _bounds.width() / 2;
@@ -588,22 +589,24 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 				| NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000);
 			return true;
 		}
-	}
-
-	bool chickenFlag = dragObject && dragObject->isEquals("Chicken");
-
-	if (_npcFlags & NPCFLAG_1000000) {
-		if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
-			stopMovie();
-			loadFrame(0);
-			setPosition(Point(-90, _bounds.top));
-		}
 	} else {
-		if (!chickenFlag)
-			return false;
+		if (dragObject)
+			chickenFlag = dragObject && dragObject->isEquals("Chicken");
+
+		if (_npcFlags & NPCFLAG_1000000) {
+			if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
+				stopMovie();
+				loadFrame(0);
+				setPosition(Point(-90, _bounds.top));
+			}
+		} else {
+			if (!chickenFlag)
+				return false;
+		}
+
+		_newXc = CLIP((int)pt.x, 230, 480);
 	}
 
-	_newXc = CLIP((int)pt.x, 230, 480);
 	if ((_npcFlags & NPCFLAG_10000) || hasActiveMovie())
 		return true;
 
@@ -623,23 +626,23 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		triesMsg.execute(dragObject);
 
 		CTrueTalkTriggerActionMsg triggerMsg;
-		int id;
+		int &action = triggerMsg._action;
 		switch (triesMsg._value2) {
 		case 1:
-			id = 280056 + (triesMsg._value1 ? 234 : 0);
+			action = 280056 + (triesMsg._value1 ? 234 : 0);
 			break;
 		case 2:
-			id = 280055 + (triesMsg._value1 ? 234 : 0);
+			action = 280055 + (triesMsg._value1 ? 234 : 0);
 			break;
 		case 3:
-			id = 280054 + (triesMsg._value1 ? 234 : 0);
+			action = 280054 + (triesMsg._value1 ? 234 : 0);
 			break;
 		default:
-			id = 280053 + (triesMsg._value1 ? 234 : 0);
+			action = 280053 + (triesMsg._value1 ? 234 : 0);
 			break;
 		}
 
-		if (id < 280266) {
+		if (action < 280266) {
 			if (pt.x < 75) {
 				_npcFlags |= NPCFLAG_1000000;
 				playClip("Walk Left Intro", MOVIE_STOP_PREVIOUS);
