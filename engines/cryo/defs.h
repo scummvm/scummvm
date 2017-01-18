@@ -793,11 +793,6 @@ extern char kPersoRoomBankTable[];
 
 // area transition descriptors
 extern Goto gotos[];
-extern uint16 kFramesVid170[];
-extern uint16 kFramesVid83[];
-extern uint16 kFramesVid88[];
-extern uint16 kFramesVid89[];
-extern uint16 kFramesVid94[];
 extern object_t _objects[];
 extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
@@ -815,7 +810,7 @@ extern int16 tab_2CEF0[64];
 extern int16 tab_2CF70[64];
 extern int16 kActionCursors[299];
 
-struct cubeface_t {
+struct CubeFace {
 	int    tri;
 	char   ff_4;
 	char   ff_5;
@@ -825,17 +820,17 @@ struct cubeface_t {
 	int16  *_uv;
 };
 
-struct Projection {
+struct Point3D {
 	int16	x;
 	int16	y;
 	int16	z;
 };
 
-struct cube_t {
-	int          _num;
-	cubeface_t **_faces;
-	Projection  *_projection;    // projected XYZ coords
-	int16       *_vertices;
+struct Cube {
+	int       _num;
+	CubeFace **_faces;
+	Point3D   *_projection;    // projected XYZ coords
+	Point3D   *_vertices;
 };
 
 extern float _translationZ;
@@ -846,7 +841,7 @@ struct XYZ {
 	signed short x, y, z;
 };
 
-struct cubeCursor {
+struct CubeCursor {
 	uint8 _sides[6];	// spr idx for each side
 	uint8 _kind;
 	int8  _speed;

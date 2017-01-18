@@ -489,17 +489,17 @@ private:
 	void actionNop();
 	void initSinCosTable();
 	void makeMatriceFix();
-	void projectionFix(cube_t *cube, int n);
+	void projectionFix(Cube *cube, int n);
 	void initCubeMac();
 	void engineMac();
-	void displayObject(cube_t *cube);
+	void displayObject(Cube *cube);
 	void loadMap(int file_id, byte *buffer);
-	void NEWcharge_objet_mob(cube_t *cube, int fileNum, byte *texturePtr);
+	void NEWcharge_objet_mob(Cube *cube, int fileNum, byte *texturePtr);
 	static int nextVal(char **ptr, char *error);
 	void selectMap(int16 num);
 	void Eden_dep_and_rot();
 	void restoreZDEP();
-	void displayPolygoneMapping(cube_t *cube, cubeface_t *face);
+	void displayPolygoneMapping(Cube *cube, CubeFace *face);
 	void drawMappingLine(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *lines);
 	void displayMappingLine(int16 r3, int16 r4, byte *target, byte *texture);
 	int16 OpenDialog(void *arg1, void *arg2);
@@ -531,7 +531,7 @@ private:
 	void incZoom();
 	void decZoom();
 
-	cubeCursor *_pcCursor;
+	CubeCursor *_pcCursor;
 
 	int8 tab1[30];
 	int8 tab2[30];
@@ -725,7 +725,7 @@ private:
 	int16 _rotationAngleY; // CHECKME: USeless?
 	int16 _rotationAngleX, _rotationAngleZ;
 	float _translationY, _translationX; // CHECKME: Useless?
-	cube_t _cube;
+	Cube _cube;
 	int16 _cursCurPCMap;
 	int16 _lines[200 * 8];
 	byte  _cubeTexture[0x4000];

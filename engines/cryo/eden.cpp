@@ -6505,6 +6505,65 @@ void EdenGame::playHNM(int16 num) {
 
 // Original name bullehnm
 void EdenGame::handleHNMSubtitles() {
+#define SUB_LINE(start, end) \
+	(start), (end) | 0x8000
+
+	static uint16 kFramesVid170[] = {
+		SUB_LINE(  68,  120),
+		SUB_LINE( 123,  196),
+		SUB_LINE( 199,  274),
+		SUB_LINE( 276,  370),
+		SUB_LINE( 799,  885),
+		SUB_LINE( 888,  940),
+		SUB_LINE( 947, 1000),
+		SUB_LINE(1319, 1378),
+		SUB_LINE(1380, 1440),
+		SUB_LINE(1854, 1898),
+		SUB_LINE(1900, 1960),
+		SUB_LINE(2116, 2184),
+		SUB_LINE(2186, 2252),
+		SUB_LINE(2254, 2320),
+		SUB_LINE(3038, 3094),
+		SUB_LINE(3096, 3160),
+		0xFFFF
+	};
+
+	static uint16 kFramesVid83[] = {
+		SUB_LINE(99, 155),
+		SUB_LINE(157, 256),
+		0xFFFF
+	};
+
+	static uint16 kFramesVid88[] = {
+		SUB_LINE(106, 173),
+		SUB_LINE(175, 244),
+		SUB_LINE(246, 350),
+		SUB_LINE(352, 467),
+		0xFFFF
+	};
+
+	static uint16 kFramesVid89[] = {
+		SUB_LINE(126, 176),
+		SUB_LINE(178, 267),
+		SUB_LINE(269, 342),
+		SUB_LINE(344, 398),
+		SUB_LINE(400, 458),
+		SUB_LINE(460, 558),
+		0xFFFF
+	};
+
+	static uint16 kFramesVid94[] = {
+		SUB_LINE(101, 213),
+		SUB_LINE(215, 353),
+		SUB_LINE(355, 455),
+		SUB_LINE(457, 518),
+		SUB_LINE(520, 660),
+		SUB_LINE(662, 768),
+		0xFFFF
+	};
+
+#undef SUB_LINE
+
 	uint16 *frames;
 	perso_t *perso;
 	switch (_vm->_video->_curVideoNum) {
@@ -8593,11 +8652,11 @@ void EdenGame::makeMatriceFix() {
 	_passMat13 = (_cosTable[rotAngleTheta] * _cosTable[rotAnglePsi]) >> 8;
 }
 
-void EdenGame::projectionFix(cube_t *cubep, int n) {
+void EdenGame::projectionFix(Cube *cubep, int n) {
 	for (int i = 0; i < n; i++) {
-		int x = cubep->_vertices[i * 4];
-		int y = cubep->_vertices[i * 4 + 1];
-		int z = cubep->_vertices[i * 4 + 2];
+		int x = cubep->_vertices[i].x;
+		int y = cubep->_vertices[i].y;
+		int z = cubep->_vertices[i].z;
 
 		int transformX = _passMat31 * x + _passMat21 * y + _passMat11 * z + (int)(_translationX * 256.0f);
 		int transformY = _passMat32 * x + _passMat22 * y + _passMat12 * z + (int)(_translationY * 256.0f);
@@ -8627,7 +8686,7 @@ void EdenGame::engineMac() {
 }
 
 // Original name: affiche_objet
-void EdenGame::displayObject(cube_t *cubep) {
+void EdenGame::displayObject(Cube *cubep) {
 	for (int i = 0; i < cubep->_num; i++)
 		displayPolygoneMapping(cubep, cubep->_faces[i]);
 }
@@ -8674,7 +8733,7 @@ void EdenGame::loadMap(int file_id, byte *buffer) {
 	}
 }
 
-void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int fileNum, byte *texturePtr) {
+void EdenGame::NEWcharge_objet_mob(Cube *cubep, int fileNum, byte *texturePtr) {
 	char *tmp1 = (char *)malloc(454);
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		loadpartoffile(fileNum, tmp1, 0, 454);
@@ -8694,17 +8753,17 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int fileNum, byte *texturePtr)
 	char *next = tmp1;
 	char error;
 	_cubeFaces = nextVal(&next, &error);
-	int16 *vertices = (int16 *)malloc(_cubeFaces * 4 * sizeof(*vertices));
-	Projection *projection = (Projection *)malloc(_cubeFaces * sizeof(*projection));
+	Point3D *vertices = (Point3D *)malloc(_cubeFaces * sizeof(*vertices));
+	Point3D *projection = (Point3D *)malloc(_cubeFaces * sizeof(*projection));
 	for (int i = 0; i < _cubeFaces; i++) {
-		vertices[i * 4] = nextVal(&next, &error);
-		vertices[i * 4 + 1] = nextVal(&next, &error);
-		vertices[i * 4 + 2] = nextVal(&next, &error);
+		vertices[i].x = nextVal(&next, &error);
+		vertices[i].y = nextVal(&next, &error);
+		vertices[i].z = nextVal(&next, &error);
 	}
 	int count2 = nextVal(&next, &error);
-	cubeface_t **tmp4 = (cubeface_t **)malloc(count2 * sizeof(*tmp4));
+	CubeFace **tmp4 = (CubeFace **)malloc(count2 * sizeof(*tmp4));
 	for (int i = 0; i < count2; i++) {
-		tmp4[i] = (cubeface_t *)malloc(sizeof(cubeface_t));
+		tmp4[i] = (CubeFace *)malloc(sizeof(CubeFace));
 		tmp4[i]->tri = 3;
 		char textured = nextVal(&next, &error);
 		tmp4[i]->ff_5 = nextVal(&next, &error);
@@ -8900,7 +8959,7 @@ void EdenGame::restoreZDEP() {
 }
 
 // Original name: affiche_polygone_mapping
-void EdenGame::displayPolygoneMapping(cube_t *cubep, cubeface_t *face) {
+void EdenGame::displayPolygoneMapping(Cube *cubep, CubeFace *face) {
 	uint16 *indices = face->_indices;
 	int idx = indices[0];
 	int16 projX0 = cubep->_projection[idx].x;
@@ -9049,7 +9108,7 @@ void EdenGame::displayMappingLine(int16 r3, int16 r4, byte *target, byte *textur
 }
 
 // PC cursor
-cubeCursor _cursorsPC[9] = {
+CubeCursor _cursorsPC[9] = {
 		{ { 0, 0, 0, 0, 0, 0 }, 3, 2 },
 		{ { 1, 1, 0, 1, 1, 0 }, 2, -2 },
 		{ { 2, 2, 2, 2, 2, 2 }, 1, 2 },
