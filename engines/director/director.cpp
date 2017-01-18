@@ -206,6 +206,9 @@ void DirectorEngine::testFonts() {
 	if (fonds.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
 			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			debug("Font: %s", name.c_str());
 
 			Graphics::MacFontFamily font;
 			font.load(*stream);
