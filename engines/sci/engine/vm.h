@@ -132,9 +132,9 @@ struct ExecStack {
 
 enum {
 	VAR_GLOBAL = 0,
-	VAR_LOCAL = 1,
-	VAR_TEMP = 2,
-	VAR_PARAM = 3
+	VAR_LOCAL  = 1,
+	VAR_TEMP   = 2,
+	VAR_PARAM  = 3
 };
 
 enum GlobalVar {
