@@ -921,6 +921,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	switch (textCast->textAlign) {
+	case kTextAlignLeft:
+		break;
 	case kTextAlignCenter:
 		textX = (width / 2) - (textSurface->w / 2) + (padding / 2) + borderSize;
 		break;
