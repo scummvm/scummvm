@@ -642,8 +642,9 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			break;
 		}
 
-		if (action < 280266) {
+		if (action != 280266) {
 			if (pt.x < 75) {
+				warning("***********************");
 				_npcFlags |= NPCFLAG_1000000;
 				playClip("Walk Left Intro", MOVIE_STOP_PREVIOUS);
 				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
@@ -684,7 +685,7 @@ bool CParrot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 		_npcFlags &= ~NPCFLAG_800000;
 	}
-
+	warning("%d", msg->_frameNumber);//***DEBUG***
 	switch (msg->_frameNumber) {
 	case 244:
 		setPosition(Point(_bounds.left + 45, _bounds.top));

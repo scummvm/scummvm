@@ -140,7 +140,7 @@ void OSMovie::stop() {
 }
 
 void OSMovie::addEvent(int frameNumber, CGameObject *obj) {
-	if (_aviSurface.addEvent(frameNumber, obj)) {
+	if (_aviSurface.addEvent(&frameNumber, obj)) {
 		CMovieFrameMsg frameMsg(frameNumber, 0);
 		frameMsg.execute(obj);
 	}

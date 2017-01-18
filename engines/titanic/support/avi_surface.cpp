@@ -406,21 +406,22 @@ bool AVISurface::renderFrame() {
 	return false;
 }
 
-bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
+bool AVISurface::addEvent(int *frameNumber, CGameObject *obj) {
 	if (!_movieRangeInfo.empty()) {
 		CMovieRangeInfo *tail = _movieRangeInfo.back();
-		if (frameNumber == -1)
-			frameNumber = tail->_startFrame;
+		assert(frameNumber);
+		if (*frameNumber == -1)
+			*frameNumber = tail->_startFrame;
 
 		CMovieEvent *me = new CMovieEvent();
 		me->_type = MET_FRAME;
 		me->_startFrame = 0;
 		me->_endFrame = 0;
-		me->_initialFrame = frameNumber;
+		me->_initialFrame = *frameNumber;
 		me->_gameObject = obj;
 		tail->addEvent(me);
 
-		return _movieRangeInfo.size() == 1 && frameNumber == getFrame();
+		return _movieRangeInfo.size() == 1 && *frameNumber == getFrame();
 	}
 
 	return false;

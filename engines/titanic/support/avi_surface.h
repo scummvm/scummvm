@@ -181,7 +181,7 @@ public:
 	/**
 	 * Add a movie event
 	 */
-	bool addEvent(int frameNumber, CGameObject *obj);
+	bool addEvent(int *frameNumber, CGameObject *obj);
 
 	/**
 	 * Set the frame rate
