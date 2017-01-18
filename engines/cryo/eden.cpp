@@ -339,10 +339,9 @@ void EdenGame::gameToMirror(byte arg1) {
 	}
 	int16 bank = _globals->_roomBackgroundBankNum;
 	uint16 resNum = bank + 326;
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		if (bank == 76 || bank == 128)
+	if ((_vm->getPlatform() == Common::kPlatformMacintosh) && (bank == 76 || bank == 128))
 			resNum = 2487;				// PCIMG.HSQ
-	}
+
 	useBank(resNum);
 	noclipax(0, 0, 16);
 	useBank(resNum + 1);
@@ -414,6 +413,7 @@ void EdenGame::actionClickValleyPlan() {
 	}
 	if (_globals->_roomNum == 8 || _globals->_roomNum < 16)
 		return;
+
 	rundcurs();
 	display();
 	if (_globals->_displayFlags == DisplayFlags::dfMirror)
@@ -431,6 +431,7 @@ void EdenGame::gotoPlace(Goto *go) {
 	showEvents();
 	if (!isAnswerYes())
 		return;
+
 	if (_globals->_var113) {
 		waitEndSpeak();
 		if (!_vm->shouldQuit())
@@ -470,6 +471,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 	byte c1 = roomNum & 0xFF;
 	if (c1 == 0)
 		return;
+
 	if (c1 < 0x80) {
 		_globals->_displayFlags = DisplayFlags::dfFlag1;
 		setChoiceYes();
@@ -477,6 +479,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 		showEvents();
 		if (!isAnswerYes())
 			return;
+
 		if (_globals->_var113) {
 			waitEndSpeak();
 			if (!_vm->shouldQuit())
@@ -691,7 +694,7 @@ void EdenGame::actionChoose() {
 		obj = _globals->_giveObj3;
 		break;
 	default:
-		warning("Unexpected object_id in actionChoose()");
+		warning("Unexpected objid in actionChoose()");
 		return;
 	}
 	objectmain(obj);
@@ -717,7 +720,7 @@ void EdenGame::handleDinaDialog() {
 			_globals->_characterPtr = perso;
 			_globals->_dialogType = DialogType::dtInspect;
 			num = (perso->_id << 3) | DialogType::dtInspect; //TODO: combine
-			bool res = dialoscansvmas((dial_t *)getElem(_gameDialogs, num));
+			bool res = dialoscansvmas((Dialog *)getElem(_gameDialogs, num));
 			_frescoTalk = false;
 			if (res) {
 				restoreUnderSubtitles();
@@ -3186,12 +3189,12 @@ void EdenGame::parle_mfin() {
 }
 
 void EdenGame::parlemoi_normal() {
-	dial_t *dial;
+	Dialog *dial;
 	if (!_globals->_nextDialogPtr) {
 		perso_t *perso = _globals->_characterPtr;
 		if (perso) {
 			int16 num = (perso->_id << 3) | _globals->_dialogType;
-			dial = (dial_t *)getElem(_gameDialogs, num);
+			dial = (Dialog *)getElem(_gameDialogs, num);
 		} else {
 			closeCharacterScreen();
 			return;
@@ -3240,13 +3243,13 @@ void EdenGame::parle_moi() {
 			parlemoi_normal();
 			return;
 		}
-		dial_t *dial;
+		Dialog *dial;
 
 		if (!_globals->_lastDialogPtr) {
 			int16 num = 160;
 			if (_globals->_phaseNum >= 400)
 				num++;
-			dial = (dial_t *)getElem(_gameDialogs, num);
+			dial = (Dialog *)getElem(_gameDialogs, num);
 		} else
 			dial = _globals->_lastDialogPtr;
 		char ok = dial_scan(dial);
@@ -3304,7 +3307,7 @@ void EdenGame::handleCharacterDialog(int16 pers) {
 	_globals->_characterPtr = perso;
 	_globals->_dialogType = DialogType::dtInspect;
 	uint16 idx = perso->_id * 8 | _globals->_dialogType;
-	dialoscansvmas((dial_t *)getElem(_gameDialogs, idx));
+	dialoscansvmas((Dialog *)getElem(_gameDialogs, idx));
 	displayPlace();
 	displaySubtitles();
 	persovox();
@@ -3884,9 +3887,9 @@ void EdenGame::handleNarrator() {
 // Original name: vrf_phrases_file
 void EdenGame::checkPhraseFile() {
 	int16 num = 3;
-	if (_globals->_dialogPtr < (dial_t *)getElem(_gameDialogs, 48))
+	if (_globals->_dialogPtr < (Dialog *)getElem(_gameDialogs, 48))
 		num = 1;
-	else if (_globals->_dialogPtr < (dial_t *)getElem(_gameDialogs, 128))
+	else if (_globals->_dialogPtr < (Dialog *)getElem(_gameDialogs, 128))
 		num = 2;
 	_globals->_textBankIndex = num;
 	if (_globals->_prefLanguage)
@@ -3975,7 +3978,7 @@ void EdenGame::record() {
 	tape->_dialog = _globals->_dialogPtr;
 }
 
-bool EdenGame::dial_scan(dial_t *dial) {
+bool EdenGame::dial_scan(Dialog *dial) {
 	if (_globals->_numGiveObjs) {
 		if (!(_globals->_displayFlags & DisplayFlags::dfFlag2))
 			showObjects();
@@ -4074,7 +4077,7 @@ bool EdenGame::dial_scan(dial_t *dial) {
 	return true;
 }
 
-bool EdenGame::dialoscansvmas(dial_t *dial) {
+bool EdenGame::dialoscansvmas(Dialog *dial) {
 	byte oldFlag = dialogSkipFlags;
 	dialogSkipFlags = DialogFlags::df20;
 	bool res = dial_scan(dial);
@@ -4086,7 +4089,7 @@ bool EdenGame::dialoscansvmas(dial_t *dial) {
 bool EdenGame::dialogEvent(perso_t *perso) {
 	_globals->_characterPtr = perso;
 	int num = (perso->_id << 3) | DialogType::dtEvent;
-	dial_t *dial = (dial_t *)getElem(_gameDialogs, num);
+	Dialog *dial = (Dialog *)getElem(_gameDialogs, num);
 	bool retVal = dialoscansvmas(dial);
 	_globals->_lastDialogPtr = nullptr;
 	parlemoiNormalFlag = false;
@@ -4174,7 +4177,7 @@ void EdenGame::preloadDialogs(int16 vid) {
 	_globals->_characterPtr = perso;
 	_globals->_dialogType = DialogType::dtInspect;
 	int num = (perso->_id << 3) | _globals->_dialogType;
-	dial_t *dial = (dial_t *)getElem(_gameDialogs, num);
+	Dialog *dial = (Dialog *)getElem(_gameDialogs, num);
 	dialoscansvmas(dial);
 }
 
@@ -5413,7 +5416,7 @@ void EdenGame::displayRoom() {
 			displaySingleRoom(room);
 	} else {
 		//TODO: roomImgBank is garbage here!
-		debug("drawroom: room 0x%X using bank %d", _globals->_roomNum, _globals->_roomImgBank);
+		debug("displayRoom: room 0x%X using bank %d", _globals->_roomNum, _globals->_roomImgBank);
 		useBank(_globals->_roomImgBank);
 		displaySingleRoom(room);
 		assert(_vm->_screenView->_pitch == 320);
@@ -6608,7 +6611,7 @@ void EdenGame::handleHNMSubtitles() {
 		_globals->_characterPtr = perso;
 		_globals->_dialogType = DialogType::dtInspect;
 		int16 num = (perso->_id << 3) | _globals->_dialogType;
-		dialoscansvmas((dial_t *)getElem(_gameDialogs, num));
+		dialoscansvmas((Dialog *)getElem(_gameDialogs, num));
 		_showVideoSubtitle = true;
 	}
 	if (_showVideoSubtitle)
@@ -6620,7 +6623,7 @@ void EdenGame::musique() {
 	if (_globals->_newMusicType == MusicType::mtDontChange)
 		return;
 
-	dial_t *dial = (dial_t *)getElem(_gameDialogs, 128);
+	Dialog *dial = (Dialog *)getElem(_gameDialogs, 128);
 	for (;;dial++) {
 		if (dial->_flags == -1 && dial->_condNumLow == -1)
 			return;
@@ -7146,7 +7149,7 @@ void EdenGame::testvoice() {
 	_globals->_characterPtr = kPersons;
 	_globals->_dialogType = DialogType::dtInspect;
 	int16 num = (kPersons[PER_KING]._id << 3) | _globals->_dialogType;
-	dialoscansvmas((dial_t *)getElem(_gameDialogs, num));
+	dialoscansvmas((Dialog *)getElem(_gameDialogs, num));
 	restoreUnderSubtitles();
 	displaySubtitles();
 	persovox();
@@ -7585,7 +7588,7 @@ void EdenGame::displayResult() {
 	_globals->_characterPtr = &kPersons[19];
 	_globals->_dialogType = DialogType::dtInspect;
 	int16 num = (kPersons[PER_UNKN_156]._id << 3) | _globals->_dialogType;
-	if (dialoscansvmas((dial_t *)getElem(_gameDialogs, num)))
+	if (dialoscansvmas((Dialog *)getElem(_gameDialogs, num)))
 		displaySubtitles();
 	_globals->_varCA = 0;
 	_globals->_dialogType = DialogType::dtTalk;
@@ -8423,10 +8426,10 @@ void EdenGame::loadgame(char *name) {
 #define OFSIN(val, base, typ) if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0;
 
 void EdenGame::vavaoffsetout() {
-	OFSOUT(_globals->_dialogPtr, _gameDialogs, dial_t);
-	OFSOUT(_globals->_nextDialogPtr, _gameDialogs, dial_t);
-	OFSOUT(_globals->_narratorDialogPtr, _gameDialogs, dial_t);
-	OFSOUT(_globals->_lastDialogPtr, _gameDialogs, dial_t);
+	OFSOUT(_globals->_dialogPtr, _gameDialogs, Dialog);
+	OFSOUT(_globals->_nextDialogPtr, _gameDialogs, Dialog);
+	OFSOUT(_globals->_narratorDialogPtr, _gameDialogs, Dialog);
+	OFSOUT(_globals->_lastDialogPtr, _gameDialogs, Dialog);
 	OFSOUT(_globals->_tapePtr, _tapes, tape_t);
 	OFSOUT(_globals->_nextRoomIcon, _gameIcons, Icon);
 	OFSOUT(_globals->_roomPtr, _gameRooms, Room);
@@ -8439,10 +8442,10 @@ void EdenGame::vavaoffsetout() {
 }
 
 void EdenGame::vavaoffsetin() {
-	OFSIN(_globals->_dialogPtr, _gameDialogs, dial_t);
-	OFSIN(_globals->_nextDialogPtr, _gameDialogs, dial_t);
-	OFSIN(_globals->_narratorDialogPtr, _gameDialogs, dial_t);
-	OFSIN(_globals->_lastDialogPtr, _gameDialogs, dial_t);
+	OFSIN(_globals->_dialogPtr, _gameDialogs, Dialog);
+	OFSIN(_globals->_nextDialogPtr, _gameDialogs, Dialog);
+	OFSIN(_globals->_narratorDialogPtr, _gameDialogs, Dialog);
+	OFSIN(_globals->_lastDialogPtr, _gameDialogs, Dialog);
 	OFSIN(_globals->_tapePtr, _tapes, tape_t);
 	OFSIN(_globals->_nextRoomIcon, _gameIcons, Icon);
 	OFSIN(_globals->_roomPtr, _gameRooms, Room);
@@ -8467,14 +8470,14 @@ void EdenGame::lieuoffsetin() {
 void EdenGame::bandeoffsetout() {
 	for (int i = 0; i < 16; i++) {
 		OFSOUT(_tapes[i]._perso, kPersons, perso_t);
-		OFSOUT(_tapes[i]._dialog, _gameDialogs, dial_t);
+		OFSOUT(_tapes[i]._dialog, _gameDialogs, Dialog);
 	}
 }
 
 void EdenGame::bandeoffsetin() {
 	for (int i = 0; i < 16; i++) {
 		OFSIN(_tapes[i]._perso, kPersons, perso_t);
-		OFSIN(_tapes[i]._dialog, _gameDialogs, dial_t);
+		OFSIN(_tapes[i]._dialog, _gameDialogs, Dialog);
 	}
 }
 

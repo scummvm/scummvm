@@ -255,8 +255,8 @@ private:
 	byte *getPhrase(int16 id);
 	void actionGotoMap();
 	void record();
-	bool dial_scan(dial_t *dial);
-	bool dialoscansvmas(dial_t *dial);
+	bool dial_scan(Dialog *dial);
+	bool dialoscansvmas(Dialog *dial);
 	bool dialogEvent(perso_t *perso);
 	void characterStayHere();
 	void endDeath(int16 vid);

@@ -366,7 +366,7 @@ enum DialogType {
 };
 }
 
-struct dial_t {
+struct Dialog {
 	char        _flags;          // 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
 	char        _condNumLow;     // condition index low bits
 	char        _textCondHiMask; // 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
@@ -379,7 +379,7 @@ struct tape_t {
 	int16       _party;
 	int16       _roomNum;
 	int16       _backgroundBankNum;
-	dial_t      *_dialog;
+	Dialog      *_dialog;
 };
 
 struct Follower {      // Characters on Mirror screen
@@ -660,11 +660,11 @@ struct global_t {
 	byte   _var6D;  //TODO: pad?
 	byte   _labyrinthDirections;
 	byte   _labyrinthRoom;
-	dial_t *_dialogPtr;
+	Dialog *_dialogPtr;
 	tape_t *_tapePtr;
-	dial_t *_nextDialogPtr;
-	dial_t *_narratorDialogPtr;
-	dial_t *_lastDialogPtr;
+	Dialog *_nextDialogPtr;
+	Dialog *_narratorDialogPtr;
+	Dialog *_lastDialogPtr;
 	Icon *_nextRoomIcon;
 	byte   *_sentenceBufferPtr;
 	Room *_roomPtr;
