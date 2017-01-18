@@ -57,7 +57,7 @@ enum {
 	kMacFontExtend = 64
 };
 
-class BdfFont;
+class Font;
 
 class MacFont {
 public:
@@ -67,7 +67,7 @@ public:
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;
-		_bdfFont = NULL;
+		_font = NULL;
 	}
 
 	int getId() { return _id; };
@@ -79,8 +79,8 @@ public:
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
-	BdfFont *getBdfFont() { return _bdfFont; }
-	void setBdfFont(BdfFont *bdfFont) { _bdfFont = bdfFont; }
+	Font *getFont() { return _font; }
+	void setFont(Font *font) { _font = font; }
 
 private:
 	int _id;
@@ -90,7 +90,7 @@ private:
 	FontManager::FontUsage _fallback;
 
 	bool _generated;
-	BdfFont *_bdfFont;
+	Font *_font;
 };
 
 class MacFontManager {

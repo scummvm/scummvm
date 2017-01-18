@@ -129,7 +129,7 @@ void MacFontManager::loadFontsBDF() {
 		}
 
 		FontMan.assignFontToName(fontName, font);
-		macfont->setBdfFont(font);
+		macfont->setFont(font);
 		_fontRegistry.setVal(fontName, macfont);
 
 		debug(2, " %s", fontName.c_str());
@@ -177,26 +177,30 @@ void MacFontManager::loadFonts() {
 					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
 											(*assoc)[i]._fontID);
 
-					Common::SeekableReadStream *fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+					Common::SeekableReadStream *fontstream;
 					MacFont *macfont;
 					Graphics::MacFONTFont *font;
 					Common::String fontName;
 
-					if (fontstream) {
-						font = new Graphics::MacFONTFont;
-						font->loadFont(*fontstream);
-
-						delete fontstream;
-
+					if ((fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID))) {
 						fontName = fontFile->getResName(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+					} else if ((fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID))) {
+						fontName = fontFile->getResName(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
 					} else {
-						fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+						warning("Unknown FontId: %d", (*assoc)[i]._fontID);
+
+						continue;
 					}
+
+					font = new Graphics::MacFONTFont;
+					font->loadFont(*fontstream);
+
+					delete fontstream;
 
 					macfont = new MacFont(_fontNames.getVal(fontName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
 
 					FontMan.assignFontToName(fontName, font);
-					//macfont->setBdfFont(font);
+					macfont->setFont(font);
 					_fontRegistry.setVal(fontName, macfont);
 
 					debug(2, " %s", fontName.c_str());
@@ -347,14 +351,14 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont));
 	debug("as '%s'", getFontName(fromFont));
 
-	Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(fromFont.getBdfFont(), toFont.getSize());
+	Graphics::BdfFont *font = NULL; // = Graphics::BdfFont::scaleFont(fromFont.getFont(), toFont.getSize());
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont));
 	}
 
 	toFont.setGenerated(true);
-	toFont.setBdfFont(font);
+	toFont.setFont(font);
 
 	FontMan.assignFontToName(getFontName(toFont), font);
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
