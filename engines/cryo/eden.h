@@ -533,21 +533,20 @@ private:
 
 	CubeCursor *_pcCursor;
 
-	int8 tab1[30];
-	int8 tab2[30];
+	int16 tab1[30];
+	int16 tab2[30];
 	int8 tab3[36][71];
-	short _angleX, _angleY, _angleZ, _zoomZ, _zoomZStep;
+	int16 _angleX, _angleY, _angleZ, _zoomZ, _zoomZStep;
 
 	int8 *_cosX, *_sinX;
 	int8 *_cosY, *_sinY;
 	int8 *_cosZ, *_sinZ;
 
 	uint8 *_face[6], *_newface[6];
-	int8 _faceSkip;
+	int16 _faceSkip;
 
 	uint8 _cursor[40 * 40];
 	uint8 *_cursorCenter;
-
 
 private:
 	int16 _scrollPos;
