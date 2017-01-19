@@ -199,9 +199,9 @@ void MacFontManager::loadFonts() {
 
 					delete fontstream;
 
-					Common::String fontName = Common::String::format("%s-%d", familyName.c_str(), (*assoc)[i]._fontSize);
+					Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle, (*assoc)[i]._fontSize);
 
-					macfont = new MacFont(_fontNames.getVal(fontName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+					macfont = new MacFont(_fontNames.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
 
 					FontMan.assignFontToName(fontName, font);
 					macfont->setFont(font);
@@ -249,40 +249,25 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 
 int MacFontManager::parseFontSlant(Common::String slant) {
 	slant.toUppercase();
+	int slantVal = 0;
 
 	if (slant == "I")
-		return kMacFontItalic;
+		slantVal |= kMacFontItalic;
 	if (slant == "B")
-		return kMacFontBold;
+		slantVal |= kMacFontBold;
 	if (slant == "R")
-		return kMacFontRegular;
+		slantVal |= kMacFontRegular;
 
-	warning("Unknown font slant '%s'", slant.c_str());
-
-	return kMacFontRegular;
+	return slantVal;
 }
 
 const char *MacFontManager::getFontName(int id, int size, int slant) {
 	static char name[128];
-	const char *sslant;
-
-	switch (slant) {
-	case kMacFontItalic:
-		sslant = "I";
-		break;
-	case kMacFontBold:
-		sslant = "B";
-		break;
-	case kMacFontRegular:
-	default:
-		sslant = "R";
-		break;
-	}
 
 	if (id > ARRAYSIZE(fontNames))
 		return NULL;
 
-	snprintf(name, 128, "%s-%s-%d", fontNames[id], sslant, size);
+	snprintf(name, 128, "%s-%d-%d", fontNames[id], slant, size);
 
 	return name;
 }
