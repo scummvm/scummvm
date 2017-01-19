@@ -647,8 +647,8 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
 		_dungeonMaps[i]._floorSet = (FloorSet)(tmp & 0xF);
 
-		if (!file)
-			delete dunDataStream;
+		//if (!file)
+		//	delete dunDataStream;
 	}
 
 	// load column stuff thingy
@@ -769,7 +769,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	}
 
 	if (!file) { // this means that we created a new MemoryReadStream
-		delete file;
+		delete dunDataStream;
 	} // the deletion of the function parameter 'file' happens elsewhere
 }
 
