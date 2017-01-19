@@ -142,6 +142,7 @@ struct MacFONTdata {
 class MacFONTFont : public Font {
 public:
 	MacFONTFont();
+	MacFONTFont(const MacFONTdata &data);
 	virtual ~MacFONTFont();
 
 	virtual int getFontHeight() const { return _data._fRectHeight; }
@@ -154,6 +155,8 @@ public:
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
 
 	int getFontSize() const { return _data._size; }
+
+	MacFONTFont *scaleFont(MacFONTFont *src, int newSize);
 
 private:
 	MacFONTdata _data;
