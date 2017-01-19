@@ -53,7 +53,7 @@ void CCage::load(SimpleFile *file) {
 }
 
 bool CCage::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (CParrot::_state != PARROT_IN_CAGE && !CParrot::_v5) {
+	if (CParrot::_state != PARROT_IN_CAGE && !CParrot::_coreReplaced) {
 		CActMsg actMsg(_open ? "Open" : "Shut");
 		actMsg.execute(this);
 	}
@@ -103,7 +103,7 @@ bool CCage::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 }
 
 bool CCage::MouseMoveMsg(CMouseMoveMsg *msg) {
-	_cursorId = CParrot::_state != PARROT_IN_CAGE && !CParrot::_v5 ? CURSOR_ACTIVATE : CURSOR_ARROW;
+	_cursorId = CParrot::_state != PARROT_IN_CAGE && !CParrot::_coreReplaced ? CURSOR_ACTIVATE : CURSOR_ARROW;
 	return true;
 }
 

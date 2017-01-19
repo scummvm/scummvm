@@ -52,11 +52,11 @@ class CParrot : public CTrueTalkNPC {
 	bool PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 public:
-	static int _v1;
-	static int _v2;
-	static int _v3;
+	static bool _eatingChicken;
+	static bool _takeOff;
+	static bool _unused;
 	static ParrotState _state;
-	static int _v5;
+	static bool _coreReplaced;
 private:
 	int _field108;
 	CString _string2;

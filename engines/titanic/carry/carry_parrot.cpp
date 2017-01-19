@@ -107,7 +107,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		petAddToInventory();
 	} else if (compareViewNameTo("ParrotLobby.Node 1.N")) {
 		if (msg->_mousePos.x >= 75 && msg->_mousePos.x <= 565 &&
-				!CParrot::_v2 && !CCage::_open) {
+				!CParrot::_takeOff && !CCage::_open) {
 			setVisible(false);
 			_canTake = false;
 			CTreeItem *perchedParrot = findUnder(getRoot(), "PerchedParrot");

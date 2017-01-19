@@ -45,11 +45,11 @@ BEGIN_MESSAGE_MAP(CParrot, CTrueTalkNPC)
 	ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
-int CParrot::_v1;
-int CParrot::_v2;
-int CParrot::_v3;
+bool CParrot::_eatingChicken;
+bool CParrot::_takeOff;
+bool CParrot::_unused;
 ParrotState CParrot::_state;
-int CParrot::_v5;
+bool CParrot::_coreReplaced;
 
 CParrot::CParrot() : CTrueTalkNPC() {
 	_field108 = 0;
@@ -119,9 +119,9 @@ void CParrot::save(SimpleFile *file, int indent) {
 
 	file->writeQuotedLine(_assetName, indent);
 	file->writeNumberLine(_field108, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_v3, indent);
+	file->writeNumberLine(_eatingChicken, indent);
+	file->writeNumberLine(_takeOff, indent);
+	file->writeNumberLine(_unused, indent);
 
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_field118, indent);
@@ -132,7 +132,7 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field12C, indent);
 	file->writeNumberLine(_field130, indent);
 	file->writeNumberLine(_state, indent);
-	file->writeNumberLine(_v5, indent);
+	file->writeNumberLine(_coreReplaced, indent);
 
 	CTrueTalkNPC::save(file, indent);
 }
@@ -143,9 +143,9 @@ void CParrot::load(SimpleFile *file) {
 
 	_assetName = file->readString();
 	_field108 = file->readNumber();
-	_v1 = file->readNumber();
-	_v2 = file->readNumber();
-	_v3 = file->readNumber();
+	_eatingChicken = file->readNumber();
+	_takeOff = file->readNumber();
+	_unused = file->readNumber();
 
 	_string2 = file->readString();
 	_field118 = file->readNumber();
@@ -156,7 +156,7 @@ void CParrot::load(SimpleFile *file) {
 	_field12C = file->readNumber();
 	_field130 = file->readNumber();
 	_state = (ParrotState)file->readNumber();
-	_v5 = file->readNumber();
+	_coreReplaced = file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
@@ -168,8 +168,8 @@ bool CParrot::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "Chicken") {
 		// Nothing to do
 	} else if (msg->_action == "CarryParrotLeftView") {
-		if (!_v2) {
-			_v1 = 0;
+		if (!_takeOff) {
+			_eatingChicken = false;
 			CStatusChangeMsg statusMsg;
 			statusMsg._newStatus = 1;
 			statusMsg.execute("PerchCoreHolder");
@@ -182,8 +182,8 @@ bool CParrot::ActMsg(CActMsg *msg) {
 		}
 	} else if (msg->_action == "EnteringFromTOW" &&
 			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
-		if (_v2) {
-			_v2 = 2;
+		if (_takeOff) {
+			_state = PARROT_ESCAPED;
 		} else {
 			setVisible(true);
 			CTreeItem *cageBar = getRoot()->findByName("CageBar");
@@ -293,7 +293,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 				} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
 					playClip("Eat Chicken");
 					playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
-					_v1 = 1;
+					_eatingChicken = true;
 
 					CStatusChangeMsg statusMsg;
 					statusMsg._newStatus = 0;
@@ -316,11 +316,13 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 
 			if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
+				_eatingChicken = false;
+
 				CStatusChangeMsg statusMsg;
 				statusMsg._newStatus = 1;
 				statusMsg.execute("PerchCoreHolder");
 
-				if (_v2) {
+				if (_takeOff) {
 					loadMovie("z168.avi", false);
 					playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 					setPosition(Point(20, 10));
@@ -502,7 +504,7 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 			&& _visible && _state == PARROT_IN_CAGE && !compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
-			if (!_v5 ||getRandomNumber(3) != 0) {
+			if (!_coreReplaced ||getRandomNumber(3) != 0) {
 				if (getRandomNumber(1)) {
 					startTalking(this, 280267, findView());
 				} else {
@@ -737,7 +739,7 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 		CActMsg actMsg("PanAwayFromParrot");
 		actMsg.execute(msg->_target);
 		_panTarget = nullptr;
-	} else if (_v2) {
+	} else if (_takeOff) {
 		_panTarget = msg->_target;
 		loadMovie("z168.avi", false);
 		stopMovie();

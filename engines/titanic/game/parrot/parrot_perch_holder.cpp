@@ -45,7 +45,7 @@ void CParrotPerchHolder::load(SimpleFile *file) {
 }
 
 bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!CParrot::_v1) {
+	if (!CParrot::_eatingChicken) {
 		if (CCage::_open) {
 			petDisplayMessage(CANNOT_TAKE_CAGE_LOCKED);
 		} else if (CParrot::_state == PARROT_IN_CAGE) {
