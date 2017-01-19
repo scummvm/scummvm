@@ -159,7 +159,7 @@ void AVISurface::seekToFrame(uint frameNumber) {
 	if (_isReversed && frameNumber == _decoder->getFrameCount())
 		--frameNumber;
 
-	if ((int)frameNumber != getFrame()) {
+	if ((int)frameNumber != _currentFrame) {
 		_decoder->seekToFrame(frameNumber);
 		_currentFrame = _priorFrame = (int)frameNumber;
 	}
