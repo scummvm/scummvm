@@ -167,6 +167,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (uint16 i = 0; i < 16; ++i)
 		_paletteFadeTemporary[i] = 0;
 
+	_refreshDungeonViewPaleteRequested = false;
+
 	initConstants();
 }
 
@@ -521,12 +523,13 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapWallSetDoorFrameLeftD3C = new byte[32 * 44];
 	_bitmapWallSetDoorFrameLeftD2C = new byte[48 * 65];
 	_bitmapWallSetDoorFrameLeftD1C = new byte[32 * 94];
-	_bitmapWallSetDoorFrameRightD1C = new byte[32 * 94];
+	_bitmapWallSetDoorFrameRightD1C = new byte[32 * 94]();
 	_bitmapWallSetDoorFrameFront = new byte[32 * 123];
-	_bitmapViewport = new byte[224 * 136];
+	_bitmapViewport = new byte[224 * 136]();
 
 	if (!_derivedBitmapByteCount)
 		_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
+    }
 	if (!_derivedBitmaps) {
 		_derivedBitmaps = new byte *[k730_DerivedBitmapMaximumCount];
 		for (uint16 i = 0; i < k730_DerivedBitmapMaximumCount; ++i)
