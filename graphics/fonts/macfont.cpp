@@ -425,6 +425,19 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	data._size = src->_data._size;
 	data._style = src->_data._style;
 
+	// Dtermine width of the bit image table
+	int newBitmapWidth = 0;
+	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
+		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &_data._defaultChar : &_data._glyphs[i];
+
+		glyph->width = (int)((float)src->_data._glyphs[i].width * scale);
+		glyph->kerningOffset = (int)((float)src->_data._glyphs[i].kerningOffset * scale);
+		glyph->bitmapWidth = (int)((float)src->_data._glyphs[i].bitmapWidth * scale);
+		glyph->bitmapOffset = newBitmapWidth;
+
+		newBitmapWidth += ((glyph->bitmapWidth + 7) / 8);
+	}
+
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &_data._defaultChar : &_data._glyphs[i];
 
