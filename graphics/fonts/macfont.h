@@ -97,24 +97,21 @@ private:
 	Common::Array<KernEntry> _ffKernEntries;
 };
 
-/**
- * Processing of Mac FONT/NFNT rResources
- */
-class MacFONTFont : public Font {
-public:
-	MacFONTFont();
-	virtual ~MacFONTFont();
+struct MacGlyph {
+	void clear() {
+		bitmapOffset = 0;
+		width = 0;
+		bitmapWidth = 0;
+		kerningOffset = 0;
+	}
 
-	virtual int getFontHeight() const;
-	virtual int getMaxCharWidth() const;
-	virtual int getCharWidth(uint32 chr) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	uint16 bitmapOffset;
+	byte width;
+	uint16 bitmapWidth;
+	int kerningOffset;
+};
 
-	bool loadFont(Common::SeekableReadStream &stream, MacFontFamily *family = nullptr, int size = 12, int style = 0);
-
-	virtual int getKerningOffset(uint32 left, uint32 right) const;
-
-private:
+struct MacFONTdata {
 	uint16 _fontType;
 	uint16 _firstChar;
 	uint16 _lastChar;
@@ -131,27 +128,40 @@ private:
 
 	byte *_bitImage;
 
-	struct Glyph {
-		void clear() {
-			bitmapOffset = 0;
-			width = 0;
-			bitmapWidth = 0;
-			kerningOffset = 0;
-		}
-
-		uint16 bitmapOffset;
-		byte width;
-		uint16 bitmapWidth;
-		int kerningOffset;
-	};
-
-	Common::Array<Glyph> _glyphs;
-	Glyph _defaultChar;
-	const Glyph *findGlyph(uint32 c) const;
+	Common::Array<MacGlyph> _glyphs;
+	MacGlyph _defaultChar;
 
 	MacFontFamily *_family;
 	int _size;
 	int _style;
+};
+
+/**
+ * Processing of Mac FONT/NFNT rResources
+ */
+class MacFONTFont : public Font {
+public:
+	MacFONTFont();
+	MacFONTFont(const MacFONTdata &data);
+	virtual ~MacFONTFont();
+
+	virtual int getFontHeight() const { return _data._fRectHeight; }
+	virtual int getMaxCharWidth() const { return _data._maxWidth; }
+	virtual int getCharWidth(uint32 chr) const;
+	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+
+	bool loadFont(Common::SeekableReadStream &stream, MacFontFamily *family = nullptr, int size = 12, int style = 0);
+
+	virtual int getKerningOffset(uint32 left, uint32 right) const;
+
+	int getFontSize() const { return _data._size; }
+
+	MacFONTFont *scaleFont(MacFONTFont *src, int newSize);
+
+private:
+	MacFONTdata _data;
+
+	const MacGlyph *findGlyph(uint32 c) const;
 };
 
 } // End of namespace Graphics
