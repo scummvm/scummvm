@@ -446,6 +446,7 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _packedBitmaps;
 	delete[] _bitmapScreen;
+	delete[] _tmpBitmap;
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
