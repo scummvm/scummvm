@@ -131,10 +131,10 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 
 	for (uint i = 0; i <= _ffNumAssoc; i++) {
 		_ffAssocEntries[i]._fontSize  = stream.readUint16BE(); // point size of font
-		_ffAssocEntries[i]._fontSize = stream.readUint16BE(); // style of font
+		_ffAssocEntries[i]._fontStyle = stream.readUint16BE(); // style of font
 		_ffAssocEntries[i]._fontID    = stream.readUint16BE(); // font resource ID
 
-		debug(10, "  size: %d style: %d id: %d", _ffAssocEntries[i]._fontSize, _ffAssocEntries[i]._fontSize,
+		debug(10, "  size: %d style: %d id: %d", _ffAssocEntries[i]._fontSize, _ffAssocEntries[i]._fontStyle,
 								_ffAssocEntries[i]._fontID);
 	}
 
