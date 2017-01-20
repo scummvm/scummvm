@@ -360,7 +360,7 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kerne
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, kUninitializedSegment, make_reg32(0, 0),
+	ExecStack xstack(NULL_REG, NULL_REG, argv + argc, argc, argv - 1, kUninitializedSegment, make_reg32(0, 0),
 						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
