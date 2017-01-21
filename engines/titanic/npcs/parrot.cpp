@@ -202,7 +202,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 }
 
 bool CParrot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!(_npcFlags & NPCFLAG_2000000) && _speechCounter == 0) {
+	if (!(_npcFlags & NPCFLAG_TAKE_OFF) && _speechCounter == 0) {
 		CTrueTalkTriggerActionMsg triggerMsg(280250, 280250, 1);
 		triggerMsg.execute(this);
 	}
@@ -211,7 +211,7 @@ bool CParrot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
-	if ((_npcFlags & NPCFLAG_2000000) && clipExistsByEnd("Take Off", msg->_endFrame)) {
+	if ((_npcFlags & NPCFLAG_TAKE_OFF) && clipExistsByEnd("Take Off", msg->_endFrame)) {
 		setVisible(false);
 		moveUnder(findRoom());
 		stopMovie();
@@ -228,12 +228,12 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			actMsg2.execute("ParrotCage");
 		}
 
-		_npcFlags &= ~NPCFLAG_2000000;
+		_npcFlags &= ~NPCFLAG_TAKE_OFF;
 		_state = PARROT_ESCAPED;
-	} else if (_npcFlags & NPCFLAG_10000) {
+	} else if (_npcFlags & NPCFLAG_MOVING) {
 		if (_npcFlags & NPCFLAG_20000) {
 			_npcFlags = (_npcFlags & ~NPCFLAG_20000) | NPCFLAG_40000;
-			if (_npcFlags & NPCFLAG_100000) {
+			if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
 				movieEvent(236);
 			} else {
@@ -242,7 +242,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 		} else if (_npcFlags & NPCFLAG_40000) {
 			int xp = _bounds.left + _bounds.width() / 2;
 
-			if (_npcFlags & NPCFLAG_100000) {
+			if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 				if ((xp - _newXc) > 32) {
 					setPosition(Point(_bounds.left - 40, _bounds.top));
 					playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
@@ -263,20 +263,20 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 		} else if (_npcFlags & NPCFLAG_80000) {
 			loadFrame(0);
-			if (_npcFlags & NPCFLAG_100000)
+			if (_npcFlags & NPCFLAG_MOVE_LEFT)
 				setPosition(Point(_bounds.left - 30, _bounds.top));
 			else
 				setPosition(Point(_bounds.left + 14, _bounds.top));
 
-			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000);
+			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_80000 | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
 			CTrueTalkNPC::MovieEndMsg(msg);
 		} else {
-			if (_npcFlags & NPCFLAG_1000000) {
+			if (_npcFlags & NPCFLAG_MOVE_LEFT0) {
 				Point pt = getMousePos();
 				if (pt.x > 70 || pt.y < 90 || pt.y > 280) {
 					stopMovie();
 					loadFrame(0);
-					_npcFlags &= ~NPCFLAG_1000000;
+					_npcFlags &= ~NPCFLAG_MOVE_LEFT0;
 				}
 
 				if (clipExistsByEnd("Walk Left Loop", msg->_endFrame)) {
@@ -291,6 +291,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 					return true;
 
 				} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
+					// Leaning left out of cage to eat the chicken
 					playClip("Eat Chicken");
 					playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
 					_eatingChicken = true;
@@ -310,12 +311,13 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 						actMsg.execute(chicken);
 					}
 
-					_npcFlags &= ~NPCFLAG_1000000;
+					_npcFlags &= ~NPCFLAG_MOVE_LEFT0;
 					return true;
 				}
 			}
 
 			if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
+				// Parrot has finished eating Chicken
 				_eatingChicken = false;
 
 				CStatusChangeMsg statusMsg;
@@ -323,13 +325,16 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 				statusMsg.execute("PerchCoreHolder");
 
 				if (_takeOff) {
+					// Perch has been taken, so take off
 					loadMovie("z168.avi", false);
 					playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 					setPosition(Point(20, 10));
-					_npcFlags |= NPCFLAG_2000000;
+					_npcFlags |= NPCFLAG_TAKE_OFF;
 				} else {
-					_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000);
-					_npcFlags |= NPCFLAG_400000;
+					// Resetting back to standing
+					_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_20000 | NPCFLAG_40000
+						| NPCFLAG_80000 | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
+					_npcFlags |= NPCFLAG_MOVE_END;
 					stopMovie();
 					loadFrame(0);
 					setPosition(Point(-90, _bounds.top));
@@ -352,7 +357,8 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_state == PARROT_IN_CAGE) {
 		setPosition(Point(_newXp, _bounds.top));
 		_field118 = 1;
-		_npcFlags &= ~(NPCFLAG_10000  |  NPCFLAG_20000  |  NPCFLAG_40000  |  NPCFLAG_80000  |  NPCFLAG_100000  |  NPCFLAG_200000  |  NPCFLAG_400000);
+		_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_20000 | NPCFLAG_40000
+			| NPCFLAG_80000 | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 		loadFrame(0);
 		setTalking(this, true, findView());
 
@@ -485,7 +491,8 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		"Talking5", "Talking6", "Talking7", nullptr
 	};
 
-	if (!(_npcFlags & (NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000))
+	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 
+			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
 			&& _visible && _state == PARROT_IN_CAGE) {
 		if (!compareViewNameTo("ParrotLobby.Node 1.N"))
 			msg->_names = NAMES;
@@ -500,7 +507,8 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 		"Peck At Feet Right", nullptr
 	};
 
-	if (!(_npcFlags & (NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000))
+	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 
+			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
 			&& _visible && _state == PARROT_IN_CAGE && !compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
@@ -576,7 +584,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	int xp = _bounds.left + _bounds.width() / 2;
 	bool chickenFlag = false;
 
-	if ((_npcFlags & NPCFLAG_400000) && !hasActiveMovie()) {
+	if ((_npcFlags & NPCFLAG_MOVE_END) && !hasActiveMovie()) {
 		_newXc =  _newXp + _bounds.width() / 2;
 		int xDiff = ABS(xp - _newXc);
 
@@ -587,15 +595,15 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 				_panTarget = nullptr;
 			}
 
-			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000
-				| NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000);
+			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_20000 | NPCFLAG_40000
+				| NPCFLAG_80000 | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 			return true;
 		}
 	} else {
 		if (dragObject)
 			chickenFlag = dragObject && dragObject->isEquals("Chicken");
 
-		if (_npcFlags & NPCFLAG_1000000) {
+		if (_npcFlags & NPCFLAG_MOVE_LEFT0) {
 			if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
 				stopMovie();
 				loadFrame(0);
@@ -609,18 +617,18 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		_newXc = CLIP((int)pt.x, 230, 480);
 	}
 
-	if ((_npcFlags & NPCFLAG_10000) || hasActiveMovie())
+	if ((_npcFlags & NPCFLAG_MOVING) || hasActiveMovie())
 		return true;
 
 	if (ABS(_newXc - xp) > 64) {
-		_npcFlags |= NPCFLAG_10000 | NPCFLAG_20000;
+		_npcFlags |= NPCFLAG_MOVING | NPCFLAG_20000;
 
 		if (_newXc >= xp) {
 			setPosition(Point(_bounds.left + 30, _bounds.top));
-			_npcFlags |= NPCFLAG_200000;
+			_npcFlags |= NPCFLAG_MOVE_RIGHT;
 			playClip("Walk Right Intro", MOVIE_NOTIFY_OBJECT);
 		} else {
-			_npcFlags |= NPCFLAG_100000;
+			_npcFlags |= NPCFLAG_MOVE_LEFT;
 			playClip("Walk Left Intro", MOVIE_NOTIFY_OBJECT);
 		}
 	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_field12C) {
@@ -646,7 +654,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 
 		if (action != 280266) {
 			if (pt.x < 75) {
-				_npcFlags |= NPCFLAG_1000000;
+				_npcFlags |= NPCFLAG_MOVE_LEFT0;
 				playClip("Walk Left Intro", MOVIE_STOP_PREVIOUS);
 				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
 				movieEvent(236);
@@ -744,9 +752,9 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 		loadMovie("z168.avi", false);
 		stopMovie();
 		playClip("Take Off", MOVIE_NOTIFY_OBJECT);
-		_npcFlags |= NPCFLAG_2000000;
+		_npcFlags |= NPCFLAG_TAKE_OFF;
 	} else {
-		_npcFlags |= NPCFLAG_400000;
+		_npcFlags |= NPCFLAG_MOVE_END;
 		_panTarget = msg->_target;
 		stopMovie();
 	}

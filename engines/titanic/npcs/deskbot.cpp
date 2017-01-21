@@ -113,7 +113,7 @@ bool CDeskbot::ActMsg(CActMsg *msg) {
 
 bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 	bool flag = false;
-	if (_npcFlags & NPCFLAG_10000) {
+	if (_npcFlags & NPCFLAG_MOVING) {
 		if (_classNum) {
 			petSetArea(PET_ROOMS);
 			decTransitions();
@@ -122,7 +122,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			_classNum = NO_CLASS;
 		}
 
-		_npcFlags &= ~NPCFLAG_10000;
+		_npcFlags &= ~NPCFLAG_MOVING;
 		flag = true;
 	}
 
@@ -135,14 +135,14 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			turnOn.execute("EmbBellbotTrigger");
 			unlockMouse();
 			changeView("EmbLobby.Node 4.N", "");
-		} else if (_npcFlags & NPCFLAG_100000) {
+		} else if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 			CTurnOn turnOn;
 			turnOn.execute("EmbDoorBotTrigger");
 			unlockMouse();
 			changeView("EmbLobby.Node 4.N", "");
 		}
 
-		_npcFlags &= ~(NPCFLAG_80000 | NPCFLAG_100000);
+		_npcFlags &= ~(NPCFLAG_80000 | NPCFLAG_MOVE_LEFT);
 		flag = true;
 	}
 
@@ -176,7 +176,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		lockMouse();
 		petSetArea(PET_CONVERSATION);
 		playClip("ReprogramPETInHand", MOVIE_NOTIFY_OBJECT);
-		_npcFlags |= NPCFLAG_10000;
+		_npcFlags |= NPCFLAG_MOVING;
 		_classNum = (PassengerClass)msg->_param1;
 
 		switch (_classNum) {
@@ -289,7 +289,7 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		turnOff.execute(this);
 
 	case 41686:
-		_npcFlags |= NPCFLAG_100000;
+		_npcFlags |= NPCFLAG_MOVE_LEFT;
 		turnOff.execute(this);
 		break;
 
