@@ -76,7 +76,7 @@ ScriptChangedResult ParrotScript::scriptChanged(const TTroomScript *roomScript, 
 		} else {
 			if ((id == 280146 || id == 280147) && CTrueTalkManager::_currentNPC) {
 				CGameObject *chicken;
-				if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+				if (!CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
 					id = 280142;
 			}
 
@@ -90,7 +90,7 @@ ScriptChangedResult ParrotScript::scriptChanged(const TTroomScript *roomScript, 
 	if (id >= 80000 && id <= 80244) {
 		if ((id == 80155 || id == 80156) && CTrueTalkManager::_currentNPC) {
 			CGameObject *chicken;
-			if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+			if (!CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
 				id = 80151;
 		}
 
