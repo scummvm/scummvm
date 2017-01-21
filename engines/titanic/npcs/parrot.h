@@ -58,15 +58,15 @@ public:
 	static ParrotState _state;
 	static bool _coreReplaced;
 private:
-	int _field108;
-	CString _string2;
-	int _field118;
-	int _field11C;
+	int _unused1;
+	CString _carryParrot;
+	bool _canDrag;
+	int _unused2;
 	uint _lastSpeakTime;
 	int _newXp;
 	int _newXc;
-	int _field12C;
-	int _field130;
+	bool _canEatChicken;
+	int _eatOffsetX;
 	CMovePlayerTo *_panTarget;
 public:
 	CLASSDEF;

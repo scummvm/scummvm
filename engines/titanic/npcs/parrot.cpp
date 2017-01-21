@@ -52,15 +52,15 @@ ParrotState CParrot::_state;
 bool CParrot::_coreReplaced;
 
 CParrot::CParrot() : CTrueTalkNPC() {
-	_field108 = 0;
-	_string2 = "CarryParrot";
-	_field118 = 1;
-	_field11C = 25;
+	_unused1 = 0;
+	_carryParrot = "CarryParrot";
+	_canDrag = true;
+	_unused2 = 25;
 	_lastSpeakTime = 0;
 	_newXp = 73;
 	_newXc = 58;
-	_field12C = 0;
-	_field130 = 0;
+	_canEatChicken = false;
+	_eatOffsetX = 0;
 	_panTarget = nullptr;
 
 	_assetName = "z454.dlg";
@@ -72,19 +72,19 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_assetNumber, indent);
 
 	file->writeQuotedLine(_assetName, indent);
-	file->writeNumberLine(_field108, indent);
+	file->writeNumberLine(_unused1, indent);
 	file->writeNumberLine(_eatingChicken, indent);
 	file->writeNumberLine(_takeOff, indent);
 	file->writeNumberLine(_unused, indent);
 
-	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_field118, indent);
-	file->writeNumberLine(_field11C, indent);
+	file->writeQuotedLine(_carryParrot, indent);
+	file->writeNumberLine(_canDrag, indent);
+	file->writeNumberLine(_unused2, indent);
 	file->writeNumberLine(_lastSpeakTime, indent);
 	file->writeNumberLine(_newXp, indent);
 	file->writeNumberLine(_newXc, indent);
-	file->writeNumberLine(_field12C, indent);
-	file->writeNumberLine(_field130, indent);
+	file->writeNumberLine(_canEatChicken, indent);
+	file->writeNumberLine(_eatOffsetX, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_coreReplaced, indent);
 
@@ -96,19 +96,19 @@ void CParrot::load(SimpleFile *file) {
 	_assetNumber = file->readNumber();
 
 	_assetName = file->readString();
-	_field108 = file->readNumber();
+	_unused1 = file->readNumber();
 	_eatingChicken = file->readNumber();
 	_takeOff = file->readNumber();
 	_unused = file->readNumber();
 
-	_string2 = file->readString();
-	_field118 = file->readNumber();
-	_field11C = file->readNumber();
+	_carryParrot = file->readString();
+	_canDrag = file->readNumber();
+	_unused2 = file->readNumber();
 	_lastSpeakTime = file->readNumber();
 	_newXp = file->readNumber();
 	_newXc = file->readNumber();
-	_field12C = file->readNumber();
-	_field130 = file->readNumber();
+	_canEatChicken = file->readNumber();
+	_eatOffsetX = file->readNumber();
 	_state = (ParrotState)file->readNumber();
 	_coreReplaced = file->readNumber();
 
@@ -132,7 +132,7 @@ bool CParrot::ActMsg(CActMsg *msg) {
 		if (_state == PARROT_IN_CAGE) {
 			stopMovie();
 			startTalking(this, 280275, findView());
-			_field12C = 0;
+			_canEatChicken = false;
 		}
 	} else if (msg->_action == "EnteringFromTOW" &&
 			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
@@ -239,7 +239,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 		if (clipExistsByEnd("Walk Left Loop", msg->_endFrame)) {
 			playClip("Lean Over To Chicken", MOVIE_NOTIFY_OBJECT);
 			setPosition(Point(_bounds.left - 55, _bounds.top));
-			_field130 = (-100 - _bounds.left) / 5;
+			_eatOffsetX = (-100 - _bounds.left) / 5;
 			movieEvent(261);
 			movieEvent(262);
 			movieEvent(265);
@@ -311,7 +311,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 
 	if (_state == PARROT_IN_CAGE) {
 		setPosition(Point(_newXp, _bounds.top));
-		_field118 = 1;
+		_canDrag = true;
 		_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
 			| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 		loadFrame(0);
@@ -324,7 +324,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		}
 
 		petSetArea(PET_CONVERSATION);
-		_field12C = 0;
+		_canEatChicken = false;
 		_npcFlags |= NPCFLAG_START_IDLING;
 	}
 
@@ -341,7 +341,7 @@ bool CParrot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_field118 && _state == PARROT_IN_CAGE && checkPoint(msg->_mousePos, false, true)) {
+	if (_canDrag && _state == PARROT_IN_CAGE && checkPoint(msg->_mousePos, false, true)) {
 		setVisible(false);
 		CRoomItem *room = findRoom();
 
@@ -349,7 +349,7 @@ bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		startTalking(this, 280129);
 		performAction(true);
 
-		CCarry *item = dynamic_cast<CCarry *>(getRoot()->findByName(_string2));
+		CCarry *item = dynamic_cast<CCarry *>(getRoot()->findByName(_carryParrot));
 		if (item) {
 			item->_canTake = true;
 			CPassOnDragStartMsg passMsg;
@@ -589,7 +589,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			_npcFlags |= NPCFLAG_MOVE_LEFT;
 			playClip("Walk Left Intro", MOVIE_NOTIFY_OBJECT);
 		}
-	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_field12C) {
+	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_canEatChicken) {
 		CParrotTriesChickenMsg triesMsg;
 		triesMsg.execute(dragObject);
 
@@ -636,7 +636,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		if (chickenFlag) {
 			triggerMsg._param2 = 1;
 			triggerMsg.execute(this);
-			_field12C = 1;
+			_canEatChicken = true;
 		}
 	}
 
@@ -664,7 +664,7 @@ bool CParrot::MovieFrameMsg(CMovieFrameMsg *msg) {
 	case 265:
 	case 268:
 	case 271:
-		setPosition(Point(_bounds.left + _field130, _bounds.top));
+		setPosition(Point(_bounds.left + _eatOffsetX, _bounds.top));
 		break;
 	default:
 		break;
