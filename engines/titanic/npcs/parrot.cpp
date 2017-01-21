@@ -258,7 +258,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			statusMsg.execute("PerchCoreHolder");
 
 			CTrueTalkTriggerActionMsg actionMsg;
-			actionMsg._param1 = 280266;
+			actionMsg._action = 280266;
 			actionMsg._param2 = 1;
 			actionMsg.execute(this);
 
