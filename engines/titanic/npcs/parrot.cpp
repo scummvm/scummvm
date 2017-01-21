@@ -606,9 +606,12 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 
 		if (_npcFlags & NPCFLAG_CHICKEN_OUTSIDE_CAGE) {
 			if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
+				// A start of eating the chicken outside the cage has to be
+				// aborted because the chicken has been moved out of range
 				stopMovie();
 				loadFrame(0);
 				setPosition(Point(-90, _bounds.top));
+				_npcFlags &= ~NPCFLAG_CHICKEN_OUTSIDE_CAGE;
 			}
 		} else {
 			if (!chickenFlag)
