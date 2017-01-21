@@ -122,7 +122,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		CTrueTalkNPC::MovieEndMsg(msg);
 	} else if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 		if (clipExistsByEnd("Cloak Off", msg->_endFrame)) {
-			_npcFlags = (_npcFlags & ~NPCFLAG_8) | NPCFLAG_START_IDLING;
+			_npcFlags = (_npcFlags & ~NPCFLAG_DOORBOT_IN_HOME) | NPCFLAG_START_IDLING;
 			setTalking(this, false);
 			startTalking(this, 221474);
 			_npcFlags |= NPCFLAG_DOORBOT_INTRO;
@@ -146,7 +146,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 				|| clipExistsByEnd("Whizz Off Right", msg->_endFrame)) {
 			CPutBotBackInHisBoxMsg boxMsg;
 			boxMsg.execute(this);
-			if (_npcFlags & NPCFLAG_4000000)
+			if (_npcFlags & NPCFLAG_SUMMON_BELLBOT)
 				startAnimTimer("SummonBellbot", 1500);
 		} else {
 			CTrueTalkNPC::MovieEndMsg(msg);
@@ -199,7 +199,7 @@ bool CDoorbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		break;
 
 	case 4:
-		_npcFlags = (_npcFlags & ~NPCFLAG_IDLING) | NPCFLAG_4000000;
+		_npcFlags = (_npcFlags & ~NPCFLAG_IDLING) | NPCFLAG_SUMMON_BELLBOT;
 		playClip("Whizz Off Left", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		break;
 
@@ -222,7 +222,7 @@ bool CDoorbot::DoorbotNeededInHomeMsg(CDoorbotNeededInHomeMsg *msg) {
 	stopMovie();
 	playClip("Cloak Off", MOVIE_NOTIFY_OBJECT);
 
-	_npcFlags |= NPCFLAG_8;
+	_npcFlags |= NPCFLAG_DOORBOT_IN_HOME;
 	return true;
 }
 
@@ -320,7 +320,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 			botMsg.execute(room);
 		}
 
-		_npcFlags &= ~NPCFLAG_4000000;
+		_npcFlags &= ~NPCFLAG_SUMMON_BELLBOT;
 	}
 
 	return true;

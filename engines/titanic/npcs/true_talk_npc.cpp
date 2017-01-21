@@ -102,7 +102,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 	_npcFlags |= NPCFLAG_SPEAKING;
 	++_speechCounter;
 
-	if (!(_npcFlags & NPCFLAG_8)) {
+	if (!(_npcFlags & NPCFLAG_DOORBOT_IN_HOME)) {
 		// Stop any previous animation
 		if (_speechTimerId)
 			stopAnimTimer(_speechTimerId);
@@ -134,7 +134,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *m
 	--_speechCounter;
 	_speechDuration = 0;
 
-	if (!(_npcFlags & NPCFLAG_8)) {
+	if (!(_npcFlags & NPCFLAG_DOORBOT_IN_HOME)) {
 		CNPCPlayTalkingAnimationMsg msg1(0, 2, nullptr);
 		msg1.execute(this);
 		CNPCQueueIdleAnimMsg msg2;
