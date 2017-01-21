@@ -85,8 +85,8 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	parlemoiNormalFlag = false;
 	_closeCharacterDialog = false;
 	dword_30B04 = 0;
-	lastPhrasesFile = 0;
-	dialogSkipFlags = 0;
+	_lastPhrasesFile = 0;
+	_dialogSkipFlags = 0;
 	_voiceSamplesBuffer = nullptr;
 	_needToFade = false;
 	_mainBankBuf = nullptr;
@@ -707,7 +707,6 @@ void EdenGame::actionChoose() {
 
 // Original name: dinaparle
 void EdenGame::handleDinaDialog() {
-	int16 num;
 	perso_t *perso = &kPersons[PER_DINA];
 	if (perso->_partyMask & (_globals->_party | _globals->_partyOutside)) {
 		if (_globals->_frescoNumber < 3)
@@ -719,7 +718,7 @@ void EdenGame::handleDinaDialog() {
 				incPhase();
 			_globals->_characterPtr = perso;
 			_globals->_dialogType = DialogType::dtInspect;
-			num = (perso->_id << 3) | DialogType::dtInspect; //TODO: combine
+			int16 num = (perso->_id << 3) | DialogType::dtInspect; //TODO: combine
 			bool res = dialoscansvmas((Dialog *)getElem(_gameDialogs, num));
 			_frescoTalk = false;
 			if (res) {
@@ -936,11 +935,10 @@ void EdenGame::actionGotoFullNest() {
 // Original name: gotoval
 void EdenGame::actionGotoVal() {
 	uint16 target = _globals->_roomNum;
-	char obj;
 	rundcurs();
 	display();
 	_scrollPos = 0;
-	obj = _curSpot2->_objectId - 14;    //TODO
+	char obj = _curSpot2->_objectId - 14;    //TODO
 	_globals->_prevLocation = target & 0xFF;
 	deplaval((target & 0xFF00) | obj);  //TODO careful!
 }
@@ -2882,9 +2880,9 @@ void EdenGame::my_bulle() {
 	_globals->_textWidthLimit = _subtitlesXWidth;
 	byte *textPtr = getPhrase(_globals->_textNum);
 	_numTextLines = 0;
-	int16 words_on_line = 0;
-	int16 word_width = 0;
-	int16 line_width = 0;
+	int16 wordsOnLine = 0;
+	int16 wordWidth = 0;
+	int16 lineWidth = 0;
 	byte c;
 	while ((c = *textPtr++) != 0xFF) {
 		if (c == 0x11 || c == 0x13) {
@@ -2936,33 +2934,33 @@ void EdenGame::my_bulle() {
 			if (c == ' ')
 				width = _spaceWidth;
 #endif
-			word_width += width;
-			line_width += width;
-			int16 overrun = line_width - _globals->_textWidthLimit;
+			wordWidth += width;
+			lineWidth += width;
+			int16 overrun = lineWidth - _globals->_textWidthLimit;
 			if (overrun > 0) {
 				_numTextLines++;
 				if (c != ' ') {
-					*linesp++ = words_on_line;
-					*linesp++ = word_width + _spaceWidth - overrun;
-					line_width = word_width;
+					*linesp++ = wordsOnLine;
+					*linesp++ = wordWidth + _spaceWidth - overrun;
+					lineWidth = wordWidth;
 				} else {
-					*linesp++ = words_on_line + 1;
+					*linesp++ = wordsOnLine + 1;
 					*linesp++ = _spaceWidth - overrun;   //TODO: checkme
-					line_width = 0;
+					lineWidth = 0;
 				}
-				word_width = 0;
-				words_on_line = 0;
+				wordWidth = 0;
+				wordsOnLine = 0;
 			} else {
 				if (c == ' ') {
-					words_on_line++;
-					word_width = 0;
+					wordsOnLine++;
+					wordWidth = 0;
 				}
 			}
 		}
 	}
 	_numTextLines++;
-	*linesp++ = words_on_line + 1;
-	*linesp++ = word_width;
+	*linesp++ = wordsOnLine + 1;
+	*linesp++ = wordWidth;
 	*sentencePtr = c;
 	if (_globals->_textBankIndex == 2 && _globals->_textNum == 101 && _globals->_prefLanguage == 1)
 		patchSentence();
@@ -3280,7 +3278,7 @@ void EdenGame::initCharacterPointers(perso_t *perso) {
 	_globals->_metPersonsMask2 |= perso->_partyMask;
 	_globals->_nextDialogPtr = nullptr;
 	_closeCharacterDialog = false;
-	dialogSkipFlags = DialogFlags::dfSpoken;
+	_dialogSkipFlags = DialogFlags::dfSpoken;
 	_globals->_var60 = 0;
 	_globals->_textToken1 = 0;
 }
@@ -3894,9 +3892,9 @@ void EdenGame::checkPhraseFile() {
 	_globals->_textBankIndex = num;
 	if (_globals->_prefLanguage)
 		num += (_globals->_prefLanguage - 1) * 3;
-	if (num == lastPhrasesFile)
+	if (num == _lastPhrasesFile)
 		return;
-	lastPhrasesFile = num;
+	_lastPhrasesFile = num;
 	num += 404;
 	loadRawFile(num, _gamePhrases);
 	verifh(_gamePhrases);
@@ -4004,7 +4002,7 @@ bool EdenGame::dial_scan(Dialog *dial) {
 				if (testCondition(((hidx << 8) | lidx) & 0x7FF))
 					break;
 			} else {
-				if (flags & dialogSkipFlags)
+				if (flags & _dialogSkipFlags)
 					continue;
 				hidx = (_globals->_dialogPtr->_textCondHiMask >> 6) & 3;
 				lidx = _globals->_dialogPtr->_condNumLow;
@@ -4078,10 +4076,10 @@ bool EdenGame::dial_scan(Dialog *dial) {
 }
 
 bool EdenGame::dialoscansvmas(Dialog *dial) {
-	byte oldFlag = dialogSkipFlags;
-	dialogSkipFlags = DialogFlags::df20;
+	byte oldFlag = _dialogSkipFlags;
+	_dialogSkipFlags = DialogFlags::df20;
 	bool res = dial_scan(dial);
-	dialogSkipFlags = oldFlag;
+	_dialogSkipFlags = oldFlag;
 	return res;
 }
 

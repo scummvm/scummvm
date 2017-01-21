@@ -602,8 +602,8 @@ private:
 	bool _closeCharacterDialog;
 	int             dword_30B04;
 
-	char            lastPhrasesFile;
-	byte dialogSkipFlags;
+	char            _lastPhrasesFile;
+	byte _dialogSkipFlags;
 
 	color3_t        newColor;
 	color_t         oldPalette[256];    // TODO palette_t ?
