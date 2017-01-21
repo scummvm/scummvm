@@ -80,9 +80,9 @@ bool CParrotLobbyLinkUpdater::ActMsg(CActMsg *msg) {
 	if (isEquals("ParrotLobbyUpdater_TOW")) {
 		entriesP = &_entries[4];
 	} else {
-		if (node->_nodeNumber > 3)
+		if (node->_nodeNumber < 1 || node->_nodeNumber > 4)
 			return true;
-		entriesP = &_entries[node->_nodeNumber];
+		entriesP = &_entries[node->_nodeNumber - 1];
 	}
 	int count = entriesP->size();
 
