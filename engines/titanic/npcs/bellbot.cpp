@@ -62,7 +62,7 @@ void CBellBot::load(SimpleFile *file) {
 
 bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	if (msg->_value == 1) {
-		_npcFlags |= NPCFLAG_40000;
+		_npcFlags |= NPCFLAG_MOVE_LOOP;
 	} else {
 		static const char *const ROOM_WAVES[8][2] = {
 			{ "EmbLobby",  "z#193.wav" },
@@ -86,7 +86,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 			playSound("z#147.wav");
 
 		sleep(2000);
-		_npcFlags &= ~NPCFLAG_40000;
+		_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 	}
 
 	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -114,9 +114,9 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 		setPosition(Point(80, 10));
 		loadFrame(543);
 		_npcFlags |= NPCFLAG_START_IDLING;
-		if (_npcFlags & NPCFLAG_40000) {
+		if (_npcFlags & NPCFLAG_MOVE_LOOP) {
 			startTalking(this, 157);
-			_npcFlags &= ~NPCFLAG_40000;
+			_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 		}
 
 		setTalking(this, true);
@@ -125,7 +125,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 		CPutBotBackInHisBoxMsg boxMsg;
 		boxMsg.execute(this);
 
-		if (_npcFlags & NPCFLAG_20000)
+		if (_npcFlags & NPCFLAG_MOVE_START)
 			startAnimTimer("SummonDoorbot", 1500);
 	} else {
 		CTrueTalkNPC::MovieEndMsg(msg);
@@ -167,7 +167,7 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	}
 
 	case 5:
-		_npcFlags &= ~NPCFLAG_20000;
+		_npcFlags &= ~NPCFLAG_MOVE_START;
 		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		movieEvent();
 		break;
@@ -246,7 +246,7 @@ bool CBellBot::TimerMsg(CTimerMsg *msg) {
 			botMsg.execute(room);
 		}
 
-		_npcFlags &= ~NPCFLAG_20000;
+		_npcFlags &= ~NPCFLAG_MOVE_START;
 	} else {
 		CTrueTalkNPC::TimerMsg(msg);
 	}
