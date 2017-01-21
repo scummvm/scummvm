@@ -273,79 +273,77 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 
 			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
 			CTrueTalkNPC::MovieEndMsg(msg);
-		} else {
-			if (_npcFlags & NPCFLAG_1000000) {
-				Point pt = getMousePos();
-				if (pt.x > 70 || pt.y < 90 || pt.y > 280) {
-					stopMovie();
-					loadFrame(0);
-					_npcFlags &= ~NPCFLAG_1000000;
-				}
-
-				if (clipExistsByEnd("Walk Left Loop", msg->_endFrame)) {
-					playClip("Lean Over To Chicken", MOVIE_NOTIFY_OBJECT);
-					setPosition(Point(_bounds.left - 55, _bounds.top));
-					_field130 = (-100 - _bounds.left) / 5;
-					movieEvent(261);
-					movieEvent(262);
-					movieEvent(265);
-					movieEvent(268);
-					movieEvent(271);
-					return true;
-
-				} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
-					// Leaning left out of cage to eat the chicken
-					playClip("Eat Chicken");
-					playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
-					_eatingChicken = true;
-
-					CStatusChangeMsg statusMsg;
-					statusMsg._newStatus = 0;
-					statusMsg.execute("PerchCoreHolder");
-
-					CTrueTalkTriggerActionMsg actionMsg;
-					actionMsg._param1 = 280266;
-					actionMsg._param2 = 1;
-					actionMsg.execute(this);
-
-					CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
-					if (chicken) {
-						CActMsg actMsg("Eaten");
-						actMsg.execute(chicken);
-					}
-
-					_npcFlags &= ~NPCFLAG_1000000;
-					return true;
-				}
-			}
-
-			if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
-				// Parrot has finished eating Chicken
-				_eatingChicken = false;
-
-				CStatusChangeMsg statusMsg;
-				statusMsg._newStatus = 1;
-				statusMsg.execute("PerchCoreHolder");
-
-				if (_takeOff) {
-					// Perch has been taken, so take off
-					loadMovie("z168.avi", false);
-					playClip("Take Off", MOVIE_NOTIFY_OBJECT);
-					setPosition(Point(20, 10));
-					_npcFlags |= NPCFLAG_TAKE_OFF;
-				} else {
-					// Resetting back to standing
-					_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
-						| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
-					_npcFlags |= NPCFLAG_MOVE_END;
-					stopMovie();
-					loadFrame(0);
-					setPosition(Point(-90, _bounds.top));
-				}
-			} else {
-				CTrueTalkNPC::MovieEndMsg(msg);
-			}
 		}
+	} else if (_npcFlags & NPCFLAG_CHICKEN_OUTSIDE_CAGE) {
+		Point pt = getMousePos();
+		if (pt.x > 70 || pt.y < 90 || pt.y > 280) {
+			stopMovie();
+			loadFrame(0);
+			_npcFlags &= ~NPCFLAG_CHICKEN_OUTSIDE_CAGE;
+		}
+
+		if (clipExistsByEnd("Walk Left Loop", msg->_endFrame)) {
+			playClip("Lean Over To Chicken", MOVIE_NOTIFY_OBJECT);
+			setPosition(Point(_bounds.left - 55, _bounds.top));
+			_field130 = (-100 - _bounds.left) / 5;
+			movieEvent(261);
+			movieEvent(262);
+			movieEvent(265);
+			movieEvent(268);
+			movieEvent(271);
+			return true;
+
+		} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
+			// Leaning left out of cage to eat the chicken
+			playClip("Eat Chicken");
+			playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
+			_eatingChicken = true;
+
+			CStatusChangeMsg statusMsg;
+			statusMsg._newStatus = 0;
+			statusMsg.execute("PerchCoreHolder");
+
+			CTrueTalkTriggerActionMsg actionMsg;
+			actionMsg._param1 = 280266;
+			actionMsg._param2 = 1;
+			actionMsg.execute(this);
+
+			CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
+			if (chicken) {
+				CActMsg actMsg("Eaten");
+				actMsg.execute(chicken);
+			}
+
+			_npcFlags &= ~NPCFLAG_CHICKEN_OUTSIDE_CAGE;
+			return true;
+		}
+	}
+
+	if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
+		// Parrot has finished eating Chicken
+		_eatingChicken = false;
+
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = 1;
+		statusMsg.execute("PerchCoreHolder");
+
+		if (_takeOff) {
+			// Perch has been taken, so take off
+			loadMovie("z168.avi", false);
+			playClip("Take Off", MOVIE_NOTIFY_OBJECT);
+			setPosition(Point(20, 10));
+			_npcFlags |= NPCFLAG_TAKE_OFF;
+		} else {
+			// Resetting back to standing
+			_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP
+				| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
+			_npcFlags |= NPCFLAG_MOVE_END;
+			stopMovie();
+			loadFrame(0);
+			setPosition(Point(-90, _bounds.top));
+		}
+	} else {
+		return CTrueTalkNPC::MovieEndMsg(msg);
 	}
 
 	return true;
@@ -606,7 +604,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		if (dragObject)
 			chickenFlag = dragObject && dragObject->isEquals("Chicken");
 
-		if (_npcFlags & NPCFLAG_1000000) {
+		if (_npcFlags & NPCFLAG_CHICKEN_OUTSIDE_CAGE) {
 			if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
 				stopMovie();
 				loadFrame(0);
@@ -657,21 +655,22 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 
 		if (action != 280266) {
 			if (pt.x < 75) {
-				_npcFlags |= NPCFLAG_1000000;
+				// Parrot needs to reach outside the cage
+				_npcFlags |= NPCFLAG_CHICKEN_OUTSIDE_CAGE;
 				playClip("Walk Left Intro", MOVIE_STOP_PREVIOUS);
 				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
 				movieEvent(236);
 				chickenFlag = false;
 			} else if ((pt.x - xp) > 15) {
-				_npcFlags |= NPCFLAG_800000;
+				_npcFlags |= NPCFLAG_PECKING;
 				playClip("Peck At Feet Right", MOVIE_NOTIFY_OBJECT);
 				movieEvent(170);
 			} else if ((xp - pt.x) > 15) {
-				_npcFlags |= NPCFLAG_800000;
+				_npcFlags |= NPCFLAG_PECKING;
 				playClip("Peck At Feet Left", MOVIE_NOTIFY_OBJECT);
 				movieEvent(142);
 			} else {
-				_npcFlags |= NPCFLAG_800000;
+				_npcFlags |= NPCFLAG_PECKING;
 				playClip("Peck At Feet", MOVIE_NOTIFY_OBJECT);
 				movieEvent(157);
 			}
@@ -688,14 +687,15 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CParrot::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (_npcFlags & NPCFLAG_800000) {
+	if (_npcFlags & NPCFLAG_PECKING) {
+		// Whoopsy, the Parrot got your chicken
 		CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
 		if (chicken) {
 			CActMsg actMsg("Eaten");
 			actMsg.execute(chicken);
 		}
 
-		_npcFlags &= ~NPCFLAG_800000;
+		_npcFlags &= ~NPCFLAG_PECKING;
 	}
 
 	switch (msg->_frameNumber) {
