@@ -2586,8 +2586,8 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	for (int16 ornamentIndex = 0; ornamentIndex <= currMap._wallOrnCount; ornamentIndex++) {
 		uint16 greenOrn = _currMapWallOrnIndices[ornamentIndex];
-		uint16 counter = k121_FirstWallOrn + greenOrn * 2; /* Each wall ornament has 2 graphics */
-		_currMapWallOrnInfo[ornamentIndex].nativeIndice = counter;
+		/* Each wall ornament has 2 graphics */
+		_currMapWallOrnInfo[ornamentIndex].nativeIndice = k121_FirstWallOrn + greenOrn * 2;
 		for (int16 ornamentCounter = 0; ornamentCounter < k3_AlcoveOrnCount; ornamentCounter++) {
 			if (greenOrn == g192_AlcoveOrnIndices[ornamentCounter]) {
 				_currMapAlcoveOrnIndices[alcoveCount++] = ornamentIndex;
@@ -2604,10 +2604,10 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 		byte *coords = _wallOrnamentCoordSets[_currMapWallOrnInfo[ornamentIndex].coordinateSet][0];
 
-		int16 asdfIndex = counter = kDMDerivedBitmapFirstWallOrnament + (ornamentIndex * 4);
-		for(asdfIndex += 4;
-			counter < asdfIndex;
-			coords += ((asdfIndex - counter) == 2) ? 18 * sizeof(byte) : 12 * sizeof(byte)) {
+		for (uint16 counter = kDMDerivedBitmapFirstWallOrnament + (ornamentIndex * 4),
+					index = counter + 4;
+			counter < index;
+			coords += ((index - counter) == 2) ? 18 : 12) {
 
 			releaseBlock(counter | 0x8000);
 			_derivedBitmapByteCount[counter++] = coords[4] * coords[5];
@@ -2625,20 +2625,19 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
-		uint16 nativeIndice = k303_FirstDoorOrn + ornIndice;
-		_currMapDoorOrnInfo[i].nativeIndice = nativeIndice;
+		_currMapDoorOrnInfo[i].nativeIndice = k303_FirstDoorOrn + ornIndice;
 		_currMapDoorOrnInfo[i].coordinateSet = doorOrnCoordIndices[ornIndice];
 
 		uint16 *coords = _doorOrnCoordSets[_currMapDoorOrnInfo[i].coordinateSet][0];
 
-		uint16 index = nativeIndice = kDMDerivedBitmapFirstDoorOrnamentD3 + i * 2;
-		for(index += 2; nativeIndice < index; coords += 6) {
+		for (uint16 nativeIndice = kDMDerivedBitmapFirstDoorOrnamentD3 + i * 2,
+					index = nativeIndice + 2; nativeIndice < index; coords += 6) {
 			releaseBlock(nativeIndice | 0x8000);
 			_derivedBitmapByteCount[nativeIndice++] = coords[4] * coords[5];
 		}
 	}
 
-	for(uint16 index = kDMDerivedBitmapFirstDoorButton, counter = 0; counter < k1_DoorButtonCount; counter++) {
+	for (uint16 index = kDMDerivedBitmapFirstDoorButton, counter = 0; counter < k1_DoorButtonCount; counter++) {
 		uint16 *coords = _doorButtonCoordSets[_doorButtonCoordSet[counter]][1];
 		_derivedBitmapByteCount[index++] = coords[4] * coords[5];
 		coords += 6;
