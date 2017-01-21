@@ -1230,9 +1230,9 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMaitreDBody, CMaitreDProdReceptor);
 	ADDFN(CMaitreDLegs, CMaitreDProdReceptor);
 	ADDFN(CMaitreDProdReceptor, CGameObject);
+	ADDFN(CParrotLobbyObject, CGameObject);
 	ADDFN(CParrotLobbyController, CParrotLobbyObject);
 	ADDFN(CParrotLobbyLinkUpdater, CParrotLobbyObject);
-	ADDFN(CParrotLobbyObject, CGameObject);
 	ADDFN(CParrotLobbyViewObject, CParrotLobbyObject);
 	ADDFN(CParrotLoser, CGameObject);
 	ADDFN(CParrotNutBowlActor, CGameObject);
