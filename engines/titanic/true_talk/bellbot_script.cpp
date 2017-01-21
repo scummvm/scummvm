@@ -173,15 +173,13 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 				addResponse(getDialogueId(201687));
 				applyResponse();
 				return 2;
-			}
-			else if (roomScript->_scriptId == 111) {
+			} else if (roomScript->_scriptId == 111) {
 				addResponse(getDialogueId(201687));
 				applyResponse();
 				CTrueTalkManager::triggerAction(17, 0);
 				CTrueTalkManager::setFlags(40, 1);
 				return 2;
-			}
-			else {
+			} else {
 				addResponse(getDialogueId(200710));
 				addResponse(getDialogueId(201334));
 				applyResponse();
