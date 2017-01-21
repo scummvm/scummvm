@@ -419,7 +419,6 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	data._ascent = (int)((float)src->_data._ascent * scale);
 	data._descent = (int)((float)src->_data._descent * scale);
 	data._leading = (int)((float)src->_data._leading * scale);
-	data._rowWords = (int)((float)src->_data._rowWords * scale);
 
 	data._family = src->_data._family;
 	data._size = src->_data._size;
@@ -438,14 +437,10 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 		newBitmapWidth += ((glyph->bitmapWidth + 7) / 8);
 	}
 
-	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
-		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &_data._defaultChar : &_data._glyphs[i];
+	data._rowWords = newBitmapWidth;
 
-		//glyph->bitmapOffset = bitmapOffsets[i];
-		//glyph->bitmapWidth = bitmapOffsets[i + 1] - bitmapOffsets[i];
-		glyph->width = (int)((float)src->_data._glyphs[i].width * scale);
-		glyph->kerningOffset = (int)((float)src->_data._glyphs[i].kerningOffset * scale);
-	}
+	uint16 bitImageSize = data._rowWords * _data._fRectHeight;
+	_data._bitImage = new byte[bitImageSize];
 
 #if 0
 	for (int i = 0; i < data.numCharacters; i++) {
