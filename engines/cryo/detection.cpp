@@ -103,6 +103,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Lost Eden DE PC version
+	{
+		"losteden",
+		0,
+		AD_ENTRY1s("EDEN.DAT", 0, 457719104),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Lost Eden Mac version
 	{
 		"losteden",
