@@ -16,3 +16,5 @@ E. Bogus hitbox in upper right corner of mirror screen (under mini-map)
 F. Wrong frescoes cursor on PC
 G. Junk on a valley entrance screen on PC
 H. On PC, no sound during first Mungo's dialogue, memory corruption after that
+I. Crackling sound in HNM videos (ex. Mac intro video)
+J. PC intro video is out of sync with background voice, crashes later

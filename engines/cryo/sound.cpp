@@ -27,7 +27,10 @@
 
 namespace Cryo {
 
-	CSoundChannel::CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo) : _mixer(mixer), _sampleRate(sampleRate), _stereo(stereo) {
+CSoundChannel::CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo, bool is16bits) : _mixer(mixer), _sampleRate(sampleRate), _stereo(stereo) {
+	_bufferFlags = is16bits ? (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS) : Audio::FLAG_UNSIGNED;
+	if (stereo)
+		_bufferFlags |= Audio::FLAG_STEREO;
 	_audioStream = nullptr;
 	_volumeLeft = _volumeRight = Audio::Mixer::kMaxChannelVolume;
 }
@@ -38,12 +41,19 @@ CSoundChannel::~CSoundChannel() {
 		delete _audioStream;
 }
 
-void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow) {
+void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, bool playQueue) {
 	if (playNow)
 		stop();
 	if (!_audioStream)
 		_audioStream = Audio::makeQueuingAudioStream(_sampleRate, _stereo);
-	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::NO, Audio::FLAG_UNSIGNED);
+	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::NO, _bufferFlags);
+	if (playNow || playQueue)
+		play();
+}
+
+void CSoundChannel::play() {
+	if (!_audioStream)
+		return;
 	if (!_mixer->isSoundHandleActive(_soundHandle)) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		applyVolumeChange();

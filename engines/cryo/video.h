@@ -23,6 +23,8 @@
 #ifndef CRYO_VIDEO_H
 #define CRYO_VIDEO_H
 
+#include "cryo/sound.h"
+
 namespace Cryo {
 
 class CryoEngine;
@@ -76,8 +78,7 @@ private:
 
 	void (*_customChunkHandler)(byte *buffer, int size, int16 id, char h6, char h7);
 
-	SoundChannel *_soundChannel;
-	SoundGroup *_soundGroup;
+	CSoundChannel *_soundChannel;
 
 public:
 	HnmPlayer(CryoEngine *vm);
@@ -86,7 +87,7 @@ public:
 	void closeSound();
 	void deallocMemory();
 	int getFrameNum();
-	SoundChannel *getSoundChannel();
+	CSoundChannel *getSoundChannel();
 	int16 getVersion();
 	bool nextElement();
 	void reset();
@@ -95,7 +96,7 @@ public:
 	void setFile(Common::File *file);
 	void setFinalBuffer(byte *buffer);
 	void setForceZero2Black(bool forceblack);
-	void setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
+	void setupSound(unsigned int rate, bool stereo, bool is16bits);
 	void setupTimer(float rate);
 	void waitLoop();
 };

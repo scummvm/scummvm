@@ -39,15 +39,19 @@ private:
 	Audio::SoundHandle _soundHandle;
 	unsigned int _sampleRate;
 	bool _stereo;
+	unsigned int _bufferFlags;
 
 	void applyVolumeChange();
 
 public:
-	CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo);
+	CSoundChannel(Audio::Mixer *mixer, unsigned int sampleRate, bool stereo, bool is16bits = false);
 	~CSoundChannel();
 
 	// Queue a new buffer, cancel any previously queued buffers if playNow is set
-	void queueBuffer(byte *buffer, unsigned int size, bool playNow = false);
+	void queueBuffer(byte *buffer, unsigned int size, bool playNow = false, bool playQueue = true);
+
+	// Play any queued buffers
+	void play();
 
 	// Stop playing and purge play queue
 	void stop();

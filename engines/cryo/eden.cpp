@@ -5776,7 +5776,7 @@ void EdenGame::run() {
 
 	word_378CE = 0;
 	CRYOLib_ManagersInit();
-	_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
+	_vm->_video->setupSound(11025, false, false);
 	_vm->_video->setForceZero2Black(true);
 	_vm->_video->setupTimer(12.5);
 	_voiceSound = new Sound(0, 11025 * 65536.0, 8, 0);
@@ -5885,7 +5885,7 @@ void EdenGame::intro() {
 		// Play intro videos in HQ
 		_hnmSoundChannel->stop();
 		_vm->_video->closeSound();
-		_vm->_video->setupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
+		_vm->_video->setupSound(22050, false, true);
 		_hnmSoundChannel = _vm->_video->getSoundChannel();
 		playHNM(2012);
 		playHNM(171);
@@ -5894,13 +5894,20 @@ void EdenGame::intro() {
 		playHNM(2001);
 		_hnmSoundChannel->stop();
 		_vm->_video->closeSound();
-		_vm->_video->setupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
+		_vm->_video->setupSound(11025, false, false);
 		_hnmSoundChannel = _vm->_video->getSoundChannel();
 	} else {
-		playHNM(98);	// Cryo logo
-		playHNM(171);	// Virgin logo
+		if (_vm->isDemo()) {
+			playHNM(171);	// Virgin logo
+			playHNM(98);	// Cryo logo
+		}
+		else {
+			playHNM(98);	// Cryo logo
+			playHNM(171);	// Virgin logo
+		}
 		CLBlitter_FillScreenView(0);
 		_specialTextMode = false;
+		startmusique(2);	// INTRO.MUS is played during intro video
 		playHNM(170);	// Intro video
 	}
 }

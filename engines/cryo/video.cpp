@@ -32,9 +32,8 @@ HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
 	_expectedFrameTime = 0.0;
 	_rate = 0.0;
 	_useSoundSync = false;
-	_useSound = false;
+	_useSound = true;
 	_soundChannel = nullptr;
-	_soundGroup = nullptr;
 	_prevRight = _prevLeft = 0;
 	_useAdpcm = false;
 	_customChunkHandler = nullptr;
@@ -89,6 +88,7 @@ void HnmPlayer::reset() {
 void HnmPlayer::init() {
 	_customChunkHandler = nullptr;
 	_preserveColor0 = false;
+	_useSound = true;
 }
 
 // Original name: CLHNM_SetForceZero2Black
@@ -112,9 +112,8 @@ void HnmPlayer::wantsSound(bool sound) {
 }
 
 // Original name: CLHNM_SetupSound
-void HnmPlayer::setupSound(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
-	_soundChannel = new SoundChannel(mode);
-	_soundGroup = new SoundGroup(_vm, numSounds, length, sampleSize, rate, mode);
+void HnmPlayer::setupSound(unsigned int rate, bool stereo, bool is16bits) {
+	_soundChannel = new CSoundChannel(_vm->_mixer, rate, stereo, is16bits);
 }
 
 // Original name: CLHNM_CloseSound
@@ -123,11 +122,6 @@ void HnmPlayer::closeSound() {
 		_soundChannel->stop();
 		delete(_soundChannel);
 		_soundChannel = nullptr;
-	}
-
-	if (_soundGroup) {
-		delete(_soundGroup);
-		_soundGroup = nullptr;
 	}
 }
 
@@ -484,8 +478,7 @@ bool HnmPlayer::nextElement() {
 			}
 
 			if (!_soundStarted) {
-				for (int16 i = 0; i < _pendingSounds; i++)
-					_soundGroup->playNextSample(_soundChannel);
+				_soundChannel->play();
 				_soundStarted = true;
 			}
 
@@ -510,12 +503,10 @@ bool HnmPlayer::nextElement() {
 				if (!h6) {
 					int sound_size = sz - 8;
 					if (!_useAdpcm) {
-						_soundGroup->setDatas(_dataPtr, sound_size - 2, false);
-						if (_soundStarted)
-							_soundGroup->playNextSample(_soundChannel);
-						else
-							_pendingSounds++;
+						_soundChannel->queueBuffer(_dataPtr, sound_size - 2, false, _soundStarted);
 					} else {
+#if 0
+						// Not used in Lost Eden
 						int16 *sound_buffer = (int16 *)_soundGroup->getNextBuffer();
 						if (!_pendingSounds) {
 							const int kDecompTableSize = 256 * sizeof(int16);
@@ -529,6 +520,7 @@ bool HnmPlayer::nextElement() {
 						_pendingSounds++;
 						if (_soundStarted)
 							_soundGroup->playNextSample(_soundChannel);
+#endif
 					}
 				} else
 					error("nextElement - unexpected flag");
@@ -545,7 +537,7 @@ bool HnmPlayer::nextElement() {
 }
 
 // Original name: CLHNM_GetSoundChannel
-SoundChannel *HnmPlayer::getSoundChannel() {
+CSoundChannel *HnmPlayer::getSoundChannel() {
 	return _soundChannel;
 }
 
