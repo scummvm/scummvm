@@ -61,7 +61,7 @@ public:
 	/**
 	 * Returns true if the item's name matches a passed name
 	 */
-	virtual bool isEquals(const CString &name, int maxLen = 0) const;
+	virtual bool isEquals(const CString &name, bool startsWith = false) const;
 
 	/**
 	 * Find a parent node for the item

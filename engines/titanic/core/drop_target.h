@@ -38,7 +38,7 @@ protected:
 	Point _pos1;
 	int _itemFrame;
 	CString _itemMatchName;
-	int _itemMatchSize;
+	bool _itemMatchStartsWith;
 	CString _soundName;
 	bool _showItem;
 	CString _itemName;

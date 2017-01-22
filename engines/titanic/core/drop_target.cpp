@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(CDropTarget, CGameObject)
 END_MESSAGE_MAP()
 
 CDropTarget::CDropTarget() : CGameObject(), _itemFrame(0),
-		_itemMatchSize(0), _showItem(false), _dropEnabled(false), _dropFrame(0),
+		_itemMatchStartsWith(false), _showItem(false), _dropEnabled(false), _dropFrame(0),
 		_dragFrame(0), _dragCursorId(CURSOR_ARROW), _dropCursorId(CURSOR_HAND),
 		_clipFlags(20) {
 }
@@ -44,7 +44,7 @@ void CDropTarget::save(SimpleFile *file, int indent) {
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_itemFrame, indent);
 	file->writeQuotedLine(_itemMatchName, indent);
-	file->writeNumberLine(_itemMatchSize, indent);
+	file->writeNumberLine(_itemMatchStartsWith, indent);
 	file->writeQuotedLine(_soundName, indent);
 	file->writeNumberLine(_showItem, indent);
 	file->writeQuotedLine(_itemName, indent);
@@ -64,7 +64,7 @@ void CDropTarget::load(SimpleFile *file) {
 	_pos1 = file->readPoint();
 	_itemFrame = file->readNumber();
 	_itemMatchName = file->readString();
-	_itemMatchSize = file->readNumber();
+	_itemMatchStartsWith = file->readNumber();
 	_soundName = file->readString();
 	_showItem = file->readNumber();
 	_itemName = file->readString();
@@ -87,7 +87,7 @@ bool CDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 		}
 	}
 
-	if (!msg->_item->isEquals(_itemMatchName, _itemMatchSize))
+	if (!msg->_item->isEquals(_itemMatchName, _itemMatchStartsWith))
 		return false;
 
 	msg->_item->detach();

@@ -103,7 +103,7 @@ bool CHose::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 		CHose *hose = dynamic_cast<CHose *>(findChildInstanceOf(CHose::_type));
 		if (hose) {
 			setVisible(true);
-			petAddToInventory();
+			hose->petAddToInventory();
 		}
 	}
 
