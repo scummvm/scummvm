@@ -66,7 +66,7 @@ protected:
 	int _offEndFrame;
 	int _okStartFrame;
 	int _okEndFrame;
-	int _field140;
+	RoomFlagsComparison _flagsComparison;
 	CGameObject *_mailP;
 	int _afterReceiveStartFrame;
 	int _afterReceiveEndFrame;

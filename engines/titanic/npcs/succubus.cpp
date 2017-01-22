@@ -67,7 +67,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_offEndFrame = 27;
 	_okStartFrame = 40;
 	_okEndFrame = 68;
-	_field140 = 1;
+	_flagsComparison = RFC_LOCATION;
 	_mailP = nullptr;
 	_afterReceiveStartFrame = 0;
 	_afterReceiveEndFrame = 0;
@@ -118,7 +118,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_offEndFrame, indent);
 	file->writeNumberLine(_okStartFrame, indent);
 	file->writeNumberLine(_okEndFrame, indent);
-	file->writeNumberLine(_field140, indent);
+	file->writeNumberLine(_flagsComparison, indent);
 
 	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_afterReceiveStartFrame, indent);
@@ -182,7 +182,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_offEndFrame = file->readNumber();
 	_okStartFrame = file->readNumber();
 	_okEndFrame = file->readNumber();
-	_field140 = file->readNumber();
+	_flagsComparison = (RoomFlagsComparison)file->readNumber();
 
 	_v2 = file->readNumber();
 	_afterReceiveStartFrame = file->readNumber();
@@ -491,7 +491,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		}
 	} else {
 		CGameObject *mailObject = findMailByFlags(
-			_v3 && compareRoomNameTo("Titania") ? 3 : _field140, petRoomFlags);
+			_v3 && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
 		if (!mailObject) {
 			// No mail for this SuccUBus
 			if (getRandomNumber(1) == 0) {
@@ -542,8 +542,8 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		if (pet && !mailExists(petRoomFlags)) {
 			CGameObject *mailObject = _v3 && compareRoomNameTo("Titania") ?
-				findMailByFlags(3, petRoomFlags) :
-				findMailByFlags(_field140, petRoomFlags);
+				findMailByFlags(RFC_TITANIA, petRoomFlags) :
+				findMailByFlags(_flagsComparison, petRoomFlags);
 
 			if (mailObject) {
 				switch (getRandomNumber(4)) {

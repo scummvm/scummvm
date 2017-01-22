@@ -41,6 +41,7 @@ namespace Titanic {
 
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
+enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
 
 class CDontSaveFileItem;
 class CMailMan;
@@ -337,7 +338,7 @@ protected:
 	/**
 	 * Find mail by room flags
 	 */
-	CGameObject *findMailByFlags(int mode, uint roomFlags);
+	CGameObject *findMailByFlags(RoomFlagsComparison compareType, uint roomFlags);
 
 	/**
 	 * Find next mail from a given prior one
@@ -712,7 +713,10 @@ public:
 	 */
 	CGameObject *getDraggingObject() const;
 
-	bool compareRoomFlags(int mode, uint flags1, uint flags2);
+	/**
+	 * Compares two sets of room flags together
+	 */
+	static bool compareRoomFlags(RoomFlagsComparison compareType, uint flags1, uint flags2);
 
 	/*--- Text display methods ---*/
 

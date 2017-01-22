@@ -960,14 +960,14 @@ CGameObject *CGameObject::getMailManNextObject(CGameObject *prior) const {
 	return mailMan ? mailMan->getNextObject(prior) : nullptr;
 }
 
-CGameObject *CGameObject::findMailByFlags(int mode, uint roomFlags) {
+CGameObject *CGameObject::findMailByFlags(RoomFlagsComparison compareType, uint roomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (!mailMan)
 		return nullptr;
 
 	for (CGameObject *obj = mailMan->getFirstObject(); obj;
 			obj = mailMan->getNextObject(obj)) {
-		if (compareRoomFlags(mode, roomFlags, obj->_roomFlags))
+		if (compareRoomFlags(compareType, roomFlags, obj->_roomFlags))
 			return obj;
 	}
 
@@ -1413,15 +1413,15 @@ Common::SeekableReadStream *CGameObject::getResource(const CString &name) {
 	return g_vm->_filesManager->getResource(name);
 }
 
-bool CGameObject::compareRoomFlags(int mode, uint flags1, uint flags2) {
-	switch (mode) {
-	case 1:
+bool CGameObject::compareRoomFlags(RoomFlagsComparison compareType, uint flags1, uint flags2) {
+	switch (compareType) {
+	case RFC_LOCATION:
 		return CRoomFlags::compareLocation(flags1, flags2);
 
-	case 2:
+	case RFC_CLASS_ELEVATOR:
 		return CRoomFlags::compareClassElevator(flags1, flags2);
 
-	case 3:
+	case RFC_TITANIA:
 		return CRoomFlags::isTitania(flags1, flags2);
 
 	default:
