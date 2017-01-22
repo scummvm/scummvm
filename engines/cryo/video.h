@@ -80,8 +80,6 @@ private:
 	SoundGroup *_soundGroup;
 
 public:
-	uint16 _curVideoNum;
-
 	HnmPlayer(CryoEngine *vm);
 
 	void allocMemory();

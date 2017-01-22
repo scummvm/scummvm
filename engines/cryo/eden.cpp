@@ -5178,6 +5178,7 @@ void EdenGame::initGlobals() {
 	_globals->_roomPersoItems = 0;
 	_globals->_roomCharacterPowers = 0;
 	_globals->_gameFlags = GameFlags::gfNone;
+	_globals->_curVideoNum = 0;
 	_globals->_morkusSpyVideoNum1 = 89;
 	_globals->_morkusSpyVideoNum2 = 88;
 	_globals->_morkusSpyVideoNum3 = 83;
@@ -6396,7 +6397,7 @@ void EdenGame::mouse() {
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
 	_vm->_video->readHeader();
-	if (_vm->_video->_curVideoNum == 92) {
+	if (_globals->_curVideoNum == 92) {
 		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		_hnmSoundChannel->setVolumeLeft(0);
 		_hnmSoundChannel->setVolumeRight(0);
@@ -6461,7 +6462,7 @@ void EdenGame::showMovie(char arg1) {
 void EdenGame::playHNM(int16 num) {
 	perso_t *perso = nullptr;
 	int16 oldDialogType = -1;
-	_vm->_video->_curVideoNum = num;
+	_globals->_curVideoNum = num;
 	if (num != 2001 && num != 2012 && num != 98 && num != 171) {
 		byte oldMusicType = _globals->_newMusicType;
 		_globals->_newMusicType = MusicType::mtEvent;
@@ -6501,15 +6502,15 @@ void EdenGame::playHNM(int16 num) {
 	}
 	if (_videoCanceledFlag)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->_curVideoNum == 167)
+	if (_globals->_curVideoNum == 167)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->_curVideoNum == 104)
+	if (_globals->_curVideoNum == 104)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->_curVideoNum == 102)
+	if (_globals->_curVideoNum == 102)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->_curVideoNum == 77)
+	if (_globals->_curVideoNum == 77)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
-	if (_vm->_video->_curVideoNum == 149)
+	if (_globals->_curVideoNum == 149)
 		_globals->_varF1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 }
 
@@ -6576,7 +6577,7 @@ void EdenGame::handleHNMSubtitles() {
 
 	uint16 *frames;
 	perso_t *perso;
-	switch (_vm->_video->_curVideoNum) {
+	switch (_globals->_curVideoNum) {
 	case 170:
 		frames = kFramesVid170;
 		perso = &kPersons[PER_UNKN_156];

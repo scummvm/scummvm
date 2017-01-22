@@ -610,6 +610,7 @@ struct global_t {
 	uint16  _roomPersoItems; //TODO: write-only?
 	uint16  _roomCharacterPowers;    //TODO: write-only?
 	uint16  _gameFlags;
+	uint16  _curVideoNum;
 	uint16  _morkusSpyVideoNum1; //TODO: pad?
 	uint16  _morkusSpyVideoNum2; //TODO: pad?
 	uint16  _morkusSpyVideoNum3; //TODO: pad?

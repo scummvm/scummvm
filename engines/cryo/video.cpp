@@ -25,7 +25,6 @@
 
 namespace Cryo {
 HnmPlayer::HnmPlayer(CryoEngine *vm) : _vm(vm) {
-	_curVideoNum = 0;
 	_soundStarted = false;
 	_pendingSounds = 0;
 	_timeDrift = 0.0;
