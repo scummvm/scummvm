@@ -169,17 +169,21 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			|| sentence->localWord("smash") || sentence->localWord("destroy")
 			|| sentence->localWord("toss") || sentence->localWord("put")
 			|| sentence->localWord("pitch") || sentence->localWord("heft")) {
+			// You've instructed the Bellbot to go all Pete Townshend on a TV
 			if (getValue(40) == 1) {
+				// Won't smash
 				addResponse(getDialogueId(201687));
 				applyResponse();
 				return 2;
 			} else if (roomScript->_scriptId == 111) {
-				addResponse(getDialogueId(201687));
+				// Within the Parrot Lobby
+				addResponse(getDialogueId(200914));
 				applyResponse();
 				CTrueTalkManager::triggerAction(17, 0);
 				CTrueTalkManager::setFlags(40, 1);
 				return 2;
 			} else {
+				// In any other room other than the Parrot Lobby
 				addResponse(getDialogueId(200710));
 				addResponse(getDialogueId(201334));
 				applyResponse();
