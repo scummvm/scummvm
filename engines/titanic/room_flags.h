@@ -223,7 +223,10 @@ public:
 	 */
 	static PassengerClass whatPassengerClass(int floorNum);
 
-	bool not5() const { return getConditionally() != 5; }
+	/**
+	 * Returns true if it's a location with a SuccUBus terminal
+	 */
+	bool isSuccUBusDest() const { return getConditionally() != 5; }
 
 	/**
 	 * Returns true if the player is in their 1st class stateroom

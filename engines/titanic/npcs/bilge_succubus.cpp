@@ -119,8 +119,8 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	_sendLost = false;
 	_mailP = mailObject;
 
-	uint roomFlags = _roomFlags;
-	if (!pet->isSuccUBusDest(roomFlags) || pet->getMailDestClass(roomFlags) < getPassengerClass()) {
+	uint roomFlags = _destRoomFlags;
+	if (!pet->isSuccUBusDest(roomFlags) || getPassengerClass() > pet->getMailDestClass(roomFlags)) {
 		roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
 		_sendLost = true;
 	}
@@ -208,15 +208,15 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		} else if (msg->_endFrame == _sendEndFrame) {
 			switch (_sendAction) {
-			case 1:
-				stopSound(_soundHandle);
-				_soundHandle = playSound("z#3.wav");
+			case SA_EATEN:
+				stopSound(_soundHandle, 1);
+				_soundHandle = playSound("z#3.wav", 1);
 				break;
-			case 2:
+			case SA_BILGE_FEATHERS:
 				stopSound(_soundHandle);
 				_soundHandle = playSound("z#12.wav");
 				break;
-			case 3:
+			case SA_BILGE_SENT:
 				if (_isChicken) {
 					startTalking(this, 230018);
 					_isChicken = false;
@@ -224,7 +224,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 					startTalking(this, 230013);
 				}
 				break;
-			case 4:
+			case SA_BILGE_EATEN:
 				startTalking(this, 230017);
 				break;
 			default:

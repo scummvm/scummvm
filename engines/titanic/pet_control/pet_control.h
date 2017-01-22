@@ -530,7 +530,7 @@ public:
 	 * Returns whether the given room flags specify a location with a SuccUBus
 	 */
 	bool isSuccUBusDest(uint roomFlags) {
-		return CRoomFlags(roomFlags).not5();
+		return CRoomFlags(roomFlags).isSuccUBusDest();
 	}
 
 	/**
