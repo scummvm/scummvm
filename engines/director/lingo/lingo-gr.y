@@ -333,9 +333,9 @@ elseifstmtoneliner1:	elseif cond tTHEN begin stmt end {
 	;
 
 elseifstmt1: elseifstmtoneliner
-	| elseif cond tTHEN stmtlist end {
+	| elseif cond tTHEN begin stmtlist end {
 		inst then = 0;
-		WRITE_UINT32(&then, $4);
+		WRITE_UINT32(&then, $5);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel($1); }
