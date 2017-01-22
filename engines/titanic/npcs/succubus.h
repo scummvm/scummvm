@@ -52,10 +52,10 @@ protected:
 	static int _v3;
 	static int _v4;
 protected:
-	int _startFrame8;
-	int _endFrame8;
-	int _startFrame11;
-	int _endFrame11;
+	int _initialStartFrame;
+	int _initialEndFrame;
+	int _endingStartFrame;
+	int _endingEndFrame;
 	int _sendStartFrame;
 	int _sendEndFrame;
 	int _receiveStartFrame;

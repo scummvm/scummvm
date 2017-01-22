@@ -184,7 +184,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		if (_offStartFrame >= 0)
 			playSound("z#27.wav");
 	} else if (msg->_endFrame == _offEndFrame) {
-		if (_startFrame11 >= 0)
+		if (_endingStartFrame >= 0)
 			playSound("z#30.wav");
 	} else {
 		if (msg->_endFrame == _onEndFrame && pet) {
@@ -378,8 +378,8 @@ bool CBilgeSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 	petSetRemoteTarget();
 	_mailP = nullptr;
 
-	if (_startFrame8 >= 0)
-		loadFrame(_startFrame8);
+	if (_initialStartFrame >= 0)
+		loadFrame(_initialStartFrame);
 
 	return true;
 }
