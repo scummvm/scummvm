@@ -49,11 +49,9 @@ class CSuccUBus : public CTrueTalkNPC {
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 protected:
+	static bool _isOn;
+	static bool _style;
 	static bool _enabled;
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static int _v4;
 protected:
 	int _initialStartFrame;
 	int _initialEndFrame;
@@ -76,17 +74,14 @@ protected:
 	int _trayOutStartFrame;
 	int _trayOutEndFrame;
 	SuccUBusAction _sendAction;
-	bool _field15C;
-	CString _string2;
+	bool _signalFlag;
+	CString _signalTarget;
 	int _startFrame1;
 	int _endFrame1;
 	Rect _rect1;
 	int _field184;
 	int _field188;
 	Rect _rect2;
-	int _field190;
-	int _field194;
-	int _field198;
 	bool _sendLost;
 	int _soundHandle;
 	bool _isChicken;

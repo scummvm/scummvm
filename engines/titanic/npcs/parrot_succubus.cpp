@@ -75,8 +75,8 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 		pumpingMsg.execute(this);
 		_hoseConnected = true;
 
-		if (_enabled) {
-			_enabled = false;
+		if (_isOn) {
+			_isOn = false;
 		} else {
 			playMovie(_onStartFrame, _onEndFrame, 0);
 			playSound("z#26.wav");
@@ -97,7 +97,7 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 			obj->setVisible(true);
 		}
 
-		_enabled = true;
+		_isOn = true;
 		CTurnOff offMsg;
 		offMsg.execute(this);
 	}

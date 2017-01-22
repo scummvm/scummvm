@@ -46,11 +46,9 @@ BEGIN_MESSAGE_MAP(CSuccUBus, CTrueTalkNPC)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
+bool CSuccUBus::_isOn;
+bool CSuccUBus::_style;
 bool CSuccUBus::_enabled;
-int CSuccUBus::_v1;
-int CSuccUBus::_v2;
-int CSuccUBus::_v3;
-int CSuccUBus::_v4;
 
 CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_initialStartFrame = -1;
@@ -74,8 +72,8 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_trayOutStartFrame = 224;
 	_trayOutEndFrame = 248;
 	_sendAction = SA_SENT;
-	_field15C = 0;
-	_string2 = "NULL";
+	_signalFlag = false;
+	_signalTarget = "NULL";
 	_startFrame1 = 28;
 	_endFrame1 = 40;
 	_rect1 = Rect(82, 284, 148, 339);
@@ -103,7 +101,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 
-	file->writeNumberLine(_enabled, indent);
+	file->writeNumberLine(_isOn, indent);
 	file->writeNumberLine(_initialStartFrame, indent);
 	file->writeNumberLine(_initialEndFrame, indent);
 	file->writeNumberLine(_endingStartFrame, indent);
@@ -120,15 +118,14 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_okEndFrame, indent);
 	file->writeNumberLine(_flagsComparison, indent);
 
-	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_style, indent);
 	file->writeNumberLine(_afterReceiveStartFrame, indent);
 	file->writeNumberLine(_afterReceiveEndFrame, indent);
 	file->writeNumberLine(_trayOutStartFrame, indent);
 	file->writeNumberLine(_trayOutEndFrame, indent);
 	file->writeNumberLine(_sendAction, indent);
-	file->writeNumberLine(_field15C, indent);
-
-	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_signalFlag, indent);
+	file->writeQuotedLine(_signalTarget, indent);
 	file->writeNumberLine(_startFrame1, indent);
 	file->writeNumberLine(_endFrame1, indent);
 	file->writeNumberLine(_rect1.left, indent);
@@ -157,7 +154,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_pumpingEndFrame, indent);
 	file->writeNumberLine(_destRoomFlags, indent);
 
-	file->writeNumberLine(_v3, indent);
+	file->writeNumberLine(_enabled, indent);
 	file->writeNumberLine(_inProgress, indent);
 	file->writeNumberLine(_field104, indent);
 
@@ -167,7 +164,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 void CSuccUBus::load(SimpleFile *file) {
 	file->readNumber();
 
-	_enabled = file->readNumber();
+	_isOn = file->readNumber();
 	_initialStartFrame = file->readNumber();
 	_initialEndFrame = file->readNumber();
 	_endingStartFrame = file->readNumber();
@@ -184,15 +181,15 @@ void CSuccUBus::load(SimpleFile *file) {
 	_okEndFrame = file->readNumber();
 	_flagsComparison = (RoomFlagsComparison)file->readNumber();
 
-	_v2 = file->readNumber();
+	_style = file->readNumber();
 	_afterReceiveStartFrame = file->readNumber();
 	_afterReceiveEndFrame = file->readNumber();
 	_trayOutStartFrame = file->readNumber();
 	_trayOutEndFrame = file->readNumber();
 	_sendAction = (SuccUBusAction)file->readNumber();
-	_field15C = file->readNumber();
+	_signalFlag = file->readNumber();
 
-	_string2 = file->readString();
+	_signalTarget = file->readString();
 	_startFrame1 = file->readNumber();
 	_endFrame1 = file->readNumber();
 	_rect1.left = file->readNumber();
@@ -221,7 +218,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_pumpingEndFrame = file->readNumber();
 	_destRoomFlags = file->readNumber();
 
-	_v3 = file->readNumber();
+	_enabled = file->readNumber();
 	_inProgress = file->readNumber();
 	_field104 = file->readNumber();
 
@@ -233,12 +230,12 @@ bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		Rect tempRect = _rect1;
 		tempRect.translate(_bounds.left, _bounds.top);
 
-		if (!_enabled || (_field188 && tempRect.contains(msg->_mousePos))) {
+		if (!_isOn || (_field188 && tempRect.contains(msg->_mousePos))) {
 			CTurnOn onMsg;
 			onMsg.execute(this);
-			_enabled = true;
+			_isOn = true;
 		} else if (getRandomNumber(256) < 130) {
-			_enabled = false;
+			_isOn = false;
 			CTurnOff offMsg;
 			offMsg.execute(this);
 		} else {
@@ -271,7 +268,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	tempRect.translate(_bounds.left, _bounds.top);
 	uint roomFlags = pet ? pet->getRoomFlags() : 0;
 
-	if (!_enabled || !pet || !item || !tempRect.contains(item->getControid())) {
+	if (!_isOn || !pet || !item || !tempRect.contains(item->getControid())) {
 		item->petAddToInventory();
 	} else if (mailExists(roomFlags)) {
 		petDisplayMessage(SUCCUBUS_DESCRIPTION);
@@ -350,7 +347,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	petDisplayMessage(2, BLANK);
 	if (_initialStartFrame >= 0)
 		loadFrame(_initialStartFrame);
-	else if (!_field15C && _onStartFrame >= 0)
+	else if (!_signalFlag && _onStartFrame >= 0)
 		loadFrame(_onStartFrame);
 
 	petClear();
@@ -359,12 +356,12 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 		_soundHandle = -1;
 	}
 
-	if (_enabled) {
-		_enabled = false;
+	if (_isOn) {
+		_isOn = false;
 		if (_offStartFrame >= 0)
 			playSound("z#27.wav", 100);
 
-		if (_field15C)
+		if (_signalFlag)
 			setVisible(false);
 	}
 
@@ -379,7 +376,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	if (_inProgress)
 		return true;
 
-	if (!_enabled) {
+	if (!_isOn) {
 		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
@@ -468,7 +465,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 	if (_inProgress || !pet)
 		return true;
-	if (!_enabled) {
+	if (!_isOn) {
 		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
@@ -491,7 +488,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		}
 	} else {
 		CGameObject *mailObject = findMailByFlags(
-			_v3 && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+			_enabled && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
 		if (!mailObject) {
 			// No mail for this SuccUBus
 			if (getRandomNumber(1) == 0) {
@@ -528,12 +525,12 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		if (_endingStartFrame >= 0)
 			playSound("z#30.wav", 100);
 
-		if (_field15C) {
-			_field15C = false;
+		if (_signalFlag) {
+			_signalFlag = false;
 			setVisible(false);
 			CSignalObject signalMsg;
 			signalMsg._numValue = 1;
-			signalMsg.execute(_string2);
+			signalMsg.execute(_signalTarget);
 		}
 	}
 
@@ -541,7 +538,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		bool flag = false;
 
 		if (pet && !mailExists(petRoomFlags)) {
-			CGameObject *mailObject = _v3 && compareRoomNameTo("Titania") ?
+			CGameObject *mailObject = _enabled && compareRoomNameTo("Titania") ?
 				findMailByFlags(RFC_TITANIA, petRoomFlags) :
 				findMailByFlags(_flagsComparison, petRoomFlags);
 
@@ -573,7 +570,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
-			switch (getRandomNumber(_v2 ? 7 : 5, &_priorRandomVal2)) {
+			switch (getRandomNumber(_style ? 7 : 5, &_priorRandomVal2)) {
 			case 2:
 				startTalking(this, 230001, findView());
 				break;
@@ -644,15 +641,15 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CSuccUBus::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	if (msg->_stateNum == 1)
-		msg->_stateVal = _enabled;
+		msg->_stateVal = _isOn;
 
 	return true;
 }
 
 bool CSuccUBus::SignalObject(CSignalObject *msg) {
 	if (msg->_numValue == 1) {
-		_string2 = msg->_strValue;
-		_field15C = 1;
+		_signalTarget = msg->_strValue;
+		_signalFlag = true;
 		setVisible(true);
 		CTurnOn onMsg;
 		onMsg.execute(this);
@@ -669,7 +666,7 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 
 	CPetControl *pet = getPetControl();
 	if (pet) {
-		if (!_field15C && _initialStartFrame >= 0) {
+		if (!_signalFlag && _initialStartFrame >= 0) {
 			playMovie(_initialStartFrame, _initialEndFrame, 0);
 			playSound("z#30.wav", 100);
 		}
@@ -684,7 +681,7 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 			// Mail canister present
 			playMovie(_endFrame1, _endFrame1, 0);
 
-		_enabled = true;
+		_isOn = true;
 		CSUBTransition transMsg;
 		transMsg.execute(this);
 
@@ -707,10 +704,10 @@ bool CSuccUBus::TurnOff(CTurnOff *msg) {
 		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	}
 
-	if (!_field15C && _endingStartFrame >= 0)
+	if (!_signalFlag && _endingStartFrame >= 0)
 		playMovie(_endingStartFrame, _endingEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 
-	_enabled = false;
+	_isOn = false;
 	performAction(true);
 	CSUBTransition transMsg;
 	transMsg.execute(this);
@@ -724,7 +721,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 	if (pet) {
 		uint petRoomFlags = pet->getRoomFlags();
 
-		if (_enabled) {
+		if (_isOn) {
 			CGameObject *mailObject = findMail(petRoomFlags);
 			if (mailObject)
 				pet->phonographAction("Send");
@@ -742,7 +739,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 }
 
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
-	if (_enabled) {
+	if (_isOn) {
 		_destRoomFlags = msg->_roomFlags;
 		playSound("z#98.wav", 100);
 	}
@@ -752,9 +749,9 @@ bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 
 bool CSuccUBus::ActMsg(CActMsg *msg) {
 	if (msg->_action == "EnableObject")
-		_v3 = 1;
+		_enabled = true;
 	else if (msg->_action == "DisableObject")
-		_v3 = 0;
+		_enabled = false;
 
 	return true;
 }
@@ -764,7 +761,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	Rect tempRect = _rect1;
 	tempRect.translate(_bounds.left, _bounds.top);
 
-	if (_inProgress || !_enabled || !_field188 || !tempRect.contains(msg->_mousePos)
+	if (_inProgress || !_isOn || !_field188 || !tempRect.contains(msg->_mousePos)
 			|| !pet)
 		return true;
 
