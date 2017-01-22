@@ -73,7 +73,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_afterReceiveEndFrame = 0;
 	_trayOutStartFrame = 224;
 	_trayOutEndFrame = 248;
-	_field158 = 0;
+	_sendAction = SA_SENT;
 	_field15C = 0;
 	_string2 = "NULL";
 	_startFrame1 = 28;
@@ -125,7 +125,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_afterReceiveEndFrame, indent);
 	file->writeNumberLine(_trayOutStartFrame, indent);
 	file->writeNumberLine(_trayOutEndFrame, indent);
-	file->writeNumberLine(_field158, indent);
+	file->writeNumberLine(_sendAction, indent);
 	file->writeNumberLine(_field15C, indent);
 
 	file->writeQuotedLine(_string2, indent);
@@ -189,7 +189,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_afterReceiveEndFrame = file->readNumber();
 	_trayOutStartFrame = file->readNumber();
 	_trayOutEndFrame = file->readNumber();
-	_field158 = file->readNumber();
+	_sendAction = (SuccUBusAction)file->readNumber();
 	_field15C = file->readNumber();
 
 	_string2 = file->readString();
@@ -307,7 +307,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 			if (_sendStartFrame >= 0) {
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
-				_field158 = 2;
+				_sendAction = SA_EATEN;
 			}
 
 			// WORKAROUND: The original had code below to return the chicken
@@ -417,7 +417,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 		_isFeathers = mailObject->getName() == "Feathers";
 		_isChicken = mailObject->getName() == "Chicken";
-		_field158 = 0;
+		_sendAction = SA_SENT;
 		_field188 = 0;
 		_inProgress = true;
 		incTransitions();
@@ -433,7 +433,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				startTalking(this, 230022, findView());
 			}
 
-			_field158 = 1;
+			_sendAction = SA_FEATHERS;
 			if (_sendStartFrame >= 0)
 				playMovie(_sendStartFrame, _sendEndFrame, 0);
 
@@ -509,7 +509,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			startTalking(this, 230004, findView());
 
 			if (_receiveStartFrame >= 0) {
-				_field158 = 1;
+				_sendAction = SA_FEATHERS;
 				_inProgress = true;
 				incTransitions();
 				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
@@ -599,9 +599,9 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _sendEndFrame) {
-		if (_field158 == 1) {
+		if (_sendAction == SA_FEATHERS) {
 			startTalking(this, 230022, findView());
-		} else if (_field158 == 2) {
+		} else if (_sendAction == SA_EATEN) {
 			startTalking(this, 230017, findView());
 		} else if (_sendLost) {
 			startTalking(this, 230019, findView());

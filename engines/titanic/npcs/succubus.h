@@ -28,6 +28,9 @@
 
 namespace Titanic {
 
+enum SuccUBusAction { SA_SENT = 0, SA_FEATHERS = 1, SA_EATEN = 2,
+	SA_BILGE_FEATHERS = 3, SA_BILGE_SENT = 4, SA_BILGE_EATEN = 5 };
+
 class CSuccUBus : public CTrueTalkNPC {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
@@ -72,7 +75,7 @@ protected:
 	int _afterReceiveEndFrame;
 	int _trayOutStartFrame;
 	int _trayOutEndFrame;
-	int _field158;
+	SuccUBusAction _sendAction;
 	bool _field15C;
 	CString _string2;
 	int _startFrame1;

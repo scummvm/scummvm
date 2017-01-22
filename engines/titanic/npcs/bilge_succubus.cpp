@@ -127,12 +127,12 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 	_isChicken = mailObject->getName() == "Chicken";
 	_isFeathers = mailObject->getName() == "Feathers";
-	_field158 = 0;
+	_sendAction = SA_SENT;
 
 	if (_v2) {
 		if (_isFeathers) {
 			startTalking(this, 230022);
-			_field158 = 1;
+			_sendAction = SA_FEATHERS;
 
 			if (_sendStartFrame >= 0)
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
@@ -145,7 +145,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			}
 		} else {
 			startTalking(this, 230012);
-			_field158 = 2;
+			_sendAction = SA_EATEN;
 			if (_sendStartFrame >= 0)
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			if (_receiveStartFrame >= 0)
@@ -156,7 +156,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	} else {
 		if (_isFeathers) {
 			startTalking(this, 230022);
-			_field158 = 3;
+			_sendAction = SA_BILGE_FEATHERS;
 
 			if (_sendStartFrame >= 0)
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -168,7 +168,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			sendMail(petRoomFlags, roomFlags);
 			startTalking(this, 230012);
 			if (_sendStartFrame >= 0) {
-				_field158 = 4;
+				_sendAction = SA_BILGE_SENT;
 				playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			}
 		}
@@ -207,7 +207,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 
 		} else if (msg->_endFrame == _sendEndFrame) {
-			switch (_field158) {
+			switch (_sendAction) {
 			case 1:
 				stopSound(_soundHandle);
 				_soundHandle = playSound("z#3.wav");
@@ -269,10 +269,10 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			CBodyInBilgeRoomMsg bodyMsg;
 			bodyMsg.execute("Service Elevator Entity");
 			decTransitions();
-			_field158 = 0;
+			_sendAction = SA_SENT;
 
 		} else {
-			_field158 = 0;
+			_sendAction = SA_SENT;
 		}
 	}
 
@@ -346,7 +346,7 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 		}
 
 		if (_sendStartFrame >= 0) {
-			_field158 = 5;
+			_sendAction = SA_BILGE_EATEN;
 			playMovie(_sendStartFrame, _sendEndFrame, MOVIE_NOTIFY_OBJECT);
 		}
 
