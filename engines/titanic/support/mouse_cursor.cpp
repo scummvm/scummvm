@@ -55,7 +55,7 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
-		_hiddenCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
+		_busyCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
 	CursorMan.showMouse(true);
@@ -87,45 +87,45 @@ void CMouseCursor::loadCursorImages() {
 	}
 }
 
-void CMouseCursor::show() {
-	assert(_hiddenCount > 0);
-
-	if (--_hiddenCount == 0)
-		CursorMan.showMouse(!_cursorSuppressed);
+void CMouseCursor::incBusyCount() {
+	if (_busyCount == 0)
+		setCursor(CURSOR_HOURGLASS);
+	++_busyCount;
 }
 
-void CMouseCursor::hide() {
-	CursorMan.showMouse(false);
-	++_hiddenCount;
+void CMouseCursor::decBusyCount() {
+	assert(_busyCount > 0);
+	if (--_busyCount == 0)
+		setCursor(CURSOR_ARROW);
 }
 
 void CMouseCursor::incHideCounter() {
 	if (_hideCounter++ == 0)
-		hide();
+		CursorMan.showMouse(false);
 }
 
 void CMouseCursor::decHideCounter() {
 	--_hideCounter;
 	assert(_hideCounter >= 0);
 	if (_hideCounter == 0)
-		show();
+		CursorMan.showMouse(true);
 }
 
 void CMouseCursor::suppressCursor() {
 	_cursorSuppressed = true;
-	hide();
+	CursorMan.showMouse(false);
 }
 
 void CMouseCursor::unsuppressCursor() {
 	_cursorSuppressed = false;
 	if (_hideCounter == 0)
-		show();
+		CursorMan.showMouse(true);
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {
 	++_setCursorCount;
 
-	if (cursorId != _cursorId) {
+	if (cursorId != _cursorId && _busyCount == 0) {
 		// The original cursors supported partial alpha when rendering the cursor.
 		// Since we're using the ScummVM CursorMan, we can't do that, so we need
 		// to build up a surface of the cursor with even partially transparent
@@ -190,14 +190,6 @@ void CMouseCursor::enableControl() {
 	_inputEnabled = true;
 	_fieldE8 = 0;
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
-}
-
-void CMouseCursor::setBusy() {
-	setCursor(CURSOR_HOURGLASS);
-}
-
-void CMouseCursor::clearBusy() {
-	setCursor(CURSOR_ARROW);
 }
 
 void CMouseCursor::setPosition(const Point &pt, double duration) {

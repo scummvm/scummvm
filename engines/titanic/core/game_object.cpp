@@ -1151,7 +1151,15 @@ void CGameObject::lockMouse() {
 	gameMan->lockInputHandler();
 
 	if (CScreenManager::_screenManagerPtr->_mouseCursor)
-		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+		CScreenManager::_screenManagerPtr->_mouseCursor->incBusyCount();
+}
+
+void CGameObject::unlockMouse() {
+	if (CScreenManager::_screenManagerPtr->_mouseCursor)
+		CScreenManager::_screenManagerPtr->_mouseCursor->decBusyCount();
+
+	CGameManager *gameMan = getGameManager();
+	gameMan->unlockInputHandler();
 }
 
 void CGameObject::hideMouse() {
@@ -1190,14 +1198,6 @@ void CGameObject::lockInputHandler() {
 
 void CGameObject::unlockInputHandler() {
 	getGameManager()->unlockInputHandler();
-}
-
-void CGameObject::unlockMouse() {
-	if (CScreenManager::_screenManagerPtr->_mouseCursor)
-		CScreenManager::_screenManagerPtr->_mouseCursor->show();
-
-	CGameManager *gameMan = getGameManager();
-	gameMan->unlockInputHandler();
 }
 
 void CGameObject::loadSurface() {

@@ -83,11 +83,11 @@ void CGameState::setMode(GameStateMode newMode) {
 			_gameManager->lockInputHandler();
 
 		if (sm && sm->_mouseCursor)
-			sm->_mouseCursor->setBusy();
+			sm->_mouseCursor->incBusyCount();
 
 	} else if (newMode != GSMODE_CUTSCENE && _mode == GSMODE_CUTSCENE) {
 		if (sm && sm->_mouseCursor)
-			sm->_mouseCursor->clearBusy();
+			sm->_mouseCursor->decBusyCount();
 
 		if (_gameManager)
 			_gameManager->unlockInputHandler();
