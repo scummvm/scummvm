@@ -41,7 +41,7 @@ class CHose : public CCarry {
 	bool HoseConnectedMsg(CHoseConnectedMsg *msg);
 	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
 protected:
-	CString _string6;
+	CString _unused1;
 public:
 	static CHoseStatics *_statics;
 public:

@@ -88,18 +88,18 @@ protected:
 	int _soundHandle;
 	bool _isChicken;
 	bool _isFeathers;
-	int _field1AC;
-	int _field1B0;
+	int _priorRandomVal1;
+	int _priorRandomVal2;
 	int _emptyStartFrame;
 	int _emptyEndFrame;
 	int _smokeStartFrame;
 	int _smokeEndFrame;
-	int _field1C4;
-	int _field1C8;
-	int _field1CC;
-	int _field1D0;
-	int _field1D4;
-	int _field1D8;
+	int _hoseStartFrame;
+	int _hoseEndFrame;
+	int _pumpingStartFrame;
+	int _pumpingEndFrame;
+	uint _destRoomFlags;
+	bool _inProgress;
 public:
 	CLASSDEF;
 	CSuccUBus();

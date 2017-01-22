@@ -86,18 +86,18 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_soundHandle = -1;
 	_isChicken = false;
 	_isFeathers = false;
-	_field1AC = 0;
-	_field1B0 = 0;
+	_priorRandomVal1 = 0;
+	_priorRandomVal2 = 0;
 	_emptyStartFrame = 303;
 	_emptyEndFrame = 312;
 	_smokeStartFrame = 313;
 	_smokeEndFrame = 325;
-	_field1C4 = 326;
-	_field1C8 = 347;
-	_field1CC = 348;
-	_field1D0 = 375;
-	_field1D4 = 1;
-	_field1D8 = 0;
+	_hoseStartFrame = 326;
+	_hoseEndFrame = 347;
+	_pumpingStartFrame = 348;
+	_pumpingEndFrame = 375;
+	_destRoomFlags = 1;
+	_inProgress = false;
 }
 
 void CSuccUBus::save(SimpleFile *file, int indent) {
@@ -145,20 +145,20 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_isChicken, indent);
 	file->writeNumberLine(_isFeathers, indent);
-	file->writeNumberLine(_field1AC, indent);
-	file->writeNumberLine(_field1B0, indent);
+	file->writeNumberLine(_priorRandomVal1, indent);
+	file->writeNumberLine(_priorRandomVal2, indent);
 	file->writeNumberLine(_emptyStartFrame, indent);
 	file->writeNumberLine(_emptyEndFrame, indent);
 	file->writeNumberLine(_smokeStartFrame, indent);
 	file->writeNumberLine(_smokeEndFrame, indent);
-	file->writeNumberLine(_field1C4, indent);
-	file->writeNumberLine(_field1C8, indent);
-	file->writeNumberLine(_field1CC, indent);
-	file->writeNumberLine(_field1D0, indent);
-	file->writeNumberLine(_field1D4, indent);
+	file->writeNumberLine(_hoseStartFrame, indent);
+	file->writeNumberLine(_hoseEndFrame, indent);
+	file->writeNumberLine(_pumpingStartFrame, indent);
+	file->writeNumberLine(_pumpingEndFrame, indent);
+	file->writeNumberLine(_destRoomFlags, indent);
 
 	file->writeNumberLine(_v3, indent);
-	file->writeNumberLine(_field1D8, indent);
+	file->writeNumberLine(_inProgress, indent);
 	file->writeNumberLine(_field104, indent);
 
 	CTrueTalkNPC::save(file, indent);
@@ -209,27 +209,27 @@ void CSuccUBus::load(SimpleFile *file) {
 	_soundHandle = file->readNumber();
 	_isChicken = file->readNumber();
 	_isFeathers = file->readNumber();
-	_field1AC = file->readNumber();
-	_field1B0 = file->readNumber();
+	_priorRandomVal1 = file->readNumber();
+	_priorRandomVal2 = file->readNumber();
 	_emptyStartFrame = file->readNumber();
 	_emptyEndFrame = file->readNumber();
 	_smokeStartFrame = file->readNumber();
 	_smokeEndFrame = file->readNumber();
-	_field1C4 = file->readNumber();
-	_field1C8 = file->readNumber();
-	_field1CC = file->readNumber();
-	_field1D0 = file->readNumber();
-	_field1D4 = file->readNumber();
+	_hoseStartFrame = file->readNumber();
+	_hoseEndFrame = file->readNumber();
+	_pumpingStartFrame = file->readNumber();
+	_pumpingEndFrame = file->readNumber();
+	_destRoomFlags = file->readNumber();
 
 	_v3 = file->readNumber();
-	_field1D8 = file->readNumber();
+	_inProgress = file->readNumber();
 	_field104 = file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
 
 bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_field1D8) {
+	if (!_inProgress) {
 		Rect tempRect = _rect1;
 		tempRect.translate(_bounds.left, _bounds.top);
 
@@ -242,7 +242,7 @@ bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			CTurnOff offMsg;
 			offMsg.execute(this);
 		} else {
-			switch (getRandomNumber(2)) {
+			switch (getRandomNumber(2, &_priorRandomVal1)) {
 			case 0:
 				startTalking(this, 230055, findView());
 				break;
@@ -376,7 +376,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
-	if (_field1D8)
+	if (_inProgress)
 		return true;
 
 	if (!_enabled) {
@@ -409,7 +409,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	} else {
 		_sendLost = false;
 
-		CRoomFlags roomFlags = _roomFlags;
+		CRoomFlags roomFlags = _destRoomFlags;
 		if (!pet->isSuccUBusDest(roomFlags) || pet->getMailDestClass(roomFlags) < getPassengerClass()) {
 			roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
 			_sendLost = true;
@@ -419,7 +419,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		_isChicken = mailObject->getName() == "Chicken";
 		_field158 = 0;
 		_field188 = 0;
-		_field1D8 = 1;
+		_inProgress = true;
 		incTransitions();
 
 		if (_isFeathers) {
@@ -466,7 +466,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (_field1D8 || !pet)
+	if (_inProgress || !pet)
 		return true;
 	if (!_enabled) {
 		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
@@ -510,7 +510,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 			if (_receiveStartFrame >= 0) {
 				_field158 = 1;
-				_field1D8 = 1;
+				_inProgress = true;
 				incTransitions();
 				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
 			}
@@ -573,7 +573,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
-			switch (getRandomNumber(_v2 ? 7 : 5, &_field1B0)) {
+			switch (getRandomNumber(_v2 ? 7 : 5, &_priorRandomVal2)) {
 			case 2:
 				startTalking(this, 230001, findView());
 				break;
@@ -613,8 +613,8 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			startTalking(this, 230013, findView());
 		}
 
-		if (_field1D8) {
-			_field1D8 = 0;
+		if (_inProgress) {
+			_inProgress = false;
 			decTransitions();
 		}
 
@@ -630,8 +630,8 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		_field188 = 1;
 		_mailP = 0;
-		if (_field1D8) {
-			_field1D8 = 0;
+		if (_inProgress) {
+			_inProgress = false;
 			decTransitions();
 		}
 
@@ -743,7 +743,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 	if (_enabled) {
-		_roomFlags = msg->_roomFlags;
+		_destRoomFlags = msg->_roomFlags;
 		playSound("z#98.wav", 100);
 	}
 
@@ -764,7 +764,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	Rect tempRect = _rect1;
 	tempRect.translate(_bounds.left, _bounds.top);
 
-	if (_field1D8 || !_enabled || !_field188 || !tempRect.contains(msg->_mousePos)
+	if (_inProgress || !_enabled || !_field188 || !tempRect.contains(msg->_mousePos)
 			|| !pet)
 		return true;
 

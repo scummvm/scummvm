@@ -270,7 +270,7 @@ MESSAGE1(CGetChevLiftBits, int, liftBits, 0);
 MESSAGE1(CGetChevLiftNum, int, liftNum, 0);
 MESSAGE1(CGetChevRoomBits, int, roomNum, 0);
 MESSAGE1(CGetChevRoomNum, int, roomNum, 0);
-MESSAGE2(CHoseConnectedMsg, int, value, 1, CGameObject *, object, nullptr);
+MESSAGE2(CHoseConnectedMsg, bool, connected, true, CGameObject *, object, nullptr);
 MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
 MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, result, false, CString, string1, "");
