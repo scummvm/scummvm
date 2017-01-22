@@ -353,7 +353,7 @@ private:
 	void newMushroom();
 	void newEmptyNest();
 	void newNestWithEggs();
-	void newor();
+	void newGold();
 	void gotoPanel();
 	void noclicpanel();
 	void generique();
@@ -711,9 +711,9 @@ private:
 	int16  word_378CC; // TODO: set by CLComputer_Init to 0
 	int16  word_378CE; // CHECKME: Unused
 
-	int		_invIconsCount;
-	int		_invIconsBase;
-	int		_roomIconsBase;
+	int	   _invIconsCount;
+	int	   _invIconsBase;
+	int	   _roomIconsBase;
 
 	//// cube.c
 	int16 _cosTable[361];
@@ -731,6 +731,8 @@ private:
 	int   _cubeFaces;
 	uint32 _cursorOldTick, _cursorNewTick;
 	byte *_codePtr;
+
+	uint8 tab_2CB1E[8][4];
 };
 
 }

@@ -797,7 +797,6 @@ extern object_t _objects[];
 extern uint16 kObjectLocations[100];
 extern perso_t kPersons[];
 extern Citadel _citadelList[];
-extern uint8 tab_2CB1E[8][4];
 
 struct prect_t {
 	int16   left, top, right, bottom;

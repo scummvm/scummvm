@@ -56,6 +56,17 @@ bool  _allowDoubled = true;
 int   _cursCenter = 11;
 
 EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
+	static uint8 statTab2CB1E[8][4] = {
+		{ 0x10, 0x81,    1, 0x90},
+		{ 0x90,    1, 0x81, 0x10},
+		{    1, 0x90, 0x10, 0x81},
+		{    1, 0x10, 0x90, 0x81},
+		{    1, 0x90, 0x10, 0x81},
+		{ 0x81, 0x10, 0x90,    1},
+		{ 0x81, 0x10, 0x90,    1},
+		{ 0x81, 0x90,    1, 0x10}
+	};
+
 	_adamMapMarkPos = Common::Point(-1, -1);
 
 	_scrollPos = _oldScrollPos = 0;
@@ -153,6 +164,11 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
 	_roomIconsBase = _invIconsBase + _invIconsCount;
 
 	_codePtr = nullptr;
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 4; j++)
+			tab_2CB1E[i][j] = statTab2CB1E[i][j];
+	}
 }
 
 void EdenGame::removeConsole() {
@@ -381,8 +397,8 @@ void EdenGame::flipMode() {
 				if (byte_31D64) {
 					dialautoon();
 					parle_moi();
+					byte_31D64 = false;
 				}
-				byte_31D64 = false;
 			}
 		}
 	}
@@ -1998,22 +2014,22 @@ void EdenGame::moveDino(perso_t *perso) {
 		scrambleDirections();
 		uint8 *dirs = tab_2CB1E[dir];
 		byte loc = perso->_roomNum & 0xFF;
-		uint8 dir2 = *dirs++;
+		uint8 dir2 = dirs[0];
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
 		if (!canMoveThere(dir2, perso)) {
-			dir2 = *dirs++;
+			dir2 = dirs[1];
 			if (dir2 & 0x80)
 				dir2 = -(dir2 & ~0x80);
 			dir2 += loc;
 			if (!canMoveThere(dir2, perso)) {
-				dir2 = *dirs++;
+				dir2 = dirs[2];
 				if (dir2 & 0x80)
 					dir2 = -(dir2 & ~0x80);
 				dir2 += loc;
 				if (!canMoveThere(dir2, perso)) {
-					dir2 = *dirs++;
+					dir2 = dirs[3];
 					if (dir2 & 0x80)
 						dir2 = -(dir2 & ~0x80);
 					dir2 += loc;
@@ -2030,13 +2046,10 @@ void EdenGame::moveDino(perso_t *perso) {
 		perso->_lastLoc = perso->_roomNum & 0xFF;
 		perso->_roomNum &= ~0xFF;
 		perso->_roomNum |= dir2 & 0xFF;
-		if (perso->_targetLoc - 16 == (perso->_roomNum & 0xFF))
-			perso->_targetLoc = 0;
-		if (perso->_targetLoc + 16 == (perso->_roomNum & 0xFF))
-			perso->_targetLoc = 0;
-		if (perso->_targetLoc - 1 == (perso->_roomNum & 0xFF))
-			perso->_targetLoc = 0;
-		if (perso->_targetLoc + 1 == (perso->_roomNum & 0xFF))
+		if ((perso->_targetLoc - 16 == (perso->_roomNum & 0xFF))
+			|| (perso->_targetLoc + 16 == (perso->_roomNum & 0xFF))
+			|| (perso->_targetLoc - 1 == (perso->_roomNum & 0xFF))
+			|| (perso->_targetLoc + 1 == (perso->_roomNum & 0xFF)))
 			perso->_targetLoc = 0;
 	} else
 		perso->_targetLoc = 0;
@@ -2047,9 +2060,7 @@ void EdenGame::moveAllDino() {
 	for (perso_t *perso = &kPersons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 		if (((perso->_roomNum >> 8) & 0xFF) != _globals->_citadelAreaNum)
 			continue;
-		if (perso->_flags & PersonFlags::pf80)
-			continue;
-		if (!perso->_targetLoc)
+		if ((perso->_flags & PersonFlags::pf80) || !perso->_targetLoc)
 			continue;
 		if (--perso->_steps)
 			continue;
@@ -2096,13 +2107,11 @@ bool EdenGame::isCita(int16 loc) {
 	for (Room *room = _globals->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
 		if (!(room->_flags & RoomFlags::rfHasCitadel))
 			continue;
-		if (room->_location == loc + 16)
-			return true;
-		if (room->_location == loc - 16)
-			return true;
-		if (room->_location == loc - 1)
-			return true;
-		if (room->_location == loc + 1)
+
+		if ((room->_location == loc + 16)
+			|| (room->_location == loc - 16)
+			|| (room->_location == loc - 1)
+			|| (room->_location == loc + 1))
 			return true;
 	}
 	return false;
@@ -2246,7 +2255,7 @@ void EdenGame::vivreval(int16 areaNum) {
 	newNestWithEggs();
 	newEmptyNest();
 	if (_globals->_phaseNum >= 226)
-		newor();
+		newGold();
 	placeVava(_globals->_curAreaPtr);
 }
 
@@ -7052,10 +7061,10 @@ void EdenGame::newNestWithEggs() {
 	}
 }
 
-void EdenGame::newor() {
-	if (_objects[Objects::obGold - 1]._count == 0) {
+// Original name: newor
+void EdenGame::newGold() {
+	if (_objects[Objects::obGold - 1]._count == 0)
 		newObject(Objects::obGold, _globals->_citadelAreaNum);
-	}
 }
 
 void EdenGame::gotoPanel() {
