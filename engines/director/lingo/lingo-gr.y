@@ -429,7 +429,6 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| expr tOR expr				{ g_lingo->code1(g_lingo->c_or); }
 	| tNOT expr  %prec UNARY	{ g_lingo->code1(g_lingo->c_not); }
 	| expr '&' expr				{ g_lingo->code1(g_lingo->c_ampersand); }
-	| expr tAFTER expr			{ g_lingo->code1(g_lingo->c_after); }
 	| expr tCONCAT expr			{ g_lingo->code1(g_lingo->c_concat); }
 	| expr tCONTAINS expr		{ g_lingo->code1(g_lingo->c_contains); }
 	| expr tSTARTS expr			{ g_lingo->code1(g_lingo->c_starts); }
