@@ -50,13 +50,12 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_bitmap(NULL_REG) {
 		_fontId = kSci32SystemFont;
 		_font = _cache->getFont(kSci32SystemFont);
-
-		if (_xResolution == 0) {
-			// initialize the statics
-			_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-			_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-		}
 	}
+
+void GfxText32::init() {
+	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+}
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, const bool gc) {
 

@@ -153,6 +153,11 @@ public:
 	GfxText32(SegManager *segMan, GfxCache *fonts);
 
 	/**
+	 * Initialises static GfxText32 members.
+	 */
+	static void init();
+
+	/**
 	 * The memory handle of the currently active bitmap.
 	 */
 	reg_t _bitmap;
