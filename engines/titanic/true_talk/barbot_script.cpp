@@ -1177,7 +1177,7 @@ int BarbotScript::applySentenceIds(int dialogueId, int v34) {
 	} else {
 		for (uint idx = 0; idx < _mappings.size(); ++idx) {
 			const TTscriptMapping &m = _mappings[idx];
-			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++idx) {
+			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++vidx) {
 				if (m._values[vidx] == (uint)dialogueId) {
 					updateState(m._id, m._id, vidx);
 					break;
