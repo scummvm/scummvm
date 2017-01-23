@@ -49,7 +49,7 @@ test/runner.cpp: $(TESTS)
 	@mkdir -p test
 	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
 test/runner.o: test/runner.cpp
-	$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -c $(<) -o $@
+	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -c $(<) -o $@
 
 
 clean: clean-test
