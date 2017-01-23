@@ -126,9 +126,7 @@ nl:	'\n' {
 
 programline: /* empty */
 	| defn
-	| func
 	| macro
-	| asgn				{ g_lingo->code1(g_lingo->c_xpop); }
 	| stmt
 	;
 
