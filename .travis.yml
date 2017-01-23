@@ -41,3 +41,10 @@ script:
   - make -j 2
   - make test
   - make devtools
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#scummvm"
+    on_success: change
+    on_failure: always
