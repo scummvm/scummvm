@@ -38,7 +38,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
