@@ -34,7 +34,7 @@ There are several Lost Eden game versions known to exists.
   implementation of mouse cursor (which is worse than the original one). Looks
   like screen transition effects are also changed / rearranged. Also comes with
   updated game script.
-  This version have no limit on save game slots. Standard system file selection
+  This version has no limit on save game slots. Standard system file selection
   dialogs are used instead. All screen hot-spots coordinates loaded from the
   main resource file instead of hard-coded values used in PC version.
 
@@ -48,18 +48,14 @@ There are several Lost Eden game versions known to exists.
 This reimplementation project is based on MAC version, since it's much easier
 to work with than any other versions.
 
-At this moment the game is fully playabe/completeable. List of currently
-discovered bugs can be found in bugs.txt file. None of those are critical or
-game-breaking. No sound support is present in this version, although all
-sound front-end code is in place and should be operational. Only single
-game save/load slot is supported and saves are not cross-platform compatible.
-Also, no game restart feature work due to the way it's implemented.
+At this moment Mac version of the game is fully playabe/completeable. List of
+currently discovered bugs can be found in bugs.txt file. None of those are
+critical or game-breaking. Only single game save/load slot is supported and
+saves are not cross-platform compatible. Also, no game restart feature work
+due to the way it's implemented.
 
-Due to the way original engine is coded, it is not fully portable in its
-current state. Game uses conditional dialog system (similar system is used in
-Dune game as well) and this system involves accessing native engine
-variables through predefined offsets within large structure. Any modification
-of this structure will result in broken dialog system.
+PC versions (Demo and Full) are supported as well, but have a number of more
+severe glitches.
 
 Because of limited development environment, this code is only tested on
 MSVS2013 32-bit compiler. There may be some issues with GCC/LLVM compilers
@@ -69,8 +65,7 @@ and problematic areas are marked with TODO comment in the source code. There
 are number of variables with non-descripitve names like byte_1234, those
 purpose is yet to be clearly understood. To make code debugging easier,
 EDEN_DEBUG macro activates several extra features. Some parts, like image
-drawing routines, can be simplified/generalized. Other parts, like CLView,
-can be replaced with existing SCUMMVM classes.
+drawing routines, can be simplified/generalized.
 
 Because parts of this code (mainly decompression and video playback) used
 by other Cryo's games, it might be worthy to make them reusable by future
