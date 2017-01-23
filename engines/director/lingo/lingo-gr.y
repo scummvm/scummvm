@@ -103,7 +103,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
-%type<narg> argdef arglist
+%type<narg> argdef arglist nonemptyarglist
 
 %right '='
 %left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS
@@ -586,7 +586,7 @@ argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
 
 
-macro: ID arglist		{
+macro: ID nonemptyarglist	{
 		g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
@@ -596,6 +596,10 @@ macro: ID arglist		{
 
 arglist:  /* nothing */ 	{ $$ = 0; }
 	| expr					{ $$ = 1; }
+	| arglist ',' expr		{ $$ = $1 + 1; }
+	;
+
+nonemptyarglist:  expr		{ $$ = 1; }
 	| arglist ',' expr		{ $$ = $1 + 1; }
 	;
 
