@@ -161,7 +161,7 @@ void MacFontManager::loadFonts() {
 		Common::MacResManager *fontFile = new Common::MacResManager();
 
 		if (!fontFile->loadFromMacBinary(*stream))
-			error("Could not open %s as a resource fork", (*it)->getName().c_str());
+			continue;
 
 		Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
 		if (fonds.size() > 0) {
