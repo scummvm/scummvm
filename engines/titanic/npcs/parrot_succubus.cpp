@@ -35,14 +35,14 @@ BEGIN_MESSAGE_MAP(CParrotSuccUBus, CSuccUBus)
 END_MESSAGE_MAP()
 
 CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _hoseConnected(false),
-	_field1EC(0), _field1F0(376), _field1F4(393) {
+	_pumpingSound(0), _hoseRemovalStartFrame(376), _hoseRemovalEndFrame(393) {
 }
 
 void CParrotSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_hoseConnected, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_field1EC, indent);
+	file->writeQuotedLine(_pumpingTarget, indent);
+	file->writeNumberLine(_pumpingSound, indent);
 
 	CSuccUBus::save(file, indent);
 }
@@ -50,8 +50,8 @@ void CParrotSuccUBus::save(SimpleFile *file, int indent) {
 void CParrotSuccUBus::load(SimpleFile *file) {
 	file->readNumber();
 	_hoseConnected = file->readNumber();
-	_string3 = file->readString();
-	_field1EC = file->readNumber();
+	_pumpingTarget = file->readString();
+	_pumpingSound = file->readNumber();
 
 	CSuccUBus::load(file);
 }
@@ -66,13 +66,13 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 	_hoseConnected = msg->_connected;
 	if (_hoseConnected) {
 		CGameObject *item = msg->_object;
-		_string3 = item->getName();
+		_pumpingTarget = item->getName();
 		CHoseConnectedMsg hoseMsg(1, this);
 		hoseMsg.execute(msg->_object);
 		item->petMoveToHiddenRoom();
 
 		CPumpingMsg pumpingMsg(1, this);
-		pumpingMsg.execute(this);
+		pumpingMsg.execute(_pumpingTarget);
 		_hoseConnected = true;
 
 		if (_isOn) {
@@ -85,13 +85,13 @@ bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
 		playMovie(_hoseStartFrame, _hoseEndFrame, MOVIE_NOTIFY_OBJECT);
 	} else {
 		stopMovie();
-		stopSound(_field1EC);
-		playMovie(_field1F0, _field1F4, MOVIE_NOTIFY_OBJECT);
+		stopSound(_pumpingSound);
+		playMovie(_hoseRemovalStartFrame, _hoseRemovalEndFrame, MOVIE_NOTIFY_OBJECT);
 
 		CPumpingMsg pumpingMsg(0, this);
-		pumpingMsg.execute(_string3);
+		pumpingMsg.execute(_pumpingTarget);
 
-		CGameObject *obj = getHiddenObject(_string3);
+		CGameObject *obj = getHiddenObject(_pumpingTarget);
 		if (obj) {
 			obj->petAddToInventory();
 			obj->setVisible(true);
@@ -117,7 +117,7 @@ bool CParrotSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 bool CParrotSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _hoseEndFrame) {
 		playMovie(_pumpingStartFrame, _pumpingEndFrame, MOVIE_REPEAT);
-		_field1EC = playSound("z#472.wav");
+		_pumpingSound = playSound("z#472.wav");
 		return true;
 	} else {
 		return CSuccUBus::MovieEndMsg(msg);
@@ -137,7 +137,7 @@ bool CParrotSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CParrotSuccUBus::LeaveNodeMsg(CLeaveNodeMsg *msg) {
 	if (_hoseConnected) {
-		getHiddenObject(_string3);
+		getHiddenObject(_pumpingTarget);
 		if (CHose::_statics->_actionTarget.empty()) {
 			playSound("z#51.wav");
 			CHoseConnectedMsg hoseMsg;

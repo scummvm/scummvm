@@ -36,10 +36,10 @@ class CParrotSuccUBus : public CSuccUBus {
 	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
 public:
 	bool _hoseConnected;
-	CString _string3;
-	int _field1EC;
-	int _field1F0;
-	int _field1F4;
+	CString _pumpingTarget;
+	int _pumpingSound;
+	int _hoseRemovalStartFrame;
+	int _hoseRemovalEndFrame;
 public:
 	CLASSDEF;
 	CParrotSuccUBus();
