@@ -86,6 +86,7 @@ MacFontFamily::MacFontFamily() {
 	_ffNumOffsets = 0;
 	_ffOffsets = nullptr;
 	_ffNumBBoxes = 0;
+	_ffNumKerns = 0;
 }
 
 MacFontFamily::~MacFontFamily() {
@@ -185,7 +186,7 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 			_ffKernEntries[i]._entryLength = stream.readUint16BE();
 			_ffKernEntries[i]._kernPairs.resize(_ffKernEntries[i]._entryLength);
 
-			debug(10, "  style: %x kernpairs: %d", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
+			debug(10, "  style: %x kernpairs: %u", _ffKernEntries[i]._style, _ffKernEntries[i]._entryLength);
 
 			for (uint j = 0; j < _ffKernEntries[i]._entryLength; j++) {
 				byte f, s;
@@ -283,7 +284,7 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	_data._glyphs.resize(glyphCount);
 
 	// Bit image table
-	uint16 bitImageSize = _data._rowWords * _data._fRectHeight;
+	uint bitImageSize = _data._rowWords * _data._fRectHeight;
 	_data._bitImage = new byte[bitImageSize];
 	stream.read(_data._bitImage, bitImageSize);
 
@@ -332,6 +333,8 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 		for (uint16 i = 0; i < glyphCount; i++)
 			stream.readUint16BE();
 	}
+
+	free(bitmapOffsets);
 
 	return true;
 }
