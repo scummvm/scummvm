@@ -183,9 +183,11 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code2(e, f);
 		$$ = $5; }
 	;
+
 stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
 	| func
 	;
+
 stmt: stmtoneliner
 	| ifstmt
 	// repeat while (expression = TRUE)
@@ -310,6 +312,7 @@ ifstmt:	if cond tTHEN nl stmtlist end ENDCLAUSE		{
 
 		g_lingo->processIf(0, $10); }
 	;
+
 elsestmtoneliner: /* nothing */		{ $$ = 0; }
 	| tNLELSE begin stmtoneliner	{ $$ = $2; }
 	;
@@ -343,20 +346,24 @@ cond:	   expr 				{ g_lingo->code1(STOP); }
 	| expr '=' expr				{ g_lingo->code2(g_lingo->c_eq, STOP); }
 	| '(' cond ')'
 	;
+
 repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
 	;
+
 repeatwith:		tREPEAT tWITH ID	{
 		$$ = g_lingo->code3(g_lingo->c_repeatwithcode, STOP, STOP);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->codeString($3->c_str());
 		delete $3; }
 	;
+
 if:	  tIF					{
 		$$ = g_lingo->code1(g_lingo->c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->code1(0);  // Do not skip end
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
 	;
+
 elseif:	  tNLELSIF			{
 		inst skipEnd;
 		WRITE_UINT32(&skipEnd, 1); // We have to skip end to avoid multiple executions
@@ -364,10 +371,13 @@ elseif:	  tNLELSIF			{
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->code1(skipEnd); }
 	;
+
 begin:	  /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	;
+
 end:	  /* nothing */		{ g_lingo->code1(STOP); $$ = g_lingo->_currentScript->size(); }
 	;
+
 stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist nl
 	| stmtlist stmt
@@ -580,6 +590,7 @@ argdef:  /* nothing */ 		{ $$ = 0; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
 	| argdef nl ',' ID		{ g_lingo->codeArg($4); $$ = $1 + 1; }
 	;
+
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
 
