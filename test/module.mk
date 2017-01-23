@@ -43,14 +43,8 @@ endif
 
 test: test/runner
 	./test/runner
-test/runner: test/runner.o $(TEST_LIBS)
-	$(QUIET_LINK)$(LD) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $+ $(TEST_LDFLAGS)
-test/runner.cpp: $(TESTS)
-	@mkdir -p test
-	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
-test/runner.o: test/runner.cpp
-	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -c $(<) -o $@
-
+test/runner: test/runner.cpp $(TEST_LIBS)
+	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $+ $(TEST_LDFLAGS)
 
 clean: clean-test
 clean-test:
