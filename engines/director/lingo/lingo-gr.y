@@ -586,11 +586,11 @@ argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
 	;
 
 
-macro: ID begin arglist		{
+macro: ID arglist		{
 		g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
-		WRITE_UINT32(&numpar, $3);
+		WRITE_UINT32(&numpar, $2);
 		g_lingo->code1(numpar); }
 	;
 
