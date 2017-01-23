@@ -215,7 +215,7 @@ void MacFontManager::loadFonts() {
 		}
 
 		delete stream;
-		delete fontFile;
+		//delete fontFile;
 	}
 
 	_builtInFonts = false;
