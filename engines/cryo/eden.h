@@ -486,6 +486,8 @@ private:
 	uint16 operFalse(uint16 v1, uint16 v2);
 	uint16 operation(byte op, uint16 v1, uint16 v2);
 	uint16 fetchValue();
+	uint8 getByteVar(uint16 offset);
+	uint16 getWordVar(uint16 offset);
 	void actionNop();
 	void initSinCosTable();
 	void makeMatriceFix();

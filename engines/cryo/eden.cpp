@@ -8618,16 +8618,114 @@ uint16 EdenGame::operation(byte op, uint16 v1, uint16 v2) {
 	return (this->*operations[(op & 0x1F) >> 1])(v1, v2);
 }
 
+#define VAR(ofs, var) case ofs: return _globals->var;
+
+uint8 EdenGame::getByteVar(uint16 offset) {
+	switch (offset) {
+		VAR(0, _areaNum);
+		VAR(1, _areaVisitCount);
+		VAR(2, _menuItemIdLo);
+		VAR(3, _menuItemIdHi);   //TODO: pad?
+		VAR(0x42, _newMusicType);
+		VAR(0x43, _var43);
+		VAR(0x44, _videoSubtitleIndex);
+		VAR(0x45, _partyInstruments);   // &1 - Bell for Monk, &2 - Drum for Thugg
+		VAR(0x46, _monkGotRing);
+		VAR(0x47, _chronoFlag);
+		VAR(0x48, _curRoomFlags);
+		VAR(0x49, _endGameFlag);
+		VAR(0x4A, _lastInfo);
+		VAR(0x4B, _autoDialog);
+		VAR(0x4C, _worldTyranSighted);
+		VAR(0x4D, _var4D);
+		VAR(0x4E, _var4E);
+		VAR(0x4F, _worldGaveGold);
+		VAR(0x50, _worldHasTriceraptors);
+		VAR(0x51, _worldHasVelociraptors);
+		VAR(0x52, _worldHasTyran);
+		VAR(0x53, _var53);
+		VAR(0x54, _var54);  //CHEKME: Used?
+		VAR(0x55, _var55);  //TODO: pad?
+		VAR(0x56, _gameHours);
+		VAR(0x57, _textToken1);
+		VAR(0x58, _textToken2); //TODO: pad?
+		VAR(0x59, _eloiHaveNews);
+		VAR(0x5A, _dialogFlags);
+		VAR(0x5B, _curAreaType);
+		VAR(0x5C, _curCitadelLevel);
+		VAR(0x5D, _newLocation);
+		VAR(0x5E, _prevLocation);
+		VAR(0x5F, _curPersoFlags);
+		VAR(0x60, _var60);
+		VAR(0x61, _eventType);
+		VAR(0x62, _var62);  //TODO: pad?
+		VAR(0x63, _curObjectId);
+		VAR(0x64, _curObjectFlags);
+		VAR(0x65, _var65);  //TODO: pad?
+		VAR(0x66, _roomCharacterType);
+		VAR(0x67, _roomCharacterFlags);
+		VAR(0x68, _narratorSequence);
+		VAR(0x69, _var69);
+		VAR(0x6A, _var6A);
+		VAR(0x6B, _frescoNumber);
+		VAR(0x6C, _var6C);  //TODO: pad?
+		VAR(0x6D, _var6D);  //TODO: pad?
+		VAR(0x6E, _labyrinthDirections);
+		VAR(0x6F, _labyrinthRoom);
+	default:
+		error("Undefined byte variable access (0x%X)", offset);
+	}
+	return 0;
+}
+
+uint16 EdenGame::getWordVar(uint16 offset) {
+	switch (offset) {
+		VAR(4, _randomNumber);   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+		VAR(6, _gameTime);
+		VAR(8, _gameDays);
+		VAR(0xA, _chrono);
+		VAR(0xC, _eloiDepartureDay);
+		VAR(0xE, _roomNum);        // current room number
+		VAR(0x10, _newRoomNum);     // target room number selected on world map
+		VAR(0x12, _phaseNum);
+		VAR(0x14, _metPersonsMask1);
+		VAR(0x16, _party);
+		VAR(0x18, _partyOutside);
+		VAR(0x1A, _metPersonsMask2);
+		VAR(0x1C, _var1C);    //TODO: write-only?	
+		VAR(0x1E, _phaseActionsCount);
+		VAR(0x20, _curAreaFlags);
+		VAR(0x22, _curItemsMask);
+		VAR(0x24, _curPowersMask);
+		VAR(0x26, _curPersoItems);
+		VAR(0x28, _curCharacterPowers);
+		VAR(0x2A, _wonItemsMask);
+		VAR(0x2C, _wonPowersMask);
+		VAR(0x2E, _stepsToFindAppleFast);
+		VAR(0x30, _stepsToFindAppleNormal);
+		VAR(0x32, _roomPersoItems); //TODO: write-only?
+		VAR(0x34, _roomCharacterPowers);    //TODO: write-only?
+		VAR(0x36, _gameFlags);
+		VAR(0x38, _curVideoNum);
+		VAR(0x3A, _morkusSpyVideoNum1); //TODO: pad?
+		VAR(0x3C, _morkusSpyVideoNum2); //TODO: pad?
+		VAR(0x3E, _morkusSpyVideoNum3); //TODO: pad?
+		VAR(0x40, _morkusSpyVideoNum4); //TODO: pad?
+	default:
+		error("Undefined word variable access (0x%X)", offset);
+	}
+	return 0;
+}
+
+#undef VAR
+
 // Original name: cher_valeur
 uint16 EdenGame::fetchValue() {
 	uint16 val;
 	byte typ = *_codePtr++;
 	if (typ < 0x80) {
 		byte ofs = *_codePtr++;
-		if (typ == 1)
-			val = *(byte *)(ofs + (byte *)_globals);
-		else
-			val = *(uint16 *)(ofs + (byte *)_globals);
+		val = (typ == 1) ? getByteVar(ofs) : getWordVar(ofs);
 	} else if (typ == 0x80)
 		val = *_codePtr++;
 	else {
