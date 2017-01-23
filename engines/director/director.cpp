@@ -214,6 +214,8 @@ void DirectorEngine::testFonts() {
 			font.load(*stream);
 		}
 	}
+
+	delete fontFile;
 }
 
 } // End of namespace Director
