@@ -432,12 +432,25 @@ void OptionsDialog::apply() {
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
 #endif
+
+			// ResidualVM specific -- Start
+			if (_rendererTypePopUp->getSelectedTag() > 0) {
+				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
+				ConfMan.set("renderer", Graphics::getRendererTypeCode(selected), _domain);
+			} else {
+				ConfMan.removeKey("renderer", _domain);
+			}
+			// ResidualVM specific -- End
+
 		} else {
 			ConfMan.removeKey("fullscreen", _domain);
 			ConfMan.removeKey("filtering", _domain);
 			ConfMan.removeKey("aspect_ratio", _domain);
+#if 0 // ResidualVM specific
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
+#endif
+			ConfMan.removeKey("renderer", _domain); // ResidualVM specific
 			ConfMan.removeKey("vsync", _domain); // ResidualVM specific
 		}
 	}
