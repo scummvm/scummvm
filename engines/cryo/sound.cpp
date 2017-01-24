@@ -41,7 +41,7 @@ CSoundChannel::~CSoundChannel() {
 		delete _audioStream;
 }
 
-void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, bool playQueue, bool buffering = true) {
+void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, bool playQueue, bool buffering) {
 	if (playNow)
 		stop();
 

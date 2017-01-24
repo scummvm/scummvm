@@ -55,7 +55,7 @@ int16 _torchCurIndex = 0;
 bool  _allowDoubled = true;
 int   _cursCenter = 11;
 
-EdenGame::EdenGame(CryoEngine *vm) : _vm(vm) {
+EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	static uint8 statTab2CB1E[8][4] = {
 		{ 0x10, 0x81,    1, 0x90},
 		{ 0x90,    1, 0x81, 0x10},
@@ -6713,7 +6713,7 @@ int EdenGame::loadmusicfile(int16 num) {
 	int32 size = file->_size;
 	int32 offs = file->_offs;
 	_bigfile.seek(offs, SEEK_SET);
-	int32 numread = size;
+	uint32 numread = size;
 	if (numread > kMaxMusicSize)
 		error("Music file %s is too big", file->_name);
 	_bigfile.read(_musicBuf, numread);
