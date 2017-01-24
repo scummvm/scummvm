@@ -62,13 +62,13 @@ private:
 	int _field108;
 	int _field10C;
 	int _field110;
-	int _field114;
-	int _field118;
+	bool _givenLemon;
+	bool _tvGiven;
 	int _field11C;
 	int _field120;
 	int _field124;
 	int _field128;
-	int _field12C;
+	bool _givenPuret;
 	int _field130;
 	int _field134;
 	int _field138;
