@@ -48,7 +48,7 @@ public:
 	~CSoundChannel();
 
 	// Queue a new buffer, cancel any previously queued buffers if playNow is set
-	void queueBuffer(byte *buffer, unsigned int size, bool playNow = false, bool playQueue = true);
+	void queueBuffer(byte *buffer, unsigned int size, bool playNow = false, bool playQueue = true, bool buffering = true);
 
 	// Play any queued buffers
 	void play();

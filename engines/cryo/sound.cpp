@@ -41,12 +41,22 @@ CSoundChannel::~CSoundChannel() {
 		delete _audioStream;
 }
 
-void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, bool playQueue) {
+void CSoundChannel::queueBuffer(byte *buffer, unsigned int size, bool playNow, bool playQueue, bool buffering = true) {
 	if (playNow)
 		stop();
+
+	if (!buffer || !size)
+		return;
+
 	if (!_audioStream)
 		_audioStream = Audio::makeQueuingAudioStream(_sampleRate, _stereo);
-	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::NO, _bufferFlags);
+
+	if (buffering) {
+		byte *localBuffer = (byte*)malloc(size);
+		memcpy(localBuffer, buffer, size);
+		_audioStream->queueBuffer(localBuffer, size, DisposeAfterUse::YES, _bufferFlags);
+	} else
+		_audioStream->queueBuffer(buffer, size, DisposeAfterUse::NO, _bufferFlags);
 	if (playNow || playQueue)
 		play();
 }
