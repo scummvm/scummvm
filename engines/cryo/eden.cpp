@@ -1103,7 +1103,9 @@ void EdenGame::useBank(int16 bank) {
 
 void EdenGame::sundcurs(int16 x, int16 y) {
 	byte *keep = _cursKeepBuf;
-	_cursKeepPos = Common::Point(x - 4, y - 4);
+	x = CLIP<int16>(x - 4, 0, 640 - 48);
+	y = CLIP<int16>(y - 4, 0, 200 - 48);
+	_cursKeepPos = Common::Point(x, y);
 	byte *scr = _mainViewBuf + _cursKeepPos.x + _cursKeepPos.y * 640;
 	for (int16 h = 48; h--;) {
 		for (int16 w = 48; w--;)
