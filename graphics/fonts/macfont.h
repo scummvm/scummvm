@@ -156,7 +156,7 @@ public:
 
 	int getFontSize() const { return _data._size; }
 
-	MacFONTFont *scaleFont(MacFONTFont *src, int newSize);
+	static MacFONTFont *scaleFont(MacFONTFont *src, int newSize);
 
 private:
 	MacFONTdata _data;

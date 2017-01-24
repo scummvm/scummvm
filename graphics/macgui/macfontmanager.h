@@ -27,6 +27,8 @@
 
 namespace Graphics {
 
+class MacFONTFont;
+
 enum {
 	kMacFontNonStandard = -1,
 	kMacFontChicago = 0,
@@ -79,8 +81,8 @@ public:
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
-	Font *getFont() { return _font; }
-	void setFont(Font *font) { _font = font; }
+	MacFONTFont *getFont() { return _font; }
+	void setFont(MacFONTFont *font) { _font = font; }
 
 private:
 	int _id;
@@ -90,7 +92,7 @@ private:
 	FontManager::FontUsage _fallback;
 
 	bool _generated;
-	Font *_font;
+	MacFONTFont *_font;
 };
 
 class MacFontManager {

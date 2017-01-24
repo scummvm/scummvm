@@ -129,7 +129,7 @@ void MacFontManager::loadFontsBDF() {
 		}
 
 		FontMan.assignFontToName(fontName, font);
-		macfont->setFont(font);
+		//macfont->setFont(font);
 		_fontRegistry.setVal(fontName, macfont);
 
 		debug(2, " %s", fontName.c_str());
@@ -340,7 +340,7 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont));
 	debug("as '%s'", getFontName(fromFont));
 
-	Font *font = fromFont.getFont(); // = Graphics::BdfFont::scaleFont(fromFont.getFont(), toFont.getSize());
+	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize());
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont));

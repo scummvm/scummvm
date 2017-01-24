@@ -427,6 +427,8 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	data._size = src->_data._size;
 	data._style = src->_data._style;
 
+	data._glyphs.resize(src->_data._glyphs.size());
+
 	// Dtermine width of the bit image table
 	int newBitmapWidth = 0;
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
@@ -443,7 +445,7 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 
 	data._rowWords = newBitmapWidth;
 
-	uint16 bitImageSize = data._rowWords * _data._fRectHeight;
+	uint16 bitImageSize = data._rowWords * data._fRectHeight;
 	data._bitImage = new byte[bitImageSize];
 
 	int srcPitch = src->_data._rowWords;
@@ -454,7 +456,7 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
 		byte *ptr = &data._bitImage[glyph->bitmapOffset];
 
-		for (int y = 0; y < _data._fRectHeight; y++) {
+		for (int y = 0; y < data._fRectHeight; y++) {
 			const byte *srcd = (const byte *)&src->_data._bitImage[((int)((float)y / scale)) * srcPitch + srcglyph->bitmapOffset];
 			byte *dst = ptr;
 			byte b = 0;
