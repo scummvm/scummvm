@@ -270,6 +270,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",                            NULL,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                            NULL,    -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game - bug #5232
 	{ GID_GK1,            -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
+	{ GID_GK1,            -1, 64937, -1,         "GKControls", "dispatchEvent",                   NULL,     6, { WORKAROUND_FAKE,   0 } }, // when using keyboard navigation (tab) in the game settings and hitting 'enter' when over a slider
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",                       NULL,     3, { WORKAROUND_FAKE,   0 } }, // called when the game starts
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",                       NULL,     4, { WORKAROUND_FAKE,   0 } }, // called during the game
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",                        NULL,     4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
