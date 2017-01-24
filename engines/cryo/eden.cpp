@@ -5713,7 +5713,7 @@ void EdenGame::allocateBuffers() {
 	ALLOC(_glowBuffer, 0x2800, byte);
 	ALLOC(_gameFont, 0x900, byte);
 	ALLOC(_gameLipsync, 0x205C, byte);
-	ALLOC(_musicBuf, 0x140000, byte);
+	ALLOC(_musicBuf, kMaxMusicSize, byte);
 #undef ALLOC
 }
 
@@ -6714,8 +6714,8 @@ int EdenGame::loadmusicfile(int16 num) {
 	int32 offs = file->_offs;
 	_bigfile.seek(offs, SEEK_SET);
 	int32 numread = size;
-	if (numread > 0x140000)     //TODO: const
-		numread = 0x140000;
+	if (numread > kMaxMusicSize)
+		error("Music file %s is too big", file->_name);
 	_bigfile.read(_musicBuf, numread);
 	return size;
 }

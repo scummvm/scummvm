@@ -735,6 +735,8 @@ private:
 	byte *_codePtr;
 
 	uint8 tab_2CB1E[8][4];
+
+	const unsigned int kMaxMusicSize = 2200000;	// largest .mus file size 
 };
 
 }
