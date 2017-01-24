@@ -430,11 +430,12 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	// Dtermine width of the bit image table
 	int newBitmapWidth = 0;
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
-		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &_data._defaultChar : &_data._glyphs[i];
+		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
+		MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
 
-		glyph->width = (int)((float)src->_data._glyphs[i].width * scale);
-		glyph->kerningOffset = (int)((float)src->_data._glyphs[i].kerningOffset * scale);
-		glyph->bitmapWidth = (int)((float)src->_data._glyphs[i].bitmapWidth * scale);
+		glyph->width = (int)((float)srcglyph->width * scale);
+		glyph->kerningOffset = (int)((float)srcglyph->kerningOffset * scale);
+		glyph->bitmapWidth = (int)((float)srcglyph->bitmapWidth * scale);
 		glyph->bitmapOffset = newBitmapWidth;
 
 		newBitmapWidth += ((glyph->bitmapWidth + 7) / 8);
@@ -443,8 +444,43 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	data._rowWords = newBitmapWidth;
 
 	uint16 bitImageSize = data._rowWords * _data._fRectHeight;
-	_data._bitImage = new byte[bitImageSize];
+	data._bitImage = new byte[bitImageSize];
 
+	int srcPitch = src->_data._rowWords;
+	int dstPitch = data._rowWords;
+
+	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
+		MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
+		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
+		byte *ptr = &data._bitImage[glyph->bitmapOffset];
+
+		for (int y = 0; y < _data._fRectHeight; y++) {
+			const byte *srcd = (const byte *)&src->_data._bitImage[((int)((float)y / scale)) * srcPitch + srcglyph->bitmapOffset];
+			byte *dst = ptr;
+			byte b = 0;
+
+			for (int x = 0; x < glyph->width; x++) {
+				int sx = (int)((float)x / scale);
+
+				if (srcd[sx / 8] & (0x80 >> (sx % 8)))
+					b |= 1;
+
+				if (!(x % 8) && x) {
+					*dst++ = b;
+					b = 0;
+				}
+
+				b <<= 1;
+			}
+
+			if (((glyph->width - 1) % 8)) {
+				b <<= 7 - ((glyph->width - 1) % 8);
+				*dst = b;
+			}
+
+			ptr += dstPitch;
+		}
+	}
 #if 0
 	for (int i = 0; i < data.numCharacters; i++) {
 		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
