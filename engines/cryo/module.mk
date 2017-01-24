@@ -3,6 +3,7 @@ MODULE := engines/cryo
 MODULE_OBJS = \
 	cryo.o \
 	cryolib.o \
+	debugger.o \
 	detection.o \
 	eden.o \
 	sound.o \

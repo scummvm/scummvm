@@ -37,6 +37,7 @@
 
 #include "cryo/eden.h"
 #include "cryo/video.h"
+#include "cryo/debugger.h"
 
 namespace Cryo {
 
@@ -69,9 +70,12 @@ public:
 	Graphics::Surface _screen;
 	EdenGame *_game;
 	HnmPlayer *_video;
+	Debugger *_debugger;
 
 	View *_screenView;
 	volatile int32 _timerTicks;
+
+	bool _showHotspots;
 
 	void pollEvents();
 
@@ -81,9 +85,6 @@ public:
 	void getMousePosition(int16 *x, int16 *y);
 	void setMousePosition(int16 x, int16 y);
 	bool isMouseButtonDown();
-
-private:
-	Console *_console;
 };
 
 extern CryoEngine *g_ed;

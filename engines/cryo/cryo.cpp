@@ -40,7 +40,7 @@ namespace Cryo {
 
 CryoEngine *g_ed = nullptr;
 
-CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
+CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().
@@ -58,11 +58,13 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("cryo");
+	_debugger = nullptr;
+
 	_game = nullptr;
 	_video = nullptr;
 	_screenView = nullptr;
 
-	debug("CryoEngine::CryoEngine");
+	_showHotspots = false;
 
 	g_ed = this;
 }
@@ -75,6 +77,7 @@ CryoEngine::~CryoEngine() {
 	delete _game;
 	delete _video;
 	delete _screenView;
+	delete _debugger;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -84,6 +87,7 @@ Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
 	_video = new HnmPlayer(this);
 	_screenView = new View(this, 320, 200);
+	_debugger = new Debugger(this);
 
 	///// CLTimer
 	_timerTicks = 0;   // incremented in realtime
@@ -91,9 +95,6 @@ Common::Error CryoEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 	_screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-
-	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
 
 	// Additional setup.
 	debug("CryoEngine::init");

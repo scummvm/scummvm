@@ -5380,12 +5380,14 @@ void EdenGame::displaySingleRoom(Room *room) {
 					x += _globals->_roomBaseX;
 					ex += _globals->_roomBaseX;
 					debug("add hotspot at %3d:%3d - %3d:%3d, action = %d", x, y, ex, ey, b0);
-#ifdef EDEN_DEBUG
-					for (int iii = x; iii < ex; iii++)
-						_mainViewBuf[y * 640 + iii] = _mainViewBuf[ey * 640 + iii] = (iii % 2) ? 0 : 255;
-					for (int iii = y; iii < ey; iii++)
-						_mainViewBuf[iii * 640 + x] = _mainViewBuf[iii * 640 + ex] = (iii % 2) ? 0 : 255;
-#endif
+
+					if (_vm->_showHotspots) {
+						for (int iii = x; iii < ex; iii++)
+							_mainViewBuf[y * 640 + iii] = _mainViewBuf[ey * 640 + iii] = (iii % 2) ? 0 : 255;
+						for (int iii = y; iii < ey; iii++)
+							_mainViewBuf[iii * 640 + x] = _mainViewBuf[iii * 640 + ex] = (iii % 2) ? 0 : 255;
+					}
+
 					icon->sx = x;
 					icon->sy = y;
 					icon->ex = ex;
