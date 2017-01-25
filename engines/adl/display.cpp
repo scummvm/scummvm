@@ -330,6 +330,9 @@ void Display::showCursor(bool enable) {
 }
 
 void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
+	if (p.x >= DISPLAY_WIDTH || p.y >= DISPLAY_HEIGHT)
+		return;
+
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	color ^= *b;
 	color &= mask;

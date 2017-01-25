@@ -303,39 +303,57 @@ static byte getPatternColor(const Common::Point &p, byte pattern) {
 	return fillPatterns[pattern][offset % PATTERN_LEN];
 }
 
-void Graphics_v2::fillRow(const Common::Point &p, bool stopBit, byte pattern) {
-	const byte color = getPatternColor(p, pattern);
-	_display.setPixelPalette(p, color);
-	_display.setPixelBit(p, color);
+bool Graphics_v2::canFillAt(const Common::Point &p, const bool stopBit) {
+	return _display.getPixelBit(p) != stopBit && _display.getPixelBit(Common::Point(p.x + 1, p.y)) != stopBit;
+}
 
-	Common::Point q(p);
-	byte c = color;
+void Graphics_v2::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
+	byte color = getPatternColor(p, pattern);
 
-	while (++q.x < DISPLAY_WIDTH) {
-		if ((q.x % 7) == 0) {
-			c = getPatternColor(q, pattern);
-			// Palette is set before the first bit is tested
-			_display.setPixelPalette(q, c);
+	while (--p.x >= 0) {
+		if ((p.x % 7) == 6) {
+			color = getPatternColor(p, pattern);
+			_display.setPixelPalette(p, color);
 		}
-		if (_display.getPixelBit(q) == stopBit)
+		if (_display.getPixelBit(p) == stopBit)
 			break;
-		_display.setPixelBit(q, c);
-	}
-
-	q = p;
-	c = color;
-	while (--q.x >= 0) {
-		if ((q.x % 7) == 6) {
-			c = getPatternColor(q, pattern);
-			_display.setPixelPalette(q, c);
-		}
-		if (_display.getPixelBit(q) == stopBit)
-			break;
-		_display.setPixelBit(q, c);
+		_display.setPixelBit(p, color);
 	}
 }
 
-// Basic flood fill
+void Graphics_v2::fillRow(Common::Point p, const byte pattern, const bool stopBit) {
+	// Set pixel at p and palette
+	byte color = getPatternColor(p, pattern);
+	_display.setPixelPalette(p, color);
+	_display.setPixelBit(p, color);
+
+	// Fill left of p
+	fillRowLeft(p, pattern, stopBit);
+
+	// Fill right of p
+	while (++p.x < DISPLAY_WIDTH) {
+		if ((p.x % 7) == 0) {
+			color = getPatternColor(p, pattern);
+			// Palette is set before the first bit is tested
+			_display.setPixelPalette(p, color);
+		}
+		if (_display.getPixelBit(p) == stopBit)
+			break;
+		_display.setPixelBit(p, color);
+	}
+}
+
+void Graphics_v2::fillAt(Common::Point p, const byte pattern) {
+	const bool stopBit = !_display.getPixelBit(p);
+
+	// Move up into the open space above p
+	while (--p.y >= 0 && canFillAt(p, stopBit));
+
+	// Then fill by moving down
+	while (++p.y < DISPLAY_HEIGHT && canFillAt(p, stopBit))
+		fillRow(p, pattern, stopBit);
+}
+
 void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 	byte pattern;
 	READ_BYTE(pattern);
@@ -344,22 +362,7 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 		Common::Point p;
 		READ_POINT(p);
 
-		bool stopBit = !_display.getPixelBit(p);
-
-		while (--p.y >= 0) {
-			if (_display.getPixelBit(p) == stopBit)
-				break;
-			if (_display.getPixelBit(Common::Point(p.x + 1, p.y)) == stopBit)
-				break;
-		}
-
-		while (++p.y < DISPLAY_HEIGHT) {
-			if (_display.getPixelBit(p) == stopBit)
-				break;
-			if (_display.getPixelBit(Common::Point(p.x + 1, p.y)) == stopBit)
-				break;
-			fillRow(p, stopBit, pattern);
-		}
+		fillAt(p, pattern);
 	}
 }
 
@@ -422,6 +425,39 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 			error("Invalid pic opcode %02x", opcode);
 		}
 	}
+}
+
+void Graphics_v3::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
+	byte color = getPatternColor(p, pattern);
+
+	while (--p.x >= 0) {
+		// In this version, when moving left, it no longer sets the palette first
+		if (!_display.getPixelBit(p))
+			return;
+		if ((p.x % 7) == 6) {
+			color = getPatternColor(p, pattern);
+			_display.setPixelPalette(p, color);
+		}
+		_display.setPixelBit(p, color);
+	}
+}
+
+void Graphics_v3::fillAt(Common::Point p, const byte pattern) {
+	// If the row at p cannot be filled, we do nothing
+	if (!canFillAt(p))
+			return;
+
+	fillRow(p, pattern);
+
+	Common::Point q(p);
+
+	// Fill up from p
+	while (--q.y >= 0 && canFillAt(q))
+		fillRow(q, pattern);
+
+	// Fill down from p
+	while (++p.y < DISPLAY_HEIGHT && canFillAt(p))
+		fillRow(p, pattern);
 }
 
 } // End of namespace Adl

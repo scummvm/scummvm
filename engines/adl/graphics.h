@@ -44,6 +44,7 @@ protected:
 	Display &_display;
 };
 
+// Used in hires1
 class Graphics_v1 : public GraphicsMan {
 public:
 	Graphics_v1(Display &display) : GraphicsMan(display) { }
@@ -54,21 +55,37 @@ private:
 	void drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
 };
 
+// Used in hires0 and hires2-hires4
 class Graphics_v2 : public GraphicsMan {
 public:
 	Graphics_v2(Display &display) : GraphicsMan(display), _color(0) { }
 	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
+
+protected:
+	bool canFillAt(const Common::Point &p, const bool stopBit = false);
+	void fillRow(Common::Point p, const byte pattern, const bool stopBit = false);
 
 private:
 	void clear();
 	void drawCorners(Common::SeekableReadStream &pic, bool yFirst);
 	void drawRelativeLines(Common::SeekableReadStream &pic);
 	void drawAbsoluteLines(Common::SeekableReadStream &pic);
-	void fillRow(const Common::Point &p, bool fillBit, byte pattern);
+	virtual void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);
+	virtual void fillAt(Common::Point p, const byte pattern);
 	void fill(Common::SeekableReadStream &pic);
 
 	byte _color;
 	Common::Point _offset;
+};
+
+// Used in hires5, hires6 and gelfling (possibly others as well)
+class Graphics_v3 : public Graphics_v2 {
+public:
+	Graphics_v3(Display &display) : Graphics_v2(display) { }
+
+private:
+	void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);
+	void fillAt(Common::Point p, const byte pattern);
 };
 
 } // End of namespace Adl
