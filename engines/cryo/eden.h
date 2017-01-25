@@ -44,9 +44,11 @@ private:
 	CryoEngine *_vm;
 
 public:
-	void run();
-
 	EdenGame(CryoEngine *vm);
+
+	void run();
+	object_t *getObjectPtr(int16 id);
+	void showObjects();
 
 private:
 	void removeConsole();
@@ -336,9 +338,7 @@ private:
 	void endCharacterSpeech();
 	void fademusicup();
 	void fademusica0(int16 delay);
-	object_t *getObjectPtr(int16 id);
 	void countObjects();
-	void showObjects();
 	void winObject(int16 id);
 	void loseObject(int16 id);
 	void lostObject();
@@ -550,6 +550,8 @@ private:
 	uint8 _cursor[40 * 40];
 	uint8 *_cursorCenter;
 
+	byte  _ownObjects[128];
+
 private:
 	int16 _scrollPos;
 	int16 _oldScrollPos;
@@ -694,7 +696,6 @@ private:
 	byte *_musSequencePtr;
 	bool  _musicEnabledFlag;
 	uint16 *_currentObjectLocation;
-	byte  _ownObjects[128];
 	bool  byte_31D64;
 
 	bool  _noPalette;

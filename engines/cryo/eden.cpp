@@ -6828,18 +6828,12 @@ void EdenGame::countObjects() {
 	byte total = 0;
 	for (int i = 0; i < MAX_OBJECTS; i++) {
 		int16 count = _objects[i]._count;
-#ifdef EDEN_DEBUG
-		count = 1;
-		goto show_all_objects;
-#endif
 		if (count == 0)
 			continue;
+
 		if (_objects[i]._flags & ObjectFlags::ofInHands)
 			count--;
-#ifdef EDEN_DEBUG
-show_all_objects:
-		;
-#endif
+
 		if (count) {
 			total += count;
 			while (count--)

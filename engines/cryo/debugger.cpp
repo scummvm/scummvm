@@ -28,6 +28,7 @@ namespace Cryo {
 
 Debugger::Debugger(CryoEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("showHotspots", WRAP_METHOD(Debugger, Cmd_ShowHotspots));
+	registerCmd("fullInventory", WRAP_METHOD(Debugger, Cmd_FullInventory));
 }
 
 /**
@@ -44,4 +45,20 @@ bool Debugger::Cmd_ShowHotspots(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::Cmd_FullInventory(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	for (int i = 0; i < MAX_OBJECTS; i++) {
+		object_t *object = _vm->_game->getObjectPtr(i);
+		object->_flags |= ObjectFlags::ofFlag1;
+		object->_count++;
+	}
+
+	_vm->_game->showObjects();
+
+	return false;
+}
 } // End of namespace Cryo
