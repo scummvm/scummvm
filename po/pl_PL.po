@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-01-16 19:19+0100\n"
-"PO-Revision-Date: 2017-01-06 10:37+0000\n"
+"PO-Revision-Date: 2017-01-25 12:49+0000\n"
 "Last-Translator: Rafa³ Rzepecki <divided.mind@gmail.com>\n"
-"Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/pl/>\n"
+"Language-Team: Polish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/pl/>\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
@@ -1500,58 +1500,58 @@ msgid "in the following field and press 'Connect':"
 msgstr "w tym polu i nacisn±æ 'Po³±cz':"
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Otwórz URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Wklej"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Wkleja zawarto¶æ schowka w pola tekstowe"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Zostaniesz skierowany na stronê ScummVM, na której"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "nale¿y wyraziæ zgodê na dostêp do przechowywania danych."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Inna us³uga jest aktywna. Czy chcesz j± przerwaæ?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Proszê czekaæ, a¿ aktywna us³uga zakoñczy pracê i spróbowaæ ponownie."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "B³±d w polu %s."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "B³êdy w polach: %s."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Wszystko w porz±dku!"
 
 #: gui/storagewizarddialog.cpp:201
-#, fuzzy
 msgid "Invalid code"
-msgstr "Niew³a¶ciwa ¶cie¿ka"
+msgstr "Nieprawid³owy kod"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Nie uda³o siê otworzyæ adresu!\n"
+"Proszê otworzyæ stronê rêcznie."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1589,19 +1589,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM umo¿liwia teraz automatyczne sprawdzanie aktualizacji;\n"
+"wymaga to dostêpu do Internetu.\n"
+"\n"
+"Czy w³±czyæ tê funkcjê?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Mo¿na j± w³±czyæ pó¼niej w opcjach, w zak³adce \"Ró¿ne\".)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Sprawd¼ aktualizacjê..."
+msgstr "Automatycznie sprawdzaj aktualizacje"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Kontynuuj"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
@@ -1733,20 +1736,19 @@ msgstr "Bursztynowy Hercules"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Codziennie"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Co tydzieñ"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Co miesi±c"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Wyczy¶æ"
+msgstr "<Nieprawid³owa warto¶æ>"
 
 #: engines/advancedDetector.cpp:335
 #, c-format
@@ -1755,6 +1757,9 @@ msgid ""
 "Please, report the following data to the ScummVM team along with name\n"
 "of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Nie uda³o siê rozpoznaæ gry w \"%s\".\n"
+"Proszê wys³aæ poni¿sze informacje do zespo³u ScummVM, razem z\n"
+"nazw± gry, któr± próbowano dodaæ i jej numerem wersji i wersj± jêzykow±:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1876,9 +1881,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Nie uda³o siê zastosowaæ ustawienia pe³nego ekranu."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Nie uda³o siê zastosowaæ ustawienia pe³nego ekranu."
+msgstr "Nie uda³o siê zastosowaæ ustawienia filtrowania."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2029,19 +2033,20 @@ msgid "C64 Audio Emulator"
 msgstr "Emulator d¼wiêku C64"
 
 #: backends/cloud/storage.cpp:211
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "Skanowanie zakoñczone!"
+msgstr "Synchronizacja zapisanych stanów gry zosta³a zakoñczona."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Synchronizacja zapisanych stanów gry zosta³a anulowana."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Synchronizacja zapisanych stanów gry nie uda³a siê.\n"
+"Proszê sprawdziæ po³±czenie z Internetem."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
