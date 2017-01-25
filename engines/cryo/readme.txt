@@ -64,7 +64,7 @@ bug-free (aka it's a can of worms). Several original bugs, various oddities
 and problematic areas are marked with TODO comment in the source code. There
 are number of variables with non-descripitve names like byte_1234, those
 purpose is yet to be clearly understood. To make code debugging easier,
-EDEN_DEBUG macro activates several extra features. Some parts, like image
+some commands have been added in the debugger. Some parts, like image
 drawing routines, can be simplified/generalized.
 
 Because parts of this code (mainly decompression and video playback) used
