@@ -170,10 +170,10 @@ void MacFontManager::loadFonts() {
 
 				Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
 
-				Graphics::MacFontFamily fontFamily;
-				fontFamily.load(*fond);
+				Graphics::MacFontFamily *fontFamily = new MacFontFamily();
+				fontFamily->load(*fond);
 
-				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily.getAssocTable();
+				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
 
 				for (uint i = 0; i < assoc->size(); i++) {
 					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
@@ -195,7 +195,7 @@ void MacFontManager::loadFonts() {
 					}
 
 					font = new Graphics::MacFONTFont;
-					font->loadFont(*fontstream);
+					font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
 
 					delete fontstream;
 
