@@ -33,8 +33,6 @@ enum Direction {
 	kCryoWest = 3
 };
 
-#define EDEN_DEBUG
-
 namespace Cryo {
 
 class CryoEngine;

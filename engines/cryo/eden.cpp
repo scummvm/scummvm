@@ -4633,9 +4633,7 @@ void EdenGame::setDestRect(int16 sx, int16 sy, int16 ex, int16 ey) {
 
 void EdenGame::wait(int howlong) {
 	int t = g_system->getMillis();
-#ifdef EDEN_DEBUG
-	howlong *= 10;
-#endif
+
 	for (int t2 = t; t2 - t < howlong; t2 = g_system->getMillis())
 		g_system->delayMillis(10); // waste time
 }
