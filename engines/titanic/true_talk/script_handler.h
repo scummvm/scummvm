@@ -33,7 +33,6 @@
 namespace Titanic {
 
 class CTitleEngine;
-class CScriptHandler;
 
 class CScriptHandler {
 private:

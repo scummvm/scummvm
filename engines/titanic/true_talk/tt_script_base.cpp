@@ -65,13 +65,8 @@ TTscriptBase::~TTscriptBase() {
 }
 
 bool TTscriptBase::isValid() {
-	if (!_charName.empty() && !_charClass.empty()) {
-		_status = SS_VALID;
-		return true;
-	} else {
-		_status = SS_11;
-		return false;
-	}
+	_status = SS_VALID;
+	return true;
 }
 
 void TTscriptBase::reset() {

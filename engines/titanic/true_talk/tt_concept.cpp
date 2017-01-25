@@ -28,7 +28,7 @@
 namespace Titanic {
 
 TTconcept::TTconcept() : _string1(" "), _string2(" "),
-		_nextP(nullptr), _scriptP(nullptr), _wordP(nullptr), _status(SS_VALID),
+		_nextP(nullptr), _scriptP(nullptr), _wordP(nullptr), _word2P(nullptr), _status(SS_VALID),
 		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
 	if (setStatus())
 		setScriptType(ST_UNKNOWN_SCRIPT);
@@ -37,7 +37,7 @@ TTconcept::TTconcept() : _string1(" "), _string2(" "),
 }
 
 TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
-		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _scriptP(nullptr),
+		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _word2P(nullptr), _scriptP(nullptr),
 		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
 	if (!script->getStatus()) {
 		setScriptType(scriptType);
