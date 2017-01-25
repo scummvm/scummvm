@@ -65,7 +65,7 @@ void TTconceptNode::deleteSiblings() {
 }
 
 TTconcept **TTconceptNode::setConcept(int conceptIndex, TTconcept *src) {
-	TTconcept **conceptPP = nullptr;
+	TTconcept **conceptPP = &_concept0P;
 	switch (conceptIndex) {
 	case 1:
 		conceptPP = &_concept1P;
