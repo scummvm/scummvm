@@ -258,7 +258,7 @@ bool TTconcept::checkWordId3() const {
 }
 
 bool TTconcept::checkWordClass() const {
-	return !_scriptP && _wordP && (_wordP->_wordClass == WC_THING || _wordP->_wordClass == WC_PRONOUN);
+	return _scriptP || (_wordP && (_wordP->_wordClass == WC_THING || _wordP->_wordClass == WC_PRONOUN));
 }
 
 const TTstring TTconcept::getText() {
