@@ -119,6 +119,7 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
+		testFontScaling();
 		testFonts();
 
 		_lingo->runTests();
@@ -129,8 +130,6 @@ Common::Error DirectorEngine::run() {
 	//FIXME
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
-
-	//testFontScaling();
 
 	if (getPlatform() == Common::kPlatformWindows)
 		_sharedCastFile = "SHARDCST.MMM";

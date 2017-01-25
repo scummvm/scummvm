@@ -27,6 +27,7 @@
 
 #include "engines/util.h"
 #include "graphics/font.h"
+#include "graphics/fonts/macfont.h"
 #include "graphics/palette.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -105,6 +106,19 @@ void DirectorEngine::testFontScaling() {
 	surface.create(w, h);
 	surface.clear(255);
 
+	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
+
+	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
+
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y, 500);
+
+	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
+
+	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
+
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50, 500);
+
+#if 0
 	const char *text = "d";
 
 	for (int i = 9; i <= 40; i++) {
@@ -121,6 +135,7 @@ void DirectorEngine::testFontScaling() {
 
 		x += width + 1;
 	}
+#endif
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h);
 
