@@ -6717,7 +6717,7 @@ int EdenGame::loadmusicfile(int16 num) {
 	_bigfile.seek(offs, SEEK_SET);
 	uint32 numread = size;
 	if (numread > kMaxMusicSize)
-		error("Music file %s is too big", file->_name);
+		error("Music file %s is too big", file->_name.c_str());
 	_bigfile.read(_musicBuf, numread);
 	return size;
 }

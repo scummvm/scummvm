@@ -443,11 +443,11 @@ void CRYOLib_ManagersDone() {
 PakHeaderNode::PakHeaderNode(int count) {
 	_count = count;
 	_files = new PakHeaderItem[count];
-};
+}
 
 PakHeaderNode::~PakHeaderNode() {
 	_count = 0;
 	delete[] _files;
-};
+}
 
 } // End of namespace Cryo
