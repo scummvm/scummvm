@@ -156,7 +156,8 @@ public:
 
 	int getFontSize() const { return _data._size; }
 
-	static MacFONTFont *scaleFont(MacFONTFont *src, int newSize);
+	static MacFONTFont *scaleFont(const MacFONTFont *src, int newSize);
+	static void testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width);
 
 private:
 	MacFONTdata _data;

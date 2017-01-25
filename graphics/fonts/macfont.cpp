@@ -22,7 +22,7 @@
 
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/fonts/macfont.h"
 
 namespace Graphics {
@@ -395,7 +395,7 @@ int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
 
-MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
+MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	if (!src) {
 		warning("Empty font reference in scale font");
 		return NULL;
@@ -433,7 +433,7 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	int newBitmapWidth = 0;
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
-		MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
+		const MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
 
 		glyph->width = (int)((float)srcglyph->width * scale);
 		glyph->kerningOffset = (int)((float)srcglyph->kerningOffset * scale);
@@ -452,7 +452,7 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 	int dstPitch = data._rowWords;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
-		MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
+		const MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
 		byte *ptr = &data._bitImage[glyph->bitmapOffset];
 
@@ -533,6 +533,25 @@ MacFONTFont *MacFONTFont::scaleFont(MacFONTFont *src, int newSize) {
 #endif
 
 	return new MacFONTFont(data);
+}
+
+void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width) {
+	for (int y = 0; y < src->_data._fRectHeight; y++) {
+		byte *srcRow = src->_data._bitImage + y * src->_data._rowWords;
+
+		for (int x = 0; x < width; x++) {
+			uint16 bitmapOffset = x;
+
+			if (srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8)))) {
+				if (dst->format.bytesPerPixel == 1)
+					*((byte *)dst->getBasePtr(x0 + x, y0 + y)) = color;
+				else if (dst->format.bytesPerPixel == 2)
+					*((uint16 *)dst->getBasePtr(x0 + x, y0 + y)) = color;
+				else if (dst->format.bytesPerPixel == 4)
+					*((uint32 *)dst->getBasePtr(x0 + x, y0 + y)) = color;
+			}
+		}
+	}
 }
 
 } // End of namespace Graphics
