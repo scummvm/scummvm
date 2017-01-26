@@ -110,18 +110,17 @@ void DirectorEngine::testFontScaling() {
 
 	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
 
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y, 500);
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
 
 	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
 
 	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
 
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50, 500);
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
 
-#if 0
 	const char *text = "d";
 
-	for (int i = 9; i <= 40; i++) {
+	for (int i = 9; i <= 20; i++) {
 		Graphics::MacFont macFont(Graphics::kMacFontNewYork, i);
 
 		const Graphics::Font *font = _wm->_fontMan->getFont(macFont);
@@ -135,7 +134,6 @@ void DirectorEngine::testFontScaling() {
 
 		x += width + 1;
 	}
-#endif
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h);
 
