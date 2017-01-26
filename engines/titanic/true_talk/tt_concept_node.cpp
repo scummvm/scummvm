@@ -65,26 +65,8 @@ void TTconceptNode::deleteSiblings() {
 }
 
 TTconcept **TTconceptNode::setConcept(int conceptIndex, TTconcept *src) {
-	TTconcept **conceptPP = &_concept0P;
-	switch (conceptIndex) {
-	case 1:
-		conceptPP = &_concept1P;
-		break;
-	case 2:
-		conceptPP = &_concept2P;
-		break;
-	case 3:
-		conceptPP = &_concept3P;
-		break;
-	case 4:
-		conceptPP = &_concept4P;
-		break;
-	case 5:
-		conceptPP = &_concept5P;
-		break;
-	default:
-		break;
-	}
+	assert(conceptIndex >= 0 && conceptIndex <= 5);
+	TTconcept **conceptPP = &_concepts[conceptIndex];
 
 	if (src) {
 		bool isPronoun = false;
