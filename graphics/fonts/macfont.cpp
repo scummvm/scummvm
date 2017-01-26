@@ -412,7 +412,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 
 	data._fontType = src->_data._fontType;
 	data._firstChar = src->_data._firstChar;
-	data._lastChar = src->_data._firstChar;
+	data._lastChar = src->_data._lastChar;
 	data._maxWidth = (int)((float)src->_data._maxWidth * scale);
 	data._kernMax = (int)((float)src->_data._kernMax * scale);
 	data._nDescent = (int)((float)src->_data._nDescent * scale);
@@ -445,7 +445,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 
 	data._rowWords = newBitmapWidth;
 
-	uint16 bitImageSize = data._rowWords * data._fRectHeight;
+	uint bitImageSize = data._rowWords * data._fRectHeight;
 	data._bitImage = new byte[bitImageSize];
 
 	int srcPitch = src->_data._rowWords;
