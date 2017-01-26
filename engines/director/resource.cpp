@@ -21,6 +21,8 @@
  */
 
 #include "common/macresman.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
@@ -213,6 +215,18 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 
 	Score *castScore = new Score(this, shardcst);
+
+	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
+		debug("Shared cast has fonts. Loading....");
+
+		Common::File file;
+
+		if (!file.open(filename)) {
+			warning("Oops, cannot open file");
+		} else {
+			_wm->_fontMan->loadFontsFromStream(&file);
+		}
+	}
 
 	castScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
 

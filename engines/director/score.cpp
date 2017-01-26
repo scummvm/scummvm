@@ -198,6 +198,10 @@ void Score::loadArchive() {
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
 
+	if (_movieArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
+		debug("Movie has fonts. Loading....");
+	}
+
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), 1024));
 

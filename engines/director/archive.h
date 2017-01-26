@@ -33,7 +33,7 @@ class MacResManager;
 namespace Director {
 
 // Completely ripped off of Mohawk's Archive code
-	
+
 struct Resource {
 	uint32 index;
 	uint32 offset;
@@ -56,7 +56,7 @@ public:
 
 	bool isOpen() const { return _stream != 0; }
 
-	bool hasResource(uint32 tag, uint16 id) const;
+	bool hasResource(uint32 tag, int id) const;
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);

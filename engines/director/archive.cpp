@@ -66,9 +66,12 @@ void Archive::close() {
 	_stream = 0;
 }
 
-bool Archive::hasResource(uint32 tag, uint16 id) const {
+bool Archive::hasResource(uint32 tag, int id) const {
 	if (!_types.contains(tag))
 		return false;
+
+	if (id == -1)
+		return true;
 
 	return _types[tag].contains(id);
 }
@@ -408,7 +411,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			keyRes = &resources[resources.size() - 1];
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
 			casRes = &resources[resources.size() - 1];
-		//or the children of 
+		//or the children of
 		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
 				 tag == MKTAG('B', 'I', 'T', 'D') ||
 				 tag == MKTAG('D', 'I', 'B', ' '))
