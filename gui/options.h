@@ -175,6 +175,9 @@ private:
 	//
 	// Volume controls
 	//
+	void updateMusicVolume(const int newValue) const;
+	void updateSfxVolume(const int newValue) const;
+	void updateSpeechVolume(const int newValue) const;
 	bool _enableVolumeSettings;
 
 	StaticTextWidget *_musicVolumeDesc;
