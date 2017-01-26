@@ -158,68 +158,72 @@ void MacFontManager::loadFonts() {
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
 		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
 
-		Common::MacResManager *fontFile = new Common::MacResManager();
-
-		if (!fontFile->loadFromMacBinary(*stream))
-			continue;
-
-		Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-		if (fonds.size() > 0) {
-			for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-				Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-				Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-				Graphics::MacFontFamily *fontFamily = new MacFontFamily();
-				fontFamily->load(*fond);
-
-				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
-
-				for (uint i = 0; i < assoc->size(); i++) {
-					debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
-											(*assoc)[i]._fontID);
-
-					Common::SeekableReadStream *fontstream;
-					MacFont *macfont;
-					Graphics::MacFONTFont *font;
-
-					fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
-
-					if (!fontstream)
-						fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
-
-					if (!fontstream) {
-						warning("Unknown FontId: %d", (*assoc)[i]._fontID);
-
-						continue;
-					}
-
-					font = new Graphics::MacFONTFont;
-					font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
-
-					delete fontstream;
-
-					Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle, (*assoc)[i]._fontSize);
-
-					macfont = new MacFont(_fontNames.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
-
-					FontMan.assignFontToName(fontName, font);
-					macfont->setFont(font);
-					_fontRegistry.setVal(fontName, macfont);
-
-					debug(2, " %s", fontName.c_str());
-				}
-
-				delete fond;
-			}
-		}
-
-		delete fontFile;
+		loadFontsFromStream(stream);
 	}
 
 	_builtInFonts = false;
 
 	delete dat;
+}
+
+void MacFontManager::loadFontsFromStream(Common::SeekableReadStream *stream) {
+	Common::MacResManager *fontFile = new Common::MacResManager();
+
+	if (!fontFile->loadFromMacBinary(*stream))
+		return;
+
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	if (fonds.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
+			Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			Graphics::MacFontFamily *fontFamily = new MacFontFamily();
+			fontFamily->load(*fond);
+
+			Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
+
+			for (uint i = 0; i < assoc->size(); i++) {
+				debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
+										(*assoc)[i]._fontID);
+
+				Common::SeekableReadStream *fontstream;
+				MacFont *macfont;
+				Graphics::MacFONTFont *font;
+
+				fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+
+				if (!fontstream)
+					fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+
+				if (!fontstream) {
+					warning("Unknown FontId: %d", (*assoc)[i]._fontID);
+
+					continue;
+				}
+
+				font = new Graphics::MacFONTFont;
+				font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+
+				delete fontstream;
+
+				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle, (*assoc)[i]._fontSize);
+
+				macfont = new MacFont(_fontNames.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+
+				FontMan.assignFontToName(fontName, font);
+				macfont->setFont(font);
+				_fontRegistry.setVal(fontName, macfont);
+
+				debug(2, " %s", fontName.c_str());
+			}
+
+			delete fond;
+		}
+	}
+
+	delete fontFile;
 }
 
 const Font *MacFontManager::getFont(MacFont macFont) {

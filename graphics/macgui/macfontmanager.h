@@ -25,6 +25,10 @@
 
 #include "graphics/fontman.h"
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Graphics {
 
 class MacFONTFont;
@@ -121,6 +125,8 @@ public:
 	const char *getFontName(int id, int size, int slant = kMacFontRegular);
 	const char *getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
+
+	void loadFontsFromStream(Common::SeekableReadStream *stream);
 
 private:
 	void loadFontsBDF();
