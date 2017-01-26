@@ -504,6 +504,13 @@ public:
 	}
 
 	/**
+	 * Sets the master volume for digital audio playback.
+	 */
+	void setMasterVolume(const int16 volume) {
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
+	}
+
+	/**
 	 * Initiate an immediate fade of the given channel.
 	 */
 	bool fadeChannel(const int16 channelIndex, const int16 targetVolume, const int16 speed, const int16 steps, const bool stopAfterFade);

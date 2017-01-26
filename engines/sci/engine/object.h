@@ -179,6 +179,10 @@ public:
 			_infoSelectorSci3 &= ~flag;
 		}
 	}
+
+	bool isInserted() const {
+		return getInfoSelector().toUint16() & kInfoFlagViewInserted;
+	}
 #endif
 
 	reg_t getNameSelector() const {

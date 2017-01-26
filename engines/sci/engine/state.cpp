@@ -19,14 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
 #include "common/system.h"
 
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
-#include "sci/event.h"
-
 #include "sci/engine/file.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -84,6 +82,8 @@ void EngineState::reset(bool isRestoring) {
 		_memorySegmentSize = 0;
 		_fileHandles.resize(5);
 		abortScriptProcessing = kAbortNone;
+	} else {
+		g_sci->_guestAdditions->reset();
 	}
 
 	// reset delayed restore game functionality
@@ -120,7 +120,6 @@ void EngineState::reset(bool isRestoring) {
 	scriptGCInterval = GC_INTERVAL;
 
 	_videoState.reset();
-	_syncedAudioOptions = false;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {

@@ -36,6 +36,8 @@
 #include "common/types.h"           // for Flag::NO
 #include "engine.h"                 // for Engine, g_engine
 #include "sci/engine/features.h"    // for GameFeatures
+#include "sci/engine/guest_additions.h" // for GuestAdditions
+#include "sci/engine/state.h"       // for EngineState
 #include "sci/engine/vm_types.h"    // for reg_t, make_reg, NULL_REG
 #include "sci/resource.h"           // for ResourceId, ResourceType::kResour...
 #include "sci/sci.h"                // for SciEngine, g_sci, getSciVersion
@@ -118,6 +120,9 @@ Audio32::Audio32(ResourceManager *resMan) :
 	}
 
 	_useModifiedAttenuation = g_sci->_features->usesModifiedAudioAttenuation();
+	// The mixer stream type is given as `kSFXSoundType` so that audio from
+	// Audio32 will be mixed at the same standard volume as the video players
+	// (which must use `kSFXSoundType` as well).
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
@@ -980,7 +985,7 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 
 int16 Audio32::getVolume(const int16 channelIndex) const {
 	if (channelIndex < 0 || channelIndex >= _numActiveChannels) {
-		return _mixer->getChannelVolume(_handle) * kMaxVolume / Audio::Mixer::kMaxChannelVolume;
+		return (_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) + 1) * kMaxVolume / Audio::Mixer::kMaxMixerVolume;
 	}
 
 	Common::StackLock lock(_mutex);
@@ -990,10 +995,9 @@ int16 Audio32::getVolume(const int16 channelIndex) const {
 void Audio32::setVolume(const int16 channelIndex, int16 volume) {
 	volume = MIN<int16>(kMaxVolume, volume);
 	if (channelIndex == kAllChannels) {
-		ConfMan.setInt("sfx_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
-		ConfMan.setInt("speech_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
-		_mixer->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
-		g_engine->syncSoundSettings();
+		if (!g_sci->_guestAdditions->audio32SetVolumeHook(channelIndex, volume)) {
+			setMasterVolume(volume);
+		}
 	} else if (channelIndex != kNoExistingChannel) {
 		Common::StackLock lock(_mutex);
 		getChannel(channelIndex).volume = volume;

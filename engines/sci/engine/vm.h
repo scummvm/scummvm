@@ -142,16 +142,32 @@ enum GlobalVar {
 	kGlobalVarCurrentRoom    = 2,
 	kGlobalVarSpeed          = 3,  // SCI16
 	kGlobalVarQuit           = 4,
+	kGlobalVarSounds         = 8,
 	kGlobalVarPlanes         = 10, // SCI32
 	kGlobalVarCurrentRoomNo  = 11,
 	kGlobalVarPreviousRoomNo = 12,
 	kGlobalVarNewRoomNo      = 13,
 	kGlobalVarScore          = 15,
+	kGlobalVarGK2MusicVolume = 76, // 0 to 127
 	kGlobalVarFastCast       = 84, // SCI16
 	kGlobalVarMessageType    = 90,
 	kGlobalVarTextSpeed      = 94, // SCI32; 0 is fastest, 8 is slowest
-	kGlobalVarLSL6HiresTextSpeed = 167, // 1 is fastest, 14 is slowest
-	kGlobalVarShivers1Score  = 349
+	kGlobalVarGK1Music1            = 102, // 0 to 127
+	kGlobalVarGK1Music2            = 103, // 0 to 127
+	kGlobalVarLSL6HiresGameFlags   = 137,
+	kGlobalVarGK1NarratorMode      = 166, // 0 for text, 1 for speech
+	kGlobalVarPhant1MusicVolume    = 187, // 0 to 15
+	kGlobalVarPhant1DACVolume      = 188, // 0 to 127
+	kGlobalVarLSL6HiresMusicVolume = 194, // 0 to 13
+	kGlobalVarGK1DAC1              = 207, // 0 to 127
+	kGlobalVarGK1DAC2              = 208, // 0 to 127
+	kGlobalVarLSL6HiresRestoreTextWindow = 210,
+	kGlobalVarGK1DAC3              = 211, // 0 to 127
+	kGlobalVarShiversFlags         = 211,
+	kGlobalVarTorinMusicVolume     = 227, // 0 to 100
+	kGlobalVarTorinSFXVolume       = 228, // 0 to 100
+	kGlobalVarTorinSpeechVolume    = 229, // 0 to 100
+	kGlobalVarShivers1Score        = 349
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */

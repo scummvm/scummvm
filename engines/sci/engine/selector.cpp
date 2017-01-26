@@ -202,6 +202,20 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(magnifier);
 	FIND_SELECTOR(frameOut);
 	FIND_SELECTOR(casts);
+	FIND_SELECTOR(setVol);
+	FIND_SELECTOR(reSyncVol);
+	FIND_SELECTOR(set);
+	FIND_SELECTOR(clear);
+	FIND_SELECTOR(curPos);
+	FIND_SELECTOR(update);
+	FIND_SELECTOR(show);
+	FIND_SELECTOR(position);
+	FIND_SELECTOR(musicVolume);
+	FIND_SELECTOR(soundVolume);
+	FIND_SELECTOR(initialOff);
+	FIND_SELECTOR(setPos);
+	FIND_SELECTOR(setSize);
+	FIND_SELECTOR(displayValue);
 #endif
 }
 

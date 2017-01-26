@@ -214,7 +214,6 @@ public:
 
 	// TODO: Excise video code from the state manager
 	VideoState _videoState;
-	bool _syncedAudioOptions;
 
 	/**
 	 * Resets the engine state.

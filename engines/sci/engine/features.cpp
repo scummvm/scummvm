@@ -534,6 +534,80 @@ SciVersion GameFeatures::detectSci21KernelType() {
 }
 #endif
 
+bool GameFeatures::supportsSpeechWithSubtitles() const {
+	switch (g_sci->getGameId()) {
+	case GID_SQ4:
+	case GID_FREDDYPHARKAS:
+	case GID_ECOQUEST:
+	case GID_LSL6:
+	case GID_LAURABOW2:
+	case GID_KQ6:
+#ifdef ENABLE_SCI32
+	// TODO: Hoyle5, SCI3
+	case GID_GK1:
+	case GID_KQ7:
+	case GID_LSL6HIRES:
+	case GID_PQ4:
+	case GID_QFG4:
+	case GID_SQ6:
+	case GID_TORIN:
+#endif
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+bool GameFeatures::audioVolumeSyncUsesGlobals() const {
+	switch (g_sci->getGameId()) {
+	case GID_GK1:
+	case GID_GK2:
+	case GID_LSL6HIRES:
+	case GID_PHANTASMAGORIA:
+	case GID_TORIN:
+		// TODO: SCI3
+		return true;
+	default:
+		return false;
+	}
+}
+
+MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		return kMessageTypeSyncStrategyNone;
+	}
+
+	if (getSciVersion() == SCI_VERSION_1_1 && g_sci->isCD()) {
+		return kMessageTypeSyncStrategyDefault;
+	}
+
+#ifdef ENABLE_SCI32
+	switch (g_sci->getGameId()) {
+	// TODO: Hoyle5, SCI3
+	case GID_GK1:
+	case GID_KQ7:
+	case GID_MOTHERGOOSEHIRES:
+	case GID_PHANTASMAGORIA:
+	case GID_PQ4:
+	case GID_QFG4:
+	case GID_TORIN:
+		return kMessageTypeSyncStrategyDefault;
+
+	case GID_LSL6HIRES:
+		return kMessageTypeSyncStrategyLSL6Hires;
+
+	case GID_SHIVERS:
+		return kMessageTypeSyncStrategyShivers;
+
+	default:
+		break;
+	}
+#endif
+
+	return kMessageTypeSyncStrategyNone;
+}
+
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));

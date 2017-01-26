@@ -1079,12 +1079,29 @@ static const uint16 gk2InvScrollPatch[] = {
 	PATCH_END
 };
 
+// The init code that runs when GK2 starts up unconditionally resets the
+// music volume to 63, but the game should always use the volume stored in
+// ScummVM.
+// Applies to at least: English 1.00 CD
+static const uint16 gk2VolumeResetSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x3f, // ldi $3f
+	0xa1, 0x4c, // sag $4c (music volume)
+	SIG_END
+};
+
+static const uint16 gk2VolumeResetPatch[] = {
+	0x33, 0x02,  // jmp 2 [past volume changes]
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
+	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,          gk2VolumeResetPatch },
+	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
 	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
-	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2295,8 +2312,30 @@ static const uint16 larry6HiresPatchSetScale[] = {
 	PATCH_END
 };
 
+// The init code that runs when LSL6hires starts up unconditionally resets the
+// master music volume to 12 (and the volume dial to 11), but the game should
+// always use the volume stored in ScummVM.
+// Applies to at least: English CD
+static const uint16 larry6HiresSignatureVolumeReset[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x221), // pushi $221 (masterVolume)
+	0x78,                    // push1
+	0x39, 0x0c,              // push $0c
+	0x81, 0x01,              // lag $01
+	0x4a, SIG_UINT16(0x06),  // send $6
+	0x35, 0x0b,              // ldi $0b
+	0xa1, 0xc2,              // sag $c2
+	SIG_END
+};
+
+static const uint16 larry6HiresPatchVolumeReset[] = {
+	0x32, PATCH_UINT16(12),  // jmp 12 [past volume changes]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
+	{  true,    71, "disable volume reset on startup",             1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -3151,9 +3190,42 @@ static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 #pragma mark -
 #pragma mark Phantasmagoria
 
+// Phantasmagoria persists audio volumes in the save games, but ScummVM manages
+// game volumes through the launcher, so stop the game from overwriting the
+// ScummVM volumes with volumes from save games.
+// Applies to at least: English CD
+static const uint16 phant1SignatureSavedVolume[] = {
+	0x7a,                         // push2
+	0x39, 0x08,                   // pushi 8
+	0x38, SIG_UINT16(0x20b),      // push $20b (readWord)
+	0x76,                         // push0
+	0x72, SIG_UINT16(0x13c),      // lofsa $13c (PREF.DAT)
+	0x4a, SIG_UINT16(0x04),       // send 4
+	SIG_MAGICDWORD,
+	0xa1, 0xbc,                   // sag $bc
+	0x36,                         // push
+	0x43, 0x76, SIG_UINT16(0x04), // callk DoAudio[76], 4
+	0x7a,                         // push2
+	0x76,                         // push0
+	0x38, SIG_UINT16(0x20b),      // push $20b (readWord)
+	0x76,                         // push0
+	0x72, SIG_UINT16(0x13c),      // lofsa $13c (PREF.DAT)
+	0x4a, SIG_UINT16(0x04),       // send 4
+	0xa1, 0xbb,                   // sag $bb
+	0x36,                         // push
+	0x43, 0x75, SIG_UINT16(0x04), // callk DoSound[75], 4
+	SIG_END
+};
+
+static const uint16 phant1PatchSavedVolume[] = {
+	0x32, PATCH_UINT16(36),         // jmp [to prefFile::close]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,  1111, "ignore audio settings from save game",        1, phant1SignatureSavedVolume,      phant1PatchSavedVolume },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3309,6 +3381,50 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
+#pragma mark Police Quest: SWAT
+
+// The init code that runs when PQ:SWAT starts up unconditionally resets the
+// master sound volume to 127, but the game should always use the volume stored
+// in ScummVM.
+// Applies to at least: English CD
+static const uint16 pqSwatSignatureVolumeReset1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
+	0x78,                    // push1
+	0x39, 0x7f,              // push $7f
+	0x54, SIG_UINT16(0x06),  // self 6
+	SIG_END
+};
+
+static const uint16 pqSwatPatchVolumeReset1[] = {
+	0x32, PATCH_UINT16(6), // jmp 6 [past volume reset]
+	PATCH_END
+};
+
+// pqInitCode::doit
+static const uint16 pqSwatSignatureVolumeReset2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x21a), // pushi $21a (masterVolume)
+	0x78,                    // push1
+	0x39, 0x0f,              // pushi $f
+	0x81, 0x01,              // lag 1
+	0x4a, SIG_UINT16(0x06),  // send 6
+	SIG_END
+};
+
+static const uint16 pqSwatPatchVolumeReset2[] = {
+	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry pqSwatSignatures[] = {
+	{  true,     0, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset1,       pqSwatPatchVolumeReset1 },
+	{  true,     1, "disable volume reset on startup",             1, pqSwatSignatureVolumeReset2,       pqSwatPatchVolumeReset2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4284,8 +4400,41 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 #pragma mark -
 #pragma mark Quest for Glory 4
 
+// The init code that runs when QFG4 starts up unconditionally resets the
+// master music volume to 15, but the game should always use the volume stored
+// in ScummVM.
+// Applies to at least: English floppy
+static const uint16 qfg4SignatureVolumeReset[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x215), // pushi $215 (masterVolume)
+	0x78,                    // push1
+	0x39, 0x0f,              // pushi $f
+	0x81, 0x01,              // lag 1 (Glory object)
+	0x4a, SIG_UINT16(0x06),  // send 6
+	SIG_END
+};
+
+// Same as above, but with a different masterVolume selector.
+// Applies to at least: English CD
+static const uint16 qfg4CDSignatureVolumeReset[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x217), // pushi $217 (masterVolume)
+	0x78,                    // push1
+	0x39, 0x0f,              // pushi $f
+	0x81, 0x01,              // lag 1 (Glory object)
+	0x4a, SIG_UINT16(0x06),  // send 6
+	SIG_END
+};
+
+static const uint16 qfg4PatchVolumeReset[] = {
+	0x32, PATCH_UINT16(8),  // jmp 8 [past volume changes]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
+	{  true,     1, "disable volume reset on startup (floppy)",    1, qfg4SignatureVolumeReset,         qfg4PatchVolumeReset },
+	{  true,     1, "disable volume reset on startup (CD)",        1, qfg4CDSignatureVolumeReset,       qfg4PatchVolumeReset },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
@@ -4948,8 +5097,57 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark -
 #pragma mark Torins Passage
 
+// The init code that runs when Torin starts up unconditionally resets the
+// master music volume to defaults, but the game should always use the volume
+// stored in ScummVM.
+// Applies to at least: English CD
+static const uint16 torinVolumeResetSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x28, // ldi $28
+	0xa1, 0xe3, // sag $e3 (music volume)
+	0x35, 0x3c, // ldi $3c
+	0xa1, 0xe4, // sag $e4 (sfx volume)
+	0x35, 0x64, // ldi $64
+	0xa1, 0xe5, // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 torinVolumeResetPatch1[] = {
+	0x33, 0x0a, // jmp [past volume resets]
+	PATCH_END
+};
+
+// The init code that runs when Torin starts up unconditionally resets the
+// master music volume to values stored in torin.prf, but the game should always
+// use the volume stored in ScummVM.
+// Applies to at least: English CD
+static const uint16 torinVolumeResetSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x20b), // pushi $020b
+	0x76,                    // push0
+	SIG_ADDTOOFFSET(6),      // advance file stream
+	0xa1, 0xe3,              // sag $e3 (music volume)
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe4,              // sag $e4 (sfx volume)
+	SIG_ADDTOOFFSET(10),     // advance file stream
+	0xa1, 0xe5,              // sag $e5 (speech volume)
+	SIG_END
+};
+
+static const uint16 torinVolumeResetPatch2[] = {
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(10), // advance file stream
+	0x18, 0x18,            // waste bytes
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
+	{  true, 64000, "disable volume reset on startup 1/2",         1, torinVolumeResetSignature1,        torinVolumeResetPatch1 },
+	{  true, 64000, "disable volume reset on startup 2/2",         1, torinVolumeResetSignature2,        torinVolumeResetPatch2 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -5468,6 +5666,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #ifdef ENABLE_SCI32
 	case GID_PQ4:
 		signatureTable = pq4Signatures;
+		break;
+	case GID_PQSWAT:
+		signatureTable = pqSwatSignatures;
 		break;
 #endif
 	case GID_QFG1:

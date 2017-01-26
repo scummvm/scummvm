@@ -40,6 +40,16 @@ enum PseudoMouseAbilityType {
 	kPseudoMouseAbilityTrue
 };
 
+enum MessageTypeSyncStrategy {
+	kMessageTypeSyncStrategyNone,
+	kMessageTypeSyncStrategyDefault
+#ifdef ENABLE_SCI32
+	,
+	kMessageTypeSyncStrategyLSL6Hires,
+	kMessageTypeSyncStrategyShivers
+#endif
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -146,6 +156,40 @@ public:
 			gid != GID_TORIN;
 	}
 #endif
+
+	/**
+	 * If true, the current game supports simultaneous speech & subtitles.
+	 */
+	bool supportsSpeechWithSubtitles() const;
+
+	/**
+	 * If true, the game supports changing text speed.
+	 */
+	bool supportsTextSpeed() const {
+		switch (g_sci->getGameId()) {
+#ifdef ENABLE_SCI32
+		case GID_GK1:
+		case GID_SQ6:
+			return true;
+#endif
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	/**
+	 * If true, audio volume sync between the game and ScummVM is done by
+	 * monitoring and setting game global variables.
+	 */
+	bool audioVolumeSyncUsesGlobals() const;
+
+	/**
+	 * The strategy that should be used when synchronising the message type
+	 * (text/speech/text+speech) between the game and ScummVM.
+	 */
+	MessageTypeSyncStrategy getMessageTypeSyncStrategy() const;
 
 	/**
 	 * Applies to all versions before 0.000.502

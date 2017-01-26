@@ -46,7 +46,7 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	error("not supposed to call this");
 }
 
-#define CREATE_DOSOUND_FORWARD(_name_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(argc, argv, s->r_acc); }
+#define CREATE_DOSOUND_FORWARD(_name_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(s, argc, argv); }
 
 CREATE_DOSOUND_FORWARD(DoSoundInit)
 CREATE_DOSOUND_FORWARD(DoSoundPlay)
@@ -77,21 +77,21 @@ reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0:
-		return g_sci->_soundCmd->kDoSoundMasterVolume(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundMasterVolume(s, argc - 1, argv + 1);
 	case 2:
-		return g_sci->_soundCmd->kDoSoundInit(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundInit(s, argc - 1, argv + 1);
 	case 3:
-		return g_sci->_soundCmd->kDoSoundDispose(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundDispose(s, argc - 1, argv + 1);
 	case 4:
-		return g_sci->_soundCmd->kDoSoundPlay(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundPlay(s, argc - 1, argv + 1);
 	case 5:
-		return g_sci->_soundCmd->kDoSoundStop(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundStop(s, argc - 1, argv + 1);
 	case 8:
-		return g_sci->_soundCmd->kDoSoundSetVolume(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundSetVolume(s, argc - 1, argv + 1);
 	case 9:
-		return g_sci->_soundCmd->kDoSoundSetLoop(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundSetLoop(s, argc - 1, argv + 1);
 	case 10:
-		return g_sci->_soundCmd->kDoSoundUpdateCues(argc - 1, argv + 1, s->r_acc);
+		return g_sci->_soundCmd->kDoSoundUpdateCues(s, argc - 1, argv + 1);
 	}
 
 	error("Unknown kDoSound Phantasmagoria Mac subop %d", argv[0].toUint16());

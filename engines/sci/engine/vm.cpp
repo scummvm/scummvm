@@ -27,7 +27,13 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/resource.h"
+#ifdef ENABLE_SCI32
+#include "audio/mixer.h"
+#include "sci/sound/audio32.h"
+#include "sci/sound/music.h"
+#endif
 #include "sci/engine/features.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
@@ -199,36 +205,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
-#ifdef ENABLE_SCI32
-		if (type == VAR_GLOBAL && getSciVersion() >= SCI_VERSION_2 && g_sci->getEngineState()->_syncedAudioOptions) {
-
-			switch (g_sci->getGameId()) {
-			case GID_LSL6HIRES:
-				if (index == kGlobalVarLSL6HiresTextSpeed) {
-					ConfMan.setInt("talkspeed", (14 - value.toSint16()) * 255 / 13);
-				}
-				break;
-			default:
-				if (index == kGlobalVarTextSpeed) {
-					ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
-				}
-			}
-		}
-#endif
-
-		if (type == VAR_GLOBAL && index == kGlobalVarMessageType) {
-			// The game is trying to change its speech/subtitle settings
-			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kGlobalVarQuit] == TRUE_REG) {
-				// ScummVM audio options haven't been applied yet, so apply them.
-				// We also force the ScummVM audio options when loading a game from
-				// the launcher.
-				g_sci->syncIngameAudioOptions();
-				g_sci->getEngineState()->_syncedAudioOptions = true;
-			} else {
-				// Update ScummVM's audio options
-				g_sci->updateScummVMAudioOptions();
-			}
-		}
+		g_sci->_guestAdditions->writeVarHook(type, index, value);
 	}
 }
 
@@ -310,6 +287,10 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
 			error("send_selector(): More than 0x800 arguments to function call");
+
+#ifdef ENABLE_SCI32
+		g_sci->_guestAdditions->sendSelectorHook(send_obj, selector, argp);
+#endif
 
 		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
 		if (selectorType == kSelectorNone)

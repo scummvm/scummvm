@@ -724,7 +724,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #ifdef ENABLE_SCI32
 #define GUIO_GK1_FLOPPY GUIO2(GUIO_NOSPEECH, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_GK1_CD     GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, \
+#define GUIO_GK1_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
+                              GAMEOPTION_ORIGINAL_SAVELOAD, \
                               GAMEOPTION_HIGH_RESOLUTION_GRAPHICS)
 #define GUIO_GK1_MAC    GUIO_GK1_FLOPPY
 
@@ -840,13 +841,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_GK1_CD
 #undef GUIO_GK1_MAC
 
-#define GUIO_GK2_DEMO GUIO6(GUIO_NOSUBTITLES, \
+#define GUIO_GK2_DEMO GUIO7(GUIO_NOSUBTITLES, \
                             GUIO_NOMUSIC, \
+                            GUIO_NOSFX, \
                             GUIO_NOSPEECH, \
                             GUIO_NOMIDI, \
                             GUIO_NOLAUNCHLOAD, \
                             GUIO_NOASPECT)
-#define GUIO_GK2      GUIO5(GUIO_NOSUBTITLES, \
+#define GUIO_GK2      GUIO7(GUIO_NOSUBTITLES, \
+                            GUIO_NOSFX, \
+                            GUIO_NOSPEECHVOLUME, \
                             GUIO_NOMIDI, \
                             GUIO_NOASPECT, \
                             GAMEOPTION_ORIGINAL_SAVELOAD, \
@@ -1134,8 +1138,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 #ifdef ENABLE_SCI32
-#define GUIO_HOYLE5 GUIO3(GUIO_NOMIDI, \
+#define GUIO_HOYLE5 GUIO5(GUIO_NOMIDI, \
                           GUIO_NOLAUNCHLOAD, \
+                          GUIO_LINKMUSICTOSFX, \
+                          GUIO_LINKSPEECHTOSFX, \
                           GUIO_NOASPECT)
 
 	// Hoyle 5 (Hoyle Classic Games) - Windows demo
@@ -1803,11 +1809,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_KQ7_DEMO GUIO4(GUIO_NOSUBTITLES, \
-                            GUIO_NOSPEECH, \
+#define GUIO_KQ7_DEMO GUIO5(GUIO_NOSUBTITLES, \
                             GUIO_NOLAUNCHLOAD, \
+                            GUIO_LINKMUSICTOSFX, \
+                            GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT)
-#define GUIO_KQ7      GUIO2(GUIO_NOASPECT, \
+#define GUIO_KQ7      GUIO4(GUIO_NOASPECT, \
+                            GUIO_LINKMUSICTOSFX, \
+                            GUIO_LINKSPEECHTOSFX, \
                             GAMEOPTION_ORIGINAL_SAVELOAD)
 
 	// King's Quest 7 - English Windows (from the King's Quest Collection)
@@ -2591,7 +2600,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_LSL6HIRES GUIO2(GUIO_NOASPECT, \
+#define GUIO_LSL6HIRES GUIO3(GUIO_NOASPECT, \
+                             GUIO_LINKSPEECHTOSFX, \
                              GAMEOPTION_ORIGINAL_SAVELOAD)
 
 	// Larry 6 - English/German DOS CD - HIRES
@@ -2874,7 +2884,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_MOTHERGOOSEHIRES GUIO2(GUIO_NOASPECT, \
+#define GUIO_MOTHERGOOSEHIRES GUIO4(GUIO_NOSUBTITLES, \
+                                    GUIO_NOASPECT, \
+                                    GUIO_LINKSPEECHTOSFX, \
                                     GAMEOPTION_ORIGINAL_SAVELOAD)
 
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
@@ -2907,9 +2919,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_PHANTASMAGORIA_DEMO GUIO4(GUIO_NOSUBTITLES, \
+#define GUIO_PHANTASMAGORIA_DEMO GUIO5(GUIO_NOSUBTITLES, \
                                        GUIO_NOASPECT, \
                                        GUIO_NOLAUNCHLOAD, \
+                                       GUIO_LINKSPEECHTOSFX, \
                                        GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
 #define GUIO_PHANTASMAGORIA      GUIO_PHANTASMAGORIA_DEMO
 #define GUIO_PHANTASMAGORIA_MAC  GUIO_PHANTASMAGORIA_DEMO
@@ -3348,7 +3361,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #define GUIO_PQ4_FLOPPY GUIO2(GUIO_NOSPEECH, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_PQ4_CD     GUIO2(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
+#define GUIO_PQ4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
+                              GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
 
 	// Police Quest 4 - English DOS CD (from the Police Quest Collection)
@@ -3394,11 +3408,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PQ4_FLOPPY
 #undef GUIO_PQ4_CD
 
-#define GUIO_PQSWAT_DEMO GUIO4(GUIO_NOSUBTITLES, \
-                               GUIO_NOSPEECH, \
+#define GUIO_PQSWAT_DEMO GUIO6(GUIO_NOSUBTITLES, \
+                               GUIO_NOMIDI, \
+                               GUIO_LINKMUSICTOSFX, \
+                               GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GUIO_NOLAUNCHLOAD)
-#define GUIO_PQSWAT      GUIO4(GUIO_NOMIDI, \
+#define GUIO_PQSWAT      GUIO7(GUIO_NOSUBTITLES, \
+                               GUIO_NOMIDI, \
+                               GUIO_LINKMUSICTOSFX, \
+                               GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GAMEOPTION_ORIGINAL_SAVELOAD, \
                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
@@ -3797,7 +3816,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #define GUIO_QFG4_FLOPPY GUIO2(GUIO_NOSPEECH, \
                                GAMEOPTION_ORIGINAL_SAVELOAD)
-#define GUIO_QFG4_CD     GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUIO_QFG4_CD     GUIO2(GUIO_LINKSPEECHTOSFX, \
+                               GAMEOPTION_ORIGINAL_SAVELOAD)
 
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #2723852)
 	// SCI interpreter version 2.000.000 (a guess?)
@@ -3920,12 +3940,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #endif	// ENABLE_SCI3_GAMES
 
-#define GUIO_SHIVERS_DEMO GUIO5(GUIO_NOSUBTITLES, \
-                                GUIO_NOSPEECH, \
+#define GUIO_SHIVERS_DEMO GUIO6(GUIO_NOSUBTITLES, \
                                 GUIO_NOMIDI, \
                                 GUIO_NOLAUNCHLOAD, \
+                                GUIO_LINKSPEECHTOSFX, \
+                                GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT)
-#define GUIO_SHIVERS      GUIO4(GUIO_NOMIDI, \
+#define GUIO_SHIVERS      GUIO6(GUIO_NOMIDI, \
+                                GUIO_LINKSPEECHTOSFX, \
+                                GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT, \
                                 GAMEOPTION_ORIGINAL_SAVELOAD, \
                                 GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
@@ -4528,9 +4551,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #ifdef ENABLE_SCI32
 
-#define GUIO_SQ6_DEMO GUIO2(GUIO_NOLAUNCHLOAD, \
+#define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
+                            GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT)
-#define GUIO_SQ6      GUIO3(GUIO_NOASPECT, \
+#define GUIO_SQ6      GUIO4(GUIO_LINKSPEECHTOSFX, \
+                            GUIO_NOASPECT, \
                             GAMEOPTION_ORIGINAL_SAVELOAD, \
                             GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
 

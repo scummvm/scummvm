@@ -158,6 +158,20 @@ struct SelectorCache {
 	Selector magnifier;
 	Selector frameOut;
 	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
+	Selector setVol; // for GK2 volume sync on restore
+	Selector reSyncVol; // for Torin volume sync on restore
+	Selector set; // for LSL6hires subtitle sync
+	Selector clear; // for LSL6hires subtitle sync
+	Selector curPos; // for LSL6hires volume sync
+	Selector update; // for LSL6hires volume sync
+	Selector show; // for GK1 volume sync
+	Selector position; // for GK1 volume sync
+	Selector musicVolume; // for GK1 volume sync
+	Selector soundVolume; // for GK1 volume sync
+	Selector initialOff; // for GK2 volume sync
+	Selector setPos; // for Torin volume sync
+	Selector setSize; // for PQ4 volume sync
+	Selector displayValue; // for PQ:SWAT volume sync
 #endif
 };
 

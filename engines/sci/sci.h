@@ -62,6 +62,7 @@ class Vocabulary;
 class ResourceManager;
 class Kernel;
 class GameFeatures;
+class GuestAdditions;
 class Console;
 class AudioPlayer;
 class SoundCommandParser;
@@ -263,28 +264,6 @@ public:
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
 
-	/**
-	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
-	 * both) with the in-game audio options of certain CD game versions. For
-	 * some games, this allows simultaneous playing of speech and subtitles,
-	 * even if the original games didn't support this feature.
-	 *
-	 * SCI1.1 games which support simultaneous speech and subtitles:
-	 * - EcoQuest 1 CD
-	 * - Leisure Suit Larry 6 CD
-	 * SCI1.1 games which don't support simultaneous speech and subtitles,
-	 * and we add this functionality in ScummVM:
-	 * - Space Quest 4 CD
-	 * - Freddy Pharkas CD
-	 * - Laura Bow 2 CD
-	 * SCI1.1 games which don't support simultaneous speech and subtitles,
-	 * and we haven't added any extra functionality in ScummVM because extra
-	 * script patches are needed:
-	 * - King's Quest 6 CD
-	 */
-	void syncIngameAudioOptions();
-	void updateScummVMAudioOptions();
-
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
 	int getResourceVersion() const;
@@ -398,6 +377,7 @@ public:
 	Sync *_sync;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
+	GuestAdditions *_guestAdditions;
 
 	opcode_format (*_opcode_formats)[4];
 
