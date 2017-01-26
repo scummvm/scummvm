@@ -440,7 +440,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 		glyph->bitmapWidth = (int)((float)srcglyph->bitmapWidth * scale);
 		glyph->bitmapOffset = newBitmapWidth;
 
-		newBitmapWidth += ((glyph->bitmapWidth + 7) / 8);
+		newBitmapWidth += (glyph->bitmapWidth + 7) & ~0x7;
 	}
 
 	data._rowWords = newBitmapWidth;
@@ -454,15 +454,15 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		const MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
-		byte *ptr = &data._bitImage[glyph->bitmapOffset];
+		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 
 		for (int y = 0; y < data._fRectHeight; y++) {
-			const byte *srcd = (const byte *)&src->_data._bitImage[((int)((float)y / scale)) * srcPitch + srcglyph->bitmapOffset];
+			const byte *srcd = (const byte *)&src->_data._bitImage[((int)((float)y / scale)) * srcPitch];
 			byte *dst = ptr;
 			byte b = 0;
 
 			for (int x = 0; x < glyph->width; x++) {
-				int sx = (int)((float)x / scale);
+				int sx = (int)((float)x / scale) + srcglyph->bitmapOffset;
 
 				if (srcd[sx / 8] & (0x80 >> (sx % 8)))
 					b |= 1;
