@@ -222,6 +222,8 @@ void Score::loadArchive() {
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), 1024)) {
+		_vm->_wm->_fontMan->clearFontMapping();
+
 		loadFontMap(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'M'), 1024));
 	}
 
