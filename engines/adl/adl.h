@@ -231,6 +231,7 @@ public:
 	virtual ~AdlEngine();
 
 	bool pollEvent(Common::Event &event) const;
+	void bell(uint count = 1) const;
 
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
@@ -312,7 +313,6 @@ protected:
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 
 	// Sound
-	void bell(uint count = 1) const;
 	bool playTones(const Tones &tones, bool isMusic, bool allowSkip = false) const;
 
 	// Game state functions

@@ -33,6 +33,7 @@
 #include "engines/util.h"
 
 #include "adl/display.h"
+#include "adl/adl.h"
 
 namespace Adl {
 
@@ -294,7 +295,10 @@ void Display::moveCursorTo(const Common::Point &pos) {
 void Display::printChar(char c) {
 	if (c == APPLECHAR('\r'))
 		_cursorPos = (_cursorPos / TEXT_WIDTH + 1) * TEXT_WIDTH;
-	else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
+	else if (c == APPLECHAR('\a')) {
+		updateTextScreen();
+		static_cast<AdlEngine *>(g_engine)->bell();
+	} else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
 		setCharAtCursor(c);
 		++_cursorPos;
 	}
