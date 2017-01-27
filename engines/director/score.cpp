@@ -914,6 +914,8 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 		_fontMap[id] = font;
+		_vm->_wm->_fontMan->registerFontMapping(id, font);
+
 		debug(3, "Fontmap. ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);

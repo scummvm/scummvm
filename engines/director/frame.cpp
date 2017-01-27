@@ -868,7 +868,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
 		// We need to make sure that teh Shared Cast fonts have been loaded in?
 		//might need a mapping table here of our own.
-		textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->_currentScore->_fontMap[textCast->fontId]);
+		//textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->_currentScore->_fontMap[textCast->fontId]);
 	}
 
 	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
