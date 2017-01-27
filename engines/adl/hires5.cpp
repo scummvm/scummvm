@@ -271,7 +271,7 @@ int HiRes5Engine::o_checkItemTimeLimits(ScriptEnv &e) {
 	}
 
 	if (lostAnItem) {
-		printString(_gameStrings.itemTimeLimit);
+		_display->printString(_gameStrings.itemTimeLimit);
 		inputString();
 	}
 
