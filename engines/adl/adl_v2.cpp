@@ -183,30 +183,29 @@ Common::String AdlEngine_v2::loadMessage(uint idx) const {
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
 	uint endPos = TEXT_WIDTH - 1;
+	uint startPos = 0;
 	uint pos = 0;
 
-	while (true) {
-		while (pos <= endPos && pos != s.size()) {
-			s.setChar(APPLECHAR(s[pos]), pos);
-			++pos;
+	while (pos < s.size()) {
+		s.setChar(APPLECHAR(s[pos]), pos);
+
+		if (pos == endPos) {
+			while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r')) {
+				if (pos-- == startPos)
+					error("Word wrapping failed");
+			}
+
+			s.setChar(APPLECHAR('\r'), pos);
+			endPos = pos + TEXT_WIDTH;
+			startPos = pos + 1;
 		}
 
-		if (pos == s.size())
-			break;
-
-		while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r'))
-			--pos;
-
-		s.setChar(APPLECHAR('\r'), pos);
-		endPos = pos + TEXT_WIDTH;
 		++pos;
 	}
 
-	pos = 0;
-	while (pos != s.size()) {
+	for (pos = 0; pos < s.size(); ++pos) {
 		checkTextOverflow(s[pos]);
 		_display->printChar(s[pos]);
-		++pos;
 	}
 
 	checkTextOverflow(APPLECHAR('\r'));
