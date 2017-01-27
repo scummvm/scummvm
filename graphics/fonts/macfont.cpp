@@ -483,54 +483,6 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 			ptr += dstPitch;
 		}
 	}
-#if 0
-	for (int i = 0; i < data.numCharacters; i++) {
-		const BdfBoundingBox &box = data.boxes ? data.boxes[i] : data.defaultBox;
-		const BdfBoundingBox &srcBox = data.boxes ? src->_data.boxes[i] : src->_data.defaultBox;
-
-		if (src->_data.bitmaps[i]) {
-			const int bytes = ((box.width + 7) / 8) * box.height; // Dimensions have been already corrected
-			bitmaps[i] = new byte[bytes];
-
-			int srcPitch = (srcBox.width + 7) / 8;
-			int dstPitch = (box.width + 7) / 8;
-
-			byte *ptr = bitmaps[i];
-
-			for (int y = 0; y < box.height; y++) {
-				const byte *srcd = (const byte *)&src->_data.bitmaps[i][((int)((float)y / scale)) * srcPitch];
-				byte *dst = ptr;
-				byte b = 0;
-
-				for (int x = 0; x < box.width; x++) {
-					int sx = (int)((float)x / scale);
-
-					if (srcd[sx / 8] & (0x80 >> (sx % 8)))
-						b |= 1;
-
-					if (!(x % 8) && x) {
-						*dst++ = b;
-						b = 0;
-					}
-
-					b <<= 1;
-				}
-
-				if (((box.width - 1) % 8)) {
-					b <<= 7 - ((box.width - 1) % 8);
-					*dst = b;
-				}
-
-				ptr += dstPitch;
-			}
-
-		} else {
-			bitmaps[i] = 0;
-		}
-	}
-
-	data.bitmaps = bitmaps;
-#endif
 
 	return new MacFONTFont(data);
 }
