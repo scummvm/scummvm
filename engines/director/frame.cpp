@@ -911,7 +911,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			textY += padding / 2;
 		}
 
-		if (textCast->textAlign == kTextAlignRight) 
+		if (textCast->textAlign == kTextAlignRight)
 			textX -= 1;
 
 		if (textShadow > 0)
@@ -950,7 +950,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX + textShadow, textY + textShadow), 0xff);
 
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
-	
+
 	inkBasedBlit(surface, textWithFeatures, spriteId, Common::Rect(x, y, x + width, y + height));
 }
 
