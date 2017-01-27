@@ -158,7 +158,7 @@ void MacFontManager::loadFonts() {
 	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
 		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
 
-		loadFontsFromStream(stream);
+		loadFonts(stream);
 	}
 
 	_builtInFonts = false;
@@ -166,12 +166,25 @@ void MacFontManager::loadFonts() {
 	delete dat;
 }
 
-void MacFontManager::loadFontsFromStream(Common::SeekableReadStream *stream) {
-	Common::MacResManager *fontFile = new Common::MacResManager();
+void MacFontManager::loadFonts(Common::SeekableReadStream *stream) {
+	Common::MacResManager fontFile;
 
-	if (!fontFile->loadFromMacBinary(*stream))
+	if (!fontFile.loadFromMacBinary(*stream))
 		return;
 
+	loadFonts(&fontFile);
+}
+
+void MacFontManager::loadFonts(const Common::String &fileName) {
+	Common::MacResManager fontFile;
+
+	if (!fontFile.open(fileName))
+		return;
+
+	loadFonts(&fontFile);
+}
+
+void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
 	if (fonds.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
@@ -222,8 +235,6 @@ void MacFontManager::loadFontsFromStream(Common::SeekableReadStream *stream) {
 			delete fond;
 		}
 	}
-
-	delete fontFile;
 }
 
 const Font *MacFontManager::getFont(MacFont macFont) {

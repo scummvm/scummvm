@@ -27,6 +27,7 @@
 
 namespace Common {
 	class SeekableReadStream;
+	class MacResManager;
 }
 
 namespace Graphics {
@@ -126,7 +127,9 @@ public:
 	const char *getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
 
-	void loadFontsFromStream(Common::SeekableReadStream *stream);
+	void loadFonts(Common::SeekableReadStream *stream);
+	void loadFonts(const Common::String &fileName);
+	void loadFonts(Common::MacResManager *fontFile);
 
 private:
 	void loadFontsBDF();

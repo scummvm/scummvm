@@ -219,13 +219,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
 		debug("Shared cast has fonts. Loading....");
 
-		Common::File file;
-
-		if (!file.open(filename)) {
-			warning("Oops, cannot open file");
-		} else {
-			_wm->_fontMan->loadFontsFromStream(&file);
-		}
+		_wm->_fontMan->loadFonts(filename);
 	}
 
 	castScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
