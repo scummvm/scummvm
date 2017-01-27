@@ -118,7 +118,7 @@ static void registerObjectInIndexTable(UnSerializationInfo *info, int index) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 2);
 
-	lua_pushlightuserdata(info->luaState, (void *)index);
+	lua_pushlightuserdata(info->luaState, reinterpret_cast<void *>(index));
 	// >>>>> permTbl indexTbl ...... obj index
 
 	lua_pushvalue(info->luaState, -2);
@@ -198,7 +198,7 @@ static void unpersist(UnSerializationInfo *info) {
 		} else {
 			// Fetch the object from the indexTbl
 
-			lua_pushlightuserdata(info->luaState, (void *)index);
+			lua_pushlightuserdata(info->luaState, reinterpret_cast<void *>(index));
 			// >>>>> permTbl indexTbl ...... index
 
 			lua_gettable(info->luaState, 2);
