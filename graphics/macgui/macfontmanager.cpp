@@ -77,7 +77,7 @@ static const char *const fontNames[] = {
 MacFontManager::MacFontManager() {
 	for (uint i = 0; i < ARRAYSIZE(fontNames); i++)
 		if (fontNames[i])
-			_fontNames.setVal(fontNames[i], i);
+			_fontIds.setVal(fontNames[i], i);
 
 	loadFonts();
 }
@@ -110,7 +110,7 @@ void MacFontManager::loadFontsBDF() {
 		if (font->getFamilyName() && *font->getFamilyName()) {
 			fontName = Common::String::format("%s-%s-%d", font->getFamilyName(), font->getFontSlant(), font->getFontSize());
 
-			macfont = new MacFont(_fontNames.getVal(font->getFamilyName(), kMacFontNonStandard), font->getFontSize(), parseFontSlant(font->getFontSlant()));
+			macfont = new MacFont(_fontIds.getVal(font->getFamilyName(), kMacFontNonStandard), font->getFontSize(), parseFontSlant(font->getFontSlant()));
 		} else { // Get it from the file name
 			fontName = (*it)->getName();
 
@@ -223,7 +223,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle, (*assoc)[i]._fontSize);
 
-				macfont = new MacFont(_fontNames.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
+				macfont = new MacFont(_fontIds.getVal(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle);
 
 				FontMan.assignFontToName(fontName, font);
 				macfont->setFont(font);
@@ -276,13 +276,28 @@ int MacFontManager::parseFontSlant(Common::String slant) {
 	return slantVal;
 }
 
+void MacFontManager::registerFontMapping(uint16 id, Common::String name) {
+	_extraFontNames[id] = name;
+	_extraFontIds[name] = id;
+}
+
+void MacFontManager::clearFontMapping() {
+	_extraFontNames.clear();
+	_extraFontIds.clear();
+}
+
 const char *MacFontManager::getFontName(int id, int size, int slant) {
 	static char name[128];
+	Common::String n;
 
-	if (id > ARRAYSIZE(fontNames))
+	if (_extraFontNames.contains(id))
+		n = _extraFontNames[id];
+	else if (id < ARRAYSIZE(fontNames))
+		n = fontNames[id];
+	else
 		return NULL;
 
-	snprintf(name, 128, "%s-%d-%d", fontNames[id], slant, size);
+	snprintf(name, 128, "%s-%d-%d", n.c_str(), slant, size);
 
 	return name;
 }
@@ -292,6 +307,9 @@ const char *MacFontManager::getFontName(MacFont &font) {
 }
 
 int MacFontManager::getFontIdByName(Common::String name) {
+	if (_extraFontIds.contains(name))
+		return _extraFontIds[name];
+
 	for (int f = 0; f < ARRAYSIZE(fontNames); f++)
 		if (fontNames[f] != NULL && strcmp(fontNames[f], name.c_str()) == 0)
 			return f;

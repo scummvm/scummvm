@@ -131,6 +131,9 @@ public:
 	void loadFonts(const Common::String &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
 
+	void registerFontMapping(uint16 id, Common::String name);
+	void clearFontMapping();
+
 private:
 	void loadFontsBDF();
 	void loadFonts();
@@ -142,7 +145,10 @@ private:
 	bool _builtInFonts;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
-	Common::HashMap<Common::String, int> _fontNames;
+	Common::HashMap<Common::String, int> _fontIds;
+
+	Common::HashMap<uint16, Common::String> _extraFontNames;
+	Common::HashMap<Common::String, int> _extraFontIds;
 
 	int parseFontSlant(Common::String slant);
 };
