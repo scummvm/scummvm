@@ -131,7 +131,7 @@ int TTparser::normalize(TTsentence *sentence) {
 			if (!destLine->empty() && destLine->lastChar() != ' ')
 				(*destLine) += ' ';
 		} else if (Common::isUpper(c)) {
-			(*destLine) += toupper(c);
+			(*destLine) += tolower(c);
 		} else if (Common::isDigit(c)) {
 			if (c == '0' && isEmoticon(srcLine, index)) {
 				sentence->set38(10);
@@ -256,7 +256,7 @@ int TTparser::isEmoticon(const TTstring &str, int &index) {
 	}
 }
 
-bool TTparser::normalizeContraction(const TTstring &srcLine, int srcIndex, TTstring &destLine) {
+bool TTparser::normalizeContraction(const TTstring &srcLine, int &srcIndex, TTstring &destLine) {
 	int startIndex = srcIndex + 1;
 	switch (srcLine[startIndex]) {
 	case 'd':
