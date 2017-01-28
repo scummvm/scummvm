@@ -32,8 +32,8 @@ namespace Titanic {
 /*------------------------------------------------------------------------*/
 
 CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
-		_owner(owner), _script(owner->_script), _parser(this), _inputCtr(0), _concept1P(nullptr),
-		_concept2P(nullptr), _concept3P(nullptr), _concept4P(nullptr) {
+		_owner(owner), _script(owner->_script), _parser(this), _inputCtr(0), _conceptObject(nullptr),
+		_conceptActor(nullptr), _conceptUnused(nullptr), _conceptVerb(nullptr) {
 	g_vm->_scriptHandler = this;
 	g_vm->_script = _script;
 	g_vm->_exeResources.reset(this, val1, val2);
@@ -42,10 +42,10 @@ CScriptHandler::CScriptHandler(CTitleEngine *owner, int val1, int val2) :
 
 CScriptHandler::~CScriptHandler() {
 	delete _vocab;
-	delete _concept1P;
-	delete _concept2P;
-	delete _concept3P;
-	delete _concept4P;
+	delete _conceptObject;
+	delete _conceptActor;
+	delete _conceptUnused;
+	delete _conceptVerb;
 }
 
 ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnpcScript *npcScript, uint dialogueId) {
@@ -59,14 +59,14 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnp
 		result = npcScript->notifyScript(roomScript, dialogueId);
 
 	if (dialogueId == 3 || dialogueId == 4) {
-		delete _concept1P;
-		delete _concept2P;
-		delete _concept3P;
-		delete _concept4P;
-		_concept1P = nullptr;
-		_concept2P = nullptr;
-		_concept3P = nullptr;
-		_concept4P = nullptr;
+		delete _conceptObject;
+		delete _conceptActor;
+		delete _conceptUnused;
+		delete _conceptVerb;
+		_conceptObject = nullptr;
+		_conceptActor = nullptr;
+		_conceptUnused = nullptr;
+		_conceptVerb = nullptr;
 	}
 
 	++_inputCtr;
@@ -116,29 +116,29 @@ int CScriptHandler::setResponse(TTscriptBase *script, TTresponse *response) {
 }
 
 void CScriptHandler::handleWord(const TTstring *str) {
-	handleWord1(str);
-	handleWord2(str);
+	setActor(str);
+	setObject(str);
 }
 
-void CScriptHandler::handleWord1(const TTstring *str) {
-	if (_concept2P)
-		delete _concept2P;
-	_concept2P = nullptr;
+void CScriptHandler::setActor(const TTstring *str) {
+	if (_conceptActor)
+		delete _conceptActor;
+	_conceptActor = nullptr;
 
 	if (str) {
 		TTword word(*str, WC_UNKNOWN, 0);
-		_concept2P = new TTconcept(&word);
+		_conceptActor = new TTconcept(&word);
 	}
 }
 
-void CScriptHandler::handleWord2(const TTstring *str) {
-	if (_concept1P)
-		delete _concept1P;
-	_concept1P = nullptr;
+void CScriptHandler::setObject(const TTstring *str) {
+	if (_conceptObject)
+		delete _conceptObject;
+	_conceptObject = nullptr;
 
 	if (str) {
 		TTword word(*str, WC_UNKNOWN, 0);
-		_concept1P = new TTconcept(&word);
+		_conceptObject = new TTconcept(&word);
 	}
 }
 

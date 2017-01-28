@@ -79,18 +79,18 @@ TTconcept **TTconceptNode::setConcept(int conceptIndex, TTconcept *src) {
 		if (!isPronoun) {
 			switch (conceptIndex) {
 			case 0:
-				delete scrHandler._concept2P;
-				scrHandler._concept2P = new TTconcept(*src);
+				delete scrHandler._conceptActor;
+				scrHandler._conceptActor = new TTconcept(*src);
 				break;
 
 			case 1:
-				delete scrHandler._concept4P;
-				scrHandler._concept4P = new TTconcept(*src);
+				delete scrHandler._conceptVerb;
+				scrHandler._conceptVerb = new TTconcept(*src);
 				break;
 
 			case 2:
-				delete scrHandler._concept1P;
-				scrHandler._concept1P = new TTconcept(*src);
+				delete scrHandler._conceptObject;
+				scrHandler._conceptObject = new TTconcept(*src);
 				break;
 
 			default:

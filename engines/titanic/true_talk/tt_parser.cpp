@@ -765,13 +765,13 @@ int TTparser::considerRequests(TTword *word) {
 		case SEEK_ACTOR:
 		case MKTAG('S', 'A', 'C', 'T'):
 			if (!_sentenceConcept->_concept0P) {
-				flag = filterConcepts(5, 0);
+				flag = applyConcepts(5, 0);
 			} else if (_sentenceConcept->_concept0P->compareTo("?") &&
 						_sentenceConcept->_concept1P->isWordId(113) &&
 						word->_wordClass == WC_THING) {
 				TTconcept *oldConcept = _sentenceConcept->_concept0P;
 				_sentenceConcept->_concept0P = nullptr;
-				flag = filterConcepts(5, 2);
+				flag = applyConcepts(5, 2);
 				if (flag)
 					delete oldConcept;
 			} else {
@@ -783,11 +783,11 @@ int TTparser::considerRequests(TTword *word) {
 			if (_sentenceConcept->_concept2P && _sentenceConcept->_concept2P->compareTo(word)) {
 				flag = true;
 			} else if (!_sentenceConcept->_concept2P) {
-				if (filterConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
+				if (applyConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
 					addNode(SEEK_OBJECT);
 			} else if (word->_wordClass == WC_THING && _sentence->fn2(2, TTstring("?"), _sentenceConcept)) {
 				TTconcept *oldConcept = _sentenceConcept->_concept2P;
-				flag = filterConcepts(5, 2);
+				flag = applyConcepts(5, 2);
 				_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
 				if (flag)
 					delete oldConcept;
@@ -807,7 +807,7 @@ int TTparser::considerRequests(TTword *word) {
 
 				if (!status && !_sentenceConcept->_concept4P && _sentenceConcept->_concept0P) {
 					TTconcept *oldConcept = _sentenceConcept->_concept2P;
-					flag = filterConcepts(5, 2);
+					flag = applyConcepts(5, 2);
 					_sentenceConcept->_concept2P->_field20 = oldConcept->get20();
 					if (flag)
 						delete oldConcept;
@@ -824,7 +824,7 @@ int TTparser::considerRequests(TTword *word) {
 				_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
 				_sentenceConcept->_concept2P = nullptr;
 
-				flag = filterConcepts(5, 2);
+				flag = applyConcepts(5, 2);
 				if (!flag) {
 					status = _sentenceConcept->createConcept(0, 2, word);
 				}
@@ -833,8 +833,8 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_TO:
 			if (!_sentenceConcept->_concept3P) {
-				if (!filterConcepts(8, 3))
-					flag = filterConcepts(3, 3);
+				if (!applyConcepts(8, 3))
+					flag = applyConcepts(3, 3);
 			} else {
 				flag = true;
 			}
@@ -842,8 +842,8 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_FROM:
 			if (!_sentenceConcept->_concept4P) {
-				if (!filterConcepts(8, 4))
-					flag = filterConcepts(3, 3);
+				if (!applyConcepts(8, 4))
+					flag = applyConcepts(3, 3);
 			} else {
 				flag = true;
 			}
@@ -906,14 +906,14 @@ int TTparser::considerRequests(TTword *word) {
 						_sentenceConcept->_concept5P->findByWordId(904)) {
 					TTconcept *oldConcept = _sentenceConcept->_concept5P;
 					_sentenceConcept->_concept5P = nullptr;
-					flag = filterConcepts(9, 5);
+					flag = applyConcepts(9, 5);
 					if (flag)
 						delete oldConcept;
 				} else {
 					flag = true;
 				}
 			} else {
-				flag = filterConcepts(9, 5);
+				flag = applyConcepts(9, 5);
 				if (!flag && word->_wordClass == WC_ADVERB) {
 					status = _sentenceConcept->createConcept(1, 5, word);
 					flag = true;
@@ -1471,7 +1471,7 @@ int TTparser::checkForAction() {
 	if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
 			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P && !flag) {
 		if (_conceptP)
-			filterConcepts(5, 2);
+			applyConcepts(5, 2);
 
 		if (!_sentenceConcept->_concept2P && _sentence->_category == 1)
 			_sentence->_category = 0;
@@ -1508,7 +1508,7 @@ int TTparser::checkForAction() {
 	} else if (!_sentenceConcept->_concept0P && !_sentenceConcept->_concept1P &&
 			!_sentenceConcept->_concept2P && !_sentenceConcept->_concept5P) {
 		if (_conceptP)
-			filterConcepts(5, 2);
+			applyConcepts(5, 2);
 
 		if (!_sentenceConcept->_concept2P && _sentence->_category == 1)
 			_sentence->_category = 0;
@@ -1597,7 +1597,7 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 	return false;
 }
 
-int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
+int TTparser::applyConcepts(int conceptMode, int conceptIndex) {
 	int result = 0;
 
 	for (TTconcept *currP = _conceptP; currP && !result; currP = currP->_nextP) {

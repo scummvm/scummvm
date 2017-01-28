@@ -174,7 +174,7 @@ private:
 	int checkForAction();
 	int fn2(TTword *word);
 	bool checkConcept2(TTconcept *concept, int conceptMode);
-	int filterConcepts(int conceptMode, int conceptIndex);
+	int applyConcepts(int conceptMode, int conceptIndex);
 	bool resetConcept(TTconcept **conceptPP, int conceptIndex);
 public:
 	CScriptHandler *_owner;

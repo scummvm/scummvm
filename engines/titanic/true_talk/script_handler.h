@@ -39,16 +39,16 @@ private:
 	CTitleEngine *_owner;
 	int _inputCtr;
 private:
-	void handleWord1(const TTstring *str);
-	void handleWord2(const TTstring *str);
+	void setActor(const TTstring *str);
+	void setObject(const TTstring *str);
 public:
 	TTparser _parser;
 	TTvocab *_vocab;
 	TTscriptBase *_script;
-	TTconcept *_concept1P;
-	TTconcept *_concept2P;
-	TTconcept *_concept3P;
-	TTconcept *_concept4P;
+	TTconcept *_conceptObject;
+	TTconcept *_conceptActor;
+	TTconcept *_conceptUnused;
+	TTconcept *_conceptVerb;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
 	~CScriptHandler();
