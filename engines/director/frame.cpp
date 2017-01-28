@@ -830,19 +830,23 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	uint16 formattingCount = textStream->readUint16();
 	while (formattingCount) {
 		uint32 formatStartOffset = textStream->readUint32();
-		textStream->readUint16();
-		textStream->readUint16();
+		uint16 unk1f = textStream->readUint16();
+		uint16 unk2f = textStream->readUint16();
 
 		textCast->fontId = textStream->readUint16();
 		textCast->textSlant = textStream->readByte();
-		textStream->readByte();
+		byte unk3f = textStream->readByte();
 		textCast->fontSize = textStream->readUint16();
 
 		textCast->palinfo1 = textStream->readUint16();
 		textCast->palinfo2 = textStream->readUint16();
 		textCast->palinfo3 = textStream->readUint16();
 
-		debugC(3, kDebugText, "renderText: formattingCount: %u formatStartOffset: %d", formattingCount, formatStartOffset);
+		debugC(3, kDebugText, "renderText: formattingCount: %u, formatStartOffset: %d, unk1: %d unk2: %d, fontId: %d, textSlant: %d",
+				formattingCount, formatStartOffset, unk1f, unk2f, textCast->fontId, textCast->textSlant);
+
+		debugC(3, kDebugText, "        unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x", unk3f, textCast->fontSize,
+				textCast->palinfo1, textCast->palinfo2, textCast->palinfo3);
 
 		formattingCount--;
 	}
