@@ -792,8 +792,8 @@ int TTparser::considerRequests(TTword *word) {
 				if (flag)
 					delete oldConcept;
 			} else if (!_sentenceConcept->_concept3P &&
-					(!_sentenceConcept->_concept1P || (_sentenceConcept->_concept1P->getWordId() &&
-					_sentenceConcept->_concept1P->getWordId() == 112)) &&
+					(!_sentenceConcept->_concept1P || (_sentenceConcept->_concept1P->getWordId() != 113 &&
+					_sentenceConcept->_concept1P->getWordId() != 112)) &&
 					_sentenceConcept->_concept2P->checkWordId1() &&
 					(word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN)) {
 				_sentenceConcept->changeConcept(0, &_sentenceConcept->_concept2P, 3);
