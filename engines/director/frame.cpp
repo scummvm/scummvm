@@ -823,11 +823,15 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		text += ch;
 	}
 
+	Common::String ftext;
+
 	debugC(3, kDebugText, "renderText: unk1: %d strLen: %d dataLen: %d textlen: %u", unk1, strLen, dataLen, text.size());
 	if (strLen < 200)
 		debugC(3, kDebugText, "text: '%s'", text.c_str());
 
 	uint16 formattingCount = textStream->readUint16();
+	uint32 prevPos = 0;
+
 	while (formattingCount) {
 		uint32 formatStartOffset = textStream->readUint32();
 		uint16 unk1f = textStream->readUint16();
@@ -848,8 +852,31 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		debugC(3, kDebugText, "        unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x", unk3f, textCast->fontSize,
 				textCast->palinfo1, textCast->palinfo2, textCast->palinfo3);
 
+		assert (prevPos <= formatStartOffset); // If this is triggered, we have to implement sorting
+
+		while (prevPos != formatStartOffset) {
+			char f = text.firstChar();
+			ftext += text.firstChar();
+			text.deleteChar(0);
+
+			if (f == '\001')	// Insert two \001s as a replacement
+				ftext += '\001';
+
+			prevPos++;
+		}
+
+		ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
+						(textCast->fontId >> 8) & 0xff, textCast->fontId & 0xff,
+						textCast->textSlant & 0xff, unk3f & 0xff,
+						(textCast->fontSize >> 8) & 0xff, textCast->fontSize & 0xff,
+						(textCast->palinfo1 >> 8) & 0xff, textCast->palinfo1 & 0xff,
+						(textCast->palinfo2 >> 8) & 0xff, textCast->palinfo2 & 0xff,
+						(textCast->palinfo3 >> 8) & 0xff, textCast->palinfo3 & 0xff);
+
 		formattingCount--;
 	}
+
+	ftext += text;
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
@@ -887,7 +914,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
-	Graphics::MacText mt(text, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+	Graphics::MacText mt(ftext, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
