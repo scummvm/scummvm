@@ -39,7 +39,14 @@ private:
 	CTitleEngine *_owner;
 	int _inputCtr;
 private:
+	/**
+	 * Sets the text for the actor concept
+	 */
 	void setActor(const TTstring *str);
+
+	/**
+	 * Sets the text for the onject concept
+	 */
 	void setObject(const TTstring *str);
 public:
 	TTparser _parser;
@@ -59,6 +66,10 @@ public:
 	ScriptChangedResult scriptChanged(TTroomScript *roomScript,
 		TTnpcScript *npcScript, uint dialogueId);
 
+	/**
+	 * Main processing and handling for text lines entered into the 
+	 * Conversation tab of the PET
+	 */
 	int processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
 		const TTstring &line);
 
@@ -77,7 +88,10 @@ public:
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response);
 
-	void handleWord(const TTstring *str);
+	/**
+	 * Sets the concepts for both actor and object to the specified text
+	 */
+	void setActorObject(const TTstring *str);
 };
 
 } // End of namespace Titanic

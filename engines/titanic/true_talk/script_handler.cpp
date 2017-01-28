@@ -115,7 +115,7 @@ int CScriptHandler::setResponse(TTscriptBase *script, TTresponse *response) {
 	return _owner->setResponse(script, response);
 }
 
-void CScriptHandler::handleWord(const TTstring *str) {
+void CScriptHandler::setActorObject(const TTstring *str) {
 	setActor(str);
 	setObject(str);
 }
