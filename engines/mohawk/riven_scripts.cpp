@@ -56,23 +56,23 @@ RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
 	uint16 commandCount = stream->readUint16BE();
 
 	for (uint16 i = 0; i < commandCount; i++) {
-		RivenCommand *command = readCommand(stream);
+		RivenCommandPtr command = readCommand(stream);
 		script->addCommand(command);
 	}
 
 	return script;
 }
 
-RivenCommand *RivenScriptManager::readCommand(Common::ReadStream *stream) {
+RivenCommandPtr RivenScriptManager::readCommand(Common::ReadStream *stream) {
 	uint16 type = stream->readUint16BE();
 
 	switch (type) {
 		case 8:
-			return RivenSwitchCommand::createFromStream(_vm, type, stream);
+			return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, type, stream));
 		case 27:
-			return RivenStackChangeCommand::createFromStream(_vm, type, stream);
+			return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, type, stream));
 		default:
-			return RivenSimpleCommand::createFromStream(_vm, type, stream);
+			return RivenCommandPtr(RivenSimpleCommand::createFromStream(_vm, type, stream));
 	}
 }
 
@@ -160,7 +160,7 @@ RivenScriptPtr RivenScriptManager::createScriptWithCommand(RivenCommand *command
 	assert(command);
 
 	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
-	script->addCommand(command);
+	script->addCommand(RivenCommandPtr(command));
 	return script;
 }
 
@@ -169,9 +169,6 @@ RivenScript::RivenScript() {
 }
 
 RivenScript::~RivenScript() {
-	for (uint i = 0; i < _commands.size(); i ++) {
-		delete _commands[i];
-	}
 }
 
 void RivenScript::dumpScript(byte tabs) {
@@ -181,12 +178,12 @@ void RivenScript::dumpScript(byte tabs) {
 }
 
 void RivenScript::run() {
-	for (uint16 i = 0; i < _commands.size() && _continueRunning; i++) {
+	for (uint i = 0; i < _commands.size() && _continueRunning; i++) {
 		_commands[i]->execute();
 	}
 }
 
-void RivenScript::addCommand(RivenCommand *command) {
+void RivenScript::addCommand(RivenCommandPtr command) {
 	_commands.push_back(command);
 }
 

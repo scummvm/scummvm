@@ -55,6 +55,7 @@ class RivenCommand;
 class RivenScript;
 
 typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
+typedef Common::SharedPtr<RivenCommand> RivenCommandPtr;
 
 /**
  * Scripts in Riven are a list of Commands
@@ -68,7 +69,7 @@ public:
 	~RivenScript();
 
 	/** Append a command to the script */
-	void addCommand(RivenCommand *command);
+	void addCommand(RivenCommandPtr command);
 
 	/** True if the script does not contain any command */
 	bool empty() const;
@@ -94,7 +95,7 @@ public:
 	static const char *getTypeName(uint16 type);
 
 private:
-	Common::Array<RivenCommand *> _commands;
+	Common::Array<RivenCommandPtr> _commands;
 	bool _continueRunning;
 };
 
@@ -163,7 +164,7 @@ private:
 	Common::Array<RivenScriptPtr> _queue;
 	StoredMovieOpcode _storedMovieOpcode;
 
-	RivenCommand *readCommand(Common::ReadStream *stream);
+	RivenCommandPtr readCommand(Common::ReadStream *stream);
 };
 
 /**
