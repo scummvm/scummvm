@@ -69,6 +69,11 @@ enum RivenTransitionSpeed {
 	kRivenTransitionSpeedBest = 5003
 };
 
+// Engine Debug Flags
+enum {
+	kRivenDebugScript   = (1 << 0)
+};
+
 struct ZipMode {
 	Common::String name;
 	uint16 id;

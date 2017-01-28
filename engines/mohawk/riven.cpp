@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/translation.h"
@@ -67,6 +68,9 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_optionsDialog = nullptr;
 	_card = nullptr;
 	_inventory = nullptr;
+
+	DebugMan.addDebugChannel(kRivenDebugScript, "Script", "Track Script Execution");
+
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
@@ -95,6 +99,8 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _optionsDialog;
 	delete _inventory;
 	delete _rnd;
+
+	DebugMan.clearAllDebugChannels();
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {

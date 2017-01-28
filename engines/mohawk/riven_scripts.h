@@ -217,6 +217,7 @@ private:
 	RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments);
 
 	void setupOpcodes();
+	Common::String describe() const;
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
 
