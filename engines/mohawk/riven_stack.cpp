@@ -36,7 +36,8 @@ namespace Mohawk {
 
 RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_vm(vm),
-		_id(id) {
+		_id(id),
+		_mouseIsDown(false) {
 	loadResourceNames();
 	loadCardIdMap();
 	setCurrentStackVariable();
@@ -221,6 +222,46 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 
 void RivenStack::installCardTimer() {
 
+}
+
+void RivenStack::onMouseDown(const Common::Point &mouse) {
+	_mouseIsDown = true;
+	_mousePosition = mouse;
+
+	if (_vm->getCard() && !_vm->_scriptMan->hasQueuedScripts()) {
+		_mouseDragStartPosition = mouse;
+
+		RivenScriptPtr script = _vm->getCard()->onMouseDown(mouse);
+
+		if (!script->empty()) {
+			_vm->_scriptMan->runScript(script, false);
+		}
+	}
+}
+
+void RivenStack::onMouseUp(const Common::Point &mouse) {
+	_mouseIsDown = false;
+	_mousePosition = mouse;
+
+	if (_vm->getCard() && !_vm->_scriptMan->hasQueuedScripts()) {
+		RivenScriptPtr script = _vm->getCard()->onMouseUp(mouse);
+
+		if (!script->empty()) {
+			_vm->_scriptMan->runScript(script, false);
+		}
+	}
+}
+
+void RivenStack::onMouseMove(const Common::Point &mouse) {
+	_mousePosition = mouse;
+
+	if (_vm->getCard() && !_vm->_scriptMan->hasQueuedScripts()) {
+		RivenScriptPtr script = _vm->getCard()->onMouseMove(mouse);
+
+		if (!script->empty()) {
+			_vm->_scriptMan->runScript(script, false);
+		}
+	}
 }
 
 RivenNameList::RivenNameList() {

@@ -197,7 +197,7 @@ void MohawkEngine_Riven::handleEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			_card->onMouseMove(event.mouse);
+			_stack->onMouseMove(event.mouse);
 
 			if (!(getFeatures() & GF_DEMO)) {
 				// Check to show the inventory, but it is always "showing" in the demo
@@ -213,10 +213,10 @@ void MohawkEngine_Riven::handleEvents() {
 			if (_card->getCurHotspot()) {
 				checkSunnerAlertClick();
 			}
-			_card->onMouseDown(_eventMan->getMousePos());
+			_stack->onMouseDown(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_card->onMouseUp(_eventMan->getMousePos());
+			_stack->onMouseUp(_eventMan->getMousePos());
 			_inventory->checkClick(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_KEYDOWN:
