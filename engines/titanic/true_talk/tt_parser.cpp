@@ -1143,9 +1143,8 @@ int TTparser::considerRequests(TTword *word) {
 						_sentenceConcept->get18());
 					status = _sentenceConcept->createConcept(1, 1, verbP);
 					delete verbP;
+					flag = true;
 				}
-
-				flag = true;
 			}
 			break;
 
@@ -1276,8 +1275,11 @@ int TTparser::considerRequests(TTword *word) {
 		}
 
 		TTparserNode *nextP = dynamic_cast<TTparserNode *>(nodeP->_nextP);
-		if (flag)
+		if (flag) {
 			removeNode(nodeP);
+			flag = false;
+		}
+
 		nodeP = nextP;
 	}
 
