@@ -216,7 +216,7 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 		_vm->_system->delayMillis(10);
 	}
 
-	_vm->setGameOver();
+	_vm->quitGame();
 }
 
 void RivenStack::installCardTimer() {

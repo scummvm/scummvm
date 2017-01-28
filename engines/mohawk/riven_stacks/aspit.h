@@ -67,8 +67,6 @@ public:
 	void xaenablemenuintro(uint16 argc, uint16 *argv);
 	void xademoquit(uint16 argc, uint16 *argv);
 	void xaexittomain(uint16 argc, uint16 *argv);
-
-	void inventoryBackFromItemScript() const;
 };
 
 } // End of namespace RivenStacks

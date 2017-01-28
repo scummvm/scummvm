@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_inventory.h"
 
 #include "common/events.h"
 
@@ -181,7 +182,7 @@ void TSpit::xtchotakesbook(uint16 argc, uint16 *argv) {
 }
 
 void TSpit::xthideinventory(uint16 argc, uint16 *argv) {
-	_vm->_gfx->hideInventory();
+	_vm->_inventory->hide();
 }
 
 // Marble Puzzle related constants
