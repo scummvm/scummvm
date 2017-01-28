@@ -144,6 +144,9 @@ public:
 	/** Run a script */
 	void runScript(const RivenScriptPtr &script, bool queue);
 
+	/** Are scripts running in the background */
+	bool hasQueuedScripts() const;
+
 	void stopAllScripts();
 
 	struct StoredMovieOpcode {
