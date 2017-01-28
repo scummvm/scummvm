@@ -39,23 +39,16 @@ private:
 	CTitleEngine *_owner;
 	int _inputCtr;
 private:
-	/**
-	 * Sets the text for the actor concept
-	 */
-	void setActor(const TTstring *str);
-
-	/**
-	 * Sets the text for the onject concept
-	 */
-	void setObject(const TTstring *str);
+	void handleWord1(const TTstring *str);
+	void handleWord2(const TTstring *str);
 public:
 	TTparser _parser;
 	TTvocab *_vocab;
 	TTscriptBase *_script;
-	TTconcept *_conceptObject;
-	TTconcept *_conceptActor;
-	TTconcept *_conceptUnused;
-	TTconcept *_conceptVerb;
+	TTconcept *_concept1P;
+	TTconcept *_concept2P;
+	TTconcept *_concept3P;
+	TTconcept *_concept4P;
 public:
 	CScriptHandler(CTitleEngine *owner, int val1, int val2);
 	~CScriptHandler();
@@ -66,10 +59,6 @@ public:
 	ScriptChangedResult scriptChanged(TTroomScript *roomScript,
 		TTnpcScript *npcScript, uint dialogueId);
 
-	/**
-	 * Main processing and handling for text lines entered into the 
-	 * Conversation tab of the PET
-	 */
 	int processInput(TTroomScript *roomScript, TTnpcScript *npcScript,
 		const TTstring &line);
 
@@ -88,10 +77,7 @@ public:
 	 */
 	int setResponse(TTscriptBase *script, TTresponse *response);
 
-	/**
-	 * Sets the concepts for both actor and object to the specified text
-	 */
-	void setActorObject(const TTstring *str);
+	void handleWord(const TTstring *str);
 };
 
 } // End of namespace Titanic

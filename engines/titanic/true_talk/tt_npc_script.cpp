@@ -262,12 +262,12 @@ bool TTnpcScript::handleWord(uint id) const {
 		const TTwordEntry &we = _words[idx];
 		if (we._id == id) {
 			TTstring str(we._text);
-			g_vm->_scriptHandler->setActorObject(&str);
+			g_vm->_scriptHandler->handleWord(&str);
 			return true;
 		}
 	}
 
-	g_vm->_scriptHandler->setActorObject(nullptr);
+	g_vm->_scriptHandler->handleWord(nullptr);
 	return true;
 }
 

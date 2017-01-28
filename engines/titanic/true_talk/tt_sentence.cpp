@@ -195,24 +195,24 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 		return true;
 	}
 
-	if (slotIndex == 1 && g_vm->_exeResources._owner->_conceptVerb) {
-		if (str == g_vm->_exeResources._owner->_conceptVerb->getText() &&
+	if (slotIndex == 1 && g_vm->_exeResources._owner->_concept4P) {
+		if (str == g_vm->_exeResources._owner->_concept4P->getText() &&
 				conceptText == "do")
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_conceptActor && (slotIndex == 0 ||
+	if (g_vm->_exeResources._owner->_concept2P && (slotIndex == 0 ||
 			slotIndex == 3 || slotIndex == 4)) {
-		if (str == g_vm->_exeResources._owner->_conceptActor->getText() &&
+		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
 				(conceptText == "it" || conceptText == "he" || conceptText == "she" ||
 				conceptText == "him" || conceptText == "her" || conceptText == "them" ||
 				conceptText == "they"))
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_conceptObject && (slotIndex == 0 ||
+	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 ||
 		slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
-		if (str == g_vm->_exeResources._owner->_conceptObject->getText() &&
+		if (str == g_vm->_exeResources._owner->_concept1P->getText() &&
 			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
 				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
 				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
@@ -220,8 +220,8 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 			goto exit;
 	}
 
-	if (g_vm->_exeResources._owner->_conceptObject && (slotIndex == 0 || slotIndex == 2)) {
-		if (conceptText == "?" && str == g_vm->_exeResources._owner->_conceptObject->getText()) {
+	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 || slotIndex == 2)) {
+		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept1P->getText()) {
 			delete concept;
 			concept = getFrameSlot(5, node);
 			conceptText = concept->getText();
@@ -307,12 +307,12 @@ bool TTsentence::localWord(const char *str) const {
 	CScriptHandler &scriptHandler = *g_vm->_exeResources._owner;
 	bool foundMatch = false;
 
-	if (scriptHandler._conceptObject) {
-		TTstring s = scriptHandler._conceptObject->getText();
+	if (scriptHandler._concept1P) {
+		TTstring s = scriptHandler._concept1P->getText();
 		if (s == str)
 			foundMatch = true;
-	} else if (scriptHandler._conceptActor) {
-			TTstring s = scriptHandler._conceptActor->getText();
+	} else if (scriptHandler._concept2P) {
+			TTstring s = scriptHandler._concept2P->getText();
 			if (s == str)
 				foundMatch = true;
 	}
