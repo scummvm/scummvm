@@ -48,6 +48,29 @@ void MacText::splitString(Common::String &str) {
 	bool prevCR = false;
 
 	while (*s) {
+		if (*s == '\001') {
+			s++;
+			if (*s == '\001') {
+				// Copy it verbatim
+			} else {
+				if (*s++ != '\015')
+					error("MacText: formatting error");
+
+				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
+				byte textSlant = *s++;
+				byte unk3f = *s++;
+				uint16 fontSize = *s++; fontSize = (fontSize << 8) | *s++;
+				uint16 palinfo1 = *s++; palinfo1 = (palinfo1 << 8) | *s++;
+				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
+				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
+
+				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+
+				continue;
+			}
+		}
+
 		if (*s == '\n' && prevCR) {	// trean \r\n as one
 			prevCR = false;
 
