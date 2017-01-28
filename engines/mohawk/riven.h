@@ -44,6 +44,7 @@ class RivenStack;
 class RivenCard;
 class RivenHotspot;
 class RivenSoundManager;
+class RivenInventory;
 
 // Riven Stack Types
 enum {
@@ -68,16 +69,6 @@ enum RivenTransitionSpeed {
 	kRivenTransitionSpeedBest = 5003
 };
 
-// Rects for the inventory object positions (initialized in
-// MohawkEngine_Riven's constructor).
-extern Common::Rect *g_atrusJournalRect1;
-extern Common::Rect *g_atrusJournalRect2;
-extern Common::Rect *g_cathJournalRect2;
-extern Common::Rect *g_atrusJournalRect3;
-extern Common::Rect *g_cathJournalRect3;
-extern Common::Rect *g_trapBookRect3;
-extern Common::Rect *g_demoExitRect;
-
 struct ZipMode {
 	Common::String name;
 	uint16 id;
@@ -98,6 +89,7 @@ public:
 	RivenGraphics *_gfx;
 	Common::RandomSource *_rnd;
 	RivenScriptManager *_scriptMan;
+	RivenInventory *_inventory;
 
 	GUI::Debugger *getDebugger();
 
@@ -127,7 +119,6 @@ private:
 	void handleEvents();
 
 	// Hotspot related functions and variables
-	void checkInventoryClick();
 	bool _showHotspots;
 
 	// Variables
@@ -138,7 +129,6 @@ private:
 	uint32 _timerTime;
 
 	// Miscellaneous
-	bool _gameOver;
 	void checkSunnerAlertClick();
 
 public:
@@ -160,7 +150,6 @@ public:
 	uint32 &getStackVar(uint32 index);
 
 	// Miscellaneous
-	void setGameOver() { _gameOver = true; }
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
 	bool _activatedPLST;
 	bool _activatedSLST;

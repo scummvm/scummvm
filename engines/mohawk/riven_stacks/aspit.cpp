@@ -25,6 +25,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_inventory.h"
 #include "mohawk/riven_sound.h"
 
 #include "common/translation.h"
@@ -95,20 +96,7 @@ void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
 }
 
 void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
-	inventoryBackFromItemScript();
-}
-
-void ASpit::inventoryBackFromItemScript() const {
-	RivenScriptPtr stopSoundScript = _vm->_scriptMan->createScriptFromData(1, 12, 1, 1);
-	_vm->_scriptMan->runScript(stopSoundScript, false);
-
-	uint16 backStackId = _vm->_vars["returnstackid"];
-	uint32 backCardId = _vm->_vars["returncardid"];
-
-	// Return to where we were before entering the book
-	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true);
-	RivenScriptPtr backScript = _vm->_scriptMan->createScriptWithCommand(back);
-	_vm->_scriptMan->runScript(backScript, false);
+	_vm->_inventory->backFromItemScript();
 }
 
 void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
@@ -198,7 +186,7 @@ void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {
 }
 
 void ASpit::xacathbookback(uint16 argc, uint16 *argv) {
-	inventoryBackFromItemScript();
+	_vm->_inventory->backFromItemScript();
 }
 
 void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
@@ -238,7 +226,7 @@ void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
 void ASpit::xtrapbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
 	_vm->_vars["atrap"] = 0;
-	inventoryBackFromItemScript();
+	_vm->_inventory->backFromItemScript();
 }
 
 void ASpit::xatrapbookclose(uint16 argc, uint16 *argv) {
@@ -309,7 +297,7 @@ void ASpit::xadisablemenuintro(uint16 argc, uint16 *argv) {
 	// The original also had this shortcut.
 
 	// Hide the "exit" button here
-	_vm->_gfx->hideInventory();
+	_vm->_inventory->hide();
 }
 
 void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
@@ -318,12 +306,12 @@ void ASpit::xaenablemenuintro(uint16 argc, uint16 *argv) {
 	// The original also had this shortcut.
 
 	// Show the "exit" button here
-	_vm->_gfx->showInventory();
+	_vm->_inventory->show();
 }
 
 void ASpit::xademoquit(uint16 argc, uint16 *argv) {
 	// Exactly as it says on the tin. In the demo, this function quits.
-	_vm->setGameOver();
+	_vm->quitGame();
 }
 
 void ASpit::xaexittomain(uint16 argc, uint16 *argv) {

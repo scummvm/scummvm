@@ -25,6 +25,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_inventory.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -53,11 +54,11 @@ void RSpit::xrshowinventory(uint16 argc, uint16 *argv) {
 	// Give the trap book and Catherine's journal to the player
 	_vm->_vars["atrapbook"] = 1;
 	_vm->_vars["acathbook"] = 1;
-	_vm->_gfx->showInventory();
+	_vm->_inventory->show();
 }
 
 void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
-	_vm->_gfx->hideInventory();
+	_vm->_inventory->hide();
 }
 
 void RSpit::rebelPrisonWindowTimer() {

@@ -44,6 +44,7 @@ public:
 	void drawRect(Common::Rect rect, bool active);
 	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
 	void drawExtrasImage(uint16 id, Common::Rect dstRect);
+	void drawExtrasImageToScreen(uint16 id, const Common::Rect &rect);
 
 	Graphics::Surface *getEffectScreen();
 	Graphics::Surface *getBackScreen();
@@ -63,10 +64,6 @@ public:
 	void runScheduledTransition();
 	void fadeToBlack();
 	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
-
-	// Inventory
-	void showInventory();
-	void hideInventory();
 
 	// Credits
 	void beginCredits();
@@ -104,11 +101,6 @@ private:
 	int16 _scheduledTransition;
 	Common::Rect _transitionRect;
 	uint32 _transitionSpeed;
-
-	// Inventory
-	void clearInventoryArea();
-	void drawInventoryImage(uint16 id, const Common::Rect *rect);
-	bool _inventoryDrawn;
 
 	// Screen Related
 	Graphics::Surface *_mainScreen;

@@ -33,6 +33,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_inventory.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
@@ -50,18 +51,9 @@
 
 namespace Mohawk {
 
-Common::Rect *g_atrusJournalRect1;
-Common::Rect *g_atrusJournalRect2;
-Common::Rect *g_cathJournalRect2;
-Common::Rect *g_atrusJournalRect3;
-Common::Rect *g_cathJournalRect3;
-Common::Rect *g_trapBookRect3;
-Common::Rect *g_demoExitRect;
-
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) :
 		MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
-	_gameOver = false;
 	_activatedPLST = false;
 	_activatedSLST = false;
 	_extrasFile = nullptr;
@@ -74,6 +66,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
+	_inventory = nullptr;
 	removeTimer();
 
 	// NOTE: We can never really support CD swapping. All of the music files
@@ -88,14 +81,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "assets1");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "program");
-
-	g_atrusJournalRect1 = new Common::Rect(295, 402, 313, 426);
-	g_atrusJournalRect2 = new Common::Rect(259, 402, 278, 426);
-	g_cathJournalRect2 = new Common::Rect(328, 408, 348, 419);
-	g_atrusJournalRect3 = new Common::Rect(222, 402, 240, 426);
-	g_cathJournalRect3 = new Common::Rect(291, 408, 311, 419);
-	g_trapBookRect3 = new Common::Rect(363, 396, 386, 432);
-	g_demoExitRect = new Common::Rect(291, 408, 317, 419);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -108,14 +93,8 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _saveLoad;
 	delete _scriptMan;
 	delete _optionsDialog;
+	delete _inventory;
 	delete _rnd;
-	delete g_atrusJournalRect1;
-	delete g_atrusJournalRect2;
-	delete g_cathJournalRect2;
-	delete g_atrusJournalRect3;
-	delete g_cathJournalRect3;
-	delete g_trapBookRect3;
-	delete g_demoExitRect;
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {
@@ -136,6 +115,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_optionsDialog = new RivenOptionsDialog(this);
 	_scriptMan = new RivenScriptManager(this);
+	_inventory = new RivenInventory(this);
 
 	_rnd = new Common::RandomSource("riven");
 
@@ -198,7 +178,7 @@ Common::Error MohawkEngine_Riven::run() {
 	}
 
 
-	while (!_gameOver && !shouldQuit())
+	while (!shouldQuit())
 		handleEvents();
 
 	return Common::kNoError;
@@ -222,9 +202,9 @@ void MohawkEngine_Riven::handleEvents() {
 			if (!(getFeatures() & GF_DEMO)) {
 				// Check to show the inventory, but it is always "showing" in the demo
 				if (_eventMan->getMousePos().y >= 392)
-					_gfx->showInventory();
+					_inventory->show();
 				else
-					_gfx->hideInventory();
+					_inventory->hide();
 			}
 
 			needsUpdate = true;
@@ -237,7 +217,7 @@ void MohawkEngine_Riven::handleEvents() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_card->onMouseUp(_eventMan->getMousePos());
-			checkInventoryClick();
+			_inventory->checkClick(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
@@ -439,79 +419,6 @@ void MohawkEngine_Riven::refreshCard() {
 
 void MohawkEngine_Riven::updateCurrentHotspot() {
 	_card->onMouseMove(_eventMan->getMousePos());
-}
-
-void MohawkEngine_Riven::checkInventoryClick() {
-	Common::Point mousePos = _eventMan->getMousePos();
-
-	// Don't even bother. We're not in the inventory portion of the screen.
-	if (mousePos.y < 392)
-		return;
-
-	// In the demo, check if we've clicked the exit button
-	if (getFeatures() & GF_DEMO) {
-		if (g_demoExitRect->contains(mousePos)) {
-			if (_stack->getId() == kStackAspit && _card->getId() == 1) {
-				// From the main menu, go to the "quit" screen
-				changeToCard(12);
-			} else if (_stack->getId() == kStackAspit && _card->getId() == 12) {
-				// From the "quit" screen, just quit
-				_gameOver = true;
-			} else {
-				// Otherwise, return to the main menu
-				if (_stack->getId() != kStackAspit)
-					changeToStack(kStackAspit);
-				changeToCard(1);
-			}
-		}
-		return;
-	}
-
-	// No inventory shown on aspit
-	if (_stack->getId() == kStackAspit)
-		return;
-
-	// Set the return stack/card id's.
-	_vars["returnstackid"] = _stack->getId();
-	_vars["returncardid"] = _stack->getCardGlobalId(_card->getId());
-
-	// See RivenGraphics::showInventory() for an explanation
-	// of the variables' meanings.
-	bool hasCathBook = _vars["acathbook"] != 0;
-	bool hasTrapBook = _vars["atrapbook"] != 0;
-
-	// Go to the book if a hotspot contains the mouse
-	if (!hasCathBook) {
-		if (g_atrusJournalRect1->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(5);
-		}
-	} else if (!hasTrapBook) {
-		if (g_atrusJournalRect2->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(5);
-		} else if (g_cathJournalRect2->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(6);
-		}
-	} else {
-		if (g_atrusJournalRect3->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(5);
-		} else if (g_cathJournalRect3->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(6);
-		} else if (g_trapBookRect3->contains(mousePos)) {
-			_gfx->hideInventory();
-			changeToStack(kStackAspit);
-			changeToCard(7);
-		}
-	}
 }
 
 Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, uint16 id) {

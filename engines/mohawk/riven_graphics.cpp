@@ -51,7 +51,6 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_screenUpdateRunning = false;
 	_scheduledTransition = -1;	// no transition
 	_dirtyScreen = false;
-	_inventoryDrawn = false;
 
 	_creditsImage = 302;
 	_creditsPos = 0;
@@ -256,79 +255,12 @@ void RivenGraphics::fadeToBlack() {
 	runScheduledTransition();
 }
 
-void RivenGraphics::showInventory() {
-	// Don't redraw the inventory
-	if (_inventoryDrawn)
-		return;
-
-	// Clear the inventory area
-	clearInventoryArea();
-
-	// Draw the demo's exit button
-	if (_vm->getFeatures() & GF_DEMO) {
-		// extras.mhk tBMP 101 contains "EXIT" instead of Atrus' journal in the demo!
-		// The demo's extras.mhk contains all the other inventory/marble/credits image
-		// but has hacked tBMP 101 with "EXIT". *sigh*
-		drawInventoryImage(101, g_demoExitRect);
-	} else {
-		// We don't want to show the inventory on setup screens or in other journals.
-		if (_vm->getStack()->getId() == kStackAspit)
-			return;
-
-		// There are three books and three vars. We have three different
-		// combinations. At the start you have just Atrus' journal. Later,
-		// you get Catherine's journal and the trap book. Near the end,
-		// you lose the trap book and have just the two journals.
-
-		bool hasCathBook = _vm->_vars["acathbook"] != 0;
-		bool hasTrapBook = _vm->_vars["atrapbook"] != 0;
-
-		if (!hasCathBook) {
-			drawInventoryImage(101, g_atrusJournalRect1);
-		} else if (!hasTrapBook) {
-			drawInventoryImage(101, g_atrusJournalRect2);
-			drawInventoryImage(102, g_cathJournalRect2);
-		} else {
-			drawInventoryImage(101, g_atrusJournalRect3);
-			drawInventoryImage(102, g_cathJournalRect3);
-			drawInventoryImage(100, g_trapBookRect3);
-		}
-	}
-
-	_vm->_system->updateScreen();
-	_inventoryDrawn = true;
-}
-
-void RivenGraphics::hideInventory() {
-	// Don't hide the inventory twice
-	if (!_inventoryDrawn)
-		return;
-
-	// Clear the area
-	clearInventoryArea();
-
-	_inventoryDrawn = false;
-}
-
-void RivenGraphics::clearInventoryArea() {
-	// Clear the inventory area
-	static const Common::Rect inventoryRect = Common::Rect(0, 392, 608, 436);
-
-	// Lock the screen
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-
-	// Fill the inventory area with black
-	screen->fillRect(inventoryRect, _pixelFormat.RGBToColor(0, 0, 0));
-
-	_vm->_system->unlockScreen();
-}
-
-void RivenGraphics::drawInventoryImage(uint16 id, const Common::Rect *rect) {
+void RivenGraphics::drawExtrasImageToScreen(uint16 id, const Common::Rect &rect) {
 	MohawkSurface *mhkSurface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
 	mhkSurface->convertToTrueColor();
 	Graphics::Surface *surface = mhkSurface->getSurface();
 
-	_vm->_system->copyRectToScreen(surface->getPixels(), surface->pitch, rect->left, rect->top, surface->w, surface->h);
+	_vm->_system->copyRectToScreen(surface->getPixels(), surface->pitch, rect.left, rect.top, surface->w, surface->h);
 
 	delete mhkSurface;
 }

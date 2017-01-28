@@ -55,6 +55,7 @@ MODULE_OBJS += \
 	riven.o \
 	riven_card.o \
 	riven_graphics.o \
+	riven_inventory.o \
 	riven_saveload.o \
 	riven_scripts.o \
 	riven_sound.o \
