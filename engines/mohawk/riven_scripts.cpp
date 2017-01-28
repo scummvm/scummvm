@@ -124,6 +124,10 @@ void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
 	}
 }
 
+bool RivenScriptManager::hasQueuedScripts() const {
+	return !_queue.empty();
+}
+
 RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...) {
 	va_list args;
 	va_start(args, commandCount);
