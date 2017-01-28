@@ -290,12 +290,14 @@ const char *MacFontManager::getFontName(int id, int size, int slant) {
 	static char name[128];
 	Common::String n;
 
-	if (_extraFontNames.contains(id))
+	if (_extraFontNames.contains(id)) {
 		n = _extraFontNames[id];
-	else if (id < ARRAYSIZE(fontNames))
+	} else if (id < ARRAYSIZE(fontNames)) {
 		n = fontNames[id];
-	else
-		return NULL;
+	} else {
+		warning("MacFontManager: Requested font ID %d not found. Falling back to Chicago", id);
+		n = fontNames[0]; // Fallback to Chicago
+	}
 
 	snprintf(name, 128, "%s-%d-%d", n.c_str(), slant, size);
 
