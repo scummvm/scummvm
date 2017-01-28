@@ -28,8 +28,9 @@
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
 #include "mohawk/video.h"
-
 #include "common/memstream.h"
+
+#include "common/debug-channels.h"
 #include "common/stream.h"
 #include "common/system.h"
 
@@ -436,14 +437,12 @@ void RivenSimpleCommand::stopSound(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 13: set mouse cursor (cursor_id)
 void RivenSimpleCommand::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Change to cursor %d", argv[0]);
 	_vm->_cursor->setCursor(argv[0]);
 	_vm->_system->updateScreen();
 }
 
 // Command 14: pause script execution (delay in ms, u1)
 void RivenSimpleCommand::delay(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Delay %dms", argv[0]);
 	if (argv[0] > 0)
 		_vm->delayAndUpdate(argv[0]);
 }
@@ -466,19 +465,16 @@ void RivenSimpleCommand::transition(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 19: reload card
 void RivenSimpleCommand::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Refreshing card");
 	_vm->refreshCard();
 }
 
 // Command 20: begin screen update
 void RivenSimpleCommand::beginScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Screen update disabled");
 	_vm->_gfx->beginScreenUpdate();
 }
 
 // Command 21: apply screen update
 void RivenSimpleCommand::applyScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Screen update enabled");
 	_vm->_gfx->applyScreenUpdate();
 }
 
@@ -525,7 +521,6 @@ void RivenSimpleCommand::stopMovie(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 36: unknown
 void RivenSimpleCommand::unk_36(uint16 op, uint16 argc, uint16 *argv) {
-	debug(0, "unk_36: Ignoring");
 }
 
 // Command 37: fade ambient sounds
@@ -632,43 +627,53 @@ void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_video->activateMLST(_vm->getCard()->getMovie(argv[0]));
 }
 
-void RivenSimpleCommand::dump(byte tabs) {
-	printTabs(tabs);
+Common::String RivenSimpleCommand::describe() const {
+	Common::String desc;
 
 	if (_type == 7) { // Use the variable name
 		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
-		debugN("%s = %d;\n", varName.c_str(), _arguments[1]);
+		desc = Common::String::format("%s = %d", varName.c_str(), _arguments[1]);
 	} else if (_type == 17) { // Use the external command name
 		Common::String externalCommandName = _vm->getStack()->getName(kExternalCommandNames, _arguments[0]);
-		debugN("%s(", externalCommandName.c_str());
+		desc = Common::String::format("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
 		for (uint16 j = 0; j < varCount; j++) {
-			debugN("%d", _arguments[2 + j]);
+			desc += Common::String::format("%d", _arguments[2 + j]);
 			if (j != varCount - 1)
-				debugN(", ");
+				desc += ", ";
 		}
-		debugN(");\n");
+		desc += ")";
 	} else if (_type == 24) { // Use the variable name
 		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
-		debugN("%s += %d;\n", varName.c_str(), _arguments[1]);
+		desc = Common::String::format("%s += %d", varName.c_str(), _arguments[1]);
 	} else {
-		debugN("%s(", _opcodes[_type].desc);
+		desc = Common::String::format("%s(", _opcodes[_type].desc);
 		for (uint16 j = 0; j < _arguments.size(); j++) {
-			debugN("%d", _arguments[j]);
+			desc += Common::String::format("%d", _arguments[j]);
 			if (j != _arguments.size() - 1)
-				debugN(", ");
+				desc += ", ";
 		}
-		debugN(");\n");
+		desc += ")";
 	}
+
+	return desc;
+}
+
+void RivenSimpleCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("%s;\n", describe().c_str());
 }
 
 void RivenSimpleCommand::execute() {
+	if (DebugMan.isDebugChannelEnabled(kRivenDebugScript)) {
+		debugC(kRivenDebugScript, "Running opcode: %s", describe().c_str());
+	}
+
 	uint16 *argValues = new uint16[_arguments.size()];
 
 	for (uint16 k = 0; k < _arguments.size(); k++)
 		argValues[k] = _arguments[k];
 
-	debug (4, "Running opcode %04x, argument count %d", _type, _arguments.size());
 	(this->*(_opcodes[_type].proc)) (_type, _arguments.size(), argValues);
 
 	delete[] argValues;
@@ -726,6 +731,11 @@ void RivenSwitchCommand::dump(byte tabs) {
 }
 
 void RivenSwitchCommand::execute() {
+	if (DebugMan.isDebugChannelEnabled(kRivenDebugScript)) {
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _variableId);
+		debugC(kRivenDebugScript, "Running opcode: switch(%s)", varName.c_str());
+	}
+
 	// Get the switch variable value
 	uint32 value = _vm->getStackVar(_variableId);
 
@@ -767,6 +777,8 @@ RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_
 }
 
 void RivenStackChangeCommand::execute() {
+	debugC(kRivenDebugScript, "Running opcode: changeStack(%d, %d)", _stackId, _cardId);
+
 	uint16 stackID;
 	if (_byStackId) {
 		stackID = _stackId;
