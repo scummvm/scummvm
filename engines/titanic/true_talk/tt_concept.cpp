@@ -53,7 +53,8 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 
 TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 		_string1(" "), _string2(" "), _nextP(nullptr), _wordP(nullptr), _scriptP(nullptr),
-		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
+		_status(SS_VALID), _scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0),
+		_field30(0), _field34(0), _flag(false) {
 	if (!word || !setStatus() || word->getStatus()) {
 		_status = SS_5;
 	} else {
@@ -68,8 +69,9 @@ TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 
 TTconcept::TTconcept(TTconcept &src) :
 		_string1(src._string1), _string2(src._string2), _nextP(nullptr),
-		_wordP(nullptr), _scriptP(nullptr), _status(SS_VALID),
-		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field20(0), _field34(0) {
+		_wordP(nullptr), _word2P(nullptr), _scriptP(nullptr), _status(SS_VALID),
+		_scriptType(ST_UNKNOWN_SCRIPT), _field14(0), _field1C(0), _field20(0),
+		_field30(0), _field34(0), _flag(false) {
 	if (src.getStatus()) {
 		_status = SS_5;
 	} else {
