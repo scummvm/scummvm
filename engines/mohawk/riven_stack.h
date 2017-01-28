@@ -25,6 +25,7 @@
 
 #include "common/hash-str.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 #include "common/str-array.h"
 
 namespace Mohawk {
@@ -110,6 +111,15 @@ public:
 	/** Install a timer for the current card if one is defined */
 	virtual void installCardTimer();
 
+	/** Handle a mouse down event */
+	void onMouseDown(const Common::Point &mouse);
+
+	/** Handle a mouse up event */
+	void onMouseUp(const Common::Point &mouse);
+
+	/** Handle a mouse move event */
+	void onMouseMove(const Common::Point &mouse);
+
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
 
@@ -139,7 +149,6 @@ private:
 	void loadCardIdMap();
 	void setCurrentStackVariable();
 
-
 	uint16 _id;
 
 	// Stack resource names
@@ -152,6 +161,10 @@ private:
 	Common::Array<uint32> _cardIdMap;
 
 	CommandsMap _commands;
+
+	bool _mouseIsDown;
+	Common::Point _mousePosition;
+	Common::Point _mouseDragStartPosition;
 };
 
 namespace RivenStacks {

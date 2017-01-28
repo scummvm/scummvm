@@ -110,13 +110,13 @@ public:
 	void activateWaterEffect(uint16 index);
 
 	/** Handle a mouse down event */
-	void onMouseDown(const Common::Point &mouse);
+	RivenScriptPtr onMouseDown(const Common::Point &mouse);
 
 	/** Handle a mouse up event */
-	void onMouseUp(const Common::Point &mouse);
+	RivenScriptPtr onMouseUp(const Common::Point &mouse);
 
 	/** Handle a mouse move event */
-	void onMouseMove(const Common::Point &mouse);
+	RivenScriptPtr onMouseMove(const Common::Point &mouse);
 
 	/** Frame update handler for the mouse cursor */
 	void onMouseUpdate();
