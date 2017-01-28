@@ -525,50 +525,50 @@ int TTparser::loadRequests(TTword *word) {
 
 	case WC_ACTION:
 		if (word->_id != 0x70 && word->_id != 0x71)
-			addNode(1);
-		addNode(17);
+			addNode(CHECK_COMMAND_FORM);
+		addNode(SET_ACTION);
 
 		switch (word->_id) {
 		case 101:
 		case 110:
-			addNode(5);
-			addNode(4);
+			addNode(SEEK_OBJECT);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 102:
-			addNode(4);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 103:
 		case 111:
-			addNode(8);
-			addNode(7);
-			addNode(5);
-			addNode(4);
+			addNode(SEEK_FROM);
+			addNode(SEEK_TO);
+			addNode(SEEK_OBJECT);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 104:
 		case 107:
-			addNode(15);
-			addNode(5);
-			addNode(4);
+			addNode(SEEK_NEW_FRAME);
+			addNode(SEEK_OBJECT);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 106:
-			addNode(7);
-			addNode(4);
+			addNode(SEEK_TO);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 108:
-			addNode(5);
-			addNode(4);
-			addNode(23);
+			addNode(SEEK_OBJECT);
+			addNode(SEEK_ACTOR);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 			break;
 
 		case 112:
 		case 113:
-			addNode(13);
-			addNode(5);
+			addNode(SEEK_STATE);
+			addNode(SEEK_OBJECT);
 			break;
 
 		default:
@@ -586,24 +586,24 @@ int TTparser::loadRequests(TTword *word) {
 	case WC_THING:
 		if (word->checkTag() && _sentence->_field58 > 0)
 			_sentence->_field58--;
-		addNode(14);
+		addNode(SEEK_MODIFIERS);
 		break;
 
 	case WC_ABSTRACT:
 		switch (word->_id) {
 		case 300:
-			addNode(14);
+			addNode(SEEK_MODIFIERS);
 			status = 1;
 			break;
 
 		case 306:
-			addNode(23);
-			addNode(4);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
+			addNode(SEEK_ACTOR);
 			break;
 
 		case 307:
 		case 308:
-			addNode(23);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 			break;
 
 		default:
@@ -612,12 +612,12 @@ int TTparser::loadRequests(TTword *word) {
 
 		if (status != 1) {
 			addToConceptList(word);
-			addNode(14);
+			addNode(SEEK_MODIFIERS);
 		}
 		break;
 
 	case WC_ARTICLE:
-		addNode(2);
+		addNode(EXPECT_THING);
 		status = 1;
 		break;
 
@@ -627,7 +627,7 @@ int TTparser::loadRequests(TTword *word) {
 			_sentenceConcept = _sentenceConcept->addSibling();
 			delete this;
 		} else {
-			addNode(23);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 		}
 		break;
 
@@ -638,20 +638,20 @@ int TTparser::loadRequests(TTword *word) {
 	case WC_PREPOSITION:
 		switch (word->_id) {
 		case 700:
-			addNode(6);
-			addNode(5);
+			addNode(SEEK_OBJECT_OVERRIDE);
+			addNode(SEEK_OBJECT);
 			break;
 		case 701:
-			addNode(11);
+			addNode(SEEK_LOCATION);
 			break;
 		case 702:
 			status = 1;
 			break;
 		case 703:
-			addNode(9);
+			addNode(SEEK_TO_OVERRIDE);
 			break;
 		case 704:
-			addNode(10);
+			addNode(SEEK_FROM_OVERRIDE);
 			break;
 		default:
 			break;
@@ -661,7 +661,7 @@ int TTparser::loadRequests(TTword *word) {
 		if (word->_id == 304) {
 			// Nothing
 		} else if (word->_id == 801) {
-			addNode(22);
+			addNode(STATE_IDENTITY);
 		} else {
 			if (word->proc16())
 				_sentence->_field58++;
@@ -679,12 +679,12 @@ int TTparser::loadRequests(TTword *word) {
 			if (_sentence->_category == 9) {
 				_sentenceConcept->_field1C = 1;
 				_sentenceConcept = _sentenceConcept->addSibling();
-				addNode(1);
+				addNode(CHECK_COMMAND_FORM);
 			}
 			else {
-				addNode(23);
-				addNode(13);
-				addNode(1);
+				addNode(WORD_TYPE_IS_SENTENCE_TYPE);
+				addNode(SEEK_STATE);
+				addNode(CHECK_COMMAND_FORM);
 			}
 			break;
 
@@ -692,19 +692,19 @@ int TTparser::loadRequests(TTword *word) {
 		case 907:
 		case 908:
 		case 909:
-			addNode(23);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 			break;
 
 		case 906:
-			addNode(23);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
 			status = 1;
 			break;
 
 		case 910:
-			addNode(4);
-			addNode(24);
-			addNode(23);
-			addNode(14);
+			addNode(SEEK_ACTOR);
+			addNode(COMPLEX_VERB);
+			addNode(WORD_TYPE_IS_SENTENCE_TYPE);
+			addNode(SEEK_MODIFIERS);
 			status = 1;
 			break;
 
@@ -713,7 +713,7 @@ int TTparser::loadRequests(TTword *word) {
 		}
 
 		if (word->_id == 906) {
-			addNode(14);
+			addNode(SEEK_MODIFIERS);
 			status = 1;
 		}
 		break;
@@ -752,7 +752,7 @@ int TTparser::considerRequests(TTword *word) {
 			if (!word->_wordClass) {
 				word->_wordClass = WC_THING;
 				addToConceptList(word);
-				addNode(14);
+				addNode(SEEK_MODIFIERS);
 			}
 
 			flag = true;
@@ -784,7 +784,7 @@ int TTparser::considerRequests(TTword *word) {
 				flag = true;
 			} else if (!_sentenceConcept->_concept2P) {
 				if (filterConcepts(5, 2) && _sentenceConcept->_concept2P->checkWordId1())
-					addNode(5);
+					addNode(SEEK_OBJECT);
 			} else if (word->_wordClass == WC_THING && _sentence->fn2(2, TTstring("?"), _sentenceConcept)) {
 				TTconcept *oldConcept = _sentenceConcept->_concept2P;
 				flag = filterConcepts(5, 2);
@@ -864,11 +864,11 @@ int TTparser::considerRequests(TTword *word) {
 				}
 
 				if (_sentenceConcept->_concept4P || !_sentenceConcept->_concept0P) {
-					addNode(7);
+					addNode(SEEK_TO);
 				} else {
 					_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
 					concept = nullptr;
-					addNode(7);
+					addNode(SEEK_TO);
 				}
 			} else {
 				flag = true;
@@ -881,12 +881,12 @@ int TTparser::considerRequests(TTword *word) {
 				_sentenceConcept->_concept4P = nullptr;
 			}
 
-			addNode(8);
+			addNode(SEEK_FROM);
 			flag = true;
 			break;
 
 		case SEEK_LOCATION:
-			addNode(5);
+			addNode(SEEK_OBJECT);
 			_sentenceConcept->createConcept(0, 5, word);
 			flag = true;
 			break;
@@ -1029,11 +1029,11 @@ int TTparser::considerRequests(TTword *word) {
 					_sentence->fn4(1, 107, _sentenceConcept)) {
 				concept = _sentenceConcept->_concept1P;
 				_sentenceConcept->_concept1P = nullptr;
-				addNode(15);
+				addNode(SEEK_NEW_FRAME);
 			}
 
 			if (_sentence->checkCategory() && word->_id == 113)
-				addNode(4);
+				addNode(SEEK_ACTOR);
 
 			if (word->_wordClass == WC_ACTION)
 				_sentenceConcept->createConcept(0, 1, word);
@@ -1112,7 +1112,7 @@ int TTparser::considerRequests(TTword *word) {
 
 						_sentenceConcept->_concept0P = newConceptP;
 						delete newPictP;
-						addNode(4);
+						addNode(SEEK_ACTOR);
 					}
 					break;
 				case 909:
@@ -1122,7 +1122,7 @@ int TTparser::considerRequests(TTword *word) {
 
 					_sentenceConcept->_concept2P = newConceptP;
 					delete newPictP;
-					addNode(4);
+					addNode(SEEK_ACTOR);
 					break;
 
 				default:
@@ -1149,9 +1149,9 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('C', 'O', 'M', 'E'):
-			addNode(7);
-			addNode(5);
-			addNode(21);
+			addNode(SEEK_TO);
+			addNode(SEEK_OBJECT);
+			addNode(ACTOR_IS_OBJECT);
 
 			if (!_sentence->_category)
 				_sentence->_category = 15;
@@ -1165,9 +1165,9 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('E', 'X', 'I', 'T'):
-			addNode(8);
-			addNode(5);
-			addNode(21);
+			addNode(SEEK_FROM);
+			addNode(SEEK_OBJECT);
+			addNode(ACTOR_IS_OBJECT);
 
 			if (!_sentence->_category)
 				_sentence->_category = 14;
@@ -1183,9 +1183,9 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('G', 'O', 'G', 'O'):
-			addNode(7);
-			addNode(5);
-			addNode(21);
+			addNode(SEEK_TO);
+			addNode(SEEK_OBJECT);
+			addNode(ACTOR_IS_OBJECT);
 
 			if (_sentence->_category == 1)
 				_sentence->_category = 14;
@@ -1246,14 +1246,14 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 
 		case MKTAG('S', 'A', 'A', 'O'):
-			addNode(5);
-			addNode(4);
+			addNode(SEEK_OBJECT);
+			addNode(SEEK_ACTOR);
 			flag = true;
 			break;
 
 		case MKTAG('S', 'S', 'T', 'A'):
-			addNode(13);
-			addNode(5);
+			addNode(SEEK_STATE);
+			addNode(SEEK_OBJECT);
 			flag = true;
 			break;
 
@@ -1520,11 +1520,11 @@ int TTparser::checkForAction() {
 int TTparser::fn2(TTword *word) {
 	switch (word->_id) {
 	case 600:
-		addNode(13);
+		addNode(SEEK_STATE);
 		return 0;
 
 	case 601:
-		addNode(12);
+		addNode(SEEK_OWNERSHIP);
 		return 1;
 
 	case 602:
@@ -1643,7 +1643,7 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 			newConcept->_string2 += _currentWordP->getText();
 		} else if (word->_id == 113 && currP->_wordClass == WC_ADJECTIVE) {
 			addToConceptList(currP);
-			addNode(13);
+			addNode(SEEK_STATE);
 		}
 
 		if (modifier == 2 || modifier == 3) {
