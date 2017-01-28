@@ -34,7 +34,7 @@ MacText::MacText(Common::String s, const Graphics::Font *font, int fgcolor, int 
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 
-	_interLinear = 0; // 0 pixels between the lines by default	
+	_interLinear = 0; // 0 pixels between the lines by default
 
 	splitString(_str);
 
@@ -121,8 +121,10 @@ void MacText::render(int from, int to) {
 
 	for (int i = from; i < to; i++) {
 		int xOffset = 0;
-		if (_textAlignment == kTextAlignRight) xOffset = _textMaxWidth - _font->getStringWidth(_text[i]);
-		else if (_textAlignment == kTextAlignCenter) xOffset = (_textMaxWidth / 2) - (_font->getStringWidth(_text[i]) / 2);
+		if (_textAlignment == kTextAlignRight)
+			xOffset = _textMaxWidth - _font->getStringWidth(_text[i]);
+		else if (_textAlignment == kTextAlignCenter)
+			xOffset = (_textMaxWidth / 2) - (_font->getStringWidth(_text[i]) / 2);
 
 		//TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		_font->drawString(_surface, _text[i], xOffset, y, _maxWidth, _fgcolor);
