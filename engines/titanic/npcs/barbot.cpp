@@ -79,7 +79,7 @@ CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field14C = 0;
 	_field150 = 0;
 	_field154 = 0;
-	_field158 = -1;
+	_glassContent = GG_DEFAULT;
 	_field15C = 0;
 	_field160 = 0;
 }
@@ -108,7 +108,7 @@ void CBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field14C, indent);
 	file->writeNumberLine(_field150, indent);
 	file->writeNumberLine(_field154, indent);
-	file->writeNumberLine(_field158, indent);
+	file->writeNumberLine(_glassContent, indent);
 	file->writeNumberLine(_field15C, indent);
 	file->writeNumberLine(_field160, indent);
 
@@ -139,7 +139,7 @@ void CBarbot::load(SimpleFile *file) {
 	_field14C = file->readNumber();
 	_field150 = file->readNumber();
 	_field154 = file->readNumber();
-	_field158 = file->readNumber();
+	_glassContent = (GlassGiven)file->readNumber();
 	_field15C = file->readNumber();
 	_field160 = file->readNumber();
 
@@ -178,7 +178,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 3;
+		_glassContent = GG_BIRD;
 
 		playRange(_frames[32], MOVIE_NOTIFY_OBJECT);
 		movieEvent();
@@ -196,7 +196,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 0;
+		_glassContent = GG_EMPTY;
 
 		playRange(_frames[55], MOVIE_NOTIFY_OBJECT);
 		movieEvent();
@@ -206,7 +206,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 1;
+		_glassContent = GG_CONDIMENT;
 
 		playRange(_frames[55], MOVIE_NOTIFY_OBJECT);
 		movieEvent();
@@ -476,8 +476,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 	else if (msg->_endFrame == _frames[35]._endFrame) {
 		playSound("c#8.wav", _volume);
-	}
-	else if (msg->_endFrame == _frames[33]._endFrame) {
+	} else if (msg->_endFrame == _frames[33]._endFrame) {
 		playSound("c#4.wav", _volume);
 	} else if (msg->_endFrame == _frames[32]._endFrame) {
 		startTalking(this, 145);
@@ -698,18 +697,21 @@ bool CBarbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 	} else if (msg->_frameNumber == _frames[55]._startFrame
 			|| msg->_frameNumber == _frames[32]._startFrame) {
+		// Finished giving the Barbot a glass
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
 		statusMsg.execute("PickUpGlass");
 
-		if (_field158 == 0) {
+		if (_glassContent == GG_EMPTY) {
+			// I'd rather see that full of Starling Puret
 			startTalking(this, 250574);
-		} else if (_field158 > 0 && _field158 <= 3) {
+		} else if (_glassContent > GG_EMPTY) {
+			// What's this?
 			startTalking(this, 250580);
 			petSetArea(PET_CONVERSATION);
 		}
 
-		_field158 = -1;
+		_glassContent = GG_DEFAULT;
 
 	} else if (msg->_frameNumber == _frames[36]._startFrame) {
 		CVisibleMsg visibleMsg(false);

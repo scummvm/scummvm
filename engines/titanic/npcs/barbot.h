@@ -28,6 +28,8 @@
 
 namespace Titanic {
 
+enum GlassGiven { GG_DEFAULT = -1, GG_EMPTY = 0, GG_CONDIMENT = 1, GG_BIRD = 3 };
+
 class CBarbot : public CTrueTalkNPC {
 	struct FrameRange {
 		int _startFrame;
@@ -79,7 +81,7 @@ private:
 	int _field14C;
 	int _field150;
 	int _field154;
-	int _field158;
+	GlassGiven _glassContent;
 	int _field15C;
 	int _field160;
 private:
