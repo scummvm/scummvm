@@ -82,7 +82,7 @@ private:
 	int _field150;
 	int _field154;
 	GlassGiven _glassContent;
-	int _field15C;
+	bool _drunkFlag;
 	int _field160;
 private:
 	/**
