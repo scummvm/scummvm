@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CMusicControl, CBackground)
 END_MESSAGE_MAP()
 
 CMusicControl::CMusicControl() : CBackground(),
-	_controlArea(BELLS), _controlVal(0), _controlMax(1), _fieldEC(1) {
+	_controlArea(BELLS), _controlVal(0), _controlMax(1), _enabled(true) {
 }
 
 void CMusicControl::save(SimpleFile *file, int indent) {
@@ -38,7 +38,7 @@ void CMusicControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_controlArea, indent);
 	file->writeNumberLine(_controlVal, indent);
 	file->writeNumberLine(_controlMax, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CBackground::save(file, indent);
 }
@@ -48,7 +48,7 @@ void CMusicControl::load(SimpleFile *file) {
 	_controlArea = (MusicControlArea)file->readNumber();
 	_controlVal = file->readNumber();
 	_controlMax = file->readNumber();
-	_fieldEC = file->readNumber();
+	_enabled = file->readNumber();
 
 	CBackground::load(file);
 }

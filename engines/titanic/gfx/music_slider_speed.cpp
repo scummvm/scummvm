@@ -41,7 +41,7 @@ void CMusicSliderSpeed::load(SimpleFile *file) {
 }
 
 bool CMusicSliderSpeed::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
-	if (_fieldEC) {
+	if (_enabled) {
 		if (++_controlVal > _controlMax)
 			_controlVal = 0;
 

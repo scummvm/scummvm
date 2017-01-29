@@ -36,7 +36,7 @@ public:
 	MusicControlArea _controlArea;
 	int _controlVal;
 	int _controlMax;
-	int _fieldEC;
+	bool _enabled;
 public:
 	CLASSDEF;
 	CMusicControl();
