@@ -57,21 +57,6 @@ public:
 	Common::Array<uint32> _indices;
 };
 
-class MeshNode {
-public:
-	MeshNode() {}
-	~MeshNode() {
-		Common::Array<FaceNode *>::iterator it = _faces.begin();
-		while (it != _faces.end()) {
-			delete *it;
-			++it;
-		}
-
-	}
-	Common::String _name;
-	Common::Array<FaceNode *> _faces;
-};
-
 class MaterialNode {
 public:
 	Common::String _name;
@@ -115,7 +100,7 @@ public:
 	void readFromStream(ArchiveReadStream *stream);
 
 	const Common::Array<VertNode *> &getVertices() const { return _vertices; }
-	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
+	const Common::Array<FaceNode *> &getFaces() const { return _faces; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	const Common::Array<BoneNode *> &getBones() const { return _bones; };
 
@@ -127,12 +112,13 @@ private:
 	void buildBoneBoundingBox(BoneNode *bone) const;
 	void readBones(ArchiveReadStream *stream);
 
+	Common::String _name;
 	uint32 _u1;
 	float _u2;
 
 	Common::Array<VertNode *> _vertices;
 	Common::Array<MaterialNode *> _materials;
-	Common::Array<MeshNode *> _meshes;
+	Common::Array<FaceNode *> _faces;
 	Common::Array<BoneNode *> _bones;
 };
 

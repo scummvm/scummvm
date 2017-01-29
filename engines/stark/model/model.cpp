@@ -43,7 +43,7 @@ Model::~Model() {
 	for (Common::Array<MaterialNode *>::iterator it = _materials.begin(); it != _materials.end(); ++it)
 		delete *it;
 
-	for (Common::Array<MeshNode *>::iterator it = _meshes.begin(); it != _meshes.end(); ++it)
+	for (Common::Array<FaceNode *>::iterator it = _faces.begin(); it != _faces.end(); ++it)
 		delete *it;
 
 	for (Common::Array<BoneNode *>::iterator it = _bones.begin(); it != _bones.end(); ++it)
@@ -93,45 +93,42 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 	readBones(stream);
 
 	uint32 numMeshes = stream->readUint32LE();
+	if (numMeshes != 1) {
+		error("Found a mesh with numMeshes != 1 (%d)", numMeshes);
+	}
 
-	for (uint32 i = 0; i < numMeshes; ++i) {
-		MeshNode *node = new MeshNode();
+	_name = stream->readString();
 
-		node->_name = stream->readString();
+	uint32 numFaces = stream->readUint32LE();
+	for (uint32 j = 0; j < numFaces; ++j) {
+		uint faceVertexIndexOffset = _vertices.size();
 
-		uint32 len = stream->readUint32LE();
-		for (uint32 j = 0; j < len; ++j) {
-			uint faceVertexIndexOffset = _vertices.size();
+		FaceNode *face = new FaceNode();
+		face->_matIdx = stream->readUint32LE();
 
-			FaceNode *face = new FaceNode();
-			face->_matIdx = stream->readUint32LE();
-
-			uint32 childCount = stream->readUint32LE();
-			for (uint32 k = 0; k < childCount; ++k) {
-				VertNode *vert = new VertNode();
-				vert->_pos1 = stream->readVector3();
-				vert->_pos2 = stream->readVector3();
-				vert->_normal = stream->readVector3();
-				vert->_texS = stream->readFloat();
-				vert->_texT = stream->readFloat();
-				vert->_bone1 = stream->readUint32LE();
-				vert->_bone2 = stream->readUint32LE();
-				vert->_boneWeight = stream->readFloat();
-				_vertices.push_back(vert);
-			}
-
-			childCount = stream->readUint32LE();
-			face->_indices.resize(childCount * 3); // 3 vertex indices per triangle
-			for (uint32 k = 0; k < childCount; ++k) {
-				face->_indices[k * 3 + 0] = stream->readUint32LE() + faceVertexIndexOffset;
-				face->_indices[k * 3 + 1] = stream->readUint32LE() + faceVertexIndexOffset;
-				face->_indices[k * 3 + 2] = stream->readUint32LE() + faceVertexIndexOffset;
-			}
-
-			node->_faces.push_back(face);
+		uint32 numVertices = stream->readUint32LE();
+		for (uint32 k = 0; k < numVertices; ++k) {
+			VertNode *vert = new VertNode();
+			vert->_pos1 = stream->readVector3();
+			vert->_pos2 = stream->readVector3();
+			vert->_normal = stream->readVector3();
+			vert->_texS = stream->readFloat();
+			vert->_texT = stream->readFloat();
+			vert->_bone1 = stream->readUint32LE();
+			vert->_bone2 = stream->readUint32LE();
+			vert->_boneWeight = stream->readFloat();
+			_vertices.push_back(vert);
 		}
 
-		_meshes.push_back(node);
+		uint32 numTriangles = stream->readUint32LE();
+		face->_indices.resize(numTriangles * 3); // 3 vertex indices per triangle
+		for (uint32 k = 0; k < numTriangles; ++k) {
+			face->_indices[k * 3 + 0] = stream->readUint32LE() + faceVertexIndexOffset;
+			face->_indices[k * 3 + 1] = stream->readUint32LE() + faceVertexIndexOffset;
+			face->_indices[k * 3 + 2] = stream->readUint32LE() + faceVertexIndexOffset;
+		}
+
+		_faces.push_back(face);
 	}
 
 	buildBonesBoundingBoxes();

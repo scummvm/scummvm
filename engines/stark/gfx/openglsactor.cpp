@@ -90,27 +90,25 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 	setBonePositionArrayUniform("bonePosition");
 	setLightArrayUniform("lights", lights);
 
-	Common::Array<MeshNode *> meshes = _model->getMeshes();
+	Common::Array<FaceNode *> faces = _model->getFaces();
 	Common::Array<MaterialNode *> mats = _model->getMaterials();
 
-	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
-		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
-			// For each face draw its vertices from the VBO, indexed by the EBO
-			const MaterialNode *material = mats[(*face)->_matIdx];
-			const Gfx::Texture *tex = resolveTexture(material);
-			if (tex) {
-				tex->bind();
-			} else {
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
-
-			_shader->setUniform("textured", tex != nullptr);
-			_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
-
-			GLuint ebo = _faceEBO[*face];
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glDrawElements(GL_TRIANGLES, (*face)->_indices.size(), GL_UNSIGNED_INT, 0);
+	for (Common::Array<FaceNode *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+		// For each face draw its vertices from the VBO, indexed by the EBO
+		const MaterialNode *material = mats[(*face)->_matIdx];
+		const Gfx::Texture *tex = resolveTexture(material);
+		if (tex) {
+			tex->bind();
+		} else {
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+
+		_shader->setUniform("textured", tex != nullptr);
+		_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
+
+		GLuint ebo = _faceEBO[*face];
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glDrawElements(GL_TRIANGLES, (*face)->_indices.size(), GL_UNSIGNED_INT, 0);
 	}
 
 	_shader->unbind();
@@ -130,11 +128,9 @@ void OpenGLSActorRenderer::clearVertices() {
 void OpenGLSActorRenderer::uploadVertices() {
 	_faceVBO = createModelVBO(_model);
 
-	Common::Array<MeshNode *> meshes = _model->getMeshes();
-	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
-		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
-			_faceEBO[*face] = createFaceEBO(*face);
-		}
+	Common::Array<FaceNode *> faces = _model->getFaces();
+	for (Common::Array<FaceNode *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
+		_faceEBO[*face] = createFaceEBO(*face);
 	}
 }
 
