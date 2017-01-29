@@ -124,6 +124,8 @@ void StateProvider::readResourceTree(Resources::Object *resource, Common::Seekab
 		} else {
 			resource->saveLoad(serializer);
 		}
+
+		delete serializer;
 	}
 
 	// Deserialize the resource children
