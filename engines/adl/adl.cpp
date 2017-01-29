@@ -454,8 +454,10 @@ void AdlEngine::clearScreen() const {
 void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 	if (_roomData.pictures.contains(pic))
 		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos);
-	else
+	else if (_pictures.contains(pic))
 		_graphics->drawPic(*_pictures[pic]->createReadStream(), pos);
+	else
+		error("Picture %d not found", pic);
 }
 
 void AdlEngine::bell(uint count) const {
