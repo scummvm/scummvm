@@ -62,6 +62,9 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 	Math::Matrix4 mvp = projection * view * model;
 	mvp.transpose();
 
+	_shader->enableVertexAttribute("position", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 0);
+	_shader->enableVertexAttribute("normal", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 12);
+	_shader->enableVertexAttribute("texcoord", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 24);
 	_shader->use(true);
 	_shader->setUniform("mvp", mvp);
 
@@ -79,20 +82,15 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		GLuint ebo = _faceEBO[face];
-
-		_shader->enableVertexAttribute("position", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 0);
-		_shader->enableVertexAttribute("normal", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 12);
-		_shader->enableVertexAttribute("texcoord", _faceVBO, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), 24);
-		_shader->use(true);
 		_shader->setUniform("textured", tex != nullptr);
 		_shader->setUniform("color", Math::Vector3d(material.r, material.g, material.b));
 
+		GLuint ebo = _faceEBO[face];
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glDrawElements(GL_TRIANGLES, face->vertexIndices.size(), GL_UNSIGNED_INT, 0);
-
-		glUseProgram(0);
 	}
+
+	_shader->unbind();
 }
 
 void OpenGLSPropRenderer::clearVertices() {

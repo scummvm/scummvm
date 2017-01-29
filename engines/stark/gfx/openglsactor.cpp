@@ -36,7 +36,8 @@ namespace Gfx {
 
 OpenGLSActorRenderer::OpenGLSActorRenderer(OpenGLSDriver *gfx) :
 		VisualActor(),
-		_gfx(gfx) {
+		_gfx(gfx),
+		_faceVBO(0) {
 	_shader = _gfx->createActorShaderInstance();
 }
 
@@ -73,7 +74,15 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 	//normalMatrix.transpose(); // OpenGL expects matrices transposed when compared to ResidualVM's
 	//normalMatrix.transpose(); // No need to transpose twice in a row
 
+	_shader->enableVertexAttribute("position1", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
+	_shader->enableVertexAttribute("position2", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
+	_shader->enableVertexAttribute("bone1", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
+	_shader->enableVertexAttribute("bone2", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
+	_shader->enableVertexAttribute("boneWeight", _faceVBO, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
+	_shader->enableVertexAttribute("normal", _faceVBO, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 36);
+	_shader->enableVertexAttribute("texcoord", _faceVBO, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 48);
 	_shader->use(true);
+
 	_shader->setUniform("modelViewMatrix", modelViewMatrix);
 	_shader->setUniform("projectionMatrix", projectionMatrix);
 	_shader->setUniform("normalMatrix", normalMatrix.getRotation());
@@ -95,57 +104,48 @@ void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
-			GLuint vbo = _faceVBO[*face];
-			GLuint ebo = _faceEBO[*face];
-
-			_shader->enableVertexAttribute("position1", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 0);
-			_shader->enableVertexAttribute("position2", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 12);
-			_shader->enableVertexAttribute("bone1", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 24);
-			_shader->enableVertexAttribute("bone2", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 28);
-			_shader->enableVertexAttribute("boneWeight", vbo, 1, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 32);
-			_shader->enableVertexAttribute("normal", vbo, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 36);
-			_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), 48);
-			_shader->use(true);
 			_shader->setUniform("textured", tex != nullptr);
 			_shader->setUniform("color", Math::Vector3d(material->_r, material->_g, material->_b));
 
+			GLuint ebo = _faceEBO[*face];
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glDrawElements(GL_TRIANGLES, 3 * (*face)->_tris.size(), GL_UNSIGNED_INT, 0);
-
-			glUseProgram(0);
+			glDrawElements(GL_TRIANGLES, (*face)->_indices.size(), GL_UNSIGNED_INT, 0);
 		}
 	}
+
+	_shader->unbind();
 }
 
 void OpenGLSActorRenderer::clearVertices() {
-	for (FaceBufferMap::iterator it = _faceVBO.begin(); it != _faceVBO.end(); ++it) {
-		OpenGL::Shader::freeBuffer(it->_value);
-	}
+	OpenGL::Shader::freeBuffer(_faceVBO); // Zero names are silently ignored
+	_faceVBO = 0;
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
 		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
-	_faceVBO.clear();
 	_faceEBO.clear();
 }
 
 void OpenGLSActorRenderer::uploadVertices() {
+	_faceVBO = createModelVBO(_model);
+
 	Common::Array<MeshNode *> meshes = _model->getMeshes();
 	for (Common::Array<MeshNode *>::const_iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
 		for (Common::Array<FaceNode *>::const_iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
-			_faceVBO[*face] = createFaceVBO(*face);
 			_faceEBO[*face] = createFaceEBO(*face);
 		}
 	}
 }
 
-uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
-	float *vertices = new float[14 * face->_verts.size()];
+uint32 OpenGLSActorRenderer::createModelVBO(const Model *model) {
+	const Common::Array<VertNode *> &modelVertices = model->getVertices();
+
+	float *vertices = new float[14 * modelVertices.size()];
 	float *vertPtr = vertices;
 
 	// Build a vertex array
-	for (Common::Array<VertNode *>::const_iterator tri = face->_verts.begin(); tri != face->_verts.end(); ++tri) {
+	for (Common::Array<VertNode *>::const_iterator tri = modelVertices.begin(); tri != modelVertices.end(); ++tri) {
 		*vertPtr++ = (*tri)->_pos1.x();
 		*vertPtr++ = (*tri)->_pos1.y();
 		*vertPtr++ = (*tri)->_pos1.z();
@@ -167,32 +167,14 @@ uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
 		*vertPtr++ = (*tri)->_texT;
 	}
 
-	uint32 vbo = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * face->_verts.size(), vertices);
+	uint32 vbo = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * modelVertices.size(), vertices);
 	delete[] vertices;
 
 	return vbo;
 }
 
 uint32 OpenGLSActorRenderer::createFaceEBO(const FaceNode *face) {
-	uint32 *indices = new uint32[3 * face->_tris.size()];
-	uint32 *idxPtr = indices;
-
-	// Build a vertex indices array
-	for (Common::Array<TriNode *>::const_iterator tri = face->_tris.begin(); tri != face->_tris.end(); ++tri) {
-		for (int vert = 0; vert < 3; ++vert) {
-			if (vert == 0)
-				*idxPtr++ = (*tri)->_vert1;
-			else if (vert == 1)
-				*idxPtr++ = (*tri)->_vert2;
-			else
-				*idxPtr++ = (*tri)->_vert3;
-		}
-	}
-
-	uint32 ebo = OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * 3 * face->_tris.size(), indices);
-	delete[] indices;
-
-	return ebo;
+	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->_indices.size(), &face->_indices[0]);
 }
 
 void OpenGLSActorRenderer::setBonePositionArrayUniform(const char *uniform) {

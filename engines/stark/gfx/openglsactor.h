@@ -51,12 +51,12 @@ protected:
 	OpenGLSDriver *_gfx;
 	OpenGL::Shader *_shader;
 
-	FaceBufferMap _faceVBO;
+	uint32 _faceVBO;
 	FaceBufferMap _faceEBO;
 
 	void clearVertices();
 	void uploadVertices();
-	uint32 createFaceVBO(const FaceNode *face);
+	uint32 createModelVBO(const Model *model);
 	uint32 createFaceEBO(const FaceNode *face);
 	void setBonePositionArrayUniform(const char *uniform);
 	void setBoneRotationArrayUniform(const char *uniform);

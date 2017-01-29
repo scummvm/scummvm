@@ -37,6 +37,9 @@ Model::Model() :
 }
 
 Model::~Model() {
+	for (Common::Array<VertNode *>::iterator it = _vertices.begin(); it != _vertices.end(); ++it)
+		delete *it;
+
 	for (Common::Array<MaterialNode *>::iterator it = _materials.begin(); it != _materials.end(); ++it)
 		delete *it;
 
@@ -98,6 +101,8 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 
 		uint32 len = stream->readUint32LE();
 		for (uint32 j = 0; j < len; ++j) {
+			uint faceVertexIndexOffset = _vertices.size();
+
 			FaceNode *face = new FaceNode();
 			face->_matIdx = stream->readUint32LE();
 
@@ -112,16 +117,15 @@ void Model::readFromStream(ArchiveReadStream *stream) {
 				vert->_bone1 = stream->readUint32LE();
 				vert->_bone2 = stream->readUint32LE();
 				vert->_boneWeight = stream->readFloat();
-				face->_verts.push_back(vert);
+				_vertices.push_back(vert);
 			}
 
 			childCount = stream->readUint32LE();
+			face->_indices.resize(childCount * 3); // 3 vertex indices per triangle
 			for (uint32 k = 0; k < childCount; ++k) {
-				TriNode *tri = new TriNode();
-				tri->_vert1 = stream->readUint32LE();
-				tri->_vert2 = stream->readUint32LE();
-				tri->_vert3 = stream->readUint32LE();
-				face->_tris.push_back(tri);
+				face->_indices[k * 3 + 0] = stream->readUint32LE() + faceVertexIndexOffset;
+				face->_indices[k * 3 + 1] = stream->readUint32LE() + faceVertexIndexOffset;
+				face->_indices[k * 3 + 2] = stream->readUint32LE() + faceVertexIndexOffset;
 			}
 
 			node->_faces.push_back(face);
@@ -166,23 +170,15 @@ void Model::buildBoneBoundingBox(BoneNode *bone) const {
 	bone->_boundingBox.reset();
 
 	// Add all the vertices with a non zero weight for the bone to the bone's bounding box
-	for (uint i = 0; i < _meshes.size(); i++) {
-		MeshNode *mesh = _meshes[i];
+	for (uint k = 0; k < _vertices.size(); k++) {
+		VertNode *vert = _vertices[k];
 
-		for (uint j = 0; j < mesh->_faces.size(); j++) {
-			FaceNode *face = mesh->_faces[j];
+		if (vert->_bone1 == bone->_idx) {
+			bone->_boundingBox.expand(vert->_pos1);
+		}
 
-			for (uint k = 0; k < face->_verts.size(); k++) {
-				VertNode *vert = face->_verts[k];
-
-				if (vert->_bone1 == bone->_idx) {
-					bone->_boundingBox.expand(vert->_pos1);
-				}
-
-				if (vert->_bone2 == bone->_idx) {
-					bone->_boundingBox.expand(vert->_pos2);
-				}
-			}
+		if (vert->_bone2 == bone->_idx) {
+			bone->_boundingBox.expand(vert->_pos2);
 		}
 	}
 }

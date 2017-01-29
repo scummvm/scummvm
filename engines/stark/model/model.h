@@ -46,26 +46,15 @@ public:
 	float _boneWeight;
 };
 
-class TriNode {
-public:
-	uint32 _vert1, _vert2, _vert3;
-};
-
 class FaceNode {
 public:
 	FaceNode() : _matIdx(0) {}
 
 	~FaceNode() {
-		for (Common::Array<VertNode *>::iterator it = _verts.begin(); it != _verts.end(); ++it)
-			delete *it;
-
-		for (Common::Array<TriNode *>::iterator it = _tris.begin(); it != _tris.end(); ++it)
-			delete *it;
 	}
 
 	uint32 _matIdx;
-	Common::Array<VertNode *> _verts;
-	Common::Array<TriNode *> _tris;
+	Common::Array<uint32> _indices;
 };
 
 class MeshNode {
@@ -125,6 +114,7 @@ public:
 	 */
 	void readFromStream(ArchiveReadStream *stream);
 
+	const Common::Array<VertNode *> &getVertices() const { return _vertices; }
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	const Common::Array<BoneNode *> &getBones() const { return _bones; };
@@ -140,6 +130,7 @@ private:
 	uint32 _u1;
 	float _u2;
 
+	Common::Array<VertNode *> _vertices;
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
 	Common::Array<BoneNode *> _bones;
