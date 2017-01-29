@@ -1242,8 +1242,7 @@ int AdlEngine::o1_goDirection(ScriptEnv &e) {
 		return -1;
 	}
 
-	getCurRoom().curPicture = getCurRoom().picture;
-	_state.room = room;
+	switchRoom(room);
 	return -1;
 }
 
