@@ -69,7 +69,7 @@ CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field124 = 0;
 	_visCenterOnCounter = false;
 	_addedVodka = false;
-	_ingredientsGiven = false;
+	_gottenDrunk = false;
 	_field134 = 0;
 	_field138 = 0;
 	_field13C = -1;
@@ -98,7 +98,7 @@ void CBarbot::save(SimpleFile *file, int indent) {
 
 	file->writeNumberLine(_timesCalled, indent);
 	file->writeNumberLine(_addedVodka, indent);
-	file->writeNumberLine(_ingredientsGiven, indent);
+	file->writeNumberLine(_gottenDrunk, indent);
 	file->writeNumberLine(_field134, indent);
 	file->writeNumberLine(_field138, indent);
 	file->writeNumberLine(_field13C, indent);
@@ -129,7 +129,7 @@ void CBarbot::load(SimpleFile *file) {
 
 	_timesCalled = file->readNumber();
 	_addedVodka = file->readNumber();
-	_ingredientsGiven = file->readNumber();
+	_gottenDrunk = file->readNumber();
 	_field134 = file->readNumber();
 	_field138 = file->readNumber();
 	_field13C = file->readNumber();
@@ -307,7 +307,7 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 
 		CGameObject *glass = findInRoom("BeerGlass");
-		if (!_ingredientsGiven) {
+		if (!_gottenDrunk) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("BarShelfVisCentre");
 		}
@@ -439,7 +439,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[45]._endFrame) {
-		if (!_ingredientsGiven) {
+		if (!_gottenDrunk) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("BarShelfVisCentre");
 		}
@@ -449,7 +449,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _frames[44]._endFrame) {
 		_visCenterOnCounter = true;
-		_ingredientsGiven = true;
+		_gottenDrunk = true;
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 1;
 		statusMsg.execute("PickUpVisCentre");
@@ -458,7 +458,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[46]._endFrame) {
-		if (!_ingredientsGiven && !areIngredientsMissing())
+		if (!_gottenDrunk && !areIngredientsMissing())
 			startTalking(this, 250571);
 		return true;
 	}
@@ -518,7 +518,7 @@ bool CBarbot::TrueTalkQueueUpAnimSetMsg(CTrueTalkQueueUpAnimSetMsg *msg) {
 bool CBarbot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	switch (msg->_stateNum) {
 	case 2:
-		if (!_ingredientsGiven) {
+		if (!_gottenDrunk) {
 			if (_field15C) {
 				msg->_stateVal = _field134 | 1;
 				return true;
@@ -557,7 +557,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (_field134) {
 			playRange(_frames[27], MOVIE_NOTIFY_OBJECT);
 			_frameNum = _frames[27]._endFrame;
-		} else if (!_ingredientsGiven && _field15C) {
+		} else if (!_gottenDrunk && _field15C) {
 			// Vision center has been placed on the counter
 			playRange(_frames[45], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);

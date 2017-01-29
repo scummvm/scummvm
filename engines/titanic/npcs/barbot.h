@@ -71,7 +71,7 @@ private:
 	int _field124;
 	bool _visCenterOnCounter;
 	bool _addedVodka;
-	bool _ingredientsGiven;
+	bool _gottenDrunk;
 	int _field134;
 	int _field138;
 	int _field13C;

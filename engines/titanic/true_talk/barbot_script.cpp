@@ -1016,11 +1016,10 @@ uint BarbotScript::getDialsBitset() const {
 }
 
 int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	int v34 = getState();
 	uint id = 0;
 
-	if (v34 > 0x200) {
-		switch (v34 - 0x201) {
+	if (val1 > 0x200) {
+		switch (val1 - 0x201) {
 		case 0:
 			if (getValue(4) != 2)
 				id = 250738;
@@ -1035,11 +1034,11 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 		default:
 			break;
 		}
-	} else if (v34 == 0x200) {
+	} else if (val1 == 0x200) {
 		if (getValue(4) != 1)
 			id = 250738;
 	} else {
-		switch (v34) {
+		switch (val1) {
 		case 2:
 			if (getValue(1) != 1)
 				return 1;
@@ -1072,40 +1071,34 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 			break;
 		case 9: {
 			uint val = CTrueTalkManager::getStateValue(3);
-			bool bit0 = (val & 1) != 0;
-			bool bit2 = (val & 4) != 0;
-			bool bit3 = (val & 8) != 0;
+			bool lemonFlag = (val & 1) != 0;
+			bool puretFlag = (val & 4) != 0;
+			bool tvFlag = (val & 8) != 0;
 
-			if (bit2) {
-				if (!bit0) {
-					id = 250085 - (bit3 ? 0 : 199715);
+			if (puretFlag) {
+				if (!lemonFlag) {
+					id = tvFlag ? 50369 : 250085;
 					break;
-				} else if (!bit3) {
+				} else if (!tvFlag) {
 					id = 250627;
 				}
 			} else {
-				if (!bit0) {
-					id = 50365 + (bit3 ? 0 : 2);
-				} else if (!bit3) {
+				if (lemonFlag) {
+					id = tvFlag ? 50367 : 50365;
+				} else if (tvFlag) {
 					id = 50370;
 				}
-			}
-
-			if (id) {
-				addResponse(getDialogueId(id));
-				applyResponse();
-				return 2;
 			}
 			break;
 		}
 
 		case 10: {
 			uint val = CTrueTalkManager::getStateValue(3);
-			bool bit0 = (val & 1) != 0;
-			bool bit2 = (val & 4) != 0;
-			bool bit3 = (val & 8) != 0;
+			bool lemonFlag = (val & 1) != 0;
+			bool puretFlag = (val & 4) != 0;
+			bool tvFlag = (val & 8) != 0;
 
-			if (bit0 && bit2 && bit3) {
+			if (lemonFlag && puretFlag && tvFlag) {
 				addResponse(getDialogueId(251027));
 				applyResponse();
 				CTrueTalkManager::triggerAction(7, 0);
