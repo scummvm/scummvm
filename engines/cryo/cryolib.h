@@ -62,11 +62,8 @@ struct BlitView{
 };
 
 class View {
-private:
-	CryoEngine *_vm;
-
 public:
-	View(CryoEngine *vm, int w, int h);
+	View(int w, int h);
 	~View();
 
 	void setSrcZoomValues(int x, int y);

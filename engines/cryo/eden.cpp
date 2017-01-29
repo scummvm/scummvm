@@ -5739,19 +5739,19 @@ void EdenGame::freebuf() {
 }
 
 void EdenGame::openWindow() {
-	_underBarsView = new View(_vm, 320, 40);
+	_underBarsView = new View(320, 40);
 	_underBarsView->_normal._width = 320;
 
-	_view2 = new View(_vm, 32, 32);
+	_view2 = new View(32, 32);
 	_view2Buf = _view2->_bufferPtr;
 
-	_subtitlesView = new View(_vm, _subtitlesXWidth, 60);
+	_subtitlesView = new View(_subtitlesXWidth, 60);
 	_subtitlesViewBuf = _subtitlesView->_bufferPtr;
 
-	_underSubtitlesView = new View(_vm, _subtitlesXWidth, 60);
+	_underSubtitlesView = new View(_subtitlesXWidth, 60);
 	_underSubtitlesViewBuf = _underSubtitlesView->_bufferPtr;
 
-	_mainView = new View(_vm, 640, 200);
+	_mainView = new View(640, 200);
 	_mainView->_normal._width = 320;
 	CLBlitter_FillView(_mainView, 0xFFFFFFFF);
 	_mainView->setSrcZoomValues(0, 0);
@@ -6417,7 +6417,7 @@ void EdenGame::showMovie(char arg1) {
 
 	bool playing = true;
 	_vm->_video->allocMemory();
-	_hnmView = new View(_vm, _vm->_video->_header._width, _vm->_video->_header._height);
+	_hnmView = new View(_vm->_video->_header._width, _vm->_video->_header._height);
 	_hnmView->setSrcZoomValues(0, 0);
 	_hnmView->setDisplayZoomValues(_vm->_video->_header._width * 2, _vm->_video->_header._height * 2);
 	_hnmView->centerIn(_vm->_screenView);

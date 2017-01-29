@@ -41,7 +41,7 @@ void FlushEvents(int16 arg1, int16 arg2) {
 
 ///// CLView
 
-View::View(CryoEngine *vm, int w, int h) : _vm(vm) {
+View::View(int w, int h) {
 	void *buffer = (byte *)malloc(w * h);
 	if (buffer)
 		initDatas(w, h, buffer);

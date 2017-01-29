@@ -112,7 +112,7 @@ void CSoundChannel::applyVolumeChange() {
 
 /****************************************************************/
 
-SoundGroup::SoundGroup(CryoEngine *vm, int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) : _vm(vm) {
+SoundGroup::SoundGroup(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode) {
 	if (numSounds < kCryoMaxClSounds)
 		_numSounds = numSounds;
 	else

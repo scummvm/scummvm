@@ -86,7 +86,7 @@ CryoEngine::~CryoEngine() {
 Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
 	_video = new HnmPlayer(this);
-	_screenView = new View(this, 320, 200);
+	_screenView = new View(320, 200);
 	_debugger = new Debugger(this);
 
 	///// CLTimer
