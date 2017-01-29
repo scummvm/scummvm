@@ -24,8 +24,9 @@
 
 namespace Graphics {
 
-MacText::MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
+MacText::MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
 	_str = s;
+	_wm = wm;
 	_font = font;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;

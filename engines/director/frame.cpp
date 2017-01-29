@@ -914,7 +914,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
-	Graphics::MacText mt(ftext, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+	Graphics::MacText mt(ftext, _vm->_wm, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();

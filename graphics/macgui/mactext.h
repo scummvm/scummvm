@@ -29,9 +29,12 @@
 
 namespace Graphics {
 
+class MacWindowManager;
+
 class MacText {
 public:
-	MacText(Common::String s, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft);
+	MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *font, int fgcolor, int bgcolor,
+				int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft);
 
 	void setInterLinear(int interLinear) { _interLinear = interLinear; }
 
@@ -49,6 +52,8 @@ private:
 	void reallocSurface();
 
 private:
+	MacWindowManager *_wm;
+
 	Common::String _str;
 	const Graphics::Font *_font;
 	int _fgcolor, _bgcolor;
