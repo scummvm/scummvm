@@ -30,6 +30,19 @@
 namespace Graphics {
 
 class MacWindowManager;
+class MacFont;
+
+struct MacFontRun {
+	uint16 fontId;
+	byte textSlant;
+	byte unk3f;
+	uint16 fontSize;
+	uint16 palinfo1;
+	uint16 palinfo2;
+	uint16 palinfo3;
+
+	MacFont *font;
+};
 
 class MacText {
 public:
