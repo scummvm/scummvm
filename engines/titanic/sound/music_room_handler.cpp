@@ -85,54 +85,54 @@ void CMusicRoomHandler::stop() {
 	}
 }
 
-bool CMusicRoomHandler::checkInstrument(MusicControlArea area) const {
+bool CMusicRoomHandler::checkInstrument(MusicInstrument instrument) const {
 	// TODO
 	return false;
 }
 
-void CMusicRoomHandler::setSpeedControl2(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array2[area]._speedControl = value;
+void CMusicRoomHandler::setSpeedControl2(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array2[instrument]._speedControl = value;
 }
 
-void CMusicRoomHandler::setPitchControl2(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array2[area]._pitchControl = value * 3;
+void CMusicRoomHandler::setPitchControl2(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array2[instrument]._pitchControl = value * 3;
 }
 
-void CMusicRoomHandler::setInversionControl2(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array2[area]._inversionControl = value;
+void CMusicRoomHandler::setInversionControl2(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array2[instrument]._inversionControl = value;
 }
 
-void CMusicRoomHandler::setDirectionControl2(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array2[area]._directionControl = value;
+void CMusicRoomHandler::setDirectionControl2(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array2[instrument]._directionControl = value;
 }
 
-void CMusicRoomHandler::setPitchControl(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array1[area]._pitchControl = value;
+void CMusicRoomHandler::setPitchControl(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array1[instrument]._pitchControl = value;
 }
 
-void CMusicRoomHandler::setSpeedControl(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array1[area]._speedControl = value;
+void CMusicRoomHandler::setSpeedControl(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array1[instrument]._speedControl = value;
 }
 
-void CMusicRoomHandler::setDirectionControl(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array1[area]._directionControl = value;
+void CMusicRoomHandler::setDirectionControl(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array1[instrument]._directionControl = value;
 }
 
-void CMusicRoomHandler::setInversionControl(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array1[area]._inversionControl = value;
+void CMusicRoomHandler::setInversionControl(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array1[instrument]._inversionControl = value;
 }
 
-void CMusicRoomHandler::setMuteControl(MusicControlArea area, int value) {
-	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
-		_array1[area]._muteControl = value;
+void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, int value) {
+	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+		_array1[instrument]._muteControl = value;
 }
 
 bool CMusicRoomHandler::isBusy() {

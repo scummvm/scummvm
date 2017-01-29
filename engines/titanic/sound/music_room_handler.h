@@ -31,7 +31,7 @@ namespace Titanic {
 class CProjectItem;
 class CSoundManager;
 
-enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+enum MusicInstrument { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
 
 class CMusicRoomHandler {
 	struct Controls {
@@ -95,33 +95,52 @@ public:
 	/**
 	 * Checks the specified instrument to see if it's settings are "correct"
 	 */
-	bool checkInstrument(MusicControlArea area) const;
+	bool checkInstrument(MusicInstrument instrument) const;
 
 	/**
-	 * Set a setting
+	 * Sets the speed control value
 	 */
-	void setSpeedControl2(MusicControlArea area, int value);
+	void setSpeedControl2(MusicInstrument instrument, int value);
 
 	/**
-	 * Set a setting
+	 * Sets the pitch control value
 	 */
-	void setPitchControl2(MusicControlArea area, int value);
+	void setPitchControl2(MusicInstrument instrument, int value);
 
 	/**
-	 * Set a setting
+	 * Sets the inversion control value
 	 */
-	void setInversionControl2(MusicControlArea area, int value);
+	void setInversionControl2(MusicInstrument instrument, int value);
 
 	/**
-	 * Set a setting
+	 * Sets the direction control value
 	 */
-	void setDirectionControl2(MusicControlArea area, int value);
+	void setDirectionControl2(MusicInstrument instrument, int value);
 
-	void setPitchControl(MusicControlArea area, int value);
-	void setSpeedControl(MusicControlArea area, int value);
-	void setDirectionControl(MusicControlArea area, int value);
-	void setInversionControl(MusicControlArea area, int value);
-	void setMuteControl(MusicControlArea area, int value);
+	/**
+	 * Sets the pitch control value
+	 */
+	void setPitchControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the speed control value
+	 */
+	void setSpeedControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the direction control value
+	 */
+	void setDirectionControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the inversion control value
+	 */
+	void setInversionControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the mute control value
+	 */
+	void setMuteControl(MusicInstrument instrument, int value);
 };
 
 } // End of namespace Titanic

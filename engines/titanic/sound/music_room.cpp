@@ -54,6 +54,7 @@ void CMusicRoom::destroyMusicHandler() {
 
 void CMusicRoom::setupMusic(int volume) {
 	if (_musicHandler) {
+		// Set up the control values that form the correct settings
 		_musicHandler->setSpeedControl2(BELLS, 0);
 		_musicHandler->setSpeedControl2(SNAKE, 1);
 		_musicHandler->setSpeedControl2(PIANO, -1);
@@ -74,8 +75,9 @@ void CMusicRoom::setupMusic(int volume) {
 		_musicHandler->setDirectionControl2(PIANO, 1);
 		_musicHandler->setDirectionControl2(BASS, 1);
 
-		for (MusicControlArea idx = BELLS; idx <= BASS;
-				idx = (MusicControlArea)((int)idx + 1)) {
+		// Set up the current control values
+		for (MusicInstrument idx = BELLS; idx <= BASS;
+				idx = (MusicInstrument)((int)idx + 1)) {
 			Controls &controls = _controls[idx];
 			_musicHandler->setSpeedControl(idx, controls._speedControl);
 			_musicHandler->setPitchControl(idx, controls._pitchControl);

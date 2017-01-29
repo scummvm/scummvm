@@ -45,7 +45,7 @@ void CMusicControl::save(SimpleFile *file, int indent) {
 
 void CMusicControl::load(SimpleFile *file) {
 	file->readNumber();
-	_controlArea = (MusicControlArea)file->readNumber();
+	_controlArea = (MusicInstrument)file->readNumber();
 	_controlVal = file->readNumber();
 	_controlMax = file->readNumber();
 	_enabled = file->readNumber();

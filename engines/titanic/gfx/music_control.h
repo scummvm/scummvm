@@ -33,7 +33,7 @@ class CMusicControl : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 public:
-	MusicControlArea _controlArea;
+	MusicInstrument _controlArea;
 	int _controlVal;
 	int _controlMax;
 	bool _enabled;

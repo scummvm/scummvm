@@ -63,11 +63,30 @@ public:
 	 */
 	void destroyMusicHandler();
 
-	void setSpeedControl(MusicControlArea index, int val) { _controls[index]._speedControl = val; }
-	void setPitchControl(MusicControlArea index, int val) { _controls[index]._pitchControl = val; }
-	void setDirectionControl(MusicControlArea index, int val) { _controls[index]._directionControl = val; }
-	void setInversionControl(MusicControlArea index, int val) { _controls[index]._inversionControl = val; }
-	void setMuteControl(MusicControlArea index, int val) { _controls[index]._muteControl = val; }
+	/**
+	 * Sets the speed control for a given instrument
+	 */
+	void setSpeedControl(MusicInstrument instrument, int val) { _controls[instrument]._speedControl = val; }
+
+	/**
+	 * Sets the pitch control for a given instrument
+	 */
+	void setPitchControl(MusicInstrument instrument, int val) { _controls[instrument]._pitchControl = val; }
+
+	/**
+	 * Sets the direction control for a given instrument
+	 */
+	void setDirectionControl(MusicInstrument instrument, int val) { _controls[instrument]._directionControl = val; }
+
+	/**
+	 * Sets the inversion control for a given instrument
+	 */
+	void setInversionControl(MusicInstrument instrument, int val) { _controls[instrument]._inversionControl = val; }
+
+	/**
+	 * Sets the mute control for a given instrument
+	 */
+	void setMuteControl(MusicInstrument instrument, int val) { _controls[instrument]._muteControl = val; }
 
 	/**
 	 * Sets up the music controls
