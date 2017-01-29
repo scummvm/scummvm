@@ -92,7 +92,10 @@ public:
 	 */
 	void stop();
 
-	bool checkSound(int index) const;
+	/**
+	 * Checks the specified instrument to see if it's settings are "correct"
+	 */
+	bool checkInstrument(MusicControlArea area) const;
 
 	/**
 	 * Set a setting

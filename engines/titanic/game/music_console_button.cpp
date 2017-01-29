@@ -57,9 +57,9 @@ bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		CMusicHasStartedMsg startedMsg;
 		startedMsg.execute("Music Room Phonograph");
 
-		if (CMusicRoom::_musicHandler->checkSound(1)
-				&& CMusicRoom::_musicHandler->checkSound(2)
-				&& CMusicRoom::_musicHandler->checkSound(3)) {
+		if (CMusicRoom::_musicHandler->checkInstrument(SNAKE)
+				&& CMusicRoom::_musicHandler->checkInstrument(PIANO)
+				&& CMusicRoom::_musicHandler->checkInstrument(BASS)) {
 			CCorrectMusicPlayedMsg correctMsg;
 			correctMsg.execute(findRoom());
 		}

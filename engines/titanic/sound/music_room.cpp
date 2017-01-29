@@ -52,7 +52,7 @@ void CMusicRoom::destroyMusicHandler() {
 	_musicHandler = nullptr;
 }
 
-void CMusicRoom::startMusic(int volume) {
+void CMusicRoom::setupMusic(int volume) {
 	if (_musicHandler) {
 		_musicHandler->setSpeedControl2(BELLS, 0);
 		_musicHandler->setSpeedControl2(SNAKE, 1);

@@ -40,7 +40,7 @@ void CMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isActive, indent);
 	file->writeQuotedLine(_stopTarget, indent);
 	file->writeNumberLine(_stopWaves, indent);
-	file->writeNumberLine(_musicId, indent);
+	file->writeNumberLine(_volume, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -50,13 +50,13 @@ void CMusicPlayer::load(SimpleFile *file) {
 	_isActive = file->readNumber();
 	_stopTarget = file->readString();
 	_stopWaves = file->readNumber();
-	_musicId = file->readNumber();
+	_volume = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CMusicPlayer::StartMusicMsg(CStartMusicMsg *msg) {
-	if (msg->_musicPlayer == this) {
+	if (msg->_musicPlayer != this) {
 		if (_isActive) {
 			CStopMusicMsg stopMusicMsg;
 			stopMusicMsg.execute(this);
@@ -73,8 +73,9 @@ bool CMusicPlayer::StartMusicMsg(CStartMusicMsg *msg) {
 		CSetMusicControlsMsg controlsMsg;
 		controlsMsg.execute(this, nullptr, MSGFLAG_SCAN);
 
-		getMusicRoom()->startMusic(_musicId);
+		getMusicRoom()->setupMusic(_volume);
 		_isActive = true;
+		unlockMouse();
 	}
 
 	return true;

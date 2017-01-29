@@ -70,9 +70,9 @@ public:
 	void setMuteControl(MusicControlArea index, int val) { _controls[index]._muteControl = val; }
 
 	/**
-	 * Start playing a given music number
+	 * Sets up the music controls
 	 */
-	void startMusic(int volume = 100);
+	void setupMusic(int volume);
 
 	/**
 	 * Stop playing music

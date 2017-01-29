@@ -85,7 +85,7 @@ void CMusicRoomHandler::stop() {
 	}
 }
 
-bool CMusicRoomHandler::checkSound(int index) const {
+bool CMusicRoomHandler::checkInstrument(MusicControlArea area) const {
 	// TODO
 	return false;
 }
