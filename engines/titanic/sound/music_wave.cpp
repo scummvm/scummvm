@@ -80,7 +80,23 @@ CWaveFile *CMusicWave::createWaveFile(const CString &name) {
 }
 
 void CMusicWave::stop() {
-	// TODO
+	if (_gameObjects[0]) {
+		switch (_instrument) {
+		case MV_PIANO:
+			_gameObjects[1]->setVisible(false);
+			_gameObjects[2]->setVisible(false);
+			_gameObjects[3]->setVisible(false);
+			_gameObjects[0]->playMovie(29, 58, MOVIE_STOP_PREVIOUS);
+			break;
+
+		case MV_BELLS:
+			_gameObjects[0]->stopMovie();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 void CMusicWave::trigger() {
