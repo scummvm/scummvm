@@ -28,9 +28,12 @@
 
 namespace Titanic {
 
+enum MusicWaveInstrument { MV_PIANO = 0, MV_BASS = 1, MV_BELLS = 2, MV_SNAKE = 3 };
+
 class CProjectItem;
 class CSoundManager;
 class CWaveFile;
+class CGameObject;
 
 class CMusicWave {
 	struct CMusicWaveFile {
@@ -41,13 +44,19 @@ class CMusicWave {
 private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
+	MusicWaveInstrument _instrument;
+	CProjectItem *_project;
+	CGameObject *_gameObjects[4];
+	int _field20;
+	int _field24;
+	int _field4C;
 private:
 	/**
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
 	 */
 	CWaveFile *createWaveFile(const CString &name);
 public:
-	CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index);
+	CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
 	/**
 	 * Sets the maximum number of allowed files that be defined
@@ -63,6 +72,12 @@ public:
 	 * Stops the music
 	 */
 	void stop();
+
+	/**
+	 * Called regularly to handle triggering the animation of the
+	 * musical instrument associated with the instance
+	 */
+	void trigger();
 };
 
 } // End of namespace Titanic

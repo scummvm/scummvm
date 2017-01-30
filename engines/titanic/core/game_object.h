@@ -462,11 +462,6 @@ protected:
 	 */
 	void setPassengerClass(PassengerClass newClass);
 
-	/**
-	 * Overrides whether the object's movie has audio timing
-	 */
-	void movieSetAudioTiming(bool flag);
-
 	void fn10(int v1, int v2, int v3);
 
 	/**
@@ -636,6 +631,11 @@ public:
 	 * Stops any movie currently playing for the object
 	 */
 	void stopMovie();
+
+	/**
+	 * Overrides whether the object's movie has audio timing
+	 */
+	void movieSetAudioTiming(bool flag);
 
 	/**
 	 * Get the current movie frame

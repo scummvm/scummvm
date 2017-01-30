@@ -39,26 +39,26 @@ CMusicRoomHandler::~CMusicRoomHandler() {
 		delete _musicWaves[idx];
 }
 
-CMusicWave *CMusicRoomHandler::createMusicWave(int waveIndex, int count) {
-	switch (waveIndex) {
-	case 0:
-		_musicWaves[waveIndex] = new CMusicWave(_project, _soundManager, 2);
+CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int count) {
+	switch (instrument) {
+	case BELLS:
+		_musicWaves[BELLS] = new CMusicWave(_project, _soundManager, MV_BELLS);
 		break;
-	case 1:
-		_musicWaves[waveIndex] = new CMusicWave(_project, _soundManager, 3);
+	case SNAKE:
+		_musicWaves[SNAKE] = new CMusicWave(_project, _soundManager, MV_SNAKE);
 		break;
-	case 2:
-		_musicWaves[waveIndex] = new CMusicWave(_project, _soundManager, 0);
+	case PIANO:
+		_musicWaves[PIANO] = new CMusicWave(_project, _soundManager, MV_PIANO);
 		break;
-	case 3:
-		_musicWaves[waveIndex] = new CMusicWave(_project, _soundManager, 1);
+	case BASS:
+		_musicWaves[BASS] = new CMusicWave(_project, _soundManager, MV_BASS);
 		break;
 	default:
 		return nullptr;
 	}
 
-	_musicWaves[waveIndex]->setSize(count);
-	return _musicWaves[waveIndex];
+	_musicWaves[instrument]->setSize(count);
+	return _musicWaves[instrument];
 }
 
 void CMusicRoomHandler::createWaveFile(int musicVolume) {

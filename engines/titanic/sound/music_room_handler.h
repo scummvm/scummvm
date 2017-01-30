@@ -68,10 +68,10 @@ public:
 	/**
 	 * Creates a new music wave class instance, and assigns it to a slot
 	 * in the music handler
-	 * @param waveIndex		Slot to save new instance in
+	 * @param instrument	Which instrument instance is for
 	 * @param count			Number of files the new instance will contain
 	 */
-	CMusicWave *createMusicWave(int waveIndex, int count);
+	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	void createWaveFile(int musicVolume);
 
