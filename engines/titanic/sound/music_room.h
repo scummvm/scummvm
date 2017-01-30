@@ -56,27 +56,37 @@ public:
 	/**
 	 * Sets the speed control for a given instrument
 	 */
-	void setSpeedControl(MusicInstrument instrument, int val) { _instruments[instrument]._speedControl = val; }
+	void setSpeedControl(MusicInstrument instrument, int val) {
+		_instruments[instrument]._speedControl = val;
+	}
 
 	/**
 	 * Sets the pitch control for a given instrument
 	 */
-	void setPitchControl(MusicInstrument instrument, int val) { _instruments[instrument]._pitchControl = val; }
+	void setPitchControl(MusicInstrument instrument, int val) {
+		_instruments[instrument]._pitchControl = val;
+	}
 
 	/**
 	 * Sets the direction control for a given instrument
 	 */
-	void setDirectionControl(MusicInstrument instrument, bool val) { _instruments[instrument]._directionControl = val; }
+	void setDirectionControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._directionControl = val;
+	}
 
 	/**
 	 * Sets the inversion control for a given instrument
 	 */
-	void setInversionControl(MusicInstrument instrument, bool val) { _instruments[instrument]._inversionControl = val; }
+	void setInversionControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._inversionControl = val;
+	}
 
 	/**
 	 * Sets the mute control for a given instrument
 	 */
-	void setMuteControl(MusicInstrument instrument, bool val) { _instruments[instrument]._muteControl = val; }
+	void setMuteControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._muteControl = val;
+	}
 
 	/**
 	 * Sets up the music controls

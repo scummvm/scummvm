@@ -32,13 +32,13 @@ END_MESSAGE_MAP()
 
 void CPhonographEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field140, indent);
+	file->writeNumberLine(_replacementEar, indent);
 	CEar::save(file, indent);
 }
 
 void CPhonographEar::load(SimpleFile *file) {
 	file->readNumber();
-	_field140 = file->readNumber();
+	_replacementEar = file->readNumber();
 	CEar::load(file);
 }
 
@@ -48,8 +48,9 @@ bool CPhonographEar::CorrectMusicPlayedMsg(CCorrectMusicPlayedMsg *msg) {
 }
 
 bool CPhonographEar::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
-	if (_field140) {
-		_field140 = false;
+	if (_replacementEar) {
+		// Start a timer to add a replacement ear to the Phonograph
+		_replacementEar = false;
 		addTimer(1000);
 	}
 

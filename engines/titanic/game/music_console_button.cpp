@@ -60,6 +60,7 @@ bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		if (CMusicRoom::_musicHandler->checkInstrument(SNAKE)
 				&& CMusicRoom::_musicHandler->checkInstrument(PIANO)
 				&& CMusicRoom::_musicHandler->checkInstrument(BASS)) {
+			// All three instruments have the correct settings
 			CCorrectMusicPlayedMsg correctMsg;
 			correctMsg.execute(findRoom());
 		}
@@ -70,6 +71,7 @@ bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CMusicConsoleButton::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isActive) {
+		// Stop playing the active music
 		CStopMusicMsg stopMsg(this);
 		stopMsg.execute(this);
 		stopMovie();
@@ -83,8 +85,6 @@ bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	CMusicRoom *musicRoom = getMusicRoom();
 	CQueryMusicControlSettingMsg queryMsg;
 
-	queryMsg.execute("Bells Mute Control");
-	musicRoom->setMuteControl(BELLS, queryMsg._value == 1);
 	queryMsg.execute("Bells Pitch Control");
 	musicRoom->setPitchControl(BELLS, queryMsg._value);
 	queryMsg.execute("Bells Speed Control");
@@ -93,9 +93,9 @@ bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	musicRoom->setInversionControl(BELLS, queryMsg._value == 1);
 	queryMsg.execute("Bells Direction Control");
 	musicRoom->setDirectionControl(BELLS, queryMsg._value == 1);
+	queryMsg.execute("Bells Mute Control");
+	musicRoom->setMuteControl(BELLS, queryMsg._value == 1);
 
-	queryMsg.execute("Snake Mute Control");
-	musicRoom->setMuteControl(SNAKE, queryMsg._value == 1);
 	queryMsg.execute("Snake Pitch Control");
 	musicRoom->setPitchControl(SNAKE, queryMsg._value);
 	queryMsg.execute("Snake Speed Control");
@@ -104,9 +104,9 @@ bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	musicRoom->setInversionControl(SNAKE, queryMsg._value == 1);
 	queryMsg.execute("Snake Direction Control");
 	musicRoom->setDirectionControl(SNAKE, queryMsg._value == 1);
+	queryMsg.execute("Snake Mute Control");
+	musicRoom->setMuteControl(SNAKE, queryMsg._value == 1);
 
-	queryMsg.execute("Piano Mute Control");
-	musicRoom->setMuteControl(PIANO, queryMsg._value == 1);
 	queryMsg.execute("Piano Pitch Control");
 	musicRoom->setPitchControl(PIANO, queryMsg._value);
 	queryMsg.execute("Piano Speed Control");
@@ -115,9 +115,9 @@ bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	musicRoom->setInversionControl(PIANO, queryMsg._value == 1);
 	queryMsg.execute("Piano Direction Control");
 	musicRoom->setDirectionControl(PIANO, queryMsg._value == 1);
+	queryMsg.execute("Piano Mute Control");
+	musicRoom->setMuteControl(PIANO, queryMsg._value == 1);
 
-	queryMsg.execute("Bass Mute Control");
-	musicRoom->setMuteControl(BASS, queryMsg._value == 1);
 	queryMsg.execute("Bass Pitch Control");
 	musicRoom->setPitchControl(BASS, queryMsg._value);
 	queryMsg.execute("Bass Speed Control");
@@ -126,6 +126,8 @@ bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	musicRoom->setInversionControl(BASS, queryMsg._value == 1);
 	queryMsg.execute("Bass Direction Control");
 	musicRoom->setDirectionControl(BASS, queryMsg._value == 1);
+	queryMsg.execute("Bass Mute Control");
+	musicRoom->setMuteControl(BASS, queryMsg._value == 1);
 
 	return true;
 }

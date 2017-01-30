@@ -33,10 +33,10 @@ class CPhonographEar : public CEar {
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 private:
-	bool _field140;
+	bool _replacementEar;
 public:
 	CLASSDEF;
-	CPhonographEar() : CEar(), _field140(true) {}
+	CPhonographEar() : CEar(), _replacementEar(true) {}
 
 	/**
 	 * Save the data for the class to file

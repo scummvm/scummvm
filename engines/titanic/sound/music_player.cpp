@@ -110,6 +110,7 @@ bool CMusicPlayer::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
+	// Set up a timer that will create a music handler
 	addTimer(100);
 	return true;
 }
@@ -171,6 +172,7 @@ bool CMusicPlayer::TimerMsg(CTimerMsg *msg) {
 
 bool CMusicPlayer::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_isActive) {
+		// Music is meant to be playing, so restart it
 		CStopMusicMsg stopMsg;
 		stopMsg.execute(this);
 		CStartMusicMsg startMsg;
