@@ -32,7 +32,6 @@ CMusicRoomHandler *CMusicRoom::_musicHandler;
 CMusicRoom::CMusicRoom(CGameManager *gameManager) :
 		_gameManager(gameManager) {
 	_sound = &_gameManager->_sound;
-	_controls.resize(4);
 }
 
 CMusicRoom::~CMusicRoom() {
@@ -65,25 +64,25 @@ void CMusicRoom::setupMusic(int volume) {
 		_musicHandler->setPitchControl2(PIANO, 0);
 		_musicHandler->setPitchControl2(BELLS, 1);
 
-		_musicHandler->setInversionControl2(BELLS, 1);
-		_musicHandler->setInversionControl2(SNAKE, 0);
-		_musicHandler->setInversionControl2(PIANO, 1);
-		_musicHandler->setInversionControl2(BASS, 0);
+		_musicHandler->setInversionControl2(BELLS, true);
+		_musicHandler->setInversionControl2(SNAKE, false);
+		_musicHandler->setInversionControl2(PIANO, true);
+		_musicHandler->setInversionControl2(BASS, false);
 
-		_musicHandler->setDirectionControl2(BELLS, 0);
-		_musicHandler->setDirectionControl2(SNAKE, 0);
-		_musicHandler->setDirectionControl2(PIANO, 1);
-		_musicHandler->setDirectionControl2(BASS, 1);
+		_musicHandler->setDirectionControl2(BELLS, false);
+		_musicHandler->setDirectionControl2(SNAKE, false);
+		_musicHandler->setDirectionControl2(PIANO, true);
+		_musicHandler->setDirectionControl2(BASS, true);
 
 		// Set up the current control values
 		for (MusicInstrument idx = BELLS; idx <= BASS;
 				idx = (MusicInstrument)((int)idx + 1)) {
-			Controls &controls = _controls[idx];
-			_musicHandler->setSpeedControl(idx, controls._speedControl);
-			_musicHandler->setPitchControl(idx, controls._pitchControl);
-			_musicHandler->setDirectionControl(idx, controls._directionControl);
-			_musicHandler->setInversionControl(idx, controls._inversionControl);
-			_musicHandler->setMuteControl(idx, controls._muteControl);
+			MusicRoomInstrument &instr = _instruments[idx];
+			_musicHandler->setSpeedControl(idx, instr._speedControl);
+			_musicHandler->setPitchControl(idx, instr._pitchControl);
+			_musicHandler->setDirectionControl(idx, instr._directionControl);
+			_musicHandler->setInversionControl(idx, instr._inversionControl);
+			_musicHandler->setMuteControl(idx, instr._muteControl);
 		}
 
 		_musicHandler->createWaveFile(volume);

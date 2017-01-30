@@ -33,16 +33,17 @@ class CSoundManager;
 
 enum MusicInstrument { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
 
+struct MusicRoomInstrument {
+	int _pitchControl;
+	int _speedControl;
+	bool _directionControl;
+	bool _inversionControl;
+	bool _muteControl;
+	MusicRoomInstrument() : _pitchControl(0), _speedControl(0), _directionControl(false),
+		_inversionControl(false), _muteControl(false) {}
+};
+
 class CMusicRoomHandler {
-	struct Controls {
-		int _pitchControl;
-		int _speedControl;
-		int _directionControl;
-		int _inversionControl;
-		int _muteControl;
-		Controls() : _pitchControl(0), _speedControl(0), _directionControl(0),
-			_inversionControl(0), _muteControl(0) {}
-	};
 	struct Array5Entry {
 		int _v1;
 		int _v2;
@@ -52,8 +53,8 @@ private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
-	Controls _array1[4];
-	Controls _array2[4];
+	MusicRoomInstrument _array1[4];
+	MusicRoomInstrument _array2[4];
 	Array5Entry _array5[4];
 	bool _stopWaves;
 	CWaveFile *_waveFile;
@@ -110,12 +111,12 @@ public:
 	/**
 	 * Sets the inversion control value
 	 */
-	void setInversionControl2(MusicInstrument instrument, int value);
+	void setInversionControl2(MusicInstrument instrument, bool value);
 
 	/**
 	 * Sets the direction control value
 	 */
-	void setDirectionControl2(MusicInstrument instrument, int value);
+	void setDirectionControl2(MusicInstrument instrument, bool value);
 
 	/**
 	 * Sets the pitch control value
@@ -130,17 +131,17 @@ public:
 	/**
 	 * Sets the direction control value
 	 */
-	void setDirectionControl(MusicInstrument instrument, int value);
+	void setDirectionControl(MusicInstrument instrument, bool value);
 
 	/**
 	 * Sets the inversion control value
 	 */
-	void setInversionControl(MusicInstrument instrument, int value);
+	void setInversionControl(MusicInstrument instrument, bool value);
 
 	/**
 	 * Sets the mute control value
 	 */
-	void setMuteControl(MusicInstrument instrument, int value);
+	void setMuteControl(MusicInstrument instrument, bool value);
 };
 
 } // End of namespace Titanic
