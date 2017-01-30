@@ -104,12 +104,12 @@ void CMusicRoomHandler::setPitchControl2(MusicInstrument instrument, int value) 
 }
 
 void CMusicRoomHandler::setInversionControl2(MusicInstrument instrument, bool value) {
-	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+	if (instrument >= BELLS && instrument <= BASS)
 		_array2[instrument]._inversionControl = value;
 }
 
 void CMusicRoomHandler::setDirectionControl2(MusicInstrument instrument, bool value) {
-	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+	if (instrument >= BELLS && instrument <= BASS)
 		_array2[instrument]._directionControl = value;
 }
 
@@ -124,17 +124,17 @@ void CMusicRoomHandler::setSpeedControl(MusicInstrument instrument, int value) {
 }
 
 void CMusicRoomHandler::setDirectionControl(MusicInstrument instrument, bool value) {
-	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+	if (instrument >= BELLS && instrument <= BASS)
 		_array1[instrument]._directionControl = value;
 }
 
 void CMusicRoomHandler::setInversionControl(MusicInstrument instrument, bool value) {
-	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+	if (instrument >= BELLS && instrument <= BASS)
 		_array1[instrument]._inversionControl = value;
 }
 
 void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, bool value) {
-	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
+	if (instrument >= BELLS && instrument <= BASS)
 		_array1[instrument]._muteControl = value;
 }
 
