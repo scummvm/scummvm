@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-01-16 19:19+0100\n"
-"PO-Revision-Date: 2016-12-14 00:22+0000\n"
-"Last-Translator: Fernando Sarmento <nando_sarmento@hotmail.com>\n"
-"Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
-"projects/scummvm/scummvm/pt_PT/>\n"
+"PO-Revision-Date: 2017-01-30 14:50+0000\n"
+"Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
+"Language-Team: Portuguese (Portugal) "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -894,15 +894,15 @@ msgstr "Corrigir taxa de proporção em jogos de 320x200"
 
 #: gui/options.cpp:849
 msgid "Preferred Device:"
-msgstr ""
+msgstr "Dispositivo Preferido:"
 
 #: gui/options.cpp:849
 msgid "Music Device:"
-msgstr ""
+msgstr "Dispositivo de Música:"
 
 #: gui/options.cpp:849 gui/options.cpp:851
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr ""
+msgstr "Especifica dispositivo sonoro ou emulador de placa sonora preferida"
 
 #: gui/options.cpp:849 gui/options.cpp:851 gui/options.cpp:852
 msgid "Specifies output sound device or sound card emulator"
@@ -920,11 +920,11 @@ msgstr ""
 
 #: gui/options.cpp:878
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "Emulador AdLib:"
 
 #: gui/options.cpp:878 gui/options.cpp:879
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib é usado para música em vários jogos"
 
 #: gui/options.cpp:889
 msgid "Output rate:"
