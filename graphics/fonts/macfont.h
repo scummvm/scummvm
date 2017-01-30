@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/stream.h"
 #include "graphics/font.h"
 
 namespace Graphics {
