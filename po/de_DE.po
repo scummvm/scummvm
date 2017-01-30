@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-01-16 19:19+0100\n"
-"PO-Revision-Date: 2016-12-27 09:55+0000\n"
+"PO-Revision-Date: 2017-01-30 17:55+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -719,7 +719,7 @@ msgstr ""
 
 #: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
-msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
+msgstr "Möchten Sie diese Spielkonfiguration wirklich entfernen?"
 
 #: gui/launcher.cpp:473
 msgid "Do you want to load saved game?"
