@@ -27,6 +27,7 @@
 #include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "backends/events/androidsdl/androidsdl-events.h"
 #include "backends/graphics/androidsdl/androidsdl-graphics.h"
+#include <SDL_android.h>
 
 void OSystem_ANDROIDSDL::initBackend() {
 	// Create the backend custom managers
@@ -42,7 +43,39 @@ void OSystem_ANDROIDSDL::initBackend() {
 
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
+	
+	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
+		const bool enable = (SDL_ANDROID_GetMouseEmulationMode() == 0) ? false : true;
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+	} else {
+		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
+	}
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
+}
+
+void OSystem_ANDROIDSDL::touchpadMode(bool enable) {
+		if (enable)
+			switchToRelativeMouseMode();
+		else
+			switchToDirectMouseMode();
+}
+
+void OSystem_ANDROIDSDL::switchToDirectMouseMode() {
+	SDL_ANDROID_SetMouseEmulationMode(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+}
+
+void OSystem_ANDROIDSDL::switchToRelativeMouseMode() {
+	SDL_ANDROID_SetMouseEmulationMode(1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+}
+
+void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+			case kFeatureTouchpadMode:
+			touchpadMode(enable);
+			break;
+	}
+	
+	OSystem_POSIX::setFeatureState(f, enable);
 }

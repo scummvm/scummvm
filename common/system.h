@@ -337,6 +337,14 @@ public:
 		 * This feature has no associated state.
 		 */
 		kFeatureOpenUrl
+			
+#ifdef ANDROIDSDL
+			/**
+			* mouse emulation mode
+			*/
+			,
+		kFeatureTouchpadMode
+#endif
 	};
 
 	/**

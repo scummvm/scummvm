@@ -136,6 +136,10 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::init() {
+#ifdef ANDROIDSDL
+	_enableAndroidSdlSettings = false;
+	_touchpadCheckbox = 0;
+#endif
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
 	_gfxPopUpDesc = 0;
@@ -202,6 +206,14 @@ void OptionsDialog::build() {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
+	
+#ifdef ANDROIDSDL
+	// AndroidSDL options
+	if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
+		bool touchpadState = ConfMan.getBool("touchpad_mouse_mode", _domain);
+		_touchpadCheckbox->setState(touchpadState);
+	}
+#endif
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -380,6 +392,14 @@ void OptionsDialog::open() {
 }
 
 void OptionsDialog::apply() {
+#ifdef ANDROIDSDL
+	if (_enableAndroidSdlSettings) {
+		if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
+			ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
+			g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+		}
+	}
+#endif
 	// Graphic options
 	bool graphicsModeChanged = false;
 	if (_fullscreenCheckbox) {
@@ -672,6 +692,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
+	
+void OptionsDialog::setAndroidSdlSettingsState(bool enabled) {
+	_enableAndroidSdlSettings = enabled;
+}
 
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
@@ -798,6 +822,15 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedSlider->setEnabled(ena);
 	_subSpeedLabel->setEnabled(ena);
 }
+	
+#ifdef ANDROIDSDL
+	void OptionsDialog::addAndroidSdlControls(GuiObject *boss, const Common::String &prefix) {
+		// Touchpad Mouse mode
+		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
+		
+		_enableAndroidSdlSettings = true;
+	}
+#endif
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -1226,6 +1259,14 @@ void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
 
+#ifdef ANDROIDSDL
+	//
+	// The control tab only for Android SDL platform
+	//
+	tab->addTab(_("Control"));
+	addAndroidSdlControls(tab, "GlobalOptions_AndroidSdl.");
+#endif
+	
 	//
 	// 1) The graphics tab
 	//

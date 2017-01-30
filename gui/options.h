@@ -86,6 +86,9 @@ protected:
 	virtual void clean();
 	void rebuild();
 
+#ifdef ANDROIDSDL
+	void addAndroidSdlControls(GuiObject *boss, const Common::String &prefix);
+#endif
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
@@ -96,6 +99,9 @@ protected:
 	void addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal = 255);
 	void addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions);
 
+#ifdef ANDROIDSDL
+	void setAndroidSdlSettingsState(bool enabled);
+#endif
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
@@ -112,6 +118,16 @@ protected:
 	int _pathsTabId;
 
 private:
+	
+#ifdef ANDROIDSDL
+	//
+	// AndroidSDL controls
+	//
+	bool _enableAndroidSdlSettings;
+
+	CheckboxWidget *_touchpadCheckbox;
+#endif
+	
 	//
 	// Graphics controls
 	//
