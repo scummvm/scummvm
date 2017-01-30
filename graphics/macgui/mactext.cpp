@@ -19,12 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/font.h"
 
 namespace Graphics {
 
-MacText::MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
+const Font *MacFontRun::getFont() {
+	if (font)
+		return font;
+
+	MacFont macFont = MacFont(fontId, fontSize, textSlant);
+
+	font = wm->_fontMan->getFont(macFont);
+
+	return font;
+}
+
+MacText::MacText(Common::String s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
 	_str = s;
 	_wm = wm;
 	_font = font;
@@ -40,6 +53,9 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *f
 	splitString(_str);
 
 	_fullRefresh = true;
+
+	_defaultFormatting.font = font;
+	_defaultFormatting.wm = wm;
 }
 
 void MacText::splitString(Common::String &str) {

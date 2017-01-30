@@ -30,7 +30,6 @@
 namespace Graphics {
 
 class MacWindowManager;
-class MacFont;
 
 struct MacFontRun {
 	uint16 fontId;
@@ -41,7 +40,43 @@ struct MacFontRun {
 	uint16 palinfo2;
 	uint16 palinfo3;
 
-	MacFont *font;
+	const Font *font;
+	MacWindowManager *wm;
+
+	MacFontRun() {
+		wm = nullptr;
+		fontId = textSlant = unk3f = fontSize;
+		palinfo1 = palinfo2  = palinfo3;
+		font = nullptr;
+	}
+
+	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		wm        = wm_;
+		fontId    = fontId_;
+		textSlant = textSlant_;
+		unk3f     = unk3f_;
+		fontSize  = fontSize_;
+		palinfo1  = palinfo1_;
+		palinfo2  = palinfo2_;
+		palinfo3  = palinfo3_;
+		font      = nullptr;
+	}
+
+	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_, const Font *font_) {
+		wm        = wm_;
+		fontId    = fontId_;
+		textSlant = textSlant_;
+		unk3f     = unk3f_;
+		fontSize  = fontSize_;
+		palinfo1  = palinfo1_;
+		palinfo2  = palinfo2_;
+		palinfo3  = palinfo3_;
+		font      = font_;
+	}
+
+	const Font *getFont();
 };
 
 class MacText {
@@ -82,6 +117,9 @@ private:
 	bool _fullRefresh;
 
 	TextAlign _textAlignment;
+
+	Common::Array< Common::Array<MacFontRun> > _formatting;
+	MacFontRun _defaultFormatting;
 };
 
 } // End of namespace Graphics
