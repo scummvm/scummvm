@@ -56,6 +56,8 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const Font *font, int f
 
 	_defaultFormatting.font = font;
 	_defaultFormatting.wm = wm;
+
+	_currentFormatting = _defaultFormatting;
 }
 
 void MacText::splitString(Common::String &str) {
@@ -63,6 +65,8 @@ void MacText::splitString(Common::String &str) {
 
 	Common::String tmp;
 	bool prevCR = false;
+
+	int curLine = _text.empty() ? 0 : _text.size() - 1;
 
 	while (*s) {
 		if (*s == '\001') {
@@ -83,6 +87,13 @@ void MacText::splitString(Common::String &str) {
 
 				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+
+				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+
+				if (_formatting.empty())
+					_formatting.resize(1);
+
+				_formatting[curLine].push_back(_currentFormatting);
 
 				continue;
 			}

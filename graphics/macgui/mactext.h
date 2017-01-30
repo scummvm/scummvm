@@ -45,12 +45,17 @@ struct MacFontRun {
 
 	MacFontRun() {
 		wm = nullptr;
-		fontId = textSlant = unk3f = fontSize;
-		palinfo1 = palinfo2  = palinfo3;
+		fontId = textSlant = unk3f = fontSize = 0;
+		palinfo1 = palinfo2  = palinfo3 = 0;
 		font = nullptr;
 	}
 
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		setValues(wm_, fontId_, textSlant_, unk3f_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+	}
+
+	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		wm        = wm_;
 		fontId    = fontId_;
@@ -61,19 +66,6 @@ struct MacFontRun {
 		palinfo2  = palinfo2_;
 		palinfo3  = palinfo3_;
 		font      = nullptr;
-	}
-
-	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
-			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_, const Font *font_) {
-		wm        = wm_;
-		fontId    = fontId_;
-		textSlant = textSlant_;
-		unk3f     = unk3f_;
-		fontSize  = fontSize_;
-		palinfo1  = palinfo1_;
-		palinfo2  = palinfo2_;
-		palinfo3  = palinfo3_;
-		font      = font_;
 	}
 
 	const Font *getFont();
@@ -120,6 +112,7 @@ private:
 
 	Common::Array< Common::Array<MacFontRun> > _formatting;
 	MacFontRun _defaultFormatting;
+	MacFontRun _currentFormatting;
 };
 
 } // End of namespace Graphics
