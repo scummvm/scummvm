@@ -42,6 +42,10 @@ class CMusicWave {
 		CMusicWaveFile() : _waveFile(nullptr), _value(0) {}
 	};
 private:
+	static bool _pianoToggle;
+	static int _pianoCtr;
+	static int _bassCtr;
+private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
 	MusicWaveInstrument _instrument;
@@ -56,6 +60,11 @@ private:
 	 */
 	CWaveFile *createWaveFile(const CString &name);
 public:
+	/**
+	 * Handles initialization of static fields
+	 */
+	static void init();
+public:
 	CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
 	/**
@@ -69,7 +78,12 @@ public:
 	void load(int index, const CString &filename, int v3);
 
 	/**
-	 * Stops the music
+	 * Starts the music and associated animations
+	 */
+	void start(int val);
+
+	/**
+	 * Stops the music and associated animations
 	 */
 	void stop();
 

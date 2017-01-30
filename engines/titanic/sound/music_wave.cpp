@@ -27,6 +27,16 @@
 
 namespace Titanic {
 
+bool CMusicWave::_pianoToggle;
+int CMusicWave::_pianoCtr;
+int CMusicWave::_bassCtr;
+
+void CMusicWave::init() {
+	_pianoToggle = false;
+	_pianoCtr = 0;
+	_bassCtr = 0;
+}
+
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
 		_soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
@@ -77,6 +87,105 @@ CWaveFile *CMusicWave::createWaveFile(const CString &name) {
 	if (name.empty())
 		return nullptr;
 	return _soundManager->loadSound(name);
+}
+
+void CMusicWave::start(int val) {
+	if (_gameObjects[0]) {
+		switch (_instrument) {
+		case MV_PIANO:
+			_gameObjects[1]->setVisible(true);
+			_gameObjects[2]->setVisible(true);
+			_gameObjects[3]->setVisible(true);
+			_gameObjects[_pianoToggle ? 3 : 2]->playMovie(MOVIE_STOP_PREVIOUS);
+			_pianoToggle = !_pianoToggle;
+
+			switch (_pianoCtr) {
+			case 0:
+				_gameObjects[1]->playMovie(0, 4, MOVIE_STOP_PREVIOUS);
+				break;
+			case 1:
+				_gameObjects[1]->playMovie(4, 8, MOVIE_STOP_PREVIOUS);
+				break;
+			case 2:
+				_gameObjects[1]->playMovie(8, 12, MOVIE_STOP_PREVIOUS);
+				break;
+			case 3:
+				_gameObjects[1]->playMovie(12, 16, MOVIE_STOP_PREVIOUS);
+				break;
+			default:
+				break;
+			}
+
+			_pianoCtr = (_pianoCtr + 1) % 4;
+			break;
+
+		case MV_BASS:
+			switch (_bassCtr) {
+			case 0:
+				_gameObjects[0]->playMovie(0, 7, MOVIE_STOP_PREVIOUS);
+				break;
+			case 1:
+				_gameObjects[0]->playMovie(7, 14, MOVIE_STOP_PREVIOUS);
+				break;
+			case 2:
+				_gameObjects[0]->playMovie(15, 24, MOVIE_STOP_PREVIOUS);
+				break;
+			case 3:
+				_gameObjects[0]->playMovie(25, 33, MOVIE_STOP_PREVIOUS);
+				break;
+			default:
+				break;
+			}
+
+			// WORKAROUND: Original didn't change the selected bass animation
+			_bassCtr = (_bassCtr + 1) % 4;
+			break;
+
+		case MV_BELLS:
+			switch (val) {
+			case 60:
+				_gameObjects[0]->movieSetAudioTiming(true);
+				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
+				_field20 = 0x33333333;
+				_field24 = 0x3FE33333;
+
+			case 62:
+				_gameObjects[0]->playMovie(828, 1023, MOVIE_STOP_PREVIOUS);
+				_field20 = 0x33333333;
+				_field24 = 0x3FD33333;
+				break;
+
+			case 63:
+				_gameObjects[0]->playMovie(1024, 1085, MOVIE_STOP_PREVIOUS);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case MV_SNAKE: {
+			_gameObjects[0]->playMovie(0, 7, MOVIE_STOP_PREVIOUS);
+
+			double tempVal = 46.0 - ((double)(val - 14) * 1.43);
+			int frameNum = _field4C;
+			int frameNum1 = (tempVal - frameNum) * 0.25;
+			_gameObjects[1]->playMovie(frameNum1, frameNum1, MOVIE_STOP_PREVIOUS);
+
+			frameNum += frameNum1;
+			_gameObjects[1]->playMovie(frameNum, frameNum, 0);
+
+			frameNum += frameNum1;
+			_gameObjects[1]->playMovie(frameNum, frameNum, 0);
+
+			_gameObjects[2]->playMovie(45, 49, MOVIE_STOP_PREVIOUS);
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
 }
 
 void CMusicWave::stop() {
