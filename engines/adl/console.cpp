@@ -24,6 +24,7 @@
 
 #include "adl/console.h"
 #include "adl/display.h"
+#include "adl/graphics.h"
 #include "adl/adl.h"
 
 namespace Adl {
@@ -173,7 +174,7 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 }
 
 void Console::prepareGame() {
-	_engine->clearScreen();
+	_engine->_graphics->clearScreen();
 	_engine->loadRoom(_engine->_state.room);
 	_engine->showRoom();
 	_engine->_display->updateTextScreen();

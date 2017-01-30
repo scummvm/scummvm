@@ -309,7 +309,6 @@ protected:
 	int o1_setRoomPic(ScriptEnv &e);
 
 	// Graphics
-	void clearScreen() const;
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 
 	// Sound

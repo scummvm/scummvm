@@ -429,7 +429,7 @@ void HiRes1Engine::loadRoom(byte roomNr) {
 
 void HiRes1Engine::showRoom() {
 	_state.curPicture = getCurRoom().curPicture;
-	clearScreen();
+	_graphics->clearScreen();
 	loadRoom(_state.room);
 
 	if (!_state.isDark) {

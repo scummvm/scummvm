@@ -446,11 +446,6 @@ void AdlEngine::loadDroppedItemOffsets(Common::ReadStream &stream, byte count) {
 	}
 }
 
-void AdlEngine::clearScreen() const {
-	_display->setMode(DISPLAY_MODE_MIXED);
-	_display->clear(0x00);
-}
-
 void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 	if (_roomData.pictures.contains(pic))
 		_graphics->drawPic(*_roomData.pictures[pic]->createReadStream(), pos);

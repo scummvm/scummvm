@@ -23,9 +23,10 @@
 #ifndef ADL_PICTURE_H
 #define ADL_PICTURE_H
 
+#include "common/rect.h"
+
 namespace Common {
 class SeekableReadStream;
-struct Point;
 }
 
 namespace Adl {
@@ -36,12 +37,16 @@ class GraphicsMan {
 public:
 	virtual ~GraphicsMan() { }
 	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) = 0;
+	void clearScreen() const;
 
 protected:
 	GraphicsMan(Display &display) : _display(display) { }
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 
 	Display &_display;
+
+private:
+	virtual byte getClearColor() const = 0;
 };
 
 // Used in hires1
@@ -53,6 +58,7 @@ public:
 
 private:
 	void drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+	byte getClearColor() const { return 0x00; }
 };
 
 // Used in hires0 and hires2-hires4
@@ -66,13 +72,13 @@ protected:
 	void fillRow(Common::Point p, const byte pattern, const bool stopBit = false);
 
 private:
-	void clear();
 	void drawCorners(Common::SeekableReadStream &pic, bool yFirst);
 	void drawRelativeLines(Common::SeekableReadStream &pic);
 	void drawAbsoluteLines(Common::SeekableReadStream &pic);
 	virtual void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);
 	virtual void fillAt(Common::Point p, const byte pattern);
 	void fill(Common::SeekableReadStream &pic);
+	byte getClearColor() const { return 0xff; }
 
 	byte _color;
 	Common::Point _offset;

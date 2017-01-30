@@ -335,7 +335,7 @@ void HiRes6Engine::showRoom() {
 		if (getVar(26) < 0x80 && getCurRoom().isFirstTime)
 			setVar(26, 0);
 
-		clearScreen();
+		_graphics->clearScreen();
 
 		if (!_state.isDark)
 			redrawPic = true;

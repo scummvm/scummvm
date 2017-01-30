@@ -29,6 +29,11 @@
 
 namespace Adl {
 
+void GraphicsMan::clearScreen() const {
+	_display.setMode(DISPLAY_MODE_MIXED);
+	_display.clear(getClearColor());
+}
+
 // Draws a four-connected line
 void GraphicsMan::drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const {
 	int16 deltaX = p2.x - p1.x;
@@ -209,11 +214,6 @@ static const byte fillPatterns[NUM_PATTERNS][PATTERN_LEN] = {
 		p.y += _offset.y; \
 	} while (0)
 
-void Graphics_v2::clear() {
-	_display.clear(0xff);
-	_color = 0;
-}
-
 void Graphics_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 	Common::Point p;
 
@@ -367,6 +367,10 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 }
 
 void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
+	// NOTE: The original engine only resets the color for overlays. As a result, room
+	// pictures that draw without setting a color or clearing the screen, will use the
+	// last color set by the previous picture. We assume this is unintentional and do
+	// not copy this behavior.
 	_color = 0;
 	_offset = pos;
 
@@ -393,7 +397,8 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 			fill(pic);
 			break;
 		case 0xe5:
-			clear();
+			clearScreen();
+			_color = 0x00;
 			break;
 		case 0xf0:
 			_color = 0x00;

@@ -255,7 +255,7 @@ void AdlEngine_v2::showRoom() {
 
 	if (_state.room != _roomOnScreen) {
 		loadRoom(_state.room);
-		clearScreen();
+		_graphics->clearScreen();
 
 		if (!_state.isDark)
 			redrawPic = true;
