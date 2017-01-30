@@ -1074,7 +1074,7 @@ int AdlEngine::o1_isItemPicEQ(ScriptEnv &e) {
 int AdlEngine::o1_varAdd(ScriptEnv &e) {
 	OP_DEBUG_2("\tVARS[%d] += %d", e.arg(2), e.arg(1));
 
-	setVar(e.arg(2), getVar(e.arg(2) + e.arg(1)));
+	setVar(e.arg(2), getVar(e.arg(2)) + e.arg(1));
 	return 2;
 }
 
