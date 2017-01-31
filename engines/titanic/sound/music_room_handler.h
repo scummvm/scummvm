@@ -56,11 +56,16 @@ private:
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
 	Array5Entry _array5[4];
-	bool _stopWaves;
+	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;
-	int _soundVolume;
 	int _field108;
+	int _field118;
+	uint _soundStartTicks;
+	uint _startTicks;
+	int _volume;
+private:
+	void trigger();
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
@@ -83,10 +88,9 @@ public:
 	bool isBusy();
 
 	/**
-	 * Flags whether the loaded music waves will be stopped when the
-	 * music handler is stopped
+	 * Flags whether the music handler is active
 	 */
-	void setStopWaves(bool flag) { _stopWaves = flag; }
+	void setActive(bool flag) { _active = flag; }
 
 	/**
 	 * Stop playing the music
@@ -142,6 +146,11 @@ public:
 	 * Sets the mute control value
 	 */
 	void setMuteControl(MusicInstrument instrument, bool value);
+
+	/**
+	 * Handles regular updates
+	 */
+	void update();
 };
 
 } // End of namespace Titanic

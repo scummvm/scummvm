@@ -23,14 +23,17 @@
 #include "titanic/sound/music_room_handler.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/project_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
-		_project(project), _soundManager(soundManager), _stopWaves(false),
-		_soundHandle(-1), _waveFile(nullptr), _soundVolume(100),
-		_field108(0) {
+		_project(project), _soundManager(soundManager), _active(false),
+		_soundHandle(-1), _waveFile(nullptr), _volume(100) {
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
+	_field108 = 0;
+	_field118 = 0;
+	_startTicks = _soundStartTicks = 0;
 }
 
 CMusicRoomHandler::~CMusicRoomHandler() {
@@ -62,7 +65,8 @@ CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int c
 }
 
 void CMusicRoomHandler::createWaveFile(int musicVolume) {
-	_soundVolume = musicVolume;
+	_volume = musicVolume;
+	// TODO
 //	_waveFile = _soundManager->loadMusic()
 }
 
@@ -80,9 +84,14 @@ void CMusicRoomHandler::stop() {
 	}
 
 	for (int idx = 0; idx < 4; ++idx) {
-		if (_stopWaves && _musicWaves[idx])
+		_musicWaves[idx]->reset();
+		if (_active && _musicWaves[idx])
 			_musicWaves[idx]->stop();
 	}
+
+	_field108 = 0;
+	_field118 = 0;
+	_startTicks = _soundStartTicks = 0;
 }
 
 bool CMusicRoomHandler::checkInstrument(MusicInstrument instrument) const {
@@ -141,6 +150,30 @@ void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, bool value) {
 bool CMusicRoomHandler::isBusy() {
 	// TODO: stuff
 	return _field108 > 0;
+}
+
+void CMusicRoomHandler::trigger() {
+	if (_active) {
+		for (int idx = 0; idx < 4; ++idx)
+			_musicWaves[idx]->trigger();
+	}
+}
+
+void CMusicRoomHandler::update() {
+	uint currentTicks = g_vm->_events->getTicksCount();
+
+	if (!_startTicks) {
+		trigger();
+		_startTicks = currentTicks;
+	} else if (!_soundStartTicks && currentTicks >= (_startTicks + 3000)) {
+		if (_waveFile) {
+			CProximity prox;
+			prox._channelVolume = _volume;
+			_soundHandle = _soundManager->playSound(*_waveFile, prox);
+		}
+
+		_soundStartTicks = currentTicks;
+	}
 }
 
 } // End of namespace Titanic

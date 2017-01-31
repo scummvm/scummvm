@@ -30,17 +30,29 @@ namespace Titanic {
 bool CMusicWave::_pianoToggle;
 int CMusicWave::_pianoCtr;
 int CMusicWave::_bassCtr;
+byte *CMusicWave::_buffer;
 
 void CMusicWave::init() {
 	_pianoToggle = false;
 	_pianoCtr = 0;
 	_bassCtr = 0;
+	_buffer = nullptr;
+}
+
+void CMusicWave::deinit() {
+	delete[] _buffer;
+	_buffer = nullptr;
 }
 
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
 		_soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_field20 = _field24 = 0;
+	_field34 = -1;
+	_field38 = 0;
+	_field3C = 0;
+	_field40 = 0;
+	_field44 = 0;
 	_field4C = 0;
 
 	switch (instrument) {
@@ -237,6 +249,22 @@ void CMusicWave::trigger() {
 			break;
 		}
 	}
+}
+
+void CMusicWave::reset() {
+	_field34 = 0;
+	_field38 = 0;
+	_field3C = 0;
+	_field40 = 0;
+	_field44 = 0;
+}
+
+void CMusicWave::setState(int val) {
+	_field34 = -1;
+	_field38 = 0;
+	_field3C = 0;
+	_field40 = val;
+	_field44 = 0;
 }
 
 } // End of namespace Titanic

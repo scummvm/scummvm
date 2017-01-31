@@ -45,6 +45,7 @@ private:
 	static bool _pianoToggle;
 	static int _pianoCtr;
 	static int _bassCtr;
+	static byte *_buffer;
 private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
@@ -53,6 +54,11 @@ private:
 	CGameObject *_gameObjects[4];
 	int _field20;
 	int _field24;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
 	int _field4C;
 private:
 	/**
@@ -64,6 +70,11 @@ public:
 	 * Handles initialization of static fields
 	 */
 	static void init();
+
+	/**
+	 * Deinitialization of static fields
+	 */
+	static void deinit();
 public:
 	CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
@@ -92,6 +103,9 @@ public:
 	 * musical instrument associated with the instance
 	 */
 	void trigger();
+
+	void reset();
+	void setState(int val);
 };
 
 } // End of namespace Titanic

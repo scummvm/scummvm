@@ -39,7 +39,7 @@ void CMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_isActive, indent);
 	file->writeQuotedLine(_stopTarget, indent);
-	file->writeNumberLine(_stopWaves, indent);
+	file->writeNumberLine(_musicActive, indent);
 	file->writeNumberLine(_volume, indent);
 
 	CGameObject::save(file, indent);
@@ -49,7 +49,7 @@ void CMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
 	_isActive = file->readNumber();
 	_stopTarget = file->readString();
-	_stopWaves = file->readNumber();
+	_musicActive = file->readNumber();
 	_volume = file->readNumber();
 
 	CGameObject::load(file);
@@ -122,7 +122,7 @@ bool CMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 	if (CMusicRoom::_musicHandler) {
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 		return true;
 	}
 
@@ -158,7 +158,7 @@ bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 		wave->load(5, "z#505.wav", 53);
 		wave->load(6, "z#501.wav", 58);
 
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 	}
 
 	return true;
