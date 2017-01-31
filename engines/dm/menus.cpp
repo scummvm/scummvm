@@ -206,7 +206,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	byte *bitmapIcon = dm._tmpBitmap;
 	Thing thing = champion.getSlot(kDMSlotActionHand);
 	IconIndice iconIndex;
-	if (thing == Thing::_none) {
+	if (thing == _vm->_thingNone) {
 		iconIndex = kDMIconIndiceActionEmptyHand;
 	} else if (dungeon._objectInfos[dungeon.getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
@@ -590,7 +590,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		if (curSpell->getType() == kDMSpellTypeProjectileOpenDoor)
 			skillLevel <<= 1;
 
-		championMan.isProjectileSpellCast(champIndex, Thing(curSpell->getType() + Thing::_firstExplosion.toUint16()), CLIP(21, (powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 255), 0);
+		championMan.isProjectileSpellCast(champIndex, Thing(curSpell->getType() + _vm->_thingFirstExplosion.toUint16()), CLIP(21, (powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 255), 0);
 		break;
 	case kDMSpellKindOther: {
 		TimelineEvent newEvent;
@@ -666,15 +666,15 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			break;
 		case kDMSpellTypeOtherZokathra: {
 			Thing unusedObject = dungeon.getUnusedThing(kDMThingTypeJunk);
-			if (unusedObject == Thing::_none)
+			if (unusedObject == _vm->_thingNone)
 				break;
 
 			Junk *junkData = (Junk *)dungeon.getThingData(unusedObject);
 			junkData->setType(kDMJunkTypeZokathra);
 			ChampionSlot slotIndex;
-			if (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)
+			if (curChampion->_slots[kDMSlotReadyHand] == _vm->_thingNone)
 				slotIndex = kDMSlotReadyHand;
-			else if (curChampion->_slots[kDMSlotActionHand] == Thing::_none)
+			else if (curChampion->_slots[kDMSlotActionHand] == _vm->_thingNone)
 				slotIndex = kDMSlotActionHand;
 			else
 				slotIndex = kDMSlotLeaderHand;
@@ -819,7 +819,7 @@ Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	for (int16 slotIndex = kDMSlotHead; --slotIndex >= kDMSlotReadyHand; ) {
 		Thing curThing = champ->_slots[slotIndex];
-		if ((curThing != Thing::_none) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
+		if ((curThing != _vm->_thingNone) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
 			return (Potion *)dungeon.getThingData(curThing);
 		}
@@ -1100,27 +1100,27 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 
 	bool setDirectionFl = false;
 	int16 kineticEnergy = 0;
-	Thing explosionThing = Thing::_none;
+	Thing explosionThing = _vm->_thingNone;
 	bool actionPerformed = true;
 	switch (actionIndex) {
 	case kDMActionLightning:
 		kineticEnergy = 180;
-		explosionThing = Thing::_explLightningBolt;
+		explosionThing = _vm->_thingExplLightningBolt;
 		setDirectionFl = true;
 		break;
 	case kDMActionDispel:
 		kineticEnergy = 150;
-		explosionThing = Thing::_explHarmNonMaterial;
+		explosionThing = _vm->_thingExplHarmNonMaterial;
 		setDirectionFl = true;
 		break;
 	case kDMActionFireball:
 		kineticEnergy = 150;
-		explosionThing = Thing::_explFireBall;
+		explosionThing = _vm->_thingExplFireBall;
 		setDirectionFl = true;
 		break;
 	case kDMActionSpit:
 		kineticEnergy = 250;
-		explosionThing = Thing::_explFireBall;
+		explosionThing = _vm->_thingExplFireBall;
 		setDirectionFl = true;
 		break;
 	case kDMActionBash:
@@ -1240,16 +1240,16 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		kineticEnergy = _vm->getRandomNumber(128) + 100;
 		switch (_vm->getRandomNumber(6)) {
 		case 0:
-			explosionThing = Thing::_explPoisonBolt;
+			explosionThing = _vm->_thingExplPoisonBolt;
 			break;
 		case 1:
-			explosionThing = Thing::_explPoisonCloud;
+			explosionThing = _vm->_thingExplPoisonCloud;
 			break;
 		case 2:
-			explosionThing = Thing::_explHarmNonMaterial;
+			explosionThing = _vm->_thingExplHarmNonMaterial;
 			break;
 		default:
-			explosionThing = Thing::_explFireBall;
+			explosionThing = _vm->_thingExplFireBall;
 			break;
 		}
 		setDirectionFl = true;
@@ -1311,12 +1311,12 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		nextMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir];
 		nextMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((dungeon.getSquare(nextMapX, nextMapY).getType() == kDMElementTypePit) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
+		if ((dungeon.getSquare(nextMapX, nextMapY).getType() == kDMElementTypePit) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == _vm->_thingEndOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether
 			   the pit is open before moving the party over the pit. This is not consistent with the behavior when using the
 			   rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_useRopeToClimbDownPit = true;
-			_vm->_moveSens->getMoveResult(Thing::_party, dungeon._partyMapX, dungeon._partyMapY, nextMapX, nextMapY);
+			_vm->_moveSens->getMoveResult(_vm->_thingParty, dungeon._partyMapX, dungeon._partyMapY, nextMapX, nextMapY);
 			_vm->_moveSens->_useRopeToClimbDownPit = false;
 		} else {
 			actionDisabledTicks = 0;
@@ -1327,11 +1327,11 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
 			championMan.getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
-			weaponInHand->setNextThing(Thing::_none);
+			weaponInHand->setNextThing(_vm->_thingNone);
 		} else if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxGreen) {
 			freezeTicks = 125;
 			championMan.getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
-			weaponInHand->setNextThing(Thing::_none);
+			weaponInHand->setNextThing(_vm->_thingNone);
 		} else {
 			freezeTicks = 70;
 			decrementCharges(curChampion);
@@ -1510,7 +1510,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
-	if (_actionTargetGroupThing == Thing::_endOfList)
+	if (_actionTargetGroupThing == _vm->_thingEndOfList)
 		return false;
 
 	uint16 championCell = champ->_cell;
@@ -1546,7 +1546,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 
 bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY) {
 	bool retVal = false;
-	if (_actionTargetGroupThing == Thing::_endOfList)
+	if (_actionTargetGroupThing == _vm->_thingEndOfList)
 		return retVal;
 
 	ChampionMan &championMan = *_vm->_championMan;
@@ -1688,7 +1688,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	uint16 actionSetIndex;
 	Thing slotActionThing = curChampion->_slots[kDMSlotActionHand];
 
-	if (slotActionThing == Thing::_none)
+	if (slotActionThing == _vm->_thingNone)
 		actionSetIndex = 2; /* Actions Punch, Kick and War Cry */
 	else {
 		actionSetIndex = dungeon._objectInfos[dungeon.getObjectInfoIndex(slotActionThing)]._actionSetIndex;

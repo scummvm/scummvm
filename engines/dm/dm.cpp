@@ -120,7 +120,14 @@ int16 DMEngine::getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) 
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
-DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc) {
+DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : 
+			Engine(syst), _console(nullptr), _gameVersion(desc),
+			_thingNone(0), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
+			_thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),
+			_thingExplHarmNonMaterial(0xFF83), _thingExplOpenDoor(0xFF84), _thingExplPoisonBolt(0xFF86),
+			_thingExplPoisonCloud(0xFF87), _thingExplSmoke(0xFFA8), _thingExplFluxcage(0xFFB2),
+			_thingExplRebirthStep1(0xFFE4), _thingExplRebirthStep2(0xFFE5), _thingParty(0xFFFF)
+	{
 	// register random source
 	_rnd = new Common::RandomSource("dm");
 
@@ -280,7 +287,7 @@ void DMEngine::initializeGame() {
 
 	startGame();
 	if (_gameMode != kDMModeLoadSavedGame)
-		_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+		_moveSens->getMoveResult(_thingParty, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_eventMan->showMouse();
 	_eventMan->discardAllInput();
 }
@@ -413,7 +420,7 @@ void DMEngine::gameloop() {
 
 			if (_newPartyMapIndex != kDMMapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
-				_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+				_moveSens->getMoveResult(_thingParty, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 				_newPartyMapIndex = kDMMapIndexNone;
 				_eventMan->discardAllInput();
 			}
@@ -928,12 +935,12 @@ void DMEngine::fuseSequence() {
 
 	for (;;) {
 		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
-		while (curThing != Thing::_endOfList) {
+		while (curThing != _thingEndOfList) {
 			if (curThing.getType() == kDMThingTypeExplosion) {
 				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
 				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
-					curExplosion->setNextThing(Thing::_none);
+					curExplosion->setNextThing(_thingNone);
 					continue;
 				}
 			}
@@ -948,14 +955,14 @@ void DMEngine::fuseSequence() {
 	}
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(_thingExplFireBall, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	_sound->requestPlay(kDMSoundIndexBuzz, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 	lordGroup->_type = kDMCreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(_thingExplHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
@@ -966,8 +973,8 @@ void DMEngine::fuseSequence() {
 				fuseSequenceUpdate();
 		}
 	}
-	_projexpl->createExplosion(Thing::_explFireBall, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
-	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(_thingExplFireBall, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(_thingExplHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 	fuseSequenceUpdate();
 	lordGroup->_type = kDMCreatureTypeGreyLord;
 	fuseSequenceUpdate();
@@ -976,7 +983,7 @@ void DMEngine::fuseSequence() {
 	for (int16 curMapX = 0; curMapX < _dungeonMan->_currMapWidth; curMapX++) {
 		for (int curMapY = 0; curMapY < _dungeonMan->_currMapHeight; curMapY++) {
 			Thing curThing = _groupMan->groupGetThing(curMapX, curMapY);
-			if ((curThing != Thing::_endOfList) && ((curMapX != lordChaosMapX) || (curMapY != lordChaosMapY))) {
+			if ((curThing != _thingEndOfList) && ((curMapX != lordChaosMapX) || (curMapY != lordChaosMapY))) {
 				_groupMan->groupDelete(curMapX, curMapY);
 			}
 		}
@@ -986,7 +993,7 @@ void DMEngine::fuseSequence() {
 	Thing curThing = _dungeonMan->getSquareFirstThing(0, 0);
 	int16 textStringThingCount = 0;
 	Thing textStringThings[8];
-	while (curThing != Thing::_endOfList) {
+	while (curThing != _thingEndOfList) {
 		if (curThing.getType() == kDMstringTypeText)
 			textStringThings[textStringThingCount++] = curThing;
 
@@ -1011,7 +1018,7 @@ void DMEngine::fuseSequence() {
 	}
 
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(_thingExplHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 

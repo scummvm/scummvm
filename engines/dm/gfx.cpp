@@ -116,7 +116,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 18; i++)
 		_currMapDoorOrnIndices[i] = 0;
 
-	_inscriptionThing = Thing::_none;
+	_inscriptionThing = _vm->_thingNone;
 	_useByteBoxCoordinates = false;
 
 	_bitmapCeiling = nullptr;
@@ -3177,14 +3177,14 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 		{276, 60}    /* D0R */
 	};
 
-	if (thingParam == Thing::_endOfList)
+	if (thingParam == _vm->_thingEndOfList)
 		return;
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	int16 orderedViewCellOrdinals = cellOrder;
 	Group *group = nullptr;
-	Thing groupThing = Thing::_none;
+	Thing groupThing = _vm->_thingNone;
 	bool squareHasExplosion = drawCreaturesCompleted = false;
 	bool squareHasProjectile = false;
 	cellCounter = 0;
@@ -3351,14 +3351,14 @@ T0115015_DrawProjectileAsObject:
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
 			}
-		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 		if (AL_2_viewCell == kDMViewCellAlcove)
 			break; /* End of processing when drawing objects in an alcove */
 		if (viewSquareIndex < kDMViewSquareD3C)
 			break; /* End of processing if square is too far away at D4 */
 				   /* Draw creatures */
 		drawingLastBackRowCell = ((AL_2_viewCell <= kDMViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
-		if ((groupThing == Thing::_none) || drawCreaturesCompleted)
+		if ((groupThing == _vm->_thingNone) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 
 		ActiveGroup *activeGroup;
@@ -3733,7 +3733,7 @@ T0115129_DrawProjectiles:
 				}
 			}
 T0115171_BackFromT0115015_DrawProjectileAsObject:;
-		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 	} while (remainingViewCellOrdinalsToProcess);
 
 	/* Draw explosions */
@@ -3765,7 +3765,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					AL_4_explosionAspectIndex = kDMExplosionAspectSmoke;
 				} else {
 					if (AL_4_explosionType == kDMExplosionTypeRebirthStep1) {
-						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(Thing::_explLightningBolt))];
+						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(_vm->_thingExplLightningBolt))];
 						bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (kDMGraphicIdxFirstProjectile + 1));
 						explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 						byteWidth = getScaledDimension((((ProjectileAspect *)objectAspect)->_byteWidth), explosionCoordinates[2]);
@@ -3869,7 +3869,7 @@ T0115200_DrawExplosion:
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
-	} while ((thingParam = dungeon.getNextThing(thingParam))!= Thing::_endOfList);
+	} while ((thingParam = dungeon.getNextThing(thingParam))!= _vm->_thingEndOfList);
 
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */

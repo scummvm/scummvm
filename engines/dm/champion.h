@@ -397,6 +397,9 @@ public:
 }; // @ SKILL
 
 class Champion {
+private:
+	DMEngine *_vm;
+
 public:
 	uint16 _attributes;
 	uint16 _wounds;
@@ -427,6 +430,9 @@ public:
 	uint16 _load;
 	int16 _shieldDefense;
 	byte _portrait[928]; // 32 x 29 pixel portrait
+
+	Champion() {}
+	void setVm(DMEngine *vm) { _vm = vm; }
 
 	Thing &getSlot(ChampionSlot slot) { return _slots[slot]; }
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }
@@ -487,7 +493,7 @@ class ChampionMan {
 
 public:
 
-	Champion _champions[4]; // @ K0071_as_Champions
+	Champion *_champions; // @ K0071_as_Champions
 	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
 	bool _partyDead; // @ G0303_B_PartyDead
 	Thing _leaderHandObject; // @ G0414_T_LeaderHandObject
@@ -502,6 +508,8 @@ public:
 	bool _mousePointerHiddenToDrawChangedObjIconOnScreen; // @ G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen
 
 	explicit ChampionMan(DMEngine *vm);
+	~ChampionMan();
+
 	ChampionIndex getIndexInCell(int16 cell); // @ F0285_CHAMPION_GetIndexInCell
 	bool isLeaderHandObjectThrown(int16 side); // @ F0329_CHAMPION_IsLeaderHandObjectThrown
 	bool isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side); // @ F0328_CHAMPION_IsObjectThrown
