@@ -427,7 +427,10 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 		case 0xff:
 			return;
 		default:
-			error("Invalid pic opcode %02x", opcode);
+			if (opcode >= 0xe0)
+				error("Invalid pic opcode %02x", opcode);
+			else
+				warning("Expected pic opcode, but found data byte %02x", opcode);
 		}
 	}
 }
