@@ -68,9 +68,7 @@ void MacText::splitString(Common::String &str) {
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
-		_textLines[0].resize(1);
-
-		_textLines[0][0] = _defaultFormatting;
+		_textLines[0].push_back(_defaultFormatting);
 	}
 
 	int curLine = _textLines.size() - 1;
@@ -99,7 +97,12 @@ void MacText::splitString(Common::String &str) {
 
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
-				_textLines[curLine].push_back(_currentFormatting);
+				if ((_textLines[curLine])[curChunk].text.empty()) {
+					(_textLines[curLine])[curChunk] = _currentFormatting;
+					continue;
+				} else {
+					_textLines[curLine].push_back(_currentFormatting);
+				}
 
 				nextChunk = true;
 			}
@@ -117,28 +120,36 @@ void MacText::splitString(Common::String &str) {
 
 			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
 
-			_textLines[curLine][curChunk].text = text[0];
+			if (text.size()) {
+				(_textLines[curLine])[curChunk].text = text[0];
 
-			if (nextChunk) {
-				curChunk++;
-				nextChunk = false;
+				if (nextChunk) {
+					curChunk++;
 
-				_text[curLine] += text[0];
-			} else {
-				_text.push_back(text[0]);
+					_text[curLine] += text[0];
+				} else {
+					_text.push_back(text[0]);
+				}
 			}
 
 			if (text.size() > 1) {
 				for (uint i = 1; i < text.size(); i++) {
 					_text.push_back(text[i]);
 
-					//curLine++;
+					curLine++;
+					_textLines.resize(curLine + 1);
+					_textLines[curLine].push_back(_currentFormatting);
+					(_textLines[curLine])[0].text = text[i];
+					curChunk = 0;
 				}
 			}
 
 			tmp.clear();
 
-			s++;
+			if (!nextChunk) // Don't skip next character
+				s++;
+
+			nextChunk = false;
 			continue;
 		}
 
@@ -146,8 +157,26 @@ void MacText::splitString(Common::String &str) {
 		s++;
 	}
 
-	if (tmp.size())
-		_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, _text), _textMaxWidth);
+	if (tmp.size()) {
+		Common::Array<Common::String> text;
+
+		_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
+
+		(_textLines[curLine])[curChunk].text = text[0];
+
+		_text.push_back(text[0]);
+
+		if (text.size() > 1) {
+			for (uint i = 1; i < text.size(); i++) {
+				_text.push_back(text[i]);
+
+				curLine++;
+				_textLines.resize(curLine + 1);
+				_textLines[curLine].push_back(_currentFormatting);
+				(_textLines[curLine])[0].text = text[i];
+			}
+		}
+	}
 }
 
 void MacText::reallocSurface() {
