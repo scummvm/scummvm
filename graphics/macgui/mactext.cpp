@@ -119,21 +119,19 @@ void MacText::splitString(Common::String &str) {
 			Common::Array<Common::String> text;
 
 			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
+			tmp.clear();
 
 			if (text.size()) {
-				(_textLines[curLine])[curChunk].text = text[0];
-
 				if (nextChunk) {
+					(_textLines[curLine])[curChunk].text += text[0];
 					curChunk++;
 
 					_text[curLine] += text[0];
-				} else {
-					_text.push_back(text[0]);
-				}
-			}
 
-			if (text.size() > 1) {
-				for (uint i = 1; i < text.size(); i++) {
+					continue;
+				}
+
+				for (uint i = 0; i < text.size(); i++) {
 					_text.push_back(text[i]);
 
 					curLine++;
@@ -143,8 +141,6 @@ void MacText::splitString(Common::String &str) {
 					curChunk = 0;
 				}
 			}
-
-			tmp.clear();
 
 			if (!nextChunk) // Don't skip next character
 				s++;
@@ -236,6 +232,14 @@ void MacText::render(int from, int to) {
 		y += _font->getFontHeight() + _interLinear;
 	}
 
+	for (uint i = 0; i < _textLines.size(); i++) {
+		debugN(4, "%2d ", i);
+
+		for (uint j = 0; j < _textLines[i].size(); j++)
+			debugN(4, "[%d] \"%s\"", (_textLines[i])[j].fontId, (_textLines[i])[j].text.c_str());
+
+		debug(4, "");
+	}
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
