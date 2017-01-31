@@ -32,6 +32,8 @@ namespace Graphics {
 class MacWindowManager;
 
 struct MacFontRun {
+	Common::String text;
+
 	uint16 fontId;
 	byte textSlant;
 	byte unk3f;
@@ -110,7 +112,7 @@ private:
 
 	TextAlign _textAlignment;
 
-	Common::Array< Common::Array<MacFontRun> > _formatting;
+	Common::Array< Common::Array<MacFontRun> > _textLines;
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
 };

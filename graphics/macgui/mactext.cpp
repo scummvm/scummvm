@@ -66,7 +66,16 @@ void MacText::splitString(Common::String &str) {
 	Common::String tmp;
 	bool prevCR = false;
 
-	int curLine = _text.empty() ? 0 : _text.size() - 1;
+	if (_textLines.empty()) {
+		_textLines.resize(1);
+		_textLines[0].resize(1);
+
+		_textLines[0][0] = _defaultFormatting;
+	}
+
+	int curLine = _textLines.size() - 1;
+	int curChunk = _textLines[curLine].size() - 1;
+	bool nextChunk = false;
 
 	while (*s) {
 		if (*s == '\001') {
@@ -90,27 +99,42 @@ void MacText::splitString(Common::String &str) {
 
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
-				if (_formatting.empty())
-					_formatting.resize(1);
+				_textLines[curLine].push_back(_currentFormatting);
 
-				_formatting[curLine].push_back(_currentFormatting);
-
-				continue;
+				nextChunk = true;
 			}
-		}
-
-		if (*s == '\n' && prevCR) {	// trean \r\n as one
+		} else if (*s == '\n' && prevCR) {	// trean \r\n as one
 			prevCR = false;
 
 			s++;
 			continue;
+		} else if (*s == '\r') {
+			prevCR = true;
 		}
 
-		if (*s == '\r')
-			prevCR = true;
+		if (*s == '\r' || *s == '\n' || nextChunk) {
+			Common::Array<Common::String> text;
 
-		if (*s == '\r' || *s == '\n') {
-			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, _text), _textMaxWidth);
+			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
+
+			_textLines[curLine][curChunk].text = text[0];
+
+			if (nextChunk) {
+				curChunk++;
+				nextChunk = false;
+
+				_text[curLine] += text[0];
+			} else {
+				_text.push_back(text[0]);
+			}
+
+			if (text.size() > 1) {
+				for (uint i = 1; i < text.size(); i++) {
+					_text.push_back(text[i]);
+
+					//curLine++;
+				}
+			}
 
 			tmp.clear();
 
