@@ -139,6 +139,7 @@ void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 }
 
 void AdlEngine_v4::saveState(Common::WriteStream &stream) {
+	getCurRoom().isFirstTime = false;
 	backupVars();
 	backupRoomState(_state.room);
 
