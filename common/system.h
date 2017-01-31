@@ -339,10 +339,14 @@ public:
 		kFeatureOpenUrl
 			
 #ifdef ANDROIDSDL
+		,
+			/**
+			* show on-screen control
+			*/
+		kFeatureOnScreenControl,
 			/**
 			* mouse emulation mode
 			*/
-			,
 		kFeatureTouchpadMode
 #endif
 	};

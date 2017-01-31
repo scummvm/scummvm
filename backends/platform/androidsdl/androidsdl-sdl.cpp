@@ -28,6 +28,7 @@
 #include "backends/events/androidsdl/androidsdl-events.h"
 #include "backends/graphics/androidsdl/androidsdl-graphics.h"
 #include <SDL_android.h>
+#include <SDL_screenkeyboard.h>
 
 void OSystem_ANDROIDSDL::initBackend() {
 	// Create the backend custom managers
@@ -50,9 +51,23 @@ void OSystem_ANDROIDSDL::initBackend() {
 	} else {
 		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
 	}
+	
+	if (!ConfMan.hasKey("onscreen_control")) {
+		const bool enable = (SDL_ANDROID_GetScreenKeyboardShown() == 0) ? false : true;
+		ConfMan.setBool("onscreen_control", enable);
+	} else {
+		showOnScreenControl(ConfMan.getBool("onscreen_control"));
+	}
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
+}
+
+void OSystem_ANDROIDSDL::showOnScreenControl(bool enable) {
+		if (enable)
+			SDL_ANDROID_SetScreenKeyboardShown(1);
+		else
+			SDL_ANDROID_SetScreenKeyboardShown(0);
 }
 
 void OSystem_ANDROIDSDL::touchpadMode(bool enable) {
@@ -72,8 +87,11 @@ void OSystem_ANDROIDSDL::switchToRelativeMouseMode() {
 
 void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
-			case kFeatureTouchpadMode:
+		case kFeatureTouchpadMode:
 			touchpadMode(enable);
+			break;
+		case kFeatureOnScreenControl:
+			showOnScreenControl(enable);
 			break;
 	}
 	

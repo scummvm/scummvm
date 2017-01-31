@@ -32,6 +32,7 @@ public:
 	void touchpadMode(bool enable);
 	void switchToDirectMouseMode();
 	void switchToRelativeMouseMode();
+	void showOnScreenControl(bool enable);
 
 #ifdef ENABLE_KEYMAPPER
 	// FIXME: This just calls parent methods, is it needed?

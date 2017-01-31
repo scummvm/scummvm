@@ -240,6 +240,9 @@
 	
 	<dialog name = 'GlobalOptions_AndroidSdl' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'grOnScreenCheckbox'
+					type = 'Checkbox'
+			/>
 			<widget name = 'grTouchpadCheckbox'
 					type = 'Checkbox'
 			/>

@@ -138,6 +138,7 @@ OptionsDialog::~OptionsDialog() {
 void OptionsDialog::init() {
 #ifdef ANDROIDSDL
 	_enableAndroidSdlSettings = false;
+	_onscreenCheckbox = 0;
 	_touchpadCheckbox = 0;
 #endif
 	_enableGraphicSettings = false;
@@ -209,6 +210,11 @@ void OptionsDialog::build() {
 	
 #ifdef ANDROIDSDL
 	// AndroidSDL options
+	if (ConfMan.hasKey("onscreen_control", _domain)) {
+		bool onscreenState = ConfMan.getBool("onscreen_control", _domain);
+		if (_onscreenCheckbox != 0)
+			_onscreenCheckbox->setState(onscreenState);
+	}
 	if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
 		bool touchpadState = ConfMan.getBool("touchpad_mouse_mode", _domain);
 		if (_touchpadCheckbox != 0)
@@ -395,6 +401,10 @@ void OptionsDialog::open() {
 void OptionsDialog::apply() {
 #ifdef ANDROIDSDL
 	if (_enableAndroidSdlSettings) {
+		if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
+			ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
+			g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+		}
 		if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
 			ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
 			g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
@@ -822,9 +832,11 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	
 #ifdef ANDROIDSDL
 	void OptionsDialog::addAndroidSdlControls(GuiObject *boss, const Common::String &prefix) {
+		// Show On-Screen control
+		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
 		// Touchpad Mouse mode
 		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
-		
+
 		_enableAndroidSdlSettings = true;
 	}
 #endif

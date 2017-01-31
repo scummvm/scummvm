@@ -123,6 +123,7 @@ private:
 	bool _enableAndroidSdlSettings;
 
 	CheckboxWidget *_touchpadCheckbox;
+	CheckboxWidget *_onscreenCheckbox;
 #endif
 	
 	//
