@@ -73,6 +73,17 @@ struct MacFontRun {
 	const Font *getFont();
 };
 
+struct MacTextLine {
+	int width;
+	int height;
+
+	Common::Array<MacFontRun> chunks;
+
+	MacTextLine() {
+		width = height = -1;
+	}
+};
+
 class MacText {
 public:
 	MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *font, int fgcolor, int bgcolor,
@@ -112,7 +123,7 @@ private:
 
 	TextAlign _textAlignment;
 
-	Common::Array< Common::Array<MacFontRun> > _textLines;
+	Common::Array<MacTextLine> _textLines;
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
 };

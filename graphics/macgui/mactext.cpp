@@ -68,11 +68,11 @@ void MacText::splitString(Common::String &str) {
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
-		_textLines[0].push_back(_defaultFormatting);
+		_textLines[0].chunks.push_back(_defaultFormatting);
 	}
 
 	int curLine = _textLines.size() - 1;
-	int curChunk = _textLines[curLine].size() - 1;
+	int curChunk = _textLines[curLine].chunks.size() - 1;
 	bool nextChunk = false;
 
 	while (*s) {
@@ -97,11 +97,11 @@ void MacText::splitString(Common::String &str) {
 
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
-				if ((_textLines[curLine])[curChunk].text.empty()) {
-					(_textLines[curLine])[curChunk] = _currentFormatting;
+				if (_textLines[curLine].chunks[curChunk].text.empty()) {
+					_textLines[curLine].chunks[curChunk] = _currentFormatting;
 					continue;
 				} else {
-					_textLines[curLine].push_back(_currentFormatting);
+					_textLines[curLine].chunks.push_back(_currentFormatting);
 				}
 
 				nextChunk = true;
@@ -123,7 +123,7 @@ void MacText::splitString(Common::String &str) {
 
 			if (text.size()) {
 				if (nextChunk) {
-					(_textLines[curLine])[curChunk].text += text[0];
+					_textLines[curLine].chunks[curChunk].text += text[0];
 					curChunk++;
 
 					_text[curLine] += text[0];
@@ -136,16 +136,16 @@ void MacText::splitString(Common::String &str) {
 				for (uint i = 0; i < text.size(); i++) {
 					_text.push_back(text[i]);
 
-					(_textLines[curLine])[curChunk].text = text[i];
+					_textLines[curLine].chunks[curChunk].text = text[i];
 
 					curLine++;
 					_textLines.resize(curLine + 1);
-					_textLines[curLine].push_back(_currentFormatting);
+					_textLines[curLine].chunks.push_back(_currentFormatting);
 					curChunk = 0;
 				}
 			} else {
 				if (nextChunk) { // No text, replacing formatting
-					(_textLines[curLine])[curChunk] = _currentFormatting;
+					_textLines[curLine].chunks[curChunk] = _currentFormatting;
 				}
 			}
 
@@ -165,7 +165,7 @@ void MacText::splitString(Common::String &str) {
 
 		_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
 
-		(_textLines[curLine])[curChunk].text = text[0];
+		_textLines[curLine].chunks[curChunk].text = text[0];
 
 		_text.push_back(text[0]);
 
@@ -175,8 +175,8 @@ void MacText::splitString(Common::String &str) {
 
 				curLine++;
 				_textLines.resize(curLine + 1);
-				_textLines[curLine].push_back(_currentFormatting);
-				(_textLines[curLine])[0].text = text[i];
+				_textLines[curLine].chunks.push_back(_currentFormatting);
+				_textLines[curLine].chunks[0].text = text[i];
 			}
 		}
 	}
@@ -242,8 +242,8 @@ void MacText::render(int from, int to) {
 	for (uint i = 0; i < _textLines.size(); i++) {
 		debugN(4, "%2d ", i);
 
-		for (uint j = 0; j < _textLines[i].size(); j++)
-			debugN(4, "[%d] \"%s\"", (_textLines[i])[j].fontId, (_textLines[i])[j].text.c_str());
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
+			debugN(4, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
 
 		debug(4, "");
 	}
