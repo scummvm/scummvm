@@ -128,6 +128,8 @@ void MacText::splitString(Common::String &str) {
 
 					_text[curLine] += text[0];
 
+					nextChunk = false;
+
 					continue;
 				}
 
@@ -139,6 +141,10 @@ void MacText::splitString(Common::String &str) {
 					_textLines[curLine].push_back(_currentFormatting);
 					(_textLines[curLine])[0].text = text[i];
 					curChunk = 0;
+				}
+			} else {
+				if (nextChunk) { // No text, replacing formatting
+					(_textLines[curLine])[curChunk] = _currentFormatting;
 				}
 			}
 
