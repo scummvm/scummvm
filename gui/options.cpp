@@ -211,7 +211,8 @@ void OptionsDialog::build() {
 	// AndroidSDL options
 	if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
 		bool touchpadState = ConfMan.getBool("touchpad_mouse_mode", _domain);
-		_touchpadCheckbox->setState(touchpadState);
+		if (_touchpadCheckbox != 0)
+			_touchpadCheckbox->setState(touchpadState);
 	}
 #endif
 
@@ -693,10 +694,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 	
-void OptionsDialog::setAndroidSdlSettingsState(bool enabled) {
-	_enableAndroidSdlSettings = enabled;
-}
-
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 

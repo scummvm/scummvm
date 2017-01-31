@@ -99,9 +99,6 @@ protected:
 	void addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal = 255);
 	void addEngineControls(GuiObject *boss, const Common::String &prefix, const ExtraGuiOptions &engineOptions);
 
-#ifdef ANDROIDSDL
-	void setAndroidSdlSettingsState(bool enabled);
-#endif
 	void setGraphicSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
