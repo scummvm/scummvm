@@ -76,11 +76,13 @@ struct MacFontRun {
 struct MacTextLine {
 	int width;
 	int height;
+	int y;
 
 	Common::Array<MacFontRun> chunks;
 
 	MacTextLine() {
 		width = height = -1;
+		y = 0;
 	}
 };
 
@@ -101,8 +103,10 @@ public:
 private:
 	void splitString(Common::String &s);
 	void render(int from, int to);
-	void calcMaxWidth();
+	void recalcDims();
 	void reallocSurface();
+	int getLineWidth(int line);
+	int getLineHeight(int line);
 
 private:
 	MacWindowManager *_wm;
@@ -117,6 +121,7 @@ private:
 	Common::Array<Common::String> _text;
 
 	int _textMaxWidth;
+	int _textMaxHeight;
 
 	Graphics::ManagedSurface *_surface;
 	bool _fullRefresh;

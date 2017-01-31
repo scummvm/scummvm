@@ -45,19 +45,22 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const Font *font, int f
 	_bgcolor = bgcolor;
 	_maxWidth = maxWidth;
 	_textMaxWidth = 0;
+	_textMaxHeight = 0;
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 
 	_interLinear = 0; // 0 pixels between the lines by default
 
-	splitString(_str);
-
-	_fullRefresh = true;
-
 	_defaultFormatting.font = font;
 	_defaultFormatting.wm = wm;
 
 	_currentFormatting = _defaultFormatting;
+
+	splitString(_str);
+
+	recalcDims();
+
+	_fullRefresh = true;
 }
 
 void MacText::splitString(Common::String &str) {
@@ -118,7 +121,7 @@ void MacText::splitString(Common::String &str) {
 		if (*s == '\r' || *s == '\n' || nextChunk) {
 			Common::Array<Common::String> text;
 
-			_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
+			_font->wordWrapText(tmp, _maxWidth, text);
 			tmp.clear();
 
 			if (text.size()) {
@@ -163,7 +166,7 @@ void MacText::splitString(Common::String &str) {
 	if (tmp.size()) {
 		Common::Array<Common::String> text;
 
-		_textMaxWidth = MAX(_font->wordWrapText(tmp, _maxWidth, text), _textMaxWidth);
+		_font->wordWrapText(tmp, _maxWidth, text);
 
 		_textLines[curLine].chunks[curChunk].text = text[0];
 
@@ -183,22 +186,19 @@ void MacText::splitString(Common::String &str) {
 }
 
 void MacText::reallocSurface() {
-	int lineH = _font->getFontHeight() + _interLinear;
 	// round to closest 10
 	//TODO: work out why this rounding doesn't correctly fill the entire width
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
-	int requiredH = _text.size() * lineH;
-	int surfW = _textMaxWidth;
 
 	if (!_surface) {
-		_surface = new ManagedSurface(surfW, requiredH);
+		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight);
 
 		return;
 	}
 
-	if (_surface->h < requiredH) {
+	if (_surface->h < _textMaxWidth) {
 		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(surfW, requiredH);
+		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
 		delete _surface;
@@ -208,7 +208,7 @@ void MacText::reallocSurface() {
 
 void MacText::render() {
 	if (_fullRefresh) {
-		render(0, _text.size());
+		render(0, _textLines.size());
 
 		_fullRefresh = false;
 	}
@@ -218,25 +218,23 @@ void MacText::render(int from, int to) {
 	reallocSurface();
 
 	from = MAX<int>(0, from);
-	to = MIN<int>(to, _text.size());
-
-	int lineH = _font->getFontHeight() + _interLinear;
-	int y = from * lineH;
+	to = MIN<int>(to, _textLines.size() - 1);
 
 	// Clear the screen
-	_surface->fillRect(Common::Rect(0, y, _surface->w, to * lineH), _bgcolor);
+	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
 
-	for (int i = from; i < to; i++) {
+	for (int i = from; i <= to; i++) {
 		int xOffset = 0;
 		if (_textAlignment == kTextAlignRight)
-			xOffset = _textMaxWidth - _font->getStringWidth(_text[i]);
+			xOffset = _textMaxWidth - getLineWidth(i);
 		else if (_textAlignment == kTextAlignCenter)
-			xOffset = (_textMaxWidth / 2) - (_font->getStringWidth(_text[i]) / 2);
+			xOffset = (_textMaxWidth / 2) - (getLineWidth(i) / 2);
 
-		//TODO: _textMaxWidth, when -1, was not rendering ANY text.
-		_font->drawString(_surface, _text[i], xOffset, y, _maxWidth, _fgcolor);
-
-		y += _font->getFontHeight() + _interLinear;
+		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, _maxWidth, _fgcolor);
+			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
+		}
 	}
 
 	for (uint i = 0; i < _textLines.size(); i++) {
@@ -247,6 +245,50 @@ void MacText::render(int from, int to) {
 
 		debug(4, "");
 	}
+}
+
+int MacText::getLineWidth(int line) {
+	if (line >= _textLines.size())
+		return 0;
+
+	if (_textLines[line].width != -1)
+		return _textLines[line].width;
+
+	int width = 0;
+	int height = 0;
+
+	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
+		width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
+	}
+
+	_textLines[line].width = width;
+	_textLines[line].height = height;
+
+	return width;
+}
+
+int MacText::getLineHeight(int line) {
+	if (line >= _textLines.size())
+		return 0;
+
+	getLineWidth(line); // This calculates height also
+
+	return _textLines[line].height;
+}
+
+void MacText::recalcDims() {
+	int y = 0;
+	_textMaxWidth = 0;
+
+	for (uint i = 0; i < _textLines.size(); i++) {
+		_textLines[i].y = y;
+
+		y += getLineHeight(i) + _interLinear;
+		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i));
+	}
+
+	_textMaxHeight = y;
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
@@ -264,7 +306,10 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 void MacText::appendText(Common::String str) {
 	int oldLen = _text.size();
 
+	// TODO: Recalc length
+
 	splitString(str);
+	recalcDims();
 
 	render(oldLen + 1, _text.size());
 }
@@ -272,10 +317,13 @@ void MacText::appendText(Common::String str) {
 void MacText::replaceLastLine(Common::String str) {
 	int oldLen = MAX<int>(0, _text.size() - 1);
 
+	// TODO: Recalc length, adapt to _textLines
+
 	if (_text.size())
 		_text.pop_back();
 
 	splitString(str);
+	recalcDims();
 
 	render(oldLen, _text.size());
 }
