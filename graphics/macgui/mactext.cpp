@@ -136,10 +136,11 @@ void MacText::splitString(Common::String &str) {
 				for (uint i = 0; i < text.size(); i++) {
 					_text.push_back(text[i]);
 
+					(_textLines[curLine])[curChunk].text = text[i];
+
 					curLine++;
 					_textLines.resize(curLine + 1);
 					_textLines[curLine].push_back(_currentFormatting);
-					(_textLines[curLine])[0].text = text[i];
 					curChunk = 0;
 				}
 			} else {
