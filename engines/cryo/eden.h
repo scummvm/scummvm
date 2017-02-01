@@ -661,7 +661,6 @@ private:
 	int   _demoCurrentTicks;
 	int   _demoStartTicks;
 	int   _currentTime;
-	bool  _doubledScreen;
 	int16 _cirsorPanX;
 	int16 _inventoryScrollDelay;
 	int16 _cursorPosX;

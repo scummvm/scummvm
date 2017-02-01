@@ -121,7 +121,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_hnmSoundChannel = nullptr;
 	_voiceSound = nullptr;
 	_view2 = _underSubtitlesView = _subtitlesView = _underBarsView = _mainView = _hnmView = nullptr;
-	_doubledScreen = false;
 	_cirsorPanX = 0;
 	_inventoryScrollDelay = 0;
 	_cursorPosY = _cursorPosX = 0;
@@ -248,18 +247,12 @@ void EdenGame::scrollMirror() {
 	if (_cursorPosY > 16 && _cursorPosY < 165) {
 		if (_cursorPosX >= 0 && _cursorPosX < 16) {
 			if (_scrollPos > 3) {
-				if (_doubledScreen)
-					_scrollPos -= 2;
-				else
-					_scrollPos -= 1;
+				_scrollPos--;
 				scroll();
 			}
 		} else if (_cursorPosX > 290 && _cursorPosX < 320) {
 			if (_scrollPos < 320) {
-				if (_doubledScreen)
-					_scrollPos += 2;
-				else
-					_scrollPos += 1;
+				_scrollPos++;
 				scroll();
 			}
 		}
@@ -269,21 +262,10 @@ void EdenGame::scrollMirror() {
 // Original name: scrollpano
 void EdenGame::scrollPanel() {
 	if (_cursorPosY > 16 && _cursorPosY < 165) {
-		if (_cursorPosX >= 0 && _cursorPosX < 16) {
-			if (_scrollPos > 3) {
-				if (_doubledScreen)
-					_scrollPos -= 2;
-				else
-					_scrollPos -= 1;
-			}
-		} else if (_cursorPosX > 290 && _cursorPosX < 320) {
-			if (_scrollPos < 320) {
-				if (_doubledScreen)
-					_scrollPos += 2;
-				else
-					_scrollPos += 1;
-			}
-		}
+		if (_cursorPosX >= 0 && _cursorPosX < 16 && _scrollPos > 3)
+			_scrollPos--;
+		else if (_cursorPosX > 290 && _cursorPosX < 320 && _scrollPos < 320)
+			_scrollPos++;
 	}
 	scroll();
 }
@@ -4193,31 +4175,17 @@ void EdenGame::preloadDialogs(int16 vid) {
 // Original name: effet1
 void EdenGame::displayEffect1() {
 	blackRect32();
-	if (!_doubledScreen) {
-		setSrcRect(0, 0, 16 - 1, 4 - 1);
-		int y = _mainView->_normal._dstTop;
-		for (int16 i = 16; i <= 96; i += 4) {
-			for (int x = _mainView->_normal._dstLeft; x < _mainView->_normal._dstLeft + 320; x += 16) {
-				setDestRect(x, y + i, x + 16 - 1, y + i + 4 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
-				setDestRect(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
-			}
-			CLBlitter_UpdateScreen();
-			wait(1);
+	setSrcRect(0, 0, 16 - 1, 4 - 1);
+	int y = _mainView->_normal._dstTop;
+	for (int16 i = 16; i <= 96; i += 4) {
+		for (int x = _mainView->_normal._dstLeft; x < _mainView->_normal._dstLeft + 320; x += 16) {
+			setDestRect(x, y + i, x + 16 - 1, y + i + 4 - 1);
+			CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
+			setDestRect(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
+			CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
 		}
-	} else {
-		setSrcRect(0, 0, 16 * 2 - 1, 4 * 2 - 1);
-		int y = _mainView->_zoom._dstTop;
-		for (int16 i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
-			for (int x = _mainView->_zoom._dstLeft; x < _mainView->_zoom._dstLeft + 320 * 2; x += 16 * 2) {
-				setDestRect(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
-				setDestRect(x, y + 192 * 2 - i, x + 16 * 2 - 1, y + 192 * 2 - i + 4 * 2 - 1);
-				CLBlitter_CopyViewRect(_view2, _vm->_screenView, &rect_src, &rect_dst);
-			}
-			wait(1);
-		}
+		CLBlitter_UpdateScreen();
+		wait(1);
 	}
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 	_mainView->_normal._height = 2;
@@ -4313,133 +4281,68 @@ void EdenGame::displayEffect4() {
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	if (!_doubledScreen) {
-		x = _mainView->_normal._dstLeft;
-		y = _mainView->_normal._dstTop;
-		for (int16 i = 32; i > 0; i -= 2) {
-			scr = _vm->_screenView->_bufferPtr;
-			scr += (y + 16) * ww + x;
-			pix = _mainView->_bufferPtr + 16 * 640;
-			r17 = 320 / i;
-			r23 = 320 - 320 / i * i;  //TODO: 320 % i ?
-			r16 = 160 / i;
-			r18 = 160 - 160 / i * i;  //TODO: 160 % i ?
-			for (r19 = r16; r19 > 0; r19--) {
-				r24 = scr;
-				r25 = pix;
-				for (r22 = r17; r22 > 0; r22--) {
-					c = *r25;
-					r25 += i;
-					r30 = r24;
-					for (r27 = i; r27 > 0; r27--) {
-						for (r31 = i; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - i;
-					}
-					r24 += i;
+	x = _mainView->_normal._dstLeft;
+	y = _mainView->_normal._dstTop;
+	for (int16 i = 32; i > 0; i -= 2) {
+		scr = _vm->_screenView->_bufferPtr;
+		scr += (y + 16) * ww + x;
+		pix = _mainView->_bufferPtr + 16 * 640;
+		r17 = 320 / i;
+		r23 = 320 - 320 / i * i;  //TODO: 320 % i ?
+		r16 = 160 / i;
+		r18 = 160 - 160 / i * i;  //TODO: 160 % i ?
+		for (r19 = r16; r19 > 0; r19--) {
+			r24 = scr;
+			r25 = pix;
+			for (r22 = r17; r22 > 0; r22--) {
+				c = *r25;
+				r25 += i;
+				r30 = r24;
+				for (r27 = i; r27 > 0; r27--) {
+					for (r31 = i; r31 > 0; r31--)
+						*r30++ = c;
+					r30 += ww - i;
 				}
-				if (r23) {
-					c = *r25;
-					r30 = r24;
-					for (r27 = i; r27 > 0; r27--) {
-						for (r31 = r23; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - r23;
-					}
-				}
-				scr += i * ww;
-				pix += i * 640;
+				r24 += i;
 			}
-			if (r18) {
-				r24 = scr;
-				r25 = pix;
-				for (r22 = r17; r22 > 0; r22--) {
-					c = *r25;
-					r25 += i;
-					r30 = r24;
-					for (r27 = r18; r27 > 0; r27--) {
-						for (r31 = i; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - i;
-					}
-					r24 += i;
-				}
-				if (r23) {
-					c = *r25;
-					r30 = r24;
-					for (r27 = r18; r27 > 0; r27--) {
-						for (r31 = r23; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - r23;
-					}
+			if (r23) {
+				c = *r25;
+				r30 = r24;
+				for (r27 = i; r27 > 0; r27--) {
+					for (r31 = r23; r31 > 0; r31--)
+						*r30++ = c;
+					r30 += ww - r23;
 				}
 			}
-			CLBlitter_UpdateScreen();
-			wait(3);
+			scr += i * ww;
+			pix += i * 640;
 		}
-	} else {
-		x = _mainView->_zoom._dstLeft;
-		y = _mainView->_zoom._dstTop;
-		for (int16 i = 32; i > 0; i -= 2) {
-			scr = _vm->_screenView->_bufferPtr;
-			scr += (y + 16 * 2) * ww + x;
-			pix = _mainView->_bufferPtr + 16 * 640;
-			r17 = 320 / i;
-			r23 = 320 % i;
-			r16 = 160 / i;
-			r18 = 160 % i;
-			for (r19 = r16; r19 > 0; r19--) {
-				r24 = scr;
-				r25 = pix;
-				for (r22 = r17; r22 > 0; r22--) {
-					c = *r25;
-					r25 += i;
-					r30 = r24;
-					for (r27 = i * 2; r27 > 0; r27--) {
-						for (r31 = i * 2; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - i * 2;
-					}
-					r24 += i * 2;
+		if (r18) {
+			r24 = scr;
+			r25 = pix;
+			for (r22 = r17; r22 > 0; r22--) {
+				c = *r25;
+				r25 += i;
+				r30 = r24;
+				for (r27 = r18; r27 > 0; r27--) {
+					for (r31 = i; r31 > 0; r31--)
+						*r30++ = c;
+					r30 += ww - i;
 				}
-				if (r23) {
-					c = *r25;
-					r30 = r24;
-					for (r27 = i * 2; r27 > 0; r27--) {
-						for (r31 = r23 * 2; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - r23 * 2;
-					}
-				}
-				scr += i * ww * 2;
-				pix += i * 640;
+				r24 += i;
 			}
-			if (r18) {
-				r24 = scr;
-				r25 = pix;
-				for (r22 = r17; r22 > 0; r22--) {
-					c = *r25;
-					r25 += i;
-					r30 = r24;
-					for (r27 = r18 * 2; r27 > 0; r27--) {
-						for (r31 = i * 2; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - i * 2;
-					}
-					r24 += i * 2;
-				}
-				if (r23) {
-					c = *r25;
-					r30 = r24;
-					for (r27 = i * 2; r27 > 0; r27--) {
-						for (r31 = r23 * 2; r31 > 0; r31--)
-							*r30++ = c;
-						r30 += ww - r23 * 2;
-					}
+			if (r23) {
+				c = *r25;
+				r30 = r24;
+				for (r27 = r18; r27 > 0; r27--) {
+					for (r31 = r23; r31 > 0; r31--)
+						*r30++ = c;
+					r30 += ww - r23;
 				}
 			}
-			wait(3);
 		}
+		CLBlitter_UpdateScreen();
+		wait(3);
 	}
 	CLBlitter_CopyView2Screen(_mainView);
 }
@@ -4452,31 +4355,14 @@ void EdenGame::clearScreen() {
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	if (!_doubledScreen) {
-		x = _mainView->_normal._dstLeft;
-		y = _mainView->_normal._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16) * ww + x;
-		for (int16 yy = 0; yy < 160; yy++) {
-			for (int16 xx = 0; xx < 320; xx++)
-				*scr++ = 0;
-			scr += ww - 320;
-		}
-	} else {
-		x = _mainView->_zoom._dstLeft;
-		y = _mainView->_zoom._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 32) * ww + x;
-		for (int16 yy = 0; yy < 160; yy++) {
-			for (int16 xx = 0; xx < 320; xx++) {
-				scr[0] = 0;
-				scr[1] = 0;
-				scr[ww] = 0;
-				scr[ww + 1] = 0;
-				scr += 2;
-			}
-			scr += (ww - 320) * 2;
-		}
+	x = _mainView->_normal._dstLeft;
+	y = _mainView->_normal._dstTop;
+	scr = _vm->_screenView->_bufferPtr;
+	scr += (y + 16) * ww + x;
+	for (int16 yy = 0; yy < 160; yy++) {
+		for (int16 xx = 0; xx < 320; xx++)
+			*scr++ = 0;
+		scr += ww - 320;
 	}
 	CLBlitter_UpdateScreen();
 }
@@ -4490,76 +4376,34 @@ void EdenGame::colimacon(int16 pattern[16]) {
 //	int16 w = _vm->ScreenView->_width;
 //	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	if (!_doubledScreen) {
-		x = _mainView->_normal._dstLeft;
-		y = _mainView->_normal._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16) * ww + x;
-		for (int16 i = 0; i < 16; i++) {
-			p = pattern[i];
-			r27 = p % 4 + p / 4 * ww;
-			for (int16 j = 0; j < 320 * 160 / 16; j++)
-				scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] = 0;
-			CLBlitter_UpdateScreen();
-			wait(1);
-		}
-	} else {
-		x = _mainView->_zoom._dstLeft;
-		y = _mainView->_zoom._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16 * 2) * ww + x;
-		for (int16 i = 0; i < 16; i++) {
-			p = pattern[i];
-			r27 = p % 4 * 2 + p / 4 * ww * 2;
-			for (int16 j = 0; j < 320 * 160 / 16; j++) {
-				byte *sc = &scr[j / (320 / 4) * ww * 4 * 2 + j % (320 / 4) * 4 * 2 + r27];
-				sc[0] = 0;
-				sc[1] = 0;
-				sc[ww] = 0;
-				sc[ww + 1] = 0;
-			}
-			wait(1);
-		}
+	x = _mainView->_normal._dstLeft;
+	y = _mainView->_normal._dstTop;
+	scr = _vm->_screenView->_bufferPtr;
+	scr += (y + 16) * ww + x;
+	for (int16 i = 0; i < 16; i++) {
+		p = pattern[i];
+		r27 = p % 4 + p / 4 * ww;
+		for (int16 j = 0; j < 320 * 160 / 16; j++)
+			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] = 0;
+		CLBlitter_UpdateScreen();
+		wait(1);
 	}
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
-	if (!_doubledScreen) {
-		pix = _mainView->_bufferPtr;
-		x = _mainView->_normal._dstLeft;
-		y = _mainView->_normal._dstTop;
-		pix += 640 * 16;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16) * ww + x;
-		for (int16 i = 0; i < 16; i++) {
-			p = pattern[i];
-			r25 = p % 4 + p / 4 * 640;
-			r27 = p % 4 + p / 4 * ww;
-			for (int16 j = 0; j < 320 * 160 / 16; j++)
-				scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
-				    pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
-			CLBlitter_UpdateScreen();
-			wait(1);
-		}
-	} else {
-		pix = _mainView->_bufferPtr;
-		x = _mainView->_zoom._dstLeft;
-		y = _mainView->_zoom._dstTop;
-		pix += 640 * 16;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16 * 2) * ww + x;
-		for (int16 i = 0; i < 16; i++) {
-			p = pattern[i];
-			r25 = p % 4 + p / 4 * 640;
-			r27 = p % 4 * 2 + p / 4 * ww * 2;
-			for (int16 j = 0; j < 320 * 160 / 16; j++) {
-				byte c = pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
-				byte *sc = &scr[j / (320 / 4) * ww * 4 * 2 + j % (320 / 4) * 4 * 2 + r27];
-				sc[0] = c;
-				sc[1] = c;
-				sc[ww] = c;
-				sc[ww + 1] = c;
-			}
-			wait(1);
-		}
+	pix = _mainView->_bufferPtr;
+	x = _mainView->_normal._dstLeft;
+	y = _mainView->_normal._dstTop;
+	pix += 640 * 16;
+	scr = _vm->_screenView->_bufferPtr;
+	scr += (y + 16) * ww + x;
+	for (int16 i = 0; i < 16; i++) {
+		p = pattern[i];
+		r25 = p % 4 + p / 4 * 640;
+		r27 = p % 4 + p / 4 * ww;
+		for (int16 j = 0; j < 320 * 160 / 16; j++)
+			scr[j / (320 / 4) * ww * 4 + j % (320 / 4) * 4 + r27] =
+			    pix[j / (320 / 4) * 640 * 4 + j % (320 / 4) * 4 + r25];
+		CLBlitter_UpdateScreen();
+		wait(1);
 	}
 }
 
@@ -4646,18 +4490,10 @@ void EdenGame::effetpix() {
 	r25 = ww * 80;
 	r18 = 640 * 80;
 	byte *pix = _mainView->_bufferPtr + 16 * 640;
-	if (!_doubledScreen) {
-		int x = _mainView->_normal._dstLeft;
-		int y = _mainView->_normal._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16) * ww + x;
-	} else {
-		int x = _mainView->_zoom._dstLeft;
-		int y = _mainView->_zoom._dstTop;
-		scr = _vm->_screenView->_bufferPtr;
-		scr += (y + 16 * 2) * ww + x;
-		r25 *= 2;
-	}
+	int x = _mainView->_normal._dstLeft;
+	int y = _mainView->_normal._dstTop;
+	scr = _vm->_screenView->_bufferPtr;
+	scr += (y + 16) * ww + x;
 	int16 r20 = 0x4400;   //TODO
 	int16 r27 = 1;
 	int16 r26 = 0;
@@ -4669,30 +4505,12 @@ void EdenGame::effetpix() {
 		if (r27 < 320 * 80) {
 			r31 = r27 / 320;
 			r30 = r27 % 320;
-			if (_doubledScreen) {
-				r31 *= 2;
-				r30 *= 2;
-				scr[r31 * ww + r30] = 0;
-				scr[r31 * ww + r30 + 1] = 0;
-				scr[r31 * ww + r25 + r30] = 0;
-				scr[r31 * ww + r25 + r30 + 1] = 0;
-				r31++;
-				scr[r31 * ww + r30] = 0;
-				scr[r31 * ww + r30 + 1] = 0;
-				scr[r31 * ww + r25 + r30] = 0;
-				scr[r31 * ww + r25 + r30 + 1] = 0;
-				if (++r26 == 960) {
-					wait(1);
-					r26 = 0;
-				}
-			} else {
-				scr[r31 * ww + r30] = 0;
-				scr[r31 * ww + r25 + r30] = 0;
-				if (++r26 == 960) {
-					CLBlitter_UpdateScreen();
-					wait(1);
-					r26 = 0;
-				}
+			scr[r31 * ww + r30] = 0;
+			scr[r31 * ww + r25 + r30] = 0;
+			if (++r26 == 960) {
+				CLBlitter_UpdateScreen();
+				wait(1);
+				r26 = 0;
 			}
 		}
 	} while (r27 != 1);
@@ -4710,30 +4528,12 @@ void EdenGame::effetpix() {
 			r30 = r27 % 320;
 			byte p0 = pix[r31 * 640 + r30];
 			byte p1 = pix[r31 * 640 + r18 + r30];
-			if (_doubledScreen) {
-				r31 *= 2;
-				r30 *= 2;
-				scr[r31 * ww + r30] = p0;
-				scr[r31 * ww + r30 + 1] = p0;
-				scr[r31 * ww + r25 + r30] = p1;
-				scr[r31 * ww + r25 + r30 + 1] = p1;
-				r31++;
-				scr[r31 * ww + r30] = p0;
-				scr[r31 * ww + r30 + 1] = p0;
-				scr[r31 * ww + r25 + r30] = p1;
-				scr[r31 * ww + r25 + r30 + 1] = p1;
-				if (++r26 == 960) {
-					wait(1);
-					r26 = 0;
-				}
-			} else {
-				scr[r31 * ww + r30] = p0;
-				scr[r31 * ww + r25 + r30] = p1;
-				if (++r26 == 960) {
-					CLBlitter_UpdateScreen();
-					wait(1);
-					r26 = 0;
-				}
+			scr[r31 * ww + r30] = p0;
+			scr[r31 * ww + r25 + r30] = p1;
+			if (++r26 == 960) {
+				CLBlitter_UpdateScreen();
+				wait(1);
+				r26 = 0;
 			}
 		}
 	} while (r27 != 1);
@@ -5800,7 +5600,6 @@ void EdenGame::run() {
 		else
 			initCubePC();
 
-		_mainView->_doubled = _doubledScreen;
 		while (!_quitFlag2) {
 			initGlobals();
 			_quitFlag3 = false;
@@ -6429,7 +6228,6 @@ void EdenGame::showMovie(char arg1) {
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
 	_vm->_video->setFinalBuffer(_hnmView->_bufferPtr);
-	_hnmView->_doubled = _doubledScreen;
 	do {
 		_hnmFrameNum = _vm->_video->getFrameNum();
 		_vm->_video->waitLoop();
@@ -6501,7 +6299,6 @@ void EdenGame::playHNM(int16 num) {
 	else
 		showMovie(1);
 	_cursKeepPos = Common::Point(-1, -1);
-	_mainView->_doubled = _doubledScreen;
 	if (_specialTextMode) {
 		_musicFadeFlag = 3;
 		musicspy();
@@ -9568,7 +9365,6 @@ int16 EdenGame::OpenDialog(void *arg1, void *arg2) {
 
 void EdenGame::LostEdenMac_InitPrefs() {
 	_globals->_prefLanguage = 1;
-	_doubledScreen = false;    // TODO: set to true
 	_globals->_prefMusicVol[0] = 192;
 	_globals->_prefMusicVol[1] = 192;
 	_globals->_prefVoiceVol[0] = 255;

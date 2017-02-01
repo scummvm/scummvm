@@ -72,7 +72,6 @@ void View::initDatas(int w, int h, void *buffer) {
 	_width = w;
 	_height = h;
 	_pitch = w;
-	_doubled = false;
 	_normal._srcLeft = 0;
 	_normal._srcTop = 0;
 	_normal._dstLeft = 0;
@@ -207,18 +206,14 @@ void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 
 }
 
 void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
-	if (!view->_doubled) {
-		View *dest = g_ed->_screenView;
-		int16 srcpitch = view->_pitch;
-		int16 dstpitch = dest->_pitch;
+	View *dest = g_ed->_screenView;
+	int16 srcpitch = view->_pitch;
+	int16 dstpitch = dest->_pitch;
 
-		CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft,
-										  view->_normal._width, srcpitch, view->_normal._height,
-										  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft,
-										  dest->_normal._width, dstpitch, dest->_normal._height);
-
-	} else
-		assert(0);
+	CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft,
+									  view->_normal._width, srcpitch, view->_normal._height,
+									  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft,
+									  dest->_normal._width, dstpitch, dest->_normal._height);
 }
 
 void CLBlitter_CopyView2Screen(View *view) {

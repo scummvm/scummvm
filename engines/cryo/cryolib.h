@@ -75,7 +75,6 @@ public:
 	int      _height;
 	byte    *_bufferPtr;
 	int16    _pitch;
-	bool     _doubled;
 	BlitView _normal;
 	BlitView _zoom;
 };
