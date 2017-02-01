@@ -863,7 +863,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 				ftext += '\001';
 
 			prevPos++;
+
+			debugCN(4, kDebugText, "%c", f);
 		}
+
+		debugCN(4, kDebugText, "*");
 
 		ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
 						(textCast->fontId >> 8) & 0xff, textCast->fontId & 0xff,
@@ -877,6 +881,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	ftext += text;
+
+	debugC(4, kDebugText, "%s", text.c_str());
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;

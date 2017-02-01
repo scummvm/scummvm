@@ -79,6 +79,15 @@ void MacText::splitString(Common::String &str) {
 	bool nextChunk = false;
 
 	while (*s) {
+		for (uint i = 0; i < _textLines.size(); i++) {
+			debugN(7, "%2d ", i);
+
+			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
+				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
+
+			debug(7, " --> %c %d", (*s > 0x20 ? *s : ' '), (byte)*s);
+		}
+
 		if (*s == '\001') {
 			s++;
 			if (*s == '\001') {
