@@ -4273,16 +4273,12 @@ void EdenGame::displayEffect3() {
 // Original name: effet4
 void EdenGame::displayEffect4() {
 	byte *scr, *pix, *r24, *r25, *r30, c;
-	int16 x, y;
 	int16 r17, r23, r16, r18, r19, r22, r27, r31;
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
 
-//	Unused
-//	int16 w = _vm->ScreenView->_width;
-//	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	x = _mainView->_normal._dstLeft;
-	y = _mainView->_normal._dstTop;
+	int16 x = _mainView->_normal._dstLeft;
+	int16 y = _mainView->_normal._dstTop;
 	for (int16 i = 32; i > 0; i -= 2) {
 		scr = _vm->_screenView->_bufferPtr;
 		scr += (y + 16) * ww + x;
@@ -4348,16 +4344,10 @@ void EdenGame::displayEffect4() {
 }
 
 void EdenGame::clearScreen() {
-	byte *scr;
-	int16 x, y;
-
-//	Unused
-//	int16 w = _vm->ScreenView->_width;
-//	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	x = _mainView->_normal._dstLeft;
-	y = _mainView->_normal._dstTop;
-	scr = _vm->_screenView->_bufferPtr;
+	int16 x = _mainView->_normal._dstLeft;
+	int16 y = _mainView->_normal._dstTop;
+	byte *scr = _vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	for (int16 yy = 0; yy < 160; yy++) {
 		for (int16 xx = 0; xx < 320; xx++)
@@ -4368,17 +4358,12 @@ void EdenGame::clearScreen() {
 }
 
 void EdenGame::colimacon(int16 pattern[16]) {
-	byte *scr, *pix;
-	int16 x, y;
 	int16 p, r27, r25;
 
-//	Unused
-//	int16 w = _vm->ScreenView->_width;
-//	int16 h = _vm->ScreenView->_height;
 	int16 ww = _vm->_screenView->_pitch;
-	x = _mainView->_normal._dstLeft;
-	y = _mainView->_normal._dstTop;
-	scr = _vm->_screenView->_bufferPtr;
+	int16 x = _mainView->_normal._dstLeft;
+	int16 y = _mainView->_normal._dstTop;
+	byte *scr = _vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	for (int16 i = 0; i < 16; i++) {
 		p = pattern[i];
@@ -4389,7 +4374,7 @@ void EdenGame::colimacon(int16 pattern[16]) {
 		wait(1);
 	}
 	CLPalette_Send2Screen(_globalPalette, 0, 256);
-	pix = _mainView->_bufferPtr;
+	byte *pix = _mainView->_bufferPtr;
 	x = _mainView->_normal._dstLeft;
 	y = _mainView->_normal._dstTop;
 	pix += 640 * 16;
@@ -4483,7 +4468,6 @@ void EdenGame::wait(int howlong) {
 }
 
 void EdenGame::effetpix() {
-	byte *scr;
 	uint16 r25, r18, r31, r30;  //TODO: change to xx/yy
 
 	uint16 ww = _vm->_screenView->_pitch;
@@ -4492,7 +4476,7 @@ void EdenGame::effetpix() {
 	byte *pix = _mainView->_bufferPtr + 16 * 640;
 	int x = _mainView->_normal._dstLeft;
 	int y = _mainView->_normal._dstTop;
-	scr = _vm->_screenView->_bufferPtr;
+	byte *scr = _vm->_screenView->_bufferPtr;
 	scr += (y + 16) * ww + x;
 	int16 r20 = 0x4400;   //TODO
 	int16 r27 = 1;
