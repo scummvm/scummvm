@@ -105,7 +105,7 @@ private:
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
-	int getLineWidth(int line);
+	int getLineWidth(int line, bool enforce = false);
 	int getLineHeight(int line);
 
 private:

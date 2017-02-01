@@ -129,7 +129,9 @@ void MacText::splitString(Common::String &str) {
 		if (*s == '\r' || *s == '\n' || nextChunk) {
 			Common::Array<Common::String> text;
 
-			_font->wordWrapText(tmp, _maxWidth, text);
+			int w = getLineWidth(curLine, true);
+
+			_font->wordWrapText(tmp, _maxWidth, text, w);
 			tmp.clear();
 
 			if (text.size()) {
@@ -178,8 +180,9 @@ void MacText::splitString(Common::String &str) {
 
 	if (tmp.size()) {
 		Common::Array<Common::String> text;
+		int w = getLineWidth(curLine, true);
 
-		_font->wordWrapText(tmp, _maxWidth, text);
+		_font->wordWrapText(tmp, _maxWidth, text, w);
 
 		_textLines[curLine].chunks[curChunk].text = text[0];
 
@@ -260,11 +263,11 @@ void MacText::render(int from, int to) {
 	}
 }
 
-int MacText::getLineWidth(int line) {
+int MacText::getLineWidth(int line, bool enforce) {
 	if ((uint)line >= _textLines.size())
 		return 0;
 
-	if (_textLines[line].width != -1)
+	if (_textLines[line].width != -1 && !enforce)
 		return _textLines[line].width;
 
 	int width = 0;
