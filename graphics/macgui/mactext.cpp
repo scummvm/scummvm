@@ -43,7 +43,7 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const Font *font, int f
 	_font = font;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
+	_maxWidth = maxWidth - 1; // This seems to be correct. TODO: More testing is required
 	_textMaxWidth = 0;
 	_textMaxHeight = 0;
 	_surface = nullptr;
