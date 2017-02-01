@@ -108,7 +108,6 @@ public:
 	void assignBuffer(void *buffer, int bufferOffs, int length);
 	void prepareSample(int16 mode);
 	void setWantsDesigned(int16 designed);
-	void setLength(int length);
 
 	char  *_sndHandle;
 	char  *_buffer;

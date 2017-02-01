@@ -143,7 +143,6 @@ bool SoundGroup::assignDatas(void *buffer, int length, bool isSigned) {
 	Sound *sound = _sounds[_soundIndex];
 
 	sound->_buffer = (char *)buffer;
-	sound->setLength(length);
 	sound->_length = length;
 	//	if(sound->reversed && sound->sampleSize == 16)
 	//		ReverseBlock16(buffer, length);
@@ -166,7 +165,6 @@ bool SoundGroup::setDatas(void *data, int length, bool isSigned) {
 	void *buffer = sound->_sndHandle + sound->_headerLen;
 	sound->_buffer = (char *)buffer;
 	memcpy(buffer, data, length);
-	sound->setLength(length);
 	sound->_length = length;
 	//	if(sound->reversed && sound->sampleSize == 16)
 	//		ReverseBlock16(buffer, length);

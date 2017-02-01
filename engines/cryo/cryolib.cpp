@@ -340,7 +340,6 @@ Sound::~Sound() {
 }
 
 void CLSoundRaw_AssignBuffer(Sound *sound, void *buffer, int bufferOffs, int length) {
-	sound->setLength(length);
 	sound->_length = length;
 	char *buf = bufferOffs + (char *)buffer;
 	//	if(CLSound_GetWantsDesigned())
@@ -356,9 +355,6 @@ void Sound::prepareSample(int16 mode) {
 }
 
 void Sound::setWantsDesigned(int16 designed) {
-}
-
-void Sound::setLength(int length) {
 }
 
 ///// CLSoundChannel
