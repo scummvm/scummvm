@@ -67,23 +67,4 @@ public:
 	void setVolumeRight(unsigned int volume);
 };
 
-#define kCryoMaxClSounds 64
-
-class SoundGroup {
-private:
-	Sound *_sounds[kCryoMaxClSounds];
-	int16 _numSounds;
-	int16 _soundIndex;
-	int16 _playIndex;
-
-public:
-	SoundGroup(int16 numSounds, int16 length, int16 sampleSize, float rate, int16 mode);
-	~SoundGroup();
-
-	bool assignDatas(void *buffer, int length, bool isSigned);
-	void playNextSample(SoundChannel *ch);
-	bool setDatas(void *data, int length, bool isSigned);
-	void *getNextBuffer();
-};
-
 }
