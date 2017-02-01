@@ -79,7 +79,6 @@ public:
 
 	void pollEvents();
 
-	bool isScanCodeDown(int16 scancode);
 	void hideMouse();
 	void showMouse();
 	void getMousePosition(int16 *x, int16 *y);

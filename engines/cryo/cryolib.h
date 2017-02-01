@@ -169,8 +169,6 @@ void CLPalette_DeactivateInterval();
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count);
 void CLPalette_BeSystem();
 
-void CLFile_Write(Common::File &handle, void *buffer, int32 *size);
-
 void CRYOLib_ManagersInit();
 void CRYOLib_ManagersDone();
 

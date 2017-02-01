@@ -212,12 +212,10 @@ void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
 		int16 srcpitch = view->_pitch;
 		int16 dstpitch = dest->_pitch;
 
-		//      this is not quite correct?
-		//      CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal.src_top * srcpitch + view->_normal._srcLeft, view->_normal._width, srcpitch, view->_normal._height,
-		//          dest->_bufferPtr + dest->_normal._dstTop * dstpitch + dest->_normal._dstLeft, dest->_normal._width, dstpitch, dest->_normal._height);
-
-		CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft, view->_normal._width, srcpitch, view->_normal._height,
-		                                  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft, dest->_normal._width, dstpitch, dest->_normal._height);
+		CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft,
+										  view->_normal._width, srcpitch, view->_normal._height,
+										  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft,
+										  dest->_normal._width, dstpitch, dest->_normal._height);
 
 	} else
 		assert(0);
@@ -300,10 +298,6 @@ void CryoEngine::pollEvents() {
 	}
 }
 
-bool CryoEngine::isScanCodeDown(int16 scancode) {
-	return false;
-}
-
 void CryoEngine::hideMouse() {
 }
 
@@ -322,11 +316,6 @@ void CryoEngine::setMousePosition(int16 x, int16 y) {
 bool CryoEngine::isMouseButtonDown() {
 	pollEvents();
 	return _mouseButton != 0;
-}
-
-///// CLFile
-void CLFile_Write(Common::File &handle, void *buffer, int32 *size) {
-	assert(0);
 }
 
 ///// CLSound
