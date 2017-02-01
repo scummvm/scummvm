@@ -109,9 +109,8 @@ void MacText::splitString(Common::String &str) {
 
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
-				if (_textLines[curLine].chunks[curChunk].text.empty()) {
+				if (curLine == 0 && curChunk == 0 && _textLines[curLine].chunks[curChunk].text.empty()) {
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
-					continue;
 				} else {
 					_textLines[curLine].chunks.push_back(_currentFormatting);
 				}
@@ -138,7 +137,12 @@ void MacText::splitString(Common::String &str) {
 					_textLines[curLine].chunks[curChunk].text += text[0];
 					curChunk++;
 
-					_text[curLine] += text[0];
+					_textLines[curLine].chunks.push_back(_currentFormatting);
+
+					if (_text.size() == curLine)
+						_text.push_back(text[0]);
+					else
+						_text[curLine] += text[0];
 
 					nextChunk = false;
 
@@ -156,7 +160,7 @@ void MacText::splitString(Common::String &str) {
 					curChunk = 0;
 				}
 			} else {
-				if (nextChunk) { // No text, replacing formatting
+				if (nextChunk && 0) { // No text, replacing formatting
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
 				}
 			}
