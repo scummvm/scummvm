@@ -97,3 +97,17 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 	
 	OSystem_POSIX::setFeatureState(f, enable);
 }
+
+bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
+	switch (f) {
+		case kFeatureTouchpadMode:
+			return ConfMan.getBool("touchpad_mouse_mode");
+			break;
+		case kFeatureOnScreenControl:
+			return ConfMan.getBool("onscreen_control");
+			break;
+		default:
+			return OSystem_POSIX::getFeatureState(f);
+			break;
+	}
+}

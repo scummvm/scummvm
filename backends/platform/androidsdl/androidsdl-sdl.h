@@ -29,6 +29,7 @@ class OSystem_ANDROIDSDL : public OSystem_POSIX {
 public:
 	virtual void initBackend();
 	virtual void setFeatureState(Feature f, bool enable);
+	virtual bool getFeatureState(Feature f);
 	void touchpadMode(bool enable);
 	void switchToDirectMouseMode();
 	void switchToRelativeMouseMode();
