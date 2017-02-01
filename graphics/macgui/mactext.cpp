@@ -243,12 +243,12 @@ void MacText::render(int from, int to) {
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
 			debugN(4, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
 
-		debug(4, "");
+		debug(4, "%s", "");
 	}
 }
 
 int MacText::getLineWidth(int line) {
-	if (line >= _textLines.size())
+	if ((uint)line >= _textLines.size())
 		return 0;
 
 	if (_textLines[line].width != -1)
@@ -269,7 +269,7 @@ int MacText::getLineWidth(int line) {
 }
 
 int MacText::getLineHeight(int line) {
-	if (line >= _textLines.size())
+	if ((uint)line >= _textLines.size())
 		return 0;
 
 	getLineWidth(line); // This calculates height also
