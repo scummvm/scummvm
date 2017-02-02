@@ -250,6 +250,8 @@ void Display::setPixelPalette(const Common::Point &p, byte color) {
 }
 
 bool Display::getPixelBit(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	return *b & (1 << (p.x % 7));
 }
@@ -334,8 +336,7 @@ void Display::showCursor(bool enable) {
 }
 
 void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
-	if (p.x >= DISPLAY_WIDTH || p.y >= DISPLAY_HEIGHT)
-		return;
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
 
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	color ^= *b;

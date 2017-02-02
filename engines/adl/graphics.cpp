@@ -57,7 +57,7 @@ void GraphicsMan::drawLine(const Common::Point &p1, const Common::Point &p2, byt
 	int16 err = deltaX + deltaY;
 
 	while (true) {
-		_display.putPixel(p, color);
+		putPixel(p, color);
 
 		if (--steps == 0)
 			return;
@@ -70,6 +70,11 @@ void GraphicsMan::drawLine(const Common::Point &p1, const Common::Point &p2, byt
 			err += deltaY;
 		}
 	}
+}
+
+void GraphicsMan::putPixel(const Common::Point &p, byte color) const {
+	if (_bounds.contains(p))
+		_display.putPixel(p, color);
 }
 
 void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
@@ -98,7 +103,7 @@ void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 			y = 160;
 
 		if (bNewLine) {
-			_display.putPixel(Common::Point(x, y), 0x7f);
+			putPixel(Common::Point(x, y), 0x7f);
 			bNewLine = false;
 		} else {
 			drawLine(Common::Point(oldX, oldY), Common::Point(x, y), 0x7f);
@@ -111,7 +116,7 @@ void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 
 void Graphics_v1::drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
 	if (bits & 4)
-		_display.putPixel(p, color);
+		putPixel(p, color);
 
 	bits += quadrant;
 
@@ -228,7 +233,7 @@ void Graphics_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 		READ_BYTE(n);
 		n += _offset.x;
 
-		_display.putPixel(p, _color);
+		putPixel(p, _color);
 
 		n <<= 1;
 		drawLine(p, Common::Point(n, p.y), _color);
@@ -238,10 +243,10 @@ doYStep:
 		READ_BYTE(n);
 		n += _offset.y;
 
-		_display.putPixel(p, _color);
+		putPixel(p, _color);
 		drawLine(p, Common::Point(p.x, n), _color);
 
-		_display.putPixel(Common::Point(p.x + 1, p.y), _color);
+		putPixel(Common::Point(p.x + 1, p.y), _color);
 		drawLine(Common::Point(p.x + 1, p.y), Common::Point(p.x + 1, n), _color);
 
 		p.y = n;
@@ -252,7 +257,7 @@ void Graphics_v2::drawRelativeLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
-	_display.putPixel(p1, _color);
+	putPixel(p1, _color);
 
 	while (true) {
 		Common::Point p2(p1);
@@ -282,7 +287,7 @@ void Graphics_v2::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
-	_display.putPixel(p1, _color);
+	putPixel(p1, _color);
 
 	while (true) {
 		Common::Point p2;
@@ -310,7 +315,7 @@ bool Graphics_v2::canFillAt(const Common::Point &p, const bool stopBit) {
 void Graphics_v2::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
-	while (--p.x >= 0) {
+	while (--p.x >= _bounds.left) {
 		if ((p.x % 7) == 6) {
 			color = getPatternColor(p, pattern);
 			_display.setPixelPalette(p, color);
@@ -331,7 +336,7 @@ void Graphics_v2::fillRow(Common::Point p, const byte pattern, const bool stopBi
 	fillRowLeft(p, pattern, stopBit);
 
 	// Fill right of p
-	while (++p.x < DISPLAY_WIDTH) {
+	while (++p.x < _bounds.right) {
 		if ((p.x % 7) == 0) {
 			color = getPatternColor(p, pattern);
 			// Palette is set before the first bit is tested
@@ -347,10 +352,10 @@ void Graphics_v2::fillAt(Common::Point p, const byte pattern) {
 	const bool stopBit = !_display.getPixelBit(p);
 
 	// Move up into the open space above p
-	while (--p.y >= 0 && canFillAt(p, stopBit));
+	while (--p.y >= _bounds.top && canFillAt(p, stopBit));
 
 	// Then fill by moving down
-	while (++p.y < DISPLAY_HEIGHT && canFillAt(p, stopBit))
+	while (++p.y < _bounds.bottom && canFillAt(p, stopBit))
 		fillRow(p, pattern, stopBit);
 }
 
@@ -362,7 +367,8 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 		Common::Point p;
 		READ_POINT(p);
 
-		fillAt(p, pattern);
+		if (_bounds.contains(p))
+			fillAt(p, pattern);
 	}
 }
 
@@ -438,7 +444,7 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 void Graphics_v3::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
-	while (--p.x >= 0) {
+	while (--p.x >= _bounds.left) {
 		// In this version, when moving left, it no longer sets the palette first
 		if (!_display.getPixelBit(p))
 			return;
@@ -460,11 +466,11 @@ void Graphics_v3::fillAt(Common::Point p, const byte pattern) {
 	Common::Point q(p);
 
 	// Fill up from p
-	while (--q.y >= 0 && canFillAt(q))
+	while (--q.y >= _bounds.top && canFillAt(q))
 		fillRow(q, pattern);
 
 	// Fill down from p
-	while (++p.y < DISPLAY_HEIGHT && canFillAt(p))
+	while (++p.y < _bounds.bottom && canFillAt(p))
 		fillRow(p, pattern);
 }
 

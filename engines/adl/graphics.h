@@ -38,12 +38,14 @@ public:
 	virtual ~GraphicsMan() { }
 	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) = 0;
 	void clearScreen() const;
+	void putPixel(const Common::Point &p, byte color) const;
 
 protected:
-	GraphicsMan(Display &display) : _display(display) { }
+	GraphicsMan(Display &display) : _bounds(280, 160), _display(display) { }
 	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
 
 	Display &_display;
+	Common::Rect _bounds;
 
 private:
 	virtual byte getClearColor() const = 0;
