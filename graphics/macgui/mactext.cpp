@@ -213,7 +213,7 @@ void MacText::reallocSurface() {
 		return;
 	}
 
-	if (_surface->h < _textMaxWidth) {
+	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
 		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight);
 		n->blitFrom(*_surface, Common::Point(0, 0));
