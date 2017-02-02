@@ -4536,8 +4536,8 @@ void EdenGame::verifh(byte *ptr) {
 	debug("* Begin unpacking resource");
 	head -= 6;
 	uint16 h0 = READ_LE_UINT16(head);
-	head += 2;
-	/*char unused = * */head++;
+	// 3 = 2 bytes for the uint16 and 1 byte for an unused char
+	head += 3;
 	uint16 h3 = READ_LE_UINT16(head);
 	head += 2;
 	byte *data = h0 + head + 26;
@@ -4702,8 +4702,6 @@ int EdenGame::loadSound(uint16 num) {
 
 		if (chunkType == 5) {
 			_bigfile.read(_gameLipsync + 7260, chunkLen);
-//			_animBufferPtr = _gameLipsync + 7260 + 2;
-
 			chunkType = _bigfile.readByte();
 			_bigfile.read(&val, 3);
 			chunkLen = LE32(val);
@@ -4711,7 +4709,7 @@ int EdenGame::loadSound(uint16 num) {
 
 		// 3. Normal sound data
 		if (chunkType == 1) {
-			/*uint8 freq = */_bigfile.readUint16LE();
+			_bigfile.readUint16LE();
 			size = chunkLen - 2;
 			_bigfile.read(_voiceSamplesBuffer, size);
 		}
