@@ -44,6 +44,13 @@ struct MusicRoomInstrument {
 };
 
 class CMusicRoomHandler {
+	struct Object3 {
+		byte *_field0;
+		int _field4;
+		Object3() : _field0(nullptr), _field4(0) {}
+		~Object3() { delete[] _field0; }
+	};
+
 	struct Array5Entry {
 		int _v1;
 		int _v2;
@@ -55,7 +62,9 @@ private:
 	CMusicWave *_musicWaves[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
+	Object3 *_array3[4];
 	Array5Entry _array5[4];
+	int _array6[4];
 	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;
@@ -66,6 +75,9 @@ private:
 	int _volume;
 private:
 	void trigger();
+
+	void updateAudio();
+	void fn1();
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
@@ -79,13 +91,6 @@ public:
 	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	void createWaveFile(int musicVolume);
-
-	/**
-	 * Handles regular polling the music handler
-	 */
-	bool poll();
-
-	bool isBusy();
 
 	/**
 	 * Flags whether the music handler is active
@@ -149,8 +154,9 @@ public:
 
 	/**
 	 * Handles regular updates
+	 * @returns		True if the music is still playing
 	 */
-	void update();
+	bool update();
 };
 
 } // End of namespace Titanic

@@ -70,11 +70,6 @@ void CMusicRoomHandler::createWaveFile(int musicVolume) {
 //	_waveFile = _soundManager->loadMusic()
 }
 
-bool CMusicRoomHandler::poll() {
-	// TODO
-	return false;
-}
-
 void CMusicRoomHandler::stop() {
 	if (_waveFile) {
 		_soundManager->stopSound(_soundHandle);
@@ -147,11 +142,6 @@ void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, bool value) {
 		_array1[instrument]._muteControl = value;
 }
 
-bool CMusicRoomHandler::isBusy() {
-	// TODO: stuff
-	return _field108 > 0;
-}
-
 void CMusicRoomHandler::trigger() {
 	if (_active) {
 		for (int idx = 0; idx < 4; ++idx)
@@ -159,7 +149,7 @@ void CMusicRoomHandler::trigger() {
 	}
 }
 
-void CMusicRoomHandler::update() {
+bool CMusicRoomHandler::update() {
 	uint currentTicks = g_vm->_events->getTicksCount();
 
 	if (!_startTicks) {
@@ -173,6 +163,32 @@ void CMusicRoomHandler::update() {
 		}
 
 		_soundStartTicks = currentTicks;
+	}
+
+	updateAudio();
+	fn1();
+
+	return _field108 > 0;
+}
+
+void CMusicRoomHandler::updateAudio() {
+	// TODO
+}
+
+void CMusicRoomHandler::fn1() {
+	if (_active && _soundStartTicks) {
+		for (int idx = 0; idx < 4; ++idx) {
+			MusicRoomInstrument &ins1 = _array1[idx];
+			MusicRoomInstrument &ins2 = _array2[idx];
+
+			// Is this about checking playback position?
+			if (_array6[idx] < 0 || ins1._muteControl || _array6[idx] >= _array3[idx]->_field4) {
+				_array6[idx] = -1;
+				continue;
+			}
+
+			// TODO
+		}
 	}
 }
 

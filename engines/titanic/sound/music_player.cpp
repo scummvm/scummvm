@@ -98,7 +98,7 @@ bool CMusicPlayer::StopMusicMsg(CStopMusicMsg *msg) {
 }
 
 bool CMusicPlayer::FrameMsg(CFrameMsg *msg) {
-	if (_isActive && !CMusicRoom::_musicHandler->poll()) {
+	if (_isActive && !CMusicRoom::_musicHandler->update()) {
 		getMusicRoom()->stopMusic();
 		_isActive = false;
 
