@@ -162,7 +162,7 @@ void MacText::splitString(Common::String &str) {
 					curChunk = 0;
 				}
 			} else {
-				if (nextChunk && 0) { // No text, replacing formatting
+				if (nextChunk) { // No text, replacing formatting
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
 				}
 			}
@@ -248,6 +248,9 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+
 			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, _maxWidth, _fgcolor);
 			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 		}
