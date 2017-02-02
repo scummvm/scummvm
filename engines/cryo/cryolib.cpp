@@ -224,7 +224,7 @@ void CLBlitter_CopyView2Screen(View *view) {
 		useNewPalette = false;
 	}
 
-	//TODO: quick hack to force screen update
+	//HACK: Quick hack to force screen update
 	if (view)
 		CLBlitter_CopyView2ScreenCUSTOM(view);
 

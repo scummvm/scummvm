@@ -938,7 +938,7 @@ void EdenGame::actionGotoVal() {
 	_scrollPos = 0;
 	char obj = _curSpot2->_objectId - 14;    //TODO
 	_globals->_prevLocation = target & 0xFF;
-	deplaval((target & 0xFF00) | obj);  //TODO careful!
+	deplaval((target & 0xFF00) | obj);
 }
 
 // Original name: visiter
@@ -1965,14 +1965,12 @@ void EdenGame::citadelFalls(char level) {
 	}
 }
 
-// Originam name: constcita
+// Original name: constcita
 void EdenGame::buildCitadel() {
-	// Room *room = p_global->_curAreaPtr->_citadelRoomPtr; //TODO: wrong? chk below
-	//	byte id = room->_location;
 	if (!_globals->_curAreaPtr->_citadelLevel || !_globals->_curAreaPtr->_citadelRoomPtr)
 		return;
 
-	Room *room = _globals->_curAreaPtr->_citadelRoomPtr; //TODO: copied here by me
+	Room *room = _globals->_curAreaPtr->_citadelRoomPtr;
 	byte loc = room->_location;
 	_tyranPtr = &kPersons[PER_UNKN_372];
 	if (istyran((_globals->_citadelAreaNum << 8) | loc)) {
@@ -2066,7 +2064,7 @@ void EdenGame::newValley() {
 	while (roomNum != -1) {
 		perso->_roomNum = roomNum;
 		perso->_flags &= ~PersonFlags::pf80;
-		perso->_flags &= ~PersonFlags::pf20; //TODO: combine?
+		perso->_flags &= ~PersonFlags::pf20;
 		perso++;
 		roomNum = *ptr++;
 	}
@@ -2298,14 +2296,14 @@ void EdenGame::animCharacter() {
 		if (*_mouthAnimations)
 			displayImage();
 		_animationDelay--;
-		if (!_animationDelay) { //TODO: combine
+		if (!_animationDelay) {
 			_globals->_animationFlags = 1;
 			_animationDelay = 8;
 		}
 	}
 
 	_animationDelay--;
-	if (!_animationDelay) { //TODO: combine
+	if (!_animationDelay) {
 		getanimrnd();
 		//TODO: no reload?
 	}
