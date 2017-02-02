@@ -34,6 +34,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	_field108 = 0;
 	_field118 = 0;
 	_startTicks = _soundStartTicks = 0;
+	_audioBuffer = new CAudioBuffer(176400);
 }
 
 CMusicRoomHandler::~CMusicRoomHandler() {
@@ -64,8 +65,8 @@ CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int c
 	return _musicWaves[instrument];
 }
 
-void CMusicRoomHandler::createWaveFile(int musicVolume) {
-	_volume = musicVolume;
+void CMusicRoomHandler::setVolume(int volume) {
+	_volume = volume;
 	// TODO
 //	_waveFile = _soundManager->loadMusic()
 }

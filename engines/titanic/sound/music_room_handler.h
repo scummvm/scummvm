@@ -23,6 +23,7 @@
 #ifndef TITANIC_MUSIC_ROOM_HANDLER_H
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
+#include "titanic/sound/audio_buffer.h"
 #include "titanic/sound/music_wave.h"
 #include "titanic/sound/wave_file.h"
 
@@ -69,6 +70,7 @@ private:
 	CWaveFile *_waveFile;
 	int _soundHandle;
 	int _field108;
+	CAudioBuffer *_audioBuffer;
 	int _field118;
 	uint _soundStartTicks;
 	uint _startTicks;
@@ -90,7 +92,10 @@ public:
 	 */
 	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
-	void createWaveFile(int musicVolume);
+	/**
+	 * Sets the volume and ??? other stuff
+	 */
+	void setVolume(int volume);
 
 	/**
 	 * Flags whether the music handler is active

@@ -399,6 +399,7 @@ MODULE_OBJS := \
 	pet_control/pet_show_translation.o \
 	pet_control/pet_slider.o \
 	pet_control/pet_sound.o \
+	sound/audio_buffer.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \
