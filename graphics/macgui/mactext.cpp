@@ -277,7 +277,9 @@ int MacText::getLineWidth(int line, bool enforce) {
 	int height = 0;
 
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
-		width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+		if (!_textLines[line].chunks[i].text.empty())
+			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+
 		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
 
