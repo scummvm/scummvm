@@ -307,7 +307,7 @@ void MacText::recalcDims() {
 		_textLines[i].y = y;
 
 		y += getLineHeight(i) + _interLinear;
-		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i));
+		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
 	}
 
 	_textMaxHeight = y;
