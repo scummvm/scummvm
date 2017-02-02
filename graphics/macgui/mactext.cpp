@@ -113,6 +113,7 @@ void MacText::splitString(Common::String &str) {
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
 				} else {
 					_textLines[curLine].chunks.push_back(_currentFormatting);
+					curChunk++;
 				}
 
 				nextChunk = true;
