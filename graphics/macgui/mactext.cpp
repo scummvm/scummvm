@@ -80,6 +80,7 @@ void MacText::splitString(Common::String &str) {
 	MacFontRun previousFormatting;
 
 	while (*s) {
+#if DEBUG
 		for (uint i = 0; i < _textLines.size(); i++) {
 			debugN(7, "%2d ", i);
 
@@ -88,6 +89,7 @@ void MacText::splitString(Common::String &str) {
 
 			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, tmp.c_str());
 		}
+#endif
 
 		if (*s == '\001') {
 			s++;
