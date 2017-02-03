@@ -85,7 +85,7 @@ void MacText::splitString(Common::String &str) {
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
 				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
 
-			debug(7, " --> %c %d", (*s > 0x20 ? *s : ' '), (byte)*s);
+			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, tmp.c_str());
 		}
 
 		if (*s == '\001') {
@@ -108,13 +108,6 @@ void MacText::splitString(Common::String &str) {
 						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
-
-				if (curLine == 0 && curChunk == 0 && _textLines[curLine].chunks[curChunk].text.empty()) {
-					_textLines[curLine].chunks[curChunk] = _currentFormatting;
-				} else {
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-					curChunk++;
-				}
 
 				nextChunk = true;
 			}
