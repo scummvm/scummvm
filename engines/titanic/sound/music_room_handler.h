@@ -64,8 +64,10 @@ private:
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
 	Object3 *_array3[4];
+	int _array4[4];
 	Array5Entry _array5[4];
 	int _array6[4];
+
 	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;

@@ -30,17 +30,24 @@ namespace Titanic {
 CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
 		_project(project), _soundManager(soundManager), _active(false),
 		_soundHandle(-1), _waveFile(nullptr), _volume(100) {
-	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
 	_field108 = 0;
 	_field118 = 0;
 	_startTicks = _soundStartTicks = 0;
+	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
+	for (int idx = 0; idx < 4; ++idx)
+		_array3[idx] = new Object3();
+	Common::fill(&_array4[0], &_array4[4], 0);
+	Common::fill(&_array6[0], &_array6[4], 0);
+
 	_audioBuffer = new CAudioBuffer(176400);
 }
 
 CMusicRoomHandler::~CMusicRoomHandler() {
 	stop();
 	for (int idx = 0; idx < 4; ++idx)
-		delete _musicWaves[idx];
+		delete _array3[idx];
+
+	delete _audioBuffer;
 }
 
 CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int count) {
