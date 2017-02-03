@@ -84,6 +84,7 @@ private:
 
 	void updateAudio();
 	void fn1();
+	bool fn2();
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();

@@ -38,21 +38,21 @@ void CAudioBuffer::reset() {
 	_fieldC = _field10 = _buffer.size() / 2;
 }
 
-const byte *CAudioBuffer::getDataPtr1() const {
+byte *CAudioBuffer::getDataPtr1() {
 	return _flag ? &_buffer[_buffer.size() / 2] : &_buffer[0];
 }
 
-const byte *CAudioBuffer::getDataPtr2() const {
+byte *CAudioBuffer::getDataPtr2() {
 	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
 }
 
-const byte *CAudioBuffer::getPtr1() const {
-	const byte *ptr = getDataPtr1();
+byte *CAudioBuffer::getPtr1() {
+	byte *ptr = getDataPtr1();
 	return ptr + (_buffer.size() / 2 - _fieldC);
 }
 
-const byte *CAudioBuffer::getPtr2() const {
-	const byte *ptr = getDataPtr2();
+byte *CAudioBuffer::getPtr2() {
+	byte *ptr = getDataPtr2();
 	return ptr + (_buffer.size() / 2 - _field10);
 }
 

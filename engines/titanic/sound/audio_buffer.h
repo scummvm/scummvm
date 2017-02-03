@@ -42,10 +42,10 @@ public:
 	~CAudioBuffer();
 
 	void reset();
-	const byte *getDataPtr1() const;
-	const byte *getDataPtr2() const;
-	const byte *getPtr1() const;
-	const byte *getPtr2() const;
+	byte *getDataPtr1();
+	byte *getDataPtr2();
+	byte *getPtr1();
+	byte *getPtr2();
 	int getC() const { return _fieldC; }
 	int get10() const { return _field10; }
 	void setC(int val);

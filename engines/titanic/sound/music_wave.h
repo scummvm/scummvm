@@ -106,6 +106,8 @@ public:
 
 	void reset();
 	void setState(int val);
+
+	int setData(const byte *data, int count);
 };
 
 } // End of namespace Titanic

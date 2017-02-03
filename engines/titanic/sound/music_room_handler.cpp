@@ -201,7 +201,34 @@ bool CMusicRoomHandler::update() {
 }
 
 void CMusicRoomHandler::updateAudio() {
-	// TODO
+	_audioBuffer->enterCriticalSection();
+	int size = _audioBuffer->get10();
+	int count;
+	byte *ptr;
+
+	if (size > 0) {
+		byte *audioPtr = _audioBuffer->getPtr2();
+		Common::fill(audioPtr, audioPtr + size, 0);
+
+		for (int waveIdx = 0; waveIdx < 4; ++waveIdx) {
+			CMusicWave *musicWave = _musicWaves[waveIdx];
+
+			for (count = size, ptr = audioPtr; count > 0; ) {
+				int amount = musicWave->setData(ptr, count);
+				if (amount > 0) {
+					count -= amount;
+					ptr += amount;
+				} else if (!fn2()) {
+					--_field108;
+					break;
+				}
+			}
+		}
+		
+		_audioBuffer->set10(size);
+	}
+
+	_audioBuffer->leaveCriticalSection();
 }
 
 void CMusicRoomHandler::fn1() {
@@ -219,6 +246,11 @@ void CMusicRoomHandler::fn1() {
 			// TODO
 		}
 	}
+}
+
+bool CMusicRoomHandler::fn2() {
+	// TODO
+	return false;
 }
 
 } // End of namespace Titanic

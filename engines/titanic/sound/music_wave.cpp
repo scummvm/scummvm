@@ -267,4 +267,9 @@ void CMusicWave::setState(int val) {
 	_field44 = 0;
 }
 
+int CMusicWave::setData(const byte *data, int count) {
+	// TODO: Implement
+	return 0;
+}
+
 } // End of namespace Titanic
