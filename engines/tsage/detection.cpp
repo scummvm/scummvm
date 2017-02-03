@@ -69,7 +69,7 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 #include "engines/tsage/detection_tables.h"
 
 enum {
-	MAX_SAVES = 100
+	MAX_SAVES = 1000
 };
 
 class TSageMetaEngine : public AdvancedMetaEngine {

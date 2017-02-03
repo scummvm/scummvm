@@ -37,7 +37,7 @@
  * A special savefile named 'nippon.999' holds information on whether the user completed one or more parts of the game.
  */
 
-#define NUM_SAVESLOTS		100
+#define NUM_SAVESLOTS		999
 #define SPECIAL_SAVESLOT	999
 
 namespace Parallaction {

@@ -328,7 +328,7 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const FileMap &allFile
 	return *matched.begin();
 }
 
-int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
+int TinselMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	Tinsel::setNeedLoad();

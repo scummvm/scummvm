@@ -337,7 +337,7 @@ enum {
 	kCursorHeight = 42,
 	kTextHeight = 16,
 	kMaxProgramDataSize = 61440,
-	kMaxSaveStates = 100
+	kMaxSaveStates = 1000
 };
 
 enum StringType {

@@ -171,7 +171,7 @@ bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportCreationDate);
 }
 
-int HugoMetaEngine::getMaximumSaveSlot() const { return 99; }
+int HugoMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();

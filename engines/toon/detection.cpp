@@ -168,7 +168,7 @@ void ToonMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-int ToonMetaEngine::getMaximumSaveSlot() const { return 99; }
+int ToonMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();

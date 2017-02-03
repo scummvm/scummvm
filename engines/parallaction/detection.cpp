@@ -294,7 +294,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
+int ParallactionMetaEngine::getMaximumSaveSlot() const { return 998; }
 
 void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");

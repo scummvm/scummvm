@@ -191,7 +191,7 @@ enum {
 	kStartupLocationGame = 1,
 	kDefaultCharSpeechSoundCounter = 1,
 	kMaxSoundVolume = 127,
-	kLastSaveSlot = 99
+	kLastSaveSlot = 999
 };
 
 enum Verb {
