@@ -160,10 +160,16 @@ void Screen::showScreen(uint16 fileNum) {
 }
 
 void Screen::showScreen(uint8 *pScreen) {
-	_system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-	_system->updateScreen();
+        // this is used in order to track a bug.
+        // if the game would appear outside of the screen,
+        // show this warning instead, so we know there's something wrong.
+        if ((GAME_SCREEN_WIDTH <= FULL_SCREEN_WIDTH) && (GAME_SCREEN_HEIGHT <= FULL_SCREEN_HEIGHT)) {
+                _system->copyRectToScreen(pScreen, 320, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
+                _system->updateScreen();
+        } else {
+                warning("Screen::showScreen: game size bigger than screen size");
+        }
 }
-
 //convert 3 byte 0..63 rgb to 3 byte 0..255 rgb
 void Screen::convertPalette(uint8 *inPal, uint8* outPal) {
 	int i;
