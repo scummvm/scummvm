@@ -29,7 +29,7 @@
 
 namespace Sci {
 
-#define VOLUME_SHIFT 3
+#define VOLUME_SHIFT 0
 
 #define BASE_NOTE 129	// A10
 #define BASE_OCTAVE 10	// A10, as I said
