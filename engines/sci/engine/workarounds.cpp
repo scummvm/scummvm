@@ -876,7 +876,7 @@ const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 
 SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin) {
 	const EngineState *state = g_sci->getEngineState();
-	ExecStack *lastCall = state->xs;
+	const ExecStack *lastCall = state->xs;
 	const SciGameId gameId = g_sci->getGameId();
 
 	*trackOrigin = state->getCurrentCallOrigin();

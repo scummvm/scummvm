@@ -390,26 +390,29 @@ SciCallOrigin EngineState::getCurrentCallOrigin() const {
 	const Script *localScript = _segMan->getScriptIfLoaded(xs->local_segment);
 	int curScriptNr = localScript->getScriptNumber();
 
+	Selector debugSelector = xs->debugSelector;
+	int debugExportId = xs->debugExportId;
+
 	if (xs->debugLocalCallOffset != -1) {
 		// if lastcall was actually a local call search back for a real call
 		Common::List<ExecStack>::const_iterator callIterator = _executionStack.end();
 		while (callIterator != _executionStack.begin()) {
 			callIterator--;
 			const ExecStack &loopCall = *callIterator;
-			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
-				xs->debugSelector = loopCall.debugSelector;
-				xs->debugExportId = loopCall.debugExportId;
+			if (loopCall.debugSelector != -1 || loopCall.debugExportId != -1) {
+				debugSelector = loopCall.debugSelector;
+				debugExportId = loopCall.debugExportId;
 				break;
 			}
 		}
 	}
 
 	if (xs->type == EXEC_STACK_TYPE_CALL) {
-		if (xs->debugSelector != -1) {
-			curMethodName = g_sci->getKernel()->getSelectorName(xs->debugSelector);
-		} else if (xs->debugExportId != -1) {
+		if (debugSelector != -1) {
+			curMethodName = g_sci->getKernel()->getSelectorName(debugSelector);
+		} else if (debugExportId != -1) {
 			curObjectName = "";
-			curMethodName = Common::String::format("export %d", xs->debugExportId);
+			curMethodName = Common::String::format("export %d", debugExportId);
 		}
 	}
 
