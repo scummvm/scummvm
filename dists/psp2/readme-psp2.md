@@ -41,8 +41,7 @@ The dependencies needed to build it are :
 - libvita2d from https://github.com/xerpi/libvita2d
 - SDL2 from https://github.com/Cpasjuste/SDL-Vita
 - libmad from https://github.com/Cpasjuste/libmad-psp2
-- freetype2 from https://github.com/vitasdk/vdpm
-- libvorbis, libogg, flac, libpng, zlib from https://github.com/Cpasjuste/vita_portlibs
+- libvorbis, libogg, flac, libpng, zlib, freetype2 from https://github.com/Cpasjuste/vita_portlibs
 - ScummVM from https://github.com/Cpasjuste/scummvm
 - cp backends/platform/sdl/psp2/freetype-config /usr/local/vitasdk/arm-vita-eabi/bin/
 
