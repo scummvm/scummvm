@@ -2663,7 +2663,15 @@ case $_host_os in
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
-		_optimization_level=-O1
+		if test "$_debug_build" = no; then
+			# TODO: > -O1 makes a lot of games to not work (dott, fotaq, fullt, indi, sam..)
+			_optimization_level=-O1
+		fi
+		if test "$_debug_build" = yes; then
+			_optimization_level=-O0
+			append_var DEFINES "-D__PSP2_DEBUG__"
+			append_var LIBS "-lpsp2shell"
+		fi
 		add_line_to_config_mk 'PSP2 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
@@ -3347,10 +3355,10 @@ case $_backend in
 		;;
 	psp2)
 		# There is no sdl-config in the PSP2 SDK so we don't use find_sdlconfig here.
-		append_var LIBS "-lpsp2shell -lpthread -lSDL2 -lvita2d"
+		append_var LIBS "-lSDL2 -lvita2d -lSceCommonDialog_stub"
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
-		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceKernel_stub -lSceAppMgr_stub"
+		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub"
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		add_line_to_config_mk "USE_SDL2 = 1"

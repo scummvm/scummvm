@@ -1,14 +1,13 @@
 DATE := $(shell date +%y-%m-%d)
 
 psp2vpk: $(EXECUTABLE)
-	$(STRIP) -g $(EXECUTABLE)
 	rm -rf psp2pkg
 	rm -f $(EXECUTABLE)-$(DATE).vpk
 	mkdir -p psp2pkg/sce_sys/livearea/contents
 	mkdir -p psp2pkg/data/
 	mkdir -p psp2pkg/doc/
 	vita-elf-create $(EXECUTABLE) $(EXECUTABLE).velf
-	vita-make-fself $(EXECUTABLE).velf psp2pkg/eboot.bin
+	vita-make-fself -c $(EXECUTABLE).velf psp2pkg/eboot.bin
 	vita-mksfoex -s TITLE_ID=VSCU00001 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
 	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/
 	cp $(srcdir)/dists/psp2/template.xml psp2pkg/sce_sys/livearea/contents/

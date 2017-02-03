@@ -33,10 +33,6 @@
 #include "common/util.h"
 #include "common/events.h"
 
-#ifdef PSP2DEBUG
-#include <psp2shell.h>
-#endif
-
 #define JOY_DEADZONE 3200
 #define JOY_ANALOG
 #define JOY_XAXIS 0

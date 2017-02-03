@@ -22,25 +22,24 @@
 
 #include <psp2/kernel/processmgr.h>
 #include <psp2/power.h>
-#include "common/scummsys.h"
 
+#include "common/scummsys.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-#include <vita2d.h>
-#include <psp2shell.h>
-
-int _newlib_heap_size_user = 128 * 1024 * 1024;
+int _newlib_heap_size_user = 192 * 1024 * 1024;
 
 int main(int argc, char *argv[]) {
 
-#if PSP2DEBUG
-	psp2shell_init(3333, 0);
+#ifdef __PSP2_DEBUG__
+	psp2shell_init(3333, 10);
 #endif
 
-	scePowerSetGpuClockFrequency(222);
 	scePowerSetArmClockFrequency(444);
+    scePowerSetBusClockFrequency(222);
+    scePowerSetGpuClockFrequency(222);
+    scePowerSetGpuXbarClockFrequency(166);
 	
 	// Create our OSystem instance
 	g_system = new OSystem_PSP2();
@@ -59,7 +58,7 @@ int main(int argc, char *argv[]) {
 	// Free OSystem
 	delete (OSystem_PSP2 *)g_system;
 	
-#if PSP2DEBUG
+#ifdef __PSP2_DEBUG__
 	psp2shell_exit();
 #endif
 

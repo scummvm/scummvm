@@ -36,7 +36,7 @@
 #include "backends/fs/psp2/psp2-dirent.h"
 #include <sys/stat.h>
 
-#ifdef PSP2DEBUG
+#ifdef __PSP2_DEBUG__
 #include <psp2shell.h>
 #endif
 
@@ -56,7 +56,7 @@ OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
 
 void OSystem_PSP2::init() {
 	
-#if PSP2DEBUG
+#if __PSP2_DEBUG__
 	gDebugLevel = 3;
 #endif
 	
@@ -91,7 +91,7 @@ void OSystem_PSP2::initBackend() {
 }
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
-#if PSP2DEBUG
+#if __PSP2_DEBUG__
 	psp2shell_print(message);
 #endif
 }
