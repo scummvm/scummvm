@@ -40,7 +40,11 @@ The dependencies needed to build it are :
 - The toolchain from https://github.com/vitadev/vdpm
 - libvita2d from https://github.com/xerpi/libvita2d
 - SDL2 from https://github.com/Cpasjuste/SDL-Vita
+- libmad from https://github.com/Cpasjuste/libmad-psp2
+- freetype2 from https://github.com/vitasdk/vdpm
+- libvorbis, libogg, flac, libpng, zlib from https://github.com/Cpasjuste/vita_portlibs
 - ScummVM from https://github.com/Cpasjuste/scummvm
+- cp backends/platform/sdl/psp2/freetype-config /usr/local/vitasdk/arm-vita-eabi/bin/
 
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :
 
