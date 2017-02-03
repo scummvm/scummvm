@@ -38,9 +38,7 @@ This port of ScummVM to the PSP2 is based on SDL2. It uses the open source SDK V
 The dependencies needed to build it are :
 
 - The toolchain from https://github.com/vitadev/vdpm
-- zlib, libpng, libjpeg-turbo, libogg, libvorbis, flac, freetype from https://github.com/Cpasjuste/vita_portlibs
-- libmad from https://github.com/Cpasjuste/libmad-psp2
-- libvita2d from https://github.com/xerpi/libvita2d
+- zlib, libpng, libjpeg-turbo, libogg, libvorbis, flac, libmad, freetype libvita2d from https://github.com/vitadev/vdpm
 - SDL2 from https://github.com/Cpasjuste/SDL-Vita
 - ScummVM from https://github.com/Cpasjuste/scummvm
 
