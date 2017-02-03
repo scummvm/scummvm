@@ -43,7 +43,6 @@ The dependencies needed to build it are :
 - libmad from https://github.com/Cpasjuste/libmad-psp2
 - libvorbis, libogg, flac, libpng, zlib, freetype2 from https://github.com/Cpasjuste/vita_portlibs
 - ScummVM from https://github.com/Cpasjuste/scummvm
-- cp backends/platform/sdl/psp2/freetype-config /usr/local/vitasdk/arm-vita-eabi/bin/
 
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :
 
