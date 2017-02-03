@@ -77,6 +77,7 @@ void MacText::splitString(Common::String &str) {
 	int curLine = _textLines.size() - 1;
 	int curChunk = _textLines[curLine].chunks.size() - 1;
 	bool nextChunk = false;
+	MacFontRun previousFormatting;
 
 	while (*s) {
 		for (uint i = 0; i < _textLines.size(); i++) {
@@ -107,7 +108,11 @@ void MacText::splitString(Common::String &str) {
 				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
+				previousFormatting = _currentFormatting;
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
+
+				if (curLine == 0 && curChunk == 0 && tmp.empty())
+					previousFormatting = _currentFormatting;
 
 				nextChunk = true;
 			}
@@ -123,37 +128,34 @@ void MacText::splitString(Common::String &str) {
 		if (*s == '\r' || *s == '\n' || nextChunk) {
 			Common::Array<Common::String> text;
 
+			if (!nextChunk)
+				previousFormatting = _currentFormatting;
+
 			int w = getLineWidth(curLine, true);
 
-			_font->wordWrapText(tmp, _maxWidth, text, w);
+			previousFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
 			tmp.clear();
 
 			if (text.size()) {
-				if (nextChunk) {
-					_textLines[curLine].chunks[curChunk].text += text[0];
-					curChunk++;
-
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-
-					if (_text.size() == curLine)
-						_text.push_back(text[0]);
-					else
-						_text[curLine] += text[0];
-
-					nextChunk = false;
-
-					continue;
-				}
-
 				for (uint i = 0; i < text.size(); i++) {
 					_text.push_back(text[i]);
 
 					_textLines[curLine].chunks[curChunk].text = text[i];
 
-					curLine++;
-					_textLines.resize(curLine + 1);
+					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
+						curLine++;
+						_textLines.resize(curLine + 1);
+						_textLines[curLine].chunks.push_back(previousFormatting);
+						curChunk = 0;
+					}
+				}
+
+				if (nextChunk) {
+					curChunk++;
+
 					_textLines[curLine].chunks.push_back(_currentFormatting);
-					curChunk = 0;
+				} else {
+					_textLines[curLine].chunks[0] = _currentFormatting;
 				}
 			} else {
 				if (nextChunk) { // No text, replacing formatting
@@ -176,7 +178,7 @@ void MacText::splitString(Common::String &str) {
 		Common::Array<Common::String> text;
 		int w = getLineWidth(curLine, true);
 
-		_font->wordWrapText(tmp, _maxWidth, text, w);
+		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
 
 		_textLines[curLine].chunks[curChunk].text = text[0];
 
