@@ -125,7 +125,7 @@ NonBlockingSwapBuffers=n
 # SEARCH and CALL by default return same keycode as DPAD_CENTER - one of those keys is available on most devices
 # Use word NO_REMAP if you want to preserve native functionality for certain key (volume keys are 3-rd and 4-th)
 # Keys: TOUCHSCREEN (works only when AppUsesMouse=n), DPAD_CENTER/SEARCH, VOLUMEUP, VOLUMEDOWN, MENU, BACK, CAMERA
-RedefinedKeys="SPACE RETURN NO_REMAP NO_REMAP ESCAPE LCTRL F7 F4 F2 MOUSE_LEFT"
+RedefinedKeys="SPACE RETURN NO_REMAP NO_REMAP ESCAPE F13 F7 F4 F2 MOUSE_LEFT"
 
 # Number of virtual keyboard keys (currently 6 is maximum)
 AppTouchscreenKeyboardKeysAmount=0
@@ -134,10 +134,10 @@ AppTouchscreenKeyboardKeysAmount=0
 AppTouchscreenKeyboardKeysAmountAutoFire=0
 
 # Redefine on-screen keyboard keys to SDL keysyms - 6 keyboard keys + 4 multitouch gestures (zoom in/out and rotate left/right)
-RedefinedKeysScreenKb="MOUSE_RIGHT F7 LCTRL"
+RedefinedKeysScreenKb="MOUSE_RIGHT F7 F13"
 
 # Names for on-screen keyboard keys, such as Fire, Jump, Run etc, separated by spaces, they are used in SDL config menu
-RedefinedKeysScreenKbNames="MOUSE_RIGHT F7 LCTRL"
+RedefinedKeysScreenKbNames="MOUSE_RIGHT F7 F13"
 
 # On-screen keys theme
 # 0 = Ultimate Droid by Sean Stieber (green, with gamepad joystick)
@@ -148,7 +148,7 @@ TouchscreenKeysTheme=1
 
 # Redefine gamepad keys to SDL keysyms, button order is:
 # A B X Y L1 R1 L2 R2 LThumb RThumb
-RedefinedKeysGamepad="MOUSE_RIGHT F7 LCTRL ESCAPE F5 SPACE RETURN MOUSE_LEFT"
+RedefinedKeysGamepad="MOUSE_RIGHT F7 F13 ESCAPE F5 SPACE RETURN MOUSE_LEFT"
 
 # How long to show startup menu button, in msec, 0 to disable startup menu
 StartupMenuButtonTimeout=3000
@@ -165,7 +165,7 @@ FirstStartMenuOptions=''
 
 # Enable multi-ABI binary, with hardware FPU support - it will also work on old devices,
 # but .apk size is 2x bigger (y) / (n) / (x86) / (all)
-MultiABI="armeabi"
+MultiABI="armeabi armeabi-v7a arm64-v8a x86 x86_64 mips"
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
 AppMinimumRAM=256

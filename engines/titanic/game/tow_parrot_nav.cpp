@@ -44,7 +44,7 @@ bool CTOWParrotNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	actMsg.execute("PerchedParrot");
 
 	CString clipString = "_EXIT,36,1,N,9,3,N";
-	if (CParrot::_v4)
+	if (CParrot::_state != PARROT_IN_CAGE)
 		clipString += 'a';
 	changeView("ParrotLobby.Node 3.N", clipString);
 

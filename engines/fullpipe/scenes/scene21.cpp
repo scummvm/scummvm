@@ -129,6 +129,8 @@ int sceneHandler21(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (g_vars->scene21_pipeIsOpen && !g_vars->scene21_wiggleTrigger)

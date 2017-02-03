@@ -65,6 +65,8 @@ bool CCallPellerator::PETActivateMsg(CPETActivateMsg *msg) {
 	if (msg->_name == "Pellerator") {
 		if (petDoorOrBellbotPresent()) {
 			petDisplayMessage(BOT_BLOCKING_PELLERATOR);
+		} else if (name == "FrozenArboretum.Node 4.E") {
+			petDisplayMessage(FROZEN_PELLERATOR);
 		} else if (name == "Bar.Node 1.S") {
 			changeView("Pellerator.Node 1.S");
 		} else {

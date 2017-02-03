@@ -25,20 +25,46 @@
 
 #include "graphics/fontman.h"
 
+namespace Common {
+	class SeekableReadStream;
+	class MacResManager;
+}
+
 namespace Graphics {
+
+class MacFONTFont;
 
 enum {
 	kMacFontNonStandard = -1,
-	kMacFontChicago = 0
+	kMacFontChicago = 0,
+	kMacFontGeneva = 1,
+	kMacFontNewYork = 2,
+	kMacFontMonaco = 4,
+	kMacFontVenice = 5,
+	kMacFontLondon = 6,
+	kMacFontAthens = 7,
+	kMacFontSanFrancisco = 8,
+	kMacFontCairo = 11,
+	kMacFontLosAngeles = 12,
+	kMacFontPalatino = 16,
+	kMacFontTimes = 20,
+	kMacFontHelvetica = 21,
+	kMacFontCourier = 22,
+	kMacFontSymbol = 23
 };
 
 enum {
 	kMacFontRegular,
-	kMacFontBold,
-	kMacFontItalic
+	kMacFontBold = 1,
+	kMacFontItalic = 2,
+	kMacFontUnderline = 4,
+	kMacFontOutline = 8,
+	kMacFontShadow = 16,
+	kMacFontCondense = 32,
+	kMacFontExtend = 64
 };
 
-class BdfFont;
+class Font;
 
 class MacFont {
 public:
@@ -48,7 +74,7 @@ public:
 		_slant = slant;
 		_fallback = fallback;
 		_generated = false;
-		_bdfFont = NULL;
+		_font = NULL;
 	}
 
 	int getId() { return _id; };
@@ -60,8 +86,8 @@ public:
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
-	BdfFont *getBdfFont() { return _bdfFont; }
-	void setBdfFont(BdfFont *bdfFont) { _bdfFont = bdfFont; }
+	MacFONTFont *getFont() { return _font; }
+	void setFont(MacFONTFont *font) { _font = font; }
 
 private:
 	int _id;
@@ -71,7 +97,7 @@ private:
 	FontManager::FontUsage _fallback;
 
 	bool _generated;
-	BdfFont *_bdfFont;
+	MacFONTFont *_font;
 };
 
 class MacFontManager {
@@ -91,9 +117,6 @@ public:
 	 */
 	const Font *getFont(MacFont macFont);
 
-private:
-	void loadFonts();
-
 	/**
 	 * Return font name from standard ID
 	 * @param id ID of the font
@@ -102,6 +125,18 @@ private:
 	 */
 	const char *getFontName(int id, int size, int slant = kMacFontRegular);
 	const char *getFontName(MacFont &font);
+	int getFontIdByName(Common::String name);
+
+	void loadFonts(Common::SeekableReadStream *stream);
+	void loadFonts(const Common::String &fileName);
+	void loadFonts(Common::MacResManager *fontFile);
+
+	void registerFontMapping(uint16 id, Common::String name);
+	void clearFontMapping();
+
+private:
+	void loadFontsBDF();
+	void loadFonts();
 
 	void generateFontSubstitute(MacFont &macFont);
 	void generateFont(MacFont &toFont, MacFont &fromFont);
@@ -110,7 +145,10 @@ private:
 	bool _builtInFonts;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
-	Common::HashMap<Common::String, int> _fontNames;
+	Common::HashMap<Common::String, int> _fontIds;
+
+	Common::HashMap<uint16, Common::String> _extraFontNames;
+	Common::HashMap<Common::String, int> _extraFontIds;
 
 	int parseFontSlant(Common::String slant);
 };

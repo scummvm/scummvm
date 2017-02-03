@@ -27,6 +27,7 @@
 #include "titanic/messages/pet_messages.h"
 #include "titanic/game_manager.h"
 #include "titanic/game_state.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -37,6 +38,7 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 	ON_MESSAGE(MouseDragEndMsg)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(MouseDoubleClickMsg)
+	ON_MESSAGE(MouseWheelMsg)
 	ON_MESSAGE(KeyCharMsg)
 	ON_MESSAGE(VirtualKeyCharMsg)
 	ON_MESSAGE(TimerMsg)
@@ -154,7 +156,7 @@ void CPetControl::postLoad() {
 	if (!_remoteTargetName.empty() && root)
 		_remoteTarget = dynamic_cast<CGameObject *>(root->findByName(_remoteTargetName));
 
-	setArea(_currentArea);
+	setArea(_currentArea, true);
 	loaded();
 }
 
@@ -184,7 +186,9 @@ void CPetControl::resetRemoteTarget() {
 }
 
 void CPetControl::setActiveNPC(CTrueTalkNPC *npc) {
-	if (_activeNPC == npc) {
+	if (_activeNPC != npc) {
+		_activeNPC = npc;
+
 		if (_activeNPC) {
 			_activeNPCName = npc->getName();
 			_conversations.displayNPCName(npc);
@@ -207,8 +211,8 @@ void CPetControl::resetActiveNPC() {
 	_activeNPCName = "";
 }
 
-PetArea CPetControl::setArea(PetArea newArea) {
-	if (newArea == _currentArea || !isAreaActive())
+PetArea CPetControl::setArea(PetArea newArea, bool forceChange) {
+	if ((!forceChange && newArea == _currentArea) || !isAreaUnlocked())
 		return _currentArea;
 
 	// Signal the currently active area that it's being left
@@ -267,7 +271,7 @@ bool CPetControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		return false;
 
 	bool result = false;
-	if (isAreaActive())
+	if (isAreaUnlocked())
 		result = _frame.MouseButtonDownMsg(msg);
 
 	if (!result) {
@@ -298,7 +302,7 @@ bool CPetControl::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 		return false;
 
 	bool result = false;
-	if (isAreaActive())
+	if (isAreaUnlocked())
 		result = _frame.MouseButtonUpMsg(msg);
 
 	if (!result)
@@ -313,6 +317,13 @@ bool CPetControl::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 		return false;
 
 	return _sections[_currentArea]->MouseDoubleClickMsg(msg);
+}
+
+bool CPetControl::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (!containsPt(msg->_mousePos) || isInputLocked())
+		return false;
+
+	return _sections[_currentArea]->MouseWheelMsg(msg);
 }
 
 bool CPetControl::KeyCharMsg(CKeyCharMsg *msg) {
@@ -377,7 +388,7 @@ bool CPetControl::checkDragEnd(CGameObject *item) const {
 }
 
 void CPetControl::displayMessage(StringId stringId, int param) const {
-	CString msg = CString::format(_strings[stringId].c_str(), param);
+	CString msg = CString::format(g_vm->_strings[stringId].c_str(), param);
 	_sections[_currentArea]->displayMessage(msg);
 }
 
@@ -388,7 +399,7 @@ void CPetControl::displayMessage(const CString &str, int param) const {
 
 void CPetControl::addTranslation(StringId id1, StringId id2) {
 	setArea(PET_TRANSLATION);
-	_translation.addTranslation(_strings[id1], _strings[id2]);
+	_translation.addTranslation(g_vm->_strings[id1], g_vm->_strings[id2]);
 }
 
 void CPetControl::clearTranslation() {
@@ -461,7 +472,7 @@ void CPetControl::moveToHiddenRoom(CTreeItem *item) {
 	CRoomItem *room = getHiddenRoom();
 	if (room) {
 		item->detach();
-		room->addUnder(item);
+		item->addUnder(room);
 	}
 }
 
@@ -594,6 +605,7 @@ void CPetControl::onSummonBot(const CString &name, int val) {
 
 		COnSummonBotMsg summonMsg(val);
 		summonMsg.execute(bot);
+		makeDirty();
 	}
 }
 
@@ -609,10 +621,13 @@ bool CPetControl::dismissBot(const CString &name) {
 	CDismissBotMsg dismissMsg;
 	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
 			treeItem = treeItem->scan(view)) {
-		if (!treeItem->getName().compareToIgnoreCase(name))
-			dismissMsg.execute(treeItem);
-		else
-			result = true;
+		CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
+		if (obj) {
+			if (!obj->getName().compareToIgnoreCase(name))
+				result = true;
+			else
+				dismissMsg.execute(treeItem);
+		}
 	}
 
 	return result;
@@ -630,7 +645,7 @@ bool CPetControl::isDoorOrBellbotPresent() const {
 			treeItem = treeItem->scan(view)) {
 		CString name = treeItem->getName();
 		if (dynamic_cast<CGameObject *>(treeItem) &&
-				(name.contains("Doorbot") || name.contains("BellBot")))
+				(name.containsIgnoreCase("Doorbot") || name.containsIgnoreCase("BellBot")))
 			return true;
 	}
 
@@ -672,7 +687,7 @@ bool CPetControl::isSuccUBusActive() const {
 		return false;
 
 	CString name = getName();
-	return name.contains("Succubus") || name.contains("Sub");
+	return name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub");
 }
 
 void CPetControl::convResetDials(int flag) {
@@ -684,11 +699,11 @@ void CPetControl::resetDials0() {
 	_conversations.resetDials0();
 }
 
-int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {
+PassengerClass CPetControl::getMailDestClass(const CRoomFlags &roomFlags) const {
 	if (!roomFlags.isSuccUBusRoomFlags())
 		return roomFlags.getPassengerClassNum();
 
-	return roomFlags.getSuccUBusNum(roomFlags.getSuccUBusRoomName());
+	return roomFlags.getSuccUBusClass(roomFlags.getSuccUBusRoomName());
 }
 
 void CPetControl::starsSetButtons(int val1, int val2) {

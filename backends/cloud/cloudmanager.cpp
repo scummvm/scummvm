@@ -272,6 +272,8 @@ void CloudManager::connectStorage(uint32 index, Common::String code) {
 	// when the token is received, they call replaceStorage()
 	// or removeStorage(), if some error occurred
 	// thus, no memory leak happens
+
+	// FIXME: storage is set, but never used. Should it be returned from this function for class variable _storages?
 }
 
 Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {

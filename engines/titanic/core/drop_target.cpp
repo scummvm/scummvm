@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(CDropTarget, CGameObject)
 END_MESSAGE_MAP()
 
 CDropTarget::CDropTarget() : CGameObject(), _itemFrame(0),
-		_itemMatchSize(0), _showItem(false), _fieldF4(0), _dropFrame(0),
+		_itemMatchStartsWith(false), _showItem(false), _dropEnabled(false), _dropFrame(0),
 		_dragFrame(0), _dragCursorId(CURSOR_ARROW), _dropCursorId(CURSOR_HAND),
 		_clipFlags(20) {
 }
@@ -44,11 +44,11 @@ void CDropTarget::save(SimpleFile *file, int indent) {
 	file->writePoint(_pos1, indent);
 	file->writeNumberLine(_itemFrame, indent);
 	file->writeQuotedLine(_itemMatchName, indent);
-	file->writeNumberLine(_itemMatchSize, indent);
+	file->writeNumberLine(_itemMatchStartsWith, indent);
 	file->writeQuotedLine(_soundName, indent);
 	file->writeNumberLine(_showItem, indent);
 	file->writeQuotedLine(_itemName, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_dropEnabled, indent);
 	file->writeNumberLine(_dropFrame, indent);
 	file->writeNumberLine(_dragFrame, indent);
 	file->writeQuotedLine(_clipName, indent);
@@ -64,11 +64,11 @@ void CDropTarget::load(SimpleFile *file) {
 	_pos1 = file->readPoint();
 	_itemFrame = file->readNumber();
 	_itemMatchName = file->readString();
-	_itemMatchSize = file->readNumber();
+	_itemMatchStartsWith = file->readNumber();
 	_soundName = file->readString();
 	_showItem = file->readNumber();
 	_itemName = file->readString();
-	_fieldF4 = file->readNumber();
+	_dropEnabled = file->readNumber();
 	_dropFrame = file->readNumber();
 	_dragFrame = file->readNumber();
 	_clipName = file->readString();
@@ -87,7 +87,7 @@ bool CDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 		}
 	}
 
-	if (!msg->_item->isEquals(_itemMatchName, _itemMatchSize))
+	if (!msg->_item->isEquals(_itemMatchName, _itemMatchStartsWith))
 		return false;
 
 	msg->_item->detach();
@@ -113,12 +113,13 @@ bool CDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 }
 
 bool CDropTarget::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	CTreeItem *dragItem = msg->_dragItem;
 	if (!checkStartDragging(msg))
 		return false;
-	//msg->_dragItem = msg->_dragItem;
+	msg->_dragItem = dragItem;
 
 	CGameObject *obj = dynamic_cast<CGameObject *>(findByName(_itemName));
-	if (_itemName.empty() || _fieldF4 || !obj)
+	if (_itemName.empty() || _dropEnabled || !obj)
 		return false;
 
 	CDropZoneLostObjectMsg lostMsg;
@@ -134,7 +135,7 @@ bool CDropTarget::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		msg->_dragItem = obj;
 		CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
 		passMsg.execute(obj);
-		setVisible(true);
+		obj->setVisible(true);
 	}
 
 	return true;
@@ -160,7 +161,7 @@ bool CDropTarget::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CDropTarget::VisibleMsg(CVisibleMsg *msg) {
 	setVisible(msg->_visible);
-	_fieldF4 = !msg->_visible;
+	_dropEnabled = !msg->_visible;
 	return true;
 }
 

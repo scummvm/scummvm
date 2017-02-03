@@ -39,7 +39,7 @@ void CPlayerMeetsParrot::load(SimpleFile *file) {
 }
 
 bool CPlayerMeetsParrot::EnterRoomMsg(CEnterRoomMsg *msg) {
-	stateSet24();
+	stateSetParrotMet();
 	return true;
 }
 

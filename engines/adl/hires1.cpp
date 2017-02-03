@@ -98,7 +98,7 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro() const;
+	void runIntro();
 	void init();
 	void initGameState();
 	void restartGame();
@@ -126,7 +126,7 @@ private:
 	} _gameStrings;
 };
 
-void HiRes1Engine::runIntro() const {
+void HiRes1Engine::runIntro() {
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
 
 	stream->seek(IDI_HR1_OFS_LOGO_0);
@@ -318,7 +318,8 @@ void HiRes1Engine::initGameState() {
 	stream->seek(IDI_HR1_OFS_ITEMS);
 	byte id;
 	while ((id = stream->readByte()) != 0xff) {
-		Item item = Item();
+		Item item;
+
 		item.id = id;
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
@@ -428,7 +429,7 @@ void HiRes1Engine::loadRoom(byte roomNr) {
 
 void HiRes1Engine::showRoom() {
 	_state.curPicture = getCurRoom().curPicture;
-	clearScreen();
+	_graphics->clearScreen();
 	loadRoom(_state.room);
 
 	if (!_state.isDark) {

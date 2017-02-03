@@ -51,7 +51,7 @@ void CSpeechCentre::load(SimpleFile *file) {
 
 bool CSpeechCentre::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 	if (_field13C == 1 && _season == "Autumn")
-		_fieldE0 = true;
+		_canTake = true;
 	return true;
 }
 

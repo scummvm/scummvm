@@ -32,18 +32,8 @@ class CGameManager;
 class CSound;
 
 class CMusicRoom {
-	struct Controls {
-		int _speedControl;
-		int _pitchControl;
-		int _directionControl;
-		int _inversionControl;
-		int _muteControl;
-
-		Controls() : _speedControl(0), _pitchControl(0), _directionControl(0),
-			_inversionControl(0), _muteControl(0) {}
-	};
 private:
-	Common::Array<Controls> _controls;
+	MusicRoomInstrument _instruments[4];
 public:
 	static CMusicRoomHandler *_musicHandler;
 public:
@@ -63,16 +53,45 @@ public:
 	 */
 	void destroyMusicHandler();
 
-	void setSpeedControl(MusicControlArea index, int val) { _controls[index]._speedControl = val; }
-	void setPitchControl(MusicControlArea index, int val) { _controls[index]._pitchControl = val; }
-	void setDirectionControl(MusicControlArea index, int val) { _controls[index]._directionControl = val; }
-	void setInversionControl(MusicControlArea index, int val) { _controls[index]._inversionControl = val; }
-	void setMuteControl(MusicControlArea index, int val) { _controls[index]._muteControl = val; }
+	/**
+	 * Sets the speed control for a given instrument
+	 */
+	void setSpeedControl(MusicInstrument instrument, int val) {
+		_instruments[instrument]._speedControl = val;
+	}
 
 	/**
-	 * Start playing a given music number
+	 * Sets the pitch control for a given instrument
 	 */
-	void startMusic(int volume = 100);
+	void setPitchControl(MusicInstrument instrument, int val) {
+		_instruments[instrument]._pitchControl = val;
+	}
+
+	/**
+	 * Sets the direction control for a given instrument
+	 */
+	void setDirectionControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._directionControl = val;
+	}
+
+	/**
+	 * Sets the inversion control for a given instrument
+	 */
+	void setInversionControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._inversionControl = val;
+	}
+
+	/**
+	 * Sets the mute control for a given instrument
+	 */
+	void setMuteControl(MusicInstrument instrument, bool val) {
+		_instruments[instrument]._muteControl = val;
+	}
+
+	/**
+	 * Sets up the music controls
+	 */
+	void setupMusic(int volume);
 
 	/**
 	 * Stop playing music

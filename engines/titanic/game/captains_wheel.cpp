@@ -99,7 +99,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		}
 	} else if (msg->_action == "Go") {
 		if (!_fieldE0) {
-			inc54();
+			incTransitions();
 			_fieldE0 = false;
 			_fieldE4 = 1;
 
@@ -109,7 +109,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		}
 	} else if (msg->_action == "Cruise") {
 		if (_fieldE0) {
-			inc54();
+			incTransitions();
 			_fieldE0 = false;
 			_fieldE4 = 2;
 

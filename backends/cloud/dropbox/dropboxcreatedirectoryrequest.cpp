@@ -52,8 +52,8 @@ void DropboxCreateDirectoryRequest::start() {
 	_ignoreCallback = false;
 
 	Networking::JsonCallback innerCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::JsonResponse>(this, &DropboxCreateDirectoryRequest::responseCallback);
-	Networking::ErrorCallback errorCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::ErrorResponse>(this, &DropboxCreateDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, DROPBOX_API_CREATE_FOLDER);
+	Networking::ErrorCallback errorResponseCallback = new Common::Callback<DropboxCreateDirectoryRequest, Networking::ErrorResponse>(this, &DropboxCreateDirectoryRequest::errorCallback);
+	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, DROPBOX_API_CREATE_FOLDER);
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Content-Type: application/json");
 

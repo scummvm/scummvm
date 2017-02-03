@@ -228,19 +228,19 @@ Common::String NetworkReadStream::responseHeaders() const {
 }
 
 uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
-	uint32 size = _sendingContentsSize - _sendingContentsPos;
-	if (size > maxSize)
-		size = maxSize;
-	for (uint32 i = 0; i < size; ++i) {
+	uint32 sendSize = _sendingContentsSize - _sendingContentsPos;
+	if (sendSize > maxSize)
+		sendSize = maxSize;
+	for (uint32 i = 0; i < sendSize; ++i) {
 		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
 	}
-	_sendingContentsPos += size;
-	return size;
+	_sendingContentsPos += sendSize;
+	return sendSize;
 }
 
-uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 size) {
-	_responseHeaders += Common::String(buffer, size);
-	return size;
+uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 bufferSize) {
+	_responseHeaders += Common::String(buffer, bufferSize);
+	return bufferSize;
 }
 
 double NetworkReadStream::getProgress() const {

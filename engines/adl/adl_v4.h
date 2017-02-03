@@ -25,47 +25,70 @@
 
 #include "adl/adl_v3.h"
 
-namespace Common {
-class RandomSource;
-}
+namespace Adl {
 
-struct DiskOffset {
+// Base track/sector for a region
+struct RegionLocation {
 	byte track;
 	byte sector;
 };
 
-namespace Adl {
+// Location of the 7 initial data blocks, relative to RegionLocation
+struct RegionInitDataOffset {
+	byte track;
+	byte sector;
+	byte offset;
+	byte volume;
+};
 
 class AdlEngine_v4 : public AdlEngine_v3 {
 public:
-	virtual ~AdlEngine_v4() { }
+	virtual ~AdlEngine_v4();
 
 protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
-	virtual void setupOpcodeTables();
+	virtual void gameLoop();
+	virtual void loadState(Common::ReadStream &stream);
+	virtual void saveState(Common::WriteStream &stream);
 	virtual Common::String loadMessage(uint idx) const;
-	Common::String getItemDescription(const Item &item) const;
+	virtual Common::String getItemDescription(const Item &item) const;
+	virtual void switchRegion(byte region);
+	virtual void switchRoom(byte roomNr);
 
 	// AdlEngine_v2
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
 
-	void applyDiskOffset(byte &track, byte &sector) const;
+	DiskImage *loadDisk(byte volume) const;
+	void insertDisk(byte volume);
+	void loadRegionLocations(Common::ReadStream &stream, uint regions);
+	void loadRegionInitDataOffsets(Common::ReadStream &stream, uint regions);
+	void initRegions(const byte *roomsPerRegion, uint regions);
+	void fixupDiskOffset(byte &track, byte &sector) const;
+	void loadRegion(byte region);
+	void loadItemPicIndex(Common::ReadStream &stream, uint items);
+	void backupRoomState(byte room);
+	void restoreRoomState(byte room);
+	void backupVars();
+	void restoreVars();
 
-	int o4_isVarGT(ScriptEnv &e);
 	int o4_isItemInRoom(ScriptEnv &e);
-	int o4_isNounNotInRoom(ScriptEnv &e);
-	int o4_skipOneCommand(ScriptEnv &e);
-	int o4_listInv(ScriptEnv &e);
+	int o4_isVarGT(ScriptEnv &e);
 	int o4_moveItem(ScriptEnv &e);
-	int o4_dummy(ScriptEnv &e);
-	int o4_setTextMode(ScriptEnv &e);
-	int o4_setDisk(ScriptEnv &e);
-	int o4_sound(ScriptEnv &e);
+	int o4_setRegionToPrev(ScriptEnv &e);
+	int o4_moveAllItems(ScriptEnv &e);
+	int o4_setRegion(ScriptEnv &e);
+	int o4_save(ScriptEnv &e);
+	int o4_restore(ScriptEnv &e);
+	int o4_restart(ScriptEnv &e);
+	int o4_setRegionRoom(ScriptEnv &e);
+	int o4_setRoomPic(ScriptEnv &e);
 
-	byte _curDisk;
-	Common::Array<DiskOffset> _diskOffsets;
+	byte _currentVolume;
+	Common::Array<RegionLocation> _regionLocations;
+	Common::Array<RegionInitDataOffset> _regionInitDataOffsets;
+	Common::SeekableReadStream *_itemPicIndex;
 };
 
 } // End of namespace Adl

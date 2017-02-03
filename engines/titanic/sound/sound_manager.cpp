@@ -155,6 +155,18 @@ CWaveFile *QSoundManager::loadMusic(const CString &name) {
 	return waveFile;
 }
 
+CWaveFile *QSoundManager::loadMusic(CAudioBuffer *buffer) {
+	CWaveFile *waveFile = new CWaveFile();
+
+	// Try to load the specified audio buffer
+	if (!waveFile->loadMusic(buffer)) {
+		delete waveFile;
+		return nullptr;
+	}
+
+	return waveFile;
+}
+
 int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 	int channel = -1;
 	uint flags = QMIX_CLEARQUEUE;
@@ -311,7 +323,9 @@ void QSoundManager::setPolarPosition(int handle, double range, double azimuth, d
 	}
 }
 
-bool QSoundManager::isActive(int handle) const {
+bool QSoundManager::isActive(int handle) {
+	resetChannel(10);
+
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		if (_slots[idx]._handle == handle)
 			return true;
@@ -320,7 +334,7 @@ bool QSoundManager::isActive(int handle) const {
 	return false;
 }
 
-bool QSoundManager::isActive(const CWaveFile *waveFile) const {
+bool QSoundManager::isActive(const CWaveFile *waveFile) {
 	return _sounds.contains(waveFile);
 }
 
@@ -441,7 +455,7 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 	case 3:
 	case 4:
 	case 5:
-		volume = (24525 * volume) / 100;
+		volume = (75 * volume) / 100;
 		break;
 	case 6:
 	case 7:

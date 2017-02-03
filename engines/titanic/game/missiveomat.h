@@ -27,10 +27,16 @@
 
 namespace Titanic {
 
-enum MissiveOMatAction {
-	MESSAGE_NONE = 1, MESSAGE_SHOW = 2, NEXT_MESSAGE = 3, PRIOR_MESSAGE = 4,
-	MESSAGE_5 = 5, MESSAGE_DOWN = 6, MESSAGE_UP = 7, REDRAW_MESSAGE = 8,
-	MESSAGE_9 = 9
+enum MissiveOMatMode {
+	MMODE_USERNAME = 1,
+	MMODE_PASSWORD = 2,
+	MMODE_DENIED = 3,
+	MMODE_LOGGED_IN = 4,
+	MMODE_5 = 5
+};
+
+enum MissiveOMatAccount {
+	NO_ACCOUNT = -1, LEOVINUS = 0, SCRALIONTIS = 1, BROBOSTIGON = 2
 };
 
 class CMissiveOMat : public CGameObject {
@@ -48,12 +54,12 @@ private:
 private:
 	void loadArray(CString *arr, const CString &resName, int count);
 public:
-	int _mode;
+	MissiveOMatMode _mode;
 	int _totalMessages;
 	int _messageNum;
-	CString _string1;
-	CString _string2;
-	int _personIndex;
+	CString _username;
+	CString _password;
+	MissiveOMatAccount _account;
 public:
 	CLASSDEF;
 	CMissiveOMat();

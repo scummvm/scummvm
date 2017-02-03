@@ -118,7 +118,7 @@ private:
 	/**
 	 * Finds the next sibling occurance of a given class type
 	 */
-	CTreeItem *findSiblingInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
+	CTreeItem *findSiblingChildInstanceOf(ClassDef *classDef, CTreeItem *startItem) const;
 private:
 	/**
 	 * Load project data from the passed file
@@ -152,6 +152,7 @@ public:
 public:
 	CLASSDEF;
 	CProjectItem();
+	virtual ~CProjectItem() { destroyChildren(); }
 
 	/**
 	 * Save the data for the class to file

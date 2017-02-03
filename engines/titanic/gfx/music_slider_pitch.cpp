@@ -41,7 +41,7 @@ void CMusicSliderPitch::load(SimpleFile *file) {
 }
 
 bool CMusicSliderPitch::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
-	if (_fieldEC) {
+	if (_enabled) {
 		if (++_controlVal > _controlMax)
 			_controlVal = 0;
 

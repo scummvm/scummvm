@@ -24,7 +24,7 @@
 #define TITANIC_PET_STARFIELD_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 
 namespace Titanic {
@@ -39,7 +39,7 @@ private:
 	CPetGfxElement _leds[6];
 	Rect _rect1;
 	int _field18C;
-	CPetText _text;
+	CTextControl _text;
 	bool _photoOn;
 	bool _hasReference;
 private:

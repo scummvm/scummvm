@@ -33,7 +33,7 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printBytecode);
+reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode);
 bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
@@ -152,6 +152,7 @@ private:
 	bool cmdBreakpointWrite(int argc, const char **argv);
 	bool cmdBreakpointKernel(int argc, const char **argv);
 	bool cmdBreakpointFunction(int argc, const char **argv);
+	bool cmdBreakpointAddress(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdScriptObjects(int argc, const char **argv);
@@ -163,6 +164,7 @@ private:
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);
 	bool cmdViewReference(int argc, const char **argv);
+	bool cmdDumpReference(int argc, const char **argv);
 	bool cmdViewObject(int argc, const char **argv);
 	bool cmdViewActiveObject(int argc, const char **argv);
 	bool cmdViewAccumulatorObject(int argc, const char **argv);

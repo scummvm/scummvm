@@ -35,6 +35,7 @@
 
 #include "fullpipe/modal.h"
 
+#include "audio/mixer.h"
 
 namespace Fullpipe {
 
@@ -55,6 +56,7 @@ void sceneFinal_initScene() {
 	g_vars->sceneFinal_var01 = 0;
 	g_vars->sceneFinal_var02 = 0;
 	g_vars->sceneFinal_var03 = 0;
+	g_vars->sceneFinal_trackHasStarted = false;
 }
 
 int sceneFinal_updateCursor() {
@@ -71,7 +73,8 @@ void sceneHandlerFinal_endFinal() {
 }
 
 void sceneHandlerFinal_startMusic(const char *track) {
-	warning("STUB: sceneHandlerFinal_startMusic()");
+	g_fp->startSoundStream1(track);
+	g_vars->sceneFinal_trackHasStarted = true;
 }
 
 void sceneHandlerFinal_goto4() {
@@ -117,6 +120,12 @@ void sceneHandlerFinal_fallCoin() {
 	if (!coin->_movement) {
 		if (!coin->_statics || coin->_statics->_staticsId != ST_FCN_NORM)
 			chainQueue(QU_FIN1_FALLCOIN, 1);
+	}
+}
+
+void updateMusic() {
+	if (g_vars->sceneFinal_trackHasStarted && !g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream1)) { // loop music
+		sceneHandlerFinal_startMusic("track16.ogg");
 	}
 }
 
@@ -167,6 +176,8 @@ int sceneHandlerFinal(ExCommand *cmd) {
 
 		break;
 	}
+
+	updateMusic();
 
 	return 0;
 }

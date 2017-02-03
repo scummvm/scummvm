@@ -73,7 +73,7 @@ private:
 	bool getRecord(CursorStack &stack, bool recurse, MessageRecord &record);
 	void outputString(reg_t buf, const Common::String &str);
 	Common::String processString(const char *s);
-	int hexDigitToInt(char h);
+	int hexDigitToWrongInt(char h);
 	bool stringHex(Common::String &outStr, const Common::String &inStr, uint &index);
 	bool stringLit(Common::String &outStr, const Common::String &inStr, uint &index);
 	bool stringStage(Common::String &outStr, const Common::String &inStr, uint &index);

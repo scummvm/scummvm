@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(CBackground, CGameObject)
 	ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
-CBackground::CBackground() : CGameObject(), _startFrame(0), _endFrame(0), _fieldDC(0) {
+CBackground::CBackground() : CGameObject(), _startFrame(0), _endFrame(0), _isBlocking(false) {
 }
 
 void CBackground::save(SimpleFile *file, int indent) {
@@ -39,7 +39,7 @@ void CBackground::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrame, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_fieldDC, indent);
+	file->writeNumberLine(_isBlocking, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -50,15 +50,15 @@ void CBackground::load(SimpleFile *file) {
 	_endFrame = file->readNumber();
 	_string1 = file->readString();
 	_string2 = file->readString();
-	_fieldDC = file->readNumber();
+	_isBlocking = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CBackground::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
-	if (_fieldDC) {
-		playMovie(_startFrame, _endFrame, 16);
+	if (_isBlocking) {
+		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
 	} else {
 		playMovie(_startFrame, _endFrame, 0);
 	}
@@ -71,7 +71,7 @@ bool CBackground::SetFrameMsg(CSetFrameMsg *msg) {
 }
 
 bool CBackground::VisibleMsg(CVisibleMsg *msg) {
-	setVisible(msg->_visible);
+	setVisible(!_visible);
 	return true;
 }
 

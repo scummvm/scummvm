@@ -338,12 +338,13 @@ uint TTnpcScript::getRangeValue(uint id) {
 	case SF_RANDOM: {
 		uint count = range->_values.size();
 
-		uint index = getRandomNumber(count) - 1;
+		int index = (int)getRandomNumber(count) - 1;
 		if (count > 1 && range->_values[index] == range->_priorIndex) {
-			for (int retry = 0; retry < 8 && index != range->_priorIndex; ++retry)
-				index = getRandomNumber(count) - 1;
+			for (int retry = 0; retry < 8 && index != (int)range->_priorIndex; ++retry)
+				index = (int)getRandomNumber(count) - 1;
 		}
 
+		assert(index >= 0);
 		range->_priorIndex = index;
 		return range->_values[index];
 	}
@@ -405,15 +406,17 @@ void TTnpcScript::save(SimpleFile *file) {
 	file->writeNumber(_dialDelta);
 	file->writeNumber(_field7C);
 
+	// Write out the dial values
 	file->writeNumber(10);
 	for (int idx = 0; idx < 10; ++idx)
-		file->writeNumber(_data[idx]);
+		file->writeNumber(_dialValues[idx]);
 }
 
 void TTnpcScript::load(SimpleFile *file) {
 	loadBody(file);
 
 	int count = file->readNumber();
+	assert(count == 4);
 	_rangeResetCtr = file->readNumber();
 	_currentDialNum = file->readNumber();
 	_dialDelta = file->readNumber();
@@ -422,22 +425,23 @@ void TTnpcScript::load(SimpleFile *file) {
 	for (int idx = count; idx > 4; --idx)
 		file->readNumber();
 
+	// Read in the dial values
 	count = file->readNumber();
 	for (int idx = 0; idx < count; ++idx) {
 		int v = file->readNumber();
 		if (idx < 10)
-			_data[idx] = v;
+			_dialValues[idx] = v;
 	}
 }
 
 void TTnpcScript::saveBody(SimpleFile *file) {
-	int count = proc31();
+	int count = getRangesCount();
 	file->writeNumber(count);
 
 	if (count > 0) {
 		for (uint idx = 0; idx < _ranges.size(); ++idx) {
 			const TTscriptRange &item = _ranges[idx];
-			if (item._mode == SF_RANDOM && item._priorIndex) {
+			if (item._mode != SF_RANDOM && item._priorIndex) {
 				file->writeNumber(item._id);
 				file->writeNumber(item._priorIndex);
 			}
@@ -463,7 +467,7 @@ void TTnpcScript::loadBody(SimpleFile *file) {
 	}
 }
 
-int TTnpcScript::proc31() const {
+int TTnpcScript::getRangesCount() const {
 	int count = 0;
 	for (uint idx = 0; idx < _ranges.size(); ++idx) {
 		const TTscriptRange &item = _ranges[idx];
@@ -699,12 +703,12 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 	if (!entryCount)
 		// No count specified, so use entire list
 		entryCount = entries->size();
-	int entryId = _field2C;
+	int categoryNum = sentence->_category;
 
 	for (uint loopCtr = 0; loopCtr < 2; ++loopCtr) {
 		for (uint entryCtr = 0; entryCtr < entryCount; ++entryCtr) {
 			const TTsentenceEntry &entry = (*entries)[entryCtr];
-			if (entry._field4 != entryId && (loopCtr == 0 || entry._field4))
+			if (entry._category != categoryNum && (loopCtr == 0 || entry._category))
 				continue;
 
 			bool flag;
@@ -955,7 +959,7 @@ bool TTnpcScript::getStateValue() const {
 }
 
 bool TTnpcScript::sentence2C(const TTsentence *sentence) {
-	return sentence->_field2C >= 2 && sentence->_field2C <= 7;
+	return sentence->_category >= 2 && sentence->_category <= 7;
 }
 
 void TTnpcScript::getAssignedRoom(int *roomNum, int *floorNum, int *elevatorNum) const {

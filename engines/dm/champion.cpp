@@ -43,7 +43,7 @@ namespace DM {
 
 void Champion::resetToZero() {
 	for (int16 i = 0; i < 30; ++i)
-		_slots[i] = Thing::_none;
+		_slots[i] = _vm->_thingNone;
 	for (int16 i = 0; i < 20; ++i)
 		_skills[i].resetToZero();
 	_attributes = _wounds = 0;
@@ -161,7 +161,9 @@ void ChampionMan::initConstants() {
 }
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
+	_champions = new Champion[4];
 	for (uint16 i = 0; i < 4; ++i) {
+		_champions[i].setVm(_vm);
 		_championPendingDamage[i] = 0;
 		_championPendingWounds[i] = 0;
 		_champions[i].resetToZero();
@@ -180,6 +182,10 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_mousePointerHiddenToDrawChangedObjIconOnScreen = false;
 
 	initConstants();
+}
+
+ChampionMan::~ChampionMan() {
+	delete[] _champions;
 }
 
 bool ChampionMan::isLeaderHandObjectThrown(int16 side) {
@@ -213,7 +219,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 		curChampion->setSlot((ChampionSlot)slotIndex, actionHandThing);
 	} else {
 		curThing = getObjectRemovedFromSlot(champIndex, slotIndex);
-		if (curThing == Thing::_none)
+		if (curThing == _vm->_thingNone)
 			return false;
 	}
 
@@ -525,7 +531,7 @@ void ChampionMan::drawChangedObjectIcons() {
 }
 
 void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex) {
-	if (thing == Thing::_none)
+	if (thing == _vm->_thingNone)
 		return;
 
 	InventoryMan &invMan = *_vm->_inventoryMan;
@@ -606,8 +612,8 @@ Thing ChampionMan::getObjectRemovedFromLeaderHand() {
 	_leaderEmptyHanded = true;
 	Thing leaderHandObject = _leaderHandObject;
 
-	if (leaderHandObject != Thing::_none) {
-		_leaderHandObject = Thing::_none;
+	if (leaderHandObject != _vm->_thingNone) {
+		_leaderHandObject = _vm->_thingNone;
 		_leaderHandObjectIconIndex = kDMIconIndiceNone;
 		eventMan.showMouse();
 		_vm->_objectMan->clearLeaderObjectName();
@@ -672,14 +678,14 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 
 	if (slotIndex >= kDMSlotChest1) {
 		curThing = inventory._chestSlots[slotIndex - kDMSlotChest1];
-		inventory._chestSlots[slotIndex - kDMSlotChest1] = Thing::_none;
+		inventory._chestSlots[slotIndex - kDMSlotChest1] = _vm->_thingNone;
 	} else {
 		curThing = curChampion->_slots[slotIndex];
-		curChampion->_slots[slotIndex] = Thing::_none;
+		curChampion->_slots[slotIndex] = _vm->_thingNone;
 	}
 
-	if (curThing == Thing::_none)
-		return Thing::_none;
+	if (curThing == _vm->_thingNone)
+		return _vm->_thingNone;
 
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == inventory._inventoryChampionOrdinal);
 	int16 curIconIndex = _vm->_objectMan->getIconIndex(curThing);
@@ -1217,7 +1223,7 @@ void ChampionMan::addScentStrength(int16 mapX, int16 mapY, int32 cycleCount) {
 }
 
 void ChampionMan::putObjectInLeaderHand(Thing thing, bool setMousePointer) {
-	if (thing == Thing::_none)
+	if (thing == _vm->_thingNone)
 		return;
 
 	EventManager &evtMan = *_vm->_eventMan;
@@ -1346,23 +1352,23 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 	else
 		slotThing = _champions[champIndex]._slots[slotIndex];
 
-	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
+	if ((slotThing == _vm->_thingNone) && (leaderHandObject == _vm->_thingNone))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(dungeon._objectInfos[dungeon.getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
+	if ((leaderHandObject != _vm->_thingNone) && (!(dungeon._objectInfos[dungeon.getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
 	EventManager &evtMan = *_vm->_eventMan;
 	evtMan.showMouse();
-	if (leaderHandObject != Thing::_none)
+	if (leaderHandObject != _vm->_thingNone)
 		getObjectRemovedFromLeaderHand();
 
-	if (slotThing != Thing::_none) {
+	if (slotThing != _vm->_thingNone) {
 		getObjectRemovedFromSlot(champIndex, slotIndex);
 		putObjectInLeaderHand(slotThing, false);
 	}
 
-	if (leaderHandObject != Thing::_none)
+	if (leaderHandObject != _vm->_thingNone)
 		addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot)slotIndex);
 
 	drawChampionState((ChampionIndex)champIndex);
@@ -1509,7 +1515,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	dropAllObjects(champIndex);
 	Thing unusedThing = dungeon.getUnusedThing(kDMMaskChampionBones | kDMThingTypeJunk);
 	uint16 curCell = 0;
-	if (unusedThing != Thing::_none) {
+	if (unusedThing != _vm->_thingNone) {
 		Junk *L0966_ps_Junk = (Junk *)dungeon.getThingData(unusedThing);
 		L0966_ps_Junk->setType(kDMJunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
@@ -1592,7 +1598,7 @@ void ChampionMan::dropAllObjects(uint16 champIndex) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing curThing = getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
-		if (curThing != Thing::_none)
+		if (curThing != _vm->_thingNone)
 			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kDMMapXNotOnASquare, 0, dungeon._partyMapX, dungeon._partyMapY);
 	}
 }
@@ -1875,7 +1881,7 @@ void ChampionMan::resetDataToStartGame() {
 		Thing handThing = _leaderHandObject;
 		EventManager &evtMan = *_vm->_eventMan;
 
-		if (handThing == Thing::_none) {
+		if (handThing == _vm->_thingNone) {
 			_leaderEmptyHanded = true;
 			_leaderHandObjectIconIndex = kDMIconIndiceNone;
 			evtMan.setMousePointer();
@@ -1903,7 +1909,7 @@ void ChampionMan::resetDataToStartGame() {
 		return;
 	}
 
-	_leaderHandObject = Thing::_none;
+	_leaderHandObject = _vm->_thingNone;
 	_leaderHandObjectIconIndex = kDMIconIndiceNone;
 	_leaderEmptyHanded = true;
 }
@@ -1938,7 +1944,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	championPtr->_food = 1500 + _vm->getRandomNumber(256);
 	championPtr->_water = 1500 + _vm->getRandomNumber(256);
 	for (int16 slotIdx = kDMSlotReadyHand; slotIdx < kDMSlotChest1; slotIdx++)
-		championPtr->_slots[slotIdx] = Thing::_none;
+		championPtr->_slots[slotIdx] = _vm->_thingNone;
 
 	Thing curThing = dungeon.getSquareFirstThing(dungeon._partyMapX, dungeon._partyMapY);
 	while (curThing.getType() != kDMstringTypeText)
@@ -2012,7 +2018,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	curMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir], curMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 	curThing = dungeon.getSquareFirstThing(curMapX, curMapY);
 	int16 slotIdx = kDMSlotBackpackLine1_1;
-	while (curThing != Thing::_endOfList) {
+	while (curThing != _vm->_thingEndOfList) {
 		ThingType thingType = curThing.getType();
 		if ((thingType > kDMThingTypeSensor) && (curThing.getCell() == championObjectsCell)) {
 			int16 objectAllowedSlots = dungeon._objectInfos[dungeon.getObjectInfoIndex(curThing)]._allowedSlots;
@@ -2030,7 +2036,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 				if (skipCheck)
 					break;
 
-				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == Thing::_none))
+				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == _vm->_thingNone))
 					curSlotIndex = kDMSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -2038,27 +2044,27 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 				break;
 			}
 			case kDMThingTypeWeapon:
-				if (championPtr->_slots[kDMSlotActionHand] == Thing::_none)
+				if (championPtr->_slots[kDMSlotActionHand] == _vm->_thingNone)
 					curSlotIndex = kDMSlotActionHand;
-				else if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == Thing::_none))
+				else if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == _vm->_thingNone))
 					curSlotIndex = kDMSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
 				break;
 			case kDMThingTypeScroll:
 			case kDMThingTypePotion:
-				if (championPtr->_slots[kDMSlotPouch1] == Thing::_none)
+				if (championPtr->_slots[kDMSlotPouch1] == _vm->_thingNone)
 					curSlotIndex = kDMSlotPouch1;
-				else if (championPtr->_slots[kDMSlotPouch_2] == Thing::_none)
+				else if (championPtr->_slots[kDMSlotPouch_2] == _vm->_thingNone)
 					curSlotIndex = kDMSlotPouch_2;
-				else if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == Thing::_none))
+				else if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == _vm->_thingNone))
 					curSlotIndex = kDMSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
 				break;
 			case kDMThingTypeContainer:
 			case kDMThingTypeJunk:
-				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == Thing::_none))
+				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == _vm->_thingNone))
 					curSlotIndex = kDMSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -2068,8 +2074,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 				break;
 			}
 
-			while (championPtr->_slots[curSlotIndex] != Thing::_none) {
-				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == Thing::_none))
+			while (championPtr->_slots[curSlotIndex] != _vm->_thingNone) {
+				if ((objectAllowedSlots & _slotMasks[kDMSlotNeck]) && (championPtr->_slots[kDMSlotNeck] == _vm->_thingNone))
 					curSlotIndex = kDMSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -2395,7 +2401,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 		evtMan.hideMouse();
 
 	int16 iconIndex;
-	if (thing == Thing::_none) {
+	if (thing == _vm->_thingNone) {
 		if (slotIndex <= kDMSlotFeet) {
 			iconIndex = kDMIconIndiceReadyHand + (slotIndex << 1);
 			if (champ->getWoundsFlag((ChampionWound)(1 << slotIndex))) {

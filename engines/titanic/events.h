@@ -65,8 +65,24 @@ public:
 	virtual void middleButtonDoubleClick(const Point &mousePos) {}
 	virtual void rightButtonDown(const Point &mousePos) {}
 	virtual void rightButtonUp(const Point &mousePos) {}
+	virtual void mouseWheel(const Point &mousePos, bool wheelUp) {}
 	virtual void keyDown(Common::KeyState keyState) {}
 	virtual void keyUp(Common::KeyState keyState) {}
+};
+
+/**
+ * An eent target used for waiting for a mouse or keypress
+ */
+class CPressTarget : public CEventTarget {
+public:
+	bool _pressed;
+public:
+	CPressTarget() : _pressed(false) {}
+	virtual ~CPressTarget() {}
+	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
+	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
+	virtual void rightButtonDown(const Point &mousePos) { _pressed = true; }
+	virtual void keyDown(Common::KeyState keyState) { _pressed = true; }
 };
 
 class Events {
@@ -76,6 +92,7 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
+	uint _specialButtons;
 
 	/**
 	 * Check whether it's time to display the next screen frame
@@ -88,6 +105,11 @@ private:
 	CEventTarget *eventTarget() const {
 		return _eventTargets.top();
 	}
+
+	/**
+	 * Handles setting/resettings special buttons on key up/down
+	 */
+	void handleKbdSpecial(Common::KeyState keyState);
 public:
 	Events(TitanicEngine *vm);
 	~Events() {}
@@ -138,6 +160,28 @@ public:
 	 * Wait for a mouse or keypress
 	 */
 	bool waitForPress(uint expiry);
+
+	/**
+	 * Get the mouse position
+	 */
+	Common::Point getMousePos() const { return _mousePos; }
+
+	/**
+	 * Sets the mouse position
+	 */
+	void setMousePos(const Common::Point &pt);
+
+	/*
+	 * Return whether a given special key is currently pressed
+	 */
+	bool isSpecialPressed(SpecialButtons btn) const {
+		return (_specialButtons & btn) != 0;
+	}
+
+	/**
+	 * Returns the bitset of the currently pressed special buttons
+	 */
+	uint getSpecialButtons() const { return _specialButtons; }
 };
 
 } // End of namespace Titanic

@@ -181,7 +181,7 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (msg->_buttons & MB_LEFT) {
 		if (!handleMouseMsg(msg, true)) {
 			CGameManager *gm = getGameManager();
-			if (gm->test54()) {
+			if (gm->isntTransitioning()) {
 				findNode()->findRoom();
 
 				CLinkItem *linkItem = dynamic_cast<CLinkItem *>(
@@ -195,6 +195,8 @@ bool CViewItem::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 					linkItem = dynamic_cast<CLinkItem *>(
 						findNextInstanceOf(CLinkItem::_type, linkItem));
 				}
+
+				handleMouseMsg(msg, false);
 			}
 		}
 	}
@@ -270,7 +272,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 		if (gameObjects.size() == 0)
 			return false;
 
-		for (int idx = (int)gameObjects.size() - 1; idx >= 0; ++idx) {
+		for (int idx = (int)gameObjects.size() - 1; idx >= 0; --idx) {
 			if (gameObjects[idx]->_cursorId != CURSOR_IGNORE) {
 				CScreenManager::_screenManagerPtr->_mouseCursor->setCursor(gameObjects[idx]->_cursorId);
 				break;

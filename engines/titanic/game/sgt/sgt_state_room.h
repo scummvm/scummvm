@@ -29,20 +29,20 @@
 namespace Titanic {
 
 struct CSGTStateRoomStatics {
-	CString _v1;
-	CString _v2;
-	CString _v3;
-	CString _v4;
-	CString _v5;
-	CString _v6;
-	CString _v7;
-	CString _v8;
-	CString _v9;
-	CString _v10;
-	CString _v11;
-	CString _v12;
-	int _v13;
-	int _v14;
+	CString _bedhead;
+	CString _bedfoot;
+	CString _vase;
+	CString _tv;
+	CString _desk;
+	CString _chestOfDrawers;
+	CString _drawer;
+	CString _armchair;
+	CString _deskchair;
+	CString _washstand;
+	CString _basin;
+	CString _toilet;
+	bool _announcementFlag;
+	uint _roomFlags;
 };
 
 class CSGTStateRoom : public CBackground {
@@ -54,11 +54,11 @@ class CSGTStateRoom : public CBackground {
 protected:
 	static CSGTStateRoomStatics *_statics;
 protected:
-	bool _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	bool _fieldEC;
-	bool _fieldF0;
+	bool _isClosed;
+	bool _displayFlag;
+	int _savedFrame;
+	bool _savedIsClosed;
+	bool _savedVisible;
 public:
 	CLASSDEF;
 	CSGTStateRoom();

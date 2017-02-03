@@ -671,6 +671,8 @@ int sceneHandler11(ExCommand *cmd) {
 
 					if (x >= 940)
 						g_vars->scene11_scrollIsMaximized = true;
+
+					g_fp->sceneAutoScrolling();
 				}
 				res = 1;
 			}

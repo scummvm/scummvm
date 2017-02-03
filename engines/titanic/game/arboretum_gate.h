@@ -40,13 +40,13 @@ class CArboretumGate : public CBackground {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TurnOn(CTurnOn *msg);
 private:
-	static int _v1;
+	static bool _gotSpeechCentre;
+	static bool _disabled;
 	static int _initialFrame;
-	static int _v3;
 private:
-	int _seasonNum;
-	CString _viewName1;
-	int _fieldF0;
+	Season _seasonNum;
+	CString _arboretumViewName;
+	int _unused1;
 	int _startFrameSpringOff;
 	int _endFrameSpringOff;
 	int _startFrameSummerOff;
@@ -71,7 +71,7 @@ private:
 	int _endFrameWinterOn1;
 	int _startFrameWinterOn2;
 	int _endFrameWinterOn2;
-	CString _viewName2;
+	CString _exitViewName;
 	// German specific fields
 	int _field160;
 	int _field164;

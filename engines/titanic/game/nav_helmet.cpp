@@ -91,9 +91,9 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 			pet->setArea(PET_REMOTE);
 		}
 
-		dec54();
+		decTransitions();
 	} else {
-		inc54();
+		incTransitions();
 		_flag = true;
 		setVisible(true);
 		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);

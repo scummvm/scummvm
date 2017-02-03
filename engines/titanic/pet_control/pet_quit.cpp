@@ -83,7 +83,7 @@ bool CPetQuit::MouseButtonUpMsg(const Point &pt) {
 	}
 }
 
-void CPetQuit::getTooltip(CPetText *text) {
+void CPetQuit::getTooltip(CTextControl *text) {
 	text->setText("Quit the game.");
 }
 

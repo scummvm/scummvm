@@ -38,7 +38,7 @@
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -381,45 +381,43 @@ void EditGameDialog::open() {
 	_platformPopUp->setSelected(sel);
 }
 
-
-void EditGameDialog::close() {
-	if (getResult()) {
-		ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
-
-		Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
-		if (lang < 0)
-			ConfMan.removeKey("language", _domain);
-		else
-			ConfMan.set("language", Common::getLanguageCode(lang), _domain);
-
-		String gamePath(_gamePathWidget->getLabel());
-		if (!gamePath.empty())
-			ConfMan.set("path", gamePath, _domain);
-
-		String extraPath(_extraPathWidget->getLabel());
-		if (!extraPath.empty() && (extraPath != _c("None", "path")))
-			ConfMan.set("extrapath", extraPath, _domain);
-		else
-			ConfMan.removeKey("extrapath", _domain);
-
-		String savePath(_savePathWidget->getLabel());
-		if (!savePath.empty() && (savePath != _("Default")))
-			ConfMan.set("savepath", savePath, _domain);
-		else
-			ConfMan.removeKey("savepath", _domain);
-
-		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
-		if (platform < 0)
-			ConfMan.removeKey("platform", _domain);
-		else
-			ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-
-		// Set the state of engine-specific checkboxes
-		for (uint i = 0; i < _engineOptions.size(); i++) {
-			ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
-		}
+void EditGameDialog::apply() {
+	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
+	
+	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
+	if (lang < 0)
+		ConfMan.removeKey("language", _domain);
+	else
+		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
+	
+	String gamePath(_gamePathWidget->getLabel());
+	if (!gamePath.empty())
+		ConfMan.set("path", gamePath, _domain);
+	
+	String extraPath(_extraPathWidget->getLabel());
+	if (!extraPath.empty() && (extraPath != _c("None", "path")))
+		ConfMan.set("extrapath", extraPath, _domain);
+	else
+		ConfMan.removeKey("extrapath", _domain);
+	
+	String savePath(_savePathWidget->getLabel());
+	if (!savePath.empty() && (savePath != _("Default")))
+		ConfMan.set("savepath", savePath, _domain);
+	else
+		ConfMan.removeKey("savepath", _domain);
+	
+	Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
+	if (platform < 0)
+		ConfMan.removeKey("platform", _domain);
+	else
+		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
+	
+	// Set the state of engine-specific checkboxes
+	for (uint i = 0; i < _engineOptions.size(); i++) {
+		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
 	}
-	OptionsDialog::close();
+
+	OptionsDialog::apply();
 }
 
 void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -506,7 +504,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.getPath());
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif

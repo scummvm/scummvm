@@ -46,7 +46,7 @@ CTransparencySurface::CTransparencySurface(const Graphics::Surface *surface,
 		_flag1 = false;
 		break;
 	case TRANS_DEFAULT:
-		if (*(byte *)surface->getPixels() < 0x80) {
+		if (*(const byte *)surface->getPixels() < 0x80) {
 			_flag1 = true;
 			_flag2 = false;
 		}
@@ -66,8 +66,17 @@ int CTransparencySurface::moveX() {
 }
 
 uint CTransparencySurface::getPixel() const {
-	const byte *pixelP = (const byte *)_surface->getBasePtr(_pos.x, _pos.y);
-	return *pixelP;
+	byte pixel = *(const byte *)_surface->getBasePtr(_pos.x, _pos.y);
+	return pixel;
+}
+
+uint CTransparencySurface::getAlpha() const {
+	byte pixel = getPixel();
+	return _flag1 ? 0xFF - pixel : pixel;
+}
+
+bool CTransparencySurface::isPixelTransparent() {
+	return getAlpha() == 0xff;
 }
 
 } // End of namespace Titanic

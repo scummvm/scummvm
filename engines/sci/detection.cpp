@@ -428,7 +428,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
-			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}
@@ -471,7 +471,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_SQ4_SILVER_CURSORS,
 		{
 			_s("Use silver cursors"),
-			_s("Use the alternate set of silver cursors, instead of the normal golden ones"),
+			_s("Use the alternate set of silver cursors instead of the normal golden ones"),
 			"silver_cursors",
 			false
 		}
@@ -556,7 +556,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.guiOptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
-	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {
+	    || allFiles.contains("resmap.000") || allFiles.contains("resmap.001")) {
 		foundResMap = true;
 	}
 
@@ -883,11 +883,24 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		switch (getGameId()) {
+		case GID_PHANTASMAGORIA:
+		case GID_HOYLE5:
+			return false;
+		default:
+			break;
+		}
+	}
+#endif
+
 	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase;
+	// see comment about kSupportsSavingDuringRuntime in SciEngine::hasFeature
+	return false;
 }
 
 } // End of namespace Sci

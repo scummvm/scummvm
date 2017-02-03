@@ -33,7 +33,6 @@
 #include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/game/get_lift_eye2.h"
-#include "titanic/game/lemon_dispensor.h"
 #include "titanic/game/television.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/sgt/sgt_navigation.h"
@@ -41,6 +40,8 @@
 #include "titanic/moves/enter_exit_first_class_state.h"
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/sound/music_wave.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_npc_script.h"
 
@@ -60,16 +61,15 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_scriptHandler = nullptr;
 	_script = nullptr;
 	CMusicRoom::_musicHandler = nullptr;
+
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 }
 
 TitanicEngine::~TitanicEngine() {
-	delete _debugger;
-	delete _events;
-	delete _screen;
-	delete _window;
-	delete _screenManager;
-	delete _filesManager;
-	CSaveableObject::freeClassList();
 }
 
 void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
@@ -78,12 +78,6 @@ void TitanicEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 void TitanicEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	_debugger = new Debugger(this);
 	_filesManager = new CFilesManager(this);
 
@@ -92,8 +86,8 @@ void TitanicEngine::initialize() {
 	CGameObject::init();
 	CGetLiftEye2::init();
 	CHose::init();
-	CLemonDispensor::init();
 	CMovie::init();
+	CMusicWave::init();
 	CParrotLobbyObject::init();
 	CSGTNavigation::init();
 	CSGTStateRoom::init();
@@ -107,6 +101,7 @@ void TitanicEngine::initialize() {
 	_screen = new Graphics::Screen(0, 0);
 	_screenManager = new OSScreenManager(this);
 	_window = new CMainGameWindow(this);
+	_strings.load();
 
 	setItemNames();
 	setRoomNames();
@@ -115,10 +110,16 @@ void TitanicEngine::initialize() {
 }
 
 void TitanicEngine::deinitialize() {
+	delete _debugger;
+	delete _events;
+	delete _window;
+	delete _screenManager;
+	delete _filesManager;
+	delete _screen;
+
 	CEnterExitFirstClassState::deinit();
 	CGetLiftEye2::deinit();
 	CHose::deinit();
-	CMovie::deinit();
 	CSGTNavigation::deinit();
 	CSGTStateRoom::deinit();
 	CExitPellerator::deinit();
@@ -126,6 +127,8 @@ void TitanicEngine::deinitialize() {
 	CGameObject::deinit();
 	CTelevision::deinit();
 	TTnpcScript::deinit();
+	CMovie::deinit();
+	CSaveableObject::freeClassList();
 }
 
 Common::Error TitanicEngine::run() {
@@ -149,7 +152,7 @@ void TitanicEngine::setItemNames() {
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_DESCRIPTIONS");
 	while (r->pos() < r->size())
-		_itemNames.push_back(readStringFromStream(r));
+		_itemDescriptions.push_back(readStringFromStream(r));
 	delete r;
 
 	r = g_vm->_filesManager->getResource("TEXT/ITEM_IDS");
@@ -167,11 +170,20 @@ void TitanicEngine::setRoomNames() {
 
 
 bool TitanicEngine::canLoadGameStateCurrently() {
-	return _window->_inputAllowed;
+	if (!_window->_inputAllowed)
+		return false;
+	CProjectItem *project = _window->_gameManager->_project;
+	if (project) {
+		CPetControl *pet = project->getPetControl();
+		if (pet && !pet->isAreaUnlocked())
+			return false;
+	}
+
+	return true;
 }
 
 bool TitanicEngine::canSaveGameStateCurrently() {
-	return _window->_inputAllowed;
+	return canLoadGameStateCurrently();
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {

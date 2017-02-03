@@ -47,6 +47,8 @@ public:
 	LauncherDialog();
 	~LauncherDialog();
 
+	void rebuild();
+
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 	virtual void handleKeyDown(Common::KeyState state);
@@ -82,6 +84,9 @@ protected:
 
 	void updateButtons();
 	void switchButtonsText(ButtonWidget *button, const char *normalText, const char *shiftedText);
+
+	void build();
+	void clean();
 
 	void open();
 	void close();

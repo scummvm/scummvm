@@ -55,7 +55,7 @@ bool CBowlEar::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
 
 bool CBowlEar::NutPuzzleMsg(CNutPuzzleMsg *msg) {
 	if (msg->_value == "BowlUnlocked")
-		_fieldE0 = 1;
+		_canTake = true;
 
 	return true;
 }

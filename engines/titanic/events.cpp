@@ -31,7 +31,7 @@
 namespace Titanic {
 
 Events::Events(TitanicEngine *vm): _vm(vm), _frameCounter(1),
-		_priorFrameTime(0) {
+		_priorFrameTime(0), _specialButtons(0) {
 }
 
 void Events::pollEvents() {
@@ -47,33 +47,46 @@ void Events::pollEvents() {
 		eventTarget()->mouseMove(_mousePos);
 		break;
 	case Common::EVENT_LBUTTONDOWN:
+		_specialButtons |= MK_LBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->leftButtonDown(_mousePos);
 		break;
 	case Common::EVENT_LBUTTONUP:
+		_specialButtons &= ~MK_LBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->leftButtonUp(_mousePos);
 		break;
 	case Common::EVENT_MBUTTONDOWN:
+		_specialButtons |= MK_MBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->middleButtonDown(_mousePos);
 		break;
 	case Common::EVENT_MBUTTONUP:
+		_specialButtons &= ~MK_MBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->middleButtonUp(_mousePos);
 		break;
 	case Common::EVENT_RBUTTONDOWN:
+		_specialButtons |= MK_RBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->rightButtonDown(_mousePos);
 		break;
 	case Common::EVENT_RBUTTONUP:
+		_specialButtons &= ~MK_RBUTTON;
 		_mousePos = event.mouse;
 		eventTarget()->rightButtonUp(_mousePos);
 		break;
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+		_mousePos = event.mouse;
+		eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
+		break;
 	case Common::EVENT_KEYDOWN:
+		handleKbdSpecial(event.kbd);
 		eventTarget()->keyDown(event.kbd);
 		break;
 	case Common::EVENT_KEYUP:
+		handleKbdSpecial(event.kbd);
 		eventTarget()->keyUp(event.kbd);
 		break;
 	default:
@@ -114,7 +127,7 @@ bool Events::checkForNextFrameCounter() {
 }
 
 uint32 Events::getTicksCount() const {
-	return g_system->getMillis();
+	return _frameCounter * GAME_FRAME_TIME;
 }
 
 void Events::sleep(uint time) {
@@ -125,31 +138,34 @@ void Events::sleep(uint time) {
 }
 
 bool Events::waitForPress(uint expiry) {
-	CGameManager *gameManager = g_vm->_window->_gameManager;
 	uint32 delayEnd = g_system->getMillis() + expiry;
+	CPressTarget pressTarget;
+	addTarget(&pressTarget);
 
-	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
-		g_system->delayMillis(10);
-		checkForNextFrameCounter();
-
-		// Regularly update the sound mixer
-		if (gameManager)
-			gameManager->_sound.updateMixer();
-
-		Common::Event event;
-		if (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_MBUTTONDOWN:
-			case Common::EVENT_KEYDOWN:
-				return true;
-			default:
-				break;
-			}
-		}
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd && !pressTarget._pressed) {
+		pollEventsAndWait();
 	}
 
-	return false;
+	removeTarget();
+	return pressTarget._pressed;
+}
+
+void Events::setMousePos(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+	_mousePos = pt;
+	eventTarget()->mouseMove(_mousePos);
+}
+
+void Events::handleKbdSpecial(Common::KeyState keyState) {
+	if (keyState.flags & Common::KBD_CTRL)
+		_specialButtons |= MK_CONTROL;
+	else
+		_specialButtons &= ~MK_CONTROL;
+
+	if (keyState.flags & Common::KBD_SHIFT)
+		_specialButtons |= MK_SHIFT;
+	else
+		_specialButtons &= ~MK_SHIFT;
 }
 
 } // End of namespace Titanic

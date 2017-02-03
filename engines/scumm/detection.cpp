@@ -1117,10 +1117,10 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	if (!findInMD5Table(res.md5.c_str())) {
 		Common::String md5Warning;
 
-		md5Warning = "Your game version appears to be unknown. If this is *NOT* a fan-modified\n";
-		md5Warning += "version (in particular, not a fan-made translation), please, report the\n";
-		md5Warning += "following data to the ScummVM team along with name of the game you tried\n";
-		md5Warning += "to add and its version/language/etc.:\n";
+		md5Warning = _("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+		               "version (in particular, not a fan-made translation), please, report the\n"
+		               "following data to the ScummVM team along with the name of the game you tried\n"
+		               "to add and its version, language, etc.:\n");
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
@@ -1135,8 +1135,8 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// We don't support the "Lite" version off puttzoo iOS because it contains
 	// the full game.
 	if (!strcmp(res.game.gameid, "puttzoo") && !strcmp(res.extra, "Lite")) {
-		GUIErrorMessage("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
-		                "The full version is available for purchase from the iTunes Store.");
+		GUIErrorMessage(_("The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid piracy.\n"
+		                  "The full version is available for purchase from the iTunes Store."));
 		return Common::kUnsupportedGameidError;
 	}
 

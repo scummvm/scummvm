@@ -86,7 +86,7 @@ public:
 	virtual Networking::Request *streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns the StorageInfo struct. */
 	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);

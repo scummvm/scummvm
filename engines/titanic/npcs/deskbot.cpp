@@ -28,11 +28,13 @@ namespace Titanic {
 static const char *const TALKING_NAMES[] = {
 	"NeutralTalking", "HandFidget1", "HandFidget2", "LookingAround",
 	"FriendlyTalking", "MoreRudeness", "HandUp", "TapFingers",
-	"WaveOn", "WaveArmsAround", "HandsOverEdge"
+	"WaveOn", "WaveArmsAround", "HandsOverEdge",
+	nullptr
 };
 
 static const char *const IDLE_NAMES[] = {
-	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge"
+	"WaveOn", "HandFidget1", "HandFidget2", "TapFingers", "HandsOverEdge",
+	nullptr
 };
 
 BEGIN_MESSAGE_MAP(CDeskbot, CTrueTalkNPC)
@@ -52,7 +54,8 @@ END_MESSAGE_MAP()
 int CDeskbot::_v1;
 int CDeskbot::_v2;
 
-CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false), _classNum(0) {
+CDeskbot::CDeskbot() : CTrueTalkNPC(), _deskbotActive(false),
+		_classNum(NO_CLASS) {
 }
 
 void CDeskbot::save(SimpleFile *file, int indent) {
@@ -70,7 +73,7 @@ void CDeskbot::load(SimpleFile *file) {
 	_v1 = file->readNumber();
 	_v2 = file->readNumber();
 	_deskbotActive = file->readNumber();
-	_classNum = file->readNumber();
+	_classNum = (PassengerClass)file->readNumber();
 
 	CTrueTalkNPC::load(file);
 }
@@ -78,11 +81,13 @@ void CDeskbot::load(SimpleFile *file) {
 bool CDeskbot::TurnOn(CTurnOn *msg) {
 	if (!_deskbotActive) {
 		setVisible(true);
-		playClip("BellRinging", 4);
+		playClip("BellRinging");
+		playClip("Opening", MOVIE_NOTIFY_OBJECT);
+
 		playSound("b#69.wav");
 		petSetArea(PET_CONVERSATION);
 
-		_npcFlags |= NPCFLAG_20000;
+		_npcFlags |= NPCFLAG_MOVE_START;
 		_deskbotActive = true;
 	}
 
@@ -108,44 +113,44 @@ bool CDeskbot::ActMsg(CActMsg *msg) {
 
 bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 	bool flag = false;
-	if (_npcFlags & NPCFLAG_10000) {
+	if (_npcFlags & NPCFLAG_MOVING) {
 		if (_classNum) {
 			petSetArea(PET_ROOMS);
-			dec54();
+			decTransitions();
 			unlockMouse();
 			playSound("z#47.wav");
-			_classNum = false;
+			_classNum = NO_CLASS;
 		}
 
-		_npcFlags &= ~NPCFLAG_10000;
+		_npcFlags &= ~NPCFLAG_MOVING;
 		flag = true;
 	}
 
-	if (_npcFlags & NPCFLAG_40000) {
+	if (_npcFlags & NPCFLAG_MOVE_LOOP) {
 		_deskbotActive = false;
-		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
+		_npcFlags &= ~(NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_START);
 
-		if (_npcFlags & NPCFLAG_80000) {
+		if (_npcFlags & NPCFLAG_MOVE_FINISH) {
 			CTurnOn turnOn;
 			turnOn.execute("EmbBellbotTrigger");
 			unlockMouse();
 			changeView("EmbLobby.Node 4.N", "");
-		} else if (_npcFlags & NPCFLAG_100000) {
+		} else if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 			CTurnOn turnOn;
 			turnOn.execute("EmbDoorBotTrigger");
 			unlockMouse();
 			changeView("EmbLobby.Node 4.N", "");
 		}
 
-		_npcFlags &= ~(NPCFLAG_80000 | NPCFLAG_100000);
+		_npcFlags &= ~(NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT);
 		flag = true;
 	}
 
-	if (_npcFlags & NPCFLAG_20000) {
-		_npcFlags &= ~(NPCFLAG_40000 | NPCFLAG_20000);
-		endTalking(this, 1, findView());
+	if (_npcFlags & NPCFLAG_MOVE_START) {
+		_npcFlags &= ~(NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_START);
+		setTalking(this, true, findView());
 
-		_npcFlags |= NPCFLAG_4;
+		_npcFlags |= NPCFLAG_START_IDLING;
 		flag = true;
 	}
 
@@ -167,26 +172,26 @@ bool CDeskbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	switch (msg->_action) {
 	case 19:
-		inc54();
+		incTransitions();
 		lockMouse();
 		petSetArea(PET_CONVERSATION);
-		playClip("ReprogramPETInHand", 4);
-		_npcFlags |= NPCFLAG_10000;
-		_classNum = msg->_param1;
+		playClip("ReprogramPETInHand", MOVIE_NOTIFY_OBJECT);
+		_npcFlags |= NPCFLAG_MOVING;
+		_classNum = (PassengerClass)msg->_param1;
 
 		switch (_classNum) {
-		case 1:
+		case FIRST_CLASS:
 			petDisplayMessage(UPGRADED_TO_FIRST_CLASS);
 			setPassengerClass(_classNum);
 			petReassignRoom(_classNum);
 			break;
-		case 2:
+		case SECOND_CLASS:
 			petDisplayMessage(UPGRADED_TO_SECOND_CLASS);
 			setPassengerClass(_classNum);
 			petReassignRoom(_classNum);
 			break;
-		case 3:
-			setPassengerClass(3);
+		case THIRD_CLASS:
+			setPassengerClass(THIRD_CLASS);
 			petReassignRoom(_classNum);
 			break;
 		default:
@@ -197,36 +202,36 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (getPassengerClass() == 1) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(4);
+				petControl->changeLocationClass(UNCHECKED);
 		}
 		break;
 
 	case 21:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(3);
+				petControl->changeLocationClass(THIRD_CLASS);
 		}
 		break;
 
 	case 22:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(2);
+				petControl->changeLocationClass(SECOND_CLASS);
 		}
 		break;
 
 	case 23:
-		if (getPassengerClass() == 1) {
+		if (getPassengerClass() == FIRST_CLASS) {
 			CPetControl *petControl = getPetControl();
 			if (petControl)
-				petControl->changeLocationClass(1);
+				petControl->changeLocationClass(FIRST_CLASS);
 		}
 		break;
 
 	case 26:
-		_npcFlags |= NPCFLAG_80000;
+		_npcFlags |= NPCFLAG_MOVE_FINISH;
 		CTurnOff turnOff;
 		turnOff.execute(this);
 		lockMouse();
@@ -249,7 +254,7 @@ bool CDeskbot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 }
 
 bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
-	if (_npcFlags & NPCFLAG_40000)
+	if (_npcFlags & NPCFLAG_MOVE_LOOP)
 		return true;
 
 	CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
@@ -269,7 +274,7 @@ bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 }
 
 bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
-	if (_npcFlags & NPCFLAG_40000)
+	if (_npcFlags & NPCFLAG_MOVE_LOOP)
 		return true;
 
 	CTurnOff turnOff;
@@ -280,11 +285,11 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 	case 41787:
 	case 41788:
 	case 41789:
-		_npcFlags |= NPCFLAG_80000;
+		_npcFlags |= NPCFLAG_MOVE_FINISH;
 		turnOff.execute(this);
 
 	case 41686:
-		_npcFlags |= NPCFLAG_100000;
+		_npcFlags |= NPCFLAG_MOVE_LEFT;
 		turnOff.execute(this);
 		break;
 
@@ -300,8 +305,8 @@ bool CDeskbot::TurnOff(CTurnOff *msg) {
 		stopMovie();
 		performAction(1, findView());
 
-		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_2 | NPCFLAG_4)) | NPCFLAG_40000;
-		playClip("Closing", 0x14);
+		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_IDLING | NPCFLAG_START_IDLING)) | NPCFLAG_MOVE_LOOP;
+		playClip("Closing", MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;

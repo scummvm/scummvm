@@ -96,8 +96,8 @@ public:
 };
 
 class DirtyAreas : public Common::Array<DirtyArea> {
-private:
-	MADSEngine *_vm;
+//private:
+//	MADSEngine *_vm;
 public:
 	DirtyAreas(MADSEngine *vm);
 

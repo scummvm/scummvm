@@ -37,8 +37,6 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
-//#define ENABLE_BILINEAR
-
 namespace Graphics {
 
 static const int kBModShift = 0;//img->format.bShift;
@@ -676,8 +674,10 @@ systems.
 
 
 
+struct tColorRGBA { byte r; byte g; byte b; byte a; };
 
-TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
+template <TFilteringMode filteringMode>
+TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transform) const {
 
 	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
@@ -704,7 +704,6 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	float invCos = cos(invAngle * M_PI / 180.0);
 	float invSin = sin(invAngle * M_PI / 180.0);
 
-	struct tColorRGBA { byte r; byte g; byte b; byte a; };
 	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
@@ -739,50 +738,50 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 				dy = sh - dy;
 			}
 
-#ifdef ENABLE_BILINEAR
-			if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
-				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-				tColorRGBA c00, c01, c10, c11, cswap;
-				c00 = *sp;
-				sp += 1;
-				c01 = *sp;
-				sp += (this->pitch / 4);
-				c11 = *sp;
-				sp -= 1;
-				c10 = *sp;
-				if (flipx) {
-					cswap = c00; c00=c01; c01=cswap;
-					cswap = c10; c10=c11; c11=cswap;
+			if (filteringMode == FILTER_BILINEAR) {
+				if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
+					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+					tColorRGBA c00, c01, c10, c11, cswap;
+					c00 = *sp;
+					sp += 1;
+					c01 = *sp;
+					sp += (this->pitch / 4);
+					c11 = *sp;
+					sp -= 1;
+					c10 = *sp;
+					if (flipx) {
+						cswap = c00; c00=c01; c01=cswap;
+						cswap = c10; c10=c11; c11=cswap;
+					}
+					if (flipy) {
+						cswap = c00; c00=c10; c10=cswap;
+						cswap = c01; c01=c11; c11=cswap;
+					}
+					/*
+					* Interpolate colors
+					*/
+					int ex = (sdx & 0xffff);
+					int ey = (sdy & 0xffff);
+					int t1, t2;
+					t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
+					t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
+					pc->r = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
+					t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
+					pc->g = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
+					t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
+					pc->b = (((t2 - t1) * ey) >> 16) + t1;
+					t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
+					t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
+					pc->a = (((t2 - t1) * ey) >> 16) + t1;
 				}
-				if (flipy) {
-					cswap = c00; c00=c10; c10=cswap;
-					cswap = c01; c01=c11; c11=cswap;
+			} else {
+				if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
+					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
+					*pc = *sp;
 				}
-				/*
-				* Interpolate colors
-				*/
-				int ex = (sdx & 0xffff);
-				int ey = (sdy & 0xffff);
-				int t1, t2;
-				t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
-				t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
-				pc->r = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
-				t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
-				pc->g = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
-				t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
-				pc->b = (((t2 - t1) * ey) >> 16) + t1;
-				t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
-				t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
-				pc->a = (((t2 - t1) * ey) >> 16) + t1;
 			}
-#else
-			if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
-				const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-				*pc = *sp;
-			}
-#endif
 			sdx += icosx;
 			sdy += isiny;
 			pc++;
@@ -791,7 +790,8 @@ TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transfo
 	return target;
 }
 
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+template <TFilteringMode filteringMode>
+TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
 
 	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
 	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
@@ -807,173 +807,169 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight)
 
 	target->create((uint16)dstW, (uint16)dstH, this->format);
 
-#ifdef ENABLE_BILINEAR
+	if (filteringMode == FILTER_BILINEAR) {
 
-	// NB: The actual order of these bytes may not be correct, but
-	// since all values are treated equal, that does not matter.
-	struct tColorRGBA { byte r; byte g; byte b; byte a; };
-
-	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
+		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
 
-	int *sax = new int[dstW + 1];
-	int *say = new int[dstH + 1];
-	assert(sax && say);
+		int *sax = new int[dstW + 1];
+		int *say = new int[dstH + 1];
+		assert(sax && say);
 
-	/*
-	* Precalculate row increments
-	*/
-	int spixelw = (srcW - 1);
-	int spixelh = (srcH - 1);
-	int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
-	int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
-
-	/* Maximum scaled source size */
-	int ssx = (srcW << 16) - 1;
-	int ssy = (srcH << 16) - 1;
-
-	/* Precalculate horizontal row increments */
-	int csx = 0;
-	int *csax = sax;
-	for (int x = 0; x <= dstW; x++) {
-		*csax = csx;
-		csax++;
-		csx += sx;
-
-		/* Guard from overflows */
-		if (csx > ssx) {
-			csx = ssx;
-		}
-	}
-
-	/* Precalculate vertical row increments */
-	int csy = 0;
-	int *csay = say;
-	for (int y = 0; y <= dstH; y++) {
-		*csay = csy;
-		csay++;
-		csy += sy;
-
-		/* Guard from overflows */
-		if (csy > ssy) {
-			csy = ssy;
-		}
-	}
-
-	const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
-	tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
-	int spixelgap = srcW;
-
-	if (flipx) {
-		sp += spixelw;
-	}
-	if (flipy) {
-		sp += spixelgap * spixelh;
-	}
-
-	csay = say;
-	for (int y = 0; y < dstH; y++) {
-		const tColorRGBA *csp = sp;
-		csax = sax;
-		for (int x = 0; x < dstW; x++) {
-			/*
-			* Setup color source pointers
-			*/
-			int ex = (*csax & 0xffff);
-			int ey = (*csay & 0xffff);
-			int cx = (*csax >> 16);
-			int cy = (*csay >> 16);
-
-			const tColorRGBA *c00, *c01, *c10, *c11;
-			c00 = sp;
-			c01 = sp;
-			c10 = sp;
-			if (cy < spixelh) {
-				if (flipy) {
-					c10 -= spixelgap;
-				} else {
-					c10 += spixelgap;
-				}
-			}
-			c11 = c10;
-			if (cx < spixelw) {
-				if (flipx) {
-					c01--;
-					c11--;
-				} else {
-					c01++;
-					c11++;
-				}
-			}
-
-			/*
-			* Draw and interpolate colors
-			*/
-			int t1, t2;
-			t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
-			t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
-			dp->r = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
-			t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
-			dp->g = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
-			t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
-			dp->b = (((t2 - t1) * ey) >> 16) + t1;
-			t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
-			t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
-			dp->a = (((t2 - t1) * ey) >> 16) + t1;
-
-			/*
-			* Advance source pointer x
-			*/
-			int *salastx = csax;
-			csax++;
-			int sstepx = (*csax >> 16) - (*salastx >> 16);
-			if (flipx) {
-				sp -= sstepx;
-			} else {
-				sp += sstepx;
-			}
-
-			/*
-			* Advance destination pointer x
-			*/
-			dp++;
-		}
 		/*
-		* Advance source pointer y
+		* Precalculate row increments
 		*/
-		int *salasty = csay;
-		csay++;
-		int sstepy = (*csay >> 16) - (*salasty >> 16);
-		sstepy *= spixelgap;
+		int spixelw = (srcW - 1);
+		int spixelh = (srcH - 1);
+		int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
+		int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
+
+		/* Maximum scaled source size */
+		int ssx = (srcW << 16) - 1;
+		int ssy = (srcH << 16) - 1;
+
+		/* Precalculate horizontal row increments */
+		int csx = 0;
+		int *csax = sax;
+		for (int x = 0; x <= dstW; x++) {
+			*csax = csx;
+			csax++;
+			csx += sx;
+
+			/* Guard from overflows */
+			if (csx > ssx) {
+				csx = ssx;
+			}
+		}
+
+		/* Precalculate vertical row increments */
+		int csy = 0;
+		int *csay = say;
+		for (int y = 0; y <= dstH; y++) {
+			*csay = csy;
+			csay++;
+			csy += sy;
+
+			/* Guard from overflows */
+			if (csy > ssy) {
+				csy = ssy;
+			}
+		}
+
+		const tColorRGBA *sp = (const tColorRGBA *) getBasePtr(0, 0);
+		tColorRGBA *dp = (tColorRGBA *) target->getBasePtr(0, 0);
+		int spixelgap = srcW;
+
+		if (flipx) {
+			sp += spixelw;
+		}
 		if (flipy) {
-			sp = csp - sstepy;
-		} else {
-			sp = csp + sstepy;
+			sp += spixelgap * spixelh;
 		}
-	}
 
-	delete[] sax;
-	delete[] say;
+		csay = say;
+		for (int y = 0; y < dstH; y++) {
+			const tColorRGBA *csp = sp;
+			csax = sax;
+			for (int x = 0; x < dstW; x++) {
+				/*
+				* Setup color source pointers
+				*/
+				int ex = (*csax & 0xffff);
+				int ey = (*csay & 0xffff);
+				int cx = (*csax >> 16);
+				int cy = (*csay >> 16);
 
-#else
+				const tColorRGBA *c00, *c01, *c10, *c11;
+				c00 = sp;
+				c01 = sp;
+				c10 = sp;
+				if (cy < spixelh) {
+					if (flipy) {
+						c10 -= spixelgap;
+					} else {
+						c10 += spixelgap;
+					}
+				}
+				c11 = c10;
+				if (cx < spixelw) {
+					if (flipx) {
+						c01--;
+						c11--;
+					} else {
+						c01++;
+						c11++;
+					}
+				}
 
-	int *scaleCacheX = new int[dstW];
-	for (int x = 0; x < dstW; x++) {
-		scaleCacheX[x] = (x * srcW) / dstW;
-	}
+				/*
+				* Draw and interpolate colors
+				*/
+				int t1, t2;
+				t1 = ((((c01->r - c00->r) * ex) >> 16) + c00->r) & 0xff;
+				t2 = ((((c11->r - c10->r) * ex) >> 16) + c10->r) & 0xff;
+				dp->r = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->g - c00->g) * ex) >> 16) + c00->g) & 0xff;
+				t2 = ((((c11->g - c10->g) * ex) >> 16) + c10->g) & 0xff;
+				dp->g = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->b - c00->b) * ex) >> 16) + c00->b) & 0xff;
+				t2 = ((((c11->b - c10->b) * ex) >> 16) + c10->b) & 0xff;
+				dp->b = (((t2 - t1) * ey) >> 16) + t1;
+				t1 = ((((c01->a - c00->a) * ex) >> 16) + c00->a) & 0xff;
+				t2 = ((((c11->a - c10->a) * ex) >> 16) + c10->a) & 0xff;
+				dp->a = (((t2 - t1) * ey) >> 16) + t1;
 
-	for (int y = 0; y < dstH; y++) {
-		uint32 *destP = (uint32 *)target->getBasePtr(0, y);
-		const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
+				/*
+				* Advance source pointer x
+				*/
+				int *salastx = csax;
+				csax++;
+				int sstepx = (*csax >> 16) - (*salastx >> 16);
+				if (flipx) {
+					sp -= sstepx;
+				} else {
+					sp += sstepx;
+				}
+
+				/*
+				* Advance destination pointer x
+				*/
+				dp++;
+			}
+			/*
+			* Advance source pointer y
+			*/
+			int *salasty = csay;
+			csay++;
+			int sstepy = (*csay >> 16) - (*salasty >> 16);
+			sstepy *= spixelgap;
+			if (flipy) {
+				sp = csp - sstepy;
+			} else {
+				sp = csp + sstepy;
+			}
+		}
+
+		delete[] sax;
+		delete[] say;
+
+	} else {
+
+		int *scaleCacheX = new int[dstW];
 		for (int x = 0; x < dstW; x++) {
-			*destP++ = srcP[scaleCacheX[x]];
+			scaleCacheX[x] = (x * srcW) / dstW;
 		}
-	}
-	delete[] scaleCacheX;
 
-#endif
+		for (int y = 0; y < dstH; y++) {
+			uint32 *destP = (uint32 *)target->getBasePtr(0, y);
+			const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
+			for (int x = 0; x < dstW; x++) {
+				*destP++ = srcP[scaleCacheX[x]];
+			}
+		}
+		delete[] scaleCacheX;
+
+	}
 
 	return target;
 
@@ -1055,6 +1051,20 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	}
 
 	return surface;
+}
+
+
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
+template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
+
+TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
+	return rotoscaleT<FILTER_BILINEAR>(transform);
+}
+
+TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight) const {
+	return scaleT<FILTER_NEAREST>(newWidth, newHeight);
 }
 
 } // End of namespace Graphics

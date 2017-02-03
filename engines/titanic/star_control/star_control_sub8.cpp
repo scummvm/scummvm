@@ -24,8 +24,10 @@
 
 namespace Titanic {
 
-CStarControlSub8::CStarControlSub8() :
-	_field0(0), _field4(0), _field8(-1), _fieldC(-1) {
+CStarControlSub8::CStarControlSub8() : _field8(-1) {
+#if 0
+	_field0(0), _field4(0), _field8(-1), _fieldC(-1)
+#endif
 }
 
 } // End of namespace Titanic

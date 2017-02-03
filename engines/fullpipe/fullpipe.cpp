@@ -28,6 +28,7 @@
 #include "audio/mixer.h"
 
 #include "engines/util.h"
+#include "graphics/surface.h"
 
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
@@ -123,7 +124,12 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_musicLocal = 0;
 	_trackStartDelay = 0;
 
-	_sceneTrackHandle = new Audio::SoundHandle();
+	_soundStream1 = new Audio::SoundHandle();
+	_soundStream2 = new Audio::SoundHandle();
+	_soundStream3 = new Audio::SoundHandle();
+	_soundStream4 = new Audio::SoundHandle();
+
+	_stream2playing = false;
 
 	memset(_sceneTracks, 0, sizeof(_sceneTracks));
 	memset(_trackName, 0, sizeof(_trackName));
@@ -205,7 +211,10 @@ FullpipeEngine::~FullpipeEngine() {
 	delete _rnd;
 	delete _console;
 	delete _globalMessageQueueList;
-	delete _sceneTrackHandle;
+	delete _soundStream1;
+	delete _soundStream2;
+	delete _soundStream3;
+	delete _soundStream4;
 }
 
 void FullpipeEngine::initialize() {
@@ -263,6 +272,7 @@ Common::Error FullpipeEngine::loadGameState(int slot) {
 	else
 		return Common::kUnknownError;
 }
+
 Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description) {
 	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot)))
 		return Common::kNoError;
@@ -276,7 +286,8 @@ Common::Error FullpipeEngine::run() {
 	// Initialize backend
 	initGraphics(800, 600, true, &format);
 
-	_backgroundSurface.create(800, 600, format);
+	_backgroundSurface = new Graphics::Surface;
+	_backgroundSurface->create(800, 600, format);
 
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
@@ -493,7 +504,9 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 
 	delete _origFormat;
-	_backgroundSurface.free();
+	_backgroundSurface->free();
+
+	delete _backgroundSurface;
 }
 
 void FullpipeEngine::updateScreen() {
@@ -593,6 +606,20 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 			//	_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
 		}
 	}
+}
+
+bool FullpipeEngine::isSaveAllowed() {
+	if (!g_fp->_isSaveAllowed)
+		return false;
+
+	bool allowed = true;
+
+	for (Common::Array<MessageQueue *>::iterator s = g_fp->_globalMessageQueueList->begin(); s != g_fp->_globalMessageQueueList->end(); ++s) {
+		if (!(*s)->_isFinished && ((*s)->getFlags() & 1))
+			allowed = false;
+	}
+
+	return allowed;
 }
 
 

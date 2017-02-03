@@ -122,6 +122,18 @@ struct CelInfo32 {
 	inline bool operator!=(const CelInfo32 &other) {
 		return !(*this == other);
 	}
+
+	inline Common::String toString() const {
+		if (type == kCelTypeView) {
+			return Common::String::format("view %u, loop %d, cel %d", resourceId, loopNo, celNo);
+		} else if (type == kCelTypePic) {
+			return Common::String::format("pic %u, cel %d", resourceId, celNo);
+		} else if (kCelTypeColor) {
+			return Common::String::format("color %d", color);
+		} else if (type == kCelTypeMem) {
+			return Common::String::format("mem %04x:%04x", PRINT_REG(bitmap));
+		}
+	}
 };
 
 class CelObj;

@@ -22,6 +22,7 @@
 
 #include "sci/console.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
@@ -34,8 +35,10 @@ namespace Sci {
 #pragma mark ScreenItem
 
 uint16 ScreenItem::_nextObjectId = 20000;
+uint32 ScreenItem::_nextCreationId = 0;
 
 ScreenItem::ScreenItem(const reg_t object) :
+_creationId(_nextCreationId++),
 _celObj(nullptr),
 _object(object),
 _pictureId(-1),
@@ -51,6 +54,7 @@ _drawBlackLines(false) {
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _useInsetRect(false),
 _z(0),
@@ -67,6 +71,7 @@ _mirrorX(false),
 _drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Rect &rect) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _useInsetRect(false),
 _z(0),
@@ -87,6 +92,7 @@ _drawBlackLines(false) {
 }
 
 ScreenItem::ScreenItem(const reg_t plane, const CelInfo32 &celInfo, const Common::Point &position, const ScaleInfo &scaleInfo) :
+_creationId(_nextCreationId++),
 _plane(plane),
 _scale(scaleInfo),
 _useInsetRect(false),
@@ -104,6 +110,7 @@ _mirrorX(false),
 _drawBlackLines(false) {}
 
 ScreenItem::ScreenItem(const ScreenItem &other) :
+_creationId(other._creationId),
 _plane(other._plane),
 _scale(other._scale),
 _useInsetRect(other._useInsetRect),
@@ -131,6 +138,7 @@ void ScreenItem::operator=(const ScreenItem &other) {
 		_celObj = nullptr;
 	}
 
+	_creationId = other._creationId;
 	_screenRect = other._screenRect;
 	_mirrorX = other._mirrorX;
 	_useInsetRect = other._useInsetRect;
@@ -148,6 +156,7 @@ ScreenItem::~ScreenItem() {
 
 void ScreenItem::init() {
 	_nextObjectId = 20000;
+	_nextCreationId = 0;
 }
 
 void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const bool updateCel, const bool updateBitmap) {
@@ -169,7 +178,7 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 			// single location
 			Resource *view = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _celInfo.resourceId), false);
 			if (!view) {
-				error("Failed to load resource %d", _celInfo.resourceId);
+				error("Failed to load %s", _celInfo.toString().c_str());
 			}
 
 			// NOTE: +2 because the header size field itself is excluded from
@@ -227,17 +236,29 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		writeSelectorValue(segMan, object, SELECTOR(priority), _position.y);
 	}
 
-	_z = readSelectorValue(segMan, object, SELECTOR(z));
+	_z = (int16)readSelectorValue(segMan, object, SELECTOR(z));
 	_position.y -= _z;
 
-	if (readSelectorValue(segMan, object, SELECTOR(useInsetRect))) {
-		_useInsetRect = true;
-		_insetRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-		_insetRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-		_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-		_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		if (readSelectorValue(segMan, object, SELECTOR(seenRect))) {
+			_useInsetRect = true;
+			_insetRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+			_insetRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+			_insetRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+			_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+		} else {
+			_useInsetRect = false;
+		}
 	} else {
-		_useInsetRect = false;
+		if (readSelectorValue(segMan, object, SELECTOR(useInsetRect))) {
+			_useInsetRect = true;
+			_insetRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+			_insetRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+			_insetRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+			_insetRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+		} else {
+			_useInsetRect = false;
+		}
 	}
 
 	segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewVisible);
@@ -434,7 +455,11 @@ void ScreenItem::calcRects(const Plane &plane) {
 
 		_screenRect = _screenItemRect;
 
-		if (_screenRect.intersects(plane._screenRect)) {
+		// PQ4CD creates screen items with invalid rects; SSCI does not care
+		// about this, but `Common::Rect::clip` does, so we need to check
+		// whether or not the rect is actually valid before clipping and only
+		// clip valid rects
+		if (_screenRect.intersects(plane._screenRect) && _screenRect.isValidRect()) {
 			_screenRect.clip(plane._screenRect);
 		} else {
 			_screenRect.right = 0;
@@ -476,10 +501,11 @@ CelObj &ScreenItem::getCelObj() const {
 }
 
 void ScreenItem::printDebugInfo(Console *con) const {
-	con->debugPrintf("%04x:%04x (%s), prio %d, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
+	con->debugPrintf("%04x:%04x (%s), prio %d, ins %u, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
 		_object.getSegment(), _object.getOffset(),
 		g_sci->getEngineState()->_segMan->getObjectName(_object),
 		_priority,
+		_creationId,
 		_position.x,
 		_position.y,
 		_z,
@@ -492,30 +518,8 @@ void ScreenItem::printDebugInfo(Console *con) const {
 		con->debugPrintf("    inset rect: (%d, %d, %d, %d)\n", PRINT_RECT(_insetRect));
 	}
 
-	Common::String celType;
-	switch (_celInfo.type) {
-		case kCelTypePic:
-			celType = "pic";
-			break;
-		case kCelTypeView:
-			celType = "view";
-			break;
-		case kCelTypeColor:
-			celType = "color";
-			break;
-		case kCelTypeMem:
-			celType = "mem";
-			break;
-	}
+	con->debugPrintf("    %s\n", _celInfo.toString().c_str());
 
-	con->debugPrintf("    type: %s, res %d, loop %d, cel %d, bitmap %04x:%04x, color: %d\n",
-		celType.c_str(),
-		_celInfo.resourceId,
-		_celInfo.loopNo,
-		_celInfo.celNo,
-		PRINT_REG(_celInfo.bitmap),
-		_celInfo.color
-	);
 	if (_celObj != nullptr) {
 		con->debugPrintf("    width %d, height %d, x-resolution %d, y-resolution %d\n",
 			_celObj->_width,

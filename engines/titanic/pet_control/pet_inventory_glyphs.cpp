@@ -112,47 +112,50 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 		return false;
 
 	CGameObject *carryParcel = petControl->getHiddenObject("CarryParcel");
+	CGameObject *item = _item;
 
 	if (petControl->isSuccUBusActive() && carryParcel) {
 		petControl->removeFromInventory(_item, carryParcel, false, true);
 		petControl->removeFromInventory(_item, false, false);
 
-		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
-			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
-		_item->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
+		carryParcel->setPosition(Point(msg->_mousePos.x - carryParcel->_bounds.width() / 2,
+			msg->_mousePos.y - carryParcel->_bounds.height() / 2));
+		carryParcel->setPosition(Point(SCREEN_WIDTH, SCREEN_HEIGHT));
+		item = carryParcel;
 	} else {
 		petControl->removeFromInventory(_item, false, true);
 
-		_item->setPosition(Point(msg->_mousePos.x - carryParcel->getBounds().width() / 2,
-			msg->_mousePos.y - carryParcel->getBounds().height() / 2));
+		_item->setPosition(Point(msg->_mousePos.x - _item->_bounds.width() / 2,
+			msg->_mousePos.y - _item->_bounds.height() / 2));
 		_item->setVisible(true);
 	}
 
 	msg->_handled = true;
-	if (msg->execute(carryParcel)) {
+	if (msg->execute(item)) {
 		_item = nullptr;
 		_background = nullptr;
 		_field34 = 0;
 		petControl->setAreaChangeType(1);
 		return true;
 	} else {
-		petControl->addToInventory(carryParcel);
+		petControl->addToInventory(item);
 		return false;
 	}
 }
 
-void CPetInventoryGlyph::getTooltip(CPetText *text) {
+void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 	if (text) {
 		text->setText("");
 
 		if (_field34 && _item) {
 			int itemIndex = populateItem(_item, 0);
 			if (itemIndex >= 14 && itemIndex <= 18) {
+				// Variations of the chicken
 				CPETObjectStateMsg stateMsg(0);
 				stateMsg.execute(_item);
 
-				text->setText(CString::format("%s %s",
-					stateMsg._value ? "A hot " : "A cold ",
+				CString temperature = g_vm->_strings[stateMsg._value ? A_HOT : A_COLD];
+				text->setText(CString::format("%s %s", temperature.c_str(),
 					g_vm->_itemDescriptions[itemIndex].c_str()
 				));
 
@@ -219,9 +222,12 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	if (itemIndex == -1)
 		return -1;
 
+	// Some objects can be in multiple different states. These are handled 
+	// below to give each the correct inventory glyph and description
 	switch (ITEM_MODES[itemIndex]) {
 	case 0:
-		switch (subMode(item, isLoading)) {
+		// Maitre d'Bot's left arm
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 		case 1:
 			return 0;
@@ -233,7 +239,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		}
 
 	case 2:
-		switch (subMode(item, isLoading)) {
+		// Maitre d'Bot's right arm
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 			return 2;
 		default:
@@ -242,7 +249,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		break;
 
 	case 15:
-		switch (subMode(item, isLoading)) {
+		// Chicken
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 		case 1:
 			return 14;
@@ -260,7 +268,8 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 		break;
 
 	case 26:
-		switch (subMode(item, isLoading)) {
+		// Beer glass
+		switch (getItemIndex(item, isLoading)) {
 		case 0:
 			return 26;
 		case 1:
@@ -281,21 +290,23 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	return ITEM_MODES[itemIndex];
 }
 
-int CPetInventoryGlyph::subMode(CGameObject *item, bool isLoading) {
+int CPetInventoryGlyph::getItemIndex(CGameObject *item, bool isLoading) {
 	int frameNum = item->getFrameNumber();
 	int movieFrame = item->getMovieFrame();
 
-	if (isLoading && frameNum != -1 && frameNum != movieFrame)
+	if (isLoading && frameNum != -1 && frameNum != movieFrame) {
 		item->loadFrame(frameNum);
+		movieFrame = frameNum;
+	}
 
-	return frameNum;
+	return movieFrame;
 }
 
 void CPetInventoryGlyph::startBackgroundMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_background, 1);
+			section->playMovie(_background, MOVIE_REPEAT);
 	}
 }
 
@@ -303,7 +314,7 @@ void CPetInventoryGlyph::startForegroundMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_image, 1);
+			section->playMovie(_image, MOVIE_REPEAT);
 	}
 }
 
@@ -311,7 +322,7 @@ void CPetInventoryGlyph::stopMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(nullptr, 1);
+			section->playMovie(nullptr, MOVIE_REPEAT);
 	}
 }
 

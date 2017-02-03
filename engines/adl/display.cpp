@@ -33,6 +33,7 @@
 #include "engines/util.h"
 
 #include "adl/display.h"
+#include "adl/adl.h"
 
 namespace Adl {
 
@@ -130,7 +131,7 @@ Display::Display() :
 	_frameBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 	_textBuf = new byte[TEXT_BUF_SIZE];
-	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
+	memset(_textBuf, (byte)APPLECHAR(' '), TEXT_BUF_SIZE);
 	_textBufSurface = new Graphics::Surface;
 	// For ease of copying, also use 2x scaling here
 	_textBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
@@ -249,6 +250,8 @@ void Display::setPixelPalette(const Common::Point &p, byte color) {
 }
 
 bool Display::getPixelBit(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	return *b & (1 << (p.x % 7));
 }
@@ -267,7 +270,7 @@ void Display::clear(byte color) {
 }
 
 void Display::home() {
-	memset(_textBuf, APPLECHAR(' '), TEXT_BUF_SIZE);
+	memset(_textBuf, (byte)APPLECHAR(' '), TEXT_BUF_SIZE);
 	_cursorPos = 0;
 }
 
@@ -294,7 +297,10 @@ void Display::moveCursorTo(const Common::Point &pos) {
 void Display::printChar(char c) {
 	if (c == APPLECHAR('\r'))
 		_cursorPos = (_cursorPos / TEXT_WIDTH + 1) * TEXT_WIDTH;
-	else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
+	else if (c == APPLECHAR('\a')) {
+		updateTextScreen();
+		static_cast<AdlEngine *>(g_engine)->bell();
+	} else if ((byte)c < 0x80 || (byte)c >= 0xa0) {
 		setCharAtCursor(c);
 		++_cursorPos;
 	}
@@ -330,6 +336,8 @@ void Display::showCursor(bool enable) {
 }
 
 void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	color ^= *b;
 	color &= mask;
@@ -546,7 +554,7 @@ void Display::createFont() {
 
 void Display::scrollUp() {
 	memmove(_textBuf, _textBuf + TEXT_WIDTH, TEXT_BUF_SIZE - TEXT_WIDTH);
-	memset(_textBuf + TEXT_BUF_SIZE - TEXT_WIDTH, APPLECHAR(' '), TEXT_WIDTH);
+	memset(_textBuf + TEXT_BUF_SIZE - TEXT_WIDTH, (byte)APPLECHAR(' '), TEXT_WIDTH);
 	if (_cursorPos >= TEXT_WIDTH)
 		_cursorPos -= TEXT_WIDTH;
 }

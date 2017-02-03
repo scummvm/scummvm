@@ -37,9 +37,9 @@ IndexPageHandler::~IndexPageHandler() {}
 Common::String IndexPageHandler::code() const { return _code; }
 
 void IndexPageHandler::handle(Client &client) {
-	Common::String code = client.queryParameter("code");
+	Common::String queryCode = client.queryParameter("code");
 
-	if (code == "") {
+	if (queryCode == "") {
 		// redirect to "/filesAJAX"
 		HandlerUtils::setMessageHandler(
 			client,
@@ -53,7 +53,7 @@ void IndexPageHandler::handle(Client &client) {
 		return;
 	}
 
-	_code = code;
+	_code = queryCode;
 	sendCommand(GUI::kStorageCodePassedCmd, 0);
 	HandlerUtils::setMessageHandler(client, _("ScummVM got the code and already connects to your cloud storage!"));
 }

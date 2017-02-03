@@ -1053,7 +1053,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 void MidiPlayer_Midi::close() {
 	if (_isMt32) {
 		// Send goodbye message
-		sendMt32SysEx(0x200000, _goodbyeMsg, 20);
+		sendMt32SysEx(0x200000, _goodbyeMsg, 20, true);
 	}
 
 	_driver->close();
@@ -1069,8 +1069,8 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	if (_isMt32)
 		delay += 40;
 
-	g_system->delayMillis(delay);
 	g_system->updateScreen();
+	g_sci->sleep(delay);
 }
 
 byte MidiPlayer_Midi::getPlayId() const {

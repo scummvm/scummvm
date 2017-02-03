@@ -55,14 +55,14 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --disable-fluidsynth --msvc --msvc-version 11 --build-events
+create_project ..\.. --enable-all-engines --disable-fluidsynth --disable-sdlnet --disable-libcurl --disable-updates --msvc --msvc-version 11 --build-events
 goto done
 
 :stable
 echo.
 echo Creating normal project files, with only the stable engines enabled
 echo.
-create_project ..\.. --disable-fluidsynth --msvc --msvc-version 11
+create_project ..\.. --disable-fluidsynth --disable-sdlnet --disable-libcurl --disable-updates --msvc --msvc-version 11
 goto done
 
 :tools

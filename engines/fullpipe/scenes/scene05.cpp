@@ -281,6 +281,9 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 			mq->_isFinished = 0;
 
+			if (!mq->chain(wacko))
+				delete mq;
+
 			return;
 		}
 

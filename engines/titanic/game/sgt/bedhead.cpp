@@ -87,38 +87,37 @@ void CBedhead::load(SimpleFile *file) {
 }
 
 bool CBedhead::TurnOn(CTurnOn *msg) {
-	if (_statics->_v2 == "Closed" || _statics->_v2 == "RestingUnderTV")
-		return true;
+	if (_statics->_bedfoot != "Closed" && _statics->_bedfoot != "RestingUnderTV") {
+		const BedheadEntries *data = nullptr;
+		if (_statics->_bedhead == "Closed")
+			data = &_on._closed;
+		else if (_statics->_bedhead == "RestingTV")
+			data = &_on._restingTV;
+		else if (_statics->_bedhead == "RestingUV")
+			data = &_on._restingUV;
+		else if (_statics->_bedhead == "ClosedWrong")
+			data = &_on._closedWrong;
+		else
+			return true;
 
-	const BedheadEntries *data = nullptr;
-	if (_statics->_v1 == "Closed")
-		data = &_on._closed;
-	else if (_statics->_v1 == "RestingTV")
-		data = &_on._restingTV;
-	else if (_statics->_v1 == "RestingUV")
-		data = &_on._restingUV;
-	else if (_statics->_v1 == "ClosedWrong")
-		data = &_on._closedWrong;
-	else
-		return true;
+		for (uint idx = 0; idx < data->size(); ++idx) {
+			const BedheadEntry &entry = (*data)[idx];
+			if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
+					&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
+					&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
+				CVisibleMsg visibleMsg(false);
+				visibleMsg.execute("Bedfoot");
+				setVisible(true);
 
-	for (uint idx = 0; idx < data->size(); ++idx) {
-		const BedheadEntry &entry = (*data)[idx];
-		if ((entry._name1 == _statics->_v4 || entry._name1 == "Any")
-				&& (entry._name2 == _statics->_v3 || entry._name2 == "Any")
-				&& (entry._name3 == _statics->_v5 || entry._name3 == "Any")) {
-			CVisibleMsg visibleMsg(false);
-			visibleMsg.execute("Bedfoot");
-			setVisible(true);
-
-			_statics->_v1 = entry._name4;
-			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playSound("b#6.wav");
-			_fieldE0 = false;
+				_statics->_bedhead = entry._name4;
+				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				playSound("b#6.wav");
+				_isClosed = false;
+			}
 		}
 	}
 
-	if (_statics->_v1 == "Open") {
+	if (_statics->_bedhead == "Open") {
 		playMovie(71, 78, 0);
 		playSound("196_436 bed inflate 2.wav");
 	}
@@ -127,40 +126,40 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 }
 
 bool CBedhead::TurnOff(CTurnOff *msg) {
-	if (_statics->_v1 == "Open") {
+	if (_statics->_bedhead == "Open") {
 		playMovie(78, 85, 0);
 		playSound("191_436_bed inflate deflate.wav");
 	}
 
 	BedheadEntries *data = nullptr;
-	if (_statics->_v1 == "Open")
+	if (_statics->_bedhead == "Open")
 		data = &_off._open;
-	else if (_statics->_v1 == "RestingUTV")
+	else if (_statics->_bedhead == "RestingUTV")
 		data = &_off._restingUTV;
-	else if (_statics->_v1 == "RestingV")
+	else if (_statics->_bedhead == "RestingV")
 		data = &_off._restingV;
-	else if (_statics->_v1 == "RestingG")
+	else if (_statics->_bedhead == "RestingG")
 		data = &_off._restingG;
-	else if (_statics->_v1 == "OpenWrong")
+	else if (_statics->_bedhead == "OpenWrong")
 		data = &_off._openWrong;
-	else if (_statics->_v1 == "RestingDWrong")
+	else if (_statics->_bedhead == "RestingDWrong")
 		data = &_off._restingDWrong;
 	else
 		return true;
 
 	for (uint idx = 0; idx < data->size(); ++idx) {
 		const BedheadEntry &entry = (*data)[idx];
-		if ((entry._name1 == _statics->_v4 || entry._name1 == "Any")
-			&& (entry._name2 == _statics->_v3 || entry._name2 == "Any")
-			&& (entry._name3 == _statics->_v5 || entry._name3 == "Any")) {
+		if ((entry._name1 == _statics->_tv || entry._name1 == "Any")
+			&& (entry._name2 == _statics->_vase || entry._name2 == "Any")
+			&& (entry._name3 == _statics->_desk || entry._name3 == "Any")) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("Bedfoot");
 			setVisible(true);
 
-			_statics->_v1 = entry._name4;
+			_statics->_bedhead = entry._name4;
 			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			playSound("193_436_bed fold up 1.wav");
-			_fieldE0 = false;
+			_isClosed = false;
 		}
 	}
 

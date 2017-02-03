@@ -79,4 +79,4 @@ Movie::~Movie() {
 	delete _currentVideo;
 }
 
-} //End of namespace Director
+} // End of namespace Director

@@ -176,6 +176,11 @@ public:
 	 */
 	MacResTagArray getResTagArray();
 
+	/**
+	 * Load from stream in MacBinary format
+	 */
+	bool loadFromMacBinary(SeekableReadStream &stream);
+
 private:
 	SeekableReadStream *_stream;
 	String _baseFileName;
@@ -183,7 +188,6 @@ private:
 	bool load(SeekableReadStream &stream);
 
 	bool loadFromRawFork(SeekableReadStream &stream);
-	bool loadFromMacBinary(SeekableReadStream &stream);
 	bool loadFromAppleDouble(SeekableReadStream &stream);
 
 	static String constructAppleDoubleName(String name);

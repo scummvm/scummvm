@@ -979,17 +979,13 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 		if (isinf(_numberValue) || isnan(_numberValue))
 			ret_string = "null";
 		else {
-			char str[80];
-			sprintf(str, "%lg", _numberValue);
-			ret_string = str;
+			ret_string = String::format("%g", _numberValue);
 		}
 		break;
 	}
 
 	case JSONType_IntegerNumber: {
-		char str[80];
-		sprintf(str, "%lld", _integerValue);
-		ret_string = str;
+		ret_string = String::format("%lld", _integerValue);
 		break;
 	}
 

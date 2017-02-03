@@ -48,7 +48,7 @@ class StorageFile {
 public:
 	StorageFile(); //invalid empty file
 	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
-	StorageFile(Common::String id, Common::String path, Common::String name, uint32 sz, uint32 ts, bool dir);
+	StorageFile(Common::String fileId, Common::String filePath, Common::String fileName, uint32 sz, uint32 ts, bool dir);
 
 	Common::String id() const { return _id; }
 	Common::String path() const { return _path; }

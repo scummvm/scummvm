@@ -52,7 +52,7 @@
 #include "gui/ThemeEval.h"
 
 #include "graphics/cursorman.h"
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -99,6 +99,30 @@ LauncherDialog::LauncherDialog()
 	_w = screenW;
 	_h = screenH;
 
+	build();
+
+	GUI::GuiManager::instance()._launched = true;
+}
+
+void LauncherDialog::selectTarget(const String &target) {
+	if (!target.empty()) {
+		int itemToSelect = 0;
+		StringArray::const_iterator iter;
+		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
+			if (target == *iter) {
+				_list->setSelected(itemToSelect);
+				break;
+			}
+		}
+	}
+}
+
+LauncherDialog::~LauncherDialog() {
+	delete _browser;
+	delete _loadDialog;
+}
+
+void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
@@ -174,26 +198,23 @@ LauncherDialog::LauncherDialog()
 
 	// Create Load dialog
 	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
-
-	GUI::GuiManager::instance()._launched = true;
 }
 
-void LauncherDialog::selectTarget(const String &target) {
-	if (!target.empty()) {
-		int itemToSelect = 0;
-		StringArray::const_iterator iter;
-		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
-			if (target == *iter) {
-				_list->setSelected(itemToSelect);
-				break;
-			}
-		}
+void LauncherDialog::clean() {
+	while (_firstWidget) {
+		Widget* w = _firstWidget;
+		removeWidget(w);
+		delete w;
 	}
-}
-
-LauncherDialog::~LauncherDialog() {
 	delete _browser;
 	delete _loadDialog;
+}
+
+void LauncherDialog::rebuild() {
+	clean();
+	build();
+	reflowLayout();
+	setFocusWidget(_firstWidget);
 }
 
 void LauncherDialog::open() {
@@ -328,7 +349,7 @@ void LauncherDialog::addGame() {
 
 		if (_browser->runModal() > 0) {
 			// User made his choice...
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 			String selectedDirectory = _browser->getResult().getPath();
 			String bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			if (selectedDirectory.size() && selectedDirectory.lastChar() != '/' && selectedDirectory.lastChar() != '\\')

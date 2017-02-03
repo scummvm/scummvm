@@ -43,6 +43,7 @@ TTword::TTword(const TTword *src) {
 	_id = src->_id;
 	_tag = src->_tag;
 	_synP = nullptr;
+	_status = SS_VALID;
 
 	TTsynonym *priorSyn = nullptr;
 	for (TTsynonym *synP = _synP; synP && !_status;) {

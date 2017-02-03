@@ -23,6 +23,7 @@
 namespace Wintermute {
 
 #define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS1
+#define GAMEOPTION_BILINEAR GUIO_GAMEOPTIONS2
 
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
@@ -42,6 +43,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
 	{"deadcity",        "Dead City"},
+	{"dfafadventure",        "DFAF Adventure"},
+	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
@@ -60,6 +63,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
+	{"openquest",        "Open Quest"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"projectdoom",     "Project: Doom"},
@@ -237,6 +241,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("deadcity", "",
 		WME_ENTRY2s("russian.dcp", "a0ae71e9e1185596fffb07ad2c951eb9", 653317,
 					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
+	// DFAF Adventure
+	WME_WINENTRY("dfafadventure", "",
+		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("czech.dcp", "08a71446467cf8f9444cfea446b46ad6", 127697934,
@@ -262,6 +269,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
 	WME_WINENTRY("dreaming", "",
 		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Dreamcat
+	WME_WINENTRY("dreamcat", "",
+		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Dreamscape
 	WME_WINENTRY("dreamscape", "",
 		WME_ENTRY1s("data.dcp",  "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -366,6 +376,9 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("oknytt", "Version 1.13",
 		WME_ENTRY2s("spanish.dcp", "10c46152cb29581671f3b6b7c229c957", 319406572,
 					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
+	// Open Quest
+	WME_WINENTRY("openquest", "",
+		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),	
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "",
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),

@@ -122,8 +122,13 @@ void MystCursorManager::setCursor(uint16 id) {
 	if (surface->format.bytesPerPixel == 1) {
 		// The transparent color is almost always 255, except for the main cursor (100)
 		// in the D'ni archive, where it is 0.
-		// Using the color of the first pixel as the transparent color seems to always work.
-		byte transparentColor = ((byte *)surface->getPixels())[0];
+		// Using the color of the first pixel as the transparent color for the main cursor always works.
+		byte transparentColor;
+		if (id == kDefaultMystCursor) {
+			transparentColor = ((byte *)surface->getPixels())[0];
+		} else {
+			transparentColor = 255;
+		}
 		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, transparentColor);
 
 		// We're using the screen palette for the original game, but we need

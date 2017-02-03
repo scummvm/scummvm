@@ -45,10 +45,12 @@ private:
 	CStarControlSub13 _sub13;
 	CSurfaceFader _fader;
 	CVideoSurface *_videoSurface2;
-	int _field210;
 	CGameObject *_homePhotoMask;
 	int _field218;
 	int _field21C;
+#if 0
+	int _field210;
+#endif
 private:
 	void fn1();
 public:

@@ -169,27 +169,27 @@ void Reader::handleFirstHeaders(Common::MemoryReadWriteStream *headersStream) {
 	_availableBytes = _contentLength;
 }
 
-void Reader::parseFirstLine(const Common::String &headers) {
-	uint32 headersSize = headers.size();
+void Reader::parseFirstLine(const Common::String &headersToParse) {
+	uint32 headersSize = headersToParse.size();
 	bool bad = false;
 
 	if (headersSize > 0) {
-		const char *cstr = headers.c_str();
+		const char *cstr = headersToParse.c_str();
 		const char *position = strstr(cstr, "\r\n");
 		if (position) { //we have at least one line - and we want the first one
 			//"<METHOD> <path> HTTP/<VERSION>\r\n"
-			Common::String method, path, http, buf;
+			Common::String methodParsed, pathParsed, http, buf;
 			uint32 length = position - cstr;
 			if (headersSize > length)
 				headersSize = length;
 			for (uint32 i = 0; i < headersSize; ++i) {
-				if (headers[i] != ' ')
-					buf += headers[i];
-				if (headers[i] == ' ' || i == headersSize - 1) {
-					if (method == "") {
-						method = buf;
-					} else if (path == "") {
-						path = buf;
+				if (headersToParse[i] != ' ')
+					buf += headersToParse[i];
+				if (headersToParse[i] == ' ' || i == headersSize - 1) {
+					if (methodParsed == "") {
+						methodParsed = buf;
+					} else if (pathParsed == "") {
+						pathParsed = buf;
 					} else if (http == "") {
 						http = buf;
 					} else {
@@ -201,44 +201,44 @@ void Reader::parseFirstLine(const Common::String &headers) {
 			}
 
 			//check that method is supported
-			if (method != "GET" && method != "PUT" && method != "POST")
+			if (methodParsed != "GET" && methodParsed != "PUT" && methodParsed != "POST")
 				bad = true;
 
 			//check that HTTP/<VERSION> is OK
 			if (!http.hasPrefix("HTTP/"))
 				bad = true;
 
-			_method = method;
-			parsePathQueryAndAnchor(path);
+			_method = methodParsed;
+			parsePathQueryAndAnchor(pathParsed);
 		}
 	}
 
 	if (bad) _isBadRequest = true;
 }
 
-void Reader::parsePathQueryAndAnchor(Common::String path) {
+void Reader::parsePathQueryAndAnchor(Common::String pathToParse) {
 	//<path>[?query][#anchor]
 	bool readingPath = true;
 	bool readingQuery = false;
 	_path = "";
 	_query = "";
 	_anchor = "";
-	for (uint32 i = 0; i < path.size(); ++i) {
+	for (uint32 i = 0; i < pathToParse.size(); ++i) {
 		if (readingPath) {
-			if (path[i] == '?') {
+			if (pathToParse[i] == '?') {
 				readingPath = false;
 				readingQuery = true;
 			} else {
-				_path += path[i];
+				_path += pathToParse[i];
 			}
 		} else if (readingQuery) {
-			if (path[i] == '#') {
+			if (pathToParse[i] == '#') {
 				readingQuery = false;
 			} else {
-				_query += path[i];
+				_query += pathToParse[i];
 			}
 		} else {
-			_anchor += path[i];
+			_anchor += pathToParse[i];
 		}
 	}
 
@@ -350,7 +350,7 @@ bool Reader::readOneByteInStream(Common::WriteStream *stream, const Common::Stri
 }
 
 byte Reader::readOne() {
-	byte b;
+	byte b = 0;
 	_content->read(&b, 1);
 	--_availableBytes;
 	--_bytesLeft;

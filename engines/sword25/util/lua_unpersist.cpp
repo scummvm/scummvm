@@ -116,16 +116,13 @@ static void registerObjectInIndexTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... obj
 
 	// Make sure there is enough room on the stack
-	lua_checkstack(info->luaState, 2);
+	lua_checkstack(info->luaState, 1);
 
-	lua_pushlightuserdata(info->luaState, (void *)index);
-	// >>>>> permTbl indexTbl ...... obj index
-
-	lua_pushvalue(info->luaState, -2);
-	// >>>>> permTbl indexTbl ...... obj index obj
+	lua_pushvalue(info->luaState, -1);
+	// >>>>> permTbl indexTbl ...... obj obj
 
 	// Push the k/v pair into the indexTbl
-	lua_settable(info->luaState, 2);
+	lua_rawseti(info->luaState, 2, index);
 	// >>>>> permTbl indexTbl ...... obj
 }
 
@@ -198,10 +195,7 @@ static void unpersist(UnSerializationInfo *info) {
 		} else {
 			// Fetch the object from the indexTbl
 
-			lua_pushlightuserdata(info->luaState, (void *)index);
-			// >>>>> permTbl indexTbl ...... index
-
-			lua_gettable(info->luaState, 2);
+			lua_rawgeti(info->luaState, 2, index);
 			// >>>>> permTbl indexTbl ...... ?obj?
 
 			assert(!lua_isnil(info->luaState, -1));

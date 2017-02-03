@@ -66,7 +66,7 @@ void CLiftBot::load(SimpleFile *file) {
 bool CLiftBot::TextInputMsg(CTextInputMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (_enabled || pet->getRoomsElevatorNum() != 4) {
-		if (getName() != "LiftBot") {
+		if (getName() == "LiftBot") {
 			CViewItem *view = findView();
 			processInput(msg, view);
 		}
@@ -79,13 +79,12 @@ bool CLiftBot::EnterViewMsg(CEnterViewMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (!_enabled && pet->getRoomsElevatorNum() == 4) {
 		loadFrame(700);
-	} else if (!_flag) {
-		if (getName() != "LiftBot") {
-			CViewItem *view = findView();
-			endTalking(this, true, view);
-			petSetArea(PET_CONVERSATION);
-			_flag = 1;
-		}
+	} else if (!_flag && getName() == "LiftBot") {
+		// First time meeting the LiftBot
+		CViewItem *view = findView();
+		setTalking(this, true, view);
+		petSetArea(PET_CONVERSATION);
+		_flag = 1;
 	}
 
 	return true;
@@ -109,7 +108,7 @@ bool CLiftBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CLiftBot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (getName() != "LiftBot")
+	if (getName() == "LiftBot")
 		performAction(false);
 
 	return true;
@@ -124,7 +123,7 @@ bool CLiftBot::TurnOn(CTurnOn *msg) {
 	_enabled = true;
 	if (!_flag) {
 		if (isEquals("LiftBotTalking")) {
-			endTalking(this, MOVIE_REPEAT, findView());
+			setTalking(this, MOVIE_REPEAT, findView());
 			petSetArea(PET_CONVERSATION);
 			_flag = true;
 		}
@@ -156,7 +155,7 @@ bool CLiftBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 }
 
 bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
-	const char *const NAMES[] = {
+	static const char *const NAMES[] = {
 		"Groaning", "Groaning 2", "Talking 1", "Talking 2", "Talking 3",
 		"Happy Talking", "Complaining", "Aggressive", "Explaining",
 		"Happy Talking 2", "Happy Talking 3", "Happy Talking 4"
@@ -164,7 +163,7 @@ bool CLiftBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	};
 
 	if (msg->_value2 == 2)
-		playClip("At Rest", 0);
+		playClip("At Rest");
 	else
 		msg->_names = NAMES;
 	return true;
@@ -174,7 +173,7 @@ bool CLiftBot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "ActivateLift") {
 		_enabled = true;
 		CViewItem *view = findView();
-		endTalking(this, true, view);
+		setTalking(this, true, view);
 		startTalking(this, 155, view);
 	} else if (msg->_action == "LiftArrive") {
 		CViewItem *view = findView();

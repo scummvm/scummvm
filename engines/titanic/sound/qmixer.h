@@ -197,9 +197,19 @@ class QMixer {
 		uint _volumeChangeEnd;
 		byte _volumeStart;
 		byte _volumeEnd;
+		// Distance of source
+		double _distance;
+		bool _resetDistance;
 
 		ChannelEntry() : _volume(0), _panRate(0), _volumeChangeStart(0),
-			_volumeChangeEnd(0), _volumeStart(0), _volumeEnd(0) {}
+			_volumeChangeEnd(0), _volumeStart(0), _volumeEnd(0),
+			_distance(0.0), _resetDistance(true) {}
+
+		/**
+		 * Calculates the raw volume level to pass to ScummVM playStream, taking
+		 * into the sound's volume level and distance from origin
+		 */
+		byte getRawVolume() const;
 	};
 private:
 	Audio::Mixer *_mixer;
@@ -290,7 +300,7 @@ public:
 	void qsWaveMixSetDistanceMapping(int iChannel, uint flags, const QMIX_DISTANCES &distances);
 
 	/**
-	 *
+	 * Sets the frequency/rate of sound playback
 	 */
 	void qsWaveMixSetFrequency(int iChannel, uint flags, uint frequency);
 

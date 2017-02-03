@@ -53,7 +53,7 @@ void CCage::load(SimpleFile *file) {
 }
 
 bool CCage::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (CParrot::_v4 && !CParrot::_v5) {
+	if (CParrot::_state != PARROT_IN_CAGE && !CParrot::_coreReplaced) {
 		CActMsg actMsg(_open ? "Open" : "Shut");
 		actMsg.execute(this);
 	}
@@ -88,7 +88,7 @@ bool CCage::MovieEndMsg(CMovieEndMsg *msg) {
 	_open = clipExistsByEnd("Shut", msg->_endFrame);
 
 	CStatusChangeMsg statusMsg;
-	statusMsg._newStatus = _open ? 1 : (CParrot::_v4 == 0 ? 1 : 0);
+	statusMsg._newStatus = _open ? 1 : (CParrot::_state == PARROT_IN_CAGE ? 1 : 0);
 	statusMsg.execute("PerchCoreHolder");
 
 	return true;
@@ -96,14 +96,14 @@ bool CCage::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CCage::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	loadSurface();
-	_open = CParrot::_v4 != 0;
+	_open = CParrot::_state != PARROT_IN_CAGE;
 	loadFrame(_open ? 8 : 0);
 
 	return true;
 }
 
 bool CCage::MouseMoveMsg(CMouseMoveMsg *msg) {
-	_cursorId = CParrot::_v4 && !CParrot::_v5 ? CURSOR_ACTIVATE : CURSOR_ARROW;
+	_cursorId = CParrot::_state != PARROT_IN_CAGE && !CParrot::_coreReplaced ? CURSOR_ACTIVATE : CURSOR_ARROW;
 	return true;
 }
 

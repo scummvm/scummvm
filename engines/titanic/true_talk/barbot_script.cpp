@@ -167,7 +167,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			dialogueId = ARRAY2[0];
 			_arrIndex = 1;
 		} else if (getRandomNumber(100) > 60) {
-			switch (sentence->_field2C) {
+			switch (sentence->_category) {
 			case 2:
 				dialogueId = 51914;
 				break;
@@ -209,7 +209,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	int val34 = getState();
 	setState(0);
 
-	int val2C = sentence->_field2C;
+	int val2C = sentence->_category;
 	bool flag = val2C == 11 || val2C == 13;
 	bool flag2 = val2C == 12;
 
@@ -748,7 +748,7 @@ done:
 				return 2;
 			}
 
-			addResponse(getDialogueId(250082 + getRandomNumber(100) <= 89 ? 128 : 0));
+			addResponse(getDialogueId(250082 + (getRandomNumber(100) <= 89 ? 128 : 0)));
 		}
 	}
 
@@ -776,7 +776,7 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 			resetFlags();
 		} else {
 			if (!getValue(28) || !fn10(true)) {
-				addResponse(getDialogueId(251627 + getValue(28) ? -1034 : 0));
+				addResponse(getDialogueId(251627 + (getValue(28) ? -1034 : 0)));
 				applyResponse();
 			}
 
@@ -1009,18 +1009,17 @@ uint BarbotScript::getDialsBitset() const {
 		bits = 1;
 	if (!getDialRegion(1))
 		bits |= 2;
-	if (!getDialRegion(2))
+	if (getDialRegion(2))
 		bits |= 4;
 
 	return bits;
 }
 
 int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	int v34 = getState();
 	uint id = 0;
 
-	if (v34 > 0x200) {
-		switch (v34 - 0x201) {
+	if (val1 > 0x200) {
+		switch (val1 - 0x201) {
 		case 0:
 			if (getValue(4) != 2)
 				id = 250738;
@@ -1035,11 +1034,11 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 		default:
 			break;
 		}
-	} else if (v34 == 0x200) {
+	} else if (val1 == 0x200) {
 		if (getValue(4) != 1)
 			id = 250738;
 	} else {
-		switch (v34) {
+		switch (val1) {
 		case 2:
 			if (getValue(1) != 1)
 				return 1;
@@ -1072,40 +1071,34 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 			break;
 		case 9: {
 			uint val = CTrueTalkManager::getStateValue(3);
-			bool bit0 = (val & 1) != 0;
-			bool bit2 = (val & 4) != 0;
-			bool bit3 = (val & 8) != 0;
+			bool lemonFlag = (val & 1) != 0;
+			bool puretFlag = (val & 4) != 0;
+			bool tvFlag = (val & 8) != 0;
 
-			if (bit2) {
-				if (!bit0) {
-					id = 250085 - (bit3 ? 0 : 199715);
+			if (puretFlag) {
+				if (!lemonFlag) {
+					id = tvFlag ? 50369 : 250085;
 					break;
-				} else if (!bit3) {
+				} else if (!tvFlag) {
 					id = 250627;
 				}
 			} else {
-				if (!bit0) {
-					id = 50365 + (bit3 ? 0 : 2);
-				} else if (!bit3) {
+				if (lemonFlag) {
+					id = tvFlag ? 50367 : 50365;
+				} else if (tvFlag) {
 					id = 50370;
 				}
-			}
-
-			if (id) {
-				addResponse(getDialogueId(id));
-				applyResponse();
-				return 2;
 			}
 			break;
 		}
 
 		case 10: {
 			uint val = CTrueTalkManager::getStateValue(3);
-			bool bit0 = (val & 1) != 0;
-			bool bit2 = (val & 4) != 0;
-			bool bit3 = (val & 8) != 0;
+			bool lemonFlag = (val & 1) != 0;
+			bool puretFlag = (val & 4) != 0;
+			bool tvFlag = (val & 8) != 0;
 
-			if (bit0 && bit2 && bit3) {
+			if (lemonFlag && puretFlag && tvFlag) {
 				addResponse(getDialogueId(251027));
 				applyResponse();
 				CTrueTalkManager::triggerAction(7, 0);
@@ -1147,9 +1140,10 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 	if (id) {
 		addResponse(getDialogueId(id));
 		applyResponse();
+		return 2;
 	}
 
-	return 2;
+	return 0;
 }
 
 void BarbotScript::setDialRegion(int dialNum, int region) {
@@ -1176,7 +1170,7 @@ int BarbotScript::applySentenceIds(int dialogueId, int v34) {
 	} else {
 		for (uint idx = 0; idx < _mappings.size(); ++idx) {
 			const TTscriptMapping &m = _mappings[idx];
-			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++idx) {
+			for (int vidx = 0; vidx < _mappings._valuesPerMapping; ++vidx) {
 				if (m._values[vidx] == (uint)dialogueId) {
 					updateState(m._id, m._id, vidx);
 					break;

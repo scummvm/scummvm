@@ -2,9 +2,11 @@ MODULE := engines/director
 
 MODULE_OBJS = \
 	archive.o \
+	cast.o \
 	detection.o \
 	director.o \
 	frame.o \
+	graphics.o \
 	images.o \
 	movie.o \
 	resource.o \

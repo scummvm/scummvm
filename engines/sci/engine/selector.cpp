@@ -21,6 +21,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -57,11 +58,11 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(nsTop);
 	FIND_SELECTOR(nsLeft);
 	FIND_SELECTOR(nsBottom);
+	FIND_SELECTOR(nsRight);
 	FIND_SELECTOR(lsTop);
 	FIND_SELECTOR(lsLeft);
 	FIND_SELECTOR(lsBottom);
 	FIND_SELECTOR(lsRight);
-	FIND_SELECTOR(nsRight);
 	FIND_SELECTOR(signal);
 	FIND_SELECTOR(illegalBits);
 	FIND_SELECTOR(brTop);
@@ -173,6 +174,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(left);
 	FIND_SELECTOR(bottom);
 	FIND_SELECTOR(right);
+	FIND_SELECTOR(seenRect);
 	FIND_SELECTOR(resY);
 	FIND_SELECTOR(resX);
 	FIND_SELECTOR(dimmed);
@@ -214,9 +216,16 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 
 #ifdef ENABLE_SCI32
 void updateInfoFlagViewVisible(Object *obj, int index) {
-	// TODO: Make this correct for all SCI versions
-	// Selectors 26 through 44 are selectors for View script objects in SQ6
-	if (index >= 26 && index <= 44 && getSciVersion() >= SCI_VERSION_2) {
+	int minIndex, maxIndex;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		minIndex = 24;
+		maxIndex = 43;
+	} else {
+		minIndex = 26;
+		maxIndex = 44;
+	}
+
+	if (index >= minIndex && index <= maxIndex && getSciVersion() >= SCI_VERSION_2) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }
@@ -233,12 +242,12 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable) {
 		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
 		error("Selector '%s' of object could not be written to. Address %04x:%04x, %s", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.toString().c_str());
-	} else {
-		*address.getPointer(segMan) = value;
-#ifdef ENABLE_SCI32
-		updateInfoFlagViewVisible(segMan->getObject(object), selectorId);
-#endif
 	}
+
+	*address.getPointer(segMan) = value;
+#ifdef ENABLE_SCI32
+	updateInfoFlagViewVisible(segMan->getObject(object), address.varindex);
+#endif
 }
 
 void invokeSelector(EngineState *s, reg_t object, int selectorId,

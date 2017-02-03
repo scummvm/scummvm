@@ -63,13 +63,14 @@ bool CEye::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			headMsg.execute(isEquals("Eye1") ? "Eye1Slot" : "Eye2Slot");
 	} else if (msg->_other->isEquals("LiftbotWithoutHead")) {
 		CPetControl *pet = getPetControl();
-		if (!CLift::_v1 && pet->getRoomsElevatorNum() == 4) {
+		if (!CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_eyeFlag = true;
 			setPosition(_origPos);
 			setVisible(false);
 			CActMsg actMsg1(getName());
 			actMsg1.execute("GetLiftEye");
 
+			CTelevision::_eyeFlag = true;
 			CActMsg actMsg2("AddWrongHead");
 			actMsg2.execute("FaultyLiftbot");
 		}
@@ -84,7 +85,7 @@ bool CEye::UseWithCharMsg(CUseWithCharMsg *msg) {
 	CLift *lift = dynamic_cast<CLift *>(msg->_character);
 	if (lift && lift->getName() == "Well") {
 		CPetControl *pet = getPetControl();
-		if (!CLift::_v1 && pet->getRoomsElevatorNum() == 4) {
+		if (!CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_eyeFlag = true;
 			setPosition(_origPos);
 			setVisible(false);
@@ -121,7 +122,7 @@ bool CEye::ActMsg(CActMsg *msg) {
 
 bool CEye::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	if (isEquals("Eye1"))
-		CTelevision::_v5 = 0;
+		CTelevision::_channel4Glyph = false;
 
 	return CHeadPiece::PETGainedObjectMsg(msg);
 }
@@ -129,9 +130,9 @@ bool CEye::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 bool CEye::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 	setVisible(true);
 	if (_eyeFlag)
-		CTelevision::_v6 = 0;
+		CTelevision::_eyeFlag = false;
 	else if (isEquals("Eye1"))
-		CTelevision::_v5 = 0;
+		CTelevision::_channel4Glyph = false;
 
 	return CHeadPiece::PassOnDragStartMsg(msg);
 }

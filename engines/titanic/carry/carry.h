@@ -59,7 +59,7 @@ protected:
 	int _visibleFrame;
 public:
 	CString _string1;
-	int _fieldE0;
+	bool _canTake;
 	Point _origPos;
 	CString _fullViewName;
 public:

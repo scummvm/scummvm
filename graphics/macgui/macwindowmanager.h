@@ -59,11 +59,25 @@ using namespace MacGUIConstants;
 
 class ManagedSurface;
 
-class Menu;
+class MacMenu;
 
 class MacFontManager;
 
 typedef Common::Array<byte *> MacPatterns;
+
+struct MacPlotData {
+	Graphics::ManagedSurface *surface;
+	MacPatterns *patterns;
+	uint fillType;
+	int thickness;
+	uint bgColor;
+
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg = kColorWhite) :
+		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
+	}
+};
+
+void macDrawPixel(int x, int y, int color, void *data);
 
 /**
  * A manager class to handle window creation, destruction,
@@ -95,7 +109,7 @@ public:
 	 * afterwards.
 	 * @return Pointer to a new empty menu.
 	 */
-	Menu *addMenu();
+	MacMenu *addMenu();
 	/**
 	 * Set the desired window state to active.
 	 * @param id ID of the window that has to be set to active.
@@ -143,9 +157,12 @@ public:
 	 * @return A MacPatterns object reference with the patterns.
 	 */
 	MacPatterns &getPatterns() { return _patterns; }
-	void drawFilledRoundRect(ManagedSurface *surface, Common::Rect &rect, int arc, int color);
 
 	void pushArrowCursor();
+	void pushBeamCursor();
+	void pushCrossHairCursor();
+	void pushCrossBarCursor();
+	void pushWatchCursor();
 	void popCursor();
 
 public:
@@ -174,7 +191,7 @@ private:
 
 	MacPatterns _patterns;
 
-	Menu *_menu;
+	MacMenu *_menu;
 
 	bool _cursorIsArrow;
 };

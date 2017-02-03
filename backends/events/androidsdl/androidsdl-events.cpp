@@ -66,9 +66,8 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (false) {}
 
-	if (ev.key.keysym.sym == SDLK_LCTRL) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
+	if (ev.key.keysym.sym == SDLK_F13) {
+		event.type = Common::EVENT_MAINMENU;
 		return true;
 	} else {
 		// Let the events fall through if we didn't change them, this may not be the best way to

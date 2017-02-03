@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,66 +18,111 @@
 #ifndef MT32EMU_INTERNALS_H
 #define MT32EMU_INTERNALS_H
 
+#include "Types.h"
+
 // Debugging
 
 // 0: Standard debug output is not stamped with the rendered sample count
 // 1: Standard debug output is stamped with the rendered sample count
 // NOTE: The "samplestamp" corresponds to the end of the last completed rendering run.
 //       This is important to bear in mind for debug output that occurs during a run.
+#ifndef MT32EMU_DEBUG_SAMPLESTAMPS
 #define MT32EMU_DEBUG_SAMPLESTAMPS 0
+#endif
 
 // 0: No debug output for initialisation progress
 // 1: Debug output for initialisation progress
+#ifndef MT32EMU_MONITOR_INIT
 #define MT32EMU_MONITOR_INIT 0
+#endif
 
 // 0: No debug output for MIDI events
 // 1: Debug output for weird MIDI events
+#ifndef MT32EMU_MONITOR_MIDI
 #define MT32EMU_MONITOR_MIDI 0
+#endif
 
 // 0: No debug output for note on/off
 // 1: Basic debug output for note on/off
 // 2: Comprehensive debug output for note on/off
+#ifndef MT32EMU_MONITOR_INSTRUMENTS
 #define MT32EMU_MONITOR_INSTRUMENTS 0
+#endif
 
 // 0: No debug output for partial allocations
 // 1: Show partial stats when an allocation fails
 // 2: Show partial stats with every new poly
 // 3: Show individual partial allocations/deactivations
+#ifndef MT32EMU_MONITOR_PARTIALS
 #define MT32EMU_MONITOR_PARTIALS 0
+#endif
 
 // 0: No debug output for sysex
 // 1: Basic debug output for sysex
+#ifndef MT32EMU_MONITOR_SYSEX
 #define MT32EMU_MONITOR_SYSEX 0
+#endif
 
 // 0: No debug output for sysex writes to the timbre areas
 // 1: Debug output with the name and location of newly-written timbres
 // 2: Complete dump of timbre parameters for newly-written timbres
+#ifndef MT32EMU_MONITOR_TIMBRES
 #define MT32EMU_MONITOR_TIMBRES 0
+#endif
 
 // 0: No TVA/TVF-related debug output.
 // 1: Shows changes to TVA/TVF target, increment and phase.
+#ifndef MT32EMU_MONITOR_TVA
 #define MT32EMU_MONITOR_TVA 0
+#endif
+#ifndef MT32EMU_MONITOR_TVF
 #define MT32EMU_MONITOR_TVF 0
+#endif
 
 // Configuration
 
+// 0: Use 16-bit signed samples and refined wave generator based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed.
+// 1: Use float samples in the wave generator and renderer. Maximum output quality and minimum noise.
+#ifndef MT32EMU_USE_FLOAT_SAMPLES
+#define MT32EMU_USE_FLOAT_SAMPLES 0
+#endif
+
 // If non-zero, deletes reverb buffers that are not in use to save memory.
 // If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
+#ifndef MT32EMU_REDUCE_REVERB_MEMORY
 #define MT32EMU_REDUCE_REVERB_MEMORY 1
+#endif
 
 // 0: Maximum speed at the cost of a bit lower emulation accuracy.
 // 1: Maximum achievable emulation accuracy.
+#ifndef MT32EMU_BOSS_REVERB_PRECISE_MODE
 #define MT32EMU_BOSS_REVERB_PRECISE_MODE 0
-
-#include "Structures.h"
-#include "Tables.h"
-#include "Poly.h"
-#include "LA32Ramp.h"
-#include "LA32WaveGenerator.h"
-#include "TVA.h"
-#include "TVP.h"
-#include "TVF.h"
-#include "Partial.h"
-#include "Part.h"
-
 #endif
+
+namespace MT32Emu {
+
+enum PolyState {
+	POLY_Playing,
+	POLY_Held, // This marks keys that have been released on the keyboard, but are being held by the pedal
+	POLY_Releasing,
+	POLY_Inactive
+};
+
+enum ReverbMode {
+	REVERB_MODE_ROOM,
+	REVERB_MODE_HALL,
+	REVERB_MODE_PLATE,
+	REVERB_MODE_TAP_DELAY
+};
+
+#if MT32EMU_USE_FLOAT_SAMPLES
+typedef float Sample;
+typedef float SampleEx;
+#else
+typedef Bit16s Sample;
+typedef Bit32s SampleEx;
+#endif
+
+}
+
+#endif // #ifndef MT32EMU_INTERNALS_H

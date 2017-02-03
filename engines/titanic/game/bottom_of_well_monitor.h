@@ -34,7 +34,8 @@ class CBottomOfWellMonitor : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
-	static int _v1, _v2;
+	static bool _tvPresent;
+	static bool _headPresent;
 	bool _flag;
 public:
 	CLASSDEF;

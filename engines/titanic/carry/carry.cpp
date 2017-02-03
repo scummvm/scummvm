@@ -25,6 +25,7 @@
 #include "titanic/npcs/character.h"
 #include "titanic/npcs/succubus.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -43,13 +44,13 @@ BEGIN_MESSAGE_MAP(CCarry, CGameObject)
 	ON_MESSAGE(PassOnDragStartMsg)
 END_MESSAGE_MAP()
 
-CCarry::CCarry() : CGameObject(), _fieldDC(0), _fieldE0(1),
+CCarry::CCarry() : CGameObject(), _fieldDC(0), _canTake(true),
 		_field100(0), _field104(0), _field108(0), _field10C(0),
 		_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
 	_string1("None"),
 	_fullViewName("NULL"),
-	_string3("That doesn't seem to do anything."),
-	_string4("It doesn't seem to want this.") {
+	_string3(g_vm->_strings[DOESNT_DO_ANYTHING]),
+	_string4(g_vm->_strings[DOESNT_WANT_THIS]) {
 }
 
 void CCarry::save(SimpleFile *file, int indent) {
@@ -58,7 +59,7 @@ void CCarry::save(SimpleFile *file, int indent) {
 	file->writePoint(_origPos, indent);
 	file->writeQuotedLine(_fullViewName, indent);
 	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_canTake, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeQuotedLine(_string4, indent);
 	file->writePoint(_tempPos, indent);
@@ -80,7 +81,7 @@ void CCarry::load(SimpleFile *file) {
 	_origPos = file->readPoint();
 	_fullViewName = file->readString();
 	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
+	_canTake = file->readNumber();
 	_string3 = file->readString();
 	_string4 = file->readString();
 	_tempPos = file->readPoint();
@@ -98,17 +99,18 @@ void CCarry::load(SimpleFile *file) {
 
 bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	CString name = getName();
+	debugC(ERROR_BASIC, kDebugScripts, "MosueDragStartMsg - %s", name.c_str());
 
-	if (_fieldE0) {
-		if (_visible) {
-			CShowTextMsg textMsg("You can't get this.");
-			textMsg.execute("PET");
-		}
-	} else {
+	if (_canTake) {
 		if (checkStartDragging(msg)) {
 			CPassOnDragStartMsg startMsg(msg->_mousePos);
 			startMsg.execute(this);
 			return true;
+		}
+	} else {
+		if (_visible) {
+			CShowTextMsg textMsg(YOU_CANT_GET_THIS);
+			textMsg.execute("PET");
 		}
 	}
 
@@ -121,6 +123,9 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	debugC(ERROR_BASIC, kDebugScripts, "MouseDragEndMsg");
+	showMouse();
+
 	if (msg->_dropTarget) {
 		if (msg->_dropTarget->isPet()) {
 			petAddToInventory();
@@ -144,8 +149,7 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			return true;
 	}
 
-	CString viewName = getViewFullName();
-	if (viewName.empty() || msg->_mousePos.y >= 360) {
+	if (!compareViewNameTo(_fullViewName) || msg->_mousePos.y >= 360) {
 		sleep(250);
 		petAddToInventory();
 	} else {
@@ -179,8 +183,7 @@ bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CShowTextMsg textMsg(_string3);
 	textMsg.execute("PET");
 
-	_fullViewName = getViewFullName();
-	if (_fullViewName.empty() || _bounds.top >= 360) {
+	if (!compareViewNameTo(_fullViewName) || _bounds.top >= 360) {
 		sleep(250);
 		petAddToInventory();
 	} else {
@@ -224,6 +227,8 @@ bool CCarry::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
+	hideMouse();
+
 	if (_visibleFrame != -1)
 		loadFrame(_visibleFrame);
 
@@ -234,7 +239,7 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		_tempPos = msg->_mousePos - _bounds;
 	}
 
-	setPosition(_tempPos - getMousePos());
+	setPosition(getMousePos() - _tempPos);
 	return true;
 }
 

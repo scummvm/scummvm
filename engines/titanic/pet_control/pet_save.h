@@ -40,6 +40,11 @@ public:
 	virtual bool MouseButtonUpMsg(const Point &pt);
 
 	/**
+	 * Handles keypresses when the glyph is focused
+	 */
+	virtual bool KeyCharMsg(int key);
+
+	/**
 	 * Unhighlight any currently highlighted element
 	 */
 	virtual void unhighlightCurrent() { unhighlightSave(_savegameSlotNum); }
@@ -52,7 +57,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 
 	/**
 	 * Called on a highlighted item when PET area is entered

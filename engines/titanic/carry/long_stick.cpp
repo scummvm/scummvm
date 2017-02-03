@@ -60,7 +60,7 @@ bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 }
 
 bool CLongStick::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldE0 = 1;
+	_canTake = true;
 	return true;
 }
 

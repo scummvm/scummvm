@@ -1421,6 +1421,11 @@ androidsdl-x86)
 	_host_cpu=i686
 	_host_alias=i686-linux-android
 	;;
+androidsdl-x86_64)
+	_host_os=androidsdl
+	_host_cpu=x86_64
+	_host_alias=x86_64-linux-android
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -2185,7 +2190,7 @@ cc_check_clean tmp_find_type_with_size.cpp
 # for the smaller sizes.
 echo_n "Alignment required... "
 case $_host_cpu in
-	i[3-6]86 | amd64 | x86_64 | powerpc*)
+	i[3-6]86 | amd64 | x86_64 | powerpc* | ppc*)
 		# Unaligned access should work
 		_need_memalign=no
 		;;
@@ -2249,7 +2254,7 @@ case $_host_cpu in
 		echo "MIPS"
 		append_var DEFINES "-DMIPS_TARGET"
 		;;
-	powerpc*)
+	powerpc* | ppc*)
 		echo "PowerPC"
 		append_var DEFINES "-DPPC_TARGET"
 		;;
@@ -2379,6 +2384,8 @@ case $_host_os in
 			append_var LDFLAGS "-mthumb-interwork"
 		fi
 
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
 		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
 		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
@@ -2622,6 +2629,7 @@ case $_host_os in
 		append_var DEFINES "-DDISABLE_NES_APU"
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
+		add_line_to_config_mk 'N64 = 1'
 		;;
 	ps2)
 		append_var CXXFLAGS "-G2"
@@ -2669,6 +2677,7 @@ case $_host_os in
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
+		add_line_to_config_mk 'PSP = 1'
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -2867,8 +2876,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-fschedule-insns2"
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fdelete-null-pointer-checks"
-			# no-delayed-branch is a workaround for GCC bug #42841 - "SH: Assembler complains pcrel too far."
-			append_var CXXFLAGS "-fno-delayed-branch"
 			_backend="dc"
 			_build_scalers=no
 			_mad=yes
@@ -3243,7 +3250,7 @@ case $_backend in
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		append_var CXXFLAGS "-Wa,--noexecstack"
 		append_var LDFLAGS "-Wl,-z,noexecstack"
-		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
+		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
 		;;
@@ -3707,7 +3714,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
-	*mingw32*)
+	*mingw32* | mingw64)
 		_plugin_prefix=""
 		_plugin_suffix=".dll"
 _mak_plugins='

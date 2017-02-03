@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,9 @@
 
 #ifndef MT32EMU_TABLES_H
 #define MT32EMU_TABLES_H
+
+#include "globals.h"
+#include "Types.h"
 
 namespace MT32Emu {
 
@@ -52,8 +55,8 @@ public:
 	Bit16u logsin9[512];
 
 	const Bit8u *resAmpDecayFactor;
-};
+}; // class Tables
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_TABLES_H

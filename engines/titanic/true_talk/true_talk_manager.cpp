@@ -46,7 +46,7 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 /*------------------------------------------------------------------------*/
 
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
-		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
+		_gameManager(owner), _scripts(), _currentCharId(0),
 		_dialogueFile(nullptr), _dialogueId(0) {
 	_titleEngine.setup(3, 3);
 	_quotes.load();
@@ -243,23 +243,23 @@ void CTrueTalkManager::start4(CTrueTalkNPC *npc, CViewItem *view) {
 }
 
 TTnpcScript *CTrueTalkManager::getTalker(const CString &name) const {
-	if (name.contains("Doorbot"))
+	if (name.containsIgnoreCase("Doorbot"))
 		return _scripts.getNpcScript(104);
-	else if (name.contains("DeskBot"))
+	else if (name.containsIgnoreCase("Deskbot"))
 		return _scripts.getNpcScript(103);
-	else if (name.contains("LiftBot"))
+	else if (name.containsIgnoreCase("LiftBot"))
 		return _scripts.getNpcScript(105);
-	else if (name.contains("Parrot"))
+	else if (name.containsIgnoreCase("Parrot"))
 		return _scripts.getNpcScript(107);
-	else if (name.contains("BarBot"))
+	else if (name.containsIgnoreCase("BarBot"))
 		return _scripts.getNpcScript(100);
-	else if (name.contains("ChatterBot"))
+	else if (name.containsIgnoreCase("ChatterBot"))
 		return _scripts.getNpcScript(102);
-	else if (name.contains("BellBot"))
+	else if (name.containsIgnoreCase("BellBot"))
 		return _scripts.getNpcScript(101);
-	else if (name.contains("MaitreD"))
+	else if (name.containsIgnoreCase("MaitreD"))
 		return _scripts.getNpcScript(112);
-	else if (name.contains("Succubus") || name.contains("Sub"))
+	else if (name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub"))
 		return _scripts.getNpcScript(111);
 
 	return nullptr;
@@ -271,6 +271,7 @@ TTnpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 
 	if (!script) {
 		// Fall back on the default NPC script
+		warning("Could not find NPC script for %s, using fallback", npc->getName().c_str());
 		script = _scripts.getNpcScript(101);
 	}
 
@@ -351,7 +352,7 @@ void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, 
 	TTtalker *talker = new TTtalker(this, npc);
 	_talkers.push_back(talker);
 
-	bool isParrot = npc->getName().contains("parrot");
+	bool isParrot = npc->getName().containsIgnoreCase("parrot");
 	triggerNPC(npc);
 	playSpeech(talker, roomScript, view, isParrot);
 	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], speechDuration);
@@ -407,7 +408,7 @@ uint CTrueTalkManager::readDialogueSpeech() {
 		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
 		if (waveFile) {
-			_speechDuration += waveFile->getDuration();
+			_speechDuration += waveFile->getDurationTicks();
 		}
 	}
 
@@ -423,22 +424,19 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 		}
 	} else {
 		CTrueTalkGetAnimSetMsg getAnimMsg;
-		if (_speechDuration > 300) {
-			do {
-				getAnimMsg.execute(npc);
-				if (!getAnimMsg._endFrame)
-					break;
+		while (_speechDuration > 300) {
+			getAnimMsg.execute(npc);
+			if (!getAnimMsg._endFrame)
+				break;
 
-				npc->playMovie(getAnimMsg._startFrame, getAnimMsg._endFrame, 0);
-				getAnimMsg._endFrame = 0;
+			npc->playMovie(getAnimMsg._startFrame, getAnimMsg._endFrame, 0);
+			getAnimMsg._endFrame = 0;
 
-				uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
-				int64 val = (numFrames * 1000) * 0x88888889;
-				uint diff = (val >> (32 + 5)) - 500;
-				_speechDuration += diff;
+			uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
+			int diff = (numFrames * 1000) / 15 - 500;
+			_speechDuration += diff;
 
-				getAnimMsg._index++;
-			} while (_speechDuration > 0);
+			getAnimMsg._index++;
 		}
 	}
 }
@@ -516,7 +514,9 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	_gameManager->_sound.stopChannel(p1._channelMode);
 	if (view) {
 		p1._positioningMode = POSMODE_VECTOR;
+#ifdef SPATIAL_SOUND
 		view->getPosition(p1._posX, p1._posY, p1._posZ);
+#endif
 	}
 
 	// Loop through adding each of the speech portions in. We use the
@@ -538,14 +538,19 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		if (!milli)
 			continue;
 
+#ifdef SPATIAL_SOUND
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
+		// TODO: Figure out if these below are needed. It kinda looks like they were
+		// simply playing the same speech at different spatial co-ordinates. And since
+		// we don't support spatial processing in ScummVM yet, they're being left disabled
 		p3._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
 		p2._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
+#endif
 	}
 }
 

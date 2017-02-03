@@ -38,7 +38,7 @@ protected:
 	int _endFrame;
 	CString _string1;
 	CString _string2;
-	int _fieldDC;
+	bool _isBlocking;
 public:
 	CLASSDEF;
 	CBackground();

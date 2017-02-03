@@ -23,6 +23,7 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -116,11 +117,11 @@ void CPetConversations::draw(CScreenManager *screenManager) {
 	_textInput.draw(screenManager);
 
 	if (_logChanged) {
-		int startIndex = _log.getLinesStart();
-		if (startIndex >= 0) {
-			int npcNum = _log.getNPCNum(1, startIndex);
+		int endIndex = _log.displayEndIndex();
+		if (endIndex >= 0) {
+			int npcNum = _log.getNPCNum(1, endIndex);
 			if (npcNum > 0 && npcNum < 10)
-				_npcNum = npcNum;
+				_npcNum = npcNum - 1;
 		}
 
 		_logChanged = false;
@@ -164,7 +165,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_doorBot.MouseButtonUpMsg(msg->_mousePos)) {
 		switch (canSummonBot("DoorBot")) {
 		case SUMMON_CANT:
-			_log.addLine("Sadly, it is not possible to summon the DoorBot from this location.", getColor(1));
+			_log.addLine(g_vm->_strings[CANT_SUMMON_DOORBOT], getColor(1));
 			break;
 		case SUMMON_CAN:
 			summonBot("DoorBot");
@@ -181,7 +182,7 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (_bellBot.MouseButtonUpMsg(msg->_mousePos)) {
 		switch (canSummonBot("BellBot")) {
 		case SUMMON_CANT:
-			_log.addLine("Sadly, it is not possible to summon the BellBot from this location.", getColor(1));
+			_log.addLine(g_vm->_strings[CANT_SUMMON_BELLBOT], getColor(1));
 			break;
 		case SUMMON_CAN:
 			summonBot("BellBot");
@@ -201,6 +202,15 @@ bool CPetConversations::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 bool CPetConversations::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
 	return _scrollDown.MouseDoubleClickMsg(msg->_mousePos)
 		|| _scrollUp.MouseDoubleClickMsg(msg->_mousePos);
+}
+
+bool CPetConversations::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (msg->_wheelUp)
+		scrollUp();
+	else
+		scrollDown();
+
+	return true;
 }
 
 bool CPetConversations::KeyCharMsg(CKeyCharMsg *msg) {
@@ -255,7 +265,7 @@ void CPetConversations::leave() {
 }
 
 void CPetConversations::timerExpired(int val) {
-	if (val == 1) {
+	if (val != 1) {
 		CPetSection::timerExpired(val);
 	} else {
 		CString name = _field418 ? _npcName : getActiveNPCName();
@@ -268,40 +278,42 @@ void CPetConversations::timerExpired(int val) {
 }
 
 void CPetConversations::displayNPCName(CGameObject *npc) {
+	const Strings &strings = g_vm->_strings;
+
 	if (npc) {
 		displayMessage(CString());
-		CString msg = "Talking to ";
+		CString msg = strings[TALKING_TO];
 		CString name = npc->getName();
 		int id = 1;
 
-		if (name.contains("Doorbot")) {
-			msg += "the DoorBot";
-		} else if (name.contains("DeskBot")) {
+		if (name.containsIgnoreCase("Doorbot")) {
+			msg += strings[DOORBOT_NAME];
+		} else if (name.containsIgnoreCase("Deskbot")) {
 			id = 2;
-			msg += "the DeskBot";
-		} else if (name.contains("LiftBot")) {
+			msg += strings[DESKBOT_NAME];
+		} else if (name.containsIgnoreCase("LiftBot")) {
 			id = 3;
-			msg += "a LiftBot";
-		} else if (name.contains("Parrot")) {
+			msg += strings[LIFTBOT_NAME];
+		} else if (name.containsIgnoreCase("Parrot")) {
 			id = 4;
-			msg += "the Parrot";
-		} else if (name.contains("BarBot")) {
+			msg += strings[PARROT_NAME];
+		} else if (name.containsIgnoreCase("BarBot")) {
 			id = 5;
-			msg += "the BarBot";
-		} else if (name.contains("ChatterBot")) {
+			msg += strings[BARBOT_NAME];
+		} else if (name.containsIgnoreCase("ChatterBot")) {
 			id = 6;
-			msg += "a ChatterBot";
-		} else if (name.contains("BellBot")) {
+			msg += strings[CHATTERBOT_NAME];
+		} else if (name.containsIgnoreCase("BellBot")) {
 			id = 7;
-			msg += "the BellBot";
-		} else if (name.contains("Maitre")) {
+			msg += strings[BELLBOT_NAME];
+		} else if (name.containsIgnoreCase("Maitre")) {
 			id = 8;
-			msg += "the Maitre d'Bot";
-		} else if (name.contains("Succubus") || name.contains("Sub")) {
+			msg += strings[MAITRED_NAME];
+		} else if (name.containsIgnoreCase("Succubus") || name.containsIgnoreCase("Sub")) {
 			id = 9;
-			msg += "a Succ-U-Bus";
+			msg += strings[SUCCUBUS_NAME];
 		} else {
-			msg += "Unknown";
+			msg += strings[UNKNOWN_NAME];
 		}
 
 		_log.setNPC(1, id);
@@ -418,7 +430,7 @@ int CPetConversations::canSummonBot(const CString &name) {
 
 void CPetConversations::summonBot(const CString &name) {
 	if (_petControl) {
-		if (_petControl->getPassengerClass() >= 4) {
+		if (_petControl->getPassengerClass() >= UNCHECKED) {
 			_petControl->displayMessage(AT_LEAST_3RD_CLASS_FOR_HELP);
 		} else {
 			_petControl->summonBot(name, 0);
@@ -498,7 +510,7 @@ void CPetConversations::textLineEntered(const CString &textLine) {
 		if (!inputMsg._response.empty())
 			_log.addLine(inputMsg._response);
 	} else {
-		_log.addLine("There is no one here to talk to", getColor(1));
+		_log.addLine(g_vm->_strings[NO_ONE_TO_TALK_TO], getColor(1));
 	}
 
 	// Clear input line and scroll log down to end to show response
@@ -520,30 +532,31 @@ void CPetConversations::updateDial(uint dialNum, const CString &npcName) {
 	_npcLevels[dialNum] = newLevel;
 }
 
-uint CPetConversations::getDialLevel(uint dialNum, TTnpcScript *script, int v) {
-	bool flag = v != 0;
-
+uint CPetConversations::getDialLevel(uint dialNum, TTnpcScript *script, bool flag) {
 	if (!script)
 		return 0;
 	else
 		return MAX(script->getDialLevel(dialNum, flag), 15);
 }
 
-void CPetConversations::npcDialChange(uint dialNum, int oldLevel, int newLevel) {
-	const uint range1[2] = { 0, 21 };
-	const uint range2[2] = { 22, 43 };
+void CPetConversations::npcDialChange(uint dialNum, uint oldLevel, uint newLevel) {
+	const uint ascending[2] = { 0, 21 };
+	const uint descending[2] = { 43, 22 };
+	assert(oldLevel <= 100 && newLevel <= 100);
 
 	if (newLevel != oldLevel) {
-		uint src = range1[0], dest = range1[1];
-		if (oldLevel < newLevel) {
-			src = range2[0];
-			dest = range2[1];
+		debugC(ERROR_DETAILED, kDebugScripts, "Dial %d change from %d to %d",
+			dialNum, oldLevel, newLevel);
+		uint src = ascending[0], dest = ascending[1];
+		if (newLevel < oldLevel) {
+			src = descending[0];
+			dest = descending[1];
 		}
 
-		int64 val1 = (oldLevel * dest) + (100 - oldLevel) * src;
+		uint val1 = (oldLevel * dest) + (100 - oldLevel) * src;
 		uint startFrame = val1 / 100;
 
-		int64 val2 = (newLevel * dest) + (100 - newLevel) * src;
+		uint val2 = (newLevel * dest) + (100 - newLevel) * src;
 		uint endFrame = val2 / 100;
 
 		if (startFrame != endFrame)

@@ -53,7 +53,7 @@ void TextAsset::decodeOld() {
 	Common::BitStream32BELSB stream(res, DisposeAfterUse::YES);
 	char *str = new char[strLen + 1];
 	bool lowercase = false;
-	char c;
+	char c = ' ';
 	for (uint16 i = 0; i < strLen; i++) {
 		char val = stream.getBits(5);
 		if (val == 0x0) { // Space

@@ -34,7 +34,7 @@ Lingo *g_lingo;
 struct EventHandlerType {
 	LEvent handler;
 	const char *name;
-} static const eventHanlerDescs[] = {
+} static const eventHandlerDescs[] = {
 	{ kEventPrepareMovie,		"prepareMovie" },
 	{ kEventStartMovie,			"startMovie" },
 	{ kEventStopMovie,			"stopMovie" },
@@ -86,8 +86,10 @@ Symbol::Symbol() {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
+	for (const EventHandlerType *t = &eventHandlerDescs[0]; t->handler != kEventNone; ++t) {
+		_eventHandlerTypeIds[t->name] = t->handler;
 		_eventHandlerTypes[t->handler] = t->name;
+	}
 
 	initBuiltIns();
 	initFuncs();
@@ -95,9 +97,12 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
+	_currentEntityId = 0;
 	_pc = 0;
 	_returning = false;
 	_indef = false;
+	_ignoreMe = false;
+	_immediateMode = false;
 
 	_linenumber = _colnumber = 0;
 
@@ -107,6 +112,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
+
+	_cursorOnStack = false;
 
 	_exitRepeat = false;
 
@@ -160,6 +167,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_currentScript = new ScriptData;
 	_currentScriptType = type;
 	_scripts[type][id] = _currentScript;
+	_currentEntityId = id;
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;
@@ -235,7 +243,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 void Lingo::executeScript(ScriptType type, uint16 id) {
 	if (!_scripts[type].contains(id)) {
-		warning("Request to execute non-existant script type %d id %d", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
 
@@ -267,21 +275,59 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
-void Lingo::processEvent(LEvent event, int entityId) {
+Symbol *Lingo::getHandler(Common::String &name) {
+	if (!_eventHandlerTypeIds.contains(name)) {
+		if (_builtins.contains(name))
+			return _builtins[name];
+
+		return NULL;
+	}
+
+	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
+	if (!_handlers.contains(entityIndex))
+		return NULL;
+
+	return _handlers[entityIndex];
+}
+
+void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
+	if (entityId <= 0)
+		return;
+
+	_currentEntityId = entityId;
+
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	ScriptType st = event2script(event);
-
-	if (st != kNoneScript) {
-		executeScript(st, entityId + 1);
-	} else if (_handlers.contains(_eventHandlerTypes[event])) {
-		call(_eventHandlerTypes[event], 0);
+	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+		call(_eventHandlerTypes[event], 0); //D4+ Events
 		pop();
+	} else if (_scripts[st].contains(entityId)) {
+		executeScript(st, entityId + 1); //D3 list of scripts.
 	} else {
-		warning("---- Handler %s is not set", _eventHandlerTypes[event]);
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}
+}
+
+void Lingo::restartLingo() {
+	warning("STUB: restartLingo()");
+
+	// TODO
+	//
+	// reset the following:
+	// the keyDownScript
+	// the mouseUpScript
+	// the mouseDownScript
+	// the beepOn
+	// the constraint properties
+	// the cursor
+	// the immediate sprite properties
+	// the puppetSprite
+	// cursor commands
+	// custom menus
+	//
+	// NOTE:
+	// tuneousScript is not reset
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
@@ -456,7 +502,7 @@ void Lingo::runTests() {
 
 			stream->read(script, size);
 
-			debugC(2, kDebugLingoCompile, "Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
+			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
@@ -464,7 +510,7 @@ void Lingo::runTests() {
 			if (!_hadError)
 				executeScript(kMovieScript, counter);
 			else
-				debugC(2, kDebugLingoCompile, "Skipping execution");
+				debug(">> Skipping execution");
 
 			free(script);
 

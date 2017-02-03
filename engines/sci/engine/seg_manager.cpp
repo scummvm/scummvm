@@ -796,7 +796,7 @@ size_t SegManager::strlen(reg_t str) {
 }
 
 
-Common::String SegManager::getString(reg_t pointer, int entries) {
+Common::String SegManager::getString(reg_t pointer) {
 	Common::String ret;
 	if (pointer.isNull())
 		return ret;	// empty text
@@ -806,10 +806,7 @@ Common::String SegManager::getString(reg_t pointer, int entries) {
 		warning("SegManager::getString(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return ret;
 	}
-	if (entries > src_r.maxSize) {
-		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
-		return ret;
-	}
+
 	if (src_r.isRaw)
 		ret = (char *)src_r.raw;
 	else {
@@ -895,6 +892,11 @@ SciArray *SegManager::lookupArray(reg_t addr) {
 }
 
 void SegManager::freeArray(reg_t addr) {
+	// SSCI memory manager ignores attempts to free null handles
+	if (addr.isNull()) {
+		return;
+	}
+
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_ARRAY)
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
@@ -962,7 +964,7 @@ void SegManager::freeBitmap(const reg_t addr) {
 #endif
 
 void SegManager::createClassTable() {
-	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), false);
 
 	if (!vocab996)
 		error("SegManager: failed to open vocab 996");
@@ -976,8 +978,6 @@ void SegManager::createClassTable() {
 		_classTable[classNr].reg = NULL_REG;
 		_classTable[classNr].script = scriptNr;
 	}
-
-	_resMan->unlockResource(vocab996);
 }
 
 reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment) {

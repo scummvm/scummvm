@@ -24,6 +24,7 @@
 #define TITANIC_ROOM_FLAGS_H
 
 #include "titanic/support/string.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -142,7 +143,9 @@ public:
 	/**
 	 * Gets the passenger class number
 	 */
-	uint getPassengerClassNum() const { return getPassengerClassBits(); }
+	PassengerClass getPassengerClassNum() const {
+		return (PassengerClass)getPassengerClassBits();
+	}
 
 	/**
 	 * Get a description for the passenger class
@@ -198,17 +201,17 @@ public:
 	/**
 	 * Change the passenger class
 	 */
-	void changeLocation(int action);
+	void changeClass(PassengerClass newClassNum);
 
 	/**
 	 * Sets a random destination in the flags
 	 */
-	void setRandomLocation(int classNum, bool flag);
+	void setRandomLocation(PassengerClass classNum, bool flag);
 
 	/**
-	 * Gets the succubus number associated with a given room
+	 * Gets the passenger class for a succubus associated with a given room
 	 */
-	uint getSuccUBusNum(const CString &roomName) const;
+	PassengerClass getSuccUBusClass(const CString &roomName) const;
 
 	/**
 	 * Gets the succubus room name associated with the current room flags
@@ -218,11 +221,19 @@ public:
 	/**
 	 * Returns what passenger class a particular floor number belongs to
 	 */
-	static int whatPassengerClass(int floorNum);
+	static PassengerClass whatPassengerClass(int floorNum);
 
-	bool not5() const { return getConditionally() != 5; }
+	/**
+	 * Returns true if it's a location with a SuccUBus terminal
+	 */
+	bool isSuccUBusDest() const { return getConditionally() != 5; }
 
-	bool is59706() const { return _data == 0x59706; }
+	/**
+	 * Returns true if the player is in their 1st class stateroom
+	 */
+	bool isFirstClassSuite() const {
+		return _data == 0x59706;
+	}
 };
 
 } // End of namespace Titanic

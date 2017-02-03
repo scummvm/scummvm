@@ -174,14 +174,10 @@ public:
 	}
 
 	Common::String toString() const {
-		char buf[32];
-
-		snprintf(buf, 32, "%s.%d", getResourceTypeName(_type), _number);
-		Common::String retStr = buf;
+		Common::String retStr = Common::String::format("%s.%d", getResourceTypeName(_type), _number);
 
 		if (_tuple != 0) {
-			snprintf(buf, 32, "(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
-			retStr += buf;
+			retStr += Common::String::format("(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
 		}
 
 		return retStr;
@@ -376,7 +372,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
-	void changeAudioDirectory(Common::String path);
+	void changeAudioDirectory(const Common::String &path);
 	bool isGMTrackIncluded();
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
 	ViewType getViewType() const { return _viewType; }
@@ -424,7 +420,6 @@ private:
 public:
 #endif
 
-	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 	// Detects, if SCI1.1 game uses palette merging

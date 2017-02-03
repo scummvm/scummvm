@@ -34,8 +34,8 @@ END_MESSAGE_MAP()
 
 void CBrokenPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_exitLeftView, indent);
+	file->writeQuotedLine(_exitRightView, indent);
 	file->writeQuotedLine(_string4, indent);
 	file->writeQuotedLine(_string5, indent);
 
@@ -44,8 +44,8 @@ void CBrokenPellerator::save(SimpleFile *file, int indent) {
 
 void CBrokenPellerator::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
+	_exitLeftView = file->readString();
+	_exitRightView = file->readString();
 	_string4 = file->readString();
 	_string5 = file->readString();
 
@@ -86,15 +86,15 @@ bool CBrokenPellerator::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg.execute("PickupHose");
 	} else {
-		_fieldE0 = 0;
+		_exitAction = 0;
 		bool closeFlag = msg->_action == "Close";
 		if (msg->_action == "CloseLeft") {
 			closeFlag = true;
-			_fieldE0 = 1;
+			_exitAction = 1;
 		}
 		if (msg->_action == "CloseRight") {
 			closeFlag = true;
-			_fieldE0 = 2;
+			_exitAction = 2;
 		}
 
 		if (closeFlag) {
@@ -105,18 +105,18 @@ bool CBrokenPellerator::ActMsg(CActMsg *msg) {
 				else
 					playMovie(14, 28, MOVIE_NOTIFY_OBJECT);
 			} else {
-				switch (_fieldE0) {
+				switch (_exitAction) {
 				case 1:
-					changeView(_string2);
+					changeView(_exitLeftView);
 					break;
 				case 2:
-					changeView(_string3);
+					changeView(_exitRightView);
 					break;
 				default:
 					break;
 				}
 
-				_fieldE0 = 0;
+				_exitAction = 0;
 			}
 		}
 	}
@@ -126,23 +126,25 @@ bool CBrokenPellerator::ActMsg(CActMsg *msg) {
 
 bool CBrokenPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == 14) {
+		// Pellerator has been opened, so let the hose be picked up (if it's still there)
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 1;
 		statusMsg.execute("PickUpHose");
 	}
 
 	if (msg->_endFrame == 28) {
+		// Pellerator has been closed, so disable the hose (if it's still there)
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
 		statusMsg.execute("PickUpHose");
 	}
 
-	switch (_fieldE0) {
+	switch (_exitAction) {
 	case 1:
-		changeView(_string2);
+		changeView(_exitLeftView);
 		break;
 	case 2:
-		changeView(_string3);
+		changeView(_exitRightView);
 		break;
 	default:
 		break;

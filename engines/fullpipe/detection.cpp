@@ -25,14 +25,24 @@
 #include "engines/advancedDetector.h"
 #include "common/file.h"
 
+#include "graphics/surface.h"
+
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/gameloader.h"
 
 
 namespace Fullpipe {
 
-const char *FullpipeEngine::getGameId() const {
-	return _gameDescription->gameId;
+uint32 FullpipeEngine::getFeatures() const {
+	return _gameDescription->flags;
+}
+
+bool FullpipeEngine::isDemo() {
+	return _gameDescription->flags & ADGF_DEMO;
+}
+
+Common::Language FullpipeEngine::getLanguage() const {
+	return _gameDescription->language;
 }
 
 }
@@ -46,25 +56,69 @@ namespace Fullpipe {
 
 static const ADGameDescription gameDescriptions[] = {
 
-	// Fullpipe Russian version
+	// Full Pipe Russian version
 	{
 		"fullpipe",
 		0,
-		AD_ENTRY1s("0654.sc2", "099f54f86d33ad2395f3b854b7e05058", 2272),
+		AD_ENTRY1s("4620.sc2", "a1a8f3ed731b0dfea43beaa3016fdc71", 554),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
-	// Fullpipe German version
+	// Full Pipe German version
 	{
 		"fullpipe",
 		0,
-		AD_ENTRY1s("0654.sc2", "d8743351fc53d205f42d91f6d791e51b", 2272),
-		Common::RU_RUS,
+		AD_ENTRY1s("4620.sc2", "e4f24ffe4dc84cafc648b951e66c1fb3", 554),
+		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Full Pipe Estonian version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "571f6b4b68b02003e35bc12c1a1d3fe3", 466),
+		Common::ET_EST,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Full Pipe English version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "bffea807345fece14089768fc141af83", 510),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Full Pipe Russian Demo version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "a0c71b47fc35a5e163fcd8d0972639bb", 70),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Full Pipe German Demo version
+	{
+		"fullpipe",
+		0,
+		AD_ENTRY1s("4620.sc2", "e5e98df537e56b39c33ae1d5c90976fe", 510),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 

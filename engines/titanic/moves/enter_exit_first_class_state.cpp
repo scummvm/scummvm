@@ -21,6 +21,7 @@
  */
 
 #include "titanic/moves/enter_exit_first_class_state.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -30,13 +31,13 @@ END_MESSAGE_MAP()
 
 void CEnterExitFirstClassState::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_viewName, indent);
+	file->writeQuotedLine(g_vm->_stateRoomExitView, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEnterExitFirstClassState::load(SimpleFile *file) {
 	file->readNumber();
-	_viewName = file->readString();
+	g_vm->_stateRoomExitView = file->readString();
 	CGameObject::load(file);
 }
 
@@ -44,10 +45,12 @@ bool CEnterExitFirstClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	switch (getPassengerClass()) {
 	case 1:
 		if (compareRoomNameTo("1stClassLobby")) {
-			_viewName = getRoomNodeName() + ".E";
-			changeView(_viewName);
+			// Entering room, so save where you were and change to stateroom
+			g_vm->_stateRoomExitView = getRoomNodeName() + ".E";
+			changeView("1stClassState.Node 1.S");
 		} else if (compareRoomNameTo("1stClassState")) {
-			changeView(_viewName);
+			// Return to where you entered room from
+			changeView(g_vm->_stateRoomExitView);
 		}
 		break;
 

@@ -331,6 +331,8 @@ Player_V2Base::Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
 	_current_nr = _next_nr = 0;
 	_current_data = _next_data = 0;
 
+	_retaddr = 0;
+
 	// Initialize channel code
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);

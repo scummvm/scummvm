@@ -50,32 +50,42 @@ static const uint16 tableDPCM16[128] = {
 static const byte tableDPCM8[8] = { 0, 1, 2, 3, 6, 10, 15, 21 };
 
 /**
+ * Decompresses one channel of 16-bit DPCM compressed audio.
+ */
+static void deDPCM16Channel(int16 *out, int16 &sample, uint8 delta) {
+	if (delta & 0x80) {
+		sample -= tableDPCM16[delta & 0x7f];
+	} else {
+		sample += tableDPCM16[delta];
+	}
+	sample = CLIP<int16>(sample, -32768, 32767);
+	*out = TO_LE_16(sample);
+}
+
+/**
  * Decompresses 16-bit DPCM compressed audio. Each byte read
  * outputs one sample into the decompression buffer.
  */
-static void deDPCM16(int16 *out, Common::ReadStream &audioStream, const uint32 numBytes, int16 &sample) {
+static void deDPCM16Mono(int16 *out, Common::ReadStream &audioStream, const uint32 numBytes, int16 &sample) {
 	for (uint32 i = 0; i < numBytes; ++i) {
 		const uint8 delta = audioStream.readByte();
-		if (delta & 0x80) {
-			sample -= tableDPCM16[delta & 0x7f];
-		} else {
-			sample += tableDPCM16[delta];
-		}
-		sample = CLIP<int16>(sample, -32768, 32767);
-		*out++ = TO_LE_16(sample);
+		deDPCM16Channel(out++, sample, delta);
 	}
 }
 
-void deDPCM16(int16 *out, const byte *in, const uint32 numBytes, int16 &sample) {
+// Used by Robot
+void deDPCM16Mono(int16 *out, const byte *in, const uint32 numBytes, int16 &sample) {
 	for (uint32 i = 0; i < numBytes; ++i) {
 		const uint8 delta = *in++;
-		if (delta & 0x80) {
-			sample -= tableDPCM16[delta & 0x7f];
-		} else {
-			sample += tableDPCM16[delta];
-		}
-		sample = CLIP<int16>(sample, -32768, 32767);
-		*out++ = TO_LE_16(sample);
+		deDPCM16Channel(out++, sample, delta);
+	}
+}
+
+static void deDPCM16Stereo(int16 *out, Common::ReadStream &audioStream, const uint32 numBytes, int16 &sampleL, int16 &sampleR) {
+	assert((numBytes % 2) == 0);
+	for (uint32 i = 0; i < numBytes / 2; ++i) {
+		deDPCM16Channel(out++, sampleL, audioStream.readByte());
+		deDPCM16Channel(out++, sampleR, audioStream.readByte());
 	}
 }
 
@@ -98,11 +108,19 @@ static void deDPCM8Nibble(int16 *out, uint8 &sample, uint8 delta) {
  * Decompresses 8-bit DPCM compressed audio. Each byte read
  * outputs two samples into the decompression buffer.
  */
-static void deDPCM8(int16 *out, Common::ReadStream &audioStream, uint32 numBytes, uint8 &sample) {
+static void deDPCM8Mono(int16 *out, Common::ReadStream &audioStream, uint32 numBytes, uint8 &sample) {
 	for (uint32 i = 0; i < numBytes; ++i) {
 		const uint8 delta = audioStream.readByte();
 		deDPCM8Nibble(out++, sample, delta >> 4);
 		deDPCM8Nibble(out++, sample, delta & 0xf);
+	}
+}
+
+static void deDPCM8Stereo(int16 *out, Common::ReadStream &audioStream, uint32 numBytes, uint8 &sampleL, uint8 &sampleR) {
+	for (uint32 i = 0; i < numBytes; ++i) {
+		const uint8 delta = audioStream.readByte();
+		deDPCM8Nibble(out++, sampleL, delta >> 4);
+		deDPCM8Nibble(out++, sampleR, delta & 0xf);
 	}
 }
 
@@ -120,9 +138,9 @@ SOLStream<STEREO, S16BIT>::SOLStream(Common::SeekableReadStream *stream, const D
 		// carried values for each channel separately. See
 		// 60900.aud from Lighthouse for an example stereo file
 		if (S16BIT) {
-			_dpcmCarry16 = 0;
+			_dpcmCarry16.l = _dpcmCarry16.r = 0;
 		} else {
-			_dpcmCarry8 = 0x80;
+			_dpcmCarry8.l = _dpcmCarry8.r = 0x80;
 		}
 
 		const uint8 compressionRatio = 2;
@@ -143,9 +161,9 @@ bool SOLStream<STEREO, S16BIT>::seek(const Audio::Timestamp &where) {
 	}
 
 	if (S16BIT) {
-		_dpcmCarry16 = 0;
+		_dpcmCarry16.l = _dpcmCarry16.r = 0;
 	} else {
-		_dpcmCarry8 = 0x80;
+		_dpcmCarry8.l = _dpcmCarry8.r = 0x80;
 	}
 
 	return _stream->seek(_dataOffset, SEEK_SET);
@@ -171,9 +189,17 @@ int SOLStream<STEREO, S16BIT>::readBuffer(int16 *buffer, const int numSamples) {
 	}
 
 	if (S16BIT) {
-		deDPCM16(buffer, *_stream, bytesToRead, _dpcmCarry16);
+		if (STEREO) {
+			deDPCM16Stereo(buffer, *_stream, bytesToRead, _dpcmCarry16.l, _dpcmCarry16.r);
+		} else {
+			deDPCM16Mono(buffer, *_stream, bytesToRead, _dpcmCarry16.l);
+		}
 	} else {
-		deDPCM8(buffer, *_stream, bytesToRead, _dpcmCarry8);
+		if (STEREO) {
+			deDPCM8Stereo(buffer, *_stream, bytesToRead, _dpcmCarry8.l, _dpcmCarry8.r);
+		} else {
+			deDPCM8Mono(buffer, *_stream, bytesToRead, _dpcmCarry8.l);
+		}
 	}
 
 	const int samplesRead = bytesToRead * samplesPerByte;

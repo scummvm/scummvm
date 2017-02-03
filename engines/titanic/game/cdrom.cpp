@@ -50,6 +50,7 @@ void CCDROM::load(SimpleFile *file) {
 
 bool CCDROM::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (checkStartDragging(msg)) {
+		hideMouse();
 		_tempPos = msg->_mousePos - _bounds;
 		setPosition(msg->_mousePos - _tempPos);
 		return true;
@@ -59,6 +60,8 @@ bool CCDROM::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CCDROM::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	showMouse();
+
 	if (msg->_dropTarget && msg->_dropTarget->getName() == "newComputer") {
 		CCDROMTray *newTray = dynamic_cast<CCDROMTray *>(getRoom()->findByName("newTray"));
 

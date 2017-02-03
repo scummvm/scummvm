@@ -48,6 +48,7 @@ private:
 	bool Cmd_Verbs(int argc, const char **argv);
 	bool Cmd_DumpScripts(int argc, const char **argv);
 	bool Cmd_ValidCommands(int argc, const char **argv);
+	bool Cmd_Region(int argc, const char **argv);
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_Items(int argc, const char **argv);
 	bool Cmd_GiveItem(int argc, const char **argv);
@@ -56,6 +57,8 @@ private:
 
 	void printItem(const Item &item);
 	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
+	void dumpScripts(const Common::String &prefix = Common::String());
+	void prepareGame();
 
 	AdlEngine *_engine;
 };

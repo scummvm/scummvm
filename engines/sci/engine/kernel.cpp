@@ -905,6 +905,11 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		} else {
 			// Normal SCI2.1 kernel table
 			_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+
+			// Used by script patcher to remove CPU spinning on kGetTime
+			if (g_sci->getGameId() == GID_HOYLE5) {
+				_kernelNames[0x4f] = "Wait";
+			}
 		}
 		break;
 
@@ -989,10 +994,8 @@ void script_adjust_opcode_formats() {
 	}
 
 	if (getSciVersion() >= SCI_VERSION_3) {
-		// TODO: There are also opcodes in
-		// here to get the superclass, and possibly the species too.
-		g_sci->_opcode_formats[0x4d/2][0] = Script_None;
-		g_sci->_opcode_formats[0x4e/2][0] = Script_None;
+		g_sci->_opcode_formats[op_info][0] = Script_None;
+		g_sci->_opcode_formats[op_superP][0] = Script_None;
 	}
 #endif
 }

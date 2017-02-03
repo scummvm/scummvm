@@ -280,6 +280,7 @@ MODULE_OBJS := \
 	gfx/chev_right_on.o \
 	gfx/chev_send_rec_switch.o \
 	gfx/edit_control.o \
+	gfx/text_control.o \
 	gfx/elevator_button.o \
 	gfx/get_from_succ.o \
 	gfx/helmet_on_off.o \
@@ -398,7 +399,7 @@ MODULE_OBJS := \
 	pet_control/pet_show_translation.o \
 	pet_control/pet_slider.o \
 	pet_control/pet_sound.o \
-	pet_control/pet_text.o \
+	sound/audio_buffer.o \
 	sound/auto_music_player.o \
 	sound/auto_music_player_base.o \
 	sound/auto_sound_player.o \

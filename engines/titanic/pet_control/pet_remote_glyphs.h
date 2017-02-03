@@ -65,9 +65,9 @@ public:
 
 class CPetRemoteGlyph : public CPetGlyph {
 protected:
-	CPetGfxElement *_gfxElement;
+	CPetGfxElement *_callButton;
 protected:
-	CPetRemoteGlyph() : CPetGlyph(), _gfxElement(nullptr) {}
+	CPetRemoteGlyph() : CPetGlyph(), _callButton(nullptr) {}
 
 	/**
 	 * Set defaults for the glyph
@@ -116,15 +116,15 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CToggleRemoteGlyph : public CPetRemoteGlyph {
 protected:
-	CPetGfxElement *_gfxElement;
-	bool _flag;
+	CPetGfxElement *_toggle;
+	bool _toggleFlag;
 public:
-	CToggleRemoteGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _flag(false) {}
+	CToggleRemoteGlyph() : CPetRemoteGlyph(), _toggle(nullptr), _toggleFlag(false) {}
 
 	/**
 	 * Setup the glyph
@@ -150,13 +150,13 @@ public:
 class CRemoteGotoGlyph : public CPetRemoteGlyph {
 protected:
 	int _roomIndex;
-	CPetGfxElement *_gfxElement;
+	CPetGfxElement *_goButton;
 	CString _gfxName, _tooltip;
 public:
-	CRemoteGotoGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21) {}
-	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip) :
-		CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21),
-		_gfxName(gfxName), _tooltip(tooltip) {}
+	CRemoteGotoGlyph() : CPetRemoteGlyph(), _goButton(nullptr), _roomIndex(21) {}
+	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip, int roomIndex) :
+		CPetRemoteGlyph(), _gfxName(gfxName), _tooltip(tooltip), _roomIndex(roomIndex),
+		_goButton(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -181,19 +181,17 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CSummonElevatorGlyph : public CBasicRemoteGlyph {
 public:
-	CSummonElevatorGlyph() : CBasicRemoteGlyph(
-		"3PetLift", "Summon Elevator", "Lift") {}
+	CSummonElevatorGlyph();
 };
 
 class CSummonPelleratorGlyph : public CBasicRemoteGlyph {
 public:
-	CSummonPelleratorGlyph() : CBasicRemoteGlyph(
-		"3PetPellerator", "Summon Pellerator", "Pellerator") {}
+	CSummonPelleratorGlyph();
 };
 
 class CTelevisionControlGlyph : public CPetRemoteGlyph {
@@ -227,16 +225,16 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CEntertainmentDeviceGlyph : public CToggleRemoteGlyph {
 public:
 	bool _flag2;
-	CPetGfxElement *_gfxElement2, *_gfxElement3;
+	CPetGfxElement *_up, *_down;
 public:
 	CEntertainmentDeviceGlyph() : CToggleRemoteGlyph(),
-		_flag2(false), _gfxElement2(nullptr), _gfxElement3(nullptr) {}
+		_flag2(false), _up(nullptr), _down(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -261,7 +259,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 
@@ -295,7 +293,7 @@ public:
 	/**
 	* Returns the tooltip text for when the glyph is selected
 	*/
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployFloralGlyph : public CToggleRemoteGlyph {
@@ -322,7 +320,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployFullyRelaxationGlyph : public CToggleRemoteGlyph {
@@ -349,7 +347,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployComfortGlyph : public CToggleRemoteGlyph {
@@ -376,7 +374,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMinorStorageGlyph : public CToggleRemoteGlyph {
@@ -403,7 +401,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMajorRelaxationGlyph : public CToggleRemoteGlyph {
@@ -430,7 +428,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CInflateRelaxationGlyph : public CToggleRemoteGlyph {
@@ -457,7 +455,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMaintenanceGlyph : public CToggleRemoteGlyph {
@@ -484,7 +482,7 @@ public:
 	/**
 	* Returns the tooltip text for when the glyph is selected
 	*/
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployWorkSurfaceGlyph : public CToggleRemoteGlyph {
@@ -511,7 +509,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMinorRelaxationGlyph : public CToggleRemoteGlyph {
@@ -538,7 +536,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeploySinkGlyph : public CToggleRemoteGlyph {
@@ -565,7 +563,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CDeployMajorStorageGlyph : public CToggleRemoteGlyph {
@@ -592,15 +590,15 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CSuccubusDeliveryGlyph : public CPetRemoteGlyph {
 private:
-	CPetGfxElement *_gfxElement1, *_gfxElement2;
+	CPetGfxElement *_send, *_receive;
 public:
 	CSuccubusDeliveryGlyph() : CPetRemoteGlyph(),
-		_gfxElement1(nullptr), _gfxElement2(nullptr) {}
+		_send(nullptr), _receive(nullptr) {}
 
 	/**
 	 * Setup the glyph
@@ -625,7 +623,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CNavigationControllerGlyph : public CPetRemoteGlyph {
@@ -659,55 +657,47 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 };
 
 class CGotoBottomOfWellGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoBottomOfWellGlyph() : CRemoteGotoGlyph("3PetBotOfWell",
-		"Go to the Bottom of the Well") {}
+	CGotoBottomOfWellGlyph();
 };
 
 class CGotoTopOfWellGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoTopOfWellGlyph() : CRemoteGotoGlyph("3PetTopOfWell",
-		"Go to the Top of the Well") {}
+	CGotoTopOfWellGlyph();
 };
 
 class CGotoStateroomGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoStateroomGlyph() : CRemoteGotoGlyph("3PetRoom",
-		"Go to your stateroom") {}
+	CGotoStateroomGlyph();
 };
 
 class CGotoBarGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoBarGlyph() : CRemoteGotoGlyph("3PetBar",
-		"Go to the Bar") {}
+	CGotoBarGlyph();
 };
 
 class CGotoPromenadeDeckGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoPromenadeDeckGlyph() : CRemoteGotoGlyph("3PetPromDeck",
-		"Go to the Promenade Deck") {}
+	CGotoPromenadeDeckGlyph();
 };
 
 class CGotoArboretumGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoArboretumGlyph() : CRemoteGotoGlyph("3PetArboretum",
-		"Go to the Arboretum") {}
+	CGotoArboretumGlyph();
 };
 
 class CGotoMusicRoomGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
-		"Go to the Music Room") {}
+	CGotoMusicRoomGlyph();
 };
 
 class CGotoRestaurantGlyph : public CRemoteGotoGlyph {
 public:
-	CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
-		"Go to the First Class Restaurant") {}
+	CGotoRestaurantGlyph();
 };
 
 } // End of namespace Titanic

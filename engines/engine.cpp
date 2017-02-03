@@ -223,7 +223,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 			g_system->setGraphicsMode(gfxMode.c_str());
 
 			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("opengl_linear") || gfxMode.equalsIgnoreCase("opengl_nearest")))
+			if (defaultTo1XScaler && gfxMode.equalsIgnoreCase("opengl"))
 				g_system->resetGraphicsScale();
 		}
 	}
@@ -242,6 +242,10 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	// (De)activate fullscreen mode as determined by the config settings
 	if (gameDomain && gameDomain->contains("fullscreen"))
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+	
+	// (De)activate filtering mode as determined by the config settings
+	if (gameDomain && gameDomain->contains("filtering"))
+		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 }
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
@@ -362,6 +366,11 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 
 	if (gfxError & OSystem::kTransactionFullscreenFailed) {
 		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
+		dialog.runModal();
+	}
+
+	if (gfxError & OSystem::kTransactionFilteringFailed) {
+		GUI::MessageDialog dialog(_("Could not apply filtering setting."));
 		dialog.runModal();
 	}
 }
@@ -530,7 +539,7 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate load failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);

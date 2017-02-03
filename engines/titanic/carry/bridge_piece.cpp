@@ -77,7 +77,7 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		} else if (name == "SeasonBridge") {
 			frameMsg._frameNumber = 3;
 		} else if (name == "BeamBridge") {
-			frameMsg._frameNumber = 0;
+			frameMsg._frameNumber = 4;
 		}
 
 		frameMsg.execute(shipSetting);

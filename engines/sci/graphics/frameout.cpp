@@ -35,6 +35,8 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/event.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -84,15 +86,20 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
-	case GID_GK2:
 	case GID_LIGHTHOUSE:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA2:
-	case GID_PQSWAT:
 	case GID_TORIN:
 	case GID_RAMA:
 		_currentBuffer.scriptWidth = 640;
 		_currentBuffer.scriptHeight = 480;
+		break;
+	case GID_GK2:
+	case GID_PQSWAT:
+		if (!g_sci->isDemo()) {
+			_currentBuffer.scriptWidth = 640;
+			_currentBuffer.scriptHeight = 480;
+		}
 		break;
 	default:
 		// default script width for other games is 320x200
@@ -501,6 +508,14 @@ void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pi
 #pragma mark Rendering
 
 void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
+	// In SSCI, mouse events were received via hardware interrupt, so the mouse
+	// cursor would always get updated whenever the user moved the mouse. Since
+	// we must poll for mouse events instead, poll here so that the mouse gets
+	// updated with its current position at render time. If we do not do this,
+	// the mouse gets "stuck" during loops that do not make calls to kGetEvent,
+	// like transitions and the benchmarking loop at the start of every game.
+	g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+
 	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
 	const bool robotIsActive = robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
 
@@ -1153,10 +1168,13 @@ void GfxFrameout::showBits() {
 
 		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
 
-		// TODO: Sometimes transition screen items generate zero-dimension
-		// show rectangles. Is this a bug?
+		// Sometimes screen items (especially from SCI2.1early transitions, like
+		// in the asteroids minigame in PQ4) generate zero-dimension show
+		// rectangles. In SSCI, zero-dimension rectangles are OK (they just
+		// result in no copy), but OSystem::copyRectToScreen will assert on
+		// them, so we need to check for zero-dimensions rectangles and ignore
+		// them explicitly
 		if (rounded.width() == 0 || rounded.height() == 0) {
-			warning("Zero-dimension show rectangle ignored");
 			continue;
 		}
 
@@ -1272,14 +1290,6 @@ void GfxFrameout::throttle() {
 	}
 }
 
-void GfxFrameout::showRect(const Common::Rect &rect) {
-	if (!rect.isEmpty()) {
-		_showList.clear();
-		_showList.add(rect);
-		showBits();
-	}
-}
-
 void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 	if (direction & kShakeHorizontal) {
 		// Used by QFG4 room 750
@@ -1376,10 +1386,18 @@ bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	}
 
 	Common::Rect result = screenItem->getNowSeenRect(*plane);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
-	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(left), result.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(top), result.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(right), result.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(bottom), result.bottom - 1);
+	} else {
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsLeft), result.left);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
+		writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+	}
 	return true;
 }
 

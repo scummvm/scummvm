@@ -50,14 +50,13 @@ void CStartAction::load(SimpleFile *file) {
 }
 
 bool CStartAction::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	// Dispatch the desired action to the desired target
-	CActMsg actMsg(_msgAction);
-	actMsg.execute(_msgTarget);
-
 	return true;
 }
 
 bool CStartAction::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	// Dispatch the desired action to the desired target
+	CActMsg actMsg(_msgAction);
+	actMsg.execute(_msgTarget);
 	return true;
 }
 

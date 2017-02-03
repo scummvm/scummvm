@@ -27,18 +27,17 @@ namespace Titanic {
 EMPTY_MESSAGE_MAP(CHoseEnd, CHose);
 
 CHoseEnd::CHoseEnd() : CHose() {
-	_string6 = "Connection refused by remote hose.";
 }
 
 void CHoseEnd::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_unused1, indent);
 	CHose::save(file, indent);
 }
 
 void CHoseEnd::load(SimpleFile *file) {
 	file->readNumber();
-	_string6 = file->readString();
+	_unused1 = file->readString();
 	CHose::load(file);
 }
 

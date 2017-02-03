@@ -54,7 +54,7 @@ bool CComputer::ActMsg(CActMsg *msg) {
 		else if (msg->_action == "CD2")
 			playMovie(50, 79, 0);
 		else if (msg->_action == "STCD")
-			playMovie(80, 90, 4);
+			playMovie(80, 90, MOVIE_NOTIFY_OBJECT);
 
 		_currentCD = msg->_action;
 		_state = 0;

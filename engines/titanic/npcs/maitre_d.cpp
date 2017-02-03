@@ -114,7 +114,7 @@ bool CMaitreD::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
-	endTalking(this, true, findView());
+	setTalking(this, true, findView());
 	_field12C = _field134;
 
 	if (_string3 == "STMusic" && (!_field11C || _string2 == _string3))
@@ -122,11 +122,11 @@ bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
 
 	if (_string3.contains("nasty ambient"))
 		startTalking(this, 111, findView());
-	else if (!CMusicRoom::_musicHandler->checkSound(1))
+	else if (!CMusicRoom::_musicHandler->checkInstrument(SNAKE))
 		startTalking(this, 114, findView());
-	else if (!CMusicRoom::_musicHandler->checkSound(3))
+	else if (!CMusicRoom::_musicHandler->checkInstrument(BASS))
 		startTalking(this, 113, findView());
-	else if (!CMusicRoom::_musicHandler->checkSound(2))
+	else if (!CMusicRoom::_musicHandler->checkInstrument(PIANO))
 		startTalking(this, 115, findView());
 	else {
 		startTalking(this, 110, findView());

@@ -70,7 +70,7 @@ bool CHeadPiece::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 bool CHeadPiece::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!checkPoint(msg->_mousePos, false, true)) {
 		return false;
-	} else if (!_fieldE0) {
+	} else if (!_canTake) {
 		return true;
 	}
 

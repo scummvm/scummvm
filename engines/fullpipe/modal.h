@@ -78,6 +78,26 @@ class ModalIntro : public BaseModalObject {
 	void finish();
 };
 
+class ModalIntroDemo : public BaseModalObject {
+	int _field_8;
+	int _introFlags;
+	int _countDown;
+	int _stillRunning;
+	int _sfxVolume;
+
+ public:
+	ModalIntroDemo();
+	virtual ~ModalIntroDemo();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void finish();
+};
+
 class ModalVideoPlayer : public BaseModalObject {
 public:
 
@@ -93,6 +113,8 @@ public:
 class ModalMap : public BaseModalObject {
 	Scene *_mapScene;
 	PictureObject *_pic;
+	PictureObject *_picI03;
+	PictureObject *_highlightedPic;
 	bool _isRunning;
 	Common::Rect _rect1;
 	int _x;
@@ -100,9 +122,9 @@ class ModalMap : public BaseModalObject {
 	int _flag;
 	int _mouseX;
 	int _mouseY;
-	int _field_38;
-	int _field_3C;
-	int _field_40;
+	int _dragX;
+	int _dragY;
+	int _hotSpotDelay;
 	Common::Rect _rect2;
 
  public:
@@ -112,11 +134,20 @@ class ModalMap : public BaseModalObject {
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
+	virtual bool init2(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
 
 	void initMap();
-	PictureObject *getScenePicture();
+
+private:
+	PictureObject *getScenePicture(int sceneId);
+	PictureObject *getSceneHPicture(PictureObject *obj);
+	bool checkScenePass(PreloadItem *item);
+	bool isSceneEnabled(int sceneId);
+
+	int findMapSceneId(int picId);
+	void clickButton(PictureObject *pic);
 };
 
 class ModalFinal : public BaseModalObject {
@@ -287,6 +318,28 @@ public:
 	Common::Array <PictureObject *> _arrayL;
 	Common::Array <PictureObject *> _arrayD;
 	int _queryRes;
+};
+
+class ModalDemo : public BaseModalObject {
+	PictureObject *_bg;
+	PictureObject *_button;
+	PictureObject *_text;
+	int _clickedQuit;
+	int _countdown;
+	Scene *_scene;
+
+ public:
+	ModalDemo();
+	virtual ~ModalDemo();
+
+	bool launch();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	bool init2(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
 };
 
 

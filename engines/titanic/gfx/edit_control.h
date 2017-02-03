@@ -30,8 +30,9 @@ namespace Titanic {
 class CEditControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EditControlMsg(CEditControlMsg *msg);
+	bool MouseWheelMsg(CMouseWheelMsg *msg);
 protected:
-	bool _fieldBC;
+	bool _showCursor;
 	int _editLeft;
 	int _editBottom;
 	int _editHeight;
@@ -43,7 +44,7 @@ protected:
 	byte _textB;
 	CString _text;
 	int _fieldF0;
-	int _fieldF4;
+	bool _isPassword;
 public:
 	CLASSDEF;
 	CEditControl();

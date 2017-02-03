@@ -373,11 +373,18 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 
-	bool updatesEnabled = false;
+	bool updatesEnabled = false, curlEnabled = false, sdlnetEnabled = false;
 	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable && !strcmp(i->name, "updates"))
-			updatesEnabled = true;
+		if (i->enable) {
+			if (!strcmp(i->name, "updates"))
+				updatesEnabled = true;
+			else if (!strcmp(i->name, "libcurl"))
+				curlEnabled = true;
+			else if (!strcmp(i->name, "sdlnet"))
+				sdlnetEnabled = true;
+		}
 	}
+
 	if (updatesEnabled) {
 		setup.defines.push_back("USE_SPARKLE");
 		if (projectType != kProjectXcode)
@@ -385,6 +392,11 @@ int main(int argc, char *argv[]) {
 		else
 			setup.libraries.push_back("sparkle");
 	}
+
+	if (curlEnabled && projectType == kProjectMSVC)
+		setup.defines.push_back("CURL_STATICLIB");
+	if (sdlnetEnabled && projectType == kProjectMSVC)
+		setup.libraries.push_back("iphlpapi");
 
 	setup.defines.push_back("SDL_BACKEND");
 	if (!setup.useSDL2) {
@@ -1515,7 +1527,8 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 	StringList duplicate;
 
 	for (StringList::const_iterator i = includeList.begin(); i != includeList.end(); ++i) {
-		const std::string fileName = getLastPathComponent(*i);
+		std::string fileName = getLastPathComponent(*i);
+		std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
 
 		// Leave out non object file names.
 		if (fileName.size() < 2 || fileName.compare(fileName.size() - 2, 2, ".o"))
@@ -1528,7 +1541,9 @@ void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &p
 		// Search for duplicates
 		StringList::const_iterator j = i; ++j;
 		for (; j != includeList.end(); ++j) {
-			if (fileName == getLastPathComponent(*j)) {
+			std::string candidateFileName = getLastPathComponent(*j);
+			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
+			if (fileName == candidateFileName) {
 				duplicate.push_back(fileName);
 				break;
 			}

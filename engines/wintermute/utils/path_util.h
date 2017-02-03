@@ -35,13 +35,14 @@ namespace Wintermute {
 
 class PathUtil {
 public:
-	static AnsiString unifySeparators(const AnsiString &path);
-	static AnsiString normalizeFileName(const AnsiString &path);
-	static AnsiString combine(const AnsiString &path1, const AnsiString &path2);
-	static AnsiString getDirectoryName(const AnsiString &path);
-	static AnsiString getFileName(const AnsiString &path);
-	static AnsiString getFileNameWithoutExtension(const AnsiString &path);
-	static AnsiString getExtension(const AnsiString &path);
+	static Common::String unifySeparators(const Common::String &path);
+	static Common::String normalizeFileName(const Common::String &path);
+	static Common::String combine(const Common::String &path1, const Common::String &path2);
+	static Common::String getDirectoryName(const Common::String &path);
+	static Common::String getFileName(const Common::String &path);
+	static Common::String getFileNameWithoutExtension(const Common::String &path);
+	static Common::String getExtension(const Common::String &path);
+	static bool hasTrailingSlash(const Common::String &path);	
 };
 
 } // End of namespace Wintermute

@@ -47,18 +47,18 @@ bool CPhonographLid::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CQueryPhonographState stateMsg;
 	stateMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
 	if (stateMsg._value) {
+		petDisplayMessage(0, LOCKED_MUSIC_SYSTEM);
+	} else {
 		if (_open) {
+			playMovie(27, 55, 0);
+		} else {
 			CGameObject *lock = dynamic_cast<CGameObject *>(findByName("Music System Lock"));
 			if (lock)
 				lock->setVisible(false);
 			playMovie(0, 27, 0);
-		} else {
-			playMovie(27, 55, 0);
 		}
 
 		_open = !_open;
-	} else {
-		petDisplayMessage(0, LOCKED_MUSIC_SYSTEM);
 	}
 
 	return true;

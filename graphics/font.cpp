@@ -142,11 +142,11 @@ struct WordWrapper {
 };
 
 template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines) {
+int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth) {
 	WordWrapper<StringType> wrapper(lines);
 	StringType line;
 	StringType tmpStr;
-	int lineWidth = 0;
+	int lineWidth = initWidth;
 	int tmpWidth = 0;
 
 	// The rough idea behind this algorithm is as follows:
@@ -305,12 +305,12 @@ void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, 
 	}
 }
 
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines);
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth);
 }
 
-int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines);
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth);
 }
 
 Common::String Font::handleEllipsis(const Common::String &input, int w) const {

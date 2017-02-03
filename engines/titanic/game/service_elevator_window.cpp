@@ -35,25 +35,25 @@ END_MESSAGE_MAP()
 static const int FACTORS[4] = { 0, 20, 100, 0 };
 
 CServiceElevatorWindow::CServiceElevatorWindow() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0) {
+	_destFloor(0), _notifyFlag(false), _isIndicator(false), _intoSpace(false) {
 }
 
 void CServiceElevatorWindow::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_destFloor, indent);
+	file->writeNumberLine(_notifyFlag, indent);
+	file->writeNumberLine(_isIndicator, indent);
+	file->writeNumberLine(_intoSpace, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CServiceElevatorWindow::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
+	_destFloor = file->readNumber();
+	_notifyFlag = file->readNumber();
+	_isIndicator = file->readNumber();
+	_intoSpace = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -61,39 +61,42 @@ void CServiceElevatorWindow::load(SimpleFile *file) {
 bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloorChangeMsg *msg) {
 	if (getView() == findView()) {
 		CDoorbot *doorbot = dynamic_cast<CDoorbot *>(findRoom()->findByName("Doorbot"));
-		int val = (_fieldE8 && doorbot) ? 65 : 15;
+		int fps = (_isIndicator && doorbot) ? 65 : 15;
 		CMovieClip *clip = _movieClips.findByName("Going Up");
 
 		if (!clip)
 			return true;
 
-		int count = _endFrame - _startFrame;
-		setMovieFrameRate(1.0 * count / val);
+		int count = clip->_endFrame - clip->_startFrame;
+		setMovieFrameRate(1.0 * count / fps);
 
-		int startFrame = clip->_startFrame + count * FACTORS[msg->_value1] / 100;
-		int endFrame = clip->_startFrame + count * FACTORS[msg->_value2] / 100;
+		int startFrame = clip->_startFrame + count * FACTORS[msg->_startFloor] / 100;
+		int endFrame = clip->_startFrame + count * FACTORS[msg->_endFloor] / 100;
 
-		if (_fieldE4) {
+		if (_notifyFlag) {
+			// Service elevator indicator
 			playMovie(startFrame, endFrame, MOVIE_NOTIFY_OBJECT);
 		} else {
+			// Background outside elevator
 			playMovie(startFrame, endFrame, 0);
-			if (_fieldEC)
+			if (_intoSpace)
 				playClip("Into Space");
 		}
 	}
 
-	_fieldE0 = msg->_value2;
+	_destFloor = msg->_endFloor;
 	return true;
 }
 
 bool CServiceElevatorWindow::MovieEndMsg(CMovieEndMsg *msg) {
+	// Called when indicator reaches desired destination floor
 	CServiceElevatorMsg elevMsg(5);
 	elevMsg.execute(findRoom()->findByName("Service Elevator Entity"));
 	return true;
 }
 
 bool CServiceElevatorWindow::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_fieldEC) {
+	if (_intoSpace) {
 		playClip("Fade Up");
 		playMovie(1, 2, 0);
 	} else {
@@ -101,7 +104,7 @@ bool CServiceElevatorWindow::EnterViewMsg(CEnterViewMsg *msg) {
 
 		if (clip) {
 			int frameNum = clip->_startFrame + (clip->_endFrame - clip->_startFrame)
-				* FACTORS[_fieldE0] / 100;
+				* FACTORS[_destFloor] / 100;
 			loadFrame(frameNum);
 		} else {
 			loadFrame(0);

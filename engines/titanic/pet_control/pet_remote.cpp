@@ -112,16 +112,16 @@ bool CPetRemote::reset() {
 		_up.reset("PetUp", _petControl, MODE_UNSELECTED);
 		_down.reset("PetDown", _petControl, MODE_UNSELECTED);
 
-		_left.reset("PetLeftUp", _petControl, MODE_SELECTED);
-		_left.reset("PetLeft", _petControl, MODE_UNSELECTED);
-		_right.reset("PetRightUp", _petControl, MODE_SELECTED);
-		_right.reset("PetRight", _petControl, MODE_UNSELECTED);
-		_top.reset("PetTopUp", _petControl, MODE_SELECTED);
-		_top.reset("PetTop", _petControl, MODE_UNSELECTED);
-		_bottom.reset("PetBottomUp", _petControl, MODE_SELECTED);
-		_bottom.reset("PetBottom", _petControl, MODE_UNSELECTED);
-		_action.reset("PetActionUp", _petControl, MODE_SELECTED);
-		_action.reset("PetAction", _petControl, MODE_UNSELECTED);
+		_left.reset("PetLeftUp", _petControl, MODE_UNSELECTED);
+		_left.reset("PetLeft", _petControl, MODE_SELECTED);
+		_right.reset("PetRightUp", _petControl, MODE_UNSELECTED);
+		_right.reset("PetRight", _petControl, MODE_SELECTED);
+		_top.reset("PetTopUp", _petControl, MODE_UNSELECTED);
+		_top.reset("PetTop", _petControl, MODE_SELECTED);
+		_bottom.reset("PetBottomUp", _petControl, MODE_UNSELECTED);
+		_bottom.reset("PetBottom", _petControl, MODE_SELECTED);
+		_action.reset("PetActionUp", _petControl, MODE_UNSELECTED);
+		_action.reset("PetAction", _petControl, MODE_SELECTED);
 
 		_send.reset("PetActSend0", _petControl, MODE_UNSELECTED);
 		_send.reset("PetActSend1", _petControl, MODE_SELECTED);
@@ -161,6 +161,15 @@ bool CPetRemote::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 	return _items.VirtualKeyCharMsg(msg);
 }
 
+bool CPetRemote::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (msg->_wheelUp)
+		_items.scrollLeft();
+	else
+		_items.scrollRight();
+
+	return true;
+}
+
 bool CPetRemote::isValid(CPetControl *petControl) {
 	return setupControl(petControl);
 }
@@ -193,7 +202,7 @@ void CPetRemote::enterRoom(CRoomItem *room) {
 	}
 }
 
-CPetText *CPetRemote::getText() {
+CTextControl *CPetRemote::getText() {
 	return &_text;
 }
 
@@ -294,7 +303,7 @@ int CPetRemote::getHighlightIndex(RemoteGlyph val) {
 
 	// Loop through the data for the room
 	for (uint idx = 0; idx < remoteData.size(); ++idx) {
-		if ((RemoteGlyph)remoteData[idx + 1] == val)
+		if ((RemoteGlyph)remoteData[idx] == val)
 			return idx;
 	}
 
@@ -314,8 +323,8 @@ bool CPetRemote::getRemoteData(int roomIndex, Common::Array<uint> &indexes) {
 	const byte *p = &REMOTE_DATA[0];
 	for (int idx = 0; idx < TOTAL_ROOMS; ++idx) {
 		if (*p == roomIndex) {
-			for (int ctr = 0; ctr < *p; ++ctr)
-				indexes.push_back(p[ctr + 1]);
+			for (int ctr = 0; ctr < p[1]; ++ctr)
+				indexes.push_back(p[ctr + 2]);
 			return true;
 		}
 

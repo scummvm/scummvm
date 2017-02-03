@@ -47,32 +47,32 @@ CGameObject *CMailMan::getNextObject(CGameObject *prior) const {
 	return dynamic_cast<CGameObject *>(prior->getNextSibling());
 }
 
-void CMailMan::addMail(CGameObject *obj, int id) {
+void CMailMan::addMail(CGameObject *obj, uint destRoomFlags) {
 	obj->detach();
 	obj->addUnder(this);
-	setMailId(obj, id);
+	setMailDest(obj, destRoomFlags);
 }
 
-void CMailMan::setMailId(CGameObject *obj, int id) {
-	obj->_id = id;
+void CMailMan::setMailDest(CGameObject *obj, uint roomFlags) {
+	obj->_destRoomFlags = roomFlags;
 	obj->_roomFlags = 0;
-	obj->_isMail = true;
+	obj->_isPendingMail = true;
 }
 
-CGameObject *CMailMan::findMail(int id) const {
+CGameObject *CMailMan::findMail(uint roomFlags) const {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
-		if (obj->_isMail && obj->_id == id)
+		if (obj->_isPendingMail && obj->_destRoomFlags == roomFlags)
 			return obj;
 	}
 
 	return nullptr;
 }
 
-void CMailMan::removeMail(int id, int roomFlags) {
+void CMailMan::sendMail(uint currRoomFlags, uint newRoomFlags) {
 	for (CGameObject *obj = getFirstObject(); obj; obj = getNextObject(obj)) {
-		if (obj->_isMail && obj->_id == id) {
-			obj->_isMail = false;
-			obj->_roomFlags = roomFlags;
+		if (obj->_isPendingMail && obj->_destRoomFlags == currRoomFlags) {
+			obj->_isPendingMail = false;
+			obj->_roomFlags = newRoomFlags;
 			break;
 		}
 	}

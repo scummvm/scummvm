@@ -185,12 +185,12 @@ public:
 	/**
 	 * Resize the passed surface
 	 */
-	virtual void resizeSurface(CVideoSurface *surface, int width, int height) = 0;
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16) = 0;
 
 	/**
 	 * Creates a surface of a given size
 	 */
-	virtual CVideoSurface *createSurface(int w, int h) = 0;
+	virtual CVideoSurface *createSurface(int w, int h, int bpp = 16) = 0;
 
 	/**
 	 * Creates a surface from a specified resource
@@ -228,6 +228,11 @@ public:
 	 * Set the current font number
 	 */
 	int setFontNumber(int fontNumber);
+
+	/**
+	 * Called when a game is about to be loaded
+	 */
+	void preLoad();
 };
 
 class OSScreenManager: CScreenManager {
@@ -367,12 +372,12 @@ public:
 	/**
 	 * Resize the passed surface
 	 */
-	virtual void resizeSurface(CVideoSurface *surface, int width, int height);
+	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16);
 
 	/**
 	 * Creates a surface of a given size
 	 */
-	virtual CVideoSurface *createSurface(int w, int h);
+	virtual CVideoSurface *createSurface(int w, int h, int bpp = 16);
 
 	/**
 	 * Creates a surface from a specified resource

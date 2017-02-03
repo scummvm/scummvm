@@ -59,12 +59,13 @@ void CGetLiftEye2::load(SimpleFile *file) {
 bool CGetLiftEye2::ActMsg(CActMsg *msg) {
 	*_destObject = msg->_action;
 	setVisible(true);
+	_cursorId = CURSOR_HAND;
 	return true;
 }
 
 bool CGetLiftEye2::EnterRoomMsg(CEnterRoomMsg *msg) {
 	CPetControl *pet = getPetControl();
-	if (pet->getRoomsElevatorNum() == 4 && CLift::_v1 == 1 && !CLift::_v6) {
+	if (pet->getRoomsElevatorNum() == 4 && CLift::_hasHead && !CLift::_hasCorrectHead) {
 		_cursorId = CURSOR_HAND;
 		setVisible(true);
 	} else {

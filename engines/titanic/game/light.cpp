@@ -37,35 +37,35 @@ BEGIN_MESSAGE_MAP(CLight, CBackground)
 	ON_MESSAGE(EnterRoomMsg)
 END_MESSAGE_MAP()
 
-CLight::CLight() : CBackground(), _fieldE0(0), _fieldE4(0),
-	_fieldE8(0), _fieldEC(0), _fieldF0(0), _fieldF4(0),
-	_fieldF8(0), _fieldFC(0) {
+CLight::CLight() : CBackground(), _unused1(0), _topRight(false),
+	_topLeft(false), _bottomLeft(false), _bottomRight(false), _unused2(0),
+	_unused3(0), _eyePresent(false) {
 }
 
 void CLight::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_unused1, indent);
+	file->writeNumberLine(_topRight, indent);
+	file->writeNumberLine(_topLeft, indent);
+	file->writeNumberLine(_bottomLeft, indent);
+	file->writeNumberLine(_bottomRight, indent);
+	file->writeNumberLine(_unused2, indent);
+	file->writeNumberLine(_unused3, indent);
+	file->writeNumberLine(_eyePresent, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CLight::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
+	_unused1 = file->readNumber();
+	_topRight = file->readNumber();
+	_topLeft = file->readNumber();
+	_bottomLeft = file->readNumber();
+	_bottomRight = file->readNumber();
+	_unused2 = file->readNumber();
+	_unused3 = file->readNumber();
+	_eyePresent = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -76,8 +76,15 @@ bool CLight::TurnOff(CTurnOff *msg) {
 }
 
 bool CLight::LightsMsg(CLightsMsg *msg) {
-	if ((msg->_flag2 && _fieldE8) || (msg->_flag3 && _fieldEC)
-			|| (msg->_flag1 && _fieldE4) || (msg->_flag4 && _fieldF0)) {
+	// WORKAROUND: Since solving the puzzle to get Titania's eye explicitly
+	// requires referring to the "broken light", don't allow the top left
+	// light to be turned on in the player's stateroom until it's gotten/fixed
+	if (msg->_topLeft && _topLeft) {
+		bool showFlag = !getPetControl()->isFirstClassSuite() ||
+			getRoom()->findByName("Eye1") == nullptr;
+		setVisible(showFlag);
+	} else if ((msg->_bottomLeft && _bottomLeft) || (msg->_topRight && _topRight) ||
+			(msg->_bottomRight && _bottomRight)) {
 		setVisible(true);
 	} else {
 		setVisible(false);
@@ -98,9 +105,9 @@ bool CLight::TurnOn(CTurnOn *msg) {
 
 bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
-	if (_fieldFC == 1 && flag) {
+	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -113,9 +120,9 @@ bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
-	if (_fieldFC == 1 && flag) {
+	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
@@ -128,7 +135,7 @@ bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CLight::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Eye Removed")
-		_fieldFC = 0;
+		_eyePresent = false;
 
 	return true;
 }
@@ -138,11 +145,11 @@ bool CLight::EnterRoomMsg(CEnterRoomMsg *msg) {
 	setVisible(true);
 
 	if (isEquals("6WTL")) {
-		CLightsMsg lightsMsg(1, 1, 1, 1);
+		CLightsMsg lightsMsg(true, true, true, true);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		bool flag = pet ? pet->isRoom59706() : false;
-		if (flag)
+		bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
+		if (isYourStateroom)
 			CTelevision::_turnOn = true;
 	}
 

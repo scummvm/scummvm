@@ -41,13 +41,13 @@ void CToilet::load(SimpleFile *file) {
 }
 
 bool CToilet::TurnOn(CTurnOn *msg) {
-	if (CSGTStateRoom::_statics->_v12 == "Closed"
-			&& CSGTStateRoom::_statics->_v10 == "Open"
-			&& CSGTStateRoom::_statics->_v8 == "Closed") {
+	if (CSGTStateRoom::_statics->_toilet == "Closed"
+			&& CSGTStateRoom::_statics->_washstand == "Open"
+			&& CSGTStateRoom::_statics->_armchair == "Closed") {
 		setVisible(true);
-		CSGTStateRoom::_statics->_v12 = "Open";
+		CSGTStateRoom::_statics->_toilet = "Open";
 
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 11;
 		playMovie(0, 11, MOVIE_GAMESTATE);
@@ -58,10 +58,10 @@ bool CToilet::TurnOn(CTurnOn *msg) {
 }
 
 bool CToilet::TurnOff(CTurnOff *msg) {
-	if (CSGTStateRoom::_statics->_v12 == "Open") {
-		CSGTStateRoom::_statics->_v12 = "Closed";
+	if (CSGTStateRoom::_statics->_toilet == "Open") {
+		CSGTStateRoom::_statics->_toilet = "Closed";
 
-		_fieldE0 = true;
+		_isClosed = true;
 		_startFrame = 11;
 		_endFrame = 18;
 		playMovie(11, 18, MOVIE_GAMESTATE);
@@ -72,7 +72,7 @@ bool CToilet::TurnOff(CTurnOff *msg) {
 }
 
 bool CToilet::MovieEndMsg(CMovieEndMsg *msg) {
-	if (CSGTStateRoom::_statics->_v12 == "Closed")
+	if (CSGTStateRoom::_statics->_toilet == "Closed")
 		setVisible(false);
 
 	return true;

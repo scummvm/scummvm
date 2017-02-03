@@ -99,6 +99,15 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 					res += Common::String::format(" %d", v);
 					break;
 				}
+			case 'f':
+				{
+					Datum d;
+					i = (*_currentScript)[pc++];
+					d.u.i = READ_UINT32(&i);
+
+					res += Common::String::format(" %f", d.u.f);
+					break;
+				}
 			case 'o':
 				{
 					i = (*_currentScript)[pc++];
@@ -184,32 +193,39 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 
 void Lingo::cleanLocalVars() {
 	// Clean up current scope local variables and clean up memory
+	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _localvars->size());
+
 	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
-		if (!h->_value->global)
-			delete h->_value;
+		if (!h->_value->global) {
+			Symbol *sym = h->_value;
+			free(sym->name);
+			delete sym;
+		}
 	}
+
 	delete g_lingo->_localvars;
+
+	g_lingo->_localvars = 0;
 }
 
 void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
-	Symbol *sym;
-
 	if (prefix)
 		name = *prefix + "-" + name;
 
 	debugC(3, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
-	if (!_handlers.contains(name)) { // Create variable if it was not defined
+	Symbol *sym = getHandler(name);
+	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
 
 		sym->name = (char *)calloc(name.size() + 1, 1);
 		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
 		sym->type = HANDLER;
 
-		_handlers[name] = sym;
+		_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 	} else {
-		sym = g_lingo->_handlers[name];
-
+		//we don't want to be here. The getHandler call should have used the EntityId and the result
+		//should have been unique!
 		warning("Redefining handler '%s'", name.c_str());
 		delete sym->u.defn;
 	}
@@ -219,6 +235,7 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 
 	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 	sym->nargs = nargs;
+	sym->maxArgs = nargs;
 }
 
 int Lingo::codeString(const char *str) {
@@ -264,6 +281,15 @@ int Lingo::codeConst(int val) {
 	return res;
 }
 
+int Lingo::codeArray(int arraySize) {
+	int res = g_lingo->code1(g_lingo->c_arraypush);
+	inst i = 0;
+	WRITE_UINT32(&i, arraySize);
+	g_lingo->code1(i);
+
+	return res;
+}
+
 void Lingo::codeArg(Common::String *s) {
 	_argstack.push_back(s);
 }
@@ -286,20 +312,38 @@ void Lingo::codeArgStore() {
 	}
 }
 
+int Lingo::codeSetImmediate(bool state) {
+	g_lingo->_immediateMode = state;
+
+	int res = g_lingo->code1(g_lingo->c_setImmediate);
+	inst i = 0;
+	WRITE_UINT32(&i, state);
+	g_lingo->code1(i);
+
+	return res;
+}
+
 int Lingo::codeFunc(Common::String *s, int numpar) {
 	int ret = g_lingo->code1(g_lingo->c_call);
 
-	if (s->equalsIgnoreCase("me")) {
-		if (!g_lingo->_currentFactory.empty()) {
-			g_lingo->codeString(g_lingo->_currentFactory.c_str());
-			debugC(2, kDebugLingoCompile, "Replaced 'me' with %s", g_lingo->_currentFactory.c_str());
-		} else {
-			warning("'me' out of factory method");
-			g_lingo->codeString(s->c_str());
-		}
-	} else {
-		g_lingo->codeString(s->c_str());
-	}
+	g_lingo->codeString(s->c_str());
+
+	inst num = 0;
+	WRITE_UINT32(&num, numpar);
+	g_lingo->code1(num);
+
+	return ret;
+}
+
+int Lingo::codeMe(Common::String *method, int numpar) {
+	int ret = g_lingo->code1(g_lingo->c_call);
+
+	Common::String m(g_lingo->_currentFactory);
+
+	m += '-';
+	m += *method;
+
+	g_lingo->codeString(m.c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
@@ -352,7 +396,7 @@ void Lingo::codeFactory(Common::String &name) {
 	sym->parens = true;
 	sym->u.bltin = g_lingo->b_factory;
 
-	_handlers[name] = sym;
+	_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 }
 
 }

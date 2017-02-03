@@ -114,6 +114,10 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	v1.x = _actorX;
 	v1.y = _actorY;
 
+	// V0/V1 games are off by 1
+	if (_vm->_game.version <= 1)
+		v1.y += 1;
+
 	if (use_scaling) {
 
 		/* Scale direction */

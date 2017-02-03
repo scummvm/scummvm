@@ -84,7 +84,7 @@ bool Client::readMoreIfNeeded() {
 		return false;
 	}
 
-	if (_stream->write(_buffer, bytes) != bytes) {
+	if (_stream->write(_buffer, bytes) != (uint32)bytes) {
 		warning("Client::readMoreIfNeeded: failed to write() into MemoryReadWriteStream");
 		close();
 		return false;

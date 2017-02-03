@@ -22,6 +22,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
 
 #ifndef DIRECTOR_SOUND_H
 #define DIRECTOR_SOUND_H
@@ -35,6 +36,8 @@ private:
 	Audio::SoundHandle *_sound2;
 	Audio::SoundHandle *_scriptSound;
 	Audio::Mixer *_mixer;
+	Audio::PCSpeaker *_speaker;
+	Audio::SoundHandle *_pcSpeakerHandle;
 
 public:
 	DirectorSound();
@@ -43,6 +46,7 @@ public:
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
+	void systemBeep();
 	bool isChannelActive(uint8 channelID);
 	void stopSound();
 };

@@ -232,20 +232,17 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 
 ObjstateCommand::ObjstateCommand() {
 	_value = 0;
-	_objCommandName = 0;
 	_objtype = kObjTypeObjstateCommand;
 }
 
 ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
 	_value = src->_value;
-	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
 	_objtype = kObjTypeObjstateCommand;
 
-	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
+	_objCommandName = src->_objCommandName;
 }
 
 ObjstateCommand::~ObjstateCommand() {
-	free(_objCommandName);
 }
 
 bool ObjstateCommand::load(MfcArchive &file) {
@@ -273,7 +270,6 @@ MessageQueue::MessageQueue() {
 	_id = 0;
 	_isFinished = 0;
 	_flags = 0;
-	_queueName = 0;
 	_counter = 0;
 	_field_38 = 0;
 	_flag1 = 0;
@@ -286,7 +282,6 @@ MessageQueue::MessageQueue(int dataId) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_isFinished = 0;
 	_flags = 0;
-	_queueName = 0;
 	_counter = 0;
 	_field_38 = 0;
 	_flag1 = 0;
@@ -312,7 +307,7 @@ MessageQueue::MessageQueue(MessageQueue *src, int parId, int field_38) {
 	_id = g_fp->_globalMessageQueueList->compact();
 	_dataId = src->_dataId;
 	_flags = src->_flags;
-	_queueName = 0;
+	_queueName = "";
 
 	g_fp->_globalMessageQueueList->addMessageQueue(this);
 
@@ -338,8 +333,6 @@ MessageQueue::~MessageQueue() {
 	}
 
 	finish();
-
-	free(_queueName);
 }
 
 bool MessageQueue::load(MfcArchive &file) {

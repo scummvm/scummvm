@@ -167,21 +167,6 @@ struct DMADGameDescription {
 class Thing {
 public:
 	uint16 _data;
-	static const Thing _none; // @ C0xFFFF_THING_NONE
-	static const Thing _endOfList; // @ C0xFFFE_THING_ENDOFLIST
-	static const Thing _firstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION
-	static const Thing _explFireBall; // @ C0xFF80_THING_EXPLOSION_FIREBALL
-	static const Thing _explSlime; // @ C0xFF81_THING_EXPLOSION_SLIME
-	static const Thing _explLightningBolt; // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
-	static const Thing _explHarmNonMaterial; // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
-	static const Thing _explOpenDoor; // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
-	static const Thing _explPoisonBolt; // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
-	static const Thing _explPoisonCloud; // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
-	static const Thing _explSmoke; // @ C0xFFA8_THING_EXPLOSION_SMOKE
-	static const Thing _explFluxcage; // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
-	static const Thing _explRebirthStep1; // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
-	static const Thing _explRebirthStep2; // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
-	static const Thing _party; // @ C0xFFFF_THING_PARTY
 
 	Thing() : _data(0) {}
 	Thing(const Thing &other) { set(other._data); }
@@ -329,6 +314,22 @@ public:
 	int32 _gameTime; // @ G0313_ul_GameTime
 	char _stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 	int16 _waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
+
+	Thing _thingNone;				 // @ C0xFFFF_THING_NONE
+	Thing _thingEndOfList;			 // @ C0xFFFE_THING_ENDOFLIST
+	Thing _thingFirstExplosion;		 // @ C0xFF80_THING_FIRST_EXPLOSION
+	Thing _thingExplFireBall;		 // @ C0xFF80_THING_EXPLOSION_FIREBALL
+	Thing _thingExplSlime;			 // @ C0xFF81_THING_EXPLOSION_SLIME
+	Thing _thingExplLightningBolt;	 // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
+	Thing _thingExplHarmNonMaterial; // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
+	Thing _thingExplOpenDoor;		 // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
+	Thing _thingExplPoisonBolt;		 // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
+	Thing _thingExplPoisonCloud;	 // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
+	Thing _thingExplSmoke;			 // @ C0xFFA8_THING_EXPLOSION_SMOKE
+	Thing _thingExplFluxcage;		 // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
+	Thing _thingExplRebirthStep1;	 // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
+	Thing _thingExplRebirthStep2;	 // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
+	Thing _thingParty;				 // @ C0xFFFF_THING_PARTY
 };
 
 bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header);

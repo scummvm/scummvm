@@ -405,7 +405,9 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
-			if (n & 0x40) {
+			// Checking for this 0x40 flag breaks at least Laura Bow 2 CD 1.1
+			// map 448
+			if (g_sci->getGameId() == GID_KQ6 && (n & 0x40)) {
 				// This seems to define the size of raw lipsync data (at least
 				// in KQ6 CD Windows).
 				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
@@ -511,10 +513,8 @@ void ResourceManager::setAudioLanguage(int language) {
 		_audioMapSCI1 = NULL;
 	}
 
-	char filename[9];
-	snprintf(filename, 9, "AUDIO%03d", language);
-
-	Common::String fullname = Common::String(filename) + ".MAP";
+	Common::String filename = Common::String::format("AUDIO%03d", language);
+	Common::String fullname = filename + ".MAP";
 	if (!Common::File::exists(fullname)) {
 		warning("No audio map found for language %i", language);
 		return;
@@ -524,7 +524,7 @@ void ResourceManager::setAudioLanguage(int language) {
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, Common::String(filename) + ".0??");
+	SearchMan.listMatchingMembers(files, filename + ".0??");
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
 		const char *dot = strrchr(name.c_str(), '.');
@@ -964,33 +964,50 @@ bool ResourceManager::addAudioSources() {
 	return true;
 }
 
-void ResourceManager::changeAudioDirectory(Common::String path) {
-	// TODO: This implementation is broken.
-	return;
+void ResourceManager::changeAudioDirectory(const Common::String &path) {
+	// Resources must be cleared before ResourceSources because the destructor
+	// of a Resource accesses its own ResourceSource
+	ResourceMap::iterator resIt = _resMap.begin();
+	while (resIt != _resMap.end()) {
+		Resource *resource = resIt->_value;
+		ResourceType type = resource->getType();
+		if (type == kResourceTypeMap ||
+			type == kResourceTypeAudio36 ||
+			type == kResourceTypeSync36) {
 
-#if 0
-	// Remove all of the audio map resource sources, as well as the audio resource sources
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
-		ResourceSource *source = *it;
-		ResSourceType sourceType = source->getSourceType();
-
-		// Remove the resource source, if it's an audio map or an audio file
-		if (sourceType == kSourceIntMap || sourceType == kSourceAudioVolume) {
-			// Don't remove 65535.map (the SFX map) or resource.sfx
-			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX") {
-				++it;
+			if (type == kResourceTypeMap && resource->getNumber() == 65535) {
+				++resIt;
 				continue;
 			}
 
-			// erase() will move the iterator to the next element
-			it = _sources.erase(it);
+			if (resource->_status == kResStatusLocked) {
+				resource->_lockers = 1;
+				unlockResource(resource);
+			}
+			if (resource->_status == kResStatusEnqueued) {
+				removeFromLRU(resource);
+			}
+			delete resource;
+			_resMap.erase(resIt);
+		}
+
+		++resIt;
+	}
+
+	Common::List<ResourceSource *>::iterator sourceIt = _sources.begin();
+	while (sourceIt != _sources.end()) {
+		ResourceSource *source = *sourceIt;
+		ResSourceType sourceType = source->getSourceType();
+		if ((sourceType == kSourceIntMap && source->_volumeNumber != 65535) ||
+			(sourceType == kSourceAudioVolume && source->getLocationName() != "RESOURCE.SFX")) {
+
+			sourceIt = _sources.erase(sourceIt);
 			delete source;
 		} else {
-			++it;
+			++sourceIt;
 		}
 	}
 
-	// Now, readd the audio resource sources
 	Common::String mapName = "MAP";
 	Common::String audioResourceName = "RESOURCE.AUD";
 	if (!path.empty()) {
@@ -1002,16 +1019,14 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 	Common::List<ResourceId>::iterator it;
 	for (it = resources.begin(); it != resources.end(); ++it) {
 		// Don't readd 65535.map or resource.sfx
-		if ((it->getNumber() == 65535))
+		if (it->getNumber() == 65535)
 			continue;
 
 		ResourceSource *src = addSource(new IntMapResourceSource(mapName, 0, it->getNumber()));
 		addSource(new AudioVolumeResourceSource(this, audioResourceName, src, 0));
 	}
 
-	// Rescan the newly added resources
 	scanNewSources();
-#endif
 }
 
 } // End of namespace Sci

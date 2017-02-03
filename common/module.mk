@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	memorypool.o \
 	md5.o \
 	mutex.o \
+	osd_message_queue.o \
 	platform.o \
 	quicktime.o \
 	random.o \

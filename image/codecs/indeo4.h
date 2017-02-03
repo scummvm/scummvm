@@ -52,7 +52,7 @@ class Indeo4Decoder : public IndeoDecoderBase {
 		bool _is2dTrans;
 	};
 public:
-	Indeo4Decoder(uint16 width, uint16 height);
+	Indeo4Decoder(uint16 width, uint16 height, uint bitsPerPixel = 16);
 	virtual ~Indeo4Decoder() {}
 
 	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
@@ -89,6 +89,11 @@ protected:
 	 *  @returns       result code: 0 = OK, negative number = error
 	 */
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
+
+	/**
+	 * Decodes optional transparency data within Indeo frames
+	 */
+	virtual void decodeTransparency();
 private:
 	int scaleTileSize(int defSize, int sizeFactor);
 

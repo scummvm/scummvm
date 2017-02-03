@@ -36,6 +36,7 @@ class SegManager;
 struct EngineState;
 class Object;
 class ResourceManager;
+class Script;
 
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
@@ -149,6 +150,7 @@ enum GlobalVar {
 	kGlobalVarFastCast       = 84, // SCI16
 	kGlobalVarMessageType    = 90,
 	kGlobalVarTextSpeed      = 94, // SCI32; 0 is fastest, 8 is slowest
+	kGlobalVarLSL6HiresTextSpeed = 167, // 1 is fastest, 14 is slowest
 	kGlobalVarShivers1Score  = 349
 };
 
@@ -196,8 +198,8 @@ enum SciOpcodes {
 	op_calle    = 0x23,	// 035
 	op_ret      = 0x24,	// 036
 	op_send     = 0x25,	// 037
-	op_infoToa  = 0x26,	// 038
-	op_superToa = 0x27,	// 039
+	op_info     = 0x26,	// 038
+	op_superP   = 0x27,	// 039
 	op_class    = 0x28,	// 040
 	// dummy      0x29,	// 041
 	op_self     = 0x2a,	// 042
@@ -385,6 +387,16 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
  *       into trouble if we encounter high value words. *If* those exist at all.
  */
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]);
+
+/**
+ * Finds the script-absolute offset of a relative object offset.
+ *
+ * @param[in] relOffset the relative object offset
+ * @param[in] scr the owner script object, used by SCI1.1+
+ * @param[in] pcOffset the offset of the program counter, used by SCI0early and
+ *                     SCI3
+ */
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset);
 
 } // End of namespace Sci
 

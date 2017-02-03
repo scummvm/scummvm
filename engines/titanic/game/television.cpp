@@ -45,24 +45,24 @@ BEGIN_MESSAGE_MAP(CTelevision, CGameObject)
 	ON_MESSAGE(LightsMsg)
 END_MESSAGE_MAP()
 
-int CTelevision::_v1;
+int CTelevision::_seasonFrame;
 bool CTelevision::_turnOn;
-int CTelevision::_v3;
-int CTelevision::_v4;
-int CTelevision::_v5;
-int CTelevision::_v6;
+int CTelevision::_seasonUnused;
+int CTelevision::_floorNum;
+bool CTelevision::_channel4Glyph;
+bool CTelevision::_eyeFlag;
 
-CTelevision::CTelevision() : CBackground(), _fieldE0(1),
-	_fieldE4(7), _isOn(false), _fieldEC(0), _soundHandle(0) {
+CTelevision::CTelevision() : CBackground(), _channelNum(1),
+	_channelsCount(7), _isOn(false), _unused(0), _soundHandle(0) {
 }
 
 void CTelevision::init() {
-	_v1 = 531;
+	_seasonFrame = 531;
 	_turnOn = true;
-	_v3 = 0;
-	_v4 = 27;
-	_v5 = 1;
-	_v6 = 1;
+	_seasonUnused = 0;
+	_floorNum = 27;
+	_channel4Glyph = true;
+	_eyeFlag = true;
 }
 
 void CTelevision::deinit() {
@@ -70,34 +70,34 @@ void CTelevision::deinit() {
 
 void CTelevision::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_channelNum, indent);
+	file->writeNumberLine(_seasonFrame, indent);
+	file->writeNumberLine(_channelsCount, indent);
 	file->writeNumberLine(_turnOn, indent);
 	file->writeNumberLine(_isOn, indent);
-	file->writeNumberLine(_v3, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_v4, indent);
+	file->writeNumberLine(_seasonUnused, indent);
+	file->writeNumberLine(_unused, indent);
+	file->writeNumberLine(_floorNum, indent);
 	file->writeNumberLine(_soundHandle, indent);
-	file->writeNumberLine(_v5, indent);
-	file->writeNumberLine(_v6, indent);
+	file->writeNumberLine(_channel4Glyph, indent);
+	file->writeNumberLine(_eyeFlag, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CTelevision::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_v1 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_channelNum = file->readNumber();
+	_seasonFrame = file->readNumber();
+	_channelsCount = file->readNumber();
 	_turnOn = file->readNumber() != 0;
 	_isOn = file->readNumber() != 0;
-	_v3 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_v4 = file->readNumber();
+	_seasonUnused = file->readNumber();
+	_unused = file->readNumber();
+	_floorNum = file->readNumber();
 	_soundHandle = file->readNumber();
-	_v5 = file->readNumber();
-	_v6 = file->readNumber();
+	_channel4Glyph = file->readNumber();
+	_eyeFlag = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -124,17 +124,17 @@ bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	if (msg->_season == "Autumn") {
-		_v1 = 545;
-		_v3 = 0;
+		_seasonFrame = 545;
+		_seasonUnused = 0;
 	} else if (msg->_season == "Winter") {
-		_v1 = 503;
-		_v3 = 0;
+		_seasonFrame = 503;
+		_seasonUnused = 0;
 	} else if (msg->_season == "Spring") {
-		_v1 = 517;
-		_v3 = 0;
+		_seasonFrame = 517;
+		_seasonUnused = 0;
 	} else if (msg->_season == "Summer") {
-		_v1 = 531;
-		_v3 = 0;
+		_seasonFrame = 531;
+		_seasonUnused = 0;
 	}
 
 	return true;
@@ -145,7 +145,7 @@ bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
 	petHighlightGlyph(GLYPH_TELEVISION_CONTROL);
 	petSetRemoteTarget();
 	setVisible(0);
-	_fieldE0 = 1;
+	_channelNum = 1;
 
 	return true;
 }
@@ -158,9 +158,9 @@ bool CTelevision::PETUpMsg(CPETUpMsg *msg) {
 		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, 0);
 
-		_fieldE0 = _fieldE0 % _fieldE4 + 1;
+		_channelNum = (_channelNum % _channelsCount) + 1;
 		stopMovie();
-		playMovie(START_FRAMES[_fieldE0], END_FRAMES[_fieldE0], 4);
+		playMovie(START_FRAMES[_channelNum], END_FRAMES[_channelNum], MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;
@@ -170,12 +170,11 @@ bool CTelevision::PETDownMsg(CPETDownMsg *msg) {
 	if (msg->_name == "Television" && _isOn) {
 		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, 0);
-		if (--_fieldE0 < 1)
-			_fieldE0 += _fieldE4;
+		if (--_channelNum < 1)
+			_channelNum += _channelsCount;
 
-		_fieldE0 = _fieldE0 % _fieldE4 + 1;
 		stopMovie();
-		playMovie(START_FRAMES[_fieldE0], END_FRAMES[_fieldE0], 4);
+		playMovie(START_FRAMES[_channelNum], END_FRAMES[_channelNum], MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;
@@ -214,7 +213,7 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 		if (_isOn) {
 			setVisible(true);
 			playMovie(0, 55, 0);
-			_fieldE0 = 1;
+			_channelNum = 1;
 		} else {
 			stopMovie();
 			if (isSoundActive(_soundHandle))
@@ -236,7 +235,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		parrotMsg.execute("PerchedParrot");
 	}
 
-	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
+	if (_channelNum == 3 && compareRoomNameTo("SGTState") && getPassengerClass() == THIRD_CLASS) {
 		playSound("z#47.wav");
 		_soundHandle = playSound("b#20.wav");
 		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
@@ -247,28 +246,28 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 
 			debugC(kDebugScripts, "Assigned room - %d", roomFlags);
 			magazine->addMail(roomFlags);
-			magazine->removeMail(roomFlags, roomFlags);
+			magazine->sendMail(roomFlags, roomFlags);
 		}
 
 		loadFrame(561);
-	} else if (_fieldE0 == 2) {
-		loadFrame(_v1);
-	} else if (_fieldE0 == 4 && _v5) {
+	} else if (_channelNum == 2) {
+		loadFrame(_seasonFrame);
+	} else if (_channelNum == 4 && _channel4Glyph) {
 		if (_turnOn)
 			loadFrame(502);
 		else
-			warning("There is currently nothing available for your viewing pleasure on this channel.");
-	} else if (_fieldE0 == 5 && *CGetLiftEye2::_destObject != "NULL") {
-		loadFrame(393 + _v4);
+			petDisplayMessage(NOTHING_ON_CHANNEL);
+	} else if (_channelNum == 5 && *CGetLiftEye2::_destObject != "NULL") {
+		loadFrame(393 + _floorNum);
 	} else {
-		warning("There is currently nothing available for your viewing pleasure on this channel.");
+		petDisplayMessage(NOTHING_ON_CHANNEL);
 	}
 
 	return true;
 }
 
 bool CTelevision::ShipSettingMsg(CShipSettingMsg *msg) {
-	_v4 = msg->_value;
+	_floorNum = msg->_value;
 	return true;
 }
 
@@ -284,12 +283,12 @@ bool CTelevision::TurnOn(CTurnOn *msg) {
 
 bool CTelevision::LightsMsg(CLightsMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = false;
+	bool isYourStateroom = false;
 
 	if (pet)
-		flag = pet->isRoom59706();
+		isYourStateroom = pet->isFirstClassSuite();
 
-	if (msg->_flag2 || !flag)
+	if (msg->_topLeft || !isYourStateroom)
 		_turnOn = true;
 
 	return true;

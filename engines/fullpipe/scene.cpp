@@ -31,6 +31,7 @@
 #include "fullpipe/constants.h"
 
 #include "common/algorithm.h"
+#include "graphics/surface.h"
 
 namespace Fullpipe {
 
@@ -400,7 +401,7 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 
 MessageQueue *Scene::getMessageQueueByName(char *name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(_messageQueueList[i]->_queueName, name))
+		if (!strcmp(_messageQueueList[i]->_queueName.c_str(), name))
 			return _messageQueueList[i];
 
 	return 0;
@@ -506,7 +507,7 @@ void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool
 }
 #else
 template<typename T>
-void Scene::objectList_sortByPriority(Common::Array<T *> &list, int startIndex) {
+void Scene::objectList_sortByPriority(Common::Array<T *> &list, uint startIndex) {
 	if (list.size() > startIndex) {
 		int lastIndex = list.size() - 1;
 		bool changed;
@@ -534,7 +535,7 @@ void Scene::draw() {
 	updateScrolling();
 
 	// Clean previous stuff
-	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
 
 	drawContent(60000, 0, true);
 

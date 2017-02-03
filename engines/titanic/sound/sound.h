@@ -115,7 +115,7 @@ public:
 	/**
 	 * Returns true if a sound with the specified handle is active
 	 */
-	bool isActive(int handle) const;
+	bool isActive(int handle);
 
 	/**
 	 * Sets the volume for a sound

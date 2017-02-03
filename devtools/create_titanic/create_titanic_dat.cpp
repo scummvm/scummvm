@@ -416,10 +416,11 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[] = {
+static const char *const STRINGS_EN[140] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
+	"I'm sorry, you cannot enter this pellerator at present as it's frozen shut",
 	"The Succ-U-Bus is in Standby, or \"Off\" mode at present.",
 	"There is currently nothing to deliver.",
 	"There is currently nothing in the tray to send.",
@@ -478,13 +479,97 @@ static const char *const STRINGS_EN[] = {
 	"Go where?",
 	"It would be nice if you could take that but you can't.",
 	"A bowl of pistachio nuts.",
-	"Not a bowl of pistachio nuts."
+	"Not a bowl of pistachio nuts.",
+
+	"Sadly, it is not possible to summon the DoorBot from this location.",
+	"Sadly, it is not possible to summon the BellBot from this location.",
+	"There is no one here to talk to",
+	"Talking to ",
+	"the DoorBot",
+	"the DeskBot",
+	"a LiftBot",
+	"the Parrot",
+	"the BarBot",
+	"a ChatterBot",
+	"the BellBot",
+	"the Maitre d'Bot",
+	"a Succ-U-Bus",
+	"Unknown",
+	"The arm is already holding something.",
+	"You can't get this.",
+	"That doesn't seem to do anything.",
+	"It doesn't seem to want this.",
+	"This does not reach.",
+	"The chicken is already clean.",
+	"Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.",
+	"This item is incorrectly calibrated.",
+	"Only First Class passengers are allowed to use the Gondoliers.",
+	"There is currently nothing available for your viewing pleasure on this channel.",
+	"Television control",
+	"Operate visual entertainment device",
+	"Operate the lights",
+	"Deploy floral enhancement",
+	"Deploy fully recumbent relaxation device",
+	"Deploy comfort workstation",
+	"Deploy minor horizontally mobile storage compartment",
+	"Deploy major semi-recumbent relaxation device",
+	"Inflate fully recumbent relaxation device",
+	"Deploy personal maintenance hub",
+	"Deploy executive horizontal worksurface",
+	"Deploy minor semi-recumbent relaxation device",
+	"Deploy aqueous cleansing receptacle",
+	"Deploy major horizontally mobile storage compartment",
+	"Succ-U-Bus delivery system control",
+	"Navigation controller",
+	"Summon Elevator",
+	"Summon Pellerator",
+	"Go to the Bottom of the Well",
+	"Go to the Top of the Well",
+	"Go to your stateroom",
+	"Go to the Bar",
+	"Go to the Promenade Deck",
+	"Go to the Arboretum",
+	"Go to the Music Room",
+	"Go to the First Class Restaurant",
+	"The Parrot Lobby",
+	"The Creators' Chamber",
+	"The Bridge",
+	"The Bilge Room",
+	"The Sculpture Chamber",
+	"The Arboretum",
+	"The Bottom of the Well",
+	"The Promenade Deck",
+	"The 1st class restaurant",
+	"Titania's Room",
+	"The Bar",
+	"The Embarkation Lobby",
+	"The Music Room",
+	"Unknown Room",
+	"The Service Elevator",
+	"The Super Galactic Leisure Lounge",
+	"The Elevator",
+	"The Dome",
+	"The Pellerator",
+	"The Top of the Well",
+	"Nowhere you're likely to want to go.",
+	"1st class",
+	"2nd class",
+	"SGT class",
+	"no class",
+	"Your assigned room: ",
+	"A previously assigned room: ",
+	"Saved Chevron: ",
+	"Current location: ",
+	"A hot",
+	"A cold"
 };
 
-static const char *const STRINGS_DE[] = {
-	// TODO: Translate these to their German versions
+static const char *const STRINGS_DE[185] = {
+	// TODO: Still many strings to translate to German
 	"",
 	"Sie befinden sich vor dem Pellerator.",
+	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der "
+		"Zutritt zum Pellerator Ihnen gegenwSrtig verwehrt.",
 	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
 		"glich, da die T\0xFC" "r zugefroren ist.",
 	"Der Sukk-U-Bus befindet sich gegenwSrtig im Standby-oder \"AUS\"-Betrieb.",
@@ -540,7 +625,7 @@ static const char *const STRINGS_DE[] = {
 	"Melden Sie sich bitte an der Rezeption an.",
 	"Dieses Nahrungsmittel ist bereits ausreichend garniert.",
 	"Leider ist dieser Automat gegenwSrtig leer.",
-	"Bei So¯enbedarf positionieren Sie bitte die Nahrungsquelle direkt "
+	"Bei So\xAF" "enbedarf positionieren Sie bitte die Nahrungsquelle direkt "
 		"unter den Automaten.",
 	"Der Jahreszeitenschalter befindet sich zur Zeit au\xDF" "er Betrieb.",
 	"Dies ist Ihre Kabine. Sie dient zum Schlafen. Wenn Sie Unterhaltung "
@@ -553,13 +638,95 @@ static const char *const STRINGS_DE[] = {
 		"Aufenthalt bitte nicht.",
 	"Leider ist dies f\xFCr Sie au\xDF" "er Reichweite.",
 	"Der Sukk-U-Bus ist ein Einzel-St\xFC" "ck-Lieferger\xE4t.",
-	"Leider ist das Gro¯e-Kanal-Bef\xF6rderungssystem im Winter geschlossen.",
+	"Leider ist das Gro\xAF" "e-Kanal-Bef\xF6rderungssystem im Winter geschlossen.",
 	"Passagieren ist der Zutritt zu diesem Bereich nicht gestattet.",
 	"Wohin m\xF6" "chten Sie gehen?",
 	"Es wSre zwar ganz nett, wenn Sie das mitnehmen k\xF6nnten, "
 		"aber das k\xF6nnen Sie eben nicht.",
 	"Eine Schale Pistazien.",
 	"Keine Schale Pistazien.",
+
+	"Sadly, it is not possible to summon the DoorBot from this location.",
+	"Sadly, it is not possible to summon the BellBot from this location.",
+	"There is no one here to talk to",
+	"Talking to ",
+	"the DoorBot",
+	"the DeskBot",
+	"a LiftBot",
+	"the Parrot",
+	"the BarBot",
+	"a ChatterBot",
+	"the BellBot",
+	"the Maitre d'Bot",
+	"a Succ-U-Bus",
+	"Unknown",
+	"The arm is already holding something.",
+	"You can't get this.",
+	"That doesn't seem to do anything.",
+	"It doesn't seem to want this.",
+	"This does not reach.",
+	"The chicken is already clean.",
+	"Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.",
+	"This item is incorrectly calibrated.",
+	"Only First Class passengers are allowed to use the Gondoliers.",
+	"There is currently nothing available for your viewing pleasure on this channel.",
+	"Television control",
+	"Operate visual entertainment device",
+	"Operate the lights",
+	"Deploy floral enhancement",
+	"Deploy fully recumbent relaxation device",
+	"Deploy comfort workstation",
+	"Deploy minor horizontally mobile storage compartment",
+	"Deploy major semi-recumbent relaxation device",
+	"Inflate fully recumbent relaxation device ",
+	"Deploy personal maintenance hub",
+	"Deploy executive horizontal worksurface",
+	"Deploy minor semi-recumbent relaxation device",
+	"Deploy aqueous cleansing receptacle",
+	"Deploy major horizontally mobile storage compartment",
+	"Succ-U-Bus delivery system control",
+	"Navigation controller",
+	"Summon Elevator",
+	"Summon Pellerator",
+	"Go to the Bottom of the Well",
+	"Go to the Top of the Well",
+	"Go to your stateroom",
+	"Go to the Bar",
+	"Go to the Promenade Deck",
+	"Go to the Arboretum",
+	"Go to the Music Room",
+	"Go to the First Class Restaurant"
+	"The Parrot Lobby",
+	"The Creators' Chamber",
+	"The Bridge",
+	"The Bilge Room",
+	"The Sculpture Chamber",
+	"The Arboretum",
+	"The Bottom of the Well",
+	"The Promenade Deck",
+	"The 1st class restaurant",
+	"Titania's Room",
+	"The Bar",
+	"The Embarkation Lobby",
+	"The Music Room",
+	"Unknown Room",
+	"The Service Elevator",
+	"The Super Galactic Leisure Lounge",
+	"The Elevator",
+	"The Dome",
+	"The Pellerator",
+	"The Top of the Well",
+	"Nowhere you're likely to want to go.",
+	"1st class",
+	"2nd class",
+	"SGT class",
+	"no class",
+	"Your assigned room: ",
+	"A previously assigned room: ",
+	"Saved Chevron: ",
+	"Current location: ",
+	"A hot",
+	"A cold",
 
 	"Sommer",
 	"Herbst",
@@ -779,12 +946,16 @@ void writeNumbers() {
 }
 
 void writeString(uint offset) {
-	inputFile.seek(offset - FILE_DIFF[_version]);
-	char c;
-	do {
-		c = inputFile.readByte();
-		outputFile.writeByte(c);
-	} while (c);
+	if (offset == 0) {
+		outputFile.writeByte(0);
+	} else {
+		inputFile.seek(offset - FILE_DIFF[_version]);
+		char c;
+		do {
+			c = inputFile.readByte();
+			outputFile.writeByte(c);
+		} while (c);
+	}
 }
 
 void writeResponseTree() {
@@ -818,7 +989,7 @@ void writeResponseTree() {
 void writeSentenceEntries(const char *name, uint tableOffset) {
 	outputFile.seek(dataOffset);
 
-	uint v1, v2, v9, v11, v12, v13;
+	uint v1, category, v4, v9, v11, v12, v13;
 	uint offset3, offset5, offset6, offset7, offset8, offset10;
 
 	for (uint idx = 0; ; ++idx) {
@@ -829,9 +1000,9 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 			break;
 
 		// Read data fields
-		v2 = inputFile.readLong();
+		category = inputFile.readLong();
 		offset3 = inputFile.readLong();
-		/* v4 = */inputFile.readLong();
+		v4 = inputFile.readLong();
 		offset5 = inputFile.readLong();
 		offset6 = inputFile.readLong();
 		offset7 = inputFile.readLong();
@@ -843,9 +1014,9 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 		v13 = inputFile.readLong();
 
 		outputFile.writeLong(v1);
-		outputFile.writeLong(v2);
+		outputFile.writeLong(category);
 		writeString(offset3);
-		outputFile.writeLong(v1);
+		outputFile.writeLong(v4);
 		writeString(offset5);
 		writeString(offset6);
 		writeString(offset7);
@@ -935,8 +1106,9 @@ void writeStarfieldPoints2() {
 }
 
 void writePhrases(const char *name, const CommonPhrase *phrases) {
+	outputFile.seek(dataOffset);
+
 	for (uint idx = 0; phrases->_str; ++idx, ++phrases) {
-		outputFile.seek(dataOffset + idx * 4);
 		outputFile.writeString(phrases->_str);
 		outputFile.writeLong(phrases->_dialogueId);
 		outputFile.writeLong(phrases->_roomNum);
@@ -1085,8 +1257,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 58);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 104);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 140);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 185);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };

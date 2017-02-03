@@ -438,31 +438,15 @@ reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
-	Resource *textres = g_sci->getResMan()->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
-	char *seeker;
-	int counter = argv[1].toUint16();
-
-	if (!textres) {
-		error("text.%d does not exist", argv[0].toUint16());
-		return NULL_REG;
-	}
-
-	seeker = (char *)textres->data;
-
-	// The second parameter (counter) determines the number of the string
-	// inside the text resource.
-	while (counter--) {
-		while (*seeker++)
-			;
-	}
+	const Common::String text = g_sci->getKernel()->lookupText(make_reg(0, argv[0].toUint16()), argv[1].toUint16());
 
 	// If the third argument is NULL, allocate memory for the destination. This
 	// occurs in SCI1 Mac games. The memory will later be freed by the game's
 	// scripts.
 	if (argv[2] == NULL_REG)
-		s->_segMan->allocDynmem(strlen(seeker) + 1, "Mac FarText", &argv[2]);
+		s->_segMan->allocDynmem(text.size() + 1, "Mac FarText", &argv[2]);
 
-	s->_segMan->strcpy(argv[2], seeker); // Copy the string and get return value
+	s->_segMan->strcpy(argv[2], text.c_str()); // Copy the string and get return value
 	return argv[2];
 }
 
@@ -679,9 +663,7 @@ reg_t kStringGetChar(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kStringFree(EngineState *s, int argc, reg_t *argv) {
-	if (!argv[0].isNull()) {
-		s->_segMan->freeArray(argv[0]);
-	}
+	s->_segMan->freeArray(argv[0]);
 	return s->r_acc;
 }
 
@@ -733,11 +715,12 @@ namespace {
 	}
 
 	bool isSignedType(const char type) {
-		return type == 'd' || type == 'i';
+		// For whatever reason, %d ends up being treated as unsigned in SSCI
+		return type == 'i';
 	}
 
 	bool isUnsignedType(const char type) {
-		return strchr("uxXoc", type);
+		return strchr("duxXoc", type);
 	}
 
 	bool isStringType(const char type) {
@@ -805,8 +788,11 @@ Common::String format(const Common::String &source, int argc, const reg_t *argv)
 				continue;
 			}
 
-			assert(argIndex < argc);
-			out += readPlaceholder(in, argv[argIndex++]);
+			if (argIndex < argc) {
+				out += readPlaceholder(in, argv[argIndex++]);
+			} else {
+				out += readPlaceholder(in, NULL_REG);
+			}
 		} else {
 			out += *in++;
 		}

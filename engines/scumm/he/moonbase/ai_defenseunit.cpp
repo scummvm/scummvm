@@ -228,7 +228,7 @@ Common::Point *ShieldUnit::createTargetPos(int index, int distance, int weaponTy
 }
 
 int ShieldUnit::selectWeapon(int index) {
-	warning("Shield weapon select");
+	debugC(DEBUG_MOONBASE_AI, "Shield weapon select");
 
 	int myUnit = _ai->getClosestUnit(getPosX(), getPosY(), _ai->getMaxX(), _ai->getCurrentPlayer(), 1, BUILDING_MAIN_BASE, 1, 0);
 	int dist = _ai->getDistance(getPosX(), getPosY(), _ai->getHubX(myUnit), _ai->getHubY(myUnit));
@@ -341,7 +341,7 @@ Common::Point *HubUnit::createTargetPos(int index, int distance, int weaponType,
 }
 
 int HubUnit::selectWeapon(int index) {
-	warning("Hub weapon select");
+	debugC(DEBUG_MOONBASE_AI, "Hub weapon select");
 
 	int energy = _ai->getPlayerEnergy();
 
@@ -489,7 +489,7 @@ Common::Point *EnergyUnit::createTargetPos(int index, int distance, int weaponTy
 }
 
 int EnergyUnit::selectWeapon(int index) {
-	warning("Energy weapon select");
+	debugC(DEBUG_MOONBASE_AI, "Energy weapon select");
 
 	int energy = _ai->getPlayerEnergy();
 
@@ -545,7 +545,7 @@ Common::Point *OffenseUnit::createTargetPos(int index, int distance, int weaponT
 }
 
 int OffenseUnit::selectWeapon(int index) {
-	warning("Offense weapon select");
+	debugC(DEBUG_MOONBASE_AI, "Offense weapon select");
 
 	int energy = _ai->getPlayerEnergy();
 
@@ -596,7 +596,7 @@ Common::Point *CrawlerUnit::createTargetPos(int index, int distance, int weaponT
 }
 
 int CrawlerUnit::selectWeapon(int index) {
-	warning("Crawler weapon select");
+	debugC(DEBUG_MOONBASE_AI, "Crawler weapon select");
 	int myUnit = _ai->getClosestUnit(getPosX(), getPosY(), _ai->getMaxX(), _ai->getCurrentPlayer(), 1, 0, 0, 0);
 	int dist = _ai->getDistance(_ai->getHubX(myUnit), _ai->getHubY(myUnit), getPosX(), getPosY());
 

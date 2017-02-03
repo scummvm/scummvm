@@ -61,9 +61,9 @@ private:
 	uint getStateDialogueId() const;
 
 	/**
-	 * Sets state data in flags 17
+	 * Sets the current state for what the Deskbot is doing/asking
 	 */
-	void setFlags17(uint newId, uint index);
+	void setCurrentState(uint newId, uint index);
 
 	/**
 	 * Does preprocessing for the sentence
@@ -81,9 +81,9 @@ private:
 	int checkCommonWords(const TTsentence *sentence);
 
 	/**
-	 * Adds response dialogue 241716
+	 * Adds a dialogue for asking the player what kind of breakfast they'd like
 	 */
-	void add241716();
+	void addAskBreakfast();
 
 	/**
 	 * Adds a dialogue description for the player's assigned room

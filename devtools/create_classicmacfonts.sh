@@ -39,6 +39,7 @@ echo_n "Mounting System 7.0.1 image..."
 
 macbinary decode System_7.0.1.smi.bin
 hdiutil convert -quiet System\ 7.0.1.smi -format UDRO -o sys7.dmg
+rm System_7.0.1.smi.bin
 hdiutil attach -quiet sys7.dmg
 
 if test ! -f /Volumes/7.0.1\ \(1440k.images\)/Fonts.image; then
@@ -73,47 +74,13 @@ echo ...Done
 
 hdiutil detach -quiet `hdiutil info|grep "/Volumes/Fonts"|cut -f 1`
 
-if test ! -f fondu_src-060102.tgz; then
-	echo_n "Getting fondu_src-060102.tgz..."
-	curl -s http://fondu.sourceforge.net/fondu_src-060102.tgz -o fondu_src-060102.tgz
-	tar xf fondu_src-060102.tgz
-fi
-
-if test ! -d fondu-060102; then
-	echo "Failed to download fondu_src-060102.tgz"
-	exit
-fi
-
-echo done
-
-if test ! -x fondu-060102/fondu; then
-	echo_n "Compiling fondu..."
-	cd fondu-060102
-	./configure >configure.log 2>&1 && make 2>&1 >make.log
-	cd ..
-fi
-
-if test ! -x fondu-060102/fondu; then
-	echo "Failed to build fondu. See configure.log and make.log"
-	exit
-else
-	rm -f configure.log make.log
-fi
-
-echo done
-
-echo_n "Converting fonts..."
-fondu-060102/fondu -force *.bin
-echo done
-
-zip -9 classicmacfonts *.bdf
+zip -9 classicmacfonts *.bin
 mv classicmacfonts.zip classicmacfonts.dat
 
 echo_n "Cleaning up..."
-rm *.bdf
-rm *.ttf
 rm *.bin
 rm *.dmg
+rm *.smi
 echo done
 
 ls -l classicmacfonts.dat

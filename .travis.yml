@@ -23,6 +23,11 @@ addons:
     - libfreetype6-dev
     - zlib1g-dev
 
+before_install:
+  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew update; fi"
+  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew install sdl2 sdl2_net libvorbis flac mad theora faad2 libmpeg2; fi"
+
+
 branches:
  only:
    - master
@@ -33,6 +38,7 @@ compiler:
 
 os:
   - linux
+  - osx
 
 dist: trusty
 
@@ -41,3 +47,10 @@ script:
   - make -j 2
   - make test
   - make devtools
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#scummvm"
+    on_success: change
+    on_failure: always

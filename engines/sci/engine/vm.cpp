@@ -142,11 +142,13 @@ static reg_t read_var(EngineState *s, int type, int index) {
 				s->variables[type][index] = make_reg(0, solution.value);
 				break;
 			}
-			case VAR_PARAM:
+			case VAR_PARAM: {
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				debugC(kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				const SciCallOrigin origin = s->getCurrentCallOrigin();
+				warning("Uninitialized read for parameter %d from %s", index, origin.toString().c_str());
 				return NULL_REG;
+			}
 			default:
 				break;
 			}
@@ -197,6 +199,23 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
+#ifdef ENABLE_SCI32
+		if (type == VAR_GLOBAL && getSciVersion() >= SCI_VERSION_2 && g_sci->getEngineState()->_syncedAudioOptions) {
+
+			switch (g_sci->getGameId()) {
+			case GID_LSL6HIRES:
+				if (index == kGlobalVarLSL6HiresTextSpeed) {
+					ConfMan.setInt("talkspeed", (14 - value.toSint16()) * 255 / 13);
+				}
+				break;
+			default:
+				if (index == kGlobalVarTextSpeed) {
+					ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
+				}
+			}
+		}
+#endif
+
 		if (type == VAR_GLOBAL && index == kGlobalVarMessageType) {
 			// The game is trying to change its speech/subtitle settings
 			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kGlobalVarQuit] == TRUE_REG) {
@@ -210,12 +229,6 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 				g_sci->updateScummVMAudioOptions();
 			}
 		}
-
-#ifdef ENABLE_SCI32
-		if (type == VAR_GLOBAL && index == kGlobalVarTextSpeed && getSciVersion() >= SCI_VERSION_2) {
-			ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
-		}
-#endif
 	}
 }
 
@@ -235,12 +248,12 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
+	// Check if a breakpoint is set on this method
+	g_sci->checkExportBreakpoint(script, pubfunct);
+
 	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
 	if (!exportAddr)
 		return NULL;
-
-	// Check if a breakpoint is set on this method
-	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	assert(argp[0].toUint16() == argc); // The first argument is argc
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
@@ -335,6 +348,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argp += argc + 1;
 	}	// while (framesize > 0)
 
+	// Perform all varselector actions at the top of the stack immediately.
+	// Note that there may be some behind method selector calls as well;
+	// those will get executed by op_ret later.
 	_exec_varselectors(s);
 
 	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
@@ -562,6 +578,31 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset) {
+	uint32 offset;
+
+	switch (g_sci->_features->detectLofsType()) {
+	case SCI_VERSION_0_EARLY:
+		offset = (uint16)pcOffset + relOffset;
+		break;
+	case SCI_VERSION_1_MIDDLE:
+		offset = relOffset;
+		break;
+	case SCI_VERSION_1_1:
+		offset = relOffset + scr->getScriptSize();
+		break;
+	case SCI_VERSION_3:
+		// In theory this can break if the variant with a one-byte argument is
+		// used. For now, assume it doesn't happen.
+		offset = scr->relocateOffsetSci3(pcOffset - 2);
+		break;
+	default:
+		error("Unknown lofs type");
+	}
+
+	return offset;
+}
+
 void run_vm(EngineState *s) {
 	assert(s);
 
@@ -628,6 +669,8 @@ void run_vm(EngineState *s) {
 
 		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
+
+		g_sci->checkAddressBreakpoint(s->xs->addr.pc);
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
@@ -956,9 +999,13 @@ void run_vm(EngineState *s) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					reg_t *var = old_xs->getVarPointer(s->_segMan);
-					if (old_xs->argc) // write?
+					if (old_xs->argc) { // write?
 						*var = old_xs->variables_argp[1];
-					else // No, read
+
+#ifdef ENABLE_SCI32
+						updateInfoFlagViewVisible(s->_segMan->getObject(old_xs->addr.varp.obj), old_xs->addr.varp.varindex);
+#endif
+					} else // No, read
 						s->r_acc = *var;
 				}
 
@@ -996,7 +1043,7 @@ void run_vm(EngineState *s) {
 
 			break;
 
-		case op_infoToa: // (38)
+		case op_info: // (38)
 			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
 
@@ -1006,7 +1053,7 @@ void run_vm(EngineState *s) {
 				PUSH32(obj->getInfoSelector());
 			break;
 
-		case op_superToa: // (39)
+		case op_superP: // (39)
 			if (getSciVersion() < SCI_VERSION_3)
 				error("Dummy opcode 0x%x called", opcode);	// should never happen
 
@@ -1158,38 +1205,21 @@ void run_vm(EngineState *s) {
 		}
 
 		case op_lofsa: // 0x39 (57)
-		case op_lofss: // 0x3a (58)
+		case op_lofss: { // 0x3a (58)
 			// Load offset to accumulator or push to stack
+
 			r_temp.setSegment(s->xs->addr.pc.getSegment());
-
-			switch (g_sci->_features->detectLofsType()) {
-			case SCI_VERSION_0_EARLY:
-				r_temp.setOffset((uint16)s->xs->addr.pc.getOffset() + opparams[0]);
-				break;
-			case SCI_VERSION_1_MIDDLE:
-				r_temp.setOffset(opparams[0]);
-				break;
-			case SCI_VERSION_1_1:
-				r_temp.setOffset(opparams[0] + local_script->getScriptSize());
-				break;
-			case SCI_VERSION_3:
-				// In theory this can break if the variant with a one-byte argument is
-				// used. For now, assume it doesn't happen.
-				r_temp.setOffset(local_script->relocateOffsetSci3(s->xs->addr.pc.getOffset() - 2));
-				break;
-			default:
-				error("Unknown lofs type");
-			}
-
+			r_temp.setOffset(findOffset(opparams[0], local_script, s->xs->addr.pc.getOffset()));
 			if (r_temp.getOffset() >= scr->getBufSize())
 				error("VM: lofsa/lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
+						  " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 
 			if (opcode == op_lofsa)
 				s->r_acc = r_temp;
 			else
 				PUSH32(r_temp);
 			break;
+		}
 
 		case op_push0: // 0x3b (59)
 			PUSH(0);

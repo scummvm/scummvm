@@ -26,7 +26,10 @@
 namespace Titanic {
 
 CStarControlSub21::CStarControlSub21(const CStar20Data *src) :
-		CStarControlSub20(src), _sub24() {
+		CStarControlSub20(src) {
+#if 0
+	_sub24()
+#endif
 }
 
 } // End of namespace Titanic

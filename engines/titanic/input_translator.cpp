@@ -90,6 +90,11 @@ void CInputTranslator::rightButtonUp(int special, const Point &pt) {
 	_inputHandler->handleMessage(msg);
 }
 
+void CInputTranslator::mouseWheel(bool wheelUp, const Point &pt) {
+	CMouseWheelMsg msg(pt, wheelUp);
+	_inputHandler->handleMessage(msg);
+}
+
 void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
 	CMouseDoubleClickMsg msg(pt, MB_RIGHT);
 	_inputHandler->handleMessage(msg);
@@ -108,7 +113,7 @@ void CInputTranslator::keyDown(const Common::KeyState &keyState) {
 }
 
 bool CInputTranslator::isMousePressed() const {
-	return g_vm->_window->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
+	return g_vm->_events->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
 }
 
 } // End of namespace Titanic

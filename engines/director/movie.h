@@ -60,6 +60,6 @@ private:
 	Video::VideoDecoder *_currentVideo;
 	DirectorEngine *_vm;
 };
-} //End of namespace Director
+} // End of namespace Director
 
 #endif

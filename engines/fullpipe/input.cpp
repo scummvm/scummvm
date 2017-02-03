@@ -56,6 +56,9 @@ InputController::~InputController() {
 	removeMessageHandler(126, -1);
 
 	g_fp->_inputController = 0;
+
+	for (uint i = 0; i < _cursorsArray.size(); i++)
+		delete _cursorsArray[i];
 }
 
 void InputController::setInputDisabled(bool state) {

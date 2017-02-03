@@ -51,9 +51,9 @@ void CNamedItem::load(SimpleFile *file) {
 	CTreeItem::load(file);
 }
 
-bool CNamedItem::isEquals(const CString &name, int maxLen) const {
-	if (maxLen) {
-		return getName().left(maxLen).compareToIgnoreCase(name) == 0;
+bool CNamedItem::isEquals(const CString &name, bool startsWith) const {
+	if (startsWith) {
+		return getName().left(name.size()).compareToIgnoreCase(name) == 0;
 	} else {
 		return getName().compareToIgnoreCase(name) == 0;
 	}

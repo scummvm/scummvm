@@ -73,6 +73,7 @@ enum LEvent {
 
 typedef void (*inst)(void);
 #define	STOP (inst)0
+#define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
 
 typedef Common::Array<inst> ScriptData;
 typedef Common::Array<double> FloatArray;
@@ -178,8 +179,9 @@ public:
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
 
 	ScriptType event2script(LEvent ev);
+	Symbol *getHandler(Common::String &name);
 
-	void processEvent(LEvent event, int entityId);
+	void processEvent(LEvent event, ScriptType st, int entityId);
 
 	void initBuiltIns();
 	void initFuncs();
@@ -209,6 +211,7 @@ public:
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeConst(int val);
+	int codeArray(int arraySize);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);
@@ -220,7 +223,9 @@ public:
 
 	void codeArg(Common::String *s);
 	void codeArgStore();
+	int codeSetImmediate(bool state);
 	int codeFunc(Common::String *s, int numpar);
+	int codeMe(Common::String *method, int numpar);
 	int codeFloat(double f);
 	void codeFactory(Common::String &s);
 
@@ -241,21 +246,34 @@ public:
 	static void c_not();
 
 	static void c_ampersand();
+	static void c_after();
+	static void c_before();
 	static void c_concat();
 	static void c_contains();
 	static void c_starts();
 
 	static void c_intersects();
 	static void c_within();
+	static void c_charOf();
+	static void c_charToOf();
+	static void c_itemOf();
+	static void c_itemToOf();
+	static void c_lineOf();
+	static void c_lineToOf();
+	static void c_wordOf();
+	static void c_wordToOf();
 
 	static void c_constpush();
 	static void c_voidpush();
 	static void c_fconstpush();
 	static void c_stringpush();
+	static void c_symbolpush();
 	static void c_varpush();
+	static void c_arraypush();
 	static void c_assign();
 	bool verify(Symbol *s);
 	static void c_eval();
+	static void c_setImmediate();
 
 	static void c_swap();
 
@@ -304,7 +322,6 @@ public:
 	static void b_exp(int nargs);
 	static void b_float(int nargs);
 	static void b_integer(int nargs);
-	static void b_integerp(int nargs);
 	static void b_log(int nargs);
 	static void b_pi(int nargs);
 	static void b_power(int nargs);
@@ -315,25 +332,59 @@ public:
 
 	static void b_chars(int nargs);
 	static void b_charToNum(int nargs);
+	static void b_delete(int nargs);
+	static void b_hilite(int nargs);
 	static void b_length(int nargs);
 	static void b_numToChar(int nargs);
 	static void b_offset(int nargs);
 	static void b_string(int nargs);
-	static void b_stringp(int nargs);
 
+	static void b_add(int nargs);
+	static void b_addAt(int nargs);
+	static void b_addProp(int nargs);
+	static void b_append(int nargs);
+	static void b_count(int nargs);
+	static void b_deleteAt(int nargs);
+	static void b_deleteProp(int nargs);
+	static void b_findPos(int nargs);
+	static void b_findPosNear(int nargs);
+	static void b_getaProp(int nargs);
+	static void b_getAt(int nargs);
+	static void b_getLast(int nargs);
+	static void b_getOne(int nargs);
+	static void b_getPos(int nargs);
+	static void b_getProp(int nargs);
+	static void b_getPropAt(int nargs);
+	static void b_list(int nargs);
+	static void b_listP(int nargs);
+	static void b_max(int nargs);
+	static void b_min(int nargs);
+	static void b_setaProp(int nargs);
+	static void b_setAt(int nargs);
+	static void b_setProp(int nargs);
+	static void b_sort(int nargs);
+
+	static void b_floatP(int nargs);
 	static void b_ilk(int nargs);
+	static void b_integerp(int nargs);
+	static void b_objectp(int nargs);
+	static void b_stringp(int nargs);
+	static void b_symbolp(int nargs);
+
 	static void b_alert(int nargs);
 	static void b_cursor(int nargs);
-	static void b_objectp(int nargs);
+	static void b_framesToHMS(int nargs);
+	static void b_HMStoFrames(int nargs);
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
-	static void b_symbolp(int nargs);
 	static void b_value(int nargs);
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
+	static void b_duplicateCast(int nargs);
 	static void b_editableText(int nargs);
+	static void b_eraseCast(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
@@ -348,6 +399,7 @@ public:
 	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
 
+	static void b_abort(int nargs);
 	static void b_continue(int nargs);
 	static void b_dontPassEvent(int nargs);
 	static void b_delay(int nargs);
@@ -355,6 +407,8 @@ public:
 	static void b_nothing(int nargs);
 	static void b_pause(int nargs);
 	static void b_playAccel(int nargs);
+	static void b_preLoad(int nargs);
+	static void b_preLoadCast(int nargs);
 	static void b_quit(int nargs);
 	static void b_restart(int nargs);
 	static void b_shutDown(int nargs);
@@ -366,14 +420,21 @@ public:
 	static void b_openDA(int nargs);
 	static void b_openResFile(int nargs);
 	static void b_openXlib(int nargs);
+	static void b_setCallBack(int nargs);
 	static void b_showResFile(int nargs);
 	static void b_showXlib(int nargs);
+	static void b_xFactoryList(int nargs);
 
 	static void b_point(int nargs);
 
 	static void b_beep(int nargs);
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
+	static void b_soundBusy(int nargs);
+	static void b_soundFadeIn(int nargs);
+	static void b_soundFadeOut(int nargs);
+	static void b_soundPlayFile(int nargs);
+	static void b_soundStop(int nargs);
 
 	static void b_backspace(int nargs);
 	static void b_empty(int nargs);
@@ -383,16 +444,23 @@ public:
 	static void b_return(int nargs);
 	static void b_tab(int nargs);
 	static void b_true(int nargs);
+	static void b_version(int nargs);
 
 	static void b_factory(int nargs);
 	void factoryCall(Common::String &name, int nargs);
 
+	static void b_field(int nargs);
+	static void b_me(int nargs);
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
+	void func_beep(int repeats);
 	void func_goto(Datum &frame, Datum &movie);
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
+	void func_cursor(int c);
+	int func_marker(int m);
 
 public:
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
@@ -405,8 +473,11 @@ public:
 public:
 	ScriptData *_currentScript;
 	ScriptType _currentScriptType;
+	uint16 _currentEntityId;
 	bool _returning;
 	bool _indef;
+	bool _ignoreMe;
+	bool _immediateMode;
 
 	Common::Array<CFrame *> _callstack;
 	Common::Array<Common::String *> _argstack;
@@ -414,7 +485,9 @@ public:
 	TheEntityFieldHash _theEntityFields;
 	Common::Array<int> _labelstack;
 
-	SymbolHash _handlers;
+	SymbolHash _builtins;
+	Common::HashMap<Common::String, bool> _twoWordBuiltins;
+	Common::HashMap<uint32, Symbol *> _handlers;
 
 	int _linenumber;
 	int _colnumber;
@@ -428,6 +501,8 @@ public:
 
 	bool _exitRepeat;
 
+	bool _cursorOnStack;
+
 private:
 	int parse(const char *code);
 	void parseMenu(const char *code);
@@ -435,7 +510,10 @@ private:
 	void push(Datum d);
 	Datum pop(void);
 
+	void restartLingo();
+
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
+	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	ScriptHash _scripts[kMaxScriptType + 1];

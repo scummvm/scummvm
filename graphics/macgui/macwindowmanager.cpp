@@ -88,6 +88,60 @@ static const byte macCursorBeam[] = {
 	3, 3, 0, 3, 0, 3, 3, 3, 3, 3, 3,
 	0, 0, 3, 3, 3, 0, 0, 3, 3, 3, 3,
 };
+static const byte macCursorCrossHair[] = {
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+static const byte macCursorWatch[] = {
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+	1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1,
+	1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+	1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+	0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+};
+static const byte macCursorCrossBar[] = {
+	0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0,
+	1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,
+	1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,
+	1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+	0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0,
+	0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
 
 MacWindowManager::MacWindowManager() {
 	_screen = 0;
@@ -131,8 +185,8 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 	return w;
 }
 
-Menu *MacWindowManager::addMenu() {
-	_menu = new Menu(_lastId, _screen->getBounds(), this);
+MacMenu *MacWindowManager::addMenu() {
+	_menu = new MacMenu(_lastId, _screen->getBounds(), this);
 
 	_windows.push_back(_menu);
 
@@ -163,18 +217,8 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 	_needsRemoval = true;
 }
 
-struct PlotData {
-	Graphics::ManagedSurface *surface;
-	MacPatterns *patterns;
-	uint fillType;
-	int thickness;
-
-	PlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t) :
-		surface(s), patterns(p), fillType(f), thickness(t) {}
-};
-
-static void drawPixel(int x, int y, int color, void *data) {
-	PlotData *p = (PlotData *)data;
+void macDrawPixel(int x, int y, int color, void *data) {
+	MacPlotData *p = (MacPlotData *)data;
 
 	if (p->fillType > p->patterns->size())
 		return;
@@ -188,7 +232,7 @@ static void drawPixel(int x, int y, int color, void *data) {
 
 			*((byte *)p->surface->getBasePtr(xu, yu)) =
 				(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-					color : kColorWhite;
+					color : p->bgColor;
 		}
 	} else {
 		int x1 = x;
@@ -203,7 +247,7 @@ static void drawPixel(int x, int y, int color, void *data) {
 					uint yu = (uint)y;
 					*((byte *)p->surface->getBasePtr(xu, yu)) =
 						(pat[yu % 8] & (1 << (7 - xu % 8))) ?
-							color : kColorWhite;
+							color : p->bgColor;
 				}
 	}
 }
@@ -211,9 +255,9 @@ static void drawPixel(int x, int y, int color, void *data) {
 void MacWindowManager::drawDesktop() {
 	Common::Rect r(_screen->getBounds());
 
-	PlotData pd(_screen, &_patterns, kPatternCheckers, 1);
+	MacPlotData pd(_screen, &_patterns, kPatternCheckers, 1);
 
-	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, drawPixel, &pd);
+	Graphics::drawRoundRect(r, kDesktopArc, kColorBlack, true, macDrawPixel, &pd);
 
 	g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
 }
@@ -325,6 +369,22 @@ void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
 /////////////////
 void MacWindowManager::pushArrowCursor() {
 	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushBeamCursor() {
+	CursorMan.pushCursor(macCursorBeam, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushCrossHairCursor() {
+	CursorMan.pushCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushCrossBarCursor() {
+	CursorMan.pushCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+}
+
+void MacWindowManager::pushWatchCursor() {
+	CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
 }
 
 void MacWindowManager::popCursor() {

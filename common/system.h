@@ -254,6 +254,12 @@ public:
 		 *       particular, interpolation, and works in-place.
 		 */
 		kFeatureAspectRatioCorrection,
+		
+		/**
+		 * If supported this flag can be used to switch between unfiltered and
+		 * filtered graphics modes.
+		 */
+		kFeatureFilteringMode,
 
 		/**
 		 * Determine whether a virtual keyboard is too be shown or not.
@@ -616,7 +622,8 @@ public:
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
 		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
-		kTransactionFormatNotSupported = (1 << 4)	/**< Failed setting the color format */
+		kTransactionFormatNotSupported = (1 << 4),	/**< Failed setting the color format */
+		kTransactionFilteringFailed = (1 << 5)		/**< Failed setting the filtering mode */
 	};
 
 	/**

@@ -34,8 +34,8 @@ class CExitArboretum : public CMovePlayerTo {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 protected:
-	int _seasonNum;
-	int _fieldCC;
+	Season _seasonNum;
+	int _exitDirection;
 	bool _enabled;
 public:
 	CLASSDEF;

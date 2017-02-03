@@ -39,14 +39,14 @@ class CLight : public CBackground {
 	bool ActMsg(CActMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
-	int _fieldF0;
-	int _fieldF4;
-	int _fieldF8;
-	int _fieldFC;
+	int _unused1;
+	bool _topRight;
+	bool _topLeft;
+	bool _bottomLeft;
+	bool _bottomRight;
+	int _unused2;
+	int _unused3;
+	bool _eyePresent;
 public:
 	CLASSDEF;
 	CLight();

@@ -62,7 +62,7 @@ void CPET::load(SimpleFile *file) {
 bool CPET::ShowTextMsg(CShowTextMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->petDisplayMessage(1, msg->_value);
+		pet->petDisplayMessage(1, msg->_message);
 	return true;
 }
 

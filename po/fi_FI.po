@@ -1,5 +1,5 @@
 # Finnish translation for ScummVM.
-# Copyright (c) 2012-2016 The ScummVM Team
+# Copyright (c) 2012-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Toni Saarela <saarela@gmail.com>, 2012.
 #
@@ -7,15 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2016-10-04 13:52+0200\n"
-"PO-Revision-Date: 2012-12-01 19:37+0200\n"
-"Last-Translator: Toni Saarela <saarela@gmail.com>\n"
-"Language-Team: Finnish\n"
-"Language: Suomi\n"
+"POT-Creation-Date: 2017-01-31 18:17+0100\n"
+"PO-Revision-Date: 2017-01-06 16:03+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fi/>\n"
+"Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 2.9\n"
+"X-Language-name: Suomi\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -31,13 +34,12 @@ msgid "Available engines:"
 msgstr "Tuetut pelimoottorit:"
 
 #: gui/browser.cpp:68 gui/browser_osx.mm:104
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Näytä / piilota konsoli"
+msgstr "Näytä piilotetut tiedostot"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Näytä piilotetuksi merkatut tiedostot"
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -56,12 +58,12 @@ msgstr "Siirry ylös"
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editgamedialog.cpp:292
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:64
 #: gui/fluidsynth-dialog.cpp:152 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
-#: gui/options.cpp:1354 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/options.cpp:1461 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
-#: gui/updates-dialog.cpp:113 engines/engine.cpp:549
+#: gui/updates-dialog.cpp:113 engines/engine.cpp:558
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
@@ -77,66 +79,68 @@ msgid "Choose"
 msgstr "Valitse"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Valitse pelin kansio"
+msgstr "Valitse hakemisto pelilataukselle"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Valitse pelin kansio"
+msgstr "Valitse pelin hakemisto"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Lähde: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Kohde: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Peruuta lataus"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Peruuta lataus"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Piilota"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Yhteytesi vaikuttaa rajatulta. Haluatko varmasti ladata tiedostoja sillä?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
+#: gui/launcher.cpp:307 gui/launcher.cpp:415 gui/launcher.cpp:474
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "Yes"
 msgstr "Kyllä"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
+#: gui/launcher.cpp:307 gui/launcher.cpp:415 gui/launcher.cpp:474
 #: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
+#: engines/sci/graphics/controls32.cpp:827
 msgid "No"
 msgstr "Ei"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:544
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:565
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM ei voi avata kyseistä hakemistoa!"
 
@@ -145,26 +149,28 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Kansion luonti latausta varten epäonnistui - valitussa kansiossa on jo "
+"tiedosto samalla nimellä."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
-#: gui/launcher.cpp:505 gui/massadd.cpp:92 gui/options.cpp:1355
-#: gui/saveload-dialog.cpp:1112 engines/engine.cpp:468 engines/engine.cpp:479
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:522
+#: gui/launcher.cpp:526 gui/massadd.cpp:92 gui/options.cpp:1463
+#: gui/saveload-dialog.cpp:1112 engines/engine.cpp:477 engines/engine.cpp:488
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1881
-#: engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:131
-#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:524
-#: engines/sword1/animation.cpp:545 engines/sword1/animation.cpp:561
-#: engines/sword1/animation.cpp:569 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:425
-#: engines/sword2/animation.cpp:445 engines/sword2/animation.cpp:461
-#: engines/sword2/animation.cpp:471
+#: engines/sci/graphics/controls32.cpp:824 engines/scumm/dialogs.cpp:189
+#: engines/scumm/scumm.cpp:1882 engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
+#: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
+#: engines/sword1/animation.cpp:561 engines/sword1/animation.cpp:569
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
+#: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
+#: engines/zvision/file/save_manager.cpp:224
 msgid "OK"
-msgstr "Tallenna"
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -172,16 +178,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" on jo olemassa valitussa hakemistossa. Haluatko varmasti ladata "
+"tiedostoja tähän hakemistoon?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Ladattu %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Skannaus on valmis!"
+msgstr "Latausnopeus: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -229,10 +237,10 @@ msgid ""
 "English"
 msgstr ""
 "Pelin kieli. Tämä ei muuta esimerkiksi espanjankielistä versiota pelistä "
-"englanninkieliseksi."
+"englanninkieliseksi"
 
-#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:114
-#: gui/options.cpp:766 gui/options.cpp:779 gui/options.cpp:1239
+#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:121
+#: gui/options.cpp:812 gui/options.cpp:825 gui/options.cpp:1356
 #: audio/null.cpp:41
 msgid "<default>"
 msgstr "<oletus>"
@@ -253,13 +261,13 @@ msgstr "Alusta:"
 
 #: gui/editgamedialog.cpp:176
 msgid "Engine"
-msgstr "Moottori"
+msgstr "Pelimoottori"
 
-#: gui/editgamedialog.cpp:184 gui/options.cpp:1098 gui/options.cpp:1115
+#: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "Graphics"
 msgstr "Grafiikka"
 
-#: gui/editgamedialog.cpp:184 gui/options.cpp:1098 gui/options.cpp:1115
+#: gui/editgamedialog.cpp:184 gui/options.cpp:1147 gui/options.cpp:1232
 msgid "GFX"
 msgstr "GFX"
 
@@ -272,7 +280,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Ohita globaalit grafiikka-asetukset"
 
-#: gui/editgamedialog.cpp:196 gui/options.cpp:1121
+#: gui/editgamedialog.cpp:196 gui/options.cpp:1238
 msgid "Audio"
 msgstr "Ääni"
 
@@ -285,11 +293,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Ohita globaalit ääniasetukset"
 
-#: gui/editgamedialog.cpp:210 gui/options.cpp:1126
+#: gui/editgamedialog.cpp:210 gui/options.cpp:1243
 msgid "Volume"
 msgstr "Voimakkuus"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:1128
+#: gui/editgamedialog.cpp:212 gui/options.cpp:1245
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Voimakkuus"
@@ -303,7 +311,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Ohita globaalit äänenvoimakkuusasetukset"
 
-#: gui/editgamedialog.cpp:226 gui/options.cpp:1136
+#: gui/editgamedialog.cpp:226 gui/options.cpp:1253
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -316,7 +324,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Ohita globaalit MIDI-asetukset"
 
-#: gui/editgamedialog.cpp:241 gui/options.cpp:1146
+#: gui/editgamedialog.cpp:241 gui/options.cpp:1263
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -329,11 +337,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Ohita globaalit MT-32 asetukset"
 
-#: gui/editgamedialog.cpp:255 gui/options.cpp:1153
+#: gui/editgamedialog.cpp:255 gui/options.cpp:1270
 msgid "Paths"
 msgstr "Polut"
 
-#: gui/editgamedialog.cpp:257 gui/options.cpp:1155
+#: gui/editgamedialog.cpp:257 gui/options.cpp:1272
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Polut"
@@ -347,7 +355,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Pelin polku:"
 
-#: gui/editgamedialog.cpp:271 gui/options.cpp:1179
+#: gui/editgamedialog.cpp:271 gui/options.cpp:1296
 msgid "Extra Path:"
 msgstr "Lisäkansio:"
 
@@ -356,182 +364,179 @@ msgstr "Lisäkansio:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Määrittää polun lisätiedostoihin joita peli mahdollisesti käyttää"
 
-#: gui/editgamedialog.cpp:273 gui/options.cpp:1181
+#: gui/editgamedialog.cpp:273 gui/options.cpp:1298
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Lisäkansio:"
 
-#: gui/editgamedialog.cpp:280 gui/options.cpp:1163
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1280
 msgid "Save Path:"
 msgstr "Tallennuskansio:"
 
 #: gui/editgamedialog.cpp:280 gui/editgamedialog.cpp:282
-#: gui/editgamedialog.cpp:283 gui/options.cpp:1163 gui/options.cpp:1165
-#: gui/options.cpp:1166
+#: gui/editgamedialog.cpp:283 gui/options.cpp:1280 gui/options.cpp:1282
+#: gui/options.cpp:1283
 msgid "Specifies where your saved games are put"
 msgstr "Määrittää polun pelitallennuksille"
 
-#: gui/editgamedialog.cpp:282 gui/options.cpp:1165
+#: gui/editgamedialog.cpp:282 gui/options.cpp:1282
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Tallennuskansio:"
 
-#: gui/editgamedialog.cpp:301 gui/editgamedialog.cpp:400
-#: gui/editgamedialog.cpp:459 gui/editgamedialog.cpp:520 gui/options.cpp:1174
-#: gui/options.cpp:1182 gui/options.cpp:1191 gui/options.cpp:1392
-#: gui/options.cpp:1398 gui/options.cpp:1406 gui/options.cpp:1429
-#: gui/options.cpp:1445 gui/options.cpp:1451 gui/options.cpp:1458
-#: gui/options.cpp:1466 gui/options.cpp:1618 gui/options.cpp:1621
-#: gui/options.cpp:1628 gui/options.cpp:1638
+#: gui/editgamedialog.cpp:301 gui/editgamedialog.cpp:398
+#: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1291
+#: gui/options.cpp:1299 gui/options.cpp:1308 gui/options.cpp:1488
+#: gui/options.cpp:1494 gui/options.cpp:1502 gui/options.cpp:1525
+#: gui/options.cpp:1554 gui/options.cpp:1560 gui/options.cpp:1567
+#: gui/options.cpp:1575 gui/options.cpp:1758 gui/options.cpp:1761
+#: gui/options.cpp:1768 gui/options.cpp:1778
 msgctxt "path"
 msgid "None"
 msgstr "Ei määritelty"
 
-#: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:406
-#: gui/editgamedialog.cpp:524 gui/options.cpp:1386 gui/options.cpp:1439
-#: gui/options.cpp:1624 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
+#: gui/editgamedialog.cpp:522 gui/options.cpp:1482 gui/options.cpp:1548
+#: gui/options.cpp:1764 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Oletus"
 
-#: gui/editgamedialog.cpp:452 gui/options.cpp:1632
+#: gui/editgamedialog.cpp:450 gui/options.cpp:1772
 msgid "Select SoundFont"
-msgstr "Valitse äänifontti"
+msgstr "Valitse SoundFont"
 
-#: gui/editgamedialog.cpp:491
+#: gui/editgamedialog.cpp:489
 msgid "Select additional game directory"
-msgstr "Valitse lisäkansio pelille"
+msgstr "Valitse lisähakemisto pelille"
 
-#: gui/editgamedialog.cpp:504 gui/options.cpp:1555
+#: gui/editgamedialog.cpp:502 gui/options.cpp:1695
 msgid "Select directory for saved games"
-msgstr "Valitse kansio pelitallennuksille"
+msgstr "Valitse hakemisto pelitallennuksille"
 
-#: gui/editgamedialog.cpp:510
+#: gui/editgamedialog.cpp:508
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Pelitallennusten synkronointiominaisuus toimii ainoastaa vakiohakemistoilla. "
+"Jos haluat synkronoida pelitallennuksesi, käytä vakiohakemistoa."
 
-#: gui/editgamedialog.cpp:536
+#: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Pelin tunnus on jo käytössä. Valitse jokin muu."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Tekijä:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Merkinnät:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Valitse ladattava tiedosto"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Syötä tiedoston nimi tallennukselle"
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Haluatko varmasti poistaa tämän pelitallennuksen?"
+msgstr "Haluatko varmasti ylikirjoitaa tiedoston?"
 
 #: gui/fluidsynth-dialog.cpp:68
-#, fuzzy
 msgid "Reverb"
-msgstr "Ei koskaan"
+msgstr "Kaiku"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
-#, fuzzy
 msgid "Active"
-msgstr " (Aktiivinen)"
+msgstr "Aktiivinen"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr ""
+msgstr "Huone:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr ""
+msgstr "Vaimennus:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr ""
+msgstr "Leveys:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr ""
+msgstr "Taso:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr ""
+msgstr "Korus"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:118
-#, fuzzy
 msgid "Speed:"
-msgstr "Puhe"
+msgstr "Nopeus:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
-msgstr ""
+msgstr "Syvyys:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr ""
+msgstr "Tyyppi:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
-msgstr ""
+msgstr "Sini"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Triangle"
-msgstr ""
+msgstr "Kolmio"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1199
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1316
 msgid "Misc"
 msgstr "Muut"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolaatio:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr ""
+msgstr "Ei päällä (nopein)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
-msgstr ""
+msgstr "Lineaarinen"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr ""
+msgstr "Neljännen asteen"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr ""
+msgstr "Seitsemännen asteen"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset"
-msgstr ""
+msgstr "Tyhjää valinnat"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Palauta FluidSynth vakioasetukset."
 
 #: gui/fluidsynth-dialog.cpp:217
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Haluatko varmasti palata pelivalitsimeen?"
+msgstr "Haluatko varmasti palauttaa FluidSynth vakioasetukset?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -544,15 +549,15 @@ msgstr "Sulje"
 msgid "Mouse click"
 msgstr "Hiiren klikkaus"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:335
+#: gui/gui-manager.cpp:126 base/main.cpp:340
 msgid "Display keyboard"
 msgstr "Näytä näppäimistö"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:339
+#: gui/gui-manager.cpp:130 base/main.cpp:344
 msgid "Remap keys"
 msgstr "Määritä näppäimet uudelleen"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:342 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Kokoruututilan vaihto"
 
@@ -570,7 +575,6 @@ msgid "Associated key : %s"
 msgstr "Nykyinen näppäin : %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
-#, c-format
 msgid "Associated key : none"
 msgstr "Nykyinen näppäin : ei mikään"
 
@@ -586,110 +590,111 @@ msgstr "Paina haluamaasi nappia"
 msgid "Choose an action to map"
 msgstr "Valitse toiminto"
 
-#: gui/launcher.cpp:117 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
+#: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:98
 msgid "~Q~uit"
 msgstr "~L~opeta"
 
-#: gui/launcher.cpp:117 backends/platform/sdl/macosx/appmenu_osx.mm:106
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:106
 msgid "Quit ScummVM"
 msgstr "Lopeta ScummVM"
 
-#: gui/launcher.cpp:118
+#: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr "Tietoa..."
+msgstr "~T~ietoa..."
 
-#: gui/launcher.cpp:118 backends/platform/sdl/macosx/appmenu_osx.mm:80
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "About ScummVM"
 msgstr "Tietoa ScummVM:stä"
 
-#: gui/launcher.cpp:119
+#: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~A~setukset"
+msgstr "~A~setukset..."
 
-#: gui/launcher.cpp:119
+#: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
 msgstr "Muuta globaaleja ScummVM:n asetuksia"
 
-#: gui/launcher.cpp:121
+#: gui/launcher.cpp:145
 msgid "~S~tart"
 msgstr "~P~elaa"
 
-#: gui/launcher.cpp:121
+#: gui/launcher.cpp:145
 msgid "Start selected game"
 msgstr "Pelaa valittua peliä"
 
-#: gui/launcher.cpp:124
+#: gui/launcher.cpp:148
 msgid "~L~oad..."
 msgstr "~L~ataa..."
 
-#: gui/launcher.cpp:124
+#: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
 msgstr "Lataa pelitallennus valitulle pelille"
 
-#: gui/launcher.cpp:129
+#: gui/launcher.cpp:153
 msgid "~A~dd Game..."
 msgstr "~L~isää peli..."
 
-#: gui/launcher.cpp:129 gui/launcher.cpp:136
+#: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
 msgstr "Pidä Shift-näppäintä pohjassa lisätäksesi useita pelejä kerralla"
 
-#: gui/launcher.cpp:131
+#: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr "Muokkaa peliä..."
+msgstr "~M~uokkaa peliä..."
 
-#: gui/launcher.cpp:131 gui/launcher.cpp:138
+#: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
 msgstr "Muuta pelin asetuksia"
 
-#: gui/launcher.cpp:133
+#: gui/launcher.cpp:157
 msgid "~R~emove Game"
-msgstr "Poista peli"
+msgstr "P~o~ista peli"
 
-#: gui/launcher.cpp:133 gui/launcher.cpp:140
+#: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Poista peli listasta. Pelin tiedostoja ei poisteta levyltä"
 
-#: gui/launcher.cpp:136
+#: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "Lisää peli..."
 
-#: gui/launcher.cpp:138
+#: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "Muokkaa peliä..."
+msgstr "~M~uokkaa peliä..."
 
-#: gui/launcher.cpp:140
+#: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "Poista peli..."
+msgstr "P~o~ista peli"
 
-#: gui/launcher.cpp:148
+#: gui/launcher.cpp:172
 msgid "Search in game list"
 msgstr "Etsi peliä listasta"
 
-#: gui/launcher.cpp:152 gui/launcher.cpp:750
+#: gui/launcher.cpp:176 gui/launcher.cpp:771
 msgid "Search:"
 msgstr "Etsi:"
 
-#: gui/launcher.cpp:176 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:733
+#: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
+#: engines/mohawk/dialogs.cpp:103 engines/mohawk/riven.cpp:734
 #: engines/pegasus/pegasus.cpp:353 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Lataa peli:"
 
-#: gui/launcher.cpp:176 engines/dialogs.cpp:115
+#: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:103
-#: engines/mohawk/riven.cpp:733 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:734 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:353 engines/scumm/dialogs.cpp:185
-#: engines/tsage/scenes.cpp:601
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Lataa"
 
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:306
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -697,42 +702,41 @@ msgstr ""
 "Haluatko varmasti lisätä pelejä alihakemistoineen? Tämä voi lisätä suuren "
 "määrän pelejä."
 
-#: gui/launcher.cpp:344
+#: gui/launcher.cpp:365
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Tätä kansiota ei voi käyttää vielä, siihen ladataan tiedostoja!"
 
-#: gui/launcher.cpp:394
+#: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
 msgstr "Haluatko varmasti poistaa pelin asetuksineen listalta?"
 
-#: gui/launcher.cpp:452
-#, fuzzy
+#: gui/launcher.cpp:473
 msgid "Do you want to load saved game?"
-msgstr "Haluatko tallentaa vai ladata pelin?"
+msgstr "Haluatko ladata tallennetun pelin?"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:522
 msgid "This game does not support loading games from the launcher."
 msgstr "Tämä peli ei tue pelitallennuksien lataamista pelin ulkopuolelta."
 
-#: gui/launcher.cpp:505
+#: gui/launcher.cpp:526
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM ei löytänyt pelimoottoria joka tukee valittua peliä!"
 
-#: gui/launcher.cpp:556
+#: gui/launcher.cpp:577
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM ei löytänyt yhtään peliä kyseisestä hakemistosta!"
 
-#: gui/launcher.cpp:569
+#: gui/launcher.cpp:590
 msgid "Pick the game:"
 msgstr "Valitse peli:"
 
-#: gui/launcher.cpp:687
+#: gui/launcher.cpp:708
 msgid "Mass Add..."
 msgstr "Lisää monta..."
 
-#: gui/launcher.cpp:689
+#: gui/launcher.cpp:710
 msgid "Record..."
-msgstr ""
+msgstr "Nauhoita..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
@@ -759,216 +763,226 @@ msgstr "Skannattiin %d hakemistoa ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
 "%d uutta peliä löytyi, jätettiin %d peliä huomiotta, koska ne oli jo lisätty "
-"aiemmin."
+"aiemmin ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Pysäytä"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Muokkaa nauhoituksen kuvausta"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Vaihda"
+msgstr "Vaihda peliin"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Nopea moodi"
+msgstr "Nopea toisto"
 
-#: gui/options.cpp:112 common/updates.cpp:56
+#: gui/options.cpp:119 common/updates.cpp:56
 msgid "Never"
 msgstr "Ei koskaan"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:119
 msgid "every 5 mins"
 msgstr "5 minuutin välein"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:119
 msgid "every 10 mins"
 msgstr "10 minuutin välein"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:119
 msgid "every 15 mins"
 msgstr "15 minuutin välein"
 
-#: gui/options.cpp:112
+#: gui/options.cpp:119
 msgid "every 30 mins"
 msgstr "30 minuutin välein"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:121
 msgid "8 kHz"
 msgstr "8 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:121
 msgid "11 kHz"
 msgstr "11 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:121
 msgid "22 kHz"
 msgstr "22 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:121
 msgid "44 kHz"
 msgstr "44 kHz"
 
-#: gui/options.cpp:114
+#: gui/options.cpp:121
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:286 gui/options.cpp:510 gui/options.cpp:611
-#: gui/options.cpp:680 gui/options.cpp:888
+#: gui/options.cpp:289 gui/options.cpp:552 gui/options.cpp:657
+#: gui/options.cpp:726 gui/options.cpp:937
 msgctxt "soundfont"
 msgid "None"
 msgstr "Ei käytössä"
 
-#: gui/options.cpp:420
+#: gui/options.cpp:456
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "Joitain grafiikka-asetuksia ei saatu asetettua:"
 
-#: gui/options.cpp:432
+#: gui/options.cpp:468
 msgid "the video mode could not be changed."
 msgstr "videotilaa ei voitu vaihtaa."
 
-#: gui/options.cpp:438
-msgid "the fullscreen setting could not be changed"
-msgstr "kokoruututilaa ei voitu muuttaa"
-
-#: gui/options.cpp:444
+#: gui/options.cpp:474
 msgid "the aspect ratio setting could not be changed"
 msgstr "kuvasuhdekorjausasetusta ei voitu muuttaa"
 
-#: gui/options.cpp:763
+#: gui/options.cpp:480
+msgid "the fullscreen setting could not be changed"
+msgstr "kokoruututilaa ei voitu muuttaa"
+
+#: gui/options.cpp:486
+msgid "the filtering setting could not be changed"
+msgstr "Suodatusasetusta ei voitu muuttaa"
+
+#: gui/options.cpp:809
 msgid "Graphics mode:"
 msgstr "Grafiikkatila:"
 
-#: gui/options.cpp:777
+#: gui/options.cpp:823
 msgid "Render mode:"
 msgstr "Renderöintitila:"
 
-#: gui/options.cpp:777 gui/options.cpp:778
+#: gui/options.cpp:823 gui/options.cpp:824
 msgid "Special dithering modes supported by some games"
 msgstr "Erityiset dithering asetukset joita jotkut pelit tukevat"
 
-#: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
+#: gui/options.cpp:835 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Fullscreen mode"
 msgstr "Kokoruututila"
 
-#: gui/options.cpp:792
+#: gui/options.cpp:838
+msgid "Filter graphics"
+msgstr "Suodata grafiikka"
+
+#: gui/options.cpp:838
+msgid "Use linear filtering when scaling graphics"
+msgstr "Käytä bilineaarista suodatinta grafiikan skaalauksessa"
+
+#: gui/options.cpp:841
 msgid "Aspect ratio correction"
 msgstr "Kuvasuhteen korjaus"
 
-#: gui/options.cpp:792
+#: gui/options.cpp:841
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Oikea kuvasuhde 320x200 peleille"
+msgstr "Korjaa kuvasuhde 320x200 peleille"
 
-#: gui/options.cpp:800
+#: gui/options.cpp:849
 msgid "Preferred Device:"
 msgstr "Ensisijainen laite:"
 
-#: gui/options.cpp:800
+#: gui/options.cpp:849
 msgid "Music Device:"
 msgstr "Musiikkilaite:"
 
-#: gui/options.cpp:800 gui/options.cpp:802
+#: gui/options.cpp:849 gui/options.cpp:851
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr ""
 "Määrittää äänilaitteen tai äänikorttiemulaattorin jota ensisijaisesti tulisi "
 "käyttää"
 
-#: gui/options.cpp:800 gui/options.cpp:802 gui/options.cpp:803
+#: gui/options.cpp:849 gui/options.cpp:851 gui/options.cpp:852
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Määrittää äänikortin tai äänikorttia emuloivan ohjelmiston"
 
-#: gui/options.cpp:802
+#: gui/options.cpp:851
 msgctxt "lowres"
 msgid "Preferred Dev.:"
 msgstr "Ensisijainen:"
 
-#: gui/options.cpp:802
+#: gui/options.cpp:851
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Musiikkilaite:"
 
-#: gui/options.cpp:829
+#: gui/options.cpp:878
 msgid "AdLib emulator:"
 msgstr "AdLib emulaattori:"
 
-#: gui/options.cpp:829 gui/options.cpp:830
+#: gui/options.cpp:878 gui/options.cpp:879
 msgid "AdLib is used for music in many games"
 msgstr "AdLibiä käytetään monien pelien musiikeissa"
 
-#: gui/options.cpp:840
+#: gui/options.cpp:889
 msgid "Output rate:"
 msgstr "Taajuus:"
 
-#: gui/options.cpp:840 gui/options.cpp:841
+#: gui/options.cpp:889 gui/options.cpp:890
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
 "Isommat taajuudet merkitsevät parempaa äänenlaatua, mutta äänikorttisi ei "
-"ehkä tue niitä."
+"ehkä tue niitä"
 
-#: gui/options.cpp:851
+#: gui/options.cpp:900
 msgid "GM Device:"
 msgstr "GM laite:"
 
-#: gui/options.cpp:851
+#: gui/options.cpp:900
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Määrittää oletuksena käytettävän äänilaitteen General MIDIlle"
 
-#: gui/options.cpp:862
+#: gui/options.cpp:911
 msgid "Don't use General MIDI music"
 msgstr "Älä käytä General MIDIä musiikissa"
 
-#: gui/options.cpp:873 gui/options.cpp:935
+#: gui/options.cpp:922 gui/options.cpp:984
 msgid "Use first available device"
 msgstr "Käytä ensimmäistä laitetta"
 
-#: gui/options.cpp:885
+#: gui/options.cpp:934
 msgid "SoundFont:"
-msgstr "Äänifontti:"
+msgstr "SoundFont:"
 
-#: gui/options.cpp:885 gui/options.cpp:887 gui/options.cpp:888
+#: gui/options.cpp:934 gui/options.cpp:936 gui/options.cpp:937
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "Jotkut äänikortit tukevat äänifonttia (SoundFont), FluidSynth ja Timidity"
 
-#: gui/options.cpp:887
+#: gui/options.cpp:936
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr "Äänifontti:"
+msgstr "SoundFont:"
 
-#: gui/options.cpp:893
+#: gui/options.cpp:942
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Yhdistetty AdLib/MIDI tila"
 
-#: gui/options.cpp:893
+#: gui/options.cpp:942
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Käytä sekä MIDIä että Adlibiä äänentuotantoon"
 
-#: gui/options.cpp:896
+#: gui/options.cpp:945
 msgid "MIDI gain:"
 msgstr "MIDIn äänilisäys:"
 
-#: gui/options.cpp:906
+#: gui/options.cpp:955
 msgid "MT-32 Device:"
 msgstr "MT-32 laite:"
 
-#: gui/options.cpp:906
+#: gui/options.cpp:955
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Määrittää oletusäänilaitteen Roland MT-32/LAPC1/CM32l/CM64:n käyttöön"
 
-#: gui/options.cpp:911
+#: gui/options.cpp:960
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Aito Roland MT-32 (ei GM emulointia)"
 
-#: gui/options.cpp:911 gui/options.cpp:913
+#: gui/options.cpp:960 gui/options.cpp:962
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -976,327 +990,302 @@ msgstr ""
 "Valitse jos haluat käyttää aitoa Roland-yhteensopivaa laittetta joka on "
 "kytketty tietokoneeseesi"
 
-#: gui/options.cpp:913
+#: gui/options.cpp:962
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Aito Roland MT-32 (ei GM emulointia)"
 
-#: gui/options.cpp:916
-#, fuzzy
+#: gui/options.cpp:965
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Aito Roland MT-32 (ei GM emulointia)"
+msgstr "Roland GS Laite (aktivoi MT-32 mappaukset)"
 
-#: gui/options.cpp:916
+#: gui/options.cpp:965
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
+"Valitse jos haluat käyttää patch mappingia MT-32:n emulointiin Roland GS "
+"laitteella"
 
-#: gui/options.cpp:925
+#: gui/options.cpp:974
 msgid "Don't use Roland MT-32 music"
 msgstr "Älä käytä Roland MT-32 musiikkia"
 
-#: gui/options.cpp:952
+#: gui/options.cpp:1001
 msgid "Text and Speech:"
 msgstr "Tekstitys ja puhe:"
 
-#: gui/options.cpp:956 gui/options.cpp:966
+#: gui/options.cpp:1005 gui/options.cpp:1015
 msgid "Speech"
 msgstr "Puhe"
 
-#: gui/options.cpp:957 gui/options.cpp:967
+#: gui/options.cpp:1006 gui/options.cpp:1016
 msgid "Subtitles"
 msgstr "Tekstitys"
 
-#: gui/options.cpp:958
+#: gui/options.cpp:1007
 msgid "Both"
 msgstr "Molemmat"
 
-#: gui/options.cpp:960
+#: gui/options.cpp:1009
 msgid "Subtitle speed:"
-msgstr "Tekstin nopeus:"
+msgstr "Tekstityksen nopeus:"
 
-#: gui/options.cpp:962
+#: gui/options.cpp:1011
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Tekstitys ja puhe:"
 
-#: gui/options.cpp:966
+#: gui/options.cpp:1015
 msgid "Spch"
 msgstr "Puhe"
 
-#: gui/options.cpp:967
+#: gui/options.cpp:1016
 msgid "Subs"
 msgstr "Tekstit"
 
-#: gui/options.cpp:968
+#: gui/options.cpp:1017
 msgctxt "lowres"
 msgid "Both"
 msgstr "Molemmat"
 
-#: gui/options.cpp:968
+#: gui/options.cpp:1017
 msgid "Show subtitles and play speech"
 msgstr "Näytä tekstitys ja käytä puhetta"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:1019
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Tekstin nopeus:"
+msgstr "Tekstityksen nopeus:"
 
-#: gui/options.cpp:986
+#: gui/options.cpp:1035
 msgid "Music volume:"
 msgstr "Musiikki:"
 
-#: gui/options.cpp:988
+#: gui/options.cpp:1037
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Musiikki:"
 
-#: gui/options.cpp:995
+#: gui/options.cpp:1044
 msgid "Mute All"
 msgstr "Vaimenna"
 
-#: gui/options.cpp:998
+#: gui/options.cpp:1047
 msgid "SFX volume:"
 msgstr "Ääniefektit:"
 
-#: gui/options.cpp:998 gui/options.cpp:1000 gui/options.cpp:1001
+#: gui/options.cpp:1047 gui/options.cpp:1049 gui/options.cpp:1050
 msgid "Special sound effects volume"
 msgstr "Erikoisefektit"
 
-#: gui/options.cpp:1000
+#: gui/options.cpp:1049
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Ääniefektit:"
 
-#: gui/options.cpp:1008
+#: gui/options.cpp:1057
 msgid "Speech volume:"
 msgstr "Puhe:"
 
-#: gui/options.cpp:1010
+#: gui/options.cpp:1059
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Puhe:"
 
-#: gui/options.cpp:1140
+#: gui/options.cpp:1257
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth asetukset"
 
-#: gui/options.cpp:1171
+#: gui/options.cpp:1288
 msgid "Theme Path:"
 msgstr "Teemojen polku:"
 
-#: gui/options.cpp:1173
+#: gui/options.cpp:1290
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Teemojen polku:"
 
-#: gui/options.cpp:1179 gui/options.cpp:1181 gui/options.cpp:1182
+#: gui/options.cpp:1296 gui/options.cpp:1298 gui/options.cpp:1299
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Määrittää polun, jossa on lisätiedostoja joita ScummVM tai kaikki pelit "
 "käyttävät"
 
-#: gui/options.cpp:1188
+#: gui/options.cpp:1305
 msgid "Plugins Path:"
 msgstr "Pluginien sijainti:"
 
-#: gui/options.cpp:1190
+#: gui/options.cpp:1307
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Pluginien sijainti:"
 
-#: gui/options.cpp:1201
+#: gui/options.cpp:1318
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Muut"
 
-#: gui/options.cpp:1203
+#: gui/options.cpp:1320
 msgid "Theme:"
-msgstr "Teema"
+msgstr "Teema:"
 
-#: gui/options.cpp:1207
+#: gui/options.cpp:1324
 msgid "GUI Renderer:"
 msgstr "GUI renderöijä:"
 
-#: gui/options.cpp:1219
+#: gui/options.cpp:1336
 msgid "Autosave:"
 msgstr "Autom. tallennus:"
 
-#: gui/options.cpp:1221
+#: gui/options.cpp:1338
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Autom. tallennus:"
 
-#: gui/options.cpp:1229
+#: gui/options.cpp:1346
 msgid "Keys"
 msgstr "Näppäimet"
 
-#: gui/options.cpp:1236
+#: gui/options.cpp:1353
 msgid "GUI Language:"
 msgstr "ScummVM:n kieli:"
 
-#: gui/options.cpp:1236
+#: gui/options.cpp:1353
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM käyttöliittymän kieli"
 
-#: gui/options.cpp:1264
+#: gui/options.cpp:1381
 msgid "Update check:"
-msgstr ""
+msgstr "Päivitystarkistus:"
 
-#: gui/options.cpp:1264
+#: gui/options.cpp:1381
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Kuinka usein tarkistetaan onko ScummVM:ään päivityksiä"
 
-#: gui/options.cpp:1276
+#: gui/options.cpp:1393
 msgid "Check now"
-msgstr ""
+msgstr "Tarkista nyt"
 
-#: gui/options.cpp:1284
+#: gui/options.cpp:1401
 msgid "Cloud"
-msgstr ""
+msgstr "Pilvi"
 
-#: gui/options.cpp:1286
+#: gui/options.cpp:1403
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Pilvi"
 
-#: gui/options.cpp:1297
+#: gui/options.cpp:1408
 msgid "Storage:"
-msgstr ""
+msgstr "Tallennustila:"
 
-#: gui/options.cpp:1297
+#: gui/options.cpp:1408
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Aktiivinen pilvitallennus"
 
-#: gui/options.cpp:1304 gui/options.cpp:1855
+#: gui/options.cpp:1415 gui/options.cpp:1972
 msgid "<none>"
-msgstr ""
+msgstr "<tyhjä>"
 
-#: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:1419 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Käyttäjänimi:"
 
-#: gui/options.cpp:1308
+#: gui/options.cpp:1419
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Tallennustilan käyttäjänimi"
 
-#: gui/options.cpp:1311
+#: gui/options.cpp:1422
 msgid "Used space:"
-msgstr ""
+msgstr "Käytetty tila:"
 
-#: gui/options.cpp:1311
+#: gui/options.cpp:1422
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "ScummVM:n pelitallennusten käyttämä tila tallennustilassa"
 
-#: gui/options.cpp:1314
+#: gui/options.cpp:1425
 msgid "Last sync time:"
-msgstr ""
+msgstr "Viimeisin synkronointi:"
 
-#: gui/options.cpp:1314
+#: gui/options.cpp:1425
 msgid "When the last saved games sync for this storage occured"
-msgstr ""
+msgstr "Milloin pelitallennukset viimeksi synkronoitiin tähän tallennustilaan"
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
+#: gui/options.cpp:1428 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Yhdistä"
 
-#: gui/options.cpp:1317
+#: gui/options.cpp:1428
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Avaa velhodialogi pilvitilan tiliin kirjautumiseen"
 
-#: gui/options.cpp:1318
+#: gui/options.cpp:1429
 msgid "Refresh"
-msgstr ""
+msgstr "Päivitä"
 
-#: gui/options.cpp:1318
+#: gui/options.cpp:1429
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Päivitä tämänhetkiset pilvitilan tiedot (käyttäjänimi ja käyttöaste)"
 
-#: gui/options.cpp:1319
-#, fuzzy
+#: gui/options.cpp:1430
 msgid "Download"
-msgstr "Alas"
+msgstr "Lataa"
 
-#: gui/options.cpp:1319
+#: gui/options.cpp:1430
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Avaa lataustenhallintadialogi"
 
-#: gui/options.cpp:1321
+#: gui/options.cpp:1432
 msgid "Run server"
-msgstr ""
+msgstr "Käynnistä palvelin"
 
-#: gui/options.cpp:1321
+#: gui/options.cpp:1432
 msgid "Run local webserver"
-msgstr ""
+msgstr "Käynnistä paikallinen webpalvelin"
 
-#: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
+#: gui/options.cpp:1433 gui/options.cpp:2082
 msgid "Not running"
-msgstr "Virhe ajettaessa peliä:"
+msgstr "Ei käynnissä"
 
-#: gui/options.cpp:1326
-#, fuzzy
+#: gui/options.cpp:1437
 msgid "/root/ Path:"
-msgstr "Lisäkansio:"
+msgstr "/root/-polku:"
 
-#: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
+#: gui/options.cpp:1437 gui/options.cpp:1439 gui/options.cpp:1440
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Määrittää polun pelitallennuksille"
+msgstr "Määrittää hakemiston johon tiedostonhallinnalla on pääsy"
 
-#: gui/options.cpp:1328
-#, fuzzy
+#: gui/options.cpp:1439
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Lisäkansio:"
+msgstr "/root/-polku:"
 
-#: gui/options.cpp:1338
-#, fuzzy
+#: gui/options.cpp:1449
 msgid "Server's port:"
-msgstr "Palvelin:"
+msgstr "Palvelimen portti:"
 
-#: gui/options.cpp:1338
+#: gui/options.cpp:1449
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Palvelimen käyttämä portti\n"
+"Autentikaatio palvelimella on mahdollista vain vakioportilla"
 
-#: gui/options.cpp:1498
-msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "ScummVM pitää käynnistää uudelleen jotta muutokset tulevat voimaan."
+#: gui/options.cpp:1462
+msgid "Apply"
+msgstr "Käytä"
 
-#: gui/options.cpp:1521
-#, fuzzy
+#: gui/options.cpp:1628
 msgid "Failed to change cloud storage!"
-msgstr "Pelin tallentaminen epäonnistui."
+msgstr "Pilvitallennustilan vaihtaminen epäonnistui!"
 
-#: gui/options.cpp:1524
+#: gui/options.cpp:1631
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Toinen pilvitila on jo aktiivinen."
 
-#: gui/options.cpp:1562
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Valittuun hakemistoon ei voi kirjoittaa. Valitse toinen hakemisto."
-
-#: gui/options.cpp:1571
-msgid "Select directory for GUI themes"
-msgstr "Valitse hakemisto käyttöliittymän teemoille"
-
-#: gui/options.cpp:1581
-msgid "Select directory for extra files"
-msgstr "Valitse hakemisto lisätiedostoille"
-
-#: gui/options.cpp:1592
-msgid "Select directory for plugins"
-msgstr "Valitse hakemisto plugineille"
-
-#: gui/options.cpp:1604
-#, fuzzy
-msgid "Select directory for Files Manager /root/"
-msgstr "Valitse hakemisto lisätiedostoille"
-
-#: gui/options.cpp:1666
+#: gui/options.cpp:1667
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
@@ -1304,71 +1293,90 @@ msgstr ""
 "Valitsemasi teema ei tue nykyistä valitsemaasi kieltä. Vaihda kieli ensin, "
 "ja yritä sitten uudelleen."
 
-#: gui/options.cpp:1862
+#: gui/options.cpp:1702
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "Valittuun hakemistoon ei voi kirjoittaa. Valitse toinen hakemisto."
+
+#: gui/options.cpp:1711
+msgid "Select directory for GUI themes"
+msgstr "Valitse hakemisto käyttöliittymän teemoille"
+
+#: gui/options.cpp:1721
+msgid "Select directory for extra files"
+msgstr "Valitse hakemisto lisätiedostoille"
+
+#: gui/options.cpp:1732
+msgid "Select directory for plugins"
+msgstr "Valitse hakemisto plugineille"
+
+#: gui/options.cpp:1744
+msgid "Select directory for Files Manager /root/"
+msgstr "Valitse /root/ hakemisto tiedostonhallinnalle"
+
+#: gui/options.cpp:1979
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu tavua"
 
-#: gui/options.cpp:1870
+#: gui/options.cpp:1987
 msgid "<right now>"
-msgstr ""
+msgstr "<nyt>"
 
-#: gui/options.cpp:1872
-#, fuzzy
+#: gui/options.cpp:1989
 msgid "<never>"
-msgstr "Ei koskaan"
+msgstr "<ei koskaan>"
 
-#: gui/options.cpp:1956
-#, fuzzy
+#: gui/options.cpp:2073
 msgid "Stop server"
-msgstr "Palvelin:"
+msgstr "Pysäytä palvelin"
 
-#: gui/options.cpp:1957
+#: gui/options.cpp:2074
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Pysäytä paikallinen webpalvelin"
 
-#: gui/options.cpp:2046
+#: gui/options.cpp:2165
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Pyyntö epäonnistui\n"
+"Tarkista verkkoyhteytesi."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr ""
+msgstr "# seuraava"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr ""
+msgstr "lisää"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
-#, fuzzy
 msgid "Delete char"
-msgstr "Poista"
+msgstr "Poista merkki"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:575
 msgid "*  Pre"
-msgstr ""
+msgstr "* Ennakoiva"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:578
 msgid "*  Num"
-msgstr ""
+msgstr "* 123"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:581
 msgid "*  Abc"
-msgstr ""
+msgstr "* Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Nauhoitin tai Toista Tallennus"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:443
@@ -1377,39 +1385,35 @@ msgstr "Poista"
 
 #: gui/recorderdialog.cpp:70
 msgid "Record"
-msgstr ""
+msgstr "Nauhoita"
 
 #: gui/recorderdialog.cpp:71
-#, fuzzy
 msgid "Playback"
-msgstr "Pelaa"
+msgstr "Toista"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
-msgstr ""
+msgstr "Muokkaa"
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Author: "
-msgstr ""
+msgstr "Tekijä: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Notes: "
-msgstr ""
+msgstr "Merkinnät: "
 
 #: gui/recorderdialog.cpp:154
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Haluatko varmasti poistaa tämän pelitallennuksen?"
+msgstr "Haluatko varmasti poistaa tämän pelinauhoituksen?"
 
 #: gui/recorderdialog.cpp:173
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Tuntematon virhe"
+msgstr "Tuntematon tekijä"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM ei voi avata kyseistä hakemistoa!"
 
@@ -1450,7 +1454,7 @@ msgid "Playtime: "
 msgstr "Peliaika: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-msgid "Untitled savestate"
+msgid "Untitled saved game"
 msgstr "Nimetön pelitallennus"
 
 #: gui/saveload-dialog.cpp:718
@@ -1481,72 +1485,73 @@ msgstr "Anna kuvaus tallennukselle numero %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "%s Tallennustilan Yhdistämisvelho"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Siirry seuraavaan osoitteeseen:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Hanki koodi tallennustilasta, syötä se"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "seuraavasta kentästä ja paina 'Yhdistä':"
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "Avaa"
+msgstr "Avaa osoite"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Liitä"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Liittää leikepöydän sisällön kenttiin"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Sinut ohjataan ScummVM:n sivuille jossa"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "sinun pitää sallia sen pääsy tallennustilaasi."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Odota kunnes aktiivinen Tallennus on valmis ja yritä sitten uudestaan."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "%s-kentässä on virhe."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Seuraavissa kentissä on virheitä: %s."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Kaikki kunnossa!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Viallinen koodi"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Osoitteen avaaminen epäonnistui!\n"
+"Ole hyvä ja siirry osoitteeseen käsin."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1562,23 +1567,20 @@ msgid "Disabled GFX"
 msgstr "Disabloitu GFX"
 
 #: gui/ThemeEngine.cpp:453
-#, fuzzy
 msgid "Standard Renderer"
-msgstr "Standardirenderöijä (16 bpp)"
+msgstr "Standardirenderöijä"
 
 #: gui/ThemeEngine.cpp:453 engines/scumm/dialogs.cpp:659
 msgid "Standard"
 msgstr "Standardi"
 
 #: gui/ThemeEngine.cpp:455
-#, fuzzy
 msgid "Antialiased Renderer"
-msgstr "Antialiasoitu renderöijä (16 bpp)"
+msgstr "Antialiasoitu renderöijä"
 
 #: gui/ThemeEngine.cpp:455
-#, fuzzy
 msgid "Antialiased"
-msgstr "Antialiasoitu (16 bpp)"
+msgstr "Antialiasoitu"
 
 #: gui/updates-dialog.cpp:51
 msgid ""
@@ -1587,53 +1589,56 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM tukee nyt automaattista päivitysten tarkistusta\n"
+"joka vaatii pääsyn internetiin\n"
+"\n"
+"Haluaisitko laittaa päälle tämän ominaisuuden?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Voit aina laittaa sen päälle asetusvalikon \"Muut\"-välilehdestä)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Tarkista päivitykset..."
+msgstr "Tarkista päivitykset automaattisesti"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Jatka"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
 msgstr "Tyhjennä arvo"
 
-#: base/main.cpp:250
+#: base/main.cpp:253
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Pelimoottori ei tue debug tasoa '%s'"
 
-#: base/main.cpp:322
+#: base/main.cpp:327
 msgid "Menu"
 msgstr "Valikko"
 
-#: base/main.cpp:325 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Ohita"
 
-#: base/main.cpp:328 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Tauko"
 
-#: base/main.cpp:331
+#: base/main.cpp:336
 msgid "Skip line"
 msgstr "Ohita rivi"
 
-#: base/main.cpp:540
+#: base/main.cpp:547
 msgid "Error running game:"
 msgstr "Virhe ajettaessa peliä:"
 
-#: base/main.cpp:587
+#: base/main.cpp:594
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Pelimoottoria joka tukisi valittua peliä ei löytynyt"
 
@@ -1690,8 +1695,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Sopivaa pelimoottorin pluginia ei löytynyt"
 
 #: common/error.cpp:68
-msgid "Engine plugin does not support save states"
-msgstr "Pelimoottori ei tue tallennustiloja"
+msgid "Engine plugin does not support saved games"
+msgstr "Pelimoottoriliitännäinen ei tue pelitallenteita"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1704,61 +1709,56 @@ msgstr "Tuntematon virhe"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules vihreä"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules keltainen"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 Väriä)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 Väriä)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules vihreä"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules keltainen"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Päivittäin"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Viikoittain"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Kuukausittain"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Tyhjennä arvo"
-
-#: engines/advancedDetector.cpp:334
-#, c-format
-msgid "The game in '%s' seems to be unknown."
-msgstr "Peli hakemistossa '%s' näyttäisi olevan tuntematon."
+msgstr "<Huono arvo>"
 
 #: engines/advancedDetector.cpp:335
-msgid "Please, report the following data to the ScummVM team along with name"
+#, c-format
+msgid ""
+"The game in '%s' seems to be unknown.\n"
+"Please, report the following data to the ScummVM team along with name\n"
+"of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Ole hyvä ja ilmoita ScummVM:n kehittäjille seuraavat tiedot, lisäksi kerro"
-
-#: engines/advancedDetector.cpp:337
-msgid "of the game you tried to add and its version/language/etc.:"
-msgstr ""
-"mikä peli oli kyseessä, ja sen versio, kieli, ja muut vastaavat tiedot."
+"Peli kansiossa \"%s\" näyttää olevan tuntematon.\n"
+"Ole kiltti ja raportoi seuraavat tiedot ScummVM:n kehittäjille pelin nimen,\n"
+"version, kielen, yms. kera:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1795,14 +1795,17 @@ msgstr "Palaa p~e~livalitsimeen"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
 #: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
-#: engines/cge2/events.cpp:65 engines/cruise/menu.cpp:212
+#: engines/cge2/events.cpp:65 engines/cine/various.cpp:348
+#: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:196
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
-#: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
+#: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
+#: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sci/engine/kfile.cpp:900 engines/sci/engine/kfile.cpp:1176
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Tallenna peli:"
 
@@ -1813,14 +1816,17 @@ msgstr "Tallenna peli:"
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1900
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:65
-#: engines/cruise/menu.cpp:212 engines/drascula/saveload.cpp:364
-#: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
+#: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
+#: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:364
+#: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
+#: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sci/engine/kfile.cpp:900 engines/sci/engine/kfile.cpp:1176
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
+#: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
 msgstr "Tallenna"
 
@@ -1836,11 +1842,11 @@ msgstr ""
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:393
 #, c-format
 msgid ""
-"Gamestate save failed (%s)! Please consult the README for basic information, "
+"Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Pelitilan tallennus epäonnistui (%s)! Avaa LUEMINUT tiedosto saadaksesi "
-"lisätietoa."
+"Pelitilan tallennus epäonnistui (%s)! Konsultoi README-tiedostoa saadaksesi "
+"lisätietoa ja ohjeita avun hankkimiseen."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:100
 #: engines/tsage/dialogs.cpp:112
@@ -1856,23 +1862,27 @@ msgstr "~P~eruuta"
 msgid "~K~eys"
 msgstr "~N~äppäimet"
 
-#: engines/engine.cpp:342
+#: engines/engine.cpp:346
 msgid "Could not initialize color format."
-msgstr "Väriformaattia ei voitu alustaa"
+msgstr "Väriformaattia ei voitu alustaa."
 
-#: engines/engine.cpp:350
+#: engines/engine.cpp:354
 msgid "Could not switch to video mode: '"
 msgstr "Videotilan vaihto ei onnistunut:'"
 
-#: engines/engine.cpp:359
+#: engines/engine.cpp:363
 msgid "Could not apply aspect ratio setting."
 msgstr "Kuvasuhdeasetusta ei voitu asettaa."
 
-#: engines/engine.cpp:364
+#: engines/engine.cpp:368
 msgid "Could not apply fullscreen setting."
 msgstr "Kokoruututila-asetusta ei voi asettaa."
 
-#: engines/engine.cpp:464
+#: engines/engine.cpp:373
+msgid "Could not apply filtering setting."
+msgstr "Suodatusasetusta ei voitu ottaa käyttöön."
+
+#: engines/engine.cpp:473
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1885,7 +1895,7 @@ msgstr ""
 "pelin tiedostot kovalevyllesi. Avaa LUEMINUT\n"
 "tiedosto ohjeita varten."
 
-#: engines/engine.cpp:475
+#: engines/engine.cpp:484
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1896,18 +1906,18 @@ msgstr ""
 "Pelin musiikki on CD-levyllä ääniraitoina.\n"
 "Raidat pitää ripata levyltä sopivaa\n"
 "ohjelmistoa käyttäen, jotta musiikit\n"
-"kuuluvat. Lue ohjeet LUEMINUT tiedostosta."
+"kuuluvat. Lue ohjeet README-tiedostosta."
 
-#: engines/engine.cpp:533
+#: engines/engine.cpp:542
 #, c-format
 msgid ""
-"Gamestate load failed (%s)! Please consult the README for basic information, "
-"and for instructions on how to obtain further assistance."
+"Failed to load saved game (%s)! Please consult the README for basic "
+"information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Pelitilan lataus epäonnistui (%s)! Avaa LUEMINUT tiedosto saadaksesi "
-"lisätietoa."
+"Pelitallennuksen lataus epäonnistui (%s)! Konsultoi README-tiedostoa "
+"saadaksesi lisätietoa ja ohjeita avun hankkimiseen."
 
-#: engines/engine.cpp:546
+#: engines/engine.cpp:555
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -1917,7 +1927,7 @@ msgstr ""
 "epävakaa, eivätkä pelitallennukset välttämättä toimi tulevissa ScummVM:n "
 "versioissa."
 
-#: engines/engine.cpp:549
+#: engines/engine.cpp:558
 msgid "Start anyway"
 msgstr "Pelaa silti"
 
@@ -1935,7 +1945,7 @@ msgstr "DOSBox OPL emulaattori"
 
 #: audio/fmopl.cpp:67
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -1992,22 +2002,21 @@ msgstr "Apple II GS emulaattori (EI TOTEUTETTU)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr ""
+msgstr "Creative Music System emulaattori"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns Ääni"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Ääni"
+msgstr "PC-98 Ääni"
 
-#: audio/softsynth/mt32.cpp:196
+#: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
 msgstr "Alustetaan MT-32 emulaattoria"
 
-#: audio/softsynth/mt32.cpp:434
+#: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
 msgstr "MT-32 emulaattori"
 
@@ -2023,37 +2032,38 @@ msgstr "IBM PCjr emulaattori"
 msgid "C64 Audio Emulator"
 msgstr "C64 Audio emulaattori"
 
-#: backends/cloud/storage.cpp:210
-#, fuzzy
+#: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "Skannaus on valmis!"
+msgstr "Pelitallennusten synkronointi valmis."
 
-#: backends/cloud/storage.cpp:221
+#: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Pelitallennusten synkronointi peruttiin."
 
-#: backends/cloud/storage.cpp:223
+#: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Pelitallennusten synkronointi epäonnistui.\n"
+"Tarkista verkkoyhteytesi."
 
-#: backends/cloud/storage.cpp:327
+#: backends/cloud/storage.cpp:328
 #, c-format
 msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Lataus valmis.\n"
+"%u:n tiedoston lataus epäonnistui."
 
-#: backends/cloud/storage.cpp:329
-#, fuzzy
+#: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Skannaus on valmis!"
+msgstr "Lataus valmis."
 
-#: backends/cloud/storage.cpp:339
-#, fuzzy
+#: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "Lataa peli:"
+msgstr "Lataus epäonnistui."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2104,7 +2114,7 @@ msgstr "Nostetaan äänenvoimakkuutta"
 
 #: backends/events/gph/gph-events.cpp:417
 msgid "Minimal Volume"
-msgstr "Minimi äänenvoimakkuus"
+msgstr "Pienin äänenvoimakkuus"
 
 #: backends/events/gph/gph-events.cpp:419
 msgid "Decreasing Volume"
@@ -2119,9 +2129,8 @@ msgid "Clicking Disabled"
 msgstr "Klikkaus pois päältä"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Kosketusnäytön 'Tap moodi' - ei klikkausta"
+msgstr "Kosketusnäytön 'Tap moodi' - Hover (DPad klikkaus)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 msgid "Do you want to quit ?"
@@ -2129,43 +2138,67 @@ msgstr "Haluatko lopettaa?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Touchpad tila pois päältä"
+msgstr "Trackpad tila on nyt"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "ON"
-msgstr ""
+msgstr "PÄÄLLÄ"
 
 #: backends/events/webossdl/webossdl-events.cpp:311
 #: backends/events/webossdl/webossdl-events.cpp:338
 msgid "OFF"
-msgstr ""
+msgstr "POIS"
 
 #: backends/events/webossdl/webossdl-events.cpp:315
 msgid "Swipe two fingers to the right to toggle."
-msgstr ""
+msgstr "Muuta tilaa pyyhkäisemällä kahdella sormella oikealle."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:335
 msgid "Auto-drag mode is now"
-msgstr ""
+msgstr "Automaattiraahaustila on nyt"
 
 #: backends/events/webossdl/webossdl-events.cpp:342
 msgid "Swipe three fingers to the right to toggle."
-msgstr ""
+msgstr "Muuta tilaa pyyhkäisemällä kolmella sormella oikealle."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:128
-#, fuzzy
+#: backends/graphics/opengl/opengl-graphics.cpp:146
 msgid "OpenGL"
-msgstr "Avaa"
+msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:129
-msgid "OpenGL (No filtering)"
-msgstr ""
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2462
+msgid "Windowed mode"
+msgstr "Ikkunoitu tila"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
+#, c-format
+msgid "Resolution: %dx%d"
+msgstr "Resoluutio: %dx%d"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2338
+msgid "Enabled aspect ratio correction"
+msgstr "Kuvasuhteen korjaus päällä"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2344
+msgid "Disabled aspect ratio correction"
+msgstr "Kuvasuhteen korjaus pois päältä"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
+msgid "Filtering enabled"
+msgstr "Suodatus päällä"
+
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
+msgid "Filtering disabled"
+msgstr "Suodatus pois päältä"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2178,21 +2211,9 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normaali (ei skaalausta)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
-msgid "Enabled aspect ratio correction"
-msgstr "Kuvasuhteen korjaus päällä"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
-msgid "Disabled aspect ratio correction"
-msgstr "Kuvasuhteen korjaus pois päältä"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2417
 msgid "Active graphics filter:"
-msgstr "Valittu grafiikkafiltteri:"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
-msgid "Windowed mode"
-msgstr "Ikkunoitu tila"
+msgstr "Valittu grafiikkasuodatin:"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
@@ -2200,7 +2221,7 @@ msgstr "Näppäinkartta:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr ""
+msgstr " (Efektiivinen)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
@@ -2253,7 +2274,7 @@ msgstr "Kosketuksen X siirros"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr "Kosketuksen Y siirto"
+msgstr "Kosketuksen Y korjaus"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
@@ -2262,7 +2283,7 @@ msgstr "Käytä kannettavan trackpad-tyylistä kursorinhallintaa"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
 msgstr ""
-"Napauta kerran vasen klikkausta varten, napauta kahdesti oikeaa klikkausta "
+"Napauta kerran vasenta klikkausta varten, napauta kahdesti oikeaa klikkausta "
 "varten"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
@@ -2271,11 +2292,11 @@ msgstr "Herkkyys"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr ""
+msgstr "Alustava yläruudun skaalaus:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "Pääruudun skaalaus"
+msgstr "Pääruudun skaalaus:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
@@ -2287,7 +2308,7 @@ msgstr "Ohjelmistoskaalaus (hyvä laatu, mutta hitaampi)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr "Ei skaalattu (vierittä vasemmalle ja oikealle itse)"
+msgstr "Ei skaalattu (vieritä vasemmalle ja oikealle itse)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
@@ -2295,11 +2316,11 @@ msgstr "Kirkkaus:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
-msgstr "Korkealuokkainen ääni (hidas) (buuttaus)"
+msgstr "Korkealaatuinen ääni (hidas) (buuttaus)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr ""
+msgstr "Poista virran sammutus käytöstä"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:309
 #: backends/platform/ios7/ios7_osys_events.cpp:519
@@ -2317,13 +2338,13 @@ msgstr "Hiiren vedä-ja-pudota tila pois käytöstä."
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Touchad tila päällä"
+msgstr "Touchpad tila päällä."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Touchpad tila pois päältä"
+msgstr "Touchpad tila pois päältä."
 
 #: backends/platform/maemo/maemo.cpp:208
 msgid "Click Mode"
@@ -2392,13 +2413,13 @@ msgstr "Oikea"
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
-msgstr ""
+msgstr "Alue"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:54
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
 msgid "Multi Function"
-msgstr ""
+msgstr "Monitoiminen"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Swap character"
@@ -2410,7 +2431,7 @@ msgstr "Ohita teksti"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Fast mode"
-msgstr "Nopea moodi"
+msgstr "Nopea tila"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Debugger"
@@ -2434,7 +2455,7 @@ msgstr "Klikkaa oikealla kerran"
 
 #: backends/platform/tizen/form.cpp:271
 msgid "Move Only"
-msgstr ""
+msgstr "Vain siirto"
 
 #: backends/platform/tizen/form.cpp:294
 msgid "Escape Key"
@@ -2454,24 +2475,23 @@ msgstr "Ohjaa hiirtä"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr ""
+msgstr "[ Data ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr ""
+msgstr "[ Resurssit ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr ""
+msgstr "[ SD-kortti ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr ""
+msgstr "[ Media ]"
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Jako:"
+msgstr "[ Jaettu ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2483,15 +2503,15 @@ msgstr "Nykyinen videotila:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "Lomittamaton (Double-strike)"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Horisontaalinenunderscan"
+msgstr "Vaakasuora underscan:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Vertikaalinen underscan"
+msgstr "Pystysuora underscan:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -2499,11 +2519,11 @@ msgstr "Syöte"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "GC Padin herkkyys"
+msgstr "GC Padin herkkyys:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "GC PAdin kiihtyvyys"
+msgstr "GC Padin kiihtyvyys:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2547,7 +2567,7 @@ msgstr "Alusta verkko"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr "Mounttaa SMB"
+msgstr "Liitä SMB"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
@@ -2555,7 +2575,7 @@ msgstr "Vapauta SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr "DVD mountattu onnistuneesti"
+msgstr "DVD liitetty onnistuneesti"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
@@ -2637,19 +2657,19 @@ msgstr "Määritä näppäimet"
 
 #: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Up"
-msgstr "Nuoli ylös"
+msgstr "Kursori ylös"
 
 #: backends/platform/wince/CEActionsPocket.cpp:57
 msgid "Cursor Down"
-msgstr "Nuoli alas"
+msgstr "Kursori alas"
 
 #: backends/platform/wince/CEActionsPocket.cpp:58
 msgid "Cursor Left"
-msgstr "Nuoli vasemmalle"
+msgstr "Kursori vasemmalle"
 
 #: backends/platform/wince/CEActionsPocket.cpp:59
 msgid "Cursor Right"
-msgstr "Nuoli oikealle"
+msgstr "Kursori oikealle"
 
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
@@ -2659,7 +2679,7 @@ msgstr "Haluatko tallentaa vai ladata pelin?"
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Haluatko varmasti lopettaa?"
+msgstr "   Haluatko varmasti lopettaa?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
@@ -2671,11 +2691,11 @@ msgstr "Käännä"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Käytetään SDL:n ajuria"
+msgstr "Käytetään SDL:n ajuria "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Näyttö"
+msgstr "Näyttö "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
@@ -2720,103 +2740,138 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Tarkista päivitykset..."
 
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:965
+#: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
+#: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
+#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
+#: engines/toon/toon.cpp:4918
+#, c-format
+msgid "Unable to locate the '%s' engine data file."
+msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
+
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:979
+#: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
+#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
+#: engines/toon/toon.cpp:4930
+#, c-format
+msgid "The '%s' engine data file is corrupt."
+msgstr "\"%s\" pelimoottorin datatiedosto on korruptoitunut."
+
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:990
+#: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
+#: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
+#: engines/toon/toon.cpp:4941
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
+"%d.%d."
+msgstr ""
+"\"%s\" pelimoottorin datatiedostosta löytyi väärä versio. Odotettu versio %d."
+"%d, löytynyt versio %d.%d."
+
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Klikkaus moodi"
+msgstr "Väritila"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Käytä värigrafiikkaa"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Vaakajuovat"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Näytä esineiden tiedot"
+msgstr "Näytä vaakajuovat"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:430
-#: engines/toltecs/detection.cpp:200 engines/zvision/detection_tables.h:51
+#: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
+#: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
-#: engines/toltecs/detection.cpp:201
-msgid "Use the original save/load screens, instead of the ScummVM ones"
-msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja, ScummVM valikoiden sijaan"
+#: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+msgid "Use the original save/load screens instead of the ScummVM ones"
+msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja ScummVM valikoiden sijaan"
 
 #: engines/agi/detection.cpp:157
-#, fuzzy
 msgid "Use an alternative palette"
-msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
+msgstr "Käytä vaihtoehtoista palettia"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
+"Käytä vaihtoehtoista väripalettia, joka on yleinen kaikissa Amigapeleissä. "
+"Tämä on vanha toimintamalli"
 
 #: engines/agi/detection.cpp:167
-#, fuzzy
 msgid "Mouse support"
-msgstr "Ohita tuki"
+msgstr "Hiirituki"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
-msgstr ""
+msgstr "Aktivoi hiirituen. Mahdollistaa hiiren käyttämisen pelivalikoissa."
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr ""
+msgstr "Käytä korkearesoluutioista Hercules-fonttia"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Käyttää korkearesoluutioista Hercules-fonttia jos tiedosto on saatavilla."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pysäytä käskyjen syöttämisen ajaksi"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Näyttää komentokehoitteen ja pysäyttää pelin (kuten SCI:ssä) reaaliaikaisen "
+"kehoitteen sijaan."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
-#: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
-#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
-#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
+#: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1019
+#: engines/sci/engine/kfile.cpp:1248 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Lataa pelitallenne:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
-#: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
-#: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
-#: engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
+#: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
+#: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
+#: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1019
+#: engines/sci/engine/kfile.cpp:1248 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
-#: engines/toon/toon.cpp:3432
+#: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Lataa tallenne"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2435
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
 #, c-format
 msgid ""
-"Failed to load game state from file:\n"
+"Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2824,10 +2879,10 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2428
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
 #, c-format
 msgid ""
-"Failed to save game state to file:\n"
+"Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2835,10 +2890,10 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2446
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
 #, c-format
 msgid ""
-"Successfully saved game state in file:\n"
+"Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
@@ -2852,18 +2907,16 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Videotiedostoa '%s' ei löytynyt!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Klikkaus moodi"
+msgstr "Värisokeustila"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Aktivoi värisokeustila vakiona"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
-"ScummVM found that you have old savefiles for Drascula that should be "
+"ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
@@ -2871,8 +2924,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"Broken Sword 1:n pelitallennukset ovat vanhassa formaatissa. Tallennukset "
-"tulee muuntaa,\n"
+"Drascula:n pelitallennukset ovat vanhassa formaatissa. Tallennukset tulee "
+"muuntaa,\n"
 "jotta niitä voi käyttää ScummVM:ssä. Paina 'Hyväksy' muuntaaksesi tiedostot. "
 "Mikäli et halua muuntaa tiedostoja nyt\n"
 "ScummVM kysyy asiaa seuraavan kerran kun käynnistät pelin.\n"
@@ -2887,38 +2940,37 @@ msgstr "Näytä grafiikat käyttäen pelin kirkasta palettia"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-msgid "Failed to load game state from file."
+msgid "Failed to load saved game from file."
 msgstr "Pelitallenteen lataaminen tiedostosta epäonnistui."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-msgid "Failed to save game state to file."
+msgid "Failed to save game to file."
 msgstr "Pelin tallentaminen tiedostoon epäonnistui."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
-msgstr "Tiedoston tuhoaminen ei onnistunut."
+msgstr "Tiedoston poistaminen ei onnistunut."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Nopea moodi"
+msgstr "Nopea videontoisto"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Toista videot nopeampana"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Pelin tallentaminen epäonnistui."
+msgstr "Pelitilan tallentaminen epäonnistui"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "Hurmemoodi"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "Aktivoi hurmemoodi jos saatavilla"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2942,11 +2994,11 @@ msgstr "Salli tekstin ja videoiden ohittaminen"
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr "Helium moodi"
+msgstr "Heliumtila"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "Käytä helium moodia"
+msgstr "Käytä heliumtilaa"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
@@ -2978,6 +3030,72 @@ msgstr "Kestopisteet (HP) graafisina palkkeina"
 msgid "Enable hit point bar graphs"
 msgstr "Käytä kestopisteissä värillisiä grafiikkapalkkeja numeroiden sijaan"
 
+#: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
+msgid "Move Forward"
+msgstr "Liiku eteenpäin"
+
+#: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
+msgid "Move Back"
+msgstr "Liiku taaksepäin"
+
+#: engines/kyra/eobcommon.cpp:333
+msgid "Move Left"
+msgstr "Liiku vasemmalle"
+
+#: engines/kyra/eobcommon.cpp:334
+msgid "Move Right"
+msgstr "Liiku oikealle"
+
+#: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
+#: engines/pegasus/pegasus.cpp:2509
+msgid "Turn Left"
+msgstr "Käänny vasemmalle"
+
+#: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
+#: engines/pegasus/pegasus.cpp:2510
+msgid "Turn Right"
+msgstr "Käänny oikealle"
+
+#: engines/kyra/eobcommon.cpp:337
+msgid "Open/Close Inventory"
+msgstr "Avaa/Sulje Inventorio"
+
+#: engines/kyra/eobcommon.cpp:338
+msgid "Switch Inventory/Character screen"
+msgstr "Vaihda Inventorio/Hahmo näyttö"
+
+#: engines/kyra/eobcommon.cpp:339
+msgid "Camp"
+msgstr "Leiriydy"
+
+#: engines/kyra/eobcommon.cpp:340
+msgid "Cast Spell"
+msgstr "Lue loitsu"
+
+#: engines/kyra/eobcommon.cpp:343
+msgid "Spell Level 1"
+msgstr "Loitsutaso 1"
+
+#: engines/kyra/eobcommon.cpp:344
+msgid "Spell Level 2"
+msgstr "Loitsutaso 2"
+
+#: engines/kyra/eobcommon.cpp:345
+msgid "Spell Level 3"
+msgstr "Loitsutaso 3"
+
+#: engines/kyra/eobcommon.cpp:346
+msgid "Spell Level 4"
+msgstr "Loitsutaso 4"
+
+#: engines/kyra/eobcommon.cpp:347
+msgid "Spell Level 5"
+msgstr "Loitsutaso 5"
+
+#: engines/kyra/eobcommon.cpp:356
+msgid "Spell Level 6"
+msgstr "Loitsutaso 6"
+
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
 msgstr "Hyökkäys 1"
@@ -2990,29 +3108,13 @@ msgstr "Hyökkäys 2"
 msgid "Attack 3"
 msgstr "Hyökkäys 3"
 
-#: engines/kyra/lol.cpp:481
-msgid "Move Forward"
-msgstr "Liiku eteenpäin"
-
-#: engines/kyra/lol.cpp:482
-msgid "Move Back"
-msgstr "Liiku taaksepäin"
-
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr "Liiku vasemmalle"
+msgstr "Liu'u vasemmalle"
 
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
-msgstr "Liiku oikealle"
-
-#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2509
-msgid "Turn Left"
-msgstr "Käänny vasemmalle"
-
-#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2510
-msgid "Turn Right"
-msgstr "Käänny oikealle"
+msgstr "Liu'u oikealle"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
@@ -3035,7 +3137,9 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 "Käytät General MIDI-äänilaitetta, mutta peli\n"
-"tukee vain Roland MT-32:sta. Jotkut ääniraidat\n"
+"tukee vain Roland MT32 MIDI:ä. Yritämme\n"
+"yhdistää Roland MT32 instrumentit sopiviin\n"
+"General MIDI instrumentteihin. Jotkut ääniraidat\n"
 "eivät ehkä kuulosta siltä miltä niiden pitäisi."
 
 #: engines/kyra/saveload_eob.cpp:557
@@ -3048,6 +3152,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Seuraava alkuperäinen pelitallennus löydettiin pelipolustasi:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Haluatko käyttää tätä tallennusta ScummVM:ssä?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -3055,25 +3165,50 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"Numerolla %d on jo pelitallennus. Ylikirjoitetaanko?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original saved game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original saved game files later you "
-"will\n"
+"%d original saved games have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game later you will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d alkuperäistä pelitallennusta onnistuneesti ladattu ScummVM:ään.\n"
+"Jos haluat myöhemmin ladata pelitallennuksia käsin, joudut avaamaan\n"
+"ScummVM:n debug konsolin ja käyttämään komentoa \"import_savefile\".\n"
+"\n"
+
+#: engines/mads/detection.cpp:91
+msgid "Easy mouse interface"
+msgstr "Helppo hiirikäyttöliittymä"
+
+#: engines/mads/detection.cpp:92
+msgid "Shows object names when hovering the mouse over them"
+msgstr "Näytä esineiden kuvauksen kohdistaessasi kursorin esineen ylle"
+
+#: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
+msgid "Animated inventory items"
+msgstr "Animoidut inventorioesineet"
+
+#: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
+msgid "Animated game interface"
+msgstr "Animoitu pelikäyttöliittymä"
+
+#: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
+msgid "Naughty game mode"
+msgstr "Tuhma pelitila"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Soita Myst fly by-video"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Alkuperäinen pelimoottori ei toistanut Myst fly by-videota."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -3082,47 +3217,89 @@ msgstr "~Z~ip moodi valittu"
 
 #: engines/mohawk/dialogs.cpp:182
 msgid "~T~ransitions Enabled"
-msgstr "Siirtymät päällä"
+msgstr "Siir~t~ymät päällä"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:184
 msgid "~D~rop Page"
-msgstr "Pudota sivu"
+msgstr "Pu~d~ota sivu"
 
 #: engines/mohawk/dialogs.cpp:188
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "Näytä kartta"
+msgstr "Näytä ~K~artta"
 
 #: engines/mohawk/dialogs.cpp:194
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "Päävalikko"
+msgstr "Päävalikko ~u~"
 
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
-msgstr "Vesiefekti päällä"
+msgstr "~V~esiefekti päällä"
+
+#: engines/mohawk/riven.cpp:150
+msgid ""
+"You're missing a Riven executable. The Windows executable is 'riven.exe' or "
+"'rivendmo.exe'. "
+msgstr ""
+"Sinulta puuttuu Riven ohjelmatiedosto. WIndowsissa tiedosto on nimeltään "
+"\"riven.exe\" tai \"rivendmo.exe\". "
+
+#: engines/mohawk/riven.cpp:151
+msgid ""
+"Using the 'arcriven.z' installer file also works. In addition, you can use "
+"the Mac 'Riven' executable."
+msgstr ""
+"\"archriven.z\" asennustiedoston käyttö toimii myös. Lisäksi voit käyttää "
+"Macin \"Riven\"-ohjelmatiedostoa."
+
+#: engines/mohawk/riven.cpp:162
+msgid ""
+"You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
+"works."
+msgstr ""
+"Sinulta puuttuu \"extras.mhk\". \"archriven.z\" asennustiedoston käyttö "
+"toimii myös."
+
+#: engines/mohawk/riven_external.cpp:213
+msgid ""
+"Exploration beyond this point available only within the full version of\n"
+"the game."
+msgstr "Tutkiminen tätä pidemmälle on mahdollista vain pelin täysversiossa."
+
+#: engines/mohawk/riven_external.cpp:655
+msgid ""
+"At this point, the Riven Demo would\n"
+"ask if you would like to open a web browser\n"
+"to bring you to the Red Orb store to buy\n"
+"the game. ScummVM cannot do that and\n"
+"the site no longer exists."
+msgstr ""
+"Tässä kohtaa Rivenin demo kysyisi\n"
+"josko haluaisit avata selaimen\n"
+"viedäkseen sinut Red Orb-kauppaan\n"
+"josta voisit ostaa pelin. ScummVM ei\n"
+"voi tehdä sitä ja sivustoa ei ole enää\n"
+"olemassa."
 
 #: engines/mohawk/mohawk.cpp:61
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Pause. Paina välilyöntiä jatkaaksesi."
+msgstr "Pause. Paina mitä tahansa nappia jatkaaksesi."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Ohita Hall of Records storyboardkohtaukset"
 
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "Sallii pelaajan ohittaa Hall of Records storyboardkohtaukset"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "Skaalaa making of-videot koko ruudun kokoiseksi"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "Skaalaa making of-videot niin että ne käyttävät koko ruudun tilan"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3130,22 +3307,20 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Pelin tallennus kohtaan ei onnistunut kohtaan %i\n"
+"Pelin tallennus ei onnistunut kohtaan %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
-#, fuzzy
 msgid "Load file"
-msgstr "Lataa peli:"
+msgstr "Lataa tiedosto"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
 msgstr "Ladataan peliä..."
 
 #: engines/parallaction/saveload.cpp:209
-#, fuzzy
 msgid "Save file"
-msgstr "Tallenna peli:"
+msgstr "Tallenna tiedosto"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
@@ -3153,23 +3328,24 @@ msgstr "Tallennetaan peliä..."
 
 #: engines/parallaction/saveload.cpp:269
 msgid ""
-"ScummVM found that you have old savefiles for Nippon Safes that should be "
+"ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
 "The old names are no longer supported, so you will not be able to load your "
 "games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"Pelin Nippon Safes tallennukset ovat vanhassa muodossa, joita ei enää tueta. "
-"Tallennukset\n"
-"tulee nimetä uudelleen ennen kuin ScummVM voi käyttää niitä. Paina 'Hyväksy' "
-"muuntaaksesi tallennukset.\n"
-"Jos et tee muunnosta nyt, ScummVM kysyy sinulta uudelleen seuraavalla "
-"kerralla kun käynnistät pelin.\n"
+"ScummVM löysi pelille Nippon Safes vanhoja pelitallennuksia jotka pitäisi "
+"uudelleennimetä.\n"
+"Vanhoja nimiä ei enää tueta, joten et pysty lataamaan tallenteitasi ellet "
+"muuta niiden nimiä.\n"
+"\n"
+"Paina OK nimetäksesi tallenteet nyt, muuten kysymme sinulta uudestaan "
+"seuraavalla kerralla. \n"
 
 #: engines/parallaction/saveload.cpp:316
-msgid "ScummVM successfully converted all your savefiles."
-msgstr "ScummVM muunsi kaikki pelitallenteet onnistuneesti"
+msgid "ScummVM successfully converted all your saved games."
+msgstr "ScummVM muunsi kaikki pelitallenteet onnistuneesti."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3183,41 +3359,40 @@ msgstr ""
 "niistä ScummVM:n kehittäjille."
 
 #: engines/pegasus/pegasus.cpp:714
-msgid "Invalid save file name"
-msgstr ""
+msgid "Invalid file name for saving"
+msgstr "Viallinen tiedostonnimi tallennukselle"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Ylös/Zoomi Sisään/Liiku Eteen/Avaa Ovia"
 
 #: engines/pegasus/pegasus.cpp:2508
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Zoomaa ylös"
+msgstr "Alas/Zoomaa ylös"
 
 #: engines/pegasus/pegasus.cpp:2511
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Näytä/Piilota Inventorio"
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Näytä/Piilota Biochip"
 
 #: engines/pegasus/pegasus.cpp:2513
 msgid "Action/Select"
-msgstr ""
+msgstr "Toiminto/Valitse"
 
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Aktivoi Keskidatanäyttö"
 
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Näytä/Piilota Infonäyttö"
 
 #: engines/pegasus/pegasus.cpp:2516
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Näytä/Piilota Pausevalikko"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
@@ -3229,39 +3404,37 @@ msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
 
 #: engines/sci/detection.cpp:390
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Ohita EGA dithering pass (täysväritaustat)"
 
 #: engines/sci/detection.cpp:391
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "Ohita dithering pass EGA peleissä, grafiikat näytetään täysvärisenä"
 
 #: engines/sci/detection.cpp:400
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Käytä kestopisteissä värillisiä grafiikkapalkkeja numeroiden sijaan"
+msgstr "Käytä korkearesoluutioista grafiikkaa"
 
 #: engines/sci/detection.cpp:401
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Käytä kestopisteissä värillisiä grafiikkapalkkeja numeroiden sijaan"
+msgstr "Käytä korkearesoluutioista grafiikkaa/sisältöä"
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Käytä Roland GS moodia"
+msgstr "Käytä mustia vuoroviivoja videoissa"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
+"Piirrä mustia vuoroviivoja videoihin jotta ne näyttäisivät terävämmiltä"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
-msgstr "Käytä mieluiten digitaalisia äänitehosteita."
+msgstr "Käytä mieluiten digitaalisia äänitehosteita"
 
 #: engines/sci/detection.cpp:421
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
-"Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden sijaan."
+"Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden sijaan"
 
 #: engines/sci/detection.cpp:440
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -3276,11 +3449,11 @@ msgstr ""
 
 #: engines/sci/detection.cpp:451
 msgid "Use CD audio"
-msgstr "Käytä CD:n ääntä"
+msgstr "Käytä CD-ääntä"
 
 #: engines/sci/detection.cpp:452
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista."
+msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista"
 
 #: engines/sci/detection.cpp:462
 msgid "Use Windows cursors"
@@ -3298,17 +3471,39 @@ msgstr "Käytä hopeisia kursoreita"
 
 #: engines/sci/detection.cpp:474
 msgid ""
-"Use the alternate set of silver cursors, instead of the normal golden ones"
+"Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
 
+#: engines/scumm/detection.cpp:1120
+msgid ""
+"Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
+"version (in particular, not a fan-made translation), please, report the\n"
+"following data to the ScummVM team along with the name of the game you "
+"tried\n"
+"to add and its version, language, etc.:\n"
+msgstr ""
+"Peliversiosi vaikuttaa olevan tuntematon. Jos tämä *EI* ole faniversio\n"
+"(esim. fanikäännös), ole kiltti ja raportoi seuraavat tiedot ScummVM:n "
+"kehittäjille pelin nimen,\n"
+"version, kielen, yms. kera.\n"
+
+#: engines/scumm/detection.cpp:1138
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
+"Putt-Putt Saves the Zoo iOS:in kevytversio ei ole tuettu piratismin "
+"ehkäisemiseksi.\n"
+"Kokoversion voi ostaa iTunes-kaupasta."
+
 #: engines/scumm/detection.cpp:1341
-#, fuzzy
 msgid "Show Object Line"
 msgstr "Näytä esineiden tiedot"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Näytä esineiden nimet näytön alalaidassa"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3318,7 +3513,7 @@ msgstr "Lisää levyke %c ja paina jotain nappia jatkaaksesi."
 #: engines/scumm/dialogs.cpp:173
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "Tiedosto %s, (%c%d) ei löydy. Paina nappia."
+msgstr "Tiedostoa %s, (%c%d) ei löydy. Paina nappia."
 
 #: engines/scumm/dialogs.cpp:174
 #, c-format
@@ -3333,15 +3528,13 @@ msgstr "Pause. Paina välilyöntiä jatkaaksesi."
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:179
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
 msgstr "Haluatko varmasti aloittaa pelin alusta? (K/E)K"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Haluatko varmati lopettaa?"
+msgstr "Haluatko varmati lopettaa? (K/E)K"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
@@ -3349,7 +3542,7 @@ msgstr "Pelaa"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr "Laita tallennus/lataus levy asemaan"
+msgstr "Laita tallennus/lataus levyke asemaan"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
@@ -3383,7 +3576,7 @@ msgstr "Valitse ladattava peli"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
-msgstr "Pelin nimi"
+msgstr "Pelin nimi)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:284
@@ -3434,11 +3627,11 @@ msgstr "Yleisiä näppäimistökomentoja:"
 
 #: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
-msgstr "Tallenna / Lataa peli"
+msgstr "Tallenna / Lataa dialogi"
 
 #: engines/scumm/help.cpp:77
 msgid "Skip line of text"
-msgstr "Ohita rivi tekstiä"
+msgstr "Ohita tekstirivi"
 
 #: engines/scumm/help.cpp:78
 msgid "Esc"
@@ -3465,8 +3658,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-msgid "Load game state 1-10"
-msgstr "Lataa pelitila 1-10"
+msgid "Load saved game 1-10"
+msgstr "Lataa pelitallennus 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3475,8 +3668,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-msgid "Save game state 1-10"
-msgstr "Tallenna pelitila 1-10"
+msgid "Save game 1-10"
+msgstr "Luo pelitallennus 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -3492,7 +3685,7 @@ msgstr "Hidasta/nopeuta tekstiä"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
-msgstr "Simuloi hiiren vasenta näppäintä"
+msgstr "Simuloi hiiren vasenta nappia"
 
 #: engines/scumm/help.cpp:91
 msgid "Tab"
@@ -3532,11 +3725,11 @@ msgstr "Kytke hiiren kaappaus päälle tai pois"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
-msgstr "Vaihda grafiikkafiltteriä"
+msgstr "Vaihda grafiikkasuodatinta"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Kasvata / vähennä skaalakerrointa"
+msgstr "Kasvata / vähennä skaalauskerrointa"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
@@ -3560,7 +3753,7 @@ msgstr "  mahdollisten virheiden vuoksi."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
-msgstr ""
+msgstr "Kehräysluonnokset näppäimistöllä:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
@@ -3569,7 +3762,7 @@ msgstr "Pelin tärkeimmät kontrollit:"
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162
 msgid "Push"
-msgstr "Paina"
+msgstr "Työnnä"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163
@@ -3646,7 +3839,7 @@ msgstr "Pue ylle"
 
 #: engines/scumm/help.cpp:151
 msgid "Take off"
-msgstr "Lähde matkaan"
+msgstr "Riisu"
 
 #: engines/scumm/help.cpp:157
 msgid "Fix"
@@ -3814,27 +4007,27 @@ msgstr "Vieritä listaa alas"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr ""
+msgstr "Ylävasen esine"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr ""
+msgstr "Alavasen esine"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr ""
+msgstr "Yläoikea esine"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr ""
+msgstr "Alaoikea esine"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr ""
+msgstr "Keskivasen esine"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr ""
+msgstr "Keskioikea esine"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
@@ -3850,27 +4043,27 @@ msgstr "Kolmas lapsi"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr ""
+msgstr "Inventorio/ÄÖ Pistenäyttö päälle/pois"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr ""
+msgstr "Näppäimistö/Hiiritappelu (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr ""
+msgstr "* Näppäimistötappelu on aina päällä,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr ""
+msgstr "  joten huolimatta viestistä pelissä tämä"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr ""
+msgstr "  itseasiassa laittaa hiiritappelun päälle/pois"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Tappeluohjaimet (numpad)"
+msgstr "Tappeluohjaimet (numpad):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -3903,7 +4096,7 @@ msgstr "Lyö alas"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr ""
+msgstr "Yllätyslyönti"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
@@ -3911,7 +4104,7 @@ msgstr "Nämä ovat Indylle vasemmalla."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr "Kun Indy on oikealla, "
+msgstr "Kun Indy on oikealla,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
@@ -3962,25 +4155,22 @@ msgid "Fly to lower right"
 msgstr "Lennä alas oikealle"
 
 #: engines/scumm/input.cpp:578
-#, fuzzy
 msgid "Snap scroll on"
-msgstr "Pehmeä vieritys"
+msgstr "Snap scroll päälle"
 
 #: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
-msgstr ""
+msgstr "Snap scroll pois päältä"
 
 #: engines/scumm/input.cpp:593
-#, fuzzy
 msgid "Music volume: "
-msgstr "Musiikki:"
+msgstr "Musiikin äänenvoimakkuus: "
 
 #: engines/scumm/input.cpp:610
-#, fuzzy
 msgid "Subtitle speed: "
-msgstr "Tekstin nopeus:"
+msgstr "Tekstityksen nopeus: "
 
-#: engines/scumm/scumm.cpp:1879
+#: engines/scumm/scumm.cpp:1880
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -3989,98 +4179,80 @@ msgstr ""
 "Suora MIDI tuki vaatii Roland päivityksen LucasArtsilta, mutta\n"
 "%s puuttuu. Käytetään AdLibia sen sijaan."
 
-#: engines/scumm/scumm.cpp:2732
-#, fuzzy
+#: engines/scumm/scumm.cpp:2733
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Maniac Mansionin pitäisi nyt käynnistyä, mutta ScummVM ei tue sitä vielä. "
-"Pelataksesi Maniac Mansionia, mene ScummVM:n päävalikkoon ja paina 'Lisää "
-"peli'. Valitse 'Maniac' hakemisto Tentacle hakemiston sisältä."
+"Normaalisti Maniac Mansion käynnistyisi nyt. Jotta se olisi mahdollista, "
+"Maniac Mansionin pelitiedostojen pitää löytyä \"Maniac\"-kansiosta Tentacle-"
+"pelikansion sisältä, ja sen pitää myös olla lisätty pelinä ScummVM:ään."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"\"Loom\":in Macintosh ohjelmatiedostoa ei löydetty\n"
+"instrumenttien lukemiseksi. Emme soita musiikkia."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-
-#: engines/sherlock/detection.cpp:71
-#, fuzzy
-msgid "Use original savegame dialog"
-msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
-
-#: engines/sherlock/detection.cpp:72
-msgid ""
-"Files button in-game shows original savegame dialog rather than the ScummVM "
-"menu"
-msgstr ""
+"\"Monkey Island\":in Macintosh ohjelmatiedostoa ei löydetty\n"
+"instrumenttien lukemiseksi. Emme soita musiikkia."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pikselöidyt kohtauksenvaihdot"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Kohtauksia vaihtaessa näytetään sattumanvarainen pikselitransitio"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Älä näytä tärkeitä alueita hiirtä liikuttaessa"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Näytä tärkeiden alueiden nimet vain sen jälkeen kun aluetta tai "
+"toimintanappia on painettu"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Vaihda hahmoa"
+msgstr "Näytä hahmojen muotokuvat"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Näytä hahmojen muotokuvat keskustelujen aikana"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Liu'uta dialogit ruudulle"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Liu'uta dialogit ruudulle sen sijaan että ne näytettäisiin välittömästi"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Läpinäkyvät ikkunat"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
-
-#: engines/sky/compact.cpp:130
-msgid ""
-"Unable to find \"sky.cpt\" file!\n"
-"Please download it from www.scummvm.org"
-msgstr ""
-"Tiedostoa \"sky.cpt\" ei löydy!\n"
-"Hae se ScummVM:n verkkosivulta."
+msgstr "Näytä ikkunat osittain läpinäkyvällä taustalla"
 
 #: engines/sky/compact.cpp:141
-msgid ""
-"The \"sky.cpt\" file has an incorrect size.\n"
-"Please (re)download it from www.scummvm.org"
-msgstr ""
-"Tiedosto \"sky.cpt\" on väärän kokoinen.\n"
-"Hae uusi versio ScummVM:n verkkosivuilta."
+msgid "The \"sky.cpt\" engine data file has an incorrect size."
+msgstr "\"sky.cpt\" pelimoottorin datatiedostolla on väärä koko."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
@@ -4093,7 +4265,7 @@ msgstr "Käytä levykeversion introa (vain CD versiossa)"
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "PSX stream videota '%s' ei voi näyttää paletisoidussa tilassa"
+msgstr "PSX stream videota '%s' ei voi toistaa paletisoidussa tilassa"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
@@ -4101,11 +4273,11 @@ msgstr ""
 "DXA videotiedostoja löydettiin mutta ScummVM on käännetty ilman zlib-tukea"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"DXA videotiedostoja löydettiin mutta ScummVM on käännetty ilman zlib-tukea"
+"MPEG-2 videotiedostoja löydettiin mutta ScummVM on käännetty ilman MPEG-2-"
+"tukea"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
@@ -4114,19 +4286,21 @@ msgstr "Videotiedosto '%s' ei löytynyt"
 
 #: engines/sword1/control.cpp:863
 msgid ""
-"ScummVM found that you have old savefiles for Broken Sword 1 that should be "
-"converted.\n"
+"ScummVM found that you have old saved games for Broken Sword 1 that should "
+"be converted.\n"
 "The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"Broken Sword 1:n pelitallennukset ovat vanhassa formaatissa. Tallennukset "
-"tulee muuntaa,\n"
-"jotta niitä voi käyttää ScummVM:ssä. Paina 'Hyväksy' muuntaaksesi tiedostot. "
-"Mikäli et halua muuntaa tiedostoja nyt\n"
-"ScummVM kysyy asiaa seuraavan kerran kun käynnistät pelin.\n"
+"ScummVM löysi pelille Broken Sword 1 vanhoja pelitallennuksia jotka pitäisi "
+"muuntaa.\n"
+"Vanhaa formaattia ei enää tueta, joten et pysty lataamaan tallenteitasi "
+"ellet muunna niitä.\n"
+"\n"
+"Paina OK muuntaaksesi tallenteet nyt, muuten kysymme sinulta uudelleestaan "
+"seuraavalla kerralla\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -4164,75 +4338,161 @@ msgstr "Näytä esineiden kuvaus kohdistaessasi kursorin esineen ylle"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Käytä englanninkielistä puhetta"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Käytä englanninkielistä puhetta saksankielisen sijaan kaikille muille "
+"kielille paitsi saksalle"
 
-#: engines/teenagent/resources.cpp:96
-msgid ""
-"You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
-"Asennuksestasi puuttuu 'teenagent.dat' tiedosto. Hae se ScummVM:n "
-"nettisivuilta"
-
-#: engines/teenagent/resources.cpp:117
+#: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
 "Tiedosto teenagent.dat on pakattu, mutta zlib-kirjastoa ei ole käännetty "
-"ScummVM:ään. Pura teenagent.dat."
+"ScummVM:ään. Pura teenagent.dat"
+
+#: engines/tony/tony.cpp:258
+#, c-format
+msgid "Font variant not present in '%s' engine data file."
+msgstr "Fonttivarianttia ei löydy '%s' pelimoottorin datatiedostosta."
+
+#: engines/toon/toon.cpp:222
+#, c-format
+msgid "Saved game in slot #%d "
+msgstr "Peli tallennettu kohtaan #%d "
+
+#: engines/toon/toon.cpp:226
+#, c-format
+msgid "Could not quick save into slot #%d"
+msgstr "Pikapelitallennus kohtaan %d epäonnistui"
+
+#: engines/toon/toon.cpp:239
+#, c-format
+msgid "Saved game #%d quick loaded"
+msgstr "Pelitallenne #%d pikaladattu"
+
+#: engines/toon/toon.cpp:243
+#, c-format
+msgid "Could not quick load the saved game #%d"
+msgstr "Tallennuksen #%d pikalataus epäonnistui"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Näytä FPS-laskuri"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "Näytä tämänhetkinen kuvia/sekunti määrä vasemmassa ylänurkassa"
+
+#: engines/wintermute/detection.cpp:68
+msgid "Sprite bilinear filtering (SLOW)"
+msgstr "Spritejen bilineaarinen suodatus (HIDAS)"
+
+#: engines/wintermute/detection.cpp:69
+msgid "Apply bilinear filtering to individual sprites"
+msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
 #: engines/zvision/detection_tables.h:52
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja, ScummVM valikoiden sijaan"
+msgstr ""
+"Käytä alkuperäisiä tallenna/lataa valikkoja ScummVM käyttöliittymän sijaan"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr ""
+msgstr "Tupla FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Kasvata ruudunpäivitysnopeus 60 FPS:ään 30 FPS:stä"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable Venus"
-msgstr "Käytä helium moodia"
+msgstr "Käytä Venusta"
 
 #: engines/zvision/detection_tables.h:72
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "Käytä helium moodia"
+msgstr "Käytä Venus-avustusjärjestelmää"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Animaatio pois päältä kääntyessä"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Animaatio pois päältä panoraamamoodissa kääntyessä"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "Käytä korkearesoluutioista MPEG-videota"
 
 #: engines/zvision/detection_tables.h:92
+msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
+msgstr ""
+"Käytä DVD-version MPEG videoita matalampiresoluutioisten AVI-tiedostojen "
+"sijaan"
+
+#: engines/zvision/file/save_manager.cpp:220
+#, c-format
+msgid ""
+"This saved game uses version %u, but this engine only supports up to version "
+"%d. You will need an updated version of the engine to use this saved game."
+msgstr ""
+"Tämä pelitallennus käyttää versiota %u, mutta tämä pelimoottorin tuki on "
+"vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
+"käyttääksesi tätä pelitallennusta."
+
+#~ msgid ""
+#~ "Unable to find \"sky.cpt\" file!\n"
+#~ "Please download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Tiedostoa \"sky.cpt\" ei löydy!\n"
+#~ "Hae se ScummVM:n verkkosivulta"
+
+#~ msgid ""
+#~ "The \"sky.cpt\" file has an incorrect size.\n"
+#~ "Please (re)download it from www.scummvm.org"
+#~ msgstr ""
+#~ "Tiedosto \"sky.cpt\" on väärän kokoinen.\n"
+#~ "Hae uusi versio ScummVM:n verkkosivuilta"
+
+#~ msgid ""
+#~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Asennuksestasi puuttuu 'teenagent.dat' tiedosto. Hae se ScummVM:n "
+#~ "nettisivuilta"
+
+#~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Asennuksestasi puuttuu 'toon.dat' tiedosto. Hae se ScummVM:n nettisivuilta"
+
 #, fuzzy
-msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
-msgstr "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
+#~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
+#~ msgstr ""
+#~ "Asennuksestasi puuttuu 'teenagent.dat' tiedosto. Hae se ScummVM:n "
+#~ "nettisivuilta"
+
+#, fuzzy
+#~ msgid "Use original savegame dialog"
+#~ msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
+
+#~ msgid "The game in '%s' seems to be unknown."
+#~ msgstr "Peli hakemistossa '%s' näyttäisi olevan tuntematon."
+
+#~ msgid ""
+#~ "Please, report the following data to the ScummVM team along with name"
+#~ msgstr ""
+#~ "Ole hyvä ja ilmoita ScummVM:n kehittäjille seuraavat tiedot, lisäksi kerro"
+
+#~ msgid "of the game you tried to add and its version/language/etc.:"
+#~ msgstr ""
+#~ "mikä peli oli kyseessä, ja sen versio, kieli, ja muut vastaavat tiedot."
+
+#~ msgid "You have to restart ScummVM before your changes will take effect."
+#~ msgstr "ScummVM pitää käynnistää uudelleen jotta muutokset tulevat voimaan."
 
 #, fuzzy
 #~ msgid "Specifies where Files Manager can access to"

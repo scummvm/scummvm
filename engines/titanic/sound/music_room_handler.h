@@ -23,6 +23,7 @@
 #ifndef TITANIC_MUSIC_ROOM_HANDLER_H
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
+#include "titanic/sound/audio_buffer.h"
 #include "titanic/sound/music_wave.h"
 #include "titanic/sound/wave_file.h"
 
@@ -31,36 +32,59 @@ namespace Titanic {
 class CProjectItem;
 class CSoundManager;
 
-enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+enum MusicInstrument { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+
+struct MusicRoomInstrument {
+	int _pitchControl;
+	int _speedControl;
+	bool _directionControl;
+	bool _inversionControl;
+	bool _muteControl;
+	MusicRoomInstrument() : _pitchControl(0), _speedControl(0), _directionControl(false),
+		_inversionControl(false), _muteControl(false) {}
+};
 
 class CMusicRoomHandler {
-	struct Controls {
-		int _pitchControl;
-		int _speedControl;
-		int _directionControl;
-		int _inversionControl;
-		int _muteControl;
-		Controls() : _pitchControl(0), _speedControl(0), _directionControl(0),
-			_inversionControl(0), _muteControl(0) {}
+	struct Object3 {
+		byte *_field0;
+		int _field4;
+		Object3() : _field0(nullptr), _field4(0) {}
+		~Object3() { delete[] _field0; }
 	};
+
 	struct Array5Entry {
 		int _v1;
 		int _v2;
 		Array5Entry() : _v1(0), _v2(0) {}
+
+		void clear() { _v1 = _v2 = 0; }
 	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
-	Controls _array1[4];
-	Controls _array2[4];
+	MusicRoomInstrument _array1[4];
+	MusicRoomInstrument _array2[4];
+	Object3 *_array3[4];
+	int _array4[4];
 	Array5Entry _array5[4];
-	bool _stopWaves;
+	int _array6[4];
+
+	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;
-	int _soundVolume;
-	uint _ticks;
 	int _field108;
+	CAudioBuffer *_audioBuffer;
+	int _field118;
+	uint _soundStartTicks;
+	uint _startTicks;
+	int _volume;
+private:
+	void trigger();
+
+	void updateAudio();
+	void fn1();
+	bool fn2();
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
@@ -68,56 +92,81 @@ public:
 	/**
 	 * Creates a new music wave class instance, and assigns it to a slot
 	 * in the music handler
-	 * @param waveIndex		Slot to save new instance in
+	 * @param instrument	Which instrument instance is for
 	 * @param count			Number of files the new instance will contain
 	 */
-	CMusicWave *createMusicWave(int waveIndex, int count);
-
-	void createWaveFile(int musicVolume);
+	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	/**
-	 * Handles regular polling the music handler
+	 * TODO: Verify - this starts the given music?
 	 */
-	bool poll();
+	void setVolume(int volume);
 
 	/**
-	 * Flags whether the loaded music waves will be stopped when the
-	 * music handler is stopped
+	 * Flags whether the music handler is active
 	 */
-	void setStopWaves(bool flag) { _stopWaves = flag; }
+	void setActive(bool flag) { _active = flag; }
 
 	/**
 	 * Stop playing the music
 	 */
 	void stop();
 
-	bool checkSound(int index) const;
+	/**
+	 * Checks the specified instrument to see if it's settings are "correct"
+	 */
+	bool checkInstrument(MusicInstrument instrument) const;
 
 	/**
-	 * Set a setting
+	 * Sets the speed control value
 	 */
-	void setSpeedControl2(MusicControlArea area, int value);
+	void setSpeedControl2(MusicInstrument instrument, int value);
 
 	/**
-	 * Set a setting
+	 * Sets the pitch control value
 	 */
-	void setPitchControl2(MusicControlArea area, int value);
+	void setPitchControl2(MusicInstrument instrument, int value);
 
 	/**
-	 * Set a setting
+	 * Sets the inversion control value
 	 */
-	void setInversionControl2(MusicControlArea area, int value);
+	void setInversionControl2(MusicInstrument instrument, bool value);
 
 	/**
-	 * Set a setting
+	 * Sets the direction control value
 	 */
-	void setDirectionControl2(MusicControlArea area, int value);
+	void setDirectionControl2(MusicInstrument instrument, bool value);
 
-	void setPitchControl(MusicControlArea area, int value);
-	void setSpeedControl(MusicControlArea area, int value);
-	void setDirectionControl(MusicControlArea area, int value);
-	void setInversionControl(MusicControlArea area, int value);
-	void setMuteControl(MusicControlArea area, int value);
+	/**
+	 * Sets the pitch control value
+	 */
+	void setPitchControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the speed control value
+	 */
+	void setSpeedControl(MusicInstrument instrument, int value);
+
+	/**
+	 * Sets the direction control value
+	 */
+	void setDirectionControl(MusicInstrument instrument, bool value);
+
+	/**
+	 * Sets the inversion control value
+	 */
+	void setInversionControl(MusicInstrument instrument, bool value);
+
+	/**
+	 * Sets the mute control value
+	 */
+	void setMuteControl(MusicInstrument instrument, bool value);
+
+	/**
+	 * Handles regular updates
+	 * @returns		True if the music is still playing
+	 */
+	bool update();
 };
 
 } // End of namespace Titanic

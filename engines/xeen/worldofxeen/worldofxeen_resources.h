@@ -42,8 +42,6 @@ public:
 	static const char *const PHAROAH_ENDING_TEXT2;
 };
 
-extern Resources *g_resources;
-
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen
 

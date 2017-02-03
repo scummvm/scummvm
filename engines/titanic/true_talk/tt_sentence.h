@@ -67,7 +67,7 @@ public:
 	int _field58;
 	TTroomScript *_roomScript;
 	TTnpcScript *_npcScript;
-	int _field2C;
+	int _category;
 public:
 	TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript);
@@ -76,7 +76,7 @@ public:
 
 	void setState(int v) { _field34 = v; }
 	void set38(int v) { _field38 = v; }
-	bool check2C() const { return _field2C > 1 && _field2C <= 10; }
+	bool checkCategory() const { return _category > 1 && _category <= 10; }
 	int concept18(TTconceptNode *conceptNode) {
 		return conceptNode ? conceptNode->get18() : 0;
 	}

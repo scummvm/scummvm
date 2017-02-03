@@ -78,9 +78,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Find the Heart", "a6834cb230cea1953f5bf1f8f7aacabd", 105871), // Standalone
 	FANGAMEN("Fortune Teller", "Fortune Teller 1.1", "7d2628eeea67b33379e01c0aef8dd196", 73931),
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5db2f95c7abaa9d060b94271a5bc57f8", 177500),
-	// Cropped graphics on first scene
+	// Cropped graphics on first scene, cannot pass to in-game
 	FANGAME("Intro to Gothic", "6f732eaad6e3b85795f8ee6c6a40d837", 208067),
-	// No Next button in intro
+	// Lots of unhandled comparisons
 	FANGAME("Jamie the Demon Slayer", "fa0ca9618c18425b6d9bf913f762d91b", 232789),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "e66f37472e1414a088eb5d5acc4df794", 820572),
 	FANGAMEN("Jumble", "LSJUMBLE", "7c46851d2f90c7da9efe40b1688869c2", 647339), // Original file name is "LSJUMBLE† "
@@ -89,7 +89,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Karth of the Jungle II", "32161b27de894fd9e3f054afc4013f34", 201053),
 	FANGAMEN("Little Pythagoras", "Little Pythagoras 1.1.1", "75906fa955de695ac3e8164e7d88ac7b", 628821),
 	FANGAME("Lost Crystal", "d5e27a83f2884a24c6ec26c6cb776fe9", 771072),
-	// Crash in design drawing on startup
 	FANGAMEN("Lost In Kookyville", "Lost In Kookyville 1.2.4", "5ab6259706b33230dbfba05618c2c5c9", 721569),
 	FANGAME("Magic Rings", "450e986694b96f3b9e6cc64e57b753dc", 109044),
 	// No way to click on the house
@@ -123,13 +122,11 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Pyramid of Ert", "Pyramid of Ert V1.2", "fb931cd35440a66864a434c773b496da", 315783),
 	FANGAME("Queen Quest", "8273e29afe64a984eb0ce7b43fdf3a59", 57039), // alt version
 	FANGAME("Quest for T-Rex", "f16f2cd525c9aeb4733295d8d842b902", 592584),
-	// Crash in console rendering on the initial scene
 	FANGAME("Quest for the Dark Sword", "4815d9a770904b26c463b7e4fcd121c7", 572576),
 	FANGAME("Radical Castle", "09b70763c7a48a76240bd0e42737caaa", 355601),
 	FANGAME("Radical Castle 1.0", "8ae2e29ffeca52a5c7fae66dec4764a3", 347278),
 	BIGGAME("raysmaze", "v1.5", "Ray's Maze1.5", "521583e59bdc1d611f963cef1dc25869", 1408516),
 	BIGGAME("raysmaze", "v1.5/alt", "Ray's Maze1.5", "120e65bec953b981b2e0aed45ad45d70", 1408516),
-	// Next button is not visible
 	FANGAME("Ray's World Builder Demo", "d252ee8e38c9abc50455d071a367d031", 116056),
 	// Unhandled comparison case
 	FANGAME("Sands of Time", "b00ea866cb04cd87124e5720bc2c84c7", 122672), // Original file name "Sands of Time†"

@@ -43,8 +43,17 @@ CWaveFile::~CWaveFile() {
 	}
 }
 
-uint CWaveFile::getDuration() const {
-	return _stream ? _stream->getLength().secs() : 0;
+uint CWaveFile::getDurationTicks() const {
+	if (!_stream)
+		return 0;
+
+	// FIXME: The original uses acmStreamSize to calculate
+	// a desired size. Since I have no idea how the system API
+	// method works, for now I'm using a simple ratio of a
+	// sample output to input value
+	uint dataSize = _size - 0x46;
+	double newSize = (double)dataSize * (1475712.0 / 199836.0);
+	return (uint)(newSize * 1000.0 / _stream->getRate());
 }
 
 bool CWaveFile::loadSound(const CString &name) {
@@ -93,8 +102,18 @@ bool CWaveFile::loadMusic(const CString &name) {
 	return true;
 }
 
+bool CWaveFile::loadMusic(CAudioBuffer *buffer) {
+	assert(!_stream && buffer);
+	warning("TODO: CWaveFile::loadMusic");
+	return false;
+}
+
 uint CWaveFile::getFrequency() const {
 	return _stream->getRate();
+}
+
+void CWaveFile::reset() {
+	_stream->rewind();
 }
 
 } // End of namespace Titanic z

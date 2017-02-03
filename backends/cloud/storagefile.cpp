@@ -56,10 +56,10 @@ StorageFile::StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir) {
 	_isDirectory = dir;
 }
 
-StorageFile::StorageFile(Common::String id, Common::String path, Common::String name, uint32 sz, uint32 ts, bool dir) {
-	_id = id;
-	_path = path;
-	_name = name;
+StorageFile::StorageFile(Common::String fileId, Common::String filePath, Common::String fileName, uint32 sz, uint32 ts, bool dir) {
+	_id = fileId;
+	_path = filePath;
+	_name = fileName;
 	_size = sz;
 	_timestamp = ts;
 	_isDirectory = dir;

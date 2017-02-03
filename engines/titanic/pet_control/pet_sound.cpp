@@ -275,7 +275,7 @@ bool CPetSound::MouseButtonUpMsg(const Point &pt) {
 	return true;
 }
 
-void CPetSound::getTooltip(CPetText *text) {
+void CPetSound::getTooltip(CTextControl *text) {
 	text->setText("Change the volume settings.");
 }
 

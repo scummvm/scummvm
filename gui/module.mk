@@ -58,11 +58,13 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_CLOUD
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	downloaddialog.o \
 	remotebrowser.o \
 	storagewizarddialog.o
+endif
 endif
 
 ifdef ENABLE_EVENTRECORDER

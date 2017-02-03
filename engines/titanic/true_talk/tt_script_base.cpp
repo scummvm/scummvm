@@ -33,7 +33,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int state,
 		_field20(0), _field24(0), _field28(0), _field2C(0),
 		_field30(0), _state(0), _hist2P(nullptr), _field3C(0),
 		_respHeadP(nullptr), _respTailP(nullptr), _oldResponseP(nullptr) {
-	if (!isValid()) {
+	if (isValid()) {
 		if (!v7 || !getStatus()) {
 			_id = scriptId;
 			_field20 = v3;
@@ -43,7 +43,7 @@ TTscriptBase::TTscriptBase(int scriptId, const char *charClass, int state,
 			_field30 = v7;
 			_state = state;
 		} else {
-			_status = 5;
+			_status = SS_5;
 		}
 	}
 
@@ -65,9 +65,8 @@ TTscriptBase::~TTscriptBase() {
 }
 
 bool TTscriptBase::isValid() {
-	bool result = !_charName.isValid() && !_charClass.isValid();
-	_status = result ? 0 : 11;
-	return result;
+	_status = SS_VALID;
+	return true;
 }
 
 void TTscriptBase::reset() {
@@ -129,7 +128,7 @@ void TTscriptBase::appendResponse(int index, int *maxP, int id) {
 	if (id && (!maxP || index <= *maxP)) {
 		if (_respTailP) {
 			// Prior fragments already exist, so append to end of chain
-			_respTailP = new TTresponse(_respTailP);
+			_respTailP = _respTailP->appendResponse(id);
 		} else {
 			// Currently no tail
 			_respTailP = new TTresponse(id, 3);

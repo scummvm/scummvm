@@ -54,20 +54,17 @@ bool CPetDragChev::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	if (msg->_dropTarget) {
-		CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_dropTarget);
+	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_dropTarget);
 
-		if (succubus) {
-			CSetChevRoomBits chevMsg(_id);
-			chevMsg.execute(succubus);
-		} else {
-			CPetControl *petControl = getPetControl();
-			if (petControl && petControl->contains(msg->_mousePos)
-					&& msg->_mousePos.x < 528) {
-				if (petControl->checkDragEnd(this))
-					petMoveToHiddenRoom();
-			}
-		}
+	if (succubus) {
+		CSetChevRoomBits chevMsg(_destRoomFlags);
+		chevMsg.execute(succubus);
+		petMoveToHiddenRoom();
+	} else {
+		CPetControl *petControl = getPetControl();
+		if (!petControl || !petControl->contains(msg->_mousePos)
+				|| msg->_mousePos.x >= 528 || !petControl->checkDragEnd(this))
+			petMoveToHiddenRoom();
 	}
 
 	return true;

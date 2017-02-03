@@ -26,15 +26,16 @@ namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CEditControl, CGameObject)
 	ON_MESSAGE(EditControlMsg)
+	ON_MESSAGE(MouseWheelMsg)
 END_MESSAGE_MAP()
 
-CEditControl::CEditControl() : CGameObject(), _fieldBC(false),  _fontNumber(0), _fieldD4(2),
-		_textR(0), _textG(0), _textB(0), _fieldF0(0), _fieldF4(0) {
+CEditControl::CEditControl() : CGameObject(), _showCursor(false),  _fontNumber(0), _fieldD4(2),
+		_textR(0), _textG(0), _textB(0), _fieldF0(0), _isPassword(false) {
 }
 
 void CEditControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_showCursor, indent);
 	file->writeNumberLine(_editLeft, indent);
 	file->writeNumberLine(_editBottom, indent);
 	file->writeNumberLine(_editHeight, indent);
@@ -46,14 +47,14 @@ void CEditControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_textB, indent);
 	file->writeQuotedLine(_text, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_isPassword, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CEditControl::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_showCursor = file->readNumber();
 	_editLeft = file->readNumber();
 	_editBottom = file->readNumber();
 	_editHeight = file->readNumber();
@@ -65,67 +66,68 @@ void CEditControl::load(SimpleFile *file) {
 	_textB = file->readNumber();
 	_text = file->readString();
 	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_isPassword = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 	switch (msg->_mode) {
-	case 0:
-		if (!_editLeft) {
-			_editHeight = _bounds.height();
-			_editBottom = _bounds.bottom;
-			_editLeft = _bounds.left + _bounds.width() / 2;
-			_maxTextChars = msg->_param;
-			setTextFontNumber(_fontNumber);
+	case EDIT_INIT: {
+		// WORKAROUND: Fix original bug where MissiveOMat username & password
+		// text weren't initialised after the first time you use the MissiveOMat
+		_editHeight = _bounds.height();
+		_editBottom = _bounds.bottom;
+		_editLeft = _bounds.left + _bounds.width() / 2;
+		_maxTextChars = msg->_param;
+		setTextFontNumber(_fontNumber);
 
-			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 10;
-			ctlMsg._param = _fieldD4;
-			ctlMsg.execute(this);
+		CEditControlMsg ctlMsg;
+		ctlMsg._mode = EDIT_BORDERS;
+		ctlMsg._param = _fieldD4;
+		ctlMsg.execute(this);
 
-			ctlMsg._mode = 11;
-			ctlMsg._textR = _textR;
-			ctlMsg._textG = _textG;
-			ctlMsg._textB = _textB;
-			ctlMsg.execute(this);
-		}
+		ctlMsg._mode = EDIT_SET_COLOR;
+		ctlMsg._textR = _textR;
+		ctlMsg._textG = _textG;
+		ctlMsg._textB = _textB;
+		ctlMsg.execute(this);
 		break;
+	}
 
-	case 1: {
+	case EDIT_CLEAR: {
 		_text = "";
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 2: {
+	case EDIT_SET_TEXT: {
 		_text = msg->_text;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 3:
+	case EDIT_GET_TEXT:
 		msg->_text = _text;
 		break;
 
-	case 4:
+	case EDIT_LENGTH:
 		msg->_param = _text.size();
 		break;
 
-	case 5:
+	case EDIT_MAX_LENGTH:
 		_maxTextChars = msg->_param;
 		break;
 
-	case 6:
+	case EDIT_KEYPRESS:
 		if (msg->_param == 8 && !_text.empty()) {
 			_text = _text.left(_text.size() - 1);
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		} else if (msg->_param == 13) {
 			msg->_param = 1000;
@@ -135,32 +137,32 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 			_text += c;
 
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case 7:
+	case EDIT_SET_FONT:
 		setTextFontNumber(msg->_param);
 		break;
 
-	case 8:
-		if (!_fieldBC) {
-			_fieldBC = true;
+	case EDIT_SHOW_CURSOR:
+		if (!_showCursor) {
+			_showCursor = true;
 			CEditControlMsg ctlMsg;
-			ctlMsg._mode = 14;
+			ctlMsg._mode = EDIT_RENDER;
 			ctlMsg.execute(this);
 		}
 		break;
 
-	case 9:
-		if (_fieldBC) {
-			_fieldBC = false;
+	case EDIT_HIDE_CURSOR:
+		if (_showCursor) {
+			_showCursor = false;
 			getTextCursor()->hide();
 		}
 		break;
 
-	case 10: {
+	case EDIT_BORDERS: {
 		setTextHasBorders((msg->_param & 1) != 0);
 		if (msg->_param & 4)
 			_fieldF0 = 1;
@@ -169,28 +171,28 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		else
 			_fieldF0 = 0;
 
-		_fieldF4 = msg->_param & 0x10;
+		_isPassword = (msg->_param & 0x10) != 0;
 		CEditControlMsg ctlMsg;
-		ctlMsg._mode = 14;
+		ctlMsg._mode = EDIT_RENDER;
 		ctlMsg.execute(this);
 		break;
 	}
 
-	case 11:
+	case EDIT_SET_COLOR:
 		setTextColor(msg->_textR, msg->_textG, msg->_textB);
 		break;
 
-	case 12:
+	case EDIT_SHOW:
 		setVisible(true);
 		break;
 
-	case 13:
+	case EDIT_HIDE:
 		setVisible(false);
 		break;
 
-	case 14: {
+	case EDIT_RENDER: {
 		makeDirty();
-		CString str = _fieldF4 ? CString('*', _text.size()) : _text;
+		CString str = _isPassword ? CString('*', _text.size()) : _text;
 		setText(str);
 
 		int textWidth = getTextWidth();
@@ -201,7 +203,7 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 			makeDirty();
 		}
 
-		if (_fieldBC) {
+		if (_showCursor) {
 			CTextCursor *textCursor = getTextCursor();
 			textCursor->show();
 			textCursor->setPos(Point(_bounds.left + textWidth + 1, _bounds.top + 3));
@@ -216,6 +218,17 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 		break;
 	}
 
+	return true;
+}
+
+bool CEditControl::MouseWheelMsg(CMouseWheelMsg *msg) {
+	if (_name != "MissiveOMat Welcome")
+		return false;
+
+	if (msg->_wheelUp)
+		scrollTextUp();
+	else
+		scrollTextDown();
 	return true;
 }
 

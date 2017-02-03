@@ -308,7 +308,11 @@ public:
 	virtual void load(SimpleFile *file);
 	virtual void saveBody(SimpleFile *file);
 	virtual void loadBody(SimpleFile *file);
-	virtual int proc31() const;
+
+	/**
+	 * Returns the number of range records that are non-random
+	 */
+	virtual int getRangesCount() const;
 
 	/**
 	 * Sets a given dial to be pointing in a specified region (0 to 2)

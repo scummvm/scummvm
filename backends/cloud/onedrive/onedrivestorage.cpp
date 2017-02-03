@@ -67,8 +67,8 @@ void OneDriveStorage::loadKeyAndSecret() {
 #endif
 }
 
-OneDriveStorage::OneDriveStorage(Common::String accessToken, Common::String userId, Common::String refreshToken):
-	_token(accessToken), _uid(userId), _refreshToken(refreshToken) {}
+OneDriveStorage::OneDriveStorage(Common::String token, Common::String uid, Common::String refreshToken):
+	_token(token), _uid(uid), _refreshToken(refreshToken) {}
 
 OneDriveStorage::OneDriveStorage(Common::String code) {
 	getAccessToken(
@@ -193,35 +193,35 @@ void OneDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, Netwo
 		return;
 	}
 
-	Common::JSONObject info = json->asObject();
+	Common::JSONObject jsonInfo = json->asObject();
 
-	Common::String uid, name, email;
+	Common::String uid, displayName, email;
 	uint64 quotaUsed = 0, quotaAllocated = 26843545600LL; // 25 GB, because I actually don't know any way to find out the real one
 
-	if (Networking::CurlJsonRequest::jsonContainsObject(info, "createdBy", "OneDriveStorage::infoInnerCallback")) {
-		Common::JSONObject createdBy = info.getVal("createdBy")->asObject();
+	if (Networking::CurlJsonRequest::jsonContainsObject(jsonInfo, "createdBy", "OneDriveStorage::infoInnerCallback")) {
+		Common::JSONObject createdBy = jsonInfo.getVal("createdBy")->asObject();
 		if (Networking::CurlJsonRequest::jsonContainsObject(createdBy, "user", "OneDriveStorage::infoInnerCallback")) {
 			Common::JSONObject user = createdBy.getVal("user")->asObject();
 			if (Networking::CurlJsonRequest::jsonContainsString(user, "id", "OneDriveStorage::infoInnerCallback"))
 				uid = user.getVal("id")->asString();
 			if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "OneDriveStorage::infoInnerCallback"))
-				name = user.getVal("displayName")->asString();
+				displayName = user.getVal("displayName")->asString();
 		}
 	}
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "size", "OneDriveStorage::infoInnerCallback")) {
-		quotaUsed = info.getVal("size")->asIntegerNumber();
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "size", "OneDriveStorage::infoInnerCallback")) {
+		quotaUsed = jsonInfo.getVal("size")->asIntegerNumber();
 	}
 
 	Common::String username = email;
 	if (username == "")
-		username = name;
+		username = displayName;
 	if (username == "")
 		username = uid;
 	CloudMan.setStorageUsername(kStorageOneDriveId, username);
 
 	if (outerCallback) {
-		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
+		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, displayName, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}
 

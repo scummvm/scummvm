@@ -35,6 +35,7 @@ const LanguageDescription g_languages[] = {
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
 	{    "us", "en_US", "English (US)", EN_USA },
+	{    "et", "et_EE", "Estonian", ET_EST },
 	{    "fr", "fr_FR", "French", FR_FRA },
 	{    "de", "de_DE", "German", DE_DEU },
 	{    "gr", "el_GR", "Greek", GR_GRE },

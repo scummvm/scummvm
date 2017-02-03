@@ -77,6 +77,15 @@ int CString::lastIndexOf(char c) const {
 	return charP ? charP - c_str() : -1;
 }
 
+bool CString::containsIgnoreCase(const CString &str) const {
+	CString lowerStr = *this;
+	CString subStr = str;
+	lowerStr.toLowercase();
+	subStr.toLowercase();
+
+	return lowerStr.contains(subStr);
+}
+
 FileType CString::fileTypeSuffix() const {
 	CString ext = right(1);
 	if (ext == "0" || ext == "4")

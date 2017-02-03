@@ -40,7 +40,9 @@ private:
 	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
+#if 0
 	int _field80B0;
+#endif
 private:
 	/**
 	 * Called for ever new game frame

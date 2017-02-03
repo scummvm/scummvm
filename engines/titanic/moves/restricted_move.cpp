@@ -51,7 +51,7 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (classNum <= _classNum) {
 		// Okay to change to the given destination
 		changeView(_destination);
-	} else if (classNum != 4) {
+	} else if (classNum != UNCHECKED) {
 		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (compareRoomNameTo("EmbLobby")) {
 		playSound("a#17.wav");
@@ -66,9 +66,9 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CRestrictedMove::EnterViewMsg(CEnterViewMsg *msg) {
 	int classNum = getPassengerClass();
-	bool flag = classNum > _classNum;
+	bool flag = classNum <= _classNum;
 
-	if (classNum == 4) {
+	if (classNum == UNCHECKED) {
 		if (compareRoomNameTo("EmbLobby"))
 			flag = false;
 		else if (compareViewNameTo("Titania.Node 1.S"))

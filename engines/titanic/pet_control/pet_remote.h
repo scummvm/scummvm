@@ -27,7 +27,7 @@
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_glyphs.h"
 #include "titanic/pet_control/pet_remote_glyphs.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -45,7 +45,7 @@ private:
 	CPetGfxElement _send;
 	CPetGfxElement _receive;
 	CPetGfxElement _call;
-	CPetText _text;
+	CTextControl _text;
 private:
 	/**
 	 * Setup the control
@@ -112,6 +112,7 @@ public:
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 
 	/**
 	 * Returns true if the object is in a valid state
@@ -136,7 +137,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText();
+	virtual CTextControl *getText();
 
 	/**
 	 * Get an element from the section by a designated Id

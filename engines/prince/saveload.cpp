@@ -22,7 +22,6 @@
 
 #include "prince/prince.h"
 #include "prince/graphics.h"
-#include "prince/detection.h"
 #include "prince/flags.h"
 #include "prince/script.h"
 #include "prince/hero.h"
@@ -41,102 +40,9 @@ namespace Prince {
 
 #define kBadSVG 99
 #define kSavegameVersion 1
-#define kSavegameStrSize 14
-#define kSavegameStr "SCUMMVM_PRINCE"
 
 class InterpreterFlags;
 class Interpreter;
-
-struct SavegameHeader {
-	uint8 version;
-	Common::String saveName;
-	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
-};
-
-int PrinceMetaEngine::getMaximumSaveSlot() const {
-	return 99;
-}
-
-SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".###";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				Prince::SavegameHeader header;
-
-				// Check to see if it's a ScummVM savegame or not
-				char buffer[kSavegameStrSize + 1];
-				file->read(buffer, kSavegameStrSize + 1);
-
-				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
-					// Valid savegame
-					if (Prince::PrinceEngine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
-					}
-				} else {
-					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
-				}
-
-				delete file;
-			}
-		}
-	}
-
-	return saveList;
-}
-
-SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		Prince::SavegameHeader header;
-
-		// Check to see if it's a ScummVM savegame or not
-		char buffer[kSavegameStrSize + 1];
-		f->read(buffer, kSavegameStrSize + 1);
-
-		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			Prince::PrinceEngine::readSavegameHeader(f, header);
-		delete f;
-
-		if (!hasHeader) {
-			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
-			return desc;
-		} else {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
 
 bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
 	header.thumbnail = nullptr;
@@ -165,11 +71,6 @@ bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &he
 	header.saveMinutes = in->readSint16LE();
 
 	return true;
-}
-
-void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 bool PrinceEngine::canSaveGameStateCurrently() {

@@ -82,6 +82,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureFilteringMode:
 		return true;
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
@@ -99,6 +100,20 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		_currentState.aspectRatioCorrection = enable;
 		break;
 
+	case OSystem::kFeatureFilteringMode:
+		assert(_transactionMode != kTransactionNone);
+		_currentState.filtering = enable;
+
+		if (_gameScreen) {
+			_gameScreen->enableLinearFiltering(enable);
+		}
+
+		if (_cursor) {
+			_cursor->enableLinearFiltering(enable);
+		}
+
+		break;
+
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteEnabled = enable;
 		updateCursorPalette();
@@ -114,6 +129,9 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 		return _currentState.aspectRatioCorrection;
 
+	case OSystem::kFeatureFilteringMode:
+		return _currentState.filtering;
+
 	case OSystem::kFeatureCursorPalette:
 		return _cursorPaletteEnabled;
 
@@ -125,8 +143,7 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 namespace {
 
 const OSystem::GraphicsMode glGraphicsModes[] = {
-	{ "opengl_linear",  _s("OpenGL"),                GFX_LINEAR  },
-	{ "opengl_nearest", _s("OpenGL (No filtering)"), GFX_NEAREST },
+	{ "opengl",  _s("OpenGL"),                GFX_OPENGL  },
 	{ nullptr, nullptr, 0 }
 };
 
@@ -137,25 +154,15 @@ const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedGraphicsModes() 
 }
 
 int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
-	return GFX_LINEAR;
+	return GFX_OPENGL;
 }
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 	assert(_transactionMode != kTransactionNone);
 
 	switch (mode) {
-	case GFX_LINEAR:
-	case GFX_NEAREST:
+	case GFX_OPENGL:
 		_currentState.graphicsMode = mode;
-
-		if (_gameScreen) {
-			_gameScreen->enableLinearFiltering(mode == GFX_LINEAR);
-		}
-
-		if (_cursor) {
-			_cursor->enableLinearFiltering(mode == GFX_LINEAR);
-		}
-
 		return true;
 
 	default:
@@ -250,6 +257,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 						transactionError |= OSystem::kTransactionModeSwitchFailed;
 					}
 
+					if (_oldState.filtering != _currentState.filtering) {
+						transactionError |= OSystem::kTransactionFilteringFailed;
+					}
+
 					// Roll back to the old state.
 					_currentState = _oldState;
 					_transactionMode = kTransactionRollback;
@@ -286,7 +297,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
-		_gameScreen->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
+		_gameScreen->enableLinearFiltering(_currentState.filtering);
 		// We fill the screen to all black or index 0 for CLUT8.
 #ifdef USE_RGB_COLOR
 		if (_currentState.gameFormat.bytesPerPixel == 1) {
@@ -366,7 +377,6 @@ void OpenGLGraphicsManager::updateScreen() {
 
 #ifdef USE_OSD
 	{
-		Common::StackLock lock(_osdMutex);
 		if (_osdMessageChangeRequest) {
 			osdMessageUpdateSurface();
 		}
@@ -660,7 +670,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		}
 		_cursor = createSurface(textureFormat, true);
 		assert(_cursor);
-		_cursor->enableLinearFiltering(_currentState.graphicsMode == GFX_LINEAR);
+		_cursor->enableLinearFiltering(_currentState.filtering);
 	}
 
 	_cursorKeyColor = keycolor;
@@ -730,11 +740,6 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #ifdef USE_OSD
-	// HACK: Actually no client code should use graphics functions from
-	// another thread. But the MT-32 emulator and network synchronization still do,
-	// thus we need to make sure this doesn't happen while a updateScreen call is done.
-	Common::StackLock lock(_osdMutex);
-
 	_osdMessageChangeRequest = true;
 
 	_osdMessageNextData = msg;

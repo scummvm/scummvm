@@ -25,6 +25,7 @@
 #include "titanic/core/game_object.h"
 #include "titanic/core/message_target.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -161,6 +162,18 @@ bool CMessage::isPreEnterViewMsg() const {
 
 bool CMessage::isLeaveViewMsg() const {
 	return dynamic_cast<const CLeaveViewMsg *>(this) != nullptr;
+}
+
+/*------------------------------------------------------------------------*/
+
+CShowTextMsg::CShowTextMsg() : CMessage(), _message("NO TEXT INCLUDED!!!") {
+}
+
+CShowTextMsg::CShowTextMsg(const CString &msg) : CMessage(), _message(msg) {
+}
+
+CShowTextMsg::CShowTextMsg(StringId stringId) : CMessage() {
+	_message = g_vm->_strings[stringId];
 }
 
 } // End of namespace Titanic

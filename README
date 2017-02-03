@@ -19,7 +19,7 @@ Table of Contents:
  * 3.2 Datafiles
  * 3.3 Multi-CD games notes
  * 3.4 Known Problems
- * 3.5 Beneath a Steel Sky notes 
+ * 3.5 Beneath a Steel Sky notes
  * 3.6 Broken Sword games notes
  * * 3.6.1 Broken Sword
  * * 3.6.2 Broken Sword II
@@ -30,12 +30,12 @@ Table of Contents:
  * 3.9 Dragon History notes
  * 3.10 Flight of the Amazon Queen notes
  * 3.11 Gobliiins notes
- * 3.12 Inherit the Earth: Quest for the Orb notes 
+ * 3.12 Inherit the Earth: Quest for the Orb notes
  * 3.13 Maniac Mansion Apple II/NES notes
  * 3.14 Mickey's Space Adventure notes
  * 3.15 Nippon Safes Inc. Amiga notes
  * 3.16 Simon the Sorcerer notes
- * 3.17 The Curse of Monkey Island notes 
+ * 3.17 The Curse of Monkey Island notes
  * 3.18 The Feeble Files notes
  * 3.19 The Legend of Kyrandia notes
  * 3.20 Troll's Tale notes
@@ -43,8 +43,8 @@ Table of Contents:
  * 3.22 Sierra AGI games: Predictive Input Dialog notes
  * 3.23 Sierra SCI games: Simultaneous speech and subtitles
  * 3.24 Zork games notes
- * 3.25 Commodore64 games notes 
- * 3.26 Macintosh games notes 
+ * 3.25 Commodore64 games notes
+ * 3.26 Macintosh games notes
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -1309,6 +1309,10 @@ arguments -- see the next section.
   -z, --list-games         Display list of supported games and exit
   -t, --list-targets       Display list of configured targets and exit
   --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified
+  --auto-detect            Display a list of games from current or specified
+                           directory and start the first one found. Use
+                           --path=PATH before--auto-detect to specify a
+                           directory.
   --console                Enable the console window (default: enabled) (Windows only)
 
   -c, --config=CONFIG      Use alternate configuration file
@@ -1317,6 +1321,10 @@ arguments -- see the next section.
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  --filtering              Force filtered graphics mode
+  --no-filtering           Force unfiltered graphics mode
+
+
   --gui-theme=THEME        Select GUI theme (default, modern, classic)
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
@@ -1502,6 +1510,7 @@ other games.
                              modern monitors. Aspect-ratio correction
                              stretches the image to use 320x240 pixels
                              instead, or a multiple thereof
+    Ctrl-Alt f             - Enable/disable graphics filtering
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
     Ctrl-F7                - Open virtual keyboard (if enabled)
@@ -2426,8 +2435,8 @@ The following keywords are recognized:
     aspect_ratio       bool     Enable aspect ratio correction
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix, opengl_linear,
-                                opengl_nearest)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl)
+    filtering          bool     Enable graphics filtering
 
     confirm_exit       bool     Ask for confirmation by the user before
                                 quitting (SDL backend only).
@@ -2644,18 +2653,12 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
 
    Windows:
-   * Dev-C++
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
    * MinGW
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
    * Visual Studio (MSVC)
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
-   * Windows CE/Mobile
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC
@@ -2664,7 +2667,7 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 
    AmigaOS4:
       Please refer to:
-      <http://wiki.scummvm.org/index.php/AmigaOS>
+      <http://wiki.scummvm.org/index.php/AmigaOS4>
 
    Apple iPhone:
       Please refer to:
@@ -2705,10 +2708,6 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
-   Nintendo DS:
-      Please refer to:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
-
    Nintendo Wii and Gamecube:
       Please refer to:
       <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
@@ -2741,7 +2740,7 @@ debug messages (see <https://technet.microsoft.com/en-us/sysinternals/debugview.
 ----- -------
 Please refer to our extensive Credits list at:
 
-  <http://www.scummvm.org/credits/>
+  <http://www.scummvm.org/credits>
 
 
 ------------------------------------------------------------------------

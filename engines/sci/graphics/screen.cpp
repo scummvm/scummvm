@@ -84,11 +84,6 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		}
 	}
 
-	if (_resMan->detectHires()) {
-		_scriptWidth = 640;
-		_scriptHeight = 480;
-	}
-
 	// if not yet set, set those to script-width/height
 	if (!_width)
 		_width = _scriptWidth;

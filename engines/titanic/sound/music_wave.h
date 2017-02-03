@@ -28,9 +28,12 @@
 
 namespace Titanic {
 
+enum MusicWaveInstrument { MV_PIANO = 0, MV_BASS = 1, MV_BELLS = 2, MV_SNAKE = 3 };
+
 class CProjectItem;
 class CSoundManager;
 class CWaveFile;
+class CGameObject;
 
 class CMusicWave {
 	struct CMusicWaveFile {
@@ -39,16 +42,41 @@ class CMusicWave {
 		CMusicWaveFile() : _waveFile(nullptr), _value(0) {}
 	};
 private:
-	CProjectItem *_project;
+	static bool _pianoToggle;
+	static int _pianoCtr;
+	static int _bassCtr;
+	static byte *_buffer;
+private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
+	MusicWaveInstrument _instrument;
+	CProjectItem *_project;
+	CGameObject *_gameObjects[4];
+	int _field20;
+	int _field24;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
+	int _field4C;
 private:
 	/**
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
 	 */
 	CWaveFile *createWaveFile(const CString &name);
 public:
-	CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index);
+	/**
+	 * Handles initialization of static fields
+	 */
+	static void init();
+
+	/**
+	 * Deinitialization of static fields
+	 */
+	static void deinit();
+public:
+	CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
 	/**
 	 * Sets the maximum number of allowed files that be defined
@@ -61,9 +89,25 @@ public:
 	void load(int index, const CString &filename, int v3);
 
 	/**
-	 * Stops the music
+	 * Starts the music and associated animations
+	 */
+	void start(int val);
+
+	/**
+	 * Stops the music and associated animations
 	 */
 	void stop();
+
+	/**
+	 * Called regularly to handle triggering the animation of the
+	 * musical instrument associated with the instance
+	 */
+	void trigger();
+
+	void reset();
+	void setState(int val);
+
+	int setData(const byte *data, int count);
 };
 
 } // End of namespace Titanic

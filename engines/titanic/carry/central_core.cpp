@@ -47,7 +47,7 @@ bool CCentralCore::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		CPuzzleSolvedMsg solvedMsg;
 		solvedMsg.execute("BigHammer");
 	} else if (name == "SpeechCentre") {
-		CShowTextMsg textMsg("This does not reach.");
+		CShowTextMsg textMsg(DOES_NOT_REACH);
 		textMsg.execute("PET");
 	}
 
@@ -57,9 +57,9 @@ bool CCentralCore::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 bool CCentralCore::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
 	CString name = msg->_object->getName();
 	if (name == "PerchCoreHolder") {
-		CParrot::_v2 = 1;
+		CParrot::_takeOff = true;
 		if (isEquals("CentralCore"))
-			CParrot::_v5 = 0;
+			CParrot::_coreReplaced = false;
 
 		CActMsg actMsg("LosePerch");
 		actMsg.execute("ParrotLobbyController");
@@ -75,7 +75,7 @@ bool CCentralCore::DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg) {
 	CString name = msg->_object->getName();
 	if (name == "PerchCoreHolder") {
 		if (isEquals("CentralCore")) {
-			CParrot::_v5 = 1;
+			CParrot::_coreReplaced = true;
 			CActMsg actMsg("CoreReplaced");
 			actMsg.execute("ParrotCage");
 		}

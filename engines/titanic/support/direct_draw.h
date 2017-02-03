@@ -87,7 +87,7 @@ public:
 	/**
 	 * Create a surface
 	 */
-	DirectDrawSurface *createSurface(int w, int h, int surfaceNum);
+	DirectDrawSurface *createSurface(int w, int h, int bpp, int surfaceNum);
 };
 
 } // End of namespace Titanic

@@ -69,6 +69,11 @@ int scene26_updateCursor() {
 	if (g_fp->_objectIdAtCursor != ANI_VENT || g_fp->_cursorId != PIC_CSR_DEFAULT) {
 		if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA)
 			g_fp->_cursorId = PIC_CSR_GOL;
+
+		// WORKAROUND: Fixing cursor
+		if (g_fp->_objectIdAtCursor == PIC_SC26_LTRUBA &&
+			(g_fp->_cursorId == PIC_CSR_GOU || g_fp->_cursorId == PIC_CSR_GOD || g_fp->_cursorId == PIC_CSR_GOR))
+				g_fp->_cursorId = PIC_CSR_GOL;
 	} else {
 		g_fp->_cursorId = PIC_CSR_ITN;
 	}

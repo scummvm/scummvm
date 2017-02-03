@@ -30,8 +30,8 @@ CPetRooms::CPetRooms() :
 		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_floorNum(0), _elevatorNum(0), _roomNum(0), _field1CC(0),
-		_wellEntry(0), _field1D4(0) {
+		_floorNum(1), _elevatorNum(0), _roomNum(0), _field1CC(1),
+		_wellEntry(0), _elevatorBroken(true) {
 }
 
 bool CPetRooms::setup(CPetControl *petControl) {
@@ -56,6 +56,7 @@ bool CPetRooms::reset() {
 void CPetRooms::draw(CScreenManager *screenManager) {
 	_petControl->drawSquares(screenManager, 6);
 	_plinth.draw(screenManager);
+	_glyphs.draw(screenManager);
 	_glyphItem.drawAt(screenManager, getGlyphPos(), false);
 	_text.draw(screenManager);
 }
@@ -67,7 +68,7 @@ bool CPetRooms::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (!_glyphItem.contains(getGlyphPos(), msg->_mousePos))
 		return false;
 
-	_glyphItem.MouseButtonDownMsg(msg->_mousePos);
+	_glyphItem.selectGlyph(getGlyphPos(), msg->_mousePos);
 	return true;
 }
 
@@ -96,11 +97,11 @@ bool CPetRooms::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 }
 
 bool CPetRooms::checkDragEnd(CGameObject *item) {
-	// Ignore any item drops except valid mail items
-	if (!item->_isMail)
+	// Ignore any item drops except onto mail items
+	if (!item->_isPendingMail)
 		return false;
 
-	uint roomFlags = item->_id;
+	uint roomFlags = item->_destRoomFlags;
 	CPetRoomsGlyph *glyph = _glyphs.findGlyphByFlags(roomFlags);
 	if (glyph) {
 		if (_glyphs.findGlyphByFlags(0)) {
@@ -133,14 +134,14 @@ void CPetRooms::load(SimpleFile *file, int param) {
 			glyph->setMode((RoomGlyphMode)file->readNumber());
 		}
 
-		_glyphItem.setMode((RoomGlyphMode)file->readNumber());
+		_glyphItem.setRoomFlags(file->readNumber());
 		file->readNumber();
 		_floorNum = file->readNumber();
 		_elevatorNum = file->readNumber();
 		_roomNum = file->readNumber();
 		_field1CC = file->readNumber();
 		_wellEntry = file->readNumber();
-		_field1D4 = file->readNumber();
+		_elevatorBroken = file->readNumber();
 	}
 }
 
@@ -156,7 +157,7 @@ void CPetRooms::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_roomNum, indent);
 	file->writeNumberLine(_field1CC, indent);
 	file->writeNumberLine(_wellEntry, indent);
-	file->writeNumberLine(_field1D4, indent);
+	file->writeNumberLine(_elevatorBroken, indent);
 }
 
 void CPetRooms::enter(PetArea oldArea) {
@@ -165,10 +166,11 @@ void CPetRooms::enter(PetArea oldArea) {
 }
 
 void CPetRooms::enterRoom(CRoomItem *room) {
-
+	if (room)
+		resetHighlight();
 }
 
-CPetText *CPetRooms::getText() {
+CTextControl *CPetRooms::getText() {
 	return &_text;
 }
 
@@ -221,7 +223,7 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	_glyphs.setup(6, this);
 	_glyphs.setFlags(GFLAG_16);
 	_glyphItem.setup(petControl, &_glyphs);
-	_glyphItem.set38(1);
+	_glyphItem.setFlag(1);
 	return true;
 }
 
@@ -240,17 +242,17 @@ uint CPetRooms::getRoomFlags() const {
 	if (flags)
 		return flags;
 
-	int classNum = roomFlags.whatPassengerClass(_floorNum);
+	PassengerClass classNum = roomFlags.whatPassengerClass(_floorNum);
 	roomFlags.setPassengerClassBits(classNum);
 	roomFlags.setFloorNum(_floorNum);
 
 	switch (classNum) {
-	case 1:
+	case FIRST_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
 		roomFlags.setRoomBits(_roomNum);
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		if (_roomNum > 0) {
 			if (_roomNum >= 3) {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 1 : 3);
@@ -264,7 +266,7 @@ uint CPetRooms::getRoomFlags() const {
 		}
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
 		roomFlags.setRoomBits(_roomNum + _field1CC * 6 - 6);
 		break;
@@ -276,14 +278,14 @@ uint CPetRooms::getRoomFlags() const {
 	return roomFlags.get();
 }
 
-void CPetRooms::reassignRoom(int passClassNum) {
+void CPetRooms::reassignRoom(PassengerClass passClassNum) {
 	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (glyph)
 		// Flag the old assigned room as no longer assigned
 		glyph->setMode(RGM_PREV_ASSIGNED_ROOM);
 
 	CRoomFlags roomFlags;
-	roomFlags.setRandomLocation(passClassNum, _field1D4);
+	roomFlags.setRandomLocation(passClassNum, _elevatorBroken);
 	glyph = addRoom(roomFlags, true);
 	if (glyph) {
 		// Flag the new room as assigned to the player, and highlight it
@@ -329,12 +331,12 @@ CPetRoomsGlyph *CPetRooms::addGlyph(uint roomFlags, bool highlight_) {
 	}
 }
 
-bool CPetRooms::changeLocationClass(int newClassNum) {
+bool CPetRooms::changeLocationClass(PassengerClass newClassNum) {
 	CPetRoomsGlyph *glyph = _glyphs.findAssignedRoom();
 	if (!glyph)
 		return 0;
 
-	glyph->changeLocation(newClassNum);
+	glyph->changeClass(newClassNum);
 	return true;
 }
 

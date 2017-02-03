@@ -39,8 +39,9 @@ void CMusicSwitchReverse::load(SimpleFile *file) {
 	file->readNumber();
 	CMusicSwitch::load(file);
 }
+
 bool CMusicSwitchReverse::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
-	if (_fieldEC) {
+	if (_enabled) {
 		if (++_controlVal > _controlMax)
 			_controlVal = 0;
 

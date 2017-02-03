@@ -33,8 +33,13 @@
 #include "fullpipe/gameloader.h"
 #include "fullpipe/behavior.h"
 #include "fullpipe/interaction.h"
+#include "fullpipe/modal.h"
 
 namespace Fullpipe {
+
+void scene08_clockCallback(int *phase) {
+	// do nothing
+}
 
 void scene08_initScene(Scene *sc) {
 	g_vars->scene08_inArcade = false;
@@ -80,7 +85,7 @@ void scene08_initScene(Scene *sc) {
 		g_vars->scene08_snoringCountdown = 71;
 	}
 
-	g_vars->scene08_clock->_callback2 = 0;
+	g_vars->scene08_clock->_callback2 = scene08_clockCallback;
 
 	if (g_fp->getObjectState(sO_StairsUp_8) == g_fp->getObjectEnumState(sO_StairsUp_8, sO_Broken)) {
 		g_vars->scene08_stairsVisible = false;
@@ -404,6 +409,15 @@ void sceneHandler08_checkEndArcade() {
 
 		if (y < 80) {
 			sceneHandler08_finishArcade();
+
+			if (g_fp->isDemo() && g_fp->getLanguage() == Common::DE_DEU) {
+				ModalDemo *demo = new ModalDemo;
+				demo->launch();
+
+				g_fp->_modalObject = demo;
+
+				return;
+			}
 
 			ExCommand *ex = new ExCommand(SC_8, 17, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_messageNum = 61;

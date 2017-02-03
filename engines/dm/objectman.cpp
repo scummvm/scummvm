@@ -132,7 +132,7 @@ void ObjectMan::loadObjectNames() {
 }
 
 IconIndice ObjectMan::getObjectType(Thing thing) {
-	if (thing == Thing::_none)
+	if (thing == _vm->_thingNone)
 		return kDMIconIndiceNone;
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);

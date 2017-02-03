@@ -68,13 +68,13 @@ bool CSummonBots::SummonBotMsg(CSummonBotMsg *msg) {
 		if (!_fieldC8)
 			return false;
 
-		if (petDismissBot("BellBot"))
+		if (!petDismissBot("BellBot"))
 			petOnSummonBot("Bellbot", msg->_value);
 	} else if (msg->_npcName == "DoorBot") {
 		if (!_fieldCC)
 			return false;
 
-		if (petDismissBot("Doorbot"))
+		if (!petDismissBot("Doorbot"))
 			petOnSummonBot("Doorbot", msg->_value);
 	} else {
 		return false;

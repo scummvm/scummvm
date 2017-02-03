@@ -36,24 +36,24 @@ class CPhonographCylinder : public CCarry {
 	bool ErasePhonographCylinderMsg(CErasePhonographCylinderMsg *msg);
 private:
 	CString _itemName;
+	int _bellsPitchControl;
+	int _bellsSpeedControl;
 	bool _bellsMuteControl;
-	bool _bellsPitchControl;
-	bool _bellsSpeedControl;
 	bool _bellsDirectionControl;
 	bool _bellsInversionControl;
+	int _snakeSpeedControl;
+	int _snakePitchControl;
 	bool _snakeMuteControl;
-	bool _snakeSpeedControl;
-	bool _snakePitchControl;
 	bool _snakeInversionControl;
 	bool _snakeDirectionControl;
+	int _pianoSpeedControl;
+	int _pianoPitchControl;
 	bool _pianoMuteControl;
-	bool _pianoSpeedControl;
-	bool _pianoPitchControl;
 	bool _pianoInversionControl;
 	bool _pianoDirectionControl;
+	int _bassSpeedControl;
+	int _bassPitchControl;
 	bool _bassMuteControl;
-	bool _bassSpeedControl;
-	bool _bassPitchControl;
 	bool _bassInversionControl;
 	bool _bassDirectionControl;
 public:

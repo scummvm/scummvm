@@ -38,7 +38,11 @@ Sprite::Sprite(ScummEngine_v90he *vm)
 	_vm(vm),
 	_spriteGroups(0),
 	_spriteTable(0),
-	_activeSpritesTable(0) {
+	_activeSpritesTable(0),
+	_numSpritesToProcess(0),
+	_varNumSpriteGroups(0),
+	_varNumSprites(0),
+	_varMaxSprites(0) {
 }
 
 Sprite::~Sprite() {

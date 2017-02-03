@@ -27,6 +27,7 @@
 namespace Titanic {
 
 void TTtalker::speechStarted(const CString &dialogueStr, uint dialogueId, uint speechHandle) {
+	_line = dialogueStr;
 	_dialogueId = dialogueId;
 
 	CTrueTalkNotifySpeechStartedMsg msg(speechHandle, dialogueId, 0);

@@ -40,7 +40,7 @@ void CMissiveOMatButton::save(SimpleFile *file, int indent) {
 
 void CMissiveOMatButton::load(SimpleFile *file) {
 	file->readNumber();
-	_buttonId = file->readNumber();
+	_buttonId = (MissiveOMatAction)file->readNumber();
 
 	CEditControl::load(file);
 }

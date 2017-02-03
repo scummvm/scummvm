@@ -81,7 +81,7 @@ bool Console::Cmd_DumpSceneResources(int argc, const char **argv) {
 		"ResetBuffer", "SpecialCmd", "CShowMessage", "PlaySoundNoWait"
 	};
 
-	debugPrintf("Room mesage: %s\n", roomData->_roomMsg.c_str());
+	debugPrintf("Room message: %s\n", roomData->_roomMsg.c_str());
 	debugPrintf("Transition: %s (%d)\n", transitions[roomData->_transitionType], roomData->_transitionType);
 
 	debugPrintf("Script:\n");

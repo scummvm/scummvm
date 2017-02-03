@@ -50,8 +50,8 @@ bool CPETLift::TransportMsg(CTransportMsg *msg) {
 	} else if (msg->_roomName == "BottomOfWell") {
 		floorNum = 39;
 	} else if (msg->_roomName == "PlayersRoom" && pet) {
-		int assignedFloor = pet->getAssignedFloorNum();
-		if (assignedFloor < 1 || assignedFloor > 39) {
+		floorNum = pet->getAssignedFloorNum();
+		if (floorNum < 1 || floorNum > 39) {
 			pet->petDisplayMessage(NO_ROOM_ASSIGNED);
 			floorNum = -1;
 		}

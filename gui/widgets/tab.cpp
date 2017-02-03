@@ -70,6 +70,12 @@ void TabWidget::init() {
 }
 
 TabWidget::~TabWidget() {
+	// If widgets were added or removed in the current tab, without tabs
+	// having been switched using setActiveTab() afterward, then the
+	// firstWidget in the _tabs list for the active tab may not be up to
+	// date. So update it now.
+	if (_activeTab != -1)
+		_tabs[_activeTab].firstWidget = _firstWidget;
 	_firstWidget = 0;
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		delete _tabs[i].firstWidget;
@@ -193,6 +199,12 @@ void TabWidget::setActiveTab(int tabID) {
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
+		
+		// Also ensure the tab is visible in the tab bar
+		if (_firstVisibleTab > tabID)
+			_firstVisibleTab = tabID;
+		else if (_firstVisibleTab + _w / _tabWidth <= tabID)
+			_firstVisibleTab = tabID - _w / _tabWidth + 1;
 
 		_boss->draw();
 	}
@@ -273,6 +285,13 @@ void TabWidget::reflowLayout() {
 	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
 	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
+
+	// If widgets were added or removed in the current tab, without tabs
+	// having been switched using setActiveTab() afterward, then the
+	// firstWidget in the _tabs list for the active tab may not be up to
+	// date. So update it now.
+	if (_activeTab != -1)
+		_tabs[_activeTab].firstWidget = _firstWidget;
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		Widget *w = _tabs[i].firstWidget;
