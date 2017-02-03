@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "titanic/sound/audio_buffer.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/dialogue_file.h"
 
@@ -71,6 +72,11 @@ public:
 	 * Tries to load the specified music wave file
 	 */
 	bool loadMusic(const CString &name);
+
+	/**
+	 * Tries to load the specified audio buffer
+	 */
+	bool loadMusic(CAudioBuffer *buffer);
 
 	/**
 	 * Returns true if the wave file has data loaded

@@ -56,6 +56,8 @@ class CMusicRoomHandler {
 		int _v1;
 		int _v2;
 		Array5Entry() : _v1(0), _v2(0) {}
+
+		void clear() { _v1 = _v2 = 0; }
 	};
 private:
 	CProjectItem *_project;
@@ -95,7 +97,7 @@ public:
 	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	/**
-	 * Sets the volume and ??? other stuff
+	 * TODO: Verify - this starts the given music?
 	 */
 	void setVolume(int volume);
 

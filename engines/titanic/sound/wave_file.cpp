@@ -102,6 +102,12 @@ bool CWaveFile::loadMusic(const CString &name) {
 	return true;
 }
 
+bool CWaveFile::loadMusic(CAudioBuffer *buffer) {
+	assert(!_stream && buffer);
+	warning("TODO: CWaveFile::loadMusic");
+	return false;
+}
+
 uint CWaveFile::getFrequency() const {
 	return _stream->getRate();
 }

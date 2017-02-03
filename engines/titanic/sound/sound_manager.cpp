@@ -155,6 +155,18 @@ CWaveFile *QSoundManager::loadMusic(const CString &name) {
 	return waveFile;
 }
 
+CWaveFile *QSoundManager::loadMusic(CAudioBuffer *buffer) {
+	CWaveFile *waveFile = new CWaveFile();
+
+	// Try to load the specified audio buffer
+	if (!waveFile->loadMusic(buffer)) {
+		delete waveFile;
+		return nullptr;
+	}
+
+	return waveFile;
+}
+
 int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 	int channel = -1;
 	uint flags = QMIX_CLEARQUEUE;

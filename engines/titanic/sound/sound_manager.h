@@ -25,6 +25,7 @@
 
 #include "titanic/core/list.h"
 #include "titanic/support/simple_file.h"
+#include "titanic/sound/audio_buffer.h"
 #include "titanic/sound/proximity.h"
 #include "titanic/sound/qmixer.h"
 #include "titanic/sound/wave_file.h"
@@ -64,11 +65,18 @@ public:
 	 * Loads a music file
 	 * @param name		Name of music resource
 	 * @returns			Loaded wave file
-	 * @remarks The original created a streaming audio buffer for the wave file,
-	 *		and passed this to the method. For ScummVM, this has been discarded
-	 *		in favor of simply passing the filename.
+	 * @remarks The original only classified music as what's produced in the
+	 * music room puzzle. For ScummVM, we've reclassified some wave files that
+	 * contain background music as music as well.
 	 */
 	virtual CWaveFile *loadMusic(const CString &name) { return nullptr; }
+
+	/**
+	 * Loads a music file from a streaming audio buffer
+	 * @param buffer	Audio buffer
+	 * @returns			Loaded wave file
+	 */
+	virtual CWaveFile *loadMusic(CAudioBuffer *buffer) { return nullptr; }
 
 	/**
 	 * Start playing a previously loaded wave file
@@ -333,11 +341,18 @@ public:
 	 * Loads a music file
 	 * @param name		Name of music resource
 	 * @returns			Loaded wave file
-	 * @remarks The original created a streaming audio buffer for the wave file,
-	 *		and passed this to the method. For ScummVM, this has been discarded
-	 *		in favor of simply passing the filename.
+	 * @remarks The original only classified music as what's produced in the
+	 * music room puzzle. For ScummVM, we've reclassified some wave files that
+	 * contain background music as music as well.
 	 */
 	virtual CWaveFile *loadMusic(const CString &name);
+
+	/**
+	 * Loads a music file from a streaming audio buffer
+	 * @param buffer	Audio buffer
+	 * @returns			Loaded wave file
+	 */
+	virtual CWaveFile *loadMusic(CAudioBuffer *buffer);
 
 	/**
 	 * Start playing a previously loaded sound resource

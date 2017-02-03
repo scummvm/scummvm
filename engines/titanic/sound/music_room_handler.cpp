@@ -74,8 +74,29 @@ CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int c
 
 void CMusicRoomHandler::setVolume(int volume) {
 	_volume = volume;
-	// TODO
-//	_waveFile = _soundManager->loadMusic()
+	_audioBuffer->reset();
+
+	for (int idx = 0; idx < 4; ++idx) {
+		MusicRoomInstrument &ins1 = _array1[idx];
+		MusicRoomInstrument &ins2 = _array2[idx];
+
+		if (ins1._directionControl == ins2._directionControl) {
+			_array4[idx] = 0;
+		} else {
+			_array4[idx] = _array3[idx]->_field4;
+		}
+
+		_array6[idx] = _array4[idx];
+		_array5[idx].clear();
+	}
+
+	_field108 = 4;
+	_field118 = 1;
+	update();
+
+	_waveFile = _soundManager->loadMusic(_audioBuffer);
+	_audioBuffer->setC(_audioBuffer->getC());
+	update();
 }
 
 void CMusicRoomHandler::stop() {
