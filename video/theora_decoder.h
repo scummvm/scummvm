@@ -20,7 +20,7 @@
  *
  */
 
-#include "common/scummsys.h"	// for USE_THEORADEC
+#include "config.h"	// for USE_THEORADEC
 
 #ifdef USE_THEORADEC
 
