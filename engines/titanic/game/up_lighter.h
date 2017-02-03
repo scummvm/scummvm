@@ -38,10 +38,10 @@ class CUpLighter : public CDropTarget {
 	bool TimerMsg(CTimerMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 private:
-	int _field118;
-	int _field11C;
-	int _field120;
-	int _field124;
+	bool _hosePumping;
+	bool _inRoom;
+	bool _isSpring;
+	bool _noseDispensed;
 public:
 	CLASSDEF;
 	CUpLighter();

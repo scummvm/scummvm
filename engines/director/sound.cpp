@@ -34,6 +34,11 @@ DirectorSound::DirectorSound() {
 	_sound2 = new Audio::SoundHandle();
 	_scriptSound = new Audio::SoundHandle();
 	_mixer = g_system->getMixer();
+
+	_speaker = new Audio::PCSpeaker();
+	_pcSpeakerHandle = new Audio::SoundHandle();
+	_mixer->playStream(Audio::Mixer::kSFXSoundType,
+		_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 
 DirectorSound::~DirectorSound() {
@@ -100,6 +105,11 @@ bool DirectorSound::isChannelActive(uint8 channelID) {
 void DirectorSound::stopSound() {
 	_mixer->stopHandle(*_sound1);
 	_mixer->stopHandle(*_sound2);
+	_mixer->stopHandle(*_pcSpeakerHandle);
 }
 
-} //End of namespace Director
+void DirectorSound::systemBeep() {
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
+}
+
+} // End of namespace Director

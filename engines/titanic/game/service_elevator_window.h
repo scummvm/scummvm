@@ -33,10 +33,10 @@ class CServiceElevatorWindow : public CBackground {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
+	int _destFloor;
+	bool _notifyFlag;
+	bool _isIndicator;
+	bool _intoSpace;
 public:
 	CLASSDEF;
 	CServiceElevatorWindow();

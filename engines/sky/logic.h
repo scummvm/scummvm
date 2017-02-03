@@ -164,7 +164,7 @@ protected:
 	void push(uint32);
 	uint32 pop();
 	void checkModuleLoaded(uint16 moduleNo);
-	bool collide(Compact *cpt);
+	bool isCollision(Compact *cpt);
 	void initScriptVariables();
 	void mainAnim();
 	void runGetOff();

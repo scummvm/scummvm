@@ -33,10 +33,10 @@ protected:
 	static bool _v1;
 	static int _v2;
 
-	int _fieldE0;
+	int _exitAction;
 public:
 	CLASSDEF;
-	CBrokenPellBase() : CBackground(), _fieldE0(0) {}
+	CBrokenPellBase() : CBackground(), _exitAction(0) {}
 
 	/**
 	 * Save the data for the class to file

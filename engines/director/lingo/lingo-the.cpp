@@ -21,6 +21,7 @@
  */
 
 #include "director/lingo/lingo.h"
+#include "director/cast.h"
 #include "director/sprite.h"
 
 namespace Director {
@@ -28,10 +29,13 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
+	{ kTheActorList,		"actorList",		false },	//				D4 property
 	{ kTheBeepOn,			"beepOn",			false },	// D2 property
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
-	{ kTheCast,				"cast",				true  },
+	{ kTheCast,				"cast",				true  },	// D3
+	{ kTheCastMembers,		"castmembers",		false },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false },	// D2 p
+	{ kTheChars,			"chars",			false },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
 	{ kTheClickOn,			"clickOn",			false },	// D2 function
@@ -39,36 +43,47 @@ TheEntity entities[] = {
 	{ kTheColorQD,			"colorQD",			false },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false },	// D2 f
 	{ kTheControlDown,		"controlDown",		false },	// D2 f
+	{ kTheDate,				"date",				false },	//		 D3
 	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
 	{ kTheExitLock,			"exitLock",			false },	// D2 p
+	{ kTheField,			"field",			true  },	//		 D3
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
-	{ kTheFloatPrecision,	"floatPrecision",	false },
+	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
+	{ kTheFrameScript,		"frameScript",		false },	//				D4 p
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
+	{ kTheItems,			"items",			false },	//		 D3
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
+	{ kTheLabelList,		"labelList",		false },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },
 	{ kTheLastKey,			"lastKey",			false },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
+	{ kTheLines,			"lines",			false },	//		 D3
 	{ kTheMachineType,		"machineType",		false },	// D2 f
 	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
 	{ kTheMenus,			"menus",			false },
 	{ kTheMenuItem,			"menuitem",			true  },
 	{ kTheMenuItems,		"menuitems",		false },
+	{ kTheMouseCast,		"mouseCast",		false },	//		D3 f
+	{ kTheMouseChar,		"mouseChar",		false },	//		D3 f
 	{ kTheMouseDown,		"mouseDown",		false },	// D2 f
 	{ kTheMouseDownScript,  "mouseDownScript",	false },	// D2 p
 	{ kTheMouseH,			"mouseH",			false },	// D2 f
+	{ kTheMouseItem,		"mouseItem",		false },	//		D3 f
+	{ kTheMouseLine,		"mouseLine",		false },	//		D3 f
 	{ kTheMouseUp,			"mouseUp",			false },	// D2 f
 	{ kTheMouseUpScript,  	"mouseUpScript",	false },	// D2 p
 	{ kTheMouseV,			"mouseV",			false },	// D2 f
+	{ kTheMouseWord,		"mouseWord",		false },	//		D3 f
 	{ kTheMovie,			"movie",			false },	// D2 f
 	{ kTheMultiSound,		"multiSound",		false },
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
@@ -81,13 +96,16 @@ TheEntity entities[] = {
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
 	{ kTheRomanLingo,		"romanLingo",		false },
 	{ kTheSelection,		"selection",		false },	// D2 f
+	{ kTheSelEnd,			"selEnd",			false },	// D2 p
+	{ kTheSelStart,			"selStart",			false },	// D2 p
 	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false },	// D2 p
 	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
-	{ kTheSprite,			"sprite",			true  },
+	{ kTheSprite,			"sprite",			true  },	//				D4
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
 	{ kTheStage,			"stage",			false },
 	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
+	{ kTheStageColor,		"stageColor",		false },	//		D3 p
 	{ kTheStageLeft,		"stageLeft",		false },	// D2 f
 	{ kTheStageRight,		"stageRight",		false },	// D2 f
 	{ kTheStageTop,			"stageTop",			false },	// D2 f
@@ -100,8 +118,10 @@ TheEntity entities[] = {
 	{ kTheTimeoutMouse,		"timeoutMouse",		false },	// D2 p
 	{ kTheTimeoutPlay,		"timeoutPlay",		false },	// D2 p
 	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
+	{ kTheTime,				"time",				false },	// 		D3 f
 	{ kTheTimer,			"timer",			false },	// D2 p
 	{ kTheWindow,			"window",			false },
+	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }
 };
 
@@ -139,13 +159,13 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
 	// Common cast fields
-	{ kTheCast,		"castType",		kTheCastType },
+	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
 	{ kTheCast,		"filename",		kTheFilename },
 	{ kTheCast,		"height",		kTheHeight },
 	{ kTheCast,		"loaded",		kTheLoaded },
 	{ kTheCast,		"modified",		kTheModified },
-	{ kTheCast,		"name",			kTheName },
-	{ kTheCast,		"number",		kTheNumber },
+	{ kTheCast,		"name",			kTheName },			//		D3 p
+	{ kTheCast,		"number",		kTheNumber },		//		D3 p
 	{ kTheCast,		"rect",			kTheRect },
 	{ kTheCast,		"purgePriority",kThePurgePriority }, // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText },
@@ -168,29 +188,50 @@ TheEntityField fields[] = {
 	{ kTheCast,		"depth",		kTheDepth },
 	{ kTheCast,		"regPoint",		kTheRegPoint },
 	{ kTheCast,		"palette",		kThePalette },
-	{ kTheCast,		"picture",		kThePicture },
+	{ kTheCast,		"picture",		kThePicture },		//		D3 p
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
-	{ kTheCast,		"selEnd",		kTheSelEnd },		// D2 p
-	{ kTheCast,		"selStart",		kTheSelStart },		// D2 p
 	{ kTheCast,		"size",			kTheSize },
 	{ kTheCast,		"text",			kTheText },			// D2 p
+
+	// Field fields
+	{ kTheField,	"textAlign",	kTheTextAlign },	//		D3 p
+	{ kTheField,	"textFont",		kTheTextFont },		//		D3 p
+	{ kTheField,	"textHeight",	kTheTextheight },	//		D3 p
+	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
+	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
 
 	{ kTheWindow,	"drawRect",		kTheDrawRect },
 	{ kTheWindow,	"filename",		kTheFilename },
 	{ kTheWindow,	"sourceRect",	kTheSourceRect },
 	{ kTheWindow,	"visible",		kTheVisible },
 
-	{ kTheMenuItem,	"checkmark",	kTheCheckMark },
-	{ kTheMenuItem, "enabled",		kTheEnabled },
-	{ kTheMenuItem, "name",			kTheName },
-	{ kTheMenuItem, "script",		kTheScript },
+	{ kTheMenuItem,	"checkmark",	kTheCheckMark },	//		D3 p
+	{ kTheMenuItem, "enabled",		kTheEnabled },		//		D3 p
+	{ kTheMenuItem, "name",			kTheName },			//		D3 p
+	{ kTheMenuItem, "script",		kTheScript },		//		D3 p
 
-	{ kTheMenu,		"name",			kTheName },
+	{ kTheMenu,		"name",			kTheName },			//		D3 p
 
-	{ kTheMenuItems,"number",		kTheNumber },
-	{ kTheMenus,	"number",		kTheNumber },
+	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
+	{ kTheChars,	"number",		kTheNumber },		//		D3 p
+	{ kTheItems,	"number",		kTheNumber },		//		D3 p
+	{ kTheLines,	"number",		kTheNumber },		//		D3 p
+	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
+	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
+	{ kTheWords,	"number",		kTheNumber },		//		D3 p
+
+	{ kTheDate,		"short",		kTheShort },		//		D3 f
+	{ kTheDate,		"long",			kTheLong },			//		D3 f
+	{ kTheDate,		"abbreviated",	kTheAbbr },			//		D3 f
+	{ kTheDate,		"abbrev",		kTheAbbr },			//		D3 f
+	{ kTheDate,		"abbr",			kTheAbbr },			//		D3 f
+	{ kTheTime,		"short",		kTheShort },		//		D3 f
+	{ kTheTime,		"long",			kTheLong },			//		D3 f
+	{ kTheTime,		"abbreviated",	kTheAbbr },			//		D3 f
+	{ kTheTime,		"abbrev",		kTheAbbr },			//		D3 f
+	{ kTheTime,		"abbr",			kTheAbbr },			//		D3 f
 
 	{ kTheNOEntity, NULL, kTheNOField }
 };
@@ -426,6 +467,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// 256 - IBM PC-type machine	D3
 		d.type = INT;
 		d.u.i = _vm->_machineType;
+		break;
+	case kTheFrame:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->getCurrentFrame();
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);

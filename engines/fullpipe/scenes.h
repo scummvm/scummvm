@@ -41,6 +41,10 @@ int sceneIntro_updateCursor();
 void sceneIntro_initScene(Scene *sc);
 int sceneHandlerIntro(ExCommand *cmd);
 
+int sceneIntroDemo_updateCursor();
+void sceneIntroDemo_initScene(Scene *sc);
+int sceneHandlerIntroDemo(ExCommand *cmd);
+
 void scene01_fixEntrance();
 void scene01_initScene(Scene *sc, int entrance);
 int sceneHandler01(ExCommand *cmd);
@@ -288,6 +292,8 @@ public:
 	int scene04_springOffset;
 	StaticANIObject *scene04_lastKozyawka;
 	int scene04_springDelay;
+	int scene04_musicStage;
+
 
 	StaticANIObject *scene05_handle;
 	StaticANIObject *scene05_wacko;
@@ -663,6 +669,7 @@ public:
 	int sceneFinal_var01;
 	int sceneFinal_var02;
 	int sceneFinal_var03;
+	bool sceneFinal_trackHasStarted;
 
 	PictureObject *selector;
 };

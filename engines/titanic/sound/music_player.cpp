@@ -39,8 +39,8 @@ void CMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_isActive, indent);
 	file->writeQuotedLine(_stopTarget, indent);
-	file->writeNumberLine(_stopWaves, indent);
-	file->writeNumberLine(_musicId, indent);
+	file->writeNumberLine(_musicActive, indent);
+	file->writeNumberLine(_volume, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -49,14 +49,14 @@ void CMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
 	_isActive = file->readNumber();
 	_stopTarget = file->readString();
-	_stopWaves = file->readNumber();
-	_musicId = file->readNumber();
+	_musicActive = file->readNumber();
+	_volume = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CMusicPlayer::StartMusicMsg(CStartMusicMsg *msg) {
-	if (msg->_musicPlayer == this) {
+	if (msg->_musicPlayer != this) {
 		if (_isActive) {
 			CStopMusicMsg stopMusicMsg;
 			stopMusicMsg.execute(this);
@@ -73,8 +73,9 @@ bool CMusicPlayer::StartMusicMsg(CStartMusicMsg *msg) {
 		CSetMusicControlsMsg controlsMsg;
 		controlsMsg.execute(this, nullptr, MSGFLAG_SCAN);
 
-		getMusicRoom()->startMusic(_musicId);
+		getMusicRoom()->setupMusic(_volume);
 		_isActive = true;
+		unlockMouse();
 	}
 
 	return true;
@@ -97,7 +98,7 @@ bool CMusicPlayer::StopMusicMsg(CStopMusicMsg *msg) {
 }
 
 bool CMusicPlayer::FrameMsg(CFrameMsg *msg) {
-	if (_isActive && !CMusicRoom::_musicHandler->poll()) {
+	if (_isActive && !CMusicRoom::_musicHandler->update()) {
 		getMusicRoom()->stopMusic();
 		_isActive = false;
 
@@ -109,6 +110,7 @@ bool CMusicPlayer::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
+	// Set up a timer that will create a music handler
 	addTimer(100);
 	return true;
 }
@@ -120,7 +122,7 @@ bool CMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 	if (CMusicRoom::_musicHandler) {
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 		return true;
 	}
 
@@ -128,26 +130,26 @@ bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 	CMusicWave *wave;
 
 	if (musicHandler) {
-		wave = musicHandler->createMusicWave(0, 3);
+		wave = musicHandler->createMusicWave(BELLS, 3);
 		wave->load(0, "z#490.wav", 60);
 		wave->load(1, "z#488.wav", 62);
 		wave->load(2, "z#489.wav", 63);
 
-		wave = musicHandler->createMusicWave(1, 5);
+		wave = musicHandler->createMusicWave(SNAKE, 5);
 		wave->load(0, "z#493.wav", 22);
 		wave->load(1, "z#495.wav", 29);
 		wave->load(2, "z#492.wav", 34);
 		wave->load(3, "z#494.wav", 41);
 		wave->load(4, "z#491.wav", 46);
 
-		wave = musicHandler->createMusicWave(2, 5);
+		wave = musicHandler->createMusicWave(PIANO, 5);
 		wave->load(0, "z#499.wav", 26);
 		wave->load(1, "z#497.wav", 34);
 		wave->load(2, "z#498.wav", 38);
 		wave->load(3, "z#496.wav", 46);
 		wave->load(4, "z#500.wav", 60);
 
-		wave = musicHandler->createMusicWave(3, 7);
+		wave = musicHandler->createMusicWave(BASS, 7);
 		wave->load(0, "z#504.wav", 22);
 		wave->load(1, "z#507.wav", 29);
 		wave->load(2, "z#503.wav", 34);
@@ -156,7 +158,7 @@ bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 		wave->load(5, "z#505.wav", 53);
 		wave->load(6, "z#501.wav", 58);
 
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 	}
 
 	return true;
@@ -170,6 +172,7 @@ bool CMusicPlayer::TimerMsg(CTimerMsg *msg) {
 
 bool CMusicPlayer::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_isActive) {
+		// Music is meant to be playing, so restart it
 		CStopMusicMsg stopMsg;
 		stopMsg.execute(this);
 		CStartMusicMsg startMsg;

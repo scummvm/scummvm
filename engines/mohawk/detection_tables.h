@@ -406,6 +406,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+
+	// Riven: The Sequel to Myst
+	// Version 1.0J (5CD) - Japanese
+	// From sev
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "3a2b4764979dc007a0e6ded64e4b7889", 10014314),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
 	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
 	// From Clone2727

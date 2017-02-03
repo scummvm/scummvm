@@ -41,12 +41,12 @@ void CVisionCentre::load(SimpleFile *file) {
 }
 
 bool CVisionCentre::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldE0 = true;
+	_canTake = true;
 	return true;
 }
 
 bool CVisionCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_fieldE0) {
+	if (_canTake) {
 		return CBrain::MouseButtonDownMsg(msg);
 	} else {
 		petDisplayMessage(1, NICE_IF_TAKE_BUT_CANT);
@@ -55,7 +55,7 @@ bool CVisionCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CVisionCentre::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_fieldE0) {
+	if (_canTake) {
 		return CBrain::MouseDragStartMsg(msg);
 	} else {
 		petDisplayMessage(1, NICE_IF_TAKE_BUT_CANT);

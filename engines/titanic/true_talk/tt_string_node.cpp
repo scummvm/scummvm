@@ -25,7 +25,8 @@
 
 namespace Titanic {
 
-TTstringNode::TTstringNode() : TTnode() {
+TTstringNode::TTstringNode() : TTnode(), _file(HANDLE_STDIN),
+		_mode(0), _field1C(0) {
 }
 
 void TTstringNode::initialize(int mode) {

@@ -55,7 +55,7 @@ int ParrotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	if (processEntries(roomScript, sentence) == 2) {
 		int tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine);
 		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
-			addResponse(getDialogueId(sentence->check2C() ? 280248 : 280235));
+			addResponse(getDialogueId(sentence->checkCategory() ? 280248 : 280235));
 			applyResponse();
 		}
 	}
@@ -76,7 +76,7 @@ ScriptChangedResult ParrotScript::scriptChanged(const TTroomScript *roomScript, 
 		} else {
 			if ((id == 280146 || id == 280147) && CTrueTalkManager::_currentNPC) {
 				CGameObject *chicken;
-				if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+				if (!CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
 					id = 280142;
 			}
 
@@ -90,7 +90,7 @@ ScriptChangedResult ParrotScript::scriptChanged(const TTroomScript *roomScript, 
 	if (id >= 80000 && id <= 80244) {
 		if ((id == 80155 || id == 80156) && CTrueTalkManager::_currentNPC) {
 			CGameObject *chicken;
-			if (CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
+			if (!CTrueTalkManager::_currentNPC->find("Chicken", &chicken, FIND_PET))
 				id = 80151;
 		}
 

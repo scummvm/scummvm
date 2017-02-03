@@ -726,7 +726,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 7:
-		if (sentence->_field2C == 12) {
+		if (sentence->_category == 12) {
 			addResponse(getDialogueId(260089));
 			applyFlag = true;
 			stateFlag = false;
@@ -738,7 +738,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 8:
-		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+		if (sentence->_category == 11 || sentence->_category == 13) {
 			trigger12(false);
 			addResponse(getDialogueId(260094));
 			CTrueTalkManager::setFlags(11, 1);
@@ -819,7 +819,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 16:
-		addResponse(getDialogueId(sentence->_field2C == 11 ? 260209 : 260210));
+		addResponse(getDialogueId(sentence->_category == 11 ? 260209 : 260210));
 		applyFlag = true;
 		stateFlag = false;
 		break;
@@ -843,13 +843,13 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 18:
-		if (sentence->_field2C == 11) {
+		if (sentence->_category == 11) {
 			addResponse(getDialogueId(260232));
 			applyFlag = true;
-		} else if (sentence->_field2C == 12) {
+		} else if (sentence->_category == 12) {
 			addResponse(getDialogueId(260231));
 			applyFlag = true;
-		} else if (sentence->_field2C == 13) {
+		} else if (sentence->_category == 13) {
 			addResponse(getDialogueId(260444));
 			addResponse(getDialogueId(260233));
 			applyFlag = true;
@@ -937,7 +937,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 23:
-		if (sentence->_field2C == 11) {
+		if (sentence->_category == 11) {
 			addResponse(getDialogueId(260237));
 			applyFlag = true;
 			stateFlag = false;
@@ -992,7 +992,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260256));
 			applyFlag = true;
 			stateFlag = false;
-		} else if (sentence->_field2C == 12) {
+		} else if (sentence->_category == 12) {
 			addResponse(getDialogueId(260255));
 			applyFlag = true;
 			stateFlag = false;
@@ -1024,7 +1024,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 29:
-		if (sentence->_field2C == 11) {
+		if (sentence->_category == 11) {
 			setFlags12();
 			addResponse(getDialogueId(260131));
 		} else {
@@ -1034,10 +1034,10 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		break;
 
 	case 30:
-		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
+		if (sentence->_category == 11 || sentence->_category == 13) {
 			addResponse(getDialogueId(260695));
 			applyFlag = true;
-		} else if (sentence->_field2C == 12) {
+		} else if (sentence->_category == 12) {
 			addResponse(getDialogueId(260696));
 			applyFlag = true;
 		}

@@ -59,8 +59,10 @@ public:
 class CSaveableObject {
 	typedef CSaveableObject *(*CreateFunction)();
 private:
-	static Common::List<ClassDef *> *_classDefs;
-	static Common::HashMap<Common::String, CreateFunction> *_classList;
+	typedef Common::List<ClassDef *> ClassDefList;
+	typedef Common::HashMap<Common::String, CreateFunction> ClassListMap;
+	static ClassDefList *_classDefs;
+	static ClassListMap *_classList;
 public:
 	/**
 	 * Sets up the list of saveable object classes

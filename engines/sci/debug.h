@@ -42,12 +42,16 @@ enum BreakpointType {
 	 * Break when an exported function is called. Data contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT        = 1 << 3
+	BREAK_EXPORT        = 1 << 3,
+	BREAK_ADDRESS       = 1 << 4  // break when pc is at this address
 };
 
 struct Breakpoint {
 	BreakpointType type;
-	uint32 address;  ///< Breakpoints on exports
+	union {
+		uint32 address;     ///< Breakpoints on exports
+		reg32_t regAddress; ///< Breakpoints on addresses
+	};
 	Common::String name; ///< Breakpoints on selector names
 };
 

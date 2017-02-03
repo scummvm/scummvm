@@ -21,6 +21,7 @@
  */
 
 #include "sci/console.h"
+#include "sci/engine/features.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
@@ -43,13 +44,15 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 #pragma mark -
 #pragma mark Plane
 uint16 Plane::_nextObjectId = 20000;
+uint32 Plane::_nextCreationId = 0;
 
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
+_creationId(_nextCreationId++),
 _pictureId(pictureId),
 _mirrored(false),
 _type(kPlaneTypeColored),
 _back(0),
-_priorityChanged(0),
+_priorityChanged(false),
 _object(make_reg(0, _nextObjectId++)),
 _redrawAllCount(g_sci->_gfxFrameout->getScreenCount()),
 _created(g_sci->_gfxFrameout->getScreenCount()),
@@ -64,6 +67,7 @@ _gameRect(gameRect) {
 }
 
 Plane::Plane(reg_t object) :
+_creationId(_nextCreationId++),
 _type(kPlaneTypeColored),
 _priorityChanged(false),
 _object(object),
@@ -76,10 +80,17 @@ _moved(0) {
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
 	_vanishingPoint.y = readSelectorValue(segMan, object, SELECTOR(vanishingY));
 
-	_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-	_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-	_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-	_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	if (g_sci->_features->usesAlternateSelectors()) {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	}
 	convertGameRectToPlaneRect();
 
 	_back = readSelectorValue(segMan, object, SELECTOR(back));
@@ -93,6 +104,7 @@ _moved(0) {
 }
 
 Plane::Plane(const Plane &other) :
+_creationId(other._creationId),
 _pictureId(other._pictureId),
 _mirrored(other._mirrored),
 _type(other._type),
@@ -105,6 +117,7 @@ _screenRect(other._screenRect),
 _screenItemList(other._screenItemList) {}
 
 void Plane::operator=(const Plane &other) {
+	_creationId = other._creationId;
 	_gameRect = other._gameRect;
 	_planeRect = other._planeRect;
 	_vanishingPoint = other._vanishingPoint;
@@ -119,6 +132,7 @@ void Plane::operator=(const Plane &other) {
 
 void Plane::init() {
 	_nextObjectId = 20000;
+	_nextCreationId = 0;
 }
 
 void Plane::convertGameRectToPlaneRect() {
@@ -143,11 +157,12 @@ void Plane::printDebugInfo(Console *con) const {
 		name = g_sci->getEngineState()->_segMan->getObjectName(_object);
 	}
 
-	con->debugPrintf("%04x:%04x (%s): type %d, prio %d, pic %d, mirror %d, back %d\n",
+	con->debugPrintf("%04x:%04x (%s): type %d, prio %d, ins %u, pic %d, mirror %d, back %d\n",
 		PRINT_REG(_object),
 		name.c_str(),
 		_type,
 		_priority,
+		_creationId,
 		_pictureId,
 		_mirrored,
 		_back
@@ -191,7 +206,7 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		delete screenItem->_celObj;
 		screenItem->_celObj = celObj;
 	}
-	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
+	_type = (g_sci->_features->hasTransparentPicturePlanes() && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
 GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate) {
@@ -507,7 +522,7 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 					const ScreenItem *drawnItem = drawListEntry->screenItem;
 
 					if (
-						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_object > drawnItem->_object)) &&
+						(newItem->_priority > drawnItem->_priority || (newItem->_priority == drawnItem->_priority && newItem->_creationId > drawnItem->_creationId)) &&
 						drawListEntry->rect.intersects(newItem->_screenRect)
 					) {
 						mergeToDrawList(j, drawListEntry->rect.findIntersectingRect(newItem->_screenRect), drawList);
@@ -751,10 +766,13 @@ void Plane::setType() {
 		_type = kPlaneTypeOpaque;
 		break;
 	case kPlanePicTransparentPicture:
-		_type = kPlaneTypeTransparentPicture;
-		break;
+		if (g_sci->_features->hasTransparentPicturePlanes()) {
+			_type = kPlaneTypeTransparentPicture;
+			break;
+		}
+		// fall through for games without transparent picture planes
 	default:
-		if (_type != kPlaneTypeTransparentPicture) {
+		if (!g_sci->_features->hasTransparentPicturePlanes() || _type != kPlaneTypeTransparentPicture) {
 			_type = kPlaneTypePicture;
 		}
 		break;
@@ -818,10 +836,18 @@ void Plane::update(const reg_t object) {
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 	_vanishingPoint.x = readSelectorValue(segMan, object, SELECTOR(vanishingX));
 	_vanishingPoint.y = readSelectorValue(segMan, object, SELECTOR(vanishingY));
-	_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
-	_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
-	_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
-	_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		_gameRect.left = readSelectorValue(segMan, object, SELECTOR(inLeft));
+		_gameRect.top = readSelectorValue(segMan, object, SELECTOR(inTop));
+		_gameRect.right = readSelectorValue(segMan, object, SELECTOR(inRight)) + 1;
+		_gameRect.bottom = readSelectorValue(segMan, object, SELECTOR(inBottom)) + 1;
+	}
 	convertGameRectToPlaneRect();
 
 	_priority = readSelectorValue(segMan, object, SELECTOR(priority));

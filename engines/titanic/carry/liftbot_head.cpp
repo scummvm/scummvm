@@ -50,7 +50,7 @@ void CLiftbotHead::load(SimpleFile *file) {
 bool CLiftbotHead::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (msg->_other->getName() == "LiftbotWithoutHead") {
 		CPetControl *pet = getPetControl();
-		if (CLift::_v1 == 1 && pet->getRoomsElevatorNum() == 4) {
+		if (!CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_flag = true;
 			CActMsg actMsg("AddRightHead");
 			actMsg.execute("FaultyLiftbot");
@@ -67,7 +67,7 @@ bool CLiftbotHead::UseWithCharMsg(CUseWithCharMsg *msg) {
 	CLift *lift = dynamic_cast<CLift *>(msg->_character);
 	if (lift) {
 		CPetControl *pet = getPetControl();
-		if (lift->isEquals("Well") && !CLift::_v1 && pet->getRoomsElevatorNum() == 4) {
+		if (lift->isEquals("Well") && !CLift::_hasHead && pet->getRoomsElevatorNum() == 4) {
 			_flag = true;
 			CActMsg actMsg("AddRightHead");
 			actMsg.execute(lift);

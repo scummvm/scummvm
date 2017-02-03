@@ -36,65 +36,65 @@ CSGTStateRoomStatics *CSGTStateRoom::_statics;
 
 void CSGTStateRoom::init() {
 	_statics = new CSGTStateRoomStatics();
-	_statics->_v1 = "Closed";
+	_statics->_bedhead = "Closed";
 }
 
 void CSGTStateRoom::deinit() {
 	delete _statics;
 }
 
-CSGTStateRoom::CSGTStateRoom() : CBackground(), _fieldE0(1),
-	_fieldE4(1), _fieldE8(0), _fieldEC(1), _fieldF0(1) {
+CSGTStateRoom::CSGTStateRoom() : CBackground(), _isClosed(1),
+	_displayFlag(true), _savedFrame(0), _savedIsClosed(true), _savedVisible(true) {
 }
 
 void CSGTStateRoom::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
-	file->writeQuotedLine(_statics->_v3, indent);
-	file->writeQuotedLine(_statics->_v4, indent);
-	file->writeQuotedLine(_statics->_v5, indent);
-	file->writeQuotedLine(_statics->_v6, indent);
-	file->writeQuotedLine(_statics->_v7, indent);
-	file->writeQuotedLine(_statics->_v8, indent);
-	file->writeQuotedLine(_statics->_v9, indent);
-	file->writeQuotedLine(_statics->_v10, indent);
-	file->writeQuotedLine(_statics->_v11, indent);
-	file->writeQuotedLine(_statics->_v12, indent);
+	file->writeQuotedLine(_statics->_bedhead, indent);
+	file->writeQuotedLine(_statics->_bedfoot, indent);
+	file->writeQuotedLine(_statics->_vase, indent);
+	file->writeQuotedLine(_statics->_tv, indent);
+	file->writeQuotedLine(_statics->_desk, indent);
+	file->writeQuotedLine(_statics->_chestOfDrawers, indent);
+	file->writeQuotedLine(_statics->_drawer, indent);
+	file->writeQuotedLine(_statics->_armchair, indent);
+	file->writeQuotedLine(_statics->_deskchair, indent);
+	file->writeQuotedLine(_statics->_washstand, indent);
+	file->writeQuotedLine(_statics->_basin, indent);
+	file->writeQuotedLine(_statics->_toilet, indent);
 
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_statics->_v13, indent);
-	file->writeNumberLine(_statics->_v14, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_isClosed, indent);
+	file->writeNumberLine(_displayFlag, indent);
+	file->writeNumberLine(_statics->_announcementFlag, indent);
+	file->writeNumberLine(_statics->_roomFlags, indent);
+	file->writeNumberLine(_savedFrame, indent);
+	file->writeNumberLine(_savedIsClosed, indent);
+	file->writeNumberLine(_savedVisible, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CSGTStateRoom::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_v1 = file->readString();
-	_statics->_v2 = file->readString();
-	_statics->_v3 = file->readString();
-	_statics->_v4 = file->readString();
-	_statics->_v5 = file->readString();
-	_statics->_v6 = file->readString();
-	_statics->_v7 = file->readString();
-	_statics->_v8 = file->readString();
-	_statics->_v9 = file->readString();
-	_statics->_v10 = file->readString();
-	_statics->_v11 = file->readString();
-	_statics->_v12 = file->readString();
+	_statics->_bedhead = file->readString();
+	_statics->_bedfoot = file->readString();
+	_statics->_vase = file->readString();
+	_statics->_tv = file->readString();
+	_statics->_desk = file->readString();
+	_statics->_chestOfDrawers = file->readString();
+	_statics->_drawer = file->readString();
+	_statics->_armchair = file->readString();
+	_statics->_deskchair = file->readString();
+	_statics->_washstand = file->readString();
+	_statics->_basin = file->readString();
+	_statics->_toilet = file->readString();
 
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_statics->_v13 = file->readNumber();
-	_statics->_v14 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_isClosed = file->readNumber();
+	_displayFlag = file->readNumber();
+	_statics->_announcementFlag = file->readNumber();
+	_statics->_roomFlags = file->readNumber();
+	_savedFrame = file->readNumber();
+	_savedIsClosed = file->readNumber();
+	_savedVisible = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -106,7 +106,7 @@ bool CSGTStateRoom::ActMsg(CActMsg *msg) {
 
 	if (roomFlags != assignedRoom) {
 		petDisplayMessage(NOT_YOUR_ASSIGNED_ROOM);
-	} else if (_fieldE0) {
+	} else if (_isClosed) {
 		CTurnOn onMsg;
 		onMsg.execute(this);
 	} else {
@@ -128,28 +128,29 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 	uint assignedRoom = pet->getAssignedRoomFlags();
 
 	if (roomFlags == assignedRoom) {
-		loadFrame(_fieldE8);
-		_fieldE0 = _fieldEC;
-		setVisible(_fieldF0);
+		loadFrame(_savedFrame);
+		_isClosed = _savedIsClosed;
+		setVisible(_savedVisible);
 
-		if (isEquals("Desk") && _statics->_v5 == "Closed")
+		if (isEquals("Desk") && _statics->_desk == "Closed")
 			loadFrame(1);
 	}
 
 	if (isEquals("Drawer")) {
 		petSetArea(PET_REMOTE);
 		if (roomFlags == assignedRoom && getPassengerClass() == 3
-				&& _statics->_v13) {
+				&& _statics->_announcementFlag) {
+			// Congratulations, you may have won an upgrade
 			playSound("b#21.wav");
-			_statics->_v13 = 0;
+			_statics->_announcementFlag = false;
 		}
 
-		_statics->_v7 = "Closed";
+		_statics->_drawer = "Closed";
 		setVisible(false);
-		_fieldE0 = true;
+		_isClosed = true;
 	} else if (roomFlags != assignedRoom) {
 		loadFrame(0);
-		if (_fieldE4) {
+		if (_displayFlag) {
 			setVisible(true);
 			if (isEquals("Desk"))
 				loadFrame(1);
@@ -167,12 +168,12 @@ bool CSGTStateRoom::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 	uint assignedRoom = pet->getAssignedRoomFlags();
 
 	if (roomFlags == assignedRoom) {
-		_fieldE8 = getMovieFrame();
-		_fieldEC = _fieldE0;
-		_fieldF0 = _visible;
+		_savedFrame = getMovieFrame();
+		_savedIsClosed = _isClosed;
+		_savedVisible = _visible;
 	}
 
-	_statics->_v14 = roomFlags;
+	_statics->_roomFlags = roomFlags;
 	return true;
 }
 

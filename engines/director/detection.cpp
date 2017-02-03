@@ -23,6 +23,8 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -55,6 +57,9 @@ Common::Language DirectorEngine::getLanguage() const {
 }
 
 Common::String DirectorEngine::getEXEName() const {
+	if (ConfMan.hasKey("start_movie"))
+		return ConfMan.get("start_movie");
+
 	return _gameDescription->desc.filesDescriptions[0].fileName;
 }
 
@@ -68,7 +73,7 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 static const PlainGameDescriptor directorGames[] = {
 	{ "director",	"Macromedia Director Game" },
 	{ "directortest",	"Macromedia Director Test Target" },
-	{ "theapartment",	"The Apartment, D3 interactive demo" },
+	{ "theapartment",	"The Apartment, Interactive demo" },
 	{ "gundam0079",	"Gundam 0079: The War for Earth" },
 	{ "jewels",		"Jewels of the Oracle" },
 	{ "jman",		"The Journeyman Project" },

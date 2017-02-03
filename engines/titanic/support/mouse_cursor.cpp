@@ -54,10 +54,11 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 }
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
-		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
-		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
+		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS), _hideCounter(0),
+		_busyCount(0), _cursorSuppressed(false), _setCursorCount(0), _inputEnabled(true), _fieldE8(0) {
 	loadCursorImages();
 	setCursor(CURSOR_ARROW);
+	CursorMan.showMouse(true);
 }
 
 CMouseCursor::~CMouseCursor() {
@@ -86,18 +87,45 @@ void CMouseCursor::loadCursorImages() {
 	}
 }
 
-void CMouseCursor::show() {
-	CursorMan.showMouse(true);
+void CMouseCursor::incBusyCount() {
+	if (_busyCount == 0)
+		setCursor(CURSOR_HOURGLASS);
+	++_busyCount;
 }
 
-void CMouseCursor::hide() {
+void CMouseCursor::decBusyCount() {
+	assert(_busyCount > 0);
+	if (--_busyCount == 0)
+		setCursor(CURSOR_ARROW);
+}
+
+void CMouseCursor::incHideCounter() {
+	if (_hideCounter++ == 0)
+		CursorMan.showMouse(false);
+}
+
+void CMouseCursor::decHideCounter() {
+	--_hideCounter;
+	assert(_hideCounter >= 0);
+	if (_hideCounter == 0)
+		CursorMan.showMouse(true);
+}
+
+void CMouseCursor::suppressCursor() {
+	_cursorSuppressed = true;
 	CursorMan.showMouse(false);
+}
+
+void CMouseCursor::unsuppressCursor() {
+	_cursorSuppressed = false;
+	if (_hideCounter == 0)
+		CursorMan.showMouse(true);
 }
 
 void CMouseCursor::setCursor(CursorId cursorId) {
 	++_setCursorCount;
 
-	if (cursorId != _cursorId) {
+	if (cursorId != _cursorId && _busyCount == 0) {
 		// The original cursors supported partial alpha when rendering the cursor.
 		// Since we're using the ScummVM CursorMan, we can't do that, so we need
 		// to build up a surface of the cursor with even partially transparent
@@ -108,7 +136,7 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
 		const uint16 *srcP = srcSurface.getPixels();
-		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_DEFAULT);
+		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_ALPHA0);
 		uint16 *destP = (uint16 *)surface.getPixels();
 
 		for (int y = 0; y < CURSOR_SIZE; ++y) {
@@ -131,25 +159,45 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 }
 
 void CMouseCursor::update() {
-	// No implementation needed
+	if (!_inputEnabled && _moveStartTime) {
+		uint32 time = CLIP(g_system->getMillis(), _moveStartTime, _moveEndTime);
+		Common::Point pt(
+			_moveStartPos.x + (_moveDestPos.x - _moveStartPos.x) *
+				(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime),
+			_moveStartPos.y + (_moveDestPos.y - _moveStartPos.y) *
+			(int)(time - _moveStartTime) / (int)(_moveEndTime - _moveStartTime)
+		);
+
+		if (pt != g_vm->_events->getMousePos()) {
+			g_vm->_events->setMousePos(pt);
+
+			CInputHandler &inputHandler = *CScreenManager::_screenManagerPtr->_inputHandler;
+			CMouseMoveMsg msg(pt, 0);
+			inputHandler.handleMessage(msg, false);
+		}
+
+		if (time == _moveEndTime)
+			_moveStartTime = _moveEndTime = 0;
+	}
 }
 
-void CMouseCursor::lockE4() {
-	_fieldE4 = 0;
+void CMouseCursor::disableControl() {
+	_inputEnabled = false;
 	CScreenManager::_screenManagerPtr->_inputHandler->incLockCount();
 }
 
-void CMouseCursor::unlockE4() {
-	_fieldE4 = 1;
+void CMouseCursor::enableControl() {
+	_inputEnabled = true;
 	_fieldE8 = 0;
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
 }
 
-void CMouseCursor::setPosition(const Point &pt, double rate) {
-	assert(rate >= 0.0 && rate <= 1.0);
-
-	// TODO: Figure out use of the rate parameter
-	g_system->warpMouse(pt.x, pt.y);
+void CMouseCursor::setPosition(const Point &pt, double duration) {
+	_moveStartPos = g_vm->_events->getMousePos();
+	_moveDestPos = pt;
+	_moveStartTime = g_system->getMillis();
+	_moveEndTime = _moveStartTime + (int)duration;
+	update();
 }
 
 } // End of namespace Titanic

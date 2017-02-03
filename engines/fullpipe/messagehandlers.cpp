@@ -188,11 +188,15 @@ int global_messageHandler1(ExCommand *cmd) {
 				}
 				break;
 			case '\t':
+				// Demo has no map
+				if (g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)
+					break;
+
 				if (g_fp->_flgCanOpenMap)
 					g_fp->openMap();
 				cmd->_messageKind = 0;
 				break;
-			case 'p':
+			case Common::KEYCODE_F1:
 				if (g_fp->_flgCanOpenMap)
 					g_fp->openHelp();
 				cmd->_messageKind = 0;
@@ -200,7 +204,7 @@ int global_messageHandler1(ExCommand *cmd) {
 			case '8':
 				{
 					int num = 32;
-					for (uint i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfosCount; i++) {
+					for (int i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfosCount; i++) {
 						debug("pic %d, %d:", num, i);
 						g_fp->_gameLoader->_sc2array[num]._picAniInfos[i]->print();
 					}
@@ -308,7 +312,7 @@ int global_messageHandler2(ExCommand *cmd) {
 				ani->_callback2 = staticANIObjectCallback;
 			} else {
 				ani->setFlags40(false);
-				ani->_callback2 = 0;
+				ani->_callback2 = 0; // Really NULL
 			}
 		}
 		break;
@@ -515,7 +519,7 @@ int global_messageHandler3(ExCommand *cmd) {
 		if (cmd->_objtype == kObjTypeObjstateCommand) {
 			ObjstateCommand *c = (ObjstateCommand *)cmd;
 			result = 1;
-			g_fp->setObjectState(c->_objCommandName, c->_value);
+			g_fp->setObjectState(c->_objCommandName.c_str(), c->_value);
 		}
 		return result;
 	default:

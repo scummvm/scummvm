@@ -24,6 +24,7 @@
 
 #include "adl/console.h"
 #include "adl/display.h"
+#include "adl/graphics.h"
 #include "adl/adl.h"
 
 namespace Adl {
@@ -35,6 +36,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("verbs", WRAP_METHOD(Console, Cmd_Verbs));
 	registerCmd("dump_scripts", WRAP_METHOD(Console, Cmd_DumpScripts));
 	registerCmd("valid_cmds", WRAP_METHOD(Console, Cmd_ValidCommands));
+	registerCmd("region", WRAP_METHOD(Console, Cmd_Region));
 	registerCmd("room", WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("items", WRAP_METHOD(Console, Cmd_Items));
 	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
@@ -112,6 +114,26 @@ bool Console::Cmd_ValidCommands(int argc, const char **argv) {
 	return true;
 }
 
+void Console::dumpScripts(const Common::String &prefix) {
+	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
+		_engine->loadRoom(roomNr);
+		if (_engine->_roomData.commands.size() != 0) {
+			_engine->_dumpFile->open(prefix + Common::String::format("%03d.ADL", roomNr).c_str());
+			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
+			_engine->_dumpFile->close();
+		}
+	}
+	_engine->loadRoom(_engine->_state.room);
+
+	_engine->_dumpFile->open(prefix + "GLOBAL.ADL");
+	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+
+	_engine->_dumpFile->open(prefix + "RESPONSE.ADL");
+	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
+	_engine->_dumpFile->close();
+}
+
 bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
@@ -124,29 +146,65 @@ bool Console::Cmd_DumpScripts(int argc, const char **argv) {
 
 	_engine->_dumpFile = new Common::DumpFile();
 
-	for (byte roomNr = 1; roomNr <= _engine->_state.rooms.size(); ++roomNr) {
-		_engine->loadRoom(roomNr);
-		if (_engine->_roomData.commands.size() != 0) {
-			_engine->_dumpFile->open(Common::String::format("%03d.ADL", roomNr).c_str());
-			_engine->doAllCommands(_engine->_roomData.commands, IDI_ANY, IDI_ANY);
-			_engine->_dumpFile->close();
+	if (_engine->_state.regions.empty()) {
+		dumpScripts();
+	} else {
+		const byte oldRegion = _engine->_state.region;
+		const byte oldPrevRegion = _engine->_state.prevRegion;
+		const byte oldRoom = _engine->_state.room;
+
+		for (byte regionNr = 1; regionNr <= _engine->_state.regions.size(); ++regionNr) {
+			_engine->switchRegion(regionNr);
+			dumpScripts(Common::String::format("%03d-", regionNr));
 		}
+
+		_engine->switchRegion(oldRegion);
+		_engine->_state.prevRegion = oldPrevRegion;
+		_engine->_state.room = oldRoom;
+		_engine->loadRoom(oldRoom);
 	}
-	_engine->loadRoom(_engine->_state.room);
-
-	_engine->_dumpFile->open("GLOBAL.ADL");
-	_engine->doAllCommands(_engine->_globalCommands, IDI_ANY, IDI_ANY);
-	_engine->_dumpFile->close();
-
-	_engine->_dumpFile->open("RESPONSE.ADL");
-	_engine->doAllCommands(_engine->_roomCommands, IDI_ANY, IDI_ANY);
-	_engine->_dumpFile->close();
 
 	delete _engine->_dumpFile;
 	_engine->_dumpFile = nullptr;
 
 	if (!oldFlag)
 		DebugMan.disableDebugChannel("Script");
+
+	return true;
+}
+
+void Console::prepareGame() {
+	_engine->_graphics->clearScreen();
+	_engine->loadRoom(_engine->_state.room);
+	_engine->showRoom();
+	_engine->_display->updateTextScreen();
+	_engine->_display->updateHiResScreen();
+}
+
+bool Console::Cmd_Region(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [<new_region>]\n", argv[0]);
+		return true;
+	}
+
+	if (argc == 2) {
+		if (!_engine->_canRestoreNow) {
+			debugPrintf("Cannot change regions right now\n");
+			return true;
+		}
+
+		uint regionCount = _engine->_state.regions.size();
+		uint region = strtoul(argv[1], NULL, 0);
+		if (region < 1 || region > regionCount) {
+			debugPrintf("Region %u out of valid range [1, %u]\n", region, regionCount);
+			return true;
+		}
+
+		_engine->switchRegion(region);
+		prepareGame();
+	}
+
+	debugPrintf("Current region: %u\n", _engine->_state.region);
 
 	return true;
 }
@@ -170,12 +228,8 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 			return true;
 		}
 
-		_engine->_state.room = room;
-		_engine->clearScreen();
-		_engine->loadRoom(_engine->_state.room);
-		_engine->showRoom();
-		_engine->_display->updateTextScreen();
-		_engine->_display->updateHiResScreen();
+		_engine->switchRoom(room);
+		prepareGame();
 	}
 
 	debugPrintf("Current room: %u\n", _engine->_state.room);

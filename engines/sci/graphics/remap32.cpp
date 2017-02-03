@@ -21,6 +21,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 
@@ -300,7 +301,7 @@ GfxRemap32::GfxRemap32() :
 	// match the highest possible value of `_remapStartColor`
 	assert(_remapStartColor == 236);
 
-	if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) {
+	if (g_sci->_features->hasNewPaletteCode()) {
 		_remaps.resize(9);
 	} else {
 		_remaps.resize(19);

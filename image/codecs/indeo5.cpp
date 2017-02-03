@@ -22,7 +22,7 @@
 
 /* Intel Indeo 5 decompressor, derived from ffmpeg.
  *
- * Original copyright note: * Intel Indeo 3 (IV41, IV42, etc.) video decoder for ffmpeg
+ * Original copyright note: * Intel Indeo 5 (IV51, IV52, etc.) video decoder for ffmpeg
  * written, produced, and directed by Alan Smithee
  */
 
@@ -48,7 +48,8 @@ enum {
 
 #define IVI5_PIC_SIZE_ESC       15
 
-Indeo5Decoder::Indeo5Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
+Indeo5Decoder::Indeo5Decoder(uint16 width, uint16 height, uint bitsPerPixel) :
+		IndeoDecoderBase(width, height, bitsPerPixel) {
 	_ctx._isIndeo4 = false;
 	_ctx._refBuf = 1;
 	_ctx._bRefBuf = 3;
@@ -84,7 +85,7 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize * 8));
+	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
 
 	// Decode the frame
 	int err = decodeIndeoFrame();

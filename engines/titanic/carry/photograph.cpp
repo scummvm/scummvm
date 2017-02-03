@@ -93,7 +93,7 @@ bool CPhotograph::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 
 bool CPhotograph::ActMsg(CActMsg *msg) {
 	if (msg->_action == "BecomeGettable") {
-		_fieldE0 = 1;
+		_canTake = true;
 		_cursorId = CURSOR_HAND;
 	}
 

@@ -248,7 +248,7 @@ Common::Error GnapEngine::run() {
 	_sequenceCache = new SequenceCache(_dat);
 	_gameSys = new GameSys(this);
 	_soundMan = new SoundMan(this);
-	_debugger = new Debugger(this);
+	_debugger = new Debugger();
 	_gnap = new PlayerGnap(this);
 	_plat = new PlayerPlat(this);
 

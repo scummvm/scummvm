@@ -24,7 +24,7 @@
 #define TITANIC_PET_LOAD_SAVE_H
 
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -52,7 +52,7 @@ private:
 	 */
 	bool isSlotHighlighted(int index, const Point &pt);
 protected:
-	CPetText _slotNames[SAVEGAME_SLOTS_COUNT];
+	CTextControl _slotNames[SAVEGAME_SLOTS_COUNT];
 	bool _slotInUse[SAVEGAME_SLOTS_COUNT];
 	CPetGfxElement _btnLoadSave;
 	CPetGfxElement _gutter;

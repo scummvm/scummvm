@@ -32,18 +32,18 @@ class CCellPointButton : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
+	int _unused1;
+	int _unused2;
+	int _unused3;
+	int _unused4;
 	int _regionNum;
-	int _fieldF4;
-	int _fieldF8;
-	int _fieldFC;
-	int _field100;
-	int _field104;
-	int _field108;
-	CString _string3;
+	int _unused5;
+	int _unused6;
+	int _unused7;
+	int _unused8;
+	int _unused9;
+	int _unused10;
+	CString _npcName;
 	int _dialNum;
 public:
 	CLASSDEF;

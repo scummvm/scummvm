@@ -278,6 +278,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	}
 
 	_cursorBack.data = (byte *)realloc(_cursorBack.data, _width * _height);
+	memset(_cursorBack.data, 0, _width * _height);
 	_drawBuff1.data = (byte *)realloc(_drawBuff1.data, _width * _height);
 	_drawBuff2.data = (byte *)realloc(_drawBuff2.data, _width * _height * 4);
 	_savedVmapRegion.data = (byte *)realloc(_savedVmapRegion.data, _width * _height);
@@ -290,8 +291,9 @@ void GfxCursor32::readVideo(DrawRegion &target) {
 		copy(target, _vmapRegion);
 	} else {
 		// NOTE: SSCI would read the background for the cursor directly out of
-		// video memory here, but as far as can be determined, this does not
-		// seem to actually be necessary for proper cursor rendering
+		// video memory here, but this is not necessary in ScummVM because mouse
+		// events in ScummVM are polled so can never interrupt the renderer
+		// between frames
 	}
 }
 

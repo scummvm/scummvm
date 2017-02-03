@@ -31,30 +31,23 @@ BEGIN_MESSAGE_MAP(CLemonDispensor, CBackground)
 END_MESSAGE_MAP()
 
 bool CLemonDispensor::_isSummer;
-int CLemonDispensor::_v2;
-int CLemonDispensor::_v3;
+bool CLemonDispensor::_lemonDropped;
+int CLemonDispensor::_hitCounter;
 CGameObject *CLemonDispensor::_draggingObject;
 
 CLemonDispensor::CLemonDispensor() : CBackground(),
-	_fieldE0(0), _origPt(Point(9, 15)), _fieldEC(0) {
-}
-
-void CLemonDispensor::init() {
-	_isSummer = false;
-	_v2 = 0;
-	_v3 = 0;
-	_draggingObject = nullptr;
+	_unused1(0), _origPt(Point(9, 15)), _onDispensor(false) {
 }
 
 void CLemonDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_isSummer, indent);
-	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_v3, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_lemonDropped, indent);
+	file->writeNumberLine(_hitCounter, indent);
+	file->writeNumberLine(_unused1, indent);
 	file->writeNumberLine(_origPt.x, indent);
 	file->writeNumberLine(_origPt.y, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_onDispensor, indent);
 
 	CBackground::save(file, indent);
 }
@@ -62,18 +55,19 @@ void CLemonDispensor::save(SimpleFile *file, int indent) {
 void CLemonDispensor::load(SimpleFile *file) {
 	file->readNumber();
 	_isSummer = file->readNumber();
-	_v2 = file->readNumber();
-	_v3 = file->readNumber();
-	_fieldE0 = file->readNumber();
+	_lemonDropped = file->readNumber();
+	_hitCounter = file->readNumber();
+	_unused1 = file->readNumber();
 	_origPt.x = file->readNumber();
 	_origPt.y = file->readNumber();
-	_fieldEC = file->readNumber();
+	_onDispensor = file->readNumber();
+	_draggingObject = nullptr;
 
 	CBackground::load(file);
 }
 
 bool CLemonDispensor::FrameMsg(CFrameMsg *msg) {
-	if (_v2 || !_isSummer)
+	if (_lemonDropped || !_isSummer)
 		return true;
 
 	if (!_draggingObject) {
@@ -94,14 +88,15 @@ bool CLemonDispensor::FrameMsg(CFrameMsg *msg) {
 			_origPt.y + _draggingObject->_bounds.top);
 		bool flag = checkPoint(pt, true);
 
-		if (_fieldEC == 0) {
-			if (flag && ++_v3 > 10) {
+		if (!_onDispensor) {
+			if (flag && ++_hitCounter > 10) {
 				CLemonFallsFromTreeMsg lemonMsg(pt);
 				lemonMsg.execute("Lemon");
-				_v2 = 1;
+				_lemonDropped = true;
 			}
-		} else if (_fieldEC == 1 && !flag) {
-			_fieldEC = 0;
+			_onDispensor = true;
+		} else if (_onDispensor && !flag) {
+			_onDispensor = false;
 		}
 	}
 
@@ -115,8 +110,8 @@ bool CLemonDispensor::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CLemonDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 	_draggingObject = nullptr;
-	_v3 = 0;
-	_fieldEC = 0;
+	_hitCounter = 0;
+	_onDispensor = false;
 	return true;
 }
 

@@ -66,26 +66,57 @@ private:
 	CursorId _cursorId;
 	CursorEntry _cursors[NUM_CURSORS];
 	uint _setCursorCount;
-	int _fieldE4;
+	int _hideCounter;
+	int _busyCount;
+	bool _cursorSuppressed;
 	int _fieldE8;
+	Common::Point _moveStartPos;
+	Common::Point _moveDestPos;
+	uint _moveStartTime, _moveEndTime;
 
 	/**
 	 * Load the images for each cursor
 	 */
 	void loadCursorImages();
 public:
+	bool _inputEnabled;
+public:
 	CMouseCursor(CScreenManager *screenManager);
 	~CMouseCursor();
 
 	/**
-	 * Make the mouse cursor visible
+	 * Increment the busy count for the cursor, showing an hourglass
 	 */
-	void show();
+	void incBusyCount();
 
 	/**
-	 * Hide the mouse cursor
+	 * Decrements the busy count, resetting back to an arrow cursor
+	 * when the count reaches zero
 	 */
-	void hide();
+	void decBusyCount();
+
+	/**
+	 * Decrements the hide counter, and shows the mouse if
+	 * it's reached zero
+	 */
+	void incHideCounter();
+
+	/**
+	 * Increments the hide counter, hiding the mouse if it's the first call
+	 */
+	void decHideCounter();
+
+	/**
+	 * Suppresses the cursor. When suppressed, the cursor isn't drawn,
+	 * even if it's not otherwise being hidden
+	 */
+	void suppressCursor();
+
+	/**
+	 * Unflags the cursor as being suppressed, allowing it to be drawn
+	 * again if it's enabled
+	 */
+	void unsuppressCursor();
 
 	/**
 	 * Set the cursor
@@ -102,13 +133,20 @@ public:
 	 */
 	uint getChangeCount() const { return _setCursorCount; }
 
-	void lockE4();
-	void unlockE4();
+	/**
+	 * Disables user control of the mouse
+	 */
+	void disableControl();
 
 	/**
-	 * Sets the mouse to a new position
+	 * Re-enables user control of the mouse
 	 */
-	void setPosition(const Point &pt, double rate);
+	void enableControl();
+
+	/**
+	 * Move the mouse to a new position
+	 */
+	void setPosition(const Point &pt, double duration);
 };
 
 

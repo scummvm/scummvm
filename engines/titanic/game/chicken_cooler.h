@@ -33,11 +33,11 @@ class CChickenCooler : public CGameObject {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
+	int _newTemperature;
+	bool _triggerOnRoomEntry;
 public:
 	CLASSDEF;
-	CChickenCooler() : CGameObject(), _fieldBC(0), _fieldC0(0) {}
+	CChickenCooler() : CGameObject(), _newTemperature(0), _triggerOnRoomEntry(false) {}
 
 	/**
 	 * Save the data for the class to file

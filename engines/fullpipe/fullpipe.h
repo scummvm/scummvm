@@ -30,8 +30,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "graphics/transparent_surface.h"
-
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
@@ -112,8 +110,9 @@ public:
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
-	const char *getGameId() const;
-	Common::Platform getPlatform() const;
+	uint32 getFeatures() const;
+	bool isDemo();
+	Common::Language getLanguage() const;
 
 	Common::RandomSource *_rnd;
 
@@ -122,7 +121,7 @@ public:
 
 	void updateEvents();
 
-	Graphics::Surface _backgroundSurface;
+	Graphics::Surface *_backgroundSurface;
 	Graphics::PixelFormat *_origFormat;
 
 	GameLoader *_gameLoader;
@@ -182,8 +181,10 @@ public:
 	void playSound(int id, int flag);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	int getSceneTrack();
+	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(char *trackName);
+	void startSoundStream1(const char *trackName);
+	void playOggSound(const char *trackName, Audio::SoundHandle *stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -233,6 +234,7 @@ public:
 
 	void enableSaves() { _isSaveAllowed = true; }
 	void disableSaves(ExCommand *ex);
+	bool isSaveAllowed();
 
 	void initObjectStates();
 	void setLevelStates();
@@ -274,6 +276,7 @@ public:
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
 
+	void sceneAutoScrolling();
 	bool sceneSwitcher(EntranceInfo *entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
@@ -327,7 +330,12 @@ public:
 	void lift_openLift();
 
 	GameVar *_musicGameVar;
-	Audio::SoundHandle *_sceneTrackHandle;
+	Audio::SoundHandle *_soundStream1;
+	Audio::SoundHandle *_soundStream2;
+	Audio::SoundHandle *_soundStream3;
+	Audio::SoundHandle *_soundStream4;
+
+	bool _stream2playing;
 
 public:
 

@@ -232,7 +232,7 @@ Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
 	return SymbianStdioStream::makeFromPath(getPath(), true);
 }
 
-bool SymbianFilesystemNode::create(bool isDirectory) {
+bool SymbianFilesystemNode::create(bool isDirectoryFlag) {
 	error("Not supported");
 	return false;
 }

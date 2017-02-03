@@ -150,7 +150,7 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 		if (haventWarned.check())
 			debugPrintf("Setting position directly can cause glitches and crashes.\n");
 		debugPrintf("Position set to (%d, %d)\n", x, y);
-		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
 										   x - currMap._offsetMapX, y - currMap._offsetMapY);
 	} else
 		goto argumentError;
@@ -184,7 +184,7 @@ bool Console::Cmd_map(int argc, const char** argv) {
 			debugPrintf("Setting map directly can cause glitches and crashes.\n");
 		debugPrintf("Map set to %d\n", index);
 
-		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 		_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(
 			_vm->_dungeonMan->_partyMapIndex, index - _vm->_dungeonMan->_partyMapIndex,
 			&_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);

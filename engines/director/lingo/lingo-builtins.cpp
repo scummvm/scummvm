@@ -33,28 +33,53 @@ static struct BuiltinProto {
 } builtins[] = {
 	// Math
 	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2
-	{ "atan",			Lingo::b_atan,			1, 1, true },	// 		D4
-	{ "cos",			Lingo::b_cos,			1, 1, true },	// 		D4
-	{ "exp",			Lingo::b_exp,			1, 1, true },	// 		D4
-	{ "float",			Lingo::b_float,			1, 1, true },	// 		D4
+	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4
+	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4
+	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4
+	{ "float",			Lingo::b_float,			1, 1, true },	//			D4
 	{ "integer",		Lingo::b_integer,		1, 1, true },
-	{ "integerp",		Lingo::b_integerp,		1, 1, true },
-	{ "log",			Lingo::b_log,			1, 1, true },	// 		D4
-	{ "pi",				Lingo::b_pi,			0, 0, true },	// 		D4
-	{ "power",			Lingo::b_power,			2, 2, true },	// 		D4
+	{ "log",			Lingo::b_log,			1, 1, true },	//			D4
+	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4
+	{ "power",			Lingo::b_power,			2, 2, true },	//			D4
 	{ "random",			Lingo::b_random,		1, 1, true },	// D2
 	{ "sin",			Lingo::b_sin,			1, 1, true },
 	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2
-	{ "tan",			Lingo::b_tan,			1, 1, true },	// 		D4
+	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4
 	// String
 	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
 	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
+	{ "delete",			Lingo::b_delete,		1, 1, true },	//		D3
+	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3
 	{ "length",			Lingo::b_length,		1, 1, true },	// D2
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
-	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
+	// Lists
+	{ "add",			Lingo::b_add,			2, 2, false },	//			D4
+	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4
+	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4
+	{ "append",			Lingo::b_append,		2, 2, false },	//			D4
+	{ "count",			Lingo::b_count,			1, 1, true },	//			D4
+	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4
+	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4
+	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4
+	{ "findPosNear",	Lingo::b_findPosNear,	2, 2, true },	//			D4
+	{ "getaProp",		Lingo::b_getaProp,		2, 2, true },	//			D4
+	{ "getAt",			Lingo::b_getAt,			2, 2, true },	//			D4
+	{ "getLast",		Lingo::b_getLast,		1, 1, true },	//			D4
+	{ "getOne",			Lingo::b_getOne,		2, 2, true },	//			D4
+	{ "getPos",			Lingo::b_getPos,		2, 2, true },	//			D4
+	{ "getProp",		Lingo::b_getProp,		2, 2, true },	//			D4
+	{ "getPropAt",		Lingo::b_getPropAt,		2, 2, true },	//			D4
+	{ "list",			Lingo::b_list,			-1, 0, true },	//			D4
+	{ "listP",			Lingo::b_listP,			1, 1, true },	//			D4
+	{ "max",			Lingo::b_max,			1, 1, true },	//			D4
+	{ "min",			Lingo::b_min,			1, 1, true },	//			D4
+	{ "setaProp",		Lingo::b_setaProp,		3, 3, false },	//			D4
+	{ "setAt",			Lingo::b_setAt,			3, 3, false },	//			D4
+	{ "setProp",		Lingo::b_setProp,		3, 3, false },	//			D4
+	{ "sort",			Lingo::b_sort,			1, 1, false },	//			D4
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
@@ -63,9 +88,12 @@ static struct BuiltinProto {
 	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2
 	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2
 	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2
+	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3
 	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
 	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
+	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3
 	// Control
+	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
@@ -75,6 +103,8 @@ static struct BuiltinProto {
 		// play													// D2
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
 		// play done											// D2
+	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3
+	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3
 	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2
 	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2
@@ -83,25 +113,33 @@ static struct BuiltinProto {
 		// when mouseDown										// D2
 		// when mouseUp											// D2
 		// when timeOut											// D2
+	// Types
+	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4
+	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2
+	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2
+	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
+	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
+	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
+	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 		D4
 		// put													// D2
 		// set													// D2
-	{ "objectp",		Lingo::b_objectp,		1, 1, true },
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
-	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
+	{ "duplicate-cast",	Lingo::b_duplicateCast,	1, 2, false },	//			D4
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
+	{ "erase-cast",		Lingo::b_eraseCast,		1, 2, false },	//			D4
 		// go													// D2
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
-	{ "marker",			Lingo::b_marker,			1, 1, true },	// D2
+	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
 	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
 	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
@@ -118,6 +156,11 @@ static struct BuiltinProto {
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
+	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3
+	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
+	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3
+	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
+	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3
 	// Constants
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
@@ -127,8 +170,20 @@ static struct BuiltinProto {
 	{ "return",			Lingo::b_return,		0, 0, false },	// D2
 	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
+	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
+	// References
+	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
+	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
+
 
 	{ 0, 0, 0, 0, false }
+};
+
+static const char *twoWordBuiltins[] = {
+	"duplicate",
+	"erase",
+	"sound",
+	0
 };
 
 void Lingo::initBuiltIns() {
@@ -143,10 +198,13 @@ void Lingo::initBuiltIns() {
 		sym->parens = blt->parens;
 		sym->u.bltin = blt->func;
 
-		_handlers[blt->name] = sym;
+		_builtins[blt->name] = sym;
 
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
+
+	for (const char **b = twoWordBuiltins; *b; b++)
+		_twoWordBuiltins[*b] = true;
 }
 
 void Lingo::printStubWithArglist(const char *funcname, int nargs) {
@@ -237,14 +295,6 @@ void Lingo::b_float(int nargs) {
 void Lingo::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	g_lingo->push(d);
-}
-
-void Lingo::b_integerp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == INT) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
 	g_lingo->push(d);
 }
 
@@ -345,6 +395,26 @@ void Lingo::b_charToNum(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_delete(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	warning("STUB: b_delete");
+
+	g_lingo->push(Datum((char)d.u.i));
+}
+
+void Lingo::b_hilite(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	warning("STUB: b_hilite");
+
+	g_lingo->push(Datum((char)d.u.i));
+}
+
 void Lingo::b_length(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -385,19 +455,134 @@ void Lingo::b_string(int nargs) {
 	g_lingo->push(d);
 }
 
-void Lingo::b_stringp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == STRING) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
-}
-
 void Lingo::b_value(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	warning("STUB: b_value()");
 	g_lingo->push(d);
+}
+
+///////////////////
+// Lists
+///////////////////
+void Lingo::b_add(int nargs) {
+	g_lingo->printStubWithArglist("b_add", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_addAt(int nargs) {
+	g_lingo->printStubWithArglist("b_addAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_addProp(int nargs) {
+	g_lingo->printStubWithArglist("b_addProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_append(int nargs) {
+	g_lingo->printStubWithArglist("b_append", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_count(int nargs) {
+	g_lingo->printStubWithArglist("b_count", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_deleteAt(int nargs) {
+	g_lingo->printStubWithArglist("b_deleteAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_deleteProp(int nargs) {
+	g_lingo->printStubWithArglist("b_deleteProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_findPos(int nargs) {
+	g_lingo->printStubWithArglist("b_findPos", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_findPosNear(int nargs) {
+	g_lingo->printStubWithArglist("b_findPosNear", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getaProp(int nargs) {
+	g_lingo->printStubWithArglist("b_getaProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getAt(int nargs) {
+	g_lingo->printStubWithArglist("b_getAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getLast(int nargs) {
+	g_lingo->printStubWithArglist("b_getLast", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getOne(int nargs) {
+	g_lingo->printStubWithArglist("b_getOne", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getPos(int nargs) {
+	g_lingo->printStubWithArglist("b_getPos", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getProp(int nargs) {
+	g_lingo->printStubWithArglist("b_getProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_getPropAt(int nargs) {
+	g_lingo->printStubWithArglist("b_getPropAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_list(int nargs) {
+	g_lingo->printStubWithArglist("b_list", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_listP(int nargs) {
+	g_lingo->printStubWithArglist("b_listP", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_max(int nargs) {
+	g_lingo->printStubWithArglist("b_max", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_min(int nargs) {
+	g_lingo->printStubWithArglist("b_min", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setaProp(int nargs) {
+	g_lingo->printStubWithArglist("b_setaProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setAt(int nargs) {
+	g_lingo->printStubWithArglist("b_setAt", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_setProp(int nargs) {
+	g_lingo->printStubWithArglist("b_setProp", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_sort(int nargs) {
+	g_lingo->printStubWithArglist("b_sort", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 
@@ -458,6 +643,10 @@ void Lingo::b_openXlib(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_setCallBack(int nargs) {
+	warning("STUB: b_setCallBack");
+}
+
 void Lingo::b_showResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -478,15 +667,29 @@ void Lingo::b_showXlib(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_xFactoryList(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_xFactoryList(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
 ///////////////////
 // Control
 ///////////////////
-void Lingo::b_dontPassEvent(int nargs) {
-	warning("STUB: b_dontPassEvent");
+void Lingo::b_abort(int nargs) {
+	warning("STUB: b_continue");
 }
 
 void Lingo::b_continue(int nargs) {
 	warning("STUB: b_continue");
+}
+
+void Lingo::b_dontPassEvent(int nargs) {
+	warning("STUB: b_dontPassEvent");
 }
 
 void Lingo::b_nothing(int nargs) {
@@ -515,6 +718,34 @@ void Lingo::b_playAccel(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void Lingo::b_preLoad(int nargs) {
+	g_lingo->printStubWithArglist("b_preLoad", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_preLoadCast(int nargs) {
+	g_lingo->printStubWithArglist("b_preLoadCast", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_framesToHMS(int nargs) {
+	g_lingo->printStubWithArglist("b_framesToHMS", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_HMStoFrames(int nargs) {
+	g_lingo->printStubWithArglist("b_HMStoFrames", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_printFrom(int nargs) {
 	g_lingo->printStubWithArglist("b_printFrom", nargs);
 
@@ -537,10 +768,17 @@ void Lingo::b_startTimer(int nargs) {
 	warning("STUB: b_startTimer");
 }
 
+///////////////////
+// Types
+///////////////////
+void Lingo::b_floatP(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == FLOAT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
 
-///////////////////
-// Misc
-///////////////////
 void Lingo::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
 	d.u.i = d.type;
@@ -548,6 +786,42 @@ void Lingo::b_ilk(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_integerp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == INT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_objectp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == OBJECT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_stringp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == STRING) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_symbolp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == SYMBOL) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+
+///////////////////
+// Misc
+///////////////////
 void Lingo::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -561,15 +835,7 @@ void Lingo::b_alert(int nargs) {
 void Lingo::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: b_cursor(%d)", d.u.i);
-}
-
-void Lingo::b_objectp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == OBJECT) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
+	g_lingo->func_cursor(d.u.i);
 }
 
 void Lingo::b_showGlobals(int nargs) {
@@ -579,15 +845,6 @@ void Lingo::b_showGlobals(int nargs) {
 void Lingo::b_showLocals(int nargs) {
 	warning("STUB: b_showLocals");
 }
-
-void Lingo::b_symbolp(int nargs) {
-	Datum d = g_lingo->pop();
-	int res = (d.type == SYMBOL) ? 1 : 0;
-	d.toInt();
-	d.u.i = res;
-	g_lingo->push(d);
-}
-
 
 ///////////////////
 // Score
@@ -616,8 +873,20 @@ void Lingo::b_constrainV(int nargs) {
 	g_lingo->push(Datum(0));
 }
 
+void Lingo::b_duplicateCast(int nargs) {
+	g_lingo->printStubWithArglist("b_duplicateCast", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 void Lingo::b_editableText(int nargs) {
 	warning("STUB: b_editableText");
+}
+
+void Lingo::b_eraseCast(int nargs) {
+	g_lingo->printStubWithArglist("b_eraseCast", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_installMenu(int nargs) {
@@ -636,9 +905,8 @@ void Lingo::b_label(int nargs) {
 void Lingo::b_marker(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: b_marker(%d)", d.u.i);
-
-	g_lingo->push(Datum(0));
+	int marker = g_lingo->func_marker(d.u.i);
+	g_lingo->push(marker);
 }
 
 void Lingo::b_moveableSprite(int nargs) {
@@ -730,7 +998,7 @@ void Lingo::b_point(int nargs) {
 ///////////////////
 void Lingo::b_beep(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_beep(%d)", d.u.i);
+	g_lingo->func_beep(d.u.i);
 }
 
 void Lingo::b_mci(int nargs) {
@@ -747,6 +1015,36 @@ void Lingo::b_mciwait(int nargs) {
 	d.toString();
 
 	g_lingo->func_mciwait(*d.u.s);
+}
+
+void Lingo::b_soundBusy(int nargs) {
+	g_lingo->printStubWithArglist("b_soundBusy", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundFadeIn(int nargs) {
+	g_lingo->printStubWithArglist("b_soundFadeIn", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundFadeOut(int nargs) {
+	g_lingo->printStubWithArglist("b_soundFadeOut", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundPlayFile(int nargs) {
+	g_lingo->printStubWithArglist("b_soundPlayFile", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundStop(int nargs) {
+	g_lingo->printStubWithArglist("b_soundStop", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 ///////////////////
@@ -784,12 +1082,30 @@ void Lingo::b_true(int nargs) {
 	g_lingo->push(Datum(1));
 }
 
+void Lingo::b_version(int nargs) {
+	g_lingo->push(Datum(g_director->getVersion()));
+}
+
 ///////////////////
 // Factory
 ///////////////////
 void Lingo::b_factory(int nargs) {
 	// This is intentionally empty
 }
+
+// TODO:
+// List of predefined methods in D3
+// mAtFrame
+// mDescribe
+// mDispose
+// mGet
+// mInstanceRespondsTo
+// mMessageList
+// mName
+// mNew
+// mPerform
+// mPut
+// mRespondsTo
 
 void Lingo::factoryCall(Common::String &name, int nargs) {
 	Common::String s("factoryCall: ");
@@ -819,5 +1135,19 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 		g_lingo->push(d);
 	}
 }
+
+///////////////////
+// References
+///////////////////
+void Lingo::b_field(int nargs) {
+	warning("STUB: b_field");
+}
+
+void Lingo::b_me(int nargs) {
+	g_lingo->printStubWithArglist("me", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 
 } // End of namespace Director

@@ -60,7 +60,7 @@ bool CFruit::UseWithCharMsg(CUseWithCharMsg *msg) {
 	if (msg->_character->isEquals("Barbot") && msg->_character->_visible) {
 		CActMsg actMsg("Fruit");
 		actMsg.execute(msg->_character);
-		_fieldE0 = 0;
+		_canTake = false;
 		setVisible(false);
 		return true;
 	} else {

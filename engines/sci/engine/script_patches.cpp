@@ -105,6 +105,7 @@ static const char *const selectorNameTable[] = {
 	"setLoop",      // Laura Bow 1 Colonel's Bequest
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
+	"scrollSelections", // GK2
 #endif
 	NULL
 };
@@ -137,7 +138,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setLoop
 #ifdef ENABLE_SCI32
 	,
-	SELECTOR_newWith
+	SELECTOR_newWith,
+	SELECTOR_scrollSelections
 #endif
 };
 
@@ -697,6 +699,43 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark Hoyle 5
+
+// Several scripts in Hoyle5 contain a subroutine which spins on kGetTime until
+// a certain number of ticks elapse. Since this wastes CPU and makes ScummVM
+// unresponsive, the kWait kernel function (which was removed in SCI2) is
+// reintroduced at 0x4f in kernel.cpp only for Hoyle5, and the spin subroutines
+// are patched here to call that function instead.
+// Applies to at least: English Demo
+static const uint16 hoyle5SignatureSpinLoop[] = {
+	SIG_MAGICDWORD,
+	0x76,                         // push0
+	0x43, 0x79, SIG_UINT16(0x00), // callk GetTime, $0
+	0x36,                         // push
+	0x87, 0x01,                   // lap param[1]
+	0x02,                         // add
+	0xa5, 0x00,                   // sat temp[0]
+	SIG_END
+};
+
+static const uint16 hoyle5PatchSpinLoop[] = {
+	0x78,                           // push1
+	0x8f, 0x01,                     // lsp param[1]
+	0x43, 0x4f, PATCH_UINT16(0x02), // callk Wait, $2
+	0x48,                           // ret
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry hoyle5Signatures[] = {
+	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Gabriel Knight 1
 
 // ===========================================================================
@@ -1012,11 +1051,40 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 #pragma mark -
 #pragma mark Gabriel Knight 2
 
-//          script, description,                                      signature                         patch
+// The down scroll button in GK2 jumps up a pixel on mousedown because there is
+// a send to scrollSelections using an immediate value 1, which means to scroll
+// up by 1 pixel. This patch fixes the send to scrollSelections by passing the
+// button's delta instead of 1.
+//
+// Applies to at least: English CD 1.00, English Steam 1.01
+// Responsible method: ScrollButton::track
+static const uint16 gk2InvScrollSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(2),               // line whatever
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(scrollSelections), // pushi $2c3
+	0x78,                                   // push1
+	0x78,                                   // push1
+	0x63, 0x98,                             // pToa $98
+	0x4a, SIG_UINT16(0x06),                 // send $6
+	SIG_END
+};
+
+static const uint16 gk2InvScrollPatch[] = {
+	0x38, PATCH_SELECTOR16(scrollSelections), // pushi $2c3
+	0x78,                                     // push1
+	0x67, 0x9a,                               // pTos $9a (delta)
+	0x63, 0x98,                               // pToa $98
+	0x4a, PATCH_UINT16(0x06),                 // send $6
+	0x18, 0x18,                               // waste bytes
+	PATCH_END
+};
+
+//          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1488,6 +1556,7 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 // Additional patch specifically for King's Quest 6
 //  Fixes special windows, used for example in the Pawn shop (room 280),
 //   when the man in a robe complains about no more mints.
+//   Or also in room 300 at the cliffs (aka copy protection), when Alexander falls down the cliffs.
 //  We have to change even more code, because the game uses PODialog class for
 //   text windows and myDialog class for audio. Both are saved to KQ6Print::dialog
 //  Sadly PODialog is created during KQ6Print::addText, myDialog is set during
@@ -1514,13 +1583,34 @@ static const uint16 kq6CDSignatureAudioTextSupport3[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupport3[] = {
-	0x31, 0x5c,                         // adjust jump to reuse audio mode addText-calling code
-	PATCH_ADDTOOFFSET(102),
-	0x48,                               // ret
-	0x48,                               // ret (waste byte)
+	0x31, 0x68,                         // adjust jump to reuse audio mode addText-calling code
+	PATCH_ADDTOOFFSET(+85),             // right at the MAGIC_DWORD
+	// check, if text is supposed to be shown. If yes, skip the follow-up check (param[1])
+	0x89, 0x5a,                         // lsg global[5Ah]
+	0x35, 0x01,                         // ldi 01
+	0x12,                               // and
+	0x2f, 0x07,                         // bt [skip over param check]
+	// original code, checks param[1]
+	0x8f, 0x01,                         // lsp param[1]
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x10,                         // bnt [code to set property repressText to 1], adjusted
+	// use myDialog class, so that text box automatically disappears (this is not done for text only mode, like in the original)
 	0x72, 0x0e, 0x00,                   // lofsa myDialog
 	0x65, 0x12,                         // aTop dialog
-	0x33, 0xed,                         // jump back to audio mode addText-calling code
+	// followed by original addText-calling code
+	0x38,
+	PATCH_GETORIGINALBYTE(+95),
+	PATCH_GETORIGINALBYTE(+96),         // pushi addText
+	0x78,                               // push1
+	0x8f, 0x02,                         // lsp param[2]
+	0x59, 0x03,                         // &rest 03
+	0x54, 0x06,                         // self 06
+	0x48,                               // ret
+
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x2e,                         // aTop repressText
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -2190,8 +2280,27 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 #pragma mark -
 #pragma mark Leisure Suit Larry 6 Hires
 
+// When entering room 270 (diving board) from room 230, a typo in the game
+// script means that `setScale` is called accidentally instead of `setScaler`.
+// In SSCI this did not do much because the first argument happened to be
+// smaller than the y-position of `ego`, but in ScummVM the first argument is
+// larger and so a debug message "y value less than vanishingY" is displayed.
+static const uint16 larry6HiresSignatureSetScale[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x14b), // pushi 014b (setScale)
+	0x38, SIG_UINT16(0x05),  // pushi 0005
+	0x51, 0x2c,              // class 2c (Scaler)
+	SIG_END
+};
+
+static const uint16 larry6HiresPatchSetScale[] = {
+	0x38, SIG_UINT16(0x14f), // pushi 014f (setScaler)
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
+	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
@@ -2822,6 +2931,65 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 };
 
 #ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Mixed-up Mother Goose Deluxe
+
+// The game uses pic 10005 to render the Sierra logo, but then it also
+// initialises a logo object with view 502 on the same priority as the pic. In
+// the original interpreter, it is dumb luck which is drawn first (based on the
+// order of the memory IDs), though usually the pic is drawn first because not
+// many objects have been created at the start of the game. In ScummVM, the
+// renderer guarantees a sort order based on the creation order of screen items,
+// and since the view is created after the pic, it wins and is drawn on top.
+// This patch stops the view object from being created at all.
+//
+// Applies to at least: English CD from King's Quest Collection
+// Responsible method: sShowLogo::changeState
+static const uint16 mothergooseHiresSignatureLogo[] = {
+	0x38, SIG_UINT16(0x8e),          // pushi $8e
+	SIG_MAGICDWORD,
+	0x76,                            // push0
+	0x72, SIG_UINT16(0x82),          // lofsa logo[82]
+	0x4a, SIG_UINT16(0x04),          // send $4
+	SIG_END
+};
+
+static const uint16 mothergooseHiresPatchLogo[] = {
+	0x18, 0x18, 0x18,                // waste bytes
+	0x18,                            // waste bytes
+	0x18, 0x18, 0x18,                // waste bytes
+	0x18, 0x18, 0x18,                // waste bytes
+	PATCH_END
+};
+
+// After finishing the rhyme at the fountain, a horse will appear and walk
+// across the screen. The priority of the horse is set too high, so it is
+// rendered in front of the fountain instead of behind the fountain. This patch
+// corrects the priority so the horse draws behind the fountain.
+//
+// Applies to at least: English CD from King's Quest Collection
+// Responsible method: rhymeScript::changeState
+static const uint16 mothergooseHiresSignatureHorse[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x4a,             // pushi $4a (setPri)
+	0x78,                   // push1
+	0x38, SIG_UINT16(0xb7), // pushi $b7
+	SIG_END
+};
+
+static const uint16 mothergooseHiresPatchHorse[] = {
+	PATCH_ADDTOOFFSET(3),
+	0x38, PATCH_UINT16(0x59),
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
+	{  true,   108, "bad logo rendering",                          1, mothergooseHiresSignatureLogo,    mothergooseHiresPatchLogo },
+	{  true,   318, "bad horse z-index",                           1, mothergooseHiresSignatureHorse,   mothergooseHiresPatchHorse },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #pragma mark -
 #pragma mark Phantasmagoria
 
@@ -4534,13 +4702,82 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark Shivers
+
+// In room 35170, there is a CCTV control station with a joystick that must be
+// clicked and dragged to pan the camera. In order to enable dragging, on
+// mousedown, the vJoystick::handleEvent method calls vJoystick::doVerb(1),
+// which enables the drag functionality of the joystick. However,
+// vJoystick::handleEvent then makes a super call to ShiversProp::handleEvent,
+// which calls vJoystick::doVerb(). This second call, which fails to pass an
+// argument, causes an uninitialized read off the stack for the first parameter.
+// In SSCI, this happens to work because the uninitialized value on the stack
+// happens to be 1. Disabling the super call avoids the bad doVerb call without
+// any apparent ill effect.
+static const uint16 shiversSignatureJoystickFix[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0xa5),    // pushi handleEvent
+	0x78,                      // push1
+	0x8f, 0x01,                // lsp 1
+	0x59, 0x02,                // &rest 2
+	0x57, 0x7f, SIG_UINT16(6), // super ShiversProp[7f], 6
+	SIG_END
+};
+
+static const uint16 shiversPatchJoystickFix[] = {
+	0x48,                      // ret
+	PATCH_END
+};
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry shiversSignatures[] = {
+	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureJoystickFix,     shiversPatchJoystickFix },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Space Quest 6
+
+// After the explosion in the Quarters of Deepship 86, the game tries to perform
+// a dramatic long fade, but does this with an unreasonably large number of
+// divisions which takes tens of seconds to finish (because transitions are not
+// CPU-dependent in ScummVM).
+static const uint16 sq6SlowTransitionSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x578), // pushi $0578
+	0x51, 0x33,              // class Styler
+	SIG_END
+};
+
+static const uint16 sq6SlowTransitionPatch1[] = {
+	0x38, SIG_UINT16(500), // pushi 500
+	PATCH_END
+};
+
+// For whatever reason, SQ6 sets the default number of transition divisions to
+// be a much larger value at startup (200 vs 30) if it thinks it is running in
+// Windows. Room 410 (eulogy room) also unconditionally resets divisions to the
+// larger value.
+static const uint16 sq6SlowTransitionSignature2[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0xc8), // pushi $c8
+	0x51, 0x33,             // class Styler
+	SIG_END
+};
+
+static const uint16 sq6SlowTransitionPatch2[] = {
+	0x38, SIG_UINT16(30), // pushi 30
+	PATCH_END
+};
 
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
+	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,    15, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
 	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
@@ -4992,6 +5229,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = freddypharkasSignatures;
 		break;
 #ifdef ENABLE_SCI32
+	case GID_HOYLE5:
+		signatureTable = hoyle5Signatures;
+		break;
 	case GID_GK1:
 		signatureTable = gk1Signatures;
 		break;
@@ -5037,6 +5277,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 		signatureTable = mothergoose256Signatures;
 		break;
 #ifdef ENABLE_SCI32
+	case GID_MOTHERGOOSEHIRES:
+		signatureTable = mothergooseHiresSignatures;
+		break;
+
 	case GID_PHANTASMAGORIA:
 		signatureTable = phantasmagoriaSignatures;
 		break;
@@ -5064,6 +5308,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 #ifdef ENABLE_SCI32
 	case GID_QFG4:
 		signatureTable = qfg4Signatures;
+		break;
+	case GID_SHIVERS:
+		signatureTable = shiversSignatures;
 		break;
 #endif
 	case GID_SQ1:

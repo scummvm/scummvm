@@ -36,7 +36,7 @@ class CGlass : public CCarry {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 public:
-	CString _string6;
+	CString _condiment;
 public:
 	CLASSDEF;
 	CGlass();

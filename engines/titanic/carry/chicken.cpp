@@ -28,6 +28,7 @@
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CChicken, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
 	ON_MESSAGE(UseWithCharMsg)
 	ON_MESSAGE(ActMsg)
 	ON_MESSAGE(VisibleMsg)
@@ -39,18 +40,20 @@ BEGIN_MESSAGE_MAP(CChicken, CCarry)
 	ON_MESSAGE(PETLostObjectMsg)
 END_MESSAGE_MAP()
 
-int CChicken::_v1;
+int CChicken::_temperature;
 
-CChicken::CChicken() : CCarry(), _string6("None"),
-		_field12C(1), _field13C(0), _timerId(0) {
+#define HOT_TEMPERATURE 120
+
+CChicken::CChicken() : CCarry(), _condiment("None"),
+		_greasy(true), _inactive(false), _timerId(0) {
 }
 
 void CChicken::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field12C, indent);
-	file->writeQuotedLine(_string6, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_field13C, indent);
+	file->writeNumberLine(_greasy, indent);
+	file->writeQuotedLine(_condiment, indent);
+	file->writeNumberLine(_temperature, indent);
+	file->writeNumberLine(_inactive, indent);
 	file->writeNumberLine(_timerId, indent);
 
 	CCarry::save(file, indent);
@@ -58,10 +61,10 @@ void CChicken::save(SimpleFile *file, int indent) {
 
 void CChicken::load(SimpleFile *file) {
 	file->readNumber();
-	_field12C = file->readNumber();
-	_string6 = file->readString();
-	_v1 = file->readNumber();
-	_field13C = file->readNumber();
+	_greasy = file->readNumber();
+	_condiment = file->readString();
+	_temperature = file->readNumber();
+	_inactive = file->readNumber();
 	_timerId = file->readNumber();
 
 	CCarry::load(file);
@@ -69,24 +72,24 @@ void CChicken::load(SimpleFile *file) {
 
 bool CChicken::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (msg->_other->getName() == "Napkin") {
-		if (_field12C || _string6 == "None") {
+		if (_greasy || _condiment != "None") {
 			CActMsg actMsg("Clean");
 			actMsg.execute(this);
 			petAddToInventory();
 		} else {
-			CShowTextMsg textMsg("The chicken is already clean.");
+			CShowTextMsg textMsg(CHICKEN_ALREADY_CLEAN);
 			textMsg.execute("PET");
 		}
 
 		petAddToInventory();
 	} else {
 		CSauceDispensor *dispensor = dynamic_cast<CSauceDispensor *>(msg->_other);
-		if (!dispensor || _string6 == "None") {
-			return CCarry::UseWithOtherMsg(msg);
-		} else {
+		if (dispensor && _condiment == "None") {
 			setVisible(false);
 			CUse use(this);
 			use.execute(msg->_other);
+		} else {
+			return CCarry::UseWithOtherMsg(msg);
 		}
 	}
 
@@ -112,38 +115,37 @@ bool CChicken::ActMsg(CActMsg *msg) {
 		setVisible(true);
 		petAddToInventory();
 	} else if (msg->_action == "Tomato") {
-		_string6 = "Tomato";
+		_condiment = "Tomato";
 		loadFrame(4);
 		_visibleFrame = 4;
 	} else if (msg->_action == "Mustard") {
-		_string6 = "Mustard";
+		_condiment = "Mustard";
 		loadFrame(5);
 		_visibleFrame = 5;
 	} else if (msg->_action == "Bird") {
-		_string6 = "Bird";
+		_condiment = "Bird";
 		loadFrame(2);
 		_visibleFrame = 2;
 	} else if (msg->_action == "None") {
 		setVisible(false);
 	} else if (msg->_action == "Clean") {
-		_string6 = "None";
+		_condiment = "None";
 		loadFrame(3);
-		_field12C = 0;
+		_greasy = false;
 		_visibleFrame = 3;
-	}
-	else if (msg->_action == "Dispense Chicken") {
-		_string6 = "None";
-		_field13C = 0;
-		_field12C = 1;
+	} else if (msg->_action == "Dispense Chicken") {
+		_condiment = "None";
+		_inactive = false;
+		_greasy = true;
 		loadFrame(1);
 		_visibleFrame = 1;
-		_v1 = 120;
+		_temperature = HOT_TEMPERATURE;
 	} else if (msg->_action == "Hot") {
-		_v1 = 120;
+		_temperature = HOT_TEMPERATURE;
 	} else if (msg->_action == "Eaten") {
 		setVisible(false);
 		petMoveToHiddenRoom();
-		_field13C = 1;
+		_inactive = true;
 	}
 
 	return true;
@@ -164,10 +166,10 @@ bool CChicken::TimerMsg(CTimerMsg *msg) {
 
 	bool flag = false;
 	if (obj) {
-		flag = _v1;
-	} else if (_v1 > 0) {
-		--_v1;
-		flag = _v1;
+		flag = _temperature;
+	} else if (_temperature > 0) {
+		--_temperature;
+		flag = _temperature;
 	}
 
 	if (flag) {
@@ -185,14 +187,14 @@ bool CChicken::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 }
 
 bool CChicken::ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg) {
-	if (_v1 > 0)
+	if (_temperature > 0)
 		msg->_value1 = 1;
 
-	if (_string6 == "Tomato") {
+	if (_condiment == "Tomato") {
 		msg->_value2 = 1;
-	} else if (_string6 == "Mustard") {
+	} else if (_condiment == "Mustard") {
 		msg->_value2 = 2;
-	} else if (_string6 == "Bird") {
+	} else if (_condiment == "Bird") {
 		msg->_value2 = 3;
 	}
 
@@ -200,14 +202,16 @@ bool CChicken::ParrotTriesChickenMsg(CParrotTriesChickenMsg *msg) {
 }
 
 bool CChicken::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	if (_field13C)
+	if (_inactive) {
+		showMouse();
 		return true;
-	else
+	} else {
 		return CCarry::MouseDragEndMsg(msg);
+	}
 }
 
 bool CChicken::PETObjectStateMsg(CPETObjectStateMsg *msg) {
-	if (_v1 > 0)
+	if (_temperature > 0)
 		msg->_value = 2;
 
 	return true;

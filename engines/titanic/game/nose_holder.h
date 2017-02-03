@@ -36,7 +36,7 @@ class CNoseHolder : public CDropTarget {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	CGameObject *_dragObject;
-	int _field11C;
+	bool _draggingFeather;
 public:
 	CLASSDEF;
 	CNoseHolder();

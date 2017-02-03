@@ -116,7 +116,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (int i = 0; i < 18; i++)
 		_currMapDoorOrnIndices[i] = 0;
 
-	_inscriptionThing = Thing::_none;
+	_inscriptionThing = _vm->_thingNone;
 	_useByteBoxCoordinates = false;
 
 	_bitmapCeiling = nullptr;
@@ -166,6 +166,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_paletteFadeFrom = nullptr;
 	for (uint16 i = 0; i < 16; ++i)
 		_paletteFadeTemporary[i] = 0;
+
+	_refreshDungeonViewPaleteRequested = false;
 
 	initConstants();
 }
@@ -386,6 +388,181 @@ void DisplayMan::initConstants() {
 	static byte palChangesFloorOrnD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 140, 130}; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
 	static byte palChangesFloorOrnD2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
 
+	static byte const wallOrnamentCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+			/* { X1, X2, Y1, Y2, ByteWidth, Height } */
+			{
+					{80,  83, 41,  45,  8,   5},   /* D3L */
+					{140, 143, 41,  45,  8,   5},  /* D3R */
+					{16,  29, 39,  50,  8,  12},   /* D3L */
+					{107, 120, 39,  50,  8,  12},  /* D3C */
+					{187, 200, 39,  50,  8,  12},  /* D3R */
+					{67,  77, 40,  49,  8,  10},   /* D2L */
+					{146, 156, 40,  49,  8,  10},  /* D2R */
+					{0,  17, 38,  55, 16,  18},    /* D2L */
+					{102, 123, 38,  55, 16,  18},  /* D2C */
+					{206, 223, 38,  55, 16,  18},  /* D2R */
+					{48,  63, 38,  56,  8,  19},   /* D1L */
+					{160, 175, 38,  56,  8,  19},  /* D1R */
+					{96, 127, 36,  63, 16,  28}    /* D1C */
+			},
+			{
+					{74,  82, 41,  60,  8,  20},   /* D3L */
+					{141, 149, 41,  60,  8,  20},  /* D3R */
+					{1,  47, 37,  63, 24,  27},    /* D3L */
+					{88, 134, 37,  63, 24,  27},   /* D3C */
+					{171, 217, 37,  63, 24,  27},  /* D3R */
+					{61,  76, 38,  67,  8,  30},   /* D2L */
+					{147, 162, 38,  67,  8,  30},  /* D2R */
+					{0,  43, 37,  73, 32,  37},    /* D2L */
+					{80, 143, 37,  73, 32,  37},   /* D2C */
+					{180, 223, 37,  73, 32,  37},  /* D2R */
+					{32,  63, 36,  83, 16,  48},   /* D1L */
+					{160, 191, 36,  83, 16,  48},  /* D1R */
+					{64, 159, 36,  91, 48,  56}    /* D1C */
+			},
+			{
+					{80,  83, 66,  70,  8,   5},   /* D3L */
+					{140, 143, 66,  70,  8,   5},  /* D3R */
+					{16,  29, 64,  75,  8,  12},   /* D3L */
+					{106, 119, 64,  75,  8,  12},  /* D3C */
+					{187, 200, 64,  75,  8,  12},  /* D3R */
+					{67,  77, 74,  83,  8,  10},   /* D2L */
+					{146, 156, 74,  83,  8,  10},  /* D2R */
+					{0,  17, 73,  90, 16,  18},    /* D2L */
+					{100, 121, 73,  90, 16,  18},  /* D2C */
+					{206, 223, 73,  90, 16,  18},  /* D2R */
+					{48,  63, 84, 102,  8,  19},   /* D1L */
+					{160, 175, 84, 102,  8,  19},  /* D1R */
+					{96, 127, 92, 119, 16,  28}    /* D1C */
+			},
+			{
+					{80,  83, 49,  53,  8,   5},   /* D3L */
+					{140, 143, 49,  53,  8,   5},  /* D3R */
+					{16,  29, 50,  61,  8,  12},   /* D3L */
+					{106, 119, 50,  61,  8,  12},  /* D3C */
+					{187, 200, 50,  61,  8,  12},  /* D3R */
+					{67,  77, 53,  62,  8,  10},   /* D2L */
+					{146, 156, 53,  62,  8,  10},  /* D2R */
+					{0,  17, 55,  72, 16,  18},    /* D2L */
+					{100, 121, 55,  72, 16,  18},  /* D2C */
+					{206, 223, 55,  72, 16,  18},  /* D2R */
+					{48,  63, 57,  75,  8,  19},   /* D1L */
+					{160, 175, 57,  75,  8,  19},  /* D1R */
+					{96, 127, 64,  91, 16,  28}    /* D1C */
+			},
+			{
+					{75,  90, 40,  44,  8,   5},   /* D3L */
+					{133, 148, 40,  44,  8,   5},  /* D3R */
+					{1,  48, 44,  49, 24,   6},    /* D3L */
+					{88, 135, 44,  49, 24,   6},   /* D3C */
+					{171, 218, 44,  49, 24,   6},  /* D3R */
+					{60,  77, 40,  46, 16,   7},   /* D2L */
+					{146, 163, 40,  46, 16,   7},  /* D2R */
+					{0,  35, 43,  50, 32,   8},    /* D2L */
+					{80, 143, 43,  50, 32,   8},   /* D2C */
+					{184, 223, 43,  50, 32,   8},  /* D2R */
+					{32,  63, 41,  52, 16,  12},   /* D1L */
+					{160, 191, 41,  52, 16,  12},  /* D1R */
+					{64, 159, 41,  52, 48,  12}    /* D1C */
+			},
+			{
+					{78,  85, 36,  51,  8,  16},   /* D3L */
+					{138, 145, 36,  51,  8,  16},  /* D3R */
+					{10,  41, 34,  53, 16,  20},   /* D3L */
+					{98, 129, 34,  53, 16,  20},   /* D3C */
+					{179, 210, 34,  53, 16,  20},  /* D3R */
+					{66,  75, 34,  56,  8,  23},   /* D2L */
+					{148, 157, 34,  56,  8,  23},  /* D2R */
+					{0,  26, 33,  61, 24,  29},    /* D2L */
+					{91, 133, 33,  61, 24,  29},   /* D2C */
+					{194, 223, 33,  61, 24,  29},  /* D2R */
+					{41,  56, 31,  65,  8,  35},   /* D1L */
+					{167, 182, 31,  65,  8,  35},  /* D1R */
+					{80, 143, 29,  71, 32,  43}    /* D1C */
+			},
+			{
+					{75,  82, 25,  75,  8,  51},   /* D3L */
+					{142, 149, 25,  75,  8,  51},  /* D3R */
+					{12,  60, 25,  75, 32,  51},   /* D3L */
+					{88, 136, 25,  75, 32,  51},   /* D3C */
+					{163, 211, 25,  75, 32,  51},  /* D3R */
+					{64,  73, 20,  90,  8,  71},   /* D2L */
+					{150, 159, 20,  90,  8,  71},  /* D2R */
+					{0,  38, 20,  90, 32,  71},    /* D2L */
+					{82, 142, 20,  90, 32,  71},   /* D2C */
+					{184, 223, 20,  90, 32,  71},  /* D2R */
+					{41,  56,  9, 119,  8, 111},   /* D1L */
+					{169, 184,  9, 119,  8, 111},  /* D1R */
+					{64, 159,  9, 119, 48, 111}    /* D1C */
+			},
+			{
+					{74,  85, 25,  75,  8,  51},   /* D3L */
+					{137, 149, 25,  75,  8,  51},  /* D3R */
+					{0,  75, 25,  75, 40,  51},    /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
+					{74, 149, 25,  75, 40,  51},   /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
+					{148, 223, 25,  75, 40,  51},  /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
+					{60,  77, 20,  90, 16,  71},   /* D2L */
+					{146, 163, 20,  90, 16,  71},  /* D2R */
+					{0,  74, 20,  90, 56,  71},    /* D2L */
+					{60, 163, 20,  90, 56,  71},   /* D2C */
+					{149, 223, 20,  90, 56,  71},  /* D2R */
+					{32,  63,  9, 119, 16, 111},   /* D1L */
+					{160, 191,  9, 119, 16, 111},  /* D1R */
+					{32, 191,  9, 119, 80, 111}    /* D1C */
+			}
+	};
+
+	static uint16 const doorOrnCoordSets[4][3][6] = { // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSets
+			/* { X1, X2, Y1, Y2, ByteWidth, Height } */
+			{
+					{17, 31,  8, 17,  8, 10},   /* D3LCR */
+					{22, 42, 11, 23, 16, 13},   /* D2LCR */
+					{32, 63, 13, 31, 16, 19}    /* D1LCR */
+			},
+			{
+					{0, 47,  0, 40, 24, 41},    /* D3LCR */
+					{0, 63,  0, 60, 32, 61},    /* D2LCR */
+					{0, 95,  0, 87, 48, 88}     /* D1LCR */
+			},
+			{
+					{17, 31, 15, 24,  8, 10},   /* D3LCR */
+					{22, 42, 22, 34, 16, 13},   /* D2LCR */
+					{32, 63, 31, 49, 16, 19}    /* D1LCR */
+			},
+			{
+					{23, 35, 31, 39,  8,  9},   /* D3LCR */
+					{30, 48, 41, 52, 16, 12},   /* D2LCR */
+					{44, 75, 61, 79, 16, 19}    /* D1LCR */
+			}
+	};
+
+	static byte const doorButtonCoordSet[1] = {0}; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
+	static uint16 const doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorButtonCoordinateSets
+			// X1, X2, Y1, Y2, ByteWidth, Height
+			{ {199, 204, 41, 44, 8, 4},   /* D3R */
+					{136, 141, 41, 44, 8, 4},   /* D3C */
+					{144, 155, 42, 47, 8, 6},   /* D2C */
+					{160, 175, 44, 52, 8, 9}    /* D1C */
+			}
+	};
+
+	_doorButtonCoordSet[0] = doorButtonCoordSet[0];
+
+	for(int a = 0; a < 1; ++a)
+		for(int b = 0; b < 4; ++b)
+			for(int c = 0; c < 6; ++c)
+				_doorButtonCoordSets[a][b][c] = doorButtonCoordSets[a][b][c];
+
+	for(int a = 0; a < 8; ++a)
+		for(int b = 0; b < 13; ++b)
+			for(int c = 0; c < 6; ++c)
+				_wallOrnamentCoordSets[a][b][c] = wallOrnamentCoordSets[a][b][c];
+
+    for(int a = 0; a < 4; ++a)
+		for(int b = 0; b < 3; ++b)
+			for(int c = 0; c < 6; ++c)
+				_doorOrnCoordSets[a][b][c] = doorOrnCoordSets[a][b][c];
+
 	_frameWallD3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 	_doorFrameLeftD1C = Frame(43, 74, 14, 107, 16, 94, 0, 0); // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
@@ -446,6 +623,7 @@ DisplayMan::~DisplayMan() {
 	delete[] _packedItemPos;
 	delete[] _packedBitmaps;
 	delete[] _bitmapScreen;
+	delete[] _tmpBitmap;
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
@@ -520,12 +698,13 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapWallSetDoorFrameLeftD3C = new byte[32 * 44];
 	_bitmapWallSetDoorFrameLeftD2C = new byte[48 * 65];
 	_bitmapWallSetDoorFrameLeftD1C = new byte[32 * 94];
-	_bitmapWallSetDoorFrameRightD1C = new byte[32 * 94];
+	_bitmapWallSetDoorFrameRightD1C = new byte[32 * 94]();
 	_bitmapWallSetDoorFrameFront = new byte[32 * 123];
-	_bitmapViewport = new byte[224 * 136];
+	_bitmapViewport = new byte[224 * 136]();
 
-	if (!_derivedBitmapByteCount)
-		_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
+	if (!_derivedBitmapByteCount) {
+        _derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
+    }
 	if (!_derivedBitmaps) {
 		_derivedBitmaps = new byte *[k730_DerivedBitmapMaximumCount];
 		for (uint16 i = 0; i < k730_DerivedBitmapMaximumCount; ++i)
@@ -753,16 +932,6 @@ void DisplayMan::drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *fra
 }
 
 void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) {
-	static byte doorButtonCoordSet[1] = {0}; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
-	static uint16 doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorButtonCoordinateSets
-		  // X1, X2, Y1, Y2, ByteWidth, Height
-		{ {199, 204, 41, 44, 8, 4},   /* D3R */
-		  {136, 141, 41, 44, 8, 4},   /* D3C */
-		  {144, 155, 42, 47, 8, 6},   /* D2C */
-		  {160, 175, 44, 52, 8, 9}    /* D1C */
-		}
-	};
-
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	if (doorButtonOrdinal) {
@@ -771,8 +940,8 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		assert(doorButtonOrdinal == 0);
 
 		int16 nativeBitmapIndex = doorButtonOrdinal + kDMGraphicIdxFirstDoorButton;
-		int coordSet = doorButtonCoordSet[doorButtonOrdinal];
-		uint16 *coordSetRedEagle = doorButtonCoordSets[coordSet][doorButton];
+		int coordSet = _doorButtonCoordSet[doorButtonOrdinal];
+		uint16 *coordSetRedEagle = _doorButtonCoordSets[coordSet][doorButton];
 
 		byte *bitmap = nullptr;
 		if (doorButton == kDMDoorButtonD1C) {
@@ -785,7 +954,7 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		} else {
 			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
-				uint16 *coordSetBlueGoat = doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
+				uint16 *coordSetBlueGoat = _doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
 				blitToBitmapShrinkWithPalChange(bitmapNative, getDerivedBitmap(doorButtonOrdinal),
 													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
@@ -843,7 +1012,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 				destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xB) {
 			uint8 byte1 = data[nextByteIndex++];
-			for (int j = 0; j < byte1 + 1; ++j, ++k)
+for (int j = 0; j < byte1 + 1; ++j, ++k)
 				destBitmap[k] = destBitmap[k - width];
 			destBitmap[k++] = nibble2;
 		} else if (nibble1 == 0xF) {
@@ -1148,29 +1317,7 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnament) {
 	static byte palChangesDoorOrnD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 0, 130}; // @ G0200_auc_Graphic558_PaletteChanges_DoorOrnament_D3
 	static byte palChangesDoorOrnd2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0201_auc_Graphic558_PaletteChanges_DoorOrnament_D2
-	static uint16 doorOrnCoordSets[4][3][6] = { // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSets
-		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-		{
-			{17, 31,  8, 17,  8, 10},   /* D3LCR */
-			{22, 42, 11, 23, 16, 13},   /* D2LCR */
-			{32, 63, 13, 31, 16, 19}    /* D1LCR */
-		},
-		{
-			{0, 47,  0, 40, 24, 41},    /* D3LCR */
-			{0, 63,  0, 60, 32, 61},    /* D2LCR */
-			{0, 95,  0, 87, 48, 88}     /* D1LCR */
-		},
-		{
-			{17, 31, 15, 24,  8, 10},   /* D3LCR */
-			{22, 42, 22, 34, 16, 13},   /* D2LCR */
-			{32, 63, 31, 49, 16, 19}    /* D1LCR */
-		},
-		{
-			{23, 35, 31, 39,  8,  9},   /* D3LCR */
-			{30, 48, 41, 52, 16, 12},   /* D2LCR */
-			{44, 75, 61, 79, 16, 19}    /* D1LCR */
-		}
-	};
+
 
 	int16 height = doorOrnOrdinal;
 
@@ -1182,7 +1329,7 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 
 	int16 nativeBitmapIndex = _currMapDoorOrnInfo[height].nativeIndice;
 	int16 coordSetGreenToad = _currMapDoorOrnInfo[height].coordinateSet;
-	uint16 *coordSetOrangeElk = &doorOrnCoordSets[coordSetGreenToad][doorOrnament][0];
+	uint16 *coordSetOrangeElk = &_doorOrnCoordSets[coordSetGreenToad][doorOrnament][0];
 	byte *blitBitmap;
 	if (doorOrnament == kDMDoorOrnamentD1LCR) {
 		blitBitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
@@ -1191,7 +1338,7 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 	} else {
 		height = kDMDerivedBitmapFirstDoorOrnamentD3 + (height * 2) + doorOrnament;
 		if (!isDerivedBitmapInCache(height)) {
-			uint16 *coordSetRedEagle = &doorOrnCoordSets[coordSetGreenToad][kDMDoorOrnamentD1LCR][0];
+			uint16 *coordSetRedEagle = &_doorOrnCoordSets[coordSetGreenToad][kDMDoorOrnamentD1LCR][0];
 			byte *nativeBitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 			blitToBitmapShrinkWithPalChange(nativeBitmap, getDerivedBitmap(height), coordSetRedEagle[4] << 1, coordSetRedEagle[5], coordSetOrangeElk[1] - coordSetOrangeElk[0] + 1, coordSetOrangeElk[5], (doorOrnament == kDMDoorOrnamentD3LCR) ? palChangesDoorOrnD3 : palChangesDoorOrnd2);
 			addDerivedBitmap(height);
@@ -2438,9 +2585,9 @@ void DisplayMan::loadCurrentMapGraphics() {
 	_currMapViAltarIndex = -1;
 
 	for (int16 ornamentIndex = 0; ornamentIndex <= currMap._wallOrnCount; ornamentIndex++) {
-		int16 greenOrn = _currMapWallOrnIndices[ornamentIndex];
-		int16 counter = k121_FirstWallOrn + greenOrn * 2; /* Each wall ornament has 2 graphics */
-		_currMapWallOrnInfo[ornamentIndex].nativeIndice = counter;
+		uint16 greenOrn = _currMapWallOrnIndices[ornamentIndex];
+		/* Each wall ornament has 2 graphics */
+		_currMapWallOrnInfo[ornamentIndex].nativeIndice = k121_FirstWallOrn + greenOrn * 2;
 		for (int16 ornamentCounter = 0; ornamentCounter < k3_AlcoveOrnCount; ornamentCounter++) {
 			if (greenOrn == g192_AlcoveOrnIndices[ornamentCounter]) {
 				_currMapAlcoveOrnIndices[alcoveCount++] = ornamentIndex;
@@ -2454,8 +2601,18 @@ void DisplayMan::loadCurrentMapGraphics() {
 		}
 
 		_currMapWallOrnInfo[ornamentIndex].coordinateSet = g194_WallOrnCoordSetIndices[greenOrn];
-	}
 
+		byte *coords = _wallOrnamentCoordSets[_currMapWallOrnInfo[ornamentIndex].coordinateSet][0];
+
+		for (uint16 counter = kDMDerivedBitmapFirstWallOrnament + (ornamentIndex * 4),
+					index = counter + 4;
+			counter < index;
+			coords += ((index - counter) == 2) ? 18 : 12) {
+
+			releaseBlock(counter | 0x8000);
+			_derivedBitmapByteCount[counter++] = coords[4] * coords[5];
+		}
+	}
 
 	for (uint16 i = 0; i < currMap._floorOrnCount; ++i) {
 		uint16 ornIndice = _currMapFloorOrnIndices[i];
@@ -2464,11 +2621,27 @@ void DisplayMan::loadCurrentMapGraphics() {
 		_currMapFloorOrnInfo[i].coordinateSet = floorOrnCoordSetIndices[ornIndice];
 	}
 
+
+
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _currMapDoorOrnIndices[i];
-		uint16 nativeIndice = k303_FirstDoorOrn + ornIndice;
-		_currMapDoorOrnInfo[i].nativeIndice = nativeIndice;
+		_currMapDoorOrnInfo[i].nativeIndice = k303_FirstDoorOrn + ornIndice;
 		_currMapDoorOrnInfo[i].coordinateSet = doorOrnCoordIndices[ornIndice];
+
+		uint16 *coords = _doorOrnCoordSets[_currMapDoorOrnInfo[i].coordinateSet][0];
+
+		for (uint16 nativeIndice = kDMDerivedBitmapFirstDoorOrnamentD3 + i * 2,
+					index = nativeIndice + 2; nativeIndice < index; coords += 6) {
+			releaseBlock(nativeIndice | 0x8000);
+			_derivedBitmapByteCount[nativeIndice++] = coords[4] * coords[5];
+		}
+	}
+
+	for (uint16 index = kDMDerivedBitmapFirstDoorButton, counter = 0; counter < k1_DoorButtonCount; counter++) {
+		uint16 *coords = _doorButtonCoordSets[_doorButtonCoordSet[counter]][1];
+		_derivedBitmapByteCount[index++] = coords[4] * coords[5];
+		coords += 6;
+		_derivedBitmapByteCount[index++] = coords[4] * coords[5];
 	}
 
 	applyCreatureReplColors(9, 8);
@@ -2560,129 +2733,6 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		46, 57, 68    /* D1L Right, D1R Left */
 	};
 
-	static byte wallOrnamentCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
-		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-		{
-			{80,  83, 41,  45,  8,   5},   /* D3L */
-			{140, 143, 41,  45,  8,   5},  /* D3R */
-			{16,  29, 39,  50,  8,  12},   /* D3L */
-			{107, 120, 39,  50,  8,  12},  /* D3C */
-			{187, 200, 39,  50,  8,  12},  /* D3R */
-			{67,  77, 40,  49,  8,  10},   /* D2L */
-			{146, 156, 40,  49,  8,  10},  /* D2R */
-			{0,  17, 38,  55, 16,  18},    /* D2L */
-			{102, 123, 38,  55, 16,  18},  /* D2C */
-			{206, 223, 38,  55, 16,  18},  /* D2R */
-			{48,  63, 38,  56,  8,  19},   /* D1L */
-			{160, 175, 38,  56,  8,  19},  /* D1R */
-			{96, 127, 36,  63, 16,  28}    /* D1C */
-		},
-		{
-			{74,  82, 41,  60,  8,  20},   /* D3L */
-			{141, 149, 41,  60,  8,  20},  /* D3R */
-			{1,  47, 37,  63, 24,  27},    /* D3L */
-			{88, 134, 37,  63, 24,  27},   /* D3C */
-			{171, 217, 37,  63, 24,  27},  /* D3R */
-			{61,  76, 38,  67,  8,  30},   /* D2L */
-			{147, 162, 38,  67,  8,  30},  /* D2R */
-			{0,  43, 37,  73, 32,  37},    /* D2L */
-			{80, 143, 37,  73, 32,  37},   /* D2C */
-			{180, 223, 37,  73, 32,  37},  /* D2R */
-			{32,  63, 36,  83, 16,  48},   /* D1L */
-			{160, 191, 36,  83, 16,  48},  /* D1R */
-			{64, 159, 36,  91, 48,  56}    /* D1C */
-		},
-		{
-			{80,  83, 66,  70,  8,   5},   /* D3L */
-			{140, 143, 66,  70,  8,   5},  /* D3R */
-			{16,  29, 64,  75,  8,  12},   /* D3L */
-			{106, 119, 64,  75,  8,  12},  /* D3C */
-			{187, 200, 64,  75,  8,  12},  /* D3R */
-			{67,  77, 74,  83,  8,  10},   /* D2L */
-			{146, 156, 74,  83,  8,  10},  /* D2R */
-			{0,  17, 73,  90, 16,  18},    /* D2L */
-			{100, 121, 73,  90, 16,  18},  /* D2C */
-			{206, 223, 73,  90, 16,  18},  /* D2R */
-			{48,  63, 84, 102,  8,  19},   /* D1L */
-			{160, 175, 84, 102,  8,  19},  /* D1R */
-			{96, 127, 92, 119, 16,  28}    /* D1C */
-		},
-		{
-			{80,  83, 49,  53,  8,   5},   /* D3L */
-			{140, 143, 49,  53,  8,   5},  /* D3R */
-			{16,  29, 50,  61,  8,  12},   /* D3L */
-			{106, 119, 50,  61,  8,  12},  /* D3C */
-			{187, 200, 50,  61,  8,  12},  /* D3R */
-			{67,  77, 53,  62,  8,  10},   /* D2L */
-			{146, 156, 53,  62,  8,  10},  /* D2R */
-			{0,  17, 55,  72, 16,  18},    /* D2L */
-			{100, 121, 55,  72, 16,  18},  /* D2C */
-			{206, 223, 55,  72, 16,  18},  /* D2R */
-			{48,  63, 57,  75,  8,  19},   /* D1L */
-			{160, 175, 57,  75,  8,  19},  /* D1R */
-			{96, 127, 64,  91, 16,  28}    /* D1C */
-		},
-		{
-			{75,  90, 40,  44,  8,   5},   /* D3L */
-			{133, 148, 40,  44,  8,   5},  /* D3R */
-			{1,  48, 44,  49, 24,   6},    /* D3L */
-			{88, 135, 44,  49, 24,   6},   /* D3C */
-			{171, 218, 44,  49, 24,   6},  /* D3R */
-			{60,  77, 40,  46, 16,   7},   /* D2L */
-			{146, 163, 40,  46, 16,   7},  /* D2R */
-			{0,  35, 43,  50, 32,   8},    /* D2L */
-			{80, 143, 43,  50, 32,   8},   /* D2C */
-			{184, 223, 43,  50, 32,   8},  /* D2R */
-			{32,  63, 41,  52, 16,  12},   /* D1L */
-			{160, 191, 41,  52, 16,  12},  /* D1R */
-			{64, 159, 41,  52, 48,  12}    /* D1C */
-		},
-		{
-			{78,  85, 36,  51,  8,  16},   /* D3L */
-			{138, 145, 36,  51,  8,  16},  /* D3R */
-			{10,  41, 34,  53, 16,  20},   /* D3L */
-			{98, 129, 34,  53, 16,  20},   /* D3C */
-			{179, 210, 34,  53, 16,  20},  /* D3R */
-			{66,  75, 34,  56,  8,  23},   /* D2L */
-			{148, 157, 34,  56,  8,  23},  /* D2R */
-			{0,  26, 33,  61, 24,  29},    /* D2L */
-			{91, 133, 33,  61, 24,  29},   /* D2C */
-			{194, 223, 33,  61, 24,  29},  /* D2R */
-			{41,  56, 31,  65,  8,  35},   /* D1L */
-			{167, 182, 31,  65,  8,  35},  /* D1R */
-			{80, 143, 29,  71, 32,  43}    /* D1C */
-		},
-		{
-			{75,  82, 25,  75,  8,  51},   /* D3L */
-			{142, 149, 25,  75,  8,  51},  /* D3R */
-			{12,  60, 25,  75, 32,  51},   /* D3L */
-			{88, 136, 25,  75, 32,  51},   /* D3C */
-			{163, 211, 25,  75, 32,  51},  /* D3R */
-			{64,  73, 20,  90,  8,  71},   /* D2L */
-			{150, 159, 20,  90,  8,  71},  /* D2R */
-			{0,  38, 20,  90, 32,  71},    /* D2L */
-			{82, 142, 20,  90, 32,  71},   /* D2C */
-			{184, 223, 20,  90, 32,  71},  /* D2R */
-			{41,  56,  9, 119,  8, 111},   /* D1L */
-			{169, 184,  9, 119,  8, 111},  /* D1R */
-			{64, 159,  9, 119, 48, 111}    /* D1C */
-		},
-		{
-			{74,  85, 25,  75,  8,  51},   /* D3L */
-			{137, 149, 25,  75,  8,  51},  /* D3R */
-			{0,  75, 25,  75, 40,  51},    /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
-			{74, 149, 25,  75, 40,  51},   /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
-			{148, 223, 25,  75, 40,  51},  /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
-			{60,  77, 20,  90, 16,  71},   /* D2L */
-			{146, 163, 20,  90, 16,  71},  /* D2R */
-			{0,  74, 20,  90, 56,  71},    /* D2L */
-			{60, 163, 20,  90, 56,  71},   /* D2C */
-			{149, 223, 20,  90, 56,  71},  /* D2R */
-			{32,  63,  9, 119, 16, 111},   /* D1L */
-			{160, 191,  9, 119, 16, 111},  /* D1R */
-			{32, 191,  9, 119, 80, 111}    /* D1C */
-		}
-	};
 
 	static Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall
 
@@ -2693,7 +2743,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	int16 wallOrnamentIndex = wallOrnOrd;
 	int16 ornNativeBitmapIndex = _currMapWallOrnInfo[wallOrnamentIndex].nativeIndice;
 	int16 wallOrnamentCoordinateSetIndex = _currMapWallOrnInfo[wallOrnamentIndex].coordinateSet;
-	byte *ornCoordSet = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
+	byte *ornCoordSet = _wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
@@ -2755,12 +2805,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		int16 coordinateSetOffset = 0;
 		bool flipHorizontal = (viewWallIndex == kDMViewWallD2RLeft) || (viewWallIndex == kDMViewWallD3RLeft);
 		if (flipHorizontal)
-			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1RLeft];
+			ornBlitBitmap = _wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1RLeft];
 		else if ((viewWallIndex == kDMViewWallD2LRight) || (viewWallIndex == kDMViewWallD3LRight))
-			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1LRight];
+			ornBlitBitmap = _wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1LRight];
 		else {
 			ornNativeBitmapIndex++;
-			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1CFront];
+			ornBlitBitmap = _wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1CFront];
 			if (viewWallIndex == kDMViewWallD2LFront)
 				coordinateSetOffset = 6;
 			else if (viewWallIndex == kDMViewWallD2RFront)
@@ -3127,14 +3177,14 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 		{276, 60}    /* D0R */
 	};
 
-	if (thingParam == Thing::_endOfList)
+	if (thingParam == _vm->_thingEndOfList)
 		return;
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	int16 orderedViewCellOrdinals = cellOrder;
 	Group *group = nullptr;
-	Thing groupThing = Thing::_none;
+	Thing groupThing = _vm->_thingNone;
 	bool squareHasExplosion = drawCreaturesCompleted = false;
 	bool squareHasProjectile = false;
 	cellCounter = 0;
@@ -3301,14 +3351,14 @@ T0115015_DrawProjectileAsObject:
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
 			}
-		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 		if (AL_2_viewCell == kDMViewCellAlcove)
 			break; /* End of processing when drawing objects in an alcove */
 		if (viewSquareIndex < kDMViewSquareD3C)
 			break; /* End of processing if square is too far away at D4 */
 				   /* Draw creatures */
 		drawingLastBackRowCell = ((AL_2_viewCell <= kDMViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
-		if ((groupThing == Thing::_none) || drawCreaturesCompleted)
+		if ((groupThing == _vm->_thingNone) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 
 		ActiveGroup *activeGroup;
@@ -3683,7 +3733,7 @@ T0115129_DrawProjectiles:
 				}
 			}
 T0115171_BackFromT0115015_DrawProjectileAsObject:;
-		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != _vm->_thingEndOfList);
 	} while (remainingViewCellOrdinalsToProcess);
 
 	/* Draw explosions */
@@ -3715,7 +3765,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					AL_4_explosionAspectIndex = kDMExplosionAspectSmoke;
 				} else {
 					if (AL_4_explosionType == kDMExplosionTypeRebirthStep1) {
-						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(Thing::_explLightningBolt))];
+						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(_vm->_thingExplLightningBolt))];
 						bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (kDMGraphicIdxFirstProjectile + 1));
 						explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 						byteWidth = getScaledDimension((((ProjectileAspect *)objectAspect)->_byteWidth), explosionCoordinates[2]);
@@ -3819,7 +3869,7 @@ T0115200_DrawExplosion:
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
-	} while ((thingParam = dungeon.getNextThing(thingParam))!= Thing::_endOfList);
+	} while ((thingParam = dungeon.getNextThing(thingParam))!= _vm->_thingEndOfList);
 
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
@@ -3844,7 +3894,7 @@ uint16 DisplayMan::getHorizontalOffsetM22(uint16 val) {
 bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 	if (_derivedBitmaps[derivedBitmapIndex] == nullptr) {
 		// * 2, because the original uses 4 bits instead of 8 bits to store a pixel
-		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex] * 2];
+		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex] * 2 + 16];
 		return false;
 	}
 

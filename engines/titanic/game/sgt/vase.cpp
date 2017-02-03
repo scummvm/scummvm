@@ -41,10 +41,10 @@ void CVase::load(SimpleFile *file) {
 }
 
 bool CVase::TurnOn(CTurnOn *msg) {
-	if (CSGTStateRoom::_statics->_v3 == "Closed") {
-		CSGTStateRoom::_statics->_v3 = "Open";
+	if (CSGTStateRoom::_statics->_vase == "Closed") {
+		CSGTStateRoom::_statics->_vase = "Open";
 		setVisible(true);
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 12;
 		playMovie(1, 12, MOVIE_GAMESTATE);
@@ -54,11 +54,11 @@ bool CVase::TurnOn(CTurnOn *msg) {
 }
 
 bool CVase::TurnOff(CTurnOff *msg) {
-	if (CSGTStateRoom::_statics->_v3 == "Open"
-			&& CSGTStateRoom::_statics->_v1 != "RestingV"
-			&& CSGTStateRoom::_statics->_v1 != "RestingUV") {
-		CSGTStateRoom::_statics->_v3 = "Closed";
-		_fieldE0 = true;
+	if (CSGTStateRoom::_statics->_vase == "Open"
+			&& CSGTStateRoom::_statics->_bedhead != "RestingV"
+			&& CSGTStateRoom::_statics->_bedhead != "RestingUV") {
+		CSGTStateRoom::_statics->_vase = "Closed";
+		_isClosed = true;
 		_startFrame = 12;
 		_endFrame = 25;
 		playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -68,7 +68,7 @@ bool CVase::TurnOff(CTurnOff *msg) {
 }
 
 bool CVase::MovieEndMsg(CMovieEndMsg *msg) {
-	if (CSGTStateRoom::_statics->_v3 == "Closed")
+	if (CSGTStateRoom::_statics->_vase == "Closed")
 		setVisible(false);
 
 	return true;

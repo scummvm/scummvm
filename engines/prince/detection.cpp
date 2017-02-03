@@ -20,7 +20,7 @@
  *
  */
 
-#include "prince/detection.h"
+#include "prince/prince.h"
 
 namespace Prince {
 
@@ -40,14 +40,116 @@ Common::Language PrinceEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	using namespace Prince;
-	const PrinceGameDescription *gd = (const PrinceGameDescription *)desc;
-	if (gd) {
-		*engine = new PrinceEngine(syst, gd);
+} // End of namespace Prince
+
+static const PlainGameDescriptor princeGames[] = {
+	{"prince", "Prince Game"},
+	{0, 0}
+};
+
+namespace Prince {
+static const PrinceGameDescription gameDescriptions[] = {
+	{
+		{
+			"prince",
+			"Galador",
+			AD_ENTRY1s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataDE
+	},
+	{
+		{
+			"prince",
+			"Ksiaze i Tchorz",
+			AD_ENTRY1s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298),
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataPL
+	},
+	{
+		{
+			"prince",
+			"Galador",
+			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataDE
+	},
+	{
+		{
+			"prince",
+			"The Prince and the Coward",
+			{
+				{"databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031},
+				{"prince_translation.dat", 0, 0, -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | GF_TRANSLATED,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataDE
+	},
+	{
+		{
+			"prince",
+			"The Prince and the Coward",
+			{
+				{"databank.ptc", 0, "48ec9806bda9d152acbea8ce31c93c49", 3435298},
+				{"prince_translation.dat", 0, 0, -1},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | GF_TRANSLATED,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataPL
+	},
+	{ AD_TABLE_END_MARKER, kPrinceDataUNK }
+};
+
+} // End of namespace Prince
+
+const static char *directoryGlobs[] = {
+	"all",
+	0
+};
+
+class PrinceMetaEngine : public AdvancedMetaEngine {
+public:
+	PrinceMetaEngine() : AdvancedMetaEngine(Prince::gameDescriptions, sizeof(Prince::PrinceGameDescription), princeGames) {
+		_singleId = "prince";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
-	return gd != 0;
-}
+
+	virtual const char *getName() const {
+		return "Prince Engine";
+	}
+
+	virtual const char *getOriginalCopyright() const {
+		return "The Prince and the Coward (C) 1996-97 Metropolis";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 99; }
+	virtual SaveStateList listSaves(const char *target) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+};
 
 bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
@@ -67,10 +169,101 @@ bool Prince::PrinceEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
-} // End of namespace Prince
+SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += ".###";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(filename->c_str() + filename->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+
+			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
+			if (file) {
+				Prince::SavegameHeader header;
+
+				// Check to see if it's a ScummVM savegame or not
+				char buffer[kSavegameStrSize + 1];
+				file->read(buffer, kSavegameStrSize + 1);
+
+				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
+					// Valid savegame
+					if (Prince::PrinceEngine::readSavegameHeader(file, header)) {
+						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+						if (header.thumbnail) {
+							header.thumbnail->free();
+							delete header.thumbnail;
+						}
+					}
+				} else {
+					// Must be an original format savegame
+					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
+				}
+
+				delete file;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (f) {
+		Prince::SavegameHeader header;
+
+		// Check to see if it's a ScummVM savegame or not
+		char buffer[kSavegameStrSize + 1];
+		f->read(buffer, kSavegameStrSize + 1);
+
+		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
+			Prince::PrinceEngine::readSavegameHeader(f, header);
+		delete f;
+
+		if (!hasHeader) {
+			// Original savegame perhaps?
+			SaveStateDescriptor desc(slot, "Unknown");
+			return desc;
+		} else {
+			// Create the return descriptor
+			SaveStateDescriptor desc(slot, header.saveName);
+			desc.setThumbnail(header.thumbnail);
+			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+			desc.setSaveTime(header.saveHour, header.saveMinutes);
+
+			return desc;
+		}
+	}
+
+	return SaveStateDescriptor();
+}
+
+void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+bool PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	using namespace Prince;
+	const PrinceGameDescription *gd = (const PrinceGameDescription *)desc;
+	if (gd) {
+		*engine = new PrinceEngine(syst, gd);
+	}
+	return gd != 0;
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(PRINCE)
-REGISTER_PLUGIN_DYNAMIC(PRINCE, PLUGIN_TYPE_ENGINE, Prince::PrinceMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(PRINCE, PLUGIN_TYPE_ENGINE, Prince::PrinceMetaEngine);
+REGISTER_PLUGIN_STATIC(PRINCE, PLUGIN_TYPE_ENGINE, PrinceMetaEngine);
 #endif

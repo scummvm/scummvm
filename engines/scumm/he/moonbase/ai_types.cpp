@@ -21,6 +21,7 @@
  */
 
 #include "common/textconsole.h"
+#include "scumm/scumm.h"
 #include "scumm/he/moonbase/ai_types.h"
 
 namespace Scumm {
@@ -29,7 +30,7 @@ AIEntity::AIEntity(int id) {
 	switch (id) {
 	default:
 	case BRUTAKAS:
-		warning("BRUTAKAS");
+		debugC(DEBUG_MOONBASE_AI, "BRUTAKAS");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "BRUTAKAS");
@@ -40,7 +41,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case AGI:
-		warning("Agi");
+		debugC(DEBUG_MOONBASE_AI, "Agi");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Agi");
@@ -51,7 +52,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case EL_GATO:
-		warning("El Gato de la Noche");
+		debugC(DEBUG_MOONBASE_AI, "El Gato de la Noche");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "El Gato de la Noche");
@@ -62,7 +63,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case PIXELAHT:
-		warning("Pixelaht");
+		debugC(DEBUG_MOONBASE_AI, "Pixelaht");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Pixelaht");
@@ -73,7 +74,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case CYBALL:
-		warning("cYbaLL");
+		debugC(DEBUG_MOONBASE_AI, "cYbaLL");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "cYbaLL");
@@ -84,7 +85,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case NEEP:
-		warning("Neep! Neep!");
+		debugC(DEBUG_MOONBASE_AI, "Neep! Neep!");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Neep! Neep!");
@@ -95,7 +96,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case WARCUPINE:
-		warning("WARcupine");
+		debugC(DEBUG_MOONBASE_AI, "WARcupine");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "WARcupine");
@@ -106,7 +107,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case AONE:
-		warning("aone");
+		debugC(DEBUG_MOONBASE_AI, "aone");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "aone");
@@ -117,7 +118,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case SPANDO:
-		warning("S p a n d o");
+		debugC(DEBUG_MOONBASE_AI, "S p a n d o");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "S p a n d o");
@@ -128,7 +129,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case ORBNU_LUNATEK:
-		warning("Bonur J Lunatek");
+		debugC(DEBUG_MOONBASE_AI, "Bonur J Lunatek");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Bonur J Lunatek");
@@ -139,7 +140,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case CRAWLER_CHUCKER:
-		warning("Le Chuckre des Crawlres");
+		debugC(DEBUG_MOONBASE_AI, "Le Chuckre des Crawlres");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Le Chuckre des Crawlres");
@@ -150,7 +151,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case ENERGY_HOG:
-		warning("Energy Hog");
+		debugC(DEBUG_MOONBASE_AI, "Energy Hog");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Energy Hog\n");
@@ -161,7 +162,7 @@ AIEntity::AIEntity(int id) {
 		break;
 
 	case RANGER:
-		warning("Ranger");
+		debugC(DEBUG_MOONBASE_AI, "Ranger");
 		_id = id;
 		_nameString = new char[64];
 		strcpy(_nameString, "Ranger\n");

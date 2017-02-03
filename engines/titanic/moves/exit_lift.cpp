@@ -46,8 +46,8 @@ void CExitLift::load(SimpleFile *file) {
 
 bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CPetControl *pet = getPetControl();
-	int floorNum = pet->getRoomsFloorNum();//ebx
-	int elevNum = pet->getRoomsElevatorNum(); //eax
+	int floorNum = pet->getRoomsFloorNum();
+	int elevNum = pet->getRoomsElevatorNum();
 
 	if (floorNum == 39) {
 		switch (elevNum) {

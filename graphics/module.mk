@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	fontman.o \
 	fonts/bdf.o \
 	fonts/consolefont.o \
+	fonts/macfont.o \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/ttf.o \
@@ -14,6 +15,7 @@ MODULE_OBJS := \
 	maccursor.o \
 	macgui/macfontmanager.o \
 	macgui/macmenu.o \
+	macgui/mactext.o \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
 	macgui/macwindowmanager.o \

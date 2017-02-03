@@ -118,6 +118,11 @@ void CloudIcon::update() {
 		break;
 	}
 
+	if (!_icon.getPixels() || !_disabledIcon.getPixels()) {
+		// Loading the icons failed. Don't try to draw them.
+		return;
+	}
+
 	if (_state != kHidden) {
 		makeAlphaIcon((_type == kDisabled ? _disabledIcon : _icon), _currentAlpha);
 		g_system->displayActivityIconOnOSD(&_alphaIcon);
@@ -137,11 +142,13 @@ void CloudIcon::initIcons() {
 void CloudIcon::loadIcon(Graphics::Surface &icon, byte *data, uint32 size) {
 	Image::PNGDecoder decoder;
 	Common::MemoryReadStream stream(data, size);
-	if (!decoder.loadStream(stream))
-		error("CloudIcon::loadIcon: error decoding PNG");
+	if (!decoder.loadStream(stream)) {
+		warning("CloudIcon::loadIcon: error decoding PNG");
+		return;
+	}
 
 	const Graphics::Surface *s = decoder.getSurface();
-	return icon.copyFrom(*s);
+	icon.copyFrom(*s);
 }
 
 void CloudIcon::makeAlphaIcon(const Graphics::Surface &icon, float alpha) {

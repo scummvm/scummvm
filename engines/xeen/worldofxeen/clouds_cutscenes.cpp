@@ -391,7 +391,8 @@ bool CloudsCutscenes::showCloudsEnding() {
 	prec.clear();
 
 	// Show swirling vortex
-	SpriteResource vort[21], cast[6], darkLord[4];
+	// TODO? SpriteResource vort[21];
+	SpriteResource cast[6], darkLord[4];
 	for (int idx = 1; idx < 7; ++idx)
 		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
 	for (int idx = 1; idx < 4; ++idx)

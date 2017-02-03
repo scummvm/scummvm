@@ -39,9 +39,11 @@
 
 #include "adl/console.h"
 #include "adl/disk.h"
+#include "adl/sound.h"
 
 namespace Common {
 class ReadStream;
+class WriteStream;
 class SeekableReadStream;
 class File;
 struct Event;
@@ -52,7 +54,6 @@ namespace Adl {
 class Console;
 class Display;
 class GraphicsMan;
-class Speaker;
 struct AdlGameDescription;
 class ScriptEnv;
 
@@ -84,7 +85,8 @@ struct Room {
 	Room() :
 			description(0),
 			picture(0),
-			curPicture(0) {
+			curPicture(0),
+			isFirstTime(true) {
 		memset(connections, 0, sizeof(connections));
 	}
 
@@ -143,6 +145,7 @@ enum {
 struct Item {
 	byte id;
 	byte noun;
+	byte region;
 	byte room;
 	byte picture;
 	bool isLineArt;
@@ -151,6 +154,8 @@ struct Item {
 	byte description;
 	Common::Array<byte> roomPictures;
 	bool isOnScreen;
+
+	Item() : id(0), noun(0), region(0), room(0), picture(0), isLineArt(false), state(0), description(0), isOnScreen(false) { }
 };
 
 struct Time {
@@ -159,18 +164,30 @@ struct Time {
 	Time() : hours(12), minutes(0) { }
 };
 
+struct RoomState {
+	byte picture;
+	byte isFirstTime;
+};
+
+struct Region {
+	Common::Array<byte> vars;
+	Common::Array<RoomState> rooms;
+};
+
 struct State {
+	Common::Array<Region> regions;
 	Common::Array<Room> rooms;
 	Common::List<Item> items;
 	Common::Array<byte> vars;
 
+	byte region, prevRegion;
 	byte room;
 	byte curPicture;
 	uint16 moves;
 	bool isDark;
 	Time time;
 
-	State() : room(1), curPicture(0), moves(1), isDark(false) { }
+	State() : region(0), prevRegion(0), room(1), curPicture(0), moves(1), isDark(false) { }
 };
 
 typedef Common::List<Command> Commands;
@@ -214,6 +231,7 @@ public:
 	virtual ~AdlEngine();
 
 	bool pollEvent(Common::Event &event) const;
+	void bell(uint count = 1) const;
 
 protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
@@ -222,6 +240,9 @@ protected:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
+	virtual void gameLoop();
+	virtual void loadState(Common::ReadStream &stream);
+	virtual void saveState(Common::WriteStream &stream);
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
 	void openFile(Common::File &file, const Common::String &name) const;
@@ -232,19 +253,26 @@ protected:
 	virtual Common::String getItemDescription(const Item &item) const;
 	void delay(uint32 ms) const;
 
+	virtual Common::String getLine();
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
+	void getInput(uint &verb, uint &noun);
 
 	virtual Common::String formatVerbError(const Common::String &verb) const;
 	virtual Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
+	void removeCommand(Commands &commands, uint idx);
+	Command &getCommand(Commands &commands, uint idx);
 	void checkInput(byte verb, byte noun);
 	virtual bool isInputValid(byte verb, byte noun, bool &is_any);
 	virtual bool isInputValid(const Commands &commands, byte verb, byte noun, bool &is_any);
+	virtual void applyRoomWorkarounds(byte roomNr) { }
+	virtual void applyRegionWorkarounds() { }
 
 	virtual void setupOpcodeTables();
 	virtual void initState();
+	virtual void switchRoom(byte roomNr);
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
@@ -281,15 +309,18 @@ protected:
 	int o1_setRoomPic(ScriptEnv &e);
 
 	// Graphics
-	void clearScreen() const;
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
 
 	// Sound
-	void bell(uint count = 1) const;
+	bool playTones(const Tones &tones, bool isMusic, bool allowSkip = false) const;
 
 	// Game state functions
+	const Region &getRegion(uint i) const;
+	Region &getRegion(uint i);
 	const Room &getRoom(uint i) const;
 	Room &getRoom(uint i);
+	const Region &getCurRegion() const;
+	Region &getCurRegion();
 	const Room &getCurRoom() const;
 	Room &getCurRoom();
 	const Item &getItem(uint i) const;
@@ -297,7 +328,7 @@ protected:
 	byte getVar(uint i) const;
 	void setVar(uint i, byte value);
 	virtual void takeItem(byte noun);
-	void dropItem(byte noun);
+	virtual void dropItem(byte noun);
 	bool matchCommand(ScriptEnv &env) const;
 	void doActions(ScriptEnv &env);
 	bool doOneCommand(const Commands &commands, byte verb, byte noun);
@@ -317,7 +348,6 @@ protected:
 
 	Display *_display;
 	GraphicsMan *_graphics;
-	Speaker *_speaker;
 
 	// Opcodes
 	typedef Common::Functor1<ScriptEnv &, int> Opcode;
@@ -359,17 +389,21 @@ protected:
 	// Game state
 	State _state;
 
-	bool _isRestarting, _isRestoring;
+	bool _isRestarting, _isRestoring, _isQuitting;
+	bool _canSaveNow, _canRestoreNow;
 	bool _skipOneCommand;
 
+	const AdlGameDescription *_gameDescription;
+
 private:
-	virtual void runIntro() const { }
+	virtual void runIntro() { }
 	virtual void init() = 0;
 	virtual void initGameState() = 0;
 	virtual void drawItems() = 0;
 	virtual void drawItem(Item &item, const Common::Point &pos) = 0;
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
+	virtual void switchRegion(byte region) { }
 
 	// Engine
 	Common::Error run();
@@ -379,15 +413,11 @@ private:
 
 	// Text input
 	byte convertKey(uint16 ascii) const;
-	Common::String getLine() const;
 	Common::String getWord(const Common::String &line, uint &index) const;
-	void getInput(uint &verb, uint &noun);
 
 	Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }
-	const AdlGameDescription *_gameDescription;
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
-	bool _canSaveNow, _canRestoreNow;
 };
 
 } // End of namespace Adl

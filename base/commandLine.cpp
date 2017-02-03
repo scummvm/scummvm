@@ -68,6 +68,9 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
+	"  --auto-detect            Display a list of games from current or specified directory\n"
+	"                           and start the first one. Use --path=PATH before --auto-detect\n"
+	"                           to specify a directory.\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -80,6 +83,8 @@ static const char HELP_STRING[] =
 	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
 	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
 	"                           dotmatrix)\n"
+	"  --filtering              Force filtered graphics mode\n"
+	"  --no-filtering           Force unfiltered graphics mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -139,6 +144,9 @@ static const char HELP_STRING[] =
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
 #endif
+#if defined(ENABLE_DIRECTOR)
+	"  --start-movie=NAME       Start movie for Director\n"
+#endif
 #ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
@@ -178,6 +186,7 @@ void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
@@ -396,6 +405,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("auto-detect")
+			END_COMMAND
+
 #ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
@@ -440,6 +452,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
 
 #ifdef ENABLE_EVENTRECORDER
@@ -610,6 +625,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+#if defined(ENABLE_DIRECTOR)
+			DO_LONG_OPTION("start-movie")
+			END_OPTION
+#endif
+
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
 			usage("Unrecognized option '%s'", argv[i]);
@@ -757,6 +777,34 @@ static void listAudioDevices() {
 	}
 }
 
+/** Display all games in the given directory, or current directory if empty */
+static bool autoDetect(Common::String path) {
+	if (path.empty())
+		path = ".";
+	//Current directory
+	Common::FSNode dir(path);
+
+	Common::FSList files;
+
+	//Collect all files from directory
+	dir.getChildren(files, Common::FSNode::kListAll);
+
+	GameList candidates(EngineMan.detectGames(files));
+	if (candidates.empty()) {
+		printf("ScummVM could not find any game in %s\n", path.c_str());
+		return false;
+	}
+
+	// Print all the candidate found
+	printf("ID                   Description\n");
+	printf("-------------------- ---------------------------------------------------------\n");
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
+	}
+	// Set the active domain to the first one to start it.
+	ConfMan.setActiveDomain(candidates.begin()->gameid());
+	return true;
+}
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -983,6 +1031,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
 		return true;
+	} else if (command == "auto-detect") {
+		// If auto-detects succeed, we want to return false so that the game is started
+		return !autoDetect(settings["path"]);
+		//return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {

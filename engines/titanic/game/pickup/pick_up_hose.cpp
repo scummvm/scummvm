@@ -72,13 +72,13 @@ bool CPickUpHose::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 		if (hose) {
 			CVisibleMsg visibleMsg;
-			visibleMsg.execute(this);
-			moveUnder(view);
+			visibleMsg.execute(hose);
+			hose->moveUnder(view);
 
 			CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
 			passMsg.execute("Hose");
 
-			msg->_dragItem = getRoot()->findByName("Hose");
+			msg->_dragItem = hose;
 			_cursorId = CURSOR_IGNORE;
 
 			CActMsg actMsg("PlayerGetsHose");
@@ -91,7 +91,7 @@ bool CPickUpHose::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 
 bool CPickUpHose::StatusChangeMsg(CStatusChangeMsg *msg) {
 	_cursorId = msg->_newStatus == 1 ? CURSOR_HAND : CURSOR_IGNORE;
-	return true;
+	return CPickUp::StatusChangeMsg(msg);
 }
 
 bool CPickUpHose::EnterViewMsg(CEnterViewMsg *msg) {

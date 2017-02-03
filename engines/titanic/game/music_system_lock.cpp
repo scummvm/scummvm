@@ -50,14 +50,16 @@ bool CMusicSystemLock::DropObjectMsg(CDropObjectMsg *msg) {
 		playMovie(MOVIE_NOTIFY_OBJECT);
 	}
 
-	return true;
+	return false;
 }
 
 bool CMusicSystemLock::MovieEndMsg(CMovieEndMsg *msg) {
 	CTreeItem *phonograph = findRoom()->findByName("Restaurant Phonograph");
+
+	// Toggle the locked status of the music system
 	CQueryPhonographState queryMsg;
 	queryMsg.execute(phonograph);
-	CLockPhonographMsg lockMsg(queryMsg._value);
+	CLockPhonographMsg lockMsg(!queryMsg._value);
 	lockMsg.execute(phonograph, nullptr, MSGFLAG_SCAN);
 
 	setVisible(false);

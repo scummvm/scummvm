@@ -105,6 +105,8 @@ class GameLoader : public CObject {
 	bool preloadScene(int sceneId, int entranceId);
 	bool unloadScene(int sceneId);
 
+	void addPreloadItem(PreloadItem *item);
+
 	void updateSystems(int counterdiff);
 
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
@@ -131,7 +133,7 @@ class GameLoader : public CObject {
 	int16 _field_FA;
 	PreloadItems _preloadItems;
 	GameVar *_gameVar;
-	char *_gameName;
+	Common::String _gameName;
 	ExCommand _exCommand;
 	int _updateCounter;
 	int _preloadSceneId;

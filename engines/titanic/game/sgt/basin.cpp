@@ -41,11 +41,11 @@ void CBasin::load(SimpleFile *file) {
 }
 
 bool CBasin::TurnOn(CTurnOn *msg) {
-	if (_statics->_v10 == "Open" && _statics->_v11 == "Closed"
-			&& _statics->_v2 == "Closed") {
+	if (_statics->_washstand == "Open" && _statics->_basin == "Closed"
+			&& _statics->_bedfoot == "Closed") {
 		setVisible(true);
-		_statics->_v11 = "Open";
-		_fieldE0 = 0;
+		_statics->_basin = "Open";
+		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 6;
 		playMovie(0, 6, MOVIE_GAMESTATE);
@@ -56,9 +56,9 @@ bool CBasin::TurnOn(CTurnOn *msg) {
 }
 
 bool CBasin::TurnOff(CTurnOff *msg) {
-	if (_statics->_v11 == "Open") {
-		_statics->_v11 = "Closed";
-		_fieldE0 = 1;
+	if (_statics->_basin == "Open") {
+		_statics->_basin = "Closed";
+		_isClosed = true;
 		_startFrame = 8;
 		_endFrame = 14;
 		playMovie(8, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -69,7 +69,7 @@ bool CBasin::TurnOff(CTurnOff *msg) {
 }
 
 bool CBasin::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_statics->_v11 == "Closed")
+	if (_statics->_basin == "Closed")
 		setVisible(false);
 
 	return true;

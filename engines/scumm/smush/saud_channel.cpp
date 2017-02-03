@@ -34,7 +34,8 @@ SaudChannel::SaudChannel(int32 track) : SmushChannel(track),
 	_nbframes(0),
 	_markReached(false),
 	_index(0),
-	_keepSize(false) {
+	_keepSize(false),
+	_flags(0) {
 }
 
 bool SaudChannel::isTerminated() const {

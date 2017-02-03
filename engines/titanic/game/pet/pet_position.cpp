@@ -155,6 +155,7 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 		if (pet) {
 			pet->setRooms1CC(1);
 			pet->setRoomsRoomNum(roomNum);
+			pet->resetRoomsHighlight();
 
 			if (viewStr == "Node 1.S")
 				pet->setRoomsWellEntry(pet->getRoomsElevatorNum());
@@ -171,8 +172,8 @@ bool CPETPosition::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CPETPosition::LeaveViewMsg(CLeaveViewMsg *msg) {
 	CPetControl *pet = getPetControl();
-	CString oldView = msg->_oldView->getName();
-	CString newView = msg->_newView->getName();
+	CString oldView = msg->_oldView->getFullViewName();
+	CString newView = msg->_newView->getFullViewName();
 
 	if (pet && newView == "Lift.Node 1.N") {
 		int elevatorNum = pet->getRoomsElevatorNum();

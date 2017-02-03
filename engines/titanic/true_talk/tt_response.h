@@ -42,6 +42,12 @@ public:
 	virtual ~TTresponse();
 
 	/**
+	 * Creates a new response and adds it as the current
+	 * response's next response
+	 */
+	TTresponse *appendResponse(int id);
+
+	/**
 	 * Makes a copy of the chain of responses
 	 */
 	TTresponse *copyChain() const;

@@ -671,6 +671,11 @@ private:
 
 	bool _useFlippedWallAndFootprintsBitmap; // @ G0076_B_UseFlippedWallAndFootprintsBitmaps
 
+	byte _wallOrnamentCoordSets[8][13][6]; // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+	uint16 _doorOrnCoordSets[4][3][6]; // @ G0207_aaauc_Graphic558_DoorOrnamentCoordinateSet
+	byte _doorButtonCoordSet[1]; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
+	uint16 _doorButtonCoordSets[1][4][6]; // @ G0208_aaauc_Graphic558_DoorButtonCoordinate
+
 	int16 _doorNativeBitmapIndexFrontD3LCR[2]; // @ G0693_ai_DoorNativeBitmapIndex_Front_D3LCR
 	int16 _doorNativeBitmapIndexFrontD2LCR[2]; // @ G0694_ai_DoorNativeBitmapIndex_Front_D2LCR
 	int16 _doorNativeBitmapIndexFrontD1LCR[2]; // @ G0695_ai_DoorNativeBitmapIndex_Front_D1LCR

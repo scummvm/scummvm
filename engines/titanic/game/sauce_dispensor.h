@@ -36,9 +36,9 @@ class CSauceDispensor : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
-	CString _string3;
-	int _fieldEC;
-	int _fieldF0;
+	CString _condimentName;
+	bool _pouringCondiment;
+	bool _starlingsDead;
 	Point _pos1;
 	Point _pos2;
 	int _field104;

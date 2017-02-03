@@ -50,7 +50,7 @@ Codepage *parseCodepageMapping(const std::string &filename) {
 
 	std::ifstream in(filename.c_str());
 	if (!in) {
-		fprintf(stderr, "ERROR: Could not open file \"%s\"!", filename.c_str());
+		fprintf(stderr, "ERROR: Could not open file \"%s\"!\n", filename.c_str());
 		return 0;
 	}
 
@@ -63,7 +63,7 @@ Codepage *parseCodepageMapping(const std::string &filename) {
 		if (in.eof())
 			break;
 		if (in.fail()) {
-			fprintf(stderr, "ERROR: Reading from file \"%s\" failed!", filename.c_str());
+			fprintf(stderr, "ERROR: Reading from file \"%s\" failed!\n", filename.c_str());
 			return 0;
 		}
 
@@ -76,7 +76,7 @@ Codepage *parseCodepageMapping(const std::string &filename) {
 		int unicode, required;
 		const int parsed = sscanf(line.c_str(), "%d %d", &unicode, &required);
 		if (parsed < 1 || parsed > 2) {
-			fprintf(stderr, "ERROR: Line \"%s\" is malformed!", filename.c_str());
+			fprintf(stderr, "ERROR: Line \"%s\" is malformed!\n", filename.c_str());
 			return 0;
 		}
 		// In case no required integer was given, we assume the character is
@@ -97,7 +97,7 @@ Codepage *parseCodepageMapping(const std::string &filename) {
 
 	// Check whether all character encodings are mapped, if not error out
 	if (processedMappings != 256) {
-		fprintf(stderr, "ERROR: File \"%s\" does not contain mappings for exactly 256 characters!", filename.c_str());
+		fprintf(stderr, "ERROR: File \"%s\" does not contain mappings for exactly 256 characters!\n", filename.c_str());
 		return 0;
 	}
 

@@ -57,8 +57,7 @@ TTroomScript *TTroomScriptList::findById(uint scriptId) const {
 
 /*------------------------------------------------------------------------*/
 
-TTscripts::TTscripts(CTitleEngine *titleEngine) :
-		_titleEngine(titleEngine), _field24(0), _field28(0) {
+TTscripts::TTscripts() {
 	// Load room scripts
 	for (int scriptNum = 100; scriptNum < 133; ++scriptNum)
 		addScript(new TTroomScript(scriptNum));

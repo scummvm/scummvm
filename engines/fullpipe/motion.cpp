@@ -770,7 +770,7 @@ bool MctlCompoundArray::load(MfcArchive &file) {
 MovGraphItem::MovGraphItem() {
 	ani = 0;
 	field_4 = 0;
-	movitems = 0;
+	mi_movitems = 0;
 	count = 0;
 	field_30 = 0;
 	field_34 = 0;
@@ -779,14 +779,17 @@ MovGraphItem::MovGraphItem() {
 }
 
 void MovGraphItem::free() {
-	for (uint i = 0; i < movitems->size(); i++) {
-		(*movitems)[i]->movarr->_movSteps.clear();
-		delete (*movitems)[i]->movarr;
+	if (!mi_movitems)
+		return;
+
+	for (uint i = 0; i < mi_movitems->size(); i++) {
+		(*mi_movitems)[i]->movarr->_movSteps.clear();
+		delete (*mi_movitems)[i]->movarr;
 	}
 
-	delete movitems;
+	delete mi_movitems;
 
-	movitems = 0;
+	mi_movitems = 0;
 }
 
 int MovGraph_messageHandler(ExCommand *cmd);
@@ -815,7 +818,13 @@ MovGraph::MovGraph() {
 }
 
 MovGraph::~MovGraph() {
-	warning("STUB: MovGraph::~MovGraph()");
+	for (ObList::iterator i = _links.begin(); i != _links.end(); ++i)
+		delete *i;
+
+	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		delete *i;
+
+	detachAllObjects();
 }
 
 bool MovGraph::load(MfcArchive &file) {
@@ -896,8 +905,8 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 
 	_items[idx]->count = 0;
 
-	delete _items[idx]->movitems;
-	_items[idx]->movitems = 0;
+	delete _items[idx]->mi_movitems;
+	_items[idx]->mi_movitems = 0;
 
 	int arrSize;
 	Common::Array<MovArr *> *movarr = getHitPoints(x, y, &arrSize, flag1, 0);
@@ -908,8 +917,9 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 			Common::Array<MovItem *> *movitems = getPaths(&_items[idx]->movarr, (*movarr)[i], &sz);
 
 			if (sz > 0) {
+				_items[idx]->mi_movitems = new Common::Array<MovItem *>;
 				for (int j = 0; j < sz; j++)
-					_items[idx]->movitems->push_back(movitems[j]);
+					_items[idx]->mi_movitems->push_back(movitems[j]);
 			}
 
 			delete movitems;
@@ -921,7 +931,7 @@ Common::Array<MovItem *> *MovGraph::getPaths(StaticANIObject *ani, int x, int y,
 	if (_items[idx]->count) {
 		*rescount = _items[idx]->count;
 
-		return _items[idx]->movitems;
+		return _items[idx]->mi_movitems;
 	}
 
 	return 0;
@@ -1001,7 +1011,7 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 
 		int idx = getObjectIndex(ani);
 		count = _items[idx]->count;
-		movitems = _items[idx]->movitems;
+		movitems = _items[idx]->mi_movitems;
 	}
 
 	return method50(ani, _callback1(ani, movitems, count), staticsId);
@@ -1090,7 +1100,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 		int idx = getObjectIndex(subj);
 
 		for (int i = 0; i < _items[idx]->count; i++) {
-			if ((*_items[idx]->movitems)[i]->movarr == goal) {
+			if ((*_items[idx]->mi_movitems)[i]->movarr == goal) {
 				if (subj->_movement) {
 					Common::Point point;
 
@@ -1120,7 +1130,7 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 		if (_items[idx]->count > 0) {
 			int arridx = 0;
 
-			while ((*_items[idx]->movitems)[arridx]->movarr != goal) {
+			while ((*_items[idx]->mi_movitems)[arridx]->movarr != goal) {
 				arridx++;
 
 				if (arridx >= _items[idx]->count) {
@@ -1130,8 +1140,8 @@ MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int
 			}
 
 			_items[idx]->movarr._movSteps.clear();
-			_items[idx]->movarr = *(*_items[idx]->movitems)[arridx]->movarr;
-			_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[arridx]->movarr->_movSteps;
+			_items[idx]->movarr = *(*_items[idx]->mi_movitems)[arridx]->movarr;
+			_items[idx]->movarr._movSteps = (*_items[idx]->mi_movitems)[arridx]->movarr->_movSteps;
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
@@ -1185,10 +1195,10 @@ MessageQueue *MovGraph::sub1(StaticANIObject *ani, int x, int y, int stid, int x
 	int cnt = movgitem->count;
 
 	for (int nidx = 0; nidx < cnt; nidx++) {
-		if ((*movgitem->movitems)[nidx]->movarr == goal) {
+		if ((*movgitem->mi_movitems)[nidx]->movarr == goal) {
 			movgitem->movarr._movSteps.clear();
-			_items[idx]->movarr = *(*movgitem->movitems)[nidx]->movarr;
-			_items[idx]->movarr._movSteps = (*movgitem->movitems)[nidx]->movarr->_movSteps;
+			_items[idx]->movarr = *(*movgitem->mi_movitems)[nidx]->movarr;
+			_items[idx]->movarr._movSteps = (*movgitem->mi_movitems)[nidx]->movarr->_movSteps;
 			_items[idx]->movarr._afield_8 = -1;
 			_items[idx]->movarr._link = 0;
 
@@ -1306,14 +1316,14 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 			return 0;
 
 		if (_items[idx]->ani == ani) {
-			if (!_items[idx]->movitems)
+			if (!_items[idx]->mi_movitems)
 				return 0;
 
 			if (_items[idx]->count < 1)
 				return 0;
 
 			for (movidx = 0; movidx < _items[idx]->count; movidx++) {
-				if ((*_items[idx]->movitems)[movidx]->movarr == movarr) {
+				if ((*_items[idx]->mi_movitems)[movidx]->movarr == movarr) {
 					done = true;
 
 					break;
@@ -1323,8 +1333,8 @@ MessageQueue *MovGraph::method50(StaticANIObject *ani, MovArr *movarr, int stati
 	}
 
 	_items[idx]->movarr._movSteps.clear();
-	_items[idx]->movarr = *(*_items[idx]->movitems)[movidx]->movarr;
-	_items[idx]->movarr._movSteps = (*_items[idx]->movitems)[movidx]->movarr->_movSteps;
+	_items[idx]->movarr = *(*_items[idx]->mi_movitems)[movidx]->movarr;
+	_items[idx]->movarr._movSteps = (*_items[idx]->mi_movitems)[movidx]->movarr->_movSteps;
 	_items[idx]->movarr._afield_8 = -1;
 	_items[idx]->movarr._link = 0;
 

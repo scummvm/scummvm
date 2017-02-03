@@ -22,6 +22,7 @@
 
 #include "titanic/carry/hose.h"
 #include "titanic/npcs/succubus.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -43,15 +44,14 @@ void CHose::deinit() {
 	delete _statics;
 }
 
-CHose::CHose() : CCarry(),
-	_string6("Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.") {
+CHose::CHose() : CCarry() {
 }
 
 void CHose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_statics->_actionVal, indent);
 	file->writeQuotedLine(_statics->_actionTarget, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_unused1, indent);
 	CCarry::save(file, indent);
 }
 
@@ -59,7 +59,7 @@ void CHose::load(SimpleFile *file) {
 	file->readNumber();
 	_statics->_actionVal = file->readNumber();
 	_statics->_actionTarget = file->readString();
-	_string6 = file->readString();
+	_unused1 = file->readString();
 	CCarry::load(file);
 }
 
@@ -69,7 +69,7 @@ bool CHose::DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg) {
 	pumpingMsg._value = _statics->_actionVal;
 	pumpingMsg.execute(_statics->_actionTarget);
 	CHoseConnectedMsg connectedMsg;
-	connectedMsg._value = 1;
+	connectedMsg._connected = true;
 	connectedMsg.execute(this);
 
 	return true;
@@ -98,11 +98,11 @@ bool CHose::UseWithCharMsg(CUseWithCharMsg *msg) {
 }
 
 bool CHose::HoseConnectedMsg(CHoseConnectedMsg *msg) {
-	if (msg->_value) {
+	if (msg->_connected) {
 		CHose *hose = dynamic_cast<CHose *>(findChildInstanceOf(CHose::_type));
 		if (hose) {
 			setVisible(true);
-			petAddToInventory();
+			hose->petAddToInventory();
 		}
 	}
 

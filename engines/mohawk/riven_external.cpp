@@ -30,6 +30,7 @@
 #include "gui/message.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Mohawk {
 
@@ -209,8 +210,8 @@ void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::runDemoBoundaryDialog() {
-	GUI::MessageDialog dialog("Exploration beyond this point available only within the full version of\n"
-							  "the game.");
+	GUI::MessageDialog dialog(_("Exploration beyond this point available only within the full version of\n"
+							  "the game."));
 	dialog.runModal();
 }
 
@@ -651,11 +652,11 @@ void RivenExternal::xalaunchbrowser(uint16 argc, uint16 *argv) {
 	//
 	// [YES] [NO]
 
-	GUI::MessageDialog dialog("At this point, the Riven Demo would\n"
+	GUI::MessageDialog dialog(_("At this point, the Riven Demo would\n"
 							  "ask if you would like to open a web browser\n"
 							  "to bring you to the Red Orb store to buy\n"
 							  "the game. ScummVM cannot do that and\n"
-							  "the site no longer exists.");
+							  "the site no longer exists."));
 	dialog.runModal();
 }
 

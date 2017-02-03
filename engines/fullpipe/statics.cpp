@@ -137,8 +137,8 @@ StaticANIObject::StaticANIObject() {
 	_movement = 0;
 	_statics = 0;
 	_flags = 0;
-	_callback1 = 0;
-	_callback2 = 0;
+	_callback1 = 0; // Really NULL
+	_callback2 = 0; // Really NULL
 	_sceneId = -1;
 	_someDynamicPhaseIndex = -1;
 
@@ -547,11 +547,13 @@ void Movement::draw(bool flipFlag, int angle) {
 
 	if (flipFlag) {
 		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
-	} if (angle) {
+	} else if (angle) {
 		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	} else {
 		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
 	}
+	//Prevent memory leak after new was used to create bmp in reverseImage()
+	delete bmp;
 
 	if (_currDynamicPhase->_rect->top) {
 		if (!_currDynamicPhase->_convertedBitmap) {

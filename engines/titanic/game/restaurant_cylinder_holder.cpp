@@ -71,7 +71,7 @@ bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 	if (_field118) {
 		playClip(hasCylinder ? "CloseHolder_Full" : "CloseHolder_Empty",
 			MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-		_fieldF4 = 1;
+		_dropEnabled = true;
 	} else {
 		playClip(hasCylinder ? "OpenHolder_Full" : "OpenHolder_Empty",
 			MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -109,7 +109,7 @@ bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 		readyMsg.execute(_target);
 	} else {
 		_field118 = true;
-		_fieldF4 = false;
+		_dropEnabled = false;
 		_cursorId = findByName("Phonograph Cylinder") ? _dropCursorId : _dragCursorId;
 	}
 

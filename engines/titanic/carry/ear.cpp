@@ -45,7 +45,7 @@ void CEar::load(SimpleFile *file) {
 
 bool CEar::ActMsg(CActMsg *msg) {
 	if (msg->_action == "MusicSolved")
-		_fieldE0 = true;
+		_canTake = true;
 	return true;
 }
 

@@ -675,7 +675,7 @@ Kompatibilitätsseite der Website aufgeführt ist, sehen Sie bitte im Abschnitt
 3.5) Hinweise zu Beneath a Steel Sky:
 ---- --------------------------------
 Beginnend mit ScummVM 0.8.0 benötigen Sie die zusätzliche Datei „SKY.CPT“, um
-Beneath a Steel Sky laufen lassen.
+Beneath a Steel Sky zu spielen.
 
 Diese Datei ist auf der Seite „Downloads“ der ScummVM-Website verfügbar. Sie
 können sie entweder im Verzeichnis mit den anderen Spieldateien (SKY.DNR,
@@ -1394,6 +1394,10 @@ gestartet werden -- siehe nächster Abschnitt.
   -t, --list-targets       Zeigt Liste konfigurierter Ziele und beendet.
   --list-saves=ZIEL        Zeigt Liste von Spielständen für das festgelegte
                            Spiel (ZIEL)
+  --auto-detect            Zeigt eine Liste unterstützter Spiele im aktuellen
+                           oder in einem anderen gewählten Verzeichnis an.
+                           Verwenden Sie --path=PFAD vor --auto-detect, um
+                           ein Verzeichnis zu wählen.
   --console                Aktiviert das Konsolenfenster
                            (standardmäßig aktiviert) (nur Windows)
 
@@ -1405,6 +1409,10 @@ gestartet werden -- siehe nächster Abschnitt.
   -f, --fullscreen         Erzwingt Vollbildmodus.
   -F, --no-fullscreen      Erzwingt Fenstermodus.
   -g, --gfx-mode=MODUS     Wählt Grafikwandler (siehe auch Abschnitt 5.3).
+  --filtering              Lineare Filterung erzwingen
+  --no-filtering           Lineare Filterung abschalten
+
+
   --gui-theme=THEMA        Wählt Oberflächenthema (default, modern, classic).
   --themepath=PFAD         Pfad zu gespeicherten Oberflächenthemen
   --list-themes            Zeigt Liste aller verwendbaren Oberflächenthemen.
@@ -1558,12 +1566,6 @@ Die einzelnen Grafikoptionen im Überblick:
     hq3x       - Sehr hochwertiger, qualitativer Filter, aber langsam. Faktor 3.
     tv2x       - Zeilensprungfilter, emuliert Fernsehgerät. Faktor 2.
     dotmatrix  - Punktraster-Effekt. Faktor 2.
-    OpenGL     - Verwendet OpenGL zur Darstellung. Wirkt bei Auflösung 320x200
-                 etwas verwaschen, für Spiele in 640x400 und höher jedoch
-                 empfohlen
-    OpenGL (ohne Filter) - Kein Filter, sehr scharfe Darstellung wenn Bildschirm
-                           auf nativer Auflösung betrieben wird. Für 640x400 und
-                           höher vielleicht etwas zu scharf.
 
 Um einen Grafikfilter auszuwählen, stellen Sie diesen im Startmenü ein oder
 übergeben Sie dessen Namen über die Option „-g“ an scummvm, z. B. mit der
@@ -1609,6 +1611,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
                              Seitenverhältniskorrektur streckt das Bild
                              stattdessen auf 320x240 Pixel oder um ein
                              Vielfaches davon.
+    Strg+Alt+f             - Lineare Filterung EIN/AUS
     Alt+Enter              - Wechselt zwischen Vollbild- und Fenstermodus.
     Alt+s                  - Macht Bildschirmfoto (nur für SDL-System).
     Strg+F7                - Öffnet virtuelle Tastatur (falls aktiviert).
@@ -1616,6 +1619,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
                              Maustaste bzw. des Mausrads aufgerufen werden.
 
   SCUMM:
+    Alt+x                  - Beenden
     Strg 0-9 und Alt 0-9   - Lädt und speichert entsprechenden Speicherstand.
     Strg+d                 - Startet den Debugger.
     Strg+f                 - Schneller Modus EIN/AUS
@@ -2594,7 +2598,8 @@ Die folgenden Schlüsselwörter werden erkannt:
     aspect_ratio       Bool     Seitenverhältniskorrektur
     gfx_mode           Text     Grafikmodus (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl)
+    filtering          Bool     Lineare Filterung aktivieren
 
     confirm_exit       Bool     Fragt Anwender vor Beenden nach Bestätigung
                                 (nur SDL-System).

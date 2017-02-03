@@ -948,9 +948,9 @@ void EventManager::commandTurnParty(CommandType cmdType) {
 		return;
 	}
 
-	_vm->_moveSens->processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, true, false);
+	_vm->_moveSens->processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, _vm->_thingParty, true, false);
 	_vm->_championMan->setPartyDirection(_vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + ((cmdType == kDMCommandTurnRight) ? 1 : 3)));
-	_vm->_moveSens->processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, true, true);
+	_vm->_moveSens->processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, _vm->_thingParty, true, true);
 }
 
 void EventManager::commandMoveParty(CommandType cmdType) {
@@ -1005,7 +1005,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 		isMovementBlocked = true;
 		break;
 	case kDMElementTypeStairs: {
-		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
 		byte stairState = curSquare.toByte();
@@ -1038,7 +1038,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			if (damage)
 				_vm->_sound->requestPlay(kDMSoundIndexPartyDamaged, partyMapX, partyMapY, kDMSoundModePlayImmediately);
 		} else {
-			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
+			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != _vm->_thingEndOfList);
 			if (isMovementBlocked)
 				_vm->_groupMan->processEvents29to41(partyMapX, partyMapY, kDMEventTypeCreateReactionPartyIsAdjacent, 0);
 		}
@@ -1052,9 +1052,9 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	}
 
 	if (isStairsSquare)
-		_vm->_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, partyMapX, partyMapY);
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, kDMMapXNotOnASquare, 0, partyMapX, partyMapY);
 	else
-		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, partyMapX, partyMapY);
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, partyMapX, partyMapY);
 
 	uint16 disabledMovtTicks = 1;
 	championsPtr = _vm->_championMan->_champions;
@@ -1282,7 +1282,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
-		if (thing != Thing::_none) {
+		if (thing != _vm->_thingNone) {
 			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
 		}
 	}
@@ -1371,7 +1371,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 	if (viewCell >= kDMViewCellBackRight) {
 		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
-		if ((groupThing != Thing::_endOfList) &&
+		if ((groupThing != _vm->_thingEndOfList) &&
 			!_vm->_moveSens->isLevitating(groupThing) &&
 			_vm->_groupMan->getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->getThingData(groupThing), _vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
@@ -1454,7 +1454,7 @@ void EventManager::discardAllInput() {
 }
 
 void EventManager::commandTakeStairs(bool stairsGoDown) {
-	_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
+	_vm->_moveSens->getMoveResult(_vm->_thingParty, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 	_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(_vm->_dungeonMan->_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
 	_vm->_dungeonMan->setCurrentMap(_vm->_newPartyMapIndex);
 	_vm->_championMan->setPartyDirection(_vm->_dungeonMan->getStairsExitDirection(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY));

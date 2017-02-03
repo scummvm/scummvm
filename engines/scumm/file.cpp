@@ -33,7 +33,7 @@ namespace Scumm {
 #pragma mark --- ScummFile ---
 #pragma mark -
 
-ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0) {
+ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0), _myEos(false) {
 }
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {

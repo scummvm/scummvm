@@ -24,14 +24,19 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
+#include "common/macresman.h"
+#include "graphics/fonts/macfont.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/resource.h"
+#include "director/archive.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
+
+DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
 		_rnd("director") {
@@ -39,12 +44,18 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
+	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
+
+	g_director = this;
 
 	if (!_mixer->isReady())
 		error("Sound initialization failed");
 
 	// Setup mixer
 	syncSoundSettings();
+
+	// Load Patterns
+	loadPatterns();
 
 	_sharedCasts = nullptr;
 
@@ -108,6 +119,9 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
+		testFontScaling();
+		testFonts();
+
 		_lingo->runTests();
 
 		return Common::kNoError;
@@ -117,10 +131,14 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	scanMovies(ConfMan.get("path"));
+	if (getPlatform() == Common::kPlatformWindows)
+		_sharedCastFile = "SHARDCST.MMM";
+	else
+		_sharedCastFile = "Shared Cast";
 
 	loadSharedCastsFrom(_sharedCastFile);
-	loadMainArchive();
+
+	loadInitialMovie(getEXEName());
 
 	_currentScore = new Score(this, _mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
@@ -131,7 +149,7 @@ Common::Error DirectorEngine::run() {
 	return Common::kNoError;
 }
 
-Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common::String &folder) {
+Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -139,10 +157,10 @@ Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common
 	if (getPlatform() == Common::kPlatformWindows)
 		sharedMMMname = "SHARDCST.MMM";
 	else
-		sharedMMMname = "Shared Cast*";
+		sharedMMMname = "Shared Cast";
 
 
-	Common::HashMap<Common::String, Score *> nameMap;
+	Common::HashMap<Common::String, Score *> *nameMap = new Common::HashMap<Common::String, Score *>();
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))
 		return nameMap;
 
@@ -152,14 +170,17 @@ Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common
 
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
 				_sharedCastFile = i->getName();
+
+				debugC(2, kDebugLoading, "Shared cast detected: %s", i->getName().c_str());
 				continue;
 			}
 
 			Archive *arc = createArchive();
 
+			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
 			Score *sc = new Score(this, arc);
-			nameMap[sc->getMacName()] = sc;
+			nameMap->setVal(sc->getMacName(), sc);
 
 			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
 		}
@@ -168,19 +189,32 @@ Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common
 	return nameMap;
 }
 
-Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stream) {
-	byte length = stream.readByte();
-	Common::String x;
-
-	while (length--)
-		x += (char)stream.readByte();
-
-	return x;
-}
-
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPalette = palette;
 	_currentPaletteLength = count;
+}
+
+void DirectorEngine::testFonts() {
+	Common::String fontName("Helvetica");
+
+	Common::MacResManager *fontFile = new Common::MacResManager();
+	if (!fontFile->open(fontName))
+		error("Could not open %s as a resource fork", fontName.c_str());
+
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	if (fonds.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
+			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			debug("Font: %s", name.c_str());
+
+			Graphics::MacFontFamily font;
+			font.load(*stream);
+		}
+	}
+
+	delete fontFile;
 }
 
 } // End of namespace Director

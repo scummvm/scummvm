@@ -28,6 +28,7 @@
 #include "engine.h"                      // for Engine, g_engine
 #include "engines/util.h"                // for initGraphics
 #include "sci/console.h"                 // for Console
+#include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState
 #include "sci/engine/vm_types.h"         // for reg_t
 #include "sci/event.h"                   // for SciEvent, EventManager, SCI_...
@@ -38,11 +39,14 @@
 #include "sci/graphics/palette32.h"      // for GfxPalette32
 #include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
+#include "sci/resource.h"                // for ResourceManager, ResourceId,...
 #include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
-#include "sci/graphics/video32.h"
+#include "sci/sound/audio32.h"           // for Audio32
 #include "sci/video/seq_decoder.h"       // for SEQDecoder
 #include "video/avi_decoder.h"           // for AVIDecoder
 #include "video/coktel_decoder.h"        // for AdvancedVMDDecoder
+#include "sci/graphics/video32.h"
+
 namespace Graphics { struct Surface; }
 
 namespace Sci {
@@ -68,11 +72,13 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	// mechanism that is very similar to that used by the VMD player, which
 	// allows the SEQ to be drawn into a bitmap ScreenItem and displayed using
 	// the normal graphics system.
-	_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	reg_t bitmapId;
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, kLowResX, kLowResY, 0, false, false);
+	bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
-	celInfo.bitmap = _bitmap;
+	celInfo.bitmap = bitmapId;
 
 	_plane = new Plane(Common::Rect(kLowResX, kLowResY), kPlanePicColored);
 	g_sci->_gfxFrameout->addPlane(*_plane);
@@ -90,20 +96,19 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
 		g_sci->sleep(_decoder->getTimeToNextFrame());
-		renderFrame();
+		renderFrame(bitmap);
 	}
 
-	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
+	_segMan->freeBitmap(bitmapId);
 	g_sci->_gfxFrameout->deletePlane(*_plane);
 	g_sci->_gfxFrameout->frameOut(true);
 	_screenItem = nullptr;
 	_plane = nullptr;
 }
 
-void SEQPlayer::renderFrame() const {
+void SEQPlayer::renderFrame(SciBitmap &bitmap) const {
 	const Graphics::Surface *surface = _decoder->decodeNextFrame();
 
-	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
 
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
@@ -135,6 +140,7 @@ AVIPlayer::AVIPlayer(SegManager *segMan, EventManager *eventMan) :
 	_scaleBuffer(nullptr),
 	_plane(nullptr),
 	_screenItem(nullptr),
+	_bitmap(NULL_REG),
 	_status(kAVINotOpen) {}
 
 AVIPlayer::~AVIPlayer() {
@@ -163,49 +169,37 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 	_pixelDouble = false;
 
 	if (!width || !height) {
-		width = _decoder->getWidth();
-		height = _decoder->getHeight();
-	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
-		// KQ7 1.51 provides an explicit width and height when it wants scaling,
-		// though the width and height it provides are not scaled
-		_pixelDouble = true;
-		width *= 2;
-		height *= 2;
+		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		const Ratio screenToScriptX(scriptWidth, screenWidth);
+		const Ratio screenToScriptY(scriptHeight, screenHeight);
+		width = (_decoder->getWidth() * screenToScriptX).toInt();
+		height = (_decoder->getHeight() * screenToScriptY).toInt();
 	}
 
-	// QFG4CD gives non-multiple-of-2 values for width and height,
-	// which would normally be OK except the source video is a pixel bigger
-	// in each dimension
+	// QFG4CD gives non-multiple-of-2 values for width and height of the intro
+	// video, which would normally be OK except the source video is a pixel
+	// bigger in each dimension so it just causes part of the video to get cut
+	// off
 	width = (width + 1) & ~1;
 	height = (height + 1) & ~1;
 
-	_drawRect.left = x;
-	_drawRect.top = y;
-	_drawRect.right = x + width;
-	_drawRect.bottom = y + height;
-
-	// SCI2.1mid uses init2x to draw a pixel-doubled AVI, but SCI2 has only the
-	// one play routine which automatically pixel-doubles in hi-res mode
-	if (getSciVersion() == SCI_VERSION_2) {
-		// This is somewhat of a hack; credits.avi from GK1 is not
-		// rendered correctly in SSCI because it is a 640x480 video, but the
-		// game script gives the wrong dimensions. Since this is the only
-		// high-resolution AVI ever used, just set the draw rectangle to draw
-		// the entire screen
-		if (_decoder->getWidth() > 320) {
-			_drawRect.left = 0;
-			_drawRect.top = 0;
-			_drawRect.right = 320;
-			_drawRect.bottom = 200;
-		}
-
-		// In hi-res mode, video will be pixel doubled, so the origin (which
-		// corresponds to the correct position without pixel doubling) needs to
-		// be corrected
-		if (g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() <= 320) {
-			_drawRect.left /= 2;
-			_drawRect.top /= 2;
-		}
+	// GK1 CREDITS.AVI is not rendered correctly in SSCI because it is a 640x480
+	// video and the game script gives the wrong dimensions.
+	// Since this is the only high-resolution AVI ever used by any SCI game,
+	// just set the draw rectangle to draw across the entire screen
+	if (g_sci->getGameId() == GID_GK1 && _decoder->getWidth() > 320) {
+		_drawRect.left = 0;
+		_drawRect.top = 0;
+		_drawRect.right = 320;
+		_drawRect.bottom = 200;
+	} else {
+		_drawRect.left = x;
+		_drawRect.top = y;
+		_drawRect.right = x + width;
+		_drawRect.bottom = y + height;
 	}
 
 	init();
@@ -222,8 +216,8 @@ AVIPlayer::IOStatus AVIPlayer::init2x(const int16 x, const int16 y) {
 	_drawRect.top = y;
 	_drawRect.right = x + _decoder->getWidth() * 2;
 	_drawRect.bottom = y + _decoder->getHeight() * 2;
-
 	_pixelDouble = true;
+
 	init();
 
 	return kIOSuccess;
@@ -233,42 +227,38 @@ void AVIPlayer::init() {
 	int16 xRes;
 	int16 yRes;
 
-	bool useScreenDimensions = false;
-	if (g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) {
-		useScreenDimensions = true;
-	}
-
-	// KQ7 1.51 gives video position in screen coordinates, not game
-	// coordinates, because in SSCI they are passed to Video for Windows, which
-	// renders as an overlay on the game video. Because we put the video into a
-	// ScreenItem instead of rendering directly to the hardware surface, the
-	// coordinates need to be converted to game script coordinates
-	if (g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY) {
-		useScreenDimensions = !_pixelDouble;
-		// This y-translation is arbitrary, based on what roughly centers the
-		// videos in the game window
-		_drawRect.translate(-_drawRect.left / 2, -_drawRect.top * 2 / 3);
-	}
-
-	if (useScreenDimensions) {
+	// GK1 CREDITS.AVI or KQ7 1.51 half-size videos
+	if ((g_sci->_gfxFrameout->_isHiRes && _decoder->getWidth() > 320) ||
+		(g_sci->getGameId() == GID_KQ7 && getSciVersion() == SCI_VERSION_2_1_EARLY && _drawRect.width() <= 160)) {
 		xRes = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 		yRes = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 	} else {
 		xRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-		yRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+		const Ratio videoRatio(_decoder->getWidth(), _decoder->getHeight());
+		const Ratio screenRatio(4, 3);
+
+		// Videos that already have a 4:3 aspect ratio should not receive any
+		// aspect ratio correction
+		if (videoRatio == screenRatio) {
+			yRes = 240;
+		} else {
+			yRes = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+		}
 	}
 
 	_plane = new Plane(_drawRect);
 	g_sci->_gfxFrameout->addPlane(*_plane);
 
 	if (_decoder->getPixelFormat().bytesPerPixel == 1) {
-		_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, xRes, yRes, 0, false, false);
+		SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _decoder->getWidth(), _decoder->getHeight(), kDefaultSkipColor, 0, 0, xRes, yRes, 0, false, false);
+		bitmap.getBuffer().fillRect(Common::Rect(_decoder->getWidth(), _decoder->getHeight()), 0);
 
 		CelInfo32 celInfo;
 		celInfo.type = kCelTypeMem;
 		celInfo.bitmap = _bitmap;
 
-		_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(_drawRect.left, _drawRect.top), ScaleInfo());
+		_screenItem = new ScreenItem(_plane->_object, celInfo, Common::Point(), ScaleInfo());
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
 	} else {
@@ -338,6 +328,10 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 
 	_decoder->close();
 	_status = kAVINotOpen;
+	if (_bitmap != NULL_REG) {
+		_segMan->freeBitmap(_bitmap);
+		_bitmap = NULL_REG;
+	}
 	g_sci->_gfxFrameout->deletePlane(*_plane);
 	_plane = nullptr;
 	_screenItem = nullptr;
@@ -384,7 +378,7 @@ void AVIPlayer::renderFrame() const {
 			const uint8 *end = (const uint8 *)surface->getPixels() + surface->w * surface->h;
 
 			while (source != end) {
-				uint8 value = *source++;
+				const uint8 value = *source++;
 				*target++ = value == 0 ? 255 : value;
 			}
 		} else {
@@ -414,12 +408,19 @@ void AVIPlayer::renderFrame() const {
 	} else {
 		assert(surface->format.bytesPerPixel == 4);
 
+		const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
+		const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
 		Common::Rect drawRect(_drawRect);
+		mulru(drawRect, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 1);
 
 		if (_pixelDouble) {
 			const uint32 *source = (const uint32 *)surface->getPixels();
 			uint32 *target = (uint32 *)_scaleBuffer;
-			// target pitch here is in uint32s, not bytes
+			// target pitch here is in uint32s, not bytes, because the surface
+			// bpp is 4
 			const uint16 pitch = surface->pitch / 2;
 			for (int y = 0; y < surface->h; ++y) {
 				for (int x = 0; x < surface->w; ++x) {
@@ -434,17 +435,12 @@ void AVIPlayer::renderFrame() const {
 				target += pitch;
 			}
 
-			g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
+			g_system->copyRectToScreen(_scaleBuffer, surface->pitch * 2, drawRect.left, drawRect.top, _drawRect.width(), _drawRect.height());
 		} else {
-			const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-			const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-			const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-			const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
-			mulinc(drawRect, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight));
-
 			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, drawRect.left, drawRect.top, surface->w, surface->h);
 		}
+
+		g_system->updateScreen();
 	}
 }
 
@@ -500,6 +496,8 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 
 	_isOpen(false),
 	_isInitialized(false),
+	_bundledVmd(nullptr),
+	_yieldFrame(0),
 	_yieldInterval(0),
 	_lastYieldedFrameNo(0),
 
@@ -512,6 +510,7 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 	_blackLines(false),
 	_leaveScreenBlack(false),
 	_leaveLastFrame(false),
+	_ignorePalettes(false),
 
 	_blackoutPlane(nullptr),
 
@@ -538,15 +537,33 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		error("Attempted to play %s, but another VMD was loaded", fileName.c_str());
 	}
 
-	if (_decoder->loadFile(fileName)) {
+	if (g_sci->_features->VMDOpenStopsAudio()) {
+		g_sci->_audio32->stop(kAllChannels);
+	}
+
+	Resource *bundledVmd = g_sci->getResMan()->findResource(ResourceId(kResourceTypeVMD, fileName.asUint64()), true);
+
+	if (bundledVmd != nullptr) {
+		Common::SeekableReadStream *stream = bundledVmd->makeStream();
+		if (_decoder->loadStream(stream)) {
+			_bundledVmd = bundledVmd;
+			_isOpen = true;
+		} else {
+			delete stream;
+			g_sci->getResMan()->unlockResource(bundledVmd);
+		}
+	} else if (_decoder->loadFile(fileName)) {
+		_isOpen = true;
+	}
+
+	if (_isOpen) {
 		if (flags & kOpenFlagMute) {
 			_decoder->setVolume(0);
 		}
-		_isOpen = true;
 		return kIOSuccess;
-	} else {
-		return kIOError;
 	}
+
+	return kIOError;
 }
 
 void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
@@ -571,10 +588,17 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 	_decoder->close();
 	_isOpen = false;
 	_isInitialized = false;
+	_ignorePalettes = false;
+
+	if (_bundledVmd) {
+		g_sci->getResMan()->unlockResource(_bundledVmd);
+		_bundledVmd = nullptr;
+	}
+
+	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
 
 	if (!_planeIsOwned && _screenItem != nullptr) {
 		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
-		_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
 		_screenItem = nullptr;
 	} else if (_plane != nullptr) {
 		g_sci->_gfxFrameout->deletePlane(*_plane);
@@ -625,12 +649,12 @@ VMDPlayer::VMDStatus VMDPlayer::getStatus() const {
 VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval) {
 	assert(lastFrameNo >= -1);
 
-	const int32 maxFrameNo = (int32)(_decoder->getFrameCount() - 1);
+	const int32 maxFrameNo = _decoder->getFrameCount() - 1;
 
-	if ((flags & kEventFlagToFrame) && lastFrameNo > 0) {
-		_decoder->setEndFrame(MIN<int32>(lastFrameNo, maxFrameNo));
+	if (flags & kEventFlagToFrame) {
+		_yieldFrame = MIN<int32>(lastFrameNo, maxFrameNo);
 	} else {
-		_decoder->setEndFrame(maxFrameNo);
+		_yieldFrame = maxFrameNo;
 	}
 
 	if (flags & kEventFlagYieldToVM) {
@@ -705,6 +729,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		reg_t bitmapId;
 		SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&bitmapId, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
+		vmdBitmap.getBuffer().fillRect(Common::Rect(vmdRect.width(), vmdRect.height()), 0);
 
 		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
 			mulru(vmdRect, Ratio(scriptWidth, screenWidth), Ratio(scriptHeight, screenHeight), 1);
@@ -739,14 +764,6 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 
-		// HACK: When VMD playback is allowed to yield back to the VM, this
-		// causes the VMD decoder to freak out for some reason and video output
-		// starts jittering horribly. This problem does not happen if audio sync
-		// is disabled, but this causes some audible clicking between frames
-		// of audio (and, presumably, will cause some AV sync problems). Still,
-		// that's better than really bad jitter.
-		_decoder->setAudioSync(!(flags & kEventFlagYieldToVM));
-
 		_decoder->start();
 	}
 
@@ -766,6 +783,11 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		}
 
 		const int currentFrameNo = _decoder->getCurFrame();
+
+		if (currentFrameNo == _yieldFrame) {
+			stopFlag = kEventFlagEnd;
+			break;
+		}
 
 		if (_yieldInterval > 0 &&
 			currentFrameNo != _lastYieldedFrameNo &&
@@ -826,7 +848,7 @@ void VMDPlayer::renderFrame() const {
 	// we are just submitting it directly here because the decoder exposes
 	// this information a little bit differently than the one in SSCI
 	const bool dirtyPalette = _decoder->hasDirtyPalette();
-	if (dirtyPalette) {
+	if (dirtyPalette && !_ignorePalettes) {
 		Palette palette;
 		palette.timestamp = g_sci->getTickCount();
 		for (uint16 i = 0; i < _startColor; ++i) {

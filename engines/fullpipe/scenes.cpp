@@ -68,6 +68,7 @@ Vars::Vars() {
 	scene04_mamasha = 0;
 	scene04_boot = 0;
 	scene04_speaker = 0;
+	scene04_musicStage = 0;
 
 	scene04_ladder = 0;
 	scene04_coinPut = false;
@@ -472,6 +473,7 @@ Vars::Vars() {
 	sceneFinal_var01 = 0;
 	sceneFinal_var02 = 0;
 	sceneFinal_var03 = 0;
+	sceneFinal_trackHasStarted = false;
 
 	selector = 0;
 }
@@ -517,6 +519,17 @@ int FullpipeEngine::getSceneFromTag(int tag) {
 	return 1;
 }
 
+void FullpipeEngine::sceneAutoScrolling() {
+	if (_aniMan2 == _aniMan && _currentScene && !_currentScene->_messageQueueId) {
+		if (800 - _mouseScreenPos.x >= 47 || _sceneRect.right >= _sceneWidth - 1 || _aniMan->_ox <= _sceneRect.left + 230) {
+			if (_mouseScreenPos.x < 47 && _sceneRect.left > 0 && _aniMan->_ox < _sceneRect.right - 230)
+				_currentScene->_x = -10;
+		} else {
+			_currentScene->_x = 10;
+		}
+	}
+}
+
 bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
@@ -540,8 +553,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_aniMan->setOXY(0, 0);
 	_aniMan->clearFlags();
-	_aniMan->_callback1 = 0;
-	_aniMan->_callback2 = 0;
+	_aniMan->_callback1 = 0; // Really NULL
+	_aniMan->_callback2 = 0; // Really NULL
 	_aniMan->_shadowsOn = 1;
 
 	_scrollSpeed = 8;
@@ -603,12 +616,23 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
-		sceneIntro_initScene(scene);
+
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS))
+			sceneIntro_initScene(scene);
+		else
+			sceneIntroDemo_initScene(scene);
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_INTRO1");
 		setSceneMusicParameters(sceneVar);
-		addMessageHandler(sceneHandlerIntro, 2);
-		_updateCursorCallback = sceneIntro_updateCursor;
+
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)) {
+			addMessageHandler(sceneHandlerIntro, 2);
+			_updateCursorCallback = sceneIntro_updateCursor;
+		} else {
+			addMessageHandler(sceneHandlerIntroDemo, 2);
+			_updateCursorCallback = sceneIntroDemo_updateCursor;
+		}
 		break;
 
 	case SC_1:

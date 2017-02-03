@@ -45,10 +45,10 @@ void CParrotPerchHolder::load(SimpleFile *file) {
 }
 
 bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (CParrot::_v1) {
+	if (!CParrot::_eatingChicken) {
 		if (CCage::_open) {
 			petDisplayMessage(CANNOT_TAKE_CAGE_LOCKED);
-		} else if (!CParrot::_v4) {
+		} else if (CParrot::_state == PARROT_IN_CAGE) {
 			CTrueTalkTriggerActionMsg triggerMsg(280252, 0, 0);
 			triggerMsg.execute(getRoot(), CParrot::_type,
 				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
@@ -59,7 +59,7 @@ bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CParrotPerchHolder::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_fieldF4 = msg->_newStatus;
+	_dropEnabled = msg->_newStatus;
 	return true;
 }
 

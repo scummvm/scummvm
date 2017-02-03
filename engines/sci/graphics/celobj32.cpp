@@ -21,6 +21,7 @@
  */
 
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/celobj32.h"
@@ -175,6 +176,10 @@ struct SCALER_Scale {
 	// so just always make the reader decompress an entire
 	// line of source data when scaling
 	_reader(celObj, celObj._width) {
+#ifndef NDEBUG
+		assert(_minX <= _maxX);
+#endif
+
 		// In order for scaling ratios to apply equally across objects that
 		// start at different positions on the screen (like the cels of a
 		// picture), the pixels that are read from the source bitmap must all
@@ -772,6 +777,14 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+	// In SSCI the checks are > because their rects are BR-inclusive;
+	// our checks are >= because our rects are BR-exclusive
+	if (g_sci->_features->hasEmptyScaleDrawHack() &&
+		(targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom)) {
+		return;
+	}
+
 	if (_drawMirrored)
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Compressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	else
@@ -779,6 +792,14 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
+	// In SSCI the checks are > because their rects are BR-inclusive;
+	// our checks are >= because our rects are BR-exclusive
+	if (g_sci->_features->hasEmptyScaleDrawHack() &&
+		(targetRect.left >= targetRect.right ||
+		 targetRect.top >= targetRect.bottom)) {
+		return;
+	}
+
 	if (_drawMirrored) {
 		render<MAPPER_NoMD, SCALER_Scale<true, READER_Uncompressed> >(target, targetRect, scaledPosition, scaleX, scaleY);
 	} else {
@@ -800,7 +821,7 @@ int16 CelObjView::getNumLoops(const GuiResourceId viewId) {
 	return resource->data[2];
 }
 
-int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
+int16 CelObjView::getNumCels(const GuiResourceId viewId, int16 loopNo) {
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, viewId), false);
 
 	if (!resource) {
@@ -813,25 +834,15 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
 
 	// Every version of SCI32 has a logic error in this function that causes
 	// random memory to be read if a script requests the cel count for one
-	// past the maximum loop index. At least GK1 room 800 does this, and gets
-	// stuck in an infinite loop because the game script expects this method
-	// to return a non-zero value.
-	// The scope of this bug means it is likely to pop up in other games, so we
-	// explicitly trap the bad condition here and report it so that any other
-	// game scripts relying on this broken behavior can be fixed as well
+	// past the maximum loop index. For example, GK1 room 808 does this, and
+	// gets stuck in an infinite loop because the game script expects this
+	// method to return a non-zero value.
+	// This bug is triggered in basically every SCI32 game and appears to be
+	// universally fixable simply by always using the next lowest loop instead.
 	if (loopNo == loopCount) {
-		SciCallOrigin origin;
-		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kNumCels_workarounds, &origin);
-		switch (solution.type) {
-		case WORKAROUND_NONE:
-			error("[CelObjView::getNumCels]: loop number %d is equal to loop count in view %u, %s", loopNo, viewId, origin.toString().c_str());
-		case WORKAROUND_FAKE:
-			return (int16)solution.value;
-		case WORKAROUND_IGNORE:
-			return 0;
-		case WORKAROUND_STILLCALL:
-			break;
-		}
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		debugC(kDebugLevelWorkarounds, "Workaround: kNumCels loop %d -> loop %d in view %u, %s", loopNo, loopNo - 1, viewId, origin.toString().c_str());
+		--loopNo;
 	}
 
 	if (loopNo > loopCount || loopNo < 0) {
@@ -959,6 +970,9 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	_width = READ_SCI11ENDIAN_UINT16(celHeader);
 	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
 	_origin.x = _width / 2 - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
+	if (g_sci->_features->usesAlternateSelectors() && _mirrorX) {
+		_origin.x = _width - _origin.x - 1;
+	}
 	_origin.y = _height - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6) - 1;
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];

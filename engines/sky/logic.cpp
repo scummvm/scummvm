@@ -245,7 +245,7 @@ void Logic::arAnim() {
 		// fine because the later collision will almost certainly
 		// take longer to clear than the earlier one.
 
-		if (collide(_skyCompact->fetchCpt(_compact->waitingFor))) {
+		if (isCollision(_skyCompact->fetchCpt(_compact->waitingFor))) {
 			stopAndWait();
 			return;
 		}
@@ -280,7 +280,7 @@ void Logic::arAnim() {
 		if (cpt->screen != _compact->screen) // is it on our screen?
 			continue;
 
-		if (collide(cpt)) { // check for a hit
+		if (isCollision(cpt)) { // check for a hit
 			// ok, we've hit a mega
 			// is it moving... or something else?
 
@@ -627,7 +627,7 @@ void Logic::stopped() {
 	Compact *cpt = _skyCompact->fetchCpt(_compact->waitingFor);
 
 	if (cpt)
-		if (!cpt->mood && collide(cpt))
+		if (!cpt->mood && isCollision(cpt))
 			return;
 
 	// we are free, continue processing the script
@@ -720,88 +720,56 @@ void Logic::simpleAnim() {
 	logicScript();
 }
 
-bool Logic::collide(Compact *cpt) {
-	MegaSet *m1 = SkyCompact::getMegaSet(_compact);
-	MegaSet *m2 = SkyCompact::getMegaSet(cpt);
+/** Checks if the currently processed object in _compact collides
+	with the one given as parameter */
+bool Logic::isCollision(Compact *other) {
+	MegaSet *thisMegaSet = SkyCompact::getMegaSet(_compact);
+	MegaSet *otherMegaSet = SkyCompact::getMegaSet(other);
 
 	// target's base coordinates
-	uint16 x = cpt->xcood & 0xfff8;
-	uint16 y = cpt->ycood & 0xfff8;
-
-	// The collision is direction dependent
-	switch (_compact->dir) {
-	case 0: // looking up
-		x -= m1->colOffset; // compensate for inner x offsets
-		x += m2->colOffset;
-
-		if ((x + m2->colWidth) < _compact->xcood) // their rightmost
-			return false;
-
-		x -= m1->colWidth; // our left, their right
-		if (x >= _compact->xcood)
-			return false;
-
-		y += 8; // bring them down a line
-		if (y == _compact->ycood)
-			return true;
-
-		y += 8; // bring them down a line
-		if (y == _compact->ycood)
-			return true;
-
-		return false;
-	case 1: // looking down
-		x -= m1->colOffset; // compensate for inner x offsets
-		x += m2->colOffset;
-
-		if ((x + m2->colWidth) < _compact->xcood) // their rightmoast
-			return false;
-
-		x -= m1->colWidth; // our left, their right
-		if (x >= _compact->xcood)
-			return false;
-
-		y -= 8; // bring them up a line
-		if (y == _compact->ycood)
-			return true;
-
-		y -= 8; // bring them up a line
-		if (y == _compact->ycood)
-			return true;
-
-		return false;
-	case 2: // looking left
-
-		if (y != _compact->ycood)
-			return false;
-
-		x += m2->lastChr;
-		if (x == _compact->xcood)
-			return true;
-
-		x -= 8; // out another one
-		if (x == _compact->xcood)
-			return true;
-
-		return false;
-	case 3: // looking right
-	case 4: // talking (not sure if this makes sense...)
-
-		if (y != _compact->ycood)
-			return false;
-
-		x -= m1->lastChr; // last block
-		if (x == _compact->xcood)
-			return true;
-
-		x -= 8; // out another block
-		if (x != _compact->xcood)
-			return false;
-
-		return true;
-	default:
-		error("Unknown Direction: %d", _compact->dir);
+	uint16 otherX = other->xcood & ~7;
+	uint16 otherY = other->ycood & ~7;
+	if ((_compact->dir == UPY) || (_compact->dir == DOWNY)) { // If we're looking up or down...
+		otherX -= thisMegaSet->colOffset; // ...then compensate inner otherX offsets
+		otherX += otherMegaSet->colOffset;
 	}
+
+	if ((_compact->dir == UPY) || (_compact->dir == DOWNY)) {
+		// Check X coordinate, same for facing up or down
+		if (otherX + otherMegaSet->colWidth < _compact->xcood) // their rightmost
+			return false; // other is left of us
+
+		if (otherX - thisMegaSet->colWidth >= _compact->xcood) // our left, their right
+			return false; // other is right of us
+		// Check Y coordinate according to actual direction
+		if (_compact->dir == UPY) {
+			if (otherY + 8 == _compact->ycood)
+				return true;
+			if (otherY + 16 == _compact->ycood)
+				return true;
+		} else {
+			if (otherY - 8 == _compact->ycood)
+				return true;
+			if (otherY - 16 == _compact->ycood)
+				return true;
+		}
+	} else {
+		// Facing left, right (or talking, which probably never happens)
+		if (otherY != _compact->ycood)
+			return false;
+		if (_compact->dir == LEFTY) { // looking left
+			if (otherX + otherMegaSet->lastChr == _compact->xcood)
+				return true;
+			if (otherX + otherMegaSet->lastChr - 8 == _compact->xcood)
+				return true;
+		} else {
+			if (otherX - thisMegaSet->lastChr == _compact->xcood)
+				return true;
+			if (otherX - thisMegaSet->lastChr - 8 == _compact->xcood)
+				return true;
+		}
+	}
+	return false;
 }
 
 void Logic::runGetOff() {

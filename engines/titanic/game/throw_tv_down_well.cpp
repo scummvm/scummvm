@@ -48,9 +48,9 @@ void CThrowTVDownWell::load(SimpleFile *file) {
 
 bool CThrowTVDownWell::ActMsg(CActMsg *msg) {
 	if (msg->_action == "ThrowTVDownWell" && !_flag) {
-		CString viewName = getFullViewName();
+		_viewName = getFullViewName();
 		lockMouse();
-		addTimer(1, 8000, 0);
+		addTimer(1, 4000, 0);
 
 		CActMsg actMsg("ThrownTVDownWell");
 		actMsg.execute("BOWTelevisionMonitor");

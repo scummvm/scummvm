@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -955,12 +956,13 @@ void DrasculaEngine::hipo_sin_nadie(int counter){
 
 bool DrasculaEngine::loadDrasculaDat() {
 	Common::File in;
+	Common::String filename = "drascula.dat";
 	int i;
 
-	in.open("drascula.dat");
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		Common::String errorMessage = "You're missing the 'drascula.dat' file. Get it from the ScummVM website";
+		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 
@@ -974,7 +976,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	buf[8] = '\0';
 
 	if (strcmp(buf, "DRASCULA") != 0) {
-		Common::String errorMessage = "File 'drascula.dat' is corrupt. Get it from the ScummVM website";
+		Common::String errorMessage = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 
@@ -984,7 +986,9 @@ bool DrasculaEngine::loadDrasculaDat() {
 	ver = in.readByte();
 
 	if (ver != DRASCULA_DAT_VER) {
-		Common::String errorMessage = Common::String::format("File 'drascula.dat' is wrong version. Expected %d but got %d. Get it from the ScummVM website", DRASCULA_DAT_VER, ver);
+		Common::String errorMessage = Common::String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			filename.c_str(), DRASCULA_DAT_VER, 0, ver, 0);
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());
 

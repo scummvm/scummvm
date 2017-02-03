@@ -544,10 +544,6 @@ bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 	}
 }
 
-void sceneHandler25_sub03() {
-	warning("STUB: sceneHandler25_sub03()");
-}
-
 int sceneHandler25(ExCommand *cmd) {
 	if (cmd->_messageKind != 17)
 		return 0;

@@ -197,7 +197,7 @@ bool Debugger::cmdPET(int argc, const char **argv) {
 
 		if (s == "on") {
 			gameState._petActive = true;
-			gameManager.initBounds();
+			gameManager.markAllDirty();
 			debugPrintf("PET is now on\n");
 			return true;
 		} else if (s == "off") {
@@ -251,7 +251,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 		} else if (CString(argv[2]) == "add") {
 			// Ensure the PET is active and add the item to the inventory
 			gameState._petActive = true;
-			gameManager.initBounds();
+			gameManager.markAllDirty();
 			item->petAddToInventory();
 
 			return false;

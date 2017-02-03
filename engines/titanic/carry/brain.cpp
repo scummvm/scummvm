@@ -75,8 +75,7 @@ bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		}
 
 		return true;
-	}
-	else {
+	} else {
 		return CCarry::UseWithOtherMsg(msg);
 	}
 }

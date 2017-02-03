@@ -68,8 +68,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_ORIGINAL_SAVES,
 		{
-			_s("Use original savegame dialog"),
-			_s("Files button in-game shows original savegame dialog rather than the ScummVM menu"),
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}

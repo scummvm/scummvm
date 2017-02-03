@@ -89,7 +89,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_USE_HIRES_MPEG_MOVIES,
 		{
 			_s("Use high resolution MPEG video"),
-			_s("Use MPEG video from the DVD version, instead of lower resolution AVI"),
+			_s("Use MPEG video from the DVD version instead of lower resolution AVI"),
 			"mpegmovies",
 			true
 		}

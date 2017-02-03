@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/sound.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 namespace Director {
 
@@ -171,12 +172,21 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type != VOID) {
 		movie.toString();
 
-		if (!_vm->_movies || !_vm->_movies->contains(*movie.u.s)) {
+		Common::File file;
+
+		if (!file.open(*movie.u.s)) {
 			warning("Movie %s does not exist", movie.u.s->c_str());
 			return;
 		}
 
-		_vm->_currentScore = _vm->_movies->getVal(*movie.u.s);
+		restartLingo();
+
+		delete _vm->_currentScore;
+
+		Archive *mov = _vm->openMainArchive(*movie.u.s);
+
+		_vm->_currentScore = new Score(_vm, mov);
+		debug(0, "Score name %s", _vm->_currentScore->getMacName().c_str());
 		_vm->_currentScore->loadArchive();
 	}
 
@@ -199,15 +209,75 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_gotoloop() {
-	_vm->_currentScore->gotoloop();
+	if (!_vm->_currentScore)
+		return;
+
+	_vm->_currentScore->gotoLoop();
 }
 
 void Lingo::func_gotonext() {
-	_vm->_currentScore->gotonext();
+	if (!_vm->_currentScore)
+		return;
+
+	_vm->_currentScore->gotoNext();
+}
+	
+void Lingo::func_gotoprevious() {
+	if (!_vm->_currentScore)
+		return;
+
+	_vm->_currentScore->gotoPrevious();
 }
 
-void Lingo::func_gotoprevious() {
-	_vm->_currentScore->gotoprevious();
+void Lingo::func_cursor(int c) {
+	if (_cursorOnStack) {
+		//pop cursor
+		_vm->getMacWindowManager()->popCursor();
+	}
+
+	//and then push cursor.
+	switch (c) {
+	case 0:
+	case -1:
+		_vm->getMacWindowManager()->pushArrowCursor();
+		break;
+	case 1:
+		_vm->getMacWindowManager()->pushBeamCursor();
+		break;
+	case 2:
+		_vm->getMacWindowManager()->pushCrossHairCursor();
+		break;
+	case 3:
+		_vm->getMacWindowManager()->pushCrossBarCursor();
+		break;
+	case 4:
+		_vm->getMacWindowManager()->pushWatchCursor();
+		break;
+	}
+
+	_cursorOnStack = true;
+
+	warning("STUB: func_cursor(%d)", c);
+}
+
+void Lingo::func_beep(int repeats) {
+	for (int r = 0; r <= repeats; r++)
+		_vm->getSoundManager()->systemBeep();
+}
+
+int Lingo::func_marker(int m) 	{
+	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
+	if (m != 0) {
+		if (m < 0) {
+			for (int marker = 0; marker > m; marker--)
+				labelNumber = _vm->getCurrentScore()->getPreviousLabelNumber(labelNumber);
+		} else {
+			for (int marker = 0; marker < m; marker++)
+				labelNumber = _vm->getCurrentScore()->getNextLabelNumber(labelNumber);
+		}
+	}
+
+	return labelNumber;
 }
 
 }

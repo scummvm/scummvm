@@ -51,28 +51,6 @@
 
 namespace Wage {
 
-Common::String readPascalString(Common::SeekableReadStream *in) {
-	Common::String s;
-	char *buf;
-	int len;
-	int i;
-
-	len = in->readByte();
-	buf = (char *)malloc(len + 1);
-	for (i = 0; i < len; i++) {
-		buf[i] = in->readByte();
-		if (buf[i] == 0x0d)
-			buf[i] = '\n';
-	}
-
-	buf[i] = 0;
-
-	s = buf;
-	free(buf);
-
-	return s;
-}
-
 Common::Rect *readRect(Common::SeekableReadStream *in) {
 	int x1, y1, x2, y2;
 

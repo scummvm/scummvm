@@ -37,16 +37,16 @@ END_MESSAGE_MAP()
 
 void CSeasonalAdjustment::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_switching, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CSeasonalAdjustment::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_switching = file->readNumber();
+	_enabled = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -80,9 +80,9 @@ bool CSeasonalAdjustment::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CSeasonalAdjustment::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	playSound("z#42.wav");
-	if (!_fieldE4) {
+	if (!_enabled) {
 		petDisplayMessage(1, SEASONAL_SWITCH_NOT_WORKING);
-	} else if (!_fieldE0) {
+	} else if (!_switching) {
 		playMovie(0, 6, MOVIE_NOTIFY_OBJECT);
 		playMovie(6, 18, 0);
 	}
@@ -105,8 +105,8 @@ bool CSeasonalAdjustment::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CSeasonalAdjustment::TurnOn(CTurnOn *msg) {
-	if (_fieldE0) {
-		_fieldE0 = false;
+	if (_switching) {
+		_switching = false;
 		CTurnOn onMsg;
 		onMsg.execute("LeftPanExit");
 		onMsg.execute("RightPanExit");
@@ -116,7 +116,7 @@ bool CSeasonalAdjustment::TurnOn(CTurnOn *msg) {
 }
 
 bool CSeasonalAdjustment::TurnOff(CTurnOff *msg) {
-	_fieldE0 = true;
+	_switching = true;
 	return true;
 }
 
@@ -125,9 +125,9 @@ bool CSeasonalAdjustment::ActMsg(CActMsg *msg) {
 		msg->execute("SeasonBackground");
 		msg->execute("ArbGate");
 	} else if (msg->_action == "EnableObject") {
-		_fieldE4 = true;
+		_enabled = true;
 	} else if (msg->_action == "DisableObject") {
-		_fieldE4 = false;
+		_enabled = false;
 	}
 
 	return true;

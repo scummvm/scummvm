@@ -57,6 +57,7 @@ backends/events/openpandora/op-events.cpp
 backends/events/symbiansdl/symbiansdl-events.cpp
 backends/events/webossdl/webossdl-events.cpp
 backends/graphics/opengl/opengl-graphics.cpp
+backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/wincesdl/wincesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp

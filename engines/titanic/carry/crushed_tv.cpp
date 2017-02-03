@@ -47,7 +47,7 @@ void CCrushedTV::load(SimpleFile *file) {
 bool CCrushedTV::ActMsg(CActMsg *msg) {
 	if (msg->_action == "SmashTV") {
 		setVisible(true);
-		_fieldE0 = 1;
+		_canTake = true;
 	}
 
 	return true;

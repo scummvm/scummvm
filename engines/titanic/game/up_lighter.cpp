@@ -36,34 +36,34 @@ BEGIN_MESSAGE_MAP(CUpLighter, CDropTarget)
 	ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
-CUpLighter::CUpLighter() : CDropTarget(), _field118(0),
-	_field11C(0), _field120(0), _field124(0) {
+CUpLighter::CUpLighter() : CDropTarget(), _hosePumping(false),
+	_inRoom(0), _isSpring(false), _noseDispensed(false) {
 }
 
 void CUpLighter::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field118, indent);
-	file->writeNumberLine(_field11C, indent);
-	file->writeNumberLine(_field120, indent);
-	file->writeNumberLine(_field124, indent);
+	file->writeNumberLine(_hosePumping, indent);
+	file->writeNumberLine(_inRoom, indent);
+	file->writeNumberLine(_isSpring, indent);
+	file->writeNumberLine(_noseDispensed, indent);
 
 	CDropTarget::save(file, indent);
 }
 
 void CUpLighter::load(SimpleFile *file) {
 	file->readNumber();
-	_field118 = file->readNumber();
-	_field11C = file->readNumber();
-	_field120 = file->readNumber();
-	_field124 = file->readNumber();
+	_hosePumping = file->readNumber();
+	_inRoom = file->readNumber();
+	_isSpring = file->readNumber();
+	_noseDispensed = file->readNumber();
 
 	CDropTarget::load(file);
 }
 
 bool CUpLighter::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_field118) {
+	if (_hosePumping) {
 		playSound("z#47.wav");
-		_field124 = true;
+		_noseDispensed = true;
 
 		CVisibleMsg visibleMsg(true);
 		visibleMsg.execute("NoseHolder");
@@ -71,15 +71,15 @@ bool CUpLighter::MovieEndMsg(CMovieEndMsg *msg) {
 		lostMsg.execute(this);
 		_clipName.clear();
 		_itemMatchName = "Nothing";
-		_field118 = 0;
+		_hosePumping = false;
 	}
 
 	return true;
 }
 
 bool CUpLighter::PumpingMsg(CPumpingMsg *msg) {
-	_field118 = msg->_value;
-	_clipName = (_field118 && !_field124) ? "WholeSequence" : "HoseToNose";
+	_hosePumping = msg->_value;
+	_clipName = (_hosePumping && !_noseDispensed) ? "WholeSequence" : "HoseToNose";
 	return true;
 }
 
@@ -91,20 +91,20 @@ bool CUpLighter::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CUpLighter::EnterRoomMsg(CEnterRoomMsg *msg) {
-	_field11C = true;
+	_inRoom = true;
 	addTimer(5000 + getRandomNumber(15000), 0);
 	return true;
 }
 
 bool CUpLighter::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
-	_field120 = msg->_season == "Spring";
-	if (_field120)
+	_isSpring = msg->_season == "Spring";
+	if (_isSpring)
 		addTimer(5000 + getRandomNumber(15000), 0);
 	return true;
 }
 
 bool CUpLighter::TimerMsg(CTimerMsg *msg) {
-	if (_field120 && _field11C & !_field118) {
+	if (_isSpring && _inRoom & !_hosePumping) {
 		CActMsg actMsg("Sneeze");
 		actMsg.execute(findRoom()->findByName("NoseHolder"));
 		addTimer(1000 + getRandomNumber(19000), 0);
@@ -114,7 +114,7 @@ bool CUpLighter::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CUpLighter::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	_field11C = false;
+	_inRoom = false;
 	return true;
 }
 

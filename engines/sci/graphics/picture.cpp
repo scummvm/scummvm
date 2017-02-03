@@ -1212,6 +1212,7 @@ void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte pri
 
 void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
+	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
@@ -1219,21 +1220,23 @@ void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, by
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
+			if (bitNo == 8) {
+				circleData++;
+				bitmap = *circleData;
+				bitNo = 0;
+			}
 			if (bitmap & 1) {
 				_screen->vectorPutPixel(x, y, flag, color, prio, control);
 			}
 			bitNo++;
-			if (bitNo == 8) {
-				circleData++; bitmap = *circleData; bitNo = 0;
-			} else {
-				bitmap = bitmap >> 1;
-			}
+			bitmap >>= 1;
 		}
 	}
 }
 
 void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
+	assert(size < ARRAYSIZE(vectorPatternCircles));
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
@@ -1242,6 +1245,11 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
+			if (bitNo == 8) {
+				circleData++;
+				bitmap = *circleData;
+				bitNo = 0;
+			}
 			if (bitmap & 1) {
 				if (*textureData) {
 					_screen->vectorPutPixel(x, y, flag, color, prio, control);
@@ -1249,11 +1257,7 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 				textureData++;
 			}
 			bitNo++;
-			if (bitNo == 8) {
-				circleData++; bitmap = *circleData; bitNo = 0;
-			} else {
-				bitmap = bitmap >> 1;
-			}
+			bitmap >>= 1;
 		}
 	}
 }

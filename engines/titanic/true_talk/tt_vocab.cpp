@@ -196,15 +196,18 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	TTword *newWord = nullptr;
 	TTword *vocabP;
 
-	if (!Common::isDigit(c)) {
+	if (Common::isDigit(c)) {
+		// Number
 		vocabP = _headP;
 		newWord = new TTword(str, WC_ABSTRACT, 300);
 	} else {
-		for (vocabP = _headP; vocabP && !newWord; vocabP = vocabP->_nextP) {
+		// Standard word
+		for (vocabP = _headP; vocabP; vocabP = vocabP->_nextP) {
 			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
 				newWord = vocabP->copy();
 				newWord->_nextP = nullptr;
 				newWord->setSyn(nullptr);
+				break;
 			} else if (vocabP->findSynByName(str, &tempSyn, _vocabMode)) {
 				// Create a copy of the word and the found synonym
 				TTsynonym *newSyn = new TTsynonym(tempSyn);
@@ -212,6 +215,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 				newWord = vocabP->copy();
 				newWord->_nextP = nullptr;
 				newWord->setSyn(newSyn);
+				break;
 			}
 		}
 	}
@@ -550,7 +554,6 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 			word->_text = str;
 	}
 
-	delete tempStr;
 	return word;
 }
 

@@ -116,6 +116,7 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		break;
 
 	case 5:
+		// Reaching destination floor
 		_fieldF8 = false;
 		_fieldDC = _v3;
 		loadSound("z#423.wav");
@@ -164,9 +165,10 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 		if (!isSoundActive(_soundHandle1)) {
 			stopAnimTimer(_timerId);
 			if (msg->_actionVal == 0) {
+				// Elevator in motion after pressing button
 				_fieldF8 = true;
 				CServiceElevatorFloorChangeMsg changeMsg(_fieldDC, _v3);
-				changeMsg.execute(getRoom());
+				changeMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
 				_soundHandle2 = playSound("z#424.wav");
 
 				if (doorbot) {
@@ -174,6 +176,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 					actMsg.execute(doorbot);
 				}
 			} else {
+				// Finished playing message for bottom/middle floor disabled
 				enableMouse();
 				if (doorbot) {
 					CActMsg actMsg;
@@ -207,10 +210,10 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 
 	if (doorbot && _v3 == 0) {
 		_soundHandle1 = playSound("z#415.wav", 50);
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else if (doorbot && _v3 == 1) {
 		_soundHandle1 = playSound("z#417.wav", 50);
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else if (_fieldDC == _v3) {
 		switch (_v3) {
 		case 0:
@@ -226,7 +229,7 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			break;
 		}
 
-		addTimer(1, 1000, 500);
+		_timerId = addTimer(1, 1000, 500);
 	} else {
 		switch (_v3) {
 		case 0:
@@ -236,13 +239,13 @@ bool CServiceElevator::ServiceElevatorFloorRequestMsg(CServiceElevatorFloorReque
 			_soundHandle1 = playSound(_fieldDC ? "z#419.wav" : "z#418.wav", 50);
 			break;
 		case 2:
-			_soundHandle1 = playSound("z#414.wav", 50);
+			_soundHandle1 = playSound("z#409.wav", 50);
 			break;
 		default:
 			break;
 		}
 
-		addTimer(0, 1000, 500);
+		_timerId = addTimer(0, 1000, 500);
 	}
 
 	return true;

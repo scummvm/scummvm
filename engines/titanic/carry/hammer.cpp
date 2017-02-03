@@ -43,7 +43,7 @@ void CHammer::load(SimpleFile *file) {
 }
 
 bool CHammer::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldE0 = 1;
+	_canTake = true;
 	return true;
 }
 

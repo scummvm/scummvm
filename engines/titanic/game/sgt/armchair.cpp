@@ -41,11 +41,11 @@ void CArmchair::load(SimpleFile *file) {
 }
 
 bool CArmchair::TurnOn(CTurnOn *msg) {
-	if (_statics->_v8 == "Closed" && _statics->_v12 == "Closed") {
+	if (_statics->_armchair == "Closed" && _statics->_toilet == "Closed") {
 		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("Deskchair");
 
-		if (_statics->_v9 == "Open") {
+		if (_statics->_deskchair == "Open") {
 			CActMsg actMsg("Squash");
 			actMsg.execute("Deskchair");
 			_startFrame = 22;
@@ -57,19 +57,19 @@ bool CArmchair::TurnOn(CTurnOn *msg) {
 
 		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
 		playSound("b#0.wav");
-		_statics->_v8 = "Open";
-		_fieldE0 = 0;
+		_statics->_armchair = "Open";
+		_isClosed = false;
 	}
 
 	return true;
 }
 
 bool CArmchair::TurnOff(CTurnOff *msg) {
-	if (_statics->_v8 == "Open") {
-		_statics->_v8 = "Closed";
+	if (_statics->_armchair == "Open") {
+		_statics->_armchair = "Closed";
 		_startFrame = 11;
 		_endFrame = 21;
-		_fieldE0 = 1;
+		_isClosed = true;
 		playMovie(11, 21, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 		playSound("b#0.wav");
 	}
@@ -78,7 +78,7 @@ bool CArmchair::TurnOff(CTurnOff *msg) {
 }
 
 bool CArmchair::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_statics->_v8 == "Closed")
+	if (_statics->_armchair == "Closed")
 		loadFrame(0);
 
 	return true;

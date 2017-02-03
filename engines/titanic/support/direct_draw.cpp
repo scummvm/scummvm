@@ -47,7 +47,7 @@ void DirectDraw::diagnostics() {
 
 DirectDrawSurface *DirectDraw::createSurfaceFromDesc(const DDSurfaceDesc &desc) {
 	DirectDrawSurface *surface = new DirectDrawSurface();
-	surface->create(desc._w, desc._h);
+	surface->create(desc._w, desc._h, desc._bpp);
 
 	return surface;
 }
@@ -82,15 +82,15 @@ void DirectDrawManager::initFullScreen() {
 	_mainSurface = new DirectDrawSurface();
 	_mainSurface->create(g_vm->_screen);
 	_backSurfaces[0] = new DirectDrawSurface();
-	_backSurfaces[0]->create(_directDraw._width, _directDraw._height);
+	_backSurfaces[0]->create(_directDraw._width, _directDraw._height, 32);
 }
 
-DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int surfaceNum) {
+DirectDrawSurface *DirectDrawManager::createSurface(int w, int h, int bpp, int surfaceNum) {
 	if (surfaceNum)
 		return nullptr;
 
 	assert(_mainSurface);
-	return _directDraw.createSurfaceFromDesc(DDSurfaceDesc(w, h));
+	return _directDraw.createSurfaceFromDesc(DDSurfaceDesc(w, h, bpp));
 }
 
 } // End of namespace Titanic

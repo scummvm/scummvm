@@ -66,7 +66,7 @@ int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
 		return -1;
 
 	if (remainder) {
-		while (*str) {
+		for (; *str; ++str) {
 			if (*str >= 'a' && *str != 's')
 				*remainder += *str;
 		}

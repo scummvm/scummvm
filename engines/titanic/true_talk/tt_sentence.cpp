@@ -41,9 +41,9 @@ TTsentenceConcept *TTsentenceConcept::addSibling() {
 
 TTsentence::TTsentence(int inputCtr, const TTstring &line, CScriptHandler *owner,
 		TTroomScript *roomScript, TTnpcScript *npcScript) :
-		_owner(owner), _field2C(1), _inputCtr(inputCtr), _field34(0),
+		_owner(owner), _category(1), _inputCtr(inputCtr), _field34(0),
 		_field38(0), _initialLine(line), _nodesP(nullptr), _roomScript(roomScript),
-		_npcScript(npcScript), _field58(0), _field5C(0) {
+		_npcScript(npcScript), _field58(5), _field5C(5) {
 	_status = _initialLine.isValid() && _normalizedLine.isValid() ? SS_11: SS_VALID;
 }
 
@@ -77,7 +77,7 @@ void TTsentence::copyFrom(const TTsentence &src) {
 	_field5C = src._field5C;
 	_field34 = src._field34;
 	_field38 = src._field38;
-	_field2C = src._field2C;
+	_category = src._category;
 	_nodesP = nullptr;
 
 	if (src._nodesP) {
@@ -109,10 +109,10 @@ int TTsentence::storeVocabHit(TTword *word) {
 
 bool TTsentence::fn1(const CString &str, int wordId1, const CString &str1, const CString &str2,
 		const CString &str3, int wordId2, int val1, int val2, const TTconceptNode *node) const {
-	if (node)
+	if (!node)
 		node = &_sentenceConcept;
 
-	if (!node && !node)
+	if (!node)
 		return false;
 	if (val1 && !is18(val1, node))
 		return false;
@@ -212,7 +212,7 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 
 	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 ||
 		slotIndex == 2 || slotIndex == 3 || slotIndex == 4 || slotIndex == 5)) {
-		if (str == g_vm->_exeResources._owner->_concept2P->getText() &&
+		if (str == g_vm->_exeResources._owner->_concept1P->getText() &&
 			(conceptText == "it" || conceptText == "that" || conceptText == "he" ||
 				conceptText == "she" || conceptText == "him" || conceptText == "her" ||
 				conceptText == "them" || conceptText == "they" || conceptText == "those" ||
@@ -221,7 +221,7 @@ bool TTsentence::fn2(int slotIndex, const TTstring &str, const TTconceptNode *no
 	}
 
 	if (g_vm->_exeResources._owner->_concept1P && (slotIndex == 0 || slotIndex == 2)) {
-		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept2P->getText()) {
+		if (conceptText == "?" && str == g_vm->_exeResources._owner->_concept1P->getText()) {
 			delete concept;
 			concept = getFrameSlot(5, node);
 			conceptText = concept->getText();
@@ -265,7 +265,9 @@ TTconcept *TTsentence::getFrameEntry(int slotIndex, const TTconceptNode *concept
 TTconcept *TTsentence::getFrameSlot(int slotIndex, const TTconceptNode *conceptNode) const {
 	TTconcept *newConcept = new TTconcept();
 	TTconcept *concept = getFrameEntry(slotIndex, conceptNode);
-	newConcept->copyFrom(concept);
+
+	if (concept)
+		newConcept->copyFrom(concept);
 
 	if (!newConcept->isValid()) {
 		delete newConcept;

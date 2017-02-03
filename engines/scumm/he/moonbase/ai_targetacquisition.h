@@ -139,7 +139,7 @@ public:
 	bool operator()(DefenseUnit *x, DefenseUnit *y) {
 		//disabled units go at the end
 		if (x->getState() == DUS_OFF) {
-			warning("OFF");
+			debugC(DEBUG_MOONBASE_AI, "OFF");
 			return 0;
 		}
 

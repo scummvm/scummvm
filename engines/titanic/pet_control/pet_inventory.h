@@ -26,7 +26,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_inventory_glyphs.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -35,7 +35,7 @@ namespace Titanic {
  */
 class CPetInventory : public CPetSection {
 private:
-	CPetText _text;
+	CTextControl _text;
 	CPetInventoryGlyphs _items;
 	CGameObject *_itemBackgrounds[46];
 	CGameObject *_itemGlyphs[46];
@@ -94,6 +94,7 @@ public:
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
@@ -133,7 +134,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return &_text; }
+	virtual CTextControl *getText() { return &_text; }
 
 	/**
 	 * Special retrieval of glyph background image

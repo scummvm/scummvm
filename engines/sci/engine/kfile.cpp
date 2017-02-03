@@ -46,7 +46,7 @@
 
 namespace Sci {
 
-extern reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename);
+extern reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename);
 extern FileHandle *getFileFromHandle(EngineState *s, uint handle);
 extern int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
 extern void listSavegames(Common::Array<SavegameDesc> &saves);
@@ -220,8 +220,9 @@ reg_t kCheckCD(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetSavedCD(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is wrong, CD number needs to be available prior to
-	// the save game being loaded
+	// Normally this code would read the CD number from the currently loaded
+	// save game file, but since we don't have one of those, just return the
+	// disc number from the resource manager
 	return make_reg(0, g_sci->getResMan()->getCurrentDiscNo());
 }
 
@@ -283,7 +284,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
-	int mode = argv[1].toUint16();
+	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
 	bool unwrapFilename = true;
 
 	// SQ4 floppy prepends /\ to the filenames
@@ -427,6 +428,13 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				return make_reg(0, handle);
 			}
 		}
+	} else if (g_sci->getGameId() == GID_PQSWAT) {
+		// PQSWAT tries to create subdirectories for each game profile
+		for (Common::String::iterator it = name.begin(); it != name.end(); ++it) {
+			if (*it == '\\') {
+				*it = '_';
+			}
+		}
 	}
 
 	// See kMakeSaveCatName
@@ -526,13 +534,14 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	uint bytesWritten = 0;
 	bool success = false;
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
-	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
 		bytesWritten = f->_out->write(buf, size);
 		success = !f->_out->err();
 	}
+
+	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d (%d, %d)", handle, size, bytesWritten, success);
 
 	delete[] buf;
 
@@ -645,7 +654,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
-	if (f) {
+	if (f && f->_out) {
 		f->_out->write(str.c_str(), str.size());
 		if (getSciVersion() <= SCI_VERSION_0_LATE)
 			return s->r_acc;	// SCI0 semantics: no value returned
@@ -659,22 +668,21 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
-	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
+	int16 offset = argv[1].toSint16();
 	uint16 whence = argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 
 	if (f && f->_in) {
-		// Backward seeking isn't supported in zip file streams, thus adapt the
-		// parameters accordingly if games ask for such a seek mode. A known
-		// case where this is requested is the save file manager in Phantasmagoria
-		if (whence == SEEK_END) {
-			whence = SEEK_SET;
-			offset = f->_in->size() - offset;
+		const bool success = f->_in->seek(offset, whence);
+		if (getSciVersion() >= SCI_VERSION_2) {
+			if (success) {
+				return make_reg(0, f->_in->pos());
+			}
+			return SIGNAL_REG;
 		}
-
-		return make_reg(0, f->_in->seek(offset, whence));
+		return make_reg(0, success);
 	} else if (f && f->_out) {
 		error("kFileIOSeek: Unsupported seek operation on a writeable stream (offset: %d, whence: %d)", offset, whence);
 	}

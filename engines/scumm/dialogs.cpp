@@ -510,7 +510,7 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 		int val, uint16 incKey, uint16 decKey)
 	: GUI::Dialog(0, 0, 0, 0),
 	_label(label), _min(minVal), _max(maxVal),
-	_value(val), _incKey(incKey), _decKey(decKey) {
+	_value(val), _incKey(incKey), _decKey(decKey), _timer(0) {
 	assert(_min <= _value && _value <= _max);
 }
 
@@ -566,7 +566,7 @@ void ValueDisplayDialog::open() {
 }
 
 SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
-	: InfoDialog(scumm, ""), _value(value) {
+	: InfoDialog(scumm, ""), _value(value), _timer(0) {
 
 }
 

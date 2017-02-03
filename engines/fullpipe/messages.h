@@ -94,7 +94,7 @@ class ExCommand2 : public ExCommand {
 
 class ObjstateCommand : public ExCommand {
  public:
-	char *_objCommandName;
+	Common::String _objCommandName;
 	int _value;
 
  public:
@@ -111,7 +111,7 @@ class MessageQueue : public CObject {
   public:
 	int _id;
 	int _flags;
-	char *_queueName;
+	Common::String _queueName;
 	int16 _dataId;
 	CObject *_field_14;
 	int _counter;

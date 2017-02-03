@@ -317,16 +317,21 @@ Common::Error SciEngine::run() {
 
 	// Must be called after game_init(), as they use _features
 	_kernel->loadKernelNames(_features);
-	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
-
-	syncSoundSettings();
-	syncIngameAudioOptions();
 
 	// Load our Mac executable here for icon bar palettes and high-res fonts
 	loadMacExecutable();
 
 	// Initialize all graphics related subsystems
 	initGraphics();
+
+	// Sound must be initialized after graphics because SysEx transfers at the
+	// start of the game must pump the event loop to avoid making the OS think
+	// that ScummVM is hanged, and pumping the event loop requires GfxCursor to
+	// be initialized
+	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
+
+	syncSoundSettings();
+	syncIngameAudioOptions();
 
 	// Patch in our save/restore code, so that dialogs are replaced
 	patchGameSaveRestore();
@@ -1063,16 +1068,6 @@ void SciEngine::syncSoundSettings() {
 	}
 }
 
-// used by Script Patcher. Used to find out, if Laura Bow 2/King's Quest 6 need patching for Speech+Subtitles - or not
-bool SciEngine::speechAndSubtitlesEnabled() {
-	bool subtitlesOn = ConfMan.getBool("subtitles");
-	bool speechOn = !ConfMan.getBool("speech_mute");
-
-	if (isCD() && subtitlesOn && speechOn)
-		return true;
-	return false;
-}
-
 void SciEngine::syncIngameAudioOptions() {
 	bool useGlobal90 = false;
 
@@ -1123,7 +1118,20 @@ void SciEngine::syncIngameAudioOptions() {
 
 #ifdef ENABLE_SCI32
 		if (getSciVersion() >= SCI_VERSION_2) {
-			_gamestate->variables[VAR_GLOBAL][kGlobalVarTextSpeed] = make_reg(0, 8 - ConfMan.getInt("talkspeed") * 8 / 255);
+			GlobalVar index;
+			uint16 textSpeed;
+
+			switch (g_sci->getGameId()) {
+			case GID_LSL6HIRES:
+				index = kGlobalVarLSL6HiresTextSpeed;
+				textSpeed = 14 - ConfMan.getInt("talkspeed") * 14 / 255 + 1;
+				break;
+			default:
+				index = kGlobalVarTextSpeed;
+				textSpeed = 8 - ConfMan.getInt("talkspeed") * 8 / 255;
+			}
+
+			_gamestate->variables[VAR_GLOBAL][index] = make_reg(0, textSpeed);
 		}
 #endif
 
@@ -1166,7 +1174,9 @@ void SciEngine::syncIngameAudioOptions() {
 void SciEngine::updateScummVMAudioOptions() {
 	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
 	// depending on the in-game settings
-	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
+	if ((isCD() && getSciVersion() == SCI_VERSION_1_1) ||
+		getSciVersion() >= SCI_VERSION_2) {
+
 		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType].getOffset();
 
 		switch (ingameSetting) {

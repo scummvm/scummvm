@@ -35,6 +35,7 @@ class MacResManager;
 
 namespace Graphics {
 class MacWindowManager;
+typedef Common::Array<byte *> MacPatterns;
 }
 
 namespace Director {
@@ -55,7 +56,8 @@ enum {
 	kDebugLingoExec		= 1 << 0,
 	kDebugLingoCompile	= 1 << 1,
 	kDebugLoading		= 1 << 2,
-	kDebugImages		= 1 << 3
+	kDebugImages		= 1 << 3,
+	kDebugText			= 1 << 4
 };
 
 
@@ -72,6 +74,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::String getEXEName() const;
 	DirectorSound *getSoundManager() const { return _soundManager; }
+	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }
@@ -80,8 +83,11 @@ public:
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
+	void loadPatterns();
+	Graphics::MacPatterns &getPatterns();
 
-	void loadMainArchive();
+	void loadInitialMovie(const Common::String movie);
+	Archive *openMainArchive(const Common::String movie);
 	Archive *createArchive();
 	void cleanupMainArchive();
 
@@ -108,16 +114,14 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
-	Common::HashMap<Common::String, Score *> scanMovies(const Common::String &folder);
-	void loadEXE();
+	Common::HashMap<Common::String, Score *> *scanMovies(const Common::String &folder);
+	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
 	void loadEXEv5(Common::SeekableReadStream *stream);
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
-	void loadMac();
-
-	Common::String readPascalString(Common::SeekableReadStream &stream);
+	void loadMac(const Common::String movie);
 
 	Common::HashMap<int, Cast *> *_sharedCasts;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
@@ -132,8 +136,17 @@ private:
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 
+	Graphics::MacPatterns _director3Patterns;
+	Graphics::MacPatterns _director3QuickDrawPatterns;
+
 	Common::String _sharedCastFile;
+
+private:
+	void testFontScaling();
+	void testFonts();
 };
+
+extern DirectorEngine *g_director;
 
 } // End of namespace Director
 

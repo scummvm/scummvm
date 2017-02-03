@@ -32,29 +32,26 @@ END_MESSAGE_MAP()
 
 void CChickenCooler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_newTemperature, indent);
+	file->writeNumberLine(_triggerOnRoomEntry, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CChickenCooler::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	_newTemperature = file->readNumber();
+	_triggerOnRoomEntry = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CChickenCooler::EnterRoomMsg(CEnterRoomMsg *msg) {
-	if (_fieldC0) {
+	if (_triggerOnRoomEntry) {
 		CGameObject *obj = getMailManFirstObject();
-		if (obj) {
-			// WORKAROUND: Redundant loop for chicken in originalhere
-		} else {
-			getNextMail(nullptr);
-			if (CChicken::_v1 > _fieldBC)
-				CChicken::_v1 = _fieldBC;
+		if (!obj) {
+			if (CChicken::_temperature > _newTemperature)
+				CChicken::_temperature = _newTemperature;
 		}
 	}
 
@@ -62,15 +59,15 @@ bool CChickenCooler::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CChickenCooler::EnterViewMsg(CEnterViewMsg *msg) {
-	if (!_fieldC0) {
+	if (!_triggerOnRoomEntry) {
 		for (CGameObject *obj = getMailManFirstObject(); obj;
 				obj = getNextMail(obj)) {
 			if (obj->isEquals("Chicken"))
 				return true;
 		}
 
-		if (CChicken::_v1 > _fieldBC)
-			CChicken::_v1 = _fieldBC;
+		if (CChicken::_temperature > _newTemperature)
+			CChicken::_temperature = _newTemperature;
 	}
 
 	return true;

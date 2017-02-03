@@ -35,7 +35,7 @@ CGameManager::CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mi
 		_inputHandler(this), _inputTranslator(&_inputHandler),
 		_gameState(this), _sound(this, mixer), _musicRoom(this),
 		_treeItem(nullptr), _soundMaker(nullptr), _movieRoom(nullptr),
-		_dragItem(nullptr), _field54(0), _lastDiskTicksCount(0), _tickCount2(0) {
+		_dragItem(nullptr), _transitionCtr(0), _lastDiskTicksCount(0), _tickCount2(0) {
 
 	CTimeEventInfo::_nextId = 0;
 	_movie = nullptr;
@@ -126,10 +126,6 @@ void CGameManager::postSave() {
 	_sound.postSave();
 }
 
-void CGameManager::initBounds() {
-	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
 void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
 	delete _movie;
 	_movie = nullptr;
@@ -150,11 +146,12 @@ void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *new
 	if (clip && clip->_startFrame != clip->_endFrame && _movie) {
 		// Clip details specifying a sub-section of movie to play
 		Rect tempRect(20, 10, SCREEN_WIDTH - 20, 350);
+		CMouseCursor &mouseCursor = *CScreenManager::_screenManagerPtr->_mouseCursor;
 
 		lockInputHandler();
-		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+		mouseCursor.incHideCounter();
 		_movie->playCutscene(tempRect, clip->_startFrame, clip->_endFrame);
-		CScreenManager::_screenManagerPtr->_mouseCursor->show();
+		mouseCursor.decHideCounter();
 		unlockInputHandler();
 	}
 }
@@ -219,6 +216,9 @@ void CGameManager::updateMovies() {
 			if (movie->_handled)
 				continue;
 
+			// Flag the movie to have been handled
+			movie->_handled = true;
+
 			CMovieEventList eventsList;
 			if (!movie->handleEvents(eventsList))
 				movie->removeFromPlayingMovies();
@@ -246,8 +246,6 @@ void CGameManager::updateMovies() {
 				eventsList.remove(movieEvent);
 			}
 
-			// Flag the movie as having been handled
-			movie->_handled = true;
 			repeatFlag = true;
 			break;
 		}
@@ -269,7 +267,7 @@ void CGameManager::viewChange() {
 	for (CTreeItem *treeItem = _project; treeItem; treeItem = treeItem->scan(_project))
 		treeItem->viewChange();
 
-	initBounds();
+	markAllDirty();
 }
 
 void CGameManager::frameMessage(CRoomItem *room) {
@@ -290,11 +288,15 @@ void CGameManager::frameMessage(CRoomItem *room) {
 	}
 }
 
-void CGameManager::extendBounds(const Rect &r) {
+void CGameManager::addDirtyRect(const Rect &r) {
 	if (_bounds.isEmpty())
 		_bounds = r;
 	else
 		_bounds.combine(r);
+}
+
+void CGameManager::markAllDirty() {
+	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 CScreenManager *CGameManager::setScreenManager() const {

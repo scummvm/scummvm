@@ -90,6 +90,14 @@ public:
 	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) = 0;
 
 	/**
+	 * Pauses a movie
+	 * @remarks	Acts a workaround for our video decoder, since some movies started
+	 * as part of a scene load need to be paused until the scene is interactive,
+	 * or else they get played back too quickly
+	 */
+	virtual void pause() = 0;
+
+	/**
 	 * Stops the movie
 	 */
 	virtual void stop() = 0;
@@ -187,6 +195,14 @@ public:
 	 * the playback ends or a key has been pressed
 	 */
 	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame);
+
+	/**
+	 * Pauses a movie
+	 * @remarks		Acts a workaround for our video decoder, since some movies started
+	 * as part of a scene load need to be paused until the scene is interactive,
+	 * or else they get played back too quickly
+	 */
+	virtual void pause();
 
 	/**
 	 * Stops the movie

@@ -85,7 +85,7 @@ int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *se
 
 	int currState = getState();
 	if (currState) {
-		int currMode = sentence->_field2C;
+		int currMode = sentence->_category;
 		bool modeFlag1 = currMode == 11 || currMode == 13;
 		bool modeFlag2 = currMode == 12;
 		setState(0);
@@ -178,8 +178,7 @@ ScriptChangedResult SuccUBusScript::scriptChanged(const TTroomScript *roomScript
 	if (id >= 230000 && id <= 230245) {
 		addResponse(getDialogueId(id));
 		applyResponse();
-	}
-	else if (id >= 70000 && id <= 70243) {
+	} else if (id >= 70000 && id <= 70243) {
 		addResponse(id);
 		applyResponse();
 	}

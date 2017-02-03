@@ -28,8 +28,8 @@ namespace Sherlock {
 namespace Scalpel {
 
 ScalpelScreen::ScalpelScreen(SherlockEngine *vm) : Screen(vm) {
-	_backBuffer1.create(320, 200);
-	_backBuffer2.create(320, 200);
+	_backBuffer1.create(320, 200, g_system->getScreenFormat());
+	_backBuffer2.create(320, 200, g_system->getScreenFormat());
 	activateBackBuffer1();
 }
 

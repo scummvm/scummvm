@@ -32,13 +32,13 @@ BEGIN_MESSAGE_MAP(CHammerDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CHammerDispensor::CHammerDispensor() : CBackground(),
-	_fieldE0(false), _fieldE4(true), _state(0) {
+	_isOpen(false), _panUp(true), _state(0) {
 }
 
 void CHammerDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_isOpen, indent);
+	file->writeNumberLine(_panUp, indent);
 	file->writeNumberLine(_state, indent);
 
 	CBackground::save(file, indent);
@@ -46,44 +46,44 @@ void CHammerDispensor::save(SimpleFile *file, int indent) {
 
 void CHammerDispensor::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_isOpen = file->readNumber();
+	_panUp = file->readNumber();
 	_state = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CHammerDispensor::ActMsg(CActMsg *msg) {
-	if (msg->_action == "DispenseHammer" && !_fieldE0) {
+	if (msg->_action == "DispenseHammer" && !_isOpen) {
 		_state = 1;
 		playMovie(15, 31, MOVIE_NOTIFY_OBJECT);
-		_fieldE0 = true;
+		_isOpen = true;
 	}
 
-	if (msg->_action == "HammerTaken" && _fieldE0)
+	if (msg->_action == "HammerTaken" && _isOpen)
 		loadFrame(32);
 
 	return true;
 }
 
 bool CHammerDispensor::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_fieldE4) {
+	if (_panUp) {
 		playMovie(7, 14, 0);
-		_fieldE4 = false;
+		_panUp = false;
 	}
 
 	return true;
 }
 
 bool CHammerDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
-	_fieldE4 = true;
-	_fieldE0 = 0;
-	_state = 2;
-
-	if (_fieldE0)
+	if (_isOpen)
 		playMovie(32, 50, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	else
 		playMovie(0, 7, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+
+	_panUp = true;
+	_isOpen = false;
+	_state = 2;
 	return true;
 }
 

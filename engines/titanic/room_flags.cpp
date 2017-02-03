@@ -41,7 +41,7 @@ struct TransportFlagsEntry {
 struct SuccUBusFlagsEntry {
 	const char *const _roomName;
 	uint _roomFlags;
-	uint _succubusNum;
+	PassengerClass _classNum;
 };
 
 #define TRANSPORT_ROOMS_SIZE 6
@@ -56,23 +56,23 @@ const TransportFlagsEntry TRANSPORT_ROOMS[TRANSPORT_ROOMS_SIZE] = {
 
 #define SUCCUBUS_ROOMS_SIZE 17
 const SuccUBusFlagsEntry SUCCUBUS_ROOMS[SUCCUBUS_ROOMS_SIZE] = {
-	{ "ParrotLobby", 0x1D0D9, 3 },
-	{ "SculptureChamber", 0x465FB, 2 },
-	{ "Bar", 0x0B3D97, 2 },
-	{ "EmbLobby", 0x0CC971, 3 },
-	{ "MoonEmbLobby", 0x0CC971, 3 },
-	{ "MusicRoom", 0x0F34DB, 2 },
-	{ "MusicRoomLobby", 0x0F34DB, 2 },
-	{ "Titania", 0x8A397, 3 },
-	{ "BottomOfWell", 0x59FAD, 3 },
-	{ "Arboretum", 0x4D6AF, 1 },
-	{ "PromenadeDeck", 0x79C45, 2 },
-	{ "1stClassRestaurant", 0x896B9, 1 },
-	{ "CreatorsChamber", 0x2F86D, 2 },
-	{ "CreatorsChamberOn", 0x2F86D, 2 },
-	{ "BilgeRoom", 0x3D94B, 3 },
-	{ "BilgeRoomWith", 0x3D94B, 3 },
-	{ "Bridge", 0x39FCB, 3 }
+	{ "ParrotLobby", 0x1D0D9, THIRD_CLASS },
+	{ "SculptureChamber", 0x465FB, SECOND_CLASS },
+	{ "Bar", 0x0B3D97, SECOND_CLASS },
+	{ "EmbLobby", 0x0CC971, THIRD_CLASS },
+	{ "MoonEmbLobby", 0x0CC971, THIRD_CLASS },
+	{ "MusicRoom", 0x0F34DB, SECOND_CLASS },
+	{ "MusicRoomLobby", 0x0F34DB, SECOND_CLASS },
+	{ "Titania", 0x8A397, THIRD_CLASS },
+	{ "BottomOfWell", 0x59FAD, THIRD_CLASS },
+	{ "Arboretum", 0x4D6AF, FIRST_CLASS },
+	{ "PromenadeDeck", 0x79C45, SECOND_CLASS },
+	{ "1stClassRestaurant", 0x896B9, FIRST_CLASS },
+	{ "CreatorsChamber", 0x2F86D, SECOND_CLASS },
+	{ "CreatorsChamberOn", 0x2F86D, SECOND_CLASS },
+	{ "BilgeRoom", 0x3D94B, THIRD_CLASS },
+	{ "BilgeRoomWith", 0x3D94B, THIRD_CLASS },
+	{ "Bridge", 0x39FCB, THIRD_CLASS }
 };
 
 int CRoomFlags::getConditionally() const {
@@ -92,7 +92,7 @@ bool CRoomFlags::isTransportRoom() const {
 }
 
 int CRoomFlags::getRoomCategory() const {
-	if (getRoomNum() == 0)
+	if (getRoomNum() != 0)
 		return false;
 
 	CRoomFlags tempFlags = _data;
@@ -112,7 +112,7 @@ int CRoomFlags::getRoomArea() const {
 				uint v6 = getElevatorNum();
 
 				if (v6 >= 1 && v6 <= 4) {
-					uint v7 = getPassengerClassNum() - 1;
+					uint v7 = (int)getPassengerClassNum() - 1;
 					if (v7) {
 						uint v8 = v7 - 1;
 						if (v8) {
@@ -138,6 +138,8 @@ int CRoomFlags::getRoomArea() const {
 }
 
 CString CRoomFlags::getRoomDesc() const {
+	Strings &str = g_vm->_strings;
+
 	switch (getRoomArea()) {
 	case 1:
 	case 2:
@@ -148,32 +150,65 @@ CString CRoomFlags::getRoomDesc() const {
 		result += ", ";
 		result += getElevatorDesc();
 		result += ", ";
-		result += getRoomDesc();
+		result += getRoomNumDesc();
 		return result;
 	}
 
 	case 4:
+		switch (_data) {
+		case 0x1D0D9:
+			return str[THE_PARROT_LOBBY];
+		case 0x2F86D:
+			return str[THE_CREATORS_CHAMBER];
+		case 0x39FCB:
+			return str[THE_BRIDGE];
+		case 0x3D94B:
+			return str[THE_BILGE_ROOM];
+		case 0x465FB:
+			return str[THE_SCULPTURE_CHAMBER];
+		case 0x4D6AF:
+			return str[THE_ARBORETUM];
+		case 0x59FAD:
+			return str[THE_BOTTOM_OF_THE_WELL];
+		case 0x79C45:
+			return str[THE_PROMENADE_DECK];
+		case 0x896B9:
+			return str[RESTAURANT_1ST_CLASS];
+		case 0x8A397:
+			return str[TITANIAS_ROOM];
+		case 0xB3D97:
+			return str[THE_BAR];
+		case 0xCC971:
+			return str[THE_EMBARKATION_LOBBY];
+		case 0xF34DB:
+			return  str[THE_MUSIC_ROOM];
+		default:
+			break;
+		}
+		return str[UNKNOWN_ROOM];
+
+	case 5:
 		if (isTransportRoom()) {
 			switch (_data) {
 			case 0x68797:
-				return "The Service Elevator";
+				return str[THE_SERVICE_ELEVATOR];
 			case 0x5D3AD:
-				return "The Super Galactic Leisure Lounge";
+				return str[SGT_LEISURE_LOUNGE];
 			case 0x96E45:
-				return "The Elevator";
+				return str[THE_ELEVATOR];
 			case 0xAD171:
-				return "The Dome";
+				return str[THE_DOME];
 			case 0xC95E9:
-				return "The Pellerator";
+				return str[THE_PELLERATOR];
 			case 0xDF4D1:
-				return  "The Top of the Well";
+				return str[THE_TOP_OF_THE_WELL];
 			default:
 				break;
 			}
 		}
 
 		if (getRoomCategory() == 0) {
-			return "Nowhere you're likely to want to go.";
+			return str[NOWHERE_TO_GO];
 		} else {
 			CString result = getPassengerClassDesc();
 			result += ", ";
@@ -182,44 +217,11 @@ CString CRoomFlags::getRoomDesc() const {
 		}
 		break;
 
-	case 5:
-		switch (_data) {
-		case 0x1D0D9:
-			return "The Parrot Lobby";
-		case 0x2F86D:
-			return "The Creators' Chamber";
-		case 0x39FCB:
-			return "The Bridge";
-		case 0x3D94B:
-			return "The Bilge Room";
-		case 0x465FB:
-			return "The Sculpture Chamber";
-		case 0x4D6AF:
-			return "The Arboretum";
-		case 0x59FAD:
-			return "The Bottom of the Well";
-		case 0x79C45:
-			return "The Promenade Deck";
-		case 0x896B9:
-			return "The 1st class restaurant";
-		case 0x8A397:
-			return "Titania's Room";
-		case 0xB3D97:
-			return "The Bar";
-		case 0xCC971:
-			return "The Embarkation Lobby";
-		case 0xF34DB:
-			return  "The Music Room";
-		default:
-			break;
-		}
-		return "Unknown Room";
-
 	default:
 		break;
 	}
 
-	return "Unknown Room";
+	return str[UNKNOWN_ROOM];
 }
 
 void CRoomFlags::setElevatorBits(uint val) {
@@ -241,17 +243,18 @@ uint CRoomFlags::getPassengerClassBits() const {
 }
 
 CString CRoomFlags::getPassengerClassDesc() const {
-	int classNum = getPassengerClassNum();
+	PassengerClass classNum = getPassengerClassNum();
+	Strings &str = g_vm->_strings;
 
 	switch (classNum) {
-	case 1:
-		return "1st class";
-	case 2:
-		return "2nd class";
-	case 3:
-		return "SGT class";
+	case FIRST_CLASS:
+		return str[CLASS_1];
+	case SECOND_CLASS:
+		return str[CLASS_2];
+	case THIRD_CLASS:
+		return str[CLASS_3];
 	default:
-		return "no class";
+		return str[CLASS_NONE];
 	}
 }
 
@@ -269,21 +272,20 @@ uint CRoomFlags::decodeFloorBits(uint bits) const {
 	int offset = bits & 0xF;
 
 	switch ((bits >> 4) & 0xF) {
-	case 1:
-	case 2:
-	case 3:
-		base = 40;
+	case 9:
+		base = 0;
 		break;
-	case 4:
+	case 0xD:
 		base = 10;
 		break;
-	case 5:
+	case 0xE:
 		base = 20;
 		break;
-	case 6:
+	case 0xF:
 		base = 30;
 		break;
 	default:
+		base = 40;
 		break;
 	}
 
@@ -299,8 +301,10 @@ void CRoomFlags::setFloorNum(uint floorNum) {
 		break;
 	case 1:
 		base = 0xD0;
+		break;
 	case 2:
 		base = 0xE0;
+		break;
 	case 3:
 		base = 0xF0;
 		break;
@@ -351,13 +355,13 @@ uint CRoomFlags::getSpecialRoomFlags(const CString &roomName) {
 	return 0;
 }
 
-uint CRoomFlags::getSuccUBusNum(const CString &roomName) const {
+PassengerClass CRoomFlags::getSuccUBusClass(const CString &roomName) const {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
 		if (roomName == SUCCUBUS_ROOMS[idx]._roomName)
-			return SUCCUBUS_ROOMS[idx]._succubusNum;
+			return SUCCUBUS_ROOMS[idx]._classNum;
 	}
 
-	return 0;
+	return NO_CLASS;
 }
 
 CString CRoomFlags::getSuccUBusRoomName() const {
@@ -369,29 +373,29 @@ CString CRoomFlags::getSuccUBusRoomName() const {
 	return CString();
 }
 
-void CRoomFlags::changeLocation(int action) {
+void CRoomFlags::changeClass(PassengerClass newClassNum) {
 	uint floorNum = getFloorNum();
 	uint roomNum = getRoomNum();
 	uint elevatorNum = getElevatorNum();
-	uint classNum = getPassengerClassNum();
+	PassengerClass classNum = getPassengerClassNum();
 	uint v10, v11, v12, v13;
 
 	switch (classNum) {
-	case 1:
+	case FIRST_CLASS:
 		v10 = 2;
 		v11 = 19;
 		v12 = 1;
 		v13 = 3;
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		v10 = 20;
 		v11 = 27;
 		v12 = 1;
 		v13 = (elevatorNum & 1) ? 3 : 4;
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		v10 = 28;
 		v11 = 38;
 		v12 = 1;
@@ -407,25 +411,28 @@ void CRoomFlags::changeLocation(int action) {
 	}
 
 	// Perform action to change room or floor
-	switch (action) {
-	case 1:
+	switch (newClassNum) {
+	case FIRST_CLASS:
 		if (--roomNum < v12)
 			roomNum = v12;
 		break;
 
-	case 2:
+	case SECOND_CLASS:
 		if (++roomNum > v13)
 			roomNum = v13;
 		break;
 
-	case 3:
+	case THIRD_CLASS:
 		if (--floorNum < v10)
 			floorNum = v10;
 		break;
 
-	case 4:
+	case UNCHECKED:
 		if (++floorNum > v11)
 			floorNum = v11;
+
+	default:
+		break;
 	}
 
 	// Set new floor and room
@@ -442,16 +449,16 @@ bool CRoomFlags::compareClassElevator(uint flags1, uint flags2) {
 
 	uint elev1 = f1.getElevatorNum();
 	uint elev2 = f2.getElevatorNum();
-	uint class1 = f1.getPassengerClassNum();
-	uint class2 = f2.getPassengerClassNum();
+	PassengerClass class1 = f1.getPassengerClassNum();
+	PassengerClass class2 = f2.getPassengerClassNum();
 
-	if (class1 > 0 && class1 < 3) {
+	if (class1 == FIRST_CLASS || class1 == SECOND_CLASS) {
 		if (elev1 == 2)
 			elev1 = 1;
 		else if (elev1 == 4)
 			elev1 = 3;
 	}
-	if (class2 > 0 && class2 < 3) {
+	if (class2 == FIRST_CLASS || class2 == SECOND_CLASS) {
 		if (elev2 == 2)
 			elev2 = 1;
 		else if (elev2 == 4)
@@ -465,7 +472,7 @@ bool CRoomFlags::compareLocation(uint flags1, uint flags2) {
 	CRoomFlags f1(flags1);
 	CRoomFlags f2(flags2);
 
-	return f1.getElevatorNum() == f2.getElevatorBits() &&
+	return f1.getElevatorNum() == f2.getElevatorNum() &&
 		f1.getFloorNum() == f2.getFloorNum() &&
 		f1.getRoomNum() == f2.getRoomNum();
 }
@@ -474,12 +481,12 @@ bool CRoomFlags::isTitania(uint flags1, uint flags2) {
 	return flags2 == 0x8A397;
 }
 
-void CRoomFlags::setRandomLocation(int classNum, bool flag) {
+void CRoomFlags::setRandomLocation(PassengerClass classNum, bool flag) {
 	uint minRoom, elevNum, maxRoom, maxFloor, minFloor;
 
 	do {
 		switch (classNum) {
-		case 1:
+		case FIRST_CLASS:
 			minFloor = 2;
 			maxFloor = 19;
 			minRoom = 1;
@@ -487,7 +494,7 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
 			break;
 
-		case 2:
+		case SECOND_CLASS:
 			minFloor = 20;
 			maxFloor = 27;
 			elevNum = g_vm->getRandomNumber(flag ? 2 : 3);
@@ -495,14 +502,12 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 			maxRoom = ((elevNum - 1) & 1) ? 3 : 4;
 			break;
 
-		case 3:
+		case THIRD_CLASS:
 			minRoom = 1;
 			minFloor = 28;
 			maxFloor = 38;
 			maxRoom = 18;
-			elevNum = g_vm->getRandomNumber(1);
-			if (elevNum == 1)
-				elevNum = 2;
+			elevNum = g_vm->getRandomNumber(1) ? 2 : 0;
 			break;
 
 		default:
@@ -514,14 +519,15 @@ void CRoomFlags::setRandomLocation(int classNum, bool flag) {
 		setElevatorBits(elevNum);
 		setRoomBits(roomNum);
 		setFloorNum(floorNum);
+		setPassengerClassBits(classNum);
 	} while (_data == 0x59706);
 }
 
-int CRoomFlags::whatPassengerClass(int floorNum) {
+PassengerClass CRoomFlags::whatPassengerClass(int floorNum) {
 	if (is2To19(floorNum))
-		return 1;
+		return FIRST_CLASS;
 
-	return is20To27(floorNum) ? 2 : 3;
+	return is20To27(floorNum) ? SECOND_CLASS : THIRD_CLASS;
 }
 
 } // End of namespace Titanic

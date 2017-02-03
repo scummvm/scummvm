@@ -28,6 +28,9 @@
 
 namespace Titanic {
 
+enum SuccUBusAction { SA_SENT = 0, SA_FEATHERS = 1, SA_EATEN = 2,
+	SA_BILGE_FEATHERS = 3, SA_BILGE_SENT = 4, SA_BILGE_EATEN = 5 };
+
 class CSuccUBus : public CTrueTalkNPC {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
@@ -46,60 +49,55 @@ class CSuccUBus : public CTrueTalkNPC {
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 protected:
+	static bool _isOn;
+	static bool _style;
 	static bool _enabled;
-	static int _v1;
-	static int _v2;
-	static int _v3;
-	static int _v4;
 protected:
-	int _startFrame8;
-	int _endFrame8;
-	int _startFrame11;
-	int _endFrame11;
-	int _startFrame3;
-	int _endFrame3;
-	int _startFrame4;
-	int _endFrame4;
-	int _startFrame9;
-	int _endFrame9;
-	int _startFrame10;
-	int _endFrame10;
-	int _startFrame2;
-	int _endFrame2;
-	int _field140;
+	int _initialStartFrame;
+	int _initialEndFrame;
+	int _endingStartFrame;
+	int _endingEndFrame;
+	int _sendStartFrame;
+	int _sendEndFrame;
+	int _receiveStartFrame;
+	int _receiveEndFrame;
+	int _onStartFrame;
+	int _onEndFrame;
+	int _offStartFrame;
+	int _offEndFrame;
+	int _okStartFrame;
+	int _okEndFrame;
+	RoomFlagsComparison _flagsComparison;
 	CGameObject *_mailP;
-	int _startFrame5;
-	int _endFrame5;
-	int _startFrame12;
-	int _endFrame12;
-	int _field158;
-	bool _field15C;
-	CString _string2;
+	int _afterReceiveStartFrame;
+	int _afterReceiveEndFrame;
+	int _trayOutStartFrame;
+	int _trayOutEndFrame;
+	SuccUBusAction _sendAction;
+	bool _signalFlag;
+	CString _signalTarget;
 	int _startFrame1;
 	int _endFrame1;
 	Rect _rect1;
 	int _field184;
 	int _field188;
 	Rect _rect2;
-	int _field190;
-	int _field194;
-	int _field198;
-	int _field19C;
+	bool _sendLost;
 	int _soundHandle;
 	bool _isChicken;
 	bool _isFeathers;
-	int _field1AC;
-	int _field1B0;
-	int _startFrame6;
-	int _endFrame6;
-	int _startFrame7;
-	int _endFrame7;
-	int _field1C4;
-	int _field1C8;
-	int _field1CC;
-	int _field1D0;
-	int _field1D4;
-	int _field1D8;
+	int _priorRandomVal1;
+	int _priorRandomVal2;
+	int _emptyStartFrame;
+	int _emptyEndFrame;
+	int _smokeStartFrame;
+	int _smokeEndFrame;
+	int _hoseStartFrame;
+	int _hoseEndFrame;
+	int _pumpingStartFrame;
+	int _pumpingEndFrame;
+	uint _destRoomFlags;
+	bool _inProgress;
 public:
 	CLASSDEF;
 	CSuccUBus();

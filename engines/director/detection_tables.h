@@ -40,11 +40,37 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
-	{ // Generic D3 entry
+	{ // Generic D3 Mac entry
 		{
 			"director",
 			"",
-			AD_ENTRY1("D3", 0),
+			AD_ENTRY1("D3-mac", 0),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
+	{ // Generic D4 Mac entry
+		{
+			"director",
+			"",
+			AD_ENTRY1("D4-mac", 0),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+	{
+		{
+			"theapartment",
+			"D3",
+			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -56,15 +82,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"theapartment",
-			"",
-			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),
+			"D4",
+			AD_ENTRY1s("Main Menu", "ff86181f03fe6eb060f65a985ca0580d", 160612),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
-		3
+		4
 	},
 
 	{

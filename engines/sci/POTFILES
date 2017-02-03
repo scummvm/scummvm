@@ -1,2 +1,3 @@
 engines/sci/detection.cpp
 engines/sci/engine/kfile.cpp
+engines/sci/graphics/controls32.cpp

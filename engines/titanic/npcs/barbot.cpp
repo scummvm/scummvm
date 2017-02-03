@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-int CBarbot::_v0;
+int CBarbot::_timesCalled;
 
 BEGIN_MESSAGE_MAP(CBarbot, CTrueTalkNPC)
 	ON_MESSAGE(ActMsg)
@@ -62,14 +62,14 @@ CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field108 = 0;
 	_field10C = 0;
 	_field110 = 0;
-	_field114 = 0;
-	_field118 = 0;
-	_field11C = 0;
+	_addedLemon = false;
+	_addedTV = false;
+	_addedPuret = false;
 	_field120 = 0;
 	_field124 = 0;
-	_field128 = 0;
-	_field12C = 0;
-	_field130 = 0;
+	_visCenterOnCounter = false;
+	_addedVodka = false;
+	_gottenDrunk = false;
 	_field134 = 0;
 	_field138 = 0;
 	_field13C = -1;
@@ -79,8 +79,8 @@ CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field14C = 0;
 	_field150 = 0;
 	_field154 = 0;
-	_field158 = -1;
-	_field15C = 0;
+	_glassContent = GG_DEFAULT;
+	_drunkFlag = false;
 	_field160 = 0;
 }
 
@@ -89,16 +89,16 @@ void CBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_field10C, indent);
 	file->writeNumberLine(_field110, indent);
-	file->writeNumberLine(_field114, indent);
-	file->writeNumberLine(_field118, indent);
-	file->writeNumberLine(_field11C, indent);
+	file->writeNumberLine(_addedLemon, indent);
+	file->writeNumberLine(_addedTV, indent);
+	file->writeNumberLine(_addedPuret, indent);
 	file->writeNumberLine(_field120, indent);
 	file->writeNumberLine(_field124, indent);
-	file->writeNumberLine(_field128, indent);
+	file->writeNumberLine(_visCenterOnCounter, indent);
 
-	file->writeNumberLine(_v0, indent);
-	file->writeNumberLine(_field12C, indent);
-	file->writeNumberLine(_field130, indent);
+	file->writeNumberLine(_timesCalled, indent);
+	file->writeNumberLine(_addedVodka, indent);
+	file->writeNumberLine(_gottenDrunk, indent);
 	file->writeNumberLine(_field134, indent);
 	file->writeNumberLine(_field138, indent);
 	file->writeNumberLine(_field13C, indent);
@@ -108,8 +108,8 @@ void CBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field14C, indent);
 	file->writeNumberLine(_field150, indent);
 	file->writeNumberLine(_field154, indent);
-	file->writeNumberLine(_field158, indent);
-	file->writeNumberLine(_field15C, indent);
+	file->writeNumberLine(_glassContent, indent);
+	file->writeNumberLine(_drunkFlag, indent);
 	file->writeNumberLine(_field160, indent);
 
 	CTrueTalkNPC::save(file, indent);
@@ -120,16 +120,16 @@ void CBarbot::load(SimpleFile *file) {
 	_field108 = file->readNumber();
 	_field10C = file->readNumber();
 	_field110 = file->readNumber();
-	_field114 = file->readNumber();
-	_field118 = file->readNumber();
-	_field11C = file->readNumber();
+	_addedLemon = file->readNumber();
+	_addedTV = file->readNumber();
+	_addedPuret = file->readNumber();
 	_field120 = file->readNumber();
 	_field124 = file->readNumber();
-	_field128 = file->readNumber();
+	_visCenterOnCounter = file->readNumber();
 
-	_v0 = file->readNumber();
-	_field12C = file->readNumber();
-	_field130 = file->readNumber();
+	_timesCalled = file->readNumber();
+	_addedVodka = file->readNumber();
+	_gottenDrunk = file->readNumber();
 	_field134 = file->readNumber();
 	_field138 = file->readNumber();
 	_field13C = file->readNumber();
@@ -139,8 +139,8 @@ void CBarbot::load(SimpleFile *file) {
 	_field14C = file->readNumber();
 	_field150 = file->readNumber();
 	_field154 = file->readNumber();
-	_field158 = file->readNumber();
-	_field15C = file->readNumber();
+	_glassContent = (GlassGiven)file->readNumber();
+	_drunkFlag = file->readNumber();
 	_field160 = file->readNumber();
 
 	CTrueTalkNPC::load(file);
@@ -148,9 +148,9 @@ void CBarbot::load(SimpleFile *file) {
 
 bool CBarbot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Vodka") {
-		if (!_field12C) {
+		if (!_addedVodka) {
 			playRange(_frames[47], MOVIE_NOTIFY_OBJECT);
-			playRange(_frames[46]);
+			playRange(_frames[46], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[40]);
 			playRange(_frames[7]);
 			playRange(_frames[13]);
@@ -178,13 +178,14 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 3;
+		_glassContent = GG_BIRD;
 
 		playRange(_frames[32], MOVIE_NOTIFY_OBJECT);
+		movieEvent();
 		playRange(_frames[30], MOVIE_NOTIFY_OBJECT);
 		_frameNum = _frames[30]._endFrame;
 
-		if (!_field114 || !_field118 || !_field12C) {
+		if (areIngredientsMissing()) {
 			playRange(_frames[42], MOVIE_NOTIFY_OBJECT);
 			_frameNum = _frames[42]._endFrame;
 		}
@@ -195,34 +196,37 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 0;
+		_glassContent = GG_EMPTY;
 
 		playRange(_frames[55], MOVIE_NOTIFY_OBJECT);
+		movieEvent();
 		playRange(_frames[54], MOVIE_NOTIFY_OBJECT);
 		_frameNum = _frames[54]._endFrame;
 	} else if (msg->_action == "Mustard" || msg->_action == "Tomato") {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
-		_field158 = 1;
+		_glassContent = GG_CONDIMENT;
 
 		playRange(_frames[55], MOVIE_NOTIFY_OBJECT);
+		movieEvent();
 		playRange(_frames[54], MOVIE_NOTIFY_OBJECT);
 		_frameNum = _frames[54]._endFrame;
 
 		CActMsg actMsg("InTitilator");
 		actMsg.execute("BeerGlass");
 	} else if (msg->_action == "Fruit") {
-		if (!_field114) {
+		if (!_addedLemon) {
 			CActMsg visibleMsg;
 			visibleMsg.execute("LemonOnBar");
 			startTalking(this, 250576);
-			_field114 = 1;
+			_addedLemon = true;
 
 			playRange(_frames[36], MOVIE_NOTIFY_OBJECT);
+			movieEvent();
 			_frameNum = _frames[36]._endFrame;
 
-			if (!_field11C || !_field118 || _field12C) {
+			if (areIngredientsMissing()) {
 				playRange(_frames[43], MOVIE_NOTIFY_OBJECT);
 				_frameNum = _frames[43]._endFrame;
 			}
@@ -231,19 +235,21 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 			removeMsg.execute("Lemon");
 		}
 	} else if (msg->_action == "CrushedTV") {
-		if (!_field118) {
+		if (!_addedTV) {
 			CVisibleMsg visibleMsg;
 			visibleMsg.execute("TVOnBar");
 			startTalking(this, 250584);
 			_field160 = 1;
+			_addedTV = true;
 
 			playSound("c#5.wav", _volume);
 			playRange(_frames[35], MOVIE_NOTIFY_OBJECT);
+			movieEvent();
 			playRange(_frames[34]);
 			playRange(_frames[33], MOVIE_NOTIFY_OBJECT);
 			_frameNum = _frames[33]._endFrame;
 
-			if (!_field11C || !_field114 || !_field12C) {
+			if (areIngredientsMissing()) {
 				playRange(_frames[41], MOVIE_NOTIFY_OBJECT);
 				_frameNum = _frames[41]._endFrame;
 			}
@@ -259,7 +265,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		statusMsg._newStatus = 0;
 		statusMsg.execute("PickUpGlass");
 	} else if (msg->_action == "PlayerTakesVisCentre") {
-		_field128 = 0;
+		_visCenterOnCounter = false;
 		loadFrame(0);
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
@@ -301,12 +307,12 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 
 		CGameObject *glass = findInRoom("BeerGlass");
-		if (!_field130) {
+		if (!_gottenDrunk) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("BarShelfVisCentre");
 		}
 
-		if (glass && !_field11C) {
+		if (glass && !_addedPuret) {
 			playRange(_frames[38], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[58], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[57], MOVIE_NOTIFY_OBJECT);
@@ -334,9 +340,9 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 		}
 
 		_fieldC4 = 1;
-		++_v0;
+		++_timesCalled;
 		petSetArea(PET_CONVERSATION);
-		endTalking(this, true);
+		setTalking(this, true);
 	}
 
 	return true;
@@ -355,10 +361,11 @@ bool CBarbot::TurnOff(CTurnOff *msg) {
 			_field124 = 0;
 		}
 
-		if (_field128) {
+		if (_visCenterOnCounter) {
+			// Barbot will put away the vision center
 			playRange(_frames[28], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			_frameNum = _frames[28]._endFrame;
-			_field128 = 0;
+			_visCenterOnCounter = false;
 			_field134 = 1;
 		}
 
@@ -391,7 +398,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _field13C) {
 		if (_field124)
 			playMovie(_frames[53]._startFrame, _frames[53]._startFrame, 0);
-		else if (_field128)
+		else if (_visCenterOnCounter)
 			playMovie(_frames[27]._endFrame, _frames[27]._endFrame, 0);
 
 		_field13C = -1;
@@ -432,7 +439,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[45]._endFrame) {
-		if (!_field130) {
+		if (!_gottenDrunk) {
 			CVisibleMsg visibleMsg(false);
 			visibleMsg.execute("BarShelfVisCentre");
 		}
@@ -441,7 +448,9 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[44]._endFrame) {
-		_field128 = _field130 = 1;
+		_visCenterOnCounter = true;
+		_gottenDrunk = true;
+		startTalking(this, 250586);
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 1;
 		statusMsg.execute("PickUpVisCentre");
@@ -450,7 +459,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[46]._endFrame) {
-		if (!_field130 && !_field12C && _field11C && _field114 && _field118)
+		if (!_gottenDrunk && !areIngredientsMissing())
 			startTalking(this, 250571);
 		return true;
 	}
@@ -467,18 +476,17 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 		playSound("c#3.wav", _volume);
 	} else if (msg->_endFrame == _frames[36]._endFrame) {
 		playSound("c#6.wav", _volume);
-	}
-	else if (msg->_endFrame == _frames[35]._endFrame) {
+	} else if (msg->_endFrame == _frames[35]._endFrame) {
 		playSound("c#8.wav", _volume);
-	}
-	else if (msg->_endFrame == _frames[33]._endFrame) {
+	} else if (msg->_endFrame == _frames[33]._endFrame) {
 		playSound("c#4.wav", _volume);
 	} else if (msg->_endFrame == _frames[32]._endFrame) {
 		startTalking(this, 145);
 		playSound("c#9.wav", _volume);
 	} else if (msg->_endFrame == _frames[47]._endFrame) {
 		playSound("c#9.wav", _volume);
-		_field12C = _field15C = 1;
+		_addedVodka = true;
+		_drunkFlag = true;
 	} else if (msg->_endFrame == _frames[30]._endFrame) {
 		playSound("c#4.wav", 60);
 	} else if (msg->_endFrame == _frames[29]._endFrame) {
@@ -492,7 +500,7 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 1;
 		statusMsg.execute("PickUpVisCentre");
-		_field128 = 1;
+		_visCenterOnCounter = true;
 		_field134 = 0;
 		startTalking(this, 250586);
 	}
@@ -511,8 +519,8 @@ bool CBarbot::TrueTalkQueueUpAnimSetMsg(CTrueTalkQueueUpAnimSetMsg *msg) {
 bool CBarbot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	switch (msg->_stateNum) {
 	case 2:
-		if (!_field130) {
-			if (_field15C) {
+		if (!_gottenDrunk) {
+			if (_drunkFlag) {
 				msg->_stateVal = _field134 | 1;
 				return true;
 			}
@@ -523,18 +531,18 @@ bool CBarbot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 
 	case 3:
 		msg->_stateVal = 0;
-		if (_field114)
+		if (_addedLemon)
 			msg->_stateVal = 1;
-		if (_field11C)
-			msg->_stateVal |= 4;
-		if (_field118)
-			msg->_stateVal |= 8;
-		if (_field12C)
+		if (_addedVodka)
 			msg->_stateVal |= 2;
+		if (_addedPuret)
+			msg->_stateVal |= 4;
+		if (_addedTV)
+			msg->_stateVal |= 8;
 		break;
 
 	case 9:
-		msg->_stateVal = _field15C ? 1 : 0;
+		msg->_stateVal = _drunkFlag ? 1 : 0;
 		break;
 
 	default:
@@ -550,7 +558,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		if (_field134) {
 			playRange(_frames[27], MOVIE_NOTIFY_OBJECT);
 			_frameNum = _frames[27]._endFrame;
-		} else if (!_field130 && _field15C) {
+		} else if (!_gottenDrunk && _drunkFlag) {
 			playRange(_frames[45], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 			_frameNum = _frames[44]._endFrame;
@@ -558,13 +566,15 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		break;
 
 	case 7: {
+		// "add vodka"
 		CActMsg actMsg("Vodka");
 		actMsg.execute(this);
 		break;
 	}
 
 	case 30:
-		_field11C = 1;
+		// "starling puret"
+		_addedPuret = true;
 		break;
 
 	default:
@@ -580,7 +590,7 @@ bool CBarbot::FrameMsg(CFrameMsg *msg) {
 			|| (msg->_ticks - _field150) <= 1000)
 		return true;
 
-	if (!_field15C) {
+	if (!_drunkFlag) {
 		if (++_field154 > 2) {
 			playRange(_frames[0]);
 			playRange(_frames[1], MOVIE_NOTIFY_OBJECT);
@@ -618,7 +628,7 @@ bool CBarbot::FrameMsg(CFrameMsg *msg) {
 			break;
 
 		case 5:
-			if (!_field160 && !_field128) {
+			if (!_field160 && !_visCenterOnCounter) {
 				playRange(_frames[15], MOVIE_NOTIFY_OBJECT);
 				_field148 = _frames[15]._endFrame;
 			}
@@ -691,18 +701,21 @@ bool CBarbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 	} else if (msg->_frameNumber == _frames[55]._startFrame
 			|| msg->_frameNumber == _frames[32]._startFrame) {
+		// Finished giving the Barbot a glass
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
 		statusMsg.execute("PickUpGlass");
 
-		if (_field158 == 0) {
+		if (_glassContent == GG_EMPTY) {
+			// I'd rather see that full of Starling Puret
 			startTalking(this, 250574);
-		} else if (_field158 > 0 && _field158 <= 3) {
+		} else if (_glassContent > GG_EMPTY) {
+			// What's this?
 			startTalking(this, 250580);
 			petSetArea(PET_CONVERSATION);
 		}
 
-		_field158 = -1;
+		_glassContent = GG_DEFAULT;
 
 	} else if (msg->_frameNumber == _frames[36]._startFrame) {
 		CVisibleMsg visibleMsg(false);

@@ -67,8 +67,8 @@ void BoxStorage::loadKeyAndSecret() {
 #endif
 }
 
-BoxStorage::BoxStorage(Common::String accessToken, Common::String refreshToken):
-	_token(accessToken), _refreshToken(refreshToken) {}
+BoxStorage::BoxStorage(Common::String token, Common::String refreshToken):
+	_token(token), _refreshToken(refreshToken) {}
 
 BoxStorage::BoxStorage(Common::String code) {
 	getAccessToken(
@@ -191,36 +191,36 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, Networking
 		return;
 	}
 
-	Common::JSONObject info = json->asObject();
+	Common::JSONObject jsonInfo = json->asObject();
 
-	Common::String uid, name, email;
+	Common::String uid, displayName, email;
 	uint64 quotaUsed = 0, quotaAllocated = 0;
 
 	// can check that "type": "user"
 	// there is also "max_upload_size", "phone" and "avatar_url"
 
-	if (Networking::CurlJsonRequest::jsonContainsString(info, "id", "BoxStorage::infoInnerCallback"))
-		uid = info.getVal("id")->asString();
+	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "id", "BoxStorage::infoInnerCallback"))
+		uid = jsonInfo.getVal("id")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsString(info, "name", "BoxStorage::infoInnerCallback"))
-		name = info.getVal("name")->asString();
+	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "name", "BoxStorage::infoInnerCallback"))
+		displayName = jsonInfo.getVal("name")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsString(info, "login", "BoxStorage::infoInnerCallback"))
-		email = info.getVal("login")->asString();
+	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "login", "BoxStorage::infoInnerCallback"))
+		email = jsonInfo.getVal("login")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "space_amount", "BoxStorage::infoInnerCallback"))
-		quotaAllocated = info.getVal("space_amount")->asIntegerNumber();
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_amount", "BoxStorage::infoInnerCallback"))
+		quotaAllocated = jsonInfo.getVal("space_amount")->asIntegerNumber();
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(info, "space_used", "BoxStorage::infoInnerCallback"))
-		quotaUsed = info.getVal("space_used")->asIntegerNumber();
+	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_used", "BoxStorage::infoInnerCallback"))
+		quotaUsed = jsonInfo.getVal("space_used")->asIntegerNumber();
 
 	Common::String username = email;
-	if (username == "") username = name;
+	if (username == "") username = displayName;
 	if (username == "") username = uid;
 	CloudMan.setStorageUsername(kStorageBoxId, username);
 
 	if (outerCallback) {
-		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, name, email, quotaUsed, quotaAllocated)));
+		(*outerCallback)(StorageInfoResponse(nullptr, StorageInfo(uid, displayName, email, quotaUsed, quotaAllocated)));
 		delete outerCallback;
 	}
 
@@ -245,8 +245,8 @@ void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networ
 
 	if (outerCallback) {
 		if (Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage::createDirectoryInnerCallback")) {
-			Common::JSONObject info = json->asObject();
-			(*outerCallback)(BoolResponse(nullptr, info.contains("id")));
+			Common::JSONObject jsonInfo = json->asObject();
+			(*outerCallback)(BoolResponse(nullptr, jsonInfo.contains("id")));
 		} else {
 			(*outerCallback)(BoolResponse(nullptr, false));
 		}
@@ -256,7 +256,7 @@ void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, Networ
 	delete json;
 }
 
-Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String parentId, Common::String name, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String parentId, Common::String directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback)
 		errorCallback = getErrorPrintingCallback();
 
@@ -270,7 +270,7 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(Common::String pare
 	parentObject.setVal("id", new Common::JSONValue(parentId));
 
 	Common::JSONObject jsonRequestParameters;
-	jsonRequestParameters.setVal("name", new Common::JSONValue(name));
+	jsonRequestParameters.setVal("name", new Common::JSONValue(directoryName));
 	jsonRequestParameters.setVal("parent", new Common::JSONValue(parentObject));
 
 	Common::JSONValue value(jsonRequestParameters);

@@ -34,12 +34,12 @@ class CSpeechDispensor : public CBackground {
 	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 private:
-	int _fieldE0;
+	int _hitCounter;
 	int _state;
 	CGameObject *_dragItem;
-	int _fieldEC;
+	bool _speechFallen;
 	Point _itemPos;
-	int _fieldF8;
+	bool _failureType;
 	Season _seasonNum;
 public:
 	CLASSDEF;

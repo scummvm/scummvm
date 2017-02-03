@@ -73,14 +73,9 @@ private:
 	ScreenItem *_screenItem;
 
 	/**
-	 * The bitmap used to render video output.
-	 */
-	reg_t _bitmap;
-
-	/**
 	 * Renders a single frame of video.
 	 */
-	void renderFrame() const;
+	void renderFrame(SciBitmap &bitmap) const;
 };
 
 #pragma mark -
@@ -326,6 +321,19 @@ private:
 	bool _isInitialized;
 
 	/**
+	 * The Resource object for VMDs that are read out
+	 * of a resource bundle instead of being streamed
+	 * from the filesystem.
+	 */
+	Resource *_bundledVmd;
+
+	/**
+	 * For VMDs played with the `kEventFlagToFrame` flag,
+	 * the target frame for yielding back to the SCI VM.
+	 */
+	int32 _yieldFrame;
+
+	/**
 	 * For VMDs played with the `kEventFlagYieldToVM` flag,
 	 * the number of frames that should be rendered until
 	 * yielding back to the SCI VM.
@@ -347,6 +355,13 @@ private:
 
 #pragma mark -
 #pragma mark VMDPlayer - Rendering
+public:
+	/**
+	 * Causes the VMD player to ignore all palettes in
+	 * the currently playing video.
+	 */
+	void ignorePalettes() { _ignorePalettes = true; }
+
 private:
 	/**
 	 * The location of the VMD plane, in game script
@@ -406,6 +421,11 @@ private:
 	 * displaying the final frame of the video.
 	 */
 	bool _leaveLastFrame;
+
+	/**
+	 * Whether or not palettes from the VMD should be ignored.
+	 */
+	bool _ignorePalettes;
 
 	/**
 	 * Renders a frame of video to the output bitmap.

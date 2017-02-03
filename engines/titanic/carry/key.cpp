@@ -43,7 +43,7 @@ void CKey::load(SimpleFile *file) {
 }
 
 bool CKey::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldE0 = 1;
+	_canTake = true;
 	setVisible(true);
 	return true;
 }

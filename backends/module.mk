@@ -19,6 +19,8 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
 
+ifdef USE_CLOUD
+
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	cloud/cloudicon.o \
@@ -52,7 +54,12 @@ MODULE_OBJS += \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \
 	cloud/onedrive/onedrivelistdirectoryrequest.o \
-	cloud/onedrive/onedriveuploadrequest.o \
+	cloud/onedrive/onedriveuploadrequest.o
+endif
+endif
+
+ifdef USE_LIBCURL
+MODULE_OBJS += \
 	networking/curl/connectionmanager.o \
 	networking/curl/networkreadstream.o \
 	networking/curl/curlrequest.o \

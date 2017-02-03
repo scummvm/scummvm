@@ -73,6 +73,11 @@ int CScreenManager::setFontNumber(int fontNumber) {
 	return oldFontNumber;
 }
 
+void CScreenManager::preLoad() {
+	if (_textCursor)
+		_textCursor->hide();
+}
+
 /*------------------------------------------------------------------------*/
 
 OSScreenManager::OSScreenManager(TitanicEngine *vm): CScreenManager(vm),
@@ -293,13 +298,13 @@ void OSScreenManager::clearSurface(SurfaceNum surfaceNum, Rect *bounds) {
 		_directDrawManager._backSurfaces[surfaceNum]->fill(bounds, 0);
 }
 
-void OSScreenManager::resizeSurface(CVideoSurface *surface, int width, int height) {
-	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(width, height, 0);
+void OSScreenManager::resizeSurface(CVideoSurface *surface, int width, int height, int bpp) {
+	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(width, height, bpp, 0);
 	surface->setSurface(this, ddSurface);
 }
 
-CVideoSurface *OSScreenManager::createSurface(int w, int h) {
-	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(w, h, 0);
+CVideoSurface *OSScreenManager::createSurface(int w, int h, int bpp) {
+	DirectDrawSurface *ddSurface = _directDrawManager.createSurface(w, h, bpp, 0);
 	return new OSVideoSurface(this, ddSurface);
 }
 
@@ -308,11 +313,11 @@ CVideoSurface *OSScreenManager::createSurface(const CResourceKey &key) {
 }
 
 void OSScreenManager::showCursor() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->show();
+	CScreenManager::_screenManagerPtr->_mouseCursor->unsuppressCursor();
 }
 
 void OSScreenManager::hideCursor() {
-	CScreenManager::_screenManagerPtr->_mouseCursor->hide();
+	CScreenManager::_screenManagerPtr->_mouseCursor->suppressCursor();
 }
 
 void OSScreenManager::destroyFrontAndBackBuffers() {
@@ -330,7 +335,6 @@ void OSScreenManager::loadCursors() {
 		delete _mouseCursor;
 	}
 	_mouseCursor = new CMouseCursor(this);
-	showCursor();
 
 	if (!_textCursor) {
 		_textCursor = new CTextCursor(this);

@@ -35,7 +35,7 @@ enum PetArea {
 
 class CPetControl;
 class CPetElement;
-class CPetText;
+class CTextControl;
 class CScreenManager;
 class CRoomItem;
 
@@ -106,6 +106,7 @@ public:
 	virtual bool MouseDragEndMsg(CMouseDragEndMsg *msg) { return false; }
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) { return false; }
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg) { return false; }
 	virtual bool KeyCharMsg(CKeyCharMsg *msg) { return false; }
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) { return false; }
 
@@ -169,7 +170,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return nullptr; }
+	virtual CTextControl *getText() { return nullptr; }
 
 	/**
 	 * Removes text after a given duration

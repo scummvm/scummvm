@@ -58,6 +58,8 @@ protected:
 	void loadMessages(Common::ReadStream &stream, byte count);
 	void loadPictures(Common::ReadStream &stream);
 	void loadItemPictures(Common::ReadStream &stream, byte count);
+	virtual bool isInventoryFull() { return false; }
+	int askForSlot(const Common::String &question);
 
 	void checkTextOverflow(char c);
 
@@ -90,8 +92,6 @@ protected:
 	byte _roomOnScreen, _picOnScreen, _itemsOnScreen;
 
 private:
-	int askForSlot(const Common::String &question);
-
 	Common::RandomSource *_random;
 };
 

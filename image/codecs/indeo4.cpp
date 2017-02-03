@@ -22,7 +22,7 @@
 
 /* Intel Indeo 4 decompressor, derived from ffmpeg.
  *
- * Original copyright note: * Intel Indeo 3 (IV41, IV42, etc.) video decoder for ffmpeg
+ * Original copyright note: * Intel Indeo 4 (IV41, IV42, etc.) video decoder for ffmpeg
  * written, produced, and directed by Alan Smithee
  */
 
@@ -37,7 +37,8 @@ namespace Image {
 
 #define IVI4_PIC_SIZE_ESC   7
 
-Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
+Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height, uint bitsPerPixel) :
+		IndeoDecoderBase(width, height, bitsPerPixel) {
 	_ctx._isIndeo4 = true;
 	_ctx._refBuf = 1;
 	_ctx._bRefBuf = 3;
@@ -73,7 +74,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize * 8));
+	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
@@ -592,6 +593,54 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 	_ctx._gb->align();
 	return 0;
+}
+
+void Indeo4Decoder::decodeTransparency() {
+	// FIXME: Since I don't currently know how to decode the transparency layer,
+	// I'm currently doing a hack where I take the color of the top left corner,
+	// and mark the range of pixels of that color from the start and end of
+	// each line as transparent
+	assert(_surface->format.bytesPerPixel == 4);
+	byte r, g, b;
+
+	if (_surface->format.aBits() == 0) {
+		// Surface is 4 bytes per pixel, but only RGB. So promote the
+		// surface to full RGBA, and convert all the existing pixels
+		Graphics::PixelFormat oldFormat = _pixelFormat;
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_surface->format = _pixelFormat;
+
+		for (int y = 0; y < _surface->h; ++y) {
+			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
+			for (int x = 0; x < _surface->w; ++x, ++lineP) {
+				oldFormat.colorToRGB(*lineP, r, g, b);
+				*lineP = _pixelFormat.ARGBToColor(0xff, r, g, b);
+			}
+		}
+	} else {
+		// Working on a frame when the surface is already RGBA. In which case,
+		// start of by defaulting all pixels of the frame to fully opaque
+		for (int y = 0; y < _surface->h; ++y) {
+			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
+			for (int x = 0; x < _surface->w; ++x, ++lineP)
+				*lineP |= 0xff;
+		}
+	}
+
+	// Use the top-left pixel as the key color, and figure out the
+	// equivalent value as fully transparent
+	uint32 keyColor = *(const uint32 *)_surface->getPixels();
+	uint32 transColor = keyColor & ~0xff;
+
+	for (int y = 0; y < _surface->h; ++y) {
+		uint32 *startP = (uint32 *)_surface->getBasePtr(0, y);
+		uint32 *endP = (uint32 *)_surface->getBasePtr(_surface->w - 1, y);
+
+		while (startP <= endP && *startP == keyColor)
+			*startP++ = transColor;
+		while (endP > startP && *endP == keyColor)
+			*endP-- = transColor;
+	}
 }
 
 int Indeo4Decoder::scaleTileSize(int defSize, int sizeFactor) {

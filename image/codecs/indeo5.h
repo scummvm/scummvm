@@ -52,7 +52,7 @@ class Indeo5Decoder : public IndeoDecoderBase {
 		int             is_2d_trans;
 	};
 public:
-	Indeo5Decoder(uint16 width, uint16 height);
+	Indeo5Decoder(uint16 width, uint16 height, uint bitsPerPixel = 16);
 	virtual ~Indeo5Decoder() {}
 
 	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);

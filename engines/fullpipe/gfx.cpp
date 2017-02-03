@@ -30,6 +30,7 @@
 #include "fullpipe/gameloader.h"
 
 #include "common/memstream.h"
+#include "graphics/transparent_surface.h"
 
 namespace Fullpipe {
 
@@ -478,7 +479,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			//free(_bitmap);
+			free(_bitmap);
 			_bitmap = 0;
 		}
 	}
@@ -677,8 +678,8 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
@@ -771,6 +772,7 @@ Bitmap::Bitmap() {
 	_flags = 0;
 	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
+	_copied_surface = false;
 }
 
 Bitmap::Bitmap(Bitmap *src) {
@@ -783,15 +785,16 @@ Bitmap::Bitmap(Bitmap *src) {
 	_height = src->_height;
 	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
+	_copied_surface = true;
 	_flipping = src->_flipping;
 }
 
 Bitmap::~Bitmap() {
-	if (_pixels)
-		free(_pixels);
 
-	_surface->free();
+	if (!_copied_surface)
+		_surface->free();
 	delete _surface;
+	_surface = 0;
 
 	_pixels = 0;
 }
@@ -858,8 +861,8 @@ void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
-	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
+	_surface->blit(*g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
 }
 
 bool Bitmap::putDibRB(int32 *palette) {
@@ -1255,7 +1258,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 
 void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(x1, y);
+		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface->getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
@@ -1274,8 +1277,8 @@ void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
 		int ticks = g_fp->_system->getMillis();
 		sc->draw();
 
-		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface.w, g_fp->_backgroundSurface.h, direction ? dim : 255 - dim);
-		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface->w, g_fp->_backgroundSurface->h, direction ? dim : 255 - dim);
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
 
 		g_fp->_system->updateScreen();
 		ticks = g_fp->_system->getMillis() - ticks;

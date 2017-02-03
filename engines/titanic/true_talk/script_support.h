@@ -40,6 +40,10 @@ struct TTnpcScriptResponse {
 	uint _tag;
 	uint _values[4];
 
+	TTnpcScriptResponse() : _tag(0) {
+		_values[0] = _values[1] = _values[2] = _values[3] = 0;
+	}
+
 	/**
 	 * Returns the size of the values list plus 1
 	 */
@@ -59,10 +63,9 @@ struct TTscriptRange {
 		bool isSequential);
 };
 
-
 struct TTsentenceEntry {
 	int _field0;
-	int _field4;
+	int _category;
 	CString _string8;
 	int _fieldC;
 	CString _string10;
@@ -75,7 +78,7 @@ struct TTsentenceEntry {
 	int _field2C;
 	int _field30;
 
-	TTsentenceEntry() : _field0(0), _field4(0), _fieldC(0),
+	TTsentenceEntry() : _field0(0), _category(0), _fieldC(0),
 		_field20(0), _field28(0), _field2C(0), _field30(0) {}
 
 	/**

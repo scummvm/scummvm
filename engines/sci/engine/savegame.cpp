@@ -118,7 +118,7 @@ struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, t
 	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
 		s.syncAsSint32LE(entry.next_free);
 
-		bool hasData;
+		bool hasData = false;
 		if (s.getVersion() >= 37) {
 			if (s.isSaving()) {
 				hasData = entry.data != nullptr;
@@ -643,20 +643,33 @@ void SoundCommandParser::reconstructPlayList() {
 	_music->_mutex.unlock();
 
 	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
-		initSoundResource(*i);
+		MusicEntry *entry = *i;
+		initSoundResource(entry);
 
-		if ((*i)->status == kSoundPlaying) {
+#ifdef ENABLE_SCI32
+		if (_soundVersion >= SCI_VERSION_2_1_EARLY && entry->isSample) {
+			const reg_t &soundObj = entry->soundObj;
+
+			if ((int)readSelectorValue(_segMan, soundObj, SELECTOR(loop)) != -1 &&
+				readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
+
+				writeSelector(_segMan, soundObj, SELECTOR(handle), NULL_REG);
+				processPlaySound(soundObj, entry->playBed);
+			}
+		} else
+#endif
+		if (entry->status == kSoundPlaying) {
 			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
 			// sound object directly without going through DoSound.
 			// Since we re-read this selector when re-playing the sound after loading,
 			// this will lead to unexpected behaviour. As a workaround we
 			// sync the sound object's selectors here. (See bug #5501)
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
-			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(loop), entry->loop);
+			writeSelectorValue(_segMan, entry->soundObj, SELECTOR(priority), entry->priority);
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
-				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
+				writeSelectorValue(_segMan, entry->soundObj, SELECTOR(vol), entry->volume);
 
-			processPlaySound((*i)->soundObj, (*i)->playBed);
+			processPlaySound(entry->soundObj, entry->playBed);
 		}
 	}
 }
@@ -751,17 +764,33 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 			palVaryRemoveTimer();
 
 		s.syncAsSint32LE(_palVaryResourceId);
-		if (_palVaryResourceId != -1) {
-			palVarySaveLoadPalette(s, &_palVaryOriginPalette);
-			palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+		if (_palVaryResourceId != -1 || s.getVersion() >= 40) {
+			if (_palVaryResourceId != -1) {
+				palVarySaveLoadPalette(s, &_palVaryOriginPalette);
+				palVarySaveLoadPalette(s, &_palVaryTargetPalette);
+			}
 			s.syncAsSint16LE(_palVaryStep);
 			s.syncAsSint16LE(_palVaryStepStop);
 			s.syncAsSint16LE(_palVaryDirection);
 			s.syncAsUint16LE(_palVaryTicks);
 			s.syncAsSint32LE(_palVaryPaused);
+			if (s.getVersion() >= 40)
+				s.syncAsSint32LE(_palVarySignal);
 		}
 
-		_palVarySignal = 0;
+		if (s.isLoading() && s.getVersion() < 40) {
+			// Reset _palVaryPaused to 0 when loading an old savegame.
+			// Before version 40, we didn't restore or reset _palVaryPaused.
+			// In QfG3 this could get it stuck at positive values (bug #9674).
+			//
+			// Other SCI11 games don't appear to use palVaryPaused at all.
+			// (Looked at eq2, freddy, kq6, lb2, mgoose11, pq1, qg1, sq4, sq5)
+			_palVaryPaused = 0;
+
+			// Clear any pending updates, since _palVarySignal also wasn't saved
+			// before version 40.
+			_palVarySignal = 0;
+		}
 
 		if (s.isLoading() && _palVaryResourceId != -1) {
 			palVaryInstallTimer();
@@ -781,7 +810,7 @@ static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 }
 
 static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
-	bool hasPalette;
+	bool hasPalette = false;
 	if (s.isSaving()) {
 		hasPalette = (*palette != nullptr);
 	}
@@ -838,7 +867,7 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
 		PalCycler *cycler = nullptr;
 
-		bool hasCycler;
+		bool hasCycler = false;
 		if (s.isSaving()) {
 			cycler = _cyclers[i];
 			hasCycler = (cycler != nullptr);

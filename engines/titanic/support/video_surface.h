@@ -176,12 +176,12 @@ public:
 	/**
 	 * Recreates the surface
 	 */
-	virtual void recreate(int width, int height) = 0;
+	virtual void recreate(int width, int height, int bpp = 16) = 0;
 
 	/**
 	 * Resizes the surface
 	 */
-	virtual void resize(int width, int height) = 0;
+	virtual void resize(int width, int height, int bpp = 16) = 0;
 
 	/**
 	 * Detachs the underlying raw surface
@@ -356,6 +356,7 @@ class OSVideoSurface : public CVideoSurface {
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
+	~OSVideoSurface();
 
 	/**
 	 * Load the surface with the passed resource
@@ -422,12 +423,12 @@ public:
 	/**
 	 * Recreates the surface with the designated size
 	 */
-	virtual void recreate(int width, int height);
+	virtual void recreate(int width, int height, int bpp = 16);
 
 	/**
 	 * Resizes the surface
 	 */
-	virtual void resize(int width, int height);
+	virtual void resize(int width, int height, int bpp = 16);
 
 	/**
 	 * Detachs the underlying raw surface

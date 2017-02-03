@@ -49,11 +49,11 @@ void CPetGfxElement::reset(const CString &name, CPetControl *petControl, PetElem
 		return;
 
 	CString numString(3);
-	int classNum = petControl->getPassengerClass();
+	PassengerClass classNum = petControl->getPassengerClass();
 
-	if (classNum >= 1 && classNum <= 3) {
+	if (classNum >= FIRST_CLASS && classNum <= THIRD_CLASS) {
 		numString = CString(classNum);
-	} else if (classNum == 4) {
+	} else if (classNum == UNCHECKED) {
 		int stateC = petControl->getPriorClass();
 		if (stateC == 1)
 			numString = CString(stateC);

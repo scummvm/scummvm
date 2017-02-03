@@ -357,10 +357,10 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 	// event is processed after recreating the window at the new resolution.
 	int currentWidth, currentHeight;
 	getWindowDimensions(&currentWidth, &currentHeight);
-	if (width != currentWidth || height != currentHeight)
+	if (width != (uint)currentWidth || height != (uint)currentHeight)
 		return;
 	setActualScreenSize(width, height);
-	_eventSource->resetKeyboadEmulation(width - 1, height - 1);
+	_eventSource->resetKeyboardEmulation(width - 1, height - 1);
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
@@ -523,7 +523,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	int actualWidth, actualHeight;
 	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
-	_eventSource->resetKeyboadEmulation(actualWidth - 1, actualHeight - 1);
+	_eventSource->resetKeyboardEmulation(actualWidth - 1, actualHeight - 1);
 	return true;
 #else
 	// WORKAROUND: Working around infamous SDL bugs when switching
@@ -569,7 +569,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	if (_hwScreen) {
 		notifyContextCreate(rgba8888, rgba8888);
 		setActualScreenSize(_hwScreen->w, _hwScreen->h);
-		_eventSource->resetKeyboadEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
+		_eventSource->resetKeyboardEmulation(_hwScreen->w - 1, _hwScreen->h - 1);
 	}
 
 	// Ignore resize events (from SDL) for a few frames, if this isn't
@@ -612,9 +612,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					displayMessageOnOSD("Fullscreen mode");
+					displayMessageOnOSD(_("Fullscreen mode"));
 				} else {
-					displayMessageOnOSD("Windowed mode");
+					displayMessageOnOSD(_("Windowed mode"));
 				}
 #endif
 				return true;
@@ -707,7 +707,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef USE_OSD
 				int windowWidth = 0, windowHeight = 0;
 				getWindowDimensions(&windowWidth, &windowHeight);
-				const Common::String osdMsg = Common::String::format("Resolution: %dx%d", windowWidth, windowHeight);
+				const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
 				displayMessageOnOSD(osdMsg.c_str());
 #endif
 
@@ -727,45 +727,21 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				Common::String osdMsg = "Aspect ratio correction: ";
-				osdMsg += getFeatureState(OSystem::kFeatureAspectRatioCorrection) ? "enabled" : "disabled";
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+					displayMessageOnOSD(_("Enabled aspect ratio correction"));
+				else
+					displayMessageOnOSD(_("Disabled aspect ratio correction"));
 #endif
 
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_f) {
-				// Ctrl+Alt+f toggles the graphics modes.
-
-				// We are crazy we will allow the OpenGL base class to
-				// introduce new graphics modes like shaders for special
-				// filtering. If some other OpenGL subclass needs this,
-				// we can think of refactoring this.
-				int mode = getGraphicsMode();
-				const OSystem::GraphicsMode *supportedModes = getSupportedGraphicsModes();
-				const OSystem::GraphicsMode *modeDesc = nullptr;
-
-				// Search the current mode.
-				for (; supportedModes->name; ++supportedModes) {
-					if (supportedModes->id == mode) {
-						modeDesc = supportedModes;
-						break;
-					}
-				}
-				assert(modeDesc);
-
-				// Try to use the next mode in the list.
-				++modeDesc;
-				if (!modeDesc->name) {
-					modeDesc = getSupportedGraphicsModes();
-				}
-
-				// Never ever try to resize the window when we simply want to
-				// switch the graphics mode. This assures that the window size
-				// does not change.
+				// Never ever try to resize the window when we simply want to enable or disable filtering.
+				// This assures that the window size does not change.
 				_ignoreLoadVideoMode = true;
 
+				// Ctrl+Alt+f toggles filtering on/off
 				beginGFXTransaction();
-					setGraphicsMode(modeDesc->id);
+				setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
 				endGFXTransaction();
 
 				// Make sure we do not ignore the next resize. This
@@ -773,8 +749,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+					displayMessageOnOSD(_("Filtering enabled"));
+				} else {
+					displayMessageOnOSD(_("Filtering disabled"));
+				}
 #endif
 
 				return true;

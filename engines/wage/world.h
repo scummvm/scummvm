@@ -134,9 +134,6 @@ public:
 	}
 
 	void addSound(Sound *sound);
-
-private:
-	Common::StringArray *readMenu(Common::SeekableReadStream *res);
 };
 
 } // End of namespace Wage

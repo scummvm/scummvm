@@ -466,6 +466,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDIgnorePalettes(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
@@ -590,6 +591,7 @@ reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv);
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv);
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
+reg_t kListSort(EngineState *s, int argc, reg_t *argv);
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
@@ -635,7 +637,12 @@ reg_t kMessageBox(EngineState *s, int argc, reg_t *argv);
 reg_t kGetConfig(EngineState *s, int argc, reg_t *argv);
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv);
 reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv);
+
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv);
+reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv);
+
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv);

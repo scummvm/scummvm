@@ -179,7 +179,7 @@ public:
 private:
 
 	Graphics::ManagedSurface _console;
-	Graphics::Menu *_menu;
+	Graphics::MacMenu *_menu;
 	bool _sceneDirty;
 	bool _consoleDirty;
 

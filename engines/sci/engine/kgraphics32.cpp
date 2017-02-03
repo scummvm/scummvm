@@ -389,13 +389,13 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		pFadeArray = NULL_REG;
 		divisions = argc > 7 ? argv[7].toSint16() : -1;
 	}
-	// SCI 2.1mid–2.1late
-	else if (getSciVersion() < SCI_VERSION_3) {
+	// SCI 2.1mid
+	else if (getSciVersion() < SCI_VERSION_2_1_LATE) {
 		blackScreen = 0;
 		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
 		divisions = argc > 8 ? argv[8].toSint16() : -1;
 	}
-	// SCI 3
+	// SCI 2.1late-3
 	else {
 		blackScreen = argv[7].toSint16();
 		pFadeArray = argc > 8 ? argv[8] : NULL_REG;
@@ -405,14 +405,6 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
 		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
 	}
-
-// TODO: Reuse later for SCI2 and SCI3 implementation and then discard
-//	warning("kSetShowStyle: effect %d, plane: %04x:%04x (%s), sec: %d, "
-//			"dir: %d, prio: %d, animate: %d, ref frame: %d, black screen: %d, "
-//			"pFadeArray: %04x:%04x (%s), divisions: %d",
-//			type, PRINT_REG(planeObj), s->_segMan->getObjectName(planeObj), seconds,
-//			back, priority, animate, refFrame, blackScreen,
-//			PRINT_REG(pFadeArray), s->_segMan->getObjectName(pFadeArray), divisions);
 
 	// NOTE: The order of planeObj and showStyle are reversed
 	// because this is how SCI3 called the corresponding method
@@ -438,31 +430,28 @@ reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution)));
 }
 
+// Used by Shivers 1, room 23601 to determine what blocks on the red door
+// puzzle board are occupied by pieces already, and by Phantasmagoria 2 when
+// saving the game from the in-game UI
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
-	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
-	// are occupied by pieces already
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
+reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.x);
+}
 
-	int16 result = 0;
+reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.y);
+}
 
-	switch (argv[0].toUint16()) {
-	case 0:
-		result = view._origin.x;
-		break;
-	case 1:
-		result = view._origin.y;
-		break;
-	case 2:
-	case 3:
-		// null operation
-		break;
-	case 4:
-		result = view.readPixel(argv[4].toSint16(), argv[5].toSint16(), view._mirrorX);
-		break;
-	}
-
-	return make_reg(0, result);
+reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.readPixel(argv[4].toSint16(), argv[5].toSint16(), view._mirrorX));
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
@@ -484,10 +473,18 @@ reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
 	const reg_t plane = readSelector(segMan, object, SELECTOR(plane));
 
 	Common::Rect rect;
-	rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
-	rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
-	rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
-	rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
+	}
 	const Common::Point position(rect.left, rect.top);
 
 	return g_sci->_gfxControls32->makeScrollWindow(rect, position, plane, foreColor, backColor, fontId, alignment, borderColor, maxNumEntries);
@@ -648,16 +645,9 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
-	const reg_t &addr = argv[0];
-	const SegmentObj *const segment = s->_segMan->getSegmentObj(addr.getSegment());
-
-	if (segment != nullptr &&
-		segment->getType() == SEG_TYPE_BITMAP &&
-		segment->isValidOffset(addr.getOffset())) {
-
-		s->_segMan->freeBitmap(addr);
+	if (s->_segMan->isValidAddr(argv[0], SEG_TYPE_BITMAP)) {
+		s->_segMan->freeBitmap(argv[0]);
 	}
-
 	return s->r_acc;
 }
 
@@ -972,7 +962,7 @@ reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
 	int16 fromColor;
 	int16 toColor;
 
-	if (argc > 4) {
+	if (g_sci->_features->hasNewPaletteCode() && argc > 4) {
 		fromColor = argv[3].toSint16();
 		toColor = argv[4].toSint16();
 	} else {

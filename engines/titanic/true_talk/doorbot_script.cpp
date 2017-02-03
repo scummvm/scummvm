@@ -196,13 +196,13 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		return setResponse(getDialogueId(220113));
 	}
 
-	if (sentence->_field2C == 6 && sentence->contains("why not")) {
+	if (sentence->_category == 6 && sentence->contains("why not")) {
 		return setResponse(11871, 8);
 	}
 
 	currState = getState();
 	if (currState) {
-		int sentMode = sentence->_field2C;
+		int sentMode = sentence->_category;
 		bool flag1 = sentMode == 11 || sentMode == 13;
 		bool flag2 = sentMode == 12;
 
@@ -475,7 +475,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			|| defaultProcess(roomScript, sentence))
 		return 2;
 
-	switch (sentence->_field2C) {
+	switch (sentence->_category) {
 	case 11:
 		if (getRandomNumber(100) > 90)
 			return setResponse(10839, 42);

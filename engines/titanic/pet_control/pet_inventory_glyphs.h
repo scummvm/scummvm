@@ -36,7 +36,12 @@ private:
 	 */
 	int populateItem(CGameObject *item, bool isLoading);
 
-	int subMode(CGameObject *item, bool isLoading);
+	/**
+	 * For items which can have multiple different states, such as the
+	 * beer glass or Maitre D arms, returns the correct item index to use
+	 * for getting the inventory item glyph and description
+	 */
+	int getItemIndex(CGameObject *item, bool isLoading);
 
 	/**
 	 * Start any movie for the background
@@ -106,7 +111,7 @@ public:
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CPetText *text);
+	virtual void getTooltip(CTextControl *text);
 
 	/**
 	 * Return whether the glyph is currently valid

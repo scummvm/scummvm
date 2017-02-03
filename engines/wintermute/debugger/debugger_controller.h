@@ -61,7 +61,6 @@ class DebuggerController : public ScriptMonitor {
 	SourceListingProvider *_sourceListingProvider;
 	const WintermuteEngine *_engine;
 	DebuggableScript *_lastScript;
-	uint32 _lastDepth;
 	uint32 _lastLine;
 	void clear();
 	bool bytecodeExists(const Common::String &filename);

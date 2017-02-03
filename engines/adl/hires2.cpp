@@ -54,12 +54,12 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro() const;
+	void runIntro();
 	void init();
 	void initGameState();
 };
 
-void HiRes2Engine::runIntro() const {
+void HiRes2Engine::runIntro() {
 	// This only works for the 16-sector re-release. The original
 	// release is not supported at this time, because we don't have
 	// access to it.

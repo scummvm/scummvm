@@ -52,7 +52,7 @@ bool CEnterSecClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		playSound("b#105.wav");
 		petDisplayMessage(1, CLASS_NOT_PERMITTED_IN_AREA);
 	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2)  {
-		CActMsg actMsg(getFullViewName().deleteRight(3) + ".S");
+		CActMsg actMsg(getFullViewName().deleteRight(2) + ".S");
 		actMsg.execute("SecClassRoomLeaver");
 		changeView("secClassState.Node 01.N");
 	}

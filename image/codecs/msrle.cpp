@@ -72,15 +72,10 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 				y--;
 				output = data + (y * width);
 
-				if (y < 0) {
-					warning("MS RLE Codec: Next line is beyond picture bounds");
-					return;
-				}
-
 			} else if (value == 1) {
 				// End of image
-
 				return;
+
 			} else if (value == 2) {
 				// Skip
 
@@ -99,6 +94,10 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 
 			} else {
 				// Copy data
+				if (y < 0) {
+					warning("MS RLE Codec: Copy data is beyond picture bounds");
+					return;
+				}
 
 				if (output + value > output_end) {
 					if (stream.pos() + value >= stream.size())
@@ -119,6 +118,10 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 
 		} else {
 			// Run data
+			if (y < 0) {
+				warning("MS RLE Codec: Run data is beyond picture bounds");
+				return;
+			}
 
 			if (output + count > output_end)
 				continue;

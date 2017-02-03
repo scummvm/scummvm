@@ -31,46 +31,46 @@ BEGIN_MESSAGE_MAP(CBottomOfWellMonitor, CGameObject)
 	ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-int CBottomOfWellMonitor::_v1;
-int CBottomOfWellMonitor::_v2;
+bool CBottomOfWellMonitor::_tvPresent;
+bool CBottomOfWellMonitor::_headPresent;
 
 void CBottomOfWellMonitor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_tvPresent, indent);
+	file->writeNumberLine(_headPresent, indent);
 	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CBottomOfWellMonitor::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
-	_v2 = file->readNumber();
+	_tvPresent = file->readNumber();
+	_headPresent = file->readNumber();
 	_flag = file->readNumber();
 	CGameObject::load(file);
 }
 
 bool CBottomOfWellMonitor::ActMsg(CActMsg *msg) {
-	if (msg->_action == "TelevisionTaken") {
-		_v1 = 0;
+	if (msg->_action == "ThrownTVDownWell") {
+		_tvPresent = true;
+		CVisibleMsg visibleMsg;
+		visibleMsg.execute("CrushedTV2NE");
+		visibleMsg.execute("CrushedTV4SW");
+		_cursorId = CURSOR_MOVE_DOWN1;
+	} else if (msg->_action == "TelevisionTaken") {
+		_tvPresent = false;
 		_cursorId = CURSOR_ARROW;
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("CrushedTV2NE");
 		visibleMsg.execute("CrushedTV4SW");
 		_cursorId = CURSOR_ARROW;
 	} else if (msg->_action == "LiftbotHeadTaken") {
-		_v2 = 0;
+		_headPresent = false;
 		_cursorId = CURSOR_ARROW;
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("LiftbotHead2NE");
 		visibleMsg.execute("LiftbotHead4SW");
 		_cursorId = CURSOR_ARROW;
-	} else if (msg->_action == "LiftbotHeadTaken") {
-		_v2 = 1;
-		CVisibleMsg visibleMsg;
-		visibleMsg.execute("CrushedTV2NE");
-		visibleMsg.execute("CrushedTV4SW");
-		_cursorId = CURSOR_MOVE_DOWN1;
 	}
 
 	return true;
@@ -78,10 +78,10 @@ bool CBottomOfWellMonitor::ActMsg(CActMsg *msg) {
 
 bool CBottomOfWellMonitor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (isEquals("BOWTelevisionMonitor")) {
-		if (_v1)
+		if (_tvPresent)
 			changeView("BottomOfWell.Node 7.N", "");
 	} else {
-		if (_v2)
+		if (_headPresent)
 			changeView("BottomOfWell.Node 8.N", "");
 	}
 
@@ -91,12 +91,12 @@ bool CBottomOfWellMonitor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CBottomOfWellMonitor::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_flag) {
 		if (isEquals("BOWTelevisionMonitor")) {
-			if (_v1) {
+			if (_tvPresent) {
 				changeView("BottomOfWell.Node 7.N", "");
 				_flag = false;
 			}
 		} else {
-			if (_v2) {
+			if (_headPresent) {
 				changeView("BottomOfWell.Node 8.N", "");
 				_flag = false;
 			}

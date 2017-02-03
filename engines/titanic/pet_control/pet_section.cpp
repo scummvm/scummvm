@@ -39,10 +39,11 @@ static const uint PALETTE3[5] = {
 };
 
 void CPetSection::displayMessage(const CString &msg) {
-	CPetText *text = getText();
+	CTextControl *text = getText();
 
 	if (text) {
 		text->setColor(getColor(1));
+		text->setText(msg);
 		_petControl->makeDirty();
 		removeText(5000);
 	}
@@ -63,7 +64,7 @@ void CPetSection::removeText(int duration) {
 }
 
 void CPetSection::removeText() {
-	CPetText *text = getText();
+	CTextControl *text = getText();
 	if (text)
 		text->setup();
 }

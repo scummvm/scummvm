@@ -62,7 +62,7 @@ void CBellBot::load(SimpleFile *file) {
 
 bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	if (msg->_value == 1) {
-		_npcFlags |= NPCFLAG_40000;
+		_npcFlags |= NPCFLAG_MOVE_LOOP;
 	} else {
 		static const char *const ROOM_WAVES[8][2] = {
 			{ "EmbLobby",  "z#193.wav" },
@@ -79,27 +79,27 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 		for (idx = 0; idx < 8; ++idx) {
 			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {
 				playSound(ROOM_WAVES[idx][1]);
-
+				break;
 			}
 		}
 		if (idx == 8)
 			playSound("z#147.wav");
 
 		sleep(2000);
-		_npcFlags &= ~NPCFLAG_40000;
+		_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 	}
 
 	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	movieEvent();
-	_npcFlags |= NPCFLAG_10000;
+	_npcFlags |= NPCFLAG_MOVING;
 
 	return true;
 }
 
 bool CBellBot::LeaveViewMsg(CLeaveViewMsg *msg) {
-	if (_npcFlags & NPCFLAG_10000) {
+	if (_npcFlags & NPCFLAG_MOVING) {
 		performAction(1);
-		_npcFlags &= ~NPCFLAG_4;
+		_npcFlags &= ~NPCFLAG_START_IDLING;
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
 	}
@@ -108,24 +108,24 @@ bool CBellBot::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
-	if (!(_npcFlags & NPCFLAG_10000)) {
+	if (!(_npcFlags & NPCFLAG_MOVING)) {
 		CTrueTalkNPC::MovieEndMsg(msg);
 	} else if (clipExistsByEnd("Walk On", msg->_endFrame)) {
 		setPosition(Point(80, 10));
 		loadFrame(543);
-		_npcFlags |= NPCFLAG_4;
-		if (_npcFlags & NPCFLAG_40000) {
+		_npcFlags |= NPCFLAG_START_IDLING;
+		if (_npcFlags & NPCFLAG_MOVE_LOOP) {
 			startTalking(this, 157);
-			_npcFlags &= ~NPCFLAG_40000;
+			_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 		}
 
-		endTalking(this, true);
+		setTalking(this, true);
 		petSetArea(PET_CONVERSATION);
 	} else if (clipExistsByEnd("Walk Off", msg->_endFrame)) {
 		CPutBotBackInHisBoxMsg boxMsg;
 		boxMsg.execute(this);
 
-		if (_npcFlags & NPCFLAG_20000)
+		if (_npcFlags & NPCFLAG_MOVE_START)
 			startAnimTimer("SummonDoorbot", 1500);
 	} else {
 		CTrueTalkNPC::MovieEndMsg(msg);
@@ -140,10 +140,10 @@ bool CBellBot::Use(CUse *msg) {
 }
 
 bool CBellBot::DismissBotMsg(CDismissBotMsg *msg) {
-	if (_npcFlags & NPCFLAG_10000) {
+	if (_npcFlags & NPCFLAG_MOVING) {
 		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-		if (_npcFlags & NPCFLAG_4) {
-			_npcFlags &= ~NPCFLAG_4;
+		if (_npcFlags & NPCFLAG_START_IDLING) {
+			_npcFlags &= ~NPCFLAG_START_IDLING;
 			performAction(true);
 		} else {
 			performAction(false);
@@ -160,14 +160,14 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	switch (msg->_action) {
 	case 1:
 	case 28: {
-		_npcFlags &= ~NPCFLAG_2;
+		_npcFlags &= ~NPCFLAG_IDLING;
 		CDismissBotMsg dismissMsg;
 		dismissMsg.execute(this);
 		break;
 	}
 
 	case 5:
-		_npcFlags &= ~NPCFLAG_20000;
+		_npcFlags &= ~NPCFLAG_MOVE_START;
 		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		movieEvent();
 		break;
@@ -203,7 +203,7 @@ bool CBellBot::MovieFrameMsg(CMovieFrameMsg *msg) {
 
 bool CBellBot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 	petMoveToHiddenRoom();
-	_npcFlags &= ~NPCFLAG_4;
+	_npcFlags &= ~NPCFLAG_START_IDLING;
 	return true;
 }
 
@@ -229,7 +229,7 @@ bool CBellBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	};
 
 	if (msg->_value2 == 2)
-		playClip("Mother Frame", 0);
+		playClip("Mother Frame");
 	else
 		msg->_names = NAMES;
 
@@ -238,8 +238,6 @@ bool CBellBot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 bool CBellBot::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "SummonDoorbot") {
-		CTrueTalkNPC::TimerMsg(msg);
-	} else {
 		CRoomItem *room = getRoom();
 		if (room) {
 			CSummonBotMsg botMsg;
@@ -248,7 +246,9 @@ bool CBellBot::TimerMsg(CTimerMsg *msg) {
 			botMsg.execute(room);
 		}
 
-		_npcFlags &= ~NPCFLAG_20000;
+		_npcFlags &= ~NPCFLAG_MOVE_START;
+	} else {
+		CTrueTalkNPC::TimerMsg(msg);
 	}
 
 	return true;
@@ -256,10 +256,10 @@ bool CBellBot::TimerMsg(CTimerMsg *msg) {
 
 bool CBellBot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	CPetControl *pet = getPetControl();
-	bool flag = pet ? pet->isRoom59706() : false;
+	bool isYourStateroom = pet ? pet->isFirstClassSuite() : false;
 
 	if (msg->_stateNum == 7)
-		msg->_stateVal = flag ? 1 : 0;
+		msg->_stateVal = isYourStateroom ? 1 : 0;
 
 	return true;
 }

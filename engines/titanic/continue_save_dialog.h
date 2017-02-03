@@ -28,7 +28,7 @@
 #include "titanic/support/image.h"
 #include "titanic/support/rect.h"
 #include "titanic/support/string.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -43,7 +43,7 @@ class CContinueSaveDialog : public CEventTarget {
 	};
 private:
 	Common::Array<SaveEntry> _saves;
-	CPetText _slotNames[5];
+	CTextControl _slotNames[5];
 	int _highlightedSlot, _selectedSlot;
 	Point _mousePos;
 	bool _evilTwinShown;

@@ -36,18 +36,18 @@ BEGIN_MESSAGE_MAP(CGlass, CCarry)
 	ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CGlass::CGlass() : CCarry(), _string6("None") {
+CGlass::CGlass() : CCarry(), _condiment("None") {
 }
 
 void CGlass::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_condiment, indent);
 	CCarry::save(file, indent);
 }
 
 void CGlass::load(SimpleFile *file) {
 	file->readNumber();
-	_string6 = file->readString();
+	_condiment = file->readString();
 	CCarry::load(file);
 }
 
@@ -55,25 +55,25 @@ bool CGlass::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CSauceDispensor *dispensor = dynamic_cast<CSauceDispensor *>(msg->_other);
 	CChicken *chicken = dynamic_cast<CChicken *>(msg->_other);
 
-	if (dispensor && _string6 != "None") {
+	if (dispensor && _condiment == "None") {
 		CUse useMsg(this);
 		useMsg.execute(dispensor);
-	} else if (msg->_other->isEquals("Chicken") && _string6 != "None") {
-		if (chicken->_string6 != "None") {
-			if (!chicken->_field12C) {
-				CActMsg actMsg(_string6);
+	} else if (msg->_other->isEquals("Chicken") && _condiment == "None") {
+		if (chicken->_condiment != "None") {
+			if (!chicken->_greasy) {
+				CActMsg actMsg(_condiment);
 				actMsg.execute("Chicken");
 			}
 
-			_string6 = "None";
+			_condiment = "None";
 			loadFrame(0);
 			_visibleFrame = 0;
 		}
 
 		petAddToInventory();
-	} else if (msg->_other->isEquals("Napkin") && _string6 != "None") {
+	} else if (msg->_other->isEquals("Napkin") && _condiment == "None") {
 		petAddToInventory();
-		_string6 = "None";
+		_condiment = "None";
 		loadFrame(0);
 		_visibleFrame = 0;
 	} else {
@@ -85,10 +85,10 @@ bool CGlass::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 
 bool CGlass::UseWithCharMsg(CUseWithCharMsg *msg) {
 	if (msg->_character->isEquals("Barbot") && msg->_character->_visible) {
-		CActMsg actMsg(_string6);
+		CActMsg actMsg(_condiment);
 		setVisible(false);
 
-		if (_string6 != "Bird")
+		if (_condiment != "Bird")
 			setPosition(_origPos);
 
 		actMsg.execute(msg->_character);
@@ -104,19 +104,19 @@ bool CGlass::ActMsg(CActMsg *msg) {
 		setVisible(true);
 		petAddToInventory();
 	} else if (msg->_action == "Mustard") {
-		_string6 = "Mustard";
+		_condiment = "Mustard";
 		loadFrame(1);
 		_visibleFrame = 1;
 	} else if (msg->_action == "Tomato") {
-		_string6 = "Tomato";
+		_condiment = "Tomato";
 		loadFrame(2);
 		_visibleFrame = 2;
 	} else if (msg->_action == "Bird") {
-		_string6 = "Bird";
+		_condiment = "Bird";
 		loadFrame(3);
 		_visibleFrame = 3;
 	} else if (msg->_action == "InTitilator") {
-		_string6 = "None";
+		_condiment = "None";
 		loadFrame(0);
 		_visibleFrame = 0;
 	}
@@ -127,14 +127,17 @@ bool CGlass::ActMsg(CActMsg *msg) {
 bool CGlass::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	showMouse();
 	if (msg->_dropTarget) {
-		error("TODO: See what drop target is");
-		CCharacter *npc = dynamic_cast<CCharacter *>(msg->_dropTarget);
-		if (npc) {
-			CUseWithCharMsg useMsg(npc);
-			useMsg.execute(this);
+		if (msg->_dropTarget->isPet()) {
+			petAddToInventory();
 		} else {
-			CUseWithOtherMsg otherMsg(npc);
-			otherMsg.execute(this);
+			CCharacter *npc = dynamic_cast<CCharacter *>(msg->_dropTarget);
+			if (npc) {
+				CUseWithCharMsg useMsg(npc);
+				useMsg.execute(this);
+			} else {
+				CUseWithOtherMsg otherMsg(msg->_dropTarget);
+				otherMsg.execute(this);
+			}
 		}
 	} else if (compareViewNameTo(_fullViewName) && msg->_mousePos.y < 360) {
 		setPosition(_origPos);

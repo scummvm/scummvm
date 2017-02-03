@@ -41,7 +41,7 @@ END_MESSAGE_MAP()
 bool CLightSwitch::_flag;
 
 CLightSwitch::CLightSwitch() : CBackground(),
-		_fieldE0(0), _fieldE4(0), _fieldE8(0) {
+		_fieldE0(0), _fieldE4(0), _turnOnTV(false) {
 }
 
 void CLightSwitch::save(SimpleFile *file, int indent) {
@@ -49,7 +49,7 @@ void CLightSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_flag, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_turnOnTV, indent);
 
 	CBackground::save(file, indent);
 }
@@ -59,7 +59,7 @@ void CLightSwitch::load(SimpleFile *file) {
 	_fieldE0 = file->readNumber();
 	_fieldE4 = file->readNumber();
 	_flag = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_turnOnTV = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -69,7 +69,7 @@ bool CLightSwitch::PETUpMsg(CPETUpMsg *msg) {
 		CLightsMsg lightsMsg(true, true, false, false);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		if (_fieldE8)
+		if (_turnOnTV)
 			CTelevision::_turnOn = true;
 	}
 
@@ -81,7 +81,7 @@ bool CLightSwitch::PETDownMsg(CPETDownMsg *msg) {
 		CLightsMsg lightsMsg(false, false, true, true);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		if (_fieldE8)
+		if (_turnOnTV)
 			CTelevision::_turnOn = true;
 	}
 
@@ -93,7 +93,7 @@ bool CLightSwitch::PETLeftMsg(CPETLeftMsg *msg) {
 		CLightsMsg lightsMsg(false, true, true, false);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		if (_fieldE8)
+		if (_turnOnTV)
 			CTelevision::_turnOn = true;
 	}
 
@@ -105,7 +105,7 @@ bool CLightSwitch::PETRightMsg(CPETRightMsg *msg) {
 		CLightsMsg lightsMsg(true, false, false, true);
 		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
 
-		if (_fieldE8)
+		if (_turnOnTV)
 			CTelevision::_turnOn = true;
 	}
 
@@ -122,7 +122,7 @@ bool CLightSwitch::PETActivateMsg(CPETActivateMsg *msg) {
 			CTurnOn onMsg;
 			onMsg.execute("1stClassState", CLight::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
 			_flag = false;
-			if (_fieldE8)
+			if (_turnOnTV)
 				CTelevision::_turnOn = false;
 		}
 	}
@@ -144,7 +144,7 @@ bool CLightSwitch::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_flag = true;
 	CPetControl *pet = getPetControl();
 	if (pet)
-		_fieldE8 = pet->isRoom59706();
+		_turnOnTV = pet->isFirstClassSuite();
 
 	return true;
 }

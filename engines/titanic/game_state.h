@@ -48,15 +48,15 @@ enum Season {
 PTR_LIST_ITEM(CMovie);
 class CGameStateMovieList : public List<CMovieListItem> {
 public:
-	CViewItem *_view;
+	CViewItem *_destView;
 	CMovieClip *_movieClip;
 public:
-	CGameStateMovieList() : List<CMovieListItem>(), _view(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList() : List<CMovieListItem>(), _destView(nullptr), _movieClip(nullptr) {}
 
 	/**
-	 * Clear the movie list
+	 * Returns true if there are no movies in the list
 	 */
-	bool clear();
+	bool empty();
 };
 
 class CGameState {
@@ -64,14 +64,14 @@ public:
 	CGameManager *_gameManager;
 	CGameLocation _gameLocation;
 	CGameStateMovieList _movieList;
-	int _passengerClass;
-	int _priorClass;
+	PassengerClass _passengerClass;
+	PassengerClass _priorClass;
 	GameStateMode _mode;
 	Season _seasonNum;
 	bool _petActive;
 	bool _field1C;
 	bool _quitGame;
-	int _field24;
+	bool _parrotMet;
 	uint _nodeChangeCtr;
 	uint32 _nodeEnterTicks;
 	Point _mousePos;
@@ -141,8 +141,16 @@ public:
 		_seasonNum = (Season)(((int)_seasonNum + 1) & 3);
 	}
 
-	void set24(int v) { _field24 = v; }
-	int get24() const { return _field24; }
+	/**
+	 * Sets whether the parrot has been met
+	 */
+	void setParrotMet(bool flag) { _parrotMet = flag; }
+
+	/**
+	 * Gets whether the parrot has been met
+	 */
+	bool getParrotMet() const { return _parrotMet; }
+
 	int getNodeChangedCtr() const { return _nodeChangeCtr; }
 	uint32 getNodeEnterTicks() const { return _nodeEnterTicks; }
 	void inc38() { ++_field38; }

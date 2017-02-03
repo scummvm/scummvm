@@ -41,7 +41,7 @@ void CMusicSwitchInversion::load(SimpleFile *file) {
 }
 
 bool CMusicSwitchInversion::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
-	if (_fieldEC) {
+	if (_enabled) {
 		if (++_controlVal > _controlMax)
 			_controlVal = 0;
 

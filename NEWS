@@ -2,7 +2,32 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.10.0 (YYYY-MM-DD)
+ General:
+   - Added a command-line option to automatically scan for supported games in
+     the current or a specified directory.
+   - Many options in GUI could be applied without closing the dialog.
+   - On-the-fly language switching was implemented.
+   - Updated Munt MT-32 emulation code to version 2.0.1pre.
 
+ AGOS:
+   - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
+
+ Composer:
+   - Added save/load from General Main Menu.
+
+1.9.1 (YYYY-MM-DD)
+ General:
+   - Added bilinear filtering option for SDL2 fullscreen mode.
+   - Fixed a bug that caused a crash in the options dialog of the GUI.
+
+ Drascula:
+  - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
+
+ Kyra:
+   - Fixed a buffer overflow in Lands of Lore.
+
+ MADS:
+   - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
 
 1.9.0 (2016-10-17)
  New Games:

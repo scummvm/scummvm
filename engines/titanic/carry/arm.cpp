@@ -84,7 +84,7 @@ void CArm::load(SimpleFile *file) {
 
 bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 	_field138 = 0;
-	_fieldE0 = 1;
+	_canTake = true;
 
 	CString name = getName();
 	if (name == "Arm1") {
@@ -108,7 +108,7 @@ bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
 
 bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (_string6 != "None") {
-		CShowTextMsg textMsg("The arm is already holding something.");
+		CShowTextMsg textMsg(ARM_ALREADY_HOLDING);
 		textMsg.execute("PET");
 		return false;
 	} else if (msg->_other->getName() == "GondolierLeftLever") {
@@ -137,10 +137,11 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 }
 
 bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!_fieldE0) {
-		CShowTextMsg textMsg("You can't get this.");
+	if (!_canTake) {
+		CShowTextMsg textMsg(YOU_CANT_GET_THIS);
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
+		hideMouse();
 		_tempPos = msg->_mousePos - _bounds;
 		setPosition(msg->_mousePos - _tempPos);
 
@@ -177,7 +178,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 	}
 
 	_field158 = 1;
-	_fieldE0 = 1;
+	_canTake = true;
 	return true;
 }
 

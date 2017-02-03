@@ -37,9 +37,9 @@ class CFanControl : public CGameObject {
 public:
 	int _state;
 	bool _enabled;
-	int _fieldC4;
-	bool _fieldC8;
-	int _fieldCC;
+	bool _starlings;
+	bool _fanOn;
+	bool _starlingsDying;
 public:
 	CLASSDEF;
 	CFanControl();

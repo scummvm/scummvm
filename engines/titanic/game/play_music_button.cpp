@@ -54,7 +54,7 @@ bool CPlayMusicButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		loadFrame(0);
 		_flag = false;
 	} else {
-		musicRoom->startMusic(100);
+		musicRoom->setupMusic(100);
 		playMovie(MOVIE_REPEAT);
 		_ticks = getTicksCount();
 		_flag = true;
@@ -64,7 +64,7 @@ bool CPlayMusicButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CPlayMusicButton::FrameMsg(CFrameMsg *msg) {
-	if (_flag && !CMusicRoom::_musicHandler->poll()) {
+	if (_flag && !CMusicRoom::_musicHandler->update()) {
 		CMusicRoom *musicRoom = getMusicRoom();
 		musicRoom->stopMusic();
 		stopMovie();

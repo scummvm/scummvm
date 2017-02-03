@@ -85,15 +85,15 @@ bool CBrokenPelleratorFroz::ActMsg(CActMsg *msg) {
 		statusMsg._newStatus = 0;
 		statusMsg.execute("FPickUpHose");
 	} else {
-		_fieldE0 = 0;
+		_exitAction = 0;
 		bool closeFlag = msg->_action == "Close";
 		if (msg->_action == "CloseLeft") {
 			closeFlag = true;
-			_fieldE0 = 1;
+			_exitAction = 1;
 		}
 		if (msg->_action == "CloseRight") {
 			closeFlag = true;
-			_fieldE0 = 2;
+			_exitAction = 2;
 		}
 
 		if (closeFlag) {
@@ -104,7 +104,7 @@ bool CBrokenPelleratorFroz::ActMsg(CActMsg *msg) {
 				else
 					playMovie(72, 84, MOVIE_NOTIFY_OBJECT);
 			} else {
-				switch (_fieldE0) {
+				switch (_exitAction) {
 				case 1:
 					changeView(_string2);
 					break;
@@ -115,7 +115,7 @@ bool CBrokenPelleratorFroz::ActMsg(CActMsg *msg) {
 					break;
 				}
 
-				_fieldE0 = 0;
+				_exitAction = 0;
 			}
 		}
 	}
@@ -136,12 +136,12 @@ bool CBrokenPelleratorFroz::MovieEndMsg(CMovieEndMsg *msg) {
 		statusMsg.execute("FPickUpHose");
 	}
 
-	if (_fieldE0 == 1) {
+	if (_exitAction == 1) {
 		changeView(_string2);
-		_fieldE0 = 0;
-	} else if (_fieldE0 == 2) {
+		_exitAction = 0;
+	} else if (_exitAction == 2) {
 		changeView(_string3);
-		_fieldE0 = 0;
+		_exitAction = 0;
 	}
 
 	return true;

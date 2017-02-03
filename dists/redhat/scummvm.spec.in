@@ -18,7 +18,7 @@ Url             : http://www.scummvm.org
 Source		: %{name}-%{version}.tar.bz2
 Source1		: libmad-0.15.1b.tar.bz2
 Source2		: faad2-2.7.tar.bz2
-Source3		: mpeg2dec-0.4.1.tar.bz2
+Source3		: mpeg2dec-0.5.1.tar.bz2
 Patch0		: libmad-0.15.1b-fixes-1.patch
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
@@ -28,8 +28,12 @@ BuildRequires: libvorbis-devel
 BuildRequires: flac-devel
 BuildRequires: zlib-devel
 BuildRequires: nasm
-BuildRequires: SDL-devel >= 1.2.2
+BuildRequires: SDL2-devel
 BuildRequires: freetype-devel
+BuildRequires: fluidsynth-devel
+BuildRequires: libtheora-devel
+BuildRequires: libpng-devel
+BuildRequires: libjpeg-turbo-devel
 
 #------------------------------------------------------------------------------
 #   Description
@@ -55,7 +59,7 @@ mkdir tmp
 %build
 (cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 (cd faad2-2.7; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd mpeg2dec-0.4.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
+(cd mpeg2dec-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
 ./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
 make
 

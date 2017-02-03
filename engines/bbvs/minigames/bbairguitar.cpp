@@ -23,7 +23,6 @@
 #include "bbvs/minigames/bbairguitar.h"
 
 #include "common/savefile.h"
-#include "common/translation.h"
 
 #include "gui/message.h"
 #include "gui/filebrowser-dialog.h"
@@ -1230,9 +1229,9 @@ bool MinigameBbAirGuitar::querySaveModifiedDialog() {
 		Original ok button caption: "Yeah, heh, heh, save it!"
 		Original discard button caption: "Who cares?  It sucked!"
 	*/
-	GUI::MessageDialog query(_("Hey Beavis - you didn't save that last Jam!"),
-		_("Save it!"),
-		_("It sucked!"));
+	GUI::MessageDialog query("Hey Beavis - you didn't save that last Jam!",
+		"Save it!",
+		"It sucked!");
 	return query.runModal() == GUI::kMessageOK;
 }
 

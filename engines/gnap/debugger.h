@@ -31,8 +31,6 @@ namespace Gnap {
 class GnapEngine;
 
 class Debugger : public GUI::Debugger {
-private:
-	GnapEngine *_vm;
 public:
 	/*
 	 * Specifies whether to show the hotspot IDs
@@ -45,7 +43,7 @@ protected:
 	bool Cmd_Hotspots(int argc, const char **argv);
 
 public:
-	Debugger(GnapEngine *vm);
+	Debugger();
 	virtual ~Debugger() {}
 };
 

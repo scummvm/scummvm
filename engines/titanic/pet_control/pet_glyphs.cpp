@@ -39,7 +39,7 @@ void CPetGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHi
 }
 
 void CPetGlyph::updateTooltip() {
-	CPetText *petText = getPetSection()->getText();
+	CTextControl *petText = getPetSection()->getText();
 	if (petText) {
 		petText->setColor(getPetSection()->getColor(0));
 		getTooltip(petText);
@@ -101,9 +101,9 @@ void CPetGlyphs::setup(int numVisible, CPetSection *owner) {
 	int buttonsLeft = numVisible * 70 + 21;
 
 	_scrollLeft.setBounds(Rect(0, 0, 31, 15));
-	_scrollLeft.translate(buttonsLeft, 373);
+	_scrollLeft.translate(buttonsLeft + 7, 373);
 	_scrollRight.setBounds(Rect(0, 0, 31, 15));
-	_scrollRight.translate(buttonsLeft, 413);
+	_scrollRight.translate(buttonsLeft + 7, 413);
 }
 
 void CPetGlyphs::reset() {
@@ -155,7 +155,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 		int itemIndex = getItemIndex(index);
 
 		if (itemIndex >= 0 && itemIndex < listSize) {
-			Point pt = getPosition(itemIndex);
+			Point pt = getPosition(index);
 			CPetGlyph *glyph = getGlyph(itemIndex);
 
 			if (glyph)
@@ -558,8 +558,8 @@ void CPetGlyphs::removeInvalid() {
 			}
 		}
 
-		_firstVisibleIndex = CLIP(_firstVisibleIndex, 0,
-			(int)size() - _numVisibleGlyphs);
+		int max = MAX((int)size() - _numVisibleGlyphs, 0);
+		_firstVisibleIndex = CLIP(_firstVisibleIndex, 0, max);
 	}
 }
 

@@ -81,6 +81,26 @@ private:
 	uint8 _paletteColorCount;
 };
 
+class BITDDecoderV4 : public Image::ImageDecoder {
+public:
+	BITDDecoderV4(int w, int h, uint16 bitsPerPixel);
+	virtual ~BITDDecoderV4();
+
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual const Graphics::Surface *getSurface() const { return _surface; }
+	const byte *getPalette() const { return _palette; }
+	void loadPalette(Common::SeekableReadStream &stream);
+	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+
+private:
+	Graphics::Surface *_surface;
+	byte *_palette;
+	uint8 _paletteColorCount;
+	uint16 _bitsPerPixel;
+};
+
 } // End of namespace Director
 
 #endif

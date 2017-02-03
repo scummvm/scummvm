@@ -65,7 +65,7 @@ public:
 	EditGameDialog(const String &domain, const String &desc);
 
 	void open();
-	void close();
+	virtual void apply();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 protected:

@@ -124,7 +124,7 @@ void sceneHandler27_winArcade() {
 	if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_dudeIsAiming = false;
 
-		g_fp->_aniMan->_callback2 = 0;
+		g_fp->_aniMan->_callback2 = 0; // Really NULL
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
 
 		sceneHandler27_driverGiveVent();
@@ -248,7 +248,7 @@ void sceneHandler27_startAiming() {
 	g_vars->scene27_dudeIsAiming = false;
 	g_vars->scene27_maxPhaseReached = false;
 
-	g_fp->_aniMan->_callback2 = 0;
+	g_fp->_aniMan->_callback2 = 0; // Really NULL
 
 	g_vars->scene27_launchPhase = g_fp->_aniMan->_movement->_currDynamicPhaseIndex - 6;
 

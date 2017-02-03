@@ -63,7 +63,7 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_restartGameAllowed = false;
 		_championMan->_partyChampionCount = 0;
-		_championMan->_leaderHandObject = Thing::_none;
+		_championMan->_leaderHandObject = _thingNone;
 	} else {
 		fileName = getSavefileName(slot);
 		saveFileManager = _system->getSavefileManager();

@@ -35,10 +35,12 @@ class TitanicEngine;
 struct DDSurfaceDesc {
 	int _w;
 	int _h;
+	int _bpp;
 	int _flags;
 	int _caps;
 
-	DDSurfaceDesc(int w, int h) : _w(w), _h(h), _flags(0x1006), _caps(64) {}
+	DDSurfaceDesc(int w, int h, int bpp) : _w(w), _h(h), _bpp(bpp),
+		_flags(0x1006), _caps(64) {}
 };
 
 class DirectDrawSurface {
@@ -52,7 +54,7 @@ public:
 	/**
 	 * Create a surface
 	 */
-	void create(int w, int h);
+	void create(int w, int h, int bpp);
 
 	/**
 	 * Create a surface based on a passed surface

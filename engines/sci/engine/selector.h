@@ -135,12 +135,8 @@ struct SelectorCache {
 	Selector bitmap; // Used to hold the text bitmap for SCI32 texts
 
 	Selector plane;
-	Selector top;
-	Selector left;
-	Selector bottom;
-	Selector right;
-	Selector resX;
-	Selector resY;
+	Selector top, left, bottom, right;
+	Selector resX, resY;
 
 	Selector fore;
 	Selector back;
@@ -153,6 +149,7 @@ struct SelectorCache {
 	Selector mirrored;
 	Selector visible;
 
+	Selector seenRect;
 	Selector useInsetRect;
 	Selector inTop, inLeft, inBottom, inRight;
 	Selector textTop, textLeft, textBottom, textRight;

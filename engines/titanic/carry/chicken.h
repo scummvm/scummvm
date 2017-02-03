@@ -42,11 +42,11 @@ class CChicken : public CCarry {
 	bool PETObjectStateMsg(CPETObjectStateMsg *msg);
 	bool PETLostObjectMsg(CPETLostObjectMsg *msg);
 public:
-	static int _v1;
+	static int _temperature;
 public:
-	int _field12C;
-	CString _string6;
-	int _field13C;
+	bool _greasy;
+	CString _condiment;
+	bool _inactive;
 	int _timerId;
 public:
 	CLASSDEF;

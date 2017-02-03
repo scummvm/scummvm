@@ -310,7 +310,7 @@ void Timeline::processTimeline() {
 				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
 					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
-					((Explosion *)curEvent)->setNextThing(Thing::_none);
+					((Explosion *)curEvent)->setNextThing(_vm->_thingNone);
 				}
 				break;
 			case kDMEventTypeEnableChampionAction:
@@ -413,7 +413,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		}
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
-		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
+		if ((groupThing != _vm->_thingEndOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
 				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
@@ -463,7 +463,7 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 			addEventGetEventIndex(event);
 		} else {
 			Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
-			if ((groupThing != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(groupThing), kDMCreatureMaskNonMaterial)) {
+			if ((groupThing != _vm->_thingEndOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(groupThing), kDMCreatureMaskNonMaterial)) {
 				event->_mapTime++;
 				addEventGetEventIndex(event);
 			} else
@@ -511,25 +511,25 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)
 	 && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
-		_vm->_moveSens->getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
+		_vm->_moveSens->getMoveResult(_vm->_thingParty, mapX, mapY, mapX, mapY);
 		_vm->_championMan->drawChangedObjectIcons();
 	}
 
 	Thing curThing = _vm->_groupMan->groupGetThing(mapX, mapY);
-	if (curThing != Thing::_endOfList)
+	if (curThing != _vm->_thingEndOfList)
 		_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
 
 	curThing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
 	Thing nextThing = curThing;
 	int16 thingsToMoveCount = 0;
-	while (curThing != Thing::_endOfList) {
+	while (curThing != _vm->_thingEndOfList) {
 		if (curThing.getType() > kDMThingTypeGroup)
 			thingsToMoveCount++;
 
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	curThing = nextThing;
-	while ((curThing != Thing::_endOfList) && thingsToMoveCount) {
+	while ((curThing != _vm->_thingEndOfList) && thingsToMoveCount) {
 		thingsToMoveCount--;
 		nextThing = _vm->_dungeonMan->getNextThing(curThing);
 		uint16 curThingType = curThing.getType();
@@ -580,7 +580,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	int16 mapY = event->_Bu._location._mapY;
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	uint16 curCell = event->_Cu.A._cell;
-	while (curThing != Thing::_endOfList) {
+	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if ((curThingType == kDMstringTypeText) && (curThing.getCell() == event->_Cu.A._cell)) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
@@ -657,39 +657,39 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	Thing firstProjectileAssociatedThing;
 	Thing secondProjectileAssociatedThing;
 	if ((sensorType == kDMSensorWallSingleProjLauncherExplosion) || (sensorType == kDMSensorWallDoubleProjLauncherExplosion))
-		firstProjectileAssociatedThing = secondProjectileAssociatedThing = Thing(sensorData + Thing::_firstExplosion.toUint16());
+		firstProjectileAssociatedThing = secondProjectileAssociatedThing = Thing(sensorData + _vm->_thingFirstExplosion.toUint16());
 	else if ((sensorType == kDMSensorWallSingleProjLauncherSquareObj) || (sensorType == kDMSensorWallDoubleProjLauncherSquareObj)) {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
+		while (firstProjectileAssociatedThing != _vm->_thingNone) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
 			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->turnDirRight(cell))))
 				break;
 			firstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(firstProjectileAssociatedThing);
 		}
-		if (firstProjectileAssociatedThing == Thing::_none) /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+		if (firstProjectileAssociatedThing == _vm->_thingNone) /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList */
 			return;
 
 		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0), mapX, mapY); /* The object is removed without triggering any sensor effects */
 		if (!launchSingleProjectile) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-			while (secondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
+			while (secondProjectileAssociatedThing != _vm->_thingNone) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
 				uint16 projectiveThingCell = secondProjectileAssociatedThing.getCell();
 				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->turnDirRight(cell))))
 					break;
 				secondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(secondProjectileAssociatedThing);
 			}
-			if (secondProjectileAssociatedThing == Thing::_none) /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+			if (secondProjectileAssociatedThing == _vm->_thingNone) /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList */
 				launchSingleProjectile = true;
 			else
-				_vm->_dungeonMan->unlinkThingFromList(secondProjectileAssociatedThing, Thing::_none, mapX, mapY); /* The object is removed without triggering any sensor effects */
+				_vm->_dungeonMan->unlinkThingFromList(secondProjectileAssociatedThing, _vm->_thingNone, mapX, mapY); /* The object is removed without triggering any sensor effects */
 		}
 	} else {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
-		if ((firstProjectileAssociatedThing) == Thing::_none)
+		if ((firstProjectileAssociatedThing) == _vm->_thingNone)
 			return;
 
 		secondProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
-		if (!launchSingleProjectile && (secondProjectileAssociatedThing == Thing::_none))
+		if (!launchSingleProjectile && (secondProjectileAssociatedThing == _vm->_thingNone))
 			launchSingleProjectile = true;
 	}
 	if (launchSingleProjectile)
@@ -710,7 +710,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 	uint16 mapX = event->_Bu._location._mapX;
 	uint16 mapY = event->_Bu._location._mapY;
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while (curThing != Thing::_endOfList) {
+	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if (curThingType == kDMstringTypeText) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
@@ -772,7 +772,7 @@ void Timeline::processEventsMoveGroup(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 
 T0252001:
-	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
+	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == _vm->_thingEndOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == kDMEventTypeMoveGroupAudible)
 			_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
@@ -806,7 +806,7 @@ T0252001:
 
 void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_Bu._location._mapX, event->_Bu._location._mapY);
-	while (curThing != Thing::_none) {
+	while (curThing != _vm->_thingNone) {
 		if ((curThing.getType()) == kDMThingTypeSensor) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			if (curSensor->getType() == kDMSensorDisabled) {
@@ -826,7 +826,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
 	}
 	if (curChampion->_currHealth) {
-		if ((curChampion->_actionIndex == kDMActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)) {
+		if ((curChampion->_actionIndex == kDMActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == _vm->_thingNone)) {
 			int16 slotIndex = kDMSlotQuiverLine1_1;
 			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, kDMSlotActionHand, slotIndex))
 				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), kDMSlotReadyHand);
@@ -846,7 +846,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 
 void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
-	if (curChampion->_slots[slotIndex] != Thing::_none)
+	if (curChampion->_slots[slotIndex] != _vm->_thingNone)
 		return;
 
 	if (hasWeaponMovedSlot(champIndex, curChampion, kDMSlotQuiverLine1_1, slotIndex))
@@ -925,7 +925,7 @@ void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
 	uint16 rebirthStep = event->_Cu.A._effect;
 	switch (rebirthStep) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
 	case 2:
-		_vm->_projexpl->createExplosion(Thing::_explRebirthStep1, 0, mapX, mapY, cell);
+		_vm->_projexpl->createExplosion(_vm->_thingExplRebirthStep1, 0, mapX, mapY, cell);
 		event->_mapTime += 5;
 T0255002:
 		rebirthStep--;
@@ -934,14 +934,14 @@ T0255002:
 		break;
 	case 1: {
 		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-		while (curThing != Thing::_endOfList) {
+		while (curThing != _vm->_thingEndOfList) {
 			if ((curThing.getCell() == cell) && (curThing.getType() == kDMThingTypeJunk)) {
 				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
 				if (iconIndex == kDMIconIndiceJunkChampionBones) {
 					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);
 					if (junkData->getChargeCount() == championIndex) {
 						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
-						junkData->setNextThing(Thing::_none);
+						junkData->setNextThing(_vm->_thingNone);
 						event->_mapTime += 1;
 						goto T0255002;
 					}

@@ -35,7 +35,7 @@ struct ADGameDescription;
 /**
  * This is the namespace of the SCI engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Awesome
  *
  * Games using this engine:
  * - Newer Sierra adventure games (based on FreeSCI)
@@ -225,8 +225,8 @@ enum SciVersion {
 	SCI_VERSION_1_LATE, // Dr. Brain 1, EcoQuest 1, Longbow, PQ3, SQ1, LSL5, KQ5 CD
 	SCI_VERSION_1_1, // Dr. Brain 2, EcoQuest 1 CD, EcoQuest 2, KQ6, QFG3, SQ4CD, XMAS 1992 and many more
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
-	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4 floppy
-	SCI_VERSION_2_1_MIDDLE, // GK2, KQ7 2.00b, MUMG Deluxe, Phantasmagoria 1, PQ:SWAT, QFG4CD, Shivers 1, SQ6, Torin
+	SCI_VERSION_2_1_EARLY, // GK2 demo, KQ7 1.4/1.51, LSL6 hires, PQ4CD, QFG4CD
+	SCI_VERSION_2_1_MIDDLE, // GK2, Hoyle 5, KQ7 2.00b, MUMG Deluxe, Phantasmagoria 1, PQ:SWAT, Shivers 1, SQ6, Torin
 	SCI_VERSION_2_1_LATE, // demos of LSL7, Lighthouse, RAMA
 	SCI_VERSION_3 // LSL7, Lighthouse, RAMA, Phantasmagoria 2
 };
@@ -282,7 +282,6 @@ public:
 	 * script patches are needed:
 	 * - King's Quest 6 CD
 	 */
-	bool speechAndSubtitlesEnabled();
 	void syncIngameAudioOptions();
 	void updateScummVMAudioOptions();
 
@@ -334,6 +333,7 @@ public:
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
+	bool checkAddressBreakpoint(const reg32_t &address);
 
 	void patchGameSaveRestore();
 

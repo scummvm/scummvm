@@ -104,6 +104,7 @@ namespace Fullpipe {
 #define PIC_MAP_A14 5276
 #define PIC_MAP_I01 5295
 #define PIC_MAP_I02 5296
+#define PIC_MAP_I03 5395
 #define PIC_MAP_P01 5277
 #define PIC_MAP_P02 5278
 #define PIC_MAP_P03 5279
@@ -162,6 +163,44 @@ namespace Fullpipe {
 #define PIC_MAP_S36 5260
 #define PIC_MAP_S37 5261
 #define PIC_MAP_S38 5262
+#define PIC_MAP_H01 5357
+#define PIC_MAP_H02 5358
+#define PIC_MAP_H03 5359
+#define PIC_MAP_H04 5360
+#define PIC_MAP_H05 5361
+#define PIC_MAP_H06 5362
+#define PIC_MAP_H07 5363
+#define PIC_MAP_H08 5364
+#define PIC_MAP_H09 5365
+#define PIC_MAP_H10 5366
+#define PIC_MAP_H11 5367
+#define PIC_MAP_H12 5368
+#define PIC_MAP_H13 5369
+#define PIC_MAP_H14 5370
+#define PIC_MAP_H15 5371
+#define PIC_MAP_H16 5372
+#define PIC_MAP_H17 5373
+#define PIC_MAP_H18 5394
+#define PIC_MAP_H19 5393
+#define PIC_MAP_H20 5374
+#define PIC_MAP_H21 5375
+#define PIC_MAP_H22 5376
+#define PIC_MAP_H23 5377
+#define PIC_MAP_H24 5378
+#define PIC_MAP_H25 5379
+#define PIC_MAP_H26 5380
+#define PIC_MAP_H27 5381
+#define PIC_MAP_H28 5382
+#define PIC_MAP_H29 5383
+#define PIC_MAP_H30 5384
+#define PIC_MAP_H31 5385
+#define PIC_MAP_H32 5386
+#define PIC_MAP_H33 5387
+#define PIC_MAP_H34 5388
+#define PIC_MAP_H35 5389
+#define PIC_MAP_H36 5390
+#define PIC_MAP_H37 5391
+#define PIC_MAP_H38 5392
 #define PIC_TTL_CREDITS 5172
 #define QU_INTR_STARTINTRO 5133
 #define SC_1 301
@@ -220,6 +259,7 @@ namespace Fullpipe {
 #define SND_CMN_032 3517
 #define SND_CMN_054 4762
 #define SND_CMN_055 4763
+#define SND_CMN_056 4772
 #define SND_CMN_060 4921
 #define SND_CMN_061 4922
 #define SND_CMN_070 5199
@@ -327,6 +367,12 @@ namespace Fullpipe {
 #define PIC_MSV_OK_L 4636
 #define PIC_MSV_SPACE_D 5190
 #define PIC_MSV_SPACE_L 5191
+
+// Demo screen
+#define PIC_POST_BGR 5396
+#define PIC_POST_TEXT 5397
+#define PIC_POST_BUTTON 5398
+#define SND_CMN_069 4969
 
 // Intro
 #define ANI_IN1MAN 5110

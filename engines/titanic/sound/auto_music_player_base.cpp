@@ -90,7 +90,7 @@ bool CAutoMusicPlayerBase::ChangeMusicMsg(CChangeMusicMsg *msg) {
 		}
 	}
 
-	if (_isRepeated && msg->_flags == 2) {
+	if (!_isRepeated && msg->_flags == 2) {
 		_isRepeated = true;
 		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0);
 	}

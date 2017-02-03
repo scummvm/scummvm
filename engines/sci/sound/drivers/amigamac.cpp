@@ -144,7 +144,7 @@ private:
 
 	void setEnvelope(Voice *channel, Envelope *envelope, int phase);
 	void setOutputFrac(int voice);
-	int interpolate(int8 *samples, frac_t offset, bool isUnsigned);
+	int interpolate(int8 *samples, frac_t offset, uint32 maxOffset, bool isUnsigned);
 	void playInstrument(int16 *dest, Voice *channel, int count);
 	void changeInstrument(int channel, int instrument);
 	void stopChannel(int ch);
@@ -169,17 +169,18 @@ void MidiDriver_AmigaMac::setEnvelope(Voice *channel, Envelope *envelope, int ph
 		channel->velocity = envelope[phase - 1].target;
 }
 
-int MidiDriver_AmigaMac::interpolate(int8 *samples, frac_t offset, bool isUnsigned) {
-	int x = fracToInt(offset);
+int MidiDriver_AmigaMac::interpolate(int8 *samples, frac_t offset, uint32 maxOffset, bool isUnsigned) {
+	uint x = fracToInt(offset);
+	uint x2 = x == maxOffset ? 0 : x + 1;
 
 	if (isUnsigned) {
 		int s1 = (byte)samples[x] - 0x80;
-		int s2 = (byte)samples[x + 1] - 0x80;
+		int s2 = (byte)samples[x2] - 0x80;
 		int diff = (s2 - s1) << 8;
 		return (s1 << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 	}
 
-	int diff = (samples[x + 1] - samples[x]) << 8;
+	int diff = (samples[x2] - samples[x]) << 8;
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
@@ -220,7 +221,7 @@ void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count)
 			amount = channel->envelope_samples;
 
 		for (i = 0; i < amount; i++) {
-			dest[index++] = interpolate(samples, channel->offset, instrument->isUnsigned) * channel->velocity / 64 * channel->note_velocity * vol / (127 * 127);
+			dest[index++] = interpolate(samples, channel->offset, seg_end, instrument->isUnsigned) * channel->velocity / 64 * channel->note_velocity * vol / (127 * 127);
 			channel->offset += channel->rate;
 		}
 

@@ -23,6 +23,11 @@
 #ifndef FULLPIPE_GFX_H
 #define FULLPIPE_GFX_H
 
+namespace Graphics {
+	struct Surface;
+	struct TransparentSurface;
+}
+
 namespace Fullpipe {
 
 class DynamicPhase;
@@ -40,6 +45,7 @@ struct Bitmap {
 	int _flags;
 	Graphics::TransparentSurface *_surface;
 	int _flipping;
+	bool _copied_surface;
 
 	Bitmap();
 	Bitmap(Bitmap *src);

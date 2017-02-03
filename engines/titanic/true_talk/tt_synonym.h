@@ -30,11 +30,6 @@ namespace Titanic {
 
 class TTsynonym : public TTstringNode {
 public:
-	TTstring _string;
-	FileHandle _file;
-	int _mode;
-	int _field1C;
-public:
 	TTsynonym();
 	TTsynonym(const TTsynonym *src);
 	TTsynonym(int mode, const char *str, FileHandle file);

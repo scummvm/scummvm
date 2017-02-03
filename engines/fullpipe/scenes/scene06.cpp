@@ -82,7 +82,7 @@ void sceneHandler06_winArcade() {
 		g_fp->setObjectState(sO_ClockAxis, g_fp->getObjectEnumState(sO_ClockAxis, sO_WithoutHandle));
 
 	if (g_vars->scene06_arcadeEnabled) {
-		g_fp->_aniMan->_callback2 = 0;
+		g_fp->_aniMan->_callback2 = 0; // Really NULL
 
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
@@ -707,6 +707,8 @@ int sceneHandler06(ExCommand *ex) {
 				}
 
 				res = 1;
+
+				g_fp->sceneAutoScrolling();
 			}
 			if (g_vars->scene06_arcadeEnabled) {
 				if (g_vars->scene06_mumsyPos > -3)

@@ -61,6 +61,13 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	}
 
 	stream.read(buf, 4);
+	if (memcmp(buf, "fact", 4) == 0) {
+		// Initial fact chunk, so skip over it
+		uint32 factLen = stream.readUint32LE();
+		stream.skip(factLen);
+		stream.read(buf, 4);
+	}
+
 	if (memcmp(buf, "fmt ", 4) != 0) {
 		warning("getWavInfo: No 'fmt' header");
 		return false;

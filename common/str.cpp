@@ -942,6 +942,13 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	return dstLength + (src - srcStart);
 }
 
+size_t strnlen(const char *src, size_t maxSize) {
+	size_t counter = 0;
+	while (counter != maxSize && *src++)
+		++counter;
+	return counter;
+}
+
 } // End of namespace Common
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.

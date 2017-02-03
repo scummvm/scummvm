@@ -46,7 +46,9 @@
  */
 
 #include "common/file.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
@@ -156,13 +158,13 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			error("Unexpected value for weapons menu");
 
 		res->skip(3);
-		_aboutMessage = readPascalString(res);
+		_aboutMessage = res->readPascalString();
 
 		if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
 			res->skip(1); // ????
 
-		_soundLibrary1 = readPascalString(res);
-		_soundLibrary2 = readPascalString(res);
+		_soundLibrary1 = res->readPascalString();
+		_soundLibrary2 = res->readPascalString();
 
 		delete res;
 	}
@@ -294,7 +296,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2001);
 	if (res != NULL) {
-		Common::StringArray *menu = readMenu(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_aboutMenuItemName.clear();
 		Common::String string = menu->operator[](1);
 
@@ -306,7 +308,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
 	if (res != NULL) {
-		Common::StringArray *menu = readMenu(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_commandsMenuName = menu->operator[](0);
 		_commandsMenu = menu->operator[](1);
 		delete menu;
@@ -314,7 +316,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2005);
 	if (res != NULL) {
-		Common::StringArray *menu = readMenu(res);
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
 		_weaponsMenuName = menu->operator[](0);
 		delete menu;
 		delete res;
@@ -332,49 +334,6 @@ void World::addSound(Sound *sound) {
 	s.toLowercase();
 	_sounds[s] = sound;
 	_orderedSounds.push_back(sound);
-}
-
-Common::StringArray *World::readMenu(Common::SeekableReadStream *res) {
-	res->skip(10);
-	int enableFlags = res->readUint32BE();
-	Common::String menuName = readPascalString(res);
-	Common::String menuItem = readPascalString(res);
-	int menuItemNumber = 1;
-	Common::String menu;
-	byte itemData[4];
-
-	while (!menuItem.empty()) {
-		if (!menu.empty()) {
-			menu += ';';
-		}
-		if ((enableFlags & (1 << menuItemNumber)) == 0) {
-			menu += '(';
-		}
-		menu += menuItem;
-		res->read(itemData, 4);
-		static const char styles[] = {'B', 'I', 'U', 'O', 'S', 'C', 'E', 0};
-		for (int i = 0; styles[i] != 0; i++) {
-			if ((itemData[3] & (1 << i)) != 0) {
-				menu += '<';
-				menu += styles[i];
-			}
-		}
-		if (itemData[1] != 0) {
-			menu += '/';
-			menu += (char)itemData[1];
-		}
-		menuItem = readPascalString(res);
-		menuItemNumber++;
-	}
-
-	Common::StringArray *result = new Common::StringArray;
-	result->push_back(menuName);
-	result->push_back(menu);
-
-	debug(4, "menuName: %s", menuName.c_str());
-	debug(4, "menu: %s", menu.c_str());
-
-	return result;
 }
 
 void World::loadExternalSounds(Common::String fname) {
@@ -408,7 +367,7 @@ Common::String *World::loadStringFromDITL(Common::MacResManager *resMan, int res
 		for (int i = 0; i <= itemCount; i++) {
 			// int placeholder; short rect[4]; byte flags; pstring str;
 			res->skip(13);
-			Common::String message = readPascalString(res);
+			Common::String message = res->readPascalString();
 			if (i == itemIndex) {
 				Common::String *msg = new Common::String(message);
 				delete res;

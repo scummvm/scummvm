@@ -41,9 +41,9 @@ void CSGTTV::load(SimpleFile *file) {
 }
 
 bool CSGTTV::TurnOff(CTurnOff *msg) {
-	if (CSGTStateRoom::_statics->_v4 == "Open") {
-		CSGTStateRoom::_statics->_v4 = "Closed";
-		_fieldE0 = true;
+	if (CSGTStateRoom::_statics->_tv == "Open") {
+		CSGTStateRoom::_statics->_tv = "Closed";
+		_isClosed = true;
 		_startFrame = 6;
 		_endFrame = 12;
 		playMovie(6, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
@@ -53,11 +53,11 @@ bool CSGTTV::TurnOff(CTurnOff *msg) {
 }
 
 bool CSGTTV::TurnOn(CTurnOn *msg) {
-	if (CSGTStateRoom::_statics->_v4 == "Closed" &&
-		CSGTStateRoom::_statics->_v2 == "Closed") {
-		CSGTStateRoom::_statics->_v4 = "Open";
+	if (CSGTStateRoom::_statics->_tv == "Closed" &&
+			CSGTStateRoom::_statics->_bedfoot != "Closed") {
+		CSGTStateRoom::_statics->_tv = "Open";
 		setVisible(true);
-		_fieldE0 = false;
+		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 6;
 		playMovie(1, 6, MOVIE_GAMESTATE);

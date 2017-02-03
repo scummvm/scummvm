@@ -81,6 +81,8 @@ private:
 	const byte *_synonyms; /**< Synonyms block or 0 if not present */
 	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
 
+	int _codeOffset; /**< The absolute offset of the VM code block */
+
 	int _localsOffset;
 	uint16 _localsCount;
 
@@ -264,7 +266,7 @@ public:
 	 * Resolve a relocation in an SCI3 script
 	 * @param offset        The offset to relocate from
 	 */
-	int relocateOffsetSci3(uint32 offset);
+	int relocateOffsetSci3(uint32 offset) const;
 
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI3 script

@@ -49,7 +49,7 @@ private:
 	static int _v1;
 	static int _v2;
 private:
-	int _field108;
+	int _introMovieNum;
 	int _timerId;
 	int _field110;
 	int _field114;

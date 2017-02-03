@@ -264,7 +264,7 @@ struct MovGraphItem {
 	StaticANIObject *ani;
 	int field_4;
 	MovArr movarr;
-	Common::Array<MovItem *> *movitems;
+	Common::Array<MovItem *> *mi_movitems;
 	int count;
 	int field_30;
 	int field_34;

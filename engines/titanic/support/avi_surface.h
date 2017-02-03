@@ -65,7 +65,9 @@ private:
 	Graphics::ManagedSurface *_movieFrameSurface[2];
 	Graphics::ManagedSurface *_framePixels;
 	bool _isReversed;
-	int _currentFrame;
+	int _currentFrame, _priorFrame;
+	uint32 _priorFrameTime;
+	Common::String _movieName;
 private:
 	/**
 	 * Render a frame to the video surface
@@ -76,6 +78,16 @@ private:
 	 * Sets up for video decompression
 	 */
 	void setupDecompressor();
+
+	/**
+	 * Copys a movie frame into a local 16-bit frame surface
+	 * @param src	Source raw movie frame
+	 * @param dest	Destination 16-bit copy of the frame
+	 * @remarks		The important thing this methods different from a straight
+	 * copy is that any pixels marked as fully transparent are replaced with
+	 * the special transparent color value.
+	 */
+	void copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest);
 protected:
 	/**
 	 * Start playback at the specified frame
@@ -120,9 +132,21 @@ public:
 	virtual void stop();
 
 	/**
+	 * Pauses video playback
+	 */
+	virtual void pause();
+
+	/**
+	 * Resumes the video if it's paused
+	 */
+	virtual void resume();
+
+	/**
 	 * Return true if a video is currently playing
 	 */
-	virtual bool isPlaying() const { return _decoder->isPlaying(); }
+	virtual bool isPlaying() const {
+		return _decoder->isPlaying();
+	}
 
 	/**
 	 * Handle any movie events relevent for the frame
@@ -152,12 +176,12 @@ public:
 	/**
 	 * Gets the current frame
 	 */
-	int getFrame() const { return _currentFrame; }
+	int getFrame() const { return _priorFrame; }
 
 	/**
 	 * Add a movie event
 	 */
-	bool addEvent(int frameNumber, CGameObject *obj);
+	bool addEvent(int *frameNumber, CGameObject *obj);
 
 	/**
 	 * Set the frame rate
@@ -184,12 +208,17 @@ public:
 	/**
 	 * Returns true if it's time for the next
 	 */
-	bool isNextFrame() const;
+	bool isNextFrame();
 
 	/**
 	 * Plays an interruptable cutscene
 	 */
 	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
+
+	/**
+	 * Returns the pixel depth of the movie in bits
+	 */
+	uint getBitDepth() const;
 };
 
 } // End of namespace Titanic

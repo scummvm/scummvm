@@ -1510,10 +1510,11 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 		((Actor_v0 *)this)->_newWalkBoxEntered = false;
 		((Actor_v0 *)this)->_CurrentWalkTo = _pos;
 		((Actor_v0 *)this)->_NewWalkTo = _pos;
-
-		// V0 always sets the actor to face the camera upon entering a room
-		setDirection(oldDirToNewDir(2));
 	}
+
+	// V0-V1 Maniac always sets the actor to face the camera upon entering a room
+	if (_vm->_game.id == GID_MANIAC && _vm->_game.version <= 1 && _vm->_game.platform != Common::kPlatformNES)
+		setDirection(oldDirToNewDir(2));
 }
 
 static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) {

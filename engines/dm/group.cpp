@@ -155,7 +155,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 	}
 
 	Thing currentThing = group->_slot;
-	if ((currentThing) != Thing::_endOfList) {
+	if ((currentThing) != _vm->_thingEndOfList) {
 		bool weaponDropped = false;
 		Thing nextThing;
 		do {
@@ -165,7 +165,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 				weaponDropped = true;
 			}
 			_vm->_moveSens->getMoveResult(currentThing, kDMMapXNotOnASquare, 0, mapX, mapY);
-		} while ((currentThing = nextThing) != Thing::_endOfList);
+		} while ((currentThing = nextThing) != _vm->_thingEndOfList);
 
 		if (soundMode != kDMSoundModeDoNotPlaySound)
 			_vm->_sound->requestPlay(weaponDropped ? kDMSoundIndexMetallicThud : kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, soundMode);
@@ -289,7 +289,7 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 		}
 
 		Thing nextUnusedThing = dungeon.getUnusedThing(currThingType);
-		if ((nextUnusedThing) == Thing::_none)
+		if ((nextUnusedThing) == _vm->_thingNone)
 			continue;
 
 		Weapon *currWeapon = (Weapon *)dungeon.getThingData(nextUnusedThing);
@@ -390,7 +390,7 @@ Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	Thing curThing = dungeon.getSquareFirstThing(mapX, mapY);
-	while ((curThing != Thing::_endOfList) && (curThing.getType() != kDMThingTypeGroup))
+	while ((curThing != _vm->_thingEndOfList) && (curThing.getType() != kDMThingTypeGroup))
 		curThing = dungeon.getNextThing(curThing);
 
 	return curThing;
@@ -489,7 +489,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 		else
 			attack = 255;
 
-		_vm->_projexpl->createExplosion(Thing::_explSmoke, attack, mapX, mapY, cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
+		_vm->_projexpl->createExplosion(_vm->_thingExplSmoke, attack, mapX, mapY, cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
 		return retVal;
 	}
 
@@ -501,7 +501,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 
 void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	Thing groupThing = groupGetThing(mapX, mapY);
-	if (groupThing == Thing::_endOfList)
+	if (groupThing == _vm->_thingEndOfList)
 		return;
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
@@ -510,7 +510,7 @@ void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	for (uint16 i = 0; i < 4; ++i)
 		group->_health[i] = 0;
 	_vm->_moveSens->getMoveResult(groupThing, mapX, mapY, kDMMapXNotOnASquare, 0);
-	group->_nextThing = Thing::_none;
+	group->_nextThing = _vm->_thingNone;
 	if (dungeon._currMapIndex == dungeon._partyMapIndex) {
 		_activeGroups[group->getActiveGroupIndex()]._groupThingIndex = -1;
 		_currActiveGroupCount--;
@@ -608,7 +608,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 
 	Thing groupThing = groupGetThing(eventMapX, eventMapY);
 	/* If there is no creature at the location specified in the event then the event is ignored */
-	if (groupThing == Thing::_endOfList)
+	if (groupThing == _vm->_thingEndOfList)
 		return;
 
 	ChampionMan &championMan = *_vm->_championMan;
@@ -1089,7 +1089,7 @@ T0209136:
 
 bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY, uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls) {
 	_groupMovementTestedDirections[dir] = true;
-	_groupMovementBlockedByGroupThing = Thing::_endOfList;
+	_groupMovementBlockedByGroupThing = _vm->_thingEndOfList;
 	_groupMovementBlockedByDoor = false;
 	_groupMovementBlockedByParty = false;
 	if (creatureInfo->_movementTicks == kDMMovementTicksImmobile)
@@ -1114,7 +1114,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 
 	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) {
 		Thing curThing = dungeon.getSquareFirstThing(mapX, mapY);
-		while (curThing != Thing::_endOfList) {
+		while (curThing != _vm->_thingEndOfList) {
 			if ((curThing).getType() == kDMThingTypeExplosion) {
 				Teleporter *curTeleporter = (Teleporter *)dungeon.getThingData(curThing);
 				if (((Explosion *)curTeleporter)->setType(kDMExplosionTypeFluxcage)) {
@@ -1148,7 +1148,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	}
 
 	_groupMovementBlockedByGroupThing = groupGetThing(mapX, mapY);
-	return (_groupMovementBlockedByGroupThing == Thing::_endOfList);
+	return (_groupMovementBlockedByGroupThing == _vm->_thingEndOfList);
 }
 
 int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
@@ -1475,47 +1475,47 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 	targetCell += primaryDirectionToParty;
 	targetCell &= 0x0003;
 	if ((creatureInfo->getAttackRange() > 1) && ((_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
-		Thing projectileThing = Thing::_none;
+		Thing projectileThing = _vm->_thingNone;
 
 		switch (creatureType) {
 		case kDMCreatureTypeVexirk:
 		case kDMCreatureTypeLordChaos:
 			if (_vm->getRandomNumber(2)) {
-				projectileThing = Thing::_explFireBall;
+				projectileThing = _vm->_thingExplFireBall;
 			} else {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
-					projectileThing = Thing::_explHarmNonMaterial;
+					projectileThing = _vm->_thingExplHarmNonMaterial;
 					break;
 				case 1:
-					projectileThing = Thing::_explLightningBolt;
+					projectileThing = _vm->_thingExplLightningBolt;
 					break;
 				case 2:
-					projectileThing = Thing::_explPoisonCloud;
+					projectileThing = _vm->_thingExplPoisonCloud;
 					break;
 				case 3:
-					projectileThing = Thing::_explOpenDoor;
+					projectileThing = _vm->_thingExplOpenDoor;
 				}
 			}
 			break;
 		case kDMCreatureTypeSwampSlime:
-			projectileThing = Thing::_explSlime;
+			projectileThing = _vm->_thingExplSlime;
 			break;
 		case kDMCreatureTypeWizardEye:
 			if (_vm->getRandomNumber(8)) {
-				projectileThing = Thing::_explLightningBolt;
+				projectileThing = _vm->_thingExplLightningBolt;
 			} else {
-				projectileThing = Thing::_explOpenDoor;
+				projectileThing = _vm->_thingExplOpenDoor;
 			}
 			break;
 		case kDMCreatureTypeMaterializerZytaz:
 			if (_vm->getRandomNumber(2)) {
-				projectileThing = Thing::_explPoisonCloud;
+				projectileThing = _vm->_thingExplPoisonCloud;
 				break;
 			}
 		case kDMCreatureTypeDemon:
 		case kDMCreatureTypeRedDragon:
-			projectileThing = Thing::_explFireBall;
+			projectileThing = _vm->_thingExplFireBall;
 			break;
 		default:
 			break;
@@ -1594,14 +1594,14 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 			stealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
 
 		Thing slotThing = champion->_slots[stealFromSlotIndex];
-		if ((slotThing != Thing::_none)) {
+		if ((slotThing != _vm->_thingNone)) {
 			objectStolen = true;
 			slotThing = championMan.getObjectRemovedFromSlot(championIndex, stealFromSlotIndex);
-			if (group->_slot == Thing::_endOfList) {
+			if (group->_slot == _vm->_thingEndOfList) {
 				group->_slot = slotThing;
 				/* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
-				The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
-				This creates cloned things if L0394_T_Thing->Next is not Thing::_endOfList which is the case when the object comes from a chest in which it was not the last object */
+				The following statement is missing: L0394_T_Thing->Next = _vm->_endOfList;
+				This creates cloned things if L0394_T_Thing->Next is not _vm->_endOfList which is the case when the object comes from a chest in which it was not the last object */
 			} else {
 				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kDMMapXNotOnASquare, 0);
 			}
@@ -1672,7 +1672,10 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
 				poisonAttack = championMan.getStatisticAdjustedAttack(curChampion, kDMStatVitality, poisonAttack);
-				if (poisonAttack >= 0)
+
+				// Strangerke: In the original, the check was on >= 0, which is pretty useless for a unsigned variable.
+				// I changed the check to > 0 because, considering the code of championPoison, it avoids a potential bug.
+				if (poisonAttack > 0)
 					championMan.championPoison(champIndex, poisonAttack);
 			}
 			return damage;
@@ -1779,7 +1782,7 @@ void GroupMan::addAllActiveGroups() {
 						break;
 					}
 					curThing = dungeon.getNextThing(curThing);
-				} while (curThing != Thing::_endOfList);
+				} while (curThing != _vm->_thingEndOfList);
 			}
 		}
 	}
@@ -1790,11 +1793,11 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 
 	Thing groupThing = dungeon.getUnusedThing(kDMThingTypeGroup);
 	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (dungeon._currMapIndex == dungeon._partyMapIndex))
-		|| (groupThing == Thing::_none)) {
-		return Thing::_none;
+		|| (groupThing == _vm->_thingNone)) {
+		return _vm->_thingNone;
 	}
 	Group *group = (Group *)dungeon.getThingData(groupThing);
-	group->_slot = Thing::_endOfList;
+	group->_slot = _vm->_thingEndOfList;
 	group->setDoNotDiscard(false);
 	group->setDir(dir);
 	group->setCount(creatureCount);
@@ -1825,7 +1828,7 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 		   impact (in which case the thing data was marked as unused) or the party is on the destination
 		   square and an event is created to move the creature into the dungeon later
 		   (in which case the thing is referenced in the event) */
-		return Thing::_none;
+		return _vm->_thingNone;
 	}
 	_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 	return groupThing;
@@ -1843,7 +1846,7 @@ bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
 
 int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {
 	Thing groupThing = groupGetThing(groupX, groupY);
-	if (groupThing == Thing::_endOfList)
+	if (groupThing == _vm->_thingEndOfList)
 		return 0;
 
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
@@ -1952,7 +1955,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 		return;
 
 	Thing unusedThing = dungeon.getUnusedThing(kDMThingTypeExplosion);
-	if (unusedThing == Thing::_none)
+	if (unusedThing == _vm->_thingNone)
 		return;
 
 	dungeon.linkThingToList(unusedThing, Thing(0), mapX, mapY);
@@ -1992,7 +1995,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 
 uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
 	Thing thing = groupGetThing(mapX, mapY);
-	if (thing == Thing::_endOfList)
+	if (thing == _vm->_thingEndOfList)
 		return 0;
 
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
@@ -2010,7 +2013,7 @@ bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 		return false;
 
 	Thing thing = dungeon.getSquareFirstThing(mapX, mapY);
-	while (thing != Thing::_endOfList) {
+	while (thing != _vm->_thingEndOfList) {
 		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)dungeon._thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == kDMExplosionTypeFluxcage))
 			return true;
 
@@ -2025,7 +2028,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 	if ((mapX >= dungeon._currMapWidth) || (mapY >= dungeon._currMapHeight))
 		return;
 
-	_vm->_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, mapX, mapY, kDMCreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
+	_vm->_projexpl->createExplosion(_vm->_thingExplHarmNonMaterial, 255, mapX, mapY, kDMCreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
 	Thing lordChaosThing = Thing(isLordChaosOnSquare(mapX, mapY));
 	if (lordChaosThing.toUint16()) {
 		bool isFluxcages[4];

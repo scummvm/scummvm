@@ -28,6 +28,8 @@
 
 namespace Titanic {
 
+enum GlassGiven { GG_DEFAULT = -1, GG_EMPTY = 0, GG_CONDIMENT = 1, GG_BIRD = 3 };
+
 class CBarbot : public CTrueTalkNPC {
 	struct FrameRange {
 		int _startFrame;
@@ -56,20 +58,20 @@ class CBarbot : public CTrueTalkNPC {
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
 private:
-	static int _v0;
+	static int _timesCalled;
 private:
 	FrameRanges _frames;
 	int _field108;
 	int _field10C;
 	int _field110;
-	int _field114;
-	int _field118;
-	int _field11C;
+	bool _addedLemon;
+	bool _addedTV;
+	bool _addedPuret;
 	int _field120;
 	int _field124;
-	int _field128;
-	int _field12C;
-	int _field130;
+	bool _visCenterOnCounter;
+	bool _addedVodka;
+	bool _gottenDrunk;
 	int _field134;
 	int _field138;
 	int _field13C;
@@ -79,14 +81,22 @@ private:
 	int _field14C;
 	int _field150;
 	int _field154;
-	int _field158;
-	int _field15C;
+	GlassGiven _glassContent;
+	bool _drunkFlag;
 	int _field160;
 private:
 	/**
 	 * Plays a given range of movie frames
 	 */
 	void playRange(const FrameRange &range, uint flags = 0);
+
+	/**
+	 * Returns true if one of the ingredients (with the exception of Vodka)
+	 * is missing from the concoction
+	 */
+	bool areIngredientsMissing() const {
+		return !_addedPuret || !_addedLemon || !_addedVodka;
+	}
 public:
 	CLASSDEF;
 	CBarbot();

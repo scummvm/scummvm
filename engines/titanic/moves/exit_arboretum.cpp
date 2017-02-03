@@ -33,13 +33,13 @@ BEGIN_MESSAGE_MAP(CExitArboretum, CMovePlayerTo)
 END_MESSAGE_MAP()
 
 CExitArboretum::CExitArboretum() : CMovePlayerTo(),
-		_seasonNum(0), _fieldCC(0), _enabled(true) {
+		_seasonNum(SEASON_SUMMER), _exitDirection(0), _enabled(true) {
 }
 
 void CExitArboretum::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_seasonNum, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_exitDirection, indent);
 	file->writeNumberLine(_enabled, indent);
 
 	CMovePlayerTo::save(file, indent);
@@ -47,8 +47,8 @@ void CExitArboretum::save(SimpleFile *file, int indent) {
 
 void CExitArboretum::load(SimpleFile *file) {
 	file->readNumber();
-	_seasonNum = file->readNumber();
-	_fieldCC = file->readNumber();
+	_seasonNum = (Season)file->readNumber();
+	_exitDirection = file->readNumber();
 	_enabled = file->readNumber();
 
 	CMovePlayerTo::load(file);
@@ -58,7 +58,7 @@ bool CExitArboretum::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_enabled) {
 		CActMsg actMsg;
 		if (_seasonNum == SEASON_WINTER) {
-			switch (_fieldCC) {
+			switch (_exitDirection) {
 			case 0:
 				actMsg._action = "ExitLFrozen";
 				break;
@@ -69,7 +69,7 @@ bool CExitArboretum::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 				break;
 			}
 		} else {
-			switch (_fieldCC) {
+			switch (_exitDirection) {
 			case 0:
 				actMsg._action = "ExitLNormal";
 				break;
@@ -88,17 +88,17 @@ bool CExitArboretum::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CExitArboretum::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
-	_seasonNum = (_seasonNum + 1) % 4;
+	_seasonNum = (Season)(((int)_seasonNum + 1) % 4);
 	return true;
 }
 
 bool CExitArboretum::TurnOn(CTurnOn *msg) {
-	_enabled = false;
+	_enabled = true;
 	return true;
 }
 
 bool CExitArboretum::TurnOff(CTurnOff *msg) {
-	_enabled = true;
+	_enabled = false;
 	return true;
 }
 

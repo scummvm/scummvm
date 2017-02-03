@@ -301,32 +301,30 @@ ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) 
 // Resource manager constructors and operations
 
 bool Resource::loadPatch(Common::SeekableReadStream *file) {
-	Resource *res = this;
-
-	// We assume that the resource type matches res->type
+	// We assume that the resource type matches `type`
 	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
-	res->data = new byte[res->size];
+	data = new byte[size];
 
-	if (res->_headerSize > 0)
-		res->_header = new byte[res->_headerSize];
+	if (_headerSize > 0)
+		_header = new byte[_headerSize];
 
-	if ((res->data == NULL) || ((res->_headerSize > 0) && (res->_header == NULL))) {
-		error("Can't allocate %d bytes needed for loading %s", res->size + res->_headerSize, res->_id.toString().c_str());
+	if (data == nullptr || (_headerSize > 0 && _header == nullptr)) {
+		error("Can't allocate %d bytes needed for loading %s", size + _headerSize, _id.toString().c_str());
 	}
 
 	uint32 really_read;
-	if (res->_headerSize > 0) {
-		really_read = file->read(res->_header, res->_headerSize);
-		if (really_read != res->_headerSize)
-			error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->_headerSize);
+	if (_headerSize > 0) {
+		really_read = file->read(_header, _headerSize);
+		if (really_read != _headerSize)
+			error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), _headerSize);
 	}
 
-	really_read = file->read(res->data, res->size);
-	if (really_read != res->size)
-		error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->size);
+	really_read = file->read(data, size);
+	if (really_read != size)
+		error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
-	res->_status = kResStatusAllocated;
+	_status = kResStatusAllocated;
 	return true;
 }
 
@@ -1399,7 +1397,20 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	}
 
 	byte patchType = convertResType(fileStream->readByte());
-	byte patchDataOffset = fileStream->readByte();
+	int32 patchDataOffset;
+	if (_volVersion < kResVersionSci2) {
+		patchDataOffset = fileStream->readByte();
+	} else if (patchType == kResourceTypeView) {
+		fileStream->seek(3, SEEK_SET);
+		patchDataOffset = fileStream->readByte() + 22 + 2;
+	} else if (patchType == kResourceTypePic) {
+		patchDataOffset = 2;
+	} else if (patchType == kResourceTypePalette) {
+		fileStream->seek(3, SEEK_SET);
+		patchDataOffset = fileStream->readByte() + 2;
+	} else {
+		patchDataOffset = 0;
+	}
 
 	delete fileStream;
 
@@ -1496,7 +1507,7 @@ void ResourceManager::readResourcePatchesBase36() {
 
 			// The S/T prefixes often conflict with non-patch files and generate
 			// spurious warnings about invalid patches
-			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT")) {
+			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT") || name.hasSuffix(".OLD")) {
 				continue;
 			}
 
@@ -2457,38 +2468,6 @@ void ResourceManager::detectSciVersion() {
 		s_sciVersion = SCI_VERSION_NONE;
 		error("detectSciVersion(): Unable to detect the game's SCI version");
 	}
-}
-
-bool ResourceManager::detectHires() {
-	// SCI 1.1 and prior is never hires
-	if (getSciVersion() <= SCI_VERSION_1_1)
-		return false;
-
-#ifdef ENABLE_SCI32
-	for (int i = 0; i < 32768; i++) {
-		Resource *res = findResource(ResourceId(kResourceTypePic, i), 0);
-
-		if (res) {
-			if (READ_SCI11ENDIAN_UINT16(res->data) == 0x0e) {
-				// SCI32 picture
-				uint16 width = READ_SCI11ENDIAN_UINT16(res->data + 10);
-				uint16 height = READ_SCI11ENDIAN_UINT16(res->data + 12);
-				// Surely lowres (e.g. QFG4CD)
-				if ((width == 320) && ((height == 190) || (height == 200)))
-					return false;
-				// Surely hires
-				if ((width >= 600) || (height >= 400))
-					return true;
-			}
-		}
-	}
-
-	// We haven't been able to find hires content
-
-	return false;
-#else
-	error("no sci32 support");
-#endif
 }
 
 bool ResourceManager::detectFontExtended() {

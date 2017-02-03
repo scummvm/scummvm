@@ -49,12 +49,22 @@ bool CPetSave::MouseButtonUpMsg(const Point &pt) {
 	}
 }
 
+bool CPetSave::KeyCharMsg(int key) {
+	if (CPetLoadSave::KeyCharMsg(key))
+		return true;
+
+	if (_savegameSlotNum != -1)
+		_slotNames[_savegameSlotNum].handleKey(key);
+
+	return true;
+}
+
 void CPetSave::highlightCurrent(const Point &pt) {
 	resetSlots();
 	highlightSave(_savegameSlotNum);
 }
 
-void CPetSave::getTooltip(CPetText *text) {
+void CPetSave::getTooltip(CTextControl *text) {
 	text->setText("Save the game.");
 }
 
@@ -71,11 +81,12 @@ void CPetSave::unhighlightSave(int index) {
 void CPetSave::execute() {
 	CPetControl *pet = getPetControl();
 	if (_savegameSlotNum >= 0) {
+		int slotNumber = _savegameSlotNum;
 		highlightSlot(-1);
 		CProjectItem *project = pet ? pet->getRoot() : nullptr;
 
 		if (project) {
-			project->saveGame(_savegameSlotNum, _slotNames[_savegameSlotNum].getText());
+			project->saveGame(slotNumber, _slotNames[slotNumber].getText());
 			pet->displayMessage(BLANK);
 		}
 	} else if (pet) {

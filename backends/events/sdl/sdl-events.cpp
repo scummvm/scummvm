@@ -110,13 +110,51 @@ SdlEventSource::~SdlEventSource() {
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
 
+	// Keep unicode in case it's regular ASCII text or in case we didn't get a valid keycode
+	//
+	// We need to use unicode in those cases, simply because SDL1.x passes us non-layout-adjusted keycodes.
+	// So unicode is the only way to get layout-adjusted keys.
+	if (unicode < 0x20) {
+		// don't use unicode, in case it's control characters
+		unicode = 0;
+	} else {
+		// Use unicode, in case keycode is invalid.
+		// Umlauts and others will set KEYCODE_INVALID on SDL2, so in such a case always keep unicode.
+		if (key != Common::KEYCODE_INVALID) {
+			// keycode is valid, check further also depending on modifiers
+			if (mod & (KMOD_CTRL | KMOD_ALT)) {
+				// Ctrl and/or Alt is active
+				//
+				// We need to restrict unicode to only up to 0x7E, because on macOS the option/alt key will switch to
+				// an alternate keyboard, which will cause us to receive Unicode characters for some keys, which are outside
+				// of the ASCII range (e.g. alt-x will get us U+2248). We need to return 'x' for alt-x, so using unicode
+				// in that case would break alt-shortcuts.
+				if (unicode > 0x7E)
+					unicode = 0; // do not allow any characters above 0x7E
+			} else {
+				// We must not restrict as much as when Ctrl/Alt-modifiers are active, otherwise
+				// we wouldn't let umlauts through for SDL1. For SDL1 umlauts may set for example KEYCODE_QUOTE, KEYCODE_MINUS, etc.
+				if (unicode > 0xFF)
+					unicode = 0; // do not allow any characters above 0xFF
+			}
+		}
+	}
+
+	// Attention:
+	// When using SDL1.x, we will get scancodes via sdlKey, that are raw scancodes, so NOT adjusted to keyboard layout/
+	// mapping. So for example for certain locales, we will get KEYCODE_y, when 'z' is pressed and so on.
+	// When using SDL2.x however, we will get scancodes based on the keyboard layout.
+
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		if ((mod & KMOD_NUM) == 0)
+			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
+		// Return unicode in case it's stil set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -848,7 +886,7 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.x_max = x_max;
 	_km.y_max = y_max;
 	_km.delay_time = 25;

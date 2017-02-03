@@ -24,7 +24,7 @@
 #define TITANIC_PET_CONVERSATIONS_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_gfx_element.h"
 #include "titanic/true_talk/true_talk_manager.h"
 
@@ -48,8 +48,8 @@ private:
 	CPetGfxElement _splitter;
 	CPetGfxElement _npcIcons[9];
 	int _npcNum;
-	CPetText _log;
-	CPetText _textInput;
+	CTextControl _log;
+	CTextControl _textInput;
 	bool _logChanged;
 	int _field418;
 	CString _npcName;
@@ -122,12 +122,12 @@ private:
 	/**
 	 * Get a dial level
 	 */
-	uint getDialLevel(uint dialNum, TTnpcScript *script, int v = 1);
+	uint getDialLevel(uint dialNum, TTnpcScript *script, bool flag = true);
 
 	/**
 	 * Called when the dial for an NPC is being changed
 	 */
-	void npcDialChange(uint dialNum, int oldLevel, int newLevel);
+	void npcDialChange(uint dialNum, uint oldLevel, uint newLevel);
 public:
 	CPetConversations();
 	virtual ~CPetConversations() {}
@@ -164,6 +164,7 @@ public:
 	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	virtual bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
+	virtual bool MouseWheelMsg(CMouseWheelMsg *msg);
 	virtual bool KeyCharMsg(CKeyCharMsg *msg);
 	virtual bool VirtualKeyCharMsg(CVirtualKeyCharMsg *msg);
 

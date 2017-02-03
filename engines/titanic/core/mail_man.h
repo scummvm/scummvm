@@ -58,22 +58,22 @@ public:
 	/**
 	 * Add an object to the mail list
 	 */
-	void addMail(CGameObject *obj, int id);
+	void addMail(CGameObject *obj, uint destRoomFlags);
 
 	/**
-	 * Sets the mail identifier for an object
+	 * Sets the mail destination for an object
 	 */
-	static void setMailId(CGameObject *obj, int id);
+	static void setMailDest(CGameObject *obj, uint roomFlags);
 
 	/**
 	 * Scan the mail list for a specified item
 	 */
-	CGameObject *findMail(int id) const;
+	CGameObject *findMail(uint roomFlags) const;
 
 	/**
-	 * Remove a mail item
+	 * Sends a pending mail object to a given destination
 	 */
-	void removeMail(int id, int v);
+	void sendMail(uint currRoomFlags, uint newRoomFlags);
 
 	void resetValue() { _value = 0; }
 };

@@ -30,7 +30,7 @@
 
 namespace Cruise {
 
-const int SPACE_WIDTH = 4;
+const int SPACE_WIDTH = 5;
 
 /**
  * Determines the line size by finding the highest character in the given font set
@@ -200,7 +200,9 @@ void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int
 		fontPtr_Data2 += sizeof(uint16);
 
 		for (int j = 0; j < charWidth; j++) {
-			*outBufferPtr = ((bitSet1 >> 15) & 1) | ((bitSet2 >> 14) & 2);
+			if (((bitSet1 >> 15) & 1)) {
+				*outBufferPtr = ((bitSet2 >> 15) & 1) + 1;
+			}
 			outBufferPtr++;
 
 			bitSet1 <<= 1;

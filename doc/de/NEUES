@@ -3,7 +3,31 @@ Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 1.10.0 (DD.MM.YYYY)
+ Allgemein:
+   - Kommandozeilen-Option hinzugefügt, mit der das aktuelle oder ein gewähltes
+     Verzeichnis nach unterstützten Spielen durchsucht werden kann.
+   - Viele Optionen der Benutzeroberfläche können nun übernommen werden, ohne
+     den Optionen-Dialog zu schließen.
+   - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
 
+ AGOS:
+   - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
+     "Simon the Sorcerer 1" korrigiert.
+
+ Composer:
+   - Unterstützung für das Speichern und Laden von Spielständen aus dem Hauptmenü heraus hinzugefügt.
+
+1.9.1 (DD.MM.YYYY)
+ Allgemein:
+   - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
+   - Fehler behoben, der einen Absturz im Optionen-Dialog der Benutzeroberfläche verursacht.
+
+ Kyra:
+   - Pufferüberlauf in "Lands of Lore" behoben.
+
+ MADS:
+   - Fehler behoben, der einen Absturz verursacht, wenn "Rex Nebular and the Cosmic Gender Bender"
+     gestartet wird.
 
 1.9.0 (17.10.2016)
  Neue Spiele:

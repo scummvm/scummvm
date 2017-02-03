@@ -35,6 +35,7 @@
 #include "common/textconsole.h"     // for warning
 #include "common/types.h"           // for Flag::NO
 #include "engine.h"                 // for Engine, g_engine
+#include "sci/engine/features.h"    // for GameFeatures
 #include "sci/engine/vm_types.h"    // for reg_t, make_reg, NULL_REG
 #include "sci/resource.h"           // for ResourceId, ResourceType::kResour...
 #include "sci/sci.h"                // for SciEngine, g_sci, getSciVersion
@@ -135,23 +136,7 @@ Audio32::Audio32(ResourceManager *resMan) :
 		_channels.resize(8);
 	}
 
-	_useModifiedAttenuation = false;
-	if (getSciVersion() == SCI_VERSION_2_1_MIDDLE) {
-		switch (g_sci->getGameId()) {
-		case GID_MOTHERGOOSEHIRES:
-		case GID_PQ4:
-		case GID_QFG4:
-		case GID_SQ6:
-			_useModifiedAttenuation = true;
-		default:
-			break;
-		}
-	} else if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
-		// KQ7 1.51 uses the non-standard attenuation, but 2.00b
-		// does not, which is strange.
-		_useModifiedAttenuation = true;
-	}
-
+	_useModifiedAttenuation = g_sci->_features->usesModifiedAudioAttenuation();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
@@ -174,9 +159,7 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 	// mono, in which case we need to request half
 	// as many samples from the mono stream and let
 	// the converter double them for stereo output
-	if (!sourceStream->isStereo()) {
-		samplesToRead >>= 1;
-	}
+	samplesToRead >>= 1;
 
 	int samplesWritten = 0;
 
@@ -197,12 +180,10 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 
 		samplesToRead -= loopSamplesWritten;
 		samplesWritten += loopSamplesWritten;
-		targetBuffer += loopSamplesWritten << 1;
+		targetBuffer += loopSamplesWritten << (sourceStream->isStereo() ? 0 : 1);
 	} while (loop && samplesToRead > 0);
 
-	if (!sourceStream->isStereo()) {
-		samplesWritten <<= 1;
-	}
+	samplesWritten <<= 1;
 
 	return samplesWritten;
 }

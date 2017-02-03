@@ -27,6 +27,7 @@ MODULE_OBJS = \
 	statics.o \
 	utils.o \
 	scenes/sceneIntro.o \
+	scenes/sceneIntroDemo.o \
 	scenes/scene01.o \
 	scenes/scene02.o \
 	scenes/scene03.o \

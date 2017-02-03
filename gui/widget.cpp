@@ -701,10 +701,12 @@ void SliderWidget::drawWidget() {
 }
 
 int SliderWidget::valueToBarWidth(int value) {
+	value = CLIP(value, _valueMin, _valueMax);
 	return (_w * (value - _valueMin) / (_valueMax - _valueMin));
 }
 
 int SliderWidget::valueToPos(int value) {
+	value = CLIP(value, _valueMin, _valueMax);
 	return ((_w - 1) * (value - _valueMin + 1) / (_valueMax - _valueMin));
 }
 

@@ -32,17 +32,18 @@ BEGIN_MESSAGE_MAP(CSpeechDispensor, CBackground)
 END_MESSAGE_MAP()
 
 CSpeechDispensor::CSpeechDispensor() : CBackground(), _dragItem(nullptr),
-		_fieldE0(0), _state(0), _fieldEC(0), _fieldF8(0), _seasonNum(SEASON_SUMMER) {
+		_hitCounter(0), _state(0), _speechFallen(false), _failureType(false),
+		_seasonNum(SEASON_SUMMER) {
 }
 
 void CSpeechDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_hitCounter, indent);
 	file->writeNumberLine(_state, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_speechFallen, indent);
 	file->writeNumberLine(_itemPos.x, indent);
 	file->writeNumberLine(_itemPos.y, indent);
-	file->writeNumberLine(_fieldF8, indent);
+	file->writeNumberLine(_failureType, indent);
 	file->writeNumberLine(_seasonNum, indent);
 
 	CBackground::save(file, indent);
@@ -50,19 +51,19 @@ void CSpeechDispensor::save(SimpleFile *file, int indent) {
 
 void CSpeechDispensor::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_hitCounter = file->readNumber();
 	_state = file->readNumber();
-	_fieldEC = file->readNumber();
+	_speechFallen = file->readNumber();
 	_itemPos.x = file->readNumber();
 	_itemPos.y = file->readNumber();
-	_fieldF8 = file->readNumber();
+	_failureType = file->readNumber();
 	_seasonNum = (Season)file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
-	if (_fieldEC || _seasonNum == SEASON_SUMMER || _seasonNum == SEASON_SPRING)
+	if (_speechFallen || _seasonNum == SEASON_SUMMER || _seasonNum == SEASON_SPRING)
 		return true;
 
 	CGameObject *dragObject = getDraggingObject();
@@ -87,26 +88,26 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 			playSound("z#93.wav");
 			if (_seasonNum == SEASON_WINTER) {
 				petDisplayMessage(1, FROZEN_TO_BRANCH);
-				_fieldE0 = false;
+				_hitCounter = 0;
 				_state = 1;
 			} else {
-				if (++_fieldE0 >= 5) {
+				if (++_hitCounter >= 5) {
 					CActMsg actMsg("PlayerGetsSpeechCentre");
 					actMsg.execute("SeasonalAdjust");
 					CSpeechFallsFromTreeMsg fallMsg(pt);
 					fallMsg.execute("SpeechCentre");
 
-					_fieldEC = true;
-					_fieldE0 = false;
+					_speechFallen = true;
+					_hitCounter = 0;
 				}
 
 				_state = 1;
 			}
 			break;
 
-		case 2:
+		case 1:
 			_state = 0;
-			++_fieldE0;
+			++_hitCounter;
 			break;
 
 		default:
@@ -118,9 +119,9 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CSpeechDispensor::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	if (!_fieldEC) {
+	if (!_speechFallen) {
 		playSound("z#93.wav");
-		if (_fieldF8) {
+		if (_failureType) {
 			petDisplayMessage(1, OUT_OF_REACH);
 		} else {
 			petDisplayMessage(1, STUCK_TO_BRANCH);
@@ -131,7 +132,7 @@ bool CSpeechDispensor::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 }
 
 bool CSpeechDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_fieldF8 = msg->_newStatus == 1;
+	_failureType = msg->_newStatus == 1;
 	return true;
 }
 

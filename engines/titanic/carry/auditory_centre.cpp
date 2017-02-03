@@ -39,7 +39,7 @@ void CAuditoryCentre::load(SimpleFile *file) {
 }
 
 bool CAuditoryCentre::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_fieldE0 = 1;
+	_canTake = true;
 	setVisible(true);
 	return true;
 }

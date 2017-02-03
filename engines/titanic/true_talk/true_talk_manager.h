@@ -50,7 +50,7 @@ private:
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
 	int _dialogueId;
-	uint _speechDuration;
+	int _speechDuration;
 	TTtalkerList _talkers;
 private:
 	/**

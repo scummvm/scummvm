@@ -55,8 +55,8 @@ bool CRestaurantPanHandler::ArmPickedUpFromTableMsg(CArmPickedUpFromTableMsg *ms
 }
 
 bool CRestaurantPanHandler::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	_destination = _armPickedUp ? _armDestination : _armlessDestination;
-	changeView(_destination);
+	CString clipName = _armPickedUp ? _armDestination : _armlessDestination;
+	changeView(_destination, clipName);
 	return true;
 }
 

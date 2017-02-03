@@ -36,7 +36,7 @@ BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-CStarControl::CStarControl() : _fieldBC(0), _field80B0(0),
+CStarControl::CStarControl() : _fieldBC(0),
 		_starRect(20, 10, 620, 350) {
 	CStarControlSub6::init();
 	CStarControlSub12::init();

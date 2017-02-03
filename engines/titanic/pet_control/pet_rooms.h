@@ -24,8 +24,9 @@
 #define TITANIC_PET_ROOMS_H
 
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 #include "titanic/pet_control/pet_rooms_glyphs.h"
+#include "titanic/game_location.h"
 
 namespace Titanic {
 
@@ -42,13 +43,13 @@ private:
 	CGameObject *_chevRightOnLit;
 	CGameObject *_chevRightOffLit;
 	CPetGfxElement _plinth;
-	CPetText _text;
+	CTextControl _text;
 	int _floorNum;
 	int _elevatorNum;
 	int _roomNum;
 	int _field1CC;
 	int _wellEntry;
-	int _field1D4;
+	bool _elevatorBroken;
 private:
 	/**
 	 * Setup the control
@@ -140,7 +141,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText();
+	virtual CTextControl *getText();
 
 	/**
 	 * Special retrieval of glyph background image
@@ -155,12 +156,12 @@ public:
 	/**
 	 * Gives the player a new assigned room in the specified passenger class
 	 */
-	void reassignRoom(int passClassNum);
+	void reassignRoom(PassengerClass passClassNum);
 
 	/**
 	 * Change the current location passenger class
 	 */
-	bool changeLocationClass(int newClassNum);
+	bool changeLocationClass(PassengerClass newClassNum);
 
 	/**
 	 * Returns true if a room glyph exists with the given flags
@@ -211,7 +212,7 @@ public:
 	 */
 	int getWellEntry() const { return _wellEntry; }
 
-	void set1D4(int val) { _field1D4 = val; }
+	void setElevatorBroken(bool flag) { _elevatorBroken = flag; }
 };
 
 } // End of namespace Titanic

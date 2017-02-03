@@ -55,7 +55,6 @@ GameLoader::GameLoader() {
 	_inputController = new InputController();
 
 	_gameProject = 0;
-	_gameName = 0;
 
 	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
 	insertMessageHandler(global_messageHandler3, 0, 128);
@@ -78,7 +77,6 @@ GameLoader::GameLoader() {
 }
 
 GameLoader::~GameLoader() {
-	free(_gameName);
 	delete _gameProject;
 	delete _interactionController;
 	delete _inputController;
@@ -112,7 +110,7 @@ bool GameLoader::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "GameLoader::load()");
 
 	_gameName = file.readPascalString();
-	debugC(1, kDebugLoading, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName.c_str());
 
 	_gameProject = new GameProject();
 
@@ -125,7 +123,7 @@ bool GameLoader::load(MfcArchive &file) {
 	}
 
 	_gameName = file.readPascalString();
-	debugC(1, kDebugLoading, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName.c_str());
 
 	_inventory.load(file);
 
@@ -353,6 +351,10 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 	}
 
 	return true;
+}
+
+void GameLoader::addPreloadItem(PreloadItem *item) {
+	_preloadItems.push_back(new PreloadItem(*item));
 }
 
 bool GameLoader::preloadScene(int sceneId, int entranceId) {

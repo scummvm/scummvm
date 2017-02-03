@@ -36,24 +36,30 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack(uint idx) {
 	return *track;
 }
 
-AVISurface::AVISurface(const CResourceKey &key) {
+AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
 	_framePixels = nullptr;
+	_priorFrameTime = 0;
 
 	// Reset current frame. We need to keep track of frames separately from the decoder,
 	// since it needs to be able to go beyond the frame count or to negative to allow
 	// correct detection of when range playbacks have finished
 	_currentFrame = -1;
+	_priorFrame = -1;
 	_isReversed = false;
 
 	// Create a decoder
 	_decoder = new AVIDecoder(Audio::Mixer::kPlainSoundType);
-	if (!_decoder->loadFile(key.getString()))
+	if (!_decoder->loadFile(_movieName))
 		error("Could not open video - %s", key.getString().c_str());
 
 	_streamCount = _decoder->videoTrackCount();
+
+	_soundManager = nullptr;
+	_hasAudio = false;
+	_frameRate = 0.0;
 }
 
 AVISurface::~AVISurface() {
@@ -114,6 +120,15 @@ void AVISurface::stop() {
 	_movieRangeInfo.destroyContents();
 }
 
+void AVISurface::pause() {
+	_decoder->pauseVideo(true);
+}
+
+void AVISurface::resume() {
+	if (_decoder->isPaused())
+		_decoder->pauseVideo(false);
+}
+
 bool AVISurface::startAtFrame(int frameNumber) {
 	if (isPlaying())
 		// If it's already playing, then don't allow it
@@ -122,28 +137,35 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	if (frameNumber == -1)
 		// Default to starting frame of first movie range
 		frameNumber = _movieRangeInfo.front()->_startFrame;
-
-	// Get the initial frame
-	seekToFrame(frameNumber);
-	renderFrame();
+	if (_isReversed && frameNumber == (int)_decoder->getFrameCount())
+		--frameNumber;
 
 	// Start the playback
 	_decoder->start();
+
+	// Seek to the starting frame
+	seekToFrame(frameNumber);
+
+	// If we're in reverse playback, set the decoder to play in reverse
+	if (_isReversed)
+		_decoder->setRate(Common::Rational(-1));
+
+	renderFrame();
 
 	return true;
 }
 
 void AVISurface::seekToFrame(uint frameNumber) {
-	if ((int)frameNumber != getFrame()) {
-		_decoder->seekToFrame(frameNumber);
-		_currentFrame = (int)frameNumber;
-	}
+	if (_isReversed && frameNumber == _decoder->getFrameCount())
+		--frameNumber;
 
-	renderFrame();
+	if ((int)frameNumber != _currentFrame) {
+		_decoder->seekToFrame(frameNumber);
+		_currentFrame = _priorFrame = (int)frameNumber;
+	}
 }
 
 void AVISurface::setReversed(bool isReversed) {
-	_decoder->setReverse(isReversed);
 	_isReversed = isReversed;
 }
 
@@ -152,11 +174,12 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 		return true;
 
 	CMovieRangeInfo *info = _movieRangeInfo.front();
+	_priorFrame = _currentFrame;
 	_currentFrame += _isReversed ? -1 : 1;
 
 	int newFrame = _currentFrame;
-	if ((info->_isReversed && newFrame <= info->_endFrame) ||
-		(!info->_isReversed && newFrame >= info->_endFrame)) {
+	if ((info->_isReversed && newFrame < info->_endFrame) ||
+		(!info->_isReversed && newFrame > info->_endFrame)) {
 		if (info->_isRepeat) {
 			newFrame = info->_startFrame;
 		} else {
@@ -165,12 +188,13 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			delete info;
 
 			if (_movieRangeInfo.empty()) {
-				// NO more ranges, so stop playback
+				// No more ranges, so stop playback
 				stop();
 			} else {
 				// Not empty, so move onto new first one
 				info = _movieRangeInfo.front();
 				newFrame = info->_startFrame;
+				setReversed(info->_isReversed);
 			}
 		}
 	}
@@ -178,8 +202,8 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 	if (isPlaying()) {
 		if (newFrame != getFrame()) {
 			// The frame has been changed, so move to new position
-			setReversed(info->_isReversed);
 			seekToFrame(newFrame);
+			renderFrame();
 		}
 
 		// Get any events for the given position
@@ -216,13 +240,11 @@ void AVISurface::setupDecompressor() {
 		return;
 
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		// Setup frame surface
-		_movieFrameSurface[idx] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
-			_decoder->getVideoTrack(idx).getPixelFormat());
-
+		Graphics::PixelFormat format = _decoder->getVideoTrack(idx).getPixelFormat();
+		int decoderPitch = _decoder->getWidth() * format.bytesPerPixel;
 		bool flag = false;
-		if (idx == 0 && _videoSurface &&
-				_videoSurface->getPitch() == _movieFrameSurface[idx]->pitch) {
+
+		if (idx == 0 && _videoSurface && _videoSurface->getPitch() == decoderPitch) {
 			const uint bitCount = _decoder->getVideoTrack(0).getBitCount();
 			const int vDepth = _videoSurface->getPixelDepth();
 
@@ -256,6 +278,40 @@ void AVISurface::setupDecompressor() {
 	}
 }
 
+void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedSurface &dest) {
+	// WORKAROUND: Handle rare cases where frame sizes don't match the video size
+	Common::Rect copyRect(0, 0, MIN(src.w, dest.w), MIN(src.h, dest.h));
+
+	if (src.format.bytesPerPixel == 1) {
+		// Paletted 8-bit, so convert to 16-bit and copy over
+		Graphics::Surface *s = src.convertTo(dest.format, _decoder->getPalette());
+		dest.blitFrom(*s, copyRect, Common::Point(0, 0));
+		s->free();
+		delete s;
+	} else if (src.format.bytesPerPixel == 2) {
+		// Source is already 16-bit, with no alpha, so do a straight copy
+		dest.blitFrom(src, copyRect, Common::Point(0, 0));
+	} else {
+		// Source is 32-bit which may have transparent pixels. Copy over each
+		// pixel, replacing transparent pixels with the special transparency color
+		byte a, r, g, b;
+		assert(src.format.bytesPerPixel == 4 && dest.format.bytesPerPixel == 2);
+		uint16 transPixel = _videoSurface->getTransparencyColor();
+
+		for (uint y = 0; y < MIN(src.h, dest.h); ++y) {
+			const uint32 *pSrc = (const uint32 *)src.getBasePtr(0, y);
+			uint16 *pDest = (uint16 *)dest.getBasePtr(0, y);
+
+			for (uint x = 0; x < MIN(src.w, dest.w); ++x, ++pSrc, ++pDest) {
+				src.format.colorToARGB(*pSrc, a, r, g, b);
+				assert(a == 0 || a == 0xff);
+
+				*pDest = (a == 0) ? transPixel : dest.format.RGBToColor(r, g, b);
+			}
+		}
+	}
+}
+
 uint AVISurface::getWidth() const {
 	return _decoder->getWidth();
 }
@@ -277,8 +333,20 @@ void AVISurface::setFrame(int frameNumber) {
 	renderFrame();
 }
 
-bool AVISurface::isNextFrame() const {
-	return _decoder->getTimeToNextFrame() == 0;
+bool AVISurface::isNextFrame() {
+	if (!_decoder->endOfVideo())
+		return _decoder->getTimeToNextFrame() == 0;
+
+	// We're at the end of the video, so we need to manually
+	// keep track of frame delays. Hardcoded at the moment for 15FPS
+	const uint FRAME_TIME = 1000 / 15;
+	uint32 currTime = g_system->getMillis();
+	if (currTime >= (_priorFrameTime + FRAME_TIME)) {
+		_priorFrameTime = currTime;
+		return true;
+	}
+
+	return false;
 }
 
 bool AVISurface::renderFrame() {
@@ -288,11 +356,23 @@ bool AVISurface::renderFrame() {
 
 	// Make a copy of each decoder's video frame
 	for (int idx = 0; idx < _streamCount; ++idx) {
-		const Graphics::Surface *frame = (idx == 0) ?
-			_decoder->decodeNextFrame() : _decoder->decodeNextTransparency();
+		const Graphics::Surface *frame;
 
-		assert(_movieFrameSurface[idx]->format == frame->format);
-		_movieFrameSurface[idx]->blitFrom(*frame);
+		if (idx == 0) {
+			frame = _decoder->decodeNextFrame();
+			if (!_movieFrameSurface[0])
+				_movieFrameSurface[0] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
+					g_system->getScreenFormat());
+
+			copyMovieFrame(*frame, *_movieFrameSurface[0]);
+		} else {
+			frame = _decoder->decodeNextTransparency();
+			if (!_movieFrameSurface[1])
+				_movieFrameSurface[1] = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
+					Graphics::PixelFormat::createFormatCLUT8());
+
+			_movieFrameSurface[1]->blitFrom(*frame);
+		}
 	}
 
 	if (!_framePixels) {
@@ -304,41 +384,56 @@ bool AVISurface::renderFrame() {
 			_videoSurface->unlock();
 		}
 	} else {
-		// Blit the primary video track's frame to the video surface
-		Graphics::Surface *s = _movieFrameSurface[0]->rawSurface().convertTo(
-			g_system->getScreenFormat(), _decoder->getPalette());
+		const Graphics::Surface &frameSurface = _movieFrameSurface[0]->rawSurface();
 		_videoSurface->lock();
-		_videoSurface->getRawSurface()->blitFrom(*s);
+
+		if (frameSurface.format.bytesPerPixel == 1) {
+			// For paletted 8-bit surfaces, we need to convert it to 16-bit,
+			// since the blitting method we're using doesn't support palettes
+			Graphics::Surface *s = frameSurface.convertTo(g_system->getScreenFormat(),
+				_decoder->getPalette());
+
+			_videoSurface->getRawSurface()->blitFrom(*s);
+			s->free();
+			delete s;
+		} else {
+			_videoSurface->getRawSurface()->blitFrom(frameSurface);
+		}
+
 		_videoSurface->unlock();
-		s->free();
-		delete s;
 	}
 
 	return false;
 }
 
-bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
+bool AVISurface::addEvent(int *frameNumber, CGameObject *obj) {
 	if (!_movieRangeInfo.empty()) {
 		CMovieRangeInfo *tail = _movieRangeInfo.back();
-		if (frameNumber == -1)
-			frameNumber = tail->_startFrame;
+		assert(frameNumber);
+		if (*frameNumber == -1)
+			*frameNumber = tail->_startFrame;
 
 		CMovieEvent *me = new CMovieEvent();
 		me->_type = MET_FRAME;
 		me->_startFrame = 0;
 		me->_endFrame = 0;
-		me->_initialFrame = frameNumber;
+		me->_initialFrame = *frameNumber;
 		me->_gameObject = obj;
 		tail->addEvent(me);
 
-		return _movieRangeInfo.size() == 1 && frameNumber == getFrame();
+		return _movieRangeInfo.size() == 1 && *frameNumber == getFrame();
 	}
 
 	return false;
 }
 
 void AVISurface::setFrameRate(double rate) {
-	_decoder->setRate(Common::Rational((int)rate));
+	// Convert rate from fps to relative to 1.0 (normal speed)
+	const int PRECISION = 10000;
+	double playRate = rate / 15.0;	// Standard 15 FPS
+	Common::Rational pRate((int)(playRate * PRECISION), PRECISION);
+
+	_decoder->setRate(pRate);
 }
 
 Graphics::ManagedSurface *AVISurface::getSecondarySurface() {
@@ -350,7 +445,7 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 		return nullptr;
 	} else {
 		Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(_movieFrameSurface[1]->w,
-			_movieFrameSurface[1]->h, _movieFrameSurface[1]->format);
+			_movieFrameSurface[1]->h, Graphics::PixelFormat::createFormatCLUT8());
 		dest->blitFrom(*_movieFrameSurface[1]);
 		return dest;
 	}
@@ -361,10 +456,12 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_movieFrameSurface[0]->h != r.height();
 
 	startAtFrame(startFrame);
+	_currentFrame = startFrame;
+
 	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
-			_currentFrame = _decoder->getCurFrame();
+			++_currentFrame;
 
 			if (isDifferent) {
 				// Clear the destination area, and use the transBlitFrom method,
@@ -386,6 +483,10 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	}
 
 	stop();
+}
+
+uint AVISurface::getBitDepth() const {
+	return _decoder->getVideoTrack(0).getBitCount();
 }
 
 } // End of namespace Titanic

@@ -33,12 +33,10 @@
 namespace Titanic {
 
 class CTitleEngine;
-class CScriptHandler;
 
 class CScriptHandler {
 private:
 	CTitleEngine *_owner;
-	CExeResources &_resources;
 	int _inputCtr;
 private:
 	void handleWord1(const TTstring *str);

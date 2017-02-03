@@ -87,7 +87,7 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 	if (!_impl)
 		return -1;
 
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	_impl->runSaveSync(ConfMan.hasKey("savepath", target));
 #endif
 

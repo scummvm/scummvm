@@ -27,7 +27,7 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 
-#include "adl/adl_v4.h"
+#include "adl/adl_v5.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
@@ -55,10 +55,10 @@ struct DiskDataDesc {
 	byte volume;
 };
 
-class HiRes6Engine : public AdlEngine_v4 {
+class HiRes6Engine : public AdlEngine_v5 {
 public:
 	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v4(syst, gd),
+			AdlEngine_v5(syst, gd),
 			_boot(nullptr),
 			_currVerb(0),
 			_currNoun(0) {
@@ -68,7 +68,7 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro() const;
+	void runIntro();
 	void init();
 	void initGameState();
 	void printRoomDescription();
@@ -120,7 +120,7 @@ static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte s
 	return new Common::MemoryReadStream(buf, bufSize, DisposeAfterUse::YES);
 }
 
-void HiRes6Engine::runIntro() const {
+void HiRes6Engine::runIntro() {
 	DiskImage *boot(new DiskImage());
 
 	if (!boot->open(disks[0]))
@@ -335,7 +335,7 @@ void HiRes6Engine::showRoom() {
 		if (getVar(26) < 0x80 && getCurRoom().isFirstTime)
 			setVar(26, 0);
 
-		clearScreen();
+		_graphics->clearScreen();
 
 		if (!_state.isDark)
 			redrawPic = true;

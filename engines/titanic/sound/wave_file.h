@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "titanic/sound/audio_buffer.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/dialogue_file.h"
 
@@ -46,9 +47,11 @@ public:
 	~CWaveFile();
 
 	/**
-	 * Returns the duration of the wave file in seconds
+	 * Returns the duration of the wave file
+	 * @returns	Total ticks. Not really sure how ticks
+	 * map to real time
 	 */
-	uint getDuration() const;
+	uint getDurationTicks() const;
 
 	/**
 	 * Return the size of the wave file
@@ -71,6 +74,11 @@ public:
 	bool loadMusic(const CString &name);
 
 	/**
+	 * Tries to load the specified audio buffer
+	 */
+	bool loadMusic(CAudioBuffer *buffer);
+
+	/**
 	 * Returns true if the wave file has data loaded
 	 */
 	bool isLoaded() const { return _stream != nullptr; }
@@ -79,6 +87,11 @@ public:
 	 * Return the frequency of the loaded wave file
 	 */
 	uint getFrequency() const;
+
+	/**
+	 * Resets the music stream
+	 */
+	void reset();
 };
 
 } // End of namespace Titanic

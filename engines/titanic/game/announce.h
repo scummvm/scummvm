@@ -35,7 +35,7 @@ class CAnnounce : public CGameObject {
 private:
 	int _nameIndex;
 	int _soundHandle;
-	bool _leaveFlag;
+	bool _notActivatedFlag;
 	bool _enabled;
 public:
 	CLASSDEF;

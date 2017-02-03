@@ -121,7 +121,7 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
 	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
-	// Line thickness is expected to be 2 * thickness + 1
+	// Line thickness is expected to be 2n + 1
 	thickness = (MAX<uint8>(1, thickness) - 1) | 1;
 	const uint8 halfThickness = thickness >> 1;
 
@@ -130,8 +130,8 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 
 	outRect.left   = MIN<int16>(startPoint.x, endPoint.x);
 	outRect.top    = MIN<int16>(startPoint.y, endPoint.y);
-	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1 + 1;	// rect lower edge + thickness offset
-	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1 + 1;	// rect lower edge + thickness offset
+	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1;
+	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1;
 
 	outRect.grow(halfThickness);
 	outRect.clip(Common::Rect(scriptWidth, scriptHeight));

@@ -25,7 +25,7 @@
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/pet_control/pet_text.h"
+#include "titanic/gfx/text_control.h"
 
 namespace Titanic {
 
@@ -35,7 +35,7 @@ class CPetSaveGlyphs : public CPetGlyphs {
 class CPetRealLife : public CPetSection {
 private:
 	CPetGlyphs _glyphs;
-	CPetText _text;
+	CTextControl _text;
 private:
 	/**
 	 * Does setup
@@ -87,11 +87,6 @@ public:
 	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
 
 	/**
-	 * Display a message
-	 */
-	virtual void displayMessage(const CString &msg) {}
-
-	/**
 	 * Returns true if the object is in a valid state
 	 */
 	virtual bool isValid(CPetControl *petControl);
@@ -129,7 +124,7 @@ public:
 	/**
 	 * Get a reference to the tooltip text associated with the section
 	 */
-	virtual CPetText *getText() { return &_text; }
+	virtual CTextControl *getText() { return &_text; }
 
 };
 

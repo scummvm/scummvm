@@ -87,7 +87,7 @@ class Scene : public Background {
 	void objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst = false);
 #else
 	template<typename T>
-	void objectList_sortByPriority(Common::Array<T*> &list, int startIndex = 0);
+	void objectList_sortByPriority(Common::Array<T*> &list, uint startIndex = 0);
 #endif
 };
 

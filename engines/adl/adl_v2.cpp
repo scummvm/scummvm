@@ -182,31 +182,30 @@ Common::String AdlEngine_v2::loadMessage(uint idx) const {
 
 void AdlEngine_v2::printString(const Common::String &str) {
 	Common::String s(str);
-	byte endPos = TEXT_WIDTH - 1;
-	byte pos = 0;
+	uint endPos = TEXT_WIDTH - 1;
+	uint startPos = 0;
+	uint pos = 0;
 
-	while (true) {
-		while (pos <= endPos && pos != s.size()) {
-			s.setChar(APPLECHAR(s[pos]), pos);
-			++pos;
+	while (pos < s.size()) {
+		s.setChar(APPLECHAR(s[pos]), pos);
+
+		if (pos == endPos) {
+			while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r')) {
+				if (pos-- == startPos)
+					error("Word wrapping failed");
+			}
+
+			s.setChar(APPLECHAR('\r'), pos);
+			endPos = pos + TEXT_WIDTH;
+			startPos = pos + 1;
 		}
 
-		if (pos == s.size())
-			break;
-
-		while (s[pos] != APPLECHAR(' ') && s[pos] != APPLECHAR('\r'))
-			--pos;
-
-		s.setChar(APPLECHAR('\r'), pos);
-		endPos = pos + TEXT_WIDTH;
 		++pos;
 	}
 
-	pos = 0;
-	while (pos != s.size()) {
+	for (pos = 0; pos < s.size(); ++pos) {
 		checkTextOverflow(s[pos]);
 		_display->printChar(s[pos]);
-		++pos;
 	}
 
 	checkTextOverflow(APPLECHAR('\r'));
@@ -245,6 +244,8 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 		stream->seek(commandOffset);
 		readCommands(*stream, _roomData.commands);
 	}
+
+	applyRoomWorkarounds(roomNr);
 }
 
 void AdlEngine_v2::showRoom() {
@@ -254,7 +255,7 @@ void AdlEngine_v2::showRoom() {
 
 	if (_state.room != _roomOnScreen) {
 		loadRoom(_state.room);
-		clearScreen();
+		_graphics->clearScreen();
 
 		if (!_state.isDark)
 			redrawPic = true;
@@ -286,31 +287,33 @@ void AdlEngine_v2::showRoom() {
 	_linesPrinted = 0;
 }
 
+// TODO: Merge this into AdlEngine?
 void AdlEngine_v2::takeItem(byte noun) {
 	Common::List<Item>::iterator item;
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
-		if (item->noun != noun || item->room != _state.room)
-			continue;
+		if (item->noun == noun && item->room == _state.room && item->region == _state.region) {
+			if (item->state == IDI_ITEM_DOESNT_MOVE) {
+				printMessage(_messageIds.itemDoesntMove);
+				return;
+			}
 
-		if (item->state == IDI_ITEM_DOESNT_MOVE) {
-			printMessage(_messageIds.itemDoesntMove);
-			return;
-		}
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			item->room = IDI_ANY;
-			_itemRemoved = true;
-			return;
-		}
-
-		Common::Array<byte>::const_iterator pic;
-		for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-			if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+			if (item->state == IDI_ITEM_DROPPED) {
 				item->room = IDI_ANY;
 				_itemRemoved = true;
-				item->state = IDI_ITEM_DROPPED;
 				return;
+			}
+
+			Common::Array<byte>::const_iterator pic;
+			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+					if (!isInventoryFull()) {
+						item->room = IDI_ANY;
+						_itemRemoved = true;
+						item->state = IDI_ITEM_DROPPED;
+					}
+					return;
+				}
 			}
 		}
 	}
@@ -323,24 +326,20 @@ void AdlEngine_v2::drawItems() {
 
 	for (item = _state.items.begin(); item != _state.items.end(); ++item) {
 		// Skip items not in this room
-		if (item->room != _state.room)
-			continue;
+		if (item->region == _state.region && item->room == _state.room && !item->isOnScreen) {
+			if (item->state == IDI_ITEM_DROPPED) {
+				// Draw dropped item if in normal view
+				if (getCurRoom().picture == getCurRoom().curPicture)
+					drawItem(*item, _itemOffsets[_itemsOnScreen++]);
+			} else {
+				// Draw fixed item if current view is in the pic list
+				Common::Array<byte>::const_iterator pic;
 
-		if (item->isOnScreen)
-			continue;
-
-		if (item->state == IDI_ITEM_DROPPED) {
-			// Draw dropped item if in normal view
-			if (getCurRoom().picture == getCurRoom().curPicture)
-				drawItem(*item, _itemOffsets[_itemsOnScreen++]);
-		} else {
-			// Draw fixed item if current view is in the pic list
-			Common::Array<byte>::const_iterator pic;
-
-			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == _state.curPicture || *pic == IDI_ANY) {
-					drawItem(*item, item->position);
-					break;
+				for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
+					if (*pic == _state.curPicture || *pic == IDI_ANY) {
+						drawItem(*item, item->position);
+						break;
+					}
 				}
 			}
 		}
@@ -367,12 +366,13 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 void AdlEngine_v2::loadItems(Common::ReadStream &stream) {
 	byte id;
 	while ((id = stream.readByte()) != 0xff && !stream.eos() && !stream.err()) {
-		Item item = Item();
+		Item item;
+
 		item.id = id;
 		item.noun = stream.readByte();
 		item.room = stream.readByte();
 		item.picture = stream.readByte();
-		item.isLineArt = stream.readByte(); // Disk number in later games
+		item.region = stream.readByte();
 		item.position.x = stream.readByte();
 		item.position.y = stream.readByte();
 		item.state = stream.readByte();

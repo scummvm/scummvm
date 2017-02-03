@@ -564,6 +564,11 @@ protected:
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile) = 0;
 
 	/**
+	 * Decodes optional transparency data within Indeo frames
+	 */
+	virtual void decodeTransparency() {}
+
+	/**
 	 * Decodes the Indeo frame from the bit reader already
 	 * loaded into the context
 	 */
@@ -574,7 +579,7 @@ protected:
 	 */
 	int scaleMV(int mv, int mvScale);
 public:
-	IndeoDecoderBase(uint16 width, uint16 height);
+	IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel);
 	virtual ~IndeoDecoderBase();
 };
 
