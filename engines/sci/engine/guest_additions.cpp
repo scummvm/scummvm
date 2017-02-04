@@ -513,10 +513,17 @@ void GuestAdditions::restoreFromLauncher() const {
 			return;
 		}
 
-		// When `Game::restore` is invoked, it will call to `Restore::doit`
-		// which will automatically return the `_delayedRestoreGameId` instead
-		// of prompting the user for a save game
-		invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+		if (g_sci->getGameId() == GID_SHIVERS) {
+			// Shivers accepts the save game number as a parameter to
+			// `SHIVERS::restore`
+			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };
+			invokeSelector(g_sci->getGameObject(), SELECTOR(restore), 1, args);
+		} else {
+			// When `Game::restore` is invoked, it will call to `Restore::doit`
+			// which will automatically return the `_delayedRestoreGameId` instead
+			// of prompting the user for a save game
+			invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+		}
 	} else {
 #else
 	{

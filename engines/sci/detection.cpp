@@ -887,7 +887,6 @@ bool SciEngine::canLoadGameStateCurrently() {
 	const Common::String &guiOptions = ConfMan.get("guioptions");
 	if (getSciVersion() >= SCI_VERSION_2) {
 		if (ConfMan.getBool("originalsaveload") ||
-			!Common::checkGameGUIOption(GAMEOPTION_ORIGINAL_SAVELOAD, guiOptions) ||
 			Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, guiOptions)) {
 
 			return false;
