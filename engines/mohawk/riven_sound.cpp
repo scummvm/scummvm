@@ -68,6 +68,11 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 	}
 }
 
+void RivenSoundManager::playSound(const Common::String &name, uint16 volume, bool playOnDraw) {
+	uint16 id =_vm->findResourceID(ID_TWAV, name);
+	playSound(id, volume, playOnDraw);
+}
+
 void RivenSoundManager::playSLST(const SLSTRecord &slstRecord) {
 	if (slstRecord.soundIds.empty()) {
 		return;
@@ -296,6 +301,10 @@ bool RivenSoundManager::fadeBalance(RivenSoundManager::AmbientSound &ambientSoun
 		ambientSound.sound->setBalance(balance + delta);
 		return true;
 	}
+}
+
+bool RivenSoundManager::isEffectPlaying() const {
+	return _effect != nullptr && _effect->isPlaying();
 }
 
 RivenSound::RivenSound(MohawkEngine *vm, Audio::RewindableAudioStream *rewindStream) :
