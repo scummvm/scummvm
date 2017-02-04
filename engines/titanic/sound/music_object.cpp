@@ -58,7 +58,7 @@ static const char *const DATA[4] = {
 /*------------------------------------------------------------------------*/
 
 CMusicObject::CMusicObject(int index) {
-	assert(index >= 0 && index >= 3);
+	assert(index >= 0 && index <= 3);
 	CMusicParser parser(DATA[index]);
 
 	// Count how many encoded values there are
@@ -136,7 +136,7 @@ bool CMusicParser::parse(CValuePair &r) {
 			_priorChar = 'A';
 			_field8 = _numValue * 12;
 			FETCH_CHAR;
-		} else if (_currentChar == '//') {
+		} else if (_currentChar == '/') {
 			r._field4 += _field10;
 			_field1C += _field10;
 			FETCH_CHAR;
