@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-01-31 18:17+0100\n"
-"PO-Revision-Date: 2017-01-25 21:31+0000\n"
+"PO-Revision-Date: 2017-02-04 10:14+0000\n"
 "Last-Translator: Purple T <zeonk@hotmail.com>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1330,7 +1330,7 @@ msgstr "Indique le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 #: gui/options.cpp:1979
 #, c-format
 msgid "%llu bytes"
-msgstr "%llu bytes"
+msgstr "%llu octets"
 
 #: gui/options.cpp:1987
 msgid "<right now>"
