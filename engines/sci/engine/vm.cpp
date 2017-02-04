@@ -1114,6 +1114,8 @@ void run_vm(EngineState *s) {
 
 		case op_rest: // 0x2c (44)
 			// Pushes all or part of the parameter variable list on the stack
+			// Index 0 is argc, so normally this will be called as &rest 1 to
+			// forward all the arguments.
 			temp = (uint16) opparams[0]; // First argument
 			s->r_rest = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
