@@ -899,10 +899,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (_vm->getVersion() >= 4 && !isButtonLabel) height = textCast->initialRect.bottom;
 	height += textShadow;
 
-	// WORKAROUND: TODO: Check what is the actual size in the original
-	//  4 is for the horizontal bars space, 1 on the left edge, 2 on the right edge
-	int width = _sprites[spriteId]->_width - 7;
-	if (_vm->getVersion() >= 4 && !isButtonLabel) width = textCast->initialRect.right;
+	int width = _sprites[spriteId]->_width;
+
+	if (_vm->getVersion() >= 4 && !isButtonLabel)
+		width = textCast->initialRect.right;
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
 		// We need to make sure that teh Shared Cast fonts have been loaded in?
