@@ -73,21 +73,20 @@ CMusicObject::CMusicObject(int index) {
 	for (int idx = 0; idx < count; ++idx)
 		parser.parse(_data[idx]);
 
-	_field8 = 0x7FFFFFFF;
-	uint val = 0x80000000;
+	_minVal = 0x7FFFFFFF;
+	int maxVal = -0x7FFFFFFF;
 
 	for (int idx = 0; idx < count; ++idx) {
 		CValuePair &vp = _data[idx];
 		if (vp._field0 != 0x7FFFFFFF) {
-			if (vp._field0 < _field8)
-				_field8 = vp._field0;
-			if (vp._field0 > val)
-				val = vp._field0;
+			if (vp._field0 < _minVal)
+				_minVal = vp._field0;
+			if (vp._field0 > maxVal)
+				maxVal = vp._field0;
 		}
 	}
 
-	val -= _field8;
-	_fieldC = val;
+	_range = maxVal - _minVal;
 }
 
 CMusicObject::~CMusicObject() {

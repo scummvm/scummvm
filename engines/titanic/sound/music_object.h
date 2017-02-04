@@ -29,16 +29,16 @@
 namespace Titanic {
 
 struct CValuePair {
-	uint _field0;
-	uint _field4;
+	int _field0;
+	int _field4;
 	CValuePair() : _field0(0), _field4(0) {}
 };
 
 class CMusicObject {
 public:
 	Common::Array<CValuePair> _data;
-	uint _field8;
-	uint _fieldC;
+	int _minVal;
+	int _range;
 public:
 	CMusicObject(int index);
 	~CMusicObject();
