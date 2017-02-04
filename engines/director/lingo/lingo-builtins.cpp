@@ -755,7 +755,10 @@ void Lingo::b_printFrom(int nargs) {
 }
 
 void Lingo::b_quit(int nargs) {
-	warning("STUB: b_quit");
+	if (g_director->_currentScore)
+		g_director->_currentScore->_stopPlay = true;
+
+	g_lingo->pushVoid();
 }
 
 void Lingo::b_restart(int nargs) {
