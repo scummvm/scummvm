@@ -150,11 +150,11 @@ bool CMusicParser::parse(CValuePair &r) {
 			if (_flag)
 				break;
 			
+			_flag = true;
 			r._field0 = 0x7FFFFFFF;
 			r._field4 = _field10;
 			_field14 = 0;
 			_field1C += _field10;
-			_field10 = 1;
 			FETCH_CHAR;
 		} else if (_currentChar == '|') {
 			_field1C = 0;

@@ -31,6 +31,7 @@ namespace Titanic {
 struct CValuePair {
 	uint _field0;
 	uint _field4;
+	CValuePair() : _field0(0), _field4(0) {}
 };
 
 class CMusicObject {
