@@ -47,7 +47,7 @@ void CMusicWave::deinit() {
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
 		_soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
-	_field20 = _field24 = 0;
+	_floatVal = 0.0;
 	_field34 = -1;
 	_field38 = 0;
 	_field3C = 0;
@@ -61,8 +61,7 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Piano Mouth"));
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Piano Left Arm"));
 		_gameObjects[3] = static_cast<CGameObject *>(_project->findByName("Piano Right Arm"));
-		_field20 = 0xCCCCCCCD;
-		_field24 = 0x3FDCCCCC;
+		_floatVal = 0.45;
 		break;
 
 	case MV_BASS:
@@ -71,15 +70,14 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 
 	case MV_BELLS:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Tubular Bells"));
-		_field20 = 0x9999999A;
-		_field24 = 0x3FD99999;
+		_floatVal = 0.4;
+		break;
 	
 	case MV_SNAKE:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake Hammer"));
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake Glass"));
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake Head"));
-		_field20 = 0x5C28F5C3;
-		_field24 = 0x3FC5C28F;
+		_floatVal = 0.17;
 		break;
 	}
 }
@@ -158,13 +156,11 @@ void CMusicWave::start(int val) {
 			case 60:
 				_gameObjects[0]->movieSetAudioTiming(true);
 				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
-				_field20 = 0x33333333;
-				_field24 = 0x3FE33333;
+				_floatVal = 0.6;
 
 			case 62:
 				_gameObjects[0]->playMovie(828, 1023, MOVIE_STOP_PREVIOUS);
-				_field20 = 0x33333333;
-				_field24 = 0x3FD33333;
+				_floatVal = 0.3;
 				break;
 
 			case 63:

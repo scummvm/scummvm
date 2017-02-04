@@ -51,14 +51,6 @@ class CMusicRoomHandler {
 		Object3() : _field0(nullptr), _field4(0) {}
 		~Object3() { delete[] _field0; }
 	};
-
-	struct Array5Entry {
-		int _v1;
-		int _v2;
-		Array5Entry() : _v1(0), _v2(0) {}
-
-		void clear() { _v1 = _v2 = 0; }
-	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
@@ -67,7 +59,7 @@ private:
 	MusicRoomInstrument _array2[4];
 	Object3 *_array3[4];
 	int _array4[4];
-	Array5Entry _array5[4];
+	double _array5[4];
 	int _array6[4];
 
 	bool _active;
@@ -85,6 +77,7 @@ private:
 	void updateAudio();
 	void fn1();
 	bool fn2();
+	double fn3(int index, int val);
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();

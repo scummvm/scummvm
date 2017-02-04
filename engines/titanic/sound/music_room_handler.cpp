@@ -37,6 +37,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	for (int idx = 0; idx < 4; ++idx)
 		_array3[idx] = new Object3();
 	Common::fill(&_array4[0], &_array4[4], 0);
+	Common::fill(&_array5[0], &_array5[4], 0.0);
 	Common::fill(&_array6[0], &_array6[4], 0);
 
 	_audioBuffer = new CAudioBuffer(176400);
@@ -87,7 +88,7 @@ void CMusicRoomHandler::setVolume(int volume) {
 		}
 
 		_array6[idx] = _array4[idx];
-		_array5[idx].clear();
+		_array5[idx] = 0.0;
 	}
 
 	_field108 = 4;
@@ -236,6 +237,7 @@ void CMusicRoomHandler::fn1() {
 		for (int idx = 0; idx < 4; ++idx) {
 			MusicRoomInstrument &ins1 = _array1[idx];
 			MusicRoomInstrument &ins2 = _array2[idx];
+			CMusicWave *musicWave = _musicWaves[idx];
 
 			// Is this about checking playback position?
 			if (_array6[idx] < 0 || ins1._muteControl || _array6[idx] >= _array3[idx]->_field4) {
@@ -243,7 +245,14 @@ void CMusicRoomHandler::fn1() {
 				continue;
 			}
 
-			// TODO
+			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
+			double val = (double)ticks * 0.001 - 0.6;
+
+			if (val >= musicWave->_floatVal) {
+				_array5[idx] += fn3(idx, _array6[idx]);
+
+				// TODO
+			}
 		}
 	}
 }
@@ -251,6 +260,11 @@ void CMusicRoomHandler::fn1() {
 bool CMusicRoomHandler::fn2() {
 	// TODO
 	return false;
+}
+
+double CMusicRoomHandler::fn3(int index, int val) {
+	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic

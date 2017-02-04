@@ -52,8 +52,6 @@ private:
 	MusicWaveInstrument _instrument;
 	CProjectItem *_project;
 	CGameObject *_gameObjects[4];
-	int _field20;
-	int _field24;
 	int _field34;
 	int _field38;
 	int _field3C;
@@ -65,6 +63,8 @@ private:
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
 	 */
 	CWaveFile *createWaveFile(const CString &name);
+public:
+	double _floatVal;
 public:
 	/**
 	 * Handles initialization of static fields
