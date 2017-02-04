@@ -123,7 +123,7 @@ public:
 	 * @param size size of the font
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
-	const char *getFontName(int id, int size, int slant = kMacFontRegular);
+	const char *getFontName(int id, int size, int slant = kMacFontRegular, bool tryGen = false);
 	const char *getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
 
