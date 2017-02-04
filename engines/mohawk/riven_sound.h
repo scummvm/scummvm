@@ -73,12 +73,18 @@ public:
 	 *
 	 * @param id Sound ID in the stack
 	 * @param volume Playback volume, between 0 and 255
-	 * @param playOnDraw Start playing when the current card is drawn instead of immediatly
+	 * @param playOnDraw Start playing when the current card is drawn instead of immediately
 	 */
 	void playSound(uint16 id, uint16 volume = 255, bool playOnDraw = false);
 
+	/** Play an effect sound by its resource name */
+	void playSound(const Common::String &name, uint16 volume = 255, bool playOnDraw = false);
+
 	/** Start playing the scheduled on-draw effect sound, if any. Called by the GraphicsManager. */
 	void triggerDrawSound();
+
+	/** Is an effect sound currently playing? */
+	bool isEffectPlaying() const;
 
 	/** Stop playing the current effect sound, if any */
 	void stopSound();
