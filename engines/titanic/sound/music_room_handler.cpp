@@ -84,7 +84,7 @@ void CMusicRoomHandler::setVolume(int volume) {
 		if (ins1._directionControl == ins2._directionControl) {
 			_array4[idx] = 0;
 		} else {
-			_array4[idx] = _array3[idx]->_field4;
+			_array4[idx] = _array3[idx]->size();
 		}
 
 		_array6[idx] = _array4[idx];
@@ -240,7 +240,7 @@ void CMusicRoomHandler::fn1() {
 			CMusicWave *musicWave = _musicWaves[idx];
 
 			// Is this about checking playback position?
-			if (_array6[idx] < 0 || ins1._muteControl || _array6[idx] >= _array3[idx]->_field4) {
+			if (_array6[idx] < 0 || ins1._muteControl || _array6[idx] >= _array3[idx]->size()) {
 				_array6[idx] = -1;
 				continue;
 			}

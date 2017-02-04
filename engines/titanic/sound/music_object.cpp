@@ -57,12 +57,41 @@ static const char *const DATA[4] = {
 
 /*------------------------------------------------------------------------*/
 
-CMusicObject::CMusicObject(int index) : _data(nullptr), _field4(0) {
+CMusicObject::CMusicObject(int index) {
+	assert(index >= 0 && index >= 3);
+	CMusicParser parser(DATA[index]);
 
+	// Count how many encoded values there are
+	CValuePair r;
+	int count = 0;
+	while (parser.parse(r))
+		++count;
+	assert(count > 0);
+
+	_data.resize(count);
+	parser.reset();
+	for (int idx = 0; idx < count; ++idx)
+		parser.parse(_data[idx]);
+
+	_field8 = 0x7FFFFFFF;
+	uint val = 0x80000000;
+
+	for (int idx = 0; idx < count; ++idx) {
+		CValuePair &vp = _data[idx];
+		if (vp._field0 != 0x7FFFFFFF) {
+			if (vp._field0 < _field8)
+				_field8 = vp._field0;
+			if (vp._field0 > val)
+				val = vp._field0;
+		}
+	}
+
+	val -= _field8;
+	_fieldC = val;
 }
 
 CMusicObject::~CMusicObject() {
-	delete[] _data;
+	_data.clear();
 }
 
 /*------------------------------------------------------------------------*/
@@ -74,7 +103,18 @@ CMusicParser::CMusicParser(const char *str) : _str(str), _strIndex(0),
 		_field1C(0), _currentChar(' '), _numValue(1) {
 }
 
-bool CMusicParser::step(Result &r) {
+void CMusicParser::reset() {
+	_strIndex = 0;
+	_field8 = 0;
+	_field10 = 0;
+	_field14 = 0;
+	_currentChar = ' ';
+	_priorChar = 'A';
+	_numValue = 1;
+	_field1C = 0;
+}
+
+bool CMusicParser::parse(CValuePair &r) {
 	const int INDEXES[8] = { 0, 2, 3, 5, 7, 8, 10, 0 };
 
 	while (_currentChar) {

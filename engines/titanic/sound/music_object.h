@@ -24,23 +24,30 @@
 #define TITANIC_MUSIC_OBJECT_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Titanic {
 
+struct CValuePair {
+	uint _field0;
+	uint _field4;
+};
+
 class CMusicObject {
 public:
-	double *_data;
-	int _field4;
+	Common::Array<CValuePair> _data;
+	uint _field8;
+	uint _fieldC;
 public:
 	CMusicObject(int index);
 	~CMusicObject();
+
+	int size() const { return _data.size(); }
+
+	const CValuePair &operator[](int index) { return _data[index]; }
 };
 
 class CMusicParser {
-	struct Result {
-		int _field0;
-		int _field4;
-	};
 private:
 	const char *_str;
 	uint _strIndex;
@@ -57,7 +64,15 @@ private:
 public:
 	CMusicParser(const char *str);
 
-	bool step(Result &r);
+	/**
+	 * Resets the parser
+	 */
+	void reset();
+
+	/**
+	 * Parses a value from the string
+	 */
+	bool parse(CValuePair &r);
 };
 
 } // End of namespace Titanic
