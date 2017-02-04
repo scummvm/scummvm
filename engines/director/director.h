@@ -107,6 +107,7 @@ public:
 	unsigned char _key;
 	int _keyCode;
 	int _machineType;
+	bool _playbackPaused;
 
 protected:
 	virtual Common::Error run();

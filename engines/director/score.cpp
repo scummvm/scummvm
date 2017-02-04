@@ -994,8 +994,11 @@ void Score::update() {
 		}
 	}
 
-	_currentFrame++;
-	if (_currentFrame >= _frames.size()) return;
+	if (!g_director->_playbackPaused)
+		_currentFrame++;
+
+	if (_currentFrame >= _frames.size())
+		return;
 
 	_frames[_currentFrame]->prepareFrame(this);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
@@ -1030,6 +1033,7 @@ void Score::update() {
 			}
 		}
 	}
+
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
 }
 

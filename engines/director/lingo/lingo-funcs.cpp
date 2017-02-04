@@ -169,6 +169,8 @@ void Lingo::func_mciwait(Common::String &s) {
 }
 
 void Lingo::func_goto(Datum &frame, Datum &movie) {
+	g_director->_playbackPaused = false;
+
 	if (movie.type != VOID) {
 		movie.toString();
 
@@ -221,7 +223,7 @@ void Lingo::func_gotonext() {
 
 	_vm->_currentScore->gotoNext();
 }
-	
+
 void Lingo::func_gotoprevious() {
 	if (!_vm->_currentScore)
 		return;

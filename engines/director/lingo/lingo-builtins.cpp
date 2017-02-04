@@ -681,11 +681,11 @@ void Lingo::b_xFactoryList(int nargs) {
 // Control
 ///////////////////
 void Lingo::b_abort(int nargs) {
-	warning("STUB: b_continue");
+	warning("STUB: b_abort");
 }
 
 void Lingo::b_continue(int nargs) {
-	warning("STUB: b_continue");
+	g_director->_playbackPaused = false;
 }
 
 void Lingo::b_dontPassEvent(int nargs) {
@@ -709,7 +709,9 @@ void Lingo::b_do(int nargs) {
 }
 
 void Lingo::b_pause(int nargs) {
-	warning("STUB: b_pause");
+	g_director->_playbackPaused = true;
+
+	g_lingo->pushVoid();	// Fake value
 }
 
 void Lingo::b_playAccel(int nargs) {
