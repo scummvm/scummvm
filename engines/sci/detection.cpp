@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/ptr.h"
 #include "common/savefile.h"
@@ -883,13 +884,13 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 
 bool SciEngine::canLoadGameStateCurrently() {
 #ifdef ENABLE_SCI32
+	const Common::String &guiOptions = ConfMan.get("guioptions");
 	if (getSciVersion() >= SCI_VERSION_2) {
-		switch (getGameId()) {
-		case GID_PHANTASMAGORIA:
-		case GID_HOYLE5:
+		if (ConfMan.getBool("originalsaveload") ||
+			!Common::checkGameGUIOption(GAMEOPTION_ORIGINAL_SAVELOAD, guiOptions) ||
+			Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, guiOptions)) {
+
 			return false;
-		default:
-			break;
 		}
 	}
 #endif
