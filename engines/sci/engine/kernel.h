@@ -98,6 +98,11 @@ struct SciWorkaroundEntry;	// from workarounds.h
 
 // ---- Kernel signatures -----------------------------------------------------
 
+enum {
+	kScummVMWaitId     = 0xe0,
+	kScummVMSaveLoadId = 0xe1
+};
+
 // internal kernel signature data
 enum {
 	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]

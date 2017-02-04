@@ -704,8 +704,8 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 // Several scripts in Hoyle5 contain a subroutine which spins on kGetTime until
 // a certain number of ticks elapse. Since this wastes CPU and makes ScummVM
 // unresponsive, the kWait kernel function (which was removed in SCI2) is
-// reintroduced at 0x4f in kernel.cpp only for Hoyle5, and the spin subroutines
-// are patched here to call that function instead.
+// reintroduced for Hoyle5, and the spin subroutines are patched here to call
+// that function instead.
 // Applies to at least: English Demo
 static const uint16 hoyle5SignatureSpinLoop[] = {
 	SIG_MAGICDWORD,
@@ -719,10 +719,10 @@ static const uint16 hoyle5SignatureSpinLoop[] = {
 };
 
 static const uint16 hoyle5PatchSpinLoop[] = {
-	0x78,                           // push1
-	0x8f, 0x01,                     // lsp param[1]
-	0x43, 0x4f, PATCH_UINT16(0x02), // callk Wait, $2
-	0x48,                           // ret
+	0x78,                                     // push1
+	0x8f, 0x01,                               // lsp param[1]
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, $2
+	0x48,                                     // ret
 	PATCH_END
 };
 

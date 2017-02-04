@@ -315,10 +315,10 @@ void GuestAdditions::patchGameSaveRestoreSCI16() const {
 
 #ifdef ENABLE_SCI32
 static const byte SRDialogPatch[] = {
-	0x76,                   // push0
-	0x59, 0x00,             // &rest 0
-	0x43, 0x57, 0x00, 0x00, // callk kScummVMSaveLoad, 0
-	0x48                    // ret
+	0x76,                                 // push0
+	0x59, 0x01,                           // &rest 1
+	0x43, kScummVMSaveLoadId, 0x00, 0x00, // callk kScummVMSaveLoad, 0
+	0x48                                  // ret
 };
 
 void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {

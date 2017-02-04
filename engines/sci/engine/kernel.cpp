@@ -905,11 +905,6 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		} else {
 			// Normal SCI2.1 kernel table
 			_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
-
-			// Used by script patcher to remove CPU spinning on kGetTime
-			if (g_sci->getGameId() == GID_HOYLE5) {
-				_kernelNames[0x4f] = "Wait";
-			}
 		}
 		break;
 
@@ -935,6 +930,32 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		// Use default table for the other versions
 		break;
 	}
+
+#ifdef ENABLE_SCI32
+	// Reserve a high range of kernel call IDs (0xe0 to 0xef) that can be used
+	// by ScummVM to improve integration and fix bugs in games that require
+	// more help than can be provided by a simple script patch (e.g. spinloops
+	// in Hoyle5).
+	// Using a new high range instead of just replacing dummied kernel calls in
+	// the normal kernel range is intended to avoid any conflicts with fangames
+	// that might try to add their own kernel calls in the same manner. It also
+	// helps to separate ScummVM interpreter's kernel calls from SSCI's standard
+	// kernel calls.
+	if (getSciVersion() >= SCI_VERSION_2) {
+		const uint kernelListSize = _kernelNames.size();
+		_kernelNames.resize(0xe2);
+		for (uint id = kernelListSize; id < 0xe0; ++id) {
+			_kernelNames[id] = "Dummy";
+		}
+
+		// Used by Hoyle5 script patches to remove CPU spinning on kGetTime
+		// (this repurposes the existing SCI16 kWait call that was removed in SCI32)
+		_kernelNames[kScummVMWaitId] = "Wait";
+
+		// Used by GuestAdditions to support integrated save/load dialogue
+		_kernelNames[kScummVMSaveLoadId] = "ScummVMSaveLoad";
+	}
+#endif
 
 	mapFunctions();
 }

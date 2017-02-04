@@ -1264,7 +1264,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x54*/ "Dummy",
 	/*0x55*/ "DeleteKey",
 	/*0x56*/ "Dummy",
-	/*0x57*/ "ScummVMSaveLoad", // Dummy in SSCI
+	/*0x57*/ "Dummy",
 	/*0x58*/ "ListAt",
 	/*0x59*/ "ListIndexOf",
 	/*0x5a*/ "ListEachElementDo",
@@ -1428,7 +1428,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x54*/ "HaveMouse",
 	/*0x55*/ "SetCursor",
 	/*0x56*/ "VibrateMouse",	// Dummy in SCI3
-	/*0x57*/ "ScummVMSaveLoad", // Dummy in SSCI
+	/*0x57*/ "Dummy",
 	/*0x58*/ "Dummy",
 	/*0x59*/ "Dummy",
 	/*0x5a*/ "List",
