@@ -34,7 +34,7 @@ namespace Mohawk {
 namespace RivenStacks {
 
 TSpit::TSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackTspit) {
+		DomeSpit(vm, kStackTspit, "tsliders.190", "tsliderbg.190") {
 
 	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown);
 	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);

@@ -33,7 +33,7 @@ namespace Mohawk {
 namespace RivenStacks {
 
 GSpit::GSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackGspit) {
+		DomeSpit(vm, kStackGspit, "gsliders.190", "gsliderbg.190") {
 
 	REGISTER_COMMAND(GSpit, xgresetpins);
 	REGISTER_COMMAND(GSpit, xgrotatepins);

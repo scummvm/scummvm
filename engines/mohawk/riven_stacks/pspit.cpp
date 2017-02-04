@@ -31,7 +31,7 @@ namespace Mohawk {
 namespace RivenStacks {
 
 PSpit::PSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackPspit) {
+		DomeSpit(vm, kStackPspit, "psliders.25", "psliderbg.25") {
 
 	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
 	REGISTER_COMMAND(PSpit, xpscpbtn);

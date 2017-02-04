@@ -35,8 +35,10 @@ namespace RivenStacks {
 static const uint32 kDomeSliderDefaultState = 0x01F00000;
 static const uint32 kDomeSliderSlotCount = 25;
 
-DomeSpit::DomeSpit(MohawkEngine_Riven *vm, uint16 id) :
-		RivenStack(vm, id) {
+DomeSpit::DomeSpit(MohawkEngine_Riven *vm, uint16 id, const char *sliderBmpName, const char *sliderBgBmpName) :
+		RivenStack(vm, id),
+		_sliderBmpName(sliderBmpName),
+		_sliderBgBmpName(sliderBgBmpName) {
 	_sliderState = kDomeSliderDefaultState;
 }
 
@@ -204,7 +206,8 @@ void DomeSpit::drawDomeSliders(uint16 startHotspot) {
 		dstAreaRect.translate(-2, 0);
 
 	// Find out bitmap id
-	uint16 bitmapId = _vm->findResourceID(ID_TBMP, "*sliders*");
+	uint16 bitmapId = _vm->findResourceID(ID_TBMP, buildCardResourceName(_sliderBmpName));
+	uint16 bgBitmapId = _vm->findResourceID(ID_TBMP, buildCardResourceName(_sliderBgBmpName));
 
 	for (uint16 i = 0; i < kDomeSliderSlotCount; i++) {
 		RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(startHotspot + i);
@@ -217,10 +220,14 @@ void DomeSpit::drawDomeSliders(uint16 startHotspot) {
 		if (_sliderState & (1 << (24 - i)))
 			_vm->_gfx->drawImageRect(bitmapId, srcRect, dstRect);
 		else
-			_vm->_gfx->drawImageRect(bitmapId + 1, srcRect, dstRect);
+			_vm->_gfx->drawImageRect(bgBitmapId, srcRect, dstRect);
 	}
 
 	_vm->_gfx->updateScreen();
+}
+
+Common::String DomeSpit::buildCardResourceName(const Common::String &name) const {
+	return Common::String::format("%d_%s", _vm->getCard()->getId(), name.c_str());
 }
 
 void DomeSpit::setDomeSliderState(uint32 sliderState) {

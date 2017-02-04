@@ -30,7 +30,7 @@ namespace RivenStacks {
 
 class DomeSpit : public RivenStack {
 public:
-	DomeSpit(MohawkEngine_Riven *vm, uint16 id);
+	DomeSpit(MohawkEngine_Riven *vm, uint16 id, const char *sliderBmpName, const char *sliderBgBmpName);
 
 	uint32 getDomeSliderState() const;
 	void setDomeSliderState(uint32 sliderState);
@@ -43,8 +43,11 @@ protected:
 	void checkSliderCursorChange(uint16 startHotspot);
 	void dragDomeSlider(uint16 soundId, uint16 startHotspot);
 	void drawDomeSliders(uint16 startHotspot);
+	Common::String buildCardResourceName(const Common::String &name) const;
 
 	uint32 _sliderState;
+	Common::String _sliderBmpName;
+	Common::String _sliderBgBmpName;
 };
 
 } // End of namespace RivenStacks

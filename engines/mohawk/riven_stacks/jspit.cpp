@@ -33,7 +33,7 @@ namespace Mohawk {
 namespace RivenStacks {
 
 JSpit::JSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackJspit) {
+		DomeSpit(vm, kStackJspit, "jsliders.190", "jsliderbg.190") {
 
 	REGISTER_COMMAND(JSpit, xreseticons);
 	REGISTER_COMMAND(JSpit, xicon);

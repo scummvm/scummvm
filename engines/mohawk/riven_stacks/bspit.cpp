@@ -33,7 +33,7 @@ namespace Mohawk {
 namespace RivenStacks {
 
 BSpit::BSpit(MohawkEngine_Riven *vm) :
-		DomeSpit(vm, kStackBspit) {
+		DomeSpit(vm, kStackBspit, "bSliders.190", "bSliderBG.190") {
 
 	REGISTER_COMMAND(BSpit, xblabopenbook);
 	REGISTER_COMMAND(BSpit, xblabbookprevpage);
