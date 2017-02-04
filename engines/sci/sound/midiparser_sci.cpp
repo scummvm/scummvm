@@ -653,6 +653,12 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 							if (g_sci->getEngineState()->currentRoomNumber() == 530)
 								skipSignal = false;
 							break;
+#ifdef ENABLE_SCI32
+						case GID_KQ7:
+							if (g_sci->getEngineState()->currentRoomNumber() == 6050) {
+								skipSignal = false;
+							}
+#endif
 						default:
 							break;
 						}
