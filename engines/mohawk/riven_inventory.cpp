@@ -196,7 +196,7 @@ void RivenInventory::backFromItemScript() const {
 	// Return to where we were before entering the book
 	RivenCommand *back = new RivenStackChangeCommand(_vm, backStackId, backCardId, true);
 	RivenScriptPtr backScript = _vm->_scriptMan->createScriptWithCommand(back);
-	_vm->_scriptMan->runScript(backScript, false);
+	_vm->_scriptMan->runScript(backScript, true);
 }
 
 } // End of namespace Mohawk

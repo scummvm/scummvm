@@ -67,6 +67,9 @@ public:
 	void xaenablemenuintro(uint16 argc, uint16 *argv);
 	void xademoquit(uint16 argc, uint16 *argv);
 	void xaexittomain(uint16 argc, uint16 *argv);
+
+private:
+	bool pageTurn(int16 transition);
 };
 
 } // End of namespace RivenStacks

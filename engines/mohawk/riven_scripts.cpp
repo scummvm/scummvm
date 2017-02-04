@@ -41,8 +41,10 @@ static void printTabs(byte tabs) {
 		debugN("\t");
 }
 
-RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) {
-	_vm = vm;
+RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
+		_vm(vm),
+		_runningQueuedScripts(false) {
+
 	_storedMovieOpcode.time = 0;
 	_storedMovieOpcode.id = 0;
 }
@@ -129,6 +131,18 @@ bool RivenScriptManager::hasQueuedScripts() const {
 	return !_queue.empty();
 }
 
+void RivenScriptManager::runQueuedScripts() {
+	_runningQueuedScripts = true;
+
+	for (uint i = 0; i < _queue.size(); i++) {
+		_queue[i]->run();
+	}
+
+	_queue.clear();
+
+	_runningQueuedScripts = false;
+}
+
 RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...) {
 	va_list args;
 	va_start(args, commandCount);
@@ -167,6 +181,10 @@ RivenScriptPtr RivenScriptManager::createScriptWithCommand(RivenCommand *command
 	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
 	script->addCommand(RivenCommandPtr(command));
 	return script;
+}
+
+bool RivenScriptManager::runningQueuedScripts() const {
+	return _runningQueuedScripts;
 }
 
 RivenScript::RivenScript() {
