@@ -76,7 +76,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
-	if (s->_delayedRestoreGame) {
+	if (s->_delayedRestoreGameId != -1) {
 		// delayed restore game from ScummVM menu got triggered
 		gamestate_delayedrestore(s);
 		return NULL_REG;

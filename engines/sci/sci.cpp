@@ -342,9 +342,7 @@ Common::Error SciEngine::run() {
 	// Check whether loading a savestate was requested
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
-		_gamestate->_delayedRestoreGame = true;
 		_gamestate->_delayedRestoreGameId = directSaveSlotLoading;
-		_gamestate->_delayedRestoreFromLauncher = true;
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.

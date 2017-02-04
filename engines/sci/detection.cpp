@@ -853,7 +853,6 @@ void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 
 Common::Error SciEngine::loadGameState(int slot) {
 	_gamestate->_delayedRestoreGameId = slot;
-	_gamestate->_delayedRestoreGame = true;
 	return Common::kNoError;
 }
 

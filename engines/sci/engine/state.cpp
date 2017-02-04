@@ -86,10 +86,7 @@ void EngineState::reset(bool isRestoring) {
 		g_sci->_guestAdditions->reset();
 	}
 
-	// reset delayed restore game functionality
-	_delayedRestoreGame = false;
-	_delayedRestoreGameId = 0;
-	_delayedRestoreFromLauncher = false;
+	_delayedRestoreGameId = -1;
 
 	executionStackBase = 0;
 	_executionStackPosChanged = false;

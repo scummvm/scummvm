@@ -397,7 +397,7 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 
 	s->wait(sleep_time);
 
-	if (s->_delayedRestoreGame) {
+	if (s->_delayedRestoreGameId != -1) {
 		// delayed restore game from ScummVM menu got triggered
 		gamestate_delayedrestore(s);
 		return NULL_REG;

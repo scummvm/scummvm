@@ -143,9 +143,7 @@ public:
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
 	// see detection.cpp / SciEngine::loadGameState()
-	bool _delayedRestoreGame;  // boolean, that triggers delayed restore (triggered by ScummVM menu)
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
-	bool _delayedRestoreFromLauncher; // is set, when the the delayed restore game was triggered from launcher
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 

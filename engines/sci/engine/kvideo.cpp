@@ -110,7 +110,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				skipVideo = true;
 		}
-		if (g_sci->getEngineState()->_delayedRestoreGame)
+		if (g_sci->getEngineState()->_delayedRestoreGameId != -1)
 			skipVideo = true;
 
 		g_system->delayMillis(10);

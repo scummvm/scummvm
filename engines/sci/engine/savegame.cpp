@@ -1276,8 +1276,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
-
-	s->_delayedRestoreFromLauncher = false;
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {
