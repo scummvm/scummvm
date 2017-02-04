@@ -24,6 +24,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/selector.h"
@@ -76,9 +77,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
-	if (s->_delayedRestoreGameId != -1) {
-		// delayed restore game from ScummVM menu got triggered
-		gamestate_delayedrestore(s);
+	if (g_sci->_guestAdditions->kGetEventHook()) {
 		return NULL_REG;
 	}
 

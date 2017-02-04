@@ -126,11 +126,26 @@ public:
 	/**
 	 * Guest additions hook for SegManager::instantiateScript.
 	 */
-	void instantiateScriptHook(Script &script) const;
+	void instantiateScriptHook(Script &script, const bool ignoreDelayedRestore = false) const;
+
+	/**
+	 * Guest additions hook for SegManager::saveLoadWithSerializer.
+	 */
+	void segManSaveLoadScriptHook(Script &script) const;
 #endif
 
+	/**
+	 * Guest additions hook for kGetEvent.
+	 */
+	bool kGetEventHook() const;
+
+	/**
+	 * Guest additions hook for kWait.
+	 */
+	bool kWaitHook() const;
+
 #pragma mark -
-#pragma mark Save & restore
+#pragma mark Integrated save & restore
 
 public:
 	/**
@@ -153,6 +168,16 @@ private:
 	reg_t promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const;
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
 #endif
+
+#pragma mark -
+#pragma mark Restore from launcher
+
+private:
+	/**
+	 * Invokes the game's restore mechanism to load a save game that was
+	 * selected from the ScummVM launcher.
+	 */
+	void restoreFromLauncher() const;
 
 #pragma mark -
 #pragma mark Message type sync

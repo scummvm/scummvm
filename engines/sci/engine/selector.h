@@ -63,6 +63,7 @@ struct SelectorCache {
 	Selector message; ///< Used by GetEvent
 	// edit
 	Selector play; ///< Play function (first function to be called)
+	Selector restore;
 	Selector number;
 	Selector handle;	///< Replaced by nodePtr in SCI1+
 	Selector nodePtr;	///< Replaces handle in SCI1+

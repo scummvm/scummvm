@@ -23,9 +23,11 @@
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
+#include "common/savefile.h"
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #ifdef ENABLE_SCI32
@@ -209,8 +211,16 @@ void GuestAdditions::kDoSoundSetVolumeHook(const reg_t soundObj, const int16 vol
 	}
 }
 
-void GuestAdditions::instantiateScriptHook(Script &script) const {
-	if (getSciVersion() < SCI_VERSION_2 || ConfMan.getBool("originalsaveload")) {
+void GuestAdditions::instantiateScriptHook(Script &script, const bool ignoreDelayedRestore) const {
+	if (getSciVersion() < SCI_VERSION_2) {
+		return;
+	}
+
+	// If there is a delayed restore, we still want to patch the script so
+	// that the automatic return of the game ID works, but we do not want to
+	// patch the scripts that get restored
+	if (ConfMan.getBool("originalsaveload") &&
+		(ignoreDelayedRestore || _state->_delayedRestoreGameId == -1)) {
 		return;
 	}
 
@@ -228,10 +238,30 @@ void GuestAdditions::instantiateScriptHook(Script &script) const {
 	}
 }
 
+void GuestAdditions::segManSaveLoadScriptHook(Script &script) const {
+	instantiateScriptHook(script, true);
+}
+
+bool GuestAdditions::kGetEventHook() const {
+	if (_state->_delayedRestoreGameId != -1) {
+		g_sci->_guestAdditions->restoreFromLauncher();
+		return true;
+	}
+	return false;
+}
+
+bool GuestAdditions::kWaitHook() const {
+	if (_state->_delayedRestoreGameId != -1) {
+		g_sci->_guestAdditions->restoreFromLauncher();
+		return true;
+	}
+	return false;
+}
+
 #endif
 
 #pragma mark -
-#pragma mark Save & restore
+#pragma mark Integrated save & restore
 
 void GuestAdditions::patchGameSaveRestore() const {
 	if (ConfMan.getBool("originalsaveload") || getSciVersion() >= SCI_VERSION_2)
@@ -401,8 +431,12 @@ reg_t GuestAdditions::promptSaveRestoreDefault(EngineState *s, int argc, reg_t *
 			description.fromString(dialog.getResultString());
 		}
 	} else {
-		GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-		saveNo = dialog.runModalWithCurrentTarget();
+		if (s->_delayedRestoreGameId != -1) {
+			saveNo = s->_delayedRestoreGameId;
+		} else {
+			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
+			saveNo = dialog.runModalWithCurrentTarget();
+		}
 	}
 
 	if (saveNo > 0) {
@@ -432,8 +466,12 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 			writeSelector(_segMan, descriptionId, SELECTOR(data), dataId);
 		}
 	} else {
-		GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-		saveNo = dialog.runModalWithCurrentTarget();
+		if (s->_delayedRestoreGameId != -1) {
+			saveNo = s->_delayedRestoreGameId;
+		} else {
+			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
+			saveNo = dialog.runModalWithCurrentTarget();
+		}
 	}
 
 	if (saveNo > 0) {
@@ -455,6 +493,51 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 }
 
 #endif
+
+#pragma mark -
+#pragma mark Restore from launcher
+
+void GuestAdditions::restoreFromLauncher() const {
+	assert(_state->_delayedRestoreGameId != -1);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		// In SQ6, delayed restore should not happen until room 100 (the Sierra
+		// logo & main menu room) is loaded, otherwise the game scripts will try
+		// to make calls to the subtitles window, which does not exist until
+		// after the main menu. The game scripts check if the current room is
+		// 100 and avoids making calls to the subtitles window if it is.
+		if (g_sci->getGameId() == GID_SQ6 &&
+			_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoomNo] != make_reg(0, 100)) {
+
+			return;
+		}
+
+		// When `Game::restore` is invoked, it will call to `Restore::doit`
+		// which will automatically return the `_delayedRestoreGameId` instead
+		// of prompting the user for a save game
+		invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
+	} else {
+#else
+	{
+#endif
+		int savegameId = _state->_delayedRestoreGameId; // delayedRestoreGameId gets destroyed within gamestate_restore()!
+		Common::String fileName = g_sci->getSavegameName(savegameId);
+		Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
+
+		if (in) {
+			// found a savegame file
+			gamestate_restore(_state, in);
+			delete in;
+			if (_state->r_acc != make_reg(0, 1)) {
+				gamestate_afterRestoreFixUp(_state, savegameId);
+				return;
+			}
+		}
+
+		error("Restoring gamestate '%s' failed", fileName.c_str());
+	}
+}
 
 #pragma mark -
 #pragma mark Message type sync

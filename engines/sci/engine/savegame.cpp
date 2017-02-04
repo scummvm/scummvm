@@ -299,7 +299,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 
 			if (s.isLoading() && pass == passes) {
-				g_sci->_guestAdditions->instantiateScriptHook(*scr);
+				g_sci->_guestAdditions->segManSaveLoadScriptHook(*scr);
 			}
 		}
 	}
@@ -1094,24 +1094,6 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 
 extern void showScummVMDialog(const Common::String &message);
 
-void gamestate_delayedrestore(EngineState *s) {
-	int savegameId = s->_delayedRestoreGameId; // delayedRestoreGameId gets destroyed within gamestate_restore()!
-	Common::String fileName = g_sci->getSavegameName(savegameId);
-	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
-
-	if (in) {
-		// found a savegame file
-		gamestate_restore(s, in);
-		delete in;
-		if (s->r_acc != make_reg(0, 1)) {
-			gamestate_afterRestoreFixUp(s, savegameId);
-			return;
-		}
-	}
-
-	error("Restoring gamestate '%s' failed", fileName.c_str());
-}
-
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	switch (g_sci->getGameId()) {
 	case GID_MOTHERGOOSE:
@@ -1255,13 +1237,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
-
-	// SCI32:
-	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
-	// We don't have to do that in here.
-	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
-	// a saved game can't be restored. That way we can restore the game screen.
-	// see _gfxFrameout->syncWithScripts()
 
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)
