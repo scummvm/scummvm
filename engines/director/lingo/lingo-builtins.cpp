@@ -762,11 +762,21 @@ void Lingo::b_quit(int nargs) {
 }
 
 void Lingo::b_restart(int nargs) {
-	warning("STUB: b_restart");
+	if (g_director->_currentScore)
+		g_director->_currentScore->_stopPlay = true;
+
+	g_lingo->pushVoid();
+
+	warning("Computer restarts");
 }
 
 void Lingo::b_shutDown(int nargs) {
-	warning("STUB: b_shutDown");
+	if (g_director->_currentScore)
+		g_director->_currentScore->_stopPlay = true;
+
+	g_lingo->pushVoid();
+
+	warning("Computer shuts down");
 }
 
 void Lingo::b_startTimer(int nargs) {
