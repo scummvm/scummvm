@@ -73,6 +73,8 @@ private:
 	void fn1();
 	bool fn2();
 	double fn3(int index, int val);
+	int getPitch(int index, int arrIndex);
+
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();

@@ -251,7 +251,17 @@ void CMusicRoomHandler::fn1() {
 			if (val >= musicWave->_floatVal) {
 				_array5[idx] += fn3(idx, _array6[idx]);
 
-				//_array3[idx]->_data[_array6[idx]];
+				const CValuePair &vp = (*_array3[idx])[_array6[idx]];
+				if (vp._field0 != 0x7FFFFFFF) {
+					int amount = getPitch(idx, _array6[idx]);
+					_musicWaves[idx]->start(amount);
+				}
+
+				if (ins1._directionControl == ins2._directionControl) {
+					_array6[idx]++;
+				} else {
+					_array6[idx]--;
+				}
 			}
 		}
 	}
@@ -265,6 +275,21 @@ bool CMusicRoomHandler::fn2() {
 double CMusicRoomHandler::fn3(int index, int val) {
 	// TODO
 	return 0;
+}
+
+int CMusicRoomHandler::getPitch(int index, int arrIndex) {
+	const CMusicObject &mObj = *_array3[index];
+	const CValuePair &vp = mObj[arrIndex];
+	int val = vp._field0;
+	const MusicRoomInstrument &ins1 = _array1[index];
+	const MusicRoomInstrument &ins2 = _array2[index];
+
+	if (ins1._inversionControl != ins2._inversionControl) {
+		val -= mObj._minVal * 2 + mObj._range;
+	}
+
+	val += ins1._pitchControl + ins2._pitchControl;
+	return val;
 }
 
 } // End of namespace Titanic

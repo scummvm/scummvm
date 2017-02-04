@@ -45,7 +45,7 @@ public:
 
 	int size() const { return _data.size(); }
 
-	const CValuePair &operator[](int index) { return _data[index]; }
+	const CValuePair &operator[](int index) const { return _data[index]; }
 };
 
 class CMusicParser {
