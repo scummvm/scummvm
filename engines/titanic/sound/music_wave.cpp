@@ -268,4 +268,8 @@ int CMusicWave::setData(const byte *data, int count) {
 	return 0;
 }
 
+void CMusicWave::fn1(int val1, int val2) {
+	// TODO
+}
+
 } // End of namespace Titanic

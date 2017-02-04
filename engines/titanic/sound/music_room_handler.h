@@ -71,8 +71,8 @@ private:
 
 	void updateAudio();
 	void fn1();
-	bool fn2();
-	double fn3(int index, int val);
+	bool fn2(int index);
+	double fn3(int index, int arrIndex);
 	int getPitch(int index, int arrIndex);
 
 public:

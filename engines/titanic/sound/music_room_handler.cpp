@@ -219,7 +219,7 @@ void CMusicRoomHandler::updateAudio() {
 				if (amount > 0) {
 					count -= amount;
 					ptr += amount;
-				} else if (!fn2()) {
+				} else if (!fn2(waveIdx)) {
 					--_field108;
 					break;
 				}
@@ -267,14 +267,56 @@ void CMusicRoomHandler::fn1() {
 	}
 }
 
-bool CMusicRoomHandler::fn2() {
-	// TODO
-	return false;
+bool CMusicRoomHandler::fn2(int index) {
+	int &arrIndex = _array4[index];
+	if (arrIndex < 0) {
+		_musicWaves[index]->reset();
+		return false;
+	}
+
+	const CMusicObject &mObj = *_array3[index];
+	if (arrIndex >= mObj.size()) {
+		arrIndex = -1;
+		_musicWaves[index]->reset();
+		return false;
+	}
+
+	const CValuePair &vp = mObj[arrIndex];
+	int freq = static_cast<int>(fn3(index, arrIndex) * 44100.0) & ~1;
+
+	if (vp._field0 == 0x7FFFFFFF || _array1[index]._muteControl)
+		_musicWaves[index]->setState(freq);
+	else
+		_musicWaves[index]->fn1(getPitch(index, arrIndex), freq);
+
+	if (_array1[index]._directionControl == _array2[index]._directionControl) {
+		++arrIndex;
+	} else {
+		--arrIndex;
+	}
+
+	return true;
 }
 
-double CMusicRoomHandler::fn3(int index, int val) {
-	// TODO
-	return 0;
+double CMusicRoomHandler::fn3(int index, int arrIndex) {
+	const CValuePair &vp = (*_array3[index])[arrIndex];
+
+	switch (_array1[index]._speedControl + _array2[index]._speedControl + 3) {
+	case 0:
+		return (double)vp._field4 * 1.5 * 0.0625 * 0.46875;
+	case 1:
+		return (double)vp._field4 * 1.33 * 0.0625 * 0.46875;
+	case 2:
+		return (double)vp._field4 * 1.25 * 0.0625 * 0.46875;
+	case 4:
+		return (double)vp._field4 * 0.75 * 0.0625 * 0.46875;
+	case 5:
+		return (double)vp._field4 * 0.67 * 0.0625 * 0.46875;
+	case 6:
+		return (double)vp._field4 * 0.5 * 0.0625 * 0.46875;
+	default:
+		return (double)vp._field4 * 1.0 * 0.0625 * 0.46875;
+	}
 }
 
 int CMusicRoomHandler::getPitch(int index, int arrIndex) {
