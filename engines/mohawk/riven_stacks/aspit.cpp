@@ -99,44 +99,79 @@ void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
 	_vm->_inventory->backFromItemScript();
 }
 
+bool ASpit::pageTurn(int16 transition) {
+	// Wait until the previous page turn sound completes
+	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
+		if (!mouseIsDown()) {
+			return false;
+		}
+
+		_vm->doFrame();
+	}
+
+	// Play the page turning sound
+	const char *soundName = nullptr;
+	if (_vm->_rnd->getRandomBit())
+		soundName = "aPage1";
+	else
+		soundName = "aPage2";
+
+	Common::String fullSoundName = Common::String::format("%d_%s_1", _vm->getCard()->getId(), soundName);
+
+	_vm->_sound->playSound(fullSoundName, 51, true);
+
+	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(transition);
+
+	return true;
+}
+
 void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["aatruspage"];
 
-	// Decrement the page if it's not the first page
-	if (page == 1)
-		return;
-	page--;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while (mouseIsDown() || firstPageTurn) {
+		// Check for the first page
+		if (page == 1)
+			return;
 
-	// Play the page turning sound
-	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(4);
-	else
-		_vm->_sound->playSound(3);
+		if (!pageTurn(1)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(1);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page--;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+		_vm->doFrame();
+	}
 }
 
 void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 &page = _vm->_vars["aatruspage"];
 
-	// Increment the page if it's not the last page
-	if (((_vm->getFeatures() & GF_DEMO) && page == 6) || page == 10)
-		return;
-	page++;
+	// Keep turning pages while the mouse is pressed
+	bool firstPageTurn = true;
+	while ((mouseIsDown() || firstPageTurn) && !_vm->shouldQuit()) {
+		// Check for the last page
+		if (((_vm->getFeatures() & GF_DEMO) && page == 6) || page == 10)
+			return;
 
-	// Play the page turning sound
-	if (_vm->getFeatures() & GF_DEMO)
-		_vm->_sound->playSound(5);
-	else
-		_vm->_sound->playSound(4);
+		if (!pageTurn(0)) {
+			return;
+		}
 
-	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(0);
-	_vm->getCard()->drawPicture(page);
+		// Update the page number
+		page++;
+		firstPageTurn = false;
+
+		_vm->getCard()->drawPicture(page);
+		_vm->doFrame();
+	}
 }
 
 void ASpit::xacathopenbook(uint16 argc, uint16 *argv) {

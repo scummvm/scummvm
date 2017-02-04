@@ -120,6 +120,8 @@ public:
 	/** Handle a mouse move event */
 	void onMouseMove(const Common::Point &mouse);
 
+	bool mouseIsDown() const;
+
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
 

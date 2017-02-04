@@ -234,7 +234,7 @@ void RivenStack::onMouseDown(const Common::Point &mouse) {
 		RivenScriptPtr script = _vm->getCard()->onMouseDown(mouse);
 
 		if (!script->empty()) {
-			_vm->_scriptMan->runScript(script, false);
+			_vm->_scriptMan->runScript(script, true);
 		}
 	}
 }
@@ -247,7 +247,7 @@ void RivenStack::onMouseUp(const Common::Point &mouse) {
 		RivenScriptPtr script = _vm->getCard()->onMouseUp(mouse);
 
 		if (!script->empty()) {
-			_vm->_scriptMan->runScript(script, false);
+			_vm->_scriptMan->runScript(script, true);
 		}
 	}
 }
@@ -259,9 +259,13 @@ void RivenStack::onMouseMove(const Common::Point &mouse) {
 		RivenScriptPtr script = _vm->getCard()->onMouseMove(mouse);
 
 		if (!script->empty()) {
-			_vm->_scriptMan->runScript(script, false);
+			_vm->_scriptMan->runScript(script, true);
 		}
 	}
+}
+
+bool RivenStack::mouseIsDown() const {
+	return _mouseIsDown;
 }
 
 RivenNameList::RivenNameList() {

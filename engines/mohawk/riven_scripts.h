@@ -118,7 +118,7 @@ typedef Common::Array<RivenTypedScript> RivenScriptList;
  * Script manager
  *
  * Reads scripts from raw data.
- * Can run scripts immediatly, or store them for future execution.
+ * Can run scripts immediately, or store them for future execution.
  */
 class RivenScriptManager {
 public:
@@ -147,6 +147,11 @@ public:
 	/** Are scripts running in the background */
 	bool hasQueuedScripts() const;
 
+	/** Run queued scripts */
+	void runQueuedScripts();
+
+	bool runningQueuedScripts() const;
+
 	void stopAllScripts();
 
 	struct StoredMovieOpcode {
@@ -165,6 +170,8 @@ private:
 	MohawkEngine_Riven *_vm;
 
 	Common::Array<RivenScriptPtr> _queue;
+	bool _runningQueuedScripts;
+
 	StoredMovieOpcode _storedMovieOpcode;
 
 	RivenCommandPtr readCommand(Common::ReadStream *stream);

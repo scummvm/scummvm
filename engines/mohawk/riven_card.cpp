@@ -396,7 +396,7 @@ RivenScriptPtr RivenCard::onMouseMove(const Common::Point &mouse) {
 void RivenCard::onMouseDragUpdate() {
 	if (_pressedHotspot) {
 		RivenScriptPtr script = _pressedHotspot->getScript(kMouseDragScript);
-		_vm->_scriptMan->runScript(script, false);
+		_vm->_scriptMan->runScript(script, true);
 	}
 }
 
@@ -407,7 +407,7 @@ void RivenCard::onMouseUpdate() {
 	}
 
 	if (!script->empty()) {
-		_vm->_scriptMan->runScript(script, false);
+		_vm->_scriptMan->runScript(script, true);
 	} else {
 		updateMouseCursor();
 	}

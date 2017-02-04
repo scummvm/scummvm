@@ -98,8 +98,8 @@ public:
 
 	GUI::Debugger *getDebugger();
 
-	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
-	bool canSaveGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
@@ -110,6 +110,7 @@ public:
 		new Common::Functor0Mem<void, cls>(this, &cls::method)
 
 	void doVideoTimer(VideoHandle handle, bool force);
+	void doFrame();
 
 private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
@@ -121,7 +122,6 @@ private:
 	// Stack/Card-related functions and variables
 	RivenCard *_card;
 	RivenStack *_stack;
-	void handleEvents();
 
 	// Hotspot related functions and variables
 	bool _showHotspots;

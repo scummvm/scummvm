@@ -185,12 +185,12 @@ Common::Error MohawkEngine_Riven::run() {
 
 
 	while (!shouldQuit())
-		handleEvents();
+		doFrame();
 
 	return Common::kNoError;
 }
 
-void MohawkEngine_Riven::handleEvents() {
+void MohawkEngine_Riven::doFrame() {
 	// Update background running things
 	checkTimer();
 	_sound->updateSLST();
@@ -276,6 +276,12 @@ void MohawkEngine_Riven::handleEvents() {
 	}
 
 	_card->onMouseUpdate();
+
+	if (!_scriptMan->runningQueuedScripts()) {
+		// Don't run queued scripts if we are calling from a queued script
+		// otherwise infinite looping will happen.
+		_scriptMan->runQueuedScripts();
+	}
 
 	// Update the screen if we need to
 	if (needsUpdate)
@@ -551,6 +557,22 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 			}
 
 	return foundMatch;
+}
+
+bool MohawkEngine_Riven::canLoadGameStateCurrently() {
+	return !(getFeatures() & GF_DEMO);
+}
+
+bool MohawkEngine_Riven::canSaveGameStateCurrently() {
+	if (getFeatures() & GF_DEMO) {
+		return false;
+	}
+
+	if (_scriptMan->hasQueuedScripts()) {
+		return false;
+	}
+
+	return true;
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {
