@@ -162,6 +162,11 @@ void MacText::splitString(Common::String &str) {
 			} else {
 				if (nextChunk) { // No text, replacing formatting
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
+				} else { // Otherwise it is an empty line
+					curLine++;
+					_textLines.resize(curLine + 1);
+					_textLines[curLine].chunks.push_back(previousFormatting);
+					curChunk = 0;
 				}
 			}
 
