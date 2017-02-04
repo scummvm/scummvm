@@ -579,12 +579,8 @@ void RivenSimpleCommand::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 40: activate SLST record (card ambient sound lists)
 void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
-	// WORKAROUND: Disable the SLST that is played during Riven's intro.
-	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getStack()->getId() == kStackTspit && _vm->getStack()->getCurrentCardGlobalId() == 0x6e9a && argv[0] == 2)
-		return;
-
 	_vm->_activatedSLST = true;
+
 	SLSTRecord slstRecord = _vm->getCard()->getSound(argv[0]);
 	_vm->_sound->playSLST(slstRecord);
 }
