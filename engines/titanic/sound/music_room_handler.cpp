@@ -35,7 +35,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	_startTicks = _soundStartTicks = 0;
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
 	for (int idx = 0; idx < 4; ++idx)
-		_array3[idx] = new Object3();
+		_array3[idx] = new CMusicObject(idx);
 	Common::fill(&_array4[0], &_array4[4], 0);
 	Common::fill(&_array5[0], &_array5[4], 0.0);
 	Common::fill(&_array6[0], &_array6[4], 0);
@@ -251,7 +251,7 @@ void CMusicRoomHandler::fn1() {
 			if (val >= musicWave->_floatVal) {
 				_array5[idx] += fn3(idx, _array6[idx]);
 
-				// TODO
+				//_array3[idx]->_data[_array6[idx]];
 			}
 		}
 	}

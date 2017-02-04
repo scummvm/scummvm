@@ -24,6 +24,7 @@
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
 #include "titanic/sound/audio_buffer.h"
+#include "titanic/sound/music_object.h"
 #include "titanic/sound/music_wave.h"
 #include "titanic/sound/wave_file.h"
 
@@ -45,19 +46,13 @@ struct MusicRoomInstrument {
 };
 
 class CMusicRoomHandler {
-	struct Object3 {
-		byte *_field0;
-		int _field4;
-		Object3() : _field0(nullptr), _field4(0) {}
-		~Object3() { delete[] _field0; }
-	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
-	Object3 *_array3[4];
+	CMusicObject *_array3[4];
 	int _array4[4];
 	double _array5[4];
 	int _array6[4];

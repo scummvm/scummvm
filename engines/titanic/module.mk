@@ -409,6 +409,7 @@ MODULE_OBJS := \
 	sound/dome_from_top_of_well.o \
 	sound/enter_view_toggles_other_music.o \
 	sound/gondolier_song.o \
+	sound/music_object.o \
 	sound/music_room.o \
 	sound/music_room_handler.o \
 	sound/music_player.o \
