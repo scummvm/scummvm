@@ -119,8 +119,10 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
-		testFontScaling();
-		testFonts();
+		if (debugChannelSet(-1, kDebugText)) {
+			testFontScaling();
+			testFonts();
+		}
 
 		_lingo->runTests();
 
