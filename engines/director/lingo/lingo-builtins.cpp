@@ -133,14 +133,18 @@ static struct BuiltinProto {
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
-	{ "duplicate-cast",	Lingo::b_duplicateCast,	1, 2, false },	//			D4
+	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
-	{ "erase-cast",		Lingo::b_eraseCast,		1, 2, false },	//			D4
+	{ "erase",			Lingo::b_erase,			1, 1, false },	//			D4
+	{ "findEmpty",		Lingo::b_findEmpty,		1, 1, true },	//			D4
 		// go													// D2
+	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
 	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
+	{ "move",			Lingo::b_move,			1, 2, false },	//			D4
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
+	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4
 	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
 	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
@@ -148,6 +152,8 @@ static struct BuiltinProto {
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
 	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
+	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4
+	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
@@ -172,6 +178,7 @@ static struct BuiltinProto {
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
 	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
 	// References
+	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4
 	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
 
@@ -180,8 +187,8 @@ static struct BuiltinProto {
 };
 
 static const char *twoWordBuiltins[] = {
-	"duplicate",
-	"erase",
+	//"duplicate",
+	//"erase",
 	"sound",
 	0
 };
@@ -888,8 +895,8 @@ void Lingo::b_constrainV(int nargs) {
 	g_lingo->push(Datum(0));
 }
 
-void Lingo::b_duplicateCast(int nargs) {
-	g_lingo->printSTUBWithArglist("b_duplicateCast", nargs);
+void Lingo::b_duplicate(int nargs) {
+	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -898,8 +905,22 @@ void Lingo::b_editableText(int nargs) {
 	warning("STUB: b_editableText");
 }
 
-void Lingo::b_eraseCast(int nargs) {
-	g_lingo->printSTUBWithArglist("b_eraseCast", nargs);
+void Lingo::b_erase(int nargs) {
+	g_lingo->printSTUBWithArglist("b_erase", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_findEmpty(int nargs) {
+	g_lingo->printSTUBWithArglist("b_findEmpty", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_importFileInto(int nargs) {
+	g_lingo->printSTUBWithArglist("b_importFileInto", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -924,9 +945,21 @@ void Lingo::b_marker(int nargs) {
 	g_lingo->push(marker);
 }
 
+void Lingo::b_move(int nargs) {
+	g_lingo->printSTUBWithArglist("b_move", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
 void Lingo::b_moveableSprite(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_moveableSprite(%d)", d.u.i);
+}
+
+void Lingo::b_pasteClipBoardInto(int nargs) {
+	g_lingo->printSTUBWithArglist("b_pasteClipBoardInto", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_puppetPalette(int nargs) {
@@ -971,6 +1004,18 @@ void Lingo::b_rollOver(int nargs) {
 
 void Lingo::b_spriteBox(int nargs) {
 	g_lingo->printSTUBWithArglist("b_spriteBox", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_unLoad(int nargs) {
+	g_lingo->printSTUBWithArglist("b_unLoad", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_unLoadCast(int nargs) {
+	g_lingo->printSTUBWithArglist("b_unLoadCast", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -1154,6 +1199,10 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 ///////////////////
 // References
 ///////////////////
+void Lingo::b_cast(int nargs) {
+	warning("STUB: b_cast");
+}
+
 void Lingo::b_field(int nargs) {
 	warning("STUB: b_field");
 }

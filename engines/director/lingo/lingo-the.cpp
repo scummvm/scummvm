@@ -147,7 +147,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
 	{ kTheSprite,	"right",		kTheRight },		// D2 p
-	{ kTheSprite,	"scriptNum",	kTheScriptNum },					D4 p
+	{ kTheSprite,	"scriptNum",	kTheScriptNum },	//				D4 p
 	{ kTheSprite,	"startTime",	kTheStartTime },
 	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
 	{ kTheSprite,	"stopTime",		kTheStopTime },
@@ -160,15 +160,15 @@ TheEntityField fields[] = {
 
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
-	{ kTheCast,		"filename",		kTheFilename },
-	{ kTheCast,		"height",		kTheHeight },
-	{ kTheCast,		"loaded",		kTheLoaded },
-	{ kTheCast,		"modified",		kTheModified },
+	{ kTheCast,		"filename",		kTheFilename },		//				D4 p
+	{ kTheCast,		"height",		kTheHeight },		//				D4 p
+	{ kTheCast,		"loaded",		kTheLoaded },		//				D4 p
+	{ kTheCast,		"modified",		kTheModified },		//				D4 p
 	{ kTheCast,		"name",			kTheName },			//		D3 p
 	{ kTheCast,		"number",		kTheNumber },		//		D3 p
 	{ kTheCast,		"rect",			kTheRect },
 	{ kTheCast,		"purgePriority",kThePurgePriority },//	 			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
-	{ kTheCast,		"scriptText",	kTheScriptText },
+	{ kTheCast,		"scriptText",	kTheScriptText },	//				D4 p
 	{ kTheCast,		"width",		kTheWidth },		//				D4 p
 
 	// Shape fields
@@ -186,13 +186,13 @@ TheEntityField fields[] = {
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth },
-	{ kTheCast,		"regPoint",		kTheRegPoint },
-	{ kTheCast,		"palette",		kThePalette },
+	{ kTheCast,		"regPoint",		kTheRegPoint },		//				D4 p
+	{ kTheCast,		"palette",		kThePalette },		//				D4 p
 	{ kTheCast,		"picture",		kThePicture },		//		D3 p
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
-	{ kTheCast,		"size",			kTheSize },
+	{ kTheCast,		"size",			kTheSize },			//				D4 p
 	{ kTheCast,		"text",			kTheText },			// D2 p
 
 	// Field fields

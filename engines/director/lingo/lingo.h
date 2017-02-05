@@ -382,13 +382,17 @@ public:
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
-	static void b_duplicateCast(int nargs);
+	static void b_duplicate(int nargs);
 	static void b_editableText(int nargs);
-	static void b_eraseCast(int nargs);
+	static void b_erase(int nargs);
+	static void b_findEmpty(int nargs);
+	static void b_importFileInto(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
+	static void b_move(int nargs);
 	static void b_moveableSprite(int nargs);
+	static void b_pasteClipBoardInto(int nargs);
 	static void b_puppetPalette(int nargs);
 	static void b_puppetSound(int nargs);
 	static void b_puppetSprite(int nargs);
@@ -396,6 +400,8 @@ public:
 	static void b_puppetTransition(int nargs);
 	static void b_rollOver(int nargs);
 	static void b_spriteBox(int nargs);
+	static void b_unLoad(int nargs);
+	static void b_unLoadCast(int nargs);
 	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
 
@@ -449,6 +455,7 @@ public:
 	static void b_factory(int nargs);
 	void factoryCall(Common::String &name, int nargs);
 
+	static void b_cast(int nargs);
 	static void b_field(int nargs);
 	static void b_me(int nargs);
 
