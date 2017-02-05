@@ -177,7 +177,11 @@ private:
 	 * Invokes the game's restore mechanism to load a save game that was
 	 * selected from the ScummVM launcher.
 	 */
-	void restoreFromLauncher() const;
+	bool restoreFromLauncher() const;
+
+#ifdef ENABLE_SCI32
+	mutable bool _restoring;
+#endif
 
 #pragma mark -
 #pragma mark Message type sync

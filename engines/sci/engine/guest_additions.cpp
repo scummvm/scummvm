@@ -61,6 +61,7 @@ GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kerne
 	_features(features),
 	_kernel(kernel),
 	_segMan(state->_segMan),
+	_restoring(false),
 	_messageTypeSynced(false) {}
 
 #pragma mark -
@@ -244,16 +245,14 @@ void GuestAdditions::segManSaveLoadScriptHook(Script &script) const {
 
 bool GuestAdditions::kGetEventHook() const {
 	if (_state->_delayedRestoreGameId != -1) {
-		g_sci->_guestAdditions->restoreFromLauncher();
-		return true;
+		return g_sci->_guestAdditions->restoreFromLauncher();
 	}
 	return false;
 }
 
 bool GuestAdditions::kWaitHook() const {
 	if (_state->_delayedRestoreGameId != -1) {
-		g_sci->_guestAdditions->restoreFromLauncher();
-		return true;
+		return g_sci->_guestAdditions->restoreFromLauncher();
 	}
 	return false;
 }
@@ -497,21 +496,32 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 #pragma mark -
 #pragma mark Restore from launcher
 
-void GuestAdditions::restoreFromLauncher() const {
+bool GuestAdditions::restoreFromLauncher() const {
 	assert(_state->_delayedRestoreGameId != -1);
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		// In SQ6, delayed restore should not happen until room 100 (the Sierra
-		// logo & main menu room) is loaded, otherwise the game scripts will try
-		// to make calls to the subtitles window, which does not exist until
-		// after the main menu. The game scripts check if the current room is
-		// 100 and avoids making calls to the subtitles window if it is.
-		if (g_sci->getGameId() == GID_SQ6 &&
-			_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoomNo] != make_reg(0, 100)) {
-
-			return;
+		if (_restoring) {
+			// Recursion will occur if a restore fails, as
+			// _delayedRestoreGameId will not be reset so the kernel will try
+			// to keep restoring forever
+			_state->_delayedRestoreGameId = -1;
+			_restoring = false;
+			return false;
 		}
+
+		// Delayed restore should not happen until after the benchmarking room.
+		// In particular, in SQ6, delayed restore must not happen until room 100
+		// (the Sierra logo & main menu room), otherwise the game scripts will
+		// try to make calls to the subtitles ScrollWindow, which does not
+		// exist. In other games, restoring early either breaks benchmarking,
+		// or, when trying to load an invalid save game, makes the dialog
+		// telling the user that the game is invalid impossible to read
+		if (Common::String(_segMan->getObjectName(_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoom])) == "speedRoom") {
+			return false;
+		}
+
+		_restoring = true;
 
 		if (g_sci->getGameId() == GID_SHIVERS) {
 			// Shivers accepts the save game number as a parameter to
@@ -524,6 +534,10 @@ void GuestAdditions::restoreFromLauncher() const {
 			// of prompting the user for a save game
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore));
 		}
+
+		_restoring = false;
+
+		return true;
 	} else {
 #else
 	{
@@ -538,7 +552,7 @@ void GuestAdditions::restoreFromLauncher() const {
 			delete in;
 			if (_state->r_acc != make_reg(0, 1)) {
 				gamestate_afterRestoreFixUp(_state, savegameId);
-				return;
+				return true;
 			}
 		}
 
