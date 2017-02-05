@@ -207,7 +207,7 @@ void Lingo::initBuiltIns() {
 		_twoWordBuiltins[*b] = true;
 }
 
-void Lingo::printStubWithArglist(const char *funcname, int nargs) {
+void Lingo::printSTUBWithArglist(const char *funcname, int nargs) {
 	Common::String s(funcname);
 
 	s += '(';
@@ -466,122 +466,122 @@ void Lingo::b_value(int nargs) {
 // Lists
 ///////////////////
 void Lingo::b_add(int nargs) {
-	g_lingo->printStubWithArglist("b_add", nargs);
+	g_lingo->printSTUBWithArglist("b_add", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_addAt(int nargs) {
-	g_lingo->printStubWithArglist("b_addAt", nargs);
+	g_lingo->printSTUBWithArglist("b_addAt", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_addProp(int nargs) {
-	g_lingo->printStubWithArglist("b_addProp", nargs);
+	g_lingo->printSTUBWithArglist("b_addProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_append(int nargs) {
-	g_lingo->printStubWithArglist("b_append", nargs);
+	g_lingo->printSTUBWithArglist("b_append", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_count(int nargs) {
-	g_lingo->printStubWithArglist("b_count", nargs);
+	g_lingo->printSTUBWithArglist("b_count", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_deleteAt(int nargs) {
-	g_lingo->printStubWithArglist("b_deleteAt", nargs);
+	g_lingo->printSTUBWithArglist("b_deleteAt", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_deleteProp(int nargs) {
-	g_lingo->printStubWithArglist("b_deleteProp", nargs);
+	g_lingo->printSTUBWithArglist("b_deleteProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_findPos(int nargs) {
-	g_lingo->printStubWithArglist("b_findPos", nargs);
+	g_lingo->printSTUBWithArglist("b_findPos", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_findPosNear(int nargs) {
-	g_lingo->printStubWithArglist("b_findPosNear", nargs);
+	g_lingo->printSTUBWithArglist("b_findPosNear", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getaProp(int nargs) {
-	g_lingo->printStubWithArglist("b_getaProp", nargs);
+	g_lingo->printSTUBWithArglist("b_getaProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getAt(int nargs) {
-	g_lingo->printStubWithArglist("b_getAt", nargs);
+	g_lingo->printSTUBWithArglist("b_getAt", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getLast(int nargs) {
-	g_lingo->printStubWithArglist("b_getLast", nargs);
+	g_lingo->printSTUBWithArglist("b_getLast", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getOne(int nargs) {
-	g_lingo->printStubWithArglist("b_getOne", nargs);
+	g_lingo->printSTUBWithArglist("b_getOne", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getPos(int nargs) {
-	g_lingo->printStubWithArglist("b_getPos", nargs);
+	g_lingo->printSTUBWithArglist("b_getPos", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getProp(int nargs) {
-	g_lingo->printStubWithArglist("b_getProp", nargs);
+	g_lingo->printSTUBWithArglist("b_getProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_getPropAt(int nargs) {
-	g_lingo->printStubWithArglist("b_getPropAt", nargs);
+	g_lingo->printSTUBWithArglist("b_getPropAt", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_list(int nargs) {
-	g_lingo->printStubWithArglist("b_list", nargs);
+	g_lingo->printSTUBWithArglist("b_list", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_listP(int nargs) {
-	g_lingo->printStubWithArglist("b_listP", nargs);
+	g_lingo->printSTUBWithArglist("b_listP", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_max(int nargs) {
-	g_lingo->printStubWithArglist("b_max", nargs);
+	g_lingo->printSTUBWithArglist("b_max", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_min(int nargs) {
-	g_lingo->printStubWithArglist("b_min", nargs);
+	g_lingo->printSTUBWithArglist("b_min", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_setaProp(int nargs) {
-	g_lingo->printStubWithArglist("b_setaProp", nargs);
+	g_lingo->printSTUBWithArglist("b_setaProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_setAt(int nargs) {
-	g_lingo->printStubWithArglist("b_setAt", nargs);
+	g_lingo->printSTUBWithArglist("b_setAt", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_setProp(int nargs) {
-	g_lingo->printStubWithArglist("b_setProp", nargs);
+	g_lingo->printSTUBWithArglist("b_setProp", nargs);
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_sort(int nargs) {
-	g_lingo->printStubWithArglist("b_sort", nargs);
+	g_lingo->printSTUBWithArglist("b_sort", nargs);
 	g_lingo->dropStack(nargs);
 }
 
@@ -715,25 +715,25 @@ void Lingo::b_pause(int nargs) {
 }
 
 void Lingo::b_playAccel(int nargs) {
-	g_lingo->printStubWithArglist("b_playAccel", nargs);
+	g_lingo->printSTUBWithArglist("b_playAccel", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_preLoad(int nargs) {
-	g_lingo->printStubWithArglist("b_preLoad", nargs);
+	g_lingo->printSTUBWithArglist("b_preLoad", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_preLoadCast(int nargs) {
-	g_lingo->printStubWithArglist("b_preLoadCast", nargs);
+	g_lingo->printSTUBWithArglist("b_preLoadCast", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_framesToHMS(int nargs) {
-	g_lingo->printStubWithArglist("b_framesToHMS", nargs);
+	g_lingo->printSTUBWithArglist("b_framesToHMS", nargs);
 
 	g_lingo->dropStack(nargs);
 
@@ -741,7 +741,7 @@ void Lingo::b_framesToHMS(int nargs) {
 }
 
 void Lingo::b_HMStoFrames(int nargs) {
-	g_lingo->printStubWithArglist("b_HMStoFrames", nargs);
+	g_lingo->printSTUBWithArglist("b_HMStoFrames", nargs);
 
 	g_lingo->dropStack(nargs);
 
@@ -749,7 +749,7 @@ void Lingo::b_HMStoFrames(int nargs) {
 }
 
 void Lingo::b_printFrom(int nargs) {
-	g_lingo->printStubWithArglist("b_printFrom", nargs);
+	g_lingo->printSTUBWithArglist("b_printFrom", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -889,7 +889,7 @@ void Lingo::b_constrainV(int nargs) {
 }
 
 void Lingo::b_duplicateCast(int nargs) {
-	g_lingo->printStubWithArglist("b_duplicateCast", nargs);
+	g_lingo->printSTUBWithArglist("b_duplicateCast", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -899,7 +899,7 @@ void Lingo::b_editableText(int nargs) {
 }
 
 void Lingo::b_eraseCast(int nargs) {
-	g_lingo->printStubWithArglist("b_eraseCast", nargs);
+	g_lingo->printSTUBWithArglist("b_eraseCast", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -932,7 +932,7 @@ void Lingo::b_moveableSprite(int nargs) {
 void Lingo::b_puppetPalette(int nargs) {
 	g_lingo->convertVOIDtoString(0, nargs);
 
-	g_lingo->printStubWithArglist("b_puppetPalette", nargs);
+	g_lingo->printSTUBWithArglist("b_puppetPalette", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -940,13 +940,13 @@ void Lingo::b_puppetPalette(int nargs) {
 void Lingo::b_puppetSound(int nargs) {
 	g_lingo->convertVOIDtoString(0, nargs);
 
-	g_lingo->printStubWithArglist("b_puppetSound", nargs);
+	g_lingo->printSTUBWithArglist("b_puppetSound", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_puppetSprite(int nargs) {
-	g_lingo->printStubWithArglist("b_puppetSprite", nargs);
+	g_lingo->printSTUBWithArglist("b_puppetSprite", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -957,7 +957,7 @@ void Lingo::b_puppetTempo(int nargs) {
 }
 
 void Lingo::b_puppetTransition(int nargs) {
-	g_lingo->printStubWithArglist("b_puppetTransition", nargs);
+	g_lingo->printSTUBWithArglist("b_puppetTransition", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -970,13 +970,13 @@ void Lingo::b_rollOver(int nargs) {
 }
 
 void Lingo::b_spriteBox(int nargs) {
-	g_lingo->printStubWithArglist("b_spriteBox", nargs);
+	g_lingo->printSTUBWithArglist("b_spriteBox", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_zoomBox(int nargs) {
-	g_lingo->printStubWithArglist("b_zoomBox", nargs);
+	g_lingo->printSTUBWithArglist("b_zoomBox", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -1033,31 +1033,31 @@ void Lingo::b_mciwait(int nargs) {
 }
 
 void Lingo::b_soundBusy(int nargs) {
-	g_lingo->printStubWithArglist("b_soundBusy", nargs);
+	g_lingo->printSTUBWithArglist("b_soundBusy", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_soundFadeIn(int nargs) {
-	g_lingo->printStubWithArglist("b_soundFadeIn", nargs);
+	g_lingo->printSTUBWithArglist("b_soundFadeIn", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_soundFadeOut(int nargs) {
-	g_lingo->printStubWithArglist("b_soundFadeOut", nargs);
+	g_lingo->printSTUBWithArglist("b_soundFadeOut", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_soundPlayFile(int nargs) {
-	g_lingo->printStubWithArglist("b_soundPlayFile", nargs);
+	g_lingo->printSTUBWithArglist("b_soundPlayFile", nargs);
 
 	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_soundStop(int nargs) {
-	g_lingo->printStubWithArglist("b_soundStop", nargs);
+	g_lingo->printSTUBWithArglist("b_soundStop", nargs);
 
 	g_lingo->dropStack(nargs);
 }
@@ -1129,7 +1129,7 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 
 	convertVOIDtoString(0, nargs);
 
-	printStubWithArglist(s.c_str(), nargs);
+	printSTUBWithArglist(s.c_str(), nargs);
 
 	Datum method = _stack[_stack.size() - nargs + 0];
 
@@ -1159,7 +1159,7 @@ void Lingo::b_field(int nargs) {
 }
 
 void Lingo::b_me(int nargs) {
-	g_lingo->printStubWithArglist("me", nargs);
+	g_lingo->printSTUBWithArglist("me", nargs);
 
 	g_lingo->dropStack(nargs);
 }
