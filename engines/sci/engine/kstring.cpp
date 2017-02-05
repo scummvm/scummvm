@@ -305,7 +305,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
-				int slen = strlen(tempsource.c_str());
+				int slen = tempsource.size();
 				int extralen = strLength - slen;
 				assert((target - targetbuf) + extralen <= maxsize);
 				if (extralen < 0)

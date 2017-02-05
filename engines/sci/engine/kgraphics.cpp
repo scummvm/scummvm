@@ -824,8 +824,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	int16 celNo;
 	int16 priority;
 	reg_t listSeeker;
-	Common::String *listStrings = NULL;
-	const char **listEntries = NULL;
+	Common::String *listStrings = nullptr;
 	bool isAlias = false;
 
 	rect = kControlCreateRect(x, y,
@@ -922,11 +921,9 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (listCount) {
 			// We create a pointer-list to the different strings, we also find out whats upper and cursor position
 			listSeeker = textReference;
-			listEntries = (const char**)malloc(sizeof(char *) * listCount);
 			listStrings = new Common::String[listCount];
 			for (i = 0; i < listCount; i++) {
 				listStrings[i] = s->_segMan->getString(listSeeker);
-				listEntries[i] = listStrings[i].c_str();
 				if (listSeeker.getOffset() == upperOffset)
 					upperPos = i;
 				if (listSeeker.getOffset() == cursorOffset)
@@ -936,8 +933,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		}
 
 		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
-		g_sci->_gfxControls16->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
-		free(listEntries);
+		g_sci->_gfxControls16->kernelDrawList(rect, controlObject, maxChars, listCount, listStrings, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		delete[] listStrings;
 		return;
 
