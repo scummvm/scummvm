@@ -5,6 +5,18 @@ For a more comprehensive changelog of the latest experimental code, see:
  New Games:
    - Added support for Full Pipe.
 
+ New Games (Sierra SCI2 - SCI2.1):
+   - Added support for Gabriel Knight.
+   - Added support for Gabriel Knight 2.
+   - Added support for King's Quest VII.
+   - Added support for King's Questions.
+   - Added support for Leisure Suit Larry 6 (hires).
+   - Added support for Phantasmagoria.
+   - Added support for Police Quest 4.
+   - Added support for Shivers.
+   - Added support for Space Quest 6.
+   - Added support for Torin's Passage.
+
  New ports:
    - Added PSP Vita port.
 
