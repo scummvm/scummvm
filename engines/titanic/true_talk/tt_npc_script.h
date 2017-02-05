@@ -43,6 +43,8 @@ public:
 	int &operator[](int idx) { return _array[idx]; }
 	int *getSlot(int idx) { return &_array[16 + idx * 4]; }
 	void resetFlags();
+
+	void copyData();
 };
 
 class TTnpcScriptBase : public TTscriptBase {

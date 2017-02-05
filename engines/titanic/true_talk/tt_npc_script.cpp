@@ -113,6 +113,13 @@ void TTnpcData::resetFlags() {
 	Common::fill(&_array[20], &_array[136], 0);
 }
 
+void TTnpcData::copyData() {
+	if (_array[20]) {
+		Common::copy_backward(&_array[16], &_array[136], &_array[24]);
+		Common::fill(&_array[20], &_array[28], 0);
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 TTnpcScriptBase::TTnpcScriptBase(int charId_, const char *charClass, int v2,
@@ -803,6 +810,7 @@ TTscriptRange *TTnpcScript::findRange(uint id) {
 }
 
 void TTnpcScript::checkItems(const TTroomScript *roomScript, const TTsentence *sentence) {
+	_data.copyData();
 	_field2CC = 0;
 	++CTrueTalkManager::_v2;
 
