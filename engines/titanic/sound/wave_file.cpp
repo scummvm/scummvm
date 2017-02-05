@@ -28,19 +28,34 @@
 
 namespace Titanic {
 
-CWaveFile::CWaveFile() : _owner(nullptr), _stream(nullptr),
+CWaveFile::CWaveFile() : _soundManager(nullptr), _stream(nullptr),
 		_soundType(Audio::Mixer::kPlainSoundType) {
+	setup();
 }
 
-CWaveFile::CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr),
+CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _stream(nullptr),
 		_soundType(Audio::Mixer::kPlainSoundType) {
+	setup();
+}
+
+void CWaveFile::setup() {
+	_loadMode = LOADMODE_SCUMMVM;
+	_field4 = 0;
+	_field14 = 1;
+	_dataSize = 0;
+	_audioBuffer = nullptr;
+	_disposeAudioBuffer = DisposeAfterUse::NO;
+	_channel = -1;
 }
 
 CWaveFile::~CWaveFile() {
 	if (_stream) {
-		_owner->soundFreed(_soundHandle);
+		_soundManager->soundFreed(_soundHandle);
 		delete _stream;
 	}
+
+	if (_disposeAudioBuffer == DisposeAfterUse::YES && _audioBuffer)
+		delete _audioBuffer;
 }
 
 uint CWaveFile::getDurationTicks() const {
@@ -51,7 +66,7 @@ uint CWaveFile::getDurationTicks() const {
 	// a desired size. Since I have no idea how the system API
 	// method works, for now I'm using a simple ratio of a
 	// sample output to input value
-	uint dataSize = _size - 0x46;
+	uint dataSize = _dataSize - 0x46;
 	double newSize = (double)dataSize * (1475712.0 / 199836.0);
 	return (uint)(newSize * 1000.0 / _stream->getRate());
 }
@@ -64,8 +79,8 @@ bool CWaveFile::loadSound(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	_size = stream->size();
-	_stream = Audio::makeWAVStream(stream->readStream(_size), DisposeAfterUse::YES);
+	_dataSize = stream->size();
+	_stream = Audio::makeWAVStream(stream->readStream(_dataSize), DisposeAfterUse::YES);
 	_soundType = Audio::Mixer::kSFXSoundType;
 
 	return true;
@@ -79,8 +94,8 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 	byte *data = (byte *)malloc(res->_size);
 	dialogueFile->read(res, data, res->_size);
 
-	_size = res->_size;
-	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, _size, DisposeAfterUse::YES),
+	_dataSize = res->_size;
+	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, _dataSize, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
 	_soundType = Audio::Mixer::kSpeechSoundType;
 
@@ -95,17 +110,20 @@ bool CWaveFile::loadMusic(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	_size = stream->size();
-	_stream = Audio::makeWAVStream(stream->readStream(_size), DisposeAfterUse::YES);
+	_dataSize = stream->size();
+	_stream = Audio::makeWAVStream(stream->readStream(_dataSize), DisposeAfterUse::YES);
 	_soundType = Audio::Mixer::kMusicSoundType;
 
 	return true;
 }
 
-bool CWaveFile::loadMusic(CAudioBuffer *buffer) {
-	assert(!_stream && buffer);
-	warning("TODO: CWaveFile::loadMusic");
-	return false;
+bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse) {
+	_audioBuffer = buffer;
+	_disposeAudioBuffer = disposeAfterUse;
+	_loadMode = LOADMODE_AUDIO_BUFFER;
+	_field14 = 0;
+
+	return true;
 }
 
 uint CWaveFile::getFrequency() const {
@@ -116,18 +134,20 @@ void CWaveFile::reset() {
 	_stream->rewind();
 }
 
-uint CWaveFile::getSize() const {
-	// TODO
-	return _stream->getLength().totalNumberOfFrames() * 2;
-}
+const byte *CWaveFile::lock() {
+	switch (_loadMode) {
+	case LOADMODE_AUDIO_BUFFER:
+		// TODO: At this point, locking returning a pointer to a buffer
+		// into a QSound wave mixer, for pushing out
+		error("TODO: Handle pushing data to sound");
 
-const byte *CWaveFile::lock(int val1, int val2) {
-	// TODO
-	return nullptr;
+	default:
+		return nullptr;
+	}
 }
 
 void CWaveFile::unlock(const byte *ptr) {
-	// TODO
+	// No implementation needed in ScummVM
 }
 
 } // End of namespace Titanic z

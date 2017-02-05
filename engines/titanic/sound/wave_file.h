@@ -31,16 +31,29 @@
 
 namespace Titanic {
 
+enum LoadMode { LOADMODE_AUDIO_BUFFER = 1, LOADMODE_SCUMMVM = 2 };
+
 class QSoundManager;
 
 class CWaveFile {
 private:
-	uint _size;
+	/**
+	 * Handles setup of fields shared by the constructors
+	 */
+	void setup();
 public:
-	QSoundManager *_owner;
+	QSoundManager *_soundManager;
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer::SoundType _soundType;
+
+	LoadMode _loadMode;
+	int _field4;
+	int _field14;
+	uint _dataSize;
+	CAudioBuffer *_audioBuffer;
+	DisposeAfterUse::Flag _disposeAudioBuffer;
+	int _channel;
 public:
 	CWaveFile();
 	CWaveFile(QSoundManager *owner);
@@ -56,7 +69,7 @@ public:
 	/**
 	 * Return the size of the wave file
 	 */
-	uint size() const { return _size; }
+	uint size() const { return _dataSize; }
 
 	/**
 	 * Tries to load the specified wave file sound
@@ -76,7 +89,7 @@ public:
 	/**
 	 * Tries to load the specified audio buffer
 	 */
-	bool loadMusic(CAudioBuffer *buffer);
+	bool loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse);
 
 	/**
 	 * Returns true if the wave file has data loaded
@@ -93,12 +106,10 @@ public:
 	 */
 	void reset();
 
-	uint getSize() const;
-
 	/**
 	 * Lock sound data for access
 	 */
-	const byte *lock(int val1, int val2);
+	const byte *lock();
 
 	/**
 	 * Unlock sound data after a prior call to lock

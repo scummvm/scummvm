@@ -95,7 +95,7 @@ void CMusicRoomHandler::setVolume(int volume) {
 	_field118 = 1;
 	update();
 
-	_waveFile = _soundManager->loadMusic(_audioBuffer);
+	_waveFile = _soundManager->loadMusic(_audioBuffer, DisposeAfterUse::NO);
 	_audioBuffer->setC(_audioBuffer->getC());
 	update();
 }

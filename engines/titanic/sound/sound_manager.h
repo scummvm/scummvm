@@ -76,7 +76,7 @@ public:
 	 * @param buffer	Audio buffer
 	 * @returns			Loaded wave file
 	 */
-	virtual CWaveFile *loadMusic(CAudioBuffer *buffer) { return nullptr; }
+	virtual CWaveFile *loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse) { return nullptr; }
 
 	/**
 	 * Start playing a previously loaded wave file
@@ -352,7 +352,7 @@ public:
 	 * @param buffer	Audio buffer
 	 * @returns			Loaded wave file
 	 */
-	virtual CWaveFile *loadMusic(CAudioBuffer *buffer);
+	virtual CWaveFile *loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse);
 
 	/**
 	 * Start playing a previously loaded sound resource

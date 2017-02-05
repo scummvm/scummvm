@@ -276,7 +276,7 @@ int CMusicWave::read(uint16 *ptr, uint size) {
 		size = _size;
 
 	if (_field34 != -1) {
-		const byte *data = _items[_field34]._waveFile->lock(0, 0);
+		const byte *data = _items[_field34]._waveFile->lock();
 		assert(data);
 		const uint16 *src = (const uint16 *)data;
 
@@ -317,7 +317,7 @@ void CMusicWave::processArray(int index, int size) {
 	_readPos = 0;
 	_readIncrement = (int)(_array[arrIndex] * 256);
 	_size = size;
-	_count = _items[minIndex]._waveFile->getSize() / 2;
+	_count = _items[minIndex]._waveFile->size() / 2;
 }
 
 void CMusicWave::setupArray(int minVal, int maxVal) {
