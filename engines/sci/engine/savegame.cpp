@@ -48,6 +48,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
@@ -256,7 +257,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				ObjMap objects = scr->getObjectMap();
 				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
 					it->_value.syncBaseObject(SciSpan<const byte>(scr->getBuf(it->_value.getPos().getOffset()), scr->getBufSize() - it->_value.getPos().getOffset()));
-
 			}
 
 			// Sync the script's string heap
@@ -296,6 +296,10 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 						objects.erase(addr.toUint16());
 					}
 				}
+			}
+
+			if (s.isLoading() && pass == passes) {
+				g_sci->_guestAdditions->instantiateScriptHook(*scr);
 			}
 		}
 	}

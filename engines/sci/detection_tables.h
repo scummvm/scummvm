@@ -1814,10 +1814,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                             GUIO_LINKMUSICTOSFX, \
                             GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT)
-#define GUIO_KQ7      GUIO4(GUIO_NOASPECT, \
+#define GUIO_KQ7      GUIO3(GUIO_NOASPECT, \
                             GUIO_LINKMUSICTOSFX, \
-                            GUIO_LINKSPEECHTOSFX, \
-                            GAMEOPTION_ORIGINAL_SAVELOAD)
+                            GUIO_LINKSPEECHTOSFX)
 
 	// King's Quest 7 - English Windows (from the King's Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.4"
@@ -2887,7 +2886,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #define GUIO_MOTHERGOOSEHIRES GUIO4(GUIO_NOSUBTITLES, \
                                     GUIO_NOASPECT, \
                                     GUIO_LINKSPEECHTOSFX, \
-                                    GAMEOPTION_ORIGINAL_SAVELOAD)
+                                    GUIO_NOLAUNCHLOAD)
 
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
 	// Executable scanning reports "2.100.002"
@@ -3414,12 +3413,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
                                GUIO_NOLAUNCHLOAD)
-#define GUIO_PQSWAT      GUIO7(GUIO_NOSUBTITLES, \
+#define GUIO_PQSWAT      GUIO6(GUIO_NOSUBTITLES, \
                                GUIO_NOMIDI, \
                                GUIO_LINKMUSICTOSFX, \
                                GUIO_LINKSPEECHTOSFX, \
                                GUIO_NOASPECT, \
-                               GAMEOPTION_ORIGINAL_SAVELOAD, \
                                GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
 
 	// Police Quest: SWAT - English DOS/Windows Demo (from jvprat)
@@ -3946,11 +3944,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                                 GUIO_LINKSPEECHTOSFX, \
                                 GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT)
-#define GUIO_SHIVERS      GUIO6(GUIO_NOMIDI, \
+#define GUIO_SHIVERS      GUIO5(GUIO_NOMIDI, \
                                 GUIO_LINKSPEECHTOSFX, \
                                 GUIO_LINKMUSICTOSFX, \
                                 GUIO_NOASPECT, \
-                                GAMEOPTION_ORIGINAL_SAVELOAD, \
                                 GAMEOPTION_ENABLE_BLACK_LINED_VIDEO)
 
 	// Shivers - English Windows (from jvprat)

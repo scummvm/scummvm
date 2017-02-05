@@ -210,14 +210,20 @@ void GuestAdditions::kDoSoundSetVolumeHook(const reg_t soundObj, const int16 vol
 }
 
 void GuestAdditions::instantiateScriptHook(Script &script) const {
-	if (getSciVersion() < SCI_VERSION_2) {
+	if (getSciVersion() < SCI_VERSION_2 || ConfMan.getBool("originalsaveload")) {
 		return;
 	}
 
-	// 64990 is the system script containing SRDialog. This script is normally
-	// used by the main Game object, but it is not loaded immediately, so we
-	// wait for it to be loaded before patching it
-	if (!ConfMan.getBool("originalsaveload") && script.getScriptNumber() == 64990) {
+	if (g_sci->getGameId() == GID_TORIN && script.getScriptNumber() == 64866) {
+		patchGameSaveRestoreTorin(script);
+	} else if (script.getScriptNumber() == 64990) {
+		// 64990 is the system script containing SRDialog. This script is used
+		// by the main Game object, but it is not loaded immediately, so we wait
+		// for it to be loaded before patching it. Attempting to preload this
+		// script early for patching will cause the order of entries in the
+		// segment table to change (versus save games that are not patched),
+		// breaking persistent objects (like the control panel in SQ6) which
+		// require reg_ts created during game startup to always be the same
 		patchGameSaveRestoreSCI32(script);
 	}
 }
@@ -347,8 +353,38 @@ void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
 	}
 }
 
+static const byte SRTorinPatch[] = {
+	0x38, 0x8d, 0x00,                     // pushi $8d (new)
+	0x76,                                 // push0
+	0x51, 0x0f,                           // class $f (Str)
+	0x4a, 0x04, 0x00,                     // send 4
+	0xa3, 0x01,                           // sal 1
+	0x76,                                 // push0
+	0x59, 0x01,                           // &rest 1
+	0x43, kScummVMSaveLoadId, 0x00, 0x00, // callk kScummVMSaveLoad, 0
+	0x48                                  // ret
+};
+
+void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
+	const uint16 address = script.validateExportFunc(2, true);
+	byte *patchPtr = const_cast<byte *>(script.getBuf(address));
+	memcpy(patchPtr, SRTorinPatch, sizeof(SRTorinPatch));
+	if (g_sci->isBE()) {
+		SWAP(patchPtr[1], patchPtr[2]);
+		SWAP(patchPtr[8], patchPtr[9]);
+	}
+}
+
 reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
-	const bool isSave = (bool)argv[0].toSint16();
+	if (g_sci->getGameId() == GID_TORIN) {
+		return promptSaveRestoreTorin(s, argc, argv);
+	}
+
+	return promptSaveRestoreDefault(s, argc, argv);
+}
+
+reg_t GuestAdditions::promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const {
+	const bool isSave = (argc > 0);
 	int saveNo;
 
 	if (isSave) {
@@ -356,10 +392,10 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 		saveNo = dialog.runModalWithCurrentTarget();
 		if (saveNo != -1) {
 			reg_t descriptionId;
-			if (_segMan->isObject(argv[1])) {
-				descriptionId = readSelector(_segMan, argv[1], SELECTOR(data));
+			if (_segMan->isObject(argv[0])) {
+				descriptionId = readSelector(_segMan, argv[0], SELECTOR(data));
 			} else {
-				descriptionId = argv[1];
+				descriptionId = argv[0];
 			}
 			SciArray &description = *_segMan->lookupArray(descriptionId);
 			description.fromString(dialog.getResultString());
@@ -380,6 +416,44 @@ reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) co
 
 	return make_reg(0, saveNo);
 }
+
+reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const {
+	const bool isSave = (argc > 0 && (bool)argv[0].toSint16());
+	int saveNo;
+
+	if (isSave) {
+		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+		saveNo = dialog.runModalWithCurrentTarget();
+		if (saveNo != -1) {
+			reg_t descriptionId = s->variables[VAR_LOCAL][1];
+			reg_t dataId;
+			SciArray &description = *_segMan->allocateArray(kArrayTypeString, 0, &dataId);
+			description.fromString(dialog.getResultString());
+			writeSelector(_segMan, descriptionId, SELECTOR(data), dataId);
+		}
+	} else {
+		GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
+		saveNo = dialog.runModalWithCurrentTarget();
+	}
+
+	if (saveNo > 0) {
+		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
+		// non-autosave save game number needs to be 0, so reduce the save
+		// number here to match what would come from the normal SCI save/restore
+		// dialog. There is additional special code for handling the autosave
+		// game inside of kRestoreGame32.
+		--saveNo;
+	}
+
+	if (saveNo != -1) {
+		assert(s->variablesMax[VAR_LOCAL] > 2);
+		s->variables[VAR_LOCAL][2] = make_reg(0, saveNo);
+		s->variables[VAR_LOCAL][3] = make_reg(0, isSave ? 1 : 0);
+	}
+
+	return make_reg(0, saveNo != -1);
+}
+
 #endif
 
 #pragma mark -

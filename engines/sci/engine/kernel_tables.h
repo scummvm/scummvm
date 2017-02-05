@@ -783,7 +783,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
 	{ "SaveGame", kSaveGame32,     SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0][r0]",     NULL,            NULL },
-	{ MAP_CALL(ScummVMSaveLoad),   SIG_SCI32, SIGFOR_ALL,    "i([ro])",               NULL,            NULL },
+	{ MAP_CALL(ScummVMSaveLoad),   SIG_SCI32, SIGFOR_ALL,    "([iro])([ro0])",        NULL,            NULL },
 #endif
 	{ MAP_CALL(SaveGame),          SIG_SCI16, SIGFOR_ALL,    "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },

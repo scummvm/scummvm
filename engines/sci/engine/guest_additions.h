@@ -148,6 +148,10 @@ public:
 
 private:
 	void patchGameSaveRestoreSCI32(Script &script) const;
+	void patchGameSaveRestoreTorin(Script &script) const;
+
+	reg_t promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const;
+	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
 #endif
 
 #pragma mark -
