@@ -5374,7 +5374,7 @@ Room *EdenGame::getRoom(int16 loc) { //TODO: byte?
 	for (;; room++) {
 		for (; room->_location != loc; room++) {
 			if (room->_id == 0xFF)
-				return 0;
+				return nullptr;
 		}
 		if (_globals->_partyOutside == room->_party || room->_party == 0xFFFF)
 			break;
