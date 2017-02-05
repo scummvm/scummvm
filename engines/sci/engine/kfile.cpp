@@ -1279,7 +1279,7 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (save.version < MINIMUM_SAVEGAME_VERSION ||
+	if (save.version < MINIMUM_SCI32_SAVEGAME_VERSION ||
 		save.version > CURRENT_SAVEGAME_VERSION ||
 		save.gameVersion != gameVersion) {
 
