@@ -46,6 +46,8 @@ private:
 	static int _pianoCtr;
 	static int _bassCtr;
 	static byte *_buffer;
+	static double *_array;
+	static int _arrayIndex;
 private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
@@ -63,6 +65,8 @@ private:
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
 	 */
 	CWaveFile *createWaveFile(const CString &name);
+
+	void fn2(int val1, int val2);
 public:
 	double _floatVal;
 public:

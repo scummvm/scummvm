@@ -31,16 +31,21 @@ bool CMusicWave::_pianoToggle;
 int CMusicWave::_pianoCtr;
 int CMusicWave::_bassCtr;
 byte *CMusicWave::_buffer;
+double *CMusicWave::_array;
+int CMusicWave::_arrayIndex;
 
 void CMusicWave::init() {
 	_pianoToggle = false;
 	_pianoCtr = 0;
 	_bassCtr = 0;
 	_buffer = nullptr;
+	_array = nullptr;
+	_arrayIndex = 0;
 }
 
 void CMusicWave::deinit() {
 	delete[] _buffer;
+	delete[] _array;
 	_buffer = nullptr;
 }
 
@@ -268,8 +273,31 @@ int CMusicWave::setData(const byte *data, int count) {
 	return 0;
 }
 
-void CMusicWave::fn1(int val1, int val2) {
+void CMusicWave::fn1(int minVal, int maxVal) {
 	// TODO
+}
+
+void CMusicWave::fn2(int minVal, int maxVal) {
+	delete[] _array;
+
+	// TODO: Figure out if the weird shift can be represented as a simpler equation
+	uint32 arrSize = ((uint32)minVal << 29) - (uint32)minVal + maxVal;
+	_array = new double[arrSize / 8];
+	_arrayIndex = maxVal;
+
+	_array[_arrayIndex] = 1.0;
+
+	double val = 1.0594634;
+	for (int idx = 1; idx <= maxVal; ++idx) {
+		val *= 1.0594634;
+		_array[_arrayIndex + idx] = val;
+	}
+
+	val = 0.94387404038686;
+	for (int idx = -1; idx >= minVal; --idx) {
+		val *= 0.94387404038686;
+		_array[_arrayIndex + idx] = val;
+	}
 }
 
 } // End of namespace Titanic
