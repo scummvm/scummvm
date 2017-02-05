@@ -120,6 +120,9 @@ TheEntity entities[] = {
 	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
 	{ kTheTime,				"time",				false },	// 		D3 f
 	{ kTheTimer,			"timer",			false },	// D2 p
+	{ kTheTrace,			"trace",			false },	//				D4 p
+	{ kTheTraceLoad,		"traceLoad",		false },	//				D4 p
+	{ kTheTraceLogFile,		"traceLogFile",		false },	//				D4 p
 	{ kTheWindow,			"window",			false },
 	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }

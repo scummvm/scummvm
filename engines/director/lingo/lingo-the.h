@@ -118,6 +118,9 @@ enum TheEntityType {
 	kTheTimeoutPlay,
 	kTheTimeoutScript,
 	kTheTimer,
+	kTheTrace,
+	kTheTraceLoad,
+	kTheTraceLogFile,
 	kTheWindow,
 	kTheWords
 };

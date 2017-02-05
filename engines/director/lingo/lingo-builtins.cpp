@@ -98,6 +98,7 @@ static struct BuiltinProto {
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
+	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2
 	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2
 		// play													// D2
@@ -715,6 +716,12 @@ void Lingo::b_do(int nargs) {
 	warning("STUB: b_do(%s)", d.u.s->c_str());
 }
 
+void Lingo::b_halt(int nargs) {
+	b_quit(nargs);
+
+	warning("Movie halted");
+}
+
 void Lingo::b_pause(int nargs) {
 	g_director->_playbackPaused = true;
 
@@ -769,19 +776,13 @@ void Lingo::b_quit(int nargs) {
 }
 
 void Lingo::b_restart(int nargs) {
-	if (g_director->_currentScore)
-		g_director->_currentScore->_stopPlay = true;
-
-	g_lingo->pushVoid();
+	b_quit(nargs);
 
 	warning("Computer restarts");
 }
 
 void Lingo::b_shutDown(int nargs) {
-	if (g_director->_currentScore)
-		g_director->_currentScore->_stopPlay = true;
-
-	g_lingo->pushVoid();
+	b_quit(nargs);
 
 	warning("Computer shuts down");
 }
