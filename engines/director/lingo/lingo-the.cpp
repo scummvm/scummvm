@@ -147,7 +147,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
 	{ kTheSprite,	"right",		kTheRight },		// D2 p
-	{ kTheSprite,	"scriptNum",	kTheScriptNum },
+	{ kTheSprite,	"scriptNum",	kTheScriptNum },					D4 p
 	{ kTheSprite,	"startTime",	kTheStartTime },
 	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
 	{ kTheSprite,	"stopTime",		kTheStopTime },
@@ -167,9 +167,9 @@ TheEntityField fields[] = {
 	{ kTheCast,		"name",			kTheName },			//		D3 p
 	{ kTheCast,		"number",		kTheNumber },		//		D3 p
 	{ kTheCast,		"rect",			kTheRect },
-	{ kTheCast,		"purgePriority",kThePurgePriority }, // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"purgePriority",kThePurgePriority },//	 			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText },
-	{ kTheCast,		"width",		kTheWidth },
+	{ kTheCast,		"width",		kTheWidth },		//				D4 p
 
 	// Shape fields
 	{ kTheCast,		"backColor",	kTheBackColor },
