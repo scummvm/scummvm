@@ -205,20 +205,20 @@ void CMusicRoomHandler::updateAudio() {
 	_audioBuffer->enterCriticalSection();
 	int size = _audioBuffer->get10();
 	int count;
-	byte *ptr;
+	uint16 *ptr;
 
 	if (size > 0) {
-		byte *audioPtr = _audioBuffer->getPtr2();
+		uint16 *audioPtr = _audioBuffer->getPtr2();
 		Common::fill(audioPtr, audioPtr + size, 0);
 
 		for (int waveIdx = 0; waveIdx < 4; ++waveIdx) {
 			CMusicWave *musicWave = _musicWaves[waveIdx];
 
 			for (count = size, ptr = audioPtr; count > 0; ) {
-				int amount = musicWave->setData(ptr, count);
+				int amount = musicWave->read(ptr, count);
 				if (amount > 0) {
 					count -= amount;
-					ptr += amount;
+					ptr += amount / sizeof(uint16);
 				} else if (!fn2(waveIdx)) {
 					--_field108;
 					break;
@@ -282,12 +282,12 @@ bool CMusicRoomHandler::fn2(int index) {
 	}
 
 	const CValuePair &vp = mObj[arrIndex];
-	int freq = static_cast<int>(fn3(index, arrIndex) * 44100.0) & ~1;
+	int size = static_cast<int>(fn3(index, arrIndex) * 44100.0) & ~1;
 
 	if (vp._field0 == 0x7FFFFFFF || _array1[index]._muteControl)
-		_musicWaves[index]->setState(freq);
+		_musicWaves[index]->setSize(size);
 	else
-		_musicWaves[index]->fn1(getPitch(index, arrIndex), freq);
+		_musicWaves[index]->processArray(getPitch(index, arrIndex), size);
 
 	if (_array1[index]._directionControl == _array2[index]._directionControl) {
 		++arrIndex;

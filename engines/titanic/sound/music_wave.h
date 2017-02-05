@@ -55,10 +55,10 @@ private:
 	CProjectItem *_project;
 	CGameObject *_gameObjects[4];
 	int _field34;
-	int _field38;
-	int _field3C;
-	int _field40;
-	int _field44;
+	int _readPos;
+	int _readIncrement;
+	uint _size;
+	uint _count;
 	int _field4C;
 private:
 	/**
@@ -66,7 +66,7 @@ private:
 	 */
 	CWaveFile *createWaveFile(const CString &name);
 
-	void fn2(int val1, int val2);
+	void setupArray(int minVal, int maxVal);
 public:
 	double _floatVal;
 public:
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Sets the maximum number of allowed files that be defined
 	 */
-	void setSize(uint count);
+	void setFilesCount(uint count);
 
 	/**
 	 * Loads a new file into the list of available entries
@@ -109,10 +109,14 @@ public:
 	void trigger();
 
 	void reset();
-	void setState(int val);
+	void setSize(uint total);
 
-	int setData(const byte *data, int count);
-	void fn1(int val1, int val2);
+	/**
+	 * Reads sound data and passes it to the provided buffer
+	 */
+	int read(uint16 *ptr, uint size);
+
+	void processArray(int index, int freq);
 };
 
 } // End of namespace Titanic

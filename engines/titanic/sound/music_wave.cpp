@@ -54,10 +54,10 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_floatVal = 0.0;
 	_field34 = -1;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = 0;
-	_field44 = 0;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = 0;
+	_count = 0;
 	_field4C = 0;
 
 	switch (instrument) {
@@ -87,7 +87,7 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 	}
 }
 
-void CMusicWave::setSize(uint count) {
+void CMusicWave::setFilesCount(uint count) {
 	assert(_items.empty());
 	_items.resize(count);
 }
@@ -254,30 +254,73 @@ void CMusicWave::trigger() {
 
 void CMusicWave::reset() {
 	_field34 = 0;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = 0;
-	_field44 = 0;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = 0;
+	_count = 0;
 }
 
-void CMusicWave::setState(int val) {
+void CMusicWave::setSize(uint total) {
 	_field34 = -1;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = val;
-	_field44 = 0;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = total;
+	_count = 0;
 }
 
-int CMusicWave::setData(const byte *data, int count) {
-	// TODO: Implement
-	return 0;
+int CMusicWave::read(uint16 *ptr, uint size) {
+	if (!_size)
+		return 0;
+
+	if (size >= _size)
+		size = _size;
+
+	if (_field34 != -1) {
+		const byte *data = _items[_field34]._waveFile->lock(0, 0);
+		assert(data);
+		const uint16 *src = (const uint16 *)data;
+
+		// Loop through copying over data
+		for (uint idx = 0; idx < size; idx += 2, _readPos += _readIncrement) {
+			uint srcPos = _readPos >> 8;
+			if (srcPos >= _count)
+				break;
+
+			uint16 val = READ_LE_UINT16(src + srcPos);
+			*ptr++ = val;
+		}
+
+		_items[_field34]._waveFile->unlock(data);
+	}
+
+	_size -= size;
+	return size;
 }
 
-void CMusicWave::fn1(int minVal, int maxVal) {
-	// TODO
+void CMusicWave::processArray(int index, int size) {
+	if (!_array)
+		setupArray(-36, 36);
+
+	int minVal = _items[0]._value - index;
+	int minIndex = 0;
+	for (uint idx = 1; idx < _items.size(); ++idx) {
+		int val = _items[idx]._value - index;
+		if (val < minVal) {
+			minVal = val;
+			minIndex = idx;
+		}
+	}
+
+	int arrIndex = _arrayIndex - _items[minIndex]._value + index;
+
+	_field34 = minIndex;
+	_readPos = 0;
+	_readIncrement = (int)(_array[arrIndex] * 256);
+	_size = size;
+	_count = _items[minIndex]._waveFile->getSize() / 2;
 }
 
-void CMusicWave::fn2(int minVal, int maxVal) {
+void CMusicWave::setupArray(int minVal, int maxVal) {
 	delete[] _array;
 
 	// TODO: Figure out if the weird shift can be represented as a simpler equation

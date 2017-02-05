@@ -116,4 +116,18 @@ void CWaveFile::reset() {
 	_stream->rewind();
 }
 
+uint CWaveFile::getSize() const {
+	// TODO
+	return _stream->getLength().totalNumberOfFrames() * 2;
+}
+
+const byte *CWaveFile::lock(int val1, int val2) {
+	// TODO
+	return nullptr;
+}
+
+void CWaveFile::unlock(const byte *ptr) {
+	// TODO
+}
+
 } // End of namespace Titanic z

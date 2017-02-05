@@ -92,6 +92,18 @@ public:
 	 * Resets the music stream
 	 */
 	void reset();
+
+	uint getSize() const;
+
+	/**
+	 * Lock sound data for access
+	 */
+	const byte *lock(int val1, int val2);
+
+	/**
+	 * Unlock sound data after a prior call to lock
+	 */
+	void unlock(const byte *ptr);
 };
 
 } // End of namespace Titanic

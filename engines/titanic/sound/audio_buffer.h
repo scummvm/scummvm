@@ -45,7 +45,7 @@ public:
 	byte *getDataPtr1();
 	byte *getDataPtr2();
 	byte *getPtr1();
-	byte *getPtr2();
+	uint16 *getPtr2();
 	int getC() const { return _fieldC; }
 	int get10() const { return _field10; }
 	void setC(int val);

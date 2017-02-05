@@ -51,9 +51,9 @@ byte *CAudioBuffer::getPtr1() {
 	return ptr + (_buffer.size() / 2 - _fieldC);
 }
 
-byte *CAudioBuffer::getPtr2() {
+uint16 *CAudioBuffer::getPtr2() {
 	byte *ptr = getDataPtr2();
-	return ptr + (_buffer.size() / 2 - _field10);
+	return (uint16 *)(ptr + (_buffer.size() / 2 - _field10));
 }
 
 void CAudioBuffer::setC(int val) {
