@@ -37,11 +37,13 @@ class SegManager;
  * The GuestAdditions class hooks into the SCI virtual machine to provide
  * enhanced interactions between the ScummVM GUI and the game engine. Currently,
  * this enhanced functionality encompasses synchronisation of audio volumes and
- * other audio-related settings.
+ * other audio-related settings, and integration of the ScummVM GUI when saving
+ * and loading game states.
  *
- * Some parts of the audio sync are applied as script patches using the normal
- * ScriptPatcher mechanism. These patches are designed to prevent the game from
- * resetting to a default volume when starting up or loading a save.
+ * NOTE: Some parts of the code used to manage audio sync are applied as script
+ * patches using the normal ScriptPatcher mechanism. These patches prevent the
+ * game from resetting audio volumes to defaults when starting up, and prevent
+ * the game from restoring audio volumes stored inside of a save game.
  */
 class GuestAdditions {
 public:
@@ -51,7 +53,7 @@ public:
 
 	/**
 	 * Synchronises audio volume settings from ScummVM to the game. Called
-	 * whenever the ScummVM launcher is dismissed.
+	 * whenever the ScummVM global menu is dismissed.
 	 */
 	void syncSoundSettings() const;
 
@@ -149,23 +151,52 @@ public:
 
 public:
 	/**
-	 * Patches game scripts to hook into the ScummVM launcher UI when a user
-	 * tries to save or restore a game from inside the game.
+	 * Patches game scripts to use the ScummVM save/load dialogue instead of the
+	 * game's native save/load dialogue when a user tries to save or restore a
+	 * game from inside the game.
 	 */
 	void patchGameSaveRestore() const;
 
 private:
+	/**
+	 * Patches the ScummVM save/load dialogue into the game for SCI16 games that
+	 * use Game::save and Game::restore.
+	 */
 	void patchGameSaveRestoreSCI16() const;
 
 #ifdef ENABLE_SCI32
 public:
+	/**
+	 * Finds the correct save file number and description to save or load and
+	 * returns it to the VM. For user-interactive save file lookup, this method
+	 * displays the ScummVM save/load dialogue. For delayed restores, it returns
+	 * the save game number sent by the ScummVM launcher without prompting the
+	 * user.
+	 */
 	reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const;
 
 private:
+	/**
+	 * Patches the ScummVM save/load dialogue into SCI32 games that use
+	 * SRDialog.
+	 */
 	void patchGameSaveRestoreSCI32(Script &script) const;
+
+	/**
+	 * Patches the ScummVM save/load dialogue into Torin.
+	 */
 	void patchGameSaveRestoreTorin(Script &script) const;
 
+	/**
+	 * Prompts for a save game and returns it to game scripts using default
+	 * SRDialog game class semantics.
+	 */
 	reg_t promptSaveRestoreDefault(EngineState *s, int argc, reg_t *argv) const;
+
+	/**
+	 * Prompts for a save game and returns it to game scripts using Torin's
+	 * custom NewGame class semantics.
+	 */
 	reg_t promptSaveRestoreTorin(EngineState *s, int argc, reg_t *argv) const;
 #endif
 
@@ -174,12 +205,16 @@ private:
 
 private:
 	/**
-	 * Invokes the game's restore mechanism to load a save game that was
-	 * selected from the ScummVM launcher.
+	 * Invokes the game's save restore mechanism to load a save game that was
+	 * selected in the ScummVM launcher when the game was started.
 	 */
 	bool restoreFromLauncher() const;
 
 #ifdef ENABLE_SCI32
+	/**
+	 * If true, GuestAdditions is in the process of handling a delayed game
+	 * restore from the ScummVM launcher or global menu.
+	 */
 	mutable bool _restoring;
 #endif
 
@@ -188,20 +223,34 @@ private:
 
 private:
 	/**
-	 * true if the message type (text/speech/text+speech) has been synchronised
+	 * True if the message type (text/speech/text+speech) has been synchronised
 	 * from ScummVM to the game.
 	 */
 	bool _messageTypeSynced;
 
 	/**
-	 * Synchronises the message type (speech/text/speech+text) from a ScummVM to
+	 * Synchronises the message type (speech/text/speech+text) from ScummVM to
 	 * a game.
 	 */
 	void syncMessageTypeFromScummVM() const;
 
+	/**
+	 * Synchronises the message type from ScummVM using the default strategy
+	 * (global90).
+	 */
 	void syncMessageTypeFromScummVMUsingDefaultStrategy() const;
+
 #ifdef ENABLE_SCI32
+	/**
+	 * Synchronises the message type from ScummVM using the strategy used by
+	 * Shivers (global211).
+	 */
 	void syncMessageTypeFromScummVMUsingShiversStrategy() const;
+
+	/**
+	 * Synchronises the message type from ScummVM using the strategy used by
+	 * LSL6hires (gameFlags).
+	 */
 	void syncMessageTypeFromScummVMUsingLSL6HiresStrategy() const;
 #endif
 
@@ -211,9 +260,23 @@ private:
 	 */
 	void syncMessageTypeToScummVM(const int index, const reg_t value);
 
+	/**
+	 * Synchronises the message type to ScummVM using the default strategy
+	 * (global90).
+	 */
 	void syncMessageTypeToScummVMUsingDefaultStrategy(const int index, const reg_t value);
+
 #ifdef ENABLE_SCI32
+	/**
+	 * Synchronises the message type to ScummVM using the strategy used by
+	 * Shivers (global211).
+	 */
 	void syncMessageTypeToScummVMUsingShiversStrategy(const int index, const reg_t value);
+
+	/**
+	 * Synchronises the message type to ScummVM using the strategy used by
+	 * LSL6hires (gameFlags).
+	 */
 	void syncMessageTypeToScummVMUsingLSL6HiresStrategy(const reg_t sendObj, Selector &selector, reg_t *argp);
 #endif
 
@@ -250,7 +313,12 @@ private:
 	 */
 	void syncGK1StartupVolumeFromScummVM(const int index, const reg_t value) const;
 
+	/**
+	 * Synchronises audio volume settings from ScummVM to GK1 when the game is
+	 * running.
+	 */
 	void syncGK1VolumeFromScummVM(const int16 musicVolume, const int16 dacVolume) const;
+
 	void syncGK2VolumeFromScummVM(const int16 musicVolume) const;
 	void syncLSL6HiresVolumeFromScummVM(const int16 musicVolume) const;
 	void syncTorinVolumeFromScummVM(const int16 musicVolume, const int16 sfxVolume, const int16 speechVolume) const;
