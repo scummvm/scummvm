@@ -100,6 +100,7 @@ static struct BuiltinProto {
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
 	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2
+	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4
 	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2
 		// play													// D2
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
@@ -730,6 +731,12 @@ void Lingo::b_halt(int nargs) {
 	b_quit(nargs);
 
 	warning("Movie halted");
+}
+
+void Lingo::b_pass(int nargs) {
+	g_lingo->printSTUBWithArglist("b_pass", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_pause(int nargs) {

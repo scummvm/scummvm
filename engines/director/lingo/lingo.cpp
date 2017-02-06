@@ -59,7 +59,7 @@ struct EventHandlerType {
 	{ kEventStart,				"start" },
 
 	{ kEventKeyUp,				"keyUp" },				//			D4
-	{ kEventKeyDown,			"keyDown" },			// D2 as when  D4
+	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
 	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3?
 	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3?
 	{ kEventRightMouseDown,		"rightMouseDown" },

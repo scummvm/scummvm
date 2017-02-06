@@ -60,6 +60,7 @@ TheEntity entities[] = {
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
+	{ kTheKeyUpScript,		"keyUpScript",		false },	//				D4 p
 	{ kTheLabelList,		"labelList",		false },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
