@@ -56,53 +56,53 @@ static struct BuiltinProto {
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
 	// Lists
-	{ "add",			Lingo::b_add,			2, 2, false },	//			D4
-	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4
-	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4
-	{ "append",			Lingo::b_append,		2, 2, false },	//			D4
-	{ "count",			Lingo::b_count,			1, 1, true },	//			D4
-	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4
-	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4
-	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4
-	{ "findPosNear",	Lingo::b_findPosNear,	2, 2, true },	//			D4
-	{ "getaProp",		Lingo::b_getaProp,		2, 2, true },	//			D4
-	{ "getAt",			Lingo::b_getAt,			2, 2, true },	//			D4
-	{ "getLast",		Lingo::b_getLast,		1, 1, true },	//			D4
-	{ "getOne",			Lingo::b_getOne,		2, 2, true },	//			D4
-	{ "getPos",			Lingo::b_getPos,		2, 2, true },	//			D4
-	{ "getProp",		Lingo::b_getProp,		2, 2, true },	//			D4
-	{ "getPropAt",		Lingo::b_getPropAt,		2, 2, true },	//			D4
-	{ "list",			Lingo::b_list,			-1, 0, true },	//			D4
-	{ "listP",			Lingo::b_listP,			1, 1, true },	//			D4
-	{ "max",			Lingo::b_max,			1, 1, true },	//			D4
-	{ "min",			Lingo::b_min,			1, 1, true },	//			D4
-	{ "setaProp",		Lingo::b_setaProp,		3, 3, false },	//			D4
-	{ "setAt",			Lingo::b_setAt,			3, 3, false },	//			D4
-	{ "setProp",		Lingo::b_setProp,		3, 3, false },	//			D4
-	{ "sort",			Lingo::b_sort,			1, 1, false },	//			D4
+	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 c
+	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4 c
+	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4 c
+	{ "append",			Lingo::b_append,		2, 2, false },	//			D4 c
+	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 f
+	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4 c
+	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4 c
+	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4 f
+	{ "findPosNear",	Lingo::b_findPosNear,	2, 2, true },	//			D4 f
+	{ "getaProp",		Lingo::b_getaProp,		2, 2, true },	//			D4 f
+	{ "getAt",			Lingo::b_getAt,			2, 2, true },	//			D4 f
+	{ "getLast",		Lingo::b_getLast,		1, 1, true },	//			D4 f
+	{ "getOne",			Lingo::b_getOne,		2, 2, true },	//			D4 f
+	{ "getPos",			Lingo::b_getPos,		2, 2, true },	//			D4 f
+	{ "getProp",		Lingo::b_getProp,		2, 2, true },	//			D4 f
+	{ "getPropAt",		Lingo::b_getPropAt,		2, 2, true },	//			D4 f
+	{ "list",			Lingo::b_list,			-1, 0, true },	//			D4 f
+	{ "listP",			Lingo::b_listP,			1, 1, true },	//			D4 f
+	{ "max",			Lingo::b_max,			1, 1, true },	//			D4 f
+	{ "min",			Lingo::b_min,			1, 1, true },	//			D4 f
+	{ "setaProp",		Lingo::b_setaProp,		3, 3, false },	//			D4 c
+	{ "setAt",			Lingo::b_setAt,			3, 3, false },	//			D4 c
+	{ "setProp",		Lingo::b_setProp,		3, 3, false },	//			D4 c
+	{ "sort",			Lingo::b_sort,			1, 1, false },	//			D4 c
 	// Files
-	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
-	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
-	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },	// D2
-	{ "getNthFileNameInFolder",Lingo::b_getNthFileNameInFolder,2,2,true },//D4
-		// open													// D2
-	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2
-	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2
-	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2
-	{ "saveMovie",		Lingo::b_saveMovie,		1, 1, false },	//			D4
-	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3
-	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
-	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
-	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3
+	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2 c
+	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2 c
+	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },	// D2 c
+	{ "getNthFileNameInFolder",Lingo::b_getNthFileNameInFolder,2,2,true },//D4 f
+		// open													// D2 c
+	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2 c
+	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2 c
+	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2 c
+	{ "saveMovie",		Lingo::b_saveMovie,		1, 1, false },	//			D4 c
+	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3 c
+	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2 c
+	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2 c
+	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3 f
 	// Control
-	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4
+	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4 c
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
-	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
+	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
-	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4
-	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2
-	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4
+	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
+	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
+	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4 c
 	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2
 		// play													// D2
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
@@ -119,13 +119,13 @@ static struct BuiltinProto {
 		// when timeOut											// D2
 	// Types
 	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4 f
 	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2
 	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2
 	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
 	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Misc
-	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2
+	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
@@ -138,19 +138,19 @@ static struct BuiltinProto {
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
-	{ "copyToClipBoard",Lingo::b_copyToClipBoard,1,1, false },	//			D4
-	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4
+	{ "copyToClipBoard",Lingo::b_copyToClipBoard,1,1, false },	//			D4 c
+	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4 c
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
-	{ "erase",			Lingo::b_erase,			1, 1, false },	//			D4
-	{ "findEmpty",		Lingo::b_findEmpty,		1, 1, true },	//			D4
+	{ "erase",			Lingo::b_erase,			1, 1, false },	//			D4 c
+	{ "findEmpty",		Lingo::b_findEmpty,		1, 1, true },	//			D4 f
 		// go													// D2
-	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4
+	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
 	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
-	{ "move",			Lingo::b_move,			1, 2, false },	//			D4
+	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
-	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4
+	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4 c
 	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
 	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
@@ -158,8 +158,8 @@ static struct BuiltinProto {
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
 	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
-	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4
-	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4
+	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
+	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4 c
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
@@ -170,7 +170,7 @@ static struct BuiltinProto {
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
 	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3
 	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
-	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3
+	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3 c
 	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
 	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3
 	// Constants
@@ -184,8 +184,8 @@ static struct BuiltinProto {
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
 	{ "version",		Lingo::b_version,		0, 0, false },	//		D3
 	// References
-	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4
-	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
+	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4 f
+	{ "field",			Lingo::b_field,			1, 1, false },	//		D3 f
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
 
 	{ 0, 0, 0, 0, false }
@@ -200,9 +200,24 @@ static const char *twoWordBuiltins[] = {
 
 static const char *builtinFunctions[] = {
 	"cast",
+	"count",
 	"field",
 	"findEmpty",
+	"findPos",
+	"findPosNear",
+	"getaProp",
+	"getAt",
+	"getLast",
 	"getNthFileNameInFolder",
+	"getOne",
+	"getPos",
+	"getProp",
+	"getPropAt",
+	"ilk",
+	"list",
+	"listP",
+	"max",
+	"min",
 	"xFactoryList",
 	0
 };
