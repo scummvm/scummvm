@@ -96,6 +96,7 @@ public:
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str);
 	void replaceLastLine(Common::String str);
+	int getLineCount() { return _text.size(); }
 
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
