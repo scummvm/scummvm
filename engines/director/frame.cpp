@@ -661,8 +661,6 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
-	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), true);
-
 	uint16 castId = _sprites[spriteId]->_castId;
 	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castId]);
 
@@ -671,8 +669,15 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 
 	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y + rectTop;
-	int height = _sprites[spriteId]->_height;
-	int width = _sprites[spriteId]->_width;
+	int height = button->initialRect.height(); // _sprites[spriteId]->_height;
+	int width = button->initialRect.width() + 3; //_sprites[spriteId]->_width;
+
+	Common::Rect textRect(0, 0, width, height);
+	//pass the rect of the button into the label.
+	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), &textRect);
+
+	//TODO: review all cases to confirm if we should use text height.
+	//height = textRect.height();
 
 	Common::Rect _rect;
 
@@ -684,7 +689,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		addDrawRect(spriteId, _rect);
 		break;
 	case kTypeButton: {
-			_rect = Common::Rect(x, y, x + width - 1, y + height + 5);
+			_rect = Common::Rect(x, y, x + width, y + height + 3);
 			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
@@ -800,10 +805,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint1
 		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
 	}
 
-	renderText(surface, spriteId, textStream, false);
+	renderText(surface, spriteId, textStream, NULL);
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, Common::Rect *textSize) {
 	if (textStream == NULL)
 		return;
 
@@ -894,14 +899,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-
 	int height = _sprites[spriteId]->_height;
-	if (_vm->getVersion() >= 4 && !isButtonLabel) height = textCast->initialRect.bottom;
-	height += textShadow;
-
 	int width = _sprites[spriteId]->_width;
 
-	if (_vm->getVersion() >= 4 && !isButtonLabel)
+	if (_vm->getVersion() >= 4 && textSize != NULL)
 		width = textCast->initialRect.right;
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
@@ -922,16 +923,28 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
+	if (_vm->getVersion() >= 4) {
+		if (textSize == NULL)
+			width = textCast->initialRect.right;
+		else {
+			width = textSize->width();
+		}
+	}
+
 	Graphics::MacText mt(ftext, _vm->_wm, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
 
 	height = textSurface->h;
+	if (textSize != NULL) {
+		//TODO: this offset could be due to incorrect fonts loaded!
+		textSize->bottom = height + (mt.getLineCount() - 2);
+	}
 
 	uint16 textX = 0, textY = 0;
 
-	if (!isButtonLabel) {
+	if (textSize == NULL) {
 		if (borderSize > 0) {
 			if (_vm->getVersion() <= 3)
 				height++;
@@ -956,7 +969,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		if (textShadow > 0)
 			textX--;
 	} else {
-		y += 2;
+		x++;
+		y += 3;
 	}
 
 	switch (textCast->textAlign) {
@@ -973,11 +987,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
 	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
 
-	if (!isButtonLabel && boxShadow > 0) {
+	if (textSize == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
 	}
 
-	if (!isButtonLabel && borderSize != kSizeNone) {
+	if (textSize == NULL && borderSize != kSizeNone) {
 		for (int bb = 0; bb < borderSize; bb++) {
 			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
 			textWithFeatures.fillRect(borderRect, 0xff);
