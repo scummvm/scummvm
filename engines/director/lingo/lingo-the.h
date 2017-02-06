@@ -84,6 +84,10 @@ enum TheEntityType {
 	kTheMouseV,
 	kTheMouseWord,
 	kTheMovie,
+	kTheMovieFileFreeSize,
+	kTheMovieFileSize,
+	kTheMovieName,
+	kTheMoviePath,
 	kTheMultiSound,
 	kTheOptionDown,
 	kTheParamCount,
@@ -97,6 +101,8 @@ enum TheEntityType {
 	kTheRightMouseDown,
 	kTheRightMouseUp,
 	kTheRomanLingo,
+	kTheSearchCurrentFolder,
+	kTheSearchPath,
 	kTheSelection,
 	kTheSelEnd,
 	kTheSelStart,
@@ -125,6 +131,7 @@ enum TheEntityType {
 	kTheTrace,
 	kTheTraceLoad,
 	kTheTraceLogFile,
+	kTheUpdateMovieEnabled,
 	kTheWindow,
 	kTheWords
 };

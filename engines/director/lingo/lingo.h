@@ -384,6 +384,7 @@ public:
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
+	static void b_copyToClipBoard(int nargs);
 	static void b_duplicate(int nargs);
 	static void b_editableText(int nargs);
 	static void b_erase(int nargs);
@@ -427,10 +428,12 @@ public:
 	static void b_closeDA(int nargs);
 	static void b_closeResFile(int nargs);
 	static void b_closeXlib(int nargs);
+	static void b_getNthFileNameInFolder(int nargs);
 	static void b_openDA(int nargs);
 	static void b_openResFile(int nargs);
 	static void b_openXlib(int nargs);
 	static void b_setCallBack(int nargs);
+	static void b_saveMovie(int nargs);
 	static void b_showResFile(int nargs);
 	static void b_showXlib(int nargs);
 	static void b_xFactoryList(int nargs);

@@ -84,10 +84,12 @@ static struct BuiltinProto {
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
 	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },	// D2
+	{ "getNthFileNameInFolder",Lingo::b_getNthFileNameInFolder,2,2,true },//D4
 		// open													// D2
 	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2
 	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2
 	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2
+	{ "saveMovie",		Lingo::b_saveMovie,		1, 1, false },	//			D4
 	{ "setCallBack",	Lingo::b_setCallBack,	2, 2, false },	//		D3
 	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
 	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
@@ -136,6 +138,7 @@ static struct BuiltinProto {
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
+	{ "copyToClipBoard",Lingo::b_copyToClipBoard,1,1, false },	//			D4
 	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
 	{ "erase",			Lingo::b_erase,			1, 1, false },	//			D4
@@ -199,6 +202,8 @@ static const char *builtinFunctions[] = {
 	"cast",
 	"field",
 	"findEmpty",
+	"getNthFileNameInFolder",
+	"xFactoryList",
 	0
 };
 
@@ -632,6 +637,14 @@ void Lingo::b_closeXlib(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_getNthFileNameInFolder(int nargs) {
+	g_lingo->printSTUBWithArglist("b_getNthFileNameInFolder", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_openDA(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -660,6 +673,12 @@ void Lingo::b_openXlib(int nargs) {
 	warning("STUB: b_openXlib(%s)", d.u.s->c_str());
 
 	delete d.u.s;
+}
+
+void Lingo::b_saveMovie(int nargs) {
+	g_lingo->printSTUBWithArglist("b_saveMovie", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_setCallBack(int nargs) {
@@ -917,6 +936,12 @@ void Lingo::b_constrainV(int nargs) {
 	warning("STUB: b_constrainV(%d, %d)", sprite.u.i, num.u.i);
 
 	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_copyToClipBoard(int nargs) {
+	g_lingo->printSTUBWithArglist("b_copyToClipBoard", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_duplicate(int nargs) {

@@ -86,6 +86,10 @@ TheEntity entities[] = {
 	{ kTheMouseV,			"mouseV",			false },	// D2 f
 	{ kTheMouseWord,		"mouseWord",		false },	//		D3 f
 	{ kTheMovie,			"movie",			false },	// D2 f
+	{ kTheMovieFileFreeSize,"movieFileFreeSize",false },	//				D4 f
+	{ kTheMovieFileSize,	"movieFileSize",	false },	//				D4 f
+	{ kTheMovieName,		"movieName",		false },	//				D4 f
+	{ kTheMoviePath,		"moviePath",		false },	//				D4 f
 	{ kTheMultiSound,		"multiSound",		false },
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
 	{ kTheParamCount,		"paramCount",		false },	//				D4 f
@@ -99,6 +103,8 @@ TheEntity entities[] = {
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
 	{ kTheRomanLingo,		"romanLingo",		false },
+	{ kTheSearchCurrentFolder,"searchCurrentFolder",false },//				D4 f
+	{ kTheSearchPath,		"searchPath",		false },	//				D4 f
 	{ kTheSelection,		"selection",		false },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false },	// D2 p
 	{ kTheSelStart,			"selStart",			false },	// D2 p
@@ -127,6 +133,7 @@ TheEntity entities[] = {
 	{ kTheTrace,			"trace",			false },	//				D4 p
 	{ kTheTraceLoad,		"traceLoad",		false },	//				D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false },	//				D4 p
+	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false },	//				D4 p
 	{ kTheWindow,			"window",			false },
 	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }
