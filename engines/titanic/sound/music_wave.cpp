@@ -322,14 +322,14 @@ void CMusicWave::processArray(int index, int size) {
 }
 
 void CMusicWave::setupArray(int minVal, int maxVal) {
+	// Delete any prior array and recreate it
 	delete[] _array;
 
-	// TODO: Figure out if the weird shift can be represented as a simpler equation
-	uint32 arrSize = ((uint32)minVal << 29) - (uint32)minVal + maxVal;
+	int arrSize = maxVal - minVal + 1;
+	_array = new double[arrSize];
+	_arrayIndex = ABS(minVal);
 
-	_array = new double[arrSize / 8];
-	_arrayIndex = maxVal;
-
+	// Setup array contents
 	_array[_arrayIndex] = 1.0;
 
 	double val = 1.0594634;
