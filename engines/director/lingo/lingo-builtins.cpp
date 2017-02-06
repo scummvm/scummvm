@@ -196,6 +196,7 @@ static const char *twoWordBuiltins[] = {
 static const char *builtinFunctions[] = {
 	"cast",
 	"field",
+	"findEmpty",
 	0
 };
 

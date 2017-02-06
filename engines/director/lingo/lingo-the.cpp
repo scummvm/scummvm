@@ -91,6 +91,8 @@ TheEntity entities[] = {
 	{ kThePauseState,		"pauseState",		false },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false },
+	{ kThePreLoadRAM,		"preLoadRAM",		false },	//				D4 p
+	{ kTheQuickTimePresent,	"quickTimePresent",	false },	//				D4 f
 	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
@@ -145,20 +147,20 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"locH",			kTheLocH },			// D2 p
 	{ kTheSprite,	"locV",			kTheLocV },			// D2 p
 	{ kTheSprite,	"moveable",		kTheMoveable },
-	{ kTheSprite,	"movieRate",	kTheMovieRate },
-	{ kTheSprite,	"movieTime",	kTheMovieTime },
+	{ kTheSprite,	"movieRate",	kTheMovieRate },	//				D4 P
+	{ kTheSprite,	"movieTime",	kTheMovieTime },	//				D4 P
 	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
 	{ kTheSprite,	"right",		kTheRight },		// D2 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum },	//				D4 p
-	{ kTheSprite,	"startTime",	kTheStartTime },
+	{ kTheSprite,	"startTime",	kTheStartTime },	//				D4 p
 	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
-	{ kTheSprite,	"stopTime",		kTheStopTime },
+	{ kTheSprite,	"stopTime",		kTheStopTime },		//				D4 p
 	{ kTheSprite,	"top",			kTheTop },			// D2 p
 	{ kTheSprite,	"trails",		kTheTrails },
 	{ kTheSprite,	"type",			kTheType },			// D2 p
 	{ kTheSprite,	"visible",		kTheVisible },
-	{ kTheSprite,	"volume",		kTheVolume },
+	{ kTheSprite,	"volume",		kTheVolume },		//				D4 p
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
 	// Common cast fields
@@ -179,13 +181,17 @@ TheEntityField fields[] = {
 	{ kTheCast,		"foreColor",	kTheForeColor },
 
 	// Digital video fields
-	{ kTheCast,		"controller",	kTheController },
-	{ kTheCast,		"directToStage",kTheDirectToStage },
-	{ kTheCast,		"frameRate",	kTheFrameRate },
-	{ kTheCast,		"loop",			kTheLoop },
-	{ kTheCast,		"pausedAtStart",kThePausedAtStart },
-	{ kTheCast,		"preload",		kThePreload },
-	{ kTheCast,		"sound",		kTheSound }, // 0-1 off-on
+	{ kTheCast,		"center",		kTheCenter },		//				D4 p
+	{ kTheCast,		"controller",	kTheController },	//				D4 p
+	{ kTheCast,		"crop",			kTheCrop },			//				D4 p
+	{ kTheCast,		"directToStage",kTheDirectToStage },//				D4 p
+	{ kTheCast,		"duration",		kTheDuration },		//				D4 p
+	{ kTheCast,		"frameRate",	kTheFrameRate },	//				D4 p
+	{ kTheCast,		"loop",			kTheLoop },			//				D4 p
+	{ kTheCast,		"pausedAtStart",kThePausedAtStart },//				D4 p
+	{ kTheCast,		"preLoad",		kThePreLoad },		//				D4 p
+	{ kTheCast,		"sound",		kTheSound },		//				D4 p // 0-1 off-on
+	{ kTheCast,		"video",		kTheVideo },		//				D4 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth },
