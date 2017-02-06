@@ -48,20 +48,39 @@ private:
 	void reverse();
 public:
 	Common::Array<byte> _buffer;
-	int _fieldC;
+	int _readBytesLeft;
 	int _writeBytesLeft;
 	bool _flag;
-	int _field18;
+	bool _disabled;
 public:
 	CAudioBuffer(int bufferSize);
 	~CAudioBuffer();
 
+	/**
+	 * Resets the audio buffer
+	 */
 	void reset();
 
-	byte *getPtr1();
+	/**
+	 * Gets a pointer to the start of previously written data
+	 */
+	uint16 *getReadPtr();
+
+	/**
+	 * Returns the number of bytes that can be read
+	 */
+	int getBytesToRead() const { return _readBytesLeft; }
+
+	/**
+	 * Advances the read index
+	 */
+	void advanceRead(int size);
+
+	/**
+	 * Gets a pointer to the remainder of the audio buffer that
+	 * can be written to
+	 */
 	uint16 *getWritePtr();
-	int getC() const { return _fieldC; }
-	void setC(int val);
 
 	/**
 	 * Returns how many bytes can be written before hitting the

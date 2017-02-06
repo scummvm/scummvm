@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-CAudioBuffer::CAudioBuffer(int bufferSize) : _flag(true), _field18(0) {
+CAudioBuffer::CAudioBuffer(int bufferSize) : _flag(true), _disabled(false) {
 	_buffer.resize(bufferSize);
 	reset();
 }
@@ -35,7 +35,7 @@ CAudioBuffer::~CAudioBuffer() {
 
 void CAudioBuffer::reset() {
 	_flag = true;
-	_fieldC = _writeBytesLeft = _buffer.size() / 2;
+	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
 }
 
 byte *CAudioBuffer::getBegin() {
@@ -46,9 +46,9 @@ byte *CAudioBuffer::getEnd() {
 	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
 }
 
-byte *CAudioBuffer::getPtr1() {
+uint16 *CAudioBuffer::getReadPtr() {
 	byte *ptr = getBegin();
-	return ptr + (_buffer.size() / 2 - _fieldC);
+	return (uint16 *)(ptr + (_buffer.size() / 2 - _readBytesLeft));
 }
 
 uint16 *CAudioBuffer::getWritePtr() {
@@ -56,11 +56,11 @@ uint16 *CAudioBuffer::getWritePtr() {
 	return (uint16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
 }
 
-void CAudioBuffer::setC(int val) {
-	_fieldC -= val;
-	if (_fieldC < 0) {
-		_fieldC = 0;
-	} else if (val && !_writeBytesLeft) {
+void CAudioBuffer::advanceRead(int size) {
+	_readBytesLeft -= size;
+	if (_readBytesLeft < 0) {
+		_readBytesLeft = 0;
+	} else if (size && !_writeBytesLeft) {
 		reverse();
 	}
 }
@@ -69,14 +69,14 @@ void CAudioBuffer::advanceWrite(int size) {
 	_writeBytesLeft -= size;
 	if (_writeBytesLeft < 0) {
 		_writeBytesLeft = 0;
-	} else if (size && !_fieldC) {
+	} else if (size && !_readBytesLeft) {
 		reverse();
 	}
 }
 
 void CAudioBuffer::reverse() {
 	_flag = !_flag;
-	_fieldC = _writeBytesLeft = _buffer.size() / 2;
+	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
 }
 
 void CAudioBuffer::enterCriticalSection() {

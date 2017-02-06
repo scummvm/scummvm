@@ -96,7 +96,7 @@ void CMusicRoomHandler::setup(int volume) {
 	update();
 
 	_waveFile = _soundManager->loadMusic(_audioBuffer, DisposeAfterUse::NO);
-	_audioBuffer->setC(_audioBuffer->getC());
+	_audioBuffer->advanceRead(_audioBuffer->getBytesToRead());
 	update();
 }
 

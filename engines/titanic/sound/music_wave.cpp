@@ -326,6 +326,7 @@ void CMusicWave::setupArray(int minVal, int maxVal) {
 
 	// TODO: Figure out if the weird shift can be represented as a simpler equation
 	uint32 arrSize = ((uint32)minVal << 29) - (uint32)minVal + maxVal;
+
 	_array = new double[arrSize / 8];
 	_arrayIndex = maxVal;
 
