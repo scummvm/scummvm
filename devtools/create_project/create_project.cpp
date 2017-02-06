@@ -300,6 +300,19 @@ int main(int argc, char *argv[]) {
 		for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 			j->enable = false;
 	}
+	
+	// Disable engines for which we are missing dependencies
+	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
+		if (i->enable) {
+			for (StringList::const_iterator ef = i->requiredFeatures.begin(); ef != i->requiredFeatures.end(); ++ef) {
+				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), *ef);
+				if (feature != setup.features.end() && !feature->enable) {
+					setEngineBuildState(i->name, setup.engines, false);
+					break;
+				}
+			}
+		}
+	}
 
 	// Print status
 	cout << "Enabled engines:\n\n";
@@ -906,7 +919,7 @@ namespace {
  */
 bool parseEngine(const std::string &line, EngineDesc &engine) {
 	// Format:
-	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"]
+	// add_engine engine_name "Readable Description" enable_default ["SubEngineList"] ["base games"] ["dependencies"]
 	TokenList tokens = tokenize(line);
 
 	if (tokens.size() < 4)
@@ -921,8 +934,14 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 	engine.name = *token; ++token;
 	engine.desc = *token; ++token;
 	engine.enable = (*token == "yes"); ++token;
-	if (token != tokens.end())
+	if (token != tokens.end()) {
 		engine.subEngines = tokenize(*token);
+		++token;
+		if (token != tokens.end())
+			++token;
+		if (token != tokens.end())
+			engine.requiredFeatures = tokenize(*token);
+	}
 
 	return true;
 }
