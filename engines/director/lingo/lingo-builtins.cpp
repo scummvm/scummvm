@@ -126,6 +126,7 @@ static struct BuiltinProto {
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
+	{ "param",	 		Lingo::b_param,			1, 1, true },	//			D4 f
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
 		// put													// D2
 		// set													// D2
@@ -769,6 +770,12 @@ void Lingo::b_HMStoFrames(int nargs) {
 	g_lingo->dropStack(nargs);
 
 	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_param(int nargs) {
+	g_lingo->printSTUBWithArglist("b_param", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_printFrom(int nargs) {

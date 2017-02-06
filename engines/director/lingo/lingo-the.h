@@ -85,6 +85,7 @@ enum TheEntityType {
 	kTheMovie,
 	kTheMultiSound,
 	kTheOptionDown,
+	kTheParamCount,
 	kThePathName,
 	kThePauseState,
 	kThePerFrameHook,

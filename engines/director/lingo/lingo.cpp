@@ -36,18 +36,19 @@ struct EventHandlerType {
 	const char *name;
 } static const eventHandlerDescs[] = {
 	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },
-	{ kEventStopMovie,			"stopMovie" },
+	{ kEventStartMovie,			"startMovie" },			//		D3?
+	{ kEventStepMovie,			"stepMovie" },			//		D3?
+	{ kEventStopMovie,			"stopMovie" },			//		D3?
 
 	{ kEventNew,				"newSprite" },
 	{ kEventBeginSprite,		"beginSprite" },
 	{ kEventEndSprite,			"endSprite" },
 
-	{ kEventEnterFrame, 		"enterFrame" },
+	{ kEventEnterFrame, 		"enterFrame" },			//			D4
 	{ kEventPrepareFrame, 		"prepareFrame" },
 	{ kEventIdle,				"idle" },
 	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame, 			"exitFrame" },
+	{ kEventExitFrame, 			"exitFrame" },			//			D4
 
 	{ kEventActivateWindow,		"activateWindow" },
 	{ kEventDeactivateWindow,	"deactivateWindow" },
@@ -57,10 +58,10 @@ struct EventHandlerType {
 	{ kEventCloseWindow,		"closeWindow" },
 	{ kEventStart,				"start" },
 
-	{ kEventKeyUp,				"keyUp" },
-	{ kEventKeyDown,			"keyDown" },			// D2 as when
-	{ kEventMouseUp,			"mouseUp" },			// D2 as when
-	{ kEventMouseDown,			"mouseDown" },			// D2 as when
+	{ kEventKeyUp,				"keyUp" },				//			D4
+	{ kEventKeyDown,			"keyDown" },			// D2 as when  D4
+	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3?
+	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3?
 	{ kEventRightMouseDown,		"rightMouseDown" },
 	{ kEventRightMouseUp,		"rightMouseUp" },
 	{ kEventMouseEnter,			"mouseEnter" },

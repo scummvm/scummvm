@@ -87,6 +87,7 @@ TheEntity entities[] = {
 	{ kTheMovie,			"movie",			false },	// D2 f
 	{ kTheMultiSound,		"multiSound",		false },
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
+	{ kTheParamCount,		"paramCount",		false },	//				D4 f
 	{ kThePathName,			"pathName",			false },	// D2 f
 	{ kThePauseState,		"pauseState",		false },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
