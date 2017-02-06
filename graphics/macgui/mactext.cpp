@@ -140,8 +140,6 @@ void MacText::splitString(Common::String &str) {
 
 			if (text.size()) {
 				for (uint i = 0; i < text.size(); i++) {
-					_text.push_back(text[i]);
-
 					_textLines[curLine].chunks[curChunk].text = text[i];
 
 					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
@@ -189,12 +187,8 @@ void MacText::splitString(Common::String &str) {
 
 		_textLines[curLine].chunks[curChunk].text = text[0];
 
-		_text.push_back(text[0]);
-
 		if (text.size() > 1) {
 			for (uint i = 1; i < text.size(); i++) {
-				_text.push_back(text[i]);
-
 				curLine++;
 				_textLines.resize(curLine + 1);
 				_textLines[curLine].chunks.push_back(_currentFormatting);
@@ -331,28 +325,28 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 void MacText::appendText(Common::String str) {
-	int oldLen = _text.size();
+	int oldLen = _textLines.size();
 
 	// TODO: Recalc length
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen + 1, _text.size());
+	render(oldLen + 1, _textLines.size());
 }
 
 void MacText::replaceLastLine(Common::String str) {
-	int oldLen = MAX<int>(0, _text.size() - 1);
+	int oldLen = MAX<int>(0, _textLines.size() - 1);
 
 	// TODO: Recalc length, adapt to _textLines
 
-	if (_text.size())
-		_text.pop_back();
+	if (_textLines.size())
+		_textLines.pop_back();
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen, _text.size());
+	render(oldLen, _textLines.size());
 }
 
 } // End of namespace Graphics

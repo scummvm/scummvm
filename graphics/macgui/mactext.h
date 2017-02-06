@@ -96,7 +96,7 @@ public:
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str);
 	void replaceLastLine(Common::String str);
-	int getLineCount() { return _text.size(); }
+	int getLineCount() { return _textLines.size(); }
 
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
@@ -118,8 +118,6 @@ private:
 
 	int _maxWidth;
 	int _interLinear;
-
-	Common::Array<Common::String> _text;
 
 	int _textMaxWidth;
 	int _textMaxHeight;
