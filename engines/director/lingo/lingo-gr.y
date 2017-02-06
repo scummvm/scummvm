@@ -92,6 +92,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
+%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
@@ -185,7 +186,7 @@ asgn: tPUT expr tINTO ID 		{
 	;
 
 stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
-	| func
+	| proc
 	;
 
 stmt: stmtoneliner
@@ -399,8 +400,11 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
-	| BLTINNOARGS 	{
+	| FBLTINNOARGS 	{
 		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		delete $1; }
+	| FBLTINONEARG expr		{
+		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
@@ -456,7 +460,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_wordToOf); }
 	;
 
-func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
+proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| playfunc
 	| tEXIT tREPEAT			{ g_lingo->code1(g_lingo->c_exitRepeat); }
@@ -464,6 +468,9 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	| tINSTANCE instancelist
+	| BLTINNOARGS 	{
+		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		delete $1; }
 	| BLTINONEARG expr		{
 		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
@@ -607,12 +614,12 @@ arglist:  /* nothing */ 	{ $$ = 0; }
 	| arglist ',' expr		{ $$ = $1 + 1; }
 	;
 
-nonemptyarglist:  expr		{ $$ = 1; }
-	| arglist ',' expr		{ $$ = $1 + 1; }
+nonemptyarglist:  expr			{ $$ = 1; }
+	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
 	;
 
-nonemptyarglistnl: expr nl	{ $$ = 1; }
-	| arglist ',' expr nl	{ $$ = $1 + 1; }
+nonemptyarglistnl: expr nl			{ $$ = 1; }
+	| nonemptyarglistnl ',' expr nl	{ $$ = $1 + 1; }
 	;
 
 %%

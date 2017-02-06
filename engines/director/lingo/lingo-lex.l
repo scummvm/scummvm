@@ -267,21 +267,22 @@ whitespace [\t ]
 		}
 
 		if (g_lingo->_builtins.contains(yytext)) {
-			if (g_lingo->_builtins[yytext]->type == BLTIN && g_lingo->_builtins[yytext]->parens == false) {
+			int type = g_lingo->_builtins[yytext]->type;
+			if ((type == BLTIN || type == FBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
 				if (g_lingo->_builtins[yytext]->nargs == 0) {
 					if (g_lingo->_builtins[yytext]->maxArgs == 0)
-						return BLTINNOARGS;
+						return type == BLTIN ? BLTINNOARGS : FBLTINNOARGS;
 					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
-						return BLTINNOARGSORONE;
+						return type == BLTINNOARGSORONE;
 					else
-						error("Incorrect setup for builtin: %s", yytext);
+						return type == BLTINARGLIST;
 				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
 							g_lingo->_builtins[yytext]->maxArgs == 1) {
-					return BLTINONEARG;
+					return type == BLTIN ? BLTINONEARG : FBLTINONEARG;
 				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
-					return BLTINARGLIST;
+					return type == BLTINARGLIST;
 				} else {
-					error("Incorrect setup for builtin: %s", yytext);
+					return type == BLTINARGLIST;
 				}
 			}
 		}

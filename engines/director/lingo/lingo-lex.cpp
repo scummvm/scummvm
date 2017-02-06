@@ -1461,21 +1461,22 @@ YY_RULE_SETUP
 		}
 
 		if (g_lingo->_builtins.contains(yytext)) {
-			if (g_lingo->_builtins[yytext]->type == BLTIN && g_lingo->_builtins[yytext]->parens == false) {
+			int type = g_lingo->_builtins[yytext]->type;
+			if ((type == BLTIN || type == FBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
 				if (g_lingo->_builtins[yytext]->nargs == 0) {
 					if (g_lingo->_builtins[yytext]->maxArgs == 0)
-						return BLTINNOARGS;
+						return type == BLTIN ? BLTINNOARGS : FBLTINNOARGS;
 					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
-						return BLTINNOARGSORONE;
+						return type == BLTINNOARGSORONE;
 					else
-						error("Incorrect setup for builtin: %s", yytext);
+						return type == BLTINARGLIST;
 				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
 							g_lingo->_builtins[yytext]->maxArgs == 1) {
-					return BLTINONEARG;
+					return type == BLTIN ? BLTINONEARG : FBLTINONEARG;
 				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
-					return BLTINARGLIST;
+					return type == BLTINARGLIST;
 				} else {
-					error("Incorrect setup for builtin: %s", yytext);
+					return type == BLTINARGLIST;
 				}
 			}
 		}
@@ -1485,41 +1486,41 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 291 "engines/director/lingo/lingo-lex.l"
+#line 292 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.f = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 292 "engines/director/lingo/lingo-lex.l"
+#line 293 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 293 "engines/director/lingo/lingo-lex.l"
+#line 294 "engines/director/lingo/lingo-lex.l"
 { count(); return *yytext; }
 	YY_BREAK
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 294 "engines/director/lingo/lingo-lex.l"
+#line 295 "engines/director/lingo/lingo-lex.l"
 { return '\n'; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 295 "engines/director/lingo/lingo-lex.l"
+#line 296 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 296 "engines/director/lingo/lingo-lex.l"
+#line 297 "engines/director/lingo/lingo-lex.l"
 
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 298 "engines/director/lingo/lingo-lex.l"
+#line 299 "engines/director/lingo/lingo-lex.l"
 ECHO;
 	YY_BREAK
-#line 1523 "engines/director/lingo/lingo-lex.cpp"
+#line 1524 "engines/director/lingo/lingo-lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2482,7 +2483,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 298 "engines/director/lingo/lingo-lex.l"
+#line 299 "engines/director/lingo/lingo-lex.l"
 
 
 

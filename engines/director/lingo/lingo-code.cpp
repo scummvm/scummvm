@@ -1030,7 +1030,7 @@ void Lingo::call(Common::String name, int nargs) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
 		dropArgs = true;
 	} else {
-		if (sym->type == BLTIN && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
+		if ((sym->type == BLTIN || sym->type == FBLTIN) && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
 			else
@@ -1057,7 +1057,7 @@ void Lingo::call(Common::String name, int nargs) {
 			g_lingo->pop();
 	}
 
-	if (sym->type == BLTIN) {
+	if (sym->type == BLTIN || sym->type == FBLTIN) {
 		if (sym->u.bltin == b_factory)
 			g_lingo->factoryCall(name, nargs);
 		else

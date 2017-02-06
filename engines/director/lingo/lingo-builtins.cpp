@@ -27,7 +27,7 @@ namespace Director {
 static struct BuiltinProto {
 	const char *name;
 	void (*func)(int);
-	int minArgs;
+	int minArgs;	// -1 -- arglist
 	int maxArgs;
 	bool parens;
 } builtins[] = {
@@ -158,7 +158,7 @@ static struct BuiltinProto {
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
-	{ "point",	Lingo::b_point, 2, 2, true },
+	{ "point",			Lingo::b_point,			2, 2, true },
 	// Sound
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
@@ -183,7 +183,6 @@ static struct BuiltinProto {
 	{ "field",			Lingo::b_field,			1, 1, false },	//		D3
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
 
-
 	{ 0, 0, 0, 0, false }
 };
 
@@ -191,6 +190,12 @@ static const char *twoWordBuiltins[] = {
 	//"duplicate",
 	//"erase",
 	"sound",
+	0
+};
+
+static const char *builtinFunctions[] = {
+	"cast",
+	"field",
 	0
 };
 
@@ -210,6 +215,9 @@ void Lingo::initBuiltIns() {
 
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
+
+	for (const char **b = builtinFunctions; *b; b++)
+		_builtins[*b]->type = FBLTIN;
 
 	for (const char **b = twoWordBuiltins; *b; b++)
 		_twoWordBuiltins[*b] = true;
