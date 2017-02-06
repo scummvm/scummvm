@@ -50,7 +50,7 @@ void CMusicWave::deinit() {
 }
 
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
-		_soundManager(soundManager), _instrument(instrument) {
+		_project(project), _soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_floatVal = 0.0;
 	_field34 = -1;
@@ -79,9 +79,9 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 		break;
 	
 	case MV_SNAKE:
-		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake Hammer"));
-		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake Glass"));
-		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake Head"));
+		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake_Hammer"));
+		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake_Glass"));
+		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake_Head"));
 		_floatVal = 0.17;
 		break;
 	}

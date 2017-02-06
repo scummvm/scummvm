@@ -69,7 +69,7 @@ CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int c
 		return nullptr;
 	}
 
-	_musicWaves[instrument]->setSize(count);
+	_musicWaves[instrument]->setFilesCount(count);
 	return _musicWaves[instrument];
 }
 
