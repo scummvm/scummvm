@@ -85,7 +85,8 @@ void CMusicRoom::setupMusic(int volume) {
 			_musicHandler->setMuteControl(idx, instr._muteControl);
 		}
 
-		_musicHandler->setVolume(volume);
+		// Set up the music handler
+		_musicHandler->setup(volume);
 	}
 }
 

@@ -162,6 +162,7 @@ void CMusicWave::start(int val) {
 				_gameObjects[0]->movieSetAudioTiming(true);
 				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
 				_floatVal = 0.6;
+				break;
 
 			case 62:
 				_gameObjects[0]->playMovie(828, 1023, MOVIE_STOP_PREVIOUS);

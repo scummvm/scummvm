@@ -35,48 +35,48 @@ CAudioBuffer::~CAudioBuffer() {
 
 void CAudioBuffer::reset() {
 	_flag = true;
-	_fieldC = _field10 = _buffer.size() / 2;
+	_fieldC = _writeBytesLeft = _buffer.size() / 2;
 }
 
-byte *CAudioBuffer::getDataPtr1() {
+byte *CAudioBuffer::getBegin() {
 	return _flag ? &_buffer[_buffer.size() / 2] : &_buffer[0];
 }
 
-byte *CAudioBuffer::getDataPtr2() {
+byte *CAudioBuffer::getEnd() {
 	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
 }
 
 byte *CAudioBuffer::getPtr1() {
-	byte *ptr = getDataPtr1();
+	byte *ptr = getBegin();
 	return ptr + (_buffer.size() / 2 - _fieldC);
 }
 
-uint16 *CAudioBuffer::getPtr2() {
-	byte *ptr = getDataPtr2();
-	return (uint16 *)(ptr + (_buffer.size() / 2 - _field10));
+uint16 *CAudioBuffer::getWritePtr() {
+	byte *ptr = getEnd();
+	return (uint16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
 }
 
 void CAudioBuffer::setC(int val) {
 	_fieldC -= val;
 	if (_fieldC < 0) {
 		_fieldC = 0;
-	} else if (val && !_field10) {
-		update();
+	} else if (val && !_writeBytesLeft) {
+		reverse();
 	}
 }
 
-void CAudioBuffer::set10(int val) {
-	_field10 -= val;
-	if (_field10 < 0) {
-		_field10 = 0;
-	} else if (val && !_field10) {
-		update();
+void CAudioBuffer::advanceWrite(int size) {
+	_writeBytesLeft -= size;
+	if (_writeBytesLeft < 0) {
+		_writeBytesLeft = 0;
+	} else if (size && !_fieldC) {
+		reverse();
 	}
 }
 
-void CAudioBuffer::update() {
+void CAudioBuffer::reverse() {
 	_flag = !_flag;
-	_fieldC = _field10 = _buffer.size() / 2;
+	_fieldC = _writeBytesLeft = _buffer.size() / 2;
 }
 
 void CAudioBuffer::enterCriticalSection() {

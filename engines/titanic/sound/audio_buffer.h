@@ -31,10 +31,25 @@ namespace Titanic {
 class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
+private:
+	/**
+	 * Gets the beginning of stored audio data
+	 */
+	byte *getBegin();
+
+	/**
+	 * Gets the end of the stored audio data
+	 */
+	byte *getEnd();
+
+	/**
+	 * Reverses the audio buffer
+	 */
+	void reverse();
 public:
 	Common::Array<byte> _buffer;
 	int _fieldC;
-	int _field10;
+	int _writeBytesLeft;
 	bool _flag;
 	int _field18;
 public:
@@ -42,15 +57,22 @@ public:
 	~CAudioBuffer();
 
 	void reset();
-	byte *getDataPtr1();
-	byte *getDataPtr2();
+
 	byte *getPtr1();
-	uint16 *getPtr2();
+	uint16 *getWritePtr();
 	int getC() const { return _fieldC; }
-	int get10() const { return _field10; }
 	void setC(int val);
-	void set10(int val);
-	void update();
+
+	/**
+	 * Returns how many bytes can be written before hitting the
+	 * end of the audio buffer
+	 */
+	int getWriteBytesLeft() const { return _writeBytesLeft; }
+	
+	/**
+	 * Advances the write pointer by the specified number of bytes
+	 */
+	void advanceWrite(int size);
 
 	/**
 	 * Enters a critical section

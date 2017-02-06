@@ -52,10 +52,10 @@ private:
 	CMusicWave *_musicWaves[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
-	CMusicObject *_array3[4];
-	int _array4[4];
+	CMusicObject *_musicObjs[4];
+	int _startPos[4];
+	int _position[4];
 	double _array5[4];
-	int _array6[4];
 
 	bool _active;
 	CWaveFile *_waveFile;
@@ -88,9 +88,9 @@ public:
 	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	/**
-	 * TODO: Verify - this starts the given music?
+	 * Main setup for the music room handler
 	 */
-	void setVolume(int volume);
+	void setup(int volume);
 
 	/**
 	 * Flags whether the music handler is active
