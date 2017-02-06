@@ -334,14 +334,14 @@ void CMusicWave::setupArray(int minVal, int maxVal) {
 
 	double val = 1.0594634;
 	for (int idx = 1; idx <= maxVal; ++idx) {
-		val *= 1.0594634;
 		_array[_arrayIndex + idx] = val;
+		val *= 1.0594634;
 	}
 
 	val = 0.94387404038686;
 	for (int idx = -1; idx >= minVal; --idx) {
-		val *= 0.94387404038686;
 		_array[_arrayIndex + idx] = val;
+		val *= 0.94387404038686;
 	}
 }
 
