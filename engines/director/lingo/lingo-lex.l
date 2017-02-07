@@ -274,16 +274,16 @@ whitespace [\t ]
 					if (g_lingo->_builtins[yytext]->maxArgs == 0)
 						return type == BLTIN ? BLTINNOARGS : FBLTINNOARGS;
 					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
-						return type == BLTINNOARGSORONE;
+						return BLTINNOARGSORONE;
 					else
-						return type == BLTINARGLIST;
+						return BLTINARGLIST;
 				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
 							g_lingo->_builtins[yytext]->maxArgs == 1) {
 					return type == BLTIN ? BLTINONEARG : FBLTINONEARG;
 				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
-					return type == BLTINARGLIST;
+					return BLTINARGLIST;
 				} else {
-					return type == BLTINARGLIST;
+					return BLTINARGLIST;
 				}
 			}
 		}
