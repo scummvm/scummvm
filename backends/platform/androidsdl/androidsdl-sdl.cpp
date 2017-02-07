@@ -88,9 +88,11 @@ void OSystem_ANDROIDSDL::switchToRelativeMouseMode() {
 void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 		case kFeatureTouchpadMode:
+			ConfMan.setBool("touchpad_mouse_mode", enable);
 			touchpadMode(enable);
 			break;
 		case kFeatureOnScreenControl:
+			ConfMan.setBool("onscreen_control", enable);
 			showOnScreenControl(enable);
 			break;
 	}

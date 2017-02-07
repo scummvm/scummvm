@@ -211,12 +211,12 @@ void OptionsDialog::build() {
 #ifdef ANDROIDSDL
 	// AndroidSDL options
 	if (ConfMan.hasKey("onscreen_control", _domain)) {
-		bool onscreenState = ConfMan.getBool("onscreen_control", _domain);
+		bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
 		if (_onscreenCheckbox != 0)
 			_onscreenCheckbox->setState(onscreenState);
 	}
 	if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
-		bool touchpadState = ConfMan.getBool("touchpad_mouse_mode", _domain);
+		bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
 		if (_touchpadCheckbox != 0)
 			_touchpadCheckbox->setState(touchpadState);
 	}
@@ -402,11 +402,9 @@ void OptionsDialog::apply() {
 #ifdef ANDROIDSDL
 	if (_enableAndroidSdlSettings) {
 		if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
-			ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
 			g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
 		}
 		if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
-			ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
 			g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
 		}
 	}
