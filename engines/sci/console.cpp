@@ -4733,9 +4733,18 @@ int Console::printObject(reg_t pos) {
 	debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
 				obj->getVarCount(), obj->getMethodCount());
 
-	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+	if (!obj->isClass())
 		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 	debugPrintf("  -- member variables:\n");
+
+	if (getSciVersion() == SCI_VERSION_3) {
+		debugPrintf("    (----) [---] -size- = 0000:%04x (%d)\n", obj->getVarCount(), obj->getVarCount());
+		debugPrintf("    (----) [---] -classScript- = %04x:%04x (%d)\n", PRINT_REG(obj->getClassScriptSelector()), obj->getClassScriptSelector().getOffset());
+		debugPrintf("    (----) [---] -species- = %04x:%04x (%s)\n", PRINT_REG(obj->getSpeciesSelector()), s->_segMan->getObjectName(obj->getSpeciesSelector()));
+		debugPrintf("    (----) [---] -super- = %04x:%04x (%s)\n", PRINT_REG(obj->getSuperClassSelector()), s->_segMan->getObjectName(obj->getSuperClassSelector()));
+		debugPrintf("    (----) [---] -info- = %04x:%04x (%d)\n", PRINT_REG(obj->getInfoSelector()), obj->getInfoSelector().getOffset());
+	}
+
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {
 		debugPrintf("    ");
 		if (var_container && i < var_container->getVarCount()) {
