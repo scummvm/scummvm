@@ -104,7 +104,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell
-%type<narg> argdef arglist nonemptyarglist nonemptyarglistnl
+%type<narg> argdef arglist nonemptyarglist
 
 %right '='
 %left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS
@@ -490,7 +490,7 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| BLTINNOARGSORONE 		{
 		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_builtins[*$1]->u.func);
 		delete $1; }
-	| BLTINARGLIST nonemptyarglistnl { g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST nonemptyarglist { g_lingo->codeFunc($1, $2); }
 	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
 	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
@@ -626,10 +626,6 @@ arglist:  /* nothing */ 	{ $$ = 0; }
 
 nonemptyarglist:  expr			{ $$ = 1; }
 	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
-	;
-
-nonemptyarglistnl: expr nl			{ $$ = 1; }
-	| nonemptyarglistnl ',' expr nl	{ $$ = $1 + 1; }
 	;
 
 %%
