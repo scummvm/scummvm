@@ -146,7 +146,7 @@ static struct BuiltinProto {
 	{ "findEmpty",		Lingo::b_findEmpty,		1, 1, true },	//			D4 f
 		// go													// D2
 	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
-	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
+	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2 c
 	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
 	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
