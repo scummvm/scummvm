@@ -192,32 +192,4 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	_currentPalette = palette;
-	_currentPaletteLength = count;
-}
-
-void DirectorEngine::testFonts() {
-	Common::String fontName("Helvetica");
-
-	Common::MacResManager *fontFile = new Common::MacResManager();
-	if (!fontFile->open(fontName))
-		error("Could not open %s as a resource fork", fontName.c_str());
-
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-			debug("Font: %s", name.c_str());
-
-			Graphics::MacFontFamily font;
-			font.load(*stream);
-		}
-	}
-
-	delete fontFile;
-}
-
 } // End of namespace Director

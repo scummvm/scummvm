@@ -60,6 +60,7 @@ enum {
 	kDebugText			= 1 << 4
 };
 
+extern byte defaultPalette[768];
 
 class DirectorEngine : public ::Engine {
 public:
