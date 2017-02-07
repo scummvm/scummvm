@@ -86,6 +86,11 @@ struct EngineDesc {
 	 * Whether the engine should be included in the build or not.
 	 */
 	bool enable;
+	
+	/**
+	 * Features required for this engine.
+	 */
+	StringList requiredFeatures;
 
 	/**
 	 * A list of all available sub engine names. Sub engines are engines

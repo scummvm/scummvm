@@ -950,6 +950,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	scummvmOSX_LdFlags.push_back("-lvorbis");
 	scummvmOSX_LdFlags.push_back("-lmad");
 	scummvmOSX_LdFlags.push_back("-lFLAC");
+	scummvmOSX_LdFlags.push_back("-lcurl");
 	if (setup.useSDL2) {
 		scummvmOSX_LdFlags.push_back("-lSDL2main");
 		scummvmOSX_LdFlags.push_back("-lSDL2");

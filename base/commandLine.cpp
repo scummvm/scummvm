@@ -386,9 +386,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 		} else {
 			// On MacOS X prior to 10.9 the OS is sometimes adding a -psn_X_XXXXXX argument (where X are digits)
 			// to pass the process serial number. We need to ignore it to avoid an error.
+			// When using XCode it also adds -NSDocumentRevisionsDebugMode YES argument if XCode option
+			// "Allow debugging when using document Versions Browser" is on (which is the default).
 #ifdef MACOSX
 			if (strncmp(s, "-psn_", 5) == 0)
 				continue;
+			if (strcmp(s, "-NSDocumentRevisionsDebugMode") == 0) {
+				++i; // Also skip the YES that follows
+				continue;
+			}
 #endif
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
