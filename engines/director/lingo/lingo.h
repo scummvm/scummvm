@@ -369,6 +369,7 @@ public:
 	static void b_ilk(int nargs);
 	static void b_integerp(int nargs);
 	static void b_objectp(int nargs);
+	static void b_pictureP(int nargs);
 	static void b_stringp(int nargs);
 	static void b_symbolp(int nargs);
 
@@ -391,6 +392,7 @@ public:
 	static void b_findEmpty(int nargs);
 	static void b_importFileInto(int nargs);
 	static void b_installMenu(int nargs);
+	static void b_intersect(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
 	static void b_move(int nargs);

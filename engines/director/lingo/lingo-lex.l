@@ -82,22 +82,22 @@ whitespace [\t ]
 %%
 
 --[^\r\n]*
-^{whitespace}+		{ count(); }
-[\t]+				{ count(); return ' '; }
+^{whitespace}+	{ count(); }
+[\t]+						{ count(); return ' '; }
 
-[#]{identifier}		{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
+[#]{identifier}	{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
 
 (?i:after)			{ count(); return tAFTER; }		// D3
-(?i:and)			{ count(); return tAND; }
+(?i:and)				{ count(); return tAND; }
 (?i:before)			{ count(); return tBEFORE; }	// D3
-(?i:char)			{ count(); return tCHAR; }		// D3
+(?i:char)				{ count(); return tCHAR; }		// D3
 (?i:contains)		{ count(); return tCONTAINS; }
-(?i:done)			{ count(); return tDONE; }
-(?i:down)			{ count(); return tDOWN; }
-(?i:if)				{ count(); return tIF; }
+(?i:done)				{ count(); return tDONE; }
+(?i:down)				{ count(); return tDOWN; }
+(?i:if)					{ count(); return tIF; }
 (?i:[\n\r]+[\t ]*else[\t ]+if)	{ countnl(); return tNLELSIF; }
 (?i:[\n\r]+[\t ]*else)	{ countnl(); return tNLELSE; }
-(?i:else)			{ count(); return tELSE; }
+(?i:else)				{ count(); return tELSE; }
 (?i:end)([\t ]*{identifier})?	{
 		count();
 
@@ -110,33 +110,33 @@ whitespace [\t ]
 		return ENDCLAUSE;
 	}
 (?i:factory)		{ count(); return tFACTORY; }
-(?i:exit)			{ count(); return tEXIT; }
+(?i:exit)				{ count(); return tEXIT; }
 (?i:frame)			{ count(); return tFRAME; }
 (?i:global)			{ count(); return tGLOBAL; }
-(?i:go[\t ]+to)		{ count(); return tGO; }
-(?i:go)				{ count(); return tGO; }
+(?i:go[\t ]+to)	{ count(); return tGO; }
+(?i:go)					{ count(); return tGO; }
 (?i:instance)		{ count(); return tINSTANCE; }
-(?i:intersects)		{ count(); return tINTERSECTS; }
-(?i:into)			{ count(); return tINTO; }
-(?i:item)			{ count(); return tITEM; }
-(?i:line)			{ count(); return tLINE; }
-(?i:loop)			{ count(); return checkImmediate(tLOOP); }
+(?i:intersects)	{ count(); return tINTERSECTS; }
+(?i:into)				{ count(); return tINTO; }
+(?i:item)				{ count(); return tITEM; }
+(?i:line)				{ count(); return tLINE; }
+(?i:loop)				{ count(); return checkImmediate(tLOOP); }
 (?i:macro)			{ count(); return tMACRO; }
 (?i:method)			{ count(); return tMETHOD; }
-(?i:mod)			{ count(); return tMOD; }
+(?i:mod)				{ count(); return tMOD; }
 (?i:movie)			{ count(); return tMOVIE; }
-(?i:next)			{ count(); return tNEXT; }
-(?i:not)			{ count(); return tNOT; }
-(?i:of)				{ count(); return tOF; }
-(?i:on)				{ count(); return tON; }		// D3
-(?i:open)			{ count(); return tOPEN; }
-(?i:or)				{ count(); return tOR; }
-(?i:play)			{ count(); return tPLAY; }
-(?i:playAccel)		{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
+(?i:next)				{ count(); return tNEXT; }
+(?i:not)				{ count(); return tNOT; }
+(?i:of)					{ count(); return tOF; }
+(?i:on)					{ count(); return tON; }		// D3
+(?i:open)				{ count(); return tOPEN; }
+(?i:or)					{ count(); return tOR; }
+(?i:play)				{ count(); return tPLAY; }
+(?i:playAccel)	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 (?i:previous)		{ count(); return tPREVIOUS; }
-(?i:put)			{ count(); return tPUT; }
+(?i:put)				{ count(); return tPUT; }
 (?i:repeat)			{ count(); return checkImmediate(tREPEAT); }
-(?i:set)			{ count(); return tSET; }
+(?i:set)				{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();
@@ -236,21 +236,21 @@ whitespace [\t ]
 
 		warning("Unhandled the entity %s", ptr);
 	}
-(?i:then)			{ count(); return tTHEN; }
-(?i:to)				{ count(); return tTO; }
+(?i:then)				{ count(); return tTHEN; }
+(?i:to)					{ count(); return tTO; }
 (?i:sprite)			{ count(); return tSPRITE; }
-(?i:with)			{ count(); return tWITH; }
+(?i:with)				{ count(); return tWITH; }
 (?i:within)			{ count(); return tWITHIN; }
-(?i:when)			{ count(); return tWHEN; }
+(?i:when)				{ count(); return tWHEN; }
 (?i:while)			{ count(); return tWHILE; }
-(?i:word)			{ count(); return tWORD; }
+(?i:word)				{ count(); return tWORD; }
 
-[<][>]				{ count(); return tNEQ; }
-[>][=]				{ count(); return tGE; }
-[<][=]				{ count(); return tLE; }
-[&][&]				{ count(); return tCONCAT; }
+[<][>]					{ count(); return tNEQ; }
+[>][=]					{ count(); return tGE; }
+[<][=]					{ count(); return tLE; }
+[&][&]					{ count(); return tCONCAT; }
 
-{identifier}	{
+{identifier}		{
 		count();
 		yylval.s = new Common::String(yytext);
 
@@ -289,11 +289,11 @@ whitespace [\t ]
 
 		return ID;
 	}
-{constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
+{constfloat}		{ count(); yylval.f = atof(yytext); return FLOAT; }
 {constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
-{operator}		{ count(); return *yytext; }
-{newline}		{ return '\n'; }
-{conststring}	{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
+{operator}			{ count(); return *yytext; }
+{newline}				{ return '\n'; }
+{conststring}		{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 .
 
 %%

@@ -120,10 +120,11 @@ static struct BuiltinProto {
 	// Types
 	{ "floatP",			Lingo::b_floatP,		1, 1, true },	//		D3
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4 f
-	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2
-	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2
-	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
-	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
+	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2 f
+	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2 f
+	{ "puctureP",		Lingo::b_pictureP,		1, 1, true },	//			D4 f
+	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2 f
+	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
@@ -146,6 +147,7 @@ static struct BuiltinProto {
 		// go													// D2
 	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
+	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
 	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
 	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
@@ -172,7 +174,7 @@ static struct BuiltinProto {
 	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
 	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3 c
 	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
-	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3
+	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3 f
 	// Constants
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
@@ -214,10 +216,17 @@ static const char *builtinFunctions[] = {
 	"getProp",
 	"getPropAt",
 	"ilk",
+	"integerp",
+	"intersect",
 	"list",
 	"listP",
 	"max",
 	"min",
+	"objectp",
+	"pictureP",
+	"soundBusy",
+	"stringp",
+	"symbolp",
 	"xFactoryList",
 	0
 };
@@ -882,6 +891,12 @@ void Lingo::b_objectp(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_pictureP(int nargs) {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_pictureP");
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_stringp(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == STRING) ? 1 : 0;
@@ -992,6 +1007,14 @@ void Lingo::b_importFileInto(int nargs) {
 void Lingo::b_installMenu(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_installMenu(%d)", d.u.i);
+}
+
+void Lingo::b_intersect(int nargs) {
+	g_lingo->printSTUBWithArglist("b_intersect", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
 }
 
 void Lingo::b_label(int nargs) {
