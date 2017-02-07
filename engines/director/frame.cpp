@@ -891,6 +891,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
+	if (textSize != NULL) borderSize = 0;
 	uint16 padding = (uint16)textCast->gutterSize;
 	uint16 textShadow = (uint16)textCast->textShadow;
 
@@ -939,7 +940,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	height = textSurface->h;
 	if (textSize != NULL) {
 		//TODO: this offset could be due to incorrect fonts loaded!
-		textSize->bottom = height + (mt.getLineCount() - 2);
+		textSize->bottom = height + mt.getLineCount();
 	}
 
 	uint16 textX = 0, textY = 0;
@@ -970,7 +971,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 			textX--;
 	} else {
 		x++;
-		y += 3;
+		if (width % 2 != 0) x++;
+		y += 2;
 	}
 
 	switch (textCast->textAlign) {

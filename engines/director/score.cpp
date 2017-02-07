@@ -743,10 +743,15 @@ void Score::gotoLoop() {
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->name == _currentLabel) {
-			_currentFrame = (*i)->number;
-			return;
+	if (_labels == NULL) {
+		_currentFrame = 0;
+		return;
+	} else {
+		for (i = _labels->begin(); i != _labels->end(); ++i) {
+			if ((*i)->name == _currentLabel) {
+				_currentFrame = (*i)->number;
+				return;
+			}
 		}
 	}
 }
