@@ -1,0 +1,19 @@
+
+1. Open menu and replay last dialog, then press stop. hover over buttons - hint text will be misplaced
+2. During valley location change some junk appears in the bottom half of screen for a brief time (broken transition effect?)
+3. Transitions often show a lot of red colors (bad palette fadein/out?)
+4. After game load in some areas (White Arch) top bar and inventory not redrawn due to (DrawFlags?) initialized incorrectly
+5. Mac reload feature uses hardcoded savefile from eden.dat
+6. First time in Tau's cave, try to take knife. When Dina objects, click on her - Tau's dialog will start (maybe it's original bug?)
+7. Mouse clipping may be lost during FMV scenes
+8. Screen doubling feature probably doesn't work (not really needed, can be replaced with built-in SCUMMVM scaler)
+9. Tons of debug messages spam when hover mouse over party icons or menu buttons
+A. King's bread drawn over inventory bar
+B. PC cursor clipped too agressively
+C. PC logos and credits videos won't play because encoded in old HNM format
+D. Eye blinking works incorrectly?
+E. Bogus hitbox in upper right corner of mirror screen (under mini-map)
+F. Wrong frescoes cursor on PC
+G. Junk on a valley entrance screen on PC
+H. On PC, no sound during first Mungo's dialogue, memory corruption after that
+J. PC intro video is lagging behind of background voice

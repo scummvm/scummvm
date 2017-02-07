@@ -1,0 +1,24 @@
+
+game phases
+
+   0  -  game start
+  10  -  enter throne room
+  20  -  heard talk of eloi and father
+  30  -  in prince's room
+  40  -  met dina
+  41  -  talking to tau                               room: 202
+  50  -  tau died
+  60  -  talked to jabber
+  70  -  got a gift from jabber
+  71  -  part with dina at secret crypt
+  80  -  learned about fresques / got flute
+  81  -  convinced monk to help
+  82  -  enter throne room
+  90  -  got king's permission
+  A0  -  met chong
+  A1  -  chong joins party
+  B0  -  on valley screen after citadel build complete
+  C0  -  met ulan
+  D0  -  build citadel in uluru
+  E0  -  got gift from ulan
+  ...
