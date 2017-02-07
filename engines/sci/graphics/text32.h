@@ -236,6 +236,11 @@ public:
 	void setFont(const GuiResourceId fontId);
 
 	/**
+	 * Gets the pixel height of the currently loaded font.
+	 */
+	int16 getScaledFontHeight() const;
+
+	/**
 	 * Gets the width of a character.
 	 */
 	uint16 getCharWidth(const char charIndex, const bool doScaling) const;

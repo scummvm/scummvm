@@ -651,7 +651,7 @@ reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
-reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv);
+reg_t kPointSize(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv);

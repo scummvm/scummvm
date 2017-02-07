@@ -608,13 +608,9 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 	error("not supposed to call this");
 }
 
-reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Setting font may have just been for side effect
-	// of setting the fontHeight on the font manager, in
-	// which case we could just get the font directly ourselves.
+reg_t kPointSize(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->setFont(argv[0].toUint16());
-	g_sci->_gfxText32->_yResolution = (g_sci->_gfxText32->_font->getHeight() * g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight + g_sci->_gfxText32->_yResolution - 1) / g_sci->_gfxText32->_yResolution;
-	return make_reg(0, g_sci->_gfxText32->_yResolution);
+	return make_reg(0, g_sci->_gfxText32->getScaledFontHeight());
 }
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {

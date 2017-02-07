@@ -216,6 +216,11 @@ void GfxText32::drawChar(const char charIndex) {
 	_drawPosition.x += _font->getCharWidth((unsigned char)charIndex);
 }
 
+int16 GfxText32::getScaledFontHeight() const {
+	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	return (_font->getHeight() * scriptHeight + _yResolution - 1) / _yResolution;
+}
+
 uint16 GfxText32::getCharWidth(const char charIndex, const bool doScaling) const {
 	uint16 width = _font->getCharWidth((unsigned char)charIndex);
 	if (doScaling) {

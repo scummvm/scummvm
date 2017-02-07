@@ -369,7 +369,7 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kFont_subops[] = {
-	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(SetFontHeight),             "i",                    NULL },
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(PointSize),                 "i",                    NULL },
 	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(SetFontRes),                "ii",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -937,7 +937,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(InvertRect),       SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(TextWidth),         SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri",             NULL,            NULL },
-	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(PointSize),         SIG_THRU_SCI21EARLY, SIGFOR_ALL, "i",              NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
 	{ "CheckCDisc", kCheckCD,      SIG_SCI21EARLY, SIGFOR_ALL, "(i)",                 NULL,            NULL },
@@ -1314,8 +1314,8 @@ static const char *const sci2_default_knames[] = {
 	/*0x86*/ "CheckIntegrity",	  // for debugging
 	/*0x87*/ "ObjectIntersect",
 	/*0x88*/ "MarkMemory",	      // for debugging
-	/*0x89*/ "TextWidth",		  // for debugging(?), only in SCI2, not used in any SCI2 game
-	/*0x8a*/ "PointSize",	      // for debugging(?), only in SCI2, not used in any SCI2 game
+	/*0x89*/ "TextWidth",
+	/*0x8a*/ "PointSize",
 
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
