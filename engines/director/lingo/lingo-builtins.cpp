@@ -122,7 +122,7 @@ static struct BuiltinProto {
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, false },	//			D4 f
 	{ "integerp",		Lingo::b_integerp,		1, 1, true },	// D2 f
 	{ "objectp",		Lingo::b_objectp,		1, 1, true },	// D2 f
-	{ "puctureP",		Lingo::b_pictureP,		1, 1, true },	//			D4 f
+	{ "pictureP",		Lingo::b_pictureP,		1, 1, true },	//			D4 f
 	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2 f
 	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
 	// Misc
@@ -258,8 +258,12 @@ void Lingo::initBuiltIns() {
 		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
 
-	for (const char **b = builtinFunctions; *b; b++)
+	for (const char **b = builtinFunctions; *b; b++) {
+		if (!_builtins.contains(*b))
+			error("Incorrectly setup builtinFunctions[]: %s", *b);
+
 		_builtins[*b]->type = FBLTIN;
+	}
 
 	for (const char **b = twoWordBuiltins; *b; b++)
 		_twoWordBuiltins[*b] = true;
