@@ -3229,6 +3229,36 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#pragma mark -
+#pragma mark Phantasmagoria 2
+
+// The interface bars at the top and bottom of the screen fade in and out when
+// hovered over. This fade is performed by a script loop that calls kFrameOut
+// directly and uses global 227 as the fade delta for each frame. Global 227
+// normally contains the value 1, which means that these fades are quite slow.
+// This patch replaces the use of global 227 with an immediate value that gives
+// a reasonable fade speed.
+// Applies to at least: US English
+static const uint16 phant2SlowIFadeSignature[] = {
+	0x43, 0x21, SIG_UINT16(0), // callk FrameOut, 0
+	SIG_MAGICDWORD,
+	0x67, 0x03,                // pTos 03 (scratch)
+	0x81, 0xe3,                // lag $e3 (227)
+	SIG_END
+};
+
+static const uint16 phant2SlowIFadePatch[] = {
+	PATCH_ADDTOOFFSET(6),      // skip to lag
+	0x35, 0x05,                // ldi 5
+	PATCH_END
+};
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
+	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,     phant2SlowIFadePatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #endif
 
 // ===========================================================================
@@ -5678,6 +5708,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 	case GID_PHANTASMAGORIA:
 		signatureTable = phantasmagoriaSignatures;
+		break;
+
+	case GID_PHANTASMAGORIA2:
+		signatureTable = phantasmagoria2Signatures;
 		break;
 #endif
 	case GID_PQ1:
