@@ -46,7 +46,7 @@ struct reg_t {
 	uint32 getOffset() const;
 	void setOffset(uint32 offset);
 
-	inline void incOffset(int16 offset) {
+	inline void incOffset(int32 offset) {
 		setOffset(getOffset() + offset);
 	}
 
