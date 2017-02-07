@@ -299,7 +299,7 @@ bool Vocabulary::loadAltInputs() {
 		uint32 maxSize = data_end - data;
 		uint32 l = Common::strnlen(data, maxSize);
 		if (l == maxSize) {
-			error("Alt input from %d appears truncated at %ld", resource->getNumber(), (byte *)data - resource->data);
+			error("Alt input from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
 		}
 		t._inputLength = l;
 		data += l + 1;
@@ -308,7 +308,7 @@ bool Vocabulary::loadAltInputs() {
 		maxSize = data_end - data;
 		l = Common::strnlen(data, maxSize);
 		if (l == maxSize) {
-			error("Alt input replacement from %d appears truncated at %ld", resource->getNumber(), (byte *)data - resource->data);
+			error("Alt input replacement from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
 		}
 		data += l + 1;
 
