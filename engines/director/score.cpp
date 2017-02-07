@@ -366,35 +366,22 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	switch (castType) {
 	case kCastBitmap:
-		warning("CASt: Bitmap");
-		Common::hexdump(data, size1 + 16);
 		_casts[id] = new BitmapCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastBitmap;
 		break;
 	case kCastText:
-		warning("CASt: Text");
-		Common::hexdump(data, size1 + 16);
 		_casts[id] = new TextCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastText;
 		break;
 	case kCastShape:
-		warning("CASt: Shape");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ShapeCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastShape;
 		break;
 	case kCastButton:
-		warning("CASt: Button");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ButtonCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastButton;
 		break;
 	case kCastLingoScript:
-		warning("CASt: Script");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastLingoScript;
 		break;
