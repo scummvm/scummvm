@@ -174,6 +174,8 @@ public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
 
+	void restartLingo();
+
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s);
@@ -533,8 +535,6 @@ private:
 
 	void push(Datum d);
 	Datum pop(void);
-
-	void restartLingo();
 
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;

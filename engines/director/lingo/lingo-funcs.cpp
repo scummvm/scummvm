@@ -181,19 +181,24 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		restartLingo();
+		_vm->_nextMovie = *movie.u.s;
+		_vm->_currentScore->_stopPlay = true;
 
-		delete _vm->_currentScore;
+		_vm->_nextMovieFrameS.clear();
+		_vm->_nextMovieFrameI = -1;
 
-		Archive *mov = _vm->openMainArchive(*movie.u.s);
+		if (frame.type == VOID)
+			return;
 
-		_vm->_currentScore = new Score(_vm, mov);
-		debug(0, "Score name %s", _vm->_currentScore->getMacName().c_str());
-		_vm->_currentScore->loadArchive();
-	}
+		if (frame.type == STRING) {
+			_vm->_nextMovieFrameS = *frame.u.s;
+			return;
+		}
 
-	if (!_vm->_currentScore) {
-		warning("func_goto: No score is loaded");
+		frame.toInt();
+
+		_vm->_nextMovieFrameI = frame.u.i;
+
 		return;
 	}
 

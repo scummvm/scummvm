@@ -110,6 +110,10 @@ public:
 	int _machineType;
 	bool _playbackPaused;
 
+	Common::String _nextMovie;
+	Common::String _nextMovieFrameS;
+	int _nextMovieFrameI;
+
 protected:
 	virtual Common::Error run();
 
