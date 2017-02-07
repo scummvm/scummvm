@@ -56,11 +56,11 @@ static struct BuiltinProto {
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
 	// Lists
-	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 c
+	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 command
 	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4 c
 	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4 c
 	{ "append",			Lingo::b_append,		2, 2, false },	//			D4 c
-	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 f
+	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 function
 	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4 c
 	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4 c
 	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4 f
@@ -127,7 +127,7 @@ static struct BuiltinProto {
 	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
-	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
+	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2 c
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
 	{ "param",	 		Lingo::b_param,			1, 1, true },	//			D4 f
@@ -158,7 +158,7 @@ static struct BuiltinProto {
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
 	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
-	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2
+	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2 f
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
 	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
 	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4 c
@@ -224,6 +224,7 @@ static const char *builtinFunctions[] = {
 	"min",
 	"objectp",
 	"pictureP",
+	"rollOver",
 	"soundBusy",
 	"stringp",
 	"symbolp",
@@ -892,7 +893,7 @@ void Lingo::b_objectp(int nargs) {
 }
 
 void Lingo::b_pictureP(int nargs) {
-	Datum d = g_lingo->pop();
+	g_lingo->pop();
 	warning("STUB: b_pictureP");
 	g_lingo->push(Datum(0));
 }

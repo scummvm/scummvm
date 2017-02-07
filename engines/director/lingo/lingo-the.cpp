@@ -38,7 +38,8 @@ TheEntity entities[] = {
 	{ kTheChars,			"chars",			false },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
-	{ kTheClickOn,			"clickOn",			false },	// D2 function
+	{ kTheClickLoc,			"clickLoc",			false },	// 				D4 function
+	{ kTheClickOn,			"clickOn",			false },	// D2 f
 	{ kTheColorDepth,		"colorDepth",		false },	// D2 p
 	{ kTheColorQD,			"colorQD",			false },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false },	// D2 f
