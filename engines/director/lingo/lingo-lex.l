@@ -138,6 +138,7 @@ whitespace [\t ]
 (?i:repeat)			{ count(); return checkImmediate(tREPEAT); }
 (?i:set)				{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
+(?i:tell)				{ count(); return tTELL; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();
 

@@ -104,6 +104,7 @@ static struct FuncDescr {
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
+	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
@@ -945,6 +946,11 @@ void Lingo::c_whencode() {
 
 	g_lingo->_pc = end;
 }
+
+void Lingo::c_tellcode() {
+	warning("STUB: c_tellcode");
+}
+
 
 //************************
 // Built-in functions

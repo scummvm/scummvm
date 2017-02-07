@@ -285,6 +285,7 @@ public:
 	static void c_repeatwithcode();
 	static void c_ifcode();
 	static void c_whencode();
+	static void c_tellcode();
 	static void c_exitRepeat();
 	static void c_eq();
 	static void c_neq();
@@ -441,6 +442,13 @@ public:
 	static void b_xFactoryList(int nargs);
 
 	static void b_point(int nargs);
+
+	static void b_close(int nargs);
+	static void b_forget(int nargs);
+	static void b_inflate(int nargs);
+	static void b_moveToBack(int nargs);
+	static void b_moveToFront(int nargs);
+	static void b_window(int nargs);
 
 	static void b_beep(int nargs);
 	static void b_mci(int nargs);

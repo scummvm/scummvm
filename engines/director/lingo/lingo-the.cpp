@@ -135,7 +135,8 @@ TheEntity entities[] = {
 	{ kTheTraceLoad,		"traceLoad",		false },	//				D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false },	//				D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false },	//				D4 p
-	{ kTheWindow,			"window",			false },
+	{ kTheWindow,			"window",			true },		//				D4
+	{ kTheWindowList,		"windowList",		false },	//				D4 p
 	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }
 };
@@ -175,7 +176,7 @@ TheEntityField fields[] = {
 
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
-	{ kTheCast,		"filename",		kTheFilename },		//				D4 p
+	{ kTheCast,		"filename",		kTheFileName },		//				D4 p
 	{ kTheCast,		"height",		kTheHeight },		//				D4 p
 	{ kTheCast,		"loaded",		kTheLoaded },		//				D4 p
 	{ kTheCast,		"modified",		kTheModified },		//				D4 p
@@ -221,10 +222,15 @@ TheEntityField fields[] = {
 	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
 
-	{ kTheWindow,	"drawRect",		kTheDrawRect },
-	{ kTheWindow,	"filename",		kTheFilename },
+	{ kTheWindow,	"drawRect",		kTheDrawRect },		//				D4 p
+	{ kTheWindow,	"fileName",		kTheFileName },		//				D4 p
+	{ kTheWindow,	"modal",		kTheModal },		//				D4 p
+	{ kTheWindow,	"rect",			kTheRect },			//				D4 p
+	{ kTheWindow,	"title",		kTheTitle },		//				D4 p
+	{ kTheWindow,	"titleVisible",	kTheTitleVisible },	//				D4 p
 	{ kTheWindow,	"sourceRect",	kTheSourceRect },
-	{ kTheWindow,	"visible",		kTheVisible },
+	{ kTheWindow,	"visible",		kTheVisible },		//				D4 p
+	{ kTheWindow,	"windowType",	kTheWindowType },	//				D4 p
 
 	{ kTheMenuItem,	"checkmark",	kTheCheckMark },	//		D3 p
 	{ kTheMenuItem, "enabled",		kTheEnabled },		//		D3 p
@@ -648,7 +654,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheCastType:
 		d.u.i = cast->type;
 		break;
-	case kTheFilename:
+	case kTheFileName:
 		d.toString();
 		d.u.s = &castInfo->fileName;
 		break;
@@ -730,7 +736,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		cast->type = static_cast<CastType>(d.u.i);
 		cast->modified = 1;
 		break;
-	case kTheFilename:
+	case kTheFileName:
 		castInfo->fileName = *d.u.s;
 		break;
 	case kTheName:

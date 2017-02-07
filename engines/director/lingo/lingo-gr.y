@@ -100,10 +100,10 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
-%token tSPRITE tINTERSECTS tWITHIN
+%token tSPRITE tINTERSECTS tWITHIN tTELL
 %token tON tME
 
-%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
+%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell
 %type<narg> argdef arglist nonemptyarglist nonemptyarglistnl
 
 %right '='
@@ -245,6 +245,12 @@ stmt: stmtoneliner
 			WRITE_UINT32(&end, $3);
 			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[$1 + 1] = end;
+		}
+	| tell expr nl stmtlist end ENDCLAUSE {
+			warning("STUB: TELL is not implemented");
+			checkEnd($6, "tell", true); }
+	| tell expr tTO expr {
+			warning("STUB: TELL is not implemented");
 		}
 	;
 
@@ -389,6 +395,10 @@ when:	  tWHEN	ID tTHEN	{
 		g_lingo->code1(STOP);
 		g_lingo->codeString($2->c_str());
 		delete $2; }
+
+tell:	  tTELL				{
+		$$ = g_lingo->code1(g_lingo->c_tellcode);
+		g_lingo->code1(STOP); }
 
 expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FLOAT		{

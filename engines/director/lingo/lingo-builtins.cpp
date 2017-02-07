@@ -175,6 +175,12 @@ static struct BuiltinProto {
 	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3 c
 	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
 	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3 f
+	// Window
+	{ "close",			Lingo::b_close,			1, 1, false },	//			D4 c
+	{ "forget",			Lingo::b_forget,		1, 1, false },	//			D4 c
+	{ "inflate",		Lingo::b_inflate,		3, 3, true },	//			D4 f
+	{ "moveToBack",		Lingo::b_moveToBack,	1, 1, false },	//			D4 c
+	{ "moveToFront",	Lingo::b_moveToFront,	1, 1, false },	//			D4 c
 	// Constants
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
@@ -189,6 +195,7 @@ static struct BuiltinProto {
 	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4 f
 	{ "field",			Lingo::b_field,			1, 1, false },	//		D3 f
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
+	{ "window",			Lingo::b_window,		1, 1, false },	//			D4 f
 
 	{ 0, 0, 0, 0, false }
 };
@@ -216,6 +223,7 @@ static const char *builtinFunctions[] = {
 	"getProp",
 	"getPropAt",
 	"ilk",
+	"inflate",
 	"integerp",
 	"intersect",
 	"list",
@@ -228,6 +236,7 @@ static const char *builtinFunctions[] = {
 	"soundBusy",
 	"stringp",
 	"symbolp",
+	"window",
 	"xFactoryList",
 	0
 };
@@ -1118,6 +1127,41 @@ void Lingo::b_updateStage(int nargs) {
 	warning("STUB: b_updateStage");
 }
 
+
+///////////////////
+// Window
+///////////////////
+
+void Lingo::b_close(int nargs) {
+	g_lingo->printSTUBWithArglist("b_close", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_forget(int nargs) {
+	g_lingo->printSTUBWithArglist("b_forget", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_inflate(int nargs) {
+	g_lingo->printSTUBWithArglist("b_inflate", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_moveToBack(int nargs) {
+	g_lingo->printSTUBWithArglist("b_moveToBack", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_moveToFront(int nargs) {
+	g_lingo->printSTUBWithArglist("b_moveToFront", nargs);
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_window(int nargs) {
+	g_lingo->printSTUBWithArglist("b_window", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
 
 
 ///////////////////
