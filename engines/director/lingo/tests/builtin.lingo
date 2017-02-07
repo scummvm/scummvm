@@ -27,4 +27,4 @@ move cast 1, cast 3
 move cast 3
 put findEmpty(cast 10)
 pasteClipBoardInto cast 2
-put the width of the cast 3
+put the width of cast 3
