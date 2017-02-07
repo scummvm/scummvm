@@ -91,7 +91,7 @@ public:
 	MacText(Common::String s, MacWindowManager *wm, const Graphics::Font *font, int fgcolor, int bgcolor,
 				int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft);
 
-	void setInterLinear(int interLinear) { _interLinear = interLinear; }
+	void setInterLinear(int interLinear);
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str);

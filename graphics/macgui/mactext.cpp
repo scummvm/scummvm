@@ -298,6 +298,11 @@ int MacText::getLineHeight(int line) {
 	return _textLines[line].height;
 }
 
+void MacText::setInterLinear(int interLinear) { 
+	_interLinear = interLinear; 
+	recalcDims();
+}
+
 void MacText::recalcDims() {
 	int y = 0;
 	_textMaxWidth = 0;
@@ -309,7 +314,7 @@ void MacText::recalcDims() {
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
 	}
 
-	_textMaxHeight = y;
+	_textMaxHeight = y - _interLinear;
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
