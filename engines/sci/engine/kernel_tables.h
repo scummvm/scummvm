@@ -1471,7 +1471,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x7e*/ "Table",
 	/*0x7f*/ "WinHelp",		// Windows only
 	/*0x80*/ "Dummy",
-	/*0x81*/ "Dummy",		// called when changing rooms in most SCI2.1 games (e.g. KQ7, GK2, MUMG deluxe, Phant1)
+	/*0x81*/ "Empty",       // called when clicking the On-line Help button in Phant2 control panel
 	/*0x82*/ "Dummy",
 	/*0x83*/ "PrintDebug",	// debug function, used by Shivers (demo and full)
 	/*0x84*/ "Dummy",
