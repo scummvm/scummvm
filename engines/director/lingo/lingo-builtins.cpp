@@ -32,19 +32,19 @@ static struct BuiltinProto {
 	bool parens;
 } builtins[] = {
 	// Math
-	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2
-	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4
-	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4
-	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4
-	{ "float",			Lingo::b_float,			1, 1, true },	//			D4
-	{ "integer",		Lingo::b_integer,		1, 1, true },
-	{ "log",			Lingo::b_log,			1, 1, true },	//			D4
-	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4
-	{ "power",			Lingo::b_power,			2, 2, true },	//			D4
-	{ "random",			Lingo::b_random,		1, 1, true },	// D2
-	{ "sin",			Lingo::b_sin,			1, 1, true },
-	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2
-	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4
+	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2 function
+	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4 function
+	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4 function
+	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4 function
+	{ "float",			Lingo::b_float,			1, 1, true },	//			D4 function
+	{ "integer",		Lingo::b_integer,		1, 1, true },	//		D3 f
+	{ "log",			Lingo::b_log,			1, 1, true },	//			D4 f
+	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4 f
+	{ "power",			Lingo::b_power,			2, 2, true },	//			D4 f
+	{ "random",			Lingo::b_random,		1, 1, true },	// D2 f
+	{ "sin",			Lingo::b_sin,			1, 1, true },	//			D4 f
+	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2 f
+	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4 f
 	// String
 	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
 	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
@@ -54,13 +54,13 @@ static struct BuiltinProto {
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
-	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
+	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2 f
 	// Lists
 	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 command
 	{ "addAt",			Lingo::b_addAt,			3, 3, false },	//			D4 c
 	{ "addProp",		Lingo::b_addProp,		3, 3, false },	//			D4 c
 	{ "append",			Lingo::b_append,		2, 2, false },	//			D4 c
-	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 function
+	{ "count",			Lingo::b_count,			1, 1, true },	//			D4 f
 	{ "deleteAt",		Lingo::b_deleteAt,		2, 2, false },	//			D4 c
 	{ "deleteProp",		Lingo::b_deleteProp,	2, 2, false },	//			D4 c
 	{ "findPos",		Lingo::b_findPos,		2, 2, true },	//			D4 f
@@ -208,16 +208,21 @@ static const char *twoWordBuiltins[] = {
 };
 
 static const char *builtinFunctions[] = {
+	"abs",
+	"atan",
 	"backspace",
 	"cast",
+	"cos",
 	"count",
 	"empty",
 	"enter",
+	"exp",
 	"false",
 	"field",
 	"findEmpty",
 	"findPos",
 	"findPosNear",
+	"float",
 	"getaProp",
 	"getAt",
 	"getLast",
@@ -228,22 +233,31 @@ static const char *builtinFunctions[] = {
 	"getPropAt",
 	"ilk",
 	"inflate",
+	"integer",
 	"integerp",
 	"intersect",
 	"list",
 	"listP",
+	"log",
 	"max",
 	"min",
 	"objectp",
+	"pi",
 	"pictureP",
+	"power",
+	"random",
 	"rollOver",
 	"quote",
 	"return",
+	"sin",
+	"sqrt",
 	"soundBusy",
 	"stringp",
 	"symbolp",
 	"tab",
+	"tan",
 	"true",
+	"value",
 	"version",
 	"window",
 	"xFactoryList",

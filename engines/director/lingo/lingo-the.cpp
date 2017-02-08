@@ -70,6 +70,7 @@ TheEntity entities[] = {
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
 	{ kTheLines,			"lines",			false },	//		 D3
 	{ kTheMachineType,		"machineType",		false },	// D2 f
+	{ kTheMaxInteger,		"maxInteger",		false },	//				D4 f
 	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
 	{ kTheMenus,			"menus",			false },
@@ -100,6 +101,7 @@ TheEntity entities[] = {
 	{ kThePreloadEventAbort,"preloadEventAbort",false },
 	{ kThePreLoadRAM,		"preLoadRAM",		false },	//				D4 p
 	{ kTheQuickTimePresent,	"quickTimePresent",	false },	//				D4 f
+	{ kTheRandomSeed,		"randomSeed",		false },	//				D4 p
 	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
