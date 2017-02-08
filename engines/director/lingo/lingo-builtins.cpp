@@ -1161,12 +1161,6 @@ void Lingo::b_moveToFront(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
-void Lingo::b_window(int nargs) {
-	g_lingo->printSTUBWithArglist("b_window", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
-}
-
 
 ///////////////////
 // Point
@@ -1347,6 +1341,12 @@ void Lingo::b_me(int nargs) {
 	g_lingo->printSTUBWithArglist("me", nargs);
 
 	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_window(int nargs) {
+	g_lingo->printSTUBWithArglist("b_window", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
 }
 
 
