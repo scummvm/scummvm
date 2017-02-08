@@ -1145,27 +1145,27 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 							scr += 128 + 1;
 							ww -= 128 + 1;
 						} else {
-							byte run;
+							byte runVal;
 							*scr++ = fill;  //TODO: wha?
 							*scr++ = fill;
 							ww -= 128 + 1;
-							for (run = 127; run--;)
+							for (runVal = 127; runVal--;)
 								*scr++ = fill;
 						}
 					} else {
 						byte fill = *pix++;
-						byte run = 255 - c + 2;
-						ww -= run;
+						byte runVal = 255 - c + 2;
+						ww -= runVal;
 						if (fill == 0)
-							scr += run;
+							scr += runVal;
 						else
-							for (; run--;)
+							for (; runVal--;)
 								*scr++ = fill;
 					}
 				} else {
-					byte run = c + 1;
-					ww -= run;
-					for (; run--;) {
+					byte runVal = c + 1;
+					ww -= runVal;
+					for (; runVal--;) {
 						byte p = *pix++;
 						if (p == 0)
 							scr++;
@@ -1220,23 +1220,23 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 				if (c >= 0x80) {
 					if (c == 0x80) {
 						byte fill = *pix++;
-						byte run;
+						byte runVal;
 						*scr++ = fill;  //TODO: wha?
 						*scr++ = fill;
 						ww -= 128 + 1;
-						for (run = 127; run--;)
+						for (runVal = 127; runVal--;)
 							*scr++ = fill;
 					} else {
 						byte fill = *pix++;
-						byte run = 255 - c + 2;
-						ww -= run;
-						for (; run--;)
+						byte runVal = 255 - c + 2;
+						ww -= runVal;
+						for (; runVal--;)
 							*scr++ = fill;
 					}
 				} else {
-					byte run = c + 1;
-					ww -= run;
-					for (; run--;) {
+					byte runVal = c + 1;
+					ww -= runVal;
+					for (; runVal--;) {
 						byte p = *pix++;
 						*scr++ = p;
 					}
@@ -1407,28 +1407,28 @@ void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 							scr += 128 + 1;
 							ww -= 128 + 1;
 						} else {
-							byte run;
+							byte runVal;
 							*scr++ = fill;  //TODO: wha?
 							*scr++ = fill;
 							ww -= 128 + 1;
-							for (run = 127; run--;)
+							for (runVal = 127; runVal--;)
 								*scr++ = fill;
 						}
 					} else {
 						byte fill = *pix++;
-						byte run = 255 - c + 2;
-						ww -= run;
+						byte runVal = 255 - c + 2;
+						ww -= runVal;
 						if (fill == 0)
-							scr += run;
+							scr += runVal;
 						else {
-							for (; run--;)
+							for (; runVal--;)
 								*scr++ = fill;
 						}
 					}
 				} else {
-					byte run = c + 1;
-					ww -= run;
-					for (; run--;) {
+					byte runVal = c + 1;
+					ww -= runVal;
+					for (; runVal--;) {
 						byte p = *pix++;
 						if (p == 0)
 							scr++;
@@ -2482,28 +2482,28 @@ void EdenGame::displayImage() {
 								scr += 128 + 1;
 								ww -= 128 + 1;
 							} else {
-								byte run;
+								byte runVal;
 								*scr++ = fill;  //TODO: wha?
 								*scr++ = fill;
 								ww -= 128 + 1;
-								for (run = 127; run--;)
+								for (runVal = 127; runVal--;)
 									*scr++ = fill;
 							}
 						} else {
 							byte fill = *pix++;
-							byte run = 255 - c + 2;
-							ww -= run;
+							byte runVal = 255 - c + 2;
+							ww -= runVal;
 							if (fill == 0)
-								scr += run;
+								scr += runVal;
 							else {
-								for (; run--;)
+								for (; runVal--;)
 									*scr++ = fill;
 							}
 						}
 					} else {
-						byte run = c + 1;
-						ww -= run;
-						for (; run--;) {
+						byte runVal = c + 1;
+						ww -= runVal;
+						for (; runVal--;) {
 							byte p = *pix++;
 							if (p == 0)
 								scr++;
