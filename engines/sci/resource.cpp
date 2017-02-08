@@ -30,6 +30,7 @@
 #include "common/memstream.h"
 #endif
 
+#include "sci/parser/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
 #include "sci/util.h"
@@ -2690,15 +2691,19 @@ static SciSpan<const byte>::const_iterator findSci0ExportsBlock(const SciSpan<co
 
 // This code duplicates Script::relocateOffsetSci3, but we can't use
 // that here since we can't instantiate scripts at this point.
-static int relocateOffsetSci3(const SciSpan<const byte> &buf, uint32 offset) {
+static int relocateOffsetSci3(const SciSpan<const byte> &buf, uint32 offset, const bool isBE) {
 	int relocStart = buf.getUint32LEAt(8);
 	int relocCount = buf.getUint16LEAt(18);
 	SciSpan<const byte>::const_iterator seeker = buf.cbegin() + relocStart;
 
 	for (int i = 0; i < relocCount; ++i) {
-		if (seeker.getUint32SE() == offset) {
-			// TODO: Find out what UINT16 at (seeker + 8) means
-			return buf.getUint16SEAt(offset) + (seeker + 4).getUint32SE();
+		const uint32 candidateOffset = isBE ? seeker.getUint32BE() : seeker.getUint32LE();
+		if (candidateOffset == offset) {
+			if (isBE) {
+				return buf.getUint16BEAt(offset) + (seeker + 4).getUint32BE();
+			} else {
+				return buf.getUint16LEAt(offset) + (seeker + 4).getUint32LE();
+			}
 		}
 		seeker += 10;
 	}
@@ -2706,7 +2711,7 @@ static int relocateOffsetSci3(const SciSpan<const byte> &buf, uint32 offset) {
 	return -1;
 }
 
-reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
+reg_t ResourceManager::findGameObject(const bool addSci11ScriptOffset, const bool isBE) {
 	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
 
 	if (!script)
@@ -2746,36 +2751,63 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 
 		return make_reg(1, offset);
 	} else {
-		return make_reg(1, relocateOffsetSci3(*script, 22));
+		return make_reg(1, relocateOffsetSci3(*script, 22, isBE));
 	}
 }
 
-Common::String ResourceManager::findSierraGameId() {
+Common::String ResourceManager::findSierraGameId(const bool isBE) {
 	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1 - SCI2.1,
 	// it's in a separate heap resource
-	Resource *heap = 0;
-	int nameSelector = 3;
+	Resource *heap = nullptr;
+	int nameSelector = -1;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
+		nameSelector = 3;
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		heap = findResource(ResourceId(kResourceTypeHeap, 0), false);
-		nameSelector += 5;
+		nameSelector = 8;
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: findSierraGameId(): SCI3 equivalent");
+		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
+
+		Resource *vocab = findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), false);
+		const uint16 numSelectors = isBE ? vocab->getUint16BEAt(0) : vocab->getUint16LEAt(0);
+		for (uint16 i = 0; i < numSelectors; ++i) {
+			uint16 selectorOffset;
+			uint16 selectorSize;
+			if (isBE) {
+				selectorOffset = vocab->getUint16BEAt((i + 1) * sizeof(uint16));
+				selectorSize = vocab->getUint16BEAt(selectorOffset);
+			} else {
+				selectorOffset = vocab->getUint16LEAt((i + 1) * sizeof(uint16));
+				selectorSize = vocab->getUint16LEAt(selectorOffset);
+			}
+
+			Common::String selectorName = Common::String((const char *)vocab->getUnsafeDataAt(selectorOffset + 2, selectorSize), selectorSize);
+			if (selectorName == "name") {
+				nameSelector = i;
+				break;
+			}
+		}
 	}
 
-	if (!heap)
+	if (!heap || nameSelector == -1)
 		return "";
 
-	int16 gameObjectOffset = findGameObject(false).getOffset();
+	int16 gameObjectOffset = findGameObject(false, isBE).getOffset();
 
 	if (!gameObjectOffset)
 		return "";
 
-	// Seek to the name selector of the first export
-	SciSpan<const byte>::const_iterator offsetPtr = heap->cbegin() + gameObjectOffset + nameSelector * 2;
-	uint16 offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
+	int32 offset;
+	if (getSciVersion() == SCI_VERSION_3) {
+		offset = relocateOffsetSci3(*heap, gameObjectOffset + /* base selector offset */ 0x110 + nameSelector * sizeof(uint16), isBE);
+	} else {
+		// Seek to the name selector of the first export
+		SciSpan<const byte>::const_iterator offsetPtr = heap->cbegin() + gameObjectOffset + nameSelector * sizeof(uint16);
+		offset = !isSci11Mac() ? offsetPtr.getUint16LE() : offsetPtr.getUint16BE();
+	}
+
 	return heap->getStringAt(offset);
 }
 

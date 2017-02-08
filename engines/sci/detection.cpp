@@ -379,6 +379,15 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		return "qfg3";
 	}
 
+	if (sierraId == "l7")
+		return "lsl7";
+
+	if (sierraId == "p2")
+		return "phantasmagoria2";
+
+	if (sierraId == "lite")
+		return "lighthouse";
+
 	return sierraId;
 }
 
@@ -628,7 +637,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String sierraGameId = resMan.findSierraGameId();
+	Common::String sierraGameId = resMan.findSierraGameId(s_fallbackDesc.platform == Common::kPlatformMacintosh);
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty())

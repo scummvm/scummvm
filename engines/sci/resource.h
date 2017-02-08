@@ -436,7 +436,7 @@ public:
 	/**
 	 * Finds the internal Sierra ID of the current game from script 0.
 	 */
-	Common::String findSierraGameId();
+	Common::String findSierraGameId(const bool isBE);
 
 	/**
 	 * Finds the location of the game object from script 0.
@@ -444,7 +444,7 @@ public:
 	 *        games. Needs to be false when the heap is accessed directly inside
 	 *        findSierraGameId().
 	 */
-	reg_t findGameObject(bool addSci11ScriptOffset = true);
+	reg_t findGameObject(const bool addSci11ScriptOffset, const bool isBE);
 
 	/**
 	 * Converts a map resource type to our type
