@@ -134,6 +134,7 @@ whitespace [\t ]
 (?i:play)				{ count(); return tPLAY; }
 (?i:playAccel)	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 (?i:previous)		{ count(); return tPREVIOUS; }
+(?i:property)		{ count(); return tPROPERTY; }	// D4
 (?i:put)				{ count(); return tPUT; }
 (?i:repeat)			{ count(); return checkImmediate(tREPEAT); }
 (?i:set)				{ count(); return tSET; }

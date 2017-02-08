@@ -309,6 +309,7 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 	static void c_instance();
+	static void c_property();
 
 	static void c_play();
 	static void c_playdone();
@@ -377,6 +378,7 @@ public:
 	static void b_symbolp(int nargs);
 
 	static void b_alert(int nargs);
+	static void b_birth(int nargs);
 	static void b_cursor(int nargs);
 	static void b_framesToHMS(int nargs);
 	static void b_HMStoFrames(int nargs);
@@ -461,6 +463,7 @@ public:
 	static void b_soundPlayFile(int nargs);
 	static void b_soundStop(int nargs);
 
+	static void b_ancestor(int nargs);
 	static void b_backspace(int nargs);
 	static void b_empty(int nargs);
 	static void b_enter(int nargs);
@@ -477,6 +480,7 @@ public:
 	static void b_cast(int nargs);
 	static void b_field(int nargs);
 	static void b_me(int nargs);
+	static void b_script(int nargs);
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

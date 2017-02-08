@@ -115,6 +115,7 @@ static struct FuncDescr {
 	{ Lingo::c_call,		"c_call",		"si" },
 	{ Lingo::c_procret,		"c_procret",	"" },
 	{ Lingo::c_global,		"c_global",		"s" },
+	{ Lingo::c_property,	"c_property",	"s" },
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
 	{ 0, 0, 0 }
@@ -1138,6 +1139,14 @@ void Lingo::c_global() {
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
 	delete s;
+}
+
+void Lingo::c_property() {
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+
+	warning("STUB: c_property()");
 }
 
 void Lingo::c_instance() {

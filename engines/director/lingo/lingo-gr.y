@@ -100,7 +100,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
-%token tSPRITE tINTERSECTS tWITHIN tTELL
+%token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tME
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell
@@ -477,6 +477,7 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
+	| tPROPERTY propertylist
 	| tINSTANCE instancelist
 	| BLTINNOARGS 	{
 		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
@@ -498,8 +499,12 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }
 	;
 
-globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
-	| globallist ',' ID		{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+globallist: ID					{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
+	| globallist ',' ID			{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+	;
+
+propertylist: ID				{ g_lingo->code1(g_lingo->c_property); g_lingo->codeString($1->c_str()); delete $1; }
+	| propertylist ',' ID		{ g_lingo->code1(g_lingo->c_property); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
 instancelist: ID				{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($1->c_str()); delete $1; }

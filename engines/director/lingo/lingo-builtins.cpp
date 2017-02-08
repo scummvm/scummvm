@@ -127,6 +127,7 @@ static struct BuiltinProto {
 	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
+	{ "birth",	 		Lingo::b_birth,			-1,0, false },	//			D4 f
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2 c
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
@@ -182,6 +183,7 @@ static struct BuiltinProto {
 	{ "moveToBack",		Lingo::b_moveToBack,	1, 1, false },	//			D4 c
 	{ "moveToFront",	Lingo::b_moveToFront,	1, 1, false },	//			D4 c
 	// Constants
+	{ "ancestor",		Lingo::b_ancestor,		0, 0, false },	//			D4
 	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
 	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
 	{ "enter",			Lingo::b_enter,			0, 0, false },	// D2
@@ -195,6 +197,7 @@ static struct BuiltinProto {
 	{ "cast",			Lingo::b_cast,			1, 1, false },	//			D4 f
 	{ "field",			Lingo::b_field,			1, 1, false },	//		D3 f
 	{ "me",				Lingo::b_me,			-1,0, false },	//		D3
+	{ "script",			Lingo::b_script,		1, 1, false },	//			D4 f
 	{ "window",			Lingo::b_window,		1, 1, false },	//			D4 f
 
 	{ 0, 0, 0, 0, false }
@@ -211,6 +214,7 @@ static const char *builtinFunctions[] = {
 	"abs",
 	"atan",
 	"backspace",
+	"birth",
 	"cast",
 	"cos",
 	"count",
@@ -250,6 +254,7 @@ static const char *builtinFunctions[] = {
 	"rollOver",
 	"quote",
 	"return",
+	"script",
 	"sin",
 	"sqrt",
 	"soundBusy",
@@ -964,6 +969,14 @@ void Lingo::b_alert(int nargs) {
 	delete d.u.s;
 }
 
+void Lingo::b_birth(int nargs) {
+	g_lingo->printSTUBWithArglist("b_birth", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
@@ -1263,6 +1276,11 @@ void Lingo::b_soundStop(int nargs) {
 ///////////////////
 // Constants
 ///////////////////
+void Lingo::b_ancestor(int nargs) {
+	warning("STUB: b_ancestor");
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_backspace(int nargs) {
 	g_lingo->push(Datum(new Common::String("\b")));
 }
@@ -1364,6 +1382,10 @@ void Lingo::b_me(int nargs) {
 	g_lingo->printSTUBWithArglist("me", nargs);
 
 	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_script(int nargs) {
+	warning("STUB: b_script");
 }
 
 void Lingo::b_window(int nargs) {
