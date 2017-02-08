@@ -408,6 +408,7 @@ public:
 	static void b_puppetSprite(int nargs);
 	static void b_puppetTempo(int nargs);
 	static void b_puppetTransition(int nargs);
+	static void b_ramNeeded(int nargs);
 	static void b_rollOver(int nargs);
 	static void b_spriteBox(int nargs);
 	static void b_unLoad(int nargs);

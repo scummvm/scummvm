@@ -96,20 +96,20 @@ static struct BuiltinProto {
 	{ "xFactoryList",	Lingo::b_xFactoryList,	1, 1, true },	//		D3 f
 	// Control
 	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4 c
-	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
+	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2 c
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
 	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
 	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4 c
-	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2
-		// play													// D2
+	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2 c
+		// play													// D2 c
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
 		// play done											// D2
-	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3
-	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3
-	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2
+	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3 c
+	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3 c
+	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2 c
 	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2
 	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2
@@ -149,8 +149,8 @@ static struct BuiltinProto {
 	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2 c
 	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
-	{ "label",			Lingo::b_label,			1, 1, true },	// D2
-	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2
+	{ "label",			Lingo::b_label,			1, 1, true },	// D2 f
+	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2 f
 	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
 	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4 c
@@ -159,6 +159,7 @@ static struct BuiltinProto {
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
 	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
+	{ "ramNeeded",		Lingo::b_ramNeeded,		2, 2, true },	//			D4 f
 	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2 f
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
 	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
@@ -240,9 +241,11 @@ static const char *builtinFunctions[] = {
 	"integer",
 	"integerp",
 	"intersect",
+	"label",
 	"list",
 	"listP",
 	"log",
+	"marker",
 	"max",
 	"min",
 	"objectp",
@@ -250,6 +253,7 @@ static const char *builtinFunctions[] = {
 	"pi",
 	"pictureP",
 	"power",
+	"ramNeeded",
 	"random",
 	"rollOver",
 	"quote",
@@ -1132,9 +1136,16 @@ void Lingo::b_puppetTransition(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void Lingo::b_ramNeeded(int nargs) {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_ramNeeded(%d)", d.u.i);
+
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_puppetTempo(%d)", d.u.i);
+	warning("STUB: b_rollOver(%d)", d.u.i);
 
 	g_lingo->push(Datum(0));
 }

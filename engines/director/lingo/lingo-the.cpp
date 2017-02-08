@@ -51,6 +51,7 @@ TheEntity entities[] = {
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
+	{ kTheFrameLabel,		"frameLabel",		false },	//				D4 p
 	{ kTheFrameScript,		"frameScript",		false },	//				D4 p
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
@@ -65,7 +66,7 @@ TheEntity entities[] = {
 	{ kTheLabelList,		"labelList",		false },	//		D3 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
-	{ kTheLastFrame,		"lastFrame",		false },
+	{ kTheLastFrame,		"lastFrame",		false },	//				D4 p
 	{ kTheLastKey,			"lastKey",			false },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
 	{ kTheLines,			"lines",			false },	//		 D3
