@@ -6508,8 +6508,8 @@ void EdenGame::persovox() {
 	_voiceSamplesSize = loadSound(num);
 	int16 volumeLeft = _globals->_prefSoundVolume[0];
 	int16 volumeRight = _globals->_prefSoundVolume[1];
-	int16 stepLeft = _musicChannel->_volumeLeft < volumeLeft ? stepLeft = 1 : -1;
-	int16 stepRight = _musicChannel->_volumeRight < volumeRight ? stepRight = 1 : -1;
+	int16 stepLeft = _musicChannel->_volumeLeft < volumeLeft ? 1 : -1;
+	int16 stepRight = _musicChannel->_volumeRight < volumeRight ? 1 : -1;
 	do {
 		if (volumeLeft != _musicChannel->_volumeLeft)
 			_musicChannel->setVolumeLeft(_musicChannel->_volumeLeft + stepLeft);
@@ -7326,8 +7326,7 @@ void EdenGame::displayPanel() {
 // Original name: afflangue
 void EdenGame::displayLanguage() {
 	useBank(65);
-	if (_globals->_prefLanguage < 0 //TODO: never happens
-	        || _globals->_prefLanguage > 5)
+	if (_globals->_prefLanguage > 5)
 		return;
 	noclipax(6,  8, _globals->_prefLanguage * 9 + 43);  //TODO: * FONT_HEIGHT
 	noclipax(7, 77, _globals->_prefLanguage * 9 + 44);

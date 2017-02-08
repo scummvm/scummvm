@@ -65,6 +65,7 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_screenView = nullptr;
 
 	_showHotspots = false;
+	_timerTicks = 0;
 
 	g_ed = this;
 }
