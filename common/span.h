@@ -393,14 +393,14 @@ public:
 
 	inline String getStringAt(const index_type index, size_type numEntries = kSpanMaxSize) const {
 		STATIC_ASSERT(sizeof(value_type) == sizeof(char), strings_can_only_be_read_from_byte_or_char_spans);
-		const char *string = (const char *)impl().data();
+		const char *string = (const char *)impl().data() + index;
 
 		if (numEntries == kSpanMaxSize) {
 			numEntries = strnlen(string, impl().size() - index);
 		}
 
 		impl().validate(index, numEntries);
-		return String(string + index, numEntries);
+		return String(string, numEntries);
 	}
 
 	/**
