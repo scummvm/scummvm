@@ -699,7 +699,6 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 
 	for (int i = 0; i < relocCount; ++i) {
 		if (seeker.getUint32SEAt(0) == offset) {
-			// TODO: Find out what UINT16 at (seeker + 8) means
 			return _buf->getUint16SEAt(offset) + seeker.getUint32SEAt(4);
 		}
 		seeker += 10;
