@@ -208,8 +208,12 @@ static const char *twoWordBuiltins[] = {
 };
 
 static const char *builtinFunctions[] = {
+	"backspace",
 	"cast",
 	"count",
+	"empty",
+	"enter",
+	"false",
 	"field",
 	"findEmpty",
 	"findPos",
@@ -233,9 +237,14 @@ static const char *builtinFunctions[] = {
 	"objectp",
 	"pictureP",
 	"rollOver",
+	"quote",
+	"return",
 	"soundBusy",
 	"stringp",
 	"symbolp",
+	"tab",
+	"true",
+	"version",
 	"window",
 	"xFactoryList",
 	0
