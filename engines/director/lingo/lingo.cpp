@@ -91,10 +91,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 	}
 
-	initBuiltIns();
-	initFuncs();
-	initTheEntities();
-
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
 	_currentEntityId = 0;
@@ -118,6 +114,10 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_exitRepeat = false;
 
 	_localvars = NULL;
+
+	initBuiltIns();
+	initFuncs();
+	initTheEntities();
 
 	warning("Lingo Inited");
 }

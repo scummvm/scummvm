@@ -142,7 +142,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 }
 
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
-	Symbol *sym;
+	Symbol *sym = nullptr;
 
 	// Looking for the cast member constants
 	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
@@ -165,7 +165,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		}
 	}
 
-	if (!_localvars->contains(name)) { // Create variable if it was not defined
+	if (!_localvars || !_localvars->contains(name)) { // Create variable if it was not defined
 		if (!create)
 			return NULL;
 
@@ -174,7 +174,8 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		sym->type = VOID;
 		sym->u.i = 0;
 
-		(*_localvars)[name] = sym;
+		if (_localvars)
+			(*_localvars)[name] = sym;
 
 		if (putInGlobalList) {
 			sym->global = true;

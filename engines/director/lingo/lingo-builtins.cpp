@@ -274,6 +274,22 @@ static const char *builtinFunctions[] = {
 	0
 };
 
+
+static const char *predefinedMethods[] = {
+	"mAtFrame",				// D3
+	"mDescribe",			// D3
+	"mDispose",				// D3
+	"mGet",					// D3
+	"mInstanceRespondsTo",	// D3
+	"mMessageList",			// D3
+	"mName",				// D3
+	"mNew",					// D3
+	"mPerform",				// D3
+	"mPut",					// D3
+	"mRespondsTo",			// D3
+	0
+};
+
 void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
 		Symbol *sym = new Symbol;
@@ -299,6 +315,13 @@ void Lingo::initBuiltIns() {
 
 	for (const char **b = twoWordBuiltins; *b; b++)
 		_twoWordBuiltins[*b] = true;
+
+	// Set predefined methods
+	for (const char **b = predefinedMethods; *b; b++) {
+		Symbol *s = g_lingo->lookupVar(*b, true, true);
+		s->type = SYMBOL;
+		s->u.s = new Common::String(*b);
+	}
 }
 
 void Lingo::printSTUBWithArglist(const char *funcname, int nargs) {
@@ -1334,20 +1357,6 @@ void Lingo::b_version(int nargs) {
 void Lingo::b_factory(int nargs) {
 	// This is intentionally empty
 }
-
-// TODO:
-// List of predefined methods in D3
-// mAtFrame
-// mDescribe
-// mDispose
-// mGet
-// mInstanceRespondsTo
-// mMessageList
-// mName
-// mNew
-// mPerform
-// mPut
-// mRespondsTo
 
 void Lingo::factoryCall(Common::String &name, int nargs) {
 	Common::String s("factoryCall: ");
