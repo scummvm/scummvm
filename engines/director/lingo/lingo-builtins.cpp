@@ -131,7 +131,7 @@ static struct BuiltinProto {
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
 	{ "param",	 		Lingo::b_param,			1, 1, true },	//			D4 f
-	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
+	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2 c
 		// put													// D2
 		// set													// D2
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
@@ -242,6 +242,7 @@ static const char *builtinFunctions[] = {
 	"max",
 	"min",
 	"objectp",
+	"param",
 	"pi",
 	"pictureP",
 	"power",
