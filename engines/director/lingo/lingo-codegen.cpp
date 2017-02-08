@@ -196,8 +196,7 @@ void Lingo::cleanLocalVars() {
 
 	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
 		if (!h->_value->global) {
-			Symbol *sym = h->_value;
-			delete sym;
+			delete h->_value;
 		}
 	}
 
@@ -219,7 +218,11 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 		sym->name = name;
 		sym->type = HANDLER;
 
-		_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		if (!_eventHandlerTypeIds.contains(name)) {
+			_builtins[name] = sym;
+		} else {
+			_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		}
 	} else {
 		//we don't want to be here. The getHandler call should have used the EntityId and the result
 		//should have been unique!
