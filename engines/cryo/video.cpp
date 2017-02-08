@@ -264,7 +264,8 @@ void HnmPlayer::decompLempelZiv(byte *buffer, byte *output) {
 				if (!l)
 					break;
 			} else {
-				l = GetBit() * 2 + GetBit();
+				l = GetBit() * 2;
+				l += GetBit();
 				o = *(inp++) - 256;
 			}
 			l += 2;
