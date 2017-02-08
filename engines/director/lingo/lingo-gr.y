@@ -240,7 +240,7 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 5] = end;	/* end, if cond fails */
 
 		checkEnd($11, "repeat", true); }
-	| when expr end {
+	| when stmtoneliner end {
 			inst end = 0;
 			WRITE_UINT32(&end, $3);
 			g_lingo->code1(STOP);
