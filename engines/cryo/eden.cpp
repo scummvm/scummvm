@@ -2074,7 +2074,7 @@ void EdenGame::newValley() {
 }
 
 char EdenGame::whereIsCita() {
-	char res = -1;
+	char res = (char)-1;
 	for (Room *room = _globals->_citaAreaFirstRoom; room->_id != 0xFF; room++) {
 		if (!(room->_flags & RoomFlags::rfHasCitadel))
 			continue;
@@ -2149,7 +2149,7 @@ void EdenGame::vivredino() {
 				perso->_targetLoc = 0;
 			else if (!perso->_targetLoc) {
 				char cita = whereIsCita();
-				if (cita != -1) {
+				if (cita != (char)-1) {
 					perso->_targetLoc = cita;
 					perso->_speed = 2;
 					perso->_steps = 1;
@@ -2162,7 +2162,7 @@ void EdenGame::vivredino() {
 					perso->_targetLoc = 0;
 				else if (!perso->_targetLoc) {
 					char cita = whereIsCita();
-					if (cita != -1) {
+					if (cita != (char)-1) {
 						perso->_targetLoc = cita;
 						perso->_speed = 3;
 						perso->_steps = 1;
@@ -6890,7 +6890,7 @@ void EdenGame::noclicpanel() {
 			num = 1;
 			goto skip;
 		}
-		num = idx & 0x7F + 1;
+		num = (idx & 0x7F) + 1;
 		if (num >= 5)
 			num = 1;
 		if (num == _globals->_var43)
@@ -9191,7 +9191,7 @@ void EdenGame::paintFaces() {
 }
 
 void EdenGame::renderCube() {
-	for (int i = 0; i < sizeof(_cursor); i++)
+	for (uint16 i = 0; i < sizeof(_cursor); i++)
 		_cursor[i] = 0;
 	_cursorCenter = &_cursor[40 * 20 + 20];
 
