@@ -254,8 +254,7 @@ void Lingo::initBuiltIns() {
 	for (BuiltinProto *blt = builtins; blt->name; blt++) {
 		Symbol *sym = new Symbol;
 
-		sym->name = (char *)calloc(strlen(blt->name) + 1, 1);
-		Common::strlcpy(sym->name, blt->name, strlen(blt->name));
+		sym->name = blt->name;
 		sym->type = BLTIN;
 		sym->nargs = blt->minArgs;
 		sym->maxArgs = blt->maxArgs;

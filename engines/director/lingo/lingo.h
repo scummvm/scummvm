@@ -104,7 +104,7 @@ struct Pointer_Hash {
 typedef Common::HashMap<void *, FuncDesc *, Pointer_Hash, Pointer_EqualTo> FuncHash;
 
 struct Symbol {	/* symbol table entry */
-	char *name;
+	Common::String name;
 	int type;
 	union {
 		int		i;			/* VAR */

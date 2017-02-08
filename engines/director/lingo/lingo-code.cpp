@@ -170,8 +170,8 @@ void Lingo::c_printtop(void) {
 		if (!d.u.sym) {
 			warning("Inconsistent stack: var, val: %d", d.u.i);
 		} else {
-			if (d.u.sym->name)
-				warning("var: %s", d.u.sym->name);
+			if (!d.u.sym->name.empty())
+				warning("var: %s", d.u.sym->name.c_str());
 			else
 				warning("Nameless var. val: %d", d.u.sym->u.i);
 		}
@@ -305,7 +305,7 @@ void Lingo::c_assign() {
 
 	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
 			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
-		warning("assignment to non-variable '%s'", d1.u.sym->name);
+		warning("assignment to non-variable '%s'", d1.u.sym->name.c_str());
 		return;
 	}
 
@@ -341,13 +341,13 @@ void Lingo::c_assign() {
 
 bool Lingo::verify(Symbol *s) {
 	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT) {
-		warning("attempt to evaluate non-variable '%s'", s->name);
+		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
 	}
 
 	if (s->type == VOID)
-		warning("Variable used before assigning a value '%s'", s->name);
+		warning("Variable used before assigning a value '%s'", s->name.c_str());
 
 	return true;
 }

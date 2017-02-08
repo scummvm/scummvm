@@ -75,7 +75,6 @@ struct EventHandlerType {
 };
 
 Symbol::Symbol() {
-	name = NULL;
 	type = VOID;
 	u.s = NULL;
 	nargs = 0;
@@ -395,7 +394,7 @@ Common::String *Datum::toString() {
 		*s = "#void";
 		break;
 	case VAR:
-		*s = Common::String::format("var: #%s", u.sym->name);
+		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
