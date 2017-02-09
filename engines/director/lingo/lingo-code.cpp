@@ -341,7 +341,7 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT) {
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL) {
 		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;

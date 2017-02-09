@@ -166,6 +166,10 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 	}
 
 	if (!_localvars || !_localvars->contains(name)) { // Create variable if it was not defined
+		// Check if it is a global symbol
+		if (_globalvars.contains(name) && _globalvars[name]->type == SYMBOL)
+			return _globalvars[name];
+
 		if (!create)
 			return NULL;
 
