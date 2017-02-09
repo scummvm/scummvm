@@ -217,6 +217,8 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 
 	freeUnusedChannels();
 
+	const bool playOnlyMonitoredChannel = getSciVersion() != SCI_VERSION_3 && _monitoredChannelIndex != -1;
+
 	// The caller of `readBuffer` is a rate converter,
 	// which reuses (without clearing) an intermediate
 	// buffer, so we need to zero the intermediate buffer
@@ -248,7 +250,7 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 		//       0 | 2  (>> 1)
 		//       1 | 4  (>> 2)
 		//       2 | 6...
-		if (_monitoredChannelIndex == -1 && _numActiveChannels > 1) {
+		if (!playOnlyMonitoredChannel && _numActiveChannels > 1) {
 			attenuationAmount = _numActiveChannels + 1;
 			attenuationStepAmount = 1;
 		} else {
@@ -299,7 +301,7 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 			rightVolume = channel.volume * channel.pan / 100 * Audio::Mixer::kMaxChannelVolume / kMaxVolume;
 		}
 
-		if (_monitoredChannelIndex == -1 && _attenuatedMixing) {
+		if (!playOnlyMonitoredChannel && _attenuatedMixing) {
 			leftVolume >>= attenuationAmount;
 			rightVolume >>= attenuationAmount;
 		}
@@ -326,7 +328,7 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 				maxSamplesWritten = _numMonitoredSamples;
 			}
 		} else if (!channel.stream->endOfStream() || channel.loop) {
-			if (_monitoredChannelIndex != -1) {
+			if (playOnlyMonitoredChannel) {
 				// Audio that is not on the monitored channel is silent
 				// when the monitored channel is active, but the stream still
 				// needs to be read in order to ensure that sound effects sync
@@ -942,14 +944,23 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 			loop = (bool)argv[5].toSint16();
 		}
 
-		if (argc < 7 || argv[6].toSint16() < 0 || argv[6].toSint16() > Audio32::kMaxVolume) {
-			volume = Audio32::kMaxVolume;
-
-			if (argc >= 7) {
-				monitor = true;
+		if (getSciVersion() == SCI_VERSION_3) {
+			if (argc < 7) {
+				volume = Audio32::kMaxVolume;
+			} else {
+				volume = argv[6].toSint16() & Audio32::kMaxVolume;
+				monitor = argv[6].toSint16() & Audio32::kMonitorAudioFlagSci3;
 			}
 		} else {
-			volume = argv[6].toSint16();
+			if (argc < 7 || argv[6].toSint16() < 0 || argv[6].toSint16() > Audio32::kMaxVolume) {
+				volume = Audio32::kMaxVolume;
+
+				if (argc >= 7) {
+					monitor = true;
+				}
+			} else {
+				volume = argv[6].toSint16();
+			}
 		}
 	} else {
 		resourceId = ResourceId(kResourceTypeAudio, argv[0].toUint16());
@@ -960,18 +971,23 @@ reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *cons
 			loop = (bool)argv[1].toSint16();
 		}
 
-		// TODO: SCI3 uses the 0x80 bit as a flag to
-		// indicate "priority channel", but the volume is clamped
-		// in this call to 0x7F so that flag never makes it into
-		// the audio subsystem
-		if (argc < 3 || argv[2].toSint16() < 0 || argv[2].toSint16() > Audio32::kMaxVolume) {
-			volume = Audio32::kMaxVolume;
-
-			if (argc >= 3) {
-				monitor = true;
+		if (getSciVersion() == SCI_VERSION_3) {
+			if (argc < 3) {
+				volume = Audio32::kMaxVolume;
+			} else {
+				volume = argv[2].toSint16() & Audio32::kMaxVolume;
+				monitor = argv[2].toSint16() & Audio32::kMonitorAudioFlagSci3;
 			}
 		} else {
-			volume = argv[2].toSint16();
+			if (argc < 3 || argv[2].toSint16() < 0 || argv[2].toSint16() > Audio32::kMaxVolume) {
+				volume = Audio32::kMaxVolume;
+
+				if (argc >= 3) {
+					monitor = true;
+				}
+			} else {
+				volume = argv[2].toSint16();
+			}
 		}
 
 		soundNode = argc == 4 ? argv[3] : NULL_REG;

@@ -164,7 +164,9 @@ public:
 		/**
 		 * The maximum channel volume.
 		 */
-		kMaxVolume = 127
+		kMaxVolume = 127,
+
+		kMonitorAudioFlagSci3 = 0x80
 	};
 
 private:
