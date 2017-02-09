@@ -53,7 +53,7 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 		_project(project), _soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_floatVal = 0.0;
-	_field34 = -1;
+	_waveIndex = -1;
 	_readPos = 0;
 	_readIncrement = 0;
 	_size = 0;
@@ -254,7 +254,7 @@ void CMusicWave::trigger() {
 }
 
 void CMusicWave::reset() {
-	_field34 = 0;
+	_waveIndex = 0;
 	_readPos = 0;
 	_readIncrement = 0;
 	_size = 0;
@@ -262,7 +262,7 @@ void CMusicWave::reset() {
 }
 
 void CMusicWave::setSize(uint total) {
-	_field34 = -1;
+	_waveIndex = -1;
 	_readPos = 0;
 	_readIncrement = 0;
 	_size = total;
@@ -276,8 +276,8 @@ int CMusicWave::read(uint16 *ptr, uint size) {
 	if (size >= _size)
 		size = _size;
 
-	if (_field34 != -1) {
-		const byte *data = _items[_field34]._waveFile->lock();
+	if (_waveIndex != -1) {
+		const byte *data = _items[_waveIndex]._waveFile->lock();
 		assert(data);
 		const uint16 *src = (const uint16 *)data;
 
@@ -291,14 +291,14 @@ int CMusicWave::read(uint16 *ptr, uint size) {
 			*ptr++ = val;
 		}
 
-		_items[_field34]._waveFile->unlock(data);
+		_items[_waveIndex]._waveFile->unlock(data);
 	}
 
 	_size -= size;
 	return size;
 }
 
-void CMusicWave::processArray(int index, int size) {
+void CMusicWave::chooseInstrument(int index, int size) {
 	if (!_array)
 		setupArray(-36, 36);
 
@@ -314,7 +314,7 @@ void CMusicWave::processArray(int index, int size) {
 
 	int arrIndex = _arrayIndex - _items[minIndex]._value + index;
 
-	_field34 = minIndex;
+	_waveIndex = minIndex;
 	_readPos = 0;
 	_readIncrement = (int)(_array[arrIndex] * 256);
 	_size = size;

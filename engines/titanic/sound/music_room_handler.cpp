@@ -290,7 +290,7 @@ bool CMusicRoomHandler::fn2(int index) {
 	if (vp._field0 == 0x7FFFFFFF || _array1[index]._muteControl)
 		_musicWaves[index]->setSize(size);
 	else
-		_musicWaves[index]->processArray(getPitch(index, arrIndex), size);
+		_musicWaves[index]->chooseInstrument(getPitch(index, arrIndex), size);
 
 	if (_array1[index]._directionControl == _array2[index]._directionControl) {
 		++arrIndex;

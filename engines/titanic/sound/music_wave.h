@@ -54,7 +54,7 @@ private:
 	MusicWaveInstrument _instrument;
 	CProjectItem *_project;
 	CGameObject *_gameObjects[4];
-	int _field34;
+	int _waveIndex;
 	int _readPos;
 	int _readIncrement;
 	uint _size;
@@ -66,6 +66,11 @@ private:
 	 */
 	CWaveFile *createWaveFile(const CString &name);
 
+	/**
+	 * Sets up an array used for figuring out the sequence in which to
+	 * play the different wave files for each instrument to give the
+	 * music based on the console's settings
+	 */
 	void setupArray(int minVal, int maxVal);
 public:
 	double _floatVal;
@@ -116,7 +121,10 @@ public:
 	 */
 	int read(uint16 *ptr, uint size);
 
-	void processArray(int index, int freq);
+	/**
+	 * Figure out which wave file to use next
+	 */
+	void chooseInstrument(int index, int freq);
 };
 
 } // End of namespace Titanic

@@ -43,7 +43,8 @@ private:
 	void setup();
 public:
 	QSoundManager *_soundManager;
-	Audio::SeekableAudioStream *_stream;
+	byte *_rawData;
+	Audio::SeekableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer::SoundType _soundType;
 
@@ -94,7 +95,7 @@ public:
 	/**
 	 * Returns true if the wave file has data loaded
 	 */
-	bool isLoaded() const { return _stream != nullptr; }
+	bool isLoaded() const { return _audioStream != nullptr; }
 
 	/**
 	 * Return the frequency of the loaded wave file
