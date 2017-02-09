@@ -186,7 +186,7 @@ TheEntityField fields[] = {
 	{ kTheCast,		"modified",		kTheModified },		//				D4 p
 	{ kTheCast,		"name",			kTheName },			//		D3 p
 	{ kTheCast,		"number",		kTheNumber },		//		D3 p
-	{ kTheCast,		"rect",			kTheRect },
+	{ kTheCast,		"rect",			kTheRect },			//				D4 p
 	{ kTheCast,		"purgePriority",kThePurgePriority },//	 			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
 	{ kTheCast,		"scriptText",	kTheScriptText },	//				D4 p
 	{ kTheCast,		"width",		kTheWidth },		//				D4 p
@@ -232,7 +232,7 @@ TheEntityField fields[] = {
 	{ kTheWindow,	"rect",			kTheRect },			//				D4 p
 	{ kTheWindow,	"title",		kTheTitle },		//				D4 p
 	{ kTheWindow,	"titleVisible",	kTheTitleVisible },	//				D4 p
-	{ kTheWindow,	"sourceRect",	kTheSourceRect },
+	{ kTheWindow,	"sourceRect",	kTheSourceRect },	//				D4 p
 	{ kTheWindow,	"visible",		kTheVisible },		//				D4 p
 	{ kTheWindow,	"windowType",	kTheWindowType },	//				D4 p
 

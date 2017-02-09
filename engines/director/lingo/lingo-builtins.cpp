@@ -52,7 +52,7 @@ static struct BuiltinProto {
 	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3
 	{ "length",			Lingo::b_length,		1, 1, true },	// D2
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
-	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
+	{ "offset",			Lingo::b_offset,		2, 3, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2 f
 	// Lists
@@ -148,7 +148,6 @@ static struct BuiltinProto {
 		// go													// D2
 	{ "importFileInto",	Lingo::b_importFileInto,2, 2, false },	//			D4 c
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2 c
-	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2 f
 	{ "marker",			Lingo::b_marker,		1, 1, true },	// D2 f
 	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
@@ -167,7 +166,12 @@ static struct BuiltinProto {
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2 c
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
-	{ "point",			Lingo::b_point,			2, 2, true },
+	{ "point",			Lingo::b_point,			2, 2, true },	//			D4 f
+	{ "inside",			Lingo::b_inside,		2, 2, true },	//			D4 f
+	{ "intersect",		Lingo::b_intersect,		2, 2, false },	//			D4 f
+	{ "map",			Lingo::b_map,			3, 3, true },	//			D4 f
+	{ "rect",			Lingo::b_rect,			4, 4, true },	//			D4 f
+	{ "union",			Lingo::b_union,			2, 2, true },	//			D4 f
 	// Sound
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
@@ -238,6 +242,7 @@ static const char *builtinFunctions[] = {
 	"getPropAt",
 	"ilk",
 	"inflate",
+	"inside",
 	"integer",
 	"integerp",
 	"intersect",
@@ -245,16 +250,20 @@ static const char *builtinFunctions[] = {
 	"list",
 	"listP",
 	"log",
+	"map",
 	"marker",
 	"max",
 	"min",
 	"objectp",
+	"offset",
 	"param",
 	"pi",
 	"pictureP",
+	"point",
 	"power",
 	"ramNeeded",
 	"random",
+	"rect",
 	"rollOver",
 	"quote",
 	"return",
@@ -555,6 +564,10 @@ void Lingo::b_numToChar(int nargs) {
 }
 
 void Lingo::b_offset(int nargs) {
+	if (nargs == 3) {
+		b_offsetRect(nargs);
+		return;
+	}
 	Datum target = g_lingo->pop();
 	Datum source = g_lingo->pop();
 
@@ -1086,14 +1099,6 @@ void Lingo::b_installMenu(int nargs) {
 	warning("STUB: b_installMenu(%d)", d.u.i);
 }
 
-void Lingo::b_intersect(int nargs) {
-	g_lingo->printSTUBWithArglist("b_intersect", nargs);
-
-	g_lingo->dropStack(nargs);
-
-	g_lingo->push(Datum(0));
-}
-
 void Lingo::b_label(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
@@ -1250,6 +1255,55 @@ void Lingo::b_point(int nargs) {
 	d.type = POINT;
 
 	g_lingo->push(d);
+}
+
+void Lingo::b_rect(int nargs) {
+	g_lingo->printSTUBWithArglist("b_rect", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+
+void Lingo::b_intersect(int nargs) {
+	g_lingo->printSTUBWithArglist("b_intersect", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_inside(int nargs) {
+	g_lingo->printSTUBWithArglist("b_inside", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_map(int nargs) {
+	g_lingo->printSTUBWithArglist("b_map", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_offsetRect(int nargs) {
+	g_lingo->printSTUBWithArglist("b_offsetRect", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_union(int nargs) {
+	g_lingo->printSTUBWithArglist("b_union", nargs);
+
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(Datum(0));
 }
 
 

@@ -397,7 +397,6 @@ public:
 	static void b_findEmpty(int nargs);
 	static void b_importFileInto(int nargs);
 	static void b_installMenu(int nargs);
-	static void b_intersect(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
 	static void b_move(int nargs);
@@ -447,6 +446,12 @@ public:
 	static void b_xFactoryList(int nargs);
 
 	static void b_point(int nargs);
+	static void b_inside(int nargs);
+	static void b_intersect(int nargs);
+	static void b_map(int nargs);
+	static void b_offsetRect(int nargs);
+	static void b_rect(int nargs);
+	static void b_union(int nargs);
 
 	static void b_close(int nargs);
 	static void b_forget(int nargs);
