@@ -464,6 +464,7 @@ public:
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
 	static void b_soundBusy(int nargs);
+	static void b_soundClose(int nargs);
 	static void b_soundFadeIn(int nargs);
 	static void b_soundFadeOut(int nargs);
 	static void b_soundPlayFile(int nargs);

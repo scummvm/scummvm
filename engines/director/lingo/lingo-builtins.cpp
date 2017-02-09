@@ -33,10 +33,10 @@ static struct BuiltinProto {
 } builtins[] = {
 	// Math
 	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2 function
-	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4 function
-	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4 function
-	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4 function
-	{ "float",			Lingo::b_float,			1, 1, true },	//			D4 function
+	{ "atan",			Lingo::b_atan,			1, 1, true },	//			D4 f
+	{ "cos",			Lingo::b_cos,			1, 1, true },	//			D4 f
+	{ "exp",			Lingo::b_exp,			1, 1, true },	//			D4 f
+	{ "float",			Lingo::b_float,			1, 1, true },	//			D4 f
 	{ "integer",		Lingo::b_integer,		1, 1, true },	//		D3 f
 	{ "log",			Lingo::b_log,			1, 1, true },	//			D4 f
 	{ "pi",				Lingo::b_pi,			0, 0, true },	//			D4 f
@@ -176,10 +176,11 @@ static struct BuiltinProto {
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
-	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3
-	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3
+	{ "sound-close",	Lingo::b_soundClose, 	1, 1, false },	//			D4 c
+	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3 c
+	{ "sound-fadeOut",	Lingo::b_soundFadeOut, 	1, 2, false },	//		D3 c
 	{ "sound-playFile",	Lingo::b_soundPlayFile, 2, 2, false },	//		D3 c
-	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3
+	{ "sound-stop",		Lingo::b_soundStop,	 	1, 1, false },	//		D3 c
 	{ "soundBusy",		Lingo::b_soundBusy,	 	1, 1, true },	//		D3 f
 	// Window
 	{ "close",			Lingo::b_close,			1, 1, false },	//			D4 c
@@ -1333,6 +1334,12 @@ void Lingo::b_mciwait(int nargs) {
 
 void Lingo::b_soundBusy(int nargs) {
 	g_lingo->printSTUBWithArglist("b_soundBusy", nargs);
+
+	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_soundClose(int nargs) {
+	g_lingo->printSTUBWithArglist("b_soundClose", nargs);
 
 	g_lingo->dropStack(nargs);
 }
