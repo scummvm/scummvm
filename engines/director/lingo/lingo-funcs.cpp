@@ -185,7 +185,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		}
 
 		_vm->_nextMovie = *movie.u.s;
-		_vm->_currentScore->_stopPlay = true;
+		_vm->getCurrentScore()->_stopPlay = true;
 
 		_vm->_nextMovieFrameS.clear();
 		_vm->_nextMovieFrameI = -1;
@@ -221,24 +221,24 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_gotoloop() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoLoop();
+	_vm->getCurrentScore()->gotoLoop();
 }
 
 void Lingo::func_gotonext() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoNext();
+	_vm->getCurrentScore()->gotoNext();
 }
 
 void Lingo::func_gotoprevious() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoPrevious();
+	_vm->getCurrentScore()->gotoPrevious();
 }
 
 void Lingo::func_cursor(int c) {

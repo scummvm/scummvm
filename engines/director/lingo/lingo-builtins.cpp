@@ -904,8 +904,8 @@ void Lingo::b_printFrom(int nargs) {
 }
 
 void Lingo::b_quit(int nargs) {
-	if (g_director->_currentScore)
-		g_director->_currentScore->_stopPlay = true;
+	if (g_director->getCurrentScore())
+		g_director->getCurrentScore()->_stopPlay = true;
 
 	g_lingo->pushVoid();
 }

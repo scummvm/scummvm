@@ -560,7 +560,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					break;
 				}
 			} else {
-				if (!_vm->_currentScore->_casts.contains(_sprites[i]->_castId)) {
+				if (!_vm->getCurrentScore()->_casts.contains(_sprites[i]->_castId)) {
 					if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
 						warning("Cast id %d not found", _sprites[i]->_castId);
 						continue;
@@ -569,7 +569,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 						cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
 					}
 				} else {
-					cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
+					cast = _vm->getCurrentScore()->_casts[_sprites[i]->_castId];
 				}
 				castType = cast->type;
 			}
@@ -661,7 +661,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
 	uint16 castId = _sprites[spriteId]->_castId;
-	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castId]);
+	ButtonCast *button = static_cast<ButtonCast *>(_vm->getCurrentScore()->_casts[castId]);
 
 	uint32 rectLeft = button->initialRect.left;
 	uint32 rectTop = button->initialRect.top;
@@ -703,14 +703,14 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 
-	if (_vm->getVersion() >= 4 && _vm->_currentScore->_casts[spriteId]->children.size() > 0)
-		imgId = _vm->_currentScore->_casts[spriteId]->children[0].index;
+	if (_vm->getVersion() >= 4 && _vm->getCurrentScore()->_casts[spriteId]->children.size() > 0)
+		imgId = _vm->getCurrentScore()->_casts[spriteId]->children[0].index;
 
 	Image::ImageDecoder *img = NULL;
 
-	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 		img = new DIBDecoder();
-		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+		img->loadStream(*_vm->getCurrentScore()->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 		return img;
 	}
 
@@ -728,9 +728,9 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		pic = _vm->getSharedBMP()->getVal(imgId);
 		pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
 		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
-	} else 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
-		bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+	} else 	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		pic = _vm->getCurrentScore()->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+		bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
 	}
 
 	if (pic != NULL && bc != NULL) {
@@ -741,7 +741,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoder(w, h);
 		} else if (_vm->getVersion() < 6) {
-			bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+			bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
@@ -798,8 +798,8 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId) {
 	Common::SeekableSubReadStreamEndian *textStream = NULL;
 
-	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
-		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
+	if (_vm->getCurrentScore()->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
+		textStream = _vm->getCurrentScore()->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
 	} else if (_vm->getSharedSTXT() != nullptr) {
 		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
 	}
@@ -812,7 +812,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 
 	uint16 castId = _sprites[spriteId]->_castId;
-	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castId]);
+	TextCast *textCast = static_cast<TextCast *>(_vm->getCurrentScore()->_casts[castId]);
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -906,10 +906,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (_vm->getVersion() >= 4 && textSize != NULL)
 		width = textCast->initialRect.right;
 
-	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
+	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
 		// We need to make sure that the Shared Cast fonts have been loaded in?
 		// might need a mapping table here of our own.
-		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->_currentScore->_fontMap[textCast->fontId]);
+		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
 	}
 
 	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);

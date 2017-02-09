@@ -98,7 +98,6 @@ public:
 	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
 
 	Common::HashMap<Common::String, Score *> *_movies;
-	Score *_currentScore;
 
 	Common::RandomSource _rnd;
 	Graphics::MacWindowManager *_wm;
@@ -141,6 +140,8 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
+
+	Score *_currentScore;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;

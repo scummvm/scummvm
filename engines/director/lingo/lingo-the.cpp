@@ -317,20 +317,20 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	d.toInt(); // Enforce Integer
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The sprite %d field %d setting over non-active score", id, field);
 		return;
 	}
 
-	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
 
 	if (!sprite)
 		return;
 
 	switch (field) {
 	case kTheCastNum:
-		if (_vm->_currentScore->_casts.contains(d.u.i)) {
-			sprite->_cast = _vm->_currentScore->_casts[d.u.i];
+		if (_vm->getCurrentScore()->_casts.contains(d.u.i)) {
+			sprite->_cast = _vm->getCurrentScore()->_casts[d.u.i];
 			sprite->_castId = d.u.i;
 		}
 		break;
@@ -519,12 +519,12 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The sprite %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
-	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
 
 	if (!sprite)
 		return d;
@@ -630,14 +630,14 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The cast %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
 	Cast *cast;
 	CastInfo *castInfo;
-	if (!_vm->_currentScore->_casts.contains(id)) {
+	if (!_vm->getCurrentScore()->_casts.contains(id)) {
 		if (field == kTheLoaded) {
 			d.type = INT;
 			d.u.i = 0;
@@ -648,8 +648,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("The cast %d found", id);
 	}
 
-	cast = _vm->_currentScore->_casts[id];
-	castInfo = _vm->_currentScore->_castsInfo[id];
+	cast = _vm->getCurrentScore()->_casts[id];
+	castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	d.type = INT;
 
@@ -683,7 +683,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			d.u.i = shape->bgCol;
 		}
 		break;
@@ -695,7 +695,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			d.u.i = shape->fgCol;
 		}
 		break;
@@ -721,13 +721,13 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The cast %d field %d setting over non-active score", id, field);
 		return;
 	}
 
-	Cast *cast = _vm->_currentScore->_casts[id];
-	CastInfo *castInfo = _vm->_currentScore->_castsInfo[id];
+	Cast *cast = _vm->getCurrentScore()->_casts[id];
+	CastInfo *castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	if (!cast) {
 		warning("The cast %d found", id);
@@ -761,7 +761,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			shape->bgCol = d.u.i;
 			shape->modified = 1;
 		}
@@ -772,7 +772,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Field %d of cast %d not found", field, id);
 				return;
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			shape->fgCol = d.u.i;
 			shape->modified = 1;
 		}
