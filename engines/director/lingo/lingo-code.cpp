@@ -1137,8 +1137,6 @@ void Lingo::c_global() {
 	s->global = true;
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
-
-	delete s;
 }
 
 void Lingo::c_property() {
