@@ -387,6 +387,7 @@ Common::String *Datum::toString() {
 		delete s;
 		s = u.s;
 		break;
+	case SYMBOL:
 	case OBJECT:
 		*s = Common::String::format("#%s", u.s->c_str());
 		break;
