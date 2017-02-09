@@ -188,9 +188,9 @@ static const AdlGameDescription gameDescriptions[] = {
 			"hires6", 0,
 			{
 				{ "DARK1A.DSK", 0, "00c2646d6943d1405717332a6f42d493", 143360 },
-				{ "DARK2A.NIB", 0, "271eb92db107e8d5829437f8ba77991e", 232960 },
-				{ "DARK1B.NIB", 0, "dbedd736617343ade0e6bead8bf2b10c", 232960 },
-				{ "DARK2B.NIB", 0, "cb72044a9b391c4285f4752f746bea2e", 232960 },
+				{ "DARK1B.NIB", 3, "dbedd736617343ade0e6bead8bf2b10c", 232960 },
+				{ "DARK2A.NIB", 4, "271eb92db107e8d5829437f8ba77991e", 232960 },
+				{ "DARK2B.NIB", 5, "cb72044a9b391c4285f4752f746bea2e", 232960 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
