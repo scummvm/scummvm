@@ -918,7 +918,6 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		_kernelNames[0x39] = "Dummy";	// ShowMovie in SCI2.1
 		_kernelNames[0x4c] = "Dummy";	// ScrollWindow in SCI2.1
 		_kernelNames[0x56] = "Dummy";	// VibrateMouse in SCI2.1 (only used in QFG4 floppy)
-		_kernelNames[0x64] = "Dummy";	// AvoidPath in SCI2.1
 		_kernelNames[0x66] = "Dummy";	// MergePoly in SCI2.1
 		_kernelNames[0x8d] = "MessageBox";	// Dummy in SCI2.1
 		_kernelNames[0x9b] = "Minimize";	// Dummy in SCI2.1
