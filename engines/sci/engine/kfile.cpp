@@ -851,7 +851,15 @@ reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
-	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	uint16 handle = argv[0].toUint16();
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
+		return s->r_acc;
+	}
+#endif
+
+	FileHandle *f = getFileFromHandle(s, handle);
 	if (f)
 		f->_out->writeUint16LE(argv[1].toUint16());
 	return s->r_acc;
