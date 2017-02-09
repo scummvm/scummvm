@@ -799,7 +799,7 @@ bool GfxTransitions32::processPixelDissolve21Early(PlaneShowStyle &showStyle) {
 }
 
 bool GfxTransitions32::processPixelDissolve21Mid(const PlaneShowStyle &showStyle) {
-	// SQ6 room 530
+	// SQ6 room 530, LSL7 room 130
 
 	Plane* plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(showStyle.plane);
 	const Common::Rect &screenRect = plane->_screenRect;
@@ -869,8 +869,8 @@ bool GfxTransitions32::processPixelDissolve21Mid(const PlaneShowStyle &showStyle
 
 	rect.left = screenRect.left;
 	rect.top = screenRect.top;
-	rect.right = divisions + screenRect.left;
-	rect.bottom = divisions + screenRect.bottom;
+	rect.right = screenRect.left + divisions;
+	rect.bottom = screenRect.top + divisions;
 	addShowRect(rect);
 	sendShowRects();
 
