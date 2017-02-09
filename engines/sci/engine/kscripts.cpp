@@ -93,7 +93,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 					// Happens in CD games (e.g. LSL6CD) with the message
 					// resource. It isn't fatal, and it's usually caused
 					// by leftover scripts.
-					debugC(kDebugLevelResMan, "[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+					debugC(kDebugLevelResMan, "[resMan] Attempt to unlock non-existent resource %s", id.toString().c_str());
 			}
 		}
 		break;
