@@ -376,9 +376,11 @@ public:
 	static void b_pictureP(int nargs);
 	static void b_stringp(int nargs);
 	static void b_symbolp(int nargs);
+	static void b_voidP(int nargs);
 
 	static void b_alert(int nargs);
 	static void b_birth(int nargs);
+	static void b_clearGlobals(int nargs);
 	static void b_cursor(int nargs);
 	static void b_framesToHMS(int nargs);
 	static void b_HMStoFrames(int nargs);

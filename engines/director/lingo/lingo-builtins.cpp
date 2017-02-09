@@ -125,9 +125,11 @@ static struct BuiltinProto {
 	{ "pictureP",		Lingo::b_pictureP,		1, 1, true },	//			D4 f
 	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2 f
 	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2 f
+	{ "voidP",			Lingo::b_voidP,			1, 1, true },	//			D4 f
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
 	{ "birth",	 		Lingo::b_birth,			-1,0, false },	//			D4 f
+	{ "clearGlobals",	Lingo::b_clearGlobals,	0, 0, false },	//			D4 c
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2 c
 	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3 f
 	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3 f
@@ -135,8 +137,8 @@ static struct BuiltinProto {
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2 c
 		// put													// D2
 		// set													// D2
-	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
-	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
+	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2 c
+	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2 c
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2 f
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2 f
@@ -288,6 +290,7 @@ static const char *builtinFunctions[] = {
 	"true",
 	"value",
 	"version",
+	"voidP",
 	"window",
 	"xFactoryList",
 	0
@@ -1005,6 +1008,14 @@ void Lingo::b_symbolp(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_voidP(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == VOID) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
 
 ///////////////////
 // Misc
@@ -1025,6 +1036,12 @@ void Lingo::b_birth(int nargs) {
 	g_lingo->dropStack(nargs);
 
 	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_clearGlobals(int nargs) {
+	g_lingo->printSTUBWithArglist("b_clearGlobals", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_cursor(int nargs) {
