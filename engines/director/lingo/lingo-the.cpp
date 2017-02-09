@@ -30,7 +30,7 @@ class Sprite;
 
 TheEntity entities[] = {
 	{ kTheActorList,		"actorList",		false },	//				D4 property
-	{ kTheBeepOn,			"beepOn",			false },	// D2 property
+	{ kTheBeepOn,			"beepOn",			false },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },	// D3
 	{ kTheCastMembers,		"castmembers",		false },	//		 D3
@@ -59,7 +59,7 @@ TheEntity entities[] = {
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
 	{ kTheItems,			"items",			false },	//		 D3
-	{ kTheItemDelimiter,	"itemDelimiter",	false },
+	{ kTheItemDelimiter,	"itemDelimiter",	false },	//				D4 p
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
@@ -94,20 +94,20 @@ TheEntity entities[] = {
 	{ kTheMovieFileSize,	"movieFileSize",	false },	//				D4 f
 	{ kTheMovieName,		"movieName",		false },	//				D4 f
 	{ kTheMoviePath,		"moviePath",		false },	//				D4 f
-	{ kTheMultiSound,		"multiSound",		false },
+	{ kTheMultiSound,		"multiSound",		false },	//				D4 p
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
 	{ kTheParamCount,		"paramCount",		false },	//				D4 f
 	{ kThePathName,			"pathName",			false },	// D2 f
 	{ kThePauseState,		"pauseState",		false },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
-	{ kThePreloadEventAbort,"preloadEventAbort",false },
+	{ kThePreloadEventAbort,"preloadEventAbort",false },	//				D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false },	//				D4 p
 	{ kTheQuickTimePresent,	"quickTimePresent",	false },	//				D4 f
 	{ kTheRandomSeed,		"randomSeed",		false },	//				D4 p
 	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
-	{ kTheRomanLingo,		"romanLingo",		false },
+	{ kTheRomanLingo,		"romanLingo",		false },	//				D4 p
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false },//				D4 f
 	{ kTheSearchPath,		"searchPath",		false },	//				D4 f
 	{ kTheSelection,		"selection",		false },	// D2 f
@@ -118,7 +118,7 @@ TheEntity entities[] = {
 	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
 	{ kTheSprite,			"sprite",			true  },	//				D4
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
-	{ kTheStage,			"stage",			false },
+	{ kTheStage,			"stage",			false },	//				D4 p
 	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
 	{ kTheStageColor,		"stageColor",		false },	//		D3 p
 	{ kTheStageLeft,		"stageLeft",		false },	// D2 f

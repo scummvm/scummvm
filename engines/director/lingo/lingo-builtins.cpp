@@ -110,8 +110,8 @@ static struct BuiltinProto {
 	{ "preLoad",		Lingo::b_preLoad,		-1,0, false },	//		D3 c
 	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false },	//		D3 c
 	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2 c
-	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2
-	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2
+	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2 c
+	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2 c
 	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2
 		// when keyDown											// D2
 		// when mouseDown										// D2
@@ -174,7 +174,7 @@ static struct BuiltinProto {
 	{ "union",			Lingo::b_union,			2, 2, true },	//			D4 f
 	// Sound
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
-	{ "mci",	 		Lingo::b_mci,			1, 1, false },
+	{ "mci",	 		Lingo::b_mci,			1, 1, false },	//			D4 c
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
 	{ "sound-close",	Lingo::b_soundClose, 	1, 1, false },	//			D4 c
 	{ "sound-fadeIn",	Lingo::b_soundFadeIn, 	1, 2, false },	//		D3 c
