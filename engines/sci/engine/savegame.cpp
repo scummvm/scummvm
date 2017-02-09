@@ -299,9 +299,11 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 					}
 				}
 
+#ifdef ENABLE_SCI32
 				if (pass == passes) {
 					g_sci->_guestAdditions->segManSaveLoadScriptHook(*scr);
 				}
+#endif
 			}
 		}
 	}

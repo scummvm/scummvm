@@ -61,7 +61,9 @@ GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kerne
 	_features(features),
 	_kernel(kernel),
 	_segMan(state->_segMan),
+#ifdef ENABLE_SCI32
 	_restoring(false),
+#endif
 	_messageTypeSynced(false) {}
 
 #pragma mark -
@@ -243,6 +245,8 @@ void GuestAdditions::segManSaveLoadScriptHook(Script &script) const {
 	instantiateScriptHook(script, true);
 }
 
+#endif
+
 bool GuestAdditions::kGetEventHook() const {
 	if (_state->_delayedRestoreGameId != -1) {
 		return g_sci->_guestAdditions->restoreFromLauncher();
@@ -256,8 +260,6 @@ bool GuestAdditions::kWaitHook() const {
 	}
 	return false;
 }
-
-#endif
 
 #pragma mark -
 #pragma mark Integrated save & restore
