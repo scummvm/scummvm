@@ -171,6 +171,9 @@ void Lingo::func_mciwait(Common::String &s) {
 void Lingo::func_goto(Datum &frame, Datum &movie) {
 	g_director->_playbackPaused = false;
 
+	if (!_vm->getCurrentScore())
+		return;
+
 	if (movie.type != VOID) {
 		movie.toString();
 
@@ -206,13 +209,15 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (frame.type == STRING) {
-		_vm->_currentScore->setStartToLabel(*frame.u.s);
+		if (_vm->getCurrentScore())
+			_vm->getCurrentScore()->setStartToLabel(*frame.u.s);
 		return;
 	}
 
 	frame.toInt();
 
-	_vm->_currentScore->setCurrentFrame(frame.u.i);
+	if (_vm->getCurrentScore())
+		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);
 }
 
 void Lingo::func_gotoloop() {
@@ -273,6 +278,9 @@ void Lingo::func_beep(int repeats) {
 }
 
 int Lingo::func_marker(int m) 	{
+	if (!_vm->getCurrentScore())
+		return 0;
+
 	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {
