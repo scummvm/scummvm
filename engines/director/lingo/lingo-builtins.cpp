@@ -154,17 +154,17 @@ static struct BuiltinProto {
 	{ "move",			Lingo::b_move,			1, 2, false },	//			D4 c
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
 	{ "pasteClipBoardInto",Lingo::b_pasteClipBoardInto,1, 1, false },	//	D4 c
-	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
-	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
-	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
-	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2
-	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
+	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2 c
+	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2 c
+	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2 c
+	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2 c
+	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2 c
 	{ "ramNeeded",		Lingo::b_ramNeeded,		2, 2, true },	//			D4 f
 	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2 f
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
 	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
 	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4 c
-	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
+	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2 c
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
 	{ "point",			Lingo::b_point,			2, 2, true },

@@ -50,6 +50,7 @@ enum TheEntityType {
 	kTheFloatPrecision,
 	kTheFrame,
 	kTheFrameLabel,
+	kTheFramePalette,
 	kTheFrameScript,
 	kTheFreeBlock,
 	kTheFreeBytes,
