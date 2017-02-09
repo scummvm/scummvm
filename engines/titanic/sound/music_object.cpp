@@ -176,7 +176,7 @@ bool CMusicParser::parse(CValuePair &r) {
 			} else if (_currentChar >= 'A' && _currentChar <= 'G') {
 				val1 -= val2;
 				if (val1 <= 0)
-					val1 = 12;
+					val1 += 12;
 				r._field0 = _field8 + val1;
 			} else {
 				flag = false;
