@@ -138,8 +138,8 @@ static struct BuiltinProto {
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
 	// Score
-	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
-	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
+	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2 f
+	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2 f
 	{ "copyToClipBoard",Lingo::b_copyToClipBoard,1,1, false },	//			D4 c
 	{ "duplicate",		Lingo::b_duplicate,		1, 2, false },	//			D4 c
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
@@ -160,11 +160,11 @@ static struct BuiltinProto {
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2 c
 	{ "ramNeeded",		Lingo::b_ramNeeded,		2, 2, true },	//			D4 f
 	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2 f
-	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
+	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2 c
 	{ "unLoad",			Lingo::b_unLoad,		0, 2, false },	//			D4 c
 	{ "unLoadCast",		Lingo::b_unLoadCast,	0, 2, false },	//			D4 c
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2 c
-	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
+	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2 c
 	// Point
 	{ "point",			Lingo::b_point,			2, 2, true },	//			D4 f
 	{ "inside",			Lingo::b_inside,		2, 2, true },	//			D4 f
@@ -222,6 +222,8 @@ static const char *builtinFunctions[] = {
 	"backspace",
 	"birth",
 	"cast",
+	"constrainH",
+	"constrainV",
 	"cos",
 	"count",
 	"empty",

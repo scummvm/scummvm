@@ -147,12 +147,12 @@ TheEntity entities[] = {
 
 TheEntityField fields[] = {
 	{ kTheSprite,	"backColor",	kTheBackColor },	// D2 p
-	{ kTheSprite,	"blend",		kTheBlend },
+	{ kTheSprite,	"blend",		kTheBlend },		//				D4 p
 	{ kTheSprite,	"bottom",		kTheBottom },		// D2 p
 	{ kTheSprite,	"castNum",		kTheCastNum },		// D2 p
 	{ kTheSprite,	"constraint",	kTheConstraint },	// D2 p
 	{ kTheSprite,	"cursor",		kTheCursor },		// D2 p
-	{ kTheSprite,	"editableText", kTheEditableText },
+	{ kTheSprite,	"editableText", kTheEditableText },	//				D4 p
 	{ kTheSprite,	"foreColor",	kTheForeColor },	// D2 p
 	{ kTheSprite,	"height",		kTheHeight },		// D2 p
 	{ kTheSprite,	"immediate",	kTheImmediate },	// D2 p
@@ -161,20 +161,21 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"lineSize",		kTheLineSize },		// D2 p
 	{ kTheSprite,	"locH",			kTheLocH },			// D2 p
 	{ kTheSprite,	"locV",			kTheLocV },			// D2 p
-	{ kTheSprite,	"moveable",		kTheMoveable },
+	{ kTheSprite,	"moveableSprite",kTheMoveableSprite },//			D4 p
 	{ kTheSprite,	"movieRate",	kTheMovieRate },	//				D4 P
 	{ kTheSprite,	"movieTime",	kTheMovieTime },	//				D4 P
 	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
 	{ kTheSprite,	"right",		kTheRight },		// D2 p
+	{ kTheSprite,	"scoreColor",	kTheScoreColor },	//				D4 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum },	//				D4 p
 	{ kTheSprite,	"startTime",	kTheStartTime },	//				D4 p
 	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
 	{ kTheSprite,	"stopTime",		kTheStopTime },		//				D4 p
 	{ kTheSprite,	"top",			kTheTop },			// D2 p
-	{ kTheSprite,	"trails",		kTheTrails },
+	{ kTheSprite,	"trails",		kTheTrails },		//				D4 p
 	{ kTheSprite,	"type",			kTheType },			// D2 p
-	{ kTheSprite,	"visible",		kTheVisible },
+	{ kTheSprite,	"visible",		kTheVisible },		//				D4 p
 	{ kTheSprite,	"volume",		kTheVolume },		//				D4 p
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
@@ -356,7 +357,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheConstraint:
 		sprite->_constraint = d.u.i;
 		break;
-	case kTheMoveable:
+	case kTheMoveableSprite:
 		sprite->_moveable = d.u.i;
 		break;
 	case kTheBackColor:
@@ -557,7 +558,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheConstraint:
 		d.u.i = sprite->_constraint;
 		break;
-	case kTheMoveable:
+	case kTheMoveableSprite:
 		d.u.i = sprite->_moveable;
 		break;
 	case kTheBackColor:
