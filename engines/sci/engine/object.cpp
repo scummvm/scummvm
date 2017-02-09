@@ -24,6 +24,9 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
 #include "sci/engine/seg_manager.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/features.h"
+#endif
 
 namespace Sci {
 
@@ -246,6 +249,28 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 }
 
 const int EXTRA_GROUPS = 3;
+
+#ifdef ENABLE_SCI32
+bool Object::mustSetViewVisible(const int index) const {
+	if (getSciVersion() == SCI_VERSION_3) {
+		if ((uint)index < getVarCount()) {
+			return _mustSetViewVisible[getVarSelector(index) >> 5];
+		}
+		return false;
+	} else {
+		int minIndex, maxIndex;
+		if (g_sci->_features->usesAlternateSelectors()) {
+			minIndex = 24;
+			maxIndex = 43;
+		} else {
+			minIndex = 26;
+			maxIndex = 44;
+		}
+
+		return index >= minIndex && index <= maxIndex;
+	}
+}
+#endif
 
 void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);

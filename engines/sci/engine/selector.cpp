@@ -231,16 +231,7 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 
 #ifdef ENABLE_SCI32
 void updateInfoFlagViewVisible(Object *obj, int index) {
-	int minIndex, maxIndex;
-	if (g_sci->_features->usesAlternateSelectors()) {
-		minIndex = 24;
-		maxIndex = 43;
-	} else {
-		minIndex = 26;
-		maxIndex = 44;
-	}
-
-	if (index >= minIndex && index <= maxIndex && getSciVersion() >= SCI_VERSION_2) {
+	if (getSciVersion() >= SCI_VERSION_2 && obj->mustSetViewVisible(index)) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }

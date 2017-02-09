@@ -295,7 +295,9 @@ public:
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
 	void syncBaseObject(const SciSpan<const byte> &ptr) { _baseObj = ptr; }
 
-	bool mustSetViewVisibleSci3(int selector) const { return _mustSetViewVisible[selector/32]; }
+#ifdef ENABLE_SCI32
+	bool mustSetViewVisible(int selector) const;
+#endif
 
 private:
 	void initSelectorsSci3(const SciSpan<const byte> &buf);
