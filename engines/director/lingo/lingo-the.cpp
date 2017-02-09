@@ -65,6 +65,7 @@ TheEntity entities[] = {
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
 	{ kTheKeyUpScript,		"keyUpScript",		false },	//				D4 p
 	{ kTheLabelList,		"labelList",		false },	//		D3 f
+	{ kTheLast,				"last",				false },	//				D4 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },	//				D4 p
@@ -193,8 +194,8 @@ TheEntityField fields[] = {
 	{ kTheCast,		"width",		kTheWidth },		//				D4 p
 
 	// Shape fields
-	{ kTheCast,		"backColor",	kTheBackColor },
-	{ kTheCast,		"foreColor",	kTheForeColor },
+	{ kTheCast,		"backColor",	kTheBackColor },	//				D4 p
+	{ kTheCast,		"foreColor",	kTheForeColor },	//				D4 p
 
 	// Digital video fields
 	{ kTheCast,		"center",		kTheCenter },		//				D4 p

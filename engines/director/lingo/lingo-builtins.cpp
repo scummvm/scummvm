@@ -46,14 +46,14 @@ static struct BuiltinProto {
 	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2 f
 	{ "tan",			Lingo::b_tan,			1, 1, true },	//			D4 f
 	// String
-	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
-	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
-	{ "delete",			Lingo::b_delete,		1, 1, true },	//		D3
-	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3
-	{ "length",			Lingo::b_length,		1, 1, true },	// D2
-	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
-	{ "offset",			Lingo::b_offset,		2, 3, true },	// D2
-	{ "string",			Lingo::b_string,		1, 1, true },	// D2
+	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2 f
+	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2 f
+	{ "delete",			Lingo::b_delete,		1, 1, true },	//		D3 c
+	{ "hilite",			Lingo::b_hilite,		1, 1, true },	//		D3 c
+	{ "length",			Lingo::b_length,		1, 1, true },	// D2 f
+	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2 f
+	{ "offset",			Lingo::b_offset,		2, 3, true },	// D2 f
+	{ "string",			Lingo::b_string,		1, 1, true },	// D2 f
 	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2 f
 	// Lists
 	{ "add",			Lingo::b_add,			2, 2, false },	//			D4 command
@@ -99,7 +99,7 @@ static struct BuiltinProto {
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2 c
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
 	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
-	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
+	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2 c
 	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
 	{ "pass",			Lingo::b_pass,			0, 0, false },	//			D4 c
@@ -222,6 +222,8 @@ static const char *builtinFunctions[] = {
 	"backspace",
 	"birth",
 	"cast",
+	"chars",
+	"charToNum",
 	"constrainH",
 	"constrainV",
 	"cos",
@@ -250,6 +252,7 @@ static const char *builtinFunctions[] = {
 	"integerp",
 	"intersect",
 	"label",
+	"length",
 	"list",
 	"listP",
 	"log",
@@ -257,6 +260,7 @@ static const char *builtinFunctions[] = {
 	"marker",
 	"max",
 	"min",
+	"numToChar",
 	"objectp",
 	"offset",
 	"param",
@@ -274,6 +278,7 @@ static const char *builtinFunctions[] = {
 	"sin",
 	"sqrt",
 	"soundBusy",
+	"string",
 	"stringp",
 	"symbolp",
 	"tab",
