@@ -98,7 +98,7 @@ static struct BuiltinProto {
 	{ "abort",			Lingo::b_abort,			0, 0, false },	//			D4 c
 	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2 c
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2 c
-	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
+	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2 c
 	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2 c
 	{ "halt",	 		Lingo::b_halt,			0, 0, false },	//			D4 c
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2 c
@@ -112,7 +112,7 @@ static struct BuiltinProto {
 	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2 c
 	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2 c
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2 c
-	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2
+	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2 c
 		// when keyDown											// D2
 		// when mouseDown										// D2
 		// when mouseUp											// D2
@@ -129,8 +129,8 @@ static struct BuiltinProto {
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2 c
 	{ "birth",	 		Lingo::b_birth,			-1,0, false },	//			D4 f
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2 c
-	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3
-	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3
+	{ "framesToHMS",	Lingo::b_framesToHMS,	4, 4, false },	//		D3 f
+	{ "HMStoFrames",	Lingo::b_HMStoFrames,	4, 4, false },	//		D3 f
 	{ "param",	 		Lingo::b_param,			1, 1, true },	//			D4 f
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2 c
 		// put													// D2
@@ -237,6 +237,7 @@ static const char *builtinFunctions[] = {
 	"findPos",
 	"findPosNear",
 	"float",
+	"framesToHMS",
 	"getaProp",
 	"getAt",
 	"getLast",
@@ -245,6 +246,7 @@ static const char *builtinFunctions[] = {
 	"getPos",
 	"getProp",
 	"getPropAt",
+	"HMStoFrames",
 	"ilk",
 	"inflate",
 	"inside",
