@@ -903,12 +903,6 @@ void ResourceManager::init() {
 	_mapVersion = detectMapVersion();
 	_volVersion = detectVolVersion();
 
-	// TODO/FIXME: Remove once SCI3 resource detection is finished
-	if ((_mapVersion == kResVersionSci3 || _volVersion == kResVersionSci3) && (_mapVersion != _volVersion)) {
-		warning("FIXME: Incomplete SCI3 detection: setting map and volume version to SCI3");
-		_mapVersion = _volVersion = kResVersionSci3;
-	}
-
 	if ((_volVersion == kResVersionUnknown) && (_mapVersion != kResVersionUnknown)) {
 		warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
 		_volVersion = _mapVersion;
