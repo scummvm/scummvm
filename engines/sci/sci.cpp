@@ -150,6 +150,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music/22s16");	// LSL7 music files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder"); // Mac robot files
