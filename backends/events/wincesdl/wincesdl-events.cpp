@@ -69,7 +69,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 	memset(&event, 0, sizeof(Common::Event));
 
-	handleKbdMouse();
+	handleKbdMouse(event);
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = _graphicsMan->getScreenChangeID();
