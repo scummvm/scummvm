@@ -4729,29 +4729,30 @@ void EdenGame::convertMacToPC() {
 }
 
 void EdenGame::loadpermfiles() {
+	Common::File f;
+	const int kNumIcons = 136;
+	const int kNumRooms = 424;
+
+	if (f.open("cryo.dat")) {
+		const int dataSize = f.size() - 8 - 1;	// CRYODATA + version
+		char headerId[9];
+
+		f.read(headerId, 8);
+		headerId[8] = '\0';
+		if (strcmp(headerId, "CRYODATA"))
+			error("Invalid aux data file");
+
+		if (f.readByte() != CRYO_DAT_VER)
+			error("Incorrect aux data version");
+
+		if (dataSize != kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room))
+			error("Mismatching data in aux data file");
+	} else
+		error("Can not load aux data");
+
 	switch (_vm->getPlatform()) {
 	case Common::kPlatformDOS:
-	{
 		// Since PC version stores hotspots and rooms info in the executable, load them from premade resource file
-		Common::File f;
-
-		if (f.open("cryo.dat")) {
-			const int kNumIcons = 136;
-			const int kNumRooms = 424;
-			const int dataSize = f.size() - 8 - 1;	// CRYODATA + version
-			char headerId[9];
-			
-			f.read(headerId, 8);
-			headerId[8] = '\0';
-			if (strcmp(headerId, "CRYODATA"))
-				error("Invalid aux data file");
-
-			if (f.readByte() != CRYO_DAT_VER)
-				error("Incorrect aux data version");
-
-			if (dataSize != kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room))
-				error("Mismatching data in aux data file");
-
 			for (int i = 0; i < kNumIcons; i++) {
 				_gameIcons[i].sx = f.readSint16LE();
 				_gameIcons[i].sy = f.readSint16LE();
@@ -4774,21 +4775,24 @@ void EdenGame::loadpermfiles() {
 				_gameRooms[i]._location = f.readByte();
 				_gameRooms[i]._backgroundBankNum = f.readByte();
 			}
-
-			f.close();
-		} else
-			error("Can not load aux data");
-	}
 		break;
 	case Common::kPlatformMacintosh:
 		loadIconFile(2498, _gameIcons);
 		loadRoomFile(2497, _gameRooms);
 		loadRawFile(2486, _gameLipsync);
 		convertMacToPC();
+
+		// Skip the icons and rooms of the DOS version
+		f.skip(kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room));
 		break;
 	default:
 		error("Unsupported platform");
 	}
+
+	// Read the common static data
+	// TODO
+
+	f.close();
 
 	loadRawFile(0, _mainBankBuf);
 	loadRawFile(402, _gameFont);
