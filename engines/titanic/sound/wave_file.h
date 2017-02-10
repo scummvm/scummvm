@@ -40,6 +40,7 @@ private:
 	byte *_waveData;
 	int _waveSize;
 	int _dataSize;
+	int _headerSize;
 	QSoundManager *_soundManager;
 	Audio::SeekableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;

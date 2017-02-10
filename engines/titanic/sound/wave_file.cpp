@@ -29,13 +29,13 @@
 namespace Titanic {
 
 CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
-		_waveData(nullptr), _waveSize(0), _dataSize(0),
+		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
 CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(nullptr),
-		_waveData(nullptr), _waveSize(0), _dataSize(0),
+		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
@@ -140,6 +140,7 @@ void CWaveFile::load(byte *data, uint size) {
 	int rate;
 	byte flags;
 	Audio::loadWAVFromStream(wavStream, _dataSize, rate, flags);
+	_headerSize = wavStream.pos();
 }
 
 Audio::SeekableAudioStream *CWaveFile::audioStream() {
@@ -168,7 +169,7 @@ const byte *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		assert(_waveData);
-		return _waveData;
+		return _waveData + _headerSize;
 
 	default:
 		return nullptr;
