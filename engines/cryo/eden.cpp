@@ -48,8 +48,6 @@
 
 namespace Cryo {
 
-#define CRYO_DAT_VER 1	// 1 byte
-
 int16 _torchTick = 0;
 int16 _glowIndex = 0;
 int16 _torchCurIndex = 0;
@@ -4735,23 +4733,11 @@ void EdenGame::loadpermfiles() {
 		// Since PC version stores hotspots and rooms info in the executable, load them from premade resource file
 		Common::File f;
 
-		if (f.open("cryo.dat")) {
+		if (f.open("led.dat")) {
 			const int kNumIcons = 136;
 			const int kNumRooms = 424;
-			const int dataSize = f.size() - 8 - 1;	// CRYODATA + version
-			char headerId[9];
-			
-			f.read(headerId, 8);
-			headerId[8] = '\0';
-			if (strcmp(headerId, "CRYODATA"))
-				error("Invalid aux data file");
-
-			if (f.readByte() != CRYO_DAT_VER)
-				error("Incorrect aux data version");
-
-			if (dataSize != kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room))
-				error("Mismatching data in aux data file");
-
+			if (f.size() != kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room))
+				error("Mismatching aux data");
 			for (int i = 0; i < kNumIcons; i++) {
 				_gameIcons[i].sx = f.readSint16LE();
 				_gameIcons[i].sy = f.readSint16LE();
