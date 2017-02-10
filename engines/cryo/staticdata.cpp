@@ -25,7 +25,7 @@
 
 namespace Cryo {
 
-Follower followerList[15] = {
+Follower followerList[] = {
 //            char,                 X,  sx, sy,  ex,  ey,bank,
 	{ PersonId::pidGregor,          5, 211,  9, 320, 176, 228,   0,  0 },
 	{ PersonId::pidEloi,            4, 162, 47, 223, 176, 228, 112, 78 },
@@ -44,7 +44,15 @@ Follower followerList[15] = {
 	{ -1,                          -1,  -1, -1,  -1,  -1,  -1,  -1, -1 }
 };
 
-byte kLabyrinthPath[70] = {
+
+/*
+  Labyrinth of Mo
+
+  | | | | | | | |
+
+*/
+
+byte kLabyrinthPath[] = {
 // each nibble tells which direction to choose to exit the labyrinth
 	0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
 	0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
@@ -56,7 +64,7 @@ byte kLabyrinthPath[70] = {
 
 char kDinoSpeedForCitaLevel[16] = { 1, 2, 3, 4, 4, 5, 6, 7, 8, 9 };
 
-char kTabletView[12] = {          //TODO: make as struct?
+char kTabletView[] = {          //TODO: make as struct?
 	// opposite tablet id, video id
 	Objects::obUnused10, 83,
 	Objects::obUnused10, 84,
@@ -67,7 +75,7 @@ char kTabletView[12] = {          //TODO: make as struct?
 };
 
 // special character backgrounds for specific rooms
-char kPersoRoomBankTable[84] = {
+char kPersoRoomBankTable[] = {
 	// first entry is default bank, then pairs of [roomNum, bankNum], terminated by -1
 	0,  3, 33, -1,
 	21, 17, 35, -1,
@@ -94,7 +102,7 @@ char kPersoRoomBankTable[84] = {
 };
 
 // area transition descriptors
-Goto gotos[130] = {
+Goto gotos[] = {
 // area, oldarea, vid, time, valleyVid
 	{  0,  1,   0,  2,  20 },
 	{  0,  1, 162,  3, 168 },
@@ -228,7 +236,7 @@ Goto gotos[130] = {
 	{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 };
 
-object_t _objects[42] = {
+object_t _objects[] = {
 	//id,fl,loc,masklow,maskhi,ct
 	{  1, 0,  3,      1,     0, 0},     // Eve's Way Stone
 	{  2, 0,  3,      2,     0, 0},     // Thau's Seashell
@@ -363,7 +371,7 @@ perso_t kPersons[] = {
 	{ 0x628, 237, PersonMask::pmEve   , PersonId::pidEve               ,                                                0, 78, 10, 0, 0,  7,  35, 0, 0 }
 };
 
-Citadel _citadelList[7] = {
+Citadel _citadelList[] = {
 	{   1, { 163, 182, 0, 0, 124, 147, 193, 0 }, {   0,   0, 0, 0,   0,   0,   0, 0 } },
 	{  48, { 285, 286, 0, 0, 287, 288, 284, 0 }, { 114, 115, 0, 0, 116, 117, 113, 0 } },
 	{  63, { 290, 291, 0, 0, 292, 293, 289, 0 }, { 119, 120, 0, 0, 121, 122, 118, 0 } },
@@ -373,7 +381,7 @@ Citadel _citadelList[7] = {
 	{ 255, { 310, 311, 0, 0, 312, 313, 309, 0 }, { 139, 140, 0, 0, 141, 142, 138, 0 } }
 };
 
-prect_t _characterRects[19] = {   // TODO: just an array of int16s?
+prect_t _characterRects[] = {   //TODO: just an array of int16s?
 	{  93,  69, 223, 176},
 	{ 102,  86, 162, 126},
 	{  88, 103, 168, 163},
@@ -395,7 +403,7 @@ prect_t _characterRects[19] = {   // TODO: just an array of int16s?
 	{ 188,  83, 251, 158}
 };
 
-byte _characterArray[][5] = {   // TODO: struc?
+byte _characterArray[][5] = {   //TODO: struc?
 	{  8, 15, 23, 25, 0xFF},
 	{  0,  9, 0xFF        },
 	{  0,  9, 0xFF        },
