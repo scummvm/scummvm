@@ -26,6 +26,8 @@
 #include "eden_icons.h"
 #include "eden_rooms.h"
 
+#define CRYO_DAT_VER 1	// 1 byte
+
 template <typename T>
 static void writeLE(FILE *f, T value) {
 	for (int i = 0; i < sizeof(value); i++, value >>= 8) {
@@ -84,6 +86,9 @@ static int emitData(char *outputFilename) {
 
 	printf("Generating %s...\n", outputFilename);
 
+	fwrite("CRYODATA", 8, 1, f);
+	writeLE<byte>(f, CRYO_DAT_VER);
+	
 	emitIcons(f);
 	emitRooms(f);
 
