@@ -179,11 +179,16 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = y;
 }
 
-void SdlEventSource::handleKbdMouse() {
+void SdlEventSource::handleKbdMouse(Common::Event &event) {
+
 	// Skip recording of these events
 	uint32 curTime = g_system->getMillis(true);
 
 	if (curTime >= _km.last_time + _km.delay_time) {
+
+		int16 oldKmX = _km.x;
+		int16 oldKmY = _km.y;
+
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
 			_km.x_down_time = curTime;
@@ -247,6 +252,11 @@ void SdlEventSource::handleKbdMouse() {
 
 			if (_graphicsManager) {
 				_graphicsManager->getWindow()->warpMouseInWindow((Uint16)_km.x, (Uint16)_km.y);
+			}
+
+			if (_km.x != oldKmX || _km.y != oldKmY) {
+				event.type = Common::EVENT_MOUSEMOVE;
+				processMouseEvent(event, _km.x, _km.y);
 			}
 		}
 	}
@@ -425,7 +435,8 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 }
 
 bool SdlEventSource::pollEvent(Common::Event &event) {
-	handleKbdMouse();
+	handleKbdMouse(event);
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	// In case we still need to send a key up event for a key down from a
