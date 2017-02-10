@@ -25,6 +25,7 @@
 #include "eden.h"
 #include "eden_icons.h"
 #include "eden_rooms.h"
+#include "eden_static.h"
 
 #define CRYO_DAT_VER 1	// 1 byte
 
@@ -77,6 +78,108 @@ static void emitRooms(FILE *f) {
 		rooms[i].write(f);
 }
 
+static void emitStatic(FILE *f) {
+	const int kNumFollowers = 15;
+	const int kNumLabyrinthPath = 70;
+	const int kNumDinoSpeedForCitaLevel = 16;
+	const int kNumTabletView = 12;
+	const int kNumPersoRoomBankTable = 84;
+	const int kNumGotos = 130;
+	const int kNumObjects = 42;
+	const int kNumObjectLocations = 45;
+	const int kNumPersons = 58;
+	const int kNumCitadel = 7;
+	const int kNumCharacterRects = 19;
+	const int kNumCharacters = 20;
+	const int kNumActionCursors = 299;
+	const int kNumAreas = 12;
+	
+	for (int i = 0; i < kNumFollowers; i++) {
+		writeLE<char>(f, followerList[i]._id);
+		writeLE<char>(f, followerList[i]._spriteNum);
+		writeLE<int16>(f, followerList[i].sx);
+		writeLE<int16>(f, followerList[i].sy);
+		writeLE<int16>(f, followerList[i].ex);
+		writeLE<int16>(f, followerList[i].ey);
+		writeLE<int16>(f, followerList[i]._spriteBank);
+		writeLE<int16>(f, followerList[i].ff_C);
+		writeLE<int16>(f, followerList[i].ff_E);
+	}
+	
+	fwrite(kLabyrinthPath, 1, kNumLabyrinthPath, f);
+	fwrite(kDinoSpeedForCitaLevel, 1, kNumDinoSpeedForCitaLevel, f);
+	fwrite(kTabletView, 1, kNumTabletView, f);
+	fwrite(kPersoRoomBankTable, 1, kNumPersoRoomBankTable, f);
+	fwrite(gotos, sizeof(Goto), kNumGotos, f);
+	
+	for (int i = 0; i < kNumObjects; i++) {
+		writeLE<byte>(f, _objects[i]._id);
+		writeLE<byte>(f, _objects[i]._flags);
+		writeLE<int>(f, _objects[i]._locations);
+		writeLE<uint16>(f, _objects[i]._itemMask);
+		writeLE<uint16>(f, _objects[i]._powerMask);
+		writeLE<int16>(f, _objects[i]._count);
+	}
+	
+	for (int i = 0; i < kNumObjectLocations; i++) {
+		writeLE<uint16>(f, kObjectLocations[i]);
+	}
+	
+	for (int i = 0; i < kNumPersons; i++) {
+		writeLE<uint16>(f, kPersons[i]._roomNum);
+		writeLE<uint16>(f, kPersons[i]._actionId);
+		writeLE<uint16>(f, kPersons[i]._partyMask);
+		writeLE<byte>(f, kPersons[i]._id);
+		writeLE<byte>(f, kPersons[i]._flags);
+		writeLE<byte>(f, kPersons[i]._roomBankId);
+		writeLE<byte>(f, kPersons[i]._spriteBank);
+		writeLE<uint16>(f, kPersons[i]._items);
+		writeLE<uint16>(f, kPersons[i]._powers);
+		writeLE<byte>(f, kPersons[i]._targetLoc);
+		writeLE<byte>(f, kPersons[i]._lastLoc);
+		writeLE<byte>(f, kPersons[i]._speed);
+		writeLE<byte>(f, kPersons[i]._steps);
+	}
+	
+	for (int i = 0; i < kNumCitadel; i++) {
+		writeLE<int16>(f, _citadelList[i]._id);
+		for (int j = 0; j < 8; j++)
+			writeLE<int16>(f, _citadelList[i]._bank[j]);
+		for (int j = 0; j < 8; j++)
+			writeLE<int16>(f, _citadelList[i]._video[j]);
+	}
+	
+	for (int i = 0; i < kNumCharacterRects; i++) {
+		writeLE<int16>(f, _characterRects[i].left);
+		writeLE<int16>(f, _characterRects[i].top);
+		writeLE<int16>(f, _characterRects[i].right);
+		writeLE<int16>(f, _characterRects[i].bottom);
+	}
+	
+	fwrite(_characterArray, 5, kNumCharacters, f);
+	
+	for (int i = 0; i < kNumAreas; i++) {
+		writeLE<byte>(f, kAreasTable[i]._num);
+		writeLE<byte>(f, kAreasTable[i]._type);
+		writeLE<uint16>(f, kAreasTable[i]._flags);
+		writeLE<uint16>(f, kAreasTable[i]._firstRoomIdx);
+		writeLE<byte>(f, kAreasTable[i]._citadelLevel);
+		writeLE<byte>(f, kAreasTable[i]._placeNum);
+		// pointer to _citadelRoomPtr is always initialized to null
+		writeLE<int16>(f, kAreasTable[i]._visitCount);
+	}
+	
+	for (int i = 0; i < 64; i++) {
+		writeLE<uint16>(f, tab_2CEF0[i]);
+	}
+	
+	for (int i = 0; i < 64; i++) {
+		writeLE<uint16>(f, tab_2CF70[i]);
+	}
+	
+	fwrite(kActionCursors, 1, kNumActionCursors, f);
+}
+
 static int emitData(char *outputFilename) {
 	FILE *f = fopen(outputFilename, "w+b");
 	if (!f) {
@@ -91,7 +194,8 @@ static int emitData(char *outputFilename) {
 	
 	emitIcons(f);
 	emitRooms(f);
-
+	emitStatic(f);
+	
 	fclose(f);
 
 	printf("Done!\n");
