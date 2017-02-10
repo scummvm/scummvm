@@ -28,14 +28,14 @@
 
 namespace Titanic {
 
-#define WAV_DATA_OFFSET 0x46
-
 CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
-		_rawData(nullptr), _soundType(Audio::Mixer::kPlainSoundType) {
+		_waveData(nullptr), _waveSize(0), _dataSize(0),
+		_soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
 CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(nullptr),
+		_waveData(nullptr), _waveSize(0), _dataSize(0),
 		_soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
@@ -58,6 +58,8 @@ CWaveFile::~CWaveFile() {
 
 	if (_disposeAudioBuffer == DisposeAfterUse::YES && _audioBuffer)
 		delete _audioBuffer;
+
+	delete[] _waveData;
 }
 
 uint CWaveFile::getDurationTicks() const {
@@ -68,8 +70,7 @@ uint CWaveFile::getDurationTicks() const {
 	// a desired size. Since I have no idea how the system API
 	// method works, for now I'm using a simple ratio of a
 	// sample output to input value
-	uint dataSize = _dataSize - WAV_DATA_OFFSET;
-	double newSize = (double)dataSize * (1475712.0 / 199836.0);
+	double newSize = (double)_dataSize * (1475712.0 / 199836.0);
 	return (uint)(newSize * 1000.0 / _audioStream->getRate());
 }
 
@@ -81,17 +82,12 @@ bool CWaveFile::loadSound(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	uint dataSize = stream->size();
-	_dataSize = dataSize - 44;
+	uint size = stream->size();
+	byte *data = new byte[size];
+	stream->read(data, size);
 
-	_rawData = new byte[dataSize];
-	stream->read(_rawData, dataSize);
-	
-	_audioStream = Audio::makeWAVStream(
-		new Common::MemoryReadStream(_rawData, dataSize, DisposeAfterUse::YES),
-		DisposeAfterUse::YES);
+	load(data, size);
 	_soundType = Audio::Mixer::kSFXSoundType;
-
 	return true;
 }
 
@@ -102,12 +98,9 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 
 	byte *data = (byte *)malloc(res->_size);
 	dialogueFile->read(res, data, res->_size);
+	load(data, res->_size);
 
-	_dataSize = res->_size;
-	_audioStream = Audio::makeWAVStream(new Common::MemoryReadStream(data, _dataSize, DisposeAfterUse::YES),
-		DisposeAfterUse::YES);
 	_soundType = Audio::Mixer::kSpeechSoundType;
-
 	return true;
 }
 
@@ -119,10 +112,13 @@ bool CWaveFile::loadMusic(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	_dataSize = stream->size();
-	_audioStream = Audio::makeWAVStream(stream->readStream(_dataSize), DisposeAfterUse::YES);
-	_soundType = Audio::Mixer::kMusicSoundType;
+	uint size = stream->size();
+	byte *data = new byte[size];
+	stream->read(data, size);
+	delete stream;
 
+	load(data, size);
+	_soundType = Audio::Mixer::kMusicSoundType;
 	return true;
 }
 
@@ -135,18 +131,44 @@ bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAft
 	return true;
 }
 
-uint CWaveFile::getFrequency() const {
-	return _audioStream->getRate();
+void CWaveFile::load(byte *data, uint size) {
+	_waveData = data;
+	_waveSize = size;
+
+	// Parse the wave header
+	Common::MemoryReadStream wavStream(data, size, DisposeAfterUse::NO);
+	int rate;
+	byte flags;
+	Audio::loadWAVFromStream(wavStream, _dataSize, rate, flags);
+}
+
+Audio::SeekableAudioStream *CWaveFile::audioStream() {
+	if (!_audioStream) {
+		// No stream yet, so create one and give it control of the raw wave data
+		assert(_waveData);
+		_audioStream = Audio::makeWAVStream(
+			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::YES),
+			DisposeAfterUse::YES);
+		_waveData = nullptr;
+	}
+
+	return _audioStream;
+}
+
+
+uint CWaveFile::getFrequency() {
+	return audioStream()->getRate();
 }
 
 void CWaveFile::reset() {
-	_audioStream->rewind();
+	audioStream()->rewind();
 }
 
 const byte *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
-		return _rawData + WAV_DATA_OFFSET;
+		assert(_waveData);
+		return _waveData;
 
 	default:
 		return nullptr;

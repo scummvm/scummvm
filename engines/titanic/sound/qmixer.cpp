@@ -204,9 +204,9 @@ void QMixer::qsWaveMixPump() {
 			if (sound._started && !_mixer->isSoundHandleActive(sound._soundHandle)) {
 				if (sound._loops == -1 || sound._loops-- > 0) {
 					// Need to loop the sound again
-					sound._waveFile->_audioStream->rewind();
+					sound._waveFile->audioStream()->rewind();
 					_mixer->playStream(sound._waveFile->_soundType,
-						&sound._soundHandle, sound._waveFile->_audioStream,
+						&sound._soundHandle, sound._waveFile->audioStream(),
 						-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
 				} else {
 					// Sound is finished
@@ -230,7 +230,7 @@ void QMixer::qsWaveMixPump() {
 
 				// Calculate an effective volume based on distance of source
 				_mixer->playStream(sound._waveFile->_soundType,
-					&sound._soundHandle, sound._waveFile->_audioStream,
+					&sound._soundHandle, sound._waveFile->audioStream(),
 					-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
 				sound._started = true;
 			}

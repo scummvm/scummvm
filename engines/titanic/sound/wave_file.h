@@ -37,21 +37,28 @@ class QSoundManager;
 
 class CWaveFile {
 private:
+	byte *_waveData;
+	int _waveSize;
+	int _dataSize;
+	QSoundManager *_soundManager;
+	Audio::SeekableAudioStream *_audioStream;
+	Audio::SoundHandle _soundHandle;
+private:
 	/**
 	 * Handles setup of fields shared by the constructors
 	 */
 	void setup();
+
+	/**
+	 * Gets passed the raw data for the wave file
+	 */
+	void load(byte *data, uint size);
 public:
-	QSoundManager *_soundManager;
-	byte *_rawData;
-	Audio::SeekableAudioStream *_audioStream;
-	Audio::SoundHandle _soundHandle;
 	Audio::Mixer::SoundType _soundType;
 
 	LoadMode _loadMode;
 	int _field4;
 	int _field14;
-	uint _dataSize;
 	CAudioBuffer *_audioBuffer;
 	DisposeAfterUse::Flag _disposeAudioBuffer;
 	int _channel;
@@ -71,6 +78,11 @@ public:
 	 * Return the size of the wave file
 	 */
 	uint size() const { return _dataSize; }
+
+	/**
+	 * Returns a ScummVM Audio Stream for playback purposes
+	 */
+	Audio::SeekableAudioStream *audioStream();
 
 	/**
 	 * Tries to load the specified wave file sound
@@ -95,12 +107,14 @@ public:
 	/**
 	 * Returns true if the wave file has data loaded
 	 */
-	bool isLoaded() const { return _audioStream != nullptr; }
+	bool isLoaded() const {
+		return _audioStream != nullptr || _waveData != nullptr;
+	}
 
 	/**
 	 * Return the frequency of the loaded wave file
 	 */
-	uint getFrequency() const;
+	uint getFrequency();
 
 	/**
 	 * Resets the music stream
