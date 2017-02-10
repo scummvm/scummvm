@@ -2664,7 +2664,6 @@ case $_host_os in
 		#append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
 		if test "$_debug_build" = no; then
-			# TODO: > -O1 makes a lot of games to not work (dott, fotaq, fullt, indi, sam..)
 			_optimization_level=-O3
 		fi
 		if test "$_debug_build" = yes; then
@@ -4259,6 +4258,9 @@ if test "$_libcurl" != "no"; then
 		case $_host_os in
 			amigaos*)
 				append_var LIBCURL_LIBS "-lpthread"
+			;;
+			psp2*)
+				append_var LIBCURL_LIBS "-lssl -lcrypto"
 			;;
 		esac
 
