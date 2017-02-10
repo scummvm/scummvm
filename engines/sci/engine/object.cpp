@@ -275,7 +275,7 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 
 			_mustSetViewVisible[groupNr] = (typeMask & 1);
 
-			 for (int bit = 2; bit < 32; ++bit) {
+			for (int bit = 2; bit < 32; ++bit) {
 				int value = seeker.getUint16SEAt(bit * 2);
 				if (typeMask & (1 << bit)) { // Property
 					++properties;
@@ -284,7 +284,6 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 				} else {
 					// Undefined selector
 				}
-
 			}
 		} else
 			_mustSetViewVisible[groupNr] = false;
