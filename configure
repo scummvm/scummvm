@@ -2661,11 +2661,11 @@ case $_host_os in
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
-		append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
+		#append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
 		if test "$_debug_build" = no; then
 			# TODO: > -O1 makes a lot of games to not work (dott, fotaq, fullt, indi, sam..)
-			_optimization_level=-O1
+			_optimization_level=-O3
 		fi
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O0
