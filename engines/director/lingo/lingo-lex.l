@@ -303,14 +303,14 @@ whitespace [\t ]
 					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
 						return BLTINNOARGSORONE;
 					else
-						return BLTINARGLIST;
+						return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
 				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
 							g_lingo->_builtins[yytext]->maxArgs == 1) {
 					return type == BLTIN ? BLTINONEARG : FBLTINONEARG;
 				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
-					return BLTINARGLIST;
+					return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
 				} else {
-					return BLTINARGLIST;
+					return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
 				}
 			}
 		}

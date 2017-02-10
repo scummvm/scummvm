@@ -92,7 +92,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
-%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG
+%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
@@ -416,6 +416,8 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FBLTINONEARG expr		{
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
+	| FBLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| FBLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
@@ -492,7 +494,8 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 		g_lingo->code1(g_lingo->c_voidpush);
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
-	| BLTINARGLIST nonemptyarglist { g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
 	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
