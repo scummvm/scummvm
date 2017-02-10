@@ -2661,10 +2661,11 @@ case $_host_os in
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
+		#append_var CXXFLAGS "-ffunction-sections -mword-relocations -fomit-frame-pointer"
 		#append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
 		if test "$_debug_build" = no; then
-			_optimization_level=-O3
+			_optimization_level=-O1
 		fi
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O0
