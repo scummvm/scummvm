@@ -4732,6 +4732,42 @@ void EdenGame::loadpermfiles() {
 	Common::File f;
 	const int kNumIcons = 136;
 	const int kNumRooms = 424;
+	const int kNumFollowers = 15;
+	const int kNumLabyrinthPath = 70;
+	const int kNumDinoSpeedForCitaLevel = 16;
+	const int kNumTabletView = 12;
+	const int kNumPersoRoomBankTable = 84;
+	const int kNumGotos = 130;
+	const int kNumObjects = 42;
+	const int kNumObjectLocations = 45;
+	const int kNumPersons = 58;
+	const int kNumCitadel = 7;
+	const int kNumCharacterRects = 19;
+	const int kNumCharacters = 20;
+	const int kNumAreas = 12;
+	// tab_2CEF0
+	// tab_2CF70
+	const int kNumActionCursors = 299;
+
+	const int expectedDataSize =
+		kNumIcons * sizeof(Icon) +
+		kNumRooms * sizeof(Room) +
+		kNumFollowers * sizeof(Follower) +
+		kNumLabyrinthPath +
+		kNumDinoSpeedForCitaLevel +
+		kNumTabletView +
+		kNumPersoRoomBankTable +
+		kNumGotos * sizeof(Goto) +
+		kNumObjects * sizeof(object_t) +
+		kNumObjectLocations * 2 +
+		kNumPersons * sizeof(perso_t) +
+		kNumCitadel * sizeof(Citadel) +
+		kNumCharacterRects * 8 +
+		kNumCharacters * 5 +
+		kNumAreas * (sizeof(Area) - 4) +
+		64 * 2 +
+		64 * 2 +
+		kNumActionCursors;
 
 	if (f.open("cryo.dat")) {
 		const int dataSize = f.size() - 8 - 1;	// CRYODATA + version
@@ -4745,8 +4781,8 @@ void EdenGame::loadpermfiles() {
 		if (f.readByte() != CRYO_DAT_VER)
 			error("Incorrect aux data version");
 
-		if (dataSize != kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room))
-			error("Mismatching data in aux data file");
+		if (dataSize != expectedDataSize)
+			error("Mismatching data in aux data file (got %d, expected %d)", dataSize, expectedDataSize);
 	} else
 		error("Can not load aux data");
 
@@ -4763,7 +4799,7 @@ void EdenGame::loadpermfiles() {
 				_gameIcons[i]._objectId = f.readUint32LE();
 			}
 
-			for (int i = 0; i <kNumRooms; i++) {
+			for (int i = 0; i < kNumRooms; i++) {
 				_gameRooms[i]._id = f.readByte();
 				for (int j = 0; j < 4; j++)
 					_gameRooms[i]._exits[j] = f.readByte();
@@ -4790,7 +4826,91 @@ void EdenGame::loadpermfiles() {
 	}
 
 	// Read the common static data
-	// TODO
+
+	for (int i = 0; i < kNumFollowers; i++) {
+		followerList[i]._id = f.readSByte();
+		followerList[i]._spriteNum = f.readSByte();
+		followerList[i].sx = f.readSint16LE();
+		followerList[i].sy = f.readSint16LE();
+		followerList[i].ex = f.readSint16LE();
+		followerList[i].ey = f.readSint16LE();
+		followerList[i]._spriteBank = f.readSint16LE();
+		followerList[i].ff_C = f.readSint16LE();
+		followerList[i].ff_E = f.readSint16LE();
+	}
+
+	f.read(kLabyrinthPath, kNumLabyrinthPath);
+	f.read(kDinoSpeedForCitaLevel, kNumDinoSpeedForCitaLevel);
+	f.read(kTabletView, kNumTabletView);
+	f.read(kPersoRoomBankTable, kNumPersoRoomBankTable);
+	f.read(gotos, kNumGotos * sizeof(Goto));
+
+	for (int i = 0; i < kNumObjects; i++) {
+		_objects[i]._id = f.readByte();
+		_objects[i]._flags = f.readByte();
+		_objects[i]._locations = f.readUint32LE();
+		_objects[i]._itemMask = f.readUint16LE();
+		_objects[i]._powerMask = f.readUint16LE();
+		_objects[i]._count = f.readSint16LE();
+	}
+
+	for (int i = 0; i < kNumObjectLocations; i++) {
+		kObjectLocations[i] = f.readUint16LE();
+	}
+
+	for (int i = 0; i < kNumPersons; i++) {
+		kPersons[i]._roomNum = f.readUint16LE();
+		kPersons[i]._actionId = f.readUint16LE();
+		kPersons[i]._partyMask = f.readUint16LE();
+		kPersons[i]._id = f.readByte();
+		kPersons[i]._flags = f.readByte();
+		kPersons[i]._roomBankId = f.readByte();
+		kPersons[i]._spriteBank = f.readByte();
+		kPersons[i]._items = f.readUint16LE();
+		kPersons[i]._powers = f.readUint16LE();
+		kPersons[i]._targetLoc = f.readByte();
+		kPersons[i]._lastLoc = f.readByte();
+		kPersons[i]._speed = f.readByte();
+		kPersons[i]._steps = f.readByte();
+	}
+
+	for (int i = 0; i < kNumCitadel; i++) {
+		_citadelList[i]._id = f.readSint16LE();
+		for (int j = 0; j < 8; j++)
+			_citadelList[i]._bank[j] = f.readSint16LE();
+		for (int j = 0; j < 8; j++)
+			_citadelList[i]._video[j] = f.readSint16LE();
+	}
+
+	for (int i = 0; i < kNumCharacterRects; i++) {
+		_characterRects[i].left = f.readSint16LE();
+		_characterRects[i].top = f.readSint16LE();
+		_characterRects[i].right = f.readSint16LE();
+		_characterRects[i].bottom = f.readSint16LE();
+	}
+
+	f.read(_characterArray, kNumCharacters * 5);
+	
+	for (int i = 0; i < kNumAreas; i++) {
+		kAreasTable[i]._num = f.readByte();
+		kAreasTable[i]._type = f.readByte();
+		kAreasTable[i]._flags = f.readUint16LE();
+		kAreasTable[i]._firstRoomIdx = f.readUint16LE();
+		kAreasTable[i]._citadelLevel = f.readByte();
+		kAreasTable[i]._placeNum = f.readByte();
+		kAreasTable[i]._citadelRoomPtr = nullptr;
+		kAreasTable[i]._visitCount = f.readSint16LE();
+	}
+
+	for (int i = 0; i < 64; i++) {
+		tab_2CEF0[i] = f.readSint16LE();
+	}
+
+	for (int i = 0; i < 64; i++) {
+		tab_2CF70[i] = f.readSint16LE();
+	}
+
+	f.read(kActionCursors, kNumActionCursors);
 
 	f.close();
 

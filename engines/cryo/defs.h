@@ -783,33 +783,6 @@ enum {
 	LAB_W
 };
 
-extern byte kLabyrinthPath[];
-
-extern char kDinoSpeedForCitaLevel[16];
-
-extern char kTabletView[];
-
-// special character backgrounds for specific rooms
-extern char kPersoRoomBankTable[];
-
-// area transition descriptors
-extern Goto gotos[];
-extern object_t _objects[];
-extern uint16 kObjectLocations[100];
-extern perso_t kPersons[];
-extern Citadel _citadelList[];
-
-struct prect_t {
-	int16   left, top, right, bottom;
-};
-
-extern prect_t _characterRects[];
-extern byte _characterArray[][5];
-extern Area kAreasTable[];
-extern int16 tab_2CEF0[64];
-extern int16 tab_2CF70[64];
-extern int16 kActionCursors[299];
-
 struct CubeFace {
 	int    tri;
 	char   ff_4;

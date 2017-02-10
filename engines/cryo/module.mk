@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	detection.o \
 	eden.o \
 	sound.o \
-	staticdata.o \
 	video.o
 
 # This module can be built as a plugin

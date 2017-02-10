@@ -576,7 +576,7 @@ private:
 	int   _lastAnimFrameNumb;
 	int   _curAnimFrameNumb;
 	int   _lastAnimTicks;
-	prect_t *_curCharacterRect;
+	Common::Rect *_curCharacterRect;
 	int16 _numAnimFrames;
 	int16 _maxPersoDesc;
 	int16 _numImgDesc;
@@ -737,6 +737,32 @@ private:
 	uint8 tab_2CB1E[8][4];
 
 	const unsigned int kMaxMusicSize;  // largest .mus file size 
+
+	// Loaded from cryo.dat
+	Follower followerList[15];
+	byte kLabyrinthPath[70];
+	char kDinoSpeedForCitaLevel[16];
+	char kTabletView[12];
+	char kPersoRoomBankTable[84];	// special character backgrounds for specific rooms
+
+	// Loaded from cryo.dat - Area transition descriptors
+	Goto gotos[130];
+	object_t _objects[42];
+	uint16 kObjectLocations[45];
+	perso_t kPersons[58];
+	Citadel _citadelList[7];
+
+	// Loaded from cryo.dat
+	Common::Rect _characterRects[19];
+	byte _characterArray[20][5];
+	Area kAreasTable[12];
+	int16 tab_2CEF0[64];
+	int16 tab_2CF70[64];
+	byte kActionCursors[299];
+
+	float _translationZ = -3400;
+	float flt_2DF80 = -3400;
+	float flt_2DF84 = 200;
 };
 
 }
