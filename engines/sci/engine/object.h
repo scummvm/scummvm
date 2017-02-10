@@ -73,24 +73,13 @@ enum ObjectOffsets {
 
 class Object {
 public:
-	Object() {
-		_offset = getSciVersion() < SCI_VERSION_1_1 ? 0 : 5;
-		_flags = 0;
-		_baseObj.clear();
-		_baseVars.clear();
-		_methodCount = 0;
-		_propertyOffsetsSci3 = nullptr;
-	}
-
-	~Object() {
-		if (getSciVersion() == SCI_VERSION_3) {
-			// TODO: This is super gross
-			free(const_cast<uint16 *>(_baseVars.data()));
-			_baseVars.clear();
-			free(_propertyOffsetsSci3);
-			_propertyOffsetsSci3 = nullptr;
-		}
-	}
+	Object() :
+		_offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5),
+		_flags(0),
+		_baseObj(),
+		_baseVars(),
+		_methodCount(0),
+		_propertyOffsetsSci3() {}
 
 	Object &operator=(const Object &other) {
 		_baseObj = other._baseObj;
@@ -100,21 +89,14 @@ public:
 		_flags = other._flags;
 		_offset = other._offset;
 		_pos = other._pos;
+		_baseVars = other._baseVars;
 
 		if (getSciVersion() == SCI_VERSION_3) {
-			uint16 *baseVars = (uint16 *)malloc(other._baseVars.byteSize());
-			other._baseVars.unsafeCopyDataTo(baseVars);
-			_baseVars = SciSpan<const uint16>(baseVars, other._baseVars.size());
-
-			_propertyOffsetsSci3 = (uint32 *)malloc(sizeof(uint32) * _variables.size());
-			memcpy(_propertyOffsetsSci3, other._propertyOffsetsSci3, sizeof(uint32) * _variables.size());
-
+			_propertyOffsetsSci3 = other._propertyOffsetsSci3;
 			_superClassPosSci3 = other._superClassPosSci3;
 			_speciesSelectorSci3 = other._speciesSelectorSci3;
 			_infoSelectorSci3 = other._infoSelectorSci3;
 			_mustSetViewVisible = other._mustSetViewVisible;
-		} else {
-			_baseVars = other._baseVars;
 		}
 
 		return *this;
@@ -225,7 +207,7 @@ public:
 			error("setClassScriptSelector called for SCI3");
 	}
 
-	Selector getVarSelector(uint16 i) const { return _baseVars.getUint16SEAt(i); }
+	Selector getVarSelector(uint16 i) const { return _baseVars[i]; }
 
 	reg_t getFunction(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
@@ -282,7 +264,7 @@ public:
 	void cloneFromObject(const Object *obj) {
 		_baseObj = obj ? obj->_baseObj : SciSpan<const byte>();
 		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint16>();
-		_baseVars = obj ? obj->_baseVars : SciSpan<const uint16>();
+		_baseVars = obj ? obj->_baseVars : Common::Array<uint16>();
 	}
 
 	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
@@ -300,12 +282,12 @@ public:
 #endif
 
 private:
-	void initSelectorsSci3(const SciSpan<const byte> &buf);
+	void initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables);
 
 	SciSpan<const byte> _baseObj; /**< base + object offset within base */
-	SciSpan<const uint16> _baseVars; /**< Pointer to the varselector area for this object */
-	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
-	uint32 *_propertyOffsetsSci3; /**< This is used to enable relocation of property values in SCI3 */
+	Common::Array<uint16> _baseVars; /**< The varselector area for this object */
+	Common::Array<uint16> _baseMethod; /**< The method selector area for this object */
+	Common::Array<uint32> _propertyOffsetsSci3; /**< Enables relocation of property values in SCI3 */
 
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;

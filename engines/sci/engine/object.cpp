@@ -62,20 +62,42 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		const SciSpan<const byte> header = buf.subspan(obj_pos.getOffset() - kOffsetHeaderSize);
 		_variables.resize(header.getUint16LEAt(kOffsetHeaderSelectorCounter));
-		_baseVars = _baseObj.subspan<const uint16>(_variables.size() * sizeof(uint16));
+
+		// Non-class objects do not have a baseVars section
+		const uint16 infoSelector = data.getUint16SEAt((_offset + 2) * sizeof(uint16));
+		if (infoSelector & kInfoFlagClass) {
+			_baseVars.reserve(_variables.size());
+			uint baseVarsOffset = _variables.size() * sizeof(uint16);
+			for (uint i = 0; i < _variables.size(); ++i) {
+				_baseVars.push_back(data.getUint16SEAt(baseVarsOffset));
+				baseVarsOffset += sizeof(uint16);
+			}
+		}
+
 		_methodCount = data.getUint16LEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) - 2);
 		for (int i = 0; i < _methodCount * 2 + 2; ++i) {
 			_baseMethod.push_back(data.getUint16SEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) + i * 2));
 		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		_variables.resize(data.getUint16SEAt(2));
-		_baseVars = buf.subspan<const uint16>(data.getUint16SEAt(4), _variables.size() * sizeof(uint16));
+
+		// Non-class objects do not have a baseVars section
+		const uint16 infoSelector = data.getUint16SEAt((_offset + 2) * sizeof(uint16));
+		if (infoSelector & kInfoFlagClass) {
+			_baseVars.reserve(_variables.size());
+			uint baseVarsOffset = data.getUint16SEAt(4);
+			for (uint i = 0; i < _variables.size(); ++i) {
+				_baseVars.push_back(buf.getUint16SEAt(baseVarsOffset));
+				baseVarsOffset += sizeof(uint16);
+			}
+		}
+
 		_methodCount = buf.getUint16SEAt(data.getUint16SEAt(6));
 		for (int i = 0; i < _methodCount * 2 + 3; ++i) {
 			_baseMethod.push_back(buf.getUint16SEAt(data.getUint16SEAt(6) + i * 2));
 		}
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		initSelectorsSci3(buf);
+		initSelectorsSci3(buf, initVariables);
 	}
 
 	if (initVariables) {
@@ -83,7 +105,7 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 			for (uint i = 0; i < _variables.size(); i++)
 				_variables[i] = make_reg(0, data.getUint16SEAt(i * 2));
 		} else {
-			_infoSelectorSci3 = make_reg(0, _baseObj.getUint16SEAt(10));
+			_infoSelectorSci3 = make_reg(0, data.getUint16SEAt(10));
 		}
 	}
 }
@@ -93,20 +115,20 @@ const Object *Object::getClass(SegManager *segMan) const {
 }
 
 int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
-	SciSpan<const byte> buf;
+	const Common::Array<uint16> *buf;
 	uint varnum = 0;
 
 	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		const Object *obj = getClass(segMan);
 		varnum = getSciVersion() <= SCI_VERSION_1_LATE ? getVarCount() : obj->getVariable(1).toUint16();
-		buf = obj->_baseVars.subspan<const byte>(0);
+		buf = &obj->_baseVars;
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		varnum = _variables.size();
-		buf = _baseVars.subspan<const byte>(0);
+		buf = &_baseVars;
 	}
 
 	for (uint i = 0; i < varnum; i++)
-		if (buf.getUint16SEAt(i << 1) == slc) // Found it?
+		if ((*buf)[i] == slc) // Found it?
 			return i; // report success
 
 	return -1; // Failed
@@ -117,7 +139,7 @@ bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSiz
 }
 
 bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
-	assert(_propertyOffsetsSci3);
+	assert(_propertyOffsetsSci3.size());
 
 	for (uint i = 0; i < _variables.size(); ++i) {
 		if (location == _propertyOffsetsSci3[i]) {
@@ -147,7 +169,7 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 		if (!isClass())
 			obj = segMan->getObject(getSuperClassSelector());
 
-		return obj->_baseVars.subspan<const byte>(0).getUint16SEAt(propertyOffset);
+		return obj->_baseVars[propertyOffset >> 1];
 	}
 }
 
@@ -272,7 +294,7 @@ bool Object::mustSetViewVisible(const int index) const {
 }
 #endif
 
-void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
+void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
 	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
 	const SciSpan<const byte> selectorBase = groupInfo.subspan(EXTRA_GROUPS * 32 * 2);
 	int groups = g_sci->getKernel()->getSelectorNamesSize()/32;
@@ -315,9 +337,9 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 	}
 
 	_variables.resize(properties);
-	uint16 *propertyIds = (uint16 *)malloc(sizeof(uint16) * properties);
+	_propertyOffsetsSci3.resize(properties);
+	_baseVars.resize(properties);
 //	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
-	uint32 *propertyOffsets = (uint32 *)malloc(sizeof(uint32) * properties);
 	int propertyCounter = 0;
 	int methodCounter = 0;
 
@@ -335,18 +357,12 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 			for (int bit = 2; bit < 32; ++bit) {
 				int value = seeker.getUint16SEAt(bit * 2);
 				if (typeMask & (1 << bit)) { // Property
-
-					// FIXME: We really shouldn't be doing endianness
-					// conversion here; instead, propertyIds should be converted
-					// to a Common::Array, like _baseMethod already is
-					// This interim solution fixes playing SCI3 PC games
-					// on Big Endian platforms
-
-					WRITE_SCI11ENDIAN_UINT16(&propertyIds[propertyCounter],
-					                         groupBaseId + bit);
-					_variables[propertyCounter] = make_reg(0, value);
+					_baseVars[propertyCounter] = groupBaseId + bit;
+					if (initVariables) {
+						_variables[propertyCounter] = make_reg(0, value);
+					}
 					uint32 propertyOffset = (seeker + bit * 2) - buf;
-					propertyOffsets[propertyCounter] = propertyOffset;
+					_propertyOffsetsSci3[propertyCounter] = propertyOffset;
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
 					_baseMethod.push_back(groupBaseId + bit);
@@ -361,12 +377,11 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf) {
 		}
 	}
 
-	_speciesSelectorSci3 = make_reg(0, _baseObj.getUint16SEAt(4));
-	_superClassPosSci3 = make_reg(0, _baseObj.getUint16SEAt(8));
-
-	_baseVars = SciSpan<const uint16>(propertyIds, properties);
+	if (initVariables) {
+		_speciesSelectorSci3 = make_reg(0, _baseObj.getUint16SEAt(4));
+		_superClassPosSci3 = make_reg(0, _baseObj.getUint16SEAt(8));
+	}
 	_methodCount = methods;
-	_propertyOffsetsSci3 = propertyOffsets;
 	//_methodOffsetsSci3 = methodOffsets;
 }
 

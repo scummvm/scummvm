@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      42 - initial SCI3 support
  *      41 - palette support for newer SCI2.1 games; stable SCI2/2.1 save games
  *      40 - always store palvary variables
  *      39 - Accurate SCI32 arrays/strings, score metadata, avatar metadata
@@ -66,7 +67,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 41,
+	CURRENT_SAVEGAME_VERSION = 42,
 	MINIMUM_SAVEGAME_VERSION = 14
 #ifdef ENABLE_SCI32
 	,
