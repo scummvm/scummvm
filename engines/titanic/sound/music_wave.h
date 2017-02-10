@@ -117,7 +117,8 @@ public:
 	void setSize(uint total);
 
 	/**
-	 * Reads sound data and passes it to the provided buffer
+	 * If there is any wave file currently specified, reads it in
+	 * and merges it into the supplied buffer
 	 */
 	int read(uint16 *ptr, uint size);
 

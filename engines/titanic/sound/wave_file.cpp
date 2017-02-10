@@ -165,18 +165,18 @@ void CWaveFile::reset() {
 	audioStream()->rewind();
 }
 
-const byte *CWaveFile::lock() {
+const uint16 *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		assert(_waveData);
-		return _waveData + _headerSize;
+		return (uint16 *)(_waveData + _headerSize);
 
 	default:
 		return nullptr;
 	}
 }
 
-void CWaveFile::unlock(const byte *ptr) {
+void CWaveFile::unlock(const uint16 *ptr) {
 	// No implementation needed in ScummVM
 }
 

@@ -125,12 +125,12 @@ public:
 	/**
 	 * Lock sound data for access
 	 */
-	const byte *lock();
+	const uint16 *lock();
 
 	/**
 	 * Unlock sound data after a prior call to lock
 	 */
-	void unlock(const byte *ptr);
+	void unlock(const uint16 *ptr);
 };
 
 } // End of namespace Titanic
