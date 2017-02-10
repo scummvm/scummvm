@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 #include "common/memstream.h"
 #include "titanic/sound/wave_file.h"
@@ -30,13 +31,13 @@ namespace Titanic {
 
 CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_soundType(Audio::Mixer::kPlainSoundType) {
+		_rate(0), _flags(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
 CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_soundType(Audio::Mixer::kPlainSoundType) {
+		_rate(0), _flags(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
@@ -137,9 +138,7 @@ void CWaveFile::load(byte *data, uint size) {
 
 	// Parse the wave header
 	Common::MemoryReadStream wavStream(data, size, DisposeAfterUse::NO);
-	int rate;
-	byte flags;
-	Audio::loadWAVFromStream(wavStream, _dataSize, rate, flags);
+	Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags);
 	_headerSize = wavStream.pos();
 }
 
@@ -168,7 +167,8 @@ void CWaveFile::reset() {
 const uint16 *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
-		assert(_waveData);
+		assert(_waveData && _rate == 22050);
+		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
 		return (uint16 *)(_waveData + _headerSize);
 
 	default:
