@@ -743,6 +743,12 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	if (isSaveCatalogue(name)) {
 		return saveCatalogueExists(name) ? TRUE_REG : NULL_REG;
 	}
+
+	// LSL7 checks to see if the autosave save exists when deciding whether to
+	// go to the main menu or not on startup
+	if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
+		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(0)).empty() ? NULL_REG : TRUE_REG;
+	}
 #endif
 
 	// TODO: It may apparently be worth caching the existence of
