@@ -41,22 +41,6 @@ namespace Cryo {
 CryoEngine *g_ed = nullptr;
 
 CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	// Put your engine in a sane state, but do nothing big yet;
-	// in particular, do not load data from files; rather, if you
-	// need to do such things, do them from run().
-
-	// Do not initialize graphics here
-	// Do not initialize audio devices here
-
-	// However this is the place to specify all default directories
-//	const Common::FSNode gameDataDir(ConfMan.get("path"));
-//	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
-
-	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kCryoDebugExample, "example", "this is just an example for a engine specific debug channel");
-	DebugMan.addDebugChannel(kCryoDebugExample2, "example2", "also an example");
-
-	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("cryo");
 	_debugger = nullptr;
 
@@ -71,16 +55,12 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 }
 
 CryoEngine::~CryoEngine() {
-	debug("CryoEngine::~CryoEngine");
-
-	// Dispose your resources here
 	delete _rnd;
 	delete _game;
 	delete _video;
 	delete _screenView;
 	delete _debugger;
 
-	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
 
@@ -96,18 +76,6 @@ Common::Error CryoEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 	_screen.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-
-	// Additional setup.
-	debug("CryoEngine::init");
-
-	// Your main even loop should be (invoked from) here.
-	debug("CryoEngine::go: Hello, World!");
-
-	// This test will show up if -d1 and --debugflags=example are specified on the commandline
-	debugC(1, kCryoDebugExample, "Example debug call");
-
-	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-	debugC(3, kCryoDebugExample | kCryoDebugExample2, "Example debug call two");
 
 	_game->run();
 
