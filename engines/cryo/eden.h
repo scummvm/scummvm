@@ -23,6 +23,8 @@
 #ifndef CRYO_EDEN_H
 #define CRYO_EDEN_H
 
+#include "common/file.h"
+
 #include "cryo/sound.h"
 #include "cryo/defs.h"
 

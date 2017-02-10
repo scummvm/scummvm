@@ -23,9 +23,6 @@
 #ifndef CRYO_PLATDEFS_H
 #define CRYO_PLATDEFS_H
 
-#if 1
-#include "common/file.h"
-
 namespace Cryo {
 
 #if 1
@@ -40,8 +37,6 @@ const int _spaceWidth = 4;
 #endif
 const int _subtitlesXWidth = (320 - _subtitlesXMargin * 2);
 const int _subtitlesXCenter = _subtitlesXWidth / 2;
-
-#endif
 
 } // End of namespace Cryo
 
