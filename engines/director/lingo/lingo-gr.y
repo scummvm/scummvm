@@ -411,10 +411,10 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
 	| FBLTINNOARGS 	{
-		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 0);
 		delete $1; }
 	| FBLTINONEARG expr		{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
@@ -480,16 +480,17 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| tPROPERTY propertylist
 	| tINSTANCE instancelist
 	| BLTINNOARGS 	{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 0);
 		delete $1; }
 	| BLTINONEARG expr		{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINNOARGSORONE expr	{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINNOARGSORONE 		{
-		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_builtins[*$1]->u.func);
+		g_lingo->code1(g_lingo->c_voidpush);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINARGLIST nonemptyarglist { g_lingo->codeFunc($1, $2); }
 	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
