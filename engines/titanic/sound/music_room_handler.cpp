@@ -149,7 +149,7 @@ void CMusicRoomHandler::setDirectionControl2(MusicInstrument instrument, bool va
 
 void CMusicRoomHandler::setPitchControl(MusicInstrument instrument, int value) {
 	if (instrument >= BELLS && instrument <= BASS && value >= -2 && value <= 2)
-		_array1[instrument]._pitchControl = value;
+		_array1[instrument]._pitchControl = value * 3;
 }
 
 void CMusicRoomHandler::setSpeedControl(MusicInstrument instrument, int value) {
