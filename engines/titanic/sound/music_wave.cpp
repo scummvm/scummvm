@@ -313,13 +313,15 @@ void CMusicWave::chooseWaveFile(int index, int size) {
 		}
 	}
 
-	int arrIndex = _arrayIndex - _items[waveIndex]._value + index;
+	const CMusicWaveFile &wf = _items[waveIndex];
+	int arrIndex = _arrayIndex - wf._value + index;
+	uint waveSize = wf._waveFile->size();
 
 	_waveIndex = waveIndex;
 	_readPos = 0;
 	_readIncrement = (int)(_array[arrIndex] * 256);
 	_size = size;
-	_count = _items[waveIndex]._waveFile->size() / 2;
+	_count = waveSize / 2;
 }
 
 void CMusicWave::setupArray(int minVal, int maxVal) {

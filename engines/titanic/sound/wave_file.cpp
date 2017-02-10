@@ -81,12 +81,14 @@ bool CWaveFile::loadSound(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	_dataSize = stream->size();
-	_rawData = new byte[_dataSize];
-	stream->read(_rawData, _dataSize);
+	uint dataSize = stream->size();
+	_dataSize = dataSize - 44;
+
+	_rawData = new byte[dataSize];
+	stream->read(_rawData, dataSize);
 	
 	_audioStream = Audio::makeWAVStream(
-		new Common::MemoryReadStream(_rawData, _dataSize, DisposeAfterUse::YES),
+		new Common::MemoryReadStream(_rawData, dataSize, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
 	_soundType = Audio::Mixer::kSFXSoundType;
 
