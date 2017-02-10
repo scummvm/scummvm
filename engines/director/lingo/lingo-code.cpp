@@ -887,8 +887,6 @@ void Lingo::c_repeatwithcode(void) {
 
 	if (!g_lingo->_returning)
 		g_lingo->_pc = end; /* next stmt */
-
-	delete counter;
 }
 
 void Lingo::c_exitRepeat(void) {
