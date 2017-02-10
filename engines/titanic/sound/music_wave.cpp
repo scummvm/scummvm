@@ -298,27 +298,28 @@ int CMusicWave::read(uint16 *ptr, uint size) {
 	return size;
 }
 
-void CMusicWave::chooseInstrument(int index, int size) {
+void CMusicWave::chooseWaveFile(int index, int size) {
 	if (!_array)
 		setupArray(-36, 36);
 
-	int minVal = _items[0]._value - index;
-	int minIndex = 0;
+	int minDiff = ABS(_items[0]._value - index);
+	int waveIndex = 0;
+
 	for (uint idx = 1; idx < _items.size(); ++idx) {
-		int val = _items[idx]._value - index;
-		if (val < minVal) {
-			minVal = val;
-			minIndex = idx;
+		int diff = ABS(_items[idx]._value - index);
+		if (diff < minDiff) {
+			minDiff = diff;
+			waveIndex = idx;
 		}
 	}
 
-	int arrIndex = _arrayIndex - _items[minIndex]._value + index;
+	int arrIndex = _arrayIndex - _items[waveIndex]._value + index;
 
-	_waveIndex = minIndex;
+	_waveIndex = waveIndex;
 	_readPos = 0;
 	_readIncrement = (int)(_array[arrIndex] * 256);
 	_size = size;
-	_count = _items[minIndex]._waveFile->size() / 2;
+	_count = _items[waveIndex]._waveFile->size() / 2;
 }
 
 void CMusicWave::setupArray(int minVal, int maxVal) {

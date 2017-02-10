@@ -124,7 +124,7 @@ public:
 	/**
 	 * Figure out which wave file to use next
 	 */
-	void chooseInstrument(int index, int freq);
+	void chooseWaveFile(int index, int freq);
 };
 
 } // End of namespace Titanic
