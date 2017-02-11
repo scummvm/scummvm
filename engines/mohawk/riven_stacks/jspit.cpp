@@ -474,7 +474,7 @@ void JSpit::sunnersPlayVideo(VideoEntryPtr &video, uint32 destCardGlobalId) {
 			sunners = 1;
 
 			uint16 destCardId = getCardStackId(destCardGlobalId);
-			RivenScriptPtr clickScript = _vm->_scriptMan->createScriptFromData(1, 2, 1, destCardId);
+			RivenScriptPtr clickScript = _vm->_scriptMan->createScriptFromData(1, kRivenCommandChangeCard, 1, destCardId);
 			_vm->_scriptMan->runScript(clickScript, false);
 			break;
 		}

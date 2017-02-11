@@ -67,13 +67,13 @@ RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
 }
 
 RivenCommandPtr RivenScriptManager::readCommand(Common::ReadStream *stream) {
-	uint16 type = stream->readUint16BE();
+	RivenCommandType type = (RivenCommandType) stream->readUint16BE();
 
 	switch (type) {
-		case 8:
-			return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, type, stream));
-		case 27:
-			return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, type, stream));
+		case kRivenCommandSwitch:
+			return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, stream));
+		case kRivenCommandChangeStack:
+			return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, stream));
 		default:
 			return RivenCommandPtr(RivenSimpleCommand::createFromStream(_vm, type, stream));
 	}
@@ -155,7 +155,7 @@ RivenScriptPtr RivenScriptManager::createScriptFromData(uint16 commandCount, ...
 		uint16 command = va_arg(args, int);
 		writeStream.writeUint16BE(command);
 
-		if (command == 8) {
+		if (command == kRivenCommandSwitch) {
 			// The switch command has a different format that is not implemented
 			error("Cannot create a Switch command from data");
 		}
@@ -252,7 +252,7 @@ RivenCommand::~RivenCommand() {
 
 }
 
-RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments) :
+RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments) :
 		RivenCommand(vm),
 		_type(type),
 		_arguments(arguments) {
@@ -262,7 +262,7 @@ RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const A
 RivenSimpleCommand::~RivenSimpleCommand() {
 }
 
-RivenSimpleCommand *RivenSimpleCommand::createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream) {
+RivenSimpleCommand *RivenSimpleCommand::createFromStream(MohawkEngine_Riven *vm, RivenCommandType type, Common::ReadStream *stream) {
 	uint16 argCount = stream->readUint16BE();
 
 	Common::Array<uint16> arguments;
@@ -644,10 +644,10 @@ void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
 Common::String RivenSimpleCommand::describe() const {
 	Common::String desc;
 
-	if (_type == 7) { // Use the variable name
+	if (_type == kRivenCommandSwitch) { // Use the variable name
 		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
 		desc = Common::String::format("%s = %d", varName.c_str(), _arguments[1]);
-	} else if (_type == 17) { // Use the external command name
+	} else if (_type == kRivenCommandRunExternal) { // Use the external command name
 		Common::String externalCommandName = _vm->getStack()->getName(kExternalCommandNames, _arguments[0]);
 		desc = Common::String::format("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
@@ -657,7 +657,7 @@ Common::String RivenSimpleCommand::describe() const {
 				desc += ", ";
 		}
 		desc += ")";
-	} else if (_type == 24) { // Use the variable name
+	} else if (_type == kRivenCommandIncrementVariable) { // Use the variable name
 		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
 		desc = Common::String::format("%s += %d", varName.c_str(), _arguments[1]);
 	} else {
@@ -703,7 +703,7 @@ RivenSwitchCommand::~RivenSwitchCommand() {
 
 }
 
-RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream) {
+RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
 	RivenSwitchCommand *command = new RivenSwitchCommand(vm);
 
 	if (stream->readUint16BE() != 2) {
@@ -782,7 +782,7 @@ RivenStackChangeCommand::~RivenStackChangeCommand() {
 
 }
 
-RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream) {
+RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
 	/* argumentsSize = */ stream->readUint16BE();
 	uint16 stackId = stream->readUint16BE();
 	uint32 globalCardId = stream->readUint32BE();
