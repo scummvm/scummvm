@@ -4603,7 +4603,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / 14;	// sizeof(Icon)
+	int count = size / 18;	// sizeof(Icon)
 	for (int i = 0; i < count; i++) {
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			buffer[i].sx = _bigfile.readSint16BE();
@@ -4638,7 +4638,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / 11;	// sizeof(Room)
+	int count = size / 14;	// sizeof(Room)
 	for (int i = 0; i < count; i++) {
 		buffer[i]._id = _bigfile.readByte();
 		for (int j = 0; j < 4; j++)
@@ -4750,27 +4750,29 @@ void EdenGame::loadpermfiles() {
 	const int kNumActionCursors = 299;
 
 	const int expectedDataSize =
-		kNumIcons * 14 +		// sizeof(Icon)
-		kNumRooms * 11 +		// sizeof(Room)
+		kNumIcons * 18 +		// sizeof(Icon)
+		kNumRooms * 14 +		// sizeof(Room)
 		kNumFollowers * 16 +	// sizeof(Follower)
 		kNumLabyrinthPath +
 		kNumDinoSpeedForCitaLevel +
 		kNumTabletView +
 		kNumPersoRoomBankTable +
 		kNumGotos * 5 +			// sizeof(Goto)
-		kNumObjects * 10 +		// sizeof(object_t)
+		kNumObjects * 12 +		// sizeof(object_t)
 		kNumObjectLocations * 2 +
 		kNumPersons * 18 +		// sizeof(perso_t)
-		kNumCitadel * 6 +		// sizeof(Citadel)
+		kNumCitadel * 34 +		// sizeof(Citadel)
 		kNumCharacterRects * 8 +
 		kNumCharacters * 5 +
 		kNumAreas * 10 +		// (sizeof(Area) - 4)
 		64 * 2 +
 		64 * 2 +
-		kNumActionCursors;
+		kNumActionCursors +
+		12 +
+		3 * 6 * 2 * 3 * 2;
 
 	if (f.open("cryo.dat")) {
-		const int dataSize = f.size() - 8 - 1;	// CRYODATA + version
+		const int dataSize = f.size() - 8 - 4;	// CRYODATA + version
 		char headerId[9];
 
 		f.read(headerId, 8);
