@@ -87,7 +87,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -104,7 +104,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -121,7 +121,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -138,7 +138,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -151,7 +151,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -168,7 +168,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -181,7 +181,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -198,7 +198,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -213,7 +213,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -226,7 +226,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -239,7 +239,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -252,7 +252,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -265,7 +265,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -278,7 +278,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -291,7 +291,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
