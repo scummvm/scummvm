@@ -26,6 +26,9 @@ wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #if ENABLE_ACCESS   == STATIC_PLUGIN
 access.dat           FILE    "dists/engine-data/access.dat"
 #endif
+#if ENABLE_CRYO       == STATIC_PLUGIN
+cryo.dat               FILE    "dists/engine-data/cryo.dat"
+#endif
 #if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
