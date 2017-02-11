@@ -420,7 +420,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			ci->type = castStrings[4];
 
 			if (!ci->script.empty()) {
-				//the script type here could be wrong!
+				// the script type here could be wrong!
 				if (ConfMan.getBool("dump_scripts"))
 					dumpScript(ci->script.c_str(), kCastScript, id);
 
@@ -649,12 +649,12 @@ int Score::getCurrentLabelNumber() {
 }
 
 void Score::gotoNext() {
-	//we can just try to use the current frame and get the next label
+	// we can just try to use the current frame and get the next label
 	_currentFrame = getNextLabelNumber(_currentFrame);
 }
 
 void Score::gotoPrevious() {
-	//we actually need the frame of the label prior to the most recent label.
+	// we actually need the frame of the label prior to the most recent label.
 	_currentFrame = getPreviousLabelNumber(getCurrentLabelNumber());
 }
 

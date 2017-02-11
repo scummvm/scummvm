@@ -118,13 +118,13 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		gutterSize = static_cast<SizeType>(stream.readByte());
 		boxShadow = static_cast<SizeType>(stream.readByte());
 		textType = static_cast<TextType>(stream.readByte());
-		textAlign = static_cast<TextAlignType>(stream.readSint16()); //this is because 'right' is -1? or should that be 255?
+		textAlign = static_cast<TextAlignType>(stream.readSint16()); // this is because 'right' is -1? or should that be 255?
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
 
-		fontId = 1; //this is in STXT
+		fontId = 1; // this is in STXT
 
 		initialRect = Score::readRect(stream);
 		stream.readUint16();

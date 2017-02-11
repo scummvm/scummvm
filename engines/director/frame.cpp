@@ -304,7 +304,7 @@ void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
 	_palette->flags = stream.readByte();
 	_palette->speed = stream.readByte();
 	_palette->frameCount = stream.readUint16();
-	stream.skip(8); //unknown
+	stream.skip(8); // unknown
 }
 
 void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size) {
@@ -552,7 +552,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					castType = kCastBitmap;
 					break;
 				case 0x02:
-				case 0x0c: //this is actually a mouse-over shape? I don't think it's a real button.
+				case 0x0c: // this is actually a mouse-over shape? I don't think it's a real button.
 					castType = kCastShape;
 					break;
 				case 0x07:

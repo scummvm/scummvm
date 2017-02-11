@@ -301,7 +301,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	int offset = 0;
-	if (_surface->w < (pixels.size() / _surface->h)) 
+	if (_surface->w < (pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
 
 	if (pixels.size() > 0) {
@@ -316,7 +316,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 				}
 
 				case 8:
-					//this calculation is wrong.. need a demo with colours.
+					// this calculation is wrong.. need a demo with colours.
 					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x + (y * offset)];
 					x++;
 					break;

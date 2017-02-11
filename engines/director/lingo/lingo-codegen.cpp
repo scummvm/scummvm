@@ -229,8 +229,8 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 			_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 		}
 	} else {
-		//we don't want to be here. The getHandler call should have used the EntityId and the result
-		//should have been unique!
+		// we don't want to be here. The getHandler call should have used the EntityId and the result
+		// should have been unique!
 		warning("Redefining handler '%s'", name.c_str());
 		delete sym->u.defn;
 	}

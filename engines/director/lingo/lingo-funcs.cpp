@@ -258,11 +258,11 @@ void Lingo::func_gotoprevious() {
 
 void Lingo::func_cursor(int c) {
 	if (_cursorOnStack) {
-		//pop cursor
+		// pop cursor
 		_vm->getMacWindowManager()->popCursor();
 	}
 
-	//and then push cursor.
+	// and then push cursor.
 	switch (c) {
 	case 0:
 	case -1:
