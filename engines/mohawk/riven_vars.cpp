@@ -24,6 +24,7 @@
 
 #include "mohawk/riven.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_graphics.h"
 
 namespace Mohawk {
 
@@ -305,7 +306,7 @@ void MohawkEngine_Riven::initVars() {
 	_vars["bmagcar"] = 1;
 	_vars["gnmagcar"] = 1;
 	_vars["omusicplayer"] = 1;
-	_vars["transitionmode"] = kRivenTransitionSpeedFastest;
+	_vars["transitionmode"] = kRivenTransitionModeFastest;
 	_vars["tdomeelev"] = 1;
 
 	// Randomize the telescope combination
