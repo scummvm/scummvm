@@ -759,7 +759,8 @@ private:
 	int16 tab_2CEF0[64];
 	int16 tab_2CF70[64];
 	byte kActionCursors[299];
-
+	byte _mapMode[12];
+	byte _cubeTextureCoords[3][6 * 2 * 3 * 2];
 	float _translationZ = -3400;
 	float flt_2DF80 = -3400;
 	float flt_2DF84 = 200;

@@ -4911,6 +4911,8 @@ void EdenGame::loadpermfiles() {
 	}
 
 	f.read(kActionCursors, kNumActionCursors);
+	f.read(_mapMode, 12);
+	f.read(_cubeTextureCoords, 3 * 6 * 2 * 3 * 2);
 
 	f.close();
 
@@ -8829,77 +8831,15 @@ int EdenGame::nextVal(char **ptr, char *error) {
 }
 
 void EdenGame::selectMap(int16 num) {
-	static const char mapMode[12] = { 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 2, 0 };
-	// Cube faces to texture coords mapping
-	// each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
-
-	static const int16 cube_texcoords[3][6 * 2 * 3 * 2] = {
-		{
-			32, 32,  0, 32,  0,  0,
-			32, 32,  0,  0, 32,  0,
-
-			0, 32,  0,  0, 32,  0,
-			0, 32, 32,  0, 32, 32,
-
-			32, 32,  0, 32,  0,  0,
-			32, 32,  0,  0, 32,  0,
-
-			32,  0, 32, 32,  0, 32,
-			32,  0,  0, 32,  0,  0,
-
-			0,  0, 32,  0, 32, 32,
-			0,  0, 32, 32,  0, 32,
-
-			0, 32,  0,  0, 32,  0,
-			0, 32, 32,  0, 32, 32
-		}, {
-			32, 32,  0, 32,  0,  0,
-			32, 32,  0,  0, 32,  0,
-
-			32,  0, 32, 32,  0, 32,
-			32,  0,  0, 32,  0,  0,
-
-			32,  0, 32, 32,  0, 32,
-			32,  0,  0, 32,  0,  0,
-
-			0, 32,  0,  0, 32,  0,
-			0, 32, 32,  0, 32, 32,
-
-			32,  0, 32, 32,  0, 32,
-			32,  0,  0, 32,  0,  0,
-
-			32,  0, 32, 32,  0, 32,
-			32,  0,  0, 32,  0,  0
-		}, {
-			30, 30,  2, 30,  2,  2,
-			30, 30,  2,  2, 30,  2,
-
-			2, 30,  2,  2, 30,  2,
-			2, 30, 30,  2, 30, 30,
-
-			30, 30,  2, 30,  2,  2,
-			30, 30,  2,  2, 30,  2,
-
-			30,  2, 30, 30,  2, 30,
-			30,  2,  2, 30,  2,  2,
-
-			2,  2, 30,  2, 30, 30,
-			2,  2, 30, 30,  2, 30,
-
-			2, 30,  2,  2, 30,  2,
-			2, 30, 30,  2, 30, 30
-		}
-	};
-
 	_cursCurPCMap = num;
 	int16 k = 0;
-	int mode = mapMode[num];
+	int mode = _mapMode[num];
 	int16 x = (num & 7) * 32;
 	int16 y = (num & 0x18) * 4;
 	for (int i = 0; i < 6 * 2; i++) {
 		for (int j = 0; j < 3; j++) {
-			_cube._faces[i]->_uv[j * 2    ] = x + cube_texcoords[mode][k++];
-			_cube._faces[i]->_uv[j * 2 + 1] = y + cube_texcoords[mode][k++];
+			_cube._faces[i]->_uv[j * 2    ] = x + _cubeTextureCoords[mode][k++];
+			_cube._faces[i]->_uv[j * 2 + 1] = y + _cubeTextureCoords[mode][k++];
 		}
 	}
 }
