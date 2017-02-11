@@ -196,6 +196,11 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 
+	assert(xorg >= 0);
+	assert(yorg >= 0);
+	assert(xorg + width <= 320);
+	assert(yorg + height <= 200);
+
 	int ptr = 0;
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
