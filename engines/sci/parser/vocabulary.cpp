@@ -207,8 +207,12 @@ bool Vocabulary::loadSuffixes() {
 	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
 		suffix_t suffix;
 
+		int maxSize = resource->size - seeker;
 		suffix.alt_suffix = (const char *)resource->data + seeker;
-		suffix.alt_suffix_length = strlen(suffix.alt_suffix);
+		suffix.alt_suffix_length = Common::strnlen(suffix.alt_suffix, maxSize);
+		if (suffix.alt_suffix_length == maxSize) {
+			error("Vocabulary alt appears truncated for suffix %d in resource %d at %u", _parserSuffixes.size(), resource->getNumber(), seeker);
+		}
 		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
 		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
@@ -217,8 +221,12 @@ bool Vocabulary::loadSuffixes() {
 		// Beginning of next string - skip leading '*'
 		seeker++;
 
+		maxSize = resource->size - seeker;
 		suffix.word_suffix = (const char *)resource->data + seeker;
-		suffix.word_suffix_length = strlen(suffix.word_suffix);
+		suffix.word_suffix_length = Common::strnlen(suffix.word_suffix, maxSize);
+		if (suffix.word_suffix_length == maxSize) {
+			error("Vocabulary word appears truncated for suffix %d in resource %d at %u", _parserSuffixes.size(), resource->getNumber(), seeker);
+		}
 		seeker += suffix.word_suffix_length + 1;
 
 		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
@@ -288,12 +296,20 @@ bool Vocabulary::loadAltInputs() {
 		AltInput t;
 		t._input = data;
 
-		uint32 l = strlen(data);
+		uint32 maxSize = data_end - data;
+		uint32 l = Common::strnlen(data, maxSize);
+		if (l == maxSize) {
+			error("Alt input from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
+		}
 		t._inputLength = l;
 		data += l + 1;
 
 		t._replacement = data;
-		l = strlen(data);
+		maxSize = data_end - data;
+		l = Common::strnlen(data, maxSize);
+		if (l == maxSize) {
+			error("Alt input replacement from %d appears truncated at %ld", resource->getNumber(), (const byte *)data - resource->data);
+		}
 		data += l + 1;
 
 		if (data < data_end && strncmp(data, t._input, t._inputLength) == 0)
@@ -316,7 +332,7 @@ void Vocabulary::freeAltInputs() {
 	_altInputs.clear();
 }
 
-bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
+bool Vocabulary::checkAltInput(Common::String &text, uint16 &cursorPos) {
 	if (_altInputs.empty())
 		return false;
 	if (SELECTOR(parseLang) == -1)
@@ -330,7 +346,7 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 	do {
 		changed = false;
 
-		const char* t = text.c_str();
+		const char *t = text.c_str();
 		uint32 tlen = text.size();
 
 		for (uint32 p = 0; p < tlen && !changed; ++p) {
@@ -345,10 +361,11 @@ bool Vocabulary::checkAltInput(Common::String& text, uint16& cursorPos) {
 					continue;
 				if (strncmp(i->_input, t+p, i->_inputLength) == 0) {
 					// replace
+					const uint32 maxSize = text.size() - cursorPos;
 					if (cursorPos > p + i->_inputLength) {
-						cursorPos += strlen(i->_replacement) - i->_inputLength;
+						cursorPos += Common::strnlen(i->_replacement, maxSize) - i->_inputLength;
 					} else if (cursorPos > p) {
-						cursorPos = p + strlen(i->_replacement);
+						cursorPos = p + Common::strnlen(i->_replacement, maxSize);
 					}
 
 					for (uint32 j = 0; j < i->_inputLength; ++j)

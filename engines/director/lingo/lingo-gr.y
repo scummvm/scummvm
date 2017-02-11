@@ -92,6 +92,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
+%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
@@ -99,10 +100,10 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
-%token tSPRITE tINTERSECTS tWITHIN
+%token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tME
 
-%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
+%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell
 %type<narg> argdef arglist nonemptyarglist
 
 %right '='
@@ -185,7 +186,7 @@ asgn: tPUT expr tINTO ID 		{
 	;
 
 stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
-	| func
+	| proc
 	;
 
 stmt: stmtoneliner
@@ -239,11 +240,17 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 5] = end;	/* end, if cond fails */
 
 		checkEnd($11, "repeat", true); }
-	| when expr end {
+	| when stmtoneliner end {
 			inst end = 0;
 			WRITE_UINT32(&end, $3);
 			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[$1 + 1] = end;
+		}
+	| tell expr nl stmtlist end ENDCLAUSE {
+			warning("STUB: TELL is not implemented");
+			checkEnd($6, "tell", true); }
+	| tell expr tTO expr {
+			warning("STUB: TELL is not implemented");
 		}
 	;
 
@@ -389,6 +396,10 @@ when:	  tWHEN	ID tTHEN	{
 		g_lingo->codeString($2->c_str());
 		delete $2; }
 
+tell:	  tTELL				{
+		$$ = g_lingo->code1(g_lingo->c_tellcode);
+		g_lingo->code1(STOP); }
+
 expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FLOAT		{
 		$$ = g_lingo->code1(g_lingo->c_fconstpush);
@@ -399,9 +410,14 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| STRING		{
 		$$ = g_lingo->code1(g_lingo->c_stringpush);
 		g_lingo->codeString($1->c_str()); }
-	| BLTINNOARGS 	{
-		$$ = g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+	| FBLTINNOARGS 	{
+		g_lingo->codeFunc($1, 0);
 		delete $1; }
+	| FBLTINONEARG expr		{
+		g_lingo->codeFunc($1, 1);
+		delete $1; }
+	| FBLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| FBLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
@@ -456,25 +472,30 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_wordToOf); }
 	;
 
-func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
+proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| playfunc
 	| tEXIT tREPEAT			{ g_lingo->code1(g_lingo->c_exitRepeat); }
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
+	| tPROPERTY propertylist
 	| tINSTANCE instancelist
+	| BLTINNOARGS 	{
+		g_lingo->codeFunc($1, 0);
+		delete $1; }
 	| BLTINONEARG expr		{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINNOARGSORONE expr	{
-		g_lingo->code1(g_lingo->_builtins[*$1]->u.func);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINNOARGSORONE 		{
-		g_lingo->code2(g_lingo->c_voidpush, g_lingo->_builtins[*$1]->u.func);
+		g_lingo->code1(g_lingo->c_voidpush);
+		g_lingo->codeFunc($1, 1);
 		delete $1; }
-	| BLTINARGLIST '(' arglist ')'	{ g_lingo->codeFunc($1, $3); }
-	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST '(' nonemptyarglist ')'	{ g_lingo->codeFunc($1, $3); }
 	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
 	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
@@ -482,8 +503,12 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }
 	;
 
-globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
-	| globallist ',' ID		{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+globallist: ID					{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
+	| globallist ',' ID			{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+	;
+
+propertylist: ID				{ g_lingo->code1(g_lingo->c_property); g_lingo->codeString($1->c_str()); delete $1; }
+	| propertylist ',' ID		{ g_lingo->code1(g_lingo->c_property); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
 instancelist: ID				{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($1->c_str()); delete $1; }
@@ -608,8 +633,8 @@ arglist:  /* nothing */ 	{ $$ = 0; }
 	| arglist ',' expr		{ $$ = $1 + 1; }
 	;
 
-nonemptyarglist:  expr		{ $$ = 1; }
-	| arglist ',' expr		{ $$ = $1 + 1; }
+nonemptyarglist:  expr			{ $$ = 1; }
+	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
 	;
 
 %%

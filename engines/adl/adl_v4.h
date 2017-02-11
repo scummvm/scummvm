@@ -60,12 +60,24 @@ protected:
 	// AdlEngine_v2
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
 
-	DiskImage *loadDisk(byte volume) const;
+	enum RegionChunkType {
+		kRegionChunkUnknown,
+		kRegionChunkMessages,
+		kRegionChunkGlobalPics,
+		kRegionChunkVerbs,
+		kRegionChunkNouns,
+		kRegionChunkRooms,
+		kRegionChunkRoomCmds,
+		kRegionChunkGlobalCmds
+	};
+
+	Common::String getDiskImageName(byte volume) const;
 	void insertDisk(byte volume);
 	void loadRegionLocations(Common::ReadStream &stream, uint regions);
 	void loadRegionInitDataOffsets(Common::ReadStream &stream, uint regions);
 	void initRegions(const byte *roomsPerRegion, uint regions);
 	void fixupDiskOffset(byte &track, byte &sector) const;
+	virtual RegionChunkType getRegionChunkType(const uint16 addr) const;
 	void loadRegion(byte region);
 	void loadItemPicIndex(Common::ReadStream &stream, uint items);
 	void backupRoomState(byte room);

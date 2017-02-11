@@ -19,9 +19,71 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
+#include "common/events.h"
+#include "common/macresman.h"
+#include "common/system.h"
+#include "engines/util.h"
+
+#include "graphics/palette.h"
+#include "graphics/fonts/macfont.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "director/director.h"
 
 namespace Director {
+
+// Referred as extern
+byte defaultPalette[768] = {
+	  0,   0,   0,  17,  17,  17,  34,  34,  34,  68,  68,  68,  85,  85,  85, 119,
+	119, 119, 136, 136, 136, 170, 170, 170, 187, 187, 187, 221, 221, 221, 238, 238,
+	238,   0,   0,  17,   0,   0,  34,   0,   0,  68,   0,   0,  85,   0,   0, 119,
+	  0,   0, 136,   0,   0, 170,   0,   0, 187,   0,   0, 221,   0,   0, 238,   0,
+	 17,   0,   0,  34,   0,   0,  68,   0,   0,  85,   0,   0, 119,   0,   0, 136,
+	  0,   0, 170,   0,   0, 187,   0,   0, 221,   0,   0, 238,   0,  17,   0,   0,
+	 34,   0,   0,  68,   0,   0,  85,   0,   0, 119,   0,   0, 136,   0,   0, 170,
+	  0,   0, 187,   0,   0, 221,   0,   0, 238,   0,   0,   0,   0,  51,   0,   0,
+	102,   0,   0, 153,   0,   0, 204,   0,   0, 255,   0,  51,   0,   0,  51,  51,
+	  0,  51, 102,   0,  51, 153,   0,  51, 204,   0,  51, 255,   0, 102,   0,   0,
+	102,  51,   0, 102, 102,   0, 102, 153,   0, 102, 204,   0, 102, 255,   0, 153,
+	  0,   0, 153,  51,   0, 153, 102,   0, 153, 153,   0, 153, 204,   0, 153, 255,
+	  0, 204,   0,   0, 204,  51,   0, 204, 102,   0, 204, 153,   0, 204, 204,   0,
+	204, 255,   0, 255,   0,   0, 255,  51,   0, 255, 102,   0, 255, 153,   0, 255,
+	204,   0, 255, 255,  51,   0,   0,  51,   0,  51,  51,   0, 102,  51,   0, 153,
+	 51,   0, 204,  51,   0, 255,  51,  51,   0,  51,  51,  51,  51,  51, 102,  51,
+	 51, 153,  51,  51, 204,  51,  51, 255,  51, 102,   0,  51, 102,  51,  51, 102,
+	102,  51, 102, 153,  51, 102, 204,  51, 102, 255,  51, 153,   0,  51, 153,  51,
+	 51, 153, 102,  51, 153, 153,  51, 153, 204,  51, 153, 255,  51, 204,   0,  51,
+	204,  51,  51, 204, 102,  51, 204, 153,  51, 204, 204,  51, 204, 255,  51, 255,
+	  0,  51, 255,  51,  51, 255, 102,  51, 255, 153,  51, 255, 204,  51, 255, 255,
+	102,   0,   0, 102,   0,  51, 102,   0, 102, 102,   0, 153, 102,   0, 204, 102,
+	  0, 255, 102,  51,   0, 102,  51,  51, 102,  51, 102, 102,  51, 153, 102,  51,
+	204, 102,  51, 255, 102, 102,   0, 102, 102,  51, 102, 102, 102, 102, 102, 153,
+	102, 102, 204, 102, 102, 255, 102, 153,   0, 102, 153,  51, 102, 153, 102, 102,
+	153, 153, 102, 153, 204, 102, 153, 255, 102, 204,   0, 102, 204,  51, 102, 204,
+	102, 102, 204, 153, 102, 204, 204, 102, 204, 255, 102, 255,   0, 102, 255,  51,
+	102, 255, 102, 102, 255, 153, 102, 255, 204, 102, 255, 255, 153,   0,   0, 153,
+	  0,  51, 153,   0, 102, 153,   0, 153, 153,   0, 204, 153,   0, 255, 153,  51,
+	  0, 153,  51,  51, 153,  51, 102, 153,  51, 153, 153,  51, 204, 153,  51, 255,
+	153, 102,   0, 153, 102,  51, 153, 102, 102, 153, 102, 153, 153, 102, 204, 153,
+	102, 255, 153, 153,   0, 153, 153,  51, 153, 153, 102, 153, 153, 153, 153, 153,
+	204, 153, 153, 255, 153, 204,   0, 153, 204,  51, 153, 204, 102, 153, 204, 153,
+	153, 204, 204, 153, 204, 255, 153, 255,   0, 153, 255,  51, 153, 255, 102, 153,
+	255, 153, 153, 255, 204, 153, 255, 255, 204,   0,   0, 204,   0,  51, 204,   0,
+	102, 204,   0, 153, 204,   0, 204, 204,   0, 255, 204,  51,   0, 204,  51,  51,
+	204,  51, 102, 204,  51, 153, 204,  51, 204, 204,  51, 255, 204, 102,   0, 204,
+	102,  51, 204, 102, 102, 204, 102, 153, 204, 102, 204, 204, 102, 255, 204, 153,
+	  0, 204, 153,  51, 204, 153, 102, 204, 153, 153, 204, 153, 204, 204, 153, 255,
+	204, 204,   0, 204, 204,  51, 204, 204, 102, 204, 204, 153, 204, 204, 204, 204,
+	204, 255, 204, 255,   0, 204, 255,  51, 204, 255, 102, 204, 255, 153, 204, 255,
+	204, 204, 255, 255, 255,   0,   0, 255,   0,  51, 255,   0, 102, 255,   0, 153,
+	255,   0, 204, 255,   0, 255, 255,  51,   0, 255,  51,  51, 255,  51, 102, 255,
+	 51, 153, 255,  51, 204, 255,  51, 255, 255, 102,   0, 255, 102,  51, 255, 102,
+	102, 255, 102, 153, 255, 102, 204, 255, 102, 255, 255, 153,   0, 255, 153,  51,
+	255, 153, 102, 255, 153, 153, 255, 153, 204, 255, 153, 255, 255, 204,   0, 255,
+	204,  51, 255, 204, 102, 255, 204, 153, 255, 204, 204, 255, 204, 255, 255, 255,
+	  0, 255, 255,  51, 255, 255, 102, 255, 255, 153, 255, 255, 204, 255, 255, 255 };
+
 
 static byte director3Patterns[][8] = {  { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 										{ 0xFF, 0xFF, 0x77, 0xFF, 0xFF, 0xFF, 0x77, 0xFF },
@@ -151,5 +213,91 @@ Graphics::MacPatterns &DirectorEngine::getPatterns() {
 	//TOOD: implement switch and other version patterns. (use getVersion());
 	return _director3QuickDrawPatterns;
 }
+
+void DirectorEngine::setPalette(byte *palette, uint16 count) {
+	_currentPalette = palette;
+	_currentPaletteLength = count;
+}
+
+void DirectorEngine::testFontScaling() {
+	int x = 10;
+	int y = 10;
+	int w = 640;
+	int h = 480;
+
+	initGraphics(w, h, true);
+	_system->getPaletteManager()->setPalette(defaultPalette, 0, 256);
+
+	Graphics::ManagedSurface surface;
+
+	surface.create(w, h);
+	surface.clear(255);
+
+	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
+
+	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
+
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
+
+	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
+
+	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
+
+	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
+
+	const char *text = "d";
+
+	for (int i = 9; i <= 20; i++) {
+		Graphics::MacFont macFont(Graphics::kMacFontNewYork, i);
+
+		const Graphics::Font *font = _wm->_fontMan->getFont(macFont);
+
+		int width = font->getStringWidth(text);
+
+		Common::Rect bbox = font->getBoundingBox(text, x, y, w);
+		surface.frameRect(bbox, 15);
+
+		font->drawString(&surface, text, x, y, width, 0);
+
+		x += width + 1;
+	}
+
+	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h);
+
+	Common::Event event;
+
+	while (true) {
+		if (g_system->getEventManager()->pollEvent(event))
+			if (event.type == Common::EVENT_QUIT)
+				break;
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+}
+
+void DirectorEngine::testFonts() {
+	Common::String fontName("Helvetica");
+
+	Common::MacResManager *fontFile = new Common::MacResManager();
+	if (!fontFile->open(fontName))
+		error("Could not open %s as a resource fork", fontName.c_str());
+
+	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	if (fonds.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
+			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
+			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
+
+			debug("Font: %s", name.c_str());
+
+			Graphics::MacFontFamily font;
+			font.load(*stream);
+		}
+	}
+
+	delete fontFile;
+}
+
 
 }

@@ -20,13 +20,16 @@
  *
  */
 
-#include "director/lingo/lingo.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "common/macresman.h"
 #include "common/util.h"
+
+#include "graphics/macgui/macwindowmanager.h"
+
+#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/sound.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 namespace Director {
 
@@ -169,29 +172,47 @@ void Lingo::func_mciwait(Common::String &s) {
 }
 
 void Lingo::func_goto(Datum &frame, Datum &movie) {
+	g_director->_playbackPaused = false;
+
+	if (!_vm->getCurrentScore())
+		return;
+
 	if (movie.type != VOID) {
 		movie.toString();
 
 		Common::File file;
 
 		if (!file.open(*movie.u.s)) {
-			warning("Movie %s does not exist", movie.u.s->c_str());
+			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+				Common::MacResManager resMan;
+				if (!resMan.open(*movie.u.s)) {
+					warning("Movie %s does not exist", movie.u.s->c_str());
+					return;
+				}
+			} else {
+				warning("Movie %s does not exist", movie.u.s->c_str());
+				return;
+			}
+		}
+
+		_vm->_nextMovie = *movie.u.s;
+		_vm->getCurrentScore()->_stopPlay = true;
+
+		_vm->_nextMovieFrameS.clear();
+		_vm->_nextMovieFrameI = -1;
+
+		if (frame.type == VOID)
+			return;
+
+		if (frame.type == STRING) {
+			_vm->_nextMovieFrameS = *frame.u.s;
 			return;
 		}
 
-		restartLingo();
+		frame.toInt();
 
-		delete _vm->_currentScore;
+		_vm->_nextMovieFrameI = frame.u.i;
 
-		Archive *mov = _vm->openMainArchive(*movie.u.s);
-
-		_vm->_currentScore = new Score(_vm, mov);
-		debug(0, "Score name %s", _vm->_currentScore->getMacName().c_str());
-		_vm->_currentScore->loadArchive();
-	}
-
-	if (!_vm->_currentScore) {
-		warning("func_goto: No score is loaded");
 		return;
 	}
 
@@ -199,34 +220,36 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		return;
 
 	if (frame.type == STRING) {
-		_vm->_currentScore->setStartToLabel(*frame.u.s);
+		if (_vm->getCurrentScore())
+			_vm->getCurrentScore()->setStartToLabel(*frame.u.s);
 		return;
 	}
 
 	frame.toInt();
 
-	_vm->_currentScore->setCurrentFrame(frame.u.i);
+	if (_vm->getCurrentScore())
+		_vm->getCurrentScore()->setCurrentFrame(frame.u.i);
 }
 
 void Lingo::func_gotoloop() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoLoop();
+	_vm->getCurrentScore()->gotoLoop();
 }
 
 void Lingo::func_gotonext() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoNext();
+	_vm->getCurrentScore()->gotoNext();
 }
-	
+
 void Lingo::func_gotoprevious() {
-	if (!_vm->_currentScore)
+	if (!_vm->getCurrentScore())
 		return;
 
-	_vm->_currentScore->gotoPrevious();
+	_vm->getCurrentScore()->gotoPrevious();
 }
 
 void Lingo::func_cursor(int c) {
@@ -266,6 +289,9 @@ void Lingo::func_beep(int repeats) {
 }
 
 int Lingo::func_marker(int m) 	{
+	if (!_vm->getCurrentScore())
+		return 0;
+
 	int labelNumber = _vm->getCurrentScore()->getCurrentLabelNumber();
 	if (m != 0) {
 		if (m < 0) {

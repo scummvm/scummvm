@@ -74,6 +74,17 @@ static const char *const fontNames[] = {
 	"New Century Schoolbook"
 };
 
+static const char *const fontStyleSuffixes[] = {
+	"",
+	"Bold",
+	"Italic",
+	"Underline",
+	"Outline",
+	"Shadow",
+	"Condense",
+	"Extend"
+};
+
 MacFontManager::MacFontManager() {
 	for (uint i = 0; i < ARRAYSIZE(fontNames); i++)
 		if (fontNames[i])
@@ -244,8 +255,14 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 		if (macFont.getName().empty())
 			macFont.setName(getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant()));
 
-		if (!_fontRegistry.contains(macFont.getName()))
-			generateFontSubstitute(macFont);
+		if (!_fontRegistry.contains(macFont.getName())) {
+			// Let's try to generate name
+			if (macFont.getSlant() != kMacFontRegular)
+				macFont.setName(getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true));
+
+			if (!_fontRegistry.contains(macFont.getName()))
+				generateFontSubstitute(macFont);
+		}
 
 		font = FontMan.getFontByName(macFont.getName());
 
@@ -286,7 +303,7 @@ void MacFontManager::clearFontMapping() {
 	_extraFontIds.clear();
 }
 
-const char *MacFontManager::getFontName(int id, int size, int slant) {
+const char *MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
 	static char name[128];
 	Common::String n;
 
@@ -297,6 +314,17 @@ const char *MacFontManager::getFontName(int id, int size, int slant) {
 	} else {
 		warning("MacFontManager: Requested font ID %d not found. Falling back to Chicago", id);
 		n = fontNames[0]; // Fallback to Chicago
+	}
+
+	if (tryGen && slant != kMacFontRegular) {
+		for (int i = 0; i < 7; i++) {
+			if (slant & (1 << i)) {
+				n += ' ';
+				n += fontStyleSuffixes[i + 1];
+			}
+		}
+
+		slant = 0;
 	}
 
 	snprintf(name, 128, "%s-%d-%d", n.c_str(), slant, size);

@@ -36,6 +36,7 @@ namespace Director {
 enum LEvent {
 	kEventPrepareMovie,
 	kEventStartMovie,
+	kEventStepMovie,
 	kEventStopMovie,
 
 	kEventNew,
@@ -103,7 +104,7 @@ struct Pointer_Hash {
 typedef Common::HashMap<void *, FuncDesc *, Pointer_Hash, Pointer_EqualTo> FuncHash;
 
 struct Symbol {	/* symbol table entry */
-	char *name;
+	Common::String name;
 	int type;
 	union {
 		int		i;			/* VAR */
@@ -172,6 +173,8 @@ class Lingo {
 public:
 	Lingo(DirectorEngine *vm);
 	~Lingo();
+
+	void restartLingo();
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
@@ -284,6 +287,7 @@ public:
 	static void c_repeatwithcode();
 	static void c_ifcode();
 	static void c_whencode();
+	static void c_tellcode();
 	static void c_exitRepeat();
 	static void c_eq();
 	static void c_neq();
@@ -305,13 +309,14 @@ public:
 	static void c_gotoprevious();
 	static void c_global();
 	static void c_instance();
+	static void c_property();
 
 	static void c_play();
 	static void c_playdone();
 
 	static void c_open();
 
-	void printStubWithArglist(const char *funcname, int nargs);
+	void printSTUBWithArglist(const char *funcname, int nargs);
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
 	void drop(uint num);
@@ -368,13 +373,18 @@ public:
 	static void b_ilk(int nargs);
 	static void b_integerp(int nargs);
 	static void b_objectp(int nargs);
+	static void b_pictureP(int nargs);
 	static void b_stringp(int nargs);
 	static void b_symbolp(int nargs);
+	static void b_voidP(int nargs);
 
 	static void b_alert(int nargs);
+	static void b_birth(int nargs);
+	static void b_clearGlobals(int nargs);
 	static void b_cursor(int nargs);
 	static void b_framesToHMS(int nargs);
 	static void b_HMStoFrames(int nargs);
+	static void b_param(int nargs);
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
@@ -382,20 +392,28 @@ public:
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
-	static void b_duplicateCast(int nargs);
+	static void b_copyToClipBoard(int nargs);
+	static void b_duplicate(int nargs);
 	static void b_editableText(int nargs);
-	static void b_eraseCast(int nargs);
+	static void b_erase(int nargs);
+	static void b_findEmpty(int nargs);
+	static void b_importFileInto(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_label(int nargs);
 	static void b_marker(int nargs);
+	static void b_move(int nargs);
 	static void b_moveableSprite(int nargs);
+	static void b_pasteClipBoardInto(int nargs);
 	static void b_puppetPalette(int nargs);
 	static void b_puppetSound(int nargs);
 	static void b_puppetSprite(int nargs);
 	static void b_puppetTempo(int nargs);
 	static void b_puppetTransition(int nargs);
+	static void b_ramNeeded(int nargs);
 	static void b_rollOver(int nargs);
 	static void b_spriteBox(int nargs);
+	static void b_unLoad(int nargs);
+	static void b_unLoadCast(int nargs);
 	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
 
@@ -404,7 +422,9 @@ public:
 	static void b_dontPassEvent(int nargs);
 	static void b_delay(int nargs);
 	static void b_do(int nargs);
+	static void b_halt(int nargs);
 	static void b_nothing(int nargs);
+	static void b_pass(int nargs);
 	static void b_pause(int nargs);
 	static void b_playAccel(int nargs);
 	static void b_preLoad(int nargs);
@@ -417,25 +437,42 @@ public:
 	static void b_closeDA(int nargs);
 	static void b_closeResFile(int nargs);
 	static void b_closeXlib(int nargs);
+	static void b_getNthFileNameInFolder(int nargs);
 	static void b_openDA(int nargs);
 	static void b_openResFile(int nargs);
 	static void b_openXlib(int nargs);
 	static void b_setCallBack(int nargs);
+	static void b_saveMovie(int nargs);
 	static void b_showResFile(int nargs);
 	static void b_showXlib(int nargs);
 	static void b_xFactoryList(int nargs);
 
 	static void b_point(int nargs);
+	static void b_inside(int nargs);
+	static void b_intersect(int nargs);
+	static void b_map(int nargs);
+	static void b_offsetRect(int nargs);
+	static void b_rect(int nargs);
+	static void b_union(int nargs);
+
+	static void b_close(int nargs);
+	static void b_forget(int nargs);
+	static void b_inflate(int nargs);
+	static void b_moveToBack(int nargs);
+	static void b_moveToFront(int nargs);
+	static void b_window(int nargs);
 
 	static void b_beep(int nargs);
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
 	static void b_soundBusy(int nargs);
+	static void b_soundClose(int nargs);
 	static void b_soundFadeIn(int nargs);
 	static void b_soundFadeOut(int nargs);
 	static void b_soundPlayFile(int nargs);
 	static void b_soundStop(int nargs);
 
+	static void b_ancestor(int nargs);
 	static void b_backspace(int nargs);
 	static void b_empty(int nargs);
 	static void b_enter(int nargs);
@@ -449,8 +486,10 @@ public:
 	static void b_factory(int nargs);
 	void factoryCall(Common::String &name, int nargs);
 
+	static void b_cast(int nargs);
 	static void b_field(int nargs);
 	static void b_me(int nargs);
+	static void b_script(int nargs);
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
@@ -509,8 +548,6 @@ private:
 
 	void push(Datum d);
 	Datum pop(void);
-
-	void restartLingo();
 
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, uint32> _eventHandlerTypeIds;

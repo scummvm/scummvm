@@ -76,6 +76,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_movies = nullptr;
 
+	_nextMovieFrameI = -1;
+
 	_wm = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -86,6 +88,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_key = 0;
 	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
+	_playbackPaused = false;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -119,8 +122,10 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
-		testFontScaling();
-		testFonts();
+		if (debugChannelSet(-1, kDebugText)) {
+			testFontScaling();
+			testFonts();
+		}
 
 		_lingo->runTests();
 
@@ -131,10 +136,14 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	if (getPlatform() == Common::kPlatformWindows)
+	if (getPlatform() == Common::kPlatformWindows) {
 		_sharedCastFile = "SHARDCST.MMM";
-	else
-		_sharedCastFile = "Shared Cast";
+	} else {
+		if (getVersion() < 4)
+			_sharedCastFile = "Shared Cast";
+		else
+			_sharedCastFile = "Shared.dir";
+	}
 
 	loadSharedCastsFrom(_sharedCastFile);
 
@@ -143,8 +152,43 @@ Common::Error DirectorEngine::run() {
 	_currentScore = new Score(this, _mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
-	_currentScore->loadArchive();
-	_currentScore->startLoop();
+	bool loop = true;
+
+	while (loop) {
+		loop = false;
+
+		_currentScore->loadArchive();
+
+		// If we came in a loop, then skip as requested
+		if (!_nextMovieFrameS.empty())
+			_currentScore->setStartToLabel(_nextMovieFrameS);
+
+		if (_nextMovieFrameI != -1)
+			_currentScore->setCurrentFrame(_nextMovieFrameI);
+
+		_currentScore->startLoop();
+
+		// If a loop was requested, do it
+		if (!_nextMovie.empty()) {
+			_lingo->restartLingo();
+
+			delete _currentScore;
+
+			Archive *mov = openMainArchive(_nextMovie);
+
+			if (!mov) {
+				warning("nextMovie: No score is loaded");
+
+				return Common::kNoError;
+			}
+
+			_currentScore = new Score(this, mov);
+			debug(0, "Score name %s", _currentScore->getMacName().c_str());
+
+			_nextMovie.clear();
+			loop = true;
+		}
+	}
 
 	return Common::kNoError;
 }
@@ -187,34 +231,6 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	}
 
 	return nameMap;
-}
-
-void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	_currentPalette = palette;
-	_currentPaletteLength = count;
-}
-
-void DirectorEngine::testFonts() {
-	Common::String fontName("Helvetica");
-
-	Common::MacResManager *fontFile = new Common::MacResManager();
-	if (!fontFile->open(fontName))
-		error("Could not open %s as a resource fork", fontName.c_str());
-
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-			debug("Font: %s", name.c_str());
-
-			Graphics::MacFontFamily font;
-			font.load(*stream);
-		}
-	}
-
-	delete fontFile;
 }
 
 } // End of namespace Director

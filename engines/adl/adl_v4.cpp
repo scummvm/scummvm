@@ -190,24 +190,23 @@ Common::String AdlEngine_v4::getItemDescription(const Item &item) const {
 	return _itemDesc[item.id - 1];
 }
 
-DiskImage *AdlEngine_v4::loadDisk(byte volume) const {
+Common::String AdlEngine_v4::getDiskImageName(byte volume) const {
 	const ADGameFileDescription *ag;
 
-	for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
-		if (ag->fileType == volume) {
-			DiskImage *disk = new DiskImage();
-			if (!disk->open(ag->fileName))
-				error("Failed to open %s", ag->fileName);
-			return disk;
-		}
-	}
+	for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
+		if (ag->fileType == volume)
+			return ag->fileName;
 
 	error("Disk volume %d not found", volume);
 }
 
 void AdlEngine_v4::insertDisk(byte volume) {
 	delete _disk;
-	_disk = loadDisk(volume);
+	_disk = new DiskImage();
+
+	if (!_disk->open(getDiskImageName(volume)))
+		error("Failed to open disk volume %d", volume);
+
 	_currentVolume = volume;
 }
 
@@ -274,6 +273,27 @@ void AdlEngine_v4::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, b
 	fixupDiskOffset(track, sector);
 }
 
+AdlEngine_v4::RegionChunkType AdlEngine_v4::getRegionChunkType(const uint16 addr) const {
+	switch (addr) {
+		case 0x9000:
+			return kRegionChunkMessages;
+		case 0x4a80:
+			return kRegionChunkGlobalPics;
+		case 0x4000:
+			return kRegionChunkVerbs;
+		case 0x1800:
+			return kRegionChunkNouns;
+		case 0x0e00:
+			return kRegionChunkRooms;
+		case 0x7b00:
+			return kRegionChunkRoomCmds;
+		case 0x9500:
+			return kRegionChunkGlobalCmds;
+		default:
+			return kRegionChunkUnknown;
+	}
+}
+
 void AdlEngine_v4::loadRegion(byte region) {
 	if (_currentVolume != _regionInitDataOffsets[region - 1].volume) {
 		insertDisk(_regionInitDataOffsets[region - 1].volume);
@@ -303,29 +323,29 @@ void AdlEngine_v4::loadRegion(byte region) {
 		stream.reset(_disk->createReadStream(track, sector, offset, size / 256 + 1));
 		stream->skip(4);
 
-		switch (addr) {
-		case 0x9000: {
+		switch (getRegionChunkType(addr)) {
+		case kRegionChunkMessages: {
 			// Messages
 			_messages.clear();
 			uint count = size / 4;
 			loadMessages(*stream, count);
 			break;
 		}
-		case 0x4a80: {
+		case kRegionChunkGlobalPics: {
 			// Global pics
 			_pictures.clear();
 			loadPictures(*stream);
 			break;
 		}
-		case 0x4000:
+		case kRegionChunkVerbs:
 			// Verbs
 			loadWords(*stream, _verbs, _priVerbs);
 			break;
-		case 0x1800:
+		case kRegionChunkNouns:
 			// Nouns
 			loadWords(*stream, _nouns, _priNouns);
 			break;
-		case 0x0e00: {
+		case kRegionChunkRooms: {
 			// Rooms
 			uint count = size / 14 - 1;
 			stream->skip(14); // Skip invalid room 0
@@ -334,12 +354,11 @@ void AdlEngine_v4::loadRegion(byte region) {
 			loadRooms(*stream, count);
 			break;
 		}
-		case 0x7b00:
-			// TODO: hires6 has global and room lists swapped
+		case kRegionChunkRoomCmds:
 			// Room commands
 			readCommands(*stream, _roomCommands);
 			break;
-		case 0x9500:
+		case kRegionChunkGlobalCmds:
 			// Global commands
 			readCommands(*stream, _globalCommands);
 			break;

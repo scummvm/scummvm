@@ -30,43 +30,24 @@
 namespace Adl {
 
 AdlEngine_v5::AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v3(syst, gd),
-		_curDisk(0) {
+		AdlEngine_v4(syst, gd) {
 }
 
-Common::String AdlEngine_v5::loadMessage(uint idx) const {
-	Common::String str = AdlEngine_v2::loadMessage(idx);
-
-	for (uint i = 0; i < str.size(); ++i) {
-		const char *xorStr = "AVISDURGAN";
-		str.setChar(str[i] ^ xorStr[i % strlen(xorStr)], i);
+AdlEngine_v5::RegionChunkType AdlEngine_v5::getRegionChunkType(const uint16 addr) const {
+	switch (addr) {
+	case 0x7b00:
+		return kRegionChunkGlobalCmds;
+	case 0x9500:
+		return kRegionChunkRoomCmds;
+	default:
+		return AdlEngine_v4::getRegionChunkType(addr);
 	}
-
-	return str;
 }
 
-Common::String AdlEngine_v5::getItemDescription(const Item &item) const {
-	return _itemDesc[item.id - 1];
-}
-
-void AdlEngine_v5::applyDiskOffset(byte &track, byte &sector) const {
-	sector += _diskOffsets[_curDisk].sector;
-	if (sector >= 16) {
-		sector -= 16;
-		++track;
-	}
-
-	track += _diskOffsets[_curDisk].track;
-}
-
-void AdlEngine_v5::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const {
-	applyDiskOffset(track, sector);
-}
-
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v5> OpcodeV4;
+typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v5> OpcodeV5;
 #define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV4(this, &AdlEngine_v5::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV4(this, 0))
+#define Opcode(x) table->push_back(new OpcodeV5(this, &AdlEngine_v5::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV5(this, 0))
 
 void AdlEngine_v5::setupOpcodeTables() {
 	Common::Array<const Opcode *> *table = 0;
@@ -76,14 +57,14 @@ void AdlEngine_v5::setupOpcodeTables() {
 	OpcodeUnImpl();
 	Opcode(o2_isFirstTime);
 	Opcode(o2_isRandomGT);
-	Opcode(o5_isItemInRoom);
+	Opcode(o4_isItemInRoom);
 	// 0x04
 	Opcode(o5_isNounNotInRoom);
 	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEQ);
 	Opcode(o2_isCarryingSomething);
 	// 0x08
-	Opcode(o5_isVarGT);
+	Opcode(o4_isVarGT);
 	Opcode(o1_isCurPicEQ);
 	Opcode(o5_skipOneCommand);
 
@@ -95,7 +76,7 @@ void AdlEngine_v5::setupOpcodeTables() {
 	Opcode(o1_varSet);
 	// 0x04
 	Opcode(o1_listInv);
-	Opcode(o5_moveItem);
+	Opcode(o4_moveItem);
 	Opcode(o1_setRoom);
 	Opcode(o2_setCurPic);
 	// 0x08
@@ -111,7 +92,7 @@ void AdlEngine_v5::setupOpcodeTables() {
 	// 0x10
 	Opcode(o2_restore);
 	Opcode(o1_restart);
-	Opcode(o5_setDisk);
+	Opcode(o5_setRegionRoom);
 	Opcode(o5_dummy);
 	// 0x14
 	Opcode(o1_resetPic);
@@ -126,43 +107,10 @@ void AdlEngine_v5::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
-	Opcode(o5_sound);
+	Opcode(o_winGame);
 	OpcodeUnImpl();
 	// 0x20
 	Opcode(o2_initDisk);
-}
-
-int AdlEngine_v5::o5_isVarGT(ScriptEnv &e) {
-	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
-
-	if (getVar(e.arg(1)) > e.arg(2))
-		return 2;
-
-	return -1;
-}
-
-int AdlEngine_v5::o5_skipOneCommand(ScriptEnv &e) {
-	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
-
-	_skipOneCommand = true;
-	setVar(2, 0);
-
-	return -1;
-}
-
-// FIXME: Rename "isLineArt" and look at code duplication
-int AdlEngine_v5::o5_isItemInRoom(ScriptEnv &e) {
-	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
-
-	const Item &item = getItem(e.arg(1));
-
-	if (e.arg(2) != IDI_ANY && item.isLineArt != _curDisk)
-		return -1;
-
-	if (item.room == roomArg(e.arg(2)))
-		return 2;
-
-	return -1;
 }
 
 int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
@@ -183,23 +131,13 @@ int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v5::o5_moveItem(ScriptEnv &e) {
-	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+int AdlEngine_v5::o5_skipOneCommand(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
 
-	byte room = roomArg(e.arg(2));
+	_skipOneCommand = true;
+	setVar(2, 0);
 
-	Item &item = getItem(e.arg(1));
-
-	if (item.room == _roomOnScreen)
-		_picOnScreen = 0;
-
-	// Set items that move from inventory to a room to state "dropped"
-	if (item.room == IDI_ANY && room != IDI_VOID_ROOM)
-		item.state = IDI_ITEM_DROPPED;
-
-	item.room = room;
-	item.isLineArt = _curDisk;
-	return 2;
+	return -1;
 }
 
 int AdlEngine_v5::o5_dummy(ScriptEnv &e) {
@@ -225,18 +163,15 @@ int AdlEngine_v5::o5_setTextMode(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v5::o5_setDisk(ScriptEnv &e) {
-	OP_DEBUG_2("\tSET_DISK(%d, %d)", e.arg(1), e.arg(2));
+int AdlEngine_v5::o5_setRegionRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
 
 	// TODO
-	// Arg 1: disk
-	// Arg 2: room
-
 	return 2;
 }
 
-int AdlEngine_v5::o5_sound(ScriptEnv &e) {
-	OP_DEBUG_0("\tSOUND()");
+int AdlEngine_v5::o_winGame(ScriptEnv &e) {
+	OP_DEBUG_0("\tWIN_GAME()");
 
 	// TODO
 

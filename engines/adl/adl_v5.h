@@ -23,21 +23,11 @@
 #ifndef ADL_ADL_V5_H
 #define ADL_ADL_V5_H
 
-#include "adl/adl_v3.h"
-
-namespace Common {
-class RandomSource;
-}
-
-struct DiskOffset {
-	byte track;
-	byte sector;
-};
+#include "adl/adl_v4.h"
 
 namespace Adl {
 
-// FIXME: Subclass _v4 when it is done
-class AdlEngine_v5 : public AdlEngine_v3 {
+class AdlEngine_v5 : public AdlEngine_v4 {
 public:
 	virtual ~AdlEngine_v5() { }
 
@@ -46,26 +36,16 @@ protected:
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
-	virtual Common::String loadMessage(uint idx) const;
-	Common::String getItemDescription(const Item &item) const;
 
-	// AdlEngine_v2
-	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+	// AdlEngine_v4
+	virtual RegionChunkType getRegionChunkType(const uint16 addr) const;
 
-	void applyDiskOffset(byte &track, byte &sector) const;
-
-	int o5_isVarGT(ScriptEnv &e);
-	int o5_isItemInRoom(ScriptEnv &e);
 	int o5_isNounNotInRoom(ScriptEnv &e);
 	int o5_skipOneCommand(ScriptEnv &e);
-	int o5_moveItem(ScriptEnv &e);
 	int o5_dummy(ScriptEnv &e);
 	int o5_setTextMode(ScriptEnv &e);
-	int o5_setDisk(ScriptEnv &e);
-	int o5_sound(ScriptEnv &e);
-
-	byte _curDisk;
-	Common::Array<DiskOffset> _diskOffsets;
+	int o5_setRegionRoom(ScriptEnv &e);
+	int o_winGame(ScriptEnv &e);
 };
 
 } // End of namespace Adl

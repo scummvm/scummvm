@@ -27,7 +27,6 @@
 
 #include "engines/util.h"
 #include "graphics/font.h"
-#include "graphics/fonts/macfont.h"
 #include "graphics/palette.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -41,113 +40,6 @@
 #include "director/lingo/lingo.h"
 
 namespace Director {
-
-static byte defaultPalette[768] = {
-	  0,   0,   0,  17,  17,  17,  34,  34,  34,  68,  68,  68,  85,  85,  85, 119,
-	119, 119, 136, 136, 136, 170, 170, 170, 187, 187, 187, 221, 221, 221, 238, 238,
-	238,   0,   0,  17,   0,   0,  34,   0,   0,  68,   0,   0,  85,   0,   0, 119,
-	  0,   0, 136,   0,   0, 170,   0,   0, 187,   0,   0, 221,   0,   0, 238,   0,
-	 17,   0,   0,  34,   0,   0,  68,   0,   0,  85,   0,   0, 119,   0,   0, 136,
-	  0,   0, 170,   0,   0, 187,   0,   0, 221,   0,   0, 238,   0,  17,   0,   0,
-	 34,   0,   0,  68,   0,   0,  85,   0,   0, 119,   0,   0, 136,   0,   0, 170,
-	  0,   0, 187,   0,   0, 221,   0,   0, 238,   0,   0,   0,   0,  51,   0,   0,
-	102,   0,   0, 153,   0,   0, 204,   0,   0, 255,   0,  51,   0,   0,  51,  51,
-	  0,  51, 102,   0,  51, 153,   0,  51, 204,   0,  51, 255,   0, 102,   0,   0,
-	102,  51,   0, 102, 102,   0, 102, 153,   0, 102, 204,   0, 102, 255,   0, 153,
-	  0,   0, 153,  51,   0, 153, 102,   0, 153, 153,   0, 153, 204,   0, 153, 255,
-	  0, 204,   0,   0, 204,  51,   0, 204, 102,   0, 204, 153,   0, 204, 204,   0,
-	204, 255,   0, 255,   0,   0, 255,  51,   0, 255, 102,   0, 255, 153,   0, 255,
-	204,   0, 255, 255,  51,   0,   0,  51,   0,  51,  51,   0, 102,  51,   0, 153,
-	 51,   0, 204,  51,   0, 255,  51,  51,   0,  51,  51,  51,  51,  51, 102,  51,
-	 51, 153,  51,  51, 204,  51,  51, 255,  51, 102,   0,  51, 102,  51,  51, 102,
-	102,  51, 102, 153,  51, 102, 204,  51, 102, 255,  51, 153,   0,  51, 153,  51,
-	 51, 153, 102,  51, 153, 153,  51, 153, 204,  51, 153, 255,  51, 204,   0,  51,
-	204,  51,  51, 204, 102,  51, 204, 153,  51, 204, 204,  51, 204, 255,  51, 255,
-	  0,  51, 255,  51,  51, 255, 102,  51, 255, 153,  51, 255, 204,  51, 255, 255,
-	102,   0,   0, 102,   0,  51, 102,   0, 102, 102,   0, 153, 102,   0, 204, 102,
-	  0, 255, 102,  51,   0, 102,  51,  51, 102,  51, 102, 102,  51, 153, 102,  51,
-	204, 102,  51, 255, 102, 102,   0, 102, 102,  51, 102, 102, 102, 102, 102, 153,
-	102, 102, 204, 102, 102, 255, 102, 153,   0, 102, 153,  51, 102, 153, 102, 102,
-	153, 153, 102, 153, 204, 102, 153, 255, 102, 204,   0, 102, 204,  51, 102, 204,
-	102, 102, 204, 153, 102, 204, 204, 102, 204, 255, 102, 255,   0, 102, 255,  51,
-	102, 255, 102, 102, 255, 153, 102, 255, 204, 102, 255, 255, 153,   0,   0, 153,
-	  0,  51, 153,   0, 102, 153,   0, 153, 153,   0, 204, 153,   0, 255, 153,  51,
-	  0, 153,  51,  51, 153,  51, 102, 153,  51, 153, 153,  51, 204, 153,  51, 255,
-	153, 102,   0, 153, 102,  51, 153, 102, 102, 153, 102, 153, 153, 102, 204, 153,
-	102, 255, 153, 153,   0, 153, 153,  51, 153, 153, 102, 153, 153, 153, 153, 153,
-	204, 153, 153, 255, 153, 204,   0, 153, 204,  51, 153, 204, 102, 153, 204, 153,
-	153, 204, 204, 153, 204, 255, 153, 255,   0, 153, 255,  51, 153, 255, 102, 153,
-	255, 153, 153, 255, 204, 153, 255, 255, 204,   0,   0, 204,   0,  51, 204,   0,
-	102, 204,   0, 153, 204,   0, 204, 204,   0, 255, 204,  51,   0, 204,  51,  51,
-	204,  51, 102, 204,  51, 153, 204,  51, 204, 204,  51, 255, 204, 102,   0, 204,
-	102,  51, 204, 102, 102, 204, 102, 153, 204, 102, 204, 204, 102, 255, 204, 153,
-	  0, 204, 153,  51, 204, 153, 102, 204, 153, 153, 204, 153, 204, 204, 153, 255,
-	204, 204,   0, 204, 204,  51, 204, 204, 102, 204, 204, 153, 204, 204, 204, 204,
-	204, 255, 204, 255,   0, 204, 255,  51, 204, 255, 102, 204, 255, 153, 204, 255,
-	204, 204, 255, 255, 255,   0,   0, 255,   0,  51, 255,   0, 102, 255,   0, 153,
-	255,   0, 204, 255,   0, 255, 255,  51,   0, 255,  51,  51, 255,  51, 102, 255,
-	 51, 153, 255,  51, 204, 255,  51, 255, 255, 102,   0, 255, 102,  51, 255, 102,
-	102, 255, 102, 153, 255, 102, 204, 255, 102, 255, 255, 153,   0, 255, 153,  51,
-	255, 153, 102, 255, 153, 153, 255, 153, 204, 255, 153, 255, 255, 204,   0, 255,
-	204,  51, 255, 204, 102, 255, 204, 153, 255, 204, 204, 255, 204, 255, 255, 255,
-	  0, 255, 255,  51, 255, 255, 102, 255, 255, 153, 255, 255, 204, 255, 255, 255 };
-
-void DirectorEngine::testFontScaling() {
-	int x = 10;
-	int y = 10;
-	int w = 640;
-	int h = 480;
-
-	initGraphics(w, h, true);
-	g_system->getPaletteManager()->setPalette(defaultPalette, 0, 256);
-
-	Graphics::ManagedSurface surface;
-
-	surface.create(w, h);
-	surface.clear(255);
-
-	Graphics::MacFont origFont(Graphics::kMacFontNewYork, 18);
-
-	const Graphics::MacFONTFont *font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(origFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 200, 500);
-
-	Graphics::MacFont bigFont(Graphics::kMacFontNewYork, 15);
-
-	font1 = (const Graphics::MacFONTFont *)_wm->_fontMan->getFont(bigFont);
-
-	Graphics::MacFONTFont::testBlit(font1, &surface, 0, x, y + 50 + 200, 500);
-
-	const char *text = "d";
-
-	for (int i = 9; i <= 20; i++) {
-		Graphics::MacFont macFont(Graphics::kMacFontNewYork, i);
-
-		const Graphics::Font *font = _wm->_fontMan->getFont(macFont);
-
-		int width = font->getStringWidth(text);
-
-		Common::Rect bbox = font->getBoundingBox(text, x, y, w);
-		surface.frameRect(bbox, 15);
-
-		font->drawString(&surface, text, x, y, width, 0);
-
-		x += width + 1;
-	}
-
-	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h);
-
-	Common::Event event;
-
-	while (true) {
-		if (g_system->getEventManager()->pollEvent(event))
-			if (event.type == Common::EVENT_QUIT)
-				break;
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-}
 
 Score::Score(DirectorEngine *vm, Archive *archive) {
 	_vm = vm;
@@ -474,35 +366,22 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	switch (castType) {
 	case kCastBitmap:
-		warning("CASt: Bitmap");
-		Common::hexdump(data, size1 + 16);
 		_casts[id] = new BitmapCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastBitmap;
 		break;
 	case kCastText:
-		warning("CASt: Text");
-		Common::hexdump(data, size1 + 16);
 		_casts[id] = new TextCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastText;
 		break;
 	case kCastShape:
-		warning("CASt: Shape");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ShapeCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastShape;
 		break;
 	case kCastButton:
-		warning("CASt: Button");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ButtonCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastButton;
 		break;
 	case kCastLingoScript:
-		warning("CASt: Script");
-		Common::hexdump(data, size1 + 16);
-
 		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
 		_casts[id]->type = kCastLingoScript;
 		break;
@@ -743,10 +622,15 @@ void Score::gotoLoop() {
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	Common::SortedArray<Label *>::iterator i;
 
-	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->name == _currentLabel) {
-			_currentFrame = (*i)->number;
-			return;
+	if (_labels == NULL) {
+		_currentFrame = 0;
+		return;
+	} else {
+		for (i = _labels->begin(); i != _labels->end(); ++i) {
+			if ((*i)->name == _currentLabel) {
+				_currentFrame = (*i)->number;
+				return;
+			}
 		}
 	}
 }
@@ -994,8 +878,11 @@ void Score::update() {
 		}
 	}
 
-	_currentFrame++;
-	if (_currentFrame >= _frames.size()) return;
+	if (!g_director->_playbackPaused)
+		_currentFrame++;
+
+	if (_currentFrame >= _frames.size())
+		return;
 
 	_frames[_currentFrame]->prepareFrame(this);
 	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
@@ -1030,6 +917,7 @@ void Score::update() {
 			}
 		}
 	}
+
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
 }
 

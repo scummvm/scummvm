@@ -104,6 +104,7 @@ static struct FuncDescr {
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
+	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
@@ -114,6 +115,7 @@ static struct FuncDescr {
 	{ Lingo::c_call,		"c_call",		"si" },
 	{ Lingo::c_procret,		"c_procret",	"" },
 	{ Lingo::c_global,		"c_global",		"s" },
+	{ Lingo::c_property,	"c_property",	"s" },
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
 	{ 0, 0, 0 }
@@ -169,8 +171,8 @@ void Lingo::c_printtop(void) {
 		if (!d.u.sym) {
 			warning("Inconsistent stack: var, val: %d", d.u.i);
 		} else {
-			if (d.u.sym->name)
-				warning("var: %s", d.u.sym->name);
+			if (!d.u.sym->name.empty())
+				warning("var: %s", d.u.sym->name.c_str());
 			else
 				warning("Nameless var. val: %d", d.u.sym->u.i);
 		}
@@ -304,7 +306,7 @@ void Lingo::c_assign() {
 
 	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
 			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
-		warning("assignment to non-variable '%s'", d1.u.sym->name);
+		warning("assignment to non-variable '%s'", d1.u.sym->name.c_str());
 		return;
 	}
 
@@ -339,14 +341,14 @@ void Lingo::c_assign() {
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT) {
-		warning("attempt to evaluate non-variable '%s'", s->name);
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL) {
+		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
 	}
 
 	if (s->type == VOID)
-		warning("Variable used before assigning a value '%s'", s->name);
+		warning("Variable used before assigning a value '%s'", s->name.c_str());
 
 	return true;
 }
@@ -885,8 +887,6 @@ void Lingo::c_repeatwithcode(void) {
 
 	if (!g_lingo->_returning)
 		g_lingo->_pc = end; /* next stmt */
-
-	delete counter;
 }
 
 void Lingo::c_exitRepeat(void) {
@@ -945,6 +945,11 @@ void Lingo::c_whencode() {
 
 	g_lingo->_pc = end;
 }
+
+void Lingo::c_tellcode() {
+	warning("STUB: c_tellcode");
+}
+
 
 //************************
 // Built-in functions
@@ -1030,7 +1035,7 @@ void Lingo::call(Common::String name, int nargs) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
 		dropArgs = true;
 	} else {
-		if (sym->type == BLTIN && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
+		if ((sym->type == BLTIN || sym->type == FBLTIN) && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
 			else
@@ -1057,7 +1062,7 @@ void Lingo::call(Common::String name, int nargs) {
 			g_lingo->pop();
 	}
 
-	if (sym->type == BLTIN) {
+	if (sym->type == BLTIN || sym->type == FBLTIN) {
 		if (sym->u.bltin == b_factory)
 			g_lingo->factoryCall(name, nargs);
 		else
@@ -1130,8 +1135,14 @@ void Lingo::c_global() {
 	s->global = true;
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+}
 
-	delete s;
+void Lingo::c_property() {
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+
+	warning("STUB: c_property()");
 }
 
 void Lingo::c_instance() {

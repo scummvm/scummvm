@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-CAudioBuffer::CAudioBuffer(int bufferSize) : _flag(true), _field18(0) {
+CAudioBuffer::CAudioBuffer(int bufferSize) : _flag(true), _disabled(false) {
 	_buffer.resize(bufferSize);
 	reset();
 }
@@ -35,48 +35,48 @@ CAudioBuffer::~CAudioBuffer() {
 
 void CAudioBuffer::reset() {
 	_flag = true;
-	_fieldC = _field10 = _buffer.size() / 2;
+	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
 }
 
-byte *CAudioBuffer::getDataPtr1() {
+byte *CAudioBuffer::getBegin() {
 	return _flag ? &_buffer[_buffer.size() / 2] : &_buffer[0];
 }
 
-byte *CAudioBuffer::getDataPtr2() {
+byte *CAudioBuffer::getEnd() {
 	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
 }
 
-byte *CAudioBuffer::getPtr1() {
-	byte *ptr = getDataPtr1();
-	return ptr + (_buffer.size() / 2 - _fieldC);
+int16 *CAudioBuffer::getReadPtr() {
+	byte *ptr = getBegin();
+	return (int16 *)(ptr + (_buffer.size() / 2 - _readBytesLeft));
 }
 
-byte *CAudioBuffer::getPtr2() {
-	byte *ptr = getDataPtr2();
-	return ptr + (_buffer.size() / 2 - _field10);
+int16 *CAudioBuffer::getWritePtr() {
+	byte *ptr = getEnd();
+	return (int16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
 }
 
-void CAudioBuffer::setC(int val) {
-	_fieldC -= val;
-	if (_fieldC < 0) {
-		_fieldC = 0;
-	} else if (val && !_field10) {
-		update();
+void CAudioBuffer::advanceRead(int size) {
+	_readBytesLeft -= size;
+	if (_readBytesLeft < 0) {
+		_readBytesLeft = 0;
+	} else if (size && !_writeBytesLeft) {
+		reverse();
 	}
 }
 
-void CAudioBuffer::set10(int val) {
-	_field10 -= val;
-	if (_field10 < 0) {
-		_field10 = 0;
-	} else if (val && !_field10) {
-		update();
+void CAudioBuffer::advanceWrite(int size) {
+	_writeBytesLeft -= size;
+	if (_writeBytesLeft < 0) {
+		_writeBytesLeft = 0;
+	} else if (size && !_readBytesLeft) {
+		reverse();
 	}
 }
 
-void CAudioBuffer::update() {
+void CAudioBuffer::reverse() {
 	_flag = !_flag;
-	_fieldC = _field10 = _buffer.size() / 2;
+	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
 }
 
 void CAudioBuffer::enterCriticalSection() {

@@ -24,6 +24,7 @@
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
 #include "titanic/sound/audio_buffer.h"
+#include "titanic/sound/music_object.h"
 #include "titanic/sound/music_wave.h"
 #include "titanic/sound/wave_file.h"
 
@@ -45,30 +46,16 @@ struct MusicRoomInstrument {
 };
 
 class CMusicRoomHandler {
-	struct Object3 {
-		byte *_field0;
-		int _field4;
-		Object3() : _field0(nullptr), _field4(0) {}
-		~Object3() { delete[] _field0; }
-	};
-
-	struct Array5Entry {
-		int _v1;
-		int _v2;
-		Array5Entry() : _v1(0), _v2(0) {}
-
-		void clear() { _v1 = _v2 = 0; }
-	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
-	Object3 *_array3[4];
-	int _array4[4];
-	Array5Entry _array5[4];
-	int _array6[4];
+	CMusicObject *_musicObjs[4];
+	int _startPos[4];
+	int _position[4];
+	double _array5[4];
 
 	bool _active;
 	CWaveFile *_waveFile;
@@ -84,7 +71,10 @@ private:
 
 	void updateAudio();
 	void fn1();
-	bool fn2();
+	bool fn2(int index);
+	double fn3(int index, int arrIndex);
+	int getPitch(int index, int arrIndex);
+
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
@@ -98,9 +88,9 @@ public:
 	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
 
 	/**
-	 * TODO: Verify - this starts the given music?
+	 * Main setup for the music room handler
 	 */
-	void setVolume(int volume);
+	void setup(int volume);
 
 	/**
 	 * Flags whether the music handler is active

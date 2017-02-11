@@ -180,8 +180,9 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 		stream.readByte();
 		stream.readByte();
 
-		initialRect = Score::readRect(stream);
-		boundingRect = Score::readRect(stream);
+		//This has already been populated in the super TextCast constructor
+		//initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
 
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}

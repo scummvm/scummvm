@@ -43,7 +43,7 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const Font *font, int f
 	_font = font;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth - 1; // This seems to be correct. TODO: More testing is required
+	_maxWidth = maxWidth;
 	_textMaxWidth = 0;
 	_textMaxHeight = 0;
 	_surface = nullptr;
@@ -77,16 +77,19 @@ void MacText::splitString(Common::String &str) {
 	int curLine = _textLines.size() - 1;
 	int curChunk = _textLines[curLine].chunks.size() - 1;
 	bool nextChunk = false;
+	MacFontRun previousFormatting;
 
 	while (*s) {
+#if DEBUG
 		for (uint i = 0; i < _textLines.size(); i++) {
 			debugN(7, "%2d ", i);
 
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
 				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
 
-			debug(7, " --> %c %d", (*s > 0x20 ? *s : ' '), (byte)*s);
+			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, tmp.c_str());
 		}
+#endif
 
 		if (*s == '\001') {
 			s++;
@@ -107,14 +110,11 @@ void MacText::splitString(Common::String &str) {
 				debug(8, "******** splitString: fontId: %d, textSlant: %d, unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
+				previousFormatting = _currentFormatting;
 				_currentFormatting.setValues(_wm, fontId, textSlant, unk3f, fontSize, palinfo1, palinfo2, palinfo3);
 
-				if (curLine == 0 && curChunk == 0 && _textLines[curLine].chunks[curChunk].text.empty()) {
-					_textLines[curLine].chunks[curChunk] = _currentFormatting;
-				} else {
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-					curChunk++;
-				}
+				if (curLine == 0 && curChunk == 0 && tmp.empty())
+					previousFormatting = _currentFormatting;
 
 				nextChunk = true;
 			}
@@ -130,41 +130,41 @@ void MacText::splitString(Common::String &str) {
 		if (*s == '\r' || *s == '\n' || nextChunk) {
 			Common::Array<Common::String> text;
 
+			if (!nextChunk)
+				previousFormatting = _currentFormatting;
+
 			int w = getLineWidth(curLine, true);
 
-			_font->wordWrapText(tmp, _maxWidth, text, w);
+			previousFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
 			tmp.clear();
 
 			if (text.size()) {
+				for (uint i = 0; i < text.size(); i++) {
+					_textLines[curLine].chunks[curChunk].text = text[i];
+
+					if ((text.size() > 1 || !nextChunk) && !(i == text.size() - 1 && nextChunk)) {
+						curLine++;
+						_textLines.resize(curLine + 1);
+						_textLines[curLine].chunks.push_back(previousFormatting);
+						curChunk = 0;
+					}
+				}
+
 				if (nextChunk) {
-					_textLines[curLine].chunks[curChunk].text += text[0];
 					curChunk++;
 
 					_textLines[curLine].chunks.push_back(_currentFormatting);
-
-					if (_text.size() == curLine)
-						_text.push_back(text[0]);
-					else
-						_text[curLine] += text[0];
-
-					nextChunk = false;
-
-					continue;
-				}
-
-				for (uint i = 0; i < text.size(); i++) {
-					_text.push_back(text[i]);
-
-					_textLines[curLine].chunks[curChunk].text = text[i];
-
-					curLine++;
-					_textLines.resize(curLine + 1);
-					_textLines[curLine].chunks.push_back(_currentFormatting);
-					curChunk = 0;
+				} else {
+					_textLines[curLine].chunks[0] = _currentFormatting;
 				}
 			} else {
 				if (nextChunk) { // No text, replacing formatting
 					_textLines[curLine].chunks[curChunk] = _currentFormatting;
+				} else { // Otherwise it is an empty line
+					curLine++;
+					_textLines.resize(curLine + 1);
+					_textLines[curLine].chunks.push_back(previousFormatting);
+					curChunk = 0;
 				}
 			}
 
@@ -183,16 +183,12 @@ void MacText::splitString(Common::String &str) {
 		Common::Array<Common::String> text;
 		int w = getLineWidth(curLine, true);
 
-		_font->wordWrapText(tmp, _maxWidth, text, w);
+		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
 
 		_textLines[curLine].chunks[curChunk].text = text[0];
 
-		_text.push_back(text[0]);
-
 		if (text.size() > 1) {
 			for (uint i = 1; i < text.size(); i++) {
-				_text.push_back(text[i]);
-
 				curLine++;
 				_textLines.resize(curLine + 1);
 				_textLines[curLine].chunks.push_back(_currentFormatting);
@@ -261,7 +257,7 @@ void MacText::render(int from, int to) {
 		debugN(4, "%2d ", i);
 
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(4, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
+			debugN(4, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.c_str());
 
 		debug(4, "%s", "");
 	}
@@ -278,6 +274,9 @@ int MacText::getLineWidth(int line, bool enforce) {
 	int height = 0;
 
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
+		if (enforce)
+			_textLines[line].chunks[i].font = nullptr;
+
 		if (!_textLines[line].chunks[i].text.empty())
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
 
@@ -299,6 +298,11 @@ int MacText::getLineHeight(int line) {
 	return _textLines[line].height;
 }
 
+void MacText::setInterLinear(int interLinear) { 
+	_interLinear = interLinear; 
+	recalcDims();
+}
+
 void MacText::recalcDims() {
 	int y = 0;
 	_textMaxWidth = 0;
@@ -310,7 +314,7 @@ void MacText::recalcDims() {
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
 	}
 
-	_textMaxHeight = y;
+	_textMaxHeight = y - _interLinear;
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
@@ -326,28 +330,28 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 void MacText::appendText(Common::String str) {
-	int oldLen = _text.size();
+	int oldLen = _textLines.size();
 
 	// TODO: Recalc length
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen + 1, _text.size());
+	render(oldLen + 1, _textLines.size());
 }
 
 void MacText::replaceLastLine(Common::String str) {
-	int oldLen = MAX<int>(0, _text.size() - 1);
+	int oldLen = MAX<int>(0, _textLines.size() - 1);
 
 	// TODO: Recalc length, adapt to _textLines
 
-	if (_text.size())
-		_text.pop_back();
+	if (_textLines.size())
+		_textLines.pop_back();
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen, _text.size());
+	render(oldLen, _textLines.size());
 }
 
 } // End of namespace Graphics

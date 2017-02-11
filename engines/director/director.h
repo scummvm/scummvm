@@ -60,6 +60,7 @@ enum {
 	kDebugText			= 1 << 4
 };
 
+extern byte defaultPalette[768];
 
 class DirectorEngine : public ::Engine {
 public:
@@ -97,7 +98,6 @@ public:
 	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
 
 	Common::HashMap<Common::String, Score *> *_movies;
-	Score *_currentScore;
 
 	Common::RandomSource _rnd;
 	Graphics::MacWindowManager *_wm;
@@ -107,6 +107,11 @@ public:
 	unsigned char _key;
 	int _keyCode;
 	int _machineType;
+	bool _playbackPaused;
+
+	Common::String _nextMovie;
+	Common::String _nextMovieFrameS;
+	int _nextMovieFrameI;
 
 protected:
 	virtual Common::Error run();
@@ -135,6 +140,8 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
+
+	Score *_currentScore;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;

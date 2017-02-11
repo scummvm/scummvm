@@ -380,7 +380,7 @@ void Frame::prepareFrame(Score *score) {
 	renderSprites(*score->_trailSurface, true);
 
 	if (_transType != 0)
-		//T ODO Handle changing area case
+		// TODO Handle changing area case
 		playTransition(score);
 
 	if (_sound1 != 0 || _sound2 != 0) {
@@ -391,8 +391,7 @@ void Frame::prepareFrame(Score *score) {
 }
 
 void Frame::playSoundChannel() {
-	debug(0, "Sound1 %d", _sound1);
-	debug(0, "Sound2 %d", _sound2);
+	debug(0, "STUB: playSoundChannel(), Sound1 %d Sound2 %d", _sound1, _sound2);
 }
 
 void Frame::playTransition(Score *score) {
@@ -561,7 +560,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					break;
 				}
 			} else {
-				if (!_vm->_currentScore->_casts.contains(_sprites[i]->_castId)) {
+				if (!_vm->getCurrentScore()->_casts.contains(_sprites[i]->_castId)) {
 					if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
 						warning("Cast id %d not found", _sprites[i]->_castId);
 						continue;
@@ -570,13 +569,13 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 						cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
 					}
 				} else {
-					cast = _vm->_currentScore->_casts[_sprites[i]->_castId];
+					cast = _vm->getCurrentScore()->_casts[_sprites[i]->_castId];
 				}
 				castType = cast->type;
 			}
 
-			//this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
-			//I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
+			// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
+			// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
 			if (castType == kCastShape) {
 				renderShape(surface, i);
 			} else if (castType == kCastText) {
@@ -599,7 +598,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				assert(_sprites[i]->_cast);
 
 				BitmapCast *bitmapCast = static_cast<BitmapCast *>(_sprites[i]->_cast);
-				//TODO: might want a quicker way to determine if cast is from Shared Cast.
+				// TODO: might want a quicker way to determine if cast is from Shared Cast.
 				if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(_sprites[i]->_castId + 1024)) {
 					debugC(2, kDebugImages, "Shared cast sprite BMP: id: %d", _sprites[i]->_castId + 1024);
 					bitmapCast = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(_sprites[i]->_castId));
@@ -642,10 +641,10 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), 255);
 		tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
-		//TODO: don't override, work out how to display correctly.
+		// TODO: don't override, work out how to display correctly.
 		_sprites[spriteId]->_ink = kInkTypeTransparent;
 	} else {
-		//No minus one on the pattern here! MacPlotData will do that for us!
+		// No minus one on the pattern here! MacPlotData will do that for us!
 		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
 		Common::Rect fillRect(shapeRect.width(), shapeRect.height());
 		Graphics::drawFilledRect(fillRect, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
@@ -661,18 +660,23 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
-	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), true);
-
 	uint16 castId = _sprites[spriteId]->_castId;
-	ButtonCast *button = static_cast<ButtonCast *>(_vm->_currentScore->_casts[castId]);
+	ButtonCast *button = static_cast<ButtonCast *>(_vm->getCurrentScore()->_casts[castId]);
 
 	uint32 rectLeft = button->initialRect.left;
 	uint32 rectTop = button->initialRect.top;
 
 	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y + rectTop;
-	int height = _sprites[spriteId]->_height;
-	int width = _sprites[spriteId]->_width;
+	int height = button->initialRect.height(); // _sprites[spriteId]->_height;
+	int width = button->initialRect.width() + 3; // _sprites[spriteId]->_width;
+
+	Common::Rect textRect(0, 0, width, height);
+	// pass the rect of the button into the label.
+	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), &textRect);
+
+	// TODO: review all cases to confirm if we should use text height.
+	// height = textRect.height();
 
 	Common::Rect _rect;
 
@@ -684,7 +688,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		addDrawRect(spriteId, _rect);
 		break;
 	case kTypeButton: {
-			_rect = Common::Rect(x, y, x + width - 1, y + height + 5);
+			_rect = Common::Rect(x, y, x + width, y + height + 3);
 			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1);
 			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
@@ -699,14 +703,14 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 
-	if (_vm->getVersion() >= 4 && _vm->_currentScore->_casts[spriteId]->children.size() > 0)
-		imgId = _vm->_currentScore->_casts[spriteId]->children[0].index;
+	if (_vm->getVersion() >= 4 && _vm->getCurrentScore()->_casts[spriteId]->children.size() > 0)
+		imgId = _vm->getCurrentScore()->_casts[spriteId]->children[0].index;
 
 	Image::ImageDecoder *img = NULL;
 
-	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
 		img = new DIBDecoder();
-		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+		img->loadStream(*_vm->getCurrentScore()->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 		return img;
 	}
 
@@ -722,11 +726,11 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
 		debugC(2, kDebugImages, "Shared cast BMP: id: %d", imgId);
 		pic = _vm->getSharedBMP()->getVal(imgId);
-		pic->seek(0); //TODO: this actually gets re-read every loop... we need to rewind it!
+		pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
 		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
-	} else 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
-		bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+	} else 	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		pic = _vm->getCurrentScore()->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+		bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
 	}
 
 	if (pic != NULL && bc != NULL) {
@@ -737,7 +741,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoder(w, h);
 		} else if (_vm->getVersion() < 6) {
-			bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+			bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
@@ -794,21 +798,21 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId) {
 	Common::SeekableSubReadStreamEndian *textStream = NULL;
 
-	if (_vm->_currentScore->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
-		textStream = _vm->_currentScore->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
+	if (_vm->getCurrentScore()->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
+		textStream = _vm->getCurrentScore()->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
 	} else if (_vm->getSharedSTXT() != nullptr) {
 		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
 	}
 
-	renderText(surface, spriteId, textStream, false);
+	renderText(surface, spriteId, textStream, NULL);
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, bool isButtonLabel) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, Common::Rect *textSize) {
 	if (textStream == NULL)
 		return;
 
 	uint16 castId = _sprites[spriteId]->_castId;
-	TextCast *textCast = static_cast<TextCast *>(_vm->_currentScore->_casts[castId]);
+	TextCast *textCast = static_cast<TextCast *>(_vm->getCurrentScore()->_casts[castId]);
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -886,6 +890,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
+	if (textSize != NULL)
+		borderSize = 0;
 	uint16 padding = (uint16)textCast->gutterSize;
 	uint16 textShadow = (uint16)textCast->textShadow;
 
@@ -894,18 +900,16 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-
 	int height = _sprites[spriteId]->_height;
-	if (_vm->getVersion() >= 4 && !isButtonLabel) height = textCast->initialRect.bottom;
-	height += textShadow;
-
 	int width = _sprites[spriteId]->_width;
-	if (_vm->getVersion() >= 4 && !isButtonLabel) width = textCast->initialRect.right;
 
-	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
-		// We need to make sure that teh Shared Cast fonts have been loaded in?
-		//might need a mapping table here of our own.
-		//textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->_currentScore->_fontMap[textCast->fontId]);
+	if (_vm->getVersion() >= 4 && textSize != NULL)
+		width = textCast->initialRect.right;
+
+	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
+		// We need to make sure that the Shared Cast fonts have been loaded in?
+		// might need a mapping table here of our own.
+		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
 	}
 
 	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
@@ -920,16 +924,28 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
+	if (_vm->getVersion() >= 4) {
+		if (textSize == NULL)
+			width = textCast->initialRect.right;
+		else {
+			width = textSize->width();
+		}
+	}
+
 	Graphics::MacText mt(ftext, _vm->_wm, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
 
 	height = textSurface->h;
+	if (textSize != NULL) {
+		// TODO: this offset could be due to incorrect fonts loaded!
+		textSize->bottom = height + mt.getLineCount();
+	}
 
 	uint16 textX = 0, textY = 0;
 
-	if (!isButtonLabel) {
+	if (textSize == NULL) {
 		if (borderSize > 0) {
 			if (_vm->getVersion() <= 3)
 				height++;
@@ -954,6 +970,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		if (textShadow > 0)
 			textX--;
 	} else {
+		x++;
+		if (width % 2 != 0)
+			x++;
 		y += 2;
 	}
 
@@ -971,11 +990,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
 	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
 
-	if (!isButtonLabel && boxShadow > 0) {
+	if (textSize == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
 	}
 
-	if (!isButtonLabel && borderSize != kSizeNone) {
+	if (textSize == NULL && borderSize != kSizeNone) {
 		for (int bb = 0; bb < borderSize; bb++) {
 			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
 			textWithFeatures.fillRect(borderRect, 0xff);

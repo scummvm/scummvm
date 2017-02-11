@@ -155,11 +155,11 @@ CWaveFile *QSoundManager::loadMusic(const CString &name) {
 	return waveFile;
 }
 
-CWaveFile *QSoundManager::loadMusic(CAudioBuffer *buffer) {
+CWaveFile *QSoundManager::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse) {
 	CWaveFile *waveFile = new CWaveFile();
 
 	// Try to load the specified audio buffer
-	if (!waveFile->loadMusic(buffer)) {
+	if (!waveFile->loadMusic(buffer, disposeAfterUse)) {
 		delete waveFile;
 		return nullptr;
 	}

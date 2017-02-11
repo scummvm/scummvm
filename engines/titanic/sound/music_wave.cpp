@@ -31,28 +31,33 @@ bool CMusicWave::_pianoToggle;
 int CMusicWave::_pianoCtr;
 int CMusicWave::_bassCtr;
 byte *CMusicWave::_buffer;
+double *CMusicWave::_array;
+int CMusicWave::_arrayIndex;
 
 void CMusicWave::init() {
 	_pianoToggle = false;
 	_pianoCtr = 0;
 	_bassCtr = 0;
 	_buffer = nullptr;
+	_array = nullptr;
+	_arrayIndex = 0;
 }
 
 void CMusicWave::deinit() {
 	delete[] _buffer;
+	delete[] _array;
 	_buffer = nullptr;
 }
 
 CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
-		_soundManager(soundManager), _instrument(instrument) {
+		_project(project), _soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
-	_field20 = _field24 = 0;
-	_field34 = -1;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = 0;
-	_field44 = 0;
+	_floatVal = 0.0;
+	_waveIndex = -1;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = 0;
+	_count = 0;
 	_field4C = 0;
 
 	switch (instrument) {
@@ -61,8 +66,7 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Piano Mouth"));
 		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Piano Left Arm"));
 		_gameObjects[3] = static_cast<CGameObject *>(_project->findByName("Piano Right Arm"));
-		_field20 = 0xCCCCCCCD;
-		_field24 = 0x3FDCCCCC;
+		_floatVal = 0.45;
 		break;
 
 	case MV_BASS:
@@ -71,20 +75,19 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 
 	case MV_BELLS:
 		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Tubular Bells"));
-		_field20 = 0x9999999A;
-		_field24 = 0x3FD99999;
+		_floatVal = 0.4;
+		break;
 	
 	case MV_SNAKE:
-		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake Hammer"));
-		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake Glass"));
-		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake Head"));
-		_field20 = 0x5C28F5C3;
-		_field24 = 0x3FC5C28F;
+		_gameObjects[0] = static_cast<CGameObject *>(_project->findByName("Snake_Hammer"));
+		_gameObjects[1] = static_cast<CGameObject *>(_project->findByName("Snake_Glass"));
+		_gameObjects[2] = static_cast<CGameObject *>(_project->findByName("Snake_Head"));
+		_floatVal = 0.17;
 		break;
 	}
 }
 
-void CMusicWave::setSize(uint count) {
+void CMusicWave::setFilesCount(uint count) {
 	assert(_items.empty());
 	_items.resize(count);
 }
@@ -158,13 +161,12 @@ void CMusicWave::start(int val) {
 			case 60:
 				_gameObjects[0]->movieSetAudioTiming(true);
 				_gameObjects[0]->playMovie(0, 512, MOVIE_STOP_PREVIOUS);
-				_field20 = 0x33333333;
-				_field24 = 0x3FE33333;
+				_floatVal = 0.6;
+				break;
 
 			case 62:
 				_gameObjects[0]->playMovie(828, 1023, MOVIE_STOP_PREVIOUS);
-				_field20 = 0x33333333;
-				_field24 = 0x3FD33333;
+				_floatVal = 0.3;
 				break;
 
 			case 63:
@@ -252,24 +254,100 @@ void CMusicWave::trigger() {
 }
 
 void CMusicWave::reset() {
-	_field34 = 0;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = 0;
-	_field44 = 0;
+	_waveIndex = 0;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = 0;
+	_count = 0;
 }
 
-void CMusicWave::setState(int val) {
-	_field34 = -1;
-	_field38 = 0;
-	_field3C = 0;
-	_field40 = val;
-	_field44 = 0;
+void CMusicWave::setSize(uint total) {
+	_waveIndex = -1;
+	_readPos = 0;
+	_readIncrement = 0;
+	_size = total;
+	_count = 0;
 }
 
-int CMusicWave::setData(const byte *data, int count) {
-	// TODO: Implement
-	return 0;
+int CMusicWave::read(int16 *ptr, uint size) {
+	if (!_size)
+		return 0;
+
+	if (size >= _size)
+		size = _size;
+
+	if (_waveIndex != -1) {
+		// Lock the specified wave file for access
+		const int16 *data = _items[_waveIndex]._waveFile->lock();
+		assert(data);
+		const int16 *src = data;
+
+		// Loop through merging data from the wave file into the dest buffer
+		for (uint idx = 0; idx < (size / sizeof(int16)); ++idx, _readPos += _readIncrement) {
+			uint srcPos = _readPos >> 8;
+			if (srcPos >= _count)
+				break;
+
+			int16 val = READ_LE_UINT16(src + srcPos);
+			*ptr++ += val;
+		}
+
+		// Unlock the wave file
+		_items[_waveIndex]._waveFile->unlock(data);
+	}
+
+	_size -= size;
+	return size;
+}
+
+void CMusicWave::chooseWaveFile(int index, int size) {
+	if (!_array)
+		setupArray(-36, 36);
+
+	int minDiff = ABS(_items[0]._value - index);
+	int waveIndex = 0;
+
+	for (uint idx = 1; idx < _items.size(); ++idx) {
+		int diff = ABS(_items[idx]._value - index);
+		if (diff < minDiff) {
+			minDiff = diff;
+			waveIndex = idx;
+		}
+	}
+
+	const CMusicWaveFile &wf = _items[waveIndex];
+	int arrIndex = _arrayIndex - wf._value + index;
+	uint waveSize = wf._waveFile->size();
+
+	_waveIndex = waveIndex;
+	_readPos = 0;
+	_readIncrement = (int)(_array[arrIndex] * 256);
+	_size = size;
+	_count = waveSize / 2;
+}
+
+void CMusicWave::setupArray(int minVal, int maxVal) {
+	// Delete any prior array and recreate it
+	delete[] _array;
+
+	int arrSize = maxVal - minVal + 1;
+	_array = new double[arrSize];
+	_arrayIndex = ABS(minVal);
+
+	// Setup array contents
+	_array[_arrayIndex] = 1.0;
+
+	double val = 1.0594634;
+	for (int idx = 1; idx <= maxVal; ++idx) {
+		_array[_arrayIndex + idx] = val;
+		val *= 1.0594634;
+	}
+
+	val = 0.94387404038686;
+	for (int idx = -1; idx >= minVal; --idx) {
+		_array[_arrayIndex + idx] = val;
+		val *= 0.94387404038686;
+	}
 }
 
 } // End of namespace Titanic

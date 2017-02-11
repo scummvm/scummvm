@@ -142,7 +142,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 }
 
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
-	Symbol *sym;
+	Symbol *sym = nullptr;
 
 	// Looking for the cast member constants
 	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
@@ -165,17 +165,21 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		}
 	}
 
-	if (!_localvars->contains(name)) { // Create variable if it was not defined
+	if (!_localvars || !_localvars->contains(name)) { // Create variable if it was not defined
+		// Check if it is a global symbol
+		if (_globalvars.contains(name) && _globalvars[name]->type == SYMBOL)
+			return _globalvars[name];
+
 		if (!create)
 			return NULL;
 
 		sym = new Symbol;
-		sym->name = (char *)calloc(strlen(name) + 1, 1);
-		Common::strlcpy(sym->name, name, strlen(name) + 1);
+		sym->name = name;
 		sym->type = VOID;
 		sym->u.i = 0;
 
-		(*_localvars)[name] = sym;
+		if (_localvars)
+			(*_localvars)[name] = sym;
 
 		if (putInGlobalList) {
 			sym->global = true;
@@ -197,9 +201,7 @@ void Lingo::cleanLocalVars() {
 
 	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
 		if (!h->_value->global) {
-			Symbol *sym = h->_value;
-			free(sym->name);
-			delete sym;
+			delete h->_value;
 		}
 	}
 
@@ -218,11 +220,14 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
 
-		sym->name = (char *)calloc(name.size() + 1, 1);
-		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
+		sym->name = name;
 		sym->type = HANDLER;
 
-		_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		if (!_eventHandlerTypeIds.contains(name)) {
+			_builtins[name] = sym;
+		} else {
+			_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		}
 	} else {
 		//we don't want to be here. The getHandler call should have used the EntityId and the result
 		//should have been unique!
@@ -388,8 +393,7 @@ void Lingo::codeFactory(Common::String &name) {
 
 	Symbol *sym = new Symbol;
 
-	sym->name = (char *)calloc(name.size() + 1, 1);
-	Common::strlcpy(sym->name, name.c_str(), name.size());
+	sym->name = name;
 	sym->type = BLTIN;
 	sym->nargs = -1;
 	sym->maxArgs = 0;

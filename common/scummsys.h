@@ -309,6 +309,23 @@
 	#endif
 #endif
 
+//
+// Determine 64 bitness
+// Reference: http://nadeausoftware.com/articles/2012/02/c_c_tip_how_detect_processor_type_using_compiler_predefined_macros
+//
+#if !defined(HAVE_CONFIG_H)
+
+	#if defined(__x86_64__) || \
+		  defined(_M_X64) || \
+		  defined(__ppc64__) || \
+		  defined(__powerpc64__) || \
+		  defined(__LP64__)
+
+		#define SCUMM_64BITS
+
+	#endif
+
+#endif
 
 //
 // Some more system specific settings.

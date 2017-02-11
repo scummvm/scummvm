@@ -30,7 +30,7 @@ class Sprite;
 
 TheEntity entities[] = {
 	{ kTheActorList,		"actorList",		false },	//				D4 property
-	{ kTheBeepOn,			"beepOn",			false },	// D2 property
+	{ kTheBeepOn,			"beepOn",			false },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },	// D3
 	{ kTheCastMembers,		"castmembers",		false },	//		 D3
@@ -38,7 +38,8 @@ TheEntity entities[] = {
 	{ kTheChars,			"chars",			false },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
-	{ kTheClickOn,			"clickOn",			false },	// D2 function
+	{ kTheClickLoc,			"clickLoc",			false },	// 				D4 function
+	{ kTheClickOn,			"clickOn",			false },	// D2 f
 	{ kTheColorDepth,		"colorDepth",		false },	// D2 p
 	{ kTheColorQD,			"colorQD",			false },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false },	// D2 f
@@ -50,24 +51,29 @@ TheEntity entities[] = {
 	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
 	{ kTheFrame,			"frame",			false },	// D2 f
+	{ kTheFrameLabel,		"frameLabel",		false },	//				D4 p
 	{ kTheFrameScript,		"frameScript",		false },	//				D4 p
+	{ kTheFramePalette,		"framePalette",		false },	//				D4 p
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
 	{ kTheItems,			"items",			false },	//		 D3
-	{ kTheItemDelimiter,	"itemDelimiter",	false },
+	{ kTheItemDelimiter,	"itemDelimiter",	false },	//				D4 p
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
 	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
+	{ kTheKeyUpScript,		"keyUpScript",		false },	//				D4 p
 	{ kTheLabelList,		"labelList",		false },	//		D3 f
+	{ kTheLast,				"last",				false },	//				D4 f
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
-	{ kTheLastFrame,		"lastFrame",		false },
+	{ kTheLastFrame,		"lastFrame",		false },	//				D4 p
 	{ kTheLastKey,			"lastKey",			false },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
 	{ kTheLines,			"lines",			false },	//		 D3
 	{ kTheMachineType,		"machineType",		false },	// D2 f
+	{ kTheMaxInteger,		"maxInteger",		false },	//				D4 f
 	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
 	{ kTheMenus,			"menus",			false },
@@ -85,16 +91,26 @@ TheEntity entities[] = {
 	{ kTheMouseV,			"mouseV",			false },	// D2 f
 	{ kTheMouseWord,		"mouseWord",		false },	//		D3 f
 	{ kTheMovie,			"movie",			false },	// D2 f
-	{ kTheMultiSound,		"multiSound",		false },
+	{ kTheMovieFileFreeSize,"movieFileFreeSize",false },	//				D4 f
+	{ kTheMovieFileSize,	"movieFileSize",	false },	//				D4 f
+	{ kTheMovieName,		"movieName",		false },	//				D4 f
+	{ kTheMoviePath,		"moviePath",		false },	//				D4 f
+	{ kTheMultiSound,		"multiSound",		false },	//				D4 p
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
+	{ kTheParamCount,		"paramCount",		false },	//				D4 f
 	{ kThePathName,			"pathName",			false },	// D2 f
 	{ kThePauseState,		"pauseState",		false },	// D2 f
 	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
-	{ kThePreloadEventAbort,"preloadEventAbort",false },
+	{ kThePreloadEventAbort,"preloadEventAbort",false },	//				D4 p
+	{ kThePreLoadRAM,		"preLoadRAM",		false },	//				D4 p
+	{ kTheQuickTimePresent,	"quickTimePresent",	false },	//				D4 f
+	{ kTheRandomSeed,		"randomSeed",		false },	//				D4 p
 	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
-	{ kTheRomanLingo,		"romanLingo",		false },
+	{ kTheRomanLingo,		"romanLingo",		false },	//				D4 p
+	{ kTheSearchCurrentFolder,"searchCurrentFolder",false },//				D4 f
+	{ kTheSearchPath,		"searchPath",		false },	//				D4 f
 	{ kTheSelection,		"selection",		false },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false },	// D2 p
 	{ kTheSelStart,			"selStart",			false },	// D2 p
@@ -103,7 +119,7 @@ TheEntity entities[] = {
 	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
 	{ kTheSprite,			"sprite",			true  },	//				D4
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
-	{ kTheStage,			"stage",			false },
+	{ kTheStage,			"stage",			false },	//				D4 p
 	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
 	{ kTheStageColor,		"stageColor",		false },	//		D3 p
 	{ kTheStageLeft,		"stageLeft",		false },	// D2 f
@@ -120,19 +136,24 @@ TheEntity entities[] = {
 	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
 	{ kTheTime,				"time",				false },	// 		D3 f
 	{ kTheTimer,			"timer",			false },	// D2 p
-	{ kTheWindow,			"window",			false },
+	{ kTheTrace,			"trace",			false },	//				D4 p
+	{ kTheTraceLoad,		"traceLoad",		false },	//				D4 p
+	{ kTheTraceLogFile,		"traceLogFile",		false },	//				D4 p
+	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false },	//				D4 p
+	{ kTheWindow,			"window",			true },		//				D4
+	{ kTheWindowList,		"windowList",		false },	//				D4 p
 	{ kTheWords,			"words",			false },	//		 D3
 	{ kTheNOEntity, NULL, false }
 };
 
 TheEntityField fields[] = {
 	{ kTheSprite,	"backColor",	kTheBackColor },	// D2 p
-	{ kTheSprite,	"blend",		kTheBlend },
+	{ kTheSprite,	"blend",		kTheBlend },		//				D4 p
 	{ kTheSprite,	"bottom",		kTheBottom },		// D2 p
 	{ kTheSprite,	"castNum",		kTheCastNum },		// D2 p
 	{ kTheSprite,	"constraint",	kTheConstraint },	// D2 p
 	{ kTheSprite,	"cursor",		kTheCursor },		// D2 p
-	{ kTheSprite,	"editableText", kTheEditableText },
+	{ kTheSprite,	"editableText", kTheEditableText },	//				D4 p
 	{ kTheSprite,	"foreColor",	kTheForeColor },	// D2 p
 	{ kTheSprite,	"height",		kTheHeight },		// D2 p
 	{ kTheSprite,	"immediate",	kTheImmediate },	// D2 p
@@ -141,58 +162,63 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"lineSize",		kTheLineSize },		// D2 p
 	{ kTheSprite,	"locH",			kTheLocH },			// D2 p
 	{ kTheSprite,	"locV",			kTheLocV },			// D2 p
-	{ kTheSprite,	"moveable",		kTheMoveable },
-	{ kTheSprite,	"movieRate",	kTheMovieRate },
-	{ kTheSprite,	"movieTime",	kTheMovieTime },
+	{ kTheSprite,	"moveableSprite",kTheMoveableSprite },//			D4 p
+	{ kTheSprite,	"movieRate",	kTheMovieRate },	//				D4 P
+	{ kTheSprite,	"movieTime",	kTheMovieTime },	//				D4 P
 	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
 	{ kTheSprite,	"right",		kTheRight },		// D2 p
-	{ kTheSprite,	"scriptNum",	kTheScriptNum },
-	{ kTheSprite,	"startTime",	kTheStartTime },
+	{ kTheSprite,	"scoreColor",	kTheScoreColor },	//				D4 p
+	{ kTheSprite,	"scriptNum",	kTheScriptNum },	//				D4 p
+	{ kTheSprite,	"startTime",	kTheStartTime },	//				D4 p
 	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
-	{ kTheSprite,	"stopTime",		kTheStopTime },
+	{ kTheSprite,	"stopTime",		kTheStopTime },		//				D4 p
 	{ kTheSprite,	"top",			kTheTop },			// D2 p
-	{ kTheSprite,	"trails",		kTheTrails },
+	{ kTheSprite,	"trails",		kTheTrails },		//				D4 p
 	{ kTheSprite,	"type",			kTheType },			// D2 p
-	{ kTheSprite,	"visible",		kTheVisible },
-	{ kTheSprite,	"volume",		kTheVolume },
+	{ kTheSprite,	"visible",		kTheVisible },		//				D4 p
+	{ kTheSprite,	"volume",		kTheVolume },		//				D4 p
 	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
-	{ kTheCast,		"filename",		kTheFilename },
-	{ kTheCast,		"height",		kTheHeight },
-	{ kTheCast,		"loaded",		kTheLoaded },
-	{ kTheCast,		"modified",		kTheModified },
+	{ kTheCast,		"filename",		kTheFileName },		//				D4 p
+	{ kTheCast,		"height",		kTheHeight },		//				D4 p
+	{ kTheCast,		"loaded",		kTheLoaded },		//				D4 p
+	{ kTheCast,		"modified",		kTheModified },		//				D4 p
 	{ kTheCast,		"name",			kTheName },			//		D3 p
 	{ kTheCast,		"number",		kTheNumber },		//		D3 p
-	{ kTheCast,		"rect",			kTheRect },
-	{ kTheCast,		"purgePriority",kThePurgePriority }, // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
-	{ kTheCast,		"scriptText",	kTheScriptText },
-	{ kTheCast,		"width",		kTheWidth },
+	{ kTheCast,		"rect",			kTheRect },			//				D4 p
+	{ kTheCast,		"purgePriority",kThePurgePriority },//	 			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"scriptText",	kTheScriptText },	//				D4 p
+	{ kTheCast,		"width",		kTheWidth },		//				D4 p
 
 	// Shape fields
-	{ kTheCast,		"backColor",	kTheBackColor },
-	{ kTheCast,		"foreColor",	kTheForeColor },
+	{ kTheCast,		"backColor",	kTheBackColor },	//				D4 p
+	{ kTheCast,		"foreColor",	kTheForeColor },	//				D4 p
 
 	// Digital video fields
-	{ kTheCast,		"controller",	kTheController },
-	{ kTheCast,		"directToStage",kTheDirectToStage },
-	{ kTheCast,		"frameRate",	kTheFrameRate },
-	{ kTheCast,		"loop",			kTheLoop },
-	{ kTheCast,		"pausedAtStart",kThePausedAtStart },
-	{ kTheCast,		"preload",		kThePreload },
-	{ kTheCast,		"sound",		kTheSound }, // 0-1 off-on
+	{ kTheCast,		"center",		kTheCenter },		//				D4 p
+	{ kTheCast,		"controller",	kTheController },	//				D4 p
+	{ kTheCast,		"crop",			kTheCrop },			//				D4 p
+	{ kTheCast,		"directToStage",kTheDirectToStage },//				D4 p
+	{ kTheCast,		"duration",		kTheDuration },		//				D4 p
+	{ kTheCast,		"frameRate",	kTheFrameRate },	//				D4 p
+	{ kTheCast,		"loop",			kTheLoop },			//				D4 p
+	{ kTheCast,		"pausedAtStart",kThePausedAtStart },//				D4 p
+	{ kTheCast,		"preLoad",		kThePreLoad },		//				D4 p
+	{ kTheCast,		"sound",		kTheSound },		//				D4 p // 0-1 off-on
+	{ kTheCast,		"video",		kTheVideo },		//				D4 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth },
-	{ kTheCast,		"regPoint",		kTheRegPoint },
-	{ kTheCast,		"palette",		kThePalette },
+	{ kTheCast,		"regPoint",		kTheRegPoint },		//				D4 p
+	{ kTheCast,		"palette",		kThePalette },		//				D4 p
 	{ kTheCast,		"picture",		kThePicture },		//		D3 p
 
 	// TextCast fields
 	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
-	{ kTheCast,		"size",			kTheSize },
+	{ kTheCast,		"size",			kTheSize },			//				D4 p
 	{ kTheCast,		"text",			kTheText },			// D2 p
 
 	// Field fields
@@ -202,10 +228,15 @@ TheEntityField fields[] = {
 	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
 
-	{ kTheWindow,	"drawRect",		kTheDrawRect },
-	{ kTheWindow,	"filename",		kTheFilename },
-	{ kTheWindow,	"sourceRect",	kTheSourceRect },
-	{ kTheWindow,	"visible",		kTheVisible },
+	{ kTheWindow,	"drawRect",		kTheDrawRect },		//				D4 p
+	{ kTheWindow,	"fileName",		kTheFileName },		//				D4 p
+	{ kTheWindow,	"modal",		kTheModal },		//				D4 p
+	{ kTheWindow,	"rect",			kTheRect },			//				D4 p
+	{ kTheWindow,	"title",		kTheTitle },		//				D4 p
+	{ kTheWindow,	"titleVisible",	kTheTitleVisible },	//				D4 p
+	{ kTheWindow,	"sourceRect",	kTheSourceRect },	//				D4 p
+	{ kTheWindow,	"visible",		kTheVisible },		//				D4 p
+	{ kTheWindow,	"windowType",	kTheWindowType },	//				D4 p
 
 	{ kTheMenuItem,	"checkmark",	kTheCheckMark },	//		D3 p
 	{ kTheMenuItem, "enabled",		kTheEnabled },		//		D3 p
@@ -289,20 +320,20 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	d.toInt(); // Enforce Integer
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The sprite %d field %d setting over non-active score", id, field);
 		return;
 	}
 
-	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
 
 	if (!sprite)
 		return;
 
 	switch (field) {
 	case kTheCastNum:
-		if (_vm->_currentScore->_casts.contains(d.u.i)) {
-			sprite->_cast = _vm->_currentScore->_casts[d.u.i];
+		if (_vm->getCurrentScore()->_casts.contains(d.u.i)) {
+			sprite->_cast = _vm->getCurrentScore()->_casts[d.u.i];
 			sprite->_castId = d.u.i;
 		}
 		break;
@@ -327,7 +358,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheConstraint:
 		sprite->_constraint = d.u.i;
 		break;
-	case kTheMoveable:
+	case kTheMoveableSprite:
 		sprite->_moveable = d.u.i;
 		break;
 	case kTheBackColor:
@@ -491,12 +522,12 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The sprite %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
-	Sprite *sprite = _vm->_currentScore->getSpriteById(id);
+	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
 
 	if (!sprite)
 		return d;
@@ -528,7 +559,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheConstraint:
 		d.u.i = sprite->_constraint;
 		break;
-	case kTheMoveable:
+	case kTheMoveableSprite:
 		d.u.i = sprite->_moveable;
 		break;
 	case kTheBackColor:
@@ -602,14 +633,14 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The cast %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
 	Cast *cast;
 	CastInfo *castInfo;
-	if (!_vm->_currentScore->_casts.contains(id)) {
+	if (!_vm->getCurrentScore()->_casts.contains(id)) {
 		if (field == kTheLoaded) {
 			d.type = INT;
 			d.u.i = 0;
@@ -620,8 +651,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("The cast %d found", id);
 	}
 
-	cast = _vm->_currentScore->_casts[id];
-	castInfo = _vm->_currentScore->_castsInfo[id];
+	cast = _vm->getCurrentScore()->_casts[id];
+	castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	d.type = INT;
 
@@ -629,7 +660,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheCastType:
 		d.u.i = cast->type;
 		break;
-	case kTheFilename:
+	case kTheFileName:
 		d.toString();
 		d.u.s = &castInfo->fileName;
 		break;
@@ -655,7 +686,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			d.u.i = shape->bgCol;
 		}
 		break;
@@ -667,7 +698,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			d.u.i = shape->fgCol;
 		}
 		break;
@@ -693,13 +724,13 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	if (!_vm->_currentScore) {
+	if (!_vm->getCurrentScore()) {
 		warning("The cast %d field %d setting over non-active score", id, field);
 		return;
 	}
 
-	Cast *cast = _vm->_currentScore->_casts[id];
-	CastInfo *castInfo = _vm->_currentScore->_castsInfo[id];
+	Cast *cast = _vm->getCurrentScore()->_casts[id];
+	CastInfo *castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	if (!cast) {
 		warning("The cast %d found", id);
@@ -711,7 +742,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		cast->type = static_cast<CastType>(d.u.i);
 		cast->modified = 1;
 		break;
-	case kTheFilename:
+	case kTheFileName:
 		castInfo->fileName = *d.u.s;
 		break;
 	case kTheName:
@@ -733,7 +764,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			if (cast->type != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			shape->bgCol = d.u.i;
 			shape->modified = 1;
 		}
@@ -744,7 +775,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Field %d of cast %d not found", field, id);
 				return;
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->_currentScore->_casts[id]);
+			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
 			shape->fgCol = d.u.i;
 			shape->modified = 1;
 		}

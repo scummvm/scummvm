@@ -46,25 +46,34 @@ private:
 	static int _pianoCtr;
 	static int _bassCtr;
 	static byte *_buffer;
+	static double *_array;
+	static int _arrayIndex;
 private:
 	CSoundManager *_soundManager;
 	Common::Array<CMusicWaveFile> _items;
 	MusicWaveInstrument _instrument;
 	CProjectItem *_project;
 	CGameObject *_gameObjects[4];
-	int _field20;
-	int _field24;
-	int _field34;
-	int _field38;
-	int _field3C;
-	int _field40;
-	int _field44;
+	int _waveIndex;
+	int _readPos;
+	int _readIncrement;
+	uint _size;
+	uint _count;
 	int _field4C;
 private:
 	/**
 	 * Loads the specified wave file, and returns a CWaveFile instance for it
 	 */
 	CWaveFile *createWaveFile(const CString &name);
+
+	/**
+	 * Sets up an array used for figuring out the sequence in which to
+	 * play the different wave files for each instrument to give the
+	 * music based on the console's settings
+	 */
+	void setupArray(int minVal, int maxVal);
+public:
+	double _floatVal;
 public:
 	/**
 	 * Handles initialization of static fields
@@ -81,7 +90,7 @@ public:
 	/**
 	 * Sets the maximum number of allowed files that be defined
 	 */
-	void setSize(uint count);
+	void setFilesCount(uint count);
 
 	/**
 	 * Loads a new file into the list of available entries
@@ -105,9 +114,18 @@ public:
 	void trigger();
 
 	void reset();
-	void setState(int val);
+	void setSize(uint total);
 
-	int setData(const byte *data, int count);
+	/**
+	 * If there is any wave file currently specified, reads it in
+	 * and merges it into the supplied buffer
+	 */
+	int read(int16 *ptr, uint size);
+
+	/**
+	 * Figure out which wave file to use next
+	 */
+	void chooseWaveFile(int index, int freq);
 };
 
 } // End of namespace Titanic

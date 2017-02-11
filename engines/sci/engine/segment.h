@@ -528,7 +528,7 @@ public:
 	 */
 	void snug() {
 		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
-		resize(strlen((char *)_data) + 1, true);
+		resize(Common::strnlen((char *)_data, _size) + 1, true);
 	}
 
 	/**
@@ -808,7 +808,7 @@ public:
 		}
 
 		if (flags & kArrayTrimRight) {
-			source = data + strlen((char *)data) - 1;
+			source = data + Common::strnlen((char *)data, _size) - 1;
 			while (source > data && *source != showChar && *source <= kWhitespaceBoundary) {
 				*source = '\0';
 				--source;
@@ -844,7 +844,7 @@ public:
 					}
 					++source;
 
-					memmove(target, source, strlen((char *)source) + 1);
+					memmove(target, source, Common::strnlen((char *)source, _size - 1) + 1);
 				}
 			}
 		}

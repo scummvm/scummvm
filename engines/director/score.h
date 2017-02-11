@@ -109,6 +109,8 @@ public:
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
 
+	bool _stopPlay;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;
@@ -123,7 +125,6 @@ private:
 	Common::String _currentLabel;
 	uint32 _nextFrameTime;
 	uint32 _flags;
-	bool _stopPlay;
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
 	uint16 _stageColor;

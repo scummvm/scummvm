@@ -22,3 +22,9 @@ puppetSprite 15, true
 puppetTempo 30
 puppetTransition 1
 puppetTransition 2,4,20
+
+move cast 1, cast 3
+move cast 3
+put findEmpty(cast 10)
+pasteClipBoardInto cast 2
+put the width of cast 3

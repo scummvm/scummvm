@@ -496,6 +496,8 @@ public:
 
 		TS_ASSERT(span.getStringAt(0) == data);
 		TS_ASSERT(span.getStringAt(0, 2) == "he");
+		TS_ASSERT(span.getStringAt(2) == "llo");
+		TS_ASSERT(span.getStringAt(2, 3) == "llo");
 		span[3] = '\0';
 		TS_ASSERT(span.getStringAt(0) == "hel");
 	}

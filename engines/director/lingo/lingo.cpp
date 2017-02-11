@@ -36,18 +36,19 @@ struct EventHandlerType {
 	const char *name;
 } static const eventHandlerDescs[] = {
 	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },
-	{ kEventStopMovie,			"stopMovie" },
+	{ kEventStartMovie,			"startMovie" },			//		D3?
+	{ kEventStepMovie,			"stepMovie" },			//		D3?
+	{ kEventStopMovie,			"stopMovie" },			//		D3?
 
 	{ kEventNew,				"newSprite" },
 	{ kEventBeginSprite,		"beginSprite" },
 	{ kEventEndSprite,			"endSprite" },
 
-	{ kEventEnterFrame, 		"enterFrame" },
+	{ kEventEnterFrame, 		"enterFrame" },			//			D4
 	{ kEventPrepareFrame, 		"prepareFrame" },
 	{ kEventIdle,				"idle" },
 	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame, 			"exitFrame" },
+	{ kEventExitFrame, 			"exitFrame" },			//			D4
 
 	{ kEventActivateWindow,		"activateWindow" },
 	{ kEventDeactivateWindow,	"deactivateWindow" },
@@ -57,10 +58,10 @@ struct EventHandlerType {
 	{ kEventCloseWindow,		"closeWindow" },
 	{ kEventStart,				"start" },
 
-	{ kEventKeyUp,				"keyUp" },
-	{ kEventKeyDown,			"keyDown" },			// D2 as when
-	{ kEventMouseUp,			"mouseUp" },			// D2 as when
-	{ kEventMouseDown,			"mouseDown" },			// D2 as when
+	{ kEventKeyUp,				"keyUp" },				//			D4
+	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
+	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3?
+	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3?
 	{ kEventRightMouseDown,		"rightMouseDown" },
 	{ kEventRightMouseUp,		"rightMouseUp" },
 	{ kEventMouseEnter,			"mouseEnter" },
@@ -74,7 +75,6 @@ struct EventHandlerType {
 };
 
 Symbol::Symbol() {
-	name = NULL;
 	type = VOID;
 	u.s = NULL;
 	nargs = 0;
@@ -90,10 +90,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypeIds[t->name] = t->handler;
 		_eventHandlerTypes[t->handler] = t->name;
 	}
-
-	initBuiltIns();
-	initFuncs();
-	initTheEntities();
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
@@ -118,6 +114,10 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_exitRepeat = false;
 
 	_localvars = NULL;
+
+	initBuiltIns();
+	initFuncs();
+	initTheEntities();
 
 	warning("Lingo Inited");
 }
@@ -387,6 +387,7 @@ Common::String *Datum::toString() {
 		delete s;
 		s = u.s;
 		break;
+	case SYMBOL:
 	case OBJECT:
 		*s = Common::String::format("#%s", u.s->c_str());
 		break;
@@ -394,7 +395,7 @@ Common::String *Datum::toString() {
 		*s = "#void";
 		break;
 	case VAR:
-		*s = Common::String::format("var: #%s", u.sym->name);
+		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
