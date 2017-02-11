@@ -180,19 +180,23 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type != VOID) {
 		movie.toString();
 
-		Common::File file;
+		bool fileExists = false;
 
-		if (!file.open(*movie.u.s)) {
-			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-				Common::MacResManager resMan;
-				if (!resMan.open(*movie.u.s)) {
-					warning("Movie %s does not exist", movie.u.s->c_str());
-					return;
-				}
-			} else {
-				warning("Movie %s does not exist", movie.u.s->c_str());
-				return;
+		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+			Common::MacResManager resMan;
+			if (resMan.open(*movie.u.s)) {
+				fileExists = true;
 			}
+		} else {
+			Common::File file;
+			if (file.open(*movie.u.s)) {
+				fileExists = true;
+			}
+		}
+
+		if (!fileExists) {
+			warning("Movie %s does not exist", movie.u.s->c_str());
+			return;
 		}
 
 		_vm->_nextMovie = *movie.u.s;
