@@ -65,13 +65,13 @@ bool AudioBufferStream::endOfData() const {
 
 CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_rate(0), _flags(0), _soundType(Audio::Mixer::kPlainSoundType) {
+		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
 CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_rate(0), _flags(0), _soundType(Audio::Mixer::kPlainSoundType) {
+		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
@@ -170,7 +170,7 @@ void CWaveFile::load(byte *data, uint size) {
 
 	// Parse the wave header
 	Common::MemoryReadStream wavStream(data, size, DisposeAfterUse::NO);
-	Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags);
+	Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags, &_wavType);
 	_headerSize = wavStream.pos();
 }
 
@@ -197,10 +197,16 @@ void CWaveFile::reset() {
 }
 
 const int16 *CWaveFile::lock() {
+	enum { kWaveFormatPCM = 1 };
+
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
+		// Sanity checking that only raw 16-bit LE 22Khz waves can be locked
 		assert(_waveData && _rate == 22050);
 		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
+		assert(_wavType == kWaveFormatPCM);
+
+		// Return a pointer to the data section of the wave file
 		return (const int16 *)(_waveData + _headerSize);
 
 	default:

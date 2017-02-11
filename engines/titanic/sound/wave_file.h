@@ -43,6 +43,7 @@ private:
 	int _headerSize;
 	int _rate;
 	byte _flags;
+	uint16 _wavType;
 	QSoundManager *_soundManager;
 	Audio::SeekableAudioStream *_audioStream;
 private:
