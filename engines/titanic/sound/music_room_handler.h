@@ -71,10 +71,16 @@ private:
 
 	void updateAudio();
 	void fn1();
-	bool fn2(int index);
-	double fn3(int index, int arrIndex);
-	int getPitch(int index, int arrIndex);
 
+	/**
+	 * Updates the state of the instrument.
+	 * @returns Returns true if a given instrument is still active..
+	 * that is, that there is still more data that can be read from it to play
+	 */
+	bool updateInstrument(MusicInstrument instrument);
+
+	double fn3(MusicInstrument instrument, int arrIndex);
+	int getPitch(MusicInstrument instrument, int arrIndex);
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
