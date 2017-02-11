@@ -627,18 +627,51 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->draw();
 		break;
-	case kMusicVolumeChanged:
-		_musicVolumeLabel->setValue(_musicVolumeSlider->getValue());
+	case kMusicVolumeChanged: {
+		const int newValue = _musicVolumeSlider->getValue();
+		_musicVolumeLabel->setValue(newValue);
 		_musicVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+			updateSfxVolume(newValue);
+
+			if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+				updateSpeechVolume(newValue);
+			}
+		}
+
 		break;
-	case kSfxVolumeChanged:
+	}
+	case kSfxVolumeChanged: {
+		const int newValue = _sfxVolumeSlider->getValue();
 		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
 		_sfxVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+			updateMusicVolume(newValue);
+		}
+
+		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+			updateSpeechVolume(newValue);
+		}
+
 		break;
-	case kSpeechVolumeChanged:
-		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
+	}
+	case kSpeechVolumeChanged: {
+		const int newValue = _speechVolumeSlider->getValue();
+		_speechVolumeLabel->setValue(newValue);
 		_speechVolumeLabel->draw();
+
+		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
+			updateSfxVolume(newValue);
+
+			if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
+				updateMusicVolume(newValue);
+			}
+		}
+
 		break;
+	}
 	case kMuteAllChanged:
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
@@ -769,7 +802,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	// Disable speech volume slider, when we are in subtitle only mode.
 	if (_subToggleGroup)
 		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
-	if (_guioptions.contains(GUIO_NOSPEECH))
+	if (_guioptions.contains(GUIO_NOSPEECH) || _guioptions.contains(GUIO_NOSPEECHVOLUME))
 		ena = false;
 
 	_speechVolumeDesc->setEnabled(ena);
@@ -1140,6 +1173,27 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	else
 		warning("Wrong configuration: Both subtitles and speech are off. Assuming subtitles only");
 	return kSubtitlesSubs;
+}
+
+void OptionsDialog::updateMusicVolume(const int newValue) const {
+	_musicVolumeLabel->setValue(newValue);
+	_musicVolumeSlider->setValue(newValue);
+	_musicVolumeLabel->draw();
+	_musicVolumeSlider->draw();
+}
+
+void OptionsDialog::updateSfxVolume(const int newValue) const {
+	_sfxVolumeLabel->setValue(newValue);
+	_sfxVolumeSlider->setValue(newValue);
+	_sfxVolumeLabel->draw();
+	_sfxVolumeSlider->draw();
+}
+
+void OptionsDialog::updateSpeechVolume(const int newValue) const {
+	_speechVolumeLabel->setValue(newValue);
+	_speechVolumeSlider->setValue(newValue);
+	_speechVolumeLabel->draw();
+	_speechVolumeSlider->draw();
 }
 
 void OptionsDialog::reflowLayout() {
