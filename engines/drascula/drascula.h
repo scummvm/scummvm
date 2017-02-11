@@ -488,7 +488,7 @@ public:
 	void addKeyToBuffer(Common::KeyState& key);
 	void flushKeyBuffer();
 	void selectVerb(int);
-	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
+	int updateVolume(int prevVolume, int prevVolumeY);
 	void volumeControls();
 
 	bool saveLoadScreen();
