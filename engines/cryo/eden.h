@@ -121,12 +121,11 @@ private:
 	void useBank(int16 bank);
 	void sundcurs(int16 x, int16 y);
 	void rundcurs();
-	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false);
+	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false, bool onSubtitle = false);
 	void getglow(int16 x, int16 y, int16 w, int16 h);
 	void unglow();
 	void glow(int16 index);
 	void readPalette(byte *ptr);
-	void spriteOnSubtitle(int16 index, int16 x, int16 y);
 	void hideBars();
 	void showBars();
 	void saveMouthBackground();

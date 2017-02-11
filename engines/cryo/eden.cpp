@@ -1115,84 +1115,6 @@ void EdenGame::readPalette(byte *ptr) {
 	}
 }
 
-// Original name: spritesurbulle
-void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
-	byte *pix = _bankData;
-	byte *scr = _subtitlesViewBuf + x + y * _subtitlesXWidth;
-	if ((_curBankNum != 117) && (READ_LE_UINT16(pix) > 2))
-		readPalette(pix + 2);
-
-	pix += READ_LE_UINT16(pix);
-	pix += READ_LE_UINT16(pix + index * 2);
-	//  int16   height:9
-	//  int16   pad:6;
-	//  int16   flag:1;
-	byte h0 = *pix++;
-	byte h1 = *pix++;
-	int16 w = ((h1 & 1) << 8) | h0;
-	int16 h = *pix++;
-	byte mode = *pix++;
-	if (mode != 0xFF && mode != 0xFE)
-		return;
-	if (h1 & 0x80) {
-		// compressed
-		for (; h-- > 0;) {
-			for (int16 ww = w; ww > 0;) {
-				byte c = *pix++;
-				if (c >= 0x80) {
-					if (c == 0x80) {
-						byte fill = *pix++;
-						if (fill == 0) {
-							scr += 128 + 1;
-							ww -= 128 + 1;
-						} else {
-							byte runVal;
-							*scr++ = fill;  //TODO: wha?
-							*scr++ = fill;
-							ww -= 128 + 1;
-							for (runVal = 127; runVal--;)
-								*scr++ = fill;
-						}
-					} else {
-						byte fill = *pix++;
-						byte runVal = 255 - c + 2;
-						ww -= runVal;
-						if (fill == 0)
-							scr += runVal;
-						else {
-							for (; runVal--;)
-								*scr++ = fill;
-						}
-					}
-				} else {
-					byte runVal = c + 1;
-					ww -= runVal;
-					for (; runVal--;) {
-						byte p = *pix++;
-						if (p == 0)
-							scr++;
-						else
-							*scr++ = p;
-					}
-				}
-			}
-			scr += _subtitlesXWidth - w;
-		}
-	} else {
-		// uncompressed
-		for (; h--;) {
-			for (int16 ww = w; ww--;) {
-				byte p = *pix++;
-				if (p == 0)
-					scr++;
-				else
-					*scr++ = p;
-			}
-			scr += _subtitlesXWidth - w;
-		}
-	}
-}
-
 // Original name: sauvefondbouche
 void EdenGame::saveMouthBackground() {
 	rect_src.left = _curCharacterRect->left;
@@ -2484,8 +2406,8 @@ void EdenGame::my_bulle() {
 		byte x = *icons++;
 		byte y = *icons++;
 		byte s = *icons++;
-		spriteOnSubtitle(52, x + _subtitlesXCenter, y - 1);
-		spriteOnSubtitle(s + 9, x + _subtitlesXCenter + 1, y);
+		drawSprite(52, x + _subtitlesXCenter, y - 1, false, true);
+		drawSprite(s + 9, x + _subtitlesXCenter + 1, y, false, true);
 	}
 }
 

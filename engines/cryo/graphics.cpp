@@ -30,10 +30,12 @@
 namespace Cryo {
 
 // Original name: noclipax
-void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack) {
+void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack, bool onSubtitle) {
+	uint16 width = (!onSubtitle) ? 640 : _subtitlesXWidth;
 	byte *pix = _bankData;
-	byte *scr = _mainViewBuf + x + y * 640;
-	if (_curBankNum != 117 && (!_noPalette || withBlack)) {
+	byte *buf = (!onSubtitle) ? _mainViewBuf : _subtitlesViewBuf;
+	byte *scr = buf + x + y * width;
+	if (_curBankNum != 117 && (!_noPalette || withBlack || onSubtitle)) {
 		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
 	}
@@ -49,7 +51,7 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack) {
 	byte mode = *pix++;
 	if (mode != 0xFF && mode != 0xFE)
 		return;
-	if (y + h > 200)
+	if (y + h > 200 && !onSubtitle)
 		h -= (y + h - 200);
 	if (h1 & 0x80) {
 		// compressed
@@ -95,7 +97,7 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack) {
 					}
 				}
 			}
-			scr += 640 - w;
+			scr += width - w;
 		}
 	}
 	else {
@@ -108,7 +110,7 @@ void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack) {
 				else
 					*scr++ = p;
 			}
-			scr += 640 - w;
+			scr += width - w;
 		}
 	}
 }
