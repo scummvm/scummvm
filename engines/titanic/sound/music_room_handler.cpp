@@ -205,11 +205,11 @@ void CMusicRoomHandler::updateAudio() {
 	_audioBuffer->enterCriticalSection();
 	int size = _audioBuffer->getWriteBytesLeft();
 	int count;
-	uint16 *ptr;
+	int16 *ptr;
 
 	if (size > 0) {
 		// Null out the destination write area
-		uint16 *audioPtr = _audioBuffer->getWritePtr();
+		int16 *audioPtr = _audioBuffer->getWritePtr();
 		Common::fill(audioPtr, audioPtr + size / sizeof(uint16), 0);
 
 		for (int instrIdx = 0; instrIdx < 4; ++instrIdx) {

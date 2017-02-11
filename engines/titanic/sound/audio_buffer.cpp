@@ -46,14 +46,14 @@ byte *CAudioBuffer::getEnd() {
 	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
 }
 
-uint16 *CAudioBuffer::getReadPtr() {
+int16 *CAudioBuffer::getReadPtr() {
 	byte *ptr = getBegin();
-	return (uint16 *)(ptr + (_buffer.size() / 2 - _readBytesLeft));
+	return (int16 *)(ptr + (_buffer.size() / 2 - _readBytesLeft));
 }
 
-uint16 *CAudioBuffer::getWritePtr() {
+int16 *CAudioBuffer::getWritePtr() {
 	byte *ptr = getEnd();
-	return (uint16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
+	return (int16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
 }
 
 void CAudioBuffer::advanceRead(int size) {

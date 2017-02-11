@@ -45,7 +45,6 @@ private:
 	byte _flags;
 	QSoundManager *_soundManager;
 	Audio::SeekableAudioStream *_audioStream;
-	Audio::SoundHandle _soundHandle;
 private:
 	/**
 	 * Handles setup of fields shared by the constructors
@@ -60,8 +59,6 @@ public:
 	Audio::Mixer::SoundType _soundType;
 
 	LoadMode _loadMode;
-	int _field4;
-	int _field14;
 	CAudioBuffer *_audioBuffer;
 	DisposeAfterUse::Flag _disposeAudioBuffer;
 	int _channel;
@@ -127,12 +124,12 @@ public:
 	/**
 	 * Lock sound data for access
 	 */
-	const uint16 *lock();
+	const int16 *lock();
 
 	/**
 	 * Unlock sound data after a prior call to lock
 	 */
-	void unlock(const uint16 *ptr);
+	void unlock(const int16 *ptr);
 };
 
 } // End of namespace Titanic

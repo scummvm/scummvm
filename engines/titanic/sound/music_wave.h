@@ -120,7 +120,7 @@ public:
 	 * If there is any wave file currently specified, reads it in
 	 * and merges it into the supplied buffer
 	 */
-	int read(uint16 *ptr, uint size);
+	int read(int16 *ptr, uint size);
 
 	/**
 	 * Figure out which wave file to use next

@@ -64,7 +64,7 @@ public:
 	/**
 	 * Gets a pointer to the start of previously written data
 	 */
-	uint16 *getReadPtr();
+	int16 *getReadPtr();
 
 	/**
 	 * Returns the number of bytes that can be read
@@ -80,7 +80,7 @@ public:
 	 * Gets a pointer to the remainder of the audio buffer that
 	 * can be written to
 	 */
-	uint16 *getWritePtr();
+	int16 *getWritePtr();
 
 	/**
 	 * Returns how many bytes can be written before hitting the

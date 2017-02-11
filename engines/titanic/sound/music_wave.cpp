@@ -269,7 +269,7 @@ void CMusicWave::setSize(uint total) {
 	_count = 0;
 }
 
-int CMusicWave::read(uint16 *ptr, uint size) {
+int CMusicWave::read(int16 *ptr, uint size) {
 	if (!_size)
 		return 0;
 
@@ -278,17 +278,17 @@ int CMusicWave::read(uint16 *ptr, uint size) {
 
 	if (_waveIndex != -1) {
 		// Lock the specified wave file for access
-		const uint16 *data = _items[_waveIndex]._waveFile->lock();
+		const int16 *data = _items[_waveIndex]._waveFile->lock();
 		assert(data);
-		const uint16 *src = data;
+		const int16 *src = data;
 
 		// Loop through merging data from the wave file into the dest buffer
-		for (uint idx = 0; idx < (size / sizeof(uint16)); ++idx, _readPos += _readIncrement) {
+		for (uint idx = 0; idx < (size / sizeof(int16)); ++idx, _readPos += _readIncrement) {
 			uint srcPos = _readPos >> 8;
 			if (srcPos >= _count)
 				break;
 
-			uint16 val = READ_LE_UINT16(src + srcPos);
+			int16 val = READ_LE_UINT16(src + srcPos);
 			*ptr++ += val;
 		}
 

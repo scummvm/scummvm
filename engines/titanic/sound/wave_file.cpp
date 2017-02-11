@@ -29,6 +29,40 @@
 
 namespace Titanic {
 
+/**
+ * This creates a ScummVM audio stream around a CAudioBuffer buffer,
+ * allowing for streaming audio output for the music room music
+ */
+class AudioBufferStream : public Audio::SeekableAudioStream {
+private:
+	CAudioBuffer *_audioBuffer;
+public:
+	AudioBufferStream(CAudioBuffer *audioBuffer) : _audioBuffer(audioBuffer) {}
+
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return false; }
+	virtual bool endOfData() const;
+	virtual int getRate() const { return 22050; }
+	virtual Audio::Timestamp getLength() const { return Audio::Timestamp(); }
+	virtual bool seek(const Audio::Timestamp &where) { return false; }
+};
+
+int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesToRead = MIN((const uint)numSamples, _audioBuffer->getBytesToRead() / sizeof(uint16));
+	
+	const int16 *src = _audioBuffer->getReadPtr();
+	Common::copy(src, src + samplesToRead, buffer);
+	_audioBuffer->advanceRead(samplesToRead * 2);
+
+	return samplesToRead;
+}
+
+bool AudioBufferStream::endOfData() const {
+	return _audioBuffer->_disabled;
+}
+
+/*------------------------------------------------------------------------*/
+
 CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _soundType(Audio::Mixer::kPlainSoundType) {
@@ -43,8 +77,6 @@ CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(
 
 void CWaveFile::setup() {
 	_loadMode = LOADMODE_SCUMMVM;
-	_field4 = 0;
-	_field14 = 1;
 	_dataSize = 0;
 	_audioBuffer = nullptr;
 	_disposeAudioBuffer = DisposeAfterUse::NO;
@@ -53,7 +85,7 @@ void CWaveFile::setup() {
 
 CWaveFile::~CWaveFile() {
 	if (_audioStream) {
-		_soundManager->soundFreed(_soundHandle);
+		//_soundManager->soundFreed(_soundHandle);
 		delete _audioStream;
 	}
 
@@ -127,8 +159,8 @@ bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAft
 	_audioBuffer = buffer;
 	_disposeAudioBuffer = disposeAfterUse;
 	_loadMode = LOADMODE_AUDIO_BUFFER;
-	_field14 = 0;
 
+	_audioStream = new AudioBufferStream(_audioBuffer);
 	return true;
 }
 
@@ -164,19 +196,19 @@ void CWaveFile::reset() {
 	audioStream()->rewind();
 }
 
-const uint16 *CWaveFile::lock() {
+const int16 *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		assert(_waveData && _rate == 22050);
 		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
-		return (uint16 *)(_waveData + _headerSize);
+		return (const int16 *)(_waveData + _headerSize);
 
 	default:
 		return nullptr;
 	}
 }
 
-void CWaveFile::unlock(const uint16 *ptr) {
+void CWaveFile::unlock(const int16 *ptr) {
 	// No implementation needed in ScummVM
 }
 
