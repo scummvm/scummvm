@@ -48,7 +48,7 @@ public:
 };
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesToRead = MIN((const uint)numSamples, _audioBuffer->getBytesToRead() / sizeof(uint16));
+	int samplesToRead = MIN((const int)numSamples, (const int)(_audioBuffer->getBytesToRead() / sizeof(uint16)));
 	
 	const int16 *src = _audioBuffer->getReadPtr();
 	Common::copy(src, src + samplesToRead, buffer);
