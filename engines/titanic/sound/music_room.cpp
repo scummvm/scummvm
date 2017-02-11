@@ -62,7 +62,7 @@ void CMusicRoom::setupMusic(int volume) {
 		_musicHandler->setPitchControl2(BELLS, 1);
 		_musicHandler->setPitchControl2(SNAKE, 2);
 		_musicHandler->setPitchControl2(PIANO, 0);
-		_musicHandler->setPitchControl2(BELLS, 1);
+		_musicHandler->setPitchControl2(BASS, 1);
 
 		_musicHandler->setInversionControl2(BELLS, true);
 		_musicHandler->setInversionControl2(SNAKE, false);
