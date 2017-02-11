@@ -332,7 +332,7 @@ int CMusicRoomHandler::getPitch(MusicInstrument instrument, int arrIndex) {
 	const MusicRoomInstrument &ins2 = _array2[instrument];
 
 	if (ins1._inversionControl != ins2._inversionControl) {
-		val -= mObj._minVal * 2 + mObj._range;
+		val = mObj._minVal * 2 + mObj._range - val;
 	}
 
 	val += ins1._pitchControl + ins2._pitchControl;
