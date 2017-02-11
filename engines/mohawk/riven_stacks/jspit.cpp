@@ -225,12 +225,12 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 	_vm->_system->updateScreen();                      // Update
 	_vm->_video->playMovieBlockingRiven(1);            // Play handle movie
-	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
+	_vm->_gfx->scheduleTransition(kRivenTransitionPanDown);
 	_vm->changeToCard(_vm->getStack()->getCardStackId(0x18e77));  // Change to card facing up
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor (again)
 	_vm->_system->updateScreen();                      // Update
 	_vm->_video->playMovieBlockingRiven(4);            // Play carriage beginning to drop
-	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
+	_vm->_gfx->scheduleTransition(kRivenTransitionPanUp);
 	_vm->changeToCard(_vm->getStack()->getCardStackId(0x183a9));  // Change to card looking straight again
 	_vm->_video->playMovieBlockingRiven(2);
 
@@ -265,12 +265,12 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();                          // Update
 
 	if (gotClick) {
-		_vm->_gfx->scheduleTransition(16);                 // Schedule dissolve transition
+		_vm->_gfx->scheduleTransition(kRivenTransitionBlend);
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x18d4d));  // Move forward
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->updateScreen();                      // Update
 		_vm->_system->delayMillis(500);                    // Delay a half second before changing again
-		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
+		_vm->_gfx->scheduleTransition(kRivenTransitionPanLeft);
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x18ab5));  // Turn right
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->updateScreen();                      // Update

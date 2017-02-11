@@ -49,7 +49,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	_screenUpdateNesting = 0;
 	_screenUpdateRunning = false;
-	_scheduledTransition = -1;	// no transition
+	_scheduledTransition = kRivenTransitionNone;
 	_dirtyScreen = false;
 
 	_creditsImage = 302;
@@ -201,7 +201,7 @@ bool RivenGraphics::runScheduledWaterEffects() {
 	return false;
 }
 
-void RivenGraphics::scheduleTransition(uint16 id, Common::Rect rect) {
+void RivenGraphics::scheduleTransition(RivenTransition id, Common::Rect rect) {
 	_scheduledTransition = id;
 	_transitionRect = rect;
 }
@@ -217,16 +217,16 @@ void RivenGraphics::runScheduledTransition() {
 	// transitions were found by hacking scripts.
 
 	switch (_scheduledTransition) {
-	case 0:  // Swipe Left
-	case 1:  // Swipe Right
-	case 2:  // Swipe Up
-	case 3:  // Swipe Down
-	case 12: // Pan Left
-	case 13: // Pan Right
-	case 14: // Pan Up
-	case 15: // Pan Down
-	case 16: // Dissolve
-	case 17: // Dissolve (tspit CARD 155)
+	case kRivenTransitionWipeLeft:
+	case kRivenTransitionWipeRight:
+	case kRivenTransitionWipeUp:
+	case kRivenTransitionWipeDown:
+	case kRivenTransitionPanLeft:
+	case kRivenTransitionPanRight:
+	case kRivenTransitionPanUp:
+	case kRivenTransitionPanDown:
+	case kRivenTransitionBlend:
+	case kRivenTransitionBlend2: // (tspit CARD 155)
 		break;
 	default:
 		if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
@@ -240,7 +240,7 @@ void RivenGraphics::runScheduledTransition() {
 	_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(0, 0), _effectScreen->pitch, 0, 0, _effectScreen->w, _effectScreen->h);
 	_vm->_system->updateScreen();
 
-	_scheduledTransition = -1; // Clear scheduled transition
+	_scheduledTransition = kRivenTransitionNone; // Clear scheduled transition
 }
 
 void RivenGraphics::clearMainScreen() {
@@ -250,7 +250,7 @@ void RivenGraphics::clearMainScreen() {
 void RivenGraphics::fadeToBlack() {
 	// The transition speed is forced to best here
 	setTransitionSpeed(kRivenTransitionSpeedBest);
-	scheduleTransition(16);
+	scheduleTransition(kRivenTransitionBlend);
 	clearMainScreen();
 	runScheduledTransition();
 }
@@ -324,7 +324,7 @@ void RivenGraphics::updateCredits() {
 
 	if (_creditsImage < 304) {
 		// For the first two credit images, they are faded from black to the image and then out again
-		scheduleTransition(16);
+		scheduleTransition(kRivenTransitionBlend);
 
 		Graphics::Surface *frame = findImage(_creditsImage++)->getSurface();
 

@@ -30,6 +30,20 @@ namespace Mohawk {
 class MohawkEngine_Riven;
 class FliesEffect;
 
+enum RivenTransition {
+	kRivenTransitionNone      = -1,
+	kRivenTransitionWipeLeft  = 0,
+	kRivenTransitionWipeRight = 1,
+	kRivenTransitionWipeUp    = 2,
+	kRivenTransitionWipeDown  = 3,
+	kRivenTransitionPanLeft   = 12,
+	kRivenTransitionPanRight  = 13,
+	kRivenTransitionPanUp     = 14,
+	kRivenTransitionPanDown   = 15,
+	kRivenTransitionBlend     = 16,
+	kRivenTransitionBlend2    = 17
+};
+
 class RivenGraphics : public GraphicsManager {
 public:
 	RivenGraphics(MohawkEngine_Riven *vm);
@@ -60,7 +74,7 @@ public:
 	void runFliesEffect();
 
 	// Transitions
-	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
+	void scheduleTransition(RivenTransition id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
 	void fadeToBlack();
 	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
@@ -98,7 +112,7 @@ private:
 	FliesEffect *_fliesEffect;
 
 	// Transitions
-	int16 _scheduledTransition;
+	RivenTransition _scheduledTransition;
 	Common::Rect _transitionRect;
 	uint32 _transitionSpeed;
 

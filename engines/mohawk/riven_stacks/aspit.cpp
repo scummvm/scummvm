@@ -99,7 +99,7 @@ void ASpit::xaatrusbookback(uint16 argc, uint16 *argv) {
 	_vm->_inventory->backFromItemScript();
 }
 
-bool ASpit::pageTurn(int16 transition) {
+bool ASpit::pageTurn(RivenTransition transition) {
 	// Wait until the previous page turn sound completes
 	while (_vm->_sound->isEffectPlaying() && !_vm->shouldQuit()) {
 		if (!mouseIsDown()) {
@@ -137,7 +137,7 @@ void ASpit::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 		if (page == 1)
 			return;
 
-		if (!pageTurn(1)) {
+		if (!pageTurn(kRivenTransitionWipeRight)) {
 			return;
 		}
 
@@ -161,7 +161,7 @@ void ASpit::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 		if (((_vm->getFeatures() & GF_DEMO) && page == 6) || page == 10)
 			return;
 
-		if (!pageTurn(0)) {
+		if (!pageTurn(kRivenTransitionWipeLeft)) {
 			return;
 		}
 
@@ -237,7 +237,7 @@ void ASpit::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(5);
 
 	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(3);
+	_vm->_gfx->scheduleTransition(kRivenTransitionWipeDown);
 	_vm->getCard()->drawPicture(page);
 }
 
@@ -254,7 +254,7 @@ void ASpit::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(6);
 
 	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(2);
+	_vm->_gfx->scheduleTransition(kRivenTransitionWipeUp);
 	_vm->getCard()->drawPicture(page);
 }
 
