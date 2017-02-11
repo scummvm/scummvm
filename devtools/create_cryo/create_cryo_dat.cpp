@@ -178,6 +178,8 @@ static void emitStatic(FILE *f) {
 	}
 	
 	fwrite(kActionCursors, 1, kNumActionCursors, f);
+	fwrite(mapMode, 1, 12, f);
+	fwrite(cubeTextureCoords, 6 * 2 * 3 * 2, 3, f);
 }
 
 static int emitData(char *outputFilename) {
