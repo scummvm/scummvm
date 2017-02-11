@@ -173,6 +173,7 @@ int AgiEngine::agiInit() {
 #endif
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 
 	_game.mouseFence.setWidth(0); // Reset
 
@@ -423,6 +424,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_inventory = nullptr;
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 
 	_artificialDelayCurrentRoom = 0;
 	_artificialDelayCurrentPicture = 0;

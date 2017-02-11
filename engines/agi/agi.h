@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stack.h"
@@ -936,6 +937,7 @@ public:
 	int getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize);
 
 	bool _keyHoldMode;
+	Common::KeyCode _keyHoldModeLastKey;
 
 	// Keyboard
 	int doPollKeyboard();
