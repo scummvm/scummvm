@@ -312,7 +312,7 @@ struct perso_t {
 	uint16  _partyMask;      // party bit mask
 	byte    _id;         // character
 	byte    _flags;      // flags and kind
-	byte    _roomBankId;// index in kPersoRoomBankTable for specific room banks
+	byte    _roomBankId;// index in _personRoomBankTable for specific room banks
 	byte    _spriteBank;       // sprite bank
 	uint16  _items;      // inventory
 	uint16  _powers;     // obj of power bitmask
@@ -340,7 +340,7 @@ enum ObjectFlags {
 struct object_t {
 	byte   _id;
 	byte   _flags;
-	int    _locations;      // index in kObjectLocations
+	int    _locations;      // index in _objectLocations
 	uint16  _itemMask;
 	uint16  _powerMask;          // object of power bitmask
 	int16  _count;

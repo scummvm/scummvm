@@ -740,25 +740,25 @@ private:
 
 	// Loaded from cryo.dat
 	Follower followerList[15];
-	byte kLabyrinthPath[70];
-	char kDinoSpeedForCitaLevel[16];
-	char kTabletView[12];
-	char kPersoRoomBankTable[84];	// special character backgrounds for specific rooms
+	byte _labyrinthPath[70];
+	char _dinoSpeedForCitadelLevel[16];
+	char _tabletView[12];
+	char _personRoomBankTable[84];	// special character backgrounds for specific rooms
 
 	// Loaded from cryo.dat - Area transition descriptors
-	Goto gotos[130];
+	Goto _gotos[130];
 	object_t _objects[42];
-	uint16 kObjectLocations[45];
-	perso_t kPersons[58];
+	uint16 _objectLocations[45];
+	perso_t _persons[58];
 	Citadel _citadelList[7];
 
 	// Loaded from cryo.dat
 	Common::Rect _characterRects[19];
 	byte _characterArray[20][5];
-	Area kAreasTable[12];
+	Area _areasTable[12];
 	int16 tab_2CEF0[64];
 	int16 tab_2CF70[64];
-	byte kActionCursors[299];
+	byte _actionCursors[299];
 	byte _mapMode[12];
 	byte _cubeTextureCoords[3][6 * 2 * 3 * 2];
 	float _translationZ = -3400;
