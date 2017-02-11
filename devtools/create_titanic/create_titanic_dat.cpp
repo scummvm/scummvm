@@ -788,6 +788,36 @@ static const char *const STRINGS_DE[185] = {
 	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
 };
 
+static const char *const MUSIC_DATA[4] = {
+	"64,^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|8,^^^^ 5:A///|64,/|/|/|/|/|/|/"
+	"|/|/|/|/|/|/|/|/|/|^|^|^|^|^|^|^|^|^|16, ^B//|64,/|/|/|/|^|16,^C/"
+	"/|64,/|/|/|/|",
+	"2:8,^^^^B//a|//g//B//|g///B//a|//g//A//|B//^C//b|//a//a//|BCb/b//"
+	"a|//g//A//|g/+f/D//c|//b//gA/|g/^^C//C|//C//a//|BCb////a|//g//g//"
+	"|g/g//B/a|/g//////|//^^B//a|//g//B//|g///B//a|//g//B//|g//^C//b|/"
+	"/a//a//|BCb/b//a|//g//B//|g/+f/D//c|//b//gA/|g/^^C//C|//C//a//|BC"
+	"b////a|//g//g//|g/g//B/a|/g//////|3:^^B//a//|g//A//g/|/^B//a//|g/"
+	"/A//B/|b^ 3:C//b//|a//g//+f/|+fG/G/GA/|B/a/g///|B///+f//G|G/G/+f/"
+	"G/|^^e//d//|c//b//gA|g/B//a//|g//g//g/|g//B/a/g|//////^^|^^Ga///G"
+	"|////////|////////|////////|",
+	"2:8,^^^^^^D/|/E//E//E|/d//^^d/|/E//E//E|/E//^^G/|/d//d//d|/^^^^^d"
+	"/|/E//E//E|/d/^^^E/|/E//d/+F/|bD^^^^G/|/e//e//e|^^^^^^d/|/E//E//E"
+	"|//d///d/|//b/////|^^^^^^D/|/E//E//E|/d//^^d/|/E//E//E|/E//^^G/|/"
+	"d//d//d|/^^^^^d/|/E//E//E|/d/^^^E/|/E//d/d/|d/^^^^G/|/e//e//e|^^^"
+	"^^^d/|/E//E//E|//d///d/|//b/////|3:D///c//b|//b//b//|D///c//b|//b"
+	"//g//|E///d//c|//b//a//|aB/B/BC/|D/c/b///|^^^D//DE|/E/E/d/d|//E/g"
+	"//g|//g//d//|^^^^g//E|//E//E//|d///d///|b///////|// 3:Db///C|///b"
+	"/// 5:A|64,/|/|/|/|/|/|/|/|",
+	"2:8,^^G//+f//|e//e//e/|//G//+f//|e//e//+F/|G/a//g//|+f//+f//+f/|/"
+	"/G//+F//|e//e//e/|//B//a//|g//e///d|//c//b//|a//a//a/|+f/G// 2:+F"
+	"//|e//e//C/|//b/g/+f/|//G/////|^^G//+f//|e//e//e/|//G//+f//|e//e/"
+	"/e/|//a//g//|+f//+f//+f/|//G//+F//|e//e//e/|//B//a//|g//e///d|/  "
+	"2:dC//b//|a//a//a/|+f/G//+F//|e//e//C/|//b/g/+f/|//G/////|d//d//d"
+	"/|/E//E//d|d//d//E/|/+F//G//b|a//a//a/|/D//D// 3:D|//g/g//D|/d/G/"
+	"///|^^b//b//|b//ba/B/|c//B//a/|/g//+f//+f|G//+F//e/|/c//C///|b/g/"
+	"+f///|G///////|G///////|C///////|////////|////////|"
+};
+
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
@@ -1269,6 +1299,7 @@ void writeData() {
 	writeStringArray("TEXT/REPLACEMENTS2", TEXT_REPLACEMENTS2[_version], 1576);
 	writeStringArray("TEXT/REPLACEMENTS3", TEXT_REPLACEMENTS3[_version], 82);
 	writeStringArray("TEXT/PRONOUNS", TEXT_PRONOUNS[_version], 15);
+	writeStringArray("MUSIC/PARSER", MUSIC_DATA, 4);
 
 	const int SENTENCES_DEFAULT[3] = { 0x5C0130, 0x5BEFC8, 0x5BE008 };
 	const int SENTENCES_BARBOT[2][3] = {
