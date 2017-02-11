@@ -20,13 +20,16 @@
  *
  */
 
-#include "director/lingo/lingo.h"
-#include "common/file.h"
 #include "audio/decoders/wave.h"
+#include "common/file.h"
+#include "common/macresman.h"
 #include "common/util.h"
+
+#include "graphics/macgui/macwindowmanager.h"
+
+#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/sound.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 namespace Director {
 
@@ -180,8 +183,16 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		Common::File file;
 
 		if (!file.open(*movie.u.s)) {
-			warning("Movie %s does not exist", movie.u.s->c_str());
-			return;
+			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+				Common::MacResManager resMan;
+				if (!resMan.open(*movie.u.s)) {
+					warning("Movie %s does not exist", movie.u.s->c_str());
+					return;
+				}
+			} else {
+				warning("Movie %s does not exist", movie.u.s->c_str());
+				return;
+			}
 		}
 
 		_vm->_nextMovie = *movie.u.s;
