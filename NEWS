@@ -15,6 +15,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  MADS:
    - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
 
+ TsAGE:
+   - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
+
 1.9.0 (2016-10-17)
  New Games:
    - Added support for Myst.
