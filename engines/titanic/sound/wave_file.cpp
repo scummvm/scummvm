@@ -48,12 +48,14 @@ public:
 };
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
+	_audioBuffer->enterCriticalSection();
 	int samplesToRead = MIN((const int)numSamples, (const int)(_audioBuffer->getBytesToRead() / sizeof(uint16)));
 	
 	const int16 *src = _audioBuffer->getReadPtr();
 	Common::copy(src, src + samplesToRead, buffer);
 	_audioBuffer->advanceRead(samplesToRead * 2);
 
+	_audioBuffer->leaveCriticalSection();
 	return samplesToRead;
 }
 
