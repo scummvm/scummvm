@@ -1063,10 +1063,23 @@ void Lingo::call(Common::String name, int nargs) {
 	}
 
 	if (sym->type == BLTIN || sym->type == FBLTIN) {
-		if (sym->u.bltin == b_factory)
+		if (sym->u.bltin == b_factory) {
 			g_lingo->factoryCall(name, nargs);
-		else
+		} else {
+			int stackSize = _stack.size() - nargs;
+
 			(*sym->u.bltin)(nargs);
+
+			int stackNewSize = _stack.size();
+
+			if (sym->type == FBLTIN) {
+				if (stackNewSize - stackSize != 1)
+					warning("built-in function %s did not return value", name.c_str());
+			} else {
+				if (stackNewSize - stackSize != 0)
+					warning("built-in procedure %s returned extra %d values", name.c_str(), stackNewSize - stackSize);
+			}
+		}
 
 		return;
 	}
