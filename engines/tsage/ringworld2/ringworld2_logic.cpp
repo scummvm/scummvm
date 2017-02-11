@@ -1972,11 +1972,11 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 	case 0:
 		// Draw from uncompressed source
 		for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-			for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
+			for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, ++y) {
 				// TODO: Check of _subData._drawType was done for two different kinds of
 				// line slice drawing in original
 				const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-				byte *pDest = (byte *)dest.getBasePtr(0, y++);
+				byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 				Common::copy(pSrc, pSrc + _subData._sliceSize, pDest);
 			}
@@ -1988,12 +1988,12 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 		case 0xfe:
 			// Draw from uncompressed source with optional skipped rows
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, playerBounds.top++) {
+				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, ++y) {
 					int offset = READ_LE_UINT16(sliceData1 + sliceNum * 2);
 
 					if (offset) {
 						const byte *pSrc = (const byte *)sliceDataStart + offset;
-						byte *pDest = (byte *)dest.getBasePtr(0, 0);
+						byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 						//Common::copy(pSrc, pSrc + playerBounds.width(), pDest);
 						rleDecode(pSrc, pDest, playerBounds.width());
@@ -2004,11 +2004,11 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 		case 0xff:
 			// Draw from RLE compressed source
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, playerBounds.top++) {
+				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, ++y) {
 					// TODO: Check of _subData._drawType was done for two different kinds of
 					// line slice drawing in original
 					const byte *pSrc = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-					byte *pDest = (byte *)dest.getBasePtr(0, 0);
+					byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 					rleDecode(pSrc, pDest, _subData._sliceSize);
 				}
@@ -2020,10 +2020,10 @@ void AnimationPlayer::drawFrame(int sliceIndex) {
 			byte *sliceData2 = &slices._pixelData[slice2._sliceOffset - 96];
 
 			for (int sliceNum = 0; sliceNum < _subData._ySlices; ++sliceNum) {
-				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex) {
+				for (int yIndex = 0; yIndex < _sliceHeight; ++yIndex, ++y) {
 					const byte *pSrc1 = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData2 + sliceNum * 2);
 					const byte *pSrc2 = (const byte *)sliceDataStart + READ_LE_UINT16(sliceData1 + sliceNum * 2);
-					byte *pDest = (byte *)dest.getBasePtr(0, y++);
+					byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 					if (slice2._drawMode == 0) {
 						// Uncompressed background, foreground compressed
