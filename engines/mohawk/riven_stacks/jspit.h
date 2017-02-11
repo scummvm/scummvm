@@ -24,6 +24,7 @@
 #define RIVEN_STACKS_JSPIT_H
 
 #include "mohawk/riven_stacks/domespit.h"
+#include "mohawk/video.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -92,6 +93,8 @@ public:
 private:
 	int jspitElevatorLoop();
 	void redrawWharkNumberPuzzle(uint16 overlay, uint16 number);
+
+	void sunnersPlayVideo(VideoEntryPtr &video, uint32 destCardGlobalId);
 };
 
 } // End of namespace RivenStacks

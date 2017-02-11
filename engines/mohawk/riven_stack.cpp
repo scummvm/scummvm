@@ -268,6 +268,10 @@ bool RivenStack::mouseIsDown() const {
 	return _mouseIsDown;
 }
 
+void RivenStack::mouseForceUp() {
+	_mouseIsDown = false;
+}
+
 RivenNameList::RivenNameList() {
 
 }

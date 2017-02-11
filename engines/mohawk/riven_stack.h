@@ -120,7 +120,11 @@ public:
 	/** Handle a mouse move event */
 	void onMouseMove(const Common::Point &mouse);
 
+	/** Is the left mouse button currently pressed? */
 	bool mouseIsDown() const;
+
+	/** Force the left mouse button to be considered unpressed until the next mouse click */
+	void mouseForceUp();
 
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
