@@ -62,6 +62,7 @@ struct Follower {      // Characters on Mirror screen
 	int16       ff_E;
 };
 
+namespace PersonId {
 enum PersonId {
 	pidGregor = 0,                          // The King
 	pidDina,                                // Pink dino
@@ -86,7 +87,9 @@ enum PersonId {
 	pidDinosaur,                            // different species of friendly dino
 	pidEnemy                                // different species of enemy dino
 };
+}
 
+namespace PersonMask {
 enum PersonMask {
 	pmGregor = 1,
 	pmDina   = 2,
@@ -104,7 +107,9 @@ enum PersonMask {
 	pmEnemy  = 0x2000,
 	pmMorkus = 0x4000
 };
+}
 
+namespace PersonFlags {
 enum PersonFlags {
 	pfType0 = 0,
 	pftTyrann,
@@ -128,7 +133,9 @@ enum PersonFlags {
 	pfInParty = 0x40,
 	pf80 = 0x80
 };
+}
 
+namespace Objects {
 enum Objects {
 	obNone,
 	obWayStone,
@@ -178,6 +185,7 @@ enum Objects {
 	obTablet5,
 	obTablet6
 };
+}
 
 struct Goto {
 	byte   _areaNum;    // target area
@@ -223,6 +231,7 @@ struct Rect {
 	int16   left, top, right, bottom;
 };
 
+namespace Areas {
 enum Areas {
 	arMo = 1,
 	arTausCave,
@@ -237,7 +246,9 @@ enum Areas {
 	arWhiteArch,
 	arMoorkusLair
 };
+}
 
+namespace AreaFlags {
 enum AreaFlags {
 	afFlag1 = 1,
 	afFlag2 = 2,
@@ -253,6 +264,7 @@ enum AreaFlags {
 	TyrannSighted = 0x4000,
 	afFlag8000 = 0x8000
 };
+}
 
 struct Room {
 	byte    _id;
@@ -277,8 +289,10 @@ struct Area {
 	int16  _visitCount;
 };
 
+namespace AreaType {
 enum AreaType {
 	atCitadel = 1,
 	atValley = 2,
 	atCave = 3
 };
+}
