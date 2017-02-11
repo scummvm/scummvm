@@ -4603,7 +4603,7 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 	debug("* Loading icon - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / sizeof(Icon);
+	int count = size / 14;	// sizeof(Icon)
 	for (int i = 0; i < count; i++) {
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			buffer[i].sx = _bigfile.readSint16BE();
@@ -4638,7 +4638,7 @@ void EdenGame::loadRoomFile(uint16 num, Room *buffer) {
 	debug("* Loading room - Resource %d (%s) at 0x%X, %d bytes", num, file->_name.c_str(), offs, size);
 	_bigfile.seek(offs, SEEK_SET);
 
-	int count = size / sizeof(Room);
+	int count = size / 11;	// sizeof(Room)
 	for (int i = 0; i < count; i++) {
 		buffer[i]._id = _bigfile.readByte();
 		for (int j = 0; j < 4; j++)
@@ -4750,21 +4750,21 @@ void EdenGame::loadpermfiles() {
 	const int kNumActionCursors = 299;
 
 	const int expectedDataSize =
-		kNumIcons * sizeof(Icon) +
-		kNumRooms * sizeof(Room) +
-		kNumFollowers * sizeof(Follower) +
+		kNumIcons * 14 +		// sizeof(Icon)
+		kNumRooms * 11 +		// sizeof(Room)
+		kNumFollowers * 16 +	// sizeof(Follower)
 		kNumLabyrinthPath +
 		kNumDinoSpeedForCitaLevel +
 		kNumTabletView +
 		kNumPersoRoomBankTable +
-		kNumGotos * sizeof(Goto) +
-		kNumObjects * sizeof(object_t) +
+		kNum_gotos * 5 +			// sizeof(Goto)
+		kNumObjects * 10 +		// sizeof(object_t)
 		kNumObjectLocations * 2 +
-		kNumPersons * sizeof(perso_t) +
-		kNumCitadel * sizeof(Citadel) +
+		kNumPersons * 18 +		// sizeof(perso_t)
+		kNumCitadel * 6 +		// sizeof(Citadel)
 		kNumCharacterRects * 8 +
 		kNumCharacters * 5 +
-		kNumAreas * (sizeof(Area) - 4) +
+		kNumAreas * 10 +		// (sizeof(Area) - 4)
 		64 * 2 +
 		64 * 2 +
 		kNumActionCursors;
@@ -4819,7 +4819,7 @@ void EdenGame::loadpermfiles() {
 		convertMacToPC();
 
 		// Skip the icons and rooms of the DOS version
-		f.skip(kNumIcons * sizeof(Icon) + kNumRooms * sizeof(Room));
+		f.skip(kNumIcons * 14 + kNumRooms * 11);
 		break;
 	default:
 		error("Unsupported platform");
@@ -4843,7 +4843,7 @@ void EdenGame::loadpermfiles() {
 	f.read(kDinoSpeedForCitaLevel, kNumDinoSpeedForCitaLevel);
 	f.read(kTabletView, kNumTabletView);
 	f.read(kPersoRoomBankTable, kNumPersoRoomBankTable);
-	f.read(gotos, kNumGotos * sizeof(Goto));
+	f.read(gotos, kNumGotos * 5);	// sizeof(Goto)
 
 	for (int i = 0; i < kNumObjects; i++) {
 		_objects[i]._id = f.readByte();
