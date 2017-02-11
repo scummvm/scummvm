@@ -34,6 +34,41 @@
 
 namespace Drascula {
 
+void DrasculaEngine::syncSoundSettings() {
+	// Sync the engine with the config manager
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	// We need to handle the speech mute separately here. This is because the
+	// engine code should be able to rely on all speech sounds muted when the
+	// user specified subtitles only mode, which results in "speech_mute" to
+	// be set to "true". The global mute setting has precedence over the
+	// speech mute setting though.
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
+
+	int voiceVolume = ConfMan.getInt("speech_volume");
+	int musicVolume = ConfMan.getInt("music_volume");
+	// If the music and voice volume are correct, don't change anything.
+	// Otherwise compute the master volume using an approximation of sqrt(max) * 16 which would result in the master
+	// volume being the same value as the max of music and voice.
+	if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) != voiceVolume || _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) != musicVolume) {
+		int masterVolume = MAX(musicVolume, voiceVolume) * 2 / 3 + 86;
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, masterVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, voiceVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, voiceVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+	}
+}
+
 int DrasculaEngine::updateVolume(int prevVolume, int prevVolumeY) {
 	prevVolumeY += 10;
 	if (_mouseY < prevVolumeY && prevVolume < 15)
@@ -112,9 +147,12 @@ void DrasculaEngine::volumeControls() {
 			voiceVolume = (masterVolume + 1) * (voiceVolume + 1) - 1;
 			_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, voiceVolume);
 			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, voiceVolume);
+			ConfMan.setInt("speech_volume", voiceVolume);
+			ConfMan.setInt("sfx_volume", voiceVolume);
 
 			musicVolume = (masterVolume + 1) * (musicVolume + 1) - 1;
 			_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+			ConfMan.setInt("music_volume", musicVolume);
 		}
 
 	}

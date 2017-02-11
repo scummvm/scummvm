@@ -325,6 +325,8 @@ public:
 	virtual ~DrasculaEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	virtual void syncSoundSettings();
+
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;
 	uint32 getFeatures() const;
