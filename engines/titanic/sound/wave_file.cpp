@@ -115,11 +115,11 @@ bool CWaveFile::loadSound(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	uint size = stream->size();
-	byte *data = new byte[size];
-	stream->read(data, size);
+	uint wavSize = stream->size();
+	byte *data = new byte[wavSize];
+	stream->read(data, wavSize);
 
-	load(data, size);
+	load(data, wavSize);
 	_soundType = Audio::Mixer::kSFXSoundType;
 	return true;
 }
@@ -145,12 +145,12 @@ bool CWaveFile::loadMusic(const CString &name) {
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
-	uint size = stream->size();
-	byte *data = new byte[size];
-	stream->read(data, size);
+	uint wavSize = stream->size();
+	byte *data = new byte[wavSize];
+	stream->read(data, wavSize);
 	delete stream;
 
-	load(data, size);
+	load(data, wavSize);
 	_soundType = Audio::Mixer::kMusicSoundType;
 	return true;
 }
