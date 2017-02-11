@@ -476,9 +476,9 @@ void RivenSimpleCommand::runExternalCommand(uint16 op, uint16 argc, uint16 *argv
 // Parameters 1-4: transition rectangle
 void RivenSimpleCommand::transition(uint16 op, uint16 argc, uint16 *argv) {
 	if (argc == 1)
-		_vm->_gfx->scheduleTransition(argv[0]);
+		_vm->_gfx->scheduleTransition((RivenTransition) argv[0]);
 	else
-		_vm->_gfx->scheduleTransition(argv[0], Common::Rect(argv[1], argv[2], argv[3], argv[4]));
+		_vm->_gfx->scheduleTransition((RivenTransition) argv[0], Common::Rect(argv[1], argv[2], argv[3], argv[4]));
 }
 
 // Command 19: reload card

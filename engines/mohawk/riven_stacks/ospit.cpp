@@ -228,7 +228,7 @@ void OSpit::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(12);
 
 	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(1);
+	_vm->_gfx->scheduleTransition(kRivenTransitionWipeRight);
 	_vm->getCard()->drawPicture(page);
 }
 
@@ -245,7 +245,7 @@ void OSpit::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(13);
 
 	// Now update the screen :)
-	_vm->_gfx->scheduleTransition(0);
+	_vm->_gfx->scheduleTransition(kRivenTransitionWipeLeft);
 	_vm->getCard()->drawPicture(page);
 }
 
