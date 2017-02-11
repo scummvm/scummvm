@@ -110,7 +110,7 @@ static void emitStatic(FILE *f) {
 	fwrite(kDinoSpeedForCitaLevel, 1, kNumDinoSpeedForCitaLevel, f);
 	fwrite(kTabletView, 1, kNumTabletView, f);
 	fwrite(kPersoRoomBankTable, 1, kNumPersoRoomBankTable, f);
-	fwrite(gotos, sizeof(Goto), kNumGotos, f);
+	fwrite(gotos, 5, kNumGotos, f);	// sizeof(Goto)
 	
 	for (int i = 0; i < kNumObjects; i++) {
 		writeLE<byte>(f, _objects[i]._id);
