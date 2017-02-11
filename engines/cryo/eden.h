@@ -761,9 +761,16 @@ private:
 	byte _actionCursors[299];
 	byte _mapMode[12];
 	byte _cubeTextureCoords[3][6 * 2 * 3 * 2];
-	float _translationZ = -3400;
-	float flt_2DF80 = -3400;
-	float flt_2DF84 = 200;
+
+	int32 _translationZ;
+	int8 _zDirection;	// 1 (up) or -1 (down)
+
+	// Torch/glow related
+	int16 _torchTick;
+	int16 _glowIndex;
+	int16 _torchCurIndex;
+
+	int _cursCenter;
 };
 
 }

@@ -806,10 +806,6 @@ struct Cube {
 	Point3D   *_vertices;
 };
 
-extern float _translationZ;
-extern float flt_2DF80;
-extern float flt_2DF84;
-
 struct XYZ {
 	signed short x, y, z;
 };

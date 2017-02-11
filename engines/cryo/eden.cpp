@@ -49,13 +49,10 @@
 namespace Cryo {
 
 #define CRYO_DAT_VER 1	// 1 byte
-
-int16 _torchTick = 0;
-int16 _glowIndex = 0;
-int16 _torchCurIndex = 0;
-
-bool  _allowDoubled = true;
-int   _cursCenter = 11;
+#define Z_RESET -3400
+#define Z_STEP 200
+#define Z_UP 1
+#define Z_DOWN -1
 
 EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	static uint8 statTab2CB1E[8][4] = {
@@ -170,6 +167,14 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 		for (int j = 0; j < 4; j++)
 			tab_2CB1E[i][j] = statTab2CB1E[i][j];
 	}
+
+	_translationZ = Z_RESET;
+	_zDirection = Z_UP;
+
+	_torchTick = 0;
+	_glowIndex = 0;
+	_torchCurIndex = 0;
+	_cursCenter = 11;
 }
 
 void EdenGame::removeConsole() {
@@ -5875,19 +5880,18 @@ void EdenGame::signon(const char *s) {
 
 void EdenGame::FRDevents() {
 	_vm->pollEvents();
-	if (_allowDoubled) {
+
 #if 0 // CLKeyboard_IsScanCodeDown currently always returns false
-		if (_vm->isScanCodeDown(0x30)) { //TODO: const
-			if (!_keyboardHeld) {
-				_doubledScreen = !_doubledScreen;
-				_mainView->_doubled = _doubledScreen;
-				CLBlitter_FillScreenView(0);
-				_keyboardHeld = true;
-			}
-		} else
+	if (_vm->isScanCodeDown(0x30)) { //TODO: const
+		if (!_keyboardHeld) {
+			_doubledScreen = !_doubledScreen;
+			_mainView->_doubled = _doubledScreen;
+			CLBlitter_FillScreenView(0);
+			_keyboardHeld = true;
+		}
+	} else
 #endif
-		_keyboardHeld = false;
-	}
+	_keyboardHeld = false;
 
 	int16 mouseY;
 	int16 mouseX;
@@ -6361,19 +6365,19 @@ void EdenGame::showMovie(char arg1) {
 		CLBlitter_CopyView2Screen(_hnmView);
 		assert(_vm->_screenView->_pitch == 320);
 		_vm->pollEvents();
-		if (_allowDoubled) {
+
 #if 0 // CLKeyboard_IsScanCodeDown currently always returns false
-			if (_vm->isScanCodeDown(0x30)) { //TODO: const
-				if (!_keyboardHeld) {
-					_doubledScreen = !_doubledScreen;
-					_hnmView->_doubled = _doubledScreen;   //TODO: but mainview ?
-					CLBlitter_FillScreenView(0);
-					_keyboardHeld = true;
-				}
-			} else
+		if (_vm->isScanCodeDown(0x30)) { //TODO: const
+			if (!_keyboardHeld) {
+				_doubledScreen = !_doubledScreen;
+				_hnmView->_doubled = _doubledScreen;   //TODO: but mainview ?
+				CLBlitter_FillScreenView(0);
+				_keyboardHeld = true;
+			}
+		} else
 #endif
-			_keyboardHeld = false;
-		}
+		_keyboardHeld = false;
+
 		if (arg1) {
 			if (_vm->isMouseButtonDown()) {
 				if (!_mouseHeld) {
@@ -8889,14 +8893,14 @@ void EdenGame::Eden_dep_and_rot() {
 	case 5:
 		_rotationAngleZ = 0;
 		_rotationAngleX = 0;
-		_translationZ += flt_2DF84;
-		if ((_translationZ < -3600.0 + flt_2DF80) || _translationZ > flt_2DF80)
-			flt_2DF84 = -flt_2DF84;
+		_translationZ += _zDirection * Z_STEP;
+		if ((_translationZ < -3600 + Z_RESET) || _translationZ > Z_RESET)
+			_zDirection = -_zDirection;
 		break;
 	case 6:
 		_rotationAngleZ = 0;
 		_rotationAngleX = 0;
-		_translationZ = flt_2DF80;
+		_translationZ = Z_RESET;
 		break;
 	case 7:
 		_rotationAngleZ -= 2;
@@ -8908,22 +8912,22 @@ void EdenGame::Eden_dep_and_rot() {
 	case 8:
 		_rotationAngleZ = 0;
 		_rotationAngleX = 0;
-		_translationZ = flt_2DF80;
+		_translationZ = Z_RESET;
 		break;
 	case 9:
 		_rotationAngleZ = 0;
 		_rotationAngleX = 0;
-		_translationZ = flt_2DF80;
+		_translationZ = Z_RESET;
 		break;
 	}
 }
 
 void EdenGame::restoreZDEP() {
-	flt_2DF84 = 200.0;
-	if (_translationZ < flt_2DF80)
-		_translationZ += flt_2DF84;
-	if (_translationZ > flt_2DF80)
-		_translationZ -= flt_2DF84;
+	_zDirection = Z_UP;
+	if (_translationZ < Z_RESET)
+		_translationZ += _zDirection * Z_STEP;
+	if (_translationZ > Z_RESET)
+		_translationZ -= _zDirection * Z_STEP;
 }
 
 // Original name: affiche_polygone_mapping
