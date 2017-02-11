@@ -20,12 +20,10 @@
  *
  */
 
-#include "cryo/defs.h"
-#include "cryo/cryolib.h"
+#pragma once
+#include "eden.h"
 
-namespace Cryo {
-
-Follower followerList[] = {
+Follower followerList[15] = {
 //            char,                 X,  sx, sy,  ex,  ey,bank,
 	{ PersonId::pidGregor,          5, 211,  9, 320, 176, 228,   0,  0 },
 	{ PersonId::pidEloi,            4, 162, 47, 223, 176, 228, 112, 78 },
@@ -44,15 +42,7 @@ Follower followerList[] = {
 	{ -1,                          -1,  -1, -1,  -1,  -1,  -1,  -1, -1 }
 };
 
-
-/*
-  Labyrinth of Mo
-
-  | | | | | | | |
-
-*/
-
-byte kLabyrinthPath[] = {
+byte kLabyrinthPath[70] = {
 // each nibble tells which direction to choose to exit the labyrinth
 	0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
 	0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
@@ -64,7 +54,7 @@ byte kLabyrinthPath[] = {
 
 char kDinoSpeedForCitaLevel[16] = { 1, 2, 3, 4, 4, 5, 6, 7, 8, 9 };
 
-char kTabletView[] = {          //TODO: make as struct?
+char kTabletView[12] = {          //TODO: make as struct?
 	// opposite tablet id, video id
 	Objects::obUnused10, 83,
 	Objects::obUnused10, 84,
@@ -75,7 +65,7 @@ char kTabletView[] = {          //TODO: make as struct?
 };
 
 // special character backgrounds for specific rooms
-char kPersoRoomBankTable[] = {
+char kPersoRoomBankTable[84] = {
 	// first entry is default bank, then pairs of [roomNum, bankNum], terminated by -1
 	0,  3, 33, -1,
 	21, 17, 35, -1,
@@ -102,7 +92,7 @@ char kPersoRoomBankTable[] = {
 };
 
 // area transition descriptors
-Goto gotos[] = {
+Goto gotos[130] = {
 // area, oldarea, vid, time, valleyVid
 	{  0,  1,   0,  2,  20 },
 	{  0,  1, 162,  3, 168 },
@@ -236,7 +226,7 @@ Goto gotos[] = {
 	{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF },
 };
 
-object_t _objects[] = {
+object_t _objects[42] = {
 	//id,fl,loc,masklow,maskhi,ct
 	{  1, 0,  3,      1,     0, 0},     // Eve's Way Stone
 	{  2, 0,  3,      2,     0, 0},     // Thau's Seashell
@@ -286,7 +276,7 @@ object_t _objects[] = {
 	{ 42, 0,  3, 0x8000,     0, 0}      // Tablet #6 (Castra)
 };
 
-uint16 kObjectLocations[100] = {
+uint16 kObjectLocations[45] = {
 	0x112, 0xFFFF,
 	0x202, 0xFFFF,
 	0x120, 0xFFFF,
@@ -301,7 +291,7 @@ uint16 kObjectLocations[100] = {
 	0xFFFF
 };
 
-perso_t kPersons[] = {
+perso_t kPersons[58] = {
 	// room, aid, party mask,                            id,                                            flags,  X,bank,X, X,sprId,sprX,speed, X
 	{ 0x103, 230, PersonMask::pmGregor, PersonId::pidGregor            ,                                                0,  0,  1, 0, 0,  0,   0, 0, 0 },
 	{ 0x116, 231, PersonMask::pmDina  , PersonId::pidDina              ,                                                0,  4,  2, 0, 0,  3,   9, 0, 0 },
@@ -371,7 +361,7 @@ perso_t kPersons[] = {
 	{ 0x628, 237, PersonMask::pmEve   , PersonId::pidEve               ,                                                0, 78, 10, 0, 0,  7,  35, 0, 0 }
 };
 
-Citadel _citadelList[] = {
+Citadel _citadelList[7] = {
 	{   1, { 163, 182, 0, 0, 124, 147, 193, 0 }, {   0,   0, 0, 0,   0,   0,   0, 0 } },
 	{  48, { 285, 286, 0, 0, 287, 288, 284, 0 }, { 114, 115, 0, 0, 116, 117, 113, 0 } },
 	{  63, { 290, 291, 0, 0, 292, 293, 289, 0 }, { 119, 120, 0, 0, 121, 122, 118, 0 } },
@@ -381,7 +371,7 @@ Citadel _citadelList[] = {
 	{ 255, { 310, 311, 0, 0, 312, 313, 309, 0 }, { 139, 140, 0, 0, 141, 142, 138, 0 } }
 };
 
-prect_t _characterRects[] = {   //TODO: just an array of int16s?
+Rect _characterRects[19] = {   // TODO: just an array of int16s?
 	{  93,  69, 223, 176},
 	{ 102,  86, 162, 126},
 	{  88, 103, 168, 163},
@@ -403,30 +393,30 @@ prect_t _characterRects[] = {   //TODO: just an array of int16s?
 	{ 188,  83, 251, 158}
 };
 
-byte _characterArray[][5] = {   //TODO: struc?
-	{  8, 15, 23, 25, 0xFF},
-	{  0,  9, 0xFF        },
-	{  0,  9, 0xFF        },
-	{  0,  9, 0xFF        },
-	{  0, 13, 0xFF        },
-	{ 16, 21, 0xFF        },
-	{ 11, 20, 0xFF        },
-	{  0, 12, 0xFF        },
-	{  0,  9, 0xFF        },
-	{  0,  9, 0xFF        },
-	{  5, 13, 0xFF        },
-	{ 0xFF                },
-	{  0,  8, 0xFF        },
-	{ 0xFF                },
-	{  0,  7, 0xFF        },
-	{  0,  8, 0xFF        },
-	{  8, 12, 0xFF        },
-	{  0,  5, 0xFF        },
-	{  0,  4, 0xFF        },
-	{ 0xFF                }
+byte _characterArray[20][5] = {   // TODO: struc?
+	{    8, 15,   23, 25, 0xFF },
+	{    0,  9, 0xFF,  0,    0 },
+	{    0,  9, 0xFF,  0,    0 },
+	{    0,  9, 0xFF,  0,    0 },
+	{    0, 13, 0xFF,  0,    0 },
+	{   16, 21, 0xFF,  0,    0 },
+	{   11, 20, 0xFF,  0,    0 },
+	{    0, 12, 0xFF,  0,    0 },
+	{    0,  9, 0xFF,  0,    0 },
+	{    0,  9, 0xFF,  0,    0 },
+	{    5, 13, 0xFF,  0,    0 },
+	{ 0xFF,  0,    0,  0,    0 },
+	{    0,  8, 0xFF,  0,    0 },
+	{ 0xFF,  0,    0,  0,    0 },
+	{    0,  7, 0xFF,  0,    0 },
+	{    0,  8, 0xFF,  0,    0 },
+	{    8, 12, 0xFF,  0,    0 },
+	{    0,  5, 0xFF,  0,    0 },
+	{    0,  4, 0xFF,  0,    0 },
+	{ 0xFF,  0,    0,  0,    0 }
 };
 
-Area kAreasTable[] = {
+Area kAreasTable[12] = {
 	{ Areas::arMo           , AreaType::atCitadel,                           0,   0, 0,  1, 0, 0},
 	{ Areas::arTausCave     , AreaType::atCave   ,                           0, 112, 0,  2, 0, 0},
 	{ Areas::arChamaar      , AreaType::atValley ,                           0, 133, 0,  3, 0, 0},
@@ -455,7 +445,7 @@ int16 tab_2CF70[64] = {
 	18, 275,  0,   0, 35, 254, 36, 255, 19, 318, 23, 256, 0, 0, 0, 0,
 };
 
-int16 kActionCursors[299] = {
+byte kActionCursors[299] = {
 	3, 1, 2, 4, 5, 5, 5, 0, 5, 5,
 	5, 5, 5, 3, 2, 5, 5, 5, 3, 2,
 	4, 5, 7, 7, 4, 5, 5, 0, 0, 0,
@@ -488,8 +478,64 @@ int16 kActionCursors[299] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-float _translationZ = -3400;
-float flt_2DF80 = -3400;
-float flt_2DF84 =   200;
+byte mapMode[12] = { 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 2, 0 };
 
-} // End of namespace Cryo
+// Cube faces to texture coords mapping
+// each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
+byte cubeTextureCoords[3][6 * 2 * 3 * 2] = {
+	{
+		32, 32,  0, 32,  0,  0,
+		32, 32,  0,  0, 32,  0,
+
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32,
+
+		32, 32,  0, 32,  0,  0,
+		32, 32,  0,  0, 32,  0,
+
+		32,  0, 32, 32,  0, 32,
+		32,  0,  0, 32,  0,  0,
+
+		0,  0, 32,  0, 32, 32,
+		0,  0, 32, 32,  0, 32,
+
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32
+	}, {
+		32, 32,  0, 32,  0,  0,
+		32, 32,  0,  0, 32,  0,
+
+		32,  0, 32, 32,  0, 32,
+		32,  0,  0, 32,  0,  0,
+
+		32,  0, 32, 32,  0, 32,
+		32,  0,  0, 32,  0,  0,
+
+		0, 32,  0,  0, 32,  0,
+		0, 32, 32,  0, 32, 32,
+
+		32,  0, 32, 32,  0, 32,
+		32,  0,  0, 32,  0,  0,
+
+		32,  0, 32, 32,  0, 32,
+		32,  0,  0, 32,  0,  0
+	}, {
+		30, 30,  2, 30,  2,  2,
+		30, 30,  2,  2, 30,  2,
+
+		2, 30,  2,  2, 30,  2,
+		2, 30, 30,  2, 30, 30,
+
+		30, 30,  2, 30,  2,  2,
+		30, 30,  2,  2, 30,  2,
+
+		30,  2, 30, 30,  2, 30,
+		30,  2,  2, 30,  2,  2,
+
+		2,  2, 30,  2, 30, 30,
+		2,  2, 30, 30,  2, 30,
+
+		2, 30,  2,  2, 30,  2,
+		2, 30, 30,  2, 30, 30
+	}
+};

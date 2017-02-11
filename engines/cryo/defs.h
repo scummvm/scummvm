@@ -312,7 +312,7 @@ struct perso_t {
 	uint16  _partyMask;      // party bit mask
 	byte    _id;         // character
 	byte    _flags;      // flags and kind
-	byte    _roomBankId;// index in kPersoRoomBankTable for specific room banks
+	byte    _roomBankId;// index in _personRoomBankTable for specific room banks
 	byte    _spriteBank;       // sprite bank
 	uint16  _items;      // inventory
 	uint16  _powers;     // obj of power bitmask
@@ -340,7 +340,7 @@ enum ObjectFlags {
 struct object_t {
 	byte   _id;
 	byte   _flags;
-	int    _locations;      // index in kObjectLocations
+	int    _locations;      // index in _objectLocations
 	uint16  _itemMask;
 	uint16  _powerMask;          // object of power bitmask
 	int16  _count;
@@ -764,11 +764,6 @@ struct Citadel {
 	int16 _video[8];
 };
 
-/////////////// vars
-
-extern Follower followerList[];
-
-
 /*
   Labyrinth of Mo
 
@@ -782,33 +777,6 @@ enum {
 	LAB_S,
 	LAB_W
 };
-
-extern byte kLabyrinthPath[];
-
-extern char kDinoSpeedForCitaLevel[16];
-
-extern char kTabletView[];
-
-// special character backgrounds for specific rooms
-extern char kPersoRoomBankTable[];
-
-// area transition descriptors
-extern Goto gotos[];
-extern object_t _objects[];
-extern uint16 kObjectLocations[100];
-extern perso_t kPersons[];
-extern Citadel _citadelList[];
-
-struct prect_t {
-	int16   left, top, right, bottom;
-};
-
-extern prect_t _characterRects[];
-extern byte _characterArray[][5];
-extern Area kAreasTable[];
-extern int16 tab_2CEF0[64];
-extern int16 tab_2CF70[64];
-extern int16 kActionCursors[299];
 
 struct CubeFace {
 	int    tri;
@@ -832,10 +800,6 @@ struct Cube {
 	Point3D   *_projection;    // projected XYZ coords
 	Point3D   *_vertices;
 };
-
-extern float _translationZ;
-extern float flt_2DF80;
-extern float flt_2DF84;
 
 struct XYZ {
 	signed short x, y, z;
