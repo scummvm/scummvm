@@ -139,7 +139,7 @@ Common::Error DirectorEngine::run() {
 	if (getPlatform() == Common::kPlatformWindows) {
 		_sharedCastFile = "SHARDCST.MMM";
 	} else {
-		if (getVersion() < 3)
+		if (getVersion() < 4)
 			_sharedCastFile = "Shared Cast";
 		else
 			_sharedCastFile = "Shared.dir";
