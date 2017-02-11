@@ -149,7 +149,7 @@ void RivenCard::loadCardPictureList(uint16 id) {
 
 void RivenCard::drawPicture(uint16 index, bool queue) {
 	if (index > 0 && index <= _pictureList.size()) {
-		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, 39, 1, index);
+		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, kRivenCommandActivatePLST, 1, index);
 		_vm->_scriptMan->runScript(script, queue);
 	}
 }
@@ -216,7 +216,7 @@ void RivenCard::loadCardSoundList(uint16 id) {
 
 void RivenCard::playSound(uint16 index, bool queue) {
 	if (index > 0 && index <= _soundList.size()) {
-		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, 40, 1, index);
+		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, kRivenCommandActivateSLST, 1, index);
 		_vm->_scriptMan->runScript(script, queue);
 	}
 }

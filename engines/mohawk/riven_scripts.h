@@ -37,17 +37,54 @@ namespace Mohawk {
 
 // Script Types
 enum {
-	kMouseDownScript = 0,
-	kMouseDragScript = 1,
-	kMouseUpScript = 2,
-	kMouseEnterScript = 3,
+	kMouseDownScript   = 0,
+	kMouseDragScript   = 1,
+	kMouseUpScript     = 2,
+	kMouseEnterScript  = 3,
 	kMouseInsideScript = 4,
-	kMouseLeaveScript = 5,
+	kMouseLeaveScript  = 5,
 
-	kCardLoadScript = 6,
-	kCardLeaveScript = 7,
-	kCardEnterScript = 9,
-	kCardUpdateScript = 10
+	kCardLoadScript    = 6,
+	kCardLeaveScript   = 7,
+	kCardEnterScript   = 9,
+	kCardUpdateScript  = 10
+};
+
+enum RivenCommandType {
+	kRivenCommandDrawBitmap          = 1,
+	kRivenCommandChangeCard          = 2,
+	kRivenCommandPlayScriptSLST      = 3,
+	kRivenCommandPlaySound           = 4,
+	kRivenCommandSetVariable         = 7,
+	kRivenCommandSwitch              = 8,
+	kRivenCommandEnableHotspot       = 9,
+	kRivenCommandDisableHotspot      = 10,
+	kRivenCommandStopSound           = 12,
+	kRivenCommandChangeCursor        = 13,
+	kRivenCommandDelay               = 14,
+	kRivenCommandRunExternal         = 17,
+	kRivenCommandTransition          = 18,
+	kRivenCommandRefreshCard         = 19,
+	kRivenCommandBeginScreenUpdate   = 20,
+	kRivenCommandApplyScreenUpdate   = 21,
+	kRivenCommandIncrementVariable   = 24,
+	kRivenCommandChangeStack         = 27,
+	kRivenCommandDisableMovie        = 28,
+	kRivenCommandDisableAllMovies    = 29,
+	kRivenCommandEnableMovie         = 31,
+	kRivenCommandlayMovieBlocking    = 32,
+	kRivenCommandPlayMovie           = 33,
+	kRivenCommandStopMovie           = 34,
+	kRivenCommandUnk36               = 36,
+	kRivenCommandFadeAmbientSounds   = 37,
+	kRivenCommandStoreMovieOpcode    = 38,
+	kRivenCommandActivatePLST        = 39,
+	kRivenCommandActivateSLST        = 40,
+	kRivenCommandActivateMLSTAndPlay = 41,
+	kRivenCommandActivateBLST        = 43,
+	kRivenCommandActivateFLST        = 44,
+	kRivenCommandZipMode             = 45,
+	kRivenCommandActivateMLST        = 46
 };
 
 class MohawkEngine_Riven;
@@ -206,7 +243,7 @@ protected:
  */
 class RivenSimpleCommand : public RivenCommand {
 public:
-	static RivenSimpleCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	static RivenSimpleCommand *createFromStream(MohawkEngine_Riven *vm, RivenCommandType type, Common::ReadStream *stream);
 	virtual ~RivenSimpleCommand();
 
 	// RivenCommand API
@@ -221,7 +258,7 @@ private:
 		const char *desc;
 	};
 
-	RivenSimpleCommand(MohawkEngine_Riven *vm, int type, const ArgumentArray &arguments);
+	RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments);
 
 	void setupOpcodes();
 	Common::String describe() const;
@@ -264,7 +301,7 @@ private:
 
 	const RivenOpcode *_opcodes;
 
-	int _type;
+	RivenCommandType _type;
 	ArgumentArray _arguments;
 };
 
@@ -278,7 +315,7 @@ private:
  */
 class RivenSwitchCommand : public RivenCommand {
 public:
-	static RivenSwitchCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	static RivenSwitchCommand *createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream);
 	virtual ~RivenSwitchCommand();
 
 	// RivenCommand API
@@ -308,7 +345,7 @@ class RivenStackChangeCommand : public RivenCommand {
 public:
 	RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId);
 
-	static RivenStackChangeCommand *createFromStream(MohawkEngine_Riven *vm, int type, Common::ReadStream *stream);
+	static RivenStackChangeCommand *createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream);
 	virtual ~RivenStackChangeCommand();
 
 	// RivenCommand API

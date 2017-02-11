@@ -187,7 +187,7 @@ void RivenInventory::checkClick(const Common::Point &mousePos) {
 }
 
 void RivenInventory::backFromItemScript() const {
-	RivenScriptPtr stopSoundScript = _vm->_scriptMan->createScriptFromData(1, 12, 1, 1);
+	RivenScriptPtr stopSoundScript = _vm->_scriptMan->createScriptFromData(1, kRivenCommandStopSound, 1, 1);
 	_vm->_scriptMan->runScript(stopSoundScript, false);
 
 	uint16 backStackId = _vm->_vars["returnstackid"];
