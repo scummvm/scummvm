@@ -216,9 +216,6 @@ void MohawkEngine_Riven::doFrame() {
 			needsUpdate = true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_card->getCurHotspot()) {
-				checkSunnerAlertClick();
-			}
 			_stack->onMouseDown(_eventMan->getMousePos());
 			break;
 		case Common::EVENT_LBUTTONUP:
@@ -505,34 +502,6 @@ void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
 	// Run the opcode if we can at this point
 	if (force || handle->getTime() >= _scriptMan->getStoredMovieOpcodeTime())
 		_scriptMan->runStoredMovieOpcode();
-}
-
-void MohawkEngine_Riven::checkSunnerAlertClick() {
-	// We need to do a manual hardcoded check for the sunners'
-	// alert movies.
-
-	uint32 &sunners = _vars["jsunners"];
-
-	// If the sunners are gone, there's nothing for us to do
-	if (sunners != 0)
-		return;
-
-	uint32 rmapCode = _stack->getCurrentCardGlobalId();
-
-	// This is only for the mid/lower staircase sections
-	if (rmapCode != 0x79bd && rmapCode != 0x7beb)
-		return;
-
-	// Only set the sunners variable on the forward hotspot
-	if (_card->getCurHotspot()->getBlstId() != 3)
-		return;
-
-	// If the alert video is no longer playing, we have nothing left to do
-	VideoEntryPtr video = _video->findVideoRiven(1);
-	if (!video || video->endOfVideo())
-		return;
-
-	sunners = 1;
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {

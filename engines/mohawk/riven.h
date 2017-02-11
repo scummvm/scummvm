@@ -133,9 +133,6 @@ private:
 	Common::SharedPtr<TimerProc> _timerProc;
 	uint32 _timerTime;
 
-	// Miscellaneous
-	void checkSunnerAlertClick();
-
 public:
 	// Stack/card/script funtions
 	void changeToCard(uint16 dest);

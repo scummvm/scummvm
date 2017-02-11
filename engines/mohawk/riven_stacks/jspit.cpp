@@ -413,9 +413,17 @@ void JSpit::xjplaybeetle_1450(uint16 argc, uint16 *argv) {
 
 void JSpit::xjlagoon700_alert(uint16 argc, uint16 *argv) {
 	// Handle sunner reactions (mid-staircase)
+	uint32 sunners = _vm->_vars["jsunners"];
 
-	if (_vm->_vars["jsunners"] == 0)
-		_vm->_video->playMovieRiven(1);
+	// If the sunners are gone, there's nothing for us to do
+	if (sunners != 0) {
+		return;
+	}
+
+	VideoEntryPtr sunnerAlertVideo = _vm->_video->playMovieRiven(1);
+
+	// Wait for a click while the alert video is playing
+	sunnersPlayVideo(sunnerAlertVideo, 0x7BEB);
 }
 
 void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
@@ -425,7 +433,10 @@ void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
 
 	if (sunners == 0) {
 		// Show the sunners alert video
-		_vm->_video->playMovieRiven(1);
+		VideoEntryPtr sunnerAlertVideo = _vm->_video->playMovieRiven(1);
+
+		// Wait for a click while the alert video is playing
+		sunnersPlayVideo(sunnerAlertVideo, 0xB6CA);
 	} else if (sunners == 1) {
 		// Show the sunners leaving if you moved forward in their "alert" status
 		_vm->_video->playMovieBlockingRiven(2);
@@ -448,6 +459,25 @@ void JSpit::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 		_vm->_video->playMovieBlockingRiven(2);
 		sunners = 2;
 		_vm->refreshCard();
+	}
+}
+
+void JSpit::sunnersPlayVideo(VideoEntryPtr &video, uint32 destCardGlobalId) {
+	uint32 &sunners = _vm->_vars["jsunners"];
+
+	mouseForceUp();
+	while (!video->endOfVideo() && !_vm->shouldQuit()) {
+		_vm->doFrame();
+
+		if (mouseIsDown()) {
+			video->stop();
+			sunners = 1;
+
+			uint16 destCardId = getCardStackId(destCardGlobalId);
+			RivenScriptPtr clickScript = _vm->_scriptMan->createScriptFromData(1, 2, 1, destCardId);
+			_vm->_scriptMan->runScript(clickScript, false);
+			break;
+		}
 	}
 }
 
