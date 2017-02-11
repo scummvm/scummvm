@@ -764,11 +764,6 @@ struct Citadel {
 	int16 _video[8];
 };
 
-/////////////// vars
-
-extern Follower followerList[];
-
-
 /*
   Labyrinth of Mo
 

@@ -739,7 +739,7 @@ private:
 	const unsigned int kMaxMusicSize;  // largest .mus file size 
 
 	// Loaded from cryo.dat
-	Follower followerList[15];
+	Follower _followerList[15];
 	byte _labyrinthPath[70];
 	char _dinoSpeedForCitadelLevel[16];
 	char _tabletView[12];

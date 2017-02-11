@@ -287,7 +287,7 @@ void EdenGame::displayFollower(Follower *follower, int16 x, int16 y) {
 void EdenGame::characterInMirror() {
 	Icon *icon1 = &_gameIcons[3];
 	Icon *icon = &_gameIcons[_roomIconsBase];
-	Follower *suiveur = followerList;
+	Follower *suiveur = _followerList;
 	int16 num = 1;
 	for (int i = 0; i < 16; i++) {
 		if (_globals->_party & (1 << i))
@@ -2661,7 +2661,7 @@ void EdenGame::closeCharacterScreen() {
 // Original name: af_fondsuiveur
 void EdenGame::displayBackgroundFollower() {
 	char id = _globals->_characterPtr->_id;
-	for (Follower *follower = followerList; follower->_id != -1; follower++) {
+	for (Follower *follower = _followerList; follower->_id != -1; follower++) {
 		if (follower->_id == id) {
 			int bank = 326;
 			if (follower->sx >= 320)
@@ -4835,15 +4835,15 @@ void EdenGame::loadpermfiles() {
 	// Read the common static data
 
 	for (int i = 0; i < kNumFollowers; i++) {
-		followerList[i]._id = f.readSByte();
-		followerList[i]._spriteNum = f.readSByte();
-		followerList[i].sx = f.readSint16LE();
-		followerList[i].sy = f.readSint16LE();
-		followerList[i].ex = f.readSint16LE();
-		followerList[i].ey = f.readSint16LE();
-		followerList[i]._spriteBank = f.readSint16LE();
-		followerList[i].ff_C = f.readSint16LE();
-		followerList[i].ff_E = f.readSint16LE();
+		_followerList[i]._id = f.readSByte();
+		_followerList[i]._spriteNum = f.readSByte();
+		_followerList[i].sx = f.readSint16LE();
+		_followerList[i].sy = f.readSint16LE();
+		_followerList[i].ex = f.readSint16LE();
+		_followerList[i].ey = f.readSint16LE();
+		_followerList[i]._spriteBank = f.readSint16LE();
+		_followerList[i].ff_C = f.readSint16LE();
+		_followerList[i].ff_E = f.readSint16LE();
 	}
 
 	f.read(_labyrinthPath, kNumLabyrinthPath);
@@ -8104,7 +8104,7 @@ void EdenGame::phase352() {
 	_personRoomBankTable[30] = 26;
 	_persons[PER_EVE]._spriteBank = 9;
 	_persons[PER_EVE]._targetLoc = 8;
-	followerList[13]._spriteNum = 2;
+	_followerList[13]._spriteNum = 2;
 	dialautoon();
 	_gameRooms[288]._exits[0] = 0xFF;
 	_gameRooms[289]._exits[0] = 0xFF;
@@ -8240,8 +8240,8 @@ h->write(ptr, *size);
 	CLFile_Write(handle, &_objects[0], &size);
 	size = (char *)(&_objectLocations[45]) - (char *)(&_objectLocations[0]);
 	CLFile_Write(handle, &_objectLocations[0], &size);
-	size = (char *)(&followerList[14]) - (char *)(&followerList[13]);
-	CLFile_Write(handle, &followerList[13], &size);
+	size = (char *)(&_followerList[14]) - (char *)(&_followerList[13]);
+	CLFile_Write(handle, &_followerList[13], &size);
 	size = (char *)(&_persons[PER_UNKN_3DE]) - (char *)(&_persons[PER_KING]);
 	CLFile_Write(handle, &_persons[PER_KING], &size);
 	bandeoffsetout();
@@ -8289,8 +8289,8 @@ void EdenGame::loadrestart() {
 	size = (char *)(&_objectLocations[45]) - (char *)(&_objectLocations[0]);
 	loadpartoffile(2495,  &_objectLocations[0], offs, size);
 	offs += size;
-	size = (char *)(&followerList[14]) - (char *)(&followerList[13]);
-	loadpartoffile(2495,  &followerList[13], offs, size);
+	size = (char *)(&_followerList[14]) - (char *)(&_followerList[13]);
+	loadpartoffile(2495,  &_followerList[13], offs, size);
 	offs += size;
 	size = (char *)(&_persons[PER_UNKN_3DE]) - (char *)(&_persons[PER_KING]);
 	loadpartoffile(2495,  &_persons[PER_KING], offs, size);
@@ -8334,8 +8334,8 @@ void EdenGame::loadgame(char *name) {
 	CLFile_Read(handle, &_objects[0], &size);
 	size = (char *)(&_objectLocations[45]) - (char *)(&_objectLocations[0]);
 	CLFile_Read(handle, &_objectLocations[0], &size);
-	size = (char *)(&followerList[14]) - (char *)(&followerList[13]);
-	CLFile_Read(handle, &followerList[13], &size);
+	size = (char *)(&_followerList[14]) - (char *)(&_followerList[13]);
+	CLFile_Read(handle, &_followerList[13], &size);
 	size = (char *)(&_persons[55]) - (char *)(&_persons[0]);
 	CLFile_Read(handle, &_persons[0], &size);
 	size = (char *)(&_tapes[16]) - (char *)(&_tapes[0]);
