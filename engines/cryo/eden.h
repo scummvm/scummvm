@@ -121,8 +121,7 @@ private:
 	void useBank(int16 bank);
 	void sundcurs(int16 x, int16 y);
 	void rundcurs();
-	void noclipax(int16 index, int16 x, int16 y);
-	void noclipax_avecnoir(int16 index, int16 x, int16 y);
+	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false);
 	void getglow(int16 x, int16 y, int16 w, int16 h);
 	void unglow();
 	void glow(int16 index);

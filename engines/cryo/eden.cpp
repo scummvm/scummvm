@@ -207,9 +207,9 @@ void EdenGame::scrollFrescoes() {
 // Original name: afffresques
 void EdenGame::displayFrescoes() {
 	useBank(_globals->_frescoeImgBank);
-	noclipax(0, 0, 16);
+	drawSprite(0, 0, 16);
 	useBank(_globals->_frescoeImgBank + 1);
-	noclipax(0, 320, 16);
+	drawSprite(0, 320, 16);
 	_paletteUpdateRequired = true;
 }
 
@@ -280,7 +280,7 @@ void EdenGame::scrollPanel() {
 // Original name: affsuiveur
 void EdenGame::displayFollower(Follower *follower, int16 x, int16 y) {
 	useBank(follower->_spriteBank);
-	noclipax(follower->_spriteNum, x, y + 16);
+	drawSprite(follower->_spriteNum, x, y + 16);
 }
 
 // Original name: persoinmiroir
@@ -348,9 +348,9 @@ void EdenGame::gameToMirror(byte arg1) {
 			resNum = 2487;				// PCIMG.HSQ
 
 	useBank(resNum);
-	noclipax(0, 0, 16);
+	drawSprite(0, 0, 16);
 	useBank(resNum + 1);
-	noclipax(0, 320, 16);
+	drawSprite(0, 320, 16);
 	characterInMirror();
 	_paletteUpdateRequired = true;
 	_globals->_iconsIndex = 16;
@@ -1118,10 +1118,11 @@ void EdenGame::rundcurs() {
 
 }
 
-void EdenGame::noclipax(int16 index, int16 x, int16 y) {
+// Original name: noclipax
+void EdenGame::drawSprite(int16 index, int16 x, int16 y, bool withBlack) {
 	byte *pix = _bankData;
 	byte *scr = _mainViewBuf + x + y * 640;
-	if (_curBankNum != 117 && !_noPalette) {
+	if (_curBankNum != 117 && (!_noPalette || withBlack)) {
 		if (READ_LE_UINT16(pix) > 2)
 			readPalette(pix + 2);
 	}
@@ -1135,7 +1136,6 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	int16 w = ((h1 & 1) << 8) | h0;
 	int16 h = *pix++;
 	byte mode = *pix++;
-	debug("- draw sprite %d at %d:%d, %dx%d", index, x, y, w, h);
 	if (mode != 0xFF && mode != 0xFE)
 		return;
 	if (y + h > 200)
@@ -1148,7 +1148,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 				if (c >= 0x80) {
 					if (c == 0x80) {
 						byte fill = *pix++;
-						if (fill == 0) {
+						if (fill == 0 && !withBlack) {
 							scr += 128 + 1;
 							ww -= 128 + 1;
 						} else {
@@ -1163,7 +1163,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 						byte fill = *pix++;
 						byte runVal = 255 - c + 2;
 						ww -= runVal;
-						if (fill == 0)
+						if (fill == 0 && !withBlack)
 							scr += runVal;
 						else
 							for (; runVal--;)
@@ -1174,7 +1174,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 					ww -= runVal;
 					for (; runVal--;) {
 						byte p = *pix++;
-						if (p == 0)
+						if (p == 0 && !withBlack)
 							scr++;
 						else
 							*scr++ = p;
@@ -1188,75 +1188,10 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 		for (; h--;) {
 			for (int16 ww = w; ww--;) {
 				byte p = *pix++;
-				if (p == 0)
+				if (p == 0 && !withBlack)
 					scr++;
 				else
 					*scr++ = p;
-			}
-			scr += 640 - w;
-		}
-	}
-}
-
-void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
-	byte *pix = _bankData;
-	byte *scr = _mainViewBuf + x + y * 640;
-	if (_curBankNum != 117) {
-		if (READ_LE_UINT16(pix) > 2)
-			readPalette(pix + 2);
-	}
-	pix += READ_LE_UINT16(pix);
-	pix += READ_LE_UINT16(pix + index * 2);
-	//  int16   height:9
-	//  int16   pad:6;
-	//  int16   flag:1;
-	byte h0 = *pix++;
-	byte h1 = *pix++;
-	int16 w = ((h1 & 1) << 8) | h0;
-	int16 h = *pix++;
-	byte mode = *pix++;
-	if (mode != 0xFF && mode != 0xFE)
-		return;
-	if (y + h > 200)
-		h -= (y + h - 200);
-	if (h1 & 0x80) {
-		// compressed
-		for (; h-- > 0;) {
-			for (int16 ww = w; ww > 0;) {
-				byte c = *pix++;
-				if (c >= 0x80) {
-					if (c == 0x80) {
-						byte fill = *pix++;
-						byte runVal;
-						*scr++ = fill;  //TODO: wha?
-						*scr++ = fill;
-						ww -= 128 + 1;
-						for (runVal = 127; runVal--;)
-							*scr++ = fill;
-					} else {
-						byte fill = *pix++;
-						byte runVal = 255 - c + 2;
-						ww -= runVal;
-						for (; runVal--;)
-							*scr++ = fill;
-					}
-				} else {
-					byte runVal = c + 1;
-					ww -= runVal;
-					for (; runVal--;) {
-						byte p = *pix++;
-						*scr++ = p;
-					}
-				}
-			}
-			scr += 640 - w;
-		}
-	} else {
-		// uncompressed
-		for (; h--;) {
-			for (int16 ww = w; ww--;) {
-				byte p = *pix++;
-				*scr++ = p;
 			}
 			scr += 640 - w;
 		}
@@ -1612,12 +1547,12 @@ void EdenGame::drawBlackBars() {
 void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 	_globals->_drawFlags &= ~DrawFlags::drDrawTopScreen;
 	useBank(314);
-	noclipax(36, 83, 0);
-	noclipax(_globals->_areaPtr->_num - 1, 0, 0);
-	noclipax(23, 145, 0);
+	drawSprite(36, 83, 0);
+	drawSprite(_globals->_areaPtr->_num - 1, 0, 0);
+	drawSprite(23, 145, 0);
 	for (perso_t *perso = &_persons[PER_DINA]; perso != &_persons[PER_UNKN_156]; perso++) {
 		if ((perso->_flags & PersonFlags::pfInParty) && !(perso->_flags & PersonFlags::pf80))
-			noclipax(perso->_targetLoc + 18, perso->_lastLoc + 120, 0);
+			drawSprite(perso->_targetLoc + 18, perso->_lastLoc + 120, 0);
 	}
 	_adamMapMarkPos.x = -1;
 	_adamMapMarkPos.y = -1;
@@ -1628,7 +1563,7 @@ void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 // Original name: affplanval
 void EdenGame::displayValleyMap() { // Draw mini-map
 	if (_globals->_areaPtr->_type == AreaType::atValley) {
-		noclipax(_globals->_areaPtr->_num + 9, 266, 1);
+		drawSprite(_globals->_areaPtr->_num + 9, 266, 1);
 		for (perso_t *perso = &_persons[PER_UNKN_18C]; perso->_roomNum != 0xFFFF; perso++) {
 			if (((perso->_roomNum >> 8) == _globals->_areaNum)
 			        && !(perso->_flags & PersonFlags::pf80) && (perso->_flags & PersonFlags::pf20))
@@ -1649,7 +1584,7 @@ void EdenGame::displayValleyMap() { // Draw mini-map
 
 // Original name: affrepere
 void EdenGame::displayMapMark(int16 index, int16 location) {
-	noclipax(index, 269 + location % 16 * 4, 2 + (location - 16) / 16 * 3);
+	drawSprite(index, 269 + location % 16 * 4, 2 + (location - 16) / 16 * 3);
 }
 
 // Original name: affrepereadam
@@ -2667,7 +2602,7 @@ void EdenGame::displayBackgroundFollower() {
 			if (follower->sx >= 320)
 				bank = 327;
 			useBank(bank + _globals->_roomBackgroundBankNum);
-			noclipax_avecnoir(0, 0, 16);
+			drawSprite(0, 0, 16, true);
 			break;
 		}
 	}
@@ -2677,9 +2612,9 @@ void EdenGame::displayNoFollower(int16 bank) {
 	if (bank) {
 		useBank(bank);
 		if (_globals->_characterPtr == &_persons[PER_UNKN_156])
-			noclipax_avecnoir(0, 0, 16);
+			drawSprite(0, 0, 16, true);
 		else
-			noclipax(0, 0, 16);
+			drawSprite(0, 0, 16);
 	}
 }
 
@@ -5267,7 +5202,7 @@ void EdenGame::displaySingleRoom(Room *room) {
 			index &= 0x1FF;
 			if (!(_globals->_displayFlags & 0x80)) {
 				if (index == 1 || _globals->_varF7)
-					noclipax_avecnoir(index - 1, x, y);
+					drawSprite(index - 1, x, y, true);
 			}
 			_globals->_varF7 = 0;
 			continue;
@@ -5343,9 +5278,9 @@ void EdenGame::displayRoom() {
 			rundcurs();
 			saveFriezes();
 			useBank(room->_bank - 1);
-			noclipax_avecnoir(0, 0, 16);
+			drawSprite(0, 0, 16, true);
 			useBank(room->_bank);
-			noclipax_avecnoir(0, 320, 16);
+			drawSprite(0, 320, 16, true);
 			displaySingleRoom(room);
 			_globals->_roomBaseX = 320;
 			displaySingleRoom(room + 1);
@@ -6023,7 +5958,7 @@ void EdenGame::updateCursor() {
 			else
 				enginePC();
 		} else
-			noclipax(_currCursor, _cursorPosX + _scrollPos, _cursorPosY);
+			drawSprite(_currCursor, _cursorPosX + _scrollPos, _cursorPosY);
 		_glowX = 1;
 	} else {
 		useBank(117);
@@ -6031,7 +5966,7 @@ void EdenGame::updateCursor() {
 			_cursorPosX = 294;
 		unglow();
 		glow(_glowIndex);
-		noclipax(_torchCurIndex, _cursorPosX + _scrollPos, _cursorPosY);
+		drawSprite(_torchCurIndex, _cursorPosX + _scrollPos, _cursorPosY);
 		if (_frescoTalk)
 			displaySubtitles();
 	}
@@ -6777,14 +6712,14 @@ void EdenGame::showObjects() {
 			icon->_cursorId |= 0x8000;
 	}
 	useMainBank();
-	noclipax(55, 0, 176);
+	drawSprite(55, 0, 176);
 	icon = &_gameIcons[_invIconsBase];
 	total = _globals->_objCount;
 	int16 index = _globals->_inventoryScrollPos;
 	for (int16 i = _invIconsCount; total-- && i--; icon++) {
 		char obj = _ownObjects[index++];
 		icon->_objectId = obj;
-		noclipax(obj + 9, icon->sx, 178);
+		drawSprite(obj + 9, icon->sx, 178);
 	}
 	_paletteUpdateRequired = true;
 	if ((_globals->_displayFlags & DisplayFlags::dfMirror) || (_globals->_displayFlags & DisplayFlags::dfPanable)) {
@@ -7242,7 +7177,7 @@ void EdenGame::confirmer(char mode, char yesId) {
 	_gameIcons[119]._objectId = yesId;
 	_confirmMode = mode;
 	useBank(65);
-	noclipax(12, 117, 74);
+	drawSprite(12, 117, 74);
 	_cursorPosX = 156;
 	if (_vm->shouldQuit())
 		_cursorPosX = 136;
@@ -7405,11 +7340,11 @@ void EdenGame::affcurstape() {
 	if (_globals->_drawFlags & DrawFlags::drDrawFlag8)
 		_noPalette = true;
 	useBank(65);
-	noclipax(2, 0, 176);
+	drawSprite(2, 0, 176);
 	int x = (_globals->_tapePtr - _tapes) * 8 + 97;
 	_gameIcons[112].sx = x - 3;
 	_gameIcons[112].ex = x + 3;
-	noclipax(5, x, 179);
+	drawSprite(5, x, 179);
 	_noPalette = false;
 }
 
@@ -7462,7 +7397,7 @@ void EdenGame::langbuftopanel() {
 // Original name: affpanel
 void EdenGame::displayPanel() {
 	useBank(65);
-	noclipax(0, 0, 16);
+	drawSprite(0, 0, 16);
 	paneltobuf();
 	displayLanguage();
 	displayCursors();
@@ -7474,8 +7409,8 @@ void EdenGame::displayLanguage() {
 	useBank(65);
 	if (_globals->_prefLanguage > 5)
 		return;
-	noclipax(6,  8, _globals->_prefLanguage * 9 + 43);  //TODO: * FONT_HEIGHT
-	noclipax(7, 77, _globals->_prefLanguage * 9 + 44);
+	drawSprite(6,  8, _globals->_prefLanguage * 9 + 43);  //TODO: * FONT_HEIGHT
+	drawSprite(7, 77, _globals->_prefLanguage * 9 + 44);
 }
 
 // Original name: affcursvol
@@ -7483,11 +7418,11 @@ void EdenGame::displayVolCursor(int16 x, int16 vol1, int16 vol2) {
 	int16 slider = 3;
 	if (_lastMenuItemIdLo && (_lastMenuItemIdLo & 9) != 1) //TODO check me
 		slider = 4;
-	noclipax(slider, x, 104 - vol1);
+	drawSprite(slider, x, 104 - vol1);
 	slider = 3;
 	if ((_lastMenuItemIdLo & 9) != 0)
 		slider = 4;
-	noclipax(slider, x + 12, 104 - vol2);
+	drawSprite(slider, x + 12, 104 - vol2);
 }
 
 // Original name: affcurseurs
@@ -7512,7 +7447,7 @@ void EdenGame::selectCursor(int itemId) {
 
 // Original name: afftoppano
 void EdenGame::displayTopPanel() {
-	noclipax(1, 0, 0);
+	drawSprite(1, 0, 0);
 }
 
 // Original name: affresult
