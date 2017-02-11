@@ -4778,15 +4778,15 @@ void EdenGame::loadpermfiles() {
 		f.read(headerId, 8);
 		headerId[8] = '\0';
 		if (strcmp(headerId, "CRYODATA"))
-			error("Invalid aux data file");
+			error("Invalid cryo.dat aux data file");
 
 		if (f.readUint32LE() != CRYO_DAT_VER)
-			error("Incorrect aux data version");
+			error("Incorrect data version for cryo.dat");
 
 		if (dataSize != expectedDataSize)
-			error("Mismatching data in aux data file (got %d, expected %d)", dataSize, expectedDataSize);
+			error("Mismatching data in cryo.dat aux data file (got %d, expected %d)", dataSize, expectedDataSize);
 	} else
-		error("Can not load aux data");
+		error("Can not load cryo.dat");
 
 	switch (_vm->getPlatform()) {
 	case Common::kPlatformDOS:
