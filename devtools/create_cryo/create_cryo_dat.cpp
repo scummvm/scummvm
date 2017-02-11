@@ -27,7 +27,7 @@
 #include "eden_rooms.h"
 #include "eden_static.h"
 
-#define CRYO_DAT_VER 1	// 1 byte
+#define CRYO_DAT_VER 1	// 32-bit integer
 
 template <typename T>
 static void writeLE(FILE *f, T value) {
@@ -192,7 +192,7 @@ static int emitData(char *outputFilename) {
 	printf("Generating %s...\n", outputFilename);
 
 	fwrite("CRYODATA", 8, 1, f);
-	writeLE<byte>(f, CRYO_DAT_VER);
+	writeLE<uint32>(f, CRYO_DAT_VER);
 	
 	emitIcons(f);
 	emitRooms(f);
