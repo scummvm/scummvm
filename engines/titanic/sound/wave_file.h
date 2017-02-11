@@ -44,7 +44,6 @@ private:
 	int _rate;
 	byte _flags;
 	uint16 _wavType;
-	QSoundManager *_soundManager;
 	Audio::SeekableAudioStream *_audioStream;
 private:
 	/**
@@ -55,7 +54,7 @@ private:
 	/**
 	 * Gets passed the raw data for the wave file
 	 */
-	void load(byte *data, uint size);
+	void load(byte *data, uint dataSize);
 public:
 	Audio::Mixer::SoundType _soundType;
 

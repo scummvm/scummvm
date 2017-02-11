@@ -63,13 +63,13 @@ bool AudioBufferStream::endOfData() const {
 
 /*------------------------------------------------------------------------*/
 
-CWaveFile::CWaveFile() : _soundManager(nullptr), _audioStream(nullptr),
+CWaveFile::CWaveFile() : _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
 }
 
-CWaveFile::CWaveFile(QSoundManager *owner) : _soundManager(owner), _audioStream(nullptr),
+CWaveFile::CWaveFile(QSoundManager *owner) : _audioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
@@ -164,12 +164,12 @@ bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAft
 	return true;
 }
 
-void CWaveFile::load(byte *data, uint size) {
+void CWaveFile::load(byte *data, uint dataSize) {
 	_waveData = data;
-	_waveSize = size;
+	_waveSize = dataSize;
 
 	// Parse the wave header
-	Common::MemoryReadStream wavStream(data, size, DisposeAfterUse::NO);
+	Common::MemoryReadStream wavStream(data, dataSize, DisposeAfterUse::NO);
 	Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags, &_wavType);
 	_headerSize = wavStream.pos();
 }
