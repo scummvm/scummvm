@@ -4778,7 +4778,7 @@ void EdenGame::loadpermfiles() {
 		if (strcmp(headerId, "CRYODATA"))
 			error("Invalid aux data file");
 
-		if (f.readByte() != CRYO_DAT_VER)
+		if (f.readUint32LE() != CRYO_DAT_VER)
 			error("Incorrect aux data version");
 
 		if (dataSize != expectedDataSize)
