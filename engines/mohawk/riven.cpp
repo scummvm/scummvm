@@ -156,7 +156,7 @@ Common::Error MohawkEngine_Riven::run() {
 	}
 
 	// Set the transition speed
-	_gfx->setTransitionSpeed(_vars["transitionmode"]);
+	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
@@ -195,8 +195,8 @@ void MohawkEngine_Riven::doFrame() {
 	checkTimer();
 	_sound->updateSLST();
 	_gfx->runFliesEffect();
-	bool needsUpdate = _gfx->runScheduledWaterEffects();
-	needsUpdate |= _video->updateMovies();
+	_gfx->runScheduledWaterEffects();
+	_video->updateMovies();
 
 	Common::Event event;
 
@@ -212,8 +212,6 @@ void MohawkEngine_Riven::doFrame() {
 				else
 					_inventory->hide();
 			}
-
-			needsUpdate = true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_stack->onMouseDown(_eventMan->getMousePos());
@@ -237,7 +235,6 @@ void MohawkEngine_Riven::doFrame() {
 				_showHotspots = !_showHotspots;
 				if (_showHotspots) {
 					_card->drawHotspotRects();
-					needsUpdate = true;
 				} else
 					refreshCard();
 				break;
@@ -280,9 +277,8 @@ void MohawkEngine_Riven::doFrame() {
 		_scriptMan->runQueuedScripts();
 	}
 
-	// Update the screen if we need to
-	if (needsUpdate)
-		_system->updateScreen();
+	// Update the screen once per frame
+	_system->updateScreen();
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
@@ -440,15 +436,14 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
 		_sound->updateSLST();
 		_gfx->runFliesEffect();
-		bool needsUpdate = _gfx->runScheduledWaterEffects();
-		needsUpdate |= _video->updateMovies();
+		_gfx->runScheduledWaterEffects();
+		_video->updateMovies();
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event))
 			;
 
-		if (needsUpdate)
-			_system->updateScreen();
+		_system->updateScreen();
 
 		_system->delayMillis(10); // Ease off the CPU
 	}

@@ -44,6 +44,13 @@ enum RivenTransition {
 	kRivenTransitionBlend2    = 17
 };
 
+enum RivenTransitionMode {
+	kRivenTransitionModeDisabled = 5000,
+	kRivenTransitionModeFastest  = 5001,
+	kRivenTransitionModeNormal   = 5002,
+	kRivenTransitionModeBest     = 5003
+};
+
 class RivenGraphics : public GraphicsManager {
 public:
 	RivenGraphics(MohawkEngine_Riven *vm);
@@ -66,7 +73,7 @@ public:
 	// Water Effect
 	void scheduleWaterEffect(uint16);
 	void clearWaterEffects();
-	bool runScheduledWaterEffects();
+	void runScheduledWaterEffects();
 
 	// Flies Effect
 	void setFliesEffect(uint16 count, bool fireflies);
@@ -74,10 +81,10 @@ public:
 	void runFliesEffect();
 
 	// Transitions
-	void scheduleTransition(RivenTransition id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
+	void scheduleTransition(RivenTransition id, const Common::Rect &rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
 	void fadeToBlack();
-	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
+	void setTransitionMode(RivenTransitionMode mode);
 
 	// Credits
 	void beginCredits();
@@ -114,7 +121,9 @@ private:
 	// Transitions
 	RivenTransition _scheduledTransition;
 	Common::Rect _transitionRect;
-	uint32 _transitionSpeed;
+	RivenTransitionMode _transitionMode;
+	uint _transitionFrames;
+	uint _transitionDuration;
 
 	// Screen Related
 	Graphics::Surface *_mainScreen;

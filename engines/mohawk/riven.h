@@ -62,13 +62,6 @@ enum {
 	kStackLast = kStackAspit
 };
 
-enum RivenTransitionSpeed {
-	kRivenTransitionSpeedNone = 5000,
-	kRivenTransitionSpeedFastest = 5001,
-	kRivenTransitionSpeedNormal = 5002,
-	kRivenTransitionSpeedBest = 5003
-};
-
 // Engine Debug Flags
 enum {
 	kRivenDebugScript   = (1 << 0)
@@ -135,6 +128,7 @@ private:
 
 public:
 	// Stack/card/script funtions
+	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
 	void refreshCard();
@@ -162,8 +156,6 @@ public:
 	void installTimer(TimerProc *proc, uint32 time);
 	void checkTimer();
 	void removeTimer();
-
-	RivenStack *constructStackById(uint16 id);
 };
 
 } // End of namespace Mohawk

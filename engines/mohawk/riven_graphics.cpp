@@ -29,14 +29,247 @@
 
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/colormasks.h"
 
 namespace Mohawk {
+
+class TransitionEffect {
+public:
+	TransitionEffect(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
+		                 RivenTransition type, uint duration, const Common::Rect &rect) :
+			_system(system),
+			_mainScreen(mainScreen),
+			_effectScreen(effectScreen),
+			_type(type),
+			_duration(duration),
+			_timeBased(false),
+			_rect(rect) {
+	}
+
+	virtual ~TransitionEffect() {}
+
+	bool isTimeBased() const { return _timeBased; }
+
+	virtual void drawFrame(uint32 elapsed) = 0;
+
+protected:
+	Common::Rect makeDirectionalInitalArea() const {
+		Common::Rect initialArea = _rect;
+		switch (_type) {
+			case kRivenTransitionWipeLeft:
+			case kRivenTransitionPanLeft:
+				initialArea.left = _rect.right;
+				break;
+			case kRivenTransitionWipeRight:
+			case kRivenTransitionPanRight:
+				initialArea.right = _rect.left;
+				break;
+			case kRivenTransitionWipeUp:
+			case kRivenTransitionPanUp:
+				initialArea.top = _rect.bottom;
+				break;
+			case kRivenTransitionWipeDown:
+			case kRivenTransitionPanDown:
+				initialArea.bottom = _rect.top;
+				break;
+			default:
+				error("Unhandled transition type: %d", _type);
+		}
+
+		return initialArea;
+	}
+
+	OSystem *_system;
+
+	RivenTransition _type;
+	uint _duration;
+	Common::Rect _rect;
+	bool _timeBased;
+
+	Graphics::Surface *_mainScreen;
+	Graphics::Surface *_effectScreen;
+};
+
+class TransitionEffectWipe : public TransitionEffect {
+public:
+	TransitionEffectWipe(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
+		                     RivenTransition type, uint duration, const Common::Rect &rect) :
+			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+
+		_timeBased = true;
+		_lastCopyArea = makeDirectionalInitalArea();
+	}
+
+	virtual void drawFrame(uint32 elapsed) override {
+		Common::Rect copyArea;
+		switch (_type) {
+			case kRivenTransitionWipeLeft:
+				copyArea.top = _lastCopyArea.top;
+				copyArea.bottom = _lastCopyArea.bottom;
+				copyArea.right = _lastCopyArea.left;
+				copyArea.left = _rect.width() - elapsed * _rect.width() / _duration;
+				break;
+			case kRivenTransitionWipeRight:
+				copyArea.top = _lastCopyArea.top;
+				copyArea.bottom = _lastCopyArea.bottom;
+				copyArea.left = _lastCopyArea.right;
+				copyArea.right = elapsed * _rect.width() / _duration;
+				break;
+			case kRivenTransitionWipeUp:
+				copyArea.left = _lastCopyArea.left;
+				copyArea.right = _lastCopyArea.right;
+				copyArea.bottom = _lastCopyArea.top;
+				copyArea.top = _rect.height() - elapsed * _rect.height() / _duration;
+				break;
+			case kRivenTransitionWipeDown:
+				copyArea.left = _lastCopyArea.left;
+				copyArea.right = _lastCopyArea.right;
+				copyArea.top = _lastCopyArea.bottom;
+				copyArea.bottom = elapsed * _rect.height() / _duration;
+				break;
+			default:
+				error("Unhandled transition type: %d", _type);
+		}
+
+		_lastCopyArea = copyArea;
+
+		if (copyArea.isEmpty()) {
+			// Nothing to draw
+			return;
+		}
+
+		_effectScreen->copyRectToSurface(*_mainScreen, copyArea.left, copyArea.top, copyArea);
+		_system->copyRectToScreen(_effectScreen->getBasePtr(copyArea.left, copyArea.top), _effectScreen->pitch,
+		                          copyArea.left, copyArea.top, copyArea.width(), copyArea.height());
+	}
+
+private:
+	Common::Rect _lastCopyArea;
+};
+
+class TransitionEffectPan : public TransitionEffect {
+public:
+	TransitionEffectPan(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
+	                    RivenTransition type, uint duration, const Common::Rect &rect) :
+			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+
+		_timeBased = true;
+		_initialArea = makeDirectionalInitalArea();
+	}
+
+	virtual void drawFrame(uint32 elapsed) override {
+		Common::Rect newArea;
+		switch (_type) {
+			case kRivenTransitionPanLeft:
+				newArea.top = _initialArea.top;
+				newArea.bottom = _initialArea.bottom;
+				newArea.right = _initialArea.right;
+				newArea.left = _rect.width() - elapsed * _rect.width() / _duration;
+				break;
+			case kRivenTransitionPanRight:
+				newArea.top = _initialArea.top;
+				newArea.bottom = _initialArea.bottom;
+				newArea.left = _initialArea.left;
+				newArea.right = elapsed * _rect.width() / _duration;
+				break;
+			case kRivenTransitionPanUp:
+				newArea.left = _initialArea.left;
+				newArea.right = _initialArea.right;
+				newArea.bottom = _initialArea.bottom;
+				newArea.top = _rect.height() - elapsed * _rect.height() / _duration;
+				break;
+			case kRivenTransitionPanDown:
+				newArea.left = _initialArea.left;
+				newArea.right = _initialArea.right;
+				newArea.top = _initialArea.top;
+				newArea.bottom = elapsed * _rect.height() / _duration;
+				break;
+			default:
+				error("Unhandled transition type: %d", _type);
+		}
+
+		if (newArea.isEmpty()) {
+			// Nothing to draw
+			return;
+		}
+
+		Common::Rect oldArea = Common::Rect(
+				newArea.right != _rect.right ? _rect.left + newArea.width() : _rect.left,
+				newArea.bottom != _rect.bottom ? _rect.top + newArea.height() : _rect.top,
+				newArea.left != _rect.left ? _rect.right - newArea.width() : _rect.right,
+				newArea.top != _rect.top ? _rect.bottom - newArea.height() : _rect.bottom
+		);
+
+		int oldX = newArea.left != _rect.left ? _rect.left + newArea.width() : _rect.left;
+		int oldY = newArea.top != _rect.top ? _rect.top + newArea.height() : _rect.top;
+		_system->copyRectToScreen(_effectScreen->getBasePtr(oldX, oldY), _effectScreen->pitch,
+		                          oldArea.left, oldArea.top, oldArea.width(), oldArea.height());
+
+		int newX = newArea.right != _rect.right ? _rect.left + oldArea.width() : _rect.left;
+		int newY = newArea.bottom != _rect.bottom ? _rect.top + oldArea.height() : _rect.top;
+		_system->copyRectToScreen(_mainScreen->getBasePtr(newX, newY), _mainScreen->pitch,
+		                          newArea.left, newArea.top, newArea.width(), newArea.height());
+
+		if (newArea == _rect) {
+			_effectScreen->copyRectToSurface(*_mainScreen, _rect.left, _rect.top, _rect);
+		}
+	}
+
+private:
+	Common::Rect _initialArea;
+};
+
+class TransitionEffectBlend : public TransitionEffect {
+public:
+	TransitionEffectBlend(OSystem *system, Graphics::Surface *mainScreen, Graphics::Surface *effectScreen,
+	                    RivenTransition type, uint duration, const Common::Rect &rect) :
+			TransitionEffect(system, mainScreen, effectScreen, type, duration, rect) {
+
+		_timeBased = false;
+	}
+
+	virtual void drawFrame(uint32 elapsed) override {
+		assert(_effectScreen->format == _mainScreen->format);
+		assert(_effectScreen->format == _system->getScreenFormat());
+
+		if (elapsed == _duration) {
+			_effectScreen->copyRectToSurface(*_mainScreen, 0, 0, Common::Rect(_mainScreen->w, _mainScreen->h));
+			_system->copyRectToScreen(_effectScreen->getBasePtr(0, 0), _effectScreen->pitch, 0, 0, _effectScreen->w, _effectScreen->h);
+		} else {
+			Graphics::Surface *screen = _system->lockScreen();
+
+			uint alpha = elapsed * 255 / _duration;
+			for (uint y = 0; y < _mainScreen->h; y++) {
+				uint16 *src1 = (uint16 *) _mainScreen->getBasePtr(0, y);
+				uint16 *src2 = (uint16 *) _effectScreen->getBasePtr(0, y);
+				uint16 *dst = (uint16 *) screen->getBasePtr(0, y);
+				for (uint x = 0; x < _mainScreen->w; x++) {
+					uint8 r1, g1, b1, r2, g2, b2;
+					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src1++, r1, g1, b1);
+					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src2++, r2, g2, b2);
+
+					uint r = r1 * alpha + r2 * (255 - alpha);
+					uint g = g1 * alpha + g2 * (255 - alpha);
+					uint b = b1 * alpha + b2 * (255 - alpha);
+
+					r /= 255;
+					g /= 255;
+					b /= 255;
+
+					*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<565> >(r, g, b);
+				}
+			}
+
+			_system->unlockScreen();
+		}
+	}
+};
 
 RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm) {
 	_bitmapDecoder = new MohawkBitmap();
 
 	// Restrict ourselves to a single pixel format to simplify the effects implementation
-	_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	_pixelFormat = Graphics::createPixelFormat<565>();
 	initGraphics(608, 436, true, &_pixelFormat);
 
 	// The actual game graphics only take up the first 392 rows. The inventory
@@ -55,7 +288,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_creditsImage = 302;
 	_creditsPos = 0;
 
-	_transitionSpeed = 0;
+	_transitionMode = kRivenTransitionModeFastest;
 	_fliesEffect = nullptr;
 }
 
@@ -93,16 +326,20 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 void RivenGraphics::updateScreen(Common::Rect updateRect) {
 	if (_dirtyScreen) {
 		// Copy to screen if there's no transition. Otherwise transition. ;)
-		if (_scheduledTransition < 0) {
+		if (_scheduledTransition == kRivenTransitionNone
+		    || _transitionMode == kRivenTransitionModeDisabled) {
 			// mainScreen -> effectScreen -> systemScreen
 			_effectScreen->copyRectToSurface(*_mainScreen, updateRect.left, updateRect.top, updateRect);
 			_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(updateRect.left, updateRect.top), _effectScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
+
+			// Finally, update the screen.
+			_vm->_system->updateScreen();
+
+			_scheduledTransition = kRivenTransitionNone;
 		} else {
 			runScheduledTransition();
 		}
 
-		// Finally, update the screen.
-		_vm->_system->updateScreen();
 		_dirtyScreen = false;
 	}
 }
@@ -148,10 +385,10 @@ void RivenGraphics::clearWaterEffects() {
 	_waterEffects.clear();
 }
 
-bool RivenGraphics::runScheduledWaterEffects() {
+void RivenGraphics::runScheduledWaterEffects() {
 	// Don't run the effect if it's disabled
 	if (_vm->_vars["waterenabled"] == 0)
-		return false;
+		return;
 
 	Graphics::Surface *screen = NULL;
 
@@ -195,50 +432,92 @@ bool RivenGraphics::runScheduledWaterEffects() {
 	// Unlock the screen if it has been locked and return true to update the screen
 	if (screen) {
 		_vm->_system->unlockScreen();
-		return true;
 	}
-
-	return false;
 }
 
-void RivenGraphics::scheduleTransition(RivenTransition id, Common::Rect rect) {
+void RivenGraphics::setTransitionMode(RivenTransitionMode mode) {
+	_transitionMode = mode;
+	switch (_transitionMode) {
+		case kRivenTransitionModeFastest:
+			_transitionFrames   = 8;
+			_transitionDuration = 300;
+			break;
+		case kRivenTransitionModeNormal:
+			_transitionFrames   = 16;
+			_transitionDuration = 500;
+			break;
+		case kRivenTransitionModeBest:
+			_transitionFrames   = 32;
+			_transitionDuration = 700;
+			break;
+		case kRivenTransitionModeDisabled:
+			_transitionFrames   = 0;
+			_transitionDuration = 0;
+			break;
+		default:
+			error("Unknown transition mode %d", _transitionMode);
+	}
+}
+
+void RivenGraphics::scheduleTransition(RivenTransition id, const Common::Rect &rect) {
 	_scheduledTransition = id;
 	_transitionRect = rect;
 }
 
 void RivenGraphics::runScheduledTransition() {
-	if (_scheduledTransition < 0) // No transition is scheduled
+	if (_scheduledTransition == kRivenTransitionNone)
 		return;
-
-	// TODO: There's a lot to be done here...
 
 	// Note: Transitions 0-11 are actual transitions, but none are used in-game.
 	// There's no point in implementing them if they're not used. These extra
 	// transitions were found by hacking scripts.
 
+	TransitionEffect *effect = nullptr;
 	switch (_scheduledTransition) {
-	case kRivenTransitionWipeLeft:
-	case kRivenTransitionWipeRight:
-	case kRivenTransitionWipeUp:
-	case kRivenTransitionWipeDown:
-	case kRivenTransitionPanLeft:
-	case kRivenTransitionPanRight:
-	case kRivenTransitionPanUp:
-	case kRivenTransitionPanDown:
-	case kRivenTransitionBlend:
-	case kRivenTransitionBlend2: // (tspit CARD 155)
-		break;
-	default:
-		if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
-			error("Found unused transition %d", _scheduledTransition);
-		else
-			error("Found unknown transition %d", _scheduledTransition);
+		case kRivenTransitionWipeLeft:
+		case kRivenTransitionWipeRight:
+		case kRivenTransitionWipeUp:
+		case kRivenTransitionWipeDown: {
+			effect = new TransitionEffectWipe(_vm->_system, _mainScreen, _effectScreen,
+			                                  _scheduledTransition, _transitionDuration, _transitionRect);
+			break;
+		}
+		case kRivenTransitionPanLeft:
+		case kRivenTransitionPanRight:
+		case kRivenTransitionPanUp:
+		case kRivenTransitionPanDown: {
+			effect = new TransitionEffectPan(_vm->_system, _mainScreen, _effectScreen,
+			                                 _scheduledTransition, _transitionDuration, _transitionRect);
+			break;
+		}
+		case kRivenTransitionBlend:
+		case kRivenTransitionBlend2: // (tspit CARD 155)
+			effect = new TransitionEffectBlend(_vm->_system, _mainScreen, _effectScreen,
+			                                   _scheduledTransition, _transitionFrames, _transitionRect);
+			break;
+		default:
+			error("Unhandled transition type: %d", _scheduledTransition);
 	}
 
-	// For now, just copy the image to screen without doing any transition.
-	_effectScreen->copyRectToSurface(*_mainScreen, 0, 0, Common::Rect(_mainScreen->w, _mainScreen->h));
-	_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(0, 0), _effectScreen->pitch, 0, 0, _effectScreen->w, _effectScreen->h);
-	_vm->_system->updateScreen();
+	if (effect->isTimeBased()) {
+		uint32 startTime = _vm->_system->getMillis();
+		uint32 timeElapsed = 0;
+		while (timeElapsed < _transitionDuration && !_vm->shouldQuit()) {
+			effect->drawFrame(timeElapsed);
+
+			_vm->doFrame();
+			timeElapsed = _vm->_system->getMillis() - startTime;
+		}
+
+		effect->drawFrame(_transitionDuration);
+	} else {
+		for (uint frame = 1; frame <= _transitionFrames && !_vm->shouldQuit(); frame++) {
+			effect->drawFrame(frame);
+
+			_vm->doFrame();
+		}
+	}
+	delete effect;
 
 	_scheduledTransition = kRivenTransitionNone; // Clear scheduled transition
 }
@@ -249,7 +528,7 @@ void RivenGraphics::clearMainScreen() {
 
 void RivenGraphics::fadeToBlack() {
 	// The transition speed is forced to best here
-	setTransitionSpeed(kRivenTransitionSpeedBest);
+	setTransitionMode(kRivenTransitionModeBest);
 	scheduleTransition(kRivenTransitionBlend);
 	clearMainScreen();
 	runScheduledTransition();
