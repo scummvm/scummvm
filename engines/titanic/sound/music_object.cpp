@@ -21,45 +21,21 @@
  */
 
 #include "titanic/sound/music_object.h"
+#include "titanic/titanic.h"
 #include "common/util.h"
 
 namespace Titanic {
 
-static const char *const DATA[4] = {
-	"64,^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|8,^^^^ 5:A///|64,/|/|/|/|/|/|/"
-	"|/|/|/|/|/|/|/|/|/|^|^|^|^|^|^|^|^|^|16, ^B//|64,/|/|/|/|^|16,^C/"
-	"/|64,/|/|/|/|",
-	"2:8,^^^^B//a|//g//B//|g///B//a|//g//A//|B//^C//b|//a//a//|BCb/b//"
-	"a|//g//A//|g/+f/D//c|//b//gA/|g/^^C//C|//C//a//|BCb////a|//g//g//"
-	"|g/g//B/a|/g//////|//^^B//a|//g//B//|g///B//a|//g//B//|g//^C//b|/"
-	"/a//a//|BCb/b//a|//g//B//|g/+f/D//c|//b//gA/|g/^^C//C|//C//a//|BC"
-	"b////a|//g//g//|g/g//B/a|/g//////|3:^^B//a//|g//A//g/|/^B//a//|g/"
-	"/A//B/|b^ 3:C//b//|a//g//+f/|+fG/G/GA/|B/a/g///|B///+f//G|G/G/+f/"
-	"G/|^^e//d//|c//b//gA|g/B//a//|g//g//g/|g//B/a/g|//////^^|^^Ga///G"
-	"|////////|////////|////////|",
-	"2:8,^^^^^^D/|/E//E//E|/d//^^d/|/E//E//E|/E//^^G/|/d//d//d|/^^^^^d"
-	"/|/E//E//E|/d/^^^E/|/E//d/+F/|bD^^^^G/|/e//e//e|^^^^^^d/|/E//E//E"
-	"|//d///d/|//b/////|^^^^^^D/|/E//E//E|/d//^^d/|/E//E//E|/E//^^G/|/"
-	"d//d//d|/^^^^^d/|/E//E//E|/d/^^^E/|/E//d/d/|d/^^^^G/|/e//e//e|^^^"
-	"^^^d/|/E//E//E|//d///d/|//b/////|3:D///c//b|//b//b//|D///c//b|//b"
-	"//g//|E///d//c|//b//a//|aB/B/BC/|D/c/b///|^^^D//DE|/E/E/d/d|//E/g"
-	"//g|//g//d//|^^^^g//E|//E//E//|d///d///|b///////|// 3:Db///C|///b"
-	"/// 5:A|64,/|/|/|/|/|/|/|/|",
-	"2:8,^^G//+f//|e//e//e/|//G//+f//|e//e//+F/|G/a//g//|+f//+f//+f/|/"
-	"/G//+F//|e//e//e/|//B//a//|g//e///d|//c//b//|a//a//a/|+f/G// 2:+F"
-	"//|e//e//C/|//b/g/+f/|//G/////|^^G//+f//|e//e//e/|//G//+f//|e//e/"
-	"/e/|//a//g//|+f//+f//+f/|//G//+F//|e//e//e/|//B//a//|g//e///d|/  "
-	"2:dC//b//|a//a//a/|+f/G//+F//|e//e//C/|//b/g/+f/|//G/////|d//d//d"
-	"/|/E//E//d|d//d//E/|/+F//G//b|a//a//a/|/D//D// 3:D|//g/g//D|/d/G/"
-	"///|^^b//b//|b//ba/B/|c//B//a/|/g//+f//+f|G//+F//e/|/c//C///|b/g/"
-	"+f///|G///////|G///////|C///////|////////|////////|"
-};
-
-/*------------------------------------------------------------------------*/
-
 CMusicObject::CMusicObject(int index) {
-	assert(index >= 0 && index <= 3);
-	CMusicParser parser(DATA[index]);
+	// Read in the list of parser strings
+	Common::SeekableReadStream *res = g_vm->_filesManager->getResource("MUSIC/PARSER");
+	Common::StringArray parserStrings;
+	while (res->pos() < res->size())
+		parserStrings.push_back(readStringFromStream(res));
+	delete res;
+
+	// Set up a new parser with the desired string
+	CMusicParser parser(parserStrings[index].c_str());
 
 	// Count how many encoded values there are
 	CValuePair r;
@@ -68,11 +44,13 @@ CMusicObject::CMusicObject(int index) {
 		++count;
 	assert(count > 0);
 
+	// Read in the values to the array
 	_data.resize(count);
 	parser.reset();
 	for (int idx = 0; idx < count; ++idx)
 		parser.parse(_data[idx]);
 
+	// Figure out the range of values in the array
 	_minVal = 0x7FFFFFFF;
 	int maxVal = -0x7FFFFFFF;
 
