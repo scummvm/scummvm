@@ -25,6 +25,8 @@
 typedef unsigned char byte;
 typedef short int16;
 typedef unsigned short uint16;
+typedef int uint32;
+typedef unsigned int uint32;
 
 struct icon_t {
 	int16	sx;
