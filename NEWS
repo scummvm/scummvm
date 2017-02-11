@@ -15,6 +15,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Composer:
    - Added save/load from General Main Menu.
 
+Drascula:
+  - Add handling of the master volume and fix volume synchronization between
+    the game and ScummVM options.
+
 1.9.1 (YYYY-MM-DD)
  General:
    - Added bilinear filtering option for SDL2 fullscreen mode.
