@@ -243,7 +243,7 @@ void CMusicRoomHandler::updateInstruments() {
 				instrument = (MusicInstrument)((int)instrument + 1)) {
 			MusicRoomInstrument &ins1 = _array1[instrument];
 			MusicRoomInstrument &ins2 = _array2[instrument];
-			CMusicRoomInstrument *musicWave = _instruments[instrument];
+			CMusicRoomInstrument *ins = _instruments[instrument];
 
 			// Is this about checking playback position?
 			if (_position[instrument] < 0 || ins1._muteControl || _position[instrument] >= _musicObjs[instrument]->size()) {
@@ -254,7 +254,7 @@ void CMusicRoomHandler::updateInstruments() {
 			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
 			double val = (double)ticks * 0.001 - 0.6;
 
-			if (val >= musicWave->_floatVal) {
+			if (val >= (ins->_floatVal - _array5[instrument])) {
 				_array5[instrument] += fn3(instrument, _position[instrument]);
 
 				const CValuePair &vp = (*_musicObjs[instrument])[_position[instrument]];
