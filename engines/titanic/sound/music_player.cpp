@@ -127,36 +127,36 @@ bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 	}
 
 	CMusicRoomHandler *musicHandler = getMusicRoom()->createMusicHandler();
-	CMusicWave *wave;
+	CMusicRoomInstrument *ins;
 
 	if (musicHandler) {
-		wave = musicHandler->createMusicWave(BELLS, 3);
-		wave->load(0, "z#490.wav", 60);
-		wave->load(1, "z#488.wav", 62);
-		wave->load(2, "z#489.wav", 63);
+		ins = musicHandler->createInstrument(BELLS, 3);
+		ins->load(0, "z#490.wav", 60);
+		ins->load(1, "z#488.wav", 62);
+		ins->load(2, "z#489.wav", 63);
 
-		wave = musicHandler->createMusicWave(SNAKE, 5);
-		wave->load(0, "z#493.wav", 22);
-		wave->load(1, "z#495.wav", 29);
-		wave->load(2, "z#492.wav", 34);
-		wave->load(3, "z#494.wav", 41);
-		wave->load(4, "z#491.wav", 46);
+		ins = musicHandler->createInstrument(SNAKE, 5);
+		ins->load(0, "z#493.wav", 22);
+		ins->load(1, "z#495.wav", 29);
+		ins->load(2, "z#492.wav", 34);
+		ins->load(3, "z#494.wav", 41);
+		ins->load(4, "z#491.wav", 46);
 
-		wave = musicHandler->createMusicWave(PIANO, 5);
-		wave->load(0, "z#499.wav", 26);
-		wave->load(1, "z#497.wav", 34);
-		wave->load(2, "z#498.wav", 38);
-		wave->load(3, "z#496.wav", 46);
-		wave->load(4, "z#500.wav", 60);
+		ins = musicHandler->createInstrument(PIANO, 5);
+		ins->load(0, "z#499.wav", 26);
+		ins->load(1, "z#497.wav", 34);
+		ins->load(2, "z#498.wav", 38);
+		ins->load(3, "z#496.wav", 46);
+		ins->load(4, "z#500.wav", 60);
 
-		wave = musicHandler->createMusicWave(BASS, 7);
-		wave->load(0, "z#504.wav", 22);
-		wave->load(1, "z#507.wav", 29);
-		wave->load(2, "z#503.wav", 34);
-		wave->load(3, "z#506.wav", 41);
-		wave->load(4, "z#502.wav", 46);
-		wave->load(5, "z#505.wav", 53);
-		wave->load(6, "z#501.wav", 58);
+		ins = musicHandler->createInstrument(BASS, 7);
+		ins->load(0, "z#504.wav", 22);
+		ins->load(1, "z#507.wav", 29);
+		ins->load(2, "z#503.wav", 34);
+		ins->load(3, "z#506.wav", 41);
+		ins->load(4, "z#502.wav", 46);
+		ins->load(5, "z#505.wav", 53);
+		ins->load(6, "z#501.wav", 58);
 
 		CMusicRoom::_musicHandler->setActive(_musicActive);
 	}

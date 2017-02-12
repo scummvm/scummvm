@@ -33,7 +33,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	_field108 = 0;
 	_field118 = 0;
 	_startTicks = _soundStartTicks = 0;
-	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
+	Common::fill(&_instruments[0], &_instruments[4], (CMusicRoomInstrument *)nullptr);
 	for (int idx = 0; idx < 4; ++idx)
 		_musicObjs[idx] = new CMusicObject(idx);
 	Common::fill(&_startPos[0], &_startPos[4], 0);
@@ -51,26 +51,26 @@ CMusicRoomHandler::~CMusicRoomHandler() {
 	delete _audioBuffer;
 }
 
-CMusicWave *CMusicRoomHandler::createMusicWave(MusicInstrument instrument, int count) {
+CMusicRoomInstrument *CMusicRoomHandler::createInstrument(MusicInstrument instrument, int count) {
 	switch (instrument) {
 	case BELLS:
-		_musicWaves[BELLS] = new CMusicWave(_project, _soundManager, MV_BELLS);
+		_instruments[BELLS] = new CMusicRoomInstrument(_project, _soundManager, MV_BELLS);
 		break;
 	case SNAKE:
-		_musicWaves[SNAKE] = new CMusicWave(_project, _soundManager, MV_SNAKE);
+		_instruments[SNAKE] = new CMusicRoomInstrument(_project, _soundManager, MV_SNAKE);
 		break;
 	case PIANO:
-		_musicWaves[PIANO] = new CMusicWave(_project, _soundManager, MV_PIANO);
+		_instruments[PIANO] = new CMusicRoomInstrument(_project, _soundManager, MV_PIANO);
 		break;
 	case BASS:
-		_musicWaves[BASS] = new CMusicWave(_project, _soundManager, MV_BASS);
+		_instruments[BASS] = new CMusicRoomInstrument(_project, _soundManager, MV_BASS);
 		break;
 	default:
 		return nullptr;
 	}
 
-	_musicWaves[instrument]->setFilesCount(count);
-	return _musicWaves[instrument];
+	_instruments[instrument]->setFilesCount(count);
+	return _instruments[instrument];
 }
 
 void CMusicRoomHandler::setup(int volume) {
@@ -108,9 +108,9 @@ void CMusicRoomHandler::stop() {
 	}
 
 	for (int idx = 0; idx < 4; ++idx) {
-		_musicWaves[idx]->reset();
-		if (_active && _musicWaves[idx])
-			_musicWaves[idx]->stop();
+		_instruments[idx]->reset();
+		if (_active && _instruments[idx])
+			_instruments[idx]->stop();
 	}
 
 	_field108 = 0;
@@ -174,7 +174,7 @@ void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, bool value) {
 void CMusicRoomHandler::trigger() {
 	if (_active) {
 		for (int idx = 0; idx < 4; ++idx)
-			_musicWaves[idx]->trigger();
+			_instruments[idx]->trigger();
 	}
 }
 
@@ -214,7 +214,7 @@ void CMusicRoomHandler::updateAudio() {
 
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
-			CMusicWave *musicWave = _musicWaves[instrument];
+			CMusicRoomInstrument *musicWave = _instruments[instrument];
 
 			// Iterate through each of the four instruments and do an additive
 			// read that will merge their data onto the output buffer
@@ -243,7 +243,7 @@ void CMusicRoomHandler::fn1() {
 				instrument = (MusicInstrument)((int)instrument + 1)) {
 			MusicRoomInstrument &ins1 = _array1[instrument];
 			MusicRoomInstrument &ins2 = _array2[instrument];
-			CMusicWave *musicWave = _musicWaves[instrument];
+			CMusicRoomInstrument *musicWave = _instruments[instrument];
 
 			// Is this about checking playback position?
 			if (_position[instrument] < 0 || ins1._muteControl || _position[instrument] >= _musicObjs[instrument]->size()) {
@@ -260,7 +260,7 @@ void CMusicRoomHandler::fn1() {
 				const CValuePair &vp = (*_musicObjs[instrument])[_position[instrument]];
 				if (vp._field0 != 0x7FFFFFFF) {
 					int amount = getPitch(instrument, _position[instrument]);
-					_musicWaves[instrument]->start(amount);
+					_instruments[instrument]->start(amount);
 				}
 
 				if (ins1._directionControl == ins2._directionControl) {
@@ -276,14 +276,14 @@ void CMusicRoomHandler::fn1() {
 bool CMusicRoomHandler::updateInstrument(MusicInstrument instrument) {
 	int &arrIndex = _startPos[instrument];
 	if (arrIndex < 0) {
-		_musicWaves[instrument]->reset();
+		_instruments[instrument]->reset();
 		return false;
 	}
 
 	const CMusicObject &mObj = *_musicObjs[instrument];
 	if (arrIndex >= mObj.size()) {
 		arrIndex = -1;
-		_musicWaves[instrument]->reset();
+		_instruments[instrument]->reset();
 		return false;
 	}
 
@@ -291,9 +291,9 @@ bool CMusicRoomHandler::updateInstrument(MusicInstrument instrument) {
 	int size = static_cast<int>(fn3(instrument, arrIndex) * 44100.0) & ~1;
 
 	if (vp._field0 == 0x7FFFFFFF || _array1[instrument]._muteControl)
-		_musicWaves[instrument]->setSize(size);
+		_instruments[instrument]->setSize(size);
 	else
-		_musicWaves[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), size);
+		_instruments[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), size);
 
 	if (_array1[instrument]._directionControl == _array2[instrument]._directionControl) {
 		++arrIndex;

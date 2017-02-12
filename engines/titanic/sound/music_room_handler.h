@@ -25,7 +25,7 @@
 
 #include "titanic/sound/audio_buffer.h"
 #include "titanic/sound/music_object.h"
-#include "titanic/sound/music_wave.h"
+#include "titanic/sound/music_room_instrument.h"
 #include "titanic/sound/wave_file.h"
 
 namespace Titanic {
@@ -49,7 +49,7 @@ class CMusicRoomHandler {
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
-	CMusicWave *_musicWaves[4];
+	CMusicRoomInstrument *_instruments[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
 	CMusicObject *_musicObjs[4];
@@ -86,12 +86,12 @@ public:
 	~CMusicRoomHandler();
 
 	/**
-	 * Creates a new music wave class instance, and assigns it to a slot
-	 * in the music handler
-	 * @param instrument	Which instrument instance is for
-	 * @param count			Number of files the new instance will contain
+	 * Creates a new music room instrument class to handle the operation of one
+	 * of the instruments in the music room.
+	 * @param instrument	Which instrument to create for
+	 * @param count			Number of Wave files the new instance will contain
 	 */
-	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
+	CMusicRoomInstrument *createInstrument(MusicInstrument instrument, int count);
 
 	/**
 	 * Main setup for the music room handler

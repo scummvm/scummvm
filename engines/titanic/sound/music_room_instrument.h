@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_MUSIC_WAVE_H
-#define TITANIC_MUSIC_WAVE_H
+#ifndef TITANIC_MUSIC_ROOM_INSTRUMENT_H
+#define TITANIC_MUSIC_ROOM_INSTRUMENT_H
 
 #include "common/array.h"
 #include "titanic/support/string.h"
@@ -35,11 +35,11 @@ class CSoundManager;
 class CWaveFile;
 class CGameObject;
 
-class CMusicWave {
-	struct CMusicWaveFile {
+class CMusicRoomInstrument {
+	struct CInstrumentWaveFile {
 		CWaveFile *_waveFile;
 		int _value;
-		CMusicWaveFile() : _waveFile(nullptr), _value(0) {}
+		CInstrumentWaveFile() : _waveFile(nullptr), _value(0) {}
 	};
 private:
 	static bool _pianoToggle;
@@ -50,7 +50,7 @@ private:
 	static int _arrayIndex;
 private:
 	CSoundManager *_soundManager;
-	Common::Array<CMusicWaveFile> _items;
+	Common::Array<CInstrumentWaveFile> _items;
 	MusicWaveInstrument _instrument;
 	CProjectItem *_project;
 	CGameObject *_gameObjects[4];
@@ -85,7 +85,7 @@ public:
 	 */
 	static void deinit();
 public:
-	CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
+	CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument);
 
 	/**
 	 * Sets the maximum number of allowed files that be defined
@@ -130,4 +130,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MUSIC_WAVE_H */
+#endif /* TITANIC_MUSIC_ROOM_INSTRUMENT_H */

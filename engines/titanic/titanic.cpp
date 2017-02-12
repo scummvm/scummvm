@@ -41,7 +41,7 @@
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/sound/music_wave.h"
+#include "titanic/sound/music_room_instrument.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_npc_script.h"
 
@@ -87,7 +87,7 @@ void TitanicEngine::initialize() {
 	CGetLiftEye2::init();
 	CHose::init();
 	CMovie::init();
-	CMusicWave::init();
+	CMusicRoomInstrument::init();
 	CParrotLobbyObject::init();
 	CSGTNavigation::init();
 	CSGTStateRoom::init();

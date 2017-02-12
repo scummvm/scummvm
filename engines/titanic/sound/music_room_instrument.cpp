@@ -20,21 +20,21 @@
  *
  */
 
-#include "titanic/sound/music_wave.h"
+#include "titanic/sound/music_room_instrument.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/game_object.h"
 
 namespace Titanic {
 
-bool CMusicWave::_pianoToggle;
-int CMusicWave::_pianoCtr;
-int CMusicWave::_bassCtr;
-byte *CMusicWave::_buffer;
-double *CMusicWave::_array;
-int CMusicWave::_arrayIndex;
+bool CMusicRoomInstrument::_pianoToggle;
+int CMusicRoomInstrument::_pianoCtr;
+int CMusicRoomInstrument::_bassCtr;
+byte *CMusicRoomInstrument::_buffer;
+double *CMusicRoomInstrument::_array;
+int CMusicRoomInstrument::_arrayIndex;
 
-void CMusicWave::init() {
+void CMusicRoomInstrument::init() {
 	_pianoToggle = false;
 	_pianoCtr = 0;
 	_bassCtr = 0;
@@ -43,13 +43,13 @@ void CMusicWave::init() {
 	_arrayIndex = 0;
 }
 
-void CMusicWave::deinit() {
+void CMusicRoomInstrument::deinit() {
 	delete[] _buffer;
 	delete[] _array;
 	_buffer = nullptr;
 }
 
-CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
+CMusicRoomInstrument::CMusicRoomInstrument(CProjectItem *project, CSoundManager *soundManager, MusicWaveInstrument instrument) :
 		_project(project), _soundManager(soundManager), _instrument(instrument) {
 	Common::fill(&_gameObjects[0], &_gameObjects[4], (CGameObject *)nullptr);
 	_floatVal = 0.0;
@@ -87,24 +87,24 @@ CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, Music
 	}
 }
 
-void CMusicWave::setFilesCount(uint count) {
+void CMusicRoomInstrument::setFilesCount(uint count) {
 	assert(_items.empty());
 	_items.resize(count);
 }
 
-void CMusicWave::load(int index, const CString &filename, int v3) {
+void CMusicRoomInstrument::load(int index, const CString &filename, int v3) {
 	assert(!_items[index]._waveFile);
 	_items[index]._waveFile = createWaveFile(filename);
 	_items[index]._value = v3;
 }
 
-CWaveFile *CMusicWave::createWaveFile(const CString &name) {
+CWaveFile *CMusicRoomInstrument::createWaveFile(const CString &name) {
 	if (name.empty())
 		return nullptr;
 	return _soundManager->loadSound(name);
 }
 
-void CMusicWave::start(int val) {
+void CMusicRoomInstrument::start(int val) {
 	if (_gameObjects[0]) {
 		switch (_instrument) {
 		case MV_PIANO:
@@ -202,7 +202,7 @@ void CMusicWave::start(int val) {
 	}
 }
 
-void CMusicWave::stop() {
+void CMusicRoomInstrument::stop() {
 	if (_gameObjects[0]) {
 		switch (_instrument) {
 		case MV_PIANO:
@@ -222,7 +222,7 @@ void CMusicWave::stop() {
 	}
 }
 
-void CMusicWave::trigger() {
+void CMusicRoomInstrument::trigger() {
 	if (_gameObjects[0]) {
 		switch (_instrument) {
 		case MV_PIANO:
@@ -253,7 +253,7 @@ void CMusicWave::trigger() {
 	}
 }
 
-void CMusicWave::reset() {
+void CMusicRoomInstrument::reset() {
 	_waveIndex = 0;
 	_readPos = 0;
 	_readIncrement = 0;
@@ -261,7 +261,7 @@ void CMusicWave::reset() {
 	_count = 0;
 }
 
-void CMusicWave::setSize(uint total) {
+void CMusicRoomInstrument::setSize(uint total) {
 	_waveIndex = -1;
 	_readPos = 0;
 	_readIncrement = 0;
@@ -269,7 +269,7 @@ void CMusicWave::setSize(uint total) {
 	_count = 0;
 }
 
-int CMusicWave::read(int16 *ptr, uint size) {
+int CMusicRoomInstrument::read(int16 *ptr, uint size) {
 	if (!_size)
 		return 0;
 
@@ -300,7 +300,7 @@ int CMusicWave::read(int16 *ptr, uint size) {
 	return size;
 }
 
-void CMusicWave::chooseWaveFile(int index, int size) {
+void CMusicRoomInstrument::chooseWaveFile(int index, int size) {
 	if (!_array)
 		setupArray(-36, 36);
 
@@ -315,7 +315,7 @@ void CMusicWave::chooseWaveFile(int index, int size) {
 		}
 	}
 
-	const CMusicWaveFile &wf = _items[waveIndex];
+	const CInstrumentWaveFile &wf = _items[waveIndex];
 	int arrIndex = _arrayIndex - wf._value + index;
 	uint waveSize = wf._waveFile->size();
 
@@ -326,7 +326,7 @@ void CMusicWave::chooseWaveFile(int index, int size) {
 	_count = waveSize / 2;
 }
 
-void CMusicWave::setupArray(int minVal, int maxVal) {
+void CMusicRoomInstrument::setupArray(int minVal, int maxVal) {
 	// Delete any prior array and recreate it
 	delete[] _array;
 
