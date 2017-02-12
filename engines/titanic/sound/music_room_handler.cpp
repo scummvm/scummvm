@@ -40,7 +40,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	Common::fill(&_array5[0], &_array5[4], 0.0);
 	Common::fill(&_position[0], &_position[4], 0);
 
-	_audioBuffer = new CAudioBuffer(176400);
+	_audioBuffer = new CAudioBuffer(88200);
 }
 
 CMusicRoomHandler::~CMusicRoomHandler() {
@@ -96,7 +96,6 @@ void CMusicRoomHandler::setup(int volume) {
 	update();
 
 	_waveFile = _soundManager->loadMusic(_audioBuffer, DisposeAfterUse::NO);
-	_audioBuffer->advanceRead(_audioBuffer->getBytesToRead());
 	update();
 }
 
@@ -203,14 +202,15 @@ bool CMusicRoomHandler::update() {
 
 void CMusicRoomHandler::updateAudio() {
 	_audioBuffer->enterCriticalSection();
-	int size = _audioBuffer->getWriteBytesLeft();
+
+	int size = _audioBuffer->freeSize();
 	int count;
 	int16 *ptr;
 
 	if (size > 0) {
-		// Null out the destination write area
-		int16 *audioPtr = _audioBuffer->getWritePtr();
-		Common::fill(audioPtr, audioPtr + size / sizeof(uint16), 0);
+		// Create a temporary buffer for merging the instruments into
+		int16 *audioData = new int16[size];
+		Common::fill(audioData, audioData + size, 0);
 
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
@@ -218,7 +218,7 @@ void CMusicRoomHandler::updateAudio() {
 
 			// Iterate through each of the four instruments and do an additive
 			// read that will merge their data onto the output buffer
-			for (count = size, ptr = audioPtr; count > 0; ) {
+			for (count = size, ptr = audioData; count > 0; ) {
 				int amount = musicWave->read(ptr, count);
 				if (amount > 0) {
 					count -= amount;
@@ -230,7 +230,8 @@ void CMusicRoomHandler::updateAudio() {
 			}
 		}
 		
-		_audioBuffer->advanceWrite(size);
+		_audioBuffer->push(audioData, size);
+		delete[] audioData;
 	}
 
 	_audioBuffer->leaveCriticalSection();

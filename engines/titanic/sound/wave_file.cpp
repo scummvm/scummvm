@@ -49,18 +49,17 @@ public:
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
 	_audioBuffer->enterCriticalSection();
-	int samplesToRead = MIN((const int)numSamples, (const int)(_audioBuffer->getBytesToRead() / sizeof(uint16)));
-	
-	const int16 *src = _audioBuffer->getReadPtr();
-	Common::copy(src, src + samplesToRead, buffer);
-	_audioBuffer->advanceRead(samplesToRead * 2);
+	int samplesToRead = MIN((const int)numSamples, (const int)_audioBuffer->size());
+
+	for (int idx = 0; idx < samplesToRead; ++idx)
+		*buffer++ = _audioBuffer->pop();
 
 	_audioBuffer->leaveCriticalSection();
 	return samplesToRead;
 }
 
 bool AudioBufferStream::endOfData() const {
-	return _audioBuffer->_disabled;
+	return _audioBuffer->_finished;
 }
 
 /*------------------------------------------------------------------------*/

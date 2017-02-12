@@ -21,62 +21,49 @@
  */
 
 #include "titanic/sound/audio_buffer.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
-CAudioBuffer::CAudioBuffer(int bufferSize) : _flag(true), _disabled(false) {
-	_buffer.resize(bufferSize);
-	reset();
-}
-
-CAudioBuffer::~CAudioBuffer() {
-	_buffer.clear();
+CAudioBuffer::CAudioBuffer(int maxSize) : _finished(false) {
+	_data.resize(maxSize);
 }
 
 void CAudioBuffer::reset() {
-	_flag = true;
-	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
+	_frontP = _backP = &_data[0];
 }
 
-byte *CAudioBuffer::getBegin() {
-	return _flag ? &_buffer[_buffer.size() / 2] : &_buffer[0];
+void CAudioBuffer::push(int16 value) {
+	assert(!full());
+	compact();
+
+	*_backP++ = value;
 }
 
-byte *CAudioBuffer::getEnd() {
-	return _flag ? &_buffer[0] : &_buffer[_buffer.size() / 2];
+void CAudioBuffer::push(int16 *values, int count) {
+	compact();
+	assert(freeSize() >= count);
+
+	Common::copy(values, values + count, _backP);
+	_backP += count;
 }
 
-int16 *CAudioBuffer::getReadPtr() {
-	byte *ptr = getBegin();
-	return (int16 *)(ptr + (_buffer.size() / 2 - _readBytesLeft));
+int16 CAudioBuffer::pop() {
+	assert(!empty());
+	return *_frontP++;
 }
 
-int16 *CAudioBuffer::getWritePtr() {
-	byte *ptr = getEnd();
-	return (int16 *)(ptr + (_buffer.size() / 2 - _writeBytesLeft));
-}
-
-void CAudioBuffer::advanceRead(int size) {
-	_readBytesLeft -= size;
-	if (_readBytesLeft < 0) {
-		_readBytesLeft = 0;
-	} else if (size && !_writeBytesLeft) {
-		reverse();
+void CAudioBuffer::compact() {
+	if (_frontP != &_data[0]) {
+		Common::copy(_frontP, _backP, &_data[0]);
+		_backP -= _frontP - &_data[0];
+		_frontP = &_data[0];
 	}
 }
 
-void CAudioBuffer::advanceWrite(int size) {
-	_writeBytesLeft -= size;
-	if (_writeBytesLeft < 0) {
-		_writeBytesLeft = 0;
-	} else if (size && !_readBytesLeft) {
-		reverse();
-	}
-}
-
-void CAudioBuffer::reverse() {
-	_flag = !_flag;
-	_readBytesLeft = _writeBytesLeft = _buffer.size() / 2;
+int CAudioBuffer::freeSize() {
+	compact();
+	return &_data[0] + _data.size() - _backP;
 }
 
 void CAudioBuffer::enterCriticalSection() {

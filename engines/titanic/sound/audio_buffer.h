@@ -31,30 +31,18 @@ namespace Titanic {
 class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
-private:
-	/**
-	 * Gets the beginning of stored audio data
-	 */
-	byte *getBegin();
+	Common::Array<int16> _data;
+	int16 *_frontP, *_backP;
 
 	/**
-	 * Gets the end of the stored audio data
+	 * Reclaims any space at the start of the array resulting from
+	 * having read values off the font
 	 */
-	byte *getEnd();
-
-	/**
-	 * Reverses the audio buffer
-	 */
-	void reverse();
+	void compact();
 public:
-	Common::Array<byte> _buffer;
-	int _readBytesLeft;
-	int _writeBytesLeft;
-	bool _flag;
-	bool _disabled;
+	bool _finished;
 public:
-	CAudioBuffer(int bufferSize);
-	~CAudioBuffer();
+	CAudioBuffer(int maxSize);
 
 	/**
 	 * Resets the audio buffer
@@ -62,36 +50,39 @@ public:
 	void reset();
 
 	/**
-	 * Gets a pointer to the start of previously written data
+	 * Returns true if the buffer is empty
 	 */
-	int16 *getReadPtr();
+	bool empty() const { return _data.empty(); }
 
 	/**
-	 * Returns the number of bytes that can be read
+	 * Returns the number of 16-bit entries in the buffer
 	 */
-	int getBytesToRead() const { return _readBytesLeft; }
+	int size() const { return _backP - _frontP; }
 
 	/**
-	 * Advances the read index
+	 * Returns true if the buffer is full
 	 */
-	void advanceRead(int size);
+	bool full() const { return (_backP - _frontP) == (int)_data.size(); }
 
 	/**
-	 * Gets a pointer to the remainder of the audio buffer that
-	 * can be written to
+	 * Returns the number of entries free in the buffer
 	 */
-	int16 *getWritePtr();
+	int freeSize();
 
 	/**
-	 * Returns how many bytes can be written before hitting the
-	 * end of the audio buffer
+	 * Adds a value to the buffer
 	 */
-	int getWriteBytesLeft() const { return _writeBytesLeft; }
-	
+	void push(int16 value);
+
 	/**
-	 * Advances the write pointer by the specified number of bytes
+	 * Adds a value to the buffer
 	 */
-	void advanceWrite(int size);
+	void push(int16 *values, int count);
+
+	/**
+	 * Removes a value from the buffer
+	 */
+	int16 pop();
 
 	/**
 	 * Enters a critical section
