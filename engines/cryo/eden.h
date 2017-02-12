@@ -667,7 +667,6 @@ private:
 	int16 _currCursor;
 	Icon *_currSpot;
 	Icon *_curSpot2;
-	bool  _keyboardHeld;
 	bool  _mouseHeld;
 	bool  _normalCursor;
 	byte *_hnmViewBuf;
@@ -678,7 +677,6 @@ private:
 	int   _voiceSamplesSize;   //TODO: perso vox sample data len
 	int16 _musicRightVol;
 	int16 _musicLeftVol;
-
 
 	bool  _animateTalking;
 	bool  _personTalking;

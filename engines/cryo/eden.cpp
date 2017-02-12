@@ -124,7 +124,6 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_cursorPosY = _cursorPosX = 0;
 	_currCursor = 0;
 	_currSpot = _curSpot2 = nullptr;
-	_keyboardHeld = false;
 	_mouseHeld = false;
 	_normalCursor = false;
 	_showVideoSubtitle = false;
@@ -4298,18 +4297,6 @@ void EdenGame::signon(const char *s) {
 void EdenGame::FRDevents() {
 	_vm->pollEvents();
 
-#if 0 // CLKeyboard_IsScanCodeDown currently always returns false
-	if (_vm->isScanCodeDown(0x30)) { //TODO: const
-		if (!_keyboardHeld) {
-			_doubledScreen = !_doubledScreen;
-			_mainView->_doubled = _doubledScreen;
-			CLBlitter_FillScreenView(0);
-			_keyboardHeld = true;
-		}
-	} else
-#endif
-	_keyboardHeld = false;
-
 	int16 mouseY;
 	int16 mouseX;
 	_vm->getMousePosition(&mouseX, &mouseY);
@@ -6382,15 +6369,8 @@ void EdenGame::phase560() {
 	_gameRooms[127]._exits[1] = 0;
 }
 
-//// saveload.c
 void EdenGame::savegame(char *name) {
-//	filespec_t fs;
-//	Common::File handle;
 	int32 size;
-//	CLFile_MakeStruct(0, 0, name, &fs);
-//	CLFile_Create(&fs);
-//	CLFile_SetFinderInfos(&fs, 'EDNS', 'LEDN');
-//	CLFile_Open(&fs, 3, handle);
 
 	Common::OutSaveFile *handle = g_system->getSavefileManager()->openForSaving(name);
 	if (!handle)
@@ -6429,8 +6409,6 @@ h->write(ptr, *size);
 	delete handle;
 
 #undef CLFile_Write
-
-//	CLFile_Close(handle);
 
 	vavaoffsetin();
 	lieuoffsetin();
@@ -6482,11 +6460,6 @@ void EdenGame::loadrestart() {
 }
 
 void EdenGame::loadgame(char *name) {
-//	filespec_t fs;
-//	Common::File handle;
-//	CLFile_MakeStruct(0, 0, name, &fs);
-//	CLFile_Open(&fs, 3, handle);
-
 	Common::InSaveFile *handle = g_system->getSavefileManager()->openForLoading(name);
 	if (!handle)
 		return;

@@ -1024,19 +1024,6 @@ void EdenGame::showMovie(char arg1) {
 		assert(_vm->_screenView->_pitch == 320);
 		_vm->pollEvents();
 
-#if 0 // CLKeyboard_IsScanCodeDown currently always returns false
-		if (_vm->isScanCodeDown(0x30)) { //TODO: const
-			if (!_keyboardHeld) {
-				_doubledScreen = !_doubledScreen;
-				_hnmView->_doubled = _doubledScreen;   //TODO: but mainview ?
-				CLBlitter_FillScreenView(0);
-				_keyboardHeld = true;
-			}
-		}
-		else
-#endif
-			_keyboardHeld = false;
-
 		if (arg1) {
 			if (_vm->isMouseButtonDown()) {
 				if (!_mouseHeld) {
