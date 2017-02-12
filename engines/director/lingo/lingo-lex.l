@@ -37,6 +37,9 @@ using namespace Director;
 
 int yyparse();
 static void count() {
+	if (debugChannelSet(-1, kDebugLingoCompile))
+		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
+
 	g_lingo->_colnumber += strlen(yytext);
 }
 
@@ -143,9 +146,6 @@ whitespace [\t ]
 (?i:the[ \t]+last[\t ]+of[\t ]+)	{
 		count();
 
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: the last: Read '%s'", yytext);
-
 		yylval.e[0] = g_lingo->_theEntities["last"]->entity;
 		yylval.e[1] = 0;	// No field
 
@@ -154,9 +154,6 @@ whitespace [\t ]
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
 		count();
 
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: the sqrt: Read '%s'", yytext);
-
 		yylval.e[0] = g_lingo->_theEntities["sqrt"]->entity;
 		yylval.e[1] = 0;	// No field
 
@@ -164,9 +161,6 @@ whitespace [\t ]
 	}
 (?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+[[:alpha:]]+)	{
 		count();
-
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: the of: Read '%s'", yytext);
 
 		const char *ptr = &yytext[4]; // Skip 'the '
 		while (*ptr == ' ' || *ptr == '\t')
@@ -208,9 +202,6 @@ whitespace [\t ]
 (?i:the[ \t]+[[:alpha:]]+[ \t+](date|time))		{
 		count();
 
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: the date: Read '%s'", yytext);
-
 		const char *ptr = &yytext[4]; // Skip 'the '
 		while (*ptr == ' ' || *ptr == '\t')
 			ptr++;
@@ -241,9 +232,6 @@ whitespace [\t ]
 	}
 (?i:the[ \t]+[[:alpha:]]+)		{
 		count();
-
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: the: Read '%s'", yytext);
 
 		const char *ptr = &yytext[4]; // Skip 'the '
 		while (*ptr == ' ' || *ptr == '\t')
@@ -278,9 +266,6 @@ whitespace [\t ]
 {identifier}		{
 		count();
 		yylval.s = new Common::String(yytext);
-
-		if (debugChannelSet(-1, kDebugLingoCompile))
-			debug("LEXER: identifier: Read '%s'", yytext);
 
 		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
 			return ID;
@@ -322,7 +307,7 @@ whitespace [\t ]
 {operator}			{ count(); return *yytext; }
 {newline}				{ return '\n'; }
 {conststring}		{ count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
-.
+.				{ count(); }
 
 %%
 
