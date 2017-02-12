@@ -299,8 +299,15 @@ void Lingo::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.type != VAR) {
+	if (d1.type != VAR && d1.type != REFERENCE) {
 		warning("assignment to non-variable");
+		return;
+	}
+
+	if (d1.type == REFERENCE) {
+		warning("STUB: c_assing REFERENCE");
+
+		g_lingo->push(d1);
 		return;
 	}
 

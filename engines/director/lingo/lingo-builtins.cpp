@@ -1493,11 +1493,23 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 // References
 ///////////////////
 void Lingo::b_cast(int nargs) {
+	Datum d = g_lingo->pop();
+
 	warning("STUB: b_cast");
+
+	d.type = REFERENCE;
+
+	g_lingo->push(d);
 }
 
 void Lingo::b_field(int nargs) {
+	Datum d = g_lingo->pop();
+
 	warning("STUB: b_field");
+
+	d.type = REFERENCE;
+
+	g_lingo->push(d);
 }
 
 void Lingo::b_me(int nargs) {
@@ -1507,13 +1519,23 @@ void Lingo::b_me(int nargs) {
 }
 
 void Lingo::b_script(int nargs) {
+	Datum d = g_lingo->pop();
+
 	warning("STUB: b_script");
+
+	d.type = REFERENCE;
+
+	g_lingo->push(d);
 }
 
 void Lingo::b_window(int nargs) {
-	g_lingo->printSTUBWithArglist("b_window", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_window");
+
+	d.type = REFERENCE;
+
+	g_lingo->push(d);
 }
 
 
