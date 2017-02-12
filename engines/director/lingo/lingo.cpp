@@ -300,10 +300,10 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
-		call(_eventHandlerTypes[event], 0); //D4+ Events
+		call(_eventHandlerTypes[event], 0); // D4+ Events
 		pop();
 	} else if (_scripts[st].contains(entityId)) {
-		executeScript(st, entityId + 1); //D3 list of scripts.
+		executeScript(st, entityId - 1); // D3 list of scripts.
 	} else {
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}
