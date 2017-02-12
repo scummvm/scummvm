@@ -104,7 +104,58 @@ CWaveFile *CMusicRoomInstrument::createWaveFile(const CString &name) {
 	return _soundManager->loadSound(name);
 }
 
-void CMusicRoomInstrument::start(int val) {
+void CMusicRoomInstrument::start() {
+	if (_gameObjects[0]) {
+		switch (_instrument) {
+		case MV_PIANO:
+			_gameObjects[0]->playMovie(0, 29, MOVIE_STOP_PREVIOUS);
+			_gameObjects[2]->loadFrame(14);
+			_gameObjects[3]->loadFrame(22);
+			break;
+
+		case MV_BELLS:
+			_gameObjects[0]->loadFrame(0);
+			_gameObjects[0]->movieSetAudioTiming(true);
+			break;
+
+		case MV_SNAKE:
+			_field4C = 22;
+			_gameObjects[1]->playMovie(0, 22, 0);
+			_gameObjects[2]->playMovie(0, 35, MOVIE_STOP_PREVIOUS);
+			_gameObjects[0]->playMovie(0, 1, MOVIE_STOP_PREVIOUS);
+			_gameObjects[0]->playMovie(0, 1, 0);
+			_gameObjects[0]->playMovie(0, 1, 0);
+			_gameObjects[0]->playMovie(0, 1, 0);
+			_gameObjects[0]->playMovie(0, 1, 0);
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void CMusicRoomInstrument::stop() {
+	if (_gameObjects[0]) {
+		switch (_instrument) {
+		case MV_PIANO:
+			_gameObjects[1]->setVisible(false);
+			_gameObjects[2]->setVisible(false);
+			_gameObjects[3]->setVisible(false);
+			_gameObjects[0]->playMovie(29, 58, MOVIE_STOP_PREVIOUS);
+			break;
+
+		case MV_BELLS:
+			_gameObjects[0]->stopMovie();
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void CMusicRoomInstrument::update(int val) {
 	if (_gameObjects[0]) {
 		switch (_instrument) {
 		case MV_PIANO:
@@ -202,58 +253,7 @@ void CMusicRoomInstrument::start(int val) {
 	}
 }
 
-void CMusicRoomInstrument::stop() {
-	if (_gameObjects[0]) {
-		switch (_instrument) {
-		case MV_PIANO:
-			_gameObjects[1]->setVisible(false);
-			_gameObjects[2]->setVisible(false);
-			_gameObjects[3]->setVisible(false);
-			_gameObjects[0]->playMovie(29, 58, MOVIE_STOP_PREVIOUS);
-			break;
-
-		case MV_BELLS:
-			_gameObjects[0]->stopMovie();
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void CMusicRoomInstrument::trigger() {
-	if (_gameObjects[0]) {
-		switch (_instrument) {
-		case MV_PIANO:
-			_gameObjects[0]->playMovie(0, 29, MOVIE_STOP_PREVIOUS);
-			_gameObjects[2]->loadFrame(14);
-			_gameObjects[3]->loadFrame(22);
-			break;
-
-		case MV_BELLS:
-			_gameObjects[0]->loadFrame(0);
-			_gameObjects[0]->movieSetAudioTiming(true);
-			break;
-		
-		case MV_SNAKE:
-			_field4C = 22;
-			_gameObjects[1]->playMovie(0, 22, 0);
-			_gameObjects[2]->playMovie(0, 35, MOVIE_STOP_PREVIOUS);
-			_gameObjects[0]->playMovie(0, 1, MOVIE_STOP_PREVIOUS);
-			_gameObjects[0]->playMovie(0, 1, 0);
-			_gameObjects[0]->playMovie(0, 1, 0);
-			_gameObjects[0]->playMovie(0, 1, 0);
-			_gameObjects[0]->playMovie(0, 1, 0);
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void CMusicRoomInstrument::reset() {
+void CMusicRoomInstrument::clear() {
 	_waveIndex = 0;
 	_readPos = 0;
 	_readIncrement = 0;
@@ -261,7 +261,7 @@ void CMusicRoomInstrument::reset() {
 	_count = 0;
 }
 
-void CMusicRoomInstrument::setSize(uint total) {
+void CMusicRoomInstrument::reset(uint total) {
 	_waveIndex = -1;
 	_readPos = 0;
 	_readIncrement = 0;

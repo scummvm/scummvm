@@ -108,7 +108,7 @@ void CMusicRoomHandler::stop() {
 	}
 
 	for (int idx = 0; idx < 4; ++idx) {
-		_instruments[idx]->reset();
+		_instruments[idx]->clear();
 		if (_active && _instruments[idx])
 			_instruments[idx]->stop();
 	}
@@ -171,10 +171,10 @@ void CMusicRoomHandler::setMuteControl(MusicInstrument instrument, bool value) {
 		_array1[instrument]._muteControl = value;
 }
 
-void CMusicRoomHandler::trigger() {
+void CMusicRoomHandler::start() {
 	if (_active) {
 		for (int idx = 0; idx < 4; ++idx)
-			_instruments[idx]->trigger();
+			_instruments[idx]->start();
 	}
 }
 
@@ -182,7 +182,7 @@ bool CMusicRoomHandler::update() {
 	uint currentTicks = g_vm->_events->getTicksCount();
 
 	if (!_startTicks) {
-		trigger();
+		start();
 		_startTicks = currentTicks;
 	} else if (!_soundStartTicks && currentTicks >= (_startTicks + 3000)) {
 		if (_waveFile) {
@@ -260,7 +260,7 @@ void CMusicRoomHandler::fn1() {
 				const CValuePair &vp = (*_musicObjs[instrument])[_position[instrument]];
 				if (vp._field0 != 0x7FFFFFFF) {
 					int amount = getPitch(instrument, _position[instrument]);
-					_instruments[instrument]->start(amount);
+					_instruments[instrument]->update(amount);
 				}
 
 				if (ins1._directionControl == ins2._directionControl) {
@@ -276,14 +276,14 @@ void CMusicRoomHandler::fn1() {
 bool CMusicRoomHandler::updateInstrument(MusicInstrument instrument) {
 	int &arrIndex = _startPos[instrument];
 	if (arrIndex < 0) {
-		_instruments[instrument]->reset();
+		_instruments[instrument]->clear();
 		return false;
 	}
 
 	const CMusicObject &mObj = *_musicObjs[instrument];
 	if (arrIndex >= mObj.size()) {
 		arrIndex = -1;
-		_instruments[instrument]->reset();
+		_instruments[instrument]->clear();
 		return false;
 	}
 
@@ -291,7 +291,7 @@ bool CMusicRoomHandler::updateInstrument(MusicInstrument instrument) {
 	int size = static_cast<int>(fn3(instrument, arrIndex) * 44100.0) & ~1;
 
 	if (vp._field0 == 0x7FFFFFFF || _array1[instrument]._muteControl)
-		_instruments[instrument]->setSize(size);
+		_instruments[instrument]->reset(size);
 	else
 		_instruments[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), size);
 

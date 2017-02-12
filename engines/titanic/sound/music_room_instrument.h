@@ -97,10 +97,11 @@ public:
 	 */
 	void load(int index, const CString &filename, int v3);
 
+
 	/**
 	 * Starts the music and associated animations
 	 */
-	void start(int val);
+	void start();
 
 	/**
 	 * Stops the music and associated animations
@@ -108,13 +109,21 @@ public:
 	void stop();
 
 	/**
-	 * Called regularly to handle triggering the animation of the
-	 * musical instrument associated with the instance
+	 * Handles regular updates of the instrument, allowing associated
+	 * objects to start animations as the music is played
 	 */
-	void trigger();
+	void update(int val);
 
-	void reset();
-	void setSize(uint total);
+	/**
+	 * Clear the instrument
+	 */
+	void clear();
+
+	/**
+	 * Resets the instrument, and sets the maximum for how much data can
+	 * be read from the wave files during each read action
+	 */
+	void reset(uint total);
 
 	/**
 	 * If there is any wave file currently specified, reads it in

@@ -67,7 +67,10 @@ private:
 	uint _startTicks;
 	int _volume;
 private:
-	void trigger();
+	/**
+	 * Starts music room instruments animation
+	 */
+	void start();
 
 	void updateAudio();
 	void fn1();
