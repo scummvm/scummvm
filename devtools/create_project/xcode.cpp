@@ -665,6 +665,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("gui/themes/scummclassic.zip");
 		files.push_back("gui/themes/scummmodern.zip");
 		files.push_back("gui/themes/translations.dat");
+		files.push_back("dists/engine-data/access.dat");
+		files.push_back("dists/engine-data/cryo.dat");
 		files.push_back("dists/engine-data/drascula.dat");
 		files.push_back("dists/engine-data/hugo.dat");
 		files.push_back("dists/engine-data/kyra.dat");
@@ -677,6 +679,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
+		files.push_back("dists/engine-data/macventure.dat");
 		files.push_back("dists/pred.dic");
 		files.push_back("icons/scummvm.icns");
 	}
