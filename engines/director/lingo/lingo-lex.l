@@ -281,7 +281,13 @@ whitespace [\t ]
 
 		if (g_lingo->_builtins.contains(yytext)) {
 			int type = g_lingo->_builtins[yytext]->type;
-			if ((type == BLTIN || type == FBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
+			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
+				if (type == RBLTIN) {
+					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1)
+						error("Incorrectly set RBLTIN %s", yytext);
+
+					return RBLTINONEARG;
+				}
 				if (g_lingo->_builtins[yytext]->nargs == 0) {
 					if (g_lingo->_builtins[yytext]->maxArgs == 0)
 						return type == BLTIN ? BLTINNOARGS : FBLTINNOARGS;

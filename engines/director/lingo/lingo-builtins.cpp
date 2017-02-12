@@ -296,6 +296,14 @@ static const char *builtinFunctions[] = {
 	0
 };
 
+static const char *builtinReferences[] = {
+	"cast",
+	"field",
+	"script",
+	"window",
+	0
+};
+
 
 static const char *predefinedMethods[] = {
 	"mAtFrame",				// D3
@@ -333,6 +341,13 @@ void Lingo::initBuiltIns() {
 			error("Incorrectly setup builtinFunctions[]: %s", *b);
 
 		_builtins[*b]->type = FBLTIN;
+	}
+
+	for (const char **b = builtinReferences; *b; b++) {
+		if (!_builtins.contains(*b))
+			error("Incorrectly setup builtinReferences[]: %s", *b);
+
+		_builtins[*b]->type = RBLTIN;
 	}
 
 	for (const char **b = twoWordBuiltins; *b; b++)

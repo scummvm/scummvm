@@ -92,7 +92,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
-%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST
+%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
@@ -137,6 +137,9 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(g_lingo->c_assign);
 		$$ = $2;
 		delete $4; }
+	| tPUT expr tINTO reference 		{
+			g_lingo->code1(g_lingo->c_assign);
+			$$ = $2; }
 	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(g_lingo->c_after); }		// D3
 	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(g_lingo->c_before); }		// D3
 	| tSET ID '=' expr			{
@@ -470,6 +473,11 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_lineToOf); }
 	| tWORD expr tOF expr				{ g_lingo->code1(g_lingo->c_wordOf); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_wordToOf); }
+	;
+
+reference: 	RBLTINONEARG expr		{
+		g_lingo->codeFunc($1, 1);
+		delete $1; }
 	;
 
 proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
