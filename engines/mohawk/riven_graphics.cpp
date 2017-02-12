@@ -323,7 +323,7 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 	applyScreenUpdate();
 }
 
-void RivenGraphics::updateScreen(Common::Rect updateRect) {
+void RivenGraphics::updateScreen(const Common::Rect &updateRect) {
 	if (_dirtyScreen) {
 		// Copy to screen if there's no transition. Otherwise transition. ;)
 		if (_scheduledTransition == kRivenTransitionNone
@@ -544,7 +544,7 @@ void RivenGraphics::drawExtrasImageToScreen(uint16 id, const Common::Rect &rect)
 	delete mhkSurface;
 }
 
-void RivenGraphics::drawRect(Common::Rect rect, bool active) {
+void RivenGraphics::drawRect(const Common::Rect &rect, bool active) {
 	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 
@@ -556,7 +556,7 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 	_vm->_system->unlockScreen();
 }
 
-void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect) {
+void RivenGraphics::drawImageRect(uint16 id, const Common::Rect &srcRect, const Common::Rect &dstRect) {
 	// Draw tBMP id from srcRect to dstRect
 	Graphics::Surface *surface = findImage(id)->getSurface();
 
@@ -568,7 +568,7 @@ void RivenGraphics::drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect 
 	_dirtyScreen = true;
 }
 
-void RivenGraphics::drawExtrasImage(uint16 id, Common::Rect dstRect) {
+void RivenGraphics::drawExtrasImage(uint16 id, const Common::Rect &dstRect) {
 	MohawkSurface *mhkSurface = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
 	mhkSurface->convertToTrueColor();
 	Graphics::Surface *surface = mhkSurface->getSurface();

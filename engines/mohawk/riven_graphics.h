@@ -61,10 +61,10 @@ public:
 	void applyScreenUpdate(bool force = false);
 
 	void copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom);
-	void updateScreen(Common::Rect updateRect = Common::Rect(0, 0, 608, 392));
-	void drawRect(Common::Rect rect, bool active);
-	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
-	void drawExtrasImage(uint16 id, Common::Rect dstRect);
+	void updateScreen(const Common::Rect &updateRect = Common::Rect(0, 0, 608, 392));
+	void drawRect(const Common::Rect &rect, bool active);
+	void drawImageRect(uint16 id, const Common::Rect &srcRect, const Common::Rect &dstRect);
+	void drawExtrasImage(uint16 id, const Common::Rect &dstRect);
 	void drawExtrasImageToScreen(uint16 id, const Common::Rect &rect);
 
 	Graphics::Surface *getEffectScreen();
