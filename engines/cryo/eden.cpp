@@ -7489,7 +7489,7 @@ void EdenGame::incAngleX(int step) {
 	_angleX += step;
 	if (_angleX == 70 + 2)
 		_angleX = 0;
-	if (_angleX == 0 - 2)
+	else if (_angleX == 0 - 2)
 		_angleX = 70;
 }
 
@@ -7502,7 +7502,7 @@ void EdenGame::incAngleY(int step) {
 	_angleY += step;
 	if (_angleY == 70 + 2)
 		_angleY = 0;
-	if (_angleY == 0 - 2)
+	else if (_angleY == 0 - 2)
 		_angleY = 70;
 }
 
@@ -7520,12 +7520,13 @@ void EdenGame::incZoom() {
 }
 
 void EdenGame::decZoom() {
-	if (_zoomZ != 170) {
-		if (_zoomZ < 170)
-			_zoomZ = 170;
-		else
-			_zoomZ -= 40;
-	}
+	if (_zoomZ == 170)
+		return;
+
+	if (_zoomZ < 170)
+		_zoomZ = 170;
+	else
+		_zoomZ -= 40;
 }
 
 void EdenGame::initCubePC() {
@@ -7588,18 +7589,6 @@ void EdenGame::enginePC() {
 	renderCube();
 }
 
-////// macgame.c
-//void MyDlgHook()  {  }
-//void PrepareReply()  {  }
-int16 EdenGame::OpenDialog(void *arg1, void *arg2) {
-	//TODO
-	return 0;
-}
-
-//void SaveDialog()  {  }
-//void LostEdenMac_SavePrefs()  {  }
-//void LostEdenMac_LoadPrefs()  {  }
-
 void EdenGame::LostEdenMac_InitPrefs() {
 	_globals->_prefLanguage = 1;
 	_globals->_prefMusicVol[0] = 192;
@@ -7609,13 +7598,5 @@ void EdenGame::LostEdenMac_InitPrefs() {
 	_globals->_prefSoundVolume[0] = 32;
 	_globals->_prefSoundVolume[1] = 32;
 }
-
-//void MacGame_DoAbout()  {  }
-//void MacGame_DoAdjustMenus()  {  }
-//void LostEdenMac_DoPreferences()  {  }
-//void MacGame_DoSave()  {  }
-//void MacGame_DoMenuCommand()  {  }
-//void MacGame_DoOpen()  {  }
-//void MacGame_DoSaveAs()  {  }
 
 }   // namespace Cryo

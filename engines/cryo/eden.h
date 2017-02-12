@@ -502,7 +502,6 @@ private:
 	void displayPolygoneMapping(Cube *cube, CubeFace *face);
 	void drawMappingLine(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *lines);
 	void displayMappingLine(int16 r3, int16 r4, byte *target, byte *texture);
-	int16 OpenDialog(void *arg1, void *arg2);
 	void LostEdenMac_InitPrefs();
 
 	void initCubePC();
