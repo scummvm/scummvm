@@ -195,7 +195,7 @@ bool CMusicRoomHandler::update() {
 	}
 
 	updateAudio();
-	fn1();
+	updateInstruments();
 
 	return _field108 > 0;
 }
@@ -223,7 +223,7 @@ void CMusicRoomHandler::updateAudio() {
 				if (amount > 0) {
 					count -= amount;
 					ptr += amount / sizeof(uint16);
-				} else if (!updateInstrument(instrument)) {
+				} else if (!pollInstrument(instrument)) {
 					--_field108;
 					break;
 				}
@@ -237,7 +237,7 @@ void CMusicRoomHandler::updateAudio() {
 	_audioBuffer->leaveCriticalSection();
 }
 
-void CMusicRoomHandler::fn1() {
+void CMusicRoomHandler::updateInstruments() {
 	if (_active && _soundStartTicks) {
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
@@ -273,7 +273,7 @@ void CMusicRoomHandler::fn1() {
 	}
 }
 
-bool CMusicRoomHandler::updateInstrument(MusicInstrument instrument) {
+bool CMusicRoomHandler::pollInstrument(MusicInstrument instrument) {
 	int &arrIndex = _startPos[instrument];
 	if (arrIndex < 0) {
 		_instruments[instrument]->clear();

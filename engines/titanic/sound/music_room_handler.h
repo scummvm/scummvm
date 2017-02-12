@@ -72,17 +72,29 @@ private:
 	 */
 	void start();
 
+	/**
+	 * Handles updating the raw audio being played for all the instruments
+	 */
 	void updateAudio();
-	void fn1();
 
 	/**
-	 * Updates the state of the instrument.
+	 * Handles updating the instruments themselves, and keeping them animating
+	 */
+	void updateInstruments();
+
+	/**
+	 * Polls a specified instrument for any updates to see if it's still active.
 	 * @returns Returns true if a given instrument is still active..
 	 * that is, that there is still more data that can be read from it to play
 	 */
-	bool updateInstrument(MusicInstrument instrument);
+	bool pollInstrument(MusicInstrument instrument);
 
 	double fn3(MusicInstrument instrument, int arrIndex);
+
+	/**
+	 * Figures out a pitch value (of some sort) for use in determining
+	 * which wave file the music instruments will use.
+	 */
 	int getPitch(MusicInstrument instrument, int arrIndex);
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
