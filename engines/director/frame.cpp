@@ -595,7 +595,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					continue;
 				}
 
-				assert(_sprites[i]->_cast);
+				if (!_sprites[i]->_cast) {
+					warning("No cast ID for sprite %d", i);
+					continue;
+				}
 
 				BitmapCast *bitmapCast = static_cast<BitmapCast *>(_sprites[i]->_cast);
 				// TODO: might want a quicker way to determine if cast is from Shared Cast.
