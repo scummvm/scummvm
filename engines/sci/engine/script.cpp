@@ -764,13 +764,12 @@ void Script::relocateSci0Sci21(reg_t block) {
 
 void Script::relocateSci3(reg_t block) {
 	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
-	//int count = _bufSize - READ_SCI11ENDIAN_UINT32(_buf + 8);
+	const uint relocCount = _buf->getUint16SEAt(18);
 
 	ObjMap::iterator it;
 	for (it = _objects.begin(); it != _objects.end(); ++it) {
 		SciSpan<const byte> seeker = relocStart;
-		while (seeker.size()) {
-			// TODO: Find out what UINT16 at (seeker + 8) means
+		for (uint i = 0; i < relocCount; ++i) {
 			it->_value.relocateSci3(block.getSegment(),
 						seeker.getUint32SEAt(0),
 						seeker.getUint32SEAt(4),

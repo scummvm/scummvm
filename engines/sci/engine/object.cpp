@@ -140,6 +140,7 @@ bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSiz
 
 bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
 	assert(_propertyOffsetsSci3.size());
+	assert(offset >= 0 && (uint)offset < scriptSize);
 
 	for (uint i = 0; i < _variables.size(); ++i) {
 		if (location == _propertyOffsetsSci3[i]) {
