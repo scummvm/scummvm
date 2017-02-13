@@ -48,6 +48,12 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_movieArchive = archive;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
+
+	// FIXME: TODO: Check whether the original truely does it
+	if (_vm->getVersion() <= 3) {
+		_lingo->executeScript(kMovieScript, 0);
+	}
+
 	_lingo->processEvent(kEventPrepareMovie, kMovieScript, 0);
 	_movieScriptCount = 0;
 	_labels = NULL;
