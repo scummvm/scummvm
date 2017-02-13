@@ -1189,6 +1189,25 @@ void ScummEngine_v2::o2_startScript() {
 		}
 	}
 
+    // WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being 
+    // chased out and end up stuck in the room. This bug is triggered if the player
+    // enters the lab within 45 minutes of first entering the mansion and has chased Purple Tentacle
+    // out. Eventually the cutscene with Purple Tentacle chasing Sandy in the lab
+    // will play. This script leaves Purple Tentacle in the room causing him to become
+    // a permanent resident.
+    // Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
+    if (_game.id == GID_MANIAC) {
+        if (_game.version >= 1 && script == 155) {
+            if (VAR(120) == 1)
+                return;
+        }
+        // Script numbers are different in V0
+        if (_game.version == 0 && script == 150) {
+            if (VAR(104) == 1)
+                return;
+        }
+    }
+
 	runScript(script, 0, 0, 0);
 }
 
