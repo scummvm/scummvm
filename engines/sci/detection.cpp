@@ -756,6 +756,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 	filenames = saveFileMan->listSavefiles(pattern);
 
 	SaveStateList saveList;
+	bool hasAutosave = false;
 	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
@@ -775,6 +776,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				if (slotNr == 0) {
 					// ScummVM auto-save slot
 					descriptor.setWriteProtectedFlag(true);
+					hasAutosave = true;
 				} else {
 					descriptor.setWriteProtectedFlag(false);
 				}
@@ -783,6 +785,12 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				delete in;
 			}
 		}
+	}
+
+	if (!hasAutosave) {
+		SaveStateDescriptor descriptor(0, _("(Autosave)"));
+		descriptor.setLocked(true);
+		saveList.push_back(descriptor);
 	}
 
 	// Sort saves based on slot number.
