@@ -24,8 +24,8 @@
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
 #include "titanic/sound/audio_buffer.h"
-#include "titanic/sound/music_object.h"
 #include "titanic/sound/music_room_instrument.h"
+#include "titanic/sound/music_song.h"
 #include "titanic/sound/wave_file.h"
 
 namespace Titanic {
@@ -52,10 +52,10 @@ private:
 	CMusicRoomInstrument *_instruments[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
-	CMusicObject *_musicObjs[4];
+	CMusicSong *_songs[4];
 	int _startPos[4];
 	int _position[4];
-	double _array5[4];
+	double _animTime[4];
 
 	bool _active;
 	CWaveFile *_waveFile;
@@ -89,7 +89,12 @@ private:
 	 */
 	bool pollInstrument(MusicInstrument instrument);
 
-	double fn3(MusicInstrument instrument, int arrIndex);
+	/**
+	 * Gets the duration for a given fragment of an instrument to play
+	 * out, so that animations of the instruments can be synchronized
+	 * to the actual music
+	 */
+	double getAnimDuration(MusicInstrument instrument, int arrIndex);
 
 	/**
 	 * Figures out a pitch value (of some sort) for use in determining

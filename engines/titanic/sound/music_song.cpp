@@ -20,22 +20,22 @@
  *
  */
 
-#include "titanic/sound/music_object.h"
+#include "titanic/sound/music_song.h"
 #include "titanic/titanic.h"
 #include "common/util.h"
 
 namespace Titanic {
 
-CMusicObject::CMusicObject(int index) {
-	// Read in the list of parser strings
+CMusicSong::CMusicSong(int index) {
+	// Read in the list of song strings
 	Common::SeekableReadStream *res = g_vm->_filesManager->getResource("MUSIC/PARSER");
 	Common::StringArray parserStrings;
 	while (res->pos() < res->size())
 		parserStrings.push_back(readStringFromStream(res));
 	delete res;
 
-	// Set up a new parser with the desired string
-	CMusicParser parser(parserStrings[index].c_str());
+	// Set up a new song parser with the desired string
+	CSongParser parser(parserStrings[index].c_str());
 
 	// Count how many encoded values there are
 	CValuePair r;
@@ -67,7 +67,7 @@ CMusicObject::CMusicObject(int index) {
 	_range = maxVal - _minVal;
 }
 
-CMusicObject::~CMusicObject() {
+CMusicSong::~CMusicSong() {
 	_data.clear();
 }
 
@@ -75,12 +75,12 @@ CMusicObject::~CMusicObject() {
 
 #define FETCH_CHAR _currentChar = _str[_strIndex++]
 
-CMusicParser::CMusicParser(const char *str) : _str(str), _strIndex(0),
+CSongParser::CSongParser(const char *str) : _str(str), _strIndex(0),
 		_field8(0), _priorChar('A'), _field10(32), _field14(0), _flag(false),
 		_field1C(0), _currentChar(' '), _numValue(1) {
 }
 
-void CMusicParser::reset() {
+void CSongParser::reset() {
 	_strIndex = 0;
 	_field8 = 0;
 	_field10 = 0;
@@ -91,7 +91,7 @@ void CMusicParser::reset() {
 	_field1C = 0;
 }
 
-bool CMusicParser::parse(CValuePair &r) {
+bool CSongParser::parse(CValuePair &r) {
 	const int INDEXES[8] = { 0, 2, 3, 5, 7, 8, 10, 0 };
 
 	while (_currentChar) {
@@ -114,7 +114,7 @@ bool CMusicParser::parse(CValuePair &r) {
 			_field8 = _numValue * 12;
 			FETCH_CHAR;
 		} else if (_currentChar == '/') {
-			r._field4 += _field10;
+			r._length += _field10;
 			_field1C += _field10;
 			FETCH_CHAR;
 		} else if (_currentChar == '+') {
@@ -129,7 +129,7 @@ bool CMusicParser::parse(CValuePair &r) {
 			
 			_flag = true;
 			r._field0 = 0x7FFFFFFF;
-			r._field4 = _field10;
+			r._length = _field10;
 			_field14 = 0;
 			_field1C += _field10;
 			FETCH_CHAR;
@@ -161,7 +161,7 @@ bool CMusicParser::parse(CValuePair &r) {
 			}
 
 			if (flag) {
-				r._field4 = _field10;
+				r._length = _field10;
 				_field1C += _field10;
 				_field8 = r._field0;
 				_priorChar = _currentChar;
@@ -183,7 +183,7 @@ bool CMusicParser::parse(CValuePair &r) {
 	return true;
 }
 
-void CMusicParser::skipSpaces() {
+void CSongParser::skipSpaces() {
 	while (_currentChar && Common::isSpace(_currentChar)) {
 		FETCH_CHAR;
 	}

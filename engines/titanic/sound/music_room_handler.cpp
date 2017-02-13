@@ -35,9 +35,9 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	_startTicks = _soundStartTicks = 0;
 	Common::fill(&_instruments[0], &_instruments[4], (CMusicRoomInstrument *)nullptr);
 	for (int idx = 0; idx < 4; ++idx)
-		_musicObjs[idx] = new CMusicObject(idx);
+		_songs[idx] = new CMusicSong(idx);
 	Common::fill(&_startPos[0], &_startPos[4], 0);
-	Common::fill(&_array5[0], &_array5[4], 0.0);
+	Common::fill(&_animTime[0], &_animTime[4], 0.0);
 	Common::fill(&_position[0], &_position[4], 0);
 
 	_audioBuffer = new CAudioBuffer(88200);
@@ -46,7 +46,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 CMusicRoomHandler::~CMusicRoomHandler() {
 	stop();
 	for (int idx = 0; idx < 4; ++idx)
-		delete _musicObjs[idx];
+		delete _songs[idx];
 
 	delete _audioBuffer;
 }
@@ -84,11 +84,11 @@ void CMusicRoomHandler::setup(int volume) {
 		if (ins1._directionControl == ins2._directionControl) {
 			_startPos[idx] = 0;
 		} else {
-			_startPos[idx] = _musicObjs[idx]->size() - 1;
+			_startPos[idx] = _songs[idx]->size() - 1;
 		}
 
 		_position[idx] = _startPos[idx];
-		_array5[idx] = 0.0;
+		_animTime[idx] = 0.0;
 	}
 
 	_field108 = 4;
@@ -246,18 +246,18 @@ void CMusicRoomHandler::updateInstruments() {
 			CMusicRoomInstrument *ins = _instruments[instrument];
 
 			// Is this about checking playback position?
-			if (_position[instrument] < 0 || ins1._muteControl || _position[instrument] >= _musicObjs[instrument]->size()) {
+			if (_position[instrument] < 0 || ins1._muteControl || _position[instrument] >= _songs[instrument]->size()) {
 				_position[instrument] = -1;
 				continue;
 			}
 
 			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
-			double val = (double)ticks * 0.001 - 0.6;
+			double time = (double)ticks * 0.001 - 0.6;
 
-			if (val >= (ins->_floatVal - _array5[instrument])) {
-				_array5[instrument] += fn3(instrument, _position[instrument]);
+			if (time >= (ins->_animTime - _animTime[instrument])) {
+				_animTime[instrument] += getAnimDuration(instrument, _position[instrument]);
 
-				const CValuePair &vp = (*_musicObjs[instrument])[_position[instrument]];
+				const CValuePair &vp = (*_songs[instrument])[_position[instrument]];
 				if (vp._field0 != 0x7FFFFFFF) {
 					int amount = getPitch(instrument, _position[instrument]);
 					_instruments[instrument]->update(amount);
@@ -280,20 +280,20 @@ bool CMusicRoomHandler::pollInstrument(MusicInstrument instrument) {
 		return false;
 	}
 
-	const CMusicObject &mObj = *_musicObjs[instrument];
-	if (arrIndex >= mObj.size()) {
+	const CMusicSong &song = *_songs[instrument];
+	if (arrIndex >= song.size()) {
 		arrIndex = -1;
 		_instruments[instrument]->clear();
 		return false;
 	}
 
-	const CValuePair &vp = mObj[arrIndex];
-	int size = static_cast<int>(fn3(instrument, arrIndex) * 44100.0) & ~1;
+	const CValuePair &vp = song[arrIndex];
+	uint duration = static_cast<int>(getAnimDuration(instrument, arrIndex) * 44100.0) & ~1;
 
 	if (vp._field0 == 0x7FFFFFFF || _array1[instrument]._muteControl)
-		_instruments[instrument]->reset(size);
+		_instruments[instrument]->reset(duration);
 	else
-		_instruments[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), size);
+		_instruments[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), duration);
 
 	if (_array1[instrument]._directionControl == _array2[instrument]._directionControl) {
 		++arrIndex;
@@ -304,36 +304,36 @@ bool CMusicRoomHandler::pollInstrument(MusicInstrument instrument) {
 	return true;
 }
 
-double CMusicRoomHandler::fn3(MusicInstrument instrument, int arrIndex) {
-	const CValuePair &vp = (*_musicObjs[instrument])[arrIndex];
+double CMusicRoomHandler::getAnimDuration(MusicInstrument instrument, int arrIndex) {
+	const CValuePair &vp = (*_songs[instrument])[arrIndex];
 
 	switch (_array1[instrument]._speedControl + _array2[instrument]._speedControl + 3) {
 	case 0:
-		return (double)vp._field4 * 1.5 * 0.0625 * 0.46875;
+		return (double)vp._length * 1.5 * 0.0625 * 0.46875;
 	case 1:
-		return (double)vp._field4 * 1.33 * 0.0625 * 0.46875;
+		return (double)vp._length * 1.33 * 0.0625 * 0.46875;
 	case 2:
-		return (double)vp._field4 * 1.25 * 0.0625 * 0.46875;
+		return (double)vp._length * 1.25 * 0.0625 * 0.46875;
 	case 4:
-		return (double)vp._field4 * 0.75 * 0.0625 * 0.46875;
+		return (double)vp._length * 0.75 * 0.0625 * 0.46875;
 	case 5:
-		return (double)vp._field4 * 0.67 * 0.0625 * 0.46875;
+		return (double)vp._length * 0.67 * 0.0625 * 0.46875;
 	case 6:
-		return (double)vp._field4 * 0.5 * 0.0625 * 0.46875;
+		return (double)vp._length * 0.5 * 0.0625 * 0.46875;
 	default:
-		return (double)vp._field4 * 1.0 * 0.0625 * 0.46875;
+		return (double)vp._length * 1.0 * 0.0625 * 0.46875;
 	}
 }
 
 int CMusicRoomHandler::getPitch(MusicInstrument instrument, int arrIndex) {
-	const CMusicObject &mObj = *_musicObjs[instrument];
-	const CValuePair &vp = mObj[arrIndex];
+	const CMusicSong &song = *_songs[instrument];
+	const CValuePair &vp = song[arrIndex];
 	int val = vp._field0;
 	const MusicRoomInstrument &ins1 = _array1[instrument];
 	const MusicRoomInstrument &ins2 = _array2[instrument];
 
 	if (ins1._inversionControl != ins2._inversionControl) {
-		val = mObj._minVal * 2 + mObj._range - val;
+		val = song._minVal * 2 + song._range - val;
 	}
 
 	val += ins1._pitchControl + ins2._pitchControl;
