@@ -253,8 +253,9 @@ void CMusicRoomHandler::updateInstruments() {
 
 			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
 			double time = (double)ticks * 0.001 - 0.6;
+			double threshold = _animTime[instrument] - ins->_animTime;
 
-			if (time >= (ins->_animTime - _animTime[instrument])) {
+			if (time >= threshold) {
 				_animTime[instrument] += getAnimDuration(instrument, _position[instrument]);
 
 				const CValuePair &vp = (*_songs[instrument])[_position[instrument]];
