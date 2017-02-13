@@ -214,6 +214,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
 	unloadGFXMode();
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_window)
+		_window->destroyWindow();
+#endif
 	if (_mouseSurface)
 		SDL_FreeSurface(_mouseSurface);
 	_mouseSurface = 0;
@@ -2644,13 +2648,11 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 	_forceFull = true;
 }
 
-#ifdef USE_SDL_RESIZABLE_WINDOW
 void SurfaceSdlGraphicsManager::notifyResize(const uint width, const uint height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	setWindowResolution(width, height);
 #endif
 }
-#endif
 
 void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -2683,9 +2685,6 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 
 	SDL_DestroyRenderer(_renderer);
 	_renderer = nullptr;
-
-	if (_window)
-		_window->destroyWindow();
 }
 
 void SurfaceSdlGraphicsManager::setWindowResolution(int width, int height) {
@@ -2746,7 +2745,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
-	if (!_window->createWindow(width, height, createWindowFlags)) {
+	if (!_window->createOrUpdateWindow(width, height, createWindowFlags)) {
 		return nullptr;
 	}
 
