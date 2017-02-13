@@ -30,8 +30,8 @@ namespace Titanic {
 CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
 		_project(project), _soundManager(soundManager), _active(false),
 		_soundHandle(-1), _waveFile(nullptr), _volume(100) {
-	_field108 = 0;
-	_field118 = 0;
+	_instrumentsActive = 0;
+	_isPlaying = false;
 	_startTicks = _soundStartTicks = 0;
 	Common::fill(&_instruments[0], &_instruments[4], (CMusicRoomInstrument *)nullptr);
 	for (int idx = 0; idx < 4; ++idx)
@@ -91,8 +91,8 @@ void CMusicRoomHandler::setup(int volume) {
 		_animTime[idx] = 0.0;
 	}
 
-	_field108 = 4;
-	_field118 = 1;
+	_instrumentsActive = 4;
+	_isPlaying = true;
 	update();
 
 	_waveFile = _soundManager->loadMusic(_audioBuffer, DisposeAfterUse::NO);
@@ -113,8 +113,8 @@ void CMusicRoomHandler::stop() {
 			_instruments[idx]->stop();
 	}
 
-	_field108 = 0;
-	_field118 = 0;
+	_instrumentsActive = 0;
+	_isPlaying = false;
 	_startTicks = _soundStartTicks = 0;
 }
 
@@ -197,7 +197,7 @@ bool CMusicRoomHandler::update() {
 	updateAudio();
 	updateInstruments();
 
-	return _field108 > 0;
+	return _instrumentsActive > 0;
 }
 
 void CMusicRoomHandler::updateAudio() {
@@ -224,7 +224,7 @@ void CMusicRoomHandler::updateAudio() {
 					count -= amount;
 					ptr += amount / sizeof(uint16);
 				} else if (!pollInstrument(instrument)) {
-					--_field108;
+					--_instrumentsActive;
 					break;
 				}
 			}
@@ -258,7 +258,7 @@ void CMusicRoomHandler::updateInstruments() {
 				_animTime[instrument] += getAnimDuration(instrument, _position[instrument]);
 
 				const CValuePair &vp = (*_songs[instrument])[_position[instrument]];
-				if (vp._field0 != 0x7FFFFFFF) {
+				if (vp._data != 0x7FFFFFFF) {
 					int amount = getPitch(instrument, _position[instrument]);
 					_instruments[instrument]->update(amount);
 				}
@@ -290,7 +290,7 @@ bool CMusicRoomHandler::pollInstrument(MusicInstrument instrument) {
 	const CValuePair &vp = song[arrIndex];
 	uint duration = static_cast<int>(getAnimDuration(instrument, arrIndex) * 44100.0) & ~1;
 
-	if (vp._field0 == 0x7FFFFFFF || _array1[instrument]._muteControl)
+	if (vp._data == 0x7FFFFFFF || _array1[instrument]._muteControl)
 		_instruments[instrument]->reset(duration);
 	else
 		_instruments[instrument]->chooseWaveFile(getPitch(instrument, arrIndex), duration);
@@ -328,7 +328,7 @@ double CMusicRoomHandler::getAnimDuration(MusicInstrument instrument, int arrInd
 int CMusicRoomHandler::getPitch(MusicInstrument instrument, int arrIndex) {
 	const CMusicSong &song = *_songs[instrument];
 	const CValuePair &vp = song[arrIndex];
-	int val = vp._field0;
+	int val = vp._data;
 	const MusicRoomInstrument &ins1 = _array1[instrument];
 	const MusicRoomInstrument &ins2 = _array2[instrument];
 

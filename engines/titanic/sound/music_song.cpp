@@ -56,11 +56,11 @@ CMusicSong::CMusicSong(int index) {
 
 	for (int idx = 0; idx < count; ++idx) {
 		CValuePair &vp = _data[idx];
-		if (vp._field0 != 0x7FFFFFFF) {
-			if (vp._field0 < _minVal)
-				_minVal = vp._field0;
-			if (vp._field0 > maxVal)
-				maxVal = vp._field0;
+		if (vp._data != 0x7FFFFFFF) {
+			if (vp._data < _minVal)
+				_minVal = vp._data;
+			if (vp._data > maxVal)
+				maxVal = vp._data;
 		}
 	}
 
@@ -128,7 +128,7 @@ bool CSongParser::parse(CValuePair &r) {
 				break;
 			
 			_flag = true;
-			r._field0 = 0x7FFFFFFF;
+			r._data = 0x7FFFFFFF;
 			r._length = _field10;
 			_field14 = 0;
 			_field1C += _field10;
@@ -145,17 +145,17 @@ bool CSongParser::parse(CValuePair &r) {
 			bool flag = true;
 
 			if (_currentChar == _priorChar) {
-				r._field0 = _field8;
+				r._data = _field8;
 			} else if (_currentChar >= 'a' && _currentChar <= 'g') {
 				val1 -= val2;
 				if (val1 >= 0)
 					val1 -= 12;
-				r._field0 = _field8 + val1;
+				r._data = _field8 + val1;
 			} else if (_currentChar >= 'A' && _currentChar <= 'G') {
 				val1 -= val2;
 				if (val1 <= 0)
 					val1 += 12;
-				r._field0 = _field8 + val1;
+				r._data = _field8 + val1;
 			} else {
 				flag = false;
 			}
@@ -163,9 +163,9 @@ bool CSongParser::parse(CValuePair &r) {
 			if (flag) {
 				r._length = _field10;
 				_field1C += _field10;
-				_field8 = r._field0;
+				_field8 = r._data;
 				_priorChar = _currentChar;
-				r._field0 += _field14;
+				r._data += _field14;
 				_field14 = 0;
 				_flag = true;
 			}

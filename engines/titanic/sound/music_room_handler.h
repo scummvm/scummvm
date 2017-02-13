@@ -60,9 +60,9 @@ private:
 	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;
-	int _field108;
+	int _instrumentsActive;
 	CAudioBuffer *_audioBuffer;
-	int _field118;
+	bool _isPlaying;
 	uint _soundStartTicks;
 	uint _startTicks;
 	int _volume;

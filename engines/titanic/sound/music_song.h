@@ -29,9 +29,9 @@
 namespace Titanic {
 
 struct CValuePair {
-	int _field0;
+	int _data;
 	int _length;
-	CValuePair() : _field0(0), _length(0) {}
+	CValuePair() : _data(0), _length(0) {}
 };
 
 class CMusicSong {
