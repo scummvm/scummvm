@@ -260,6 +260,9 @@
 			<widget name = 'grTouchpadCheckbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 

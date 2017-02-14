@@ -122,6 +122,7 @@ private:
 
 	CheckboxWidget *_touchpadCheckbox;
 	CheckboxWidget *_onscreenCheckbox;
+	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
 	
 	//
 	// Graphics controls

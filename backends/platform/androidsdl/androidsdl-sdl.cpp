@@ -45,19 +45,22 @@ void OSystem_ANDROIDSDL::initBackend() {
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
 	
+	if (!ConfMan.hasKey("swap_menu_and_back"))
+		ConfMan.setBool("swap_menu_and_back", true);
+	else
+		swapMenuAndBackButtons(ConfMan.getBool("swap_menu_and_back"));
+	
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		const bool enable = (SDL_ANDROID_GetMouseEmulationMode() == 0) ? false : true;
 		ConfMan.setBool("touchpad_mouse_mode", enable);
-	} else {
+	} else
 		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
-	}
 	
 	if (!ConfMan.hasKey("onscreen_control")) {
 		const bool enable = (SDL_ANDROID_GetScreenKeyboardShown() == 0) ? false : true;
 		ConfMan.setBool("onscreen_control", enable);
-	} else {
+	} else
 		showOnScreenControl(ConfMan.getBool("onscreen_control"));
-	}
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -75,6 +78,18 @@ void OSystem_ANDROIDSDL::touchpadMode(bool enable) {
 			switchToRelativeMouseMode();
 		else
 			switchToDirectMouseMode();
+}
+
+void OSystem_ANDROIDSDL::swapMenuAndBackButtons(bool enable) {
+	static int KEYCODE_MENU = 82;
+	static int KEYCODE_BACK = 4;
+		if (enable) {
+			SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_F13);
+			SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_ESCAPE);
+		} else {
+			SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_ESCAPE);
+			SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_F13);
+		}
 }
 
 void OSystem_ANDROIDSDL::switchToDirectMouseMode() {
@@ -95,6 +110,10 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 			ConfMan.setBool("onscreen_control", enable);
 			showOnScreenControl(enable);
 			break;
+		case kFeatureSwapMenuAndBackButtons:
+			ConfMan.setBool("swap_menu_and_back", enable);
+			swapMenuAndBackButtons(enable);
+			break;
 	}
 	
 	OSystem_POSIX::setFeatureState(f, enable);
@@ -108,6 +127,9 @@ bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 		case kFeatureOnScreenControl:
 			return ConfMan.getBool("onscreen_control");
 			break;
+		case kFeatureSwapMenuAndBackButtons:
+			return ConfMan.getBool("swap_menu_and_back");
+			break;
 		default:
 			return OSystem_POSIX::getFeatureState(f);
 			break;
@@ -117,5 +139,6 @@ bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 bool OSystem_ANDROIDSDL::hasFeature(Feature f) {
 	return (f == kFeatureTouchpadMode ||
 			f == kFeatureOnScreenControl ||
+			f == kFeatureSwapMenuAndBackButtons ||
 			f == OSystem_POSIX::getFeatureState(f));
 }

@@ -139,6 +139,7 @@ void OptionsDialog::init() {
 	_enableControlSettings = false;
 	_onscreenCheckbox = 0;
 	_touchpadCheckbox = 0;
+	_swapMenuAndBackBtnsCheckbox = 0;
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
 	_gfxPopUpDesc = 0;
@@ -219,6 +220,13 @@ void OptionsDialog::build() {
 			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
 			if (_touchpadCheckbox != 0)
 				_touchpadCheckbox->setState(touchpadState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+		if (ConfMan.hasKey("swap_menu_and_back", _domain)) {
+			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
+			if (_swapMenuAndBackBtnsCheckbox != 0)
+				_swapMenuAndBackBtnsCheckbox->setState(state);
 		}
 	}
 
@@ -409,6 +417,11 @@ void OptionsDialog::apply() {
 		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
 				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+			if (ConfMan.getBool("swap_menu_and_back", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
 			}
 		}
 	}
@@ -841,6 +854,10 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
 			_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
 	
+		// Swap menu and back buttons
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons))
+			_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", _("Swap Menu and Back buttons"));
+		
 		_enableControlSettings = true;
 	}
 
@@ -1275,7 +1292,8 @@ void GlobalOptionsDialog::build() {
 	// The control tab (currently visible only for AndroidSDL platform, visibility checking by features
 	//
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
-		g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
+	    g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
 		tab->addTab(_("Control"));
 		addControlControls(tab, "GlobalOptions_Control.");
    }

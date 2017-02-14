@@ -346,7 +346,12 @@ public:
 		/**
 		* mouse emulation mode
 		*/
-		kFeatureTouchpadMode
+		kFeatureTouchpadMode,
+			
+		/**
+		* swap menu and back buttons
+		*/
+		kFeatureSwapMenuAndBackButtons
 	};
 
 	/**

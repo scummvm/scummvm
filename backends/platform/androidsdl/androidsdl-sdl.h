@@ -32,6 +32,7 @@ public:
 	virtual bool getFeatureState(Feature f);
 	virtual bool hasFeature(Feature f);
 	void touchpadMode(bool enable);
+	void swapMenuAndBackButtons(bool enable);
 	void switchToDirectMouseMode();
 	void switchToRelativeMouseMode();
 	void showOnScreenControl(bool enable);
