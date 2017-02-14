@@ -1192,7 +1192,28 @@ void ScummEngine_v2::o2_startScript() {
 	runScript(script, 0, 0, 0);
 }
 
+// Helper functions for ManiacMansion workarounds
+#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
+#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
+
 void ScummEngine_v2::stopScriptCommon(int script) {
+    
+    // WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
+    // to repair the Zom-B-Matic, the script will be stopped and the power will never turn
+    // back on. This fix forces the power on, when the player enters the lab, 
+    // if the script which turned it off is running
+    if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
+
+        if (vm.slot[_currentScript].number == MM_VALUE(130, 163)) {
+
+            if (script == MM_SCRIPT(138)) {
+
+                int obj = MM_VALUE(124, 157);
+                putState(obj, getState(obj) & ~kObjectState_08 );
+            }
+        }
+    }
+
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
