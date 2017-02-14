@@ -4431,10 +4431,30 @@ static const uint16 qfg4PatchVolumeReset[] = {
 	PATCH_END
 };
 
+// The trap init code incorrectly creates an int array for string data.
+// Applies to at least: English CD
+static const uint16 qfg4SignatureTrapArrayType[] = {
+	0x38, SIG_UINT16(0x92), // pushi $92 (new)
+	0x78,                   // push1
+	0x38, SIG_UINT16(0x80), // pushi $80 (128)
+	SIG_MAGICDWORD,
+	0x51, 0x0b,             // class $b (IntArray)
+	0x4a, SIG_UINT16(0x06), // send 6
+	SIG_END
+};
+
+static const uint16 qfg4PatchTrapArrayType[] = {
+	PATCH_ADDTOOFFSET(+4),     // pushi $92 (new), push1
+	0x38, PATCH_UINT16(0x100), // pushi $100 (256)
+	0x51, 0x0d,                // class $d (ByteArray)
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable volume reset on startup (floppy)",    1, qfg4SignatureVolumeReset,         qfg4PatchVolumeReset },
 	{  true,     1, "disable volume reset on startup (CD)",        1, qfg4CDSignatureVolumeReset,       qfg4PatchVolumeReset },
+	{  true,    83, "fix incorrect array type",                    1, qfg4SignatureTrapArrayType,       qfg4PatchTrapArrayType },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
