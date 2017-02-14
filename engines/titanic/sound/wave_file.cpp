@@ -171,7 +171,8 @@ void CWaveFile::load(byte *data, uint dataSize) {
 
 	// Parse the wave header
 	Common::MemoryReadStream wavStream(data, dataSize, DisposeAfterUse::NO);
-	Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags, &_wavType);
+	if (!Audio::loadWAVFromStream(wavStream, _dataSize, _rate, _flags, &_wavType))
+		error("Invalid wave file");
 	_headerSize = wavStream.pos();
 }
 
