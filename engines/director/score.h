@@ -110,6 +110,7 @@ public:
 	Common::Rect _movieRect;
 
 	bool _stopPlay;
+	uint32 _nextFrameTime;
 
 private:
 	uint16 _versionMinor;
@@ -123,7 +124,6 @@ private:
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
 	Common::String _currentLabel;
-	uint32 _nextFrameTime;
 	uint32 _flags;
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;

@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -871,7 +872,8 @@ void Lingo::b_nothing(int nargs) {
 void Lingo::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
-	warning("STUB: b_delay(%d)", d.u.i);
+
+	g_director->getCurrentScore()->_nextFrameTime = g_system->getMillis() + (float)d.u.i / 60 * 1000;
 }
 
 void Lingo::b_do(int nargs) {
