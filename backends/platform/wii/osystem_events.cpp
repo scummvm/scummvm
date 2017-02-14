@@ -172,7 +172,7 @@ void OSystem_Wii::initEvents() {
 									TIMER_THREAD_PRIO);
 
 		if (res) {
-			printf("ERROR creating timer thread: %d\n", res);
+			printf("ERROR creating timer thread: %ld\n", res);
 			LWP_CloseQueue(timer_queue);
 		}
 
@@ -227,7 +227,9 @@ bool OSystem_Wii::pollKeyboard(Common::Event &event) {
 	int i;
 	keyboard_event kbdEvent;
 
-	if (!KEYBOARD_GetEvent(&kbdEvent) > 0)
+	s32 res = KEYBOARD_GetEvent(&kbdEvent);
+	
+	if (!res)
 		return false;
 
 	switch (kbdEvent.type) {
