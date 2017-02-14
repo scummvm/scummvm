@@ -108,6 +108,7 @@ public:
 	int _keyCode;
 	int _machineType;
 	bool _playbackPaused;
+	bool _skipFrameAdvance;
 
 	Common::String _nextMovie;
 	Common::String _nextMovieFrameS;

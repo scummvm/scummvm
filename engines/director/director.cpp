@@ -89,6 +89,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
 	_playbackPaused = false;
+	g_director->_skipFrameAdvance = false;
 }
 
 DirectorEngine::~DirectorEngine() {

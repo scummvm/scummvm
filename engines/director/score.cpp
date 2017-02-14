@@ -884,8 +884,10 @@ void Score::update() {
 		}
 	}
 
-	if (!g_director->_playbackPaused)
+	if (!g_director->_playbackPaused && !g_director->_skipFrameAdvance)
 		_currentFrame++;
+
+	g_director->_skipFrameAdvance = false;
 
 	if (_currentFrame >= _frames.size())
 		return;

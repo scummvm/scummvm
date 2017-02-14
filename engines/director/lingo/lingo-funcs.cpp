@@ -223,6 +223,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (frame.type == VOID)
 		return;
 
+	_vm->_skipFrameAdvance = true;
+
 	if (frame.type == STRING) {
 		if (_vm->getCurrentScore())
 			_vm->getCurrentScore()->setStartToLabel(*frame.u.s);
