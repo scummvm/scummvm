@@ -31,6 +31,10 @@
 
 namespace Scumm {
 
+    // Helper functions for ManiacMansion workarounds
+#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
+#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
+
 #define OPCODE(i, x)	_opcodes[i]._OPCODE(ScummEngine_v2, x)
 
 void ScummEngine_v2::setupOpcodes() {
@@ -1178,23 +1182,14 @@ void ScummEngine_v2::o2_startScript() {
 	// (which makes Ted go answer the door bell) is simply ignored. This
 	// way, the door bell still chimes, but Ted ignores it.
 	if (_game.id == GID_MANIAC) {
-		if (_game.version >= 1 && script == 87) {
-			if (isScriptRunning(88) || isScriptRunning(89))
-				return;
-		}
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 82) {
-			if (isScriptRunning(83) || isScriptRunning(84))
+		if (script == MM_SCRIPT(82)) {
+			if (isScriptRunning(MM_SCRIPT(83)) || isScriptRunning(MM_SCRIPT(84)))
 				return;
 		}
 	}
 
 	runScript(script, 0, 0, 0);
 }
-
-// Helper functions for ManiacMansion workarounds
-#define MM_SCRIPT(script)  (script + (_game.version == 0 ? 0 : 5))
-#define MM_VALUE(v0,v1)    (_game.version == 0 ? v0 : v1)
 
 void ScummEngine_v2::stopScriptCommon(int script) {
     
@@ -1209,7 +1204,7 @@ void ScummEngine_v2::stopScriptCommon(int script) {
             if (script == MM_SCRIPT(138)) {
 
                 int obj = MM_VALUE(124, 157);
-                putState(obj, getState(obj) & ~kObjectState_08 );
+                putState(obj, getState(obj) & ~kObjectState_08);
             }
         }
     }
@@ -1218,10 +1213,7 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 	// FIXME: Nasty hack for bug #915575
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
-		if (_game.version >= 1 && script == 116 && isScriptRunning(89))
-			return;
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 111 && isScriptRunning(84))
+		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))
 			return;
 	}
 
