@@ -45,7 +45,7 @@ bool CRecordPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CPhonographRecordMsg recordMsg;
 	recordMsg.execute(getParent());
 
-	if (recordMsg._value) {
+	if (recordMsg._canRecord) {
 		playSound("z#58.wav");
 		loadFrame(1);
 		_active = true;

@@ -60,14 +60,14 @@ void CRestaurantPhonograph::load(SimpleFile *file) {
 }
 
 bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_fieldF8 && !_fieldE0) {
+	if (!_fieldF8 && !_isPlaying) {
 		CQueryCylinderHolderMsg holderMsg;
 		holderMsg.execute(this);
 
-		if (!holderMsg._value1) {
+		if (!holderMsg._isOpen) {
 			CPhonographPlayMsg playMsg;
 			playMsg.execute(this);
-		} else if (holderMsg._value2) {
+		} else if (holderMsg._isPresent) {
 			CEjectCylinderMsg ejectMsg;
 			ejectMsg.execute(this);
 
@@ -83,7 +83,7 @@ bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CRestaurantPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
-	if (_fieldE0) {
+	if (_isPlaying) {
 		if (findView() == getView() && (!_fieldE8 || !_field114)) {
 			loadFrame(_fieldEC);
 			playSound(_ejectSoundName);
@@ -101,10 +101,10 @@ bool CRestaurantPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 }
 
 bool CRestaurantPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
-	bool flag = _fieldE0;
+	bool flag = _isPlaying;
 	CPhonograph::PhonographStopMsg(msg);
 
-	if (_fieldE0) {
+	if (_isPlaying) {
 		loadFrame(_fieldF0);
 		if (flag)
 			playSound(_string3);
@@ -126,7 +126,7 @@ bool CRestaurantPhonograph::PhonographReadyToPlayMsg(CPhonographReadyToPlayMsg *
 }
 
 bool CRestaurantPhonograph::EjectCylinderMsg(CEjectCylinderMsg *msg) {
-	if (_fieldE0) {
+	if (_isPlaying) {
 		CPhonographStopMsg stopMsg;
 		stopMsg.execute(this);
 	}

@@ -38,8 +38,8 @@ class CPhonograph : public CMusicPlayer {
 	bool MusicHasStartedMsg(CMusicHasStartedMsg *msg);
 protected:
 	CString _string2;
-	bool _fieldE0;
-	int _fieldE4;
+	bool _isPlaying;
+	bool _isRecording;
 	int _fieldE8;
 	int _fieldEC;
 	int _fieldF0;

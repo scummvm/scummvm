@@ -34,13 +34,13 @@ BEGIN_MESSAGE_MAP(CRestaurantCylinderHolder, CDropTarget)
 END_MESSAGE_MAP()
 
 CRestaurantCylinderHolder::CRestaurantCylinderHolder() : CDropTarget(),
-	_field118(0), _field11C(0), _field12C(0), _field130(0),
+	_isOpen(false), _field11C(0), _field12C(0), _field130(0),
 	_ejectSoundName("z#61.wav"), _defaultCursorId(CURSOR_ARROW) {
 }
 
 void CRestaurantCylinderHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field118, indent);
+	file->writeNumberLine(_isOpen, indent);
 	file->writeNumberLine(_field11C, indent);
 	file->writeQuotedLine(_target, indent);
 	file->writeNumberLine(_field12C, indent);
@@ -53,7 +53,7 @@ void CRestaurantCylinderHolder::save(SimpleFile *file, int indent) {
 
 void CRestaurantCylinderHolder::load(SimpleFile *file) {
 	file->readNumber();
-	_field118 = file->readNumber();
+	_isOpen = file->readNumber();
 	_field11C = file->readNumber();
 	_target = file->readString();
 	_field12C = file->readNumber();
@@ -68,7 +68,7 @@ bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 	_field11C = true;
 	bool hasCylinder = findByName("Phonograph Cylinder") != nullptr;
 
-	if (_field118) {
+	if (_isOpen) {
 		playClip(hasCylinder ? "CloseHolder_Full" : "CloseHolder_Empty",
 			MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		_dropEnabled = true;
@@ -82,7 +82,7 @@ bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 }
 
 bool CRestaurantCylinderHolder::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_field118) {
+	if (_isOpen) {
 		CTreeItem *cylinder = findByName("Phonograph Cylinder", true);
 		if (cylinder) {
 			loadFrame(_dropFrame);
@@ -101,14 +101,14 @@ bool CRestaurantCylinderHolder::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 	_field11C = false;
-	if (_field118) {
-		_field118 = false;
+	if (_isOpen) {
+		_isOpen = false;
 		_cursorId = _defaultCursorId;
 
 		CPhonographReadyToPlayMsg readyMsg;
 		readyMsg.execute(_target);
 	} else {
-		_field118 = true;
+		_isOpen = true;
 		_dropEnabled = false;
 		_cursorId = findByName("Phonograph Cylinder") ? _dropCursorId : _dragCursorId;
 	}
@@ -121,9 +121,9 @@ bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 bool CRestaurantCylinderHolder::QueryCylinderHolderMsg(CQueryCylinderHolderMsg *msg) {
 	CNamedItem *cylinder = findByName("Phonograph Cylinder", true);
 
-	msg->_value1 = _field118;
+	msg->_isOpen = _isOpen;
 	if (cylinder) {
-		msg->_value2 = 1;
+		msg->_isPresent = true;
 		msg->_target = cylinder;
 	}
 
@@ -143,7 +143,7 @@ bool CRestaurantCylinderHolder::QueryCylinderNameMsg(CQueryCylinderNameMsg *msg)
 }
 
 bool CRestaurantCylinderHolder::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_field118)
+	if (_isOpen)
 		return CDropTarget::MouseDragStartMsg(msg);
 	else
 		return true;

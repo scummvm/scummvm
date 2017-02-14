@@ -34,15 +34,15 @@ BEGIN_MESSAGE_MAP(CPhonograph, CMusicPlayer)
 END_MESSAGE_MAP()
 
 CPhonograph::CPhonograph() : CMusicPlayer(),
-		_fieldE0(false), _fieldE4(0), _fieldE8(0), _fieldEC(0),
+		_isPlaying(false), _isRecording(false), _fieldE8(0), _fieldEC(0),
 		_fieldF0(0), _fieldF4(0) {
 }
 
 void CPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_isPlaying, indent);
+	file->writeNumberLine(_isRecording, indent);
 	file->writeNumberLine(_fieldE8, indent);
 	file->writeNumberLine(_fieldEC, indent);
 	file->writeNumberLine(_fieldF0, indent);
@@ -54,8 +54,8 @@ void CPhonograph::save(SimpleFile *file, int indent) {
 void CPhonograph::load(SimpleFile *file) {
 	file->readNumber();
 	_string2 = file->readString();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_isPlaying = file->readNumber();
+	_isRecording = file->readNumber();
 	_fieldE8 = file->readNumber();
 	_fieldEC = file->readNumber();
 	_fieldF0 = file->readNumber();
@@ -67,8 +67,8 @@ void CPhonograph::load(SimpleFile *file) {
 bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 	CQueryCylinderHolderMsg holderMsg;
 	holderMsg.execute(this);
-	if (!holderMsg._value2) {
-		_fieldE0 = false;
+	if (!holderMsg._isPresent) {
+		_isPlaying = false;
 		return true;
 	}
 
@@ -76,16 +76,16 @@ bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 	cylinderMsg.execute(holderMsg._target);
 
 	if (cylinderMsg._name.empty()) {
-		_fieldE0 = false;
+		_isPlaying = false;
 	} else if (cylinderMsg._name.hasPrefix("STMusic")) {
 		CStartMusicMsg startMsg(this);
 		startMsg.execute(this);
-		_fieldE0 = true;
+		_isPlaying = true;
 		msg->_value = 1;
 	} else {
 		stopGlobalSound(0, -1);
 		playGlobalSound(cylinderMsg._name, -2, true, true, 0);
-		_fieldE0 = true;
+		_isPlaying = true;
 		msg->_value = 1;
 	}
 
@@ -95,14 +95,14 @@ bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 	CQueryCylinderHolderMsg holderMsg;
 	holderMsg.execute(this);
-	if (!holderMsg._value2)
+	if (!holderMsg._isPresent)
 		return true;
 
-	_fieldE0 = false;
+	_isPlaying = false;
 	CQueryCylinderMsg cylinderMsg;
 	cylinderMsg.execute(holderMsg._target);
 
-	if (_fieldE0) {
+	if (_isPlaying) {
 		if (!cylinderMsg._name.empty()) {
 			if (cylinderMsg._name.hasPrefix("STMusic")) {
 				CStopMusicMsg stopMsg;
@@ -114,9 +114,9 @@ bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 		}
 
 		if (!msg->_value3)
-			_fieldE0 = false;
-	} else if (_fieldE4) {
-		_fieldE4 = false;
+			_isPlaying = false;
+	} else if (_isRecording) {
+		_isRecording = false;
 		msg->_value2 = 1;
 	}
 
@@ -124,16 +124,17 @@ bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 }
 
 bool CPhonograph::PhonographRecordMsg(CPhonographRecordMsg *msg) {
-	if (!_fieldE0 && !_fieldE4 && !_fieldE8) {
+	if (!_isPlaying && !_isRecording && !_fieldE8) {
 		CQueryCylinderHolderMsg holderMsg;
 		holderMsg.execute(this);
 
-		if (holderMsg._value2) {
-			_fieldE4 = true;
+		if (holderMsg._isPresent) {
+			_isRecording = true;
+			msg->_canRecord = true;
 			CErasePhonographCylinderMsg eraseMsg;
 			eraseMsg.execute(holderMsg._target);
 		} else {
-			_fieldE4 = false;
+			_isRecording = false;
 		}
 	}
 
@@ -141,7 +142,7 @@ bool CPhonograph::PhonographRecordMsg(CPhonographRecordMsg *msg) {
 }
 
 bool CPhonograph::EnterRoomMsg(CEnterRoomMsg *msg) {
-	if (_fieldE0) {
+	if (_isPlaying) {
 		CPhonographPlayMsg playMsg;
 		playMsg.execute(this);
 	}
@@ -150,7 +151,7 @@ bool CPhonograph::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CPhonograph::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (_fieldE0) {
+	if (_isPlaying) {
 		CPhonographStopMsg stopMsg;
 		stopMsg._value1 = 1;
 		stopMsg.execute(this);
@@ -160,14 +161,14 @@ bool CPhonograph::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 }
 
 bool CPhonograph::MusicHasStartedMsg(CMusicHasStartedMsg *msg) {
-	if (_fieldE4) {
+	if (_isRecording) {
 		CQueryCylinderHolderMsg holderMsg;
 		holderMsg.execute(this);
-		if (holderMsg._value2) {
+		if (holderMsg._isPresent) {
 			CRecordOntoCylinderMsg recordMsg;
 			recordMsg.execute(holderMsg._target);
 		} else {
-			_fieldE4 = false;
+			_isRecording = false;
 		}
 	}
 
