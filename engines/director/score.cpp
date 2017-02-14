@@ -639,6 +639,8 @@ void Score::gotoLoop() {
 			}
 		}
 	}
+
+	g_director->_skipFrameAdvance = true;
 }
 
 int Score::getCurrentLabelNumber() {
@@ -657,11 +659,15 @@ int Score::getCurrentLabelNumber() {
 void Score::gotoNext() {
 	// we can just try to use the current frame and get the next label
 	_currentFrame = getNextLabelNumber(_currentFrame);
+
+	g_director->_skipFrameAdvance = true;
 }
 
 void Score::gotoPrevious() {
 	// we actually need the frame of the label prior to the most recent label.
 	_currentFrame = getPreviousLabelNumber(getCurrentLabelNumber());
+
+	g_director->_skipFrameAdvance = true;
 }
 
 int Score::getNextLabelNumber(int referenceFrame) {

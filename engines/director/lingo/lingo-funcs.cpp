@@ -242,6 +242,8 @@ void Lingo::func_gotoloop() {
 		return;
 
 	_vm->getCurrentScore()->gotoLoop();
+
+	g_director->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
@@ -249,6 +251,8 @@ void Lingo::func_gotonext() {
 		return;
 
 	_vm->getCurrentScore()->gotoNext();
+
+	g_director->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
@@ -256,6 +260,8 @@ void Lingo::func_gotoprevious() {
 		return;
 
 	_vm->getCurrentScore()->gotoPrevious();
+
+	g_director->_skipFrameAdvance = true;
 }
 
 void Lingo::func_cursor(int c) {
