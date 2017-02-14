@@ -147,7 +147,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
-		debugC(3, kDebugImages, "Skipping compression");
+		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->pitch; ) {
 				byte color = stream.readByte();
@@ -265,7 +265,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
-		debugC(3, kDebugImages, "Skipping compression");
+		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->pitch; ) {
 				byte color = stream.readByte();

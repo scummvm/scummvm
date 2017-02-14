@@ -727,7 +727,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	BitmapCast *bc = NULL;
 
 	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
-		debugC(2, kDebugImages, "Shared cast BMP: id: %d", imgId);
+		debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
 		pic = _vm->getSharedBMP()->getVal(imgId);
 		pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
 		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
@@ -740,14 +740,14 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 		if (_vm->getVersion() < 4) {
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
-			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoder(w, h);
 		} else if (_vm->getVersion() < 6) {
 			bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
 			int w = bc->initialRect.width(), h = bc->initialRect.height();
 
-			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
 			img = new BITDDecoderV4(w, h, bc->bitsPerPixel);
 		} else {
