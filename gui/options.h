@@ -86,9 +86,8 @@ protected:
 	virtual void clean();
 	void rebuild();
 
-#ifdef ANDROIDSDL
-	void addAndroidSdlControls(GuiObject *boss, const Common::String &prefix);
-#endif
+
+	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
@@ -116,15 +115,13 @@ protected:
 
 private:
 	
-#ifdef ANDROIDSDL
 	//
-	// AndroidSDL controls
+	// Control controls
 	//
-	bool _enableAndroidSdlSettings;
+	bool _enableControlSettings;
 
 	CheckboxWidget *_touchpadCheckbox;
 	CheckboxWidget *_onscreenCheckbox;
-#endif
 	
 	//
 	// Graphics controls

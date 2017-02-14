@@ -113,3 +113,9 @@ bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 			break;
 	}
 }
+
+bool OSystem_ANDROIDSDL::hasFeature(Feature f) {
+	return (f == kFeatureTouchpadMode ||
+			f == kFeatureOnScreenControl ||
+			f == OSystem_POSIX::getFeatureState(f));
+}

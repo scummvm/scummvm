@@ -336,19 +336,17 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureOpenUrl
-			
-#ifdef ANDROIDSDL
-		,
-			/**
-			* show on-screen control
-			*/
+		kFeatureOpenUrl	,
+		
+		/**
+		* show on-screen control
+		*/
 		kFeatureOnScreenControl,
-			/**
-			* mouse emulation mode
-			*/
+		
+		/**
+		* mouse emulation mode
+		*/
 		kFeatureTouchpadMode
-#endif
 	};
 
 	/**

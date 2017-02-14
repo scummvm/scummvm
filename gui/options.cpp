@@ -136,11 +136,9 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::init() {
-#ifdef ANDROIDSDL
-	_enableAndroidSdlSettings = false;
+	_enableControlSettings = false;
 	_onscreenCheckbox = 0;
 	_touchpadCheckbox = 0;
-#endif
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
 	_gfxPopUpDesc = 0;
@@ -208,19 +206,21 @@ void OptionsDialog::build() {
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 	
-#ifdef ANDROIDSDL
-	// AndroidSDL options
-	if (ConfMan.hasKey("onscreen_control", _domain)) {
-		bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
-		if (_onscreenCheckbox != 0)
-			_onscreenCheckbox->setState(onscreenState);
+	// Control options
+	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+		if (ConfMan.hasKey("onscreen_control", _domain)) {
+			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
+			if (_onscreenCheckbox != 0)
+				_onscreenCheckbox->setState(onscreenState);
+		}
 	}
-	if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
-		bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
-		if (_touchpadCheckbox != 0)
-			_touchpadCheckbox->setState(touchpadState);
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
+			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
+			if (_touchpadCheckbox != 0)
+				_touchpadCheckbox->setState(touchpadState);
+		}
 	}
-#endif
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -399,16 +399,20 @@ void OptionsDialog::open() {
 }
 
 void OptionsDialog::apply() {
-#ifdef ANDROIDSDL
-	if (_enableAndroidSdlSettings) {
-		if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
-			g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+	// Control options
+	if (_enableControlSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+			}
 		}
-		if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
-			g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+			}
 		}
 	}
-#endif
+
 	// Graphic options
 	bool graphicsModeChanged = false;
 	if (_fullscreenCheckbox) {
@@ -828,16 +832,17 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedLabel->setEnabled(ena);
 }
 	
-#ifdef ANDROIDSDL
-	void OptionsDialog::addAndroidSdlControls(GuiObject *boss, const Common::String &prefix) {
+	void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
 		// Show On-Screen control
-		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
+			_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
+		
 		// Touchpad Mouse mode
-		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
-
-		_enableAndroidSdlSettings = true;
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
+			_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
+	
+		_enableControlSettings = true;
 	}
-#endif
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -1265,14 +1270,15 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
-
-#ifdef ANDROIDSDL
+	
 	//
-	// The control tab only for Android SDL platform
+	// The control tab (currently visible only for AndroidSDL platform, visibility checking by features
 	//
-	tab->addTab(_("Control"));
-	addAndroidSdlControls(tab, "GlobalOptions_AndroidSdl.");
-#endif
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
+		g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+		tab->addTab(_("Control"));
+		addControlControls(tab, "GlobalOptions_Control.");
+   }
 	
 	//
 	// 1) The graphics tab

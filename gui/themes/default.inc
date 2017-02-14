@@ -814,7 +814,7 @@ const char *defaultXML1 = "<?xml version = '1.0'?>"
 "</layout>"
 "</dialog>"
 
-"<dialog name='GlobalOptions_AndroidSdl' overlays='Dialog.GlobalOptions.TabWidget'>"
+"<dialog name='GlobalOptions_Control' overlays='Dialog.GlobalOptions.TabWidget'>"
 "<layout type='vertical' padding='16,16,16,16' spacing='8'>"
 "<widget name='grOnScreenCheckbox' "
 "type='Checkbox' "
