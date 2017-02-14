@@ -41,8 +41,8 @@ CRestaurantPhonograph::CRestaurantPhonograph() : CPhonograph(),
 void CRestaurantPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldF8, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_ejectSoundName, indent);
+	file->writeQuotedLine(_stopSoundName, indent);
 
 	file->writeNumberLine(_field114, indent);
 
@@ -52,8 +52,8 @@ void CRestaurantPhonograph::save(SimpleFile *file, int indent) {
 void CRestaurantPhonograph::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldF8 = file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
+	_ejectSoundName = file->readString();
+	_stopSoundName = file->readString();
 	_field114 = file->readNumber();
 
 	CPhonograph::load(file);
@@ -71,7 +71,7 @@ bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			CEjectCylinderMsg ejectMsg;
 			ejectMsg.execute(this);
 
-			_fieldE8 = true;
+			_isDisabled = true;
 			if (_field114) {
 				loadFrame(_fieldEC);
 				playSound(_ejectSoundName);
@@ -84,7 +84,7 @@ bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CRestaurantPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 	if (_isPlaying) {
-		if (findView() == getView() && (!_fieldE8 || !_field114)) {
+		if (findView() == getView() && (!_isDisabled || !_field114)) {
 			loadFrame(_fieldEC);
 			playSound(_ejectSoundName);
 		}
@@ -107,7 +107,7 @@ bool CRestaurantPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 	if (_isPlaying) {
 		loadFrame(_fieldF0);
 		if (flag)
-			playSound(_string3);
+			playSound(_stopSoundName);
 	} else {
 		loadFrame(_fieldEC);
 	}
@@ -116,10 +116,10 @@ bool CRestaurantPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 }
 
 bool CRestaurantPhonograph::PhonographReadyToPlayMsg(CPhonographReadyToPlayMsg *msg) {
-	if (_fieldE8) {
+	if (_isDisabled) {
 		CPhonographPlayMsg playMsg;
 		playMsg.execute(this);
-		_fieldE8 = false;
+		_isDisabled = false;
 	}
 
 	return true;

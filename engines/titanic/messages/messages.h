@@ -305,7 +305,7 @@ MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);
 MESSAGE1(CPhonographRecordMsg, bool, canRecord, false);
-MESSAGE3(CPhonographStopMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CPhonographStopMsg, bool, leavingRoom, false, bool, cylinderPresent, false, bool, dontStop, false);
 MESSAGE2(CPlayRangeMsg, int, value1, 0, int, value2, 0);
 MESSAGE2(CPlayerTriesRestaurantTableMsg, int, tableId, 0, bool, result, false);
 MESSAGE1(CPreSaveMsg, int, value, 0);

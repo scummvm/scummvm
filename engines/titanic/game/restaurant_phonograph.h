@@ -39,7 +39,7 @@ class CRestaurantPhonograph : public CPhonograph {
 private:
 	int _fieldF8;
 	CString _ejectSoundName;
-	CString _string3;
+	CString _stopSoundName;
 	int _field114;
 public:
 	CLASSDEF;

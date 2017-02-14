@@ -37,10 +37,10 @@ class CPhonograph : public CMusicPlayer {
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 	bool MusicHasStartedMsg(CMusicHasStartedMsg *msg);
 protected:
-	CString _string2;
+	CString _unused;
 	bool _isPlaying;
 	bool _isRecording;
-	int _fieldE8;
+	bool _isDisabled;
 	int _fieldEC;
 	int _fieldF0;
 	int _fieldF4;

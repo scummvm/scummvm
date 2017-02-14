@@ -49,7 +49,7 @@ bool CMusicRoomStopPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg
 
 		CPhonographStopMsg stopMsg;
 		stopMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
-		if (stopMsg._value2) {
+		if (stopMsg._cylinderPresent) {
 			_ticks = getTicksCount();
 		} else {
 			CEjectCylinderMsg ejectMsg;

@@ -34,16 +34,16 @@ BEGIN_MESSAGE_MAP(CPhonograph, CMusicPlayer)
 END_MESSAGE_MAP()
 
 CPhonograph::CPhonograph() : CMusicPlayer(),
-		_isPlaying(false), _isRecording(false), _fieldE8(0), _fieldEC(0),
+		_isPlaying(false), _isRecording(false), _isDisabled(false), _fieldEC(0),
 		_fieldF0(0), _fieldF4(0) {
 }
 
 void CPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_unused, indent);
 	file->writeNumberLine(_isPlaying, indent);
 	file->writeNumberLine(_isRecording, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_isDisabled, indent);
 	file->writeNumberLine(_fieldEC, indent);
 	file->writeNumberLine(_fieldF0, indent);
 	file->writeNumberLine(_fieldF4, indent);
@@ -53,10 +53,10 @@ void CPhonograph::save(SimpleFile *file, int indent) {
 
 void CPhonograph::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
+	_unused = file->readString();
 	_isPlaying = file->readNumber();
 	_isRecording = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_isDisabled = file->readNumber();
 	_fieldEC = file->readNumber();
 	_fieldF0 = file->readNumber();
 	_fieldF4 = file->readNumber();
@@ -108,23 +108,23 @@ bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 				CStopMusicMsg stopMsg;
 				stopMsg.execute(this);
 			} else {
-				stopGlobalSound(msg->_value1, -1);
+				stopGlobalSound(msg->_leavingRoom, -1);
 			}
-			msg->_value2 = 1;
+			msg->_cylinderPresent = true;
 		}
 
-		if (!msg->_value3)
+		if (!msg->_dontStop)
 			_isPlaying = false;
 	} else if (_isRecording) {
 		_isRecording = false;
-		msg->_value2 = 1;
+		msg->_cylinderPresent = true;
 	}
 
 	return true;
 }
 
 bool CPhonograph::PhonographRecordMsg(CPhonographRecordMsg *msg) {
-	if (!_isPlaying && !_isRecording && !_fieldE8) {
+	if (!_isPlaying && !_isRecording && !_isDisabled) {
 		CQueryCylinderHolderMsg holderMsg;
 		holderMsg.execute(this);
 
@@ -153,7 +153,7 @@ bool CPhonograph::EnterRoomMsg(CEnterRoomMsg *msg) {
 bool CPhonograph::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 	if (_isPlaying) {
 		CPhonographStopMsg stopMsg;
-		stopMsg._value1 = 1;
+		stopMsg._leavingRoom = true;
 		stopMsg.execute(this);
 	}
 
