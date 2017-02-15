@@ -284,10 +284,13 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 
 	if (src.format.bytesPerPixel == 1) {
 		// Paletted 8-bit, so convert to 16-bit and copy over
-		Graphics::Surface *s = src.convertTo(dest.format, _decoder->getPalette());
-		dest.blitFrom(*s, copyRect, Common::Point(0, 0));
-		s->free();
-		delete s;
+		const byte *palette = _decoder->getPalette();
+		if (palette) {
+			Graphics::Surface *s = src.convertTo(dest.format, palette);
+			dest.blitFrom(*s, copyRect, Common::Point(0, 0));
+			s->free();
+			delete s;
+		}
 	} else if (src.format.bytesPerPixel == 2) {
 		// Source is already 16-bit, with no alpha, so do a straight copy
 		dest.blitFrom(src, copyRect, Common::Point(0, 0));
