@@ -274,7 +274,7 @@ CNamedItem *CTreeItem::findByName(const CString &name, bool subMatch) {
 		itemName.toLowercase();
 
 		if (subMatch) {
-			if (itemName.left(name.size()).compareTo(nameLower))
+			if (!itemName.left(nameLower.size()).compareTo(nameLower))
 				return dynamic_cast<CNamedItem *>(treeItem);
 		} else {
 			if (!itemName.compareTo(nameLower))
