@@ -877,7 +877,7 @@ void Score::update() {
 		}
 	}
 
-	// TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	if (_vm->getVersion() >= 6)
 		_lingo->processEvent(kEventPrepareFrame, kFrameScript, _currentFrame);
 
@@ -936,7 +936,7 @@ void Score::update() {
 }
 
 void Score::processEvents() {
-	//TODO: re-instate when we know which script to run.
+	// TODO: re-instate when we know which script to run.
 	//if (_currentFrame > 0)
 	//	_lingo->processEvent(kEventIdle, _currentFrame - 1);
 
@@ -952,9 +952,9 @@ void Score::processEvents() {
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				//D3 doesn't have both mouse up and down.
+				// D3 doesn't have both mouse up and down.
 				if (_vm->getVersion() > 3) {
-					//TODO: check that this is the order of script execution!
+					// TODO: check that this is the order of script execution!
 					uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
 					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
 					_lingo->processEvent(kEventMouseDown, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
@@ -966,11 +966,11 @@ void Score::processEvents() {
 
 				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
 				if (_vm->getVersion() > 3) {
-					//TODO: check that this is the order of script execution!
+					// TODO: check that this is the order of script execution!
 					_lingo->processEvent(kEventMouseUp, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
 					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				} else {
-					//D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
+					// D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
 					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				}
 			}
@@ -996,7 +996,7 @@ void Score::processEvents() {
 					warning("Keycode: %d", _vm->_keyCode);
 				}
 
-				//TODO: is movie script correct? Can this be elsewhere?
+				// TODO: is movie script correct? Can this be elsewhere?
 				_lingo->processEvent(kEventKeyDown, kMovieScript, 0);
 			}
 		}
