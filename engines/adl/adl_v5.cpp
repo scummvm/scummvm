@@ -66,7 +66,7 @@ void AdlEngine_v5::setupOpcodeTables() {
 	// 0x08
 	Opcode(o4_isVarGT);
 	Opcode(o1_isCurPicEQ);
-	Opcode(o5_skipOneCommand);
+	Opcode(o5_abortScript);
 
 	SetOpcodeTable(_actOpcodes);
 	// 0x00
@@ -131,10 +131,10 @@ int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v5::o5_skipOneCommand(ScriptEnv &e) {
-	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
+int AdlEngine_v5::o5_abortScript(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& ABORT_SCRIPT()");
 
-	_skipOneCommand = true;
+	_abortScript = true;
 	setVar(2, 0);
 
 	return -1;

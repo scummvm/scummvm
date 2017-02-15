@@ -58,7 +58,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_isRestarting(false),
 		_isRestoring(false),
 		_isQuitting(false),
-		_skipOneCommand(false),
+		_abortScript(false),
 		_gameDescription(gd),
 		_console(nullptr),
 		_messageIds(),
@@ -1320,20 +1320,18 @@ bool AdlEngine::doOneCommand(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-
-		if (_skipOneCommand) {
-			_skipOneCommand = false;
-			continue;
-		}
-
 		ScriptEnv env(*cmd, _state.room, verb, noun);
 		if (matchCommand(env)) {
 			doActions(env);
 			return true;
 		}
+
+		if (_abortScript) {
+			_abortScript = false;
+			return false;
+		}
 	}
 
-	_skipOneCommand = false;
 	return false;
 }
 
@@ -1341,11 +1339,6 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 	Commands::const_iterator cmd;
 
 	for (cmd = commands.begin(); cmd != commands.end(); ++cmd) {
-		if (_skipOneCommand) {
-			_skipOneCommand = false;
-			continue;
-		}
-
 		ScriptEnv env(*cmd, _state.room, verb, noun);
 		if (matchCommand(env)) {
 			doActions(env);
@@ -1353,9 +1346,12 @@ void AdlEngine::doAllCommands(const Commands &commands, byte verb, byte noun) {
 			if (_isRestarting)
 				return;
 		}
-	}
 
-	_skipOneCommand = false;
+		if (_abortScript) {
+			_abortScript = false;
+			return;
+		}
+	}
 }
 
 Common::String AdlEngine::toAscii(const Common::String &str) {

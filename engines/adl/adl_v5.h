@@ -41,7 +41,7 @@ protected:
 	virtual RegionChunkType getRegionChunkType(const uint16 addr) const;
 
 	int o5_isNounNotInRoom(ScriptEnv &e);
-	int o5_skipOneCommand(ScriptEnv &e);
+	int o5_abortScript(ScriptEnv &e);
 	int o5_dummy(ScriptEnv &e);
 	int o5_setTextMode(ScriptEnv &e);
 	int o5_setRegionRoom(ScriptEnv &e);

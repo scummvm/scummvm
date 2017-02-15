@@ -391,7 +391,7 @@ protected:
 
 	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _canSaveNow, _canRestoreNow;
-	bool _skipOneCommand;
+	bool _abortScript;
 
 	const AdlGameDescription *_gameDescription;
 
