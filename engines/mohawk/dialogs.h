@@ -34,6 +34,7 @@ class SaveLoadChooser;
 class ButtonWidget;
 class CheckboxWidget;
 class CommandSender;
+class PopUpWidget;
 class StaticTextWidget;
 }
 
@@ -143,6 +144,8 @@ private:
 
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
+	GUI::StaticTextWidget *_transitionModeCaption;
+	GUI::PopUpWidget *_transitionModePopUp;
 };
 
 #endif
