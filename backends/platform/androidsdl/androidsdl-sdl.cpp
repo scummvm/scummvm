@@ -67,29 +67,29 @@ void OSystem_ANDROIDSDL::initBackend() {
 }
 
 void OSystem_ANDROIDSDL::showOnScreenControl(bool enable) {
-		if (enable)
-			SDL_ANDROID_SetScreenKeyboardShown(1);
-		else
-			SDL_ANDROID_SetScreenKeyboardShown(0);
+	if (enable)
+		SDL_ANDROID_SetScreenKeyboardShown(1);
+	else
+		SDL_ANDROID_SetScreenKeyboardShown(0);
 }
 
 void OSystem_ANDROIDSDL::touchpadMode(bool enable) {
-		if (enable)
-			switchToRelativeMouseMode();
-		else
-			switchToDirectMouseMode();
+	if (enable)
+		switchToRelativeMouseMode();
+	else
+		switchToDirectMouseMode();
 }
 
 void OSystem_ANDROIDSDL::swapMenuAndBackButtons(bool enable) {
 	static int KEYCODE_MENU = 82;
 	static int KEYCODE_BACK = 4;
-		if (enable) {
-			SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_F13);
-			SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_ESCAPE);
-		} else {
-			SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_ESCAPE);
-			SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_F13);
-		}
+	if (enable) {
+		SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_F13);
+		SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_ESCAPE);
+	} else {
+		SDL_ANDROID_SetAndroidKeycode(KEYCODE_BACK, SDLK_ESCAPE);
+		SDL_ANDROID_SetAndroidKeycode(KEYCODE_MENU, SDLK_F13);
+	}
 }
 
 void OSystem_ANDROIDSDL::switchToDirectMouseMode() {
