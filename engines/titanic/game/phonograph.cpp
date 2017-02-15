@@ -83,7 +83,7 @@ bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 		_isPlaying = true;
 		msg->_value = 1;
 	} else {
-		stopGlobalSound(0, -1);
+		stopGlobalSound(false, -1);
 		playGlobalSound(cylinderMsg._name, -2, true, true, 0);
 		_isPlaying = true;
 		msg->_value = 1;

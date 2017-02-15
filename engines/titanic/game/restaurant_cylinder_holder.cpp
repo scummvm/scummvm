@@ -66,7 +66,7 @@ void CRestaurantCylinderHolder::load(SimpleFile *file) {
 
 bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 	_field11C = true;
-	bool hasCylinder = findByName("Phonograph Cylinder") != nullptr;
+	bool hasCylinder = findByName("Phonograph Cylinder", true) != nullptr;
 
 	if (_isOpen) {
 		playClip(hasCylinder ? "CloseHolder_Full" : "CloseHolder_Empty",
