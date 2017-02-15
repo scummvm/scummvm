@@ -2013,7 +2013,7 @@ void GlobalOptionsDialog::reflowLayout() {
 void GlobalOptionsDialog::setupCloudTab() {
 	int serverLabelPosition = -1; //no override
 #ifdef USE_LIBCURL
-	_selectedStorageIndex = _storagePopUp->getSelectedTag();
+	_selectedStorageIndex = (_storagePopUp ? _storagePopUp->getSelectedTag() : Cloud::kStorageNoneId);
 
 	if (_storagePopUpDesc) _storagePopUpDesc->setVisible(true);
 	if (_storagePopUp) _storagePopUp->setVisible(true);
