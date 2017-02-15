@@ -896,8 +896,6 @@ void Lingo::b_pass(int nargs) {
 
 void Lingo::b_pause(int nargs) {
 	g_director->_playbackPaused = true;
-
-	g_lingo->pushVoid();	// Fake value
 }
 
 void Lingo::b_playAccel(int nargs) {
