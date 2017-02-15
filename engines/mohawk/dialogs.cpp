@@ -26,6 +26,7 @@
 #include "gui/gui-manager.h"
 #include "gui/saveload.h"
 #include "gui/widget.h"
+#include "gui/widgets/popup.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -35,6 +36,7 @@
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
+#include "mohawk/riven_graphics.h"
 #endif
 
 namespace Mohawk {
@@ -266,6 +268,13 @@ RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
 		_vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
+
+	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 50, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
+	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 50, 120, 20);
+	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
+	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
+	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
+	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
 }
 
 RivenOptionsDialog::~RivenOptionsDialog() {
@@ -276,6 +285,7 @@ void RivenOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_vars["azip"] != 0);
 	_waterEffectCheckbox->setState(_vm->_vars["waterenabled"] != 0);
+	_transitionModePopUp->setSelectedTag(_vm->_vars["transitionmode"]);
 }
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -283,6 +293,7 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 	case GUI::kOKCmd:
 		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
 		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
+		_vm->_vars["transitionmode"] = _transitionModePopUp->getSelectedTag();
 		setResult(1);
 		close();
 		break;

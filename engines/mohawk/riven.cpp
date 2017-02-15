@@ -242,6 +242,7 @@ void MohawkEngine_Riven::doFrame() {
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)
 					loadGameState(_optionsDialog->getLoadSlot());
+				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 				_card->initializeZipMode();
 				break;
 			case Common::KEYCODE_r:
