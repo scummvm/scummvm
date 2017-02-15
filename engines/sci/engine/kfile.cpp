@@ -42,6 +42,7 @@
 #include "sci/console.h"
 #ifdef ENABLE_SCI32
 #include "sci/engine/guest_additions.h"
+#include "sci/engine/message.h"
 #include "sci/resource.h"
 #endif
 
@@ -1197,6 +1198,20 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		}
 	} else {
 		saveNo += kSaveIdShift;
+	}
+
+	// Auto-save system used by QFG4
+	if (g_sci->getGameId() == GID_QFG4) {
+		reg_t autoSaveNameId;
+		SciArray &autoSaveName = *s->_segMan->allocateArray(kArrayTypeString, 0, &autoSaveNameId);
+		MessageTuple autoSaveNameTuple(0, 0, 16, 1);
+		s->_msgState->getMessage(0, autoSaveNameTuple, autoSaveNameId);
+
+		if (saveDescription == autoSaveName.toString()) {
+			saveNo = 0;
+		}
+
+		s->_segMan->freeArray(autoSaveNameId);
 	}
 
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
