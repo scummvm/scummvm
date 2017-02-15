@@ -2416,6 +2416,7 @@ void Actor_v0::startAnimActor(int f) {
 			return;
 
 		_speaking = 1;
+		speakCheck();
 		return;
 	}
 
