@@ -1618,9 +1618,8 @@ void ResourceManager::readResourcePatches() {
 			SearchMan.listMatchingMembers(files, "*.p32");	// Amiga SCI1 picture patches
 			SearchMan.listMatchingMembers(files, "*.p64");	// Amiga AGA SCI1 (i.e. Longbow) picture patches
 		} else if (i == kResourceTypeScript) {
-			if (files.size() == 0)
-				// SCI3 (we can't use getSciVersion() at this point)
-				SearchMan.listMatchingMembers(files, "*.csc");
+			// SCI3 (we can't use getSciVersion() at this point)
+			SearchMan.listMatchingMembers(files, "*.csc");
 		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
