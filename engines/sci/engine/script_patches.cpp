@@ -3253,9 +3253,55 @@ static const uint16 phant2SlowIFadePatch[] = {
 	PATCH_END
 };
 
+// The game uses a spin loop during music transitions which causes the mouse to
+// appear unresponsive during scene changes. Replace the spin loop with a call
+// to ScummVM kWait.
+// Applies to at least: US English
+// Responsible method: P2SongPlyr::wait4Fade
+static const uint16 phant2Wait4FadeSignature[] = {
+	SIG_MAGICDWORD,
+	0x76,                      // push0
+	0x43, 0x79, SIG_UINT16(0), // callk GetTime, 0
+	0xa5, 0x01,                // sat 1
+	0x78,                      // push1
+	SIG_END
+};
+
+static const uint16 phant2Wait4FadePatch[] = {
+	0x78,                                     // push1
+	0x8d, 0x00,                               // lst temp[0]
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x48,                                     // ret
+	PATCH_END
+};
+
+// The game uses a spin loop when navigating to and from Curtis's computer in
+// the office, which causes the mouse to appear unresponsive. Replace the spin
+// loop with a call to ScummVM kWait.
+// Applies to at least: US English
+// Responsible method: localproc 4f04
+static const uint16 phant2CompSlideDoorsSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00, // ldi 0
+	0xa5, 0x00, // sat 0
+	0x8d, 0x00, // lst 0
+	0x87, 0x01, // lap 1
+	SIG_END
+};
+
+static const uint16 phant2CompSlideDoorsPatch[] = {
+	0x78,                                     // push1
+	0x8f, 0x01,                               // lsp param[1]
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x48,                                     // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
-	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,     phant2SlowIFadePatch },
+	{  true,     0, "slow interface fades",                        3, phant2SlowIFadeSignature,      phant2SlowIFadePatch },
+	{  true, 63016, "non-responsive mouse during music fades",     1, phant2Wait4FadeSignature,      phant2Wait4FadePatch },
+	{  true, 63019, "non-responsive mouse during computer load",   1, phant2CompSlideDoorsSignature, phant2CompSlideDoorsPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
