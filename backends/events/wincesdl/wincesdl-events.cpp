@@ -48,8 +48,8 @@ void WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) 
 	event.mouse.y = y;
 
 	// Update the "keyboard mouse" coords
-	_km.x = event.mouse.x;
-	_km.y = event.mouse.y;
+	_km.x = event.mouse.x * _km.multiplier;
+	_km.y = event.mouse.y * _km.multiplier;
 
 	// Adjust for the screen scaling
 	if (_graphicsMan->_zoomDown)
@@ -69,7 +69,9 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 	memset(&event, 0, sizeof(Common::Event));
 
-	handleKbdMouse(event);
+	if (handleKbdMouse(event) {
+		return true;
+	}
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = _graphicsMan->getScreenChangeID();

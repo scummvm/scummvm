@@ -58,7 +58,7 @@ protected:
 	//@{
 
 	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, multiplier;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
 	KbdMouse _km;
@@ -106,7 +106,7 @@ protected:
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-	virtual void handleKbdMouse(Common::Event &event);
+	virtual bool handleKbdMouse(Common::Event &event);
 
 	//@}
 
