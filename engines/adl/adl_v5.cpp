@@ -85,7 +85,7 @@ void AdlEngine_v5::setupOpcodeTables() {
 	Opcode(o5_dummy);
 	Opcode(o5_setTextMode);
 	// 0x0c
-	Opcode(o2_moveAllItems);
+	Opcode(o4_moveAllItems);
 	Opcode(o1_quit);
 	Opcode(o5_dummy);
 	Opcode(o2_save);
