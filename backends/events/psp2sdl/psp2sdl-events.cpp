@@ -65,35 +65,102 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	event.kbd.flags = 0;
 
 	switch (ev.jbutton.button) {
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
-		break;
-	case BTN_TRIANGLE: // Game menu
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_SELECT: // Virtual keyboard
+// Dpad
+		case BTN_LEFT: // Left (+R_trigger: Up+Left)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP4;
+				event.kbd.ascii = mapKey(SDLK_KP4, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP7;
+				event.kbd.ascii = mapKey(SDLK_KP7, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_RIGHT: // Right (+R_trigger: Down+Right)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP6;
+				event.kbd.ascii = mapKey(SDLK_KP6, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP3;
+				event.kbd.ascii = mapKey(SDLK_KP3, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_UP: // Up (+R_trigger: Up+Right)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP8;
+				event.kbd.ascii = mapKey(SDLK_KP8, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP9;
+				event.kbd.ascii = mapKey(SDLK_KP9, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_DOWN: // Down (+R_trigger: Down+Left)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP2;
+				event.kbd.ascii = mapKey(SDLK_KP2, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP1;
+				event.kbd.ascii = mapKey(SDLK_KP1, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+// Buttons
+		case BTN_CROSS: // Left mouse button
+			event.type = Common::EVENT_LBUTTONDOWN;
+			processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+			break;
+		case BTN_CIRCLE: // Right mouse button
+			event.type = Common::EVENT_RBUTTONDOWN;
+			processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+			break;
+		case BTN_TRIANGLE: // Game menu
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+			break;
+		case BTN_SQUARE: // Period (+R_trigger: Space)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_PERIOD;
+				event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_SPACE;
+				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_L1: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_R1: // Modifier
+			_km.modifier=true;
+			break;
+		case BTN_START: // ScummVM in game menu
+			event.type = Common::EVENT_MAINMENU;
+			break;
+		case BTN_SELECT: // Virtual keyboard (+R_trigger: Predictive Input Dialog)
+			if (!_km.modifier) {
 #ifdef ENABLE_VKEYBD
-		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+				event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 #endif
-		break;
-	case BTN_SQUARE: // Escape
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_L1: // Predictive input dialog
-		event.type = Common::EVENT_PREDICTIVE_DIALOG;
-		break;
-	case BTN_START: // ScummVM in game menu
-		event.type = Common::EVENT_MAINMENU;
-		break;
+			} else {
+				event.type = Common::EVENT_PREDICTIVE_DIALOG;
+			}
+			break;
 	}
 	return true;
 }
@@ -103,27 +170,96 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	event.kbd.flags = 0;
 
 	switch (ev.jbutton.button) {
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
-		break;
-	case BTN_TRIANGLE: // Game menu
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_SELECT: // Virtual keyboard
-		// Handled in key down
-		break;
-	case BTN_SQUARE: // Escape
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		break;
+// Dpad
+		case BTN_LEFT: // Left (+R_trigger: Up+Left)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP4;
+				event.kbd.ascii = mapKey(SDLK_KP4, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP7;
+				event.kbd.ascii = mapKey(SDLK_KP7, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_RIGHT: // Right (+R_trigger: Down+Right)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP6;
+				event.kbd.ascii = mapKey(SDLK_KP6, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP3;
+				event.kbd.ascii = mapKey(SDLK_KP3, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_UP: // Up (+R_trigger: Up+Right)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP8;
+				event.kbd.ascii = mapKey(SDLK_KP8, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP9;
+				event.kbd.ascii = mapKey(SDLK_KP9, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_DOWN: // Down (+R_trigger: Down+Left)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP2;
+				event.kbd.ascii = mapKey(SDLK_KP2, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_KP1;
+				event.kbd.ascii = mapKey(SDLK_KP1, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+// Buttons
+		case BTN_CROSS: // Left mouse button
+			event.type = Common::EVENT_LBUTTONUP;
+			processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+			break;
+		case BTN_CIRCLE: // Right mouse button
+			event.type = Common::EVENT_RBUTTONUP;
+			processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+			break;
+		case BTN_TRIANGLE: // Game menu
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+			break;
+		case BTN_SQUARE: // Period (+R_trigger: Space)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_PERIOD;
+				event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_SPACE;
+				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_L1: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
+			break;
+		case BTN_R1: // Modifier
+			_km.modifier=false;
+			break;
+		case BTN_START: // ScummVM in game menu
+			// Handled in key down
+			break;
+		case BTN_SELECT: // Virtual keyboard (+R_trigger: Predictive Input Dialog)
+			// Handled in key down
+			break;
 	}
 	return true;
 }
@@ -132,17 +268,6 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 	int axis = ev.jaxis.value;
 	
-/* old deadzone (cross shaped)
-	if (axis > JOY_DEADZONE) {
-		axis -= JOY_DEADZONE;
-		event.type = Common::EVENT_MOUSEMOVE;
-	} else if (axis < -JOY_DEADZONE) {
-		axis += JOY_DEADZONE;
-		event.type = Common::EVENT_MOUSEMOVE;
-	} else
-		axis = 0;
-*/
-
 	// conversion factor between keyboard mouse and joy axis value
 	int vel_to_axis = (3000/_km.multiplier);
 

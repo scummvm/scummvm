@@ -230,7 +230,11 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 						_km.y_vel = -5 * _km.multiplier;
 				}
 			}
-
+			// The modifier key makes the mouse movement ten times slower
+			if (_km.modifier) {
+				_km.x_vel/=10;
+				_km.y_vel/=10;
+			}
 			_km.x += _km.x_vel;
 			_km.y += _km.y_vel;
 
@@ -937,6 +941,7 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.delay_time = 12;
 	_km.last_time = 0;
 	_km.multiplier = 16;
+	_km.modifier = false;
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {

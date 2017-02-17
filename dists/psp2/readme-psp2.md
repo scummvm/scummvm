@@ -18,14 +18,20 @@ Saves are wrote in the ux0:/data/scummvm/saves folder.
 
 Joypad button mapping
 =====================
-- Left stick => Mouse
-- Cross      => Left mouse button
-- Circle     => Right mouse button
-- Triangle   => Game menu (F5)
-- Square     => Escape
-- Start      => ScummVM's in global game menu
-- Select     => Toggle virtual keyboard
-- L1         => AGI predictive input dialog
+- Left stick     => Mouse
+- R + Left stick => Slow Mouse
+- Cross          => Left mouse button
+- Circle         => Right mouse button
+- DPad           => Cursor Keys (useful for character motion)
+- R + DPad       => Diagonal Cursor Keys
+- Triangle       => Game menu (F5)
+- Square         => Period '.' (used to skip dialog lines)
+- R + Square     => Space ' '
+- L Trigger      => Escape (used to skip cutscenes)
+- R + L          => Return
+- Start          => ScummVM's global in-game menu
+- Select         => Toggle virtual keyboard
+- R + Select     => AGI predictive input dialog
 
 Disclaimer
 ==========
