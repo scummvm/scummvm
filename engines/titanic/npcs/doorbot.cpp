@@ -95,7 +95,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		case 6:
 			if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 				petShow();
-				setState1C(true);
+				stateSetSoundMakerAllowed(true);
 				changeView("ServiceElevator.Node 1.S");
 				changeView("ServiceElevator.Node 1.N");
 			}
@@ -129,7 +129,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			_introMovieNum = 0;
 		} else if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 			petShow();
-			setState1C(true);
+			stateSetSoundMakerAllowed(true);
 			changeView("ServiceElevator.Node 1.S");
 		} else {
 			CTrueTalkNPC::MovieEndMsg(msg);

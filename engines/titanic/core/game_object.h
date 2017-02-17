@@ -77,13 +77,11 @@ private:
 protected:
 	static CCreditText *_credits;
 protected:
-	double _field34;
-	double _field38;
-	double _field3C;
+	double _unused1;
+	double _unused2;
+	double _unused3;
 	bool _nonvisual;
-	int _field44;
-	int _field48;
-	int _field4C;
+	byte _toggleR, _toggleG, _toggleB;
 	CMovieClipList _movieClips;
 	int _initialFrame;
 	CMovieRangeInfoList _movieRangeInfoList;
@@ -91,11 +89,10 @@ protected:
 	CTextControl *_text;
 	uint _textBorder;
 	uint _textBorderRight;
-	int _field9C;
 	Common::Point _savedPos;
 	CVideoSurface *_surface;
 	CString _resource;
-	int _fieldB8;
+	int _unused4;
 protected:
 	/**
 	 * Saves the current position the object is located at
@@ -465,7 +462,11 @@ protected:
 	 */
 	void setPassengerClass(PassengerClass newClass);
 
-	void fn10(int v1, int v2, int v3);
+	/**
+	 * Sets color RGB for toggles
+	 * @remarks		The color set isn't actually used anywhere
+	 */
+	void setToggleColor(byte r, byte g, byte b);
 
 	/**
 	 * Gets the duration of a specified clip in milliseconds
@@ -526,7 +527,7 @@ public:
 	bool _isPendingMail;
 	uint _destRoomFlags;
 	uint _roomFlags;
-	int _field60;
+	bool _handleMouseFlag;
 	CursorId _cursorId;
 	bool _visible;
 public:
@@ -990,7 +991,10 @@ public:
 
 	/*--- CGameState Methods ---*/
 
-	void setState1C(bool flag);
+	/**
+	 * Sets whether a background sound maker is allowed for the rooms if available
+	 */
+	void stateSetSoundMakerAllowed(bool flag);
 
 	/**
 	 * Change to the next season

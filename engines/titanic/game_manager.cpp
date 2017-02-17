@@ -276,7 +276,7 @@ void CGameManager::frameMessage(CRoomItem *room) {
 		CFrameMsg frameMsg(g_vm->_events->getTicksCount());
 		frameMsg.execute(room, nullptr, MSGFLAG_SCAN);
 
-		if (!_soundMaker) {
+		if (_gameState._soundMakerAllowed && !_soundMaker) {
 			// Check for a sound maker in the room
 			_soundMaker = dynamic_cast<CBackgroundSoundMaker *>(
 				_project->findByName("zBackgroundSoundMaker"));

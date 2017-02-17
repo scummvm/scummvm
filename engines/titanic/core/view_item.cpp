@@ -260,7 +260,7 @@ bool CViewItem::handleMouseMsg(CMouseMsg *msg, bool flag) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
 		if (gameObject) {
 			if (gameObject->checkPoint(msg->_mousePos, false, true) &&
-					(!flag || !gameObject->_field60)) {
+					(!flag || !gameObject->_handleMouseFlag)) {
 				if (gameObjects.size() < 256)
 					gameObjects.push_back(gameObject);
 			}

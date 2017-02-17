@@ -56,26 +56,25 @@ void CGameObject::deinit() {
 
 CGameObject::CGameObject(): CNamedItem() {
 	_bounds = Rect(0, 0, 15, 15);
-	_field34 = 0;
-	_field38 = 0;
-	_field3C = 0;
+	_unused1 = 0;
+	_unused2 = 0;
+	_unused3 = 0;
 	_nonvisual = false;
-	_field44 = 0xF0;
-	_field48 = 0xF0;
-	_field4C = 0xFF;
+	_toggleR = 0xF0;
+	_toggleG = 0xF0;
+	_toggleB = 0xFF;
 	_isPendingMail = false;
 	_destRoomFlags = 0;
 	_roomFlags = 0;
 	_visible = true;
-	_field60 = 0;
+	_handleMouseFlag = false;
 	_cursorId = CURSOR_ARROW;
 	_initialFrame = 0;
 	_frameNumber = -1;
 	_text = nullptr;
 	_textBorder = _textBorderRight = 0;
-	_field9C = 0;
 	_surface = nullptr;
-	_fieldB8 = 0;
+	_unused4 = 0;
 }
 
 CGameObject::~CGameObject() {
@@ -105,19 +104,19 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(getMovieFrame(), indent + 1);
 	file->writeNumberLine(_cursorId, indent + 1);
 	_movieClips.save(file, indent + 1);
-	file->writeNumberLine(_field60, indent + 1);
+	file->writeNumberLine(_handleMouseFlag, indent + 1);
 	file->writeNumberLine(_nonvisual, indent + 1);
 	file->writeQuotedLine(_resource, indent + 1);
 	file->writeBounds(_bounds, indent + 1);
 
-	file->writeFloatLine(_field34, indent + 1);
-	file->writeFloatLine(_field38, indent + 1);
-	file->writeFloatLine(_field3C, indent + 1);
+	file->writeFloatLine(_unused1, indent + 1);
+	file->writeFloatLine(_unused2, indent + 1);
+	file->writeFloatLine(_unused3, indent + 1);
 
-	file->writeNumberLine(_field44, indent + 1);
-	file->writeNumberLine(_field48, indent + 1);
-	file->writeNumberLine(_field4C, indent + 1);
-	file->writeNumberLine(_fieldB8, indent + 1);
+	file->writeNumberLine(_toggleR, indent + 1);
+	file->writeNumberLine(_toggleG, indent + 1);
+	file->writeNumberLine(_toggleB, indent + 1);
+	file->writeNumberLine(_unused4, indent + 1);
 	file->writeNumberLine(_visible, indent + 1);
 	file->writeNumberLine(_isPendingMail, indent + 1);
 	file->writeNumberLine(_destRoomFlags, indent + 1);
@@ -153,7 +152,7 @@ void CGameObject::load(SimpleFile *file) {
 		// Deliberate fall-through
 
 	case 4:
-		_field60 = file->readNumber();
+		_handleMouseFlag = file->readNumber();
 		// Deliberate fall-through
 
 	case 3:
@@ -166,13 +165,13 @@ void CGameObject::load(SimpleFile *file) {
 
 	case 1:
 		_bounds = file->readBounds();
-		_field34 = file->readFloat();
-		_field38 = file->readFloat();
-		_field3C = file->readFloat();
-		_field44 = file->readNumber();
-		_field48 = file->readNumber();
-		_field4C = file->readNumber();
-		_fieldB8 = file->readNumber();
+		_unused1 = file->readFloat();
+		_unused2 = file->readFloat();
+		_unused3 = file->readFloat();
+		_toggleR = file->readNumber();
+		_toggleG = file->readNumber();
+		_toggleB = file->readNumber();
+		_unused4 = file->readNumber();
 		_visible = file->readNumber() != 0;
 		_isPendingMail = file->readNumber();
 		_destRoomFlags = file->readNumber();
@@ -1369,11 +1368,11 @@ void CGameObject::createCredits() {
 	_credits->load(this, screenManager, _bounds);
 }
 
-void CGameObject::fn10(int v1, int v2, int v3) {
+void CGameObject::setToggleColor(byte r, byte g, byte b) {
 	makeDirty();
-	_field44 = v1;
-	_field48 = v2;
-	_field4C = v3;
+	_toggleR = r;
+	_toggleG = g;
+	_toggleB = b;
 }
 
 void CGameObject::movieSetAudioTiming(bool flag) {
@@ -1425,8 +1424,8 @@ bool CGameObject::compareRoomFlags(RoomFlagsComparison compareType, uint flags1,
 	}
 }
 
-void CGameObject::setState1C(bool flag) {
-	getGameManager()->_gameState._field1C = flag;
+void CGameObject::stateSetSoundMakerAllowed(bool flag) {
+	getGameManager()->_gameState._soundMakerAllowed = flag;
 }
 
 void CGameObject::addMail(uint destRoomFlags) {

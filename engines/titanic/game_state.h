@@ -69,7 +69,7 @@ public:
 	GameStateMode _mode;
 	Season _seasonNum;
 	bool _petActive;
-	bool _field1C;
+	bool _soundMakerAllowed;
 	bool _quitGame;
 	bool _parrotMet;
 	uint _nodeChangeCtr;
