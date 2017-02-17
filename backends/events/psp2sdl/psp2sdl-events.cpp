@@ -33,7 +33,9 @@
 #include "common/util.h"
 #include "common/events.h"
 
-#define JOY_DEADZONE 3200
+#include "math.h"
+
+#define JOY_DEADZONE 2000
 #define JOY_ANALOG
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
@@ -65,11 +67,11 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	switch (ev.jbutton.button) {
 	case BTN_CROSS: // Left mouse button
 		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
 		break;
 	case BTN_CIRCLE: // Right mouse button
 		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
 		break;
 	case BTN_TRIANGLE: // Game menu
 		event.type = Common::EVENT_KEYDOWN;
@@ -103,11 +105,11 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	switch (ev.jbutton.button) {
 	case BTN_CROSS: // Left mouse button
 		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
 		break;
 	case BTN_CIRCLE: // Right mouse button
 		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
 		break;
 	case BTN_TRIANGLE: // Game menu
 		event.type = Common::EVENT_KEYUP;
@@ -130,6 +132,7 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 	int axis = ev.jaxis.value;
 	
+/* old deadzone (cross shaped)
 	if (axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
@@ -138,17 +141,42 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_MOUSEMOVE;
 	} else
 		axis = 0;
+*/
+
+	// conversion factor between keyboard mouse and joy axis value
+	int vel_to_axis = (3000/_km.multiplier);
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
-		_km.x_vel = axis / 2000;
+		_km.x_vel = axis / vel_to_axis;
 		_km.x_down_count = 0;
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 		axis = -axis;
-		_km.y_vel = -axis / 2000;
+		_km.y_vel = -axis / vel_to_axis;
 		_km.y_down_count = 0;
 	}
 
-	processMouseEvent(event, _km.x, _km.y);
+	// radial and scaled deadzone
+
+	float analogX=(float) (_km.x_vel * vel_to_axis);
+	float analogY=(float) (_km.y_vel * vel_to_axis);
+	float deadZone=(float) JOY_DEADZONE;
+	float scalingFactor=1.0f;
+	float magnitude=0.0f;
+		
+	magnitude=sqrt(analogX*analogX+analogY*analogY);
+	
+	if (magnitude >= deadZone)
+	{
+		scalingFactor=1.0f/magnitude*(magnitude-deadZone)/(32769.0f-deadZone);
+		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
+		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
+		event.type = Common::EVENT_MOUSEMOVE;
+	} else {
+		_km.y_vel = 0;
+		_km.x_vel = 0;
+	}
+
+	processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
 
 	return true;
 }

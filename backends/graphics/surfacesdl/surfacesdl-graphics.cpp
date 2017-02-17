@@ -2668,7 +2668,12 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 #ifdef PSP2
 		vita2d_set_vblank_wait(true);
 		vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
-		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
+		if (_videoMode.filtering) {
+			vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_LINEAR, SCE_GXM_TEXTURE_FILTER_LINEAR);
+		}
+		else {
+			vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
+		}
 		sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
 		screen->pixels = vita2d_texture_get_datap(vitatex_hwscreen);
 #endif
