@@ -225,9 +225,12 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 			}
 
 			if (opcode == op_lofsa || opcode == op_lofss) {
-				reg_t addr = make_reg(pos.getSegment(), findOffset(param_value, script_entity, pos.getOffset()));
+				const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
+				reg_t addr;
+				addr.setSegment(retval.getSegment());
+				addr.setOffset(offset);
 				debugN("\t%s", s->_segMan->getObjectName(addr));
-				debugN(opsize ? "[%02x]" : "[%04x]", param_value);
+				debugN(opsize ? "[%02x]" : "[%04x]", offset);
 			} else {
 				debugN(opsize ? "\t%02x" : "\t%04x", param_value);
 			}
