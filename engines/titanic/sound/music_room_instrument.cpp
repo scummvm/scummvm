@@ -234,7 +234,7 @@ void CMusicRoomInstrument::update(int val) {
 
 			double tempVal = 46.0 - ((double)(val - 14) * 1.43);
 			int frameNum = _field4C;
-			int frameNum1 = (tempVal - frameNum) * 0.25;
+			int frameNum1 = (int)((tempVal - frameNum) * 0.25);
 			_gameObjects[1]->playMovie(frameNum1, frameNum1, MOVIE_STOP_PREVIOUS);
 
 			frameNum += frameNum1;
