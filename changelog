@@ -1,0 +1,7 @@
+changelog :
+
+improved speed: more than 100% faster on some games (for example broken sword 1 intro now play full speed)
+enabled scalers and hq scalers (no need to enable 2x scalers on "HD" games like broken swords, will just slow down)
+ability to use "integer scaling" (disable fullscreen)
+corrected aspect ratio of some games
+updates sources to latest git revision (2016-10-11)

@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(POSIX) || defined(PLAYSTATION3)
+#if defined(POSIX) || defined(PLAYSTATION3) || defined(PSP2)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
@@ -36,7 +36,11 @@
 
 #include <sys/param.h>
 #include <sys/stat.h>
+#ifdef PSP2
+#include "backends/fs/psp2/psp2-dirent.h"
+#else
 #include <dirent.h>
+#endif
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -257,7 +261,11 @@ bool POSIXFilesystemNode::create(bool isDirectoryFlag) {
 	bool success;
 
 	if (isDirectoryFlag) {
+#ifdef PSP2
+		success = sceIoMkdir(_path.c_str(), 0755) == 0;
+#else
 		success = mkdir(_path.c_str(), 0755) == 0;
+#endif
 	} else {
 		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
 		success = fd >= 0;
@@ -324,8 +332,11 @@ bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
 			// simplifies the code a lot.
 			*cur = '\0';
 		}
-
+#ifdef PSP2
+		if (sceIoMkdir(path.c_str(), 0755) != 0) {
+#else
 		if (mkdir(path.c_str(), 0755) != 0) {
+#endif
 			if (errno == EEXIST) {
 				if (stat(path.c_str(), &sb) != 0) {
 					return false;

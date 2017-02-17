@@ -883,7 +883,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
                           gph, iphone, ios7, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, samsungtv, sdl, tizen, webos, wii, wince) [sdl]
+                          ps2, psp, psp2, samsungtv, sdl, tizen, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -934,6 +934,7 @@ Special configuration feature:
                                            ouya for OUYA
                                            ps2 for PlayStation 2
                                            ps3 for PlayStation 3
+                                           psp2 for PlayStation Vita
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            tizen for Samsung Tizen
@@ -1559,6 +1560,22 @@ ps3)
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
 	;;
+psp2)
+	_host_os=psp2
+	_host_cpu=arm
+	_host_alias=arm-vita-eabi
+
+	# The prefix is always the same on PSP2 so we hardcode the default
+	# here. It is still possible to define a custom prefix which is
+	# needed when packaging the app with a user-specific app ID.
+	test "x$prefix" = xNONE && prefix=app0:
+	# PSP2 apps are installed into app-specific directories. The
+	# default directory structure of ScummVM makes no sense here so we
+	# hardcode PSP2 specific directories here.
+	datarootdir='${prefix}/data'
+	datadir='${datarootdir}'
+	docdir='${prefix}/doc'
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
@@ -1625,7 +1642,7 @@ fi
 #
 
 case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2)
+caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
 	if test "$_debug_build" = auto; then
 		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
@@ -1716,6 +1733,12 @@ ps3)
 	fi
 	if test -z "$PSL1GHT"; then
 		echo "Please set PSL1GHT in your environment. export PSL1GHT=<path to psl1ght>"
+		exit 1
+	fi
+	;;
+psp2)
+	if test -z "$VITASDK"; then
+		echo "Please set VITASDK in your environment. export VITASDK=<path to psp2 toolchain>"
 		exit 1
 	fi
 	;;
@@ -1947,7 +1970,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2199,6 +2222,9 @@ case $_host_cpu in
 			arm-apple-darwin10)
 				;;
 			arm-apple-darwin11)
+				;;
+			# psvita does not like the asm code...
+			arm-vita-eabi)
 				;;
 
 			*)
@@ -2625,6 +2651,28 @@ case $_host_os in
 		# The network libraries are statically linked and need to be specified in the following order
 		append_var SDL_NET_LIBS "-lSDL_net -lnet -lsysmodule"
 		add_line_to_config_mk 'PLAYSTATION3 = 1'
+		add_line_to_config_h "#define PREFIX \"${prefix}\""
+		;;
+	psp2)
+		_freetypepath="$VITASDK/arm-vita-eabi/bin"
+		_libcurlpath="$VITASDK/arm-vita-eabi/bin"
+		append_var CXXFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
+		append_var LDFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
+		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
+		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
+		#append_var CXXFLAGS "-ffunction-sections -mword-relocations -fomit-frame-pointer"
+		#append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
+		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
+		if test "$_debug_build" = no; then
+			_optimization_level=-O1
+		fi
+		if test "$_debug_build" = yes; then
+			_optimization_level=-O0
+			append_var DEFINES "-D__PSP2_DEBUG__"
+			append_var LIBS "-lpsp2shell"
+		fi
+		add_line_to_config_mk 'PSP2 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
@@ -3121,6 +3169,17 @@ if test -n "$_host"; then
 			_eventrec=no
 			_port_mk="backends/platform/sdl/ps3/ps3.mk"
 			;;
+		psp2)
+			_backend="psp2"
+			_16bit=no
+			_vkeybd=yes
+			_build_scalers=yes
+			_build_hq_scalers=yes
+			_mt32emu=no
+			_timidity=no
+			_eventrec=no
+			_port_mk="backends/platform/sdl/psp2/psp2.mk"
+			;;
 		psp)
 			_backend="psp"
 			_build_scalers=no
@@ -3294,6 +3353,18 @@ case $_backend in
 		append_var LIBS "-lpng"
 		append_var LIBS "-Wl,-Map,mapfile.txt"
 		;;
+	psp2)
+		# There is no sdl-config in the PSP2 SDK so we don't use find_sdlconfig here.
+		append_var LIBS "-lSDL2 -lvita2d -lSceCommonDialog_stub"
+		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
+		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
+		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub"
+		append_var DEFINES "-DSDL_BACKEND"
+		add_line_to_config_mk "SDL_BACKEND = 1"
+		add_line_to_config_mk "USE_SDL2 = 1"
+		append_var MODULES "backends/platform/sdl"
+		append_var CXXFLAGS "-I$VITASDK/arm-vita-eabi/include/SDL2"
+		;;
 	samsungtv)
 		append_var DEFINES "-DSAMSUNGTV"
 		append_var LDFLAGS "-shared"
@@ -3404,7 +3475,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | samsungtv | sdl | tizen | webos | wii)
+	3ds | android | androidsdl | dingux | dc | gph | iphone | ios7 | maemo | openpandora | psp | psp2 | samsungtv | sdl | tizen | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -3480,7 +3551,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | wii | wince)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
@@ -4188,6 +4259,9 @@ if test "$_libcurl" != "no"; then
 		case $_host_os in
 			amigaos*)
 				append_var LIBCURL_LIBS "-lpthread"
+			;;
+			psp2*)
+				append_var LIBCURL_LIBS "-lssl -lcrypto"
 			;;
 		esac
 

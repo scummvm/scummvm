@@ -22,6 +22,12 @@
 
 #include "common/scummsys.h"
 
+#ifdef PSP2
+#include <vita2d.h>
+vita2d_texture *vitatex_hwscreen;
+void *sdlpixels_hwscreen;
+#endif
+
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -47,15 +53,21 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
+#ifndef PSP2
 	{"3x", "3x", GFX_TRIPLESIZE},
+#endif
 	{"2xsai", "2xSAI", GFX_2XSAI},
 	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
+#ifndef PSP2
 	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
+#endif
 #ifdef USE_HQ_SCALERS
 	{"hq2x", "HQ2x", GFX_HQ2X},
+#ifndef PSP2
 	{"hq3x", "HQ3x", GFX_HQ3X},
+#endif
 #endif
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
@@ -943,6 +955,10 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 #endif
 
 	if (_hwscreen) {
+#ifdef PSP2
+		vita2d_free_texture(vitatex_hwscreen);
+		_hwscreen->pixels = sdlpixels_hwscreen;
+#endif
 		SDL_FreeSurface(_hwscreen);
 		_hwscreen = NULL;
 	}
@@ -996,6 +1012,10 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	_overlayscreen = NULL;
 
 	// Release the HW screen surface
+#ifdef PSP2
+	vita2d_free_texture(vitatex_hwscreen);
+	_hwscreen->pixels = sdlpixels_hwscreen;
+#endif
 	SDL_FreeSurface(_hwscreen); _hwscreen = NULL;
 
 	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
@@ -1130,8 +1150,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		}
 
 		SDL_LockSurface(srcSurf);
+#ifndef PSP2
 		SDL_LockSurface(_hwscreen);
-
+#endif
 		srcPitch = srcSurf->pitch;
 		dstPitch = _hwscreen->pitch;
 
@@ -1172,8 +1193,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
+#ifndef PSP2
 		SDL_UnlockSurface(_hwscreen);
-
+#endif
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
 		if (_forceFull) {
@@ -1208,8 +1230,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 					y = real2Aspect(y);
 
 				if (h > 0 && w > 0) {
+#ifndef PSP2
 					SDL_LockSurface(_hwscreen);
-
+#endif
 					// Use white as color for now.
 					Uint32 rectColor = SDL_MapRGB(_hwscreen->format, 0xFF, 0xFF, 0xFF);
 
@@ -1252,8 +1275,9 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 							right += _hwscreen->pitch;
 						}
 					}
-
+#ifndef PSP2
 					SDL_UnlockSurface(_hwscreen);
+#endif
 				}
 			}
 		}
@@ -2641,16 +2665,45 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		deinitializeRenderer();
 		return nullptr;
 	} else {
+#ifdef PSP2
+		vita2d_set_vblank_wait(true);
+		vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
+		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
+		sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
+		screen->pixels = vita2d_texture_get_datap(vitatex_hwscreen);
+#endif
 		return screen;
 	}
 }
 
 void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
+#ifdef PSP2
+	int x, y, w, h;
+	float sx, sy;
+	float ratio = (float)screen->w/(float)screen->h;
+	
+	if(_videoMode.fullscreen) {
+		h = 544; 
+		w = h*ratio;
+	} else {
+		h = screen->h > 544 ? 544 : screen->h;
+		w = h*ratio;
+	}
+	x = (960-w)/2; y = (544-h)/2;
+	sx = (float)w/(float)screen->w;
+	sy = (float)h/(float)screen->h;
+	
+	vita2d_start_drawing();
+	vita2d_draw_texture_scale(vitatex_hwscreen, x, y, sx, sy);
+	vita2d_end_drawing();
+	vita2d_swap_buffers();
+#else
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
 
 	SDL_RenderClear(_renderer);
 	SDL_RenderCopy(_renderer, _screenTexture, NULL, &_viewport);
 	SDL_RenderPresent(_renderer);
+#endif
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
 

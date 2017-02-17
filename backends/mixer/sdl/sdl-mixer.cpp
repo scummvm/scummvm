@@ -34,6 +34,8 @@
 #define SAMPLES_PER_SEC 11025
 #elif defined(PLAYSTATION3)
 #define SAMPLES_PER_SEC 48000
+#elif defined(PSP2)
+#define SAMPLES_PER_SEC 48000
 #else
 #define SAMPLES_PER_SEC 44100
 #endif

@@ -290,6 +290,14 @@ MODULE_OBJS += \
 	timer/psp/timer.o
 endif
 
+ifeq ($(BACKEND),psp2)
+MODULE_OBJS += \
+	fs/posix/posix-fs.o \
+	fs/psp2/psp2-fs-factory.o \
+	fs/psp2/psp2-dirent.o \
+	events/psp2sdl/psp2sdl-events.o
+endif
+
 ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
 	events/samsungtvsdl/samsungtvsdl-events.o \

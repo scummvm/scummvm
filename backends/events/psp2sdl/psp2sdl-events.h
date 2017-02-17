@@ -20,34 +20,20 @@
  *
  */
 
-#include "common/scummsys.h"
+#if !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_PSP2_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL)
+#include "backends/events/sdl/sdl-events.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+/**
+ * SDL Events manager for the PSP2.
+ */
+class PSP2EventSource : public SdlEventSource {
+protected:
+	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	void preprocessEvents(SDL_Event *event);
+};
 
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
-
-#endif
+#endif /* BACKEND_EVENTS_PSP2_H */
