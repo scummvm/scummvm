@@ -176,6 +176,14 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				debugN("\t%s[%x],", (param_value < kernel->_kernelFuncs.size()) ?
 							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
+			} else if (opcode == op_class) {
+				const reg_t classAddr = s->_segMan->getClassAddress(param_value, SCRIPT_GET_DONT_LOAD, retval.getSegment());
+				if (!classAddr.isNull()) {
+					debugN("\t%s", s->_segMan->getObjectName(classAddr));
+					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
+				} else {
+					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
+				}
 			} else if (opcode == op_super) {
 				Object *obj;
 				if (objAddr != NULL_REG && (obj = s->_segMan->getObject(objAddr)) != nullptr) {
