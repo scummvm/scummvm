@@ -41,6 +41,24 @@
 
 namespace Director {
 
+const char *scriptTypes[] = {
+	"MovieScript",
+	"SpriteScript",
+	"FrameScript",
+	"CastScript"
+};
+
+const char *scriptType2str(ScriptType scr) {
+	if (scr < 0)
+		return "NoneScript";
+
+	if (scr > kMaxScriptType)
+		return "<unknown>";
+
+	return scriptTypes[scr];
+}
+
+
 Score::Score(DirectorEngine *vm, Archive *archive) {
 	_vm = vm;
 	_surface = new Graphics::ManagedSurface;

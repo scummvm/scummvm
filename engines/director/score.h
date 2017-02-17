@@ -52,6 +52,8 @@ enum ScriptType {
 	kMaxScriptType = 3
 };
 
+const char *scriptType2str(ScriptType scr);
+
 class Score {
 public:
 	Score(DirectorEngine *vm, Archive *);

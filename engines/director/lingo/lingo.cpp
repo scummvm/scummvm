@@ -247,7 +247,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	debugC(2, kDebugLingoExec, "Executing script type: %d, id: %d", type, id);
+	debugC(2, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
@@ -294,7 +294,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (entityId <= 0)
 		return;
 
-	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %d, %d)", _eventHandlerTypes[event], st, entityId);
+	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 	_currentEntityId = entityId;
 
