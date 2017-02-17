@@ -215,7 +215,9 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 
 			break;
 
-		case Script_Offset:
+		case Script_Offset: {
+			assert(opcode == op_lofsa || opcode == op_lofss);
+
 			if (opsize) {
 				param_value = scr[retval.getOffset()];
 				retval.incOffset(1);
@@ -224,26 +226,21 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				retval.incOffset(2);
 			}
 
-			if (opcode == op_lofsa || opcode == op_lofss) {
-				const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
-				reg_t addr;
-				addr.setSegment(retval.getSegment());
-				addr.setOffset(offset);
-				debugN("\t%s", s->_segMan->getObjectName(addr));
-				debugN(opsize ? "[%02x]" : "[%04x]", offset);
-			} else {
-				debugN(opsize ? "\t%02x" : "\t%04x", param_value);
-			}
-
+			const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
+			reg_t addr;
+			addr.setSegment(retval.getSegment());
+			addr.setOffset(offset);
+			debugN("\t%s", s->_segMan->getObjectName(addr));
+			debugN(opsize ? "[%02x]" : "[%04x]", offset);
 			break;
+		}
 
 		case Script_SRelative:
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
 				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (retval.getOffset() + offset));
-			}
-			else {
+			} else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
 				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (retval.getOffset() + offset));
