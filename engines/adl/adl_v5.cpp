@@ -154,13 +154,28 @@ int AdlEngine_v5::o5_setTextMode(ScriptEnv &e) {
 	// 2: 24-line mode
 
 	switch (e.arg(1)) {
+	case 1:
+		if (_linesPrinted != 0) {
+			_display->printChar(APPLECHAR(' '));
+			handleTextOverflow();
+			_display->moveCursorTo(Common::Point(0, 23));
+			_maxLines = 4;
+		}
+		return 1;
+	case 2:
+		_textMode = true;
+		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->home();
+		_maxLines = 24;
+		_linesPrinted = 0;
+		return 1;
 	case 3:
 		// We re-use the restarting flag here, to simulate a long jump
 		_isRestarting = true;
 		return -1;
+	default:
+		error("Invalid text mode %d", e.arg(1));
 	}
-
-	return 1;
 }
 
 int AdlEngine_v5::o5_setRegionRoom(ScriptEnv &e) {

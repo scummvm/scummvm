@@ -62,6 +62,7 @@ protected:
 	int askForSlot(const Common::String &question);
 
 	void checkTextOverflow(char c);
+	void handleTextOverflow();
 
 	int o2_isFirstTime(ScriptEnv &e);
 	int o2_isRandomGT(ScriptEnv &e);
@@ -85,7 +86,7 @@ protected:
 		Common::String restoreInsert, restoreReplace;
 	} _strings_v2;
 
-	uint _linesPrinted;
+	uint _linesPrinted, _maxLines;
 	DiskImage *_disk;
 	Common::Array<DataBlockPtr> _itemPics;
 	bool _itemRemoved;

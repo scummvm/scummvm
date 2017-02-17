@@ -55,6 +55,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_dumpFile(nullptr),
 		_display(nullptr),
 		_graphics(nullptr),
+		_textMode(false),
 		_isRestarting(false),
 		_isRestoring(false),
 		_isQuitting(false),
@@ -911,10 +912,6 @@ byte AdlEngine::convertKey(uint16 ascii) const {
 }
 
 Common::String AdlEngine::getLine() {
-	// Original engine uses a global here, which isn't reset between
-	// calls and may not match actual mode
-	bool textMode = false;
-
 	while (1) {
 		Common::String line = inputString(APPLECHAR('?'));
 
@@ -922,8 +919,8 @@ Common::String AdlEngine::getLine() {
 			return "";
 
 		if ((byte)line[0] == ('\r' | 0x80)) {
-			textMode = !textMode;
-			_display->setMode(textMode ? DISPLAY_MODE_TEXT : DISPLAY_MODE_MIXED);
+			_textMode = !_textMode;
+			_display->setMode(_textMode ? DISPLAY_MODE_TEXT : DISPLAY_MODE_MIXED);
 			continue;
 		}
 

@@ -348,6 +348,7 @@ protected:
 
 	Display *_display;
 	GraphicsMan *_graphics;
+	bool _textMode;
 
 	// Opcodes
 	typedef Common::Functor1<ScriptEnv &, int> Opcode;

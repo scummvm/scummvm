@@ -37,6 +37,7 @@ AdlEngine_v2::~AdlEngine_v2() {
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd),
 		_linesPrinted(0),
+		_maxLines(4),
 		_disk(nullptr),
 		_itemRemoved(false),
 		_roomOnScreen(0),
@@ -151,9 +152,11 @@ void AdlEngine_v2::checkTextOverflow(char c) {
 
 	++_linesPrinted;
 
-	if (_linesPrinted < 4)
-		return;
+	if (_linesPrinted >= _maxLines)
+		handleTextOverflow();
+}
 
+void AdlEngine_v2::handleTextOverflow() {
 	_linesPrinted = 0;
 	_display->updateTextScreen();
 	bell();
