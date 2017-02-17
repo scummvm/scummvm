@@ -41,9 +41,9 @@ protected:
 	bool _isPlaying;
 	bool _isRecording;
 	bool _isDisabled;
-	int _fieldEC;
-	int _fieldF0;
-	int _fieldF4;
+	int _playUnpressedFrame;
+	int _playPressedFrame;
+	int _unused5;
 public:
 	CLASSDEF;
 	CPhonograph();

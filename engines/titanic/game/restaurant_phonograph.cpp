@@ -73,7 +73,7 @@ bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 			_isDisabled = true;
 			if (_field114) {
-				loadFrame(_fieldEC);
+				loadFrame(_playUnpressedFrame);
 				playSound(_ejectSoundName);
 			}
 		}
@@ -83,9 +83,11 @@ bool CRestaurantPhonograph::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CRestaurantPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
+	CPhonograph::PhonographPlayMsg(msg);
+
 	if (_isPlaying) {
 		if (findView() == getView() && (!_isDisabled || !_field114)) {
-			loadFrame(_fieldEC);
+			loadFrame(_playUnpressedFrame);
 			playSound(_ejectSoundName);
 		}
 
@@ -94,7 +96,7 @@ bool CRestaurantPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 		CRestaurantMusicChanged musicMsg(nameMsg._name);
 		musicMsg.execute(findRoom());
 	} else {
-		loadFrame(_fieldF0);
+		loadFrame(_playPressedFrame);
 	}
 
 	return true;
@@ -105,11 +107,11 @@ bool CRestaurantPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 	CPhonograph::PhonographStopMsg(msg);
 
 	if (_isPlaying) {
-		loadFrame(_fieldF0);
+		loadFrame(_playUnpressedFrame);
+	} else {
+		loadFrame(_playPressedFrame);
 		if (flag)
 			playSound(_stopSoundName);
-	} else {
-		loadFrame(_fieldEC);
 	}
 
 	return true;

@@ -34,8 +34,8 @@ BEGIN_MESSAGE_MAP(CPhonograph, CMusicPlayer)
 END_MESSAGE_MAP()
 
 CPhonograph::CPhonograph() : CMusicPlayer(),
-		_isPlaying(false), _isRecording(false), _isDisabled(false), _fieldEC(0),
-		_fieldF0(0), _fieldF4(0) {
+		_isPlaying(false), _isRecording(false), _isDisabled(false),
+		_playUnpressedFrame(false), _playPressedFrame(false), _unused5(0) {
 }
 
 void CPhonograph::save(SimpleFile *file, int indent) {
@@ -44,9 +44,9 @@ void CPhonograph::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isPlaying, indent);
 	file->writeNumberLine(_isRecording, indent);
 	file->writeNumberLine(_isDisabled, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_playUnpressedFrame, indent);
+	file->writeNumberLine(_playPressedFrame, indent);
+	file->writeNumberLine(_unused5, indent);
 
 	CMusicPlayer::save(file, indent);
 }
@@ -57,9 +57,9 @@ void CPhonograph::load(SimpleFile *file) {
 	_isPlaying = file->readNumber();
 	_isRecording = file->readNumber();
 	_isDisabled = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_playUnpressedFrame = file->readNumber();
+	_playPressedFrame = file->readNumber();
+	_unused5 = file->readNumber();
 
 	CMusicPlayer::load(file);
 }
@@ -98,7 +98,6 @@ bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 	if (!holderMsg._isPresent)
 		return true;
 
-	_isPlaying = false;
 	CQueryCylinderMsg cylinderMsg;
 	cylinderMsg.execute(holderMsg._target);
 
