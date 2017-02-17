@@ -250,7 +250,13 @@ void ScummEngine::setupRoomSubBlocks() {
 	_EPAL_offs = 0;
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
-
+	
+	// Games up to version 3, can have a 'prequel' to a cutscene, which is a blank screen with text at the top of the screen...
+	// If the game was saved during this, the current room is set to 0
+	if (_game.version <= 3)
+		if (_currentScript == 0xFF && _roomResource == 0 && _currentRoom == 0 )
+			return;
+					
 	// Determine the room and room script base address
 	roomResPtr = roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (_game.version == 8)
@@ -587,7 +593,13 @@ void ScummEngine_v3old::setupRoomSubBlocks() {
 	_EPAL_offs = 0;
 	_CLUT_offs = 0;
 	_PALS_offs = 0;
-
+	
+	// Games up to version 3, can have a 'prequel' to a cutscene, which is a blank screen with text at the top of the screen...
+	// If the game was saved during this, the current room is set to 0
+	if (_game.version <= 3)
+		if (_currentScript == 0xFF && _roomResource == 0 && _currentRoom == 0 )
+			return;
+			
 	// Determine the room and room script base address
 	roomptr = getResourceAddress(rtRoom, _roomResource);
 	if (!roomptr)
