@@ -284,15 +284,47 @@ public:
 private:
 	void initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables);
 
-	SciSpan<const byte> _baseObj; /**< base + object offset within base */
-	Common::Array<uint16> _baseVars; /**< The varselector area for this object */
-	Common::Array<uint16> _baseMethod; /**< The method selector area for this object */
-	Common::Array<uint32> _propertyOffsetsSci3; /**< Enables relocation of property values in SCI3 */
+	/**
+	 * A pointer to the raw object data within the object's owner script.
+	 */
+	SciSpan<const byte> _baseObj;
 
+	/**
+	 * A lookup table from a property index to its corresponding selector number.
+	 */
+	Common::Array<uint16> _baseVars;
+
+	/**
+	 * A lookup table from a method index to its corresponding selector number.
+	 */
+	Common::Array<uint16> _baseMethod;
+
+	/**
+	 * A lookup table from a property index to the property's current value.
+	 */
 	Common::Array<reg_t> _variables;
+
+	/**
+	 * A lookup table from a property index to the property's original absolute
+	 * offset within the raw script data. This absolute offset is coded into the
+	 * script's relocation table, and is used to look up 32-bit values for
+	 * properties in the relocation table (which is used to break the 16-bit
+	 * barrier, since the script format still only holds 16-bit values inline).
+	 */
+	Common::Array<uint32> _propertyOffsetsSci3;
+
+	/**
+	 * The number of methods on the object.
+	 */
 	uint16 _methodCount;
 	int _flags;
+
+	/**
+	 * For SCI0 through SCI2.1, an extra index offset used when looking up
+	 * special object properties -species-, -super-, -info-, and name.
+	 */
 	uint16 _offset;
+
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
