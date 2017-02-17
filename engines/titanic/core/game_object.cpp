@@ -543,8 +543,8 @@ void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) 
 	}
 }
 
-void CGameObject::sound8(bool flag) const {
-	getGameManager()->_sound.stopChannel(flag ? 3 : 0);
+void CGameObject::stopSoundChannel(bool channel3) {
+	getGameManager()->_sound.stopChannel(channel3 ? 3 : 0);
 }
 
 void CGameObject::setVisible(bool val) {
@@ -1054,12 +1054,12 @@ bool CGameObject::stateGetParrotMet() const {
 	return getGameManager()->_gameState.getParrotMet();
 }
 
-void CGameObject::stateInc38() {
-	getGameManager()->_gameState.inc38();
+void CGameObject::incParrotResponse() {
+	getGameManager()->_gameState.incParrotResponse();
 }
 
-int CGameObject::stateGet38() const {
-	return getGameManager()->_gameState._field38;
+int CGameObject::getParrotResponse() const {
+	return getGameManager()->_gameState._parrotResponseIndex;
 }
 
 void CGameObject::quitGame() {

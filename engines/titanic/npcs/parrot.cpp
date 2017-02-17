@@ -475,7 +475,7 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 				}
 			} else {
 				int id = -1;
-				switch (stateGet38()) {
+				switch (getParrotResponse()) {
 				case 0:
 					id = 280107;
 					break;

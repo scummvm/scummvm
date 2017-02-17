@@ -277,7 +277,10 @@ protected:
 	 */
 	void setGlobalSoundVolume(int mode, uint seconds, int handleIndex);
 
-	void sound8(bool flag) const;
+	/**
+	 * Stops sound channel 3 or 0
+	 */
+	void stopSoundChannel(bool channel3);
 
 	/**
 	 * Adds a timer
@@ -1009,8 +1012,15 @@ public:
 	 */
 	bool stateGetParrotMet() const;
 
-	void stateInc38();
-	int stateGet38() const;
+	/**
+	 * Moves the parrot to the next idle response
+	 */
+	void incParrotResponse();
+
+	/**
+	 * Gets the index to use for parrot idle responses
+	 */
+	int getParrotResponse() const;
 
 	/**
 	 * Gets the game state node changed counter

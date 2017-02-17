@@ -113,7 +113,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			CTreeItem *perchedParrot = findUnder(getRoot(), "PerchedParrot");
 			detach();
 			addUnder(perchedParrot);
-			sound8(true);
+			stopSoundChannel(true);
 
 			CPutParrotBackMsg backMsg(msg->_mousePos.x);
 			backMsg.execute(perchedParrot);
@@ -122,7 +122,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			_canTake = false;
 			CParrot::_state = PARROT_ESCAPED;
 			playSound("z#475.wav");
-			sound8(true);
+			stopSoundChannel(true);
 			moveUnder(findRoom());
 
 			CActMsg actMsg("Shut");
@@ -137,7 +137,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			setVisible(false);
 			_canTake = false;
 			playSound("z#475.wav");
-			sound8(true);
+			stopSoundChannel(true);
 			moveUnder(findRoom());
 		}
 	}

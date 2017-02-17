@@ -60,7 +60,7 @@ bool CHeadPiece::SenseWorkingMsg(CSenseWorkingMsg *msg) {
 bool CHeadPiece::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	_visibleFrame = 1;
 	if (!_field13C) {
-		stateInc38();
+		incParrotResponse();
 		_field13C = true;
 	}
 

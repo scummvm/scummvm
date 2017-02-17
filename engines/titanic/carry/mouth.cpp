@@ -70,7 +70,7 @@ bool CMouth::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	loadFrame(2);
 	setVisible(true);
 	if (!_field13C) {
-		stateInc38();
+		incParrotResponse();
 		_field13C = true;
 	}
 

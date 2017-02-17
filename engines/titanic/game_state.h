@@ -75,7 +75,7 @@ public:
 	uint _nodeChangeCtr;
 	uint32 _nodeEnterTicks;
 	Point _mousePos;
-	int _field38;
+	int _parrotResponseIndex;
 public:
 	CGameState(CGameManager *gameManager);
 
@@ -151,9 +151,21 @@ public:
 	 */
 	bool getParrotMet() const { return _parrotMet; }
 
+	/**
+	 * Gets the counter for the number of times different nodes have
+	 * been entered
+	 */
 	int getNodeChangedCtr() const { return _nodeChangeCtr; }
+
+	/**
+	 * Gets the node enter ticks amount
+	 */
 	uint32 getNodeEnterTicks() const { return _nodeEnterTicks; }
-	void inc38() { ++_field38; }
+
+	/**
+	 * Increments the index to use for parrot idle responses
+	 */
+	void incParrotResponse() { ++_parrotResponseIndex; }
 };
 
 } // End of namespace Titanic
