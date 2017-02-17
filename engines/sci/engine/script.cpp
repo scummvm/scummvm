@@ -696,7 +696,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 int Script::relocateOffsetSci3(uint32 offset) const {
 	int relocStart = _buf->getUint32LEAt(8);
 	int relocCount = _buf->getUint16LEAt(18);
-	SciSpan <const byte> seeker = _buf->subspan(relocStart);
+	SciSpan<const byte> seeker = _buf->subspan(relocStart);
 
 	for (int i = 0; i < relocCount; ++i) {
 		if (seeker.getUint32SEAt(0) == offset) {

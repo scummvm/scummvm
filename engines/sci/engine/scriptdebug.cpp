@@ -461,7 +461,7 @@ void SciEngine::scriptDebug() {
 	_console->attach();
 }
 
-void Kernel::dumpScriptObject(const SciSpan<const byte> &script, SciSpan <const byte> object) {
+void Kernel::dumpScriptObject(const SciSpan<const byte> &script, SciSpan<const byte> object) {
 	const int16 species = object.getInt16SEAt(8);
 	const int16 superclass = object.getInt16SEAt(10);
 	const int16 namepos = object.getInt16SEAt(14);
