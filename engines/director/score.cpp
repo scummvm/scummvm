@@ -863,8 +863,8 @@ void Score::update() {
 	_surface->copyFrom(*_trailSurface);
 
 	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
-	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId - 1);
+	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId - 1);
 	// TODO Director 6 - another order
 
 	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
@@ -971,7 +971,7 @@ void Score::processEvents() {
 					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				} else {
 					// D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
-					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId + 1);
 				}
 			}
 

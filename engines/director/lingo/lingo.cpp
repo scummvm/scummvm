@@ -304,8 +304,8 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
 		call(_eventHandlerTypes[event], 0); // D4+ Events
 		pop();
-	} else if (_scripts[st].contains(entityId + 1)) {
-		executeScript(st, entityId + 1); // D3 list of scripts.
+	} else if (_scripts[st].contains(entityId)) {
+		executeScript(st, entityId); // D3 list of scripts.
 	} else {
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}
