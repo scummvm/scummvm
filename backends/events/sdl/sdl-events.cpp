@@ -230,14 +230,15 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 						_km.y_vel = -5 * _km.multiplier;
 				}
 			}
-			// The modifier key makes the mouse movement ten times slower
+			// The modifier key makes the mouse movement slower
 			if (_km.modifier) {
-				_km.x_vel /= 10;
-				_km.y_vel /= 10;
+				_km.x += _km.x_vel / 5;
+				_km.y += _km.y_vel / 5;
+			} else {
+				_km.x += _km.x_vel;
+				_km.y += _km.y_vel;
 			}
-			_km.x += _km.x_vel;
-			_km.y += _km.y_vel;
-
+			
 			if (_km.x < 0) {
 				_km.x = 0;
 				_km.x_vel = -1 * _km.multiplier;
