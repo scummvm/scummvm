@@ -35,11 +35,6 @@ namespace Sci {
 
 class SegManager;
 
-/** Clone has been marked as 'freed' */
-enum {
-	OBJECT_FLAG_FREED = (1 << 0)
-};
-
 enum infoSelectorFlags {
 	kInfoFlagClone        = 0x0001,
 #ifdef ENABLE_SCI32
@@ -75,7 +70,7 @@ class Object {
 public:
 	Object() :
 		_offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5),
-		_flags(0),
+		_isFreed(false),
 		_baseObj(),
 		_baseVars(),
 		_methodCount(0),
@@ -86,7 +81,7 @@ public:
 		_baseMethod = other._baseMethod;
 		_variables = other._variables;
 		_methodCount = other._methodCount;
-		_flags = other._flags;
+		_isFreed = other._isFreed;
 		_offset = other._offset;
 		_pos = other._pos;
 		_baseVars = other._baseVars;
@@ -246,8 +241,8 @@ public:
 	bool isClass() const { return (getInfoSelector().getOffset() & kInfoFlagClass); }
 	const Object *getClass(SegManager *segMan) const;
 
-	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
-	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }
+	void markAsFreed() { _isFreed = true; }
+	bool isFreed() const { return _isFreed; }
 
 	uint getVarCount() const { return _variables.size(); }
 
@@ -317,7 +312,11 @@ private:
 	 * The number of methods on the object.
 	 */
 	uint16 _methodCount;
-	int _flags;
+
+	/**
+	 * Whether or not a clone object has been marked as 'freed'.
+	 */
+	bool _isFreed;
 
 	/**
 	 * For SCI0 through SCI2.1, an extra index offset used when looking up

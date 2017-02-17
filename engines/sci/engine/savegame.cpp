@@ -414,7 +414,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(_flags);
+	s.syncAsSint32LE(_isFreed);
 	syncWithSerializer(s, _pos);
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
