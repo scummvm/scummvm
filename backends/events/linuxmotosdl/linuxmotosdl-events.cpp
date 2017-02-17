@@ -138,7 +138,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_RIGHT) {
 		if (ev.type == SDL_KEYDOWN) {
@@ -150,7 +150,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_DOWN) {
@@ -163,7 +163,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_UP) {
@@ -176,7 +176,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_RETURN) {
@@ -187,7 +187,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_PLUS) {
@@ -197,7 +197,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		} else {
 			event.type = Common::EVENT_RBUTTONUP;
 		}
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_MINUS) {
@@ -208,7 +208,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+		processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 		return true;
 	} else {
