@@ -95,7 +95,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", 0, kLocMulti2)
 	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "1b2fa162a951fa4ed65617dd3f0c8a53", 0, kLocMulti2) // #1323, andrews05
 	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "906645a87ac1cbbd2b88c277c2b4fda2", 0, kLocMulti2) // #1323, andrews05
-	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "1404b50c36516bf48e4d2cb00c5982bc", 0, kLocMulti2) // #1323, goodoldgeorge
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "28003569d9536cbdf6020aee8e9bcd15", 0, kLocMulti2) // #1323, goodoldgeorge
 	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "00000000000000000000000000000000", 0, kLocMulti2)
 
 	// Russian release (Russian only) (1.2)
