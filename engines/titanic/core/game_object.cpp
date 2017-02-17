@@ -548,10 +548,6 @@ void CGameObject::sound8(bool flag) const {
 }
 
 void CGameObject::setVisible(bool val) {
-	if (_name.contains("ylinder")) {
-		warning("TODO");
-	}
-
 	if (val != _visible) {
 		_visible = val;
 		makeDirty();
