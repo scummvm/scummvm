@@ -1580,7 +1580,6 @@ static const opcode_format g_base_opcode_formats[128][4] = {
 	// 7C - 7F / minussgi, minussli, minussti, minusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param}
 };
-#undef END
 
 } // End of namespace Sci
 
