@@ -294,6 +294,8 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (entityId <= 0)
 		return;
 
+	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %d, %d)", _eventHandlerTypes[event], st, entityId);
+
 	_currentEntityId = entityId;
 
 	if (!_eventHandlerTypes.contains(event))
