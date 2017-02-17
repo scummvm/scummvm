@@ -59,7 +59,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			movieSetAudioTiming(true);
 			loadSound("a#12.wav");
 			sleep(1000);
-			playMovie(0, 187, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(0, 187, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			movieEvent(0);
 			break;
 
@@ -78,7 +78,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#10.wav");
-			playMovie(585, 706, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(585, 706, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			playSound("a#10.wav");
 			break;
 
@@ -86,7 +86,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#9.wav");
-			playMovie(707, 905, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(707, 905, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			playSound("a#9.wav");
 			break;
 
@@ -94,7 +94,7 @@ bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
 			visibleMsg._visible = false;
 			visibleMsg.execute("TitaniaStillControl");
 			loadSound("a#8.wav");
-			playMovie(906, 938, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(906, 938, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			playSound("a#8.wav");
 			break;
 

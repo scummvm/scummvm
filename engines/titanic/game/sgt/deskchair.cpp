@@ -48,7 +48,7 @@ bool CDeskchair::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 16;
-		playMovie(0, 16, MOVIE_GAMESTATE);
+		playMovie(0, 16, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#8.wav");
 	}
 
@@ -61,7 +61,7 @@ bool CDeskchair::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 16;
 		_endFrame = 32;
-		playMovie(16, 32, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(16, 32, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#2.wav");
 	}
 

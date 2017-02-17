@@ -53,7 +53,7 @@ bool CBedfoot::TurnOn(CTurnOn *msg) {
 			playSound("b#4.wav");
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 	} else if (_statics->_bedfoot == "RestingUnderTV") {
 		_isClosed = false;
 		_startFrame = 8;
@@ -65,7 +65,7 @@ bool CBedfoot::TurnOn(CTurnOn *msg) {
 			playSound("192_436_bed hits floor.wav");
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	if (_statics->_bedfoot == "Open")
@@ -94,7 +94,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 			_endFrame = 25;
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#7.wav");
 
 	} else if (_statics->_bedfoot == "NotOnWashstand" && _statics->_bedhead == "ClosedWrong") {
@@ -109,14 +109,14 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 			_endFrame = 25;
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#7.wav");
 
 	} else if (_statics->_bedfoot == "RestingUTV" && _statics->_tv == "Closed") {
 		_statics->_bedfoot = "Closed";
 		_startFrame = 25;
 		_endFrame = 30;
-		playMovie(25, 30, MOVIE_GAMESTATE);
+		playMovie(25, 30, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#7.wav");
 	}
 

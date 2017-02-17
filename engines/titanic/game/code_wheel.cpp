@@ -77,13 +77,13 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		_state = (_state + 1) % 15;
 		playMovie(START_FRAMES[_state], END_FRAMES[_state],
-			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	} else {
 		if (_state == _field108)
 			_field110 = true;
 
 		playMovie(START_FRAMES[14 - _state] + 68, END_FRAMES[14 - _state] + 68,
-			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
 		_state = (_state <= 0) ? 14 : _state - 1;
 	}

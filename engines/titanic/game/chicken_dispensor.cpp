@@ -89,10 +89,10 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 		setVisible(true);
 
 		if (_disabled) {
-			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			playSound("z#400.wav");
 		} else {
-			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 		break;
 
@@ -186,7 +186,7 @@ bool CChickenDispensor::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 bool CChickenDispensor::TurnOff(CTurnOff *msg) {
 	if (getMovieFrame() != 16)
 		setVisible(false);
-	playMovie(16, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	playMovie(16, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	_dispensed = false;
 
 	return true;

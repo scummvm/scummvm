@@ -65,39 +65,39 @@ bool CSeasonBackground::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 	switch (_seasonNum) {
 	case SEASON_SUMMER:
-		playMovie(0, 45, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(0, 45, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		_defaultFrame = 45;
 		break;
 
 	case SEASON_AUTUMN:
 		if (_flag) {
-			playMovie(232, 278, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(232, 278, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 278;
 		} else {
-			playMovie(45, 91, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(45, 91, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 91;
 		}
 		break;
 
 	case SEASON_WINTER:
 		if (_flag) {
-			playMovie(278, 326, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(278, 326, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 326;
 		} else {
 			CStatusChangeMsg changeMsg;
 			changeMsg._newStatus = 0;
 			changeMsg.execute("PickUpSpeechCentre");
-			playMovie(91, 139, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(91, 139, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 139;
 		}
 		break;
 
 	case SEASON_SPRING:
 		if (_flag) {
-			playMovie(326, 417, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(326, 417, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 417;
 		} else {
-			playMovie(139, 228, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(139, 228, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_defaultFrame = 228;
 		}
 		break;

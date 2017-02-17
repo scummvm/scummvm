@@ -46,7 +46,7 @@ bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 		_statics->_chestOfDrawers = "Open";
 		_startFrame = 1;
 		_endFrame = 14;
-		playMovie(1, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(1, 14, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#11.wav");
 	}
 
@@ -62,7 +62,7 @@ bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
 
 		_startFrame = 14;
 		_endFrame = 27;
-		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#11.wav");
 	}
 

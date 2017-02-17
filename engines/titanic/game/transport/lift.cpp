@@ -120,20 +120,20 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 		if (oldClass == newClass) {
 			debugStr = CString::format("Same (%d-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else if (oldClass == 1 && newClass == 2) {
 			debugStr = CString::format("1 to 2 (%d-108, 108-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 108, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(108, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 108, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(108, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else if (oldClass == 1 && newClass == 3) {
 			debugStr = CString::format("1 to 3 (%d-108, 108-190, 190-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 108, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(108, 190, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(190, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 108, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(108, 190, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(190, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else {
 			debugStr = CString::format("2 to 3 (%d-190, 190-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 190, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(190, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 190, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(190, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	}
 
@@ -144,20 +144,20 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 		if (oldClass == newClass) {
 			debugStr = CString::format("Same (%d-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else if (oldClass == 3 && newClass == 2) {
 			debugStr = CString::format("3 to 2 (%d-407, 407-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 407, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(407, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 407, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(407, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else if (oldClass == 3 && newClass == 1) {
 			debugStr = CString::format("3 to 1 (%d-407, 407-489, 489-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 407, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(407, 489, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(489, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 407, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(407, 489, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(489, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else {
 			debugStr = CString::format("2 to 1 (%d-489, 489-%d)", _startFrame, _endFrame);
-			playMovie(_startFrame, 489, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-			playMovie(489, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(_startFrame, 489, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			playMovie(489, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	}
 

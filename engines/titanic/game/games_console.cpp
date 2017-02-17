@@ -56,7 +56,7 @@ bool CGamesConsole::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CGamesConsole::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_active) {
 		_active = false;
-		playMovie(23, 44, MOVIE_GAMESTATE);
+		playMovie(23, 44, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

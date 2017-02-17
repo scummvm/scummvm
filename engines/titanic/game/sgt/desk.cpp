@@ -47,7 +47,7 @@ bool CDesk::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 26;
-		playMovie(1, 26, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(1, 26, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#12.wav");
 	}
 
@@ -64,7 +64,7 @@ bool CDesk::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 26;
 		_endFrame = 51;
-		playMovie(26, 51, MOVIE_GAMESTATE);
+		playMovie(26, 51, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#9.wav");
 	}
 

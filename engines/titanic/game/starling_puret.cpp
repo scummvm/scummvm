@@ -59,7 +59,7 @@ bool CStarlingPuret::EnterViewMsg(CEnterViewMsg *msg) {
 		changeMsg._newStatus = 1;
 		changeMsg.execute("PromDeckStarlings");
 
-		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		CSignalObject signalMsg;
 		signalMsg._numValue = 4;
 		signalMsg.execute("PromDeckStarlings");

@@ -60,9 +60,9 @@ bool CSGTDoors::EnterViewMsg(CEnterViewMsg *msg) {
 
 		if (pet->getRooms1CC() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
-			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;
@@ -89,9 +89,9 @@ bool CSGTDoors::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 		if (pet->getRooms1CC() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
-				MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
-			playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

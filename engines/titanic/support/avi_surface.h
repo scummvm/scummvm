@@ -34,8 +34,11 @@ class CSoundManager;
 class CVideoSurface;
 
 enum MovieFlag {
-	MOVIE_REPEAT = 1, MOVIE_STOP_PREVIOUS = 2, MOVIE_NOTIFY_OBJECT = 4,
-	MOVIE_REVERSE = 8, MOVIE_GAMESTATE = 0x10
+	MOVIE_REPEAT = 1,				// Repeat movie
+	MOVIE_STOP_PREVIOUS = 2,		// Stop any prior movie playing on the object
+	MOVIE_NOTIFY_OBJECT = 4,		// Notify the object when the movie finishes
+	MOVIE_REVERSE = 8,				// Play the movie in reverse
+	MOVIE_WAIT_FOR_FINISH = 0x10	// Let finish before playing next movie for object
 };
 
 class AVIDecoder : public Video::AVIDecoder {

@@ -88,7 +88,7 @@ bool CSUBGlass::SignalObject(CSignalObject *msg) {
 		setVisible(true);
 
 		if (_signalStartFrame >= 0) {
-			playMovie(_signalStartFrame, _signalEndFrame, MOVIE_GAMESTATE);
+			playMovie(_signalStartFrame, _signalEndFrame, MOVIE_WAIT_FOR_FINISH);
 			playSound("z#30.wav");
 			_fieldBC = false;
 		}

@@ -89,7 +89,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 		_npcFlags &= ~NPCFLAG_MOVE_LOOP;
 	}
 
-	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	playClip("Walk On", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent();
 	_npcFlags |= NPCFLAG_MOVING;
 
@@ -141,7 +141,7 @@ bool CBellBot::Use(CUse *msg) {
 
 bool CBellBot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_MOVING) {
-		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		if (_npcFlags & NPCFLAG_START_IDLING) {
 			_npcFlags &= ~NPCFLAG_START_IDLING;
 			performAction(true);
@@ -168,7 +168,7 @@ bool CBellBot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 
 	case 5:
 		_npcFlags &= ~NPCFLAG_MOVE_START;
-		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playClip("Walk Off", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent();
 		break;
 

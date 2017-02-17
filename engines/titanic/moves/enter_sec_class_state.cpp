@@ -85,9 +85,9 @@ bool CEnterSecClassState::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	if (msg->_newStatus != 3) {
 		if (msg->_newStatus == 2 && _mode == 1)
-			playMovie(0, 10, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(0, 10, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else if (msg->_newStatus == 1)
-			playMovie(11, 21, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(11, 21, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	_cursorId = msg->_newStatus == 2 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;

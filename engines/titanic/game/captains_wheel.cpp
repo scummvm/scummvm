@@ -80,7 +80,7 @@ bool CCaptainsWheel::LeaveViewMsg(CLeaveViewMsg *msg) {
 		_fieldE0 = false;
 		CTurnOff offMsg;
 		offMsg.execute(this);
-		playMovie(162, 168, MOVIE_GAMESTATE);
+		playMovie(162, 168, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;
@@ -91,11 +91,11 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		if (_fieldE0) {
 			CTurnOn onMsg;
 			onMsg.execute("RatchetySound");
-			playMovie(8, 142, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(8, 142, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Honk") {
 		if (_fieldE0) {
-			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Go") {
 		if (!_fieldE0) {
@@ -105,7 +105,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
-			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Cruise") {
 		if (_fieldE0) {
@@ -115,7 +115,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
-			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "SetDestin") {
 		playSound("a#44.wav");

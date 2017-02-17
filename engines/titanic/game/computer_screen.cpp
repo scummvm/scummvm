@@ -47,10 +47,10 @@ void CComputerScreen::load(SimpleFile *file) {
 
 bool CComputerScreen::ActMsg(CActMsg *msg) {
 	if (msg->_action == "newCD1" || msg->_action == "newCD2") {
-		playMovie(27, 53, MOVIE_GAMESTATE);
-		playMovie(19, 26, MOVIE_GAMESTATE);
+		playMovie(27, 53, MOVIE_WAIT_FOR_FINISH);
+		playMovie(19, 26, MOVIE_WAIT_FOR_FINISH);
 	} else if (msg->_action == "newSTCD") {
-		playMovie(0, 18, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playMovie(0, 18, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;

@@ -45,7 +45,7 @@ bool CPlayOnAct::ActMsg(CActMsg *msg) {
 		playMovie(0);
 	} else if (msg->_action == "PlayToEnd") {
 		setVisible(true);
-		playMovie(MOVIE_GAMESTATE);
+		playMovie(MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

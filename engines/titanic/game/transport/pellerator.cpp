@@ -83,7 +83,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(315, 323, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(299, 304, 0);
-					playMovie(305, 313, MOVIE_GAMESTATE);
+					playMovie(305, 313, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 2:
@@ -95,7 +95,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(153, 197, 0);
 					for (int idx = 0; idx < 5; ++idx)
 						playMovie(253, 263, 0);
-					playMovie(290, 293, MOVIE_GAMESTATE);
+					playMovie(290, 293, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 4:
@@ -107,7 +107,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(253, 263, 0);
 					for (int idx = 0; idx < 7; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 5:
@@ -130,7 +130,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(315, 323, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(299, 304, 0);
-					playMovie(305, 313, MOVIE_GAMESTATE);
+					playMovie(305, 313, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 2:
@@ -139,7 +139,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(299, 304, 0);
 					for (int idx = 0; idx < 15; ++idx)
 						playMovie(245, 255, 0);
-					playMovie(264, 267, MOVIE_GAMESTATE);
+					playMovie(264, 267, MOVIE_WAIT_FOR_FINISH);
 					++_destination;
 					break;
 
@@ -149,7 +149,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(245, 255, 0);
 					for (int idx = 0; idx < 7; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 5:
@@ -160,7 +160,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(245, 255, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(299, 304, 0);
-					playMovie(305, 313, MOVIE_GAMESTATE);
+					playMovie(305, 313, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				default:
@@ -184,7 +184,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(351, 359, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 3:
@@ -196,7 +196,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(245, 255, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					--_destination;
 					break;
 
@@ -209,7 +209,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(78, 149, 0);
 					for (int idx = 0; idx < 5; ++idx)
 						playMovie(245, 255, 0);
-					playMovie(264, 267, MOVIE_GAMESTATE);
+					playMovie(264, 267, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 5:
@@ -221,7 +221,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(78, 149, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				default:
@@ -236,7 +236,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					playMovie(351, 359, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 3:
@@ -245,7 +245,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(253, 263, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					--_destination;
 					break;
 
@@ -255,7 +255,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(299, 304, 0);
 					for (int idx = 0; idx < 15; ++idx)
 						playMovie(253, 263, 0);
-					playMovie(290, 293, MOVIE_GAMESTATE);
+					playMovie(290, 293, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				case 5:
@@ -266,7 +266,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 						playMovie(253, 263, 0);
 					for (int idx = 0; idx < 3; ++idx)
 						playMovie(336, 341, 0);
-					playMovie(342, 348, MOVIE_GAMESTATE);
+					playMovie(342, 348, MOVIE_WAIT_FOR_FINISH);
 					break;
 
 				default:

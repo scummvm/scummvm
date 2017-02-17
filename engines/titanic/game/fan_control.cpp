@@ -121,7 +121,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 							// It's puret time
 							incTransitions();
 							_starlingsDying = true;
-							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 						} else {
 							playMovie(12, 18, 0);
 						}

@@ -47,7 +47,7 @@ bool CVase::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 12;
-		playMovie(1, 12, MOVIE_GAMESTATE);
+		playMovie(1, 12, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;
@@ -61,7 +61,7 @@ bool CVase::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 12;
 		_endFrame = 25;
-		playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

@@ -77,9 +77,9 @@ bool CHammerDispensor::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CHammerDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isOpen)
-		playMovie(32, 50, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(32, 50, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	else
-		playMovie(0, 7, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(0, 7, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 
 	_panUp = true;
 	_isOpen = false;

@@ -101,13 +101,13 @@ bool CHeadSlot::EnterViewMsg(CEnterViewMsg *msg) {
 		_cursorId = CURSOR_ARROW;
 
 	if (_v1 == 1 || _string1 == "Working") {
-		playMovie(_fieldE0, _fieldE4, MOVIE_GAMESTATE);
+		playMovie(_fieldE0, _fieldE4, MOVIE_WAIT_FOR_FINISH);
 		_fieldEC = true;
 	} else if (_fieldBC) {
-		playMovie(_fieldE0, _fieldE8, MOVIE_GAMESTATE);
+		playMovie(_fieldE0, _fieldE8, MOVIE_WAIT_FOR_FINISH);
 		_fieldEC = false;
 	} else {
-		playMovie(0, _fieldDC, MOVIE_GAMESTATE);
+		playMovie(0, _fieldDC, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	addTimer(5000 + getRandomNumber(3000));
@@ -120,11 +120,11 @@ bool CHeadSlot::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 		if (_fieldBC) {
 			loadFrame(_fieldE0);
-			playMovie(_fieldE0, _fieldE8, MOVIE_GAMESTATE);
+			playMovie(_fieldE0, _fieldE8, MOVIE_WAIT_FOR_FINISH);
 			_fieldEC = false;
 		} else {
 			loadFrame(_fieldDC);
-			playMovie(_fieldDC, _fieldE0, MOVIE_GAMESTATE);
+			playMovie(_fieldDC, _fieldE0, MOVIE_WAIT_FOR_FINISH);
 		}
 
 		_fieldEC = false;

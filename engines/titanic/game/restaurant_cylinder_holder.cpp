@@ -70,11 +70,11 @@ bool CRestaurantCylinderHolder::EjectCylinderMsg(CEjectCylinderMsg *msg) {
 
 	if (_isOpen) {
 		playClip(hasCylinder ? "CloseHolder_Full" : "CloseHolder_Empty",
-			MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		_dropEnabled = true;
 	} else {
 		playClip(hasCylinder ? "OpenHolder_Full" : "OpenHolder_Empty",
-			MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	playSound(_ejectSoundName, 50);

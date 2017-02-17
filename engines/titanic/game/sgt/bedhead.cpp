@@ -110,7 +110,7 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 				setVisible(true);
 
 				_statics->_bedhead = entry._name4;
-				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 				playSound("b#6.wav");
 				_isClosed = false;
 			}
@@ -157,7 +157,7 @@ bool CBedhead::TurnOff(CTurnOff *msg) {
 			setVisible(true);
 
 			_statics->_bedhead = entry._name4;
-			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			playSound("193_436_bed fold up 1.wav");
 			_isClosed = false;
 		}

@@ -48,7 +48,7 @@ bool CBasin::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 6;
-		playMovie(0, 6, MOVIE_GAMESTATE);
+		playMovie(0, 6, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#13.wav");
 	}
 
@@ -61,7 +61,7 @@ bool CBasin::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 8;
 		_endFrame = 14;
-		playMovie(8, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(8, 14, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		playSound("b#13.wav");
 	}
 

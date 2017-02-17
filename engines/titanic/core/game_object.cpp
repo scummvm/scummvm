@@ -606,7 +606,7 @@ void CGameObject::playMovie(uint flags) {
 	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(flags, obj);
-		if (flags & MOVIE_GAMESTATE)
+		if (flags & MOVIE_WAIT_FOR_FINISH)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}
 }
@@ -622,7 +622,7 @@ void CGameObject::playMovie(int startFrame, int endFrame, uint flags) {
 	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(startFrame, endFrame, flags, obj);
-		if (flags & MOVIE_GAMESTATE)
+		if (flags & MOVIE_WAIT_FOR_FINISH)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}
 }
@@ -639,7 +639,7 @@ void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint
 	CGameObject *obj = (flags & MOVIE_NOTIFY_OBJECT) ? this : nullptr;
 	if (_surface) {
 		_surface->playMovie(startFrame, endFrame, initialFrame, flags, obj);
-		if (flags & MOVIE_GAMESTATE)
+		if (flags & MOVIE_WAIT_FOR_FINISH)
 			getGameManager()->_gameState.addMovie(_surface->_movie);
 	}
 }

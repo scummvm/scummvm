@@ -55,7 +55,7 @@ bool CSweetBowl::EnterViewMsg(CEnterViewMsg *msg) {
 bool CSweetBowl::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Jiggle") {
 		setVisible(true);
-		playMovie(MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playMovie(MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 		playSound(getRandomNumber(1) == 1 ? "b#42.wav" : "b#43.wav");
 	}
 

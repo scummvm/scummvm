@@ -701,11 +701,11 @@ bool CSuccUBus::TurnOff(CTurnOff *msg) {
 
 	if (_offStartFrame >= 0) {
 		playSound("z#27.wav", 100);
-		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	if (!_signalFlag && _endingStartFrame >= 0)
-		playMovie(_endingStartFrame, _endingEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(_endingStartFrame, _endingEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 
 	_isOn = false;
 	performAction(true);

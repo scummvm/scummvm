@@ -306,7 +306,7 @@ bool CDeskbot::TurnOff(CTurnOff *msg) {
 		performAction(1, findView());
 
 		_npcFlags = (_npcFlags & ~(NPCFLAG_SPEAKING | NPCFLAG_IDLING | NPCFLAG_START_IDLING)) | NPCFLAG_MOVE_LOOP;
-		playClip("Closing", MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playClip("Closing", MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	}
 
 	return true;

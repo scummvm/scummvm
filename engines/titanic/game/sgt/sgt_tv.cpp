@@ -46,7 +46,7 @@ bool CSGTTV::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 6;
 		_endFrame = 12;
-		playMovie(6, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(6, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;
@@ -60,7 +60,7 @@ bool CSGTTV::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 1;
 		_endFrame = 6;
-		playMovie(1, 6, MOVIE_GAMESTATE);
+		playMovie(1, 6, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

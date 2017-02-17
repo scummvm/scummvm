@@ -185,7 +185,7 @@ bool CDoorbot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 	}
 
 	playClip(getRandomNumber(1) ? "Whizz On Left" : "Whizz On Right",
-		MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent();
 	_npcFlags |= NPCFLAG_MOVE_END;
 
@@ -200,7 +200,7 @@ bool CDoorbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 
 	case 4:
 		_npcFlags = (_npcFlags & ~NPCFLAG_IDLING) | NPCFLAG_SUMMON_BELLBOT;
-		playClip("Whizz Off Left", MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playClip("Whizz Off Left", MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		break;
 
 	case 28: {
@@ -387,7 +387,7 @@ bool CDoorbot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 bool CDoorbot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_MOVE_END) {
 		playClip(getRandomNumber(1) ? "Whizz Off Left" : "Whizz Off Right",
-			MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent();
 
 		if (_npcFlags & NPCFLAG_START_IDLING) {

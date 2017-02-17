@@ -47,7 +47,7 @@ bool CWashstand::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 14;
-		playMovie(0, 14, MOVIE_GAMESTATE);
+		playMovie(0, 14, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#14.wav");
 	}
 
@@ -61,7 +61,7 @@ bool CWashstand::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 14;
 		_endFrame = 28;
-		playMovie(14, 28, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playMovie(14, 28, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 		playSound("b#14.wav");
 	}
 

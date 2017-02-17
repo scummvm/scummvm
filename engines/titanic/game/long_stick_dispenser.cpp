@@ -109,9 +109,9 @@ bool CLongStickDispenser::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CLongStickDispenser::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_fieldC0 == 1) {
 		if (_fieldC4) {
-			playMovie(19, 38, MOVIE_GAMESTATE);
+			playMovie(19, 38, MOVIE_WAIT_FOR_FINISH);
 		} else {
-			playMovie(0, 18, MOVIE_GAMESTATE);
+			playMovie(0, 18, MOVIE_WAIT_FOR_FINISH);
 			_fieldBC = 1;
 		}
 

@@ -275,27 +275,27 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 	if (!_disabled) {
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
-			playMovie(_startFrameSummerOff, _endFrameSummerOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(_startFrameSummerOff, _endFrameSummerOff, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		case SEASON_AUTUMN:
 			if (_gotSpeechCentre) {
-				playMovie(_startFrameAutumnOff2, _endFrameAutumnOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOff2, _endFrameAutumnOff2, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_startFrameAutumnOff1, _endFrameAutumnOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOff1, _endFrameAutumnOff1, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
 		case SEASON_WINTER:
 			if (_gotSpeechCentre) {
-				playMovie(_startFrameWinterOff2, _endFrameWinterOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOff2, _endFrameWinterOff2, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_startFrameWinterOff1, _endFrameWinterOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOff1, _endFrameWinterOff1, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
 		case SEASON_SPRING:
-			playMovie(_startFrameSpringOff, _endFrameSpringOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(_startFrameSpringOff, _endFrameSpringOff, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		default:
@@ -318,27 +318,27 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 
 		switch (_seasonNum) {
 		case SEASON_SUMMER:
-			playMovie(_startFrameSummerOn, _endFrameSummerOn, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(_startFrameSummerOn, _endFrameSummerOn, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		case SEASON_AUTUMN:
 			if (_gotSpeechCentre) {
-				playMovie(_startFrameAutumnOn2, _endFrameAutumnOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOn2, _endFrameAutumnOn2, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_startFrameAutumnOn1, _endFrameAutumnOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOn1, _endFrameAutumnOn1, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
 		case SEASON_WINTER:
 			if (_gotSpeechCentre) {
-				playMovie(_startFrameWinterOn2, _endFrameWinterOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOn2, _endFrameWinterOn2, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_startFrameWinterOn1, _endFrameWinterOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOn1, _endFrameWinterOn1, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
 		case SEASON_SPRING:
-			playMovie(_startFrameSpringOn, _endFrameSpringOn, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+			playMovie(_startFrameSpringOn, _endFrameSpringOn, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		default:

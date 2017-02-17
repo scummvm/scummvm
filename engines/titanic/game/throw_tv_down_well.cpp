@@ -60,7 +60,7 @@ bool CThrowTVDownWell::ActMsg(CActMsg *msg) {
 }
 
 bool CThrowTVDownWell::EnterViewMsg(CEnterViewMsg *msg) {
-	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	movieEvent(49);
 	return true;
 }

@@ -50,7 +50,7 @@ bool CToilet::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 11;
-		playMovie(0, 11, MOVIE_GAMESTATE);
+		playMovie(0, 11, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#1.wav");
 	}
 
@@ -64,7 +64,7 @@ bool CToilet::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 11;
 		_endFrame = 18;
-		playMovie(11, 18, MOVIE_GAMESTATE);
+		playMovie(11, 18, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#1.wav");
 	}
 

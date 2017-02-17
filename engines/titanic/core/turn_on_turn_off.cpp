@@ -58,7 +58,7 @@ void CTurnOnTurnOff::load(SimpleFile *file) {
 bool CTurnOnTurnOff::TurnOn(CTurnOn *msg) {
 	if (!_isOn) {
 		if (_isBlocking)
-			playMovie(_startFrameOn, _endFrameOn, MOVIE_GAMESTATE);
+			playMovie(_startFrameOn, _endFrameOn, MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(_startFrameOn, _endFrameOn, MOVIE_NOTIFY_OBJECT);
 		_isOn = true;
@@ -70,7 +70,7 @@ bool CTurnOnTurnOff::TurnOn(CTurnOn *msg) {
 bool CTurnOnTurnOff::TurnOff(CTurnOff *msg) {
 	if (_isOn) {
 		if (_isBlocking)
-			playMovie(_startFrameOff, _endFrameOff, MOVIE_GAMESTATE);
+			playMovie(_startFrameOff, _endFrameOff, MOVIE_WAIT_FOR_FINISH);
 		else
 			playMovie(_startFrameOff, _endFrameOff, MOVIE_NOTIFY_OBJECT);
 		_isOn = false;

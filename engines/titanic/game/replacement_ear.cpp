@@ -40,7 +40,7 @@ void CReplacementEar::load(SimpleFile *file) {
 
 bool CReplacementEar::VisibleMsg(CVisibleMsg *msg) {
 	setVisible(true);
-	playMovie(MOVIE_GAMESTATE);
+	playMovie(MOVIE_WAIT_FOR_FINISH);
 	playSound("z#64.wav");
 	return true;
 }

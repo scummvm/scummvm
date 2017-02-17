@@ -55,7 +55,7 @@ bool CArmchair::TurnOn(CTurnOn *msg) {
 			_endFrame = 10;
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 		playSound("b#0.wav");
 		_statics->_armchair = "Open";
 		_isClosed = false;
@@ -70,7 +70,7 @@ bool CArmchair::TurnOff(CTurnOff *msg) {
 		_startFrame = 11;
 		_endFrame = 21;
 		_isClosed = true;
-		playMovie(11, 21, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playMovie(11, 21, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 		playSound("b#0.wav");
 	}
 

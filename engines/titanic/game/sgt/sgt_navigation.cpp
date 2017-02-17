@@ -71,9 +71,9 @@ bool CSGTNavigation::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 		int startVal = pet->getRooms1CC();
 		if (startVal > _statics->_changeViewNum)
-			playMovie(FRAMES[startVal], FRAMES[_statics->_changeViewNum], MOVIE_GAMESTATE);
+			playMovie(FRAMES[startVal], FRAMES[_statics->_changeViewNum], MOVIE_WAIT_FOR_FINISH);
 		else
-			playMovie(FRAMES[startVal + 3], FRAMES[_statics->_changeViewNum + 3], MOVIE_GAMESTATE);
+			playMovie(FRAMES[startVal + 3], FRAMES[_statics->_changeViewNum + 3], MOVIE_WAIT_FOR_FINISH);
 
 		_cursorId = _statics->_changeViewNum != 1 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
 

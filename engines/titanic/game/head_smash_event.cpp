@@ -42,7 +42,7 @@ void CHeadSmashEvent::load(SimpleFile *file) {
 bool CHeadSmashEvent::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayToEnd") {
 		setVisible(true);
-		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;

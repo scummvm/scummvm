@@ -166,7 +166,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 			playRange(_frames[7]);
 			playRange(_frames[8]);
 			playRange(_frames[13]);
-			playRange(_frames[40], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[40], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[40]._endFrame;
 		}
 	} else if (msg->_action == "GiveBackVisCentre") {
@@ -316,7 +316,7 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 			playRange(_frames[38], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[58], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[57], MOVIE_NOTIFY_OBJECT);
-			playRange(_frames[56], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[56], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[56]._endFrame;
 		} else {
 			playRange(_frames[38]);
@@ -363,13 +363,13 @@ bool CBarbot::TurnOff(CTurnOff *msg) {
 
 		if (_visCenterOnCounter) {
 			// Barbot will put away the vision center
-			playRange(_frames[28], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[28], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[28]._endFrame;
 			_visCenterOnCounter = false;
 			_field134 = 1;
 		}
 
-		playRange(_frames[29], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playRange(_frames[29], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent(_frames[29]._startFrame);
 		_frameNum = _frames[29]._endFrame;
 		_fieldC4 = 0;
@@ -560,7 +560,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 			_frameNum = _frames[27]._endFrame;
 		} else if (!_gottenDrunk && _drunkFlag) {
 			playRange(_frames[45], MOVIE_NOTIFY_OBJECT);
-			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[44]._endFrame;
 		}
 		break;
