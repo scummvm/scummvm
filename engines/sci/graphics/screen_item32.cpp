@@ -212,15 +212,13 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		}
 	}
 
-	if (updateBitmap) {
-		const reg_t bitmap = readSelector(segMan, object, SELECTOR(bitmap));
-		if (!bitmap.isNull()) {
-			_celInfo.bitmap = bitmap;
-			_celInfo.type = kCelTypeMem;
-		} else {
-			_celInfo.bitmap = NULL_REG;
-			_celInfo.type = kCelTypeView;
-		}
+	const reg_t bitmap = readSelector(segMan, object, SELECTOR(bitmap));
+	if (updateBitmap && !bitmap.isNull()) {
+		_celInfo.bitmap = bitmap;
+		_celInfo.type = kCelTypeMem;
+	} else {
+		_celInfo.bitmap = NULL_REG;
+		_celInfo.type = kCelTypeView;
 	}
 
 	if (updateCel || updateBitmap) {
