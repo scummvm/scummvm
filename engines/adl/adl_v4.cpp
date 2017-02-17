@@ -127,7 +127,7 @@ void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 	if (size != expectedSize)
 		error("Variable count mismatch (expected %i; found %i)", expectedSize, size);
 
-	for (uint i = getRegion(1).vars.size(); i < size; ++i)
+	for (uint i = getRegion(1).vars.size(); i < _state.vars.size(); ++i)
 		_state.vars[i] = stream.readByte();
 
 	if (stream.err() || stream.eos())
