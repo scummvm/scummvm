@@ -116,7 +116,7 @@ bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
 	setTalking(this, true, findView());
 	_fightFlag = _savedFightFlag;
 
-	if (_musicName == "STMusic" && (!_musicSet || _priorMusicName == _musicName))
+	if (_musicName != "STMusic" && (!_musicSet || _priorMusicName == _musicName))
 		return true;
 
 	if (_musicName.contains("nasty ambient"))
