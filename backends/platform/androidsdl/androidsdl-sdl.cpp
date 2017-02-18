@@ -57,7 +57,7 @@ void OSystem_ANDROIDSDL::initBackend() {
 		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
 	
 	if (!ConfMan.hasKey("onscreen_control")) {
-		const bool enable = (SDL_ANDROID_GetScreenKeyboardShown() == 0) ? false : true;
+		const bool enable = SDL_ANDROID_GetScreenKeyboardShown();
 		ConfMan.setBool("onscreen_control", enable);
 	} else
 		showOnScreenControl(ConfMan.getBool("onscreen_control"));
