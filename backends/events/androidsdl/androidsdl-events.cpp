@@ -42,9 +42,8 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 	else if (ev.button.button == SDL_BUTTON_MIDDLE) {
 		event.type = Common::EVENT_MBUTTONDOWN;
 
-		static bool show_onscreen = g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
-		show_onscreen = !show_onscreen;
-		g_system->setFeatureState(OSystem::kFeatureOnScreenControl, show_onscreen);
+		const bool show_onscreen = g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
+		g_system->setFeatureState(OSystem::kFeatureOnScreenControl, !show_onscreen);
 	}
 #endif
 	else

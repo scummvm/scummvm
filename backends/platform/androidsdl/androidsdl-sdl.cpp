@@ -51,7 +51,7 @@ void OSystem_ANDROIDSDL::initBackend() {
 		swapMenuAndBackButtons(ConfMan.getBool("swap_menu_and_back"));
 	
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
-		const bool enable = (SDL_ANDROID_GetMouseEmulationMode() == 0) ? false : true;
+		const bool enable = SDL_ANDROID_GetMouseEmulationMode();
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 	} else
 		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
