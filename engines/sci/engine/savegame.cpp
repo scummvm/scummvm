@@ -456,9 +456,6 @@ void Script::syncStringHeap(Common::Serializer &s) {
 				s.syncBytes(buf, blockSize);
 
 			buf += blockSize;
-
-			if (_buf - buf == 0)
-				break;
 		} while (1);
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
