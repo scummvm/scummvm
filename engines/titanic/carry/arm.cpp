@@ -164,10 +164,10 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 		if (!_armUnlocked)
 			playSound("z#47.wav");
 		if (_heldItemName == "Key" || _heldItemName == "AuditoryCentre") {
-			CGameObject *child = dynamic_cast<CGameObject *>(getFirstChild());
-			if (child) {
-				child->setVisible(true);
-				petAddToInventory();
+			CGameObject *heldItem = dynamic_cast<CGameObject *>(getFirstChild());
+			if (heldItem) {
+				heldItem->setVisible(true);
+				heldItem->petAddToInventory();
 			}
 
 			_visibleFrame = _unlockedFrame;
