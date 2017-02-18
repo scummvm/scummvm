@@ -125,13 +125,14 @@ struct CelInfo32 {
 	}
 
 	inline Common::String toString() const {
-		if (type == kCelTypeView) {
+		switch (type) {
+		case kCelTypeView:
 			return Common::String::format("view %u, loop %d, cel %d", resourceId, loopNo, celNo);
-		} else if (type == kCelTypePic) {
+		case kCelTypePic:
 			return Common::String::format("pic %u, cel %d", resourceId, celNo);
-		} else if (kCelTypeColor) {
+		case kCelTypeColor:
 			return Common::String::format("color %d", color);
-		} else if (type == kCelTypeMem) {
+		case kCelTypeMem:
 			return Common::String::format("mem %04x:%04x", PRINT_REG(bitmap));
 		}
 	}
