@@ -238,6 +238,11 @@ void AdlEngine_v4::loadRegionInitDataOffsets(Common::ReadStream &stream, uint re
 	}
 }
 
+void AdlEngine_v4::initRoomState(RoomState &roomState) const {
+	roomState.picture = 1;
+	roomState.isFirstTime = 1;
+}
+
 void AdlEngine_v4::initRegions(const byte *roomsPerRegion, uint regions) {
 	_state.regions.resize(regions);
 
@@ -247,12 +252,8 @@ void AdlEngine_v4::initRegions(const byte *roomsPerRegion, uint regions) {
 		regn.vars.resize(24);
 
 		regn.rooms.resize(roomsPerRegion[r]);
-		for (uint rm = 0; rm < roomsPerRegion[r]; ++rm) {
-			// TODO: hires6 uses 0xff and has slightly different
-			// code working on these values
-			regn.rooms[rm].picture = 1;
-			regn.rooms[rm].isFirstTime = 1;
-		}
+		for (uint rm = 0; rm < roomsPerRegion[r]; ++rm)
+			initRoomState(regn.rooms[rm]);
 	}
 }
 

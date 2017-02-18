@@ -81,7 +81,8 @@ protected:
 	void loadRegion(byte region);
 	void loadItemPicIndex(Common::ReadStream &stream, uint items);
 	void backupRoomState(byte room);
-	void restoreRoomState(byte room);
+	virtual void initRoomState(RoomState &roomState) const;
+	virtual void restoreRoomState(byte room);
 	void backupVars();
 	void restoreVars();
 

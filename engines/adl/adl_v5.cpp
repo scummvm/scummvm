@@ -33,6 +33,22 @@ AdlEngine_v5::AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine_v4(syst, gd) {
 }
 
+void AdlEngine_v5::initRoomState(RoomState &roomState) const {
+	roomState.picture = 0xff;
+	roomState.isFirstTime = 0xff;
+}
+
+void AdlEngine_v5::restoreRoomState(byte room) {
+	const RoomState &backup = getCurRegion().rooms[room - 1];
+
+	if (backup.isFirstTime != 0xff) {
+		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
+
+		if (backup.isFirstTime != 1)
+			getRoom(room).isFirstTime = false;
+	}
+}
+
 AdlEngine_v5::RegionChunkType AdlEngine_v5::getRegionChunkType(const uint16 addr) const {
 	switch (addr) {
 	case 0x7b00:
@@ -181,8 +197,12 @@ int AdlEngine_v5::o5_setTextMode(ScriptEnv &e) {
 int AdlEngine_v5::o5_setRegionRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
 
-	// TODO
-	return 2;
+	getCurRoom().curPicture = getCurRoom().picture;
+	getCurRoom().isFirstTime = false;
+	switchRegion(e.arg(1));
+	_state.room = e.arg(2);
+	restoreRoomState(_state.room);
+	return -1;
 }
 
 int AdlEngine_v5::o_winGame(ScriptEnv &e) {
