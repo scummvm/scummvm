@@ -116,18 +116,16 @@ const Object *Object::getClass(SegManager *segMan) const {
 
 int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	const Common::Array<uint16> *buf;
-	uint varnum = 0;
+	const uint varCount = getVarCount();
 
 	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		const Object *obj = getClass(segMan);
-		varnum = getSciVersion() <= SCI_VERSION_1_LATE ? getVarCount() : obj->getVariable(1).toUint16();
 		buf = &obj->_baseVars;
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		varnum = _variables.size();
 		buf = &_baseVars;
 	}
 
-	for (uint i = 0; i < varnum; i++)
+	for (uint i = 0; i < varCount; i++)
 		if ((*buf)[i] == slc) // Found it?
 			return i; // report success
 
