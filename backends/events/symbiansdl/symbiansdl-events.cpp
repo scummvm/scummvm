@@ -63,7 +63,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
@@ -76,7 +76,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
@@ -89,7 +89,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
@@ -102,30 +102,30 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
 			case GUI::ACTION_LEFTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP);
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
 			case GUI::ACTION_RIGHTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP);
-				processMouseEvent(event, _km.x/_km.multiplier, _km.y/_km.multiplier);
+				processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
 
 				return true;
 
 			case GUI::ACTION_ZONE:
 				if (ev.type == SDL_KEYDOWN) {
 					for (int i = 0; i < TOTAL_ZONES; i++)
-						if ( (_km.x/_km.multiplier) >= _zones[i].x && (_km.y/_km.multiplier) >= _zones[i].y &&
-							(_km.x/_km.multiplier) <= _zones[i].x + _zones[i].width && (_km.y/_km.multiplier <= _zones[i].y + _zones[i].height
+						if ( (_km.x / _km.multiplier) >= _zones[i].x && (_km.y / _km.multiplier) >= _zones[i].y &&
+							(_km.x / _km.multiplier) <= _zones[i].x + _zones[i].width && (_km.y / _km.multiplier <= _zones[i].y + _zones[i].height
 							) {
-							_mouseXZone[i] = _km.x/_km.multiplier;
-							_mouseYZone[i] = _km.y/_km.multiplier;
+							_mouseXZone[i] = _km.x / _km.multiplier;
+							_mouseYZone[i] = _km.y / _km.multiplier;
 							break;
 						}
 						_currentZone++;
