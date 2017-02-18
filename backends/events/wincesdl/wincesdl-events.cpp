@@ -48,8 +48,8 @@ void WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) 
 	event.mouse.y = y;
 
 	// Update the "keyboard mouse" coords
-	_km.x = event.mouse.x * _km.multiplier;
-	_km.y = event.mouse.y * _km.multiplier;
+	_km.x = event.mouse.x * MULTIPLIER;
+	_km.y = event.mouse.y * MULTIPLIER;
 
 	// Adjust for the screen scaling
 	if (_graphicsMan->_zoomDown)
