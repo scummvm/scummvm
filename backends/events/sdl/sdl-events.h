@@ -58,7 +58,8 @@ protected:
 	//@{
 
 	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, multiplier;
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		static const int16 multiplier = 16;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 		bool modifier;
 	};
