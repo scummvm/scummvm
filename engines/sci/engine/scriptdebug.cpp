@@ -71,7 +71,9 @@ const char *opcodeNames[] = {
 reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	reg_t retval = make_reg(pos.getSegment(), pos.getOffset() + 1);
+	reg_t retval;
+	retval.setSegment(pos.getSegment());
+	retval.setOffset(pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
 	Kernel *kernel = g_sci->getKernel();

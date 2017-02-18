@@ -208,7 +208,11 @@ public:
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
 		if (getSciVersion() == SCI_VERSION_3)
 			offset--;
-		return make_reg(_pos.getSegment(), _baseMethod[offset]);
+
+		reg_t addr;
+		addr.setSegment(_pos.getSegment());
+		addr.setOffset(_baseMethod[offset]);
+		return addr;
 	}
 
 	Selector getFuncSelector(uint16 i) const {
@@ -258,7 +262,7 @@ public:
 
 	void cloneFromObject(const Object *obj) {
 		_baseObj = obj ? obj->_baseObj : SciSpan<const byte>();
-		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint16>();
+		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint32>();
 		_baseVars = obj ? obj->_baseVars : Common::Array<uint16>();
 	}
 
@@ -285,14 +289,16 @@ private:
 	SciSpan<const byte> _baseObj;
 
 	/**
-	 * A lookup table from a property index to its corresponding selector number.
+	 * A lookup table from a property index to its corresponding selector
+	 * number.
 	 */
 	Common::Array<uint16> _baseVars;
 
 	/**
 	 * A lookup table from a method index to its corresponding selector number.
+	 * In SCI3, the table contains selector + offset in pairs.
 	 */
-	Common::Array<uint16> _baseMethod;
+	Common::Array<uint32> _baseMethod;
 
 	/**
 	 * A lookup table from a property index to the property's current value.

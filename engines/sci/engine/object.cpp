@@ -298,22 +298,22 @@ bool Object::mustSetViewVisible(const int index) const {
 void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
 	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
 	const SciSpan<const byte> selectorBase = groupInfo.subspan(EXTRA_GROUPS * 32 * 2);
-	int groups = g_sci->getKernel()->getSelectorNamesSize()/32;
-	int methods, properties;
 
+	int numGroups = g_sci->getKernel()->getSelectorNamesSize() / 32;
 	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
-		++groups;
+		++numGroups;
 
-	_mustSetViewVisible.resize(groups);
+	_mustSetViewVisible.resize(numGroups);
 
-	methods = properties = 0;
+	int numMethods = 0;
+	int numProperties = 0;
 
 	// Selectors are divided into groups of 32, of which the first
 	// two selectors are always reserved (because their storage
 	// space is used by the typeMask).
 	// We don't know beforehand how many methods and properties
 	// there are, so we count them first.
-	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
 		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * 32 * 2);
 
@@ -326,9 +326,9 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 			for (int bit = 2; bit < 32; ++bit) {
 				int value = seeker.getUint16SEAt(bit * 2);
 				if (typeMask & (1 << bit)) { // Property
-					++properties;
+					++numProperties;
 				} else if (value != 0xffff) { // Method
-					++methods;
+					++numMethods;
 				} else {
 					// Undefined selector
 				}
@@ -337,16 +337,15 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 			_mustSetViewVisible[groupNr] = false;
 	}
 
-	_variables.resize(properties);
-	_propertyOffsetsSci3.resize(properties);
-	_baseVars.resize(properties);
-//	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
-	int propertyCounter = 0;
-	int methodCounter = 0;
+	_methodCount = numMethods;
+	_variables.resize(numProperties);
+	_baseVars.resize(numProperties);
+	_propertyOffsetsSci3.resize(numProperties);
 
 	// Go through the whole thing again to get the property values
 	// and method pointers
-	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+	int propertyCounter = 0;
+	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
 		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * 32 * 2);
 
@@ -367,13 +366,12 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
 					_baseMethod.push_back(groupBaseId + bit);
-					_baseMethod.push_back(value + buf.getUint32SEAt(0));
-//					methodOffsets[methodCounter] = (seeker + bit * 2) - buf;
-					++methodCounter;
+					const uint32 offset = value + buf.getUint32SEAt(0);
+					assert(offset <= kOffsetMask);
+					_baseMethod.push_back(offset);
 				} else {
 					// Undefined selector
 				}
-
 			}
 		}
 	}
@@ -382,8 +380,6 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 		_speciesSelectorSci3 = make_reg(0, _baseObj.getUint16SEAt(4));
 		_superClassPosSci3 = make_reg(0, _baseObj.getUint16SEAt(8));
 	}
-	_methodCount = methods;
-	//_methodOffsetsSci3 = methodOffsets;
 }
 
 } // End of namespace Sci

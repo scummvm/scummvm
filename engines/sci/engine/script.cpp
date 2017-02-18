@@ -113,22 +113,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			error("Script and heap sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\n"
 					"Please report this error to the ScummVM team");
-	} else if (getSciVersion() == SCI_VERSION_3) {
-		// Check for scripts over 64KB. These won't work with the current 16-bit address
-		// scheme. We need an overlaying mechanism, or a mechanism to split script parts
-		// in different segments to handle these. For now, simply stop when such a script
-		// is found.
-		//
-		// Known large SCI 3 scripts are:
-		// Lighthouse: 9, 220, 270, 351, 360, 490, 760, 765, 800
-		// LSL7: 240, 511, 550
-		// Phantasmagoria 2: none (hooray!)
-		// RAMA: 70
-		//
-		// TODO: Remove this once such a mechanism is in place
-		if (script->size() > 65535)
-			warning("TODO: SCI script %d is over 64KB - it's %u bytes long. This can't "
-			      "be fully handled at the moment", script_nr, script->size());
+	} else if (getSciVersion() == SCI_VERSION_3 && script->size() > 0x3FFFF) {
+		error("Script %d size exceeds 256K (it is %u bytes).\n"
+			  "Please report this error to the ScummVM team", script_nr, script->size());
 	}
 
 	uint extraLocalsWorkaround = 0;
@@ -640,14 +627,14 @@ SciSpan<const byte> Script::getSci3ObjectsPointer() {
 	return ptr;
 }
 
-Object *Script::getObject(uint16 offset) {
+Object *Script::getObject(uint32 offset) {
 	if (_objects.contains(offset))
 		return &_objects[offset];
 	else
 		return 0;
 }
 
-const Object *Script::getObject(uint16 offset) const {
+const Object *Script::getObject(uint32 offset) const {
 	if (_objects.contains(offset))
 		return &_objects[offset];
 	else
@@ -866,7 +853,7 @@ SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastB
 
 // memory operations
 
-bool Script::isValidOffset(uint16 offset) const {
+bool Script::isValidOffset(uint32 offset) const {
 	return offset < _buf->size();
 }
 
@@ -995,7 +982,10 @@ void Script::initializeClasses(SegManager *segMan) {
 						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			SegmentId segmentId = segMan->getScriptSegment(_nr);
-			segMan->setClassOffset(species, make_reg(segmentId, classpos));
+			reg_t classOffset;
+			classOffset.setSegment(segmentId);
+			classOffset.setOffset(classpos);
+			segMan->setClassOffset(species, classOffset);
 		}
 
 		seeker += seeker.getUint16SEAt(2) * mult;
@@ -1182,7 +1172,7 @@ Common::Array<reg_t> Script::listObjectReferences() const {
 	return tmp;
 }
 
-bool Script::offsetIsObject(uint16 offset) const {
+bool Script::offsetIsObject(uint32 offset) const {
 	return _buf->getUint16SEAt(offset + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER;
 }
 

@@ -262,7 +262,10 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		s->variables[VAR_GLOBAL][kGlobalVarSpeed] = make_reg(0, 6);
 	}
 
-	return make_reg(scriptSeg, address);
+	reg_t addr;
+	addr.setSegment(scriptSeg);
+	addr.setOffset(address);
+	return addr;
 }
 
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {

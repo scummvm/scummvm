@@ -48,7 +48,7 @@ enum ScriptObjectTypes {
 	SCI_OBJ_LOCALVARS
 };
 
-typedef Common::HashMap<uint16, Object> ObjMap;
+typedef Common::HashMap<uint32, Object> ObjMap;
 
 enum ScriptOffsetEntryTypes {
 	SCI_SCR_OFFSET_TYPE_OBJECT = 0, // classes are handled by this type as well
@@ -114,7 +114,7 @@ public:
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
 	const ObjMap &getObjectMap() const { return _objects; }
-	bool offsetIsObject(uint16 offset) const;
+	bool offsetIsObject(uint32 offset) const;
 
 public:
 	Script();
@@ -123,7 +123,7 @@ public:
 	void freeScript();
 	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
-	virtual bool isValidOffset(uint16 offset) const;
+	virtual bool isValidOffset(uint32 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
@@ -140,8 +140,8 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
-	Object *getObject(uint16 offset);
-	const Object *getObject(uint16 offset) const;
+	Object *getObject(uint32 offset);
+	const Object *getObject(uint32 offset) const;
 
 	/**
 	 * Initializes an object within the segment manager

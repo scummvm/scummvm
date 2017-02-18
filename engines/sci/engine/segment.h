@@ -93,7 +93,7 @@ public:
 	 * Check whether the given offset into this memory object is valid,
 	 * i.e., suitable for passing to dereference.
 	 */
-	virtual bool isValidOffset(uint16 offset) const = 0;
+	virtual bool isValidOffset(uint32 offset) const = 0;
 
 	/**
 	 * Dereferences a raw memory pointer.
@@ -149,7 +149,7 @@ struct LocalVariables : public SegmentObj {
 public:
 	LocalVariables(): SegmentObj(SEG_TYPE_LOCALS), script_id(0) { }
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint32 offset) const {
 		return offset < _locals.size() * 2;
 	}
 	virtual SegmentRef dereference(reg_t pointer);
@@ -161,7 +161,7 @@ public:
 
 /** Data stack */
 struct DataStack : SegmentObj {
-	int _capacity; /**< Number of stack entries */
+	uint _capacity; /**< Number of stack entries */
 	reg_t *_entries;
 
 public:
@@ -171,7 +171,7 @@ public:
 		_entries = NULL;
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint32 offset) const {
 		return offset < _capacity * 2;
 	}
 	virtual SegmentRef dereference(reg_t pointer);
@@ -276,7 +276,7 @@ public:
 		}
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint32 offset) const {
 		return isValidEntry(offset);
 	}
 
@@ -380,7 +380,7 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 
 // Free-style memory
 struct DynMem : public SegmentObj {
-	int _size;
+	uint _size;
 	Common::String _description;
 	byte *_buf;
 
@@ -391,7 +391,7 @@ public:
 		_buf = NULL;
 	}
 
-	virtual bool isValidOffset(uint16 offset) const {
+	virtual bool isValidOffset(uint32 offset) const {
 		return offset < _size;
 	}
 	virtual SegmentRef dereference(reg_t pointer);

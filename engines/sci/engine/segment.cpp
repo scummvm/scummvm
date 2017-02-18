@@ -194,7 +194,7 @@ SegmentRef DataStack::dereference(reg_t pointer) {
 
 Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
 	Common::Array<reg_t> tmp;
-	for (int i = 0; i < _capacity; i++)
+	for (uint i = 0; i < _capacity; i++)
 		tmp.push_back(_entries[i]);
 
 	return tmp;
