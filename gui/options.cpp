@@ -223,7 +223,7 @@ void OptionsDialog::build() {
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
-		if (ConfMan.hasKey("swap_menu_and_back", _domain)) {
+		if (ConfMan.hasKey("swap_menu_and_back_buttons", _domain)) {
 			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
 			if (_swapMenuAndBackBtnsCheckbox != 0)
 				_swapMenuAndBackBtnsCheckbox->setState(state);
@@ -420,7 +420,7 @@ void OptionsDialog::apply() {
 			}
 		}
 		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
-			if (ConfMan.getBool("swap_menu_and_back", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
+			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
 				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
 			}
 		}

@@ -45,10 +45,10 @@ void OSystem_ANDROIDSDL::initBackend() {
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
 	
-	if (!ConfMan.hasKey("swap_menu_and_back"))
-		ConfMan.setBool("swap_menu_and_back", true);
+	if (!ConfMan.hasKey("swap_menu_and_back_buttons"))
+		ConfMan.setBool("swap_menu_and_back_buttons", true);
 	else
-		swapMenuAndBackButtons(ConfMan.getBool("swap_menu_and_back"));
+		swapMenuAndBackButtons(ConfMan.getBool("swap_menu_and_back_buttons"));
 	
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		const bool enable = SDL_ANDROID_GetMouseEmulationMode();
@@ -111,7 +111,7 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 			showOnScreenControl(enable);
 			break;
 		case kFeatureSwapMenuAndBackButtons:
-			ConfMan.setBool("swap_menu_and_back", enable);
+			ConfMan.setBool("swap_menu_and_back_buttons", enable);
 			swapMenuAndBackButtons(enable);
 			break;
 	}
@@ -128,7 +128,7 @@ bool OSystem_ANDROIDSDL::getFeatureState(Feature f) {
 			return ConfMan.getBool("onscreen_control");
 			break;
 		case kFeatureSwapMenuAndBackButtons:
-			return ConfMan.getBool("swap_menu_and_back");
+			return ConfMan.getBool("swap_menu_and_back_buttons");
 			break;
 		default:
 			return OSystem_POSIX::getFeatureState(f);
