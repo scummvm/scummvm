@@ -40,14 +40,14 @@ class CArm : public CCarry {
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 private:
-	CString _string6;
-	int _field138;
+	CString _heldItemName;
+	int _puzzleUnused;
 	Rect _hookedRect;
-	CString _string7;
-	int _field158;
+	CString _hookedTarget;
+	bool _armUnlocked;
 	Rect _armRect;
-	int _field16C;
-	int _field170;
+	int _arboretumFrame;
+	int _unlockedFrame;
 public:
 	CLASSDEF;
 	CArm();
