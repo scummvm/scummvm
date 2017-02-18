@@ -291,6 +291,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		4
 	},
 
+	{ // Meet Mediaband
+		{
+			"mediaband",
+			"",
+			AD_ENTRY1s("MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		4
+	},
+
 	{
 		{
 			// Masters of the Elements - English (from rootfather)

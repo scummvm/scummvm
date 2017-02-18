@@ -84,6 +84,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
 
 	_colorDepth = 8;	// 256-color
 	_key = 0;
