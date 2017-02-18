@@ -138,13 +138,14 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	if (getPlatform() == Common::kPlatformWindows) {
-		_sharedCastFile = "SHARDCST.MMM";
-	} else {
-		if (getVersion() < 4)
+	if (getVersion() < 4) {
+		if (getPlatform() == Common::kPlatformWindows) {
+			_sharedCastFile = "SHARDCST.MMM";
+		} else {
 			_sharedCastFile = "Shared Cast";
-		else
-			_sharedCastFile = "Shared.dir";
+		}
+	} else {
+		_sharedCastFile = "Shared.dir";
 	}
 
 	loadSharedCastsFrom(_sharedCastFile);
