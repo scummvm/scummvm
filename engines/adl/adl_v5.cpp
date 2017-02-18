@@ -88,9 +88,9 @@ void AdlEngine_v5::setupOpcodeTables() {
 	Opcode(o4_moveAllItems);
 	Opcode(o1_quit);
 	Opcode(o5_dummy);
-	Opcode(o2_save);
+	Opcode(o4_save);
 	// 0x10
-	Opcode(o2_restore);
+	Opcode(o4_restore);
 	Opcode(o1_restart);
 	Opcode(o5_setRegionRoom);
 	Opcode(o5_dummy);

@@ -50,6 +50,8 @@ private:
 	void showRoom();
 	Common::String formatVerbError(const Common::String &verb) const;
 	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
+	void loadState(Common::ReadStream &stream);
+	void saveState(Common::WriteStream &stream);
 
 	// AdlEngine_v2
 	void printString(const Common::String &str);
@@ -146,12 +148,9 @@ void HiRes6Engine::init() {
 
 	_strings.lineFeeds = readStringAt(*stream, 0x408);
 
-	// Read opcode strings (TODO)
 	_strings_v2.saveInsert = readStringAt(*stream, 0xad8);
-	readStringAt(*stream, 0xb95); // Confirm save
-	// _strings_v2.saveReplace
+	_strings_v2.saveReplace = readStringAt(*stream, 0xb95);
 	_strings_v2.restoreInsert = readStringAt(*stream, 0xc07);
-	// _strings_v2.restoreReplace
 	_strings.playAgain = readStringAt(*stream, 0xcdf, 0xff);
 
 	_messageIds.cantGoThere = 249;
@@ -273,6 +272,20 @@ Common::String HiRes6Engine::formatNounError(const Common::String &verb, const C
 	err.setChar(APPLECHAR('.'), i + 3);
 
 	return err;
+}
+
+void HiRes6Engine::loadState(Common::ReadStream &stream) {
+	AdlEngine_v5::loadState(stream);
+	_state.moves = (getVar(39) << 8) | getVar(24);
+	setVar(39, 0);
+}
+
+void HiRes6Engine::saveState(Common::WriteStream &stream) {
+	// Move counter is stuffed into variables, in order to save it
+	setVar(24, _state.moves & 0xff);
+	setVar(39, _state.moves >> 8);
+	AdlEngine_v5::saveState(stream);
+	setVar(39, 0);
 }
 
 void HiRes6Engine::printString(const Common::String &str) {
