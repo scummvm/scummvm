@@ -43,22 +43,22 @@ END_MESSAGE_MAP()
 int CMaitreD::_v1;
 
 CMaitreD::CMaitreD() : CTrueTalkNPC(),
-	_string2("z#40.wav"), _string3("z#40.wav"), _field108(0), _field118(1),
-	_field11C(0), _field12C(0), _field130(1), _field134(0), _timerId(0) {
+	_priorMusicName("z#40.wav"), _musicName("z#40.wav"), _unused5(0), _hasMusic(true),
+	_musicSet(false), _fightFlag(false), _unused6(true), _savedFightFlag(false), _timerId(0) {
 }
 
 void CMaitreD::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field108, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeNumberLine(_field118, indent);
-	file->writeNumberLine(_field11C, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_field12C, indent);
-	file->writeNumberLine(_field130, indent);
+	file->writeNumberLine(_unused5, indent);
+	file->writeQuotedLine(_priorMusicName, indent);
+	file->writeNumberLine(_hasMusic, indent);
+	file->writeNumberLine(_musicSet, indent);
+	file->writeQuotedLine(_musicName, indent);
+	file->writeNumberLine(_fightFlag, indent);
+	file->writeNumberLine(_unused6, indent);
 
 	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_field134, indent);
+	file->writeNumberLine(_savedFightFlag, indent);
 	file->writeNumberLine(_timerId, indent);
 
 	CTrueTalkNPC::save(file, indent);
@@ -66,16 +66,16 @@ void CMaitreD::save(SimpleFile *file, int indent) {
 
 void CMaitreD::load(SimpleFile *file) {
 	file->readNumber();
-	_field108 = file->readNumber();
-	_string2 = file->readString();
-	_field118 = file->readNumber();
-	_field11C = file->readNumber();
-	_string3 = file->readString();
-	_field12C = file->readNumber();
-	_field130 = file->readNumber();
+	_unused5 = file->readNumber();
+	_priorMusicName = file->readString();
+	_hasMusic = file->readNumber();
+	_musicSet = file->readNumber();
+	_musicName = file->readString();
+	_fightFlag = file->readNumber();
+	_unused6 = file->readNumber();
 
 	_v1 = file->readNumber();
-	_field134 = file->readNumber();
+	_savedFightFlag = file->readNumber();
 	_timerId = file->readNumber();
 
 	CTrueTalkNPC::load(file);
@@ -83,10 +83,10 @@ void CMaitreD::load(SimpleFile *file) {
 
 bool CMaitreD::RestaurantMusicChanged(CRestaurantMusicChanged *msg) {
 	if (msg->_value.empty()) {
-		_field118 = 0;
+		_hasMusic = false;
 	} else {
-		_string3 = msg->_value;
-		_field118 = _field11C = 1;
+		_musicName = msg->_value;
+		_hasMusic = _musicSet = true;
 	}
 
 	return true;
@@ -94,14 +94,14 @@ bool CMaitreD::RestaurantMusicChanged(CRestaurantMusicChanged *msg) {
 
 bool CMaitreD::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 	if (msg->_action == 8) {
-		_field12C = 1;
+		_fightFlag = true;
 		stopAnimTimer(_timerId);
 		_timerId = startAnimTimer("MD Fight", 3500, 0);
 	} else if (msg->_action == 9) {
 		stopAnimTimer(_timerId);
 		_timerId = 0;
 	} else if (msg->_action == 10) {
-		_field12C = 0;
+		_fightFlag = false;
 		_v1 = 1;
 		stopAnimTimer(_timerId);
 		_timerId = 0;
@@ -115,12 +115,12 @@ bool CMaitreD::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 
 bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
 	setTalking(this, true, findView());
-	_field12C = _field134;
+	_fightFlag = _savedFightFlag;
 
-	if (_string3 == "STMusic" && (!_field11C || _string2 == _string3))
+	if (_musicName == "STMusic" && (!_musicSet || _priorMusicName == _musicName))
 		return true;
 
-	if (_string3.contains("nasty ambient"))
+	if (_musicName.contains("nasty ambient"))
 		startTalking(this, 111, findView());
 	else if (!CMusicRoom::_musicHandler->checkInstrument(SNAKE))
 		startTalking(this, 114, findView());
@@ -135,16 +135,17 @@ bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
 		happyMsg.execute("MaitreD Right Arm");
 	}
 
+	_priorMusicName = _musicName;
 	return true;
 }
 
 bool CMaitreD::LeaveViewMsg(CLeaveViewMsg *msg) {
-	_field134 = _field12C;
+	_savedFightFlag = _fightFlag;
 	performAction(true);
 	stopAnimTimer(_timerId);
 	_timerId = 0;
 
-	_field12C = 0;
+	_fightFlag = false;
 	return true;
 }
 
@@ -158,7 +159,7 @@ bool CMaitreD::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 		msg->_names = NAMES;
 
 		CAnimateMaitreDMsg animMsg;
-		if (_field12C)
+		if (_fightFlag)
 			animMsg._value = 0;
 		animMsg.execute(this);
 	}
@@ -168,7 +169,7 @@ bool CMaitreD::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 bool CMaitreD::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "MD Fight") {
-		if (_field12C && compareViewNameTo("1stClassRestaurant.MaitreD Node.N")) {
+		if (_fightFlag && compareViewNameTo("1stClassRestaurant.MaitreD Node.N")) {
 			startTalking(this, 131, findView());
 		}
 	} else {
@@ -179,7 +180,7 @@ bool CMaitreD::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CMaitreD::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
-	if (_field12C) {
+	if (_fightFlag) {
 		stopAnimTimer(_timerId);
 		_timerId = 0;
 	}
@@ -189,7 +190,7 @@ bool CMaitreD::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 }
 
 bool CMaitreD::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
-	if (_field12C) {
+	if (_fightFlag) {
 		stopAnimTimer(_timerId);
 		_timerId = startAnimTimer("MD Fight", 3000 + getRandomNumber(3000));
 	}
@@ -199,7 +200,7 @@ bool CMaitreD::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 }
 
 bool CMaitreD::LoadSuccessMsg(CLoadSuccessMsg *msg) {
-	if (_field12C) {
+	if (_fightFlag) {
 		_timerId = startAnimTimer("MD Fight", 3000 + getRandomNumber(3000));
 	}
 

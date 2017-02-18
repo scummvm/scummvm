@@ -43,14 +43,14 @@ class CMaitreD : public CTrueTalkNPC {
 private:
 	static int _v1;
 private:
-	int _field108;
-	CString _string2;
-	int _field118;
-	int _field11C;
-	CString _string3;
-	int _field12C;
-	int _field130;
-	int _field134;
+	int _unused5;
+	CString _priorMusicName;
+	bool _hasMusic;
+	bool _musicSet;
+	CString _musicName;
+	bool _fightFlag;
+	bool _unused6;
+	bool _savedFightFlag;
 	int _timerId;
 public:
 	CLASSDEF;
