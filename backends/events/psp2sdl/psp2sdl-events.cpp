@@ -113,11 +113,11 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 // Buttons
 		case BTN_CROSS: // Left mouse button
 			event.type = Common::EVENT_LBUTTONDOWN;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
 		case BTN_CIRCLE: // Right mouse button
 			event.type = Common::EVENT_RBUTTONDOWN;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
 		case BTN_TRIANGLE: // Game menu
 			event.type = Common::EVENT_KEYDOWN;
@@ -218,11 +218,11 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 // Buttons
 		case BTN_CROSS: // Left mouse button
 			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
 		case BTN_CIRCLE: // Right mouse button
 			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
 		case BTN_TRIANGLE: // Game menu
 			event.type = Common::EVENT_KEYUP;
@@ -269,7 +269,7 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	
 	// conversion factor between keyboard mouse and joy axis value
-	int vel_to_axis = (3000 / _km.multiplier);
+	int vel_to_axis = (1500 / MULTIPLIER);
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
 		_km.x_vel = axis / vel_to_axis;
@@ -287,26 +287,23 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	float deadZone = (float) JOY_DEADZONE;
 	float scalingFactor = 1.0f;
 	float magnitude = 0.0f;
-		
+
 	magnitude = sqrt(analogX * analogX + analogY * analogY);
-	
+
 	if (magnitude >= deadZone) {
 		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
 		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
 		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
-		event.type = Common::EVENT_MOUSEMOVE;
 	} else {
 		_km.y_vel = 0;
 		_km.x_vel = 0;
 	}
 
-	processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
-
-	return true;
+	return false;
 }
 
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
-	
+
 	// prevent suspend (scummvm games contains a lot of cutscenes..)
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
