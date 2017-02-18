@@ -119,6 +119,11 @@ bool CMaitreD::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_musicName != "STMusic" && (!_musicSet || _priorMusicName == _musicName))
 		return true;
 
+	// WORKAROUND: It's possible in the original to not have a music handler set
+	// if you start and stop the phonograph, then save and restore the game
+	if (!CMusicRoom::_musicHandler)
+		return true;
+
 	if (_musicName.contains("nasty ambient"))
 		startTalking(this, 111, findView());
 	else if (!CMusicRoom::_musicHandler->checkInstrument(SNAKE))
