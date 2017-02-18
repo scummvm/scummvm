@@ -273,7 +273,7 @@ MESSAGE1(CGetChevRoomNum, int, roomNum, 0);
 MESSAGE2(CHoseConnectedMsg, bool, connected, true, CGameObject *, object, nullptr);
 MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
-MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, result, false, CString, string1, "");
+MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, isHooked, false, CString, armName, "");
 MESSAGE1(CIsParrotPresentMsg, bool, value, false);
 MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);

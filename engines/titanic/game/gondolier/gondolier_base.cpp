@@ -32,12 +32,12 @@ int CGondolierBase::_v1;
 bool CGondolierBase::_puzzleSolved;
 int CGondolierBase::_volume1;
 int CGondolierBase::_v4;
-int CGondolierBase::_v5;
 int CGondolierBase::_volume2;
 int CGondolierBase::_v7;
-int CGondolierBase::_v8;
-int CGondolierBase::_v9;
-int CGondolierBase::_v10;
+bool CGondolierBase::_rightSliderHooked;
+bool CGondolierBase::_leftSliderHooked;
+bool CGondolierBase::_priorRightSliderHooked;
+bool CGondolierBase::_priorLeftSliderHooked;
 
 void CGondolierBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -45,12 +45,12 @@ void CGondolierBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_puzzleSolved, indent);
 	file->writeNumberLine(_volume1, indent);
 	file->writeNumberLine(_v4, indent);
-	file->writeNumberLine(_v5, indent);
+	file->writeNumberLine(_rightSliderHooked, indent);
 	file->writeNumberLine(_volume2, indent);
 	file->writeNumberLine(_v7, indent);
-	file->writeNumberLine(_v8, indent);
-	file->writeNumberLine(_v9, indent);
-	file->writeNumberLine(_v10, indent);
+	file->writeNumberLine(_leftSliderHooked, indent);
+	file->writeNumberLine(_priorRightSliderHooked, indent);
+	file->writeNumberLine(_priorLeftSliderHooked, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -61,12 +61,12 @@ void CGondolierBase::load(SimpleFile *file) {
 	_puzzleSolved = file->readNumber();
 	_volume1 = file->readNumber();
 	_v4 = file->readNumber();
-	_v5 = file->readNumber();
+	_rightSliderHooked = file->readNumber();
 	_volume2 = file->readNumber();
 	_v7 = file->readNumber();
-	_v8 = file->readNumber();
-	_v9 = file->readNumber();
-	_v10 = file->readNumber();
+	_leftSliderHooked = file->readNumber();
+	_priorRightSliderHooked = file->readNumber();
+	_priorLeftSliderHooked = file->readNumber();
 
 	CGameObject::load(file);
 }

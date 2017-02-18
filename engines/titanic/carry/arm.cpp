@@ -116,7 +116,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		hookedMsg._rect.translate(_bounds.left, _bounds.top);
 		hookedMsg.execute("GondolierLeftLever");
 
-		if (hookedMsg._result) {
+		if (hookedMsg._isHooked) {
 			_hookedTarget = "GondolierLeftLever";
 		} else {
 			petAddToInventory();
@@ -126,7 +126,7 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		hookedMsg._rect.translate(_bounds.left, _bounds.top);
 		hookedMsg.execute("GondolierRightLever");
 
-		if (hookedMsg._result) {
+		if (hookedMsg._isHooked) {
 			_hookedTarget = "GondolierRightLever";
 		} else {
 			petAddToInventory();
