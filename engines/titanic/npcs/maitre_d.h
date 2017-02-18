@@ -41,8 +41,6 @@ class CMaitreD : public CTrueTalkNPC {
 	bool TextInputMsg(CTextInputMsg *msg);
 	bool TriggerNPCEvent(CTriggerNPCEvent *msg);
 private:
-	static int _v1;
-private:
 	int _unused5;
 	CString _priorMusicName;
 	bool _hasMusic;
@@ -52,6 +50,7 @@ private:
 	bool _unused6;
 	bool _savedFightFlag;
 	int _timerId;
+	bool _defeated;
 public:
 	CLASSDEF;
 	CMaitreD();

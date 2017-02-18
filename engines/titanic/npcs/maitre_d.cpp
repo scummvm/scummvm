@@ -40,11 +40,10 @@ BEGIN_MESSAGE_MAP(CMaitreD, CTrueTalkNPC)
 	ON_MESSAGE(TriggerNPCEvent)
 END_MESSAGE_MAP()
 
-int CMaitreD::_v1;
-
 CMaitreD::CMaitreD() : CTrueTalkNPC(),
 	_priorMusicName("z#40.wav"), _musicName("z#40.wav"), _unused5(0), _hasMusic(true),
-	_musicSet(false), _fightFlag(false), _unused6(true), _savedFightFlag(false), _timerId(0) {
+	_musicSet(false), _fightFlag(false), _unused6(true), _savedFightFlag(false),
+	_timerId(0), _defeated(false) {
 }
 
 void CMaitreD::save(SimpleFile *file, int indent) {
@@ -57,7 +56,7 @@ void CMaitreD::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fightFlag, indent);
 	file->writeNumberLine(_unused6, indent);
 
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_defeated, indent);
 	file->writeNumberLine(_savedFightFlag, indent);
 	file->writeNumberLine(_timerId, indent);
 
@@ -74,7 +73,7 @@ void CMaitreD::load(SimpleFile *file) {
 	_fightFlag = file->readNumber();
 	_unused6 = file->readNumber();
 
-	_v1 = file->readNumber();
+	_defeated = file->readNumber();
 	_savedFightFlag = file->readNumber();
 	_timerId = file->readNumber();
 
@@ -102,7 +101,7 @@ bool CMaitreD::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		_timerId = 0;
 	} else if (msg->_action == 10) {
 		_fightFlag = false;
-		_v1 = 1;
+		_defeated = true;
 		stopAnimTimer(_timerId);
 		_timerId = 0;
 
