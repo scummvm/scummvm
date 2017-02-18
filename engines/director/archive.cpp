@@ -441,14 +441,13 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
 
 		for (uint i = 0; i < casSize; i++) {
-			uint32 index = casStream.readUint32();
+			uint32 index = casStream.readUint32BE();
+			debugCN(2, kDebugLoading, "%d ", index);
 
 			Resource &res = resources[index];
 			res.index = index;
 			res.castId = i + 1;
 			_types[castTag][res.castId] = res;
-
-			debugCN(2, kDebugLoading, "%d ", index);
 		}
 		debugC(2, kDebugLoading, "]");
 	}
