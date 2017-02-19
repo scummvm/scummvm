@@ -126,18 +126,18 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_LEFT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 		case SDLK_RIGHT:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 #if defined(SDL_BUTTON_MIDDLE)
 		case SDLK_UP:
 			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_MBUTTONDOWN : Common::EVENT_MBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 #endif
@@ -150,12 +150,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONDOWN;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONDOWN;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
@@ -188,12 +188,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, _km.x / _km.multiplier, _km.y / _km.multiplier);
+			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
