@@ -35,8 +35,6 @@
 #include "graphics/screen.h"
 #include "graphics/palette.h"
 #include "common/timer.h"
-
-//#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "cryo/defs.h"
@@ -5334,7 +5332,7 @@ void EdenGame::save() {
 	//SaveDialog(byte_37150, byte_37196->ff_A);
 	//TODO
 	strcpy(name, "edsave1.000");
-	savegame(name);
+	saveGame(name);
 	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	fadeToBlack(3);
@@ -6369,55 +6367,126 @@ void EdenGame::phase560() {
 	_gameRooms[127]._exits[1] = 0;
 }
 
-void EdenGame::savegame(char *name) {
-	int32 size;
-
-	Common::OutSaveFile *handle = g_system->getSavefileManager()->openForSaving(name);
-	if (!handle)
+void EdenGame::saveGame(char *name) {
+	Common::OutSaveFile *fh = g_system->getSavefileManager()->openForSaving(name);
+	if (!fh)
 		return;
 
-#define CLFile_Write(h, ptr, size) \
-debug("writing 0x%X bytes", *size); \
-h->write(ptr, *size);
+	Common::Serializer s(nullptr, fh);
 
-	vavaoffsetout();
-	size = (char *)(&_globals->_saveEnd) - (char *)(_globals);
-	CLFile_Write(handle, _globals, &size);
-	size = (char *)(&_gameIcons[134]) - (char *)(&_gameIcons[123]);
-	CLFile_Write(handle, &_gameIcons[123], &size);
-	lieuoffsetout();
-	size = (char *)(&_areasTable[12]) - (char *)(&_areasTable[0]);
-	CLFile_Write(handle, &_areasTable[0], &size);
-	size = (char *)(&_gameRooms[423]) - (char *)(&_gameRooms[0]);
-	CLFile_Write(handle, &_gameRooms[0], &size);
-	size = (char *)(&_objects[42]) - (char *)(&_objects[0]);
-	CLFile_Write(handle, &_objects[0], &size);
-	size = (char *)(&_objectLocations[45]) - (char *)(&_objectLocations[0]);
-	CLFile_Write(handle, &_objectLocations[0], &size);
-	size = (char *)(&_followerList[14]) - (char *)(&_followerList[13]);
-	CLFile_Write(handle, &_followerList[13], &size);
-	size = (char *)(&_persons[PER_UNKN_3DE]) - (char *)(&_persons[PER_KING]);
-	CLFile_Write(handle, &_persons[PER_KING], &size);
-	bandeoffsetout();
-	size = (char *)(&_tapes[16]) - (char *)(&_tapes[0]);
-	CLFile_Write(handle, &_tapes[0], &size);
-	size = (char *)(&_tabletView[6]) - (char *)(&_tabletView[0]);
-	CLFile_Write(handle, &_tabletView[0], &size);
-	size = (char *)(&_gameDialogs[10240]) - (char *)(&_gameDialogs[0]); //TODO: const size 10240
-	CLFile_Write(handle, &_gameDialogs[0], &size);
+	syncGame(s);
 
-	delete handle;
+	delete fh;
+}
 
-#undef CLFile_Write
+void EdenGame::syncGame(Common::Serializer s) {
+	saveGlobalPointers(s);
+	saveGlobalValues(s);
 
-	vavaoffsetin();
-	lieuoffsetin();
-	bandeoffsetin();
+	// _gameIcons
+	// CHECKME: only from #123 to #133?
+	for (int i = 123; i < 134; i++) {
+		s.syncAsSint16LE(_gameIcons[i].sx);
+		s.syncAsSint16LE(_gameIcons[i].sy);
+		s.syncAsSint16LE(_gameIcons[i].ex);
+		s.syncAsSint16LE(_gameIcons[i].ey);
+		s.syncAsUint16LE(_gameIcons[i]._cursorId);
+		s.syncAsUint16LE(_gameIcons[i]._actionId);
+		s.syncAsUint16LE(_gameIcons[i]._objectId);
+	}
 
-	debug("* Game saved to %s", name);
+	saveCitadelRoomPointers(s);
+
+	// _areasTable
+	for (int i = 0; i < 12; i++) {
+		s.syncAsByte(_areasTable[i]._num);
+		s.syncAsByte(_areasTable[i]._type);
+		s.syncAsUint16LE(_areasTable[i]._flags);
+		s.syncAsUint16LE(_areasTable[i]._firstRoomIdx);
+		s.syncAsByte(_areasTable[i]._citadelLevel);
+		s.syncAsByte(_areasTable[i]._placeNum);
+		s.syncAsSint16LE(_areasTable[i]._visitCount);
+	}
+
+	// _gameRooms
+	for (int i = 0; i < 423; i++) {
+		s.syncAsByte(_gameRooms[i]._id);
+		for (int j = 0; j < 4; j++)
+			s.syncAsByte(_gameRooms[i]._exits[j]);
+		s.syncAsByte(_gameRooms[i]._flags);
+		s.syncAsUint16LE(_gameRooms[i]._bank);
+		s.syncAsUint16LE(_gameRooms[i]._party);
+		s.syncAsByte(_gameRooms[i]._level);
+		s.syncAsByte(_gameRooms[i]._video);
+		s.syncAsByte(_gameRooms[i]._location);
+		s.syncAsByte(_gameRooms[i]._backgroundBankNum);
+	}
+
+	// _Objects
+	for (int i = 0; i < 42; i++) {
+		s.syncAsByte(_objects[i]._id);
+		s.syncAsByte(_objects[i]._flags);
+		s.syncAsSint16LE(_objects[i]._locations);
+		s.syncAsUint16LE(_objects[i]._itemMask);
+		s.syncAsUint16LE(_objects[i]._powerMask);
+		s.syncAsSint16LE(_objects[i]._count);
+	}
+
+	for (int i = 0; i < 45; i++)
+		s.syncAsUint16LE(_objectLocations[i]);
+
+	// _followerList[13]
+	// CHECKME: Only #13?
+	s.syncAsByte(_followerList[13]._id);
+	s.syncAsByte(_followerList[13]._spriteNum);
+	s.syncAsSint16LE(_followerList[13].sx);
+	s.syncAsSint16LE(_followerList[13].sy);
+	s.syncAsSint16LE(_followerList[13].ex);
+	s.syncAsSint16LE(_followerList[13].ey);
+	s.syncAsSint16LE(_followerList[13]._spriteBank);
+	s.syncAsSint16LE(_followerList[13].ff_C);
+	s.syncAsSint16LE(_followerList[13].ff_E);
+
+	// _persons
+	for (int i = 0; i < 58; i++) {
+		s.syncAsUint16LE(_persons[i]._roomNum);
+		s.syncAsUint16LE(_persons[i]._actionId);
+		s.syncAsUint16LE(_persons[i]._partyMask);
+		s.syncAsByte(_persons[i]._id);
+		s.syncAsByte(_persons[i]._flags);
+		s.syncAsByte(_persons[i]._roomBankId);
+		s.syncAsByte(_persons[i]._spriteBank);
+		s.syncAsUint16LE(_persons[i]._items);
+		s.syncAsUint16LE(_persons[i]._powers);
+		s.syncAsByte(_persons[i]._targetLoc);
+		s.syncAsByte(_persons[i]._lastLoc);
+		s.syncAsByte(_persons[i]._speed);
+		s.syncAsByte(_persons[i]._steps);
+	}
+
+	saveTapePointers(s);
+
+	// _tapes
+	for (int i = 0; i < MAX_TAPES; i++) {
+		s.syncAsSint16LE(_tapes[i]._textNum);
+		s.syncAsSint16LE(_tapes[i]._party);
+		s.syncAsSint16LE(_tapes[i]._roomNum);
+		s.syncAsSint16LE(_tapes[i]._backgroundBankNum);
+	}
+
+	// _tabletView
+	// CHECKME: Only 6 out of 12?
+	for (int i = 0; i < 6; i++)
+		s.syncAsByte(_tabletView[i]);
+
+	// _gameDialogs
+	for (int i = 0; i < 10240; i++)
+		s.syncAsByte(_gameDialogs[i]);
 }
 
 void EdenGame::loadrestart() {
+	_quitFlag3 = true;
+/*
 	assert(0);  //TODO: this won't work atm - all snapshots are BE
 	int32 offs = 0;
 	int32 size;
@@ -6457,111 +6526,269 @@ void EdenGame::loadrestart() {
 	size = (char *)(&_gameDialogs[10240]) - (char *)(&_gameDialogs[0]); //TODO: const size 10240
 	loadpartoffile(2495,  &_gameDialogs[0], offs, size);
 	_gameLoaded = true;
+	*/
 }
 
 void EdenGame::loadgame(char *name) {
-	Common::InSaveFile *handle = g_system->getSavefileManager()->openForLoading(name);
-	if (!handle)
+	Common::InSaveFile *fh = g_system->getSavefileManager()->openForLoading(name);
+	if (!fh)
 		return;
 
-#define CLFile_Read(h, ptr, size) \
-	h->read(ptr, *size);
+	Common::Serializer s(fh, nullptr);
+	syncGame(s);
 
-	int32 size = (char *)(&_globals->_saveEnd) - (char *)(_globals);
-	CLFile_Read(handle, _globals, &size);
-	vavaoffsetin();
-	size = (char *)(&_gameIcons[134]) - (char *)(&_gameIcons[123]);
-	CLFile_Read(handle, &_gameIcons[123], &size);
-	size = (char *)(&_areasTable[12]) - (char *)(&_areasTable[0]);
-	CLFile_Read(handle, &_areasTable[0], &size);
-	lieuoffsetin();
-	size = (char *)(&_gameRooms[423]) - (char *)(&_gameRooms[0]);
-	CLFile_Read(handle, &_gameRooms[0], &size);
-	size = (char *)(&_objects[42]) - (char *)(&_objects[0]);
-	CLFile_Read(handle, &_objects[0], &size);
-	size = (char *)(&_objectLocations[45]) - (char *)(&_objectLocations[0]);
-	CLFile_Read(handle, &_objectLocations[0], &size);
-	size = (char *)(&_followerList[14]) - (char *)(&_followerList[13]);
-	CLFile_Read(handle, &_followerList[13], &size);
-	size = (char *)(&_persons[55]) - (char *)(&_persons[0]);
-	CLFile_Read(handle, &_persons[0], &size);
-	size = (char *)(&_tapes[16]) - (char *)(&_tapes[0]);
-	CLFile_Read(handle, &_tapes[0], &size);
-	bandeoffsetin();
-	size = (char *)(&_tabletView[6]) - (char *)(&_tabletView[0]);
-	CLFile_Read(handle, &_tabletView[0], &size);
-	size = (char *)(&_gameDialogs[10240]) - (char *)(&_gameDialogs[0]); //TODO: const size 10240
-	CLFile_Read(handle, &_gameDialogs[0], &size);
-
-	delete handle;
-#undef CLFile_Read
-
-//	CLFile_Close(handle);
+	delete fh;
 	_gameLoaded = true;
-	debug("* Game loaded from %s", name);
 }
 
-#define NULLPTR (void*)0xFFFFFF
-#define OFSOUT(val, base, typ) if (val)      (val) = (typ*)((char*)(val) - (size_t)(base)); else (val) = (typ*)NULLPTR;
+#define NULLPTR 0xFFFFFF
+#define IDXOUT(val, base, typ, idx) if (val)      (idx) = ((byte*)val - (byte*)base) / sizeof(typ); else (idx) = NULLPTR;
 #define OFSIN(val, base, typ) if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0;
 
-void EdenGame::vavaoffsetout() {
-	OFSOUT(_globals->_dialogPtr, _gameDialogs, Dialog);
-	OFSOUT(_globals->_nextDialogPtr, _gameDialogs, Dialog);
-	OFSOUT(_globals->_narratorDialogPtr, _gameDialogs, Dialog);
-	OFSOUT(_globals->_lastDialogPtr, _gameDialogs, Dialog);
-	OFSOUT(_globals->_tapePtr, _tapes, tape_t);
-	OFSOUT(_globals->_nextRoomIcon, _gameIcons, Icon);
-	OFSOUT(_globals->_roomPtr, _gameRooms, Room);
-	OFSOUT(_globals->_citaAreaFirstRoom, _gameRooms, Room);
-	OFSOUT(_globals->_areaPtr, _areasTable, Area);
-	OFSOUT(_globals->_lastAreaPtr, _areasTable, Area);
-	OFSOUT(_globals->_curAreaPtr, _areasTable, Area);
-	OFSOUT(_globals->_characterPtr, _persons, perso_t);
-	OFSOUT(_globals->_roomCharacterPtr, _persons, perso_t);
-}
+void EdenGame::saveGlobalPointers(Common::Serializer s) {
+	uint32 dialogIdx, nextDialogIdx, narratorDialogIdx, lastDialogIdx, tapeIdx, nextRoomIconIdx, roomIdx;
+	uint32 citaAreaFirstRoomIdx, areaIdx, lastAreaIdx, curAreaIdx, characterIdx, roomCharacterIdx;
 
-void EdenGame::vavaoffsetin() {
-	OFSIN(_globals->_dialogPtr, _gameDialogs, Dialog);
-	OFSIN(_globals->_nextDialogPtr, _gameDialogs, Dialog);
-	OFSIN(_globals->_narratorDialogPtr, _gameDialogs, Dialog);
-	OFSIN(_globals->_lastDialogPtr, _gameDialogs, Dialog);
-	OFSIN(_globals->_tapePtr, _tapes, tape_t);
-	OFSIN(_globals->_nextRoomIcon, _gameIcons, Icon);
-	OFSIN(_globals->_roomPtr, _gameRooms, Room);
-	OFSIN(_globals->_citaAreaFirstRoom, _gameRooms, Room);
-	OFSIN(_globals->_areaPtr, _areasTable, Area);
-	OFSIN(_globals->_lastAreaPtr, _areasTable, Area);
-	OFSIN(_globals->_curAreaPtr, _areasTable, Area);
-	OFSIN(_globals->_characterPtr, _persons, perso_t);
-	OFSIN(_globals->_roomCharacterPtr, _persons, perso_t);
-}
+	if (s.isSaving()) {
+		IDXOUT(_globals->_dialogPtr, _gameDialogs, Dialog, dialogIdx);
+		IDXOUT(_globals->_nextDialogPtr, _gameDialogs, Dialog, nextDialogIdx);
+		IDXOUT(_globals->_narratorDialogPtr, _gameDialogs, Dialog, narratorDialogIdx);
+		IDXOUT(_globals->_lastDialogPtr, _gameDialogs, Dialog, lastDialogIdx);
+		IDXOUT(_globals->_tapePtr, _tapes, tape_t, tapeIdx);
+		IDXOUT(_globals->_nextRoomIcon, _gameIcons, Icon, nextRoomIconIdx);
+		IDXOUT(_globals->_roomPtr, _gameRooms, Room, roomIdx);
+		IDXOUT(_globals->_citaAreaFirstRoom, _gameRooms, Room, citaAreaFirstRoomIdx);
+		IDXOUT(_globals->_areaPtr, _areasTable, Area, areaIdx);
+		IDXOUT(_globals->_lastAreaPtr, _areasTable, Area, lastAreaIdx);
+		IDXOUT(_globals->_curAreaPtr, _areasTable, Area, curAreaIdx);
+		IDXOUT(_globals->_characterPtr, _persons, perso_t, characterIdx);
+		IDXOUT(_globals->_roomCharacterPtr, _persons, perso_t, roomCharacterIdx);
+	}
 
-void EdenGame::lieuoffsetout() {
-	for (int i = 0; i < 12; i++)
-		OFSOUT(_areasTable[i]._citadelRoomPtr, _gameRooms, Room);
-}
+	s.syncAsUint32LE(dialogIdx);
+	s.syncAsUint32LE(nextDialogIdx);
+	s.syncAsUint32LE(narratorDialogIdx);
+	s.syncAsUint32LE(lastDialogIdx);
+	s.syncAsUint32LE(tapeIdx);
+	s.syncAsUint32LE(nextRoomIconIdx);
+	s.syncAsUint32LE(roomIdx);
+	s.syncAsUint32LE(citaAreaFirstRoomIdx);
+	s.syncAsUint32LE(areaIdx);
+	s.syncAsUint32LE(lastAreaIdx);
+	s.syncAsUint32LE(curAreaIdx);
+	s.syncAsUint32LE(characterIdx);
+	s.syncAsUint32LE(roomCharacterIdx);
 
-void EdenGame::lieuoffsetin() {
-	for (int i = 0; i < 12; i++)
-		OFSIN(_areasTable[i]._citadelRoomPtr, _gameRooms, Room);
-}
-
-void EdenGame::bandeoffsetout() {
-	for (int i = 0; i < 16; i++) {
-		OFSOUT(_tapes[i]._perso, _persons, perso_t);
-		OFSOUT(_tapes[i]._dialog, _gameDialogs, Dialog);
+	if (s.isLoading()) {
+		_globals->_dialogPtr = (dialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, dialogIdx);
+		_globals->_nextDialogPtr = (nextDialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, nextDialogIdx);
+		_globals->_narratorDialogPtr = (narratorDialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, narratorDialogIdx);
+		_globals->_lastDialogPtr = (lastDialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, lastDialogIdx);
+		_globals->_tapePtr = (tapeIdx == NULLPTR) ? nullptr : &_tapes[tapeIdx];
+		_globals->_nextRoomIcon = (nextRoomIconIdx == NULLPTR) ? nullptr : &_gameIcons[nextRoomIconIdx];
+		_globals->_roomPtr = (roomIdx == NULLPTR) ? nullptr : &_gameRooms[roomIdx];
+		_globals->_citaAreaFirstRoom = (citaAreaFirstRoomIdx == NULLPTR) ? nullptr : &_gameRooms[citaAreaFirstRoomIdx];
+		_globals->_areaPtr = (areaIdx == NULLPTR) ? nullptr : &_areasTable[areaIdx];
+		_globals->_lastAreaPtr = (lastAreaIdx == NULLPTR) ? nullptr : &_areasTable[lastAreaIdx];
+		_globals->_curAreaPtr = (curAreaIdx == NULLPTR) ? nullptr : &_areasTable[curAreaIdx];
+		_globals->_characterPtr = (characterIdx == NULLPTR) ? nullptr : &_persons[characterIdx];
+		_globals->_roomCharacterPtr = (roomCharacterIdx == NULLPTR) ? nullptr : &_persons[roomCharacterIdx];
 	}
 }
 
-void EdenGame::bandeoffsetin() {
-	for (int i = 0; i < 16; i++) {
-		OFSIN(_tapes[i]._perso, _persons, perso_t);
-		OFSIN(_tapes[i]._dialog, _gameDialogs, Dialog);
+void EdenGame::saveGlobalValues(Common::Serializer s) {
+	s.syncAsByte(_globals->_areaNum);
+	s.syncAsByte(_globals->_areaVisitCount);
+	s.syncAsByte(_globals->_menuItemIdLo);
+	s.syncAsByte(_globals->_menuItemIdHi);
+	s.syncAsUint16LE(_globals->_randomNumber);
+	s.syncAsUint16LE(_globals->_gameTime);
+	s.syncAsUint16LE(_globals->_gameDays);
+	s.syncAsUint16LE(_globals->_chrono);
+	s.syncAsUint16LE(_globals->_eloiDepartureDay);
+	s.syncAsUint16LE(_globals->_roomNum);
+	s.syncAsUint16LE(_globals->_newRoomNum);
+	s.syncAsUint16LE(_globals->_phaseNum);
+	s.syncAsUint16LE(_globals->_metPersonsMask1);
+	s.syncAsUint16LE(_globals->_party);
+	s.syncAsUint16LE(_globals->_partyOutside);
+	s.syncAsUint16LE(_globals->_metPersonsMask2);
+	s.syncAsUint16LE(_globals->_var1C);
+	s.syncAsUint16LE(_globals->_phaseActionsCount);
+	s.syncAsUint16LE(_globals->_curAreaFlags);
+	s.syncAsUint16LE(_globals->_curItemsMask);
+	s.syncAsUint16LE(_globals->_curPowersMask);
+	s.syncAsUint16LE(_globals->_curPersoItems);
+	s.syncAsUint16LE(_globals->_curCharacterPowers);
+	s.syncAsUint16LE(_globals->_wonItemsMask);
+	s.syncAsUint16LE(_globals->_wonPowersMask);
+	s.syncAsUint16LE(_globals->_stepsToFindAppleFast);
+	s.syncAsUint16LE(_globals->_stepsToFindAppleNormal);
+	s.syncAsUint16LE(_globals->_roomPersoItems);
+	s.syncAsUint16LE(_globals->_roomCharacterPowers);
+	s.syncAsUint16LE(_globals->_gameFlags);
+	s.syncAsUint16LE(_globals->_curVideoNum);
+	s.syncAsUint16LE(_globals->_morkusSpyVideoNum1);
+	s.syncAsUint16LE(_globals->_morkusSpyVideoNum2);
+	s.syncAsUint16LE(_globals->_morkusSpyVideoNum3);
+	s.syncAsUint16LE(_globals->_morkusSpyVideoNum4);
+	s.syncAsByte(_globals->_newMusicType);
+	s.syncAsByte(_globals->_var43);
+	s.syncAsByte(_globals->_videoSubtitleIndex);
+	s.syncAsByte(_globals->_partyInstruments);
+	s.syncAsByte(_globals->_monkGotRing);
+	s.syncAsByte(_globals->_chronoFlag);
+	s.syncAsByte(_globals->_curRoomFlags);
+	s.syncAsByte(_globals->_endGameFlag);
+	s.syncAsByte(_globals->_lastInfo);
+
+	byte autoDialog;
+	if (s.isSaving())
+		autoDialog = _globals->_autoDialog ? 1 : 0;
+	s.syncAsByte(autoDialog);
+	if (s.isLoading())
+		_globals->_autoDialog = (autoDialog == 1);
+
+	s.syncAsByte(_globals->_worldTyranSighted);
+	s.syncAsByte(_globals->_var4D);
+	s.syncAsByte(_globals->_var4E);
+	s.syncAsByte(_globals->_worldGaveGold);
+	s.syncAsByte(_globals->_worldHasTriceraptors);
+	s.syncAsByte(_globals->_worldHasVelociraptors);
+	s.syncAsByte(_globals->_worldHasTyran);
+	s.syncAsByte(_globals->_var53);
+	s.syncAsByte(_globals->_var54);
+	s.syncAsByte(_globals->_var55);
+	s.syncAsByte(_globals->_gameHours);
+	s.syncAsByte(_globals->_textToken1);
+	s.syncAsByte(_globals->_textToken2);
+	s.syncAsByte(_globals->_eloiHaveNews);
+	s.syncAsByte(_globals->_dialogFlags);
+	s.syncAsByte(_globals->_curAreaType);
+	s.syncAsByte(_globals->_curCitadelLevel);
+	s.syncAsByte(_globals->_newLocation);
+	s.syncAsByte(_globals->_prevLocation);
+	s.syncAsByte(_globals->_curPersoFlags);
+	s.syncAsByte(_globals->_var60);
+	s.syncAsByte(_globals->_eventType);
+	s.syncAsByte(_globals->_var62);
+	s.syncAsByte(_globals->_curObjectId);
+	s.syncAsByte(_globals->_curObjectFlags);
+	s.syncAsByte(_globals->_var65);
+	s.syncAsByte(_globals->_roomCharacterType);
+	s.syncAsByte(_globals->_roomCharacterFlags);
+	s.syncAsByte(_globals->_narratorSequence);
+	s.syncAsByte(_globals->_var69);
+	s.syncAsByte(_globals->_var6A);
+	s.syncAsByte(_globals->_frescoNumber);
+	s.syncAsByte(_globals->_var6C);
+	s.syncAsByte(_globals->_var6D);
+	s.syncAsByte(_globals->_labyrinthDirections);
+	s.syncAsByte(_globals->_labyrinthRoom);
+
+/*
+	CHECKME: *_sentenceBufferPtr
+*/
+
+	s.syncAsByte(_globals->_lastInfoIdx);
+	s.syncAsByte(_globals->_nextInfoIdx);
+
+/*
+	CHECKME
+		* _persoSpritePtr
+		* _persoSpritePtr2
+		* _curCharacterAnimPtr
+		* _varC2
+*/
+
+	s.syncAsSint16LE(_globals->_iconsIndex);
+	s.syncAsSint16LE(_globals->_curObjectCursor);
+	s.syncAsSint16LE(_globals->_varCA);
+	s.syncAsSint16LE(_globals->_varCC);
+	s.syncAsSint16LE(_globals->_characterImageBank);
+	s.syncAsUint16LE(_globals->_roomImgBank);
+	s.syncAsUint16LE(_globals->_characterBackgroundBankIdx);
+	s.syncAsUint16LE(_globals->_varD4);
+	s.syncAsUint16LE(_globals->_frescoeWidth);
+	s.syncAsUint16LE(_globals->_frescoeImgBank);
+	s.syncAsUint16LE(_globals->_varDA);
+	s.syncAsUint16LE(_globals->_varDC);
+	s.syncAsUint16LE(_globals->_roomBaseX);
+	s.syncAsUint16LE(_globals->_varE0);
+	s.syncAsUint16LE(_globals->_dialogType);
+	s.syncAsUint16LE(_globals->_varE4);
+	s.syncAsUint16LE(_globals->_currMusicNum);
+	s.syncAsSint16LE(_globals->_textNum);
+	s.syncAsUint16LE(_globals->_travelTime);
+	s.syncAsUint16LE(_globals->_varEC);
+	s.syncAsByte(_globals->_displayFlags);
+	s.syncAsByte(_globals->_oldDisplayFlags);
+	s.syncAsByte(_globals->_drawFlags);
+	s.syncAsByte(_globals->_varF1);
+	s.syncAsByte(_globals->_varF2);
+	s.syncAsByte(_globals->_menuFlags);
+	s.syncAsByte(_globals->_varF4);
+	s.syncAsByte(_globals->_varF5);
+	s.syncAsByte(_globals->_varF6);
+	s.syncAsByte(_globals->_varF7);
+	s.syncAsByte(_globals->_varF8);
+	s.syncAsByte(_globals->_varF9);
+	s.syncAsByte(_globals->_varFA);
+	s.syncAsByte(_globals->_animationFlags);
+	s.syncAsByte(_globals->_giveObj1);
+	s.syncAsByte(_globals->_giveObj2);
+	s.syncAsByte(_globals->_giveObj3);
+	s.syncAsByte(_globals->_var100);
+	s.syncAsByte(_globals->_roomVidNum);
+	s.syncAsByte(_globals->_mirrorEffect);
+	s.syncAsByte(_globals->_var103);
+	s.syncAsByte(_globals->_roomBackgroundBankNum);
+	s.syncAsByte(_globals->_valleyVidNum);
+	s.syncAsByte(_globals->_updatePaletteFlag);
+	s.syncAsByte(_globals->_inventoryScrollPos);
+	s.syncAsByte(_globals->_objCount);
+	s.syncAsByte(_globals->_textBankIndex);
+	s.syncAsByte(_globals->_prefLanguage);
+	for (int i = 0; i < 2; i++) {
+		s.syncAsByte(_globals->_prefMusicVol[i]);
+		s.syncAsByte(_globals->_prefVoiceVol[i]);
+		s.syncAsByte(_globals->_prefSoundVolume[i]);
+	}
+	s.syncAsByte(_globals->_citadelAreaNum);
+	s.syncAsByte(_globals->_var113);
+	s.syncAsByte(_globals->_lastPlaceNum);
+	s.syncAsByte(_globals->_saveEnd);
+}
+
+void EdenGame::saveCitadelRoomPointers(Common::Serializer s) {
+	uint32 citadelRoomIdx;
+	for (int i = 0; i < 12; i++) {
+		if (s.isSaving())
+			IDXOUT(_areasTable[i]._citadelRoomPtr, _gameRooms, Room, citadelRoomIdx);
+		s.syncAsUint32LE(citadelRoomIdx);
+		if (s.isLoading())
+			_areasTable[i]._citadelRoomPtr = (citadelRoomIdx == NULLPTR) ? nullptr : &_gameRooms[citadelRoomIdx];
 	}
 }
 
-//// cond.c
+void EdenGame::saveTapePointers(Common::Serializer s) {
+	int persoIdx, dialogIdx;
+
+	for (int i = 0; i < 16; i++) {
+		if (s.isSaving()) {
+			IDXOUT(_tapes[i]._perso, _persons, perso_t, persoIdx);
+			IDXOUT(_tapes[i]._dialog, _gameDialogs, Dialog, dialogIdx);
+		}
+
+		s.syncAsUint32LE(persoIdx);
+		s.syncAsUint32LE(dialogIdx);
+
+		if (s.isLoading()) {
+			_tapes[i]._perso = &_persons[persoIdx];
+			_tapes[i]._dialog = (dialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, dialogIdx);
+		}
+	}
+}
 
 char EdenGame::testCondition(int16 index) {
 	bool endFl = false;

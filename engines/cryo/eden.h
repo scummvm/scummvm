@@ -24,6 +24,8 @@
 #define CRYO_EDEN_H
 
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 
 #include "cryo/sound.h"
 #include "cryo/defs.h"
@@ -461,15 +463,14 @@ private:
 	void phase528();
 	void phase544();
 	void phase560();
-	void savegame(char *name);
+	void saveGame(char *name);
 	void loadrestart();
 	void loadgame(char *name);
-	void vavaoffsetout();
-	void vavaoffsetin();
-	void lieuoffsetout();
-	void lieuoffsetin();
-	void bandeoffsetout();
-	void bandeoffsetin();
+	void syncGame(Common::Serializer s);
+	void saveGlobalPointers(Common::Serializer s);
+	void saveGlobalValues(Common::Serializer s);
+	void saveCitadelRoomPointers(Common::Serializer s);
+	void saveTapePointers(Common::Serializer s);
 	char testCondition(int16 index);
 	uint16 operAdd(uint16 v1, uint16 v2);
 	uint16 operSub(uint16 v1, uint16 v2);
