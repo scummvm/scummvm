@@ -120,6 +120,9 @@ public:
 	/** Handle a mouse move event */
 	void onMouseMove(const Common::Point &mouse);
 
+	/** Frame update handler */
+	void onFrame();
+
 	/** Is the left mouse button currently pressed? */
 	bool mouseIsDown() const;
 

@@ -107,7 +107,7 @@ RivenScriptPtr RivenCard::getScript(uint16 scriptType) const {
 			return _scripts[i].script;
 		}
 
-	return RivenScriptPtr(new RivenScript());
+	return RivenScriptPtr();
 }
 
 void RivenCard::runScript(uint16 scriptType) {
@@ -393,24 +393,30 @@ RivenScriptPtr RivenCard::onMouseMove(const Common::Point &mouse) {
 	return script;
 }
 
-void RivenCard::onMouseDragUpdate() {
+RivenScriptPtr RivenCard::onMouseDragUpdate() {
+	RivenScriptPtr script;
 	if (_pressedHotspot) {
-		RivenScriptPtr script = _pressedHotspot->getScript(kMouseDragScript);
-		_vm->_scriptMan->runScript(script, true);
+		script = _pressedHotspot->getScript(kMouseDragScript);
 	}
+
+	return script;
 }
 
-void RivenCard::onMouseUpdate() {
-	RivenScriptPtr script(new RivenScript());
+RivenScriptPtr RivenCard::onFrame() {
+	return getScript(kCardFrameScript);
+}
+
+RivenScriptPtr RivenCard::onMouseUpdate() {
+	RivenScriptPtr script;
 	if (_hoveredHotspot) {
 		script = _hoveredHotspot->getScript(kMouseInsideScript);
 	}
 
-	if (!script->empty()) {
-		_vm->_scriptMan->runScript(script, true);
-	} else {
+	if (!script || script->empty()) {
 		updateMouseCursor();
 	}
+
+	return script;
 }
 
 void RivenCard::updateMouseCursor() {
@@ -608,7 +614,7 @@ RivenScriptPtr RivenHotspot::getScript(uint16 scriptType) const {
 			return _scripts[i].script;
 		}
 
-	return RivenScriptPtr(new RivenScript());
+	return RivenScriptPtr();
 }
 
 bool RivenHotspot::isEnabled() const {

@@ -272,6 +272,24 @@ void RivenStack::mouseForceUp() {
 	_mouseIsDown = false;
 }
 
+void RivenStack::onFrame() {
+	if (!_vm->getCard() || _vm->_scriptMan->hasQueuedScripts()) {
+		return;
+	}
+
+	_vm->_gfx->updateEffects();
+
+	RivenScriptPtr script(new RivenScript());
+	if (_mouseIsDown) {
+		script += _vm->getCard()->onMouseDragUpdate();
+	} else {
+		script += _vm->getCard()->onFrame();
+		script += _vm->getCard()->onMouseUpdate();
+	}
+
+	_vm->_scriptMan->runScript(script, true);
+}
+
 RivenNameList::RivenNameList() {
 
 }
