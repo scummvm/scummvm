@@ -44,6 +44,7 @@ public:
 
 private:
 	// AdlEngine
+	void setupOpcodeTables();
 	void runIntro();
 	void init();
 	void initGameState();
@@ -56,11 +57,107 @@ private:
 	// AdlEngine_v2
 	void printString(const Common::String &str);
 
+	template <Direction D>
+	int o_goDirection(ScriptEnv &e);
+
 	static const uint kRegions = 3;
 	static const uint kItems = 15;
 
 	byte _currVerb, _currNoun;
 };
+
+typedef Common::Functor1Mem<ScriptEnv &, int, HiRes6Engine> OpcodeH6;
+#define SetOpcodeTable(x) table = &x;
+#define Opcode(x) table->push_back(new OpcodeH6(this, &HiRes6Engine::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeH6(this, 0))
+
+void HiRes6Engine::setupOpcodeTables() {
+	Common::Array<const Opcode *> *table = 0;
+
+	SetOpcodeTable(_condOpcodes);
+	// 0x00
+	OpcodeUnImpl();
+	Opcode(o2_isFirstTime);
+	Opcode(o2_isRandomGT);
+	Opcode(o4_isItemInRoom);
+	// 0x04
+	Opcode(o5_isNounNotInRoom);
+	Opcode(o1_isMovesGT);
+	Opcode(o1_isVarEQ);
+	Opcode(o2_isCarryingSomething);
+	// 0x08
+	Opcode(o4_isVarGT);
+	Opcode(o1_isCurPicEQ);
+	Opcode(o5_abortScript);
+
+	SetOpcodeTable(_actOpcodes);
+	// 0x00
+	OpcodeUnImpl();
+	Opcode(o1_varAdd);
+	Opcode(o1_varSub);
+	Opcode(o1_varSet);
+	// 0x04
+	Opcode(o1_listInv);
+	Opcode(o4_moveItem);
+	Opcode(o1_setRoom);
+	Opcode(o2_setCurPic);
+	// 0x08
+	Opcode(o2_setPic);
+	Opcode(o1_printMsg);
+	Opcode(o5_dummy);
+	Opcode(o5_setTextMode);
+	// 0x0c
+	Opcode(o4_moveAllItems);
+	Opcode(o1_quit);
+	Opcode(o5_dummy);
+	Opcode(o4_save);
+	// 0x10
+	Opcode(o4_restore);
+	Opcode(o1_restart);
+	Opcode(o5_setRegionRoom);
+	Opcode(o5_dummy);
+	// 0x14
+	Opcode(o1_resetPic);
+	Opcode(o_goDirection<IDI_DIR_NORTH>);
+	Opcode(o_goDirection<IDI_DIR_SOUTH>);
+	Opcode(o_goDirection<IDI_DIR_EAST>);
+	// 0x18
+	Opcode(o_goDirection<IDI_DIR_WEST>);
+	Opcode(o_goDirection<IDI_DIR_UP>);
+	Opcode(o_goDirection<IDI_DIR_DOWN>);
+	Opcode(o1_takeItem);
+	// 0x1c
+	Opcode(o1_dropItem);
+	Opcode(o1_setRoomPic);
+	Opcode(o_winGame);
+	OpcodeUnImpl();
+	// 0x20
+	Opcode(o2_initDisk);
+}
+
+template <Direction D>
+int HiRes6Engine::o_goDirection(ScriptEnv &e) {
+	OP_DEBUG_0((Common::String("\tGO_") + dirStr(D) + "()").c_str());
+
+	byte room = getCurRoom().connections[D];
+
+	if (room == 0) {
+		if (getVar(33) == 2)
+			setVar(34, getVar(34) + 1);
+
+		printMessage(_messageIds.cantGoThere);
+		return -1;
+	}
+
+	switchRoom(room);
+
+	if (getVar(33) == 2) {
+		printMessage(102);
+		setVar(33, 0);
+	}
+
+	return -1;
+}
 
 #define SECTORS_PER_TRACK 16
 #define BYTES_PER_SECTOR 256

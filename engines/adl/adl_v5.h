@@ -34,9 +34,6 @@ public:
 protected:
 	AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd);
 
-	// AdlEngine
-	virtual void setupOpcodeTables();
-
 	// AdlEngine_v4
 	virtual RegionChunkType getRegionChunkType(const uint16 addr) const;
 	virtual void initRoomState(RoomState &roomState) const;
