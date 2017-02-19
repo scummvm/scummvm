@@ -332,7 +332,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SINCE_SCI21MID, 16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
 	{ SIG_SINCE_SCI21MID, 17, "FileIOCheckFreeSpace", kCheckFreeSpace, "i(r)",             NULL },
 	{ SIG_SINCE_SCI21MID, 18, MAP_CALL(FileIOGetCWD),              "r",                    NULL },
-	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(FileIOIsValidDirectory),    "[ro]",                 NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };

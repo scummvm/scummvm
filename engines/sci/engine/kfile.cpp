@@ -864,9 +864,10 @@ reg_t kFileIOGetCWD(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv) {
-	// Used in Torin's Passage and LSL7 to determine if the directory passed as
-	// a parameter (usually the save directory) is valid. We always return true
-	// here.
+	// Used in Torin's Passage, LSL7, and RAMA to determine if the directory
+	// passed as a parameter (usually the save directory) is valid. We always
+	// return true here because we do not use this directory information when
+	// saving games.
 	return TRUE_REG;
 }
 
