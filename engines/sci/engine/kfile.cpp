@@ -1201,6 +1201,10 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		saveNo += kSaveIdShift;
 	}
 
+	if (g_sci->getGameId() == GID_LIGHTHOUSE && gameName == "rst") {
+		saveNo = kNewGameId;
+	}
+
 	// Auto-save system used by QFG4
 	if (g_sci->getGameId() == GID_QFG4) {
 		reg_t autoSaveNameId;
