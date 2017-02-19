@@ -270,8 +270,14 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 			}
 
 			if (_km.x != oldKmX || _km.y != oldKmY) {
+				// keep hi-res coordinates since 
+				// processMouseEvent will overwrite them with lo-res numbers
+				oldKmX = _km.x;
+				oldKmY = _km.y;
 				event.type = Common::EVENT_MOUSEMOVE;
 				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+				_km.x = oldKmX;
+				_km.y = oldKmY;
 				return true;
 			}
 		}
