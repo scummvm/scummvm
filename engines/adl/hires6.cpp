@@ -128,7 +128,7 @@ void HiRes6Engine::setupOpcodeTables() {
 	Opcode(o1_takeItem);
 	// 0x1c
 	Opcode(o1_dropItem);
-	Opcode(o1_setRoomPic);
+	Opcode(o5_setRoomPic);
 	Opcode(o_winGame);
 	OpcodeUnImpl();
 	// 0x20

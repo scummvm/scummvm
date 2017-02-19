@@ -82,7 +82,7 @@ protected:
 	void loadItemPicIndex(Common::ReadStream &stream, uint items);
 	void backupRoomState(byte room);
 	virtual void initRoomState(RoomState &roomState) const;
-	virtual void restoreRoomState(byte room);
+	virtual byte restoreRoomState(byte room);
 	void backupVars();
 	void restoreVars();
 

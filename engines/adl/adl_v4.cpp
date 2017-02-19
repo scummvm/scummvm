@@ -396,13 +396,16 @@ void AdlEngine_v4::backupRoomState(byte room) {
 	backup.picture = getRoom(room).picture;
 }
 
-void AdlEngine_v4::restoreRoomState(byte room) {
+byte AdlEngine_v4::restoreRoomState(byte room) {
 	const RoomState &backup = getCurRegion().rooms[room - 1];
 
 	if (backup.isFirstTime != 1) {
 		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
 		getRoom(room).isFirstTime = false;
+		return 0;
 	}
+
+	return 1;
 }
 
 void AdlEngine_v4::backupVars() {

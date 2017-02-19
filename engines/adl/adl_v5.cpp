@@ -38,15 +38,20 @@ void AdlEngine_v5::initRoomState(RoomState &roomState) const {
 	roomState.isFirstTime = 0xff;
 }
 
-void AdlEngine_v5::restoreRoomState(byte room) {
+byte AdlEngine_v5::restoreRoomState(byte room) {
 	const RoomState &backup = getCurRegion().rooms[room - 1];
 
 	if (backup.isFirstTime != 0xff) {
 		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
 
-		if (backup.isFirstTime != 1)
+		// CHECKME: Why doesn't this just copy the flag unconditionally?
+		if (backup.isFirstTime != 1) {
 			getRoom(room).isFirstTime = false;
+			return 0;
+		}
 	}
+
+	return backup.isFirstTime;
 }
 
 AdlEngine_v5::RegionChunkType AdlEngine_v5::getRegionChunkType(const uint16 addr) const {
@@ -134,6 +139,20 @@ int AdlEngine_v5::o5_setRegionRoom(ScriptEnv &e) {
 	_state.room = e.arg(2);
 	restoreRoomState(_state.room);
 	return -1;
+}
+
+int AdlEngine_v5::o5_setRoomPic(ScriptEnv &e) {
+	const byte isFirstTime = restoreRoomState(e.arg(1));
+
+	// CHECKME: More peculiar isFirstTime handling (see also restoreRoomState).
+	// Is this here to prevent changing the backed up flag from 1 to 0? Since
+	// that could only happen if the room isFirstTime is 0 while the backed up flag
+	// is 1, is this scenario even possible?
+	if (isFirstTime != 0xff)
+		getRoom(e.arg(1)).isFirstTime = isFirstTime;
+
+	o4_setRoomPic(e);
+	return 2;
 }
 
 int AdlEngine_v5::o_winGame(ScriptEnv &e) {

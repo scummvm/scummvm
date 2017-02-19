@@ -37,13 +37,14 @@ protected:
 	// AdlEngine_v4
 	virtual RegionChunkType getRegionChunkType(const uint16 addr) const;
 	virtual void initRoomState(RoomState &roomState) const;
-	virtual void restoreRoomState(byte room);
+	virtual byte restoreRoomState(byte room);
 
 	int o5_isNounNotInRoom(ScriptEnv &e);
 	int o5_abortScript(ScriptEnv &e);
 	int o5_dummy(ScriptEnv &e);
 	int o5_setTextMode(ScriptEnv &e);
 	int o5_setRegionRoom(ScriptEnv &e);
+	int o5_setRoomPic(ScriptEnv &e);
 	int o_winGame(ScriptEnv &e);
 };
 
