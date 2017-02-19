@@ -3171,7 +3171,6 @@ if test -n "$_host"; then
 			;;
 		psp2)
 			_backend="psp2"
-			_16bit=no
 			_vkeybd=yes
 			_build_scalers=yes
 			_build_hq_scalers=yes
