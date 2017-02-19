@@ -670,18 +670,20 @@ void RivenGraphics::clearFliesEffect() {
 	_fliesEffect = nullptr;
 }
 
-void RivenGraphics::runFliesEffect() {
-	if (_fliesEffect) {
-		_fliesEffect->update();
-	}
-}
-
 Graphics::Surface *RivenGraphics::getBackScreen() {
 	return _mainScreen;
 }
 
 Graphics::Surface *RivenGraphics::getEffectScreen() {
 	return _effectScreen;
+}
+
+void RivenGraphics::updateEffects() {
+	runScheduledWaterEffects();
+
+	if (_fliesEffect) {
+		_fliesEffect->update();
+	}
 }
 
 const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {

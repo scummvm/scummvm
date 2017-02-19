@@ -194,8 +194,6 @@ void MohawkEngine_Riven::doFrame() {
 	// Update background running things
 	checkTimer();
 	_sound->updateSLST();
-	_gfx->runFliesEffect();
-	_gfx->runScheduledWaterEffects();
 	_video->updateMovies();
 
 	Common::Event event;
@@ -270,7 +268,7 @@ void MohawkEngine_Riven::doFrame() {
 		}
 	}
 
-	_card->onMouseUpdate();
+	_stack->onFrame();
 
 	if (!_scriptMan->runningQueuedScripts()) {
 		// Don't run queued scripts if we are calling from a queued script
@@ -436,8 +434,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
 		_sound->updateSLST();
-		_gfx->runFliesEffect();
-		_gfx->runScheduledWaterEffects();
+		_stack->onFrame();
 		_video->updateMovies();
 
 		Common::Event event;

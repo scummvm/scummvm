@@ -118,11 +118,14 @@ public:
 	/** Handle a mouse move event */
 	RivenScriptPtr onMouseMove(const Common::Point &mouse);
 
+	/** General frame update handler */
+	RivenScriptPtr onFrame();
+
 	/** Frame update handler for the mouse cursor */
-	void onMouseUpdate();
+	RivenScriptPtr onMouseUpdate();
 
 	/** Frame update handler for mouse dragging */
-	void onMouseDragUpdate();
+	RivenScriptPtr onMouseDragUpdate();
 
 	/** Write all of the card's data to standard output */
 	void dump() const;

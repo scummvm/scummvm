@@ -46,6 +46,7 @@ enum {
 
 	kCardLoadScript    = 6,
 	kCardLeaveScript   = 7,
+	kCardFrameScript   = 8,
 	kCardEnterScript   = 9,
 	kCardUpdateScript  = 10
 };

@@ -73,12 +73,13 @@ public:
 	// Water Effect
 	void scheduleWaterEffect(uint16);
 	void clearWaterEffects();
-	void runScheduledWaterEffects();
 
 	// Flies Effect
 	void setFliesEffect(uint16 count, bool fireflies);
 	void clearFliesEffect();
-	void runFliesEffect();
+
+	/** Update the screen with the water and fly effects */
+	void updateEffects();
 
 	// Transitions
 	void scheduleTransition(RivenTransition id, const Common::Rect &rect = Common::Rect(0, 0, 608, 392));
@@ -114,6 +115,8 @@ private:
 		uint32 lastFrameTime;
 	};
 	Common::Array<SFXERecord> _waterEffects;
+
+	void runScheduledWaterEffects();
 
 	// Flies Effect
 	FliesEffect *_fliesEffect;

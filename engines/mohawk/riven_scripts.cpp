@@ -120,6 +120,10 @@ void RivenScriptManager::clearStoredMovieOpcode() {
 }
 
 void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
+	if (!script || script->empty()) {
+		return;
+	}
+
 	if (!queue) {
 		script->run();
 	} else {
@@ -239,7 +243,9 @@ const char *RivenScript::getTypeName(uint16 type) {
 }
 
 RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
-	*lhs += *rhs;
+	if (rhs) {
+		*lhs += *rhs;
+	}
 	return lhs;
 }
 
