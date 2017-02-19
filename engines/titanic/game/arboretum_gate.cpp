@@ -303,7 +303,7 @@ bool CArboretumGate::TurnOff(CTurnOff *msg) {
 		}
 
 		_disabled = true;
-		CArboretumGateMsg gateMsg;
+		CArboretumGateMsg gateMsg(1);
 		gateMsg.execute("Arboretum", nullptr, MSGFLAG_SCAN);
 	}
 
