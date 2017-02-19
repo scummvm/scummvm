@@ -95,7 +95,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		palinfo3 = stream.readUint16();
 
 		int t = stream.readUint32();
-		assert(t == 0); // So far we saw only 0 here
+		if (t != 0) { // In D2 there are values
+			warning("TextCast: t: %x", t);
+		}
 
 		initialRect = Score::readRect(stream);
 		textShadow = static_cast<SizeType>(stream.readByte());
