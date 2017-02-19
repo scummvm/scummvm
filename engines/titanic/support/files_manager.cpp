@@ -106,7 +106,7 @@ void CFilesManager::loadDrive() {
 }
 
 void CFilesManager::insertCD(CScreenManager *screenManager) {
-	// We not support running game directly from the original CDs,
+	// We don't support running the game directly from the original CDs,
 	// so this method can remain stubbed
 }
 

@@ -87,7 +87,7 @@ bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 }
 
 bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
-	Point newPos(_bounds.left - msg->_delta.x, _bounds.top - msg->_delta.y);
+	Point newPos(_bounds.left + msg->_delta.x, _bounds.top + msg->_delta.y);
 	setPosition(newPos);
 	return true;
 }
