@@ -69,8 +69,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"theapartment",
+			"D2",
+			AD_ENTRY1s("Main Menu", "fc56c179cb8c6d4938e61ee61fd0032c", 48325),	// Original name is "•Main Menu"
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		2
+	},
+	{
+		{
+			"theapartment",
 			"D3",
-			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),
+			AD_ENTRY1s("Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911),	// Original name is "•Main Menu"
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -83,7 +96,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		{
 			"theapartment",
 			"D4",
-			AD_ENTRY1s("Main Menu", "ff86181f03fe6eb060f65a985ca0580d", 160612),
+			AD_ENTRY1s("Main Menu", "ff86181f03fe6eb060f65a985ca0580d", 160612),// Original name is "•Main Menu"
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
