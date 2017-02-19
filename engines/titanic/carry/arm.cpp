@@ -44,17 +44,10 @@ void CArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_heldItemName, indent);
 	file->writeNumberLine(_puzzleUnused, indent);
-	file->writeNumberLine(_hookedRect.left, indent);
-	file->writeNumberLine(_hookedRect.top, indent);
-	file->writeNumberLine(_hookedRect.right, indent);
-	file->writeNumberLine(_hookedRect.bottom, indent);
-
+	file->writeRect(_hookedRect, indent);
 	file->writeQuotedLine(_hookedTarget, indent);
 	file->writeNumberLine(_armUnlocked, indent);
-	file->writeNumberLine(_armRect.left, indent);
-	file->writeNumberLine(_armRect.top, indent);
-	file->writeNumberLine(_armRect.right, indent);
-	file->writeNumberLine(_armRect.bottom, indent);
+	file->writeRect(_armRect, indent);
 	file->writeNumberLine(_arboretumFrame, indent);
 	file->writeNumberLine(_unlockedFrame, indent);
 
@@ -65,17 +58,10 @@ void CArm::load(SimpleFile *file) {
 	file->readNumber();
 	_heldItemName = file->readString();
 	_puzzleUnused = file->readNumber();
-	_hookedRect.left = file->readNumber();
-	_hookedRect.top = file->readNumber();
-	_hookedRect.right = file->readNumber();
-	_hookedRect.bottom = file->readNumber();
-
+	_hookedRect = file->readRect();
 	_hookedTarget = file->readString();
 	_armUnlocked = file->readNumber();
-	_armRect.left = file->readNumber();
-	_armRect.top = file->readNumber();
-	_armRect.right = file->readNumber();
-	_armRect.bottom = file->readNumber();
+	_armRect = file->readRect();
 	_arboretumFrame = file->readNumber();
 	_unlockedFrame = file->readNumber();
 
@@ -131,6 +117,8 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		} else {
 			petAddToInventory();
 		}
+	} else {
+		petAddToInventory();
 	}
 
 	return true;
@@ -203,7 +191,7 @@ bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 bool CArm::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 	setPosition(msg->_mousePos - _tempPos);
 
-	if (_heldItemName != "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
+	if (_heldItemName == "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
 		loadFrame(_armRect.contains(msg->_mousePos) ?
 			_arboretumFrame : _visibleFrame);
 	}
