@@ -76,7 +76,8 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
-	ConfMan.registerDefault("gfx_mode", "1x");
+	ConfMan.registerDefault("gfx_mode", "2x");
+	ConfMan.registerDefault("filtering",true);
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
