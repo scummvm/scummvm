@@ -135,7 +135,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CBellBot::Use(CUse *msg) {
-	dynamic_cast<CCarry *>(msg->_item)->_string1 = "Bellbot";
+	dynamic_cast<CCarry *>(msg->_item)->_npcUse = "Bellbot";
 	return true;
 }
 

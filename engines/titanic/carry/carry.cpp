@@ -44,30 +44,29 @@ BEGIN_MESSAGE_MAP(CCarry, CGameObject)
 	ON_MESSAGE(PassOnDragStartMsg)
 END_MESSAGE_MAP()
 
-CCarry::CCarry() : CGameObject(), _fieldDC(0), _canTake(true),
-		_field100(0), _field104(0), _field108(0), _field10C(0),
-		_itemFrame(0), _enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
-	_string1("None"),
-	_fullViewName("NULL"),
-	_string3(g_vm->_strings[DOESNT_DO_ANYTHING]),
-	_string4(g_vm->_strings[DOESNT_WANT_THIS]) {
+CCarry::CCarry() : CGameObject(), _unused5(0), _canTake(true),
+		_unusedR(0), _unusedG(0), _unusedB(0), _itemFrame(0),
+		_enterFrame(0), _enterFrameSet(false), _visibleFrame(0),
+		_npcUse("None"), _fullViewName("NULL"),
+		_doesNothingMsg(g_vm->_strings[DOESNT_DO_ANYTHING]),
+		_doesntWantMsg(g_vm->_strings[DOESNT_WANT_THIS]) {
 }
 
 void CCarry::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_npcUse, indent);
 	file->writePoint(_origPos, indent);
 	file->writeQuotedLine(_fullViewName, indent);
-	file->writeNumberLine(_fieldDC, indent);
+	file->writeNumberLine(_unused5, indent);
 	file->writeNumberLine(_canTake, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writePoint(_tempPos, indent);
-	file->writeNumberLine(_field104, indent);
-	file->writeNumberLine(_field108, indent);
-	file->writeNumberLine(_field10C, indent);
+	file->writeQuotedLine(_doesNothingMsg, indent);
+	file->writeQuotedLine(_doesntWantMsg, indent);
+	file->writePoint(_centroid, indent);
+	file->writeNumberLine(_unusedR, indent);
+	file->writeNumberLine(_unusedG, indent);
+	file->writeNumberLine(_unusedB, indent);
 	file->writeNumberLine(_itemFrame, indent);
-	file->writeQuotedLine(_string5, indent);
+	file->writeQuotedLine(_unused6, indent);
 	file->writeNumberLine(_enterFrame, indent);
 	file->writeNumberLine(_enterFrameSet, indent);
 	file->writeNumberLine(_visibleFrame, indent);
@@ -77,19 +76,19 @@ void CCarry::save(SimpleFile *file, int indent) {
 
 void CCarry::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
+	_npcUse = file->readString();
 	_origPos = file->readPoint();
 	_fullViewName = file->readString();
-	_fieldDC = file->readNumber();
+	_unused5 = file->readNumber();
 	_canTake = file->readNumber();
-	_string3 = file->readString();
-	_string4 = file->readString();
-	_tempPos = file->readPoint();
-	_field104 = file->readNumber();
-	_field108 = file->readNumber();
-	_field10C = file->readNumber();
+	_doesNothingMsg = file->readString();
+	_doesntWantMsg = file->readString();
+	_centroid = file->readPoint();
+	_unusedR = file->readNumber();
+	_unusedG = file->readNumber();
+	_unusedB = file->readNumber();
 	_itemFrame = file->readNumber();
-	_string5 = file->readString();
+	_unused6 = file->readString();
 	_enterFrame = file->readNumber();
 	_enterFrameSet = file->readNumber();
 	_visibleFrame = file->readNumber();
@@ -118,7 +117,7 @@ bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	setPosition(msg->_mousePos - _tempPos);
+	setPosition(msg->_mousePos - _centroid);
 	return true;
 }
 
@@ -167,7 +166,7 @@ bool CCarry::UseWithCharMsg(CUseWithCharMsg *msg) {
 		carryMsg._item = this;
 		carryMsg.execute(succubus);
 	} else {
-		CShowTextMsg textMsg(_string4);
+		CShowTextMsg textMsg(_doesntWantMsg);
 		textMsg.execute("PET");
 		petAddToInventory();
 	}
@@ -180,7 +179,7 @@ bool CCarry::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CCarry::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	CShowTextMsg textMsg(_string3);
+	CShowTextMsg textMsg(_doesNothingMsg);
 	textMsg.execute("PET");
 
 	if (!compareViewNameTo(_fullViewName) || _bounds.top >= 360) {
@@ -233,13 +232,13 @@ bool CCarry::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		loadFrame(_visibleFrame);
 
 	if (msg->_value3) {
-		_tempPos.x = _bounds.width() / 2;
-		_tempPos.y = _bounds.height() / 2;
+		_centroid.x = _bounds.width() / 2;
+		_centroid.y = _bounds.height() / 2;
 	} else {
-		_tempPos = msg->_mousePos - _bounds;
+		_centroid = msg->_mousePos - _bounds;
 	}
 
-	setPosition(getMousePos() - _tempPos);
+	setPosition(getMousePos() - _centroid);
 	return true;
 }
 

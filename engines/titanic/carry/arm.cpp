@@ -130,8 +130,8 @@ bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
 		hideMouse();
-		_tempPos = msg->_mousePos - _bounds;
-		setPosition(msg->_mousePos - _tempPos);
+		_centroid = msg->_mousePos - _bounds;
+		setPosition(msg->_mousePos - _centroid);
 
 		if (!_hookedTarget.empty()) {
 			CActMsg actMsg("Unhook");
@@ -189,7 +189,7 @@ bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 }
 
 bool CArm::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	setPosition(msg->_mousePos - _tempPos);
+	setPosition(msg->_mousePos - _centroid);
 
 	if (_heldItemName == "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
 		loadFrame(_armRect.contains(msg->_mousePos) ?
