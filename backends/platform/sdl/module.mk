@@ -38,9 +38,22 @@ MODULE_OBJS += \
 endif
 
 ifdef PSP2
+CC=arm-vita-eabi-gcc
 MODULE_OBJS += \
 	psp2/psp2-main.o \
-	psp2/psp2.o
+	psp2/psp2.o \
+	psp2/libvita2d/source/vita2d_image_jpeg.o \
+	psp2/libvita2d/source/utils.o \
+	psp2/libvita2d/source/vita2d_image_png.o \
+	psp2/libvita2d/source/vita2d_draw.o \
+	psp2/libvita2d/source/vita2d.o \
+	psp2/libvita2d/source/bin_packing_2d.o \
+	psp2/libvita2d/source/texture_atlas.o \
+	psp2/libvita2d/source/vita2d_image_bmp.o \
+	psp2/libvita2d/source/vita2d_texture.o \
+	psp2/libvita2d/source/vita2d_pgf.o \
+	psp2/libvita2d/source/int_htab.o \
+	psp2/libvita2d/source/vita2d_font.o
 endif
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.

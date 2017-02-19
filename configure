@@ -2661,9 +2661,10 @@ case $_host_os in
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
-		#append_var CXXFLAGS "-ffunction-sections -mword-relocations -fomit-frame-pointer"
-		#append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
+		CC=arm-vita-eabi-gcc
+		append_var CFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
+		append_var CFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		if test "$_debug_build" = no; then
 			_optimization_level=-O1
 		fi
@@ -3173,8 +3174,8 @@ if test -n "$_host"; then
 			_backend="psp2"
 			_16bit=no
 			_vkeybd=yes
-			_build_scalers=yes
-			_build_hq_scalers=yes
+			_build_scalers=no
+			_build_hq_scalers=no
 			_mt32emu=no
 			_timidity=no
 			_eventrec=no
@@ -3354,16 +3355,25 @@ case $_backend in
 		append_var LIBS "-Wl,-Map,mapfile.txt"
 		;;
 	psp2)
-		# There is no sdl-config in the PSP2 SDK so we don't use find_sdlconfig here.
-		append_var LIBS "-lSDL2 -lvita2d -lSceCommonDialog_stub"
+		append_var LDFLAGS "-Lbackends/platform/sdl/psp2/vita-shader-collection/lib"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/clear_v_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/clear_f_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/color_v_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/color_f_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/texture_v_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d/shader/compiled/texture_f_gxp.o"
+		append_var LIBS "backends/platform/sdl/psp2/libvita2d//shader/compiled/texture_tint_f_gxp.o"
+		append_var LIBS "-lvitashaders -lSDL2 -lSceCommonDialog_stub"
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
-		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub"
+		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 		add_line_to_config_mk "USE_SDL2 = 1"
 		append_var MODULES "backends/platform/sdl"
-		append_var CXXFLAGS "-I$VITASDK/arm-vita-eabi/include/SDL2"
+		append_var INCLUDES "-I$VITASDK/arm-vita-eabi/include/SDL2"
+		append_var INCLUDES "-Ibackends/platform/sdl/psp2/libvita2d/include"
+		append_var INCLUDES "-Ibackends/platform/sdl/psp2/vita-shader-collection/includes"
 		;;
 	samsungtv)
 		append_var DEFINES "-DSAMSUNGTV"

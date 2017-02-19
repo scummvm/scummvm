@@ -22,12 +22,6 @@
 
 #include "common/scummsys.h"
 
-#ifdef PSP2
-#include <vita2d.h>
-vita2d_texture *vitatex_hwscreen;
-void *sdlpixels_hwscreen;
-#endif
-
 #if defined(SDL_BACKEND)
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -49,25 +43,47 @@ void *sdlpixels_hwscreen;
 #include "graphics/surface.h"
 #include "gui/EventRecorder.h"
 
+#ifdef PSP2
+#include "vita2d.h"
+#include "lcd3x_v.h"
+#include "lcd3x_f.h"
+#include "texture_v.h"
+#include "texture_f.h"
+#include "advanced_aa_v.h"
+#include "advanced_aa_f.h"
+#include "scale2x_f.h"
+#include "scale2x_v.h"
+#include "sharp_bilinear_f.h"
+#include "sharp_bilinear_v.h"
+#include "sharp_bilinear_simple_f.h"
+#include "sharp_bilinear_simple_v.h"
+
+#define GFX_SHADER_NONE 0
+#define GFX_SHADER_LCD3X 1
+#define GFX_SHADER_SHARP 2
+#define GFX_SHADER_SHARP_SCAN 3
+#define GFX_SHADER_AAA 4
+#define GFX_SHADER_SCALE2X 5
+
+vita2d_texture *vitatex_hwscreen;
+void *sdlpixels_hwscreen;
+vita2d_shader *shaders[6];
+
+#endif
+
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
-#ifndef PSP2
 	{"3x", "3x", GFX_TRIPLESIZE},
-#endif
 	{"2xsai", "2xSAI", GFX_2XSAI},
 	{"super2xsai", "Super2xSAI", GFX_SUPER2XSAI},
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
-#ifndef PSP2
 	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-#endif
 #ifdef USE_HQ_SCALERS
 	{"hq2x", "HQ2x", GFX_HQ2X},
-#ifndef PSP2
 	{"hq3x", "HQ3x", GFX_HQ3X},
-#endif
 #endif
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
@@ -935,12 +951,13 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		effectiveScreenHeight() - 1);
 #endif
 
+#ifndef PSP2
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
 		InitScalers(555);
 	else
 		InitScalers(565);
-
+#endif
 	return true;
 }
 
@@ -989,7 +1006,9 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		_osdIconSurface = NULL;
 	}
 #endif
+#ifndef PSP2
 	DestroyScalers();
+#endif
 
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Reset video mode to original.
@@ -2029,7 +2048,9 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	SDL_LockSurface(_mouseSurface);
 
 	ScalerProc *scalerProc;
-
+#ifdef PSP2
+	scalerProc = Normal1x;
+#else
 	// Only apply scaling, when the user allows it.
 	if (!_cursorDontScale) {
 		// If possible, use the same scaler for the cursor as for the rest of
@@ -2042,7 +2063,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	} else {
 		scalerProc = Normal1x;
 	}
-
+#endif
 	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);
