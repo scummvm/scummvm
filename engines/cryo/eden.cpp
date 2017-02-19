@@ -6380,8 +6380,8 @@ void EdenGame::saveGame(char *name) {
 }
 
 void EdenGame::syncGame(Common::Serializer s) {
-	saveGlobalPointers(s);
-	saveGlobalValues(s);
+	syncGlobalPointers(s);
+	syncGlobalValues(s);
 
 	// _gameIcons
 	// CHECKME: only from #123 to #133?
@@ -6395,7 +6395,7 @@ void EdenGame::syncGame(Common::Serializer s) {
 		s.syncAsUint16LE(_gameIcons[i]._objectId);
 	}
 
-	saveCitadelRoomPointers(s);
+	syncCitadelRoomPointers(s);
 
 	// _areasTable
 	for (int i = 0; i < 12; i++) {
@@ -6464,7 +6464,7 @@ void EdenGame::syncGame(Common::Serializer s) {
 		s.syncAsByte(_persons[i]._steps);
 	}
 
-	saveTapePointers(s);
+	syncTapePointers(s);
 
 	// _tapes
 	for (int i = 0; i < MAX_TAPES; i++) {
@@ -6545,7 +6545,7 @@ void EdenGame::loadgame(char *name) {
 #define IDXOUT(val, base, typ, idx) if (val)      (idx) = ((byte*)val - (byte*)base) / sizeof(typ); else (idx) = NULLPTR;
 #define OFSIN(val, base, typ) if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0;
 
-void EdenGame::saveGlobalPointers(Common::Serializer s) {
+void EdenGame::syncGlobalPointers(Common::Serializer s) {
 	uint32 dialogIdx, nextDialogIdx, narratorDialogIdx, lastDialogIdx, tapeIdx, nextRoomIconIdx, roomIdx;
 	uint32 citaAreaFirstRoomIdx, areaIdx, lastAreaIdx, curAreaIdx, characterIdx, roomCharacterIdx;
 
@@ -6596,7 +6596,7 @@ void EdenGame::saveGlobalPointers(Common::Serializer s) {
 	}
 }
 
-void EdenGame::saveGlobalValues(Common::Serializer s) {
+void EdenGame::syncGlobalValues(Common::Serializer s) {
 	s.syncAsByte(_globals->_areaNum);
 	s.syncAsByte(_globals->_areaVisitCount);
 	s.syncAsByte(_globals->_menuItemIdLo);
@@ -6760,7 +6760,7 @@ void EdenGame::saveGlobalValues(Common::Serializer s) {
 	s.syncAsByte(_globals->_saveEnd);
 }
 
-void EdenGame::saveCitadelRoomPointers(Common::Serializer s) {
+void EdenGame::syncCitadelRoomPointers(Common::Serializer s) {
 	uint32 citadelRoomIdx;
 	for (int i = 0; i < 12; i++) {
 		if (s.isSaving())
@@ -6771,7 +6771,7 @@ void EdenGame::saveCitadelRoomPointers(Common::Serializer s) {
 	}
 }
 
-void EdenGame::saveTapePointers(Common::Serializer s) {
+void EdenGame::syncTapePointers(Common::Serializer s) {
 	int persoIdx, dialogIdx;
 
 	for (int i = 0; i < 16; i++) {

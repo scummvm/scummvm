@@ -467,10 +467,10 @@ private:
 	void loadrestart();
 	void loadgame(char *name);
 	void syncGame(Common::Serializer s);
-	void saveGlobalPointers(Common::Serializer s);
-	void saveGlobalValues(Common::Serializer s);
-	void saveCitadelRoomPointers(Common::Serializer s);
-	void saveTapePointers(Common::Serializer s);
+	void syncGlobalPointers(Common::Serializer s);
+	void syncGlobalValues(Common::Serializer s);
+	void syncCitadelRoomPointers(Common::Serializer s);
+	void syncTapePointers(Common::Serializer s);
 	char testCondition(int16 index);
 	uint16 operAdd(uint16 v1, uint16 v2);
 	uint16 operSub(uint16 v1, uint16 v2);
