@@ -41,9 +41,9 @@ class CGondolierSlider : public CGondolierBase {
 	bool ActMsg(CActMsg *msg);
 private:
 	Rect _rectUnused;
-	Rect _sliderRect1;
-	Rect _sliderRect2;
-	int _arrayIndex;
+	Rect _thumbRect;
+	Rect _defaultThumbRect;
+	int _sliderIndex;
 	CString _stringUnused;
 	int _sliderNum;
 	CString _armName;

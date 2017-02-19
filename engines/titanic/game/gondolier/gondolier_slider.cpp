@@ -24,7 +24,10 @@
 
 namespace Titanic {
 
-static const int ARRAY[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
+/**
+ * Y offsets within slider for each successive thumbnail position
+ */
+static const int Y_OFFSETS[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
 
 BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
 	ON_MESSAGE(MouseButtonDownMsg)
@@ -40,23 +43,15 @@ BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
 END_MESSAGE_MAP()
 
 CGondolierSlider::CGondolierSlider() : CGondolierBase(),
-	_arrayIndex(0), _stringUnused("NULL"), _sliderNum(0), _dragging(false) {
+	_sliderIndex(0), _stringUnused("NULL"), _sliderNum(0), _dragging(false) {
 }
 
 void CGondolierSlider::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeRect(_rectUnused, indent);
-	file->writeRect(_sliderRect1, indent);
-	file->writeRect(_sliderRect2, indent);
-	file->writeNumberLine(_sliderRect1.left, indent);
-	file->writeNumberLine(_sliderRect1.top, indent);
-	file->writeNumberLine(_sliderRect1.right, indent);
-	file->writeNumberLine(_sliderRect1.bottom, indent);
-	file->writeNumberLine(_sliderRect2.left, indent);
-	file->writeNumberLine(_sliderRect2.top, indent);
-	file->writeNumberLine(_sliderRect2.right, indent);
-	file->writeNumberLine(_sliderRect2.bottom, indent);
-	file->writeNumberLine(_arrayIndex, indent);
+	file->writeRect(_thumbRect, indent);
+	file->writeRect(_defaultThumbRect, indent);
+	file->writeNumberLine(_sliderIndex, indent);
 	file->writeQuotedLine(_stringUnused, indent);
 	file->writeNumberLine(_sliderNum, indent);
 	file->writeQuotedLine(_armName, indent);
@@ -69,9 +64,9 @@ void CGondolierSlider::save(SimpleFile *file, int indent) {
 void CGondolierSlider::load(SimpleFile *file) {
 	file->readNumber();
 	_rectUnused = file->readRect();
-	_sliderRect1 = file->readRect();
-	_sliderRect2 = file->readRect();
-	_arrayIndex = file->readNumber();
+	_thumbRect = file->readRect();
+	_defaultThumbRect = file->readRect();
+	_sliderIndex = file->readNumber();
 	_stringUnused = file->readString();
 	_sliderNum = file->readNumber();
 	_armName = file->readString();
@@ -82,33 +77,32 @@ void CGondolierSlider::load(SimpleFile *file) {
 }
 
 bool CGondolierSlider::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_v1)
+	if (!_chestOpen)
 		return false;
 	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
 		return false;
 
-	return _sliderRect1.contains(msg->_mousePos);
+	return _thumbRect.contains(msg->_mousePos);
 }
 
 bool CGondolierSlider::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 	if (!(_sliderNum ? _rightSliderHooked : _leftSliderHooked)) {
 		int minVal = 0x7FFFFFFF;
 		int foundIndex = -1;
-		int yp = (_sliderRect2.top + _sliderRect2.bottom) / 2
+		int yp = (_defaultThumbRect.top + _defaultThumbRect.bottom) / 2
 			+ _bounds.top - msg->_mousePos.y;
 
 		for (int idx = 0; idx < 11; ++idx) {
-			int yv = yp + ARRAY[idx];
-			if (yv < 0)
-				yv = -yv;
-			if (yv < minVal) {
-				minVal = yv;
+			int yDiff = ABS(yp + Y_OFFSETS[idx]);
+
+			if (yDiff < minVal) {
+				minVal = yDiff;
 				foundIndex = idx;
 			}
 		}
 
 		if (foundIndex >= 0) {
-			_arrayIndex = foundIndex;
+			_sliderIndex = foundIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 		}
@@ -124,7 +118,7 @@ bool CGondolierSlider::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CGondolierSlider::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!_v1)
+	if (!_chestOpen)
 		return false;
 	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
 		return false;
@@ -134,12 +128,12 @@ bool CGondolierSlider::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CGondolierSlider::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_arrayIndex = CLIP(10 - msg->_newStatus, 0, 10);
-	_sliderRect1 = _sliderRect2;
-	_sliderRect1.translate(_bounds.left, _bounds.top);
-	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
+	_sliderIndex = CLIP(10 - msg->_newStatus, 0, 10);
+	_thumbRect = _defaultThumbRect;
+	_thumbRect.translate(_bounds.left, _bounds.top);
+	_thumbRect.translate(0, Y_OFFSETS[_sliderIndex]);
 
-	loadFrame(_arrayIndex);
+	loadFrame(_sliderIndex);
 	return true;
 }
 
@@ -152,15 +146,15 @@ bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
 	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked)
 		return false;
 
-	if (!_sliderRect1.intersects(msg->_rect)) {
+	if (!_thumbRect.intersects(msg->_rect)) {
 		_armName = CString();
 		msg->_isHooked = false;
 	} else {
 		_armName = msg->_armName;
 		if (_sliderNum) {
-			_rightSliderHooked = _priorRightSliderHooked = true;
+			_rightSliderHooked = _priorLeftSliderHooked = true;
 		} else {
-			_leftSliderHooked = _priorLeftSliderHooked = true;
+			_leftSliderHooked = _priorRightSliderHooked = true;
 		}
 
 		msg->_isHooked = true;
@@ -171,14 +165,14 @@ bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
 
 bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 	if (_sliderNum ? _rightSliderHooked : _leftSliderHooked) {
-		if (_arrayIndex < 10) {
-			++_arrayIndex;
+		if (_sliderIndex < 10) {
+			++_sliderIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 
 			int yp = 0;
-			if (_arrayIndex > 0)
-				yp = ARRAY[_arrayIndex] - ARRAY[_arrayIndex - 1];
+			if (_sliderIndex > 0)
+				yp = Y_OFFSETS[_sliderIndex] - Y_OFFSETS[_sliderIndex - 1];
 
 			if (!_armName.empty()) {
 				CTranslateObjectMsg transMsg;
@@ -186,8 +180,8 @@ bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 				transMsg.execute(_armName);
 			}
 		}
-	} else if (_sliderNum ? _priorLeftSliderHooked : _priorRightSliderHooked) {
-		if (!_dragging && !_puzzleSolved && _arrayIndex > 0) {
+	} else if (_sliderNum ? _priorRightSliderHooked : _priorLeftSliderHooked) {
+		if (!_dragging && !_puzzleSolved && _sliderIndex > 0) {
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 		}
@@ -197,14 +191,14 @@ bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CGondolierSlider::SignalObject(CSignalObject *msg) {
-	_arrayIndex = CLIP(_arrayIndex, 0, 10);
-	_sliderRect1 = _sliderRect2;
-	_sliderRect1.translate(_bounds.left, _bounds.top);
-	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
-	loadFrame(_arrayIndex);
+	_sliderIndex = CLIP(_sliderIndex, 0, 10);
+	_thumbRect = _defaultThumbRect;
+	_thumbRect.translate(_bounds.left, _bounds.top);
+	_thumbRect.translate(0, Y_OFFSETS[_sliderIndex]);
+	loadFrame(_sliderIndex);
 
 	CSignalObject signalMsg;
-	signalMsg._numValue = 10 - _arrayIndex;
+	signalMsg._numValue = 10 - _sliderIndex;
 	signalMsg._strValue = _sliderNum ? "Fly" : "Tos";
 	signalMsg.execute(_signalTarget);
 
@@ -214,11 +208,11 @@ bool CGondolierSlider::SignalObject(CSignalObject *msg) {
 bool CGondolierSlider::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Unhook") {
 		if (_sliderNum) {
-			_rightSliderHooked = _priorRightSliderHooked = false;
-			_priorLeftSliderHooked = _leftSliderHooked;
+			_rightSliderHooked = _priorLeftSliderHooked = false;
+			_priorRightSliderHooked = _leftSliderHooked;
 		} else {
-			_leftSliderHooked = _priorLeftSliderHooked = false;
-			_priorRightSliderHooked = _rightSliderHooked;
+			_leftSliderHooked = _priorRightSliderHooked = false;
+			_priorLeftSliderHooked = _rightSliderHooked;
 		}
 	}
 

@@ -31,16 +31,16 @@ class CGondolierBase : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 protected:
-	static int _v1;
+	static bool _chestOpen;
 	static bool _puzzleSolved;
 	static int _volume1;
 	static int _v4;
 	static int _volume2;
 	static int _v7;
-	static bool _rightSliderHooked;
 	static bool _leftSliderHooked;
-	static bool _priorRightSliderHooked;
+	static bool _rightSliderHooked;
 	static bool _priorLeftSliderHooked;
+	static bool _priorRightSliderHooked;
 public:
 	CLASSDEF;
 
