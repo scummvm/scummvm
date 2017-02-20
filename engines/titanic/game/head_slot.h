@@ -41,8 +41,8 @@ public:
 	static bool _titaniaWoken;
 public:
 	bool _occupied;
-	CString _string1;
-	CString _string2;
+	CString _senseState;
+	CString _target;
 	int _timerDuration;
 	int _frameNum1;
 	int _frameNum2;

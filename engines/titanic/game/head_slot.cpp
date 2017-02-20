@@ -39,7 +39,7 @@ END_MESSAGE_MAP()
 
 bool CHeadSlot::_titaniaWoken;
 
-CHeadSlot::CHeadSlot() : CGameObject(), _string1("NotWorking"), _string2("NULL"),
+CHeadSlot::CHeadSlot() : CGameObject(), _senseState("NotWorking"), _target("NULL"),
 	_occupied(false), _timerDuration(0), _frameNum1(27), _frameNum2(56),
 	_frameNum3(82), _frameNum4(112), _workingFlag(false) {
 }
@@ -47,8 +47,8 @@ CHeadSlot::CHeadSlot() : CGameObject(), _string1("NotWorking"), _string2("NULL")
 void CHeadSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_occupied, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_senseState, indent);
+	file->writeQuotedLine(_target, indent);
 	file->writeNumberLine(_timerDuration, indent);
 	file->writeNumberLine(_frameNum1, indent);
 	file->writeNumberLine(_frameNum2, indent);
@@ -63,8 +63,8 @@ void CHeadSlot::save(SimpleFile *file, int indent) {
 void CHeadSlot::load(SimpleFile *file) {
 	file->readNumber();
 	_occupied = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
+	_senseState = file->readString();
+	_target = file->readString();
 	_timerDuration = file->readNumber();
 	_frameNum1 = file->readNumber();
 	_frameNum2 = file->readNumber();
@@ -79,7 +79,7 @@ void CHeadSlot::load(SimpleFile *file) {
 bool CHeadSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 	setVisible(true);
 	_occupied = true;
-	_string2 = msg->_value;
+	_target = msg->_value;
 	playMovie(_frameNum1, _frameNum4, 0);
 	_cursorId = CURSOR_HAND;
 	msg->execute("TitaniaControl");
@@ -90,7 +90,7 @@ bool CHeadSlot::SenseWorkingMsg(CSenseWorkingMsg *msg) {
 	if (_workingFlag)
 		playMovie(_frameNum3, _frameNum4, 0);
 
-	_string1 = msg->_value;
+	_senseState = msg->_value;
 	_workingFlag = false;
 	return true;
 }
@@ -100,7 +100,7 @@ bool CHeadSlot::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_titaniaWoken)
 		_cursorId = CURSOR_ARROW;
 
-	if (_titaniaWoken || _string1 == "Working") {
+	if (_titaniaWoken || _senseState == "Working") {
 		playMovie(_frameNum2, _frameNum3, MOVIE_WAIT_FOR_FINISH);
 		_workingFlag = true;
 	} else if (_occupied) {
@@ -139,10 +139,10 @@ bool CHeadSlot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 bool CHeadSlot::TimerMsg(CTimerMsg *msg) {
 	if (compareViewNameTo("Titania.Node 15.S") && CBrainSlot::_numAdded == 5
 			&& _occupied) {
-		if (_string1 == "Working" && !_workingFlag) {
+		if (_senseState == "Working" && !_workingFlag) {
 			playMovie(_frameNum2, _frameNum3, 0);
 			_workingFlag = true;
-		} else if (_string1 == "Random") {
+		} else if (_senseState == "Random") {
 			playMovie(_frameNum2, _frameNum4, 0);
 		}
 	}
@@ -165,13 +165,13 @@ bool CHeadSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_occupied && !_titaniaWoken && checkPoint(msg->_mousePos, false, true)) {
 		CPassOnDragStartMsg passMsg;
 		passMsg._mousePos = msg->_mousePos;
-		passMsg.execute(_string2);
+		passMsg.execute(_target);
 
-		msg->_dragItem = getRoot()->findByName(_string2);
+		msg->_dragItem = getRoot()->findByName(_target);
 		_cursorId = CURSOR_ARROW;
 		_occupied = false;
 		_workingFlag = false;
-		_string2 = "NULL";
+		_target = "NULL";
 		stopMovie();
 		loadFrame(0);
 		playMovie(0, _frameNum1, 0);
