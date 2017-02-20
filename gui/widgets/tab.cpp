@@ -277,6 +277,16 @@ void TabWidget::adjustTabs(int value) {
 	setActiveTab(tabID);
 }
 
+int TabWidget::getFirstVisible() {
+	return _firstVisibleTab;
+}
+
+void TabWidget::setFirstVisible(int tabID) {
+	assert(0 <= tabID && tabID < (int)_tabs.size());
+	_firstVisibleTab = tabID;
+	_boss->draw();
+}
+
 void TabWidget::reflowLayout() {
 	Widget::reflowLayout();
 

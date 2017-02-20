@@ -246,6 +246,28 @@
 			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
 					type = 'Checkbox'
 			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'grKbdMouseSpeedDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grKbdMouseSpeedSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grKbdMouseSpeedLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grJoystickDeadzoneDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grJoystickDeadzoneSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grJoystickDeadzoneLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
