@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-11 08:56+0100\n"
-"PO-Revision-Date: 2016-12-04 15:46+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/ca/>\n"
+"PO-Revision-Date: 2017-02-20 14:15+0000\n"
+"Last-Translator: Carlos <carlogarro@gmail.com>\n"
+"Language-Team: Catalan "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ca/>\n"
 "Language: ca_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -79,9 +79,8 @@ msgid "Choose"
 msgstr "Escull"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Seleccioneu el directori amb les dades del joc"
+msgstr "Seleccioneu el directori on descarregar les dades del joc"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
@@ -89,30 +88,32 @@ msgstr "Seleccioneu el directori amb les dades del joc"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Des de:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Fins:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancel·lar descàrrega"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancel·lar descàrrega"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Amagar"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Sembla que estàs utilitzant una connexió limitada. Estàs segur que vols "
+"descarregar els arxius?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -149,6 +150,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"No s'ha pogut crear un directori per la descàrrega. El directori conté un "
+"arxiu amb el mateix nom."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:522
@@ -176,16 +179,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"Ja existeix un directori %s a la ruta especificada.\n"
+"Estàs segur que vols descarregar els arxius dins d'aquest directori?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Descarregat: %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "S'ha acabat la cerca!"
+msgstr "Velocitat de descàrrega: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -422,28 +427,27 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notes:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Acceptar"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Tria l'arxiu a carregar"
 
 #: gui/filebrowser-dialog.cpp:49
 msgid "Enter filename for saving"
 msgstr ""
 
 #: gui/filebrowser-dialog.cpp:132
-#, fuzzy
 msgid "Do you really want to overwrite the file?"
-msgstr "Realment voleu suprimir aquesta partida?"
+msgstr "Realment vols sobreescriure aquest arxiu?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -711,9 +715,8 @@ msgid "Do you really want to remove this game configuration?"
 msgstr "Realment voleu suprimir la configuració d'aquest joc?"
 
 #: gui/launcher.cpp:473
-#, fuzzy
 msgid "Do you want to load saved game?"
-msgstr "Voleu carregar o desar el joc?"
+msgstr "Desitges carregar la partida guardada?"
 
 #: gui/launcher.cpp:522
 msgid "This game does not support loading games from the launcher."
@@ -773,14 +776,12 @@ msgid "Edit record description"
 msgstr ""
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "Commuta"
+msgstr "Tornar al joc"
 
 #: gui/onscreendialog.cpp:110
-#, fuzzy
 msgid "Fast replay"
-msgstr "Mode ràpid"
+msgstr "Repetició ràpida"
 
 #: gui/options.cpp:119 common/updates.cpp:56
 msgid "Never"
@@ -845,9 +846,8 @@ msgid "the fullscreen setting could not be changed"
 msgstr "no s'ha pogut canviar l'ajust de pantalla completa"
 
 #: gui/options.cpp:486
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "no s'ha pogut canviar l'ajust de pantalla completa"
+msgstr "no s'han pogut canviar els ajustes de filtratge"
 
 #: gui/options.cpp:842
 msgid "Graphics mode:"
@@ -867,9 +867,8 @@ msgid "Fullscreen mode"
 msgstr "Mode pantalla completa"
 
 #: gui/options.cpp:871
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Gràfics"
+msgstr "Filtres de gràfics"
 
 #: gui/options.cpp:871
 msgid "Use linear filtering when scaling graphics"
@@ -999,9 +998,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sense emulació GM)"
 
 #: gui/options.cpp:998
-#, fuzzy
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Mode Roland GS (desactiva el mapeig GM)"
+msgstr "Dispositiu Roland GS (activar conversió MT-32)"
 
 #: gui/options.cpp:998
 msgid ""
@@ -1231,9 +1229,8 @@ msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
 
 #: gui/options.cpp:1484
-#, fuzzy
 msgid "Download"
-msgstr "Avall"
+msgstr "Descarregar"
 
 #: gui/options.cpp:1484
 msgid "Open downloads manager dialog"
@@ -1248,30 +1245,25 @@ msgid "Run local webserver"
 msgstr ""
 
 #: gui/options.cpp:1487 gui/options.cpp:2136
-#, fuzzy
 msgid "Not running"
-msgstr "Error al executar el joc:"
+msgstr "Aturat"
 
 #: gui/options.cpp:1491
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Camí extra:"
+msgstr "Directori /arrel/:"
 
 #: gui/options.cpp:1491 gui/options.cpp:1493 gui/options.cpp:1494
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Especifica on es desaran les partides"
+msgstr "Especifica els directoris accessibles per al gestor d'arxius"
 
 #: gui/options.cpp:1493
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Camí extra:"
+msgstr "Directori /arrel/:"
 
 #: gui/options.cpp:1503
-#, fuzzy
 msgid "Server's port:"
-msgstr "Servidor:"
+msgstr "Port del servidor:"
 
 #: gui/options.cpp:1503
 msgid ""
@@ -1284,9 +1276,8 @@ msgid "Apply"
 msgstr ""
 
 #: gui/options.cpp:1682
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "No s'ha pogut desar l'estat del joc"
+msgstr "Fallada al canviar l'emmagatzematge en línia!"
 
 #: gui/options.cpp:1685
 msgid "Another cloud storage is already active."
@@ -1319,9 +1310,8 @@ msgid "Select directory for plugins"
 msgstr "Seleccioneu el directori dels connectors"
 
 #: gui/options.cpp:1798
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Seleccioneu el directori dels fitxers extra"
+msgstr "Selecciona el directori /arrel/ per al gestor d'arxius"
 
 #: gui/options.cpp:2033
 #, c-format
@@ -1333,14 +1323,12 @@ msgid "<right now>"
 msgstr ""
 
 #: gui/options.cpp:2043
-#, fuzzy
 msgid "<never>"
-msgstr "Mai"
+msgstr "<mai>"
 
 #: gui/options.cpp:2127
-#, fuzzy
 msgid "Stop server"
-msgstr "Servidor:"
+msgstr "Aturar servidor"
 
 #: gui/options.cpp:2128
 msgid "Stop local webserver"
@@ -1362,9 +1350,8 @@ msgid "add"
 msgstr ""
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
-#, fuzzy
 msgid "Delete char"
-msgstr "Suprimeix"
+msgstr "Suprimeix personatge"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
@@ -1399,9 +1386,8 @@ msgid "Record"
 msgstr ""
 
 #: gui/recorderdialog.cpp:71
-#, fuzzy
 msgid "Playback"
-msgstr "Jugar"
+msgstr "Reproducció"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
@@ -1418,19 +1404,16 @@ msgid "Notes: "
 msgstr ""
 
 #: gui/recorderdialog.cpp:154
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Realment voleu suprimir aquesta partida?"
+msgstr "Realment voleu suprimir aquest enregistrament?"
 
 #: gui/recorderdialog.cpp:173
-#, fuzzy
 msgid "Unknown Author"
-msgstr "Error desconegut"
+msgstr "Autor desconegut"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM no ha pogut obrir el directori especificat!"
+msgstr "ScummVM no ha pogut accedir al directori especificat!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1469,9 +1452,8 @@ msgid "Playtime: "
 msgstr "Temps de joc: "
 
 #: gui/saveload-dialog.cpp:577 gui/saveload-dialog.cpp:665
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Partida sense títol"
+msgstr "Partida sense nom"
 
 #: gui/saveload-dialog.cpp:718
 msgid "Next"
@@ -1516,9 +1498,8 @@ msgid "in the following field and press 'Connect':"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "Obre"
+msgstr "Obre URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
@@ -1613,9 +1594,8 @@ msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Comprova les actualitzacions..."
+msgstr "Comprova les actualitzacions automàticament"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
@@ -1710,9 +1690,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "No s'ha pogut trobar un connector de motor apropiat"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "El connector de motor no suporta el nivell partides desades'"
+msgstr "El connector de motor no suporta partides desades"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1762,9 +1741,8 @@ msgid "Monthly"
 msgstr ""
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Neteja el valor"
+msgstr "<Valor incorrecte>"
 
 #: engines/advancedDetector.cpp:335
 #, c-format
@@ -1893,9 +1871,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "No s'ha pogut aplicar l'ajust de pantalla completa."
 
 #: engines/engine.cpp:373
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "No s'ha pogut aplicar l'ajust de pantalla completa."
+msgstr "No s'ha pogut aplicar la configuració de filtratge."
 
 #: engines/engine.cpp:473
 msgid ""
@@ -2026,9 +2003,8 @@ msgid "FM-Towns Audio"
 msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
-#, fuzzy
 msgid "PC-98 Audio"
-msgstr "Àudio"
+msgstr "PC-98 Àudio"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -2051,9 +2027,8 @@ msgid "C64 Audio Emulator"
 msgstr "Emulador d'àudio C64"
 
 #: backends/cloud/storage.cpp:211
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "S'ha acabat la cerca!"
+msgstr "Sincronització dels jocs desats completada."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
@@ -2073,14 +2048,12 @@ msgid ""
 msgstr ""
 
 #: backends/cloud/storage.cpp:330
-#, fuzzy
 msgid "Download complete."
-msgstr "S'ha acabat la cerca!"
+msgstr "Descàrrega completada."
 
 #: backends/cloud/storage.cpp:340
-#, fuzzy
 msgid "Download failed."
-msgstr "Carrega partida:"
+msgstr "La descàrrega ha fallat."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2155,9 +2128,8 @@ msgstr "Vols sortir?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:308
-#, fuzzy
 msgid "Trackpad mode is now"
-msgstr "Mode Touchpad desactivat."
+msgstr "El mode trackpad està"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
@@ -2185,9 +2157,8 @@ msgid "Swipe three fingers to the right to toggle."
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:146
-#, fuzzy
 msgid "OpenGL"
-msgstr "Obre"
+msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2462
@@ -2211,15 +2182,13 @@ msgstr "S'ha desactivat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2362
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Clicat activat"
+msgstr "Filtratge activat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2364
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Clicat desactivat"
+msgstr "Filtratge desactivat"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:47
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2509,9 +2478,8 @@ msgid "[ Media ]"
 msgstr ""
 
 #: backends/platform/tizen/fs.cpp:275
-#, fuzzy
 msgid "[ Shared ]"
-msgstr "Compartició:"
+msgstr "[ Compartit ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2786,9 +2754,8 @@ msgid ""
 msgstr ""
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Mode clic"
+msgstr "Mode de color"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
