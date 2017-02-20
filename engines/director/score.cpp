@@ -504,34 +504,31 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 
 	byte id = stream.readByte();
 
-	/*byte subId = */ stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
+	byte subId = stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
 	uint16 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 nextId = stream.readByte();
-		byte subId = stream.readByte();
+		byte nextSubId = stream.readByte();
 		uint16 nextStringPos = stream.readUint16() + offset;
 		uint16 streamPos = stream.pos();
 
 		stream.seek(stringPos);
-
-		if (_vm->getVersion() == 3) {
-			id -= 1;
-		}
 
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
 			byte ch = stream.readByte();
 			if (ch == 0x0d) {
 				ch = '\n';
 			}
-			_actions[id] += ch;
+			_actions[i + 1] += ch;
 		}
 
-		warning("id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
+		debugC(3, kDebugLoading, "id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
 
 		stream.seek(streamPos);
 
 		id = nextId;
+		subId = nextSubId;
 		stringPos = nextStringPos;
 
 		if (stringPos == stream.size())
@@ -997,7 +994,7 @@ void Score::processEvents() {
 					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				} else {
 					// D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
-					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId + 1);
+					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				}
 			}
 
