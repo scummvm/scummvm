@@ -30,17 +30,25 @@ BEGIN_MESSAGE_MAP(CodeWheel, CBomb)
 	ON_MESSAGE(EnterViewMsg)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(CheckCodeWheelsMsg)
 END_MESSAGE_MAP()
 
+static const int START_FRAMES[15] = {
+	0, 5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66
+};
+static const int END_FRAMES[15] = {
+	5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66, 70
+};
+
 CodeWheel::CodeWheel() : CBomb(), _correctValue(0), _value(4),
-		_isCorrect(0), _field114(0), _field118(0) {
+		_matched(false), _field114(0), _field118(0) {
 }
 
 void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_correctValue, indent);
 	file->writeNumberLine(_value, indent);
-	file->writeNumberLine(_isCorrect, indent);
+	file->writeNumberLine(_matched, indent);
 	if (g_vm->isGerman()) {
 		file->writeNumberLine(_field114, indent);
 		file->writeNumberLine(_field118, indent);
@@ -53,7 +61,7 @@ void CodeWheel::load(SimpleFile *file) {
 	file->readNumber();
 	_correctValue = file->readNumber();
 	_value = file->readNumber();
-	_isCorrect = file->readNumber();
+	_matched = file->readNumber();
 	if (g_vm->isGerman()) {
 		_field114 = file->readNumber();
 		_field118 = file->readNumber();
@@ -63,26 +71,19 @@ void CodeWheel::load(SimpleFile *file) {
 }
 
 bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	static const int START_FRAMES[15] = {
-		0, 5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66
-	};
-	static const int END_FRAMES[15] = {
-		5, 10, 15, 19, 24, 28, 33, 38, 42, 47, 52, 57, 61, 66, 70
-	};
-
 	int yp = _bounds.top + _bounds.height() / 2;
-	_isCorrect = false;
+	_matched = false;
 
 	if (msg->_mousePos.y > yp) {
 		if (_value == _correctValue)
-			_isCorrect = true;
+			_matched = true;
 
 		_value = (_value + 1) % 15;
 		playMovie(START_FRAMES[_value], END_FRAMES[_value],
 			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	} else {
 		if (_value == _correctValue)
-			_isCorrect = true;
+			_matched = true;
 
 		playMovie(START_FRAMES[14 - _value] + 68, END_FRAMES[14 - _value] + 68,
 			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
@@ -95,8 +96,8 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CodeWheel::EnterViewMsg(CEnterViewMsg *msg) {
-	loadFrame(24);
-	_value = 4;
+	// WORKAROUND: Don't keep resetting code wheels back to default
+	loadFrame(END_FRAMES[_value]);
 	return true;
 }
 
@@ -106,14 +107,17 @@ bool CodeWheel::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 bool CodeWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	sleep(200);
+
+	// Signal that a code wheel has changed
 	CStatusChangeMsg changeMsg;
-	changeMsg._newStatus = 0;
-	if (_isCorrect)
-		changeMsg._newStatus = -1;
-	if (_value == _correctValue)
-		changeMsg._newStatus = 1;
 	changeMsg.execute("Bomb");
 
+	return true;
+}
+
+bool CodeWheel::CheckCodeWheelsMsg(CCheckCodeWheelsMsg *msg) {
+	if (_value != _correctValue)
+		msg->_isCorrect = false;
 	return true;
 }
 

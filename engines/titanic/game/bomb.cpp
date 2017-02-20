@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bomb.h"
+#include "titanic/game/code_wheel.h"
 
 namespace Titanic {
 
@@ -35,6 +36,8 @@ BEGIN_MESSAGE_MAP(CBomb, CBackground)
 	ON_MESSAGE(TrueTalkGetStateValueMsg)
 	ON_MESSAGE(SetFrameMsg)
 END_MESSAGE_MAP()
+
+const int CORRECT_WHEELS = 23;
 
 static const char *const HUNDREDS_WAVS[] = {
 	"", "z#353.wav", "z#339.wav", "z#325.wav", "z#311.wav", "z#297.wav",
@@ -115,9 +118,13 @@ void CBomb::load(SimpleFile *file) {
 }
 
 bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_numCorrectWheels += msg->_newStatus;
+	// Check whether the wheels are corect
+	CCheckCodeWheelsMsg checkMsg;
+	checkMsg.execute(findRoom(), nullptr, MSGFLAG_SCAN);
 
-	if (_numCorrectWheels == 23) {
+	_numCorrectWheels = checkMsg._isCorrect ? CORRECT_WHEELS : 0;
+
+	if (_numCorrectWheels == CORRECT_WHEELS) {
 		// Nobody likes a smartass
 		startAnimTimer("Disarmed", 2000);
 		lockMouse();
@@ -158,7 +165,7 @@ bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CBomb::EnterViewMsg(CEnterViewMsg *msg) {
-	_numCorrectWheels = 2;
+	// WORKAROUND: Don't keep resetting wheels
 	return true;
 }
 
@@ -169,7 +176,7 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		stopSound(_soundHandle);
 		//stopSound(_unusedHandle);
 
-		if (_numCorrectWheels < 23) {
+		if (_numCorrectWheels < CORRECT_WHEELS) {
 			_tappedCtr = MIN(_tappedCtr + 1, 23);
 
 			CString name;
@@ -262,6 +269,16 @@ bool CBomb::TurnOn(CTurnOn *msg) {
 	if (!_active) {
 		_soundHandle = playSound("z#389.wav", _volume);
 		_active = true;
+
+		// WORKAROUND: Only reset the code wheels back to 'O' value
+		// when first arming the bomb, not whenever the bomb view is entered
+		_numCorrectWheels = 2;
+		CRoomItem *room = findRoom();
+		for (CTreeItem *treeItem = room; treeItem; treeItem = treeItem->scan(room)) {
+			CodeWheel *codeWheel = dynamic_cast<CodeWheel *>(treeItem);
+			if (codeWheel)
+				codeWheel->reset();
+		}
 
 		CActMsg actMsg("Arm Bomb");
 		actMsg.execute("EndExplodeShip");

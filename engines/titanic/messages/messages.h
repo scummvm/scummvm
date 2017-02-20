@@ -378,6 +378,7 @@ MESSAGE1(CUseWithCharMsg, CCharacter *, character, nullptr);
 MESSAGE1(CUseWithOtherMsg, CGameObject *, other, 0);
 MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
 MESSAGE1(CVisibleMsg, bool, visible, true);
+MESSAGE1(CCheckCodeWheelsMsg, bool, isCorrect, true);
 
 } // End of namespace Titanic
 

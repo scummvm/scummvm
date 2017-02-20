@@ -955,6 +955,7 @@ DEFFN(CUseWithCharMsg);
 DEFFN(CUseWithOtherMsg);
 DEFFN(CVirtualKeyCharMsg);
 DEFFN(CVisibleMsg);
+DEFFN(CCheckCodeWheelsMsg);
 
 DEFFN(CEnterBombRoom);
 DEFFN(CEnterBridge);
@@ -1538,6 +1539,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CUseWithOtherMsg, CMessage);
 	ADDFN(CVirtualKeyCharMsg, CMessage);
 	ADDFN(CVisibleMsg, CMessage);
+	ADDFN(CCheckCodeWheelsMsg, CMessage);
 
 	ADDFN(CMovePlayerTo, CGameObject);
 	ADDFN(CMovePlayerToFrom, CGameObject);
