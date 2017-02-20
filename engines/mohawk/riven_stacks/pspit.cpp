@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_video.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -33,13 +34,13 @@ namespace RivenStacks {
 PSpit::PSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackPspit, "psliders.25", "psliderbg.25") {
 
-	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
-	REGISTER_COMMAND(PSpit, xpscpbtn);
-	REGISTER_COMMAND(PSpit, xpisland290_domecheck);
-	REGISTER_COMMAND(PSpit, xpisland25_opencard);
-	REGISTER_COMMAND(PSpit, xpisland25_resetsliders);
-	REGISTER_COMMAND(PSpit, xpisland25_slidermd);
-	REGISTER_COMMAND(PSpit, xpisland25_slidermw);
+//	REGISTER_COMMAND(PSpit, xpisland990_elevcombo);
+//	REGISTER_COMMAND(PSpit, xpscpbtn);
+//	REGISTER_COMMAND(PSpit, xpisland290_domecheck);
+//	REGISTER_COMMAND(PSpit, xpisland25_opencard);
+//	REGISTER_COMMAND(PSpit, xpisland25_resetsliders);
+//	REGISTER_COMMAND(PSpit, xpisland25_slidermd);
+//	REGISTER_COMMAND(PSpit, xpisland25_slidermw);
 }
 
 void PSpit::catherineIdleTimer() {
@@ -67,9 +68,10 @@ void PSpit::catherineIdleTimer() {
 		cathState = 1;
 
 	// Play the movie, blocking
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(movie));
+	_vm->getCard()->playMovie(movie);
 	_vm->_cursor->hideCursor();
-	_vm->_video->playMovieBlockingRiven(movie);
+	RivenVideo *video = _vm->_video->openSlot(movie);
+	video->playBlocking();
 	_vm->_cursor->showCursor();
 	_vm->_system->updateScreen();
 

@@ -25,7 +25,6 @@
 
 #include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
-#include "mohawk/riven_scripts.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -43,8 +42,10 @@ class RivenOptionsDialog;
 class RivenStack;
 class RivenCard;
 class RivenHotspot;
+class RivenScriptManager;
 class RivenSoundManager;
 class RivenInventory;
+class RivenVideoManager;
 
 // Riven Stack Types
 enum {
@@ -83,7 +84,7 @@ public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Riven();
 
-	VideoManager *_video;
+	RivenVideoManager *_video;
 	RivenSoundManager *_sound;
 	RivenGraphics *_gfx;
 	Common::RandomSource *_rnd;
@@ -103,7 +104,6 @@ public:
 #define TIMER(cls, method) \
 		new Common::Functor0Mem<void, cls>(this, &cls::method)
 
-	void doVideoTimer(VideoHandle handle, bool force);
 	void doFrame();
 
 private:

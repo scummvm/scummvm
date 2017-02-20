@@ -91,6 +91,7 @@ enum RivenCommandType {
 class MohawkEngine_Riven;
 class RivenCommand;
 class RivenScript;
+struct MLSTRecord;
 
 typedef Common::SharedPtr<RivenScript> RivenScriptPtr;
 typedef Common::SharedPtr<RivenCommand> RivenCommandPtr;
@@ -263,6 +264,8 @@ private:
 
 	void setupOpcodes();
 	Common::String describe() const;
+
+	void activateMLST(const MLSTRecord &mlst) const;
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
 

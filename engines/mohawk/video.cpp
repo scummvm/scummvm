@@ -235,7 +235,6 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 					break;
 				case Common::KEYCODE_ESCAPE:
 					continuePlaying = false;
-					_vm->doVideoTimer(videoHandle, true);
 					break;
 				default:
 					break;
@@ -326,9 +325,6 @@ bool VideoManager::updateMovies() {
 			}
 		}
 
-		// Check the video time
-		_vm->doVideoTimer(VideoHandle(*it), false);
-
 		// Remember to increase the iterator
 		it++;
 	}
@@ -405,68 +401,6 @@ bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
 	return true;
 }
 
-void VideoManager::activateMLST(const MLSTRecord &mlst) {
-	// Make sure we don't have any duplicates
-	for (uint32 j = 0; j < _mlstRecords.size(); j++)
-		if (_mlstRecords[j].index == mlst.index || _mlstRecords[j].code == mlst.code) {
-			_mlstRecords.remove_at(j);
-			j--;
-		}
-
-	_mlstRecords.push_back(mlst);
-}
-
-void VideoManager::clearMLST() {
-	_mlstRecords.clear();
-}
-
-VideoEntryPtr VideoManager::playMovieRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
-		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s, Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping", _mlstRecords[i].volume);
-
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
-			if (ptr) {
-				ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
-				ptr->setLooping(_mlstRecords[i].loop != 0);
-				ptr->setVolume(_mlstRecords[i].volume);
-				ptr->start();
-			}
-
-			return ptr;
-		}
-	}
-
-	return VideoEntryPtr();
-}
-
-void VideoManager::playMovieBlockingRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
-		if (_mlstRecords[i].code == id) {
-			debug(1, "Play tMOV %d (blocking) at (%d, %d), Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].volume);
-			VideoEntryPtr ptr = open(_mlstRecords[i].movieID);
-			ptr->moveTo(_mlstRecords[i].left, _mlstRecords[i].top);
-			ptr->setVolume(_mlstRecords[i].volume);
-			ptr->start();
-			waitUntilMovieEnds(VideoHandle(ptr));
-			return;
-		}
-	}
-}
-
-void VideoManager::stopMovieRiven(uint16 id) {
-	debug(2, "Stopping movie %d", id);
-	VideoEntryPtr video = findVideoRiven(id);
-	if (video)
-		removeEntry(video);
-}
-
-void VideoManager::disableAllMovies() {
-	debug(2, "Disabling all movies");
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
-		(*it)->setEnabled(false);
-}
-
 VideoEntryPtr VideoManager::open(uint16 id) {
 	// If this video is already playing, return that handle
 	VideoHandle oldHandle = findVideoHandle(id);
@@ -518,16 +452,6 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	_videos.push_back(entry);
 
 	return entry;
-}
-
-VideoEntryPtr VideoManager::findVideoRiven(uint16 id) {
-	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		if (_mlstRecords[i].code == id)
-			for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
-				if ((*it)->getID() == _mlstRecords[i].movieID)
-					return *it;
-
-	return VideoEntryPtr();
 }
 
 VideoHandle VideoManager::findVideoHandle(uint16 id) {

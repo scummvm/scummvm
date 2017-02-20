@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_video.h"
 #include "mohawk/resource.h"
 
 #include "common/events.h"
@@ -37,7 +38,8 @@ namespace Mohawk {
 RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_vm(vm),
 		_id(id),
-		_mouseIsDown(false) {
+		_mouseIsDown(false),
+		_keyPressed(Common::KEYCODE_INVALID) {
 	loadResourceNames();
 	loadCardIdMap();
 	setCurrentStackVariable();
@@ -178,10 +180,11 @@ void RivenStack::runDemoBoundaryDialog() {
 	dialog.runModal();
 }
 
-void RivenStack::runEndGame(uint16 video, uint32 delay) {
+void RivenStack::runEndGame(uint16 videoCode, uint32 delay) {
 	_vm->_sound->stopAllSLST();
-	_vm->_video->playMovieRiven(video);
-	runCredits(video, delay);
+	RivenVideo *video = _vm->_video->openSlot(videoCode);
+	video->play();
+	runCredits(videoCode, delay);
 }
 
 void RivenStack::runCredits(uint16 video, uint32 delay) {
@@ -190,7 +193,7 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 	_vm->_gfx->beginCredits();
 	uint nextCreditsFrameStart = 0;
 
-	VideoEntryPtr videoPtr = _vm->_video->findVideoRiven(video);
+	RivenVideo *videoPtr = _vm->_video->getSlot(video);
 
 	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
 		if (videoPtr->getCurFrame() >= (int32)videoPtr->getFrameCount() - 1) {
@@ -207,8 +210,10 @@ void RivenStack::runCredits(uint16 video, uint32 delay) {
 
 				_vm->_gfx->updateCredits();
 			}
-		} else if (_vm->_video->updateMovies())
+		} else {
+			_vm->_video->updateMovies();
 			_vm->_system->updateScreen();
+		}
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
@@ -288,6 +293,18 @@ void RivenStack::onFrame() {
 	}
 
 	_vm->_scriptMan->runScript(script, true);
+}
+
+Common::KeyCode RivenStack::keyGetPressed() const {
+	return _keyPressed;
+}
+
+void RivenStack::keyForceUp() {
+	_keyPressed = Common::KEYCODE_INVALID;
+}
+
+void RivenStack::onKeyPressed(const Common::KeyCode keyCode) {
+	_keyPressed = keyCode;
 }
 
 RivenNameList::RivenNameList() {

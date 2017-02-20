@@ -46,8 +46,8 @@
 #include "mohawk/riven_stacks/pspit.h"
 #include "mohawk/riven_stacks/rspit.h"
 #include "mohawk/riven_stacks/tspit.h"
+#include "mohawk/riven_video.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/video.h"
 #include "mohawk/console.h"
 
 namespace Mohawk {
@@ -118,7 +118,7 @@ Common::Error MohawkEngine_Riven::run() {
 		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
-	_video = new VideoManager(this);
+	_video = new RivenVideoManager(this);
 	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
@@ -221,6 +221,9 @@ void MohawkEngine_Riven::doFrame() {
 			_stack->onMouseUp(_eventMan->getMousePos());
 			_inventory->checkClick(_eventMan->getMousePos());
 			break;
+		case Common::EVENT_KEYUP:
+			_stack->keyForceUp();
+			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_d:
@@ -263,6 +266,8 @@ void MohawkEngine_Riven::doFrame() {
 				}
 				break;
 			default:
+				// TODO: Pass the keypress to the game only if it was not consumed by the engine
+				_stack->onKeyPressed(event.kbd.keycode);
 				break;
 			}
 			break;
@@ -310,8 +315,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 		return;
 
 	// Stop any videos playing
-	_video->stopVideos();
-	_video->clearMLST();
+	_video->removeVideos();
 
 	// Clear the graphics cache; images aren't used across stack boundaries
 	_gfx->clearCache();
@@ -423,7 +427,7 @@ void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
 	removeTimer();
 
-	_card->enter();
+	_card->enter(true);
 
 	if (_showHotspots)
 		_card->drawHotspotRects();
@@ -496,19 +500,6 @@ void MohawkEngine_Riven::checkTimer() {
 void MohawkEngine_Riven::removeTimer() {
 	_timerProc.reset();
 	_timerTime = 0;
-}
-
-void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
-	assert(handle);
-
-	uint16 id = _scriptMan->getStoredMovieOpcodeID();
-
-	if (handle != _video->findVideoRiven(id)) // Check if we've got a video match
-		return;
-
-	// Run the opcode if we can at this point
-	if (force || handle->getTime() >= _scriptMan->getStoredMovieOpcodeTime())
-		_scriptMan->runStoredMovieOpcode();
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {

@@ -34,7 +34,7 @@ class RewindableAudioStream;
 
 namespace Mohawk {
 
-class MohawkEngine;
+class MohawkEngine_Riven;
 class RivenSound;
 
 /**
@@ -65,7 +65,7 @@ struct SLSTRecord {
  */
 class RivenSoundManager {
 public:
-	RivenSoundManager(MohawkEngine *vm);
+	RivenSoundManager(MohawkEngine_Riven *vm);
 	~RivenSoundManager();
 
 	/**
@@ -78,7 +78,7 @@ public:
 	void playSound(uint16 id, uint16 volume = 255, bool playOnDraw = false);
 
 	/** Play an effect sound by its resource name */
-	void playSound(const Common::String &name, uint16 volume = 255, bool playOnDraw = false);
+	void playCardSound(const Common::String &name, uint16 volume = 255, bool playOnDraw = false);
 
 	/** Start playing the scheduled on-draw effect sound, if any. Called by the GraphicsManager. */
 	void triggerDrawSound();
@@ -120,7 +120,7 @@ private:
 		kFadeInNewSounds = 2
 	};
 
-	MohawkEngine *_vm;
+	MohawkEngine_Riven *_vm;
 
 	int16 _mainAmbientSoundId;
 	AmbientSoundList _ambientSounds;
@@ -154,7 +154,7 @@ private:
  */
 class RivenSound {
 public:
-	RivenSound(MohawkEngine *vm, Audio::RewindableAudioStream *rewindStream);
+	RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream);
 	~RivenSound();
 
 	/** Start playing the sound stream passed to the constructor */
@@ -185,7 +185,7 @@ private:
 	static byte convertVolume(uint16 volume);
 	static int8 convertBalance(int16 balance);
 
-	MohawkEngine *_vm;
+	MohawkEngine_Riven *_vm;
 
 	Audio::SoundHandle _handle;
 	Audio::RewindableAudioStream *_stream;

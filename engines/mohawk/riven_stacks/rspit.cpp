@@ -26,6 +26,7 @@
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_inventory.h"
+#include "mohawk/riven_video.h"
 
 namespace Mohawk {
 namespace RivenStacks {
@@ -33,10 +34,10 @@ namespace RivenStacks {
 RSpit::RSpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackRspit) {
 
-	REGISTER_COMMAND(RSpit, xrshowinventory);
-	REGISTER_COMMAND(RSpit, xrhideinventory);
-	REGISTER_COMMAND(RSpit, xrcredittime);
-	REGISTER_COMMAND(RSpit, xrwindowsetup);
+//	REGISTER_COMMAND(RSpit, xrshowinventory);
+//	REGISTER_COMMAND(RSpit, xrhideinventory);
+//	REGISTER_COMMAND(RSpit, xrcredittime);
+//	REGISTER_COMMAND(RSpit, xrwindowsetup);
 }
 
 void RSpit::xrcredittime(uint16 argc, uint16 *argv) {
@@ -64,11 +65,12 @@ void RSpit::xrhideinventory(uint16 argc, uint16 *argv) {
 void RSpit::rebelPrisonWindowTimer() {
 	// Randomize a video out in the middle of Tay
 	uint16 movie = _vm->_rnd->getRandomNumberRng(2, 13);
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(movie));
-	VideoEntryPtr handle = _vm->_video->playMovieRiven(movie);
+	_vm->getCard()->playMovie(movie);
+	RivenVideo *video = _vm->_video->openSlot(movie);
+	video->play();
 
 	// Ensure the next video starts after this one ends
-	uint32 timeUntilNextVideo = handle->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
+	uint32 timeUntilNextVideo = video->getDuration() + _vm->_rnd->getRandomNumberRng(38, 58) * 1000;
 
 	// Save the time in case we leave the card and return
 	_vm->_vars["rvillagetime"] = timeUntilNextVideo + _vm->getTotalPlayTime();

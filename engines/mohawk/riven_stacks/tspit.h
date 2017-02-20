@@ -40,8 +40,9 @@ public:
 	// External commands - Telescope
 	void xtexterior300_telescopedown(uint16 argc, uint16 *argv);
 	void xtexterior300_telescopeup(uint16 argc, uint16 *argv);
+	void xtopenfissure();
 
-	// External commands -  Telescope cover buttons. Button is the button number (1...5).
+	// External commands - Telescope cover buttons. Button is the button number (1...5).
 	void xtisland390_covercombo(uint16 argc, uint16 *argv);	// Param1: button
 
 	// External commands - Atrus' Journal and Trap Book are added to inventory

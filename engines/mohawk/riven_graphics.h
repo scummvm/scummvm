@@ -59,6 +59,7 @@ public:
 	// Screen updates
 	void beginScreenUpdate();
 	void applyScreenUpdate(bool force = false);
+	void enableCardUpdateScript(bool enable);
 
 	void copyImageToScreen(uint16 image, uint32 left, uint32 top, uint32 right, uint32 bottom);
 	void updateScreen(const Common::Rect &updateRect = Common::Rect(0, 0, 608, 392));
@@ -66,6 +67,9 @@ public:
 	void drawImageRect(uint16 id, const Common::Rect &srcRect, const Common::Rect &dstRect);
 	void drawExtrasImage(uint16 id, const Common::Rect &dstRect);
 	void drawExtrasImageToScreen(uint16 id, const Common::Rect &rect);
+
+	/** Copy a rect from the system screen to the game screen */
+	void copySystemRectToScreen(const Common::Rect &rect);
 
 	Graphics::Surface *getEffectScreen();
 	Graphics::Surface *getBackScreen();
@@ -101,6 +105,7 @@ private:
 	MohawkBitmap *_bitmapDecoder;
 	int _screenUpdateNesting;
 	bool _screenUpdateRunning;
+	bool _enableCardUpdateScript;
 
 	// Water Effects
 	struct SFXERecord {

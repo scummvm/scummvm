@@ -35,35 +35,35 @@ namespace RivenStacks {
 JSpit::JSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackJspit, "jsliders.190", "jsliderbg.190") {
 
-	REGISTER_COMMAND(JSpit, xreseticons);
-	REGISTER_COMMAND(JSpit, xicon);
-	REGISTER_COMMAND(JSpit, xcheckicons);
-	REGISTER_COMMAND(JSpit, xtoggleicon);
-	REGISTER_COMMAND(JSpit, xjtunnel103_pictfix);
-	REGISTER_COMMAND(JSpit, xjtunnel104_pictfix);
-	REGISTER_COMMAND(JSpit, xjtunnel105_pictfix);
-	REGISTER_COMMAND(JSpit, xjtunnel106_pictfix);
-	REGISTER_COMMAND(JSpit, xvga1300_carriage);
-	REGISTER_COMMAND(JSpit, xjdome25_resetsliders);
-	REGISTER_COMMAND(JSpit, xjdome25_slidermd);
-	REGISTER_COMMAND(JSpit, xjdome25_slidermw);
-	REGISTER_COMMAND(JSpit, xjscpbtn);
-	REGISTER_COMMAND(JSpit, xjisland3500_domecheck);
-	REGISTER_COMMAND(JSpit, xhandlecontroldown);
-	REGISTER_COMMAND(JSpit, xhandlecontrolmid);
-	REGISTER_COMMAND(JSpit, xhandlecontrolup);
-	REGISTER_COMMAND(JSpit, xjplaybeetle_550);
-	REGISTER_COMMAND(JSpit, xjplaybeetle_600);
-	REGISTER_COMMAND(JSpit, xjplaybeetle_950);
-	REGISTER_COMMAND(JSpit, xjplaybeetle_1050);
-	REGISTER_COMMAND(JSpit, xjplaybeetle_1450);
-	REGISTER_COMMAND(JSpit, xjlagoon700_alert);
-	REGISTER_COMMAND(JSpit, xjlagoon800_alert);
-	REGISTER_COMMAND(JSpit, xjlagoon1500_alert);
-	REGISTER_COMMAND(JSpit, xschool280_playwhark);
-	REGISTER_COMMAND(JSpit, xjschool280_resetleft);
-	REGISTER_COMMAND(JSpit, xjschool280_resetright);
-	REGISTER_COMMAND(JSpit, xjatboundary);
+//	REGISTER_COMMAND(JSpit, xreseticons);
+//	REGISTER_COMMAND(JSpit, xicon);
+//	REGISTER_COMMAND(JSpit, xcheckicons);
+//	REGISTER_COMMAND(JSpit, xtoggleicon);
+//	REGISTER_COMMAND(JSpit, xjtunnel103_pictfix);
+//	REGISTER_COMMAND(JSpit, xjtunnel104_pictfix);
+//	REGISTER_COMMAND(JSpit, xjtunnel105_pictfix);
+//	REGISTER_COMMAND(JSpit, xjtunnel106_pictfix);
+//	REGISTER_COMMAND(JSpit, xvga1300_carriage);
+//	REGISTER_COMMAND(JSpit, xjdome25_resetsliders);
+//	REGISTER_COMMAND(JSpit, xjdome25_slidermd);
+//	REGISTER_COMMAND(JSpit, xjdome25_slidermw);
+//	REGISTER_COMMAND(JSpit, xjscpbtn);
+//	REGISTER_COMMAND(JSpit, xjisland3500_domecheck);
+//	REGISTER_COMMAND(JSpit, xhandlecontroldown);
+//	REGISTER_COMMAND(JSpit, xhandlecontrolmid);
+//	REGISTER_COMMAND(JSpit, xhandlecontrolup);
+//	REGISTER_COMMAND(JSpit, xjplaybeetle_550);
+//	REGISTER_COMMAND(JSpit, xjplaybeetle_600);
+//	REGISTER_COMMAND(JSpit, xjplaybeetle_950);
+//	REGISTER_COMMAND(JSpit, xjplaybeetle_1050);
+//	REGISTER_COMMAND(JSpit, xjplaybeetle_1450);
+//	REGISTER_COMMAND(JSpit, xjlagoon700_alert);
+//	REGISTER_COMMAND(JSpit, xjlagoon800_alert);
+//	REGISTER_COMMAND(JSpit, xjlagoon1500_alert);
+//	REGISTER_COMMAND(JSpit, xschool280_playwhark);
+//	REGISTER_COMMAND(JSpit, xjschool280_resetleft);
+//	REGISTER_COMMAND(JSpit, xjschool280_resetright);
+//	REGISTER_COMMAND(JSpit, xjatboundary);
 }
 
 void JSpit::xreseticons(uint16 argc, uint16 *argv) {
@@ -224,19 +224,23 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 	_vm->_system->updateScreen();                      // Update
-	_vm->_video->playMovieBlockingRiven(1);            // Play handle movie
+	RivenVideo *handleVideo = _vm->_video->openSlot(1);            // Play handle movie
+	handleVideo->playBlocking();
 	_vm->_gfx->scheduleTransition(kRivenTransitionPanDown);
 	_vm->changeToCard(_vm->getStack()->getCardStackId(0x18e77));  // Change to card facing up
 	_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor (again)
 	_vm->_system->updateScreen();                      // Update
-	_vm->_video->playMovieBlockingRiven(4);            // Play carriage beginning to drop
+	RivenVideo *beginDropVideo = _vm->_video->openSlot(4);            // Play carriage beginning to drop
+	beginDropVideo->playBlocking();
 	_vm->_gfx->scheduleTransition(kRivenTransitionPanUp);
 	_vm->changeToCard(_vm->getStack()->getCardStackId(0x183a9));  // Change to card looking straight again
-	_vm->_video->playMovieBlockingRiven(2);
+	RivenVideo *video = _vm->_video->openSlot(2);
+	video->playBlocking();
 
 	if (_vm->_vars["jgallows"] == 1) {
 		// If the gallows is open, play the up movie and return
-		_vm->_video->playMovieBlockingRiven(3);
+		RivenVideo *upVideo = _vm->_video->openSlot(3);
+		upVideo->playBlocking();
 		return;
 	}
 
@@ -274,10 +278,14 @@ void JSpit::xvga1300_carriage(uint16 argc, uint16 *argv) {
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x18ab5));  // Turn right
 		_vm->_cursor->setCursor(kRivenHideCursor);         // Hide the cursor
 		_vm->_system->updateScreen();                      // Update
-		_vm->_video->playMovieBlockingRiven(1);            // Play carriage ride movie
+		RivenVideo *rideVideo = _vm->_video->openSlot(1);            // Play carriage ride movie
+		rideVideo->playBlocking();
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x17167));  // We have arrived at the top
-	} else
-		_vm->_video->playMovieBlockingRiven(3);            // Too slow!
+	} else {
+
+		RivenVideo *tooSlowVideo = _vm->_video->openSlot(3);            // Too slow!
+		tooSlowVideo->playBlocking();
+	}
 }
 
 void JSpit::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
@@ -339,8 +347,10 @@ void JSpit::xhandlecontrolup(uint16 argc, uint16 *argv) {
 
 	// If we've moved the handle down, go down a floor
 	if (changeLevel == -1) {
-		_vm->_video->playMovieBlockingRiven(1);
-		_vm->_video->playMovieBlockingRiven(2);
+		RivenVideo *firstVideo = _vm->_video->openSlot(1);
+		firstVideo->playBlocking();
+		RivenVideo *secondVideo = _vm->_video->openSlot(2);
+		secondVideo->playBlocking();
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x1e374));
 	}
 }
@@ -350,8 +360,10 @@ void JSpit::xhandlecontroldown(uint16 argc, uint16 *argv) {
 
 	// If we've moved the handle up, go up a floor
 	if (changeLevel == 1) {
-		_vm->_video->playMovieBlockingRiven(1);
-		_vm->_video->playMovieBlockingRiven(2);
+		RivenVideo *firstVideo = _vm->_video->openSlot(1);
+		firstVideo->playBlocking();
+		RivenVideo *secondVideo = _vm->_video->openSlot(2);
+		secondVideo->playBlocking();
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x1e374));
 	}
 }
@@ -363,25 +375,31 @@ void JSpit::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 		return;
 
 	// Play the handle moving video
+	RivenVideo *handleVideo;
 	if (changeLevel == 1)
-		_vm->_video->playMovieBlockingRiven(7);
+		handleVideo = _vm->_video->openSlot(7);
 	else
-		_vm->_video->playMovieBlockingRiven(6);
+		handleVideo = _vm->_video->openSlot(6);
+	handleVideo->playBlocking();
 
 	// If the whark's mouth is open, close it
 	uint32 &mouthVar = _vm->_vars["jwmouth"];
 	if (mouthVar == 1) {
-		_vm->_video->playMovieBlockingRiven(3);
-		_vm->_video->playMovieBlockingRiven(8);
+		RivenVideo *closeVideo1 = _vm->_video->openSlot(3);
+		closeVideo1->playBlocking();
+		RivenVideo *closeVideo2 = _vm->_video->openSlot(8);
+		closeVideo2->playBlocking();
 		mouthVar = 0;
 	}
 
 	// Play the elevator video and then change the card
 	if (changeLevel == 1) {
-		_vm->_video->playMovieBlockingRiven(5);
+		RivenVideo *elevatorVideo = _vm->_video->openSlot(5);
+		elevatorVideo->playBlocking();
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x1e597));
 	} else {
-		_vm->_video->playMovieBlockingRiven(4);
+		RivenVideo *elevatorVideo = _vm->_video->openSlot(4);
+		elevatorVideo->playBlocking();
 		_vm->changeToCard(_vm->getStack()->getCardStackId(0x1e29c));
 	}
 }
@@ -420,7 +438,7 @@ void JSpit::xjlagoon700_alert(uint16 argc, uint16 *argv) {
 		return;
 	}
 
-	VideoEntryPtr sunnerAlertVideo = _vm->_video->playMovieRiven(1);
+	RivenVideo *sunnerAlertVideo = _vm->_video->openSlot(1);
 
 	// Wait for a click while the alert video is playing
 	sunnersPlayVideo(sunnerAlertVideo, 0x7BEB);
@@ -433,14 +451,16 @@ void JSpit::xjlagoon800_alert(uint16 argc, uint16 *argv) {
 
 	if (sunners == 0) {
 		// Show the sunners alert video
-		VideoEntryPtr sunnerAlertVideo = _vm->_video->playMovieRiven(1);
+		RivenVideo *sunnerAlertVideo = _vm->_video->openSlot(1);
 
 		// Wait for a click while the alert video is playing
 		sunnersPlayVideo(sunnerAlertVideo, 0xB6CA);
 	} else if (sunners == 1) {
 		// Show the sunners leaving if you moved forward in their "alert" status
-		_vm->_video->playMovieBlockingRiven(2);
-		_vm->_video->playMovieBlockingRiven(6);
+		RivenVideo *leaving1 = _vm->_video->openSlot(2);
+		leaving1->playBlocking();
+		RivenVideo *leaving2 = _vm->_video->openSlot(6);
+		leaving2->playBlocking();
 		sunners = 2;
 		_vm->refreshCard();
 	}
@@ -453,19 +473,22 @@ void JSpit::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
 
 	if (sunners == 0) {
 		// Show the sunners alert video
-		_vm->_video->playMovieBlockingRiven(3);
+		RivenVideo *alertVideo = _vm->_video->openSlot(3);
+		alertVideo->playBlocking();
 	} else if (sunners == 1) {
 		// Show the sunners leaving if you moved forward in their "alert" status
-		_vm->_video->playMovieBlockingRiven(2);
+		RivenVideo *leavingVideo = _vm->_video->openSlot(2);
+		leavingVideo->playBlocking();
 		sunners = 2;
 		_vm->refreshCard();
 	}
 }
 
-void JSpit::sunnersPlayVideo(VideoEntryPtr &video, uint32 destCardGlobalId) {
+void JSpit::sunnersPlayVideo(RivenVideo *video, uint32 destCardGlobalId) {
 	uint32 &sunners = _vm->_vars["jsunners"];
 
 	mouseForceUp();
+	video->play();
 	while (!video->endOfVideo() && !_vm->shouldQuit()) {
 		_vm->doFrame();
 
@@ -491,7 +514,7 @@ void JSpit::sunnersTopStairsTimer() {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	RivenVideo *oldVideo = _vm->_video->getSlot(1);
 	uint32 timerTime = 500;
 
 	if (!oldVideo || oldVideo->endOfVideo()) {
@@ -500,9 +523,10 @@ void JSpit::sunnersTopStairsTimer() {
 		if (sunnerTime == 0) {
 			timerTime = _vm->_rnd->getRandomNumberRng(2, 15) * 1000;
 		} else if (sunnerTime < _vm->getTotalPlayTime()) {
-			VideoEntryPtr video = _vm->_video->playMovieRiven(_vm->_rnd->getRandomNumberRng(1, 3));
+			RivenVideo *video = _vm->_video->openSlot(_vm->_rnd->getRandomNumberRng(1, 3));
+			video->play();
 
-			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+			timerTime = video->getDuration() + _vm->_rnd->getRandomNumberRng(2, 15) * 1000;
 		}
 
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
@@ -521,7 +545,7 @@ void JSpit::sunnersMidStairsTimer() {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	RivenVideo *oldVideo = _vm->_video->getSlot(1);
 	uint32 timerTime = 500;
 
 	if (!oldVideo || oldVideo->endOfVideo()) {
@@ -538,9 +562,10 @@ void JSpit::sunnersMidStairsTimer() {
 			else if (randValue == 5)
 				movie = 3;
 
-			VideoEntryPtr video = _vm->_video->playMovieRiven(movie);
+			RivenVideo *video = _vm->_video->openSlot(movie);
+			video->play();
 
-			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+			timerTime = video->getDuration() + _vm->_rnd->getRandomNumberRng(1, 10) * 1000;
 		}
 
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
@@ -559,7 +584,7 @@ void JSpit::sunnersLowerStairsTimer() {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoEntryPtr oldVideo = _vm->_video->findVideoRiven(1);
+	RivenVideo *oldVideo = _vm->_video->getSlot(1);
 	uint32 timerTime = 500;
 
 	if (!oldVideo || oldVideo->endOfVideo()) {
@@ -568,9 +593,10 @@ void JSpit::sunnersLowerStairsTimer() {
 		if (sunnerTime == 0) {
 			timerTime = _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		} else if (sunnerTime < _vm->getTotalPlayTime()) {
-			VideoEntryPtr video = _vm->_video->playMovieRiven(_vm->_rnd->getRandomNumberRng(3, 5));
+			RivenVideo *video = _vm->_video->openSlot(_vm->_rnd->getRandomNumberRng(3, 5));
+			video->play();
 
-			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = video->getDuration() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
@@ -589,7 +615,7 @@ void JSpit::sunnersBeachTimer() {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoEntryPtr oldvideo = _vm->_video->findVideoRiven(3);
+	RivenVideo *oldvideo = _vm->_video->getSlot(3);
 	uint32 timerTime = 500;
 
 	if (!oldvideo || oldvideo->endOfVideo()) {
@@ -601,10 +627,11 @@ void JSpit::sunnersBeachTimer() {
 			// Unlike the other cards' scripts which automatically
 			// activate the MLST, we have to set it manually here.
 			uint16 mlstID = _vm->_rnd->getRandomNumberRng(3, 8);
-			_vm->_video->activateMLST(_vm->getCard()->getMovie(mlstID));
-			VideoEntryPtr video = _vm->_video->playMovieRiven(mlstID);
+			_vm->getCard()->playMovie(mlstID);
+			RivenVideo *video = _vm->_video->openSlot(mlstID);
+			video->play();
 
-			timerTime = video->getDuration().msecs() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = video->getDuration() + _vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + _vm->getTotalPlayTime();
@@ -658,7 +685,8 @@ void JSpit::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();
 
 	// Play the spin movie
-	_vm->_video->playMovieBlockingRiven(spinMLST);
+	RivenVideo *spinVideo = _vm->_video->openSlot(spinMLST);
+	spinVideo->playBlocking();
 
 	// Get our random number and redraw the area
 	uint16 number = _vm->_rnd->getRandomNumberRng(1, 10);
@@ -667,16 +695,17 @@ void JSpit::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	// Handle movement
 	// (11560/600)s is the length of each of the two movies. We divide it into 19 parts
 	// (one for each of the possible positions the villager can have).
-	VideoEntryPtr handle = _vm->_video->playMovieRiven(doomMLST);
-	Audio::Timestamp startTime = Audio::Timestamp(0, (11560 / 19) * (*posVar), 600);
+	RivenVideo *video = _vm->_video->openSlot(doomMLST);
+	uint32 startTime = (11560 / 19) * (*posVar);
 	*posVar += number; // Adjust to the end
-	Audio::Timestamp endTime = Audio::Timestamp(0, (11560 / 19) * (*posVar), 600);
-	handle->setBounds(startTime, endTime);
-	_vm->_video->waitUntilMovieEnds(handle);
+	uint32 endTime = (11560 / 19) * (*posVar);
+	video->setBounds(startTime, endTime);
+	video->playBlocking();
 
 	if (*posVar > 19) {
 		// The villager has died :(
-		_vm->_video->playMovieBlockingRiven(snackMLST);
+		RivenVideo *snackVideo = _vm->_video->openSlot(snackMLST);
+		snackVideo->playBlocking();
 		redrawWharkNumberPuzzle(overlayPLST, number);
 		*posVar = 0;
 	}

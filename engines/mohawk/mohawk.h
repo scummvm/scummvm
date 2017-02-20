@@ -28,8 +28,6 @@
 
 #include "engines/engine.h"
 
-#include "mohawk/video.h"
-
 class OSystem;
 
 namespace Common {
@@ -110,10 +108,6 @@ public:
 	Common::String getResourceName(uint32 tag, uint16 id);
 
 	void pauseGame();
-
-	// Check if events should be done based on a video's current time
-	// (currently only used for Riven's storeMovieOpcode function)
-	virtual void doVideoTimer(VideoHandle handle, bool force) {}
 
 private:
 	PauseDialog *_pauseDialog;
