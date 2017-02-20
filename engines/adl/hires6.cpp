@@ -195,6 +195,8 @@ int HiRes6Engine::o_fluteSound(ScriptEnv &e) {
 
 	playTones(tones, false);
 
+	_linesPrinted = 0;
+
 	return 0;
 }
 
