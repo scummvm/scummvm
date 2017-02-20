@@ -47,10 +47,9 @@ private:
 
 Speaker::Speaker(int sampleRate) :
 		_rate(sampleRate),
-		_curSample(32767) {
-
-	stopTone();
-}
+		_halfWaveLen(0),
+		_halfWaveRem(0),
+		_curSample(32767) { }
 
 void Speaker::startTone(double freq) {
 	_halfWaveLen = _halfWaveRem = doubleToFrac(_rate / freq / 2);
@@ -63,10 +62,15 @@ void Speaker::startTone(double freq) {
 
 void Speaker::stopTone() {
 	_halfWaveLen = 0;
-	_halfWaveRem = intToFrac(32767);
 }
 
 void Speaker::generateSamples(int16 *buffer, int numSamples) {
+	if (_halfWaveLen == 0) {
+		// Silence
+		memset(buffer, 0, numSamples * sizeof(int16));
+		return;
+	}
+
 	int offset = 0;
 
 	while (offset < numSamples) {
@@ -79,15 +83,14 @@ void Speaker::generateSamples(int16 *buffer, int numSamples) {
 			// Compute next transition point
 			_halfWaveRem += _halfWaveLen - FRAC_ONE;
 		} else {
-			// Low/high level (incl. silence)
+			// Low/high level
 			// Generate as many samples as we can
 			const int samples = MIN(numSamples - offset, (int)fracToInt(_halfWaveRem));
 			Common::fill(buffer + offset, buffer + offset + samples, _curSample);
 			offset += samples;
 
-			// Count down to level transition point, unless we're playing silence
-			if (_halfWaveLen > 0)
-				_halfWaveRem -= intToFrac(samples);
+			// Count down to level transition point
+			_halfWaveRem -= intToFrac(samples);
 		}
 	}
 }
