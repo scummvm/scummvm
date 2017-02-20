@@ -2662,9 +2662,6 @@ case $_host_os in
 		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
-		CC=arm-vita-eabi-gcc
-		append_var CFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
-		append_var CFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		if test "$_debug_build" = no; then
 			_optimization_level=-O1
 		fi

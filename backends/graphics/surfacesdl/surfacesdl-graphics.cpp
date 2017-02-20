@@ -68,11 +68,17 @@
 vita2d_texture *vitatex_hwscreen;
 void *sdlpixels_hwscreen;
 vita2d_shader *shaders[6];
-
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
+#ifdef PSP2
+	{"2xlcd", "2xLCD", GFX_SHADER_LCD3X},
+	{"2xsharp", "2xSharp", GFX_SHADER_SHARP},
+	{"2xscan", "2xScan", GFX_SHADER_SHARP_SCAN},
+	{"2xaaa", "2xAAA", GFX_SHADER_AAA},
+	{"2xscale", "2xScale", GFX_SHADER_SCALE2X},
+#endif
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
@@ -566,6 +572,9 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	int newScaleFactor = 1;
 
+#ifdef PSP2
+	_transactionDetails.normal1xScaler = true;
+#else
 	switch (mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
@@ -615,6 +624,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	}
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
+#endif // PSP2
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -630,6 +640,19 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
+#ifdef PSP2
+	if (_videoMode.filtering) {
+		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_LINEAR, SCE_GXM_TEXTURE_FILTER_LINEAR);
+	} else {
+		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
+	}
+	vita2d_texture_set_program(shaders[_videoMode.mode]->vertexProgram, shaders[_videoMode.mode]->fragmentProgram);
+	vita2d_texture_set_wvp(shaders[_videoMode.mode]->wvpParam);
+	vita2d_texture_set_vertexInput(&shaders[_videoMode.mode]->vertexInput);
+	vita2d_texture_set_fragmentInput(&shaders[_videoMode.mode]->fragmentInput);
+	_scalerProc = Normal1x;
+	_scalerType = 0;
+#else
 	switch (_videoMode.mode) {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
@@ -687,6 +710,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 			}
 		}
 	}
+#endif // PSP2
 
 	if (!_screen || !_hwscreen)
 		return;
@@ -973,6 +997,9 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 
 	if (_hwscreen) {
 #ifdef PSP2
+		for(int i=0; i<6; i++) {
+			vita2d_free_shader(shaders[i]);
+		}
 		vita2d_free_texture(vitatex_hwscreen);
 		_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
@@ -1032,6 +1059,9 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 
 	// Release the HW screen surface
 #ifdef PSP2
+	for(int i=0; i<6; i++) {
+		vita2d_free_shader(shaders[i]);
+	}
 	vita2d_free_texture(vitatex_hwscreen);
 	_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
@@ -2689,14 +2719,16 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 #ifdef PSP2
 		vita2d_set_vblank_wait(true);
 		vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
-		if (_videoMode.filtering) {
-			vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_LINEAR, SCE_GXM_TEXTURE_FILTER_LINEAR);
-		}
-		else {
-			vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
-		}
 		sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
 		screen->pixels = vita2d_texture_get_datap(vitatex_hwscreen);
+
+		// shaders
+		shaders[GFX_SHADER_NONE] = vita2d_create_shader((const SceGxmProgram *) texture_v, (const SceGxmProgram *) texture_f);
+		shaders[GFX_SHADER_LCD3X] = vita2d_create_shader((const SceGxmProgram *) lcd3x_v, (const SceGxmProgram *) lcd3x_f);
+		shaders[GFX_SHADER_SHARP] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_simple_v, (const SceGxmProgram *) sharp_bilinear_simple_f);
+		shaders[GFX_SHADER_SHARP_SCAN] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_v, (const SceGxmProgram *) sharp_bilinear_f);
+		shaders[GFX_SHADER_AAA] = vita2d_create_shader((const SceGxmProgram *) advanced_aa_v, (const SceGxmProgram *) advanced_aa_f);
+		shaders[GFX_SHADER_SCALE2X] = vita2d_create_shader((const SceGxmProgram *) scale2x_v, (const SceGxmProgram *) scale2x_f);
 #endif
 		return screen;
 	}
@@ -2718,7 +2750,7 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	x = (960-w)/2; y = (544-h)/2;
 	sx = (float)w/(float)screen->w;
 	sy = (float)h/(float)screen->h;
-	
+
 	vita2d_start_drawing();
 	vita2d_draw_texture_scale(vitatex_hwscreen, x, y, sx, sy);
 	vita2d_end_drawing();
