@@ -44,6 +44,7 @@ public:
 
 private:
 	// AdlEngine
+	void gameLoop();
 	void setupOpcodeTables();
 	void runIntro();
 	void init();
@@ -66,6 +67,29 @@ private:
 
 	byte _currVerb, _currNoun;
 };
+
+void HiRes6Engine::gameLoop() {
+	AdlEngine_v5::gameLoop();
+
+	// Variable 25 starts at 5 and counts down every 160 moves.
+	// When it reaches 0, the game ends. This variable determines
+	// what you see when you "LOOK SUNS".
+	// Variable 39 is used to advance the suns based on game events,
+	// so even a fast player will see the suns getting closer together
+	// as he progresses.
+	if (getVar(39) != 0) {
+		if (getVar(39) < getVar(25))
+			setVar(25, getVar(39));
+		setVar(39, 0);
+	}
+
+	if (getVar(25) != 0) {
+		if (getVar(25) > 5)
+			error("Variable 25 has unexpected value %d", getVar(25));
+		if ((6 - getVar(25)) * 160 == _state.moves)
+			setVar(25, getVar(25) - 1);
+	}
+}
 
 typedef Common::Functor1Mem<ScriptEnv &, int, HiRes6Engine> OpcodeH6;
 #define SetOpcodeTable(x) table = &x;
