@@ -46,7 +46,7 @@ private:
 	bool _ear2;
 	bool _nose;
 	bool _mouth;
-	bool _showIntro;
+	bool _showSpeech;
 public:
 	CLASSDEF;
 	CTitania();

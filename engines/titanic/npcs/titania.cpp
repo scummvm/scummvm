@@ -43,7 +43,7 @@ CTitania::CTitania() : CCharacter() {
 	_ear2 = false;
 	_nose = false;
 	_mouth = false;
-	_showIntro = true;
+	_showSpeech = true;
 }
 
 void CTitania::save(SimpleFile *file, int indent) {
@@ -59,7 +59,7 @@ void CTitania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_ear2, indent);
 	file->writeNumberLine(_nose, indent);
 	file->writeNumberLine(_mouth, indent);
-	file->writeNumberLine(_showIntro, indent);
+	file->writeNumberLine(_showSpeech, indent);
 
 	CCharacter::save(file, indent);
 }
@@ -77,7 +77,7 @@ void CTitania::load(SimpleFile *file) {
 	_ear2 = file->readNumber();
 	_nose = file->readNumber();
 	_mouth = file->readNumber();
-	_showIntro = file->readNumber();
+	_showSpeech = file->readNumber();
 
 	CCharacter::load(file);
 }
@@ -197,8 +197,8 @@ bool CTitania::ActMsg(CActMsg *msg) {
 }
 
 bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_showIntro) {
-		_showIntro = false;
+	if (_showSpeech) {
+		_showSpeech = false;
 		disableMouse();
 		petHide();
 
