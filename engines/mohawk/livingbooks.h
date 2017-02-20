@@ -714,6 +714,7 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	VideoManager *_video;
 	Sound *_sound;
 	LBGraphics *_gfx;
 	bool _needsRedraw, _needsUpdate;
@@ -817,6 +818,8 @@ private:
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 	int getIntFromConfig(const Common::String &section, const Common::String &key);
+
+	void pauseEngineIntern(bool) override;
 };
 
 } // End of namespace Mohawk

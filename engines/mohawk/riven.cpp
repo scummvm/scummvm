@@ -60,6 +60,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_extrasFile = nullptr;
 	_stack = nullptr;
 	_gfx = nullptr;
+	_video = nullptr;
 	_sound = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
@@ -91,6 +92,7 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _card;
 	delete _stack;
 	delete _sound;
+	delete _video;
 	delete _gfx;
 	delete _console;
 	delete _extrasFile;
@@ -116,6 +118,7 @@ Common::Error MohawkEngine_Riven::run() {
 		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
+	_video = new VideoManager(this);
 	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
@@ -281,6 +284,17 @@ void MohawkEngine_Riven::doFrame() {
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
+}
+
+void MohawkEngine_Riven::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+		_system->updateScreen();
+	}
 }
 
 // Stack/Card-Related Functions

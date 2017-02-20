@@ -100,7 +100,6 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
-	VideoManager *_video;
 	CursorManager *_cursor;
 
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
@@ -118,7 +117,6 @@ public:
 
 private:
 	PauseDialog *_pauseDialog;
-	void pauseEngineIntern(bool);
 
 protected:
 	// An array holding the main Mohawk archives require by the games
