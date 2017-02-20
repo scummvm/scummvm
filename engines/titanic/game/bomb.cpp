@@ -71,13 +71,13 @@ static const char *const COUNTDOWN_WAVS[100] = {
 
 CBomb::CBomb() : CBackground() {
 	_active = false;
-	_fieldE4 = 0;
-	_fieldE8 = 17;
-	_fieldEC = 9;
-	_fieldF0 = 0;
+	_numCorrectWheels = 0;
+	_tappedCtr = 17;
+	_hammerCtr = 9;
+	_commentCtr = 0;
 	_countdown = 999;
 	_soundHandle = 0;
-	_fieldFC = 0;
+	_unusedHandle = 0;
 	_startingTicks = 0;
 	_volume = 60;
 }
@@ -85,13 +85,13 @@ CBomb::CBomb() : CBackground() {
 void CBomb::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_active, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_numCorrectWheels, indent);
+	file->writeNumberLine(_tappedCtr, indent);
+	file->writeNumberLine(_hammerCtr, indent);
+	file->writeNumberLine(_commentCtr, indent);
 	file->writeNumberLine(_countdown, indent);
 	file->writeNumberLine(_soundHandle, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_unusedHandle, indent);
 	file->writeNumberLine(_startingTicks, indent);
 	file->writeNumberLine(_volume, indent);
 
@@ -101,13 +101,13 @@ void CBomb::save(SimpleFile *file, int indent) {
 void CBomb::load(SimpleFile *file) {
 	file->readNumber();
 	_active = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_numCorrectWheels = file->readNumber();
+	_tappedCtr = file->readNumber();
+	_hammerCtr = file->readNumber();
+	_commentCtr = file->readNumber();
 	_countdown = file->readNumber();
 	_soundHandle = file->readNumber();
-	_fieldFC = file->readNumber();
+	_unusedHandle = file->readNumber();
 	_startingTicks = file->readNumber();
 	_volume = file->readNumber();
 
@@ -115,34 +115,35 @@ void CBomb::load(SimpleFile *file) {
 }
 
 bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_fieldE4 += msg->_newStatus;
+	_numCorrectWheels += msg->_newStatus;
 
-	if (_fieldE4 == 23) {
+	if (_numCorrectWheels == 23) {
+		// Nobody likes a smartass
 		startAnimTimer("Disarmed", 2000);
 		lockMouse();
 	}
 
-	_fieldF0 %= 1000;
-	if (!(_fieldF0 % 20) && _countdown < 995) {
+	_commentCtr = (_commentCtr % 1000) + 1;
+	if (!(_commentCtr % 20) && _countdown < 995) {
 		int val = getRandomNumber(5) + 25;
-		if (_fieldF0 < 20 || _fieldF0 > 80)
+		if (_commentCtr < 20 || _commentCtr > 80)
 			val = 28;
 
 		CString name;
-		switch (val - 25) {
-		case 0:
+		switch (val) {
+		case 25:
 			name = "z#372.wav";
 			break;
-		case 1:
+		case 26:
 			name = "z#371.wav";
 			break;
-		case 2:
+		case 27:
 			name = "z#370.wav";
 			break;
-		case 3:
+		case 28:
 			name = "z#369.wav";
 			break;
-		case 4:
+		case 29:
 			name = "z#368.wav";
 			break;
 		default:
@@ -157,7 +158,7 @@ bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CBomb::EnterViewMsg(CEnterViewMsg *msg) {
-	_fieldE4 = 2;
+	_numCorrectWheels = 2;
 	return true;
 }
 
@@ -166,11 +167,13 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 	if (_active) {
 		stopSound(_soundHandle);
-		if (_fieldE4 < 23) {
-			_fieldE8 = MIN(_fieldE8 + 1, 23);
+		//stopSound(_unusedHandle);
+
+		if (_numCorrectWheels < 23) {
+			_tappedCtr = MIN(_tappedCtr + 1, 23);
 
 			CString name;
-			switch (_fieldE8) {
+			switch (_tappedCtr) {
 			case 18:
 				name = "z#380.wav";
 				break;
@@ -205,9 +208,9 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CBomb::EnterRoomMsg(CEnterRoomMsg *msg) {
-	_fieldE8 = 17;
-	_fieldEC = 9;
-	_fieldF0 = 0;
+	_tappedCtr = 17;
+	_hammerCtr = 9;
+	_commentCtr = 0;
 	_startingTicks = getTicksCount();
 	return true;
 }
@@ -217,11 +220,11 @@ bool CBomb::ActMsg(CActMsg *msg) {
 		playSound("z#63.wav");
 		stopSound(_soundHandle);
 
-		if (_fieldEC < 17)
-			++_fieldEC;
+		if (_hammerCtr < 17)
+			++_hammerCtr;
 
 		CString name;
-		switch (_fieldEC) {
+		switch (_hammerCtr) {
 		case 10:
 			name = "z#388.wav";
 			break;

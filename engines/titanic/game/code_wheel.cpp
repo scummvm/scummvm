@@ -108,7 +108,7 @@ bool CodeWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	sleep(200);
 	CStatusChangeMsg changeMsg;
 	changeMsg._newStatus = 0;
-	if (!_isCorrect)
+	if (_isCorrect)
 		changeMsg._newStatus = -1;
 	if (_value == _correctValue)
 		changeMsg._newStatus = 1;

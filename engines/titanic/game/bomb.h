@@ -41,13 +41,13 @@ class CBomb : public CBackground {
 	DECLARE_MESSAGE_MAP;
 private:
 	bool _active;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
-	int _fieldF0;
+	int _numCorrectWheels;
+	int _tappedCtr;
+	int _hammerCtr;
+	int _commentCtr;
 	int _countdown;
 	int _soundHandle;
-	int _fieldFC;
+	int _unusedHandle;
 	int _startingTicks;
 	int _volume;
 public:
