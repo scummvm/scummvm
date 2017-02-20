@@ -430,6 +430,8 @@ void HiRes6Engine::printString(const Common::String &str) {
 	Common::String s;
 	uint found = 0;
 
+	// Variable 27 is 1 when Kira is present, 0 otherwise. It's used for choosing
+	// between singular and plural variants of a string.
 	// This does not emulate the corner cases of the original, hence this check
 	if (getVar(27) > 1)
 		error("Invalid value %i encountered for variable 27", getVar(27));
@@ -445,21 +447,24 @@ void HiRes6Engine::printString(const Common::String &str) {
 		}
 	}
 
-	if (getVar(2) != 0xff) {
-		AdlEngine_v5::printString(s);
-	} else {
+	// Variables 2 and 26 are used for controlling the printing of room descriptions
+	if (getVar(2) == 0xff) {
 		if (getVar(26) == 0) {
+			// This checks for special room description string " "
 			if (str.size() != 1 || APPLECHAR(str[0]) != APPLECHAR(' '))
 				return AdlEngine_v5::printString(s);
-			setVar(2, APPLECHAR(' '));
-		} else if (getVar(26) != 0xff) {
-			setVar(2, 'P');
-		} else {
+			setVar(2, 160);
+		} else if (getVar(26) == 0xff) {
+			// Storing the room number in a variable allows for range comparisons
 			setVar(26, _state.room);
 			setVar(2, 1);
+		} else {
+			setVar(2, 80);
 		}
 
 		doAllCommands(_globalCommands, _currVerb, _currNoun);
+	} else {
+		AdlEngine_v5::printString(s);
 	}
 }
 
