@@ -35,7 +35,7 @@ class CBrainSlot : public CGameObject {
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
-	static bool _added;
+	static int _numAdded;
 	static bool _woken;
 public:
 	bool _occupied;

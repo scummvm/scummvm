@@ -33,14 +33,14 @@ BEGIN_MESSAGE_MAP(CBrainSlot, CGameObject)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-bool CBrainSlot::_added;
+int CBrainSlot::_numAdded;
 bool CBrainSlot::_woken;
 
 void CBrainSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_occupied, indent);
 	file->writeQuotedLine(_target, indent);
-	file->writeNumberLine(_added, indent);
+	file->writeNumberLine(_numAdded, indent);
 	file->writeNumberLine(_woken, indent);
 
 	CGameObject::save(file, indent);
@@ -50,7 +50,7 @@ void CBrainSlot::load(SimpleFile *file) {
 	file->readNumber();
 	_occupied = file->readNumber();
 	_target = file->readString();
-	_added = file->readNumber();
+	_numAdded = file->readNumber();
 	_woken = file->readNumber();
 
 	CGameObject::load(file);
@@ -63,7 +63,7 @@ bool CBrainSlot::SetFrameMsg(CSetFrameMsg *msg) {
 }
 
 bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
-	_added = true;
+	_numAdded++;
 	_cursorId = CURSOR_HAND;
 	CAddHeadPieceMsg addMsg("NULL");
 
@@ -141,7 +141,7 @@ bool CBrainSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	passMsg.execute(_target);
 
 	msg->_dragItem = getRoot()->findByName(_target);
-	_added = false;
+	_numAdded--;
 
 	return true;
 }
