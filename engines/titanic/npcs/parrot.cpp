@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CParrot, CTrueTalkNPC)
 	ON_MESSAGE(PreEnterViewMsg)
 	ON_MESSAGE(PanningAwayFromParrotMsg)
 	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
 bool CParrot::_eatingChicken;
@@ -728,5 +729,16 @@ bool CParrot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 	return true;
 }
+
+bool CParrot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
+	if (msg->_dialogueId == 80022) {
+		// WORKAROUND: End of parrot speech after having fixed Titania
+		unlockMouse();
+		changeView("Titania.Node 18.N", "");
+	}
+
+	return CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
+}
+
 
 } // End of namespace Titanic

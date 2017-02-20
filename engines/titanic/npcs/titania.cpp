@@ -99,7 +99,7 @@ bool CTitania::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 		_eye2 = true;
 	} else if (msg->_value == "Ear1") {
 		_ear1 = true;
-	} else if (msg->_value == "Ear2") {
+	} else if (msg->_value == "Ear 2") {
 		_ear2 = true;
 	} else if (msg->_value == "Mouth") {
 		_mouth = true;
@@ -216,8 +216,11 @@ bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CTitania::TimerMsg(CTimerMsg *msg) {
-	changeView("Titania.Node 18.N", "");
+	// WORKAROUND: The original uses the disc change dialog as a pause
+	// to allow the parrot speech to finish. I've rewritten it to instead
+	// use the standard TrueTalkNotifySpeechEndedMsg message instead
 	startTalking("PerchedParrot", 80022);
+	lockMouse();
 
 	return true;
 }
