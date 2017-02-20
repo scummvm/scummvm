@@ -34,9 +34,9 @@ class CodeWheel : public CBomb {
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
-	int _field108;
-	int _state;
-	int _field110;
+	int _correctValue;
+	int _value;
+	bool _isCorrect;
 	// German specific fields
 	int _field114;
 	int _field118;

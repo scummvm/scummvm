@@ -32,15 +32,15 @@ BEGIN_MESSAGE_MAP(CodeWheel, CBomb)
 	ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-CodeWheel::CodeWheel() : CBomb(), _field108(0), _state(4),
-		_field110(0), _field114(0), _field118(0) {
+CodeWheel::CodeWheel() : CBomb(), _correctValue(0), _value(4),
+		_isCorrect(0), _field114(0), _field118(0) {
 }
 
 void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field108, indent);
-	file->writeNumberLine(_state, indent);
-	file->writeNumberLine(_field110, indent);
+	file->writeNumberLine(_correctValue, indent);
+	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_isCorrect, indent);
 	if (g_vm->isGerman()) {
 		file->writeNumberLine(_field114, indent);
 		file->writeNumberLine(_field118, indent);
@@ -51,9 +51,9 @@ void CodeWheel::save(SimpleFile *file, int indent) {
 
 void CodeWheel::load(SimpleFile *file) {
 	file->readNumber();
-	_field108 = file->readNumber();
-	_state = file->readNumber();
-	_field110 = file->readNumber();
+	_correctValue = file->readNumber();
+	_value = file->readNumber();
+	_isCorrect = file->readNumber();
 	if (g_vm->isGerman()) {
 		_field114 = file->readNumber();
 		_field118 = file->readNumber();
@@ -71,21 +71,23 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	};
 
 	int yp = _bounds.top + _bounds.height() / 2;
-	if (msg->_mousePos.y > yp) {
-		if (_state == _field108)
-			_field110 = true;
+	_isCorrect = false;
 
-		_state = (_state + 1) % 15;
-		playMovie(START_FRAMES[_state], END_FRAMES[_state],
+	if (msg->_mousePos.y > yp) {
+		if (_value == _correctValue)
+			_isCorrect = true;
+
+		_value = (_value + 1) % 15;
+		playMovie(START_FRAMES[_value], END_FRAMES[_value],
 			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	} else {
-		if (_state == _field108)
-			_field110 = true;
+		if (_value == _correctValue)
+			_isCorrect = true;
 
-		playMovie(START_FRAMES[14 - _state] + 68, END_FRAMES[14 - _state] + 68,
+		playMovie(START_FRAMES[14 - _value] + 68, END_FRAMES[14 - _value] + 68,
 			MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 
-		_state = (_state <= 0) ? 14 : _state - 1;
+		_value = (_value <= 0) ? 14 : _value - 1;
 	}
 
 	playSound("z#59.wav");
@@ -94,7 +96,7 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CodeWheel::EnterViewMsg(CEnterViewMsg *msg) {
 	loadFrame(24);
-	_state = 4;
+	_value = 4;
 	return true;
 }
 
@@ -106,9 +108,9 @@ bool CodeWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	sleep(200);
 	CStatusChangeMsg changeMsg;
 	changeMsg._newStatus = 0;
-	if (_field110)
+	if (!_isCorrect)
 		changeMsg._newStatus = -1;
-	if (_field108 == _state)
+	if (_value == _correctValue)
 		changeMsg._newStatus = 1;
 	changeMsg.execute("Bomb");
 
