@@ -26,11 +26,13 @@
 #include "audio/audiostream.h"
 
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/sound.h"
 
 namespace Mohawk {
 
-RivenSoundManager::RivenSoundManager(MohawkEngine *vm) :
+RivenSoundManager::RivenSoundManager(MohawkEngine_Riven *vm) :
 		_vm(vm),
 		_effect(nullptr),
 		_mainAmbientSoundId(-1),
@@ -68,8 +70,9 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 	}
 }
 
-void RivenSoundManager::playSound(const Common::String &name, uint16 volume, bool playOnDraw) {
-	uint16 id =_vm->findResourceID(ID_TWAV, name);
+void RivenSoundManager::playCardSound(const Common::String &name, uint16 volume, bool playOnDraw) {
+	Common::String fullName = Common::String::format("%d_%s_1", _vm->getCard()->getId(), name.c_str());
+	uint16 id =_vm->findResourceID(ID_TWAV, fullName);
 	playSound(id, volume, playOnDraw);
 }
 
@@ -307,7 +310,7 @@ bool RivenSoundManager::isEffectPlaying() const {
 	return _effect != nullptr && _effect->isPlaying();
 }
 
-RivenSound::RivenSound(MohawkEngine *vm, Audio::RewindableAudioStream *rewindStream) :
+RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream) :
 		_vm(vm),
 		_volume(Audio::Mixer::kMaxChannelVolume),
 		_balance(0),

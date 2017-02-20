@@ -282,6 +282,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 
 	_screenUpdateNesting = 0;
 	_screenUpdateRunning = false;
+	_enableCardUpdateScript = true;
 	_scheduledTransition = kRivenTransitionNone;
 	_dirtyScreen = false;
 
@@ -651,7 +652,9 @@ void RivenGraphics::applyScreenUpdate(bool force) {
 	if (_screenUpdateNesting <= 0 && !_screenUpdateRunning) {
 		_screenUpdateRunning = true;
 
-		_vm->getCard()->runScript(kCardUpdateScript);
+		if (_enableCardUpdateScript) {
+			_vm->getCard()->runScript(kCardUpdateScript);
+		}
 		_vm->_sound->triggerDrawSound();
 		updateScreen();
 
@@ -684,6 +687,17 @@ void RivenGraphics::updateEffects() {
 	if (_fliesEffect) {
 		_fliesEffect->update();
 	}
+}
+
+void RivenGraphics::copySystemRectToScreen(const Common::Rect &rect) {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_mainScreen->copyRectToSurface(*screen, rect.left, rect.top, rect);
+	_effectScreen->copyRectToSurface(*screen, rect.left, rect.top, rect);
+	_vm->_system->unlockScreen();
+}
+
+void RivenGraphics::enableCardUpdateScript(bool enable) {
+	_enableCardUpdateScript = enable;
 }
 
 const FliesEffect::FliesEffectData FliesEffect::_firefliesParameters = {

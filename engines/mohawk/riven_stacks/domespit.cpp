@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_video.h"
 
 #include "common/events.h"
 
@@ -44,13 +45,15 @@ DomeSpit::DomeSpit(MohawkEngine_Riven *vm, uint16 id, const char *sliderBmpName,
 
 void DomeSpit::runDomeButtonMovie() {
 	// This command just plays the video of the button moving down and up.
-	_vm->_video->playMovieBlockingRiven(2);
+	// The original displayed images of the button going down
+	RivenVideo *video = _vm->_video->openSlot(2);
+	video->playBlocking();
 }
 
 void DomeSpit::runDomeCheck() {
 	// Check if we clicked while the golden frame was showing
 
-	VideoEntryPtr video = _vm->_video->findVideoRiven(1);
+	const RivenVideo *video = _vm->_video->getSlot(1);
 	assert(video);
 
 	int32 curFrame = video->getCurFrame();

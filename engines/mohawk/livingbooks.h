@@ -27,6 +27,7 @@
 #include "mohawk/console.h"
 #include "mohawk/livingbooks_graphics.h"
 #include "mohawk/sound.h"
+#include "mohawk/video.h"
 
 #include "common/ini-file.h"
 #include "common/rect.h"

@@ -25,7 +25,6 @@
 
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
-#include "mohawk/video.h"
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -33,6 +32,7 @@
 namespace Mohawk {
 
 class RivenHotspot;
+struct MLSTRecord;
 
 /**
  * A game view
@@ -57,7 +57,7 @@ public:
 	};
 
 	/** Initialization routine used to draw a card for the first time or to refresh it */
-	void enter();
+	void enter(bool unkMovies);
 
 	/** Run the card's leave scripts */
 	void leave();
@@ -79,6 +79,9 @@ public:
 
 	/** Get the card's sound description with the specified index */
 	SLSTRecord getSound(uint16 index) const;
+
+	/** Play the card's movie with the specified index */
+	void playMovie(uint16 index, bool queue = false);
 
 	/** Get the card's movie description with the specified index */
 	MLSTRecord getMovie(uint16 index) const;
@@ -175,6 +178,18 @@ private:
 	Common::Array<MLSTRecord> _movieList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
+};
+
+struct MLSTRecord {
+	uint16 index;
+	uint16 movieID;
+	uint16 playbackSlot;
+	uint16 left;
+	uint16 top;
+	uint16 u0[3];
+	uint16 loop;
+	uint16 volume;
+	uint16 u1;
 };
 
 /**

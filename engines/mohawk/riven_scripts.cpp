@@ -27,7 +27,7 @@
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
 #include "mohawk/riven_stack.h"
-#include "mohawk/video.h"
+#include "mohawk/riven_video.h"
 #include "common/memstream.h"
 
 #include "common/debug-channels.h"
@@ -509,9 +509,9 @@ void RivenSimpleCommand::incrementVariable(uint16 op, uint16 argc, uint16 *argv)
 
 // Command 28: disable a movie
 void RivenSimpleCommand::disableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
+	RivenVideo *video = _vm->_video->openSlot(argv[0]);
 	if (video)
-		video->setEnabled(false);
+		video->disable();
 }
 
 // Command 29: disable all movies
@@ -521,26 +521,29 @@ void RivenSimpleCommand::disableAllMovies(uint16 op, uint16 argc, uint16 *argv) 
 
 // Command 31: enable a movie
 void RivenSimpleCommand::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
-	if (video)
-		video->setEnabled(true);
+	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+	video->enable();
 }
 
 // Command 32: play foreground movie - blocking (movie_id)
 void RivenSimpleCommand::playMovieBlocking(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_cursor->hideCursor();
-	_vm->_video->playMovieBlockingRiven(argv[0]);
-	_vm->_cursor->showCursor();
+	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+	video->setLooping(false);
+	video->enable();
+	video->playBlocking();
 }
 
 // Command 33: play background movie - nonblocking (movie_id)
 void RivenSimpleCommand::playMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->playMovieRiven(argv[0]);
+	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+	video->enable();
+	video->play();
 }
 
 // Command 34: stop a movie
 void RivenSimpleCommand::stopMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->stopMovieRiven(argv[0]);
+	RivenVideo *video = _vm->_video->openSlot(argv[0]);
+	video->stop();
 }
 
 // Command 36: unknown
@@ -611,8 +614,12 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 41: activate MLST record and play
 void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(argv[0]));
-	_vm->_video->playMovieRiven(argv[0]);
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(argv[0]);
+	activateMLST(mlstRecord);
+
+	RivenVideo *video = _vm->_video->openSlot(mlstRecord.playbackSlot);
+	video->enable();
+	video->play();
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)
@@ -644,7 +651,16 @@ void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 46: activate MLST record (movie lists)
 void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(argv[0]));
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(argv[0]);
+	activateMLST(mlstRecord);
+}
+
+void RivenSimpleCommand::activateMLST(const MLSTRecord &mlstRecord) const {
+	RivenVideo *ptr = _vm->_video->openSlot(mlstRecord.playbackSlot);
+	ptr->load(mlstRecord.movieID);
+	ptr->moveTo(mlstRecord.left, mlstRecord.top);
+	ptr->setLooping(mlstRecord.loop != 0);
+	ptr->setVolume(mlstRecord.volume);
 }
 
 Common::String RivenSimpleCommand::describe() const {

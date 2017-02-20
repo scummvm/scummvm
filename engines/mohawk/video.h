@@ -39,18 +39,6 @@ namespace Mohawk {
 
 class MohawkEngine;
 
-struct MLSTRecord {
-	uint16 index;
-	uint16 movieID;
-	uint16 code;
-	uint16 left;
-	uint16 top;
-	uint16 u0[3];
-	uint16 loop;
-	uint16 volume;
-	uint16 u1;
-};
-
 /**
  * A video monitored by the VideoManager
  */
@@ -317,14 +305,6 @@ public:
 	void stopVideos();
 	bool isVideoPlaying();
 
-	// Riven-related functions
-	void activateMLST(const MLSTRecord &mlst);
-	void clearMLST();
-	void disableAllMovies();
-	VideoEntryPtr playMovieRiven(uint16 id);
-	void playMovieBlockingRiven(uint16 id);
-	VideoEntryPtr findVideoRiven(uint16 id);
-	void stopMovieRiven(uint16 id);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
 
 	// Handle functions
@@ -336,9 +316,6 @@ public:
 
 private:
 	MohawkEngine *_vm;
-
-	// Riven-related variables
-	Common::Array<MLSTRecord> _mlstRecords;
 
 	// Keep tabs on any videos playing
 	typedef Common::List<VideoEntryPtr> VideoList;

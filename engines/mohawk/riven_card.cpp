@@ -25,6 +25,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_stack.h"
+#include "mohawk/riven_video.h"
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
@@ -52,7 +53,7 @@ RivenCard::~RivenCard() {
 
 	_vm->_gfx->clearWaterEffects();
 	_vm->_gfx->clearFliesEffect();
-	_vm->_video->stopVideos();
+	_vm->_video->closeVideos();
 }
 
 void RivenCard::loadCardResource(uint16 id) {
@@ -65,7 +66,7 @@ void RivenCard::loadCardResource(uint16 id) {
 	delete inStream;
 }
 
-void RivenCard::enter() {
+void RivenCard::enter(bool unkMovies) {
 	setCurrentCardVariable();
 
 	_vm->_activatedPLST = false;
@@ -516,7 +517,7 @@ void RivenCard::dump() const {
 	for (uint i = 0; i < _movieList.size(); i++) {
 		debug("== Movie %d ==", _movieList[i].index);
 		debug("movieID: %d", _movieList[i].movieID);
-		debug("code: %d", _movieList[i].code);
+		debug("playbackSlot: %d", _movieList[i].playbackSlot);
 		debug("left: %d", _movieList[i].left);
 		debug("top: %d", _movieList[i].top);
 		debug("u0[0]: %d", _movieList[i].u0[0]);
@@ -539,7 +540,7 @@ void RivenCard::loadCardMovieList(uint16 id) {
 		MLSTRecord &mlstRecord = _movieList[i];
 		mlstRecord.index = mlstStream->readUint16BE();
 		mlstRecord.movieID = mlstStream->readUint16BE();
-		mlstRecord.code = mlstStream->readUint16BE();
+		mlstRecord.playbackSlot = mlstStream->readUint16BE();
 		mlstRecord.left = mlstStream->readUint16BE();
 		mlstRecord.top = mlstStream->readUint16BE();
 
@@ -569,6 +570,13 @@ MLSTRecord RivenCard::getMovie(uint16 index) const {
 	}
 
 	error("Could not find movie %d in card %d", index, _id);
+}
+
+void RivenCard::playMovie(uint16 index, bool queue) {
+	if (index > 0 && index <= _movieList.size()) {
+		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1, kRivenCommandActivateMLSTAndPlay, 1, index);
+		_vm->_scriptMan->runScript(script, queue);
+	}
 }
 
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :

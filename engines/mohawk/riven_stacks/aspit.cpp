@@ -27,6 +27,7 @@
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_inventory.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_video.h"
 
 #include "common/translation.h"
 
@@ -38,27 +39,27 @@ namespace RivenStacks {
 ASpit::ASpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackAspit) {
 
-	REGISTER_COMMAND(ASpit, xastartupbtnhide);
-	REGISTER_COMMAND(ASpit, xasetupcomplete);
-	REGISTER_COMMAND(ASpit, xaatrusopenbook);
-	REGISTER_COMMAND(ASpit, xaatrusbookback);
-	REGISTER_COMMAND(ASpit, xaatrusbookprevpage);
-	REGISTER_COMMAND(ASpit, xaatrusbooknextpage);
-	REGISTER_COMMAND(ASpit, xacathopenbook);
-	REGISTER_COMMAND(ASpit, xacathbookback);
-	REGISTER_COMMAND(ASpit, xacathbookprevpage);
-	REGISTER_COMMAND(ASpit, xacathbooknextpage);
-	REGISTER_COMMAND(ASpit, xtrapbookback);
-	REGISTER_COMMAND(ASpit, xatrapbookclose);
-	REGISTER_COMMAND(ASpit, xatrapbookopen);
-	REGISTER_COMMAND(ASpit, xarestoregame);
-	REGISTER_COMMAND(ASpit, xadisablemenureturn);
-	REGISTER_COMMAND(ASpit, xaenablemenureturn);
-	REGISTER_COMMAND(ASpit, xalaunchbrowser);
-	REGISTER_COMMAND(ASpit, xadisablemenuintro);
-	REGISTER_COMMAND(ASpit, xaenablemenuintro);
-	REGISTER_COMMAND(ASpit, xademoquit);
-	REGISTER_COMMAND(ASpit, xaexittomain);
+	REGISTER_COMMAND(ASpit, xastartupbtnhide);    // Inaccurate but sufficient
+	REGISTER_COMMAND(ASpit, xasetupcomplete);     // Inaccurate but sufficient
+	REGISTER_COMMAND(ASpit, xaatrusopenbook);     // Done
+	REGISTER_COMMAND(ASpit, xaatrusbookback);     // Done
+	REGISTER_COMMAND(ASpit, xaatrusbookprevpage); // Done
+	REGISTER_COMMAND(ASpit, xaatrusbooknextpage); // Done
+//	REGISTER_COMMAND(ASpit, xacathopenbook);
+//	REGISTER_COMMAND(ASpit, xacathbookback);
+//	REGISTER_COMMAND(ASpit, xacathbookprevpage);
+//	REGISTER_COMMAND(ASpit, xacathbooknextpage);
+//	REGISTER_COMMAND(ASpit, xtrapbookback);
+//	REGISTER_COMMAND(ASpit, xatrapbookclose);
+//	REGISTER_COMMAND(ASpit, xatrapbookopen);
+	REGISTER_COMMAND(ASpit, xarestoregame);       // Done
+//	REGISTER_COMMAND(ASpit, xadisablemenureturn);
+//	REGISTER_COMMAND(ASpit, xaenablemenureturn);
+//	REGISTER_COMMAND(ASpit, xalaunchbrowser);
+//	REGISTER_COMMAND(ASpit, xadisablemenuintro);
+//	REGISTER_COMMAND(ASpit, xaenablemenuintro);
+//	REGISTER_COMMAND(ASpit, xademoquit);
+//	REGISTER_COMMAND(ASpit, xaexittomain);
 }
 
 void ASpit::xastartupbtnhide(uint16 argc, uint16 *argv) {
@@ -69,8 +70,9 @@ void ASpit::xastartupbtnhide(uint16 argc, uint16 *argv) {
 void ASpit::xasetupcomplete(uint16 argc, uint16 *argv) {
 	// The original game sets an ini entry to disable the setup button and use the
 	// start button only. It's safe to ignore this part of the command.
-	_vm->_sound->stopSound();
-	_vm->changeToCard(1);
+	uint16 menuCardId = getCardStackId(0xE2E);
+	RivenScriptPtr goToMenuScript = _vm->_scriptMan->createScriptFromData(1, kRivenCommandChangeCard, 1, menuCardId);
+	_vm->_scriptMan->runScript(goToMenuScript, false);
 }
 
 void ASpit::xaatrusopenbook(uint16 argc, uint16 *argv) {
@@ -116,9 +118,7 @@ bool ASpit::pageTurn(RivenTransition transition) {
 	else
 		soundName = "aPage2";
 
-	Common::String fullSoundName = Common::String::format("%d_%s_1", _vm->getCard()->getId(), soundName);
-
-	_vm->_sound->playSound(fullSoundName, 51, true);
+	_vm->_sound->playCardSound(soundName, 51, true);
 
 	// Now update the screen :)
 	_vm->_gfx->scheduleTransition(transition);

@@ -23,6 +23,7 @@
 #ifndef RIVEN_STACK_H
 #define RIVEN_STACK_H
 
+#include "common/keyboard.h"
 #include "common/hash-str.h"
 #include "common/ptr.h"
 #include "common/rect.h"
@@ -129,13 +130,22 @@ public:
 	/** Force the left mouse button to be considered unpressed until the next mouse click */
 	void mouseForceUp();
 
+	/** Handle a key press event */
+	void onKeyPressed(const Common::KeyCode keyCode);
+
+	/** Get the pressed keyboard key if any */
+	Common::KeyCode keyGetPressed() const;
+
+	/** Force the keyboard to be considered unpressed until the next key press */
+	void keyForceUp();
+
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" effect
 
 	// TODO: Misc stuff move elsewhere
 	uint16 getComboDigit(uint32 correctCombo, uint32 digit);
 	void runDemoBoundaryDialog();
-	void runEndGame(uint16 video, uint32 delay);
+	void runEndGame(uint16 videoCode, uint32 delay);
 	void runCredits(uint16 video, uint32 delay);
 
 protected:
@@ -170,6 +180,8 @@ private:
 	Common::Array<uint32> _cardIdMap;
 
 	CommandsMap _commands;
+
+	Common::KeyCode _keyPressed;
 
 	bool _mouseIsDown;
 	Common::Point _mousePosition;

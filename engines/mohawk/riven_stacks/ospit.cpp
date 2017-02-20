@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_video.h"
 
 #include "common/events.h"
 
@@ -35,14 +36,14 @@ namespace RivenStacks {
 OSpit::OSpit(MohawkEngine_Riven *vm) :
 		RivenStack(vm, kStackOspit) {
 
-	REGISTER_COMMAND(OSpit, xorollcredittime);
-	REGISTER_COMMAND(OSpit, xbookclick);
-	REGISTER_COMMAND(OSpit, xooffice30_closebook);
-	REGISTER_COMMAND(OSpit, xobedroom5_closedrawer);
-	REGISTER_COMMAND(OSpit, xogehnopenbook);
-	REGISTER_COMMAND(OSpit, xogehnbookprevpage);
-	REGISTER_COMMAND(OSpit, xogehnbooknextpage);
-	REGISTER_COMMAND(OSpit, xgwatch);
+//	REGISTER_COMMAND(OSpit, xorollcredittime);
+//	REGISTER_COMMAND(OSpit, xbookclick);
+//	REGISTER_COMMAND(OSpit, xooffice30_closebook);
+//	REGISTER_COMMAND(OSpit, xobedroom5_closedrawer);
+//	REGISTER_COMMAND(OSpit, xogehnopenbook);
+//	REGISTER_COMMAND(OSpit, xogehnbookprevpage);
+//	REGISTER_COMMAND(OSpit, xogehnbooknextpage);
+//	REGISTER_COMMAND(OSpit, xgwatch);
 }
 
 void OSpit::xorollcredittime(uint16 argc, uint16 *argv) {
@@ -72,7 +73,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();
 
 	// Let's hook onto our video
-	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
+	RivenVideo *video = _vm->_video->getSlot(argv[0]);
 
 	// Convert from the standard QuickTime base time to milliseconds
 	// The values are in terms of 1/600 of a second.
@@ -93,8 +94,8 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 
 	// Just let the video play while we wait until Gehn opens the trap book for us
 	while (video->getTime() < startTime && !_vm->shouldQuit()) {
-		if (_vm->_video->updateMovies())
-			_vm->_system->updateScreen();
+		_vm->_video->updateMovies();
+		_vm->_system->updateScreen();
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event))
@@ -118,7 +119,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 	// OK, Gehn has opened the trap book and has asked us to go in. Let's watch
 	// and see what the player will do...
 	while (video->getTime() < endTime && !_vm->shouldQuit()) {
-		bool updateScreen = _vm->_video->updateMovies();
+		_vm->_video->updateMovies();
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -128,18 +129,18 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 						_vm->_cursor->setCursor(kRivenOpenHandCursor);
 					else
 						_vm->_cursor->setCursor(kRivenMainCursor);
-					updateScreen = true;
 					break;
 				case Common::EVENT_LBUTTONUP:
 					if (hotspotRect.contains(_vm->_system->getEventManager()->getMousePos())) {
 						// OK, we've used the trap book! We go for ride lady!
 						_vm->_scriptMan->stopAllScripts();                  // Stop all running scripts (so we don't remain in the cage)
-						_vm->_video->stopVideos();                          // Stop all videos
+						_vm->_video->closeVideos();                          // Stop all videos
 						_vm->_cursor->setCursor(kRivenHideCursor);          // Hide the cursor
 						_vm->getCard()->drawPicture(3);                  // Black out the screen
 						_vm->_sound->playSound(0);                          // Play the link sound
-						_vm->_video->activateMLST(_vm->getCard()->getMovie(7));    // Activate Gehn Link Video
-						_vm->_video->playMovieBlockingRiven(1);             // Play Gehn Link Video
+						_vm->getCard()->playMovie(7);    // Activate Gehn Link Video
+						RivenVideo *linkVideo = _vm->_video->openSlot(1);             // Play Gehn Link Video
+						linkVideo->playBlocking();
 						_vm->_vars["agehn"] = 4;                            // Set Gehn to the trapped state
 						_vm->_vars["atrapbook"] = 1;                        // We've got the trap book again
 						_vm->_sound->playSound(0);                          // Play the link sound again
@@ -152,8 +153,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 			}
 		}
 
-		if (updateScreen && !_vm->shouldQuit())
-			_vm->_system->updateScreen();
+		_vm->_system->updateScreen();
 
 		_vm->_system->delayMillis(10);
 	}
@@ -176,7 +176,7 @@ void OSpit::xbookclick(uint16 argc, uint16 *argv) {
 	}
 
 	// There was no click, so just play the rest of the video.
-	_vm->_video->waitUntilMovieEnds(video);
+	video->playBlocking();
 }
 
 void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
@@ -189,7 +189,8 @@ void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
 	book = 0;
 
 	// Play the movie
-	_vm->_video->playMovieBlockingRiven(1);
+	RivenVideo *video = _vm->_video->openSlot(1);
+	video->playBlocking();
 
 	// Set the hotspots into their correct states
 	RivenHotspot *closeBook = _vm->getCard()->getHotspotByName("closeBook");
@@ -207,7 +208,8 @@ void OSpit::xooffice30_closebook(uint16 argc, uint16 *argv) {
 
 void OSpit::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
 	// Close the drawer if open when clicking on the journal.
-	_vm->_video->playMovieBlockingRiven(2);
+	RivenVideo *video = _vm->_video->openSlot(2);
+	video->playBlocking();
 	_vm->_vars["ostanddrawer"] = 0;
 }
 
@@ -278,8 +280,9 @@ void OSpit::xgwatch(uint16 argc, uint16 *argv) {
 	}
 
 	// Now play the video for the watch
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(1));
-	_vm->_video->playMovieBlockingRiven(1);
+	_vm->getCard()->playMovie(1);
+	RivenVideo *watchVideo = _vm->_video->openSlot(1);
+	watchVideo->playBlocking();
 
 	// And, finally, refresh
 	_vm->refreshCard();

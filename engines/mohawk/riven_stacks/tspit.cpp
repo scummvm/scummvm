@@ -27,6 +27,7 @@
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_inventory.h"
+#include "mohawk/riven_video.h"
 
 #include "common/events.h"
 
@@ -36,29 +37,32 @@ namespace RivenStacks {
 TSpit::TSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackTspit, "tsliders.190", "tsliderbg.190") {
 
-	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown);
-	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);
-	REGISTER_COMMAND(TSpit, xtisland390_covercombo);
-	REGISTER_COMMAND(TSpit, xtatrusgivesbooks);
-	REGISTER_COMMAND(TSpit, xtchotakesbook);
-	REGISTER_COMMAND(TSpit, xthideinventory);
-	REGISTER_COMMAND(TSpit, xt7500_checkmarbles);
-	REGISTER_COMMAND(TSpit, xt7600_setupmarbles);
-	REGISTER_COMMAND(TSpit, xt7800_setup);
-	REGISTER_COMMAND(TSpit, xdrawmarbles);
-	REGISTER_COMMAND(TSpit, xtakeit);
-	REGISTER_COMMAND(TSpit, xtscpbtn);
-	REGISTER_COMMAND(TSpit, xtisland4990_domecheck);
-	REGISTER_COMMAND(TSpit, xtisland5056_opencard);
-	REGISTER_COMMAND(TSpit, xtisland5056_resetsliders);
-	REGISTER_COMMAND(TSpit, xtisland5056_slidermd);
-	REGISTER_COMMAND(TSpit, xtisland5056_slidermw);
-	REGISTER_COMMAND(TSpit, xtatboundary);
+	REGISTER_COMMAND(TSpit, xtexterior300_telescopedown); // TODO: Check endgame
+	REGISTER_COMMAND(TSpit, xtexterior300_telescopeup);   // TODO: Check endgame
+	REGISTER_COMMAND(TSpit, xtisland390_covercombo); // Done
+	REGISTER_COMMAND(TSpit, xtatrusgivesbooks);      // Done
+	REGISTER_COMMAND(TSpit, xtchotakesbook);         // Done
+	REGISTER_COMMAND(TSpit, xthideinventory);        // Done
+//	REGISTER_COMMAND(TSpit, xt7500_checkmarbles);
+//	REGISTER_COMMAND(TSpit, xt7600_setupmarbles);
+//	REGISTER_COMMAND(TSpit, xt7800_setup);
+//	REGISTER_COMMAND(TSpit, xdrawmarbles);
+//	REGISTER_COMMAND(TSpit, xtakeit);
+//	REGISTER_COMMAND(TSpit, xtscpbtn);
+//	REGISTER_COMMAND(TSpit, xtisland4990_domecheck);
+//	REGISTER_COMMAND(TSpit, xtisland5056_opencard);
+//	REGISTER_COMMAND(TSpit, xtisland5056_resetsliders);
+//	REGISTER_COMMAND(TSpit, xtisland5056_slidermd);
+//	REGISTER_COMMAND(TSpit, xtisland5056_slidermw);
+//	REGISTER_COMMAND(TSpit, xtatboundary);
 }
 
 void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	// First, show the button movie
-	_vm->_video->playMovieBlockingRiven(3);
+	RivenVideo *buttonVideo = _vm->_video->openSlot(3);
+	buttonVideo->seek(0);
+	buttonVideo->enable();
+	buttonVideo->playBlocking();
 
 	// Don't do anything else if the telescope power is off
 	if (_vm->_vars["ttelevalve"] == 0)
@@ -67,61 +71,41 @@ void TSpit::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 	uint32 &telescopePos = _vm->_vars["ttelescope"];
 	uint32 &telescopeCover = _vm->_vars["ttelecover"];
 
-	if (telescopePos == 1) {
-		// We're at the bottom, which means one of two things can happen...
-		if (telescopeCover == 1 && _vm->_vars["ttelepin"] == 1) {
-			// ...if the cover is open and the pin is up, the game is now over.
-			if (_vm->_vars["pcage"] == 2) {
-				// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
-				// And now we fall back to Earth... all the way...
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(8));
-				runEndGame(8, 5000);
-			} else if (_vm->_vars["agehn"] == 4) {
-				// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
-				// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(9));
-				runEndGame(9, 5000);
-			} else if (_vm->_vars["atrapbook"] == 1) {
-				// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
-				// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
-				// and you have just set Gehn free from Riven, not to mention you're dead.
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(10));
-				runEndGame(10, 5000);
-			} else {
-				// The impossible ending: You don't have Catherine's journal and yet you were somehow
-				// able to open the hatch on the telescope. The game provides an ending for those who
-				// cheat, load a saved game with the combo, or just guess the telescope combo. Atrus
-				// doesn't come and you just fall into the fissure.
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(11));
-				runEndGame(11, 5000);
-			}
-		} else {
-			// ...the telescope can't move down anymore.
-			// Play the sound of not being able to move
-			_vm->_cursor->setCursor(kRivenHideCursor);
-			_vm->_system->updateScreen();
-			_vm->_sound->playSound(13);
-		}
-	} else {
+	if (telescopePos != 1) {
 		// We're not at the bottom, and we can move down again
 
 		// Play a piece of the moving down movie
-		static const uint32 timeIntervals[] = { 4320, 3440, 2560, 1760, 880, 0 };
+		static const uint32 timeIntervals[] = { 4320, 3440, 2660, 1760, 880, 0 };
 		uint16 movieCode = telescopeCover ? 1 : 2;
-		VideoEntryPtr handle = _vm->_video->playMovieRiven(movieCode);
-		handle->setBounds(Audio::Timestamp(0, timeIntervals[telescopePos], 600), Audio::Timestamp(0, timeIntervals[telescopePos - 1], 600));
-		_vm->_sound->playSound(14); // Play the moving sound
-		_vm->_video->waitUntilMovieEnds(handle);
+		RivenVideo *video = _vm->_video->openSlot(movieCode);
+		video->enable();
+		video->setBounds(timeIntervals[telescopePos], timeIntervals[telescopePos - 1] + 7);
+		_vm->_sound->playCardSound("tTeleMove"); // Play the moving sound
+		video->playBlocking();
 
 		// Now move the telescope down a position and refresh
 		telescopePos--;
-		_vm->refreshCard();
+		_vm->getCard()->enter(false);
+		return;
+	}
+
+	// We're at the bottom, which means one of two things can happen...
+	if (telescopeCover == 1 && _vm->_vars["ttelepin"] == 1) {
+		// ...if the cover is open and the pin is up, the game is now over.
+		xtopenfissure();
+	} else {
+		// ...the telescope can't move down anymore.
+		// Play the sound of not being able to move
+		_vm->_sound->playCardSound("tTelDnMore");
 	}
 }
 
 void TSpit::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// First, show the button movie
-	_vm->_video->playMovieBlockingRiven(3);
+	RivenVideo *buttonVideo = _vm->_video->openSlot(3);
+	buttonVideo->seek(0);
+	buttonVideo->enable();
+	buttonVideo->playBlocking();
 
 	// Don't do anything else if the telescope power is off
 	if (_vm->_vars["ttelevalve"] == 0)
@@ -132,23 +116,49 @@ void TSpit::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Check if we can't move up anymore
 	if (telescopePos == 5) {
 		// Play the sound of not being able to move
-		_vm->_cursor->setCursor(kRivenHideCursor);
-		_vm->_system->updateScreen();
-		_vm->_sound->playSound(13);
+		_vm->_sound->playCardSound("tTelDnMore");
 		return;
 	}
 
 	// Play a piece of the moving up movie
 	static const uint32 timeIntervals[] = { 0, 800, 1680, 2560, 3440, 4320 };
 	uint16 movieCode = _vm->_vars["ttelecover"] ? 4 : 5;
-	VideoEntryPtr handle = _vm->_video->playMovieRiven(movieCode);
-	handle->setBounds(Audio::Timestamp(0, timeIntervals[telescopePos - 1], 600), Audio::Timestamp(0, timeIntervals[telescopePos], 600));
-	_vm->_sound->playSound(14); // Play the moving sound
-	_vm->_video->waitUntilMovieEnds(handle);
+	RivenVideo *video = _vm->_video->openSlot(movieCode);
+	video->enable();
+	video->setBounds(timeIntervals[telescopePos - 1], timeIntervals[telescopePos] + 7);
+	_vm->_sound->playCardSound("tTeleMove"); // Play the moving sound
+	video->playBlocking();
 
 	// Now move the telescope up a position and refresh
 	telescopePos++;
-	_vm->refreshCard();
+	_vm->getCard()->enter(false);
+}
+
+void TSpit::xtopenfissure() {
+	if (_vm->_vars["pcage"] == 2) {
+		// The best ending: Catherine is free, Gehn is trapped, Atrus comes to rescue you.
+		// And now we fall back to Earth... all the way...
+		_vm->getCard()->playMovie(8);
+		runEndGame(8, 5000);
+	} else if (_vm->_vars["agehn"] == 4) {
+		// The ok ending: Catherine is still trapped, Gehn is trapped, Atrus comes to rescue you.
+		// Nice going! Catherine and the islanders are all dead now! Just go back to your home...
+		_vm->getCard()->playMovie(9);
+		runEndGame(9, 5000);
+	} else if (_vm->_vars["atrapbook"] == 1) {
+		// The bad ending: Catherine is trapped, Gehn is free, Atrus gets shot by Gehn,
+		// And then you get shot by Cho. Nice going! Catherine and the islanders are dead
+		// and you have just set Gehn free from Riven, not to mention you're dead.
+		_vm->getCard()->playMovie(10);
+		runEndGame(10, 5000);
+	} else {
+		// The impossible ending: You don't have Catherine's journal and yet you were somehow
+		// able to open the hatch on the telescope. The game provides an ending for those who
+		// cheat, load a saved game with the combo, or just guess the telescope combo. Atrus
+		// doesn't come and you just fall into the fissure.
+		_vm->getCard()->playMovie(11);
+		runEndGame(11, 5000);
+	}
 }
 
 void TSpit::xtisland390_covercombo(uint16 argc, uint16 *argv) {
@@ -169,20 +179,14 @@ void TSpit::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 // Atrus' Journal and Trap Book are added to inventory
 void TSpit::xtatrusgivesbooks(uint16 argc, uint16 *argv) {
 	// Give the player Atrus' Journal and the Trap book
-	_vm->_vars["aatrusbook"] = 1;
-	_vm->_vars["atrapbook"] = 1;
 }
 
 // Trap Book is removed from inventory
 void TSpit::xtchotakesbook(uint16 argc, uint16 *argv) {
-	// And now Cho takes the trap book. Sure, this isn't strictly
-	// necessary to add and them remove the trap book... but it
-	// seems better to do this ;)
-	_vm->_vars["atrapbook"] = 0;
+	// And now Cho takes the trap book
 }
 
 void TSpit::xthideinventory(uint16 argc, uint16 *argv) {
-	_vm->_inventory->hide();
 }
 
 // Marble Puzzle related constants

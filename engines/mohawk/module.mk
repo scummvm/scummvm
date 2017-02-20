@@ -61,6 +61,7 @@ MODULE_OBJS += \
 	riven_sound.o \
 	riven_stack.o \
 	riven_vars.o \
+	riven_video.o \
 	riven_stacks/aspit.o \
 	riven_stacks/bspit.o \
 	riven_stacks/domespit.o \

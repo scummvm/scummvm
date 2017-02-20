@@ -26,6 +26,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
+#include "mohawk/riven_video.h"
 
 #include "common/events.h"
 
@@ -35,25 +36,25 @@ namespace RivenStacks {
 BSpit::BSpit(MohawkEngine_Riven *vm) :
 		DomeSpit(vm, kStackBspit, "bSliders.190", "bSliderBG.190") {
 
-	REGISTER_COMMAND(BSpit, xblabopenbook);
-	REGISTER_COMMAND(BSpit, xblabbookprevpage);
-	REGISTER_COMMAND(BSpit, xblabbooknextpage);
-	REGISTER_COMMAND(BSpit, xsoundplug);
-	REGISTER_COMMAND(BSpit, xbchangeboiler);
-	REGISTER_COMMAND(BSpit, xbupdateboiler);
-	REGISTER_COMMAND(BSpit, xbsettrap);
-	REGISTER_COMMAND(BSpit, xbcheckcatch);
-	REGISTER_COMMAND(BSpit, xbait);
-	REGISTER_COMMAND(BSpit, xbfreeytram);
-	REGISTER_COMMAND(BSpit, xbaitplate);
-	REGISTER_COMMAND(BSpit, xbisland190_opencard);
-	REGISTER_COMMAND(BSpit, xbisland190_resetsliders);
-	REGISTER_COMMAND(BSpit, xbisland190_slidermd);
-	REGISTER_COMMAND(BSpit, xbisland190_slidermw);
-	REGISTER_COMMAND(BSpit, xbscpbtn);
-	REGISTER_COMMAND(BSpit, xbisland_domecheck);
-	REGISTER_COMMAND(BSpit, xvalvecontrol);
-	REGISTER_COMMAND(BSpit, xbchipper);
+//	REGISTER_COMMAND(BSpit, xblabopenbook);
+//	REGISTER_COMMAND(BSpit, xblabbookprevpage);
+//	REGISTER_COMMAND(BSpit, xblabbooknextpage);
+//	REGISTER_COMMAND(BSpit, xsoundplug);
+//	REGISTER_COMMAND(BSpit, xbchangeboiler);
+//	REGISTER_COMMAND(BSpit, xbupdateboiler);
+//	REGISTER_COMMAND(BSpit, xbsettrap);
+//	REGISTER_COMMAND(BSpit, xbcheckcatch);
+//	REGISTER_COMMAND(BSpit, xbait);
+//	REGISTER_COMMAND(BSpit, xbfreeytram);
+//	REGISTER_COMMAND(BSpit, xbaitplate);
+//	REGISTER_COMMAND(BSpit, xbisland190_opencard);
+//	REGISTER_COMMAND(BSpit, xbisland190_resetsliders);
+//	REGISTER_COMMAND(BSpit, xbisland190_slidermd);
+//	REGISTER_COMMAND(BSpit, xbisland190_slidermw);
+//	REGISTER_COMMAND(BSpit, xbscpbtn);
+//	REGISTER_COMMAND(BSpit, xbisland_domecheck);
+//	REGISTER_COMMAND(BSpit, xvalvecontrol);
+//	REGISTER_COMMAND(BSpit, xbchipper);
 }
 
 void BSpit::xblabopenbook(uint16 argc, uint16 *argv) {
@@ -137,59 +138,59 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 	uint32 platform = _vm->_vars["bblrgrt"];
 
 	// Stop any background videos
-	_vm->_video->stopVideos();
+	_vm->_video->closeVideos();
 
 	if (argv[0] == 1) {
 		// Water is filling/draining from the boiler
 		if (water == 0) {
 			if (platform == 1)
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(12));
+				_vm->getCard()->playMovie(12);
 			else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(10));
+				_vm->getCard()->playMovie(10);
 		} else if (heat == 1) {
 			if (platform == 1)
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(22));
+				_vm->getCard()->playMovie(22);
 			else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(19));
+			_vm->getCard()->playMovie(19);
 		} else {
 			if (platform == 1)
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(16));
+				_vm->getCard()->playMovie(16);
 			else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(13));
+			_vm->getCard()->playMovie(13);
 		}
 	} else if (argv[0] == 2 && water != 0) {
 		if (heat == 1) {
 			// Turning on the heat
 			if (platform == 1)
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(23));
+				_vm->getCard()->playMovie(23);
 			else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(20));
+			_vm->getCard()->playMovie(20);
 		} else {
 			// Turning off the heat
 			if (platform == 1)
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(18));
+				_vm->getCard()->playMovie(18);
 			else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(15));
+			_vm->getCard()->playMovie(15);
 		}
 	} else if (argv[0] == 3) {
 		if (platform == 1) {
 			// Lowering the platform
 			if (water == 1) {
 				if (heat == 1)
-					_vm->_video->activateMLST(_vm->getCard()->getMovie(24));
+					_vm->getCard()->playMovie(24);
 				else
-					_vm->_video->activateMLST(_vm->getCard()->getMovie(17));
+				_vm->getCard()->playMovie(17);
 			} else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(11));
+				_vm->getCard()->playMovie(11);
 		} else {
 			// Raising the platform
 			if (water == 1) {
 				if (heat == 1)
-					_vm->_video->activateMLST(_vm->getCard()->getMovie(21));
+					_vm->getCard()->playMovie(21);
 				else
-					_vm->_video->activateMLST(_vm->getCard()->getMovie(14));
+				_vm->getCard()->playMovie(14);
 			} else
-				_vm->_video->activateMLST(_vm->getCard()->getMovie(9));
+				_vm->getCard()->playMovie(9);
 		}
 	}
 
@@ -198,26 +199,28 @@ void BSpit::xbchangeboiler(uint16 argc, uint16 *argv) {
 	else if (argv[0] == 2)
 		_vm->getCard()->playSound(1);
 
-	_vm->_cursor->setCursor(kRivenHideCursor);
-	_vm->_video->playMovieBlockingRiven(11);
+	RivenVideo *video = _vm->_video->openSlot(11);
+	video->playBlocking();
 }
 
 void BSpit::xbupdateboiler(uint16 argc, uint16 *argv) {
 	if (_vm->_vars["bheat"] != 0) {
 		if (_vm->_vars["bblrgrt"] == 0) {
-			_vm->_video->activateMLST(_vm->getCard()->getMovie(8));
-			_vm->_video->playMovieRiven(8);
+			_vm->getCard()->playMovie(8);
 		} else {
-			_vm->_video->activateMLST(_vm->getCard()->getMovie(7));
-			_vm->_video->playMovieRiven(7);
+			_vm->getCard()->playMovie(7);
 		}
 	} else {
-		VideoEntryPtr video = _vm->_video->findVideoRiven(7);
-		if (video)
-			video->setEnabled(false);
-		video = _vm->_video->findVideoRiven(8);
-		if (video)
-			video->setEnabled(false);
+		RivenVideo *video = _vm->_video->getSlot(7);
+		if (video) {
+			video->disable();
+			video->stop();
+		}
+		video = _vm->_video->getSlot(8);
+		if (video) {
+			video->disable();
+			video->stop();
+		}
 	}
 }
 
@@ -324,17 +327,22 @@ void BSpit::xbfreeytram(uint16 argc, uint16 *argv) {
 			mlstId = 12;
 			break;
 		default:
+			// The original did rand(13, 14)
 			mlstId = _vm->_rnd->getRandomNumberRng(13, 15);
 			break;
 	}
 
-	// Activate the MLST and play the video
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(mlstId));
-	_vm->_video->playMovieBlockingRiven(11);
+	// Play the video
+	_vm->getCard()->playMovie(mlstId);
+	RivenVideo *first = _vm->_video->openSlot(11);
+	first->playBlocking();
 
 	// Now play the second movie
-	_vm->_video->activateMLST(_vm->getCard()->getMovie(mlstId + 5));
-	_vm->_video->playMovieBlockingRiven(12);
+	_vm->getCard()->playMovie(mlstId + 5);
+	RivenVideo *second = _vm->_video->openSlot(12);
+	second->playBlocking();
+
+	_vm->getCard()->drawPicture(4);
 }
 
 void BSpit::xbaitplate(uint16 argc, uint16 *argv) {
@@ -432,27 +440,31 @@ void BSpit::xvalvecontrol(uint16 argc, uint16 *argv) {
 						valve = 1;
 						_vm->_cursor->setCursor(kRivenHideCursor);
 						_vm->_system->updateScreen();
-						_vm->_video->playMovieBlockingRiven(2);
+						RivenVideo *video = _vm->_video->openSlot(2);
+						video->playBlocking();
 						_vm->refreshCard();
 					} else if (valve == 1) {
 						if (changeX >= 0 && changeY >= 10) {
 							valve = 0;
 							_vm->_cursor->setCursor(kRivenHideCursor);
 							_vm->_system->updateScreen();
-							_vm->_video->playMovieBlockingRiven(3);
+							RivenVideo *video = _vm->_video->openSlot(3);
+							video->playBlocking();
 							_vm->refreshCard();
 						} else if (changeX <= -10 && changeY <= 10) {
 							valve = 2;
 							_vm->_cursor->setCursor(kRivenHideCursor);
 							_vm->_system->updateScreen();
-							_vm->_video->playMovieBlockingRiven(1);
+							RivenVideo *video = _vm->_video->openSlot(1);
+							video->playBlocking();
 							_vm->refreshCard();
 						}
 					} else if (valve == 2 && changeX >= 10) {
 						valve = 1;
 						_vm->_cursor->setCursor(kRivenHideCursor);
 						_vm->_system->updateScreen();
-						_vm->_video->playMovieBlockingRiven(4);
+						RivenVideo *video = _vm->_video->openSlot(4);
+						video->playBlocking();
 						_vm->refreshCard();
 					}
 					done = true;
@@ -485,8 +497,10 @@ void BSpit::xvalvecontrol(uint16 argc, uint16 *argv) {
 
 void BSpit::xbchipper(uint16 argc, uint16 *argv) {
 	// Why is this an external command....?
-	if (_vm->_vars["bvalve"] == 2)
-		_vm->_video->playMovieBlockingRiven(2);
+	if (_vm->_vars["bvalve"] == 2) {
+		RivenVideo *video = _vm->_video->openSlot(2);
+		video->playBlocking();
+	}
 }
 
 } // End of namespace RivenStacks
