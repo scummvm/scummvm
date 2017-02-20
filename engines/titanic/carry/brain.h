@@ -39,8 +39,8 @@ class CBrain : public CCarry {
 	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
 private:
 	Point _pos1;
-	int _field134;
-	int _field138;
+	bool _pieceAdded;
+	bool _perchGained;
 public:
 	CLASSDEF;
 	CBrain();
