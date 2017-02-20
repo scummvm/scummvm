@@ -136,6 +136,10 @@ OptionsDialog::~OptionsDialog() {
 }
 
 void OptionsDialog::init() {
+	_enableControlSettings = false;
+	_onscreenCheckbox = 0;
+	_touchpadCheckbox = 0;
+	_swapMenuAndBackBtnsCheckbox = 0;
 	_enableGraphicSettings = false;
 	_gfxPopUp = 0;
 	_gfxPopUpDesc = 0;
@@ -201,6 +205,29 @@ void OptionsDialog::build() {
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
+	}
+	
+	// Control options
+	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+		if (ConfMan.hasKey("onscreen_control", _domain)) {
+			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
+			if (_onscreenCheckbox != 0)
+				_onscreenCheckbox->setState(onscreenState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
+			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
+			if (_touchpadCheckbox != 0)
+				_touchpadCheckbox->setState(touchpadState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+		if (ConfMan.hasKey("swap_menu_and_back_buttons", _domain)) {
+			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
+			if (_swapMenuAndBackBtnsCheckbox != 0)
+				_swapMenuAndBackBtnsCheckbox->setState(state);
+		}
 	}
 
 	// Graphic options
@@ -380,6 +407,25 @@ void OptionsDialog::open() {
 }
 
 void OptionsDialog::apply() {
+	// Control options
+	if (_enableControlSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
+			}
+		}
+	}
+
 	// Graphic options
 	bool graphicsModeChanged = false;
 	if (_fullscreenCheckbox) {
@@ -705,7 +751,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
-
+	
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
@@ -831,6 +877,22 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedSlider->setEnabled(ena);
 	_subSpeedLabel->setEnabled(ena);
 }
+	
+	void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
+		// Show On-Screen control
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
+			_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
+		
+		// Touchpad Mouse mode
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
+			_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
+	
+		// Swap menu and back buttons
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons))
+			_swapMenuAndBackBtnsCheckbox = new CheckboxWidget(boss, prefix + "grSwapMenuAndBackBtnsCheckbox", _("Swap Menu and Back buttons"));
+		
+		_enableControlSettings = true;
+	}
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
@@ -1279,7 +1341,17 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
-
+	
+	//
+	// The control tab (currently visible only for AndroidSDL platform, visibility checking by features
+	//
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
+		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
+	    g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+		tab->addTab(_("Control"));
+		addControlControls(tab, "GlobalOptions_Control.");
+   }
+	
 	//
 	// 1) The graphics tab
 	//

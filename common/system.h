@@ -336,7 +336,22 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureOpenUrl
+		kFeatureOpenUrl	,
+		
+		/**
+		* show on-screen control
+		*/
+		kFeatureOnScreenControl,
+		
+		/**
+		* mouse emulation mode
+		*/
+		kFeatureTouchpadMode,
+			
+		/**
+		* swap menu and back buttons
+		*/
+		kFeatureSwapMenuAndBackButtons
 	};
 
 	/**

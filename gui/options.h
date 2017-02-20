@@ -86,6 +86,8 @@ protected:
 	virtual void clean();
 	void rebuild();
 
+
+	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
@@ -112,6 +114,16 @@ protected:
 	int _pathsTabId;
 
 private:
+	
+	//
+	// Control controls
+	//
+	bool _enableControlSettings;
+
+	CheckboxWidget *_touchpadCheckbox;
+	CheckboxWidget *_onscreenCheckbox;
+	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
+	
 	//
 	// Graphics controls
 	//
