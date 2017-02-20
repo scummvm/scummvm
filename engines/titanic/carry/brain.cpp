@@ -56,14 +56,16 @@ void CBrain::load(SimpleFile *file) {
 
 bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CBrainSlot *slot = dynamic_cast<CBrainSlot *>(msg->_other);
-	if (!slot) {
+	if (!slot)
 		return CCarry::UseWithOtherMsg(msg);
-	} else if (isEquals("CentralCore")) {
+
+	if (isEquals("CentralCore")) {
 		setVisible(false);
 		petMoveToHiddenRoom();
 		CAddHeadPieceMsg headpieceMsg(getName());
 		headpieceMsg.execute("CentralCoreSlot");
 	} else if (!slot->_occupied && slot->getName() != "CentralCoreSlot") {
+		// Brain card goes into vacant slot
 		setVisible(false);
 		petMoveToHiddenRoom();
 		CAddHeadPieceMsg headpieceMsg(getName());
@@ -72,6 +74,9 @@ bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		setPosition(Point(0, 0));
 		setVisible(false);
 		_pieceAdded = true;
+	} else {
+		// Trying to put brain card into an already occupied slot
+		petAddToInventory();
 	}
 
 	return true;
