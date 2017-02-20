@@ -176,9 +176,11 @@ bool CHeadSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		stopMovie();
 		loadFrame(0);
 		playMovie(0, _fieldDC, 0);
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 } // End of namespace Titanic
