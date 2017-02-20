@@ -83,6 +83,7 @@ public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Riven();
 
+	VideoManager *_video;
 	RivenSoundManager *_sound;
 	RivenGraphics *_gfx;
 	Common::RandomSource *_rnd;
@@ -126,6 +127,7 @@ private:
 	Common::SharedPtr<TimerProc> _timerProc;
 	uint32 _timerTime;
 
+	void pauseEngineIntern(bool) override;
 public:
 	// Stack/card/script funtions
 	RivenStack *constructStackById(uint16 id);

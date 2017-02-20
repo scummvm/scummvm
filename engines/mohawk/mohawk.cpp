@@ -41,13 +41,11 @@ MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc)
 	// Setup mixer
 	syncSoundSettings();
 
-	_video = 0;
 	_pauseDialog = 0;
 	_cursor = 0;
 }
 
 MohawkEngine::~MohawkEngine() {
-	delete _video;
 	delete _pauseDialog;
 	delete _cursor;
 
@@ -57,21 +55,9 @@ MohawkEngine::~MohawkEngine() {
 }
 
 Common::Error MohawkEngine::run() {
-	_video = new VideoManager(this);
 	_pauseDialog = new PauseDialog(this, _("The game is paused. Press any key to continue."));
 
 	return Common::kNoError;
-}
-
-void MohawkEngine::pauseEngineIntern(bool pause) {
-	Engine::pauseEngineIntern(pause);
-
-	if (pause) {
-		_video->pauseVideos();
-	} else {
-		_video->resumeVideos();
-		_system->updateScreen();
-	}
 }
 
 void MohawkEngine::pauseGame() {

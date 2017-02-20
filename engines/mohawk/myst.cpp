@@ -76,6 +76,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_hoverResource = nullptr;
 
 	_sound = nullptr;
+	_video = nullptr;
 	_gfx = nullptr;
 	_console = nullptr;
 	_scriptParser = nullptr;
@@ -89,6 +90,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _gfx;
+	delete _video;
 	delete _sound;
 	delete _console;
 	delete _scriptParser;
@@ -222,6 +224,7 @@ Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
 	_gfx = new MystGraphics(this);
+	_video = new VideoManager(this);
 	_sound = new Sound(this);
 	_console = new MystConsole(this);
 	_gameState = new MystGameState(this, _saveFileMan);
@@ -417,6 +420,17 @@ void MohawkEngine_Myst::pollAndDiscardEvents() {
 			default:
 				break;
 		}
+	}
+}
+
+void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+		_system->updateScreen();
 	}
 }
 
