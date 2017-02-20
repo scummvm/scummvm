@@ -937,7 +937,6 @@ L2A33:;
 	}
 
 	if ((_moving & 0x0F) == 3) {
-L2C36:;
 		setTmpFromActor();
 
 		if (!_walkDirX) {
@@ -980,7 +979,6 @@ L2C36:;
 
 	// 2ADA
 	if ((_moving & 0x0F) == 4) {
-L2CA3:;
 		setTmpFromActor();
 
 		if (!_walkDirY) {
@@ -1045,7 +1043,7 @@ L2CA3:;
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
-				goto L2C36;
+				return;
 
 			} else {
 				// 2B39
@@ -1064,7 +1062,7 @@ L2CA3:;
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
-				goto L2CA3;
+				return;
 			}
 		}
 	}
