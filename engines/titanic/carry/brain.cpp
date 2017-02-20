@@ -56,28 +56,25 @@ void CBrain::load(SimpleFile *file) {
 
 bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CBrainSlot *slot = dynamic_cast<CBrainSlot *>(msg->_other);
-	if (slot) {
-		if (slot->getName() == "CentralCore") {
-			setVisible(false);
-			petMoveToHiddenRoom();
-			CAddHeadPieceMsg headpieceMsg(getName());
-			headpieceMsg.execute("CentralCoreSlot");
-		}
-		else if (!slot->_value1 && slot->getName() == "CentralCoreSlot") {
-			setVisible(false);
-			petMoveToHiddenRoom();
-			CAddHeadPieceMsg headpieceMsg(getName());
-			headpieceMsg.execute(msg->_other);
-			playSound("z#116.wav");
-			setPosition(Point(0, 0));
-			setVisible(false);
-			_field134 = 1;
-		}
-
-		return true;
-	} else {
+	if (!slot) {
 		return CCarry::UseWithOtherMsg(msg);
+	} else if (isEquals("CentralCore")) {
+		setVisible(false);
+		petMoveToHiddenRoom();
+		CAddHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute("CentralCoreSlot");
+	} else if (!slot->_occupied && slot->getName() != "CentralCoreSlot") {
+		setVisible(false);
+		petMoveToHiddenRoom();
+		CAddHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute(msg->_other);
+		playSound("z#116.wav");
+		setPosition(Point(0, 0));
+		setVisible(false);
+		_field134 = 1;
 	}
+
+	return true;
 }
 
 bool CBrain::VisibleMsg(CVisibleMsg *msg) {
