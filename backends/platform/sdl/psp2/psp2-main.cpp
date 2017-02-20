@@ -37,9 +37,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	scePowerSetArmClockFrequency(444);
-    scePowerSetBusClockFrequency(222);
-    scePowerSetGpuClockFrequency(222);
-    scePowerSetGpuXbarClockFrequency(166);
+	scePowerSetBusClockFrequency(222);
+	scePowerSetGpuClockFrequency(222);
+	scePowerSetGpuXbarClockFrequency(166);
 	
 	// Create our OSystem instance
 	g_system = new OSystem_PSP2();

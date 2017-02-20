@@ -36,6 +36,7 @@ public:
 
 	virtual void init();
 	virtual void initBackend();
+	virtual bool hasFeature(Feature f);
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 protected:

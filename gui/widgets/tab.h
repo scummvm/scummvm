@@ -101,6 +101,8 @@ public:
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual bool handleKeyDown(Common::KeyState state);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual int getFirstVisible();
+	virtual void setFirstVisible(int tabID); 
 
 	virtual void reflowLayout();
 

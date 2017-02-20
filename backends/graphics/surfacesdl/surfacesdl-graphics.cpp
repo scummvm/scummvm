@@ -72,13 +72,6 @@ vita2d_shader *shaders[6];
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
-#ifdef PSP2
-	{"2xlcd", "2xLCD", GFX_SHADER_LCD3X},
-	{"2xsharp", "2xSharp", GFX_SHADER_SHARP},
-	{"2xscan", "2xScan", GFX_SHADER_SHARP_SCAN},
-	{"2xaaa", "2xAAA", GFX_SHADER_AAA},
-	{"2xscale", "2xScale", GFX_SHADER_SCALE2X},
-#endif
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
@@ -228,6 +221,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #endif
+
+#ifdef PSP2
+	shaders[0] = NULL;
+#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -359,7 +356,7 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 
 OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 	int errors = OSystem::kTransactionSuccess;
-
+	
 	assert(_transactionMode != kTransactionNone);
 
 	if (_transactionMode == kTransactionRollback) {
@@ -453,7 +450,10 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			// caused a crash under certain circumstances when doing an RTL.
 			// To fix this issue we update the screen change count right here.
 			_screenChangeCount++;
-
+#ifdef PSP2
+			// force update of filtering on Vita
+			setGraphicsModeIntern();
+#endif
 			if (_transactionDetails.needUpdatescreen)
 				internUpdateScreen();
 		}
@@ -567,14 +567,13 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	assert(_transactionMode == kTransactionActive);
 
+	updateShader();
+
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
 	int newScaleFactor = 1;
 
-#ifdef PSP2
-	_transactionDetails.normal1xScaler = true;
-#else
 	switch (mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
@@ -624,7 +623,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	}
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
-#endif // PSP2
+
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -646,58 +645,53 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	} else {
 		vita2d_texture_set_filters(vitatex_hwscreen, SCE_GXM_TEXTURE_FILTER_POINT, SCE_GXM_TEXTURE_FILTER_POINT);
 	}
-	vita2d_texture_set_program(shaders[_videoMode.mode]->vertexProgram, shaders[_videoMode.mode]->fragmentProgram);
-	vita2d_texture_set_wvp(shaders[_videoMode.mode]->wvpParam);
-	vita2d_texture_set_vertexInput(&shaders[_videoMode.mode]->vertexInput);
-	vita2d_texture_set_fragmentInput(&shaders[_videoMode.mode]->fragmentInput);
-	_scalerProc = Normal1x;
-	_scalerType = 0;
-#else
-	switch (_videoMode.mode) {
-	case GFX_NORMAL:
-		newScalerProc = Normal1x;
-		break;
-#ifdef USE_SCALERS
-	case GFX_DOUBLESIZE:
-		newScalerProc = Normal2x;
-		break;
-	case GFX_TRIPLESIZE:
-		newScalerProc = Normal3x;
-		break;
-
-	case GFX_2XSAI:
-		newScalerProc = _2xSaI;
-		break;
-	case GFX_SUPER2XSAI:
-		newScalerProc = Super2xSaI;
-		break;
-	case GFX_SUPEREAGLE:
-		newScalerProc = SuperEagle;
-		break;
-	case GFX_ADVMAME2X:
-		newScalerProc = AdvMame2x;
-		break;
-	case GFX_ADVMAME3X:
-		newScalerProc = AdvMame3x;
-		break;
-#ifdef USE_HQ_SCALERS
-	case GFX_HQ2X:
-		newScalerProc = HQ2x;
-		break;
-	case GFX_HQ3X:
-		newScalerProc = HQ3x;
-		break;
+	updateShader();
 #endif
-	case GFX_TV2X:
-		newScalerProc = TV2x;
-		break;
-	case GFX_DOTMATRIX:
-		newScalerProc = DotMatrix;
-		break;
+	switch (_videoMode.mode) {
+		case GFX_NORMAL:
+			newScalerProc = Normal1x;
+			break;
+#ifdef USE_SCALERS
+		case GFX_DOUBLESIZE:
+			newScalerProc = Normal2x;
+			break;
+		case GFX_TRIPLESIZE:
+			newScalerProc = Normal3x;
+			break;
+
+		case GFX_2XSAI:
+			newScalerProc = _2xSaI;
+			break;
+		case GFX_SUPER2XSAI:
+			newScalerProc = Super2xSaI;
+			break;
+		case GFX_SUPEREAGLE:
+			newScalerProc = SuperEagle;
+			break;
+		case GFX_ADVMAME2X:
+			newScalerProc = AdvMame2x;
+			break;
+		case GFX_ADVMAME3X:
+			newScalerProc = AdvMame3x;
+			break;
+#ifdef USE_HQ_SCALERS
+		case GFX_HQ2X:
+			newScalerProc = HQ2x;
+			break;
+		case GFX_HQ3X:
+			newScalerProc = HQ3x;
+			break;
+#endif
+		case GFX_TV2X:
+			newScalerProc = TV2x;
+			break;
+		case GFX_DOTMATRIX:
+			newScalerProc = DotMatrix;
+			break;
 #endif // USE_SCALERS
 
-	default:
-		error("Unknown gfx mode %d", _videoMode.mode);
+		default:
+			error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
 	_scalerProc = newScalerProc;
@@ -710,7 +704,6 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 			}
 		}
 	}
-#endif // PSP2
 
 	if (!_screen || !_hwscreen)
 		return;
@@ -975,13 +968,12 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		effectiveScreenHeight() - 1);
 #endif
 
-#ifndef PSP2
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
 		InitScalers(555);
 	else
 		InitScalers(565);
-#endif
+
 	return true;
 }
 
@@ -997,10 +989,11 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 
 	if (_hwscreen) {
 #ifdef PSP2
-		for(int i=0; i<6; i++) {
-			vita2d_free_shader(shaders[i]);
-		}
 		vita2d_free_texture(vitatex_hwscreen);
+		for(int i = 0; i < 6; i++) {
+			vita2d_free_shader(shaders[i]);
+			shaders[i] = NULL;
+		}
 		_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
 		SDL_FreeSurface(_hwscreen);
@@ -1033,9 +1026,7 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		_osdIconSurface = NULL;
 	}
 #endif
-#ifndef PSP2
 	DestroyScalers();
-#endif
 
 #if defined(WIN32) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Reset video mode to original.
@@ -1058,17 +1049,26 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 	_overlayscreen = NULL;
 
 	// Release the HW screen surface
+	if (_hwscreen) {
 #ifdef PSP2
-	for(int i=0; i<6; i++) {
-		vita2d_free_shader(shaders[i]);
-	}
-	vita2d_free_texture(vitatex_hwscreen);
-	_hwscreen->pixels = sdlpixels_hwscreen;
+		vita2d_free_texture(vitatex_hwscreen);
+		for(int i = 0; i < 6; i++) {
+			vita2d_free_shader(shaders[i]);
+			shaders[i] = NULL;
+		}
+		_hwscreen->pixels = sdlpixels_hwscreen;
 #endif
-	SDL_FreeSurface(_hwscreen); _hwscreen = NULL;
-
-	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
-	SDL_FreeSurface(_tmpscreen2); _tmpscreen2 = NULL;
+		SDL_FreeSurface(_hwscreen);
+		_hwscreen = NULL;
+	}
+	if (_tmpscreen) {
+		SDL_FreeSurface(_tmpscreen);
+		_tmpscreen = NULL;
+	}
+	if (_tmpscreen2) {
+		SDL_FreeSurface(_tmpscreen2);
+		_tmpscreen2 = NULL;
+	}
 
 	// Setup the new GFX mode
 	if (!loadGFXMode()) {
@@ -1106,6 +1106,29 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	internUpdateScreen();
+}
+
+void SurfaceSdlGraphicsManager::updateShader() {
+#ifdef PSP2
+	if (vitatex_hwscreen) {
+		if (shaders[0] == NULL) { 
+			// load shaders
+			shaders[GFX_SHADER_NONE] = vita2d_create_shader((const SceGxmProgram *) texture_v, (const SceGxmProgram *) texture_f);
+			shaders[GFX_SHADER_LCD3X] = vita2d_create_shader((const SceGxmProgram *) lcd3x_v, (const SceGxmProgram *) lcd3x_f);
+			shaders[GFX_SHADER_SHARP] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_simple_v, (const SceGxmProgram *) sharp_bilinear_simple_f);
+			shaders[GFX_SHADER_SHARP_SCAN] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_v, (const SceGxmProgram *) sharp_bilinear_f);
+			shaders[GFX_SHADER_AAA] = vita2d_create_shader((const SceGxmProgram *) advanced_aa_v, (const SceGxmProgram *) advanced_aa_f);
+			shaders[GFX_SHADER_SCALE2X] = vita2d_create_shader((const SceGxmProgram *) scale2x_v, (const SceGxmProgram *) scale2x_f);
+		}
+		int shaderNum = ConfMan.getInt("shader");
+		if (shaderNum >= 0 && shaderNum < sizeof(shaders)) {
+			vita2d_texture_set_program(shaders[shaderNum]->vertexProgram, shaders[shaderNum]->fragmentProgram);
+			vita2d_texture_set_wvp(shaders[shaderNum]->wvpParam);
+			vita2d_texture_set_vertexInput(&shaders[shaderNum]->vertexInput);
+			vita2d_texture_set_fragmentInput(&shaders[shaderNum]->fragmentInput);
+		}
+	}
+#endif
 }
 
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
@@ -2078,9 +2101,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	SDL_LockSurface(_mouseSurface);
 
 	ScalerProc *scalerProc;
-#ifdef PSP2
-	scalerProc = Normal1x;
-#else
+
 	// Only apply scaling, when the user allows it.
 	if (!_cursorDontScale) {
 		// If possible, use the same scaler for the cursor as for the rest of
@@ -2093,7 +2114,6 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	} else {
 		scalerProc = Normal1x;
 	}
-#endif
 	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);
@@ -2721,14 +2741,7 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 		sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
 		screen->pixels = vita2d_texture_get_datap(vitatex_hwscreen);
-
-		// shaders
-		shaders[GFX_SHADER_NONE] = vita2d_create_shader((const SceGxmProgram *) texture_v, (const SceGxmProgram *) texture_f);
-		shaders[GFX_SHADER_LCD3X] = vita2d_create_shader((const SceGxmProgram *) lcd3x_v, (const SceGxmProgram *) lcd3x_f);
-		shaders[GFX_SHADER_SHARP] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_simple_v, (const SceGxmProgram *) sharp_bilinear_simple_f);
-		shaders[GFX_SHADER_SHARP_SCAN] = vita2d_create_shader((const SceGxmProgram *) sharp_bilinear_v, (const SceGxmProgram *) sharp_bilinear_f);
-		shaders[GFX_SHADER_AAA] = vita2d_create_shader((const SceGxmProgram *) advanced_aa_v, (const SceGxmProgram *) advanced_aa_f);
-		shaders[GFX_SHADER_SCALE2X] = vita2d_create_shader((const SceGxmProgram *) scale2x_v, (const SceGxmProgram *) scale2x_f);
+		updateShader();
 #endif
 		return screen;
 	}

@@ -384,6 +384,8 @@ protected:
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
+	virtual void updateShader();
+
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();

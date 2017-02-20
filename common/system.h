@@ -337,21 +337,37 @@ public:
 		 * This feature has no associated state.
 		 */
 		kFeatureOpenUrl	,
-		
+
 		/**
 		* show on-screen control
 		*/
 		kFeatureOnScreenControl,
-		
+
 		/**
 		* mouse emulation mode
 		*/
 		kFeatureTouchpadMode,
-			
+
 		/**
 		* swap menu and back buttons
 		*/
-		kFeatureSwapMenuAndBackButtons
+		kFeatureSwapMenuAndBackButtons,
+
+		/**
+		* keyboard mouse and joystick mouse speed
+		*/
+		kFeatureKbdMouseSpeed,
+
+		/**
+		* change analog joystick deadzone
+		*/
+		kFeatureJoystickDeadzone,
+
+		/**
+		* shaders
+		*/
+		kFeatureShader
+
 	};
 
 	/**

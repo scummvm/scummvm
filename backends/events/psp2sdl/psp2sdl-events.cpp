@@ -32,6 +32,7 @@
 
 #include "common/util.h"
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "math.h"
 
@@ -272,31 +273,33 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int vel_to_axis = (1500 / MULTIPLIER);
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
-		_km.x_vel = axis / vel_to_axis;
-		_km.x_down_count = 0;
+		_km.joy_x = axis;
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 		axis = -axis;
-		_km.y_vel = -axis / vel_to_axis;
-		_km.y_down_count = 0;
+		_km.joy_y = -axis;
 	}
-
+	
 	// radial and scaled deadzone
 
-	float analogX = (float) (_km.x_vel * vel_to_axis);
-	float analogY = (float) (_km.y_vel * vel_to_axis);
+	float analogX = (float) _km.joy_x;
+	float analogY = (float) _km.joy_y;
 	float deadZone = (float) JOY_DEADZONE;
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
+		deadZone = (float) ConfMan.getInt("joystick_deadzone") * 1000.0f;
 	float scalingFactor = 1.0f;
 	float magnitude = 0.0f;
 
 	magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
+		_km.x_down_count = 0;
+		_km.y_down_count = 0;
 		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
-		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
+		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / (float) vel_to_axis);
+		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / (float) vel_to_axis);
 	} else {
-		_km.y_vel = 0;
 		_km.x_vel = 0;
+		_km.y_vel = 0;
 	}
 
 	return false;

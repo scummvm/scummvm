@@ -234,7 +234,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grOnScreenCheckbox'
@@ -246,6 +246,28 @@
 			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
 					type = 'Checkbox'
 			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'grKbdMouseSpeedDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grKbdMouseSpeedSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grKbdMouseSpeedLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grJoystickDeadzoneDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grJoystickDeadzoneSlider'
+						type = 'Slider'
+				/>
+				<widget name = 'grJoystickDeadzoneLabel'
+						type = 'SmallLabel'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
@@ -276,6 +298,19 @@
 			<widget name = 'grFilteringCheckbox'
 					type = 'Checkbox'
 			/>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_Shader' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grShaderPopUpDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grShaderPopUp'
+						type = 'PopUp'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

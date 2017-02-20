@@ -194,6 +194,7 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 		int16 oldKmY = _km.y;
 
 		_km.last_time = curTime;
+
 		if (_km.x_down_count == 1) {
 			_km.x_down_time = curTime;
 			_km.x_down_count = 2;
@@ -204,6 +205,7 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 		}
 
 		if (_km.x_vel || _km.y_vel) {
+
 			if (_km.x_down_count) {
 				if (curTime > _km.x_down_time + 300) {
 					if (_km.x_vel > 0)
@@ -231,18 +233,59 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 				}
 			}
 
-			// The modifier key makes the mouse movement slower
-			// The extra factor of delay/25 makes velocities 
-			// independent of kbdMouse update rate
-			// all velovities were originally chosen
-			// at a delay of 25, so that is the reference
-			// operator order is important to avoid overflow
+			int16 speedFactor = 25;
+
+			if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+				switch (ConfMan.getInt("kbdmouse_speed")) {
+					// 0.25 keyboard pointer speed
+					case 0:
+						speedFactor = 100;
+						break;
+					// 0.5 speed
+					case 1:
+						speedFactor = 50;
+						break;
+					// 0.75 speed
+					case 2:
+						speedFactor = 37;
+						break;
+					// 1.0 speed
+					case 3:
+						speedFactor = 25;
+						break;
+					// 1.25 speed
+					case 4:
+						speedFactor = 20;
+						break;
+					// 1.5 speed
+					case 5:
+						speedFactor = 17;
+						break;
+					// 1.75 speed
+					case 6:
+						speedFactor = 14;
+						break;
+					// 2.0 speed
+					case 7:
+						speedFactor = 12;
+						break;
+					default:
+						speedFactor = 25;
+				}
+			}
+
+			// - The modifier key makes the mouse movement slower
+			// - The extra factor "delay/25" ensures velocities 
+			// are independent of the kbdMouse update rate
+			// - all velocities were originally chosen
+			// at a delay of 25, so that is the reference used here
+			// - note: operator order is important to avoid overflow
 			if (_km.modifier) {
-				_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / 25;
-				_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / 25;
+				_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
+				_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
 			} else {
-				_km.x += (_km.x_vel * ((int16)_km.delay_time)) / 25;
-				_km.y += (_km.y_vel * ((int16)_km.delay_time)) / 25;
+				_km.x += (_km.x_vel * ((int16)_km.delay_time)) / speedFactor;
+				_km.y += (_km.y_vel * ((int16)_km.delay_time)) / speedFactor;
 			}
 
 			if (_km.x < 0) {
@@ -826,8 +869,7 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
-		_km.x_vel = axis / vel_to_axis;
-		_km.x_down_count = 0;
+		_km.joy_x = axis;
 #else
 		if (axis != 0) {
 			_km.x_vel = (axis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
@@ -842,8 +884,7 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		axis = -axis;
 #endif
 #ifdef JOY_ANALOG
-		_km.y_vel = -axis / vel_to_axis;
-		_km.y_down_count = 0;
+		_km.joy_y = -axis;
 #else
 		if (axis != 0) {
 			_km.y_vel = (-axis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
@@ -856,21 +897,25 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	}
 #ifdef JOY_ANALOG
 	// radial and scaled analog joystick deadzone
-	float analogX = (float) (_km.x_vel * vel_to_axis);
-	float analogY = (float) (_km.y_vel * vel_to_axis);
+	float analogX = (float) _km.joy_x;
+	float analogY = (float) _km.joy_y;
 	float deadZone = (float) JOY_DEADZONE;
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
+		deadZone = (float) ConfMan.getInt("joystick_deadzone") * 1000.0f;
 	float scalingFactor = 1.0f;
 	float magnitude = 0.0f;
 
 	magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
+		_km.x_down_count = 0;
+		_km.y_down_count = 0;
 		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
 		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
 		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
 	} else {
-		_km.y_vel = 0;
 		_km.x_vel = 0;
+		_km.y_vel = 0;
 	}
 #endif
 
@@ -951,6 +996,8 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.delay_time = 12;
 	_km.last_time = 0;
 	_km.modifier = false;
+	_km.joy_x = 0;
+	_km.joy_y = 0;
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
