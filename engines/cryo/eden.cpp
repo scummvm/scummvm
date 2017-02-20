@@ -6784,7 +6784,7 @@ void EdenGame::syncTapePointers(Common::Serializer s) {
 		s.syncAsUint32LE(dialogIdx);
 
 		if (s.isLoading()) {
-			_tapes[i]._perso = &_persons[persoIdx];
+			_tapes[i]._perso = (persoIdx == NULLPTR) ? nullptr : &_persons[persoIdx];
 			_tapes[i]._dialog = (dialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, dialogIdx);
 		}
 	}
