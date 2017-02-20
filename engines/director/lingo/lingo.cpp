@@ -158,7 +158,8 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debugC(2, kDebugLingoCompile, "Add code \"%s\" for type %d with id %d", code, type, id);
+	debugC(2, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
+	warning("Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];

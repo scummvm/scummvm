@@ -260,6 +260,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
 		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
+		warning("Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 		delete str;
 
@@ -502,16 +503,21 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 offset = count * 4 + 2;
 
 	byte id = stream.readByte();
+
 	/*byte subId = */ stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
 	uint16 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 nextId = stream.readByte();
-		/*byte subId = */ stream.readByte();
+		byte subId = stream.readByte();
 		uint16 nextStringPos = stream.readUint16() + offset;
 		uint16 streamPos = stream.pos();
 
 		stream.seek(stringPos);
+
+		if (_vm->getVersion() == 3) {
+			id -= 1;
+		}
 
 		for (uint16 j = stringPos; j < nextStringPos; j++) {
 			byte ch = stream.readByte();
@@ -520,6 +526,8 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			}
 			_actions[id] += ch;
 		}
+
+		warning("id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
 
 		stream.seek(streamPos);
 
@@ -881,8 +889,8 @@ void Score::update() {
 	_surface->copyFrom(*_trailSurface);
 
 	// Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId - 1);
-	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId - 1);
+	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
 	// TODO Director 6 - another order
 
 	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
