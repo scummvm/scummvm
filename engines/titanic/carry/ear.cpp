@@ -59,9 +59,11 @@ bool CEar::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		CAddHeadPieceMsg addMsg(getName());
 		if (addMsg._value != "NULL")
 			addMsg.execute(addMsg._value == "Ear1" ? "Ear1Slot" : "Ear2Slot");
-	}
 
-	return CCarry::UseWithOtherMsg(msg);
+		return true;
+	} else {
+		return CCarry::UseWithOtherMsg(msg);
+	}
 }
 
 } // End of namespace Titanic
