@@ -87,15 +87,15 @@ bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 	if (addMsg._value != "NULL")
 		addMsg.execute("TitaniaControl");
 
-	if (addMsg._value == "OlfactoryCentre")
+	if (msg->_value == "OlfactoryCentre")
 		loadFrame(2);
-	else if (addMsg._value == "AuditoryCentre")
+	else if (msg->_value == "AuditoryCentre")
 		loadFrame(1);
-	else if (addMsg._value == "SpeechCentre")
+	else if (msg->_value == "SpeechCentre")
 		loadFrame(3);
-	else if (addMsg._value == "VisionCentre")
+	else if (msg->_value == "VisionCentre")
 		loadFrame(4);
-	else if (addMsg._value == "CentralCore") {
+	else if (msg->_value == "CentralCore") {
 		CActMsg actMsg("Insert Central Core");
 		actMsg.execute("CentralCoreSlot");
 	}
