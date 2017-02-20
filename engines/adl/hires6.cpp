@@ -59,6 +59,7 @@ private:
 
 	template <Direction D>
 	int o_goDirection(ScriptEnv &e);
+	int o_fluteSound(ScriptEnv &e);
 
 	static const uint kRegions = 3;
 	static const uint kItems = 15;
@@ -129,7 +130,7 @@ void HiRes6Engine::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o5_setRoomPic);
-	Opcode(o_winGame);
+	Opcode(o_fluteSound);
 	OpcodeUnImpl();
 	// 0x20
 	Opcode(o2_initDisk);
@@ -157,6 +158,20 @@ int HiRes6Engine::o_goDirection(ScriptEnv &e) {
 	}
 
 	return -1;
+}
+
+int HiRes6Engine::o_fluteSound(ScriptEnv &e) {
+	OP_DEBUG_0("\tFLUTE_SOUND()");
+
+	Tones tones;
+
+	tones.push_back(Tone(1072.0, 587.6));
+	tones.push_back(Tone(1461.0, 495.8));
+	tones.push_back(Tone(0.0, 1298.7));
+
+	playTones(tones, false);
+
+	return 0;
 }
 
 #define SECTORS_PER_TRACK 16

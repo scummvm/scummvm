@@ -45,7 +45,6 @@ protected:
 	int o5_setTextMode(ScriptEnv &e);
 	int o5_setRegionRoom(ScriptEnv &e);
 	int o5_setRoomPic(ScriptEnv &e);
-	int o_winGame(ScriptEnv &e);
 };
 
 } // End of namespace Adl

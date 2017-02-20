@@ -101,10 +101,6 @@ int AdlEngine_v5::o5_dummy(ScriptEnv &e) {
 int AdlEngine_v5::o5_setTextMode(ScriptEnv &e) {
 	OP_DEBUG_1("\tSET_TEXT_MODE(%d)", e.arg(1));
 
-	// TODO
-	// 1: 4-line mode
-	// 2: 24-line mode
-
 	switch (e.arg(1)) {
 	case 1:
 		if (_linesPrinted != 0) {
@@ -153,14 +149,6 @@ int AdlEngine_v5::o5_setRoomPic(ScriptEnv &e) {
 
 	o4_setRoomPic(e);
 	return 2;
-}
-
-int AdlEngine_v5::o_winGame(ScriptEnv &e) {
-	OP_DEBUG_0("\tWIN_GAME()");
-
-	// TODO
-
-	return 0;
 }
 
 } // End of namespace Adl
