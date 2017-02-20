@@ -260,7 +260,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
 		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
-		warning("Frame %d actionId: %d", _frames.size(), frame->_actionId);
+
+		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 		delete str;
 
