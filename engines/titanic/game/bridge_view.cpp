@@ -31,13 +31,13 @@ END_MESSAGE_MAP()
 
 void CBridgeView::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_mode, indent);
+	file->writeNumberLine(_action, indent);
 	CBackground::save(file, indent);
 }
 
 void CBridgeView::load(SimpleFile *file) {
 	file->readNumber();
-	_mode = file->readNumber();
+	_action = (BridgeAction)file->readNumber();
 	CBackground::load(file);
 }
 
@@ -47,13 +47,13 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 	volumeMsg._secondsTransition = 1;
 
 	if (msg->_action == "End") {
-		_mode = 4;
+		_action = BA_ENDING2;
 		petLockInput();
 		petHide();
 		setVisible(true);
 		playMovie(MOVIE_NOTIFY_OBJECT);
 	} else if (msg->_action == "Go") {
-		_mode = 1;
+		_action = BA_GO;
 		setVisible(true);
 		volumeMsg._volume = 100;
 		volumeMsg.execute("EngineSounds");
@@ -65,11 +65,11 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 		onMsg.execute("EngineSounds");
 
 		if (msg->_action == "Cruise") {
-			_mode = 2;
+			_action = BA_CRUISE;
 			setVisible(true);
 			playMovie(MOVIE_NOTIFY_OBJECT);
 		} else if (msg->_action == "GoEnd") {
-			_mode = 3;
+			_action = BA_ENDING1;
 			setVisible(true);
 			CChangeMusicMsg musicMsg;
 			musicMsg._flags = 1;
@@ -86,21 +86,21 @@ bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
 	CTurnOff offMsg;
 	offMsg.execute("EngineSounds");
 
-	switch (_mode) {
-	case 1:
-	case 2:
+	switch (_action) {
+	case BA_GO:
+	case BA_CRUISE:
 		setVisible(false);
 		decTransitions();
 		break;
 
-	case 3: {
+	case BA_ENDING1: {
 		setVisible(false);
 		CActMsg actMsg("End");
 		actMsg.execute("HomeSequence");
 		break;
 	}
 
-	case 4:
+	case BA_ENDING2:
 		setVisible(false);
 		changeView("TheEnd.Node 3.N");
 		break;

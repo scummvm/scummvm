@@ -27,15 +27,19 @@
 
 namespace Titanic {
 
+enum BridgeAction {
+	BA_NONE = 0, BA_GO = 1, BA_CRUISE = 2, BA_ENDING1 = 3, BA_ENDING2 = 4
+};
+
 class CBridgeView : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool ActMsg(CActMsg *msg);
 	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	int _mode;
+	BridgeAction _action;
 public:
 	CLASSDEF;
-	CBridgeView() : CBackground(), _mode(0) {}
+	CBridgeView() : CBackground(), _action(BA_NONE) {}
 
 	/**
 	 * Save the data for the class to file
