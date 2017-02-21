@@ -294,7 +294,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		SelectorType selectorType = lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp);
 		if (selectorType == kSelectorNone)
-			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
+			error("Send to invalid selector 0x%x (%s) of object at %04x:%04x", 0xffff & selector, g_sci->getKernel()->getSelectorName(0xffff & selector).c_str(), PRINT_REG(send_obj));
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
 		StackPtr curSP = NULL;
