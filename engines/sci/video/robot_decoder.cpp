@@ -134,7 +134,7 @@ bool RobotAudioStream::addPacket(const RobotAudioPacket &packet) {
 		return true;
 	}
 
-	const int32 packetEndByte = packet.position + (packet.dataSize * sizeof(int16) * kEOSExpansion);
+	const int32 packetEndByte = packet.position + (packet.dataSize * (sizeof(int16) + kEOSExpansion));
 
 	// Already read all the way past this packet (or already wrote valid samples
 	// to this channel all the way past this packet), so discard it
@@ -228,12 +228,12 @@ void RobotAudioStream::fillRobotBuffer(const RobotAudioPacket &packet, const int
 		targetBytePosition = _jointMin[bufferIndex] % _loopBufferSize;
 		if (targetBytePosition >= packetEndByte) {
 			numBytesToEnd = _loopBufferSize - targetBytePosition;
-			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / sizeof(int16) / kEOSExpansion, 0);
+			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / (sizeof(int16) + kEOSExpansion), 0);
 			targetBytePosition = bufferIndex ? 2 : 0;
 		}
 		numBytesToEnd = packetEndByte - targetBytePosition;
 		if (numBytesToEnd > 0) {
-			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / sizeof(int16) / kEOSExpansion, 0);
+			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / (sizeof(int16) + kEOSExpansion), 0);
 		}
 	}
 
@@ -246,13 +246,13 @@ void RobotAudioStream::fillRobotBuffer(const RobotAudioPacket &packet, const int
 			copyEveryOtherSample((int16 *)(_loopBuffer + targetBytePosition), (int16 *)(_decompressionBuffer + sourceByte), numBytesToEnd / kEOSExpansion);
 			targetBytePosition = bufferIndex ? 2 : 0;
 		}
-		copyEveryOtherSample((int16 *)(_loopBuffer + targetBytePosition), (int16 *)(_decompressionBuffer + sourceByte + numBytesToEnd), (packetEndByte - targetBytePosition) / sizeof(int16) / kEOSExpansion);
+		copyEveryOtherSample((int16 *)(_loopBuffer + targetBytePosition), (int16 *)(_decompressionBuffer + sourceByte + numBytesToEnd), (packetEndByte - targetBytePosition) / (sizeof(int16) + kEOSExpansion));
 	}
 	_jointMin[bufferIndex] = endByte;
 }
 
 void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
-	int32 numBytes = numSamples * sizeof(int16) * kEOSExpansion;
+	int32 numBytes = numSamples * (sizeof(int16) + kEOSExpansion);
 	int32 targetPosition = _readHead;
 
 	if (_readHeadAbs > _jointMin[1]) {
@@ -268,7 +268,7 @@ void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 			_jointMin[1] += numBytes;
 		} else {
 			if (targetPosition + numBytes >= _loopBufferSize) {
-				const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / sizeof(int16) / kEOSExpansion;
+				const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
 				interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamplesToEdge, 1);
 				numSamples -= numSamplesToEdge;
 				targetPosition = 0;
@@ -278,7 +278,7 @@ void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 		}
 	} else if (_readHeadAbs > _jointMin[0]) {
 		if (targetPosition + numBytes >= _loopBufferSize) {
-			const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / sizeof(int16) / kEOSExpansion;
+			const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
 			interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamplesToEdge, 0);
 			numSamples -= numSamplesToEdge;
 			targetPosition = 2;
