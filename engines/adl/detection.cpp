@@ -141,6 +141,21 @@ static const AdlGameDescription gameDescriptions[] = {
 		},
 		GAME_TYPE_HIRES0
 	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
+		{
+			"hires4", 0,
+			{
+				{ "ULYSSESA.DSK", 0, "df21f28ae94440f958dbbcfdfaf0c36e", 143360 },
+				{ "ULYSSESB.DSK", 1, "c204e8fe265e9534049f3c0f816cc9fc", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES4
+	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{
 			"hires4", 0,
