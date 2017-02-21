@@ -1643,9 +1643,9 @@ void CGameObject::starFn1(int v) {
 		starControl->fn1(v);
 }
 
-bool CGameObject::starFn2() {
+bool CGameObject::starIsSolved() const {
 	CStarControl *starControl = getStarControl();
-	return starControl ? starControl->fn4() : false;
+	return starControl ? starControl->isSolved() : false;
 }
 
 /*------------------------------------------------------------------------*/

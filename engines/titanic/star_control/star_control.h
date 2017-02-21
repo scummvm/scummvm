@@ -69,7 +69,11 @@ public:
 	virtual void draw(CScreenManager *screenManager);
 
 	void fn1(int action);
-	bool fn4();
+
+	/**
+	 * Returns true if the starfield puzzle has been solved
+	 */
+	bool isSolved() const;
 
 	/**
 	 * Returns true if a star destination can be set

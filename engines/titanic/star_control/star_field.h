@@ -44,7 +44,7 @@ private:
 	int _val3;
 	bool _val4;
 	int _val5;
-	bool _val6;
+	bool _isSolved;
 public:
 	CStarField();
 
@@ -77,8 +77,16 @@ public:
 	bool set4(bool val);
 	int get88() const;
 	int get5() const;
-	void update6();
-	int get6() const;
+
+	/**
+	 * Sets the flag that the starfield has been solved
+	 */
+	void setSolved();
+
+	/**
+	 * Returns true if the starfield puzzle has been solved
+	 */
+	bool isSolved() const;
 };
 
 } // End of namespace Titanic

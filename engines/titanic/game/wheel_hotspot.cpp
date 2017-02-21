@@ -31,36 +31,36 @@ END_MESSAGE_MAP()
 
 void CWheelHotSpot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_active, indent);
+	file->writeNumberLine(_action, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CWheelHotSpot::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_active = file->readNumber();
+	_action = (WheelHotspotAction)file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CWheelHotSpot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_fieldE0) {
+	if (_active) {
 		CActMsg actMsg;
 
-		switch (_fieldE4) {
-		case 1:
+		switch (_action) {
+		case WH_STOP:
 			actMsg._action = "Stop";
 			actMsg.execute("CaptainsWheel");
 			break;
 
-		case 2:
+		case WH_CRUISE:
 			actMsg._action = "Cruise";
 			actMsg.execute("CaptainsWheel");
 			break;
 
-		case 3:
+		case WH_GO:
 			actMsg._action = "Go";
 			actMsg.execute("CaptainsWheel");
 			break;
@@ -68,7 +68,7 @@ bool CWheelHotSpot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		default:
 			break;
 		}
-	} else if (_fieldE4 == 3) {
+	} else if (_action == WH_GO) {
 		petDisplayMessage(GO_WHERE);
 	}
 
@@ -76,7 +76,7 @@ bool CWheelHotSpot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CWheelHotSpot::SignalObject(CSignalObject *msg) {
-	_fieldE0 = msg->_numValue != 0;
+	_active = msg->_numValue != 0;
 	return true;
 }
 

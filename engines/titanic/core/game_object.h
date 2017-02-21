@@ -946,7 +946,11 @@ public:
 	CStarControl *getStarControl() const;
 
 	void starFn1(int v);
-	bool starFn2();
+
+	/**
+	 * Returns true if the starmap puzzle has been solved
+	 */
+	bool starIsSolved() const;
 
 	/*--- CTrueTalkManager Methods ---*/
 

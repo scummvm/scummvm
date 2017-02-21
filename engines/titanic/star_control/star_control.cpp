@@ -133,8 +133,8 @@ void CStarControl::fn1(int action) {
 	// TODO
 }
 
-bool CStarControl::fn4() {
-	return _starField.get6();
+bool CStarControl::isSolved() const {
+	return _starField.isSolved();
 }
 
 bool CStarControl::canSetStarDestination() const {

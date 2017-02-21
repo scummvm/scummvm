@@ -31,33 +31,33 @@ BEGIN_MESSAGE_MAP(CWheelButton, CBackground)
 END_MESSAGE_MAP()
 
 CWheelButton::CWheelButton() : CBackground(),
-	_fieldE0(false), _timerId(0), _fieldE8(0) {
+	_blinking(false), _timerId(0), _unused5(0) {
 }
 
 void CWheelButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_blinking, indent);
 	file->writeNumberLine(_timerId, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_unused5, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CWheelButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_blinking = file->readNumber();
 	_timerId = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_unused5 = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CWheelButton::SignalObject(CSignalObject *msg) {
-	bool oldFlag = _fieldE0;
-	_fieldE0 = msg->_numValue != 0;
+	bool oldBlinking = _blinking;
+	_blinking = msg->_numValue != 0;
 
-	if (oldFlag != _fieldE0) {
-		if (_fieldE0) {
+	if (oldBlinking != _blinking) {
+		if (_blinking) {
 			_timerId = addTimer(500, 500);
 		} else {
 			stopAnimTimer(_timerId);

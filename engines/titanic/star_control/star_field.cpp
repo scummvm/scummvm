@@ -26,7 +26,7 @@
 namespace Titanic {
 
 CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(true),
-	_val5(0), _val6(false) {
+	_val5(0), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -36,7 +36,7 @@ void CStarField::load(SimpleFile *file) {
 	_val2 = file->readNumber();
 	_val3 = file->readNumber();
 	_val4 = file->readNumber();
-	_val6 = file->readNumber();
+	_isSolved = file->readNumber();
 }
 
 void CStarField::save(SimpleFile *file, int indent) {
@@ -46,7 +46,7 @@ void CStarField::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_val2, indent);
 	file->writeNumberLine(_val3, indent);
 	file->writeNumberLine(_val4, indent);
-	file->writeNumberLine(_val6, indent);
+	file->writeNumberLine(_isSolved, indent);
 }
 
 bool CStarField::initDocument() {
@@ -119,12 +119,12 @@ int CStarField::get5() const {
 	return _val5;
 }
 
-void CStarField::update6() {
-	_val6 = _sub8._field8 == 2;
+void CStarField::setSolved() {
+	_isSolved = _sub8._field8 == 2;
 }
 
-int CStarField::get6() const {
-	return _val6;
+bool CStarField::isSolved() const {
+	return _isSolved;
 }
 
 } // End of namespace Titanic
