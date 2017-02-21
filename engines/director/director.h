@@ -58,7 +58,8 @@ enum {
 	kDebugLoading		= 1 << 2,
 	kDebugImages		= 1 << 3,
 	kDebugText			= 1 << 4,
-	kDebugEvents		= 1 << 5
+	kDebugEvents		= 1 << 5,
+	kDebugLingoParse	= 1 << 6
 };
 
 extern byte defaultPalette[768];
