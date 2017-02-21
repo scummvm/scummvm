@@ -65,36 +65,30 @@ static void interpolateChannel(int16 *buffer, int32 numSamples, const int8 buffe
 		return;
 	}
 
+	int16 *inBuffer, *outBuffer;
+	int16 sample, previousSample;
+
 	if (bufferIndex) {
-		int16 lastSample = *buffer;
-		int sample = lastSample;
-		int16 *target = buffer + 1;
-		const int16 *source = buffer + 2;
+		outBuffer = buffer + 1;
+		inBuffer = buffer + 2;
+		previousSample = sample = *buffer;
 		--numSamples;
-
-		while (numSamples--) {
-			sample = *source + lastSample;
-			lastSample = *source;
-			sample /= 2;
-			*target = sample;
-			source += 2;
-			target += 2;
-		}
-
-		*target = sample;
 	} else {
-		int16 *target = buffer;
-		const int16 *source = buffer + 1;
-		int16 lastSample = *source;
+		outBuffer = buffer;
+		inBuffer = buffer + 1;
+		previousSample = sample = *inBuffer;
+	}
 
-		while (numSamples--) {
-			int sample = *source + lastSample;
-			lastSample = *source;
-			sample /= 2;
-			*target = sample;
-			source += 2;
-			target += 2;
-		}
+	while (numSamples--) {
+		sample = (*inBuffer + previousSample) >> 1;
+		previousSample = *inBuffer;
+		*outBuffer = sample;
+		inBuffer += RobotAudioStream::kEOSExpansion;
+		outBuffer += RobotAudioStream::kEOSExpansion;
+	}
+
+	if (bufferIndex) {
+		*outBuffer = sample;
 	}
 }
 
@@ -254,9 +248,10 @@ void RobotAudioStream::fillRobotBuffer(const RobotAudioPacket &packet, const int
 void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 	int32 numBytes = numSamples * (sizeof(int16) + kEOSExpansion);
 	int32 targetPosition = _readHead;
+	const int32 nextReadHeadPosition = _readHeadAbs + numBytes;
 
-	if (_readHeadAbs > _jointMin[1]) {
-		if (_readHeadAbs > _jointMin[0]) {
+	if (nextReadHeadPosition > _jointMin[1]) {
+		if (nextReadHeadPosition > _jointMin[0]) {
 			if (targetPosition + numBytes >= _loopBufferSize) {
 				const int32 numBytesToEdge = (_loopBufferSize - targetPosition);
 				memset(_loopBuffer + targetPosition, 0, numBytesToEdge);
@@ -264,8 +259,8 @@ void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 				targetPosition = 0;
 			}
 			memset(_loopBuffer + targetPosition, 0, numBytes);
-			_jointMin[0] += numBytes;
-			_jointMin[1] += numBytes;
+			_jointMin[0] = nextReadHeadPosition;
+			_jointMin[1] = nextReadHeadPosition + sizeof(int16);
 		} else {
 			if (targetPosition + numBytes >= _loopBufferSize) {
 				const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
@@ -274,9 +269,9 @@ void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 				targetPosition = 0;
 			}
 			interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamples, 1);
-			_jointMin[1] += numBytes;
+			_jointMin[1] = nextReadHeadPosition + sizeof(int16);
 		}
-	} else if (_readHeadAbs > _jointMin[0]) {
+	} else if (nextReadHeadPosition > _jointMin[0]) {
 		if (targetPosition + numBytes >= _loopBufferSize) {
 			const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
 			interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamplesToEdge, 0);
@@ -284,7 +279,7 @@ void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
 			targetPosition = 2;
 		}
 		interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamples, 0);
-		_jointMin[0] += numBytes;
+		_jointMin[0] = nextReadHeadPosition;
 	}
 }
 
