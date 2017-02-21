@@ -68,7 +68,7 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 			_mode = 2;
 			setVisible(true);
 			playMovie(MOVIE_NOTIFY_OBJECT);
-		} else if (msg->_action == "GoENd") {
+		} else if (msg->_action == "GoEnd") {
 			_mode = 3;
 			setVisible(true);
 			CChangeMusicMsg musicMsg;
@@ -87,20 +87,20 @@ bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
 	offMsg.execute("EngineSounds");
 
 	switch (_mode) {
-	case 0:
 	case 1:
+	case 2:
 		setVisible(false);
 		decTransitions();
 		break;
 
-	case 2: {
+	case 3: {
 		setVisible(false);
 		CActMsg actMsg("End");
 		actMsg.execute("HomeSequence");
 		break;
 	}
 
-	case 3:
+	case 4:
 		setVisible(false);
 		changeView("TheEnd.Node 3.N");
 		break;

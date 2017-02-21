@@ -34,14 +34,14 @@ BEGIN_MESSAGE_MAP(CCaptainsWheel, CBackground)
 END_MESSAGE_MAP()
 
 CCaptainsWheel::CCaptainsWheel() : CBackground(),
-		_stopEnabled(false), _fieldE4(0), _fieldE8(0),
+		_stopEnabled(false), _actionNum(0), _fieldE8(0),
 		_cruiseEnabled(false), _goEnabled(false), _fieldF4(0) {
 }
 
 void CCaptainsWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_stopEnabled, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_actionNum, indent);
 	file->writeNumberLine(_fieldE8, indent);
 	file->writeNumberLine(_cruiseEnabled, indent);
 	file->writeNumberLine(_goEnabled, indent);
@@ -53,7 +53,7 @@ void CCaptainsWheel::save(SimpleFile *file, int indent) {
 void CCaptainsWheel::load(SimpleFile *file) {
 	file->readNumber();
 	_stopEnabled = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_actionNum = file->readNumber();
 	_fieldE8 = file->readNumber();
 	_cruiseEnabled = file->readNumber();
 	_goEnabled = file->readNumber();
@@ -101,7 +101,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		if (!_stopEnabled) {
 			incTransitions();
 			_stopEnabled = false;
-			_fieldE4 = 1;
+			_actionNum = 1;
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
@@ -111,7 +111,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		if (_stopEnabled) {
 			incTransitions();
 			_stopEnabled = false;
-			_fieldE4 = 2;
+			_actionNum = 2;
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
@@ -183,7 +183,7 @@ bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == 168) {
-		switch (_fieldE4) {
+		switch (_actionNum) {
 		case 1: {
 			CActMsg actMsg(starIsSolved() ? "GoEnd" : "Go");
 			actMsg.execute("GoSequence");
@@ -200,7 +200,7 @@ bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
 			break;
 		}
 
-		_fieldE4 = 0;
+		_actionNum = 0;
 	}
 
 	return true;
