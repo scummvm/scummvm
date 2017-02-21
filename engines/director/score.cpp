@@ -160,10 +160,13 @@ void Score::loadArchive() {
 
 	setSpriteCasts();
 
-	//Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
-	//if (stxt.size() > 0) {
-	//	loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
-	//}
+	// Try to load movie script, it sits in resource A11
+	if (_vm->getVersion() <= 3) {
+		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
+		if (stxt.size() > 0) {
+			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
+		}
+	}
 }
 
 Score::~Score() {
@@ -869,7 +872,6 @@ void Score::startLoop() {
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
-	_lingo->processEvent(kEventStartMovie, kMovieScript, 0);
 	_frames[_currentFrame]->prepareFrame(this);
 
 	while (!_stopPlay && _currentFrame < _frames.size()) {
