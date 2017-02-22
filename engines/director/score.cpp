@@ -302,6 +302,9 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		if (size == 0)
 			continue;
 
+		if (debugChannelSet(5, kDebugLoading))
+			stream.hexdump(size);
+
 		uint8 castType = stream.readByte();
 
 		switch (castType) {
@@ -361,7 +364,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	uint32 size1, size2, size3, castType;
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
-	if (_vm->getVersion() < 4) {
+	if (_vm->getVersion() <= 3) {
 		size1 = stream.readUint16();
 		size2 = stream.readUint32();
 		size3 = 0;
@@ -369,7 +372,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		unk1 = stream.readByte();
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
-	} else if (_vm->getVersion() < 5) {
+	} else if (_vm->getVersion() == 4) {
 		size1 = stream.readUint16() + 2;
 		size2 = stream.readUint32();
 		size3 = 0;

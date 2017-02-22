@@ -83,7 +83,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	textSlant = 0;
 	palinfo1 = palinfo2 = palinfo3 = 0;
 
-	if (version < 4) {
+	if (version <= 3) {
 		flags1 = stream.readByte();
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
@@ -115,7 +115,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontId = stream.readByte();
 		fontSize = stream.readByte();
 		textSlant = 0;
-	} else if (version < 5) {
+	} else if (version == 4) {
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
 		boxShadow = static_cast<SizeType>(stream.readByte());
@@ -134,7 +134,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		byte flags = stream.readByte();
 
 		if (flags)
-			warning("Unproxessed text cast flags: %x", flags);
+			warning("Unprocessed text cast flags: %x", flags);
 
 		fontSize = stream.readUint16();
 		textSlant = 0;
