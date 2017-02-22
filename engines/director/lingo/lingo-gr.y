@@ -188,7 +188,7 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $5; }
 	;
 
-stmtoneliner: expr 				{ g_lingo->code1(g_lingo->c_xpop); }
+stmtoneliner: expr
 	| proc
 	;
 
@@ -484,8 +484,7 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| playfunc
 	| tEXIT tREPEAT			{ g_lingo->code1(g_lingo->c_exitRepeat); }
-	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
-							  g_lingo->code1(g_lingo->c_procret); }
+	| tEXIT					{ g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
 	| tPROPERTY propertylist
 	| tINSTANCE instancelist
@@ -595,7 +594,6 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		begin argdef nl argstore stmtlist 		{
-			g_lingo->codeConst(0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
@@ -609,7 +607,6 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->_indef = false; }	;
 	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }			// D3
 		begin { g_lingo->_ignoreMe = true; } argdef nl argstore stmtlist ENDCLAUSE	{
-				g_lingo->codeConst(0); // Push fake value on stack
 				g_lingo->code1(g_lingo->c_procret);
 				g_lingo->define(*$2, $4, $6);
 				g_lingo->_indef = false;
