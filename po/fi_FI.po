@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-21 23:29+0100\n"
-"PO-Revision-Date: 2017-01-06 16:03+0000\n"
+"PO-Revision-Date: 2017-02-22 17:44+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -849,16 +849,15 @@ msgstr "Suodatusasetusta ei voitu muuttaa"
 
 #: gui/options.cpp:884
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Virtuaalikontrollit"
 
 #: gui/options.cpp:888
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpad tila pois p‰‰lt‰."
+msgstr "Touchpad hiiritila"
 
 #: gui/options.cpp:892
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Vaihda Menu ja Takaisin nappien paikkaa"
 
 #: gui/options.cpp:904
 msgid "Graphics mode:"
@@ -1107,9 +1106,8 @@ msgid "Speech volume:"
 msgstr "Puhe:"
 
 #: gui/options.cpp:1351
-#, fuzzy
 msgid "Control"
-msgstr "Ohjaa hiirt‰"
+msgstr "Kontrollit"
 
 #: gui/options.cpp:1383
 msgid "FluidSynth Settings"
