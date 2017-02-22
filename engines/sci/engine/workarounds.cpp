@@ -388,8 +388,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG4,          520, 64950,  0,             "fLake2", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD version, at the lake, when meeting the Rusalka and attempting to leave
 	{ GID_QFG4,          780, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // CD version, walking down to the monastery basement
 	{ GID_QFG4,          800, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD version, in the room with the spider pillar, when climbing on the pillar
-	{ GID_RAMA,           -1, 64950, -1,   "InterfaceFeature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the main game interface
-	{ GID_RAMA,           -1, 64950, -1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on main menu buttons
+	{ GID_RAMA,           -1, 64950, -1,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the main game interface, or the main menu buttons, or mousing over things in the main game window
+	{ GID_RAMA,           -1, 64923, -1,              "Inset", "init",                            NULL,     0, { WORKAROUND_FAKE,   0 } }, // When receiving a message on the pocket computer at the start of the game
 	{ GID_SHIVERS,        -1,   952,  0,       "SoundManager", "stop",                            NULL,     2, { WORKAROUND_FAKE,   0 } }, // Just after Sierra logo
 	{ GID_SHIVERS,        -1, 64950,  0,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the locked door at the beginning
 	{ GID_SHIVERS,        -1, 64950,  0,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When clicking on the gargoyle eye at the beginning
