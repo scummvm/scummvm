@@ -1228,7 +1228,8 @@ void Ringworld2Game::processEvent(Event &event) {
 
 		case Common::KEYCODE_F8:
 			// F8 - Credits
-			R2_GLOBALS._sceneManager.changeScene(205);
+			if (R2_GLOBALS._sceneManager._sceneNumber != 205)
+				R2_GLOBALS._sceneManager.changeScene(205);
 			break;
 
 		case Common::KEYCODE_F10:
