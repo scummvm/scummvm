@@ -102,6 +102,7 @@ public:
 	Common::Array<Frame *> _frames;
 	Common::HashMap<int, Cast *> _casts;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
+	Common::HashMap<Common::String, int> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, Common::String> _fontMap;
