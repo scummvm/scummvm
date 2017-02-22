@@ -303,7 +303,6 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
 		call(_eventHandlerTypes[event], 0); // D4+ Events
-		pop();
 	} else if (_scripts[st].contains(entityId)) {
 		executeScript(st, entityId); // D3 list of scripts.
 	} else {

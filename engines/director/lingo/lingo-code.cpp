@@ -142,7 +142,7 @@ void Lingo::pushVoid() {
 
 Datum Lingo::pop(void) {
 	if (_stack.size() == 0)
-		error("stack underflow");
+		assert(0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
@@ -1126,7 +1126,7 @@ void Lingo::call(Common::String name, int nargs) {
 
 void Lingo::c_procret() {
 	if (!g_lingo->_callstack.size()) {
-		warning("Call stack underflow");
+		warning("c_procret: Call stack underflow");
 		g_lingo->_returning = true;
 		return;
 	}
