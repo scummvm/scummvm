@@ -200,8 +200,8 @@ stmt: stmtoneliner
 	//
 	| repeatwhile '(' cond ')' stmtlist end ENDCLAUSE	{
 		inst body = 0, end = 0;
-		WRITE_UINT32(&body, $5);
-		WRITE_UINT32(&end, $6);
+		WRITE_UINT32(&body, $5 - $1);
+		WRITE_UINT32(&end, $6 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 2] = end;	/* end, if cond fails */
 
@@ -213,10 +213,10 @@ stmt: stmtoneliner
 	//
 	| repeatwith '=' expr end tTO expr end stmtlist end ENDCLAUSE {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $3);
-		WRITE_UINT32(&finish, $6);
-		WRITE_UINT32(&body, $8);
-		WRITE_UINT32(&end, $9);
+		WRITE_UINT32(&init, $3 - $1);
+		WRITE_UINT32(&finish, $6 - $1);
+		WRITE_UINT32(&body, $8 - $1);
+		WRITE_UINT32(&end, $9 - $1);
 		WRITE_UINT32(&inc, 1);
 		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
@@ -231,10 +231,10 @@ stmt: stmtoneliner
 	//
 	| repeatwith '=' expr end tDOWN tTO expr end stmtlist end ENDCLAUSE {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, $3);
-		WRITE_UINT32(&finish, $7);
-		WRITE_UINT32(&body, $9);
-		WRITE_UINT32(&end, $10);
+		WRITE_UINT32(&init, $3 - $1);
+		WRITE_UINT32(&finish, $7 - $1);
+		WRITE_UINT32(&body, $9 - $1);
+		WRITE_UINT32(&end, $10 - $1);
 		WRITE_UINT32(&inc, -1);
 		(*g_lingo->_currentScript)[$1 + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[$1 + 2] = finish;/* final count value */
@@ -245,7 +245,7 @@ stmt: stmtoneliner
 		checkEnd($11, "repeat", true); }
 	| when stmtoneliner end {
 			inst end = 0;
-			WRITE_UINT32(&end, $3);
+			WRITE_UINT32(&end, $3 - $1);
 			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[$1 + 1] = end;
 		}

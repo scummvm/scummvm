@@ -2270,8 +2270,8 @@ yyreduce:
 #line 201 "engines/director/lingo/lingo-gr.y"
     {
 		inst body = 0, end = 0;
-		WRITE_UINT32(&body, (yyvsp[(5) - (7)].code));
-		WRITE_UINT32(&end, (yyvsp[(6) - (7)].code));
+		WRITE_UINT32(&body, (yyvsp[(5) - (7)].code) - (yyvsp[(1) - (7)].code));
+		WRITE_UINT32(&end, (yyvsp[(6) - (7)].code) - (yyvsp[(1) - (7)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 1] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 2] = end;	/* end, if cond fails */
 
@@ -2282,10 +2282,10 @@ yyreduce:
 #line 214 "engines/director/lingo/lingo-gr.y"
     {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, (yyvsp[(3) - (10)].code));
-		WRITE_UINT32(&finish, (yyvsp[(6) - (10)].code));
-		WRITE_UINT32(&body, (yyvsp[(8) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code));
+		WRITE_UINT32(&init, (yyvsp[(3) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&finish, (yyvsp[(6) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&body, (yyvsp[(8) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code) - (yyvsp[(1) - (10)].code));
 		WRITE_UINT32(&inc, 1);
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = finish;/* final count value */
@@ -2300,10 +2300,10 @@ yyreduce:
 #line 232 "engines/director/lingo/lingo-gr.y"
     {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, (yyvsp[(3) - (11)].code));
-		WRITE_UINT32(&finish, (yyvsp[(7) - (11)].code));
-		WRITE_UINT32(&body, (yyvsp[(9) - (11)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (11)].code));
+		WRITE_UINT32(&init, (yyvsp[(3) - (11)].code) - (yyvsp[(1) - (11)].code));
+		WRITE_UINT32(&finish, (yyvsp[(7) - (11)].code) - (yyvsp[(1) - (11)].code));
+		WRITE_UINT32(&body, (yyvsp[(9) - (11)].code) - (yyvsp[(1) - (11)].code));
+		WRITE_UINT32(&end, (yyvsp[(10) - (11)].code) - (yyvsp[(1) - (11)].code));
 		WRITE_UINT32(&inc, -1);
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 1] = init;	/* initial count value */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 2] = finish;/* final count value */
@@ -2318,7 +2318,7 @@ yyreduce:
 #line 246 "engines/director/lingo/lingo-gr.y"
     {
 			inst end = 0;
-			WRITE_UINT32(&end, (yyvsp[(3) - (3)].code));
+			WRITE_UINT32(&end, (yyvsp[(3) - (3)].code) - (yyvsp[(1) - (3)].code));
 			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[(yyvsp[(1) - (3)].code) + 1] = end;
 		;}

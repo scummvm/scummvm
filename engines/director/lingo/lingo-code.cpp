@@ -833,7 +833,7 @@ void Lingo::c_repeatwhilecode(void) {
 	d.toInt();
 
 	while (d.u.i) {
-		g_lingo->execute(body);	/* body */
+		g_lingo->execute(body + savepc - 1);	/* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -848,7 +848,7 @@ void Lingo::c_repeatwhilecode(void) {
 	}
 
 	if (!g_lingo->_returning)
-		g_lingo->_pc = end; /* next stmt */
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 }
 
 void Lingo::c_repeatwithcode(void) {
@@ -867,14 +867,14 @@ void Lingo::c_repeatwithcode(void) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}
 
-	g_lingo->execute(init);	/* condition */
+	g_lingo->execute(init + savepc - 1);	/* condition */
 	d = g_lingo->pop();
 	d.toInt();
 	counter->u.i = d.u.i;
 	counter->type = INT;
 
 	while (true) {
-		g_lingo->execute(body);	/* body */
+		g_lingo->execute(body + savepc - 1);	/* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -884,7 +884,7 @@ void Lingo::c_repeatwithcode(void) {
 		}
 
 		counter->u.i += inc;
-		g_lingo->execute(finish);	/* condition */
+		g_lingo->execute(finish + savepc - 1);	/* condition */
 		d = g_lingo->pop();
 		d.toInt();
 
@@ -893,7 +893,7 @@ void Lingo::c_repeatwithcode(void) {
 	}
 
 	if (!g_lingo->_returning)
-		g_lingo->_pc = end; /* next stmt */
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 }
 
 void Lingo::c_exitRepeat(void) {
@@ -933,7 +933,7 @@ void Lingo::c_ifcode() {
 void Lingo::c_whencode() {
 	Datum d;
 	uint start = g_lingo->_pc;
-	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]) + start - 1;
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
 	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
