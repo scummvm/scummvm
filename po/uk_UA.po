@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-21 23:29+0100\n"
-"PO-Revision-Date: 2017-02-22 19:50+0000\n"
-"Last-Translator: Lyubomyr Lisen <lubomyr31@gmail.com>\n"
+"PO-Revision-Date: 2017-02-22 19:52+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
 "Language: uk_UA\n"
@@ -1108,9 +1108,8 @@ msgid "Speech volume:"
 msgstr "Гучн. озвучки:"
 
 #: gui/options.cpp:1351
-#, fuzzy
 msgid "Control"
-msgstr "Управління мишею"
+msgstr "Керування"
 
 #: gui/options.cpp:1383
 msgid "FluidSynth Settings"
