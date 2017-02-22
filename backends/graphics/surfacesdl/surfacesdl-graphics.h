@@ -386,7 +386,6 @@ protected:
 	virtual void internUpdateScreen();
 	virtual void updateShader();
 
-
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 	virtual bool hotswapGFXMode();

@@ -356,7 +356,7 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 
 OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 	int errors = OSystem::kTransactionSuccess;
-	
+
 	assert(_transactionMode != kTransactionNone);
 
 	if (_transactionMode == kTransactionRollback) {
@@ -568,7 +568,6 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	assert(_transactionMode == kTransactionActive);
 
 	updateShader();
-
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
@@ -623,7 +622,6 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 	}
 
 	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
-
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -648,50 +646,50 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	updateShader();
 #endif
 	switch (_videoMode.mode) {
-		case GFX_NORMAL:
-			newScalerProc = Normal1x;
-			break;
+	case GFX_NORMAL:
+		newScalerProc = Normal1x;
+		break;
 #ifdef USE_SCALERS
-		case GFX_DOUBLESIZE:
-			newScalerProc = Normal2x;
-			break;
-		case GFX_TRIPLESIZE:
-			newScalerProc = Normal3x;
-			break;
+	case GFX_DOUBLESIZE:
+		newScalerProc = Normal2x;
+		break;
+	case GFX_TRIPLESIZE:
+		newScalerProc = Normal3x;
+		break;
 
-		case GFX_2XSAI:
-			newScalerProc = _2xSaI;
-			break;
-		case GFX_SUPER2XSAI:
-			newScalerProc = Super2xSaI;
-			break;
-		case GFX_SUPEREAGLE:
-			newScalerProc = SuperEagle;
-			break;
-		case GFX_ADVMAME2X:
-			newScalerProc = AdvMame2x;
-			break;
-		case GFX_ADVMAME3X:
-			newScalerProc = AdvMame3x;
-			break;
+	case GFX_2XSAI:
+		newScalerProc = _2xSaI;
+		break;
+	case GFX_SUPER2XSAI:
+		newScalerProc = Super2xSaI;
+		break;
+	case GFX_SUPEREAGLE:
+		newScalerProc = SuperEagle;
+		break;
+	case GFX_ADVMAME2X:
+		newScalerProc = AdvMame2x;
+		break;
+	case GFX_ADVMAME3X:
+		newScalerProc = AdvMame3x;
+		break;
 #ifdef USE_HQ_SCALERS
-		case GFX_HQ2X:
-			newScalerProc = HQ2x;
-			break;
-		case GFX_HQ3X:
-			newScalerProc = HQ3x;
-			break;
+	case GFX_HQ2X:
+		newScalerProc = HQ2x;
+		break;
+	case GFX_HQ3X:
+		newScalerProc = HQ3x;
+		break;
 #endif
-		case GFX_TV2X:
-			newScalerProc = TV2x;
-			break;
-		case GFX_DOTMATRIX:
-			newScalerProc = DotMatrix;
-			break;
+	case GFX_TV2X:
+		newScalerProc = TV2x;
+		break;
+	case GFX_DOTMATRIX:
+		newScalerProc = DotMatrix;
+		break;
 #endif // USE_SCALERS
 
-		default:
-			error("Unknown gfx mode %d", _videoMode.mode);
+	default:
+		error("Unknown gfx mode %d", _videoMode.mode);
 	}
 
 	_scalerProc = newScalerProc;
@@ -1109,6 +1107,14 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 }
 
 void SurfaceSdlGraphicsManager::updateShader() {
+// shader init code goes here
+// currently only used on Vita port
+// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
+// and the corresponding shader should then be activated here
+// this way the user can combine any software scaling (scalers)
+// with any hardware shading (shaders). The shaders could provide
+// scanline masks, overlays, but could also serve for
+// hardware-based up-scaling (sharp-bilinear-simple, etc.)
 #ifdef PSP2
 	if (vitatex_hwscreen) {
 		if (shaders[0] == NULL) { 
@@ -2114,6 +2120,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 	} else {
 		scalerProc = Normal1x;
 	}
+
 	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);

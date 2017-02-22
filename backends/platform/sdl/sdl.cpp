@@ -280,10 +280,12 @@ void OSystem_SDL::initBackend() {
 
 	if (!ConfMan.hasKey("kbdmouse_speed")) {
 		ConfMan.registerDefault("kbdmouse_speed", 3);
+		ConfMan.setInt("kbdmouse_speed", 3);
 	}
 #ifdef JOY_ANALOG
 	if (!ConfMan.hasKey("joystick_deadzone")) {
 		ConfMan.registerDefault("joystick_deadzone", 3);
+		ConfMan.setInt("joystick_deadzone", 3);
 	}
 #endif
 	ModularBackend::initBackend();

@@ -232,7 +232,7 @@
 			</layout>
 		</layout>
 	</dialog>
-
+	
 	<dialog name = 'GlobalOptions_Control' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'grOnScreenCheckbox'

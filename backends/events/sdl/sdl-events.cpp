@@ -194,7 +194,6 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 		int16 oldKmY = _km.y;
 
 		_km.last_time = curTime;
-
 		if (_km.x_down_count == 1) {
 			_km.x_down_time = curTime;
 			_km.x_down_count = 2;
@@ -205,7 +204,6 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 		}
 
 		if (_km.x_vel || _km.y_vel) {
-
 			if (_km.x_down_count) {
 				if (curTime > _km.x_down_time + 300) {
 					if (_km.x_vel > 0)
@@ -237,45 +235,45 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 
 			if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
 				switch (ConfMan.getInt("kbdmouse_speed")) {
-					// 0.25 keyboard pointer speed
-					case 0:
-						speedFactor = 100;
-						break;
-					// 0.5 speed
-					case 1:
-						speedFactor = 50;
-						break;
-					// 0.75 speed
-					case 2:
-						speedFactor = 37;
-						break;
-					// 1.0 speed
-					case 3:
-						speedFactor = 25;
-						break;
-					// 1.25 speed
-					case 4:
-						speedFactor = 20;
-						break;
-					// 1.5 speed
-					case 5:
-						speedFactor = 17;
-						break;
-					// 1.75 speed
-					case 6:
-						speedFactor = 14;
-						break;
-					// 2.0 speed
-					case 7:
-						speedFactor = 12;
-						break;
-					default:
-						speedFactor = 25;
+				// 0.25 keyboard pointer speed
+				case 0:
+					speedFactor = 100;
+					break;
+				// 0.5 speed
+				case 1:
+					speedFactor = 50;
+					break;
+				// 0.75 speed
+				case 2:
+					speedFactor = 37;
+					break;
+				// 1.0 speed
+				case 3:
+					speedFactor = 25;
+					break;
+				// 1.25 speed
+				case 4:
+					speedFactor = 20;
+					break;
+				// 1.5 speed
+				case 5:
+					speedFactor = 17;
+					break;
+				// 1.75 speed
+				case 6:
+					speedFactor = 14;
+					break;
+				// 2.0 speed
+				case 7:
+					speedFactor = 12;
+					break;
+				default:
+					speedFactor = 25;
 				}
 			}
 
 			// - The modifier key makes the mouse movement slower
-			// - The extra factor "delay/25" ensures velocities 
+			// - The extra factor "delay/speedFactor" ensures velocities 
 			// are independent of the kbdMouse update rate
 			// - all velocities were originally chosen
 			// at a delay of 25, so that is the reference used here
@@ -897,11 +895,11 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	}
 #ifdef JOY_ANALOG
 	// radial and scaled analog joystick deadzone
-	float analogX = (float) _km.joy_x;
-	float analogY = (float) _km.joy_y;
-	float deadZone = (float) JOY_DEADZONE;
+	float analogX = (float)_km.joy_x;
+	float analogY = (float)_km.joy_y;
+	float deadZone = (float)JOY_DEADZONE;
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
-		deadZone = (float) ConfMan.getInt("joystick_deadzone") * 1000.0f;
+		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
 	float scalingFactor = 1.0f;
 	float magnitude = 0.0f;
 
@@ -911,8 +909,8 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		_km.x_down_count = 0;
 		_km.y_down_count = 0;
 		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
-		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
+		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / vel_to_axis);
+		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / vel_to_axis);
 	} else {
 		_km.x_vel = 0;
 		_km.y_vel = 0;

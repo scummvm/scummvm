@@ -79,8 +79,8 @@ enum {
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf',
 	kUpdatesCheckCmd		= 'updc',
-	kKbdMouseSpeedChanged = 'kmsc',
-	kJoystickDeadzoneChanged = 'jodc'
+	kKbdMouseSpeedChanged	= 'kmsc',
+	kJoystickDeadzoneChanged= 'jodc'
 };
 
 enum {
@@ -457,9 +457,7 @@ void OptionsDialog::open() {
 }
 
 void OptionsDialog::apply() {
-
 	bool graphicsModeChanged = false;
-
 	// Control options
 	if (_enableControlSettings) {
 		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
@@ -549,7 +547,7 @@ void OptionsDialog::apply() {
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
-
+		
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
@@ -611,7 +609,7 @@ void OptionsDialog::apply() {
 			dialog.runModal();
 		}
 	}
-
+	
 	// Volume options
 	if (_musicVolumeSlider) {
 		if (_enableVolumeSettings) {
@@ -1463,7 +1461,7 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
-
+	
 	//
 	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
 	//
@@ -1475,7 +1473,7 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Control"));
 		addControlControls(tab, "GlobalOptions_Control.");
 	}
-
+	
 	//
 	// 1) The graphics tab
 	//
@@ -2062,7 +2060,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	{
 		//update container's scrollbar and make sure tabs are not re-arranged
 		if (_tabWidget) {
-			int oldFirstVisible=_tabWidget->getFirstVisible();
+			int oldFirstVisible = _tabWidget->getFirstVisible();
 			reflowLayout();
 			_tabWidget->setFirstVisible(oldFirstVisible);
 		} else {
@@ -2184,7 +2182,7 @@ void GlobalOptionsDialog::handleTickle() {
 
 void GlobalOptionsDialog::reflowLayout() {
 	int activeTab = _tabWidget->getActiveTab();
-	
+
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
 
