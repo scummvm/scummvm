@@ -650,6 +650,9 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	ci->fileName = getString(castStrings[3]);
 	ci->type = castStrings[4];
 
+	debugC(5, kDebugLoading, "CastInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
+				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
+
 	_castsInfo[id] = ci;
 }
 
