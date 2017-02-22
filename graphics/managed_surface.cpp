@@ -256,7 +256,7 @@ void transBlit(const Surface &src, const Common::Rect &srcRect, Surface &dest, c
 	for (int destY = destRect.top, scaleYCtr = 0; destY < destRect.bottom; ++destY, scaleYCtr += scaleY) {
 		if (destY < 0 || destY >= dest.h)
 			continue;
-		const TSRC *srcLine = (const TSRC *)src.getBasePtr(0, scaleYCtr / SCALE_THRESHOLD);
+		const TSRC *srcLine = (const TSRC *)src.getBasePtr(srcRect.left, scaleYCtr / SCALE_THRESHOLD + srcRect.top);
 		TDEST *destLine = (TDEST *)dest.getBasePtr(destRect.left, destY);
 
 		// Loop through drawing the pixels of the row
