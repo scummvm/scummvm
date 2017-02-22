@@ -453,9 +453,12 @@ void HiRes6Engine::printString(const Common::String &str) {
 	if (getVar(2) == 0xff) {
 		if (getVar(26) == 0) {
 			// This checks for special room description string " "
-			if (str.size() != 1 || APPLECHAR(str[0]) != APPLECHAR(' '))
-				return AdlEngine_v5::printString(s);
-			setVar(2, 160);
+			if (str.size() == 1 && APPLECHAR(str[0]) == APPLECHAR(' ')) {
+				setVar(2, 160);
+			} else {
+				AdlEngine_v5::printString(s);
+				setVar(2, 1);
+			}
 		} else if (getVar(26) == 0xff) {
 			// Storing the room number in a variable allows for range comparisons
 			setVar(26, _state.room);
