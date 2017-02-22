@@ -380,6 +380,9 @@ void Lingo::processIf(int elselabel, int endlabel) {
 		if (!label)
 			break;
 
+		if (else1)
+			else1 = else1 - label;
+
 		WRITE_UINT32(&ielse1, else1);
 		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
 		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */

@@ -916,14 +916,14 @@ void Lingo::c_ifcode() {
 
 	if (d.toInt()) {
 		debugC(8, kDebugLingoExec, "executing then");
-		g_lingo->execute(then);
+		g_lingo->execute(then + savepc - 1);
 	} else if (elsep) { /* else part? */
 		debugC(8, kDebugLingoExec, "executing else");
-		g_lingo->execute(elsep);
+		g_lingo->execute(elsep + savepc - 1);
 	}
 
 	if (!g_lingo->_returning && !skipEnd) {
-		g_lingo->_pc = end; /* next stmt */
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		debugC(8, kDebugLingoExec, "executing end");
 	} else {
 		debugC(8, kDebugLingoExec, "Skipped end");

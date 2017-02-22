@@ -2342,8 +2342,8 @@ yyreduce:
 #line 260 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(5) - (7)].code));
-		WRITE_UINT32(&end, (yyvsp[(6) - (7)].code));
+		WRITE_UINT32(&then, (yyvsp[(5) - (7)].code) - (yyvsp[(1) - (7)].code));
+		WRITE_UINT32(&end, (yyvsp[(6) - (7)].code) - (yyvsp[(1) - (7)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 3] = end;	/* end, if cond fails */
 
@@ -2356,9 +2356,9 @@ yyreduce:
 #line 270 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(5) - (10)].code));
-		WRITE_UINT32(&else1, (yyvsp[(8) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code));
+		WRITE_UINT32(&then, (yyvsp[(5) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&else1, (yyvsp[(8) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code) - (yyvsp[(1) - (10)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end;	/* end, if cond fails */
@@ -2372,25 +2372,25 @@ yyreduce:
 #line 282 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(5) - (10)].code));
-		WRITE_UINT32(&else1, (yyvsp[(7) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code));
+		WRITE_UINT32(&then, (yyvsp[(5) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&else1, (yyvsp[(7) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code) - (yyvsp[(1) - (10)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end;	/* end, if cond fails */
 
 		checkEnd((yyvsp[(10) - (10)].s), "if", true);
 
-		g_lingo->processIf(0, (yyvsp[(9) - (10)].code)); ;}
+		g_lingo->processIf(0, (yyvsp[(9) - (10)].code) - (yyvsp[(1) - (10)].code)); ;}
     break;
 
   case 33:
 #line 294 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code));
+		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code) - (yyvsp[(1) - (6)].code));
 		WRITE_UINT32(&else1, 0);
-		WRITE_UINT32(&end, (yyvsp[(6) - (6)].code));
+		WRITE_UINT32(&end, (yyvsp[(6) - (6)].code) - (yyvsp[(1) - (6)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 3] = end; 	/* end, if cond fails */
@@ -2402,9 +2402,9 @@ yyreduce:
 #line 304 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code));
-		WRITE_UINT32(&else1, (yyvsp[(8) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code));
+		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&else1, (yyvsp[(8) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end; 	/* end, if cond fails */
@@ -2416,14 +2416,14 @@ yyreduce:
 #line 314 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code));
-		WRITE_UINT32(&else1, (yyvsp[(6) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code));
+		WRITE_UINT32(&then, (yyvsp[(4) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&else1, (yyvsp[(6) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&end, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = end; 	/* end, if cond fails */
 
-		g_lingo->processIf(0, (yyvsp[(10) - (10)].code)); ;}
+		g_lingo->processIf(0, (yyvsp[(10) - (10)].code) - (yyvsp[(1) - (10)].code)); ;}
     break;
 
   case 36:
@@ -2440,7 +2440,7 @@ yyreduce:
 #line 338 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0;
-		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code));
+		WRITE_UINT32(&then, (yyvsp[(4) - (6)].code) - (yyvsp[(1) - (6)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel((yyvsp[(1) - (6)].code)); ;}
@@ -2450,7 +2450,7 @@ yyreduce:
 #line 347 "engines/director/lingo/lingo-gr.y"
     {
 		inst then = 0;
-		WRITE_UINT32(&then, (yyvsp[(5) - (6)].code));
+		WRITE_UINT32(&then, (yyvsp[(5) - (6)].code) - (yyvsp[(1) - (6)].code));
 		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
 
 		g_lingo->codeLabel((yyvsp[(1) - (6)].code)); ;}
