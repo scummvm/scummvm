@@ -746,7 +746,7 @@ using namespace Director;
 
 int yyparse();
 static void count() {
-	if (debugChannelSet(-1, kDebugLingoCompile))
+	if (debugChannelSet(-1, kDebugLingoParse))
 		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
 
 	g_lingo->_colnumber += strlen(yytext);
