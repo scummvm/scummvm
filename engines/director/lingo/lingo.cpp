@@ -291,7 +291,7 @@ Symbol *Lingo::getHandler(Common::String &name) {
 }
 
 void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
-	if (entityId <= 0)
+	if (entityId < 0)
 		return;
 
 	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);

@@ -940,7 +940,12 @@ void Lingo::c_whencode() {
 
 	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
 
+	int entity = g_lingo->_currentEntityId;
+	g_lingo->_currentEntityId = 0;
+
 	g_lingo->define(eventname, start, 0, NULL, end);
+
+	g_lingo->_currentEntityId = entity;
 
 	if (debugChannelSet(3, kDebugLingoExec)) {
 		uint pc = start;
