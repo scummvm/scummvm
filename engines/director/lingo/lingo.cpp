@@ -428,6 +428,8 @@ const char *Datum::type2str(bool isk) {
 		return isk ? "#symbol" : "SYMBOL";
 	case OBJECT:
 		return isk ? "#object" : "OBJECT";
+	case REFERENCE:
+		return "REFERENCE";
 	case VAR:
 		return isk ? "#var" : "VAR";
 	default:
