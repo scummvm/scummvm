@@ -915,6 +915,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
 	}
 
+	if (width == 0 || height == 0) {
+		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
+		return;
+	}
+
 	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
 	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
