@@ -43,6 +43,7 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "director/cast.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
@@ -305,6 +306,12 @@ void Lingo::c_assign() {
 	}
 
 	if (d1.type == REFERENCE) {
+		if (!g_director->getCurrentScore()->_castsInfo.contains(d1.u.i)) {
+			warning("c_assign: Unknown REFERENCE %d", d1.u.i);
+			g_lingo->pushVoid();
+			return;
+		}
+
 		warning("STUB: c_assing REFERENCE");
 
 		g_lingo->push(d1);
