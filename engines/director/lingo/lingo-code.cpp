@@ -422,8 +422,6 @@ void Lingo::c_theentityassign() {
 
 	Datum d = g_lingo->pop();
 	g_lingo->setTheEntity(entity, id, field, d);
-
-	g_lingo->push(d); // Dummy value
 }
 
 void Lingo::c_swap() {
