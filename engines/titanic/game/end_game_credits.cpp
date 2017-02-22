@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CEndGameCredits, CGameObject)
 	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CEndGameCredits::CEndGameCredits() : CGameObject(), _flag(0),
+CEndGameCredits::CEndGameCredits() : CGameObject(), _flag(false),
 	_frameRange(0, 28) {
 }
 
