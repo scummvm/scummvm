@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-21 23:29+0100\n"
-"PO-Revision-Date: 2017-01-07 02:29+0000\n"
-"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
-"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/el/>\n"
+"PO-Revision-Date: 2017-02-22 19:57+0000\n"
+"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"Language-Team: Greek "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
@@ -873,7 +873,7 @@ msgstr "Λειτουργία Touchpad απενεργοποιημένη."
 
 #: gui/options.cpp:892
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Εναλλαγή των κουμπιών Μενού και Πίσω"
 
 #: gui/options.cpp:904
 msgid "Graphics mode:"
