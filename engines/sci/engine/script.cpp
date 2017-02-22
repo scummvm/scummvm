@@ -505,6 +505,7 @@ void Script::identifyOffsets() {
 		if (_buf->size() < 22)
 			error("Script::identifyOffsets(): script %d smaller than expected SCI3-header", _nr);
 
+		_codeOffset = _buf->getUint32LEAt(0);
 		sci3StringOffset = _buf->getUint32LEAt(4);
 		sci3RelocationOffset = _buf->getUint32LEAt(8);
 
@@ -796,23 +797,29 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	if (exportsAreWide)
 		pubfunct *= 2;
 
-	uint32 offset;
+	int offset;
 
 	if (getSciVersion() != SCI_VERSION_3) {
 		offset = _exports.getUint16SEAt(pubfunct);
 	} else {
-		if (!relocSci3)
-			offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffsetSci3();
-		else
-			offset = relocateOffsetSci3(pubfunct * 2 + 22);
+		if (!relocSci3) {
+			offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffset();
+		} else {
+			offset = relocateOffsetSci3(pubfunct * sizeof(uint16) + /* header size */ 22);
+			// Some offsets below 0xFFFF are left as-is in the export table,
+			// e.g. Lighthouse script 64990
+			if (offset == -1) {
+				offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffset();
+			}
+		}
 	}
 
 	// TODO: Check if this should be done for SCI1.1 games as well
 	if (getSciVersion() >= SCI_VERSION_2 && offset == 0) {
-		offset = _codeOffset;
+		offset = getCodeBlockOffset();
 	}
 
-	if (offset >= _buf->size())
+	if (offset == -1 || offset >= (int)_buf->size())
 		error("Invalid export function pointer");
 
 	return offset;

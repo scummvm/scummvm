@@ -397,7 +397,7 @@ static const byte SRTorinPatch[] = {
 };
 
 void GuestAdditions::patchGameSaveRestoreTorin(Script &script) const {
-	const uint16 address = script.validateExportFunc(2, true);
+	const uint32 address = script.validateExportFunc(2, true);
 	byte *patchPtr = const_cast<byte *>(script.getBuf(address));
 	memcpy(patchPtr, SRTorinPatch, sizeof(SRTorinPatch));
 	if (g_sci->isBE()) {

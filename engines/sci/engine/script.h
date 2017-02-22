@@ -260,9 +260,10 @@ public:
 	int relocateOffsetSci3(uint32 offset) const;
 
 	/**
-	 * Gets an offset to the beginning of the code block in a SCI3 script
+	 * Gets an offset to the beginning of the code block in a SCI1.1 or later
+	 * script
 	 */
-	int getCodeBlockOffsetSci3() { return _buf->getInt32SEAt(0); }
+	int getCodeBlockOffset() { return _codeOffset; }
 
 	/**
 	 * Get the offset array
