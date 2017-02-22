@@ -103,7 +103,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 				{
 					Datum d;
 					i = (*_currentScript)[pc++];
-					d.u.i = READ_UINT32(&i);
+					d.u.f = *(double *)(&i);
 
 					res += Common::String::format(" %f", d.u.f);
 					break;
