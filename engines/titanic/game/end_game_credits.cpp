@@ -75,6 +75,7 @@ bool CEndGameCredits::MovieEndMsg(CMovieEndMsg *msg) {
 		visibleMsg.execute("CreditsBackdrop");
 	}
 
+	addTimer(4000, 0);
 	return true;
 }
 
