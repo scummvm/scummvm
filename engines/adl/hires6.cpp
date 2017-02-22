@@ -167,6 +167,7 @@ int HiRes6Engine::o_goDirection(ScriptEnv &e) {
 	byte room = getCurRoom().connections[D];
 
 	if (room == 0) {
+		// Don't penalize invalid directions at escapable Garthim encounter
 		if (getVar(33) == 2)
 			setVar(34, getVar(34) + 1);
 
@@ -176,6 +177,7 @@ int HiRes6Engine::o_goDirection(ScriptEnv &e) {
 
 	switchRoom(room);
 
+	// Escapes an escapable Garthim encounter by going to a different room
 	if (getVar(33) == 2) {
 		printMessage(102);
 		setVar(33, 0);
