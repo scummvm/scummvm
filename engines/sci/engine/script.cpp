@@ -184,7 +184,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		if (localsTable) {
 			// skip header (4 bytes)
 			_localsOffset = localsTable - *_buf + 4;
-			_localsCount = (_buf->getUint16LEAt(_localsOffset - 2) - 4) >> 1; // half block size
+			_localsCount = localsTable.size() / 2 - 2;
 		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		_numExports = _buf->getUint16SEAt(kSci11NumExportsOffset);
