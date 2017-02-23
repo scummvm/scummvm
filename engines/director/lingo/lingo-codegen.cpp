@@ -311,7 +311,6 @@ void Lingo::codeArgStore() {
 		code1(c_varpush);
 		codeString(arg->c_str());
 		code1(c_assign);
-		code1(c_xpop);
 
 		delete arg;
 	}
