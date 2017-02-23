@@ -86,7 +86,7 @@ protected:
 		Common::String restoreInsert, restoreReplace;
 	} _strings_v2;
 
-	uint _linesPrinted, _maxLines;
+	uint _maxLines;
 	DiskImage *_disk;
 	Common::Array<DataBlockPtr> _itemPics;
 	bool _itemRemoved;

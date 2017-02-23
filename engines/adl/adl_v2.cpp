@@ -36,7 +36,6 @@ AdlEngine_v2::~AdlEngine_v2() {
 
 AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd),
-		_linesPrinted(0),
 		_maxLines(4),
 		_disk(nullptr),
 		_itemRemoved(false),
@@ -285,9 +284,6 @@ void AdlEngine_v2::showRoom() {
 
 	_display->updateHiResScreen();
 	printString(_roomData.description);
-
-	// FIXME: move to main loop?
-	_linesPrinted = 0;
 }
 
 // TODO: Merge this into AdlEngine?

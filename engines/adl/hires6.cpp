@@ -372,9 +372,6 @@ void HiRes6Engine::showRoom() {
 	_display->updateHiResScreen();
 	setVar(2, 0xff);
 	printString(_roomData.description);
-
-	// FIXME: move to main loop?
-	_linesPrinted = 0;
 }
 
 Common::String HiRes6Engine::formatVerbError(const Common::String &verb) const {

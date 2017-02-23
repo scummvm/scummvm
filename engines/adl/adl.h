@@ -390,6 +390,7 @@ protected:
 	// Game state
 	State _state;
 
+	uint _linesPrinted;
 	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _canSaveNow, _canRestoreNow;
 	bool _abortScript;

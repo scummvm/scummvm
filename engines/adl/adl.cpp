@@ -56,6 +56,7 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_display(nullptr),
 		_graphics(nullptr),
 		_textMode(false),
+		_linesPrinted(0),
 		_isRestarting(false),
 		_isRestoring(false),
 		_isQuitting(false),
@@ -634,6 +635,8 @@ void AdlEngine::gameLoop() {
 
 		if (shouldQuit())
 			return;
+
+		_linesPrinted = 0;
 
 		// If we just restored from the GMM, we skip this command
 		// set, as no command has been input by the user
