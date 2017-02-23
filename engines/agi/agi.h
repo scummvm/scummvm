@@ -867,7 +867,7 @@ public:
 	void unloadLogic(int16 logicNr);
 	int runLogic(int16 logicNr);
 	void debugConsole(int, int, const char *);
-	int testIfCode(int);
+	bool testIfCode(int16 logicNr);
 	void executeAgiCommand(uint8, uint8 *);
 
 private:
