@@ -180,16 +180,28 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type != VOID) {
 		movie.toString();
 
+		Common::String cleanedFilename;
+
+		for (const char *p = movie.u.s->c_str(); *p; p++)
+			if (*p >= 0x20 && *p <= 0x7f)
+				cleanedFilename += *p;
+
 		bool fileExists = false;
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			Common::MacResManager resMan;
 			if (resMan.open(*movie.u.s)) {
 				fileExists = true;
+				cleanedFilename = *movie.u.s;
+			} else if (resMan.open(cleanedFilename)) {
+				fileExists = true;
 			}
 		} else {
 			Common::File file;
 			if (file.open(*movie.u.s)) {
+				fileExists = true;
+				cleanedFilename = *movie.u.s;
+			} else if (file.open(cleanedFilename)) {
 				fileExists = true;
 			}
 		}
@@ -199,7 +211,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		_vm->_nextMovie = *movie.u.s;
+		_vm->_nextMovie = cleanedFilename;
 		_vm->getCurrentScore()->_stopPlay = true;
 
 		_vm->_nextMovieFrameS.clear();
