@@ -147,11 +147,12 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
-		case BTN_R1: // Modifier
+		case BTN_R1: // Modifier + Shift
 			_km.modifier=true; // slow mouse
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_RSHIFT;
-			event.kbd.ascii = mapKey(SDLK_RSHIFT, (SDLMod) ev.key.keysym.mod, 0);
+			event.kbd.keycode = Common::KEYCODE_INVALID;
+			event.kbd.ascii = 0;
+			event.kbd.flags = Common::KBD_SHIFT;
 			break;
 		case BTN_START: // ScummVM in game menu
 			event.type = Common::EVENT_MAINMENU;
@@ -255,11 +256,12 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
-		case BTN_R1: // Modifier
+		case BTN_R1: // Modifier + SHIFT Key
 			_km.modifier = false; // slow mouse
 			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_RSHIFT;
-			event.kbd.ascii = mapKey(SDLK_RSHIFT, (SDLMod) ev.key.keysym.mod, 0);
+			event.kbd.keycode = Common::KEYCODE_INVALID;
+			event.kbd.ascii = 0;
+			event.kbd.flags = 0;
 			break;
 		case BTN_START: // ScummVM in game menu
 			// Handled in key down

@@ -64,6 +64,15 @@
 #define GFX_SHADER_SHARP_SCAN 3
 #define GFX_SHADER_AAA 4
 #define GFX_SHADER_SCALE2X 5
+static const OSystem::GraphicsMode s_supportedShaders[] = {
+	{"NONE", "Normal (no shader)", GFX_SHADER_NONE},
+	{"LCD", "LCD", GFX_SHADER_LCD3X},
+	{"Sharp", "Sharp", GFX_SHADER_SHARP},
+	{"Scan", "Scan", GFX_SHADER_SHARP_SCAN},
+	{"AAA", "Super2xSAI", GFX_SHADER_AAA},
+	{"Scale", "Scale", GFX_SHADER_SCALE2X},
+	{0, 0, 0}
+};
 
 // if defined, do aspect correction in hardware
 // changing aspect_ratio to 1.2 * aspect_ratio
@@ -76,6 +85,11 @@ static bool hardwareAspectRatioCorrection = false;
 vita2d_texture *vitatex_hwscreen;
 void *sdlpixels_hwscreen;
 vita2d_shader *shaders[6];
+#else
+static const OSystem::GraphicsMode s_supportedShaders[] = {
+	{"NONE", "Normal (no shader)", 0},
+	{0, 0, 0}
+}
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -238,6 +252,20 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #endif
+
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		_currentShader = ConfMan.getInt("shader");
+		// shader number 0 is the entry NONE (no shader)
+		const OSystem::GraphicsMode *p = s_supportedShaders;
+		_numShaders = 0;
+		while (p->name) { 
+			_numShaders++;
+			p++;
+		}
+	} else {
+		_numShaders = 1;
+		_currentShader = 0;
+	}
 
 #ifdef PSP2
 	shaders[0] = NULL;
@@ -736,6 +764,21 @@ int SurfaceSdlGraphicsManager::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
+const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedShaders() const {
+	return s_supportedShaders;
+}
+
+int SurfaceSdlGraphicsManager::getShader() {
+	return _currentShader;
+}
+
+bool SurfaceSdlGraphicsManager::setShader(int id) {
+	assert(id >= 0 && id < _numShaders);
+	_currentShader = id;
+	updateShader();
+	return true;
+}
+
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
@@ -1143,12 +1186,11 @@ void SurfaceSdlGraphicsManager::updateShader() {
 			shaders[GFX_SHADER_AAA] = vita2d_create_shader((const SceGxmProgram *) advanced_aa_v, (const SceGxmProgram *) advanced_aa_f);
 			shaders[GFX_SHADER_SCALE2X] = vita2d_create_shader((const SceGxmProgram *) scale2x_v, (const SceGxmProgram *) scale2x_f);
 		}
-		int shaderNum = ConfMan.getInt("shader");
-		if (shaderNum >= 0 && shaderNum < sizeof(shaders)) {
-			vita2d_texture_set_program(shaders[shaderNum]->vertexProgram, shaders[shaderNum]->fragmentProgram);
-			vita2d_texture_set_wvp(shaders[shaderNum]->wvpParam);
-			vita2d_texture_set_vertexInput(&shaders[shaderNum]->vertexInput);
-			vita2d_texture_set_fragmentInput(&shaders[shaderNum]->fragmentInput);
+		if (_currentShader >= 0 && _currentShader < _numShaders) {
+			vita2d_texture_set_program(shaders[_currentShader]->vertexProgram, shaders[_currentShader]->fragmentProgram);
+			vita2d_texture_set_wvp(shaders[_currentShader]->wvpParam);
+			vita2d_texture_set_vertexInput(&shaders[_currentShader]->vertexInput);
+			vita2d_texture_set_fragmentInput(&shaders[_currentShader]->fragmentInput);
 		}
 	}
 #endif

@@ -124,13 +124,6 @@ static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 k
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 static const char *kbdMouseSpeedLabels[] = { _s("3"), _s("5"), _s("8"), _s("10"), _s("13"), _s("15"), _s("18"), _s("20"), 0 };
 static const int kbdMouseSpeedValues[] = { 0, 1, 2, 3, 4, 5, 6, 7, -1 };
-#ifdef PSP2
-static const char *shaderLabels[] = { _s("None"), _s("LCD"), _s("Sharp"), _s("Scan"), _s("AAA"), _s("Scale"), 0 };
-static const int shaderValues[] = { 0, 1, 2, 3, 4, 5, -1 };
-#else
-static const char *shaderLabels[] = { _s("None"), 0 };
-static const int shaderValues[] = { 0, -1 };
-#endif
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
@@ -327,12 +320,8 @@ void OptionsDialog::build() {
 	// Shader options
 	if (g_system->hasFeature(OSystem::kFeatureShader)) {
 		if (_shaderPopUp) {
-			_shaderPopUp->setSelected(1);
 			int value = ConfMan.getInt("shader", _domain);
-			for	(int i = 0; shaderLabels[i]; i++) {
-				if (value == shaderValues[i])
-					_shaderPopUp->setSelected(i);
-			}
+			_shaderPopUp->setSelected(value);
 		}
 	}
 
@@ -537,7 +526,7 @@ void OptionsDialog::apply() {
 			if (_shaderPopUp) {
 				if (ConfMan.getInt("shader", _domain) != _shaderPopUp->getSelectedTag()) {
 					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
-					graphicsModeChanged = true;
+					g_system->setShader(_shaderPopUp->getSelectedTag());
 				}
 			}
 		}
@@ -1007,8 +996,10 @@ void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &pre
 		else
 			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
 		_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
-		for (int i = 0; shaderLabels[i]; i++) {
-			_shaderPopUp->appendEntry(_(shaderLabels[i]), shaderValues[i]);
+		const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+		while (p->name) {
+			_shaderPopUp->appendEntry(p->name, p->id);
+			p++;
 		}
 	}
 	_enableShaderSettings = true;
