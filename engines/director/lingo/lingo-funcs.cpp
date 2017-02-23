@@ -193,7 +193,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			if (resMan.open(*movie.u.s)) {
 				fileExists = true;
 				cleanedFilename = *movie.u.s;
-			} else if (resMan.open(cleanedFilename)) {
+			} else if (!movie.u.s->equals(cleanedFilename) && resMan.open(cleanedFilename)) {
 				fileExists = true;
 			}
 		} else {
@@ -201,7 +201,7 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			if (file.open(*movie.u.s)) {
 				fileExists = true;
 				cleanedFilename = *movie.u.s;
-			} else if (file.open(cleanedFilename)) {
+			} else if (!movie.u.s->equals(cleanedFilename) && file.open(cleanedFilename)) {
 				fileExists = true;
 			}
 		}
