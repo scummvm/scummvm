@@ -43,6 +43,11 @@
 #include "graphics/surface.h"
 #include "gui/EventRecorder.h"
 
+static const OSystem::GraphicsMode s_supportedShaders[] = {
+	{"NONE", "Normal (no shader)", 0},
+	{0, 0, 0}
+}
+
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
@@ -194,6 +199,20 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #endif
+
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		_currentShader = ConfMan.getInt("shader");
+		// shader number 0 is the entry NONE (no shader)
+		const OSystem::GraphicsMode *p = s_supportedShaders;
+		_numShaders = 0;
+		while (p->name) { 
+			_numShaders++;
+			p++;
+		}
+	} else {
+		_numShaders = 1;
+		_currentShader = 0;
+	}
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -533,6 +552,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode) {
 
 	assert(_transactionMode == kTransactionActive);
 
+	updateShader();
 	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
 		return true;
 
@@ -674,6 +694,21 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 int SurfaceSdlGraphicsManager::getGraphicsMode() const {
 	assert(_transactionMode == kTransactionNone);
 	return _videoMode.mode;
+}
+
+const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedShaders() const {
+	return s_supportedShaders;
+}
+
+int SurfaceSdlGraphicsManager::getShader() {
+	return _currentShader;
+}
+
+bool SurfaceSdlGraphicsManager::setShader(int id) {
+	assert(id >= 0 && id < _numShaders);
+	_currentShader = id;
+	updateShader();
+	return true;
 }
 
 void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
@@ -1037,6 +1072,17 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	internUpdateScreen();
+}
+
+void SurfaceSdlGraphicsManager::updateShader() {
+// shader init code goes here
+// currently only used on Vita port
+// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
+// and the corresponding shader should then be activated here
+// this way the user can combine any software scaling (scalers)
+// with any hardware shading (shaders). The shaders could provide
+// scanline masks, overlays, but could also serve for
+// hardware-based up-scaling (sharp-bilinear-simple, etc.)
 }
 
 void SurfaceSdlGraphicsManager::internUpdateScreen() {
