@@ -40,6 +40,7 @@ void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
 		const Rect &rect) {
 	_objectP = obj;
 	_screenManagerP = screenManager;
+	_rect = rect;
 
 	setup();
 
