@@ -614,7 +614,10 @@ VMDPlayer::IOStatus VMDPlayer::close() {
 		_bundledVmd = nullptr;
 	}
 
-	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
+	if (_bitmapId != NULL_REG) {
+		_segMan->freeBitmap(_bitmapId);
+		_bitmapId = NULL_REG;
+	}
 
 	if (!_planeIsOwned && _screenItem != nullptr) {
 		g_sci->_gfxFrameout->deleteScreenItem(*_screenItem);
@@ -738,8 +741,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-		reg_t bitmapId;
-		SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&bitmapId, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
+		SciBitmap &vmdBitmap = *_segMan->allocateBitmap(&_bitmapId, vmdRect.width(), vmdRect.height(), 255, 0, 0, screenWidth, screenHeight, 0, false, false);
 		vmdBitmap.getBuffer().fillRect(Common::Rect(vmdRect.width(), vmdRect.height()), 0);
 
 		if (screenWidth != scriptWidth || screenHeight != scriptHeight) {
@@ -747,7 +749,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		}
 
 		CelInfo32 vmdCelInfo;
-		vmdCelInfo.bitmap = bitmapId;
+		vmdCelInfo.bitmap = _bitmapId;
 		_decoder->setSurfaceMemory(vmdBitmap.getPixels(), vmdBitmap.getWidth(), vmdBitmap.getHeight(), 1);
 
 		if (_planeIsOwned) {

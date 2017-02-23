@@ -380,6 +380,11 @@ private:
 	 */
 	ScreenItem *_screenItem;
 
+	/**
+	 * The bitmap used to render the VMD.
+	 */
+	reg_t _bitmapId;
+
 	// TODO: planeIsOwned and priority are used in SCI3+ only
 
 	/**
