@@ -125,7 +125,7 @@ static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 
 static const char *kbdMouseSpeedLabels[] = { _s("3"), _s("5"), _s("8"), _s("10"), _s("13"), _s("15"), _s("18"), _s("20"), 0 };
 static const int kbdMouseSpeedValues[] = { 0, 1, 2, 3, 4, 5, 6, 7, -1 };
 #ifdef PSP2
-static const char *shaderLabels[] = { _s("None"), _s("2xLCD"), _s("2xSharp"), _s("2xScan"), _s("2xAAA"), _s("2xScale"), 0 };
+static const char *shaderLabels[] = { _s("None"), _s("LCD"), _s("Sharp"), _s("Scan"), _s("AAA"), _s("Scale"), 0 };
 static const int shaderValues[] = { 0, 1, 2, 3, 4, 5, -1 };
 #else
 static const char *shaderLabels[] = { _s("None"), 0 };

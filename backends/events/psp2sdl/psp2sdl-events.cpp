@@ -120,10 +120,16 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
-		case BTN_TRIANGLE: // Game menu
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+		case BTN_TRIANGLE: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
 			break;
 		case BTN_SQUARE: // Period (+R_trigger: Space)
 			if (!_km.modifier) {
@@ -136,19 +142,16 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
 			}
 			break;
-		case BTN_L1: // Escape (+R_trigger: Return)
-			if (!_km.modifier) {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-			} else {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_RETURN;
-				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-			}
+		case BTN_L1: // Game menu
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
 		case BTN_R1: // Modifier
-			_km.modifier=true;
+			_km.modifier=true; // slow mouse
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_RSHIFT;
+			event.kbd.ascii = mapKey(SDLK_RSHIFT, (SDLMod) ev.key.keysym.mod, 0);
 			break;
 		case BTN_START: // ScummVM in game menu
 			event.type = Common::EVENT_MAINMENU;
@@ -225,10 +228,16 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONUP;
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
-		case BTN_TRIANGLE: // Game menu
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+		case BTN_TRIANGLE: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
 			break;
 		case BTN_SQUARE: // Period (+R_trigger: Space)
 			if (!_km.modifier) {
@@ -241,19 +250,16 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
 			}
 			break;
-		case BTN_L1: // Escape (+R_trigger: Return)
-			if (!_km.modifier) {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-			} else {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_RETURN;
-				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-			}
+		case BTN_L1: // Game menu
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
 		case BTN_R1: // Modifier
-			_km.modifier = false;
+			_km.modifier = false; // slow mouse
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_RSHIFT;
+			event.kbd.ascii = mapKey(SDLK_RSHIFT, (SDLMod) ev.key.keysym.mod, 0);
 			break;
 		case BTN_START: // ScummVM in game menu
 			// Handled in key down

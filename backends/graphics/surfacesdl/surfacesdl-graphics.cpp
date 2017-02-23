@@ -65,6 +65,14 @@
 #define GFX_SHADER_AAA 4
 #define GFX_SHADER_SCALE2X 5
 
+// if defined, do aspect correction in hardware
+// changing aspect_ratio to 1.2 * aspect_ratio
+#define PSP2_HARDWAREASPECT
+
+#ifdef PSP2_HARDWAREASPECT
+static bool hardwareAspectRatioCorrection = false;
+#endif
+
 vita2d_texture *vitatex_hwscreen;
 void *sdlpixels_hwscreen;
 vita2d_shader *shaders[6];
@@ -202,6 +210,15 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
+#ifdef PSP2_HARDWAREASPECT
+	// do aspect ration correction in hardware
+	if (_videoMode.aspectRatioCorrection == true) {
+		hardwareAspectRatioCorrection = true;
+	} else {
+		hardwareAspectRatioCorrection = false;
+	}
+	_videoMode.aspectRatioCorrection = false;
+#endif
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
 #else // for small screen platforms
@@ -1394,12 +1411,31 @@ void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
 void SurfaceSdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 	Common::StackLock lock(_graphicsMutex);
 
+#ifdef PSP2_HARDWAREASPECT
+	if (_oldVideoMode.setup && hardwareAspectRatioCorrection == enable)
+		return;
+#else
 	if (_oldVideoMode.setup && _oldVideoMode.aspectRatioCorrection == enable)
 		return;
+#endif
 
 	if (_transactionMode == kTransactionActive) {
+#ifdef PSP2_HARDWAREASPECT
+		_videoMode.aspectRatioCorrection = false;
+		hardwareAspectRatioCorrection = enable;
+		// erase the screen for both buffers
+		if (vitatex_hwscreen) {
+			for (int i = 0; i <= 10; i++) {
+				vita2d_start_drawing();
+				vita2d_clear_screen();
+				vita2d_end_drawing();
+				vita2d_swap_buffers();
+			}
+		}
+#else
 		_videoMode.aspectRatioCorrection = enable;
 		_transactionDetails.needHotswap = true;
+#endif
 	}
 }
 
@@ -2758,18 +2794,42 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 #ifdef PSP2
 	int x, y, w, h;
 	float sx, sy;
-	float ratio = (float)screen->w/(float)screen->h;
-	
-	if(_videoMode.fullscreen) {
-		h = 544; 
-		w = h*ratio;
-	} else {
-		h = screen->h > 544 ? 544 : screen->h;
-		w = h*ratio;
+	float ratio = (float)screen->w / (float)screen->h;
+
+#ifdef PSP2_HARDWAREASPECT
+	if ((_videoMode.screenHeight == 200 || _videoMode.screenHeight == 400) && hardwareAspectRatioCorrection) {
+		ratio = ratio * (200.0f / 240.0f);
 	}
-	x = (960-w)/2; y = (544-h)/2;
-	sx = (float)w/(float)screen->w;
-	sy = (float)h/(float)screen->h;
+#endif
+
+	if (_videoMode.fullscreen || screen->h >= 544) {
+		h = 544; 
+		w = h * ratio;
+	} else {
+		if (screen->h <= 277 && screen->w <= 480) {
+			// Use Vita hardware 2x scaling if the picture is really small
+			// this uses the current shader and filtering mode
+			h = screen->h * 2;
+			w = screen->w * 2;
+		} else {
+			h = screen->h;
+			w = screen->w;
+		}
+#ifdef PSP2_HARDWAREASPECT	
+		if ((_videoMode.screenHeight == 200 || _videoMode.screenHeight == 400) && hardwareAspectRatioCorrection) {
+			// stretch the height only if it fits, otherwise make the width smaller
+			if (((float)w * (1.0f / ratio)) <= 544.0f) {
+				h = w * (1.0f / ratio);
+			} else {
+				w = h * ratio;
+			}
+		}
+#endif
+	}
+	
+	x = (960 - w) / 2; y = (544 - h) / 2;
+	sx = (float)w / (float)screen->w;
+	sy = (float)h / (float)screen->h;
 
 	vita2d_start_drawing();
 	vita2d_draw_texture_scale(vitatex_hwscreen, x, y, sx, sy);

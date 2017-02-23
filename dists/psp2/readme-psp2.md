@@ -24,11 +24,11 @@ Joypad button mapping
 - Circle         => Right mouse button
 - DPad           => Cursor Keys (useful for character motion)
 - R + DPad       => Diagonal Cursor Keys
-- Triangle       => Game menu (F5)
+- L Trigger      => Game menu (F5)
 - Square         => Period '.' (used to skip dialog lines)
 - R + Square     => Space ' '
-- L Trigger      => Escape (used to skip cutscenes)
-- R + L          => Return
+- Triangle       => Escape (used to skip cutscenes)
+- R + Triangle   => Return
 - Start          => ScummVM's global in-game menu
 - Select         => Toggle virtual keyboard
 - R + Select     => AGI predictive input dialog
