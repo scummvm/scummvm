@@ -406,7 +406,8 @@ void Files_DOS33::readVTOC() {
 
 			entry.totalSectors = stream->readUint16BE();
 
-			if (sectorList.track != 0) {
+			// 0 is empty slot, 255 is deleted file
+			if (sectorList.track != 0 && sectorList.track != 255) {
 				readSectorList(sectorList, entry.sectors);
 				_toc[name] = entry;
 			}
