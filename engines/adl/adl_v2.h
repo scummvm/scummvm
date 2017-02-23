@@ -51,6 +51,9 @@ protected:
 	virtual void showRoom();
 	void takeItem(byte noun);
 
+	// Engine
+	bool canSaveGameStateCurrently();
+
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
 	void loadItems(Common::ReadStream &stream);

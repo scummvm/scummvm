@@ -239,6 +239,7 @@ protected:
 	// Engine
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canSaveGameStateCurrently();
 
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
@@ -411,7 +412,6 @@ private:
 	Common::Error run();
 	bool hasFeature(EngineFeature f) const;
 	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
 
 	// Text input
 	byte convertKey(uint16 ascii) const;

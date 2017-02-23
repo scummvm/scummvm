@@ -58,6 +58,9 @@ private:
 	// AdlEngine_v2
 	void printString(const Common::String &str);
 
+	// Engine
+	bool canSaveGameStateCurrently();
+
 	template <Direction D>
 	int o_goDirection(ScriptEnv &e);
 	int o_fluteSound(ScriptEnv &e);
@@ -201,6 +204,22 @@ int HiRes6Engine::o_fluteSound(ScriptEnv &e) {
 
 	return 0;
 }
+
+bool HiRes6Engine::canSaveGameStateCurrently() {
+	// Back up variables that may be changed by this test
+	const byte var2 = getVar(2);
+	const byte var24 = getVar(24);
+	const bool abortScript = _abortScript;
+
+	const bool retval = AdlEngine_v5::canSaveGameStateCurrently();
+
+	setVar(2, var2);
+	setVar(24, var24);
+	_abortScript = abortScript;
+
+	return retval;
+}
+
 
 #define SECTORS_PER_TRACK 16
 #define BYTES_PER_SECTOR 256

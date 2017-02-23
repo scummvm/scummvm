@@ -611,6 +611,16 @@ int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
 	return 0;
 }
 
+bool AdlEngine_v2::canSaveGameStateCurrently() {
+	// Back up first visit flag as it may be changed by this test
+	const bool isFirstTime = getCurRoom().isFirstTime;
+	const bool retval = AdlEngine::canSaveGameStateCurrently();
+
+	getCurRoom().isFirstTime = isFirstTime;
+
+	return retval;
+}
+
 int AdlEngine_v2::askForSlot(const Common::String &question) {
 	while (1) {
 		_display->printString(question);

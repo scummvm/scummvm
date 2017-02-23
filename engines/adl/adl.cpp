@@ -891,6 +891,12 @@ bool AdlEngine::canSaveGameStateCurrently() {
 	// Here we check whether or not the game currently accepts the command
 	// "SAVE GAME". This prevents saving via the GMM in situations where
 	// it wouldn't otherwise be possible to do so.
+	for (cmd = _roomData.commands.begin(); cmd != _roomData.commands.end(); ++cmd) {
+		ScriptEnv env(*cmd, _state.room, _saveVerb, _saveNoun);
+		if (matchCommand(env))
+			return env.op() == IDO_ACT_SAVE;
+	}
+
 	for (cmd = _roomCommands.begin(); cmd != _roomCommands.end(); ++cmd) {
 		ScriptEnv env(*cmd, _state.room, _saveVerb, _saveNoun);
 		if (matchCommand(env))
