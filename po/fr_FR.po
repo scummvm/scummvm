@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-21 23:29+0100\n"
-"PO-Revision-Date: 2017-02-04 10:14+0000\n"
+"PO-Revision-Date: 2017-02-23 11:45+0000\n"
 "Last-Translator: Purple T <zeonk@hotmail.com>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -854,16 +854,15 @@ msgstr "le mode de filtrage n'a pu être changé"
 
 #: gui/options.cpp:884
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Afficher les contrôles sur l'écran"
 
 #: gui/options.cpp:888
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Mode touchpad désactivé."
+msgstr "Souris en mode Touchpad"
 
 #: gui/options.cpp:892
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Inverser les boutons Menu et Retour"
 
 #: gui/options.cpp:904
 msgid "Graphics mode:"
@@ -1117,9 +1116,8 @@ msgid "Speech volume:"
 msgstr "Dialogues :"
 
 #: gui/options.cpp:1351
-#, fuzzy
 msgid "Control"
-msgstr "Contrôles la Souris"
+msgstr "Contrôles"
 
 #: gui/options.cpp:1383
 msgid "FluidSynth Settings"
