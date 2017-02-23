@@ -466,8 +466,6 @@ struct AgiGame {
 
 	ScreenObjEntry addToPicView;
 
-	int32 ver;                      /**< detected game version */
-
 	bool automaticSave;             /**< set by CmdSetSimple() */
 	char automaticSaveDescription[SAVEDGAME_DESCRIPTION_LEN + 1];
 
@@ -718,7 +716,20 @@ struct AgiArtificialDelayEntry {
 	uint16 millisecondsDelay;
 };
 
-typedef void (*AgiCommand)(AgiGame *state, AgiEngine *vm, uint8 *p);
+typedef void (*AgiOpCodeFunction)(AgiGame *state, AgiEngine *vm, uint8 *p);
+
+struct AgiOpCodeEntry {
+	const char *name;
+	const char *parameters;
+	AgiOpCodeFunction functionPtr;
+	uint16     parameterSize;
+};
+
+struct AgiOpCodeDefinitionEntry {
+	const char *name;
+	const char *parameters;
+	AgiOpCodeFunction functionPtr;
+};
 
 class AgiEngine : public AgiBase {
 protected:
@@ -985,10 +996,13 @@ private:
 	uint32 _passedPlayTimeCycles; // increased by 1 every time we passed a cycle
 
 private:
-	AgiCommand _agiCommands[183];
-	AgiCommand _agiCondCommands[256];
+	AgiOpCodeEntry _opCodes[256]; // always keep those at 256, so that there is no way for invalid memory access
+	AgiOpCodeEntry _opCodesCond[256];
 
-	void setupOpcodes();
+	void setupOpCodes(uint16 version);
+
+public:
+	const AgiOpCodeEntry *getOpCodesTable() { return _opCodes; }
 };
 
 } // End of namespace Agi

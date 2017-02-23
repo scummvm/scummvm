@@ -394,7 +394,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	resetControllers();
 
-	setupOpcodes();
 	_game._curLogic = NULL;
 	_veryFirstInitialCycle = true;
 	_instructionCounter = 0;
@@ -498,6 +497,8 @@ void AgiEngine::initialize() {
 	} else {
 		warning("Could not open AGI game");
 	}
+	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
+	setupOpCodes(getVersion());
 
 	debugC(2, kDebugLevelMain, "Init sound");
 }

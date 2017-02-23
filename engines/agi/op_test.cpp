@@ -418,7 +418,7 @@ int AgiEngine::testIfCode(int lognum) {
 
 		default:
 			// Evaluate the command and skip the rest of the instruction
-			_agiCondCommands[op](state, this, p);
+			_opCodesCond[op].functionPtr(state, this, p);
 			skipInstruction(op);
 
 			// NOT mode is enabled only for one instruction
@@ -469,16 +469,26 @@ void AgiEngine::skipInstruction(byte op) {
 		return;
 	if (op == 0x0E && state->_vm->getVersion() >= 0x2000) // said
 		ip += *(code + ip) * 2 + 1;
-	else
-		ip += logicNamesTest[op].argumentsLength();
+	else {
+		ip += _opCodesCond[op].parameterSize;
+	}
 }
 
 void AgiEngine::skipInstructionsUntil(byte v) {
 	AgiGame *state = &_game;
+	int originalIP = state->_curLogic->cIP;
+
 	while (1) {
 		byte op = *(code + ip++);
 		if (op == v)
 			return;
+
+		if (op < 0xFC) {
+			if (!_opCodesCond[op].functionPtr) {
+				// security-check
+				error("illegal opcode %x during skipinstructions in script %d at %d (triggered at %d)", op, state->curLogicNr, ip, originalIP);
+			}
+		}
 		skipInstruction(op);
 	}
 }

@@ -1051,9 +1051,10 @@ void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdAdjEgoMoveToXY(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	const AgiOpCodeEntry *opCodeTable = vm->getOpCodesTable();
 	int8 x, y;
 
-	switch (logicNamesCmd[182].argumentsLength()) {
+	switch (opCodeTable[182].parameterSize) {
 	// The 2 arguments version is used at least in Amiga Gold Rush!
 	// (v2.05 1989-03-09, Amiga AGI 2.316) in logics 130 and 150
 	// (Using arguments (0, 0), (0, 7), (0, 8), (9, 9) and (-9, 9)).
@@ -2308,7 +2309,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 	AgiGame *state = &_game;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
-	int num = 0;
+	int curParameterSize = 0;
 	ScriptPos sp;
 	//int logic_index = 0;
 
@@ -2390,14 +2391,18 @@ int AgiEngine::runLogic(int16 logicNr) {
 			_game.execStack.pop_back();
 			return 1;
 		default:
-			num = logicNamesCmd[op].argumentsLength();
-			memmove(p, state->_curLogic->data + state->_curLogic->cIP, num);
-			memset(p + num, 0, CMD_BSIZE - num);
+			curParameterSize = _opCodes[op].parameterSize;
+			memmove(p, state->_curLogic->data + state->_curLogic->cIP, curParameterSize);
+			memset(p + curParameterSize, 0, CMD_BSIZE - curParameterSize);
 
-			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, logicNamesCmd[op].name, p[0], p[1], p[2]);
+			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, _opCodes[op].name, p[0], p[1], p[2]);
 
-			_agiCommands[op](&_game, this, p);
-			state->_curLogic->cIP += num;
+			if (!_opCodes[op].functionPtr) {
+				error("Illegal opcode %x in logic %d, ip %d", op, state->curLogicNr, state->_curLogic->cIP);
+			}
+
+			_opCodes[op].functionPtr(&_game, this, p);
+			state->_curLogic->cIP += curParameterSize;
 		}
 
 //		if ((op == 0x0B || op == 0x3F || op == 0x40) && logic_index < state->max_logics) {
@@ -2418,9 +2423,9 @@ int AgiEngine::runLogic(int16 logicNr) {
 }
 
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {
-	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
+	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", _opCodes[op].name, p[0], p[1], p[2]);
 
-	_agiCommands[op](&_game, this, p);
+	_opCodes[op].functionPtr(&_game, this, p);
 }
 
 } // End of namespace Agi
