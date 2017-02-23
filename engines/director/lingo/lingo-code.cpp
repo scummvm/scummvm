@@ -314,7 +314,6 @@ void Lingo::c_assign() {
 
 		warning("STUB: c_assing REFERENCE");
 
-		g_lingo->push(d1);
 		return;
 	}
 
@@ -350,8 +349,6 @@ void Lingo::c_assign() {
 	}
 
 	d1.u.sym->type = d2.type;
-
-	g_lingo->push(d1);
 }
 
 bool Lingo::verify(Symbol *s) {
