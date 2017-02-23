@@ -214,6 +214,7 @@ void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &cli
 		// Form a rect of the area of the next character to draw
 		Rect charRect(_chars[c]._offset, textRect.top,
 			_chars[c]._offset + _chars[c]._width, textRect.bottom);
+		int textX = textPt.x;
 
 		if (textPt.x < clipRect.left) {
 			// Character is either partially or entirely left off-screen
@@ -237,6 +238,7 @@ void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &cli
 		// At this point, we know we've got to draw at least part of a character,
 		// and have figured out the area of the character to draw
 		copyRect(surface, textPt, charRect);
+		textPt.x = textX + _chars[c]._width;
 	}
 }
 
