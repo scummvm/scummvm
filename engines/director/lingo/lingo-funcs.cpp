@@ -279,6 +279,12 @@ void Lingo::func_gotoprevious() {
 void Lingo::func_play(Datum &frame, Datum &movie) {
 	MovieReference ref;
 
+	if (movie.type != VOID) {
+		warning("STUB: func_play()");
+
+		return;
+	}
+
 	ref.frameI = _vm->getCurrentScore()->getCurrentFrame();
 
 	_vm->_movieStack.push_back(ref);
@@ -293,8 +299,13 @@ void Lingo::func_playdone() {
 
 	Datum m, f;
 
-	warning("STUB: func_playdone()");
-	m.type = VOID;
+	if (ref.movie.empty()) {
+		m.type = VOID;
+	} else {
+		m.type = STRING;
+		m.u.s = new Common::String(ref.movie);
+	}
+
 	f.type = INT;
 	f.u.i = ref.frameI;
 
