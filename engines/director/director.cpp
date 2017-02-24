@@ -78,7 +78,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_movies = nullptr;
 
-	_nextMovieFrameI = -1;
+	_nextMovie.frameI = -1;
 
 	_wm = nullptr;
 
@@ -165,21 +165,25 @@ Common::Error DirectorEngine::run() {
 		_currentScore->loadArchive();
 
 		// If we came in a loop, then skip as requested
-		if (!_nextMovieFrameS.empty())
-			_currentScore->setStartToLabel(_nextMovieFrameS);
+		if (!_nextMovie.frameS.empty()) {
+			_currentScore->setStartToLabel(_nextMovie.frameS);
+			_nextMovie.frameS.clear();
+		}
 
-		if (_nextMovieFrameI != -1)
-			_currentScore->setCurrentFrame(_nextMovieFrameI);
+		if (_nextMovie.frameI != -1) {
+			_currentScore->setCurrentFrame(_nextMovie.frameI);
+			_nextMovie.frameI = -1;
+		}
 
 		_currentScore->startLoop();
 
 		// If a loop was requested, do it
-		if (!_nextMovie.empty()) {
+		if (!_nextMovie.movie.empty()) {
 			_lingo->restartLingo();
 
 			delete _currentScore;
 
-			Archive *mov = openMainArchive(_nextMovie);
+			Archive *mov = openMainArchive(_nextMovie.movie);
 
 			if (!mov) {
 				warning("nextMovie: No score is loaded");
@@ -190,7 +194,7 @@ Common::Error DirectorEngine::run() {
 			_currentScore = new Score(this, mov);
 			debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
-			_nextMovie.clear();
+			_nextMovie.movie.clear();
 			loop = true;
 		}
 	}

@@ -62,6 +62,14 @@ enum {
 	kDebugLingoParse	= 1 << 6
 };
 
+struct MovieReference {
+	Common::String movie;
+	Common::String frameS;
+	int frameI;
+
+	MovieReference() { frameI = -1; }
+};
+
 extern byte defaultPalette[768];
 
 class DirectorEngine : public ::Engine {
@@ -112,9 +120,7 @@ public:
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
 
-	Common::String _nextMovie;
-	Common::String _nextMovieFrameS;
-	int _nextMovieFrameI;
+	MovieReference _nextMovie;
 
 protected:
 	virtual Common::Error run();

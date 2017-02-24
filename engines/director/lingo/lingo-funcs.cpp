@@ -211,23 +211,23 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			return;
 		}
 
-		_vm->_nextMovie = cleanedFilename;
+		_vm->_nextMovie.movie = cleanedFilename;
 		_vm->getCurrentScore()->_stopPlay = true;
 
-		_vm->_nextMovieFrameS.clear();
-		_vm->_nextMovieFrameI = -1;
+		_vm->_nextMovie.frameS.clear();
+		_vm->_nextMovie.frameI = -1;
 
 		if (frame.type == VOID)
 			return;
 
 		if (frame.type == STRING) {
-			_vm->_nextMovieFrameS = *frame.u.s;
+			_vm->_nextMovie.frameS = *frame.u.s;
 			return;
 		}
 
 		frame.toInt();
 
-		_vm->_nextMovieFrameI = frame.u.i;
+		_vm->_nextMovie.frameI = frame.u.i;
 
 		return;
 	}
