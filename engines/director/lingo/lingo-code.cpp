@@ -940,7 +940,7 @@ void Lingo::c_whencode() {
 
 	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
 
-	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+	debugC(1, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
 
 	int entity = g_lingo->_currentEntityId;
 	g_lingo->_currentEntityId = 0;
@@ -953,7 +953,7 @@ void Lingo::c_whencode() {
 		uint pc = start;
 		while (pc <= end) {
 			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
-			debugC(3, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
 		}
 	}
 
