@@ -214,7 +214,7 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 	if (prefix)
 		name = *prefix + "-" + name;
 
-	debugC(3, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
+	debugC(1, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
 	Symbol *sym = getHandler(name);
 	if (sym == NULL) { // Create variable if it was not defined

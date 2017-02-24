@@ -136,17 +136,17 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return NULL;
 
 		if (!strncmp(res, "macro ", 6)) {
-			debugC(3, kDebugLingoCompile, "See macro");
+			debugC(1, kDebugLingoCompile, "See macro");
 			return res;
 		}
 
 		if (!strncmp(res, "factory ", 8)) {
-			debugC(3, kDebugLingoCompile, "See factory");
+			debugC(1, kDebugLingoCompile, "See factory");
 			return res;
 		}
 
 		if (!strncmp(res, "method ", 7)) {
-			debugC(3, kDebugLingoCompile, "See method");
+			debugC(1, kDebugLingoCompile, "See method");
 			return res;
 		}
 
@@ -158,7 +158,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debugC(2, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
+	debugC(1, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];
@@ -175,7 +175,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	const char *begin, *end;
 
 	if (!strncmp(code, "menu:", 5)) {
-		debugC(2, kDebugLingoCompile, "Parsing menu");
+		debugC(1, kDebugLingoCompile, "Parsing menu");
 		parseMenu(code);
 
 		return;
@@ -200,7 +200,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			else
 				_inFactory = false;
 
-			debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
+			debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
@@ -208,7 +208,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				uint pc = 0;
 				while (pc < _currentScript->size()) {
 					Common::String instr = decodeInstruction(pc, &pc);
-					debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+					debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 				}
 			}
 
@@ -219,7 +219,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		_hadError = true; // HACK: This is for preventing test execution
 
-		debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
+		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
 		parse(begin);
 	} else {
 		parse(code);
@@ -236,7 +236,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		uint pc = 0;
 		while (pc < _currentScript->size()) {
 			Common::String instr = decodeInstruction(pc, &pc);
-			debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+			debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 		}
 	}
 }
@@ -247,7 +247,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	debugC(2, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
+	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
@@ -306,7 +306,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	} else if (_scripts[st].contains(entityId)) {
 		executeScript(st, entityId); // D3 list of scripts.
 	} else {
-		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+		debugC(3, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 	}
 }
 

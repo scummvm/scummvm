@@ -949,7 +949,7 @@ void Lingo::c_whencode() {
 
 	g_lingo->_currentEntityId = entity;
 
-	if (debugChannelSet(3, kDebugLingoExec)) {
+	if (debugChannelSet(1, kDebugLingoExec)) {
 		uint pc = start;
 		while (pc <= end) {
 			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
