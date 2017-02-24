@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-24 22:00+0100\n"
-"PO-Revision-Date: 2017-01-02 18:38+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"PO-Revision-Date: 2017-02-24 21:01+0000\n"
+"Last-Translator: jeroen klop <klopjero@geklopt.net>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -885,7 +885,7 @@ msgstr "de filterinstelling kon niet veranderd worden"
 
 #: gui/options.cpp:930
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Toon scherm-besturing"
 
 #: gui/options.cpp:934
 #, fuzzy
@@ -894,7 +894,7 @@ msgstr "Touchpadmodus uitgeschakeld."
 
 #: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Menu en Terug knoppen wisselen"
 
 #: gui/options.cpp:943
 #, fuzzy
