@@ -498,6 +498,7 @@ public:
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
+	void func_play(Datum &frame, Datum &movie);
 	void func_cursor(int c);
 	int func_marker(int m);
 

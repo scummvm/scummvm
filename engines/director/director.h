@@ -121,6 +121,7 @@ public:
 	bool _skipFrameAdvance;
 
 	MovieReference _nextMovie;
+	Common::List<MovieReference> _movieStack;
 
 protected:
 	virtual Common::Error run();

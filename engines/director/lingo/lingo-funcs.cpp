@@ -172,7 +172,7 @@ void Lingo::func_mciwait(Common::String &s) {
 }
 
 void Lingo::func_goto(Datum &frame, Datum &movie) {
-	g_director->_playbackPaused = false;
+	_vm->_playbackPaused = false;
 
 	if (!_vm->getCurrentScore())
 		return;
@@ -255,7 +255,7 @@ void Lingo::func_gotoloop() {
 
 	_vm->getCurrentScore()->gotoLoop();
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotonext() {
@@ -264,7 +264,7 @@ void Lingo::func_gotonext() {
 
 	_vm->getCurrentScore()->gotoNext();
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
 }
 
 void Lingo::func_gotoprevious() {
@@ -273,7 +273,17 @@ void Lingo::func_gotoprevious() {
 
 	_vm->getCurrentScore()->gotoPrevious();
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
+}
+
+void Lingo::func_play(Datum &frame, Datum &movie) {
+	MovieReference ref;
+
+	ref.frameI = _vm->getCurrentScore()->getCurrentFrame();
+
+	_vm->_movieStack.push_back(ref);
+
+	func_goto(frame, movie);
 }
 
 void Lingo::func_cursor(int c) {

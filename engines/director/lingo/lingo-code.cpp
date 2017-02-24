@@ -1003,19 +1003,7 @@ void Lingo::c_play() {
 	if (mode.u.i == 1 || mode.u.i == 3)
 		frame = g_lingo->pop();
 
-	if (frame.type == VOID) {
-		frame.u.s = new Common::String("<void>");
-		frame.type = STRING;
-	}
-	frame.toString();
-
-	if (movie.type == VOID) {
-		movie.u.s = new Common::String("<void>");
-		movie.type = STRING;
-	}
-	movie.toString();
-
-	warning("STUB: c_play(%s, %s)", frame.u.s->c_str(), movie.u.s->c_str());
+	g_lingo->func_play(frame, movie);
 }
 
 void Lingo::c_playdone() {
