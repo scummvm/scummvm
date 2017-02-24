@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-21 23:29+0100\n"
 "PO-Revision-Date: 2017-02-24 12:04+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -850,7 +850,7 @@ msgstr ""
 
 #: gui/options.cpp:888
 msgid "Touchpad mouse mode"
-msgstr "Touchpad egér mód."
+msgstr "Touchpad egér mód"
 
 #: gui/options.cpp:892
 msgid "Swap Menu and Back buttons"
