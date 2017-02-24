@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      41 - palette support for newer SCI2.1 games
  *      40 - always store palvary variables
  *      39 - Accurate SCI32 arrays/strings, score metadata, avatar metadata
  *      38 - SCI32 cursor
@@ -65,7 +66,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 40,
+	CURRENT_SAVEGAME_VERSION = 41,
 	MINIMUM_SAVEGAME_VERSION = 14
 };
 

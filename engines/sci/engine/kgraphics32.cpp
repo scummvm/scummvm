@@ -934,16 +934,8 @@ reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxPalette32->matchColor(r, g, b));
 }
 
-/*
- * Used starting in Shivers 1. SCI3 contains 6 gamma look-up tables, with the
- * first table (gamma = 0) being the default one.
- */
 reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
-	const uint8 gamma = argv[0].toUint16();
-	assert(gamma <= 6);
-
-	warning("TODO: kPaletteSetGamma(%d)", gamma);
-
+	g_sci->_gfxPalette32->setGamma(argv[0].toSint16());
 	return s->r_acc;
 }
 
@@ -962,7 +954,7 @@ reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
 	int16 fromColor;
 	int16 toColor;
 
-	if (g_sci->_features->hasNewPaletteCode() && argc > 4) {
+	if (g_sci->_features->hasMidPaletteCode() && argc > 4) {
 		fromColor = argv[3].toSint16();
 		toColor = argv[4].toSint16();
 	} else {

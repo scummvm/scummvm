@@ -124,8 +124,18 @@ public:
 			gid != GID_MOTHERGOOSEHIRES;
 	}
 
-	inline bool hasNewPaletteCode() const {
+	inline bool hasMidPaletteCode() const {
 		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7;
+	}
+
+	inline bool hasLatePaletteCode() const {
+		return getSciVersion() > SCI_VERSION_2_1_MIDDLE ||
+			g_sci->getGameId() == GID_GK2 ||
+			g_sci->getGameId() == GID_PQSWAT ||
+			// Guessing that Shivers has the late palette code because it has a
+			// brightness slider
+			g_sci->getGameId() == GID_SHIVERS ||
+			g_sci->getGameId() == GID_TORIN;
 	}
 
 	inline bool VMDOpenStopsAudio() const {

@@ -865,10 +865,18 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsByte(_cycleMap[i]);
 	}
 
+	if (g_sci->_features->hasLatePaletteCode() && s.getVersion() >= 41) {
+		s.syncAsSint16LE(_gammaLevel);
+		saveLoadPalette32(s, &_sourcePalette);
+		++_version;
+		_needsUpdate = true;
+		_gammaChanged = true;
+	}
+
 	saveLoadOptionalPalette32(s, &_varyTargetPalette);
 	saveLoadOptionalPalette32(s, &_varyStartPalette);
-	// NOTE: _sourcePalette and _nextPalette are not saved
-	// by SCI engine
+
+	// _nextPalette is not saved by SSCI
 
 	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
 		PalCycler *cycler = nullptr;

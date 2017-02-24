@@ -572,6 +572,37 @@ private:
 	 * The intensity levels of each palette entry, in percent. Defaults to 100.
 	 */
 	uint16 _fadeTable[256];
+
+#pragma mark -
+#pragma mark Gamma correction
+public:
+	enum {
+		/**
+		 * The number of available gamma corrections.
+		 */
+		numGammaTables = 6
+	};
+
+	/**
+	 * Sets the gamma correction level, from 0 (off) to `numGammaTables`,
+	 * inclusive.
+	 */
+	void setGamma(const int16 level) {
+		_gammaLevel = CLIP<int16>(level, 0, numGammaTables) - 1;
+		_gammaChanged = true;
+	}
+
+private:
+	/**
+	 * The current gamma correction level. -1 means no correction.
+	 */
+	int8 _gammaLevel;
+
+	/**
+	 * Whether the gamma correction has changed since the last call to update
+	 * the hardware palette.
+	 */
+	bool _gammaChanged;
 };
 
 } // End of namespace Sci

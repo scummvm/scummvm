@@ -301,7 +301,7 @@ GfxRemap32::GfxRemap32() :
 	// match the highest possible value of `_remapStartColor`
 	assert(_remapStartColor == 236);
 
-	if (g_sci->_features->hasNewPaletteCode()) {
+	if (g_sci->_features->hasMidPaletteCode()) {
 		_remaps.resize(9);
 	} else {
 		_remaps.resize(19);
