@@ -4710,11 +4710,11 @@ void EdenGame::mouse() {
 		&EdenGame::changeVolume,
 		&EdenGame::load,
 		&EdenGame::save,
-		&EdenGame::cliccurstape,
+		&EdenGame::clickTapeCursor,
 		&EdenGame::playtape,
-		&EdenGame::stoptape,
+		&EdenGame::stopTape,
 		&EdenGame::rewindtape,
-		&EdenGame::forwardtape,
+		&EdenGame::forwardTape,
 		&EdenGame::confirmYes,
 		&EdenGame::confirmNo,
 		&EdenGame::actionGotoMap
@@ -5174,7 +5174,7 @@ void EdenGame::gotoPanel() {
 
 void EdenGame::noclicpanel() {
 	if (_globals->_menuFlags & MenuFlags::mfFlag4) {
-		depcurstape();
+		moveTapeCursor();
 		return;
 	}
 	if (_globals->_drawFlags & DrawFlags::drDrawFlag8)
@@ -5492,7 +5492,7 @@ void EdenGame::playtape() {
 	for (;; _globals->_tapePtr++) {
 		if (_globals->_tapePtr == &_tapes[MAX_TAPES]) {
 			_globals->_tapePtr--;
-			stoptape();
+			stopTape();
 			return;
 		}
 		if (_globals->_tapePtr->_textNum)
@@ -5510,7 +5510,7 @@ void EdenGame::playtape() {
 	_globals->_dialogPtr = _globals->_tapePtr->_dialog;
 	_globals->_characterPtr = _globals->_tapePtr->_perso;
 	endCharacterSpeech();
-	affcurstape();
+	displayTapeCursor();
 	if (_globals->_characterPtr != oldPerso
 	        || _globals->_roomNum != _lastTapeRoomNum) {
 		_lastTapeRoomNum = _globals->_roomNum;
@@ -5535,11 +5535,12 @@ void EdenGame::rewindtape() {
 	if (_globals->_tapePtr > _tapes) {
 		_globals->_tapePtr--;
 		_globals->_menuFlags &= ~MenuFlags::mfFlag8;
-		affcurstape();
+		displayTapeCursor();
 	}
 }
 
-void EdenGame::depcurstape() {
+// Original name: depcurstape
+void EdenGame::moveTapeCursor() {
 	if (_mouseHeld) {
 		restrictCursorArea(95, 217, 179, 183);
 		int idx = (_cursorPosX - 97);
@@ -5553,14 +5554,15 @@ void EdenGame::depcurstape() {
 
 		if (tape != _globals->_tapePtr) {
 			_globals->_tapePtr = tape;
-			affcurstape();
+			displayTapeCursor();
 			_globals->_menuFlags &= ~MenuFlags::mfFlag8;
 		}
 	} else
 		_globals->_menuFlags &= ~MenuFlags::mfFlag4;
 }
 
-void EdenGame::affcurstape() {
+// Original name: affcurstape
+void EdenGame::displayTapeCursor() {
 	if (_globals->_drawFlags & DrawFlags::drDrawFlag8)
 		_noPalette = true;
 	useBank(65);
@@ -5572,15 +5574,15 @@ void EdenGame::affcurstape() {
 	_noPalette = false;
 }
 
-void EdenGame::forwardtape() {
+void EdenGame::forwardTape() {
 	if (_globals->_tapePtr < _tapes + 16) {
 		_globals->_tapePtr++;
 		_globals->_menuFlags &= ~MenuFlags::mfFlag8;
-		affcurstape();
+		displayTapeCursor();
 	}
 }
 
-void EdenGame::stoptape() {
+void EdenGame::stopTape() {
 	if (!(_globals->_drawFlags & DrawFlags::drDrawFlag8))
 		return;
 	_globals->_menuFlags &= ~MenuFlags::mfFlag8;
@@ -5596,7 +5598,7 @@ void EdenGame::stoptape() {
 	_paletteUpdateRequired = true;
 }
 
-void EdenGame::cliccurstape() {
+void EdenGame::clickTapeCursor() {
 	_globals->_menuFlags |= MenuFlags::mfFlag4;
 }
 
@@ -5625,7 +5627,7 @@ void EdenGame::displayPanel() {
 	paneltobuf();
 	displayLanguage();
 	displayCursors();
-	affcurstape();
+	displayTapeCursor();
 }
 
 // Original name: afflangue
@@ -5713,7 +5715,7 @@ void EdenGame::edenShudown() {
 	if (_globals->_displayFlags & DisplayFlags::dfMirror)
 		resetScroll();
 	if (_globals->_drawFlags & DrawFlags::drDrawFlag8)
-		stoptape();
+		stopTape();
 	if (_personTalking)
 		endCharacterSpeech();
 	_globals->_var103 = 0;

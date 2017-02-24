@@ -376,11 +376,11 @@ private:
 	void newvol(byte *volptr, int16 delta);
 	void playtape();
 	void rewindtape();
-	void depcurstape();
-	void affcurstape();
-	void forwardtape();
-	void stoptape();
-	void cliccurstape();
+	void moveTapeCursor();
+	void displayTapeCursor();
+	void forwardTape();
+	void stopTape();
+	void clickTapeCursor();
 	void paneltobuf();
 	void cursbuftopanel();
 	void langbuftopanel();
