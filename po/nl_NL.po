@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-24 22:00+0100\n"
-"PO-Revision-Date: 2017-02-24 21:01+0000\n"
-"Last-Translator: jeroen klop <klopjero@geklopt.net>\n"
+"PO-Revision-Date: 2017-02-24 21:02+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -888,9 +888,8 @@ msgid "Show On-screen control"
 msgstr "Toon scherm-besturing"
 
 #: gui/options.cpp:934
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Touchpadmodus uitgeschakeld."
+msgstr "Touchpadmodus"
 
 #: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
@@ -1172,9 +1171,8 @@ msgid "Speech volume:"
 msgstr "Spraak volume:"
 
 #: gui/options.cpp:1424
-#, fuzzy
 msgid "Control"
-msgstr "Muis Besturing"
+msgstr "Besturing"
 
 #: gui/options.cpp:1456
 msgid "FluidSynth Settings"
