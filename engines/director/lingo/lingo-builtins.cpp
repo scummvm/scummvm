@@ -1163,8 +1163,9 @@ void Lingo::b_move(int nargs) {
 }
 
 void Lingo::b_moveableSprite(int nargs) {
-	Datum d = g_lingo->pop();
-	warning("STUB: b_moveableSprite(%d)", d.u.i);
+	g_lingo->printSTUBWithArglist("b_moveableSprite", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_pasteClipBoardInto(int nargs) {
