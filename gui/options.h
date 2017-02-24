@@ -123,7 +123,14 @@ private:
 	CheckboxWidget *_touchpadCheckbox;
 	CheckboxWidget *_onscreenCheckbox;
 	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
-	
+
+	StaticTextWidget *_kbdMouseSpeedDesc;
+	SliderWidget *_kbdMouseSpeedSlider;
+	StaticTextWidget *_kbdMouseSpeedLabel;
+	StaticTextWidget *_joystickDeadzoneDesc;
+	SliderWidget *_joystickDeadzoneSlider;
+	StaticTextWidget *_joystickDeadzoneLabel;
+
 	//
 	// Graphics controls
 	//

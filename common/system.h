@@ -351,7 +351,18 @@ public:
 		/**
 		* swap menu and back buttons
 		*/
-		kFeatureSwapMenuAndBackButtons
+		kFeatureSwapMenuAndBackButtons,
+
+		/**
+		* keyboard mouse and joystick mouse speed
+		*/
+		kFeatureKbdMouseSpeed,
+
+		/**
+		* change analog joystick deadzone
+		*/
+		kFeatureJoystickDeadzone
+
 	};
 
 	/**

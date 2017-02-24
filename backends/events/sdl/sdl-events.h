@@ -60,7 +60,7 @@ protected:
 	//@{
 
 	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count, joy_x, joy_y;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 		bool modifier;
 	};
