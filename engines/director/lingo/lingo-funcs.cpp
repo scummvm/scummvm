@@ -286,6 +286,21 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	func_goto(frame, movie);
 }
 
+void Lingo::func_playdone() {
+	MovieReference ref = _vm->_movieStack.back();
+
+	_vm->_movieStack.pop_back();
+
+	Datum m, f;
+
+	warning("STUB: func_playdone()");
+	m.type = VOID;
+	f.type = INT;
+	f.u.i = ref.frameI;
+
+	func_goto(f, m);
+}
+
 void Lingo::func_cursor(int c) {
 	if (_cursorOnStack) {
 		// pop cursor

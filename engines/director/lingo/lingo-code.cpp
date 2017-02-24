@@ -1007,7 +1007,7 @@ void Lingo::c_play() {
 }
 
 void Lingo::c_playdone() {
-	warning("STUB: c_playdone()");
+	g_lingo->func_playdone();
 }
 
 void Lingo::c_call() {
