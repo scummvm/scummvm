@@ -203,12 +203,13 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		_numExports = _buf->getUint16LEAt(20);
 		if (_numExports) {
 			_exports = _buf->subspan<const uint16>(22, _numExports * sizeof(uint16));
-			// SCI3 local variables always start dword-aligned
-			if (_numExports % 2)
-				_localsOffset = 22 + _numExports * 2;
-			else
-				_localsOffset = 24 + _numExports * 2;
 		}
+
+		// SCI3 local variables always start dword-aligned
+		if (_numExports % 2)
+			_localsOffset = 22 + _numExports * sizeof(uint16);
+		else
+			_localsOffset = 24 + _numExports * sizeof(uint16);
 	}
 
 	// WORKAROUND: Increase locals, if needed (check above)
