@@ -26,6 +26,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -261,7 +262,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (bmp.size() != 0) {
 		debugC(3, kDebugLoading, "Loading %d BITDs", bmp.size());
 		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
-			debugC(3, kDebugLoading, "Shared BITD %d", *iterator);
+			debugC(3, kDebugLoading, "Shared BITD %d (%s)", *iterator, numToCastNum(*iterator - 1024));
 			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
 		}
 	}
