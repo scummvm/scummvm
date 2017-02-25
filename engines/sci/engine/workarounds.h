@@ -91,7 +91,6 @@ extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPalVarySetPercent_workarounds[];
 extern const SciWorkaroundEntry kPalVaryMergeStart_workarounds[];
 extern const SciWorkaroundEntry kPlatform32_workarounds[];
-extern const SciWorkaroundEntry kRandom_workarounds[];
 extern const SciWorkaroundEntry kReadNumber_workarounds[];
 extern const SciWorkaroundEntry kResCheck_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];

@@ -765,14 +765,6 @@ const SciWorkaroundEntry kPlatform32_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
-const SciWorkaroundEntry kRandom_workarounds[] = {
-	{ GID_TORIN,        51400,64928,  0,               "Blink", "init",                     NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
-	{ GID_TORIN,        51400,64928,  0,               "Blink", "cycleDone",                NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-
-//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kReadNumber_workarounds[] = {
 	{ GID_CNICK_LAURABOW,100,   101,  0,          "dominoes.opt", "doit",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425
 	{ GID_HOYLE3,        100,   101,  0,          "dominoes.opt", "doit",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When dominoes.opt is present, the game scripts call kReadNumber with an extra integer parameter - bug #6425

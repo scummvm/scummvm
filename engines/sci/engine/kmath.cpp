@@ -25,13 +25,22 @@
 
 namespace Sci {
 
+// Following variations existed:
+// up until including 0.530 (Hoyle 1): will always get 2 parameters, even if 2 parameters were not passed
+//                                     it seems if range is 0, it will return the seed.
+// 0.566 (Hero's Quest) to SCI1MID: check for 2 parameters, if not 2 parameters get seed.
+// SCI1LATE+: 2 parameters -> get random number within range
+//            1 parameter -> set seed
+//            any other amount of parameters -> get seed
+//
+// Right now, the weird SCI0 behavior (up until 0.530) for getting parameters and getting the seed is not implemented.
+// We also do not let through more than 2 parameters to kRandom via signatures. In case there is a game doing this,
+// a workaround should be added.
 reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
-	switch (argc) {
-	case 1: // set seed to argv[0]
-		// SCI0/SCI01 just reset the seed to 0 instead of using argv[0] at all
-		return NULL_REG;
+	Common::RandomSource &rng = g_sci->getRNG();
 
-	case 2: { // get random number
+	if (argc == 2) {
+		// get random number
 		// numbers are definitely unsigned, for example lsl5 door code in k rap radio is random
 		//  and 5-digit - we get called kRandom(10000, 65000)
 		//  some codes in sq4 are also random and 5 digit (if i remember correctly)
@@ -54,19 +63,25 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 		if (range)
 			range--; // the range value was never returned, our random generator gets 0->range, so fix it
 
-		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(range);
+		const int randomNumber = fromNumber + (int)rng.getRandomNumber(range);
 		return make_reg(0, randomNumber);
 	}
 
-	case 3: // get seed
-		// SCI0/01 did not support this at all
-		// Actually we would have to return the previous seed
-		error("kRandom: scripts asked for previous seed");
-		break;
-
-	default:
-		error("kRandom: unsupported argc");
+	// for other amounts of arguments
+	if (getSciVersion() >= SCI_VERSION_1_LATE) {
+		if (argc == 1) {
+			// 1 single argument is for setting the seed
+			// right now we do not change the Common RNG seed.
+			// It should never be required unless a game reuses the same seed to get the same combination of numbers multiple times.
+			// And in such a case, we would have to add code for such a feature (ScummVM RNG uses a UINT32 seed).
+			warning("kRandom: caller requested to set the RNG seed");
+			return NULL_REG;
+		}
 	}
+
+	// treat anything else as if caller wants the seed
+	warning("kRandom: caller requested to get the RNG seed");
+	return make_reg(0, rng.getSeed());
 }
 
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
