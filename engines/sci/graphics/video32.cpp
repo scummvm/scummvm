@@ -590,7 +590,10 @@ void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const 
 	_y = y;
 	_doublePixels = flags & kPlayFlagDoublePixels;
 	_blackLines = ConfMan.getBool("enable_black_lined_video") && (flags & kPlayFlagBlackLines);
-	_boostPercent = 100 + (flags & kPlayFlagBoost ? boostPercent : 0);
+	// If ScummVM has been configured to disable black lines on video playback,
+	// the boosts need to be ignored too or else the brightness of the video
+	// will be too high
+	_boostPercent = 100 + (_blackLines && (flags & kPlayFlagBoost) ? boostPercent : 0);
 	_boostStartColor = CLIP<int16>(boostStartColor, 0, 255);
 	_boostEndColor = CLIP<int16>(boostEndColor, 0, 255);
 	_leaveScreenBlack = flags & kPlayFlagLeaveScreenBlack;
