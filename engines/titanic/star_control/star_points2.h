@@ -24,17 +24,12 @@
 #define TITANIC_STAR_POINTS2_H
 
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
 class CStarPoints2 {
-	struct DataEntry {
-		int _v1;
-		int _v2;
-		int _v3;
-	};
-
-	class RootEntry : public Common::Array<DataEntry> {
+	class RootEntry : public Common::Array<FVector> {
 	public:
 		int _field0;
 		RootEntry() : _field0(0) {}

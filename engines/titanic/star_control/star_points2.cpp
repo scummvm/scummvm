@@ -42,14 +42,15 @@ bool CStarPoints2::initialize() {
 		RootEntry &rootEntry = _data[rootCtr];
 		rootEntry.resize(count * 2);
 		for (int idx = 0; idx < count * 2; ++idx) {
-			DataEntry &entry = rootEntry[idx];
+			FVector &entry = rootEntry[idx];
 			v1 = stream->readSint32LE();
 			v2 = stream->readSint32LE();
 			v1 *= 0.015 * FACTOR;
 			v2 *= 0.0099999998 * FACTOR;
-			entry._v1 = static_cast<int>(cos(v1) * 3000000.0 * cos(v2));
-			entry._v2 = static_cast<int>(sin(v1) * 3000000.0 * cos(v2));
-			entry._v3 = static_cast<int>(sin(v2) * 3000000.0);
+
+			entry._x = cos(v1) * 3000000.0 * cos(v2);
+			entry._y = sin(v1) * 3000000.0 * cos(v2);
+			entry._z = sin(v2) * 3000000.0;
 		}
 	}
 
