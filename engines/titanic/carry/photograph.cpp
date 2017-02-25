@@ -64,7 +64,7 @@ bool CPhotograph::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		moveUnder(getDontSave());
 		makeDirty();
 		playSound("a#46.wav");
-		starFn1(14);
+		starFn(14);
 		showMouse();
 		return true;
 	} else {

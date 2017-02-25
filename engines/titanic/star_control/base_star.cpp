@@ -34,7 +34,7 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 	_field1 = s.readByte();
 	_field2 = s.readByte();
 	_field3 = s.readByte();
-	*((uint32 *)&_value) = s.readUint32LE();		// FIXME
+	_value = s.readFloatLE();
 	_val._v1 = s.readUint32LE();
 	_val._v2 = s.readUint32LE();
 	_val._v3 = s.readUint32LE();

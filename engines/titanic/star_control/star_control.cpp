@@ -129,7 +129,7 @@ void CStarControl::newFrame() {
 	// TODO
 }
 
-void CStarControl::fn1(int action) {
+void CStarControl::doAction(int action) {
 	// TODO
 }
 

@@ -1637,10 +1637,10 @@ CStarControl *CGameObject::getStarControl() const {
 	return starControl;
 }
 
-void CGameObject::starFn1(int v) {
+void CGameObject::starFn(int action) {
 	CStarControl *starControl = getStarControl();
 	if (starControl)
-		starControl->fn1(v);
+		starControl->doAction(action);
 }
 
 bool CGameObject::starIsSolved() const {

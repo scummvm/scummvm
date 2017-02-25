@@ -68,7 +68,10 @@ public:
 	 */
 	virtual void draw(CScreenManager *screenManager);
 
-	void fn1(int action);
+	/**
+	 * Does an action in the star control
+	 */
+	void doAction(int action);
 
 	/**
 	 * Returns true if the starfield puzzle has been solved

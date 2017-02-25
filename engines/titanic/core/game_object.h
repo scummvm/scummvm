@@ -945,7 +945,10 @@ public:
 	 */
 	CStarControl *getStarControl() const;
 
-	void starFn1(int v);
+	/**
+	 * Executes an action in the StarControl subsystem
+	 */
+	void starFn(int action);
 
 	/**
 	 * Returns true if the starmap puzzle has been solved
