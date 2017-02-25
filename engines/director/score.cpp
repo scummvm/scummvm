@@ -164,7 +164,9 @@ void Score::loadArchive() {
 	if (_vm->getVersion() <= 3) {
 		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 		if (stxt.size() > 0) {
-			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
+			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+			}
 		}
 	}
 }
@@ -571,11 +573,15 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 		script += ch;
 	}
 
-	if (!script.empty() && ConfMan.getBool("dump_scripts"))
+	// Check if the script has macro. They must start with a comment.
+	// See D2 Interactivity Manual pp.46-47 (Ch.2.11. Using a macro)
+	if (script.empty() || !script.hasPrefix("--"))
+		return;
+
+	if (ConfMan.getBool("dump_scripts"))
 		dumpScript(script.c_str(), kMovieScript, _movieScriptCount);
 
-	if (!script.empty())
-		_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
+	_lingo->addCode(script.c_str(), kMovieScript, _movieScriptCount);
 
 	_movieScriptCount++;
 }
