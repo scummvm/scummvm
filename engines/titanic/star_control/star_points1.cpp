@@ -42,16 +42,16 @@ bool CStarPoints1::initialize() {
 		FVector &entry = _data[idx];
 
 		// Get the next set of values
-		double v1 = stream->readUint32LE();
-		double v2 = stream->readUint32LE();
+		double v1 = stream->readSint32LE();
+		double v2 = stream->readSint32LE();
 		stream->readUint32LE();
 
-		v1 *= 0.0099999998 * FACTOR;
-		v2 *= 0.015 * FACTOR;
+		v1 *= 0.015 * FACTOR;
+		v2 *= 0.0099999998 * FACTOR;
 
 		entry._x = cos(v2) * 3000000.0 * cos(v1);
-		entry._y = sin(v2) * 3000000.0 * cos(v1);
-		entry._z = sin(v1) * 3000000.0;
+		entry._y = sin(v1) * 3000000.0 * cos(v2);
+		entry._z = sin(v2) * 3000000.0;
 	}
 
 	return true;
