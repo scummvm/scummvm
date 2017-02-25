@@ -44,6 +44,7 @@
 // THIS SOFTWARE.
 
 #include "director/cast.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
@@ -578,8 +579,8 @@ void Lingo::c_contains() {
 	d1.toString();
 	d2.toString();
 
-	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
-	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+	Common::String *s1 = toLowercaseMac(d1.u.s);
+	Common::String *s2 = toLowercaseMac(d2.u.s);
 
 	int res = s1->contains(*s2) ? 1 : 0;
 
@@ -601,8 +602,8 @@ void Lingo::c_starts() {
 	d1.toString();
 	d2.toString();
 
-	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
-	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+	Common::String *s1 = toLowercaseMac(d1.u.s);
+	Common::String *s2 = toLowercaseMac(d2.u.s);
 
 	int res = s1->hasPrefix(*s2) ? 1 : 0;
 

@@ -438,48 +438,6 @@ const char *Datum::type2str(bool isk) {
 	}
 }
 
-// This is table for built-in Macintosh font lowercasing.
-// '.' means that the symbol should be not changed, rest
-// of the symbols are stripping the diacritics
-// The table starts from 0x80
-//
-// TODO: Check it for correctness.
-static char lowerCaseConvert[] =
-"aacenoua" // 80
-"aaaaacee" // 88
-"eeiiiino" // 90
-"oooouuuu" // 98
-"........" // a0
-".......o" // a8
-"........" // b0
-".......o" // b8
-"........" // c0
-".. aao.." // c8
-"--.....y";// d0-d8
-
-Common::String *Lingo::toLowercaseMac(Common::String *s) {
-	Common::String *res = new Common::String;
-	const unsigned char *p = (const unsigned char *)s->c_str();
-
-	while (*p) {
-		if (*p >= 0x80 && *p <= 0xd8) {
-			if (lowerCaseConvert[*p - 0x80] != '.')
-				*res += lowerCaseConvert[*p - 0x80];
-			else
-				*res += *p;
-		} else if (*p < 0x80) {
-			*res += tolower(*p);
-		} else {
-			warning("Unacceptable symbol in toLowercaseMac: %c", *p);
-
-			*res += *p;
-		}
-		p++;
-	}
-
-	return res;
-}
-
 void Lingo::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }

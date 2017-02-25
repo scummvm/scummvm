@@ -35,6 +35,7 @@
 #include "director/archive.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -586,12 +587,12 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
 				if (!img) {
-					warning("Image with id %d not found", _sprites[i]->_castId);
+					warning("Image with id %d (%s) not found", _sprites[i]->_castId, numToCastNum(_sprites[i]->_castId));
 					continue;
 				}
 
 				if (!img->getSurface()) {
-					warning("Frame::renderSprites: Could not load image %d", _sprites[i]->_castId);
+					warning("Frame::renderSprites: Could not load image %d (%s)", _sprites[i]->_castId, numToCastNum(_sprites[i]->_castId));
 					continue;
 				}
 

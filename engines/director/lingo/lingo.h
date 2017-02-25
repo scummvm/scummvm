@@ -190,8 +190,6 @@ public:
 	void initFuncs();
 	void initTheEntities();
 
-	Common::String *toLowercaseMac(Common::String *s);
-
 	void runTests();
 
 private:

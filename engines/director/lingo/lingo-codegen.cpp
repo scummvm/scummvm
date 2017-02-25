@@ -48,6 +48,7 @@
 #include "audio/decoders/wave.h"
 
 #include "director/lingo/lingo-gr.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -146,22 +147,18 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 
 	// Looking for the cast member constants
 	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
-		if (strlen(name) == 3) {
-			if (tolower(name[0]) >= 'a' && tolower(name[0]) <= 'h' &&
-				name[1] >= '1' && name[1] <= '8' &&
-				name[2] >= '1' && name[2] <= '8') {
+		int val = castNumToNum(name);
 
-				if (!create)
-					error("Cast reference used in wrong context: %s", name);
+		if (val != -1) {
+			if (!create)
+				error("Cast reference used in wrong context: %s", name);
 
-				int val = (tolower(name[0]) - 'a') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
-				sym = new Symbol;
+			sym = new Symbol;
 
-				sym->type = CASTREF;
-				sym->u.i = val;
+			sym->type = CASTREF;
+			sym->u.i = val;
 
-				return sym;
-			}
+			return sym;
 		}
 	}
 

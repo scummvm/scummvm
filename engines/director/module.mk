@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	score.o \
 	sound.o \
 	sprite.o \
+	util.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
