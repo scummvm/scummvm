@@ -38,14 +38,13 @@
 namespace Agi {
 
 #define getFeatures() state->_vm->getFeatures()
-#define getVersion() state->_vm->getVersion()
 #define getLanguage() state->_vm->getLanguage()
 
 void cmdIncrement(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 varNr = parameter[0];
 	byte   varVal = vm->getVar(varNr);
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		if (varVal < 0xf0) {
 			varVal++;
 			vm->setVar(varNr, varVal);
@@ -223,7 +222,7 @@ void cmdToggle(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdSetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(flagNr, 1);
 	} else {
 		flagNr = vm->getVar(flagNr);
@@ -235,7 +234,7 @@ void cmdSetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(flagNr, 0);
 	} else {
 		flagNr = vm->getVar(flagNr);
@@ -247,7 +246,7 @@ void cmdResetV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdToggleV(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 flagNr = parameter[0];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		byte value = vm->getVar(flagNr);
 		vm->setVar(flagNr, value ^ 1);
 	} else {
@@ -467,7 +466,7 @@ void cmdSetCel(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
 	vm->setCel(screenObj, celNr);
-	if (getVersion() >= 0x2000) {
+	if (vm->getVersion() >= 0x2000) {
 		screenObj->flags &= ~fDontupdate;
 	}
 }
@@ -746,6 +745,11 @@ void cmdResetScanStart(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (vm->getVersion() >= 0x2272) {
+		// this was only donce since 2.272
+		state->_vm->_sound->stopSound();
+	}
+
 	vm->inGameTimerPause();
 
 	if (state->automaticSave) {
@@ -763,6 +767,11 @@ void cmdSaveGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	if (vm->getVersion() >= 0x2272) {
+		// this was only donce since 2.272
+		state->_vm->_sound->stopSound();
+	}
+
 	vm->inGameTimerPause();
 
 	if (state->automaticSave) {
@@ -896,7 +905,7 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		// TODO: Figure out what's going on. It can't be automatic saving of course.
 		// Also getting called in KQ1, when planting beans - parameter 12.
 		// And when killing the witch - parameter 40.
-		if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+		if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
 			// was not available before 2.2425, but also not available in 2.440
 			warning("set.simple called, although not available for current AGI version");
 			return;
@@ -945,7 +954,7 @@ void cmdSetSimple(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 // push.script was not available until 2.425, and also not available in 2.440
 void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
 		// was not available before 2.2425, but also not available in 2.440
 		warning("pop.script called, although not available for current AGI version");
 		return;
@@ -955,7 +964,7 @@ void cmdPopScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdDiscardSound(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() >= 0x2936) {
+	if (vm->getVersion() >= 0x2936) {
 		debug(0, "discard.sound");
 	}
 }
@@ -973,7 +982,7 @@ void cmdShowMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // but show.mouse is never called afterwards. Game running under emulator doesn't seem to hide the mouse cursor.
 // TODO: figure out, what exactly happens. Probably some hacked-in command and not related to mouse cursor for that game?
 void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3000) {
+	if (vm->getVersion() < 0x3000) {
 		// was not available before 3.086
 		warning("hide.mouse, although not available for current AGI version");
 		return;
@@ -1002,7 +1011,7 @@ void cmdHideMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdAllowMenu(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3098) {
+	if (vm->getVersion() < 0x3098) {
 		// was not available before 3.098
 		warning("allow.menu called, although not available for current AGI version");
 		return;
@@ -1031,7 +1040,7 @@ void cmdFenceMouse(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 // HoldKey was added in 2.425
 // There was no way to disable this mode until 3.098 though
 void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if ((getVersion() < 0x2425) || (getVersion() == 0x2440)) {
+	if ((vm->getVersion() < 0x2425) || (vm->getVersion() == 0x2440)) {
 		// was not available before 2.425, but also not available in 2.440
 		warning("hold.key called, although not available for current AGI version");
 		return;
@@ -1041,7 +1050,7 @@ void cmdHoldKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdReleaseKey(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if (getVersion() < 0x3098) {
+	if (vm->getVersion() < 0x3098) {
 		// was not available before 3.098
 		warning("release.key called, although not available for current AGI version");
 		return;
@@ -1238,7 +1247,7 @@ void cmdAnimateObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 objectNr = parameter[0];
 	ScreenObjEntry *screenObj = &state->screenObjTable[objectNr];
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		if (screenObj->flags & fDidntMove)
 			return;
 	} else {
@@ -1249,7 +1258,7 @@ void cmdAnimateObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "animate vt entry #%d", objectNr);
 	screenObj->flags = fAnimated | fUpdate | fCycling;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		screenObj->flags |= fDidntMove;
 	}
 
@@ -1280,7 +1289,7 @@ void cmdDraw(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "draw entry %d", screenObj->objectNr);
 
 	screenObj->flags |= fUpdate;
-	if (getVersion() >= 0x3000) {
+	if (vm->getVersion() >= 0x3000) {
 		state->_vm->setLoop(screenObj, screenObj->currentLoopNr);
 		state->_vm->setCel(screenObj, screenObj->currentCelNr);
 	}
@@ -1630,7 +1639,7 @@ void cmdFollowEgo(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	screenObj->follow_flag = followFlag;
 	screenObj->follow_count = 255;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(screenObj->follow_flag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
@@ -1659,7 +1668,7 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	if (stepSize != 0)
 		screenObj->stepSize = stepSize;
 
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		vm->setVar(moveFlag, 0);
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
@@ -1673,7 +1682,7 @@ void cmdMoveObj(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (getVersion() > 0x2272)
+	if (vm->getVersion() > 0x2272)
 		vm->moveObj(screenObj);
 }
 
@@ -1703,7 +1712,7 @@ void cmdMoveObjF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (getVersion() > 0x2272)
+	if (vm->getVersion() > 0x2272)
 		vm->moveObj(screenObj);
 }
 
@@ -1715,7 +1724,7 @@ void cmdWander(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		state->playerControl = false;
 
 	screenObj->motionType = kMotionWander;
-	if (getVersion() < 0x2000) {
+	if (vm->getVersion() < 0x2000) {
 		screenObj->flags |= fUpdate | fAnimated;
 	} else {
 		screenObj->flags |= fUpdate;
@@ -1781,7 +1790,7 @@ void cmdVersion(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 	Common::String verMsg = TITLE " v%s";
 
-	int ver = getVersion();
+	int ver = vm->getVersion();
 	int maj = (ver >> 12) & 0xf;
 	int min = ver & 0xfff;
 
@@ -2108,7 +2117,7 @@ void cmdSetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 
 void cmdDisplay(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	// V1 has 4 args
-	int16 textNr = (getVersion() >= 0x2000 ? parameter[2] : parameter[3]);
+	int16 textNr = (vm->getVersion() >= 0x2000 ? parameter[2] : parameter[3]);
 	int16 textRow = parameter[0];
 	int16 textColumn = parameter[1];
 
@@ -2194,14 +2203,14 @@ void cmdPushScript(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	vm->setVar(VM_VAR_MOUSE_X, vm->_mouse.pos.x / 2);
 	vm->setVar(VM_VAR_MOUSE_Y, vm->_mouse.pos.y);
 	/*} else {
-	    if (getVersion() >= 0x2915) {
+	    if (vm->getVersion() >= 0x2915) {
 	        debug(0, "push.script");
 	    }
 	}*/
 }
 
 void cmdSetPriBase(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
-	if ((getVersion() != 0x2425) && (getVersion() < 0x2936)) {
+	if ((vm->getVersion() != 0x2425) && (vm->getVersion() < 0x2936)) {
 		// was only available in the 2.425 interpreter and from 2.936 (last AGI2 version) onwards
 		// Called during KQ3 (Apple IIgs):
 		//  - picking up chicken (parameter = 50)
@@ -2376,7 +2385,7 @@ int AgiEngine::runLogic(int16 logicNr) {
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, logicNr);
 			debugC(2, kDebugLevelScripts, "=================");
 
-//			if (getVersion() < 0x2000) {
+//			if (vm->getVersion() < 0x2000) {
 //				if (logic_index < state->max_logics) {
 //					n = state->logic_list[++logic_index];
 //					state->_curLogic = &state->logics[n];

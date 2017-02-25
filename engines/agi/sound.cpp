@@ -164,8 +164,8 @@ void SoundMgr::stopSound() {
 		_playingSound = -1;
 	}
 
-	// This is probably not needed most of the time, but there also should
-	// not be any harm doing it, so do it anyway.
+	// This is needed all the time, some games wait until music got played and when a sound/music got stopped early
+	// it would otherwise block the game (for example Death Angel jingle in back door poker room in Police Quest 1, room 71)
 	if (_endflag != -1) {
 		if (_vm->getVersion() < 0x2000) {
 			_vm->_game.vars[_endflag] = 1;
