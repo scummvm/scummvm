@@ -2739,6 +2739,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
 
+	// Lighthouse - French DOS (from bgK)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
+	{"lighthouse", "", {
+		{"resmap.001", 0, "911c9cc5f49d4a96ff836154d3a86a8f", 7876},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122516760},
+		{"resmap.002", 0, "703e7ab04bd358e76bc098995d71f36a", 7642},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115212682},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LIGHTHOUSE },
+
 #undef GUIO_LIGHTHOUSE_DEMO
 #undef GUIO_LIGHTHOUSE
 
