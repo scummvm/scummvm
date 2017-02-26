@@ -25,8 +25,13 @@
 
 #include "titanic/support/rect.h"
 #include "titanic/support/video_surface.h"
+#include "titanic/star_control/fpoint.h"
 
 namespace Titanic {
+
+enum SurfaceAreaMode {
+	SA_NONE = 0, SA_MODE1 = 1, SA_MODE2 = 2, SA_MODE3 = 3, SA_MODE4 = 4
+};
 
 class CSurfaceArea {
 private:
@@ -34,6 +39,13 @@ private:
 	 * Initialize data for the class
 	 */
 	void initialize();
+
+	/**
+	 * Sets the drawing color and mask
+	 */
+	void setColor(uint rgb);
+
+	void pixelToRGB(uint pixel, uint *rgb);
 public:
 	int _field0;
 	int _width;
@@ -41,23 +53,30 @@ public:
 	int _pitch;
 	int _bpp;
 	uint16 *_pixelsPtr;
-	Point _centroid;
-	byte _field20;
-	byte _field21;
-	byte _field22;
-	byte _field23;
+	FPoint _centroid;
+	uint _pixel;
 	byte _field24;
 	byte _field25;
 	byte _field26;
 	byte _field27;
-	int _field28;
+	uint _rgb;
 	int _field2C;
-	int _field30;
-	int _field34;
-	int _field38;
+	uint _colorMask;
+	uint _color;
+	SurfaceAreaMode _mode;
 	Rect _bounds;
 public:
 	CSurfaceArea(CVideoSurface *surface);
+
+	/**
+	 * Sets the drawing mode, and returns the old mode
+	 */
+	SurfaceAreaMode setMode(SurfaceAreaMode mode);
+
+	/**
+	 * Sets the color from the current pixel
+	 */
+	void setColorFromPixel();
 };
 
 } // End of namespace Titanic
