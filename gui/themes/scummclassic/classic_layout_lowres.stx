@@ -93,14 +93,14 @@
 				size = '9, 0'
 		/>
 		<widget name = 'TabWidget.Tab'
-				size = '45, 16'
+				size = '40, 16'
 				padding = '0, 0, 2, 0'
 		/>
 		<widget name = 'TabWidget.Body'
 				padding = '0, 0, 0, 0'
 		/>
 		<widget name = 'TabWidget.NavButton'
-				size = '32, 18'
+				size = '32, 14'
 				padding = '0, 0, 1, 0'
 		/>
 		<widget name = 'EditRecordLabel'
