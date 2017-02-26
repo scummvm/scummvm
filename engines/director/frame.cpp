@@ -550,14 +550,15 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (_vm->getVersion() < 4) {
 				debugC(1, kDebugImages, "Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
-				case 0x01:
+				case 1:
 					castType = kCastBitmap;
 					break;
-				case 0x02:
-				case 0x0c: // this is actually a mouse-over shape? I don't think it's a real button.
+				case 2:
+				case 12: // this is actually a mouse-over shape? I don't think it's a real button.
+				case 16: // Face kit D3
 					castType = kCastShape;
 					break;
-				case 0x07:
+				case 7:
 					castType = kCastText;
 					break;
 				}
