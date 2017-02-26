@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-24 22:00+0100\n"
-"PO-Revision-Date: 2017-02-24 12:05+0000\n"
-"Last-Translator: Rouven Bauer <r_bauer11@cs.uni-kl.de>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2017-02-26 11:10+0000\n"
+"Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -900,20 +900,18 @@ msgid "Swap Menu and Back buttons"
 msgstr "Vertausche Menü- und Zurück-Buttons"
 
 #: gui/options.cpp:943
-#, fuzzy
 msgid "Mouse Speed:"
-msgstr "Rate:"
+msgstr "Maus-Geschwindigkeit:"
 
 #: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
 #, fuzzy
 msgid "Speed multiplier for mouse emulation"
-msgstr "Linke Maustaste simulieren"
+msgstr "Geschwindigkeitsfaktor für Maus-Emulation"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgctxt "lowres"
 msgid "Mouse Speed:"
-msgstr "Rate:"
+msgstr "Maus-Geschwindigkeit:"
 
 #: gui/options.cpp:956
 msgid "Joy Deadzone:"
