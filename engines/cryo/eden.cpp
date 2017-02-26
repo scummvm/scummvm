@@ -6544,8 +6544,8 @@ void EdenGame::loadgame(char *name) {
 }
 
 #define NULLPTR 0xFFFFFF
-#define IDXOUT(val, base, typ, idx) if (val)      (idx) = ((byte*)val - (byte*)base) / sizeof(typ); else (idx) = NULLPTR;
-#define OFSIN(val, base, typ) if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0;
+#define IDXOUT(val, base, typ, idx) do { if (val)      (idx) = ((byte*)val - (byte*)base) / sizeof(typ); else (idx) = NULLPTR; } while (false)
+#define OFSIN(val, base, typ) do { if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0; } while (false)
 
 void EdenGame::syncGlobalPointers(Common::Serializer s) {
 	uint32 dialogIdx, nextDialogIdx, narratorDialogIdx, lastDialogIdx, tapeIdx, nextRoomIconIdx, roomIdx;
