@@ -3096,6 +3096,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "e94005890d22dd3b7f605a2a7c025803", 68232146},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+
+	// Phantasmagoria 2 - French DOS/Windows (supplied by bgK)
+	// Windows executable scanning reports "3.000.000" - "Nov 09 1996 16:03:00"
+	// DOS executable scanning reports "3.000.000" - "Dec 07 1996 09:29:03"
+	// VERSION file reports "000.1.0t" (HEX: 30 30 30 2e 31 3c 2e 30 74 03 0d 0a)
+	{"phantasmagoria2", "", {
+		{"resmap.001", 0, "a4b2d9d19b007115f1bdf5d1033c3a59", 1114},
+		{"ressci.001", 0, "733700c435304a4e862e9687891d7771", 24597800},
+		{"resmap.002", 0, "dcc1b312f40c29dd678f9e92e8d14227", 1138},
+		{"ressci.002", 0, "733700c435304a4e862e9687891d7771", 34675235},
+		{"resmap.003", 0, "8d5556599f41f7afdcfb7bdbac28ba22", 1174},
+		{"ressci.003", 0, "733700c435304a4e862e9687891d7771", 38924549},
+		{"resmap.004", 0, "b585a3abb32a29149a20bd2150dbff59", 1300},
+		{"ressci.004", 0, "733700c435304a4e862e9687891d7771", 42748514},
+		{"resmap.005", 0, "7811a1801660090725ceef799b62fc72", 1954},
+		{"ressci.005", 0, "b6f090a2c8fc955d17b8a47085b2f890", 68231525},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
 #endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
