@@ -26,7 +26,6 @@
 
 #include "backends/events/androidsdl/androidsdl-events.h"
 #include "backends/platform/androidsdl/androidsdl-sdl.h"
-#include <SDL_screenkeyboard.h>
 
 bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
@@ -43,16 +42,8 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 	else if (ev.button.button == SDL_BUTTON_MIDDLE) {
 		event.type = Common::EVENT_MBUTTONDOWN;
 
-		static int show_onscreen = 0;
-		if (show_onscreen == 0) {
-			SDL_ANDROID_SetScreenKeyboardShown(0);
-			show_onscreen++;
-		} else if (show_onscreen==1) {
-			SDL_ANDROID_SetScreenKeyboardShown(1);
-			show_onscreen++;
-		}
-		if (show_onscreen == 2)
-			show_onscreen = 0;
+		const bool show_onscreen = g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
+		g_system->setFeatureState(OSystem::kFeatureOnScreenControl, !show_onscreen);
 	}
 #endif
 	else

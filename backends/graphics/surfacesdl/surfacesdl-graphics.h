@@ -105,6 +105,9 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
+	virtual const OSystem::GraphicsMode *getSupportedShaders() const;
+	virtual int getShader();
+	virtual bool setShader(int id);
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
@@ -302,6 +305,9 @@ protected:
 
 	int _screenChangeCount;
 
+	int _currentShader;
+	int _numShaders;
+
 	enum {
 		NUM_DIRTY_RECT = 100,
 		MAX_SCALING = 3
@@ -384,6 +390,7 @@ protected:
 	virtual void blitCursor();
 
 	virtual void internUpdateScreen();
+	virtual void updateShader();
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();

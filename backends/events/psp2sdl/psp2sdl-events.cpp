@@ -32,6 +32,7 @@
 
 #include "common/util.h"
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "math.h"
 
@@ -119,10 +120,16 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
-		case BTN_TRIANGLE: // Game menu
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+		case BTN_TRIANGLE: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
 			break;
 		case BTN_SQUARE: // Period (+R_trigger: Space)
 			if (!_km.modifier) {
@@ -135,19 +142,17 @@ bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
 			}
 			break;
-		case BTN_L1: // Escape (+R_trigger: Return)
-			if (!_km.modifier) {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-			} else {
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_RETURN;
-				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-			}
+		case BTN_L1: // Game menu
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
-		case BTN_R1: // Modifier
-			_km.modifier=true;
+		case BTN_R1: // Modifier + Shift
+			_km.modifier=true; // slow mouse
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = Common::KEYCODE_INVALID;
+			event.kbd.ascii = 0;
+			event.kbd.flags = Common::KBD_SHIFT;
 			break;
 		case BTN_START: // ScummVM in game menu
 			event.type = Common::EVENT_MAINMENU;
@@ -224,10 +229,16 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONUP;
 			processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			break;
-		case BTN_TRIANGLE: // Game menu
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
+		case BTN_TRIANGLE: // Escape (+R_trigger: Return)
+			if (!_km.modifier) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
+			} else {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
+			}
 			break;
 		case BTN_SQUARE: // Period (+R_trigger: Space)
 			if (!_km.modifier) {
@@ -240,19 +251,17 @@ bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod) ev.key.keysym.mod, 0);
 			}
 			break;
-		case BTN_L1: // Escape (+R_trigger: Return)
-			if (!_km.modifier) {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_ESCAPE;
-				event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-			} else {
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_RETURN;
-				event.kbd.ascii = mapKey(SDLK_RETURN, (SDLMod) ev.key.keysym.mod, 0);
-			}
+		case BTN_L1: // Game menu
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
 			break;
-		case BTN_R1: // Modifier
-			_km.modifier = false;
+		case BTN_R1: // Modifier + SHIFT Key
+			_km.modifier = false; // slow mouse
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = Common::KEYCODE_INVALID;
+			event.kbd.ascii = 0;
+			event.kbd.flags = 0;
 			break;
 		case BTN_START: // ScummVM in game menu
 			// Handled in key down
@@ -272,31 +281,33 @@ bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int vel_to_axis = (1500 / MULTIPLIER);
 
 	if (ev.jaxis.axis == JOY_XAXIS) {
-		_km.x_vel = axis / vel_to_axis;
-		_km.x_down_count = 0;
+		_km.joy_x = axis;
 	} else if (ev.jaxis.axis == JOY_YAXIS) {
 		axis = -axis;
-		_km.y_vel = -axis / vel_to_axis;
-		_km.y_down_count = 0;
+		_km.joy_y = -axis;
 	}
-
+	
 	// radial and scaled deadzone
 
-	float analogX = (float) (_km.x_vel * vel_to_axis);
-	float analogY = (float) (_km.y_vel * vel_to_axis);
-	float deadZone = (float) JOY_DEADZONE;
+	float analogX = (float)_km.joy_x;
+	float analogY = (float)_km.joy_y;
+	float deadZone = (float)JOY_DEADZONE;
+	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
+		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
 	float scalingFactor = 1.0f;
 	float magnitude = 0.0f;
 
 	magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
+		_km.x_down_count = 0;
+		_km.y_down_count = 0;
 		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
-		_km.x_vel = (int16) (analogX * scalingFactor * 32768.0f / vel_to_axis);
-		_km.y_vel = (int16) (analogY * scalingFactor * 32768.0f / vel_to_axis);
+		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / (float) vel_to_axis);
+		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / (float) vel_to_axis);
 	} else {
-		_km.y_vel = 0;
 		_km.x_vel = 0;
+		_km.y_vel = 0;
 	}
 
 	return false;

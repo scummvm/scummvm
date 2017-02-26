@@ -2655,6 +2655,7 @@ case $_host_os in
 		;;
 	psp2)
 		_freetypepath="$VITASDK/arm-vita-eabi/bin"
+		_freetype2=yes
 		_libcurlpath="$VITASDK/arm-vita-eabi/bin"
 		append_var CXXFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
 		append_var LDFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
@@ -3170,7 +3171,7 @@ if test -n "$_host"; then
 		psp2)
 			_backend="psp2"
 			_vkeybd=yes
-			_build_scalers=no
+			_build_scalers=yes
 			_build_hq_scalers=no
 			_mt32emu=no
 			_timidity=no

@@ -78,6 +78,19 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");
 	ConfMan.registerDefault("filtering",true);
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 2);
+	ConfMan.registerDefault("shader", 0);
+
+	if (!ConfMan.hasKey("kbdmouse_speed")) {
+		ConfMan.setInt("kbdmouse_speed",3);
+	}
+	if (!ConfMan.hasKey("joystick_deadzone")) {
+		ConfMan.setInt("joystick_deadzone",2);
+	}
+	if (!ConfMan.hasKey("shader")) {
+		ConfMan.setInt("shader", 0);
+	}
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
@@ -89,6 +102,13 @@ void OSystem_PSP2::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
+}
+
+bool OSystem_PSP2::hasFeature(Feature f) {
+	return (f == kFeatureKbdMouseSpeed ||
+		f == kFeatureJoystickDeadzone ||
+		f == kFeatureShader ||
+		OSystem_SDL::hasFeature(f));
 }
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
