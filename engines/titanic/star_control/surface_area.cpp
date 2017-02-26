@@ -106,4 +106,75 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	}
 }
 
+double CSurfaceArea::fn1(const FRect &rect) {
+	if (rect.empty())
+		return rect.top;
+
+	double xp = rect.left, yp = rect.top;
+	FRect r = rect;
+
+	// edx=flags1, esi=flags2
+	int flags1 = (r.left < _bounds.left ? 1 : 0)
+		| (r.left > _bounds.right ? 2 : 0)
+		| (r.top < _bounds.top ? 4 : 0)
+		| (r.top > _bounds.bottom ? 8 : 0);
+	int flags2 = (r.right < _bounds.left ? 1 : 0)
+		| (r.right > _bounds.right ? 2 : 0)
+		| (r.bottom < _bounds.top ? 4 : 0)
+		| (r.bottom > _bounds.bottom ? 8 : 0);
+
+	// Handle any clipping
+	while (flags1 | flags2) {
+		if (flags1 & flags2)
+			return r.top;
+
+		int flags = flags1 ? flags1 : flags2;
+		if ((flags & 1) || (flags & 2)) {
+			xp = (flags & 1) ? _bounds.left : _bounds.right;
+			yp = (r.bottom - r.top) * (xp - r.left) / (r.right - r.left) + r.top;
+		} else if ((flags & 4) || (flags & 8)) {
+			yp = (flags & 4) ? _bounds.top : _bounds.bottom;
+			xp = (r.right - r.left) * (yp - r.top) / (r.bottom - r.top) + r.left;
+		}
+
+		if (flags == flags1) {
+			r.left = xp;
+			r.top = yp;
+
+			flags1 = 0;
+			if (xp < _bounds.left)
+				flags1 |= 1;
+			if (xp > _bounds.right)
+				flags1 |= 2;
+			if (yp < _bounds.top)
+				flags1 |= 4;
+			if (yp > _bounds.bottom)
+				flags1 |= 8;
+		} else {
+			r.right = xp;
+			r.bottom = yp;
+
+			flags2 = 0;
+			if (xp < _bounds.left)
+				flags2 |= 1;
+			if (xp > _bounds.right)
+				flags2 |= 2;
+			if (yp < _bounds.top)
+				flags2 |= 4;
+			if (yp > _bounds.bottom)
+				flags2 |= 8;
+		}
+	}
+
+	Common::Rect rr(round(r.left), round(r.top), round(r.right), round(r.bottom));
+	if (rr.left > rr.right) {
+		SWAP(rr.left, rr.right);
+		SWAP(rr.top, rr.bottom);
+	}
+	
+	// TODO: Lots more functionality
+
+	return r.top;
+}
+
 } // End of namespace Titanic

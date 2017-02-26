@@ -57,10 +57,14 @@ bool CStarPoints1::initialize() {
 	return true;
 }
 
-void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *img) {
+void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	if (_data.empty())
 		return;
 
+	CStarControlSub6 sub6 = sub12->proc23();
+	sub12->proc25();
+
+	FVector &v0 = _data[0];
 
 
 	// TODO

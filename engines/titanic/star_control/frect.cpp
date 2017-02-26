@@ -20,34 +20,20 @@
  *
  */
 
-#ifndef TITANIC_STAR_POINTS1_H
-#define TITANIC_STAR_POINTS1_H
-
-#include "common/array.h"
-#include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/frect.h"
 
 namespace Titanic {
 
-class CStarControlSub12;
+bool FRect::operator==(const FRect &r) const {
+	return left == r.left && top == r.top && right == r.right && bottom == r.bottom;
+}
 
-class CStarPoints1 {
-private:
-	Common::Array<FVector> _data;
-public:
-	CStarPoints1();
+bool FRect::operator!=(const FRect &r) const {
+	return !operator==(r);
+}
 
-	/**
-	 * Initialize the array
-	 */
-	bool initialize();
-
-	/**
-	 * Draw the starfield points
-	 */
-	void draw(CSurfaceArea *surface, CStarControlSub12 *sub12);
-};
+bool FRect::empty() const {
+	return left == right && top == bottom; 
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_POINTS1_H */

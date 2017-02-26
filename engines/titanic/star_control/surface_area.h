@@ -26,6 +26,7 @@
 #include "titanic/support/rect.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/star_control/fpoint.h"
+#include "titanic/star_control/frect.h"
 
 namespace Titanic {
 
@@ -77,6 +78,8 @@ public:
 	 * Sets the color from the current pixel
 	 */
 	void setColorFromPixel();
+
+	double fn1(const FRect &rect);
 };
 
 } // End of namespace Titanic
