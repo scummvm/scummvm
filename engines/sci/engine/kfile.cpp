@@ -627,6 +627,21 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 
 	bytesRead = fgets_wrapper(s, buf, maxsize, handle);
 
+	// Fix up size too large for destination.
+	SegmentRef dest_r = s->_segMan->dereference(argv[0]);
+	if (!dest_r.isValid()) {
+		error("kFileIO(readString): invalid destination %04x:%04x", PRINT_REG(argv[0]));
+	} else if ((int)bytesRead > dest_r.maxSize) {
+		error("kFileIO(readString) attempting to read %u bytes into buffer of size %u", bytesRead, dest_r.maxSize);
+	} else if (maxsize > dest_r.maxSize) {
+		// This happens at least in the QfG4 character import.
+		// CHECKME: We zero the remainder of the dest buffer, while
+		// at least several (and maybe all) SSCI interpreters didn't do this.
+		// Therefore this warning is presumably no problem.
+		warning("kFileIO(readString) attempting to copy %u bytes into buffer of size %u (%u/%u bytes actually read)", maxsize, dest_r.maxSize, bytesRead, maxsize);
+		maxsize = dest_r.maxSize;
+	}
+
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	delete[] buf;
 	return bytesRead ? argv[0] : NULL_REG;
