@@ -401,12 +401,6 @@ void RobotDecoder::initAudio() {
 
 	_audioRecordInterval = RobotAudioStream::kRobotSampleRate / _frameRate;
 
-	// TODO: Might actually be for all games newer than Lighthouse; check to
-	// see which games have this condition.
-	if (g_sci->getGameId() != GID_LIGHTHOUSE && !(_audioRecordInterval & 1)) {
-		++_audioRecordInterval;
-	}
-
 	_expectedAudioBlockSize = _audioBlockSize - kAudioBlockHeaderSize;
 	_audioBuffer = (byte *)realloc(_audioBuffer, kRobotZeroCompressSize + _expectedAudioBlockSize);
 
