@@ -122,8 +122,9 @@ static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("e
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
+// The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
+// "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { _s("3"), _s("5"), _s("8"), _s("10"), _s("13"), _s("15"), _s("18"), _s("20"), 0 };
-static const int kbdMouseSpeedValues[] = { 0, 1, 2, 3, 4, 5, 6, 7, -1 };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
@@ -247,7 +248,7 @@ void OptionsDialog::build() {
 			int value =  ConfMan.getInt("kbdmouse_speed", _domain);
 			if (_kbdMouseSpeedSlider && value < sizeof(kbdMouseSpeedLabels)) {
 				_kbdMouseSpeedSlider->setValue(value);
-				_kbdMouseSpeedLabel->setLabel(kbdMouseSpeedLabels[value]);
+				_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
 			}
 		}
 	}
@@ -447,34 +448,6 @@ void OptionsDialog::open() {
 
 void OptionsDialog::apply() {
 	bool graphicsModeChanged = false;
-	// Control options
-	if (_enableControlSettings) {
-		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
-			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
-				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
-			}
-		}
-		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
-			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
-				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
-			}
-		}
-		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
-			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
-				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
-			}
-		}
-		if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
-			if (ConfMan.getInt("kbdmouse_speed", _domain) != _kbdMouseSpeedSlider->getValue()) {
-				ConfMan.setInt("kbdmouse_speed", _kbdMouseSpeedSlider->getValue(), _domain);
-			}
-		}
-		if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-			if (ConfMan.getInt("joystick_deadzone", _domain) != _joystickDeadzoneSlider->getValue()) {
-				ConfMan.setInt("joystick_deadzone", _joystickDeadzoneSlider->getValue(), _domain);
-			}
-		}
-	}
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -517,18 +490,6 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("aspect_ratio", _domain);
 			ConfMan.removeKey("gfx_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
-		}
-	}
-	
-	// Shader options
-	if (_enableShaderSettings) {
-		if (g_system->hasFeature(OSystem::kFeatureShader)) {
-			if (_shaderPopUp) {
-				if (ConfMan.getInt("shader", _domain) != _shaderPopUp->getSelectedTag()) {
-					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
-					g_system->setShader(_shaderPopUp->getSelectedTag());
-				}
-			}
 		}
 	}
 
@@ -598,7 +559,48 @@ void OptionsDialog::apply() {
 			dialog.runModal();
 		}
 	}
-	
+
+	// Shader options
+	if (_enableShaderSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureShader)) {
+			if (_shaderPopUp) {
+				if (ConfMan.getInt("shader", _domain) != _shaderPopUp->getSelectedTag()) {
+					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
+					g_system->setShader(_shaderPopUp->getSelectedTag());
+				}
+			}
+		}
+	}
+
+	// Control options
+	if (_enableControlSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
+			if (ConfMan.getBool("onscreen_control", _domain) != _onscreenCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
+			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
+			if (ConfMan.getBool("swap_menu_and_back_buttons", _domain) != _swapMenuAndBackBtnsCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureSwapMenuAndBackButtons, _swapMenuAndBackBtnsCheckbox->getState());
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
+			if (ConfMan.getInt("kbdmouse_speed", _domain) != _kbdMouseSpeedSlider->getValue()) {
+				ConfMan.setInt("kbdmouse_speed", _kbdMouseSpeedSlider->getValue(), _domain);
+			}
+		}
+		if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+			if (ConfMan.getInt("joystick_deadzone", _domain) != _joystickDeadzoneSlider->getValue()) {
+				ConfMan.setInt("joystick_deadzone", _joystickDeadzoneSlider->getValue(), _domain);
+			}
+		}
+	}
+
 	// Volume options
 	if (_musicVolumeSlider) {
 		if (_enableVolumeSettings) {
@@ -799,7 +801,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		draw();
 		break;
 	case kKbdMouseSpeedChanged:
-		_kbdMouseSpeedLabel->setLabel(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]); 
+		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()])); 
 		_kbdMouseSpeedLabel->draw();
 		break;
 	case kJoystickDeadzoneChanged:
@@ -963,10 +965,10 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	// Keyboard and joystick mouse speed
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
 		if (g_system->getOverlayWidth() > 320)
-			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _("Mouse Speed:"), _("Speed multiplier for mouse emulation"));
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _("Pointer Speed:"), _("Speed for keyboard/joystick mouse pointer control"));
 		else
-			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _c("Mouse Speed:", "lowres"), _("Speed multiplier for mouse emulation"));
-		_kbdMouseSpeedSlider = new SliderWidget(boss, prefix + "grKbdMouseSpeedSlider", _("Speed multiplier for mouse emulation"), kKbdMouseSpeedChanged);
+			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _c("Pointer Speed:", "lowres"), _("Speed for keyboard/joystick mouse pointer control"));
+		_kbdMouseSpeedSlider = new SliderWidget(boss, prefix + "grKbdMouseSpeedSlider", _("Speed for keyboard/joystick mouse pointer control"), kKbdMouseSpeedChanged);
 		_kbdMouseSpeedLabel = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedLabel", "  ");
 		_kbdMouseSpeedSlider->setMinValue(0);
 		_kbdMouseSpeedSlider->setMaxValue(7);
@@ -976,10 +978,10 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	// Joystick deadzone
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
 		if (g_system->getOverlayWidth() > 320)
-			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _("Joy Deadzone:"), _("Analog Joystick Deadzone"));
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _("Joy Deadzone:"), _("Analog joystick Deadzone"));
 		else
-			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _c("Joy Deadzone:", "lowres"), _("Analog Joystick Deadzone"));
-		_joystickDeadzoneSlider = new SliderWidget(boss, prefix + "grJoystickDeadzoneSlider", _("Analog Joystick Deadzone"), kJoystickDeadzoneChanged);
+			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _c("Joy Deadzone:", "lowres"), _("Analog joystick Deadzone"));
+		_joystickDeadzoneSlider = new SliderWidget(boss, prefix + "grJoystickDeadzoneSlider", _("Analog joystick Deadzone"), kJoystickDeadzoneChanged);
 		_joystickDeadzoneLabel = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneLabel", "  ");
 		_joystickDeadzoneSlider->setMinValue(1);
 		_joystickDeadzoneSlider->setMaxValue(10);
@@ -1454,18 +1456,6 @@ void GlobalOptionsDialog::build() {
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
 	
 	//
-	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
-	//
-	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
-		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
-		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
-		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
-		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-		tab->addTab(_("Control"));
-		addControlControls(tab, "GlobalOptions_Control.");
-	}
-	
-	//
 	// 1) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
@@ -1478,6 +1468,18 @@ void GlobalOptionsDialog::build() {
 	if (g_system->hasFeature(OSystem::kFeatureShader)) {
 		tab->addTab(_("Shader"));
 		addShaderControls(tab, "GlobalOptions_Shader.");
+	}
+
+	//
+	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
+	//
+	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
+		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
+		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
+		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
+		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
+		tab->addTab(_("Control"));
+		addControlControls(tab, "GlobalOptions_Control.");
 	}
 
 	//
