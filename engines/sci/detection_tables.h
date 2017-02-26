@@ -3895,6 +3895,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
 
+	// RAMA - French Windows CD (from bgK)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.000.000"
+	{"rama", "", {
+		{"resmap.001", 0, "c931947115a69bb4c1760cef04e4018f", 8338},
+		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70783560},
+		{"resmap.002", 0, "2f70519e32dd4d56d0009d127797a444", 12082},
+		{"ressci.002", 0, "2a68edd064e5e4937b5e9c74b38f2082", 128724165},
+		{"resmap.003", 0, "fd2ce2312084e60b2cc5194a799873d0", 1636},
+		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6379952},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_RAMA },
+
 	// RAMA - Italian Windows CD (from glorifindel)
 	// SCI interpreter version 3.000.000 (a guess?)
 	{"rama", "", {
