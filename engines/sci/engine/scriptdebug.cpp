@@ -317,18 +317,22 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 
 				debugN("  %s::%s[", name, g_sci->getKernel()->getSelectorName(selector).c_str());
 
-				switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
-				case kSelectorMethod:
-					debugN("FUNCT");
-					argc += restmod;
-					restmod = 0;
-					break;
-				case kSelectorVariable:
-					debugN("VAR");
-					break;
-				case kSelectorNone:
-					debugN("INVALID");
-					break;
+				if (!s->_segMan->getObject(called_obj_addr)) {
+					debugN("INVALID_OBJ");
+				} else {
+					switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
+					case kSelectorMethod:
+						debugN("FUNCT");
+						argc += restmod;
+						restmod = 0;
+						break;
+					case kSelectorVariable:
+						debugN("VAR");
+						break;
+					case kSelectorNone:
+						debugN("INVALID");
+						break;
+					}
 				}
 
 				debugN("](");
