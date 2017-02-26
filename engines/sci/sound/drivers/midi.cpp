@@ -656,13 +656,13 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			f.seek(-2, SEEK_CUR);
 
 		// Send before-SysEx text
-		sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+		sendMt32SysEx(0x200000, &f, 20);
 
 		if (size != 2271) {
 			// Send after-SysEx text (SSCI sends this before every song).
 			// There aren't any SysEx calls in old drivers, so this can
 			// be sent right after the before-SysEx text.
-			sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+			sendMt32SysEx(0x200000, &f, 20);
 		} else {
 			// Skip the after-SysEx text in the newer patch version, we'll send
 			// it after the SysEx messages are sent.
@@ -696,14 +696,14 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			f.skip(2235);	// skip driver code
 
 			// Patches 1-48
-			sendMt32SysEx(0x50000, static_cast<Common::SeekableReadStream *>(&f), 256);
-			sendMt32SysEx(0x50200, static_cast<Common::SeekableReadStream *>(&f), 128);
+			sendMt32SysEx(0x50000, &f, 256);
+			sendMt32SysEx(0x50200, &f, 128);
 
 			setReverb(reverb);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);
-			sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+			sendMt32SysEx(0x200000, &f, 20);
 		} else {
 			byte reverbSysEx[13];
 			// This old driver should have a full reverb SysEx
