@@ -53,6 +53,7 @@
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
+#include "sci/graphics/video32.h"
 #endif
 
 namespace Sci {
@@ -390,6 +391,12 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
 	}
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_sci->_video32->beforeSaveLoadWithSerializer(s);
+	}
+#endif
+
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
@@ -399,6 +406,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
 		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
+		g_sci->_video32->saveLoadWithSerializer(s);
 	} else
 #endif
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
@@ -972,6 +980,53 @@ void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 }
+
+void Video32::beforeSaveLoadWithSerializer(Common::Serializer &s) {
+	if (getSciVersion() < SCI_VERSION_3 || s.isSaving()) {
+		return;
+	}
+
+	_robotPlayer.close();
+}
+
+void Video32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (getSciVersion() < SCI_VERSION_3) {
+		return;
+	}
+
+	bool robotExists = _robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
+	s.syncAsByte(robotExists);
+	if (robotExists) {
+		GuiResourceId robotId;
+		reg_t planeId;
+		Common::Point position;
+		int16 priority, scale;
+		int frameNo;
+
+		if (s.isSaving()) {
+			robotId = _robotPlayer.getResourceId();
+			planeId = _robotPlayer.getPlaneId();
+			priority = _robotPlayer.getPriority();
+			position = _robotPlayer.getPosition();
+			scale = _robotPlayer.getScale();
+			frameNo = _robotPlayer.getFrameNo();
+		}
+
+		s.syncAsUint16LE(robotId);
+		syncWithSerializer(s, planeId);
+		s.syncAsSint16LE(priority);
+		s.syncAsSint16LE(position.x);
+		s.syncAsSint16LE(position.y);
+		s.syncAsSint16LE(scale);
+		s.syncAsSint32LE(frameNo);
+
+		if (s.isLoading()) {
+			_robotPlayer.open(robotId, planeId, priority, position.x, position.y, scale);
+			_robotPlayer.showFrame(frameNo, position.x, position.y, priority);
+		}
+	}
+}
+
 #endif
 
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {

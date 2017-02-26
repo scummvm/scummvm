@@ -371,6 +371,8 @@ void RobotDecoder::initStream(const GuiResourceId robotId) {
 		error("Unable to open robot file %s", fileName.c_str());
 	}
 
+	_robotId = robotId;
+
 	const uint16 id = stream->readUint16LE();
 	if (id != 0x16) {
 		error("Invalid robot file %s", fileName.c_str());
@@ -437,17 +439,16 @@ void RobotDecoder::initAudio() {
 void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, const reg_t plane, const bool hasPalette, const uint16 paletteSize) {
 	_position = Common::Point(x, y);
 
-	if (scale != 128) {
-		_scaleInfo.x = scale;
-		_scaleInfo.y = scale;
-		_scaleInfo.signal = kScaleSignalManual;
-	}
+	_scaleInfo.x = scale;
+	_scaleInfo.y = scale;
+	_scaleInfo.signal = scale == 128 ? kScaleSignalNone : kScaleSignalManual;
 
 	_plane = g_sci->_gfxFrameout->getPlanes().findByObject(plane);
 	if (_plane == nullptr) {
 		error("Invalid plane %04x:%04x passed to RobotDecoder::open", PRINT_REG(plane));
 	}
 
+	_planeId = plane;
 	_minFrameRate = _frameRate - kMaxFrameRateDrift;
 	_maxFrameRate = _frameRate + kMaxFrameRateDrift;
 
@@ -585,6 +586,8 @@ void RobotDecoder::close() {
 
 	debugC(kDebugLevelVideo, "Closing robot");
 
+	_robotId = -1;
+	_planeId = NULL_REG;
 	_status = kRobotStatusUninitialized;
 	_videoSizes.clear();
 	_recordPositions.clear();
@@ -1341,6 +1344,10 @@ void RobotDecoder::expandCel(byte* target, const byte* source, const int16 celWi
 
 		source += celWidth;
 	}
+}
+
+int16 RobotDecoder::getPriority() const {
+	return _priority;
 }
 
 void RobotDecoder::setPriority(const int16 newPriority) {

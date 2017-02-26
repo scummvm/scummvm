@@ -469,22 +469,24 @@ public:
 #pragma mark RobotDecoder
 
 /**
- * RobotDecoder implements the logic required
- * for Robot animations.
- *
- * @note A paused or finished RobotDecoder was
- * classified as serializable in SCI3, but the
- * save/load code would attempt to use uninitialised
- * values, so it seems that robots were not ever
- * actually able to be saved.
+ * RobotDecoder implements the logic required for Robot animations.
  */
 class RobotDecoder {
 public:
 	RobotDecoder(SegManager *segMan);
 	~RobotDecoder();
 
+	GuiResourceId getResourceId() const {
+		return _robotId;
+	}
+
 private:
 	SegManager *_segMan;
+
+	/**
+	 * The ID of the currently loaded robot.
+	 */
+	GuiResourceId _robotId;
 
 #pragma mark Constants
 public:
@@ -1175,6 +1177,27 @@ private:
 #pragma mark Rendering
 public:
 	/**
+	 * Gets the plane used to render the robot.
+	 */
+	const reg_t getPlaneId() const {
+		return _planeId;
+	}
+
+	/**
+	 * Gets the origin of the robot.
+	 */
+	Common::Point getPosition() const {
+		return _position;
+	}
+
+	/**
+	 * Gets the scale of the robot.
+	 */
+	int16 getScale() const {
+		return _scaleInfo.x;
+	}
+
+	/**
 	 * Puts the current dimensions of the robot, in game script
 	 * coordinates, into the given rect, and returns the total
 	 * number of frames in the robot animation.
@@ -1206,6 +1229,8 @@ public:
 	 * uncompressed dimensions.
 	 */
 	void expandCel(byte *target, const byte* source, const int16 celWidth, const int16 celHeight) const;
+
+	int16 getPriority() const;
 
 	/**
 	 * Sets the visual priority of the robot.
@@ -1290,6 +1315,11 @@ private:
 	 * The decompressor for LZS-compressed cels.
 	 */
 	DecompressorLZS _decompressor;
+
+	/**
+	 * The ID of the robot plane.
+	 */
+	reg_t _planeId;
 
 	/**
 	 * The origin of the robot animation, in screen

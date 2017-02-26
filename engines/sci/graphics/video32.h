@@ -642,7 +642,7 @@ private:
  * Video32 provides facilities for playing back
  * video in SCI engine.
  */
-class Video32 {
+class Video32 : public Common::Serializable {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
 	_SEQPlayer(segMan),
@@ -650,6 +650,9 @@ public:
 	_VMDPlayer(segMan, eventMan),
 	_robotPlayer(segMan),
 	_duckPlayer(segMan, eventMan) {}
+
+	void beforeSaveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	SEQPlayer &getSEQPlayer() { return _SEQPlayer; }
 	AVIPlayer &getAVIPlayer() { return _AVIPlayer; }
