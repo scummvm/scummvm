@@ -1308,7 +1308,7 @@ void ThemeEngine::drawRadiobuttonClip(const Common::Rect &r, const Common::Rect 
 	queueDDClip(dd, r2, clippingRect);
 
 	r2.left = r2.right + checkBoxSize;
-	r2.right = r.right;
+	r2.right = MAX(r2.left, r.right);
 
 	queueDDTextClip(getTextData(dd), getTextColor(dd), r2, clippingRect, str, true, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
@@ -1519,7 +1519,7 @@ void ThemeEngine::drawPopUpWidgetClip(const Common::Rect &r, const Common::Rect 
 
 	queueDDClip(dd, r, clip);
 
-	if (!sel.empty()) {
+	if (!sel.empty() && r.width() >= 13 && r.height() >= 1) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
 		queueDDTextClip(getTextData(dd), getTextColor(dd), text, clip, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
 	}
