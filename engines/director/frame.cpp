@@ -548,6 +548,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			CastType castType = kCastTypeNull;
 			Cast *cast = nullptr;
 			if (_vm->getVersion() < 4) {
+				debugC(1, kDebugImages, "Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
 				case 0x01:
 					castType = kCastBitmap;
