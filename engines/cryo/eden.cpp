@@ -3787,6 +3787,8 @@ void EdenGame::initGlobals() {
 	_underSubtitlesBackupRect.left = _subtitlesXScrMargin;
 	_underSubtitlesBackupRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
 	_underSubtitlesBackupRect.bottom = 60 - 1;
+
+	_savedUnderSubtitles = false;
 }
 
 void EdenGame::initRects() {
