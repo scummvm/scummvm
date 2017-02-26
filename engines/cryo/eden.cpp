@@ -6774,20 +6774,42 @@ void EdenGame::syncCitadelRoomPointers(Common::Serializer s) {
 }
 
 void EdenGame::syncTapePointers(Common::Serializer s) {
-	int persoIdx, dialogIdx;
+	int persoIdx;
 
 	for (int i = 0; i < 16; i++) {
+		int index, subIndex;
 		if (s.isSaving()) {
+			index = NULLPTR;
+			char *closerPtr = nullptr;
+			for (int j = (getElem((char *)_gameDialogs, 0) - (char *)_gameDialogs) / sizeof(char *) - 1; j >= 0; j--) {
+				char *tmpPtr = getElem((char *)_gameDialogs, j);
+				if ((tmpPtr <= (char *)_tapes[i]._dialog) && (tmpPtr > closerPtr)) {
+					index = j;
+					closerPtr = tmpPtr;
+				}
+			}
+
+			subIndex = NULLPTR;
+			if (index != NULLPTR)
+				subIndex = ((char *)_tapes[i]._dialog - closerPtr);
+
 			IDXOUT(_tapes[i]._perso, _persons, perso_t, persoIdx);
-			IDXOUT(_tapes[i]._dialog, _gameDialogs, Dialog, dialogIdx);
 		}
 
 		s.syncAsUint32LE(persoIdx);
-		s.syncAsUint32LE(dialogIdx);
+		s.syncAsUint32LE(index);
+		s.syncAsUint32LE(subIndex);
 
 		if (s.isLoading()) {
 			_tapes[i]._perso = (persoIdx == NULLPTR) ? nullptr : &_persons[persoIdx];
-			_tapes[i]._dialog = (dialogIdx == NULLPTR) ? nullptr : (Dialog *)getElem(_gameDialogs, dialogIdx);
+			char *tmpPtr = nullptr;
+
+			if (index != NULLPTR) {
+				tmpPtr = getElem((char *)_gameDialogs, index);
+				if (subIndex != NULLPTR)
+					tmpPtr += subIndex;
+			}
+			_tapes[i]._dialog = (Dialog *)tmpPtr;
 		}
 	}
 }
