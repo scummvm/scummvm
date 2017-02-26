@@ -3161,7 +3161,7 @@ void EdenGame::specialObjects(perso_t *perso, char objid) {
 		{ PersonFlags::pfType0, Objects::obEgg, &EdenGame::specialEgg },
 		{ -1, -1, nullptr }
 	};
-	
+
 	char characterType = perso->_flags & PersonFlags::pfTypeMask;
 	_curSpecialObject = &_objects[objid - 1];
 	for (SpecialObject *spcObj = kSpecialObjectActions; spcObj->_characterType != -1; spcObj++) {
@@ -3422,7 +3422,7 @@ bool EdenGame::dial_scan(Dialog *dial) {
 		if (mask)
 			break;
 	}
-	
+
 	if (!skipFl) {
 		perso_t *perso;
 		for (perso = _persons; !(perso->_partyMask == mask && perso->_roomNum == _globals->_roomNum); perso++)
@@ -6765,8 +6765,9 @@ void EdenGame::syncGlobalValues(Common::Serializer s) {
 void EdenGame::syncCitadelRoomPointers(Common::Serializer s) {
 	uint32 citadelRoomIdx;
 	for (int i = 0; i < 12; i++) {
-		if (s.isSaving())
+		if (s.isSaving()) {
 			IDXOUT(_areasTable[i]._citadelRoomPtr, _gameRooms, Room, citadelRoomIdx);
+		}
 		s.syncAsUint32LE(citadelRoomIdx);
 		if (s.isLoading())
 			_areasTable[i]._citadelRoomPtr = (citadelRoomIdx == NULLPTR) ? nullptr : &_gameRooms[citadelRoomIdx];
@@ -7008,7 +7009,7 @@ uint16 EdenGame::getWordVar(uint16 offset) {
 		VAR(0x16, _party);
 		VAR(0x18, _partyOutside);
 		VAR(0x1A, _metPersonsMask2);
-		VAR(0x1C, _var1C);    //TODO: write-only?	
+		VAR(0x1C, _var1C);    //TODO: write-only?
 		VAR(0x1E, _phaseActionsCount);
 		VAR(0x20, _curAreaFlags);
 		VAR(0x22, _curItemsMask);
