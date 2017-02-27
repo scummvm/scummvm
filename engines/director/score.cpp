@@ -240,7 +240,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	while (size != 0) {
 		uint16 frameSize = stream.readUint16();
-		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size() + 1, frameSize, size);
 		size -= frameSize;
 		frameSize -= 2;
 
@@ -266,7 +266,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
 
-		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
+		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size() + 1, frame->_actionId);
 
 		delete str;
 
