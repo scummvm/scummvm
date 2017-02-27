@@ -26,6 +26,7 @@
 #include "adl/adl_v2.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
+#include "adl/detection.h"
 
 namespace Adl {
 
@@ -38,11 +39,32 @@ AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine(syst, gd),
 		_maxLines(4),
 		_disk(nullptr),
+		_currentVolume(0),
 		_itemRemoved(false),
 		_roomOnScreen(0),
 		_picOnScreen(0),
 		_itemsOnScreen(0) {
 	_random = new Common::RandomSource("adl");
+}
+
+Common::String AdlEngine_v2::getDiskImageName(byte volume) const {
+	const ADGameFileDescription *ag;
+
+	for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
+		if (ag->fileType == volume)
+			return ag->fileName;
+
+	error("Disk volume %d not found", volume);
+}
+
+void AdlEngine_v2::insertDisk(byte volume) {
+	delete _disk;
+	_disk = new DiskImage();
+
+	if (!_disk->open(getDiskImageName(volume)))
+		error("Failed to open disk volume %d", volume);
+
+	_currentVolume = volume;
 }
 
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v2> OpcodeV2;

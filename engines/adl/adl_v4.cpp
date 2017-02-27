@@ -20,15 +20,15 @@
  *
  */
 
+#include "common/error.h"
+
 #include "adl/adl_v4.h"
 #include "adl/display.h"
-#include "adl/detection.h"
 
 namespace Adl {
 
 AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine_v3(syst, gd),
-		_currentVolume(0),
 		_itemPicIndex(nullptr) {
 
 }
@@ -188,26 +188,6 @@ Common::String AdlEngine_v4::loadMessage(uint idx) const {
 
 Common::String AdlEngine_v4::getItemDescription(const Item &item) const {
 	return _itemDesc[item.id - 1];
-}
-
-Common::String AdlEngine_v4::getDiskImageName(byte volume) const {
-	const ADGameFileDescription *ag;
-
-	for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
-		if (ag->fileType == volume)
-			return ag->fileName;
-
-	error("Disk volume %d not found", volume);
-}
-
-void AdlEngine_v4::insertDisk(byte volume) {
-	delete _disk;
-	_disk = new DiskImage();
-
-	if (!_disk->open(getDiskImageName(volume)))
-		error("Failed to open disk volume %d", volume);
-
-	_currentVolume = volume;
 }
 
 void AdlEngine_v4::loadRegionLocations(Common::ReadStream &stream, uint regions) {

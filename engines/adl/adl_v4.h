@@ -71,8 +71,6 @@ protected:
 		kRegionChunkGlobalCmds
 	};
 
-	Common::String getDiskImageName(byte volume) const;
-	void insertDisk(byte volume);
 	void loadRegionLocations(Common::ReadStream &stream, uint regions);
 	void loadRegionInitDataOffsets(Common::ReadStream &stream, uint regions);
 	void initRegions(const byte *roomsPerRegion, uint regions);
@@ -98,7 +96,6 @@ protected:
 	int o4_setRegionRoom(ScriptEnv &e);
 	int o4_setRoomPic(ScriptEnv &e);
 
-	byte _currentVolume;
 	Common::Array<RegionLocation> _regionLocations;
 	Common::Array<RegionInitDataOffset> _regionInitDataOffsets;
 	Common::SeekableReadStream *_itemPicIndex;
