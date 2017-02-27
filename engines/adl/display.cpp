@@ -39,9 +39,6 @@ namespace Adl {
 
 // This implements the Apple II "Hi-Res" display mode
 
-#define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
-#define DISPLAY_SIZE (DISPLAY_PITCH * DISPLAY_HEIGHT)
-
 #define TEXT_BUF_SIZE (TEXT_WIDTH * TEXT_HEIGHT)
 
 #define COLOR_PALETTE_ENTRIES 8
@@ -201,8 +198,7 @@ bool Display::saveThumbnail(Common::WriteStream &out) {
 	return retval;
 }
 
-void Display::loadFrameBuffer(Common::ReadStream &stream) {
-	byte *dst = _frameBuf;
+void Display::loadFrameBuffer(Common::ReadStream &stream, byte *dst) {
 	for (uint j = 0; j < 8; ++j) {
 		for (uint i = 0; i < 8; ++i) {
 			stream.read(dst, DISPLAY_PITCH);
@@ -219,6 +215,10 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 
 	if (stream.eos() || stream.err())
 		error("Failed to read frame buffer");
+}
+
+void Display::loadFrameBuffer(Common::ReadStream &stream) {
+	loadFrameBuffer(stream, _frameBuf);
 }
 
 void Display::putPixel(const Common::Point &p, byte color) {
