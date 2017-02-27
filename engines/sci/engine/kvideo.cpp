@@ -471,6 +471,11 @@ reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPlayVMDSetPlane(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_video32->getVMDPlayer().setPlane(argv[0].toSint16(), argc > 1 ? argv[1] : NULL_REG);
+	return s->r_acc;
+}
+
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, getSciVersion());

@@ -477,6 +477,7 @@ reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDSetPlane(EngineState *s, int argc, reg_t *argv);
 
 reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWin(EngineState *s, int argc, reg_t *argv);

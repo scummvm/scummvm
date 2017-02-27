@@ -363,6 +363,11 @@ public:
 	 */
 	void ignorePalettes() { _ignorePalettes = true; }
 
+	/**
+	 * Sets the plane and plane priority used to render video.
+	 */
+	void setPlane(const int16 priority, const reg_t planeId);
+
 private:
 	/**
 	 * The location of the VMD plane, in game script

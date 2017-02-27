@@ -919,6 +919,15 @@ void VMDPlayer::fillPalette(Palette &palette) const {
 	}
 }
 
+void VMDPlayer::setPlane(const int16 priority, const reg_t planeId) {
+	_priority = priority;
+	if (planeId != NULL_REG) {
+		_plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeId);
+		assert(_plane != nullptr);
+		_planeIsOwned = false;
+	}
+}
+
 #pragma mark -
 #pragma mark VMDPlayer - Palette
 
