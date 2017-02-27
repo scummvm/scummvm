@@ -331,7 +331,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,    90,  1,        "MuseumActor", "init",                            NULL,     6, { WORKAROUND_FAKE,   0 } }, // Random actors in museum - bug #5197
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #5028
 	{ GID_LAURABOW2,      -1,   928,  0,                 NULL, "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
-	{ GID_LIGHTHOUSE,    441,    17,  0,        "StemTracker", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // when operating the joystick in the puzzle to lower the bridge at the entrance to the workshop
+	{ GID_LIGHTHOUSE,     -1,    17,  0,                 NULL, "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // when operating the joystick in the puzzle to lower the bridge at the entrance to the workshop, or the joystick that moves the robotic arm in the mini-sub
 	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",                         NULL,     0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #5244
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
 	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent", sig_uninitread_longbow_1,   1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #5035
