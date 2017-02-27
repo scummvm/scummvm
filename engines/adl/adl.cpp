@@ -139,12 +139,14 @@ Common::String AdlEngine::getItemDescription(const Item &item) const {
 }
 
 void AdlEngine::delay(uint32 ms) const {
-	uint32 start = g_system->getMillis();
+	uint32 now = g_system->getMillis();
+	const uint32 end = now + ms;
 
-	while (!shouldQuit() && g_system->getMillis() - start < ms) {
+	while (!shouldQuit() && now < end) {
 		Common::Event event;
 		pollEvent(event);
-		g_system->delayMillis(16);
+		g_system->delayMillis(end - now < 16 ? end - now : 16);
+		now = g_system->getMillis();
 	}
 }
 
