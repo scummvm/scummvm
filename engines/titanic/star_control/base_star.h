@@ -103,6 +103,8 @@ public:
 	void clear();
 
 	void initialize();
+
+	int size() const { return _data.size(); }
 };
 
 } // End of namespace Titanic

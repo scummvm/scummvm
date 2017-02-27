@@ -72,7 +72,7 @@ void CStarControl::load(SimpleFile *file) {
 		_view.load(file, 0);
 		CScreenManager *screenManager = CScreenManager::setCurrent();
 		if (!screenManager)
-			error("There's no screen  manager during loading");
+			error("There's no screen manager during loading");
 
 		_view.setup(screenManager, &_starField, this);
 		_view.reset();
@@ -131,7 +131,21 @@ bool CStarControl::FrameMsg(CFrameMsg *msg) {
 }
 
 void CStarControl::newFrame() {
-	// TODO
+	if (!_petControl)
+		_petControl = getPetControl();
+
+	if (_petControl) {
+		int val1 = _starField.get88();
+		int val2 = 0;
+
+		if (!_starField.get3()) {
+			val2 = _starField.get5();
+			if ((val1 + 2) == _starField.get7Count())
+				val2 = 0;
+		}
+
+		_petControl->starsSetButtons(val1, val2);
+	}
 }
 
 void CStarControl::doAction(StarControlAction action) {
@@ -238,10 +252,7 @@ void CStarControl::doAction(StarControlAction action) {
 	case STAR_19:
 		_view.petDestinationSet();
 		break;
-
 	}
-
-	// TODO
 }
 
 bool CStarControl::isSolved() const {

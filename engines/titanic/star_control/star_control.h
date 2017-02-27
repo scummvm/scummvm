@@ -26,6 +26,7 @@
 #include "titanic/core/game_object.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -40,9 +41,7 @@ private:
 	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
-#if 0
-	int _field80B0;
-#endif
+	CPetControl *_petControl;
 private:
 	/**
 	 * Called for ever new game frame

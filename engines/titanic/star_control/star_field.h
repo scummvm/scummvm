@@ -87,6 +87,10 @@ public:
 	 * Returns true if the starfield puzzle has been solved
 	 */
 	bool isSolved() const;
+
+	int get7Count() const {
+		return _sub7.size();
+	}
 };
 
 } // End of namespace Titanic
