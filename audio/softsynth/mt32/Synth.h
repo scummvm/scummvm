@@ -120,6 +120,8 @@ friend class PartialManager;
 friend class Poly;
 friend class Renderer;
 friend class RhythmPart;
+friend class SamplerateAdapter;
+friend class SoxrAdapter;
 friend class TVA;
 friend class TVP;
 
@@ -252,6 +254,14 @@ public:
 		while (len--) {
 			*(buffer++) = 0.0f;
 		}
+	}
+
+	static inline Bit16s convertSample(float sample) {
+		return Synth::clipSampleEx(Bit32s(sample * 16384.0f)); // This multiplier takes into account the DAC bit shift
+	}
+
+	static inline float convertSample(Bit16s sample) {
+		return float(sample) / 16384.0f; // This multiplier takes into account the DAC bit shift
 	}
 
 	// Returns library version as an integer in format: 0x00MMmmpp, where:
