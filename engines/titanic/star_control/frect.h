@@ -34,8 +34,8 @@ public:
 	double right, bottom;
 public:
 	FRect() : left(0), top(0), right(0), bottom(0) {}
-	FRect(double left, double top, double right, double bottom) : 
-		left(left), top(top), right(right), bottom(bottom) {}
+	FRect(double x1, double y1, double x2, double y2) :
+		left(x1), top(y1), right(x2), bottom(y2) {}
 
 	/**
 	 * Returns true if the rects equal
