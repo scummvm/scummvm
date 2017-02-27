@@ -83,7 +83,7 @@ namespace Adl {
 #define IDI_HR1_OFS_MSGS         0x4d00
 
 #define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
-#define IDI_HR1_OFS_CORNERS      0x4f00
+#define IDI_HR1_OFS_SHAPES       0x4f00
 
 #define IDI_HR1_OFS_VERBS        0x3800
 #define IDI_HR1_OFS_NOUNS        0x0f00
@@ -229,7 +229,7 @@ void HiRes1Engine::init() {
 	} else
 		_files = new Files_Plain();
 
-	_graphics = new Graphics_v1(*_display);
+	_graphics = new GraphicsMan(*_display);
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
@@ -279,11 +279,11 @@ void HiRes1Engine::init() {
 	stream->seek(IDI_HR1_OFS_ITEM_OFFSETS);
 	loadDroppedItemOffsets(*stream, IDI_HR1_NUM_ITEM_OFFSETS);
 
-	// Load right-angle line art
-	stream->seek(IDI_HR1_OFS_CORNERS);
+	// Load shapes
+	stream->seek(IDI_HR1_OFS_SHAPES);
 	uint16 cornersCount = stream->readUint16LE();
 	for (uint i = 0; i < cornersCount; ++i)
-		_corners.push_back(_files->getDataBlock(IDS_HR1_EXE_1, IDI_HR1_OFS_CORNERS + stream->readUint16LE()));
+		_corners.push_back(_files->getDataBlock(IDS_HR1_EXE_1, IDI_HR1_OFS_SHAPES + stream->readUint16LE()));
 
 	if (stream->eos() || stream->err())
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
@@ -324,7 +324,7 @@ void HiRes1Engine::initGameState() {
 		item.noun = stream->readByte();
 		item.room = stream->readByte();
 		item.picture = stream->readByte();
-		item.isLineArt = stream->readByte();
+		item.isShape = stream->readByte();
 		item.position.x = stream->readByte();
 		item.position.y = stream->readByte();
 		item.state = stream->readByte();
@@ -416,9 +416,10 @@ void HiRes1Engine::drawItems() {
 }
 
 void HiRes1Engine::drawItem(Item &item, const Common::Point &pos) {
-	if (item.isLineArt) {
+	if (item.isShape) {
 		StreamPtr stream(_corners[item.picture - 1]->createReadStream());
-		static_cast<Graphics_v1 *>(_graphics)->drawCorners(*stream, pos);
+		Common::Point p(pos);
+		_graphics->drawShape(*stream, p);
 	} else
 		drawPic(item.picture, pos);
 }

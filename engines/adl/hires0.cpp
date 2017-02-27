@@ -56,7 +56,7 @@ private:
 };
 
 void HiRes0Engine::init() {
-	_graphics = new Graphics_v2(*_display);
+	_graphics = new GraphicsMan_v2(*_display);
 
 	_disk = new DiskImage();
 	if (!_disk->open(IDS_HR0_DISK_IMAGE))

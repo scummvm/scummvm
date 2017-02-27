@@ -77,7 +77,56 @@ void GraphicsMan::putPixel(const Common::Point &p, byte color) const {
 		_display.putPixel(p, color);
 }
 
-void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
+void GraphicsMan::drawShapePixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
+	if (bits & 4)
+		putPixel(p, color);
+
+	bits += quadrant;
+
+	if (bits & 1)
+		p.x += (bits & 2 ? -1 : 1);
+	else
+		p.y += (bits & 2 ? 1 : -1);
+}
+
+void GraphicsMan::drawShape(Common::ReadStream &corners, Common::Point &pos, byte rotation, byte scaling, byte color) const {
+	const byte stepping[] = {
+		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
+		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
+		0xff
+	};
+
+	byte quadrant = rotation >> 4;
+	rotation &= 0xf;
+	byte xStep = stepping[rotation];
+	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
+
+	while (true) {
+		byte b = corners.readByte();
+
+		if (corners.eos() || corners.err())
+			error("Error reading corners");
+
+		if (b == 0)
+			return;
+
+		do {
+			byte xFrac = 0x80;
+			byte yFrac = 0x80;
+			for (uint j = 0; j < scaling; ++j) {
+				if (xFrac + xStep + 1 > 255)
+					drawShapePixel(pos, color, b, quadrant);
+				xFrac += xStep + 1;
+				if (yFrac + yStep > 255)
+					drawShapePixel(pos, color, b, quadrant + 1);
+				yFrac += yStep;
+			}
+			b >>= 3;
+		} while (b != 0);
+	}
+}
+
+void GraphicsMan::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
 	byte x, y;
 	bool bNewLine = false;
 	byte oldX = 0, oldY = 0;
@@ -111,57 +160,6 @@ void Graphics_v1::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 
 		oldX = x;
 		oldY = y;
-	}
-}
-
-void Graphics_v1::drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const {
-	if (bits & 4)
-		putPixel(p, color);
-
-	bits += quadrant;
-
-	if (bits & 1)
-		p.x += (bits & 2 ? -1 : 1);
-	else
-		p.y += (bits & 2 ? 1 : -1);
-}
-
-void Graphics_v1::drawCorners(Common::ReadStream &corners, const Common::Point &pos, byte rotation, byte scaling, byte color) const {
-	const byte stepping[] = {
-		0xff, 0xfe, 0xfa, 0xf4, 0xec, 0xe1, 0xd4, 0xc5,
-		0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x49, 0x31, 0x18,
-		0xff
-	};
-
-	byte quadrant = rotation >> 4;
-	rotation &= 0xf;
-	byte xStep = stepping[rotation];
-	byte yStep = stepping[(rotation ^ 0xf) + 1] + 1;
-
-	Common::Point p(pos);
-
-	while (true) {
-		byte b = corners.readByte();
-
-		if (corners.eos() || corners.err())
-			error("Error reading corners");
-
-		if (b == 0)
-			return;
-
-		do {
-			byte xFrac = 0x80;
-			byte yFrac = 0x80;
-			for (uint j = 0; j < scaling; ++j) {
-				if (xFrac + xStep + 1 > 255)
-					drawCornerPixel(p, color, b, quadrant);
-				xFrac += xStep + 1;
-				if (yFrac + yStep > 255)
-					drawCornerPixel(p, color, b, quadrant + 1);
-				yFrac += yStep;
-			}
-			b >>= 3;
-		} while (b != 0);
 	}
 }
 
@@ -219,7 +217,7 @@ static const byte fillPatterns[NUM_PATTERNS][PATTERN_LEN] = {
 		p.y += _offset.y; \
 	} while (0)
 
-void Graphics_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
+void GraphicsMan_v2::drawCorners(Common::SeekableReadStream &pic, bool yFirst) {
 	Common::Point p;
 
 	READ_POINT(p);
@@ -253,7 +251,7 @@ doYStep:
 	}
 }
 
-void Graphics_v2::drawRelativeLines(Common::SeekableReadStream &pic) {
+void GraphicsMan_v2::drawRelativeLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
@@ -283,7 +281,7 @@ void Graphics_v2::drawRelativeLines(Common::SeekableReadStream &pic) {
 	}
 }
 
-void Graphics_v2::drawAbsoluteLines(Common::SeekableReadStream &pic) {
+void GraphicsMan_v2::drawAbsoluteLines(Common::SeekableReadStream &pic) {
 	Common::Point p1;
 
 	READ_POINT(p1);
@@ -308,11 +306,11 @@ static byte getPatternColor(const Common::Point &p, byte pattern) {
 	return fillPatterns[pattern][offset % PATTERN_LEN];
 }
 
-bool Graphics_v2::canFillAt(const Common::Point &p, const bool stopBit) {
+bool GraphicsMan_v2::canFillAt(const Common::Point &p, const bool stopBit) {
 	return _display.getPixelBit(p) != stopBit && _display.getPixelBit(Common::Point(p.x + 1, p.y)) != stopBit;
 }
 
-void Graphics_v2::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
+void GraphicsMan_v2::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
 	while (--p.x >= _bounds.left) {
@@ -326,7 +324,7 @@ void Graphics_v2::fillRowLeft(Common::Point p, const byte pattern, const bool st
 	}
 }
 
-void Graphics_v2::fillRow(Common::Point p, const byte pattern, const bool stopBit) {
+void GraphicsMan_v2::fillRow(Common::Point p, const byte pattern, const bool stopBit) {
 	// Set pixel at p and palette
 	byte color = getPatternColor(p, pattern);
 	_display.setPixelPalette(p, color);
@@ -348,7 +346,7 @@ void Graphics_v2::fillRow(Common::Point p, const byte pattern, const bool stopBi
 	}
 }
 
-void Graphics_v2::fillAt(Common::Point p, const byte pattern) {
+void GraphicsMan_v2::fillAt(Common::Point p, const byte pattern) {
 	const bool stopBit = !_display.getPixelBit(p);
 
 	// Move up into the open space above p
@@ -359,7 +357,7 @@ void Graphics_v2::fillAt(Common::Point p, const byte pattern) {
 		fillRow(p, pattern, stopBit);
 }
 
-void Graphics_v2::fill(Common::SeekableReadStream &pic) {
+void GraphicsMan_v2::fill(Common::SeekableReadStream &pic) {
 	byte pattern;
 	READ_BYTE(pattern);
 
@@ -372,7 +370,7 @@ void Graphics_v2::fill(Common::SeekableReadStream &pic) {
 	}
 }
 
-void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
+void GraphicsMan_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) {
 	// NOTE: The original engine only resets the color for overlays. As a result, room
 	// pictures that draw without setting a color or clearing the screen, will use the
 	// last color set by the previous picture. We assume this is unintentional and do
@@ -441,7 +439,7 @@ void Graphics_v2::drawPic(Common::SeekableReadStream &pic, const Common::Point &
 	}
 }
 
-void Graphics_v3::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
+void GraphicsMan_v3::fillRowLeft(Common::Point p, const byte pattern, const bool stopBit) {
 	byte color = getPatternColor(p, pattern);
 
 	while (--p.x >= _bounds.left) {
@@ -456,7 +454,7 @@ void Graphics_v3::fillRowLeft(Common::Point p, const byte pattern, const bool st
 	}
 }
 
-void Graphics_v3::fillAt(Common::Point p, const byte pattern) {
+void GraphicsMan_v3::fillAt(Common::Point p, const byte pattern) {
 	// If the row at p cannot be filled, we do nothing
 	if (!canFillAt(p))
 			return;

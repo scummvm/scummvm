@@ -325,7 +325,7 @@ void HiRes5Engine::runIntro() {
 }
 
 void HiRes5Engine::init() {
-	_graphics = new Graphics_v3(*_display);
+	_graphics = new GraphicsMan_v3(*_display);
 
 	insertDisk(2);
 

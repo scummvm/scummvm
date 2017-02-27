@@ -289,7 +289,7 @@ void HiRes6Engine::runIntro() {
 }
 
 void HiRes6Engine::init() {
-	_graphics = new Graphics_v3(*_display);
+	_graphics = new GraphicsMan_v3(*_display);
 
 	insertDisk(0);
 

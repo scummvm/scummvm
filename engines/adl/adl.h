@@ -148,14 +148,14 @@ struct Item {
 	byte region;
 	byte room;
 	byte picture;
-	bool isLineArt;
+	bool isShape;
 	Common::Point position;
 	int state;
 	byte description;
 	Common::Array<byte> roomPictures;
 	bool isOnScreen;
 
-	Item() : id(0), noun(0), region(0), room(0), picture(0), isLineArt(false), state(0), description(0), isOnScreen(false) { }
+	Item() : id(0), noun(0), region(0), room(0), picture(0), isShape(false), state(0), description(0), isOnScreen(false) { }
 };
 
 struct Time {

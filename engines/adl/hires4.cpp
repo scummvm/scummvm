@@ -83,7 +83,7 @@ HiRes4Engine_Atari::~HiRes4Engine_Atari() {
 }
 
 void HiRes4Engine_Atari::init() {
-	_graphics = new Graphics_v2(*_display);
+	_graphics = new GraphicsMan_v2(*_display);
 
 	_boot = new DiskImage();
 	if (!_boot->open(atariDisks[0]))
