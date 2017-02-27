@@ -1637,7 +1637,7 @@ CStarControl *CGameObject::getStarControl() const {
 	return starControl;
 }
 
-void CGameObject::starFn(int action) {
+void CGameObject::starFn(StarControlAction action) {
 	CStarControl *starControl = getStarControl();
 	if (starControl)
 		starControl->doAction(action);

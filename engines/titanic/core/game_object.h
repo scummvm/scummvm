@@ -42,6 +42,11 @@ namespace Titanic {
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
 enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
+enum StarControlAction {
+	STAR_SHOW = 0, STAR_HIDE, STAR_2, STAR_RESET_POS, STAR_4, STAR_5, STAR_6, STAR_7,
+	STAR_8, STAR_9, STAR_10, STAR_11, STAR_12, STAR_13, STAR_SET_REFERENCE, STAR_FADE_IN,
+	STAR_FADE_OUT, STAR_17, STAR_18, STAR_19
+};
 
 class CDontSaveFileItem;
 class CMailMan;
@@ -948,7 +953,7 @@ public:
 	/**
 	 * Executes an action in the StarControl subsystem
 	 */
-	void starFn(int action);
+	void starFn(StarControlAction action);
 
 	/**
 	 * Returns true if the starmap puzzle has been solved

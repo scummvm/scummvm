@@ -588,9 +588,9 @@ public:
 	void starsSetButtons(int val1, int val2);
 
 	/**
-	 * Set whether the user has the galactic reference material
+	 * Sets that the user has the galactic reference material
 	 */
-	void starsSetReference(bool hasRef);
+	void starsSetReference();
 };
 
 } // End of namespace Titanic

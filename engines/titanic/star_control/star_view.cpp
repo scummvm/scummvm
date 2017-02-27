@@ -128,8 +128,81 @@ void CStarView::starDestinationSet() {
 	// TODO
 }
 
+void CStarView::petDestinationSet() {
+	// TODO
+}
+
+void CStarView::resetPosition() {
+	// TODO
+}
+
 void CStarView::fn1() {
 	// TODO
 }
+
+void CStarView::fn2() {
+	// TODO
+}
+
+void CStarView::fn3(bool fadeIn) {
+	// TODO
+}
+
+void CStarView::fn4() {
+	// TODO
+}
+
+void CStarView::fn5() {
+	// TODO
+}
+
+void CStarView::fn6() {
+	// TODO
+}
+
+void CStarView::fn7() {
+	// TODO
+}
+
+void CStarView::fn8() {
+	// TODO
+}
+
+void CStarView::fn9() {
+	// TODO
+}
+
+void CStarView::fn10() {
+	// TODO
+}
+
+void CStarView::fn11() {
+	// TODO
+}
+
+void CStarView::fn12() {
+	// TODO
+}
+
+void CStarView::fn13() {
+	// TODO
+}
+
+void CStarView::fn14() {
+	// TODO
+}
+
+void CStarView::fn15() {
+	// TODO
+}
+
+void CStarView::fn16() {
+	// TODO
+}
+
+void CStarView::fn17() {
+	// TODO
+}
+
 
 } // End of namespace Titanic

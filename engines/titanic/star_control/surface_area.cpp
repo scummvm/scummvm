@@ -172,6 +172,19 @@ double CSurfaceArea::fn1(const FRect &rect) {
 		SWAP(rr.top, rr.bottom);
 	}
 	
+	// TODO: initial setup
+	if (_mode == SA_NONE) {
+		switch (_bpp) {
+		default:
+			break;
+		}
+	} else {
+		switch (_bpp) {
+		default:
+			break;
+		}
+	}
+
 	// TODO: Lots more functionality
 
 	return r.top;

@@ -712,8 +712,8 @@ void CPetControl::starsSetButtons(int val1, int val2) {
 		_starfield.makePetDirty();
 }
 
-void CPetControl::starsSetReference(bool hasRef) {
-	_starfield.setHasReference(hasRef);
+void CPetControl::starsSetReference() {
+	_starfield.setHasReference(true);
 }
 
 } // End of namespace Titanic

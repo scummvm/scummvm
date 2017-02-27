@@ -63,9 +63,21 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 
 	CStarControlSub6 sub6 = sub12->proc23();
 	sub12->proc25();
-
+	/*
 	FVector &v0 = _data[0];
+	double vx = v0._x, vy = v0._y, vz = v0._z;
 
+	| (vx*sub6._matrix.row1._z + vy*sub6._matrix.row2._z + vy) |
+	| vz*sub6._matrix.row3._x |
+	| surface->_width |
+	| vy |
+	| vx*sub6._matrix.row1._x |
+	| vz |
+	| vy*sub6._matrix.row2._x*sub6._matrix.row1._y*sub6._matrix.row3._z |
+	| vz*sub6._matrix.row2._y |
+	| vy*sub6._matrix.row2._z + vx*sub6._matrix.row1._z + vy*sub6._matrix.row2._z |
+	| vx |
+	*/
 
 	// TODO
 }

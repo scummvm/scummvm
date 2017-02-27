@@ -102,6 +102,30 @@ public:
 	 * Called when a star destination is set
 	 */
 	void starDestinationSet();
+
+	/**
+	 * Resets back to the origin position
+	 */
+	void resetPosition();
+	void petDestinationSet();
+
+	void fn2();
+	void fn3(bool fadeIn);
+	void fn4();
+	void fn5();
+	void fn6();
+	void fn7();
+	void fn8();
+	void fn9();
+	void fn10();
+	void fn11();
+	void fn12();
+	void fn13();
+	void fn14();
+	void fn15();
+	void fn16();
+	void fn17();
+
 };
 
 } // End of namespace Titanic

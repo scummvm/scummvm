@@ -36,7 +36,7 @@ class CStarControl : public CGameObject {
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
 private:
-	int _fieldBC;
+	bool _enabled;
 	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
@@ -71,7 +71,7 @@ public:
 	/**
 	 * Does an action in the star control
 	 */
-	void doAction(int action);
+	void doAction(StarControlAction action);
 
 	/**
 	 * Returns true if the starfield puzzle has been solved
