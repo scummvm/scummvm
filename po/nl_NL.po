@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-27 16:03+0100\n"
-"PO-Revision-Date: 2017-02-27 07:07+0000\n"
+"PO-Revision-Date: 2017-02-27 20:28+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -827,35 +827,35 @@ msgstr "48 kHz"
 
 #: gui/options.cpp:125
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #: gui/options.cpp:125
 msgid "5"
-msgstr ""
+msgstr "5"
 
 #: gui/options.cpp:125
 msgid "8"
-msgstr ""
+msgstr "8"
 
 #: gui/options.cpp:125
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: gui/options.cpp:125
 msgid "13"
-msgstr ""
+msgstr "13"
 
 #: gui/options.cpp:125
 msgid "15"
-msgstr ""
+msgstr "15"
 
 #: gui/options.cpp:125
 msgid "18"
-msgstr ""
+msgstr "18"
 
 #: gui/options.cpp:125
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #: gui/options.cpp:344 gui/options.cpp:636 gui/options.cpp:774
 #: gui/options.cpp:851 gui/options.cpp:1103
@@ -896,33 +896,30 @@ msgid "Swap Menu and Back buttons"
 msgstr "Knoppen Menu en Terug omwisselen"
 
 #: gui/options.cpp:943
-#, fuzzy
 msgid "Mouse Speed:"
-msgstr "Snelheid:"
+msgstr "Muis Snelheid:"
 
 #: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
-#, fuzzy
 msgid "Speed multiplier for mouse emulation"
-msgstr "Simuleer linkermuisknop"
+msgstr "Snelheidsfactor voor muis emulatie"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgctxt "lowres"
 msgid "Mouse Speed:"
-msgstr "Snelheid:"
+msgstr "Muis Snelheid:"
 
 #: gui/options.cpp:956
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy Deadzone:"
 
 #: gui/options.cpp:956 gui/options.cpp:958 gui/options.cpp:959
 msgid "Analog Joystick Deadzone"
-msgstr ""
+msgstr "Analoge Joystick Deadzone"
 
 #: gui/options.cpp:958
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy Deadzone:"
 
 #: gui/options.cpp:975
 msgid "Graphics mode:"
