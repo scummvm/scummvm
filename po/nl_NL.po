@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-24 22:00+0100\n"
-"PO-Revision-Date: 2017-02-24 21:02+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-02-27 07:07+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -40,7 +40,7 @@ msgstr "Verborgen bestanden weergeven"
 
 #: gui/browser.cpp:68
 msgid "Show files marked with the hidden attribute"
-msgstr "Bestanden die zijn gemarkeerd met het kenmerk verborgen weergeven"
+msgstr "Bestanden die gemarkeerd zijn met het verbergen kenmerk weergeven"
 
 #: gui/browser.cpp:72 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -893,7 +893,7 @@ msgstr "Touchpadmodus"
 
 #: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
-msgstr "Menu en Terug knoppen wisselen"
+msgstr "Knoppen Menu en Terug omwisselen"
 
 #: gui/options.cpp:943
 #, fuzzy
