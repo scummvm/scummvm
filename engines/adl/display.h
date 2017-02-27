@@ -67,8 +67,10 @@ public:
 	static void loadFrameBuffer(Common::ReadStream &stream, byte *dst);
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void putPixel(const Common::Point &p, byte color);
+	void setPixelByte(const Common::Point &p, byte color);
 	void setPixelBit(const Common::Point &p, byte color);
 	void setPixelPalette(const Common::Point &p, byte color);
+	byte getPixelByte(const Common::Point &p) const;
 	bool getPixelBit(const Common::Point &p) const;
 	void clear(byte color);
 

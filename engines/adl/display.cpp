@@ -241,12 +241,24 @@ void Display::putPixel(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, mask);
 }
 
+void Display::setPixelByte(const Common::Point &p, byte color) {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
+	_frameBuf[p.y * DISPLAY_PITCH + p.x / 7] = color;
+}
+
 void Display::setPixelBit(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, 1 << (p.x % 7));
 }
 
 void Display::setPixelPalette(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, 0x80);
+}
+
+byte Display::getPixelByte(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
+	return _frameBuf[p.y * DISPLAY_PITCH + p.x / 7];
 }
 
 bool Display::getPixelBit(const Common::Point &p) const {
