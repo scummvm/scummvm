@@ -1,5 +1,4 @@
-/* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+/* Copyright (C) 2015-2017 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,14 +14,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_CONFIG_H
-#define MT32EMU_CONFIG_H
+#ifndef FLOAT_SAMPLE_PROVIDER_H
+#define FLOAT_SAMPLE_PROVIDER_H
 
-#define MT32EMU_VERSION      "2.0.3"
-#define MT32EMU_VERSION_MAJOR 2
-#define MT32EMU_VERSION_MINOR 0
-#define MT32EMU_VERSION_PATCH 3
+namespace SRCTools {
 
-#define MT32EMU_EXPORTS_TYPE  3
+typedef float FloatSample;
 
-#endif
+/** Interface defines an abstract source of samples. It can either define a single channel stream or a stream with interleaved channels. */
+class FloatSampleProvider {
+public:
+	virtual ~FloatSampleProvider() {};
+
+	virtual void getOutputSamples(FloatSample *outBuffer, unsigned int size) = 0;
+};
+
+} // namespace SRCTools
+
+#endif // FLOAT_SAMPLE_PROVIDER_H

@@ -77,6 +77,7 @@
 #include "ROMInfo.h"
 #include "Synth.h"
 #include "MidiStreamParser.h"
+#include "SampleRateConverter.h"
 
 #endif /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
 

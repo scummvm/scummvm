@@ -1,5 +1,4 @@
-/* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+/* Copyright (C) 2015-2017 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -15,14 +14,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_CONFIG_H
-#define MT32EMU_CONFIG_H
+#ifndef SAMPLERATE_ADAPTER_H
+#define SAMPLERATE_ADAPTER_H
 
-#define MT32EMU_VERSION      "2.0.3"
-#define MT32EMU_VERSION_MAJOR 2
-#define MT32EMU_VERSION_MINOR 0
-#define MT32EMU_VERSION_PATCH 3
+#include <samplerate.h>
 
-#define MT32EMU_EXPORTS_TYPE  3
+#include "../SampleRateConverter.h"
 
-#endif
+namespace MT32Emu {
+
+class SamplerateAdapter {
+public:
+	SamplerateAdapter(Synth &synth, double targetSampleRate, SampleRateConverter::Quality quality);
+	~SamplerateAdapter();
+
+	void getOutputSamples(float *outBuffer, unsigned int length);
+
+private:
+	Synth &synth;
+	float * const inBuffer;
+	unsigned int inBufferSize;
+	const double inputToOutputRatio;
+	const double outputToInputRatio;
+	SRC_STATE *resampler;
+
+	static long getInputSamples(void *cb_data, float **data);
+};
+
+} // namespace MT32Emu
+
+#endif // SAMPLERATE_ADAPTER_H

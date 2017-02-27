@@ -49,6 +49,9 @@ protected:
 private:
 	bool sha1DigestCalculated;
 	SHA1Digest sha1Digest;
+
+	// Binary compatibility helper.
+	void *reserved;
 };
 
 class MT32EMU_EXPORT ArrayFile : public AbstractFile {

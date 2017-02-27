@@ -376,7 +376,8 @@ void RhythmPart::noteOn(unsigned int midiKey, unsigned int velocity) {
 	unsigned int key = midiKey;
 	unsigned int drumNum = key - 24;
 	int drumTimbreNum = rhythmTemp[drumNum].timbre;
-	if (drumTimbreNum >= 127) { // 94 on MT-32
+	const int drumTimbreCount = 64 + synth->controlROMMap->timbreRCount; // 94 on MT-32, 128 on LAPC-I/CM32-L
+	if (drumTimbreNum == 127 || drumTimbreNum >= drumTimbreCount) { // timbre #127 is OFF, no sense to play it
 		synth->printDebug("%s: Attempted to play unmapped key %d (velocity %d)", name, midiKey, velocity);
 		return;
 	}
