@@ -272,9 +272,6 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 		_frames.push_back(frame);
 	}
-
-	// Remove initial frame
-	_frames.remove_at(0);
 }
 
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
