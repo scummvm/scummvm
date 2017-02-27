@@ -243,7 +243,7 @@ void OptionsDialog::build() {
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
 		if (ConfMan.hasKey("kbdmouse_speed", _domain)) {
 			int value =  ConfMan.getInt("kbdmouse_speed", _domain);
-			if (_kbdMouseSpeedSlider && value < sizeof(kbdMouseSpeedLabels)) {
+			if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
 				_kbdMouseSpeedSlider->setValue(value);
 				_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
 			}
