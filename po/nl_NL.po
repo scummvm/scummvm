@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-28 15:54+0100\n"
-"PO-Revision-Date: 2017-02-27 20:28+0000\n"
+"PO-Revision-Date: 2017-02-28 19:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -896,26 +896,23 @@ msgid "Swap Menu and Back buttons"
 msgstr "Knoppen Menu en Terug omwisselen"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Muis Snelheid:"
+msgstr "Aanwijzer Snelheid:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Snelheid voor toetsenbord/joystick muis aanwijzer besturing"
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Muis Snelheid:"
+msgstr "Aanwijzer Snelheid:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
 msgstr "Joy Deadzone:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
-#, fuzzy
 msgid "Analog joystick Deadzone"
 msgstr "Analoge Joystick Deadzone"
 
