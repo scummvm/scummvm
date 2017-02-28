@@ -33,6 +33,8 @@ enum {
 	kCmdRight = 'RGHT'
 };
 
+static const int kTabTitleSpacing = 2 * 5;
+
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
@@ -108,7 +110,7 @@ int TabWidget::addTab(const String &title) {
 	newTab.firstWidget = 0;
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + 2 * 3;
+	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
@@ -278,7 +280,7 @@ void TabWidget::reflowLayout() {
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
 		if (newWidth < _minTabWidth)
 			newWidth = _minTabWidth;
 		_tabs[i]._tabWidth = newWidth;
