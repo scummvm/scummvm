@@ -91,6 +91,8 @@ public:
 	int get7Count() const {
 		return _sub7.size();
 	}
+
+	void fn1(CErrorCode *errorCode);
 };
 
 } // End of namespace Titanic

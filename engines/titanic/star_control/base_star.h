@@ -46,6 +46,11 @@ struct CBaseStarEntry {
 };
 
 class CBaseStar {
+private:
+	void draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+	void draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+	void draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 protected:
 	Common::Array<CBaseStarEntry> _data;
 	CStarControlSub4 _sub4;
@@ -72,6 +77,9 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
+
+	void baseFn1(int v1, int v2, int v3, int v4);
+	void baseFn2(int v1, int v2);
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}

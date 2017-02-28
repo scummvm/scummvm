@@ -127,4 +127,8 @@ bool CStarField::isSolved() const {
 	return _isSolved;
 }
 
+void CStarField::fn1(CErrorCode *errorCode) {
+	_sub5.proc3(errorCode);
+}
+
 } // End of namespace Titanic

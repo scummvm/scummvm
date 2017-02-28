@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/base_star.h"
+#include "titanic/star_control/star_control_sub12.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -46,10 +47,6 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0) {
-}
-
-void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	// TODO
 }
 
 void CBaseStar::clear() {
@@ -113,6 +110,65 @@ void CBaseStar::resetEntry(CBaseStarEntry &entry) {
 	entry._val._v3 = 0;
 	for (int idx = 0; idx < 5; ++idx)
 		entry._data[idx] = 0;
+}
+
+void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	if (!_data.empty()) {
+		switch (sub12->proc27()) {
+		case 0:
+			switch (surfaceArea->_bpp) {
+			case 1:
+				draw1(surfaceArea, sub12, sub5);
+				break;
+			case 2:
+				draw2(surfaceArea, sub12, sub5);
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case 2:
+			switch (surfaceArea->_bpp) {
+			case 1:
+				draw3(surfaceArea, sub12, sub5);
+				break;
+			case 2:
+				draw4(surfaceArea, sub12, sub5);
+				break;
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	// TODO
+}
+
+void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	// TODO
+}
+
+void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	// TODO
+}
+
+void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+	// TODO
+}
+
+void CBaseStar::baseFn1(int v1, int v2, int v3, int v4) {
+	// TODO
+}
+
+void CBaseStar::baseFn2(int v1, int v2) {
+	// TODO
 }
 
 } // End of namespace Titanic
