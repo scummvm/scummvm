@@ -182,9 +182,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 		Common::String cleanedFilename;
 
-		for (const char *p = movie.u.s->c_str(); *p; p++)
+		for (const byte *p = (const byte *)movie.u.s->c_str(); *p; p++)
 			if (*p >= 0x20 && *p <= 0x7f)
-				cleanedFilename += *p;
+				cleanedFilename += (const char) *p;
 
 		bool fileExists = false;
 
