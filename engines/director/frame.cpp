@@ -661,7 +661,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
 	}
 
-	addDrawRect(spriteId, shapeRect); 
+	addDrawRect(spriteId, shapeRect);
 	inkBasedBlit(surface, tmpSurface, spriteId, shapeRect);
 }
 
@@ -1061,10 +1061,13 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
 
 		for (int j = 0; j < drawRect.width(); j++) {
-			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0))
-				if (*src != skipColor) *dst = (*dst == *src ? (*src == 0 ? 0xff : 0) : *src);
-			else if (*src != skipColor)
+			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
+				if (*src != skipColor) {
+					*dst = (*dst == *src ? (*src == 0 ? 0xff : 0) : *src);
+				}
+			} else if (*src != skipColor) {
 				*dst = *src;
+			}
 			src++;
 			dst++;
 		}
