@@ -81,7 +81,7 @@ void CViewItem::load(SimpleFile *file) {
 
 bool CViewItem::getResourceKey(CResourceKey *key) {
 	*key = _resourceKey;
-	CString filename = key->exists();
+	CString filename = key->getFilename();
 	return !filename.empty();
 }
 

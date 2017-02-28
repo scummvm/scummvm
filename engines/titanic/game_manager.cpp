@@ -132,7 +132,7 @@ void CGameManager::roomTransition(CRoomItem *oldRoom, CRoomItem *newRoom) {
 
 	CResourceKey movieKey = (oldRoom == newRoom) ? oldRoom->getTransitionMovieKey() :
 		oldRoom->getExitMovieKey();
-	CString filename = movieKey.exists();
+	CString filename = movieKey.getFilename();
 	if (g_vm->_filesManager->fileExists(filename)) {
 		_movieSurface->freeSurface();
 		_movie = g_vm->_movieManager.createMovie(filename, _movieSurface);

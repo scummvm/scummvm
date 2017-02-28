@@ -103,10 +103,10 @@ void CRoomItem::load(SimpleFile *file) {
 }
 
 void CRoomItem::postLoad() {
-	if (!_exitMovieKey.exists().empty())
+	if (!_exitMovieKey.getFilename().empty())
 		return;
 
-	CString name = _transitionMovieKey.exists();
+	CString name = _transitionMovieKey.getFilename();
 	if (name.right(7) == "nav.avi") {
 		_exitMovieKey = CResourceKey(name.left(name.size() - 7) + "exit.avi");
 	}
