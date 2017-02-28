@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-02-28 15:54+0100\n"
-"PO-Revision-Date: 2017-02-26 11:21+0000\n"
+"PO-Revision-Date: 2017-02-28 15:48+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -892,28 +892,25 @@ msgid "Swap Menu and Back buttons"
 msgstr "Vaihda Menu ja Takaisin nappien paikkaa"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Hiiren Nopeus:"
+msgstr "Osoittimen Nopeus:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Näppäimistö/joystick hiiriosoittimen nopeus"
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Hiiren Nopeus:"
+msgstr "Osoittimen Nopeus:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
 msgstr "Joystickin Kuollut Alue:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
-#, fuzzy
 msgid "Analog joystick Deadzone"
-msgstr "Analogisen Joystickin Kuollut Alue"
+msgstr "Analogisen joystickin kuollut alue"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
