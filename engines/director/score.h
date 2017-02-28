@@ -111,6 +111,7 @@ public:
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
+	uint16 _currentMouseDownSpriteId;
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;

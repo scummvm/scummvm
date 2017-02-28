@@ -622,8 +622,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 				Common::Rect drawRect(x, y, x + width, y + height);
 
-				inkBasedBlit(surface, *img->getSurface(), i, drawRect);
 				addDrawRect(i, drawRect);
+				inkBasedBlit(surface, *img->getSurface(), i, drawRect);
 			}
 		}
 	}
@@ -645,10 +645,10 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
 	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
-		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), 255);
-		tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
+		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
+		//tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
 		// TODO: don't override, work out how to display correctly.
-		_sprites[spriteId]->_ink = kInkTypeTransparent;
+		_sprites[spriteId]->_ink = kInkTypeReverse;
 	} else {
 		// No minus one on the pattern here! MacPlotData will do that for us!
 		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
@@ -661,8 +661,8 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
 	}
 
+	addDrawRect(spriteId, shapeRect); 
 	inkBasedBlit(surface, tmpSurface, spriteId, shapeRect);
-	addDrawRect(spriteId, shapeRect);
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
@@ -1062,7 +1062,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 
 		for (int j = 0; j < drawRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0))
-				*dst = (_vm->getPaletteColorCount() - 1) - *src;
+				if (*src != skipColor) *dst = (*dst == *src ? (*src == 0 ? 0xff : 0) : *src);
 			else if (*src != skipColor)
 				*dst = *src;
 			src++;

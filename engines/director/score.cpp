@@ -991,11 +991,13 @@ void Score::processEvents() {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
 				// D3 doesn't have both mouse up and down.
+				// But we still want to know if the mouse is down for press effects.
+				_currentMouseDownSpriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
+				
 				if (_vm->getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
-					uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
-					_lingo->processEvent(kEventMouseDown, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[_currentMouseDownSpriteId]->_castId);
+					_lingo->processEvent(kEventMouseDown, kSpriteScript, _frames[_currentFrame]->_sprites[_currentMouseDownSpriteId]->_scriptId);
 				}
 			}
 
