@@ -245,7 +245,7 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 					break;
 				// 0.75 speed
 				case 2:
-					speedFactor = 37;
+					speedFactor = 33;
 					break;
 				// 1.0 speed
 				case 3:
