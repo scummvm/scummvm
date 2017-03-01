@@ -208,5 +208,10 @@ dists/msvc*/**
 out/
 scummvm.xcodeproj
 
+#Ignore PSP2 files
+psp2pkg/
+*.velf
+*.vpk
+
 #Ignore gmon.out created by gprof
 gmon.out

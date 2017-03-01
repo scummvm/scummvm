@@ -20,34 +20,22 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PSP2_FILESYSTEM_FACTORY_H
+#define PSP2_FILESYSTEM_FACTORY_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL)
+#include "backends/fs/posix/posix-fs-factory.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+/**
+ * Creates PSP2FilesystemFactory objects.
+ *
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
+ */
 
-int main(int argc, char *argv[]) {
+class PSP2FilesystemFactory : public FilesystemFactory {
+protected:
+	virtual AbstractFSNode *makeRootFileNode() const;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+};
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
-
-#endif
+#endif /*PSP2_FILESYSTEM_FACTORY_H*/

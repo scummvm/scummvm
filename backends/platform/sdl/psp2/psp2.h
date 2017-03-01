@@ -20,34 +20,33 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PLATFORM_SDL_PSP2_H
+#define PLATFORM_SDL_PSP2_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL)
-
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
-
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#include "backends/platform/sdl/sdl.h"
+#ifdef __PSP2_DEBUG__
+#include <psp2shell.h>
 #endif
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
+class OSystem_PSP2 : public OSystem_SDL {
+public:
+	// Let the subclasses be able to change _baseConfigName in the constructor
+	OSystem_PSP2(Common::String baseConfigName = "scummvm.ini");
+	virtual ~OSystem_PSP2() {}
 
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
+	virtual void init();
+	virtual void initBackend();
+	virtual bool hasFeature(Feature f);
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
-	return res;
-}
+protected:
+	// Base string for creating the default path and filename
+	// for the configuration file
+	Common::String _baseConfigName;
+
+	virtual Common::String getDefaultConfigFileName();
+
+	virtual Common::WriteStream *createLogFile();
+};
 
 #endif

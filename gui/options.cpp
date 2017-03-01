@@ -159,6 +159,9 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = 0;
 	_filteringCheckbox = 0;
 	_aspectCheckbox = 0;
+	_enableShaderSettings = false;
+	_shaderPopUpDesc = 0;
+	_shaderPopUp = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -313,6 +316,14 @@ void OptionsDialog::build() {
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
 
+	}
+
+	// Shader options
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		if (_shaderPopUp) {
+			int value = ConfMan.getInt("shader", _domain);
+			_shaderPopUp->setSelected(value);
+		}
 	}
 
 	// Audio options
@@ -546,6 +557,18 @@ void OptionsDialog::apply() {
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
+		}
+	}
+
+	// Shader options
+	if (_enableShaderSettings) {
+		if (g_system->hasFeature(OSystem::kFeatureShader)) {
+			if (_shaderPopUp) {
+				if (ConfMan.getInt("shader", _domain) != _shaderPopUp->getSelectedTag()) {
+					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
+					g_system->setShader(_shaderPopUp->getSelectedTag());
+				}
+			}
 		}
 	}
 
@@ -965,6 +988,23 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 		_joystickDeadzoneLabel->setFlags(WIDGET_CLEARBG);
 	}
 	_enableControlSettings = true;
+}
+
+void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
+	// Shader selector
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		if (g_system->getOverlayWidth() > 320)
+			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _("HW Shader:"), _("Different hardware shaders give different visual effects"));
+		else
+			_shaderPopUpDesc = new StaticTextWidget(boss, prefix + "grShaderPopUpDesc", _c("HW Shader:", "lowres"), _("Different hardware shaders give different visual effects"));
+		_shaderPopUp = new PopUpWidget(boss, prefix + "grShaderPopUp", _("Different shaders give different visual effects"));
+		const OSystem::GraphicsMode *p = g_system->getSupportedShaders();
+		while (p->name) {
+			_shaderPopUp->appendEntry(p->name, p->id);
+			p++;
+		}
+	}
+	_enableShaderSettings = true;
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
@@ -1420,6 +1460,15 @@ void GlobalOptionsDialog::build() {
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	addGraphicControls(tab, "GlobalOptions_Graphics.");
+
+	//
+	// The shader tab (currently visible only for Vita platform), visibility checking by features
+	//
+
+	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+		tab->addTab(_("Shader"));
+		addShaderControls(tab, "GlobalOptions_Shader.");
+	}
 
 	//
 	// The control tab (currently visible only for AndroidSDL, SDL, and Vita platform, visibility checking by features
