@@ -105,7 +105,7 @@ public:
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
+	Common::HashMap<int, Cast *> *getSharedCasts();
 
 	Common::HashMap<Common::String, Score *> *_movies;
 
@@ -138,7 +138,7 @@ private:
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
 
-	Common::HashMap<int, Cast *> *_sharedCasts;
+	Score *_sharedScore;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSound;
@@ -157,6 +157,7 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::String _sharedCastFile;
+	Common::HashMap<int, Cast *> _dummyCast;
 
 private:
 	void testFontScaling();

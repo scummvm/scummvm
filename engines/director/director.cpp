@@ -59,7 +59,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load Patterns
 	loadPatterns();
 
-	_sharedCasts = nullptr;
+	_sharedScore = nullptr;
 
 	_currentScore = nullptr;
 	_soundManager = nullptr;
@@ -67,7 +67,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
 
-	_sharedCasts = nullptr;
+	_sharedScore = nullptr;
 	_sharedSound = nullptr;
 	_sharedBMP = nullptr;
 	_sharedSTXT = nullptr;
@@ -100,6 +100,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedBMP;
 	delete _sharedSTXT;
 	delete _sharedDIB;
+	delete _sharedScore;
 
 	delete _currentScore;
 
@@ -240,6 +241,13 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	}
 
 	return nameMap;
+}
+
+Common::HashMap<int, Cast *> *DirectorEngine::getSharedCasts() {
+	if (_sharedScore)
+		return &_sharedScore->_casts;
+
+	return &_dummyCast;
 }
 
 } // End of namespace Director

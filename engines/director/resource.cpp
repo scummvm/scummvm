@@ -205,8 +205,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
 
-		_sharedCasts = new Common::HashMap<int, Cast *>;
-
 		return;
 	}
 
@@ -214,8 +212,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
-
-	Score *castScore = new Score(this, shardcst);
+	_sharedScore = new Score(this, shardcst);
 
 	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
 		debug("Shared cast has fonts. Loading....");
@@ -223,20 +220,18 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		_wm->_fontMan->loadFonts(filename);
 	}
 
-	castScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
+	_sharedScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
 
 	if (getVersion() < 4)
-		castScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+		_sharedScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
 
 	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
-			castScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
+			_sharedScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
 	}
 
-	castScore->setSpriteCasts();
-
-	_sharedCasts = &castScore->_casts;
+	_sharedScore->setSpriteCasts();
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
 	if (dib.size() != 0) {
