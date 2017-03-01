@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-02-28 15:54+0100\n"
+"POT-Creation-Date: 2017-03-01 08:17+0100\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1259,7 +1259,7 @@ msgstr "Lagring:"
 msgid "Active cloud storage"
 msgstr "Aktiv skylagring"
 
-#: gui/options.cpp:1616 gui/options.cpp:2179
+#: gui/options.cpp:1616 gui/options.cpp:2176
 msgid "<none>"
 msgstr "<ingen>"
 
@@ -1319,7 +1319,7 @@ msgstr "Kjør server"
 msgid "Run local webserver"
 msgstr "Kjør lokal webserver"
 
-#: gui/options.cpp:1634 gui/options.cpp:2289
+#: gui/options.cpp:1634 gui/options.cpp:2286
 msgid "Not running"
 msgstr "Kjører ikke"
 
@@ -1388,28 +1388,28 @@ msgstr "Velg mappe for plugins"
 msgid "Select directory for Files Manager /root/"
 msgstr "Velg mappe for filbehandler /root/"
 
-#: gui/options.cpp:2186
+#: gui/options.cpp:2183
 #, c-format
 msgid "%llu bytes"
 msgstr "%llu bytes"
 
-#: gui/options.cpp:2194
+#: gui/options.cpp:2191
 msgid "<right now>"
 msgstr "<med en gang>"
 
-#: gui/options.cpp:2196
+#: gui/options.cpp:2193
 msgid "<never>"
 msgstr "<aldri>"
 
-#: gui/options.cpp:2280
+#: gui/options.cpp:2277
 msgid "Stop server"
 msgstr "Stopp server"
 
-#: gui/options.cpp:2281
+#: gui/options.cpp:2278
 msgid "Stop local webserver"
 msgstr "Stopp lokal webserver"
 
-#: gui/options.cpp:2372
+#: gui/options.cpp:2369
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
