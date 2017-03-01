@@ -25,8 +25,11 @@
 
 #include "titanic/star_control/star_control_sub6.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
+
+class CStarControlSub12;
 
 class CStarControlSub5 {
 	struct SubEntry {
@@ -49,7 +52,8 @@ public:
 	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
-	virtual void proc2();
+	virtual void proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
+		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	virtual void proc3(CErrorCode *errorCode);
 
 	int get4() const { return _field4; }

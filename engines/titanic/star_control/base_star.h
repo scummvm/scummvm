@@ -57,6 +57,8 @@ protected:
 	double _minVal;
 	double _maxVal;
 	double _range;
+	double _value1, _value2;
+	double _value3, _value4;
 protected:
 	/**
 	 * Get a pointer to a data entry

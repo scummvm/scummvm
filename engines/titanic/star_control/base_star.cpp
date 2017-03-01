@@ -46,7 +46,8 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
-CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0) {
+CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0),
+		_value1(0.0), _value2(0.0), _value3(0.0), _value4(0.0) {
 }
 
 void CBaseStar::clear() {
@@ -148,7 +149,36 @@ void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarC
 }
 
 void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	// TODO
+	CStarControlSub6 sub6 = sub12->proc23();
+	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+
+	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	double v70 = sub12->proc25();
+	double minVal = v70 - 9216.0;
+	//int width1 = surfaceArea->_width - 1;
+	//int height1 = surfaceArea->_height - 1;
+	FVector vector;
+	double v4;
+
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		CBaseStarEntry &entry = _data[idx];
+		vector._x = entry._val._v1;
+		vector._y = entry._val._v2;
+		vector._z = entry._val._v3;
+		v4 = vector._x * sub6._matrix._row1._z + vector._y * sub6._matrix._row2._z
+			+ vector._z * sub6._matrix._row3._z + sub6._field2C;
+		if (v4 <= minVal)
+			continue;
+
+		
+		// TODO Lots of stuff
+		double v17 = 0.0, v98 = 0.0;
+		if (v17 >= 1.0e12) {
+			// TODO
+		} else {
+			sub5->proc2(&sub6, &vector, centroid._x, centroid._y, v98, surfaceArea, sub12);
+		}
+	}
 }
 
 void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {

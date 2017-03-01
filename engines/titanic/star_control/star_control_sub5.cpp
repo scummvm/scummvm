@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_control_sub5.h"
+#include "titanic/star_control/star_control_sub12.h"
 
 namespace Titanic {
 
@@ -33,7 +34,8 @@ bool CStarControlSub5::setup() {
 	return true;
 }
 
-void CStarControlSub5::proc2() {
+void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
+		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	// TODO
 }
 

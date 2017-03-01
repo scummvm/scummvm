@@ -37,6 +37,8 @@ public:
 
 	bool operator==(const FPoint &p) const { return _x == p._x && _y == p._y; }
 	bool operator!=(const FPoint &p) const { return _x != p._x || _y != p._y; }
+	FPoint operator+(const FPoint &delta) const { return FPoint(_x + delta._x, _y + delta._y); }
+	FPoint operator-(const FPoint &delta) const { return FPoint(_x - delta._x, _y - delta._y); }
 
 	void operator+=(const FPoint &delta) {
 		_x += delta._x;
