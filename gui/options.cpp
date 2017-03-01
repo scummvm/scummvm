@@ -2002,14 +2002,8 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #ifdef USE_LIBCURL
 	case kPopUpItemSelectedCmd:
 	{
-		//update container's scrollbar and make sure tabs are not re-arranged
-		if (_tabWidget) {
-			int oldFirstVisible = _tabWidget->getFirstVisible();
-			reflowLayout();
-			_tabWidget->setFirstVisible(oldFirstVisible);
-		} else {
-			reflowLayout();
-		}
+		// update container's scrollbar
+		reflowLayout();
 		break;
 	}
 	case kConfigureStorageCmd:
@@ -2125,6 +2119,7 @@ void GlobalOptionsDialog::handleTickle() {
 }
 
 void GlobalOptionsDialog::reflowLayout() {
+	int firstVisible = _tabWidget->getFirstVisible();
 	int activeTab = _tabWidget->getActiveTab();
 
 	if (_midiTabId != -1) {
@@ -2156,6 +2151,8 @@ void GlobalOptionsDialog::reflowLayout() {
 	}
 
 	_tabWidget->setActiveTab(activeTab);
+	_tabWidget->setFirstVisible(firstVisible);
+
 	OptionsDialog::reflowLayout();
 #ifdef USE_CLOUD
 	setupCloudTab();

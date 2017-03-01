@@ -33,6 +33,8 @@ enum {
 	kCmdRight = 'RGHT'
 };
 
+static const int kTabTitleSpacing = 2 * 5;
+
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
@@ -48,8 +50,10 @@ void TabWidget::init() {
 	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
+	_lastVisibleTab = 0;
+	_navButtonsVisible = false;
 
-	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
 	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
@@ -105,51 +109,15 @@ int TabWidget::addTab(const String &title) {
 	newTab.title = title;
 	newTab.firstWidget = 0;
 
+	// Determine the new tab width
+	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
+	if (newWidth < _minTabWidth)
+		newWidth = _minTabWidth;
+	newTab._tabWidth = newWidth;
+
 	_tabs.push_back(newTab);
 
 	int numTabs = _tabs.size();
-
-	// HACK: Nintendo DS uses a custom config dialog. This dialog does not work with
-	// our default "Globals.TabWidget.Tab.Width" setting.
-	//
-	// TODO: Add proper handling in the theme layout for such cases.
-	//
-	// There are different solutions to this problem:
-	//  - offer a "Tab.Width" setting per tab widget and thus let the Ninteno DS
-	//    backend set a default value for its special dialog.
-	//
-	//  - change our themes to use auto width calculaction by default
-	//
-	//  - change "Globals.TabWidget.Tab.Width" to be the minimal tab width setting and
-	//    rename it accordingly.
-	//    Actually this solution is pretty similar to our HACK for the Nintendo DS
-	//    backend. This hack enables auto width calculation by default with the
-	//    "Globals.TabWidget.Tab.Width" value as minimal width for the tab buttons.
-	//
-	//  - we might also consider letting every tab button having its own width.
-	//
-	//  - other solutions you can think of, which are hopefully less evil ;-).
-	//
-	// Of course also the Ninteno DS' dialog should be in our layouting engine, instead
-	// of being hard coded like it is right now.
-	//
-	// There are checks for __DS__ all over this source file to take care of the
-	// aforemnetioned problem.
-#ifdef __DS__
-	if (true) {
-#else
-	if (g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width") == 0) {
-#endif
-		if (_tabWidth == 0)
-			_tabWidth = 40;
-		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(title) + 2 * 3;
-		if (_tabWidth < newWidth)
-			_tabWidth = newWidth;
-		int maxWidth = _w / numTabs;
-		if (_tabWidth > maxWidth)
-			_tabWidth = maxWidth;
-	}
 
 	// Activate the new tab
 	setActiveTab(numTabs - 1);
@@ -160,7 +128,7 @@ int TabWidget::addTab(const String &title) {
 void TabWidget::removeTab(int tabID) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 
-	// Deactive the tab if it's currently the active one
+	// Deactivate the tab if it's currently the active one
 	if (tabID == _activeTab) {
 		_tabs[tabID].firstWidget = _firstWidget;
 		releaseFocus();
@@ -202,9 +170,9 @@ void TabWidget::setActiveTab(int tabID) {
 		
 		// Also ensure the tab is visible in the tab bar
 		if (_firstVisibleTab > tabID)
-			_firstVisibleTab = tabID;
-		else if (_firstVisibleTab + _w / _tabWidth <= tabID)
-			_firstVisibleTab = tabID - _w / _tabWidth + 1;
+			setFirstVisible(tabID, true);
+		while (_lastVisibleTab < tabID)
+			setFirstVisible(_firstVisibleTab + 1, false);
 
 		_boss->draw();
 	}
@@ -216,16 +184,14 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	switch (cmd) {
 	case kCmdLeft:
-		if (_firstVisibleTab) {
-			_firstVisibleTab--;
-			draw();
+		if (_firstVisibleTab > 0) {
+			setFirstVisible(_firstVisibleTab - 1);
 		}
 		break;
 
 	case kCmdRight:
-		if (_firstVisibleTab + _w / _tabWidth < (int)_tabs.size()) {
-			_firstVisibleTab++;
-			draw();
+		if (_lastVisibleTab + 1 < (int)_tabs.size()) {
+			setFirstVisible(_firstVisibleTab + 1, false);
 		}
 		break;
 	}
@@ -234,18 +200,20 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	assert(y < _tabHeight);
 
+	if (x < 0)
+		return;
+
 	// Determine which tab was clicked
-	int tabID = -1;
-	if (x >= 0 && (x % _tabWidth) < _tabWidth) {
-		tabID = x / _tabWidth;
-		if (tabID >= (int)_tabs.size())
-			tabID = -1;
+	int tabID;
+	for (tabID = _firstVisibleTab; tabID <= _lastVisibleTab; ++tabID) {
+		x -= _tabs[tabID]._tabWidth;
+		if (x < 0)
+			break;
 	}
 
 	// If a tab was clicked, switch to that pane
-	if (tabID >= 0 && tabID + _firstVisibleTab < (int)_tabs.size()) {
-		setActiveTab(tabID + _firstVisibleTab);
-	}
+	if (tabID <= _lastVisibleTab)
+		setActiveTab(tabID);
 }
 
 bool TabWidget::handleKeyDown(Common::KeyState state) {
@@ -265,26 +233,20 @@ void TabWidget::adjustTabs(int value) {
 	else if (tabID < 0)
 		tabID = ((int)_tabs.size() - 1);
 
-	// Slides _firstVisibleTab forward to the correct tab
-	int maxTabsOnScreen = (_w / _tabWidth);
-	if (tabID >= maxTabsOnScreen && (_firstVisibleTab + maxTabsOnScreen) < (int)_tabs.size())
-		_firstVisibleTab++;
-
-	// Slides _firstVisibleTab backwards to the correct tab
-	while (tabID < _firstVisibleTab)
-		_firstVisibleTab--;
-
 	setActiveTab(tabID);
 }
 
-int TabWidget::getFirstVisible() {
+int TabWidget::getFirstVisible() const {
 	return _firstVisibleTab;
 }
 
-void TabWidget::setFirstVisible(int tabID) {
+void TabWidget::setFirstVisible(int tabID, bool adjustIfRoom) {
 	assert(0 <= tabID && tabID < (int)_tabs.size());
 	_firstVisibleTab = tabID;
-	_boss->draw();
+
+	computeLastVisibleTab(adjustIfRoom);
+
+	_boss->draw(); // TODO: Necessary?
 }
 
 void TabWidget::reflowLayout() {
@@ -293,8 +255,13 @@ void TabWidget::reflowLayout() {
 	// NOTE: if you change that, make sure to do the same
 	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
 	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
-	_tabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
+
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
+	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
+	_butW = g_gui.xmlEval()->getVar("GlobalsTabWidget.NavButton.Width", 10);
+	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
 
 	// If widgets were added or removed in the current tab, without tabs
 	// having been switched using setActiveTab() afterward, then the
@@ -311,28 +278,34 @@ void TabWidget::reflowLayout() {
 		}
 	}
 
-	if (_tabWidth == 0) {
-		_tabWidth = 40;
-#ifdef __DS__
+	for (uint i = 0; i < _tabs.size(); ++i) {
+		// Determine the new tab width
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
+		if (newWidth < _minTabWidth)
+			newWidth = _minTabWidth;
+		_tabs[i]._tabWidth = newWidth;
 	}
-	if (true) {
-#endif
-		int maxWidth = _w / _tabs.size();
 
-		for (uint i = 0; i < _tabs.size(); ++i) {
-			// Determine the new tab width
-			int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
-			if (_tabWidth < newWidth)
-				_tabWidth = newWidth;
-			if (_tabWidth > maxWidth)
-				_tabWidth = maxWidth;
+	// See how many tabs fit on screen.
+	// We do this in a loop, because it will change if we need to
+	// add left/right scroll buttons, if we scroll left to use free
+	// space on the right, or a combination of those.
+	_navButtonsVisible = _firstVisibleTab > 0;
+	do {
+		computeLastVisibleTab(true);
+
+		if (_firstVisibleTab > 0 || _lastVisibleTab + 1 < (int)_tabs.size()) {
+			if (!_navButtonsVisible)
+				_navButtonsVisible = true;
+			else
+				break;
+		} else {
+			if (_navButtonsVisible)
+				_navButtonsVisible = false;
+			else
+				break;
 		}
-	}
-
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
-	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
-	_butW = g_gui.xmlEval()->getVar("GlobalsTabWidget.NavButton.Width", 10);
-	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
+	} while (true);
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
@@ -342,18 +315,20 @@ void TabWidget::reflowLayout() {
 
 void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
-	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
+	Common::Array<int> widths;
+	for (int i = _firstVisibleTab; i <= _lastVisibleTab; ++i) {
 		tabs.push_back(_tabs[i].title);
+		widths.push_back(_tabs[i]._tabWidth);
 	}
 	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP+_tabHeight), getBossClipRect(), _bodyBackgroundType);
 
-	g_gui.theme()->drawTabClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
+	g_gui.theme()->drawTabClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _tabHeight, widths, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
 }
 
 void TabWidget::draw() {
 	Widget::draw();
 
-	if (_tabWidth * _tabs.size() > _w) {
+	if (_navButtonsVisible) {
 		_navLeft->draw();
 		_navRight->draw();
 	}
@@ -361,7 +336,7 @@ void TabWidget::draw() {
 
 Widget *TabWidget::findWidget(int x, int y) {
 	if (y < _tabHeight) {
-		if (_tabWidth * _tabs.size() > _w) {
+		if (_navButtonsVisible) {
 			if (y >= _butTP && y < _butTP + _butH) {
 				if (x >= _w - _butRP - _butW * 2 - 2 && x < _w - _butRP - _butW - 2)
 					return _navLeft;
@@ -375,6 +350,32 @@ Widget *TabWidget::findWidget(int x, int y) {
 	} else {
 		// Iterate over all child widgets and find the one which was clicked
 		return Widget::findWidgetInChain(_firstWidget, x, y - _tabHeight);
+	}
+}
+
+void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {
+	int availableWidth = _w;
+	if (_navButtonsVisible)
+		availableWidth -= 2 + _butW * 2;
+
+	_lastVisibleTab = _tabs.size() - 1;
+	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
+		if (_tabs[i]._tabWidth > availableWidth) {
+			if (i > _firstVisibleTab)
+				_lastVisibleTab = i - 1;
+			else
+				_lastVisibleTab = _firstVisibleTab; // Always show 1
+			break;
+		}
+		availableWidth -= _tabs[i]._tabWidth;
+	}
+
+	if (adjustFirstIfRoom) {
+		// If possible, scroll to fit if there's unused space to the right
+		while (_firstVisibleTab > 0 && _tabs[_firstVisibleTab-1]._tabWidth <= availableWidth) {
+			availableWidth -= _tabs[_firstVisibleTab-1]._tabWidth;
+			_firstVisibleTab--;
+		}
 	}
 }
 
