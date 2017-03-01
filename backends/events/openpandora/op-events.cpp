@@ -84,6 +84,9 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -112,6 +115,9 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }

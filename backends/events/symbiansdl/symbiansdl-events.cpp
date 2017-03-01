@@ -133,6 +133,10 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 							_currentZone = 0;
 						event.type = Common::EVENT_MOUSEMOVE;
 						processMouseEvent(event, _mouseXZone[_currentZone], _mouseYZone[_currentZone]);
+						// update KbdMouse
+						_km.x = _mouseXZone[_currentZone] * MULTIPLIER;
+						_km.y = _mouseYZone[_currentZone] * MULTIPLIER;
+
 						if (_graphicsManager) {
 							_graphicsManager->getWindow()->warpMouseInWindow(event.mouse.x, event.mouse.y);
 						}
