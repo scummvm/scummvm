@@ -72,6 +72,7 @@ public:
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
+	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	int getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
@@ -90,7 +91,6 @@ private:
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
-	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);

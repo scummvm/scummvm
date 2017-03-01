@@ -231,6 +231,12 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			_sharedScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
 	}
 
+	Common::Array<uint16> vwci = shardcst->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
+	if (vwci.size() > 0) {
+		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
+			_sharedScore->loadCastInfo(*shardcst->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
+	}
+
 	_sharedScore->setSpriteCasts();
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
