@@ -240,7 +240,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	while (size != 0) {
 		uint16 frameSize = stream.readUint16();
-		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size() + 1, frameSize, size);
+		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 		size -= frameSize;
 		frameSize -= 2;
 
@@ -993,7 +993,7 @@ void Score::processEvents() {
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
 				_currentMouseDownSpriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-				
+
 				if (_vm->getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
 					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[_currentMouseDownSpriteId]->_castId);
