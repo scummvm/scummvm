@@ -25,6 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub20.h"
 
@@ -93,7 +94,12 @@ public:
 	virtual FVector proc29(const FVector &v);
 	virtual FVector proc30(int index, const FVector &v);
 	virtual FVector proc31(int index, const FVector &v);
-	virtual void proc32(double v1, double v2);
+
+	/**
+	 * Sets the viewport position within the starfield
+	 */
+	virtual void setViewportPosition(const FPoint &pt);
+
 	virtual int getCurrentIndex() const { return _currentIndex; }
 	virtual bool setArrayVector(const FVector &v);
 	virtual bool proc35();

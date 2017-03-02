@@ -31,9 +31,8 @@ namespace Titanic {
 CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
 		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
-		_field218(0), _field21C(0) {
-	CStar20Data data = { 0, 0, 0x47C35000, 0, 0x41A00000,
-		0x3F800000, 0x3F800000, 0x3F800000 };
+		_field218(0), _showingPhoto(false) {
+	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_sub12.proc3(&data);
 }
@@ -47,7 +46,7 @@ void CStarView::load(SimpleFile *file, int param) {
 			_sub13.load(file, 0);
 
 		_field218 = file->readNumber();
-		_field21C = file->readNumber();
+		_showingPhoto = file->readNumber();
 	}
 }
 
@@ -59,7 +58,7 @@ void CStarView::save(SimpleFile *file, int indent) {
 		_sub13.save(file, indent);
 
 	file->writeNumberLine(_field218, indent);
-	file->writeNumberLine(_field21C, indent);
+	file->writeNumberLine(_showingPhoto, indent);
 }
 
 void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CStarControl *starControl) {
@@ -76,13 +75,13 @@ void CStarView::draw(CScreenManager *screenManager) {
 		return;
 
 	if (_fader.isActive()) {
-		CVideoSurface *surface = _field21C ? _videoSurface2 : _videoSurface;
+		CVideoSurface *surface = _showingPhoto ? _videoSurface2 : _videoSurface;
 		surface = _fader.fade(screenManager, surface);
 		screenManager->blitFrom(SURFACE_PRIMARY, surface);
 	} else {
 		Point destPos(20, 10);
 
-		if (_field21C) {
+		if (_showingPhoto) {
 			screenManager->blitFrom(SURFACE_PRIMARY, _videoSurface2, &destPos);
 
 			if (!_homePhotoMask && _owner) {
@@ -110,8 +109,28 @@ void CStarView::MouseButtonDownMsg(int unused, const Point &pt) {
 	// TODO
 }
 
-void CStarView::MouseMoveMsg(int unused, const Point &pt) {
-	// TODO
+bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
+	if (!_showingPhoto && (_fader._index < 0 || _fader._count >= 0)) {
+		FPoint fpt = pt;
+		FPoint centerPt(300.0, 170.0);
+
+		if (fpt != centerPt) {
+			double threshold = MIN(centerPt._x, centerPt._y) * 0.5;
+			FPoint tempPt = fpt - centerPt;
+
+			double distance = tempPt.normalize();
+			if (distance >= threshold) {
+				distance -= threshold;
+
+				FPoint relPt(tempPt._x * -2.0 * distance / threshold, 
+					tempPt._y * -2.0 * distance / threshold);
+				_sub12.setViewportPosition(relPt);
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 CErrorCode CStarView::KeyCharMsg(int key) {

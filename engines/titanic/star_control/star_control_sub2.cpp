@@ -24,9 +24,9 @@
 
 namespace Titanic {
 
-bool CStarControlSub2::proc3(int v1) {
+bool CStarControlSub2::loadYale(int v1) {
 	clear();
-	// TODO
+	error("Original loadYale not supported");
 	return true;
 }
 

@@ -216,8 +216,8 @@ FVector CStarControlSub12::proc31(int index, const FVector &v) {
 	return _sub13.fn18(index, v);
 }
 
-void CStarControlSub12::proc32(double v1, double v2) {
-	error("TODO: CStarControlSub12::proc32");
+void CStarControlSub12::setViewportPosition(const FPoint &pt) {
+	// TODO
 }
 
 bool CStarControlSub12::setArrayVector(const FVector &v) {

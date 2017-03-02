@@ -23,6 +23,8 @@
 #ifndef TITANIC_FPOINT_H
 #define TITANIC_FPOINT_H
 
+#include "common/rect.h"
+
 namespace Titanic {
 
 /**
@@ -34,6 +36,7 @@ public:
 public:
 	FPoint() : _x(0), _y(0) {}
 	FPoint(double x, double y) : _x(x), _y(y) {}
+	FPoint(const Common::Point &pt) : _x(pt.x), _y(pt.y) {}
 
 	bool operator==(const FPoint &p) const { return _x == p._x && _y == p._y; }
 	bool operator!=(const FPoint &p) const { return _x != p._x || _y != p._y; }
@@ -54,7 +57,7 @@ public:
 	 * Normalises the X and Y coordinates as fractions relative to the
 	 * value of the hypotenuse formed by a triangle from the origin (0,0)
 	 */
-	void normalize();
+	double normalize();
 };
 
 } // End of namespace Titanic

@@ -47,7 +47,7 @@ private:
 	CVideoSurface *_videoSurface2;
 	CGameObject *_homePhotoMask;
 	int _field218;
-	int _field21C;
+	bool _showingPhoto;
 #if 0
 	int _field210;
 #endif
@@ -86,7 +86,7 @@ public:
 	/**
 	 * Handles mouse move messages
 	 */
-	void MouseMoveMsg(int unused, const Point &pt);
+	bool MouseMoveMsg(int unused, const Point &pt);
 
 	/**
 	 * Handles keyboard messages
