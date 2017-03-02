@@ -210,7 +210,7 @@ void DirectorEngine::loadPatterns() {
 }
 
 Graphics::MacPatterns &DirectorEngine::getPatterns() {
-	//TOOD: implement switch and other version patterns. (use getVersion());
+	// TOOD: implement switch and other version patterns. (use getVersion());
 	return _director3QuickDrawPatterns;
 }
 

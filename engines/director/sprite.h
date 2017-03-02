@@ -49,7 +49,7 @@ enum InkType {
 	kInkTypeDark
 };
 
-//Director v4
+// Director v4
 enum SpriteType {
 	kInactiveSprite, // turns the sprite off
 	kBitmapSprite,

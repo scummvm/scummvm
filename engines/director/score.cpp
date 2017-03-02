@@ -344,12 +344,12 @@ void Score::setSpriteCasts() {
 }
 
 void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res) {
-	// d4+ variant
+	// D4+ variant
 	if (stream.size() == 0)
 		return;
 
-	//TODO: Determine if there really is a minimum size.
-	//This value was too small for Shape Casts.
+	// TODO: Determine if there really is a minimum size.
+	// This value was too small for Shape Casts.
 	if (stream.size() < 10) {
 		warning("CAST data id %d is too small", id);
 		return;
@@ -909,7 +909,7 @@ void Score::update() {
 	if (_vm->getVersion() >= 6) {
 		for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 			if (_frames[_currentFrame]->_sprites[i]->_enabled) {
-				//TODO: Check if this is also possibly a kSpriteScript?
+				// TODO: Check if this is also possibly a kSpriteScript?
 				_lingo->processEvent(kEventBeginSprite, kCastScript, _frames[_currentFrame]->_sprites[i]->_scriptId);
 			}
 		}

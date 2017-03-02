@@ -182,7 +182,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 		stream.readByte();
 		stream.readByte();
 
-		//This has already been populated in the super TextCast constructor
+		// This has already been populated in the super TextCast constructor
 		//initialRect = Score::readRect(stream);
 		//boundingRect = Score::readRect(stream);
 
