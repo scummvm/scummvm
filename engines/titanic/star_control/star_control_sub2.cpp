@@ -30,17 +30,13 @@ bool CStarControlSub2::loadYale(int v1) {
 	return true;
 }
 
-bool CStarControlSub2::proc4(int v1, int v2, int v3, int v4, int v5) {
+bool CStarControlSub2::selectStar(CSurfaceArea *surfaceArea,
+		CStarControlSub12 *sub12, int flags, const Common::Point &pt) {
 	// TODO
 	return true;
 }
 
 bool CStarControlSub2::loadStar() {
-	// TODO
-	return true;
-}
-
-bool CStarControlSub2::proc7(int v1, int v2) {
 	// TODO
 	return true;
 }

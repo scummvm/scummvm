@@ -24,8 +24,12 @@
 #define TITANIC_STAR_CONTROL_SUB8_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/support/video_surface.h"
 
 namespace Titanic {
+
+class CStarField;
+class CStarControlSub7;
 
 class CStarControlSub8 {
 	struct StructEntry {
@@ -55,6 +59,11 @@ public:
 	 * Save the data for the class to file
 	 */
 	void save(SimpleFile *file, int indent) {}
+
+	int findStar(const Common::Point &pt);
+
+	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
+		CStarControlSub7 *sub7);
 };
 
 } // End of namespace Titanic

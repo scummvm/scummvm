@@ -92,10 +92,15 @@ public:
 	virtual void draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 
 	virtual bool loadYale(int v1) { return true; }
-	virtual bool proc4(int v1, int v2, int v3, int v4, int v5) { return false; }
+
+	/**
+	 * Selects a star
+	 */
+	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		int flags, const Common::Point &pt) { return false; }
+
 	virtual bool proc5(int v1) { return false; }
 	virtual bool loadStar() { return false; }
-	virtual bool proc7(int v1, int v2) { return true; }
 
 	/**
 	 * Load the item's data

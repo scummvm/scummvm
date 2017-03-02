@@ -21,6 +21,8 @@
  */
 
 #include "titanic/star_control/star_control_sub8.h"
+#include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_field.h"
 
 namespace Titanic {
 
@@ -29,5 +31,21 @@ CStarControlSub8::CStarControlSub8() : _field8(-1) {
 	_field0(0), _field4(0), _field8(-1), _fieldC(-1)
 #endif
 }
+
+bool MouseButtonDown(const Common::Point &pt) {
+	// TODO
+	return true;
+}
+
+int CStarControlSub8::findStar(const Common::Point &pt) {
+	// TODO
+	return -1;
+}
+
+void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
+		CStarField *starField, CStarControlSub7 *sub7) {
+	// TODO
+}
+
 
 } // End of namespace Titanic

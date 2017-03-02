@@ -32,9 +32,14 @@ public:
 	virtual ~CStarControlSub2() {}
 
 	virtual bool loadYale(int v1);
-	virtual bool proc4(int v1, int v2, int v3, int v4, int v5);
+
+	/**
+	 * Selects a star
+	 */
+	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		int flags, const Common::Point &pt);
+
 	virtual bool loadStar();
-	virtual bool proc7(int v1, int v2);
 
 	/**
 	 * Setup the control

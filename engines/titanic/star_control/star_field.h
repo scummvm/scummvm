@@ -93,6 +93,12 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
+
+	/**
+	 * Called when the starfield is clicked
+	 */
+	bool mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
+		int flags, const Common::Point &pt);
 };
 
 } // End of namespace Titanic

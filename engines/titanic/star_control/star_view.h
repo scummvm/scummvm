@@ -81,7 +81,7 @@ public:
 	/**
 	 * Handles mouse down messages
 	 */
-	void MouseButtonDownMsg(int unused, const Point &pt);
+	bool MouseButtonDownMsg(int unused, const Point &pt);
 
 	/**
 	 * Handles mouse move messages

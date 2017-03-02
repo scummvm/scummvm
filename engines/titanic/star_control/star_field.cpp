@@ -131,4 +131,20 @@ void CStarField::fn1(CErrorCode *errorCode) {
 	_sub5.proc3(errorCode);
 }
 
+bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
+		int flags, const Common::Point &pt) {
+	if (!_val3) {
+		CSurfaceArea surfaceArea(surface);
+		return selectStar(&surfaceArea, sub12, 0, pt);
+	} else {
+		int starNum = _sub8.findStar(pt);
+		if (starNum >= 0) {
+			_sub8.selectStar(starNum, surface, this, &_sub7);
+			return true;
+		}
+
+		return false;
+	}
+}
+
 } // End of namespace Titanic

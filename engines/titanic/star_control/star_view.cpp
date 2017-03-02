@@ -105,8 +105,14 @@ void CStarView::draw(CScreenManager *screenManager) {
 	}
 }
 
-void CStarView::MouseButtonDownMsg(int unused, const Point &pt) {
-	// TODO
+bool CStarView::MouseButtonDownMsg(int flags, const Point &pt) {
+	if (_starField) {
+		return _starField->mouseButtonDown(
+			_showingPhoto ? _videoSurface2 : _videoSurface,
+			&_sub12, flags, pt);
+	}
+
+	return false;
 }
 
 bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
