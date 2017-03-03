@@ -25,6 +25,7 @@
 #include "titanic/star_control/star_control.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/core/game_object.h"
+#include "titanic/messages/pet_messages.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -145,7 +146,7 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 
 bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	CStarControlSub6 sub6;
-//	int v = _starField ? _starField->get88() : -1;
+	int v = _starField ? _starField->get88() : -1;
 
 	switch (key) {
 	case Common::KEYCODE_TAB:
@@ -155,7 +156,78 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-		// TODO: More switch cases
+	case Common::KEYCODE_l: {
+		CPetControl *pet = _owner->getPetControl();
+		if (pet && pet->_remoteTarget) {
+			CPETStarFieldLockMsg lockMsg(1);
+			lockMsg.execute(pet->_remoteTarget);
+		}
+		return true;
+	}
+
+	case Common::KEYCODE_d: {
+		CPetControl *pet = _owner->getPetControl();
+		if (pet && pet->_remoteTarget) {
+			CPETStarFieldLockMsg lockMsg(0);
+			lockMsg.execute(pet->_remoteTarget);
+		}
+		return true;
+	}
+
+	case Common::KEYCODE_z:
+	case Common::KEYCODE_c:
+		if (v == -1) {
+			sub6.set(key == Common::KEYCODE_z ? MODE_PHOTO : MODE_STARFIELD, 1.0);
+			_sub12.proc22(sub6);
+			_sub12.proc15(errorCode);
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_SEMICOLON:
+		if (v == -1) {
+			_sub12.proc16();
+			errorCode->set();
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_PERIOD:
+		if (v == -1) {
+			_sub12.proc17();
+			errorCode->set();
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_SPACE:
+		if (v == -1) {
+			_sub12.proc19();
+			errorCode->set();
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_x:
+		if (v == -1) {
+			sub6.set(MODE_PHOTO, -1.0);
+			_sub12.proc22(sub6);
+			_sub12.proc15(errorCode);
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_QUOTE:
+		if (v == -1) {
+			sub6.set(MODE_STARFIELD, -1.0);
+			_sub12.proc22(sub6);
+			_sub12.proc15(errorCode);
+			return true;
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	return false;

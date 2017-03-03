@@ -165,8 +165,8 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		vector._x = entry._val._v1;
 		vector._y = entry._val._v2;
 		vector._z = entry._val._v3;
-		v4 = vector._x * sub6._matrix._row1._z + vector._y * sub6._matrix._row2._z
-			+ vector._z * sub6._matrix._row3._z + sub6._field2C;
+		v4 = vector._x * sub6._row1._z + vector._y * sub6._row2._z
+			+ vector._z * sub6._row3._z + sub6._field2C;
 		if (v4 <= minVal)
 			continue;
 

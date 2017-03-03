@@ -48,7 +48,7 @@ void CStarControlSub6::deinit() {
 }
 
 void CStarControlSub6::clear() {
-	_matrix.clear();
+	FMatrix::clear();
 	_field24 = 0;
 	_field28 = 0;
 	_field2C = 0;
@@ -61,39 +61,39 @@ void CStarControlSub6::set(int mode, double amount) {
 
 	switch (mode) {
 	case 0:
-		_matrix._row1._x = 1.0;
-		_matrix._row1._y = 0.0;
-		_matrix._row1._z = 0.0;
-		_matrix._row2._x = 0.0;
-		_matrix._row2._y = cosVal;
-		_matrix._row2._z = sinVal;
-		_matrix._row3._x = 0.0;
-		_matrix._row3._y = -sinVal;
-		_matrix._row3._z = cosVal;
+		_row1._x = 1.0;
+		_row1._y = 0.0;
+		_row1._z = 0.0;
+		_row2._x = 0.0;
+		_row2._y = cosVal;
+		_row2._z = sinVal;
+		_row3._x = 0.0;
+		_row3._y = -sinVal;
+		_row3._z = cosVal;
 		break;
 
 	case 1:
-		_matrix._row1._x = cosVal;
-		_matrix._row1._y = 0.0;
-		_matrix._row1._z = sinVal;
-		_matrix._row2._x = 0.0;
-		_matrix._row2._y = 1.0;
-		_matrix._row2._z = 0.0;
-		_matrix._row3._x = -sinVal;
-		_matrix._row3._y = 0.0;
-		_matrix._row3._z = sinVal;
+		_row1._x = cosVal;
+		_row1._y = 0.0;
+		_row1._z = sinVal;
+		_row2._x = 0.0;
+		_row2._y = 1.0;
+		_row2._z = 0.0;
+		_row3._x = -sinVal;
+		_row3._y = 0.0;
+		_row3._z = sinVal;
 		break;
 
 	case 2:
-		_matrix._row1._x = cosVal;
-		_matrix._row1._y = sinVal;
-		_matrix._row1._z = 0.0;
-		_matrix._row2._x = -sinVal;
-		_matrix._row2._y = cosVal;
-		_matrix._row2._z = 0.0;
-		_matrix._row3._x = 0.0;
-		_matrix._row3._y = 0.0;
-		_matrix._row3._z = 1.0;
+		_row1._x = cosVal;
+		_row1._y = sinVal;
+		_row1._z = 0.0;
+		_row2._x = -sinVal;
+		_row2._y = cosVal;
+		_row2._z = 0.0;
+		_row3._x = 0.0;
+		_row3._y = 0.0;
+		_row3._z = 1.0;
 		break;
 
 	default:
@@ -106,7 +106,9 @@ void CStarControlSub6::set(int mode, double amount) {
 }
 
 void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
-	_matrix = src->_matrix;
+	_row1 = src->_row1;
+	_row2 = src->_row2;
+	_row3 = src->_row3;
 	_field24 = src->_field24;
 	_field28 = src->_field28;
 	_field2C = src->_field2C;

@@ -28,6 +28,7 @@
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/error_code.h"
 
 namespace Titanic {
 
@@ -77,7 +78,7 @@ public:
 	virtual void proc12(double v1, double v2);
 	virtual void proc13(CStarControlSub13 *dest);
 	virtual void proc14(int v);
-	virtual void proc15(int v);
+	virtual void proc15(CErrorCode *errorCode);
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();

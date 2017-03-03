@@ -122,7 +122,7 @@ void CStarControlSub12::proc14(int v) {
 	_handlerP->proc9(&vector, v, &matrix);
 }
 
-void CStarControlSub12::proc15(int v) {
+void CStarControlSub12::proc15(CErrorCode *errorCode) {
 	if (!_matrix1)
 		_matrix1 = new FMatrix();
 	if (!_matrix2)
@@ -133,8 +133,7 @@ void CStarControlSub12::proc15(int v) {
 
 	FVector v1 = _sub13._position;
 	FVector v2 = _sub13._position;
-	CErrorCode errorCode;
-	_handlerP->proc11(errorCode, v2, _matrix2);
+	_handlerP->proc11(*errorCode, v2, _matrix2);
 
 	if (v1 != v2) {
 		_sub13.setPosition(v2);

@@ -129,7 +129,7 @@ void CStarControlSub13::setPosition(const FVector &v) {
 void CStarControlSub13::setPosition(const CStarControlSub6 &sub6) {
 	FVector vector;
 	_position.fn5(&vector, &sub6);
-	_position = sub6._matrix._row1;
+	_position = sub6._row1;
 	_fieldD4 = 0;
 }
 
