@@ -94,12 +94,23 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		palinfo2 = stream.readUint16();
 		palinfo3 = stream.readUint16();
 
-		int t = stream.readUint32();
-		if (t != 0) { // In D2 there are values
-			warning("TextCast: t: %x", t);
+		if (version == 2) {
+			int t = stream.readUint16();
+			if (t != 0) { // In D2 there are values
+				warning("TextCast: t: %x", t);
+			}
+
+			initialRect = Score::readRect(stream);
+			stream.readUint16();
+		} else {
+			int t = stream.readUint32();
+			if (t != 0) { // In D2 there are values
+				warning("TextCast: t: %x", t);
+			}
+
+			initialRect = Score::readRect(stream); 
 		}
 
-		initialRect = Score::readRect(stream);
 		textShadow = static_cast<SizeType>(stream.readByte());
 		byte flags = stream.readByte();
 		if (flags & 0x1)

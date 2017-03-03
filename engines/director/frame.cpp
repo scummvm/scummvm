@@ -906,8 +906,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-	int height = _sprites[spriteId]->_height;
-	int width = _sprites[spriteId]->_width;
+	int height = _sprites[spriteId]->_cast->initialRect.height(); //_sprites[spriteId]->_height;
+	int width = _sprites[spriteId]->_cast->initialRect.width(); //_sprites[spriteId]->_width;
 
 	if (_vm->getVersion() >= 4 && textSize != NULL)
 		width = textCast->initialRect.right;
