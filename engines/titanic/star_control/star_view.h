@@ -29,6 +29,7 @@
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
@@ -53,6 +54,15 @@ private:
 #endif
 private:
 	void fn1();
+	void fn18(CStarControlSub12 *sub12);
+
+	void randomizeVectors(FVector *v1, FVector *v2);
+
+	/**
+	 * Handles resizing the surface
+	 */
+	void resizeSurface(CScreenManager *scrManager, int width, int height,
+		CVideoSurface **surface);
 public:
 	CStarView();
 
@@ -91,7 +101,7 @@ public:
 	/**
 	 * Handles keyboard messages
 	 */
-	CErrorCode KeyCharMsg(int key);
+	bool KeyCharMsg(int key, CErrorCode *errorCode);
 
 	/**
 	 * Returns true if a star destination can be set
@@ -117,12 +127,22 @@ public:
 	void fn7();
 	void fn8();
 	void fn9();
-	void fn10();
+
+	/**
+	 * Toggles between starfield and photo modes
+	 */
+	void toggleMode();
+	
 	void fn11();
 	void fn12();
 	void fn13();
 	void fn14();
-	void fn15();
+
+	/**
+	 * Called when the photograph is used on the navigation computer
+	 */
+	void setHasReference();
+	
 	void fn16();
 	void fn17();
 

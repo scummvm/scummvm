@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/star_control_sub8.h"
 #include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_field.h"
 
 namespace Titanic {
@@ -47,5 +48,8 @@ void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 	// TODO
 }
 
+void CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+	// TODO
+}
 
 } // End of namespace Titanic

@@ -164,6 +164,11 @@ public:
 	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }
 
 	/**
+	 * Returns a random floating point number between 0.0 to 65535.0
+	 */
+	double getRandomFloat() { return getRandomNumber(0xffffffff) * 0.000015259022; }
+
+	/**
 	 * Support method that generates a savegame name
 	 * @param slot		Slot number
 	 */

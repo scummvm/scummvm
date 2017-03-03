@@ -106,7 +106,7 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 
 bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
 	if (_flag)
-		starFn(STAR_9);
+		starFn(STAR_TOGGLE_MODE);
 
 	return true;
 }

@@ -25,8 +25,8 @@
 
 namespace Titanic {
 
-CStarField::CStarField() : _val1(0), _val2(0), _val3(0), _val4(true),
-	_val5(0), _isSolved(false) {
+CStarField::CStarField() : _val1(0), _val2(0), _mode(MODE_STARFIELD),
+		_val4(true), _val5(0), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -34,7 +34,7 @@ void CStarField::load(SimpleFile *file) {
 	_sub8.load(file);
 	_val1 = file->readNumber();
 	_val2 = file->readNumber();
-	_val3 = file->readNumber();
+	_mode = (StarMode)file->readNumber();
 	_val4 = file->readNumber();
 	_isSolved = file->readNumber();
 }
@@ -44,7 +44,7 @@ void CStarField::save(SimpleFile *file, int indent) {
 	_sub8.save(file, indent);
 	file->writeNumberLine(_val1, indent);
 	file->writeNumberLine(_val2, indent);
-	file->writeNumberLine(_val3, indent);
+	file->writeNumberLine(_mode, indent);
 	file->writeNumberLine(_val4, indent);
 	file->writeNumberLine(_isSolved, indent);
 }
@@ -93,12 +93,12 @@ void CStarField::set54(int val) {
 	_sub5.set4(val);
 }
 
-int CStarField::get3() const {
-	return _val3;
+StarMode CStarField::getMode() const {
+	return _mode;
 }
 
-void CStarField::set3(int val) {
-	_val3 = val;
+void CStarField::setMode(StarMode mode) {
+	_mode = mode;
 }
 
 void CStarField::toggle4() {
@@ -131,9 +131,14 @@ void CStarField::fn1(CErrorCode *errorCode) {
 	_sub5.proc3(errorCode);
 }
 
+void CStarField::fn6(CVideoSurface *surface, CStarControlSub12 *sub12) {
+	CSurfaceArea surfaceArea(surface);
+
+}
+
 bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
 		int flags, const Common::Point &pt) {
-	if (!_val3) {
+	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);
 		return selectStar(&surfaceArea, sub12, 0, pt);
 	} else {

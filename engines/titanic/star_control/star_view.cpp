@@ -25,6 +25,7 @@
 #include "titanic/star_control/star_control.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/core/game_object.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -67,7 +68,10 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 }
 
 void CStarView::reset() {
-	// TODO
+	if (!_field118) {
+		CStarControlSub12 sub12(&_sub13);
+		fn18(&sub12);
+	}
 }
 
 void CStarView::draw(CScreenManager *screenManager) {
@@ -139,9 +143,22 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 	return false;
 }
 
-CErrorCode CStarView::KeyCharMsg(int key) {
-	// TODO
-	return CErrorCode();
+bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
+	CStarControlSub6 sub6;
+//	int v = _starField ? _starField->get88() : -1;
+
+	switch (key) {
+	case Common::KEYCODE_TAB:
+		if (_starField) {
+			toggleMode();
+			return true;
+		}
+		break;
+
+		// TODO: More switch cases
+	}
+
+	return false;
 }
 
 bool CStarView::canSetStarDestination() const {
@@ -197,8 +214,10 @@ void CStarView::fn9() {
 	// TODO
 }
 
-void CStarView::fn10() {
-	// TODO
+void CStarView::toggleMode() {
+	_showingPhoto = !_showingPhoto;
+	if (_starField)
+		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);
 }
 
 void CStarView::fn11() {
@@ -217,8 +236,18 @@ void CStarView::fn14() {
 	// TODO
 }
 
-void CStarView::fn15() {
-	// TODO
+void CStarView::setHasReference() {
+	FVector v1, v2;
+	randomizeVectors(&v1, &v2);
+
+	_sub13.setPosition(v1);
+	_sub13.fn11(v2);
+	_field218 = 0;
+	_sub13.fn13(1, 0);
+	_sub13.fn13(0, 0);
+	_field118 = 1;
+	reset();
+	_field218 = 1;
 }
 
 void CStarView::fn16() {
@@ -227,6 +256,65 @@ void CStarView::fn16() {
 
 void CStarView::fn17() {
 	// TODO
+}
+
+void CStarView::fn18(CStarControlSub12 *sub12) {
+	if (_starField) {
+		if (!_videoSurface2) {
+			CScreenManager *scrManager = CScreenManager::setCurrent();
+			if (scrManager)
+				resizeSurface(scrManager, 600, 340, &_videoSurface2);
+		}
+
+		if (_videoSurface2) {
+			int oldVal = _starField->get54();
+			_starField->set4(false);
+
+			_videoSurface2->clear();
+			_videoSurface2->lock();
+			_starField->render(_videoSurface2, sub12);
+			_videoSurface2->unlock();
+
+			_starField->set54(oldVal);
+			_starField->fn6(_videoSurface2, sub12);
+		}
+	}
+}
+
+void CStarView::randomizeVectors(FVector *v1, FVector *v2) {
+	v1->_x = g_vm->getRandomFloat() * -4096.0 - 3072.0;
+	v1->_y = g_vm->getRandomFloat() * -4096.0 - 3072.0;
+	v1->_z = g_vm->getRandomFloat() * -4096.0 - 3072.0;
+
+	double vx = g_vm->getRandomFloat() * 8192.0;
+	double vy = g_vm->getRandomFloat() * 1024.0;
+	vx -= v1->_x;
+	vy -= v1->_y;
+	
+	v2->_x = vx;
+	v2->_y = vy;
+	v2->_z = -v1->_z;
+	v2->fn3();
+}
+
+void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
+		CVideoSurface **surface) {
+	if (!surface)
+		// Surface pointer must be provided
+		return;
+	if (*surface) {
+		// If there's an existing surface of the correct size, re-use it
+		if ((*surface)->getWidth() == width && (*surface)->getHeight() == height)
+			return;
+
+		// Delete the old surface
+		delete *surface;
+		*surface = nullptr;
+	}
+
+	CVideoSurface *newSurface = scrManager->createSurface(width, height);
+	if (newSurface)
+		*surface = newSurface;
 }
 
 

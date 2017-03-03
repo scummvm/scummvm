@@ -110,8 +110,11 @@ bool CStarControl::MouseMoveMsg(CMouseMoveMsg *msg) {
 }
 
 bool CStarControl::KeyCharMsg(CKeyCharMsg *msg) {
-	if (_visible)
-		_view.KeyCharMsg(msg->_key);
+	if (_visible) {
+		CErrorCode errorCode;
+		_view.KeyCharMsg(msg->_key, &errorCode);
+		return errorCode.get();
+	}
 
 	return false;
 }
@@ -138,7 +141,7 @@ void CStarControl::newFrame() {
 		int val1 = _starField.get88();
 		int val2 = 0;
 
-		if (!_starField.get3()) {
+		if (_starField.getMode() == MODE_STARFIELD) {
 			val2 = _starField.get5();
 			if ((val1 + 2) == _starField.get7Count())
 				val2 = 0;
@@ -205,8 +208,8 @@ void CStarControl::doAction(StarControlAction action) {
 		_view.fn9();
 		break;
 
-	case STAR_9:
-		_view.fn10();
+	case STAR_TOGGLE_MODE:
+		_view.toggleMode();
 		break;
 
 	case STAR_10:
@@ -226,7 +229,7 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 
 	case STAR_SET_REFERENCE: {
-		_view.fn15();
+		_view.setHasReference();
 		CPetControl *pet = getPetControl();
 		if (pet)
 			pet->starsSetReference();

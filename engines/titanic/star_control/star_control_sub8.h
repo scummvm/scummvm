@@ -23,6 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_SUB8_H
 #define TITANIC_STAR_CONTROL_SUB8_H
 
+#include "titanic/star_control/surface_area.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/support/video_surface.h"
 
@@ -30,6 +31,7 @@ namespace Titanic {
 
 class CStarField;
 class CStarControlSub7;
+class CStarControlSub12;
 
 class CStarControlSub8 {
 	struct StructEntry {
@@ -64,6 +66,8 @@ public:
 
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
 		CStarControlSub7 *sub7);
+
+	void fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 };
 
 } // End of namespace Titanic

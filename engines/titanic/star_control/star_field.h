@@ -32,6 +32,8 @@
 
 namespace Titanic {
 
+enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
+
 class CStarField : public CStarControlSub2 {
 private:
 	CStarControlSub7 _sub7;
@@ -41,7 +43,7 @@ private:
 	CStarControlSub5 _sub5;
 	int _val1;
 	int _val2;
-	int _val3;
+	StarMode _mode;
 	bool _val4;
 	int _val5;
 	bool _isSolved;
@@ -71,8 +73,17 @@ public:
 	void set2(int val);
 	int get54() const;
 	void set54(int val);
-	int get3() const;
-	void set3(int val);
+	
+	/**
+	 * Gets the current display mode
+	 */
+	StarMode getMode() const;
+	
+	/**
+	 * Sets the display mode
+	 */
+	void setMode(StarMode mode);
+	
 	void toggle4();
 	bool set4(bool val);
 	int get88() const;
@@ -93,6 +104,7 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
+	void fn6(CVideoSurface *surface, CStarControlSub12 *sub12);
 
 	/**
 	 * Called when the starfield is clicked
