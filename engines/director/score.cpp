@@ -717,14 +717,15 @@ int Score::getNextLabelNumber(int referenceFrame) {
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
 		if ((*i)->number >= referenceFrame) {
+			int n = (*i)->number;
+			++i;
 			if (i != _labels->end()) {
 				// return to the first marker to to the right
-				++i;
 				return (*i)->number;
 			} else {
 				// if no markers are to the right of the playback head,
 				// the playback head goes to the first marker to the left
-				return (*i)->number;
+				return n;
 			}
 		}
 	}
