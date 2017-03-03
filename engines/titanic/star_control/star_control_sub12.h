@@ -26,6 +26,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
+#include "titanic/star_control/base_star.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub20.h"
 #include "titanic/star_control/error_code.h"
@@ -75,7 +76,7 @@ public:
 	virtual void proc9(int v);
 	virtual void proc10(int v);
 	virtual void proc11();
-	virtual void proc12(double v1, double v2);
+	virtual void proc12(StarMode mode, double v2);
 	virtual void proc13(CStarControlSub13 *dest);
 	virtual void proc14(int v);
 	virtual void proc15(CErrorCode *errorCode);

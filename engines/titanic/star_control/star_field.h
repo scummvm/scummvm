@@ -32,8 +32,6 @@
 
 namespace Titanic {
 
-enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
-
 class CStarField : public CStarControlSub2 {
 private:
 	CStarControlSub7 _sub7;

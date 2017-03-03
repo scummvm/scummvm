@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB13_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/star_control/base_star.h"
 #include "titanic/star_control/star_control_sub6.h"
 #include "titanic/star_control/fmatrix.h"
 
@@ -88,7 +89,7 @@ public:
 
 	void fn11(const FVector &v);
 	void fn12();
-	void fn13(double v1, double v2);
+	void fn13(StarMode mode, double v2);
 	void fn14(double v);
 	void fn15(FMatrix &matrix);
 	CStarControlSub6 getSub1();

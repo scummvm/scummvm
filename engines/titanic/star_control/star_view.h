@@ -47,16 +47,18 @@ private:
 	CSurfaceFader _fader;
 	CVideoSurface *_videoSurface2;
 	CGameObject *_homePhotoMask;
-	int _field218;
+	bool _field218;
 	bool _showingPhoto;
 #if 0
 	int _field210;
 #endif
 private:
-	void fn1();
+	bool fn1();
 	void fn18(CStarControlSub12 *sub12);
+	void fn19(int v);
 
-	void randomizeVectors(FVector *v1, FVector *v2);
+	void randomizeVectors1(FVector *v1, FVector *v2);
+	void randomizeVectors2(FVector *v1, FVector *v2);
 
 	/**
 	 * Handles resizing the surface
@@ -117,7 +119,6 @@ public:
 	 * Resets back to the origin position
 	 */
 	void resetPosition();
-	void petDestinationSet();
 
 	void fn2();
 	void fn3(bool fadeIn);

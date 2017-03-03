@@ -105,9 +105,9 @@ void CStarControlSub12::proc11() {
 		_sub13.fn12();
 }
 
-void CStarControlSub12::proc12(double v1, double v2) {
+void CStarControlSub12::proc12(StarMode mode, double v2) {
 	if (!isLocked())
-		_sub13.fn13(v1, v2);
+		_sub13.fn13(mode, v2);
 }
 
 void CStarControlSub12::proc13(CStarControlSub13 *dest) {

@@ -172,8 +172,8 @@ void CStarControlSub13::fn12() {
 	error("TODO: CStarControlSub13::fn12");
 }
 
-void CStarControlSub13::fn13(double v1, double v2) {
-	if (v1 == 0.0) {
+void CStarControlSub13::fn13(StarMode mode, double v2) {
+	if (mode == MODE_STARFIELD) {
 		_valArray[0] = v2;
 		_valArray[1] = -v2;
 	} else {

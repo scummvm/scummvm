@@ -30,6 +30,8 @@
 
 namespace Titanic {
 
+enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
+
 class CStarControlSub12;
 
 struct CBaseStarEntry {

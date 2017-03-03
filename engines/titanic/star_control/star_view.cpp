@@ -33,7 +33,7 @@ namespace Titanic {
 CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
 		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
-		_field218(0), _showingPhoto(false) {
+		_field218(false), _showingPhoto(false) {
 	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_sub12.proc3(&data);
@@ -234,44 +234,65 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 }
 
 bool CStarView::canSetStarDestination() const {
-	// TODO
-	return false;
+	return _sub12.is108();
 }
 
 void CStarView::starDestinationSet() {
-	// TODO
-}
-
-void CStarView::petDestinationSet() {
-	// TODO
+	_sub12.reset108();
 }
 
 void CStarView::resetPosition() {
 	// TODO
 }
 
-void CStarView::fn1() {
-	// TODO
+bool CStarView::fn1() {
+	if (_videoSurface) {
+		CErrorCode errorCode;
+		_sub12.proc15(&errorCode);
+
+		if (_fader._index < 0 || _fader._index >= _fader._count)
+			_starField->fn1(&errorCode);
+		else
+			errorCode.set();
+
+		return errorCode.get();
+	}
+
+	return false;
 }
 
 void CStarView::fn2() {
-	// TODO
+	if (!_videoSurface) {
+		CScreenManager *scrManager = CScreenManager::setCurrent();
+		if (scrManager)
+			resizeSurface(scrManager, 600, 340, &_videoSurface);
+
+		if (_videoSurface) {
+			fn13();
+			fn19(200);
+			draw(scrManager);
+		}
+	}
 }
 
 void CStarView::fn3(bool fadeIn) {
-	// TODO
+	_fader.reset();
+	_fader.setFadeIn(fadeIn);
 }
 
 void CStarView::fn4() {
-	// TODO
+	FVector v1, v2;
+	randomizeVectors2(&v1, &v2);
+	_sub12.setPosition(v1);
+	_sub12.proc5(v2);
 }
 
 void CStarView::fn5() {
-	// TODO
+	_starField->set1(!_starField->get1());
 }
 
 void CStarView::fn6() {
-	// TODO
+	_starField->set2(!_starField->get2());
 }
 
 void CStarView::fn7() {
@@ -279,11 +300,18 @@ void CStarView::fn7() {
 }
 
 void CStarView::fn8() {
-	// TODO
+	_sub12.proc18();
 }
 
 void CStarView::fn9() {
-	// TODO
+	_field218 = !_field218;
+	if (_field218) {
+		_sub12.proc12(MODE_PHOTO, 30.0);
+		_sub12.proc12(MODE_STARFIELD, 28000.0);
+	} else {
+		_sub12.proc12(MODE_PHOTO, 0.0);
+		_sub12.proc12(MODE_STARFIELD, 0.0);
+	}
 }
 
 void CStarView::toggleMode() {
@@ -301,25 +329,29 @@ void CStarView::fn12() {
 }
 
 void CStarView::fn13() {
-	// TODO
+	_field218 = true;
+	_sub12.proc12(MODE_PHOTO, 30.0);
+	_sub12.proc12(MODE_STARFIELD, 28000.0);
 }
 
 void CStarView::fn14() {
-	// TODO
+	_field218 = false;
+	_sub12.proc12(MODE_PHOTO, 0.0);
+	_sub12.proc12(MODE_STARFIELD, 0.0);
 }
 
 void CStarView::setHasReference() {
 	FVector v1, v2;
-	randomizeVectors(&v1, &v2);
+	randomizeVectors1(&v1, &v2);
 
 	_sub13.setPosition(v1);
 	_sub13.fn11(v2);
-	_field218 = 0;
-	_sub13.fn13(1, 0);
-	_sub13.fn13(0, 0);
-	_field118 = 1;
+	_field218 = false;
+	_sub13.fn13(MODE_PHOTO, 0.0);
+	_sub13.fn13(MODE_STARFIELD, 0.0);
+	_field118 = true;
 	reset();
-	_field218 = 1;
+	_field218 = true;
 }
 
 void CStarView::fn16() {
@@ -353,7 +385,11 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 	}
 }
 
-void CStarView::randomizeVectors(FVector *v1, FVector *v2) {
+void CStarView::fn19(int v) {
+	// TODO
+}
+
+void CStarView::randomizeVectors1(FVector *v1, FVector *v2) {
 	v1->_x = g_vm->getRandomFloat() * -4096.0 - 3072.0;
 	v1->_y = g_vm->getRandomFloat() * -4096.0 - 3072.0;
 	v1->_z = g_vm->getRandomFloat() * -4096.0 - 3072.0;
@@ -365,6 +401,17 @@ void CStarView::randomizeVectors(FVector *v1, FVector *v2) {
 	
 	v2->_x = vx;
 	v2->_y = vy;
+	v2->_z = -v1->_z;
+	v2->fn3();
+}
+
+void CStarView::randomizeVectors2(FVector *v1, FVector *v2) {
+	v1->_x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+
+	v2->_x = -v1->_x;
+	v2->_y = -v1->_y;
 	v2->_z = -v1->_z;
 	v2->fn3();
 }

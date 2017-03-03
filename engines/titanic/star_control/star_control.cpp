@@ -253,7 +253,7 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 
 	case STAR_19:
-		_view.petDestinationSet();
+		_view.starDestinationSet();
 		break;
 	}
 }
