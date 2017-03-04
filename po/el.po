@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-04 11:50+0100\n"
-"PO-Revision-Date: 2017-02-22 19:57+0000\n"
+"PO-Revision-Date: 2017-03-04 10:56+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
-"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/el/>\n"
+"Language-Team: Greek "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
@@ -864,7 +864,7 @@ msgstr "δεν ήταν δυνατή η αλλαγή της ρύθμισης φιλτραρίσματος"
 
 #: gui/options.cpp:932
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Εμφάνιση των στοιχείων χειρισμού στην οθόνη"
 
 #: gui/options.cpp:936
 #, fuzzy
@@ -882,7 +882,7 @@ msgstr "Ταχύτητα:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Ταχύτητα χειρισμού του δείκτη ποντικιού με πληκτρολόγιο/χειριστήριο"
 
 #: gui/options.cpp:947
 #, fuzzy
@@ -896,12 +896,12 @@ msgstr ""
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Περιοχή αδράνειας αναλογικού χειριστήριου"
 
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Περιοχή αδράνειας χειριστήριου:"
 
 #: gui/options.cpp:977
 msgid "Graphics mode:"
