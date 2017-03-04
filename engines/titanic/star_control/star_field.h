@@ -39,12 +39,15 @@ private:
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
 	CStarControlSub5 _sub5;
-	int _val1;
-	int _val2;
+	bool _points1On;
+	bool _points2On;
 	StarMode _mode;
 	bool _val4;
 	int _val5;
 	bool _isSolved;
+private:
+	void fn3(CSurfaceArea *surfaceArea);
+	void fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 public:
 	CStarField();
 
@@ -103,6 +106,8 @@ public:
 
 	void fn1(CErrorCode *errorCode);
 	void fn6(CVideoSurface *surface, CStarControlSub12 *sub12);
+	void fn7();
+	void fn8(CVideoSurface *surface);
 
 	/**
 	 * Called when the starfield is clicked

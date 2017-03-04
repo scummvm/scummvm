@@ -67,7 +67,11 @@ public:
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
 		CStarControlSub7 *sub7);
 
+	void draw(CSurfaceArea *surfaceArea);
+
 	void fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
+	void fn3();
 };
 
 } // End of namespace Titanic

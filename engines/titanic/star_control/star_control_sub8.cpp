@@ -29,7 +29,7 @@ namespace Titanic {
 
 CStarControlSub8::CStarControlSub8() : _field8(-1) {
 #if 0
-	_field0(0), _field4(0), _field8(-1), _fieldC(-1)
+	_field4(0), _field8(-1), _fieldC(-1)
 #endif
 }
 
@@ -49,6 +49,19 @@ void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 }
 
 void CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+	// TODO
+}
+
+void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
+	// TODO
+}
+
+void CStarControlSub8::fn3() {
+	if (_field8 < 3)
+		++_field8;
+}
+
+void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 	// TODO
 }
 

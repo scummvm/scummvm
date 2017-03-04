@@ -25,15 +25,15 @@
 
 namespace Titanic {
 
-CStarField::CStarField() : _val1(0), _val2(0), _mode(MODE_STARFIELD),
+CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
 		_val4(true), _val5(0), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
 	_sub7.load(file);
 	_sub8.load(file);
-	_val1 = file->readNumber();
-	_val2 = file->readNumber();
+	_points1On = file->readNumber();
+	_points2On = file->readNumber();
 	_mode = (StarMode)file->readNumber();
 	_val4 = file->readNumber();
 	_isSolved = file->readNumber();
@@ -42,8 +42,8 @@ void CStarField::load(SimpleFile *file) {
 void CStarField::save(SimpleFile *file, int indent) {
 	_sub7.save(file, indent);
 	_sub8.save(file, indent);
-	file->writeNumberLine(_val1, indent);
-	file->writeNumberLine(_val2, indent);
+	file->writeNumberLine(_points1On, indent);
+	file->writeNumberLine(_points2On, indent);
 	file->writeNumberLine(_mode, indent);
 	file->writeNumberLine(_val4, indent);
 	file->writeNumberLine(_isSolved, indent);
@@ -64,25 +64,34 @@ bool CStarField::initDocument() {
 void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, sub12, &_sub5);
+	if (_val4)
+		fn3(&surfaceArea);
 
+	_sub7.draw(&surfaceArea, sub12, nullptr);
+	_sub8.draw(&surfaceArea);
 
-	// TODO
+	if (_points2On)
+		_points2.draw(&surfaceArea, sub12);
+	if (_points1On)
+		_points1.draw(&surfaceArea, sub12);
+
+	fn4(&surfaceArea, sub12);
 }
 
 int CStarField::get1() const {
-	return _val1;
+	return _points1On;
 }
 
 void CStarField::set1(int val) {
-	_val1 = val;
+	_points1On = val;
 }
 
 int CStarField::get2() const {
-	return _val2;
+	return _points2On;
 }
 
 void CStarField::set2(int val) {
-	_val2 = val;
+	_points2On = val;
 }
 
 int CStarField::get54() const {
@@ -131,9 +140,45 @@ void CStarField::fn1(CErrorCode *errorCode) {
 	_sub5.proc3(errorCode);
 }
 
+void CStarField::fn3(CSurfaceArea *surfaceArea) {
+	surfaceArea->_pixel = 0x323232;
+	surfaceArea->setColorFromPixel();
+
+	surfaceArea->fn1(FRect(202.60417, 63.75, 397.39584, 63.75));
+	surfaceArea->fn1(FRect(202.60417, 276.25, 397.39584, 276.25));
+	surfaceArea->fn1(FRect(193.75, 72.604164, 193.75, 267.39584));
+	surfaceArea->fn1(FRect(406.25, 72.604164, 406.25, 267.39584));
+	surfaceArea->fn1(FRect(202.60417, 63.75, 202.60417, 68.177086));
+	surfaceArea->fn1(FRect(397.39584, 63.75, 397.39584, 68.177086));
+	surfaceArea->fn1(FRect(202.60417, 276.25, 202.60417, 271.82291));
+	surfaceArea->fn1(FRect(397.39584, 276.25, 397.39584, 271.82291));
+	surfaceArea->fn1(FRect(193.75, 72.604164, 198.17708, 72.604164));
+	surfaceArea->fn1(FRect(193.75, 267.39584, 198.17708, 267.39584));
+	surfaceArea->fn1(FRect(406.25, 72.604164, 401.82291, 72.604164));
+	surfaceArea->fn1(FRect(406.25, 267.39584, 401.82291, 267.39584));
+	surfaceArea->fn1(FRect(300.0, 63.75, 300.0, 54.895832));
+	surfaceArea->fn1(FRect(300.0, 276.25, 300.0, 285.10416));
+	surfaceArea->fn1(FRect(193.75, 170.0, 184.89583, 170.0));
+	surfaceArea->fn1(FRect(406.25, 170.0, 415.10416, 170.0));
+}
+
+void CStarField::fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+	// TODO
+}
+
 void CStarField::fn6(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	CSurfaceArea surfaceArea(surface);
 
+}
+
+void CStarField::fn7() {
+	_sub8.fn3();
+	setSolved();
+}
+
+void CStarField::fn8(CVideoSurface *surface) {
+	_sub8.fn2(surface, this, &_sub7);
+	setSolved();
 }
 
 bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,

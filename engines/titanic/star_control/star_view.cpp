@@ -242,7 +242,7 @@ void CStarView::starDestinationSet() {
 }
 
 void CStarView::resetPosition() {
-	// TODO
+	_sub12.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
 bool CStarView::fn1() {
@@ -359,7 +359,10 @@ void CStarView::fn16() {
 }
 
 void CStarView::fn17() {
-	// TODO
+	if (_starField && !_showingPhoto) {
+		_sub12.proc35();
+		_starField->fn8(_videoSurface2);
+	}
 }
 
 void CStarView::fn18(CStarControlSub12 *sub12) {
@@ -410,12 +413,36 @@ void CStarView::randomizeVectors2(FVector *v1, FVector *v2) {
 	v1->_y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1->_z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 
+	// TODO: Doublecheck
 	v2->_x = -v1->_x;
 	v2->_y = -v1->_y;
 	v2->_z = -v1->_z;
 	v2->fn3();
 }
 
+void CStarView::randomizeVectors3(FVector *v1, FVector *v2) {
+	v1->_x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+
+	// TODO: Doublecheck
+	v2->_x = -v1->_x;
+	v2->_y = -v1->_y;
+	v2->_z = -v1->_z;
+	v2->fn3();
+}
+
+void CStarView::randomizeVectors4(FVector *v1, FVector *v2) {
+	v1->_x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1->_z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+
+	// TODO: Doublecheck
+	v2->_x = -v1->_x;
+	v2->_y = -v1->_y;
+	v2->_z = -v1->_z;
+	v2->fn3();
+}
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 		CVideoSurface **surface) {
 	if (!surface)

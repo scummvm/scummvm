@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_points2.h"
+#include "titanic/star_control/star_control_sub12.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -55,6 +56,10 @@ bool CStarPoints2::initialize() {
 	}
 
 	return true;
+}
+
+void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
+	// TODO
 }
 
 } // End of namespace Titanic

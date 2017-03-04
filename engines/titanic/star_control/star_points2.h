@@ -25,8 +25,11 @@
 
 #include "common/array.h"
 #include "titanic/star_control/fvector.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
+
+class CStarControlSub12;
 
 class CStarPoints2 {
 	class RootEntry : public Common::Array<FVector> {
@@ -41,6 +44,11 @@ public:
 	 * Initializes the data
 	 */
 	bool initialize();
+
+	/**
+	 * Draw the starfield points
+	 */
+	void draw(CSurfaceArea *surface, CStarControlSub12 *sub12);
 };
 
 } // End of namespace Titanic
