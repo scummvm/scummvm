@@ -314,8 +314,8 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		// get ifconfig
 		char buffer[LSSDP_BUFFER_LEN] = {};
 		struct ifconf ifc;
-                ifc.ifc_len = sizeof(buffer);
-                ifc.ifc_buf = (caddr_t) buffer;
+		ifc.ifc_len = sizeof(buffer);
+		ifc.ifc_buf = (caddr_t) buffer;
 
 		if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
 		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
