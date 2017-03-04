@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-01 08:17+0100\n"
+"POT-Creation-Date: 2017-03-04 11:23+0100\n"
 "PO-Revision-Date: 2017-01-15 22:05+0000\n"
 "Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -824,38 +824,6 @@ msgstr "44 kHz"
 #: gui/options.cpp:123
 msgid "48 kHz"
 msgstr "48 kHz"
-
-#: gui/options.cpp:127
-msgid "3"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "5"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "8"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "10"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "13"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "15"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "18"
-msgstr ""
-
-#: gui/options.cpp:127
-msgid "20"
-msgstr ""
 
 #: gui/options.cpp:345 gui/options.cpp:638 gui/options.cpp:776
 #: gui/options.cpp:853 gui/options.cpp:1105

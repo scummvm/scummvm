@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-01 08:17+0100\n"
+"POT-Creation-Date: 2017-03-04 11:23+0100\n"
 "PO-Revision-Date: 2017-02-28 15:48+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -820,38 +820,6 @@ msgstr "44 kHz"
 #: gui/options.cpp:123
 msgid "48 kHz"
 msgstr "48 kHz"
-
-#: gui/options.cpp:127
-msgid "3"
-msgstr "3"
-
-#: gui/options.cpp:127
-msgid "5"
-msgstr "5"
-
-#: gui/options.cpp:127
-msgid "8"
-msgstr "8"
-
-#: gui/options.cpp:127
-msgid "10"
-msgstr "10"
-
-#: gui/options.cpp:127
-msgid "13"
-msgstr "13"
-
-#: gui/options.cpp:127
-msgid "15"
-msgstr "15"
-
-#: gui/options.cpp:127
-msgid "18"
-msgstr "18"
-
-#: gui/options.cpp:127
-msgid "20"
-msgstr "20"
 
 #: gui/options.cpp:345 gui/options.cpp:638 gui/options.cpp:776
 #: gui/options.cpp:853 gui/options.cpp:1105
@@ -4518,6 +4486,30 @@ msgstr ""
 "Tämä pelitallennus käyttää versiota %u, mutta tämä pelimoottorin tuki on "
 "vain versioon %d asti. Tarvitset päivitetyn version tästä pelimoottorista "
 "käyttääksesi tätä pelitallennusta."
+
+#~ msgid "3"
+#~ msgstr "3"
+
+#~ msgid "5"
+#~ msgstr "5"
+
+#~ msgid "8"
+#~ msgstr "8"
+
+#~ msgid "10"
+#~ msgstr "10"
+
+#~ msgid "13"
+#~ msgstr "13"
+
+#~ msgid "15"
+#~ msgstr "15"
+
+#~ msgid "18"
+#~ msgstr "18"
+
+#~ msgid "20"
+#~ msgstr "20"
 
 #~ msgid "Speed multiplier for mouse emulation"
 #~ msgstr "Hiiriemulaation nopeuskerroin"

@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-01 08:17+0100\n"
+"POT-Creation-Date: 2017-03-04 11:23+0100\n"
 "PO-Revision-Date: 2017-03-04 09:13+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -828,38 +828,6 @@ msgstr "44 kHz"
 #: gui/options.cpp:123
 msgid "48 kHz"
 msgstr "48 kHz"
-
-#: gui/options.cpp:127
-msgid "3"
-msgstr "3"
-
-#: gui/options.cpp:127
-msgid "5"
-msgstr "5"
-
-#: gui/options.cpp:127
-msgid "8"
-msgstr "8"
-
-#: gui/options.cpp:127
-msgid "10"
-msgstr "10"
-
-#: gui/options.cpp:127
-msgid "13"
-msgstr "13"
-
-#: gui/options.cpp:127
-msgid "15"
-msgstr "15"
-
-#: gui/options.cpp:127
-msgid "18"
-msgstr "18"
-
-#: gui/options.cpp:127
-msgid "20"
-msgstr "20"
 
 #: gui/options.cpp:345 gui/options.cpp:638 gui/options.cpp:776
 #: gui/options.cpp:853 gui/options.cpp:1105
@@ -4578,6 +4546,30 @@ msgstr ""
 "Dieser Spielstand verwendet Version %u, diese Engine unterstützt jedoch nur "
 "Spielstände bis zu Version %d. Sie benötigen eine aktualisierte Version der "
 "Engine, um diesen Spielstand zu verwenden."
+
+#~ msgid "3"
+#~ msgstr "3"
+
+#~ msgid "5"
+#~ msgstr "5"
+
+#~ msgid "8"
+#~ msgstr "8"
+
+#~ msgid "10"
+#~ msgstr "10"
+
+#~ msgid "13"
+#~ msgstr "13"
+
+#~ msgid "15"
+#~ msgstr "15"
+
+#~ msgid "18"
+#~ msgstr "18"
+
+#~ msgid "20"
+#~ msgstr "20"
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
