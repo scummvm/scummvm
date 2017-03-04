@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-04 22:45+0100\n"
-"PO-Revision-Date: 2017-03-04 10:33+0000\n"
+"PO-Revision-Date: 2017-03-04 21:57+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/ru/>\n"
+"Language-Team: Russian "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/ru/>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Russian\n"
 
@@ -889,20 +889,20 @@ msgstr "Мёртвая зона джойстика:"
 
 #: gui/options.cpp:997
 msgid "HW Shader:"
-msgstr ""
+msgstr "Аппаратный шейдер:"
 
 #: gui/options.cpp:997 gui/options.cpp:999
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Различные аппаратные шейдеры дают различные визуальные эффекты"
 
 #: gui/options.cpp:999
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Аппаратный шейдер:"
 
 #: gui/options.cpp:1000
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Различные шейдеры дают различные визуальные эффекты"
 
 #: gui/options.cpp:1017
 msgid "Graphics mode:"
@@ -1154,7 +1154,7 @@ msgstr "Громк. озвучки:"
 
 #: gui/options.cpp:1469
 msgid "Shader"
-msgstr ""
+msgstr "Шейдер"
 
 #: gui/options.cpp:1481
 msgid "Control"
