@@ -2,6 +2,9 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 1.10.0 (YYYY-MM-DD)
+ New ports:
+   - Added PSP Vita port.
+
  General:
    - Added a command-line option to automatically scan for supported games in
      the current or a specified directory.
