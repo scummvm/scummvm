@@ -89,6 +89,7 @@ protected:
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
+	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
@@ -142,6 +143,13 @@ private:
 	CheckboxWidget *_aspectCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
+	
+	//
+	// Shader controls
+	//
+	bool _enableShaderSettings;
+	StaticTextWidget *_shaderPopUpDesc;
+	PopUpWidget *_shaderPopUp;
 
 	//
 	// Audio controls

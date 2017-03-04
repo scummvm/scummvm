@@ -20,7 +20,7 @@
  *
  */
 
-#if defined(POSIX) || defined(PLAYSTATION3)
+#if defined(POSIX) || defined(PLAYSTATION3) || defined(PSP2)
 
 // Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
 // Also with clock() in sys/time.h in some Mac OS X SDKs.
@@ -36,7 +36,12 @@
 
 #include <sys/param.h>
 #include <sys/stat.h>
+#ifdef PSP2
+#include "backends/fs/psp2/psp2-dirent.h"
+#define mkdir sceIoMkdir
+#else
 #include <dirent.h>
+#endif
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>

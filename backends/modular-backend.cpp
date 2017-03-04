@@ -81,6 +81,18 @@ int ModularBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
+const OSystem::GraphicsMode *ModularBackend::getSupportedShaders() const {
+	return _graphicsManager->getSupportedShaders();
+}
+
+bool ModularBackend::setShader(int id) {
+	return _graphicsManager->setShader(id);
+}
+
+int ModularBackend::getShader() const {
+	return _graphicsManager->getShader();
+}
+
 void ModularBackend::resetGraphicsScale() {
 	_graphicsManager->resetGraphicsScale();
 }
