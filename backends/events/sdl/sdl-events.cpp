@@ -177,10 +177,6 @@ void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 		_graphicsManager->notifyMousePos(Common::Point(x, y));
 		_graphicsManager->transformMouseCoordinates(event.mouse);
 	}
-
-	// Update the "keyboard mouse" coords
-	_km.x = x * MULTIPLIER;
-	_km.y = y * MULTIPLIER;
 }
 
 bool SdlEventSource::handleKbdMouse(Common::Event &event) {
@@ -311,14 +307,8 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 			}
 
 			if (_km.x != oldKmX || _km.y != oldKmY) {
-				// keep hi-res coordinates since 
-				// processMouseEvent will overwrite them with lo-res numbers
-				oldKmX = _km.x;
-				oldKmY = _km.y;
 				event.type = Common::EVENT_MOUSEMOVE;
 				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-				_km.x = oldKmX;
-				_km.y = oldKmY;
 				return true;
 			}
 		}
@@ -745,6 +735,9 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	processMouseEvent(event, ev.motion.x, ev.motion.y);
+	// update KbdMouse
+	_km.x = ev.motion.x * MULTIPLIER;
+	_km.y = ev.motion.y * MULTIPLIER;
 
 	return true;
 }
@@ -768,6 +761,9 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 		return false;
 
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
@@ -784,6 +780,9 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	else
 		return false;
 	processMouseEvent(event, ev.button.x, ev.button.y);
+	// update KbdMouse
+	_km.x = ev.button.x * MULTIPLIER;
+	_km.y = ev.button.y * MULTIPLIER;
 
 	return true;
 }
