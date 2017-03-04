@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-04 22:45+0100\n"
+"POT-Creation-Date: 2017-03-05 00:45+0100\n"
 "PO-Revision-Date: 2017-03-04 21:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Ukrainian "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/uk/>\n"
+"Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/uk/>\n"
 "Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.9\n"
 "X-Language-name: Ukrainian\n"
 
@@ -917,7 +917,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Спеціальні режими растрування, які підтримують деякі ігри"
 
 #: gui/options.cpp:1043 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2518
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -2242,7 +2242,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
@@ -2252,22 +2252,22 @@ msgid "Resolution: %dx%d"
 msgstr "Розгалуження %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2402
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2404
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2420
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2422
 msgid "Filtering enabled"
 msgstr "Фільтрування увімкнено"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2422
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2424
 msgid "Filtering disabled"
 msgstr "Фільтрування вимкнено"
 
@@ -2282,7 +2282,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2475
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
