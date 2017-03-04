@@ -305,7 +305,6 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 
 	// if not - try platform-specific
 #ifdef POSIX
-	struct ifaddrs *ifAddrStruct = NULL;
 	void *tmpAddrPtr = NULL;
 
 	int fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -316,7 +315,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		char buffer[LSSDP_BUFFER_LEN] = {};
 		struct ifconf ifc;
                 ifc.ifc_len = sizeof(buffer);
-                ifc.ifc_buf = (caddr_t) buffer;		
+                ifc.ifc_buf = (caddr_t) buffer;
 
 		if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
 		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
