@@ -254,7 +254,7 @@ public:
 		 *       particular, interpolation, and works in-place.
 		 */
 		kFeatureAspectRatioCorrection,
-		
+
 		/**
 		 * If supported this flag can be used to switch between unfiltered and
 		 * filtered graphics modes.
@@ -337,17 +337,17 @@ public:
 		 * This feature has no associated state.
 		 */
 		kFeatureOpenUrl	,
-		
+
 		/**
 		* show on-screen control
 		*/
 		kFeatureOnScreenControl,
-		
+
 		/**
 		* mouse emulation mode
 		*/
 		kFeatureTouchpadMode,
-			
+
 		/**
 		* swap menu and back buttons
 		*/
@@ -586,7 +586,7 @@ public:
 	 * @return a list of supported shaders
 	 */
 	virtual const GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}}; 
+		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
 		return no_shader;
 	}
 
@@ -603,7 +603,7 @@ public:
 	 * Determine which shader is currently active.
 	 * @return the ID of the active shader
 	 */
-	virtual int getShader() { return 0; }
+	virtual int getShader() const { return 0; }
 
 	/**
 	 * Set the size and color format of the virtual screen. Typical sizes include:

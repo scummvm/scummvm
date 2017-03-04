@@ -106,7 +106,7 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const;
-	virtual int getShader();
+	virtual int getShader() const;
 	virtual bool setShader(int id);
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }

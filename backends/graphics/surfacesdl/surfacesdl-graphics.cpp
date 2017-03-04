@@ -706,7 +706,7 @@ const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedShaders() co
 	return s_supportedShaders;
 }
 
-int SurfaceSdlGraphicsManager::getShader() {
+int SurfaceSdlGraphicsManager::getShader() const {
 	return _currentShader;
 }
 
