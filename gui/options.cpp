@@ -113,7 +113,7 @@ enum {
 	kRootPathClearCmd = 'clrp'
 };
 #endif
-	
+
 enum {
 	kApplyCmd = 'appl'
 };
@@ -124,7 +124,7 @@ static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 k
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
-static const char *kbdMouseSpeedLabels[] = { _s("3"), _s("5"), _s("8"), _s("10"), _s("13"), _s("15"), _s("18"), _s("20"), 0 };
+static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", 0 };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
@@ -209,7 +209,7 @@ void OptionsDialog::init() {
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
 }
-	
+
 void OptionsDialog::build() {
 	// Retrieve game GUI options
 	_guioptions.clear();
@@ -217,7 +217,7 @@ void OptionsDialog::build() {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
 	}
-	
+
 	// Control options
 	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
 		if (ConfMan.hasKey("onscreen_control", _domain)) {
@@ -406,7 +406,7 @@ void OptionsDialog::build() {
 		_subSpeedLabel->setValue(speed);
 	}
 }
-	
+
 void OptionsDialog::clean() {
 	delete _subToggleGroup;
 	while (_firstWidget) {
@@ -416,7 +416,7 @@ void OptionsDialog::clean() {
 	}
 	init();
 }
-	
+
 void OptionsDialog::rebuild() {
 	int currentTab = _tabWidget->getActiveTab();
 	clean();
@@ -447,16 +447,16 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
-			
+
 			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 			ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
-			
+
 			bool isSet = false;
-			
+
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-				
+
 				while (gm->name) {
 					if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
 						if (ConfMan.get("gfx_mode", _domain) != gm->name)
@@ -470,7 +470,7 @@ void OptionsDialog::apply() {
 			}
 			if (!isSet)
 				ConfMan.removeKey("gfx_mode", _domain);
-			
+
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
 		} else {
@@ -481,21 +481,21 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("render_mode", _domain);
 		}
 	}
-	
+
 	// Setup graphics again if needed
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
-		
+
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
-		
+
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
-		
+
 		// Since this might change the screen resolution we need to give
 		// the GUI a chance to update it's internal state. Otherwise we might
 		// get a crash when the GUI tries to grab the overlay.
@@ -507,11 +507,11 @@ void OptionsDialog::apply() {
 		// Dialog::close) is called, to prevent crashes caused by invalid
 		// widgets being referenced or similar errors.
 		g_gui.checkScreenChange();
-		
+
 		if (gfxError != OSystem::kTransactionSuccess) {
 			// Revert ConfMan to what OSystem is using.
 			Common::String message = _("Failed to apply some of the graphic options changes:");
-			
+
 			if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 				while (gm->name) {
@@ -524,25 +524,25 @@ void OptionsDialog::apply() {
 				message += "\n";
 				message += _("the video mode could not be changed.");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionAspectRatioFailed) {
 				ConfMan.setBool("aspect_ratio", g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection), _domain);
 				message += "\n";
 				message += _("the aspect ratio setting could not be changed");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionFullscreenFailed) {
 				ConfMan.setBool("fullscreen", g_system->getFeatureState(OSystem::kFeatureFullscreenMode), _domain);
 				message += "\n";
 				message += _("the fullscreen setting could not be changed");
 			}
-			
+
 			if (gfxError & OSystem::kTransactionFilteringFailed) {
 				ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
 				message += "\n";
 				message += _("the filtering setting could not be changed");
 			}
-			
+
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
@@ -592,7 +592,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("mute", _domain);
 		}
 	}
-	
+
 	// Audio options
 	if (_midiPopUp) {
 		if (_enableAudioSettings) {
@@ -601,11 +601,11 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("music_driver", _domain);
 		}
 	}
-	
+
 	if (_oplPopUp) {
 		if (_enableAudioSettings) {
 			const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
-			
+
 			if (ed)
 				ConfMan.set("opl_driver", ed->name, _domain);
 			else
@@ -614,7 +614,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("opl_driver", _domain);
 		}
 	}
-	
+
 	if (_outputRatePopUp) {
 		if (_enableAudioSettings) {
 			if (_outputRatePopUp->getSelectedTag() != 0)
@@ -625,15 +625,15 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("output_rate", _domain);
 		}
 	}
-	
+
 	// MIDI options
 	if (_multiMidiCheckbox) {
 		if (_enableMIDISettings) {
 			saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
-			
+
 			ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
 			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
-			
+
 			Common::String soundFont(_soundFont->getLabel());
 			if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
 				ConfMan.set("soundfont", soundFont, _domain);
@@ -646,7 +646,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("soundfont", _domain);
 		}
 	}
-	
+
 	// MT-32 options
 	if (_mt32DevicePopUp) {
 		if (_enableMT32Settings) {
@@ -659,14 +659,14 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("enable_gs", _domain);
 		}
 	}
-	
+
 	// Subtitle options
 	if (_subToggleGroup) {
 		if (_enableSubtitleSettings) {
 			bool subtitles, speech_mute;
 			int talkspeed;
 			int sliderMaxValue = _subSpeedSlider->getMaxValue();
-			
+
 			switch (_subToggleGroup->getValue()) {
 				case kSubtitlesSpeech:
 					subtitles = speech_mute = false;
@@ -680,22 +680,22 @@ void OptionsDialog::apply() {
 					subtitles = speech_mute = true;
 					break;
 			}
-			
+
 			ConfMan.setBool("subtitles", subtitles, _domain);
 			ConfMan.setBool("speech_mute", speech_mute, _domain);
-			
+
 			// Engines that reuse the subtitle speed widget set their own max value.
 			// Scale the config value accordingly (see addSubtitleControls)
 			talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
 			ConfMan.setInt("talkspeed", talkspeed, _domain);
-			
+
 		} else {
 			ConfMan.removeKey("subtitles", _domain);
 			ConfMan.removeKey("talkspeed", _domain);
 			ConfMan.removeKey("speech_mute", _domain);
 		}
 	}
-	
+
 	// Save config file
 	ConfMan.flushToDisk();
 }
@@ -778,7 +778,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		draw();
 		break;
 	case kKbdMouseSpeedChanged:
-		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()])); 
+		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]));
 		_kbdMouseSpeedLabel->draw();
 		break;
 	case kJoystickDeadzoneChanged:
@@ -799,7 +799,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		Dialog::handleCommand(sender, cmd, data);
 	}
 }
-	
+
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
@@ -925,12 +925,12 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedSlider->setEnabled(ena);
 	_subSpeedLabel->setEnabled(ena);
 }
-	
+
 void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &prefix) {
 	// Show On-Screen control
 	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
 		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
-	
+
 	// Touchpad Mouse mode
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
 		_touchpadCheckbox = new CheckboxWidget(boss, prefix + "grTouchpadCheckbox", _("Touchpad mouse mode"));
@@ -1410,11 +1410,11 @@ GlobalOptionsDialog::~GlobalOptionsDialog() {
 	delete _fluidSynthSettingsDialog;
 #endif
 }
-	
+
 void GlobalOptionsDialog::build() {
 	// The tab widget
 	TabWidget *tab = new TabWidget(this, "GlobalOptions.TabWidget");
-	
+
 	//
 	// 1) The graphics tab
 	//
@@ -1743,7 +1743,7 @@ void GlobalOptionsDialog::clean() {
 
 	OptionsDialog::clean();
 }
-	
+
 void GlobalOptionsDialog::apply() {
 	Common::String savePath(_savePath->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
@@ -1850,7 +1850,7 @@ void GlobalOptionsDialog::apply() {
 #endif // NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
-	
+
 	if (!_newTheme.empty()) {
 #ifdef USE_TRANSLATION
 		Common::String lang = TransMan.getCurrentLanguage();
