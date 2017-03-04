@@ -634,6 +634,9 @@ int AdlEngine_v2::o2_initDisk(ScriptEnv &e) {
 }
 
 bool AdlEngine_v2::canSaveGameStateCurrently() {
+	if (!_canSaveNow)
+		return false;
+
 	// Back up first visit flag as it may be changed by this test
 	const bool isFirstTime = getCurRoom().isFirstTime;
 	const bool retval = AdlEngine::canSaveGameStateCurrently();

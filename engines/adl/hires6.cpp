@@ -206,6 +206,9 @@ int HiRes6Engine::o_fluteSound(ScriptEnv &e) {
 }
 
 bool HiRes6Engine::canSaveGameStateCurrently() {
+	if (!_canSaveNow)
+		return false;
+
 	// Back up variables that may be changed by this test
 	const byte var2 = getVar(2);
 	const byte var24 = getVar(24);
