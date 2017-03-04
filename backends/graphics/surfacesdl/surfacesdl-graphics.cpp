@@ -200,11 +200,13 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #endif
 
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
+	// Default backend does not have shaders. Disable check.
+	// TODO: Implement more elegant way.
+	if (0 && g_system->hasFeature(OSystem::kFeatureShader)) {
 		// shader number 0 is the entry NONE (no shader)
 		const OSystem::GraphicsMode *p = s_supportedShaders;
 		_numShaders = 0;
-		while (p->name) { 
+		while (p->name) {
 			_numShaders++;
 			p++;
 		}
