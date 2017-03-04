@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-04 11:50+0100\n"
-"PO-Revision-Date: 2017-03-04 10:53+0000\n"
-"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"PO-Revision-Date: 2017-03-04 10:55+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -881,7 +881,7 @@ msgstr "Vitesse :"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr "Zone inactive du joystick:"
+msgstr "Zone inactive du joystick :"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
@@ -890,7 +890,7 @@ msgstr ""
 #: gui/options.cpp:960
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "Zone inactive du joystick:"
+msgstr "Zone inactive du joystick :"
 
 #: gui/options.cpp:977
 msgid "Graphics mode:"
