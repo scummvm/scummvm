@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-01 08:17+0100\n"
-"PO-Revision-Date: 2017-02-26 11:10+0000\n"
+"PO-Revision-Date: 2017-03-04 09:09+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -831,35 +831,35 @@ msgstr "48 kHz"
 
 #: gui/options.cpp:127
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #: gui/options.cpp:127
 msgid "5"
-msgstr ""
+msgstr "5"
 
 #: gui/options.cpp:127
 msgid "8"
-msgstr ""
+msgstr "8"
 
 #: gui/options.cpp:127
 msgid "10"
-msgstr ""
+msgstr "10"
 
 #: gui/options.cpp:127
 msgid "13"
-msgstr ""
+msgstr "13"
 
 #: gui/options.cpp:127
 msgid "15"
-msgstr ""
+msgstr "15"
 
 #: gui/options.cpp:127
 msgid "18"
-msgstr ""
+msgstr "18"
 
 #: gui/options.cpp:127
 msgid "20"
-msgstr ""
+msgstr "20"
 
 #: gui/options.cpp:345 gui/options.cpp:638 gui/options.cpp:776
 #: gui/options.cpp:853 gui/options.cpp:1105
@@ -900,7 +900,6 @@ msgid "Swap Menu and Back buttons"
 msgstr "Vertausche Menü- und Zurück-Buttons"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
 msgstr "Maus-Geschwindigkeit:"
 
@@ -909,7 +908,6 @@ msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Maus-Geschwindigkeit:"
