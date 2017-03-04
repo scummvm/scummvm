@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-04 11:50+0100\n"
 "PO-Revision-Date: 2017-03-04 10:56+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Greek "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
@@ -892,7 +892,7 @@ msgstr "Ταχύτητα:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Περιοχή αδράνειας χειριστήριου:"
 
 #: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
 msgid "Analog joystick Deadzone"
