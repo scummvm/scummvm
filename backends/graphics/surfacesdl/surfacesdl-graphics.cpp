@@ -200,24 +200,12 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_videoMode.filtering = ConfMan.getBool("filtering");
 #endif
 
-	// Default backend does not have shaders. Disable check.
-	// TODO: Implement more elegant way.
-	if (0 && g_system->hasFeature(OSystem::kFeatureShader)) {
-		// shader number 0 is the entry NONE (no shader)
-		const OSystem::GraphicsMode *p = s_supportedShaders;
-		_numShaders = 0;
-		while (p->name) {
-			_numShaders++;
-			p++;
-		}
-		_currentShader = ConfMan.getInt("shader");
-		if (_currentShader < 0 || _currentShader >= _numShaders) {
-			_currentShader = 0;
-		}
-	} else {
-		_numShaders = 1;
-		_currentShader = 0;
-	}
+	// the default backend has no shaders
+	// shader number 0 is the entry NONE (no shader)
+	// for an example on shader support,
+	// consult the psp2sdl backend which inherits from this class
+	_currentShader = 0;
+	_numShaders = 1;
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
