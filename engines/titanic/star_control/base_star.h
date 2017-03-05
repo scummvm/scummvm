@@ -40,7 +40,7 @@ struct CBaseStarEntry {
 	byte _field2;
 	byte _field3;
 	double _value;
-	CBaseStarVal _val;
+	FVector _position;
 	uint _data[5];
 
 	CBaseStarEntry();
@@ -62,11 +62,6 @@ protected:
 	double _value1, _value2;
 	double _value3, _value4;
 protected:
-	/**
-	 * Get a pointer to a data entry
-	 */
-	CBaseStarEntry *getDataPtr(int index);
-
 	/**
 	 * Load entry data from a passed stream
 	 */
@@ -122,6 +117,11 @@ public:
 	void initialize();
 
 	int size() const { return _data.size(); }
+
+	/**
+	 * Get a pointer to a data entry
+	 */
+	const CBaseStarEntry *getDataPtr(int index) const;
 };
 
 } // End of namespace Titanic

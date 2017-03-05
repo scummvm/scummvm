@@ -198,13 +198,15 @@ int CStarControlSub12::proc27() const {
 	return _sub13._field24;
 }
 
-FVector CStarControlSub12::proc28(int index, const void *v2) {
-	error("TODO: CStarControlSub12::proc28");
-	return FVector();
+void CStarControlSub12::proc28(int index, const FVector &src, FVector &dest) {
+	dest._x = ((_sub13._valArray[index] + src._x) * _sub13._fieldC8)
+		/ (_sub13._fieldCC * src._z);
+	dest._y = src._y * _sub13._fieldC8 / (_sub13._fieldD0 * src._z);
+	dest._z = src._z;
 }
 
-FVector CStarControlSub12::proc29(const FVector &v) {
-	return _sub13.fn16(v);
+void CStarControlSub12::proc29(int index, const FVector &src, FVector &dest) {
+	_sub13.fn16(index, src, dest);
 }
 
 FVector CStarControlSub12::proc30(int index, const FVector &v) {

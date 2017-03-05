@@ -29,17 +29,17 @@ CStarControlSub4::CStarControlSub4() {
 }
 
 void CStarControlSub4::initialize() {
-	_min._v1 = _min._v2 = _min._v3 = 9.9999994e27;
-	_max._v1 = _max._v2 = _max._v3 = -9.9999994e27;
+	_min._x = _min._y = _min._z = 9.9999994e27;
+	_max._x = _max._y = _max._z = -9.9999994e27;
 }
 
-void CStarControlSub4::checkEntry(const CBaseStarVal &val) {
-	_min._v1 = MIN(_min._v1, val._v1);
-	_min._v2 = MIN(_min._v2, val._v2);
-	_min._v3 = MIN(_min._v3, val._v3);
-	_max._v1 = MAX(_max._v1, val._v1);
-	_max._v2 = MAX(_max._v2, val._v2);
-	_max._v3 = MAX(_max._v3, val._v3);
+void CStarControlSub4::checkEntry(const FVector &v) {
+	_min._x = MIN(_min._x, v._x);
+	_min._y = MIN(_min._y, v._y);
+	_min._z = MIN(_min._z, v._z);
+	_max._x = MAX(_max._x, v._x);
+	_max._y = MAX(_max._y, v._y);
+	_max._z = MAX(_max._z, v._z);
 }
 
 } // End of namespace Titanic

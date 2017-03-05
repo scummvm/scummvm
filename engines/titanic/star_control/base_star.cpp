@@ -36,9 +36,9 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 	_field2 = s.readByte();
 	_field3 = s.readByte();
 	_value = s.readFloatLE();
-	_val._v1 = s.readUint32LE();
-	_val._v2 = s.readUint32LE();
-	_val._v3 = s.readUint32LE();
+	_position._x = s.readUint32LE();
+	_position._y = s.readUint32LE();
+	_position._z = s.readUint32LE();
 
 	for (int idx = 0; idx < 5; ++idx)
 		_data[idx] = s.readUint32LE();
@@ -61,7 +61,7 @@ void CBaseStar::initialize() {
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		const CBaseStarEntry *entry = getDataPtr(idx);
-		_sub4.checkEntry(entry->_val);
+		_sub4.checkEntry(entry->_position);
 
 		if (entry->_value < _minVal)
 			_minVal = entry->_value;
@@ -72,7 +72,7 @@ void CBaseStar::initialize() {
 	_range = (_maxVal - _minVal) / 1.0;
 }
 
-CBaseStarEntry *CBaseStar::getDataPtr(int index) {
+const CBaseStarEntry *CBaseStar::getDataPtr(int index) const {
 	return (index >= 0 && index < (int)_data.size()) ? &_data[index] : nullptr;
 }
 
@@ -106,9 +106,9 @@ void CBaseStar::resetEntry(CBaseStarEntry &entry) {
 	entry._field1 = 0xFF;
 	entry._field2 = 0xFF;
 	entry._field3 = 0;
-	entry._val._v1 = 0;
-	entry._val._v2 = 0;
-	entry._val._v3 = 0;
+	entry._position._x = 0;
+	entry._position._y = 0;
+	entry._position._z = 0;
 	for (int idx = 0; idx < 5; ++idx)
 		entry._data[idx] = 0;
 }
@@ -162,9 +162,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
-		vector._x = entry._val._v1;
-		vector._y = entry._val._v2;
-		vector._z = entry._val._v3;
+		vector = entry._position;
 		v4 = vector._x * sub6._row1._z + vector._y * sub6._row2._z
 			+ vector._z * sub6._row3._z + sub6._field2C;
 		if (v4 <= minVal)

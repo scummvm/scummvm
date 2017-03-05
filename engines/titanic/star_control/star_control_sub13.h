@@ -37,15 +37,11 @@ private:
 	double _field1C;
 	int _width;
 	int _height;
-	double _valArray[5];
 	FMatrix _matrix;
 	CStarControlSub6 _sub1;
 	CStarControlSub6 _sub2;
 	double _fieldC0;
 	double _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	double _fieldD0;
 	int _fieldD4;
 private:
 	void setup(void *ptr);
@@ -56,6 +52,10 @@ public:
 	double _field10;
 	double _field14;
 	int _field24;
+	double _valArray[5];
+	double _fieldC8;
+	double _fieldCC;
+	double _fieldD0;
 public:
 	CStarControlSub13(void *ptr);
 	CStarControlSub13(CStarControlSub13 *src);
@@ -94,7 +94,7 @@ public:
 	void fn15(FMatrix &matrix);
 	CStarControlSub6 getSub1();
 	CStarControlSub6 getSub2();
-	FVector fn16(const FVector &v);
+	void fn16(int index, const FVector &src, FVector &dest);
 	FVector fn17(int index, const FVector &v);
 	FVector fn18(int index, const FVector &v);
 	void fn19(double *v1, double *v2, double *v3, double *v4);

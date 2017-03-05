@@ -25,7 +25,7 @@
 namespace Titanic {
 
 CStarControlSub13::CStarControlSub13(void *src) :
-		_fieldC0(0), _fieldC4(0), _fieldC8(0), _fieldCC(0), _fieldD0(0) {
+		_fieldC0(0), _fieldC4(0), _fieldC8(0.0), _fieldCC(0.0), _fieldD0(0.0) {
 	if (src) {
 		setup(src);
 	} else {
@@ -208,7 +208,7 @@ CStarControlSub6 CStarControlSub13::getSub2() {
 	return _sub2;
 }
 
-FVector CStarControlSub13::fn16(const FVector &v) {
+void CStarControlSub13::fn16(int index, const FVector &src, FVector &dest) {
 	error("TODO: CStarControlSub13::fn16");
 }
 

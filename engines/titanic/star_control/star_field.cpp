@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
+#include "titanic/star_control/star_control_sub12.h"
 
 namespace Titanic {
 
@@ -141,6 +142,7 @@ void CStarField::fn1(CErrorCode *errorCode) {
 }
 
 void CStarField::fn3(CSurfaceArea *surfaceArea) {
+	uint oldPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 0x323232;
 	surfaceArea->setColorFromPixel();
 
@@ -160,15 +162,57 @@ void CStarField::fn3(CSurfaceArea *surfaceArea) {
 	surfaceArea->fn1(FRect(300.0, 276.25, 300.0, 285.10416));
 	surfaceArea->fn1(FRect(193.75, 170.0, 184.89583, 170.0));
 	surfaceArea->fn1(FRect(406.25, 170.0, 415.10416, 170.0));
+
+	surfaceArea->_pixel = oldPixel;
+	surfaceArea->setColorFromPixel();
 }
 
 void CStarField::fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
-	// TODO
+	FVector v1, v2, v3;
+	_val5 = 0;
+
+	if (_mode == MODE_STARFIELD) {
+		if (fn5(surfaceArea, sub12, v1, v2, v3) > -1.0) {
+			surfaceArea->_pixel = 0xA0A0;
+			surfaceArea->setColorFromPixel();
+			surfaceArea->fn1(FRect(v1._x, v1._y, v3._x, v3._y));
+		}
+	}
+}
+
+double CStarField::fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		FVector &v1, FVector &v2, FVector &v3) {
+	if (_sub8._fieldC < 0)
+		return -1.0;
+
+	const CBaseStarEntry *dataP = _sub7.getDataPtr(_sub8._fieldC);
+	v2 = dataP->_position;
+	FVector tv;
+	sub12->proc29(2, v2, tv);
+
+	if (sub12->proc25() >= tv._z)
+		return -1.0;
+
+	sub12->proc28(2, tv, tv);
+
+	v1 = FVector(tv._x + surfaceArea->_centroid._x,
+		tv._y + surfaceArea->_centroid._y, tv._z);
+	FPoint pt = _sub8.getPosition();
+	v3 = FVector(pt._x, pt._y, 1.0);
+
+	double incr = (v1._x - pt._x) * (v1._x - pt._x);
+	if (incr > 3600.0)
+		return -1.0;
+	if ((v1._y - pt._y) * (v1._y - pt._y) + incr > 3600.0)
+		return -1.0;
+
+	_val5 = 1;
+	return v1._y - pt._y;
 }
 
 void CStarField::fn6(CVideoSurface *surface, CStarControlSub12 *sub12) {
-	CSurfaceArea surfaceArea(surface);
-
+		CSurfaceArea surfaceArea(surface);
+	// TODO
 }
 
 void CStarField::fn7() {

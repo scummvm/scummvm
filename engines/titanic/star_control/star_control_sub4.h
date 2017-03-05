@@ -23,23 +23,20 @@
 #ifndef TITANIC_STAR_CONTROL_SUB4_H
 #define TITANIC_STAR_CONTROL_SUB4_H
 
-namespace Titanic {
+#include "titanic/star_control/fvector.h"
 
-struct CBaseStarVal {
-	double _v1, _v2, _v3;
-	CBaseStarVal() : _v1(0), _v2(0), _v3(0) {}
-};
+namespace Titanic {
 
 class CStarControlSub4 {
 private:
-	CBaseStarVal _min;
-	CBaseStarVal _max;
+	FVector _min;
+	FVector _max;
 public:
 	CStarControlSub4();
 
 	void initialize();
 
-	void checkEntry(const CBaseStarVal &val);
+	void checkEntry(const FVector &v);
 };
 
 } // End of namespace Titanic

@@ -48,6 +48,9 @@ private:
 private:
 	void fn3(CSurfaceArea *surfaceArea);
 	void fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+	double fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		FVector &v1, FVector &v2, FVector &v3);
+
 public:
 	CStarField();
 

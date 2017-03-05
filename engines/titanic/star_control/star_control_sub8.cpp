@@ -61,6 +61,10 @@ void CStarControlSub8::fn3() {
 		++_field8;
 }
 
+FPoint CStarControlSub8::getPosition() const {
+	return (_fieldC >= 0 && _fieldC <= 2) ? _data[_fieldC]._position : FPoint();
+}
+
 void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 	// TODO
 }

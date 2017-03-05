@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB8_H
 
 #include "titanic/star_control/surface_area.h"
+#include "titanic/star_control/fpoint.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/support/video_surface.h"
 
@@ -35,8 +36,7 @@ class CStarControlSub12;
 
 class CStarControlSub8 {
 	struct StructEntry {
-		int _field0;
-		int _field4;
+		FPoint _position;
 		int _field8;
 		int _fieldC;
 	};
@@ -44,11 +44,11 @@ private:
 #if 0
 	int _field0;
 	int _field4;
-	int _fieldC;
-	StructEntry _array[3];
 #endif
+	StructEntry _data[3];
 public:
 	int _field8;
+	int _fieldC;
 public:
 	CStarControlSub8();
 
@@ -72,6 +72,7 @@ public:
 	void fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
 	void fn3();
+	FPoint getPosition() const;
 };
 
 } // End of namespace Titanic
