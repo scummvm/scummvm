@@ -269,7 +269,8 @@ bool CStarControlSub12::setupHandler(const CStar20Data *src) {
 		assert(!_handlerP);
 		_handlerP = handler;
 		return true;
-	} else {
+	}
+	else {
 		return false;
 	}
 }
@@ -279,6 +280,18 @@ void CStarControlSub12::deleteHandler() {
 		delete _handlerP;
 		_handlerP = nullptr;
 	}
+}
+
+void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
+	// TODO
+}
+
+void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
+	// TODO
+}
+
+void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
+	// TODO
 }
 
 } // End of namespace Titanic

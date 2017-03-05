@@ -48,9 +48,6 @@ private:
 private:
 	void fn3(CSurfaceArea *surfaceArea);
 	void fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
-	double fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
-		FVector &v1, FVector &v2, FVector &v3);
-
 public:
 	CStarField();
 
@@ -108,9 +105,12 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
+	double fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		FVector &v1, FVector &v2, FVector &v3);
 	void fn6(CVideoSurface *surface, CStarControlSub12 *sub12);
 	void fn7();
 	void fn8(CVideoSurface *surface);
+	void fn9() { _sub5.fn1(); }
 
 	/**
 	 * Called when the starfield is clicked

@@ -121,6 +121,10 @@ public:
 	bool is108() const { return _field108; }
 	void set108() { _field108 = true; }
 	void reset108() { _field108 = false; }
+
+	void fn1(CStarControlSub13 *sub13, const FVector &v);
+	void fn2(FVector v1, FVector v2, FVector v3);
+	void fn3(CStarControlSub13 *sub13, const FVector &v);
 };
 
 } // End of namespace Titanic

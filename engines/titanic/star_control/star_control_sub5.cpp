@@ -25,8 +25,7 @@
 
 namespace Titanic {
 
-CStarControlSub5::CStarControlSub5() :
-	_field4(1) {
+CStarControlSub5::CStarControlSub5() : _flag(true) {
 }
 
 bool CStarControlSub5::setup() {
@@ -41,6 +40,10 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 
 void CStarControlSub5::proc3(CErrorCode *errorCode) {
 	// TODO
+}
+
+void CStarControlSub5::fn1() {
+	_flag = !_flag;
 }
 
 } // End of namespace Titanic

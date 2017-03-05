@@ -23,6 +23,8 @@
 #ifndef TITANIC_FVECTOR_H
 #define TITANIC_FVECTOR_H
 
+#include "titanic/star_control/fpoint.h"
+
 namespace Titanic {
 
 class CStarControlSub6;
@@ -82,6 +84,16 @@ public:
 		_x -= delta._x;
 		_y -= delta._y;
 		_z -= delta._z;
+	}
+
+	void operator+=(const FPoint &delta) {
+		_x += delta._x;
+		_y += delta._y;
+	}
+
+	void operator-=(const FPoint &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
 	}
 };
 

@@ -39,7 +39,7 @@ class CStarControlSub5 {
 		int _fieldC;
 	};
 private:
-	int _field4;
+	bool _flag;
 	CStarControlSub6 _sub1, _sub2;
 #if 0
 	SubEntry _array[5];
@@ -56,8 +56,10 @@ public:
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	virtual void proc3(CErrorCode *errorCode);
 
-	int get4() const { return _field4; }
-	void set4(int val) { _field4 = val; }
+	bool get4() const { return _flag; }
+	void set4(bool val) { _flag = val; }
+
+	void fn1();
 };
 
 } // End of namespace Titanic

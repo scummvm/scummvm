@@ -339,11 +339,13 @@ void CStarView::toggleMode() {
 }
 
 void CStarView::fn11() {
-	// TODO
+	if (_starField)
+		_starField->fn9();
 }
 
 void CStarView::fn12() {
-	// TODO
+	if (_starField)
+		_starField->toggle4();
 }
 
 void CStarView::fn13() {
@@ -373,7 +375,36 @@ void CStarView::setHasReference() {
 }
 
 void CStarView::fn16() {
-	// TODO
+	if (_starField && !_showingPhoto) {
+		CSurfaceArea surfaceArea(_videoSurface);
+		FVector v1, v2, v3;
+		double val = _starField->fn5(&surfaceArea, &_sub12, v1, v2, v3);
+
+		if (val > -1.0) {
+			v1 += surfaceArea._centroid;
+			v3 += surfaceArea._centroid;
+
+			switch (_starField->get88()) {
+			case -1:
+				_sub12.fn2(v1, v2, v3);
+				_starField->fn7();
+				break;
+
+			case 0:
+				_sub12.fn3(&_sub13, v2);
+				_starField->fn7();
+				break;
+
+			case 1:
+				_sub12.fn1(&_sub13, v2);
+				_starField->fn7();
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void CStarView::fn17() {
