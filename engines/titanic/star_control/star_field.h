@@ -117,6 +117,16 @@ public:
 	 */
 	bool mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
 		int flags, const Common::Point &pt);
+
+	/**
+	 * Gets a random star
+	 */
+	const CBaseStarEntry *getRandomStar() const;
+
+	/**
+	 * Gets a specified star
+	 */
+	const CBaseStarEntry *getStar(int index) const;
 };
 
 } // End of namespace Titanic

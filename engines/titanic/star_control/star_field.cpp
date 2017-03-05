@@ -23,6 +23,7 @@
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/star_control_sub12.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -211,8 +212,8 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 }
 
 void CStarField::fn6(CVideoSurface *surface, CStarControlSub12 *sub12) {
-		CSurfaceArea surfaceArea(surface);
-	// TODO
+	CSurfaceArea surfaceArea(surface);
+	_sub8.fn1(this, &surfaceArea, sub12);
 }
 
 void CStarField::fn7() {
@@ -239,6 +240,17 @@ bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub1
 
 		return false;
 	}
+}
+
+const CBaseStarEntry *CStarField::getRandomStar() const {
+	if (_data.empty())
+		return nullptr;
+
+	return getDataPtr(g_vm->getRandomNumber(_data.size() - 1));
+}
+
+const CBaseStarEntry *CStarField::getStar(int index) const {
+	return (index < 0 || index >= (int)_data.size()) ? nullptr : getDataPtr(index);
 }
 
 } // End of namespace Titanic

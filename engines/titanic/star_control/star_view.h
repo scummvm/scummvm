@@ -57,10 +57,10 @@ private:
 	void fn18(CStarControlSub12 *sub12);
 	void fn19(int v);
 
-	void randomizeVectors1(FVector *v1, FVector *v2);
-	void randomizeVectors2(FVector *v1, FVector *v2);
-	void randomizeVectors3(FVector *v1, FVector *v2);
-	void randomizeVectors4(FVector *v1, FVector *v2);
+	void randomizeVectors1(FVector &v1, FVector &v2);
+	void randomizeVectors2(FVector &v1, FVector &v2);
+	void randomizeVectors3(FVector &v1, FVector &v2);
+	void randomizeVectors4(FVector &v1, FVector &v2);
 
 	/**
 	 * Handles resizing the surface

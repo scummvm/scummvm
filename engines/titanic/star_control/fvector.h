@@ -63,6 +63,26 @@ public:
 	bool operator!=(const FVector &src) const {
 		return !operator==(src);
 	}
+
+	FVector operator+(const FVector &delta) const {
+		return FVector(_x + delta._x, _y + delta._y, _z + delta._z);
+	}
+
+	FVector operator-(const FVector &delta) const {
+		return FVector(_x - delta._x, _y - delta._y, _z - delta._z);
+	}
+
+	void operator+=(const FVector &delta) {
+		_x += delta._x;
+		_y += delta._y;
+		_z += delta._z;
+	}
+
+	void operator-=(const FVector &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
+		_z -= delta._z;
+	}
 };
 
 } // End of namespace Titanic
