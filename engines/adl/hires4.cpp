@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/events.h"
 
 #include "adl/adl_v3.h"
 #include "adl/detection.h"
@@ -47,6 +48,367 @@ namespace Adl {
 #define IDI_HR4_MSG_ITEM_DOESNT_MOVE   114
 #define IDI_HR4_MSG_ITEM_NOT_HERE      115
 #define IDI_HR4_MSG_THANKS_FOR_PLAYING 113
+
+class HiRes4Engine : public AdlEngine_v3 {
+public:
+	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine_v3(syst, gd) { }
+
+private:
+	// AdlEngine
+	void runIntro();
+	void init();
+	void initGameState();
+
+	void putSpace(uint x, uint y) const;
+	void drawChar(byte c, Common::SeekableReadStream &shapeTable, Common::Point &pos) const;
+	void drawText(const Common::String &str, Common::SeekableReadStream &shapeTable, const float ht, const float vt) const;
+
+	void runIntroAdvise(Common::SeekableReadStream &menu);
+	void runIntroLogo(Common::SeekableReadStream &ms2);
+	void runIntroTitle(Common::SeekableReadStream &menu, Common::SeekableReadStream &ms2);
+	void runIntroInstructions(Common::SeekableReadStream &instructions);
+	void runIntroLoading(Common::SeekableReadStream &adventure);
+
+	static const uint kClock = 1022727; // Apple II CPU clock rate
+};
+
+void HiRes4Engine::putSpace(uint x, uint y) const {
+	if (shouldQuit())
+		return;
+
+	_display->moveCursorTo(Common::Point(x, y));
+	_display->printChar(' ');
+	_display->updateTextScreen();
+	delay(2);
+}
+
+void HiRes4Engine::drawChar(byte c, Common::SeekableReadStream &shapeTable, Common::Point &pos) const {
+	shapeTable.seek(0);
+	byte entries = shapeTable.readByte();
+
+	if (c >= entries)
+		error("Character %d is not in the shape table", c);
+
+	shapeTable.seek(c * 2 + 2);
+	uint16 offset = shapeTable.readUint16LE();
+
+	shapeTable.seek(offset);
+
+	_graphics->drawShape(shapeTable, pos);
+}
+
+void HiRes4Engine::drawText(const Common::String &str, Common::SeekableReadStream &shapeTable, const float ht, const float vt) const {
+	if (shouldQuit())
+		return;
+
+	Common::Point pos(ht * 7, vt * 7.7);
+
+	drawChar(99, shapeTable, pos);
+
+	for (uint i = 0; i < str.size(); ++i) {
+		const byte c = str[i] - 32;
+
+		drawChar(c, shapeTable, pos);
+		drawChar(98, shapeTable, pos);
+
+		_display->updateHiResScreen();
+		delay(15);
+	}
+}
+
+void HiRes4Engine::runIntroAdvise(Common::SeekableReadStream &menu) {
+	Common::StringArray backupText;
+	backupText.push_back(readStringAt(menu, 0x659, '"'));
+	backupText.push_back(readStringAt(menu, 0x682, '"'));
+	backupText.push_back(readStringAt(menu, 0x6a9, '"'));
+	backupText.push_back(readStringAt(menu, 0x6c6, '"'));
+
+	_display->setMode(DISPLAY_MODE_TEXT);
+
+	for (uint x = 2; x <= 36; ++x)
+		putSpace(x, 2);
+
+	for (uint y = 3; y <= 20; ++y) {
+		putSpace(2, y);
+		putSpace(36, y);
+	}
+
+	for (uint x = 2; x <= 36; ++x)
+		putSpace(x, 20);
+
+	for (uint x = 0; x <= 38; ++x)
+		putSpace(x, 0);
+
+	for (uint y = 1; y <= 21; ++y) {
+		putSpace(0, y);
+		putSpace(38, y);
+	}
+
+	for (uint x = 0; x <= 38; ++x)
+		putSpace(x, 22);
+
+	int y = 7;
+
+	for (uint i = 0; i < backupText.size(); ++i) {
+		uint x = 0;
+
+		do {
+			if (shouldQuit())
+				return;
+
+			++x;
+
+			Common::String left = backupText[i];
+			left.erase(x, Common::String::npos);
+			Common::String right = backupText[i];
+			right.erase(0, right.size() - x);
+
+			_display->moveCursorTo(Common::Point(19 - x, y));
+			_display->printAsciiString(left);
+			_display->moveCursorTo(Common::Point(19, y));
+			_display->printAsciiString(right);
+			_display->updateTextScreen();
+			delay(35);
+		} while (x != backupText[i].size() / 2);
+
+		if (i == 2)
+			y = 18;
+		else
+			y += 2;
+	}
+
+	Common::String cursor = readStringAt(menu, 0x781, '"');
+
+	uint cursorIdx = 0;
+	while (!shouldQuit()) {
+		Common::Event event;
+		if (pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN)
+				break;
+		}
+
+		_display->moveCursorTo(Common::Point(32, 18));
+		_display->printChar(APPLECHAR(cursor[cursorIdx]));
+		_display->updateTextScreen();
+		g_system->delayMillis(25);
+		cursorIdx = (cursorIdx + 1) % cursor.size();
+	}
+}
+
+void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
+	_display->clear(0x00);
+	_display->setMode(DISPLAY_MODE_HIRES);
+	byte *logo = new byte[DISPLAY_SIZE];
+	Display::loadFrameBuffer(ms2, logo);
+
+	for (uint x = 0; x < DISPLAY_WIDTH; ++x) {
+		for (uint y = 0; y < DISPLAY_HEIGHT; ++y) {
+			const byte p = logo[y * DISPLAY_PITCH + x / 7];
+			_display->setPixelBit(Common::Point(x, y), p);
+			if (x % 7 == 6)
+				_display->setPixelPalette(Common::Point(x, y), p);
+		}
+		_display->updateHiResScreen();
+
+		if (shouldQuit()) {
+			delete logo;
+			return;
+		}
+
+		delay(7);
+	}
+
+	delete logo;
+
+	for (uint i = 38; i != 0; --i) {
+		Common::Point p;
+
+		for (p.y = 1; p.y < DISPLAY_HEIGHT; ++p.y)
+			for (p.x = 0; p.x < DISPLAY_WIDTH; p.x += 7)
+				_display->setPixelByte(Common::Point(p.x, p.y - 1), _display->getPixelByte(p));
+
+		_display->updateHiResScreen();
+
+		Tones tone;
+		tone.push_back(Tone(kClock / 2.0 / ((i * 4 + 1) * 10.0 + 10.0), 12.5));
+		playTones(tone, false, false);
+
+		if (shouldQuit())
+			return;
+	}
+}
+
+void HiRes4Engine::runIntroTitle(Common::SeekableReadStream &menu, Common::SeekableReadStream &ms2) {
+	ms2.seek(0x2290);
+	StreamPtr shapeTable(ms2.readStream(0x450));
+	if (ms2.err() || ms2.eos())
+		error("Failed to read shape table");
+
+	Common::String titleString(readStringAt(menu, 0x1f5, '"'));
+	drawText(titleString, *shapeTable, 4.0f, 22.5f);
+
+	titleString = readStringAt(menu, 0x22b, '"');
+	drawText(titleString, *shapeTable, 5.0f, 24.0f);
+
+	// Draw "TM" with lines
+	_graphics->drawLine(Common::Point(200, 170), Common::Point(200, 174), 0x7f);
+	_graphics->drawLine(Common::Point(198, 170), Common::Point(202, 170), 0x7f);
+	_display->updateHiResScreen();
+	delay(7);
+	_graphics->drawLine(Common::Point(204, 170), Common::Point(204, 174), 0x7f);
+	_graphics->drawLine(Common::Point(204, 170), Common::Point(207, 173), 0x7f);
+	_graphics->drawLine(Common::Point(207, 173), Common::Point(209, 170), 0x7f);
+	_graphics->drawLine(Common::Point(209, 170), Common::Point(209, 174), 0x7f);
+	_display->updateHiResScreen();
+	delay(7);
+
+	titleString = readStringAt(menu, 0x46c);
+	drawText(titleString, *shapeTable, 20.0f - titleString.size() / 2.0f, 10.6f);
+
+	titleString = readStringAt(menu, 0x490);
+	drawText(titleString, *shapeTable, 20.0f - titleString.size() / 2.0f, 11.8f);
+
+	Common::StringArray menuStrings;
+	menuStrings.push_back(readStringAt(menu, 0x515));
+	menuStrings.push_back(readStringAt(menu, 0x52b));
+
+	for (uint i = 0; i < menuStrings.size(); ++i)
+		drawText(Common::String::format("%d) ", i + 1) + menuStrings[i], *shapeTable, 12.5f, 14.0f + i * 1.2f);
+
+	titleString = readStringAt(menu, 0x355, '"');
+	drawText(titleString, *shapeTable, 12.5f, 14.0f + menuStrings.size() * 1.2f + 2.0f);
+}
+
+void HiRes4Engine::runIntroInstructions(Common::SeekableReadStream &instructions) {
+	Common::String line;
+	Common::String pressKey(readStringAt(instructions, 0xad6, '"'));
+	instructions.seek(0);
+
+	_display->home();
+	_display->setMode(DISPLAY_MODE_TEXT);
+
+	// Search for PRINT commands in tokenized BASIC
+	while (1) {
+		char c;
+
+		do {
+			c = instructions.readByte();
+
+			if (instructions.err() || instructions.eos())
+				error("Error reading instructions file");
+
+			// GOSUB (calls "press any key" routine)
+			if (c == (char)0xb0) {
+				_display->moveCursorTo(Common::Point(6, 23));
+				_display->printAsciiString(pressKey);
+				inputKey();
+
+				if (shouldQuit())
+					return;
+
+				_display->home();
+			}
+		} while (c != (char)0xba); // PRINT
+
+		uint quotes = 0;
+		while (1) {
+			c = instructions.readByte();
+
+			if (instructions.err() || instructions.eos())
+				error("Error reading instructions file");
+
+			if (c == '"') {
+				++quotes;
+				continue;
+			}
+
+			if (c == 0)
+				break;
+
+			if (quotes == 1)
+				line += c;
+			else if (c == ':') // Separator
+				break;
+			else if (c == '4') // CTRL-D before "RUN MENU"
+				return;
+		};
+
+		line += '\r';
+		_display->printAsciiString(line);
+		line.clear();
+	}
+}
+
+void HiRes4Engine::runIntroLoading(Common::SeekableReadStream &adventure) {
+	_display->home();
+	_display->setMode(DISPLAY_MODE_TEXT);
+
+	const uint kStrings = 4;
+	const uint kStringLen = 39;
+	char text[kStrings][kStringLen];
+
+	adventure.seek(0x2eb);
+
+	if (adventure.read(text, sizeof(text)) < sizeof(text))
+		error("Failed to read loading screen text");
+
+	const uint yPos[kStrings] = { 2, 19, 8, 22 };
+
+	for (uint  i = 0; i < kStrings; ++i) {
+		_display->moveCursorTo(Common::Point(0, yPos[i]));
+		_display->printString(Common::String(text[i], kStringLen));
+	}
+
+	delay(4000);
+}
+
+void HiRes4Engine::runIntro() {
+	Common::ScopedPtr<Files_DOS33> files(new Files_DOS33());
+	files->open(getDiskImageName(0));
+
+	while (!shouldQuit()) {
+		StreamPtr menu(files->createReadStream("MENU"));
+		runIntroAdvise(*menu);
+
+		if (shouldQuit())
+			return;
+
+		StreamPtr ms2(files->createReadStream("MS2"));
+		runIntroLogo(*ms2);
+
+		if (shouldQuit())
+			return;
+
+		_graphics->setBounds(Common::Rect(280, 192));
+		runIntroTitle(*menu, *ms2);
+		_graphics->setBounds(Common::Rect(280, 160));
+
+		while (1) {
+			char key = inputKey();
+
+			if (shouldQuit())
+				return;
+
+			if (key == APPLECHAR('1')) {
+				StreamPtr instructions(files->createReadStream("INSTRUCTIONS"));
+				runIntroInstructions(*instructions);
+				break;
+			} else if (key == APPLECHAR('2')) {
+				StreamPtr adventure(files->createReadStream("THE ADVENTURE"));
+				runIntroLoading(*adventure);
+				return;
+			}
+		};
+	}
+}
+
+void HiRes4Engine::init() {
+	_graphics = new GraphicsMan_v2(*_display);
+}
+
+void HiRes4Engine::initGameState() {
+}
 
 class HiRes4Engine_Atari : public AdlEngine_v3 {
 public:
@@ -261,6 +623,8 @@ void HiRes4Engine_Atari::adjustDataBlockPtr(byte &track, byte &sector, byte &off
 
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	switch (gd->desc.platform) {
+	case Common::kPlatformApple2:
+		return new HiRes4Engine(syst, gd);
 	case Common::kPlatformAtari8Bit:
 		return new HiRes4Engine_Atari(syst, gd);
 	default:
