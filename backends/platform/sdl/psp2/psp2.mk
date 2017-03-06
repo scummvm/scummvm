@@ -1,8 +1,6 @@
-DATE := $(shell date +%y-%m-%d)
-
 psp2vpk: $(EXECUTABLE)
 	rm -rf psp2pkg
-	rm -f $(EXECUTABLE)-$(DATE).vpk
+	rm -f $(EXECUTABLE).vpk
 	mkdir -p psp2pkg/sce_sys/livearea/contents
 	mkdir -p psp2pkg/data/
 	mkdir -p psp2pkg/doc/
@@ -21,6 +19,6 @@ ifdef DIST_FILES_ENGINEDATA
 endif
 	cp $(DIST_FILES_DOCS) psp2pkg/doc/
 	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/doc/
-	cd psp2pkg && zip -r ../$(EXECUTABLE)-$(DATE).vpk . && cd ..
+	cd psp2pkg && zip -r ../$(EXECUTABLE).vpk . && cd ..
 
 .PHONY: psp2vpk
