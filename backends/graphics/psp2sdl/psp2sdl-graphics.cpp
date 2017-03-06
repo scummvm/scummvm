@@ -87,20 +87,15 @@ PSP2SdlGraphicsManager::PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, S
 	}
 	_videoMode.aspectRatioCorrection = false;
 
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		// shader number 0 is the entry NONE (no shader)
-		const OSystem::GraphicsMode *p = s_supportedShadersPSP2;
-		_numShaders = 0;
-		while (p->name) { 
-			_numShaders++;
-			p++;
-		}
-		_currentShader = ConfMan.getInt("shader");
-		if (_currentShader < 0 || _currentShader >= _numShaders) {
-			_currentShader = 0;
-		}
-	} else {
-		_numShaders = 1;
+	// shader number 0 is the entry NONE (no shader)
+	const OSystem::GraphicsMode *p = s_supportedShadersPSP2;
+	_numShaders = 0;
+	while (p->name) { 
+		_numShaders++;
+		p++;
+	}
+	_currentShader = ConfMan.getInt("shader");
+	if (_currentShader < 0 || _currentShader >= _numShaders) {
 		_currentShader = 0;
 	}
 
