@@ -212,14 +212,14 @@ void HiRes4Engine::runIntroLogo(Common::SeekableReadStream &ms2) {
 		_display->updateHiResScreen();
 
 		if (shouldQuit()) {
-			delete logo;
+			delete[] logo;
 			return;
 		}
 
 		delay(7);
 	}
 
-	delete logo;
+	delete[] logo;
 
 	for (uint i = 38; i != 0; --i) {
 		Common::Point p;
