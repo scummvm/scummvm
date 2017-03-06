@@ -140,6 +140,11 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return res;
 		}
 
+		if (!strncmp(res, "on ", 3)) {
+			debugC(1, kDebugLingoCompile, "See on");
+			return res;
+		}
+
 		if (!strncmp(res, "factory ", 8)) {
 			debugC(1, kDebugLingoCompile, "See factory");
 			return res;
@@ -195,7 +200,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
 				_inFactory = true;
-			else if (chunk.hasPrefix("macro"))
+			else if (chunk.hasPrefix("macro") || chunk.hasPrefix("on"))
 				_inFactory = false;
 			else
 				_inFactory = false;
