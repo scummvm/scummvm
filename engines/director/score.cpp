@@ -1013,6 +1013,7 @@ void Score::processEvents() {
 					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				} else {
 					// D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
+					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_castId + 1024);
 					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				}
 			}
