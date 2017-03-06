@@ -35,21 +35,67 @@ class CStarControlSub5 {
 	struct SubEntry {
 		int _field0;
 		int _field4;
+		byte *_data1P;
+		byte *_data2P;
+		SubEntry() : _field0(0), _field4(0), _data1P(nullptr), _data2P(nullptr) {}
+		~SubEntry() { clear(); }
+
+		/**
+		 * Clears the entry
+		 */
+		void clear();
+	};
+
+	struct Entry {
+		int _field0;
+		byte _field4;
+		byte _field5;
+		byte _field6;
 		int _field8;
 		int _fieldC;
+		double _field10;
+		byte _field14;
+		byte _field15;
+
+		Entry() : _field0(0), _field4(0), _field5(0), _field6(0), _field8(0),
+				_fieldC(0), _field10(0), _field14(0), _field15(0) {}
+	};
+
+	struct MemoryBlock {
+	public:
+		byte *_ptr;
+	public:
+		MemoryBlock() : _ptr(nullptr) {}
+		~MemoryBlock() { delete[] _ptr; }
+
+		/**
+		 * Allocates the memory block
+		 */
+		bool allocate();
 	};
 private:
 	bool _flag;
 	CStarControlSub6 _sub1, _sub2;
-#if 0
 	SubEntry _array[5];
-	int _field7914;
-	int _field78AC;
+	Entry _entries[1284];
 	int _field78B0;
-#endif
+	MemoryBlock _memoryBlock;
+	byte *_dataP;
+private:
+	/**
+	 * Sets up the data for an array entry
+	 * @return	True if success
+	 */
+	bool setupEntry(int val1, int val2, int index, double val3);
+
+	/**
+	 * Secondary setup method
+	 * @return	True if success
+	 */
+	bool setup2(int val1, int val2);
 public:
 	CStarControlSub5();
-	virtual ~CStarControlSub5() {}
+	virtual ~CStarControlSub5();
 
 	virtual bool setup();
 	virtual void proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,

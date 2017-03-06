@@ -51,6 +51,7 @@ public:
 	int _fieldC;
 public:
 	CStarControlSub8();
+	~CStarControlSub8() { clear(); }
 
 	/**
 	 * Load the data for the class from file
@@ -73,6 +74,8 @@ public:
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
 	void fn3();
 	FPoint getPosition() const;
+
+	void clear();
 };
 
 } // End of namespace Titanic

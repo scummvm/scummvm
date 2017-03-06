@@ -69,4 +69,8 @@ void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 	// TODO
 }
 
+void CStarControlSub8::clear() {
+	// TODO
+}
+
 } // End of namespace Titanic
