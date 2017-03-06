@@ -66,6 +66,7 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_movieArchive = archive;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
+	_currentMouseDownSpriteId = 0;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {
