@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-05 00:45+0100\n"
+"POT-Creation-Date: 2017-03-06 15:57+0100\n"
 "PO-Revision-Date: 2017-03-05 14:47+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
+"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -919,7 +919,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Speciale ditheringmodi die door sommige games ondersteund worden"
 
 #: gui/options.cpp:1043 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2508
 msgid "Fullscreen mode"
 msgstr "Volledig-scherm modus"
 
@@ -2243,7 +2243,7 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
 msgid "Windowed mode"
 msgstr "Venstermodus"
 
@@ -2253,22 +2253,22 @@ msgid "Resolution: %dx%d"
 msgstr "Resolutie: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2398
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2386
 msgid "Enabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie ingeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2404
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2392
 msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2422
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2410
 msgid "Filtering enabled"
 msgstr "Filteren aangezet"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2424
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Filtering disabled"
 msgstr "Filteren uitgeschakeld"
 
@@ -2283,7 +2283,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normaal (niet schalen)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2465
 msgid "Active graphics filter:"
 msgstr "Actieve grafische filter:"
 
