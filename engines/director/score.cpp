@@ -1050,6 +1050,10 @@ void Score::processEvents() {
 }
 
 Sprite *Score::getSpriteById(uint16 id) {
+	if (_currentFrame >= _frames.size() || _currentFrame < 0 || id >= _frames[_currentFrame]->_sprites.size()) {
+		warning("Score::getSpriteById(%d): out of bounds. frame: %d", id, _currentFrame);
+		return nullptr;
+	}
 	if (_frames[_currentFrame]->_sprites[id]) {
 		return _frames[_currentFrame]->_sprites[id];
 	} else {
