@@ -86,8 +86,6 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 	Common::Array<double> *arr;
 }
 
-%token EOSTREAM
-
 %token UNARY
 %token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE
 %token<i> INT
@@ -616,7 +614,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 
 				checkEnd($7, $1->c_str(), false);
 			}
-	| on begin argdef nl argstore stmtlist EOSTREAM {	// D4. No 'end' clause
+	| on begin argdef nl argstore stmtlist {	// D4. No 'end' clause
 				g_lingo->code1(g_lingo->c_procret);
 				g_lingo->define(*$1, $2, $3);
 				g_lingo->_indef = false;
