@@ -112,6 +112,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("resource_info",		WRAP_METHOD(Console, cmdResourceInfo));
 	registerCmd("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	registerCmd("list",				WRAP_METHOD(Console, cmdList));
+	registerCmd("alloc_list",				WRAP_METHOD(Console, cmdAllocList));
 	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
 	// Game
@@ -364,6 +365,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" resource_info - Shows info about a resource\n");
 	debugPrintf(" resource_types - Shows the valid resource types\n");
 	debugPrintf(" list - Lists all the resources of a given type\n");
+	debugPrintf(" alloc_list - Lists all allocated resources\n");
 	debugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	debugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
 	debugPrintf("\n");
@@ -907,6 +909,36 @@ bool Console::cmdList(int argc, const char **argv) {
 	}
 
 	debugPrintf("\n");
+	return true;
+}
+
+bool Console::cmdAllocList(int argc, const char **argv) {
+	ResourceManager *resMan = _engine->getResMan();
+
+	for (int i = 0; i < kResourceTypeInvalid; ++i) {
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources((ResourceType)i);
+		if (resources.size()) {
+			Common::sort(resources.begin(), resources.end());
+			bool hasAlloc = false;
+			Common::List<ResourceId>::const_iterator it;
+			for (it = resources.begin(); it != resources.end(); ++it) {
+				Resource *resource = resMan->testResource(*it);
+				if (resource != nullptr && resource->data() != nullptr) {
+					if (hasAlloc) {
+						debugPrintf(", ");
+					} else {
+						debugPrintf("%s: ", getResourceTypeName((ResourceType)i));
+					}
+					hasAlloc = true;
+					debugPrintf("%u (%u locks)", resource->getNumber(), resource->getNumLockers());
+				}
+			}
+			if (hasAlloc) {
+				debugPrintf("\n");
+			}
+		}
+	}
+
 	return true;
 }
 

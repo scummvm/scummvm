@@ -277,6 +277,8 @@ public:
 	// eases transition.
 	uint32 getAudioCompressionType() const;
 
+	uint16 getNumLockers() const { return _lockers; }
+
 protected:
 	ResourceId _id;	// TODO: _id could almost be made const, only readResourceInfo() modifies it...
 	int32 _fileOffset; /**< Offset in file */
