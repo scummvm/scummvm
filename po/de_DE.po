@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-06 15:57+0100\n"
-"PO-Revision-Date: 2017-03-05 08:27+0000\n"
+"PO-Revision-Date: 2017-03-07 19:30+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -869,7 +869,7 @@ msgstr "Menü- und Zurück-Tasten vertauschen"
 
 #: gui/options.cpp:968
 msgid "Pointer Speed:"
-msgstr "Maus-Geschwindigkeit:"
+msgstr "Zeiger-Geschw.:"
 
 #: gui/options.cpp:968 gui/options.cpp:970 gui/options.cpp:971
 msgid "Speed for keyboard/joystick mouse pointer control"
@@ -878,7 +878,7 @@ msgstr "Zeiger-Geschwindigkeit der Tastatur-/Joystick-Maus"
 #: gui/options.cpp:970
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Maus-Geschwindigkeit:"
+msgstr "Zeiger-Geschw.:"
 
 #: gui/options.cpp:981
 msgid "Joy Deadzone:"
