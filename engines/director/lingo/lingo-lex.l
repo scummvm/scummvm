@@ -35,6 +35,8 @@
 
 using namespace Director;
 
+#define yyterminate() return EOSTREAM
+
 int yyparse();
 static void count() {
 	if (debugChannelSet(-1, kDebugLingoParse))

@@ -86,6 +86,8 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 	Common::Array<double> *arr;
 }
 
+%token EOSTREAM
+
 %token UNARY
 %token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE
 %token<i> INT
@@ -105,6 +107,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist tell
 %type<narg> argdef arglist nonemptyarglist
+%type<s> on
 
 %right '='
 %left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS
@@ -605,15 +608,22 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;
-	| tON ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }			// D3
-		begin { g_lingo->_ignoreMe = true; } argdef nl argstore stmtlist ENDCLAUSE	{
+	| on begin  argdef nl argstore stmtlist ENDCLAUSE {	// D3
 				g_lingo->code1(g_lingo->c_procret);
-				g_lingo->define(*$2, $4, $6);
+				g_lingo->define(*$1, $2, $3);
 				g_lingo->_indef = false;
 				g_lingo->_ignoreMe = false;
 
-				checkEnd($10, $2->c_str(), false);
+				checkEnd($7, $1->c_str(), false);
 			}
+	| on begin argdef nl argstore stmtlist EOSTREAM {	// D4. No 'end' clause
+				g_lingo->code1(g_lingo->c_procret);
+				g_lingo->define(*$1, $2, $3);
+				g_lingo->_indef = false;
+				g_lingo->_ignoreMe = false;
+			}
+
+on:  tON ID { $$ = $2; g_lingo->_indef = true; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
