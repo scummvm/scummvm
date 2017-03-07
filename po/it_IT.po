@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-06 15:57+0100\n"
-"PO-Revision-Date: 2017-03-07 09:58+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-03-07 13:59+0000\n"
+"Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -905,7 +905,7 @@ msgstr "HW Shader:"
 
 #: gui/options.cpp:1000
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Shader diversi danno diversi effetti grafici"
 
 #: gui/options.cpp:1017
 msgid "Graphics mode:"
@@ -1156,7 +1156,7 @@ msgstr "Volume voci:"
 
 #: gui/options.cpp:1469
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/options.cpp:1481
 msgid "Control"
