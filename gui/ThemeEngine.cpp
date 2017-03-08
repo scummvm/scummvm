@@ -2420,19 +2420,32 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 		return "builtin";
 
 	Common::FSNode node(filename);
-	if (!node.exists())
-		return "builtin";
+	if (node.exists()) {
+		if (node.getName().matchString("*.zip", true)) {
+			Common::String id = node.getName();
 
-	if (node.getName().matchString("*.zip", true)) {
-		Common::String id = node.getName();
+			for (int i = 0; i < 4; ++i)
+				id.deleteLastChar();
 
-		for (int i = 0; i < 4; ++i)
-			id.deleteLastChar();
-
-		return id;
-	} else {
-		return node.getName();
+			return id;
+		} else {
+			return node.getName();
+		}
 	}
+
+	// FIXME:
+	// A very ugly hack to map a id to a filename, this will generate
+	// a complete theme list, thus it is slower than it could be.
+	// But it is the easiest solution for now.
+	Common::List<ThemeDescriptor> list;
+	listUsableThemes(list);
+
+	for (Common::List<ThemeDescriptor>::const_iterator i = list.begin(); i != list.end(); ++i) {
+		if (filename.equalsIgnoreCase(i->filename))
+			return i->id;
+	}
+
+	return "builtin";
 }
 
 void ThemeEngine::showCursor() {
