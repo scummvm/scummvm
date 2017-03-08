@@ -314,7 +314,7 @@ public:
 
 	static void c_open();
 
-	void printSTUBWithArglist(const char *funcname, int nargs);
+	void printSTUBWithArglist(const char *funcname, int nargs, const char *prefix = "STUB:");
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
 	void drop(uint num);

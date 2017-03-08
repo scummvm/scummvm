@@ -362,7 +362,7 @@ void Lingo::initBuiltIns() {
 	}
 }
 
-void Lingo::printSTUBWithArglist(const char *funcname, int nargs) {
+void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {
 	Common::String s(funcname);
 
 	s += '(';
@@ -379,7 +379,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs) {
 
 	s += ")";
 
-	warning("STUB: %s", s.c_str());
+	warning("%s: %s", prefix, s.c_str());
 }
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {

@@ -1023,6 +1023,9 @@ void Lingo::c_call() {
 void Lingo::call(Common::String name, int nargs) {
 	bool dropArgs = false;
 
+	if (debugChannelSet(3, kDebugLingoExec))
+		printSTUBWithArglist(name.c_str(), nargs, "call:");
+
 	Symbol *sym = g_lingo->getHandler(name);
 
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
