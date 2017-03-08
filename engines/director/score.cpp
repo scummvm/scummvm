@@ -1012,9 +1012,11 @@ void Score::processEvents() {
 					_lingo->processEvent(kEventMouseUp, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
 					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				} else {
-					// D3 doesn't have cast member or sprite scripts. Just Frame Scripts.
-					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_castId + 1024);
-					_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
+					// Frame script overrides sprite script
+					if (!_frames[_currentFrame]->_sprites[spriteId]->_scriptId)
+						_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_castId + 1024);
+					else
+						_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
 				}
 			}
 
