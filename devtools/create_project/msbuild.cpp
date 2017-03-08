@@ -65,7 +65,10 @@ int MSBuildProvider::getVisualStudioVersion() {
 }
 
 int MSBuildProvider::getSolutionVersion() {
-	return (_version == 15) ? 14 : _version + 1;
+	if (_version == 14 || _version == 15)
+		return 14;
+
+	return _version + 1;
 }
 
 namespace {
