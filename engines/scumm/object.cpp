@@ -1024,6 +1024,10 @@ void ScummEngine::resetRoomObject(ObjectData *od, const byte *room, const byte *
 
 	} else if (_game.version == 6) {
 		od->obj_nr = READ_LE_UINT16(&(cdhd->v6.obj_id));
+		// This used to be an assert(imhd) but the Russion version of FF1 triggered it.
+		// FIXME: Needs a real fix (tm) where we skip the assert for only the Russian version 
+		if (!imhd)
+			warning("resetRoomObject() called but no imhd was found for object %d in room %d",od->obj_nr,int(room));
 
 		od->width = READ_LE_UINT16(&cdhd->v6.w);
 		od->height = READ_LE_UINT16(&cdhd->v6.h);
