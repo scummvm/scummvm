@@ -171,6 +171,7 @@ ipch/
 *.bat
 *.tss
 *.VC.db
+.vs/
 
 #Ignore default Visual Studio build folders
 [Dd]ebug/

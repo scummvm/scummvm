@@ -58,11 +58,14 @@ int MSBuildProvider::getVisualStudioVersion() {
 	if (_version == 14)
 		return 14;
 
+	if (_version == 15)
+		return 15;
+
 	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 int MSBuildProvider::getSolutionVersion() {
-	return (_version < 14) ? _version + 1 : _version;
+	return (_version == 15) ? 14 : _version + 1;
 }
 
 namespace {
@@ -123,7 +126,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	std::string version = "v" + toString(_version) + "0";
+	std::string version = _version == 15 ? "v141" : "v" + toString(_version) + "0";
 	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);

@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14) {
+			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14 && msvcVersion != 15) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -579,7 +579,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
 
-		if (msvcVersion == 14) {
+		if (msvcVersion == 14 || msvcVersion == 15) {
 			globalWarnings.push_back("4267");
 			globalWarnings.push_back("4577");
 		}
@@ -701,7 +701,8 @@ void displayHelp(const char *exe) {
 	        "                           11 stands for \"Visual Studio 2012\"\n"
 	        "                           12 stands for \"Visual Studio 2013\"\n"
 	        "                           14 stands for \"Visual Studio 2015\"\n"
-	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
+	        "                           15 stands for \"Visual Studio 2017\"\n"
+	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
