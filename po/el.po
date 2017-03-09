@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-06 15:57+0100\n"
+"POT-Creation-Date: 2017-03-09 23:27+0100\n"
 "PO-Revision-Date: 2017-03-07 09:56+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
-"Language-Team: Greek "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
+"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
@@ -1364,15 +1364,15 @@ msgstr ""
 msgid "Apply"
 msgstr "Εφαρμογή"
 
-#: gui/options.cpp:1878
+#: gui/options.cpp:1860
 msgid "Failed to change cloud storage!"
 msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
 
-#: gui/options.cpp:1881
+#: gui/options.cpp:1863
 msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκευση σύννεφου είναι ήδη ενεργή."
 
-#: gui/options.cpp:1917
+#: gui/options.cpp:1899
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."

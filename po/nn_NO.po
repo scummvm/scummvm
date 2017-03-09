@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-03-06 15:57+0100\n"
+"POT-Creation-Date: 2017-03-09 23:27+0100\n"
 "PO-Revision-Date: 2016-12-18 18:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1335,16 +1335,16 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: gui/options.cpp:1878
+#: gui/options.cpp:1860
 #, fuzzy
 msgid "Failed to change cloud storage!"
 msgstr "Klarte ikkje lagre spel"
 
-#: gui/options.cpp:1881
+#: gui/options.cpp:1863
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:1917
+#: gui/options.cpp:1899
 msgid ""
 "The theme you selected does not support your current language. If you want "
 "to use this theme you need to switch to another language first."
