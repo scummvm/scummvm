@@ -52,11 +52,10 @@ class CStarControlSub5 {
 		int _field8;
 		int _fieldC;
 		double _field10;
-		byte _field14;
-		byte _field15;
+		double _field14;
 
 		Entry() : _field0(0), _field4(0), _field5(0), _field6(0), _field8(0),
-				_fieldC(0), _field10(0), _field14(0), _field15(0) {}
+				_fieldC(0), _field10(0), _field14(0) {}
 	};
 
 	struct GridEntry {
@@ -112,6 +111,7 @@ private:
 	bool setup2(int val1, int val2);
 public:
 	CStarControlSub5();
+	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
 	virtual void proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
