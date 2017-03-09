@@ -23,6 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_SUB5_H
 #define TITANIC_STAR_CONTROL_SUB5_H
 
+#include "common/array.h"
 #include "titanic/star_control/star_control_sub6.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/surface_area.h"
@@ -33,11 +34,8 @@ class CStarControlSub12;
 
 class CStarControlSub5 {
 	struct SubEntry {
-		int _field0;
-		int _field4;
-		byte *_data1P;
-		byte *_data2P;
-		SubEntry() : _field0(0), _field4(0), _data1P(nullptr), _data2P(nullptr) {}
+		Common::Array<FPoint> _data1;
+		Common::Array<FVector> _data2;
 		~SubEntry() { clear(); }
 
 		/**
@@ -61,32 +59,51 @@ class CStarControlSub5 {
 				_fieldC(0), _field10(0), _field14(0), _field15(0) {}
 	};
 
-	struct MemoryBlock {
+	struct GridEntry {
+		int _field0;
+		int _field4;
+		int _field8;
+		int _fieldC;
+		int _field10;
+		int _field14;
+
+		GridEntry() : _field0(0), _field4(0), _field8(0), _fieldC(0),
+			_field10(0), _field14(0) {}
+	};
+
+	/**
+	 * Maintains a pre-calculated table of sine values
+	 */
+	struct SineTable {
+	private:
+		Common::Array<double> _data;
 	public:
-		byte *_ptr;
-	public:
-		MemoryBlock() : _ptr(nullptr) {}
-		~MemoryBlock() { delete[] _ptr; }
+		SineTable() {}
 
 		/**
-		 * Allocates the memory block
+		 * Sets up the table
 		 */
-		bool allocate();
+		bool setup();
+
+		/**
+		 * Get a value
+		 */
+		double operator[](int idx) { return _data[idx]; }
 	};
 private:
 	bool _flag;
 	CStarControlSub6 _sub1, _sub2;
 	SubEntry _array[5];
 	Entry _entries[1284];
-	int _field78B0;
-	MemoryBlock _memoryBlock;
-	byte *_dataP;
+	int _multiplier;
+	SineTable _sineTable;
+	Common::Array<GridEntry> _grid;
 private:
 	/**
 	 * Sets up the data for an array entry
 	 * @return	True if success
 	 */
-	bool setupEntry(int val1, int val2, int index, double val3);
+	bool setupEntry(int width, int height, int index, double val);
 
 	/**
 	 * Secondary setup method
@@ -95,7 +112,6 @@ private:
 	bool setup2(int val1, int val2);
 public:
 	CStarControlSub5();
-	virtual ~CStarControlSub5();
 
 	virtual bool setup();
 	virtual void proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,

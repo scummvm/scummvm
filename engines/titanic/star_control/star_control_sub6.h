@@ -34,9 +34,7 @@ public:
 	static void init();
 	static void deinit();
 public:
-	int _field24;
-	int _field28;
-	int _field2C;
+	FVector _vector;
 public:
 	CStarControlSub6();
 	CStarControlSub6(int mode, double amount);

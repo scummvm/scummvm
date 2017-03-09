@@ -27,35 +27,25 @@
 namespace Titanic {
 
 void CStarControlSub5::SubEntry::clear() {
-	if (_data2P) {
-		delete[] _data2P;
-		_data2P = nullptr;
-		_field4 = 0;
-	}
-
-	if (_data1P) {
-		delete[] _data1P;
-		_data1P = nullptr;
-		_field0 = 0;
-	}
+	_data1.clear();
+	_data2.clear();
 }
 
 /*------------------------------------------------------------------------*/
 
-bool CStarControlSub5::MemoryBlock::allocate() {
-	// TODO
+bool CStarControlSub5::SineTable::setup() {
+	if (_data.empty()) {
+		_data.resize(1024);
+		for (int idx = 0; idx < 1024; ++idx)
+			_data[idx] = sin((double)idx * 6.283185307179586 * 0.001953125);
+	}
+
 	return true;
 }
 
 /*------------------------------------------------------------------------*/
 
-CStarControlSub5::CStarControlSub5() : _flag(true), _dataP(nullptr),
-		_field78B0(0) {
-}
-
-CStarControlSub5::~CStarControlSub5() {
-	delete[] _dataP;
-	_dataP = nullptr;
+CStarControlSub5::CStarControlSub5() : _flag(true), _multiplier(0) {
 }
 
 bool CStarControlSub5::setup() {
@@ -73,7 +63,7 @@ bool CStarControlSub5::setup() {
 bool CStarControlSub5::setup2(int val1, int val2) {
 	// TODO: Original set an explicit random seed here. Could be
 	// problematic if following random values need to be deterministic
-	double FACTOR = 3.1415927 * 0.0055555557;
+	const double FACTOR = 3.1415927 * 0.0055555557;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
 		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
@@ -191,8 +181,8 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 		}
 	}
 
-	if (_memoryBlock.allocate()) {
-		_dataP = new byte[((val2 - 2) * val1 + 2) * 24];
+	if (_sineTable.setup()) {
+		_grid.resize((val2 - 2) * val1 + 2);
 		return true;
 	}
 
@@ -201,11 +191,66 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 
 void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
+	double val1 = sub12->proc25();
+	int val2 = sub12->proc27();
+
+	if (v3 >= 6.0e9) {
+		int count, start;
+		if (vector->_x != 0.0 && (vector->_y != 0.0 || vector->_z != 0.0)) {
+			// TODO: Non-sensical randSeed((int)vector->_x);
+			count = VALUES[g_vm->getRandomNumber(15)];
+			start = g_vm->getRandomNumber(255);
+		} else {
+			count = 9;
+			start = 0;
+		}
+
+		Entry *entryP = &_entries[start];
+		for (; count > 0; --count, ++entryP) {
+			//eax=sineIndex1, ecx=sineIndex2,
+			int sineIndex1 = (entryP->_field8 * _multiplier) & 0x1ff;			
+			int sineIndex2 = (entryP->_fieldC * _multiplier + entryP->_fieldC) & 0x1ff;
+
+			double t1 = _sineTable[sineIndex2];
+			double t2 = sin(_sineTable[sineIndex1] * entryP->_field10);
+			double t3 = cos(_sineTable[sineIndex1] * entryP->_field10);
+			double t4 = _sineTable[sineIndex2 + 512];
+			double t5 = t3 * t4;
+			t3 = t3 * t1;
+			double t6 = entryP->_field14 * t5;
+			double t7 = t2 * entryP->_field14;
+			double t8 = entryP->_field14 * t3;
+			double t9 = -(t2 * t4 * entryP->_field14);
+			double t10 = t3 * entryP->_field14;
+			double t11 = -(t2 * t1 * entryP->_field14);
+			t4 = -(t1 * entryP->_field14);
+			t1 = t4 * entryP->_field14;
+
+			_sub1._row1._x = t6;
+			_sub1._row1._y = t2 * entryP->_field14;
+			_sub1._row1._z = entryP->_field14 * t3;
+			_sub1._row2._x = -(t2 * t4 * entryP->_field14);
+			_sub1._row2._y = t3 * entryP->_field14;
+			_sub1._row2._z = -(t2 * t1 * entryP->_field14);
+			_sub1._row3._x = -(t1 * entryP->_field14);
+			_sub1._row3._z = t4 * entryP->_field14;
+
+			double t12 = entryP->_field0;
+			_sub1._vector._x = t12 * t5 + vector->_x;
+			_sub1._vector._y = t12 * t2 + vector->_y;
+			_sub1._vector._z = t12 * t3 + vector->_z;
+
+			// TODO
+			warning("TODO: %f %f %f %f %f %f %d", t7, t8, t9, t10, t11, val1, val2);
+		}
+	}
+
 	// TODO
 }
 
 void CStarControlSub5::proc3(CErrorCode *errorCode) {
-	++_field78B0;
+	++_multiplier;
 	errorCode->set();
 }
 
@@ -213,8 +258,41 @@ void CStarControlSub5::fn1() {
 	_flag = !_flag;
 }
 
-bool CStarControlSub5::setupEntry(int val1, int val2, int index, double val3) {
+bool CStarControlSub5::setupEntry(int width, int height, int index, double val) {
+	/*
+	if (width < 2 || height < 3)
+		return false;
+
+	SubEntry &entry = _array[index];
+	entry.clear();
+
+	int height2 = height - 2;
+	int height1 = height - 1;
+	entry._data1.resize((2 * height - 3) * width);
+	entry._data2.resize(width * height2 + 2);
+	entry._data2[0] = FVector(0.0, val, 0.0);
+
+	index = 1;
+	double vy = 180.0 / (double)height1;
+	double vx = 360.0 / (double)width;
+	const double FACTOR = 3.1415927 * 0.0055555557;
+
+	if (height1 > 1) {
+		double yAmount = vy;
+		int width12 = width * 12;
+		for (int yCtr = height1 - 1; yCtr > 0; --yCtr, yAmount += vy) {
+			double sineVal = sin(yAmount * FACTOR);
+
+
+			| 0.0 * FACTOR |
+			| cos(yAmount * FACTOR) * val |
+			| 0.0 |
+			|yAmount|
+		}
+	}
 	// TODO
+
+	*/
 	return true;
 }
 

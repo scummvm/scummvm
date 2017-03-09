@@ -39,6 +39,8 @@ class CStarControlSub8 {
 		FPoint _position;
 		int _field8;
 		int _fieldC;
+
+		StructEntry() : _field8(0), _fieldC(0) {}
 	};
 private:
 #if 0

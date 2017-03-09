@@ -40,6 +40,13 @@ public:
 	FVector() : _x(0), _y(0), _z(0) {}
 	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
 
+	/**
+	 * Clears the vector
+	 */
+	void clear() {
+		_x = _y = _z = 0.0;
+	}
+
 	void fn1(FVector *v);
 	void multiply(FVector *dest, const FVector *src);
 	void fn3();

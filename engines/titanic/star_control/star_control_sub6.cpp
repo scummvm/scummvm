@@ -49,9 +49,7 @@ void CStarControlSub6::deinit() {
 
 void CStarControlSub6::clear() {
 	FMatrix::clear();
-	_field24 = 0;
-	_field28 = 0;
-	_field2C = 0;
+	_vector.clear();
 }
 
 void CStarControlSub6::set(int mode, double amount) {
@@ -100,18 +98,14 @@ void CStarControlSub6::set(int mode, double amount) {
 		break;
 	}
 
-	_field24 = 0.0;
-	_field28 = 0.0;
-	_field2C = 0.0;
+	_vector.clear();
 }
 
 void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
 	_row1 = src->_row1;
 	_row2 = src->_row2;
 	_row3 = src->_row3;
-	_field24 = src->_field24;
-	_field28 = src->_field28;
-	_field2C = src->_field2C;
+	_vector = src->_vector;
 }
 
 } // End of namespace Titanic
