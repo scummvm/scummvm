@@ -108,4 +108,52 @@ void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
 	_vector = src->_vector;
 }
 
+void CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3) {
+	CStarControlSub6 &d = *dest;
+
+	d._row1._x = s3->_row1._x * s2->_row1._x
+		+ s2->_row1._z * s3->_row3._x
+		+ s2->_row1._y * s3->_row2._x;
+	d._row1._y = s2->_row1._x * s3->_row1._y
+		+ s3->_row3._y * s2->_row1._z
+		+ s3->_row2._y * s2->_row1._y;
+	d._row1._z = s2->_row1._x * s3->_row1._z
+		+ s3->_row3._z * s2->_row1._z
+		+ s3->_row2._z * s2->_row1._y;
+	d._row2._x = s3->_row1._x * s2->_row2._x
+		+ s2->_row2._y * s3->_row2._x
+		+ s2->_row2._z * s3->_row3._x;
+	d._row2._y = s2->_row2._y * s3->_row2._y
+		+ s2->_row2._z * s3->_row3._y
+		+ s3->_row1._y * s2->_row2._x;
+	d._row2._z = s3->_row1._z * s2->_row2._x
+		+ s2->_row2._y * s3->_row2._z
+		+ s2->_row2._z * s3->_row3._z;
+	d._row3._x = s3->_row1._x * s2->_row3._x
+		+ s2->_row3._y * s3->_row2._x
+		+ s2->_row3._z * s3->_row3._x;
+	d._row3._y = s2->_row3._z * s3->_row3._y
+		+ s2->_row3._y * s3->_row2._y
+		+ s3->_row1._y * s2->_row3._x;
+	d._row3._z = s3->_row3._z * s2->_row3._z
+		+ s3->_row2._z * s2->_row3._y
+		+ s3->_row1._z * s2->_row3._x;
+	d._vector._x = s3->_row1._x * s2->_vector._x
+		+ s2->_vector._y * s3->_row2._x
+		+ s2->_vector._z * s3->_row3._x
+		+ s3->_vector._x;
+	d._vector._y = s2->_vector._z * s3->_row3._y
+		+ s2->_vector._y * s3->_row2._y
+		+ s2->_vector._x * s3->_row1._y
+		+ s3->_vector._y;
+	d._vector._z = s2->_vector._y * s3->_row2._z
+		+ s2->_vector._z * s3->_row3._z
+		+ s2->_vector._x * s3->_row1._z
+		+ s3->_vector._z;
+}
+
+void CStarControlSub6::fn1(CStarControlSub6 *sub6) {
+	// TODO
+}
+
 } // End of namespace Titanic

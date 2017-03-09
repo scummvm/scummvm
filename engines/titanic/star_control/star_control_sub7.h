@@ -30,8 +30,15 @@ class CStarControlSub7 : public CBaseStar {
 public:
 	virtual ~CStarControlSub7() { clear(); }
 
-	virtual void proc2(int v1, int v2, int v3);
-	virtual bool proc5(int v1);
+	/**
+	 * Draw the item
+	 */
+	virtual void draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+
+	/**
+	 * Adds a new star, or removes one if already present at the given co-ordinates
+	 */
+	virtual bool addStar(const CBaseStarEntry *entry);
 };
 
 } // End of namespace Titanic

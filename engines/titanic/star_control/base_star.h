@@ -96,7 +96,11 @@ public:
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 		int flags, const Common::Point &pt) { return false; }
 
-	virtual bool proc5(int v1) { return false; }
+	/**
+	 * Adds a new star, or removes one if already present at the given co-ordinates
+	 */
+	virtual bool addStar(const CBaseStarEntry *entry) { return false; }
+
 	virtual bool loadStar() { return false; }
 
 	/**

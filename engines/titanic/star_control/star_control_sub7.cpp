@@ -24,12 +24,28 @@
 
 namespace Titanic {
 
-void CStarControlSub7::proc2(int v1, int v2, int v3) {
+void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
 	// TODO
 }
 
-bool CStarControlSub7::proc5(int v1) {
-	// TODO
+bool CStarControlSub7::addStar(const CBaseStarEntry *entry) {
+	// iterate through the existing stars
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		CBaseStarEntry &star = _data[idx];
+		if (star == *entry) {
+			// Found a matching star at the exact same position, so remove it instead
+			_data.remove_at(idx);
+			return;
+		}
+	}
+
+	// No existing match
+	if (_data.size() == 32)
+		// Out of space, so delete oldest star
+		_data.remove_at(0);
+
+	// Add new star
+	_data.push_back(*entry);
 	return true;
 }
 
