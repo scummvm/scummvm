@@ -680,7 +680,7 @@ void Score::gotoLoop() {
 		}
 	}
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
 }
 
 int Score::getCurrentLabelNumber() {
@@ -700,14 +700,14 @@ void Score::gotoNext() {
 	// we can just try to use the current frame and get the next label
 	_currentFrame = getNextLabelNumber(_currentFrame);
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
 }
 
 void Score::gotoPrevious() {
 	// we actually need the frame of the label prior to the most recent label.
 	_currentFrame = getPreviousLabelNumber(getCurrentLabelNumber());
 
-	g_director->_skipFrameAdvance = true;
+	_vm->_skipFrameAdvance = true;
 }
 
 int Score::getNextLabelNumber(int referenceFrame) {
@@ -891,7 +891,7 @@ void Score::startLoop() {
 	while (!_stopPlay && _currentFrame < _frames.size()) {
 		debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame + 1);
 		update();
-		processEvents();
+		_vm->processEvents();
 	}
 }
 
@@ -930,10 +930,10 @@ void Score::update() {
 		}
 	}
 
-	if (!g_director->_playbackPaused && !g_director->_skipFrameAdvance)
+	if (!_vm->_playbackPaused && !_vm->_skipFrameAdvance)
 		_currentFrame++;
 
-	g_director->_skipFrameAdvance = false;
+	_vm->_skipFrameAdvance = false;
 
 	if (_currentFrame >= _frames.size())
 		return;
@@ -962,93 +962,17 @@ void Score::update() {
 		} else if (tempo == 135) {
 			// Wait for sound channel 1
 			while (_soundManager->isChannelActive(1)) {
-				processEvents();
+				_vm->processEvents();
 			}
 		} else if (tempo == 134) {
 			// Wait for sound channel 2
 			while (_soundManager->isChannelActive(2)) {
-				processEvents();
+				_vm->processEvents();
 			}
 		}
 	}
 
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
-}
-
-void Score::processEvents() {
-	// TODO: re-instate when we know which script to run.
-	//if (_currentFrame > 0)
-	//	_lingo->processEvent(kEventIdle, _currentFrame - 1);
-
-	Common::Event event;
-
-	uint endTime = g_system->getMillis() + 200;
-
-	while (g_system->getMillis() < endTime) {
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
-				_stopPlay = true;
-
-			if (event.type == Common::EVENT_LBUTTONDOWN) {
-				Common::Point pos = g_system->getEventManager()->getMousePos();
-
-				// D3 doesn't have both mouse up and down.
-				// But we still want to know if the mouse is down for press effects.
-				_currentMouseDownSpriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-
-				if (_vm->getVersion() > 3) {
-					// TODO: check that this is the order of script execution!
-					_lingo->processEvent(kEventMouseDown, kCastScript, _frames[_currentFrame]->_sprites[_currentMouseDownSpriteId]->_castId);
-					_lingo->processEvent(kEventMouseDown, kSpriteScript, _frames[_currentFrame]->_sprites[_currentMouseDownSpriteId]->_scriptId);
-				}
-			}
-
-			if (event.type == Common::EVENT_LBUTTONUP) {
-				Common::Point pos = g_system->getEventManager()->getMousePos();
-
-				uint16 spriteId = _frames[_currentFrame]->getSpriteIDFromPos(pos);
-				if (_vm->getVersion() > 3) {
-					// TODO: check that this is the order of script execution!
-					_lingo->processEvent(kEventMouseUp, kCastScript, _frames[_currentFrame]->_sprites[spriteId]->_castId);
-					_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
-				} else {
-					// Frame script overrides sprite script
-					if (!_frames[_currentFrame]->_sprites[spriteId]->_scriptId)
-						_lingo->processEvent(kEventMouseUp, kSpriteScript, _frames[_currentFrame]->_sprites[spriteId]->_castId + 1024);
-					else
-						_lingo->processEvent(kEventMouseUp, kFrameScript, _frames[_currentFrame]->_sprites[spriteId]->_scriptId);
-				}
-			}
-
-			if (event.type == Common::EVENT_KEYDOWN) {
-				_vm->_keyCode = event.kbd.keycode;
-				_vm->_key = (unsigned char)(event.kbd.ascii & 0xff);
-
-				switch (_vm->_keyCode) {
-				case Common::KEYCODE_LEFT:
-					_vm->_keyCode = 123;
-					break;
-				case Common::KEYCODE_RIGHT:
-					_vm->_keyCode = 124;
-					break;
-				case Common::KEYCODE_DOWN:
-					_vm->_keyCode = 125;
-					break;
-				case Common::KEYCODE_UP:
-					_vm->_keyCode = 126;
-					break;
-				default:
-					warning("Keycode: %d", _vm->_keyCode);
-				}
-
-				// TODO: is movie script correct? Can this be elsewhere?
-				_lingo->processEvent(kEventKeyDown, kMovieScript, 0);
-			}
-		}
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
 }
 
 Sprite *Score::getSpriteById(uint16 id) {

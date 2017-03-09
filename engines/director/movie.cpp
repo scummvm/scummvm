@@ -25,6 +25,7 @@
 
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -51,7 +52,7 @@ void Movie::play(Common::Point dest) {
 			g_system->updateScreen();
 		}
 		g_system->delayMillis(10);
-		_vm->getCurrentScore()->processEvents();
+		processQuitEvent();
 	}
 }
 

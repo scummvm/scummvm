@@ -67,7 +67,6 @@ public:
 	void gotoNext();
 	void gotoPrevious();
 	void startLoop();
-	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);

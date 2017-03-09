@@ -415,7 +415,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
@@ -431,7 +431,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
@@ -446,7 +446,7 @@ void Frame::playTransition(Score *score) {
 				r.setWidth(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();
@@ -461,7 +461,7 @@ void Frame::playTransition(Score *score) {
 				r.setWidth(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
 				g_system->updateScreen();
@@ -477,7 +477,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
@@ -493,7 +493,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
 				g_system->updateScreen();
@@ -509,7 +509,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
 				g_system->updateScreen();
@@ -525,7 +525,7 @@ void Frame::playTransition(Score *score) {
 				r.setHeight(stepSize * i);
 
 				g_system->delayMillis(stepDuration);
-				score->processEvents();
+				processQuitEvent();
 
 				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
 				g_system->updateScreen();

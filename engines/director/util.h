@@ -34,6 +34,8 @@ char *numToCastNum(int num);
 
 Common::String *toLowercaseMac(Common::String *s);
 
+void processQuitEvent(); // events.cpp
+
 } // End of namespace Director
 
 #endif

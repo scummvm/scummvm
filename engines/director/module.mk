@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	cast.o \
 	detection.o \
 	director.o \
+	events.o \
 	frame.o \
 	graphics.o \
 	images.o \
