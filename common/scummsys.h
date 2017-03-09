@@ -321,7 +321,9 @@
 		  defined(__powerpc64__) || \
 		  defined(__LP64__)
 
-		#define SCUMM_64BITS
+		#if !defined(SCUMM_64BITS)
+			#define SCUMM_64BITS
+		#endif
 
 	#endif
 
