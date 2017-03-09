@@ -722,7 +722,9 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
 #endif
-			warning("Failed to load localized font '%s'. Using non-localized font and default GUI language instead", localized.c_str());
+			warning("Failed to load localized font '%s'.", localized.c_str());
+
+			return false;
 		}
 	}
 
