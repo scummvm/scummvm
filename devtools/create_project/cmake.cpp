@@ -81,8 +81,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Generate options for the engines\n";
 	writeEngineOptions(workspace);
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR} ${" << setup.projectDescription << "_SOURCE_DIR}/engines\n"
-			"$ENV{"<<LIBS_DEFINE<<"}/include)\n\n";
+	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR} ${" << setup.projectDescription << "_SOURCE_DIR}/engines "
+			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
 
 	workspace << "# Libraries and features\n";
 	writeFeatureLibSearch(setup, workspace, "sdl");
@@ -214,7 +214,7 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 			}
 		}
 		project << "if (WIN32)\n";
-		project << "    target_sources(" << name << " PUBLIC dists/" << name << ".rc)\n";
+		project << "    target_sources(" << name << " PUBLIC " << setup.filePrefix << "/dists/" << name << ".rc)\n";
 		project << "    target_link_libraries(" << name << " winmm)\n";
 		project << "endif()\n";
 		project << "\n";
