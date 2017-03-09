@@ -1838,24 +1838,6 @@ void GlobalOptionsDialog::apply() {
 		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
 		ConfMan.set("gui_renderer", cfg, _domain);
 	}
-#ifdef USE_TRANSLATION
-	Common::String oldLang = ConfMan.get("gui_language");
-	int selLang = _guiLanguagePopUp->getSelectedTag();
-
-	ConfMan.set("gui_language", TransMan.getLangById(selLang));
-
-	Common::String newLang = ConfMan.get("gui_language").c_str();
-	if (newLang != oldLang) {
-		// Activate the selected language
-		TransMan.setLanguage(selLang);
-
-		// Rebuild the Launcher and Options dialogs
-		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
-		rebuild();
-		if (_launcher != 0)
-			_launcher->rebuild();
-	}
-#endif // USE_TRANSLATION
 
 #ifdef USE_UPDATES
 	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
@@ -1926,6 +1908,24 @@ void GlobalOptionsDialog::apply() {
 		draw();
 		_newTheme.clear();
 	}
+#ifdef USE_TRANSLATION
+	Common::String oldLang = ConfMan.get("gui_language");
+	int selLang = _guiLanguagePopUp->getSelectedTag();
+
+	ConfMan.set("gui_language", TransMan.getLangById(selLang));
+
+	Common::String newLang = ConfMan.get("gui_language").c_str();
+	if (newLang != oldLang) {
+		// Activate the selected language
+		TransMan.setLanguage(selLang);
+
+		// Rebuild the Launcher and Options dialogs
+		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
+		rebuild();
+		if (_launcher != 0)
+			_launcher->rebuild();
+	}
+#endif // USE_TRANSLATION
 
 	OptionsDialog::apply();
 }
