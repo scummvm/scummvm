@@ -78,7 +78,7 @@ protected:
 	void resetEntry(CBaseStarEntry &entry);
 
 	void baseFn1(int v1, int v2, int v3, int v4);
-	void baseFn2(int v1, int v2);
+	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}

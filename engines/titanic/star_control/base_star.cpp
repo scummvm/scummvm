@@ -195,8 +195,9 @@ void CBaseStar::baseFn1(int v1, int v2, int v3, int v4) {
 	// TODO
 }
 
-void CBaseStar::baseFn2(int v1, int v2) {
+int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	// TODO
+	return 0;
 }
 
 } // End of namespace Titanic
