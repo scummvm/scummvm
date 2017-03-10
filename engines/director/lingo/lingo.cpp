@@ -318,6 +318,10 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
 
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		_scripts[i].clear();
+	}
+
 	// TODO
 	//
 	// reset the following:
