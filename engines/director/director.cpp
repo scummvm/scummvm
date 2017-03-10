@@ -176,7 +176,11 @@ Common::Error DirectorEngine::run() {
 			_nextMovie.frameI = -1;
 		}
 
+		debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+
 		_currentScore->startLoop();
+
+		debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
@@ -193,7 +197,7 @@ Common::Error DirectorEngine::run() {
 			}
 
 			_currentScore = new Score(this, mov);
-			debug(0, "Score name %s", _currentScore->getMacName().c_str());
+			debug(0, "Switching to score '%s'", _currentScore->getMacName().c_str());
 
 			_nextMovie.movie.clear();
 			loop = true;
