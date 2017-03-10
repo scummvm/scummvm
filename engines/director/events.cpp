@@ -111,8 +111,7 @@ void DirectorEngine::processEvents() {
 					warning("Keycode: %d", _keyCode);
 				}
 
-				// TODO: is movie script correct? Can this be elsewhere?
-				_lingo->processEvent(kEventKeyDown, kMovieScript, 0);
+				_lingo->processEvent(kEventKeyDown, kGlobalScript, 0);
 			}
 		}
 

@@ -621,6 +621,9 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 	case kCastScript:
 		typeName = "cast";
 		break;
+	case kGlobalScript:
+		typeName = "global";
+		break;
 	}
 
 	sprintf(buf, "./dumps/%s-%s-%d.txt", _macName.c_str(), typeName.c_str(), id);

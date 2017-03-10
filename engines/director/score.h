@@ -48,8 +48,9 @@ enum ScriptType {
 	kSpriteScript = 1,
 	kFrameScript = 2,
 	kCastScript = 3,
+	kGlobalScript = 4,
 	kNoneScript = -1,
-	kMaxScriptType = 3
+	kMaxScriptType = 4
 };
 
 const char *scriptType2str(ScriptType scr);
