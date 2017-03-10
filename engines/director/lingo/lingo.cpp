@@ -319,6 +319,9 @@ void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptHash::iterator it = _scripts[i].begin(); it != _scripts[i].end(); ++it)
+			delete it->_value;
+
 		_scripts[i].clear();
 	}
 
