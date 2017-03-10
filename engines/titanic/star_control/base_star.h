@@ -44,7 +44,13 @@ struct CBaseStarEntry {
 	uint _data[5];
 
 	CBaseStarEntry();
+
+	/**
+	 * Loads the data for a star
+	 */
 	void load(Common::SeekableReadStream &s);
+
+	bool operator==(const CBaseStarEntry &s) const;
 };
 
 class CBaseStar {

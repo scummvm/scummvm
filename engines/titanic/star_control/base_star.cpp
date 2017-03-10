@@ -44,6 +44,15 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 		_data[idx] = s.readUint32LE();
 }
 
+bool CBaseStarEntry::operator==(const CBaseStarEntry &s) const {
+	return _field0 == s._field0 && _field1 == s._field1
+		&& _field2 == s._field2 && _field3 == s._field3
+		&& _value == s._value && _position == s._position
+		&& _data[0] == s._data[0] && _data[1] == s._data[1]
+		&& _data[2] == s._data[2] && _data[3] == s._data[3]
+		&& _data[4] == s._data[4];
+}
+
 /*------------------------------------------------------------------------*/
 
 CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0),

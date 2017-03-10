@@ -32,7 +32,7 @@ bool CStarControlSub7::addStar(const CBaseStarEntry *entry) {
 	// iterate through the existing stars
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &star = _data[idx];
-		if (star._position == entry->_position) {
+		if (star == *entry) {
 			// Found a matching star at the exact same position, so remove it instead
 			_data.remove_at(idx);
 			return true;
