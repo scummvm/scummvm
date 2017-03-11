@@ -254,6 +254,23 @@ Dialog *GuiManager::getTopDialog() const {
 	return _dialogStack.top();
 }
 
+void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
+	debug(7, "Adding Gui Object %p to trash", object);
+	GuiObjectTrashItem t;
+	t.object = object;
+	t.parent = 0;
+	// If a dialog was provided, check it is in the dialog stack
+	if (parent != 0) {
+		for (int i = 0 ; i < _dialogStack.size() ; ++i) {
+			if (_dialogStack[i] == parent) {
+				t.parent = parent;
+				break;
+			}
+		}
+	}
+	_guiObjectTrash.push_back(t);
+}
+
 void GuiManager::runLoop() {
 	Dialog * const activeDialog = getTopDialog();
 	bool didSaveState = false;
@@ -339,6 +356,17 @@ void GuiManager::runLoop() {
 				_theme->updateScreen();
 				_system->updateScreen();
 			}
+		}
+
+		// Delete GuiObject that have been added to the trash for a delayed deletion
+		Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
+		while (it != _guiObjectTrash.end()) {
+			if ((*it).parent == 0 || (*it).parent == activeDialog) {
+				debug(7, "Delayed deletion of Gui Object %p", (*it).object);
+				delete (*it).object;
+				it = _guiObjectTrash.erase(it);
+			} else
+				++it;
 		}
 
 		if (_lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
