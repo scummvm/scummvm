@@ -127,4 +127,12 @@ void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starFi
 	// TODO
 }
 
+void CStarControlSub8::fn6(CSurfaceArea *surfaceArea) {
+	// TODO
+}
+
+void CStarControlSub8::fn7(const FPoint &pt, CSurfaceArea *surfaceArea) {
+	// TODO
+}
+
 } // End of namespace Titanic

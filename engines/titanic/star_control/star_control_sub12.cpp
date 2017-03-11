@@ -29,9 +29,8 @@ namespace Titanic {
 FMatrix *CStarControlSub12::_matrix1;
 FMatrix *CStarControlSub12::_matrix2;
 
-CStarControlSub12::CStarControlSub12(void *val1, const CStar20Data *data) :
-		_currentIndex(-1), _handlerP(nullptr), _field108(0),
-		_sub13(val1) {
+CStarControlSub12::CStarControlSub12(const CStar20Data *data) :
+		_currentIndex(-1), _handlerP(nullptr), _field108(0) {
 	setupHandler(data);
 }
 
@@ -55,7 +54,7 @@ CStarControlSub12::~CStarControlSub12() {
 	deleteHandler();
 }
 
-void CStarControlSub12::proc2(const void *src) {
+void CStarControlSub12::proc2(const CStarControlSub13 *src) {
 	_sub13.copyFrom(src);
 }
 
@@ -115,8 +114,7 @@ void CStarControlSub12::proc13(CStarControlSub13 *dest) {
 }
 
 void CStarControlSub12::proc14(int v) {
-	FMatrix matrix;
-	_sub13.getMatrix(&matrix);
+	FMatrix matrix = _sub13.getMatrix();
 	FVector vector = _sub13._position;
 
 	_handlerP->proc9(&vector, v, &matrix);
@@ -128,7 +126,7 @@ void CStarControlSub12::proc15(CErrorCode *errorCode) {
 	if (!_matrix2)
 		_matrix2 = new FMatrix();
 
-	_sub13.getMatrix(_matrix1);
+	*_matrix1 = _sub13.getMatrix();
 	*_matrix2 = *_matrix1;
 
 	FVector v1 = _sub13._position;
@@ -161,12 +159,12 @@ void CStarControlSub12::proc19() {
 	_handlerP->proc7();
 }
 
-void CStarControlSub12::proc20(double v) {
+void CStarControlSub12::proc20(double factor) {
 	if (!isLocked())
-		_sub13.fn14(v);
+		_sub13.reposition(factor);
 }
 
-void CStarControlSub12::proc21(CStarControlSub6 &sub6) {
+void CStarControlSub12::proc21(const CStarControlSub6 *sub6) {
 	if (!isLocked()) {
 		_sub13.setPosition(sub6);
 		set108();

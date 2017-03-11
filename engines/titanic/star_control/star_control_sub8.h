@@ -81,7 +81,8 @@ public:
 	void fn3();
 	void fn4(int index, CSurfaceArea *surfaceArea);
 	void fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
-
+	void fn6(CSurfaceArea *surfaceArea);
+	void fn7(const FPoint &pt, CSurfaceArea *surfaceArea);
 	FPoint getPosition() const;
 
 	/**

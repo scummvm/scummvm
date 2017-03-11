@@ -57,6 +57,11 @@ public:
 
 	void copyFrom(const CStarControlSub6 *src);
 
+	/**
+	 * Copy from the specified matrix
+	 */
+	void copyFrom(const FMatrix &src);
+
 	void fn1(CStarControlSub6 *sub6);
 };
 

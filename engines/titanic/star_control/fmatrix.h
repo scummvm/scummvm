@@ -69,10 +69,9 @@ public:
 	 */
 	void set(FVector *row1, FVector *row2, FVector *row3);
 
-	void fn1(const FVector *v);
-
-	void fn2(FMatrix *m);
-	void fn3(FMatrix *m);
+	void fn1(const FVector &v);
+	void fn2(const FMatrix &m);
+	void fn3(const FMatrix &m);
 
 	/**
 	 * Returns true if the passed matrix equals this one

@@ -62,11 +62,11 @@ public:
 	static void init();
 	static void deinit();
 public:
-	CStarControlSub12(void *val1, const CStar20Data *data);
+	CStarControlSub12(const CStar20Data *data);
 	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
-	virtual void proc2(const void *src);
+	virtual void proc2(const CStarControlSub13 *src);
 	virtual void proc3(const CStar20Data *src);
 	virtual void setPosition(const FVector &v);
 	virtual void proc5(const FVector &v);
@@ -84,8 +84,8 @@ public:
 	virtual void proc17();
 	virtual void proc18();
 	virtual void proc19();
-	virtual void proc20(double v);
-	virtual void proc21(CStarControlSub6 &sub6);
+	virtual void proc20(double factor);
+	virtual void proc21(const CStarControlSub6 *sub6);
 	virtual void proc22(FMatrix &m);
 	virtual CStarControlSub6 proc23();
 	virtual CStarControlSub6 proc24();

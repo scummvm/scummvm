@@ -30,8 +30,8 @@
 
 namespace Titanic {
 
-CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
-		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0),
+CStarView::CStarView() : _sub12((const CStar20Data *)nullptr), _owner(nullptr),
+		_starField(nullptr), _videoSurface(nullptr), _field118(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
 	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
