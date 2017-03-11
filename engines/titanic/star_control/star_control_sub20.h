@@ -30,7 +30,7 @@
 namespace Titanic {
 
 struct CStar20Data {
-	double _field0;
+	double _size;
 	double _field4;
 	double _field8;
 	double _fieldC;
