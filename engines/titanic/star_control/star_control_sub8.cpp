@@ -24,18 +24,11 @@
 #include "titanic/star_control/star_control_sub7.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_field.h"
+#include "titanic/star_control/star_ref.h"
 
 namespace Titanic {
 
-CStarControlSub8::CStarControlSub8() : _field8(-1), _fieldC(-1) {
-#if 0
-	_field4(0), _field8(-1)
-#endif
-}
-
-bool MouseButtonDown(const Common::Point &pt) {
-	// TODO
-	return true;
+CStarControlSub8::CStarControlSub8() : _field8(-1), _entryIndex(-1) {
 }
 
 int CStarControlSub8::findStar(const Common::Point &pt) {
@@ -48,8 +41,21 @@ void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 	// TODO
 }
 
-void CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+	int count = starField->baseFn2(surfaceArea, sub12);
+
+	if (count > 0) {
+		allocate(count);
+		CStarRef2 starRef(starField, &_positions);
+		starRef.process(surfaceArea, sub12);
+		return true;
+	} else {
+		clear();
+		return false;
+	}
+
 	// TODO
+	return true;
 }
 
 void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
@@ -62,14 +68,62 @@ void CStarControlSub8::fn3() {
 }
 
 FPoint CStarControlSub8::getPosition() const {
-	return (_fieldC >= 0 && _fieldC <= 2) ? _data[_fieldC]._position : FPoint();
+	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
+		FPoint(_entries[_entryIndex].left, _entries[_entryIndex].top) : FPoint();
 }
 
 void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
-	// TODO
+	if (!_positions.empty()) {
+		uint oldPixel = surfaceArea->_pixel;
+		surfaceArea->_pixel = 0xFF;
+		surfaceArea->setColorFromPixel();
+		SurfaceAreaMode oldMode = surfaceArea->setMode(SA_NONE);
+
+		// TODO: Loop
+		/*
+		for (int idx = 0; idx < _entryIndex; ++idx) {
+			Common::Rect &r = _entries[idx];
+
+		}
+		*/
+
+		surfaceArea->_pixel = oldPixel;
+		surfaceArea->setMode(oldMode);
+	}
+}
+
+void CStarControlSub8::allocate(int count) {
+	if (!_positions.empty()) {
+		if ((int)_positions.size() == count)
+			return;
+
+		clear();
+	}
+
+	_positions.resize(count);
 }
 
 void CStarControlSub8::clear() {
+	_positions.clear();
+	_field8 = _entryIndex = -1;
+}
+
+int CStarControlSub8::indexOf(const Common::Point &pt) const {
+	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
+
+	for (int idx = 0; idx < (int)_positions.size(); ++idx) {
+		if (r.contains(_positions[idx]._position))
+			return idx;
+	}
+
+	return -1;
+}
+
+void CStarControlSub8::fn4(int index, CSurfaceArea *surfaceArea) {
+	// TODO
+}
+
+void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
 	// TODO
 }
 

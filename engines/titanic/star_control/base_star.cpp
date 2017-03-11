@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/base_star.h"
 #include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_ref.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -200,8 +201,9 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	// TODO
 }
 
-void CBaseStar::baseFn1(int v1, int v2, int v3, int v4) {
-	// TODO
+void CBaseStar::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		const Common::Point &pt) {
+	CStarRef1 ref(this, pt);
 }
 
 int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {

@@ -457,6 +457,7 @@ MODULE_OBJS := \
 	star_control/star_field.o \
 	star_control/star_points1.o \
 	star_control/star_points2.o \
+	star_control/star_ref.o \
 	star_control/star_view.o \
 	star_control/surface_area.o \
 	star_control/surface_fader_base.o \

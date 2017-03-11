@@ -230,7 +230,7 @@ bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub1
 		int flags, const Common::Point &pt) {
 	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);
-		return selectStar(&surfaceArea, sub12, 0, pt);
+		return selectStar(&surfaceArea, sub12, pt);
 	} else {
 		int starNum = _sub8.findStar(pt);
 		if (starNum >= 0) {

@@ -20,29 +20,42 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub2.h"
+#include "titanic/star_control/star_ref.h"
 
 namespace Titanic {
 
-bool CStarControlSub2::loadYale(int v1) {
-	clear();
-	error("Original loadYale not supported");
+void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CStarRef1::check(const Common::Point &pt, int index) {
+	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
+	if (r.contains(_position)) {
+		_index = index;
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CStarRef2::check(const Common::Point &pt, int index) {
+	if (_index >= (int)_positions->size())
+		return false;
+
+	CStarPosition &sp = (*_positions)[index];
+	sp._position = pt;
+	sp._index1 = sp._index2 = index;
 	return true;
 }
 
-bool CStarControlSub2::selectStar(CSurfaceArea *surfaceArea,
-		CStarControlSub12 *sub12, const Common::Point &pt, int flags) {
-	// TODO
-	return true;
-}
+/*------------------------------------------------------------------------*/
 
-bool CStarControlSub2::loadStar() {
-	// TODO
-	return true;
-}
-
-bool CStarControlSub2::setup() {
-	// TODO
+bool CStarRef3::check(const Common::Point &pt, int index) {
+	++_counter;
 	return true;
 }
 

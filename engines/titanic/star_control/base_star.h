@@ -53,6 +53,13 @@ struct CBaseStarEntry {
 	bool operator==(const CBaseStarEntry &s) const;
 };
 
+struct CStarPosition {
+	Common::Point _position;
+	int _index1;
+	int _index2;
+	CStarPosition() : _index1(0), _index2(0) {}
+};
+
 class CBaseStar {
 private:
 	void draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
@@ -82,9 +89,6 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
-
-	void baseFn1(int v1, int v2, int v3, int v4);
-	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}
@@ -100,7 +104,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
-		int flags, const Common::Point &pt) { return false; }
+		const Common::Point &pt, int flags = 0) { return false; }
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates
@@ -132,6 +136,11 @@ public:
 	 * Get a pointer to a data entry
 	 */
 	const CBaseStarEntry *getDataPtr(int index) const;
+
+	void baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		const Common::Point &pt);
+
+	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 };
 
 } // End of namespace Titanic
