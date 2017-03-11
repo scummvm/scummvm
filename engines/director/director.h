@@ -28,6 +28,7 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
+#include "director/cast.h"
 
 namespace Common {
 class MacResManager;
@@ -89,6 +90,7 @@ public:
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }
+	Score *getSharedScore() const { return _sharedScore; }
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
@@ -107,7 +109,7 @@ public:
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, Cast *> *getSharedCasts();
+	Common::HashMap<int, CastType> *getSharedCastTypes();
 
 	Common::HashMap<Common::String, Score *> *_movies;
 
@@ -159,7 +161,7 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::String _sharedCastFile;
-	Common::HashMap<int, Cast *> _dummyCast;
+	Common::HashMap<int, CastType> _dummyCastType;
 
 private:
 	void testFontScaling();

@@ -26,6 +26,8 @@
 #include "common/substream.h"
 #include "common/rect.h"
 #include "director/archive.h"
+#include "director/cast.h"
+#include "director/images.h"
 
 namespace Graphics {
 	class ManagedSurface;
@@ -57,7 +59,7 @@ const char *scriptType2str(ScriptType scr);
 
 class Score {
 public:
-	Score(DirectorEngine *vm, Archive *);
+	Score(DirectorEngine *vm);
 	~Score();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
@@ -68,6 +70,7 @@ public:
 	void gotoNext();
 	void gotoPrevious();
 	void startLoop();
+	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
@@ -78,7 +81,12 @@ public:
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
+	void loadSpriteImages(bool isSharedCast);
 	Graphics::ManagedSurface *getSurface() { return _surface; }
+
+	void loadCastInto(Sprite *sprite, int castId);
+	Common::Rect getCastMemberInitialRect(int castId);
+	void setCastMemberModified(int castId);
 
 	int getPreviousLabelNumber(int referenceFrame);
 	int getCurrentLabelNumber();
@@ -100,7 +108,7 @@ private:
 
 public:
 	Common::Array<Frame *> _frames;
-	Common::HashMap<int, Cast *> _casts;
+	Common::HashMap<int, CastType> _castTypes;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
 	Common::HashMap<Common::String, int> _castsNames;
 	Common::SortedArray<Label *> *_labels;
@@ -115,6 +123,13 @@ public:
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;
+
+	Common::HashMap<int, ButtonCast *> *_loadedButtons;
+	Common::HashMap<int, TextCast *> *_loadedText;
+	//Common::HashMap<int, SoundCast *> _loadedSound;
+	Common::HashMap<int, BitmapCast *> *_loadedBitmaps;
+	Common::HashMap<int, ShapeCast *> *_loadedShapes;
+	Common::HashMap<int, ScriptCast *> *_loadedScripts;
 
 private:
 	uint16 _versionMinor;

@@ -212,7 +212,9 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
-	_sharedScore = new Score(this, shardcst);
+
+	_sharedScore = new Score(this);
+	_sharedScore->setArchive(shardcst);
 
 	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
 		debug("Shared cast has fonts. Loading....");
@@ -276,6 +278,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
 		}
 	}
+
+	_sharedScore->loadSpriteImages(true);
 }
 
 } // End of namespace Director

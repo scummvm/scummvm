@@ -88,6 +88,8 @@ void DirectorEngine::processEvents() {
 					else
 						_lingo->processEvent(kEventMouseUp, kFrameScript, sc->_frames[currentFrame]->_sprites[spriteId]->_scriptId);
 				}
+
+				sc->_currentMouseDownSpriteId = 0;
 			}
 
 			if (event.type == Common::EVENT_KEYDOWN) {

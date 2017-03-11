@@ -141,6 +141,8 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
+	_currentScore = new Score(this);
+
 	if (getVersion() < 4) {
 		if (getPlatform() == Common::kPlatformWindows) {
 			_sharedCastFile = "SHARDCST.MMM";
@@ -155,7 +157,7 @@ Common::Error DirectorEngine::run() {
 
 	loadInitialMovie(getEXEName());
 
-	_currentScore = new Score(this, _mainArchive);
+	_currentScore->setArchive(_mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
 	bool loop = true;
@@ -196,7 +198,8 @@ Common::Error DirectorEngine::run() {
 				return Common::kNoError;
 			}
 
-			_currentScore = new Score(this, mov);
+			_currentScore = new Score(this);
+			_currentScore->setArchive(mov);
 			debug(0, "Switching to score '%s'", _currentScore->getMacName().c_str());
 
 			_nextMovie.movie.clear();
@@ -237,7 +240,8 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 
 			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
-			Score *sc = new Score(this, arc);
+			Score *sc = new Score(this);
+			sc->setArchive(arc);
 			nameMap->setVal(sc->getMacName(), sc);
 
 			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
@@ -247,11 +251,11 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-Common::HashMap<int, Cast *> *DirectorEngine::getSharedCasts() {
+Common::HashMap<int, CastType> *DirectorEngine::getSharedCastTypes() {
 	if (_sharedScore)
-		return &_sharedScore->_casts;
+		return &_sharedScore->_castTypes;
 
-	return &_dummyCast;
+	return &_dummyCastType;
 }
 
 } // End of namespace Director
