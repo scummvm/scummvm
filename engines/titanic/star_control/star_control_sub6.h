@@ -48,7 +48,7 @@ public:
 	/**
 	 * Sets up a passed instance from the specified two other ones
 	 */
-	static void setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3);
+	static CStarControlSub6 *setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3);
 
 	/**
 	 * Sets the default data

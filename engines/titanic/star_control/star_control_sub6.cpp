@@ -114,7 +114,7 @@ void CStarControlSub6::copyFrom(const FMatrix &src) {
 	_row3 = src._row3;
 }
 
-void CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3) {
+CStarControlSub6 *CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3) {
 	CStarControlSub6 &d = *dest;
 
 	d._row1._x = s3->_row1._x * s2->_row1._x
@@ -156,6 +156,7 @@ void CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2,
 		+ s2->_vector._z * s3->_row3._z
 		+ s2->_vector._x * s3->_row1._z
 		+ s3->_vector._z;
+	return dest;
 }
 
 void CStarControlSub6::fn1(CStarControlSub6 *sub6) {

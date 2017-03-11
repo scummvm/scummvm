@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/star_control_sub13.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -156,7 +157,19 @@ void CStarControlSub13::set1C(double v) {
 
 void CStarControlSub13::fn12() {
 	_matrix.clear();
-	error("TODO: CStarControlSub13::fn12");
+
+	CStarControlSub6 m1(0, g_vm->getRandomNumber(359));
+	CStarControlSub6 m2(1, g_vm->getRandomNumber(359));
+	CStarControlSub6 m3(2, g_vm->getRandomNumber(359));
+	
+	CStarControlSub6 s1, s2;
+	CStarControlSub6 *s;
+	s = CStarControlSub6::setup(&s1, &m1, &m2);
+	s = CStarControlSub6::setup(&s2, s, &m3);
+
+	m1.copyFrom(*s);
+	_matrix.fn2(&m1);
+	_fieldD4 = 0;
 }
 
 void CStarControlSub13::fn13(StarMode mode, double v2) {
@@ -236,7 +249,10 @@ FVector CStarControlSub13::fn18(int index, const FVector &src) {
 }
 
 void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
-	error("TODO: CStarControlSub13::fn19");
+	*v1 = _fieldC8 / _fieldCC;
+	*v2 = _fieldC8 / _fieldD0;
+	*v3 = _valArray[3];
+	*v4 = _valArray[4];
 }
 
 void CStarControlSub13::reset() {
