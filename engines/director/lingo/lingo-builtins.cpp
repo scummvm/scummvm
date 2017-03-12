@@ -21,7 +21,10 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
+
 #include "director/lingo/lingo.h"
+#include "director/frame.h"
 
 namespace Director {
 
@@ -1216,9 +1219,27 @@ void Lingo::b_ramNeeded(int nargs) {
 
 void Lingo::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_rollOver(%d)", d.u.i);
 
-	g_lingo->push(Datum(0));
+	d.toInt();
+
+	int arg = d.u.i;
+
+	d.u.i = 0; // FALSE
+
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+
+	if (arg >= frame->_sprites.size()) {
+		g_lingo->push(d);
+		return;
+	}
+
+	Common::Point pos = g_system->getEventManager()->getMousePos();
+	uint16 spriteId = frame->getSpriteIDFromPos(pos);
+
+	if (spriteId == arg)
+		d.u.i = 1; // TRUE
+
+	g_lingo->push(d);
 }
 
 void Lingo::b_spriteBox(int nargs) {
