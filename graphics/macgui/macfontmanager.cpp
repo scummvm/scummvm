@@ -267,7 +267,7 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 		font = FontMan.getFontByName(macFont.getName());
 
 		if (!font) {
-			warning("Cannot load font '%s'", macFont.getName().c_str());
+			debug(1, "Cannot load font '%s'", macFont.getName().c_str());
 
 			font = FontMan.getFontByName(MacFont(kMacFontChicago, 12).getName());
 		}
@@ -375,7 +375,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	}
 
 	if (sizes.empty()) {
-		warning("No viable substitute found for font %s", getFontName(macFont));
+		debug(1, "No viable substitute found for font %s", getFontName(macFont));
 		return;
 	}
 
