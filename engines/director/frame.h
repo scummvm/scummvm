@@ -119,6 +119,8 @@ public:
 	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
+	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+
 
 private:
 	void playTransition(Score *score);

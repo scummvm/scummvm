@@ -1055,4 +1055,13 @@ uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 	return 0;
 }
 
+bool Frame::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
+	// Find first from front to back
+	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
+		if (_drawRects[dr]->spriteId == spriteId && _drawRects[dr]->rect.contains(pos))
+			return true;
+
+	return false;
+}
+
 } // End of namespace Director

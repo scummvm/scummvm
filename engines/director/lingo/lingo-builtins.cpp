@@ -1234,9 +1234,8 @@ void Lingo::b_rollOver(int nargs) {
 	}
 
 	Common::Point pos = g_system->getEventManager()->getMousePos();
-	uint16 spriteId = frame->getSpriteIDFromPos(pos);
 
-	if (spriteId == arg)
+	if (frame->checkSpriteIntersection(arg, pos))
 		d.u.i = 1; // TRUE
 
 	g_lingo->push(d);
