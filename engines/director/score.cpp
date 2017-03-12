@@ -211,7 +211,8 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			if (isSharedCast) {
 				debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
 				pic = _vm->getSharedBMP()->getVal(imgId);
-				pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
+				if (pic != NULL)
+					pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
 			} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 			}
