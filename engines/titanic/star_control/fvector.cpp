@@ -40,13 +40,14 @@ void FVector::multiply(FVector *dest, const FVector *src) {
 	dest->_z = (src->_y * _x) - (_y * src->_x);
 }
 
-void FVector::fn3() {
+double FVector::fn3() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+	return hyp;
 }
 
 double FVector::getDistance(const FVector *src) const {

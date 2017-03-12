@@ -38,13 +38,13 @@ private:
 	int _field24;
 	FVector _row3;
 	int _field34;
-	int _field38;
+	double _field38;
 	int _field3C;
 	int _field40;
 	int _field44;
 	int _field48;
 	int _field4C;
-	int _field50;
+	Common::Array<double> _powers;
 	int _field54;
 	int _field58;
 	double _field5C;
@@ -52,10 +52,14 @@ private:
 	double _field64;
 	CStarControlSub25 _sub25;
 public:
+	CStarControlSub23();
+	virtual ~CStarControlSub23() {}
+
+	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
 	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
 	virtual void proc4(FVector &v1, FVector &v2, FMatrix &m);
-	virtual int proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m);
-	virtual ~CStarControlSub23() {}
+	virtual int proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m) { return 2; }
+	virtual void proc6(int val1, int val2, float val);
 
 	int get8() const { return _field8; }
 };

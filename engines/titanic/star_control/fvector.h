@@ -49,7 +49,7 @@ public:
 
 	void fn1(FVector *v);
 	void multiply(FVector *dest, const FVector *src);
-	void fn3();
+	double fn3();
 
 	/**
 	 * Returns the distance between a specified point and this one
