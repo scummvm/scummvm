@@ -47,7 +47,7 @@ void CStarControlSub23::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 	_row1 = v1;
 	_row2 = v2;
 	_row3 = _row2 - _row1;
-	_field24 = _row3.fn3();
+	_field24 = _row3.normalize();
 
 	_field58 = 0;
 	_field8 = 0;
@@ -74,7 +74,7 @@ void CStarControlSub23::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 	_row2 = v2;
 	FVector vector = _row2 - _row1;
 	_row3 = vector;
-	_field24 = _row3.fn3();
+	_field24 = _row3.normalize();
 
 	_field8 = 0;
 	_field34 = 0;

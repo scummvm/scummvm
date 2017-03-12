@@ -41,9 +41,9 @@ public:
 	CStarControlSub6(const CStarControlSub6 *src);
 
 	/**
-	 * Clear the item
+	 * Sets an identity matrix
 	 */
-	void clear();
+	void identity();
 
 	/**
 	 * Sets up a passed instance from the specified two other ones

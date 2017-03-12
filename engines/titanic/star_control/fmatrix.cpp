@@ -67,6 +67,12 @@ void FMatrix::save(SimpleFile *file, int indent) {
 }
 
 void FMatrix::clear() {
+	_row1.clear();
+	_row2.clear();
+	_row3.clear();
+}
+
+void FMatrix::identity() {
 	_row1 = FVector(1.0, 0.0, 0.0);
 	_row2 = FVector(0.0, 1.0, 0.0);
 	_row3 = FVector(0.0, 0.0, 1.0);
@@ -88,17 +94,17 @@ void FMatrix::fn1(const FVector &v) {
 	_row2._y = tempVector._y;
 	_row2._z = tempVector._z;
 
-	_row3.multiply(&tempVector, &_row2);
+	_row3.crossProduct(&tempVector, &_row2);
 	_row1._x = _row2._x;
 	_row1._y = _row2._y;
 	_row1._z = _row2._z;
-	_row1.fn3();
+	_row1.normalize();
 
-	_row3.multiply(&tempVector, &_row1);
+	_row3.crossProduct(&tempVector, &_row1);
 	_row2._x = _row1._x;
 	_row2._y = _row1._y;
 	_row2._z = _row1._z;
-	_row2.fn3();
+	_row2.normalize();
 }
 
 void FMatrix::fn2(const FMatrix &m) {

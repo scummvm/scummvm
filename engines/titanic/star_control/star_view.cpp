@@ -450,7 +450,7 @@ void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
 	v2._x = vx;
 	v2._y = vy;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
@@ -462,7 +462,7 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors3(FVector &v1, FVector &v2) {
@@ -474,7 +474,7 @@ void CStarView::randomizeVectors3(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors4(FVector &v1, FVector &v2) {
@@ -486,7 +486,7 @@ void CStarView::randomizeVectors4(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 		CVideoSurface **surface) {

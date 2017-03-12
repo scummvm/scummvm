@@ -65,6 +65,11 @@ public:
 	void clear();
 
 	/**
+	 * Sets up an identity matrix
+	 */
+	void identity();
+
+	/**
 	 * Sets the data for the matrix
 	 */
 	void set(FVector *row1, FVector *row2, FVector *row3);

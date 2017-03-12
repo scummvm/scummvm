@@ -47,8 +47,8 @@ void CStarControlSub6::deinit() {
 	_static = nullptr;
 }
 
-void CStarControlSub6::clear() {
-	FMatrix::clear();
+void CStarControlSub6::identity() {
+	FMatrix::identity();
 	_vector.clear();
 }
 
