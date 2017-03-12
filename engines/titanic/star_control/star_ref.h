@@ -36,6 +36,7 @@ protected:
 public:
 	CBaseStarRef(CBaseStar *star) : _star(star) {}
 	CBaseStarRef() : _star(nullptr) {}
+	virtual ~CBaseStarRef() {}
 
 	void process(CSurfaceArea *surface, CStarControlSub12 *sub12);
 
@@ -49,6 +50,7 @@ private:
 public:
 	CStarRef1(CBaseStar *star, const Common::Point &pt) :
 		CBaseStarRef(star), _index(-1) {}
+	virtual ~CStarRef1() {}
 
 	virtual bool check(const Common::Point &pt, int index);
 };
@@ -60,6 +62,7 @@ private:
 public:
 	CStarRef2(CBaseStar *star, Common::Array<CStarPosition> *positions) :
 		CBaseStarRef(star), _positions(positions), _index(0) {}
+	virtual ~CStarRef2() {}
 
 	virtual bool check(const Common::Point &pt, int index);
 };
@@ -69,6 +72,7 @@ private:
 	int _counter;
 public:
 	CStarRef3(CBaseStar *star) :CBaseStarRef(star), _counter(0) {}
+	virtual ~CStarRef3() {}
 
 	virtual bool check(const Common::Point &pt, int index);
 };

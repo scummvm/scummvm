@@ -28,6 +28,7 @@
 namespace Titanic {
 
 class CStarControlSub27 : public CStarControlSub23 {
+	virtual ~CStarControlSub27() {}
 };
 
 } // End of namespace Titanic
