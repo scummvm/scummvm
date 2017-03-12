@@ -35,7 +35,7 @@ public:
 	CStarControlSub26 _sub1;
 	CStarControlSub26 _sub2;
 public:
-
+	void fn1(const FMatrix &m1, const FMatrix &m2);
 };
 
 } // End of namespace Titanic

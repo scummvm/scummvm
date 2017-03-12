@@ -20,10 +20,40 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub24.h"
+#include "titanic/star_control/star_control_sub27.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
+void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {
+	CStarControlSub23::proc2(v1, v2, m1, m2);
+
+	int v24 = _field24;
+	if (_field24 > 0.0) {
+		_field8 = 1;
+		_field34 = 1;
+		proc6(120, 4, _field24);
+	}
+
+	if (m1 != m2) {
+		_sub25.fn1(m1, m2);
+		_field58 = 0;
+		_field5C = 0.0;
+
+		if (_field4C == 0) {
+			_field60 = -1.5881868e-23;
+			_field64 = 1.4499999;
+			_field8 = 1;
+		} else {
+			_field60 = 1.0 / (double)v24;
+			_field8 = 1;
+		}
+	}
+}
+
+int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
+	// TODO
+	return 0;
+}
 
 } // End of namespace Titanic

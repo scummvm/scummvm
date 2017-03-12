@@ -31,7 +31,7 @@
 namespace Titanic {
 
 class CStarControlSub23 {
-private:
+protected:
 	int _field4;
 	int _field8;
 	FVector _row1, _row2;
@@ -48,7 +48,7 @@ private:
 	int _field54;
 	int _field58;
 	double _field5C;
-	int _field60;
+	double _field60;
 	double _field64;
 	CStarControlSub25 _sub25;
 public:

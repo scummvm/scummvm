@@ -30,6 +30,9 @@ namespace Titanic {
 class CStarControlSub27 : public CStarControlSub23 {
 public:	
 	virtual ~CStarControlSub27() {}
+
+	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
+	virtual int proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m);
 };
 
 } // End of namespace Titanic

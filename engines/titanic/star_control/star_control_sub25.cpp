@@ -25,4 +25,10 @@
 
 namespace Titanic {
 
+void CStarControlSub25::fn1(const FMatrix &m1, const FMatrix &m2) {
+	_matrix1 = m1;
+	_matrix2 = m2;
+
+}
+
 } // End of namespace Titanic
