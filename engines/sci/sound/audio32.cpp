@@ -875,6 +875,12 @@ int16 Audio32::stop(const int16 channelIndex) {
 	return oldNumChannels;
 }
 
+uint16 Audio32::restart(const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor) {
+	Common::StackLock lock(_mutex);
+	stop(resourceId, soundNode);
+	return play(kNoExistingChannel, resourceId, autoPlay, loop, volume, soundNode, monitor);
+}
+
 int16 Audio32::getPosition(const int16 channelIndex) const {
 	Common::StackLock lock(_mutex);
 	if (channelIndex == kNoExistingChannel || _numActiveChannels == 0) {
@@ -918,82 +924,6 @@ void Audio32::setLoop(const int16 channelIndex, const bool loop) {
 
 	AudioChannel &channel = getChannel(channelIndex);
 	channel.loop = loop;
-}
-
-reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv) {
-	if (argc == 0) {
-		return make_reg(0, _numActiveChannels);
-	}
-
-	const int16 channelIndex = findChannelByArgs(argc, argv, 0, NULL_REG);
-	ResourceId resourceId;
-	bool loop;
-	int16 volume;
-	bool monitor = false;
-	reg_t soundNode = NULL_REG;
-
-	if (argc >= 5) {
-		resourceId = ResourceId(kResourceTypeAudio36, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16());
-
-		if (argc < 6 || argv[5].toSint16() == 1) {
-			loop = false;
-		} else {
-			// NOTE: Uses -1 for infinite loop. Presumably the
-			// engine was supposed to allow counter loops at one
-			// point, but ended up only using loop as a boolean.
-			loop = (bool)argv[5].toSint16();
-		}
-
-		if (getSciVersion() == SCI_VERSION_3) {
-			if (argc < 7) {
-				volume = Audio32::kMaxVolume;
-			} else {
-				volume = argv[6].toSint16() & Audio32::kMaxVolume;
-				monitor = argv[6].toSint16() & Audio32::kMonitorAudioFlagSci3;
-			}
-		} else {
-			if (argc < 7 || argv[6].toSint16() < 0 || argv[6].toSint16() > Audio32::kMaxVolume) {
-				volume = Audio32::kMaxVolume;
-
-				if (argc >= 7) {
-					monitor = true;
-				}
-			} else {
-				volume = argv[6].toSint16();
-			}
-		}
-	} else {
-		resourceId = ResourceId(kResourceTypeAudio, argv[0].toUint16());
-
-		if (argc < 2 || argv[1].toSint16() == 1) {
-			loop = false;
-		} else {
-			loop = (bool)argv[1].toSint16();
-		}
-
-		if (getSciVersion() == SCI_VERSION_3) {
-			if (argc < 3) {
-				volume = Audio32::kMaxVolume;
-			} else {
-				volume = argv[2].toSint16() & Audio32::kMaxVolume;
-				monitor = argv[2].toSint16() & Audio32::kMonitorAudioFlagSci3;
-			}
-		} else {
-			if (argc < 3 || argv[2].toSint16() < 0 || argv[2].toSint16() > Audio32::kMaxVolume) {
-				volume = Audio32::kMaxVolume;
-
-				if (argc >= 3) {
-					monitor = true;
-				}
-			} else {
-				volume = argv[2].toSint16();
-			}
-		}
-
-		soundNode = argc == 4 ? argv[3] : NULL_REG;
-	}
-
-	return make_reg(0, play(channelIndex, resourceId, autoPlay, loop, volume, soundNode, monitor));
 }
 
 #pragma mark -
@@ -1098,6 +1028,161 @@ bool Audio32::hasSignal() const {
 	}
 
 	return false;
+}
+
+#pragma mark -
+#pragma mark Kernel
+
+reg_t Audio32::kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	if (argc == 0) {
+		return make_reg(0, _numActiveChannels);
+	}
+
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, NULL_REG);
+	ResourceId resourceId;
+	bool loop;
+	int16 volume;
+	bool monitor = false;
+	reg_t soundNode = NULL_REG;
+
+	if (argc >= 5) {
+		resourceId = ResourceId(kResourceTypeAudio36, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16());
+
+		if (argc < 6 || argv[5].toSint16() == 1) {
+			loop = false;
+		} else {
+			// NOTE: Uses -1 for infinite loop. Presumably the
+			// engine was supposed to allow counter loops at one
+			// point, but ended up only using loop as a boolean.
+			loop = (bool)argv[5].toSint16();
+		}
+
+		if (getSciVersion() == SCI_VERSION_3) {
+			if (argc < 7) {
+				volume = Audio32::kMaxVolume;
+			} else {
+				volume = argv[6].toSint16() & Audio32::kMaxVolume;
+				monitor = argv[6].toSint16() & Audio32::kMonitorAudioFlagSci3;
+			}
+		} else {
+			if (argc < 7 || argv[6].toSint16() < 0 || argv[6].toSint16() > Audio32::kMaxVolume) {
+				volume = Audio32::kMaxVolume;
+
+				if (argc >= 7) {
+					monitor = true;
+				}
+			} else {
+				volume = argv[6].toSint16();
+			}
+		}
+	} else {
+		resourceId = ResourceId(kResourceTypeAudio, argv[0].toUint16());
+
+		if (argc < 2 || argv[1].toSint16() == 1) {
+			loop = false;
+		} else {
+			loop = (bool)argv[1].toSint16();
+		}
+
+		if (getSciVersion() == SCI_VERSION_3) {
+			if (argc < 3) {
+				volume = Audio32::kMaxVolume;
+			} else {
+				volume = argv[2].toSint16() & Audio32::kMaxVolume;
+				monitor = argv[2].toSint16() & Audio32::kMonitorAudioFlagSci3;
+			}
+		} else {
+			if (argc < 3 || argv[2].toSint16() < 0 || argv[2].toSint16() > Audio32::kMaxVolume) {
+				volume = Audio32::kMaxVolume;
+
+				if (argc >= 3) {
+					monitor = true;
+				}
+			} else {
+				volume = argv[2].toSint16();
+			}
+		}
+
+		soundNode = argc == 4 ? argv[3] : NULL_REG;
+	}
+
+	return make_reg(0, play(channelIndex, resourceId, autoPlay, loop, volume, soundNode, monitor));
+}
+
+reg_t Audio32::kernelStop(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, stop(channelIndex));
+}
+
+reg_t Audio32::kernelPause(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, pause(channelIndex));
+}
+
+reg_t Audio32::kernelResume(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, resume(channelIndex));
+}
+
+reg_t Audio32::kernelPosition(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
+	return make_reg(0, getPosition(channelIndex));
+}
+
+reg_t Audio32::kernelVolume(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	const int16 volume = argc > 0 ? argv[0].toSint16() : -1;
+	const int16 channelIndex = findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
+
+	if (volume != -1) {
+		setVolume(channelIndex, volume);
+	}
+
+	return make_reg(0, getVolume(channelIndex));
+}
+
+reg_t Audio32::kernelMixing(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	if (argc > 0) {
+		setAttenuatedMixing(argv[0].toUint16());
+	}
+
+	return make_reg(0, getAttenuatedMixing());
+}
+
+reg_t Audio32::kernelFade(const int argc, const reg_t *const argv) {
+	if (argc < 4) {
+		return make_reg(0, 0);
+	}
+
+	Common::StackLock lock(_mutex);
+
+	// NOTE: In SSCI, this call to find the channel is hacked up; argc is
+	// set to 2 before the call, and then restored after the call.
+	const int16 channelIndex = findChannelByArgs(2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
+	const int16 volume = argv[1].toSint16();
+	const int16 speed = argv[2].toSint16();
+	const int16 steps = argv[3].toSint16();
+	const bool stopAfterFade = argc > 4 ? (bool)argv[4].toUint16() : false;
+
+	return make_reg(0, fadeChannel(channelIndex, volume, speed, steps, stopAfterFade));
+}
+
+void Audio32::kernelLoop(const int argc, const reg_t *const argv) {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findChannelByArgs(argc, argv, 0, argc == 3 ? argv[2] : NULL_REG);
+	const bool loop = argv[0].toSint16() != 0 && argv[0].toSint16() != 1;
+
+	setLoop(channelIndex, loop);
 }
 
 } // End of namespace Sci

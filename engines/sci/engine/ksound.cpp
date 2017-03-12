@@ -356,23 +356,19 @@ reg_t kDoAudioPlay(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioStop(EngineState *s, int argc, reg_t *argv) {
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
-	return make_reg(0, g_sci->_audio32->stop(channelIndex));
+	return g_sci->_audio32->kernelStop(argc, argv);
 }
 
 reg_t kDoAudioPause(EngineState *s, int argc, reg_t *argv) {
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
-	return make_reg(0, g_sci->_audio32->pause(channelIndex));
+	return g_sci->_audio32->kernelPause(argc, argv);
 }
 
 reg_t kDoAudioResume(EngineState *s, int argc, reg_t *argv) {
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
-	return make_reg(0, g_sci->_audio32->resume(channelIndex));
+	return g_sci->_audio32->kernelResume(argc, argv);
 }
 
 reg_t kDoAudioPosition(EngineState *s, int argc, reg_t *argv) {
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc > 1 ? argv[1] : NULL_REG);
-	return make_reg(0, g_sci->_audio32->getPosition(channelIndex));
+	return g_sci->_audio32->kernelPosition(argc, argv);
 }
 
 reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
@@ -391,14 +387,7 @@ reg_t kDoAudioRate(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioVolume(EngineState *s, int argc, reg_t *argv) {
-	const int16 volume = argc > 0 ? argv[0].toSint16() : -1;
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 1, argc > 2 ? argv[2] : NULL_REG);
-
-	if (volume != -1) {
-		g_sci->_audio32->setVolume(channelIndex, volume);
-	}
-
-	return make_reg(0, g_sci->_audio32->getVolume(channelIndex));
+	return g_sci->_audio32->kernelVolume(argc, argv);
 }
 
 reg_t kDoAudioGetCapability(EngineState *s, int argc, reg_t *argv) {
@@ -421,11 +410,7 @@ reg_t kDoAudioBitDepth(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioMixing(EngineState *s, int argc, reg_t *argv) {
-	if (argc > 0) {
-		g_sci->_audio32->setAttenuatedMixing(argv[0].toUint16());
-	}
-
-	return make_reg(0, g_sci->_audio32->getAttenuatedMixing());
+	return g_sci->_audio32->kernelMixing(argc, argv);
 }
 
 reg_t kDoAudioChannels(EngineState *s, int argc, reg_t *argv) {
@@ -457,21 +442,7 @@ reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv) {
-	if (argc < 4) {
-		return make_reg(0, 0);
-	}
-
-	// NOTE: Sierra did a nightmarish hack here, temporarily replacing
-	// the argc of the kernel arguments with 2 and then restoring it
-	// after findChannelByArgs was called.
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(2, argv, 0, argc > 5 ? argv[5] : NULL_REG);
-
-	const int16 volume = argv[1].toSint16();
-	const int16 speed = argv[2].toSint16();
-	const int16 steps = argv[3].toSint16();
-	const bool stopAfterFade = argc > 4 ? (bool)argv[4].toUint16() : false;
-
-	return make_reg(0, g_sci->_audio32->fadeChannel(channelIndex, volume, speed, steps, stopAfterFade));
+	return g_sci->_audio32->kernelFade(argc, argv);
 }
 
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv) {
@@ -479,11 +450,7 @@ reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv) {
-	const int16 channelIndex = g_sci->_audio32->findChannelByArgs(argc, argv, 0, argc == 3 ? argv[2] : NULL_REG);
-
-	const bool loop = argv[0].toSint16() != 0 && argv[0].toSint16() != 1;
-
-	g_sci->_audio32->setLoop(channelIndex, loop);
+	g_sci->_audio32->kernelLoop(argc, argv);
 	return s->r_acc;
 }
 

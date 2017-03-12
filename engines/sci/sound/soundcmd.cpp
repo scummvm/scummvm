@@ -344,12 +344,10 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		// implementation is so different that it doesn't
 		// matter here
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
-			const int16 channelIndex = g_sci->_audio32->findChannelById(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
-
 			if (shouldPause) {
-				g_sci->_audio32->pause(channelIndex);
+				g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
 			} else {
-				g_sci->_audio32->resume(channelIndex);
+				g_sci->_audio32->resume(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
 			}
 		} else
 #endif
@@ -504,7 +502,7 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 	if (musicSlot->isSample) {
 #ifdef ENABLE_SCI32
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-			const int position = g_sci->_audio32->getPosition(g_sci->_audio32->findChannelById(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj));
+			const int position = g_sci->_audio32->getPosition(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
 
 			if (position == -1) {
 				processStopSound(musicSlot->soundObj, true);

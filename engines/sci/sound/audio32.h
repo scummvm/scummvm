@@ -451,6 +451,11 @@ public:
 	}
 
 	/**
+	 * Restarts playback of the given audio resource.
+	 */
+	uint16 restart(const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor);
+
+	/**
 	 * Returns the playback position for the given channel
 	 * number, in ticks.
 	 */
@@ -468,8 +473,6 @@ public:
 		Common::StackLock lock(_mutex);
 		setLoop(findChannelById(resourceId, soundNode), loop);
 	}
-
-	reg_t kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv);
 
 private:
 	/**
@@ -594,6 +597,19 @@ private:
 	 * monitoring buffer.
 	 */
 	int _numMonitoredSamples;
+
+#pragma mark -
+#pragma mark Kernel
+public:
+	reg_t kernelPlay(const bool autoPlay, const int argc, const reg_t *const argv);
+	reg_t kernelStop(const int argc, const reg_t *const argv);
+	reg_t kernelPause(const int argc, const reg_t *const argv);
+	reg_t kernelResume(const int argc, const reg_t *const argv);
+	reg_t kernelPosition(const int argc, const reg_t *const argv);
+	reg_t kernelVolume(const int argc, const reg_t *const argv);
+	reg_t kernelMixing(const int argc, const reg_t *const argv);
+	reg_t kernelFade(const int argc, const reg_t *const argv);
+	void kernelLoop(const int argc, const reg_t *const argv);
 };
 
 } // End of namespace Sci
