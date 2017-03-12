@@ -113,11 +113,11 @@ void CStarControlSub12::proc13(CStarControlSub13 *dest) {
 	*dest = _sub13;
 }
 
-void CStarControlSub12::proc14(int v) {
+void CStarControlSub12::proc14(FVector &v) {
 	FMatrix matrix = _sub13.getMatrix();
 	FVector vector = _sub13._position;
 
-	_handlerP->proc9(&vector, v, &matrix);
+	_handlerP->proc9(vector, v, matrix);
 }
 
 void CStarControlSub12::proc15(CErrorCode *errorCode) {
@@ -131,7 +131,7 @@ void CStarControlSub12::proc15(CErrorCode *errorCode) {
 
 	FVector v1 = _sub13._position;
 	FVector v2 = _sub13._position;
-	_handlerP->proc11(*errorCode, v2, _matrix2);
+	_handlerP->proc11(*errorCode, v2, *_matrix2);
 
 	if (v1 != v2) {
 		_sub13.setPosition(v2);
@@ -139,7 +139,7 @@ void CStarControlSub12::proc15(CErrorCode *errorCode) {
 	}
 
 	if (_matrix1 != _matrix2) {
-		_sub13.setMatrix(_matrix2);
+		_sub13.setMatrix(*_matrix2);
 	}
 }
 

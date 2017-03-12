@@ -23,9 +23,40 @@
 #ifndef TITANIC_STAR_CONTROL_SUB23_H
 #define TITANIC_STAR_CONTROL_SUB23_H
 
+#include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/star_control_sub25.h"
+
 namespace Titanic {
 
 class CStarControlSub23 {
+private:
+	int _field4;
+	int _field8;
+	FVector _row1, _row2;
+	int _field24;
+	FVector _row3;
+	int _field34;
+	int _field38;
+	int _field3C;
+	int _field40;
+	int _field44;
+	int _field48;
+	int _field4C;
+	int _field50;
+	int _field54;
+	int _field58;
+	double _field5C;
+	int _field60;
+	double _field64;
+	CStarControlSub25 _sub25;
+public:
+	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
+	virtual void proc4(FVector &v1, FVector &v2, FMatrix &m);
+	virtual int proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m);
+
+	int get8() const { return _field8; }
 };
 
 } // End of namespace Titanic

@@ -51,13 +51,17 @@ public:
 	DMatrix();
 	DMatrix(int mode, const FMatrix *src);
 	DMatrix(int mode, double val);
+	DMatrix(const FMatrix &src);
 
 	/**
 	 * Sets up data for the matrix
 	 */
 	void set(int mode, double amount);
 
+	void fn1(DMatrix &m);
 	void fn3(CStarControlSub26 *sub26);
+
+	const DMatrix *fn4(DMatrix &dest, const DMatrix &m1, const DMatrix &m2);
 };
 
 } // End of namespace Titanic

@@ -29,15 +29,15 @@ namespace Titanic {
 DMatrix *DMatrix::_static;
 
 DMatrix::DMatrix() :
-	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
+	_row1(1.875, 0.0, 0.0), _row2(0.0, 1.875, 0.0), _row3(0.0, 0.0, 1.875) {
 }
 
 DMatrix::DMatrix(int mode, const FMatrix *src) {
 	assert(!mode);
 
-	_row1._x = 1.0;
-	_row2._y = 1.0;
-	_row3._z = 1.0;
+	_row1._x = 1.875;
+	_row2._y = 1.875;
+	_row3._z = 1.875;
 	_frow1._x = src->_row1._x;
 	_frow1._y = src->_row1._y;
 	_frow1._z = src->_row1._z;
@@ -48,6 +48,12 @@ DMatrix::DMatrix(int mode, const FMatrix *src) {
 
 DMatrix::DMatrix(int mode, double val) {
 	set(mode, val);
+}
+
+DMatrix::DMatrix(const FMatrix &src) {
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
 }
 
 void DMatrix::init() {
@@ -94,11 +100,20 @@ void DMatrix::set(int mode, double amount) {
 	}
 }
 
+void DMatrix::fn1(DMatrix &m) {
+	// TODO
+}
+
 void DMatrix::fn3(CStarControlSub26 *sub26) {
 	double v = sub26->fn1();
 	v = (v < 0.0) ? 0.0 : 2.0 / v;
 
 	error("TODO: DMatrix::fn3 %d", (int)v);
+}
+
+const DMatrix *DMatrix::fn4(DMatrix &dest, const DMatrix &m1, const DMatrix &m2) {
+	// TODO
+	return nullptr;
 }
 
 } // End of namespace Titanic

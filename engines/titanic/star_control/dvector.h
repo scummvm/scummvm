@@ -23,7 +23,11 @@
 #ifndef TITANIC_DVECTOR_H
 #define TITANIC_DVECTOR_H
 
+#include "titanic/star_control/fvector.h"
+
 namespace Titanic {
+
+class DMatrix;
 
 /**
  * Double based vector class.
@@ -35,8 +39,20 @@ public:
 public:
 	DVector() : _x(0), _y(0), _z(0) {}
 	DVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+	DVector(const FVector &v) : _x(v._x), _y(v._y), _z(v._z) {}
 
-	void fn3();
+	void normalize();
+
+	/**
+	 * Returns the distance between this vector and the passed one
+	 */
+	double getDistance(const DVector &src);
+
+	void fn1(DVector &dest, const DMatrix &m);
+	void fn2(double val);
+	void fn3(DVector &dest);
+	const DMatrix *fn4(const DVector &v, DMatrix &m);
+	void fn5(DMatrix &dest);
 };
 
 } // End of namespace Titanic

@@ -40,7 +40,7 @@ CStarControlSub13::CStarControlSub13() {
 }
 
 CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
-		_matrix(&src->_matrix), _sub1(&src->_sub1), _sub2(&src->_sub2) {
+		_matrix(src->_matrix), _sub1(&src->_sub1), _sub2(&src->_sub2) {
 	_position = src->_position;
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
@@ -168,7 +168,7 @@ void CStarControlSub13::fn12() {
 	s = CStarControlSub6::setup(&s2, s, &m3);
 
 	m1.copyFrom(*s);
-	_matrix.fn2(&m1);
+	_matrix.fn2(m1);
 	_fieldD4 = 0;
 }
 
@@ -262,7 +262,7 @@ void CStarControlSub13::reset() {
 	_sub2._vector._x = _position._x;
 	_sub2._vector._y = _position._y;
 	_sub2._vector._z = _position._z;
-	_sub2.fn3(&_sub1);
+	_sub2.fn3(_sub1);
 
 	double widthV = (double)_width * 0.5;
 	double heightV = (double)_height * 0.5;

@@ -78,7 +78,7 @@ public:
 	virtual void proc11();
 	virtual void proc12(StarMode mode, double v2);
 	virtual void proc13(CStarControlSub13 *dest);
-	virtual void proc14(int v);
+	virtual void proc14(FVector &v);
 	virtual void proc15(CErrorCode *errorCode);
 	virtual void proc16();
 	virtual void proc17();
