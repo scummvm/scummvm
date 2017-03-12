@@ -46,8 +46,8 @@ DMatrix::DMatrix(int mode, const FMatrix *src) {
 	_frow2._z = src->_row2._z;
 }
 
-DMatrix::DMatrix(int mode, double val) {
-	set(mode, val);
+DMatrix::DMatrix(DAxis axis, double amount) {
+	setRotationMatrix(axis, amount);
 }
 
 DMatrix::DMatrix(const FMatrix &src) {
@@ -65,13 +65,13 @@ void DMatrix::deinit() {
 	_static = nullptr;
 }
 
-void DMatrix::set(int mode, double amount) {
+void DMatrix::setRotationMatrix(DAxis axis, double amount) {
 	const double FACTOR = 0.0174532925199433;
 	double sinVal = sin(amount * FACTOR);
 	double cosVal = cos(amount * FACTOR);
 
-	switch (mode) {
-	case 0:
+	switch (axis) {
+	case X_AXIS:
 		_row1._x = 1.0;
 		_row2._y = cosVal;
 		_row2._z = sinVal;
@@ -79,7 +79,7 @@ void DMatrix::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 1:
+	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._z = sinVal;
 		_row2._y = 1.0;
@@ -87,7 +87,7 @@ void DMatrix::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 2:
+	case Z_AXIS:
 		_row1._x = cosVal;
 		_row1._y = sinVal;
 		_row2._x = -sinVal;
