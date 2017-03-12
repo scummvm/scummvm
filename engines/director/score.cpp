@@ -568,6 +568,8 @@ void Score::loadCastInto(Sprite *sprite, int castId) {
 	case kCastText:
 		sprite->_textCast = _loadedText->getVal(castId);
 		break;
+	default:
+		warning("Score::loadCastInto(..., %d): Unhandled castType %d", castId, _castTypes[castId]);
 	}
 }
 
@@ -581,6 +583,9 @@ Common::Rect Score::getCastMemberInitialRect(int castId) {
 		return _loadedButtons->getVal(castId)->initialRect;
 	case kCastText:
 		return _loadedText->getVal(castId)->initialRect;
+	default:
+		warning("Score::getCastMemberInitialRect(%d): Unhandled castType %d", castId, _castTypes[castId]);
+		return Common::Rect(0, 0);
 	}
 }
 
@@ -598,6 +603,8 @@ void Score::setCastMemberModified(int castId) {
 	case kCastText:
 		_loadedText->getVal(castId)->modified = 1;
 		break;
+	default:
+		warning("Score::setCastMemberModified(%d): Unhandled castType %d", castId, _castTypes[castId]);
 	}
 }
 
