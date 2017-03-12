@@ -51,7 +51,7 @@ struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
 class Score;
-struct Cast;
+class Cast;
 
 enum {
 	kDebugLingoExec		= 1 << 0,
