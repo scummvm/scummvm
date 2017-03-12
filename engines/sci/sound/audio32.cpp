@@ -35,6 +35,7 @@
 #include "common/textconsole.h"     // for warning
 #include "common/types.h"           // for Flag::NO
 #include "engine.h"                 // for Engine, g_engine
+#include "sci/console.h"            // for Console
 #include "sci/engine/features.h"    // for GameFeatures
 #include "sci/engine/guest_additions.h" // for GuestAdditions
 #include "sci/engine/state.h"       // for EngineState
@@ -1183,6 +1184,36 @@ void Audio32::kernelLoop(const int argc, const reg_t *const argv) {
 	const bool loop = argv[0].toSint16() != 0 && argv[0].toSint16() != 1;
 
 	setLoop(channelIndex, loop);
+}
+
+#pragma mark -
+#pragma mark Debugging
+
+void Audio32::printAudioList(Console *con) const {
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i < _numActiveChannels; ++i) {
+		const AudioChannel &channel = _channels[i];
+		con->debugPrintf("  %d[%04x:%04x]: %s, started at %d, pos %d/%d, vol %d, pan %d%s%s\n",
+						 i,
+						 PRINT_REG(channel.soundNode),
+						 channel.robot ? "robot" : channel.resource->name().c_str(),
+						 channel.startedAtTick,
+						 (g_sci->getTickCount() - channel.startedAtTick) % channel.duration,
+						 channel.duration,
+						 channel.volume,
+						 channel.pan,
+						 channel.loop ? ", looping" : "",
+						 channel.pausedAtTick ? ", paused" : "");
+		if (channel.fadeStartTick) {
+			con->debugPrintf("                fade: vol %d -> %d, started at %d, pos %d/%d%s\n",
+							 channel.fadeStartVolume,
+							 channel.fadeTargetVolume,
+							 channel.fadeStartTick,
+							 (g_sci->getTickCount() - channel.fadeStartTick) % channel.duration,
+							 channel.fadeDuration,
+							 channel.stopChannelOnFade ? ", stopping" : "");
+		}
+	}
 }
 
 } // End of namespace Sci

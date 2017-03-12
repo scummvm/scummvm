@@ -33,6 +33,8 @@
 #include "sci/video/robot_decoder.h" // for RobotAudioStream
 
 namespace Sci {
+class Console;
+
 #pragma mark AudioChannel
 
 /**
@@ -610,6 +612,11 @@ public:
 	reg_t kernelMixing(const int argc, const reg_t *const argv);
 	reg_t kernelFade(const int argc, const reg_t *const argv);
 	void kernelLoop(const int argc, const reg_t *const argv);
+
+#pragma mark -
+#pragma mark Debugging
+public:
+	void printAudioList(Console *con) const;
 };
 
 } // End of namespace Sci

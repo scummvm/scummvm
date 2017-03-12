@@ -169,6 +169,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
 	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
+	registerCmd("audio_list",		WRAP_METHOD(Console, cmdAudioList));
 	// Script
 	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -418,6 +419,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
+	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2.1+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -1314,6 +1316,21 @@ bool Console::cmdMapInstrument(int argc, const char **argv) {
 			debugPrintf("\"%s\" -> %d / %d\n", (*it).name, (*it).gmInstr, (*it).gmRhythmKey);
 		}
 	}
+
+	return true;
+}
+
+bool Console::cmdAudioList(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (_engine->_audio32) {
+		debugPrintf("Audio list (%d active channels):\n", _engine->_audio32->getNumActiveChannels());
+		_engine->_audio32->printAudioList(this);
+	} else {
+		debugPrintf("This SCI version does not have a software digital audio mixer\n");
+	}
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
 
 	return true;
 }
