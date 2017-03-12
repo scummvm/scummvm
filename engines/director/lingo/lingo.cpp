@@ -410,6 +410,9 @@ Common::String *Datum::toString() {
 	case VAR:
 		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
+	case REFERENCE:
+		*s = Common::String::format("field#%d", u.i);
+		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
 	}
