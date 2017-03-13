@@ -123,6 +123,10 @@ void DirectorEngine::processEvents() {
 }
 
 void DirectorEngine::setDraggedSprite(uint16 id) {
+	_draggingSprite = true;
+	_draggingSpriteId = id;
+	_draggingSpritePos = g_system->getEventManager()->getMousePos();
+
 	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
 }
 

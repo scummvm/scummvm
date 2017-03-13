@@ -164,6 +164,10 @@ private:
 	Common::String _sharedCastFile;
 	Common::HashMap<int, CastType> _dummyCastType;
 
+	bool _draggingSprite;
+	uint16 _draggingSpriteId;
+	Common::Point _draggingSpritePos;
+
 private:
 	void testFontScaling();
 	void testFonts();
