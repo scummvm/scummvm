@@ -255,7 +255,7 @@ Dialog *GuiManager::getTopDialog() const {
 }
 
 void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
-	debug(7, "Adding Gui Object %p to trash", object);
+	debug(7, "Adding Gui Object %p to trash", (void *)object);
 	GuiObjectTrashItem t;
 	t.object = object;
 	t.parent = 0;
@@ -362,7 +362,7 @@ void GuiManager::runLoop() {
 		Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
 		while (it != _guiObjectTrash.end()) {
 			if ((*it).parent == 0 || (*it).parent == activeDialog) {
-				debug(7, "Delayed deletion of Gui Object %p", (*it).object);
+				debug(7, "Delayed deletion of Gui Object %p", (void *)(*it).object);
 				delete (*it).object;
 				it = _guiObjectTrash.erase(it);
 			} else
