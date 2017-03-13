@@ -177,7 +177,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_z:
 	case Common::KEYCODE_c:
 		if (v == -1) {
-			sub6.set(key == Common::KEYCODE_z ? MODE_PHOTO : MODE_STARFIELD, 1.0);
+			sub6.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;
@@ -210,7 +210,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_x:
 		if (v == -1) {
-			sub6.set(MODE_PHOTO, -1.0);
+			sub6.setRotationMatrix(Y_AXIS, -1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;
@@ -219,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_QUOTE:
 		if (v == -1) {
-			sub6.set(MODE_STARFIELD, -1.0);
+			sub6.setRotationMatrix(X_AXIS, -1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;

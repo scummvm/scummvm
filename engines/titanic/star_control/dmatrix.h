@@ -28,8 +28,6 @@
 
 namespace Titanic {
 
-enum DAxis { X_AXIS, Y_AXIS, Z_AXIS };
-
 class FMatrix;
 class CStarControlSub26;
 
@@ -52,13 +50,13 @@ public:
 public:
 	DMatrix();
 	DMatrix(int mode, const FMatrix *src);
-	DMatrix(DAxis axis, double amount);
+	DMatrix(Axis axis, double amount);
 	DMatrix(const FMatrix &src);
 
 	/**
 	 * Sets up a matrix for rotating on a given axis by a given amount
 	 */
-	void setRotationMatrix(DAxis axis, double amount);
+	void setRotationMatrix(Axis axis, double amount);
 
 	void fn1(DMatrix &m);
 	void fn3(CStarControlSub26 *sub26);

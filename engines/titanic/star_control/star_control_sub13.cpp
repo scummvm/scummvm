@@ -158,9 +158,9 @@ void CStarControlSub13::set1C(double v) {
 void CStarControlSub13::fn12() {
 	_matrix.identity();
 
-	CStarControlSub6 m1(0, g_vm->getRandomNumber(359));
-	CStarControlSub6 m2(1, g_vm->getRandomNumber(359));
-	CStarControlSub6 m3(2, g_vm->getRandomNumber(359));
+	CStarControlSub6 m1(X_AXIS, g_vm->getRandomNumber(359));
+	CStarControlSub6 m2(Y_AXIS, g_vm->getRandomNumber(359));
+	CStarControlSub6 m3(Z_AXIS, g_vm->getRandomNumber(359));
 	
 	CStarControlSub6 s1, s2;
 	CStarControlSub6 *s;

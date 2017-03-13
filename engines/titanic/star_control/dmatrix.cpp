@@ -46,7 +46,7 @@ DMatrix::DMatrix(int mode, const FMatrix *src) {
 	_frow2._z = src->_row2._z;
 }
 
-DMatrix::DMatrix(DAxis axis, double amount) {
+DMatrix::DMatrix(Axis axis, double amount) {
 	setRotationMatrix(axis, amount);
 }
 
@@ -65,7 +65,7 @@ void DMatrix::deinit() {
 	_static = nullptr;
 }
 
-void DMatrix::setRotationMatrix(DAxis axis, double amount) {
+void DMatrix::setRotationMatrix(Axis axis, double amount) {
 	const double FACTOR = 0.0174532925199433;
 	double sinVal = sin(amount * FACTOR);
 	double cosVal = cos(amount * FACTOR);

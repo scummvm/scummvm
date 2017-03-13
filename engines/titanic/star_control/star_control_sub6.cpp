@@ -30,8 +30,8 @@ CStarControlSub6::CStarControlSub6() {
 	clear();
 }
 
-CStarControlSub6::CStarControlSub6(int mode, double val) {
-	set(mode, val);
+CStarControlSub6::CStarControlSub6(Axis axis, double amount) {
+	setRotationMatrix(axis, amount);
 }
 
 CStarControlSub6::CStarControlSub6(const CStarControlSub6 *src) {
@@ -52,13 +52,13 @@ void CStarControlSub6::identity() {
 	_vector.clear();
 }
 
-void CStarControlSub6::set(int mode, double amount) {
+void CStarControlSub6::setRotationMatrix(Axis axis, double amount) {
 	const double ROTATION = 3.1415927 * 0.0055555557;
 	double sinVal = sin(amount * ROTATION);
 	double cosVal = cos(amount * ROTATION);
 
-	switch (mode) {
-	case 0:
+	switch (axis) {
+	case X_AXIS:
 		_row1._x = 1.0;
 		_row1._y = 0.0;
 		_row1._z = 0.0;
@@ -70,7 +70,7 @@ void CStarControlSub6::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 1:
+	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._y = 0.0;
 		_row1._z = sinVal;
@@ -82,7 +82,7 @@ void CStarControlSub6::set(int mode, double amount) {
 		_row3._z = sinVal;
 		break;
 
-	case 2:
+	case Z_AXIS:
 		_row1._x = cosVal;
 		_row1._y = sinVal;
 		_row1._z = 0.0;
