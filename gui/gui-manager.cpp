@@ -345,11 +345,11 @@ void GuiManager::runLoop() {
 			// triggered in 3x mode or when running ScummVM under Valgrind.)
 			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED) {
 				processEvent(event, getTopDialog());
-				continue;		
+				continue;
 			}
-			
+
 			processEvent(event, activeDialog);
-			
+
 
 			if (lastRedraw + waitTime < _system->getMillis(true)) {
 				lastRedraw = _system->getMillis(true);
