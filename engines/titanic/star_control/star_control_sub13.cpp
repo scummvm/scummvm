@@ -35,7 +35,8 @@ CStarControlSub13::CStarControlSub13() {
 	_height = 340;
 	_field24 = 0;
 	_fieldC0 = _fieldC4 = _fieldC8 = 0.0;
-	_fieldCC = _fieldD0 = _fieldD4 = 0.0;
+	_fieldCC = _fieldD0 = 0.0;
+	_flag = false;
 	Common::fill(&_valArray[0], &_valArray[5], 0.0);
 }
 
@@ -58,7 +59,7 @@ CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 	_field24 = src->_field24;
 
 	Common::copy(&src->_valArray[0], &src->_valArray[4], &_valArray[0]);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::copyFrom(const CStarControlSub13 *src) {
@@ -89,7 +90,7 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 		_valArray[idx] = file->readFloat();
 
 	_matrix.load(file, param);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::save(SimpleFile *file, int indent) {
@@ -111,34 +112,34 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 
 void CStarControlSub13::setPosition(const FVector &v) {
 	_position = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::setPosition(const CStarControlSub6 *sub6) {
 	FVector vector;
 	_position.fn5(&vector, sub6);
 	_position = sub6->_row1;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::setMatrix(const FMatrix &m) {
 	_matrix = m;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn11(const FVector &v) {
 	_matrix.fn1(v);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::setC(double v) {
 	_fieldC = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::set10(double v) {
 	_field10 = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::set14(double v) {
@@ -147,12 +148,12 @@ void CStarControlSub13::set14(double v) {
 
 void CStarControlSub13::set18(double v) {
 	_field18 = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::set1C(double v) {
 	_field1C = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn12() {
@@ -169,7 +170,7 @@ void CStarControlSub13::fn12() {
 
 	m1.copyFrom(*s);
 	_matrix.fn2(m1);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn13(StarMode mode, double v2) {
@@ -189,23 +190,23 @@ void CStarControlSub13::reposition(double factor) {
 	_position._x = _matrix._row3._x * factor + _position._x;
 	_position._y = _matrix._row3._y * factor + _position._y;
 	_position._z = _matrix._row3._z * factor + _position._z;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn15(const FMatrix &matrix) {
 	_matrix.fn3(matrix);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 CStarControlSub6 CStarControlSub13::getSub1() {
-	if (!_fieldD4)
+	if (!_flag)
 		reset();
 
 	return _sub1;
 }
 
 CStarControlSub6 CStarControlSub13::getSub2() {
-	if (!_fieldD4)
+	if (!_flag)
 		reset();
 
 	return _sub2;
@@ -270,8 +271,8 @@ void CStarControlSub13::reset() {
 	_fieldC4 = heightV;
 	_fieldC8 = MIN(widthV, heightV);
 	_fieldCC = tan(_field18 * FACTOR);
-	_fieldD4 = 1;
 	_fieldD0 = tan(_field1C * FACTOR);
+	_flag = true;
 }
 
 const FMatrix &CStarControlSub13::getMatrix() const {

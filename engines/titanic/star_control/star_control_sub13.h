@@ -42,7 +42,7 @@ private:
 	CStarControlSub6 _sub2;
 	double _fieldC0;
 	double _fieldC4;
-	int _fieldD4;
+	bool _flag;
 private:
 	void reset();
 public:

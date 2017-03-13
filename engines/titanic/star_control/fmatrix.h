@@ -95,4 +95,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MATRIX3_H */
+#endif /* TITANIC_FMATRIX_H */

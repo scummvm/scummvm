@@ -28,7 +28,7 @@ namespace Titanic {
 CStarControlSub23::CStarControlSub23() : _row1(0.0, 1000000.0, 0.0) {
 	_field4 = 0;
 	_field8 = 0;
-	_field24 = 0;
+	_field24 = 0.0;
 	_field34 = 0;
 	_field38 = 0;
 	_field3C = 0;
@@ -63,7 +63,7 @@ void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_row1.clear();
 	_row2.clear();
 	_field58 = 0;
-	_field24 = 0;
+	_field24 = 0.0;
 	_field8 = 0;
 	_field34 = 0;
 	_field5C = 1.875;
