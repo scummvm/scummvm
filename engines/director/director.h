@@ -105,6 +105,7 @@ public:
 	void cleanupMainArchive();
 
 	void processEvents(); // evetns.cpp
+	void setDraggedSprite(uint16 id); // events.cpp
 
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }

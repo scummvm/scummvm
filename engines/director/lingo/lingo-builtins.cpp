@@ -25,6 +25,7 @@
 
 #include "director/lingo/lingo.h"
 #include "director/frame.h"
+#include "director/sprite.h"
 
 namespace Director {
 
@@ -1166,9 +1167,12 @@ void Lingo::b_move(int nargs) {
 }
 
 void Lingo::b_moveableSprite(int nargs) {
-	g_lingo->printSTUBWithArglist("b_moveableSprite", nargs);
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	g_lingo->dropStack(nargs);
+	// Will have no effect
+	frame->_sprites[g_lingo->_currentEntityId]->_moveable = true;
+
+	g_director->setDraggedSprite(frame->_sprites[g_lingo->_currentEntityId]->_castId);
 }
 
 void Lingo::b_pasteClipBoardInto(int nargs) {

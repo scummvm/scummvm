@@ -122,4 +122,8 @@ void DirectorEngine::processEvents() {
 	}
 }
 
+void DirectorEngine::setDraggedSprite(uint16 id) {
+	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
+}
+
 } // End of namespace Director
