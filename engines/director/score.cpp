@@ -693,8 +693,22 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 	for (j = _actions.begin(); j != _actions.end(); ++j)
-		if (!j->_value.empty())
+		if (!j->_value.empty()) {
 			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
+
+			processImmediateFrameScript(j->_value, j->_key);
+		}
+}
+
+bool Score::processImmediateFrameScript(Common::String s, int id) {
+	s.trim();
+
+	// In D2/D3 this specifies immediately the sprite/field properties
+	if (!s.compareToIgnoreCase("moveableSprite") || !s.compareToIgnoreCase("editableText")) {
+		_immediateActions[id] = true;
+	}
+
+	return false;
 }
 
 void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {

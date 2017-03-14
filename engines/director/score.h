@@ -106,6 +106,8 @@ private:
 	Common::String getString(Common::String str);
 	Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
 
+	bool processImmediateFrameScript(Common::String s, int id);
+
 public:
 	Common::Array<Frame *> _frames;
 	Common::HashMap<int, CastType> _castTypes;
@@ -113,6 +115,7 @@ public:
 	Common::HashMap<Common::String, int> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
+	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
