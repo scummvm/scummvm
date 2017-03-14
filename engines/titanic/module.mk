@@ -436,10 +436,10 @@ MODULE_OBJS := \
 	star_control/dvector.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
+	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
 	star_control/star_control_sub2.o \
-	star_control/star_control_sub4.o \
 	star_control/star_control_sub5.o \
 	star_control/star_control_sub6.o \
 	star_control/star_control_sub7.o \

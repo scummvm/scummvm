@@ -24,7 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB3_H
 
 #include "titanic/support/simple_file.h"
-#include "titanic/star_control/star_control_sub4.h"
+#include "titanic/star_control/frange.h"
 #include "titanic/star_control/star_control_sub5.h"
 #include "titanic/star_control/surface_area.h"
 
@@ -68,7 +68,7 @@ private:
 	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 protected:
 	Common::Array<CBaseStarEntry> _data;
-	CStarControlSub4 _sub4;
+	FRange _minMax;
 	double _minVal;
 	double _maxVal;
 	double _range;

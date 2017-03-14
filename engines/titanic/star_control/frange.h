@@ -20,26 +20,31 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "titanic/star_control/star_control_sub4.h"
+#ifndef TITANIC_FRANGE_H
+#define TITANIC_FRANGE_H
+
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
-CStarControlSub4::CStarControlSub4() {
-}
+class FRange {
+private:
+	FVector _min;
+	FVector _max;
+public:
+	FRange();
 
-void CStarControlSub4::initialize() {
-	_min._x = _min._y = _min._z = 9.9999994e27;
-	_max._x = _max._y = _max._z = -9.9999994e27;
-}
+	/**
+	 * Resets the minimum & maximum vector values
+	 */
+	void reset();
 
-void CStarControlSub4::checkEntry(const FVector &v) {
-	_min._x = MIN(_min._x, v._x);
-	_min._y = MIN(_min._y, v._y);
-	_min._z = MIN(_min._z, v._z);
-	_max._x = MAX(_max._x, v._x);
-	_max._y = MAX(_max._y, v._y);
-	_max._z = MAX(_max._z, v._z);
-}
+	/**
+	 * Expands the minimum & maximum as necessary to encompass the passed vector/
+	 */
+	void expand(const FVector &v);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_FRANGE_H */

@@ -67,11 +67,11 @@ void CBaseStar::clear() {
 void CBaseStar::initialize() {
 	_minVal = 9.9999998e10;
 	_maxVal = -9.9999998e10;
-	_sub4.initialize();
+	_minMax.reset();
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		const CBaseStarEntry *entry = getDataPtr(idx);
-		_sub4.checkEntry(entry->_position);
+		_minMax.expand(entry->_position);
 
 		if (entry->_value < _minVal)
 			_minVal = entry->_value;
