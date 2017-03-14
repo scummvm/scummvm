@@ -55,7 +55,7 @@ bool CStarRef2::check(const Common::Point &pt, int index) {
 /*------------------------------------------------------------------------*/
 
 bool CStarRef3::check(const Common::Point &pt, int index) {
-	++_counter;
+	++_index;
 	return true;
 }
 

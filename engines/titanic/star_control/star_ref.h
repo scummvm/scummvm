@@ -46,6 +46,7 @@ public:
 class CStarRef1 : public CBaseStarRef {
 private:
 	Common::Point _position;
+public:
 	int _index;
 public:
 	CStarRef1(CBaseStar *star, const Common::Point &pt) :
@@ -58,6 +59,7 @@ public:
 class CStarRef2 : public CBaseStarRef {
 private:
 	Common::Array<CStarPosition> *_positions;
+public:
 	int _index;
 public:
 	CStarRef2(CBaseStar *star, Common::Array<CStarPosition> *positions) :
@@ -68,10 +70,10 @@ public:
 };
 
 class CStarRef3 : public CBaseStarRef {
-private:
-	int _counter;
 public:
-	CStarRef3(CBaseStar *star) :CBaseStarRef(star), _counter(0) {}
+	int _index;
+public:
+	CStarRef3(CBaseStar *star) :CBaseStarRef(star), _index(0) {}
 	virtual ~CStarRef3() {}
 
 	virtual bool check(const Common::Point &pt, int index);

@@ -201,14 +201,17 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	// TODO
 }
 
-void CBaseStar::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+int CBaseStar::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 		const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
+	ref.process(surfaceArea, sub12);
+	return ref._index;
 }
 
 int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
-	// TODO
-	return 0;
+	CStarRef3 ref(this);
+	ref.process(surfaceArea, sub12);
+	return ref._index;
 }
 
 } // End of namespace Titanic

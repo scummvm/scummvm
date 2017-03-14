@@ -104,7 +104,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
-		const Common::Point &pt, int flags = 0) { return false; }
+		const Common::Point &pt, void *handler = nullptr) { return false; }
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates
@@ -137,7 +137,7 @@ public:
 	 */
 	const CBaseStarEntry *getDataPtr(int index) const;
 
-	void baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+	int baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 		const Common::Point &pt);
 
 	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
