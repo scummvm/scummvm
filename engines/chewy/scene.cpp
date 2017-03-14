@@ -37,6 +37,7 @@ namespace Chewy {
 
 #define MAX_DETAILS 32
 #define MAX_HOTSPOTS 50
+#define MAX_AUTOMOVE 20
 
 // Animated details - scene animations
 struct AnimatedDetails {
@@ -75,6 +76,13 @@ struct Hotspot {
 	Common::String desc;
 };
 
+struct AutoMove {
+	int16 x;
+	int16 y;
+	byte spriteNum;	// sprite number to draw when the end point is reached
+	// 1 byte dummy
+};
+
 struct SceneInfo {
 	uint16 staticDetailsCount;
 	uint16 animatedDetailsCount;
@@ -89,7 +97,7 @@ struct SceneInfo {
 	Common::String tafName;	// 14 bytes
 	byte zoomFactor;
 	// 1 byte dummy
-	// 6 * 20 = 120 bytes automove coordinates - TODO
+	AutoMove autoMove[MAX_AUTOMOVE];
 	// MAX_DETAILS * 3 * 2 = 192 bytes voc - TODO
 	// MAX_DETAILS * 3 = 96 bytes samples - TODO
 };
@@ -233,7 +241,13 @@ void Scene::loadSceneInfo() {
 	_sceneInfo->zoomFactor = indexFile.readByte();
 	indexFile.readByte();	// padding
 	
-	// 6 * 20 = 120 bytes automove coordinates - TODO: read these
+	for (int i = 0; i < MAX_AUTOMOVE; i++) {
+		_sceneInfo->autoMove[i].x = indexFile.readSint16LE();
+		_sceneInfo->autoMove[i].y = indexFile.readSint16LE();
+		_sceneInfo->autoMove[i].spriteNum = indexFile.readByte();
+		indexFile.readByte();	// padding
+	}
+
 	// MAX_DETAILS * 3 * 2 = 192 bytes voc - TODO: read these
 	// MAX_DETAILS * 3 = 96 bytes samples - TODO: read these
 
