@@ -36,6 +36,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -536,6 +537,14 @@ void Frame::playTransition(Score *score) {
 		warning("Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
 		break;
 
+	}
+}
+
+void Frame::executeImmediateScripts() {
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_vm->getCurrentScore()->_immediateActions.contains(_sprites[i]->_scriptId)) {
+			g_lingo->processEvent(kEventMouseUp, kFrameScript, _sprites[i]->_scriptId);
+		}
 	}
 }
 

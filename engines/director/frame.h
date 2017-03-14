@@ -121,6 +121,7 @@ public:
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
 
+	void executeImmediateScripts();
 
 private:
 	void playTransition(Score *score);

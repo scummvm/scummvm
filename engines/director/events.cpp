@@ -75,6 +75,10 @@ void DirectorEngine::processEvents() {
 					_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
 					_lingo->processEvent(kEventMouseDown, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 				}
+
+				if (currentFrame->_sprites[spriteId]->_moveable) {
+					warning("Moveable");
+				}
 				break;
 
 			case Common::EVENT_LBUTTONUP:

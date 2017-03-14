@@ -1061,6 +1061,8 @@ void Score::update() {
 	_surface->clear();
 	_surface->copyFrom(*_trailSurface);
 
+	_frames[_currentFrame]->executeImmediateScripts();
+
 	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
 	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
