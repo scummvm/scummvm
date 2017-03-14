@@ -28,11 +28,14 @@ CSurfaceArea::CSurfaceArea(CVideoSurface *surface) {
 	_width = surface->getWidth();
 	_height = surface->getHeight();
 	_pitch = surface->getPitch();
+	_field0 = 0;
+	_colorMask = _color = 0;
+	_mode = SA_NONE;
 
 	// Original supported other pixel depths
 	_bpp = surface->getPixelDepth();
-	assert(_bpp == 2);
 	_pixelsPtr = surface->getPixels();
+	assert(_bpp == 2 && _pixelsPtr);
 
 	initialize();
 }

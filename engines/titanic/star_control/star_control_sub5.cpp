@@ -175,7 +175,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 				
 				e->_fieldC = g_vm->getRandomNumber(255);
 				e->_field10 = FACTOR * (double)g_vm->getRandomNumber(15);
-				e->_field14 = ((double)g_vm->getRandomNumber(0xffffffff)
+				e->_field14 = ((double)g_vm->getRandomNumber(0xfffffffe)
 					* 50.0 * 0.000015259022) * 0.00390625;
 			}
 		}
