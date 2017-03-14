@@ -34,12 +34,17 @@
 
 namespace Chewy {
 
+#define DESC_WIDTH 80
+#define DESC_HEIGHT 8
+
 Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
 	_font = nullptr;
+	_descSurface.create(DESC_WIDTH, DESC_HEIGHT, ::Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Graphics::~Graphics() {
 	delete _font;
+	_descSurface.free();
 }
 
 void Graphics::drawSprite(Common::String filename, int spriteNum, uint x, uint y) {
@@ -65,6 +70,15 @@ void Graphics::drawImage(Common::String filename, int imageNum) {
 	delete[] image->data;
 	delete image;
 	delete res;
+}
+
+void Graphics::drawRect(Common::Rect r, byte color) {
+	::Graphics::Surface *screen = g_system->lockScreen();
+	screen->drawLine(r.left, r.top, r.right, r.top, color);
+	screen->drawLine(r.right, r.top, r.right, r.bottom, color);
+	screen->drawLine(r.left, r.bottom, r.right, r.bottom, color);
+	screen->drawLine(r.left, r.top, r.left, r.bottom, color);
+	g_system->unlockScreen();
 }
 
 void Graphics::loadFont(Common::String filename) {
@@ -143,6 +157,29 @@ void Graphics::playVideo(uint num) {
 
 	delete videoResource;
 	delete cfoDecoder;
+}
+
+void Graphics::setDescSurface(Common::Point pos) {
+	_descPos = pos;
+
+	if (pos.x < 0)
+		return;
+
+	::Graphics::Surface *s = g_system->lockScreen();
+	Common::Rect r = Common::Rect(pos.x, pos.y, pos.x + _descSurface.w, pos.y + _descSurface.h);
+	r.clip(Common::Rect(0, 0, 320, 200));
+	_descSurface.copyRectToSurface(*s, 0, 0, r);
+	g_system->unlockScreen();
+}
+
+void Graphics::restoreDescSurface() {
+	if (_descPos.x < 0)
+		return;
+
+	Common::Rect r = Common::Rect(_descPos.x, _descPos.y, _descPos.x + _descSurface.w, _descPos.y + _descSurface.h);
+	r.clip(Common::Rect(0, 0, 320, 200));
+	g_system->copyRectToScreen(_descSurface.getPixels(), _descSurface.pitch, _descPos.x, _descPos.y, r.width(), r.height());
+	_descPos = Common::Point(-1, -1);
 }
 
 } // End of namespace Chewy

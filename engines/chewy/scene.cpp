@@ -55,15 +55,19 @@ struct StaticDetails {
 	// 1 byte dummy
 };
 
+struct Hotspot {
+	Common::Rect rect;
+	uint16 resource;
+	Common::String desc;
+};
+
 struct SceneInfo {
 	uint16 staticDetailsCount;
 	uint16 animatedDetailsCount;
 	uint32 spritePtr;
 	AnimatedDetails animatedDetails[MAX_DETAILS];
 	StaticDetails staticDetails[MAX_DETAILS];
-	Common::Rect hotspot[MAX_HOTSPOTS];
-	uint16 hotspotDescRes[MAX_HOTSPOTS];
-	Common::String hotspotDesc[MAX_HOTSPOTS];
+	Hotspot hotspot[MAX_HOTSPOTS];
 	byte roomNum;
 	byte picNum;
 	byte autoMoveCount;
@@ -78,6 +82,7 @@ struct SceneInfo {
 
 Scene::Scene(ChewyEngine *vm) : _vm(vm) {
 	_sceneInfo = new SceneInfo();
+	_vm->_graphics->setDescSurface(Common::Point(-1, -1));
 }
 
 Scene::~Scene() {
@@ -98,7 +103,7 @@ void Scene::draw() {
 	_vm->_graphics->drawImage("episode1.tgp", _curScene);
 
 	// Static details
-	for (uint16 i = 0; i < MAX_HOTSPOTS; i++) {
+	for (uint16 i = 0; i < MAX_DETAILS; i++) {
 		StaticDetails s = _sceneInfo->staticDetails[i];
 		if (s.spriteNum >= 0 && s.x >= 0 && s.y >= 0 && !s.hide)
 			_vm->_graphics->drawSprite(Common::String::format("det%d.taf", _curScene), s.spriteNum, s.x, s.y);
@@ -108,17 +113,25 @@ void Scene::draw() {
 	_vm->_graphics->drawSprite("det1.taf", 0, 200, 100);
 	_vm->_graphics->loadFont("6x8.tff");
 	_vm->_graphics->drawText("This is a test", 200, 80);
+
+	_vm->_graphics->setDescSurface(Common::Point(-1, -1));
 }
 
 void Scene::updateMouse(Common::Point coords) {
+	_vm->_graphics->restoreDescSurface();
+
 	// Animated details
 	// TODO: handle these
 
 	// Static details
 	for (uint16 i = 0; i < MAX_HOTSPOTS; i++) {
-		if (_sceneInfo->hotspot[i].contains(coords)) {
-			// TODO: Draw hotspot description on screen
-			debug("Coords %d, %d: '%s'", coords.x, coords.y, _sceneInfo->hotspotDesc[i].c_str());
+		//_vm->_graphics->drawRect(_sceneInfo->hotspot[i].rect, 0);	// debug
+
+		if (_sceneInfo->hotspot[i].rect.contains(coords) && _sceneInfo->hotspot[i].resource < kATSTextMax) {
+			if (coords.y >= 8) {
+				_vm->_graphics->setDescSurface(Common::Point(coords.x, coords.y - 8));
+				_vm->_graphics->drawText(_sceneInfo->hotspot[i].desc, coords.x, coords.y - 8);
+			}
 			break;
 		}
 	}
@@ -165,25 +178,29 @@ void Scene::loadSceneInfo() {
 
 	// Hotspots
 	for (int i = 0; i < MAX_HOTSPOTS; i++) {
-		_sceneInfo->hotspot[i].left = indexFile.readUint16LE();
-		_sceneInfo->hotspot[i].top = indexFile.readUint16LE();
-		_sceneInfo->hotspot[i].right = indexFile.readUint16LE();
-		_sceneInfo->hotspot[i].bottom = indexFile.readUint16LE();
-		if (!_sceneInfo->hotspot[i].isValidRect())
+		_sceneInfo->hotspot[i].rect.left = indexFile.readUint16LE();
+		_sceneInfo->hotspot[i].rect.top = indexFile.readUint16LE();
+		_sceneInfo->hotspot[i].rect.right = indexFile.readUint16LE();
+		_sceneInfo->hotspot[i].rect.bottom = indexFile.readUint16LE();
+		if (!_sceneInfo->hotspot[i].rect.isValidRect())
 			warning("Hotspot %d has an invalid rect", i);
 	}
 
 	// Hotspot descriptions
 	for (int i = 0; i < MAX_HOTSPOTS; i++) {
-		_sceneInfo->hotspotDescRes[i] = indexFile.readUint16LE();
+		_sceneInfo->hotspot[i].resource = indexFile.readUint16LE() + 4;
 		
-		if (_sceneInfo->hotspotDescRes[i] < 12) {
-			// TODO: Hotspot description IDs are off... investigate why
-			_sceneInfo->hotspotDesc[i] = text->getText(_curScene + kADSTextMax, _sceneInfo->hotspotDescRes[i])->text;
+		if (_sceneInfo->hotspot[i].resource < kATSTextMax) {
+			TextEntry *entry = text->getText(_curScene + kADSTextMax, _sceneInfo->hotspot[i].resource);
+			if (entry)
+				_sceneInfo->hotspot[i].desc = entry->text;
+			else
+				_sceneInfo->hotspot[i].desc = Common::String::format("Hotspot %d", _sceneInfo->hotspot[i].resource);
 		} else {
 			// TODO: Handle these types of hotspot descriptions
-			warning("Hotspot %d has an invalid description resource (%d)", i, _sceneInfo->hotspotDescRes[i]);
-			_sceneInfo->hotspotDesc[i] = Common::String::format("Hotspot %d", _sceneInfo->hotspotDescRes[i]);
+			_sceneInfo->hotspot[i].desc = "";
+			//warning("Hotspot %d has an invalid description resource (%d)", i, _sceneInfo->hotspot[i].resource);
+			//_sceneInfo->hotspot[i].desc = Common::String::format("Hotspot %d", _sceneInfo->hotspot[i].resource);
 		}
 	}
 

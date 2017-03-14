@@ -24,6 +24,8 @@
 #define CHEWY_GRAPHICS_H
 
 #include "chewy/chewy.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace Chewy {
 
@@ -37,15 +39,20 @@ public:
 
 	void drawImage(Common::String filename, int imageNum);
 	void drawSprite(Common::String filename, int spriteNum, uint x, uint y);
+	void drawRect(Common::Rect r, byte color);
 	void playVideo(uint num);
 	void loadFont(Common::String filename);
 	void drawText(Common::String text, uint x, uint y);
+	void setDescSurface(Common::Point pos);
+	void restoreDescSurface();
 
 private:
 	void drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uint16 height, byte transparentColor);
 
 	ChewyEngine *_vm;
 	Font *_font;
+	Common::Point _descPos;
+	::Graphics::Surface _descSurface;
 };
 
 } // End of namespace Chewy
