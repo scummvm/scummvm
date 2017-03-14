@@ -37,7 +37,7 @@ bool CStarControlSub5::SineTable::setup() {
 	if (_data.empty()) {
 		_data.resize(1024);
 		for (int idx = 0; idx < 1024; ++idx)
-			_data[idx] = sin((double)idx * 6.283185307179586 * 0.001953125);
+			_data[idx] = sin((double)idx * 2 * M_PI / 512.0);
 	}
 
 	return true;
@@ -63,7 +63,7 @@ bool CStarControlSub5::setup() {
 bool CStarControlSub5::setup2(int val1, int val2) {
 	// TODO: Original set an explicit random seed here. Could be
 	// problematic if following random values need to be deterministic
-	const double FACTOR = 3.1415927 * 0.0055555557;
+	const double FACTOR = 2 * M_PI / 360.0;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
 		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
@@ -162,7 +162,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 			e->_field8 = g_vm->getRandomNumber(3) + 3;
 			e->_fieldC = g_vm->getRandomNumber(255);
 			e->_field10 = FACTOR * 17.0;
-			e->_field14 = 0.00390625;
+			e->_field14 = 1 / 256.0;
 		} else {
 			for (int ctr = 0; ctr < 5; ++ctr) {
 				e->_field0 = static_cast<int>(g_vm->getRandomFloat() * 1350.0
@@ -176,7 +176,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 				e->_fieldC = g_vm->getRandomNumber(255);
 				e->_field10 = FACTOR * (double)g_vm->getRandomNumber(15);
 				e->_field14 = ((double)g_vm->getRandomNumber(0xfffffffe)
-					* 50.0 * 0.000015259022) * 0.00390625;
+					* 50.0 / 65536.0) / 256.0;
 			}
 		}
 	}

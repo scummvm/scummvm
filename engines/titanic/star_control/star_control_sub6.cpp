@@ -53,7 +53,7 @@ void CStarControlSub6::identity() {
 }
 
 void CStarControlSub6::setRotationMatrix(Axis axis, double amount) {
-	const double ROTATION = 3.1415927 * 0.0055555557;
+	const double ROTATION = 2 * M_PI / 360.0;
 	double sinVal = sin(amount * ROTATION);
 	double cosVal = cos(amount * ROTATION);
 
