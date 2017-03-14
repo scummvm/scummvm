@@ -40,9 +40,23 @@ namespace Chewy {
 
 // Animated details - scene animations
 struct AnimatedDetails {
-	uint16 x;
-	uint16 y;
-	// 66 bytes animated details - TODO
+	int16 x;
+	int16 y;
+	byte startFlag;     // 0: no animation
+	byte repeat;
+	int16 startSprite;
+	int16 endSprite;
+	int16 spriteCount;
+	uint16 delay;
+	uint16 delayCount;
+	uint16 reverse;     // 0: play normally, 1: play in reverse
+	uint16 timerStart;  // seconds until detail is started (0: no timer)
+	uint16 zIndex;
+	byte loadFlag;      // 0: load animation in memory immediately, 1: load animation in memory when it is played
+	byte zoom;
+	// 2 * 3 * 7 = 42 bytes sound data - TODO
+	byte showOneFrame;  // show a sprite, 0: none, 1: before animation, 2: after animation
+	byte currentFrame;
 };
 
 // Static details - scene sprites and props
@@ -50,7 +64,7 @@ struct StaticDetails {
 	int16 x;
 	int16 y;
 	int16 spriteNum;
-	uint16 z;
+	uint16 zIndex;
 	byte hide;
 	// 1 byte dummy
 };
@@ -102,8 +116,8 @@ void Scene::draw() {
 	// Background
 	_vm->_graphics->drawImage("episode1.tgp", _curScene);
 
-	// Static details
 	for (uint16 i = 0; i < MAX_DETAILS; i++) {
+		// Static details
 		StaticDetails s = _sceneInfo->staticDetails[i];
 		if (s.spriteNum >= 0 && s.x >= 0 && s.y >= 0 && !s.hide)
 			_vm->_graphics->drawSprite(Common::String::format("det%d.taf", _curScene), s.spriteNum, s.x, s.y);
@@ -112,7 +126,7 @@ void Scene::draw() {
 	// TODO: These are all hardcoded for now
 	_vm->_graphics->drawSprite("det1.taf", 0, 200, 100);
 	_vm->_graphics->loadFont("6x8.tff");
-	_vm->_graphics->drawText("This is a test", 200, 80);
+	//_vm->_graphics->drawText("This is a test", 200, 80);
 
 	_vm->_graphics->setDescSurface(Common::Point(-1, -1));
 }
@@ -120,13 +134,9 @@ void Scene::draw() {
 void Scene::updateMouse(Common::Point coords) {
 	_vm->_graphics->restoreDescSurface();
 
-	// Animated details
-	// TODO: handle these
-
 	// Static details
 	for (uint16 i = 0; i < MAX_HOTSPOTS; i++) {
 		//_vm->_graphics->drawRect(_sceneInfo->hotspot[i].rect, 0);	// debug
-
 		if (_sceneInfo->hotspot[i].rect.contains(coords) && _sceneInfo->hotspot[i].resource < kATSTextMax) {
 			if (coords.y >= 8) {
 				_vm->_graphics->setDescSurface(Common::Point(coords.x, coords.y - 8));
@@ -161,9 +171,23 @@ void Scene::loadSceneInfo() {
 
 	// Animated details
 	for (int i = 0; i < MAX_DETAILS; i++) {
-		_sceneInfo->animatedDetails[i].x = indexFile.readUint16LE();
-		_sceneInfo->animatedDetails[i].y = indexFile.readUint16LE();
-		indexFile.skip(66);	// animated details info - TODO: read these
+		_sceneInfo->animatedDetails[i].x = indexFile.readSint16LE();
+		_sceneInfo->animatedDetails[i].y = indexFile.readSint16LE();
+		_sceneInfo->animatedDetails[i].startFlag = indexFile.readByte();
+		_sceneInfo->animatedDetails[i].repeat = indexFile.readByte();
+		_sceneInfo->animatedDetails[i].startSprite = indexFile.readSint16LE();
+		_sceneInfo->animatedDetails[i].endSprite = indexFile.readSint16LE();
+		_sceneInfo->animatedDetails[i].spriteCount = indexFile.readSint16LE();
+		_sceneInfo->animatedDetails[i].delay = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].delayCount = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].reverse = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].timerStart = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].zIndex = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].loadFlag = indexFile.readByte();
+		_sceneInfo->animatedDetails[i].zoom = indexFile.readByte();
+		indexFile.skip(42);	// 2 * 3 * 7 = 42 bytes sound data - TODO
+		_sceneInfo->animatedDetails[i].showOneFrame = indexFile.readUint16LE();
+		_sceneInfo->animatedDetails[i].currentFrame = indexFile.readUint16LE();
 	}
 
 	// Static details
@@ -171,7 +195,7 @@ void Scene::loadSceneInfo() {
 		_sceneInfo->staticDetails[i].x = indexFile.readSint16LE();
 		_sceneInfo->staticDetails[i].y = indexFile.readSint16LE();
 		_sceneInfo->staticDetails[i].spriteNum = indexFile.readSint16LE();
-		_sceneInfo->staticDetails[i].z = indexFile.readUint16LE();
+		_sceneInfo->staticDetails[i].zIndex = indexFile.readUint16LE();
 		_sceneInfo->staticDetails[i].hide = indexFile.readByte();
 		indexFile.readByte();	// padding
 	}
@@ -189,18 +213,12 @@ void Scene::loadSceneInfo() {
 	// Hotspot descriptions
 	for (int i = 0; i < MAX_HOTSPOTS; i++) {
 		_sceneInfo->hotspot[i].resource = indexFile.readUint16LE() + 4;
-		
+		_sceneInfo->hotspot[i].desc = "";
+
 		if (_sceneInfo->hotspot[i].resource < kATSTextMax) {
 			TextEntry *entry = text->getText(_curScene + kADSTextMax, _sceneInfo->hotspot[i].resource);
 			if (entry)
 				_sceneInfo->hotspot[i].desc = entry->text;
-			else
-				_sceneInfo->hotspot[i].desc = Common::String::format("Hotspot %d", _sceneInfo->hotspot[i].resource);
-		} else {
-			// TODO: Handle these types of hotspot descriptions
-			_sceneInfo->hotspot[i].desc = "";
-			//warning("Hotspot %d has an invalid description resource (%d)", i, _sceneInfo->hotspot[i].resource);
-			//_sceneInfo->hotspot[i].desc = Common::String::format("Hotspot %d", _sceneInfo->hotspot[i].resource);
 		}
 	}
 
