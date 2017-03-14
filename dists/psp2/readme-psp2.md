@@ -48,10 +48,10 @@ The dependencies needed to build it are :
 - zlib, libpng, libjpeg-turbo, libogg, libvorbis, flac, curl, openssl, freetype, from https://github.com/vitadev/vdpm
 - libmad from https://github.com/Cpasjuste/libmad-psp2
 - SDL2 from https://github.com/Cpasjuste/SDL-Vita
-- ScummVM from https://github.com/Cpasjuste/scummvm
+- ScummVM from https://github.com/scummvm/scummvm
 - The fbo branch of libvita2d from https://github.com/frangarcj/vita2dlib/tree/fbo/libvita2d
-copied under new names libvita2d_fbo.a in $VITASDK/arm-vita-eabi-gcc/lib and vita2d_fbo.h in $VITASDK/arm-vita-eabi-gcc/include. The renaming is necessary to prevent conflict with the official vita2d lib that comes with the VitaSDK.
-- The pre-compiled gtu release of vita-shader-collection from https://github.com/frangarcj/vita-shader-collection/releases, copy all headers to $VITASDK/arm-vita-eabi-gcc/include and the library libvitashaders.a to $VITASDK/arm-vita-eabi-gcc/lib
+copied under new names libvita2d_fbo.a in $VITASDK/arm-vita-eabi/lib and vita2d_fbo.h in $VITASDK/arm-vita-eabi/include. The renaming is necessary to prevent conflict with the official vita2d lib that comes with the VitaSDK.
+- The pre-compiled gtu release of vita-shader-collection from https://github.com/frangarcj/vita-shader-collection/releases, copy all headers to $VITASDK/arm-vita-eabi/include and the library libvitashaders.a to $VITASDK/arm-vita-eabi/lib
 
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :
 
