@@ -877,6 +877,11 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("PlayStation Vita");
+				add_person("", "Cpasjuste", "");
+				add_person("", "rsn8887", "");
+			end_section();
+
 			begin_section("SDL (Win/Linux/OS X/etc.)");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "Asm routines, GFX layers");
