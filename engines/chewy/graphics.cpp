@@ -89,10 +89,12 @@ void Graphics::drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uin
 	::Graphics::Surface *screen = g_system->lockScreen();
 	for (uint curX = 0; curX < width; curX++) {
 		for (uint curY = 0; curY < height; curY++) {
-			byte *src = data + (curY * width) + curX;
-			byte *dst = (byte *)screen->getBasePtr(curX + x, curY + y);
-			if (*src != transparentColor)
-				*dst = *src;
+			if (curX + x < 320 && curY + y < 200) {
+				byte *src = data + (curY * width) + curX;
+				byte *dst = (byte *)screen->getBasePtr(curX + x, curY + y);
+				if (*src != transparentColor)
+					*dst = *src;
+			}
 		}
 	}
 	g_system->unlockScreen();
