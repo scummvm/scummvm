@@ -37,6 +37,7 @@ public:
 	void change(uint scene);
 	void draw();
 	void updateMouse(Common::Point coords);
+	void mouseClick(Common::Point coords);
 	uint getCurScene() const {
 		return _curScene;
 	}
