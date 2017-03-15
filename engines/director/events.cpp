@@ -49,10 +49,6 @@ void DirectorEngine::processEvents() {
 	Frame *currentFrame = sc->_frames[sc->getCurrentFrame()];
 	uint16 spriteId = 0;
 
-	// TODO: re-instate when we know which script to run.
-	//if (currentFrame > 0)
-	//	_lingo->processEvent(kEventIdle, currentFrame - 1);
-
 	Common::Point pos;
 
 	while (g_system->getMillis() < endTime) {
@@ -131,6 +127,9 @@ void DirectorEngine::processEvents() {
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+
+		if (currentFrame > 0)
+			_lingo->processEvent(kEventIdle, kFrameScript, sc->getCurrentFrame());
 	}
 }
 
