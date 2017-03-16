@@ -202,18 +202,18 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	debug(0, "Loading Shared cast '%s'", filename.c_str());
 
-	if (!shardcst->openFile(filename)) {
-		warning("No shared cast %s", filename.c_str());
-
-		return;
-	}
-
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 
 	_sharedScore = new Score(this);
+	if (!shardcst->openFile(filename)) {
+		warning("No shared cast %s", filename.c_str());
+
+		return;
+	}
+
 	_sharedScore->setArchive(shardcst);
 
 	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
