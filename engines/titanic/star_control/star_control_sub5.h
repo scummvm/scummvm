@@ -33,8 +33,14 @@ namespace Titanic {
 class CStarControlSub12;
 
 class CStarControlSub5 {
+	struct Data1 {
+		int _index1;
+		int _index2;
+		Data1() : _index1(0), _index2(0) {}
+	};
+
 	struct SubEntry {
-		Common::Array<FPoint> _data1;
+		Common::Array<Data1> _data1;
 		Common::Array<FVector> _data2;
 		~SubEntry() { clear(); }
 
@@ -46,28 +52,23 @@ class CStarControlSub5 {
 
 	struct Entry {
 		int _field0;
-		byte _field4;
-		byte _field5;
-		byte _field6;
+		byte _pixel1;
+		byte _pixel2;
+		byte _pixel3;
 		int _field8;
 		int _fieldC;
 		double _field10;
 		double _field14;
 
-		Entry() : _field0(0), _field4(0), _field5(0), _field6(0), _field8(0),
+		Entry() : _field0(0), _pixel1(0), _pixel2(0), _pixel3(0), _field8(0),
 				_fieldC(0), _field10(0), _field14(0) {}
 	};
 
-	struct GridEntry {
-		int _field0;
-		int _field4;
-		int _field8;
-		int _fieldC;
-		int _field10;
+	struct GridEntry : public FVector {
+		FPoint _position;
 		int _field14;
 
-		GridEntry() : _field0(0), _field4(0), _field8(0), _fieldC(0),
-			_field10(0), _field14(0) {}
+		GridEntry() : FVector(), _field14(0) {}
 	};
 
 	/**
