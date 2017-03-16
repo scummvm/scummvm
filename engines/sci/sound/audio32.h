@@ -85,12 +85,6 @@ struct AudioChannel {
 	uint32 pausedAtTick;
 
 	/**
-	 * Whether or not the audio in this channel should loop
-	 * infinitely.
-	 */
-	bool loop;
-
-	/**
 	 * The time, in ticks, that the channel fade began.
 	 * If 0, the channel is not being faded.
 	 */
@@ -205,7 +199,7 @@ private:
 	 * Mixes audio from the given source stream into the
 	 * target buffer using the given rate converter.
 	 */
-	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop);
+	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume);
 
 #pragma mark -
 #pragma mark Channel management
