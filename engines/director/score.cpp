@@ -183,6 +183,8 @@ void Score::loadArchive() {
 }
 
 void Score::loadSpriteImages(bool isSharedCast) {
+	debugC(1, kDebugLoading, "****** Preloading sprite images");
+
 	Common::HashMap<int, BitmapCast *>::iterator bc;
 	for (bc = _loadedBitmaps->begin(); bc != _loadedBitmaps->end(); ++bc) {
 		if (bc->_value) {
@@ -277,6 +279,8 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading frames");
+
 	uint32 size = stream.readUint32();
 	size -= 4;
 
@@ -334,7 +338,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
 
-		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size() + 1, frame->_actionId);
+		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 		delete str;
 
@@ -343,6 +347,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading Config");
+
 	/*uint16 unk1 = */ stream.readUint16();
 	/*ver1 = */ stream.readUint16();
 	_movieRect = Score::readRect(stream);
@@ -362,7 +368,7 @@ void Score::readVersion(uint32 rid) {
 }
 
 void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
+	debugC(1, kDebugLoading, "****** Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
@@ -638,6 +644,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 
 	Common::SortedArray<Label *>::iterator j;
 
+	debugC(2, kDebugLoading, "****** Loading labels");
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
 		debugC(2, kDebugLoading, "Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
 	}

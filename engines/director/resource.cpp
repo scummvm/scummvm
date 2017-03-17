@@ -200,7 +200,7 @@ void DirectorEngine::loadMac(const Common::String movie) {
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Archive *shardcst = createArchive();
 
-	debug(0, "Loading Shared cast '%s'", filename.c_str());
+	debug(0, "****** Loading Shared cast '%s'", filename.c_str());
 
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
@@ -229,12 +229,16 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {
+		debug(0, "****** Loading %d CASt resources", cast.size());
+
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
 			_sharedScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
 	}
 
 	Common::Array<uint16> vwci = shardcst->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
+		debug(0, "****** Loading %d CastInfo resources", vwci.size());
+
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			_sharedScore->loadCastInfo(*shardcst->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
 	}
@@ -243,7 +247,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
 	if (dib.size() != 0) {
-		debugC(3, kDebugLoading, "Loading %d DIBs", dib.size());
+		debugC(3, kDebugLoading, "****** Loading %d DIBs", dib.size());
 
 		for (Common::Array<uint16>::iterator iterator = dib.begin(); iterator != dib.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared DIB %d", *iterator);
@@ -253,7 +257,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S','T','X','T'));
 	if (stxt.size() != 0) {
-		debugC(3, kDebugLoading, "Loading %d STXTs", stxt.size());
+		debugC(3, kDebugLoading, "****** Loading %d STXTs", stxt.size());
 
 		for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared STXT %d", *iterator);
@@ -263,7 +267,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B','I','T','D'));
 	if (bmp.size() != 0) {
-		debugC(3, kDebugLoading, "Loading %d BITDs", bmp.size());
+		debugC(3, kDebugLoading, "****** Loading %d BITDs", bmp.size());
 		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared BITD %d (%s)", *iterator, numToCastNum(*iterator - 1024));
 			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
@@ -272,7 +276,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S','N','D',' '));
 	if (sound.size() != 0) {
-		debugC(3, kDebugLoading, "Loading %d SNDs", sound.size());
+		debugC(3, kDebugLoading, "****** Loading %d SNDs", sound.size());
 		for (Common::Array<uint16>::iterator iterator = sound.begin(); iterator != sound.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared SND  %d", *iterator);
 			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
