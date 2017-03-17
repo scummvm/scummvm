@@ -299,7 +299,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (entityId < 0)
 		return;
 
-	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
+	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 	_currentEntityId = entityId;
 
@@ -307,8 +307,11 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		call(_eventHandlerTypes[event], 0); // D4+ Events
 	} else if (_scripts[st].contains(entityId)) {
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
+
 		executeScript(st, entityId); // D3 list of scripts.
 	} else {
 		debugC(3, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
