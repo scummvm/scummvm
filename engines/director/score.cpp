@@ -120,6 +120,7 @@ void Score::loadArchive() {
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
+		debugC(2, kDebugLoading, "****** Loading Palette");
 		loadPalette(*pal);
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
@@ -155,12 +156,16 @@ void Score::loadArchive() {
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
+		debugC(2, kDebugLoading, "****** Loading %d CastInfos", vwci.size());
+
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
 	}
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (cast.size() > 0) {
+		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
+
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
 			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
@@ -175,6 +180,8 @@ void Score::loadArchive() {
 	if (_vm->getVersion() <= 3) {
 		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 		if (stxt.size() > 0) {
+			debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
+
 			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
 			}
@@ -382,18 +389,22 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 		switch (castType) {
 		case kCastBitmap:
+			debugC(3, kDebugLoading, "CastTypes id: %d BitmapCast", id);
 			_loadedBitmaps->setVal(id, new BitmapCast(stream));
 			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
+			debugC(3, kDebugLoading, "CastTypes id: %d TextCast", id);
 			_loadedText->setVal(id, new TextCast(stream));
 			_castTypes[id] = kCastText;
 			break;
 		case kCastShape:
+			debugC(3, kDebugLoading, "CastTypes id: %d ShapeCast", id);
 			_loadedShapes->setVal(id, new ShapeCast(stream));
 			_castTypes[id] = kCastShape;
 			break;
 		case kCastButton:
+			debugC(3, kDebugLoading, "CastTypes id: %d ButtonCast", id);
 			_loadedButtons->setVal(id, new ButtonCast(stream));
 			_castTypes[id] = kCastButton;
 			break;
@@ -655,6 +666,8 @@ int Score::compareLabels(const void *a, const void *b) {
 }
 
 void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading Actions");
+
 	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
 
@@ -679,7 +692,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			_actions[i + 1] += ch;
 		}
 
-		debugC(3, kDebugLoading, "id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
+		debugC(3, kDebugLoading, "Action id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
 
 		stream.seek(streamPos);
 
@@ -942,6 +955,8 @@ Common::String Score::getString(Common::String str) {
 }
 
 void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading FileInfo");
+
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 
@@ -971,6 +986,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 
 	uint16 count = stream.readUint16() + 1;
 
+	debugC(3, kDebugLoading, "Strings: %d entries", count);
+
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
@@ -989,6 +1006,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 				entryString += data[j];
 
 		strings.push_back(entryString);
+
+		debugC(4, kDebugLoading, "String %d:\n%s\n", i, entryString.c_str());
 	}
 
 	free(data);
@@ -1000,6 +1019,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 	if (stream.size() == 0)
 		return;
+
+	debugC(2, kDebugLoading, "****** Loading FontMap");
 
 	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
@@ -1021,7 +1042,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		_fontMap[id] = font;
 		_vm->_wm->_fontMan->registerFontMapping(id, font);
 
-		debug(3, "Fontmap. ID %d Font %s", id, font.c_str());
+		debugC(3, kDebugLoading, "Fontmap. ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
