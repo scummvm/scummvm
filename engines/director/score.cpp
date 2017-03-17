@@ -1007,7 +1007,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 
 		strings.push_back(entryString);
 
-		debugC(4, kDebugLoading, "String %d:\n%s\n", i, entryString.c_str());
+		debugC(6, kDebugLoading, "String %d:\n%s\n", i, entryString.c_str());
 	}
 
 	free(data);

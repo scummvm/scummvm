@@ -222,10 +222,14 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._unk3 = stream->readUint32();
 		}
 
-		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d/%d] script:%d",
-			sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
-			sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height,
-			sprite._lineSize, sprite._scriptId);
+		if (sprite._castId) {
+			debugC(kDebugLoading, 4, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
+				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
+				sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
+				sprite._lineSize, sprite._scriptId);
+		} else {
+			debugC(kDebugLoading, 4, "CH: %-3d castId: 000", i + 1);
+		}
 	}
 }
 
