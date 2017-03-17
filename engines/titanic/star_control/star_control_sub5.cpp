@@ -199,13 +199,12 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 	if (!_flag)
 		return;
 
-	int f1, f3, f29, f31;
+	int f1, f3, size2, size1;
 	double f2, f4, f5, f6, f7, f8, f9;
 	double f10, f11, f12, f13, f14, f15, f16, f17, f18, f19;
 	double f20, f21, f22, f23, f24, f25, f26, f27, f28;
 	double f34, f35, f36, f37, f38, f39, f40;
-	//double f41, f42, f43, f44, f45, f46, f47, f48, f49;
-	//double f50, f51, f52, f53, f54, f55, f56, f57, f58, f59;
+	double f41, f42, f43, f44, f45, f46;
 	FVector tempV;
 
 	if (v3 >= 6.0e9) {
@@ -285,11 +284,11 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 				+ f28 * sub6->_row2._z
 				+ sub6->_vector._z;
 
-			f29 = (int)_array[1]._data2.size();
-			f31 = (int)_array[1]._data1.size();
+			size2 = (int)_array[1]._data2.size();
+			size1 = (int)_array[1]._data1.size();
 
-			if (f29 > 0) {
-				for (uint ctr2 = 0; ctr2 < _array[1]._data2.size(); ++ctr2) {
+			if (size2 > 0) {
+				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					FVector &currVector = _array[1]._data2[ctr2];
 					GridEntry &gridEntry = _grid[ctr2];
 
@@ -319,14 +318,14 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 					entryP->_pixel3, 0);
 				surfaceArea->setColorFromPixel();
 
-				for (int ctr2 = 0; ctr2 < f29; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
 					sub12->proc28(2, gridEntry, tempV);
 					gridEntry._position._x = tempV._x;
 					gridEntry._position._y = tempV._y + v2;
 				}
 
-				for (int ctr2 = 0; ctr2 < f31; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
 					Data1 &d1 = _array[1]._data1[ctr2];
 					GridEntry &grid1 = _grid[d1._index1];
 					GridEntry &grid2 = _grid[d1._index2];
@@ -341,14 +340,14 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 				surfaceArea->_pixel = entryP->_pixel1;
 				surfaceArea->setColorFromPixel();
 
-				for (int ctr2 = 0; ctr2 < f29; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
 					sub12->proc28(0, gridEntry, tempV);
 					gridEntry._position._x = tempV._x + v1;
 					gridEntry._position._y = tempV._y + v2;
 				}
 
-				for (int ctr2 = 0; ctr2 < f31; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
 					Data1 &d1 = _array[1]._data1[ctr2];
 					GridEntry &grid1 = _grid[d1._index1];
 					GridEntry &grid2 = _grid[d1._index2];
@@ -363,14 +362,14 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 				surfaceArea->setColorFromPixel();
 				surfaceArea->setMode(SA_MODE2);
 
-				for (int ctr2 = 0; ctr2 < f29; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
 					sub12->proc28(1, gridEntry, tempV);
 					gridEntry._position._x = tempV._x + v1;
 					gridEntry._position._y = tempV._y + v2;
 				}
 
-				for (int ctr2 = 0; ctr2 < f31; ++ctr2) {
+				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
 					Data1 &d1 = _array[1]._data1[ctr2];
 					GridEntry &grid1 = _grid[d1._index1];
 					GridEntry &grid2 = _grid[d1._index2];
@@ -384,7 +383,117 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 		}
 	}
 
-	// TODO
+	uint pixel1 = 0x81EEF5, pixel2 = 0xF5, pixel3 = 0x810000;
+	int arrIndex = 0;
+
+	if (v3 >= 200000000.0) {
+		if (v3 >= 900000000.0) {
+			if (v3 >= 6000000000.0) {
+				arrIndex = 3;
+				if (v3 >= 1.0e10)
+					arrIndex = 4;
+			} else {
+				arrIndex = 2;
+			}
+		} else {
+			arrIndex = 1;
+		}
+	} else {
+		arrIndex = 0;
+	}
+
+	SubEntry &entry = _array[arrIndex];
+
+	for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
+		GridEntry &gridEntry = _grid[ctr];
+		const FVector &d2v = entry._data2[ctr];
+		FVector newV = d2v + *vector;
+
+		f41 = sub6->_row1._x;
+		f42 = sub6->_row3._x;
+		f43 = sub6->_row2._x;
+		f44 = f43 * newV._y;
+		f45 = f41 * newV._x + f42 * newV._z + f44;
+		f46 = f45 + sub6->_vector._x;
+
+		gridEntry._x = f46;
+		gridEntry._y = newV._y * sub6->_row2._y
+			+ newV._z * sub6->_row3._y
+			+ newV._x * sub6->_row1._y
+			+ sub6->_vector._y;
+		gridEntry._z = newV._z * sub6->_row3._z
+			+ newV._y * sub6->_row2._z
+			+ newV._x * sub6->_row1._z
+			+ sub6->_vector._z;
+	}
+
+	if (val2 <= 0) {
+		surfaceArea->setMode(SA_NONE);
+		surfaceArea->_pixel = pixel1;
+		surfaceArea->setColorFromPixel();
+
+		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
+			GridEntry &gridEntry = _grid[ctr];
+			sub12->proc28(2, gridEntry, tempV);
+			gridEntry._position._x = tempV._x + v1;
+			gridEntry._position._y = tempV._y + v2;
+		}
+
+		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
+			Data1 &d1 = entry._data1[ctr];
+			GridEntry &grid1 = _grid[d1._index1];
+			GridEntry &grid2 = _grid[d1._index2];
+
+			if (grid2._z > val1 && grid1._z > val1) {
+				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+					grid2._position._x, grid2._position._y));
+			}
+		}
+	} else {
+		surfaceArea->setMode(SA_NONE);
+		surfaceArea->_pixel = pixel2;
+		surfaceArea->setColorFromPixel();
+
+		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
+			GridEntry &gridEntry = _grid[ctr];
+			sub12->proc28(2, gridEntry, tempV);
+			gridEntry._position._x = tempV._x + v1;
+			gridEntry._position._y = tempV._y + v2;
+		}
+
+		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
+			Data1 &d1 = entry._data1[ctr];
+			GridEntry &grid1 = _grid[d1._index1];
+			GridEntry &grid2 = _grid[d1._index2];
+
+			if (grid2._z > val1 && grid1._z > val1) {
+				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+					grid2._position._x, grid2._position._y));
+			}
+		}
+
+		surfaceArea->_pixel = pixel3;
+		surfaceArea->setColorFromPixel();
+		surfaceArea->setMode(SA_MODE2);
+
+		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
+			GridEntry &gridEntry = _grid[ctr];
+			sub12->proc28(2, gridEntry, tempV);
+			gridEntry._position._x = tempV._x + v1;
+			gridEntry._position._y = tempV._y + v2;
+		}
+
+		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
+			Data1 &d1 = entry._data1[ctr];
+			GridEntry &grid1 = _grid[d1._index1];
+			GridEntry &grid2 = _grid[d1._index2];
+
+			if (grid2._z > val1 && grid1._z > val1) {
+				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+					grid2._position._x, grid2._position._y));
+			}
+		}
+	}
 }
 
 void CStarControlSub5::proc3(CErrorCode *errorCode) {
