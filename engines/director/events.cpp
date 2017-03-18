@@ -133,7 +133,7 @@ void DirectorEngine::processEvents() {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 
-		if (currentFrame > 0)
+		if (sc->getCurrentFrame() > 0)
 			_lingo->processEvent(kEventIdle, kFrameScript, sc->getCurrentFrame());
 	}
 }
