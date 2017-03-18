@@ -506,40 +506,85 @@ void CStarControlSub5::fn1() {
 }
 
 bool CStarControlSub5::setupEntry(int width, int height, int index, double val) {
-	/*
 	if (width < 2 || height < 3)
 		return false;
 
 	SubEntry &entry = _array[index];
 	entry.clear();
 
-	int height2 = height - 2;
-	int height1 = height - 1;
-	entry._data1.resize((2 * height - 3) * width);
-	entry._data2.resize(width * height2 + 2);
-	entry._data2[0] = FVector(0.0, val, 0.0);
+	const double FACTOR = 2 * M_PI / 360.0;
+	int d1Count, d2Count, size3, height1;
+	int ctr, ctr2, idx, offset, f11;
+	double vx, vy, f5, f6, f7, f8, f9, f10;
 
-	index = 1;
-	double vy = 180.0 / (double)height1;
-	double vx = 360.0 / (double)width;
-	const double FACTOR = 3.1415927 * 0.0055555557;
+	d1Count = width * (2 * height - 3);
+	d2Count = (height - 2) * width + 2;
+	entry._data1.resize(d1Count);
+	entry._data2.resize(d2Count);
 
-	if (height1 > 1) {
-		double yAmount = vy;
-		int width12 = width * 12;
-		for (int yCtr = height1 - 1; yCtr > 0; --yCtr, yAmount += vy) {
-			double sineVal = sin(yAmount * FACTOR);
+	height1 = height - 1;
+	entry._data2[0]._y = val;
 
+	vy = 180.0 / (double)height1;
+	vx = 360.0 / (double)width;
 
-			| 0.0 * FACTOR |
-			| cos(yAmount * FACTOR) * val |
-			| 0.0 |
-			|yAmount|
+	for (ctr = height - 2, idx = 0; ctr > 0; --ctr, vy *= 2) {
+		f5 = 0.0;
+		f6 = cos(vy * FACTOR);
+		f7 = sin(vy * FACTOR);
+
+		if (width > 0) {
+			f8 = f6 * val;
+
+			for (int xp = width; xp > 0; --xp, ++idx, f5 += vx) {
+				f9 = f5 * FACTOR;
+				f10 = cos(f9) * f7 * val;
+
+				FVector &tempV = entry._data2[idx];
+				tempV._x = sin(f9) * f7 * val;
+				tempV._y = f8;
+				tempV._z = f10;
+			}
 		}
 	}
-	// TODO
+	entry._data2[idx] = FVector(0.0, -1.0, 0.0);
 
-	*/
+	size3 = width * (height - 3) + 1;
+	offset = 0;
+	Data1 *data1P = &entry._data1[0];
+	for (ctr = 0; ctr < width; ++ctr, ++size3) {
+		data1P->_index1 = 0;
+		data1P->_index2 = size3 - width * (height - 3);
+		++data1P;
+
+		data1P->_index1 = d2Count - 1;
+		data1P->_index2 = size3;
+		++data1P;
+	}
+
+	f11 = 1;
+	for (ctr = 1; ctr < height1; ++ctr, f11 += width) {
+		data1P = &entry._data1[offset];
+
+		for (ctr2 = 0; ctr2 < width; ++ctr2) {
+			data1P->_index1 = ctr2 + f11;
+			if (ctr2 == width - 1)
+				data1P->_index2 = f11;
+			else
+				data1P->_index2 = ctr2 + f11 + 1;
+
+			++offset;
+			++data1P;
+
+			if (ctr < height - 2) {
+				data1P->_index1 = ctr2 + f11;
+				++offset;
+				data1P->_index2 = width + ctr2 + f11;
+				++data1P;
+			}
+		}
+	}
+
 	return true;
 }
 
