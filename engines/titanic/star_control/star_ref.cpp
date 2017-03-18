@@ -47,7 +47,8 @@ bool CStarRef2::check(const Common::Point &pt, int index) {
 		return false;
 
 	CStarPosition &sp = (*_positions)[index];
-	sp._position = pt;
+	sp.x = pt.x;
+	sp.y = pt.y;
 	sp._index1 = sp._index2 = index;
 	return true;
 }

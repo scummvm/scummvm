@@ -59,7 +59,18 @@ bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 }
 
 void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
-	// TODO
+	if (_field8 <= -1) {
+		if (_entryIndex > -1) {
+			fn5(_entryIndex, surface, starField, sub7);
+			--_entryIndex;
+		}
+	} else {
+		--_field8;
+		if (_entryIndex - _field8 > 1) {
+			fn5(_entryIndex, surface, starField, sub7);
+			--_entryIndex;
+		}
+	}
 }
 
 void CStarControlSub8::fn3() {
@@ -74,21 +85,24 @@ FPoint CStarControlSub8::getPosition() const {
 
 void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 	if (!_positions.empty()) {
-		uint oldPixel = surfaceArea->_pixel;
-		surfaceArea->_pixel = 0xFF;
+		uint savedPixel = surfaceArea->_pixel;
+		surfaceArea->_pixel = 0xff;
 		surfaceArea->setColorFromPixel();
-		SurfaceAreaMode oldMode = surfaceArea->setMode(SA_NONE);
+		SurfaceAreaMode savedMode = surfaceArea->setMode(SA_NONE);
 
-		// TODO: Loop
-		/*
 		for (int idx = 0; idx < _entryIndex; ++idx) {
-			Common::Rect &r = _entries[idx];
+			const Common::Rect &src = _entries[idx];
+			double xp = src.left, yp = src.top;
 
+			surfaceArea->fn1(FRect(xp - 8.0, yp, xp - 4.0, yp));
+			surfaceArea->fn1(FRect(xp + 4.0, yp, xp + 8.0, yp));
+			surfaceArea->fn1(FRect(xp, yp - 8.0, xp, yp - 4.0));
+			surfaceArea->fn1(FRect(xp, yp + 4.0, xp, yp + 8.0));
 		}
-		*/
 
-		surfaceArea->_pixel = oldPixel;
-		surfaceArea->setMode(oldMode);
+		surfaceArea->_pixel = savedPixel;
+		surfaceArea->setColorFromPixel();
+		surfaceArea->setMode(savedMode);
 	}
 }
 
@@ -112,7 +126,7 @@ int CStarControlSub8::indexOf(const Common::Point &pt) const {
 	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
 
 	for (int idx = 0; idx < (int)_positions.size(); ++idx) {
-		if (r.contains(_positions[idx]._position))
+		if (r.contains(_positions[idx]))
 			return idx;
 	}
 
@@ -120,7 +134,10 @@ int CStarControlSub8::indexOf(const Common::Point &pt) const {
 }
 
 void CStarControlSub8::fn4(int index, CSurfaceArea *surfaceArea) {
-	// TODO
+	if (index >= 0 && index < (int)_positions.size()) {
+		const CStarPosition &pt = _positions[index];
+		fn7(pt, surfaceArea);
+	}
 }
 
 void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
@@ -128,11 +145,25 @@ void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starFi
 }
 
 void CStarControlSub8::fn6(CSurfaceArea *surfaceArea) {
-	// TODO
+	const CStarPosition &pt = _positions[_entryIndex];
+	fn7(pt, surfaceArea);
 }
 
 void CStarControlSub8::fn7(const FPoint &pt, CSurfaceArea *surfaceArea) {
-	// TODO
+	uint savedPixel = surfaceArea->_pixel;
+	surfaceArea->_pixel = 255;
+	surfaceArea->setColorFromPixel();
+	SurfaceAreaMode savedMode = surfaceArea->setMode(SA_MODE3);
+
+
+	surfaceArea->fn1(FRect(pt._x - 8.0, pt._y, pt._x - 4.0, pt._y));
+	surfaceArea->fn1(FRect(pt._x - -4.0, pt._y, pt._x + 8.0, pt._y));
+	surfaceArea->fn1(FRect(pt._x, pt._y - 8.0, pt._x, pt._y - 4.0));
+	surfaceArea->fn1(FRect(pt._x, pt._y + 4.0, pt._x, pt._y + 8.0));
+
+	surfaceArea->_pixel = savedPixel;
+	surfaceArea->setColorFromPixel();
+	surfaceArea->setMode(savedMode);
 }
 
 } // End of namespace Titanic

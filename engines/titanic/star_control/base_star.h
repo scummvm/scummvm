@@ -53,8 +53,7 @@ struct CBaseStarEntry {
 	bool operator==(const CBaseStarEntry &s) const;
 };
 
-struct CStarPosition {
-	Common::Point _position;
+struct CStarPosition : public Common::Point {
 	int _index1;
 	int _index2;
 	CStarPosition() : _index1(0), _index2(0) {}
