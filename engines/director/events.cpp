@@ -66,6 +66,8 @@ void DirectorEngine::processEvents() {
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
 
+				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
 				if (getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
 					_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
@@ -81,6 +83,9 @@ void DirectorEngine::processEvents() {
 				pos = g_system->getEventManager()->getMousePos();
 
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
+
+				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
 				if (getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
 					_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
