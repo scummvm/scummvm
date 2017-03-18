@@ -864,6 +864,7 @@ void Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *a
 		// Unset button
 		for (uint i = 4795; i >= 4779; i--) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 		_fireplaceLines[var - 17] &= ~bitmask;
@@ -871,6 +872,7 @@ void Myst::o_fireplaceToggleButton(uint16 op, uint16 var, uint16 argc, uint16 *a
 		// Set button
 		for (uint i = 4779; i <= 4795; i++) {
 			_vm->_gfx->copyImageToScreen(i, getInvokingResource<MystArea>()->getRect());
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 		_fireplaceLines[var - 17] |= bitmask;
