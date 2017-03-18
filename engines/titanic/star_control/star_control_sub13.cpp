@@ -263,7 +263,7 @@ void CStarControlSub13::reset() {
 	_sub2._vector._x = _position._x;
 	_sub2._vector._y = _position._y;
 	_sub2._vector._z = _position._z;
-	_sub2.fn3(_sub1);
+	_sub2.fn4(&_sub1);
 
 	double widthV = (double)_width * 0.5;
 	double heightV = (double)_height * 0.5;

@@ -159,8 +159,67 @@ CStarControlSub6 *CStarControlSub6::setup(CStarControlSub6 *dest, const CStarCon
 	return dest;
 }
 
-void CStarControlSub6::fn1(CStarControlSub6 *sub6) {
-	// TODO
+void CStarControlSub6::fn4(CStarControlSub6 *sub6) {
+	double v2, v3, v6, v7, v8, v9, v10, v11;
+	double v12, v13, v14, v15, v16, v17, v18;
+	
+	v16 = _row3._z * _row2._y;
+	v2 = _row1._x * v16;
+	v3 = 0.0;
+	v18 = v2;
+	if (v2 < 0.0) {
+		v3 = v18;
+		v2 = 0.0;
+	}
+	v6 = _row3._x * _row1._y * _row2._z;
+	if (v6 < 0.0)
+		v3 = v3 + v6;
+	else
+		v2 = v2 + v6;
+	v7 = _row3._y * _row1._z * _row2._x;
+	if (v7 < 0.0)
+		v3 = v3 + v7;
+	else
+		v2 = v2 + v7;
+	if (-(_row3._x * _row1._z * _row2._y) < 0.0)
+		v3 = v3 - _row3._x * _row1._z * _row2._y;
+	else
+		v2 = v2 - _row3._x * _row1._z * _row2._y;
+	if (-(_row1._y * _row2._x * _row3._z) < 0.0)
+		v3 = v3 - _row1._y * _row2._x * _row3._z;
+	else
+		v2 = v2 - _row1._y * _row2._x * _row3._z;
+	v17 = _row2._z * _row3._y;
+	if (-(_row1._x * v17) < 0.0)
+		v3 = v3 - _row1._x * v17;
+	else
+		v2 = v2 - _row1._x * v17;
+	v18 = v3 + v2;
+	assert(!(v18 == 0.0 || fabs(v18 / (v2 - v3)) < 1.0e-10));
+
+	v8 = 1.0 / v18;
+	v18 = v8;
+	sub6->_row1._x = (v16 - v17) * v8;
+	sub6->_row2._x = -(_row2._x * _row3._z - _row3._x * _row2._z) * v8;
+	sub6->_row3._x = (_row3._y * _row2._x - _row3._x * _row2._y) * v8;
+	sub6->_row1._y = -(_row1._y * _row3._z - _row3._y * _row1._z) * v8;
+	sub6->_row2._y = (_row1._x * _row3._z - _row3._x * _row1._z) * v8;
+	sub6->_row3._y = -(_row1._x * _row3._y - _row3._x * _row1._y) * v8;
+	sub6->_row1._z = (_row1._y * _row2._z - _row1._z * _row2._y) * v8;
+	sub6->_row2._z = -(_row1._x * _row2._z - _row1._z * _row2._x) * v8;
+	v9 = sub6->_row1._x;
+	v10 = sub6->_row2._y;
+	v11 = sub6->_row3._y;
+	v12 = sub6->_row1._z;
+	v13 = sub6->_row2._z;
+	sub6->_row3._z = (_row1._x * _row2._y - _row1._y * _row2._x) * v18;
+	v14 = v9;
+	v15 = sub6->_row3._z;
+	sub6->_vector._x = -(v14 * _vector._x
+		+ _vector._y * sub6->_row2._x
+		+ _vector._z * sub6->_row3._x);
+	sub6->_vector._y = -(_vector._x * sub6->_row1._y + v10 * _vector._y + v11 * _vector._z);
+	sub6->_vector._z = -(v12 * _vector._x + v13 * _vector._y + v15 * _vector._z);
 }
 
 } // End of namespace Titanic

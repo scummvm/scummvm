@@ -62,7 +62,7 @@ public:
 	 */
 	void copyFrom(const FMatrix &src);
 
-	void fn1(CStarControlSub6 *sub6);
+	void fn4(CStarControlSub6 *sub6);
 };
 
 } // End of namespace Titanic
