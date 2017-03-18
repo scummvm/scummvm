@@ -41,7 +41,7 @@ class CStarControlSub8 {
 private:
 	Common::Array<CStarPosition> _positions;
 	int _entryIndex;
-	Common::Rect _entries[3];
+	CStarPosition _entries[3];
 private:
 	/**
 	 * Allocates space in the _rects array

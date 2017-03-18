@@ -38,7 +38,64 @@ int CStarControlSub8::findStar(const Common::Point &pt) {
 
 void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarControlSub7 *sub7) {
-	// TODO
+	if (_entryIndex >= 0) {
+		if (_entryIndex == _field8) {
+			if (_field8 != 2) {
+				if (_positions[index] != _positions[_entryIndex + 1]) {
+					surface->lock();
+
+					CSurfaceArea surfaceArea(surface);
+					fn4(index, &surfaceArea);
+					surface->unlock();
+
+					++_entryIndex;
+					CStarPosition &newP = _positions[_entryIndex + 1];
+					newP = _positions[index];
+
+					const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
+					sub7->addStar(starP);
+				}
+			}
+		} else if (_entryIndex == _field8 + 1) {
+			if (_positions[index] == _positions[_entryIndex + 1]) {
+				surface->lock();
+				CSurfaceArea surfaceArea(surface);
+				fn6(&surfaceArea);
+				surface->unlock();
+
+				--_entryIndex;
+				const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
+				sub7->addStar(starP);
+			} else {
+				surface->lock();
+				CSurfaceArea surfaceArea(surface);
+				fn6(&surfaceArea);
+				fn4(index, &surfaceArea);
+				surface->unlock();
+
+				const CBaseStarEntry *starP;
+				starP = starField->getDataPtr(_positions[_entryIndex]._index1);
+				sub7->addStar(starP);
+				starP = starField->getDataPtr(_positions[index]._index1);
+				sub7->addStar(starP);
+
+				CStarPosition &newP = _positions[_entryIndex + 1];
+				newP = _positions[index];
+			}
+		}
+	} else {
+		surface->lock();
+		CSurfaceArea surfaceArea(surface);
+		fn4(index, &surfaceArea);
+		surface->unlock();
+
+		++_entryIndex;
+		CStarPosition &newP = _positions[_entryIndex + 1];
+		newP = _positions[index];
+
+		const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
+		sub7->addStar(starP);
+	}
 }
 
 bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
@@ -80,7 +137,7 @@ void CStarControlSub8::fn3() {
 
 FPoint CStarControlSub8::getPosition() const {
 	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
-		FPoint(_entries[_entryIndex].left, _entries[_entryIndex].top) : FPoint();
+		FPoint(_entries[_entryIndex]) : FPoint();
 }
 
 void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
@@ -91,8 +148,8 @@ void CStarControlSub8::draw(CSurfaceArea *surfaceArea) {
 		SurfaceAreaMode savedMode = surfaceArea->setMode(SA_NONE);
 
 		for (int idx = 0; idx < _entryIndex; ++idx) {
-			const Common::Rect &src = _entries[idx];
-			double xp = src.left, yp = src.top;
+			const CStarPosition &src = _entries[idx];
+			double xp = src.x, yp = src.y;
 
 			surfaceArea->fn1(FRect(xp - 8.0, yp, xp - 4.0, yp));
 			surfaceArea->fn1(FRect(xp + 4.0, yp, xp + 8.0, yp));

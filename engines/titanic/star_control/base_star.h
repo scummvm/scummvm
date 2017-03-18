@@ -57,6 +57,10 @@ struct CStarPosition : public Common::Point {
 	int _index1;
 	int _index2;
 	CStarPosition() : _index1(0), _index2(0) {}
+
+	bool operator==(const CStarPosition &sp) const {
+		return x == sp.x && y == sp.y && _index1 == sp._index1 && _index2 == sp._index2;
+	}
 };
 
 class CBaseStar {
