@@ -2614,6 +2614,100 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// When entering the main musem party room (w/ the golden Egyptian head),
+// Laura is waslking a bit into the room automatically.
+// In case you press a mouse button while this is happening, you will get
+// stuck inside that room and won't be able to exit it anymore.
+//
+// Users, who played the game w/ a previous version of ScummVM can simply
+// enter the debugger and then enter "send rm350 script 0:0", which will
+// fix the script state.
+//
+// This is caused by the user controls not being locked at that point.
+// Pressing a button will cause the cue from the PolyPath walker to never
+// happen, which then causes sEnterSouth to never dispose itself.
+//
+// User controls are locked in the previous room 335, but controls
+// are unlocked by frontDoor::cue.
+// We do not want to change this, because it could have side-effects.
+// We instead add another LB2::handsOff call inside the script responsible
+// for making Laura walk into the room (sEnterSouth::changeState(0).
+//
+// Applies to at least: English PC-CD, English PC-Floppy, German PC-Floppy
+// Responsible method: sEnterSouth::changeState
+// Fixes bug: (no bug report, from GOG forum post)
+static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth1[] = {
+	0x3c,                              // dup
+	0x35, 0x00,                        // ldi 00
+	0x1a,                              // eq?
+	0x30, SIG_UINT16(0x0097),          // bnt [state 1 code]
+	SIG_ADDTOOFFSET(+141),             // skip to end of follow-up code
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x008d for CD, 0x007d for floppy)
+	0x35, 0x01,                        // ldi 01
+	0x65, 0x1a,                        // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x0086 for CD, 0x0076 for floppy)
+	// state 1 code
+	0x3c,                              // dup
+	0x35, 0x01,                        // ldi 01
+	0x1a,                              // eq?
+	SIG_MAGICDWORD,
+	0x31, 0x05,                        // bnt [state 2 code]
+	0x35, 0x00,                        // ldi 00
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x007b for CD, 0x006b for floppy)
+	// state 2 code
+	0x3c,                              // dup
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth1[] = {
+	0x2e, PATCH_UINT16(0x00a6),        // bt [state 2 code] (we skip state 1, because it's a NOP anyways)
+	// state 0 processing
+	0x32, PATCH_UINT16(+151),
+	SIG_ADDTOOFFSET(+149),             // skip to end of follow-up code
+	// save 1 byte by replacing jump to [ret] into straight toss/ret
+	0x3a,                              // toss
+	0x48,                              // ret
+
+	// additional code, that gets called right at the start of step 0 processing
+	0x18,                              // not -- this here is where pushi handsOff will be inserted by the second patch
+	0x18,                              // not    offset and handsOff is different for floppy + CD, that's why we do this
+	0x18,                              // not    floppy also does not have a selector table, so we can't go by "handsOff" name
+	0x18,                              // not
+	0x76,                              // push0
+	0x81, 0x01,                        // lag global[1]
+	0x4a, 0x04,                        // send 04
+	0x32, PATCH_UINT16(0xFF5e),        // jmp [back to start of step 0 processing]
+	PATCH_END
+};
+
+// second patch, which only inserts pushi handsOff inside our new code
+// There is no other way to do this except making 2 full patches for floppy + CD, because handsOff/handsOn
+// is not the same value between floppy + CD *and* floppy doesn't even have a vocab, so we can't figure out the id
+// by ourselves.
+static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth2[] = {
+	0x18,                              // our injected code
+	0x18,
+	0x18,
+	SIG_ADDTOOFFSET(+92),              // skip to the handsOn code, that we are interested in
+	0x38, SIG_ADDTOOFFSET(+2),         // pushi handsOn (0x0189 for CD, 0x024b for floppy)
+	0x76,                              // push0
+	0x81, 0x01,                        // lag global[1]
+	0x4a, 0x04,                        // send 04
+	0x38, SIG_ADDTOOFFSET(+2),         // pushi 0274h
+	SIG_MAGICDWORD,
+	0x78,                              // push1
+	0x38, SIG_UINT16(0x033f),          // pushi 033f
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth2[] = {
+	0x38,                              // pushi
+	PATCH_GETORIGINALBYTEADJUST(96, -1),
+	PATCH_GETORIGINALBYTE(97),         // get handsOff code and subtract 1 from it to get handsOn
+	// we should be able to not care about SCI-platform byte order, because Laura Bow 2 was only released for PC.
+	PATCH_END
+};
+
 // Opening/Closing the east door in the pterodactyl room doesn't
 //  check, if it's locked and will open/close the door internally
 //  even when it is.
@@ -2628,7 +2722,7 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 // Responsible method (CD): eastDoor::doVerb
 // Responsible method (Floppy): eastDoor::<noname300>
 // Fixes bug: #6458 (partly, see additional patch below)
-static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
+static const uint16 laurabow2SignatureFixWiredEastDoor[] = {
 	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
 	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
 	0x35, 0x00,                         // ldi 00
@@ -2651,7 +2745,7 @@ static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
 	SIG_END
 };
 
-static const uint16 laurabow2CDPatchFixWiredEastDoor[] = {
+static const uint16 laurabow2PatchFixWiredEastDoor[] = {
 	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
 	0x81,   97,                         // lag 97d (get our eastDoor-wired-global)
 	0x31, 0x04,                         // bnt [skip setting locked property]
@@ -2780,20 +2874,22 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
-	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,           laurabow2CDPatchPaintingClosing },
-	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar,     laurabow2CDPatchFixProblematicIconBar },
-	{  true,   430, "CD/Floppy: make wired east door persistent",  1, laurabow2SignatureRememberWiredEastDoor,       laurabow2PatchRememberWiredEastDoor },
-	{  true,   430, "CD/Floppy: fix wired east door",              1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
+	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix problematic icon bar",                   1, laurabow2CDSignatureFixProblematicIconBar,      laurabow2CDPatchFixProblematicIconBar },
+	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
+	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
+	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
+	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
-	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,      kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,      kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3,      kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4,      kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5,      kq6laurabow2CDPatchAudioTextSupport5 },
-	{ false,     0, "CD: audio + text support disable mode reset", 1, laurabow2CDSignatureAudioTextSupportModeReset, laurabow2CDPatchAudioTextSupportModeReset },
-	{ false,   100, "CD: audio + text support disable mode reset", 1, laurabow2CDSignatureAudioTextSupportModeReset, laurabow2CDPatchAudioTextSupportModeReset },
-	{ false,    24, "CD: audio + text support LB2 menu 1",         1, laurabow2CDSignatureAudioTextMenuSupport1,     laurabow2CDPatchAudioTextMenuSupport1 },
-	{ false,    24, "CD: audio + text support LB2 menu 2",         1, laurabow2CDSignatureAudioTextMenuSupport2,     laurabow2CDPatchAudioTextMenuSupport2 },
+	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                     1, kq6laurabow2CDSignatureAudioTextSupport3,       kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                     1, kq6laurabow2CDSignatureAudioTextSupport4,       kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                     2, kq6laurabow2CDSignatureAudioTextSupport5,       kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,     0, "CD: audio + text support disable mode reset",    1, laurabow2CDSignatureAudioTextSupportModeReset,  laurabow2CDPatchAudioTextSupportModeReset },
+	{ false,   100, "CD: audio + text support disable mode reset",    1, laurabow2CDSignatureAudioTextSupportModeReset,  laurabow2CDPatchAudioTextSupportModeReset },
+	{ false,    24, "CD: audio + text support LB2 menu 1",            1, laurabow2CDSignatureAudioTextMenuSupport1,      laurabow2CDPatchAudioTextMenuSupport1 },
+	{ false,    24, "CD: audio + text support LB2 menu 2",            1, laurabow2CDSignatureAudioTextMenuSupport2,      laurabow2CDPatchAudioTextMenuSupport2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
