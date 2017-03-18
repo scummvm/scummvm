@@ -232,7 +232,7 @@ bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub1
 		CSurfaceArea surfaceArea(surface);
 		return selectStar(&surfaceArea, sub12, pt);
 	} else {
-		int starNum = _sub8.findStar(pt);
+		int starNum = _sub8.indexOf(pt);
 		if (starNum >= 0) {
 			_sub8.selectStar(starNum, surface, this, &_sub7);
 			return true;

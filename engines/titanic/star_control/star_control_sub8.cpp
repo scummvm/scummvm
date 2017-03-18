@@ -31,11 +31,6 @@ namespace Titanic {
 CStarControlSub8::CStarControlSub8() : _field8(-1), _entryIndex(-1) {
 }
 
-int CStarControlSub8::findStar(const Common::Point &pt) {
-	// TODO
-	return -1;
-}
-
 void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 		CStarField *starField, CStarControlSub7 *sub7) {
 	if (_entryIndex >= 0) {
@@ -110,9 +105,6 @@ bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSt
 		clear();
 		return false;
 	}
-
-	// TODO
-	return true;
 }
 
 void CStarControlSub8::fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
@@ -198,7 +190,13 @@ void CStarControlSub8::fn4(int index, CSurfaceArea *surfaceArea) {
 }
 
 void CStarControlSub8::fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7) {
-	// TODO
+	surface->lock();
+	CSurfaceArea surfaceArea(surface);
+	fn7(_positions[index + 1], &surfaceArea);
+	surface->unlock();
+
+	const CBaseStarEntry *starP = starField->getDataPtr(_positions[index + 1]._index1);
+	sub7->addStar(starP);
 }
 
 void CStarControlSub8::fn6(CSurfaceArea *surfaceArea) {

@@ -69,8 +69,6 @@ public:
 	 */
 	void save(SimpleFile *file, int indent) {}
 
-	int findStar(const Common::Point &pt);
-
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
 		CStarControlSub7 *sub7);
 
