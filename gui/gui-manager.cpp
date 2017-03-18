@@ -261,7 +261,7 @@ void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
 	t.parent = 0;
 	// If a dialog was provided, check it is in the dialog stack
 	if (parent != 0) {
-		for (int i = 0 ; i < _dialogStack.size() ; ++i) {
+		for (uint i = 0 ; i < _dialogStack.size() ; ++i) {
 			if (_dialogStack[i] == parent) {
 				t.parent = parent;
 				break;
