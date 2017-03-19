@@ -36,6 +36,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -221,10 +222,14 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._unk3 = stream->readUint32();
 		}
 
-		debugC(kDebugLoading, 8, "%03d(%d)[%x,%x,%04x,%d/%d/%d/%d/%d] script:%d",
-			sprite._castId, sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
-			sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height,
-			sprite._lineSize, sprite._scriptId);
+		if (sprite._castId) {
+			debugC(kDebugLoading, 4, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
+				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
+				sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
+				sprite._lineSize, sprite._scriptId);
+		} else {
+			debugC(kDebugLoading, 4, "CH: %-3d castId: 000", i + 1);
+		}
 	}
 }
 
@@ -539,6 +544,14 @@ void Frame::playTransition(Score *score) {
 	}
 }
 
+void Frame::executeImmediateScripts() {
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_vm->getCurrentScore()->_immediateActions.contains(_sprites[i]->_scriptId)) {
+			g_lingo->processEvent(kEventMouseUp, kFrameScript, _sprites[i]->_scriptId);
+		}
+	}
+}
+
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
 		if (_sprites[i]->_enabled) {
@@ -563,18 +576,17 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					break;
 				}
 			} else {
-				if (!_vm->getCurrentScore()->_casts.contains(_sprites[i]->_castId)) {
-					if (!_vm->getSharedCasts()->contains(_sprites[i]->_castId)) {
+				if (!_vm->getCurrentScore()->_castTypes.contains(_sprites[i]->_castId)) {
+					if (!_vm->getSharedCastTypes()->contains(_sprites[i]->_castId)) {
 						warning("Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {
 						warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
-						cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
+						castType = _vm->getSharedCastTypes()->getVal(_sprites[i]->_castId);
 					}
 				} else {
-					cast = _vm->getCurrentScore()->_casts[_sprites[i]->_castId];
+					castType = _vm->getCurrentScore()->_castTypes[_sprites[i]->_castId];
 				}
-				castType = cast->type;
 			}
 
 			// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
@@ -586,34 +598,15 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			} else if (castType == kCastButton) {
 				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : cast->children[0].index);
 			} else {
-				Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
-
-				if (!img) {
-					warning("Image with id %d (%s) not found", _sprites[i]->_castId, numToCastNum(_sprites[i]->_castId));
-					continue;
-				}
-
-				if (!img->getSurface()) {
-					warning("Frame::renderSprites: Could not load image %d (%s)", _sprites[i]->_castId, numToCastNum(_sprites[i]->_castId));
-					continue;
-				}
-
-				if (!_sprites[i]->_cast) {
+				if (!_sprites[i]->_bitmapCast) {
 					warning("No cast ID for sprite %d", i);
 					continue;
 				}
 
-				BitmapCast *bitmapCast = static_cast<BitmapCast *>(_sprites[i]->_cast);
-				// TODO: might want a quicker way to determine if cast is from Shared Cast.
-				if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(_sprites[i]->_castId + 1024)) {
-					debugC(2, kDebugImages, "Shared cast sprite BMP: id: %d", _sprites[i]->_castId + 1024);
-					bitmapCast = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(_sprites[i]->_castId));
-				}
-
-				uint32 regX = bitmapCast->regX;
-				uint32 regY = bitmapCast->regY;
-				uint32 rectLeft = bitmapCast->initialRect.left;
-				uint32 rectTop = bitmapCast->initialRect.top;
+				uint32 regX = _sprites[i]->_bitmapCast->regX;
+				uint32 regY = _sprites[i]->_bitmapCast->regY;
+				uint32 rectLeft = _sprites[i]->_bitmapCast->initialRect.left;
+				uint32 rectTop = _sprites[i]->_bitmapCast->initialRect.top;
 
 				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
@@ -621,9 +614,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int width = _sprites[i]->_width;
 
 				Common::Rect drawRect(x, y, x + width, y + height);
-
 				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *img->getSurface(), i, drawRect);
+				inkBasedBlit(surface, *(_sprites[i]->_bitmapCast->surface), i, drawRect);
 			}
 		}
 	}
@@ -667,15 +659,15 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
 	uint16 castId = _sprites[spriteId]->_castId;
-	ButtonCast *button = static_cast<ButtonCast *>(_vm->getCurrentScore()->_casts[castId]);
+	ButtonCast *button = _vm->getCurrentScore()->_loadedButtons->getVal(castId);
 
 	uint32 rectLeft = button->initialRect.left;
 	uint32 rectTop = button->initialRect.top;
 
 	int x = _sprites[spriteId]->_startPoint.x + rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y + rectTop;
-	int height = button->initialRect.height(); // _sprites[spriteId]->_height;
-	int width = button->initialRect.width() + 3; // _sprites[spriteId]->_width;
+	int height = button->initialRect.height();
+	int width = button->initialRect.width() + 3;
 
 	Common::Rect textRect(0, 0, width, height);
 	// pass the rect of the button into the label.
@@ -704,73 +696,6 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 		warning("STUB: renderButton: kTypeRadio");
 		break;
 	}
-}
-
-Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
-	uint16 imgId = spriteId + 1024;
-
-	if (_vm->getVersion() >= 4 && _vm->getCurrentScore()->_casts[spriteId]->children.size() > 0)
-		imgId = _vm->getCurrentScore()->_casts[spriteId]->children[0].index;
-
-	Image::ImageDecoder *img = NULL;
-
-	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-		img = new DIBDecoder();
-		img->loadStream(*_vm->getCurrentScore()->getArchive()->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
-		return img;
-	}
-
-	if (_vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
-		img = new DIBDecoder();
-		img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
-		return img;
-	}
-
-	Common::SeekableReadStream *pic = NULL;
-	BitmapCast *bc = NULL;
-
-	if (_vm->getSharedBMP() != NULL && _vm->getSharedBMP()->contains(imgId)) {
-		debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
-		pic = _vm->getSharedBMP()->getVal(imgId);
-		pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
-		bc = static_cast<BitmapCast *>(_vm->getSharedCasts()->getVal(spriteId));
-	} else 	if (_vm->getCurrentScore()->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		pic = _vm->getCurrentScore()->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
-		bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
-	}
-
-	if (pic != NULL && bc != NULL) {
-		if (_vm->getVersion() < 4) {
-			int w = bc->initialRect.width(), h = bc->initialRect.height();
-
-			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
-				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
-			img = new BITDDecoder(w, h);
-		} else if (_vm->getVersion() < 6) {
-			bc = static_cast<BitmapCast *>(_vm->getCurrentScore()->_casts[spriteId]);
-			int w = bc->initialRect.width(), h = bc->initialRect.height();
-
-			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
-				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
-			img = new BITDDecoderV4(w, h, bc->bitsPerPixel);
-		} else {
-			img = new Image::BitmapDecoder();
-		}
-
-		if (debugChannelSet(8, kDebugLoading)) {
-			Common::SeekableReadStream *s = pic;
-			byte buf[1024];
-			int n = s->read(buf, 1024);
-			Common::hexdump(buf, n);
-			s->seek(0);
-		}
-
-		img->loadStream(*pic);
-		return img;
-	}
-
-	warning("Image %d not found", spriteId);
-	return img;
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
@@ -818,7 +743,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 
 	uint16 castId = _sprites[spriteId]->_castId;
-	TextCast *textCast = static_cast<TextCast *>(_vm->getCurrentScore()->_casts[castId]);
+	TextCast *textCast = _vm->getCurrentScore()->_loadedText->getVal(castId);
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -906,8 +831,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-	int height = _sprites[spriteId]->_cast->initialRect.height(); //_sprites[spriteId]->_height;
-	int width = _sprites[spriteId]->_cast->initialRect.width(); //_sprites[spriteId]->_width;
+	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
+	int width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
 
 	if (_vm->getVersion() >= 4 && textSize != NULL)
 		width = textCast->initialRect.right;
@@ -1141,6 +1066,15 @@ uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 			return _drawRects[dr]->spriteId;
 
 	return 0;
+}
+
+bool Frame::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
+	// Find first from front to back
+	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
+		if (_drawRects[dr]->spriteId == spriteId && _drawRects[dr]->rect.contains(pos))
+			return true;
+
+	return false;
 }
 
 } // End of namespace Director

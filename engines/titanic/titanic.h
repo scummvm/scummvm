@@ -166,7 +166,7 @@ public:
 	/**
 	 * Returns a random floating point number between 0.0 to 65535.0
 	 */
-	double getRandomFloat() { return getRandomNumber(0xffffffff) * 0.000015259022; }
+	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.000015259022; }
 
 	/**
 	 * Support method that generates a savegame name

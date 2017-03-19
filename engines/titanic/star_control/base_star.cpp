@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/base_star.h"
 #include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_ref.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -44,6 +45,15 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 		_data[idx] = s.readUint32LE();
 }
 
+bool CBaseStarEntry::operator==(const CBaseStarEntry &s) const {
+	return _field0 == s._field0 && _field1 == s._field1
+		&& _field2 == s._field2 && _field3 == s._field3
+		&& _value == s._value && _position == s._position
+		&& _data[0] == s._data[0] && _data[1] == s._data[1]
+		&& _data[2] == s._data[2] && _data[3] == s._data[3]
+		&& _data[4] == s._data[4];
+}
+
 /*------------------------------------------------------------------------*/
 
 CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0),
@@ -57,11 +67,11 @@ void CBaseStar::clear() {
 void CBaseStar::initialize() {
 	_minVal = 9.9999998e10;
 	_maxVal = -9.9999998e10;
-	_sub4.initialize();
+	_minMax.reset();
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		const CBaseStarEntry *entry = getDataPtr(idx);
-		_sub4.checkEntry(entry->_position);
+		_minMax.expand(entry->_position);
 
 		if (entry->_value < _minVal)
 			_minVal = entry->_value;
@@ -191,13 +201,17 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	// TODO
 }
 
-void CBaseStar::baseFn1(int v1, int v2, int v3, int v4) {
-	// TODO
+int CBaseStar::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		const Common::Point &pt) {
+	CStarRef1 ref(this, pt);
+	ref.process(surfaceArea, sub12);
+	return ref._index;
 }
 
 int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
-	// TODO
-	return 0;
+	CStarRef3 ref(this);
+	ref.process(surfaceArea, sub12);
+	return ref._index;
 }
 
 } // End of namespace Titanic

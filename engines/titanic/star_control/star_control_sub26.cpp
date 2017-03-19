@@ -30,5 +30,16 @@ double CStarControlSub26::fn1() const {
 		_sub._v3 * _sub._v3 + _field0 * _field0;
 }
 
+void CStarControlSub26::setup(double val1, double val2, double val3, double val4) {
+	_field0 = val1;
+	_sub._v1 = val2;
+	_sub._v2 = val3;
+	_sub._v3 = val4;
+}
+
+void CStarControlSub26::copyFrom(const CStarControlSub26 *src) {
+	_field0 = src->_field0;
+	_sub = src->_sub;
+}
 
 } // End of namespace Titanic

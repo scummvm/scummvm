@@ -423,7 +423,10 @@ void OptionsDialog::clean() {
 	while (_firstWidget) {
 		Widget* w = _firstWidget;
 		removeWidget(w);
-		delete w;
+		// This is called from rebuild() which may result from handleCommand being called by
+		// a child widget sendCommand call. In such a case sendCommand is still being executed
+		// so we should not delete yet the child widget. Thus delay the deletion.
+		g_gui.addToTrash(w, this);
 	}
 	init();
 }

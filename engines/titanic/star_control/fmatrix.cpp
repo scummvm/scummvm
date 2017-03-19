@@ -28,17 +28,17 @@ FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
 }
 
-FMatrix::FMatrix(DMatrix *src) {
+FMatrix::FMatrix(const DMatrix &src) {
 	copyFrom(src);
 }
 
-FMatrix::FMatrix(FMatrix *src) {
-	_row1 = src->_row1;
-	_row2 = src->_row2;
-	_row3 = src->_row3;
+FMatrix::FMatrix(const FMatrix &src) {
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
 }
 
-void FMatrix::copyFrom(const DMatrix *src) {
+void FMatrix::copyFrom(const DMatrix &src) {
 	// TODO
 }
 
@@ -67,19 +67,25 @@ void FMatrix::save(SimpleFile *file, int indent) {
 }
 
 void FMatrix::clear() {
+	_row1.clear();
+	_row2.clear();
+	_row3.clear();
+}
+
+void FMatrix::identity() {
 	_row1 = FVector(1.0, 0.0, 0.0);
 	_row2 = FVector(0.0, 1.0, 0.0);
 	_row3 = FVector(0.0, 0.0, 1.0);
 }
 
-void FMatrix::set(FVector *row1, FVector *row2, FVector *row3) {
-	_row1 = *row1;
-	_row2 = *row2;
-	_row3 = *row3;
+void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3) {
+	_row1 = row1;
+	_row2 = row2;
+	_row3 = row3;
 }
 
-void FMatrix::fn1(const FVector *v) {
-	_row3._x = v->_x;
+void FMatrix::fn1(const FVector &v) {
+	_row3._x = v._x;
 
 	FVector tempVector;
 	_row3.fn1(&tempVector);
@@ -88,45 +94,45 @@ void FMatrix::fn1(const FVector *v) {
 	_row2._y = tempVector._y;
 	_row2._z = tempVector._z;
 
-	_row3.multiply(&tempVector, &_row2);
+	_row3.crossProduct(&tempVector, &_row2);
 	_row1._x = _row2._x;
 	_row1._y = _row2._y;
 	_row1._z = _row2._z;
-	_row1.fn3();
+	_row1.normalize();
 
-	_row3.multiply(&tempVector, &_row1);
+	_row3.crossProduct(&tempVector, &_row1);
 	_row2._x = _row1._x;
 	_row2._y = _row1._y;
 	_row2._z = _row1._z;
-	_row2.fn3();
+	_row2.normalize();
 }
 
-void FMatrix::fn2(FMatrix *m) {
-	double x1 = _row1._y * m->_row2._x + _row1._z * m->_row3._x + _row1._x * m->_row1._x;
-	double y1 = _row1._x * m->_row1._y + m->_row2._y * _row1._y + m->_row3._y * _row1._z;
-	double z1 = _row1._x * m->_row1._z + _row1._y * m->_row2._z + _row1._z * m->_row3._z;
-	double x2 = m->_row1._x * _row2._x + m->_row3._x * _row2._z + m->_row2._x * _row2._y;
-	double y2 = m->_row3._y * _row2._z + m->_row1._y * _row2._x + m->_row2._y * _row2._y;
-	double z2 = _row2._z * m->_row3._z + _row2._x * m->_row1._z + _row2._y * m->_row2._z;
-	double x3 = m->_row1._x * _row3._x + _row3._z * m->_row3._x + _row3._y * m->_row2._x;
-	double y3 = _row3._y * m->_row2._y + _row3._z * m->_row3._y + _row3._x * m->_row1._y;
-	double z3 = _row3._x * m->_row1._z + _row3._y * m->_row2._z + _row3._z * m->_row3._z;
+void FMatrix::fn2(const FMatrix &m) {
+	double x1 = _row1._y * m._row2._x + _row1._z * m._row3._x + _row1._x * m._row1._x;
+	double y1 = _row1._x * m._row1._y + m._row2._y * _row1._y + m._row3._y * _row1._z;
+	double z1 = _row1._x * m._row1._z + _row1._y * m._row2._z + _row1._z * m._row3._z;
+	double x2 = m._row1._x * _row2._x + m._row3._x * _row2._z + m._row2._x * _row2._y;
+	double y2 = m._row3._y * _row2._z + m._row1._y * _row2._x + m._row2._y * _row2._y;
+	double z2 = _row2._z * m._row3._z + _row2._x * m._row1._z + _row2._y * m._row2._z;
+	double x3 = m._row1._x * _row3._x + _row3._z * m._row3._x + _row3._y * m._row2._x;
+	double y3 = _row3._y * m._row2._y + _row3._z * m._row3._y + _row3._x * m._row1._y;
+	double z3 = _row3._x * m._row1._z + _row3._y * m._row2._z + _row3._z * m._row3._z;
 
 	_row1 = FVector(x1, y1, z1);
 	_row2 = FVector(x2, y2, z2);
 	_row3 = FVector(x3, y3, z3);
 }
 
-void FMatrix::fn3(FMatrix *m) {
-	double x1 = _row2._x * m->_row1._y + m->_row1._z * _row3._x + _row1._x * m->_row1._x;
-	double y1 = m->_row1._x * _row1._y + _row3._y * m->_row1._z + _row2._y * m->_row1._y;
-	double z1 = m->_row1._x * _row1._z + m->_row1._y * _row2._z + m->_row1._z * _row3._z;
-	double x2 = _row1._x * m->_row2._x + _row2._x * m->_row2._y + _row3._x * m->_row2._z;
-	double y2 = _row3._y * m->_row2._z + _row1._y * m->_row2._x + _row2._y * m->_row2._y;
-	double z2 = m->_row2._z * _row3._z + m->_row2._x * _row1._z + m->_row2._y * _row2._z;
-	double x3 = _row1._x * m->_row3._x + m->_row3._z * _row3._x + m->_row3._y * _row2._x;
-	double y3 = m->_row3._y * _row2._y + m->_row3._z * _row3._y + m->_row3._x * _row1._y;
-	double z3 = m->_row3._x * _row1._z + m->_row3._y * _row2._z + m->_row3._z * _row3._z;
+void FMatrix::fn3(const FMatrix &m) {
+	double x1 = _row2._x * m._row1._y + m._row1._z * _row3._x + _row1._x * m._row1._x;
+	double y1 = m._row1._x * _row1._y + _row3._y * m._row1._z + _row2._y * m._row1._y;
+	double z1 = m._row1._x * _row1._z + m._row1._y * _row2._z + m._row1._z * _row3._z;
+	double x2 = _row1._x * m._row2._x + _row2._x * m._row2._y + _row3._x * m._row2._z;
+	double y2 = _row3._y * m._row2._z + _row1._y * m._row2._x + _row2._y * m._row2._y;
+	double z2 = m._row2._z * _row3._z + m._row2._x * _row1._z + m._row2._y * _row2._z;
+	double x3 = _row1._x * m._row3._x + m._row3._z * _row3._x + m._row3._y * _row2._x;
+	double y3 = m._row3._y * _row2._y + m._row3._z * _row3._y + m._row3._x * _row1._y;
+	double z3 = m._row3._x * _row1._z + m._row3._y * _row2._z + m._row3._z * _row3._z;
 
 	_row1 = FVector(x1, y1, z1);
 	_row2 = FVector(x2, y2, z2);

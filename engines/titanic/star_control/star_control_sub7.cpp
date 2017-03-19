@@ -21,18 +21,62 @@
  */
 
 #include "titanic/star_control/star_control_sub7.h"
+#include "titanic/star_control/star_control_sub12.h"
 
 namespace Titanic {
 
 void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	// TODO
+	if (_data.empty())
+		return;
+
+	CStarControlSub6 sub6 = sub12->proc23();
+	double threshold = sub12->proc25();
+	FPoint center((double)surfaceArea->_width * 0.5,
+		surfaceArea->_height * 0.5);
+	FVector newV;
+
+	uint savedPixel = surfaceArea->_pixel;
+	surfaceArea->_pixel = 0xffff;
+	surfaceArea->setColorFromPixel();
+
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		const CBaseStarEntry &star = _data[idx];
+
+		newV._x = sub6._row1._x * star._position._x + sub6._row3._x * star._position._z
+			+ sub6._row2._x * star._position._y + sub6._vector._x;
+		newV._y = sub6._row1._y * star._position._x + sub6._row3._y * star._position._z
+			+ sub6._row2._y * star._position._x + sub6._vector._y;
+		newV._z = sub6._row1._z * star._position._x + sub6._row3._z * star._position._z
+			+ sub6._row2._z * star._position._y + sub6._vector._z; 
+
+		if (newV._z > threshold) {
+			FVector vTemp;
+			sub12->proc28(2, newV, vTemp);
+
+			FRect r1(center._x + vTemp._x, center._y + vTemp._y,
+				center._x + vTemp._x + 4.0, center._y + vTemp._y + 4.0);
+			surfaceArea->fn1(r1);
+
+			FRect r2(r1.right, r1.bottom, r1.right + 4.0, r1.top);
+			surfaceArea->fn1(r2);
+
+			FRect r3(r2.right, r1.top, r1.right, r1.top - 4.0);
+			surfaceArea->fn1(r3);
+
+			FRect r4(r1.right, r1.top - 4.0, r1.left, r1.top);
+			surfaceArea->fn1(r4);
+		}
+	}
+
+	surfaceArea->_pixel = savedPixel;
+	surfaceArea->setColorFromPixel();
 }
 
 bool CStarControlSub7::addStar(const CBaseStarEntry *entry) {
 	// iterate through the existing stars
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &star = _data[idx];
-		if (star._position == entry->_position) {
+		if (star == *entry) {
 			// Found a matching star at the exact same position, so remove it instead
 			_data.remove_at(idx);
 			return true;

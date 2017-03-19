@@ -23,6 +23,9 @@
 #ifndef TITANIC_STAR_CONTROL_SUB8_H
 #define TITANIC_STAR_CONTROL_SUB8_H
 
+#include "common/array.h"
+#include "common/rect.h"
+#include "titanic/star_control/base_star.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/support/simple_file.h"
@@ -35,19 +38,20 @@ class CStarControlSub7;
 class CStarControlSub12;
 
 class CStarControlSub8 {
-	struct StructEntry {
-		FPoint _position;
-		int _field8;
-		int _fieldC;
-
-		StructEntry() : _field8(0), _fieldC(0) {}
-	};
 private:
-#if 0
-	int _field0;
-	int _field4;
-#endif
-	StructEntry _data[3];
+	Common::Array<CStarPosition> _positions;
+	int _entryIndex;
+	CStarPosition _entries[3];
+private:
+	/**
+	 * Allocates space in the _rects array
+	 */
+	void allocate(int count);
+
+	/**
+	 * Clears any current data
+	 */
+	void clear();
 public:
 	int _field8;
 	int _fieldC;
@@ -65,19 +69,24 @@ public:
 	 */
 	void save(SimpleFile *file, int indent) {}
 
-	int findStar(const Common::Point &pt);
-
 	void selectStar(int starNum, CVideoSurface *surface, CStarField *starField,
 		CStarControlSub7 *sub7);
 
 	void draw(CSurfaceArea *surfaceArea);
 
-	void fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
 	void fn3();
+	void fn4(int index, CSurfaceArea *surfaceArea);
+	void fn5(int index, CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
+	void fn6(CSurfaceArea *surfaceArea);
+	void fn7(const FPoint &pt, CSurfaceArea *surfaceArea);
 	FPoint getPosition() const;
 
-	void clear();
+	/**
+	 * Returns the index of an entry in the rects list a given point falls within
+	 */
+	int indexOf(const Common::Point &pt) const;
 };
 
 } // End of namespace Titanic

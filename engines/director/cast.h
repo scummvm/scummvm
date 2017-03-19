@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/substream.h"
 #include "director/archive.h"
+#include "graphics/surface.h"
 
 namespace Director {
 
@@ -44,16 +45,20 @@ enum CastType {
 	kCastLingoScript = 11
 };
 
-struct Cast {
+class Cast {
+public:
 	CastType type;
 	Common::Rect initialRect;
 	Common::Rect boundingRect;
 	Common::Array<Resource> children;
 
+	const Graphics::Surface *surface;
+
 	byte modified;
 };
 
-struct BitmapCast : Cast {
+class BitmapCast : public Cast {
+public:
 	BitmapCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	uint16 regX;
@@ -72,7 +77,8 @@ enum ShapeType {
 	kShapeLine
 };
 
-struct ShapeCast : Cast {
+class ShapeCast : public Cast {
+public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ShapeType shapeType;
@@ -111,7 +117,8 @@ enum SizeType {
 	kSizeLargest
 };
 
-struct TextCast : Cast {
+class TextCast : public Cast {
+public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	SizeType borderSize;
@@ -135,13 +142,15 @@ enum ButtonType {
 	kTypeRadio
 };
 
-struct ButtonCast : TextCast {
+class ButtonCast : public TextCast {
+public:
 	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ButtonType buttonType;
 };
 
-struct ScriptCast : Cast {
+class ScriptCast : public Cast {
+public:
 	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	uint32 id;

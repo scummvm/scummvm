@@ -27,7 +27,7 @@
 namespace Titanic {
 
 #define ARRAY_COUNT 80
-const double FACTOR = 3.1415927 * 0.0055555557;
+const double FACTOR = 2 * M_PI / 360.0;
 
 bool CStarPoints2::initialize() {
 	// Get a reference to the starfield points resource
@@ -47,7 +47,7 @@ bool CStarPoints2::initialize() {
 			v1 = stream->readSint32LE();
 			v2 = stream->readSint32LE();
 			v1 *= 0.015 * FACTOR;
-			v2 *= 0.0099999998 * FACTOR;
+			v2 *= FACTOR / 100.0;
 
 			entry._x = cos(v1) * 3000000.0 * cos(v2);
 			entry._y = sin(v1) * 3000000.0 * cos(v2);

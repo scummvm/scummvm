@@ -21,7 +21,11 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
+
 #include "director/lingo/lingo.h"
+#include "director/frame.h"
+#include "director/sprite.h"
 
 namespace Director {
 
@@ -379,7 +383,7 @@ void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *pr
 
 	s += ")";
 
-	warning("%s: %s", prefix, s.c_str());
+	warning("%s %s", prefix, s.c_str());
 }
 
 void Lingo::convertVOIDtoString(int arg, int nargs) {
@@ -1163,9 +1167,12 @@ void Lingo::b_move(int nargs) {
 }
 
 void Lingo::b_moveableSprite(int nargs) {
-	g_lingo->printSTUBWithArglist("b_moveableSprite", nargs);
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	g_lingo->dropStack(nargs);
+	// Will have no effect
+	frame->_sprites[g_lingo->_currentEntityId]->_moveable = true;
+
+	g_director->setDraggedSprite(frame->_sprites[g_lingo->_currentEntityId]->_castId);
 }
 
 void Lingo::b_pasteClipBoardInto(int nargs) {
@@ -1216,9 +1223,26 @@ void Lingo::b_ramNeeded(int nargs) {
 
 void Lingo::b_rollOver(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_rollOver(%d)", d.u.i);
 
-	g_lingo->push(Datum(0));
+	d.toInt();
+
+	int arg = d.u.i;
+
+	d.u.i = 0; // FALSE
+
+	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
+
+	if (arg >= frame->_sprites.size()) {
+		g_lingo->push(d);
+		return;
+	}
+
+	Common::Point pos = g_system->getEventManager()->getMousePos();
+
+	if (frame->checkSpriteIntersection(arg, pos))
+		d.u.i = 1; // TRUE
+
+	g_lingo->push(d);
 }
 
 void Lingo::b_spriteBox(int nargs) {

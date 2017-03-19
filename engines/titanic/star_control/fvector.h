@@ -27,6 +27,8 @@
 
 namespace Titanic {
 
+enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
+
 class CStarControlSub6;
 
 /**
@@ -48,16 +50,28 @@ public:
 	}
 
 	void fn1(FVector *v);
-	void multiply(FVector *dest, const FVector *src);
-	void fn3();
+
+	/**
+	 * Calculates the cross-product between this matrix and a passed one
+	 */
+	void crossProduct(FVector *dest, const FVector *src);
+
+	/**
+	 * Normalizes the vector so the length from origin equals 1.0
+	 */
+	double normalize();
+
+	/**
+	 * Adds two vectors together and then normalizes the result
+	 */
+	static void addAndNormalize(FVector *dest, const FVector *v1, const FVector *v2);
 
 	/**
 	 * Returns the distance between a specified point and this one
 	 */
 	double getDistance(const FVector *src) const;
 
-	static void fn4(FVector *dest, const FVector *v1, const FVector *v2);
-	void fn5(FVector *dest, const CStarControlSub6 *sub6) const;
+	FVector fn5(const CStarControlSub6 *sub6) const;
 
 	/**
 	 * Returns true if the passed vector equals this one

@@ -20,41 +20,31 @@
  *
  */
 
-#ifndef CHEWY_GRAPHICS_H
-#define CHEWY_GRAPHICS_H
+#ifndef TITANIC_FRANGE_H
+#define TITANIC_FRANGE_H
 
-#include "chewy/chewy.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
+#include "titanic/star_control/fvector.h"
 
-namespace Chewy {
+namespace Titanic {
 
-class SpriteResource;
-class Font;
-
-class Graphics {
-public:
-	Graphics(ChewyEngine *vm);
-	virtual ~Graphics();
-
-	void drawImage(Common::String filename, int imageNum);
-	void drawSprite(Common::String filename, int spriteNum, uint x, uint y);
-	void drawRect(Common::Rect r, byte color);
-	void playVideo(uint num);
-	void loadFont(Common::String filename);
-	void drawText(Common::String text, uint x, uint y);
-	void setDescSurface(Common::Point pos);
-	void restoreDescSurface();
-
+class FRange {
 private:
-	void drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uint16 height, byte transparentColor);
+	FVector _min;
+	FVector _max;
+public:
+	FRange();
 
-	ChewyEngine *_vm;
-	Font *_font;
-	Common::Point _descPos;
-	::Graphics::Surface _descSurface;
+	/**
+	 * Resets the minimum & maximum vector values
+	 */
+	void reset();
+
+	/**
+	 * Expands the minimum & maximum as necessary to encompass the passed vector/
+	 */
+	void expand(const FVector &v);
 };
 
-} // End of namespace Chewy
+} // End of namespace Titanic
 
-#endif
+#endif /* TITANIC_FRANGE_H */

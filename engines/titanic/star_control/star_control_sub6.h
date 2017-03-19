@@ -37,27 +37,28 @@ public:
 	FVector _vector;
 public:
 	CStarControlSub6();
-	CStarControlSub6(int mode, double amount);
+	CStarControlSub6(Axis axis, double amount);
 	CStarControlSub6(const CStarControlSub6 *src);
+	CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2);
 
 	/**
-	 * Clear the item
+	 * Sets an identity matrix
 	 */
-	void clear();
+	void identity();
 
 	/**
-	 * Sets up a passed instance from the specified two other ones
+	 * Sets a rotation matrix for the given axis for the given amount
 	 */
-	static void setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3);
-
-	/**
-	 * Sets the default data
-	 */
-	void set(int mode, double val);
+	void setRotationMatrix(Axis axis, double val);
 
 	void copyFrom(const CStarControlSub6 *src);
 
-	void fn1(CStarControlSub6 *sub6);
+	/**
+	 * Copy from the specified matrix
+	 */
+	void copyFrom(const FMatrix &src);
+
+	void fn4(CStarControlSub6 *sub6);
 };
 
 } // End of namespace Titanic

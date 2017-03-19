@@ -39,7 +39,7 @@ private:
 	static FMatrix *_matrix2;
 private:
 	int _currentIndex;
-	FVector _array[3];
+	FMatrix _matrix;
 	CStarControlSub20 *_handlerP;
 	CStarControlSub13 _sub13;
 	int _field108;
@@ -62,11 +62,11 @@ public:
 	static void init();
 	static void deinit();
 public:
-	CStarControlSub12(void *val1, const CStar20Data *data);
+	CStarControlSub12(const CStar20Data *data);
 	CStarControlSub12(CStarControlSub13 *src);
 	virtual ~CStarControlSub12();
 
-	virtual void proc2(const void *src);
+	virtual void proc2(const CStarControlSub13 *src);
 	virtual void proc3(const CStar20Data *src);
 	virtual void setPosition(const FVector &v);
 	virtual void proc5(const FVector &v);
@@ -78,14 +78,14 @@ public:
 	virtual void proc11();
 	virtual void proc12(StarMode mode, double v2);
 	virtual void proc13(CStarControlSub13 *dest);
-	virtual void proc14(int v);
+	virtual void proc14(FVector &v);
 	virtual void proc15(CErrorCode *errorCode);
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();
 	virtual void proc19();
-	virtual void proc20(double v);
-	virtual void proc21(CStarControlSub6 &sub6);
+	virtual void proc20(double factor);
+	virtual void proc21(const CStarControlSub6 *sub6);
 	virtual void proc22(FMatrix &m);
 	virtual CStarControlSub6 proc23();
 	virtual CStarControlSub6 proc24();
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Sets the viewport position within the starfield
 	 */
-	virtual void setViewportPosition(const FPoint &pt);
+	virtual void setViewportPosition(const FPoint &angles);
 
 	virtual int getCurrentIndex() const { return _currentIndex; }
 	virtual bool setArrayVector(const FVector &v);

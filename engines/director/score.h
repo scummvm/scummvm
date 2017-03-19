@@ -26,6 +26,8 @@
 #include "common/substream.h"
 #include "common/rect.h"
 #include "director/archive.h"
+#include "director/cast.h"
+#include "director/images.h"
 
 namespace Graphics {
 	class ManagedSurface;
@@ -48,15 +50,16 @@ enum ScriptType {
 	kSpriteScript = 1,
 	kFrameScript = 2,
 	kCastScript = 3,
+	kGlobalScript = 4,
 	kNoneScript = -1,
-	kMaxScriptType = 3
+	kMaxScriptType = 4
 };
 
 const char *scriptType2str(ScriptType scr);
 
 class Score {
 public:
-	Score(DirectorEngine *vm, Archive *);
+	Score(DirectorEngine *vm);
 	~Score();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
@@ -67,6 +70,7 @@ public:
 	void gotoNext();
 	void gotoPrevious();
 	void startLoop();
+	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _movieArchive; };
 	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
@@ -77,7 +81,12 @@ public:
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();
+	void loadSpriteImages(bool isSharedCast);
 	Graphics::ManagedSurface *getSurface() { return _surface; }
+
+	void loadCastInto(Sprite *sprite, int castId);
+	Common::Rect getCastMemberInitialRect(int castId);
+	void setCastMemberModified(int castId);
 
 	int getPreviousLabelNumber(int referenceFrame);
 	int getCurrentLabelNumber();
@@ -97,13 +106,16 @@ private:
 	Common::String getString(Common::String str);
 	Common::Array<Common::String> loadStrings(Common::SeekableSubReadStreamEndian &stream, uint32 &entryType, bool hasHeader = true);
 
+	bool processImmediateFrameScript(Common::String s, int id);
+
 public:
 	Common::Array<Frame *> _frames;
-	Common::HashMap<int, Cast *> _casts;
+	Common::HashMap<int, CastType> _castTypes;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
 	Common::HashMap<Common::String, int> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
+	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
@@ -114,6 +126,13 @@ public:
 
 	bool _stopPlay;
 	uint32 _nextFrameTime;
+
+	Common::HashMap<int, ButtonCast *> *_loadedButtons;
+	Common::HashMap<int, TextCast *> *_loadedText;
+	//Common::HashMap<int, SoundCast *> _loadedSound;
+	Common::HashMap<int, BitmapCast *> *_loadedBitmaps;
+	Common::HashMap<int, ShapeCast *> *_loadedShapes;
+	Common::HashMap<int, ScriptCast *> *_loadedScripts;
 
 private:
 	uint16 _versionMinor;

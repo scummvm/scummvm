@@ -39,7 +39,18 @@ public:
 public:
 	CStarControlSub26() : _field0(1.0) {}
 
+	/**
+	 * Sets the field values
+	 */
+	void setup(double val1, double val2, double val3, double val4);
+
+	/**
+	 * Copies from another instance
+	 */
+	void copyFrom(const CStarControlSub26 *src);
+
 	double fn1() const;
+
 };
 
 } // End of namespace Titanic

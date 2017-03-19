@@ -34,19 +34,27 @@ void FVector::fn1(FVector *v) {
 	v->_z = _z;
 }
 
-void FVector::multiply(FVector *dest, const FVector *src) {
+void FVector::crossProduct(FVector *dest, const FVector *src) {
 	dest->_x = (src->_z * _y) - (_z * src->_y);
 	dest->_y = (src->_x * _z) - (_x * src->_z);
 	dest->_z = (src->_y * _x) - (_y * src->_x);
 }
 
-void FVector::fn3() {
+double FVector::normalize() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+	return hyp;
+}
+
+void FVector::addAndNormalize(FVector *dest, const FVector *v1, const FVector *v2) {
+	FVector tempVector(v1->_x + v2->_x, v1->_y + v2->_y, v1->_z + v2->_z);
+	tempVector.normalize();
+
+	*dest = tempVector;
 }
 
 double FVector::getDistance(const FVector *src) const {
@@ -57,14 +65,7 @@ double FVector::getDistance(const FVector *src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-void FVector::fn4(FVector *dest, const FVector *v1, const FVector *v2) {
-	FVector tempVector(v1->_x + v2->_x, v1->_y + v2->_y, v1->_z + v2->_z);
-	tempVector.fn3();
-
-	*dest = tempVector;
-}
-
-void FVector::fn5(FVector *dest, const CStarControlSub6 *sub6) const {
+FVector FVector::fn5(const CStarControlSub6 *sub6) const {
 	error("TODO: FVector::fn5");
 }
 

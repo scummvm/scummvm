@@ -46,51 +46,62 @@ void DirectorEngine::processEvents() {
 	uint endTime = g_system->getMillis() + 200;
 
 	Score *sc = getCurrentScore();
-	int currentFrame = sc->getCurrentFrame();
+	Frame *currentFrame = sc->_frames[sc->getCurrentFrame()];
 	uint16 spriteId = 0;
 
-	// TODO: re-instate when we know which script to run.
-	//if (currentFrame > 0)
-	//	_lingo->processEvent(kEventIdle, currentFrame - 1);
+	Common::Point pos;
 
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_QUIT)
+			switch (event.type) {
+			case Common::EVENT_QUIT:
 				sc->_stopPlay = true;
+				break;
 
-			if (event.type == Common::EVENT_LBUTTONDOWN) {
-				Common::Point pos = g_system->getEventManager()->getMousePos();
+			case Common::EVENT_LBUTTONDOWN:
+				pos = g_system->getEventManager()->getMousePos();
 
 				// D3 doesn't have both mouse up and down.
 				// But we still want to know if the mouse is down for press effects.
-				spriteId = sc->_frames[currentFrame]->getSpriteIDFromPos(pos);
+				spriteId = currentFrame->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
 
+				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
 				if (getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
-					_lingo->processEvent(kEventMouseDown, kCastScript, sc->_frames[currentFrame]->_sprites[spriteId]->_castId);
-					_lingo->processEvent(kEventMouseDown, kSpriteScript, sc->_frames[currentFrame]->_sprites[spriteId]->_scriptId);
+					_lingo->processEvent(kEventMouseDown, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+					_lingo->processEvent(kEventMouseDown, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 				}
-			}
 
-			if (event.type == Common::EVENT_LBUTTONUP) {
-				Common::Point pos = g_system->getEventManager()->getMousePos();
+				if (currentFrame->_sprites[spriteId]->_moveable) {
+					warning("Moveable");
+				}
+				break;
 
-				spriteId = sc->_frames[currentFrame]->getSpriteIDFromPos(pos);
+			case Common::EVENT_LBUTTONUP:
+				pos = g_system->getEventManager()->getMousePos();
+
+				spriteId = currentFrame->getSpriteIDFromPos(pos);
+
+				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
 				if (getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
-					_lingo->processEvent(kEventMouseUp, kCastScript, sc->_frames[currentFrame]->_sprites[spriteId]->_castId);
-					_lingo->processEvent(kEventMouseUp, kSpriteScript, sc->_frames[currentFrame]->_sprites[spriteId]->_scriptId);
+					_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+					_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 				} else {
 					// Frame script overrides sprite script
-					if (!sc->_frames[currentFrame]->_sprites[spriteId]->_scriptId)
-						_lingo->processEvent(kEventMouseUp, kSpriteScript, sc->_frames[currentFrame]->_sprites[spriteId]->_castId + 1024);
+					if (!currentFrame->_sprites[spriteId]->_scriptId)
+						_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
 					else
-						_lingo->processEvent(kEventMouseUp, kFrameScript, sc->_frames[currentFrame]->_sprites[spriteId]->_scriptId);
+						_lingo->processEvent(kEventMouseUp, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 				}
-			}
 
-			if (event.type == Common::EVENT_KEYDOWN) {
+				sc->_currentMouseDownSpriteId = 0;
+				break;
+
+			case Common::EVENT_KEYDOWN:
 				_keyCode = event.kbd.keycode;
 				_key = (unsigned char)(event.kbd.ascii & 0xff);
 
@@ -111,14 +122,28 @@ void DirectorEngine::processEvents() {
 					warning("Keycode: %d", _keyCode);
 				}
 
-				// TODO: is movie script correct? Can this be elsewhere?
-				_lingo->processEvent(kEventKeyDown, kMovieScript, 0);
+				_lingo->processEvent(kEventKeyDown, kGlobalScript, 0);
+				break;
+
+			default:
+				break;
 			}
 		}
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+
+		if (sc->getCurrentFrame() > 0)
+			_lingo->processEvent(kEventIdle, kFrameScript, sc->getCurrentFrame());
 	}
+}
+
+void DirectorEngine::setDraggedSprite(uint16 id) {
+	_draggingSprite = true;
+	_draggingSpriteId = id;
+	_draggingSpritePos = g_system->getEventManager()->getMousePos();
+
+	warning("STUB: DirectorEngine::setDraggedSprite(%d)", id);
 }
 
 } // End of namespace Director

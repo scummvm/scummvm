@@ -25,5 +25,19 @@
 
 namespace Titanic {
 
+void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
+
+}
+
+void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
+	CStarControlSub23::proc4(v1, v2, m);
+
+	// TODO
+}
+
+int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
+	// TODO
+	return 0;
+}
 
 } // End of namespace Titanic

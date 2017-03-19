@@ -24,7 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB3_H
 
 #include "titanic/support/simple_file.h"
-#include "titanic/star_control/star_control_sub4.h"
+#include "titanic/star_control/frange.h"
 #include "titanic/star_control/star_control_sub5.h"
 #include "titanic/star_control/surface_area.h"
 
@@ -44,7 +44,23 @@ struct CBaseStarEntry {
 	uint _data[5];
 
 	CBaseStarEntry();
+
+	/**
+	 * Loads the data for a star
+	 */
 	void load(Common::SeekableReadStream &s);
+
+	bool operator==(const CBaseStarEntry &s) const;
+};
+
+struct CStarPosition : public Common::Point {
+	int _index1;
+	int _index2;
+	CStarPosition() : _index1(0), _index2(0) {}
+
+	bool operator==(const CStarPosition &sp) const {
+		return x == sp.x && y == sp.y && _index1 == sp._index1 && _index2 == sp._index2;
+	}
 };
 
 class CBaseStar {
@@ -55,7 +71,7 @@ private:
 	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 protected:
 	Common::Array<CBaseStarEntry> _data;
-	CStarControlSub4 _sub4;
+	FRange _minMax;
 	double _minVal;
 	double _maxVal;
 	double _range;
@@ -76,9 +92,6 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
-
-	void baseFn1(int v1, int v2, int v3, int v4);
-	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}
@@ -94,7 +107,7 @@ public:
 	 * Selects a star
 	 */
 	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
-		int flags, const Common::Point &pt) { return false; }
+		const Common::Point &pt, void *handler = nullptr) { return false; }
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates
@@ -126,6 +139,11 @@ public:
 	 * Get a pointer to a data entry
 	 */
 	const CBaseStarEntry *getDataPtr(int index) const;
+
+	int baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+		const Common::Point &pt);
+
+	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 };
 
 } // End of namespace Titanic

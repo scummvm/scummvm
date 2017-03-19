@@ -27,7 +27,7 @@
 namespace Titanic {
 
 #define ARRAY_COUNT 876
-const double FACTOR = 3.1415927 * 0.0055555557;
+const double FACTOR = 2 * M_PI / 360.0;
 
 CStarPoints1::CStarPoints1() {
 }

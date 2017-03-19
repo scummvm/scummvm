@@ -39,6 +39,11 @@ Drascula:
  MADS:
    - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
 
+ SCI:
+   - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible to exit the
+     party room with the large golden head inside the museum (room 350).
+     This bug is also present, when using the original interpreter.
+
  TsAGE:
    - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
 

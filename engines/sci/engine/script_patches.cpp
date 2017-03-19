@@ -103,6 +103,7 @@ static const char *const selectorNameTable[] = {
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest
+	"ignoreActors", // Laura Bow 1 Colonel's Bequest
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
@@ -135,7 +136,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
 	SELECTOR_cycler,
-	SELECTOR_setLoop
+	SELECTOR_setLoop,
+	SELECTOR_ignoreActors
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
@@ -554,14 +556,12 @@ static const uint16 freddypharkasSignatureIntroScaling[] = {
 static const uint16 freddypharkasPatchIntroScaling[] = {
 	// remove setLoop(), objects in heap are already prepared, saves 5 bytes
 	0x38,
-	PATCH_GETORIGINALBYTE(+6),
-	PATCH_GETORIGINALBYTE(+7),       // pushi (setStep)
+	PATCH_GETORIGINALUINT16(+6),     // pushi (setStep)
 	0x7a,                            // push2
 	0x39, 0x05,                      // pushi 05
 	0x3c,                            // dup
 	0x72,
-	PATCH_GETORIGINALBYTE(+13),
-	PATCH_GETORIGINALBYTE(+14),      // lofsa (view)
+	PATCH_GETORIGINALUINT16(+13),    // lofsa (view)
 	0x4a, 0x18,                      // send 18 - adjusted
 	0x35, 0x0a,                      // ldi 0a
 	0xa3, 0x02,                      // sal local[2]
@@ -1314,8 +1314,7 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
 	0x38,                               // pushi "show"
-	PATCH_GETORIGINALBYTE(+22),
-	PATCH_GETORIGINALBYTE(+23),
+	PATCH_GETORIGINALUINT16(+22),
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
 	0x31, 0x04,                         // bnt [call show using global 0]
@@ -1600,8 +1599,7 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 	0x65, 0x12,                         // aTop dialog
 	// followed by original addText-calling code
 	0x38,
-	PATCH_GETORIGINALBYTE(+95),
-	PATCH_GETORIGINALBYTE(+96),         // pushi addText
+	PATCH_GETORIGINALUINT16(+95),       // pushi (addText)
 	0x78,                               // push1
 	0x8f, 0x02,                         // lsp param[2]
 	0x59, 0x03,                         // &rest 03
@@ -1949,8 +1947,7 @@ static const uint16 kq7PatchSubtitleFix3[] = {
 	PATCH_ADDTOOFFSET(+2),              // skip over "pToa initialized code"
 	0x2f, 0x0c,                         // bt [skip init code] - saved 1 byte
 	0x38,
-	PATCH_GETORIGINALBYTE(+6),
-	PATCH_GETORIGINALBYTE(+7),          // pushi (init)
+	PATCH_GETORIGINALUINT16(+6),        // pushi (init)
 	0x76,                               // push0
 	0x54, PATCH_UINT16(0x0004),           // self 04
 	// additionally set background color here (5 bytes)
@@ -2488,12 +2485,79 @@ static const uint16 laurabow1PatchArmorOilingArmFix[] = {
 	PATCH_END
 };
 
+// When you tell Lilly about Gertie in room 35, Lilly will then walk to the left and off the screen.
+// In case Laura (ego) is in the way, the whole game will basically block and you won't be able
+// to do anything except saving + restoring the game.
+//
+// If this happened already, the player can enter
+// "send Lillian ignoreActors 1" inside the debugger to fix this situation.
+//
+// This issue is very difficult to solve, because Lilly also walks diagonally after walking to the left right
+// under the kitchen table. This means that even if we added a few more rectangle checks, there could still be
+// spots, where the game would block.
+//
+// Also the mover "PathOut" is used for Lillian instead of the regular "MoveTo", which would avoid other
+// actors by itself.
+//
+// So instead we set Lilly to ignore other actors during that cutscene, which is the least invasive solution.
+//
+// Applies to at least: English PC Floppy, English Amiga Floppy, English Atari ST Floppy
+// Responsible method: goSee::changeState(1) in script 236
+// Fixes bug: (happened during GOG Let's Play)
+static const uint16 laurabow1SignatureTellLillyAboutGerieBlockingFix1[] = {
+	0x7a,                               // puah2
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00c1),           // pushi 00C1h
+	0x38, SIG_UINT16(0x008f),           // pushi 008Fh
+	0x38, SIG_SELECTOR16(ignoreActors), // pushi (ignoreActors)
+	0x78,                               // push1
+	0x76,                               // push0
+	SIG_END
+};
+
+static const uint16 laurabow1PatchTellLillyAboutGertieBlockingFix1[] = {
+	PATCH_ADDTOOFFSET(+11),             // skip over until push0
+	0x78,                               // push1 (change push0 to push1)
+	PATCH_END
+};
+
+// a second patch to call Lillian::ignoreActors(1) on goSee::changeState(9) in script 236
+static const uint16 laurabow1SignatureTellLillyAboutGerieBlockingFix2[] = {
+	0x3c,                               // dup
+	0x35, 0x09,                         // ldi 09
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x003f),           // bnt [ret]
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi (view)
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0203),           // pushi 203h (515d)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi (posn)
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x00c9),           // pushi C9h (201d)
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0084),           // pushi 84h (132d)
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa Lillian (different offsets for different platforms)
+	0x4a, 0x0e,                         // send 0Eh
+	SIG_END
+};
+
+static const uint16 laurabow1PatchTellLillyAboutGertieBlockingFix2[] = {
+	0x38, PATCH_SELECTOR16(ignoreActors), // pushi (ignoreActors)
+	0x78,                                 // push1
+	0x76,                                 // push0
+	0x33, 0x00,                           // ldi 00 (waste 2 bytes)
+	PATCH_ADDTOOFFSET(+19),               // skip over until send
+	0x4a, 0x14,                           // send 14h
+	PATCH_END
+};
+
 //          script, description,                                      signature                           patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
-	{  true,     4, "easter egg view fix",                         1, laurabow1SignatureEasterEggViewFix,  laurabow1PatchEasterEggViewFix },
-	{  true,    37, "armor open visor fix",                        1, laurabow1SignatureArmorOpenVisorFix, laurabow1PatchArmorOpenVisorFix },
-	{  true,    37, "armor move to fix",                           2, laurabow1SignatureArmorMoveToFix,    laurabow1PatchArmorMoveToFix },
-	{  true,    37, "allowing input, after oiling arm",            1, laurabow1SignatureArmorOilingArmFix, laurabow1PatchArmorOilingArmFix },
+	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
+	{  true,    37, "armor open visor fix",                     1, laurabow1SignatureArmorOpenVisorFix,               laurabow1PatchArmorOpenVisorFix },
+	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
+	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
+	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
+	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2614,6 +2678,98 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	PATCH_END
 };
 
+// When entering the main musem party room (w/ the golden Egyptian head),
+// Laura is waslking a bit into the room automatically.
+// In case you press a mouse button while this is happening, you will get
+// stuck inside that room and won't be able to exit it anymore.
+//
+// Users, who played the game w/ a previous version of ScummVM can simply
+// enter the debugger and then enter "send rm350 script 0:0", which will
+// fix the script state.
+//
+// This is caused by the user controls not being locked at that point.
+// Pressing a button will cause the cue from the PolyPath walker to never
+// happen, which then causes sEnterSouth to never dispose itself.
+//
+// User controls are locked in the previous room 335, but controls
+// are unlocked by frontDoor::cue.
+// We do not want to change this, because it could have side-effects.
+// We instead add another LB2::handsOff call inside the script responsible
+// for making Laura walk into the room (sEnterSouth::changeState(0).
+//
+// Applies to at least: English PC-CD, English PC-Floppy, German PC-Floppy
+// Responsible method: sEnterSouth::changeState
+// Fixes bug: (no bug report, from GOG forum post)
+static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth1[] = {
+	0x3c,                              // dup
+	0x35, 0x00,                        // ldi 00
+	0x1a,                              // eq?
+	0x30, SIG_UINT16(0x0097),          // bnt [state 1 code]
+	SIG_ADDTOOFFSET(+141),             // skip to end of follow-up code
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x008d for CD, 0x007d for floppy)
+	0x35, 0x01,                        // ldi 01
+	0x65, 0x1a,                        // aTop cycles
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x0086 for CD, 0x0076 for floppy)
+	// state 1 code
+	0x3c,                              // dup
+	0x35, 0x01,                        // ldi 01
+	0x1a,                              // eq?
+	SIG_MAGICDWORD,
+	0x31, 0x05,                        // bnt [state 2 code]
+	0x35, 0x00,                        // ldi 00
+	0x32, SIG_ADDTOOFFSET(+2),         // jmp [ret] (0x007b for CD, 0x006b for floppy)
+	// state 2 code
+	0x3c,                              // dup
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth1[] = {
+	0x2e, PATCH_UINT16(0x00a6),        // bt [state 2 code] (we skip state 1, because it's a NOP anyways)
+	// state 0 processing
+	0x32, PATCH_UINT16(+151),
+	SIG_ADDTOOFFSET(+149),             // skip to end of follow-up code
+	// save 1 byte by replacing jump to [ret] into straight toss/ret
+	0x3a,                              // toss
+	0x48,                              // ret
+
+	// additional code, that gets called right at the start of step 0 processing
+	0x18,                              // not -- this here is where pushi handsOff will be inserted by the second patch
+	0x18,                              // not    offset and handsOff is different for floppy + CD, that's why we do this
+	0x18,                              // not    floppy also does not have a selector table, so we can't go by "handsOff" name
+	0x18,                              // not
+	0x76,                              // push0
+	0x81, 0x01,                        // lag global[1]
+	0x4a, 0x04,                        // send 04
+	0x32, PATCH_UINT16(0xFF5e),        // jmp [back to start of step 0 processing]
+	PATCH_END
+};
+
+// second patch, which only inserts pushi handsOff inside our new code
+// There is no other way to do this except making 2 full patches for floppy + CD, because handsOff/handsOn
+// is not the same value between floppy + CD *and* floppy doesn't even have a vocab, so we can't figure out the id
+// by ourselves.
+static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth2[] = {
+	0x18,                              // our injected code
+	0x18,
+	0x18,
+	SIG_ADDTOOFFSET(+92),              // skip to the handsOn code, that we are interested in
+	0x38, SIG_ADDTOOFFSET(+2),         // pushi handsOn (0x0189 for CD, 0x024b for floppy)
+	0x76,                              // push0
+	0x81, 0x01,                        // lag global[1]
+	0x4a, 0x04,                        // send 04
+	0x38, SIG_ADDTOOFFSET(+2),         // pushi 0274h
+	SIG_MAGICDWORD,
+	0x78,                              // push1
+	0x38, SIG_UINT16(0x033f),          // pushi 033f
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth2[] = {
+	0x38,                              // pushi
+	PATCH_GETORIGINALUINT16ADJUST(+96, -1), // get handsOff code and ubstract 1 from it to get handsOn
+	PATCH_END
+};
+
 // Opening/Closing the east door in the pterodactyl room doesn't
 //  check, if it's locked and will open/close the door internally
 //  even when it is.
@@ -2628,7 +2784,7 @@ static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 // Responsible method (CD): eastDoor::doVerb
 // Responsible method (Floppy): eastDoor::<noname300>
 // Fixes bug: #6458 (partly, see additional patch below)
-static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
+static const uint16 laurabow2SignatureFixWiredEastDoor[] = {
 	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
 	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
 	0x35, 0x00,                         // ldi 00
@@ -2651,7 +2807,7 @@ static const uint16 laurabow2CDSignatureFixWiredEastDoor[] = {
 	SIG_END
 };
 
-static const uint16 laurabow2CDPatchFixWiredEastDoor[] = {
+static const uint16 laurabow2PatchFixWiredEastDoor[] = {
 	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
 	0x81,   97,                         // lag 97d (get our eastDoor-wired-global)
 	0x31, 0x04,                         // bnt [skip setting locked property]
@@ -2780,20 +2936,22 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
-	{  true,   560, "CD: painting closing immediately",            1, laurabow2CDSignaturePaintingClosing,           laurabow2CDPatchPaintingClosing },
-	{  true,     0, "CD: fix problematic icon bar",                1, laurabow2CDSignatureFixProblematicIconBar,     laurabow2CDPatchFixProblematicIconBar },
-	{  true,   430, "CD/Floppy: make wired east door persistent",  1, laurabow2SignatureRememberWiredEastDoor,       laurabow2PatchRememberWiredEastDoor },
-	{  true,   430, "CD/Floppy: fix wired east door",              1, laurabow2CDSignatureFixWiredEastDoor,          laurabow2CDPatchFixWiredEastDoor },
+	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD: fix problematic icon bar",                   1, laurabow2CDSignatureFixProblematicIconBar,      laurabow2CDPatchFixProblematicIconBar },
+	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
+	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
+	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
+	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
-	{ false,   924, "CD: audio + text support 1",                  1, kq6laurabow2CDSignatureAudioTextSupport1,      kq6laurabow2CDPatchAudioTextSupport1 },
-	{ false,   924, "CD: audio + text support 2",                  1, kq6laurabow2CDSignatureAudioTextSupport2,      kq6laurabow2CDPatchAudioTextSupport2 },
-	{ false,   924, "CD: audio + text support 3",                  1, kq6laurabow2CDSignatureAudioTextSupport3,      kq6laurabow2CDPatchAudioTextSupport3 },
-	{ false,   928, "CD: audio + text support 4",                  1, kq6laurabow2CDSignatureAudioTextSupport4,      kq6laurabow2CDPatchAudioTextSupport4 },
-	{ false,   928, "CD: audio + text support 5",                  2, kq6laurabow2CDSignatureAudioTextSupport5,      kq6laurabow2CDPatchAudioTextSupport5 },
-	{ false,     0, "CD: audio + text support disable mode reset", 1, laurabow2CDSignatureAudioTextSupportModeReset, laurabow2CDPatchAudioTextSupportModeReset },
-	{ false,   100, "CD: audio + text support disable mode reset", 1, laurabow2CDSignatureAudioTextSupportModeReset, laurabow2CDPatchAudioTextSupportModeReset },
-	{ false,    24, "CD: audio + text support LB2 menu 1",         1, laurabow2CDSignatureAudioTextMenuSupport1,     laurabow2CDPatchAudioTextMenuSupport1 },
-	{ false,    24, "CD: audio + text support LB2 menu 2",         1, laurabow2CDSignatureAudioTextMenuSupport2,     laurabow2CDPatchAudioTextMenuSupport2 },
+	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
+	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
+	{ false,   924, "CD: audio + text support 3",                     1, kq6laurabow2CDSignatureAudioTextSupport3,       kq6laurabow2CDPatchAudioTextSupport3 },
+	{ false,   928, "CD: audio + text support 4",                     1, kq6laurabow2CDSignatureAudioTextSupport4,       kq6laurabow2CDPatchAudioTextSupport4 },
+	{ false,   928, "CD: audio + text support 5",                     2, kq6laurabow2CDSignatureAudioTextSupport5,       kq6laurabow2CDPatchAudioTextSupport5 },
+	{ false,     0, "CD: audio + text support disable mode reset",    1, laurabow2CDSignatureAudioTextSupportModeReset,  laurabow2CDPatchAudioTextSupportModeReset },
+	{ false,   100, "CD: audio + text support disable mode reset",    1, laurabow2CDSignatureAudioTextSupportModeReset,  laurabow2CDPatchAudioTextSupportModeReset },
+	{ false,    24, "CD: audio + text support LB2 menu 1",            1, laurabow2CDSignatureAudioTextMenuSupport1,      laurabow2CDPatchAudioTextMenuSupport1 },
+	{ false,    24, "CD: audio + text support LB2 menu 2",            1, laurabow2CDSignatureAudioTextMenuSupport2,      laurabow2CDPatchAudioTextMenuSupport2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3939,8 +4097,7 @@ static const uint16 qfg3PatchMissingPoints1[] = {
 	PATCH_UINT16(0xFFD6),               // -42 "Greet"
 	PATCH_UINT16(0xFFB0),               // -80 "Say Good-bye"
 	PATCH_UINT16(0x03E7),               // 999 END MARKER
-	PATCH_GETORIGINALBYTE(+28),         // local[$aa][0].low
-	PATCH_GETORIGINALBYTE(+29),         // local[$aa][0].high
+	PATCH_GETORIGINALUINT16(+28),       // local[$aa][0]
 	PATCH_END
 };
 
@@ -4841,14 +4998,6 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			break;
 		}
 		case PATCH_CODE_GETORIGINALBYTE: {
-			// get original byte from script
-			if (patchValue >= orgDataSize)
-				error("Script-Patcher: can not get requested original byte from script");
-			scriptData[offset] = orgData[patchValue];
-			offset++;
-			break;
-		}
-		case PATCH_CODE_GETORIGINALBYTEADJUST: {
 			// get original byte from script and adjust it
 			if (patchValue >= orgDataSize)
 				error("Script-Patcher: can not get requested original byte from script");
@@ -4857,6 +5006,30 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			patchData++; adjustValue = (int16)(*patchData);
 			scriptData[offset] = orgByte + adjustValue;
 			offset++;
+			break;
+		}
+		case PATCH_CODE_GETORIGINALUINT16: {
+			// get original byte from script and adjust it
+			if ((patchValue >= orgDataSize) || (((uint32)patchValue + 1) >= orgDataSize))
+				error("Script-Patcher: can not get requested original uint16 from script");
+			uint16 orgUINT16;
+			int16 adjustValue;
+
+			if (!_isMacSci11) {
+				orgUINT16 = orgData[patchValue] | (orgData[patchValue + 1] << 8);
+			} else {
+				orgUINT16 = orgData[patchValue + 1] | (orgData[patchValue] << 8);
+			}
+			patchData++; adjustValue = (int16)(*patchData);
+			orgUINT16 += adjustValue;
+			if (!_isMacSci11) {
+				scriptData[offset] = orgUINT16 & 0xFF;
+				scriptData[offset + 1] = orgUINT16 >> 8;
+			} else {
+				scriptData[offset] = orgUINT16 >> 8;
+				scriptData[offset + 1] = orgUINT16 & 0xFF;
+			}
+			offset += 2;
 			break;
 		}
 		case PATCH_CODE_UINT16:
@@ -5134,7 +5307,8 @@ void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescriptio
 			}
 			break;
 		}
-		case PATCH_CODE_GETORIGINALBYTEADJUST: {
+		case PATCH_CODE_GETORIGINALBYTE:
+		case PATCH_CODE_GETORIGINALUINT16: {
 			signatureData++; // skip over extra uint16
 			break;
 		}

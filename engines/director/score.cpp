@@ -30,6 +30,7 @@
 #include "graphics/palette.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "image/bmp.h"
 
 #include "director/cast.h"
 #include "director/score.h"
@@ -59,11 +60,10 @@ const char *scriptType2str(ScriptType scr) {
 }
 
 
-Score::Score(DirectorEngine *vm, Archive *archive) {
+Score::Score(DirectorEngine *vm) {
 	_vm = vm;
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
-	_movieArchive = archive;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
@@ -87,6 +87,15 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_stopPlay = false;
 	_stageColor = 0;
 
+	_loadedBitmaps = new Common::HashMap<int, BitmapCast *>();
+	_loadedText = new Common::HashMap<int, TextCast *>();
+	_loadedButtons = new Common::HashMap<int, ButtonCast *>();
+	_loadedShapes = new Common::HashMap<int, ShapeCast *>();
+	_loadedScripts = new Common::HashMap<int, ScriptCast *>();
+}
+
+void Score::setArchive(Archive *archive) {
+	_movieArchive = archive;
 	if (archive->hasResource(MKTAG('M', 'C', 'N', 'M'), 0)) {
 		_macName = archive->getName(MKTAG('M', 'C', 'N', 'M'), 0).c_str();
 	} else {
@@ -111,6 +120,7 @@ void Score::loadArchive() {
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
+		debugC(2, kDebugLoading, "****** Loading Palette");
 		loadPalette(*pal);
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
@@ -146,12 +156,16 @@ void Score::loadArchive() {
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
+		debugC(2, kDebugLoading, "****** Loading %d CastInfos", vwci.size());
+
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
 	}
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
 	if (cast.size() > 0) {
+		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
+
 		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
 			Common::SeekableSubReadStreamEndian *stream = _movieArchive->getResource(MKTAG('C', 'A', 'S', 't'), *iterator);
 			Resource res = _movieArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
@@ -160,14 +174,76 @@ void Score::loadArchive() {
 	}
 
 	setSpriteCasts();
+	loadSpriteImages(false);
 
 	// Try to load movie script, it sits in resource A11
 	if (_vm->getVersion() <= 3) {
 		Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 		if (stxt.size() > 0) {
+			debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
+
 			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
 			}
+		}
+	}
+}
+
+void Score::loadSpriteImages(bool isSharedCast) {
+	debugC(1, kDebugLoading, "****** Preloading sprite images");
+
+	Common::HashMap<int, BitmapCast *>::iterator bc;
+	for (bc = _loadedBitmaps->begin(); bc != _loadedBitmaps->end(); ++bc) {
+		if (bc->_value) {
+			uint16 imgId = bc->_key + 1024;
+			BitmapCast *bitmapCast = bc->_value;
+
+			if (_vm->getVersion() >= 4 && bitmapCast->children.size() > 0)
+				imgId = bitmapCast->children[0].index;
+
+			Image::ImageDecoder *img = NULL;
+
+			if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+				img = new DIBDecoder();
+				img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+				bitmapCast->surface = img->getSurface();
+			}
+
+			if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
+				img = new DIBDecoder();
+				img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
+				bitmapCast->surface = img->getSurface();
+			}
+
+			Common::SeekableReadStream *pic = NULL;
+
+			if (isSharedCast) {
+				debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
+				pic = _vm->getSharedBMP()->getVal(imgId);
+				if (pic != NULL)
+					pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
+			} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+			}
+
+			int w = bitmapCast->initialRect.width(), h = bitmapCast->initialRect.height();
+			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+				imgId, w, h, bitmapCast->flags, bitmapCast->someFlaggyThing, bitmapCast->unk1, bitmapCast->unk2);
+
+			if (pic != NULL && bitmapCast != NULL) {
+				if (_vm->getVersion() < 4) {
+					img = new BITDDecoder(w, h);
+				} else if (_vm->getVersion() < 6) {
+					img = new BITDDecoderV4(w, h, bitmapCast->bitsPerPixel);
+				} else {
+					img = new Image::BitmapDecoder();
+				}
+
+				img->loadStream(*pic);
+				bitmapCast->surface = img->getSurface();
+			}
+
+			warning("Image %d not found", imgId);
 		}
 	}
 }
@@ -210,6 +286,8 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading frames");
+
 	uint32 size = stream.readUint32();
 	size -= 4;
 
@@ -267,7 +345,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		//Common::hexdump(channelData, ARRAYSIZE(channelData));
 		frame->readChannels(str);
 
-		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size() + 1, frame->_actionId);
+		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 		delete str;
 
@@ -276,6 +354,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading Config");
+
 	/*uint16 unk1 = */ stream.readUint16();
 	/*ver1 = */ stream.readUint16();
 	_movieRect = Score::readRect(stream);
@@ -295,7 +375,7 @@ void Score::readVersion(uint32 rid) {
 }
 
 void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
+	debugC(1, kDebugLoading, "****** Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
@@ -309,20 +389,24 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 		switch (castType) {
 		case kCastBitmap:
-			_casts[id] = new BitmapCast(stream);
-			_casts[id]->type = kCastBitmap;
+			debugC(3, kDebugLoading, "CastTypes id: %d BitmapCast", id);
+			_loadedBitmaps->setVal(id, new BitmapCast(stream));
+			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
-			_casts[id] = new TextCast(stream);
-			_casts[id]->type = kCastText;
+			debugC(3, kDebugLoading, "CastTypes id: %d TextCast", id);
+			_loadedText->setVal(id, new TextCast(stream));
+			_castTypes[id] = kCastText;
 			break;
 		case kCastShape:
-			_casts[id] = new ShapeCast(stream);
-			_casts[id]->type = kCastShape;
+			debugC(3, kDebugLoading, "CastTypes id: %d ShapeCast", id);
+			_loadedShapes->setVal(id, new ShapeCast(stream));
+			_castTypes[id] = kCastShape;
 			break;
 		case kCastButton:
-			_casts[id] = new ButtonCast(stream);
-			_casts[id]->type = kCastButton;
+			debugC(3, kDebugLoading, "CastTypes id: %d ButtonCast", id);
+			_loadedButtons->setVal(id, new ButtonCast(stream));
+			_castTypes[id] = kCastButton;
 			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast type: %d", castType);
@@ -336,10 +420,34 @@ void Score::setSpriteCasts() {
 	// Set cast pointers to sprites
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
-			byte castId = _frames[i]->_sprites[j]->_castId;
+			uint16 castId = _frames[i]->_sprites[j]->_castId;
 
-			if (_casts.contains(castId))
-				_frames[i]->_sprites[j]->_cast = _casts.find(castId)->_value;
+			if (_vm->getSharedScore()->_loadedBitmaps->contains(castId)) {
+				_frames[i]->_sprites[j]->_bitmapCast = _vm->getSharedScore()->_loadedBitmaps->getVal(castId);
+			} else if (_loadedBitmaps->contains(castId)) {
+				_frames[i]->_sprites[j]->_bitmapCast = _loadedBitmaps->getVal(castId);
+			}
+
+			if (_vm->getSharedScore()->_loadedButtons->contains(castId)) {
+				_frames[i]->_sprites[j]->_buttonCast = _vm->getSharedScore()->_loadedButtons->getVal(castId);
+			} else if (_loadedButtons->contains(castId)) {
+				_frames[i]->_sprites[j]->_buttonCast = _loadedButtons->getVal(castId);
+			}
+
+			//if (_loadedScripts->contains(castId))
+			//	_frames[i]->_sprites[j]->_bitmapCast = _loadedBitmaps->getVal(castId);
+
+			if (_vm->getSharedScore()->_loadedText->contains(castId)) {
+				_frames[i]->_sprites[j]->_textCast = _vm->getSharedScore()->_loadedText->getVal(castId);
+			} else if (_loadedText->contains(castId)) {
+				_frames[i]->_sprites[j]->_textCast = _loadedText->getVal(castId);
+			}
+
+			if (_vm->getSharedScore()->_loadedShapes->contains(castId)) {
+				_frames[i]->_sprites[j]->_shapeCast = _vm->getSharedScore()->_loadedShapes->getVal(castId);
+			} else if (_loadedShapes->contains(castId)) {
+				_frames[i]->_sprites[j]->_shapeCast = _loadedShapes->getVal(castId);
+			}
 		}
 	}
 }
@@ -398,33 +506,30 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	switch (castType) {
 	case kCastBitmap:
-		_casts[id] = new BitmapCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastBitmap;
+		_loadedBitmaps->setVal(id, new BitmapCast(castStream, _vm->getVersion()));
+		for (uint child = 0; child < res->children.size(); child++)
+			_loadedBitmaps->getVal(id)->children.push_back(res->children[child]);
+		_castTypes[id] = kCastBitmap;
 		break;
 	case kCastText:
-		_casts[id] = new TextCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastText;
+		_loadedText->setVal(id, new TextCast(castStream, _vm->getVersion()));
+		_castTypes[id] = kCastText;
 		break;
 	case kCastShape:
-		_casts[id] = new ShapeCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastShape;
+		_loadedShapes->setVal(id, new ShapeCast(castStream, _vm->getVersion()));
+		_castTypes[id] = kCastShape;
 		break;
 	case kCastButton:
-		_casts[id] = new ButtonCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastButton;
+		_loadedButtons->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
+		_castTypes[id] = kCastButton;
 		break;
 	case kCastLingoScript:
-		_casts[id] = new ScriptCast(castStream, _vm->getVersion());
-		_casts[id]->type = kCastLingoScript;
+		_loadedScripts->setVal(id, new ScriptCast(castStream, _vm->getVersion()));
+		_castTypes[id] = kCastLingoScript;
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d", castType);
 		break;
-	}
-
-	if (res != NULL) {
-		for (uint child = 0; child < res->children.size(); child++)
-			_casts[id]->children.push_back(res->children[child]);
 	}
 
 	free(data);
@@ -467,6 +572,60 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		warning("size3: %x", size3);
 }
 
+void Score::loadCastInto(Sprite *sprite, int castId) {
+	switch (_castTypes[castId]) {
+	case kCastBitmap:
+		sprite->_bitmapCast = _loadedBitmaps->getVal(castId);
+		break;
+	case kCastShape:
+		sprite->_shapeCast = _loadedShapes->getVal(castId);
+		break;
+	case kCastButton:
+		sprite->_buttonCast = _loadedButtons->getVal(castId);
+		break;
+	case kCastText:
+		sprite->_textCast = _loadedText->getVal(castId);
+		break;
+	default:
+		warning("Score::loadCastInto(..., %d): Unhandled castType %d", castId, _castTypes[castId]);
+	}
+}
+
+Common::Rect Score::getCastMemberInitialRect(int castId) {
+	switch (_castTypes[castId]) {
+	case kCastBitmap:
+		return _loadedBitmaps->getVal(castId)->initialRect;
+	case kCastShape:
+		return _loadedShapes->getVal(castId)->initialRect;
+	case kCastButton:
+		return _loadedButtons->getVal(castId)->initialRect;
+	case kCastText:
+		return _loadedText->getVal(castId)->initialRect;
+	default:
+		warning("Score::getCastMemberInitialRect(%d): Unhandled castType %d", castId, _castTypes[castId]);
+		return Common::Rect(0, 0);
+	}
+}
+
+void Score::setCastMemberModified(int castId) {
+	switch (_castTypes[castId]) {
+	case kCastBitmap:
+		_loadedBitmaps->getVal(castId)->modified = 1;
+		break;
+	case kCastShape:
+		_loadedShapes->getVal(castId)->modified = 1;
+		break;
+	case kCastButton:
+		_loadedButtons->getVal(castId)->modified = 1;
+		break;
+	case kCastText:
+		_loadedText->getVal(castId)->modified = 1;
+		break;
+	default:
+		warning("Score::setCastMemberModified(%d): Unhandled castType %d", castId, _castTypes[castId]);
+	}
+}
+
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 	_labels = new Common::SortedArray<Label *>(compareLabels);
 	uint16 count = stream.readUint16() + 1;
@@ -496,6 +655,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 
 	Common::SortedArray<Label *>::iterator j;
 
+	debugC(2, kDebugLoading, "****** Loading labels");
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
 		debugC(2, kDebugLoading, "Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
 	}
@@ -506,6 +666,8 @@ int Score::compareLabels(const void *a, const void *b) {
 }
 
 void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading Actions");
+
 	uint16 count = stream.readUint16() + 1;
 	uint16 offset = count * 4 + 2;
 
@@ -530,7 +692,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 			_actions[i + 1] += ch;
 		}
 
-		debugC(3, kDebugLoading, "id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
+		debugC(3, kDebugLoading, "Action id: %d nextId: %d subId: %d, code: %s", id, nextId, subId, _actions[id].c_str());
 
 		stream.seek(streamPos);
 
@@ -551,8 +713,22 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 		}
 
 	for (j = _actions.begin(); j != _actions.end(); ++j)
-		if (!j->_value.empty())
+		if (!j->_value.empty()) {
 			_lingo->addCode(j->_value.c_str(), kFrameScript, j->_key);
+
+			processImmediateFrameScript(j->_value, j->_key);
+		}
+}
+
+bool Score::processImmediateFrameScript(Common::String s, int id) {
+	s.trim();
+
+	// In D2/D3 this specifies immediately the sprite/field properties
+	if (!s.compareToIgnoreCase("moveableSprite") || !s.compareToIgnoreCase("editableText")) {
+		_immediateActions[id] = true;
+	}
+
+	return false;
 }
 
 void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
@@ -620,6 +796,9 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 		break;
 	case kCastScript:
 		typeName = "cast";
+		break;
+	case kGlobalScript:
+		typeName = "global";
 		break;
 	}
 
@@ -776,6 +955,8 @@ Common::String Score::getString(Common::String str) {
 }
 
 void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading FileInfo");
+
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
 
@@ -805,6 +986,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 
 	uint16 count = stream.readUint16() + 1;
 
+	debugC(3, kDebugLoading, "Strings: %d entries", count);
+
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
 	for (uint i = 0; i < count; i++)
@@ -823,6 +1006,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 				entryString += data[j];
 
 		strings.push_back(entryString);
+
+		debugC(6, kDebugLoading, "String %d:\n%s\n", i, entryString.c_str());
 	}
 
 	free(data);
@@ -834,6 +1019,8 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 	if (stream.size() == 0)
 		return;
+
+	debugC(2, kDebugLoading, "****** Loading FontMap");
 
 	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
@@ -855,7 +1042,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 		_fontMap[id] = font;
 		_vm->_wm->_fontMan->registerFontMapping(id, font);
 
-		debug(3, "Fontmap. ID %d Font %s", id, font.c_str());
+		debugC(3, kDebugLoading, "Fontmap. ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
@@ -902,9 +1089,10 @@ void Score::update() {
 	_surface->clear();
 	_surface->copyFrom(*_trailSurface);
 
+	_frames[_currentFrame]->executeImmediateScripts();
+
 	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
-	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
 	// TODO Director 6 - another order
 
 	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
@@ -971,6 +1159,8 @@ void Score::update() {
 			}
 		}
 	}
+
+	_lingo->processEvent(kEventExitFrame, kFrameScript, _frames[_currentFrame]->_actionId);
 
 	_nextFrameTime = g_system->getMillis() + (float)_currentFrameRate / 60 * 1000;
 }

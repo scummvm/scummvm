@@ -30,12 +30,54 @@ CStarControlSub6::CStarControlSub6() {
 	clear();
 }
 
-CStarControlSub6::CStarControlSub6(int mode, double val) {
-	set(mode, val);
+CStarControlSub6::CStarControlSub6(Axis axis, double amount) {
+	setRotationMatrix(axis, amount);
 }
 
 CStarControlSub6::CStarControlSub6(const CStarControlSub6 *src) {
 	copyFrom(src);
+}
+
+CStarControlSub6::CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2) {
+	_row1._x = s2->_row1._x * s1->_row1._x
+		+ s1->_row1._z * s2->_row3._x
+		+ s1->_row1._y * s2->_row2._x;
+	_row1._y = s1->_row1._x * s2->_row1._y
+		+ s2->_row3._y * s1->_row1._z
+		+ s2->_row2._y * s1->_row1._y;
+	_row1._z = s1->_row1._x * s2->_row1._z
+		+ s2->_row3._z * s1->_row1._z
+		+ s2->_row2._z * s1->_row1._y;
+	_row2._x = s2->_row1._x * s1->_row2._x
+		+ s1->_row2._y * s2->_row2._x
+		+ s1->_row2._z * s2->_row3._x;
+	_row2._y = s1->_row2._y * s2->_row2._y
+		+ s1->_row2._z * s2->_row3._y
+		+ s2->_row1._y * s1->_row2._x;
+	_row2._z = s2->_row1._z * s1->_row2._x
+		+ s1->_row2._y * s2->_row2._z
+		+ s1->_row2._z * s2->_row3._z;
+	_row3._x = s2->_row1._x * s1->_row3._x
+		+ s1->_row3._y * s2->_row2._x
+		+ s1->_row3._z * s2->_row3._x;
+	_row3._y = s1->_row3._z * s2->_row3._y
+		+ s1->_row3._y * s2->_row2._y
+		+ s2->_row1._y * s1->_row3._x;
+	_row3._z = s2->_row3._z * s1->_row3._z
+		+ s2->_row2._z * s1->_row3._y
+		+ s2->_row1._z * s1->_row3._x;
+	_vector._x = s2->_row1._x * s1->_vector._x
+		+ s1->_vector._y * s2->_row2._x
+		+ s1->_vector._z * s2->_row3._x
+		+ s2->_vector._x;
+	_vector._y = s1->_vector._z * s2->_row3._y
+		+ s1->_vector._y * s2->_row2._y
+		+ s1->_vector._x * s2->_row1._y
+		+ s2->_vector._y;
+	_vector._z = s1->_vector._y * s2->_row2._z
+		+ s1->_vector._z * s2->_row3._z
+		+ s1->_vector._x * s2->_row1._z
+		+ s2->_vector._z;
 }
 
 void CStarControlSub6::init() {
@@ -47,18 +89,18 @@ void CStarControlSub6::deinit() {
 	_static = nullptr;
 }
 
-void CStarControlSub6::clear() {
-	FMatrix::clear();
+void CStarControlSub6::identity() {
+	FMatrix::identity();
 	_vector.clear();
 }
 
-void CStarControlSub6::set(int mode, double amount) {
-	const double ROTATION = 3.1415927 * 0.0055555557;
+void CStarControlSub6::setRotationMatrix(Axis axis, double amount) {
+	const double ROTATION = 2 * M_PI / 360.0;
 	double sinVal = sin(amount * ROTATION);
 	double cosVal = cos(amount * ROTATION);
 
-	switch (mode) {
-	case 0:
+	switch (axis) {
+	case X_AXIS:
 		_row1._x = 1.0;
 		_row1._y = 0.0;
 		_row1._z = 0.0;
@@ -70,7 +112,7 @@ void CStarControlSub6::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 1:
+	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._y = 0.0;
 		_row1._z = sinVal;
@@ -82,7 +124,7 @@ void CStarControlSub6::set(int mode, double amount) {
 		_row3._z = sinVal;
 		break;
 
-	case 2:
+	case Z_AXIS:
 		_row1._x = cosVal;
 		_row1._y = sinVal;
 		_row1._z = 0.0;
@@ -108,52 +150,73 @@ void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
 	_vector = src->_vector;
 }
 
-void CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3) {
-	CStarControlSub6 &d = *dest;
-
-	d._row1._x = s3->_row1._x * s2->_row1._x
-		+ s2->_row1._z * s3->_row3._x
-		+ s2->_row1._y * s3->_row2._x;
-	d._row1._y = s2->_row1._x * s3->_row1._y
-		+ s3->_row3._y * s2->_row1._z
-		+ s3->_row2._y * s2->_row1._y;
-	d._row1._z = s2->_row1._x * s3->_row1._z
-		+ s3->_row3._z * s2->_row1._z
-		+ s3->_row2._z * s2->_row1._y;
-	d._row2._x = s3->_row1._x * s2->_row2._x
-		+ s2->_row2._y * s3->_row2._x
-		+ s2->_row2._z * s3->_row3._x;
-	d._row2._y = s2->_row2._y * s3->_row2._y
-		+ s2->_row2._z * s3->_row3._y
-		+ s3->_row1._y * s2->_row2._x;
-	d._row2._z = s3->_row1._z * s2->_row2._x
-		+ s2->_row2._y * s3->_row2._z
-		+ s2->_row2._z * s3->_row3._z;
-	d._row3._x = s3->_row1._x * s2->_row3._x
-		+ s2->_row3._y * s3->_row2._x
-		+ s2->_row3._z * s3->_row3._x;
-	d._row3._y = s2->_row3._z * s3->_row3._y
-		+ s2->_row3._y * s3->_row2._y
-		+ s3->_row1._y * s2->_row3._x;
-	d._row3._z = s3->_row3._z * s2->_row3._z
-		+ s3->_row2._z * s2->_row3._y
-		+ s3->_row1._z * s2->_row3._x;
-	d._vector._x = s3->_row1._x * s2->_vector._x
-		+ s2->_vector._y * s3->_row2._x
-		+ s2->_vector._z * s3->_row3._x
-		+ s3->_vector._x;
-	d._vector._y = s2->_vector._z * s3->_row3._y
-		+ s2->_vector._y * s3->_row2._y
-		+ s2->_vector._x * s3->_row1._y
-		+ s3->_vector._y;
-	d._vector._z = s2->_vector._y * s3->_row2._z
-		+ s2->_vector._z * s3->_row3._z
-		+ s2->_vector._x * s3->_row1._z
-		+ s3->_vector._z;
+void CStarControlSub6::copyFrom(const FMatrix &src) {
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
 }
 
-void CStarControlSub6::fn1(CStarControlSub6 *sub6) {
-	// TODO
+void CStarControlSub6::fn4(CStarControlSub6 *sub6) {
+	double v2, v3, v6, v7, v8, v9, v10, v11;
+	double v12, v13, v14, v15, v16, v17, v18;
+	
+	v16 = _row3._z * _row2._y;
+	v2 = _row1._x * v16;
+	v3 = 0.0;
+	v18 = v2;
+	if (v2 < 0.0) {
+		v3 = v18;
+		v2 = 0.0;
+	}
+	v6 = _row3._x * _row1._y * _row2._z;
+	if (v6 < 0.0)
+		v3 = v3 + v6;
+	else
+		v2 = v2 + v6;
+	v7 = _row3._y * _row1._z * _row2._x;
+	if (v7 < 0.0)
+		v3 = v3 + v7;
+	else
+		v2 = v2 + v7;
+	if (-(_row3._x * _row1._z * _row2._y) < 0.0)
+		v3 = v3 - _row3._x * _row1._z * _row2._y;
+	else
+		v2 = v2 - _row3._x * _row1._z * _row2._y;
+	if (-(_row1._y * _row2._x * _row3._z) < 0.0)
+		v3 = v3 - _row1._y * _row2._x * _row3._z;
+	else
+		v2 = v2 - _row1._y * _row2._x * _row3._z;
+	v17 = _row2._z * _row3._y;
+	if (-(_row1._x * v17) < 0.0)
+		v3 = v3 - _row1._x * v17;
+	else
+		v2 = v2 - _row1._x * v17;
+	v18 = v3 + v2;
+	assert(!(v18 == 0.0 || fabs(v18 / (v2 - v3)) < 1.0e-10));
+
+	v8 = 1.0 / v18;
+	v18 = v8;
+	sub6->_row1._x = (v16 - v17) * v8;
+	sub6->_row2._x = -(_row2._x * _row3._z - _row3._x * _row2._z) * v8;
+	sub6->_row3._x = (_row3._y * _row2._x - _row3._x * _row2._y) * v8;
+	sub6->_row1._y = -(_row1._y * _row3._z - _row3._y * _row1._z) * v8;
+	sub6->_row2._y = (_row1._x * _row3._z - _row3._x * _row1._z) * v8;
+	sub6->_row3._y = -(_row1._x * _row3._y - _row3._x * _row1._y) * v8;
+	sub6->_row1._z = (_row1._y * _row2._z - _row1._z * _row2._y) * v8;
+	sub6->_row2._z = -(_row1._x * _row2._z - _row1._z * _row2._x) * v8;
+	v9 = sub6->_row1._x;
+	v10 = sub6->_row2._y;
+	v11 = sub6->_row3._y;
+	v12 = sub6->_row1._z;
+	v13 = sub6->_row2._z;
+	sub6->_row3._z = (_row1._x * _row2._y - _row1._y * _row2._x) * v18;
+	v14 = v9;
+	v15 = sub6->_row3._z;
+	sub6->_vector._x = -(v14 * _vector._x
+		+ _vector._y * sub6->_row2._x
+		+ _vector._z * sub6->_row3._x);
+	sub6->_vector._y = -(_vector._x * sub6->_row1._y + v10 * _vector._y + v11 * _vector._z);
+	sub6->_vector._z = -(v12 * _vector._x + v13 * _vector._y + v15 * _vector._z);
 }
 
 } // End of namespace Titanic

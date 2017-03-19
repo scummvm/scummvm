@@ -21,8 +21,14 @@
  */
 
 #include "titanic/star_control/star_control_sub2.h"
+#include "titanic/star_control/star_control_sub12.h"
 
 namespace Titanic {
+
+bool CStarControlSub2::setup() {
+	loadData("STARFIELD/132");
+	return true;
+}
 
 bool CStarControlSub2::loadYale(int v1) {
 	clear();
@@ -31,19 +37,20 @@ bool CStarControlSub2::loadYale(int v1) {
 }
 
 bool CStarControlSub2::selectStar(CSurfaceArea *surfaceArea,
-		CStarControlSub12 *sub12, int flags, const Common::Point &pt) {
-	// TODO
-	return true;
+		CStarControlSub12 *sub12, const Common::Point &pt, void *handler) {
+	int index = baseFn1(surfaceArea, sub12, pt);
+	if (index == -1) {
+		return false;
+	} else if (!handler) {
+		sub12->proc14(_data[index]._position);
+		return true;
+	} else {
+		error("no handler ever passed in original");
+	}
 }
 
 bool CStarControlSub2::loadStar() {
-	// TODO
-	return true;
-}
-
-bool CStarControlSub2::setup() {
-	// TODO
-	return true;
+	error("loadStar not supported");
 }
 
 } // End of namespace Titanic

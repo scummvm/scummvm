@@ -48,7 +48,7 @@ char *numToCastNum(int num) {
 	res[3] = '\0';
 	num--;
 
-	if (num > 0 && num <= 512) {
+	if (num >= 0 && num < 512) {
 		int c = num / 64;
 		res[0] = 'A' + c;
 		num -= 64 * c;

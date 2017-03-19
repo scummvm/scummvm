@@ -21,29 +21,27 @@
  */
 
 #include "titanic/star_control/star_control_sub13.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CStarControlSub13::CStarControlSub13(void *src) :
-		_fieldC0(0), _fieldC4(0), _fieldC8(0.0), _fieldCC(0.0), _fieldD0(0.0) {
-	if (src) {
-		setup(src);
-	} else {
-		_fieldC = 0;
-		_field10 = 0x44480000;
-		_field14 = 0x461C4000;
-		_field18 = 0x41A00000;
-		_field1C = 0x41A00000;
-		_width = 600;
-		_height = 340;
-		_field24 = 0;
-	}
-
-	_fieldD4 = 0;
+CStarControlSub13::CStarControlSub13() {
+	_fieldC = 0;
+	_field10 = 800.0;
+	_field14 = 10000.0;
+	_field18 = 20.0;
+	_field1C = 20.0;
+	_width = 600;
+	_height = 340;
+	_field24 = 0;
+	_fieldC0 = _fieldC4 = _fieldC8 = 0.0;
+	_fieldCC = _fieldD0 = 0.0;
+	_flag = false;
+	Common::fill(&_valArray[0], &_valArray[5], 0.0);
 }
 
 CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
-		_matrix(&src->_matrix), _sub1(&src->_sub1), _sub2(&src->_sub2) {
+		_matrix(src->_matrix), _sub1(&src->_sub1), _sub2(&src->_sub2) {
 	_position = src->_position;
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
@@ -60,26 +58,17 @@ CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 	_fieldC8 = src->_fieldC8;
 	_field24 = src->_field24;
 
-	_valArray[0] = src->_valArray[0];
-	_valArray[2] = src->_valArray[2];
-	_valArray[3] = src->_valArray[3];
-	_fieldD4 = 0;
+	Common::copy(&src->_valArray[0], &src->_valArray[4], &_valArray[0]);
+	_flag = false;
 }
 
-void CStarControlSub13::setup(void *ptr) {
-	// TODO
-}
-
-void CStarControlSub13::copyFrom(const void *src) {
-	if (!src)
-		return;
-/*
-	_field0 = src->_field0;
-	_field4 = src->_field4;
-	_field8 = src->_field8;
-	_fieldC = src->_field18;
-	_field10 = src->_field1C;
-	*/
+void CStarControlSub13::copyFrom(const CStarControlSub13 *src) {
+	if (src) {
+		// TODO: Not really certain src is a CStarControlSub13
+		_position = src->_position;
+		_fieldC = src->_field18;
+		_field10 = src->_field1C;
+	}
 }
 
 void CStarControlSub13::load(SimpleFile *file, int param) {
@@ -101,7 +90,7 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 		_valArray[idx] = file->readFloat();
 
 	_matrix.load(file, param);
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::save(SimpleFile *file, int indent) {
@@ -123,53 +112,62 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 
 void CStarControlSub13::setPosition(const FVector &v) {
 	_position = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
-void CStarControlSub13::setPosition(const CStarControlSub6 &sub6) {
-	FVector vector;
-	_position.fn5(&vector, &sub6);
-	_position = sub6._row1;
-	_fieldD4 = 0;
+void CStarControlSub13::setPosition(const CStarControlSub6 *sub6) {
+	_position.fn5(sub6);
+	_position = sub6->_row1;
+	_flag = false;
 }
 
 void CStarControlSub13::setMatrix(const FMatrix &m) {
 	_matrix = m;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn11(const FVector &v) {
-	_matrix.fn1(&v);
-	_fieldD4 = 0;
+	_matrix.fn1(v);
+	_flag = false;
 }
 
-void CStarControlSub13::setC(int v) {
+void CStarControlSub13::setC(double v) {
 	_fieldC = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
-void CStarControlSub13::set10(int v) {
+void CStarControlSub13::set10(double v) {
 	_field10 = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
-void CStarControlSub13::set14(int v) {
+void CStarControlSub13::set14(double v) {
 	_field10 = v;
 }
 
-void CStarControlSub13::set18(int v) {
+void CStarControlSub13::set18(double v) {
 	_field18 = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
-void CStarControlSub13::set1C(int v) {
+void CStarControlSub13::set1C(double v) {
 	_field1C = v;
-	_fieldD4 = 0;
+	_flag = false;
 }
 
 void CStarControlSub13::fn12() {
-	_matrix.clear();
-	error("TODO: CStarControlSub13::fn12");
+	_matrix.identity();
+
+	CStarControlSub6 m1(X_AXIS, g_vm->getRandomNumber(359));
+	CStarControlSub6 m2(Y_AXIS, g_vm->getRandomNumber(359));
+	CStarControlSub6 m3(Z_AXIS, g_vm->getRandomNumber(359));
+	
+	CStarControlSub6 s1(&m1, &m2);
+	CStarControlSub6 s2(&s1, &m3);
+
+	m1.copyFrom(s2);
+	_matrix.fn2(m1);
+	_flag = false;
 }
 
 void CStarControlSub13::fn13(StarMode mode, double v2) {
@@ -185,52 +183,95 @@ void CStarControlSub13::fn13(StarMode mode, double v2) {
 	_field24 = v2 ? 2 : 0;
 }
 
-void CStarControlSub13::fn14(double v) {
-	error("TODO: CStarControlSub13::fn14");
+void CStarControlSub13::reposition(double factor) {
+	_position._x = _matrix._row3._x * factor + _position._x;
+	_position._y = _matrix._row3._y * factor + _position._y;
+	_position._z = _matrix._row3._z * factor + _position._z;
+	_flag = false;
 }
 
-void CStarControlSub13::fn15(FMatrix &matrix) {
-	_matrix.fn3(&matrix);
-	_fieldD4 = 0;
+void CStarControlSub13::fn15(const FMatrix &matrix) {
+	_matrix.fn3(matrix);
+	_flag = false;
 }
 
 CStarControlSub6 CStarControlSub13::getSub1() {
-	if (!_fieldD4)
+	if (!_flag)
 		reset();
 
 	return _sub1;
 }
 
 CStarControlSub6 CStarControlSub13::getSub2() {
-	if (!_fieldD4)
+	if (!_flag)
 		reset();
 
 	return _sub2;
 }
 
 void CStarControlSub13::fn16(int index, const FVector &src, FVector &dest) {
-	error("TODO: CStarControlSub13::fn16");
+	CStarControlSub6 temp = getSub1();
+
+	dest._x = temp._row3._x * src._z + temp._row2._x * src._y
+		+ src._x * temp._row1._x + temp._vector._x;
+	dest._y = temp._row3._y * src._z + temp._row2._y * src._y
+		+ src._x * temp._row1._y + temp._vector._y;
+	dest._z = temp._row3._z * src._z + temp._row2._z * src._y
+		+ src._x * temp._row1._z + temp._vector._z;
 }
 
-FVector CStarControlSub13::fn17(int index, const FVector &v) {
-	error("TODO: CStarControlSub13::fn17");
+FVector CStarControlSub13::fn17(int index, const FVector &src) {
+	FVector dest;
+	CStarControlSub6 sub6 = getSub1();
+	FVector tv = src.fn5(&sub6);
+
+	dest._x = (_valArray[index] + tv._x)
+		* _fieldC8 / (_fieldCC * tv._z);
+	dest._y = (tv._y * _fieldC8) / (_fieldD0 * tv._z);
+	dest._z = tv._z;
+	return dest;
 }
 
-FVector CStarControlSub13::fn18(int index, const FVector &v) {
-	error("TODO: CStarControlSub13::fn17");
+FVector CStarControlSub13::fn18(int index, const FVector &src) {
+	FVector dest;
+	CStarControlSub6 sub6 = getSub2();
+	FVector tv = src.fn5(&sub6);
+
+	dest._x = (_valArray[index] + tv._x)
+		* _fieldC8 / (_fieldCC * tv._z);
+	dest._y = (tv._y * _fieldC8) / (_fieldD0 * tv._z);
+	dest._z = tv._z;
+	return dest;
 }
 
 void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
-	error("TODO: CStarControlSub13::fn19");
+	*v1 = _fieldC8 / _fieldCC;
+	*v2 = _fieldC8 / _fieldD0;
+	*v3 = _valArray[3];
+	*v4 = _valArray[4];
 }
 
 void CStarControlSub13::reset() {
-	//const double FACTOR = 3.1415927 * 0.0055555557;
-	error("TODO: CStarControlSub13::reset");
+	const double FACTOR = 2 * M_PI / 360.0;
+
+	_sub2.copyFrom(_matrix);
+	_sub2._vector._x = _position._x;
+	_sub2._vector._y = _position._y;
+	_sub2._vector._z = _position._z;
+	_sub2.fn4(&_sub1);
+
+	double widthV = (double)_width * 0.5;
+	double heightV = (double)_height * 0.5;
+	_fieldC0 = widthV;
+	_fieldC4 = heightV;
+	_fieldC8 = MIN(widthV, heightV);
+	_fieldCC = tan(_field18 * FACTOR);
+	_fieldD0 = tan(_field1C * FACTOR);
+	_flag = true;
 }
 
-void CStarControlSub13::getMatrix(FMatrix *matrix) {
-	*matrix = _matrix;
+const FMatrix &CStarControlSub13::getMatrix() const {
+	return _matrix;
 }
 
 } // End of namespace Titanic

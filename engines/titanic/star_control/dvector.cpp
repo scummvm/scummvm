@@ -25,13 +25,38 @@
 
 namespace Titanic {
 
-void DVector::fn3() {
+void DVector::normalize() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+}
+
+double DVector::getDistance(const DVector &src) {
+	return sqrt((src._x - _x) * (src._x - _x) + (src._y - _y) * (src._y - _y) + (src._z - _z) * (src._z - _z));
+}
+
+void DVector::fn1(DVector &dest, const DMatrix &m) {
+	// TODO
+}
+
+void DVector::fn2(double val) {
+	// TODO
+}
+
+void DVector::fn3(DVector &dest) {
+	// TODO
+}
+
+const DMatrix *DVector::fn4(const DVector &v, DMatrix &m) {
+	// TODO
+	return nullptr;
+}
+
+void DVector::fn5(DMatrix &dest) {
+	// TODO
 }
 
 } // End of namespace Titanic

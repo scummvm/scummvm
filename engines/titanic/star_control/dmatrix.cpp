@@ -29,25 +29,40 @@ namespace Titanic {
 DMatrix *DMatrix::_static;
 
 DMatrix::DMatrix() :
-	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
+	_row1(1.875, 0.0, 0.0), _row2(0.0, 1.875, 0.0), _row3(0.0, 0.0, 1.875) {
 }
 
-DMatrix::DMatrix(int mode, const FMatrix *src) {
-	assert(!mode);
+DMatrix::DMatrix(int mode, const DVector &src) {
+	switch (mode) {
+	case 0:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		_row4 = src;
+		break;
 
-	_row1._x = 1.0;
-	_row2._y = 1.0;
-	_row3._z = 1.0;
-	_frow1._x = src->_row1._x;
-	_frow1._y = src->_row1._y;
-	_frow1._z = src->_row1._z;
-	_frow2._x = src->_row2._x;
-	_frow2._y = src->_row2._y;
-	_frow2._z = src->_row2._z;
+	case 1:
+		_row1._x = src._x;
+		_row2._y = src._y;
+		_row3._z = src._z;
+		break;
+
+	default:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		break;
+	}
 }
 
-DMatrix::DMatrix(int mode, double val) {
-	set(mode, val);
+DMatrix::DMatrix(Axis axis, double amount) {
+	setRotationMatrix(axis, amount);
+}
+
+DMatrix::DMatrix(const FMatrix &src) {
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
 }
 
 void DMatrix::init() {
@@ -59,13 +74,13 @@ void DMatrix::deinit() {
 	_static = nullptr;
 }
 
-void DMatrix::set(int mode, double amount) {
+void DMatrix::setRotationMatrix(Axis axis, double amount) {
 	const double FACTOR = 0.0174532925199433;
 	double sinVal = sin(amount * FACTOR);
 	double cosVal = cos(amount * FACTOR);
 
-	switch (mode) {
-	case 0:
+	switch (axis) {
+	case X_AXIS:
 		_row1._x = 1.0;
 		_row2._y = cosVal;
 		_row2._z = sinVal;
@@ -73,7 +88,7 @@ void DMatrix::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 1:
+	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._z = sinVal;
 		_row2._y = 1.0;
@@ -81,7 +96,7 @@ void DMatrix::set(int mode, double amount) {
 		_row3._z = cosVal;
 		break;
 
-	case 2:
+	case Z_AXIS:
 		_row1._x = cosVal;
 		_row1._y = sinVal;
 		_row2._x = -sinVal;
@@ -94,11 +109,20 @@ void DMatrix::set(int mode, double amount) {
 	}
 }
 
+void DMatrix::fn1(DMatrix &m) {
+	// TODO
+}
+
 void DMatrix::fn3(CStarControlSub26 *sub26) {
 	double v = sub26->fn1();
 	v = (v < 0.0) ? 0.0 : 2.0 / v;
 
 	error("TODO: DMatrix::fn3 %d", (int)v);
+}
+
+const DMatrix *DMatrix::fn4(DMatrix &dest, const DMatrix &m1, const DMatrix &m2) {
+	// TODO
+	return nullptr;
 }
 
 } // End of namespace Titanic

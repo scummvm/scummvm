@@ -30,8 +30,8 @@
 
 namespace Titanic {
 
-CStarView::CStarView() : _sub12(nullptr, nullptr), _sub13((void *)nullptr),
-		_owner(nullptr), _starField(nullptr), _videoSurface(nullptr), _field118(0),
+CStarView::CStarView() : _sub12((const CStar20Data *)nullptr), _owner(nullptr),
+		_starField(nullptr), _videoSurface(nullptr), _field118(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
 	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
@@ -177,7 +177,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	case Common::KEYCODE_z:
 	case Common::KEYCODE_c:
 		if (v == -1) {
-			sub6.set(key == Common::KEYCODE_z ? MODE_PHOTO : MODE_STARFIELD, 1.0);
+			sub6.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;
@@ -210,7 +210,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_x:
 		if (v == -1) {
-			sub6.set(MODE_PHOTO, -1.0);
+			sub6.setRotationMatrix(Y_AXIS, -1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;
@@ -219,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_QUOTE:
 		if (v == -1) {
-			sub6.set(MODE_STARFIELD, -1.0);
+			sub6.setRotationMatrix(X_AXIS, -1.0);
 			_sub12.proc22(sub6);
 			_sub12.proc15(errorCode);
 			return true;
@@ -450,7 +450,7 @@ void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
 	v2._x = vx;
 	v2._y = vy;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
@@ -462,7 +462,7 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors3(FVector &v1, FVector &v2) {
@@ -474,7 +474,7 @@ void CStarView::randomizeVectors3(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 
 void CStarView::randomizeVectors4(FVector &v1, FVector &v2) {
@@ -486,7 +486,7 @@ void CStarView::randomizeVectors4(FVector &v1, FVector &v2) {
 	v2._x = -v1._x;
 	v2._y = -v1._y;
 	v2._z = -v1._z;
-	v2.fn3();
+	v2.normalize();
 }
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 		CVideoSurface **surface) {

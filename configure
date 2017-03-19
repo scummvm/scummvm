@@ -2663,8 +2663,16 @@ case $_host_os in
 		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
+		#the next line fixes a crash when starting scumm-7-8 games (The Dig etc.)
+		#when either -O2, -O3 or -Os optimizations are enabled
+		append_var CXXFLAGS "-fno-optimize-sibling-calls"
+		#the next line fixes "branch out of range" error in gob engine when -Os is used
+		append_var CXXFLAGS "-mlong-calls"
 		if test "$_debug_build" = no; then
-			_optimization_level=-O1
+		#optimize for smallest file size. This is necessary to prevent a crash on startup
+		#due to the large executable file size when many engines are enabled
+		#for example when --enable-all-engines is used to enable all the unstable engines
+			_optimization_level=-Os
 		fi
 		if test "$_debug_build" = yes; then
 			_optimization_level=-O0
@@ -2783,7 +2791,7 @@ if test -n "$_host"; then
 			_mt32emu=no
 			_timidity=no
 			;;
-		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a)
+		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
 			DEFINES="$DEFINES -DANDROIDSDL"
 			_unix=yes
 			_seq_midi=no

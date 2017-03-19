@@ -332,8 +332,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheCastNum:
-		if (_vm->getCurrentScore()->_casts.contains(d.u.i)) {
-			sprite->_cast = _vm->getCurrentScore()->_casts[d.u.i];
+		if (_vm->getCurrentScore()->_castTypes.contains(d.u.i)) {
+			_vm->getCurrentScore()->loadCastInto(sprite, d.u.i);
 			sprite->_castId = d.u.i;
 		}
 		break;
@@ -638,9 +638,9 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	Cast *cast;
+	CastType castType;
 	CastInfo *castInfo;
-	if (!_vm->getCurrentScore()->_casts.contains(id)) {
+	if (!_vm->getCurrentScore()->_castTypes.contains(id)) {
 		if (field == kTheLoaded) {
 			d.type = INT;
 			d.u.i = 0;
@@ -651,14 +651,14 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("The cast %d found", id);
 	}
 
-	cast = _vm->getCurrentScore()->_casts[id];
+	castType = _vm->getCurrentScore()->_castTypes[id];
 	castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	d.type = INT;
 
 	switch (field) {
 	case kTheCastType:
-		d.u.i = cast->type;
+		d.u.i = castType;
 		break;
 	case kTheFileName:
 		d.toString();
@@ -673,32 +673,32 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.s = &castInfo->script;
 		break;
 	case kTheWidth:
-		d.u.i = cast->initialRect.width();
+		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).width();
 		break;
 	case kTheHeight:
-		d.u.i = cast->initialRect.height();
+		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).height();
 		break;
 	case kTheBackColor:
 		{
-			if (cast->type != kCastShape) {
+			if (castType != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 				d.type = VOID;
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
+			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
 			d.u.i = shape->bgCol;
 		}
 		break;
 	case kTheForeColor:
 		{
-			if (cast->type != kCastShape) {
+			if (castType != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 				d.type = VOID;
 				return d;
 			}
 
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
+			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
 			d.u.i = shape->fgCol;
 		}
 		break;
@@ -729,18 +729,20 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	Cast *cast = _vm->getCurrentScore()->_casts[id];
+	CastType castType = _vm->getCurrentScore()->_castTypes[id];
 	CastInfo *castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
-	if (!cast) {
+	if (!castInfo) {
 		warning("The cast %d found", id);
 		return;
 	}
 
 	switch (field) {
 	case kTheCastType:
-		cast->type = static_cast<CastType>(d.u.i);
-		cast->modified = 1;
+		// TODO: You can actually switch the cast type!?
+		warning("Tried to switch cast type of %d", id);
+		//cast->type = static_cast<CastType>(d.u.i);
+		//cast->modified = 1;
 		break;
 	case kTheFileName:
 		castInfo->fileName = *d.u.s;
@@ -752,30 +754,30 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		castInfo->script = *d.u.s;
 		break;
 	case kTheWidth:
-		cast->initialRect.setWidth(d.u.i);
-		cast->modified = 1;
+		_vm->getCurrentScore()->getCastMemberInitialRect(id).setWidth(d.u.i);
+		_vm->getCurrentScore()->setCastMemberModified(id);
 		break;
 	case kTheHeight:
-		cast->initialRect.setHeight(d.u.i);
-		cast->modified = 1;
+		_vm->getCurrentScore()->getCastMemberInitialRect(id).setHeight(d.u.i);
+		_vm->getCurrentScore()->setCastMemberModified(id);
 		break;
 	case kTheBackColor:
 		{
-			if (cast->type != kCastShape) {
+			if (castType != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
+			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
 			shape->bgCol = d.u.i;
 			shape->modified = 1;
 		}
 		break;
 	case kTheForeColor:
 		{
-			if (cast->type != kCastShape) {
+			if (castType != kCastShape) {
 				warning("Field %d of cast %d not found", field, id);
 				return;
 			}
-			ShapeCast *shape = static_cast<ShapeCast *>(_vm->getCurrentScore()->_casts[id]);
+			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
 			shape->fgCol = d.u.i;
 			shape->modified = 1;
 		}

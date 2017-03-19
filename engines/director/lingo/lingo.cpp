@@ -299,7 +299,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (entityId < 0)
 		return;
 
-	debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
+	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 	_currentEntityId = entityId;
 
@@ -307,8 +307,11 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		call(_eventHandlerTypes[event], 0); // D4+ Events
 	} else if (_scripts[st].contains(entityId)) {
+		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
+
 		executeScript(st, entityId); // D3 list of scripts.
 	} else {
 		debugC(3, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
@@ -317,6 +320,13 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 
 void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
+
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptHash::iterator it = _scripts[i].begin(); it != _scripts[i].end(); ++it)
+			delete it->_value;
+
+		_scripts[i].clear();
+	}
 
 	// TODO
 	//
@@ -402,6 +412,9 @@ Common::String *Datum::toString() {
 		break;
 	case VAR:
 		*s = Common::String::format("var: #%s", u.sym->name.c_str());
+		break;
+	case REFERENCE:
+		*s = Common::String::format("field#%d", u.i);
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());

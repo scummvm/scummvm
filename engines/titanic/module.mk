@@ -436,10 +436,10 @@ MODULE_OBJS := \
 	star_control/dvector.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
+	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
 	star_control/star_control_sub2.o \
-	star_control/star_control_sub4.o \
 	star_control/star_control_sub5.o \
 	star_control/star_control_sub6.o \
 	star_control/star_control_sub7.o \
@@ -457,6 +457,7 @@ MODULE_OBJS := \
 	star_control/star_field.o \
 	star_control/star_points1.o \
 	star_control/star_points2.o \
+	star_control/star_ref.o \
 	star_control/star_view.o \
 	star_control/surface_area.o \
 	star_control/surface_fader_base.o \

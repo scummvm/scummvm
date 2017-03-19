@@ -355,7 +355,26 @@ void MystScriptParser::o_changeCardSwitchRtL(uint16 op, uint16 var, uint16 argc,
 }
 
 void MystScriptParser::o_takePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	uint16 cursorId = argv[0];
+	// In most game releases, the first opcode argument is the new mouse cursor.
+	// However, in the original v1.0 English release this opcode takes no argument.
+	uint16 cursorId; // = argv[0];
+	switch (var) {
+		case 41: // Vault white page
+			cursorId = kWhitePageCursor;
+			break;
+		case 25:  // Fireplace red page
+		case 102: // Red page
+			cursorId = kRedPageCursor;
+			break;
+		case 24:  // Fireplace blue page
+		case 103: // Blue page
+			cursorId = kBluePageCursor;
+			break;
+		default:
+			warning("Unexpected take page variable '%d'", var);
+			cursorId = kDefaultMystCursor;
+	}
+
 	uint16 oldPage = _globals.heldPage;
 
 	debugC(kDebugScript, "Opcode %d: takePage Var %d CursorId %d", op, var, cursorId);

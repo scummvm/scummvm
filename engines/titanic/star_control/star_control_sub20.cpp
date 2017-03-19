@@ -32,7 +32,7 @@ CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
 	if (src) {
 		copyFrom(src);
 	} else {
-		_field0 = 0.0;
+		_size = 0.0;
 		_field4 = 0.0;
 		_field8 = 20.0;
 		_fieldC = 0.0;
@@ -56,22 +56,22 @@ void CStarControlSub20::copyTo(CStar20Data *dest) {
 }
 
 void CStarControlSub20::proc4() {
-	if (!isLocked() && _field0 < _field10) {
-		_field4 += _field0;
+	if (!isLocked() && _size < _field10) {
+		_field4 += _size;
 		if (_field8 == _field4)
-			_field0 -= _field4;
+			_size -= _field4;
 		else
-			_field0 += _field4;
+			_size += _field4;
 	}
 }
 
 void CStarControlSub20::proc5() {
 	if (!isLocked()) {
 		_field4 -= _field8;
-		if (_field4 == _field0)
-			_field0 += _field4;
+		if (_field4 == _size)
+			_size += _field4;
 		else
-			_field0 -= _field4;
+			_size -= _field4;
 
 		if (_field4 < 0.0)
 			_field4 = 0.0;
@@ -80,19 +80,23 @@ void CStarControlSub20::proc5() {
 
 void CStarControlSub20::proc6() {
 	if (!isLocked())
-		_field0 = _field10;
+		_size = _field10;
 }
 
 void CStarControlSub20::proc7() {
 	if (!isLocked()) {
-		_field0 = 0.0;
+		_size = 0.0;
 		_field4 = 0.0;
 	}
 }
 
 void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
-	if (_field0 > 0.0) {
-		warning("TODO: CStarControlSub20::proc11");
+	if (_size > 0.0) {
+		v._x += m._row3._x * _size;
+		v._y += m._row3._y * _size;
+		v._z += m._row3._z * _size;
+
+		errorCode.set();
 	}
 }
 
@@ -110,7 +114,7 @@ void CStarControlSub20::clear() {
 
 void CStarControlSub20::load(SimpleFile *file, int val) {
 	if (!val) {
-		_field0 = file->readFloat();
+		_size = file->readFloat();
 		_field4 = file->readFloat();
 		_field8 = file->readFloat();
 		_fieldC = file->readFloat();
@@ -122,7 +126,7 @@ void CStarControlSub20::load(SimpleFile *file, int val) {
 }
 
 void CStarControlSub20::save(SimpleFile *file, int indent) {
-	file->writeFloatLine(_field0, indent);
+	file->writeFloatLine(_size, indent);
 	file->writeFloatLine(_field4, indent);
 	file->writeFloatLine(_field8, indent);
 	file->writeFloatLine(_fieldC, indent);

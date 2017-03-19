@@ -368,6 +368,7 @@ void Channelwood::o_waterTankValveOpen(uint16 op, uint16 var, uint16 argc, uint1
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3601; imageId >= 3595; imageId--) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 
@@ -699,6 +700,7 @@ void Channelwood::o_waterTankValveClose(uint16 op, uint16 var, uint16 argc, uint
 	for (uint i = 0; i < 2; i++)
 		for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 			_vm->_gfx->copyImageToScreen(imageId, rect);
+			_vm->pollAndDiscardEvents();
 			_vm->_system->updateScreen();
 		}
 

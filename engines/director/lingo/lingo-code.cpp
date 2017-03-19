@@ -307,10 +307,14 @@ void Lingo::c_assign() {
 	}
 
 	if (d1.type == REFERENCE) {
-		if (!g_director->getCurrentScore()->_castsInfo.contains(d1.u.i)) {
-			warning("c_assign: Unknown REFERENCE %d", d1.u.i);
-			g_lingo->pushVoid();
-			return;
+		if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i)) {
+			if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i - 1024)) {
+				warning("c_assign: Unknown REFERENCE %d", d1.u.i);
+				g_lingo->pushVoid();
+				return;
+			} else {
+				d1.u.i -= 1024;
+			}
 		}
 
 		warning("STUB: c_assing REFERENCE");

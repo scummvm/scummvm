@@ -39,15 +39,15 @@ private:
 	/**
 	 * Copys data from a given source
 	 */
-	void copyFrom(const DMatrix *src);
+	void copyFrom(const DMatrix &src);
 public:
 	FVector _row1;
 	FVector _row2;
 	FVector _row3;
 public:
 	FMatrix();
-	FMatrix(DMatrix *src);
-	FMatrix(FMatrix *src);
+	FMatrix(const DMatrix &src);
+	FMatrix(const FMatrix &src);
 
 	/**
 	 * Load the data for the class from file
@@ -65,14 +65,18 @@ public:
 	void clear();
 
 	/**
+	 * Sets up an identity matrix
+	 */
+	void identity();
+
+	/**
 	 * Sets the data for the matrix
 	 */
-	void set(FVector *row1, FVector *row2, FVector *row3);
+	void set(const FVector &row1, const FVector &row2, const FVector &row3);
 
-	void fn1(const FVector *v);
-
-	void fn2(FMatrix *m);
-	void fn3(FMatrix *m);
+	void fn1(const FVector &v);
+	void fn2(const FMatrix &m);
+	void fn3(const FMatrix &m);
 
 	/**
 	 * Returns true if the passed matrix equals this one
@@ -91,4 +95,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MATRIX3_H */
+#endif /* TITANIC_FMATRIX_H */

@@ -20,25 +20,44 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB4_H
-#define TITANIC_STAR_CONTROL_SUB4_H
-
-#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/star_ref.h"
 
 namespace Titanic {
 
-class CStarControlSub4 {
-private:
-	FVector _min;
-	FVector _max;
-public:
-	CStarControlSub4();
+void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
+	// TODO
+}
 
-	void initialize();
+/*------------------------------------------------------------------------*/
 
-	void checkEntry(const FVector &v);
-};
+bool CStarRef1::check(const Common::Point &pt, int index) {
+	Common::Rect r(pt.x - 2, pt.y - 2, pt.x + 2, pt.y + 2);
+	if (r.contains(_position)) {
+		_index = index;
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CStarRef2::check(const Common::Point &pt, int index) {
+	if (_index >= (int)_positions->size())
+		return false;
+
+	CStarPosition &sp = (*_positions)[index];
+	sp.x = pt.x;
+	sp.y = pt.y;
+	sp._index1 = sp._index2 = index;
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CStarRef3::check(const Common::Point &pt, int index) {
+	++_index;
+	return true;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_STAR_CONTROL_SUB4_H */

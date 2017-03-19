@@ -21,19 +21,19 @@
  */
 
 #include "common/algorithm.h"
-#include "titanic/star_control/star_control_sub4.h"
+#include "titanic/star_control/frange.h"
 
 namespace Titanic {
 
-CStarControlSub4::CStarControlSub4() {
+FRange::FRange() {
 }
 
-void CStarControlSub4::initialize() {
+void FRange::reset() {
 	_min._x = _min._y = _min._z = 9.9999994e27;
 	_max._x = _max._y = _max._z = -9.9999994e27;
 }
 
-void CStarControlSub4::checkEntry(const FVector &v) {
+void FRange::expand(const FVector &v) {
 	_min._x = MIN(_min._x, v._x);
 	_min._y = MIN(_min._y, v._y);
 	_min._z = MIN(_min._z, v._z);
