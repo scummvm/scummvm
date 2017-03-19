@@ -32,18 +32,27 @@ DMatrix::DMatrix() :
 	_row1(1.875, 0.0, 0.0), _row2(0.0, 1.875, 0.0), _row3(0.0, 0.0, 1.875) {
 }
 
-DMatrix::DMatrix(int mode, const FMatrix *src) {
-	assert(!mode);
+DMatrix::DMatrix(int mode, const DVector &src) {
+	switch (mode) {
+	case 0:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		_row4 = src;
+		break;
 
-	_row1._x = 1.875;
-	_row2._y = 1.875;
-	_row3._z = 1.875;
-	_frow1._x = src->_row1._x;
-	_frow1._y = src->_row1._y;
-	_frow1._z = src->_row1._z;
-	_frow2._x = src->_row2._x;
-	_frow2._y = src->_row2._y;
-	_frow2._z = src->_row2._z;
+	case 1:
+		_row1._x = src._x;
+		_row2._y = src._y;
+		_row3._z = src._z;
+		break;
+
+	default:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		break;
+	}
 }
 
 DMatrix::DMatrix(Axis axis, double amount) {
