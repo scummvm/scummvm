@@ -38,6 +38,48 @@ CStarControlSub6::CStarControlSub6(const CStarControlSub6 *src) {
 	copyFrom(src);
 }
 
+CStarControlSub6::CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2) {
+	_row1._x = s2->_row1._x * s1->_row1._x
+		+ s1->_row1._z * s2->_row3._x
+		+ s1->_row1._y * s2->_row2._x;
+	_row1._y = s1->_row1._x * s2->_row1._y
+		+ s2->_row3._y * s1->_row1._z
+		+ s2->_row2._y * s1->_row1._y;
+	_row1._z = s1->_row1._x * s2->_row1._z
+		+ s2->_row3._z * s1->_row1._z
+		+ s2->_row2._z * s1->_row1._y;
+	_row2._x = s2->_row1._x * s1->_row2._x
+		+ s1->_row2._y * s2->_row2._x
+		+ s1->_row2._z * s2->_row3._x;
+	_row2._y = s1->_row2._y * s2->_row2._y
+		+ s1->_row2._z * s2->_row3._y
+		+ s2->_row1._y * s1->_row2._x;
+	_row2._z = s2->_row1._z * s1->_row2._x
+		+ s1->_row2._y * s2->_row2._z
+		+ s1->_row2._z * s2->_row3._z;
+	_row3._x = s2->_row1._x * s1->_row3._x
+		+ s1->_row3._y * s2->_row2._x
+		+ s1->_row3._z * s2->_row3._x;
+	_row3._y = s1->_row3._z * s2->_row3._y
+		+ s1->_row3._y * s2->_row2._y
+		+ s2->_row1._y * s1->_row3._x;
+	_row3._z = s2->_row3._z * s1->_row3._z
+		+ s2->_row2._z * s1->_row3._y
+		+ s2->_row1._z * s1->_row3._x;
+	_vector._x = s2->_row1._x * s1->_vector._x
+		+ s1->_vector._y * s2->_row2._x
+		+ s1->_vector._z * s2->_row3._x
+		+ s2->_vector._x;
+	_vector._y = s1->_vector._z * s2->_row3._y
+		+ s1->_vector._y * s2->_row2._y
+		+ s1->_vector._x * s2->_row1._y
+		+ s2->_vector._y;
+	_vector._z = s1->_vector._y * s2->_row2._z
+		+ s1->_vector._z * s2->_row3._z
+		+ s1->_vector._x * s2->_row1._z
+		+ s2->_vector._z;
+}
+
 void CStarControlSub6::init() {
 	_static = nullptr;
 }
@@ -112,51 +154,6 @@ void CStarControlSub6::copyFrom(const FMatrix &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
 	_row3 = src._row3;
-}
-
-CStarControlSub6 *CStarControlSub6::setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3) {
-	CStarControlSub6 &d = *dest;
-
-	d._row1._x = s3->_row1._x * s2->_row1._x
-		+ s2->_row1._z * s3->_row3._x
-		+ s2->_row1._y * s3->_row2._x;
-	d._row1._y = s2->_row1._x * s3->_row1._y
-		+ s3->_row3._y * s2->_row1._z
-		+ s3->_row2._y * s2->_row1._y;
-	d._row1._z = s2->_row1._x * s3->_row1._z
-		+ s3->_row3._z * s2->_row1._z
-		+ s3->_row2._z * s2->_row1._y;
-	d._row2._x = s3->_row1._x * s2->_row2._x
-		+ s2->_row2._y * s3->_row2._x
-		+ s2->_row2._z * s3->_row3._x;
-	d._row2._y = s2->_row2._y * s3->_row2._y
-		+ s2->_row2._z * s3->_row3._y
-		+ s3->_row1._y * s2->_row2._x;
-	d._row2._z = s3->_row1._z * s2->_row2._x
-		+ s2->_row2._y * s3->_row2._z
-		+ s2->_row2._z * s3->_row3._z;
-	d._row3._x = s3->_row1._x * s2->_row3._x
-		+ s2->_row3._y * s3->_row2._x
-		+ s2->_row3._z * s3->_row3._x;
-	d._row3._y = s2->_row3._z * s3->_row3._y
-		+ s2->_row3._y * s3->_row2._y
-		+ s3->_row1._y * s2->_row3._x;
-	d._row3._z = s3->_row3._z * s2->_row3._z
-		+ s3->_row2._z * s2->_row3._y
-		+ s3->_row1._z * s2->_row3._x;
-	d._vector._x = s3->_row1._x * s2->_vector._x
-		+ s2->_vector._y * s3->_row2._x
-		+ s2->_vector._z * s3->_row3._x
-		+ s3->_vector._x;
-	d._vector._y = s2->_vector._z * s3->_row3._y
-		+ s2->_vector._y * s3->_row2._y
-		+ s2->_vector._x * s3->_row1._y
-		+ s3->_vector._y;
-	d._vector._z = s2->_vector._y * s3->_row2._z
-		+ s2->_vector._z * s3->_row3._z
-		+ s2->_vector._x * s3->_row1._z
-		+ s3->_vector._z;
-	return dest;
 }
 
 void CStarControlSub6::fn4(CStarControlSub6 *sub6) {

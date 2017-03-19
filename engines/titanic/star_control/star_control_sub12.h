@@ -39,7 +39,7 @@ private:
 	static FMatrix *_matrix2;
 private:
 	int _currentIndex;
-	FVector _array[3];
+	FMatrix _matrix;
 	CStarControlSub20 *_handlerP;
 	CStarControlSub13 _sub13;
 	int _field108;
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Sets the viewport position within the starfield
 	 */
-	virtual void setViewportPosition(const FPoint &pt);
+	virtual void setViewportPosition(const FPoint &angles);
 
 	virtual int getCurrentIndex() const { return _currentIndex; }
 	virtual bool setArrayVector(const FVector &v);

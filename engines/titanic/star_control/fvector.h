@@ -71,7 +71,7 @@ public:
 	 */
 	double getDistance(const FVector *src) const;
 
-	void fn5(FVector *dest, const CStarControlSub6 *sub6) const;
+	FVector fn5(const CStarControlSub6 *sub6) const;
 
 	/**
 	 * Returns true if the passed vector equals this one

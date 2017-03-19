@@ -72,7 +72,7 @@ public:
 	/**
 	 * Sets the data for the matrix
 	 */
-	void set(FVector *row1, FVector *row2, FVector *row3);
+	void set(const FVector &row1, const FVector &row2, const FVector &row3);
 
 	void fn1(const FVector &v);
 	void fn2(const FMatrix &m);

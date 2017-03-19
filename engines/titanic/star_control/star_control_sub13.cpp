@@ -116,8 +116,7 @@ void CStarControlSub13::setPosition(const FVector &v) {
 }
 
 void CStarControlSub13::setPosition(const CStarControlSub6 *sub6) {
-	FVector vector;
-	_position.fn5(&vector, sub6);
+	_position.fn5(sub6);
 	_position = sub6->_row1;
 	_flag = false;
 }
@@ -163,12 +162,10 @@ void CStarControlSub13::fn12() {
 	CStarControlSub6 m2(Y_AXIS, g_vm->getRandomNumber(359));
 	CStarControlSub6 m3(Z_AXIS, g_vm->getRandomNumber(359));
 	
-	CStarControlSub6 s1, s2;
-	CStarControlSub6 *s;
-	s = CStarControlSub6::setup(&s1, &m1, &m2);
-	s = CStarControlSub6::setup(&s2, s, &m3);
+	CStarControlSub6 s1(&m1, &m2);
+	CStarControlSub6 s2(&s1, &m3);
 
-	m1.copyFrom(*s);
+	m1.copyFrom(s2);
 	_matrix.fn2(m1);
 	_flag = false;
 }
@@ -225,9 +222,8 @@ void CStarControlSub13::fn16(int index, const FVector &src, FVector &dest) {
 
 FVector CStarControlSub13::fn17(int index, const FVector &src) {
 	FVector dest;
-	FVector tv;
 	CStarControlSub6 sub6 = getSub1();
-	src.fn5(&tv, &sub6);
+	FVector tv = src.fn5(&sub6);
 
 	dest._x = (_valArray[index] + tv._x)
 		* _fieldC8 / (_fieldCC * tv._z);
@@ -238,9 +234,8 @@ FVector CStarControlSub13::fn17(int index, const FVector &src) {
 
 FVector CStarControlSub13::fn18(int index, const FVector &src) {
 	FVector dest;
-	FVector tv;
 	CStarControlSub6 sub6 = getSub2();
-	src.fn5(&tv, &sub6);
+	FVector tv = src.fn5(&sub6);
 
 	dest._x = (_valArray[index] + tv._x)
 		* _fieldC8 / (_fieldCC * tv._z);

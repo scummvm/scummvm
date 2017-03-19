@@ -39,16 +39,12 @@ public:
 	CStarControlSub6();
 	CStarControlSub6(Axis axis, double amount);
 	CStarControlSub6(const CStarControlSub6 *src);
+	CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2);
 
 	/**
 	 * Sets an identity matrix
 	 */
 	void identity();
-
-	/**
-	 * Sets up a passed instance from the specified two other ones
-	 */
-	static CStarControlSub6 *setup(CStarControlSub6 *dest, const CStarControlSub6 *s2, const CStarControlSub6 *s3);
 
 	/**
 	 * Sets a rotation matrix for the given axis for the given amount

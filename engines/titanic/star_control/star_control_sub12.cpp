@@ -215,8 +215,103 @@ FVector CStarControlSub12::proc31(int index, const FVector &v) {
 	return _sub13.fn18(index, v);
 }
 
-void CStarControlSub12::setViewportPosition(const FPoint &pt) {
-	// TODO
+void CStarControlSub12::setViewportPosition(const FPoint &angles) {
+	if (isLocked())
+		return;
+
+	if (_currentIndex == -1) {
+		CStarControlSub6 subX(X_AXIS, angles._x);
+		CStarControlSub6 subY(Y_AXIS, angles._y);
+		CStarControlSub6 sub(&subX, &subY);
+		subY.copyFrom(&sub);
+		proc22(subY);
+	} else if (_currentIndex == 0) {
+		FVector row1 = _matrix._row1;
+		CStarControlSub6 subX(X_AXIS, angles._x);
+		CStarControlSub6 subY(Y_AXIS, angles._y);
+		CStarControlSub6 sub(&subX, &subY);
+		subX.copyFrom(&sub);
+
+		FMatrix m1 = _sub13.getMatrix();
+		FVector tempV1 = _sub13._position;
+		FVector tempV2, tempV3, tempV4, tempV5, tempV6;
+		tempV2._y = m1._row1._y * 100000.0;
+		tempV2._z = m1._row1._z * 100000.0;
+		tempV3._x = m1._row1._x * 100000.0 + tempV1._x;
+		tempV4._x = tempV3._x;
+		tempV3._y = tempV2._y + tempV1._y;
+		tempV4._y = tempV3._y;
+		tempV3._z = tempV2._z + tempV1._z;
+		tempV4._z = tempV3._z;
+		tempV2._x = m1._row2._x * 100000.0;
+		tempV2._y = m1._row2._y * 100000.0;
+		tempV2._z = m1._row2._z * 100000.0;
+		tempV2._x = m1._row3._x * 100000.0;
+		tempV2._y = m1._row3._y * 100000.0;
+		tempV2._z = m1._row3._z * 100000.0;
+		tempV2._x = tempV2._x + tempV1._x;
+		tempV2._y = tempV2._y + tempV1._y;
+		tempV2._z = tempV2._z + tempV1._z;
+		tempV3._x = tempV2._x + tempV1._x;
+		tempV3._y = tempV2._y + tempV1._y;
+		tempV5._x = tempV2._x;
+		tempV5._y = tempV2._y;
+		tempV3._z = tempV2._z + tempV1._z;
+		tempV5._z = tempV2._z;
+		tempV6._x = tempV3._x;
+		tempV6._y = tempV3._y;
+		tempV6._z = tempV3._z;
+		tempV1._x = tempV1._x - row1._x;
+		tempV1._y = tempV1._y - row1._y;
+		tempV1._z = tempV1._z - row1._z;
+		tempV4._x = tempV3._x - row1._x;
+		tempV4._y = tempV4._y - row1._y;
+		tempV4._z = tempV4._z - row1._z;
+		tempV5._x = tempV2._x - row1._x;
+
+		tempV5._y = tempV5._y - row1._y;
+		tempV5._z = tempV5._z - row1._z;
+		tempV6._x = tempV3._x - row1._x;
+		tempV6._y = tempV6._y - row1._y;
+		tempV6._z = tempV6._z - row1._z;
+
+		FVector modV1 = tempV1.fn5(&subX);
+		FVector modV2 = tempV4.fn5(&subX);
+		FVector modV3 = tempV5.fn5(&subX);
+		FVector modV4 = tempV6.fn5(&subX);
+		tempV1 = modV1;
+		tempV4 = modV2;
+		tempV5 = modV3;
+		tempV4 = modV4;
+
+		tempV2._x = tempV4._x - tempV1._x;
+		tempV2._y = tempV4._y - tempV1._y;
+		tempV2._z = tempV4._z - tempV1._z;
+		tempV4._x = tempV2._x;
+		tempV4._y = tempV2._y;
+		tempV2._x = tempV5._x - tempV1._x;
+		tempV4._z = tempV2._z;
+		tempV5._x = tempV2._x;
+		tempV2._y = tempV5._y - tempV1._y;
+		tempV5._y = tempV2._y;
+		tempV2._z = tempV5._z - tempV1._z;
+		tempV5._z = tempV2._z;
+		tempV2._x = tempV6._x - tempV1._x;
+		tempV2._y = tempV6._y - tempV1._y;
+		tempV2._z = tempV6._z - tempV1._z;
+		tempV6 = tempV2;
+
+		tempV4.normalize();
+		tempV5.normalize();
+		tempV6.normalize();
+		tempV1 += row1;
+
+		m1.set(tempV4, tempV5, tempV6);
+		_sub13.setMatrix(m1);
+		_sub13.setPosition(tempV1);
+	} else if (_currentIndex == 1) {
+		// TODO
+	}
 }
 
 bool CStarControlSub12::setArrayVector(const FVector &v) {

@@ -65,7 +65,7 @@ double FVector::getDistance(const FVector *src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-void FVector::fn5(FVector *dest, const CStarControlSub6 *sub6) const {
+FVector FVector::fn5(const CStarControlSub6 *sub6) const {
 	error("TODO: FVector::fn5");
 }
 
