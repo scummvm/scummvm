@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengls.o \
 	gfx/openglsactor.o \
+	gfx/openglsfade.o \
 	gfx/openglsprop.o \
 	gfx/openglssurface.o \
 	gfx/opengltexture.o \

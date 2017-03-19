@@ -72,6 +72,10 @@ public:
 	 */
 	Common::Point convertPosition3DToGameScreenOriginal(const Math::Vector3d &obj) const;
 
+	/** Get and set scene fade level */
+	void setFadeLevel(float fadeLevel);
+	float getFadeLevel() const;
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
@@ -88,6 +92,7 @@ private:
 	Math::Matrix4 _projectionMatrix;
 	Math::Matrix4 _viewMatrix;
 
+	float _fadeLevel;
 };
 
 } // End of namespace Stark

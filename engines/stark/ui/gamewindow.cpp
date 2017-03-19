@@ -51,6 +51,12 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu,
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
+
+	_fadeRenderer = _gfx->createFadeRenderer();
+}
+
+GameWindow::~GameWindow() {
+	delete _fadeRenderer;
 }
 
 void GameWindow::onRender() {
@@ -67,6 +73,11 @@ void GameWindow::onRender() {
 
 		// Go for the next one
 		element++;
+	}
+
+	float fadeLevel = StarkScene->getFadeLevel();
+	if ((1.0f - fadeLevel) > 0.00001f) {
+		_fadeRenderer->render(fadeLevel);
 	}
 }
 

@@ -31,6 +31,7 @@
 #include "engines/stark/gfx/openglsactor.h"
 #include "engines/stark/gfx/openglsprop.h"
 #include "engines/stark/gfx/openglssurface.h"
+#include "engines/stark/gfx/openglsfade.h"
 #include "engines/stark/gfx/opengltexture.h"
 
 #include "graphics/pixelbuffer.h"
@@ -47,16 +48,28 @@ static const GLfloat surfaceVertices[] = {
 	1.0, 1.0,
 };
 
+static const GLfloat fadeVertices[] = {
+	// XS   YT
+	-1.0, 1.0,
+	1.0, 1.0,
+	-1.0, -1.0,
+	1.0, -1.0,
+};
+
 OpenGLSDriver::OpenGLSDriver() :
 	_surfaceShader(nullptr),
 	_actorShader(nullptr),
-	_surfaceVBO(0) {
+	_fadeShader(nullptr),
+	_surfaceVBO(0),
+	_fadeVBO(0) {
 }
 
 OpenGLSDriver::~OpenGLSDriver() {
 	OpenGL::Shader::freeBuffer(_surfaceVBO);
+	OpenGL::Shader::freeBuffer(_fadeVBO);
 	delete _surfaceShader;
 	delete _actorShader;
+	delete _fadeShader;
 }
 
 void OpenGLSDriver::init() {
@@ -70,6 +83,11 @@ void OpenGLSDriver::init() {
 
 	static const char* actorAttributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "normal", "texcoord", nullptr };
 	_actorShader = OpenGL::Shader::fromFiles("stark_actor", actorAttributes);
+
+	static const char* fadeAttributes[] = { "position", nullptr };
+	_fadeShader = OpenGL::Shader::fromFiles("stark_fade", fadeAttributes);
+	_fadeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(fadeVertices), fadeVertices);
+	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
 void OpenGLSDriver::setScreenViewport(bool noScaling) {
@@ -135,6 +153,10 @@ SurfaceRenderer *OpenGLSDriver::createSurfaceRenderer() {
 	return new OpenGLSSurfaceRenderer(this);
 }
 
+FadeRenderer *OpenGLSDriver::createFadeRenderer() {
+	return new OpenGLSFadeRenderer(this);
+}
+
 void OpenGLSDriver::start2DMode() {
 	// Enable alpha blending
 	glEnable(GL_BLEND);
@@ -172,6 +194,10 @@ OpenGL::Shader *OpenGLSDriver::createActorShaderInstance() {
 
 OpenGL::Shader *OpenGLSDriver::createSurfaceShaderInstance() {
 	return _surfaceShader->clone();
+}
+
+OpenGL::Shader *OpenGLSDriver::createFadeShaderInstance() {
+	return _fadeShader->clone();
 }
 
 } // End of namespace Gfx

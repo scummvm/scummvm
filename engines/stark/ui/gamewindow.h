@@ -23,6 +23,7 @@
 #ifndef STARK_UI_GAME_WINDOW_H
 #define STARK_UI_GAME_WINDOW_H
 
+#include "engines/stark/gfx/faderenderer.h"
 #include "engines/stark/gfx/renderentry.h"
 
 #include "engines/stark/ui/window.h"
@@ -39,7 +40,7 @@ class InventoryWindow;
 class GameWindow : public Window {
 public:
 	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryWindow *inventory);
-	virtual ~GameWindow() {}
+	virtual ~GameWindow();
 
 	/** Clear the location dependent state */
 	void reset();
@@ -59,6 +60,8 @@ protected:
 	Gfx::RenderEntryArray _renderEntries;
 	Resources::ItemVisual *_objectUnderCursor;
 	Common::Point _objectRelativePosition;
+
+	Gfx::FadeRenderer *_fadeRenderer;
 };
 
 } // End of namespace Stark

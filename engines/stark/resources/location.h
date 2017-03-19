@@ -122,6 +122,10 @@ public:
 	/** Set remaining frames to rumble on this lcation */
 	void setRumbleFramesRemaining(int32 rumbleFramesRemaining);
 
+	/** Setup fading for this location */
+	void fadeInInit(int32 fadeFrames);
+	void fadeOutInit(int32 fadeFrames);
+
 protected:
 	void printData() override;
 
@@ -146,6 +150,9 @@ private:
 	Common::HashMap<int32, ItemVisual *> _characterItemMap;
 
 	int32 _rumbleFramesRemaining;
+
+	int32 _fadeFramesRemaining;
+	float _fadeLevelIncrement;
 
 	uint getScrollStep();
 };

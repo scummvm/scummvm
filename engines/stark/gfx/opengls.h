@@ -53,9 +53,11 @@ public:
 	VisualActor *createActorRenderer() override;
 	VisualProp *createPropRenderer() override;
 	SurfaceRenderer *createSurfaceRenderer() override;
+	FadeRenderer *createFadeRenderer() override;
 
 	OpenGL::Shader *createActorShaderInstance();
 	OpenGL::Shader *createSurfaceShaderInstance();
+	OpenGL::Shader *createFadeShaderInstance();
 
 	void start2DMode();
 	void end2DMode();
@@ -70,7 +72,9 @@ private:
 
 	OpenGL::Shader *_surfaceShader;
 	OpenGL::Shader *_actorShader;
+	OpenGL::Shader *_fadeShader;
 	uint32 _surfaceVBO;
+	uint32 _fadeVBO;
 };
 
 } // End of namespace Gfx

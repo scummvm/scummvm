@@ -52,7 +52,9 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_currentLayer(nullptr),
 		_hasActiveScroll(false),
 		_scrollFollowCharacter(false),
-		_rumbleFramesRemaining(0) {
+		_rumbleFramesRemaining(0),
+		_fadeFramesRemaining(0),
+		_fadeLevelIncrement(0.0) {
 	_type = TYPE;
 }
 
@@ -64,6 +66,13 @@ void Location::onAllLoaded() {
 
 void Location::onGameLoop() {
 	Object::onGameLoop();
+
+	if (_fadeFramesRemaining > 0) {
+		_fadeFramesRemaining--;
+
+		float newFadeLevel = CLIP<float>(StarkScene->getFadeLevel() + _fadeLevelIncrement, 0.0, 1.0);
+		StarkScene->setFadeLevel(newFadeLevel);
+	}
 
 	if (_hasActiveScroll) {
 		// Script triggered scrolling has precedence over following the character
@@ -394,6 +403,24 @@ Sound *Location::findStockSound(const Object *parent, uint32 stockSoundType) con
 
 void Location::setRumbleFramesRemaining(int32 rumbleFramesRemaining) {
 	_rumbleFramesRemaining = rumbleFramesRemaining;
+}
+
+void Location::fadeInInit(int32 fadeFrames) {
+	_fadeFramesRemaining = fadeFrames;
+
+	if (fadeFrames > 0) {
+		StarkScene->setFadeLevel(0.0);
+		_fadeLevelIncrement = 1.0 / fadeFrames;
+	}
+}
+
+void Location::fadeOutInit(int32 fadeFrames) {
+	_fadeFramesRemaining = fadeFrames;
+
+	if (fadeFrames > 0) {
+		StarkScene->setFadeLevel(1.0);
+		_fadeLevelIncrement = -1.0 / fadeFrames;
+	}
 }
 
 } // End of namespace Resources
