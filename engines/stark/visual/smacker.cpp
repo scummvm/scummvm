@@ -130,7 +130,8 @@ int VisualSmacker::getFrameNumber() const {
 }
 
 bool VisualSmacker::isDone() {
-	return _smacker->endOfVideo();
+	uint32 time = _smacker->getTime();
+	return time >= getDuration();
 }
 
 int VisualSmacker::getWidth() const {
