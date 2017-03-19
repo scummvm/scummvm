@@ -316,6 +316,11 @@ void DefinitionRegistry::registerReference(const ResourceReference &reference) {
 }
 
 Common::String DefinitionRegistry::getFromReference(const ResourceReference &reference) const {
+	if (!reference.canResolve()) {
+		// The reference uses archives that are not currently loaded
+		return reference.describe();
+	}
+
 	Resources::Object *object = reference.resolve<Resources::Object>();
 
 	if (_definitions.contains(object)) {

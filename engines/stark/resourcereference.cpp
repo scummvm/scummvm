@@ -48,6 +48,7 @@ void ResourceReference::addPathElement(Resources::Type type, uint16 index) {
 }
 
 Resources::Object *ResourceReference::resolve() const {
+	Resources::Object *level = nullptr;
 	Resources::Object *resource = nullptr;
 	for (uint i = 0; i < _path.size(); i++) {
 		const PathElement &element = _path[i];
@@ -55,21 +56,25 @@ Resources::Object *ResourceReference::resolve() const {
 		switch (element.getType().get()) {
 		case Resources::Type::kLevel:
 			if (element.getIndex()) {
-				resource = StarkResourceProvider->getLevel(element.getIndex());
+				resource = level = StarkResourceProvider->getLevel(element.getIndex());
 			} else {
-				resource = StarkGlobal->getLevel();
+				resource = level = StarkGlobal->getLevel();
 			}
 
-			if (!resource) {
+			if (!level) {
 				error("Level '%d' not found", element.getIndex());
 			}
 
 			break;
 		case Resources::Type::kLocation:
-			resource = StarkResourceProvider->getLocation(resource->getIndex(), element.getIndex());
+			if (!level) {
+				error("Cannot resolve location '%d' without resolving a level first", element.getIndex());
+			}
+
+			resource = StarkResourceProvider->getLocation(level->getIndex(), element.getIndex());
 
 			if (!resource) {
-				error("Location '%d' not found in level '%d'", element.getIndex(), resource->getIndex());
+				error("Location '%d' not found in level '%d'", element.getIndex(), level->getIndex());
 			}
 
 			break;
