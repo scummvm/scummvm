@@ -39,7 +39,7 @@ MODULE_OBJS = \
 	scene.o \
 	scene_objects.o \
 	script/ai_00_mccoy.o \
-	script/aiscript_officer_leroy.o \
+	script/ai_23_officer_leroy.o \
 	script/init.o \
 	script/kia.o \
 	script/vk.o \

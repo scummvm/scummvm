@@ -203,10 +203,10 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 
 	setBoundingBox(_position, retired);
 
-	_vm->_sceneObjects->remove(_id);
+	_vm->_sceneObjects->remove(_id + SCENE_OBJECTS_ACTORS_OFFSET);
 
 	if (_vm->_scene->getSetId() == _setId) {
-		_vm->_sceneObjects->addActor(_id, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
+		_vm->_sceneObjects->addActor(_id + SCENE_OBJECTS_ACTORS_OFFSET, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
 	}
 }
 
@@ -477,7 +477,7 @@ bool Actor::tick(bool forceDraw) {
 				this->_position.z = this->_position.z + positionChange.x * sinx + positionChange.y * cosx;
 				this->_position.y = this->_position.y + positionChange.z;
 
-				if (_vm->_sceneObjects->existsOnXZ(this->_id, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
+				if (_vm->_sceneObjects->existsOnXZ(this->_id + SCENE_OBJECTS_ACTORS_OFFSET, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
 					this->_position.x = originalX;
 					this->_position.y = originalY;
 					this->_position.z = originalZ;

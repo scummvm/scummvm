@@ -146,7 +146,7 @@ void ActorWalk::setRunning() {
 }
 
 void ActorWalk::stop(int actorId, bool unknown, int combatAnimationMode, int animationMode) {
-	_vm->_sceneObjects->setMoving(actorId, false);
+	_vm->_sceneObjects->setMoving(actorId + SCENE_OBJECTS_ACTORS_OFFSET, false);
 	_vm->_actors[actorId]->setMoving(false);
 
 	if (_vm->_actors[actorId]->inCombat()) {
@@ -173,7 +173,7 @@ bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) {
 	if (_vm->_actors[actorId]->isImmuneToObstacles()) {
 		return false;
 	}
-	return _vm->_sceneObjects->existsOnXZ(actorId, x, z, false, false);
+	return _vm->_sceneObjects->existsOnXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x, z, false, false);
 }
 
 int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
@@ -206,14 +206,14 @@ int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
 		x = to.x + sin_1024(v24) * dist;
 		z = to.z + cos_1024(v24) * dist;
 
-		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
+		if (!_vm->_sceneObjects->existsOnXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;
 		}
 
 		x = to.x + sin_1024(v23) * dist;
 		z = to.z + cos_1024(v23) * dist;
 
-		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
+		if (!_vm->_sceneObjects->existsOnXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;
 		}
 
@@ -252,7 +252,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 	if (_vm->_scene->_set->findWalkbox(to.x, to.z) == -1) {
 		return 0;
 	}
-	if (_vm->_sceneObjects->existsOnXZ(actorId, to.x, to.z, false, false)) {
+	if (_vm->_sceneObjects->existsOnXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, to.x, to.z, false, false)) {
 		return 0;
 	}
 	Vector3 next1;

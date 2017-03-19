@@ -48,7 +48,7 @@
 #include "bladerunner/waypoints.h"
 
 #include "bladerunner/script/ai_00_mccoy.h"
-#include "bladerunner/script/aiscript_officer_leroy.h"
+#include "bladerunner/script/ai_23_officer_leroy.h"
 
 namespace BladeRunner {
 
@@ -500,11 +500,11 @@ bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1I
 	float z1 = _vm->_actors[otherActor1Id]->getZ();
 	float x2 = _vm->_actors[otherActor2Id]->getX();
 	float z2 = _vm->_actors[otherActor2Id]->getZ();
-	return _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1, z1, x2, z1)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
+	return _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1, z1, x2, z1)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
 }
 
 void ScriptBase::Actor_Set_Goal_Number(int actorId, int goalNumber) {
@@ -542,26 +542,61 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool run) {
-	//TODO
-	warning("Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, a3, a4, run);
-	return false;
+	_vm->gameWaitForActive();
+
+	if (actorId == _vm->_walkingActorId) {
+		run = true;
+	}
+	_vm->_playerActorIdle = false;
+	bool isRunning;
+	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, a3, a4, run, true, &isRunning);
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning == 1) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(37, actorId);
+	Global_Variable_Set(38, isRunning);
+	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool run) {
-	//TODO
-	warning("Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, a3, a4, run);
-	return false;
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+	_vm->_playerActorIdle = false;
+	bool isRunning;
+	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, a3, a4, run, true, &isRunning);
+	if (_vm->_playerActorIdle == 1) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning == 1) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(37, actorId);
+	Global_Variable_Set(38, isRunning);
+	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int destinationOffset, bool a4, bool run) {
 	_vm->gameWaitForActive();
 
-	if(_vm->_walkingActorId == actorId) {
+	if (_vm->_walkingActorId == actorId) {
 		run = true;
 	}
+	_vm->_playerActorIdle = false;
 	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, a4, run, true, &isRunning);
-	if(isRunning == 1) {
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
 	Global_Variable_Set(37, actorId);
@@ -1243,7 +1278,7 @@ void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int reti
 	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
 	actor->retire(retired, width, height, retiredByActorId);
 	actor->setAtXYZ(actorPosition, actor->getFacing(), true, 0, true);
-	_vm->_sceneObjects->setRetired(actorId, true);
+	_vm->_sceneObjects->setRetired(actorId + SCENE_OBJECTS_ACTORS_OFFSET, true);
 }
 
 void ScriptBase::Clickable_Object(const char *objectName) {

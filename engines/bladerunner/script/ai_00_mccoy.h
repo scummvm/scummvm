@@ -60,13 +60,14 @@ public:
 	void ShotAtAndMissed();
 	void ShotAtAndHit();
 	void Retired(int byActorId);
-	void GetFriendlinessModifierIfGetsClue();
+	int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId);
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber);
 	bool UpdateAnimation(int *animation, int *frame);
 	bool ChangeAnimationMode(int mode);
 	void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4);
 	void SetAnimationState(int animationState, int a2, int a3, int a4);
-	bool ReachedMovementTrackWaypoint();
+	bool ReachedMovementTrackWaypoint(int a1);
+	void FledCombat();
 
 private:
 	void sub_4053E0();

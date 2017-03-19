@@ -248,7 +248,8 @@ void AIScript_McCoy::Retired(int byActorId) {
 	}
 }
 
-void AIScript_McCoy::GetFriendlinessModifierIfGetsClue() {
+int AIScript_McCoy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
+	return 0;
 }
 
 bool AIScript_McCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
@@ -1660,9 +1661,11 @@ void AIScript_McCoy::SetAnimationState(int animationState, int a2, int a3, int a
 	dword_46271C = a4;
 }
 
-bool AIScript_McCoy::ReachedMovementTrackWaypoint() {
+bool AIScript_McCoy::ReachedMovementTrackWaypoint(int a1) {
 	return true;
 }
+
+void AIScript_McCoy::FledCombat() {}
 
 void AIScript_McCoy::sub_4053E0() {
 	float x, y, z;

@@ -827,13 +827,14 @@ public:
 	virtual void ShotAtAndMissed() = 0;
 	virtual void ShotAtAndHit() = 0;
 	virtual void Retired(int byActorId) = 0;
-	virtual void GetFriendlinessModifierIfGetsClue() = 0;
+	virtual int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) = 0;
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
 	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
 	virtual bool ChangeAnimationMode(int mode) = 0;
 	virtual void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) = 0;
 	virtual void SetAnimationState(int animationState, int a2, int a3, int a4) = 0;
-	virtual bool ReachedMovementTrackWaypoint() = 0;
+	virtual bool ReachedMovementTrackWaypoint(int a1) = 0;
+	virtual void FledCombat() = 0;
 };
 
 class AIScripts {
