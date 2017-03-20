@@ -23,6 +23,8 @@
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_control_sub21.h"
 #include "titanic/star_control/star_control_sub22.h"
+#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
@@ -310,7 +312,81 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		_sub13.setMatrix(m1);
 		_sub13.setPosition(tempV1);
 	} else if (_currentIndex == 1) {
-		// TODO
+		FVector tempV2;
+		DMatrix m1, m2, sub;
+		DVector mrow1, mrow2, mrow3;
+		DVector tempV1, diffV, multV, multV2, tempV3, tempV4, tempV5, tempV6, tempV7;
+		DVector tempV8, tempV9, tempV10, tempV11, tempV12;
+		DVector tempV13, tempV14, tempV15, tempV16;
+
+		DMatrix subX(0, _matrix._row1);
+		DMatrix subY(Y_AXIS, angles._x);
+
+		tempV1 = _matrix._row2 - _matrix._row1;
+		diffV = tempV1;
+		diffV.fn5(m1);
+		sub.fn4(sub, m1, subX);
+		m1 = sub;
+		m1.fn1(subX);
+		subX.fn4(m2, subX, subY);
+		subX = m2;
+
+		FMatrix m3 = _sub13.getMatrix();
+		tempV2 = _sub13._position;
+		multV._x = m3._row1._x * 1000000.0;
+		multV._y = m3._row1._y * 1000000.0;
+		multV._z = m3._row1._z * 1000000.0;
+		tempV3._x = tempV2._x;
+		tempV3._y = tempV2._y;
+		tempV3._z = tempV2._z;
+		multV2._z = m3._row2._z * 1000000.0;
+
+		tempV1._x = multV._x + tempV3._x;
+		tempV1._y = multV._y + tempV3._y;
+		tempV1._z = multV._z + tempV3._z;
+		mrow3._z = 0.0;
+		mrow3._y = 0.0;
+		mrow3._x = 0.0;
+		multV2._x = m3._row2._x * 1000000.0;
+		multV2._y = m3._row2._y * 1000000.0;
+		mrow1 = tempV1;
+		multV = multV2 + tempV3;
+		mrow2 = multV;
+
+		tempV7._z = m3._row3._z * 1000000.0 + tempV3._z;
+		tempV7._y = m3._row3._y * 1000000.0 + tempV3._y;
+		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
+
+		mrow3 = tempV8;
+		DVector *v = tempV3.fn1(tempV9, subX);
+		tempV3 = *v;
+		v = mrow1.fn1(tempV10, subX);
+		mrow1 = *v;
+		v = mrow2.fn1(tempV11, subX);
+		mrow2 = *v;
+		v = mrow3.fn1(tempV12, subX);
+		mrow3 = *v;
+
+		v = tempV3.fn1(tempV13, m1);
+		tempV3 = *v;
+		v = mrow1.fn1(tempV14, m1);
+		mrow1 = *v;
+		v = mrow2.fn1(tempV15, m1);
+		mrow2 = *v;
+		v = mrow3.fn1(tempV16, m1);
+		mrow3 = *v;
+
+		mrow1 -= tempV3;
+		mrow2 -= tempV3;
+		mrow3 -= tempV3;
+		mrow1.normalize();
+		mrow2.normalize();
+		mrow3.normalize();
+		tempV16 = tempV3;
+
+		m3.set(mrow1, mrow2, mrow3);
+		_sub13.setMatrix(m3);
+		_sub13.setPosition(tempV16);
 	}
 }
 

@@ -38,8 +38,9 @@ double DVector::getDistance(const DVector &src) {
 	return sqrt((src._x - _x) * (src._x - _x) + (src._y - _y) * (src._y - _y) + (src._z - _z) * (src._z - _z));
 }
 
-void DVector::fn1(DVector &dest, const DMatrix &m) {
+DVector *DVector::fn1(DVector &dest, const DMatrix &m) {
 	// TODO
+	return nullptr;
 }
 
 void DVector::fn2(double val) {

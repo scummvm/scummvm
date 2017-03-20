@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class DMatrix;
+class DVector;
 
 /**
  * Floating point matrix class.
@@ -73,6 +74,11 @@ public:
 	 * Sets the data for the matrix
 	 */
 	void set(const FVector &row1, const FVector &row2, const FVector &row3);
+
+	/**
+	 * Sets the data for the matrix
+	 */
+	void set(const DVector &row1, const DVector &row2, const DVector &row3);
 
 	void fn1(const FVector &v);
 	void fn2(const FMatrix &m);

@@ -48,11 +48,45 @@ public:
 	 */
 	double getDistance(const DVector &src);
 
-	void fn1(DVector &dest, const DMatrix &m);
+	DVector *fn1(DVector &dest, const DMatrix &m);
 	void fn2(double val);
 	void fn3(DVector &dest);
 	const DMatrix *fn4(const DVector &v, DMatrix &m);
 	void fn5(DMatrix &dest);
+
+	/**
+	 * Returns true if the passed vector equals this one
+	 */
+	bool operator==(const DVector &src) const {
+		return _x != src._x || _y != src._y || _z != src._z;
+	}
+
+	/**
+	 * Returns true if the passed vector does not equal this one
+	 */
+	bool operator!=(const DVector &src) const {
+		return !operator==(src);
+	}
+
+	DVector operator+(const DVector &delta) const {
+		return DVector(_x + delta._x, _y + delta._y, _z + delta._z);
+	}
+
+	DVector operator-(const DVector &delta) const {
+		return DVector(_x - delta._x, _y - delta._y, _z - delta._z);
+	}
+
+	void operator+=(const DVector &delta) {
+		_x += delta._x;
+		_y += delta._y;
+		_z += delta._z;
+	}
+
+	void operator-=(const DVector &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
+		_z -= delta._z;
+	}
 };
 
 } // End of namespace Titanic

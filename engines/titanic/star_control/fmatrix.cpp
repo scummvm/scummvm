@@ -84,6 +84,12 @@ void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3)
 	_row3 = row3;
 }
 
+void FMatrix::set(const DVector &row1, const DVector &row2, const DVector &row3) {
+	_row1 = row1;
+	_row2 = row2;
+	_row3 = row3;
+}
+
 void FMatrix::fn1(const FVector &v) {
 	_row3._x = v._x;
 
