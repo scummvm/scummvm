@@ -43,9 +43,9 @@ public:
 	void ReceivedClue(int clueId, int fromActorId);
 	void ClickedByPlayer();
 	void EnteredScene(int sceneId);
-	void OtherAgentEnteredThisScene();
-	void OtherAgentExitedThisScene();
-	void OtherAgentEnteredCombatMode();
+	void OtherAgentEnteredThisScene(int otherActorId);
+	void OtherAgentExitedThisScene(int otherActorId);
+	void OtherAgentEnteredCombatMode(int otherActorId, int combatMode);
 	void ShotAtAndMissed();
 	void ShotAtAndHit();
 	void Retired(int byActorId);

@@ -155,6 +155,7 @@ public:
 
 	void gameLoop();
 	void gameTick();
+	void actorsUpdate();
 	void handleEvents();
 	void handleMouseClick(int x, int y);
 	void handleMouseClickExit(int x, int y, int exitIndex);

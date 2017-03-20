@@ -203,11 +203,11 @@ void AIScript_Officer_Leroy::ClickedByPlayer() {}
 
 void AIScript_Officer_Leroy::EnteredScene(int sceneId) {}
 
-void AIScript_Officer_Leroy::OtherAgentEnteredThisScene() {}
+void AIScript_Officer_Leroy::OtherAgentEnteredThisScene(int otherActorId) {}
 
-void AIScript_Officer_Leroy::OtherAgentExitedThisScene() {}
+void AIScript_Officer_Leroy::OtherAgentExitedThisScene(int otherActorId) {}
 
-void AIScript_Officer_Leroy::OtherAgentEnteredCombatMode() {}
+void AIScript_Officer_Leroy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {}
 
 void AIScript_Officer_Leroy::ShotAtAndMissed() {}
 

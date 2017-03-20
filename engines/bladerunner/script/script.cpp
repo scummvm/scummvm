@@ -48,6 +48,7 @@
 #include "bladerunner/waypoints.h"
 
 #include "bladerunner/script/ai_00_mccoy.h"
+#include "bladerunner/script/ai_15_runciter.h"
 #include "bladerunner/script/ai_23_officer_leroy.h"
 
 namespace BladeRunner {
@@ -190,7 +191,7 @@ void ScriptBase::Actor_Set_At_XYZ(int actorId, float x, float y, float z, int di
 }
 
 void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
-	_vm->_actors[actorId]->setAtWaypoint(waypointId, angle, 0, 0);
+	_vm->_actors[actorId]->setAtWaypoint(waypointId, angle, 0, false);
 }
 
 bool ScriptBase::Region_Check(int left, int top, int right, int down) {
@@ -1105,28 +1106,21 @@ void ScriptBase::Scene_2D_Region_Remove(int index) {
 	_vm->_scene->_regions->remove(index);
 }
 
-void ScriptBase::World_Waypoint_Set(int waypointId, int sceneId, float x, float y, float z) {
-	//TODO
-	warning("World_Waypoint_Set(%d, %d, %f, %f, %f)", waypointId, sceneId, x, y, z);
+void ScriptBase::World_Waypoint_Set(int waypointId, int setId, float x, float y, float z) {
+	_vm->_waypoints->set(waypointId, setId, Vector3(x, y, z));
 }
 // ScriptBase::World_Waypoint_Reset
 
 float ScriptBase::World_Waypoint_Query_X(int waypointId) {
-	//TODO
-	warning("World_Waypoint_Query_X(%d)", waypointId);
-	return 0.0f;
+	return _vm->_waypoints->getX(waypointId);
 }
 
 float ScriptBase::World_Waypoint_Query_Y(int waypointId) {
-	//TODO
-	warning("World_Waypoint_Query_Y(%d)", waypointId);
-	return 0.0f;
+	return _vm->_waypoints->getY(waypointId);
 }
 
 float ScriptBase::World_Waypoint_Query_Z(int waypointId) {
-	//TODO
-	warning("World_Waypoint_Query_Z(%d)", waypointId);
-	return 0.0f;
+	return _vm->_waypoints->getZ(waypointId);
 }
 
 void ScriptBase::Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int sceneId, int a4, float x, float y, float z) {
@@ -1458,27 +1452,89 @@ void ScriptBase::VK_Play_Speech_Line(int actorIndex, int a2, float a3) {
 	warning("VK_Play_Speech_Line(%d, %d, %g)", actorIndex, a2, a3);
 }
 
-AIScripts::AIScripts(BladeRunnerEngine *vm) : _vm(vm), _inScriptCounter(0) {
-	for (int i = 0; i != 100; ++i)
+AIScripts::AIScripts(BladeRunnerEngine *vm, int actorsCount) : _vm(vm), _inScriptCounter(0) {
+	_actorsCount = actorsCount;
+	_actorUpdating = new bool[actorsCount];
+	_AIScripts = new AIScriptBase*[actorsCount];
+	for (int i = 0; i < actorsCount; ++i) {
 		_AIScripts[i] = nullptr;
+		_actorUpdating[i] = false;
+	}
 
 	_AIScripts[0]  = new AIScript_McCoy(_vm);
+	_AIScripts[15] = new AIScript_Runciter(_vm);
 	_AIScripts[23] = new AIScript_Officer_Leroy(_vm);
 }
 
 AIScripts::~AIScripts() {
-	for (int i = 0; i != 100; ++i) {
+	for (int i = 0; i < _actorsCount; ++i) {
 		delete _AIScripts[i];
 		_AIScripts[i] = nullptr;
 	}
+	delete _AIScripts;
+	delete _actorUpdating;
 }
 
 void AIScripts::Initialize(int actor) {
+	assert(actor < _actorsCount);
 	if (_AIScripts[actor])
 		_AIScripts[actor]->Initialize();
 }
 
+void AIScripts::Update(int actor) {
+	assert(actor < _actorsCount);
+	if (this->_actorUpdating[actor] != 1) {
+		this->_actorUpdating[actor] = true;
+		++this->_inScriptCounter;
+		if (_AIScripts[actor])
+			_AIScripts[actor]->Update();
+		--this->_inScriptCounter;
+		this->_actorUpdating[actor] = false;
+	}
+}
+
+void AIScripts::TimerExpired(int actor, int timer) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->TimerExpired(timer);
+	_inScriptCounter--;
+}
+
+void AIScripts::EnteredScene(int actor, int setId) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->EnteredScene(setId);
+	_inScriptCounter--;
+}
+
+void AIScripts::OtherAgentEnteredThisScene(int actor, int otherActorId) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->OtherAgentEnteredThisScene(otherActorId);
+	_inScriptCounter--;
+}
+
+void AIScripts::OtherAgentExitedThisScene(int actor, int otherActorId) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->OtherAgentExitedThisScene(otherActorId);
+	_inScriptCounter--;
+}
+
+void AIScripts::GoalChanged(int actor, int currentGoalNumber, int newGoalNumber) {
+	assert(actor < _actorsCount);
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->GoalChanged(currentGoalNumber, newGoalNumber);
+	_inScriptCounter--;
+}
+
 void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
+	assert(actor < _actorsCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor])
 		_AIScripts[actor]->UpdateAnimation(animation, frame);
@@ -1486,6 +1542,7 @@ void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
 }
 
 void AIScripts::ChangeAnimationMode(int actor, int mode) {
+	assert(actor < _actorsCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor])
 		_AIScripts[actor]->ChangeAnimationMode(mode);

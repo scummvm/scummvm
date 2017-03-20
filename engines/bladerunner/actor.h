@@ -136,6 +136,7 @@ public:
 	void countdownTimerStart(int timerId, int interval);
 	void countdownTimerReset(int timerId);
 	int  countdownTimerGetRemainingTime(int timerId);
+	void countdownTimersUpdate();
 	void countdownTimerUpdate(int timerId);
 
 	int getSetId();

@@ -211,13 +211,13 @@ void AIScript_McCoy::ClickedByPlayer() {
 void AIScript_McCoy::EnteredScene(int sceneId) {
 }
 
-void AIScript_McCoy::OtherAgentEnteredThisScene() {
+void AIScript_McCoy::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
-void AIScript_McCoy::OtherAgentExitedThisScene() {
+void AIScript_McCoy::OtherAgentExitedThisScene(int otherActorId) {
 }
 
-void AIScript_McCoy::OtherAgentEnteredCombatMode() {
+void AIScript_McCoy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 }
 
 void AIScript_McCoy::ShotAtAndMissed() {

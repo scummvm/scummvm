@@ -60,7 +60,7 @@
 #include "engines/util.h"
 
 #include "graphics/pixelformat.h"
-#include "suspects_database.h"
+#include "suspects_database.h" 
 
 namespace BladeRunner {
 
@@ -337,7 +337,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	initScript.SCRIPT_Initialize_Game();
 
 	// TODO: Load AI-ACT1.DLL
-	_aiScripts = new AIScripts(this);
+	_aiScripts = new AIScripts(this, actorCount);
 
 	initChapterAndScene();
 
@@ -619,17 +619,20 @@ void BladeRunnerEngine::gameTick() {
 #endif
 
 		// TODO: Render overlays
-		// TODO: Tick Actor AI and Timers
 
-		if (_settings->getNewScene() == -1 || _script->_inScriptCounter /* || in_ai */) {
+		//if (!dialogueMenu)
+			actorsUpdate();
+
+		if (_settings->getNewScene() == -1 || _script->IsInsideScript() || _aiScripts->IsInsideScript()) {
 			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
-			//int setId = _scene->_setId;
+			int setId = _scene->getSetId();
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-				//if (_actors[i]->getSetId() == setId) {
-				if (i == 0 || i == 23) { // Currently limited to McCoy and Officer Leroy
-					_actors[i]->tick(backgroundChanged);
+				if (_actors[i]->getSetId() == setId) {
+					if (i == 0 || i == 15 || i == 23) { // Currently limited to McCoy, Runciter and Officer Leroy
+						_actors[i]->tick(backgroundChanged);
+					}
 				}
 			}
 
@@ -724,16 +727,30 @@ void BladeRunnerEngine::gameTick() {
 
 			}
 
-			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
-				Light *light = _lights->_lights[i];
-				Matrix4x3 m = light->_matrix;
-				Vector3 pos = Vector3(m(0, 3), m(1, 3), m(2, 3));
+//			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
+//				Light *light = _lights->_lights[i];
+//				Matrix4x3 m = light->_matrix;
+//				Vector3 pos = Vector3(m(0, 3), m(1, 3), m(2, 3));
+//				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
+//				int colorR = (light->_color.r * 31.0f);
+//				int colorG = (light->_color.g * 31.0f);
+//				int colorB = (light->_color.b * 31.0f);
+//				int color = (colorR << 10) + (colorG << 5) + colorB;
+//				drawBBox(pos - size, pos + size, _view, &_surface2, color);
+//			}
+
+			for(int i = 0; i < _waypoints->_count; i++) {
+				Waypoint *waypoint = &_waypoints->_waypoints[i];
+				if(waypoint->_setId != _scene->getSetId())
+					continue;
+				Vector3 pos = waypoint->_position;
 				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-				int colorR = (light->_color.r * 31.0f);
-				int colorG = (light->_color.g * 31.0f);
-				int colorB = (light->_color.b * 31.0f);
-				int color = (colorR << 10) + (colorG << 5) + colorB;
+				int color = 0b111111111111111;
 				drawBBox(pos - size, pos + size, _view, &_surface2, color);
+				Vector3 spos = _view->calculateScreenPosition(pos);
+				char waypointText[40];
+				sprintf(waypointText, "waypoint %i", i);
+				_mainFont->drawColor(waypointText, _surface2, spos.x, spos.y, color);
 
 			}
 #endif
@@ -741,6 +758,22 @@ void BladeRunnerEngine::gameTick() {
 			_system->copyRectToScreen((const byte *)_surface2.getBasePtr(0, 0), _surface2.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
 			_system->delayMillis(10);
+		}
+	}
+}
+
+void BladeRunnerEngine::actorsUpdate() {
+	int actorCount = (int)_gameInfo->getActorCount();
+	int setId = _scene->getSetId();
+
+	//TODO: original game updates every non-visible characters by updating only one character in one frame
+	if (setId != 89 || _gameVars[1] != 4 || _gameFlags->query(670) != 1 || !_aiScripts->IsInsideScript()) {
+		for (int i = 0; i < actorCount; i++) {
+			Actor *actor = _actors[i];
+			if (actor->getSetId() == setId) {
+				_aiScripts->Update(i);
+				actor->countdownTimersUpdate();
+			}
 		}
 	}
 }
