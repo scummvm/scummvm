@@ -1232,7 +1232,7 @@ void Lingo::b_rollOver(int nargs) {
 
 	Frame *frame = g_director->getCurrentScore()->_frames[g_director->getCurrentScore()->getCurrentFrame()];
 
-	if (arg >= frame->_sprites.size()) {
+	if (arg >= (int32) frame->_sprites.size()) {
 		g_lingo->push(d);
 		return;
 	}
