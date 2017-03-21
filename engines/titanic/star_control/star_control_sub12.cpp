@@ -401,6 +401,7 @@ bool CStarControlSub12::addMatrixRow(const FVector &v) {
 	FVector &row = _matrix[++_matrixRow];
 	row = v;
 	setupHandler(&data);
+	return true;
 }
 
 bool CStarControlSub12::removeMatrixRow() {
@@ -413,6 +414,7 @@ bool CStarControlSub12::removeMatrixRow() {
 
 	--_matrixRow;
 	setupHandler(&data);
+	return true;
 }
 
 void CStarControlSub12::proc36(double *v1, double *v2, double *v3, double *v4) {
@@ -463,7 +465,16 @@ void CStarControlSub12::deleteHandler() {
 }
 
 void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
-	// TODO
+	if (_matrixRow == 1) {
+		FMatrix m1 = sub13->getMatrix();
+		FMatrix m2 = _sub13.getMatrix();
+		FVector v1 = sub13->_position;
+		FVector v2 = _sub13._position;
+
+		_handlerP->proc8(v2, v1, m2, m1);
+		CStarVector *sv = new CStarVector(this, v);
+		_handlerP->setVector(sv);
+	}
 }
 
 void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
