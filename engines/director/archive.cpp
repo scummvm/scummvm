@@ -275,8 +275,8 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		if (tag == 0)
 			break;
 
-		uint16 startResPos = stream->pos();
-		stream->seek(offset + 12);
+		uint32 startResPos = stream->pos();
+		stream->seek(startOffset + offset + 12);
 
 		Common::String name = "";
 		byte nameSize = stream->readByte();
@@ -289,7 +289,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		stream->seek(startResPos);
 
-		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x", tag2str(tag), id, size, offset);
+		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x", tag2str(tag), id, size, startOffset + offset);
 
 		ResourceMap &resMap = _types[tag];
 		Resource &res = resMap[id];
