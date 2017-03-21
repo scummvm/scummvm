@@ -1078,7 +1078,9 @@ void Score::startLoop() {
 	while (!_stopPlay && _currentFrame < _frames.size()) {
 		debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame + 1);
 		update();
-		_vm->processEvents();
+
+		if (_currentFrame < _frames.size())
+			_vm->processEvents();
 	}
 }
 
