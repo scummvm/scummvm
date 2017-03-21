@@ -182,14 +182,15 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 		Common::String cleanedFilename;
 
-		for (const byte *p = (const byte *)movie.u.s->c_str(); *p; p++)
-			if (*p >= 0x20 && *p <= 0x7f)
-				cleanedFilename += (const char) *p;
-
 		bool fileExists = false;
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 			Common::MacResManager resMan;
+
+			for (const byte *p = (const byte *)movie.u.s->c_str(); *p; p++)
+				if (*p >= 0x20 && *p <= 0x7f)
+					cleanedFilename += (const char) *p;
+
 			if (resMan.open(*movie.u.s)) {
 				fileExists = true;
 				cleanedFilename = *movie.u.s;
@@ -198,6 +199,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			}
 		} else {
 			Common::File file;
+			cleanedFilename = *movie.u.s + ".MMM";
+
 			if (file.open(*movie.u.s)) {
 				fileExists = true;
 				cleanedFilename = *movie.u.s;
