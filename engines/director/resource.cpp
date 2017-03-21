@@ -20,7 +20,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/macresman.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
@@ -113,6 +115,30 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	if (mmmSize) {
 		uint32 riffOffset = stream->pos();
 
+		debugC(1, kDebugLoading, "RIFF offset: %d (%x)", riffOffset, riffOffset);
+
+		if (ConfMan.getBool("dump_scripts")) {
+			Common::DumpFile out;
+			byte *buf = (byte *)malloc(mmmSize);
+			stream->read(buf, mmmSize);
+			stream->seek(riffOffset);
+			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
+
+
+			if (!out.open(fname.c_str())) {
+				warning("Can not open dump file %s", fname.c_str());
+				return;
+			}
+
+			out.write(buf, mmmSize);
+
+			out.flush();
+			out.close();
+
+			free(buf);
+		}
+
+
 		_mainArchive = new RIFFArchive();
 
 		if (!_mainArchive->openStream(stream, riffOffset))
@@ -120,8 +146,6 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	}
 
 	openMainArchive(mmmFileName);
-
-	delete stream;
 }
 
 void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
