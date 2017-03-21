@@ -143,6 +143,8 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 		if (!_mainArchive->openStream(stream, riffOffset))
 			error("Failed to load RIFF from EXE");
+
+		return;
 	}
 
 	openMainArchive(mmmFileName);

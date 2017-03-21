@@ -293,7 +293,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		ResourceMap &resMap = _types[tag];
 		Resource &res = resMap[id];
-		res.offset = offset;
+		res.offset = offset + startOffset;
 		res.size = size;
 		res.name = name;
 	}
