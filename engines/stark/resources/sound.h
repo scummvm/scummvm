@@ -78,6 +78,9 @@ public:
 	/** Get the type for stock sounds */
 	uint32 getStockSoundType() const;
 
+	/** Fade the sound's current volume and pan to the specified target over duration milliseconds */
+	void changeVolumePan(int32 volume, int32 pan, int32 duration);
+
 protected:
 	void printData() override;
 
@@ -96,8 +99,12 @@ protected:
 	Common::String _soundName;
 	uint32 _field_6C;
 	uint32 _soundType;
-	uint32 _pan;
+	float _pan;
 	float _volume;
+
+	uint32 _fadeFramesRemaining;
+	float _fadeVolumeStep;
+	float _fadePanStep;
 
 	Audio::SoundHandle _handle;
 };

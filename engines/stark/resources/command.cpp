@@ -890,9 +890,8 @@ Command *Command::opPATChangeTooltip(const ResourceReference &patRef, const Reso
 }
 
 Command *Command::opSoundChange(Script *script, const ResourceReference &soundRef, int32 volume, int32 pan, int32 duration, bool pause) {
-	assert(_arguments.size() == 6);
-	Object *sound = soundRef.resolve<Object>();
-	warning("(TODO: Implement) opSoundChange(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), volume, pan, duration, pause, soundRef.describe().c_str());
+	Sound *sound = soundRef.resolve<Sound>();
+	sound->changeVolumePan(volume, pan, duration);
 
 	if (pause) {
 		script->pause(duration);

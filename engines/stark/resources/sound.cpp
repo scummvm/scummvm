@@ -29,6 +29,7 @@
 #include "engines/stark/formats/iss.h"
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
 namespace Stark {
@@ -49,7 +50,9 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 		_field_6C(0),
 		_soundType(0),
 		_pan(0),
-		_volume(0) {
+		_volume(0),
+		_fadeFramesRemaining(0),
+		_fadeVolumeStep(0.0) {
 	_type = TYPE;
 }
 
@@ -120,7 +123,8 @@ void Sound::play() {
 		playStream = rewindableStream;
 	}
 
-	g_system->getMixer()->playStream(getMixerSoundType(), &_handle, playStream, -1, _volume * Audio::Mixer::kMaxChannelVolume);
+	g_system->getMixer()->playStream(getMixerSoundType(), &_handle, playStream, -1,
+	                                 _volume * Audio::Mixer::kMaxChannelVolume, _pan * 127);
 }
 
 bool Sound::isPlaying() {
@@ -149,7 +153,7 @@ void Sound::readData(Formats::XRCReadStream *stream) {
 	_soundName = stream->readString();
 	_field_6C = stream->readUint32LE();
 	_soundType = stream->readUint32LE();
-	_pan = stream->readUint32LE();
+	_pan = stream->readFloat();
 	_volume = stream->readFloat();
 	_archiveName = stream->getArchiveName();
 }
@@ -166,7 +170,7 @@ void Sound::printData() {
 	debug("soundName: %s", _soundName.c_str());
 	debug("field_6C: %d", _field_6C);
 	debug("soundType: %d", _soundType);
-	debug("pan: %d", _pan);
+	debug("pan: %f", _pan);
 	debug("volume: %f", _volume);
 }
 
@@ -180,10 +184,45 @@ void Sound::onGameLoop() {
 			stop();
 		}
 	}
+
+	if (_fadeFramesRemaining > 0 && isPlaying()) {
+		_volume += _fadeVolumeStep;
+		_pan += _fadePanStep;
+
+		g_system->getMixer()->setChannelVolume(_handle, _volume * Audio::Mixer::kMaxChannelVolume);
+		g_system->getMixer()->setChannelBalance(_handle, _pan * 127);
+
+		_fadeFramesRemaining--;
+	}
 }
 
 uint32 Sound::getStockSoundType() const {
 	return _stockSoundType;
 }
+
+void Sound::changeVolumePan(int32 volume, int32 pan, int32 duration) {
+	if (isPlaying()) {
+		_fadeFramesRemaining = duration / StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_fadeFramesRemaining > 0) {
+			_fadeVolumeStep = (volume / 100.0 - _volume) / _fadeFramesRemaining;
+			_fadePanStep = (pan / 100.0 - _pan) / _fadeFramesRemaining;
+		} else {
+			_volume = volume / 100.0;
+			_pan = pan / 100.0;
+
+			g_system->getMixer()->setChannelVolume(_handle, _volume * Audio::Mixer::kMaxChannelVolume);
+			g_system->getMixer()->setChannelBalance(_handle, _pan * 127);
+
+			_fadeFramesRemaining = 0;
+		}
+	} else {
+		if (!_fadeFramesRemaining) {
+			_volume = volume / 100.0;
+			_pan = pan / 100.0;
+		}
+	}
+}
+
 } // End of namespace Resources
 } // End of namespace Stark
