@@ -27,7 +27,7 @@ namespace Titanic {
 
 CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
 	_lockCounter = 0;
-	_dataP = nullptr;
+	_starVector = nullptr;
 
 	if (src) {
 		copyFrom(src);
@@ -100,15 +100,15 @@ void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, const FMatrix 
 	}
 }
 
-void CStarControlSub20::setData(void *data) {
+void CStarControlSub20::setVector(CStarVector *sv) {
 	clear();
-	_dataP = (byte *)data;
+	_starVector = sv;
 }
 
 void CStarControlSub20::clear() {
-	if (_dataP) {
-		delete _dataP;
-		_dataP = nullptr;
+	if (_starVector) {
+		delete _starVector;
+		_starVector = nullptr;
 	}
 }
 

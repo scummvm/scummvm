@@ -456,7 +456,26 @@ void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
 }
 
 void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
-	// TODO
+	if (_currentIndex == -1) {
+		FVector tempV;
+		tempV._z = _sub13._field10;
+		v3._z = v1._z;
+		tempV._x = _sub13._fieldD0 * v1._y * v1._z / _sub13._fieldC8;
+		v3._y = _sub13._fieldCC * tempV._z * v3._x / _sub13._fieldC8;
+		v3._x = _sub13._fieldCC * v1._x * v1._z / _sub13._fieldC8 - _sub13._valArray[2];
+		tempV._y = _sub13._fieldD0 * tempV._z * v3._y / _sub13._fieldC8;
+		tempV._x = tempV._x - _sub13._valArray[2];
+
+		v3.normalize();
+		tempV.normalize();
+
+		FMatrix matrix = _sub13.getMatrix();
+		const FVector &pos = _sub13._position;
+		_handlerP->proc10(v3, tempV, pos, matrix);
+
+		CStarVector *sv = new CStarVector(this, v2);
+		_handlerP->setVector(sv);
+	}
 }
 
 void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {

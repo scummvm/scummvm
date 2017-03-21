@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB20_H
 
 #include "titanic/support/simple_file.h"
+#include "titanic/star_control/base_star.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
 
@@ -43,7 +44,7 @@ struct CStar20Data {
 class CStarControlSub20 : public CStar20Data {
 public:
 	int _lockCounter;
-	byte *_dataP;
+	CStarVector *_starVector;
 public:
 	CStarControlSub20(const CStar20Data *src);
 	virtual ~CStarControlSub20();
@@ -58,11 +59,7 @@ public:
 	virtual void proc9(FVector &v1, FVector &v2, FMatrix &matrix) {}
 	virtual void proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {}
 	virtual void proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m);
-
-	/**
-	 * Set the data
-	 */
-	virtual void setData(void *data);
+	virtual void setVector(CStarVector *sv);
 
 	/**
 	 * Clear the class
