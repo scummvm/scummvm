@@ -409,7 +409,7 @@ void CStarView::fn16() {
 
 void CStarView::fn17() {
 	if (_starField && !_showingPhoto) {
-		_sub12.proc35();
+		_sub12.removeMatrixRow();
 		_starField->fn8(_videoSurface2);
 	}
 }

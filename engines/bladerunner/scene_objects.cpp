@@ -86,7 +86,7 @@ bool SceneObjects::remove(int sceneObjectId) {
 	if (i == -1) {
 		return false;
 	}
-
+	_sceneObjects[i]._present = 0;
 	int j;
 	for (j = 0; j < _count; ++j) {
 		if (_sceneObjectsSortedByDistance[j] == i) {
@@ -107,7 +107,7 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 	*isTarget = 0;
 
 	for (int i = 0; i < _count; ++i) {
-		assert(_sceneObjectsSortedByDistance[i] < _count);
+		assert(_sceneObjectsSortedByDistance[i] < SCENE_OBJECTS_COUNT);
 
 		SceneObject &sceneObject = _sceneObjects[_sceneObjectsSortedByDistance[i]];
 
@@ -171,8 +171,10 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5
 
 int SceneObjects::findById(int sceneObjectId) {
 	for (int i = 0; i < _count; ++i) {
-		if (_sceneObjects[i]._present && _sceneObjects[i]._sceneObjectId == sceneObjectId) {
-			return i;
+		int j = this->_sceneObjectsSortedByDistance[i];
+
+		if (_sceneObjects[j]._present && _sceneObjects[j]._sceneObjectId == sceneObjectId) {
+			return j;
 		}
 	}
 	return -1;

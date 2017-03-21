@@ -203,10 +203,10 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 
 	setBoundingBox(_position, retired);
 
-	_vm->_sceneObjects->remove(_id);
+	_vm->_sceneObjects->remove(_id + SCENE_OBJECTS_ACTORS_OFFSET);
 
 	if (_vm->_scene->getSetId() == _setId) {
-		_vm->_sceneObjects->addActor(_id, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
+		_vm->_sceneObjects->addActor(_id + SCENE_OBJECTS_ACTORS_OFFSET, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
 	}
 }
 
@@ -477,7 +477,7 @@ bool Actor::tick(bool forceDraw) {
 				this->_position.z = this->_position.z + positionChange.x * sinx + positionChange.y * cosx;
 				this->_position.y = this->_position.y + positionChange.z;
 
-				if (_vm->_sceneObjects->existsOnXZ(this->_id, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
+				if (_vm->_sceneObjects->existsOnXZ(this->_id + SCENE_OBJECTS_ACTORS_OFFSET, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
 					this->_position.x = originalX;
 					this->_position.y = originalY;
 					this->_position.z = originalZ;
@@ -530,16 +530,16 @@ void Actor::setSetId(int setId) {
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				// TODO: _vm->_aiScripts->OtherAgentExitedThisScene( i, _id);
+				_vm->_aiScripts->OtherAgentExitedThisScene(i, _id);
 			}
 		}
 	}
 	_setId = setId;
-	// TODO: _vm->_aiScripts->EnteredScene(_id, set);
+	_vm->_aiScripts->EnteredScene(_id, _setId);
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				// TODO: _vm->_aiScripts->OtherAgentEnteredThisScene(i, _id);
+				_vm->_aiScripts->OtherAgentEnteredThisScene(i, _id);
 			}
 		}
 	}
@@ -851,11 +851,11 @@ int Actor::getAnimationMode() {
 }
 
 void Actor::setGoal(int goalNumber) {
-	if (goalNumber == _goalNumber)
+	if (goalNumber == _goalNumber) {
 		return;
+	}
 
-	//TODO: _vm->actorScript->GoalChanged(_id, _goalNumber, goalNumber);
-
+	_vm->_aiScripts->GoalChanged(_id, _goalNumber, goalNumber);
 	_vm->_script->ActorChangedGoal(_id, goalNumber, _goalNumber, _vm->_scene->getSetId() == _setId);
 }
 
@@ -943,6 +943,12 @@ int Actor::countdownTimerGetRemainingTime(int timerId) {
 	return _timersRemain[timerId];
 }
 
+void Actor::countdownTimersUpdate() {
+	for (int i = 0; i <= 6; i++) {
+		countdownTimerUpdate(i);
+	}
+}
+
 void Actor::countdownTimerUpdate(int timerId) {
 	if (_timersRemain[timerId] == 0)
 		return;
@@ -959,7 +965,14 @@ void Actor::countdownTimerUpdate(int timerId) {
 		case 0:
 		case 1:
 		case 2:
-			// AI timers, call AI dll
+			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_script->IsInsideScript()) {
+				_vm->_aiScripts->TimerExpired(this->_id, timerId);
+				this->_timersRemain[timerId] = 0;
+				//return false;
+			} else {
+				this->_timersRemain[timerId] = 1;
+				//return true;
+			}
 			break;
 		case 3:
 			// Movement track timer

@@ -146,6 +146,19 @@ public:
 	int baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 };
 
+class CStarVector {
+private:
+	CStarControlSub12 *_owner;
+	FVector _vector;
+public:
+	CStarVector(CStarControlSub12 *owner, const FVector &v) : _owner(owner), _vector(v) {}
+
+	/**
+	 * Applies the saved vector
+	 */
+	void apply();
+};
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_STAR_CONTROL_SUB3_H */

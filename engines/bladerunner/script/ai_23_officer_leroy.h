@@ -25,27 +25,16 @@
 #include "bladerunner/bladerunner.h"
 
 namespace BladeRunner {
-class AIScript_McCoy : public AIScriptBase {
-	int dword_45A0D0_animation_state;
-	int dword_45A0D4_animation_frame;
-	int dword_45A0D8;
-	int dword_45A0DC;
-	int dword_45A0E0;
-	int dword_45A0E4;
-	float off_45A0EC;
-	int dword_45A0E8;
-	int dword_45A0F0;
-	int dword_45A0F4;
-	int dword_45A0F8;
-	int dword_45A0FC;
-	int dword_462718;
-	int dword_46271C;
-	float off_45A100;
-	float flt_462710;
-	float flt_462714;
 
+class AIScript_Officer_Leroy : public AIScriptBase {
+	int var_45D5B0_animation_state;
+	int var_45D5B4_animation_frame;
+	int var_45D5B8;
+	int var_45D5BC;
+	int var_462880;
+	int var_462884;
 public:
-	AIScript_McCoy(BladeRunnerEngine *vm);
+	AIScript_Officer_Leroy(BladeRunnerEngine *vm);
 
 	void Initialize();
 	bool Update();
@@ -64,20 +53,14 @@ public:
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber);
 	bool UpdateAnimation(int *animation, int *frame);
 	bool ChangeAnimationMode(int mode);
-	void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4);
-	void SetAnimationState(int animationState, int a2, int a3, int a4);
+	void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4);
+	void SetAnimationState(int animationState, int animationFrame, int a3, int a4);
 	bool ReachedMovementTrackWaypoint(int a1);
 	void FledCombat();
 
 private:
-	void sub_4053E0();
-	void sub_4054F0();
-	void sub_405660();
-	void sub_405800();
-	void sub_4058B0();
-	void sub_405920();
-	void sub_405940(float a1);
-	void sub_4059D0(float a1);
-	
+	bool sub_431408();
+	bool sub_431420();
 };
+
 } // End of namespace BladeRunner

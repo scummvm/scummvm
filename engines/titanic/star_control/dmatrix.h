@@ -42,14 +42,13 @@ public:
 	DVector _row1;
 	DVector _row2;
 	DVector _row3;
-	FVector _frow1;
-	FVector _frow2;
+	DVector _row4;
 public:
 	static void init();
 	static void deinit();
 public:
 	DMatrix();
-	DMatrix(int mode, const FMatrix *src);
+	DMatrix(int mode, const DVector &src);
 	DMatrix(Axis axis, double amount);
 	DMatrix(const FMatrix &src);
 

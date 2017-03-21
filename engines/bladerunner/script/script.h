@@ -304,11 +304,12 @@ public:
  */
 
 class Script {
-public:
+protected:
 	BladeRunnerEngine *_vm;
 	int                _inScriptCounter;
 	SceneScriptBase   *_currentScript;
 
+public:
 	Script(BladeRunnerEngine *vm)
 		: _vm(vm),
 		  _inScriptCounter(0),
@@ -331,6 +332,7 @@ public:
 	void PlayerWalkedIn();
 	void PlayerWalkedOut();
 	void DialogueQueueFlushed(int a1);
+	bool IsInsideScript() { return _inScriptCounter > 0; }
 };
 
 #define DECLARE_SCRIPT(name) \
@@ -820,34 +822,45 @@ public:
 	virtual void CompletedMovementTrack() = 0;
 	virtual void ReceivedClue(int clueId, int fromActorId) = 0;
 	virtual void ClickedByPlayer() = 0;
-	virtual void EnteredScene(int sceneId) = 0;
-	virtual void OtherAgentEnteredThisScene() = 0;
-	virtual void OtherAgentExitedThisScene() = 0;
-	virtual void OtherAgentEnteredCombatMode() = 0;
+	virtual void EnteredScene(int setId) = 0;
+	virtual void OtherAgentEnteredThisScene(int otherActorId) = 0;
+	virtual void OtherAgentExitedThisScene(int otherActorId) = 0;
+	virtual void OtherAgentEnteredCombatMode(int otherActorId, int combatMode) = 0;
 	virtual void ShotAtAndMissed() = 0;
 	virtual void ShotAtAndHit() = 0;
 	virtual void Retired(int byActorId) = 0;
-	virtual void GetFriendlinessModifierIfGetsClue() = 0;
+	virtual int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) = 0;
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
 	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
 	virtual bool ChangeAnimationMode(int mode) = 0;
 	virtual void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) = 0;
 	virtual void SetAnimationState(int animationState, int a2, int a3, int a4) = 0;
-	virtual bool ReachedMovementTrackWaypoint() = 0;
+	virtual bool ReachedMovementTrackWaypoint(int a1) = 0;
+	virtual void FledCombat() = 0;
 };
 
 class AIScripts {
-public:
+private:
 	BladeRunnerEngine *_vm;
 	int                _inScriptCounter;
-	AIScriptBase      *_AIScripts[100];
-
-	AIScripts(BladeRunnerEngine *vm);
+	int                _actorsCount;
+	AIScriptBase     **_AIScripts;
+	bool              *_actorUpdating;
+public:
+	AIScripts(BladeRunnerEngine *vm, int actorsCount);
 	~AIScripts();
 
 	void Initialize(int actor);
+	void Update(int actor);
+	void TimerExpired(int actor, int timer);
+	void EnteredScene(int actor, int setId);
+	void OtherAgentEnteredThisScene(int actor, int otherActorId);
+	void OtherAgentExitedThisScene(int actor, int otherActorId);
+	void GoalChanged(int actor, int currentGoalNumber, int newGoalNumber);
 	void UpdateAnimation(int actor, int *animation, int *frame);
 	void ChangeAnimationMode(int actor, int mode);
+
+	bool IsInsideScript() { return _inScriptCounter > 0; }
 };
 
 } // End of namespace BladeRunner

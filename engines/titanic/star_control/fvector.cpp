@@ -21,11 +21,15 @@
  */
 
 #include "titanic/star_control/fvector.h"
+#include "titanic/star_control/dvector.h"
 #include "titanic/star_control/star_control_sub6.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
+
+FVector::FVector(const DVector &src) : _x(src._x), _y(src._y), _z(src._z) {
+}
 
 void FVector::fn1(FVector *v) {
 	v->_x = (ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&

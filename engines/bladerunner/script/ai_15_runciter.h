@@ -26,12 +26,18 @@
 
 namespace BladeRunner {
 
-class AIScript_Officer_Leroy : public AIScriptBase {
-	int var_45D5B0_animation_state;
-	int var_45D5B4_frame;
-	int var_45D5B8;
+class AIScript_Runciter : public AIScriptBase {
+	int var_45CD70_animation_state;
+	int var_45CD74_animation_frame;
+	int var_462800;
+	int var_462804;
+	int var_45CD78;
+	int var_45CD7C;
+	int var_45CD80;
+	int var_45CD84;
+	int var_45CD88;
 public:
-	AIScript_Officer_Leroy(BladeRunnerEngine *vm);
+	AIScript_Runciter(BladeRunnerEngine *vm);
 
 	void Initialize();
 	bool Update();
@@ -40,19 +46,20 @@ public:
 	void ReceivedClue(int clueId, int fromActorId);
 	void ClickedByPlayer();
 	void EnteredScene(int sceneId);
-	void OtherAgentEnteredThisScene();
-	void OtherAgentExitedThisScene();
-	void OtherAgentEnteredCombatMode();
+	void OtherAgentEnteredThisScene(int otherActorId);
+	void OtherAgentExitedThisScene(int otherActorId);
+	void OtherAgentEnteredCombatMode(int otherActorId, int combatMode);
 	void ShotAtAndMissed();
 	void ShotAtAndHit();
 	void Retired(int byActorId);
-	void GetFriendlinessModifierIfGetsClue();
+	int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId);
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber);
 	bool UpdateAnimation(int *animation, int *frame);
 	bool ChangeAnimationMode(int mode);
-	void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4);
-	void SetAnimationState(int animationState, int a2, int a3, int a4);
-	bool ReachedMovementTrackWaypoint();
+	void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4);
+	void SetAnimationState(int animationState, int animationFrame, int a3, int a4);
+	bool ReachedMovementTrackWaypoint(int a1);
+	void FledCombat();
 };
 
 } // End of namespace BladeRunner

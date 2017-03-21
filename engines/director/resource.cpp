@@ -76,6 +76,7 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	exeStream->seek(exeStream->readUint32LE());
 
 	switch (getVersion()) {
+	case 2:
 	case 3:
 		loadEXEv3(exeStream);
 		break;
@@ -100,12 +101,23 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 
 	stream->skip(5); // unknown
 
-	stream->readUint32LE(); // Main MMM size
+	uint32 mmmSize = stream->readUint32LE(); // Main MMM size
+
 	Common::String mmmFileName = stream->readPascalString();
 	Common::String directoryName = stream->readPascalString();
 
 	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
 	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
+	debugC(1, kDebugLoading, "Main mmmSize: %d (0x%x)", mmmSize, mmmSize);
+
+	if (mmmSize) {
+		uint32 riffOffset = stream->pos();
+
+		_mainArchive = new RIFFArchive();
+
+		if (!_mainArchive->openStream(stream, riffOffset))
+			error("Failed to load RIFF from EXE");
+	}
 
 	openMainArchive(mmmFileName);
 

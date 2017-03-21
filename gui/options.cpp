@@ -567,7 +567,7 @@ void OptionsDialog::apply() {
 	if (_enableShaderSettings) {
 		if (g_system->hasFeature(OSystem::kFeatureShader)) {
 			if (_shaderPopUp) {
-				if (ConfMan.getInt("shader", _domain) != _shaderPopUp->getSelectedTag()) {
+				if (ConfMan.getInt("shader", _domain) != (int32)_shaderPopUp->getSelectedTag()) {
 					ConfMan.setInt("shader", _shaderPopUp->getSelectedTag(), _domain);
 					g_system->setShader(_shaderPopUp->getSelectedTag());
 				}

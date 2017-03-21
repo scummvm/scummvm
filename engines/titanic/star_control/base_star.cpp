@@ -214,4 +214,10 @@ int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	return ref._index;
 }
 
+/*------------------------------------------------------------------------*/
+
+void CStarVector::apply() {
+	_owner->addMatrixRow(_vector);
+}
+
 } // End of namespace Titanic

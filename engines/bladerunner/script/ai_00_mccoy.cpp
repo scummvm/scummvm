@@ -211,13 +211,13 @@ void AIScript_McCoy::ClickedByPlayer() {
 void AIScript_McCoy::EnteredScene(int sceneId) {
 }
 
-void AIScript_McCoy::OtherAgentEnteredThisScene() {
+void AIScript_McCoy::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
-void AIScript_McCoy::OtherAgentExitedThisScene() {
+void AIScript_McCoy::OtherAgentExitedThisScene(int otherActorId) {
 }
 
-void AIScript_McCoy::OtherAgentEnteredCombatMode() {
+void AIScript_McCoy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 }
 
 void AIScript_McCoy::ShotAtAndMissed() {
@@ -248,7 +248,8 @@ void AIScript_McCoy::Retired(int byActorId) {
 	}
 }
 
-void AIScript_McCoy::GetFriendlinessModifierIfGetsClue() {
+int AIScript_McCoy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
+	return 0;
 }
 
 bool AIScript_McCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
@@ -1660,9 +1661,11 @@ void AIScript_McCoy::SetAnimationState(int animationState, int a2, int a3, int a
 	dword_46271C = a4;
 }
 
-bool AIScript_McCoy::ReachedMovementTrackWaypoint() {
+bool AIScript_McCoy::ReachedMovementTrackWaypoint(int a1) {
 	return true;
 }
+
+void AIScript_McCoy::FledCombat() {}
 
 void AIScript_McCoy::sub_4053E0() {
 	float x, y, z;

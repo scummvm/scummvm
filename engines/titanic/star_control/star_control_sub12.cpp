@@ -23,6 +23,8 @@
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_control_sub21.h"
 #include "titanic/star_control/star_control_sub22.h"
+#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
@@ -30,12 +32,12 @@ FMatrix *CStarControlSub12::_matrix1;
 FMatrix *CStarControlSub12::_matrix2;
 
 CStarControlSub12::CStarControlSub12(const CStar20Data *data) :
-		_currentIndex(-1), _handlerP(nullptr), _field108(0) {
+		_matrixRow(-1), _handlerP(nullptr), _field108(0) {
 	setupHandler(data);
 }
 
 CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
-		_currentIndex(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
+		_matrixRow(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
 }
 
 void CStarControlSub12::init() {
@@ -219,13 +221,13 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 	if (isLocked())
 		return;
 
-	if (_currentIndex == -1) {
+	if (_matrixRow == -1) {
 		CStarControlSub6 subX(X_AXIS, angles._x);
 		CStarControlSub6 subY(Y_AXIS, angles._y);
 		CStarControlSub6 sub(&subX, &subY);
 		subY.copyFrom(&sub);
 		proc22(subY);
-	} else if (_currentIndex == 0) {
+	} else if (_matrixRow == 0) {
 		FVector row1 = _matrix._row1;
 		CStarControlSub6 subX(X_AXIS, angles._x);
 		CStarControlSub6 subY(Y_AXIS, angles._y);
@@ -309,23 +311,110 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		m1.set(tempV4, tempV5, tempV6);
 		_sub13.setMatrix(m1);
 		_sub13.setPosition(tempV1);
-	} else if (_currentIndex == 1) {
-		// TODO
+	} else if (_matrixRow == 1) {
+		FVector tempV2;
+		DMatrix m1, m2, sub;
+		DVector mrow1, mrow2, mrow3;
+		DVector tempV1, diffV, multV, multV2, tempV3, tempV4, tempV5, tempV6, tempV7;
+		DVector tempV8, tempV9, tempV10, tempV11, tempV12;
+		DVector tempV13, tempV14, tempV15, tempV16;
+
+		DMatrix subX(0, _matrix._row1);
+		DMatrix subY(Y_AXIS, angles._x);
+
+		tempV1 = _matrix._row2 - _matrix._row1;
+		diffV = tempV1;
+		diffV.fn5(m1);
+		sub.fn4(sub, m1, subX);
+		m1 = sub;
+		m1.fn1(subX);
+		subX.fn4(m2, subX, subY);
+		subX = m2;
+
+		FMatrix m3 = _sub13.getMatrix();
+		tempV2 = _sub13._position;
+		multV._x = m3._row1._x * 1000000.0;
+		multV._y = m3._row1._y * 1000000.0;
+		multV._z = m3._row1._z * 1000000.0;
+		tempV3._x = tempV2._x;
+		tempV3._y = tempV2._y;
+		tempV3._z = tempV2._z;
+		multV2._z = m3._row2._z * 1000000.0;
+
+		tempV1._x = multV._x + tempV3._x;
+		tempV1._y = multV._y + tempV3._y;
+		tempV1._z = multV._z + tempV3._z;
+		mrow3._z = 0.0;
+		mrow3._y = 0.0;
+		mrow3._x = 0.0;
+		multV2._x = m3._row2._x * 1000000.0;
+		multV2._y = m3._row2._y * 1000000.0;
+		mrow1 = tempV1;
+		multV = multV2 + tempV3;
+		mrow2 = multV;
+
+		tempV7._z = m3._row3._z * 1000000.0 + tempV3._z;
+		tempV7._y = m3._row3._y * 1000000.0 + tempV3._y;
+		tempV7._x = m3._row3._x * 1000000.0 + tempV3._x;
+
+		mrow3 = tempV8;
+		DVector *v = tempV3.fn1(tempV9, subX);
+		tempV3 = *v;
+		v = mrow1.fn1(tempV10, subX);
+		mrow1 = *v;
+		v = mrow2.fn1(tempV11, subX);
+		mrow2 = *v;
+		v = mrow3.fn1(tempV12, subX);
+		mrow3 = *v;
+
+		v = tempV3.fn1(tempV13, m1);
+		tempV3 = *v;
+		v = mrow1.fn1(tempV14, m1);
+		mrow1 = *v;
+		v = mrow2.fn1(tempV15, m1);
+		mrow2 = *v;
+		v = mrow3.fn1(tempV16, m1);
+		mrow3 = *v;
+
+		mrow1 -= tempV3;
+		mrow2 -= tempV3;
+		mrow3 -= tempV3;
+		mrow1.normalize();
+		mrow2.normalize();
+		mrow3.normalize();
+		tempV16 = tempV3;
+
+		m3.set(mrow1, mrow2, mrow3);
+		_sub13.setMatrix(m3);
+		_sub13.setPosition(tempV16);
 	}
 }
 
-bool CStarControlSub12::setArrayVector(const FVector &v) {
-	if (_currentIndex >= 2)
+bool CStarControlSub12::addMatrixRow(const FVector &v) {
+	if (_matrixRow >= 2)
 		return false;
 
-	error("TODO: CStarControlSub12::setArrayVector");
+	CStar20Data data;
+	_handlerP->copyTo(&data);
+	deleteHandler();
+
+	FVector &row = _matrix[++_matrixRow];
+	row = v;
+	setupHandler(&data);
+	return true;
 }
 
-bool CStarControlSub12::proc35() {
-	if (_currentIndex == -1)
+bool CStarControlSub12::removeMatrixRow() {
+	if (_matrixRow == -1)
 		return false;
 
-	error("TODO: CStarControlSub12::proc35");
+	CStar20Data data;
+	_handlerP->copyTo(&data);
+	deleteHandler();
+
+	--_matrixRow;
+	setupHandler(&data);
+	return true;
 }
 
 void CStarControlSub12::proc36(double *v1, double *v2, double *v3, double *v4) {
@@ -343,7 +432,7 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 bool CStarControlSub12::setupHandler(const CStar20Data *src) {
 	CStarControlSub20 *handler = nullptr;
 
-	switch (_currentIndex) {
+	switch (_matrixRow) {
 	case -1:
 		handler = new CStarControlSub21(src);
 		break;
@@ -376,14 +465,45 @@ void CStarControlSub12::deleteHandler() {
 }
 
 void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
-	// TODO
+	if (_matrixRow == 1) {
+		FMatrix m1 = sub13->getMatrix();
+		FMatrix m2 = _sub13.getMatrix();
+		FVector v1 = sub13->_position;
+		FVector v2 = _sub13._position;
+
+		_handlerP->proc8(v2, v1, m2, m1);
+		CStarVector *sv = new CStarVector(this, v);
+		_handlerP->setVector(sv);
+	}
 }
 
 void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
-	// TODO
+	if (_matrixRow == -1) {
+		FVector tempV;
+		tempV._z = _sub13._field10;
+		v3._z = v1._z;
+		tempV._x = _sub13._fieldD0 * v1._y * v1._z / _sub13._fieldC8;
+		v3._y = _sub13._fieldCC * tempV._z * v3._x / _sub13._fieldC8;
+		v3._x = _sub13._fieldCC * v1._x * v1._z / _sub13._fieldC8 - _sub13._valArray[2];
+		tempV._y = _sub13._fieldD0 * tempV._z * v3._y / _sub13._fieldC8;
+		tempV._x = tempV._x - _sub13._valArray[2];
+
+		v3.normalize();
+		tempV.normalize();
+
+		FMatrix matrix = _sub13.getMatrix();
+		const FVector &pos = _sub13._position;
+		_handlerP->proc10(v3, tempV, pos, matrix);
+
+		CStarVector *sv = new CStarVector(this, v2);
+		_handlerP->setVector(sv);
+	}
 }
 
 void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
+	if (_matrixRow != 0)
+		return;
+
 	// TODO
 }
 

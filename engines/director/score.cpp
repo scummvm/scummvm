@@ -1093,6 +1093,7 @@ void Score::update() {
 
 	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame, kFrameScript, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventNone, kFrameScript, _frames[_currentFrame]->_actionId);
 	// TODO Director 6 - another order
 
 	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
@@ -1166,7 +1167,7 @@ void Score::update() {
 }
 
 Sprite *Score::getSpriteById(uint16 id) {
-	if (_currentFrame >= _frames.size() || _currentFrame < 0 || id >= _frames[_currentFrame]->_sprites.size()) {
+	if (_currentFrame >= _frames.size() || id >= _frames[_currentFrame]->_sprites.size()) {
 		warning("Score::getSpriteById(%d): out of bounds. frame: %d", id, _currentFrame);
 		return nullptr;
 	}

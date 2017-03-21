@@ -30,6 +30,7 @@ namespace Titanic {
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
 
 class CStarControlSub6;
+class DVector;
 
 /**
  * Floating point vector class.
@@ -41,6 +42,7 @@ public:
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
 	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+	FVector(const DVector &src);
 
 	/**
 	 * Clears the vector
