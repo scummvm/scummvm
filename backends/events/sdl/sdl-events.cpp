@@ -545,11 +545,6 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
 		Sint32 yDir = ev.wheel.y;
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-		if (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
-			yDir *= -1;
-		}
-#endif
 		// HACK: It seems we want the mouse coordinates supplied
 		// with a mouse wheel event. However, SDL2 does not supply
 		// these, thus we use whatever we got last time. It seems
