@@ -32,12 +32,12 @@ FMatrix *CStarControlSub12::_matrix1;
 FMatrix *CStarControlSub12::_matrix2;
 
 CStarControlSub12::CStarControlSub12(const CStar20Data *data) :
-		_currentIndex(-1), _handlerP(nullptr), _field108(0) {
+		_matrixRow(-1), _handlerP(nullptr), _field108(0) {
 	setupHandler(data);
 }
 
 CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
-		_currentIndex(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
+		_matrixRow(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
 }
 
 void CStarControlSub12::init() {
@@ -221,13 +221,13 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 	if (isLocked())
 		return;
 
-	if (_currentIndex == -1) {
+	if (_matrixRow == -1) {
 		CStarControlSub6 subX(X_AXIS, angles._x);
 		CStarControlSub6 subY(Y_AXIS, angles._y);
 		CStarControlSub6 sub(&subX, &subY);
 		subY.copyFrom(&sub);
 		proc22(subY);
-	} else if (_currentIndex == 0) {
+	} else if (_matrixRow == 0) {
 		FVector row1 = _matrix._row1;
 		CStarControlSub6 subX(X_AXIS, angles._x);
 		CStarControlSub6 subY(Y_AXIS, angles._y);
@@ -311,7 +311,7 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		m1.set(tempV4, tempV5, tempV6);
 		_sub13.setMatrix(m1);
 		_sub13.setPosition(tempV1);
-	} else if (_currentIndex == 1) {
+	} else if (_matrixRow == 1) {
 		FVector tempV2;
 		DMatrix m1, m2, sub;
 		DVector mrow1, mrow2, mrow3;
@@ -390,18 +390,29 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 	}
 }
 
-bool CStarControlSub12::setArrayVector(const FVector &v) {
-	if (_currentIndex >= 2)
+bool CStarControlSub12::addMatrixRow(const FVector &v) {
+	if (_matrixRow >= 2)
 		return false;
 
-	error("TODO: CStarControlSub12::setArrayVector");
+	CStar20Data data;
+	_handlerP->copyTo(&data);
+	deleteHandler();
+
+	FVector &row = _matrix[++_matrixRow];
+	row = v;
+	setupHandler(&data);
 }
 
-bool CStarControlSub12::proc35() {
-	if (_currentIndex == -1)
+bool CStarControlSub12::removeMatrixRow() {
+	if (_matrixRow == -1)
 		return false;
 
-	error("TODO: CStarControlSub12::proc35");
+	CStar20Data data;
+	_handlerP->copyTo(&data);
+	deleteHandler();
+
+	--_matrixRow;
+	setupHandler(&data);
 }
 
 void CStarControlSub12::proc36(double *v1, double *v2, double *v3, double *v4) {
@@ -419,7 +430,7 @@ void CStarControlSub12::save(SimpleFile *file, int indent) {
 bool CStarControlSub12::setupHandler(const CStar20Data *src) {
 	CStarControlSub20 *handler = nullptr;
 
-	switch (_currentIndex) {
+	switch (_matrixRow) {
 	case -1:
 		handler = new CStarControlSub21(src);
 		break;
@@ -456,7 +467,7 @@ void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
 }
 
 void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
-	if (_currentIndex == -1) {
+	if (_matrixRow == -1) {
 		FVector tempV;
 		tempV._z = _sub13._field10;
 		v3._z = v1._z;

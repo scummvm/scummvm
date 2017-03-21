@@ -38,7 +38,7 @@ private:
 	static FMatrix *_matrix1;
 	static FMatrix *_matrix2;
 private:
-	int _currentIndex;
+	int _matrixRow;
 	FMatrix _matrix;
 	CStarControlSub20 *_handlerP;
 	CStarControlSub13 _sub13;
@@ -102,9 +102,9 @@ public:
 	 */
 	virtual void setViewportPosition(const FPoint &angles);
 
-	virtual int getCurrentIndex() const { return _currentIndex; }
-	virtual bool setArrayVector(const FVector &v);
-	virtual bool proc35();
+	virtual int getMatrixRow() const { return _matrixRow; }
+	virtual bool addMatrixRow(const FVector &v);
+	virtual bool removeMatrixRow();
 	virtual void proc36(double *v1, double *v2, double *v3, double *v4);
 
 	/**

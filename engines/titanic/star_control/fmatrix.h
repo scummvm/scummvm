@@ -97,6 +97,15 @@ public:
 	bool operator!=(const FMatrix &src) {
 		return !operator==(src);
 	}
+
+	/**
+	 * Allows accessing rows as an array
+	 */
+	FVector &operator[](int idx) {
+		assert(idx >= 0 && idx <= 2);
+		FVector *rows[3] = { &_row1, &_row2, &_row3 };
+		return *rows[idx];
+	}
 };
 
 } // End of namespace Titanic
