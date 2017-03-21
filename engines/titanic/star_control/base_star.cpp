@@ -216,7 +216,7 @@ int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 
 /*------------------------------------------------------------------------*/
 
-void CStarVector::proc1() {
+void CStarVector::apply() {
 	_owner->addMatrixRow(_vector);
 }
 

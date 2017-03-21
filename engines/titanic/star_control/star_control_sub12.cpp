@@ -501,6 +501,9 @@ void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
 }
 
 void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
+	if (_matrixRow != 0)
+		return;
+
 	// TODO
 }
 

@@ -153,7 +153,10 @@ private:
 public:
 	CStarVector(CStarControlSub12 *owner, const FVector &v) : _owner(owner), _vector(v) {}
 
-	virtual void proc1();
+	/**
+	 * Applies the saved vector
+	 */
+	void apply();
 };
 
 } // End of namespace Titanic
