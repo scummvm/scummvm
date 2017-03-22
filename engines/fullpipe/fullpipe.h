@@ -165,15 +165,15 @@ public:
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
-	char _sceneTracks[10][260];
+	Common::String _sceneTracks[10];
 	int _numSceneTracks;
 	bool _sceneTrackHasSequence;
 	int _musicMinDelay;
 	int _musicMaxDelay;
 	int _musicLocal;
-	char _trackName[2600];
+	Common::String _trackName;
 	int _trackStartDelay;
-	char _sceneTracksCurrentTrack[260];
+	Common::String _sceneTracksCurrentTrack;
 	bool _sceneTrackIsPlaying;
 
 	void stopAllSounds();
@@ -183,8 +183,8 @@ public:
 	int getSceneTrack();
 	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(const char *trackName);
-	void playOggSound(const char *trackName, Audio::SoundHandle *stream);
+	void startSoundStream1(Common::String trackName);
+	void playOggSound(Common::String trackName, Audio::SoundHandle *stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);

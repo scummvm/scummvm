@@ -131,10 +131,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_stream2playing = false;
 
-	memset(_sceneTracks, 0, sizeof(_sceneTracks));
-	memset(_trackName, 0, sizeof(_trackName));
-	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
-
 	_numSceneTracks = 0;
 	_sceneTrackHasSequence = false;
 	_sceneTrackIsPlaying = false;
