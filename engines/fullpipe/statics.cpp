@@ -1428,7 +1428,8 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 
 Statics::Statics() {
 	_staticsId = 0;
-	_picture = 0;
+	_picture = nullptr;
+	_data = nullptr;
 }
 
 Statics::~Statics() {
@@ -1474,7 +1475,6 @@ void Statics::init() {
 		freePixelData();
 		// TODO: properly dispose old _bitmap
 		_bitmap = reversed;
-		// _data = ... // useless?
 	}
 }
 
@@ -2199,6 +2199,7 @@ DynamicPhase::DynamicPhase() {
 	_field_7E = 0;
 	_dynFlags = 0;
 	_someY = 0;
+	_data = nullptr;
 }
 
 DynamicPhase::~DynamicPhase() {
@@ -2217,7 +2218,6 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 			src->init();
 
 		_bitmap = src->_bitmap->reverseImage();
-		_data = _bitmap->_pixels;
 		_dataSize = src->_dataSize;
 
 		if (g_fp->_currArchive) {
