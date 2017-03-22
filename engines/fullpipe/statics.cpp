@@ -223,7 +223,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	for (int i = 0; i < count; i++) {
 		int movNum = file.readUint16LE();
 
-		char *movname = genFileName(_id, movNum, "mov");
+		Common::String movname = genFileName(_id, movNum, "mov");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(movname);
 
@@ -236,7 +236,6 @@ bool StaticANIObject::load(MfcArchive &file) {
 		_movements.push_back(mov);
 
 		delete f;
-		free(movname);
 	}
 
 	Common::Point pt;

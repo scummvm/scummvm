@@ -33,7 +33,7 @@
 
 namespace Fullpipe {
 
-bool CObject::loadFile(const char *fname) {
+bool CObject::loadFile(Common::String fname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -486,16 +486,16 @@ void MfcArchive::writeObject(CObject *obj) {
 	}
 }
 
-char *genFileName(int superId, int sceneId, const char *ext) {
-	char *s = (char *)calloc(256, 1);
+Common::String genFileName(int superId, int sceneId, const char *ext) {
+	Common::String s;
 
 	if (superId) {
-		snprintf(s, 255, "%04d%04d.%s", superId, sceneId, ext);
+		s = Common::String::format("%04d%04d.%s", superId, sceneId, ext);
 	} else {
-		snprintf(s, 255, "%04d.%s", sceneId, ext);
+		s = Common::String::format("%04d.%s", sceneId, ext);
 	}
 
-	debugC(7, kDebugLoading, "genFileName: %s", s);
+	debugC(7, kDebugLoading, "genFileName: %s", s.c_str());
 
 	return s;
 }

@@ -50,13 +50,13 @@ SoundList::~SoundList() {
 	free(_soundItems);
 }
 
-bool SoundList::load(MfcArchive &file, char *fname) {
+bool SoundList::load(MfcArchive &file, Common::String fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
 	_soundItemsCount = file.readUint32LE();
 	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
 
-	if (fname) {
+	if (!fname.empty()) {
 	  _libHandle = (NGIArchive *)makeNGIArchive(fname);
 	} else {
 		_libHandle = 0;
@@ -73,7 +73,7 @@ bool SoundList::load(MfcArchive &file, char *fname) {
 
 }
 
-bool SoundList::loadFile(const char *fname, char *libname) {
+bool SoundList::loadFile(Common::String fname, Common::String libname) {
 	Common::File file;
 
 	if (!file.open(fname))

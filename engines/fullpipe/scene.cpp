@@ -96,11 +96,11 @@ SceneTag::~SceneTag() {
 }
 
 void SceneTag::loadScene() {
-	char *archname = genFileName(0, _sceneId, "nl");
+	Common::String archname = genFileName(0, _sceneId, "nl");
 
 	Common::Archive *arch = makeNGIArchive(archname);
 
-	char *fname = genFileName(0, _sceneId, "sc");
+	Common::String fname = genFileName(0, _sceneId, "sc");
 
 	Common::SeekableReadStream *file = arch->createReadStreamForMember(fname);
 
@@ -116,9 +116,6 @@ void SceneTag::loadScene() {
 	delete file;
 
 	g_fp->_currArchive = 0;
-
-	free(fname);
-	free(archname);
 }
 
 Scene::Scene() {
@@ -166,7 +163,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
-		char *aniname = genFileName(0, aniNum, "ani");
+		Common::String aniname = genFileName(0, aniNum, "ani");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(aniname);
 
@@ -180,7 +177,6 @@ bool Scene::load(MfcArchive &file) {
 		_staticANIObjectList1.push_back(ani);
 
 		delete f;
-		free(aniname);
 	}
 
 	count = file.readUint16LE();
@@ -188,7 +184,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int qNum = file.readUint16LE();
-		char *qname = genFileName(0, qNum, "qu");
+		Common::String qname = genFileName(0, qNum, "qu");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
@@ -202,7 +198,6 @@ bool Scene::load(MfcArchive &file) {
 		_messageQueueList.push_back(mq);
 
 		delete f;
-		free(qname);
 	}
 
 	count = file.readUint16LE();
@@ -227,32 +222,26 @@ bool Scene::load(MfcArchive &file) {
 		_palette = col;
 	}
 
-	char *shdname = genFileName(0, _sceneId, "shd");
+	Common::String shdname = genFileName(0, _sceneId, "shd");
 
 	Shadows *shd = new Shadows();
 
 	if (shd->loadFile(shdname))
 		_shadows = shd;
 
-	free(shdname);
-
-	char *slsname = genFileName(0, _sceneId, "sls");
+	Common::String slsname = genFileName(0, _sceneId, "sls");
 
 	if (g_fp->_soundEnabled) {
 		_soundList = new SoundList();
 
 		if (g_fp->_flgSoundList) {
-			char *nlname = genFileName(17, _sceneId, "nl");
+			Common::String nlname = genFileName(17, _sceneId, "nl");
 
 			_soundList->loadFile(slsname, nlname);
-
-			free(nlname);
 		} else {
 			_soundList->loadFile(slsname, 0);
 		}
 	}
-
-	free(slsname);
 
 	initStaticANIObjects();
 

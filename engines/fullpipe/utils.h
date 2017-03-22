@@ -117,7 +117,7 @@ public:
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
 
-	bool loadFile(const char *fname);
+	bool loadFile(Common::String fname);
 };
 
 class ObList : public Common::List<CObject *>, public CObject {
@@ -180,7 +180,7 @@ class DWordArray : public Common::Array<int32>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-char *genFileName(int superId, int sceneId, const char *ext);
+Common::String genFileName(int superId, int sceneId, const char *ext);
 byte *transCyrillic(Common::String str);
 
 } // End of namespace Fullpipe
