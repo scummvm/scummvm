@@ -475,7 +475,7 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			free(_bitmap);
+			delete _bitmap;
 			_bitmap = 0;
 		}
 	}
