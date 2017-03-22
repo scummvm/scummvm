@@ -54,7 +54,7 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 
 				MovGraphLink *lnk = (MovGraphLink *)*l;
 
-				if (!strcmp(lnk->_name, linkName)) {
+				if (lnk->_name == linkName) {
 					if (enable)
 						lnk->_flags |= 0x20000000;
 					else
@@ -82,7 +82,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 					MovGraphLink *lnk = (MovGraphLink *)*l;
 
-					if (!strcmp(lnk->_name, name))
+					if (lnk->_name == name)
 						return lnk;
 				}
 			}
@@ -97,7 +97,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 			MovGraphLink *lnk = (MovGraphLink *)*l;
 
-			if (!strcmp(lnk->_name, name))
+			if (lnk->_name == name)
 				return lnk;
 		}
 	}
@@ -391,7 +391,7 @@ int MctlLadder::findObjectPos(StaticANIObject *obj) {
 bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
 	debugC(4, kDebugPathfinding, "MctlLadder::initMovement(*%d, ...)", ani->_id);
 
-	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName());
+	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName().c_str());
 
 	if (!v)
 		return false;
@@ -1744,7 +1744,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni *item) {
 	item->_obj = obj;
 	item->_objectId = obj->_id;
 
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName.c_str());
 	if (!var)
 		return false;
 
@@ -2900,7 +2900,6 @@ MovGraphLink::MovGraphLink() {
 	_field_3C = 0;
 	_field_38 = 0;
 	_movGraphReact = 0;
-	_name = 0;
 
 	_objtype = kObjTypeMovGraphLink;
 }

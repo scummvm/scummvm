@@ -133,7 +133,7 @@ class GameObject : public CObject {
 	int _field_8;
 	int16 _flags;
 	int16 _id;
-	char *_objectName;
+	Common::String _objectName;
 	int _ox;
 	int _oy;
 	int _priority;
@@ -150,7 +150,7 @@ class GameObject : public CObject {
 	void renumPictures(Common::Array<PictureObject *> *lst);
 	void setFlags(int16 flags) { _flags = flags; }
 	void clearFlags() { _flags = 0; }
-	const char *getName() { return _objectName; }
+	Common::String getName() { return _objectName; }
 
 	bool getPicAniInfo(PicAniInfo *info);
 	bool setPicAniInfo(PicAniInfo *info);
@@ -186,7 +186,7 @@ class Background : public CObject {
   public:
 	Common::Array<PictureObject *> _picObjList;
 
-	char *_bgname;
+	Common::String _bgname;
 	int _x;
 	int _y;
 	int16 _messageQueueId;

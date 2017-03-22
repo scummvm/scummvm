@@ -273,7 +273,7 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 
 		while (sub) {
 			if (_musicAllowed & sub->_value.intValue) {
-				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName, 260);
+				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName.c_str(), 260);
 
 				_numSceneTracks++;
 			}
@@ -445,7 +445,7 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 
 		while (sub) {
 			if (_musicAllowed & sub->_value.intValue) {
-				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName, 260);
+				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName.c_str(), 260);
 
 				_numSceneTracks++;
 			}

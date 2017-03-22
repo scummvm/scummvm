@@ -50,7 +50,7 @@ class Interaction : public CObject {
 	int _sceneId;
 	int _field_28;
 	uint _flags;
-	char *_actionName;
+	Common::String _actionName;
 
  public:
 	Interaction();

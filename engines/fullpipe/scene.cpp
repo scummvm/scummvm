@@ -72,7 +72,6 @@ bool SceneTagList::load(MfcArchive &file) {
 SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
-	_tag = 0;
 	_sceneId = 0;
 }
 
@@ -86,14 +85,12 @@ bool SceneTag::load(MfcArchive &file) {
 
 	_tag = file.readPascalString();
 
-	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag);
+	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag.c_str());
 
 	return true;
 }
 
 SceneTag::~SceneTag() {
-	free(_tag);
-
 	delete _scene;
 	delete _field_4;
 }
@@ -130,7 +127,6 @@ Scene::Scene() {
 	_shadows = 0;
 	_soundList = 0;
 	_libHandle = 0;
-	_sceneName = 0;
 }
 
 Scene::~Scene() {
@@ -153,8 +149,6 @@ Scene::~Scene() {
 	delete _libHandle;
 
 	// delete _field_BC;
-
-	free(_sceneName);
 }
 
 bool Scene::load(MfcArchive &file) {
@@ -221,10 +215,10 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle = g_fp->_currArchive;
 
-	if (_picObjList.size() > 0 && _bgname && strlen(_bgname) > 1) {
+	if (_picObjList.size() > 0 && _bgname.size() > 1) {
 		char fname[260];
 
-		strcpy(fname, _bgname);
+		strcpy(fname, _bgname.c_str());
 		strcpy(strrchr(fname, '.') + 1, "col");
 
 		MemoryObject *col = new MemoryObject();
@@ -312,7 +306,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 
 StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (!strcmp(_staticANIObjectList1[i]->_objectName, name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if (_staticANIObjectList1[i]->_objectName == name && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -373,7 +367,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 
 PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
+		if (((PictureObject *)_picObjList[i])->_objectName == objName && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -413,14 +407,14 @@ void Scene::preloadMovements(GameVar *var) {
 		return;
 
 	for (GameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
-		StaticANIObject *ani = getStaticANIObject1ByName(i->_varName, -1);
+		StaticANIObject *ani = getStaticANIObject1ByName((char *)i->_varName.c_str(), -1);
 
 		if (ani) {
 			GameVar *subVars = i->_subVars;
 
 			if (subVars) {
 				for (;subVars; subVars = subVars->_nextVarObj) {
-					Movement *mov = ani->getMovementByName(subVars->_varName);
+					Movement *mov = ani->getMovementByName((char *)subVars->_varName.c_str());
 
 					if (mov)
 						mov->loadPixelData();
@@ -442,9 +436,9 @@ void Scene::initObjectCursors(const char *varname) {
 	int minId = 0xffff;
 
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
-		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
+		GameObject *obj = getPictureObjectByName((char *)sub->_varName.c_str(), -1);
 
-		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
+		if (obj || (obj = getStaticANIObject1ByName((char *)sub->_varName.c_str(), -1)) != 0) {
 			if (obj->_id < minId)
 				minId = obj->_id;
 			if (obj->_id > maxId)
@@ -458,10 +452,10 @@ void Scene::initObjectCursors(const char *varname) {
 	g_fp->_objectIdCursors.resize(maxId - minId + 1);
 
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
-		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
+		GameObject *obj = getPictureObjectByName((char *)sub->_varName.c_str(), -1);
 
 		if (!obj)
-			obj = getStaticANIObject1ByName(sub->_varName, -1);
+			obj = getStaticANIObject1ByName((char *)sub->_varName.c_str(), -1);
 
 		PictureObject *pic = getGameLoaderInventory()->getScene()->getPictureObjectByName(sub->_value.stringValue, -1);
 

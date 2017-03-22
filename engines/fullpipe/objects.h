@@ -33,7 +33,7 @@ class SceneTagList;
 class GameProject : public CObject {
  public:
 	int _field_4;
-	char *_headerFilename;
+	Common::String _headerFilename;
 	SceneTagList *_sceneTagList;
 	int _field_10;
 
@@ -80,7 +80,7 @@ class GameVar : public CObject {
 	GameVar *_parentVarObj;
 	GameVar *_subVars;
 	GameVar *_field_14;
-	char *_varName;
+	Common::String _varName;
 	VarValue _value;
 	int _varType;
 

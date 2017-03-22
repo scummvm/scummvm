@@ -38,7 +38,7 @@ class Scene : public Background {
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
-	char *_sceneName;
+	Common::String _sceneName;
 	int _field_BC;
 	NGIArchive *_libHandle;
 
@@ -94,7 +94,7 @@ class Scene : public Background {
 class SceneTag : public CObject {
  public:
 	CObject *_field_4;
-	char *_tag;
+	Common::String _tag;
 	Scene *_scene;
 	int16 _sceneId;
 

@@ -67,8 +67,8 @@ public:
 	MfcArchive(Common::SeekableReadStream *file);
 	MfcArchive(Common::WriteStream *file);
 
-	char *readPascalString(bool twoByte = false);
-	void writePascalString(const char *str, bool twoByte = false);
+	Common::String readPascalString(bool twoByte = false);
+	void writePascalString(Common::String str, bool twoByte = false);
 	int readCount();
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);

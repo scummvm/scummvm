@@ -428,7 +428,6 @@ Interaction::Interaction() {
 	_staticsId2 = 0;
 	_field_28 = 0;
 	_sceneId = -1;
-	_actionName = 0;
 }
 
 Interaction::~Interaction() {
@@ -438,8 +437,6 @@ Interaction::~Interaction() {
 	}
 
 	delete _messageQueue;
-
-	free(_actionName);
 }
 
 bool Interaction::load(MfcArchive &file) {
@@ -496,20 +493,20 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 
 	if (_objectState1) {
 		if (_flags & 0x10) {
-			if ((g_fp->getObjectState(obj1->getName()) & _objectState1) == 0)
+			if ((g_fp->getObjectState(obj1->getName().c_str()) & _objectState1) == 0)
 				return false;
 		} else {
-			if (g_fp->getObjectState(obj1->getName()) != _objectState1)
+			if (g_fp->getObjectState(obj1->getName().c_str()) != _objectState1)
 				return false;
 		}
 	}
 
 	if (_objectState2) {
 		if (_flags & 0x10) {
-			if ((g_fp->getObjectState(obj2->getName()) & _objectState2) == 0)
+			if ((g_fp->getObjectState(obj2->getName().c_str()) & _objectState2) == 0)
 				return false;
 		} else {
-			if (g_fp->getObjectState(obj2->getName()) != _objectState2)
+			if (g_fp->getObjectState(obj2->getName().c_str()) != _objectState2)
 				return false;
 		}
 	}

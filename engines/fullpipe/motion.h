@@ -228,7 +228,7 @@ class MovGraphLink : public CObject {
 	double _length;
 	double _angle;
 	MovGraphReact *_movGraphReact;
-	char *_name;
+	Common::String _name;
 
   public:
 	MovGraphLink();

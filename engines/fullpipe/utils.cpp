@@ -92,9 +92,10 @@ bool DWordArray::load(MfcArchive &file) {
 	return true;
 }
 
-char *MfcArchive::readPascalString(bool twoByte) {
+Common::String MfcArchive::readPascalString(bool twoByte) {
 	char *tmp;
 	int len;
+	Common::String result;
 
 	if (twoByte)
 		len = readUint16LE();
@@ -103,21 +104,23 @@ char *MfcArchive::readPascalString(bool twoByte) {
 
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
+	result = tmp;
+	free(tmp);
 
-	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic(tmp));
+	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic(result));
 
-	return tmp;
+	return result;
 }
 
-void MfcArchive::writePascalString(const char *str, bool twoByte) {
-	int len = strlen(str);
+void MfcArchive::writePascalString(Common::String str, bool twoByte) {
+	int len = str.size();
 
 	if (twoByte)
 		writeUint16LE(len);
 	else
 		writeByte(len);
 
-	write(str, len);
+	write(str.c_str(), len);
 }
 
 MemoryObject::MemoryObject() {
@@ -388,7 +391,7 @@ CObject *MfcArchive::readClass() {
 }
 
 CObject *MfcArchive::parseClass(bool *isCopyReturned) {
-	char *name;
+	Common::String name;
 	int objectId = 0;
 	CObject *res = 0;
 
@@ -404,13 +407,13 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		debugC(7, kDebugLoading, "parseClass::schema = %d", schema);
 
 		name = readPascalString(true);
-		debugC(7, kDebugLoading, "parseClass::class <%s>", name);
+		debugC(7, kDebugLoading, "parseClass::class <%s>", name.c_str());
 
-		if (!_classMap.contains(name)) {
-			error("Unknown class in MfcArchive: <%s>", name);
+		if (!_classMap.contains(name.c_str())) {
+			error("Unknown class in MfcArchive: <%s>", name.c_str());
 		}
 
-		objectId = _classMap[name];
+		objectId = _classMap[name.c_str()];
 
 		debugC(7, kDebugLoading, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
 

@@ -41,7 +41,6 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
-	_bgname = 0;
 	_palette = 0;
 }
 
@@ -260,7 +259,6 @@ GameObject::GameObject() {
 	_priority = 0;
 	_field_20 = 0;
 	_field_8 = 0;
-	_objectName = 0;
 }
 
 GameObject::GameObject(GameObject *src) {
@@ -268,8 +266,7 @@ GameObject::GameObject(GameObject *src) {
 	_flags = 0;
 	_id = src->_id;
 
-	_objectName = (char *)calloc(strlen(src->_objectName) + 1, 1);
-	strncpy(_objectName, src->_objectName, strlen(src->_objectName));
+	_objectName = src->_objectName;
 
 	_ox = src->_ox;
 	_oy = src->_oy;
@@ -279,7 +276,6 @@ GameObject::GameObject(GameObject *src) {
 }
 
 GameObject::~GameObject() {
-	free(_objectName);
 }
 
 bool GameObject::load(MfcArchive &file) {
