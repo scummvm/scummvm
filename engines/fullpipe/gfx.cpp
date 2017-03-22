@@ -591,8 +591,9 @@ void Picture::getDibInfo() {
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
-
 	_bitmap->load(s);
+	delete s;
+
 	_bitmap->_pixels = _data;
 
 	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
