@@ -1472,8 +1472,9 @@ void Statics::init() {
 
 	if (_staticsId & 0x4000) {
 		Bitmap *reversed = _bitmap->reverseImage();
-		freePixelData();
 		// TODO: properly dispose old _bitmap
+		// Enabling the call below causes corruption in flipped bitmaps
+		//freePixelData();
 		_bitmap = reversed;
 	}
 }
