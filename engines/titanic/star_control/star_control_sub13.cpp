@@ -68,6 +68,7 @@ void CStarControlSub13::copyFrom(const CStarControlSub13 *src) {
 		_position = src->_position;
 		_fieldC = src->_field18;
 		_field10 = src->_field1C;
+		error("TODO: Remainder of CStarControlSub13::copyFrom");
 	}
 }
 

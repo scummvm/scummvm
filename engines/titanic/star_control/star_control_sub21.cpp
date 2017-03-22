@@ -60,11 +60,14 @@ void CStarControlSub21::proc11(CErrorCode &errorCode, FVector &v, const FMatrix 
 			incLockCount();
 		if (val == 2) {
 			proc7();
-			error("TODO: _dataP");
+			if (_starVector)
+				_starVector->apply();
 		}
 	} else if (_size != 0.0) {
-		// TODO
-		error("TODO");
+		v._x += m._row3._x * _size;
+		v._y += m._row3._y * _size;
+		v._z += m._row3._z * _size;
+		errorCode.set();
 	}
 }
 
