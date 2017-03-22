@@ -128,7 +128,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			if (cinter->_messageQueue)
 				cinter->_messageQueue->calcDuration(subj);
 
-			debugC(5, kDebugInteractions, "Interaction: %s", transCyrillic((byte *)cinter->_actionName));
+			debugC(5, kDebugInteractions, "Interaction: %s", transCyrillic(cinter->_actionName));
 
 			PicAniInfo aniInfo;
 

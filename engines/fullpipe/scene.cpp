@@ -165,7 +165,7 @@ bool Scene::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
 	_sceneName = file.readPascalString();
-	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
+	debug(0, "scene: <%s> %d", transCyrillic(_sceneName), _sceneId);
 
 	int count = file.readUint16LE();
 	debugC(7, kDebugLoading, "scene.ani: %d", count);

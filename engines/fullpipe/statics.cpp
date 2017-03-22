@@ -605,7 +605,7 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
@@ -665,7 +665,7 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
 		if (_movement) {
@@ -790,7 +790,7 @@ Common::Point *StaticANIObject::getSomeXY(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
+	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic(_objectName), _id, _ox, _oy, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -1300,7 +1300,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	if (_flags & 0x80)
 		return false;
 
-	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
@@ -1459,7 +1459,7 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName.c_str()), _staticsId, _staticsId);
+	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
 
 	_picture = new Picture();
 	_picture->load(file);

@@ -181,7 +181,7 @@ class DWordArray : public Common::Array<int32>, public CObject {
 };
 
 char *genFileName(int superId, int sceneId, const char *ext);
-byte *transCyrillic(byte *s);
+byte *transCyrillic(Common::String str);
 
 } // End of namespace Fullpipe
 

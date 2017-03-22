@@ -104,7 +104,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
-	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
+	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic(tmp));
 
 	return tmp;
 }
@@ -498,7 +498,8 @@ char *genFileName(int superId, int sceneId, const char *ext) {
 }
 
 // Translates cp-1251..utf-8
-byte *transCyrillic(byte *s) {
+byte *transCyrillic(Common::String str) {
+	byte *s = (byte *)str.c_str();
 	static byte tmp[1024];
 
 #ifndef WIN32

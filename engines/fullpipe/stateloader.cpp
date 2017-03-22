@@ -467,7 +467,7 @@ bool GameVar::load(MfcArchive &file) {
 	for (int i = 0; i < file.getLevel(); i++)
 		debugCN(6, kDebugLoading, " ");
 
-	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic((byte *)_varName));
+	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic(_varName));
 
 	switch (_varType) {
 	case 0:
