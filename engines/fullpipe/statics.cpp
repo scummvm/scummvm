@@ -1538,6 +1538,10 @@ Movement::~Movement() {
 		if (_updateFlag1)
 			_dynamicPhases.remove_at(0);
 
+		// FIXME: At this point, the last entry in _dynamicPhases is invalid
+		for (uint i = 0; i < _dynamicPhases.size() - 1; i++)
+			_dynamicPhases[i]->freePixelData();
+
 		_dynamicPhases.clear();
 	}
 
