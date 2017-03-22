@@ -121,7 +121,6 @@ void MfcArchive::writePascalString(const char *str, bool twoByte) {
 }
 
 MemoryObject::MemoryObject() {
-	_memfilename = 0;
 	_mfield_8 = 0;
 	_mfield_C = 0;
 	_mfield_10 = -1;
@@ -134,19 +133,14 @@ MemoryObject::MemoryObject() {
 
 MemoryObject::~MemoryObject() {
 	freeData();
-	if (_memfilename)
-		free(_memfilename);
 }
 
 bool MemoryObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MemoryObject::load()");
 	_memfilename = file.readPascalString();
 
-	if (char *p = strchr(_memfilename, '\\')) {
-		for (char *d = _memfilename; *p;) {
-			p++;
-			*d++ = *p;
-		}
+	while (_memfilename.contains('\\')) {
+		_memfilename.deleteChar(0);
 	}
 
 	if (g_fp->_currArchive) {
@@ -157,10 +151,10 @@ bool MemoryObject::load(MfcArchive &file) {
 	return true;
 }
 
-void MemoryObject::loadFile(char *filename) {
-	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename);
+void MemoryObject::loadFile(Common::String filename) {
+	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename.c_str());
 
-	if (!*filename)
+	if (filename.empty())
 		return;
 
 	if (!_data) {
@@ -176,7 +170,7 @@ void MemoryObject::loadFile(char *filename) {
 
 			_dataSize = s->size();
 
-			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename, _dataSize);
+			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.c_str(), _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
 
@@ -205,7 +199,7 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
-	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename);
+	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename.c_str());
 
 	if (_data)
 		free(_data);
@@ -238,9 +232,9 @@ bool MemoryObject2::load(MfcArchive &file) {
 
 	_mflags |= 1;
 
-	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename);
+	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename.c_str());
 
-	if (_memfilename && *_memfilename) {
+	if (!_memfilename.empty()) {
 		MemoryObject::loadFile(_memfilename);
 	}
 

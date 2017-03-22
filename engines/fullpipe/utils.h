@@ -130,7 +130,7 @@ class MemoryObject : CObject {
 	friend class Scene;
 
  protected:
-	char *_memfilename;
+	Common::String _memfilename;
 	int _mfield_8;
 	int _mfield_C;
 	int _mfield_10;
@@ -145,7 +145,7 @@ class MemoryObject : CObject {
 	virtual ~MemoryObject();
 
 	virtual bool load(MfcArchive &file);
-	void loadFile(char *filename);
+	void loadFile(Common::String filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();

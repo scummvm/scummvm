@@ -1446,8 +1446,7 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 		_staticsName = src->_staticsName;
 	}
 
-	_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
-	strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+	_memfilename = src->_memfilename;
 
 	_picture = new Picture();
 }
@@ -2236,8 +2235,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_8 = src->_mfield_8;
 		_mflags = src->_mflags;
 
-		_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
-		strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+		_memfilename = src->_memfilename;
 		_dataSize = src->_dataSize;
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
