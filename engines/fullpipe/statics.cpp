@@ -420,7 +420,7 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 
 Statics *StaticANIObject::getStaticsByName(char *name) {
 	for (uint i = 0; i < _staticsList.size(); i++)
-		if (!strcmp(_staticsList[i]->_staticsName, name))
+		if (_staticsList[i]->_staticsName == name)
 			return _staticsList[i];
 
 	return 0;
@@ -1430,12 +1430,10 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 Statics::Statics() {
 	_staticsId = 0;
 	_picture = 0;
-	_staticsName = 0;
 }
 
 Statics::~Statics() {
 	delete _picture;
-	free(_staticsName);
 }
 
 Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
@@ -1443,13 +1441,9 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 
 	if (reverse) {
 		_staticsId ^= 0x4000;
-		int newlen = strlen(src->_staticsName) + strlen(sO_MirroredTo) + 1;
-		_staticsName = (char *)calloc(newlen, 1);
-
-		snprintf(_staticsName, newlen, "%s%s", sO_MirroredTo, src->_staticsName);
+		_staticsName = sO_MirroredTo + src->_staticsName;
 	} else {
-		_staticsName = (char *)calloc(strlen(src->_staticsName) + 1, 1);
-		strncpy(_staticsName, src->_staticsName, strlen(src->_staticsName) + 1);
+		_staticsName = src->_staticsName;
 	}
 
 	_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
@@ -1466,7 +1460,7 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName), _staticsId, _staticsId);
+	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName.c_str()), _staticsId, _staticsId);
 
 	_picture = new Picture();
 	_picture->load(file);

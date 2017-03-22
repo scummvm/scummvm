@@ -89,7 +89,7 @@ class DynamicPhase : public StaticPhase {
 class Statics : public DynamicPhase {
  public:
  	int16 _staticsId;
-	char *_staticsName;
+	Common::String _staticsName;
 	Picture *_picture;
 
   public:
