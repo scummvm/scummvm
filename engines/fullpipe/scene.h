@@ -59,16 +59,16 @@ class Scene : public Background {
 
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
-	StaticANIObject *getStaticANIObject1ByName(char *name, int a3);
+	StaticANIObject *getStaticANIObject1ByName(Common::String &name, int a3);
 	MessageQueue *getMessageQueueById(int messageId);
-	MessageQueue *getMessageQueueByName(char *name);
+	MessageQueue *getMessageQueueByName(Common::String &name);
 
 	void deleteStaticANIObject(StaticANIObject *obj);
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
 
 	void setPictureObjectsFlag4();
 	PictureObject *getPictureObjectById(int objId, int flags);
-	PictureObject *getPictureObjectByName(const char *name, int keyCode);
+	PictureObject *getPictureObjectByName(Common::String name, int keyCode);
 	void deletePictureObject(PictureObject *obj);
 	void preloadMovements(GameVar *var);
 

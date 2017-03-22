@@ -418,7 +418,7 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 	return 0;
 }
 
-Statics *StaticANIObject::getStaticsByName(char *name) {
+Statics *StaticANIObject::getStaticsByName(Common::String &name) {
 	for (uint i = 0; i < _staticsList.size(); i++)
 		if (_staticsList[i]->_staticsName == name)
 			return _staticsList[i];
@@ -450,7 +450,7 @@ int StaticANIObject::getMovementIdById(int itemId) {
 	return 0;
 }
 
-Movement *StaticANIObject::getMovementByName(char *name) {
+Movement *StaticANIObject::getMovementByName(Common::String &name) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (_movements[i]->_objectName == name)
 			return _movements[i];
@@ -681,7 +681,7 @@ void StaticANIObject::draw2() {
 }
 
 MovTable *StaticANIObject::countMovements() {
-	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName().c_str())->getSubVarByName("PRELOAD");
+	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
 		return 0;
@@ -706,7 +706,7 @@ MovTable *StaticANIObject::countMovements() {
 }
 
 void StaticANIObject::setSpeed(int speed) {
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(getName().c_str())->getSubVarByName("SpeedUp");
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("SpeedUp");
 
 	if (!var)
 		return;

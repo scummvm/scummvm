@@ -304,9 +304,9 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	return 0;
 }
 
-StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
+StaticANIObject *Scene::getStaticANIObject1ByName(Common::String &name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (_staticANIObjectList1[i]->_objectName == name && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if ((_staticANIObjectList1[i]->_objectName == name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -365,9 +365,9 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	return 0;
 }
 
-PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
+PictureObject *Scene::getPictureObjectByName(Common::String objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_objectName == objName && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
+		if ((((PictureObject *)_picObjList[i])->_objectName == objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -393,9 +393,9 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 	return 0;
 }
 
-MessageQueue *Scene::getMessageQueueByName(char *name) {
+MessageQueue *Scene::getMessageQueueByName(Common::String &name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(_messageQueueList[i]->_queueName.c_str(), name))
+		if (_messageQueueList[i]->_queueName == name)
 			return _messageQueueList[i];
 
 	return 0;
@@ -407,14 +407,14 @@ void Scene::preloadMovements(GameVar *var) {
 		return;
 
 	for (GameVar *i = preload->_subVars; i; i = i->_nextVarObj) {
-		StaticANIObject *ani = getStaticANIObject1ByName((char *)i->_varName.c_str(), -1);
+		StaticANIObject *ani = getStaticANIObject1ByName(i->_varName, -1);
 
 		if (ani) {
 			GameVar *subVars = i->_subVars;
 
 			if (subVars) {
 				for (;subVars; subVars = subVars->_nextVarObj) {
-					Movement *mov = ani->getMovementByName((char *)subVars->_varName.c_str());
+					Movement *mov = ani->getMovementByName(subVars->_varName);
 
 					if (mov)
 						mov->loadPixelData();
@@ -436,9 +436,9 @@ void Scene::initObjectCursors(const char *varname) {
 	int minId = 0xffff;
 
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
-		GameObject *obj = getPictureObjectByName((char *)sub->_varName.c_str(), -1);
+		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
-		if (obj || (obj = getStaticANIObject1ByName((char *)sub->_varName.c_str(), -1)) != 0) {
+		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
 			if (obj->_id < minId)
 				minId = obj->_id;
 			if (obj->_id > maxId)
@@ -452,10 +452,10 @@ void Scene::initObjectCursors(const char *varname) {
 	g_fp->_objectIdCursors.resize(maxId - minId + 1);
 
 	for (GameVar *sub = cursorsVar->_subVars; sub; sub = sub->_nextVarObj) {
-		GameObject *obj = getPictureObjectByName((char *)sub->_varName.c_str(), -1);
+		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (!obj)
-			obj = getStaticANIObject1ByName((char *)sub->_varName.c_str(), -1);
+			obj = getStaticANIObject1ByName(sub->_varName, -1);
 
 		PictureObject *pic = getGameLoaderInventory()->getScene()->getPictureObjectByName(sub->_value.stringValue, -1);
 

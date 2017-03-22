@@ -90,10 +90,10 @@ class GameVar : public CObject {
 
 	virtual bool load(MfcArchive &file);
 	virtual void save(MfcArchive &file);
-	GameVar *getSubVarByName(const char *name);
-	bool setSubVarAsInt(const char *name, int value);
-	int getSubVarAsInt(const char *name);
-	GameVar *addSubVarAsInt(const char *name, int value);
+	GameVar *getSubVarByName(Common::String name);
+	bool setSubVarAsInt(Common::String name, int value);
+	int getSubVarAsInt(Common::String name);
+	GameVar *addSubVarAsInt(Common::String name, int value);
 	bool addSubVar(GameVar *subvar);
 	int getSubVarsCount();
 	GameVar *getSubVarByIndex(int idx);

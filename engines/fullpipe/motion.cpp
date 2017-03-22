@@ -391,7 +391,7 @@ int MctlLadder::findObjectPos(StaticANIObject *obj) {
 bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement) {
 	debugC(4, kDebugPathfinding, "MctlLadder::initMovement(*%d, ...)", ani->_id);
 
-	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName().c_str());
+	GameVar *v = g_fp->getGameLoaderGameVar()->getSubVarByName(ani->getName());
 
 	if (!v)
 		return false;
@@ -1744,7 +1744,7 @@ bool MctlGraph::fillData(StaticANIObject *obj, MctlAni *item) {
 	item->_obj = obj;
 	item->_objectId = obj->_id;
 
-	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName.c_str());
+	GameVar *var = g_fp->getGameLoaderGameVar()->getSubVarByName(obj->_objectName);
 	if (!var)
 		return false;
 

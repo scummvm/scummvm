@@ -272,9 +272,9 @@ public:
 	void setCursor(int id);
 	void updateCursorCommon();
 
-	int getObjectState(const char *objname);
-	void setObjectState(const char *name, int state);
-	int getObjectEnumState(const char *name, const char *state);
+	int getObjectState(Common::String objname);
+	void setObjectState(Common::String name, int state);
+	int getObjectEnumState(Common::String name, const char *state);
 
 	void sceneAutoScrolling();
 	bool sceneSwitcher(EntranceInfo *entrance);

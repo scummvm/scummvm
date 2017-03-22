@@ -70,7 +70,7 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 
 			_behaviors.push_back(behinfo);
 		} else {
-			StaticANIObject *ani = sc->getStaticANIObject1ByName((char *)subvar->_varName.c_str(), -1);
+			StaticANIObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
 			if (ani) {
 				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
 					if (((StaticANIObject *)sc->_staticANIObjectList1[i])->_id == ani->_id) {
@@ -279,7 +279,7 @@ void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *
 		if (strcmp(var->_value.stringValue, "ROOT"))
 			break;
 
-		GameVar *v1 = g_fp->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName().c_str());
+		GameVar *v1 = g_fp->getGameLoaderGameVar()->getSubVarByName("BEHAVIOR")->getSubVarByName(ani->getName());
 		if (v1 == var)
 			return;
 
@@ -317,7 +317,7 @@ BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *m
 	_flags = 0;
 	_behaviorMoves = 0;
 
-	Statics *st = ani->getStaticsByName((char *)var->_varName.c_str());
+	Statics *st = ani->getStaticsByName(var->_varName);
 	if (st)
 		_staticsId = st->_staticsId;
 
@@ -346,7 +346,7 @@ BehaviorMove::BehaviorMove(GameVar *subvar, Scene *sc, int *delay) {
 	_delay = 0;
 	_percent = 0;
 	_flags = 0;
-	_messageQueue = sc->getMessageQueueByName((char *)subvar->_varName.c_str());
+	_messageQueue = sc->getMessageQueueByName(subvar->_varName);
 
 	GameVar *vart = subvar->getSubVarByName("dwDelay");
 	if (vart)
