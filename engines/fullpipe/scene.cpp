@@ -210,7 +210,7 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle = g_fp->_currArchive;
 
-	if (_picObjList.size() > 0 && _bgname.size() > 1) {
+	if (_picObjList.size() > 0 && !_bgname.empty()) {
 		char fname[260];
 
 		strcpy(fname, _bgname.c_str());
