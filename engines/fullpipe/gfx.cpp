@@ -470,7 +470,7 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
-	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename);
+	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename.c_str());
 
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
@@ -532,7 +532,7 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename);
+	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename.c_str());
 
 	return true;
 }
@@ -552,7 +552,7 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
-	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename);
+	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename.c_str());
 
 	MemoryObject::getData();
 
@@ -585,7 +585,7 @@ void Picture::getDibInfo() {
 	}
 
 	if (!_data) {
-		warning("Picture::getDibInfo: data is empty <%s>", _memfilename);
+		warning("Picture::getDibInfo: data is empty <%s>", _memfilename.c_str());
 
 		MemoryObject::load();
 	}
@@ -611,7 +611,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
+	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename.c_str());
 
 	if (x != -1)
 		x1 = x;
