@@ -1006,12 +1006,14 @@ int Actor::getAnimationMode() {
 }
 
 void Actor::setGoal(int goalNumber) {
-	if (goalNumber == _goalNumber) {
+	int oldGoalNumber = _goalNumber;
+	_goalNumber = goalNumber;
+	if (goalNumber == oldGoalNumber) {
 		return;
-	}
+	}	
 
-	_vm->_aiScripts->GoalChanged(_id, _goalNumber, goalNumber);
-	_vm->_script->ActorChangedGoal(_id, goalNumber, _goalNumber, _vm->_scene->getSetId() == _setId);
+	_vm->_aiScripts->GoalChanged(_id, oldGoalNumber, goalNumber);
+	_vm->_script->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
 }
 
 int Actor::getGoal() {
