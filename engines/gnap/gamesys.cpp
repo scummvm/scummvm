@@ -555,6 +555,7 @@ void GameSys::seqRemoveGfx(int sequenceId, int id) {
 bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 	bool found = false;
 	int duration = 0x7FFFFFFF;
+	*outDuration = 0;
 	for (int i = 0; i < _gfxItemsCount; ++i) {
 		GfxItem *gfxItem = &_gfxItems[i];
 		if (gfxItem->_sequenceId == sequenceId && gfxItem->_id == id) {
@@ -577,8 +578,10 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 			}
 		}
 	}
+
 	if (found)
 		*outDuration = duration;
+
 	return found;
 }
 
