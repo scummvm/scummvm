@@ -38,7 +38,22 @@ void CStarControlSub22::proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 }
 
 void CStarControlSub22::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
-	// TODO
+	if (_sub27.get8()) {
+		decLockCount();
+		int val = _sub27.proc5(errorCode, v, m);
+		if (val == 1)
+			incLockCount();
+		if (val == 2) {
+			proc7();
+			if (_starVector)
+				_starVector->apply();
+		}
+	} else if (_size != 0.0) {
+		v._x += m._row3._x * _size;
+		v._y += m._row3._y * _size;
+		v._z += m._row3._z * _size;
+		errorCode.set();
+	}
 }
 
 } // End of namespace Titanic
