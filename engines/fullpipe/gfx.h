@@ -39,7 +39,6 @@ struct Bitmap {
 	int _y;
 	int _width;
 	int _height;
-	byte *_pixels;
 	int _type;
 	int _dataSize;
 	int _flags;
@@ -52,10 +51,10 @@ struct Bitmap {
 	~Bitmap();
 
 	void load(Common::ReadStream *s);
-	void decode(int32 *palette);
+	void decode(byte *pixels, int32 *palette);
 	void putDib(int x, int y, int32 *palette, byte alpha);
-	bool putDibRB(int32 *palette);
-	void putDibCB(int32 *palette);
+	bool putDibRB(byte *pixels, int32 *palette);
+	void putDibCB(byte *pixels, int32 *palette);
 
 	void colorFill(uint32 *dest, int len, int32 color);
 	void paletteFill(uint32 *dest, byte *src, int len, int32 *palette);

@@ -486,7 +486,6 @@ void Picture::freePicture() {
 	}
 
 	if (_convertedBitmap) {
-		free(_convertedBitmap->_pixels);
 		delete _convertedBitmap;
 		_convertedBitmap = 0;
 	}
@@ -594,11 +593,7 @@ void Picture::getDibInfo() {
 	_bitmap->load(s);
 	delete s;
 
-	_bitmap->_pixels = _data;
-
-	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
-
-	_bitmap->_pixels = 0;
+	_bitmap->decode(_data, (int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
 }
 
 Bitmap *Picture::getPixelData() {
@@ -763,7 +758,6 @@ Bitmap::Bitmap() {
 	_y = 0;
 	_width = 0;
 	_height = 0;
-	_pixels = 0;
 	_type = 0;
 	_dataSize = 0;
 	_flags = 0;
@@ -780,20 +774,16 @@ Bitmap::Bitmap(Bitmap *src) {
 	_type = src->_type;
 	_width = src->_width;
 	_height = src->_height;
-	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
 	_copied_surface = true;
 	_flipping = src->_flipping;
 }
 
 Bitmap::~Bitmap() {
-
 	if (!_copied_surface)
 		_surface->free();
 	delete _surface;
 	_surface = 0;
-
-	_pixels = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -822,15 +812,15 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
-void Bitmap::decode(int32 *palette) {
+void Bitmap::decode(byte *pixels, int32 *palette) {
 	_surface = new Graphics::TransparentSurface;
 
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
-		putDibRB(palette);
+		putDibRB(pixels, palette);
 	else
-		putDibCB(palette);
+		putDibCB(pixels, palette);
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
@@ -862,7 +852,7 @@ void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(int32 *palette) {
+bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endy;
 	int x;
@@ -887,7 +877,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 
 	y = endy;
 
-	srcPtr = (uint16 *)_pixels;
+	srcPtr = (uint16 *)pixels;
 
 	bool breakup = false;
 	for (y = endy; y >= starty && !breakup; y--) {
@@ -964,7 +954,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 	return false;
 }
 
-void Bitmap::putDibCB(int32 *palette) {
+void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endx;
 	int endy;
@@ -983,10 +973,10 @@ void Bitmap::putDibCB(int32 *palette) {
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
 
-	byte *srcPtr = &_pixels[pitch * endy];
+	byte *srcPtr = &pixels[pitch * endy];
 
 	if (endy < _height)
-		srcPtr = &_pixels[pitch * (_height - 1)];
+		srcPtr = &pixels[pitch * (_height - 1)];
 
 	int starty = 0;
 	int startx = 0;
