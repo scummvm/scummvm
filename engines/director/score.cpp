@@ -317,7 +317,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	byte channelData[kChannelDataSize];
 	memset(channelData, 0, kChannelDataSize);
 
-	while (size != 0) {
+	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
 		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 		size -= frameSize;
