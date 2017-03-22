@@ -629,15 +629,15 @@ void Score::setCastMemberModified(int castId) {
 void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 	_labels = new Common::SortedArray<Label *>(compareLabels);
 	uint16 count = stream.readUint16() + 1;
-	uint16 offset = count * 4 + 2;
+	uint32 offset = count * 4 + 2;
 
 	uint16 frame = stream.readUint16();
-	uint16 stringPos = stream.readUint16() + offset;
+	uint32 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 nextFrame = stream.readUint16();
-		uint16 nextStringPos = stream.readUint16() + offset;
-		uint16 streamPos = stream.pos();
+		uint32 nextStringPos = stream.readUint16() + offset;
+		uint32 streamPos = stream.pos();
 
 		stream.seek(stringPos);
 		Common::String label;
@@ -669,18 +669,18 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading Actions");
 
 	uint16 count = stream.readUint16() + 1;
-	uint16 offset = count * 4 + 2;
+	uint32 offset = count * 4 + 2;
 
 	byte id = stream.readByte();
 
 	byte subId = stream.readByte(); // I couldn't find how it used in continuity (except print). Frame actionId = 1 byte.
-	uint16 stringPos = stream.readUint16() + offset;
+	uint32 stringPos = stream.readUint16() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 nextId = stream.readByte();
 		byte nextSubId = stream.readByte();
-		uint16 nextStringPos = stream.readUint16() + offset;
-		uint16 streamPos = stream.pos();
+		uint32 nextStringPos = stream.readUint16() + offset;
+		uint32 streamPos = stream.pos();
 
 		stream.seek(stringPos);
 
@@ -1024,7 +1024,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 
 	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
-	uint16 currentRawPosition = offset;
+	uint32 currentRawPosition = offset;
 
 	for (uint16 i = 0; i < count; i++) {
 		uint16 id = stream.readUint16();
