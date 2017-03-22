@@ -504,7 +504,104 @@ void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
-	// TODO
+	DMatrix m1;
+	DVector tempV1 = _matrix._row1;
+	DMatrix m2(0, tempV1);
+
+	tempV1 = v - _matrix._row1;
+	tempV1.fn5(m1);
+
+	DMatrix m3;
+	const DMatrix *m = m1.fn4(m3, m1, m2);
+	m1 = *m;
+	m1.fn1(m2);
+
+	DVector tempV2 = _sub13._position;
+	DMatrix m4;
+	m4._row1 = sub13->_position;
+	m4._row2 = DVector(0.0, 0.0, 0.0);
+	m4._row3 = DVector(0.0, 0.0, 0.0);
+	m4._row4 = DVector(0.0, 0.0, 0.0);
+
+	FMatrix m5 = sub13->getMatrix();
+	DVector tempV3, tempV4;
+	tempV4._x = m5._row1._x * 1000000.0 + m4._row1._x;
+	tempV4._y = m5._row1._y * 1000000.0 + m4._row1._y;
+	tempV4._z = m5._row1._z * 1000000.0 + m4._row1._z;
+	tempV3._x = m5._row2._x * 1000000.0 + m4._row1._x;
+	tempV3._y = m5._row2._y * 1000000.0 + m4._row1._y;
+	tempV3._z = m5._row2._z * 1000000.0 + m4._row1._z;
+	m4._row3 = tempV4;
+	m4._row2 = tempV3;
+
+	tempV4._x = m5._row3._x * 1000000.0;
+	tempV4._y = m5._row3._y * 1000000.0;
+	tempV3._x = tempV4._x + m4._row1._x;
+	tempV3._y = tempV4._y + m4._row1._y;
+	tempV3._z = m5._row3._z * 1000000.0 + m4._row1._z;
+	m4._row4 = tempV3;
+
+	DVector *dv = tempV2.fn1(tempV3, m2);
+	tempV3 = *dv;
+	dv = m4._row1.fn1(tempV3, m2);
+	m4._row1 = *dv;
+	dv = m4._row3.fn1(tempV3, m2);
+	m4._row3 = *dv;
+	dv = m4._row2.fn1(tempV3, m2);
+	m4._row2 = *dv;
+	dv = m4._row4.fn1(tempV3, m2);
+	m4._row4 = *dv;
+
+	// Find the angle that gives the minimum distance
+	DVector tempV5;
+	double minDistance = 1.0e20;
+	int minDegree = 0;
+	for (int degree = 0; degree < 360; ++degree) {
+		tempV5 = m4._row1;
+		tempV5.fn2((double)degree);
+		double distance = tempV2.getDistance(tempV5);
+
+		if (distance < minDistance) {
+			minDistance = distance;
+			minDegree = degree;
+		}
+	}
+
+	m4._row1.fn2((double)minDegree);
+	m4._row2.fn2((double)minDegree);
+	m4._row3.fn2((double)minDegree);
+	m4._row4.fn2((double)minDegree);
+	dv = m4._row1.fn1(tempV3, m1);
+	m4._row1 = *dv;
+	dv = m4._row3.fn1(tempV3, m1);
+	m4._row3 = *dv;
+	dv = m4._row2.fn1(tempV3, m1);
+	m4._row2 = *dv;
+	dv = m4._row4.fn1(tempV3, m1);
+	m4._row4 = *dv;
+
+	m4._row3._x -= m4._row1._x;
+	m4._row3._y -= m4._row1._y;
+	m4._row3._z -= m4._row1._z;
+	m4._row2._x -= m4._row1._x;
+	m4._row2._y -= m4._row1._y;
+	m4._row2._z = m4._row2._z - m4._row1._z;
+
+	m4._row4._x = m4._row4._x - m4._row1._x;
+	m4._row4._y = m4._row4._y - m4._row1._y;
+	m4._row4._z = m4._row4._z - m4._row1._z;
+
+	m4._row3.normalize();
+	m4._row2.normalize();
+	m4._row4.normalize();
+	m5.set(m4._row3, m4._row2, m4._row4);
+
+	FVector tempV6 = m4._row1;
+	FMatrix m6 = _sub13.getMatrix();
+	_handlerP->proc8(_sub13._position, tempV6, m6, m5);
+
+	CStarVector *sv = new CStarVector(this, v);
+	_handlerP->setVector(sv);
 }
 
 } // End of namespace Titanic

@@ -29,7 +29,7 @@ namespace Titanic {
 DMatrix *DMatrix::_static;
 
 DMatrix::DMatrix() :
-	_row1(1.875, 0.0, 0.0), _row2(0.0, 1.875, 0.0), _row3(0.0, 0.0, 1.875) {
+	_row1(0.0, 0.0, 0.0), _row2(0.0, 0.0, 0.0), _row3(0.0, 0.0, 0.0) {
 }
 
 DMatrix::DMatrix(int mode, const DVector &src) {
