@@ -488,6 +488,9 @@ void BladeRunnerEngine::shutdown() {
 		delete _actors[i];
 		_actors[i] = nullptr;
 	}
+	delete _actors[VOICEOVER_ACTOR];
+	_actors[VOICEOVER_ACTOR] = nullptr;
+
 	_playerActor = nullptr;
 
 	// TODO: Delete proper ZBuf class

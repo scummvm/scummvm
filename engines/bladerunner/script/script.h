@@ -835,7 +835,7 @@ public:
 	virtual bool ChangeAnimationMode(int mode) = 0;
 	virtual void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) = 0;
 	virtual void SetAnimationState(int animationState, int a2, int a3, int a4) = 0;
-	virtual bool ReachedMovementTrackWaypoint(int a1) = 0;
+	virtual bool ReachedMovementTrackWaypoint(int waypointId) = 0;
 	virtual void FledCombat() = 0;
 };
 
@@ -853,10 +853,12 @@ public:
 	void Initialize(int actor);
 	void Update(int actor);
 	void TimerExpired(int actor, int timer);
+	void CompletedMovementTrack(int actor);
 	void EnteredScene(int actor, int setId);
 	void OtherAgentEnteredThisScene(int actor, int otherActorId);
 	void OtherAgentExitedThisScene(int actor, int otherActorId);
 	void GoalChanged(int actor, int currentGoalNumber, int newGoalNumber);
+	bool ReachedMovementTrackWaypoint(int actor, int waypointId);
 	void UpdateAnimation(int actor, int *animation, int *frame);
 	void ChangeAnimationMode(int actor, int mode);
 

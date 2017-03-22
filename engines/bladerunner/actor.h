@@ -78,6 +78,16 @@ private:
 	bool _isMoving;
 	bool _damageAnimIfMoving;
 
+	// Movement
+	bool _movementTrackPaused;
+	int _movementTrackNextWaypointId;
+	int _movementTrackNextDelay; // probably not used
+	int _movementTrackNextAngle; // probably not used
+	bool _movementTrackNextRunning;
+
+	int _movementTrackWalkingToWaypointId;
+	int _movementTrackDelayOnNextWaypoint;
+
 	// Animation
 	int _width;
 	int _height;
@@ -122,7 +132,16 @@ public:
 	void changeAnimationMode(int animationMode, bool force = false);
 	void setFPS(int fps);
 
-	void processMovement();
+	void countdownTimerStart(int timerId, int interval);
+	void countdownTimerReset(int timerId);
+	int  countdownTimerGetRemainingTime(int timerId);
+	void countdownTimersUpdate();
+	void countdownTimerUpdate(int timerId);
+
+	void movementTrackNext(bool omitAiScript);
+	void movementTrackPause();
+	void movementTrackUnpause();
+	void movementTrackWaypointReached();
 
 	bool loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
 	bool loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
@@ -132,12 +151,6 @@ public:
 
 	bool tick(bool forceUpdate);
 	void draw();
-
-	void countdownTimerStart(int timerId, int interval);
-	void countdownTimerReset(int timerId);
-	int  countdownTimerGetRemainingTime(int timerId);
-	void countdownTimersUpdate();
-	void countdownTimerUpdate(int timerId);
 
 	int getSetId();
 	void setSetId(int setId);
@@ -152,6 +165,7 @@ public:
 	bool isMoving() { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
 	bool isWalking();
+	bool isRunning();
 	void stopWalking(bool value);
 
 	void faceActor(int otherActorId, bool animate);

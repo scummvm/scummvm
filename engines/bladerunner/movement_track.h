@@ -43,8 +43,8 @@ class MovementTrack {
 private:
 	int _currentIndex;
 	int _lastIndex;
-	int _hasNext;
-	int _paused;
+	bool _hasNext;
+	bool _paused;
 	MovementTrackEntry _entries[100];
 	void reset();
 
@@ -55,11 +55,11 @@ public:
 	int append(int waypointId, int delay, int angle, int running);
 	void flush();
 	void repeat();
-	int pause();
-	int unpause();
-	int isPaused();
-	int hasNext();
-	int next(int *waypointId, int *delay, int *angle, int *running);
+	void pause();
+	void unpause();
+	bool isPaused();
+	bool hasNext();
+	bool next(int *waypointId, int *delay, int *angle, int *running);
 
 	//int saveGame();
 };

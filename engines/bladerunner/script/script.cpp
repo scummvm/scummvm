@@ -1364,26 +1364,28 @@ void ScriptBase::I_Sez(const char *str) {
 }
 
 void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int seconds) {
-//	if (timer >= 0 && timer <= 2)
-//		_vm->_actors[actorId]->timerSet(timer, 1000 * seconds);
+	if (timer >= 0 && timer <= 2) {
+		_vm->_actors[actorId]->countdownTimerStart(timer, 1000 * seconds);
+	}
 }
 
 void ScriptBase::AI_Countdown_Timer_Reset(int actorId, int timer) {
-//	if (timer >= 0 && timer <= 2)
-//		_vm->_actors[actorId]->timerReset(timer);
+	if (timer >= 0 && timer <= 2) {
+		_vm->_actors[actorId]->countdownTimerReset(timer);
+	}
 }
 
 void ScriptBase::AI_Movement_Track_Unpause(int actorId) {
-	//_vm->_actors[actorId]->movementTrackUnpause();
+	_vm->_actors[actorId]->movementTrackUnpause();
 }
 
 void ScriptBase::AI_Movement_Track_Pause(int actorId) {
-	//_vm->_actors[actorId]->movementTrackPause();
+	_vm->_actors[actorId]->movementTrackPause();
 }
 
 void ScriptBase::AI_Movement_Track_Repeat(int actorId) {
 	_vm->_actors[actorId]->_movementTrack->repeat();
-	//_vm->_actors[actorId]->movementTrackRepeat(1);
+	_vm->_actors[actorId]->movementTrackNext(true);
 }
 
 void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int delay, int angle) {
@@ -1471,8 +1473,8 @@ AIScripts::~AIScripts() {
 		delete _AIScripts[i];
 		_AIScripts[i] = nullptr;
 	}
-	delete _AIScripts;
-	delete _actorUpdating;
+	delete[] _AIScripts;
+	delete[] _actorUpdating;
 }
 
 void AIScripts::Initialize(int actor) {
@@ -1496,56 +1498,87 @@ void AIScripts::Update(int actor) {
 void AIScripts::TimerExpired(int actor, int timer) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->TimerExpired(timer);
+	}
 	_inScriptCounter--;
+}
+
+void AIScripts::CompletedMovementTrack(int actor) {
+	assert(actor < _actorsCount);
+	if (!_vm->_actors[actor]->inCombat()) {
+		_inScriptCounter++;
+		if (_AIScripts[actor]) {
+			_AIScripts[actor]->CompletedMovementTrack();
+		}
+		_inScriptCounter--;
+	}
 }
 
 void AIScripts::EnteredScene(int actor, int setId) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->EnteredScene(setId);
+	}
 	_inScriptCounter--;
 }
 
 void AIScripts::OtherAgentEnteredThisScene(int actor, int otherActorId) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->OtherAgentEnteredThisScene(otherActorId);
+	}
 	_inScriptCounter--;
 }
 
 void AIScripts::OtherAgentExitedThisScene(int actor, int otherActorId) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->OtherAgentExitedThisScene(otherActorId);
+	}
 	_inScriptCounter--;
 }
 
 void AIScripts::GoalChanged(int actor, int currentGoalNumber, int newGoalNumber) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->GoalChanged(currentGoalNumber, newGoalNumber);
+	}
 	_inScriptCounter--;
+}
+
+bool AIScripts::ReachedMovementTrackWaypoint(int actor, int waypointId) {
+	assert(actor < _actorsCount);
+	bool result = false;
+	if (!_vm->_actors[actor]->inCombat()) {
+		_inScriptCounter++;
+		if (_AIScripts[actor]) {
+			result = _AIScripts[actor]->ReachedMovementTrackWaypoint(waypointId);
+		}
+		_inScriptCounter--;
+	}
+	return result;
 }
 
 void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->UpdateAnimation(animation, frame);
+	}
 	_inScriptCounter--;
 }
 
 void AIScripts::ChangeAnimationMode(int actor, int mode) {
 	assert(actor < _actorsCount);
 	_inScriptCounter++;
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->ChangeAnimationMode(mode);
+	}
 	_inScriptCounter--;
 }
 

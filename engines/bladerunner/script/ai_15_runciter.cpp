@@ -628,8 +628,8 @@ void AIScript_Runciter::SetAnimationState(int animationState, int animationFrame
 	var_462804 = a4;
 }
 
-bool AIScript_Runciter::ReachedMovementTrackWaypoint(int a1) {
-	switch (a1) {
+bool AIScript_Runciter::ReachedMovementTrackWaypoint(int waypointId) {
+	switch (waypointId) {
 	case 93:
 		Actor_Face_Heading(15, 1002, true);
 		break;

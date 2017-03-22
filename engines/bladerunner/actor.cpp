@@ -91,6 +91,9 @@ void Actor::setup(int actorId) {
 	_retiredWidth = 0;
 	_retiredHeight = 0;
 
+	_movementTrackWalkingToWaypointId = -1;
+	_movementTrackDelayOnNextWaypoint = -1;
+
 	for (int i = 0; i != 7; ++i) {
 		_timersRemain[i] = 0;
 		_timersStart[i] = _vm->getTotalPlayTime();
@@ -106,6 +109,12 @@ void Actor::setup(int actorId) {
 	_currentHP = 50;
 	_maxHP = 50;
 	_goalNumber = -1;
+
+	_movementTrackPaused = false;
+	_movementTrackNextWaypointId = -1;
+	_movementTrackNextDelay = -1;
+	_movementTrackNextAngle = -1;
+	_movementTrackNextRunning = false;
 
 	_timersRemain[4] = 60000;
 	_animationMode = -1;
@@ -151,30 +160,174 @@ void Actor::setFPS(int fps) {
 	}
 }
 
-void Actor::processMovement() {
-	/*if (movementTrack::is_paused(this->movementTrack) != 1 && this->id)
-	{
-		if (this->walkingWaypointId >= 0 && this->timeoutWalkingWaypoint >= 0)
-		{
-			worldWaypoints::get_sceneId(WorldWaypoints, this->walkingWaypointId);
-			if (!this->timeoutWalkingWaypoint)
-			{
-				this->timeoutWalkingWaypoint = 1;
+void Actor::countdownTimerStart(int timerId, int interval) {
+	assert(timerId >= 0 && timerId < 7);
+	_timersRemain[timerId] = interval;
+	_timersStart[timerId] = _vm->getTotalPlayTime();
+}
+
+void Actor::countdownTimerReset(int timerId) {
+	assert(timerId >= 0 && timerId < 7);
+	_timersRemain[timerId] = 0;
+}
+
+int Actor::countdownTimerGetRemainingTime(int timerId) {
+	assert(timerId >= 0 && timerId < 7);
+	return _timersRemain[timerId];
+}
+
+void Actor::countdownTimersUpdate() {
+	for (int i = 0; i <= 6; i++) {
+		countdownTimerUpdate(i);
+	}
+}
+
+void Actor::countdownTimerUpdate(int timerId) {
+	if (_timersRemain[timerId] == 0) {
+		return;
+	}
+
+	uint32 now = _vm->getTotalPlayTime();
+	int tickInterval = now - _timersStart[timerId];
+	_timersStart[timerId] = now;
+
+	//warning("tickInterval: %d", tickInterval);
+	_timersRemain[timerId] -= tickInterval;
+
+	if (_timersRemain[timerId] <= 0) {
+		switch (timerId) {
+		case 0:
+		case 1:
+		case 2:
+			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_script->IsInsideScript()) {
+				_vm->_aiScripts->TimerExpired(this->_id, timerId);
+				this->_timersRemain[timerId] = 0;
+			} else {
+				this->_timersRemain[timerId] = 1;
 			}
-			if (actorScript::call_ReachedMovementTrackWaypoint(ActorScript, this->id, this->walkingWaypointId) == 1)
-			{
-				seconds = this->timeoutWalkingWaypoint;
-				if (seconds > 1)
-				{
-					actor::changeAnimationMode(this, 0, 0);
-					seconds = this->timeoutWalkingWaypoint;
+			break;
+		case 3:
+			_timersRemain[3] = 0;
+			if (_movementTrack->isPaused()) {
+				_timersRemain[3] = 1;
+			} else {
+				movementTrackNext(false);
+			}
+			break;
+		case 4:
+			// Something timer
+			break;
+		case 5:
+			// Actor animation frame timer
+			break;
+		case 6:
+			if (isRunning()) {
+				if (_fps > 15) {
+					int newFps = _fps - 2;
+					if (newFps < 15) {
+						newFps = 15;
+					}
+					setFPS(newFps);
 				}
-				actor::startTimer(this, 3, seconds);
+			}
+			_timersRemain[6] = 200;
+			break;
+		}
+	}
+}
+
+void Actor::movementTrackNext(bool omitAiScript) {
+	bool hasNextMovement;
+	int waypointSetId;
+	int running;
+	int angle;
+	int delay;
+	int waypointId;
+	Vector3 waypointPosition;
+	bool stopped;
+
+	hasNextMovement = _movementTrack->next(&waypointId, &delay, &angle, &running);
+	_movementTrackNextWaypointId = waypointId;
+	_movementTrackNextDelay = delay;
+	_movementTrackNextAngle = angle;
+	_movementTrackNextRunning = running;
+	if (hasNextMovement) {
+		if (angle == -1) {
+			angle = 0;
+		}
+		waypointSetId = _vm->_waypoints->getSetId(waypointId);
+		_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
+		if (_setId == waypointSetId && waypointSetId == _vm->_actors[0]->_setId) {
+			stopWalking(false);
+			_walkInfo->setup(_id, running, _position, waypointPosition, false, &stopped);
+
+			_movementTrackWalkingToWaypointId = waypointId;
+			_movementTrackDelayOnNextWaypoint = delay;
+			if (stopped) {
+				movementTrackWaypointReached();
+			}
+		} else {
+			setSetId(waypointSetId);
+			setAtXYZ(waypointPosition, angle, true, false, false);
+
+			if (!delay) {
+				delay = 1;
+			}
+			if (delay > 1) {
+				changeAnimationMode(0, false);
+			}
+			countdownTimerStart(3, delay);
+		}
+		//return true;
+	} else {
+		if (!omitAiScript) {
+			_vm->_aiScripts->CompletedMovementTrack(_id);
+		}
+		//return false;
+	}
+}
+
+void Actor::movementTrackPause() {
+	_movementTrack->pause();
+	if (isWalking()) {
+		_movementTrackPaused = true;
+		stopWalking(false);
+	} else {
+		_movementTrackPaused = false;
+	}
+}
+
+void Actor::movementTrackUnpause() {
+	Vector3 waypointPosition;
+	bool stopped;
+
+	_movementTrack->unpause();
+	if (_movementTrackNextWaypointId >= 0 && _movementTrackPaused) {
+		_vm->_waypoints->getXYZ(_movementTrackNextWaypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
+		_walkInfo->setup(_id, _movementTrackNextRunning, _position, waypointPosition, false, &stopped);
+		_movementTrackPaused = false;
+	}
+}
+
+void Actor::movementTrackWaypointReached() {
+	int seconds;
+	if (!_movementTrack->isPaused() && _id != 0) {
+		if (_movementTrackWalkingToWaypointId >= 0 && _movementTrackDelayOnNextWaypoint) {
+			if (!_movementTrackDelayOnNextWaypoint) {
+				_movementTrackDelayOnNextWaypoint = 1;
+			}
+			if (_vm->_aiScripts->ReachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
+				seconds = _movementTrackDelayOnNextWaypoint;
+				if (seconds > 1) {
+					changeAnimationMode(0, false);
+					seconds = _movementTrackDelayOnNextWaypoint; // todo: analyze if movement is changed in some aiscript->ChangeAnimationMode?
+				}
+				countdownTimerStart(3, seconds);
 			}
 		}
-		this->walkingWaypointId = -1;
-		this->timeoutWalkingWaypoint = 0;
-	}*/
+		_movementTrackWalkingToWaypointId = -1;
+		_movementTrackDelayOnNextWaypoint = 0;
+	}
 }
 
 bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
@@ -375,10 +528,8 @@ bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset,
 }
 
 bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
-	float x, y, z;
-	_vm->_waypoints->getXYZ(waypointId, &x, &y, &z);
-	Vector3 waypointPosition(x, y, z);
-
+	Vector3 waypointPosition;
+	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
 }
 
@@ -432,7 +583,7 @@ bool Actor::tick(bool forceDraw) {
 			if (walked) {
 				_vm->_actors[_id]->changeAnimationMode(0);
 
-				this->processMovement();
+				this->movementTrackWaypointReached();
 				if (this->inCombat()) {
 					this->changeAnimationMode(this->_combatAnimationMode, false);
 				} else {
@@ -611,6 +762,10 @@ float Actor::distanceFromView(View *view) {
 
 bool Actor::isWalking() {
 	return _walkInfo->isWalking();
+}
+
+bool Actor::isRunning() {
+	return _walkInfo->isRunning();
 }
 
 void Actor::stopWalking(bool value) {
@@ -925,69 +1080,6 @@ int Actor::soundVolume() {
 int Actor::soundBalance() {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	return 127.0f * (MAX(MIN(screenPosition.x / 640.0f, 1.0f), 0.0f) * 2.0f - 1.0f);
-}
-
-void Actor::countdownTimerStart(int timerId, int interval) {
-	assert(timerId >= 0 && timerId < 7);
-	_timersRemain[timerId] = interval;
-	_timersStart[timerId] = _vm->getTotalPlayTime();
-}
-
-void Actor::countdownTimerReset(int timerId) {
-	assert(timerId >= 0 && timerId < 7);
-	_timersRemain[timerId] = 0;
-}
-
-int Actor::countdownTimerGetRemainingTime(int timerId) {
-	assert(timerId >= 0 && timerId < 7);
-	return _timersRemain[timerId];
-}
-
-void Actor::countdownTimersUpdate() {
-	for (int i = 0; i <= 6; i++) {
-		countdownTimerUpdate(i);
-	}
-}
-
-void Actor::countdownTimerUpdate(int timerId) {
-	if (_timersRemain[timerId] == 0)
-		return;
-
-	uint32 now = _vm->getTotalPlayTime();
-	int tickInterval = now - _timersStart[timerId];
-	_timersStart[timerId] = now;
-
-	// warning("tickInterval: %d", tickInterval);
-	_timersRemain[timerId] -= tickInterval;
-
-	if (_timersRemain[timerId] <= 0) {
-		switch (timerId) {
-		case 0:
-		case 1:
-		case 2:
-			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_script->IsInsideScript()) {
-				_vm->_aiScripts->TimerExpired(this->_id, timerId);
-				this->_timersRemain[timerId] = 0;
-				//return false;
-			} else {
-				this->_timersRemain[timerId] = 1;
-				//return true;
-			}
-			break;
-		case 3:
-			// Movement track timer
-			break;
-		case 4:
-			// Something timer
-			break;
-		case 5:
-			// Actor animation frame timer
-			break;
-		case 6:
-			// Slow down actor run timer?
-			break;
-		}
-	}
 }
 
 bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *newDestination) {

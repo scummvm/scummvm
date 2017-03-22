@@ -1661,7 +1661,7 @@ void AIScript_McCoy::SetAnimationState(int animationState, int a2, int a3, int a
 	dword_46271C = a4;
 }
 
-bool AIScript_McCoy::ReachedMovementTrackWaypoint(int a1) {
+bool AIScript_McCoy::ReachedMovementTrackWaypoint(int waypointId) {
 	return true;
 }
 

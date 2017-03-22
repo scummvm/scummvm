@@ -1192,8 +1192,8 @@ void AIScript_Officer_Leroy::SetAnimationState(int animationState, int animation
 	var_462884 = a4;
 }
 
-bool AIScript_Officer_Leroy::ReachedMovementTrackWaypoint(int a1) {
-	if (a1 == 57 || a1 == 58) {
+bool AIScript_Officer_Leroy::ReachedMovementTrackWaypoint(int waypointId) {
+	if (waypointId == 57 || waypointId == 58) {
 		sub_431408();
 		AI_Countdown_Timer_Reset(23, 2);
 		AI_Countdown_Timer_Start(23, 2, 6);
