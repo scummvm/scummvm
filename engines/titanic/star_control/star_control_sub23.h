@@ -56,7 +56,7 @@ public:
 	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
 	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
 	virtual void proc4(FVector &v1, FVector &v2, FMatrix &m);
-	virtual int proc5(CErrorCode &errorCode, FVector &v, const FMatrix &m) { return 2; }
+	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) { return 2; }
 	virtual void proc6(int val1, int val2, float val);
 
 	int get8() const { return _field8; }
