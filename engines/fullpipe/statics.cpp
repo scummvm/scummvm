@@ -1535,8 +1535,10 @@ Movement::~Movement() {
 		delete _framePosOffsets[i];
 
 	if (!_currMovement ) {
-		if (_updateFlag1)
+		if (_updateFlag1) {
+			_dynamicPhases[0]->freePixelData();
 			_dynamicPhases.remove_at(0);
+		}
 
 		// FIXME: At this point, the last entry in _dynamicPhases is invalid
 		for (uint i = 0; i < _dynamicPhases.size() - 1; i++)
