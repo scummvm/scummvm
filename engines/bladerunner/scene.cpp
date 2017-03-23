@@ -31,7 +31,7 @@
 #include "bladerunner/items.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/scene_objects.h"
-#include "bladerunner/script/script.h"
+#include "bladerunner/script/scene.h"
 #include "bladerunner/slice_renderer.h"
 
 #include "common/str.h"
@@ -78,11 +78,11 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	_vqaPlayer = new VQAPlayer(_vm);
 
 	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
-	if (!_vm->_script->open(sceneName))
+	if (!_vm->_sceneScript->Open(sceneName))
 		return false;
 
 	if (!isLoadingGame)
-		_vm->_script->InitializeScene();
+		_vm->_sceneScript->InitializeScene();
 
 	Common::String setResourceName = Common::String::format("%s-MIN.SET", sceneName.c_str());
 	if (!_set->open(setResourceName))
@@ -93,7 +93,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (isLoadingGame) {
 		// TODO: Advance VQA frame
 		if (sceneId >= 73 && sceneId <= 76)
-			_vm->_script->SceneLoaded();
+			_vm->_sceneScript->SceneLoaded();
 		return true;
 	}
 
@@ -110,7 +110,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	_vm->_playerActor->setSetId(setId);
 
-	_vm->_script->SceneLoaded();
+	_vm->_sceneScript->SceneLoaded();
 
 	_vm->_sceneObjects->clear();
 
@@ -137,7 +137,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	// TODO: calculate walking obstacles??
 
 	if (_specialLoopMode) {
-		_vm->_script->PlayerWalkedIn();
+		_vm->_sceneScript->PlayerWalkedIn();
 	}
 
 	return true;
@@ -151,7 +151,7 @@ bool Scene::close(bool isLoadingGame) {
 
 	//_vm->_policeMaze->clear(!isLoadingGame);
 	if (isLoadingGame) {
-		_vm->_script->PlayerWalkedOut();
+		_vm->_sceneScript->PlayerWalkedOut();
 	}
 
 	//	if (SceneScript_isLoaded() && !SceneScript_unload()) {

@@ -55,7 +55,7 @@ class Mouse;
 class Obstacles;
 class Scene;
 class SceneObjects;
-class Script;
+class SceneScript;
 class Settings;
 class Shape;
 class SliceAnimations;
@@ -91,7 +91,7 @@ public:
 	Obstacles        *_obstacles;
 	Scene            *_scene;
 	SceneObjects     *_sceneObjects;
-	Script           *_script;
+	SceneScript      *_sceneScript;
 	Settings         *_settings;
 	SliceAnimations  *_sliceAnimations;
 	SliceRenderer    *_sliceRenderer;

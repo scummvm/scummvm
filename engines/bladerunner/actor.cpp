@@ -35,7 +35,8 @@
 #include "bladerunner/movement_track.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
-#include "bladerunner/script/script.h"
+#include "bladerunner/script/scene.h"
+#include "bladerunner/script/ai.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/waypoints.h"
@@ -199,7 +200,7 @@ void Actor::countdownTimerUpdate(int timerId) {
 		case 0:
 		case 1:
 		case 2:
-			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_script->IsInsideScript()) {
+			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_sceneScript->IsInsideScript()) {
 				_vm->_aiScripts->TimerExpired(this->_id, timerId);
 				this->_timersRemain[timerId] = 0;
 			} else {
@@ -926,7 +927,7 @@ void Actor::retire(bool retired, int width, int height, int retiredByActorId) {
 		_vm->_playerDead = true;
 	}
 	if (_isRetired) {
-		//TODO: _vm->actorScript->Retired(_id, retiredByActorId);
+		_vm->_aiScripts->Retired(_id, retiredByActorId);
 	}
 }
 
@@ -1013,7 +1014,7 @@ void Actor::setGoal(int goalNumber) {
 	}	
 
 	_vm->_aiScripts->GoalChanged(_id, oldGoalNumber, goalNumber);
-	_vm->_script->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
+	_vm->_sceneScript->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
 }
 
 int Actor::getGoal() {

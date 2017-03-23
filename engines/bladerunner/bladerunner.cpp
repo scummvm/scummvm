@@ -43,7 +43,8 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/init.h"
-#include "bladerunner/script/script.h"
+#include "bladerunner/script/scene.h"
+#include "bladerunner/script/ai.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
@@ -72,7 +73,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_playerLosesControlCounter = 0;
 
 	_crimesDatabase = nullptr;
-	_script = new Script(this);
+	_sceneScript = new SceneScript(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
 	_combat = new Combat(this);
@@ -120,7 +121,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _combat;
 	delete _lights;
 	delete _settings;
-	delete _script;
+	delete _sceneScript;
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -346,11 +347,17 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 void BladeRunnerEngine::initChapterAndScene() {
 	// TODO: Init actors...
-	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i)
+	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 		_aiScripts->Initialize(i);
+	}
 
-	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i)
+	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 		_actors[i]->changeAnimationMode(0);
+	}
+
+	for (int i = 1, end = _gameInfo->getActorCount(); i != end; ++i) { // skip first actor, probably player
+		_actors[i]->movementTrackNext(true);
+	}
 
 	_settings->setChapter(1);
 	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
@@ -587,7 +594,7 @@ void BladeRunnerEngine::gameTick() {
 
 		_adq->tick();
 		if (_scene->didPlayerWalkIn()) {
-			_script->PlayerWalkedIn();
+			_sceneScript->PlayerWalkedIn();
 		}
 		// TODO: Gun range announcements
 		// TODO: ZBUF repair dirty rects
@@ -597,7 +604,7 @@ void BladeRunnerEngine::gameTick() {
 		bool backgroundChanged = false;
 		int frame = _scene->advanceFrame(_surface1, _zBuffer1);
 		if (frame >= 0) {
-			_script->SceneFrameAdvanced(frame);
+			_sceneScript->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
@@ -626,7 +633,7 @@ void BladeRunnerEngine::gameTick() {
 		//if (!dialogueMenu)
 			actorsUpdate();
 
-		if (_settings->getNewScene() == -1 || _script->IsInsideScript() || _aiScripts->IsInsideScript()) {
+		if (_settings->getNewScene() == -1 || _sceneScript->IsInsideScript() || _aiScripts->IsInsideScript()) {
 			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
@@ -846,28 +853,28 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex) {
 	// clickedOnExit(exitType, x, y);
 	debug("clicked on exit %d %d %d", exitIndex, x, y);
-	_script->ClickedOnExit(exitIndex);
+	_sceneScript->ClickedOnExit(exitIndex);
 }
 
 void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex) {
 	debug("clicked on region %d %d %d", regionIndex, x, y);
-	_script->ClickedOn2DRegion(regionIndex);
+	_sceneScript->ClickedOn2DRegion(regionIndex);
 }
 
 void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget) {
 	const char *objectName = _scene->objectGetName(objectId);
 	debug("Clicked on object %s", objectName);
-	_script->ClickedOn3DObject(objectName, false);
+	_sceneScript->ClickedOn3DObject(objectName, false);
 }
 
 void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
 	debug("Clicked on item %d", itemId);
-	_script->ClickedOnItem(itemId, false);
+	_sceneScript->ClickedOnItem(itemId, false);
 }
 
 void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
 	debug("Clicked on actor %d", actorId);
-	_script->ClickedOnActor(actorId);
+	_sceneScript->ClickedOnActor(actorId);
 }
 
 void BladeRunnerEngine::gameWaitForActive() {
