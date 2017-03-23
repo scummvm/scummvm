@@ -90,7 +90,7 @@ void CStarControlSub20::proc7() {
 	}
 }
 
-void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
+void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (_size > 0.0) {
 		v._x += m._row3._x * _size;
 		v._y += m._row3._y * _size;

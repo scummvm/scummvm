@@ -37,7 +37,7 @@ public:
 
 	virtual void proc9(FVector &v1, FVector &v2, FMatrix &matrix);
 	virtual void proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m);
-	virtual void proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m);
+	virtual void proc11(CErrorCode &errorCode, FVector &v, FMatrix &m);
 };
 
 } // End of namespace Titanic

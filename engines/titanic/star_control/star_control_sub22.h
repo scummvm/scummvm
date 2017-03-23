@@ -36,7 +36,7 @@ public:
 	virtual ~CStarControlSub22() {}
 
 	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
-	virtual void proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m);
+	virtual void proc11(CErrorCode &errorCode, FVector &v, FMatrix &m);
 };
 
 } // End of namespace Titanic

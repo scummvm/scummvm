@@ -46,10 +46,8 @@ protected:
 	int _field4C;
 	Common::Array<double> _powers;
 	int _field54;
-	int _field58;
-	double _field5C;
+	double _field58;
 	double _field60;
-	double _field64;
 	CStarControlSub25 _sub25;
 public:
 	CStarControlSub23();

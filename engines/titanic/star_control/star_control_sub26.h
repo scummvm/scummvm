@@ -50,7 +50,7 @@ public:
 	void copyFrom(const CStarControlSub26 *src);
 
 	double fn1() const;
-
+	void fn5(double val, CStarControlSub26 *s1, CStarControlSub26 *s2);
 };
 
 } // End of namespace Titanic

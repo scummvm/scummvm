@@ -37,7 +37,7 @@ void CStarControlSub22::proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 	incLockCount();
 }
 
-void CStarControlSub22::proc11(CErrorCode &errorCode, FVector &v, const FMatrix &m) {
+void CStarControlSub22::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (_sub27.get8()) {
 		decLockCount();
 		int val = _sub27.proc5(errorCode, v, m);

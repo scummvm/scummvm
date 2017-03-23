@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_control_sub25.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/dmatrix.h"
 
 namespace Titanic {
 
@@ -29,6 +29,21 @@ void CStarControlSub25::fn1(const FMatrix &m1, const FMatrix &m2) {
 	_matrix1 = m1;
 	_matrix2 = m2;
 
+}
+
+void CStarControlSub25::fn2(double val, FMatrix &m) {
+	if (val < 0.0) {
+		m = _matrix1;
+	} else if (val > 1.0) {
+		m = _matrix2;
+	} else {
+		CStarControlSub26 sub26;
+		sub26.fn5(val, &_sub2, &sub26);
+
+		DMatrix m1;
+		m1.fn3(&sub26);
+		m = m1;
+	}
 }
 
 } // End of namespace Titanic

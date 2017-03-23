@@ -42,4 +42,8 @@ void CStarControlSub26::copyFrom(const CStarControlSub26 *src) {
 	_sub = src->_sub;
 }
 
+void CStarControlSub26::fn5(double val, CStarControlSub26 *s1, CStarControlSub26 *s2) {
+	// TODO
+}
+
 } // End of namespace Titanic

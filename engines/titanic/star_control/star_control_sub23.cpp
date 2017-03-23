@@ -37,10 +37,8 @@ CStarControlSub23::CStarControlSub23() : _row1(0.0, 1000000.0, 0.0) {
 	_field48 = 0;
 	_field4C = 0;
 	_field54 = 0;
-	_field58 = 0;
-	_field5C = 0;
-	_field60 = 0;
-	_field64 = 0;
+	_field58 = 0.0;
+	_field60 = 0.0;
 }
 
 void CStarControlSub23::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {
@@ -52,7 +50,7 @@ void CStarControlSub23::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 	_field58 = 0;
 	_field8 = 0;
 	_field34 = 0;
-	_field5C = 1.875;
+	_field58 = 1.0;
 	_field40 = -1;
 	_field44 = -1;
 	_field48 = -1;
@@ -62,11 +60,10 @@ void CStarControlSub23::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_row1.clear();
 	_row2.clear();
-	_field58 = 0;
+	_field58 = 1.0;
 	_field24 = 0.0;
 	_field8 = 0;
 	_field34 = 0;
-	_field5C = 1.875;
 }
 
 void CStarControlSub23::proc4(FVector &v1, FVector &v2, FMatrix &m) {
@@ -82,8 +79,7 @@ void CStarControlSub23::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 	_field44 = -1;
 	_field48 = -1;
 	_field4C = -1;
-	_field58 = 0;
-	_field5C = 1.875;
+	_field58 = 1.0;
 }
 
 void CStarControlSub23::proc6(int val1, int val2, float val) {

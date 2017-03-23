@@ -56,7 +56,7 @@ public:
 	/**
 	 * Calculates the cross-product between this matrix and a passed one
 	 */
-	void crossProduct(FVector *dest, const FVector *src);
+	void crossProduct(FVector &dest, const FVector &src);
 
 	/**
 	 * Normalizes the vector so the length from origin equals 1.0
@@ -66,12 +66,12 @@ public:
 	/**
 	 * Adds two vectors together and then normalizes the result
 	 */
-	static void addAndNormalize(FVector *dest, const FVector *v1, const FVector *v2);
+	static const FVector *addAndNormalize(FVector &dest, const FVector &v1, const FVector &v2);
 
 	/**
 	 * Returns the distance between a specified point and this one
 	 */
-	double getDistance(const FVector *src) const;
+	double getDistance(const FVector &src) const;
 
 	FVector fn5(const CStarControlSub6 *sub6) const;
 
@@ -95,6 +95,10 @@ public:
 
 	FVector operator-(const FVector &delta) const {
 		return FVector(_x - delta._x, _y - delta._y, _z - delta._z);
+	}
+
+	const FVector operator*(double right) const {
+		return FVector(_x * right, _y * right, _z * right);
 	}
 
 	void operator+=(const FVector &delta) {

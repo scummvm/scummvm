@@ -38,10 +38,10 @@ void FVector::fn1(FVector *v) {
 	v->_z = _z;
 }
 
-void FVector::crossProduct(FVector *dest, const FVector *src) {
-	dest->_x = (src->_z * _y) - (_z * src->_y);
-	dest->_y = (src->_x * _z) - (_x * src->_z);
-	dest->_z = (src->_y * _x) - (_y * src->_x);
+void FVector::crossProduct(FVector &dest, const FVector &src) {
+	dest._x = (src._z * _y) - (_z * src._y);
+	dest._y = (src._x * _z) - (_x * src._z);
+	dest._z = (src._y * _x) - (_y * src._x);
 }
 
 double FVector::normalize() {
@@ -54,17 +54,18 @@ double FVector::normalize() {
 	return hyp;
 }
 
-void FVector::addAndNormalize(FVector *dest, const FVector *v1, const FVector *v2) {
-	FVector tempVector(v1->_x + v2->_x, v1->_y + v2->_y, v1->_z + v2->_z);
+const FVector *FVector::addAndNormalize(FVector &dest, const FVector &v1, const FVector &v2) {
+	FVector tempVector(v1._x + v2._x, v1._y + v2._y, v1._z + v2._z);
 	tempVector.normalize();
 
-	*dest = tempVector;
+	dest = tempVector;
+	return &dest;
 }
 
-double FVector::getDistance(const FVector *src) const {
-	double xd = src->_x - _x;
-	double yd = src->_y - _y;
-	double zd = src->_z - _z;
+double FVector::getDistance(const FVector &src) const {
+	double xd = src._x - _x;
+	double yd = src._y - _y;
+	double zd = src._z - _z;
 
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
