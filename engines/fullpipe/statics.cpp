@@ -417,7 +417,7 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 	return 0;
 }
 
-Statics *StaticANIObject::getStaticsByName(Common::String &name) {
+Statics *StaticANIObject::getStaticsByName(const Common::String &name) {
 	for (uint i = 0; i < _staticsList.size(); i++)
 		if (_staticsList[i]->_staticsName == name)
 			return _staticsList[i];
@@ -449,7 +449,7 @@ int StaticANIObject::getMovementIdById(int itemId) {
 	return 0;
 }
 
-Movement *StaticANIObject::getMovementByName(Common::String &name) {
+Movement *StaticANIObject::getMovementByName(const Common::String &name) {
 	for (uint i = 0; i < _movements.size(); i++)
 		if (_movements[i]->_objectName == name)
 			return _movements[i];

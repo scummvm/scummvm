@@ -548,7 +548,7 @@ void FullpipeEngine::updateScreen() {
 	++_updateTicks;
 }
 
-int FullpipeEngine::getObjectEnumState(Common::String name, const char *state) {
+int FullpipeEngine::getObjectEnumState(const Common::String &name, const char *state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
@@ -565,7 +565,7 @@ int FullpipeEngine::getObjectEnumState(Common::String name, const char *state) {
 	return 0;
 }
 
-int FullpipeEngine::getObjectState(Common::String objname) {
+int FullpipeEngine::getObjectState(const Common::String &objname) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
@@ -574,7 +574,7 @@ int FullpipeEngine::getObjectState(Common::String objname) {
   return 0;
 }
 
-void FullpipeEngine::setObjectState(Common::String name, int state) {
+void FullpipeEngine::setObjectState(const Common::String &name, int state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {

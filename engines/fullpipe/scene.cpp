@@ -293,7 +293,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	return 0;
 }
 
-StaticANIObject *Scene::getStaticANIObject1ByName(Common::String &name, int a3) {
+StaticANIObject *Scene::getStaticANIObject1ByName(const Common::String &name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
 		if ((_staticANIObjectList1[i]->_objectName == name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
@@ -354,7 +354,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	return 0;
 }
 
-PictureObject *Scene::getPictureObjectByName(Common::String objName, int flags) {
+PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
 		if ((((PictureObject *)_picObjList[i])->_objectName == objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
@@ -382,7 +382,7 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 	return 0;
 }
 
-MessageQueue *Scene::getMessageQueueByName(Common::String &name) {
+MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
 		if (_messageQueueList[i]->_queueName == name)
 			return _messageQueueList[i];

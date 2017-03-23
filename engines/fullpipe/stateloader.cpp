@@ -492,7 +492,7 @@ bool GameVar::load(MfcArchive &file) {
 	return true;
 }
 
-GameVar *GameVar::getSubVarByName(Common::String name) {
+GameVar *GameVar::getSubVarByName(const Common::String &name) {
 	GameVar *sv = 0;
 
 	if (_subVars != 0) {
@@ -503,7 +503,7 @@ GameVar *GameVar::getSubVarByName(Common::String name) {
 	return sv;
 }
 
-bool GameVar::setSubVarAsInt(Common::String name, int value) {
+bool GameVar::setSubVarAsInt(const Common::String &name, int value) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var) {
@@ -523,7 +523,7 @@ bool GameVar::setSubVarAsInt(Common::String name, int value) {
 	return addSubVar(var);
 }
 
-int GameVar::getSubVarAsInt(Common::String name) {
+int GameVar::getSubVarAsInt(const Common::String &name) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var)
@@ -532,7 +532,7 @@ int GameVar::getSubVarAsInt(Common::String name) {
 		return 0;
 }
 
-GameVar *GameVar::addSubVarAsInt(Common::String name, int value) {
+GameVar *GameVar::addSubVarAsInt(const Common::String &name, int value) {
 	if (getSubVarByName(name)) {
 		return 0;
 	} else {

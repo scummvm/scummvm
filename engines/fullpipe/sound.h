@@ -67,9 +67,9 @@ class SoundList : public CObject {
  public:
 	SoundList();
 	~SoundList();
-	virtual bool load(MfcArchive &file, Common::String fname);
+	virtual bool load(MfcArchive &file, const Common::String &fname);
 	virtual bool load(MfcArchive &file) { assert(0); return false; } // Disable base class
-	bool loadFile(Common::String fname, Common::String libname);
+	bool loadFile(const Common::String &fname, const Common::String &libname);
 
 	int getCount() { return _soundItemsCount; }
 	Sound *getSoundByIndex(int idx) { return _soundItems[idx]; }

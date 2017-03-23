@@ -33,7 +33,7 @@
 
 namespace Fullpipe {
 
-bool CObject::loadFile(Common::String fname) {
+bool CObject::loadFile(const Common::String &fname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -112,7 +112,7 @@ Common::String MfcArchive::readPascalString(bool twoByte) {
 	return result;
 }
 
-void MfcArchive::writePascalString(Common::String str, bool twoByte) {
+void MfcArchive::writePascalString(const Common::String &str, bool twoByte) {
 	int len = str.size();
 
 	if (twoByte)
@@ -154,7 +154,7 @@ bool MemoryObject::load(MfcArchive &file) {
 	return true;
 }
 
-void MemoryObject::loadFile(Common::String filename) {
+void MemoryObject::loadFile(const Common::String &filename) {
 	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename.c_str());
 
 	if (filename.empty())
@@ -501,7 +501,7 @@ Common::String genFileName(int superId, int sceneId, const char *ext) {
 }
 
 // Translates cp-1251..utf-8
-byte *transCyrillic(Common::String str) {
+byte *transCyrillic(const Common::String &str) {
 	byte *s = (byte *)str.c_str();
 	static byte tmp[1024];
 

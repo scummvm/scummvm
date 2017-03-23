@@ -183,8 +183,8 @@ public:
 	int getSceneTrack();
 	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(Common::String trackName);
-	void playOggSound(Common::String trackName, Audio::SoundHandle *stream);
+	void startSoundStream1(const Common::String &trackName);
+	void playOggSound(const Common::String &trackName, Audio::SoundHandle *stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -272,9 +272,9 @@ public:
 	void setCursor(int id);
 	void updateCursorCommon();
 
-	int getObjectState(Common::String objname);
-	void setObjectState(Common::String name, int state);
-	int getObjectEnumState(Common::String name, const char *state);
+	int getObjectState(const Common::String &objname);
+	void setObjectState(const Common::String &name, int state);
+	int getObjectEnumState(const Common::String &name, const char *state);
 
 	void sceneAutoScrolling();
 	bool sceneSwitcher(EntranceInfo *entrance);

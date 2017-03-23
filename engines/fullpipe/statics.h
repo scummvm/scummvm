@@ -204,10 +204,10 @@ public:
 
 	void setOXY(int x, int y);
 	Statics *getStaticsById(int id);
-	Statics *getStaticsByName(Common::String &name);
+	Statics *getStaticsByName(const Common::String &name);
 	Movement *getMovementById(int id);
 	int getMovementIdById(int itemId);
-	Movement *getMovementByName(Common::String &name);
+	Movement *getMovementByName(const Common::String &name);
 	Common::Point *getCurrDimensions(Common::Point &p);
 
 	Common::Point *getSomeXY(Common::Point &p);

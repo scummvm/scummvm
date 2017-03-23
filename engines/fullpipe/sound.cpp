@@ -50,7 +50,7 @@ SoundList::~SoundList() {
 	free(_soundItems);
 }
 
-bool SoundList::load(MfcArchive &file, Common::String fname) {
+bool SoundList::load(MfcArchive &file, const Common::String &fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
 	_soundItemsCount = file.readUint32LE();
@@ -73,7 +73,7 @@ bool SoundList::load(MfcArchive &file, Common::String fname) {
 
 }
 
-bool SoundList::loadFile(Common::String fname, Common::String libname) {
+bool SoundList::loadFile(const Common::String &fname, const Common::String &libname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -364,13 +364,13 @@ int FullpipeEngine::getSceneTrack() {
 	return res;
 }
 
-void FullpipeEngine::startSoundStream1(Common::String trackName) {
+void FullpipeEngine::startSoundStream1(const Common::String &trackName) {
 	stopAllSoundStreams();
 
 	playOggSound(trackName, _soundStream1);
 }
 
-void FullpipeEngine::playOggSound(Common::String trackName, Audio::SoundHandle *stream) {
+void FullpipeEngine::playOggSound(const Common::String &trackName, Audio::SoundHandle *stream) {
 #ifdef USE_VORBIS
 	if (_mixer->isSoundHandleActive(*stream))
 		return;
