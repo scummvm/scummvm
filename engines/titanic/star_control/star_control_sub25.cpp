@@ -29,6 +29,10 @@ void CStarControlSub25::fn1(const FMatrix &m1, const FMatrix &m2) {
 	_matrix1 = m1;
 	_matrix2 = m2;
 
+	DMatrix matrix = _matrix2;
+	_sub1.fn4(matrix);
+	matrix = _matrix2;
+	_sub2.fn4(matrix);
 }
 
 void CStarControlSub25::fn2(double val, FMatrix &m) {

@@ -23,6 +23,8 @@
 #ifndef TITANIC_STAR_CONTROL_SUB26_H
 #define TITANIC_STAR_CONTROL_SUB26_H
 
+#include "titanic/star_control/dmatrix.h"
+
 namespace Titanic {
 
 class CStarControlSub26 {
@@ -33,6 +35,9 @@ class CStarControlSub26 {
 
 		Sub() : _v1(0.0), _v2(0.0), _v3(0.0) {}
 	};
+private:
+	double fn2(const CStarControlSub26 *src);
+	const CStarControlSub26 *fn3(const CStarControlSub26 *src, double val);
 public:
 	double _field0;
 	Sub _sub;
@@ -50,6 +55,7 @@ public:
 	void copyFrom(const CStarControlSub26 *src);
 
 	double fn1() const;
+	void fn4(const DMatrix &m);
 	void fn5(double val, CStarControlSub26 *s1, CStarControlSub26 *s2);
 };
 
