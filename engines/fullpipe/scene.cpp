@@ -72,7 +72,6 @@ bool SceneTagList::load(MfcArchive &file) {
 SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
-	_tag = 0;
 	_sceneId = 0;
 }
 
@@ -86,24 +85,22 @@ bool SceneTag::load(MfcArchive &file) {
 
 	_tag = file.readPascalString();
 
-	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag);
+	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag.c_str());
 
 	return true;
 }
 
 SceneTag::~SceneTag() {
-	free(_tag);
-
 	delete _scene;
 	delete _field_4;
 }
 
 void SceneTag::loadScene() {
-	char *archname = genFileName(0, _sceneId, "nl");
+	Common::String archname = genFileName(0, _sceneId, "nl");
 
 	Common::Archive *arch = makeNGIArchive(archname);
 
-	char *fname = genFileName(0, _sceneId, "sc");
+	Common::String fname = genFileName(0, _sceneId, "sc");
 
 	Common::SeekableReadStream *file = arch->createReadStreamForMember(fname);
 
@@ -119,9 +116,6 @@ void SceneTag::loadScene() {
 	delete file;
 
 	g_fp->_currArchive = 0;
-
-	free(fname);
-	free(archname);
 }
 
 Scene::Scene() {
@@ -130,7 +124,6 @@ Scene::Scene() {
 	_shadows = 0;
 	_soundList = 0;
 	_libHandle = 0;
-	_sceneName = 0;
 }
 
 Scene::~Scene() {
@@ -153,8 +146,6 @@ Scene::~Scene() {
 	delete _libHandle;
 
 	// delete _field_BC;
-
-	free(_sceneName);
 }
 
 bool Scene::load(MfcArchive &file) {
@@ -165,14 +156,14 @@ bool Scene::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
 	_sceneName = file.readPascalString();
-	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
+	debug(0, "scene: <%s> %d", transCyrillic(_sceneName), _sceneId);
 
 	int count = file.readUint16LE();
 	debugC(7, kDebugLoading, "scene.ani: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
-		char *aniname = genFileName(0, aniNum, "ani");
+		Common::String aniname = genFileName(0, aniNum, "ani");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(aniname);
 
@@ -186,7 +177,6 @@ bool Scene::load(MfcArchive &file) {
 		_staticANIObjectList1.push_back(ani);
 
 		delete f;
-		free(aniname);
 	}
 
 	count = file.readUint16LE();
@@ -194,7 +184,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int qNum = file.readUint16LE();
-		char *qname = genFileName(0, qNum, "qu");
+		Common::String qname = genFileName(0, qNum, "qu");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
@@ -208,7 +198,6 @@ bool Scene::load(MfcArchive &file) {
 		_messageQueueList.push_back(mq);
 
 		delete f;
-		free(qname);
 	}
 
 	count = file.readUint16LE();
@@ -221,10 +210,10 @@ bool Scene::load(MfcArchive &file) {
 
 	_libHandle = g_fp->_currArchive;
 
-	if (_picObjList.size() > 0 && _bgname && strlen(_bgname) > 1) {
+	if (_picObjList.size() > 0 && !_bgname.empty()) {
 		char fname[260];
 
-		strcpy(fname, _bgname);
+		strcpy(fname, _bgname.c_str());
 		strcpy(strrchr(fname, '.') + 1, "col");
 
 		MemoryObject *col = new MemoryObject();
@@ -233,32 +222,26 @@ bool Scene::load(MfcArchive &file) {
 		_palette = col;
 	}
 
-	char *shdname = genFileName(0, _sceneId, "shd");
+	Common::String shdname = genFileName(0, _sceneId, "shd");
 
 	Shadows *shd = new Shadows();
 
 	if (shd->loadFile(shdname))
 		_shadows = shd;
 
-	free(shdname);
-
-	char *slsname = genFileName(0, _sceneId, "sls");
+	Common::String slsname = genFileName(0, _sceneId, "sls");
 
 	if (g_fp->_soundEnabled) {
 		_soundList = new SoundList();
 
 		if (g_fp->_flgSoundList) {
-			char *nlname = genFileName(17, _sceneId, "nl");
+			Common::String nlname = genFileName(17, _sceneId, "nl");
 
 			_soundList->loadFile(slsname, nlname);
-
-			free(nlname);
 		} else {
 			_soundList->loadFile(slsname, 0);
 		}
 	}
-
-	free(slsname);
 
 	initStaticANIObjects();
 
@@ -310,9 +293,9 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	return 0;
 }
 
-StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
+StaticANIObject *Scene::getStaticANIObject1ByName(Common::String &name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (!strcmp(_staticANIObjectList1[i]->_objectName, name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if ((_staticANIObjectList1[i]->_objectName == name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -371,9 +354,9 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	return 0;
 }
 
-PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
+PictureObject *Scene::getPictureObjectByName(Common::String objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
+		if ((((PictureObject *)_picObjList[i])->_objectName == objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -399,9 +382,9 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 	return 0;
 }
 
-MessageQueue *Scene::getMessageQueueByName(char *name) {
+MessageQueue *Scene::getMessageQueueByName(Common::String &name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(_messageQueueList[i]->_queueName.c_str(), name))
+		if (_messageQueueList[i]->_queueName == name)
 			return _messageQueueList[i];
 
 	return 0;

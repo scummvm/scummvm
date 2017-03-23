@@ -67,8 +67,8 @@ public:
 	MfcArchive(Common::SeekableReadStream *file);
 	MfcArchive(Common::WriteStream *file);
 
-	char *readPascalString(bool twoByte = false);
-	void writePascalString(const char *str, bool twoByte = false);
+	Common::String readPascalString(bool twoByte = false);
+	void writePascalString(Common::String str, bool twoByte = false);
 	int readCount();
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
@@ -117,7 +117,7 @@ public:
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
 
-	bool loadFile(const char *fname);
+	bool loadFile(Common::String fname);
 };
 
 class ObList : public Common::List<CObject *>, public CObject {
@@ -130,7 +130,7 @@ class MemoryObject : CObject {
 	friend class Scene;
 
  protected:
-	char *_memfilename;
+	Common::String _memfilename;
 	int _mfield_8;
 	int _mfield_C;
 	int _mfield_10;
@@ -145,7 +145,7 @@ class MemoryObject : CObject {
 	virtual ~MemoryObject();
 
 	virtual bool load(MfcArchive &file);
-	void loadFile(char *filename);
+	void loadFile(Common::String filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
@@ -180,8 +180,8 @@ class DWordArray : public Common::Array<int32>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-char *genFileName(int superId, int sceneId, const char *ext);
-byte *transCyrillic(byte *s);
+Common::String genFileName(int superId, int sceneId, const char *ext);
+byte *transCyrillic(Common::String str);
 
 } // End of namespace Fullpipe
 

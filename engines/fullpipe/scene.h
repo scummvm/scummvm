@@ -38,7 +38,7 @@ class Scene : public Background {
 	Shadows *_shadows;
 	SoundList *_soundList;
 	int16 _sceneId;
-	char *_sceneName;
+	Common::String _sceneName;
 	int _field_BC;
 	NGIArchive *_libHandle;
 
@@ -59,16 +59,16 @@ class Scene : public Background {
 
 	StaticANIObject *getAniMan();
 	StaticANIObject *getStaticANIObject1ById(int obj, int a3);
-	StaticANIObject *getStaticANIObject1ByName(char *name, int a3);
+	StaticANIObject *getStaticANIObject1ByName(Common::String &name, int a3);
 	MessageQueue *getMessageQueueById(int messageId);
-	MessageQueue *getMessageQueueByName(char *name);
+	MessageQueue *getMessageQueueByName(Common::String &name);
 
 	void deleteStaticANIObject(StaticANIObject *obj);
 	void addStaticANIObject(StaticANIObject *obj, bool addList2);
 
 	void setPictureObjectsFlag4();
 	PictureObject *getPictureObjectById(int objId, int flags);
-	PictureObject *getPictureObjectByName(const char *name, int keyCode);
+	PictureObject *getPictureObjectByName(Common::String name, int keyCode);
 	void deletePictureObject(PictureObject *obj);
 	void preloadMovements(GameVar *var);
 
@@ -94,7 +94,7 @@ class Scene : public Background {
 class SceneTag : public CObject {
  public:
 	CObject *_field_4;
-	char *_tag;
+	Common::String _tag;
 	Scene *_scene;
 	int16 _sceneId;
 

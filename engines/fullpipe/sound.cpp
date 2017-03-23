@@ -50,13 +50,13 @@ SoundList::~SoundList() {
 	free(_soundItems);
 }
 
-bool SoundList::load(MfcArchive &file, char *fname) {
+bool SoundList::load(MfcArchive &file, Common::String fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
 	_soundItemsCount = file.readUint32LE();
 	_soundItems = (Sound **)calloc(_soundItemsCount, sizeof(Sound *));
 
-	if (fname) {
+	if (!fname.empty()) {
 	  _libHandle = (NGIArchive *)makeNGIArchive(fname);
 	} else {
 		_libHandle = 0;
@@ -73,7 +73,7 @@ bool SoundList::load(MfcArchive &file, char *fname) {
 
 }
 
-bool SoundList::loadFile(const char *fname, char *libname) {
+bool SoundList::loadFile(Common::String fname, Common::String libname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -257,7 +257,8 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 
 	GameVar *var = gvar->getSubVarByName("MUSIC");
 
-	memset(_sceneTracks, 0, sizeof(_sceneTracks));
+	for (int i = 0; i < 10; i++)
+		_sceneTracks[i].clear();
 
 	_numSceneTracks = 0;
 	_sceneTrackHasSequence = false;
@@ -273,7 +274,7 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 
 		while (sub) {
 			if (_musicAllowed & sub->_value.intValue) {
-				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName, 260);
+				_sceneTracks[_numSceneTracks] = sub->_varName;
 
 				_numSceneTracks++;
 			}
@@ -291,7 +292,7 @@ void FullpipeEngine::setSceneMusicParameters(GameVar *gvar) {
 	if (seq) {
 		_sceneTrackHasSequence = true;
 
-		Common::strlcpy(_trackName, seq->_value.stringValue, 2600);
+		_trackName = seq->_value.stringValue;
 	}
 
 	if (_musicLocal)
@@ -320,12 +321,12 @@ void FullpipeEngine::startSceneTrack() {
 			int trackNum = getSceneTrack();
 
 			if (trackNum == -1) {
-				strcpy(_sceneTracksCurrentTrack, "silence");
+				_sceneTracksCurrentTrack = "silence";
 
 				_trackStartDelay = 2880;
 				_sceneTrackIsPlaying = 0;
 			} else {
-				strcpy(_sceneTracksCurrentTrack, _sceneTracks[trackNum]);
+				_sceneTracksCurrentTrack = _sceneTracks[trackNum];
 
 				startSoundStream1(_sceneTracksCurrentTrack);
 
@@ -363,20 +364,20 @@ int FullpipeEngine::getSceneTrack() {
 	return res;
 }
 
-void FullpipeEngine::startSoundStream1(const char *trackName) {
+void FullpipeEngine::startSoundStream1(Common::String trackName) {
 	stopAllSoundStreams();
 
 	playOggSound(trackName, _soundStream1);
 }
 
-void FullpipeEngine::playOggSound(const char *trackName, Audio::SoundHandle *stream) {
+void FullpipeEngine::playOggSound(Common::String trackName, Audio::SoundHandle *stream) {
 #ifdef USE_VORBIS
 	if (_mixer->isSoundHandleActive(*stream))
 		return;
 
 	Common::File *track = new Common::File();
 	if (!track->open(trackName)) {
-		warning("Could not open %s", trackName);
+		warning("Could not open %s", trackName.c_str());
 		delete track;
 		return;
 	}
@@ -429,7 +430,8 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 
 	GameVar *var = sceneVar->getSubVarByName(name);
 
-	memset(_sceneTracks, 0, sizeof(_sceneTracks));
+	for (int i = 0; i < 10; i++)
+		_sceneTracks[i].clear();
 
 	_numSceneTracks = 0;
 	_sceneTrackHasSequence = false;
@@ -445,7 +447,7 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 
 		while (sub) {
 			if (_musicAllowed & sub->_value.intValue) {
-				Common::strlcpy(_sceneTracks[_numSceneTracks], sub->_varName, 260);
+				_sceneTracks[_numSceneTracks] = sub->_varName;
 
 				_numSceneTracks++;
 			}
@@ -463,12 +465,12 @@ void FullpipeEngine::playTrack(GameVar *sceneVar, const char *name, bool delayed
 	if (seq) {
 		_sceneTrackHasSequence = true;
 
-		Common::strlcpy(_trackName, seq->_value.stringValue, 2600);
+		_trackName = seq->_value.stringValue;
 	}
 
 	if (delayed) {
 		if (_sceneTrackIsPlaying && _numSceneTracks == 1) {
-			if (strcmp(_sceneTracksCurrentTrack, _sceneTracks[0]))
+			if (_sceneTracksCurrentTrack != _sceneTracks[0])
 				stopAllSoundStreams();
 		}
 

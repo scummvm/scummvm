@@ -223,7 +223,7 @@ bool StaticANIObject::load(MfcArchive &file) {
 	for (int i = 0; i < count; i++) {
 		int movNum = file.readUint16LE();
 
-		char *movname = genFileName(_id, movNum, "mov");
+		Common::String movname = genFileName(_id, movNum, "mov");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(movname);
 
@@ -236,7 +236,6 @@ bool StaticANIObject::load(MfcArchive &file) {
 		_movements.push_back(mov);
 
 		delete f;
-		free(movname);
 	}
 
 	Common::Point pt;
@@ -418,9 +417,9 @@ Statics *StaticANIObject::getStaticsById(int itemId) {
 	return 0;
 }
 
-Statics *StaticANIObject::getStaticsByName(char *name) {
+Statics *StaticANIObject::getStaticsByName(Common::String &name) {
 	for (uint i = 0; i < _staticsList.size(); i++)
-		if (!strcmp(_staticsList[i]->_staticsName, name))
+		if (_staticsList[i]->_staticsName == name)
 			return _staticsList[i];
 
 	return 0;
@@ -450,9 +449,9 @@ int StaticANIObject::getMovementIdById(int itemId) {
 	return 0;
 }
 
-Movement *StaticANIObject::getMovementByName(char *name) {
+Movement *StaticANIObject::getMovementByName(Common::String &name) {
 	for (uint i = 0; i < _movements.size(); i++)
-		if (!strcmp(_movements[i]->_objectName, name))
+		if (_movements[i]->_objectName == name)
 			return _movements[i];
 
 	return 0;
@@ -605,7 +604,7 @@ void StaticANIObject::draw() {
 	Common::Point point;
 	Common::Rect rect;
 
-	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
 		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
@@ -665,7 +664,7 @@ void StaticANIObject::draw() {
 }
 
 void StaticANIObject::draw2() {
-	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(6, kDebugDrawing, "StatciANIObject::draw2(): id: (%s) %d [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if ((_flags & 4) && (_flags & 0x10)) {
 		if (_movement) {
@@ -695,7 +694,7 @@ MovTable *StaticANIObject::countMovements() {
 		movTable->movs[i] = 2;
 
 		for (GameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
-			if (scumm_stricmp(_movements[i]->getName(), sub->_varName) == 0) {
+			if (scumm_stricmp(_movements[i]->getName().c_str(), sub->_varName.c_str()) == 0) {
 				movTable->movs[i] = 1;
 				break;
 			}
@@ -790,7 +789,7 @@ Common::Point *StaticANIObject::getSomeXY(Common::Point &p) {
 void StaticANIObject::update(int counterdiff) {
 	int mqid;
 
-	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic((byte *)_objectName), _id, _ox, _oy, _flags);
+	debugC(6, kDebugAnimation, "StaticANIObject::update() (%s) [%d] [%d, %d] fl: %x", transCyrillic(_objectName), _id, _ox, _oy, _flags);
 
 	if (_flags & 2) {
 		_messageNum--;
@@ -1300,7 +1299,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	if (_flags & 0x80)
 		return false;
 
-	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic((byte *)_objectName), _id, _ox, _oy);
+	debugC(4, kDebugAnimation, "StaticANIObject::startAnim(%d, %d, %d) (%s [%d]) [%d, %d]", movementId, messageQueueId, dynPhaseIdx, transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_messageQueueId) {
 		updateGlobalMessageQueue(messageQueueId, _id);
@@ -1429,13 +1428,12 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 
 Statics::Statics() {
 	_staticsId = 0;
-	_picture = 0;
-	_staticsName = 0;
+	_picture = nullptr;
+	_data = nullptr;
 }
 
 Statics::~Statics() {
 	delete _picture;
-	free(_staticsName);
 }
 
 Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
@@ -1443,17 +1441,12 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 
 	if (reverse) {
 		_staticsId ^= 0x4000;
-		int newlen = strlen(src->_staticsName) + strlen(sO_MirroredTo) + 1;
-		_staticsName = (char *)calloc(newlen, 1);
-
-		snprintf(_staticsName, newlen, "%s%s", sO_MirroredTo, src->_staticsName);
+		_staticsName = sO_MirroredTo + src->_staticsName;
 	} else {
-		_staticsName = (char *)calloc(strlen(src->_staticsName) + 1, 1);
-		strncpy(_staticsName, src->_staticsName, strlen(src->_staticsName) + 1);
+		_staticsName = src->_staticsName;
 	}
 
-	_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
-	strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+	_memfilename = src->_memfilename;
 
 	_picture = new Picture();
 }
@@ -1466,7 +1459,7 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic((byte *)_staticsName), _staticsId, _staticsId);
+	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
 
 	_picture = new Picture();
 	_picture->load(file);
@@ -1479,10 +1472,10 @@ void Statics::init() {
 
 	if (_staticsId & 0x4000) {
 		Bitmap *reversed = _bitmap->reverseImage();
-		freePixelData();
 		// TODO: properly dispose old _bitmap
+		// Enabling the call below causes corruption in flipped bitmaps
+		//freePixelData();
 		_bitmap = reversed;
-		// _data = ... // useless?
 	}
 }
 
@@ -1544,6 +1537,10 @@ Movement::~Movement() {
 	if (!_currMovement ) {
 		if (_updateFlag1)
 			_dynamicPhases.remove_at(0);
+
+		// FIXME: At this point, the last entry in _dynamicPhases is invalid
+		for (uint i = 0; i < _dynamicPhases.size() - 1; i++)
+			_dynamicPhases[i]->freePixelData();
 
 		_dynamicPhases.clear();
 	}
@@ -2207,6 +2204,7 @@ DynamicPhase::DynamicPhase() {
 	_field_7E = 0;
 	_dynFlags = 0;
 	_someY = 0;
+	_data = nullptr;
 }
 
 DynamicPhase::~DynamicPhase() {
@@ -2225,7 +2223,6 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 			src->init();
 
 		_bitmap = src->_bitmap->reverseImage();
-		_data = _bitmap->_pixels;
 		_dataSize = src->_dataSize;
 
 		if (g_fp->_currArchive) {
@@ -2242,8 +2239,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_8 = src->_mfield_8;
 		_mflags = src->_mflags;
 
-		_memfilename = (char *)calloc(strlen(src->_memfilename) + 1, 1);
-		strncpy(_memfilename, src->_memfilename, strlen(src->_memfilename) + 1);
+		_memfilename = src->_memfilename;
 		_dataSize = src->_dataSize;
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;

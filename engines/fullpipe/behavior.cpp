@@ -49,7 +49,7 @@ void BehaviorManager::clear() {
 }
 
 void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
-	debugC(2, kDebugBehavior, "BehaviorManager::initBehavior(%d, %s)", sc->_sceneId, transCyrillic((byte *)var->_varName));
+	debugC(2, kDebugBehavior, "BehaviorManager::initBehavior(%d, %s)", sc->_sceneId, transCyrillic(var->_varName));
 
 	clear();
 	_scene = sc;
@@ -63,8 +63,8 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 	debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. have Variable");
 
 	for (GameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
-		debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. subVar %s", transCyrillic((byte *)subvar->_varName));
-		if (!strcmp(subvar->_varName, "AMBIENT")) {
+		debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. subVar %s", transCyrillic(subvar->_varName));
+		if (subvar->_varName == "AMBIENT") {
 			behinfo = new BehaviorInfo;
 			behinfo->initAmbientBehavior(subvar, sc);
 
@@ -151,7 +151,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *e
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorAnim *bhe) {
-	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
+	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic(ani->_objectName));
 
 	MessageQueue *mq = 0;
 
@@ -243,7 +243,7 @@ void BehaviorInfo::clear() {
 }
 
 void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
-	debugC(4, kDebugBehavior, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic(var->_varName));
 
 	clear();
 	_animsCount = 1;
@@ -267,8 +267,8 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	Common::String s((char *)transCyrillic((byte *)var->_varName));
-	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic((byte *)ani->_objectName));
+	Common::String s((char *)transCyrillic(var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic(ani->_objectName));
 
 	clear();
 

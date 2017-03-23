@@ -54,7 +54,7 @@ void MotionController::enableLinks(const char *linkName, bool enable) {
 
 				MovGraphLink *lnk = (MovGraphLink *)*l;
 
-				if (!strcmp(lnk->_name, linkName)) {
+				if (lnk->_name == linkName) {
 					if (enable)
 						lnk->_flags |= 0x20000000;
 					else
@@ -82,7 +82,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 					MovGraphLink *lnk = (MovGraphLink *)*l;
 
-					if (!strcmp(lnk->_name, name))
+					if (lnk->_name == name)
 						return lnk;
 				}
 			}
@@ -97,7 +97,7 @@ MovGraphLink *MotionController::getLinkByName(const char *name) {
 
 			MovGraphLink *lnk = (MovGraphLink *)*l;
 
-			if (!strcmp(lnk->_name, name))
+			if (lnk->_name == name)
 				return lnk;
 		}
 	}
@@ -2900,7 +2900,6 @@ MovGraphLink::MovGraphLink() {
 	_field_3C = 0;
 	_field_38 = 0;
 	_movGraphReact = 0;
-	_name = 0;
 
 	_objtype = kObjTypeMovGraphLink;
 }

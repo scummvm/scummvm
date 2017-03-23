@@ -131,10 +131,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_stream2playing = false;
 
-	memset(_sceneTracks, 0, sizeof(_sceneTracks));
-	memset(_trackName, 0, sizeof(_trackName));
-	memset(_sceneTracksCurrentTrack, 0, sizeof(_sceneTracksCurrentTrack));
-
 	_numSceneTracks = 0;
 	_sceneTrackHasSequence = false;
 	_sceneTrackIsPlaying = false;
@@ -552,7 +548,7 @@ void FullpipeEngine::updateScreen() {
 	++_updateTicks;
 }
 
-int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
+int FullpipeEngine::getObjectEnumState(Common::String name, const char *state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {
@@ -569,7 +565,7 @@ int FullpipeEngine::getObjectEnumState(const char *name, const char *state) {
 	return 0;
 }
 
-int FullpipeEngine::getObjectState(const char *objname) {
+int FullpipeEngine::getObjectState(Common::String objname) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (var)
@@ -578,7 +574,7 @@ int FullpipeEngine::getObjectState(const char *objname) {
   return 0;
 }
 
-void FullpipeEngine::setObjectState(const char *name, int state) {
+void FullpipeEngine::setObjectState(Common::String name, int state) {
 	GameVar *var = _gameLoader->_gameVar->getSubVarByName("OBJSTATES");
 
 	if (!var) {

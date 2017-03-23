@@ -41,7 +41,6 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
-	_bgname = 0;
 	_palette = 0;
 }
 
@@ -260,7 +259,6 @@ GameObject::GameObject() {
 	_priority = 0;
 	_field_20 = 0;
 	_field_8 = 0;
-	_objectName = 0;
 }
 
 GameObject::GameObject(GameObject *src) {
@@ -268,8 +266,7 @@ GameObject::GameObject(GameObject *src) {
 	_flags = 0;
 	_id = src->_id;
 
-	_objectName = (char *)calloc(strlen(src->_objectName) + 1, 1);
-	strncpy(_objectName, src->_objectName, strlen(src->_objectName));
+	_objectName = src->_objectName;
 
 	_ox = src->_ox;
 	_oy = src->_oy;
@@ -279,7 +276,6 @@ GameObject::GameObject(GameObject *src) {
 }
 
 GameObject::~GameObject() {
-	free(_objectName);
 }
 
 bool GameObject::load(MfcArchive &file) {
@@ -474,12 +470,12 @@ Picture::~Picture() {
 }
 
 void Picture::freePicture() {
-	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename);
+	debugC(5, kDebugMemory, "Picture::freePicture(): file: %s", _memfilename.c_str());
 
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			free(_bitmap);
+			delete _bitmap;
 			_bitmap = 0;
 		}
 	}
@@ -490,7 +486,6 @@ void Picture::freePicture() {
 	}
 
 	if (_convertedBitmap) {
-		free(_convertedBitmap->_pixels);
 		delete _convertedBitmap;
 		_convertedBitmap = 0;
 	}
@@ -536,7 +531,7 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename);
+	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename.c_str());
 
 	return true;
 }
@@ -556,7 +551,7 @@ void Picture::setAOIDs() {
 }
 
 void Picture::init() {
-	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename);
+	debugC(5, kDebugLoading, "Picture::init(), %s", _memfilename.c_str());
 
 	MemoryObject::getData();
 
@@ -589,19 +584,16 @@ void Picture::getDibInfo() {
 	}
 
 	if (!_data) {
-		warning("Picture::getDibInfo: data is empty <%s>", _memfilename);
+		warning("Picture::getDibInfo: data is empty <%s>", _memfilename.c_str());
 
 		MemoryObject::load();
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);
-
 	_bitmap->load(s);
-	_bitmap->_pixels = _data;
+	delete s;
 
-	_bitmap->decode((int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
-
-	_bitmap->_pixels = 0;
+	_bitmap->decode(_data, (int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
 }
 
 Bitmap *Picture::getPixelData() {
@@ -615,7 +607,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 	int x1 = x;
 	int y1 = y;
 
-	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename);
+	debugC(7, kDebugDrawing, "Picture::draw(%d, %d, %d, %d) (%s)", x, y, style, angle, _memfilename.c_str());
 
 	if (x != -1)
 		x1 = x;
@@ -766,7 +758,6 @@ Bitmap::Bitmap() {
 	_y = 0;
 	_width = 0;
 	_height = 0;
-	_pixels = 0;
 	_type = 0;
 	_dataSize = 0;
 	_flags = 0;
@@ -783,20 +774,16 @@ Bitmap::Bitmap(Bitmap *src) {
 	_type = src->_type;
 	_width = src->_width;
 	_height = src->_height;
-	_pixels = src->_pixels;
 	_surface = new Graphics::TransparentSurface(*src->_surface);
 	_copied_surface = true;
 	_flipping = src->_flipping;
 }
 
 Bitmap::~Bitmap() {
-
 	if (!_copied_surface)
 		_surface->free();
 	delete _surface;
 	_surface = 0;
-
-	_pixels = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -825,15 +812,15 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
-void Bitmap::decode(int32 *palette) {
+void Bitmap::decode(byte *pixels, int32 *palette) {
 	_surface = new Graphics::TransparentSurface;
 
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
-		putDibRB(palette);
+		putDibRB(pixels, palette);
 	else
-		putDibCB(palette);
+		putDibCB(pixels, palette);
 }
 
 void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
@@ -865,7 +852,7 @@ void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(int32 *palette) {
+bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endy;
 	int x;
@@ -890,7 +877,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 
 	y = endy;
 
-	srcPtr = (uint16 *)_pixels;
+	srcPtr = (uint16 *)pixels;
 
 	bool breakup = false;
 	for (y = endy; y >= starty && !breakup; y--) {
@@ -967,7 +954,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 	return false;
 }
 
-void Bitmap::putDibCB(int32 *palette) {
+void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 	uint32 *curDestPtr;
 	int endx;
 	int endy;
@@ -986,10 +973,10 @@ void Bitmap::putDibCB(int32 *palette) {
 	bpp = cb05_format ? 2 : 1;
 	pitch = (bpp * _width + 3) & 0xFFFFFFFC;
 
-	byte *srcPtr = &_pixels[pitch * endy];
+	byte *srcPtr = &pixels[pitch * endy];
 
 	if (endy < _height)
-		srcPtr = &_pixels[pitch * (_height - 1)];
+		srcPtr = &pixels[pitch * (_height - 1)];
 
 	int starty = 0;
 	int startx = 0;

@@ -256,11 +256,10 @@ void GameLoader::addVar(GameVar *var, GameVar *subvar) {
 			subvar->_value.intValue = var->_value.intValue;
 
 		for (GameVar *v = var->_subVars; v; v = v->_nextVarObj) {
-			GameVar *nv = subvar->getSubVarByName(v->_varName);
+			GameVar *nv = subvar->getSubVarByName(v->_varName.c_str());
 			if (!nv) {
 				nv = new GameVar;
-				nv->_varName = (char *)calloc(strlen(v->_varName) + 1, 1);
-				strcpy(nv->_varName, v->_varName);
+				nv->_varName = v->_varName;
 				nv->_varType = v->_varType;
 
 				subvar->addSubVar(nv);
@@ -361,7 +360,6 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 GameProject::GameProject() {
 	_field_4 = 0;
-	_headerFilename = 0;
 	_field_10 = 12;
 
 	_sceneTagList = 0;
@@ -371,7 +369,6 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "GameProject::load()");
 
 	_field_4 = 0;
-	_headerFilename = 0;
 	_field_10 = 12;
 
 	g_fp->_gameProjectVersion = file.readUint32LE();
@@ -383,7 +380,7 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
 	debugC(1, kDebugLoading, "_pictureScale = %d", g_fp->_pictureScale);
 	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
-	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename);
+	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
 
 	_sceneTagList = new SceneTagList();
 
@@ -401,8 +398,6 @@ bool GameProject::load(MfcArchive &file) {
 }
 
 GameProject::~GameProject() {
-	free(_headerFilename);
-
 	delete _sceneTagList;
 }
 
@@ -414,7 +409,6 @@ GameVar::GameVar() {
 	_field_14 = 0;
 	_varType = 0;
 	_value.floatValue = 0;
-	_varName = 0;
 
 	_objtype = kObjTypeGameVar;
 }
@@ -455,8 +449,6 @@ GameVar::~GameVar() {
 		delete s;
 		s = _field_14;
 	}
-
-	free(_varName);
 }
 
 bool GameVar::load(MfcArchive &file) {
@@ -467,7 +459,7 @@ bool GameVar::load(MfcArchive &file) {
 	for (int i = 0; i < file.getLevel(); i++)
 		debugCN(6, kDebugLoading, " ");
 
-	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic((byte *)_varName));
+	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic(_varName));
 
 	switch (_varType) {
 	case 0:
@@ -478,9 +470,12 @@ bool GameVar::load(MfcArchive &file) {
 		_value.intValue = file.readUint32LE(); // FIXME
 		debugC(6, kDebugLoading, "f --> %f", _value.floatValue);
 		break;
-	case 2:
-		_value.stringValue = file.readPascalString();
+	case 2: {
+		Common::String str = file.readPascalString();
+		_value.stringValue = (char *)calloc(str.size() + 1, 1);
+		Common::strlcpy(_value.stringValue, str.c_str(), str.size() + 1);
 		debugC(6, kDebugLoading, "s --> %s", _value.stringValue);
+		}
 		break;
 	default:
 		error("Unknown var type: %d (0x%x)", _varType, _varType);
@@ -497,18 +492,18 @@ bool GameVar::load(MfcArchive &file) {
 	return true;
 }
 
-GameVar *GameVar::getSubVarByName(const char *name) {
+GameVar *GameVar::getSubVarByName(Common::String name) {
 	GameVar *sv = 0;
 
 	if (_subVars != 0) {
 		sv = _subVars;
-		for (;sv && scumm_stricmp(sv->_varName, name); sv = sv->_nextVarObj)
+		for (;sv && scumm_stricmp(sv->_varName.c_str(), name.c_str()); sv = sv->_nextVarObj)
 			;
 	}
 	return sv;
 }
 
-bool GameVar::setSubVarAsInt(const char *name, int value) {
+bool GameVar::setSubVarAsInt(Common::String name, int value) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var) {
@@ -523,13 +518,12 @@ bool GameVar::setSubVarAsInt(const char *name, int value) {
 	var = new GameVar();
 	var->_varType = 0;
 	var->_value.intValue = value;
-	var->_varName = (char *)calloc(strlen(name) + 1, 1);
-	strcpy(var->_varName, name);
+	var->_varName = name;
 
 	return addSubVar(var);
 }
 
-int GameVar::getSubVarAsInt(const char *name) {
+int GameVar::getSubVarAsInt(Common::String name) {
 	GameVar *var = getSubVarByName(name);
 
 	if (var)
@@ -538,7 +532,7 @@ int GameVar::getSubVarAsInt(const char *name) {
 		return 0;
 }
 
-GameVar *GameVar::addSubVarAsInt(const char *name, int value) {
+GameVar *GameVar::addSubVarAsInt(Common::String name, int value) {
 	if (getSubVarByName(name)) {
 		return 0;
 	} else {
@@ -547,8 +541,7 @@ GameVar *GameVar::addSubVarAsInt(const char *name, int value) {
 		var->_varType = 0;
 		var->_value.intValue = value;
 
-		var->_varName = (char *)calloc(strlen(name) + 1, 1);
-		strcpy(var->_varName, name);
+		var->_varName = name;
 
 		return (addSubVar(var) != 0) ? var : 0;
 	}
