@@ -489,7 +489,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		{
 			"warlock",
 			"",
-			AD_ENTRY1s("Spaceship Warlock.bin", "cfa68a1bc49251497ebde18e5fc9c217", 271107),
+			AD_ENTRY1s("Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271107),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
