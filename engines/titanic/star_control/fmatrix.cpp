@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/dmatrix.h"
 
 namespace Titanic {
 
@@ -39,7 +40,9 @@ FMatrix::FMatrix(const FMatrix &src) {
 }
 
 void FMatrix::copyFrom(const DMatrix &src) {
-	// TODO
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
 }
 
 void FMatrix::load(SimpleFile *file, int param) {
