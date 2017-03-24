@@ -28,7 +28,9 @@
 namespace Titanic {
 
 class CStarControlSub27 : public CStarControlSub23 {
-public:	
+private:
+	void fn1(FVector &v) const;
+public:
 	virtual ~CStarControlSub27() {}
 
 	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);

@@ -50,8 +50,58 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 }
 
 int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
-	// TODO
-	return 0;
+	if (!_field8)
+		return 0;
+
+	_field58 += _field60;
+	_field58 = _field58;
+	_sub25.fn2(_field58, m);
+	errorCode.set();
+
+	if (_field40 >= 0) {
+		double powVal = _powers[_field40];
+		v += _row3 * powVal;
+		fn1(v);
+
+		--_field40;
+		errorCode.set();
+		return 1;
+	} else if (_field44 > 0) {
+		v += _row3 * _field38;
+		fn1(v);
+
+		--_field44;
+		errorCode.set();
+		return 1;
+	} else if (_field48 >= 0) {
+		double powVal = _powers[31 - _field48];
+		v += _row3 * powVal;
+		fn1(v);
+
+		--_field48;
+		errorCode.set();
+		return 1;
+	} else {
+		_field8 = 0;
+		return 2;
+	}
+}
+
+void CStarControlSub27::fn1(FVector &v) const {
+	double distance = _row1.getDistance(v);
+	distance /= _field24;
+
+	if (distance <= 0.0) {
+		v = _row1;
+	} else if (distance >= 1.0) {
+		v = _row2;
+	} else {
+		v = FVector(
+			(_row2._x - _row1._x) * distance + _row1._x,
+			(_row2._y - _row1._y) * distance + _row1._y,
+			(_row2._z - _row1._z) * distance + _row1._z
+		);
+	}
 }
 
 } // End of namespace Titanic
