@@ -28,6 +28,9 @@
 #ifdef USE_OSD
 #include "common/translation.h"
 #endif
+#ifdef WIN32
+#include "backends/platform/sdl/win32/win32.h"
+#endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window)
     : SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
@@ -620,6 +623,35 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 
+#ifdef WIN32
+			// Alt-s creates a screenshot
+			if (event.kbd.keycode == Common::KEYCODE_s) {
+				Common::String filename;
+
+				Common::String screenshotsPath = OSystem_Win32::getScreenshotsPath();
+
+				char fullpath[MAXPATHLEN];
+
+				for (int n = 0;; n++) {
+					SDL_RWops *file;
+
+					filename = Common::String::format("scummvm%05d.bmp", n);
+
+					strcpy(fullpath, screenshotsPath.c_str());
+					strcat(fullpath, filename.c_str());
+
+					file = SDL_RWFromFile(fullpath, "r");
+					if (!file)
+						break;
+					SDL_RWclose(file);
+				}
+
+				saveScreenshot(fullpath);
+				debug("Saved screenshot '%s'", filename.c_str());
+
+				return true;
+		}
+#else
 			if (event.kbd.keycode == Common::KEYCODE_s) {
 				// Alt-s creates a screenshot
 				Common::String filename;
@@ -638,7 +670,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				debug("Saved screenshot '%s'", filename.c_str());
 
 				return true;
-			}
+		}
+#endif
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {

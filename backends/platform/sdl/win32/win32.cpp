@@ -145,6 +145,46 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 	return true;
 }
 
+Common::String OSystem_Win32::getScreenshotsPath() {
+	char screenshotsPath[MAXPATHLEN];
+
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", screenshotsPath, MAXPATHLEN))
+				error("Unable to access application data directory");
+		}
+		else {
+			if (!GetEnvironmentVariable("USERPROFILE", screenshotsPath, MAXPATHLEN))
+				error("Unable to access user profile directory");
+
+			strcat(screenshotsPath, "\\Application Data");
+		}
+
+		strcat(screenshotsPath, "\\ScummVM\\Screenshots");
+
+		// If the directory already exists (as it should in most cases),
+		// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
+		if (!CreateDirectory(screenshotsPath, NULL)) {
+			if (GetLastError() != ERROR_ALREADY_EXISTS)
+				error("Cannot create Screenshots folder");
+		}
+
+	} else {
+		// Check windows directory
+		uint ret = GetWindowsDirectory(screenshotsPath, MAXPATHLEN);
+		if (ret == 0 || ret > MAXPATHLEN)
+			error("Cannot retrieve the path of the Windows directory");
+	}
+
+	return strcat(screenshotsPath, "\\");
+}
+
 Common::String OSystem_Win32::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 

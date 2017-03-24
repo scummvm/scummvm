@@ -42,6 +42,9 @@
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 #include "gui/EventRecorder.h"
+#ifdef WIN32
+#include "backends/platform/sdl/win32/win32.h"
+#endif
 
 static const OSystem::GraphicsMode s_supportedShaders[] = {
 	{"NONE", "Normal (no shader)", 0},
@@ -2522,6 +2525,38 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
+#ifdef WIN32
+		// Alt-S: Create a screenshot - Win32
+		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
+			Common::String filename;
+
+			Common::String screenshotsPath = OSystem_Win32::getScreenshotsPath();
+
+			char fullpath[MAXPATHLEN];
+
+			for (int n = 0;; n++) {
+				SDL_RWops *file;
+
+				filename = Common::String::format("scummvm%05d.bmp", n);
+
+				strcpy(fullpath, screenshotsPath.c_str());
+				strcat(fullpath, filename.c_str());
+
+				file = SDL_RWFromFile(fullpath, "r");
+
+				if (!file)
+					break;
+				SDL_RWclose(file);
+			}
+
+			if (saveScreenshot(fullpath))
+				debug("Saved screenshot '%s'", filename.c_str());
+			else
+				warning("Could not save screenshot");
+
+			return true;
+		}
+#else
 		// Alt-S: Create a screenshot
 		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
 			char filename[20];
@@ -2531,6 +2566,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 				sprintf(filename, "scummvm%05d.bmp", n);
 				file = SDL_RWFromFile(filename, "r");
+
 				if (!file)
 					break;
 				SDL_RWclose(file);
@@ -2541,6 +2577,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				warning("Could not save screenshot");
 			return true;
 		}
+#endif
 
 		// Ctrl-Alt-<key> will change the GFX mode
 		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {

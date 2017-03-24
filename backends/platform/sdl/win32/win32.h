@@ -38,6 +38,8 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
+	static Common::String getScreenshotsPath();
+
 protected:
 	/**
 	 * The path of the currently open log file, if any.
