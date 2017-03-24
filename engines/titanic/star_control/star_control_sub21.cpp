@@ -46,9 +46,8 @@ void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVect
 	DVector vector2 = v2;
 	DMatrix matrix1, matrix2 = m, matrix3;
 	vector2.fn4(vector1, matrix1);
-	const DMatrix *matrixP = matrix1.fn4(matrix3, matrix1, matrix2);
+	FMatrix matrix4 = matrix1.fn4(matrix2);
 
-	FMatrix matrix4 = *matrixP;
 	_sub24.proc3(m, matrix4);
 	incLockCount();
 }

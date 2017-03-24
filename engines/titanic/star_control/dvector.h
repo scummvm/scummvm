@@ -41,7 +41,7 @@ public:
 	DVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
 	DVector(const FVector &v) : _x(v._x), _y(v._y), _z(v._z) {}
 
-	void normalize();
+	double normalize();
 
 	/**
 	 * Returns the distance between this vector and the passed one
@@ -50,9 +50,9 @@ public:
 
 	DVector *fn1(DVector &dest, const DMatrix &m);
 	void fn2(double val);
-	void fn3(DVector &dest);
-	const DMatrix *fn4(const DVector &v, DMatrix &m);
-	void fn5(DMatrix &dest);
+	DVector fn3() const;
+	void fn4(const DVector &v, DMatrix &m);
+	DMatrix fn5() const;
 
 	/**
 	 * Returns true if the passed vector equals this one

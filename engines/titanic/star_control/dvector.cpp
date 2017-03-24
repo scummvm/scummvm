@@ -21,17 +21,19 @@
  */
 
 #include "titanic/star_control/dvector.h"
+#include "titanic/star_control/dmatrix.h"
 #include "common/algorithm.h"
 
 namespace Titanic {
 
-void DVector::normalize() {
+double DVector::normalize() {
 	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+	return hyp;
 }
 
 double DVector::getDistance(const DVector &src) {
@@ -39,25 +41,69 @@ double DVector::getDistance(const DVector &src) {
 }
 
 DVector *DVector::fn1(DVector &dest, const DMatrix &m) {
-	// TODO
-	return nullptr;
+	dest._x = m._row3._x * _z + m._row2._x * _y + _x * m._row1._x + m._row4._x;
+	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._z;
+	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._y;
+	return &dest;
 }
 
 void DVector::fn2(double val) {
-	// TODO
+	const double FACTOR = 2 * M_PI / 360.0;
+	double sinVal = sin(val * FACTOR);
+	double cosVal = cos(val * FACTOR);
+
+	_x = cosVal * _x - sinVal * _z;
+	_z = cosVal * _z + sinVal * _x;
 }
 
-void DVector::fn3(DVector &dest) {
-	// TODO
+DVector DVector::fn3() const {
+	DVector vector = *this;
+	DVector dest;
+	dest._x = vector.normalize();
+	dest._z = acos(vector._y);
+
+	if (ABS(vector._z) < 0.00001) {
+		if (vector._x < 0.0) {
+			dest._y = 2 * M_PI - (M_PI / 2.0);
+		} else {
+			dest._y = M_PI / 2.0;
+		}
+	} else {
+		dest._y = atan(vector._x / vector._z);
+		if (vector._x < 0.0)
+			dest._y += 2 * M_PI;
+	}
+
+	return dest;
 }
 
-const DMatrix *DVector::fn4(const DVector &v, DMatrix &m) {
-	// TODO
-	return nullptr;
+void DVector::fn4(const DVector &v, DMatrix &m) {
+	const double FACTOR = 180.0 / M_PI;
+	DMatrix matrix1, matrix2, matrix3, matrix4;
+	DMatrix dest;
+	DVector vector1 = fn3();
+
+	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
+	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
+	matrix3 = matrix1.fn4(matrix2);
+	matrix3.fn1(matrix4);
+
+	vector1 = v.fn3();
+	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
+	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
+	matrix3 = matrix1.fn4(matrix2);
+	matrix1.fn1(matrix4);
+
+	m = matrix4.fn4(matrix3);
 }
 
-void DVector::fn5(DMatrix &dest) {
-	// TODO
+DMatrix DVector::fn5() const {
+	const double FACTOR = 180.0 / M_PI;
+	DVector v1 = fn3();
+	DMatrix m1, m2;
+	m1.setRotationMatrix(X_AXIS, v1._y * FACTOR);
+	m2.setRotationMatrix(Y_AXIS, -(v1._z * FACTOR));
+	return m1.fn4(m2);
 }
 
 } // End of namespace Titanic

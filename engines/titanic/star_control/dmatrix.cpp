@@ -120,9 +120,9 @@ void DMatrix::fn3(CStarControlSub26 *sub26) {
 	error("TODO: DMatrix::fn3 %d", (int)v);
 }
 
-const DMatrix *DMatrix::fn4(DMatrix &dest, const DMatrix &m1, const DMatrix &m2) {
+DMatrix DMatrix::fn4(const DMatrix &m) {
 	// TODO
-	return nullptr;
+	return DMatrix();
 }
 
 } // End of namespace Titanic

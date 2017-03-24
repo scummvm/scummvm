@@ -60,7 +60,7 @@ public:
 	void fn1(DMatrix &m);
 	void fn3(CStarControlSub26 *sub26);
 
-	const DMatrix *fn4(DMatrix &dest, const DMatrix &m1, const DMatrix &m2);
+	DMatrix fn4(const DMatrix &m);
 };
 
 } // End of namespace Titanic
