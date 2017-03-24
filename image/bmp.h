@@ -23,6 +23,7 @@
 /**
  * @file
  * Image decoder used in engines:
+ *  - buried
  *  - hugo
  *  - mohawk
  *  - wintermute

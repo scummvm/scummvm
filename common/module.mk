@@ -58,6 +58,11 @@ MODULE_OBJS += \
 	recorderfile.o
 endif
 
+ifdef USE_ICONV
+MODULE_OBJS += \
+	iconv.o
+endif
+
 ifdef USE_UPDATES
 MODULE_OBJS += \
 	updates.o

@@ -25,6 +25,7 @@
  * Sound decoder used in engines:
  *  - access
  *  - agos
+ *  - buried
  *  - cge
  *  - cge2
  *  - fullpipe
