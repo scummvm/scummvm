@@ -71,7 +71,11 @@ double FVector::getDistance(const FVector &src) const {
 }
 
 FVector FVector::fn5(const CStarControlSub6 *sub6) const {
-	error("TODO: FVector::fn5");
+	FVector v;
+	v._x = sub6->_row2._x * _y + sub6->_row3._x * _z + sub6->_row1._x * _x + sub6->_vector._x;
+	v._y = sub6->_row2._y * _y + sub6->_row3._y * _z + sub6->_row1._y * _x + sub6->_vector._y;
+	v._z = sub6->_row3._z * _z + sub6->_row2._z * _y + sub6->_row1._z * _x + sub6->_vector._z;
+	return v;
 }
 
 } // End of namespace Titanic
