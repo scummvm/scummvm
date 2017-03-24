@@ -29,6 +29,7 @@
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #include <shellapi.h>
+#include <ShlObj.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -143,6 +144,25 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 		return false;
 	}
 	return true;
+}
+
+Common::String OSystem_Win32::getScreenshotsPath() {
+	char picturesPath[MAXPATHLEN];
+
+	// Use the My Pictures folder.
+	if (SHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK)
+		error("Unable to access My Pictures directory");
+
+	Common::String screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
+
+	// If the directory already exists (as it should in most cases),
+	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
+	if (!CreateDirectory(screenshotsPath.c_str(), NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS)
+			error("Cannot create ScummVM Screenshots folder");
+	}
+
+	return screenshotsPath;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
