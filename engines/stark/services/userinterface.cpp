@@ -27,9 +27,10 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/services/gameinterface.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/cursor.h"
@@ -174,10 +175,12 @@ bool UserInterface::isInventoryOpen() const {
 	return _inventoryWindow->isVisible();
 }
 
-void UserInterface::skipFMV() {
+bool UserInterface::skipFMV() {
 	if (_currentScreen == kScreenFMV) {
 		_fmvPlayer->stop();
+		return true;
 	}
+	return false;
 }
 
 void UserInterface::render() {
@@ -203,6 +206,10 @@ bool UserInterface::isInteractive() const {
 }
 
 void UserInterface::setInteractive(bool interactive) {
+	if (interactive && !_interactive) {
+		StarkGlobal->setNormalSpeed();
+	}
+
 	_interactive = interactive;
 }
 

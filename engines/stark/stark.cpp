@@ -177,6 +177,7 @@ void StarkEngine::setStartupLocation() {
 void StarkEngine::mainLoop() {
 	while (!shouldQuit()) {
 		if (_resourceProvider->hasLocationChangeRequest()) {
+			_global->setNormalSpeed();
 			_resourceProvider->performLocationChange();
 		}
 
@@ -203,9 +204,14 @@ void StarkEngine::processEvents() {
 					_console->onFrame();
 				}
 			} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_gameInterface->skipCurrentSpeeches();
 				// Quick-hack for now.
-				_userInterface->skipFMV();
+				bool skipped = _gameInterface->skipCurrentSpeeches();
+				if (!skipped) {
+					skipped = _userInterface->skipFMV();
+				}
+				if (!skipped) {
+					_global->setFastForward();
+				}
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
@@ -235,10 +241,19 @@ void StarkEngine::updateDisplayScene() {
 
 	// Only update the world resources when on the game screen
 	if (_userInterface->isInGameScreen()) {
-		// Update the game resources
-		_global->getLevel()->onGameLoop();
-		_global->getCurrent()->getLevel()->onGameLoop();
-		_global->getCurrent()->getLocation()->onGameLoop();
+		int frames = 0;
+		do {
+			// Update the game resources
+			_global->getLevel()->onGameLoop();
+			_global->getCurrent()->getLevel()->onGameLoop();
+			_global->getCurrent()->getLocation()->onGameLoop();
+			frames++;
+
+			// When the game is in fast forward mode, update
+			// the game resources for multiple frames,
+			// but render only once.
+		} while (_global->isFastForward() && frames < 100);
+		_global->setNormalSpeed();
 	}
 
 	// Render the current scene

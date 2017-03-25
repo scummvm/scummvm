@@ -50,11 +50,11 @@ GameInterface::GameInterface() {
 GameInterface::~GameInterface() {
 }
 
-void GameInterface::skipCurrentSpeeches() {
+bool GameInterface::skipCurrentSpeeches() {
 	Current *current = StarkGlobal->getCurrent();
 
 	if (!current) {
-		return; // No current location, nothing to do
+		return false; // No current location, nothing to do
 	}
 
 	// Get all speeches
@@ -64,12 +64,16 @@ void GameInterface::skipCurrentSpeeches() {
 	speeches.push_back(current->getLocation()->listChildrenRecursive<Resources::Speech>());
 
 	// Stop them
+	bool skippedSpeeches = false;
 	for (uint i = 0; i < speeches.size(); i++) {
 		Resources::Speech *speech = speeches[i];
 		if (speech->isPlaying()) {
 			speech->stop();
+			skippedSpeeches = true;
 		}
 	}
+
+	return skippedSpeeches;
 }
 
 void GameInterface::walkTo(const Common::Point &mouse) {

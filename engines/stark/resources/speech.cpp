@@ -55,6 +55,8 @@ Common::String Speech::getPhrase() const {
 }
 
 void Speech::playSound() {
+	StarkGlobal->setNormalSpeed();
+
 	if (_playTalkAnim) {
 		setCharacterTalkAnim();
 	}

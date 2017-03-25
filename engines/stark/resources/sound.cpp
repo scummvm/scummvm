@@ -52,7 +52,8 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 		_pan(0),
 		_volume(0),
 		_fadeFramesRemaining(0),
-		_fadeVolumeStep(0.0) {
+		_fadeVolumeStep(0.0),
+		_fadePanStep(0.0) {
 	_type = TYPE;
 }
 

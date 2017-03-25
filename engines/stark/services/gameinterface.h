@@ -44,8 +44,12 @@ public:
 	GameInterface();
 	~GameInterface();
 
-	/** Skip currently playing speeches */
-	void skipCurrentSpeeches();
+	/**
+	 * Skip currently playing speeches
+	 *
+	 * @return true if at least one speech was skipped
+	 */
+	bool skipCurrentSpeeches();
 
 	/** Make April try to go to the location under the cursor */
 	void walkTo(const Common::Point &mouse);

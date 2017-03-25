@@ -266,6 +266,10 @@ void Script::updateSuspended() {
 		}
 	}
 
+	if (!isSuspended() && _shouldResetGameSpeed) {
+		StarkGlobal->setNormalSpeed();
+	}
+
 	if (!isSuspended() && !commandChanged) {
 		// Resume to the next command
 		goToNextCommand();

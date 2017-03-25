@@ -74,8 +74,12 @@ public:
 	/** FMV playback has just ended */
 	void onFMVStopped();
 
-	/** Abort the currently playing FMV, if any */
-	void skipFMV();
+	/**
+	 * Abort the currently playing FMV, if any
+	 *
+	 * @return true if a FMV was skipped
+	 */
+	bool skipFMV();
 
 	/** Set the currently displayed screen */
 	void changeScreen(Screen screen);

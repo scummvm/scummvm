@@ -92,7 +92,8 @@ public:
 	void setLevel(Resources::Level *level) { _level = level; }
 	void setCurrent(Current *current) { _current = current; }
 	void setDebug(bool debug) { _debug = debug; }
-	void setFastForward(bool fastForward) { _fastForward = fastForward; }
+	void setFastForward() { _fastForward = true; }
+	void setNormalSpeed() { _fastForward = false; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
 	void setApril(Resources::GlobalItemTemplate *april) { _april = april; }
 	void setInventory(Resources::KnowledgeSet * inventory) { _inventory = inventory; }
