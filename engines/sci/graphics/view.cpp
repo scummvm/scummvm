@@ -912,11 +912,6 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	const int16 offsetY = clipRect.top - rect.top;
 	const int16 offsetX = clipRect.left - rect.left;
 
-	// TODO: Remove? This class is not for SCI32
-	// Happens in SQ6, first room
-	if (offsetX < 0 || offsetY < 0)
-		return;
-
 	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
 	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
 	const byte *bitmapData = bitmap.getUnsafeDataAt(0, celWidth * celHeight);
