@@ -86,13 +86,13 @@ void DVector::fn4(const DVector &v, DMatrix &m) {
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
-	matrix3.fn1(matrix4);
+	matrix4 = matrix3.fn1();
 
 	vector1 = v.fn3();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
-	matrix1.fn1(matrix4);
+	matrix4 = matrix1.fn1();
 
 	m = matrix4.fn4(matrix3);
 }
