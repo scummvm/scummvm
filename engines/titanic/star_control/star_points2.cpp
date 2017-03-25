@@ -96,7 +96,7 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 			vector3._x = sub6._row3._z * se._v2._y + sub6._row3._x * se._v2._z
 				+ sub6._row1._x * se._v2._x + sub6._vector._y;
 			vector3._y = sub6._row2._y * se._v2._y + sub6._row3._y * se._v2._z
-				+ sub6._row1._y * se._v2._x; + sub6._vector._y;
+				+ sub6._row1._y * se._v2._x + sub6._vector._y;
 
 			if (vector1._z > threshold && vector3._z > threshold) {
 				vector2.clear();
