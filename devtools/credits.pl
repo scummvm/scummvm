@@ -560,6 +560,11 @@ begin_credits("Credits");
 				add_person("Benjamin Haisch", "john_doe", "");
 			end_section();
 
+			begin_section("Blade Runner");
+				add_person("Thomas Fach-Pedersen", "madmoose", "");
+				add_person("Peter Kohaut", "peterkohaut", "");
+			end_section();
+
 			begin_section("CGE");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
