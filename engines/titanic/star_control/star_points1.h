@@ -32,8 +32,12 @@ namespace Titanic {
 class CStarControlSub12;
 
 class CStarPoints1 {
+	struct CStarPointEntry : public FVector {
+		bool _flag;
+		CStarPointEntry() : FVector(), _flag(false) {}
+	};
 private:
-	Common::Array<FVector> _data;
+	Common::Array<CStarPointEntry> _data;
 public:
 	CStarPoints1();
 

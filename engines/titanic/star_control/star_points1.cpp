@@ -39,12 +39,12 @@ bool CStarPoints1::initialize() {
 
 	_data.resize(ARRAY_COUNT);
 	for (int idx = 0; idx < ARRAY_COUNT; ++idx) {
-		FVector &entry = _data[idx];
+		CStarPointEntry &entry = _data[idx];
 
 		// Get the next set of values
 		double v1 = stream->readSint32LE();
 		double v2 = stream->readSint32LE();
-		stream->readUint32LE();
+		entry._flag = stream->readUint32LE() != 0;
 
 		v1 *= 0.015 * FACTOR;
 		v2 *= 0.0099999998 * FACTOR;
@@ -61,25 +61,51 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	if (_data.empty())
 		return;
 
-	/*CStarControlSub6 sub6 = */ sub12->proc23();
-	sub12->proc25();
-	/*
-	FVector &v0 = _data[0];
-	double vx = v0._x, vy = v0._y, vz = v0._z;
+	CStarControlSub6 sub6 = sub12->proc23();
+	double threshold = sub12->proc25();
+	FVector vector1, vector2, vector3, vector4;
+	FVector vTemp = _data[0];
+	double vWidth2 = (double)surface->_width * 0.5;
+	double vHeight2 = (double)surface->_height * 0.5;
+	FRect r;
 
-	| (vx*sub6._matrix.row1._z + vy*sub6._matrix.row2._z + vy) |
-	| vz*sub6._matrix.row3._x |
-	| surface->_width |
-	| vy |
-	| vx*sub6._matrix.row1._x |
-	| vz |
-	| vy*sub6._matrix.row2._x*sub6._matrix.row1._y*sub6._matrix.row3._z |
-	| vz*sub6._matrix.row2._y |
-	| vy*sub6._matrix.row2._z + vx*sub6._matrix.row1._z + vy*sub6._matrix.row2._z |
-	| vx |
-	*/
+	surface->_pixel = 0xff0000;
+	uint oldPixel = surface->_pixel;
+	surface->setColorFromPixel();
+	SurfaceAreaMode oldMode = surface->setMode(SA_NONE);
 
-	// TODO
+	vector1._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
+	vector1._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x + sub6._vector._x;
+	vector1._x = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y; 
+
+	for (uint idx = 1; idx < _data.size(); ++idx) {
+		const FVector &sv = _data[idx];
+		bool flag = _data[idx - 1]._flag;
+		vTemp = sv;
+
+		vector3._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x * sub6._vector._x;
+		vector3._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y * sub6._vector._y; 
+		vector3._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
+
+		if (flag && vector1._z > threshold && vector3._z > threshold) {
+			vector2.clear();
+			vector4.clear();
+			sub12->proc28(2, vector1, vector2);
+			sub12->proc28(2, vector3, vector4);
+
+			r.bottom = vector4._y + vHeight2;
+			r.right = vector4._x + vWidth2;
+			r.top = vector2._y + vHeight2;
+			r.left = vector2._x + vWidth2;
+			surface->fn1(r);
+		}
+
+		vector1 = vector3;
+	}
+
+	surface->_pixel = oldPixel;
+	surface->setColorFromPixel();
+	surface->setMode(oldMode);
 }
 
 } // End of namespace Titanic
