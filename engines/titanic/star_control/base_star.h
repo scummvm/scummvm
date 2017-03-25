@@ -70,7 +70,6 @@ private:
 	void draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 protected:
-	Common::Array<CBaseStarEntry> _data;
 	FRange _minMax;
 	double _minVal;
 	double _maxVal;
@@ -92,6 +91,8 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
+public:
+	Common::Array<CBaseStarEntry> _data;
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}
