@@ -489,42 +489,45 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 
 	// Compute the precise game settings using gameVariantsTable.
 	for (const GameSettings *g = gameVariantsTable; g->gameid; ++g) {
-		if (g->gameid[0] == 0 || !scumm_stricmp(md5Entry->gameid, g->gameid)) {
-			// The gameid either matches, or is empty. The latter indicates
-			// a generic entry, currently used for some generic HE settings.
-			if (g->variant == 0 || !scumm_stricmp(md5Entry->variant, g->variant)) {
-				// Perfect match found, use it and stop the loop
-				dr.game = *g;
-				dr.game.gameid = md5Entry->gameid;
+		if (g->gameid[0] != 0 && scumm_stricmp(md5Entry->gameid, g->gameid)) continue;
+		// The gameid either matches, or is empty. The latter indicates
+		// a generic entry, currently used for some generic HE settings.
 
-				// Set the platform value. The value from the MD5 record has
-				// highest priority; if missing (i.e. set to unknown) we try
-				// to use that from the filename pattern record instead.
-				if (md5Entry->platform != Common::kPlatformUnknown) {
-					dr.game.platform = md5Entry->platform;
-				} else if (gfp->platform != Common::kPlatformUnknown) {
-					dr.game.platform = gfp->platform;
-				}
+		if (g->variant != 0 && scumm_stricmp(md5Entry->variant, g->variant)) continue;
+		// Variant matches too
 
-				// HACK: Special case to distinguish the V1 demo from the full version
-				// (since they have identical MD5):
-				if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
-					dr.extra = "V1 Demo";
-					dr.game.features = GF_DEMO;
-				}
+		if (g->preferredTag != 0 && scumm_stricmp(md5Entry->extra, g->preferredTag)) continue;
+		// OH, and do check the extra field in the entry too, otherwise we miss demos
 
-				// HACK: Try to detect languages for translated games
-				if (dr.language == UNK_LANG) {
-					dr.language = detectLanguage(fslist, dr.game.id);
-				}
+		dr.game = *g;
+		dr.game.gameid = md5Entry->gameid;
 
-				// HACK: Detect between 68k and PPC versions
-				if (dr.game.platform == Common::kPlatformMacintosh && dr.game.version >= 5 && dr.game.heversion == 0 && strstr(gfp->pattern, "Data"))
-					dr.game.features |= GF_MAC_CONTAINER;
-
-				break;
-			}
+		// Set the platform value. The value from the MD5 record has
+		// highest priority; if missing (i.e. set to unknown) we try
+		// to use that from the filename pattern record instead.
+		if (md5Entry->platform != Common::kPlatformUnknown) {
+			dr.game.platform = md5Entry->platform;
+		} else if (gfp->platform != Common::kPlatformUnknown) {
+			dr.game.platform = gfp->platform;
 		}
+
+		// HACK: Special case to distinguish the V1 demo from the full version
+		// (since they have identical MD5):
+		if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
+			dr.extra = "V1 Demo";
+			dr.game.features = GF_DEMO;
+		}
+
+		// HACK: Try to detect languages for translated games
+		if (dr.language == UNK_LANG) {
+			dr.language = detectLanguage(fslist, dr.game.id);
+		}
+
+		// HACK: Detect between 68k and PPC versions
+		if (dr.game.platform == Common::kPlatformMacintosh && dr.game.version >= 5 && dr.game.heversion == 0 && strstr(gfp->pattern, "Data"))
+			dr.game.features |= GF_MAC_CONTAINER;
+
+		break;
 	}
 }
 
