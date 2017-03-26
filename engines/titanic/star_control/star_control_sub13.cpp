@@ -63,13 +63,7 @@ CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 }
 
 void CStarControlSub13::copyFrom(const CStarControlSub13 *src) {
-	if (src) {
-		// TODO: Not really certain src is a CStarControlSub13
-		_position = src->_position;
-		_fieldC = src->_field18;
-		_field10 = src->_field1C;
-		error("TODO: Remainder of CStarControlSub13::copyFrom");
-	}
+	error("Unused function");
 }
 
 void CStarControlSub13::load(SimpleFile *file, int param) {
