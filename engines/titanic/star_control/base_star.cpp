@@ -200,9 +200,9 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 
 		double sVal = sqrt(total2);
 		sVal = (sVal < 100000.0) ? 1.0 : 1.0 - ((sVal - 100000.0) / 1.0e9);
-		double red = MIN((double)entry._red * sVal, 255.0);
-		double green = MIN((double)entry._green * sVal, 255.0);
-		double blue = MIN((double)entry._green * sVal, 255.0);
+		double red = MIN((double)entry._red * sVal, (double)255.0);
+		double green = MIN((double)entry._green * sVal, (double)255.0);
+		double blue = MIN((double)entry._green * sVal, (double)255.0);
 
 		int minusCount = 0;
 		if (red < 0.0) {
