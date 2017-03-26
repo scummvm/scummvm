@@ -109,7 +109,7 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	}
 }
 
-double CSurfaceArea::fn1(const FRect &rect) {
+double CSurfaceArea::fillRect(const FRect &rect) {
 	if (rect.empty())
 		return rect.top;
 
@@ -169,13 +169,54 @@ double CSurfaceArea::fn1(const FRect &rect) {
 		}
 	}
 
-	Common::Rect rr(round(r.left), round(r.top), round(r.right), round(r.bottom));
+	Common::Rect rr((int)(r.left - 0.5), (int)(r.top - 0.5), (int)(r.right - 0.5), (int)(r.bottom - 0.5));
 	if (rr.left > rr.right) {
 		SWAP(rr.left, rr.right);
 		SWAP(rr.top, rr.bottom);
 	}
 	
-	// TODO: initial setup
+	Graphics::Surface s;
+	s.setPixels(_pixelsPtr);
+	s.pitch = _pitch;
+	s.w = _width;
+	s.h = _height;
+
+	switch (_bpp) {
+	case 0:
+		s.format = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case 1:
+	case 2:
+		s.format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		break;
+	case 4:
+		s.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		break;
+	default:
+		error("Unknown bpp");
+	}
+
+	// Fill area
+	if (_mode == SA_NONE) {
+		s.fillRect(rr, _rgb);
+	} else {
+		colorRect(s, rr, _colorMask, _color);
+	}
+/*
+	int yInc = 1;
+	byte *lineStartP = (byte *)_pixelsPtr + rr.top * _pitch;
+	int width2 = rr.width() / 2;
+	int height2 = rr.height() / 2;
+	int xInc = _pitch;
+
+	if (xInc < 0) {
+		--xInc;
+		yInc = -1;
+	}
+
+	// rr: left=esi, edi=top, ebx=right, edx=bottom
+	// ecx=lineStartP; ebp=width2, edx=height2
+
 	if (_mode == SA_NONE) {
 		switch (_bpp) {
 		default:
@@ -189,8 +230,33 @@ double CSurfaceArea::fn1(const FRect &rect) {
 	}
 
 	// TODO: Lots more functionality
-
+*/
 	return r.top;
+}
+
+template<typename T>
+static void colorRectFn(Graphics::Surface &s, const Common::Rect &r,
+		uint andMask, uint xorMask) {
+	for (int yp = r.top; yp < r.bottom; ++yp) {
+		T *pixelP = (T *)s.getBasePtr(r.left, yp);
+		for (int xp = r.left; xp < r.right; ++xp, ++pixelP)
+			*pixelP = (*pixelP & andMask) ^ xorMask;
+	}
+}
+
+void CSurfaceArea::colorRect(Graphics::Surface &s, const Common::Rect &r,
+		uint andMask, uint xorMask) {
+	switch (s.format.bytesPerPixel) {
+	case 1:
+		colorRectFn<byte>(s, r, andMask, xorMask);
+		break;
+	case 2:
+		colorRectFn<uint16>(s, r, andMask, xorMask);
+		break;
+	default:
+		colorRectFn<uint32>(s, r, andMask, xorMask);
+		break;
+	}
 }
 
 } // End of namespace Titanic

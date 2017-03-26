@@ -331,7 +331,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -353,7 +353,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -375,7 +375,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 					GridEntry &grid2 = _grid[d1._index2];
 
 					if (grid1._z > val1 && grid2._z > val1) {
-						surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+						surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 							grid2._position._x, grid2._position._y));
 					}
 				}
@@ -445,7 +445,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}
@@ -467,7 +467,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}
@@ -489,7 +489,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 			GridEntry &grid2 = _grid[d1._index2];
 
 			if (grid2._z > val1 && grid1._z > val1) {
-				surfaceArea->fn1(FRect(grid1._position._x, grid1._position._y,
+				surfaceArea->fillRect(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
 		}

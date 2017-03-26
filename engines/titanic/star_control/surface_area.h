@@ -47,6 +47,11 @@ private:
 	void setColor(uint rgb);
 
 	void pixelToRGB(uint pixel, uint *rgb);
+
+	/**
+	 * Alters the pixels of a specified rectangle using a passed and and xor mask
+	 */
+	static void colorRect(Graphics::Surface &s, const Common::Rect &r, uint andMask, uint xorMask);
 public:
 	int _field0;
 	int _width;
@@ -79,7 +84,10 @@ public:
 	 */
 	void setColorFromPixel();
 
-	double fn1(const FRect &rect);
+	/**
+	 * Fills a rectangular area
+	 */
+	double fillRect(const FRect &rect);
 };
 
 } // End of namespace Titanic

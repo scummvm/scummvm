@@ -108,7 +108,7 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 				r.right = vector4._x + vWidth2;
 				r.top = vector2._y + vHeight2;
 				r.left = vector2._x + vWidth2;
-				surface->fn1(r);
+				surface->fillRect(r);
 			}
 		}
 	}
