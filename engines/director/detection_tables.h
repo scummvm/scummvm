@@ -538,7 +538,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
-		2
+		5
 	},
 
 	{
@@ -552,7 +552,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
-		2
+		5
 	},
 
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
