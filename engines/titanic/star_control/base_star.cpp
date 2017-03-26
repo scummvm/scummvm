@@ -223,7 +223,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		int r = (int)(red - 0.5) & 0xfff8;
 		int g = (int)(green - 0.5) & 0xfff8;
 		int b = (int)(blue - 0.5) & 0xfff8;
-		int rgb = (g | (r << 5)) << 2 | ((b >> 3) & 0xfff8);
+		int rgb = ((g | (r << 5)) << 2) | ((b >> 3) & 0xfff8);
 		uint16 *pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
 
 		switch (entry._thickness) {
@@ -306,10 +306,11 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		if (skipCtr == 3)
 			continue;
 
-		int r = (int)(red - 0.5) & 0xfff8;
-		int g = (int)(green - 0.5) & 0xfff8;
+		int r = (int)(red - 0.5) & 0xf8;
+		int g = (int)(green - 0.5) & 0xfc;
 		int b = (int)(blue - 0.5) & 0xfff8;
-		int rgb = (g | (r << 5)) << 2 | ((b >> 3) & 0xfff8);
+
+		int rgb = ((g | (r << 5)) << 3) | (b >> 3);
 		uint16 *pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
 
 		switch (entry._thickness) {
