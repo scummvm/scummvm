@@ -204,38 +204,38 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		double green = MIN((double)entry._green * sVal, (double)255.0);
 		double blue = MIN((double)entry._green * sVal, (double)255.0);
 
-		int minusCount = 0;
+		int skipCtr = 0;
 		if (red < 0.0) {
 			red = 0.0;
-			++minusCount;
+			++skipCtr;
 		}
 		if (green < 0.0) {
 			green = 0.0;
-			++minusCount;
+			++skipCtr;
 		}
 		if (blue < 0.0) {
 			blue = 0.0;
-			++minusCount;
+			++skipCtr;
 		}
-		if (minusCount == 3)
+		if (skipCtr == 3)
 			continue;
 
 		int r = (int)(red - 0.5) & 0xfff8;
 		int g = (int)(green - 0.5) & 0xfff8;
 		int b = (int)(blue - 0.5) & 0xfff8;
 		int rgb = (g | (r << 5)) << 2 | ((b >> 3) & 0xfff8);
-		uint16 *pixel = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
+		uint16 *pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
 
 		switch (entry._thickness) {
 		case 0:
-			*pixel = rgb;
+			*pixelP = rgb;
 			break;
 
 		case 1:
-			*pixel = rgb;
-			*(pixel + 1) = rgb;
-			*(pixel + surfaceArea->_pitch / 2) = rgb;
-			*(pixel + surfaceArea->_pitch / 2 + 1) = rgb;
+			*pixelP = rgb;
+			*(pixelP + 1) = rgb;
+			*(pixelP + surfaceArea->_pitch / 2) = rgb;
+			*(pixelP + surfaceArea->_pitch / 2 + 1) = rgb;
 			break;
 
 		default:
@@ -249,7 +249,74 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 }
 
 void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	// TODO
+	CStarControlSub6 sub6 = sub12->proc23();
+	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+
+	const double MAX_VAL = 1.0e9 * 1.0e9;
+	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	double threshold = sub12->proc25();
+	double minVal = threshold - 9216.0;
+	int width1 = surfaceArea->_width - 1;
+	int height1 = surfaceArea->_height - 1;
+	double *v1Ptr = &_value1, *v2Ptr = &_value2, *v3Ptr = &_value3;
+	FVector vector;
+	double total;
+
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		CBaseStarEntry &entry = _data[idx];
+		vector = entry._position;
+		total = vector._x * sub6._row1._z + vector._y * sub6._row2._z
+			+ vector._z * sub6._row3._z + sub6._vector._z;
+		if (total <= minVal)
+			continue;
+
+		double temp1 = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + vector._y;
+		double temp2 = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + vector._x;
+		double total2 = temp1 * temp1 + temp2 * temp2 + total * total;
+
+		if (total2 < 1.0e12) {
+			sub5->proc2(&sub6, &vector, centroid._x, centroid._y, total2,
+				surfaceArea, sub12);
+			continue;
+		}
+
+		if (total <= threshold || total2 >= MAX_VAL)
+			continue;
+
+		int xStart = (int)((temp2 + *v3Ptr) * *v1Ptr / total + centroid._x);
+		int yStart = (int)(temp1 * *v2Ptr / total + centroid._y);
+
+		if (xStart < 0 || xStart >= width1 || yStart < 0 || yStart >= height1)
+			continue;
+
+		double sVal = sqrt(total2);
+		sVal = (sVal < 100000.0) ? 1.0 : 1.0 - ((sVal - 100000.0) / 1.0e9);
+		sVal *= 255.0;
+
+		if (sVal > 255.0)
+			sVal = 255.0;
+
+		if (sVal > 2.0) {
+			uint16 *pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
+			int rgb = ((int)(sVal - 0.5) & 0xf8) << 7;
+
+			switch (entry._thickness) {
+			case 0:
+				*pixelP = rgb;
+				break;
+
+			case 1:
+				*pixelP = rgb;
+				*(pixelP + 1) = rgb;
+				*(pixelP + surfaceArea->_pitch / 2) = rgb;
+				*(pixelP + surfaceArea->_pitch / 2 + 1) = rgb;
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
