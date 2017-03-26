@@ -38,7 +38,7 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
-	static Common::String getScreenshotsPath();
+	virtual Common::String getScreenshotsPath();
 
 protected:
 	/**

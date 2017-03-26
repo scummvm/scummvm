@@ -2525,59 +2525,35 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
-#ifdef WIN32
 		// Alt-S: Create a screenshot - Win32
 		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
 			Common::String filename;
 
-			Common::String screenshotsPath = OSystem_Win32::getScreenshotsPath();
-
-			char fullpath[MAXPATHLEN];
+#ifdef WIN32
+			Common::String screenshotsPath = OSystem_Win32().getScreenshotsPath();
+#else
+			Common::String screenshotsPath = OSystem_SDL().getScreenshotsPath();
+#endif
 
 			for (int n = 0;; n++) {
 				SDL_RWops *file;
 
 				filename = Common::String::format("scummvm%05d.bmp", n);
 
-				strcpy(fullpath, screenshotsPath.c_str());
-				strcat(fullpath, filename.c_str());
-
-				file = SDL_RWFromFile(fullpath, "r");
+				file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
 
 				if (!file)
 					break;
 				SDL_RWclose(file);
 			}
 
-			if (saveScreenshot(fullpath))
+			if (saveScreenshot((screenshotsPath + filename).c_str()))
 				debug("Saved screenshot '%s'", filename.c_str());
 			else
 				warning("Could not save screenshot");
 
 			return true;
 		}
-#else
-		// Alt-S: Create a screenshot
-		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			char filename[20];
-
-			for (int n = 0;; n++) {
-				SDL_RWops *file;
-
-				sprintf(filename, "scummvm%05d.bmp", n);
-				file = SDL_RWFromFile(filename, "r");
-
-				if (!file)
-					break;
-				SDL_RWclose(file);
-			}
-			if (saveScreenshot(filename))
-				debug("Saved screenshot '%s'", filename);
-			else
-				warning("Could not save screenshot");
-			return true;
-		}
-#endif
 
 		// Ctrl-Alt-<key> will change the GFX mode
 		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {

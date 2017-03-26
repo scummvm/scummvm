@@ -623,55 +623,34 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				return true;
 			}
 
-#ifdef WIN32
 			// Alt-s creates a screenshot
 			if (event.kbd.keycode == Common::KEYCODE_s) {
 				Common::String filename;
 
-				Common::String screenshotsPath = OSystem_Win32::getScreenshotsPath();
-
-				char fullpath[MAXPATHLEN];
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-					filename = Common::String::format("scummvm%05d.bmp", n);
-
-					strcpy(fullpath, screenshotsPath.c_str());
-					strcat(fullpath, filename.c_str());
-
-					file = SDL_RWFromFile(fullpath, "r");
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-
-				saveScreenshot(fullpath);
-				debug("Saved screenshot '%s'", filename.c_str());
-
-				return true;
-		}
+#ifdef WIN32
+				Common::String screenshotsPath = OSystem_Win32().getScreenshotsPath();
 #else
-			if (event.kbd.keycode == Common::KEYCODE_s) {
-				// Alt-s creates a screenshot
-				Common::String filename;
+				Common::String screenshotsPath = OSystem_SDL().getScreenshotsPath();
+#endif
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;
 
 					filename = Common::String::format("scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename.c_str(), "r");
+
+					file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
+
 					if (!file)
 						break;
 					SDL_RWclose(file);
 				}
 
-				saveScreenshot(filename.c_str());
+				saveScreenshot((screenshotsPath + filename).c_str());
 				debug("Saved screenshot '%s'", filename.c_str());
 
 				return true;
-		}
-#endif
+			}
+
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {

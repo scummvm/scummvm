@@ -158,8 +158,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		if (win32OsVersion.dwMajorVersion >= 5) {
 			if (!GetEnvironmentVariable("APPDATA", screenshotsPath, MAXPATHLEN))
 				error("Unable to access application data directory");
-		}
-		else {
+		} else {
 			if (!GetEnvironmentVariable("USERPROFILE", screenshotsPath, MAXPATHLEN))
 				error("Unable to access user profile directory");
 
