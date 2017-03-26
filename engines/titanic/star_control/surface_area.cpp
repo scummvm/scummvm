@@ -34,7 +34,7 @@ CSurfaceArea::CSurfaceArea(CVideoSurface *surface) {
 
 	// Original supported other pixel depths
 	_bpp = surface->getPixelDepth();
-	_pixelsPtr = surface->getPixels();
+	_pixelsPtr = (byte *)surface->getPixels();
 	assert(_bpp == 2 && _pixelsPtr);
 
 	initialize();

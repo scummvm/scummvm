@@ -34,7 +34,7 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
 	FVector vTemp, vector1, vector2;
-	double val1, val2, val3, val4;
+	double val1, green, blue, red;
 
 	for (int idx = 0; idx < _star->size(); ++idx) {
 		const CBaseStarEntry &se = _star->_data[idx];
@@ -58,16 +58,16 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 				else
 					val1 = 1.0;
 
-				val2 = val1 * (double)se._field1;
-				val3 = val1 * (double)se._field2;
-				val4 = val1 * (double)se._field0;
+				red = val1 * (double)se._red;
+				green = val1 * (double)se._green;
+				blue = val1 * (double)se._blue;
 
 				int count = 0;
-				if (val4 < 0.0)
+				if (red < 0.0)
 					++count;
-				if (val2 < 0.0)
+				if (green < 0.0)
 					++count;
-				if (val3 < 0.0)
+				if (blue < 0.0)
 					++count;
 
 				if (count < 3) {

@@ -58,7 +58,7 @@ public:
 	int _height;
 	int _pitch;
 	int _bpp;
-	uint16 *_pixelsPtr;
+	byte *_pixelsPtr;
 	FPoint _centroid;
 	uint _pixel;
 	byte _field24;

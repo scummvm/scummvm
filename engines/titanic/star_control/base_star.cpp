@@ -27,15 +27,15 @@
 
 namespace Titanic {
 
-CBaseStarEntry::CBaseStarEntry() : _field0(0), _value(0.0) {
+CBaseStarEntry::CBaseStarEntry() : _red(0), _value(0.0) {
 	Common::fill(&_data[0], &_data[5], 0);
 }
 
 void CBaseStarEntry::load(Common::SeekableReadStream &s) {
-	_field0 = s.readByte();
-	_field1 = s.readByte();
-	_field2 = s.readByte();
-	_field3 = s.readByte();
+	_red = s.readByte();
+	_green = s.readByte();
+	_blue = s.readByte();
+	_thickness = s.readByte();
 	_value = s.readFloatLE();
 	_position._x = s.readUint32LE();
 	_position._y = s.readUint32LE();
@@ -46,8 +46,8 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 }
 
 bool CBaseStarEntry::operator==(const CBaseStarEntry &s) const {
-	return _field0 == s._field0 && _field1 == s._field1
-		&& _field2 == s._field2 && _field3 == s._field3
+	return _red == s._red && _green == s._green
+		&& _blue == s._blue && _thickness == s._thickness
 		&& _value == s._value && _position == s._position
 		&& _data[0] == s._data[0] && _data[1] == s._data[1]
 		&& _data[2] == s._data[2] && _data[3] == s._data[3]
@@ -112,10 +112,10 @@ void CBaseStar::loadData(const CString &resName) {
 }
 
 void CBaseStar::resetEntry(CBaseStarEntry &entry) {
-	entry._field0 = 0xFF;
-	entry._field1 = 0xFF;
-	entry._field2 = 0xFF;
-	entry._field3 = 0;
+	entry._red = 0xFF;
+	entry._green = 0xFF;
+	entry._blue = 0xFF;
+	entry._thickness = 0;
 	entry._position._x = 0;
 	entry._position._y = 0;
 	entry._position._z = 0;
@@ -162,29 +162,84 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	CStarControlSub6 sub6 = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
+	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double v70 = sub12->proc25();
-	double minVal = v70 - 9216.0;
-	//int width1 = surfaceArea->_width - 1;
-	//int height1 = surfaceArea->_height - 1;
+	double threshold = sub12->proc25();
+	double minVal = threshold - 9216.0;
+	int width1 = surfaceArea->_width - 1;
+	int height1 = surfaceArea->_height - 1;
+	double *v1Ptr = &_value1, *v2Ptr = &_value2;
 	FVector vector;
-	double v4;
+	double total;
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		vector = entry._position;
-		v4 = vector._x * sub6._row1._z + vector._y * sub6._row2._z
+		total = vector._x * sub6._row1._z + vector._y * sub6._row2._z
 			+ vector._z * sub6._row3._z + sub6._vector._z;
-		if (v4 <= minVal)
+		if (total <= minVal)
 			continue;
 
-		
-		// TODO Lots of stuff
-		double v17 = 0.0, v98 = 0.0;
-		if (v17 >= 1.0e12) {
-			// TODO
-		} else {
-			sub5->proc2(&sub6, &vector, centroid._x, centroid._y, v98, surfaceArea, sub12);
+		double temp1 = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + vector._y;
+		double temp2 = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + vector._x;
+		double total2 = temp1 * temp1 + temp2 * temp2 + total * total; 
+
+		if (total2 < 1.0e12) {
+			sub5->proc2(&sub6, &vector, centroid._x, centroid._y, total2,
+				surfaceArea, sub12);
+			continue;
+		}
+
+		if (total <= threshold || total2 >= MAX_VAL)
+			continue;
+
+		int xStart = (int)(*v1Ptr * temp2 / total + centroid._x);
+		int yStart = (int)(*v2Ptr * temp1 / total + centroid._y);
+		if (xStart < 0 || xStart >= width1 || yStart < 0 || yStart >= height1)
+			continue;
+
+		double sVal = sqrt(total2);
+		sVal = (sVal < 100000.0) ? 1.0 : 1.0 - ((sVal - 100000.0) / 1.0e9);
+		double red = MIN((double)entry._red * sVal, 255.0);
+		double green = MIN((double)entry._green * sVal, 255.0);
+		double blue = MIN((double)entry._green * sVal, 255.0);
+
+		int minusCount = 0;
+		if (red < 0.0) {
+			red = 0.0;
+			++minusCount;
+		}
+		if (green < 0.0) {
+			green = 0.0;
+			++minusCount;
+		}
+		if (blue < 0.0) {
+			blue = 0.0;
+			++minusCount;
+		}
+		if (minusCount == 3)
+			continue;
+
+		int r = (int)(red - 0.5) & 0xfff8;
+		int g = (int)(green - 0.5) & 0xfff8;
+		int b = (int)(blue - 0.5) & 0xfff8;
+		int rgb = (g | (r << 5)) << 2 | ((b >> 3) & 0xfff8);
+		uint16 *pixel = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
+
+		switch (entry._thickness) {
+		case 0:
+			*pixel = rgb;
+			break;
+
+		case 1:
+			*pixel = rgb;
+			*(pixel + 1) = rgb;
+			*(pixel + surfaceArea->_pitch / 2) = rgb;
+			*(pixel + surfaceArea->_pitch / 2 + 1) = rgb;
+			break;
+
+		default:
+			break;
 		}
 	}
 }

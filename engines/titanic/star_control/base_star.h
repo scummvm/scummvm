@@ -35,10 +35,10 @@ enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
 class CStarControlSub12;
 
 struct CBaseStarEntry {
-	byte _field0;
-	byte _field1;
-	byte _field2;
-	byte _field3;
+	byte _red;
+	byte _green;
+	byte _blue;
+	byte _thickness;
 	double _value;
 	FVector _position;
 	uint _data[5];
