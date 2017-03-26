@@ -2532,7 +2532,7 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 #ifdef WIN32
 			Common::String screenshotsPath = OSystem_Win32().getScreenshotsPath();
 #else
-			Common::String screenshotsPath = OSystem_SDL().getScreenshotsPath();
+			Common::String screenshotsPath = "";
 #endif
 
 			for (int n = 0;; n++) {
