@@ -36,6 +36,8 @@ class BladeRunnerEngine;
 class View;
 class Lights;
 
+//TODO: split this into two components as it is in original game: universal vqa player, blade runner player functionality
+
 class VQAPlayer {
 	BladeRunnerEngine           *_vm;
 	Common::SeekableReadStream  *_s;
@@ -44,11 +46,18 @@ class VQAPlayer {
 	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
-	int _curFrame;
-	int _decodedFrame;
-	int _curLoop;
-	int _loopBegin;
-	int _loopEnd;
+	int _frameCurrent;
+	int _frameDecoded;
+	int _frameBegin;
+	int _frameEnd;
+	int _loop;
+	int _repeatsCount;
+
+	int _repeatsCountQueued;
+	int _frameEndQueued;
+
+	int _loopInitial;
+	int _repeatsCountInitial;
 
 	uint32 _nextFrameTime;
 	bool   _hasAudio;
@@ -65,11 +74,16 @@ public:
 		  _s(nullptr),
 		  _surface(nullptr),
 		  _audioStream(nullptr),
-		  _curFrame(-1),
-		  _decodedFrame(-1),
-		  _curLoop(-1),
-		  _loopBegin(-1),
-		  _loopEnd(-1),
+		  _frameCurrent(-1),
+		  _frameDecoded(-1),
+		  _frameBegin(-1),
+		  _frameEnd(-1),
+		  _loop(-1),
+		  _repeatsCount(-1),
+		  _repeatsCountQueued(-1),
+		  _frameEndQueued(-1),
+		  _loopInitial(-1),
+		  _repeatsCountInitial(-1),
 		  _nextFrameTime(0),
 		  _hasAudio(false),
 		  _audioStarted(false),
@@ -89,13 +103,14 @@ public:
 	void updateView(View *view);
 	void updateLights(Lights *lights);
 
-	bool setLoop(int loop, int unknown, int loopMode, void(*callback)(void*, int, int), void* callbackData);
+	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopMode, void(*callback)(void *, int, int), void *callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopMode, void(*callback)(void*, int, int), void* callbackData);
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
 
 private:
-	int calcNextFrame(int frame) const;
+	int calcNextFrame(int frame);
 	void queueAudioFrame(Audio::AudioStream *audioStream);
 };
 
