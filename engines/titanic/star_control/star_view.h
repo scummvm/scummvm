@@ -59,8 +59,6 @@ private:
 
 	void randomizeVectors1(FVector &v1, FVector &v2);
 	void randomizeVectors2(FVector &v1, FVector &v2);
-	void randomizeVectors3(FVector &v1, FVector &v2);
-	void randomizeVectors4(FVector &v1, FVector &v2);
 
 	/**
 	 * Handles resizing the surface
