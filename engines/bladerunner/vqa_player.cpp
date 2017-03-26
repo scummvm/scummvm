@@ -130,7 +130,7 @@ void VQAPlayer::updateLights(Lights *lights) {
 }
 
 bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopMode, void (*callback)(void *, int, int), void *callbackData) {
-	debug("VQAPlayer::setBeginAndEndFrameFromLoop(%i, %i, %i, %p, %p), streamLoaded = %i", loop, repeatsCount, loopMode, (void*)callback, callbackData, _s != nullptr);
+	debug("VQAPlayer::setBeginAndEndFrameFromLoop(%i, %i, %i, %x, %p), streamLoaded = %i", loop, repeatsCount, loopMode, (uint)callback, callbackData, _s != nullptr);
 	if (_s == nullptr) {
 		_loopInitial = loop;
 		_repeatsCountInitial = repeatsCount;
@@ -149,7 +149,7 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopMode, void (*callbac
 }
 
 bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopMode, void (*callback)(void *, int, int), void *callbackData) {
-	debug("VQAPlayer::setBeginAndEndFrame(%i, %i, %i, %i, %p, %p), streamLoaded = %i", begin, end, repeatsCount, loopMode, (void*)callback, callbackData, _s != nullptr);
+	debug("VQAPlayer::setBeginAndEndFrame(%i, %i, %i, %i, %x, %p), streamLoaded = %i", begin, end, repeatsCount, loopMode, (uint)callback, callbackData, _s != nullptr);
 
 	if (repeatsCount < 0) {
 		repeatsCount = -1;
