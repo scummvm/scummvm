@@ -28,11 +28,6 @@
 namespace Titanic {
 
 class CStarControlSub6 : public FMatrix {
-private:
-	static CStarControlSub6 *_static;
-public:
-	static void init();
-	static void deinit();
 public:
 	FVector _vector;
 public:
