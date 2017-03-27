@@ -69,31 +69,31 @@ private:
 	} aBitmaps[kMaxBitmaps];
 
 	struct {
-		int	sNoBitmaps;
-		int	sStartBitmap;
-		int	sNoDecisionChoices;
-		char	cSceneName[kMaxName];
-		char	cWaveFileName[kMaxName];
-		char	cDecisionBitmap[kMaxName];
+		int	 sNoBitmaps;
+		int	 sStartBitmap;
+		int	 sNoDecisionChoices;
+		char cSceneName[kMaxName];
+		char cWaveFileName[kMaxName];
+		char cDecisionBitmap[kMaxName];
 		struct {
-			long		lPoints;
-			int		sGoTo;
-			int		bSkipScene;
-			Common::Rect	aRegion;
+			long lPoints;
+			int  sGoTo;
+			int  bSkipScene;
+			Common::Rect aRegion;
 		}	aChoice[kMaxChoice];
 	} aScene[kMaxScene];
 
 	struct {
-		long	lTotScore;
-		int	sPrevScene;
-		int	sCurrScene;
-		int	sCurrSceneStep;
-		int	sLkhdScene;
-		int	sLkhdBitmapNo;
-		int	sTotScene;
-		int	sTotBitmap;
-		int	bEightBit;
-		int	bIsaDecision;
+		long lTotScore;
+		int	 sPrevScene;
+		int	 sCurrScene;
+		int	 sCurrSceneStep;
+		int	 sLkhdScene;
+		int	 sLkhdBitmapNo;
+		int	 sTotScene;
+		int	 sTotBitmap;
+		int	 bEightBit;
+		int	 bIsaDecision;
 	} Game;
 
 	Image::ImageDecoder *_image;
@@ -101,16 +101,16 @@ private:
 	int	xadj;
 	int	yadj;
 
-	bool	bShowScore;
-	bool	bSetDuration;
-	bool	bLButtonDown;
-	bool	bEnd;
-	int	sCurScene;
-	int	sCurBitmap;
-	int	sCurChoice;
-	int	sPrvScene;
-	Common::Point	point;
-	Common::Rect	rect;
+	bool bShowScore;
+	bool bSetDuration;
+	bool bLButtonDown;
+	bool bEnd;
+	int	 sCurScene;
+	int	 sCurBitmap;
+	int	 sCurChoice;
+	int	 sPrvScene;
+	Common::Point point;
+	Common::Rect  rect;
 
 	enum Action {
 		Redraw,
@@ -141,9 +141,6 @@ private:
 	void sReadTables(char *cFileName);
 	int sGetSceneNumb(int sNo);
 };
-
-extern MarioGame *g_mario;
-
 } // End of namespace Mario
 
 #endif

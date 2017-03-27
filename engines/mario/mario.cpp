@@ -211,11 +211,10 @@ void MarioGame::playSound() {
 	if (!file->open(name)) {
 		delete file;
 		error("unable to load sound %s", name.c_str());
-		return;
 	}
-	Audio::AudioStream *stream;
+
 	Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-	stream = audioStream;
+	Audio::AudioStream *stream = audioStream;
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 }
@@ -273,8 +272,7 @@ void MarioGame::changeScene() {
 			_actions.push(UpdateScene);
 			_actions.push(Redraw);
 			g_system->getTimerManager()->removeTimerProc(onTimer);
-		}
-		else {
+		} else {
 			sCurScene = sGetSceneNumb(aScene[sCurScene].aChoice[sCurChoice].sGoTo);
 			_actions.push(ShowScene);
 		}
@@ -285,8 +283,7 @@ void MarioGame::processTimer() {
 	debug("%s", __FUNCTION__);
 	if (bEnd == true) {
 		//	PostMessage(wnd, WM_DESTROY, 0, 0);
-	}
-	else
+	} else
 		_actions.push(Redraw);
 }
 
@@ -296,15 +293,16 @@ void MarioGame::onTimer(void *arg) {
 }
 
 void MarioGame::sInitTables() {
-	memset(&Game, 0, sizeof Game);
-	memset(aScene, 0, sizeof aScene);
-	memset(aBitmaps, 0, sizeof aBitmaps);
+	memset(&Game, 0, sizeof(Game));
+	memset(aScene, 0, sizeof(aScene));
+	memset(aBitmaps, 0, sizeof(aBitmaps));
 }
 
 void MarioGame::sReadTables(char *cFileName) {
 	Common::File file;
 	if (!file.open(cFileName))
 		error("sReadTables(): Error reading BIN file");
+
 	sInitTables();
 
 	Game.lTotScore = file.readSint32LE();
@@ -346,8 +344,8 @@ void MarioGame::sReadTables(char *cFileName) {
 
 int MarioGame::sGetSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
-	char	cTestString[14];
-	int	sCurScene;
+	char cTestString[14];
+	int	 sCurScene;
 
 	sprintf(cTestString, "SC%02d", sNo);
 	for (sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {

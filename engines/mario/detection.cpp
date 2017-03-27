@@ -96,10 +96,10 @@ bool MarioMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool MarioMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
+	if (desc)
 		*engine = new Mario::MarioGame(syst, desc);
-	}
-	return desc != 0;
+
+	return desc != nullptr;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MARIO)
