@@ -343,8 +343,28 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	pSnd->time = ++_timeCounter;
 
 	if (track) {
+		bool playSample;
+
+		if (_soundVersion <= SCI_VERSION_0_LATE && !_useDigitalSFX) {
+			// For SCI0 the digital sample is present in the same track as the
+			// MIDI. If the user specifically requests not to use the digital
+			// samples, play the MIDI data instead. If the MIDI portion of the
+			// track is empty however, play the digital sample anyway. This is
+			// necessary for e.g. the "Where am I?" sample in the SQ3 intro.
+			playSample = false;
+
+			if (track->channelCount == 2) {
+				SoundResource::Channel &chan = track->channels[0];
+				
+				if (chan.size < 2 || chan.data[1] == 0xfc) {
+					playSample = true;
+				}
+			}
+		} else
+			playSample = (track->digitalChannelNr != -1);
+
 		// Play digital sample
-		if (track->digitalChannelNr != -1) {
+		if (playSample) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;
 			byte flags = Audio::FLAG_UNSIGNED;
