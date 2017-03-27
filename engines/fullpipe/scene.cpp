@@ -213,8 +213,8 @@ bool Scene::load(MfcArchive &file) {
 	if (_picObjList.size() > 0 && !_bgname.empty()) {
 		char fname[260];
 
-		strcpy(fname, _bgname.c_str());
-		strcpy(strrchr(fname, '.') + 1, "col");
+		Common::strlcpy(fname, _bgname.c_str(), 260);
+		Common::strlcpy(strrchr(fname, '.') + 1, "col", 260);
 
 		MemoryObject *col = new MemoryObject();
 		col->loadFile(fname);
