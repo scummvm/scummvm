@@ -22,14 +22,12 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
 #ifdef USE_OSD
 #include "common/translation.h"
-#endif
-#ifdef WIN32
-#include "backends/platform/sdl/win32/win32.h"
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window)
@@ -627,11 +625,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			if (event.kbd.keycode == Common::KEYCODE_s) {
 				Common::String filename;
 
-#ifdef WIN32
-				Common::String screenshotsPath = OSystem_Win32().getScreenshotsPath();
-#else
-				Common::String screenshotsPath = "";
-#endif
+				Common::String screenshotsPath = ((OSystem_SDL *)g_system)->getScreenshotsPath();
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;

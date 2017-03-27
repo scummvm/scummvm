@@ -42,9 +42,6 @@
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 #include "gui/EventRecorder.h"
-#ifdef WIN32
-#include "backends/platform/sdl/win32/win32.h"
-#endif
 
 static const OSystem::GraphicsMode s_supportedShaders[] = {
 	{"NONE", "Normal (no shader)", 0},
@@ -2525,15 +2522,11 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
-		// Alt-S: Create a screenshot - Win32
+		// Alt-S: Create a screenshot
 		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
 			Common::String filename;
 
-#ifdef WIN32
-			Common::String screenshotsPath = OSystem_Win32().getScreenshotsPath();
-#else
-			Common::String screenshotsPath = "";
-#endif
+			Common::String screenshotsPath = ((OSystem_SDL *)g_system)->getScreenshotsPath();
 
 			for (int n = 0;; n++) {
 				SDL_RWops *file;
