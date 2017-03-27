@@ -73,7 +73,7 @@ static const char HELP_STRING[] =
 	"                           Use --path=PATH before -a, --add to specify a directory.\n"
 	"  --massadd                Add all games from current or specified directory and all sub directories\n"
 	"                           Use --path=PATH before --massadd to specify a directory.\n"
-	"  -d, --detect             Display a list of games from current or specified directory\n"
+	"  --detect                 Display a list of games from current or specified directory\n"
 	"                           without adding it to the config. Use --path=PATH before --detect\n"
 	"                           to specify a directory.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
@@ -425,7 +425,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("massadd")
 			END_COMMAND
 
-			DO_COMMAND('d', "detect")
+			DO_LONG_COMMAND("detect")
 			END_COMMAND
 
 			DO_LONG_COMMAND("auto-detect")
@@ -812,11 +812,44 @@ static GameList getGameList(Common::String path) {
 	//Collect all files from directory
 	dir.getChildren(files, Common::FSNode::kListAll);
 
+	// detect Games
 	GameList candidates(EngineMan.detectGames(files));
 	if (candidates.empty()) {
 		printf("ScummVM could not find any game in %s\n", path.c_str());
+	} else {
+		Common::String dataPath = dir.getPath();
+		// add game data path
+		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+			(*v)["path"] = dataPath;
+		}
 	}
 	return candidates;
+}
+
+static bool addGameToConf(const GameDescriptor &gd) {
+	Common::String domain = gd.preferredtarget();
+
+	// If game has already been added, don't add
+	if (ConfMan.hasGameDomain(domain))
+		return false;
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+
+	// Copy all non-empty key/value pairs into the new domain
+	for (GameDescriptor::const_iterator iter = gd.begin(); iter != gd.end(); ++iter) {
+		if (!iter->_value.empty() && iter->_key != "preferredtarget")
+			ConfMan.set(iter->_key, iter->_value, domain);
+	}
+
+	// Display added game info
+	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
+			gd.gameid().c_str(),
+			gd.description().c_str(),
+			Common::getLanguageDescription(gd.language()),
+			Common::getPlatformDescription(gd.platform()));
+
+	return true;
 }
 
 /** Display all games in the given directory, add it to config according to input */
@@ -852,7 +885,7 @@ static bool addGame(Common::String path) {
 		printf("Several games are detected. Please pick one game to add: \n");
 		int i = 1;
 		for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++i, ++v) {
-			printf("%2i. %s\n", i, v->description().c_str());
+			printf("%2i. %s : %s\n", i, v->gameid().c_str(), v->description().c_str());
 		}
 
 		// Get user input
@@ -864,29 +897,19 @@ static bool addGame(Common::String path) {
 		}
 	}
 
-	Common::String domain = candidates[idx].preferredtarget();
-
-	// If game has already been added, don't add
-	if (ConfMan.hasGameDomain(domain)) {
+	if (!addGameToConf(candidates[idx])) {
 		printf("This game has already been added.\n");
 		return false;
 	}
 
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Display game info
-	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
-			candidates[idx].gameid().c_str(),
-			candidates[idx].description().c_str(),
-			Common::getLanguageDescription(candidates[idx].language()),
-			Common::getPlatformDescription(candidates[idx].platform()));
+	// save to disk
+	ConfMan.flushToDisk();
 	return true;
 }
 
 static bool massAddGame(Common::String path) {
 	if (path.empty())
-			path = ".";
+		path = ".";
 
 	// Current directory
 	Common::FSNode startDir(path);
@@ -899,6 +922,7 @@ static bool massAddGame(Common::String path) {
 
 		Common::FSNode dir = scanStack.pop();
 		Common::FSList files;
+		Common::String dataPath = dir.getPath();
 
 		//Collect all files from directory
 		dir.getChildren(files, Common::FSNode::kListAll);
@@ -907,24 +931,11 @@ static bool massAddGame(Common::String path) {
 		GameList candidates(EngineMan.detectGames(files));
 		if (!candidates.empty()) {
 			for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
-
 				++ndetect;
-				Common::String domain = v->preferredtarget();
-				// If game was already added, don't add it
-				if (ConfMan.hasGameDomain(domain))
-					continue;
-
-				// Add game
-				ConfMan.addGameDomain(domain);
-
-				// Print game info
-				++n;
-				printf("Game %i Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
-						n,
-						v->gameid().c_str(),
-						v->description().c_str(),
-						Common::getLanguageDescription(v->language()),
-						Common::getPlatformDescription(v->platform()));
+				(*v)["path"] = dataPath;
+				if (addGameToConf(*v)) {
+					++n;
+				}
 			}
 		}
 
@@ -938,6 +949,8 @@ static bool massAddGame(Common::String path) {
 
 	// Return and print info
 	if (n > 0) {
+		// save to disk
+		ConfMan.flushToDisk();
 		return true;
 	} else if (ndetect == 0){
 		printf("ScummVM could not find any game in %s and its sub directories\n", path.c_str());
@@ -1181,9 +1194,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		detectGames(settings["path"], false);
 		return true;
 	} else if (command == "add") {
-		return !addGame(settings["path"]);
+		addGame(settings["path"]);
+		return true;
 	} else if (command == "massadd") {
-		return !massAddGame(settings["path"]);
+		massAddGame(settings["path"]);
+		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
