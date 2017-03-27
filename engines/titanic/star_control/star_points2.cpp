@@ -42,7 +42,7 @@ bool CStarPoints2::initialize() {
 		// Read in the sub-entries
 		RootEntry &rootEntry = _data[rootCtr];
 		rootEntry.resize(count);
-		for (int idx = 0; idx < count * 2; ++idx) {
+		for (int idx = 0; idx < count; ++idx) {
 			CStarPointEntry &se = rootEntry[idx];
 			FVector *vectors[2] = { &se._v1, &se._v2 };
 
