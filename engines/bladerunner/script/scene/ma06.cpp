@@ -70,8 +70,8 @@ void SceneScriptMA06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA06::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(0, 40.0f, 1.35f, 0.0f, 0, 0, false, 0);
-	Actor_Face_Object(0, "panel", true);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 40.0f, 1.35f, 0.0f, 0, 0, false, 0);
+	Actor_Face_Object(kActorMcCoy, "panel", true);
 	Delay(500);
 	sub_4014E4();
 	if (sub_4012C0()) {
@@ -120,7 +120,7 @@ void SceneScriptMA06::sub_4014E4() {
 		if (Game_Flag_Query(58)) {
 			break;
 		}
-		Actor_Says(39, 80, 3);
+		Actor_Says(kActorAnsweringMachine, 80, 3);
 		Player_Gains_Control();
 		int v1 = Elevator_Activate(1);
 		Player_Loses_Control();
@@ -133,19 +133,19 @@ void SceneScriptMA06::sub_4014E4() {
 			} else {
 				Sound_Play(412, 100, 0, 0, 50);
 				Delay(500);
-				Actor_Says(39, 610, 3);
+				Actor_Says(kActorAnsweringMachine, 610, 3);
 			}
 		} else {
-			Actor_Says(0, 2940, 18);
+			Actor_Says(kActorMcCoy, 2940, 18);
 			if (Global_Variable_Query(1) == 4 && Game_Flag_Query(655)) {
 				Sound_Play(412, 100, 0, 0, 50);
 				Delay(500);
-				Actor_Says(39, 610, 3);
+				Actor_Says(kActorAnsweringMachine, 610, 3);
 				Delay(500);
-				Actor_Says(0, 8527, 3);
+				Actor_Says(kActorMcCoy, 8527, 3);
 			} else {
 				Game_Flag_Set(34);
-				Actor_Says(39, 90, 3);
+				Actor_Says(kActorAnsweringMachine, 90, 3);
 			}
 		}
 	}

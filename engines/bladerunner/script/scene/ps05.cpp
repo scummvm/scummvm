@@ -64,24 +64,24 @@ bool SceneScriptPS05::MouseClick(int x, int y) {
 }
 
 bool SceneScriptPS05::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("WATER FOUNTAIN", objectName) && !Loop_Actor_Walk_To_Scene_Object(0, "WATER FOUNTAIN", 12, 1, false)) {
-		Actor_Face_Object(0, "WATER FOUNTAIN", true);
-		Actor_Says(0, 3490, 18);
+	if (Object_Query_Click("WATER FOUNTAIN", objectName) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "WATER FOUNTAIN", 12, true, false)) {
+		Actor_Face_Object(kActorMcCoy, "WATER FOUNTAIN", true);
+		Actor_Says(kActorMcCoy, 3490, 18);
 	}
-	if (Object_Query_Click("ASHTRAY", objectName) && !Loop_Actor_Walk_To_XYZ(0, 662.0f, 0.37f, -180.0f, 0, 1, false, 0)) {
-		Actor_Face_Object(0, "ASHTRAY", true);
-		Actor_Voice_Over(1770, 99);
-		Actor_Voice_Over(1780, 99);
-		Actor_Voice_Over(1790, 99);
+	if (Object_Query_Click("ASHTRAY", objectName) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 662.0f, 0.37f, -180.0f, 0, 1, false, 0)) {
+		Actor_Face_Object(kActorMcCoy, "ASHTRAY", true);
+		Actor_Voice_Over(1770, kActorVoiceOver);
+		Actor_Voice_Over(1780, kActorVoiceOver);
+		Actor_Voice_Over(1790, kActorVoiceOver);
 	}
-	if (Object_Query_Click("WIRE BASKET", objectName) && !Loop_Actor_Walk_To_Scene_Object(0, "WIRE BASKET", 12, 1, false)) {
-		Actor_Face_Object(0, "WIRE BASKET", true);
-		Actor_Voice_Over(1810, 99);
-		Actor_Voice_Over(1820, 99);
+	if (Object_Query_Click("WIRE BASKET", objectName) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "WIRE BASKET", 12, true, false)) {
+		Actor_Face_Object(kActorMcCoy, "WIRE BASKET", true);
+		Actor_Voice_Over(1810, kActorVoiceOver);
+		Actor_Voice_Over(1820, kActorVoiceOver);
 	}
-	if (Object_Query_Click("WANTED POSTERS", objectName) && !Loop_Actor_Walk_To_Scene_Object(0, "WANTED POSTERS", 12, 1, false)) {
-		Actor_Face_Object(0, "WANTED POSTERS", true);
-		Actor_Voice_Over(1800, 99);
+	if (Object_Query_Click("WANTED POSTERS", objectName) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "WANTED POSTERS", 12, true, false)) {
+		Actor_Face_Object(kActorMcCoy, "WANTED POSTERS", true);
+		Actor_Voice_Over(1800, kActorVoiceOver);
 	}
 	return false;
 }
@@ -92,7 +92,7 @@ bool SceneScriptPS05::ClickedOnActor(int actorId) {
 
 bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
 	if (Game_Flag_Query(23)) {
-		Actor_Set_At_XYZ(0, 718.72f, 0.37f, -461.26f, 600);
+		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
 	} else if (Game_Flag_Query(22)) {
 		sub_401B34();
 		sub_401C30();
@@ -106,7 +106,7 @@ bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 2, 24, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 2, 24, 1, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(101, 119);
@@ -114,7 +114,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 635.0f, 0.0f, -598.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 635.0f, 0.0f, -598.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(62, 66);
@@ -122,7 +122,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 742.52002f, 0.37f, -457.69f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52002f, 0.37f, -457.69f, 0, 1, false, 0)) {
 			Game_Flag_Set(136);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -134,8 +134,8 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptPS05::ClickedOn2DRegion(int region) {
-	if (region == 0 && !Loop_Actor_Walk_To_XYZ(0, 694.78f, 0.37f, -321.05f, 0, 1, false, 0)) {
-		Actor_Face_Heading(0, 130, false);
+	if (region == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 694.78f, 0.37f, -321.05f, 0, 1, false, 0)) {
+		Actor_Face_Heading(kActorMcCoy, 130, false);
 		View_Score_Board();
 	}
 	return false;
@@ -195,47 +195,47 @@ void SceneScriptPS05::sub_401C30() {
 	case 4:
 		if (!Game_Flag_Query(692)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(61, 230, 3);
-			ADQ_Add(61, 240, 3);
+			ADQ_Add(kActorNewscaster, 230, 3);
+			ADQ_Add(kActorNewscaster, 240, 3);
 			Game_Flag_Set(692);
 		}
 		break;
 	case 3:
 		if (!Game_Flag_Query(691)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(61, 170, 3);
-			ADQ_Add(61, 180, 3);
-			ADQ_Add(61, 190, 3);
-			ADQ_Add(61, 200, 3);
-			ADQ_Add(61, 210, 3);
-			ADQ_Add(61, 220, 3);
-			ADQ_Add(41, 80, 3);
-			ADQ_Add(41, 90, 3);
-			ADQ_Add(41, 100, 3);
-			ADQ_Add(41, 110, 3);
-			ADQ_Add(41, 120, 3);
-			ADQ_Add(41, 130, 3);
+			ADQ_Add(kActorNewscaster, 170, 3);
+			ADQ_Add(kActorNewscaster, 180, 3);
+			ADQ_Add(kActorNewscaster, 190, 3);
+			ADQ_Add(kActorNewscaster, 200, 3);
+			ADQ_Add(kActorNewscaster, 210, 3);
+			ADQ_Add(kActorNewscaster, 220, 3);
+			ADQ_Add(kActorGovernorKolvig, 80, 3);
+			ADQ_Add(kActorGovernorKolvig, 90, 3);
+			ADQ_Add(kActorGovernorKolvig, 100, 3);
+			ADQ_Add(kActorGovernorKolvig, 110, 3);
+			ADQ_Add(kActorGovernorKolvig, 120, 3);
+			ADQ_Add(kActorGovernorKolvig, 130, 3);
 			Game_Flag_Set(691);
 		}
 		break;
 	case 2:
 		if (!Game_Flag_Query(690)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			if (Actor_Query_Friendliness_To_Other(5, 0) > Actor_Query_Friendliness_To_Other(1, 0)) {
-				ADQ_Add(61, 120, 3);
-				ADQ_Add(61, 130, 3);
-				ADQ_Add(61, 140, 3);
-				ADQ_Add(61, 150, 3);
-				ADQ_Add(4, 1570, 3);
-				ADQ_Add(4, 1580, 3);
-				ADQ_Add(4, 1590, 3);
+			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy)) {
+				ADQ_Add(kActorNewscaster, 120, 3);
+				ADQ_Add(kActorNewscaster, 130, 3);
+				ADQ_Add(kActorNewscaster, 140, 3);
+				ADQ_Add(kActorNewscaster, 150, 3);
+				ADQ_Add(kActorGuzza, 1570, 3);
+				ADQ_Add(kActorGuzza, 1580, 3);
+				ADQ_Add(kActorGuzza, 1590, 3);
 			} else {
-				ADQ_Add(61, 90, 3);
-				ADQ_Add(61, 100, 3);
-				ADQ_Add(61, 110, 3);
-				ADQ_Add(4, 1540, 3);
-				ADQ_Add(4, 1550, 3);
-				ADQ_Add(4, 1560, 3);
+				ADQ_Add(kActorNewscaster, 90, 3);
+				ADQ_Add(kActorNewscaster, 100, 3);
+				ADQ_Add(kActorNewscaster, 110, 3);
+				ADQ_Add(kActorGuzza, 1540, 3);
+				ADQ_Add(kActorGuzza, 1550, 3);
+				ADQ_Add(kActorGuzza, 1560, 3);
 			}
 			Game_Flag_Set(690);
 		}
@@ -243,25 +243,25 @@ void SceneScriptPS05::sub_401C30() {
 	case 1:
 		if (!Game_Flag_Query(689)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(61, 40, 3);
-			ADQ_Add(61, 50, 3);
-			ADQ_Add(61, 60, 3);
-			ADQ_Add(61, 70, 3);
-			ADQ_Add(61, 80, 3);
+			ADQ_Add(kActorNewscaster, 40, 3);
+			ADQ_Add(kActorNewscaster, 50, 3);
+			ADQ_Add(kActorNewscaster, 60, 3);
+			ADQ_Add(kActorNewscaster, 70, 3);
+			ADQ_Add(kActorNewscaster, 80, 3);
 			Game_Flag_Set(689);
 		}
 		break;
 	case 0:
 		if (!Game_Flag_Query(688)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(61, 0, 3);
-			ADQ_Add(61, 10, 3);
-			ADQ_Add(61, 20, 3);
-			ADQ_Add(61, 30, 3);
-			ADQ_Add(51, 430, 3);
-			ADQ_Add(51, 440, 3);
-			ADQ_Add(51, 450, 3);
-			ADQ_Add(51, 460, 3);
+			ADQ_Add(kActorNewscaster, 0, 3);
+			ADQ_Add(kActorNewscaster, 10, 3);
+			ADQ_Add(kActorNewscaster, 20, 3);
+			ADQ_Add(kActorNewscaster, 30, 3);
+			ADQ_Add(kActorTyrell, 430, 3);
+			ADQ_Add(kActorTyrell, 440, 3);
+			ADQ_Add(kActorTyrell, 450, 3);
+			ADQ_Add(kActorTyrell, 460, 3);
 			Game_Flag_Set(688);
 		}
 		break;

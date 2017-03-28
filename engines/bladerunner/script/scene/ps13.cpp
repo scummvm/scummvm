@@ -216,7 +216,7 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS13::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 10, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 1, false)) {
 			Game_Flag_Set(19);
 			sub_40267C();
 			Set_Enter(14, 75);
@@ -224,7 +224,7 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 11, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 11, 12, 1, false)) {
 			Game_Flag_Set(21);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);

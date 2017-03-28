@@ -88,7 +88,7 @@ bool SceneScriptBB02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 98.0f, -415.06f, -593.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 98.0f, -415.06f, -593.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(263);
@@ -97,7 +97,7 @@ bool SceneScriptBB02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -12.0f, -415.06f, -27.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -415.06f, -27.0f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			if (!Game_Flag_Query(493)) {
 				Scene_Loop_Start_Special(2, 0, 1);
@@ -110,8 +110,8 @@ bool SceneScriptBB02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 86.0f, -415.06f, 174.0f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(0, 179.0f, -415.06f, 274.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 86.0f, -415.06f, 174.0f, 0, 1, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, -415.06f, 274.0f, 0, 0, false, 0);
 			Game_Flag_Set(282);
 			Game_Flag_Reset(493);
 			Set_Enter(21, 4);
@@ -139,10 +139,10 @@ void SceneScriptBB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB02::PlayerWalkedIn() {
 	if (Game_Flag_Query(281)) {
-		Loop_Actor_Walk_To_XYZ(0, 86.0f, -415.06f, 174.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 86.0f, -415.06f, 174.0f, 0, 0, false, 0);
 		Game_Flag_Reset(281);
 	} else if (Game_Flag_Query(333)) {
-		Loop_Actor_Walk_To_XYZ(0, 35.0f, -415.06f, -27.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 35.0f, -415.06f, -27.0f, 0, 0, false, 0);
 		Player_Gains_Control();
 		Game_Flag_Reset(333);
 	}

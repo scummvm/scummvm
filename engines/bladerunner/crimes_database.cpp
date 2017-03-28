@@ -49,24 +49,24 @@ CrimesDatabase::~CrimesDatabase() {
 	delete[] _crimes;
 }
 
-void CrimesDatabase::setCrime(int crimeId, int value) {
-	_crimes[crimeId] = value;
+void CrimesDatabase::setCrime(int clueId, int crimeId) {
+	_crimes[clueId] = crimeId;
 }
 
-int CrimesDatabase::getCrime(int crimeId) {
-	return _crimes[crimeId];
+int CrimesDatabase::getCrime(int clueId) {
+	return _crimes[clueId];
 }
 
-void CrimesDatabase::setAssetType(int assetId, int assetType) {
-	_assetTypes[assetId] = assetType;
+void CrimesDatabase::setAssetType(int clueId, int assetType) {
+	_assetTypes[clueId] = assetType;
 }
 
-int CrimesDatabase::getAssetType(int assetId) {
-	return _assetTypes[assetId];
+int CrimesDatabase::getAssetType(int clueId) {
+	return _assetTypes[clueId];
 }
 
-const char *CrimesDatabase::getClueText(int id) {
-	return _cluesText->getText(id);
+const char *CrimesDatabase::getClueText(int clueId) {
+	return _cluesText->getText(clueId);
 }
 
 } // End of namespace BladeRunner

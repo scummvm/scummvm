@@ -87,47 +87,47 @@ bool SceneScriptHC02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHC02::ClickedOnActor(int actorId) {
 	if (actorId == 32) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -150.51f, 0.14f, 62.74f, 0, 1, false, 0)) {
-			Actor_Face_Actor(0, 32, true);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.51f, 0.14f, 62.74f, 0, 1, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorHawkersBarkeep, true);
 			if (!Game_Flag_Query(404)) {
-				Actor_Says(0, 1225, 13);
-				Actor_Says_With_Pause(32, 0, 0.0f, 13);
-				Actor_Says(32, 10, 16);
-				Actor_Set_Goal_Number(32, 1);
-				Actor_Change_Animation_Mode(0, 23);
+				Actor_Says(kActorMcCoy, 1225, 13);
+				Actor_Says_With_Pause(kActorHawkersBarkeep, 0, 0.0f, 13);
+				Actor_Says(kActorHawkersBarkeep, 10, 16);
+				Actor_Set_Goal_Number(kActorHawkersBarkeep, 1);
+				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Delay(1500);
-				Actor_Change_Animation_Mode(0, 75);
+				Actor_Change_Animation_Mode(kActorMcCoy, 75);
 				Delay(1500);
 				Global_Variable_Increment(42, 1);
 				Game_Flag_Set(404);
-			} else if (Actor_Clue_Query(0, 254) && !Actor_Clue_Query(0, 257)) {
-				Actor_Says(0, 4545, 11);
-				Actor_Says(32, 120, 12);
-				Actor_Says(32, 180, 13);
-				Actor_Clue_Acquire(0, 257, 1, 32);
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityCamera) && !Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityDisc)) {
+				Actor_Says(kActorMcCoy, 4545, 11);
+				Actor_Says(kActorHawkersBarkeep, 120, 12);
+				Actor_Says(kActorHawkersBarkeep, 180, 13);
+				Actor_Clue_Acquire(kActorMcCoy, kClueChinaBarSecurityDisc, 1, kActorHawkersBarkeep);
 				Item_Pickup_Spin_Effect(975, 229, 215);
-			} else if (Actor_Clue_Query(0, 122) && !Actor_Clue_Query(0, 131) && (Global_Variable_Query(2) > 20 || Query_Difficulty_Level() == 0)) {
-				Actor_Clue_Acquire(0, 131, 1, 32);
-				Actor_Says(0, 1230, 13);
-				Actor_Says(32, 20, 12);
-				Actor_Says(0, 1235, 13);
-				Actor_Says(32, 30, 15);
-				Actor_Says(0, 1240, 13);
-				Actor_Says(32, 40, 14);
+			} else if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1) && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe) && (Global_Variable_Query(2) > 20 || Query_Difficulty_Level() == 0)) {
+				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, 1, kActorHawkersBarkeep);
+				Actor_Says(kActorMcCoy, 1230, 13);
+				Actor_Says(kActorHawkersBarkeep, 20, 12);
+				Actor_Says(kActorMcCoy, 1235, 13);
+				Actor_Says(kActorHawkersBarkeep, 30, 15);
+				Actor_Says(kActorMcCoy, 1240, 13);
+				Actor_Says(kActorHawkersBarkeep, 40, 14);
 				Item_Pickup_Spin_Effect(945, 229, 215);
-				Actor_Set_Goal_Number(32, 2);
-				Actor_Change_Animation_Mode(0, 23);
+				Actor_Set_Goal_Number(kActorHawkersBarkeep, 2);
+				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Delay(1500);
-				Actor_Says_With_Pause(32, 50, 1.6f, 17);
+				Actor_Says_With_Pause(kActorHawkersBarkeep, 50, 1.6f, 17);
 				if (Query_Difficulty_Level() != 0) {
 					Global_Variable_Decrement(2, 20);
 				}
-				Actor_Says(0, 1245, 13);
+				Actor_Says(kActorMcCoy, 1245, 13);
 			} else {
-				if (Actor_Clue_Query(0, 75)  && !Game_Flag_Query(405)) {
-					Actor_Says(32, 80, 16);
-					Actor_Says(0, 1265, 13);
-					Actor_Says(32, 90, 13);
+				if (Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)  && !Game_Flag_Query(405)) {
+					Actor_Says(kActorHawkersBarkeep, 80, 16);
+					Actor_Says(kActorMcCoy, 1265, 13);
+					Actor_Says(kActorHawkersBarkeep, 90, 13);
 					Game_Flag_Set(405);
 				}
 				if (Global_Variable_Query(2) > 5 || Query_Difficulty_Level() == 0) {
@@ -135,17 +135,17 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 						Global_Variable_Decrement(2, 5);
 					}
 					Global_Variable_Increment(42, 1);
-					Actor_Says(0, 1250, 13);
-					Actor_Says_With_Pause(32, 60, 0.8f, 14);
-					Actor_Says(0, 1255, 13);
-					Actor_Set_Goal_Number(32, 1);
-					Actor_Change_Animation_Mode(0, 23);
+					Actor_Says(kActorMcCoy, 1250, 13);
+					Actor_Says_With_Pause(kActorHawkersBarkeep, 60, 0.8f, 14);
+					Actor_Says(kActorMcCoy, 1255, 13);
+					Actor_Set_Goal_Number(kActorHawkersBarkeep, 1);
+					Actor_Change_Animation_Mode(kActorMcCoy, 23);
 					Delay(1500);
-					Actor_Change_Animation_Mode(0, 75);
+					Actor_Change_Animation_Mode(kActorMcCoy, 75);
 					Delay(1500);
 				} else {
-					Actor_Says_With_Pause(0, 1260, 0.3f, 13);
-					Actor_Says(32, 70, 14);
+					Actor_Says_With_Pause(kActorMcCoy, 1260, 0.3f, 13);
+					Actor_Says(kActorHawkersBarkeep, 70, 14);
 				}
 			}
 		}
@@ -160,7 +160,7 @@ bool SceneScriptHC02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 7.0f, 0.14f, 79.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 0.14f, 79.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(385);
@@ -169,11 +169,11 @@ bool SceneScriptHC02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -76.0f, 0.14f, -339.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(110);
-			Async_Actor_Walk_To_XYZ(0, -88.0f, 0.14f, -463.0f, 0, false);
+			Async_Actor_Walk_To_XYZ(kActorMcCoy, -88.0f, 0.14f, -463.0f, 0, false);
 			Set_Enter(8, 106);
 		}
 		return true;
@@ -202,7 +202,7 @@ void SceneScriptHC02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHC02::PlayerWalkedIn() {
 	if (Game_Flag_Query(109)) {
-		Loop_Actor_Walk_To_XYZ(0, -76.0f, 0.14f, -339.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, 0, false, 0);
 		Game_Flag_Reset(109);
 	}
 }

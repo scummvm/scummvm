@@ -223,7 +223,7 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 6, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 6, 12, 1, false)) {
 			Game_Flag_Set(15);
 			sub_402744();
 			Set_Enter(14, 73);
@@ -231,7 +231,7 @@ bool SceneScriptPS11::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 8, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, 1, false)) {
 			Game_Flag_Set(16);
 			sub_402744();
 			Global_Variable_Decrement(9, 20 - Global_Variable_Query(11));

@@ -122,9 +122,9 @@ void Actor::setup(int actorId) {
 	_animationMode = -1;
 	_screenRectangle = Common::Rect(-1, -1, -1, -1);
 
-	_combatAnimationMode = 4;
-	_unknown1 = 7;
-	_unknown2 = 8;
+	_animationModeCombatIdle = kAnimationModeCombatIdle;
+	_animationModeCombatWalk = kAnimationModeCombatWalk;
+	_animationModeCombatRun = kAnimationModeCombatRun;
 
 	int actorCount = (int)_vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i)
@@ -138,8 +138,9 @@ void Actor::setup(int actorId) {
 }
 
 void Actor::changeAnimationMode(int animationMode, bool force) {
-	if (force)
+	if (force) {
 		_animationMode = -1;
+	}
 
 	if (animationMode != _animationMode) {
 		_vm->_aiScripts->ChangeAnimationMode(_id, animationMode);
@@ -276,7 +277,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 				delay = 1;
 			}
 			if (delay > 1) {
-				changeAnimationMode(0, false);
+				changeAnimationMode(kAnimationModeIdle, false);
 			}
 			countdownTimerStart(3, delay);
 		}
@@ -321,7 +322,7 @@ void Actor::movementTrackWaypointReached() {
 			if (_vm->_aiScripts->ReachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
 				seconds = _movementTrackDelayOnNextWaypoint;
 				if (seconds > 1) {
-					changeAnimationMode(0, false);
+					changeAnimationMode(kAnimationModeIdle, false);
 					seconds = _movementTrackDelayOnNextWaypoint; // todo: analyze if movement is changed in some aiscript->ChangeAnimationMode?
 				}
 				countdownTimerStart(3, seconds);
@@ -577,19 +578,19 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 			this->_targetFacing = -1;
 
 			bool walked = _walkInfo->tick(_id, -positionChange.y, false);
+
 			Vector3 pos;
 			int facing;
 			_walkInfo->getCurrentPosition(_id, &pos, &facing);
-
 			setAtXYZ(pos, facing, false, this->_isMoving, false);
 			if (walked) {
-				_vm->_actors[_id]->changeAnimationMode(0);
+				_vm->_actors[_id]->changeAnimationMode(kAnimationModeIdle);
 
 				this->movementTrackWaypointReached();
 				if (this->inCombat()) {
-					this->changeAnimationMode(this->_combatAnimationMode, false);
+					this->changeAnimationMode(this->_animationModeCombatIdle, false);
 				} else {
-					this->changeAnimationMode(0, false);
+					this->changeAnimationMode(kAnimationModeIdle, false);
 				}
 			}
 		} else {
@@ -784,11 +785,11 @@ void Actor::stopWalking(bool value) {
 	}
 
 	if (isWalking()) {
-		_walkInfo->stop(_id, true, _combatAnimationMode, 0);
+		_walkInfo->stop(_id, true, _animationModeCombatIdle, 0);
 	} else if (inCombat()) {
-		changeAnimationMode(_combatAnimationMode, false);
+		changeAnimationMode(_animationModeCombatIdle, false);
 	} else {
-		changeAnimationMode(0, false);
+		changeAnimationMode(kAnimationModeIdle, false);
 	}
 }
 
@@ -952,15 +953,15 @@ void Actor::setHealth(int hp, int maxHp) {
 	}
 }
 
-void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int combatAnimationMode, int a7, int a8, int a9, int a10, int a11, int ammoDamage, int a13, int a14) {
-	_combatAnimationMode = combatAnimationMode;
-	_unknown1 = a7;
-	_unknown2 = a8;
+void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int a9, int a10, int a11, int ammoDamage, int a13, int a14) {
+	_animationModeCombatIdle = animationModeCombatIdle;
+	_animationModeCombatWalk = animationModeCombatWalk;
+	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
 	if (_id > 0)
 		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
 	stopWalking(false);
-	changeAnimationMode(_combatAnimationMode, false);
+	changeAnimationMode(_animationModeCombatIdle, false);
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];
@@ -975,7 +976,7 @@ void Actor::combatModeOff() {
 		_combatInfo->combatOff();
 	_inCombat = false;
 	stopWalking(false);
-	changeAnimationMode(0, false);
+	changeAnimationMode(kAnimationModeIdle, false);
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];

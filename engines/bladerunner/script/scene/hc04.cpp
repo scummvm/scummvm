@@ -32,8 +32,8 @@ void SceneScriptHC04::InitializeScene() {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 1013);
 	}
 	Music_Play(4, 14, -90, 1, -1, 1, 2);
-	Actor_Put_In_Set(59, 8);
-	Actor_Set_At_XYZ(59, -210.0f, 0.0f, -445.0f, 250);
+	Actor_Put_In_Set(kActorIsabella, 8);
+	Actor_Set_At_XYZ(kActorIsabella, -210.0f, 0.0f, -445.0f, 250);
 	Scene_Exit_Add_2D_Exit(0, 539, 51, 639, 309, 0);
 	Scene_Exit_Add_2D_Exit(1, 0, 456, 639, 479, 2);
 	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
@@ -83,17 +83,17 @@ bool SceneScriptHC04::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptHC04::ClickedOnActor(int actorId) {
-	if (actorId == 59) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -155.0f, 0.0f, -475.0f, 12, 1, false, 0)) {
-			Actor_Face_Actor(0, 59, true);
-			Actor_Face_Actor(59, 0, true);
+	if (actorId == kActorIsabella) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -155.0f, 0.0f, -475.0f, 12, 1, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorIsabella, true);
+			Actor_Face_Actor(kActorIsabella, kActorMcCoy, true);
 			if (Game_Flag_Query(106)) {
 				sub_401B90();
 				return true;
 			} else {
-				Actor_Says(59, 0, 3);
-				Actor_Says(0, 1280, 3);
-				Actor_Says(59, 20, 3);
+				Actor_Says(kActorIsabella, 0, 3);
+				Actor_Says(kActorMcCoy, 1280, 3);
+				Actor_Says(kActorIsabella, 20, 3);
 				Game_Flag_Set(106);
 				return true;
 			}
@@ -108,7 +108,7 @@ bool SceneScriptHC04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -108.0f, 0.14f, -639.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, 1, false, 0)) {
 			Music_Stop(2);
 			Game_Flag_Set(107);
 			Game_Flag_Reset(479);
@@ -118,7 +118,7 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -72.0f, 0.14f, -399.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(109);
 			Set_Enter(8, 32);
 		}
@@ -150,18 +150,18 @@ void SceneScriptHC04::DialogueQueueFlushed(int a1) {
 
 void SceneScriptHC04::sub_401B90() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(0, 263) || Actor_Clue_Query(0, 53)) {
-		if (Actor_Clue_Query(0, 47)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueKingstonKitchenBox2) || Actor_Clue_Query(kActorMcCoy, kClueKingstonKitchenBox1)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueBombingSuspect)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(340, 5, 6, 5);
-		} else if (Actor_Clue_Query(0, 259)) {
+		} else if (Actor_Clue_Query(kActorMcCoy, kClueTyrellSecurityPhoto)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(350, 5, 6, 5);
 		}
 		DM_Add_To_List_Never_Repeat_Once_Selected(360, 6, 4, 3);
 	}
-	if (Actor_Clue_Query(0, 87) && !Actor_Clue_Query(0, 101)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueCheese) && !Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(370, 3, 4, 7);
 	}
-	if (Actor_Clue_Query(0, 101)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueSpecialIngredient)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(380, -1, 5, 8);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(390, 7, 5, -1);
@@ -171,70 +171,70 @@ void SceneScriptHC04::sub_401B90() {
 	Dialogue_Menu_Disappear();
 	switch (answer) {
 	case 340:
-		Actor_Says(0, 1285, 3);
-		Actor_Says(59, 50, 3);
-		Actor_Says(0, 1330, 3);
-		Actor_Says(59, 60, 3);
+		Actor_Says(kActorMcCoy, 1285, 3);
+		Actor_Says(kActorIsabella, 50, 3);
+		Actor_Says(kActorMcCoy, 1330, 3);
+		Actor_Says(kActorIsabella, 60, 3);
 		break;
 	case 350:
-		Actor_Says(0, 1290, 3);
-		Actor_Says(59, 70, 3);
-		Actor_Says(0, 1335, 3);
-		Actor_Says(59, 80, 3);
-		Actor_Says(0, 1340, 3);
-		Actor_Says(59, 90, 3);
-		Actor_Says(0, 1345, 3);
+		Actor_Says(kActorMcCoy, 1290, 3);
+		Actor_Says(kActorIsabella, 70, 3);
+		Actor_Says(kActorMcCoy, 1335, 3);
+		Actor_Says(kActorIsabella, 80, 3);
+		Actor_Says(kActorMcCoy, 1340, 3);
+		Actor_Says(kActorIsabella, 90, 3);
+		Actor_Says(kActorMcCoy, 1345, 3);
 		break;
 	case 360:
-		Actor_Says(0, 1295, 3);
-		Actor_Says(59, 100, 3);
-		Actor_Says(0, 1350, 3);
-		Actor_Says(59, 110, 3);
-		Actor_Says(0, 1355, 3);
-		Actor_Says(59, 130, 3);
-		Actor_Says(0, 1360, 3);
+		Actor_Says(kActorMcCoy, 1295, 3);
+		Actor_Says(kActorIsabella, 100, 3);
+		Actor_Says(kActorMcCoy, 1350, 3);
+		Actor_Says(kActorIsabella, 110, 3);
+		Actor_Says(kActorMcCoy, 1355, 3);
+		Actor_Says(kActorIsabella, 130, 3);
+		Actor_Says(kActorMcCoy, 1360, 3);
 		break;
 	case 370:
-		Actor_Says(0, 1300, 3);
-		Actor_Says(59, 140, 3);
-		Actor_Says(0, 1365, 3);
-		Actor_Says(59, 150, 3);
+		Actor_Says(kActorMcCoy, 1300, 3);
+		Actor_Says(kActorIsabella, 140, 3);
+		Actor_Says(kActorMcCoy, 1365, 3);
+		Actor_Says(kActorIsabella, 150, 3);
 		break;
 	case 380:
-		Actor_Says(0, 1305, 3);
-		Actor_Modify_Friendliness_To_Other(59, 0, -2);
-		Actor_Says(59, 160, 3);
-		Actor_Says(0, 1370, 3);
-		Actor_Says(59, 170, 3);
-		Actor_Says(0, 1375, 3);
-		Actor_Says(59, 180, 3);
-		Actor_Says(0, 1380, 3);
-		Actor_Says(59, 190, 3);
-		Actor_Says(59, 210, 3);
-		Actor_Says(59, 240, 3);
-		Actor_Says(0, 1385, 3);
-		Actor_Says(59, 260, 3);
-		Actor_Says(0, 1390, 3);
-		Actor_Says(59, 300, 3);
-		Actor_Says(59, 310, 3);
-		Actor_Says(59, 320, 3);
-		Actor_Says(0, 1395, 3);
-		Actor_Says(59, 330, 3);
-		Actor_Clue_Acquire(0, 102, 0, 59);
+		Actor_Says(kActorMcCoy, 1305, 3);
+		Actor_Modify_Friendliness_To_Other(kActorIsabella, kActorMcCoy, -2);
+		Actor_Says(kActorIsabella, 160, 3);
+		Actor_Says(kActorMcCoy, 1370, 3);
+		Actor_Says(kActorIsabella, 170, 3);
+		Actor_Says(kActorMcCoy, 1375, 3);
+		Actor_Says(kActorIsabella, 180, 3);
+		Actor_Says(kActorMcCoy, 1380, 3);
+		Actor_Says(kActorIsabella, 190, 3);
+		Actor_Says(kActorIsabella, 210, 3);
+		Actor_Says(kActorIsabella, 240, 3);
+		Actor_Says(kActorMcCoy, 1385, 3);
+		Actor_Says(kActorIsabella, 260, 3);
+		Actor_Says(kActorMcCoy, 1390, 3);
+		Actor_Says(kActorIsabella, 300, 3);
+		Actor_Says(kActorIsabella, 310, 3);
+		Actor_Says(kActorIsabella, 320, 3);
+		Actor_Says(kActorMcCoy, 1395, 3);
+		Actor_Says(kActorIsabella, 330, 3);
+		Actor_Clue_Acquire(kActorMcCoy, kClueStolenCheese, 0, kActorIsabella);
 		break;
 	case 390:
-		Actor_Says(0, 1310, 3);
-		Actor_Modify_Friendliness_To_Other(59, 0, 2);
-		Actor_Says(59, 340, 3);
+		Actor_Says(kActorMcCoy, 1310, 3);
+		Actor_Modify_Friendliness_To_Other(kActorIsabella, kActorMcCoy, 2);
+		Actor_Says(kActorIsabella, 340, 3);
 		break;
 	case 400:
-		Actor_Says(0, 1315, 3);
+		Actor_Says(kActorMcCoy, 1315, 3);
 		break;
 	default:
-		Actor_Says(0, 1320, 3);
-		Actor_Says(59, 30, 3);
-		Actor_Says(0, 1325, 3);
-		Actor_Says(0, 1345, 3);
+		Actor_Says(kActorMcCoy, 1320, 3);
+		Actor_Says(kActorIsabella, 30, 3);
+		Actor_Says(kActorMcCoy, 1325, 3);
+		Actor_Says(kActorMcCoy, 1345, 3);
 		break;
 	}
 }

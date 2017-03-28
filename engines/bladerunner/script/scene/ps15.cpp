@@ -36,8 +36,8 @@ void SceneScriptPS15::InitializeScene() {
 	Ambient_Sounds_Add_Sound(158, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(73, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(74, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
-	Actor_Put_In_Set(34, 101);
-	Actor_Set_At_XYZ(34, -265.4f, -113.43f, -31.29f, 623);
+	Actor_Put_In_Set(kActorSergeantWalls, 101);
+	Actor_Set_At_XYZ(kActorSergeantWalls, -265.4f, -113.43f, -31.29f, 623);
 }
 
 void SceneScriptPS15::SceneLoaded() {
@@ -57,26 +57,26 @@ bool SceneScriptPS15::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptPS15::ClickedOnActor(int actorId) {
 	if (actorId == 34) {
-		if ((Actor_Clue_Query(0, 80) || Actor_Clue_Query(0, 83)) && !Actor_Clue_Query(0, 81)) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -256.0f, -113.43f, 43.51f, 0, 1, false, 0)) {
-				Actor_Face_Actor(0, 34, true);
-				Actor_Face_Actor(34, 0, true);
-				Actor_Says(0, 4470, 17);
-				Actor_Says(34, 130, 12);
-				Actor_Says(0, 4475, 18);
-				Actor_Says(0, 4480, 13);
-				Actor_Says(34, 140, 16);
+		if ((Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, 1, false, 0)) {
+				Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
+				Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
+				Actor_Says(kActorMcCoy, 4470, 17);
+				Actor_Says(kActorSergeantWalls, 130, 12);
+				Actor_Says(kActorMcCoy, 4475, 18);
+				Actor_Says(kActorMcCoy, 4480, 13);
+				Actor_Says(kActorSergeantWalls, 140, 16);
 				Item_Pickup_Spin_Effect(965, 211, 239);
-				Actor_Says(34, 150, 14);
-				Actor_Clue_Acquire(0, 81, 1, 34);
+				Actor_Says(kActorSergeantWalls, 150, 14);
+				Actor_Clue_Acquire(kActorMcCoy, kClueShippingForm, 1, kActorSergeantWalls);
 				if (!Game_Flag_Query(727)) {
 					Item_Remove_From_World(111);
 				}
 			}
 		} else {
-			Actor_Face_Actor(0, 34, true);
-			Actor_Says(0, 8600, 15);
-			Actor_Says(34, 190, 12);
+			Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
+			Actor_Says(kActorMcCoy, 8600, 15);
+			Actor_Says(kActorSergeantWalls, 190, 12);
 		}
 		return true;
 	}
@@ -85,17 +85,17 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 
 bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 110) {
-		if (Actor_Clue_Query(0, 80) && Actor_Clue_Query(0, 83)) {
-			Actor_Says(0, 8570, 14);
+		if (Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) && Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) {
+			Actor_Says(kActorMcCoy, 8570, 14);
 		} else {
-			Actor_Face_Actor(0, 34, true);
-			Actor_Face_Actor(34, 0, true);
-			Actor_Says(0, 4485, 17);
-			Actor_Says(34, 160, 14);
-			Actor_Says(0, 4490, 12);
-			Actor_Says(34, 170, 13);
-			Actor_Clue_Acquire(0, 80, 1, 0);
-			Actor_Clue_Acquire(0, 83, 1, 0);
+			Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
+			Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
+			Actor_Says(kActorMcCoy, 4485, 17);
+			Actor_Says(kActorSergeantWalls, 160, 14);
+			Actor_Says(kActorMcCoy, 4490, 12);
+			Actor_Says(kActorSergeantWalls, 170, 13);
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, 1, kActorMcCoy);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, 1, kActorMcCoy);
 		}
 		return true;
 	}
@@ -104,7 +104,7 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -360.0f, -113.43f, 50.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(204);
@@ -113,9 +113,9 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -183.58f, -113.43f, 91.7f, 0, 1, false, 0)) {
-			Actor_Says(0, 4440, 18);
-			Actor_Says(34, 150, 17);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, 1, false, 0)) {
+			Actor_Says(kActorMcCoy, 4440, 18);
+			Actor_Says(kActorSergeantWalls, 150, 17);
 			Sound_Play(155, 90, 0, 0, 50);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -137,24 +137,24 @@ void SceneScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS15::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(0, -326.93f, -113.43f, 101.42f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, 0, false, 0);
 	if (!Game_Flag_Query(43)) {
-		Actor_Face_Actor(0, 34, true);
-		Actor_Face_Actor(34, 0, true);
-		Actor_Says(34, 0, 12);
-		Actor_Says(0, 4445, 18);
-		Actor_Says(34, 10, 12);
-		Actor_Says(0, 4450, 18);
-		Actor_Says(34, 60, 13);
-		Actor_Says(34, 70, 12);
-		Actor_Says(0, 4460, 15);
-		Actor_Says(34, 80, 13);
-		Actor_Says(0, 4465, 16);
-		Actor_Says(34, 90, 13);
-		Actor_Says(34, 100, 14);
-		Actor_Says(34, 110, 15);
-		Actor_Says(34, 120, 15);
-		Actor_Says(0, 4555, 14);
+		Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
+		Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
+		Actor_Says(kActorSergeantWalls, 0, 12);
+		Actor_Says(kActorMcCoy, 4445, 18);
+		Actor_Says(kActorSergeantWalls, 10, 12);
+		Actor_Says(kActorMcCoy, 4450, 18);
+		Actor_Says(kActorSergeantWalls, 60, 13);
+		Actor_Says(kActorSergeantWalls, 70, 12);
+		Actor_Says(kActorMcCoy, 4460, 15);
+		Actor_Says(kActorSergeantWalls, 80, 13);
+		Actor_Says(kActorMcCoy, 4465, 16);
+		Actor_Says(kActorSergeantWalls, 90, 13);
+		Actor_Says(kActorSergeantWalls, 100, 14);
+		Actor_Says(kActorSergeantWalls, 110, 15);
+		Actor_Says(kActorSergeantWalls, 120, 15);
+		Actor_Says(kActorMcCoy, 4555, 14);
 		Game_Flag_Set(43);
 		//return true;
 		return;

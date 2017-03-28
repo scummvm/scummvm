@@ -29,39 +29,39 @@ void SceneScriptKP07::InitializeScene() {
 	Game_Flag_Reset(578);
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 	if (Game_Flag_Query(653)) {
-		if (Game_Flag_Query(47) && Actor_Query_Goal_Number(3) < 599) {
-			Actor_Set_Targetable(3, true);
+		if (Game_Flag_Query(47) && Actor_Query_Goal_Number(kActorDektora) < 599) {
+			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(51, 1);
-			Actor_Put_In_Set(3, 48);
-			Actor_Set_At_XYZ(3, -52.0f, -41.52f, -5.0f, 289);
+			Actor_Put_In_Set(kActorDektora, 48);
+			Actor_Set_At_XYZ(kActorDektora, -52.0f, -41.52f, -5.0f, 289);
 		}
-		if (Actor_Query_Goal_Number(19) < 599) {
+		if (Actor_Query_Goal_Number(kActorZuben) < 599) {
 			Global_Variable_Increment(51, 1);
-			Actor_Set_Targetable(19, true);
-			Actor_Put_In_Set(19, 48);
-			Actor_Set_At_XYZ(19, -26.0f, -41.52f, -135.0f, 0);
+			Actor_Set_Targetable(kActorZuben, true);
+			Actor_Put_In_Set(kActorZuben, 48);
+			Actor_Set_At_XYZ(kActorZuben, -26.0f, -41.52f, -135.0f, 0);
 		}
-		if (Game_Flag_Query(44) && Actor_Query_Goal_Number(7) < 599) {
+		if (Game_Flag_Query(44) && Actor_Query_Goal_Number(kActorIzo) < 599) {
 			Global_Variable_Increment(51, 1);
-			Actor_Set_Targetable(7, true);
-			Actor_Put_In_Set(7, 48);
-			Actor_Set_At_XYZ(7, -38.0f, -41.52f, -175.0f, 500);
+			Actor_Set_Targetable(kActorIzo, true);
+			Actor_Put_In_Set(kActorIzo, 48);
+			Actor_Set_At_XYZ(kActorIzo, -38.0f, -41.52f, -175.0f, 500);
 		}
-		if (Game_Flag_Query(45) && Actor_Query_Goal_Number(2) < 599) {
+		if (Game_Flag_Query(45) && Actor_Query_Goal_Number(kActorGordo) < 599) {
 			Global_Variable_Increment(51, 1);
-			Actor_Set_Targetable(2, true);
-			Actor_Put_In_Set(2, 48);
-			Actor_Set_At_XYZ(2, 61.0f, -41.52f, -3.0f, 921);
+			Actor_Set_Targetable(kActorGordo, true);
+			Actor_Put_In_Set(kActorGordo, 48);
+			Actor_Set_At_XYZ(kActorGordo, 61.0f, -41.52f, -3.0f, 921);
 		}
-		if (Game_Flag_Query(46) && Actor_Query_Goal_Number(6) < 599) {
+		if (Game_Flag_Query(46) && Actor_Query_Goal_Number(kActorLucy) < 599) {
 			Global_Variable_Increment(51, 1);
-			Actor_Put_In_Set(6, 48);
-			Actor_Set_At_XYZ(6, 78.0f, -41.52f, -119.0f, 659);
+			Actor_Put_In_Set(kActorLucy, 48);
+			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
 		}
-		if (Actor_Query_Goal_Number(10) < 599) {
+		if (Actor_Query_Goal_Number(kActorLuther) < 599) {
 			Global_Variable_Increment(51, 1);
-			Actor_Put_In_Set(10, 48);
-			Actor_Set_At_XYZ(10, -47.0f, 0.0f, 151.0f, 531);
+			Actor_Put_In_Set(kActorLuther, 48);
+			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);
 		}
 	}
 	Ambient_Sounds_Add_Looping_Sound(585, 7, 1, 1);
@@ -95,19 +95,19 @@ bool SceneScriptKP07::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptKP07::ClickedOnActor(int actorId) {
-	if (actorId == 5) {
-		if (Game_Flag_Query(697) || actorId != 5 || Actor_Query_Goal_Number(5) == 599 || Actor_Query_Goal_Number(5) == 515) {
+	if (actorId == kActorClovis) {
+		if (Game_Flag_Query(697) || actorId != kActorClovis || Actor_Query_Goal_Number(kActorClovis) == 599 || Actor_Query_Goal_Number(kActorClovis) == 515) {
 			return false;
 		}
 		if (Game_Flag_Query(653)) {
-			Actor_Set_Goal_Number(5, 516);
+			Actor_Set_Goal_Number(kActorClovis, 516);
 		} else {
 			Music_Play(20, 31, 0, 0, -1, 1, 0);
-			Actor_Set_Goal_Number(5, 514);
+			Actor_Set_Goal_Number(kActorClovis, 514);
 		}
 	} else {
-		Actor_Face_Actor(0, actorId, true);
-		Actor_Says(0, 8590, 14);
+		Actor_Face_Actor(kActorMcCoy, actorId, true);
+		Actor_Says(kActorMcCoy, 8590, 14);
 	}
 	return true;
 }
@@ -118,7 +118,7 @@ bool SceneScriptKP07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -12.0f, -41.58f, 72.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
@@ -140,23 +140,23 @@ void SceneScriptKP07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptKP07::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(0, 9.0f, -41.88f, -81.0f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 9.0f, -41.88f, -81.0f, 0, 0, false, 0);
 	if (!Game_Flag_Query(658)) {
 		if (Game_Flag_Query(653)) {
-			Actor_Face_Actor(0, 5, true);
-			Actor_Says(5, 1240, 3);
-			Actor_Says(0, 8500, 3);
-			Actor_Says(5, 1250, 3);
-			if (Actor_Query_Goal_Number(8) == 416) {
-				Actor_Put_In_Set(8, 48);
+			Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
+			Actor_Says(kActorClovis, 1240, 3);
+			Actor_Says(kActorMcCoy, 8500, 3);
+			Actor_Says(kActorClovis, 1250, 3);
+			if (Actor_Query_Goal_Number(kActorSadik) == 416) {
+				Actor_Put_In_Set(kActorSadik, 48);
 				Global_Variable_Increment(51, 1);
-				Actor_Set_At_XYZ(8, -12.0f, -41.58f, 72.0f, 0);
-				Actor_Face_Actor(8, 5, true);
+				Actor_Set_At_XYZ(kActorSadik, -12.0f, -41.58f, 72.0f, 0);
+				Actor_Face_Actor(kActorSadik, kActorClovis, true);
 			}
 		} else {
-			Actor_Face_Actor(0, 5, true);
-			Actor_Says(5, 160, 3);
-			Actor_Retired_Here(5, 72, 60, 0, -1);
+			Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
+			Actor_Says(kActorClovis, 160, 3);
+			Actor_Retired_Here(kActorClovis, 72, 60, 0, -1);
 		}
 		Game_Flag_Set(658);
 	}
@@ -167,11 +167,11 @@ void SceneScriptKP07::PlayerWalkedOut() {
 }
 
 void SceneScriptKP07::DialogueQueueFlushed(int a1) {
-	if (Actor_Query_Goal_Number(5) == 515) {
-		Actor_Set_Targetable(5, false);
-		Actor_Change_Animation_Mode(5, 21);
-		Actor_Retired_Here(5, 12, 48, 1, -1);
-		Actor_Set_Goal_Number(5, 599);
+	if (Actor_Query_Goal_Number(kActorClovis) == 515) {
+		Actor_Set_Targetable(kActorClovis, false);
+		Actor_Change_Animation_Mode(kActorClovis, 21);
+		Actor_Retired_Here(kActorClovis, 12, 48, 1, -1);
+		Actor_Set_Goal_Number(kActorClovis, 599);
 	}
 }
 

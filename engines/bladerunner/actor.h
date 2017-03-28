@@ -92,7 +92,9 @@ private:
 	int _width;
 	int _height;
 	int _animationMode;
-	int _combatAnimationMode;
+	int _animationModeCombatIdle;
+	int _animationModeCombatWalk;
+	int _animationModeCombatRun;
 	int _fps;
 	int _frame_ms;
 	int _animationId;
@@ -105,9 +107,6 @@ private:
 	int _timersStart[7];
 
 	float _scale;
-
-	int _unknown1;
-	int _unknown2;
 
 	Vector3 _actorSpeed;
 

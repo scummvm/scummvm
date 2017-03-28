@@ -91,7 +91,7 @@ bool SceneScriptUG06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 23.0f, 0.0f, 321.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 0.0f, 321.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(341);
@@ -100,10 +100,10 @@ bool SceneScriptUG06::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 66.0f, 0.0f, -90.0f, 0, 1, false, 0)) {
-			Actor_Face_Heading(0, 0, false);
-			Loop_Actor_Travel_Stairs(0, 17, 1, 0);
-			Loop_Actor_Walk_To_XYZ(0, 66.0f, 153.0f, -446.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -90.0f, 0, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 0, false);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 1, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 153.0f, -446.0f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(342);
@@ -126,25 +126,25 @@ void SceneScriptUG06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG06::PlayerWalkedIn() {
 	if (Game_Flag_Query(340)) {
-		Loop_Actor_Walk_To_XYZ(0, 23.0f, 0.0f, 273.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 0.0f, 273.0f, 0, 0, false, 0);
 		Game_Flag_Reset(340);
 	}
 	if (Game_Flag_Query(343)) {
-		Loop_Actor_Travel_Stairs(0, 17, 0, 0);
-		Loop_Actor_Walk_To_XYZ(0, 66.0f, 0.0f, -36.91f, 0, 0, false, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 0, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -36.91f, 0, 0, false, 0);
 		Game_Flag_Reset(343);
 	}
 	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(524)) {
 		Player_Loses_Control();
-		Actor_Voice_Over(2620, 99);
-		Actor_Voice_Over(2630, 99);
-		Actor_Voice_Over(2640, 99);
-		Actor_Voice_Over(2650, 99);
-		Actor_Voice_Over(2660, 99);
-		Actor_Voice_Over(2670, 99);
-		Actor_Voice_Over(2680, 99);
-		Actor_Voice_Over(2690, 99);
-		Actor_Voice_Over(2700, 99);
+		Actor_Voice_Over(2620, kActorVoiceOver);
+		Actor_Voice_Over(2630, kActorVoiceOver);
+		Actor_Voice_Over(2640, kActorVoiceOver);
+		Actor_Voice_Over(2650, kActorVoiceOver);
+		Actor_Voice_Over(2660, kActorVoiceOver);
+		Actor_Voice_Over(2670, kActorVoiceOver);
+		Actor_Voice_Over(2680, kActorVoiceOver);
+		Actor_Voice_Over(2690, kActorVoiceOver);
+		Actor_Voice_Over(2700, kActorVoiceOver);
 		Player_Gains_Control();
 		Game_Flag_Set(524);
 		Autosave_Game(2);

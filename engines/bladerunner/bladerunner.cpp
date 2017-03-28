@@ -268,8 +268,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_textKIA->open("KIA"))
 		return false;
 
-	_textSpindest = new TextResource(this);
-	if (!_textSpindest->open("SPINDEST"))
+	_textSpinnerDestinations = new TextResource(this);
+	if (!_textSpinnerDestinations->open("SPINDEST"))
 		return false;
 
 	_textVK = new TextResource(this);
@@ -351,7 +351,7 @@ void BladeRunnerEngine::initChapterAndScene() {
 	}
 
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-		_actors[i]->changeAnimationMode(0);
+		_actors[i]->changeAnimationMode(kAnimationModeIdle);
 	}
 
 	for (int i = 1, end = _gameInfo->getActorCount(); i != end; ++i) { // skip first actor, probably player
@@ -410,8 +410,8 @@ void BladeRunnerEngine::shutdown() {
 	delete _textKIA;
 	_textKIA = nullptr;
 
-	delete _textSpindest;
-	_textSpindest = nullptr;
+	delete _textSpinnerDestinations;
+	_textSpinnerDestinations = nullptr;
 
 	delete _textVK;
 	_textVK = nullptr;

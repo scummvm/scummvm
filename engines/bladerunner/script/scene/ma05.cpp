@@ -76,12 +76,12 @@ bool SceneScriptMA05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(0, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0);
 			Game_Flag_Set(63);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Async_Actor_Walk_To_XYZ(0, -7199.0f, 953.97f, 1685.0f, 0, false);
+			Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1685.0f, 0, false);
 			Set_Enter(50, 50);
 		}
 		return true;
@@ -112,10 +112,10 @@ void SceneScriptMA05::PlayerWalkedIn() {
 	}
 	if (Game_Flag_Query(146) && !Game_Flag_Query(61)) {
 		if (!Game_Flag_Query(378)) {
-			Actor_Voice_Over(1260, 99);
-			Actor_Voice_Over(1270, 99);
-			Actor_Voice_Over(1280, 99);
-			Actor_Voice_Over(1290, 99);
+			Actor_Voice_Over(1260, kActorVoiceOver);
+			Actor_Voice_Over(1270, kActorVoiceOver);
+			Actor_Voice_Over(1280, kActorVoiceOver);
+			Actor_Voice_Over(1290, kActorVoiceOver);
 		}
 		Game_Flag_Set(61);
 		Player_Gains_Control();
@@ -131,12 +131,12 @@ void SceneScriptMA05::DialogueQueueFlushed(int a1) {
 
 bool SceneScriptMA05::sub_401990() {
 	return Global_Variable_Query(1) == 5
-		&& !Actor_Clue_Query(0, 143)
-		&& !Actor_Clue_Query(0, 144)
-		&& !Actor_Clue_Query(0, 139)
-		&& !Actor_Clue_Query(0, 140)
-		&& !Actor_Clue_Query(0, 141)
-		&& !Actor_Clue_Query(0, 142);
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2)
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
+		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
 }
 
 } // End of namespace BladeRunner

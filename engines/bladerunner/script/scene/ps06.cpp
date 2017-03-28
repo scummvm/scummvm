@@ -50,43 +50,43 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 		return true;
 	}
 	if (Object_Query_Click("E.SCREEN03", objectName) || Object_Query_Click("E.MONITOR3", objectName)) {
-		Actor_Says(39, 330, 3);
-		if (!Actor_Clue_Query(0, 111) || Actor_Clue_Query(0, 113) || Actor_Clue_Query(0, 114) || Actor_Clue_Query(0, 115)) {
-			Actor_Clues_Transfer_New_To_Mainframe(0);
+		Actor_Says(kActorAnsweringMachine, 330, 3);
+		if (!Actor_Clue_Query(kActorMcCoy, kClueCar) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration2) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)) {
+			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
 			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
 			Delay(2000);
-			Actor_Says(39, 340, 3);
-			Actor_Clues_Transfer_New_From_Mainframe(0);
+			Actor_Says(kActorAnsweringMachine, 340, 3);
+			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
 			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
 			Delay(2000);
 			Ambient_Sounds_Play_Sound(588, 80, 0, 0, 99);
-			Actor_Says(39, 350, 3);
+			Actor_Says(kActorAnsweringMachine, 350, 3);
 			return true;
 		} else {
 			Delay(2000);
-			Actor_Voice_Over(3780, 99);
-			Actor_Voice_Over(3790, 99);
+			Actor_Voice_Over(3780, kActorVoiceOver);
+			Actor_Voice_Over(3790, kActorVoiceOver);
 			if (Game_Flag_Query(47)) {
-				Actor_Voice_Over(3800, 99);
-				Actor_Voice_Over(3810, 99);
-				Actor_Voice_Over(3820, 99);
-				Actor_Voice_Over(3830, 99);
-				Actor_Clue_Acquire(0, 113, 1, -1);
+				Actor_Voice_Over(3800, kActorVoiceOver);
+				Actor_Voice_Over(3810, kActorVoiceOver);
+				Actor_Voice_Over(3820, kActorVoiceOver);
+				Actor_Voice_Over(3830, kActorVoiceOver);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration1, 1, -1);
 			} else if (Game_Flag_Query(45)) {
-				Actor_Voice_Over(3840, 99);
-				Actor_Voice_Over(3850, 99);
-				Actor_Voice_Over(3860, 99);
-				Actor_Voice_Over(3870, 99);
-				Actor_Clue_Acquire(0, 114, 1, -1);
+				Actor_Voice_Over(3840, kActorVoiceOver);
+				Actor_Voice_Over(3850, kActorVoiceOver);
+				Actor_Voice_Over(3860, kActorVoiceOver);
+				Actor_Voice_Over(3870, kActorVoiceOver);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration2, 1, -1);
 			} else {
-				Actor_Voice_Over(3880, 99);
-				Actor_Voice_Over(3890, 99);
-				Actor_Voice_Over(3900, 99);
-				Actor_Voice_Over(3910, 99);
-				Actor_Clue_Acquire(0, 115, 1, -1);
+				Actor_Voice_Over(3880, kActorVoiceOver);
+				Actor_Voice_Over(3890, kActorVoiceOver);
+				Actor_Voice_Over(3900, kActorVoiceOver);
+				Actor_Voice_Over(3910, kActorVoiceOver);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration3, 1, -1);
 			}
-			Actor_Clues_Transfer_New_To_Mainframe(0);
-			Actor_Clues_Transfer_New_From_Mainframe(0);
+			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
+			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
 			return true;
 		}
 	}

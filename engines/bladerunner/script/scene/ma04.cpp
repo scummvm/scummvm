@@ -84,7 +84,7 @@ bool SceneScriptMA04::ClickedOn3DObject(const char *objectName, bool a2) {
 		return false;
 	}
 	if (Object_Query_Click("BED-TV-1", objectName) || Object_Query_Click("BED-TV-2", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "BED-TV-2", 24, 1, false)) {
+		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BED-TV-2", 24, true, false)) {
 			Game_Flag_Set(711);
 			Unclickable_Object("BED-TV-1");
 			Unclickable_Object("BED-TV-2");
@@ -107,7 +107,7 @@ bool SceneScriptMA04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -7099.0f, 954.0f, 1866.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7099.0f, 954.0f, 1866.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(36);
 			Set_Enter(10, 49);
 		}
@@ -115,26 +115,26 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		float x, y, z;
-		Actor_Query_XYZ(0, &x, &y, &z);
-		if (z <= 1677.0f || !Loop_Actor_Walk_To_XYZ(0, -7199.0f, 955.0f, 1675.0f, 0, 1, false, 0)) {
+		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
+		if (z <= 1677.0f || !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, 1, false, 0)) {
 			if (sub_402888()) {
 				Overlay_Remove("MA04OVER");
 			}
-			Loop_Actor_Walk_To_XYZ(0, -7199.0f, 955.0f, 1675.0f, 0, 0, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, 0, false, 1);
 			Game_Flag_Set(62);
 			if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
-				Async_Actor_Walk_To_XYZ(0, -7199.0f, 956.17f, 1568.0f, 0, false);
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1568.0f, 0, false);
 			}
 			Set_Enter(51, 51);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -7115.0f, 954.0f, 1742.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7115.0f, 954.0f, 1742.0f, 0, 1, false, 0)) {
 			int sounds[] = {252, 405, 404, 407, 406};
 			Ambient_Sounds_Play_Sound(sounds[Random_Query(0, 4)], 50, 0, 0, 0);
 			Delay(3000);
-			Loop_Actor_Walk_To_XYZ(0, -7139.0f, 954.0f, 1746.0f, 0, 1, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, 1, false, 1);
 		}
 	}
 	return false;
@@ -149,10 +149,10 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 		return true;
 	}
 	if (region == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -7176.0f, 954.0f, 1806.0f, 0, 1, false, 0)) {
-			Actor_Face_Heading(0, 256, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 256, false);
 			if (sub_402758()) {
-				Actor_Says(0, 2680, 0);
+				Actor_Says(kActorMcCoy, 2680, 0);
 				Ambient_Sounds_Remove_Sound(403, true);
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
@@ -171,41 +171,41 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Music_Play(2, 52, 0, 3, -1, 0, 0);
 				return false;
 			}
-			if (Actor_Clue_Query(5, 222) && !Game_Flag_Query(649)) {
+			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(649)) {
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
-				Actor_Says(5, 310, 3);
-				Actor_Says(5, 320, 3);
+				Actor_Says(kActorClovis, 310, 3);
+				Actor_Says(kActorClovis, 320, 3);
 				if (!Game_Flag_Query(378) && Global_Variable_Query(1) < 3) {
-					Actor_Voice_Over(1300, 99);
-					Actor_Voice_Over(1310, 99);
-					Actor_Voice_Over(1320, 99);
+					Actor_Voice_Over(1300, kActorVoiceOver);
+					Actor_Voice_Over(1310, kActorVoiceOver);
+					Actor_Voice_Over(1320, kActorVoiceOver);
 				}
-				Actor_Says(0, 2445, 13);
+				Actor_Says(kActorMcCoy, 2445, 13);
 				Sound_Play(123, 100, 0, 0, 50);
 				Game_Flag_Set(649);
 				return true;
 			}
-			if (Actor_Clue_Query(6, 215) && !Game_Flag_Query(650)) {
+			if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(650)) {
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
-				Actor_Says(6, 500, 3);
-				Actor_Says(6, 510, 3);
+				Actor_Says(kActorLucy, 500, 3);
+				Actor_Says(kActorLucy, 510, 3);
 				if (!Game_Flag_Query(378) && Global_Variable_Query(1) < 3) {
-					Actor_Voice_Over(1330, 99);
-					Actor_Voice_Over(1340, 99);
-					Actor_Voice_Over(1350, 99);
+					Actor_Voice_Over(1330, kActorVoiceOver);
+					Actor_Voice_Over(1340, kActorVoiceOver);
+					Actor_Voice_Over(1350, kActorVoiceOver);
 				}
-				Actor_Says(0, 2445, 13);
+				Actor_Says(kActorMcCoy, 2445, 13);
 				Sound_Play(123, 100, 0, 0, 50);
 				Game_Flag_Set(650);
 				return true;
 			}
-			Actor_Says(0, 2670, 13);
+			Actor_Says(kActorMcCoy, 2670, 13);
 			if (!Game_Flag_Query(378)) {
-				Actor_Says(0, 2675, 17);
+				Actor_Says(kActorMcCoy, 2675, 17);
 			}
 		}
 		return true;
@@ -238,43 +238,43 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		Overlay_Play("MA04OVER", 0, 1, 0, 0);
 	}
 	if (Game_Flag_Query(647)) {
-		Loop_Actor_Walk_To_XYZ(0, -7139.0f, 954.0f, 1746.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, 1, false, 0);
 	} else if (Game_Flag_Query(35)) {
-		Loop_Actor_Walk_To_XYZ(0, -7143.0f, 954.0f, 1868.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, 1, false, 0);
 	}
 	Game_Flag_Reset(35);
 	Game_Flag_Reset(63);
 	Game_Flag_Reset(647);
 	if (Game_Flag_Query(61)) {
-		if (Global_Variable_Query(1) == 2 && !Actor_Clue_Query(0, 43)) {
+		if (Global_Variable_Query(1) == 2 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallGuzza)) {
 			Sound_Play(403, 100, 0, 0, 50);
-			Loop_Actor_Walk_To_XYZ(0, -7176.0f, 954.0f, 1806.0f, 0, 0, false, 0);
-			Actor_Face_Heading(0, 256, true);
-			Actor_Says(0, 2680, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, 0, false, 0);
+			Actor_Face_Heading(kActorMcCoy, 256, true);
+			Actor_Says(kActorMcCoy, 2680, 0);
 			Sound_Play(123, 100, 0, 0, 50);
 			Delay(500);
-			Actor_Says(4, 0, 3);
-			Actor_Says(0, 2685, 13);
-			Actor_Says(4, 10, 3);
-			Actor_Says(0, 2690, 17);
-			Actor_Says(4, 30, 3);
-			Actor_Says(0, 2695, 12);
-			Actor_Says(4, 40, 3);
-			Actor_Says(4, 50, 3);
-			Actor_Says(0, 2700, 3);
-			Actor_Says(4, 60, 3);
-			Actor_Says(4, 70, 3);
+			Actor_Says(kActorGuzza, 0, 3);
+			Actor_Says(kActorMcCoy, 2685, 13);
+			Actor_Says(kActorGuzza, 10, 3);
+			Actor_Says(kActorMcCoy, 2690, 17);
+			Actor_Says(kActorGuzza, 30, 3);
+			Actor_Says(kActorMcCoy, 2695, 12);
+			Actor_Says(kActorGuzza, 40, 3);
+			Actor_Says(kActorGuzza, 50, 3);
+			Actor_Says(kActorMcCoy, 2700, 3);
+			Actor_Says(kActorGuzza, 60, 3);
+			Actor_Says(kActorGuzza, 70, 3);
 			Sound_Play(123, 100, 0, 0, 50);
-			Actor_Clue_Acquire(0, 43, 1, 4);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, 1, kActorGuzza);
 			Spinner_Set_Selectable_Destination_Flag(5, 1);
 			Game_Flag_Set(186);
 			if (!Game_Flag_Query(163)) {
 				Game_Flag_Set(163);
 				Item_Remove_From_World(66);
 			}
-			Actor_Set_Goal_Number(23, 99);
-			Actor_Put_In_Set(23, 93);
-			Actor_Set_At_Waypoint(23, 35, 0);
+			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
+			Actor_Put_In_Set(kActorOfficerLeary, 93);
+			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0);
 			Autosave_Game(0);
 		}
 		//return false;
@@ -283,13 +283,13 @@ void SceneScriptMA04::PlayerWalkedIn() {
 	if ((Game_Flag_Query(40) || Game_Flag_Query(41)) && !Game_Flag_Query(146)) {
 		Music_Play(2, 52, 0, 2, -1, 0, 0);
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(0, -7199.0f, 955.0f, 1677.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1677.0f, 0, 1, false, 0);
 		if (sub_402820() || sub_402758()) {
 			Overlay_Remove("MA04OVER");
 		}
-		Loop_Actor_Walk_To_XYZ(0, -7199.0f, 955.0f, 1675.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, 1, false, 0);
 		Game_Flag_Set(146);
-		Async_Actor_Walk_To_XYZ(0, -7204.0f, 956.17f, 1568.0f, 0, false);
+		Async_Actor_Walk_To_XYZ(kActorMcCoy, -7204.0f, 956.17f, 1568.0f, 0, false);
 		Set_Enter(51, 51);
 	}
 }
@@ -310,11 +310,11 @@ void SceneScriptMA04::DialogueQueueFlushed(int a1) {
 }
 
 bool SceneScriptMA04::sub_402758() {
-	return Global_Variable_Query(1) == 5 && !Actor_Clue_Query(0, 143) && !Actor_Clue_Query(0, 144) && !Actor_Clue_Query(0, 139) && !Actor_Clue_Query(0, 140) && !Actor_Clue_Query(0, 141) && !Actor_Clue_Query(0, 142);
+	return Global_Variable_Query(1) == 5 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis) && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal) && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora2) && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1) && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
 }
 
 bool SceneScriptMA04::sub_402820() {
-	return (Actor_Clue_Query(5, 222) && !Game_Flag_Query(649)) || (Actor_Clue_Query(6, 215) && !Game_Flag_Query(650));
+	return (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(649)) || (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(650));
 }
 
 bool SceneScriptMA04::sub_402888() {
@@ -323,28 +323,28 @@ bool SceneScriptMA04::sub_402888() {
 
 void SceneScriptMA04::sub_4028A8() {
 	int answer;
-	Actor_Says(3, 220, 3);
-	Actor_Says(0, 2460, 0);
-	Actor_Says(3, 230, 3);
-	Actor_Says(3, 240, 3);
-	Actor_Says(0, 2465, 0);
-	Actor_Says(3, 250, 3);
-	Actor_Says_With_Pause(0, 2470, 1.5f, 17);
-	Actor_Says(3, 260, 3);
-	Actor_Says(0, 2475, 15);
-	Actor_Says(3, 270, 3);
-	Actor_Says(0, 2480, 0);
-	Actor_Says(3, 280, 3);
-	Actor_Says(3, 290, 3);
-	Actor_Says(0, 2485, 19);
-	Actor_Says(3, 300, 3);
-	Actor_Says(3, 310, 3);
-	Actor_Says(0, 2490, 0);
-	Actor_Says(3, 330, 3);
-	Actor_Says(0, 2495, 0);
-	Actor_Says(3, 340, 3);
-	Actor_Says(3, 350, 3);
-	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(9) == 2) {
+	Actor_Says(kActorDektora, 220, 3);
+	Actor_Says(kActorMcCoy, 2460, 0);
+	Actor_Says(kActorDektora, 230, 3);
+	Actor_Says(kActorDektora, 240, 3);
+	Actor_Says(kActorMcCoy, 2465, 0);
+	Actor_Says(kActorDektora, 250, 3);
+	Actor_Says_With_Pause(kActorMcCoy, 2470, 1.5f, 17);
+	Actor_Says(kActorDektora, 260, 3);
+	Actor_Says(kActorMcCoy, 2475, 15);
+	Actor_Says(kActorDektora, 270, 3);
+	Actor_Says(kActorMcCoy, 2480, 0);
+	Actor_Says(kActorDektora, 280, 3);
+	Actor_Says(kActorDektora, 290, 3);
+	Actor_Says(kActorMcCoy, 2485, 19);
+	Actor_Says(kActorDektora, 300, 3);
+	Actor_Says(kActorDektora, 310, 3);
+	Actor_Says(kActorMcCoy, 2490, 0);
+	Actor_Says(kActorDektora, 330, 3);
+	Actor_Says(kActorMcCoy, 2495, 0);
+	Actor_Says(kActorDektora, 340, 3);
+	Actor_Says(kActorDektora, 350, 3);
+	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
 		answer = 1170;
 	} else {
 		Dialogue_Menu_Clear_List();
@@ -355,187 +355,187 @@ void SceneScriptMA04::sub_4028A8() {
 		Dialogue_Menu_Disappear();
 	}
 	if (answer == 1160) {
-		Actor_Says(0, 2500, 19);
-		Actor_Says(3, 360, 3);
-		Actor_Says(0, 2510, 0);
-		Actor_Says(3, 370, 3);
-		Actor_Says(3, 380, 3);
-		Actor_Says(0, 2515, 12);
-		Actor_Says(3, 390, 3);
-		Actor_Says(0, 2520, 13);
-		Actor_Says(3, 400, 3);
-		Actor_Says(3, 410, 3);
-		Actor_Says(0, 2525, 15);
-		Actor_Says(3, 420, 3);
+		Actor_Says(kActorMcCoy, 2500, 19);
+		Actor_Says(kActorDektora, 360, 3);
+		Actor_Says(kActorMcCoy, 2510, 0);
+		Actor_Says(kActorDektora, 370, 3);
+		Actor_Says(kActorDektora, 380, 3);
+		Actor_Says(kActorMcCoy, 2515, 12);
+		Actor_Says(kActorDektora, 390, 3);
+		Actor_Says(kActorMcCoy, 2520, 13);
+		Actor_Says(kActorDektora, 400, 3);
+		Actor_Says(kActorDektora, 410, 3);
+		Actor_Says(kActorMcCoy, 2525, 15);
+		Actor_Says(kActorDektora, 420, 3);
 		Sound_Play(123, 100, 0, 0, 50);
-		Actor_Clue_Acquire(0, 139, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora1, 1, -1);
 	} else {
-		Actor_Says_With_Pause(0, 2505, 0.5f, 19);
-		Actor_Says(3, 430, 3);
-		Actor_Says(3, 440, 3);
-		Actor_Says(0, 2530, 0);
-		Actor_Says(3, 450, 3);
-		Actor_Says(0, 2535, 12);
-		Actor_Says(3, 460, 3);
-		Actor_Says_With_Pause(3, 470, 1.0f, 3);
-		Actor_Says(3, 480, 3);
-		Actor_Says(3, 490, 3);
+		Actor_Says_With_Pause(kActorMcCoy, 2505, 0.5f, 19);
+		Actor_Says(kActorDektora, 430, 3);
+		Actor_Says(kActorDektora, 440, 3);
+		Actor_Says(kActorMcCoy, 2530, 0);
+		Actor_Says(kActorDektora, 450, 3);
+		Actor_Says(kActorMcCoy, 2535, 12);
+		Actor_Says(kActorDektora, 460, 3);
+		Actor_Says_With_Pause(kActorDektora, 470, 1.0f, 3);
+		Actor_Says(kActorDektora, 480, 3);
+		Actor_Says(kActorDektora, 490, 3);
 		Sound_Play(123, 100, 0, 0, 50);
-		Actor_Says(0, 2540, 15);
-		Actor_Clue_Acquire(0, 140, 1, -1);
+		Actor_Says(kActorMcCoy, 2540, 15);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora2, 1, -1);
 	}
 }
 
 void SceneScriptMA04::sub_402F2C() {
-	Actor_Says(6, 530, 3);
-	Actor_Says(0, 2545, 19);
-	Actor_Says(6, 540, 3);
-	Actor_Says(6, 550, 3);
-	Actor_Says(0, 2550, 13);
-	Actor_Says(6, 560, 3);
-	Actor_Says(0, 2555, 19);
-	Actor_Says(6, 570, 3);
-	Actor_Says(0, 2560, 17);
-	Actor_Says(6, 580, 3);
-	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(9) == 2) {
-		Actor_Says(6, 630, 3);
-		Actor_Says_With_Pause(0, 2575, 0.0f, 15);
+	Actor_Says(kActorLucy, 530, 3);
+	Actor_Says(kActorMcCoy, 2545, 19);
+	Actor_Says(kActorLucy, 540, 3);
+	Actor_Says(kActorLucy, 550, 3);
+	Actor_Says(kActorMcCoy, 2550, 13);
+	Actor_Says(kActorLucy, 560, 3);
+	Actor_Says(kActorMcCoy, 2555, 19);
+	Actor_Says(kActorLucy, 570, 3);
+	Actor_Says(kActorMcCoy, 2560, 17);
+	Actor_Says(kActorLucy, 580, 3);
+	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
+		Actor_Says(kActorLucy, 630, 3);
+		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(378)) {
-			Actor_Says(6, 640, 3);
+			Actor_Says(kActorLucy, 640, 3);
 		}
-		Actor_Clue_Acquire(0, 142, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy2, 1, -1);
 	} else {
-		Actor_Says(6, 590, 3);
-		Actor_Says(0, 2565, 12);
-		Actor_Says(6, 600, 3);
-		Actor_Says(6, 610, 3);
-		Actor_Says(6, 620, 3);
-		Actor_Says(0, 2570, 13);
-		Actor_Says_With_Pause(6, 630, 0.0f, 3);
-		Actor_Says_With_Pause(0, 2575, 0.0f, 15);
+		Actor_Says(kActorLucy, 590, 3);
+		Actor_Says(kActorMcCoy, 2565, 12);
+		Actor_Says(kActorLucy, 600, 3);
+		Actor_Says(kActorLucy, 610, 3);
+		Actor_Says(kActorLucy, 620, 3);
+		Actor_Says(kActorMcCoy, 2570, 13);
+		Actor_Says_With_Pause(kActorLucy, 630, 0.0f, 3);
+		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(378)) {
-			Actor_Says(6, 640, 3);
+			Actor_Says(kActorLucy, 640, 3);
 		}
-		Actor_Clue_Acquire(0, 141, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, 1, -1);
 	}
 	Sound_Play(123, 100, 0, 0, 50);
 }
 
 void SceneScriptMA04::sub_4032A0() {
-	Actor_Says(1, 680, 3);
-	Actor_Says(0, 2630, 17);
-	Actor_Says(1, 690, 3);
-	Actor_Says(0, 2635, 18);
-	Actor_Says(1, 700, 3);
-	Actor_Says(0, 2640, 14);
-	Actor_Says(1, 710, 3);
-	Actor_Says(1, 720, 3);
-	Actor_Says(0, 2645, 13);
-	Actor_Says(1, 740, 3);
-	Actor_Says(1, 750, 3);
-	Actor_Says(0, 2650, 12);
-	Actor_Says(1, 760, 3);
-	Actor_Says(0, 2665, 13);
-	Actor_Says(1, 810, 3);
-	Actor_Says(1, 820, 3);
+	Actor_Says(kActorSteele, 680, 3);
+	Actor_Says(kActorMcCoy, 2630, 17);
+	Actor_Says(kActorSteele, 690, 3);
+	Actor_Says(kActorMcCoy, 2635, 18);
+	Actor_Says(kActorSteele, 700, 3);
+	Actor_Says(kActorMcCoy, 2640, 14);
+	Actor_Says(kActorSteele, 710, 3);
+	Actor_Says(kActorSteele, 720, 3);
+	Actor_Says(kActorMcCoy, 2645, 13);
+	Actor_Says(kActorSteele, 740, 3);
+	Actor_Says(kActorSteele, 750, 3);
+	Actor_Says(kActorMcCoy, 2650, 12);
+	Actor_Says(kActorSteele, 760, 3);
+	Actor_Says(kActorMcCoy, 2665, 13);
+	Actor_Says(kActorSteele, 810, 3);
+	Actor_Says(kActorSteele, 820, 3);
 	Sound_Play(123, 100, 0, 0, 50);
-	Actor_Clue_Acquire(0, 144, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallCrystal, 1, -1);
 }
 
 void SceneScriptMA04::sub_4034D8() {
-	Actor_Says(5, 330, 3);
-	Actor_Says(0, 2580, 14);
-	Actor_Says(5, 340, 3);
-	Actor_Says(0, 2585, 19);
-	Actor_Says(5, 350, 3);
-	Actor_Says(5, 360, 3);
-	Actor_Says(0, 2590, 18);
-	Actor_Says(5, 370, 3);
-	Actor_Says(0, 2595, 15);
-	Actor_Says(5, 390, 3);
-	Actor_Says(5, 400, 3);
-	Actor_Says(5, 410, 3);
-	Actor_Says(0, 2600, 15);
-	Actor_Says_With_Pause(5, 420, 1.5f, 3);
-	Actor_Says(0, 2605, 17);
-	Actor_Says(5, 430, 3);
-	Actor_Says(5, 440, 3);
-	Actor_Says(0, 2610, 3);
-	Actor_Says(5, 450, 3);
-	Actor_Says(5, 460, 3);
-	Actor_Says(5, 470, 3);
-	Actor_Says(5, 480, 3);
-	Actor_Says(5, 490, 3);
-	Actor_Says(0, 2615, 17);
-	Actor_Says(5, 500, 3);
-	Actor_Says(5, 530, 3);
-	Actor_Says(5, 540, 3);
+	Actor_Says(kActorClovis, 330, 3);
+	Actor_Says(kActorMcCoy, 2580, 14);
+	Actor_Says(kActorClovis, 340, 3);
+	Actor_Says(kActorMcCoy, 2585, 19);
+	Actor_Says(kActorClovis, 350, 3);
+	Actor_Says(kActorClovis, 360, 3);
+	Actor_Says(kActorMcCoy, 2590, 18);
+	Actor_Says(kActorClovis, 370, 3);
+	Actor_Says(kActorMcCoy, 2595, 15);
+	Actor_Says(kActorClovis, 390, 3);
+	Actor_Says(kActorClovis, 400, 3);
+	Actor_Says(kActorClovis, 410, 3);
+	Actor_Says(kActorMcCoy, 2600, 15);
+	Actor_Says_With_Pause(kActorClovis, 420, 1.5f, 3);
+	Actor_Says(kActorMcCoy, 2605, 17);
+	Actor_Says(kActorClovis, 430, 3);
+	Actor_Says(kActorClovis, 440, 3);
+	Actor_Says(kActorMcCoy, 2610, 3);
+	Actor_Says(kActorClovis, 450, 3);
+	Actor_Says(kActorClovis, 460, 3);
+	Actor_Says(kActorClovis, 470, 3);
+	Actor_Says(kActorClovis, 480, 3);
+	Actor_Says(kActorClovis, 490, 3);
+	Actor_Says(kActorMcCoy, 2615, 17);
+	Actor_Says(kActorClovis, 500, 3);
+	Actor_Says(kActorClovis, 530, 3);
+	Actor_Says(kActorClovis, 540, 3);
 	Sound_Play(123, 100, 0, 0, 50);
-	Actor_Clue_Acquire(0, 143, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallClovis, 1, -1);
 }
 
 void SceneScriptMA04::sub_403864() {
 	Overlay_Play("MA04OVR2", 0, 1, 0, 0);
 	switch (Global_Variable_Query(52)) {
 	case 4:
-		ADQ_Add(61, 230, 3);
-		ADQ_Add(61, 240, 3);
+		ADQ_Add(kActorNewscaster, 230, 3);
+		ADQ_Add(kActorNewscaster, 240, 3);
 		break;
 	case 3:
-		ADQ_Add(61, 170, 3);
-		ADQ_Add(61, 180, 3);
-		ADQ_Add(61, 190, 3);
-		ADQ_Add(61, 200, 3);
-		ADQ_Add(61, 210, 3);
-		ADQ_Add(61, 220, 3);
-		ADQ_Add(41, 80, 3);
-		ADQ_Add(41, 90, 3);
-		ADQ_Add(41, 100, 3);
-		ADQ_Add(41, 110, 3);
-		ADQ_Add(41, 120, 3);
-		ADQ_Add(41, 130, 3);
+		ADQ_Add(kActorNewscaster, 170, 3);
+		ADQ_Add(kActorNewscaster, 180, 3);
+		ADQ_Add(kActorNewscaster, 190, 3);
+		ADQ_Add(kActorNewscaster, 200, 3);
+		ADQ_Add(kActorNewscaster, 210, 3);
+		ADQ_Add(kActorNewscaster, 220, 3);
+		ADQ_Add(kActorGovernorKolvig, 80, 3);
+		ADQ_Add(kActorGovernorKolvig, 90, 3);
+		ADQ_Add(kActorGovernorKolvig, 100, 3);
+		ADQ_Add(kActorGovernorKolvig, 110, 3);
+		ADQ_Add(kActorGovernorKolvig, 120, 3);
+		ADQ_Add(kActorGovernorKolvig, 130, 3);
 		break;
 	case 2:
-		if (Actor_Query_Friendliness_To_Other(5, 0) <= Actor_Query_Friendliness_To_Other(1, 0)) {
-			ADQ_Add(61, 90, 3);
-			ADQ_Add(61, 100, 3);
-			ADQ_Add(61, 110, 3);
-			ADQ_Add(4, 1540, 3);
-			ADQ_Add(4, 1550, 3);
-			ADQ_Add(4, 1560, 3);
+		if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) <= Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy)) {
+			ADQ_Add(kActorNewscaster, 90, 3);
+			ADQ_Add(kActorNewscaster, 100, 3);
+			ADQ_Add(kActorNewscaster, 110, 3);
+			ADQ_Add(kActorGuzza, 1540, 3);
+			ADQ_Add(kActorGuzza, 1550, 3);
+			ADQ_Add(kActorGuzza, 1560, 3);
 		} else {
-			ADQ_Add(61, 120, 3);
-			ADQ_Add(61, 130, 3);
-			ADQ_Add(61, 140, 3);
-			ADQ_Add(61, 150, 3);
-			ADQ_Add(4, 1570, 3);
-			ADQ_Add(4, 1580, 3);
-			ADQ_Add(4, 1590, 3);
+			ADQ_Add(kActorNewscaster, 120, 3);
+			ADQ_Add(kActorNewscaster, 130, 3);
+			ADQ_Add(kActorNewscaster, 140, 3);
+			ADQ_Add(kActorNewscaster, 150, 3);
+			ADQ_Add(kActorGuzza, 1570, 3);
+			ADQ_Add(kActorGuzza, 1580, 3);
+			ADQ_Add(kActorGuzza, 1590, 3);
 		}
 		break;
 	case 1:
-		ADQ_Add(61, 40, 3);
-		ADQ_Add(61, 50, 3);
-		ADQ_Add(61, 60, 3);
-		ADQ_Add(61, 70, 3);
-		ADQ_Add(61, 80, 3);
+		ADQ_Add(kActorNewscaster, 40, 3);
+		ADQ_Add(kActorNewscaster, 50, 3);
+		ADQ_Add(kActorNewscaster, 60, 3);
+		ADQ_Add(kActorNewscaster, 70, 3);
+		ADQ_Add(kActorNewscaster, 80, 3);
 		break;
 	case 0:
-		ADQ_Add(61, 0, 3);
-		ADQ_Add(61, 10, 3);
-		ADQ_Add(61, 20, 3);
-		ADQ_Add(61, 30, 3);
-		ADQ_Add(51, 430, 3);
-		ADQ_Add(51, 440, 3);
-		ADQ_Add(51, 450, 3);
-		ADQ_Add(51, 460, 3);
+		ADQ_Add(kActorNewscaster, 0, 3);
+		ADQ_Add(kActorNewscaster, 10, 3);
+		ADQ_Add(kActorNewscaster, 20, 3);
+		ADQ_Add(kActorNewscaster, 30, 3);
+		ADQ_Add(kActorTyrell, 430, 3);
+		ADQ_Add(kActorTyrell, 440, 3);
+		ADQ_Add(kActorTyrell, 450, 3);
+		ADQ_Add(kActorTyrell, 460, 3);
 		break;
 	}
 }
 
 void SceneScriptMA04::sub_403DA8() {
-	if (!Loop_Actor_Walk_To_Scene_Object(0, "BED-SHEETS", 12, 1, false)) {
-		Actor_Says(0, 8530, 12);
+	if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BED-SHEETS", 12, true, false)) {
+		Actor_Says(kActorMcCoy, 8530, 12);
 		Music_Stop(4);
 		if (sub_402820() || sub_402758()) {
 			Overlay_Remove("MA04OVER");
@@ -543,9 +543,9 @@ void SceneScriptMA04::sub_403DA8() {
 		Player_Loses_Control();
 		Game_Flag_Set(647);
 		if ((Game_Flag_Query(40) || Game_Flag_Query(41)) && Global_Variable_Query(1) == 1) {
-			if (Actor_Query_Goal_Number(19) == 599) {
-				Actor_Put_In_Set(19, 91);
-				Actor_Set_At_Waypoint(19, 33, 0);
+			if (Actor_Query_Goal_Number(kActorZuben) == 599) {
+				Actor_Put_In_Set(kActorZuben, 91);
+				Actor_Set_At_Waypoint(kActorZuben, 33, 0);
 			}
 			Game_Flag_Set(678);
 			Global_Variable_Set(1, 2);

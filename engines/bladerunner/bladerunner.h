@@ -36,6 +36,15 @@
 
 namespace BladeRunner {
 
+enum AnimationModes : int {
+	kAnimationModeIdle = 0,
+	kAnimationModeWalk = 1,
+	kAnimationModeRun = 2,
+	kAnimationModeCombatIdle = 4,
+	kAnimationModeCombatWalk = 7,
+	kAnimationModeCombatRun = 8
+};
+
 class Actor;
 class ADQ;
 class AIScripts;
@@ -105,7 +114,7 @@ public:
 	TextResource    *_textCrimes;
 	TextResource    *_textCluetype;
 	TextResource    *_textKIA;
-	TextResource    *_textSpindest;
+	TextResource    *_textSpinnerDestinations;
 	TextResource    *_textVK;
 	TextResource    *_textOptions;
 

@@ -204,8 +204,8 @@ void ScriptBase::Actor_Combat_AI_Hit_Attempt(int actorId) {
 		_vm->_actors[actorId]->_combatInfo->hitAttempt();
 }
 
-void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14) {
-	_vm->_actors[actorId]->combatModeOn(a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14);
+void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int otherActorId, int a5, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int a9, int a10, int a11, int a12, int a13, int a14) {
+	_vm->_actors[actorId]->combatModeOn(a2, a3, otherActorId, a5, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, a9, a10, a11, a12, a13, a14);
 }
 
 void ScriptBase::Non_Player_Actor_Combat_Mode_Off(int actorId) {
@@ -259,7 +259,7 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 		}
 	}
 	if (animationModeChanged) {
-		actor->changeAnimationMode(0, false);
+		actor->changeAnimationMode(kAnimationModeIdle, false);
 	}
 
 	//TODO: sitcom
@@ -406,14 +406,14 @@ int ScriptBase::Slice_Animation_Query_Number_Of_Frames(int animation) {
 }
 
 void ScriptBase::Actor_Change_Animation_Mode(int actorId, int animationMode) {
-	_vm->_actors[actorId]->changeAnimationMode(animationMode, 0);
+	_vm->_actors[actorId]->changeAnimationMode(animationMode, false);
 }
 
 int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 	return _vm->_actors[actorId]->getAnimationMode();
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool run) {
+bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int distance, int a4, bool run) {
 	_vm->gameWaitForActive();
 
 	if (actorId == _vm->_walkingActorId) {
@@ -421,7 +421,7 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3,
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, a3, a4, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, distance, a4, run, true, &isRunning);
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -1021,20 +1021,20 @@ void ScriptBase::Police_Maze_Set_Pause_State(int a1) {
 	warning("Police_Maze_Set_Pause_State(%d)", a1);
 }
 
-void ScriptBase::CDB_Set_Crime(int crimeId, int value) {
-	_vm->_crimesDatabase->setCrime(crimeId, value);
+void ScriptBase::CDB_Set_Crime(int clueId, int crimeId) {
+	_vm->_crimesDatabase->setCrime(clueId, crimeId);
 }
 
-void ScriptBase::CDB_Set_Clue_Asset_Type(int assetId, int type) {
-	_vm->_crimesDatabase->setAssetType(assetId, type);
+void ScriptBase::CDB_Set_Clue_Asset_Type(int clueId, int assetType) {
+	_vm->_crimesDatabase->setAssetType(clueId, assetType);
 }
 
 void ScriptBase::SDB_Set_Actor(int suspectId, int actorId) {
 	_vm->_suspectsDatabase->get(suspectId)->setActor(actorId);
 }
 
-bool ScriptBase::SDB_Add_Photo_Clue(int suspectId, int a2, int a3) {
-	return _vm->_suspectsDatabase->get(suspectId)->addPhotoClue(a2, a3);
+bool ScriptBase::SDB_Add_Photo_Clue(int suspectId, int clueId, int shapeId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addPhotoClue(shapeId, clueId);
 }
 
 void ScriptBase::SDB_Set_Name(int actorId) {

@@ -46,9 +46,9 @@ void SceneScriptKP03::InitializeScene() {
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Set(421);
 	}
-	if ((Actor_Query_Goal_Number(1) != 599 && !Game_Flag_Query(422) && !Game_Flag_Query(484)) && ((Game_Flag_Query(653) && Game_Flag_Query(420)) || (!Game_Flag_Query(653) && Game_Flag_Query(417)))) {
-		Actor_Put_In_Set(1, 46);
-		Actor_Set_At_XYZ(1, -300.0f, -36.55f, 26.0f, 350);
+	if ((Actor_Query_Goal_Number(kActorSteele) != 599 && !Game_Flag_Query(422) && !Game_Flag_Query(484)) && ((Game_Flag_Query(653) && Game_Flag_Query(420)) || (!Game_Flag_Query(653) && Game_Flag_Query(417)))) {
+		Actor_Put_In_Set(kActorSteele, 46);
+		Actor_Set_At_XYZ(kActorSteele, -300.0f, -36.55f, 26.0f, 350);
 	}
 }
 
@@ -65,37 +65,37 @@ bool SceneScriptKP03::MouseClick(int x, int y) {
 }
 
 bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
-	Actor_Face_Object(1, "BRACK MID", true);
+	Actor_Face_Object(kActorSteele, "BRACK MID", true);
 	if (Object_Query_Click("BRACK MID", objectName) && !Game_Flag_Query(422)) {
 		if (a2) {
 			Scene_Loop_Set_Default(5);
 			Scene_Loop_Start_Special(2, 4, 1);
-			Actor_Change_Animation_Mode(0, 39);
-			Actor_Retired_Here(0, 72, 18, 1, -1);
+			Actor_Change_Animation_Mode(kActorMcCoy, 39);
+			Actor_Retired_Here(kActorMcCoy, 72, 18, 1, -1);
 			Game_Flag_Set(422);
 			Game_Flag_Reset(421);
 			return false;
 		}
-		if (Actor_Query_Goal_Number(1) == 411) {
+		if (Actor_Query_Goal_Number(kActorSteele) == 411) {
 			Scene_Exits_Enable();
 			sub_401E54();
 		} else {
 			if (Game_Flag_Query(417)) {
-				Loop_Actor_Walk_To_XYZ(0, -137.0f, -36.55f, 26.0f, 0, 0, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, -36.55f, 26.0f, 0, 0, true, 0);
 			} else if (Game_Flag_Query(420)) {
-				Loop_Actor_Walk_To_XYZ(0, -50.0f, -36.55f, 78.0f, 0, 0, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, -36.55f, 78.0f, 0, 0, true, 0);
 			}
 			if (Game_Flag_Query(421)) {
-				Actor_Face_Object(0, "BRACK MID", true);
+				Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
 				Game_Flag_Set(484);
 				Game_Flag_Reset(421);
 				Scene_Loop_Set_Default(7);
 				Scene_Loop_Start_Special(2, 0, 0);
-				Actor_Voice_Over(1110, 99);
-				Actor_Voice_Over(1120, 99);
+				Actor_Voice_Over(1110, kActorVoiceOver);
+				Actor_Voice_Over(1120, kActorVoiceOver);
 			} else {
-				Actor_Face_Object(0, "BRACK MID", true);
-				Actor_Says(0, 8580, 13);
+				Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
+				Actor_Says(kActorMcCoy, 8580, 13);
 			}
 		}
 		return true;
@@ -104,8 +104,8 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptKP03::ClickedOnActor(int actorId) {
-	if (actorId == 1 && Actor_Query_Goal_Number(1) == 411) {
-		Actor_Face_Object(1, "BRACK MID", true);
+	if (actorId == 1 && Actor_Query_Goal_Number(kActorSteele) == 411) {
+		Actor_Face_Object(kActorSteele, "BRACK MID", true);
 		sub_401E54();
 	}
 	return false;
@@ -116,11 +116,11 @@ bool SceneScriptKP03::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptKP03::ClickedOnExit(int exitId) {
-	if (Actor_Query_Goal_Number(1) == 410) {
-		Actor_Set_Goal_Number(1, 418);
+	if (Actor_Query_Goal_Number(kActorSteele) == 410) {
+		Actor_Set_Goal_Number(kActorSteele, 418);
 	} else {
 		if (exitId == 0) {
-			if (!Loop_Actor_Walk_To_XYZ(0, 1.0f, -36.55f, 111.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
@@ -132,7 +132,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 			return true;
 		}
 		if (exitId == 1) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -321.0f, -36.55f, 26.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -321.0f, -36.55f, 26.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
@@ -161,14 +161,14 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 	if (Game_Flag_Query(421) && !Game_Flag_Query(484)) {
 		v1 = -1;
 		if (!Game_Flag_Query(422)) {
-			Actor_Query_XYZ(0, &x, &y, &z);
+			Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 			if ((Game_Flag_Query(417) && -130.0f < x) || (Game_Flag_Query(420) && -130.0f > x)) {
 				v1 = 0;
 			}
 		}
 		if (!Game_Flag_Query(422)) { //todo ? same condition as before
-			Actor_Query_XYZ(1, &x, &y, &z);
-			if (Game_Flag_Query(653) && Actor_Query_Which_Set_In(1) == 46) {
+			Actor_Query_XYZ(kActorSteele, &x, &y, &z);
+			if (Game_Flag_Query(653) && Actor_Query_Which_Set_In(kActorSteele) == 46) {
 				if ((Game_Flag_Query(417) && -130.0f > x) || (Game_Flag_Query(420) && -130.0f < x)) {
 					v1 = 1;
 				}
@@ -184,18 +184,18 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 			Unclickable_Object("BRACK MID");
 			Scene_Exits_Enable();
 			if (v1 == 1) {
-				Actor_Set_Goal_Number(1, 415);
+				Actor_Set_Goal_Number(kActorSteele, 415);
 				Music_Play(12, 25, 0, 1, -1, 0, 0);
-				if (Actor_Query_Inch_Distance_From_Actor(0, 1) <= 120) {
+				if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorSteele) <= 120) {
 					v1 = 0;
 				}
 			}
 			if (v1) {
-				Actor_Change_Animation_Mode(0, 21);
+				Actor_Change_Animation_Mode(kActorMcCoy, 21);
 			} else {
-				Actor_Force_Stop_Walking(0);
-				Actor_Change_Animation_Mode(0, 48);
-				Actor_Retired_Here(0, 72, 18, 1, -1);
+				Actor_Force_Stop_Walking(kActorMcCoy);
+				Actor_Change_Animation_Mode(kActorMcCoy, 48);
+				Actor_Retired_Here(kActorMcCoy, 72, 18, 1, -1);
 			}
 		}
 	}
@@ -206,17 +206,17 @@ void SceneScriptKP03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP03::PlayerWalkedIn() {
 	if (Game_Flag_Query(420)) {
-		Loop_Actor_Walk_To_XYZ(0, 1.0f, -36.55f, 87.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 87.0f, 0, 0, false, 0);
 	}
-	if (Actor_Query_Is_In_Current_Set(1) && Actor_Query_Goal_Number(1) != 419) {
+	if (Actor_Query_Is_In_Current_Set(kActorSteele) && Actor_Query_Goal_Number(kActorSteele) != 419) {
 		if (Game_Flag_Query(653)) {
 			if (Game_Flag_Query(420)) {
-				Actor_Set_Goal_Number(1, 410);
+				Actor_Set_Goal_Number(kActorSteele, 410);
 			}
 		} else if (!Game_Flag_Query(422) && !Game_Flag_Query(484) && Game_Flag_Query(417)) {
 			Scene_Exits_Disable();
 			Delay(1000);
-			Actor_Set_Goal_Number(1, 411);
+			Actor_Set_Goal_Number(kActorSteele, 411);
 		}
 	}
 }
@@ -229,27 +229,27 @@ void SceneScriptKP03::DialogueQueueFlushed(int a1) {
 
 void SceneScriptKP03::sub_401E54() {
 	Player_Loses_Control();
-	Actor_Says(0, 2180, 14);
-	Actor_Set_Goal_Number(1, 412);
-	Actor_Says(1, 480, 60);
-	Actor_Face_Object(0, "BRACK MID", true);
-	Actor_Says(0, 2185, 14);
-	Loop_Actor_Walk_To_XYZ(1, -137.0f, -36.55f, 26.0f, 0, 0, false, 0);
-	Actor_Face_Object(1, "BRACK MID", true);
-	Actor_Says(1, 490, 58);
-	Actor_Says(0, 2190, 14);
-	Actor_Says(1, 500, 58);
-	Actor_Says(1, 510, 59);
-	Actor_Says(1, 520, 60);
+	Actor_Says(kActorMcCoy, 2180, 14);
+	Actor_Set_Goal_Number(kActorSteele, 412);
+	Actor_Says(kActorSteele, 480, 60);
+	Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
+	Actor_Says(kActorMcCoy, 2185, 14);
+	Loop_Actor_Walk_To_XYZ(kActorSteele, -137.0f, -36.55f, 26.0f, 0, 0, false, 0);
+	Actor_Face_Object(kActorSteele, "BRACK MID", true);
+	Actor_Says(kActorSteele, 490, 58);
+	Actor_Says(kActorMcCoy, 2190, 14);
+	Actor_Says(kActorSteele, 500, 58);
+	Actor_Says(kActorSteele, 510, 59);
+	Actor_Says(kActorSteele, 520, 60);
 	Game_Flag_Set(484);
 	Game_Flag_Reset(421);
 	Scene_Loop_Set_Default(7);
 	Scene_Loop_Start_Special(2, 7, 0);
-	Actor_Set_Goal_Number(1, 413);
-	Actor_Says(0, 2195, 14);
+	Actor_Set_Goal_Number(kActorSteele, 413);
+	Actor_Says(kActorMcCoy, 2195, 14);
 	Ambient_Sounds_Play_Sound(151, 40, -60, -60, 0);
-	Loop_Actor_Walk_To_XYZ(0, 1.0f, -36.55f, 111.0f, 0, 0, false, 0);
-	Actor_Set_Goal_Number(1, 430);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, 0, false, 0);
+	Actor_Set_Goal_Number(kActorSteele, 430);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	Game_Flag_Reset(417);
