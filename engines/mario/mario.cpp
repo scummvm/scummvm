@@ -37,11 +37,7 @@
 
 namespace Mario {
 
-MarioGame *g_mario = nullptr;
-
 MarioGame::MarioGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	g_mario = this;
-
 	_image = nullptr;
 
 	xadj = 0;
@@ -78,7 +74,7 @@ Common::Error MarioGame::run() {
 
 	bool quit = false;
 
-	for (; !quit && !bEnd;) {
+	while (!quit && !bEnd) {
 		g_system->delayMillis(100);
 
 		Common::Event event;
@@ -91,14 +87,13 @@ Common::Error MarioGame::run() {
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (bLButtonDown) {
-					int x = g_system->getEventManager()->getMousePos().x;
-					int y = g_system->getEventManager()->getMousePos().y;
+					Common::Point mousePos = g_system->getEventManager()->getMousePos();
 					for (sCurChoice = 0; sCurChoice < aScene[sCurScene].sNoDecisionChoices; sCurChoice++) {
-						if (aScene[sCurScene].aChoice[sCurChoice].aRegion.contains(x, y))
+						if (aScene[sCurScene].aChoice[sCurChoice].aRegion.contains(mousePos))
 							break;
 					}
 					if (sCurChoice < kMaxChoice) {
-						debug("Accepting mouse click at %d : %d , choice = %d", x, y, sCurChoice);
+						debug("Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, sCurChoice);
 						Game.lTotScore += aScene[sCurScene].aChoice[sCurChoice].lPoints;
 						_actions.push(ChangeScene);
 						bLButtonDown = false;
@@ -221,9 +216,8 @@ void MarioGame::playSound() {
 
 void MarioGame::stopSound() {
 	debug("%s", __FUNCTION__);
-	if (_mixer->isSoundHandleActive(_soundHandle)) {
+	if (_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->stopHandle(_soundHandle);
-	}
 }
 
 void MarioGame::showScene() {
@@ -281,10 +275,10 @@ void MarioGame::changeScene() {
 
 void MarioGame::processTimer() {
 	debug("%s", __FUNCTION__);
-	if (bEnd == true) {
-		//	PostMessage(wnd, WM_DESTROY, 0, 0);
-	} else
+	if (!bEnd)
 		_actions.push(Redraw);
+	//else
+	//	PostMessage(wnd, WM_DESTROY, 0, 0);
 }
 
 void MarioGame::onTimer(void *arg) {
@@ -345,10 +339,9 @@ void MarioGame::sReadTables(char *cFileName) {
 int MarioGame::sGetSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
 	char cTestString[14];
-	int	 sCurScene;
 
 	sprintf(cTestString, "SC%02d", sNo);
-	for (sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
+	for (int sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
 		if (!strcmp(cTestString, aScene[sCurScene].cSceneName))
 			return sCurScene;
 	}
