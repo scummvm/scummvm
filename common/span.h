@@ -280,8 +280,10 @@ public:
 
 	inline size_type byteSize() const { return impl().size() * sizeof(value_type); }
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline SpanBase() {}
 	inline SpanBase(const SpanBase &) {}
@@ -294,8 +296,10 @@ protected:
 #pragma mark -
 #pragma mark SpanBase - Interface
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline void clear();
 
@@ -475,8 +479,10 @@ public:
 		return !operator<(other);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline bool operator_bool() const { return impl().data() != nullptr; }
 
@@ -506,8 +512,10 @@ public:
 #pragma mark -
 #pragma mark SpanBase - Validation
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	/**
 	 * @returns true if bounds are invalid.
@@ -627,8 +635,10 @@ public:
 		return subspan<value_type>(index, numEntries);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries) const {
@@ -788,8 +798,10 @@ public:
 		return subspan<value_type>(index, numEntries, name_, sourceByteOffset_);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries, const String &name_, const size_type sourceByteOffset_ = kSpanKeepOffset) const {
@@ -968,8 +980,10 @@ public:
 		_span.clear();
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline bool operator_bool() const { return _span; }
 
