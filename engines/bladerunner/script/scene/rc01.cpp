@@ -291,8 +291,8 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					Game_Flag_Reset(392);
 				}
 			} else {
-				I_Sez("MG: Hey, leave that officer alone.Can't you see he's busy?");
-				I_Sez("JM: (...mmm, donuts...");
+				I_Sez("MG: Hey, leave that officer alone.  Can't you see he's busy?");
+				I_Sez("JM: (...mmm, donuts...)");
 				Game_Flag_Set(3);
 				Actor_Clue_Acquire(0, 0, 1, 23);
 				Actor_Says(0, 4515, 13);
@@ -301,7 +301,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				if (!Game_Flag_Query(1)) {
 					Actor_Says(23, 50, 14);
 					Actor_Says(23, 60, 15);
-					I_Sez("MG: It's all fun and games until someone loses a tiger cub");
+					I_Sez("MG: It's all fun and games until someone loses a tiger cub.");
 					Actor_Says(0, 4520, 18);
 					Actor_Says(23, 70, 16);
 					Actor_Says(0, 4525, 14);

@@ -26,8 +26,9 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/gameinfo.h"
-#include "slice_animations.h"
-#include "slice_renderer.h"
+#include "bladerunner/slice_animations.h"
+#include "bladerunner/slice_renderer.h"
+#include "bladerunner/zbuffer.h"
 
 namespace BladeRunner {
 
@@ -103,6 +104,6 @@ void ItemPickup::draw() {
 		return;
 	}
 
-	_vm->_sliceRenderer->drawOnScreen(_animationId, _animationFrame, _screenX, _screenY, _facing, _scale, _vm->_surface2, _vm->_zBuffer2);
+	_vm->_sliceRenderer->drawOnScreen(_animationId, _animationFrame, _screenX, _screenY, _facing, _scale, _vm->_surface2, _vm->_zbuffer->getData());
 }
 } // End of namespace BladeRunner

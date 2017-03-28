@@ -88,7 +88,7 @@ public:
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	bool close(bool isLoadingGame);
-	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
+	int  advanceFrame(Graphics::Surface &surface);
 	void setActorStart(Vector3 position, int facing);
 
 	void loopSetDefault(int a);

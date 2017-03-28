@@ -170,7 +170,8 @@ MODULE_OBJS = \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \
-	waypoints.o
+	waypoints.o \
+	zbuffer.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BLADERUNNER), DYNAMIC_PLUGIN)

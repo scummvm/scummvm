@@ -40,6 +40,7 @@
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/waypoints.h"
+#include "bladerunner/zbuffer.h"
 
 namespace BladeRunner {
 
@@ -534,7 +535,7 @@ bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bo
 	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
 }
 
-bool Actor::tick(bool forceDraw) {
+bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	int remain = 0;
 	bool needsUpdate = false;
 	if (_fps > 0) {
@@ -639,7 +640,13 @@ bool Actor::tick(bool forceDraw) {
 		}
 	}
 
-	draw();
+	bool isVisible = false;
+	if (!_isInvisible) {
+		isVisible = draw(screenRect);
+		if (isVisible) {
+			_screenRectangle = *screenRect;
+		}
+	}
 
 	if (needsUpdate) {
 		int nextFrameTime = remain + _frame_ms;
@@ -654,18 +661,20 @@ bool Actor::tick(bool forceDraw) {
 			this->setFacing(this->_targetFacing, false);
 		}
 	}
-	return false;
+	return isVisible;
 }
 
-void Actor::draw() {
+bool Actor::draw(Common::Rect *screenRect) {
 	Vector3 drawPosition(_position.x, -_position.z, _position.y + 2.0);
 	float drawAngle = M_PI - _facing * (M_PI / 512.0f);
 	float drawScale = _scale;
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zBuffer2);
-	_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);
+	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->getScreenRectangle(screenRect, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);
+
+	return !screenRect->isEmpty();
 }
 
 int Actor::getSetId() {
@@ -1011,7 +1020,7 @@ void Actor::setGoal(int goalNumber) {
 	_goalNumber = goalNumber;
 	if (goalNumber == oldGoalNumber) {
 		return;
-	}	
+	}
 
 	_vm->_aiScripts->GoalChanged(_id, oldGoalNumber, goalNumber);
 	_vm->_sceneScript->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);

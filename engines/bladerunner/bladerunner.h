@@ -63,6 +63,7 @@ class SliceRenderer;
 class TextResource;
 class View;
 class Waypoints;
+class ZBuffer;
 
 #define ACTORS_COUNT 100
 #define VOICEOVER_ACTOR (ACTORS_COUNT - 1)
@@ -72,7 +73,7 @@ public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
-	
+
 	ADQ              *_adq;
 	AIScripts        *_aiScripts;
 	AmbientSounds    *_ambientSounds;
@@ -99,7 +100,7 @@ public:
 	View             *_view;
 	Waypoints        *_waypoints;
 	int              *_gameVars;
-	
+
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
 	TextResource    *_textCluetype;
@@ -117,8 +118,7 @@ public:
 
 	Graphics::Surface  _surface1;
 	Graphics::Surface  _surface2;
-	uint16            *_zBuffer1;
-	uint16            *_zBuffer2;
+	ZBuffer           *_zbuffer;
 
 	Common::RandomSource _rnd;
 

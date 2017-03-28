@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/zbuffer.h"
 
 namespace BladeRunner {
 
@@ -75,40 +76,54 @@ bool Item::isTargetable() {
 	return _isTargetable;
 }
 
-void Item::tick(bool special) {
-	if (_isVisible) {
-		Vector3 postition(_position.x, -_position.z, _position.y);
-		int animationId = _animationId + (special ? 1 : 0);
-		_vm->_sliceRenderer->drawInWorld(animationId, 0, postition, M_PI - _angle, 1.0f, _vm->_surface2, _vm->_zBuffer2);
-		_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, animationId, 0, postition, M_PI - _angle, 1.0f);
+bool Item::tick(Common::Rect *screenRect, bool special) {
+	if (!_isVisible) {
+		*screenRect = Common::Rect();
+		return false;
+	}
 
-		if (_isSpinning) {
-			_facing += _facingChange;
+	bool isVisible = false;
 
-			if (_facing >= 1024) {
-				_facing -= 1024;
-			} else if (_facing < 0) {
-				_facing += 1024;
-			}
-			_angle = _facing * (M_PI / 512.0f);
+	Vector3 position(_position.x, -_position.z, _position.y);
+	int animationId = _animationId + (special ? 1 : 0);
+	_vm->_sliceRenderer->drawInWorld(animationId, 0, position, M_PI - _angle, 1.0f, _vm->_surface2, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, animationId, 0, position, M_PI - _angle, 1.0f);
 
-			if (_facingChange > 0) {
-				_facingChange = _facingChange - 20;
-				if (_facingChange < 0) {
-					_facingChange = 0;
-					_isSpinning = false;
-				}
-			} else if (_facingChange < 0) {
-				_facingChange = _facingChange + 20;
-				if (_facingChange > 0) {
-					_facingChange = 0;
-					_isSpinning = false;
-				}
-			} else {
+	if (!_screenRectangle.isEmpty()) {
+		*screenRect = _screenRectangle;
+		isVisible = true;
+	} else {
+		*screenRect = Common::Rect();
+	}
+
+	if (_isSpinning) {
+		_facing += _facingChange;
+
+		if (_facing >= 1024) {
+			_facing -= 1024;
+		} else if (_facing < 0) {
+			_facing += 1024;
+		}
+		_angle = _facing * (M_PI / 512.0f);
+
+		if (_facingChange > 0) {
+			_facingChange = _facingChange - 20;
+			if (_facingChange < 0) {
+				_facingChange = 0;
 				_isSpinning = false;
 			}
+		} else if (_facingChange < 0) {
+			_facingChange = _facingChange + 20;
+			if (_facingChange > 0) {
+				_facingChange = 0;
+				_isSpinning = false;
+			}
+		} else {
+			_isSpinning = false;
 		}
 	}
+
+	return isVisible;
 }
 
 void Item::setXYZ(Vector3 position) {

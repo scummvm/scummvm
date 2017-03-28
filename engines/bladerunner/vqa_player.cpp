@@ -72,7 +72,6 @@ int VQAPlayer::update() {
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
 		}
 
 		_frameDecoded = calcNextFrame(_frameCurrent);
@@ -95,7 +94,6 @@ int VQAPlayer::update() {
 		_frameCurrent = _frameDecoded;
 		if (_frameCurrent >= 0) {
 			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
 		}
 
 		_frameDecoded = calcNextFrame(_frameCurrent);
@@ -117,8 +115,8 @@ const Graphics::Surface *VQAPlayer::getSurface() const {
 	return _surface;
 }
 
-const uint16 *VQAPlayer::getZBuffer() const {
-	return _zBuffer;
+void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
+	_decoder.decodeZBuffer(zbuffer);
 }
 
 void VQAPlayer::updateView(View *view) {

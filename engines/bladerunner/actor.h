@@ -149,8 +149,8 @@ public:
 	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
 	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning);
 
-	bool tick(bool forceUpdate);
-	void draw();
+	bool tick(bool forceUpdate, Common::Rect *screenRect);
+	bool draw(Common::Rect *screenRect);
 
 	int getSetId();
 	void setSetId(int setId);
