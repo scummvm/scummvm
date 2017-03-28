@@ -54,7 +54,7 @@ class ZBuffer {
 	uint16 *_zbuf1;
 	uint16 *_zbuf2;
 
-	ZBufferDirtyRects *_dirtyRects;;
+	ZBufferDirtyRects *_dirtyRects;
 
 	bool _disabled;
 
