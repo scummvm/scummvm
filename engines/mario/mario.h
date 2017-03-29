@@ -83,11 +83,6 @@ private:
 		} _choices[kMaxChoice];
 	} _scenes[kMaxScene];
 
-	struct {
-		long lTotScore;
-		int	 sTotScene;
-	} Game;
-
 	Image::ImageDecoder *_image;
 
 	bool _showScoreFl;
@@ -97,6 +92,8 @@ private:
 	int	 _curSceneIdx, _prvSceneIdx;
 	int	 _curBitmapIdx;
 	int	 _curChoice;
+	int	 _totScene;
+	long _totScore;
 
 	enum Action {
 		Redraw,

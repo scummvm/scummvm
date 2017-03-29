@@ -55,7 +55,7 @@ Common::Error MarioGame::run() {
 	_showScoreFl = false;
 	_leftButtonDownFl = false;
 	_endGameFl = false;
-	Game.lTotScore = 0;
+	_totScore = 0;
 	_curSceneIdx = _prvSceneIdx = 0;
 	_curChoice = 0;
 	_actions.clear();
@@ -83,7 +83,7 @@ Common::Error MarioGame::run() {
 					}
 					if (_curChoice < kMaxChoice) {
 						debug("Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, _curChoice);
-						Game.lTotScore += _scenes[_curSceneIdx]._choices[_curChoice]._points;
+						_totScore += _scenes[_curSceneIdx]._choices[_curChoice]._points;
 						_actions.push(ChangeScene);
 						_leftButtonDownFl = false;
 					}
@@ -276,7 +276,6 @@ void MarioGame::onTimer(void *arg) {
 }
 
 void MarioGame::initTables() {
-	memset(&Game, 0, sizeof(Game));
 	memset(_scenes, 0, sizeof(_scenes));
 	memset(_bitmaps, 0, sizeof(_bitmaps));
 }
@@ -288,9 +287,9 @@ void MarioGame::readTables(Common::String fileName) {
 
 	initTables();
 
-	Game.lTotScore = file.readSint32LE();
+	_totScore = file.readSint32LE();
 	file.skip(10);
-	Game.sTotScene = file.readSint16LE();
+	_totScene = file.readSint16LE();
 	file.skip(6);
 
 	char buf[kMaxName];
@@ -329,7 +328,7 @@ int MarioGame::getSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
 	Common::String testString = Common::String::format("SC%02d", sNo);
 
-	for (int sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
+	for (int sCurScene = 0; sCurScene < _totScene; sCurScene++) {
 		if (testString == _scenes[sCurScene]._sceneName)
 			return sCurScene;
 	}
