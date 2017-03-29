@@ -429,11 +429,11 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 			_videoSurface2->clear();
 			_videoSurface2->lock();
 			_starField->render(_videoSurface2, sub12);
-			_videoSurface2->unlock();
 
 			_starField->set4(old4);
 			_starField->set54(oldVal);
 			_starField->fn6(_videoSurface2, sub12);
+			_videoSurface2->unlock();
 		}
 	}
 }
