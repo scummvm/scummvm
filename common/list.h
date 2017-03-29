@@ -93,6 +93,11 @@ public:
 	 * Deletes the element at location pos and returns an iterator pointing
 	 * to the element before the one which was deleted.
 	 */
+	reverse_iterator reverse_erase(reverse_iterator pos) {
+		assert(pos != reverseEnd());
+		return reverse_iterator(erase(pos._node)._prev);
+	}
+
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
 		return iterator(erase(pos._node)._prev);
@@ -213,24 +218,39 @@ public:
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
+	iterator lastElement() {
 		return iterator(_anchor._prev);
+	}
+
+	reverse_iterator reverseBegin() {
+		return reverse_iterator(_anchor._prev);
 	}
 
 	iterator		end() {
 		return iterator(&_anchor);
 	}
 
+	reverse_iterator reverseEnd() {
+		return reverse_iterator(&_anchor);
+	}
+
 	const_iterator	begin() const {
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor._prev);
+	reverse_const_iterator	reverseBegin() const {
+		return reverse_const_iterator(_anchor._prev);
 	}
 
+	const_iterator lastElement() const {
+		return const_iterator(_anchor._prev);
+	}
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
+	}
+
+	reverse_const_iterator reverseEnd() const {
+		return reverse_const_iterator(const_cast<NodeBase *> (&_anchor));
 	}
 
 protected:

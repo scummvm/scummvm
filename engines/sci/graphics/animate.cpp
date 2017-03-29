@@ -392,7 +392,7 @@ void GfxAnimate::update() {
 	const AnimateList::iterator end = _list.end();
 
 	// Remove all no-update cels, if requested
-	for (it = _list.reverse_begin(); it != end; --it) {
+	for (it = _list.lastElement(); it != end; --it) {
 		if (it->signal & kSignalNoUpdate) {
 			if (!(it->signal & kSignalRemoveView)) {
 				bitsHandle = readSelector(_s->_segMan, it->object, SELECTOR(underBits));
@@ -538,7 +538,7 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		writeSelectorValue(_s->_segMan, it->object, SELECTOR(signal), it->signal);
 	}
 
-	for (it = _list.reverse_begin(); it != end; --it) {
+	for (it = _list.lastElement(); it != end; --it) {
 		// We read out signal here again, this is not by accident but to ensure
 		// that we got an up-to-date signal
 		it->signal = readSelectorValue(_s->_segMan, it->object, SELECTOR(signal));

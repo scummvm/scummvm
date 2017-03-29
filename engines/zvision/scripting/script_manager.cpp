@@ -477,7 +477,7 @@ void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Commo
 	if (!_activeControls) {
 		return;
 	}
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+	for (ControlList::iterator iter = _activeControls->lastElement(); iter != _activeControls->end(); iter--) {
 		if ((*iter)->onMouseDown(screenSpacePos, backgroundImageSpacePos)) {
 			return;
 		}
@@ -488,7 +488,7 @@ void ScriptManager::onMouseUp(const Common::Point &screenSpacePos, const Common:
 	if (!_activeControls) {
 		return;
 	}
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+	for (ControlList::iterator iter = _activeControls->lastElement(); iter != _activeControls->end(); iter--) {
 		if ((*iter)->onMouseUp(screenSpacePos, backgroundImageSpacePos)) {
 			return;
 		}
@@ -500,7 +500,7 @@ bool ScriptManager::onMouseMove(const Common::Point &screenSpacePos, const Commo
 		return false;
 	}
 
-	for (ControlList::iterator iter = _activeControls->reverse_begin(); iter != _activeControls->end(); iter--) {
+	for (ControlList::iterator iter = _activeControls->lastElement(); iter != _activeControls->end(); iter--) {
 		if ((*iter)->onMouseMove(screenSpacePos, backgroundImageSpacePos)) {
 			return true;
 		}

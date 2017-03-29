@@ -113,7 +113,7 @@ namespace ListInternal {
 		// Prefix inc
 		Self &operator++() {
 			if (_node)
-				_node = _node->_next;
+				_node = _node->_prev;
 			return *this;
 		}
 		// Postfix inc
@@ -125,7 +125,7 @@ namespace ListInternal {
 		// Prefix dec
 		Self &operator--() {
 			if (_node)
-				_node = _node->_prev;
+				_node = _node->_next ;
 			return *this;
 		}
 		// Postfix dec
@@ -216,7 +216,7 @@ namespace ListInternal {
 
 		ReverseConstIterator() : _node(0) {}
 		explicit ReverseConstIterator(const NodeBase *node) : _node(node) {}
-		ReverseConstIterator(const Iterator<T> &x) : _node(x._node) {}
+		ReverseConstIterator(const ReverseIterator<T> &x) : _node(x._node) {}
 
 		// Prefix inc
 		Self &operator++() {
@@ -258,8 +258,15 @@ namespace ListInternal {
 			return _node != x._node;
 		}
 	};
+	template<typename T>
+	bool operator==(const ReverseIterator<T>& a, const ReverseConstIterator<T>& b) {
+		return a._node == b._node;
+	}
 
-
+	template<typename T>
+	bool operator!=(const ReverseIterator<T>& a, const ReverseConstIterator<T>& b) {
+		return a._node != b._node;
+	}
 	template<typename T>
 	bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
 		return a._node == b._node;
@@ -267,6 +274,42 @@ namespace ListInternal {
 
 	template<typename T>
 	bool operator!=(const Iterator<T>& a, const ConstIterator<T>& b) {
+		return a._node != b._node;
+	}
+	template<typename T>
+	bool operator==(const ReverseIterator<T>& a, const ConstIterator<T>& b) {
+		return a._node == b._node;
+	}
+
+	template<typename T>
+	bool operator!=(const ReverseIterator<T>& a, const ConstIterator<T>& b) {
+		return a._node != b._node;
+	}
+	template<typename T>
+	bool operator==(const ReverseConstIterator<T>& a, const ConstIterator<T>& b) {
+		return a._node == b._node;
+	}
+
+	template<typename T>
+	bool operator!=(const ReverseConstIterator<T>& a, const ConstIterator<T>& b) {
+		return a._node != b._node;
+	}
+	template<typename T>
+	bool operator==(const ReverseIterator<T>& a, const Iterator<T>& b) {
+		return a._node == b._node;
+	}
+
+	template<typename T>
+	bool operator!=(const ReverseIterator<T>& a, const Iterator<T>& b) {
+		return a._node != b._node;
+	}
+	template<typename T>
+	bool operator==(const ReverseConstIterator<T>& a, const Iterator<T>& b) {
+		return a._node == b._node;
+	}
+
+	template<typename T>
+	bool operator!=(const ReverseConstIterator<T>& a, const Iterator<T>& b) {
 		return a._node != b._node;
 	}
 }

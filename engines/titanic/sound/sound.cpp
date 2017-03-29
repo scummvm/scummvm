@@ -104,7 +104,7 @@ void CSound::checkSounds() {
 }
 
 void CSound::removeOldest() {
-	for (CSoundItemList::iterator i = _sounds.reverse_begin();
+	for (CSoundItemList::iterator i = _sounds.lastElement();
 			i != _sounds.end(); --i) {
 		CSoundItem *soundItem = *i;
 		if (soundItem->_active && !_soundManager.isActive(soundItem->_waveFile)) {

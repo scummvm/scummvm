@@ -136,7 +136,7 @@ void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenO
 
 void SpritesMgr::freeList(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-	for (iter = spriteList.reverse_begin(); iter != spriteList.end(); iter--) {
+	for (iter = spriteList.lastElement(); iter != spriteList.end(); iter--) {
 		Sprite &sprite = *iter;
 
 		free(sprite.backgroundBuffer);
@@ -160,7 +160,7 @@ void SpritesMgr::freeAllSprites() {
 void SpritesMgr::eraseSprites(SpriteList &spriteList) {
 	SpriteList::iterator iter;
 //	warning("eraseSprites - count %d", spriteList.size());
-	for (iter = spriteList.reverse_begin(); iter != spriteList.end(); iter--) {
+	for (iter = spriteList.lastElement(); iter != spriteList.end(); iter--) {
 		Sprite &sprite = *iter;
 		_gfx->block_restore(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
 	}

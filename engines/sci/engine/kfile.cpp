@@ -660,7 +660,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	// directly. Since the sciAudio calls are only creating text files,
 	// this is probably the most straightforward place to handle them.
 	if (handle == VIRTUALFILE_HANDLE_SCIAUDIO) {
-		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
+		Common::List<ExecStack>::const_iterator iter = s->_executionStack.lastElement();
 		iter--;	// sciAudio
 		iter--;	// sciAudio child
 		g_sci->_audio->handleFanmadeSciAudio(iter->sendp, s->_segMan);
