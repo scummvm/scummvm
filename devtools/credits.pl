@@ -616,6 +616,10 @@ begin_credits("Credits");
 				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
+			begin_section("Fullpipe");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+			
 			begin_section("Gnap");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Benjamin Haisch", "john_doe", "");
