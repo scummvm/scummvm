@@ -4,34 +4,34 @@ We moved TODO list to our Wiki. You may find it at the following link:
 
 Own ToDo for http://wiki.scummvm.org/index.php/TODO#Iterator_handling:
   ✓ Make reverse in list_intern
-      - add ReverseIterator and ReverseConstIterator (like SGI documentation)
+      - add reverseIterator and ReverseConstIterator (like SGI documentation)
         ✓ self
-        ✓ reverse_iterator()
-        - reverse_iterator(const reverse_iterator& x)
-        ✓ reverse_iterator& operator=(const reverse_iterator& x)
-        ✓ reverse_iterator(RandomAccessIterator x)
+        ✓ reverseIterator()
+        - reverseIterator(const reverseIterator& x)
+        ✓ reverseIterator& operator=(const reverseIterator& x)
+        ✓ reverseIterator(RandomAccessIterator x)
         - RandomAccessIterator base()
         ✓ Reference operator*() const
-        ✓ reverse_iterator& operator++()
-        ✓ reverse_iterator operator++(int)
-        ✓ reverse_iterator& operator--()
-        ✓ reverse_iterator operator--(int)
-        - reverse_iterator operator+(Distance)
-        - reverse_iterator& operator+=(Distance)
-        - reverse_iterator operator-(Distance)
-        - reverse_iterator& operator-=(Distance)
-        ✓ T* value_type(const reverse_iterator&)
+        ✓ reverseIterator& operator++()
+        ✓ reverseIterator operator++(int)
+        ✓ reverseIterator& operator--()
+        ✓ reverseIterator operator--(int)
+        - reverseIterator operator+(Distance)
+        - reverseIterator& operator+=(Distance)
+        - reverseIterator operator-(Distance)
+        - reverseIterator& operator-=(Distance)
+        ✓ T* value_type(const reverseIterator&)
         - Reference operator[](Distance)
-        - reverse_iterator operator+(Distance, reverse_iterator)
-        - Distance operator-(const reverse_iterator&, const reverse_iterator&)
-        ✓ bool operator==(const reverse_iterator&, const reverse_iterator&)
-        ✓ bool operator<(const reverse_iterator&, const reverse_iterator&)
-        - random_access_iterator_tag iterator_category(const reverse_iterator&)
+        - reverseIterator operator+(Distance, reverseIterator)
+        - Distance operator-(const reverseIterator&, const reverseIterator&)
+        ✓ bool operator==(const reverseIterator&, const reverseIterator&)
+        ✓ bool operator<(const reverseIterator&, const reverseIterator&)
+        - random_access_iterator_tag iterator_category(const reverseIterator&)
 
       - refactor list_intern (less copi paste code)
 
   - Refactor to mantain code estable:
-      ✓ reverse_erase (overloading)
-      - lastElement & lastElement const (renamed as lastElement)
+      ✓ reverseErase (overloading)
+      ✓ reverseBegin & reverseBegin const (renamed as lastElement)
 
   - Make test for reverse
