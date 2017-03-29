@@ -605,23 +605,8 @@ void BladeRunnerEngine::gameTick() {
 		}
 		(void)backgroundChanged;
 		_surface2.copyFrom(_surface1);
-
-#if 0
-		{
-			for (int y = 0; y != 480; ++y) {
-				for (int x = 0; x != 640; ++x) {
-					if (_scene->_regions->getRegionAtXY(x, y) >= 0) {
-						uint16 *p = (uint16*)_surface2.getBasePtr(x, y);
-						*p = 0x7C00;
-					}
-					if (_scene->_exits->getRegionAtXY(x, y) >= 0) {
-						uint16 *p = (uint16*)_surface2.getBasePtr(x, y);
-						*p = 0x7C08;
-					}
-				}
-			}
-		}
-#endif
+		// TODO: remove zbuffer draw
+		//_surface2.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
 		// TODO: Render overlays
 

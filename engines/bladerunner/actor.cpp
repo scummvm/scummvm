@@ -1163,9 +1163,9 @@ bool Actor::walkFindU2(Vector3 *newDestination, float targetWidth, int destinati
 
 bool Actor::walkToU(const Vector3 &destination, float distance) {
 	Vector3 out;
-	bool isRunning;
+	bool flagIsRunning;
 	if (_walkInfo->findU1(_id, destination, distance, &out)) {
-		loopWalk(out, 0, false, false, _position, 0.0f, 24.0f, false, &isRunning, false);
+		loopWalk(out, 0, false, false, _position, 0.0f, 24.0f, false, &flagIsRunning, false);
 		return true;
 	}
 	return false;

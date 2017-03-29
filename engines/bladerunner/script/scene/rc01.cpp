@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptRC01::InitializeScene() {
 #if _DEBUG
 	//TODO: not part of game, remove
-	Game_Flag_Set(24); // force skip intro
+	//Game_Flag_Set(24); // force skip intro
 #endif
 
 	if (!Game_Flag_Query(24)) {

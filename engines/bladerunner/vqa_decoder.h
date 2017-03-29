@@ -49,8 +49,7 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *s);
 
-	void readNextPacket();
-	void readPacket(int frame);
+	void readFrame(int frame, int skipFlags);
 
 	const Graphics::Surface    *decodeVideoFrame();
 	void                        decodeZBuffer(ZBuffer *zbuffer);
@@ -140,6 +139,8 @@ private:
 
 	VQAVideoTrack *_videoTrack;
 	VQAAudioTrack *_audioTrack;
+
+	void readPacket(int skipFlags);
 
 	bool readVQHD(Common::SeekableReadStream *s, uint32 size);
 	bool readMSCI(Common::SeekableReadStream *s, uint32 size);

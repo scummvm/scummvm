@@ -208,7 +208,7 @@ void VQADecoder::decodeLights(Lights *lights) {
 	_videoTrack->decodeLights(lights);
 }
 
-void VQADecoder::readNextPacket() {
+void VQADecoder::readPacket(int skipFlags) {
 	IFFChunkHeader chd;
 
 	if (remain(_s) < 8) {
@@ -223,21 +223,20 @@ void VQADecoder::readNextPacket() {
 		}
 
 		bool rc = false;
-		switch (chd.id) {
 		// Video track
-		case kAESC: rc = _videoTrack->readAESC(_s, chd.size); break;
-		case kLITE: rc = _videoTrack->readLITE(_s, chd.size); break;
-		case kVIEW: rc = _videoTrack->readVIEW(_s, chd.size); break;
-		case kVQFL: rc = _videoTrack->readVQFL(_s, chd.size); break;
-		case kVQFR: rc = _videoTrack->readVQFR(_s, chd.size); break;
-		case kZBUF: rc = _videoTrack->readZBUF(_s, chd.size); break;
+		switch (chd.id) {
+		case kAESC: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readAESC(_s, chd.size); break;
+		case kLITE: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readLITE(_s, chd.size); break;
+		case kVIEW: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVIEW(_s, chd.size); break;
+		case kVQFL: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVQFL(_s, chd.size); break;
+		case kVQFR: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVQFR(_s, chd.size); break;
+		case kZBUF: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readZBUF(_s, chd.size); break;
 		// Sound track
-		case kSN2J: rc = _audioTrack->readSN2J(_s, chd.size); break;
-		case kSND2: rc = _audioTrack->readSND2(_s, chd.size); break;
-
+		case kSN2J: rc = skipFlags & 2 ? _s->skip(roundup(chd.size)) : _audioTrack->readSN2J(_s, chd.size); break;
+		case kSND2: rc = skipFlags & 2 ? _s->skip(roundup(chd.size)) : _audioTrack->readSND2(_s, chd.size); break;
 		default:
-			_s->skip(roundup(chd.size));
 			rc = false;
+			_s->skip(roundup(chd.size));
 		}
 
 		if (!rc) {
@@ -247,14 +246,14 @@ void VQADecoder::readNextPacket() {
 	} while (chd.id != kVQFR);
 }
 
-void VQADecoder::readPacket(int frame) {
+void VQADecoder::readFrame(int frame, int skipFlags) {
 	if (frame < 0 || frame >= numFrames()) {
 		error("frame %d out of bounds, frame count is %d", frame, numFrames());
 	}
 
 	uint32 frameOffset = 2 * (_frameInfo[frame] & 0x0FFFFFFF);
 	_s->seek(frameOffset);
-	readNextPacket();
+	readPacket(skipFlags);
 }
 
 bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size) {

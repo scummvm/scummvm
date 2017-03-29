@@ -32,6 +32,12 @@
 
 namespace BladeRunner {
 
+enum LoopSetModes {
+	kLoopSetModeJustStart = 0,
+	kLoopSetModeEnqueue = 1,
+	kLoopSetModeImmediate = 2
+};
+
 class BladeRunnerEngine;
 class View;
 class Lights;
@@ -47,8 +53,7 @@ class VQAPlayer {
 	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
-	int _frameCurrent;
-	int _frameDecoded;
+	int _frameNext;
 	int _frameBegin;
 	int _frameEnd;
 	int _loop;
@@ -60,7 +65,7 @@ class VQAPlayer {
 	int _loopInitial;
 	int _repeatsCountInitial;
 
-	uint32 _nextFrameTime;
+	uint32 _frameNextTime;
 	bool   _hasAudio;
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
@@ -74,9 +79,9 @@ public:
 		: _vm(vm),
 		  _s(nullptr),
 		  _surface(nullptr),
+		  _zBuffer(nullptr),
 		  _audioStream(nullptr),
-		  _frameCurrent(-1),
-		  _frameDecoded(-1),
+		  _frameNext(-1),
 		  _frameBegin(-1),
 		  _frameEnd(-1),
 		  _loop(-1),
@@ -85,11 +90,11 @@ public:
 		  _frameEndQueued(-1),
 		  _loopInitial(-1),
 		  _repeatsCountInitial(-1),
-		  _nextFrameTime(0),
+		  _frameNextTime(0),
 		  _hasAudio(false),
 		  _audioStarted(false),
-		  _callbackLoopEnded(nullptr) {
-	}
+		  _callbackLoopEnded(nullptr),
+		  _callbackData(nullptr) { }
 
 	~VQAPlayer() {
 		close();
@@ -104,14 +109,15 @@ public:
 	void updateView(View *view);
 	void updateLights(Lights *lights);
 
-	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopMode, void(*callback)(void *, int, int), void *callbackData);
-	bool setLoop(int loop, int repeatsCount, int loopMode, void(*callback)(void*, int, int), void* callbackData);
+	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void* callbackData);
+
+	bool seekToFrame(int frame);
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
 
 private:
-	int calcNextFrame(int frame);
 	void queueAudioFrame(Audio::AudioStream *audioStream);
 };
 
