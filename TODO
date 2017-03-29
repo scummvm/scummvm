@@ -2,11 +2,38 @@ We moved TODO list to our Wiki. You may find it at the following link:
 
   http://wiki.scummvm.org/index.php/TODO
 
+Own ToDo for http://wiki.scummvm.org/index.php/TODO#Iterator_handling:
+  - Make reverse in list_intern
+      - add ReverseIterator and ReverseConstIterator (like SGI documentation)
+          ToDo:   Done:
+                  self
+                  reverse_iterator()
+          reverse_iterator(const reverse_iterator& x)
+          reverse_iterator& operator=(const reverse_iterator& x)
+          reverse_iterator(RandomAccessIterator x)
+          RandomAccessIterator base()
+                  Reference operator*() const
+                  reverse_iterator& operator++()
+                  reverse_iterator operator++(int)
+                  reverse_iterator& operator--()
+                  reverse_iterator operator--(int)
+          reverse_iterator operator+(Distance)
+          reverse_iterator& operator+=(Distance)
+          reverse_iterator operator-(Distance)
+          reverse_iterator& operator-=(Distance)
+          T* value_type(const reverse_iterator&)
+          Reference operator[](Distance)
+          reverse_iterator operator+(Distance, reverse_iterator)
+          Distance operator-(const reverse_iterator&, const reverse_iterator&)
+                  bool operator==(const reverse_iterator&, const reverse_iterator&)
+                  bool operator<(const reverse_iterator&, const reverse_iterator&)
+          random_access_iterator_tag iterator_category(const reverse_iterator&)
 
-Own ToDo:
-  Refactor to mantain code estable:
-    reverse_erase
-    reverse_begin
-    reverse_begin const
+      - refactor list_intern (less copi paste code)
 
-  Make reverse in list_intern
+  - Refactor to mantain code estable:
+      - reverse_erase
+      - reverse_begin
+      - reverse_begin const
+
+  - Make test for reverse

@@ -57,7 +57,59 @@ namespace ListInternal {
 
 		Iterator() : _node(0) {}
 		explicit Iterator(NodeBase *node) : _node(node) {}
+		// Prefix inc
+		Self &operator++() {
+			if (_node)
+				_node = _node->_next;
+			return *this;
+		}
+		// Postfix inc
+		Self operator++(int) {
+			Self tmp(_node);
+			++(*this);
+			return tmp;
+		}
+		// Prefix dec
+			Self &operator--() {
+			if (_node)
+				_node = _node->_prev;
+			return *this;
+		}
+		// Postfix dec
+		Self operator--(int) {
+			Self tmp(_node);
+			--(*this);
+			return tmp;
+		}
+		ValueRef operator*() const {
+			assert(_node);
+			return static_cast<NodePtr>(_node)->_data;
+		}
+		ValuePtr operator->() const {
+			return &(operator*());
+		}
 
+		bool operator==(const Self &x) const {
+			return _node == x._node;
+		}
+
+		bool operator!=(const Self &x) const {
+			return _node != x._node;
+		}
+	};
+
+	template<typename T>
+	struct ReverseIterator {
+		typedef ReverseIterator<T>	Self;
+		typedef Node<T> *	NodePtr;
+		typedef T &			ValueRef;
+		typedef T *			ValuePtr;
+		typedef T			ValueType;
+
+		NodeBase *_node;
+
+		ReverseIterator() : _node(0) {}
+		explicit ReverseIterator(NodeBase *node) : _node(node) {}
 		// Prefix inc
 		Self &operator++() {
 			if (_node)
@@ -128,6 +180,60 @@ namespace ListInternal {
 		Self &operator--() {
 			if (_node)
 				_node = _node->_prev;
+			return *this;
+		}
+		// Postfix dec
+		Self operator--(int) {
+			Self tmp(_node);
+			--(*this);
+			return tmp;
+		}
+		ValueRef operator*() const {
+			assert(_node);
+			return static_cast<NodePtr>(_node)->_data;
+		}
+		ValuePtr operator->() const {
+			return &(operator*());
+		}
+
+		bool operator==(const Self &x) const {
+			return _node == x._node;
+		}
+
+		bool operator!=(const Self &x) const {
+			return _node != x._node;
+		}
+	};
+
+	template<typename T>
+	struct ReverseConstIterator {
+		typedef ReverseConstIterator<T>	Self;
+		typedef const Node<T> *	NodePtr;
+		typedef const T &		ValueRef;
+		typedef const T *		ValuePtr;
+
+		const NodeBase *_node;
+
+		ReverseConstIterator() : _node(0) {}
+		explicit ReverseConstIterator(const NodeBase *node) : _node(node) {}
+		ReverseConstIterator(const Iterator<T> &x) : _node(x._node) {}
+
+		// Prefix inc
+		Self &operator++() {
+			if (_node)
+				_node = _node->_prev;
+			return *this;
+		}
+		// Postfix inc
+		Self operator++(int) {
+			Self tmp(_node);
+			++(*this);
+			return tmp;
+		}
+		// Prefix dec
+		Self &operator--() {
+			if (_node)
+				_node = _node->_next;
 			return *this;
 		}
 		// Postfix dec

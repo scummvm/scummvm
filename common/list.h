@@ -42,6 +42,8 @@ protected:
 public:
 	typedef ListInternal::Iterator<t_T>		iterator;
 	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+	typedef ListInternal::ReverseIterator<t_T>		reverse_iterator;
+	typedef ListInternal::ReverseConstIterator<t_T>	reverse_const_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;

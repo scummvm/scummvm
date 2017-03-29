@@ -86,6 +86,50 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(iter, cIter);
 	}
 
+	void test_ReverseIterator() {
+		Common::List<int> container;
+		Common::List<int>::reverse_iterator iter;
+		Common::List<int>::reverse_const_iterator cIter;
+
+		// Fill the container with some random data
+		container.push_back(17);
+		container.push_back(33);
+		container.push_back(-11);
+
+		// Iterate over the container and verify that we encounter the elements in
+		// the order we expect them to be.
+
+		// iter = container.begin();
+		// cIter = container.begin();
+		//
+		// TS_ASSERT_EQUALS(iter, cIter);
+		//
+		// TS_ASSERT_EQUALS(*iter, 17);
+		// ++iter;
+		// ++cIter;
+		// TS_ASSERT_DIFFERS(iter, container.end());
+		// TS_ASSERT_DIFFERS(cIter, container.end());
+		// TS_ASSERT_EQUALS(iter, cIter);
+		//
+		// TS_ASSERT_EQUALS(*iter, 33);
+		// ++iter;
+		// ++cIter;
+		// TS_ASSERT_DIFFERS(iter, container.end());
+		// TS_ASSERT_DIFFERS(cIter, container.end());
+		// TS_ASSERT_EQUALS(iter, cIter);
+		//
+		// // Also test the postinc
+		// TS_ASSERT_EQUALS(*iter, -11);
+		// iter++;
+		// cIter++;
+		// TS_ASSERT_EQUALS(iter, container.end());
+		// TS_ASSERT_EQUALS(cIter, container.end());
+		// TS_ASSERT_EQUALS(iter, cIter);
+		//
+		// cIter = iter;
+		// TS_ASSERT_EQUALS(iter, cIter);
+	}
+
 	void test_insert() {
 		Common::List<int> container;
 		Common::List<int>::iterator iter;
