@@ -34,9 +34,9 @@ FVector::FVector(const DVector &src) : _x(src._x), _y(src._y), _z(src._z) {
 FVector FVector::fn1() const {
 	return FVector(
 		(ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
-			ABS(_x - _z) < 0.00001) ? -_x : _x,
+			ABS(_x - _z) < 0.00001) ? -_y : _y,
 		_z,
-		_y
+		_x
 	);
 }
 
