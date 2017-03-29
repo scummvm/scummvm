@@ -530,7 +530,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"ernie",
-			"Ernie - Demo",
+			"Demo",
 			AD_ENTRY1s("ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -544,7 +544,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"ernie",
-			"Ernie",
+			"",
 			AD_ENTRY1s("Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
