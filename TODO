@@ -1,3 +1,12 @@
 We moved TODO list to our Wiki. You may find it at the following link:
 
   http://wiki.scummvm.org/index.php/TODO
+
+
+Own ToDo:
+  Refactor to mantain code estable:
+    reverse_erase
+    reverse_begin
+    reverse_begin const
+
+  Make reverse in list_intern
