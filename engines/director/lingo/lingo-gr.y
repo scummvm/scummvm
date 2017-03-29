@@ -96,7 +96,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL
 %token tDOWN tELSE tNLELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
-%token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
+%token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTHENNL tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
@@ -258,40 +258,40 @@ stmt: stmtoneliner
 		}
 	;
 
-ifstmt:	if cond tTHEN nl stmtlist end ENDCLAUSE		{
+ifstmt:	if cond tTHENNL stmtlist end ENDCLAUSE		{
 		inst then = 0, end = 0;
-		WRITE_UINT32(&then, $5 - $1);
-		WRITE_UINT32(&end, $6 - $1);
+		WRITE_UINT32(&then, $4 - $1);
+		WRITE_UINT32(&end, $5 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
-		checkEnd($7, "if", true);
+		checkEnd($6, "if", true);
 
 		g_lingo->processIf(0, 0); }
-	| if cond tTHEN nl stmtlist end tNLELSE stmtlist end ENDCLAUSE {
+	| if cond tTHENNL stmtlist end tNLELSE stmtlist end ENDCLAUSE {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $5 - $1);
-		WRITE_UINT32(&else1, $8 - $1);
-		WRITE_UINT32(&end, $9 - $1);
-		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
-
-		checkEnd($10, "if", true);
-
-		g_lingo->processIf(0, 0); }
-	| if cond tTHEN nl stmtlist end begin elseifstmt end ENDCLAUSE {
-		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, $5 - $1);
+		WRITE_UINT32(&then, $4 - $1);
 		WRITE_UINT32(&else1, $7 - $1);
-		WRITE_UINT32(&end, $9 - $1);
+		WRITE_UINT32(&end, $8 - $1);
 		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
 		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
 		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
 
-		checkEnd($10, "if", true);
+		checkEnd($9, "if", true);
 
-		g_lingo->processIf(0, $9 - $1); }
+		g_lingo->processIf(0, 0); }
+	| if cond tTHENNL stmtlist end begin elseifstmt end ENDCLAUSE {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $4 - $1);
+		WRITE_UINT32(&else1, $6 - $1);
+		WRITE_UINT32(&end, $8 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+
+		checkEnd($9, "if", true);
+
+		g_lingo->processIf(0, $8 - $1); }
 	| if cond tTHEN begin stmtoneliner end {
 		inst then = 0, else1 = 0, end = 0;
 		WRITE_UINT32(&then, $4 - $1);
