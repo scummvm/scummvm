@@ -30,8 +30,8 @@ Own ToDo for http://wiki.scummvm.org/index.php/TODO#Iterator_handling:
 
       - refactor list_intern (less copi paste code)
 
-  - Refactor to mantain code estable:
+  ✓ Refactor to mantain code estable:
       ✓ reverseErase (overloading)
       ✓ reverseBegin & reverseBegin const (renamed as lastElement)
 
-  - Make test for reverse
+  ✓ Make test for reverse
