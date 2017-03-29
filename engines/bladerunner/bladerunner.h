@@ -36,7 +36,7 @@
 
 namespace BladeRunner {
 
-enum AnimationModes : int {
+enum AnimationModes {
 	kAnimationModeIdle = 0,
 	kAnimationModeWalk = 1,
 	kAnimationModeRun = 2,

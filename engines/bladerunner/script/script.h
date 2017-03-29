@@ -29,7 +29,7 @@
 
 namespace BladeRunner {
 
-enum Actors : int {
+enum Actors {
 	kActorMcCoy = 0,
 	kActorSteele = 1,
 	kActorGordo = 2,
@@ -106,7 +106,7 @@ enum Actors : int {
 	kActorVoiceOver = 99
 };
 
-enum Clues : int {
+enum Clues {
 	kClueOfficersStatement = 0,
 	kClueDoorForced1 = 1,
 	kClueDoorForced2 = 2,
@@ -397,14 +397,14 @@ enum Clues : int {
 	kClueCrazylegGgrovels = 287,
 };
 
-enum ClueTypes: int{
+enum ClueTypes {
 	kClueTypePhotograph  = 0,
 	kClueTypeVideoClip = 1,
 	kClueTypeAudioRecording = 2,
 	kClueTypeObject = 3
 };
 
-enum Crimes : int {
+enum Crimes {
 	kCrimeAnimalMurder = 0,
 	kCrimeEisendullerMurder = 1,
 	kCrimeArmsDealing = 2,
@@ -416,7 +416,7 @@ enum Crimes : int {
 	kCrimeMoonbusHijacking = 8
 };
 
-enum SpinnerDestinations : int {
+enum SpinnerDestinations {
 	kSpinnerDestinationPoliceStation = 0,
 	kSpinnerDestinationMcCoysApartment = 1,
 	kSpinnerDestinationRuncitersAnimals = 2,
