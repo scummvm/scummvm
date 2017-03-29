@@ -135,8 +135,10 @@ Common::Error MarioGame::run() {
 }
 
 bool MarioGame::loadImage(char *dirname, char *filename) {
-	if (_image)
+	if (_image) {
 		delete _image;
+		_image = nullptr;
+	}
 
 	const Common::String name = Common::String::format("%s/%s", dirname, filename);
 	debug("%s : %s", __FUNCTION__, name.c_str());
@@ -338,7 +340,7 @@ void MarioGame::sReadTables(char *cFileName) {
 
 int MarioGame::sGetSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
-	char cTestString[14];
+	char cTestString[kMaxName];
 
 	sprintf(cTestString, "SC%02d", sNo);
 	for (int sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
