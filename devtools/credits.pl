@@ -526,6 +526,11 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 			
+			begin_section("Access");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("ADL");
 				add_person("Walter van Niftrik", "waltervn", "");
 			end_section();
@@ -548,11 +553,6 @@ begin_credits("Credits");
 				add_person("Travis Howell", "Kirben", "");
 				add_person("Oliver Kiehl", "olki", "(retired)");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
-			end_section();
-
-			begin_section("Access");
-				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
-				add_person("Paul Gilbert", "dreammaster", "");
 			end_section();
 
 			begin_section("Avalanche");
