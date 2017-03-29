@@ -123,26 +123,22 @@ Common::Error MarioGame::run() {
 	return Common::kNoError;
 }
 
-bool MarioGame::loadImage(char *dirname, char *filename) {
+void MarioGame::loadImage(Common::String dirname, Common::String filename) {
 	if (_image) {
 		delete _image;
 		_image = nullptr;
 	}
 
-	const Common::String name = Common::String::format("%s/%s", dirname, filename);
+	Common::String name = dirname + "/" + filename;
 	debug("%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
-	if (!file->open(name)) {
-		delete file;
+	if (!file->open(name))
 		error("unable to load image %s", name.c_str());
-		return false;
-	}
 
 	_image = new Image::BitmapDecoder();
 	_image->loadStream(*file);
 	file->close();
 	delete file;
-	return true;
 }
 
 void MarioGame::drawScreen() {
@@ -197,13 +193,11 @@ void MarioGame::drawScreen() {
 }
 
 void MarioGame::playSound() {
-	const Common::String name = Common::String::format("%s/%s", _scenes[_curSceneIdx]._sceneName, _scenes[_curSceneIdx]._waveFilename);
+	Common::String name = _scenes[_curSceneIdx]._sceneName + "/" + _scenes[_curSceneIdx]._waveFilename;
 	debug("%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
-	if (!file->open(name)) {
-		delete file;
+	if (!file->open(name))
 		error("unable to load sound %s", name.c_str());
-	}
 
 	Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	Audio::AudioStream *stream = audioStream;
@@ -274,8 +268,6 @@ void MarioGame::processTimer() {
 	debug("%s", __FUNCTION__);
 	if (!_endGameFl)
 		_actions.push(Redraw);
-	//else
-	//	PostMessage(wnd, WM_DESTROY, 0, 0);
 }
 
 void MarioGame::onTimer(void *arg) {
@@ -289,9 +281,9 @@ void MarioGame::initTables() {
 	memset(_bitmaps, 0, sizeof(_bitmaps));
 }
 
-void MarioGame::readTables(char *cFileName) {
+void MarioGame::readTables(Common::String fileName) {
 	Common::File file;
-	if (!file.open(cFileName))
+	if (!file.open(fileName))
 		error("sReadTables(): Error reading BIN file");
 
 	initTables();
@@ -307,13 +299,18 @@ void MarioGame::readTables(char *cFileName) {
 	Game.bEightBit = file.readSint16LE();
 	Game.bIsaDecision = file.readSint16LE();
 
+	char buf[kMaxName];
 	for (int i = 0; i < kMaxScene; i++) {
 		_scenes[i]._bitmapNum = file.readSint16LE();
 		_scenes[i]._startBitmap = file.readSint16LE();
 		_scenes[i]._decisionChoices = file.readSint16LE();
-		file.read(_scenes[i]._sceneName, kMaxName);
-		file.read(_scenes[i]._waveFilename, kMaxName);
-		file.read(_scenes[i]._decisionBitmap, kMaxName);
+		file.read(buf, kMaxName);
+		_scenes[i]._sceneName = Common::String(buf);
+		file.read(buf, kMaxName);
+		_scenes[i]._waveFilename = Common::String(buf);
+		file.read(buf, kMaxName);
+		_scenes[i]._decisionBitmap = Common::String(buf);
+
 		for (int j = 0; j < kMaxChoice; j++) {
 			_scenes[i]._choices[j]._points = file.readSint32LE();
 			_scenes[i]._choices[j]._sceneIdx = file.readSint16LE();
@@ -328,18 +325,18 @@ void MarioGame::readTables(char *cFileName) {
 
 	for (int i = 0; i < kMaxBitmaps; i++) {
 		_bitmaps[i]._duration = file.readSint16LE();
-		file.read(_bitmaps[i]._filename, kMaxName);
+		file.read(buf, kMaxName);
+		_bitmaps[i]._filename = Common::String(buf);
 	}
 	file.close();
 }
 
 int MarioGame::getSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
-	char cTestString[kMaxName];
+	Common::String testString = Common::String::format("SC%02d", sNo);
 
-	sprintf(cTestString, "SC%02d", sNo);
 	for (int sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
-		if (!strcmp(cTestString, _scenes[sCurScene]._sceneName))
+		if (testString == _scenes[sCurScene]._sceneName)
 			return sCurScene;
 	}
 	return 0;

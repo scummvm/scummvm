@@ -65,16 +65,16 @@ private:
 
 	struct {
 		int  _duration;
-		char _filename[kMaxName];
+		Common::String _filename;
 	} _bitmaps[kMaxBitmaps];
 
 	struct {
 		int	 _bitmapNum;
 		int	 _startBitmap;
 		int	 _decisionChoices;
-		char _sceneName[kMaxName];
-		char _waveFilename[kMaxName];
-		char _decisionBitmap[kMaxName];
+		Common::String _sceneName;
+		Common::String _waveFilename;
+		Common::String _decisionBitmap;
 		struct {
 			long _points;
 			int  _sceneIdx;
@@ -116,7 +116,7 @@ private:
 
 	Common::Queue<Action> _actions;
 	
-	bool loadImage(char *dirname, char *filename);
+	void loadImage(Common::String dirname, Common::String filename);
 	void drawScreen();
 
 	Audio::SoundHandle _soundHandle;
@@ -132,7 +132,7 @@ private:
 	static void onTimer(void *arg);
 
 	void initTables();
-	void readTables(char *cFileName);
+	void readTables(Common::String fileName);
 	int getSceneNumb(int sNo);
 };
 } // End of namespace Mario
