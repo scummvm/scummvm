@@ -142,11 +142,11 @@ public:
 	void movementTrackUnpause();
 	void movementTrackWaypointReached();
 
-	bool loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
-	bool loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
-	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning);
-	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
-	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning);
+	bool loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
 
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
 	bool draw(Common::Rect *screenRect);

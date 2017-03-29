@@ -333,18 +333,18 @@ void Actor::movementTrackWaypointReached() {
 	}
 }
 
-bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
-	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, isRunning, false);
+bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
+bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
 	float x, y, z;
 	int width, height;
 	_vm->_items->getXYZ(itemId, &x, &y, &z);
 	_vm->_items->getWidthHeight(itemId, &width, &height);
 	Vector3 itemPosition(x, y, z);
 
-	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, isRunning, false);
+	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, flagIsRunning, false);
 }
 
 void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool moving, bool retired) {
@@ -372,9 +372,9 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
 }
 
-bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *isRunning, bool async) {
+bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *flagIsRunning, bool async) {
 	if (true) { // simple walking
-		*isRunning = false;
+		*flagIsRunning = false;
 		bool stopped;
 		_walkInfo->setup(_id, false, _position, destination, false, &stopped);
 
@@ -389,7 +389,7 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 	} else {
 		//TODO:
 		// original code, not yet working
-		*isRunning = false;
+		*flagIsRunning = false;
 
 		if (destinationOffset > 0) {
 			float dist = distance(_position, destination);
@@ -449,7 +449,7 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 		bool v46 = false;
 		while (_walkInfo->isWalking() && _vm->_gameIsRunning) {
 			if (_walkInfo->isRunning()) {
-				*isRunning = true;
+				*flagIsRunning = true;
 			}
 			_vm->gameTick();
 			if (_id == 0 && a3 /*&& dword_482994*/) {
@@ -476,16 +476,16 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 }
 
 bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
-	bool isRunning;
+	bool flagIsRunning;
 
-	return _walkInfo->setup(_id, run, _position, destination, a3, &isRunning);
+	return _walkInfo->setup(_id, run, _position, destination, a3, &flagIsRunning);
 }
 
-bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning) {
-	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
+bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning) {
+bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
 	int sceneObject = _vm->_scene->_set->findObject(objectName);
 	if (sceneObject < 0) {
 		return true;
@@ -527,13 +527,13 @@ bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset,
 	float y = _vm->_scene->_set->getAltitudeAtXZ(closestX, closestZ, &inWalkbox);
 	Vector3 destination(closestX, y, closestZ);
 
-	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
+	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
+bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
+	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
 bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {

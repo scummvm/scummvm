@@ -394,7 +394,7 @@ enum Clues {
 	kClueEarlyInterviewB1 = 284,
 	kClueEarlyInterviewB2 = 285,
 	kClueCrazylegsInterview3 = 286,
-	kClueCrazylegGgrovels = 287,
+	kClueCrazylegGgrovels = 287
 };
 
 enum ClueTypes {
@@ -426,7 +426,7 @@ enum SpinnerDestinations {
 	kSpinnerDestinationDNARow = 6,
 	kSpinnerDestinationBradburyBuilding = 7,
 	kSpinnerDestinationNightclubRow = 8,
-	kSpinnerDestinationHysteriaHall = 9,
+	kSpinnerDestinationHysteriaHall = 9
 };
 
 class BladeRunnerEngine;
