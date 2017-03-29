@@ -255,6 +255,7 @@ static const char *credits[] = {
 "C0""Willem Jan Palenstijn",
 "C0""Jordi Vilalta Prat",
 "C0""Lars Skovlund",
+"C0""Colin Snover",
 "",
 "C1""Sherlock",
 "C0""Paul Gilbert",
