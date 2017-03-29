@@ -64,24 +64,24 @@ private:
 	static const int kMaxScene = 100;
 
 	struct {
-		int	sBitmapDuration;
-		char	cBitmapFileName[kMaxName];
-	} aBitmaps[kMaxBitmaps];
+		int  _duration;
+		char _filename[kMaxName];
+	} _bitmaps[kMaxBitmaps];
 
 	struct {
-		int	 sNoBitmaps;
-		int	 sStartBitmap;
-		int	 sNoDecisionChoices;
-		char cSceneName[kMaxName];
-		char cWaveFileName[kMaxName];
-		char cDecisionBitmap[kMaxName];
+		int	 _bitmapNum;
+		int	 _startBitmap;
+		int	 _decisionChoices;
+		char _sceneName[kMaxName];
+		char _waveFilename[kMaxName];
+		char _decisionBitmap[kMaxName];
 		struct {
-			long lPoints;
-			int  sGoTo;
-			int  bSkipScene;
-			Common::Rect aRegion;
-		}	aChoice[kMaxChoice];
-	} aScene[kMaxScene];
+			long _points;
+			int  _sceneIdx;
+			int  _skipScene;
+			Common::Rect _region;
+		} _choices[kMaxChoice];
+	} _scenes[kMaxScene];
 
 	struct {
 		long lTotScore;
@@ -98,19 +98,13 @@ private:
 
 	Image::ImageDecoder *_image;
 
-	int	xadj;
-	int	yadj;
-
-	bool bShowScore;
-	bool bSetDuration;
-	bool bLButtonDown;
-	bool bEnd;
-	int	 sCurScene;
-	int	 sCurBitmap;
-	int	 sCurChoice;
-	int	 sPrvScene;
-	Common::Point point;
-	Common::Rect  rect;
+	bool _showScoreFl;
+	bool _setDurationFl;
+	bool _leftButtonDownFl;
+	bool _endGameFl;
+	int	 _curSceneIdx, _prvSceneIdx;
+	int	 _curBitmapIdx;
+	int	 _curChoice;
 
 	enum Action {
 		Redraw,
@@ -137,9 +131,9 @@ private:
 	void processTimer();
 	static void onTimer(void *arg);
 
-	void sInitTables();
-	void sReadTables(char *cFileName);
-	int sGetSceneNumb(int sNo);
+	void initTables();
+	void readTables(char *cFileName);
+	int getSceneNumb(int sNo);
 };
 } // End of namespace Mario
 

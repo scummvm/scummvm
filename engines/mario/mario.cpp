@@ -39,16 +39,6 @@ namespace Mario {
 
 MarioGame::MarioGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_image = nullptr;
-
-	xadj = 0;
-	yadj = 0;
-
-#if 0
-	rect.left = xadj + 10;
-	rect.top = yadj + 440;
-	rect.right = xadj + 200;
-	rect.bottom = yadj + 460;
-#endif
 }
 
 MarioGame::~MarioGame() {
@@ -60,21 +50,20 @@ Common::Error MarioGame::run() {
 	initGraphics(640, 480, false);
 	g_system->showMouse(true);
 
-	sReadTables("game.bin");
+	readTables("game.bin");
 
-	bShowScore = false;
-	bLButtonDown = false;
-	bEnd = false;
+	_showScoreFl = false;
+	_leftButtonDownFl = false;
+	_endGameFl = false;
 	Game.lTotScore = 0;
-	sCurScene = 0;
-	sPrvScene = 0;
-	sCurChoice = 0;
+	_curSceneIdx = _prvSceneIdx = 0;
+	_curChoice = 0;
 	_actions.clear();
 	_actions.push(ShowScene);
 
 	bool quit = false;
 
-	while (!quit && !bEnd) {
+	while (!quit && !_endGameFl) {
 		g_system->delayMillis(100);
 
 		Common::Event event;
@@ -86,17 +75,17 @@ Common::Error MarioGame::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				if (bLButtonDown) {
+				if (_leftButtonDownFl) {
 					Common::Point mousePos = g_system->getEventManager()->getMousePos();
-					for (sCurChoice = 0; sCurChoice < aScene[sCurScene].sNoDecisionChoices; sCurChoice++) {
-						if (aScene[sCurScene].aChoice[sCurChoice].aRegion.contains(mousePos))
+					for (_curChoice = 0; _curChoice < _scenes[_curSceneIdx]._decisionChoices; _curChoice++) {
+						if (_scenes[_curSceneIdx]._choices[_curChoice]._region.contains(mousePos))
 							break;
 					}
-					if (sCurChoice < kMaxChoice) {
-						debug("Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, sCurChoice);
-						Game.lTotScore += aScene[sCurScene].aChoice[sCurChoice].lPoints;
+					if (_curChoice < kMaxChoice) {
+						debug("Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, _curChoice);
+						Game.lTotScore += _scenes[_curSceneIdx]._choices[_curChoice]._points;
 						_actions.push(ChangeScene);
-						bLButtonDown = false;
+						_leftButtonDownFl = false;
 					}
 				}
 				break;
@@ -159,15 +148,15 @@ bool MarioGame::loadImage(char *dirname, char *filename) {
 void MarioGame::drawScreen() {
 	debug("%s : %s", __FUNCTION__, _image ? "YES" : "NO");
 	if (_image) {
-		if (bSetDuration == true) {
+		if (_setDurationFl) {
 			g_system->getTimerManager()->removeTimerProc(onTimer);
-			g_system->getTimerManager()->installTimerProc(onTimer, aBitmaps[sCurBitmap].sBitmapDuration * 100 * 1000, this, "timer");
+			g_system->getTimerManager()->installTimerProc(onTimer, _bitmaps[_curBitmapIdx]._duration * 100 * 1000, this, "timer");
 			_actions.push(UpdateScene);
 		}
 
 		const Graphics::Surface *surface = _image->getSurface();
 
-		//TODO sometimes a picture is not 640x480 (SC01/0119.BMP), crop/strectch/center it?
+		//TODO sometimes a picture is not 640x480 (SC01/0119.BMP), crop/stretch/center it?
 		int w = CLIP<int>(surface->w, 0, 640);
 		int h = CLIP<int>(surface->h, 0, 480);
 
@@ -175,9 +164,15 @@ void MarioGame::drawScreen() {
 		g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
 #if 0
+		xadj = yadj = 0;
+		Common::Rect  rect;
+		rect.left = xadj + 10;
+		rect.top = yadj + 440;
+		rect.right = xadj + 200;
+		rect.bottom = yadj + 460;
+
 		//TODO this should be drawn on top of picture
-		if (bShowScore == true)
-		{
+		if (bShowScore) {
 			char	szBuffer[24];
 			HBRUSH	hBrush;
 			HRGN	hrgn;
@@ -202,7 +197,7 @@ void MarioGame::drawScreen() {
 }
 
 void MarioGame::playSound() {
-	const Common::String name = Common::String::format("%s/%s", aScene[sCurScene].cSceneName, aScene[sCurScene].cWaveFileName);
+	const Common::String name = Common::String::format("%s/%s", _scenes[_curSceneIdx]._sceneName, _scenes[_curSceneIdx]._waveFilename);
 	debug("%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
 	if (!file->open(name)) {
@@ -223,53 +218,53 @@ void MarioGame::stopSound() {
 }
 
 void MarioGame::showScene() {
-	debug("%s : %d", __FUNCTION__, sCurScene);
-	sCurBitmap = aScene[sCurScene].sStartBitmap;
-	loadImage(aScene[sCurScene].cSceneName, aBitmaps[sCurBitmap].cBitmapFileName);
+	debug("%s : %d", __FUNCTION__, _curSceneIdx);
+	_curBitmapIdx = _scenes[_curSceneIdx]._startBitmap;
+	loadImage(_scenes[_curSceneIdx]._sceneName, _bitmaps[_curBitmapIdx]._filename);
 	_actions.push(Redraw);
-	bSetDuration = true;
+	_setDurationFl = true;
 	_actions.push(PlaySound);
 }
 
 void MarioGame::updateScene() {
-	debug("%s : %d", __FUNCTION__, sCurBitmap);
-	sCurBitmap++;
-	if (sCurBitmap >= aScene[sCurScene].sStartBitmap + aScene[sCurScene].sNoBitmaps) {
-		if (aScene[sCurScene].sNoDecisionChoices == 1) {
-			sCurChoice = 0;
+	debug("%s : %d", __FUNCTION__, _curBitmapIdx);
+	_curBitmapIdx++;
+	if (_curBitmapIdx >= _scenes[_curSceneIdx]._startBitmap + _scenes[_curSceneIdx]._bitmapNum) {
+		if (_scenes[_curSceneIdx]._decisionChoices == 1) {
+			_curChoice = 0;
 			_actions.push(ChangeScene);
 		} else {
-			bShowScore = true;
-			bLButtonDown = true;
-			bSetDuration = false;
-			loadImage(aScene[sCurScene].cSceneName, aScene[sCurScene].cDecisionBitmap);
+			_showScoreFl = true;
+			_leftButtonDownFl = true;
+			_setDurationFl = false;
+			loadImage(_scenes[_curSceneIdx]._sceneName, _scenes[_curSceneIdx]._decisionBitmap);
 		}
 	} else {
-		loadImage(aScene[sCurScene].cSceneName, aBitmaps[sCurBitmap].cBitmapFileName);
-		bSetDuration = true;
+		loadImage(_scenes[_curSceneIdx]._sceneName, _bitmaps[_curBitmapIdx]._filename);
+		_setDurationFl = true;
 	}
 }
 
 void MarioGame::changeScene() {
-	debug("%s : %d", __FUNCTION__, sCurChoice);
-	if (aScene[sCurScene].aChoice[sCurChoice].sGoTo == -1) {
-		sCurScene = sPrvScene;
-		sCurBitmap = 9999;
+	debug("%s : %d", __FUNCTION__, _curChoice);
+	if (_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx == -1) {
+		_curSceneIdx = _prvSceneIdx;
+		_curBitmapIdx = 9999;
 		_actions.push(UpdateScene);
 		_actions.push(Redraw);
-	} else if (aScene[sCurScene].aChoice[sCurChoice].sGoTo == 32767) {
-		bEnd = true;
+	} else if (_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx == 32767) {
+		_endGameFl = true;
 	} else {
-		if (aScene[sCurScene].sNoDecisionChoices > 1)
-			sPrvScene = sCurScene;
-		if (aScene[sCurScene].aChoice[sCurChoice].bSkipScene) {
-			sCurScene = sGetSceneNumb(aScene[sCurScene].aChoice[sCurChoice].sGoTo);
-			sCurBitmap = 9999;
+		if (_scenes[_curSceneIdx]._decisionChoices > 1)
+			_prvSceneIdx = _curSceneIdx;
+		if (_scenes[_curSceneIdx]._choices[_curChoice]._skipScene) {
+			_curSceneIdx = getSceneNumb(_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx);
+			_curBitmapIdx = 9999;
 			_actions.push(UpdateScene);
 			_actions.push(Redraw);
 			g_system->getTimerManager()->removeTimerProc(onTimer);
 		} else {
-			sCurScene = sGetSceneNumb(aScene[sCurScene].aChoice[sCurChoice].sGoTo);
+			_curSceneIdx = getSceneNumb(_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx);
 			_actions.push(ShowScene);
 		}
 	}
@@ -277,7 +272,7 @@ void MarioGame::changeScene() {
 
 void MarioGame::processTimer() {
 	debug("%s", __FUNCTION__);
-	if (!bEnd)
+	if (!_endGameFl)
 		_actions.push(Redraw);
 	//else
 	//	PostMessage(wnd, WM_DESTROY, 0, 0);
@@ -288,18 +283,18 @@ void MarioGame::onTimer(void *arg) {
 	((MarioGame*)arg)->processTimer();
 }
 
-void MarioGame::sInitTables() {
+void MarioGame::initTables() {
 	memset(&Game, 0, sizeof(Game));
-	memset(aScene, 0, sizeof(aScene));
-	memset(aBitmaps, 0, sizeof(aBitmaps));
+	memset(_scenes, 0, sizeof(_scenes));
+	memset(_bitmaps, 0, sizeof(_bitmaps));
 }
 
-void MarioGame::sReadTables(char *cFileName) {
+void MarioGame::readTables(char *cFileName) {
 	Common::File file;
 	if (!file.open(cFileName))
 		error("sReadTables(): Error reading BIN file");
 
-	sInitTables();
+	initTables();
 
 	Game.lTotScore = file.readSint32LE();
 	Game.sPrevScene = file.readSint16LE();
@@ -313,38 +308,38 @@ void MarioGame::sReadTables(char *cFileName) {
 	Game.bIsaDecision = file.readSint16LE();
 
 	for (int i = 0; i < kMaxScene; i++) {
-		aScene[i].sNoBitmaps = file.readSint16LE();
-		aScene[i].sStartBitmap = file.readSint16LE();
-		aScene[i].sNoDecisionChoices = file.readSint16LE();
-		file.read(aScene[i].cSceneName, kMaxName);
-		file.read(aScene[i].cWaveFileName, kMaxName);
-		file.read(aScene[i].cDecisionBitmap, kMaxName);
+		_scenes[i]._bitmapNum = file.readSint16LE();
+		_scenes[i]._startBitmap = file.readSint16LE();
+		_scenes[i]._decisionChoices = file.readSint16LE();
+		file.read(_scenes[i]._sceneName, kMaxName);
+		file.read(_scenes[i]._waveFilename, kMaxName);
+		file.read(_scenes[i]._decisionBitmap, kMaxName);
 		for (int j = 0; j < kMaxChoice; j++) {
-			aScene[i].aChoice[j].lPoints = file.readSint32LE();
-			aScene[i].aChoice[j].sGoTo = file.readSint16LE();
-			aScene[i].aChoice[j].bSkipScene = file.readSint16LE();
+			_scenes[i]._choices[j]._points = file.readSint32LE();
+			_scenes[i]._choices[j]._sceneIdx = file.readSint16LE();
+			_scenes[i]._choices[j]._skipScene = file.readSint16LE();
 			int left = file.readSint16LE();
 			int top = file.readSint16LE();
 			int right = file.readSint16LE();
 			int bottom = file.readSint16LE();
-			aScene[i].aChoice[j].aRegion = Common::Rect(left, top, right, bottom);
+			_scenes[i]._choices[j]._region = Common::Rect(left, top, right, bottom);
 		}
 	}
 
 	for (int i = 0; i < kMaxBitmaps; i++) {
-		aBitmaps[i].sBitmapDuration = file.readSint16LE();
-		file.read(aBitmaps[i].cBitmapFileName, kMaxName);
+		_bitmaps[i]._duration = file.readSint16LE();
+		file.read(_bitmaps[i]._filename, kMaxName);
 	}
 	file.close();
 }
 
-int MarioGame::sGetSceneNumb(int sNo) {
+int MarioGame::getSceneNumb(int sNo) {
 	debug("%s : %d", __FUNCTION__, sNo);
 	char cTestString[kMaxName];
 
 	sprintf(cTestString, "SC%02d", sNo);
 	for (int sCurScene = 0; sCurScene < Game.sTotScene; sCurScene++) {
-		if (!strcmp(cTestString, aScene[sCurScene].cSceneName))
+		if (!strcmp(cTestString, _scenes[sCurScene]._sceneName))
 			return sCurScene;
 	}
 	return 0;
