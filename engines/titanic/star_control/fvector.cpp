@@ -31,17 +31,21 @@ namespace Titanic {
 FVector::FVector(const DVector &src) : _x(src._x), _y(src._y), _z(src._z) {
 }
 
-void FVector::fn1(FVector *v) {
-	v->_x = (ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
-		ABS(_x - _z) < 0.00001) ? -_x : _x;
-	v->_y = _y;
-	v->_z = _z;
+FVector FVector::fn1() const {
+	return FVector(
+		(ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
+			ABS(_x - _z) < 0.00001) ? -_x : _x,
+		_z,
+		_y
+	);
 }
 
-void FVector::crossProduct(FVector &dest, const FVector &src) {
-	dest._x = (src._z * _y) - (_z * src._y);
-	dest._y = (src._x * _z) - (_x * src._z);
-	dest._z = (src._y * _x) - (_y * src._x);
+FVector FVector::crossProduct(const FVector &src) const {
+	return FVector(
+		src._z * _y - _z * src._y,
+		src._x * _z - _x * src._z,
+		src._y * _x - _y * src._x
+	);
 }
 
 double FVector::normalize() {
