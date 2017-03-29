@@ -289,15 +289,9 @@ void MarioGame::readTables(Common::String fileName) {
 	initTables();
 
 	Game.lTotScore = file.readSint32LE();
-	Game.sPrevScene = file.readSint16LE();
-	Game.sCurrScene = file.readSint16LE();
-	Game.sCurrSceneStep = file.readSint16LE();
-	Game.sLkhdScene = file.readSint16LE();
-	Game.sLkhdBitmapNo = file.readSint16LE();
+	file.skip(10);
 	Game.sTotScene = file.readSint16LE();
-	Game.sTotBitmap = file.readSint16LE();
-	Game.bEightBit = file.readSint16LE();
-	Game.bIsaDecision = file.readSint16LE();
+	file.skip(6);
 
 	char buf[kMaxName];
 	for (int i = 0; i < kMaxScene; i++) {

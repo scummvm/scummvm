@@ -85,15 +85,7 @@ private:
 
 	struct {
 		long lTotScore;
-		int	 sPrevScene;
-		int	 sCurrScene;
-		int	 sCurrSceneStep;
-		int	 sLkhdScene;
-		int	 sLkhdBitmapNo;
 		int	 sTotScene;
-		int	 sTotBitmap;
-		int	 bEightBit;
-		int	 bIsaDecision;
 	} Game;
 
 	Image::ImageDecoder *_image;
