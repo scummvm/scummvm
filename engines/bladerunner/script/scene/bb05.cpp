@@ -72,10 +72,10 @@ void SceneScriptBB05::SceneLoaded() {
 	Clickable_Object("BOX06");
 	Unclickable_Object("BOX06");
 	Unclickable_Object("BOX14");
-	if (Actor_Query_Goal_Number(56) == 200) {
-		Actor_Set_Goal_Number(58, 299);
-		Actor_Put_In_Set(58, 97);
-		Actor_Set_At_Waypoint(58, 39, 0);
+	if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
+		Actor_Set_Goal_Number(kActorGeneralDoll, 299);
+		Actor_Put_In_Set(kActorGeneralDoll, 97);
+		Actor_Set_At_Waypoint(kActorGeneralDoll, 39, 0);
 	}
 }
 
@@ -97,7 +97,7 @@ bool SceneScriptBB05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -212.0f, -60.31f, 131.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -212.0f, -60.31f, 131.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(286);
@@ -106,7 +106,7 @@ bool SceneScriptBB05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 95.0f, -60.31f, 331.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, -60.31f, 331.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(297);
@@ -115,7 +115,7 @@ bool SceneScriptBB05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 271.0f, -60.31f, 203.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 271.0f, -60.31f, 203.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(299);
@@ -124,7 +124,7 @@ bool SceneScriptBB05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 3) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 151.0f, -60.34f, -108.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 151.0f, -60.34f, -108.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(301);
@@ -147,60 +147,60 @@ void SceneScriptBB05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB05::PlayerWalkedIn() {
 	if (Game_Flag_Query(298)) {
-		Loop_Actor_Walk_To_XYZ(0, 95.0f, -60.31f, 303.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, -60.31f, 303.0f, 0, 0, false, 0);
 		Game_Flag_Reset(298);
 	} else if (Game_Flag_Query(300)) {
-		Loop_Actor_Walk_To_XYZ(0, 231.0f, -60.31f, 203.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 231.0f, -60.31f, 203.0f, 0, 0, false, 0);
 		Game_Flag_Reset(300);
 	} else if (Game_Flag_Query(302)) {
-		Loop_Actor_Walk_To_XYZ(0, 111.0f, -60.31f, -24.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 111.0f, -60.31f, -24.0f, 0, 0, false, 0);
 		Game_Flag_Reset(302);
 	} else {
-		Loop_Actor_Walk_To_XYZ(0, -76.0f, -60.31f, 131.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, -60.31f, 131.0f, 0, 0, false, 0);
 		Game_Flag_Reset(285);
 	}
-	if (Actor_Query_Goal_Number(56) == 200) {
-		Actor_Face_Actor(56, 0, true);
-		Actor_Face_Actor(0, 56, true);
-		Actor_Says(56, 120, 13);
-		Actor_Says(0, 7030, 15);
-		Actor_Says(56, 130, 17);
-		Actor_Says(56, 140, 16);
-		Actor_Says(56, 150, 14);
-		Actor_Says(56, 160, 15);
-		Actor_Says(0, 7035, 14);
-		Actor_Says(56, 170, 12);
-		Actor_Says(0, 7040, 14);
-		Actor_Says(56, 180, 16);
-		Actor_Says(0, 7045, 14);
+	if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
+		Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);
+		Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
+		Actor_Says(kActorSebastian, 120, 13);
+		Actor_Says(kActorMcCoy, 7030, 15);
+		Actor_Says(kActorSebastian, 130, 17);
+		Actor_Says(kActorSebastian, 140, 16);
+		Actor_Says(kActorSebastian, 150, 14);
+		Actor_Says(kActorSebastian, 160, 15);
+		Actor_Says(kActorMcCoy, 7035, 14);
+		Actor_Says(kActorSebastian, 170, 12);
+		Actor_Says(kActorMcCoy, 7040, 14);
+		Actor_Says(kActorSebastian, 180, 16);
+		Actor_Says(kActorMcCoy, 7045, 14);
 		if (Game_Flag_Query(399)) {
-			Actor_Says(56, 190, 15);
-			Actor_Says(0, 7050, 17);
-			Actor_Says(56, 200, 16);
-			Actor_Says_With_Pause(56, 210, 1.5f, 14);
-			Actor_Says(0, 7055, 15);
+			Actor_Says(kActorSebastian, 190, 15);
+			Actor_Says(kActorMcCoy, 7050, 17);
+			Actor_Says(kActorSebastian, 200, 16);
+			Actor_Says_With_Pause(kActorSebastian, 210, 1.5f, 14);
+			Actor_Says(kActorMcCoy, 7055, 15);
 		} else {
-			Actor_Put_In_Set(58, 22);
-			Actor_Set_At_Waypoint(58, 134, 0);
-			Loop_Actor_Walk_To_Waypoint(58, 135, 0, 0, false);
-			Actor_Says(58, 0, 3);
-			Actor_Face_Actor(0, 58, true);
-			Actor_Face_Actor(56, 58, true);
-			Actor_Says(56, 220, 13);
-			Loop_Actor_Walk_To_Waypoint(58, 134, 0, 0, false);
-			Actor_Face_Actor(56, 0, true);
-			Actor_Face_Actor(0, 56, true);
-			Actor_Says(56, 230, 15);
-			Actor_Says(0, 7060, 17);
-			Actor_Says(56, 240, 12);
+			Actor_Put_In_Set(kActorGeneralDoll, 22);
+			Actor_Set_At_Waypoint(kActorGeneralDoll, 134, 0);
+			Loop_Actor_Walk_To_Waypoint(kActorGeneralDoll, 135, 0, 0, false);
+			Actor_Says(kActorGeneralDoll, 0, 3);
+			Actor_Face_Actor(kActorMcCoy, kActorGeneralDoll, true);
+			Actor_Face_Actor(kActorSebastian, kActorGeneralDoll, true);
+			Actor_Says(kActorSebastian, 220, 13);
+			Loop_Actor_Walk_To_Waypoint(kActorGeneralDoll, 134, 0, 0, false);
+			Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);
+			Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
+			Actor_Says(kActorSebastian, 230, 15);
+			Actor_Says(kActorMcCoy, 7060, 17);
+			Actor_Says(kActorSebastian, 240, 12);
 		}
-		Actor_Says(0, 7065, 16);
-		Actor_Says(56, 250, 16);
-		Actor_Says(0, 7070, 18);
-		Actor_Set_Goal_Number(56, 205);
-		Actor_Set_Goal_Number(58, 201);
-		Actor_Set_Goal_Number(54, 101);
-		Actor_Set_Goal_Number(58, 200);
+		Actor_Says(kActorMcCoy, 7065, 16);
+		Actor_Says(kActorSebastian, 250, 16);
+		Actor_Says(kActorMcCoy, 7070, 18);
+		Actor_Set_Goal_Number(kActorSebastian, 205);
+		Actor_Set_Goal_Number(kActorGeneralDoll, 201);
+		Actor_Set_Goal_Number(kActorBryant, 101);
+		Actor_Set_Goal_Number(kActorGeneralDoll, 200);
 	}
 }
 

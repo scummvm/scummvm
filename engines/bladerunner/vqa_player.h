@@ -35,6 +35,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class View;
 class Lights;
+class ZBuffer;
 
 //TODO: split this into two components as it is in original game: universal vqa player, blade runner player functionality
 
@@ -99,7 +100,7 @@ public:
 
 	int  update();
 	const Graphics::Surface *getSurface() const;
-	const uint16 *getZBuffer() const;
+	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateLights(Lights *lights);
 

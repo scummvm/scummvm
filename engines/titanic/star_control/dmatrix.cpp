@@ -164,12 +164,13 @@ DMatrix DMatrix::fn1() const {
 	m._row2._z = -((_row1._x * _row2._z - _row1._z * _row2._x) * val9);
 	m._row3._z = (_row1._x * _row2._y - _row1._y * _row2._x) * val9;
 
-	m._row4._x = -(m._row1._x * _row4._x + _row4._z * m._row2._x
-		+ _row4._y * m._row3._x);
-	m._row4._z = -(_row4._y * m._row3._y + _row4._z * m._row2._y
+	m._row4._x = -(m._row1._x * _row4._x + _row4._y * m._row2._x
+		+ _row4._z * m._row3._x);
+	m._row4._y = -(_row4._z * m._row3._y + _row4._y * m._row2._y
 		+ _row4._x * m._row1._y);
-	m._row4._y = -(_row4._y * m._row3._z + _row4._x * m._row1._z
-		+ _row4._z * m._row2._z);
+	m._row4._z = -(_row4._z * m._row3._z + _row4._x * m._row1._z
+		+ _row4._y * m._row2._z);
+
 	return m;
 }
 
@@ -232,11 +233,11 @@ DMatrix DMatrix::fn4(const DMatrix &m) {
 		+ m._row1._y * _row3._x;
 	dm._row3._z = m._row2._z * _row3._y + m._row3._z * _row3._z
 		+ m._row1._z * _row3._x;
-	dm._row4._x = m._row1._x * dm._row4._x + _row4._y * m._row2._x
+	dm._row4._x = m._row1._x * _row4._x + _row4._y * m._row2._x
 		+ _row4._z * m._row3._x + m._row4._x;
-	dm._row4._z = _row4._z * m._row3._y + _row4._y * m._row2._y
-		+ dm._row4._x * m._row1._y + m._row4._y;
-	dm._row4._z = _row4._y * m._row2._z + dm._row4._x * m._row1._z
+	dm._row4._y = _row4._z * m._row3._y + _row4._y * m._row2._y
+		+ _row4._x * m._row1._y + m._row4._y;
+	dm._row4._z = _row4._y * m._row2._z + _row4._x * m._row1._z
 		+ _row4._z * m._row3._z + m._row4._z;
 
 	return dest;

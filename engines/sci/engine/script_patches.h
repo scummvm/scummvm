@@ -97,14 +97,14 @@ public:
 	void calculateMagicDWordAndVerify(const char *signatureDescription, const uint16 *signatureData, bool magicDWordIncluded, uint32 &calculatedMagicDWord, int &calculatedMagicDWordOffset);
 
 	// Called when a script is loaded to check for signature matches and apply patches in such cases
-	void processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
+	void processScript(uint16 scriptNr, SciSpan<byte> scriptData);
 
 	// Verifies, if a given signature matches the given script data (pointed to by additional byte offset)
-	bool verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const byte *scriptData, const uint32 scriptSize);
+	bool verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const SciSpan<const byte> &scriptData);
 
 	// searches for a given signature inside script data
 	// returns -1 in case it was not found or an offset to the matching data
-	int32 findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const SciSpan<const byte> &scriptData);
 
 private:
 	// Initializes a patch table and creates run time information for it (for enabling/disabling), also calculates magic DWORD)
@@ -115,10 +115,10 @@ private:
 
 	// Searches for a given signature entry inside script data
 	// returns -1 in case it was not found or an offset to the matching data
-	int32 findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const SciSpan<const byte> &scriptData);
 
 	// Applies a patch to a given script + offset (overwrites parts)
-	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+	void applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<byte> scriptData, int32 signatureOffset);
 
 	Selector *_selectorIdTable;
 	SciScriptPatcherRuntimeEntry *_runtimeTable;

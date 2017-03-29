@@ -53,7 +53,7 @@ void SceneScriptBB09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(308, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(309, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(310, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Actor_Set_Targetable(8, true);
+	Actor_Set_Targetable(kActorSadik, true);
 }
 
 void SceneScriptBB09::SceneLoaded() {
@@ -80,8 +80,8 @@ bool SceneScriptBB09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 454.56f, -9.0f, 190.31f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(0, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, 1, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(216);
@@ -91,7 +91,7 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(219);

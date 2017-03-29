@@ -43,7 +43,7 @@ void SceneScriptPS01::InitializeScene() {
 			Scene_Loop_Set_Default(5);
 		}
 	} else {
-		Actor_Set_Invisible(0, true);
+		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(273);
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
@@ -78,15 +78,15 @@ bool SceneScriptPS01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 1920.0f, 16581.0f, -2653.0f, 12, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(718);
 			Set_Enter(62, 66);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 1877.9f, 16592.0f, -2975.0f, 0, 1, false, 0)) {
-			Actor_Set_At_XYZ(0, 1872.0f, 16592.0f, -2975.0f, 870);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1877.9f, 16592.0f, -2975.0f, 0, 1, false, 0)) {
+			Actor_Set_At_XYZ(kActorMcCoy, 1872.0f, 16592.0f, -2975.0f, 870);
 			Game_Flag_Reset(176);
 			Game_Flag_Reset(182);
 			Game_Flag_Reset(179);
@@ -161,7 +161,7 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			default:
-				Actor_Face_Heading(0, 870, false);
+				Actor_Face_Heading(kActorMcCoy, 870, false);
 				Game_Flag_Set(178);
 				Game_Flag_Set(273);
 				Player_Loses_Control();
@@ -203,23 +203,23 @@ void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 	if (!Game_Flag_Query(273)) {
 		switch (frame) {
 		case 196:
-			Actor_Face_Heading(0, 870, false);
-			Actor_Set_Frame_Rate_FPS(0, -1);
-			Actor_Change_Animation_Mode(0, 41);
+			Actor_Face_Heading(kActorMcCoy, 870, false);
+			Actor_Set_Frame_Rate_FPS(kActorMcCoy, -1);
+			Actor_Change_Animation_Mode(kActorMcCoy, 41);
 			break;
 		case 220:
-			Actor_Set_Frame_Rate_FPS(0, 0);
+			Actor_Set_Frame_Rate_FPS(kActorMcCoy, 0);
 			break;
 		case 240:
-			Actor_Set_Frame_Rate_FPS(0, -2);
+			Actor_Set_Frame_Rate_FPS(kActorMcCoy, -2);
 			break;
 		}
 		//return true;
 		return;
 	}
 	if (frame == 75) {
-		Actor_Face_Heading(0, 870, false);
-		Actor_Change_Animation_Mode(0, 42);
+		Actor_Face_Heading(kActorMcCoy, 870, false);
+		Actor_Change_Animation_Mode(kActorMcCoy, 42);
 		//return true;
 		return;
 	}
@@ -238,12 +238,12 @@ void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 		return;
 	}
 	if (frame == 181) {
-		Actor_Face_Heading(0, 870, false);
-		Actor_Change_Animation_Mode(0, 42);
+		Actor_Face_Heading(kActorMcCoy, 870, false);
+		Actor_Change_Animation_Mode(kActorMcCoy, 42);
 	} else if (frame == 182) {
-		Actor_Set_Frame_Rate_FPS(0, 0);
+		Actor_Set_Frame_Rate_FPS(kActorMcCoy, 0);
 	} else if (frame == 195) {
-		Actor_Set_Frame_Rate_FPS(0, -2);
+		Actor_Set_Frame_Rate_FPS(kActorMcCoy, -2);
 	}
 	//return true;
 	return;
@@ -254,14 +254,14 @@ void SceneScriptPS01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS01::PlayerWalkedIn() {
 	if (Game_Flag_Query(130)) {
-		Actor_Set_At_XYZ(0, 1920.0f, 16581.0f, -2653.0f, 150);
+		Actor_Set_At_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 150);
 		Game_Flag_Reset(130);
 	}
 	//return false;
 }
 
 void SceneScriptPS01::PlayerWalkedOut() {
-	Actor_Set_Invisible(0, false);
+	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (!Game_Flag_Query(718) && Global_Variable_Query(1) == 1) {

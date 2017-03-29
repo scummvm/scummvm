@@ -66,12 +66,12 @@ void SceneScriptNR03::InitializeScene() {
 			Scene_Loop_Set_Default(0);
 		}
 	} else {
-		Actor_Set_Goal_Number(4, 201);
+		Actor_Set_Goal_Number(kActorGuzza, 201);
 		Scene_Loop_Start_Special(0, 2, 0);
 		Scene_Loop_Set_Default(0);
 	}
-	if (Actor_Query_Goal_Number(25) > 209 && Actor_Query_Goal_Number(25) < 215) {
-		Actor_Set_Goal_Number(25, 215);
+	if (Actor_Query_Goal_Number(kActorHanoi) > 209 && Actor_Query_Goal_Number(kActorHanoi) < 215) {
+		Actor_Set_Goal_Number(kActorHanoi, 215);
 	}
 }
 
@@ -93,29 +93,29 @@ bool SceneScriptNR03::MouseClick(int x, int y) {
 
 bool SceneScriptNR03::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("PG3", objectName)) {
-		Actor_Face_Object(0, "PG3", true);
-		Actor_Voice_Over(3770, 99);
+		Actor_Face_Object(kActorMcCoy, "PG3", true);
+		Actor_Voice_Over(3770, kActorVoiceOver);
 		return true;
 	}
 	return false;
 }
 
 bool SceneScriptNR03::ClickedOnActor(int actorId) {
-	if (actorId == 25 && !Loop_Actor_Walk_To_Actor(0, 25, 48, 1, false)) {
-		AI_Movement_Track_Pause(25);
-		Actor_Face_Actor(0, 25, true);
+	if (actorId == 25 && !Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorHanoi, 48, 1, false)) {
+		AI_Movement_Track_Pause(kActorHanoi);
+		Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 		if (Game_Flag_Query(611)) {
-			Actor_Says(0, 3350, 16);
-			Actor_Says(25, 50, 17);
+			Actor_Says(kActorMcCoy, 3350, 16);
+			Actor_Says(kActorHanoi, 50, 17);
 		} else {
 			Game_Flag_Set(611);
-			Actor_Says(0, 3340, 3);
-			Actor_Face_Actor(25, 0, true);
-			Actor_Says(25, 30, 13);
-			Actor_Says(0, 3345, 14);
-			Actor_Says(25, 40, 14);
+			Actor_Says(kActorMcCoy, 3340, 3);
+			Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
+			Actor_Says(kActorHanoi, 30, 13);
+			Actor_Says(kActorMcCoy, 3345, 14);
+			Actor_Says(kActorHanoi, 40, 14);
 		}
-		AI_Movement_Track_Unpause(25);
+		AI_Movement_Track_Unpause(kActorHanoi);
 		return true;
 	}
 	return false;
@@ -127,7 +127,7 @@ bool SceneScriptNR03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 410.0f, -70.19f, -715.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 410.0f, -70.19f, -715.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(534);
@@ -136,20 +136,20 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -161.0f, -70.19f, -1139.0f, 0, 1, false, 0)) {
-			if (Actor_Query_Which_Set_In(25) == 55) {
-				AI_Movement_Track_Pause(25);
-				Actor_Face_Actor(25, 0, true);
-				Actor_Face_Actor(0, 25, true);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -161.0f, -70.19f, -1139.0f, 0, 1, false, 0)) {
+			if (Actor_Query_Which_Set_In(kActorHanoi) == 55) {
+				AI_Movement_Track_Pause(kActorHanoi);
+				Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
+				Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 				int v3 = Global_Variable_Query(44);
 				if (v3 == 0) {
-					Actor_Says(25, 50, 13);
-					AI_Movement_Track_Unpause(25);
+					Actor_Says(kActorHanoi, 50, 13);
+					AI_Movement_Track_Unpause(kActorHanoi);
 				} else if (v3 == 1) {
-					Actor_Says(25, 210, 15);
-					AI_Movement_Track_Unpause(25);
+					Actor_Says(kActorHanoi, 210, 15);
+					AI_Movement_Track_Unpause(kActorHanoi);
 				} else if (v3 == 2) {
-					Actor_Set_Goal_Number(25, 220);
+					Actor_Set_Goal_Number(kActorHanoi, 220);
 				}
 			}
 			Global_Variable_Increment(44, 1);
@@ -163,13 +163,13 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -151.0f, -70.19f, -476.0f, 12, 1, false, 0)) {
-			if (Actor_Query_Goal_Number(25) == 213 || Actor_Query_Which_Set_In(25) != 55) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.0f, -70.19f, -476.0f, 12, 1, false, 0)) {
+			if (Actor_Query_Goal_Number(kActorHanoi) == 213 || Actor_Query_Which_Set_In(kActorHanoi) != 55) {
 				Player_Loses_Control();
 				Player_Set_Combat_Mode(false);
-				Loop_Actor_Walk_To_XYZ(0, -229.0f, -70.19f, -469.0f, 0, 0, false, 1);
-				Actor_Face_Heading(0, 656, false);
-				Actor_Change_Animation_Mode(0, 53);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -229.0f, -70.19f, -469.0f, 0, 0, false, 1);
+				Actor_Face_Heading(kActorMcCoy, 656, false);
+				Actor_Change_Animation_Mode(kActorMcCoy, 53);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(536);
@@ -177,26 +177,26 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 				Scene_Loop_Start_Special(1, 2, 0);
 				return true;
 			}
-			Actor_Face_Heading(0, 680, false);
-			Actor_Change_Animation_Mode(0, 12);
+			Actor_Face_Heading(kActorMcCoy, 680, false);
+			Actor_Change_Animation_Mode(kActorMcCoy, 12);
 			Delay(150);
-			Actor_Change_Animation_Mode(0, 0);
-			AI_Movement_Track_Pause(25);
-			Actor_Face_Actor(25, 0, true);
+			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			AI_Movement_Track_Pause(kActorHanoi);
+			Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
 
 			int v1 = Global_Variable_Query(43);
 			if (v1 == 0) {
-				Actor_Says(25, 0, 15);
-				Actor_Face_Actor(0, 25, true);
-				Actor_Says(0, 3335, 13);
-				Actor_Says(25, 10, 16);
-				AI_Movement_Track_Unpause(25);
+				Actor_Says(kActorHanoi, 0, 15);
+				Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
+				Actor_Says(kActorMcCoy, 3335, 13);
+				Actor_Says(kActorHanoi, 10, 16);
+				AI_Movement_Track_Unpause(kActorHanoi);
 			} else if (v1 == 1) {
-				Actor_Face_Actor(0, 25, true);
-				Actor_Says(25, 210, 12);
-				AI_Movement_Track_Unpause(25);
+				Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
+				Actor_Says(kActorHanoi, 210, 12);
+				AI_Movement_Track_Unpause(kActorHanoi);
 			} else if (v1 == 2) {
-				Actor_Set_Goal_Number(25, 220);
+				Actor_Set_Goal_Number(kActorHanoi, 220);
 			}
 			Global_Variable_Increment(43, 1);
 		}
@@ -207,17 +207,17 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 
 bool SceneScriptNR03::ClickedOn2DRegion(int region) {
 	if (region == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 79.2f, -70.19f, -984.0f, 12, 1, false, 0)) {
-			Actor_Face_Actor(0, 47, true);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 79.2f, -70.19f, -984.0f, 12, 1, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorHysteriaPatron1, true);
 			int v1 = Random_Query(0, 4);
 			if (v1 == 0) {
-				Actor_Says(0, 1055, 3);
+				Actor_Says(kActorMcCoy, 1055, 3);
 			} else if (v1 == 1) {
-				Actor_Says(0, 8590, 3);
+				Actor_Says(kActorMcCoy, 8590, 3);
 			} else if (v1 == 2) {
-				Actor_Says(0, 8930, 3);
+				Actor_Says(kActorMcCoy, 8930, 3);
 			} else if (v1 == 3) {
-				Actor_Says(0, 7465, 3);
+				Actor_Says(kActorMcCoy, 7465, 3);
 			}
 		}
 		return true;
@@ -242,10 +242,10 @@ void SceneScriptNR03::SceneFrameAdvanced(int frame) {
 			//return false;
 			return;
 		}
-		if (Actor_Query_Goal_Number(4) == 201) {
-			Actor_Set_Goal_Number(4, 200);
+		if (Actor_Query_Goal_Number(kActorGuzza) == 201) {
+			Actor_Set_Goal_Number(kActorGuzza, 200);
 		} else if (!Game_Flag_Query(536)) {
-			Actor_Set_Goal_Number(0, 200);
+			Actor_Set_Goal_Number(kActorMcCoy, 200);
 			Player_Gains_Control();
 		}
 	}
@@ -260,19 +260,19 @@ void SceneScriptNR03::PlayerWalkedIn() {
 	Player_Set_Combat_Mode(false);
 	if (Game_Flag_Query(573)) {
 		if (Game_Flag_Query(535) ) {
-			Loop_Actor_Walk_To_XYZ(0, 302.0f, -70.19f, -715.0f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 302.0f, -70.19f, -715.0f, 0, 0, false, 0);
 			Game_Flag_Reset(535);
 		}
 	} else {
 		Game_Flag_Set(573);
-		Async_Actor_Walk_To_XYZ(0, 206.0f, -70.19f, -643.0f, 0, false);
+		Async_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, -70.19f, -643.0f, 0, false);
 		Game_Flag_Reset(535);
-		Actor_Voice_Over(1490, 99);
-		Actor_Voice_Over(1510, 99);
-		Actor_Voice_Over(1520, 99);
+		Actor_Voice_Over(1490, kActorVoiceOver);
+		Actor_Voice_Over(1510, kActorVoiceOver);
+		Actor_Voice_Over(1520, kActorVoiceOver);
 	}
 	if (Player_Query_Combat_Mode()) {
-		Actor_Set_Goal_Number(25, 220);
+		Actor_Set_Goal_Number(kActorHanoi, 220);
 	}
 	//return false;
 }
@@ -295,7 +295,7 @@ void SceneScriptNR03::sub_40259C(int frame) {
 
 	angle = cos((frame - 70) * (M_PI / 40.0f)) * M_PI_2;
 	invertedAngle = M_PI - angle;
-	if (!Game_Flag_Query(536) && Actor_Query_Goal_Number(4) != 201) {
+	if (!Game_Flag_Query(536) && Actor_Query_Goal_Number(kActorGuzza) != 201) {
 		angle = angle + M_PI;
 		invertedAngle = invertedAngle + M_PI;
 	}
@@ -304,7 +304,7 @@ void SceneScriptNR03::sub_40259C(int frame) {
 	float x = 36.49f * s - -60.21f * c + -265.49f;
 	float z = -60.21f * s + 36.49f * c + -408.79f;
 
-	if (Actor_Query_Goal_Number(4) == 201) {
+	if (Actor_Query_Goal_Number(kActorGuzza) == 201) {
 		facing = angle * (512.0f / M_PI);
 		facing = facing + 144;
 		if (facing < 0) {
@@ -313,7 +313,7 @@ void SceneScriptNR03::sub_40259C(int frame) {
 		if (facing > 1023) {
 			facing -= 1024;
 		}
-		Actor_Set_At_XYZ(4, x, -70.19f, z, facing);
+		Actor_Set_At_XYZ(kActorGuzza, x, -70.19f, z, facing);
 	} else {
 		facing = angle * (512.0f / M_PI);
 		facing = facing + 400;
@@ -324,7 +324,7 @@ void SceneScriptNR03::sub_40259C(int frame) {
 			facing -= 1024;
 		}
 
-		Actor_Set_At_XYZ(0, x, -70.19f, z, facing);
+		Actor_Set_At_XYZ(kActorMcCoy, x, -70.19f, z, facing);
 	}
 }
 

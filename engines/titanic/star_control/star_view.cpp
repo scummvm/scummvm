@@ -31,7 +31,7 @@
 namespace Titanic {
 
 CStarView::CStarView() : _sub12((const CStar20Data *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _field118(0),
+		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
 	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
@@ -43,8 +43,8 @@ void CStarView::load(SimpleFile *file, int param) {
 	if (!param) {
 		_sub12.load(file, param);
 
-		_field118 = file->readNumber();
-		if (_field118)
+		_hasReference = file->readNumber();
+		if (_hasReference)
 			_sub13.load(file, 0);
 
 		_field218 = file->readNumber();
@@ -55,8 +55,8 @@ void CStarView::load(SimpleFile *file, int param) {
 void CStarView::save(SimpleFile *file, int indent) {
 	_sub12.save(file, indent);
 
-	file->writeNumberLine(_field118, indent);
-	if (_field118)
+	file->writeNumberLine(_hasReference, indent);
+	if (_hasReference)
 		_sub13.save(file, indent);
 
 	file->writeNumberLine(_field218, indent);
@@ -69,7 +69,7 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 }
 
 void CStarView::reset() {
-	if (!_field118) {
+	if (_hasReference) {
 		CStarControlSub12 sub12(&_sub13);
 		fn18(&sub12);
 	}
@@ -369,7 +369,7 @@ void CStarView::setHasReference() {
 	_field218 = false;
 	_sub13.fn13(MODE_PHOTO, 0.0);
 	_sub13.fn13(MODE_STARFIELD, 0.0);
-	_field118 = true;
+	_hasReference = true;
 	reset();
 	_field218 = true;
 }
@@ -424,15 +424,16 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 
 		if (_videoSurface2) {
 			int oldVal = _starField->get54();
-			_starField->set4(false);
+			bool old4 = _starField->set4(false);
 
 			_videoSurface2->clear();
 			_videoSurface2->lock();
 			_starField->render(_videoSurface2, sub12);
-			_videoSurface2->unlock();
 
+			_starField->set4(old4);
 			_starField->set54(oldVal);
 			_starField->fn6(_videoSurface2, sub12);
+			_videoSurface2->unlock();
 		}
 	}
 }

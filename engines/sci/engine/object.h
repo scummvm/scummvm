@@ -59,9 +59,11 @@ enum infoSelectorFlags {
 };
 
 enum ObjectOffsets {
-	kOffsetLocalVariables = -6,
-	kOffsetFunctionArea = -4,
-	kOffsetSelectorCounter = -2,
+	kOffsetHeaderSize = 6,
+	kOffsetHeaderLocalVariables = 0,
+	kOffsetHeaderFunctionArea = 2,
+	kOffsetHeaderSelectorCounter = 4,
+
 	kOffsetSelectorSegment = 0,
 	kOffsetInfoSelectorSci0 = 4,
 	kOffsetNamePointerSci0 = 6,
@@ -74,21 +76,48 @@ public:
 	Object() {
 		_offset = getSciVersion() < SCI_VERSION_1_1 ? 0 : 5;
 		_flags = 0;
-		_baseObj = 0;
-		_baseVars = 0;
+		_baseObj.clear();
+		_baseVars.clear();
 		_methodCount = 0;
-		_propertyOffsetsSci3 = 0;
+		_propertyOffsetsSci3 = nullptr;
 	}
 
 	~Object() {
 		if (getSciVersion() == SCI_VERSION_3) {
-			// FIXME: memory leak! Commented out because of reported heap
-			// corruption by MSVC (e.g. in LSL7, when it starts)
-			//free(_baseVars);
-			//_baseVars = 0;
-			//free(_propertyOffsetsSci3);
-			//_propertyOffsetsSci3 = 0;
+			// TODO: This is super gross
+			free(const_cast<uint16 *>(_baseVars.data()));
+			_baseVars.clear();
+			free(_propertyOffsetsSci3);
+			_propertyOffsetsSci3 = nullptr;
 		}
+	}
+
+	Object &operator=(const Object &other) {
+		_baseObj = other._baseObj;
+		_baseMethod = other._baseMethod;
+		_variables = other._variables;
+		_methodCount = other._methodCount;
+		_flags = other._flags;
+		_offset = other._offset;
+		_pos = other._pos;
+
+		if (getSciVersion() == SCI_VERSION_3) {
+			uint16 *baseVars = (uint16 *)malloc(other._baseVars.byteSize());
+			other._baseVars.unsafeCopyDataTo(baseVars);
+			_baseVars = SciSpan<const uint16>(baseVars, other._baseVars.size());
+
+			_propertyOffsetsSci3 = (uint32 *)malloc(sizeof(uint32) * _variables.size());
+			memcpy(_propertyOffsetsSci3, other._propertyOffsetsSci3, sizeof(uint32) * _variables.size());
+
+			_superClassPosSci3 = other._superClassPosSci3;
+			_speciesSelectorSci3 = other._speciesSelectorSci3;
+			_infoSelectorSci3 = other._infoSelectorSci3;
+			_mustSetViewVisible = other._mustSetViewVisible;
+		} else {
+			_baseVars = other._baseVars;
+		}
+
+		return *this;
 	}
 
 	reg_t getSpeciesSelector() const {
@@ -181,7 +210,7 @@ public:
 		if (getSciVersion() < SCI_VERSION_3)
 			return _variables[4];
 		else	// SCI3
-			return make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 6));
+			return make_reg(0, _baseObj.getUint16SEAt(6));
 	}
 
 	void setClassScriptSelector(reg_t value) {
@@ -192,7 +221,7 @@ public:
 			error("setClassScriptSelector called for SCI3");
 	}
 
-	Selector getVarSelector(uint16 i) const { return READ_SCI11ENDIAN_UINT16(_baseVars + i); }
+	Selector getVarSelector(uint16 i) const { return _baseVars.getUint16SEAt(i); }
 
 	reg_t getFunction(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
@@ -236,7 +265,7 @@ public:
 
 	uint getVarCount() const { return _variables.size(); }
 
-	void init(byte *buf, reg_t obj_pos, bool initVariables = true);
+	void init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariables = true);
 
 	reg_t getVariable(uint var) const { return _variables[var]; }
 	reg_t &getVariableRef(uint var) { return _variables[var]; }
@@ -247,9 +276,9 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	void cloneFromObject(const Object *obj) {
-		_baseObj = obj ? obj->_baseObj : NULL;
+		_baseObj = obj ? obj->_baseObj : SciSpan<const byte>();
 		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint16>();
-		_baseVars = obj ? obj->_baseVars : NULL;
+		_baseVars = obj ? obj->_baseVars : SciSpan<const uint16>();
 	}
 
 	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
@@ -260,17 +289,17 @@ public:
 	void initSpecies(SegManager *segMan, reg_t addr);
 	void initSuperClass(SegManager *segMan, reg_t addr);
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
-	void syncBaseObject(const byte *ptr) { _baseObj = ptr; }
+	void syncBaseObject(const SciSpan<const byte> &ptr) { _baseObj = ptr; }
 
 	bool mustSetViewVisibleSci3(int selector) const { return _mustSetViewVisible[selector/32]; }
 
 private:
-	void initSelectorsSci3(const byte *buf);
+	void initSelectorsSci3(const SciSpan<const byte> &buf);
 
-	const byte *_baseObj; /**< base + object offset within base */
-	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
+	SciSpan<const byte> _baseObj; /**< base + object offset within base */
+	SciSpan<const uint16> _baseVars; /**< Pointer to the varselector area for this object */
 	Common::Array<uint16> _baseMethod; /**< Pointer to the method selector area for this object */
-	uint32 *_propertyOffsetsSci3; /**< This is used to enable relocation of property valuesa in SCI3 */
+	uint32 *_propertyOffsetsSci3; /**< This is used to enable relocation of property values in SCI3 */
 
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;

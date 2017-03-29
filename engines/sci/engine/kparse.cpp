@@ -188,7 +188,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();
 
 		if (numSynonyms) {
-			const byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
+			const SciSpan<const byte> &synonyms = s->_segMan->getScript(seg)->getSynonyms();
 
 			if (synonyms) {
 				debugC(kDebugLevelParser, "Setting %d synonyms for script.%d",
@@ -202,8 +202,8 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 				} else
 					for (int i = 0; i < numSynonyms; i++) {
 						synonym_t tmp;
-						tmp.replaceant = READ_LE_UINT16(synonyms + i * 4);
-						tmp.replacement = READ_LE_UINT16(synonyms + i * 4 + 2);
+						tmp.replaceant = synonyms.getUint16LEAt(i * 4);
+						tmp.replacement = synonyms.getUint16LEAt(i * 4 + 2);
 						voc->addSynonym(tmp);
 					}
 			} else

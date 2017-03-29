@@ -610,7 +610,7 @@ int MidiDriver_AmigaMac::open() {
 			return Common::kUnknownError;
 		}
 
-		Common::MemoryReadStream stream(resource->data, resource->size);
+		Common::MemoryReadStream stream(resource->toStream());
 
 		if (_isSci1) {
 			if (!loadInstrumentsSCI1(stream))

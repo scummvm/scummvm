@@ -69,7 +69,7 @@ public:
 	bool addNonReplicantClue(int clueId);
 	bool addOtherClue(int clueId);
 	bool addIdentityClue(int clueId);
-	bool addPhotoClue(int a1, int a2);
+	bool addPhotoClue(int shapeId, int clueIndex);
 
 	const char *getName();
 	bool hasMOClue(int clueId);

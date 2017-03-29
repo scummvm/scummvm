@@ -27,8 +27,10 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/util.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/span.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -53,19 +55,21 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 
 	videoDecoder->start();
 
-	byte *scaleBuffer = 0;
+	Common::SpanOwner<SciSpan<byte> > scaleBuffer;
 	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
 	uint16 width = videoDecoder->getWidth();
 	uint16 height = videoDecoder->getHeight();
 	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
+	uint32 numPixels;
 
 	if (screenWidth == 640 && width <= 320 && height <= 240) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
-		scaleBuffer = new byte[width * height * bytesPerPixel];
+		numPixels = width * height * bytesPerPixel;
+		scaleBuffer->allocate(numPixels, videoState.fileName + " scale buffer");
 	}
 
 	uint16 x = (screenWidth - width) / 2;
@@ -84,9 +88,10 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 
 			if (frame) {
 				if (scaleBuffer) {
+					const SciSpan<const byte> input((const byte *)frame->getPixels(), frame->w * frame->h * bytesPerPixel);
 					// TODO: Probably should do aspect ratio correction in KQ6
-					g_sci->_gfxScreen->scale2x((const byte *)frame->getPixels(), scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
-					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
+					g_sci->_gfxScreen->scale2x(input, *scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
+					g_system->copyRectToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, x, y, width, height);
 				} else {
 					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, width, height);
 				}
@@ -111,7 +116,6 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 		g_system->delayMillis(10);
 	}
 
-	delete[] scaleBuffer;
 	delete videoDecoder;
 }
 

@@ -63,11 +63,11 @@ bool SceneScriptNR10::MouseClick(int x, int y) {
 
 bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX18", objectName) && a2 && Game_Flag_Query(642)) {
-		Actor_Set_Goal_Number(3, 250);
+		Actor_Set_Goal_Number(kActorDektora, 250);
 		Game_Flag_Set(640);
 		Game_Flag_Reset(642);
-		Actor_Set_Invisible(0, false);
-		Actor_Set_Invisible(3, false);
+		Actor_Set_Invisible(kActorMcCoy, false);
+		Actor_Set_Invisible(kActorDektora, false);
 		Ambient_Sounds_Remove_Looping_Sound(452, true);
 		Sound_Play(453, 52, 0, 0, 50);
 		Scene_Loop_Set_Default(0);
@@ -89,16 +89,16 @@ bool SceneScriptNR10::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR10::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -152.78f, 2.84f, -238.43f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.78f, 2.84f, -238.43f, 0, 1, false, 0)) {
 			Game_Flag_Set(476);
 			Set_Enter(58, 62);
 			return true;
 		}
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 11.5f, 2.84f, -304.46f, 0, 1, false, 0)) {
-			Actor_Face_Heading(0, 55, false);
-			Loop_Actor_Travel_Ladder(0, 8, 1, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 11.5f, 2.84f, -304.46f, 0, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 55, false);
+			Loop_Actor_Travel_Ladder(kActorMcCoy, 8, 1, 0);
 			Game_Flag_Set(641);
 			Set_Enter(60, 64);
 			return true;
@@ -114,8 +114,8 @@ bool SceneScriptNR10::ClickedOn2DRegion(int region) {
 void SceneScriptNR10::SceneFrameAdvanced(int frame) {
 	if (frame == 122) {
 		Game_Flag_Set(642);
-		Actor_Set_Invisible(0, true);
-		Actor_Set_Invisible(3, true);
+		Actor_Set_Invisible(kActorMcCoy, true);
+		Actor_Set_Invisible(kActorDektora, true);
 		Combat_Target_Object("BOX18");
 		//return true;
 		return;
@@ -123,8 +123,8 @@ void SceneScriptNR10::SceneFrameAdvanced(int frame) {
 	if (frame == 61 && Game_Flag_Query(642)) {
 		Game_Flag_Reset(642);
 		Player_Set_Combat_Mode(false);
-		Actor_Set_Invisible(0, false);
-		Actor_Set_Goal_Number(3, 247);
+		Actor_Set_Invisible(kActorMcCoy, false);
+		Actor_Set_Goal_Number(kActorDektora, 247);
 		//return true;
 		return;
 	}
@@ -135,22 +135,22 @@ void SceneScriptNR10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR10::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(3) == 246) {
+	if (Actor_Query_Goal_Number(kActorDektora) == 246) {
 		Player_Set_Combat_Mode(true);
 		//return true;
 		return;
 	}
-	if (Actor_Query_Goal_Number(1) == 236) {
-		Actor_Face_Actor(1, 0, true);
-		Actor_Says(1, 150, 13);
-		Actor_Face_Actor(0, 1, true);
-		Actor_Says(0, 1580, 14);
-		Actor_Says(1, 160, 15);
-		Actor_Says(0, 1585, 16);
-		Actor_Says(1, 1160, 16);
+	if (Actor_Query_Goal_Number(kActorSteele) == 236) {
+		Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
+		Actor_Says(kActorSteele, 150, 13);
+		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
+		Actor_Says(kActorMcCoy, 1580, 14);
+		Actor_Says(kActorSteele, 160, 15);
+		Actor_Says(kActorMcCoy, 1585, 16);
+		Actor_Says(kActorSteele, 1160, 16);
 		Delay(1000);
-		Actor_Says(1, 1290, 14);
-		Actor_Set_Goal_Number(1, 275);
+		Actor_Says(kActorSteele, 1290, 14);
+		Actor_Set_Goal_Number(kActorSteele, 275);
 	}
 	//		return false;
 }

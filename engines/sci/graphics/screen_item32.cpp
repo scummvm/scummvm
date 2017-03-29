@@ -183,9 +183,9 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 
 			// NOTE: +2 because the header size field itself is excluded from
 			// the header size in the data
-			const uint16 headerSize = READ_SCI11ENDIAN_UINT16(view->data) + 2;
-			const uint8 loopCount = view->data[2];
-			const uint8 loopSize = view->data[12];
+			const uint16 headerSize = view->getUint16SEAt(0) + 2;
+			const uint8 loopCount = view->getUint8At(2);
+			const uint8 loopSize = view->getUint8At(12);
 
 			// loopNo is set to be an unsigned integer in SSCI, so if it's a
 			// negative value, it'll be fixed accordingly
@@ -195,10 +195,10 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 				writeSelectorValue(segMan, object, SELECTOR(loop), maxLoopNo);
 			}
 
-			byte *loopData = view->data + headerSize + (_celInfo.loopNo * loopSize);
+			SciSpan<const byte> loopData = view->subspan(headerSize + (_celInfo.loopNo * loopSize));
 			const int8 seekEntry = loopData[0];
 			if (seekEntry != -1) {
-				loopData = view->data + headerSize + (seekEntry * loopSize);
+				loopData = view->subspan(headerSize + (seekEntry * loopSize));
 			}
 
 			// celNo is set to be an unsigned integer in SSCI, so if it's a

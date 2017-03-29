@@ -54,10 +54,10 @@ bool SceneScriptPS07::MouseClick(int x, int y) {
 bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("L.MOUSE", objectName)) {
 		Sound_Play(155, 70, 0, 0, 50);
-		if (Actor_Query_Goal_Number(30) < 4 && Actor_Query_Goal_Number(30) > 0) {
-			Actor_Face_Actor(0, 30, true);
-			Actor_Set_Goal_Number(30, 3);
-			Actor_Modify_Friendliness_To_Other(30, 0, -3);
+		if (Actor_Query_Goal_Number(kActorKlein) < 4 && Actor_Query_Goal_Number(kActorKlein) > 0) {
+			Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
+			Actor_Set_Goal_Number(kActorKlein, 3);
+			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -3);
 		}
 		return true;
 	}
@@ -66,64 +66,64 @@ bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptPS07::ClickedOnActor(int actorId) {
 	if (actorId == 30) {
-		Actor_Face_Actor(0, 30, true);
-		Actor_Set_Goal_Number(30, 3);
+		Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
+		Actor_Set_Goal_Number(kActorKlein, 3);
 		if (!Game_Flag_Query(111)) {
-			Actor_Says(0, 4115, 13);
+			Actor_Says(kActorMcCoy, 4115, 13);
 		}
 		if (!Game_Flag_Query(111) && (Game_Flag_Query(125) || Game_Flag_Query(126) || Game_Flag_Query(127) || Game_Flag_Query(128))) {
-			Actor_Face_Actor(30, 0, true);
-			Actor_Says(30, 30, 12);
+			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
+			Actor_Says(kActorKlein, 30, 12);
 			Game_Flag_Set(111);
 		} else {
 			if (Game_Flag_Query(111)) {
-				Actor_Says(0, 4130, 18);
+				Actor_Says(kActorMcCoy, 4130, 18);
 			}
 		}
 		if (Game_Flag_Query(125) && !Game_Flag_Query(12)) {
 			Game_Flag_Set(12);
-			Actor_Clue_Acquire(0, 11, 0, 30);
-			Actor_Says(30, 50, 16);
-			Actor_Says(0, 4135, 13);
-			Actor_Says(30, 60, 15);
-			Actor_Says(30, 70, 12);
-			Actor_Says(0, 4140, 18);
-			Actor_Says(30, 80, 14);
-			Actor_Says(30, 90, 14);
-			Actor_Set_Goal_Number(30, 1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, 0, kActorKlein);
+			Actor_Says(kActorKlein, 50, 16);
+			Actor_Says(kActorMcCoy, 4135, 13);
+			Actor_Says(kActorKlein, 60, 15);
+			Actor_Says(kActorKlein, 70, 12);
+			Actor_Says(kActorMcCoy, 4140, 18);
+			Actor_Says(kActorKlein, 80, 14);
+			Actor_Says(kActorKlein, 90, 14);
+			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
 		if (Game_Flag_Query(126) && !Game_Flag_Query(13)) {
 			Game_Flag_Set(13);
-			Actor_Clue_Acquire(0, 10, 0, 30);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, 0, kActorKlein);
 			sub_401D60();
-			Actor_Set_Goal_Number(30, 1);
+			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
 		if (Game_Flag_Query(127) && !Game_Flag_Query(104)) {
 			Game_Flag_Set(104);
-			Actor_Clue_Acquire(0, 39, 0, 30);
-			Actor_Says(30, 170, 14);
-			Actor_Says(0, 4180, 13);
-			Actor_Says(30, 180, 12);
-			Actor_Says(30, 190, 13);
-			Actor_Says(30, 200, 16);
-			Actor_Says(0, 4185, 18);
-			Actor_Says(30, 210, 12);
-			Actor_Modify_Friendliness_To_Other(30, 0, -12);
-			Actor_Set_Goal_Number(30, 1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, 0, kActorKlein);
+			Actor_Says(kActorKlein, 170, 14);
+			Actor_Says(kActorMcCoy, 4180, 13);
+			Actor_Says(kActorKlein, 180, 12);
+			Actor_Says(kActorKlein, 190, 13);
+			Actor_Says(kActorKlein, 200, 16);
+			Actor_Says(kActorMcCoy, 4185, 18);
+			Actor_Says(kActorKlein, 210, 12);
+			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, -12);
+			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
 		if (Game_Flag_Query(128) && !Game_Flag_Query(105)) {
 			Game_Flag_Set(105);
-			Actor_Says(30, 220, 12);
-			Actor_Says(0, 4190, 13);
-			Actor_Says(30, 230, 14);
-			Actor_Set_Goal_Number(30, 1);
+			Actor_Says(kActorKlein, 220, 12);
+			Actor_Says(kActorMcCoy, 4190, 13);
+			Actor_Says(kActorKlein, 230, 14);
+			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		Actor_Says(30, 0, 13);
-		Actor_Set_Goal_Number(30, 1);
+		Actor_Says(kActorKlein, 0, 13);
+		Actor_Set_Goal_Number(kActorKlein, 1);
 		return true;
 	}
 	return false;
@@ -136,7 +136,7 @@ bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 609.07f, 0.22f, -598.67f, 0, 0, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 609.07f, 0.22f, -598.67f, 0, 0, false, 0)) {
 			Set_Enter(62, 66);
 		}
 		return true;
@@ -155,14 +155,14 @@ void SceneScriptPS07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS07::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(0, 561.07f, 0.34f, -606.67f, 6, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 561.07f, 0.34f, -606.67f, 6, 0, false, 0);
 	Game_Flag_Reset(131);
 	//return false;
 }
 
 void SceneScriptPS07::PlayerWalkedOut() {
 	if (!Game_Flag_Query(138) && Global_Variable_Query(1) == 1) {
-		Actor_Set_Goal_Number(30, 0);
+		Actor_Set_Goal_Number(kActorKlein, 0);
 	}
 }
 
@@ -170,20 +170,20 @@ void SceneScriptPS07::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptPS07::sub_401D60() {
-	Actor_Says(30, 100, 13);
-	Actor_Says(0, 4145, 13);
-	Actor_Says(30, 110, 12);
-	Actor_Says(0, 4150, 13);
-	Actor_Says(30, 120, 14);
-	Actor_Says(0, 4155, 17);
-	Actor_Says(30, 130, 15);
-	Actor_Says(0, 4160, 13);
-	Actor_Says(30, 140, 16);
-	Actor_Says(0, 4165, 18);
-	Actor_Says(30, 160, 13);
-	Actor_Says(0, 4170, 19);
-	Actor_Says(0, 4175, 19);
-	Actor_Modify_Friendliness_To_Other(30, 0, 3);
+	Actor_Says(kActorKlein, 100, 13);
+	Actor_Says(kActorMcCoy, 4145, 13);
+	Actor_Says(kActorKlein, 110, 12);
+	Actor_Says(kActorMcCoy, 4150, 13);
+	Actor_Says(kActorKlein, 120, 14);
+	Actor_Says(kActorMcCoy, 4155, 17);
+	Actor_Says(kActorKlein, 130, 15);
+	Actor_Says(kActorMcCoy, 4160, 13);
+	Actor_Says(kActorKlein, 140, 16);
+	Actor_Says(kActorMcCoy, 4165, 18);
+	Actor_Says(kActorKlein, 160, 13);
+	Actor_Says(kActorMcCoy, 4170, 19);
+	Actor_Says(kActorMcCoy, 4175, 19);
+	Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
 }
 
 } // End of namespace BladeRunner

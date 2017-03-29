@@ -20,53 +20,68 @@
  *
  */
 
-#include "bladerunner/crimes_database.h"
+#ifndef BLADERUNNER_ZBUFFER_H
+#define BLADERUNNER_ZBUFFER_H
 
 #include "bladerunner/bladerunner.h"
 
-#include "bladerunner/text_resource.h"
+#include "common/rect.h"
 
 namespace BladeRunner {
 
-CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimesCount) : _crimesCount(crimesCount) {
-	// reset();
+#define MAX_DIRTY_RECTS 20
 
-	_crimes     = new int[_crimesCount];
-	_assetTypes = new int[_crimesCount];
+class ZBufferDirtyRects {
+	int          _count;
+	Common::Rect _rects[MAX_DIRTY_RECTS];
 
-	_cluesText = new TextResource(vm);
-	_cluesText->open(cluesResource);
+public:
+	ZBufferDirtyRects() :
+		_count(0)
+	{}
 
-	for (int i = 0; i != _crimesCount; ++i) {
-		_crimes[i] = -1;
-		_assetTypes[i] = -1;
-	}
-}
+	void reset();
+	bool add(Common::Rect rect);
+	void extendExisting();
+	int getCount();
+	bool popRect(Common::Rect *rect);
+};
 
-CrimesDatabase::~CrimesDatabase() {
-	delete   _cluesText;
-	delete[] _assetTypes;
-	delete[] _crimes;
-}
+class ZBuffer {
+	int     _width;
+	int     _height;
 
-void CrimesDatabase::setCrime(int clueId, int crimeId) {
-	_crimes[clueId] = crimeId;
-}
+	uint16 *_zbuf1;
+	uint16 *_zbuf2;
 
-int CrimesDatabase::getCrime(int clueId) {
-	return _crimes[clueId];
-}
+	ZBufferDirtyRects *_dirtyRects;
 
-void CrimesDatabase::setAssetType(int clueId, int assetType) {
-	_assetTypes[clueId] = assetType;
-}
+	bool _disabled;
 
-int CrimesDatabase::getAssetType(int clueId) {
-	return _assetTypes[clueId];
-}
+public:
+	ZBuffer();
+	~ZBuffer();
 
-const char *CrimesDatabase::getClueText(int clueId) {
-	return _cluesText->getText(clueId);
-}
+	void init(int width, int height);
+	bool decodeData(const uint8 *data, int size);
+
+	uint16 *getData();
+	uint16 getZValue(int x, int y);
+
+private:
+	void reset();
+	void blit(Common::Rect rect);
+
+public:
+	void mark(Common::Rect rect);
+	void clean();
+	void resetUpdates();
+
+	// Only called from Scene::resume which is not yet implemented
+	void disable();
+	void enable();
+};
 
 } // End of namespace BladeRunner
+
+#endif

@@ -72,7 +72,6 @@ int VQAPlayer::update() {
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
 		}
 
 		_frameDecoded = calcNextFrame(_frameCurrent);
@@ -95,7 +94,6 @@ int VQAPlayer::update() {
 		_frameCurrent = _frameDecoded;
 		if (_frameCurrent >= 0) {
 			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
 		}
 
 		_frameDecoded = calcNextFrame(_frameCurrent);
@@ -117,8 +115,8 @@ const Graphics::Surface *VQAPlayer::getSurface() const {
 	return _surface;
 }
 
-const uint16 *VQAPlayer::getZBuffer() const {
-	return _zBuffer;
+void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
+	_decoder.decodeZBuffer(zbuffer);
 }
 
 void VQAPlayer::updateView(View *view) {
@@ -130,7 +128,7 @@ void VQAPlayer::updateLights(Lights *lights) {
 }
 
 bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopMode, void (*callback)(void *, int, int), void *callbackData) {
-	debug("VQAPlayer::setBeginAndEndFrameFromLoop(%i, %i, %i, %p, %p), streamLoaded = %i", loop, repeatsCount, loopMode, (void*)callback, callbackData, _s != nullptr);
+//	debug("VQAPlayer::setBeginAndEndFrameFromLoop(%i, %i, %i, %x, %p), streamLoaded = %i", loop, repeatsCount, loopMode, (uint)callback, callbackData, _s != nullptr);
 	if (_s == nullptr) {
 		_loopInitial = loop;
 		_repeatsCountInitial = repeatsCount;
@@ -149,7 +147,7 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopMode, void (*callbac
 }
 
 bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopMode, void (*callback)(void *, int, int), void *callbackData) {
-	debug("VQAPlayer::setBeginAndEndFrame(%i, %i, %i, %i, %p, %p), streamLoaded = %i", begin, end, repeatsCount, loopMode, (void*)callback, callbackData, _s != nullptr);
+//	debug("VQAPlayer::setBeginAndEndFrame(%i, %i, %i, %i, %x, %p), streamLoaded = %i", begin, end, repeatsCount, loopMode, (uint)callback, callbackData, _s != nullptr);
 
 	if (repeatsCount < 0) {
 		repeatsCount = -1;

@@ -53,7 +53,7 @@ void SceneScriptKP05::SceneLoaded() {
 	Unobstacle_Object("OBSTACLEBOX20", true);
 	Clickable_Object("BRIDGE02");
 	Unclickable_Object("BRIDGE02");
-	if (!Actor_Clue_Query(0, 145) && Game_Flag_Query(653)) {
+	if (!Actor_Clue_Query(kActorMcCoy, kCluePowerSource) && Game_Flag_Query(653)) {
 		Item_Add_To_World(118, 960, 9, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
 	}
 }
@@ -72,9 +72,9 @@ bool SceneScriptKP05::ClickedOnActor(int actorId) {
 
 bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 118) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -1058.0f, 0.0f, 852.0f, 0, 1, false, 0)) {
-			Actor_Face_Item(0, 118, true);
-			Actor_Clue_Acquire(0, 145, 1, -1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, 1, false, 0)) {
+			Actor_Face_Item(kActorMcCoy, 118, true);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, 1, -1);
 			Item_Remove_From_World(118);
 			Item_Pickup_Spin_Effect(960, 58, 321);
 		}
@@ -84,7 +84,7 @@ bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -802.0f, 0.0f, 972.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -802.0f, 0.0f, 972.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(420);
@@ -93,7 +93,7 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -1142.0f, 0.0f, 932.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1142.0f, 0.0f, 932.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(575);
@@ -102,11 +102,11 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -868.0f, 0.0f, -68.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -68.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(576);
-			Async_Actor_Walk_To_XYZ(0, -868.0f, 0.0f, -216.0f, 0, false);
+			Async_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -216.0f, 0, false);
 			Set_Enter(9, 46);
 		}
 		return true;
@@ -128,37 +128,37 @@ void SceneScriptKP05::PlayerWalkedIn() {
 	if (Game_Flag_Query(577)) {
 		Game_Flag_Reset(577);
 	} else if (Game_Flag_Query(574)) {
-		Loop_Actor_Walk_To_XYZ(0, -1110.0f, 0.0f, 932.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1110.0f, 0.0f, 932.0f, 0, 0, false, 0);
 		Game_Flag_Reset(574);
 	} else {
-		Loop_Actor_Walk_To_XYZ(0, -846.0f, 0.0f, 972.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, 0, false, 0);
 		Game_Flag_Query(419);
 	}
-	if (Actor_Query_Goal_Number(66) == 411) {
-		Actor_Set_Goal_Number(66, 412);
+	if (Actor_Query_Goal_Number(kActorMaggie) == 411) {
+		Actor_Set_Goal_Number(kActorMaggie, 412);
 	}
-	if (Actor_Query_Goal_Number(1) == 450) {
+	if (Actor_Query_Goal_Number(kActorSteele) == 450) {
 		Scene_Exits_Disable();
-		Actor_Face_Actor(1, 0, true);
-		Actor_Says(1, 530, 15);
-		Actor_Says(1, 540, 16);
-		Actor_Face_Actor(0, 1, true);
+		Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
+		Actor_Says(kActorSteele, 530, 15);
+		Actor_Says(kActorSteele, 540, 16);
+		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Player_Set_Combat_Mode(true);
-		Actor_Says(0, 2200, 3);
-		Actor_Says(1, 550, 17);
-		Actor_Says(0, 2205, 3);
-		Actor_Says(1, 560, 15);
-		Actor_Says(1, 570, 16);
-		Actor_Says(1, 580, 13);
-		Actor_Says(0, 2210, 3);
-		Actor_Says(1, 590, 13);
-		Actor_Says(0, 2215, 3);
-		Actor_Says(1, 600, 16);
-		Actor_Says(1, 610, 15);
-		Actor_Says(0, 2220, 3);
-		Actor_Says(1, 620, 15);
-		Actor_Says(1, 630, 17);
-		Non_Player_Actor_Combat_Mode_On(1, 0, 1, 0, 9, 4, 7, 8, 0, -1, -1, 20, 240, 0);
+		Actor_Says(kActorMcCoy, 2200, 3);
+		Actor_Says(kActorSteele, 550, 17);
+		Actor_Says(kActorMcCoy, 2205, 3);
+		Actor_Says(kActorSteele, 560, 15);
+		Actor_Says(kActorSteele, 570, 16);
+		Actor_Says(kActorSteele, 580, 13);
+		Actor_Says(kActorMcCoy, 2210, 3);
+		Actor_Says(kActorSteele, 590, 13);
+		Actor_Says(kActorMcCoy, 2215, 3);
+		Actor_Says(kActorSteele, 600, 16);
+		Actor_Says(kActorSteele, 610, 15);
+		Actor_Says(kActorMcCoy, 2220, 3);
+		Actor_Says(kActorSteele, 620, 15);
+		Actor_Says(kActorSteele, 630, 17);
+		Non_Player_Actor_Combat_Mode_On(kActorSteele, 0, 1, kActorMcCoy, 9, 4, 7, 8, 0, -1, -1, 20, 240, 0);
 	}
 }
 

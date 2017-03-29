@@ -105,7 +105,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		_defaultLoopSet = true;
 		_specialLoopAtEnd = false;
 	}
-	_vm->_scene->advanceFrame(_vm->_surface1, _vm->_zBuffer1);
+	_vm->_scene->advanceFrame(_vm->_surface1);
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	_vm->_playerActor->setSetId(setId);
@@ -168,11 +168,11 @@ bool Scene::close(bool isLoadingGame) {
 	return result;
 }
 
-int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
+int Scene::advanceFrame(Graphics::Surface &surface) {
 	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer->getSurface());
-		memcpy(zBuffer, _vqaPlayer->getZBuffer(), 640 * 480 * 2);
+		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}

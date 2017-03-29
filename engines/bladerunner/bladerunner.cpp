@@ -52,6 +52,7 @@
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
+#include "bladerunner/zbuffer.h"
 
 #include "common/array.h"
 #include "common/error.h"
@@ -61,7 +62,7 @@
 #include "engines/util.h"
 
 #include "graphics/pixelformat.h"
-#include "suspects_database.h" 
+#include "suspects_database.h"
 
 namespace BladeRunner {
 
@@ -112,8 +113,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	// _surface1.free();
 	// _surface2.free();
 
-	// delete[] _zBuffer1;
-	// delete[] _zBuffer2;
+	delete _zbuffer;
 
 	delete _itemPickup;
 	delete _obstacles;
@@ -232,9 +232,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Video overlays
 
-	// TODO: Proper ZBuf class
-	_zBuffer1 = new uint16[640 * 480];
-	_zBuffer2 = new uint16[640 * 480];
+	_zbuffer = new ZBuffer();
+	_zbuffer->init(640, 480);
 
 	int actorCount = (int)_gameInfo->getActorCount();
 	assert(actorCount < ACTORS_COUNT);
@@ -269,8 +268,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_textKIA->open("KIA"))
 		return false;
 
-	_textSpindest = new TextResource(this);
-	if (!_textSpindest->open("SPINDEST"))
+	_textSpinnerDestinations = new TextResource(this);
+	if (!_textSpinnerDestinations->open("SPINDEST"))
 		return false;
 
 	_textVK = new TextResource(this);
@@ -352,7 +351,7 @@ void BladeRunnerEngine::initChapterAndScene() {
 	}
 
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-		_actors[i]->changeAnimationMode(0);
+		_actors[i]->changeAnimationMode(kAnimationModeIdle);
 	}
 
 	for (int i = 1, end = _gameInfo->getActorCount(); i != end; ++i) { // skip first actor, probably player
@@ -411,8 +410,8 @@ void BladeRunnerEngine::shutdown() {
 	delete _textKIA;
 	_textKIA = nullptr;
 
-	delete _textSpindest;
-	_textSpindest = nullptr;
+	delete _textSpinnerDestinations;
+	_textSpinnerDestinations = nullptr;
 
 	delete _textVK;
 	_textVK = nullptr;
@@ -500,12 +499,8 @@ void BladeRunnerEngine::shutdown() {
 
 	_playerActor = nullptr;
 
-	// TODO: Delete proper ZBuf class
-	delete[] _zBuffer1;
-	_zBuffer1 = nullptr;
-
-	delete[] _zBuffer2;
-	_zBuffer2 = nullptr;
+	delete _zbuffer;
+	_zbuffer = nullptr;
 
 	delete _gameInfo;
 	_gameInfo = nullptr;
@@ -597,19 +592,19 @@ void BladeRunnerEngine::gameTick() {
 			_sceneScript->PlayerWalkedIn();
 		}
 		// TODO: Gun range announcements
-		// TODO: ZBUF repair dirty rects
+
+		_zbuffer->clean();
 
 		_ambientSounds->tick();
 
 		bool backgroundChanged = false;
-		int frame = _scene->advanceFrame(_surface1, _zBuffer1);
+		int frame = _scene->advanceFrame(_surface1);
 		if (frame >= 0) {
 			_sceneScript->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
 		_surface2.copyFrom(_surface1);
-		memcpy(_zBuffer2, _zBuffer1, 640 * 480 * 2);
 
 #if 0
 		{
@@ -641,7 +636,10 @@ void BladeRunnerEngine::gameTick() {
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 				if (_actors[i]->getSetId() == setId) {
 					if (i == 0 || i == 15 || i == 23) { // Currently limited to McCoy, Runciter and Officer Leroy
-						_actors[i]->tick(backgroundChanged);
+						Common::Rect screenRect;
+						if (_actors[i]->tick(backgroundChanged, &screenRect)) {
+							_zbuffer->mark(screenRect);
+						}
 					}
 				}
 			}

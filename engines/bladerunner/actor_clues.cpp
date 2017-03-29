@@ -92,7 +92,6 @@ bool ActorClues::isAcquired(int clueId) {
 	if (clueIndex == -1) {
 		return false;
 	}
-
 	return _clues[clueIndex]._flags & 0x01;
 }
 

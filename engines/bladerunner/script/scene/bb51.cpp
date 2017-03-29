@@ -58,15 +58,15 @@ bool SceneScriptBB51::MouseClick(int x, int y) {
 
 bool SceneScriptBB51::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("V2CHESSTBL01", objectName)) {
-		Actor_Face_Object(0, "V2CHESSTBL01", true);
-		Actor_Voice_Over(80, 99);
-		Actor_Voice_Over(90, 99);
+		Actor_Face_Object(kActorMcCoy, "V2CHESSTBL01", true);
+		Actor_Voice_Over(80, kActorVoiceOver);
+		Actor_Voice_Over(90, kActorVoiceOver);
 	}
 	if (Object_Query_Click("TOP02", objectName)) {
-		Actor_Face_Object(0, "TOP02", true);
-		Actor_Voice_Over(100, 99);
-		Actor_Voice_Over(110, 99);
-		Actor_Voice_Over(120, 99);
+		Actor_Face_Object(kActorMcCoy, "TOP02", true);
+		Actor_Voice_Over(100, kActorVoiceOver);
+		Actor_Voice_Over(110, kActorVoiceOver);
+		Actor_Voice_Over(120, kActorVoiceOver);
 	}
 	return false;
 }
@@ -81,7 +81,7 @@ bool SceneScriptBB51::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB51::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 76.0f, 0.0f, 79.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 76.0f, 0.0f, 79.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(394);
@@ -90,7 +90,7 @@ bool SceneScriptBB51::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 55.0f, 0.0f, -96.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 55.0f, 0.0f, -96.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(395);

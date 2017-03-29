@@ -83,7 +83,7 @@ bool SceneScriptBB11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 43.39f, -10.27f, -68.52f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(223);
@@ -99,8 +99,8 @@ bool SceneScriptBB11::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptBB11::SceneFrameAdvanced(int frame) {
-	if (Actor_Query_Goal_Number(8) == 105 && !Game_Flag_Query(375)) {
-		Actor_Change_Animation_Mode(0, 48);
+	if (Actor_Query_Goal_Number(kActorSadik) == 105 && !Game_Flag_Query(375)) {
+		Actor_Change_Animation_Mode(kActorMcCoy, 48);
 		Game_Flag_Set(375);
 	} else {
 		if (frame == 1) {
@@ -113,9 +113,9 @@ void SceneScriptBB11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB11::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(8) == 102 && Global_Variable_Query(1) == 2) {
-		Actor_Set_Invisible(0, true);
-		Actor_Set_Goal_Number(8, 103);
+	if (Actor_Query_Goal_Number(kActorSadik) == 102 && Global_Variable_Query(1) == 2) {
+		Actor_Set_Invisible(kActorMcCoy, true);
+		Actor_Set_Goal_Number(kActorSadik, 103);
 		Music_Play(11, 61, 0, 1, -1, 0, 0);
 		Player_Loses_Control();
 	}

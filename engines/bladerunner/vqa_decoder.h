@@ -40,6 +40,7 @@ namespace BladeRunner {
 
 class Lights;
 class View;
+class ZBuffer;
 
 class VQADecoder {
 public:
@@ -52,7 +53,7 @@ public:
 	void readPacket(int frame);
 
 	const Graphics::Surface    *decodeVideoFrame();
-	const uint16               *decodeZBuffer();
+	void                        decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
 	void                        decodeView(View *view);
 	void                        decodeLights(Lights *lights);
@@ -160,7 +161,7 @@ private:
 		int getCurFrame() const;
 		int getFrameCount() const;
 		const Graphics::Surface *decodeVideoFrame();
-		const uint16 *decodeZBuffer();
+		void decodeZBuffer(ZBuffer *zbuffer);
 		void decodeView(View *view);
 		void decodeLights(Lights *lights);
 
@@ -180,8 +181,7 @@ private:
 
 	private:
 		Graphics::Surface *_surface;
-		uint16            *_zbuffer;
-		bool     _hasNewFrame;
+		bool _hasNewFrame;
 
 		uint16 _numFrames;
 		uint16 _width, _height;

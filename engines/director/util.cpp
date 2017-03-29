@@ -105,4 +105,41 @@ Common::String *toLowercaseMac(Common::String *s) {
 	return res;
 }
 
+Common::String convertPath(Common::String &path) {
+	if (path.empty())
+		return path;
+
+	if (!path.contains(':')) {
+		return path;
+	}
+
+	if (path[0] != ':') {
+		warning("convertPath: unsupported absolute path '%s'", path.c_str());
+
+		return path;
+	}
+
+	Common::String res;
+	int idx = 0;
+
+	if (path.hasPrefix(":::")) {
+		res = "../";
+		idx = 3;
+	} else {
+		res = "./";
+		idx = 1;
+	}
+
+	while (idx != path.size()) {
+		if (path[idx] == ':')
+			res += '/';
+		else
+			res += path[idx];
+
+		idx++;
+	}
+
+	return res;
+}
+
 } // End of namespace Director

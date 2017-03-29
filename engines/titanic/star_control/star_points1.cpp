@@ -76,7 +76,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 
 	vector1._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
 	vector1._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x + sub6._vector._x;
-	vector1._x = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y; 
+	vector1._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y; 
 
 	for (uint idx = 1; idx < _data.size(); ++idx) {
 		const FVector &sv = _data[idx];
@@ -84,7 +84,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 		vTemp = sv;
 
 		vector3._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x * sub6._vector._x;
-		vector3._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y * sub6._vector._y; 
+		vector3._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y * sub6._vector._y;
 		vector3._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
 
 		if (flag && vector1._z > threshold && vector3._z > threshold) {

@@ -63,16 +63,16 @@ bool SceneScriptCT10::MouseClick(int x, int y) {
 }
 
 void SceneScriptCT10::sub_401844() {
-	if (!Loop_Actor_Walk_To_XYZ(0, 10.6f, 0.0f, -50.5f, 0, 1, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 10.6f, 0.0f, -50.5f, 0, 1, false, 0)) {
 		Player_Loses_Control();
-		Actor_Face_Heading(0, 0, false);
+		Actor_Face_Heading(kActorMcCoy, 0, false);
 		Sound_Play(339, 100, 0, 0, 50);
 		Delay(1000);
-		if (Actor_Clue_Query(0, 110)) {
-			Actor_Voice_Over(3700, 99);
+		if (Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)) {
+			Actor_Voice_Over(3700, kActorVoiceOver);
 		} else {
 			Item_Pickup_Spin_Effect(931, 435, 258);
-			Actor_Clue_Acquire(0, 110, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueHoldensBadge, 1, -1);
 		}
 		Player_Gains_Control();
 	}
@@ -80,21 +80,21 @@ void SceneScriptCT10::sub_401844() {
 
 bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("TUB", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -41.0f, 0.0f, -106.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -106.0f, 0, 1, false, 0)) {
 			Player_Loses_Control();
-			Actor_Face_Heading(0, 850, false);
-			Actor_Change_Animation_Mode(0, 38);
+			Actor_Face_Heading(kActorMcCoy, 850, false);
+			Actor_Change_Animation_Mode(kActorMcCoy, 38);
 			Delay(1000);
 			Sound_Play(338, 33, 0, 0, 50);
 			Delay(3000);
-			if (Actor_Clue_Query(0, 93)) {
-				Actor_Voice_Over(3700, 99);
+			if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)) {
+				Actor_Voice_Over(3700, kActorVoiceOver);
 			} else {
-				Actor_Clue_Acquire(0, 93, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueStrangeScale1, 1, -1);
 				Item_Pickup_Spin_Effect(969, 364, 214);
 			}
 			Delay(1000);
-			Loop_Actor_Walk_To_XYZ(0, -41.0f, 0.0f, -82.0f, 0, 0, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -82.0f, 0, 0, false, 1);
 			Player_Gains_Control();
 		}
 		return true;
@@ -116,8 +116,8 @@ bool SceneScriptCT10::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT10::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -93.0f, 0.0f, -38.0f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(0, -121.0f, 0.0f, -78.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, 1, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -121.0f, 0.0f, -78.0f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(85);
@@ -141,12 +141,12 @@ void SceneScriptCT10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT10::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(0, -93.0f, 0.0f, -38.0f, 0, 0, false, 0);
-	Loop_Actor_Walk_To_XYZ(0, -49.0f, 0.0f, -38.0f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -49.0f, 0.0f, -38.0f, 0, 0, false, 0);
 	if (!Game_Flag_Query(525)) {
-		Actor_Voice_Over(450, 99);
-		Actor_Voice_Over(460, 99);
-		Actor_Voice_Over(470, 99);
+		Actor_Voice_Over(450, kActorVoiceOver);
+		Actor_Voice_Over(460, kActorVoiceOver);
+		Actor_Voice_Over(470, kActorVoiceOver);
 		Game_Flag_Set(525);
 	}
 }

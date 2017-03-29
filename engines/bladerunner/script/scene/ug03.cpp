@@ -75,15 +75,15 @@ bool SceneScriptUG03::MouseClick(int x, int y) {
 }
 
 bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
-	if ((Object_Query_Click("CHAIR_BACK", objectName) || Object_Query_Click("CHAIR_SEAT", objectName) || Object_Query_Click("CHAIR_HEADZAPPER", objectName)) && !Loop_Actor_Walk_To_Scene_Object(0, "CHAIR_BACK", 36, 1, false)) {
-		Actor_Face_Object(0, "CHAIR_BACK", true);
-		if (!Actor_Clue_Query(0, 120)) {
-			Actor_Voice_Over(2550, 99);
-			Actor_Voice_Over(2560, 99);
-			Actor_Voice_Over(2570, 99);
-			Actor_Voice_Over(2580, 99);
-			Actor_Voice_Over(2590, 99);
-			Actor_Clue_Acquire(0, 120, 1, -1);
+	if ((Object_Query_Click("CHAIR_BACK", objectName) || Object_Query_Click("CHAIR_SEAT", objectName) || Object_Query_Click("CHAIR_HEADZAPPER", objectName)) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "CHAIR_BACK", 36, true, false)) {
+		Actor_Face_Object(kActorMcCoy, "CHAIR_BACK", true);
+		if (!Actor_Clue_Query(kActorMcCoy, kClueScaryChair)) {
+			Actor_Voice_Over(2550, kActorVoiceOver);
+			Actor_Voice_Over(2560, kActorVoiceOver);
+			Actor_Voice_Over(2570, kActorVoiceOver);
+			Actor_Voice_Over(2580, kActorVoiceOver);
+			Actor_Voice_Over(2590, kActorVoiceOver);
+			Actor_Clue_Acquire(kActorMcCoy, kClueScaryChair, 1, -1);
 		}
 	}
 	return false;
@@ -99,9 +99,9 @@ bool SceneScriptUG03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -139.0f, 0.0f, -13.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -139.0f, 0.0f, -13.0f, 0, 1, false, 0)) {
 			if (Global_Variable_Query(1) < 4) {
-				Actor_Says(0, 8522, 14);
+				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -112,7 +112,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -51.0f, 0.0f, 255.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -51.0f, 0.0f, 255.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(334);

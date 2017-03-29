@@ -255,7 +255,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 				ObjMap objects = scr->getObjectMap();
 				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
-					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().getOffset()));
+					it->_value.syncBaseObject(SciSpan<const byte>(scr->getBuf(it->_value.getPos().getOffset()), scr->getBufSize() - it->_value.getPos().getOffset()));
 
 			}
 
@@ -437,37 +437,38 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 void Script::syncStringHeap(Common::Serializer &s) {
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// Sync all of the SCI_OBJ_STRINGS blocks
-		byte *buf = _buf;
+		SciSpan<byte> buf = (SciSpan<byte> &)*_buf;
 		bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 		if (oldScriptHeader)
 			buf += 2;
 
-		do {
-			int blockType = READ_LE_UINT16(buf);
+		for (;;) {
+			int blockType = buf.getUint16LEAt(0);
 			int blockSize;
 			if (blockType == 0)
 				break;
 
-			blockSize = READ_LE_UINT16(buf + 2);
+			blockSize = buf.getUint16LEAt(2);
 			assert(blockSize > 0);
 
 			if (blockType == SCI_OBJ_STRINGS)
-				s.syncBytes(buf, blockSize);
+				s.syncBytes(buf.getUnsafeDataAt(0, blockSize), blockSize);
 
 			buf += blockSize;
-		} while (1);
+		}
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
 		// Strings in SCI1.1 come after the object instances
-		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+		SciSpan<byte> buf = _heap.subspan<byte>(4 + _heap.getUint16SEAt(2) * 2);
 
 		// Skip all of the objects
-		while (READ_SCI11ENDIAN_UINT16(buf) == SCRIPT_OBJECT_MAGIC_NUMBER)
-			buf += READ_SCI11ENDIAN_UINT16(buf + 2) * 2;
+		while (buf.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER)
+			buf += buf.getUint16SEAt(2) * 2;
 
 		// Now, sync everything till the end of the buffer
-		s.syncBytes(buf, _heapSize - (buf - _heapStart));
+		const int length = _heap.size() - (buf - _heap);
+		s.syncBytes(buf.getUnsafeDataAt(0, length), length);
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		warning("TODO: syncStringHeap(): Implement SCI3 variant");
 	}
@@ -1062,7 +1063,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
 	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-	meta.script0Size = script0->size;
+	meta.script0Size = script0->size();
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
@@ -1199,7 +1200,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
 		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-		if (script0->size != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
+		if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
 			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
 
 			s->r_acc = TRUE_REG;	// signal failure

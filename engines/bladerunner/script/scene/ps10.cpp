@@ -185,7 +185,7 @@ bool SceneScriptPS10::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS10::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 6, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 6, 12, 1, false)) {
 			Game_Flag_Set(14);
 			sub_402238();
 			Global_Variable_Decrement(9, 20 - Global_Variable_Query(10));
@@ -210,17 +210,17 @@ void SceneScriptPS10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS10::PlayerWalkedIn() {
 	if (Game_Flag_Query(15)) {
-		Loop_Actor_Walk_To_XYZ(0, -352.09f, -9.23f, 267.95f, 0, 0, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -352.09f, -9.23f, 267.95f, 0, 0, true, 0);
 		Police_Maze_Set_Pause_State(0);
 		Game_Flag_Reset(15);
 		//return true;
 		return;
 	} else {
 		Player_Set_Combat_Mode(true);
-		Loop_Actor_Walk_To_Waypoint(0, 5, 0, 0, true);
-		Actor_Says(39, 280, 3);
-		Actor_Says(39, 290, 3);
-		Actor_Says(39, 300, 3);
+		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 5, 0, 0, true);
+		Actor_Says(kActorAnsweringMachine, 280, 3);
+		Actor_Says(kActorAnsweringMachine, 290, 3);
+		Actor_Says(kActorAnsweringMachine, 300, 3);
 		Police_Maze_Set_Pause_State(0);
 		//return true;
 		return;

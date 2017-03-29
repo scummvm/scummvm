@@ -448,7 +448,7 @@ SciVersion GameFeatures::detectMessageFunctionType() {
 	// Only v2 Message resources use the kGetMessage kernel function.
 	// v3-v5 use the kMessage kernel function.
 
-	if (READ_SCI11ENDIAN_UINT32(res->data) / 1000 == 2)
+	if (res->getUint32SEAt(0) / 1000 == 2)
 		_messageFunctionType = SCI_VERSION_1_LATE;
 	else
 		_messageFunctionType = SCI_VERSION_1_1;

@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "sci/graphics/helpers.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -47,9 +48,9 @@ public:
 	bool isUsing16bitColorMatch();
 
 	void setDefault();
-	void createFromData(byte *data, int bytesLeft, Palette *paletteOut) const;
+	void createFromData(const SciSpan<const byte> &data, Palette *paletteOut) const;
 	bool setAmiga();
-	void modifyAmigaPalette(byte *data);
+	void modifyAmigaPalette(const SciSpan<const byte> &data);
 	void setEGA();
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
 	bool insert(Palette *newPalette, Palette *destPalette);

@@ -587,6 +587,9 @@ void Picture::getDibInfo() {
 		warning("Picture::getDibInfo: data is empty <%s>", _memfilename.c_str());
 
 		MemoryObject::load();
+
+		if (!_data)
+			error("Picture::getDibInfo: error loading object #%d", _cnum);
 	}
 
 	Common::MemoryReadStream *s = new Common::MemoryReadStream(_data + off - 32, 32);

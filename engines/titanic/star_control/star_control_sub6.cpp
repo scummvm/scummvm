@@ -24,8 +24,6 @@
 
 namespace Titanic {
 
-CStarControlSub6 *CStarControlSub6::_static;
-
 CStarControlSub6::CStarControlSub6() {
 	clear();
 }
@@ -78,15 +76,6 @@ CStarControlSub6::CStarControlSub6(const CStarControlSub6 *s1, const CStarContro
 		+ s1->_vector._z * s2->_row3._z
 		+ s1->_vector._x * s2->_row1._z
 		+ s2->_vector._z;
-}
-
-void CStarControlSub6::init() {
-	_static = nullptr;
-}
-
-void CStarControlSub6::deinit() {
-	delete _static;
-	_static = nullptr;
 }
 
 void CStarControlSub6::identity() {

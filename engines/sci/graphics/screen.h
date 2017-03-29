@@ -31,8 +31,10 @@
 
 namespace Sci {
 
-#define SCI_SCREEN_UPSCALEDMAXHEIGHT 200
-#define SCI_SCREEN_UPSCALEDMAXWIDTH  320
+enum {
+	SCI_SCREEN_UPSCALEDMAXHEIGHT = 200,
+	SCI_SCREEN_UPSCALEDMAXWIDTH  = 320
+};
 
 enum GfxScreenUpscaledMode {
 	GFX_SCREEN_UPSCALED_DISABLED	= 0,
@@ -76,11 +78,6 @@ public:
 	byte getColorWhite() { return _colorWhite; }
 	byte getColorDefaultVectorData() { return _colorDefaultVectorData; }
 
-#ifdef ENABLE_SCI32
-	byte *getDisplayScreen() { return _displayScreen; }
-	byte *getPriorityScreen() { return _priorityScreen; }
-#endif
-
 	void clearForRestoreGame();
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);
@@ -120,7 +117,7 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
+	void scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);

@@ -27,13 +27,15 @@
 #include "common/hashmap.h"
 #include "sci/sci.h"
 #include "sci/graphics/helpers.h"
+#include "sci/util.h"
 
 namespace Sci {
 
-#define SCI_CURSOR_SCI0_HEIGHTWIDTH 16
-#define SCI_CURSOR_SCI0_RESOURCESIZE 68
-
-#define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
+enum {
+	SCI_CURSOR_SCI0_HEIGHTWIDTH = 16,
+	SCI_CURSOR_SCI0_RESOURCESIZE = 68,
+	SCI_CURSOR_SCI0_TRANSPARENCYCOLOR = 1
+};
 
 class GfxView;
 class GfxPalette;
@@ -117,7 +119,7 @@ private:
 	GfxView *_zoomPicView;
 	byte _zoomColor;
 	byte _zoomMultiplier;
-	byte *_cursorSurface;
+	Common::SpanOwner<SciSpan<byte> > _cursorSurface;
 
 	CursorCache _cachedCursors;
 

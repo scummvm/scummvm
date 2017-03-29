@@ -72,9 +72,9 @@ bool SceneScriptMA07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 104.0f, -162.0f, 56.0f, 12, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 104.0f, -162.0f, 56.0f, 12, 1, false, 0)) {
 			if (Global_Variable_Query(1) == 4 && Game_Flag_Query(671)) {
-				Actor_Set_Goal_Number(0, 400);
+				Actor_Set_Goal_Number(kActorMcCoy, 400);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -85,7 +85,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -400.0f, -162.8f, 185.08f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, -162.8f, 185.08f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(672);
@@ -96,7 +96,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 8.0f, -172.43f, 356.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 8.0f, -172.43f, 356.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(357);
@@ -122,25 +122,25 @@ void SceneScriptMA07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptMA07::PlayerWalkedIn() {
 	if (Game_Flag_Query(673)) {
-		Loop_Actor_Walk_To_XYZ(0, -268.0f, -162.8f, 188.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -268.0f, -162.8f, 188.0f, 0, 0, false, 0);
 		Game_Flag_Reset(673);
 	}
-	if (Actor_Query_Goal_Number(57) == 300) {
-		Actor_Set_Goal_Number(57, 305);
+	if (Actor_Query_Goal_Number(kActorRachael) == 300) {
+		Actor_Set_Goal_Number(kActorRachael, 305);
 	}
 	if (Game_Flag_Query(58)) {
 		Game_Flag_Reset(58);
 	}
 	if (!Game_Flag_Query(648) && Game_Flag_Query(671) && Global_Variable_Query(1) == 4) {
 		Scene_Exits_Disable();
-		Actor_Set_Goal_Number(53, 300);
+		Actor_Set_Goal_Number(kActorGaff, 300);
 	}
 	if (Game_Flag_Query(666)) {
-		Actor_Voice_Over(1360, 99);
-		Actor_Voice_Over(1370, 99);
-		Actor_Voice_Over(1380, 99);
-		Actor_Voice_Over(1390, 99);
-		Actor_Voice_Over(1400, 99);
+		Actor_Voice_Over(1360, kActorVoiceOver);
+		Actor_Voice_Over(1370, kActorVoiceOver);
+		Actor_Voice_Over(1380, kActorVoiceOver);
+		Actor_Voice_Over(1390, kActorVoiceOver);
+		Actor_Voice_Over(1400, kActorVoiceOver);
 		Delay(1000);
 		Game_Flag_Reset(666);
 		Game_Flag_Set(34);

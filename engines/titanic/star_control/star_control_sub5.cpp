@@ -63,8 +63,6 @@ bool CStarControlSub5::setup() {
 }
 
 bool CStarControlSub5::setup2(int val1, int val2) {
-	// TODO: Original set an explicit random seed here. Could be
-	// problematic if following random values need to be deterministic
 	const double FACTOR = 2 * M_PI / 360.0;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {

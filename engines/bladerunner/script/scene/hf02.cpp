@@ -56,11 +56,11 @@ void SceneScriptHF02::InitializeScene() {
 void SceneScriptHF02::SceneLoaded() {
 	Obstacle_Object("BARD_NEON", true);
 	Unclickable_Object("BARD_NEON");
-	if (Actor_Query_Goal_Number(1) == 234) {
+	if (Actor_Query_Goal_Number(kActorSteele) == 234) {
 		if (Game_Flag_Query(593)) {
-			Actor_Set_Goal_Number(1, 243);
+			Actor_Set_Goal_Number(kActorSteele, 243);
 		} else {
-			Actor_Set_Goal_Number(1, 240);
+			Actor_Set_Goal_Number(kActorSteele, 240);
 		}
 	}
 }
@@ -84,7 +84,7 @@ bool SceneScriptHF02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 42.0f, 47.76f, -296.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 42.0f, 47.76f, -296.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(309);
@@ -93,7 +93,7 @@ bool SceneScriptHF02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 470.0f, 47.76f, -444.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 470.0f, 47.76f, -444.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(527);
@@ -116,21 +116,21 @@ void SceneScriptHF02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF02::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(1) == 240) {
-		Actor_Set_Goal_Number(1, 241);
+	if (Actor_Query_Goal_Number(kActorSteele) == 240) {
+		Actor_Set_Goal_Number(kActorSteele, 241);
 	}
 	if (Game_Flag_Query(528)) {
-		Loop_Actor_Walk_To_XYZ(0, 470.0f, 47.76f, -444.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 470.0f, 47.76f, -444.0f, 0, 0, false, 0);
 		Game_Flag_Reset(528);
 	} else if (Game_Flag_Query(308)) {
-		Loop_Actor_Walk_To_XYZ(0, 42.0f, 47.76f, -296.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 42.0f, 47.76f, -296.0f, 0, 0, false, 0);
 		Game_Flag_Reset(308);
 	}
-	if (Actor_Query_Goal_Number(1) == 243) {
-		if (Actor_Query_Goal_Number(6) == 599) {
-			Actor_Set_Goal_Number(1, 244);
+	if (Actor_Query_Goal_Number(kActorSteele) == 243) {
+		if (Actor_Query_Goal_Number(kActorLucy) == 599) {
+			Actor_Set_Goal_Number(kActorSteele, 244);
 		} else {
-			Actor_Set_Goal_Number(1, 245);
+			Actor_Set_Goal_Number(kActorSteele, 245);
 		}
 	}
 }

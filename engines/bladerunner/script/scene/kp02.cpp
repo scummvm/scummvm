@@ -75,12 +75,12 @@ bool SceneScriptKP02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -1040.0f, -615.49f, 2903.0f, 0, 1, false, 0)) {
-			if (Actor_Query_Goal_Number(65) == 406 || Actor_Query_Goal_Number(64) == 406) {
-				Non_Player_Actor_Combat_Mode_Off(65);
-				Non_Player_Actor_Combat_Mode_Off(64);
-				Actor_Set_Goal_Number(65, 400);
-				Actor_Set_Goal_Number(64, 400);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1040.0f, -615.49f, 2903.0f, 0, 1, false, 0)) {
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406) {
+				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
+				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
+				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
+				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(411);
@@ -95,12 +95,12 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -884.0f, -615.49f, 3065.0f, 0, 1, false, 0)) {
-			if (Actor_Query_Goal_Number(65) == 406 || Actor_Query_Goal_Number(64) == 406) {
-				Non_Player_Actor_Combat_Mode_Off(65);
-				Non_Player_Actor_Combat_Mode_Off(64);
-				Actor_Set_Goal_Number(65, 400);
-				Actor_Set_Goal_Number(64, 400);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3065.0f, 0, 1, false, 0)) {
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406) {
+				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
+				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
+				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
+				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(413);
@@ -129,11 +129,11 @@ void SceneScriptKP02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP02::PlayerWalkedIn() {
 	if (Game_Flag_Query(414)) {
-		Loop_Actor_Walk_To_XYZ(0, -884.0f, -615.49f, 3035.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3035.0f, 0, 0, false, 0);
 		Game_Flag_Reset(414);
 	}
-	if (Game_Flag_Query(653) && Actor_Query_Goal_Number(1) != 599) {
-		Actor_Set_Goal_Number(1, 450);
+	if (Game_Flag_Query(653) && Actor_Query_Goal_Number(kActorSteele) != 599) {
+		Actor_Set_Goal_Number(kActorSteele, 450);
 	}
 	//return false;
 }

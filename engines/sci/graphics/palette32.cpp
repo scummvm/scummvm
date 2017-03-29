@@ -37,15 +37,15 @@ namespace Sci {
 
 #pragma mark HunkPalette
 
-HunkPalette::HunkPalette(byte *rawPalette) :
+HunkPalette::HunkPalette(const SciSpan<const byte> &rawPalette) :
 	_version(0),
 	// NOTE: The header size in palettes is garbage. In at least KQ7 2.00b and
 	// Phant1, the 999.pal sets this value to 0. In most other palettes it is
 	// set to 14, but the *actual* size of the header structure used in SSCI is
 	// 13, which is reflected by `kHunkPaletteHeaderSize`.
 	// _headerSize(rawPalette[0]),
-	_numPalettes(rawPalette[10]),
-	_data(nullptr) {
+	_numPalettes(rawPalette.getUint8At(10)),
+	_data() {
 	assert(_numPalettes == 0 || _numPalettes == 1);
 	if (_numPalettes) {
 		_data = rawPalette;
@@ -54,7 +54,7 @@ HunkPalette::HunkPalette(byte *rawPalette) :
 }
 
 void HunkPalette::setVersion(const uint32 version) const {
-	if (_numPalettes != _data[10]) {
+	if (_numPalettes != _data.getUint8At(10)) {
 		error("Invalid HunkPalette");
 	}
 
@@ -64,20 +64,21 @@ void HunkPalette::setVersion(const uint32 version) const {
 			error("Invalid HunkPalette");
 		}
 
-		WRITE_SCI11ENDIAN_UINT32(getPalPointer() + kEntryVersionOffset, version);
+		byte *palette = const_cast<byte *>(getPalPointer().getUnsafeDataAt(kEntryVersionOffset, sizeof(uint32)));
+		WRITE_SCI11ENDIAN_UINT32(palette, version);
 		_version = version;
 	}
 }
 
 const HunkPalette::EntryHeader HunkPalette::getEntryHeader() const {
-	const byte *const data = getPalPointer();
+	const SciSpan<const byte> data(getPalPointer());
 
 	EntryHeader header;
-	header.startColor = data[10];
-	header.numColors = READ_SCI11ENDIAN_UINT16(data + 14);
-	header.used = data[16];
-	header.sharedUsed = data[17];
-	header.version = READ_SCI11ENDIAN_UINT32(data + kEntryVersionOffset);
+	header.startColor = data.getUint8At(10);
+	header.numColors = data.getUint16SEAt(14);
+	header.used = data.getUint8At(16);
+	header.sharedUsed = data.getUint8At(17);
+	header.version = data.getUint32SEAt(kEntryVersionOffset);
 
 	return header;
 }
@@ -94,7 +95,8 @@ const Palette HunkPalette::toPalette() const {
 
 	if (_numPalettes) {
 		const EntryHeader header = getEntryHeader();
-		const byte *data = getPalPointer() + kEntryHeaderSize;
+		const uint32 dataSize = header.numColors * (/* RGB */ 3 + (header.sharedUsed ? 0 : 1));
+		const byte *data = getPalPointer().getUnsafeDataAt(kEntryHeaderSize, dataSize);
 
 		const int16 end = header.startColor + header.numColors;
 		assert(end <= 256);
@@ -169,7 +171,7 @@ bool GfxPalette32::loadPalette(const GuiResourceId resourceId) {
 		return false;
 	}
 
-	const HunkPalette palette(palResource->data);
+	const HunkPalette palette(*palResource);
 	submit(palette);
 	return true;
 }
@@ -296,7 +298,7 @@ Palette GfxPalette32::getPaletteFromResource(const GuiResourceId resourceId) con
 		error("Could not load vary palette %d", resourceId);
 	}
 
-	const HunkPalette rawPalette(palResource->data);
+	const HunkPalette rawPalette(*palResource);
 	return rawPalette.toPalette();
 }
 

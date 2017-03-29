@@ -39,21 +39,21 @@ void SceneScriptPS09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(126, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(127, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	if (!Game_Flag_Query(55)) {
-		Actor_Put_In_Set(11, 67);
-		Actor_Set_At_XYZ(11, -417.88f, 0.0f, -200.74f, 512);
+		Actor_Put_In_Set(kActorGrigorian, 67);
+		Actor_Set_At_XYZ(kActorGrigorian, -417.88f, 0.0f, -200.74f, 512);
 		Game_Flag_Set(55);
 	}
 	if (Game_Flag_Query(465)) {
-		Actor_Put_In_Set(11, 94);
-		Actor_Set_At_XYZ(11, 0.0f, 0.0f, 0.0f, 512);
+		Actor_Put_In_Set(kActorGrigorian, 94);
+		Actor_Set_At_XYZ(kActorGrigorian, 0.0f, 0.0f, 0.0f, 512);
 	}
-	if (Game_Flag_Query(164) ) {
-		Actor_Put_In_Set(7, 67);
-		Actor_Set_At_XYZ(7, -476.0f, 0.2f, -225.0f, 518);
+	if (Game_Flag_Query(164)) {
+		Actor_Put_In_Set(kActorIzo, 67);
+		Actor_Set_At_XYZ(kActorIzo, -476.0f, 0.2f, -225.0f, 518);
 	}
-	if (Game_Flag_Query(165) ) {
-		Actor_Put_In_Set(9, 67);
-		Actor_Set_At_XYZ(9, -290.0f, 0.33f, -235.0f, 207);
+	if (Game_Flag_Query(165)) {
+		Actor_Put_In_Set(kActorCrazylegs, 67);
+		Actor_Set_At_XYZ(kActorCrazylegs, -290.0f, 0.33f, -235.0f, 207);
 	}
 }
 
@@ -72,97 +72,97 @@ bool SceneScriptPS09::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptPS09::ClickedOnActor(int actorId) {
-	if (actorId == 11 && !Loop_Actor_Walk_To_XYZ(0, -381.11f, 0.0f, -135.55f, 0, 1, false, 0)) {
-		Actor_Face_Actor(0, 11, true);
-		Actor_Face_Actor(11, 0, true);
+	if (actorId == 11 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -381.11f, 0.0f, -135.55f, 0, 1, false, 0)) {
+		Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
+		Actor_Face_Actor(kActorGrigorian, kActorMcCoy, true);
 		if (!Game_Flag_Query(49)) {
-			Actor_Says(11, 0, 12);
-			Actor_Says(0, 4235, 18);
-			Actor_Says(11, 10, 13);
+			Actor_Says(kActorGrigorian, 0, 12);
+			Actor_Says(kActorMcCoy, 4235, 18);
+			Actor_Says(kActorGrigorian, 10, 13);
 			Game_Flag_Set(49);
 			return true;
 		}
-		if (Game_Flag_Query(49)  && !Game_Flag_Query(54) && !Actor_Clue_Query(0, 179) && !Actor_Clue_Query(0, 180) && !Actor_Clue_Query(0, 181)) {
-			Actor_Says(0, 4245, 14);
-			Actor_Says(11, 20, 14);
+		if (Game_Flag_Query(49) && !Game_Flag_Query(54) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
+			Actor_Says(kActorMcCoy, 4245, 14);
+			Actor_Says(kActorGrigorian, 20, 14);
 			Game_Flag_Set(54);
 			return true;
 		}
-		if ((!Game_Flag_Query(53) && Game_Flag_Query(49)  && Actor_Clue_Query(0, 179) ) || Actor_Clue_Query(0, 180)  || Actor_Clue_Query(0, 181)  || Actor_Clue_Query(0, 99) ) {
+		if ((!Game_Flag_Query(53) && Game_Flag_Query(49) && Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2) || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) {
 			Game_Flag_Set(53);
-			Actor_Says(0, 4240, 13);
-			Actor_Says(11, 550, 15);
-			Actor_Says(11, 480, 16);
+			Actor_Says(kActorMcCoy, 4240, 13);
+			Actor_Says(kActorGrigorian, 550, 15);
+			Actor_Says(kActorGrigorian, 480, 16);
 			sub_402090();
 			return true;
 		}
-		if (Game_Flag_Query(51) ) {
-			Actor_Says(0, 4270, 18);
-			Actor_Says(11, 30, 14);
-			Actor_Says(11, 40, 13);
+		if (Game_Flag_Query(51)) {
+			Actor_Says(kActorMcCoy, 4270, 18);
+			Actor_Says(kActorGrigorian, 30, 14);
+			Actor_Says(kActorGrigorian, 40, 13);
 			return true;
 		}
-		if (Game_Flag_Query(53)  && Game_Flag_Query(49)  && (Actor_Clue_Query(0, 179)  || Actor_Clue_Query(0, 180)  || Actor_Clue_Query(0, 99) )) {
+		if (Game_Flag_Query(53) && Game_Flag_Query(49) && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote))) {
 			sub_402090();
 			return true;
 		}
-		Actor_Says(0, 4270, 18);
-		Actor_Says(11, 30, 14);
-		Actor_Says(11, 40, 13);
+		Actor_Says(kActorMcCoy, 4270, 18);
+		Actor_Says(kActorGrigorian, 30, 14);
+		Actor_Says(kActorGrigorian, 40, 13);
 		return true;
 	}
-	if (actorId == 7 && !Loop_Actor_Walk_To_XYZ(0, -473.0f, 0.2f, -133.0f, 12, 1, false, 0)) {
-		Actor_Face_Actor(0, 7, true);
-		Actor_Face_Actor(7, 0, true);
+	if (actorId == 7 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -473.0f, 0.2f, -133.0f, 12, 1, false, 0)) {
+		Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
+		Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 		if (!Game_Flag_Query(167)) {
-			Actor_Says(0, 4200, 14);
-			Actor_Says(7, 570, 3);
-			Actor_Says(0, 4205, 18);
+			Actor_Says(kActorMcCoy, 4200, 14);
+			Actor_Says(kActorIzo, 570, 3);
+			Actor_Says(kActorMcCoy, 4205, 18);
 			Game_Flag_Set(167);
 			return true;
 		}
-		if (Game_Flag_Query(167)  && !Game_Flag_Query(168)) {
-			Actor_Says(0, 4210, 18);
-			Actor_Says(7, 580, 3);
-			Actor_Says(0, 4215, 14);
-			Actor_Says(7, 590, 3);
-			Actor_Says(7, 600, 3);
-			Actor_Says(0, 4220, 18);
-			Actor_Says(7, 610, 3);
-			Actor_Says(0, 4225, 19);
-			Actor_Says(7, 620, 3);
-			Actor_Says(0, 4230, 14);
+		if (Game_Flag_Query(167) && !Game_Flag_Query(168)) {
+			Actor_Says(kActorMcCoy, 4210, 18);
+			Actor_Says(kActorIzo, 580, 3);
+			Actor_Says(kActorMcCoy, 4215, 14);
+			Actor_Says(kActorIzo, 590, 3);
+			Actor_Says(kActorIzo, 600, 3);
+			Actor_Says(kActorMcCoy, 4220, 18);
+			Actor_Says(kActorIzo, 610, 3);
+			Actor_Says(kActorMcCoy, 4225, 19);
+			Actor_Says(kActorIzo, 620, 3);
+			Actor_Says(kActorMcCoy, 4230, 14);
 			Game_Flag_Set(168);
 			return true;
 		}
-		Actor_Says(0, 4200, 13);
+		Actor_Says(kActorMcCoy, 4200, 13);
 	}
-	if (actorId == 9 && !Loop_Actor_Walk_To_XYZ(0, -295.0f, 0.34f, -193.0f, 12, 1, false, 0)) {
-		Actor_Face_Actor(0, 9, true);
-		Actor_Face_Actor(9, 0, true);
+	if (actorId == 9 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -295.0f, 0.34f, -193.0f, 12, 1, false, 0)) {
+		Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+		Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 		//TODO: cleanup
-		if (Game_Flag_Query(166) || (Actor_Says(0, 4415, 18) , Actor_Says(9, 1090, 3) , Actor_Says(0, 4420, 18) , Game_Flag_Set(166) , Game_Flag_Query(166) != 1) || Game_Flag_Query(55) != 1 || Game_Flag_Query(56)) {
+		if (Game_Flag_Query(166) || (Actor_Says(kActorMcCoy, 4415, 18) , Actor_Says(kActorCrazylegs, 1090, 3) , Actor_Says(kActorMcCoy, 4420, 18) , Game_Flag_Set(166) , Game_Flag_Query(166) != 1) || Game_Flag_Query(55) != 1 || Game_Flag_Query(56)) {
 			if (!Game_Flag_Query(166) || Game_Flag_Query(55) || Game_Flag_Query(175)) {
-				Actor_Says(0, 4425, 18);
-				Actor_Says(9, 1160, 3);
+				Actor_Says(kActorMcCoy, 4425, 18);
+				Actor_Says(kActorCrazylegs, 1160, 3);
 				return true;
 			} else {
-				Actor_Says(0, 4425, 18);
-				Actor_Says(9, 1100, 3);
-				Actor_Says(0, 4430, 19);
-				Actor_Says(9, 1110, 3);
+				Actor_Says(kActorMcCoy, 4425, 18);
+				Actor_Says(kActorCrazylegs, 1100, 3);
+				Actor_Says(kActorMcCoy, 4430, 19);
+				Actor_Says(kActorCrazylegs, 1110, 3);
 				Game_Flag_Set(175);
 				return true;
 			}
 		} else {
-			Actor_Face_Actor(11, 9, true);
-			Actor_Says(11, 420, 14);
-			Actor_Face_Actor(9, 11, true);
-			Actor_Says(9, 1120, 3);
-			Actor_Face_Actor(0, 11, true);
-			Actor_Says(0, 4435, 14);
-			Actor_Says(11, 430, 16);
-			Actor_Says(9, 1130, 3);
+			Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
+			Actor_Says(kActorGrigorian, 420, 14);
+			Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
+			Actor_Says(kActorCrazylegs, 1120, 3);
+			Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
+			Actor_Says(kActorMcCoy, 4435, 14);
+			Actor_Says(kActorGrigorian, 430, 16);
+			Actor_Says(kActorCrazylegs, 1130, 3);
 			Game_Flag_Set(56);
 			return true;
 		}
@@ -176,7 +176,7 @@ bool SceneScriptPS09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -559.15f, 0.0f, -85.06f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -559.15f, 0.0f, -85.06f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(62, 66);
@@ -205,17 +205,17 @@ void SceneScriptPS09::PlayerWalkedIn() {
 	if (Game_Flag_Query(465)) {
 		Player_Loses_Control();
 		Delay(2000);
-		Actor_Retired_Here(0, 6, 6, 1, -1);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 		//return true;
 		return;
 	}
 	if (!Game_Flag_Query(211)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(0, -491.15f, 0.0f, -73.06f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -491.15f, 0.0f, -73.06f, 0, 0, false, 0);
 		Player_Gains_Control();
 		Game_Flag_Set(211);
 	}
-	if (Game_Flag_Query(133) ) {
+	if (Game_Flag_Query(133)) {
 		Game_Flag_Reset(133);
 		//return true;
 		return;
@@ -231,12 +231,12 @@ void SceneScriptPS09::DialogueQueueFlushed(int a1) {
 
 void SceneScriptPS09::sub_402090() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(0, 179)  || Actor_Clue_Query(0, 180)  || Actor_Clue_Query(0, 181) ) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3);
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5);
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);
 	}
-	if (Actor_Clue_Query(0, 99) 		&& (Actor_Clue_Query(0, 179)  || Actor_Clue_Query(0, 180)  || Actor_Clue_Query(0, 181) )) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2))) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1);
 	}
 	Dialogue_Menu_Add_To_List(210);
@@ -245,108 +245,107 @@ void SceneScriptPS09::sub_402090() {
 	Dialogue_Menu_Disappear();
 	switch (answer) {
 	case 170:
-		Actor_Says(0, 4270, 13);
-		Actor_Says(0, 4250, 18);
-		Actor_Says(11, 50, 13);
-		Actor_Says(0, 4275, 18);
-		Actor_Says(0, 4280, 19);
-		if (Game_Flag_Query(44) ) {
-			Actor_Says(11, 60, 14);
-			Actor_Says(0, 4285, 13);
-			Actor_Says(11, 70, 12);
-			Actor_Says(0, 4290, 13);
-			Actor_Says(11, 80, 13);
-			Actor_Says(11, 90, 13);
-			Actor_Says(0, 4295, 18);
-			Actor_Says(11, 110, 14);
-			Actor_Says(0, 4300, 17);
+		Actor_Says(kActorMcCoy, 4270, 13);
+		Actor_Says(kActorMcCoy, 4250, 18);
+		Actor_Says(kActorGrigorian, 50, 13);
+		Actor_Says(kActorMcCoy, 4275, 18);
+		Actor_Says(kActorMcCoy, 4280, 19);
+		if (Game_Flag_Query(44)) {
+			Actor_Says(kActorGrigorian, 60, 14);
+			Actor_Says(kActorMcCoy, 4285, 13);
+			Actor_Says(kActorGrigorian, 70, 12);
+			Actor_Says(kActorMcCoy, 4290, 13);
+			Actor_Says(kActorGrigorian, 80, 13);
+			Actor_Says(kActorGrigorian, 90, 13);
+			Actor_Says(kActorMcCoy, 4295, 18);
+			Actor_Says(kActorGrigorian, 110, 14);
+			Actor_Says(kActorMcCoy, 4300, 17);
 			return;
 		}
 		if (!Game_Flag_Query(44)) {
-			Actor_Says(11, 130, 15);
-			Actor_Says(11, 140, 13);
-			Actor_Says(0, 4305, 13);
-			Actor_Says(11, 150, 14);
-			Actor_Says(11, 160, 12);
-			Actor_Says(0, 4310, 13);
-			Actor_Says(11, 170, 15);
-			Actor_Says(11, 180, 16);
-			Actor_Says(0, 4315, 18);
-			Actor_Says(11, 200, 13);
+			Actor_Says(kActorGrigorian, 130, 15);
+			Actor_Says(kActorGrigorian, 140, 13);
+			Actor_Says(kActorMcCoy, 4305, 13);
+			Actor_Says(kActorGrigorian, 150, 14);
+			Actor_Says(kActorGrigorian, 160, 12);
+			Actor_Says(kActorMcCoy, 4310, 13);
+			Actor_Says(kActorGrigorian, 170, 15);
+			Actor_Says(kActorGrigorian, 180, 16);
+			Actor_Says(kActorMcCoy, 4315, 18);
+			Actor_Says(kActorGrigorian, 200, 13);
 			return;
 		}
 		break;
 	case 180:
-		Actor_Says(0, 4270, 18);
-		Actor_Says(0, 4255, 3);
-		Actor_Says(11, 210, 12);
-		Actor_Says(11, 220, 13);
-		Actor_Says(11, 230, 14);
-		Actor_Says(0, 4320, 14);
-		Actor_Says(11, 240, 16);
-		Actor_Says(11, 250, 15);
-		Actor_Says(0, 4330, 13);
-		Actor_Says(11, 260, 13);
-		Actor_Says(11, 270, 12);
-		Actor_Says(0, 4335, 18);
-		Actor_Says(11, 290, 15);
-		Actor_Says(0, 4340, 13);
-		Actor_Modify_Friendliness_To_Other(11, 0, -5);
+		Actor_Says(kActorMcCoy, 4270, 18);
+		Actor_Says(kActorMcCoy, 4255, 3);
+		Actor_Says(kActorGrigorian, 210, 12);
+		Actor_Says(kActorGrigorian, 220, 13);
+		Actor_Says(kActorGrigorian, 230, 14);
+		Actor_Says(kActorMcCoy, 4320, 14);
+		Actor_Says(kActorGrigorian, 240, 16);
+		Actor_Says(kActorGrigorian, 250, 15);
+		Actor_Says(kActorMcCoy, 4330, 13);
+		Actor_Says(kActorGrigorian, 260, 13);
+		Actor_Says(kActorGrigorian, 270, 12);
+		Actor_Says(kActorMcCoy, 4335, 18);
+		Actor_Says(kActorGrigorian, 290, 15);
+		Actor_Says(kActorMcCoy, 4340, 13);
+		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);
 		if (Game_Flag_Query(165)) {
-			Actor_Says(11, 300, 12);
-			Actor_Face_Actor(9, 11, true);
-			Actor_Says(9, 1010, 3);
-			Actor_Face_Actor(11, 9, true);
-			Actor_Says(11, 310, 16);
-			Actor_Face_Actor(0, 9, true);
-			Actor_Says(0, 4345, 14);
-			Actor_Face_Actor(9, 0, true);
-			Actor_Says(9, 1020, 3);
-			Actor_Says(0, 4350, 18);
-			Actor_Says(9, 1030, 3);
-			Actor_Says(0, 4355, 19);
-			Actor_Says(9, 1040, 3);
-			Actor_Says(0, 4360, 16);
-			Actor_Says(0, 4365, 14);
-			Actor_Says(9, 1050, 3);
-			Actor_Says(9, 1060, 3);
-			Actor_Says(0, 4370, 14);
-			Actor_Says(9, 1070, 3);
-			Actor_Says(9, 1080, 3);
-		}
-		else {
-			Actor_Says(11, 320, 13);
-			Actor_Says(11, 340, 14);
-			Actor_Says(11, 350, 12);
-			Actor_Says(0, 4375, 18);
+			Actor_Says(kActorGrigorian, 300, 12);
+			Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
+			Actor_Says(kActorCrazylegs, 1010, 3);
+			Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
+			Actor_Says(kActorGrigorian, 310, 16);
+			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+			Actor_Says(kActorMcCoy, 4345, 14);
+			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
+			Actor_Says(kActorCrazylegs, 1020, 3);
+			Actor_Says(kActorMcCoy, 4350, 18);
+			Actor_Says(kActorCrazylegs, 1030, 3);
+			Actor_Says(kActorMcCoy, 4355, 19);
+			Actor_Says(kActorCrazylegs, 1040, 3);
+			Actor_Says(kActorMcCoy, 4360, 16);
+			Actor_Says(kActorMcCoy, 4365, 14);
+			Actor_Says(kActorCrazylegs, 1050, 3);
+			Actor_Says(kActorCrazylegs, 1060, 3);
+			Actor_Says(kActorMcCoy, 4370, 14);
+			Actor_Says(kActorCrazylegs, 1070, 3);
+			Actor_Says(kActorCrazylegs, 1080, 3);
+		} else {
+			Actor_Says(kActorGrigorian, 320, 13);
+			Actor_Says(kActorGrigorian, 340, 14);
+			Actor_Says(kActorGrigorian, 350, 12);
+			Actor_Says(kActorMcCoy, 4375, 18);
 		}
 		break;
 	case 190:
-		Actor_Says(0, 4270, 18);
-		Actor_Says(0, 4260, 3);
-		Actor_Says(11, 360, 16);
-		Actor_Says(0, 4380, 19);
-		Actor_Says(0, 4385, 19);
-		Actor_Says(11, 370, 13);
-		Actor_Says(0, 4390, 19);
-		Actor_Says(0, 4395, 18);
-		Actor_Says(11, 380, 14);
-		Actor_Says(11, 390, 12);
-		Actor_Modify_Friendliness_To_Other(11, 0, -5);
+		Actor_Says(kActorMcCoy, 4270, 18);
+		Actor_Says(kActorMcCoy, 4260, 3);
+		Actor_Says(kActorGrigorian, 360, 16);
+		Actor_Says(kActorMcCoy, 4380, 19);
+		Actor_Says(kActorMcCoy, 4385, 19);
+		Actor_Says(kActorGrigorian, 370, 13);
+		Actor_Says(kActorMcCoy, 4390, 19);
+		Actor_Says(kActorMcCoy, 4395, 18);
+		Actor_Says(kActorGrigorian, 380, 14);
+		Actor_Says(kActorGrigorian, 390, 12);
+		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);
 		break;
 	case 200:
-		Actor_Says(0, 4265, 14);
-		Actor_Says(11, 400, 13);
-		Actor_Says(0, 4400, 13);
-		Actor_Says(11, 410, 16);
-		Actor_Says(0, 4405, 14);
-		Actor_Says(0, 4410, 15);
+		Actor_Says(kActorMcCoy, 4265, 14);
+		Actor_Says(kActorGrigorian, 400, 13);
+		Actor_Says(kActorMcCoy, 4400, 13);
+		Actor_Says(kActorGrigorian, 410, 16);
+		Actor_Says(kActorMcCoy, 4405, 14);
+		Actor_Says(kActorMcCoy, 4410, 15);
 		Voight_Kampff_Activate(11, 20);
-		Actor_Modify_Friendliness_To_Other(11, 0, -10);
+		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -10);
 		break;
 	case 210:
-		Actor_Says(0, 8600, 18);
-		Actor_Says(11, 20, 15);
+		Actor_Says(kActorMcCoy, 8600, 18);
+		Actor_Says(kActorGrigorian, 20, 15);
 		break;
 	}
 }

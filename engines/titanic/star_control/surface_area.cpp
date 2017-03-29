@@ -229,7 +229,7 @@ double CSurfaceArea::fillRect(const FRect &rect) {
 		}
 	}
 
-	// TODO: Lots more functionality
+	// Lots more functionality
 */
 	return r.top;
 }

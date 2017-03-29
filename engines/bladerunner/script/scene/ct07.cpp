@@ -26,8 +26,8 @@ namespace BladeRunner {
 
 void SceneScriptCT07::InitializeScene() {
 	Setup_Scene_Information(202.32f, -58.23f, -12.86f, 225);
-	Actor_Put_In_Set(19, 30);
-	Actor_Set_At_XYZ(19, -9.68f, -58.23f, 11.14f, 250);
+	Actor_Put_In_Set(kActorZuben, 30);
+	Actor_Set_At_XYZ(kActorZuben, -9.68f, -58.23f, 11.14f, 250);
 	Ambient_Sounds_Add_Looping_Sound(54, 30, 90, 1);
 	Ambient_Sounds_Add_Looping_Sound(205, 20, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(56, 40, 100, 1);
@@ -89,9 +89,9 @@ void SceneScriptCT07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT07::PlayerWalkedIn() {
 	Player_Gains_Control();
-	Non_Player_Actor_Combat_Mode_On(19, 0, 0, 0, 2, 4, 7, 8, 0, 0, 100, 15, 300, 0);
+	Non_Player_Actor_Combat_Mode_On(kActorZuben, 0, 0, kActorMcCoy, 2, 4, 7, 8, 0, 0, 100, 15, 300, 0);
 	Game_Flag_Set(516);
-	Actor_Face_Actor(0, 19, true);
+	Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 }
 
 void SceneScriptCT07::PlayerWalkedOut() {

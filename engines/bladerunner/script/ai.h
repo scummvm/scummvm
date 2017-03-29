@@ -127,7 +127,7 @@ DECLARE_SCRIPT(Runciter)
 	int var_45CD88;
 END_SCRIPT
 
-DECLARE_SCRIPT(OfficerLeroy)
+DECLARE_SCRIPT(OfficerLeary)
 	int var_45D5B0_animation_state;
 	int var_45D5B4_animation_frame;
 	int var_45D5B8;

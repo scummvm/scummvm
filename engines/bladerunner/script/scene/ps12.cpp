@@ -232,7 +232,7 @@ bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 8, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, 1, false)) {
 			Game_Flag_Set(17);
 			sub_4028C4();
 			Set_Enter(14, 74);
@@ -240,9 +240,9 @@ bool SceneScriptPS12::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(0, 9, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 9, 12, 1, false)) {
 			Player_Loses_Control();
-			Loop_Actor_Walk_To_Waypoint(0, 10, 12, 0, false);
+			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 0, false);
 			Player_Gains_Control();
 			Game_Flag_Set(18);
 			sub_4028C4();
@@ -267,7 +267,7 @@ void SceneScriptPS12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS12::PlayerWalkedIn() {
 	if (Game_Flag_Query(16)) {
-		Loop_Actor_Walk_To_XYZ(0, -546.0f, -9.06f, 570.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -546.0f, -9.06f, 570.0f, 0, 1, false, 0);
 		Game_Flag_Reset(16);
 	}
 	Police_Maze_Set_Pause_State(0);

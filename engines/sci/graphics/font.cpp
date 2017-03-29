@@ -40,16 +40,15 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 	if (!_resource) {
 		error("font resource %d not found", resourceId);
 	}
-	_resourceData = _resource->data;
 
-	_numChars = READ_SCI32ENDIAN_UINT16(_resourceData + 2);
-	_fontHeight = READ_SCI32ENDIAN_UINT16(_resourceData + 4);
+	_numChars = _resource->getUint16SE32At(2);
+	_fontHeight = _resource->getUint16SE32At(4);
 	_chars = new Charinfo[_numChars];
 	// filling info for every char
 	for (int16 i = 0; i < _numChars; i++) {
-		_chars[i].offset = READ_SCI32ENDIAN_UINT16(_resourceData + 6 + i * 2);
-		_chars[i].width = _resourceData[_chars[i].offset];
-		_chars[i].height = _resourceData[_chars[i].offset + 1];
+		_chars[i].offset = _resource->getUint16SE32At(6 + i * 2);
+		_chars[i].width = _resource->getUint8At(_chars[i].offset);
+		_chars[i].height = _resource->getUint8At(_chars[i].offset + 1);
 	}
 }
 
@@ -62,20 +61,33 @@ GuiResourceId GfxFontFromResource::getResourceId() {
 	return _resourceId;
 }
 
-byte GfxFontFromResource::getHeight() {
+uint8 GfxFontFromResource::getHeight() {
 	return _fontHeight;
 }
-byte GfxFontFromResource::getCharWidth(uint16 chr) {
+uint8 GfxFontFromResource::getCharWidth(uint16 chr) {
 	return chr < _numChars ? _chars[chr].width : 0;
 }
-byte GfxFontFromResource::getCharHeight(uint16 chr) {
+uint8 GfxFontFromResource::getCharHeight(uint16 chr) {
 	return chr < _numChars ? _chars[chr].height : 0;
 }
-byte *GfxFontFromResource::getCharData(uint16 chr) {
-	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
+SciSpan<const byte> GfxFontFromResource::getCharData(uint16 chr) {
+	if (chr >= _numChars) {
+		return SciSpan<const byte>();
+	}
+
+	const uint32 size = (chr + 1 >= _numChars ? _resource->size() : _chars[chr + 1].offset) - _chars[chr].offset - 2;
+	return _resource->subspan(_chars[chr].offset + 2, size);
 }
 
 void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
+	if (chr >= _numChars) {
+		// SSCI silently ignores attempts to draw characters that do not exist
+		// in the font; for now, emit warnings if this happens, to learn if
+		// it leads to any bugs
+		warning("%s is missing glyph %d", _resource->name().c_str(), chr);
+		return;
+	}
+
 	// Make sure we're comparing against the correct dimensions
 	// If the font we're drawing is already upscaled, make sure we use the full screen width/height
 	uint16 screenWidth = _screen->fontIsUpscaled() ? _screen->getDisplayWidth() : _screen->getWidth();
@@ -87,13 +99,13 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 	int y = 0;
 	int16 greyedTop = top;
 
-	byte *pIn = getCharData(chr);
+	SciSpan<const byte> charData = getCharData(chr);
 	for (int i = 0; i < charHeight; i++, y++) {
 		if (greyedOutput)
 			mask = ((greyedTop++) % 2) ? 0xAA : 0x55;
 		for (int done = 0; done < charWidth; done++) {
 			if ((done & 7) == 0) // fetching next data byte
-				b = *(pIn++) & mask;
+				b = *(charData++) & mask;
 			if (b & 0x80) // if MSB is set - paint it
 				_screen->putFontPixel(top, left + done, y, color);
 			b = b << 1;
@@ -104,19 +116,27 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 #ifdef ENABLE_SCI32
 
 void GfxFontFromResource::drawToBuffer(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput, byte *buffer, int16 bufWidth, int16 bufHeight) {
+	if (chr >= _numChars) {
+		// SSCI silently ignores attempts to draw characters that do not exist
+		// in the font; for now, emit warnings if this happens, to learn if
+		// it leads to any bugs
+		warning("%s is missing glyph %d", _resource->name().c_str(), chr);
+		return;
+	}
+
 	int charWidth = MIN<int>(getCharWidth(chr), bufWidth - left);
 	int charHeight = MIN<int>(getCharHeight(chr), bufHeight - top);
 	byte b = 0, mask = 0xFF;
 	int y = 0;
 	int16 greyedTop = top;
 
-	byte *pIn = getCharData(chr);
+	SciSpan<const byte> charData = getCharData(chr);
 	for (int i = 0; i < charHeight; i++, y++) {
 		if (greyedOutput)
 			mask = ((greyedTop++) % 2) ? 0xAA : 0x55;
 		for (int done = 0; done < charWidth; done++) {
 			if ((done & 7) == 0) // fetching next data byte
-				b = *(pIn++) & mask;
+				b = *(charData++) & mask;
 			if (b & 0x80) {	// if MSB is set - paint it
 				int offset = (top + y) * bufWidth + (left + done);
 				buffer[offset] = color;

@@ -58,7 +58,7 @@ void SceneScriptCT11::SceneLoaded() {
 			Scene_2D_Region_Add(0, 505, 316, 513, 321);
 			Game_Flag_Set(725);
 		}
-		if (!Actor_Clue_Query(0, 111)) {
+		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
 			Scene_2D_Region_Add(1, 412, 258, 552, 358);
 		}
 	} else {
@@ -99,22 +99,22 @@ bool SceneScriptCT11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 121.0f, 9.6800003f, -42.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.6800003f, -42.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(304);
 			Set_Enter(31, 21);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -300.0f, 9.6800003f, 66.0f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(0, -400.0f, 9.6800003f, -70.0f, 0, 1, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.6800003f, 66.0f, 0, 1, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.6800003f, -70.0f, 0, 1, false, 0);
 			Game_Flag_Set(86);
 			Set_Enter(4, 24);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 290.0f, 0.0f, 635.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 0.0f, 635.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(531);
 			Game_Flag_Reset(176);
 			Game_Flag_Set(177);
@@ -127,50 +127,50 @@ bool SceneScriptCT11::ClickedOnExit(int exitId) {
 
 bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 	if (region == 0 && Game_Flag_Query(725)) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 686.0f, 0.0f, 658.0f, 12, 1, false, 0)) {
-			Actor_Face_Heading(0, 47, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(115);
-			Actor_Clue_Acquire(0, 118, 0, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLichenDogWrapper, 0, -1);
 			Item_Pickup_Spin_Effect(951, 510, 319);
 			Game_Flag_Reset(725);
 			Game_Flag_Set(645);
-			Actor_Voice_Over(550, 99);
-			Actor_Voice_Over(560, 99);
-			Actor_Voice_Over(570, 99);
-			Actor_Voice_Over(580, 99);
+			Actor_Voice_Over(550, kActorVoiceOver);
+			Actor_Voice_Over(560, kActorVoiceOver);
+			Actor_Voice_Over(570, kActorVoiceOver);
+			Actor_Voice_Over(580, kActorVoiceOver);
 		}
 		return true;
 	}
 	if (region == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 686.0f, 0.0f, 658.0f, 12, 1, false, 0)) {
-			Actor_Face_Heading(0, 47, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 47, false);
 			int temp = 0;
-			if (Actor_Clue_Query(0, 17)) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB)) {
 				temp = 1;
 			}
-			if (Actor_Clue_Query(0, 26)) {
+			if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)) {
 				++temp;
 			}
-			if (Actor_Clue_Query(0, 39)) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueLabPaintTransfer)) {
 				++temp;
 			}
-			if (Actor_Clue_Query(0, 37)) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueLicensePlate)) {
 				temp += 2;
 			}
-			if (Actor_Clue_Query(0, 30)) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueCarColorAndMake)) {
 				temp += 2;
 			}
-			if (Actor_Clue_Query(0, 31)) {
+			if (Actor_Clue_Query(kActorMcCoy, kCluePartialLicenseNumber)) {
 				temp += 2;
 			}
-			if (temp <= 2 || Actor_Clue_Query(0, 111)) {
-				Actor_Says(0, 8525, 12);
+			if (temp <= 2 || Actor_Clue_Query(kActorMcCoy, kClueCar)) {
+				Actor_Says(kActorMcCoy, 8525, 12);
 			} else {
-				Actor_Voice_Over(510, 99);
-				Actor_Voice_Over(520, 99);
-				Actor_Voice_Over(530, 99);
-				Actor_Voice_Over(540, 99);
-				Actor_Clue_Acquire(0, 111, 0, -1);
+				Actor_Voice_Over(510, kActorVoiceOver);
+				Actor_Voice_Over(520, kActorVoiceOver);
+				Actor_Voice_Over(530, kActorVoiceOver);
+				Actor_Voice_Over(540, kActorVoiceOver);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCar, 0, -1);
 				Scene_2D_Region_Remove(1);
 			}
 		}
@@ -187,16 +187,16 @@ void SceneScriptCT11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT11::PlayerWalkedIn() {
 	if (Game_Flag_Query(91)) {
-		Loop_Actor_Walk_To_XYZ(0, -358.0f, 9.68f, 32.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0f, 9.68f, 32.0f, 0, 0, false, 0);
 		Game_Flag_Reset(91);
 	} else if (Game_Flag_Query(558)) {
-		Loop_Actor_Walk_To_XYZ(0, 329.0f, 0.0f, 617.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 329.0f, 0.0f, 617.0f, 0, 0, false, 0);
 		Game_Flag_Reset(558);
 	} else {
 		Player_Loses_Control();
-		Actor_Set_Immunity_To_Obstacles(0, true);
-		Loop_Actor_Walk_To_XYZ(0, 125.0f, 9.68f, 74.0f, 0, 0, false, 0);
-		Actor_Set_Immunity_To_Obstacles(0, false);
+		Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 125.0f, 9.68f, 74.0f, 0, 0, false, 0);
+		Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 		Player_Gains_Control();
 		Game_Flag_Reset(83);
 	}

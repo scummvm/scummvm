@@ -55,8 +55,8 @@ bool SceneScriptRC51::MouseClick(int x, int y) {
 
 bool SceneScriptRC51::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("POSTER_2", objectName)) {
-		Actor_Face_Object(0, "POSTER_2", true);
-		Actor_Says(0, 8620, 3);
+		Actor_Face_Object(kActorMcCoy, "POSTER_2", true);
+		Actor_Says(kActorMcCoy, 8620, 3);
 		return true;
 	}
 	return false;
@@ -67,32 +67,32 @@ bool SceneScriptRC51::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 82 && !Loop_Actor_Walk_To_XYZ(0, 17.97f, -1238.89f, 108053.5f, 0, 1, false, 0)) {
-		Actor_Face_Item(0, 82, true);
-		Actor_Clue_Acquire(0, 8, 1, -1);
+	if (itemId == 82 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, 1, false, 0)) {
+		Actor_Face_Item(kActorMcCoy, 82, true);
+		Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, 1, -1);
 		Item_Remove_From_World(82);
 		Item_Pickup_Spin_Effect(937, 437, 407);
-		Actor_Voice_Over(2010, 99);
+		Actor_Voice_Over(2010, kActorVoiceOver);
 		Game_Flag_Set(147);
 		return true;
 	}
-	if (itemId == 79 && !Loop_Actor_Walk_To_Item(0, 79, 36, 1, false)) {
-		Actor_Face_Item(0, 79, true);
-		Actor_Clue_Acquire(0, 6, 1, -1);
+	if (itemId == 79 && !Loop_Actor_Walk_To_Item(kActorMcCoy, 79, 36, 1, false)) {
+		Actor_Face_Item(kActorMcCoy, 79, true);
+		Actor_Clue_Acquire(kActorMcCoy, kClueCandy, 1, -1);
 		Item_Remove_From_World(79);
 		Item_Pickup_Spin_Effect(933, 445, 230);
-		Actor_Says(0, 8735, 3);
-		Actor_Says(0, 8529, 3);
+		Actor_Says(kActorMcCoy, 8735, 3);
+		Actor_Says(kActorMcCoy, 8529, 3);
 		Game_Flag_Set(148);
 		return true;
 	}
-	if (itemId == 98 && !Loop_Actor_Walk_To_Item(0, 98, 36, 1, false)) {
-		Actor_Face_Item(0, 98, true);
-		Actor_Clue_Acquire(0, 7, 1, -1);
+	if (itemId == 98 && !Loop_Actor_Walk_To_Item(kActorMcCoy, 98, 36, 1, false)) {
+		Actor_Face_Item(kActorMcCoy, 98, true);
+		Actor_Clue_Acquire(kActorMcCoy, kClueToyDog, 1, -1);
 		Item_Remove_From_World(98);
 		Item_Pickup_Spin_Effect(971, 55, 376);
-		Actor_Says(0, 8525, 3);
-		Actor_Says(0, 8740, 3);
+		Actor_Says(kActorMcCoy, 8525, 3);
+		Actor_Says(kActorMcCoy, 8740, 3);
 		Game_Flag_Set(149);
 		return true;
 	}
@@ -100,7 +100,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptRC51::ClickedOnExit(int exitId) {
-	if (exitId == 0 && !Loop_Actor_Walk_To_XYZ(0, -8.87f, -1238.89f, 108173.27f, 0, 1, false, 0)) {
+	if (exitId == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, 1, false, 0)) {
 		Set_Enter(16, 79);
 		return true;
 	}

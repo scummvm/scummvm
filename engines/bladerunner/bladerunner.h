@@ -36,6 +36,15 @@
 
 namespace BladeRunner {
 
+enum AnimationModes {
+	kAnimationModeIdle = 0,
+	kAnimationModeWalk = 1,
+	kAnimationModeRun = 2,
+	kAnimationModeCombatIdle = 4,
+	kAnimationModeCombatWalk = 7,
+	kAnimationModeCombatRun = 8
+};
+
 class Actor;
 class ADQ;
 class AIScripts;
@@ -63,6 +72,7 @@ class SliceRenderer;
 class TextResource;
 class View;
 class Waypoints;
+class ZBuffer;
 
 #define ACTORS_COUNT 100
 #define VOICEOVER_ACTOR (ACTORS_COUNT - 1)
@@ -72,7 +82,7 @@ public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
-	
+
 	ADQ              *_adq;
 	AIScripts        *_aiScripts;
 	AmbientSounds    *_ambientSounds;
@@ -99,12 +109,12 @@ public:
 	View             *_view;
 	Waypoints        *_waypoints;
 	int              *_gameVars;
-	
+
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
 	TextResource    *_textCluetype;
 	TextResource    *_textKIA;
-	TextResource    *_textSpindest;
+	TextResource    *_textSpinnerDestinations;
 	TextResource    *_textVK;
 	TextResource    *_textOptions;
 
@@ -117,8 +127,7 @@ public:
 
 	Graphics::Surface  _surface1;
 	Graphics::Surface  _surface2;
-	uint16            *_zBuffer1;
-	uint16            *_zBuffer2;
+	ZBuffer           *_zbuffer;
 
 	Common::RandomSource _rnd;
 

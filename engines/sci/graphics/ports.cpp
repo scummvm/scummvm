@@ -674,13 +674,13 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 		_priorityBottom--;
 }
 
-void GfxPorts::priorityBandsInit(byte *data) {
+void GfxPorts::priorityBandsInit(const SciSpan<const byte> &data) {
 	int i = 0, inx;
 	byte priority = 0;
 
 	for (inx = 0; inx < 14; inx++) {
-		priority = *data++;
-		while (i < priority)
+		priority = data[inx];
+		while (i < priority && i < 200)
 			_priorityBands[i++] = inx;
 	}
 	while (i < 200)
@@ -688,13 +688,13 @@ void GfxPorts::priorityBandsInit(byte *data) {
 }
 
 // Gets used to read priority bands data from sci1.1 pictures
-void GfxPorts::priorityBandsInitSci11(byte *data) {
+void GfxPorts::priorityBandsInitSci11(SciSpan<const byte> data) {
 	byte priorityBands[14];
 	for (int bandNo = 0; bandNo < 14; bandNo++) {
-		priorityBands[bandNo] = READ_LE_UINT16(data);
+		priorityBands[bandNo] = data.getUint16LEAt(0);
 		data += 2;
 	}
-	priorityBandsInit(priorityBands);
+	priorityBandsInit(SciSpan<const byte>(priorityBands, 14));
 }
 
 void GfxPorts::kernelInitPriorityBands() {
