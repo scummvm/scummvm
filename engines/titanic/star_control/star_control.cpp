@@ -260,6 +260,11 @@ bool CStarControl::isSolved() const {
 	return _starField.isSolved();
 }
 
+void CStarControl::forceSolved() {
+	while (!_starField.isSolved())
+		_starField.fn7();
+}
+
 bool CStarControl::canSetStarDestination() const {
 	return _view.canSetStarDestination();
 }

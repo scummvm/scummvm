@@ -24,6 +24,7 @@
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/star_control/star_control.h"
 #include "titanic/support/strings.h"
 #include "titanic/titanic.h"
 
@@ -643,6 +644,10 @@ bool CSkipNavigationGlyph::MouseButtonDownMsg(const Point &pt) {
 
 bool CSkipNavigationGlyph::MouseButtonUpMsg(const Point &pt) {
 	if (_button && _button->MouseButtonUpMsg(pt)) {
+		CPetRemote *remote = static_cast<CPetRemote *>(_owner->getOwner());
+		CStarControl *starControl = remote->getPetControl()->getStarControl();
+		starControl->forceSolved();
+
 		CActMsg actMsg("SetDestin");
 		actMsg.execute("CaptainsWheel");
 		return true;
