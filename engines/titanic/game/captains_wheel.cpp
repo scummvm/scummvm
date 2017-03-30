@@ -98,7 +98,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Go") {
-		if (!_stopEnabled) {
+		if (_stopEnabled) {
 			incTransitions();
 			_stopEnabled = false;
 			_actionNum = 1;
