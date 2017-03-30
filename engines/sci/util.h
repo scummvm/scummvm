@@ -157,9 +157,9 @@ public:
 
 	inline SciSpanImpl(const pointer data_,
 					   const size_type size_,
-					   const Common::String &name = Common::String(),
-					   const size_type sourceByteOffset = 0) :
-		super_type(data_, size_, name, sourceByteOffset) {}
+					   const Common::String &name_ = Common::String(),
+					   const size_type sourceByteOffset_ = 0) :
+		super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
 	inline SciSpanImpl(const Other &other) : super_type(other) {}
@@ -265,9 +265,9 @@ public:
 
 	inline SciSpan(const pointer data_,
 				   const size_type size_,
-				   const Common::String &name = Common::String(),
-				   const size_type sourceByteOffset = 0) :
-		super_type(data_, size_, name, sourceByteOffset) {}
+				   const Common::String &name_ = Common::String(),
+				   const size_type sourceByteOffset_ = 0) :
+		super_type(data_, size_, name_, sourceByteOffset_) {}
 
 	template <typename Other>
 	inline SciSpan(const Other &other) : super_type(other) {}
