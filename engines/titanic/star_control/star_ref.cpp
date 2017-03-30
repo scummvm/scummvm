@@ -25,7 +25,58 @@
 namespace Titanic {
 
 void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
-	// TODO
+	if (_star->_data.empty())
+		return;
+
+	const double MAX_VAL = 1.0e9 * 1.0e9;
+	CStarControlSub6 sub6 = sub12->proc23();
+	double threshold = sub12->proc25();
+	double vWidth2 = (double)surface->_width * 0.5;
+	double vHeight2 = (double)surface->_height * 0.5;
+	FVector vTemp, vector1, vector2;
+	double val1, green, blue, red;
+
+	for (int idx = 0; idx < _star->size(); ++idx) {
+		const CBaseStarEntry &se = _star->_data[idx];
+		vTemp = se._position;
+		vector1._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x + sub6._vector._x;
+		vector1._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y;
+		vector1._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
+		double hyp = vector1._x * vector1._x + vector1._y * vector1._y + vector1._z * vector1._z;
+
+		if (vector1._z > threshold && hyp >= 1.0e12 && hyp < MAX_VAL) {
+			vector2.clear();
+			sub12->proc28(2, vector1, vector2);
+
+			const Common::Point pt((int)(vector2._x + vWidth2 - -0.5),
+				(int)(vector2._y + vHeight2 - -0.5));
+			if (pt.y >= 0 && pt.y < (surface->_height - 1) &&
+					pt.x >= 0 && pt.x < (surface->_width - 1)) {
+				val1 = sqrt(hyp);
+				if (val1 >= 100000.0)
+					val1 = 1.0 - (val1 - 100000.0) / 1000000000.0;
+				else
+					val1 = 1.0;
+
+				red = val1 * (double)se._red;
+				green = val1 * (double)se._green;
+				blue = val1 * (double)se._blue;
+
+				int count = 0;
+				if (red < 0.0)
+					++count;
+				if (green < 0.0)
+					++count;
+				if (blue < 0.0)
+					++count;
+
+				if (count < 3) {
+					if (!check(pt, idx))
+						break;
+				}
+			}
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

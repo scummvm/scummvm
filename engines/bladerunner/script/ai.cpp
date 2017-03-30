@@ -37,9 +37,9 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorsCount) : _vm(vm), _inScrip
 		_actorUpdating[i] = false;
 	}
 
-	_AIScripts[0]  = new AIScriptMcCoy(_vm);
-	_AIScripts[15] = new AIScriptRunciter(_vm);
-	_AIScripts[23] = new AIScriptOfficerLeroy(_vm);
+	_AIScripts[kActorMcCoy]  = new AIScriptMcCoy(_vm);
+	_AIScripts[kActorRunciter] = new AIScriptRunciter(_vm);
+	_AIScripts[kActorOfficerLeary] = new AIScriptOfficerLeary(_vm);
 }
 
 AIScripts::~AIScripts() {
@@ -53,8 +53,9 @@ AIScripts::~AIScripts() {
 
 void AIScripts::Initialize(int actor) {
 	assert(actor < _actorsCount);
-	if (_AIScripts[actor])
+	if (_AIScripts[actor]) {
 		_AIScripts[actor]->Initialize();
+	}
 }
 
 void AIScripts::Update(int actor) {

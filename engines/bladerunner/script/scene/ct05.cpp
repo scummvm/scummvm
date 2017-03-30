@@ -49,7 +49,7 @@ void SceneScriptCT05::InitializeScene() {
 	} else {
 		Scene_Loop_Set_Default(0);
 	}
-	if (Actor_Query_Goal_Number(53) == 1) {
+	if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 		Overlay_Play("ct05over", 0, 1, 0, 0);
 	}
 }
@@ -82,46 +82,46 @@ bool SceneScriptCT05::MouseClick(int x, int y) {
 
 bool SceneScriptCT05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("STAIR1", objectName)) {
-		Actor_Face_Object(0, objectName, true);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
 		return true;
 	}
 	if (Object_Query_Click("STAIR2", objectName)) {
-		Actor_Face_Object(0, objectName, true);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
 		return true;
 	}
 	if (Object_Query_Click("GRGDOOR", objectName)) {
-		Loop_Actor_Walk_To_Scene_Object(0, "GRGDOOR", 24, 1, false);
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8522, 12);
+		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "GRGDOOR", 24, true, false);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8522, 12);
 		return true;
 	}
 	if (Object_Query_Click("GRGDOOR2", objectName)) {
-		Loop_Actor_Walk_To_Scene_Object(0, "GRGDOOR2", 24, 1, false);
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8522, 12);
+		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "GRGDOOR2", 24, true, false);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8522, 12);
 		return true;
 	}
 	if (Object_Query_Click("TURBINE", objectName)) {
-		Loop_Actor_Walk_To_Scene_Object(0, "TURBINE", 36, 1, false);
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8528, 12);
+		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "TURBINE", 36, true, false);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8528, 12);
 		return true;
 	}
 	if (Object_Query_Click("LFTDOOR", objectName)) {
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8522, 12);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8522, 12);
 		return true;
 	}
 	if (Object_Query_Click("BARREL", objectName)) {
-		Loop_Actor_Walk_To_Scene_Object(0, "BARREL", 36, 1, false);
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8529, 12);
+		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BARREL", 36, true, false);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8529, 12);
 		return true;
 	}
 	if (Object_Query_Click("GRNDPIPE", objectName)) {
-		Loop_Actor_Walk_To_Scene_Object(0, "GRNDPIPE", 24, 1, false);
-		Actor_Face_Object(0, objectName, true);
-		Actor_Says(0, 8528, 12);
+		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "GRNDPIPE", 24, true, false);
+		Actor_Face_Object(kActorMcCoy, objectName, true);
+		Actor_Says(kActorMcCoy, 8528, 12);
 		return true;
 	}
 	return false;
@@ -137,9 +137,9 @@ bool SceneScriptCT05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -128.42f, -109.91f, 112.83f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, 1, false, 0)) {
 			Game_Flag_Set(76);
-			if (Actor_Query_Goal_Number(53) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
 			}
 			Set_Enter(4, 24);
@@ -147,11 +147,11 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -308.18f, -109.91f, 674.77f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, 1, false, 0)) {
 			Game_Flag_Set(75);
-			if (Actor_Query_Goal_Number(53) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
-				Actor_Set_Goal_Number(53, 5);
+				Actor_Set_Goal_Number(kActorGaff, 5);
 				Game_Flag_Set(409);
 			}
 			Set_Enter(5, 16);
@@ -159,15 +159,15 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 71.99f, -109.91f, 288.79f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.99f, -109.91f, 288.79f, 0, 1, false, 0)) {
 			Footstep_Sound_Override_On(2);
-			Actor_Face_Object(0, "STAIR 2", true);
-			Loop_Actor_Travel_Stairs(0, 9, 1, 0);
-			Actor_Set_At_XYZ(0, 99.73f, -19.91f, 134.97f, 256);
-			Loop_Actor_Travel_Stairs(0, 5, 1, 0);
+			Actor_Face_Object(kActorMcCoy, "STAIR 2", true);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, 0);
+			Actor_Set_At_XYZ(kActorMcCoy, 99.73f, -19.91f, 134.97f, 256);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 5, 1, 0);
 			Footstep_Sound_Override_Off();
 			Game_Flag_Set(77);
-			if (Actor_Query_Goal_Number(53) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
 			}
 			Set_Enter(29, 18);
@@ -211,21 +211,21 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		Player_Loses_Control();
 		Game_Flag_Reset(74);
 		if (Player_Query_Combat_Mode()) {
-			Loop_Actor_Walk_To_XYZ(0, -308.18f, -109.91f, 674.77f, 0, 0, true, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, 0, true, 0);
 		} else {
-			Loop_Actor_Walk_To_XYZ(0, -308.18f, -109.91f, 674.77f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, 0, false, 0);
 		}
 		Player_Gains_Control();
 	}
 	if (Game_Flag_Query(78)) {
 		Footstep_Sound_Override_On(2);
-		Loop_Actor_Travel_Stairs(0, 7, 0, 0);
-		Actor_Set_At_XYZ(0, 90.73f, -19.91f, 164.97f, 520);
-		Loop_Actor_Travel_Stairs(0, 10, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, 0);
+		Actor_Set_At_XYZ(kActorMcCoy, 90.73f, -19.91f, 164.97f, 520);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 10, 0, 0);
 		Game_Flag_Reset(78);
 		Footstep_Sound_Override_Off();
-		if (Actor_Query_Goal_Number(2) == 2 && Game_Flag_Query(145)) {
-			Actor_Set_Goal_Number(2, 3);
+		if (Actor_Query_Goal_Number(kActorGordo) == 2 && Game_Flag_Query(145)) {
+			Actor_Set_Goal_Number(kActorGordo, 3);
 		}
 	}
 }

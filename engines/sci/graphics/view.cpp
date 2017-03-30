@@ -21,7 +21,6 @@
  */
 
 #include "sci/sci.h"
-#include "sci/util.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
@@ -39,16 +38,7 @@ GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette
 }
 
 GfxView::~GfxView() {
-	// Iterate through the loops
-	for (uint16 loopNum = 0; loopNum < _loopCount; loopNum++) {
-		// and through the cells of each loop
-		for (uint16 celNum = 0; celNum < _loop[loopNum].celCount; celNum++) {
-			delete[] _loop[loopNum].cel[celNum].rawBitmap;
-		}
-		delete[] _loop[loopNum].cel;
-	}
-	delete[] _loop;
-
+	_loop.clear();
 	_resMan->unlockResource(_resource);
 }
 
@@ -111,10 +101,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 	if (!_resource) {
 		error("view resource %d not found", resourceId);
 	}
-	_resourceData = _resource->data;
-	_resourceSize = _resource->size;
 
-	byte *celData, *loopData;
+	SciSpan<const byte> celData, loopData;
 	uint16 celOffset;
 	CelInfo *cel;
 	uint16 celCount = 0;
@@ -122,15 +110,15 @@ void GfxView::initData(GuiResourceId resourceId) {
 	uint32 palOffset = 0;
 	uint16 headerSize = 0;
 	uint16 loopSize = 0, celSize = 0;
-	int loopNo, celNo, EGAmapNr;
+	uint loopNo, celNo, EGAmapNr;
 	byte seekEntry;
 	bool isEGA = false;
 	bool isCompressed = true;
 	ViewType curViewType = _resMan->getViewType();
 
-	_loopCount = 0;
+	_loop.resize(0);
 	_embeddedPal = false;
-	_EGAmapping = NULL;
+	_EGAmapping.clear();
 	_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
 	_isScaleable = true;
 
@@ -143,11 +131,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 	// make them look better (like removing dithered colors that aren't caught
 	// by our undithering or even improve the graphics overall).
 	if (curViewType == kViewEga) {
-		if (_resourceData[1] == 0x80) {
+		if (_resource->getUint8At(1) == 0x80) {
 			curViewType = kViewVga;
-		} else {
-			if (READ_LE_UINT16(_resourceData + 4) == 1)
-				curViewType = kViewVga11;
+		} else if (_resource->getUint16LEAt(4) == 1) {
+			curViewType = kViewVga11;
 		}
 	}
 
@@ -159,12 +146,12 @@ void GfxView::initData(GuiResourceId resourceId) {
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
-		_loopCount = _resourceData[0];
+		_loop.resize(_resource->getUint8At(0));
 		// bit 0x8000 of _resourceData[1] means palette is set
-		if (_resourceData[1] & 0x40)
+		if (_resource->getUint8At(1) & 0x40)
 			isCompressed = false;
-		mirrorBits = READ_LE_UINT16(_resourceData + 2);
-		palOffset = READ_LE_UINT16(_resourceData + 6);
+		mirrorBits = _resource->getUint16LEAt(2);
+		palOffset = _resource->getUint16LEAt(6);
 
 		if (palOffset && palOffset != 0x100) {
 			// Some SCI0/SCI01 games also have an offset set. It seems that it
@@ -174,7 +161,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			// have this pointing to a 8x16 byte mapping table that needs to get
 			// applied then.
 			if (!isEGA) {
-				_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
+				_palette->createFromData(_resource->subspan(palOffset), &_viewPalette);
 				_embeddedPal = true;
 			} else {
 				// Only use the EGA-mapping, when being SCI1 EGA
@@ -182,44 +169,41 @@ void GfxView::initData(GuiResourceId resourceId) {
 				//  with broken mapping tables. I guess those games won't use the mapping, so I rather disable it
 				//  for them
 				if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
-					_EGAmapping = &_resourceData[palOffset];
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
-						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
+						const SciSpan<const byte> mapping = _resource->subspan(palOffset + EGAmapNr * SCI_VIEW_EGAMAPPING_SIZE, SCI_VIEW_EGAMAPPING_SIZE);
+						if (memcmp(mapping.getUnsafeDataAt(0, SCI_VIEW_EGAMAPPING_SIZE), EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
 							break;
-						_EGAmapping += SCI_VIEW_EGAMAPPING_SIZE;
 					}
 					// If all mappings are "straight", then we actually ignore the mapping
 					if (EGAmapNr == SCI_VIEW_EGAMAPPING_COUNT)
-						_EGAmapping = NULL;
+						_EGAmapping.clear();
 					else
-						_EGAmapping = &_resourceData[palOffset];
+						_EGAmapping = _resource->subspan(palOffset, SCI_VIEW_EGAMAPPING_COUNT * SCI_VIEW_EGAMAPPING_SIZE);
 				}
 			}
 		}
 
-		_loop = new LoopInfo[_loopCount];
-		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
-			loopData = _resourceData + READ_LE_UINT16(_resourceData + 8 + loopNo * 2);
+		for (loopNo = 0; loopNo < _loop.size(); loopNo++) {
+			loopData = _resource->subspan(_resource->getUint16LEAt(8 + loopNo * 2));
 			// CelCount:WORD Unknown:WORD CelOffset0:WORD CelOffset1:WORD...
 
-			celCount = READ_LE_UINT16(loopData);
-			_loop[loopNo].celCount = celCount;
+			celCount = loopData.getUint16LEAt(0);
+			_loop[loopNo].cel.resize(celCount);
 			_loop[loopNo].mirrorFlag = mirrorBits & 1 ? true : false;
 			mirrorBits >>= 1;
 
 			// read cel info
-			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
-				celOffset = READ_LE_UINT16(loopData + 4 + celNo * 2);
-				celData = _resourceData + celOffset;
+				celOffset = loopData.getUint16LEAt(4 + celNo * 2);
+				celData = _resource->subspan(celOffset);
 
 				// For VGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE Unknown:BYTE RLEData starts now directly
 				// For EGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
 				cel = &_loop[loopNo].cel[celNo];
-				cel->scriptWidth = cel->width = READ_LE_UINT16(celData);
-				cel->scriptHeight = cel->height = READ_LE_UINT16(celData + 2);
+				cel->scriptWidth = cel->width = celData.getUint16LEAt(0);
+				cel->scriptHeight = cel->height = celData.getUint16LEAt(2);
 				cel->displaceX = (signed char)celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
@@ -251,27 +235,20 @@ void GfxView::initData(GuiResourceId resourceId) {
 						cel->offsetLiteral = celOffset + 8;
 					}
 				}
-				cel->rawBitmap = 0;
+				cel->rawBitmap.clear();
 				if (_loop[loopNo].mirrorFlag)
 					cel->displaceX = -cel->displaceX;
 			}
 		}
 		break;
 
-	case kViewVga11: // View-format SCI1.1+
+	case kViewVga11: { // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Flags:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
-		headerSize = READ_SCI11ENDIAN_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so it's added
+		headerSize = _resource->getUint16SEAt(0) + 2; // headerSize is not part of the header, so it's added
 		assert(headerSize >= 16);
-		_loopCount = _resourceData[2];
-		assert(_loopCount);
-		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
-
-		// For SCI32, this is a scale flag
-		if (getSciVersion() >= SCI_VERSION_2) {
-			_sci2ScaleRes = (Sci32ViewNativeResolution)_resourceData[5];
-			if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_DISABLED)
-				_sci2ScaleRes = SCI_VIEW_NATIVERES_NONE;
-		}
+		const uint8 loopCount = _resource->getUint8At(2);
+		assert(loopCount);
+		palOffset = _resource->getUint32SEAt(8);
 
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
@@ -279,7 +256,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// we assume that if flags is 0h the view does not support flags and default to scaleable
 		// if it's 1h then we assume that the view is not to be scaled
 		// if it's 40h then we assume that the view is scaleable
-		switch (_resourceData[3]) {
+		switch (_resource->getUint8At(3)) {
 		case 1:
 			_isScaleable = false;
 			break;
@@ -288,48 +265,49 @@ void GfxView::initData(GuiResourceId resourceId) {
 		case 0:
 			break; // don't do anything, we already have _isScaleable set
 		default:
-			error("unsupported flags byte (%d) inside sci1.1 view", _resourceData[3]);
+			error("unsupported flags byte (%d) inside sci1.1 view", _resource->getUint8At(3));
 			break;
 		}
 
-		loopData = _resourceData + headerSize;
-		loopSize = _resourceData[12];
+		loopData = _resource->subspan(headerSize);
+		loopSize = _resource->getUint8At(12);
 		assert(loopSize >= 16);
-		celSize = _resourceData[13];
+		celSize = _resource->getUint8At(13);
 		assert(celSize >= 32);
 
 		if (palOffset) {
-			_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
+			_palette->createFromData(_resource->subspan(palOffset), &_viewPalette);
 			_embeddedPal = true;
 		}
 
-		_loop = new LoopInfo[_loopCount];
-		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
-			loopData = _resourceData + headerSize + (loopNo * loopSize);
+		_loop.resize(loopCount);
+		for (loopNo = 0; loopNo < loopCount; loopNo++) {
+			loopData = _resource->subspan(headerSize + (loopNo * loopSize));
 
 			seekEntry = loopData[0];
 			if (seekEntry != 255) {
-				if (seekEntry >= _loopCount)
+				if (seekEntry >= loopCount)
 					error("Bad loop-pointer in sci 1.1 view");
 				_loop[loopNo].mirrorFlag = true;
-				loopData = _resourceData + headerSize + (seekEntry * loopSize);
+				loopData = _resource->subspan(headerSize + (seekEntry * loopSize));
 			} else {
 				_loop[loopNo].mirrorFlag = false;
 			}
 
 			celCount = loopData[2];
-			_loop[loopNo].celCount = celCount;
+			_loop[loopNo].cel.resize(celCount);
 
-			celData = _resourceData + READ_SCI11ENDIAN_UINT32(loopData + 12);
+			const uint32 celDataOffset = loopData.getUint32SEAt(12);
 
 			// read cel info
-			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
+				celData = _resource->subspan(celDataOffset + celNo * celSize, celSize);
+
 				cel = &_loop[loopNo].cel[celNo];
-				cel->scriptWidth = cel->width = READ_SCI11ENDIAN_UINT16(celData);
-				cel->scriptHeight = cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
-				cel->displaceX = READ_SCI11ENDIAN_UINT16(celData + 4);
-				cel->displaceY = READ_SCI11ENDIAN_UINT16(celData + 6);
+				cel->scriptWidth = cel->width = celData.getInt16SEAt(0);
+				cel->scriptHeight = cel->height = celData.getInt16SEAt(2);
+				cel->displaceX = celData.getInt16SEAt(4);
+				cel->displaceY = celData.getInt16SEAt(6);
 				if (cel->displaceY < 0)
 					cel->displaceY += 255; // sierra did this adjust in their sci1.1 getCelRect() - not sure about sci32
 
@@ -337,21 +315,20 @@ void GfxView::initData(GuiResourceId resourceId) {
 
 				cel->clearKey = celData[8];
 				cel->offsetEGA = 0;
-				cel->offsetRLE = READ_SCI11ENDIAN_UINT32(celData + 24);
-				cel->offsetLiteral = READ_SCI11ENDIAN_UINT32(celData + 28);
+				cel->offsetRLE = celData.getUint32SEAt(24);
+				cel->offsetLiteral = celData.getUint32SEAt(28);
 
 				// GK1-hires content is actually uncompressed, we need to swap both so that we process it as such
 				if ((cel->offsetRLE) && (!cel->offsetLiteral))
 					SWAP(cel->offsetRLE, cel->offsetLiteral);
 
-				cel->rawBitmap = 0;
+				cel->rawBitmap.clear();
 				if (_loop[loopNo].mirrorFlag)
 					cel->displaceX = -cel->displaceX;
-
-				celData += celSize;
 			}
 		}
 		break;
+	}
 
 	default:
 		error("ViewType was not detected, can't continue");
@@ -365,22 +342,18 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 995, Loop 13, Cel 0 = "TEXT"
 		// View 995, Loop 13, Cel 1 = "SPEECH"
 		// View 995, Loop 13, Cel 2 = "DUAL" (<- our injected view)
-		if ((g_sci->isCD()) && (resourceId == 995)) {
+		if (g_sci->isCD() && resourceId == 995) {
 			// security checks
-			if (_loopCount >= 14) {
-				if ((_loop[13].celCount == 2) && (_loop[13].cel[0].width == 46) && (_loop[13].cel[0].height == 11)) {
-					// copy current cels over
-					CelInfo *newCels = new CelInfo[3];
-					memcpy(newCels, _loop[13].cel, sizeof(CelInfo) * 2);
-					delete[] _loop[13].cel;
-					_loop[13].celCount++;
-					_loop[13].cel = newCels;
-					// Duplicate cel 0 to cel 2
-					memcpy(&_loop[13].cel[2], &_loop[13].cel[0], sizeof(CelInfo));
-					// copy over our data (which is uncompressed bitmap data)
-					_loop[13].cel[2].rawBitmap = new byte[sizeof(ViewInject_LauraBow2_Dual)];
-					memcpy(_loop[13].cel[2].rawBitmap, ViewInject_LauraBow2_Dual, sizeof(ViewInject_LauraBow2_Dual));
-				}
+			if (_loop.size() >= 14 &&
+				_loop[13].cel.size() == 2 &&
+				_loop[13].cel[0].width == 46 &&
+				_loop[13].cel[0].height == 11) {
+
+				_loop[13].cel.resize(3);
+				// Duplicate cel 0 to cel 2
+				_loop[13].cel[2] = _loop[13].cel[0];
+				// use our data (which is uncompressed bitmap data)
+				_loop[13].cel[2].rawBitmap->allocateFromSpan(SciSpan<const byte>(ViewInject_LauraBow2_Dual, sizeof(ViewInject_LauraBow2_Dual)));
 			}
 		}
 		break;
@@ -391,27 +364,20 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 947, Loop 9, Cel 1 = "TEXT" (pressed)
 		// View 947, Loop 12, Cel 0 = "DUAL" (not pressed) (<- our injected view)
 		// View 947, Loop 12, Cel 1 = "DUAL" (pressed) (<- our injected view)
-		if ((g_sci->isCD()) && (resourceId == 947)) {
+		if (g_sci->isCD() && resourceId == 947) {
 			// security checks
-			if (_loopCount == 12) {
-				if ((_loop[8].celCount == 2) && (_loop[8].cel[0].width == 50) && (_loop[8].cel[0].height == 15)) {
-					// add another loop
-					LoopInfo *newLoops = new LoopInfo[_loopCount + 1];
-					memcpy(newLoops, _loop, sizeof(LoopInfo) * _loopCount);
-					delete[] _loop;
-					_loop = newLoops;
-					_loopCount++;
-					// copy loop 8 to loop 12
-					memcpy(&_loop[12], &_loop[8], sizeof(LoopInfo));
-					_loop[12].cel = new CelInfo[2];
-					// duplicate all cels of loop 8 and into loop 12
-					memcpy(_loop[12].cel, _loop[8].cel, sizeof(CelInfo) * _loop[8].celCount);
-					// copy over our data (which is uncompressed bitmap data)
-					_loop[12].cel[0].rawBitmap = new byte[sizeof(ViewInject_KingsQuest6_Dual1)];
-					memcpy(_loop[12].cel[0].rawBitmap, ViewInject_KingsQuest6_Dual1, sizeof(ViewInject_KingsQuest6_Dual1));
-					_loop[12].cel[1].rawBitmap = new byte[sizeof(ViewInject_KingsQuest6_Dual2)];
-					memcpy(_loop[12].cel[1].rawBitmap, ViewInject_KingsQuest6_Dual2, sizeof(ViewInject_KingsQuest6_Dual2));
-				}
+			if (_loop.size() == 12 &&
+				_loop[8].cel.size() == 2 &&
+				_loop[8].cel[0].width == 50 &&
+				_loop[8].cel[0].height == 15) {
+
+				// add another loop
+				_loop.resize(_loop.size() + 1);
+				// copy loop 8 to loop 12
+				_loop[12] = _loop[8];
+				// use our data (which is uncompressed bitmap data)
+				_loop[12].cel[0].rawBitmap->allocateFromSpan(SciSpan<const byte>(ViewInject_KingsQuest6_Dual1, sizeof(ViewInject_KingsQuest6_Dual1)));
+				_loop[12].cel[1].rawBitmap->allocateFromSpan(SciSpan<const byte>(ViewInject_KingsQuest6_Dual2, sizeof(ViewInject_KingsQuest6_Dual2)));
 			}
 		}
 		break;
@@ -425,24 +391,24 @@ GuiResourceId GfxView::getResourceId() const {
 }
 
 int16 GfxView::getWidth(int16 loopNo, int16 celNo) const {
-	return _loopCount ? getCelInfo(loopNo, celNo)->width : 0;
+	return _loop.size() ? getCelInfo(loopNo, celNo)->width : 0;
 }
 
 int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
-	return _loopCount ? getCelInfo(loopNo, celNo)->height : 0;
+	return _loop.size() ? getCelInfo(loopNo, celNo)->height : 0;
 }
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
-	assert(_loopCount);
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
+	assert(_loop.size());
+	loopNo = CLIP<int16>(loopNo, 0, _loop.size() - 1);
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].cel.size() - 1);
 	return &_loop[loopNo].cel[celNo];
 }
 
 uint16 GfxView::getCelCount(int16 loopNo) const {
-	assert(_loopCount);
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	return _loop[loopNo].celCount;
+	assert(_loop.size());
+	loopNo = CLIP<int16>(loopNo, 0, _loop.size() - 1);
+	return _loop[loopNo].cel.size();
 }
 
 Palette *GfxView::getPalette() {
@@ -491,16 +457,19 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 	outRect.top = outRect.bottom - scaledHeight;
 }
 
-void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCount, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData) {
-	byte *outPtr = celBitmap;
+void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap, byte clearColor, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData) {
+	const int pixelCount = celBitmap.size();
+	byte *outPtr = celBitmap.getUnsafeDataAt(0);
 	byte curByte, runLength;
-	byte *rlePtr = inBuffer + rlePos;
+	// TODO: Calculate correct maximum dimensions
+	const byte *rlePtr = inBuffer.getUnsafeDataAt(rlePos);
 	// The existence of a literal position pointer signifies data with two
 	// separate streams, most likely a SCI1.1 view
-	byte *literalPtr = inBuffer + literalPos;
+	const byte *literalPtr = inBuffer.getUnsafeDataAt(literalPos, inBuffer.size() - literalPos);
+	const byte *const endOfResource = inBuffer.getUnsafeDataAt(inBuffer.size(), 0);
 	int pixelNr = 0;
 
-	memset(celBitmap, clearColor, pixelCount);
+	memset(celBitmap.getUnsafeDataAt(0), clearColor, celBitmap.size());
 
 	// View unpacking:
 	//
@@ -545,14 +514,17 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			uint32 pixelLine = pixelNr;
 
 			if (hasByteLengths) {
+				assert (rlePtr + 2 <= endOfResource);
 				pixelNr += *rlePtr++;
 				runLength = *rlePtr++;
 			} else {
+				assert (rlePtr + 4 <= endOfResource);
 				pixelNr += READ_BE_UINT16(rlePtr);
 				runLength = READ_BE_UINT16(rlePtr + 2);
 				rlePtr += 4;
 			}
 
+			assert(literalPtr + MIN<int>(runLength, pixelCount - pixelNr) <= endOfResource);
 			while (runLength-- && pixelNr < pixelCount)
 				outPtr[pixelNr++] = *literalPtr++;
 
@@ -566,7 +538,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 		while (pixelNr < pixelCount) {
 			curByte = *rlePtr++;
 			runLength = curByte >> 4;
-			memset(outPtr + pixelNr,        curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+			memset(outPtr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
 			pixelNr += runLength;
 		}
 		break;
@@ -576,7 +548,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			if (curByte & 0x07) { // fill with color
 				runLength = curByte & 0x07;
 				curByte = curByte >> 3;
-				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
+				memset(outPtr + pixelNr, curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte >> 3;
 			}
@@ -589,7 +561,7 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			if (curByte & 0xC0) { // fill with color
 				runLength = curByte >> 6;
 				curByte = curByte & 0x3F;
-				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
+				memset(outPtr + pixelNr, curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte & 0x3F;
 			}
@@ -638,12 +610,12 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 	}
 }
 
-void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
+void GfxView::unpackCel(int16 loopNo, int16 celNo, SciSpan<byte> &outPtr) {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 
 	if (celInfo->offsetEGA) {
 		// decompression for EGA views
-		unpackCelData(_resourceData, outPtr, 0, pixelCount, celInfo->offsetEGA, 0, _resMan->getViewType(), celInfo->width, false);
+		unpackCelData(*_resource, outPtr, 0, celInfo->offsetEGA, 0, _resMan->getViewType(), celInfo->width, false);
 	} else {
 		// We fill the buffer with transparent pixels, so that we can later skip
 		//  over pixels to automatically have them transparent
@@ -667,11 +639,11 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 		}
 
 		bool isMacSci11ViewData = g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1;
-		unpackCelData(_resourceData, outPtr, clearColor, pixelCount, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11ViewData);
+		unpackCelData(*_resource, outPtr, clearColor, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11ViewData);
 
 		// Swap 0 and 0xff pixels for Mac SCI1.1+ games (see above)
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
-			for (uint32 i = 0; i < pixelCount; i++) {
+			for (uint32 i = 0; i < outPtr.size(); i++) {
 				if (outPtr[i] == 0)
 					outPtr[i] = 0xff;
 				else if (outPtr[i] == 0xff)
@@ -681,39 +653,44 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 	}
 }
 
-const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
-	if (_loop[loopNo].cel[celNo].rawBitmap)
-		return _loop[loopNo].cel[celNo].rawBitmap;
+const SciSpan<const byte> &GfxView::getBitmap(int16 loopNo, int16 celNo) {
+	loopNo = CLIP<int16>(loopNo, 0, _loop.size() - 1);
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].cel.size() - 1);
 
-	uint16 width = _loop[loopNo].cel[celNo].width;
-	uint16 height = _loop[loopNo].cel[celNo].height;
-	// allocating memory to store cel's bitmap
-	int pixelCount = width * height;
-	_loop[loopNo].cel[celNo].rawBitmap = new byte[pixelCount];
-	byte *pBitmap = _loop[loopNo].cel[celNo].rawBitmap;
+	CelInfo &cel = _loop[loopNo].cel[celNo];
+
+	if (cel.rawBitmap)
+		return *cel.rawBitmap;
+
+	const uint16 width = cel.width;
+	const uint16 height = cel.height;
+	const uint pixelCount = width * height;
+	const Common::String sourceName = Common::String::format("%s loop %d cel %d", _resource->name().c_str(), loopNo, celNo);
+
+	SciSpan<byte> outBitmap = cel.rawBitmap->allocate(pixelCount, sourceName);
 
 	// unpack the actual cel bitmap data
-	unpackCel(loopNo, celNo, pBitmap, pixelCount);
+	unpackCel(loopNo, celNo, outBitmap);
 
 	if (_resMan->getViewType() == kViewEga)
-		unditherBitmap(pBitmap, width, height, _loop[loopNo].cel[celNo].clearKey);
+		unditherBitmap(outBitmap, width, height, _loop[loopNo].cel[celNo].clearKey);
 
 	// mirroring the cel if needed
 	if (_loop[loopNo].mirrorFlag) {
+		byte *pBitmap = outBitmap.getUnsafeDataAt(0, width * height);
 		for (int i = 0; i < height; i++, pBitmap += width)
 			for (int j = 0; j < width / 2; j++)
 				SWAP(pBitmap[j], pBitmap[width - j - 1]);
 	}
-	return _loop[loopNo].cel[celNo].rawBitmap;
+
+	return *cel.rawBitmap;
 }
 
 /**
  * Called after unpacking an EGA cel, this will try to undither (parts) of the
  * cel if the dithering in here matches dithering used by the current picture.
  */
-void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
+void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height, byte clearKey) {
 	int16 *ditheredPicColors = _screen->unditherGetDitheredBgColors();
 
 	// It makes no sense to go further, if there isn't any dithered color data
@@ -731,7 +708,6 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 
 	// Walk through the bitmap and remember all combinations of colors
 	int16 ditheredBitmapColors[DITHERED_BG_COLORS_SIZE];
-	byte *curPtr;
 	byte color1, color2;
 	byte nextColor1, nextColor2;
 	int16 y, x;
@@ -742,8 +718,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	// pixels are adjacent and check pixels in the following line as well to
 	// be the reverse pixel combination
 	int16 checkHeight = height - 1;
-	curPtr = bitmapPtr;
-	byte *nextPtr = curPtr + width;
+	byte *curPtr = bitmapPtr.getUnsafeDataAt(0, checkHeight * width);
+	const byte *nextPtr = bitmapPtr.getUnsafeDataAt(width, checkHeight * width);
 	for (y = 0; y < checkHeight; y++) {
 		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
 		nextColor1 = nextPtr[0] << 4; nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
@@ -783,9 +759,9 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		return;
 
 	// We now need to replace color-combinations
-	curPtr = bitmapPtr;
+	curPtr = bitmapPtr.getUnsafeDataAt(0, height * width);
 	for (y = 0; y < height; y++) {
-		color = *curPtr;
+		color = curPtr[0];
 		for (x = 1; x < width; x++) {
 			color = (color << 4) | curPtr[1];
 			if (unditherTable[color]) {
@@ -806,12 +782,11 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 			int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	const byte *bitmap = getBitmap(loopNo, celNo);
+	const SciSpan<const byte> &bitmap = getBitmap(loopNo, celNo);
 	const int16 celHeight = celInfo->height;
 	const int16 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
 	const byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
-	int x, y;
 
 	if (_embeddedPal)
 		// Merge view palette in...
@@ -820,12 +795,16 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	const int16 width = MIN(clipRect.width(), celWidth);
 	const int16 height = MIN(clipRect.height(), celHeight);
 
-	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
+	if (!width || !height) {
+		return;
+	}
+
+	const byte *bitmapData = bitmap.getUnsafeDataAt((clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left), celWidth * (height - 1) + width);
 
 	if (!_EGAmapping) {
-		for (y = 0; y < height; y++, bitmap += celWidth) {
-			for (x = 0; x < width; x++) {
-				const byte color = bitmap[x];
+		for (int y = 0; y < height; y++, bitmapData += celWidth) {
+			for (int x = 0; x < width; x++) {
+				const byte color = bitmapData[x];
 				if (color != clearKey) {
 					const int x2 = clipRectTranslated.left + x;
 					const int y2 = clipRectTranslated.top + y;
@@ -850,10 +829,10 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 			}
 		}
 	} else {
-		byte *EGAmapping = _EGAmapping + (EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE);
-		for (y = 0; y < height; y++, bitmap += celWidth) {
-			for (x = 0; x < width; x++) {
-				const byte color = EGAmapping[bitmap[x]];
+		const SciSpan<const byte> EGAmapping = _EGAmapping.subspan(EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE, SCI_VIEW_EGAMAPPING_SIZE);
+		for (int y = 0; y < height; y++, bitmapData += celWidth) {
+			for (int x = 0; x < width; x++) {
+				const byte color = EGAmapping[bitmapData[x]];
 				const int x2 = clipRectTranslated.left + x;
 				const int y2 = clipRectTranslated.top + y;
 				if (color != clearKey && priority >= _screen->getPriority(x2, y2))
@@ -872,7 +851,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	const byte *bitmap = getBitmap(loopNo, celNo);
+	const SciSpan<const byte> &bitmap = getBitmap(loopNo, celNo);
 	const int16 celHeight = celInfo->height;
 	const int16 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
@@ -933,15 +912,12 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	const int16 offsetY = clipRect.top - rect.top;
 	const int16 offsetX = clipRect.left - rect.left;
 
-	// Happens in SQ6, first room
-	if (offsetX < 0 || offsetY < 0)
-		return;
-
 	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
 	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
+	const byte *bitmapData = bitmap.getUnsafeDataAt(0, celWidth * celHeight);
 	for (int y = 0; y < scaledHeight; y++) {
 		for (int x = 0; x < scaledWidth; x++) {
-			const byte color = bitmap[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];
+			const byte color = bitmapData[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];
 			const int x2 = clipRectTranslated.left + x;
 			const int y2 = clipRectTranslated.top + y;
 			if (color != clearKey && priority >= _screen->getPriority(x2, y2)) {

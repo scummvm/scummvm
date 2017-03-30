@@ -56,7 +56,7 @@ bool SceneScriptHF03::MouseClick(int x, int y) {
 
 bool SceneScriptHF03::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click(objectName, "MAIN")) {
-		Actor_Says(0, Random_Query(0, 3) + 8525, 18);
+		Actor_Says(kActorMcCoy, Random_Query(0, 3) + 8525, 18);
 	}
 	return false;
 }
@@ -73,107 +73,107 @@ void SceneScriptHF03::sub_401C80() {
 	Dialogue_Menu_Disappear();
 	switch (answer) {
 	case 840:
-		Actor_Says(0, 1630, 15);
+		Actor_Says(kActorMcCoy, 1630, 15);
 		if (Global_Variable_Query(40) == 3) {
-			Actor_Set_Goal_Number(6, 214);
+			Actor_Set_Goal_Number(kActorLucy, 214);
 		} else if (Game_Flag_Query(46)) {
-			Actor_Set_Goal_Number(6, 212);
+			Actor_Set_Goal_Number(kActorLucy, 212);
 		} else {
-			Actor_Set_Goal_Number(6, 210);
+			Actor_Set_Goal_Number(kActorLucy, 210);
 			Game_Flag_Set(593);
 		}
 		break;
 	case 850:
-		Actor_Says(0, 1635, 15);
-		Actor_Says(6, 200, 13);
-		Actor_Modify_Friendliness_To_Other(6, 0, 3);
+		Actor_Says(kActorMcCoy, 1635, 15);
+		Actor_Says(kActorLucy, 200, 13);
+		Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, 3);
 		break;
 	case 860:
-		Actor_Says(0, 1640, 12);
+		Actor_Says(kActorMcCoy, 1640, 12);
 		if (Global_Variable_Query(40) == 3) {
-			Actor_Set_Goal_Number(6, 214);
+			Actor_Set_Goal_Number(kActorLucy, 214);
 		} else {
-			Actor_Says(6, 210, 13);
-			Actor_Says(0, 1655, 15);
-			Actor_Modify_Friendliness_To_Other(6, 0, Random_Query(9, 10));
-			if (Actor_Query_Friendliness_To_Other(6, 0) > 59 && !Global_Variable_Query(45)) {
+			Actor_Says(kActorLucy, 210, 13);
+			Actor_Says(kActorMcCoy, 1655, 15);
+			Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, Random_Query(9, 10));
+			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59 && !Global_Variable_Query(45)) {
 				Global_Variable_Set(45, 3);
-				Actor_Says(6, 940, 14);
-				Actor_Says(0, 6780, 11);
-				Actor_Says(6, 950, 12);
-				Actor_Says(6, 960, 13);
-				Actor_Says(0, 6785, 15);
-				Actor_Says(6, 970, 16);
-				Actor_Says(6, 980, 17);
+				Actor_Says(kActorLucy, 940, 14);
+				Actor_Says(kActorMcCoy, 6780, 11);
+				Actor_Says(kActorLucy, 950, 12);
+				Actor_Says(kActorLucy, 960, 13);
+				Actor_Says(kActorMcCoy, 6785, 15);
+				Actor_Says(kActorLucy, 970, 16);
+				Actor_Says(kActorLucy, 980, 17);
 				if (Game_Flag_Query(47)) {
-					Actor_Says(6, 990, 17);
+					Actor_Says(kActorLucy, 990, 17);
 				}
-				Actor_Says(0, 6790, 15);
-				Actor_Says(6, 1000, 13);
-				Actor_Says(6, 1010, 17);
-				Actor_Says(6, 1020, 18);
-				Actor_Says(0, 6795, 14);
-				Actor_Says(6, 1030, 17);
-				Actor_Says(0, 6800, 14);
+				Actor_Says(kActorMcCoy, 6790, 15);
+				Actor_Says(kActorLucy, 1000, 13);
+				Actor_Says(kActorLucy, 1010, 17);
+				Actor_Says(kActorLucy, 1020, 18);
+				Actor_Says(kActorMcCoy, 6795, 14);
+				Actor_Says(kActorLucy, 1030, 17);
+				Actor_Says(kActorMcCoy, 6800, 14);
 			}
-			Actor_Says(6, 220, 13);
-			Actor_Says(0, 1660, 15);
-			Actor_Says(6, 230, 14);
-			Actor_Clue_Acquire(6, 219, 1, 0);
+			Actor_Says(kActorLucy, 220, 13);
+			Actor_Says(kActorMcCoy, 1660, 15);
+			Actor_Says(kActorLucy, 230, 14);
+			Actor_Clue_Acquire(kActorLucy, kClueMcCoyHelpedLucy, 1, kActorMcCoy);
 			if (Game_Flag_Query(46)) {
-				Actor_Set_Goal_Number(6, 212);
+				Actor_Set_Goal_Number(kActorLucy, 212);
 			} else {
-				Actor_Set_Goal_Number(6, 210);
+				Actor_Set_Goal_Number(kActorLucy, 210);
 			}
 		}
 		break;
 	case 870:
-		Actor_Says(0, 1645, 18);
-		Actor_Says(6, 240, 14);
-		Actor_Says(6, 250, 12);
-		Actor_Says(6, 260, 13);
-		Actor_Says(6, 270, 19);
-		Actor_Says(0, 1665, 18);
-		Actor_Says(6, 280, 13);
-		Actor_Says(0, 1670, 12);
-		Actor_Says(6, 290, 14);
-		Actor_Says(6, 300, 16);
-		Actor_Says(0, 1675, 12);
-		Actor_Says(6, 310, 13);
-		Actor_Clue_Acquire(0, 273, 0, 6);
+		Actor_Says(kActorMcCoy, 1645, 18);
+		Actor_Says(kActorLucy, 240, 14);
+		Actor_Says(kActorLucy, 250, 12);
+		Actor_Says(kActorLucy, 260, 13);
+		Actor_Says(kActorLucy, 270, 19);
+		Actor_Says(kActorMcCoy, 1665, 18);
+		Actor_Says(kActorLucy, 280, 13);
+		Actor_Says(kActorMcCoy, 1670, 12);
+		Actor_Says(kActorLucy, 290, 14);
+		Actor_Says(kActorLucy, 300, 16);
+		Actor_Says(kActorMcCoy, 1675, 12);
+		Actor_Says(kActorLucy, 310, 13);
+		Actor_Clue_Acquire(kActorMcCoy, kClueLucyInterview, 0, kActorLucy);
 		break;
 	case 880:
-		Actor_Says(0, 1650, 14);
+		Actor_Says(kActorMcCoy, 1650, 14);
 		break;
 	}
 }
 
 bool SceneScriptHF03::ClickedOnActor(int actorId) {
-	if (actorId == 6 && Actor_Query_Goal_Number(6) == 205) {
-		if (Game_Flag_Query(46) ? !Loop_Actor_Walk_To_Waypoint(0, 377, 0, 1, false) : !Loop_Actor_Walk_To_Waypoint(0, 378, 0, 1, false)) {
-			Actor_Face_Actor(0, 6, true);
+	if (actorId == 6 && Actor_Query_Goal_Number(kActorLucy) == 205) {
+		if (Game_Flag_Query(46) ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, 1, false) : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, 1, false)) {
+			Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 			if (!Game_Flag_Query(613)) {
 				Game_Flag_Set(613);
 				if (Game_Flag_Query(46)) {
-					Actor_Says(0, 1605, 15);
-					Actor_Says(6, 100, 12);
-					Actor_Says(0, 1610, 14);
+					Actor_Says(kActorMcCoy, 1605, 15);
+					Actor_Says(kActorLucy, 100, 12);
+					Actor_Says(kActorMcCoy, 1610, 14);
 				} else {
-					Actor_Says(0, 1615, 16);
-					Actor_Says(6, 110, 13);
+					Actor_Says(kActorMcCoy, 1615, 16);
+					Actor_Says(kActorLucy, 110, 13);
 				}
-				Actor_Says(6, 120, 13);
-				Actor_Says(0, 1620, 14);
-				Actor_Says(6, 130, 17);
-				Actor_Says(0, 1625, 15);
+				Actor_Says(kActorLucy, 120, 13);
+				Actor_Says(kActorMcCoy, 1620, 14);
+				Actor_Says(kActorLucy, 130, 17);
+				Actor_Says(kActorMcCoy, 1625, 15);
 				if (Game_Flag_Query(46)) {
-					Actor_Says(6, 140, 12);
-					Actor_Says(6, 150, 13);
-					Actor_Says(6, 160, 15);
+					Actor_Says(kActorLucy, 140, 12);
+					Actor_Says(kActorLucy, 150, 13);
+					Actor_Says(kActorLucy, 160, 15);
 				} else {
-					Actor_Says(6, 170, 12);
-					Actor_Says(6, 180, 13);
-					Actor_Says(6, 190, 15);
+					Actor_Says(kActorLucy, 170, 12);
+					Actor_Says(kActorLucy, 180, 13);
+					Actor_Says(kActorLucy, 190, 15);
 				}
 			}
 			sub_401C80();
@@ -188,21 +188,21 @@ bool SceneScriptHF03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 179.0f, 46.76f, -824.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 46.76f, -824.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(311);
 			Set_Enter(37, 34);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 479.0f, 47.76f, -524.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(528);
 			Set_Enter(38, 35);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 942.0f, 47.76f, -847.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 942.0f, 47.76f, -847.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(566);
 			Set_Enter(40, 37);
 		}
@@ -223,23 +223,23 @@ void SceneScriptHF03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHF03::PlayerWalkedIn() {
 	if (Game_Flag_Query(527)) {
-		Loop_Actor_Walk_To_XYZ(0, 479.0f, 47.76f, -524.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, 0, false, 0);
 		Game_Flag_Reset(527);
 	} else {
-		Loop_Actor_Walk_To_XYZ(0, 179.0f, 47.76f, -824.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 47.76f, -824.0f, 0, 0, false, 0);
 		Game_Flag_Reset(310);
 	}
-	if (Actor_Query_Goal_Number(6) == 250) {
-		Actor_Set_Goal_Number(6, 212);
-		Actor_Says(1, 210, 13);
-		Actor_Face_Actor(0, 1, true);
-		Actor_Says(0, 1680, 15);
-		Actor_Says(1, 220, 14);
-		Actor_Says(0, 1685, 13);
-		Actor_Says(1, 230, 16);
-		Actor_Says(0, 1690, 12);
-		Actor_Says(1, 240, 13);
-		Actor_Set_Goal_Number(1, 234);
+	if (Actor_Query_Goal_Number(kActorLucy) == 250) {
+		Actor_Set_Goal_Number(kActorLucy, 212);
+		Actor_Says(kActorSteele, 210, 13);
+		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
+		Actor_Says(kActorMcCoy, 1680, 15);
+		Actor_Says(kActorSteele, 220, 14);
+		Actor_Says(kActorMcCoy, 1685, 13);
+		Actor_Says(kActorSteele, 230, 16);
+		Actor_Says(kActorMcCoy, 1690, 12);
+		Actor_Says(kActorSteele, 240, 13);
+		Actor_Set_Goal_Number(kActorSteele, 234);
 	}
 }
 

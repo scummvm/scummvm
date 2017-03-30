@@ -89,18 +89,18 @@ bool SceneScriptNR05::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptNR05::ClickedOnActor(int actorId) {
-	if (actorId == 42) {
-		if (!Loop_Actor_Walk_To_Actor(0, 42, 120, 1, false)) {
+	if (actorId == kActorEarlyQBartender) {
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorEarlyQBartender, 120, 1, false)) {
 			sub_4020B4();
 		}
 		return true;
 	}
-	if (actorId == 18) {
-		Actor_Set_Goal_Number(18, 229);
-		if (!Loop_Actor_Walk_To_Actor(0, 18, 36, 1, false)) {
+	if (actorId == kActorEarlyQ) {
+		Actor_Set_Goal_Number(kActorEarlyQ, 229);
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorEarlyQ, 36, 1, false)) {
 			sub_4022DC();
 		}
-		Actor_Set_Goal_Number(18, 221);
+		Actor_Set_Goal_Number(kActorEarlyQ, 221);
 		return true;
 	}
 	return false;
@@ -112,12 +112,12 @@ bool SceneScriptNR05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -444.0f, 0.0f, -451.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -444.0f, 0.0f, -451.0f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			Music_Stop(2);
 			Player_Set_Combat_Mode(false);
-			Actor_Face_Heading(0, 1021, false);
-			Actor_Change_Animation_Mode(0, 53);
+			Actor_Face_Heading(kActorMcCoy, 1021, false);
+			Actor_Change_Animation_Mode(kActorMcCoy, 53);
 			Game_Flag_Set(537);
 			Set_Enter(55, 56);
 			Scene_Loop_Start_Special(1, 3, 0);
@@ -125,7 +125,7 @@ bool SceneScriptNR05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -777.56f, 0.0f, -166.86f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -777.56f, 0.0f, -166.86f, 0, 1, false, 0)) {
 			Game_Flag_Set(546);
 			Set_Enter(13, 61);
 		}
@@ -150,8 +150,8 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 	}
 	sub_402A48(48);
 	sub_402A48(0);
-	if (Actor_Query_Goal_Number(18) == 224) {
-		Actor_Set_Goal_Number(18, 225);
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == 224) {
+		Actor_Set_Goal_Number(kActorEarlyQ, 225);
 		if (Player_Query_Current_Scene() == 58) {
 			Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 		}
@@ -159,7 +159,7 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 	if (frame > 77 && frame <= 134) {
 		sub_401F74(frame - 13);
 		if (frame == 134 && !Game_Flag_Query(537)) {
-			Actor_Set_Goal_Number(0, 200);
+			Actor_Set_Goal_Number(kActorMcCoy, 200);
 		}
 		//return true;
 		return;
@@ -176,7 +176,7 @@ void SceneScriptNR05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptNR05::PlayerWalkedIn() {
 	if (Game_Flag_Query(547)) {
 		Music_Stop(2);
-		Loop_Actor_Walk_To_XYZ(0, -697.56f, 0.0f, -174.86f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -697.56f, 0.0f, -174.86f, 0, 1, false, 0);
 		Game_Flag_Reset(547);
 	}
 	//	return false;
@@ -213,70 +213,70 @@ void SceneScriptNR05::sub_401F74(int frame) {
 	if (facing > 1023) {
 		facing -= 1024;
 	}
-	Actor_Set_At_XYZ(0, x, 0.0f, z, facing);
+	Actor_Set_At_XYZ(kActorMcCoy, x, 0.0f, z, facing);
 }
 
 void SceneScriptNR05::sub_4020B4() {
-	Actor_Face_Actor(0, 42, true);
-	Actor_Face_Actor(42, 0, true);
+	Actor_Face_Actor(kActorMcCoy, kActorEarlyQBartender, true);
+	Actor_Face_Actor(kActorEarlyQBartender, kActorMcCoy, true);
 	if (Game_Flag_Query(588)) {
 		if (Game_Flag_Query(589)) {
-			Actor_Says(0, 3480, 19);
-			Actor_Says(42, 30, 12);
-			Actor_Says(0, 3485, 3);
-			Actor_Says(42, 40, 13);
-			Actor_Change_Animation_Mode(42, 23);
-			Actor_Change_Animation_Mode(0, 75);
+			Actor_Says(kActorMcCoy, 3480, 19);
+			Actor_Says(kActorEarlyQBartender, 30, 12);
+			Actor_Says(kActorMcCoy, 3485, 3);
+			Actor_Says(kActorEarlyQBartender, 40, 13);
+			Actor_Change_Animation_Mode(kActorEarlyQBartender, 23);
+			Actor_Change_Animation_Mode(kActorMcCoy, 75);
 			Global_Variable_Increment(42, 1);
 		} else {
-			Actor_Says(0, 3475, 17);
-			Actor_Says(42, 20, 23);
+			Actor_Says(kActorMcCoy, 3475, 17);
+			Actor_Says(kActorEarlyQBartender, 20, 23);
 			Game_Flag_Set(589);
-			Actor_Change_Animation_Mode(0, 75);
+			Actor_Change_Animation_Mode(kActorMcCoy, 75);
 			Global_Variable_Increment(42, 1);
 		}
 	} else {
-		Actor_Says(42, 0, 13);
-		Actor_Says(0, 3470, 3);
-		Actor_Says(42, 10, 23);
+		Actor_Says(kActorEarlyQBartender, 0, 13);
+		Actor_Says(kActorMcCoy, 3470, 3);
+		Actor_Says(kActorEarlyQBartender, 10, 23);
 		Game_Flag_Set(588);
-		Actor_Change_Animation_Mode(0, 75);
+		Actor_Change_Animation_Mode(kActorMcCoy, 75);
 		Global_Variable_Increment(42, 1);
 	}
 }
 
 void SceneScriptNR05::sub_4022DC() {
-	if (Actor_Query_Goal_Number(18) == 220) {
-		Actor_Set_Goal_Number(18, 221);
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == 220) {
+		Actor_Set_Goal_Number(kActorEarlyQ, 221);
 	}
-	Actor_Face_Actor(0, 18, true);
-	Actor_Face_Actor(18, 0, true);
+	Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
+	Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 	if (!Game_Flag_Query(590)) {
-		Actor_Says(0, 8513, 3);
-		Actor_Says(18, 360, 3);
-		Actor_Says(0, 3495, 11);
-		Actor_Says(18, 370, 15);
-		Actor_Says(0, 3500, 17);
-		Actor_Says(18, 380, 13);
+		Actor_Says(kActorMcCoy, 8513, 3);
+		Actor_Says(kActorEarlyQ, 360, 3);
+		Actor_Says(kActorMcCoy, 3495, 11);
+		Actor_Says(kActorEarlyQ, 370, 15);
+		Actor_Says(kActorMcCoy, 3500, 17);
+		Actor_Says(kActorEarlyQ, 380, 13);
 		Game_Flag_Set(590);
 		return;
 	}
 	Dialogue_Menu_Clear_List();
-	if (Actor_Query_Friendliness_To_Other(18, 0) >= 48) {
-		if (Actor_Clue_Query(0, 90) || Actor_Clue_Query(0, 100)) {
+	if (Actor_Query_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy) >= 48) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueDragonflyCollection) || Actor_Clue_Query(kActorMcCoy, kClueCollectionReceipt)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(890, -1, 4, 8);
 		}
-		if (Actor_Clue_Query(0, 13)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(900, 5, 6, 5);
 		}
-		if (Actor_Clue_Query(0, 88)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(910, 5, 5, 5);
 		}
 	}
 	if (!Dialogue_Menu_Query_List_Size()) {
-		Actor_Says(0, 3520, 3);
-		Actor_Says(18, 730, 3);
-		Actor_Face_Heading(18, 849, false);
+		Actor_Says(kActorMcCoy, 3520, 3);
+		Actor_Says(kActorEarlyQ, 730, 3);
+		Actor_Face_Heading(kActorEarlyQ, 849, false);
 		return;
 	}
 	Dialogue_Menu_Add_DONE_To_List(100);
@@ -284,48 +284,48 @@ void SceneScriptNR05::sub_4022DC() {
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 	if (answer == 890) {
-		Actor_Says(0, 3505, 3);
-		Actor_Modify_Friendliness_To_Other(18, 0, -1);
-		Actor_Says(18, 420, 12);
-		Actor_Says(18, 430, 13);
-		Actor_Says(0, 3530, 15);
-		Actor_Says(18, 440, 15);
-		Actor_Says(0, 3535, 13);
-		Actor_Says(18, 460, 16);
-		Actor_Says(0, 3540, 15);
-		Actor_Says(18, 490, 16);
-		Actor_Says(18, 500, 13);
-		Actor_Says(0, 3545, 15);
-		Actor_Says(18, 520, 12);
-		Actor_Face_Heading(18, 849, false);
+		Actor_Says(kActorMcCoy, 3505, 3);
+		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
+		Actor_Says(kActorEarlyQ, 420, 12);
+		Actor_Says(kActorEarlyQ, 430, 13);
+		Actor_Says(kActorMcCoy, 3530, 15);
+		Actor_Says(kActorEarlyQ, 440, 15);
+		Actor_Says(kActorMcCoy, 3535, 13);
+		Actor_Says(kActorEarlyQ, 460, 16);
+		Actor_Says(kActorMcCoy, 3540, 15);
+		Actor_Says(kActorEarlyQ, 490, 16);
+		Actor_Says(kActorEarlyQ, 500, 13);
+		Actor_Says(kActorMcCoy, 3545, 15);
+		Actor_Says(kActorEarlyQ, 520, 12);
+		Actor_Face_Heading(kActorEarlyQ, 849, false);
 	} else if (answer == 900) {
-		Actor_Says(0, 3510, 15);
-		Actor_Modify_Friendliness_To_Other(18, 0, -1);
-		Actor_Says_With_Pause(18, 530, 1.2f, 3);
-		Actor_Says(18, 540, 15);
-		Actor_Says(0, 3550, 13);
-		Actor_Says(18, 560, 14);
-		Actor_Says(18, 570, 13);
-		Actor_Says(0, 3555, 12);
-		Actor_Face_Heading(18, 849, false);
+		Actor_Says(kActorMcCoy, 3510, 15);
+		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
+		Actor_Says_With_Pause(kActorEarlyQ, 530, 1.2f, 3);
+		Actor_Says(kActorEarlyQ, 540, 15);
+		Actor_Says(kActorMcCoy, 3550, 13);
+		Actor_Says(kActorEarlyQ, 560, 14);
+		Actor_Says(kActorEarlyQ, 570, 13);
+		Actor_Says(kActorMcCoy, 3555, 12);
+		Actor_Face_Heading(kActorEarlyQ, 849, false);
 	} else if (answer == 910) {
-		Actor_Says(0, 3515, 14);
-		Actor_Modify_Friendliness_To_Other(18, 0, -1);
-		if (Actor_Clue_Query(0, 99)) {
-			Actor_Says(18, 580, 12);
-			Actor_Says(0, 3560, 13);
-			Actor_Says(18, 590, 16);
-			Actor_Says(0, 3565, 16);
-			Actor_Says(18, 600, 13);
-			Actor_Says(0, 3570, 14);
-			Actor_Says(18, 620, 15);
-			Actor_Says(0, 3575, 13);
+		Actor_Says(kActorMcCoy, 3515, 14);
+		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
+		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) {
+			Actor_Says(kActorEarlyQ, 580, 12);
+			Actor_Says(kActorMcCoy, 3560, 13);
+			Actor_Says(kActorEarlyQ, 590, 16);
+			Actor_Says(kActorMcCoy, 3565, 16);
+			Actor_Says(kActorEarlyQ, 600, 13);
+			Actor_Says(kActorMcCoy, 3570, 14);
+			Actor_Says(kActorEarlyQ, 620, 15);
+			Actor_Says(kActorMcCoy, 3575, 13);
 		} else {
-			Actor_Says(18, 640, 13);
-			Actor_Says(0, 3580, 15);
-			Actor_Says(18, 660, 12);
+			Actor_Says(kActorEarlyQ, 640, 13);
+			Actor_Says(kActorMcCoy, 3580, 15);
+			Actor_Says(kActorEarlyQ, 660, 12);
 		}
-		Actor_Face_Heading(18, 849, false);
+		Actor_Face_Heading(kActorEarlyQ, 849, false);
 	}
 }
 

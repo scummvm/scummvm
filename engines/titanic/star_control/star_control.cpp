@@ -43,13 +43,11 @@ END_MESSAGE_MAP()
 
 CStarControl::CStarControl() : _enabled(false),
 		_starRect(20, 10, 620, 350) {
-	CStarControlSub6::init();
 	CStarControlSub12::init();
 	DMatrix::init();
 }
 
 CStarControl::~CStarControl() {
-	CStarControlSub6::deinit();
 	CStarControlSub12::deinit();
 	DMatrix::deinit();
 }
@@ -260,6 +258,11 @@ void CStarControl::doAction(StarControlAction action) {
 
 bool CStarControl::isSolved() const {
 	return _starField.isSolved();
+}
+
+void CStarControl::forceSolved() {
+	while (!_starField.isSolved())
+		_starField.fn7();
 }
 
 bool CStarControl::canSetStarDestination() const {

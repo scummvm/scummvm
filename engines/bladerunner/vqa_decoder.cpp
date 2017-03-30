@@ -27,6 +27,7 @@
 #include "bladerunner/decompress_lzo.h"
 #include "bladerunner/lights.h"
 #include "bladerunner/view.h"
+#include "bladerunner/zbuffer.h"
 
 #include "audio/decoders/raw.h"
 
@@ -191,8 +192,8 @@ const Graphics::Surface *VQADecoder::decodeVideoFrame() {
 	return _videoTrack->decodeVideoFrame();
 }
 
-const uint16 *VQADecoder::decodeZBuffer() {
-	return _videoTrack->decodeZBuffer();
+void VQADecoder::decodeZBuffer(ZBuffer *zbuffer) {
+	_videoTrack->decodeZBuffer(zbuffer);
 }
 
 Audio::SeekableAudioStream *VQADecoder::decodeAudioFrame() {
@@ -207,7 +208,7 @@ void VQADecoder::decodeLights(Lights *lights) {
 	_videoTrack->decodeLights(lights);
 }
 
-void VQADecoder::readNextPacket() {
+void VQADecoder::readPacket(int skipFlags) {
 	IFFChunkHeader chd;
 
 	if (remain(_s) < 8) {
@@ -222,21 +223,20 @@ void VQADecoder::readNextPacket() {
 		}
 
 		bool rc = false;
-		switch (chd.id) {
 		// Video track
-		case kAESC: rc = _videoTrack->readAESC(_s, chd.size); break;
-		case kLITE: rc = _videoTrack->readLITE(_s, chd.size); break;
-		case kVIEW: rc = _videoTrack->readVIEW(_s, chd.size); break;
-		case kVQFL: rc = _videoTrack->readVQFL(_s, chd.size); break;
-		case kVQFR: rc = _videoTrack->readVQFR(_s, chd.size); break;
-		case kZBUF: rc = _videoTrack->readZBUF(_s, chd.size); break;
+		switch (chd.id) {
+		case kAESC: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readAESC(_s, chd.size); break;
+		case kLITE: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readLITE(_s, chd.size); break;
+		case kVIEW: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVIEW(_s, chd.size); break;
+		case kVQFL: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVQFL(_s, chd.size); break;
+		case kVQFR: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readVQFR(_s, chd.size); break;
+		case kZBUF: rc = skipFlags & 1 ? _s->skip(roundup(chd.size)) : _videoTrack->readZBUF(_s, chd.size); break;
 		// Sound track
-		case kSN2J: rc = _audioTrack->readSN2J(_s, chd.size); break;
-		case kSND2: rc = _audioTrack->readSND2(_s, chd.size); break;
-
+		case kSN2J: rc = skipFlags & 2 ? _s->skip(roundup(chd.size)) : _audioTrack->readSN2J(_s, chd.size); break;
+		case kSND2: rc = skipFlags & 2 ? _s->skip(roundup(chd.size)) : _audioTrack->readSND2(_s, chd.size); break;
 		default:
-			_s->skip(roundup(chd.size));
 			rc = false;
+			_s->skip(roundup(chd.size));
 		}
 
 		if (!rc) {
@@ -246,14 +246,14 @@ void VQADecoder::readNextPacket() {
 	} while (chd.id != kVQFR);
 }
 
-void VQADecoder::readPacket(int frame) {
+void VQADecoder::readFrame(int frame, int skipFlags) {
 	if (frame < 0 || frame >= numFrames()) {
 		error("frame %d out of bounds, frame count is %d", frame, numFrames());
 	}
 
 	uint32 frameOffset = 2 * (_frameInfo[frame] & 0x0FFFFFFF);
 	_s->seek(frameOffset);
-	readNextPacket();
+	readPacket(skipFlags);
 }
 
 bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size) {
@@ -552,7 +552,6 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_maxVPTRSize = header->maxVPTRSize;
 	_maxCBFZSize = header->maxCBFZSize;
 	_maxZBUFChunkSize = vqaDecoder->_maxZBUFChunkSize;
-	_zbuffer = nullptr;
 
 	_codebookSize = 0;
 	_codebook  = nullptr;
@@ -563,7 +562,6 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_vpointer = nullptr;
 
 	_curFrame = -1;
-
 
 	_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
 
@@ -583,7 +581,6 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	if (_surface)
 		_surface->free();
 	delete _surface;
-	delete[] _zbuffer;
 
 	if (_viewData)
 		delete[] _viewData;
@@ -668,42 +665,6 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-static int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen) {
-	uint32 dstSize = 640 * 480; // This is taken from global variables?
-	uint32 dstRemain = dstSize;
-
-	uint16 *curzp = curZBUF;
-	uint16 *inp = (uint16*)src;
-
-	while (dstRemain && (inp - (uint16*)src) < (std::ptrdiff_t)srcLen) {
-		uint32 count = FROM_LE_16(*inp++);
-
-		if (count & 0x8000) {
-			count = MIN(count & 0x7fff, dstRemain);
-			dstRemain -= count;
-
-			while (count--) {
-				uint16 value = FROM_LE_16(*inp++);
-				if (value)
-					*curzp = value;
-				++curzp;
-			}
-		} else {
-			count = MIN(count, dstRemain);
-			dstRemain -= count;
-			uint16 value = FROM_LE_16(*inp++);
-
-			if (!value) {
-				curzp += count;
-			} else {
-				while (count--)
-					*curzp++ = value;
-			}
-		}
-	}
-	return dstSize - dstRemain;
-}
-
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size) {
 	if (size > _maxZBUFChunkSize) {
 		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
@@ -711,42 +672,17 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 		return false;
 	}
 
-	uint32 width, height, complete, unk0;
-	width    = s->readUint32LE();
-	height   = s->readUint32LE();
-	complete = s->readUint32LE();
-	unk0     = s->readUint32LE();
-
-	uint32 remain = size - 16;
-
-	if (_width != width || _height != height) {
-		debug("%d, %d, %d, %d", width, height, complete, unk0);
-		s->skip(roundup(remain));
-		return false;
-	}
-
-	_zbufChunkComplete = complete;
-	_zbufChunkSize = remain;
-	s->read(_zbufChunk, roundup(remain));
+	_zbufChunkSize = size;
+	s->read(_zbufChunk, roundup(size));
 
 	return true;
 }
 
-const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer() {
+void VQADecoder::VQAVideoTrack::decodeZBuffer(ZBuffer *zbuffer) {
 	if (_maxZBUFChunkSize == 0)
-		return nullptr;
+		return;
 
-	if (!_zbuffer)
-		_zbuffer = new uint16[_width * _height];
-
-	if (_zbufChunkComplete) {
-		size_t zbufOutSize;
-		decompress_lzo1x(_zbufChunk, _zbufChunkSize, (uint8*)_zbuffer, &zbufOutSize);
-	} else {
-		decodeZBUF_partial(_zbufChunk, _zbuffer, _zbufChunkSize);
-	}
-
-	return _zbuffer;
+	zbuffer->decodeData(_zbufChunk, _zbufChunkSize);
 }
 
 bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size) {

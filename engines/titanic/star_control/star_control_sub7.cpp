@@ -55,16 +55,16 @@ void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 
 			FRect r1(center._x + vTemp._x, center._y + vTemp._y,
 				center._x + vTemp._x + 4.0, center._y + vTemp._y + 4.0);
-			surfaceArea->fn1(r1);
+			surfaceArea->fillRect(r1);
 
 			FRect r2(r1.right, r1.bottom, r1.right + 4.0, r1.top);
-			surfaceArea->fn1(r2);
+			surfaceArea->fillRect(r2);
 
 			FRect r3(r2.right, r1.top, r1.right, r1.top - 4.0);
-			surfaceArea->fn1(r3);
+			surfaceArea->fillRect(r3);
 
 			FRect r4(r1.right, r1.top - 4.0, r1.left, r1.top);
-			surfaceArea->fn1(r4);
+			surfaceArea->fillRect(r4);
 		}
 	}
 

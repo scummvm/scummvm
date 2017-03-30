@@ -251,6 +251,7 @@ whitespace [\t ]
 		warning("Unhandled the entity %s", ptr);
 	}
 (?i:then)				{ count(); return tTHEN; }
+(?i:then[\n\r]+)		{ count(); return tTHENNL; }
 (?i:to)					{ count(); return tTO; }
 (?i:sprite)			{ count(); return tSPRITE; }
 (?i:with)				{ count(); return tWITH; }

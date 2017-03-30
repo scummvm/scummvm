@@ -57,7 +57,7 @@ public:
 	 */
 	void setRotationMatrix(Axis axis, double amount);
 
-	void fn1(DMatrix &m);
+	DMatrix fn1() const;
 	void fn3(CStarControlSub26 *sub26);
 
 	DMatrix fn4(const DMatrix &m);

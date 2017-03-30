@@ -129,7 +129,7 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 		if (_track->channels[i].time == -1) // channel ended
 			continue;
 		SoundResource::Channel *curChannel = &_track->channels[i];
-		if (curChannel->curPos >= curChannel->size)
+		if (curChannel->curPos >= curChannel->data.size())
 			continue;
 		next = curChannel->data[curChannel->curPos]; // when the next event should occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
@@ -151,7 +151,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 		_track->channels[i].time = 0;
 		_track->channels[i].prev = 0;
 		_track->channels[i].curPos = 0;
-		totalSize += _track->channels[i].size;
+		totalSize += _track->channels[i].data.size();
 	}
 
 	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
@@ -228,9 +228,9 @@ byte *MidiParser_SCI::midiMixChannels() {
 // certain channels from that data.
 byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	SoundResource::Channel *channel = &_track->channels[0];
-	byte *channelData = channel->data;
-	byte *channelDataEnd = channel->data + channel->size;
-	byte *outData = new byte[channel->size + 5];
+	SciSpan<const byte>::const_iterator channelData = channel->data.cbegin();
+	SciSpan<const byte>::const_iterator channelDataEnd = channel->data.cend();
+	byte *outData = new byte[channel->data.size() + 5];
 	byte curChannel = 15, curByte, curDelta;
 	byte command = 0, lastCommand = 0;
 	int delta = 0;
@@ -239,7 +239,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 	_mixedData = outData;
 
-	while (channelData < channelDataEnd) {
+	while (channelData != channelDataEnd) {
 		curDelta = *channelData++;
 		if (curDelta == 0xF8) {
 			delta += 240;
@@ -804,7 +804,7 @@ byte MidiParser_SCI::getSongReverb() {
 		for (int i = 0; i < _track->channelCount; i++) {
 			SoundResource::Channel &channel = _track->channels[i];
 			// Peek ahead in the control channel to get the default reverb setting
-			if (channel.number == 15 && channel.size >= 7)
+			if (channel.number == 15 && channel.data.size() >= 7)
 				return channel.data[6];
 		}
 	}

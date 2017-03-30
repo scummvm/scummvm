@@ -929,7 +929,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 							}
 
 							// now actually check for signature match
-							if (g_sci->getScriptPatcher()->verifySignature(curLocalCallOffset, workaround->localCallSignature, "workaround signature", curScriptPtr, curScriptSize)) {
+							if (g_sci->getScriptPatcher()->verifySignature(curLocalCallOffset, workaround->localCallSignature, "workaround signature", SciSpan<const byte>(curScriptPtr, curScriptSize))) {
 								matched = true;
 							}
 

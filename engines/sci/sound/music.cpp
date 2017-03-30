@@ -345,16 +345,16 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	if (track) {
 		// Play digital sample
 		if (track->digitalChannelNr != -1) {
-			byte *channelData = track->channels[track->digitalChannelNr].data;
+			const SciSpan<const byte> &channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;
 			byte flags = Audio::FLAG_UNSIGNED;
 			// Amiga SCI1 games had signed sound data
 			if (_soundVersion >= SCI_VERSION_1_EARLY && g_sci->getPlatform() == Common::kPlatformAmiga)
 				flags = 0;
 			int endPart = track->digitalSampleEnd > 0 ? (track->digitalSampleSize - track->digitalSampleEnd) : 0;
-			pSnd->pStreamAud = Audio::makeRawStream(channelData + track->digitalSampleStart,
-								track->digitalSampleSize - track->digitalSampleStart - endPart,
-								track->digitalSampleRate, flags, DisposeAfterUse::NO);
+			const uint size = track->digitalSampleSize - track->digitalSampleStart - endPart;
+			pSnd->pStreamAud = Audio::makeRawStream(channelData.getUnsafeDataAt(track->digitalSampleStart),
+								size, track->digitalSampleRate, flags, DisposeAfterUse::NO);
 			assert(pSnd->pStreamAud);
 			delete pSnd->pLoopStream;
 			pSnd->pLoopStream = 0;

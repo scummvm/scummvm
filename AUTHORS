@@ -39,6 +39,13 @@ ScummVM Team
        Gregory Montoir              - (retired)
        Eugene Sandulenko
 
+    Access:
+       Arnaud Boutonne
+       Paul Gilbert
+
+    ADL:
+       Walter van Niftrik
+
     AGI:
        Stuart George
        Matthew Hoops                - (retired)
@@ -57,16 +64,16 @@ ScummVM Team
        Oliver Kiehl                 - (retired)
        Ludvig Strigeus              - (retired)
 
-    Access:
-       Arnaud Boutonne
-       Paul Gilbert
-
     Avalanche:
        Peter Bozso
        Arnaud Boutonne
 
     BBVS:
        Benjamin Haisch
+
+    Blade Runner:
+       Thomas Fach-Pedersen
+       Peter Kohaut
 
     CGE:
        Arnaud Boutonne
@@ -107,6 +114,9 @@ ScummVM Team
        Vladimir Menshakov           - (retired)
        Willem Jan Palenstijn
 
+    Fullpipe:
+       Eugene Sandulenko
+
     Gnap:
        Arnaud Boutonne
        Benjamin Haisch
@@ -137,6 +147,12 @@ ScummVM Team
        Florian Kagerer
        Gregory Montoir              - (retired)
        Johannes Schickel            - (retired)
+
+    Lab:
+       Arnaud Boutonne
+       Filippos Karapetis
+       Willem Jan Palenstijn
+       Eugene Sandulenko
 
     Lastexpress:
        Matthew Hoops                - (retired)
@@ -200,6 +216,7 @@ ScummVM Team
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
+       Colin Snover
 
     Sherlock:
        Paul Gilbert
@@ -711,8 +728,8 @@ Special thanks to
    supportive.
 
    Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of
-   their famous title Inherit the Earth and always prompt replies to our
-   questions.
+   their famous title Inherit the Earth, for sharing the source of The
+   Labyrinth of Time and for always replying promptly to our questions.
 
    Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
    LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it

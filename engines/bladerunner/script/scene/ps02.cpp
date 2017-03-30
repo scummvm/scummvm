@@ -50,34 +50,34 @@ bool SceneScriptPS02::MouseClick(int x, int y) {
 bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("E.DOOR01", objectName) || Object_Query_Click("E.D00R02", objectName)) {
 		if (Game_Flag_Query(130) ) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(61, 65);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(22) ) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(15, 69);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(131) ) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(66, 71);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(132) ) {
-			if (!Loop_Actor_Walk_To_XYZ(0, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(63, 67);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
-		} else if (Game_Flag_Query(133)  && !Loop_Actor_Walk_To_XYZ(0, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
+		} else if (Game_Flag_Query(133)  && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(67, 72);
@@ -118,7 +118,7 @@ void SceneScriptPS02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS02::PlayerWalkedIn() {
 	Game_Flag_Reset(718);
-	Actor_Face_XYZ(0, 0, 0, 450.0f, true);
+	Actor_Face_XYZ(kActorMcCoy, 0, 0, 450.0f, true);
 	Player_Gains_Control();
 	sub_4018BC();
 	Player_Loses_Control();

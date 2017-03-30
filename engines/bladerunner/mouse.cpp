@@ -26,6 +26,7 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/shape.h"
+#include "bladerunner/zbuffer.h"
 
 #include "graphics/surface.h"
 
@@ -308,7 +309,7 @@ Vector3 Mouse::getXYZ(int x, int y) {
 	float x3d = (2.0f / 640.0f * screenRight - 1.0f);
 	float y3d = (2.0f / 480.0f * screenDown  - 1.0f) * 0.75f;
 
-	uint16 zbufval = _vm->_zBuffer1[x + y * 640];
+	uint16 zbufval = _vm->_zbuffer->getZValue(x, y);
 
 	Vector3 pos;
 	pos.z = zbufval / 25.5f;

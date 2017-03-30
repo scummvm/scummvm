@@ -525,6 +525,15 @@ begin_credits("Credits");
 				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
+			
+			begin_section("Access");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
+			begin_section("ADL");
+				add_person("Walter van Niftrik", "waltervn", "");
+			end_section();
 
 			begin_section("AGI");
 				add_person("Stuart George", "darkfiber", "");
@@ -546,11 +555,6 @@ begin_credits("Credits");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
 
-			begin_section("Access");
-				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
-				add_person("Paul Gilbert", "dreammaster", "");
-			end_section();
-
 			begin_section("Avalanche");
 				add_person("Peter Bozs&oacute;", "uruk", "");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
@@ -558,6 +562,11 @@ begin_credits("Credits");
 
 			begin_section("BBVS");
 				add_person("Benjamin Haisch", "john_doe", "");
+			end_section();
+
+			begin_section("Blade Runner");
+				add_person("Thomas Fach-Pedersen", "madmoose", "");
+				add_person("Peter Kohaut", "peterkohaut", "");
 			end_section();
 
 			begin_section("CGE");
@@ -607,6 +616,10 @@ begin_credits("Credits");
 				add_person("Willem Jan Palenstijn", "wjp", "");
 			end_section();
 
+			begin_section("Fullpipe");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+			
 			begin_section("Gnap");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Benjamin Haisch", "john_doe", "");
@@ -644,6 +657,13 @@ begin_credits("Credits");
 				add_person("Johannes Schickel", "LordHoto", "(retired)");
 			end_section();
 
+			begin_section("Lab");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Willem Jan Palenstijn", "wjp", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+			
 			begin_section("Lastexpress");
 				add_person("Matthew Hoops", "clone2727", "(retired)");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
@@ -716,6 +736,7 @@ begin_credits("Credits");
 				add_person("Willem Jan Palenstijn", "wjp", "");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
 				add_person("Lars Skovlund", "lskovlun", "");
+				add_person("Colin Snover", "", "");
 			end_section();
 
 			begin_section("Sherlock");
@@ -1273,8 +1294,8 @@ begin_credits("Credits");
 
 	add_paragraph(
     "Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source ".
-    "of their famous title Inherit the Earth and always prompt replies to ".
-    "our questions.");
+    "of their famous title Inherit the Earth, for sharing the source of The Labyrinth of Time ".
+    "and for always replying promptly to our questions.");
 
 	add_paragraph(
     "Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at ".

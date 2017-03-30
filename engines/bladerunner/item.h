@@ -68,7 +68,7 @@ public:
 	void getWidthHeight(int *width, int *height);
 
 	bool isTargetable();
-	void tick(bool special);
+	bool tick(Common::Rect *screenRect, bool special);
 
 	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
 };

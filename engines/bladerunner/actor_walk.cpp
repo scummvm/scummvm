@@ -30,7 +30,6 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/set.h"
 
-
 namespace BladeRunner {
 
 ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
@@ -79,9 +78,9 @@ bool ActorWalk::setup(int actorId, bool run, const Vector3 &from, const Vector3 
 
 	int animationMode;
 	if (_vm->_actors[actorId]->inCombat()) {
-		animationMode = run ? 8 : 7;
+		animationMode = run ? kAnimationModeCombatRun : kAnimationModeCombatWalk;
 	} else {
-		animationMode = run ? 2 : 1;
+		animationMode = run ? kAnimationModeRun : kAnimationModeWalk;
 	}
 
 	_vm->_actors[actorId]->changeAnimationMode(animationMode);

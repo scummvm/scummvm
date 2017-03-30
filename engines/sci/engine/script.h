@@ -24,6 +24,7 @@
 #define SCI_ENGINE_SCRIPT_H
 
 #include "common/str.h"
+#include "sci/util.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/script_patches.h"
 
@@ -67,19 +68,16 @@ typedef Common::Array<offsetLookupArrayEntry> offsetLookupArrayType;
 class Script : public SegmentObj {
 private:
 	int _nr; /**< Script number */
-	byte *_buf; /**< Static data buffer, or NULL if not used */
-	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
+	Common::SpanOwner<SciSpan<const byte> > _buf; /**< Static data buffer, or NULL if not used */
+	SciSpan<const byte> _script; /**< Script size includes alignment byte */
+	SciSpan<const byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
 
 	int _lockers; /**< Number of classes and objects that require this script */
-	size_t _scriptSize;
-	size_t _heapSize;
-	size_t _bufSize;
 
-	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
-	uint16 _numExports; /**< Number of entries in the exports table */
-
-	const byte *_synonyms; /**< Synonyms block or 0 if not present */
-	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
+	SciSpan<const uint16> _exports; /**< Exports block or 0 if not present */
+	uint16 _numExports; /**< Number of export entries */
+	SciSpan<const byte> _synonyms; /**< Synonyms block or 0 if not present */
+	uint16 _numSynonyms; /**< Number of synonym entries */
 
 	int _codeOffset; /**< The absolute offset of the VM code block */
 
@@ -104,10 +102,11 @@ public:
 	int getLocalsOffset() const { return _localsOffset; }
 	uint16 getLocalsCount() const { return _localsCount; }
 
-	uint32 getScriptSize() const { return _scriptSize; }
-	uint32 getHeapSize() const { return _heapSize; }
-	uint32 getBufSize() const { return _bufSize; }
-	const byte *getBuf(uint offset = 0) const { return _buf + offset; }
+	uint32 getScriptSize() const { return _script.size(); }
+	uint32 getHeapSize() const { return _heap.size(); }
+	uint32 getBufSize() const { return _buf->size(); }
+
+	const byte *getBuf(uint offset = 0) const { return _buf->getUnsafeDataAt(offset); }
 
 	int getScriptNumber() const { return _nr; }
 	SegmentId getLocalsSegment() const { return _localsSegment; }
@@ -192,10 +191,10 @@ public:
 	void setLockers(int lockers);
 
 	/**
-	 * Retrieves a pointer to the exports of this script
-	 * @return	pointer to the exports.
+	 * Retrieves the offset of the export table in the script
+	 * @return	the exports offset.
 	 */
-	const uint16 *getExportTable() const { return _exportTable; }
+	uint getExportsOffset() const { return _exports.sourceByteOffset(); }
 
 	/**
 	 * Retrieves the number of exports of script.
@@ -207,7 +206,7 @@ public:
 	 * Retrieves a pointer to the synonyms associated with this script
 	 * @return	pointer to the synonyms, in non-parsed format.
 	 */
-	const byte *getSynonyms() const { return _synonyms; }
+	const SciSpan<const byte> &getSynonyms() const { return _synonyms; }
 
 	/**
 	 * Retrieves the number of synonyms associated with this script.
@@ -244,18 +243,10 @@ public:
 	}
 
 	/**
-	 * Copies a byte string into a script's heap representation.
-	 * @param dst	script-relative offset of the destination area
-	 * @param src	pointer to the data source location
-	 * @param n		number of bytes to copy
-	 */
-	void mcpyInOut(int dst, const void *src, size_t n);
-
-	/**
 	 * Finds the pointer where a block of a specific type starts from,
 	 * in SCI0 - SCI1 games
 	 */
-	byte *findBlockSCI0(int type, int startBlockIndex = -1);
+	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, int startBlockIndex = -1);
 
 	/**
 	 * Syncs the string heap of a script. Used when saving/loading.
@@ -271,7 +262,7 @@ public:
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI3 script
 	 */
-	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
+	int getCodeBlockOffsetSci3() { return _buf->getInt32SEAt(0); }
 
 	/**
 	 * Get the offset array
@@ -303,7 +294,7 @@ private:
 	/**
 	 * Gets a pointer to the beginning of the objects in a SCI3 script
 	 */
-	const byte *getSci3ObjectsPointer();
+	SciSpan<const byte> getSci3ObjectsPointer();
 
 	/**
 	 * Initializes the script's objects (SCI0)

@@ -80,11 +80,12 @@ AudioVolumeResourceSource::~AudioVolumeResourceSource() {
 }
 
 bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
-	data = new byte[size];
+	byte *ptr = new byte[_size];
+	_data = ptr;
 
-	uint32 really_read = file->read(data, size);
-	if (really_read != size)
-		error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
+	uint32 bytesRead = file->read(ptr, _size);
+	if (bytesRead != _size)
+		error("Read %d bytes from %s but expected %u", bytesRead, _id.toString().c_str(), _size);
 
 	_status = kResStatusAllocated;
 	return true;
@@ -95,7 +96,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKTAG('R','I','F','F')) {
 		_headerSize = 0;
-		size = file->readUint32LE() + 8;
+		_size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
 	}
@@ -123,7 +124,8 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 			if (_headerSize != 7) { // Size is defined already from the map
 				// Load sample size
 				file->seek(7, SEEK_CUR);
-				size = file->readUint32LE();
+				_size = file->readUint32LE();
+				assert(!file->err() && !file->eos());
 				// Adjust offset to point at the header data again
 				file->seek(-11, SEEK_CUR);
 			}
@@ -133,15 +135,16 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 }
 
 bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
-	data = new byte[size];
+	byte *ptr = new byte[size()];
+	_data = ptr;
 
-	if (data == NULL) {
-		error("Can't allocate %d bytes needed for loading %s", size, _id.toString().c_str());
+	if (!ptr) {
+		error("Can't allocate %u bytes needed for loading %s", _size, _id.toString().c_str());
 	}
 
-	uint32 really_read = file->read(data, size);
-	if (really_read != size)
-		warning("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
+	uint32 bytesRead = file->read(ptr, size());
+	if (bytesRead != size())
+		warning("Read %d bytes from %s but expected %u", bytesRead, _id.toString().c_str(), _size);
 
 	_status = kResStatusAllocated;
 	return true;
@@ -300,11 +303,13 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 	}
 
-	byte *ptr = mapRes->data;
+	const uint32 srcSize = getVolumeFile(src)->size();
+
+	SciSpan<const byte>::const_iterator ptr = mapRes->cbegin();
 
 	// Heuristic to detect entry size
 	uint32 entrySize = 0;
-	for (int i = mapRes->size - 1; i >= 0; --i) {
+	for (int i = mapRes->size() - 1; i >= 0; --i) {
 		if (ptr[i] == 0xff)
 			entrySize++;
 		else
@@ -312,52 +317,54 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 	}
 
 	if (map->_mapNumber == 65535) {
-		while (ptr < mapRes->data + mapRes->size) {
-			uint16 n = READ_LE_UINT16(ptr);
+		while (ptr != mapRes->cend()) {
+			uint16 n = ptr.getUint16LE();
 			ptr += 2;
 
 			if (n == 0xffff)
 				break;
 
 			if (entrySize == 6) {
-				offset = READ_LE_UINT32(ptr);
+				offset = ptr.getUint32LE();
 				ptr += 4;
 			} else {
-				offset += READ_LE_UINT24(ptr);
+				offset += ptr.getUint24LE();
 				ptr += 3;
 			}
 
+			assert(offset < srcSize);
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset);
 		}
 	} else if (map->_mapNumber == 0 && entrySize == 10 && ptr[3] == 0) {
 		// QFG3 demo format
 		// ptr[3] would be 'seq' in the normal format and cannot possibly be 0
-		while (ptr < mapRes->data + mapRes->size) {
-			uint16 n = READ_BE_UINT16(ptr);
+		while (ptr != mapRes->cend()) {
+			uint16 n = ptr.getUint16BE();
 			ptr += 2;
 
 			if (n == 0xffff)
 				break;
 
-			offset = READ_LE_UINT32(ptr);
+			offset = ptr.getUint32LE();
 			ptr += 4;
-			uint32 size = READ_LE_UINT32(ptr);
+			uint32 size = ptr.getUint32LE();
 			ptr += 4;
 
+			assert(offset + size <= srcSize);
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
 		}
-	} else if (map->_mapNumber == 0 && entrySize == 8 && READ_LE_UINT16(ptr + 2) == 0xffff) {
+	} else if (map->_mapNumber == 0 && entrySize == 8 && (ptr + 2).getUint16LE() == 0xffff) {
 		// LB2 Floppy/Mother Goose SCI1.1 format
 		Common::SeekableReadStream *stream = getVolumeFile(src);
 
-		while (ptr < mapRes->data + mapRes->size) {
-			uint16 n = READ_LE_UINT16(ptr);
+		while (ptr != mapRes->cend()) {
+			uint16 n = ptr.getUint16LE();
 			ptr += 4;
 
 			if (n == 0xffff)
 				break;
 
-			offset = READ_LE_UINT32(ptr);
+			offset = ptr.getUint32LE();
 			ptr += 4;
 
 			// The size is not stored in the map and the entries have no order.
@@ -369,18 +376,19 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			stream->skip(5);
 			uint32 size = stream->readUint32LE() + headerSize + 2;
 
+			assert(offset + size <= srcSize);
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
 		}
 	} else {
 		bool isEarly = (entrySize != 11);
 
 		if (!isEarly) {
-			offset = READ_LE_UINT32(ptr);
+			offset = ptr.getUint32LE();
 			ptr += 4;
 		}
 
-		while (ptr < mapRes->data + mapRes->size) {
-			uint32 n = READ_BE_UINT32(ptr);
+		while (ptr != mapRes->cend()) {
+			uint32 n = ptr.getUint32BE();
 			int syncSize = 0;
 			ptr += 4;
 
@@ -388,21 +396,23 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				break;
 
 			if (isEarly) {
-				offset = READ_LE_UINT32(ptr);
+				offset = ptr.getUint32LE();
 				ptr += 4;
 			} else {
-				offset += READ_LE_UINT24(ptr);
+				offset += ptr.getUint24LE();
 				ptr += 3;
 			}
 
 			if (isEarly || (n & 0x80)) {
-				syncSize = READ_LE_UINT16(ptr);
+				syncSize = ptr.getUint16LE();
 				ptr += 2;
 
 				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
 				// (bytes taken from the RAVE resource right after it)
-				if (syncSize > 0)
+				if (syncSize > 0) {
+					assert(offset + syncSize <= srcSize);
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize);
+				}
 			}
 
 			// Checking for this 0x40 flag breaks at least Laura Bow 2 CD 1.1
@@ -410,15 +420,17 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			if (g_sci->getGameId() == GID_KQ6 && (n & 0x40)) {
 				// This seems to define the size of raw lipsync data (at least
 				// in KQ6 CD Windows).
-				int kq6HiresSyncSize = READ_LE_UINT16(ptr);
+				int kq6HiresSyncSize = ptr.getUint16LE();
 				ptr += 2;
 
 				if (kq6HiresSyncSize > 0) {
+					assert(offset + syncSize + kq6HiresSyncSize <= srcSize);
 					addResource(ResourceId(kResourceTypeRave, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize);
 					syncSize += kq6HiresSyncSize;
 				}
 			}
 
+			assert(offset + syncSize < srcSize);
 			addResource(ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize);
 		}
 	}
@@ -445,7 +457,10 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 	bool oldFormat = (file.readUint16LE() >> 11) == kResourceTypeAudio;
 	file.seek(0);
 
-	while (1) {
+	uint32 volumeSize;
+	int lastVolumeNo = -1;
+
+	for (;;) {
 		uint16 n = file.readUint16LE();
 		uint32 offset = file.readUint32LE();
 		uint32 size = file.readUint32LE();
@@ -472,10 +487,17 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		ResourceSource *src = findVolume(map, volume_nr);
 
 		if (src) {
+			if (volume_nr != lastVolumeNo) {
+				volumeSize = getVolumeFile(src)->size();
+				lastVolumeNo = volume_nr;
+			}
+
 			if (unload)
 				removeAudioResource(ResourceId(kResourceTypeAudio, n));
-			else
+			else {
+				assert(offset + size <= volumeSize);
 				addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
+			}
 		} else {
 			warning("Failed to find audio volume %i", volume_nr);
 		}
@@ -583,8 +605,6 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 	_innerResource = resource;
 	_soundPriority = 0xFF;
 
-	byte *data, *data2;
-	byte *dataEnd;
 	Channel *channel, *sampleChannel;
 
 	switch (_soundVersion) {
@@ -597,60 +617,54 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		_tracks->type = 0; // Not used for SCI0
 		_tracks->channelCount = 1;
 		// Digital sample data included? -> Add an additional channel
-		if (resource->data[0] == 2)
+		if (resource->getUint8At(0) == 2)
 			_tracks->channelCount++;
 		_tracks->channels = new Channel[_tracks->channelCount];
-		memset(_tracks->channels, 0, sizeof(Channel) * _tracks->channelCount);
 		channel = &_tracks->channels[0];
 		channel->flags |= 2; // don't remap (SCI0 doesn't have remapping)
 		if (_soundVersion == SCI_VERSION_0_EARLY) {
-			channel->data = resource->data + 0x11;
-			channel->size = resource->size - 0x11;
+			channel->data = resource->subspan(0x11);
 		} else {
-			channel->data = resource->data + 0x21;
-			channel->size = resource->size - 0x21;
+			channel->data = resource->subspan(0x21);
 		}
 		if (_tracks->channelCount == 2) {
 			// Digital sample data included
 			_tracks->digitalChannelNr = 1;
 			sampleChannel = &_tracks->channels[1];
 			// we need to find 0xFC (channel terminator) within the data
-			data = channel->data;
-			dataEnd = channel->data + channel->size;
-			while ((data < dataEnd) && (*data != 0xfc))
-				data++;
+			SciSpan<const byte>::const_iterator it = channel->data.cbegin();
+			while (it != channel->data.cend() && *it != 0xfc)
+				it++;
 			// Skip any following 0xFCs as well
-			while ((data < dataEnd) && (*data == 0xfc))
-				data++;
+			while (it != channel->data.cend() && *it == 0xfc)
+				it++;
 			// Now adjust channels accordingly
-			sampleChannel->data = data;
-			sampleChannel->size = channel->size - (data - channel->data);
-			channel->size = data - channel->data;
+			sampleChannel->data = channel->data.subspan(it - channel->data.cbegin());
+			channel->data = channel->data.subspan(0, it - channel->data.cbegin());
 			// Read sample header information
 			//Offset 14 in the header contains the frequency as a short integer. Offset 32 contains the sample length, also as a short integer.
-			_tracks->digitalSampleRate = READ_LE_UINT16(sampleChannel->data + 14);
-			_tracks->digitalSampleSize = READ_LE_UINT16(sampleChannel->data + 32);
+			_tracks->digitalSampleRate = sampleChannel->data.getUint16LEAt(14);
+			_tracks->digitalSampleSize = sampleChannel->data.getUint16LEAt(32);
 			_tracks->digitalSampleStart = 0;
 			_tracks->digitalSampleEnd = 0;
 			sampleChannel->data += 44; // Skip over header
-			sampleChannel->size -= 44;
 		}
 		break;
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1_EARLY:
-		data = resource->data;
+	case SCI_VERSION_2_1_EARLY: {
+		SciSpan<const byte> data = *resource;
 		// Count # of tracks
 		_trackCount = 0;
 		while ((*data++) != 0xFF) {
 			_trackCount++;
 			while (*data != 0xFF)
 				data += 6;
-			data++;
+			++data;
 		}
 		_tracks = new Track[_trackCount];
-		data = resource->data;
+		data = *resource;
 
 		byte channelCount;
 
@@ -662,7 +676,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 			_tracks[trackNr].type = *data++;
 			// Counting # of channels used
-			data2 = data;
+			SciSpan<const byte> data2 = data;
 			channelCount = 0;
 			while (*data2 != 0xFF) {
 				data2 += 6;
@@ -680,38 +694,37 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 				channelNr = 0;
 				while (channelCount--) {
 					channel = &_tracks[trackNr].channels[channelNr];
-					uint dataOffset = READ_LE_UINT16(data + 2);
+					const uint16 dataOffset = data.getUint16LEAt(2);
 
-					if (dataOffset >= resource->size) {
+					if (dataOffset >= resource->size()) {
 						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 						data += 6;
 						continue;
 					}
 
-					channel->data = resource->data + dataOffset;
-					channel->size = READ_LE_UINT16(data + 4);
+					uint16 size = data.getUint16LEAt(4);
 
-					if (dataOffset + channel->size > resource->size) {
+					if (dataOffset + size > resource->size()) {
 						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
-						channel->size = resource->size - dataOffset;
+						size = resource->size() - dataOffset;
 					}
 
-					channel->curPos = 0;
-					channel->number = *channel->data;
+					channel->data = resource->subspan(dataOffset, size);
 
-					channel->poly = *(channel->data + 1) & 0x0F;
-					channel->prio = *(channel->data + 1) >> 4;
+					channel->curPos = 0;
+					channel->number = channel->data[0];
+
+					channel->poly = channel->data[1] & 0x0F;
+					channel->prio = channel->data[1] >> 4;
 					channel->time = channel->prev = 0;
 					channel->data += 2; // skip over header
-					channel->size -= 2; // remove header size
 					if (channel->number == 0xFE) { // Digital channel
 						_tracks[trackNr].digitalChannelNr = channelNr;
-						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
-						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
-						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
+						_tracks[trackNr].digitalSampleRate = channel->data.getUint16LEAt(0);
+						_tracks[trackNr].digitalSampleSize = channel->data.getUint16LEAt(2);
+						_tracks[trackNr].digitalSampleStart = channel->data.getUint16LEAt(4);
+						_tracks[trackNr].digitalSampleEnd = channel->data.getUint16LEAt(6);
 						channel->data += 8; // Skip over header
-						channel->size -= 8;
 						channel->flags = 0;
 					} else {
 						channel->flags = channel->number >> 4;
@@ -740,9 +753,10 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 				// Skip over digital track
 				data += 6;
 			}
-			data++; // Skipping 0xFF that closes channels list
+			++data; // Skipping 0xFF that closes channels list
 		}
 		break;
+	}
 
 	default:
 		error("SoundResource: SCI version %d is unsupported", _soundVersion);
@@ -789,13 +803,13 @@ SoundResource::Track *SoundResource::getDigitalTrack() {
 
 // Gets the filter mask for SCI0 sound resources
 int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
-	byte *data = _innerResource->data;
+	SciSpan<const byte> data = *_innerResource;
 	int channelMask = 0;
 
 	if (_soundVersion > SCI_VERSION_0_LATE)
 		return 0;
 
-	data++; // Skip over digital sample flag
+	++data; // Skip over digital sample flag
 
 	for (int channelNr = 0; channelNr < 16; channelNr++) {
 		channelMask = channelMask >> 1;
@@ -823,7 +837,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 			// by the corresponding hardware
 
 			// Skip voice count
-			data++;
+			++data;
 
 			flags = *data++;
 		}
@@ -853,12 +867,11 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 }
 
 byte SoundResource::getInitialVoiceCount(byte channel) {
-	byte *data = _innerResource->data;
-
 	if (_soundVersion > SCI_VERSION_0_LATE)
 		return 0; // TODO
 
-	data++; // Skip over digital sample flag
+	// Skip over digital sample flag
+	SciSpan<const byte> data = _innerResource->subspan(1);
 
 	if (_soundVersion == SCI_VERSION_0_EARLY)
 		return data[channel] >> 4;
@@ -902,7 +915,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 					break;
 				default:
 					mappingTable += 2;
-					res->size = *mappingTable - compressedOffset;
+					res->_size = *mappingTable - compressedOffset;
 				}
 				break;
 			}

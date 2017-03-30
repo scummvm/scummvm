@@ -42,16 +42,13 @@ private:
 	CStarField *_starField;
 	CVideoSurface *_videoSurface;
 	CStarControlSub12 _sub12;
-	int _field118;
+	bool _hasReference;
 	CStarControlSub13 _sub13;
 	CSurfaceFader _fader;
 	CVideoSurface *_videoSurface2;
 	CGameObject *_homePhotoMask;
 	bool _field218;
 	bool _showingPhoto;
-#if 0
-	int _field210;
-#endif
 private:
 	bool fn1();
 	void fn18(CStarControlSub12 *sub12);
@@ -59,8 +56,6 @@ private:
 
 	void randomizeVectors1(FVector &v1, FVector &v2);
 	void randomizeVectors2(FVector &v1, FVector &v2);
-	void randomizeVectors3(FVector &v1, FVector &v2);
-	void randomizeVectors4(FVector &v1, FVector &v2);
 
 	/**
 	 * Handles resizing the surface

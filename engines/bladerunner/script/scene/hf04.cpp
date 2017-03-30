@@ -52,11 +52,11 @@ void SceneScriptHF04::SceneLoaded() {
 		Unobstacle_Object("HIDE_WALL_A", true);
 		Unobstacle_Object("HIDE_WALL_B", true);
 	}
-	if (Actor_Query_Goal_Number(6) == 213) {
-		if (Actor_Clue_Query(6, 219) && Global_Variable_Query(40) != 3) {
+	if (Actor_Query_Goal_Number(kActorLucy) == 213) {
+		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy) && Global_Variable_Query(40) != 3) {
 			Game_Flag_Set(593);
 		} else {
-			Actor_Set_Goal_Number(6, 230);
+			Actor_Set_Goal_Number(kActorLucy, 230);
 			Game_Flag_Reset(584);
 		}
 	}
@@ -80,7 +80,7 @@ bool SceneScriptHF04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 1132.27f, -0.31f, -113.46f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(567);
@@ -102,8 +102,8 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	if (frame == 154) {
 		Sound_Play(360, Random_Query(43, 43), 0, 0, 50);
 	}
-	if (frame == 179 && Actor_Query_Goal_Number(6) == 235) {
-		Actor_Set_Goal_Number(6, 236);
+	if (frame == 179 && Actor_Query_Goal_Number(kActorLucy) == 235) {
+		Actor_Set_Goal_Number(kActorLucy, 236);
 	}
 	if (Game_Flag_Query(585)) {
 		Game_Flag_Reset(585);
@@ -136,8 +136,8 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 		Obstacle_Object("PIVOT_WALL#02", false);
 		Obstacle_Object("PIVOT_WALL#03", true);
 		Game_Flag_Reset(584);
-		if (Actor_Query_Goal_Number(6) == 234) {
-			Actor_Set_Goal_Number(6, 235);
+		if (Actor_Query_Goal_Number(kActorLucy) == 234) {
+			Actor_Set_Goal_Number(kActorLucy, 235);
 		}
 		//return true;
 		return;
@@ -149,11 +149,11 @@ void SceneScriptHF04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF04::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(6) == 230 || Actor_Query_Goal_Number(6) == 233) {
+	if (Actor_Query_Goal_Number(kActorLucy) == 230 || Actor_Query_Goal_Number(kActorLucy) == 233) {
 		Player_Set_Combat_Mode(true);
 		Music_Play(1, 60, 0, 2, -1, 0, 0);
 	}
-	Loop_Actor_Walk_To_XYZ(0, -45.0f, -0.31f, 307.0f, 0, 0, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, 0, true, 0);
 	Delay(2500);
 }
 

@@ -976,11 +976,11 @@ void SegManager::createClassTable() {
 	if (!vocab996)
 		error("SegManager: failed to open vocab 996");
 
-	int totalClasses = vocab996->size >> 2;
+	int totalClasses = vocab996->size() >> 2;
 	_classTable.resize(totalClasses);
 
 	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
-		uint16 scriptNr = READ_SCI11ENDIAN_UINT16(vocab996->data + classNr * 4 + 2);
+		uint16 scriptNr = vocab996->getUint16SEAt(classNr * 4 + 2);
 
 		_classTable[classNr].reg = NULL_REG;
 		_classTable[classNr].script = scriptNr;
@@ -993,15 +993,13 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 calle
 
 	if (classnr < 0 || (int)_classTable.size() <= classnr || _classTable[classnr].script < 0) {
 		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classTable.size());
-		return NULL_REG;
 	} else {
 		Class *the_class = &_classTable[classnr];
 		if (!the_class->reg.getSegment()) {
 			getScriptSegment(the_class->script, lock);
 
 			if (!the_class->reg.getSegment()) {
-				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;", classnr, the_class->script, the_class->script);
-				return NULL_REG;
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed", classnr, the_class->script, the_class->script);
 			}
 		} else
 			if (callerSegment != the_class->reg.getSegment())

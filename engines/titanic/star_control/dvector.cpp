@@ -42,8 +42,8 @@ double DVector::getDistance(const DVector &src) {
 
 DVector *DVector::fn1(DVector &dest, const DMatrix &m) {
 	dest._x = m._row3._x * _z + m._row2._x * _y + _x * m._row1._x + m._row4._x;
-	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._z;
-	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._y;
+	dest._y = m._row2._y * _y + m._row3._y * _z + m._row1._y * _x + m._row4._y;
+	dest._z = m._row3._z * _z + m._row2._z * _y + m._row1._z * _x + m._row4._z;
 	return &dest;
 }
 
@@ -86,13 +86,13 @@ void DVector::fn4(const DVector &v, DMatrix &m) {
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
-	matrix3.fn1(matrix4);
+	matrix4 = matrix3.fn1();
 
 	vector1 = v.fn3();
 	matrix1.setRotationMatrix(X_AXIS, vector1._y * FACTOR);
 	matrix2.setRotationMatrix(Y_AXIS, -(vector1._z * FACTOR));
 	matrix3 = matrix1.fn4(matrix2);
-	matrix1.fn1(matrix4);
+	matrix4 = matrix1.fn1();
 
 	m = matrix4.fn4(matrix3);
 }

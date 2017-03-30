@@ -526,16 +526,16 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 		return true;
 	}
 
-	int count = READ_LE_UINT16(r->data);
+	int count = r->getUint16LEAt(0);
 
 	debugPrintf("Opcode names in numeric order [index: type name]:\n");
 
 	for (int i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset) - 2;
-		int type = READ_LE_UINT16(r->data + offset + 2);
+		int offset = r->getUint16LEAt(2 + i * 2);
+		int len = r->getUint16LEAt(offset) - 2;
+		int type = r->getUint16LEAt(offset + 2);
 		// QFG3 has empty opcodes
-		Common::String name = len > 0 ? Common::String((const char *)r->data + offset + 4, len) : "Dummy";
+		Common::String name = len > 0 ? r->getStringAt(offset + 4, len) : "Dummy";
 		debugPrintf("%03x: %03x %20s | ", i, type, name.c_str());
 		if ((i % 3) == 2)
 			debugPrintf("\n");
@@ -816,7 +816,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	else {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
-			Common::hexdump(resource->data, resource->size, 16, 0);
+			Common::hexdump(resource->getUnsafeDataAt(0), resource->size(), 16, 0);
 			debugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
 		} else {
 			debugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
@@ -954,7 +954,7 @@ bool Console::cmdResourceInfo(int argc, const char **argv) {
 	else {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
-			debugPrintf("Resource size: %d\n", resource->size);
+			debugPrintf("Resource size: %u\n", resource->size());
 			debugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
 		} else {
 			debugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
@@ -1015,8 +1015,8 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 			uint32 comppos = 0;
 			int output_script_name = 0;
 
-			while (seeker < script->size) {
-				if (script->data[seeker] == byteString[comppos]) {
+			while (seeker < script->size()) {
+				if (script->getUint8At(seeker) == byteString[comppos]) {
 					if (comppos == 0)
 						seekerold = seeker;
 
@@ -1066,13 +1066,13 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 			if (!heap)
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
-			if (script && heap && (script->size + heap->size > 65535))
-				debugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
-				itr->getNumber(), script->size + heap->size);
+			if (script && heap && (script->size() + heap->size() > 65535))
+				debugPrintf("Error: script and heap %d together are larger than 64KB (%u bytes)\n",
+				itr->getNumber(), script->size() + heap->size());
 		} else {	// SCI3
-			if (script && script->size > 65535)
-				debugPrintf("Error: script %d is larger than 64KB (%d bytes)\n",
-				itr->getNumber(), script->size);
+			if (script && script->size() > 65535)
+				debugPrintf("Error: script %d is larger than 64KB (%u bytes)\n",
+				itr->getNumber(), script->size());
 		}
 	}
 
@@ -1566,7 +1566,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	spec[len++] = 0xFF;
 
 	debugN("Matching '%s' against:", string);
-	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
+	_engine->getVocabulary()->debugDecipherSaidBlock(SciSpan<const byte>(spec, len));
 	debugN("\n");
 
 	ResultWordListList words;
@@ -2113,9 +2113,10 @@ bool Console::segmentInfo(int nr) {
 	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
 		debugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->getScriptNumber(), scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
-		if (scr->getExportTable())
-			debugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), (int)(((const byte *)scr->getExportTable()) - ((const byte *)scr->getBuf())));
-		else
+		if (scr->getExportsNr()) {
+			const uint location = scr->getExportsOffset();
+			debugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), location);
+		} else
 			debugPrintf("  Exports: none\n");
 
 		debugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
@@ -3171,7 +3172,7 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 					saidPtr = curScriptData + arrayIterator->offset;
 					debugPrintf(" %03d:%04x:\n", arrayIterator->id, arrayIterator->offset);
 					debugN(" %03d:%04x: ", arrayIterator->id, arrayIterator->offset);
-					vocab->debugDecipherSaidBlock(saidPtr);
+					vocab->debugDecipherSaidBlock(SciSpan<const byte>(saidPtr, (arrayIterator + 1)->offset - arrayIterator->offset));
 					debugN("\n");
 					break;
 				default:
@@ -3512,7 +3513,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 				byte opcode;
 				uint16 maxJmpOffset = 0;
 
-				while (true) {
+				for (;;) {
 					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 					opcode = extOpcode >> 1;
 
@@ -3946,7 +3947,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), false);
 
 	if (!song) {
 		debugPrintf("Doesn't exist\n");
@@ -3957,36 +3958,36 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 
 	debugPrintf("SCI01 song track mappings:\n");
 
-	if (*song->data == 0xf0) // SCI1 priority spec
+	if (song->getUint8At(0) == 0xf0) // SCI1 priority spec
 		offset = 8;
 
-	if (song->size <= 0)
+	if (song->size() <= 0)
 		return 1;
 
-	while (song->data[offset] != 0xff) {
-		byte device_id = song->data[offset];
+	while (song->getUint8At(offset) != 0xff) {
+		byte device_id = song->getUint8At(offset);
 		debugPrintf("* Device %02x:\n", device_id);
 		offset++;
 
-		if (offset + 1 >= song->size)
+		if (offset + 1 >= song->size())
 			return 1;
 
-		while (song->data[offset] != 0xff) {
+		while (song->getUint8At(offset) != 0xff) {
 			int track_offset;
 			int end;
 			byte header1, header2;
 
-			if (offset + 7 >= song->size)
+			if (offset + 7 >= song->size())
 				return 1;
 
 			offset += 2;
 
-			track_offset = READ_LE_UINT16(song->data + offset);
-			header1 = song->data[track_offset];
-			header2 = song->data[track_offset+1];
+			track_offset = song->getUint16LEAt(offset);
+			header1 = song->getUint8At(track_offset);
+			header2 = song->getUint8At(track_offset + 1);
 			track_offset += 2;
 
-			end = READ_LE_UINT16(song->data + offset + 2);
+			end = song->getUint16LEAt(offset + 2);
 			debugPrintf("  - %04x -- %04x", track_offset, track_offset + end);
 
 			if (track_offset == 0xfe)
@@ -4002,7 +4003,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 	return true;
 }
 
-static int _parse_ticks(byte *data, int *offset_p, int size) {
+static int _parse_ticks(const byte *data, int *offset_p, int size) {
 	int ticks = 0;
 	int tempticks;
 	int offset = 0;
@@ -4019,7 +4020,7 @@ static int _parse_ticks(byte *data, int *offset_p, int size) {
 }
 
 // Specialised for SCI01 tracks (this affects the way cumulative cues are treated)
-static void midi_hexdump(byte *data, int size, int notational_offset) {
+static void midi_hexdump(const byte *data, int size, int notational_offset) {
 	int offset = 0;
 	int prev = 0;
 	const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
@@ -4120,7 +4121,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 		return true;
 	}
 
-	midi_hexdump(song->data + offset, song->size, offset);
+	midi_hexdump(song->getUnsafeDataAt(offset), song->size() - offset, offset);
 
 	return true;
 }
@@ -4141,9 +4142,9 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), 0);
+	Resource *resource = _engine->_resMan->findResource(ResourceId(kResourceTypeVocab, 994), false);
 	const Object *obj = s->_segMan->getObject(reg);
-	uint16 *data = (uint16 *) resource->data;
+	SciSpan<const uint16> data = resource->subspan<const uint16>(0);
 	uint32 first = atoi(argv[2]);
 	uint32 last  = atoi(argv[3]);
 	Common::Array<bool> markers;
@@ -4152,8 +4153,8 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		obj = s->_segMan->getObject(obj->getSuperClassSelector());
 
-	first = MIN(first, (uint32) (resource->size / 2 - 2));
-	last =  MIN(last, (uint32) (resource->size / 2 - 2));
+	first = MIN<uint32>(first, resource->size() / 2 - 2);
+	last =  MIN<uint32>(last, resource->size() / 2 - 2);
 
 	for (uint32 i = first; i <= last; ++i) {
 		uint16 ofs = data[i];

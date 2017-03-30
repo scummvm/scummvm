@@ -46,7 +46,7 @@ MODULE_OBJS = \
 	script/ai.o \
 	script/ai/mccoy.o \
 	script/ai/runciter.o \
-	script/ai/officer_leroy.o \
+	script/ai/officer_leary.o \
 	script/scene.o \
 	script/scene/ar01.o \
 	script/scene/ar02.o \
@@ -170,7 +170,8 @@ MODULE_OBJS = \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \
-	waypoints.o
+	waypoints.o \
+	zbuffer.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_BLADERUNNER), DYNAMIC_PLUGIN)

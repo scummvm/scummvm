@@ -35,7 +35,7 @@ namespace Sci {
  */
 class HunkPalette {
 public:
-	HunkPalette(byte *rawPalette);
+	HunkPalette(const SciSpan<const byte> &rawPalette);
 
 	/**
 	 * Gets the version of the palette. Used to avoid resubmitting a HunkPalette
@@ -118,7 +118,7 @@ private:
 	/**
 	 * The raw palette data for this hunk palette.
 	 */
-	byte *_data;
+	SciSpan<const byte> _data;
 
 	/**
 	 * Returns a struct that describes the palette held by this HunkPalette. The
@@ -129,8 +129,8 @@ private:
 	/**
 	 * Returns a pointer to the palette data within the hunk palette.
 	 */
-	byte *getPalPointer() const {
-		return _data + kHunkPaletteHeaderSize + (2 * _numPalettes);
+	SciSpan<const byte> getPalPointer() const {
+		return _data.subspan(kHunkPaletteHeaderSize + (2 * _numPalettes));
 	}
 };
 

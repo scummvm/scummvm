@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-03-11 10:08+0100\n"
-"PO-Revision-Date: 2017-03-05 14:47+0000\n"
+"PO-Revision-Date: 2017-03-29 02:41+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1268,7 +1268,7 @@ msgstr "Gebruikte ruimte:"
 
 #: gui/options.cpp:1675
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "Ruimte in gebruikt door ScummVM's opgeslagen spellen op deze opslag"
+msgstr "Ruimte in gebruik door ScummVM's opgeslagen spellen op deze opslag"
 
 #: gui/options.cpp:1678
 msgid "Last sync time:"
@@ -3424,7 +3424,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM heeft al uw opgeslagen spellen succesvol geconverteerd."
+msgstr "Al uw opgeslagen spellen zijn succesvol geconverteerd."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3433,7 +3433,7 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM heeft enkele waarschuwing in uw consolewindow geprint en kan niet "
+"ScummVM heeft enkele waarschuwingen in uw consolewindow geprint en kan niet "
 "garanderen dat al uw files zijn geconverteerd.\n"
 "\n"
 "Meld dit a.u.b. bij de ontwikkelaars."

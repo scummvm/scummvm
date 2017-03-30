@@ -489,7 +489,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		{
 			"warlock",
 			"",
-			AD_ENTRY1s("Spaceship Warlock.bin", "cfa68a1bc49251497ebde18e5fc9c217", 271107),
+			AD_ENTRY1s("Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271107),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -525,6 +525,34 @@ static const DirectorGameDescription gameDescriptions[] = {
 		},
 		GID_GENERIC,
 		2
+	},
+
+	{
+		{
+			"ernie",
+			"Demo",
+			AD_ENTRY1s("ERNIE.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1417371),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
+	{
+		{
+			"ernie",
+			"",
+			AD_ENTRY1s("Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
 	},
 
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }

@@ -32,7 +32,10 @@ namespace Titanic {
 class CStarControlSub12;
 
 class CStarPoints2 {
-	class RootEntry : public Common::Array<FVector> {
+	struct CStarPointEntry {
+		FVector _v1, _v2;
+	};
+	class RootEntry : public Common::Array<CStarPointEntry> {
 	public:
 		int _field0;
 		RootEntry() : _field0(0) {}

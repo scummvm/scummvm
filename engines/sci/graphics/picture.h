@@ -23,6 +23,8 @@
 #ifndef SCI_GRAPHICS_PICTURE_H
 #define SCI_GRAPHICS_PICTURE_H
 
+#include "sci/util.h"
+
 namespace Sci {
 
 #define SCI_PATTERN_CODE_RECTANGLE 0x10
@@ -54,28 +56,18 @@ public:
 	GuiResourceId getResourceId();
 	void draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 
-#ifdef ENABLE_SCI32
-	int16 getSci32celCount();
-	int16 getSci32celY(int16 celNo);
-	int16 getSci32celX(int16 celNo);
-	int16 getSci32celWidth(int16 celNo);
-	int16 getSci32celHeight(int16 celNo);
-	int16 getSci32celPriority(int16 celNo);
-	void drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, int16 pictureX, int16 pictureY, bool mirrored);
-#endif
-
 private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA);
-	void drawVectorData(byte *data, int size);
+	void drawCelData(const SciSpan<const byte> &inbuffer, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA);
+	void drawVectorData(const SciSpan<const byte> &data);
 	bool vectorIsNonOpcode(byte pixel);
-	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);
-	void vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y);
-	void vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y);
-	void vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y);
-	void vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture);
+	void vectorGetAbsCoords(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
+	void vectorGetAbsCoordsNoMirror(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
+	void vectorGetRelCoords(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
+	void vectorGetRelCoordsMed(const SciSpan<const byte> &data, uint &curPos, int16 &x, int16 &y);
+	void vectorGetPatternTexture(const SciSpan<const byte> &data, uint &curPos, int16 pattern_Code, int16 &pattern_Texture);
 	void vectorFloodFill(int16 x, int16 y, byte color, byte prio, byte control);
 	void vectorPattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void vectorPatternBox(Common::Rect box, byte color, byte prio, byte control);

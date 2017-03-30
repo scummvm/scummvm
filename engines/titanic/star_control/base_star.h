@@ -35,10 +35,10 @@ enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
 class CStarControlSub12;
 
 struct CBaseStarEntry {
-	byte _field0;
-	byte _field1;
-	byte _field2;
-	byte _field3;
+	byte _red;
+	byte _green;
+	byte _blue;
+	byte _thickness;
 	double _value;
 	FVector _position;
 	uint _data[5];
@@ -70,7 +70,6 @@ private:
 	void draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
 protected:
-	Common::Array<CBaseStarEntry> _data;
 	FRange _minMax;
 	double _minVal;
 	double _maxVal;
@@ -92,6 +91,8 @@ protected:
 	 * Reset the data for an entry
 	 */
 	void resetEntry(CBaseStarEntry &entry);
+public:
+	Common::Array<CBaseStarEntry> _data;
 public:
 	CBaseStar();
 	virtual ~CBaseStar() {}

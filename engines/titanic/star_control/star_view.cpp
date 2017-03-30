@@ -31,7 +31,7 @@
 namespace Titanic {
 
 CStarView::CStarView() : _sub12((const CStar20Data *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _field118(0),
+		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
 	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
@@ -43,8 +43,8 @@ void CStarView::load(SimpleFile *file, int param) {
 	if (!param) {
 		_sub12.load(file, param);
 
-		_field118 = file->readNumber();
-		if (_field118)
+		_hasReference = file->readNumber();
+		if (_hasReference)
 			_sub13.load(file, 0);
 
 		_field218 = file->readNumber();
@@ -55,8 +55,8 @@ void CStarView::load(SimpleFile *file, int param) {
 void CStarView::save(SimpleFile *file, int indent) {
 	_sub12.save(file, indent);
 
-	file->writeNumberLine(_field118, indent);
-	if (_field118)
+	file->writeNumberLine(_hasReference, indent);
+	if (_hasReference)
 		_sub13.save(file, indent);
 
 	file->writeNumberLine(_field218, indent);
@@ -69,7 +69,7 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 }
 
 void CStarView::reset() {
-	if (!_field118) {
+	if (_hasReference) {
 		CStarControlSub12 sub12(&_sub13);
 		fn18(&sub12);
 	}
@@ -282,7 +282,7 @@ void CStarView::fn3(bool fadeIn) {
 
 void CStarView::fn4() {
 	FVector v1, v2;
-	randomizeVectors2(v1, v2);
+	randomizeVectors1(v1, v2);
 	_sub12.setPosition(v1);
 	_sub12.proc5(v2);
 }
@@ -299,7 +299,7 @@ void CStarView::fn7() {
 	const CBaseStarEntry *star = _starField->getRandomStar();
 	if (star) {
 		FVector v1, v2;
-		randomizeVectors3(v1, v2);
+		randomizeVectors1(v1, v2);
 		v2 += star->_position;
 		_sub12.setPosition(v2);
 		_sub12.proc5(v1);
@@ -310,7 +310,7 @@ void CStarView::fn19(int index) {
 	const CBaseStarEntry *star = _starField->getStar(index);
 	if (star) {
 		FVector v1, v2;
-		randomizeVectors3(v1, v2);
+		randomizeVectors1(v1, v2);
 		v1 += star->_position;
 		_sub12.setPosition(v1);
 		_sub12.proc5(v2);
@@ -362,14 +362,14 @@ void CStarView::fn14() {
 
 void CStarView::setHasReference() {
 	FVector v1, v2;
-	randomizeVectors1(v1, v2);
+	randomizeVectors2(v1, v2);
 
 	_sub13.setPosition(v1);
 	_sub13.fn11(v2);
 	_field218 = false;
 	_sub13.fn13(MODE_PHOTO, 0.0);
 	_sub13.fn13(MODE_STARFIELD, 0.0);
-	_field118 = true;
+	_hasReference = true;
 	reset();
 	_field218 = true;
 }
@@ -424,31 +424,27 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 
 		if (_videoSurface2) {
 			int oldVal = _starField->get54();
-			_starField->set4(false);
+			bool old4 = _starField->set4(false);
 
 			_videoSurface2->clear();
 			_videoSurface2->lock();
 			_starField->render(_videoSurface2, sub12);
-			_videoSurface2->unlock();
 
+			_starField->set4(old4);
 			_starField->set54(oldVal);
 			_starField->fn6(_videoSurface2, sub12);
+			_videoSurface2->unlock();
 		}
 	}
 }
 
 void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
-	v1._x = g_vm->getRandomFloat() * -4096.0 - 3072.0;
-	v1._y = g_vm->getRandomFloat() * -4096.0 - 3072.0;
-	v1._z = g_vm->getRandomFloat() * -4096.0 - 3072.0;
+	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 
-	double vx = g_vm->getRandomFloat() * 8192.0;
-	double vy = g_vm->getRandomFloat() * 1024.0;
-	vx -= v1._x;
-	vy -= v1._y;
-	
-	v2._x = vx;
-	v2._y = vy;
+	v2._x = -v1._x;
+	v2._y = -v1._y;
 	v2._z = -v1._z;
 	v2.normalize();
 }
@@ -458,33 +454,8 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 
-	// TODO: Doublecheck
-	v2._x = -v1._x;
-	v2._y = -v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-}
-
-void CStarView::randomizeVectors3(FVector &v1, FVector &v2) {
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-
-	// TODO: Doublecheck
-	v2._x = -v1._x;
-	v2._y = -v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-}
-
-void CStarView::randomizeVectors4(FVector &v1, FVector &v2) {
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-
-	// TODO: Doublecheck
-	v2._x = -v1._x;
-	v2._y = -v1._y;
+	v2._x = g_vm->getRandomFloat() * 8192.0 - v1._x;
+	v2._y = g_vm->getRandomFloat() * 1024.0 - v1._y;
 	v2._z = -v1._z;
 	v2.normalize();
 }

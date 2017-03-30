@@ -78,7 +78,7 @@ bool TextResource::open(const char *name) {
 
 	s->read(_strings, remain);
 
-#if 0
+#if _DEBUG
 	debug("\n%s\n----------------", resName);
 	for (uint32 i = 0; i != (uint32)_count; ++i) {
 		debug("%3d: %s", i, getText(i));

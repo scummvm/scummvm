@@ -51,12 +51,12 @@ public:
 		_x = _y = _z = 0.0;
 	}
 
-	void fn1(FVector *v);
+	FVector fn1() const;
 
 	/**
 	 * Calculates the cross-product between this matrix and a passed one
 	 */
-	void crossProduct(FVector &dest, const FVector &src);
+	FVector crossProduct(const FVector &src) const;
 
 	/**
 	 * Normalizes the vector so the length from origin equals 1.0

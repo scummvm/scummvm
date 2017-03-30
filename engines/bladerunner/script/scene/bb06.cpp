@@ -76,13 +76,13 @@ bool SceneScriptBB06::MouseClick(int x, int y) {
 
 bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX31", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "BOX31", 24, 1, false)) {
-			Actor_Face_Object(0, "BOX31", true);
+		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BOX31", 24, true, false)) {
+			Actor_Face_Object(kActorMcCoy, "BOX31", true);
 			if (Game_Flag_Query(410)) {
-				Actor_Voice_Over(60, 99);
-				Actor_Voice_Over(70, 99);
+				Actor_Voice_Over(60, kActorVoiceOver);
+				Actor_Voice_Over(70, kActorVoiceOver);
 			} else {
-				Actor_Voice_Over(50, 99);
+				Actor_Voice_Over(50, kActorVoiceOver);
 			}
 		}
 	}
@@ -107,7 +107,7 @@ bool SceneScriptBB06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -37.0f, 0.0f, 178.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -37.0f, 0.0f, 178.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(298);
@@ -116,7 +116,7 @@ bool SceneScriptBB06::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 101.0f, 0.0f, -25.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 101.0f, 0.0f, -25.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(393);
@@ -125,7 +125,7 @@ bool SceneScriptBB06::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 3) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -115.0f, 0.0f, -103.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -115.0f, 0.0f, -103.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(363);
@@ -163,7 +163,7 @@ void SceneScriptBB06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB06::PlayerWalkedIn() {
 	if (Game_Flag_Query(297)) {
-		Loop_Actor_Walk_To_XYZ(0, -36.0f, 0.0f, 145.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -36.0f, 0.0f, 145.0f, 0, 0, false, 0);
 		Game_Flag_Reset(297);
 	}
 }

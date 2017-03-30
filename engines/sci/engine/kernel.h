@@ -171,8 +171,8 @@ public:
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
-	void dumpScriptObject(char *data, int seeker, int objsize);
-	void dumpScriptClass(char *data, int seeker, int objsize);
+	void dumpScriptObject(const SciSpan<const byte> &script, SciSpan<const byte> object);
+	void dumpScriptClass(const SciSpan<const byte> &script, SciSpan<const byte> clazz);
 
 	SelectorCache _selectorCache; /**< Shortcut list for important selectors. */
 	typedef Common::Array<KernelFunction> KernelFunctionArray;

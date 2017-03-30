@@ -29,6 +29,7 @@
 #include "common/system.h"
 
 #include "sci/resource.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -72,7 +73,7 @@ private:
 	bool _playSwitch;
 	uint16 _masterVolume;
 
-	uint8 *_patchData;
+	Common::SpanOwner<SciSpan<uint8> > _patchData;
 
 	struct Channel {
 		Channel()
@@ -96,7 +97,7 @@ private:
 
 	struct Voice {
 		Voice() : channel(0xFF), note(0xFF), sustained(0xFF), ticks(0),
-		    turnOffTicks(0), patchDataPtr(0), patchDataIndex(0),
+		    turnOffTicks(0), patchDataPtr(), patchDataIndex(0),
 		    amplitudeTimer(0), amplitudeModifier(0), turnOff(false),
 		    velocity(0) {
 		}
@@ -106,7 +107,7 @@ private:
 		uint8 sustained;
 		uint16 ticks;
 		uint16 turnOffTicks;
-		const uint8 *patchDataPtr;
+		SciSpan<uint8> patchDataPtr;
 		uint8 patchDataIndex;
 		uint8 amplitudeTimer;
 		uint8 amplitudeModifier;
@@ -172,12 +173,11 @@ int MidiDriver_CMS::open() {
 		return MERR_ALREADY_OPEN;
 
 	assert(_resMan);
-	Resource *res = _resMan->findResource(ResourceId(kResourceTypePatch, 101), 0);
+	Resource *res = _resMan->findResource(ResourceId(kResourceTypePatch, 101), false);
 	if (!res)
 		return -1;
 
-	_patchData = new uint8[res->size];
-	memcpy(_patchData, res->data, res->size);
+	_patchData->allocateFromSpan(*res);
 
 	for (uint i = 0; i < ARRAYSIZE(_channel); ++i)
 		_channel[i] = Channel();
@@ -218,9 +218,9 @@ int MidiDriver_CMS::open() {
 void MidiDriver_CMS::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
-	delete[] _patchData;
+	_patchData.clear();
 	delete _cms;
-	_cms = 0;
+	_cms = nullptr;
 }
 
 void MidiDriver_CMS::send(uint32 b) {
@@ -295,7 +295,7 @@ void MidiDriver_CMS::voiceOn(int voiceNr, int note, int velocity) {
 	voice.amplitudeTimer = 0;
 	voice.ticks = 0;
 	voice.turnOffTicks = 0;
-	voice.patchDataPtr = _patchData + READ_LE_UINT16(&_patchData[_channel[voice.channel].patch * 2]);
+	voice.patchDataPtr = _patchData->subspan(_patchData->getUint16LEAt(_channel[voice.channel].patch * 2));
 	if (velocity)
 		velocity = _velocityTable[(velocity >> 3)];
 	voice.velocity = velocity;
@@ -798,7 +798,7 @@ public:
 		_driver->setTimerCallback(0, 0);
 		_driver->close();
 		delete _driver;
-		_driver = 0;
+		_driver = nullptr;
 	}
 
 	bool hasRhythmChannel() const { return false; }

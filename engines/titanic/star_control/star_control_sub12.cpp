@@ -326,7 +326,7 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		diffV = tempV1;
 		m1 = diffV.fn5();
 		m1 = m1.fn4(subX);
-		m1.fn1(subX);
+		subX = m1.fn1();
 		subX = subX.fn4(subY);
 
 		FMatrix m3 = _sub13.getMatrix();
@@ -510,7 +510,7 @@ void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
 	m1 = tempV1.fn5();
 
 	m1 = m1.fn4(m2);
-	m1.fn1(m2);
+	m2 = m1.fn1();
 
 	DVector tempV2 = _sub13._position;
 	DMatrix m4;

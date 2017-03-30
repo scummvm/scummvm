@@ -268,9 +268,9 @@ class SpanBase : public SafeBool<Derived<ValueType> > {
 
 public:
 	typedef ValueType value_type;
-	typedef ptrdiff_t difference_type;
-	typedef size_t index_type;
-	typedef size_t size_type;
+	typedef int32 difference_type;
+	typedef uint32 index_type;
+	typedef uint32 size_type;
 	typedef SpanInternal::SpanIterator<derived_type, true> const_iterator;
 	typedef SpanInternal::SpanIterator<derived_type, false> iterator;
 	typedef value_type *pointer;
@@ -280,8 +280,10 @@ public:
 
 	inline size_type byteSize() const { return impl().size() * sizeof(value_type); }
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline SpanBase() {}
 	inline SpanBase(const SpanBase &) {}
@@ -294,8 +296,10 @@ protected:
 #pragma mark -
 #pragma mark SpanBase - Interface
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline void clear();
 
@@ -475,8 +479,10 @@ public:
 		return !operator<(other);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline bool operator_bool() const { return impl().data() != nullptr; }
 
@@ -506,8 +512,10 @@ public:
 #pragma mark -
 #pragma mark SpanBase - Validation
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	/**
 	 * @returns true if bounds are invalid.
@@ -593,11 +601,11 @@ public:
 				break;
 		}
 
-		return String::format("Access violation %s %s: %ld + %ld > %ld",
+		return String::format("Access violation %s %s: %u + %d > %u",
 							  modeName,
 							  this->impl().name().c_str(),
 							  index,
-							  deltaInBytes / sizeof(value_type),
+							  deltaInBytes / (int)sizeof(value_type),
 							  size());
 	}
 
@@ -627,8 +635,10 @@ public:
 		return subspan<value_type>(index, numEntries);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries) const {
@@ -788,8 +798,10 @@ public:
 		return subspan<value_type>(index, numEntries, name_, sourceByteOffset_);
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	template <typename NewValueType>
 	void populateSubspan(Derived<NewValueType> &span, const index_type index, size_type numEntries, const String &name_, const size_type sourceByteOffset_ = kSpanKeepOffset) const {
@@ -817,7 +829,7 @@ public:
 		const size_type maxSizeInBytes = this->impl().byteSize();
 
 		return super_type::getValidationMessage(index, deltaInBytes, mode) +
-			String::format(" (abs: %ld + %ld > %ld)",
+			String::format(" (abs: %u + %d > %u)",
 						   this->impl().sourceByteOffset() + indexInBytes,
 						   deltaInBytes,
 						   this->impl().sourceByteOffset() + maxSizeInBytes);
@@ -968,8 +980,10 @@ public:
 		_span.clear();
 	}
 
+#if !defined(_MSC_VER)
 #if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 protected:
+#endif
 #endif
 	inline bool operator_bool() const { return _span; }
 

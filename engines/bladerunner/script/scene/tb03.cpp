@@ -55,15 +55,15 @@ void SceneScriptTB03::InitializeScene() {
 		Ambient_Sounds_Add_Sound(194, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 		Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	}
-	Actor_Put_In_Set(17, 17);
-	Actor_Set_At_XYZ(17, -38.53f, 2.93f, 1475.97f, 673);
+	Actor_Put_In_Set(kActorTyrellGuard, 17);
+	Actor_Set_At_XYZ(kActorTyrellGuard, -38.53f, 2.93f, 1475.97f, 673);
 	if (Global_Variable_Query(1) == 4) {
-		int goal = Actor_Query_Goal_Number(17);
+		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
 		if (goal == 304) {
-			Actor_Change_Animation_Mode(17, 0);
-			Actor_Set_Goal_Number(24, 399);
+			Actor_Change_Animation_Mode(kActorTyrellGuard, 0);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, 399);
 		} else if (goal != 302) {
-			Actor_Set_Goal_Number(17, 300);
+			Actor_Set_Goal_Number(kActorTyrellGuard, 300);
 		}
 	}
 	if (Game_Flag_Query(448)) {
@@ -103,8 +103,8 @@ bool SceneScriptTB03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -260.0f, 0.15f, 2014.0f, 0, 1, false, 0)) {
-			Actor_Set_Goal_Number(17, 304);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, 1, false, 0)) {
+			Actor_Set_Goal_Number(kActorTyrellGuard, 304);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(447);
@@ -113,12 +113,12 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -152.0f, 0.0f, 1774.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(155);
 			Set_Enter(17, 82);
-			Async_Actor_Walk_To_XYZ(0, -152.0f, 0.0f, 1702.0f, 0, false);
+			Async_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1702.0f, 0, false);
 		}
 		return true;
 	}
@@ -136,12 +136,12 @@ void SceneScriptTB03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptTB03::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(17) == 304) {
+	if (Actor_Query_Goal_Number(kActorTyrellGuard) == 304) {
 		Player_Set_Combat_Mode(false);
-		Actor_Says(24, 260, -1);
-		Actor_Says(0, 170, 14);
+		Actor_Says(kActorOfficerGrayford, 260, -1);
+		Actor_Says(kActorMcCoy, 170, 14);
 		Delay(1000);
-		Actor_Set_Goal_Number(0, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, 500);
 	}
 }
 

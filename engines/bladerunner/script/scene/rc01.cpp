@@ -27,10 +27,7 @@ namespace BladeRunner {
 void SceneScriptRC01::InitializeScene() {
 #if _DEBUG
 	//TODO: not part of game, remove
-	Game_Flag_Set(24); // force skip intro
-	// Game_Flag_Set(9); // Force flag 9 so McCoy will be in view
-
-	Footstep_Sound_Override_On(0);
+	//Game_Flag_Set(24); // force skip intro
 #endif
 
 	if (!Game_Flag_Query(24)) {
@@ -186,10 +183,10 @@ void SceneScriptRC01::SceneLoaded() {
 
 	if (!Game_Flag_Query(24)) {
 		ADQ_Flush();
-		Actor_Voice_Over(1830, 99);
-		Actor_Voice_Over(1850, 99);
+		Actor_Voice_Over(1830, kActorVoiceOver);
+		Actor_Voice_Over(1850, kActorVoiceOver);
 		if (!Game_Flag_Query(378)) {
-			Actor_Voice_Over(1860, 99);
+			Actor_Voice_Over(1860, kActorVoiceOver);
 			I_Sez("MG: Is David Leary a self-respecting human or is he powered by rechargeable");
 			I_Sez("batteries?\n");
 		}
@@ -215,42 +212,42 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("HYDRANT02", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "HYDRANT02", 60, true, false)) {
-			if (Actor_Clue_Query(0, 26)) {
-				Actor_Says(0, 6975, 3);
+		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "HYDRANT02", 60, true, false)) {
+			if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)) {
+				Actor_Says(kActorMcCoy, 6975, 3);
 			} else {
-				Actor_Face_Object(0, "HYDRANT02", true);
-				Actor_Voice_Over(1880, 99);
-				Actor_Voice_Over(1890, 99);
+				Actor_Face_Object(kActorMcCoy, "HYDRANT02", true);
+				Actor_Voice_Over(1880, kActorVoiceOver);
+				Actor_Voice_Over(1890, kActorVoiceOver);
 				I_Sez("JM: That McCoy--he's one funny guy! Jet-black fire truck, hehehehe...");
-				Actor_Clue_Acquire(0, 26, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kCluePaintTransfer, 1, -1);
 			}
 		}
 		return true;
 	}
 
 	if (Object_Query_Click("DOOR LEFT", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "DOOR LEFT", 48, true, false)) {
-			Actor_Face_Object(0, "DOOR LEFT", true);
-			if (!Actor_Clue_Query(0, 2) && Actor_Query_In_Set(23, 69) && Global_Variable_Query(1)) {
-				Actor_Set_Goal_Number(23, 0);
-				Actor_Face_Actor(23, 0, true);
-				Actor_Says(23, 0, 12);
-				Actor_Says(0, 4495, 13);
-				Actor_Clue_Acquire(0, 2, 1, 23);
+		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "DOOR LEFT", 48, true, false)) {
+			Actor_Face_Object(kActorMcCoy, "DOOR LEFT", true);
+			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && Actor_Query_In_Set(kActorOfficerLeary, 69) && Global_Variable_Query(1)) {
+				Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+				Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+				Actor_Says(kActorOfficerLeary, 0, 12);
+				Actor_Says(kActorMcCoy, 4495, 13);
+				Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced2, 1, kActorOfficerLeary);
 			} else {
-				Actor_Says(0, 8570, 14);
+				Actor_Says(kActorMcCoy, 8570, 14);
 			}
-			Actor_Clue_Acquire(0, 1, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced1, 1, -1);
 		}
 		return true;
 	}
 
 	if (Object_Query_Click("T-CAN01", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "T-CAN01", 24, true, false)) {
-			Actor_Face_Object(0, "T-CAN01", true);
-			Actor_Voice_Over(1810, 99);
-			Actor_Voice_Over(1820, 99);
+		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "T-CAN01", 24, true, false)) {
+			Actor_Face_Object(kActorMcCoy, "T-CAN01", true);
+			Actor_Voice_Over(1810, kActorVoiceOver);
+			Actor_Voice_Over(1820, kActorVoiceOver);
 		}
 		return true;
 	}
@@ -259,57 +256,57 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptRC01::ClickedOnActor(int actorId) {
-	if (actorId == 23 && Global_Variable_Query(1) == 1) {
-		if (!Loop_Actor_Walk_To_Actor(0, 23, 36, 1, false)) {
-			Actor_Face_Actor(0, 23, true);
-			Actor_Face_Actor(23, 0, true);
-			if (Actor_Query_Goal_Number(23) == 1) {
-				Actor_Set_Goal_Number(23, 0);
+	if (actorId == kActorOfficerLeary && Global_Variable_Query(1) == 1) {
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorOfficerLeary, 36, 1, false)) {
+			Actor_Face_Actor(kActorMcCoy, kActorOfficerLeary, true);
+			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+			if (Actor_Query_Goal_Number(kActorOfficerLeary) == 1) {
+				Actor_Set_Goal_Number(kActorOfficerLeary, 0);
 			}
 			if (Game_Flag_Query(3)) {
-				Actor_Says(0, 4535, 13);
+				Actor_Says(kActorMcCoy, 4535, 13);
 				Game_Flag_Set(392);
-				if (Actor_Clue_Query(23, 16) && !Actor_Clue_Query(0, 16)) {
-					Actor_Face_Object(23, "70_1", true);
-					Actor_Says(23, 100, 15);
-					Actor_Face_Actor(23, 0, true);
-					Actor_Clue_Acquire(0, 16, 1, 23);
+				if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)) {
+					Actor_Face_Object(kActorOfficerLeary, "70_1", true);
+					Actor_Says(kActorOfficerLeary, 100, 15);
+					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewA, 1, kActorOfficerLeary);
 					Game_Flag_Reset(392);
-				} else if (Actor_Clue_Query(23, 17) && !Actor_Clue_Query(0, 17)) {
-					Actor_Face_Object(23, "70_5", true);
-					Actor_Says(23, 120, 19);
-					Actor_Face_Actor(23, 0, true);
-					Actor_Says(23, 130, 14);
+				} else if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB)) {
+					Actor_Face_Object(kActorOfficerLeary, "70_5", true);
+					Actor_Says(kActorOfficerLeary, 120, 19);
+					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+					Actor_Says(kActorOfficerLeary, 130, 14);
 					I_Sez("JM: Did it have a huge, ugly piece of chrome on it?");
-					Actor_Clue_Acquire(0, 17, 1, 23);
+					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewB, 1, kActorOfficerLeary);
 					Game_Flag_Reset(392);
 				} else {
-					Actor_Says(23, 90, 16);
+					Actor_Says(kActorOfficerLeary, 90, 16);
 					I_Sez("JM: This officer has a talent for vivid metaphors.");
 					if (!Game_Flag_Query(397)) {
 						I_Sez("DL: What is that supposed to mean?  I didn't write this line...");
-						Actor_Says(0, 4540, 16);
+						Actor_Says(kActorMcCoy, 4540, 16);
 						Game_Flag_Set(397);
 					}
 					Game_Flag_Reset(392);
 				}
 			} else {
-				I_Sez("MG: Hey, leave that officer alone.Can't you see he's busy?");
-				I_Sez("JM: (...mmm, donuts...");
+				I_Sez("MG: Hey, leave that officer alone. Can't you see he's busy?");
+				I_Sez("JM: (...mmm, donuts...)");
 				Game_Flag_Set(3);
-				Actor_Clue_Acquire(0, 0, 1, 23);
-				Actor_Says(0, 4515, 13);
+				Actor_Clue_Acquire(kActorMcCoy, kClueOfficersStatement, 1, kActorOfficerLeary);
+				Actor_Says(kActorMcCoy, 4515, 13);
 				Game_Flag_Set(392);
-				Actor_Says(23, 40, 13);
+				Actor_Says(kActorOfficerLeary, 40, 13);
 				if (!Game_Flag_Query(1)) {
-					Actor_Says(23, 50, 14);
-					Actor_Says(23, 60, 15);
-					I_Sez("MG: It's all fun and games until someone loses a tiger cub");
-					Actor_Says(0, 4520, 18);
-					Actor_Says(23, 70, 16);
-					Actor_Says(0, 4525, 14);
-					Actor_Says(23, 80, 18);
-					Actor_Says(0, 4530, 15);
+					Actor_Says(kActorOfficerLeary, 50, 14);
+					Actor_Says(kActorOfficerLeary, 60, 15);
+					I_Sez("MG: It's all fun and games until someone loses a tiger cub.");
+					Actor_Says(kActorMcCoy, 4520, 18);
+					Actor_Says(kActorOfficerLeary, 70, 16);
+					Actor_Says(kActorMcCoy, 4525, 14);
+					Actor_Says(kActorOfficerLeary, 80, 18);
+					Actor_Says(kActorMcCoy, 4530, 15);
 				}
 				Game_Flag_Reset(392);
 			}
@@ -321,24 +318,24 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 
 bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 66) {
-		Actor_Set_Goal_Number(23, 0);
-		if (!Loop_Actor_Walk_To_Item(0, 66, 36, 1, false)) {
-			Actor_Face_Item(0, 66, true);
-			Actor_Clue_Acquire(0, 27, 1, -1);
-			Actor_Face_Actor(23, 0, true);
-			Actor_Says(23, 20, 12);
+		Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 66, 36, 1, false)) {
+			Actor_Face_Item(kActorMcCoy, 66, true);
+			Actor_Clue_Acquire(kActorMcCoy, kClueChromeDebris, 1, -1);
+			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+			Actor_Says(kActorOfficerLeary, 20, 12);
 			Game_Flag_Set(163);
 			Item_Remove_From_World(66);
 			Item_Pickup_Spin_Effect(938, 426, 316);
 			I_Sez("JM: Chrome...is that what that is?");
-			Actor_Says(0, 4505, 13);
+			Actor_Says(kActorMcCoy, 4505, 13);
 			ADQ_Flush();
-			ADQ_Add(23, 30, -1);
-			ADQ_Add(0, 4510, 13);
+			ADQ_Add(kActorOfficerLeary, 30, -1);
+			ADQ_Add(kActorMcCoy, 4510, 13);
 			I_Sez("JM: It's hard to imagine that thing on either a car or a horse.");
 			I_Sez("MG: McCoy! What a witty chap...");
 			I_Sez("JM: He keeps me chuckling non-stop!\n");
-			Loop_Actor_Walk_To_Actor(23, 0, 36, 0, false);
+			Loop_Actor_Walk_To_Actor(kActorOfficerLeary, kActorMcCoy, 36, 0, false);
 		}
 		return true;
 	}
@@ -349,18 +346,17 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 void SceneScriptRC01::sub_4037AC() {
 	Player_Loses_Control();
 	Game_Flag_Set(182);
-	Actor_Set_Immunity_To_Obstacles(0, true);
-	Loop_Actor_Walk_To_XYZ(0, -151.98f, -0.3f, 318.15f, 0, 0, false, 0);
-	Actor_Set_Immunity_To_Obstacles(0, false);
+	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, 0, false, 0);
+	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 	Player_Gains_Control();
 }
 
 bool SceneScriptRC01::ClickedOnExit(int exitId) {
-
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -174.77f, 5.55f, 25.95f, 12, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, 1, false, 0)) {
 			if (Game_Flag_Query(705)) {
-				Actor_Says(0, 8522, 14);
+				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
 				switch (Global_Variable_Query(1)) {
 				case 1:
@@ -371,7 +367,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				case 2:
 				case 3:
 				case 5:
-					Actor_Says(0, 8522, 12);
+					Actor_Says(kActorMcCoy, 8522, 12);
 					break;
 				default:
 					return true;
@@ -385,19 +381,19 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			Spinner_Set_Selectable_Destination_Flag(6, 1);
 		}
 		I_Sez("MG: Leaving already?  The fun is just beginning!");
-		if (!Loop_Actor_Walk_To_XYZ(0, -151.98f, -0.3f, 318.15f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, 1, false, 0)) {
 			Player_Loses_Control();
-			Actor_Set_Immunity_To_Obstacles(0, true);
-			Loop_Actor_Walk_To_XYZ(0, -10.98f, -0.3f, 318.15f, 0, 0, false, 0);
+			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.98f, -0.3f, 318.15f, 0, 0, false, 0);
 			if (Game_Flag_Query(486) && !Game_Flag_Query(660)) {
-				Actor_Voice_Over(4310, 99);
-				Actor_Voice_Over(4320, 99);
-				Actor_Voice_Over(4330, 99);
-				Actor_Voice_Over(4340, 99);
-				Actor_Voice_Over(4350, 99);
+				Actor_Voice_Over(4310, kActorVoiceOver);
+				Actor_Voice_Over(4320, kActorVoiceOver);
+				Actor_Voice_Over(4330, kActorVoiceOver);
+				Actor_Voice_Over(4340, kActorVoiceOver);
+				Actor_Voice_Over(4350, kActorVoiceOver);
 				Game_Flag_Set(660);
 			}
-			Actor_Set_Immunity_To_Obstacles(0, false);
+			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Player_Gains_Control();
 			Game_Flag_Reset(176);
 			Game_Flag_Reset(182);
@@ -518,7 +514,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -471.98f, -0.3f, 258.15f, 4, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -471.98f, -0.3f, 258.15f, 4, 1, false, 0)) {
 			Game_Flag_Set(115);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -530,15 +526,15 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 }
 
 void SceneScriptRC01::sub_403850() {
-	if (!Game_Flag_Query(186) && !Loop_Actor_Walk_To_Scene_Object(0, "BARICADE03", 36, true, false)) {
-		Actor_Set_Goal_Number(23, 0);
-		Actor_Face_Object(0, "BARICADE03", true);
-		Loop_Actor_Walk_To_Actor(23, 0, 36, 1, false);
-		Actor_Face_Actor(23, 0, true);
-		Actor_Says(0, 4500, 14);
+	if (!Game_Flag_Query(186) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BARICADE03", 36, true, false)) {
+		Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+		Actor_Face_Object(kActorMcCoy, "BARICADE03", true);
+		Loop_Actor_Walk_To_Actor(kActorOfficerLeary, kActorMcCoy, 36, 1, false);
+		Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
+		Actor_Says(kActorMcCoy, 4500, 14);
 		I_Sez("MG: We don't want any of that abstract art oozing out onto the street.");
-		Actor_Says(23, 10, 14);
-		Actor_Set_Goal_Number(23, 1);
+		Actor_Says(kActorOfficerLeary, 10, 14);
+		Actor_Set_Goal_Number(kActorOfficerLeary, 1);
 	}
 }
 
@@ -584,21 +580,21 @@ void SceneScriptRC01::PlayerWalkedIn() {
 
 	if (Game_Flag_Query(114)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(0, -415.98f, -0.30f, 262.15f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -415.98f, -0.30f, 262.15f, 0, 0, false, 0);
 		Player_Gains_Control();
 		Game_Flag_Reset(114);
 	}
 
 	if (Game_Flag_Query(9)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(0, -203.45f, 5.55f, 85.05f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.45f, 5.55f, 85.05f, 0, 0, false, 0);
 		Player_Gains_Control();
 		Game_Flag_Reset(9);
 
 		if (Game_Flag_Query(1) && !Game_Flag_Query(4)) {
-			Actor_Voice_Over(1910, 99);
-			Actor_Voice_Over(1920, 99);
-			Actor_Voice_Over(1930, 99);
+			Actor_Voice_Over(1910, kActorVoiceOver);
+			Actor_Voice_Over(1920, kActorVoiceOver);
+			Actor_Voice_Over(1930, kActorVoiceOver);
 			Game_Flag_Set(4);
 		}
 		//return true;

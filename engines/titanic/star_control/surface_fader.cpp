@@ -39,8 +39,8 @@ CSurfaceFader::~CSurfaceFader() {
 }
 
 void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
-	const uint16 *srcPixelP = srcSurface._pixelsPtr;
-	uint16 *destPixelP = destSurface._pixelsPtr;
+	const uint16 *srcPixelP = (const uint16 *)srcSurface._pixelsPtr;
+	uint16 *destPixelP = (uint16 *)destSurface._pixelsPtr;
 
 	// Currently we only support 2 bytes per pixel surfaces
 	assert(srcSurface._bpp == 2);

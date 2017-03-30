@@ -105,7 +105,7 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool a2) {
 			Item_Remove_From_World(121);
 			Unobstacle_Object("GPscisGate", true);
 		} else {
-			Actor_Says(0, 8522, 12);
+			Actor_Says(kActorMcCoy, 8522, 12);
 		}
 		return true;
 	}
@@ -117,11 +117,11 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool a2) {
 		Delay(1500);
 		Item_Pickup_Spin_Effect(984, 58, 435);
 		if (Game_Flag_Query(374)) {
-			Actor_Clue_Acquire(0, 246, 1, 7);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, 1, kActorIzo);
 		} else {
-			Actor_Clue_Acquire(0, 247, 1, 7);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, 1, kActorIzo);
 		}
-		Actor_Clue_Acquire(0, 260, 1, 7);
+		Actor_Clue_Acquire(kActorMcCoy, kClueChinaBar, 1, kActorIzo);
 		return true;
 	}
 	return false;
@@ -129,14 +129,14 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 607.0f, 0.14f, 9.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(387);
 			Set_Enter(8, 31);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 628.0f, 2.04f, -123.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 628.0f, 2.04f, -123.0f, 0, 1, false, 0)) {
 			if (Game_Flag_Query(388)) {
 				Game_Flag_Set(319);
 				Game_Flag_Reset(479);

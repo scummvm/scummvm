@@ -31,7 +31,7 @@ void SceneScriptUG13::InitializeScene() {
 		Setup_Scene_Information(39.0f, 52.94f, -528.0f, 600);
 	} else {
 		Setup_Scene_Information(-22.0f, 54.63f, -883.0f, 578);
-		Actor_Set_Invisible(0, false);
+		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	if (!Game_Flag_Query(431)) {
 		Scene_Exit_Add_2D_Exit(0, 394, 205, 464, 281, 0);
@@ -47,10 +47,10 @@ void SceneScriptUG13::InitializeScene() {
 	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(169)) {
-		Actor_Set_Goal_Number(12, 390);
+		Actor_Set_Goal_Number(kActorTransient, 390);
 	}
-	if (Actor_Query_Goal_Number(12) == 599) {
-		Actor_Change_Animation_Mode(12, 89);
+	if (Actor_Query_Goal_Number(kActorTransient) == 599) {
+		Actor_Change_Animation_Mode(kActorTransient, 89);
 	}
 	if (Game_Flag_Query(429)) {
 		Scene_Loop_Start_Special(0, 0, 0);
@@ -72,7 +72,7 @@ void SceneScriptUG13::SceneLoaded() {
 	Clickable_Object("BASKET");
 	Clickable_Object("BOLLARD");
 	Unclickable_Object("BASKET");
-	if (Global_Variable_Query(1) >= 3 && !Actor_Clue_Query(0, 128) && Game_Flag_Query(169) && (Actor_Clue_Query(0, 81) || Actor_Clue_Query(0, 80))) {
+	if (Global_Variable_Query(1) >= 3 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm) && Game_Flag_Query(169) && (Actor_Clue_Query(kActorMcCoy, kClueShippingForm) || Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm))) {
 		Item_Add_To_World(111, 958, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
 	}
 }
@@ -83,8 +83,8 @@ bool SceneScriptUG13::MouseClick(int x, int y) {
 
 bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 
-	if (Object_Query_Click("BOLLARD", objectName) && !Loop_Actor_Walk_To_XYZ(0, 7.0f, 44.0f, -695.0f, 0, 1, false, 0)) {
-		Actor_Face_Object(0, "BOLLARD", true);
+	if (Object_Query_Click("BOLLARD", objectName) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 44.0f, -695.0f, 0, 1, false, 0)) {
+		Actor_Face_Object(kActorMcCoy, "BOLLARD", true);
 		if (Game_Flag_Query(431)) {
 			Scene_Loop_Set_Default(1);
 			Scene_Loop_Start_Special(2, 0, 0);
@@ -103,47 +103,47 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptUG13::ClickedOnActor(int actorId) {
-	if (actorId == 12 && Global_Variable_Query(1) == 4 && !Loop_Actor_Walk_To_XYZ(0, -248.0f, 44.0f, -390.0f, 12, 1, false, 0)) {
-		Actor_Face_Actor(0, 12, true);
-		if (Actor_Query_Goal_Number(12) != 6 && Actor_Query_Goal_Number(12) != 599) {
+	if (actorId == 12 && Global_Variable_Query(1) == 4 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -248.0f, 44.0f, -390.0f, 12, 1, false, 0)) {
+		Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
+		if (Actor_Query_Goal_Number(kActorTransient) != 6 && Actor_Query_Goal_Number(kActorTransient) != 599) {
 			if (!Game_Flag_Query(554)) {
 				sub_40223C();
-			} else if (!Actor_Clue_Query(0, 122) || !Actor_Clue_Query(0, 123)) {
+			} else if (!Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1) || !Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview2)) {
 				sub_402AD4();
 			} else {
-				Actor_Set_Goal_Number(12, 391);
-				if (Actor_Clue_Query(0, 131)) {
+				Actor_Set_Goal_Number(kActorTransient, 391);
+				if (Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)) {
 					sub_402AD4();
 				} else {
-					Actor_Face_Actor(0, 12, true);
-					Actor_Says(0, 5600, 14);
-					Actor_Says(12, 100, 53);
-					Actor_Says(0, 5605, 18);
-					Actor_Start_Speech_Sample(12, 110);
-					Actor_Set_Goal_Number(12, 395);
+					Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
+					Actor_Says(kActorMcCoy, 5600, 14);
+					Actor_Says(kActorTransient, 100, 53);
+					Actor_Says(kActorMcCoy, 5605, 18);
+					Actor_Start_Speech_Sample(kActorTransient, 110);
+					Actor_Set_Goal_Number(kActorTransient, 395);
 				}
 			}
 		} else if (Random_Query(0, 1) == 1) {
-			Actor_Says(0, 8590, 16);
+			Actor_Says(kActorMcCoy, 8590, 16);
 		} else {
-			Actor_Says(0, 8655, 15);
+			Actor_Says(kActorMcCoy, 8655, 15);
 		}
 	}
 	return false;
 }
 
 bool SceneScriptUG13::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 111 && !Loop_Actor_Walk_To_Item(0, 111, 36, 1, false)) {
-		Actor_Face_Item(0, 111, true);
-		Actor_Clue_Acquire(0, 128, 1, -1);
+	if (itemId == 111 && !Loop_Actor_Walk_To_Item(kActorMcCoy, 111, 36, 1, false)) {
+		Actor_Face_Item(kActorMcCoy, 111, true);
+		Actor_Clue_Acquire(kActorMcCoy, kClueOriginalRequisitionForm, 1, -1);
 		Item_Remove_From_World(111);
 		Item_Pickup_Spin_Effect(958, 426, 316);
-		Actor_Voice_Over(3950, 99);
-		Actor_Voice_Over(3960, 99);
-		Actor_Voice_Over(3970, 99);
-		Actor_Voice_Over(3980, 99);
-		Actor_Voice_Over(3990, 99);
-		Actor_Voice_Over(4000, 99);
+		Actor_Voice_Over(3950, kActorVoiceOver);
+		Actor_Voice_Over(3960, kActorVoiceOver);
+		Actor_Voice_Over(3970, kActorVoiceOver);
+		Actor_Voice_Over(3980, kActorVoiceOver);
+		Actor_Voice_Over(3990, kActorVoiceOver);
+		Actor_Voice_Over(4000, kActorVoiceOver);
 		return true;
 	}
 	return false;
@@ -152,7 +152,7 @@ bool SceneScriptUG13::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptUG13::ClickedOnExit(int exitId) {
 
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -32.0f, 54.63f, -883.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 54.63f, -883.0f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			Game_Flag_Set(430);
 			Game_Flag_Set(431);
@@ -162,26 +162,26 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, 39.0f, 52.94f, -528.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 39.0f, 52.94f, -528.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(351);
 			Set_Enter(87, 99);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -267.0f, 44.0f, -795.0f, 0, 1, false, 0)) {
-			Actor_Face_Heading(0, 830, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -267.0f, 44.0f, -795.0f, 0, 1, false, 0)) {
+			Actor_Face_Heading(kActorMcCoy, 830, false);
 			Footstep_Sound_Override_On(3);
-			Loop_Actor_Travel_Stairs(0, 11, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, 1, 0);
 			Footstep_Sound_Override_Off();
 			if (!sub_402AD0()) {
-				Loop_Actor_Walk_To_XYZ(0, -477.0f, 141.9f, -870.0f, 0, 0, false, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0f, 141.9f, -870.0f, 0, 0, false, 0);
 				Game_Flag_Set(434);
 				Set_Enter(89, 102);
 				return true;
 			}
-			Actor_Face_Heading(0, 325, false);
-			Loop_Actor_Travel_Stairs(0, 11, 0, 0);
+			Actor_Face_Heading(kActorMcCoy, 325, false);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, 0, 0);
 		} else {
 			return true;
 		}
@@ -205,11 +205,11 @@ void SceneScriptUG13::SceneFrameAdvanced(int frame) {
 		return;
 	}
 	if (Game_Flag_Query(429) && frame < 25) {
-		Actor_Set_Invisible(0, true);
+		Actor_Set_Invisible(kActorMcCoy, true);
 	} else if (Game_Flag_Query(430) && frame >= 94 && frame <= 120) {
-		Actor_Set_Invisible(0, true);
+		Actor_Set_Invisible(kActorMcCoy, true);
 	} else {
-		Actor_Set_Invisible(0, false);
+		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	//return false;
 	return;
@@ -220,35 +220,35 @@ void SceneScriptUG13::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG13::PlayerWalkedIn() {
 	if (Game_Flag_Query(435)) {
-		Loop_Actor_Walk_To_XYZ(0, -389.0f, 143.0f, -844.0f, 0, 0, false, 0);
-		Actor_Face_Heading(0, 325, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -389.0f, 143.0f, -844.0f, 0, 0, false, 0);
+		Actor_Face_Heading(kActorMcCoy, 325, false);
 		Footstep_Sound_Override_On(3);
-		Loop_Actor_Travel_Stairs(0, 11, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 11, 0, 0);
 		Footstep_Sound_Override_Off();
 		Game_Flag_Reset(435);
 	} else if (Game_Flag_Query(350)) {
-		Loop_Actor_Walk_To_XYZ(0, -12.0f, 44.0f, -528.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, 44.0f, -528.0f, 0, 0, false, 0);
 		Game_Flag_Reset(350);
 	} else {
-		Loop_Actor_Walk_To_XYZ(0, -60.0f, 55.24f, -816.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -60.0f, 55.24f, -816.0f, 0, 0, false, 0);
 		Game_Flag_Reset(429);
 		Player_Gains_Control();
 	}
-	if (Actor_Query_Goal_Number(12) >= 390 && !Game_Flag_Query(169)) {
+	if (Actor_Query_Goal_Number(kActorTransient) >= 390 && !Game_Flag_Query(169)) {
 		if (Game_Flag_Query(553)) {
 			if (Random_Query(1, 3) == 1) {
-				Actor_Set_Goal_Number(12, 395);
+				Actor_Set_Goal_Number(kActorTransient, 395);
 			}
 		} else {
 			Game_Flag_Set(553);
-			Actor_Says(12, 50, 3);
+			Actor_Says(kActorTransient, 50, 3);
 		}
 	}
 	//return false;
 }
 
 void SceneScriptUG13::PlayerWalkedOut() {
-	Actor_Set_Invisible(0, false);
+	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Game_Flag_Query(430)) {
 		Ambient_Sounds_Remove_Sound(401, false);
@@ -265,59 +265,59 @@ void SceneScriptUG13::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptUG13::sub_40223C() {
-	Actor_Face_Actor(0, 12, true);
+	Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 	Game_Flag_Set(554);
-	Actor_Says(0, 5560, 13);
-	Actor_Says_With_Pause(0, 5565, 3.0f, 18);
-	Actor_Says(12, 70, 31);
-	Actor_Says(12, 80, 32);
-	Actor_Says(0, 5570, 3);
-	Actor_Says(12, 90, 32);
+	Actor_Says(kActorMcCoy, 5560, 13);
+	Actor_Says_With_Pause(kActorMcCoy, 5565, 3.0f, 18);
+	Actor_Says(kActorTransient, 70, 31);
+	Actor_Says(kActorTransient, 80, 32);
+	Actor_Says(kActorMcCoy, 5570, 3);
+	Actor_Says(kActorTransient, 90, 32);
 }
 
 void SceneScriptUG13::sub_4023D8() {
-	Actor_Face_Actor(0, 12, true);
-	Actor_Clue_Acquire(0, 122, 0, 12);
-	Actor_Modify_Friendliness_To_Other(12, 0, -5);
-	Actor_Says(0, 5575, 16);
-	Actor_Says(12, 120, 31);
-	Actor_Says(0, 5610, 15);
-	Actor_Says(12, 140, 32);
-	Actor_Says(0, 5615, 18);
-	Actor_Says(12, 160, 33);
-	Actor_Says(0, 5620, 9);
-	Actor_Says(12, 170, 30);
-	Actor_Says(0, 5625, 12);
-	Actor_Says(12, 180, 32);
-	Actor_Says(0, 5630, 18);
-	Actor_Says(12, 190, 32);
-	Actor_Says(0, 5635, 15);
-	Actor_Says(12, 200, 31);
+	Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
+	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview1, 0, kActorTransient);
+	Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
+	Actor_Says(kActorMcCoy, 5575, 16);
+	Actor_Says(kActorTransient, 120, 31);
+	Actor_Says(kActorMcCoy, 5610, 15);
+	Actor_Says(kActorTransient, 140, 32);
+	Actor_Says(kActorMcCoy, 5615, 18);
+	Actor_Says(kActorTransient, 160, 33);
+	Actor_Says(kActorMcCoy, 5620, 9);
+	Actor_Says(kActorTransient, 170, 30);
+	Actor_Says(kActorMcCoy, 5625, 12);
+	Actor_Says(kActorTransient, 180, 32);
+	Actor_Says(kActorMcCoy, 5630, 18);
+	Actor_Says(kActorTransient, 190, 32);
+	Actor_Says(kActorMcCoy, 5635, 15);
+	Actor_Says(kActorTransient, 200, 31);
 }
 
 void SceneScriptUG13::sub_4025E0() {
-	Actor_Clue_Acquire(0, 123, 0, 12);
-	Actor_Modify_Friendliness_To_Other(12, 0, -10);
-	Actor_Says(12, 220, 30);
-	Actor_Says(0, 5640, 19);
-	Actor_Says(12, 230, 33);
-	Actor_Says(0, 5645, 16);
-	Actor_Says(12, 240, 30);
-	Actor_Says(12, 250, 33);
-	Actor_Says(0, 5650, 14);
-	Actor_Says(12, 260, 32);
+	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview2, 0, kActorTransient);
+	Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -10);
+	Actor_Says(kActorTransient, 220, 30);
+	Actor_Says(kActorMcCoy, 5640, 19);
+	Actor_Says(kActorTransient, 230, 33);
+	Actor_Says(kActorMcCoy, 5645, 16);
+	Actor_Says(kActorTransient, 240, 30);
+	Actor_Says(kActorTransient, 250, 33);
+	Actor_Says(kActorMcCoy, 5650, 14);
+	Actor_Says(kActorTransient, 260, 32);
 }
 
 void SceneScriptUG13::sub_402960() {
-	Actor_Says(0, 5670, 9);
-	Actor_Says(12, 340, 31);
-	Actor_Says(0, 5690, 19);
-	Actor_Says(12, 350, 32);
-	Actor_Says(0, 5695, 14);
-	Actor_Says(12, 360, 33);
-	Actor_Voice_Over(2710, 99);
-	Actor_Voice_Over(2730, 99);
-	Actor_Clue_Acquire(0, 124, 0, 12);
+	Actor_Says(kActorMcCoy, 5670, 9);
+	Actor_Says(kActorTransient, 340, 31);
+	Actor_Says(kActorMcCoy, 5690, 19);
+	Actor_Says(kActorTransient, 350, 32);
+	Actor_Says(kActorMcCoy, 5695, 14);
+	Actor_Says(kActorTransient, 360, 33);
+	Actor_Voice_Over(2710, kActorVoiceOver);
+	Actor_Voice_Over(2730, kActorVoiceOver);
+	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManKid, 0, kActorTransient);
 }
 
 int SceneScriptUG13::sub_402AD0() {
@@ -327,11 +327,11 @@ int SceneScriptUG13::sub_402AD0() {
 void SceneScriptUG13::sub_402AD4() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1320, 6, 3, 1);
-	if (Actor_Clue_Query(0, 122)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1330, 5, 8, 5);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(1340, 2, 4, 6);
-	if (Actor_Clue_Query(0, 131)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1350, 1, 3, 7);
 	}
 	Dialogue_Menu_Add_DONE_To_List(1360);
@@ -342,41 +342,41 @@ void SceneScriptUG13::sub_402AD4() {
 	case 1360:
 		return;
 	case 1350:
-		Actor_Clue_Acquire(12, 131, 0, 0);
-		Actor_Says_With_Pause(0, 5595, 1.0f, 23);
+		Actor_Clue_Acquire(kActorTransient, kClueFlaskOfAbsinthe, 0, kActorMcCoy);
+		Actor_Says_With_Pause(kActorMcCoy, 5595, 1.0f, 23);
 		Item_Pickup_Spin_Effect(945, 193, 325);
-		Actor_Says(12, 290, 33);
-		Actor_Says(0, 5660, 13);
-		Actor_Clue_Lose(0, 131);
+		Actor_Says(kActorTransient, 290, 33);
+		Actor_Says(kActorMcCoy, 5660, 13);
+		Actor_Clue_Lose(kActorMcCoy, kClueFlaskOfAbsinthe);
 		sub_402E24();
 		break;
 	case 1340:
-		Actor_Modify_Friendliness_To_Other(12, 0, -10);
-		Actor_Says(0, 5590, 15);
-		Actor_Says(12, 270, 31);
-		Actor_Says(0, 5655, 16);
-		Actor_Says(12, 280, 32);
+		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -10);
+		Actor_Says(kActorMcCoy, 5590, 15);
+		Actor_Says(kActorTransient, 270, 31);
+		Actor_Says(kActorMcCoy, 5655, 16);
+		Actor_Says(kActorTransient, 280, 32);
 		break;
 	case 1330:
-		Actor_Says(0, 5585, 16);
+		Actor_Says(kActorMcCoy, 5585, 16);
 		sub_4025E0();
 		break;
 	case 1320:
 		sub_4023D8();
 		break;
 	default:
-		Actor_Face_Actor(0, 12, true);
-		Actor_Says(0, 5600, 14);
-		Actor_Says(12, 100, 53);
-		Actor_Says(0, 5605, 18);
-		Actor_Start_Speech_Sample(12, 110);
-		Actor_Set_Goal_Number(12, 395);
+		Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
+		Actor_Says(kActorMcCoy, 5600, 14);
+		Actor_Says(kActorTransient, 100, 53);
+		Actor_Says(kActorMcCoy, 5605, 18);
+		Actor_Start_Speech_Sample(kActorTransient, 110);
+		Actor_Set_Goal_Number(kActorTransient, 395);
 		break;
 	}
 }
 
 void SceneScriptUG13::sub_402E24() {
-	Actor_Set_Friendliness_To_Other(12, 0, 40);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorMcCoy, 40);
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1370, 1, 1, 8);
 	DM_Add_To_List_Never_Repeat_Once_Selected(1380, 1, 8, 1);
@@ -385,25 +385,25 @@ void SceneScriptUG13::sub_402E24() {
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 	if (answer == 1370) {
-		Actor_Says(0, 5665, 16);
-		Actor_Says(12, 300, 32);
-		Actor_Says(0, 5680, 19);
-		Actor_Says(12, 310, 33);
-		Actor_Says(12, 330, 30);
-		Actor_Start_Speech_Sample(12, 110);
-		Actor_Set_Goal_Number(12, 395);
-		Actor_Says(0, 5685, 18);
+		Actor_Says(kActorMcCoy, 5665, 16);
+		Actor_Says(kActorTransient, 300, 32);
+		Actor_Says(kActorMcCoy, 5680, 19);
+		Actor_Says(kActorTransient, 310, 33);
+		Actor_Says(kActorTransient, 330, 30);
+		Actor_Start_Speech_Sample(kActorTransient, 110);
+		Actor_Set_Goal_Number(kActorTransient, 395);
+		Actor_Says(kActorMcCoy, 5685, 18);
 	} else if (answer == 1380) {
-		if (Actor_Clue_Query(0, 123)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview2)) {
 			sub_402960();
 		} else {
-			Actor_Says(0, 5700, 15);
+			Actor_Says(kActorMcCoy, 5700, 15);
 			sub_4025E0();
 		}
 	} else if (answer == 1390) {
-		Actor_Says(0, 5675, 9);
-		Actor_Says(12, 370, 32);
-		Actor_Says(0, 5705, 10);
+		Actor_Says(kActorMcCoy, 5675, 9);
+		Actor_Says(kActorTransient, 370, 32);
+		Actor_Says(kActorMcCoy, 5705, 10);
 	}
 }
 

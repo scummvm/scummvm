@@ -147,22 +147,22 @@ void CStarField::fn3(CSurfaceArea *surfaceArea) {
 	surfaceArea->_pixel = 0x323232;
 	surfaceArea->setColorFromPixel();
 
-	surfaceArea->fn1(FRect(202.60417, 63.75, 397.39584, 63.75));
-	surfaceArea->fn1(FRect(202.60417, 276.25, 397.39584, 276.25));
-	surfaceArea->fn1(FRect(193.75, 72.604164, 193.75, 267.39584));
-	surfaceArea->fn1(FRect(406.25, 72.604164, 406.25, 267.39584));
-	surfaceArea->fn1(FRect(202.60417, 63.75, 202.60417, 68.177086));
-	surfaceArea->fn1(FRect(397.39584, 63.75, 397.39584, 68.177086));
-	surfaceArea->fn1(FRect(202.60417, 276.25, 202.60417, 271.82291));
-	surfaceArea->fn1(FRect(397.39584, 276.25, 397.39584, 271.82291));
-	surfaceArea->fn1(FRect(193.75, 72.604164, 198.17708, 72.604164));
-	surfaceArea->fn1(FRect(193.75, 267.39584, 198.17708, 267.39584));
-	surfaceArea->fn1(FRect(406.25, 72.604164, 401.82291, 72.604164));
-	surfaceArea->fn1(FRect(406.25, 267.39584, 401.82291, 267.39584));
-	surfaceArea->fn1(FRect(300.0, 63.75, 300.0, 54.895832));
-	surfaceArea->fn1(FRect(300.0, 276.25, 300.0, 285.10416));
-	surfaceArea->fn1(FRect(193.75, 170.0, 184.89583, 170.0));
-	surfaceArea->fn1(FRect(406.25, 170.0, 415.10416, 170.0));
+	surfaceArea->fillRect(FRect(202.60417, 63.75, 397.39584, 63.75));
+	surfaceArea->fillRect(FRect(202.60417, 276.25, 397.39584, 276.25));
+	surfaceArea->fillRect(FRect(193.75, 72.604164, 193.75, 267.39584));
+	surfaceArea->fillRect(FRect(406.25, 72.604164, 406.25, 267.39584));
+	surfaceArea->fillRect(FRect(202.60417, 63.75, 202.60417, 68.177086));
+	surfaceArea->fillRect(FRect(397.39584, 63.75, 397.39584, 68.177086));
+	surfaceArea->fillRect(FRect(202.60417, 276.25, 202.60417, 271.82291));
+	surfaceArea->fillRect(FRect(397.39584, 276.25, 397.39584, 271.82291));
+	surfaceArea->fillRect(FRect(193.75, 72.604164, 198.17708, 72.604164));
+	surfaceArea->fillRect(FRect(193.75, 267.39584, 198.17708, 267.39584));
+	surfaceArea->fillRect(FRect(406.25, 72.604164, 401.82291, 72.604164));
+	surfaceArea->fillRect(FRect(406.25, 267.39584, 401.82291, 267.39584));
+	surfaceArea->fillRect(FRect(300.0, 63.75, 300.0, 54.895832));
+	surfaceArea->fillRect(FRect(300.0, 276.25, 300.0, 285.10416));
+	surfaceArea->fillRect(FRect(193.75, 170.0, 184.89583, 170.0));
+	surfaceArea->fillRect(FRect(406.25, 170.0, 415.10416, 170.0));
 
 	surfaceArea->_pixel = oldPixel;
 	surfaceArea->setColorFromPixel();
@@ -176,7 +176,7 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 		if (fn5(surfaceArea, sub12, v1, v2, v3) > -1.0) {
 			surfaceArea->_pixel = 0xA0A0;
 			surfaceArea->setColorFromPixel();
-			surfaceArea->fn1(FRect(v1._x, v1._y, v3._x, v3._y));
+			surfaceArea->fillRect(FRect(v1._x, v1._y, v3._x, v3._y));
 		}
 	}
 }

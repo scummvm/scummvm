@@ -38,13 +38,13 @@ public:
 	CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimesCount);
 	~CrimesDatabase();
 
-	void setCrime(int crimeId, int value);
-	int getCrime(int crimeId);
+	void setCrime(int clueId, int crimeId);
+	int getCrime(int clueId);
 
-	void setAssetType(int assetId, int assetType);
-	int getAssetType(int assetId);
+	void setAssetType(int clueId, int assetType);
+	int getAssetType(int clueId);
 
-	const char *getClueText(int id);
+	const char *getClueText(int clueId);
 };
 
 } // End of namespace BladeRunner

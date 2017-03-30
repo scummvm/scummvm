@@ -122,7 +122,7 @@ bool GfxAnimate::detectFastCast() {
 	// within that game. Which means even though we detect it as having the capability, it's never actually used.
 	// The original multilingual KQ5 interpreter did have this feature disabled.
 	// Sierra probably used latest system scripts and that's why we detect it.
-	if (_scriptPatcher->findSignature(magicDWord, magicDWordOffset, fastCastSignature, "fast cast detection", scriptData, scriptSize) >= 0) {
+	if (_scriptPatcher->findSignature(magicDWord, magicDWordOffset, fastCastSignature, "fast cast detection", SciSpan<const byte>(scriptData, scriptSize)) >= 0) {
 		// Signature found, game seems to use fast cast for kAnimate
 		return true;
 	}

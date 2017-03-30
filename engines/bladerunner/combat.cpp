@@ -50,7 +50,7 @@ Combat::~Combat() {
 
 void Combat::activate() {
 	if(_enabled) {
-		_vm->_playerActor->combatModeOn(-1, -1, -1, -1, 4, 7, 8, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, 0);
+		_vm->_playerActor->combatModeOn(-1, -1, -1, -1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, 0);
 		_active = true;
 	}
 }

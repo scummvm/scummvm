@@ -117,8 +117,8 @@ bool SceneScriptDR02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -835.0f, -0.04f, -118.0f, 0, 1, false, 0)) {
-			Async_Actor_Walk_To_XYZ(0, -727.0f, -0.04f, -118.0f, 0, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, 1, false, 0)) {
+			Async_Actor_Walk_To_XYZ(kActorMcCoy, -727.0f, -0.04f, -118.0f, 0, false);
 			Game_Flag_Set(225);
 			Set_Enter(7, 25);
 		}
@@ -127,9 +127,9 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -1162.0f, 7.18f, -322.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, 1, false, 0)) {
 			if (Global_Variable_Query(1) > 2) {
-				Actor_Says(0, 8522, 15);
+				Actor_Says(kActorMcCoy, 8522, 15);
 			} else {
 				Game_Flag_Set(226);
 				Set_Enter(34, 27);
@@ -138,7 +138,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(0, -1258.0f, 7.18f, -314.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1258.0f, 7.18f, -314.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(265);
 			Game_Flag_Reset(177);
 			Game_Flag_Set(258);

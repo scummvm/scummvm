@@ -24,6 +24,7 @@
 
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/zbuffer.h"
 
 namespace BladeRunner {
 
@@ -58,7 +59,10 @@ void Items::tick() {
 			continue;
 		}
 		bool set14NotTarget = setId == 14 && !_items[i]->isTargetable();
-		_items[i]->tick(set14NotTarget);
+		Common::Rect screenRect;
+		if (_items[i]->tick(&screenRect, set14NotTarget)) {
+			_vm->_zbuffer->mark(screenRect);
+		}
 	}
 }
 

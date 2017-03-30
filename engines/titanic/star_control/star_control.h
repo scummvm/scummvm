@@ -78,6 +78,11 @@ public:
 	bool isSolved() const;
 
 	/**
+	 * Forces the starfield to be solved
+	 */
+	void forceSolved();
+
+	/**
 	 * Returns true if a star destination can be set
 	 */
 	bool canSetStarDestination() const;

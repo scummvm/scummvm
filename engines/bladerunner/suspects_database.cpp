@@ -92,12 +92,12 @@ bool SuspectDatabaseEntry::addIdentityClue(int clueId) {
 	return true;
 }
 
-bool SuspectDatabaseEntry::addPhotoClue(int a1, int a2) {
+bool SuspectDatabaseEntry::addPhotoClue(int shapeId, int clueId) {
 	if (_photoCluesCount >= PHOTO_CLUES_COUNT) {
 		return false;
 	}
-	_photoClues[_photoCluesCount][0] = a2;
-	_photoClues[_photoCluesCount][1] = a1;
+	_photoClues[_photoCluesCount][0] = clueId;
+	_photoClues[_photoCluesCount][1] = shapeId;
 	_photoClues[_photoCluesCount][2] = -1;
 
 	_photoCluesCount++;

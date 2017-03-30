@@ -30,6 +30,7 @@
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
 #include "sci/sci.h"
+#include "sci/util.h"
 
 namespace Common {
 class File;
@@ -226,7 +227,7 @@ struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
 };
 
 /** Class for storing resources in memory */
-class Resource {
+class Resource : public SciSpan<const byte> {
 	friend class ResourceManager;
 
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
@@ -243,8 +244,6 @@ class Resource {
 // NOTE : Currently most member variables lack the underscore prefix and have
 // public visibility to let the rest of the engine compile without changes.
 public:
-	byte *data;
-	uint32 size;
 	byte *_header;
 	uint32 _headerSize;
 
@@ -595,11 +594,21 @@ public:
 		byte flags;
 		byte poly;
 		uint16 prio;
-		uint16 size;
-		byte *data;
+		SciSpan<const byte> data;
 		uint16 curPos;
 		long time;
 		byte prev;
+
+		Channel() :
+			number(0),
+			flags(0),
+			poly(0),
+			prio(0),
+			data(),
+			curPos(0) {
+			time = 0;
+			prev = 0;
+		}
 	};
 
 	struct Track {

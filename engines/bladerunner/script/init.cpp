@@ -115,95 +115,419 @@ void ScriptInit::Init_Game_Flags() {
 
 void ScriptInit::Init_Clues() {
 	for (int i = 0; i != 288; ++i) {
-		Actor_Clue_Add_To_Database(0, i, 0, false, false, -1);
+		Actor_Clue_Add_To_Database(kActorMcCoy, i, 0, false, false, -1);
 	}
 }
 
-struct clue_weigth {
+struct ClueWeight {
 	int clue;
 	int weight;
 };
 
-static clue_weigth clues_actor_1[44] = {
-	{222, 100}, {227, 100}, {223, 100}, {224, 100}, {226, 100}, {228, 100}, {231, 100}, {162, 100},
-	{164, 100}, {166, 100}, {168, 100}, {170, 100}, {172, 100}, {174, 100}, {176, 100}, {239, 90},
-	{241, 90}, {242, 90}, {179, 90}, {180, 90}, {181, 90}, {8, 85}, {240, 85}, {216, 85},
-	{217, 85}, {178, 80}, {5, 65}, {9, 65}, {215, 65}, {218, 65}, {219, 65}, {220, 65},
-	{229, 65}, {211, 65}, {80, 65}, {108, 65}, {134, 65}, {135, 65}, {212, 55}, {221, 55},
-	{230, 55}, {6, 30}, {7, 30}, {65, 30}
+static ClueWeight ClueWeightsForSteele[44] = {
+	{kClueMcCoyRetiredZuben, 100},
+	{kClueMcCoyShotZubenintheback, 100},
+	{kClueMcCoyRetiredLucy, 100},
+	{kClueMcCoyRetiredDektora, 100},
+	{kClueMcCoyRetiredSadik, 100},
+	{kClueMcCoyRetiredLutherLance, 100},
+	{kClueClovisOrdersMcCoysDeath, 100},
+	{kClueVKDektoraReplicant, 100},
+	{kClueVKBobGorskyReplicant, 100},
+	{kClueVKLutherLanceReplicant, 100},
+	{kClueVKGrigorianReplicant, 100},
+	{kClueVKIzoReplicant, 100},
+	{kClueVKCrazylegsReplicant, 100},
+	{kClueVKRunciterReplicant, 100},
+	{kClueVKEarlyQReplicant, 100},
+	{kClueMcCoyIsStupid, 90},
+	{kClueMcCoyIsKind, 90},
+	{kClueMcCoyIsInsane, 90},
+	{kClueGrigorianInterviewA, 90},
+	{kClueGrigorianInterviewB1, 90},
+	{kClueGrigorianInterviewB2, 90},
+	{kClueChopstickWrapper, 85},
+	{kClueMcCoyIsAnnoying, 85},
+	{kClueMcCoyWarnedIzo, 85},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 85},
+	{kClueCrimeSceneNotes, 80},
+	{kClueShellCasings, 65},
+	{kClueSushiMenu, 65},
+	{kClueMcCoyLetZubenEscape, 65},
+	{kClueMcCoyHelpedDektora, 65},
+	{kClueMcCoyHelpedLucy, 65},
+	{kClueMcCoyHelpedGordo, 65},
+	{kClueMcCoyBetrayal, 65},
+	{kClueSightingMcCoyRuncitersShop, 65},
+	{kClueWeaponsOrderForm, 65},
+	{kClueHollowayInterview, 65},
+	{kClueRunciterConfession1, 65},
+	{kClueRunciterConfession2, 65},
+	{kClueMcCoyKilledRunciter1, 55},
+	{kClueMcCoyShotGuzza, 55},
+	{kClueMcCoyKilledRunciter2, 55},
+	{kClueCandy, 30},
+	{kClueToyDog, 30},
+	{kClueDogCollar1, 30}
 };
 
-static clue_weigth clues_actor_2[28] = {
-	{227, 70}, {240, 65}, {241, 70}, {242, 95}, {212, 70}, {213, 70}, {214, 70}, {215, 70},
-	{216, 95}, {217, 70}, {218, 70}, {219, 70}, {220, 70}, {221, 65}, {222, 70}, {223, 70},
-	{224, 70}, {226, 70}, {228, 70}, {229, 70}, {230, 70}, {231, 70}, {232, 70}, {116, 65},
-	{117, 65}, {145, 70}, {207, 55}, {211, 65}
+static ClueWeight ClueWeightsForGordo[28] = {
+	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyIsAnnoying, 65},
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyIsInsane, 95},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoysDescription, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyWarnedIzo, 95},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyShotGuzza, 65},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueClovisOrdersMcCoysDeath, 70},
+	{kClueEarlyAttemptedToSeduceLucy, 70},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kCluePowerSource, 70},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueSightingMcCoyRuncitersShop, 65}
 };
 
-static clue_weigth clues_actor_3[46] = {
-	{227, 70}, {240, 45}, {241, 70}, {242, 65}, {212, 70}, {213, 70}, {214, 70}, {215, 70},
-	{216, 65}, {217, 70}, {220, 70}, {219, 70}, {218, 70}, {221, 45}, {222, 70}, {223, 70},
-	{224, 70}, {225, 70}, {226, 70}, {228, 70}, {229, 70}, {230, 70}, {231, 70}, {95, 70},
-	{232, 70}, {239, 65}, {19, 65}, {25, 55}, {60, 60}, {69, 60}, {70, 60}, {92, 70},
-	{103, 65}, {121, 65}, {130, 70}, {147, 70}, {148, 65}, {149, 65}, {150, 65}, {151, 65},
-	{152, 65}, {116, 65}, {117, 65}, {145, 70}, {207, 55}, {211, 65}
+static ClueWeight ClueWeightsForDektora[46] = {
+	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyIsAnnoying, 45},
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyIsInsane, 65},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoysDescription, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyShotGuzza, 45},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredGordo, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueClovisOrdersMcCoysDeath, 70},
+	{kClueSuspectDektora, 70},
+	{kClueEarlyAttemptedToSeduceLucy, 70},
+	{kClueMcCoyIsStupid, 65},
+	{kClueZubenInterview, 65},
+	{kClueHowieLeeInterview, 55},
+	{kClueIzoInterview, 60},
+	{kClueGordoInterview1, 60},
+	{kClueGordoInterview2, 60},
+	{kClueEarlyQInterview, 70},
+	{kClueGordoInterview3, 65},
+	{kClueIzosStashRaided, 65},
+	{kClueGordoBlabs, 70},
+	{kClueDNATyrell, 70},
+	{kClueDNASebastian, 65},
+	{kClueDNAChew, 65},
+	{kClueDNAMoraji, 65},
+	{kClueDNALutherLance, 65},
+	{kClueDNAMarcus, 65},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kCluePowerSource, 70},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueSightingMcCoyRuncitersShop, 65}
 };
 
-static clue_weigth clues_actor_4[23] = {
-	{241, 90}, {242, 90}, {240, 70}, {214, 75}, {216, 75}, {218, 75}, {219, 75}, {220, 75},
-	{215, 70}, {217, 70}, {222, 70}, {223, 70}, {224, 70}, {226, 70}, {228, 70}, {230, 70},
-	{73, 65}, {211, 65}, {80, 65}, {108, 65}, {134, 65}, {135, 65}, {212, 55}
+static ClueWeight ClueWeightsForGuzza[23] = {
+	{kClueMcCoyIsKind, 90},
+	{kClueMcCoyIsInsane, 90},
+	{kClueMcCoyIsAnnoying, 70},
+	{kClueMcCoyIsABladeRunner, 75},
+	{kClueMcCoyWarnedIzo, 75},
+	{kClueMcCoyHelpedDektora, 75},
+	{kClueMcCoyHelpedLucy, 75},
+	{kClueMcCoyHelpedGordo, 75},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueSightingSadikBradbury, 65},
+	{kClueSightingMcCoyRuncitersShop, 65},
+	{kClueWeaponsOrderForm, 65},
+	{kClueHollowayInterview, 65},
+	{kClueRunciterConfession1, 65},
+	{kClueRunciterConfession2, 65},
+	{kClueMcCoyKilledRunciter1, 55}
 };
 
-static clue_weigth clues_actor_5[46] = {
-	{227, 70}, {241, 70}, {212, 70}, {213, 70}, {214, 70}, {215, 70}, {217, 70}, {220, 70},
-	{219, 70}, {218, 70}, {222, 70}, {223, 70}, {224, 70}, {226, 70}, {228, 70}, {229, 70},
-	{230, 70}, {232, 70}, {130, 70}, {147, 70}, {145, 70}, {242, 65}, {216, 65}, {239, 65},
-	{19, 65}, {95, 65}, {103, 65}, {107, 65}, {121, 65}, {148, 65}, {149, 65}, {150, 65},
-	{151, 65}, {152, 65}, {116, 65}, {117, 65}, {211, 65}, {60, 60}, {69, 60}, {70, 60},
-	{92, 60}, {25, 55}, {133, 55}, {207, 55}, {240, 45}, {221, 45}
+static ClueWeight ClueWeightsForClovis[46] = {
+	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoysDescription, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueEarlyAttemptedToSeduceLucy, 70},
+	{kClueGordoBlabs, 70},
+	{kClueDNATyrell, 70},
+	{kCluePowerSource, 70},
+	{kClueMcCoyIsInsane, 65},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyIsStupid, 65},
+	{kClueZubenInterview, 65},
+	{kClueSuspectDektora, 65},
+	{kClueGordoInterview3, 65},
+	{kClueDektoraInterview4, 65},
+	{kClueIzosStashRaided, 65},
+	{kClueDNASebastian, 65},
+	{kClueDNAChew, 65},
+	{kClueDNAMoraji, 65},
+	{kClueDNALutherLance, 65},
+	{kClueDNAMarcus, 65},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kClueSightingMcCoyRuncitersShop, 65},
+	{kClueIzoInterview, 60},
+	{kClueGordoInterview1, 60},
+	{kClueGordoInterview2, 60},
+	{kClueEarlyQInterview, 60},
+	{kClueHowieLeeInterview, 55},
+	{kClueDektoraConfession, 55},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueMcCoyIsAnnoying, 45},
+	{kClueMcCoyShotGuzza, 45}
 };
 
-static clue_weigth clues_actor_6[47] = {
-	{227, 70}, {240, 45}, {241, 70}, {242, 65}, {212, 70}, {213, 70}, {214, 70}, {215, 70},
-	{216, 65}, {217, 70}, {220, 70}, {219, 70}, {218, 70}, {221, 45}, {222, 70}, {223, 70},
-	{224, 70}, {226, 70}, {228, 70}, {229, 70}, {230, 70}, {231, 70}, {232, 70}, {239, 65},
-	{19, 65}, {25, 55}, {60, 60}, {69, 60}, {70, 60}, {92, 60}, {95, 65}, {103, 65},
-	{107, 65}, {121, 55}, {130, 70}, {133, 70}, {147, 70}, {148, 65}, {149, 65}, {150, 65},
-	{151, 65}, {152, 65}, {116, 65}, {117, 65}, {145, 70}, {207, 55}, {211, 65}
+static ClueWeight ClueWeightsForLucy[47] = {
+	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyIsAnnoying, 45},
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyIsInsane, 65},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoysDescription, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyShotGuzza, 45},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueClovisOrdersMcCoysDeath, 70},
+	{kClueEarlyAttemptedToSeduceLucy, 70},
+	{kClueMcCoyIsStupid, 65},
+	{kClueZubenInterview, 65},
+	{kClueHowieLeeInterview, 55},
+	{kClueIzoInterview, 60},
+	{kClueGordoInterview1, 60},
+	{kClueGordoInterview2, 60},
+	{kClueEarlyQInterview, 60},
+	{kClueSuspectDektora, 65},
+	{kClueGordoInterview3, 65},
+	{kClueDektoraInterview4, 65},
+	{kClueIzosStashRaided, 55},
+	{kClueGordoBlabs, 70},
+	{kClueDektoraConfession, 70},
+	{kClueDNATyrell, 70},
+	{kClueDNASebastian, 65},
+	{kClueDNAChew, 65},
+	{kClueDNAMoraji, 65},
+	{kClueDNALutherLance, 65},
+	{kClueDNAMarcus, 65},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kCluePowerSource, 70},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueSightingMcCoyRuncitersShop, 65}
 };
 
-static clue_weigth clues_actor_7_and_8[47] = {
-	{227, 70}, {240, 45}, {241, 70}, {242, 65}, {212, 70}, {213, 70}, {214, 70}, {215, 70},
-	{216, 65}, {217, 70}, {220, 70}, {219, 70}, {218, 70}, {221, 45}, {222, 70}, {223, 70},
-	{224, 70}, {226, 70}, {228, 70}, {229, 70}, {230, 70}, {231, 70}, {232, 70}, {239, 65},
-	{19, 45}, {25, 45}, {60, 45}, {69, 45}, {70, 45}, {92, 45}, {95, 45}, {103, 45},
-	{107, 45}, {121, 45}, {130, 45}, {133, 45}, {147, 70}, {148, 70}, {149, 70}, {150, 70},
-	{151, 70}, {152, 70}, {116, 65}, {117, 65}, {145, 70}, {207, 55}, {211, 65}
+static ClueWeight ClueWeightsForIzoAndSadik[47] = {
+	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyIsAnnoying, 45},
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyIsInsane, 65},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoysDescription, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyLetZubenEscape, 70},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyShotGuzza, 45},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueClovisOrdersMcCoysDeath, 70},
+	{kClueEarlyAttemptedToSeduceLucy, 70},
+	{kClueMcCoyIsStupid, 65},
+	{kClueZubenInterview, 45},
+	{kClueHowieLeeInterview, 45},
+	{kClueIzoInterview, 45},
+	{kClueGordoInterview1, 45},
+	{kClueGordoInterview2, 45},
+	{kClueEarlyQInterview, 45},
+	{kClueSuspectDektora, 45},
+	{kClueGordoInterview3, 45},
+	{kClueDektoraInterview4, 45},
+	{kClueIzosStashRaided, 45},
+	{kClueGordoBlabs, 45},
+	{kClueDektoraConfession, 45},
+	{kClueDNATyrell, 70},
+	{kClueDNASebastian, 70},
+	{kClueDNAChew, 70},
+	{kClueDNAMoraji, 70},
+	{kClueDNALutherLance, 70},
+	{kClueDNAMarcus, 70},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kCluePowerSource, 70},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueSightingMcCoyRuncitersShop, 65}
 };
 
-static clue_weigth clues_actor_9[49] = {
-	{241, 70}, {212, 70}, {214, 70}, {217, 70}, {220, 70}, {219, 70}, {218, 70}, {222, 70},
-	{223, 70}, {224, 70}, {226, 70}, {228, 70}, {229, 70}, {230, 70}, {231, 70}, {130, 70},
-	{133, 70}, {147, 70}, {148, 70}, {149, 70}, {150, 70}, {151, 70}, {152, 70}, {145, 70},
-	{227, 65}, {240, 65}, {242, 65}, {213, 65}, {215, 65}, {216, 65}, {221, 65}, {239, 65},
-	{95, 65}, {103, 65}, {107, 65}, {121, 65}, {116, 65}, {117, 65}, {211, 65}, {99, 65},
-	{236, 65}, {60, 60}, {69, 60}, {70, 60}, {232, 55}, {92, 55}, {207, 55}, {19, 50},
-	{25, 40}
+static ClueWeight ClueWeightsForCrazylegs[49] = {
+	{kClueMcCoyIsKind, 70},
+	{kClueMcCoyKilledRunciter1, 70},
+	{kClueMcCoyIsABladeRunner, 70},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 70},
+	{kClueMcCoyHelpedGordo, 70},
+	{kClueMcCoyHelpedLucy, 70},
+	{kClueMcCoyHelpedDektora, 70},
+	{kClueMcCoyRetiredZuben, 70},
+	{kClueMcCoyRetiredLucy, 70},
+	{kClueMcCoyRetiredDektora, 70},
+	{kClueMcCoyRetiredSadik, 70},
+	{kClueMcCoyRetiredLutherLance, 70},
+	{kClueMcCoyBetrayal, 70},
+	{kClueMcCoyKilledRunciter2, 70},
+	{kClueClovisOrdersMcCoysDeath, 70},
+	{kClueGordoBlabs, 70},
+	{kClueDektoraConfession, 70},
+	{kClueDNATyrell, 70},
+	{kClueDNASebastian, 70},
+	{kClueDNAChew, 70},
+	{kClueDNAMoraji, 70},
+	{kClueDNALutherLance, 70},
+	{kClueDNAMarcus, 70},
+	{kCluePowerSource, 70},
+	{kClueMcCoyShotZubenintheback, 65},
+	{kClueMcCoyIsAnnoying, 65},
+	{kClueMcCoyIsInsane, 65},
+	{kClueMcCoysDescription, 65},
+	{kClueMcCoyLetZubenEscape, 65},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyShotGuzza, 65},
+	{kClueMcCoyIsStupid, 65},
+	{kClueSuspectDektora, 65},
+	{kClueGordoInterview3, 65},
+	{kClueDektoraInterview4, 65},
+	{kClueIzosStashRaided, 65},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kClueSightingMcCoyRuncitersShop, 65},
+	{kClueGrigoriansNote, 65},
+	{kClueCrazysInvolvement, 65},
+	{kClueIzoInterview, 60},
+	{kClueGordoInterview1, 60},
+	{kClueGordoInterview2, 60},
+	{kClueEarlyAttemptedToSeduceLucy, 55},
+	{kClueEarlyQInterview, 55},
+	{kClueCrystalArrestedCrazylegs, 55},
+	{kClueZubenInterview, 50},
+	{kClueHowieLeeInterview, 40}
 };
 
-static clue_weigth clues_actor_10[44] = {
-	{241, 70}, {130, 70}, {147, 70}, {145, 70}, {240, 65}, {216, 65}, {217, 65}, {219, 65},
-	{218, 65}, {221, 65}, {223, 65}, {224, 65}, {226, 65}, {229, 65}, {239, 65}, {95, 65},
-	{121, 65}, {148, 65}, {149, 65}, {150, 65}, {152, 65}, {116, 65}, {117, 65}, {214, 60},
-	{215, 60}, {69, 60}, {70, 60}, {211, 60}, {242, 55}, {213, 55}, {220, 55}, {222, 55},
-	{60, 55}, {107, 55}, {133, 55}, {103, 50}, {92, 45}, {207, 45}, {227, 35}, {212, 35},
-	{230, 35}, {232, 35}, {19, 30}, {25, 30}
+static ClueWeight ClueWeightsForLuther[44] = {
+	{kClueMcCoyIsKind, 70},
+	{kClueGordoBlabs, 70},
+	{kClueDNATyrell, 70},
+	{kCluePowerSource, 70},
+	{kClueMcCoyIsAnnoying, 65},
+	{kClueMcCoyWarnedIzo, 65},
+	{kClueMcCoyHelpedIzoIzoIsAReplicant, 65},
+	{kClueMcCoyHelpedLucy, 65},
+	{kClueMcCoyHelpedDektora, 65},
+	{kClueMcCoyShotGuzza, 65},
+	{kClueMcCoyRetiredLucy, 65},
+	{kClueMcCoyRetiredDektora, 65},
+	{kClueMcCoyRetiredSadik, 65},
+	{kClueMcCoyBetrayal, 65},
+	{kClueMcCoyIsStupid, 65},
+	{kClueSuspectDektora, 65},
+	{kClueIzosStashRaided, 65},
+	{kClueDNASebastian, 65},
+	{kClueDNAChew, 65},
+	{kClueDNAMoraji, 65},
+	{kClueDNAMarcus, 65},
+	{kClueCrazylegsInterview1, 65},
+	{kClueCrazylegsInterview2, 65},
+	{kClueMcCoyIsABladeRunner, 60},
+	{kClueMcCoyLetZubenEscape, 60},
+	{kClueGordoInterview1, 60},
+	{kClueGordoInterview2, 60},
+	{kClueSightingMcCoyRuncitersShop, 60},
+	{kClueMcCoyIsInsane, 55},
+	{kClueMcCoysDescription, 55},
+	{kClueMcCoyHelpedGordo, 55},
+	{kClueMcCoyRetiredZuben, 55},
+	{kClueIzoInterview, 55},
+	{kClueDektoraInterview4, 55},
+	{kClueDektoraConfession, 55},
+	{kClueGordoInterview3, 50},
+	{kClueEarlyQInterview, 45},
+	{kClueCrystalArrestedCrazylegs, 45},
+	{kClueMcCoyShotZubenintheback, 35},
+	{kClueMcCoyKilledRunciter1, 35},
+	{kClueMcCoyKilledRunciter2, 35},
+	{kClueEarlyAttemptedToSeduceLucy, 35},
+	{kClueZubenInterview, 30},
+	{kClueHowieLeeInterview, 30}
 };
 
 void ScriptInit::Init_Clues2() {
 	for (int i = 0; i != 288; ++i) {
-		Actor_Clue_Add_To_Database(99, i, 100, false, false, -1);
+		Actor_Clue_Add_To_Database(kActorVoiceOver, i, 100, false, false, -1);
 	}
 
 #define IMPORT_CLUE_TABLE(a, arr) \
@@ -211,1117 +535,1119 @@ void ScriptInit::Init_Clues2() {
 		Actor_Clue_Add_To_Database( a, arr[i].clue, arr[i].weight, 0, 0, -1);\
 	}
 
-	IMPORT_CLUE_TABLE( 1, clues_actor_1);
-	IMPORT_CLUE_TABLE( 2, clues_actor_2);
-	IMPORT_CLUE_TABLE( 3, clues_actor_3);
-	IMPORT_CLUE_TABLE( 4, clues_actor_4);
-	IMPORT_CLUE_TABLE( 5, clues_actor_5);
-	IMPORT_CLUE_TABLE( 6, clues_actor_6);
-	IMPORT_CLUE_TABLE( 7, clues_actor_7_and_8);
-	IMPORT_CLUE_TABLE( 9, clues_actor_9);
-	IMPORT_CLUE_TABLE(10, clues_actor_10);
+	IMPORT_CLUE_TABLE(kActorSteele, ClueWeightsForSteele);
+	IMPORT_CLUE_TABLE(kActorGordo, ClueWeightsForGordo);
+	IMPORT_CLUE_TABLE(kActorDektora, ClueWeightsForDektora);
+	IMPORT_CLUE_TABLE(kActorGuzza, ClueWeightsForGuzza);
+	IMPORT_CLUE_TABLE(kActorClovis, ClueWeightsForClovis);
+	IMPORT_CLUE_TABLE(kActorLucy, ClueWeightsForLucy);
+	IMPORT_CLUE_TABLE(kActorIzo, ClueWeightsForIzoAndSadik);
+	IMPORT_CLUE_TABLE(kActorSadik, ClueWeightsForIzoAndSadik);
+	IMPORT_CLUE_TABLE(kActorCrazylegs, ClueWeightsForCrazylegs);
+	IMPORT_CLUE_TABLE(kActorLuther, ClueWeightsForLuther);
 
 #undef IMPORT_CLUE_TABLE
 
-	Actor_Clue_Add_To_Database(11, 201, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 213, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 212, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 218, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 219, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 225, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 229, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 230, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 232, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 116, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 117, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(11, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 213, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 219, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 222, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 223, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 228, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 124, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(12, 131, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 227, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 214, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 215, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 216, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 217, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 220, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 222, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 224, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 226, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 232, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 25, 30, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 60, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 69, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 70, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 92, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 95, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 19, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 103, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 107, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 121, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 130, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 133, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 147, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 148, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 149, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 150, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 152, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 116, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 117, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 207, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(13, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 5, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 239, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 240, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 241, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 242, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 212, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 215, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 216, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 230, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 0, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 73, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 211, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 108, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 134, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 135, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 66, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 109, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 110, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 111, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(14, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(15, 232, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(16, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 222, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 218, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 219, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 220, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 223, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 224, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 226, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 228, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 230, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 231, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 73, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(17, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 239, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 240, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 242, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 222, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 227, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 216, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 217, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 223, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 224, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 228, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 231, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(18, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 219, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 213, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 229, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 232, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 116, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 117, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(19, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(20, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 214, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 223, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 25, 30, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 147, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 148, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 150, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 152, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 117, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(21, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(22, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 27, 20, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 16, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 17, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 26, 25, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 227, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 219, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 239, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(1, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(23, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 227, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 219, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 239, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 17, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 16, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 27, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 26, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(24, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(25, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(25, 213, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(25, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 0, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 5, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 8, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 9, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 239, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 240, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 242, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 216, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 217, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(26, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 227, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 241, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 215, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 216, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 217, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 220, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 219, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 218, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 222, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 223, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 224, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 226, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 228, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 230, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 232, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 25, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 60, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 69, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 70, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 92, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 95, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 19, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 103, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 107, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 121, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 130, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 133, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 147, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 148, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 149, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 150, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 151, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 152, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 116, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 117, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 145, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 207, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(27, 211, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 25, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 64, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 69, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 111, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 124, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 219, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 241, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 217, 25, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 221, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 223, 75, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 225, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 222, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(28, 232, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(29, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 126, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 195, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 197, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 198, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 202, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 225, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 222, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 239, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(30, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(31, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 240, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 241, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 212, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 213, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 214, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 221, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 223, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 229, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 230, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 231, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 232, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 239, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 25, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 60, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 69, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 70, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 92, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 19, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 103, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 121, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 207, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(32, 211, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 5, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 8, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 9, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 239, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 240, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 242, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 216, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 217, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(33, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 126, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 195, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 197, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 198, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 202, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 219, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 225, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 222, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 239, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 80, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(34, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 214, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 223, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 25, 30, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 147, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 148, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 150, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 152, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 117, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(35, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 0, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 5, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 8, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 9, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 239, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 240, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 242, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 222, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 216, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 217, 85, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(37, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 227, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 212, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 221, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 224, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 228, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 231, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(42, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 212, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(44, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 227, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 216, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 217, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 221, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 224, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 226, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 214, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 229, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 232, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 145, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(51, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 214, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 223, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 25, 30, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 147, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 148, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 150, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 152, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 117, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(52, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 126, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 162, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 164, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 166, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 168, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 170, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 172, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 176, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 195, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 197, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 198, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 202, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 111, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 219, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 241, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 212, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 230, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 215, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 216, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 218, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 220, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 221, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 225, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 222, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 242, 95, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(53, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 227, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 212, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 219, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 221, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 224, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 228, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 229, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 230, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 231, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 80, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 108, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 134, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 135, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 214, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(55, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 222, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 227, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 240, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 212, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 213, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 216, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 223, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 224, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 229, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 230, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 231, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 232, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 239, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 25, 30, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 60, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 69, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 70, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 92, 25, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 95, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 19, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 103, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 107, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 121, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 130, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 133, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 147, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 149, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 150, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 151, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 152, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 116, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 117, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 145, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 207, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(56, 211, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 241, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 227, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 216, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 217, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 221, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 224, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 226, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 228, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 214, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 229, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 232, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 145, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(57, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(58, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(58, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(58, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(58, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(58, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 227, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 240, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 242, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 212, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 213, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 215, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 216, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 217, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 220, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 219, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 218, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 221, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 222, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 224, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 226, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 228, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 230, 35, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 95, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 232, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 130, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 147, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 148, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 149, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 150, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 151, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 152, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 116, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 117, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 145, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(59, 211, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 239, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 241, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 222, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 227, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 212, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 215, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 216, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 217, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 218, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 219, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 220, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 221, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 223, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 224, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 226, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 228, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 229, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 230, 45, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 231, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 162, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 164, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 166, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 168, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 170, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 172, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 174, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 176, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 0, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 73, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 211, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 80, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 108, 55, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 134, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(62, 135, 40, false, false, -1);
-	Actor_Clue_Add_To_Database(66, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(66, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(66, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(66, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(66, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(67, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(67, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(67, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(67, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(67, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(68, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(68, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(68, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(68, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(68, 214, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(69, 240, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(69, 241, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(69, 242, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(69, 239, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(69, 214, 65, false, false, -1);
+	//note: this might look a bit weird, but it is implemented in this way in the original game - few weights are in table, others by direct call
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueBobShotInColdBlood, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoysDescription, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyKilledRunciter1, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyHelpedDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyHelpedLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyBetrayal, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueMcCoyKilledRunciter2, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueCrazylegsInterview1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueCrazylegsInterview2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGrigorian, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoysDescription, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoyHelpedLucy, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoyRetiredZuben, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoyRetiredLucy, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueMcCoyRetiredLutherLance, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueHomelessManKid, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTransient, kClueFlaskOfAbsinthe, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyShotZubenintheback, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsABladeRunner, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyLetZubenEscape, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyWarnedIzo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyHelpedIzoIzoIsAReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyHelpedGordo, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyRetiredZuben, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyRetiredDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyRetiredSadik, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueEarlyAttemptedToSeduceLucy, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueHowieLeeInterview, 30, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueIzoInterview, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueGordoInterview1, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueGordoInterview2, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueEarlyQInterview, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueSuspectDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueZubenInterview, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueGordoInterview3, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDektoraInterview4, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueIzosStashRaided, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueGordoBlabs, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDektoraConfession, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDNATyrell, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDNASebastian, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDNAChew, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDNAMoraji, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueDNAMarcus, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueCrazylegsInterview1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueCrazylegsInterview2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueCrystalArrestedCrazylegs, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueShellCasings, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsStupid, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsAnnoying, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsKind, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsInsane, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyKilledRunciter1, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyLetZubenEscape, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyWarnedIzo, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyKilledRunciter2, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueOfficersStatement, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueSightingSadikBradbury, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueSightingMcCoyRuncitersShop, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueHollowayInterview, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueRunciterConfession1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueRunciterConfession2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueWeaponsCache, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueBakersBadge, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueHoldensBadge, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueCar, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRunciter, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyRetiredZuben, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyHelpedDektora, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyHelpedLucy, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyHelpedGordo, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyRetiredLucy, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyRetiredDektora, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyRetiredSadik, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyRetiredLutherLance, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueMcCoyKilledRunciter2, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueClovisOrdersMcCoysDeath, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueSightingSadikBradbury, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrellGuard, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsStupid, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsAnnoying, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsInsane, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredZuben, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyShotZubenintheback, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyWarnedIzo, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyHelpedIzoIzoIsAReplicant, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredLucy, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredDektora, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredLutherLance, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueClovisOrdersMcCoysDeath, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyHelpedLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoysDescription, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyBetrayal, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueCrazylegsInterview1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueCrazylegsInterview2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyIsABladeRunner, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyRetiredLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueHowieLeeInterview, 30, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueDNATyrell, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueDNASebastian, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueDNAMoraji, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueDNAMarcus, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueCrazylegsInterview2, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMarcus, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueChromeDebris, 20, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueCrowdInterviewA, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueCrowdInterviewB, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kCluePaintTransfer, 25, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyHelpedLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyIsStupid, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSteele, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyHelpedLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyIsStupid, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueCrowdInterviewB, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueCrowdInterviewA, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueChromeDebris, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kCluePaintTransfer, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHanoi, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHanoi, kClueMcCoysDescription, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHanoi, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueOfficersStatement, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueShellCasings, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueChopstickWrapper, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueSushiMenu, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsStupid, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsAnnoying, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsInsane, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyWarnedIzo, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyHelpedIzoIzoIsAReplicant, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyShotZubenintheback, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsKind, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyLetZubenEscape, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyWarnedIzo, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyHelpedIzoIzoIsAReplicant, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyHelpedGordo, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyHelpedLucy, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyHelpedDektora, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyRetiredZuben, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyRetiredLucy, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyRetiredDektora, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyRetiredSadik, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyRetiredLutherLance, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyKilledRunciter2, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueEarlyAttemptedToSeduceLucy, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueHowieLeeInterview, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueIzoInterview, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueGordoInterview1, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueGordoInterview2, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueEarlyQInterview, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueSuspectDektora, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueZubenInterview, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueGordoInterview3, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDektoraInterview4, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueIzosStashRaided, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueGordoBlabs, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDektoraConfession, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNATyrell, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNASebastian, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNAChew, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNAMoraji, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNALutherLance, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueDNAMarcus, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueCrazylegsInterview1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueCrazylegsInterview2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kCluePowerSource, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueCrystalArrestedCrazylegs, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueSightingMcCoyRuncitersShop, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueHowieLeeInterview, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueFishLadyInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueGordoInterview1, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueCar, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueHomelessManKid, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyHelpedLucy, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyIsKind, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyHelpedIzoIzoIsAReplicant, 25, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyShotGuzza, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyRetiredLucy, 75, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyRetiredGordo, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyRetiredZuben, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHowieLee, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueGuzzaFramedMcCoy, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyIncept, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kCluePoliceWeaponUsed, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoysWeaponUsedonBob, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRecoveredHoldensBadge, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredGordo, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRetiredZuben, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyIsStupid, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsAnnoying, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsKind, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyKilledRunciter1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoysDescription, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsABladeRunner, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyShotGuzza, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyRetiredLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyBetrayal, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyKilledRunciter2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueClovisOrdersMcCoysDeath, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueEarlyAttemptedToSeduceLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsStupid, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueHowieLeeInterview, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueIzoInterview, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueGordoInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueGordoInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueEarlyQInterview, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueZubenInterview, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueGordoInterview3, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueIzosStashRaided, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueCrystalArrestedCrazylegs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueSightingMcCoyRuncitersShop, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueShellCasings, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueChopstickWrapper, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueSushiMenu, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsStupid, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsAnnoying, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsInsane, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyWarnedIzo, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyHelpedIzoIzoIsAReplicant, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueGuzzaFramedMcCoy, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyIncept, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kCluePoliceWeaponUsed, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoysWeaponUsedonBob, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRecoveredHoldensBadge, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyHelpedLucy, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredGordo, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRetiredZuben, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyIsStupid, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueWeaponsOrderForm, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyIsABladeRunner, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyRetiredLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueHowieLeeInterview, 30, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueDNATyrell, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueDNASebastian, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueDNAMoraji, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueDNAMarcus, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueCrazylegsInterview2, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMoraji, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueOfficersStatement, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueShellCasings, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueChopstickWrapper, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueSushiMenu, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsStupid, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsAnnoying, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsInsane, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredZuben, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyWarnedIzo, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyHelpedIzoIzoIsAReplicant, 85, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyShotZubenintheback, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyKilledRunciter1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyShotGuzza, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredLutherLance, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueClovisOrdersMcCoysDeath, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyKilledRunciter1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyShotZubenintheback, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyWarnedIzo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyHelpedIzoIzoIsAReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyShotGuzza, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyRetiredDektora, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyRetiredSadik, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyIsABladeRunner, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyBetrayal, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueEarlyAttemptedToSeduceLucy, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kCluePowerSource, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyIsABladeRunner, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyRetiredLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueHowieLeeInterview, 30, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueDNATyrell, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueDNASebastian, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueDNAMoraji, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueDNAMarcus, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueCrazylegsInterview2, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorChew, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueGuzzaFramedMcCoy, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKDektoraReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKBobGorskyReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKLutherLanceReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKGrigorianReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKIzoReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKCrazylegsReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueVKEarlyQReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyIncept, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kCluePoliceWeaponUsed, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoysWeaponUsedonBob, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRecoveredHoldensBadge, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueCar, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyHelpedLucy, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyIsKind, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyKilledRunciter1, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyKilledRunciter2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyLetZubenEscape, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyWarnedIzo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyHelpedDektora, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyHelpedGordo, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyShotGuzza, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredGordo, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyRetiredZuben, 90, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyIsInsane, 95, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyShotZubenintheback, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyKilledRunciter1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyHelpedLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyShotGuzza, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredLutherLance, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyBetrayal, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyKilledRunciter2, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueClovisOrdersMcCoysDeath, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueWeaponsOrderForm, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueHollowayInterview, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueRunciterConfession1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueRunciterConfession2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsABladeRunner, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyRetiredZuben, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsAnnoying, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyKilledRunciter1, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoysDescription, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyWarnedIzo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyRetiredLucy, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyRetiredDektora, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyBetrayal, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyKilledRunciter2, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueClovisOrdersMcCoysDeath, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueEarlyAttemptedToSeduceLucy, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsStupid, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueHowieLeeInterview, 30, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueIzoInterview, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueGordoInterview1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueGordoInterview2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueEarlyQInterview, 25, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueSuspectDektora, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueZubenInterview, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueGordoInterview3, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDektoraInterview4, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueIzosStashRaided, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueGordoBlabs, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDektoraConfession, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDNATyrell, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDNAChew, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDNAMoraji, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDNALutherLance, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueDNAMarcus, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueCrazylegsInterview1, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueCrazylegsInterview2, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kCluePowerSource, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyIsKind, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyShotZubenintheback, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyWarnedIzo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyHelpedIzoIzoIsAReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyShotGuzza, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyRetiredDektora, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyRetiredSadik, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyIsABladeRunner, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyBetrayal, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueEarlyAttemptedToSeduceLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kCluePowerSource, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsAnnoying, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsInsane, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyKilledRunciter1, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoysDescription, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyLetZubenEscape, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyWarnedIzo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyHelpedIzoIzoIsAReplicant, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyHelpedGordo, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyHelpedLucy, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyHelpedDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyShotGuzza, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyRetiredZuben, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyRetiredDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyRetiredSadik, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyRetiredLutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyKilledRunciter2, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueSuspectDektora, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueGordoBlabs, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNATyrell, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNASebastian, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNAChew, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNAMoraji, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNALutherLance, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueDNAMarcus, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueCrazylegsInterview1, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueCrazylegsInterview2, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kCluePowerSource, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsStupid, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsKind, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredZuben, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyKilledRunciter1, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyLetZubenEscape, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyWarnedIzo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyHelpedIzoIzoIsAReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyHelpedDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyHelpedLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyHelpedGordo, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyShotGuzza, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredLucy, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredDektora, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredSadik, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredLutherLance, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyBetrayal, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyKilledRunciter2, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueClovisOrdersMcCoysDeath, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKDektoraReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKBobGorskyReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKLutherLanceReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKGrigorianReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKIzoReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKCrazylegsReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKRunciterReplicant, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueVKEarlyQReplicant, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueOfficersStatement, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueSightingSadikBradbury, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueSightingMcCoyRuncitersShop, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueWeaponsOrderForm, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueHollowayInterview, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueRunciterConfession1, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueRunciterConfession2, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMaggie, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMaggie, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMaggie, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMaggie, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMaggie, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerA, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerA, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerA, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerA, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerA, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerB, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerB, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerB, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerB, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerB, kClueMcCoyIsABladeRunner, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsAnnoying, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsKind, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsInsane, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsStupid, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsABladeRunner, 65, false, false, -1);
 }
 
 void ScriptInit::Init_World_Waypoints() {
@@ -1860,459 +2186,459 @@ void ScriptInit::Init_World_Waypoints() {
 }
 
 void ScriptInit::Init_SDB() {
-	SDB_Set_Actor(0, 8);
+	SDB_Set_Actor(0, kActorSadik);
 	SDB_Set_Sex(0, 1);
-	SDB_Add_MO_Clue(0, 52);
-	SDB_Add_MO_Clue(0, 49);
-	SDB_Add_MO_Clue(0, 48);
-	SDB_Add_MO_Clue(0, 261);
-	SDB_Add_Whereabouts_Clue(0, 45);
-	SDB_Add_Whereabouts_Clue(0, 53);
-	SDB_Add_Whereabouts_Clue(0, 44);
-	SDB_Add_Whereabouts_Clue(0, 67);
-	SDB_Add_Whereabouts_Clue(0, 122);
-	SDB_Add_Replicant_Clue(0, 49);
-	SDB_Add_Replicant_Clue(0, 52);
-	SDB_Add_Replicant_Clue(0, 68);
-	SDB_Add_Replicant_Clue(0, 51);
-	SDB_Add_Replicant_Clue(0, 269);
-	SDB_Add_Replicant_Clue(0, 278);
-	SDB_Add_Replicant_Clue(0, 52);
-	SDB_Add_Non_Replicant_Clue(0, 74);
-	SDB_Add_Non_Replicant_Clue(0, 61);
-	SDB_Add_Non_Replicant_Clue(0, 270);
-	SDB_Add_Other_Clue(0, 180);
-	SDB_Add_Other_Clue(0, 181);
-	SDB_Add_Other_Clue(0, 266);
-	SDB_Add_Other_Clue(0, 47);
-	SDB_Add_Other_Clue(0, 277);
-	SDB_Add_Identity_Clue(0, 266);
-	SDB_Add_Photo_Clue(0, 47, 31);
-	SDB_Add_Photo_Clue(0, 277, 38);
-	SDB_Set_Actor(1, 5);
+	SDB_Add_MO_Clue(0, kClueCrystalsCase);
+	SDB_Add_MO_Clue(0, kClueDetonatorWire);
+	SDB_Add_MO_Clue(0, kClueSadiksGun);
+	SDB_Add_MO_Clue(0, kCluePlasticExplosive);
+	SDB_Add_Whereabouts_Clue(0, kClueTyrellSecurity);
+	SDB_Add_Whereabouts_Clue(0, kClueKingstonKitchenBox1);
+	SDB_Add_Whereabouts_Clue(0, kClueDragonflyEarring);
+	SDB_Add_Whereabouts_Clue(0, kClueChewInterview);
+	SDB_Add_Whereabouts_Clue(0, kClueHomelessManInterview1);
+	SDB_Add_Replicant_Clue(0, kClueDetonatorWire);
+	SDB_Add_Replicant_Clue(0, kClueCrystalsCase);
+	SDB_Add_Replicant_Clue(0, kClueMorajiInterview);
+	SDB_Add_Replicant_Clue(0, kClueAttemptedFileAccess);
+	SDB_Add_Replicant_Clue(0, kClueExpertBomber);
+	SDB_Add_Replicant_Clue(0, kClueRachaelInterview);
+	SDB_Add_Replicant_Clue(0, kClueCrystalsCase);
+	SDB_Add_Non_Replicant_Clue(0, kClueStaggeredbyPunches);
+	SDB_Add_Non_Replicant_Clue(0, kClueIzosWarning);
+	SDB_Add_Non_Replicant_Clue(0, kClueAmateurBomber);
+	SDB_Add_Other_Clue(0, kClueGrigorianInterviewB1);
+	SDB_Add_Other_Clue(0, kClueGrigorianInterviewB2);
+	SDB_Add_Other_Clue(0, kClueAct2Ended);
+	SDB_Add_Other_Clue(0, kClueBombingSuspect);
+	SDB_Add_Other_Clue(0, kClueSadikAtMoonbus);
+	SDB_Add_Identity_Clue(0, kClueAct2Ended);
+	SDB_Add_Photo_Clue(0, kClueBombingSuspect, 31);
+	SDB_Add_Photo_Clue(0, kClueSadikAtMoonbus, 38);
+	SDB_Set_Actor(1, kActorClovis);
 	SDB_Set_Sex(1, 1);
-	SDB_Add_MO_Clue(1, 5);
-	SDB_Add_MO_Clue(1, 11);
-	SDB_Add_Whereabouts_Clue(1, 40);
-	SDB_Add_Whereabouts_Clue(1, 29);
-	SDB_Add_Whereabouts_Clue(1, 67);
-	SDB_Add_Replicant_Clue(1, 0);
-	SDB_Add_Replicant_Clue(1, 2);
-	SDB_Add_Replicant_Clue(1, 68);
-	SDB_Add_Replicant_Clue(1, 156);
-	SDB_Add_Replicant_Clue(1, 157);
-	SDB_Add_Replicant_Clue(1, 107);
-	SDB_Add_Other_Clue(1, 243);
-	SDB_Add_Other_Clue(1, 4);
-	SDB_Add_Other_Clue(1, 61);
-	SDB_Add_Other_Clue(1, 266);
-	SDB_Add_Other_Clue(1, 276);
-	SDB_Add_Other_Clue(1, 243);
-	SDB_Add_Other_Clue(1, 77);
-	SDB_Add_Other_Clue(1, 244);
-	SDB_Add_Identity_Clue(1, 61);
-	SDB_Add_Identity_Clue(1, 266);
-	SDB_Add_Identity_Clue(1, 107);
-	SDB_Add_Photo_Clue(1, 276, 37);
-	SDB_Add_Photo_Clue(1, 243, 7);
-	SDB_Add_Photo_Clue(1, 77, 25);
-	SDB_Add_Photo_Clue(1, 244, 8);
-	SDB_Set_Actor(2, 19);
+	SDB_Add_MO_Clue(1, kClueShellCasings);
+	SDB_Add_MO_Clue(1, kClueLabShellCasings);
+	SDB_Add_Whereabouts_Clue(1, kClueDispatchHitAndRun);
+	SDB_Add_Whereabouts_Clue(1, kClueRuncitersViewB);
+	SDB_Add_Whereabouts_Clue(1, kClueChewInterview);
+	SDB_Add_Replicant_Clue(1, kClueOfficersStatement);
+	SDB_Add_Replicant_Clue(1, kClueDoorForced2);
+	SDB_Add_Replicant_Clue(1, kClueMorajiInterview);
+	SDB_Add_Replicant_Clue(1, kClueZubenTalksAboutLucy1);
+	SDB_Add_Replicant_Clue(1, kClueZubenTalksAboutLucy2);
+	SDB_Add_Replicant_Clue(1, kClueDektoraInterview4);
+	SDB_Add_Other_Clue(1, kClueAnimalMurderSuspect);
+	SDB_Add_Other_Clue(1, kClueGracefulFootprints);
+	SDB_Add_Other_Clue(1, kClueIzosWarning);
+	SDB_Add_Other_Clue(1, kClueAct2Ended);
+	SDB_Add_Other_Clue(1, kClueClovisAtMoonbus);
+	SDB_Add_Other_Clue(1, kClueAnimalMurderSuspect);
+	SDB_Add_Other_Clue(1, kClueIzosFriend);
+	SDB_Add_Other_Clue(1, kClueMilitaryBoots);
+	SDB_Add_Identity_Clue(1, kClueIzosWarning);
+	SDB_Add_Identity_Clue(1, kClueAct2Ended);
+	SDB_Add_Identity_Clue(1, kClueDektoraInterview4);
+	SDB_Add_Photo_Clue(1, kClueClovisAtMoonbus, 37);
+	SDB_Add_Photo_Clue(1, kClueAnimalMurderSuspect, 7);
+	SDB_Add_Photo_Clue(1, kClueIzosFriend, 25);
+	SDB_Add_Photo_Clue(1, kClueMilitaryBoots, 8);
+	SDB_Set_Actor(2, kActorZuben);
 	SDB_Set_Sex(2, 1);
-	SDB_Add_MO_Clue(2, 0);
-	SDB_Add_MO_Clue(2, 10);
-	SDB_Add_Whereabouts_Clue(2, 40);
-	SDB_Add_Whereabouts_Clue(2, 29);
-	SDB_Add_Replicant_Clue(2, 0);
-	SDB_Add_Replicant_Clue(2, 2);
-	SDB_Add_Replicant_Clue(2, 25);
-	SDB_Add_Replicant_Clue(2, 18);
-	SDB_Add_Replicant_Clue(2, 20);
-	SDB_Add_Replicant_Clue(2, 156);
-	SDB_Add_Replicant_Clue(2, 157);
-	SDB_Add_Non_Replicant_Clue(2, 3);
-	SDB_Add_Non_Replicant_Clue(2, 21);
-	SDB_Add_Non_Replicant_Clue(2, 158);
-	SDB_Add_Other_Clue(2, 16);
-	SDB_Add_Other_Clue(2, 19);
-	SDB_Add_Other_Clue(2, 273);
-	SDB_Add_Identity_Clue(2, 25);
-	SDB_Add_Identity_Clue(2, 18);
-	SDB_Add_Identity_Clue(2, 19);
-	SDB_Add_Identity_Clue(2, 273);
-	SDB_Add_Photo_Clue(2, 20, 33);
-	SDB_Set_Actor(3, 6);
+	SDB_Add_MO_Clue(2, kClueOfficersStatement);
+	SDB_Add_MO_Clue(2, kClueLabCorpses);
+	SDB_Add_Whereabouts_Clue(2, kClueDispatchHitAndRun);
+	SDB_Add_Whereabouts_Clue(2, kClueRuncitersViewB);
+	SDB_Add_Replicant_Clue(2, kClueOfficersStatement);
+	SDB_Add_Replicant_Clue(2, kClueDoorForced2);
+	SDB_Add_Replicant_Clue(2, kClueHowieLeeInterview);
+	SDB_Add_Replicant_Clue(2, kClueZubenRunsAway);
+	SDB_Add_Replicant_Clue(2, kClueZuben);
+	SDB_Add_Replicant_Clue(2, kClueZubenTalksAboutLucy1);
+	SDB_Add_Replicant_Clue(2, kClueZubenTalksAboutLucy2);
+	SDB_Add_Non_Replicant_Clue(2, kClueLimpingFootprints);
+	SDB_Add_Non_Replicant_Clue(2, kClueBigManLimping);
+	SDB_Add_Non_Replicant_Clue(2, kClueZubensMotive);
+	SDB_Add_Other_Clue(2, kClueCrowdInterviewA);
+	SDB_Add_Other_Clue(2, kClueZubenInterview);
+	SDB_Add_Other_Clue(2, kClueLucyInterview);
+	SDB_Add_Identity_Clue(2, kClueHowieLeeInterview);
+	SDB_Add_Identity_Clue(2, kClueZubenRunsAway);
+	SDB_Add_Identity_Clue(2, kClueZubenInterview);
+	SDB_Add_Identity_Clue(2, kClueLucyInterview);
+	SDB_Add_Photo_Clue(2, kClueZuben, 33);
+	SDB_Set_Actor(3, kActorLucy);
 	SDB_Set_Sex(3, 0);
-	SDB_Add_Whereabouts_Clue(3, 8);
-	SDB_Add_Whereabouts_Clue(3, 9);
-	SDB_Add_Whereabouts_Clue(3, 15);
-	SDB_Add_Whereabouts_Clue(3, 28);
-	SDB_Add_Whereabouts_Clue(3, 84);
-	SDB_Add_Whereabouts_Clue(3, 19);
-	SDB_Add_Replicant_Clue(3, 22);
-	SDB_Add_Replicant_Clue(3, 23);
-	SDB_Add_Replicant_Clue(3, 271);
-	SDB_Add_Replicant_Clue(3, 156);
-	SDB_Add_Replicant_Clue(3, 107);
-	SDB_Add_Replicant_Clue(3, 280);
-	SDB_Add_Non_Replicant_Clue(3, 7);
-	SDB_Add_Non_Replicant_Clue(3, 85);
-	SDB_Add_Non_Replicant_Clue(3, 6);
-	SDB_Add_Non_Replicant_Clue(3, 272);
-	SDB_Add_Non_Replicant_Clue(3, 157);
-	SDB_Add_Other_Clue(3, 13);
-	SDB_Add_Other_Clue(3, 16);
-	SDB_Add_Identity_Clue(3, 22);
-	SDB_Add_Identity_Clue(3, 107);
-	SDB_Add_Photo_Clue(3, 13, 5);
-	SDB_Set_Actor(4, 3);
-	SDB_Add_MO_Clue(4, 252);
-	SDB_Add_Replicant_Clue(4, 162);
-	SDB_Add_Replicant_Clue(4, 92);
-	SDB_Add_Replicant_Clue(4, 91);
-	SDB_Add_Replicant_Clue(4, 107);
-	SDB_Add_Non_Replicant_Clue(4, 163);
-	SDB_Add_Non_Replicant_Clue(4, 96);
-	SDB_Add_Non_Replicant_Clue(4, 97);
-	SDB_Add_Non_Replicant_Clue(4, 98);
-	SDB_Add_Non_Replicant_Clue(4, 94);
-	SDB_Add_Other_Clue(4, 91);
-	SDB_Add_Other_Clue(4, 251);
-	SDB_Add_Other_Clue(4, 260);
-	SDB_Add_Other_Clue(4, 113);
-	SDB_Add_Identity_Clue(4, 96);
-	SDB_Add_Identity_Clue(4, 97);
-	SDB_Add_Identity_Clue(4, 92);
-	SDB_Add_Photo_Clue(4, 251, 21);
-	SDB_Add_Photo_Clue(4, 260, 19);
-	SDB_Set_Actor(5, 2);
+	SDB_Add_Whereabouts_Clue(3, kClueChopstickWrapper);
+	SDB_Add_Whereabouts_Clue(3, kClueSushiMenu);
+	SDB_Add_Whereabouts_Clue(3, kClueReferenceLetter);
+	SDB_Add_Whereabouts_Clue(3, kClueRuncitersViewA);
+	SDB_Add_Whereabouts_Clue(3, kClueHysteriaToken);
+	SDB_Add_Whereabouts_Clue(3, kClueZubenInterview);
+	SDB_Add_Replicant_Clue(3, kClueRunciterInterviewA);
+	SDB_Add_Replicant_Clue(3, kClueRunciterInterviewB1);
+	SDB_Add_Replicant_Clue(3, kClueVKLucyReplicant);
+	SDB_Add_Replicant_Clue(3, kClueZubenTalksAboutLucy1);
+	SDB_Add_Replicant_Clue(3, kClueDektoraInterview4);
+	SDB_Add_Replicant_Clue(3, kClueRuncitersConfession1);
+	SDB_Add_Non_Replicant_Clue(3, kClueToyDog);
+	SDB_Add_Non_Replicant_Clue(3, kClueRagDoll);
+	SDB_Add_Non_Replicant_Clue(3, kClueCandy);
+	SDB_Add_Non_Replicant_Clue(3, kClueVKLucyHuman);
+	SDB_Add_Non_Replicant_Clue(3, kClueZubenTalksAboutLucy2);
+	SDB_Add_Other_Clue(3, kClueLucy);
+	SDB_Add_Other_Clue(3, kClueCrowdInterviewA);
+	SDB_Add_Identity_Clue(3, kClueRunciterInterviewA);
+	SDB_Add_Identity_Clue(3, kClueDektoraInterview4);
+	SDB_Add_Photo_Clue(3, kClueLucy, 5);
+	SDB_Set_Actor(4, kActorDektora);
+	SDB_Add_MO_Clue(4, kClueScorpions);
+	SDB_Add_Replicant_Clue(4, kClueVKDektoraReplicant);
+	SDB_Add_Replicant_Clue(4, kClueEarlyQInterview);
+	SDB_Add_Replicant_Clue(4, kClueDragonflyBelt);
+	SDB_Add_Replicant_Clue(4, kClueDektoraInterview4);
+	SDB_Add_Non_Replicant_Clue(4, kClueVKDektoraHuman);
+	SDB_Add_Non_Replicant_Clue(4, kClueDektoraInterview2);
+	SDB_Add_Non_Replicant_Clue(4, kClueDektoraInterview3);
+	SDB_Add_Non_Replicant_Clue(4, kClueDektorasCard);
+	SDB_Add_Non_Replicant_Clue(4, kClueDektoraInterview1);
+	SDB_Add_Other_Clue(4, kClueDragonflyBelt);
+	SDB_Add_Other_Clue(4, kClueWomanInAnimoidRow);
+	SDB_Add_Other_Clue(4, kClueChinaBar);
+	SDB_Add_Other_Clue(4, kClueCarRegistration1);
+	SDB_Add_Identity_Clue(4, kClueDektoraInterview2);
+	SDB_Add_Identity_Clue(4, kClueDektoraInterview3);
+	SDB_Add_Identity_Clue(4, kClueEarlyQInterview);
+	SDB_Add_Photo_Clue(4, kClueWomanInAnimoidRow, 21);
+	SDB_Add_Photo_Clue(4, kClueChinaBar, 19);
+	SDB_Set_Actor(5, kActorGordo);
 	SDB_Set_Sex(5, 1);
-	SDB_Add_Whereabouts_Clue(5, 102);
-	SDB_Add_Identity_Clue(5, 69);
-	SDB_Add_Identity_Clue(5, 70);
-	SDB_Set_Actor(6, 7);
+	SDB_Add_Whereabouts_Clue(5, kClueStolenCheese);
+	SDB_Add_Identity_Clue(5, kClueGordoInterview1);
+	SDB_Add_Identity_Clue(5, kClueGordoInterview2);
+	SDB_Set_Actor(6, kActorIzo);
 	SDB_Set_Sex(6, 1);
-	SDB_Add_Whereabouts_Clue(6, 58);
-	SDB_Add_Whereabouts_Clue(6, 59);
-	SDB_Add_Whereabouts_Clue(6, 181);
-	SDB_Add_Whereabouts_Clue(6, 122);
-	SDB_Add_Replicant_Clue(6, 63);
-	SDB_Add_Other_Clue(6, 180);
-	SDB_Add_Other_Clue(6, 66);
-	SDB_Add_Other_Clue(6, 125);
-	SDB_Add_Other_Clue(6, 121);
-	SDB_Add_Other_Clue(6, 255);
-	SDB_Add_Other_Clue(6, 246);
-	SDB_Add_Other_Clue(6, 247);
-	SDB_Add_Other_Clue(6, 62);
-	SDB_Add_Other_Clue(6, 60);
-	SDB_Add_Identity_Clue(6, 181);
-	SDB_Add_Identity_Clue(6, 58);
-	SDB_Add_Identity_Clue(6, 59);
-	SDB_Add_Identity_Clue(6, 246);
-	SDB_Add_Identity_Clue(6, 247);
-	SDB_Add_Identity_Clue(6, 62);
-	SDB_Add_Identity_Clue(6, 60);
-	SDB_Add_Photo_Clue(6, 255, 26);
-	SDB_Set_Actor(7, 0);
-	SDB_Add_Replicant_Clue(7, 275);
-	SDB_Add_Other_Clue(7, 246);
-	SDB_Add_Other_Clue(7, 247);
-	SDB_Add_Identity_Clue(7, 275);
-	SDB_Add_Photo_Clue(7, 275, 36);
-	SDB_Add_Photo_Clue(7, 246, 17);
-	SDB_Add_Photo_Clue(7, 247, 18);
-	SDB_Set_Actor(8, 4);
-	SDB_Add_Other_Clue(8, 256);
-	SDB_Add_Other_Clue(8, 125);
-	SDB_Add_Other_Clue(8, 126);
-	SDB_Add_Identity_Clue(8, 256);
-	SDB_Add_Identity_Clue(8, 126);
-	SDB_Add_Identity_Clue(8, 125);
-	SDB_Add_Photo_Clue(8, 256, 27);
+	SDB_Add_Whereabouts_Clue(6, kClueBobInterview1);
+	SDB_Add_Whereabouts_Clue(6, kClueBobInterview2);
+	SDB_Add_Whereabouts_Clue(6, kClueGrigorianInterviewB2);
+	SDB_Add_Whereabouts_Clue(6, kClueHomelessManInterview1);
+	SDB_Add_Replicant_Clue(6, kClueGogglesReplicantIssue);
+	SDB_Add_Other_Clue(6, kClueGrigorianInterviewB1);
+	SDB_Add_Other_Clue(6, kClueWeaponsCache);
+	SDB_Add_Other_Clue(6, kClueFolder);
+	SDB_Add_Other_Clue(6, kClueIzosStashRaided);
+	SDB_Add_Other_Clue(6, kClueIzo);
+	SDB_Add_Other_Clue(6, kCluePhotoOfMcCoy1);
+	SDB_Add_Other_Clue(6, kCluePhotoOfMcCoy2);
+	SDB_Add_Other_Clue(6, kClueRadiationGoggles);
+	SDB_Add_Other_Clue(6, kClueIzoInterview);
+	SDB_Add_Identity_Clue(6, kClueGrigorianInterviewB2);
+	SDB_Add_Identity_Clue(6, kClueBobInterview1);
+	SDB_Add_Identity_Clue(6, kClueBobInterview2);
+	SDB_Add_Identity_Clue(6, kCluePhotoOfMcCoy1);
+	SDB_Add_Identity_Clue(6, kCluePhotoOfMcCoy2);
+	SDB_Add_Identity_Clue(6, kClueRadiationGoggles);
+	SDB_Add_Identity_Clue(6, kClueIzoInterview);
+	SDB_Add_Photo_Clue(6, kClueIzo, 26);
+	SDB_Set_Actor(7, kActorMcCoy);
+	SDB_Add_Replicant_Clue(7, kClueMcCoyAtMoonbus);
+	SDB_Add_Other_Clue(7, kCluePhotoOfMcCoy1);
+	SDB_Add_Other_Clue(7, kCluePhotoOfMcCoy2);
+	SDB_Add_Identity_Clue(7, kClueMcCoyAtMoonbus);
+	SDB_Add_Photo_Clue(7, kClueMcCoyAtMoonbus, 36);
+	SDB_Add_Photo_Clue(7, kCluePhotoOfMcCoy1, 17);
+	SDB_Add_Photo_Clue(7, kCluePhotoOfMcCoy2, 18);
+	SDB_Set_Actor(8, kActorGuzza);
+	SDB_Add_Other_Clue(8, kClueGuzza);
+	SDB_Add_Other_Clue(8, kClueFolder);
+	SDB_Add_Other_Clue(8, kClueGuzzaFramedMcCoy);
+	SDB_Add_Identity_Clue(8, kClueGuzza);
+	SDB_Add_Identity_Clue(8, kClueGuzzaFramedMcCoy);
+	SDB_Add_Identity_Clue(8, kClueFolder);
+	SDB_Add_Photo_Clue(8, kClueGuzza, 27);
 }
 
 void ScriptInit::Init_CDB() {
-	CDB_Set_Crime(0, 0);
-	CDB_Set_Crime(1, 0);
-	CDB_Set_Crime(2, 0);
-	CDB_Set_Crime(3, 0);
-	CDB_Set_Crime(4, 0);
-	CDB_Set_Crime(5, 0);
-	CDB_Set_Crime(6, 0);
-	CDB_Set_Crime(7, 0);
-	CDB_Set_Crime(8, 0);
-	CDB_Set_Crime(9, 0);
-	CDB_Set_Crime(10, 0);
-	CDB_Set_Crime(11, 0);
-	CDB_Set_Crime(12, 0);
-	CDB_Set_Crime(15, 0);
-	CDB_Set_Crime(16, 0);
-	CDB_Set_Crime(17, 0);
-	CDB_Set_Crime(22, 0);
-	CDB_Set_Crime(23, 0);
-	CDB_Set_Crime(24, 0);
-	CDB_Set_Crime(26, 0);
-	CDB_Set_Crime(27, 0);
-	CDB_Set_Crime(28, 0);
-	CDB_Set_Crime(29, 0);
-	CDB_Set_Crime(30, 0);
-	CDB_Set_Crime(37, 0);
-	CDB_Set_Crime(31, 0);
-	CDB_Set_Crime(39, 0);
-	CDB_Set_Crime(243, 0);
-	CDB_Set_Crime(244, 0);
-	CDB_Set_Crime(273, 0);
-	CDB_Set_Crime(113, 0);
-	CDB_Set_Crime(114, 0);
-	CDB_Set_Crime(115, 0);
-	CDB_Set_Crime(19, 0);
-	CDB_Set_Crime(13, 0);
-	CDB_Set_Crime(14, 0);
-	CDB_Set_Crime(20, 0);
-	CDB_Set_Crime(43, 1);
-	CDB_Set_Crime(44, 1);
-	CDB_Set_Crime(45, 1);
-	CDB_Set_Crime(46, 1);
-	CDB_Set_Crime(49, 1);
-	CDB_Set_Crime(50, 1);
-	CDB_Set_Crime(51, 1);
-	CDB_Set_Crime(53, 1);
-	CDB_Set_Crime(54, 1);
-	CDB_Set_Crime(55, 1);
-	CDB_Set_Crime(65, 1);
-	CDB_Set_Crime(278, 1);
-	CDB_Set_Crime(279, 1);
-	CDB_Set_Crime(47, 1);
-	CDB_Set_Crime(262, 1);
-	CDB_Set_Crime(263, 1);
-	CDB_Set_Crime(261, 1);
-	CDB_Set_Crime(259, 1);
-	CDB_Set_Crime(33, 8);
-	CDB_Set_Crime(86, 8);
-	CDB_Set_Crime(275, 8);
-	CDB_Set_Crime(276, 8);
-	CDB_Set_Crime(277, 8);
-	CDB_Set_Crime(271, 8);
-	CDB_Set_Crime(52, 8);
-	CDB_Set_Crime(144, 8);
-	CDB_Set_Crime(178, 5);
-	CDB_Set_Crime(179, 5);
-	CDB_Set_Crime(180, 5);
-	CDB_Set_Crime(181, 5);
-	CDB_Set_Crime(68, 3);
-	CDB_Set_Crime(269, 3);
-	CDB_Set_Crime(270, 3);
-	CDB_Set_Crime(66, 2);
-	CDB_Set_Crime(125, 2);
-	CDB_Set_Crime(121, 2);
-	CDB_Set_Crime(122, 2);
-	CDB_Set_Crime(123, 2);
-	CDB_Set_Crime(124, 2);
-	CDB_Set_Crime(128, 2);
-	CDB_Set_Crime(83, 2);
-	CDB_Set_Crime(125, 2);
-	CDB_Set_Crime(126, 2);
-	CDB_Set_Crime(74, 4);
-	CDB_Set_Crime(266, 4);
+	CDB_Set_Crime(kClueOfficersStatement, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueDoorForced1, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueDoorForced2, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLimpingFootprints, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueGracefulFootprints, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueShellCasings, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCandy, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueToyDog, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueChopstickWrapper, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueSushiMenu, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLabCorpses, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLabShellCasings, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRuncitersVideo, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueReferenceLetter, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCrowdInterviewA, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCrowdInterviewB, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRunciterInterviewA, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRunciterInterviewB1, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRunciterInterviewB2, kCrimeAnimalMurder);
+	CDB_Set_Crime(kCluePaintTransfer, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueChromeDebris, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRuncitersViewA, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueRuncitersViewB, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCarColorAndMake, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLicensePlate, kCrimeAnimalMurder);
+	CDB_Set_Crime(kCluePartialLicenseNumber, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLabPaintTransfer, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueAnimalMurderSuspect, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueMilitaryBoots, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLucyInterview, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCarRegistration1, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCarRegistration2, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueCarRegistration3, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueZubenInterview, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueLucy, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueDragonflyAnklet, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueZuben, kCrimeAnimalMurder);
+	CDB_Set_Crime(kCluePhoneCallGuzza, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueDragonflyEarring, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSecurity, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellGuardInterview, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueDetonatorWire, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueVictimInformation, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueAttemptedFileAccess, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueKingstonKitchenBox1, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSalesPamphlet1, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSalesPamphlet2, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueDogCollar1, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueRachaelInterview, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellInterview, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueBombingSuspect, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueDogCollar2, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueKingstonKitchenBox2, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kCluePlasticExplosive, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSecurityPhoto, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueGaffsInformation, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueMoonbus1, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueMcCoyAtMoonbus, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueClovisAtMoonbus, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueSadikAtMoonbus, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueVKLucyReplicant, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueCrystalsCase, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kCluePhoneCallCrystal, kCrimeMoonbusHijacking);
+	CDB_Set_Crime(kClueCrimeSceneNotes, kCrimeFactoryBombing);
+	CDB_Set_Crime(kClueGrigorianInterviewA, kCrimeFactoryBombing);
+	CDB_Set_Crime(kClueGrigorianInterviewB1, kCrimeFactoryBombing);
+	CDB_Set_Crime(kClueGrigorianInterviewB2, kCrimeFactoryBombing);
+	CDB_Set_Crime(kClueMorajiInterview, kCrimeMorajiMurder);
+	CDB_Set_Crime(kClueExpertBomber, kCrimeMorajiMurder);
+	CDB_Set_Crime(kClueAmateurBomber, kCrimeMorajiMurder);
+	CDB_Set_Crime(kClueWeaponsCache, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueFolder, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueIzosStashRaided, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueHomelessManInterview1, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueHomelessManInterview2, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueHomelessManKid, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueOriginalRequisitionForm, kCrimeArmsDealing);
+	CDB_Set_Crime(kCluePoliceIssueWeapons, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueFolder, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueGuzzaFramedMcCoy, kCrimeArmsDealing);
+	CDB_Set_Crime(kClueStaggeredbyPunches, kCrimeBradburyAssault);
+	CDB_Set_Crime(kClueAct2Ended, kCrimeBradburyAssault);
 	int i = 0;
 	do {
 		CDB_Set_Clue_Asset_Type(i++, -1);
 	} while (i < 288);
-	CDB_Set_Clue_Asset_Type(0, 2);
-	CDB_Set_Clue_Asset_Type(2, 2);
-	CDB_Set_Clue_Asset_Type(3, 2);
-	CDB_Set_Clue_Asset_Type(4, 2);
-	CDB_Set_Clue_Asset_Type(5, 3);
-	CDB_Set_Clue_Asset_Type(6, 3);
-	CDB_Set_Clue_Asset_Type(7, 3);
-	CDB_Set_Clue_Asset_Type(8, 3);
-	CDB_Set_Clue_Asset_Type(9, 0);
-	CDB_Set_Clue_Asset_Type(10, 2);
-	CDB_Set_Clue_Asset_Type(11, 2);
-	CDB_Set_Clue_Asset_Type(12, 1);
-	CDB_Set_Clue_Asset_Type(13, 0);
-	CDB_Set_Clue_Asset_Type(14, 0);
-	CDB_Set_Clue_Asset_Type(15, 3);
-	CDB_Set_Clue_Asset_Type(16, 2);
-	CDB_Set_Clue_Asset_Type(17, 2);
-	CDB_Set_Clue_Asset_Type(19, 2);
-	CDB_Set_Clue_Asset_Type(20, 0);
-	CDB_Set_Clue_Asset_Type(21, 2);
-	CDB_Set_Clue_Asset_Type(22, 2);
-	CDB_Set_Clue_Asset_Type(23, 2);
-	CDB_Set_Clue_Asset_Type(24, 2);
-	CDB_Set_Clue_Asset_Type(25, 2);
-	CDB_Set_Clue_Asset_Type(26, 2);
-	CDB_Set_Clue_Asset_Type(27, 3);
-	CDB_Set_Clue_Asset_Type(28, 0);
-	CDB_Set_Clue_Asset_Type(29, 0);
-	CDB_Set_Clue_Asset_Type(30, 0);
-	CDB_Set_Clue_Asset_Type(31, 0);
-	CDB_Set_Clue_Asset_Type(32, 3);
-	CDB_Set_Clue_Asset_Type(33, 2);
-	CDB_Set_Clue_Asset_Type(34, -1);
-	CDB_Set_Clue_Asset_Type(35, -1);
-	CDB_Set_Clue_Asset_Type(36, 0);
-	CDB_Set_Clue_Asset_Type(37, 3);
-	CDB_Set_Clue_Asset_Type(39, 2);
-	CDB_Set_Clue_Asset_Type(40, 2);
-	CDB_Set_Clue_Asset_Type(41, 0);
-	CDB_Set_Clue_Asset_Type(43, 2);
-	CDB_Set_Clue_Asset_Type(44, 3);
-	CDB_Set_Clue_Asset_Type(45, 1);
-	CDB_Set_Clue_Asset_Type(46, 2);
-	CDB_Set_Clue_Asset_Type(47, 0);
-	CDB_Set_Clue_Asset_Type(48, 0);
-	CDB_Set_Clue_Asset_Type(49, 3);
-	CDB_Set_Clue_Asset_Type(50, 2);
-	CDB_Set_Clue_Asset_Type(51, 2);
-	CDB_Set_Clue_Asset_Type(52, 2);
-	CDB_Set_Clue_Asset_Type(53, 3);
-	CDB_Set_Clue_Asset_Type(54, 3);
-	CDB_Set_Clue_Asset_Type(55, 3);
-	CDB_Set_Clue_Asset_Type(56, 2);
-	CDB_Set_Clue_Asset_Type(57, 2);
-	CDB_Set_Clue_Asset_Type(58, 2);
-	CDB_Set_Clue_Asset_Type(59, 2);
-	CDB_Set_Clue_Asset_Type(60, 2);
-	CDB_Set_Clue_Asset_Type(61, 2);
-	CDB_Set_Clue_Asset_Type(62, 3);
-	CDB_Set_Clue_Asset_Type(63, 2);
-	CDB_Set_Clue_Asset_Type(64, 2);
-	CDB_Set_Clue_Asset_Type(65, 3);
-	CDB_Set_Clue_Asset_Type(66, 2);
-	CDB_Set_Clue_Asset_Type(67, 2);
-	CDB_Set_Clue_Asset_Type(68, 2);
-	CDB_Set_Clue_Asset_Type(69, 2);
-	CDB_Set_Clue_Asset_Type(70, 2);
-	CDB_Set_Clue_Asset_Type(71, 2);
-	CDB_Set_Clue_Asset_Type(72, 2);
-	CDB_Set_Clue_Asset_Type(74, 2);
-	CDB_Set_Clue_Asset_Type(75, 3);
-	CDB_Set_Clue_Asset_Type(76, 3);
-	CDB_Set_Clue_Asset_Type(77, 0);
-	CDB_Set_Clue_Asset_Type(78, 0);
-	CDB_Set_Clue_Asset_Type(79, 2);
-	CDB_Set_Clue_Asset_Type(80, 3);
-	CDB_Set_Clue_Asset_Type(81, 3);
-	CDB_Set_Clue_Asset_Type(84, 3);
-	CDB_Set_Clue_Asset_Type(85, 3);
-	CDB_Set_Clue_Asset_Type(86, 0);
-	CDB_Set_Clue_Asset_Type(87, 3);
-	CDB_Set_Clue_Asset_Type(88, 0);
-	CDB_Set_Clue_Asset_Type(89, 1);
-	CDB_Set_Clue_Asset_Type(93, 3);
-	CDB_Set_Clue_Asset_Type(94, 2);
-	CDB_Set_Clue_Asset_Type(96, 2);
-	CDB_Set_Clue_Asset_Type(97, 2);
-	CDB_Set_Clue_Asset_Type(98, 3);
-	CDB_Set_Clue_Asset_Type(99, 3);
-	CDB_Set_Clue_Asset_Type(100, 3);
-	CDB_Set_Clue_Asset_Type(101, 2);
-	CDB_Set_Clue_Asset_Type(102, 2);
-	CDB_Set_Clue_Asset_Type(103, 2);
-	CDB_Set_Clue_Asset_Type(104, 2);
-	CDB_Set_Clue_Asset_Type(105, 3);
-	CDB_Set_Clue_Asset_Type(106, 3);
-	CDB_Set_Clue_Asset_Type(107, 2);
-	CDB_Set_Clue_Asset_Type(108, 2);
-	CDB_Set_Clue_Asset_Type(109, 3);
-	CDB_Set_Clue_Asset_Type(110, 3);
-	CDB_Set_Clue_Asset_Type(112, 2);
-	CDB_Set_Clue_Asset_Type(113, 2);
-	CDB_Set_Clue_Asset_Type(114, 2);
-	CDB_Set_Clue_Asset_Type(115, 2);
-	CDB_Set_Clue_Asset_Type(116, 2);
-	CDB_Set_Clue_Asset_Type(117, 2);
-	CDB_Set_Clue_Asset_Type(118, 3);
-	CDB_Set_Clue_Asset_Type(119, 3);
-	CDB_Set_Clue_Asset_Type(120, 2);
-	CDB_Set_Clue_Asset_Type(121, 2);
-	CDB_Set_Clue_Asset_Type(122, 2);
-	CDB_Set_Clue_Asset_Type(123, 2);
-	CDB_Set_Clue_Asset_Type(124, 2);
-	CDB_Set_Clue_Asset_Type(126, 2);
-	CDB_Set_Clue_Asset_Type(127, 3);
-	CDB_Set_Clue_Asset_Type(128, 3);
-	CDB_Set_Clue_Asset_Type(129, 3);
-	CDB_Set_Clue_Asset_Type(131, 3);
-	CDB_Set_Clue_Asset_Type(133, 2);
-	CDB_Set_Clue_Asset_Type(134, 2);
-	CDB_Set_Clue_Asset_Type(135, 2);
-	CDB_Set_Clue_Asset_Type(136, 2);
-	CDB_Set_Clue_Asset_Type(137, 0);
-	CDB_Set_Clue_Asset_Type(138, 0);
-	CDB_Set_Clue_Asset_Type(139, 2);
-	CDB_Set_Clue_Asset_Type(140, 2);
-	CDB_Set_Clue_Asset_Type(141, 2);
-	CDB_Set_Clue_Asset_Type(142, 2);
-	CDB_Set_Clue_Asset_Type(143, 2);
-	CDB_Set_Clue_Asset_Type(144, 2);
-	CDB_Set_Clue_Asset_Type(145, 3);
-	CDB_Set_Clue_Asset_Type(146, 3);
-	CDB_Set_Clue_Asset_Type(178, 2);
-	CDB_Set_Clue_Asset_Type(179, 2);
-	CDB_Set_Clue_Asset_Type(180, 2);
-	CDB_Set_Clue_Asset_Type(181, 2);
-	CDB_Set_Clue_Asset_Type(147, 3);
-	CDB_Set_Clue_Asset_Type(148, 3);
-	CDB_Set_Clue_Asset_Type(149, 3);
-	CDB_Set_Clue_Asset_Type(150, 3);
-	CDB_Set_Clue_Asset_Type(151, 3);
-	CDB_Set_Clue_Asset_Type(152, 3);
-	CDB_Set_Clue_Asset_Type(243, 0);
-	CDB_Set_Clue_Asset_Type(244, 0);
-	CDB_Set_Clue_Asset_Type(245, 0);
-	CDB_Set_Clue_Asset_Type(246, 0);
-	CDB_Set_Clue_Asset_Type(247, 0);
-	CDB_Set_Clue_Asset_Type(248, 0);
-	CDB_Set_Clue_Asset_Type(249, 0);
-	CDB_Set_Clue_Asset_Type(250, 0);
-	CDB_Set_Clue_Asset_Type(251, 0);
-	CDB_Set_Clue_Asset_Type(252, 0);
-	CDB_Set_Clue_Asset_Type(253, 0);
-	CDB_Set_Clue_Asset_Type(254, 0);
-	CDB_Set_Clue_Asset_Type(255, 0);
-	CDB_Set_Clue_Asset_Type(256, 0);
-	CDB_Set_Clue_Asset_Type(257, 1);
-	CDB_Set_Clue_Asset_Type(258, 0);
-	CDB_Set_Clue_Asset_Type(259, 0);
-	CDB_Set_Clue_Asset_Type(260, 0);
-	CDB_Set_Clue_Asset_Type(261, 0);
-	CDB_Set_Clue_Asset_Type(262, 0);
-	CDB_Set_Clue_Asset_Type(263, 0);
-	CDB_Set_Clue_Asset_Type(264, 3);
-	CDB_Set_Clue_Asset_Type(265, 3);
-	CDB_Set_Clue_Asset_Type(269, 2);
-	CDB_Set_Clue_Asset_Type(270, 2);
-	CDB_Set_Clue_Asset_Type(271, 2);
-	CDB_Set_Clue_Asset_Type(272, 2);
-	CDB_Set_Clue_Asset_Type(162, 2);
-	CDB_Set_Clue_Asset_Type(163, 2);
-	CDB_Set_Clue_Asset_Type(164, 2);
-	CDB_Set_Clue_Asset_Type(165, 2);
-	CDB_Set_Clue_Asset_Type(168, 2);
-	CDB_Set_Clue_Asset_Type(169, 2);
-	CDB_Set_Clue_Asset_Type(174, 2);
-	CDB_Set_Clue_Asset_Type(175, 2);
-	CDB_Set_Clue_Asset_Type(273, 2);
-	CDB_Set_Clue_Asset_Type(274, 0);
-	CDB_Set_Clue_Asset_Type(275, 0);
-	CDB_Set_Clue_Asset_Type(276, 0);
-	CDB_Set_Clue_Asset_Type(277, 0);
-	CDB_Set_Clue_Asset_Type(156, 2);
-	CDB_Set_Clue_Asset_Type(157, 2);
-	CDB_Set_Clue_Asset_Type(158, 2);
-	CDB_Set_Clue_Asset_Type(278, 2);
-	CDB_Set_Clue_Asset_Type(279, 2);
-	CDB_Set_Clue_Asset_Type(280, 2);
-	CDB_Set_Clue_Asset_Type(283, 2);
-	CDB_Set_Clue_Asset_Type(284, 2);
-	CDB_Set_Clue_Asset_Type(285, 2);
-	CDB_Set_Clue_Asset_Type(286, 2);
-	CDB_Set_Clue_Asset_Type(287, 2);
-	CDB_Set_Clue_Asset_Type(125, 3);
+	CDB_Set_Clue_Asset_Type(kClueOfficersStatement, 2);
+	CDB_Set_Clue_Asset_Type(kClueDoorForced2, 2);
+	CDB_Set_Clue_Asset_Type(kClueLimpingFootprints, 2);
+	CDB_Set_Clue_Asset_Type(kClueGracefulFootprints, 2);
+	CDB_Set_Clue_Asset_Type(kClueShellCasings, 3);
+	CDB_Set_Clue_Asset_Type(kClueCandy, 3);
+	CDB_Set_Clue_Asset_Type(kClueToyDog, 3);
+	CDB_Set_Clue_Asset_Type(kClueChopstickWrapper, 3);
+	CDB_Set_Clue_Asset_Type(kClueSushiMenu, 0);
+	CDB_Set_Clue_Asset_Type(kClueLabCorpses, 2);
+	CDB_Set_Clue_Asset_Type(kClueLabShellCasings, 2);
+	CDB_Set_Clue_Asset_Type(kClueRuncitersVideo, 1);
+	CDB_Set_Clue_Asset_Type(kClueLucy, 0);
+	CDB_Set_Clue_Asset_Type(kClueDragonflyAnklet, 0);
+	CDB_Set_Clue_Asset_Type(kClueReferenceLetter, 3);
+	CDB_Set_Clue_Asset_Type(kClueCrowdInterviewA, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrowdInterviewB, 2);
+	CDB_Set_Clue_Asset_Type(kClueZubenInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueZuben, 0);
+	CDB_Set_Clue_Asset_Type(kClueBigManLimping, 2);
+	CDB_Set_Clue_Asset_Type(kClueRunciterInterviewA, 2);
+	CDB_Set_Clue_Asset_Type(kClueRunciterInterviewB1, 2);
+	CDB_Set_Clue_Asset_Type(kClueRunciterInterviewB2, 2);
+	CDB_Set_Clue_Asset_Type(kClueHowieLeeInterview, 2);
+	CDB_Set_Clue_Asset_Type(kCluePaintTransfer, 2);
+	CDB_Set_Clue_Asset_Type(kClueChromeDebris, 3);
+	CDB_Set_Clue_Asset_Type(kClueRuncitersViewA, 0);
+	CDB_Set_Clue_Asset_Type(kClueRuncitersViewB, 0);
+	CDB_Set_Clue_Asset_Type(kClueCarColorAndMake, 0);
+	CDB_Set_Clue_Asset_Type(kCluePartialLicenseNumber, 0);
+	CDB_Set_Clue_Asset_Type(kClueBriefcase, 3);
+	CDB_Set_Clue_Asset_Type(kClueGaffsInformation, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrystalVisitedRunciters, -1);
+	CDB_Set_Clue_Asset_Type(kClueCrystalVisitedChinatown, -1);
+	CDB_Set_Clue_Asset_Type(kClueWantedPoster, 0);
+	CDB_Set_Clue_Asset_Type(kClueLicensePlate, 3);
+	CDB_Set_Clue_Asset_Type(kClueLabPaintTransfer, 2);
+	CDB_Set_Clue_Asset_Type(kClueDispatchHitAndRun, 2);
+	CDB_Set_Clue_Asset_Type(kClueInceptShotRoy, 0);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallGuzza, 2);
+	CDB_Set_Clue_Asset_Type(kClueDragonflyEarring, 3);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSecurity, 1);
+	CDB_Set_Clue_Asset_Type(kClueTyrellGuardInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueBombingSuspect, 0);
+	CDB_Set_Clue_Asset_Type(kClueSadiksGun, 0);
+	CDB_Set_Clue_Asset_Type(kClueDetonatorWire, 3);
+	CDB_Set_Clue_Asset_Type(kClueVictimInformation, 2);
+	CDB_Set_Clue_Asset_Type(kClueAttemptedFileAccess, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrystalsCase, 2);
+	CDB_Set_Clue_Asset_Type(kClueKingstonKitchenBox1, 3);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphlet1, 3);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphlet2, 3);
+	CDB_Set_Clue_Asset_Type(kCluePeruvianLadyInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueHasanInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueBobInterview1, 2);
+	CDB_Set_Clue_Asset_Type(kClueBobInterview2, 2);
+	CDB_Set_Clue_Asset_Type(kClueIzoInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueIzosWarning, 2);
+	CDB_Set_Clue_Asset_Type(kClueRadiationGoggles, 3);
+	CDB_Set_Clue_Asset_Type(kClueGogglesReplicantIssue, 2);
+	CDB_Set_Clue_Asset_Type(kClueFishLadyInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueDogCollar1, 3);
+	CDB_Set_Clue_Asset_Type(kClueWeaponsCache, 2);
+	CDB_Set_Clue_Asset_Type(kClueChewInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueMorajiInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueGordoInterview1, 2);
+	CDB_Set_Clue_Asset_Type(kClueGordoInterview2, 2);
+	CDB_Set_Clue_Asset_Type(kClueAnsweringMachineMessage, 2);
+	CDB_Set_Clue_Asset_Type(kClueChessTable, 2);
+	CDB_Set_Clue_Asset_Type(kClueStaggeredbyPunches, 2);
+	CDB_Set_Clue_Asset_Type(kClueMaggieBracelet, 3);
+	CDB_Set_Clue_Asset_Type(kClueEnvelope, 3);
+	CDB_Set_Clue_Asset_Type(kClueIzosFriend, 0);
+	CDB_Set_Clue_Asset_Type(kClueChinaBarSecurityPhoto, 0);
+	CDB_Set_Clue_Asset_Type(kCluePurchasedScorpions, 2);
+	CDB_Set_Clue_Asset_Type(kClueWeaponsOrderForm, 3);
+	CDB_Set_Clue_Asset_Type(kClueShippingForm, 3);
+	CDB_Set_Clue_Asset_Type(kClueHysteriaToken, 3);
+	CDB_Set_Clue_Asset_Type(kClueRagDoll, 3);
+	CDB_Set_Clue_Asset_Type(kClueMoonbus1, 0);
+	CDB_Set_Clue_Asset_Type(kClueCheese, 3);
+	CDB_Set_Clue_Asset_Type(kClueDektorasDressingRoom, 0);
+	CDB_Set_Clue_Asset_Type(kClueEarlyQsClub, 1);
+	CDB_Set_Clue_Asset_Type(kClueStrangeScale1, 3);
+	CDB_Set_Clue_Asset_Type(kClueDektoraInterview1, 2);
+	CDB_Set_Clue_Asset_Type(kClueDektoraInterview2, 2);
+	CDB_Set_Clue_Asset_Type(kClueDektoraInterview3, 2);
+	CDB_Set_Clue_Asset_Type(kClueDektorasCard, 3);
+	CDB_Set_Clue_Asset_Type(kClueGrigoriansNote, 3);
+	CDB_Set_Clue_Asset_Type(kClueCollectionReceipt, 3);
+	CDB_Set_Clue_Asset_Type(kClueSpecialIngredient, 2);
+	CDB_Set_Clue_Asset_Type(kClueStolenCheese, 2);
+	CDB_Set_Clue_Asset_Type(kClueGordoInterview3, 2);
+	CDB_Set_Clue_Asset_Type(kClueGordoConfession, 2);
+	CDB_Set_Clue_Asset_Type(kClueGordosLighter1, 3);
+	CDB_Set_Clue_Asset_Type(kClueGordosLighter2, 3);
+	CDB_Set_Clue_Asset_Type(kClueDektoraInterview4, 2);
+	CDB_Set_Clue_Asset_Type(kClueHollowayInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueBakersBadge, 3);
+	CDB_Set_Clue_Asset_Type(kClueHoldensBadge, 3);
+	CDB_Set_Clue_Asset_Type(kClueCarIdentified, 2);
+	CDB_Set_Clue_Asset_Type(kClueCarRegistration1, 2);
+	CDB_Set_Clue_Asset_Type(kClueCarRegistration2, 2);
+	CDB_Set_Clue_Asset_Type(kClueCarRegistration3, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrazylegsInterview1, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrazylegsInterview2, 2);
+	CDB_Set_Clue_Asset_Type(kClueLichenDogWrapper, 3);
+	CDB_Set_Clue_Asset_Type(kClueRequisitionForm, 3);
+	CDB_Set_Clue_Asset_Type(kClueScaryChair, 2);
+	CDB_Set_Clue_Asset_Type(kClueIzosStashRaided, 2);
+	CDB_Set_Clue_Asset_Type(kClueHomelessManInterview1, 2);
+	CDB_Set_Clue_Asset_Type(kClueHomelessManInterview2, 2);
+	CDB_Set_Clue_Asset_Type(kClueHomelessManKid, 2);
+	CDB_Set_Clue_Asset_Type(kClueGuzzaFramedMcCoy, 2);
+	CDB_Set_Clue_Asset_Type(kClueOriginalShippingForm, 3);
+	CDB_Set_Clue_Asset_Type(kClueOriginalRequisitionForm, 3);
+	CDB_Set_Clue_Asset_Type(kClueCandyWrapper, 3);
+	CDB_Set_Clue_Asset_Type(kClueFlaskOfAbsinthe, 3);
+	CDB_Set_Clue_Asset_Type(kClueDektoraConfession, 2);
+	CDB_Set_Clue_Asset_Type(kClueRunciterConfession1, 2);
+	CDB_Set_Clue_Asset_Type(kClueRunciterConfession2, 2);
+	CDB_Set_Clue_Asset_Type(kClueLutherLanceInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueMoonbus2, 0);
+	CDB_Set_Clue_Asset_Type(kClueMoonbusCloseup, 0);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallDektora1, 2);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallDektora2, 2);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallLucy1, 2);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallLucy2, 2);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallClovis, 2);
+	CDB_Set_Clue_Asset_Type(kCluePhoneCallCrystal, 2);
+	CDB_Set_Clue_Asset_Type(kCluePowerSource, 3);
+	CDB_Set_Clue_Asset_Type(kClueBomb, 3);
+	CDB_Set_Clue_Asset_Type(kClueCrimeSceneNotes, 2);
+	CDB_Set_Clue_Asset_Type(kClueGrigorianInterviewA, 2);
+	CDB_Set_Clue_Asset_Type(kClueGrigorianInterviewB1, 2);
+	CDB_Set_Clue_Asset_Type(kClueGrigorianInterviewB2, 2);
+	CDB_Set_Clue_Asset_Type(kClueDNATyrell, 3);
+	CDB_Set_Clue_Asset_Type(kClueDNASebastian, 3);
+	CDB_Set_Clue_Asset_Type(kClueDNAChew, 3);
+	CDB_Set_Clue_Asset_Type(kClueDNAMoraji, 3);
+	CDB_Set_Clue_Asset_Type(kClueDNALutherLance, 3);
+	CDB_Set_Clue_Asset_Type(kClueDNAMarcus, 3);
+	CDB_Set_Clue_Asset_Type(kClueAnimalMurderSuspect, 0);
+	CDB_Set_Clue_Asset_Type(kClueMilitaryBoots, 0);
+	CDB_Set_Clue_Asset_Type(kClueOuterDressingRoom, 0);
+	CDB_Set_Clue_Asset_Type(kCluePhotoOfMcCoy1, 0);
+	CDB_Set_Clue_Asset_Type(kCluePhotoOfMcCoy2, 0);
+	CDB_Set_Clue_Asset_Type(kClueEarlyQAndLucy, 0);
+	CDB_Set_Clue_Asset_Type(kClueClovisflowers, 0);
+	CDB_Set_Clue_Asset_Type(kClueLucyWithDektora, 0);
+	CDB_Set_Clue_Asset_Type(kClueWomanInAnimoidRow, 0);
+	CDB_Set_Clue_Asset_Type(kClueScorpions, 0);
+	CDB_Set_Clue_Asset_Type(kClueStrangeScale2, 0);
+	CDB_Set_Clue_Asset_Type(kClueChinaBarSecurityCamera, 0);
+	CDB_Set_Clue_Asset_Type(kClueIzo, 0);
+	CDB_Set_Clue_Asset_Type(kClueGuzza, 0);
+	CDB_Set_Clue_Asset_Type(kClueChinaBarSecurityDisc, 1);
+	CDB_Set_Clue_Asset_Type(kClueScorpionbox, 0);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSecurityPhoto, 0);
+	CDB_Set_Clue_Asset_Type(kClueChinaBar, 0);
+	CDB_Set_Clue_Asset_Type(kCluePlasticExplosive, 0);
+	CDB_Set_Clue_Asset_Type(kClueDogCollar2, 0);
+	CDB_Set_Clue_Asset_Type(kClueKingstonKitchenBox2, 0);
+	CDB_Set_Clue_Asset_Type(kClueCrystalsCigarette, 3);
+	CDB_Set_Clue_Asset_Type(kClueSpinnerKeys, 3);
+	CDB_Set_Clue_Asset_Type(kClueExpertBomber, 2);
+	CDB_Set_Clue_Asset_Type(kClueAmateurBomber, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKLucyReplicant, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKLucyHuman, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKDektoraReplicant, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKDektoraHuman, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKBobGorskyReplicant, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKBobGorskyHuman, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKGrigorianReplicant, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKGrigorianHuman, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKRunciterReplicant, 2);
+	CDB_Set_Clue_Asset_Type(kClueVKRunciterHuman, 2);
+	CDB_Set_Clue_Asset_Type(kClueLucyInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueMoonbusReflection, 0);
+	CDB_Set_Clue_Asset_Type(kClueMcCoyAtMoonbus, 0);
+	CDB_Set_Clue_Asset_Type(kClueClovisAtMoonbus, 0);
+	CDB_Set_Clue_Asset_Type(kClueSadikAtMoonbus, 0);
+	CDB_Set_Clue_Asset_Type(kClueZubenTalksAboutLucy1, 2);
+	CDB_Set_Clue_Asset_Type(kClueZubenTalksAboutLucy2, 2);
+	CDB_Set_Clue_Asset_Type(kClueZubensMotive, 2);
+	CDB_Set_Clue_Asset_Type(kClueRachaelInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueTyrellInterview, 2);
+	CDB_Set_Clue_Asset_Type(kClueRuncitersConfession1, 2);
+	CDB_Set_Clue_Asset_Type(kClueEarlyInterviewA, 2);
+	CDB_Set_Clue_Asset_Type(kClueEarlyInterviewB1, 2);
+	CDB_Set_Clue_Asset_Type(kClueEarlyInterviewB2, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrazylegsInterview3, 2);
+	CDB_Set_Clue_Asset_Type(kClueCrazylegGgrovels, 2);
+	CDB_Set_Clue_Asset_Type(kClueFolder, 3);
 }
 
 void ScriptInit::Init_Spinner() {
@@ -2329,274 +2655,274 @@ void ScriptInit::Init_Spinner() {
 }
 
 void ScriptInit::Init_Actor_Friendliness() {
-	Actor_Set_Friendliness_To_Other(1, 0, 65);
-	Actor_Set_Friendliness_To_Other(1, 4, 60);
-	Actor_Set_Friendliness_To_Other(1, 11, 30);
-	Actor_Set_Friendliness_To_Other(1, 15, 35);
-	Actor_Set_Friendliness_To_Other(1, 23, 65);
-	Actor_Set_Friendliness_To_Other(1, 24, 65);
-	Actor_Set_Friendliness_To_Other(1, 28, 70);
-	Actor_Set_Friendliness_To_Other(1, 30, 65);
-	Actor_Set_Friendliness_To_Other(1, 34, 80);
-	Actor_Set_Friendliness_To_Other(1, 53, 65);
-	Actor_Set_Friendliness_To_Other(2, 1, 45);
-	Actor_Set_Friendliness_To_Other(2, 4, 65);
-	Actor_Set_Friendliness_To_Other(2, 11, 70);
-	Actor_Set_Friendliness_To_Other(2, 12, 75);
-	Actor_Set_Friendliness_To_Other(2, 15, 30);
-	Actor_Set_Friendliness_To_Other(2, 19, 80);
-	Actor_Set_Friendliness_To_Other(2, 23, 40);
-	Actor_Set_Friendliness_To_Other(2, 24, 40);
-	Actor_Set_Friendliness_To_Other(2, 28, 70);
-	Actor_Set_Friendliness_To_Other(2, 53, 40);
-	Actor_Set_Friendliness_To_Other(4, 1, 75);
-	Actor_Set_Friendliness_To_Other(4, 2, 70);
-	Actor_Set_Friendliness_To_Other(4, 11, 40);
-	Actor_Set_Friendliness_To_Other(4, 12, 55);
-	Actor_Set_Friendliness_To_Other(4, 15, 40);
-	Actor_Set_Friendliness_To_Other(4, 19, 45);
-	Actor_Set_Friendliness_To_Other(4, 23, 55);
-	Actor_Set_Friendliness_To_Other(4, 24, 55);
-	Actor_Set_Friendliness_To_Other(4, 28, 60);
-	Actor_Set_Friendliness_To_Other(4, 30, 60);
-	Actor_Set_Friendliness_To_Other(4, 34, 60);
-	Actor_Set_Friendliness_To_Other(4, 53, 65);
-	Actor_Set_Friendliness_To_Other(5, 0, 63);
-	Actor_Set_Friendliness_To_Other(6, 0, 50);
-	Actor_Set_Friendliness_To_Other(11, 1, 30);
-	Actor_Set_Friendliness_To_Other(11, 2, 70);
-	Actor_Set_Friendliness_To_Other(11, 4, 30);
-	Actor_Set_Friendliness_To_Other(11, 12, 55);
-	Actor_Set_Friendliness_To_Other(11, 15, 60);
-	Actor_Set_Friendliness_To_Other(11, 19, 70);
-	Actor_Set_Friendliness_To_Other(11, 23, 30);
-	Actor_Set_Friendliness_To_Other(11, 24, 30);
-	Actor_Set_Friendliness_To_Other(11, 28, 65);
-	Actor_Set_Friendliness_To_Other(11, 53, 30);
-	Actor_Set_Friendliness_To_Other(12, 2, 75);
-	Actor_Set_Friendliness_To_Other(12, 4, 40);
-	Actor_Set_Friendliness_To_Other(12, 11, 35);
-	Actor_Set_Friendliness_To_Other(12, 15, 40);
-	Actor_Set_Friendliness_To_Other(12, 19, 65);
-	Actor_Set_Friendliness_To_Other(12, 23, 40);
-	Actor_Set_Friendliness_To_Other(12, 24, 40);
-	Actor_Set_Friendliness_To_Other(12, 28, 70);
-	Actor_Set_Friendliness_To_Other(12, 53, 45);
-	Actor_Set_Friendliness_To_Other(15, 1, 55);
-	Actor_Set_Friendliness_To_Other(15, 2, 40);
-	Actor_Set_Friendliness_To_Other(15, 4, 40);
-	Actor_Set_Friendliness_To_Other(15, 11, 35);
-	Actor_Set_Friendliness_To_Other(15, 12, 40);
-	Actor_Set_Friendliness_To_Other(15, 19, 40);
-	Actor_Set_Friendliness_To_Other(15, 23, 60);
-	Actor_Set_Friendliness_To_Other(15, 24, 60);
-	Actor_Set_Friendliness_To_Other(15, 28, 65);
-	Actor_Set_Friendliness_To_Other(15, 53, 65);
-	Actor_Set_Friendliness_To_Other(19, 1, 45);
-	Actor_Set_Friendliness_To_Other(19, 2, 90);
-	Actor_Set_Friendliness_To_Other(19, 4, 55);
-	Actor_Set_Friendliness_To_Other(19, 11, 65);
-	Actor_Set_Friendliness_To_Other(19, 12, 60);
-	Actor_Set_Friendliness_To_Other(19, 15, 35);
-	Actor_Set_Friendliness_To_Other(19, 23, 35);
-	Actor_Set_Friendliness_To_Other(19, 24, 35);
-	Actor_Set_Friendliness_To_Other(19, 28, 60);
-	Actor_Set_Friendliness_To_Other(19, 53, 35);
-	Actor_Set_Friendliness_To_Other(23, 1, 75);
-	Actor_Set_Friendliness_To_Other(23, 4, 75);
-	Actor_Set_Friendliness_To_Other(23, 11, 35);
-	Actor_Set_Friendliness_To_Other(23, 12, 45);
-	Actor_Set_Friendliness_To_Other(23, 15, 40);
-	Actor_Set_Friendliness_To_Other(23, 24, 80);
-	Actor_Set_Friendliness_To_Other(23, 28, 70);
-	Actor_Set_Friendliness_To_Other(23, 30, 85);
-	Actor_Set_Friendliness_To_Other(23, 34, 85);
-	Actor_Set_Friendliness_To_Other(23, 53, 85);
-	Actor_Set_Friendliness_To_Other(24, 1, 75);
-	Actor_Set_Friendliness_To_Other(24, 4, 75);
-	Actor_Set_Friendliness_To_Other(24, 11, 35);
-	Actor_Set_Friendliness_To_Other(24, 12, 45);
-	Actor_Set_Friendliness_To_Other(24, 15, 40);
-	Actor_Set_Friendliness_To_Other(24, 23, 80);
-	Actor_Set_Friendliness_To_Other(24, 28, 65);
-	Actor_Set_Friendliness_To_Other(24, 30, 80);
-	Actor_Set_Friendliness_To_Other(24, 34, 85);
-	Actor_Set_Friendliness_To_Other(24, 53, 85);
-	Actor_Set_Friendliness_To_Other(28, 0, 60);
-	Actor_Set_Friendliness_To_Other(28, 1, 60);
-	Actor_Set_Friendliness_To_Other(28, 2, 65);
-	Actor_Set_Friendliness_To_Other(28, 4, 65);
-	Actor_Set_Friendliness_To_Other(28, 12, 65);
-	Actor_Set_Friendliness_To_Other(28, 15, 40);
-	Actor_Set_Friendliness_To_Other(28, 19, 65);
-	Actor_Set_Friendliness_To_Other(28, 23, 70);
-	Actor_Set_Friendliness_To_Other(28, 24, 70);
-	Actor_Set_Friendliness_To_Other(28, 53, 70);
-	Actor_Set_Friendliness_To_Other(30, 1, 70);
-	Actor_Set_Friendliness_To_Other(30, 4, 75);
-	Actor_Set_Friendliness_To_Other(30, 11, 35);
-	Actor_Set_Friendliness_To_Other(30, 23, 70);
-	Actor_Set_Friendliness_To_Other(30, 24, 70);
-	Actor_Set_Friendliness_To_Other(30, 34, 65);
-	Actor_Set_Friendliness_To_Other(30, 53, 70);
-	Actor_Set_Friendliness_To_Other(34, 0, 70);
-	Actor_Set_Friendliness_To_Other(34, 1, 70);
-	Actor_Set_Friendliness_To_Other(34, 4, 80);
-	Actor_Set_Friendliness_To_Other(34, 11, 35);
-	Actor_Set_Friendliness_To_Other(34, 23, 70);
-	Actor_Set_Friendliness_To_Other(34, 24, 70);
-	Actor_Set_Friendliness_To_Other(34, 30, 65);
-	Actor_Set_Friendliness_To_Other(34, 53, 70);
-	Actor_Set_Friendliness_To_Other(53, 1, 70);
-	Actor_Set_Friendliness_To_Other(53, 4, 65);
-	Actor_Set_Friendliness_To_Other(53, 11, 35);
-	Actor_Set_Friendliness_To_Other(53, 15, 35);
-	Actor_Set_Friendliness_To_Other(53, 23, 70);
-	Actor_Set_Friendliness_To_Other(53, 24, 65);
-	Actor_Set_Friendliness_To_Other(53, 28, 80);
-	Actor_Set_Friendliness_To_Other(53, 30, 70);
-	Actor_Set_Friendliness_To_Other(53, 34, 70);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorMcCoy, 65);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorGuzza, 60);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorGrigorian, 30);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorRunciter, 35);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorOfficerLeary, 65);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorOfficerGrayford, 65);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorHowieLee, 70);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorKlein, 65);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorSergeantWalls, 80);
+	Actor_Set_Friendliness_To_Other(kActorSteele, kActorGaff, 65);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorSteele, 45);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorGuzza, 65);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorGrigorian, 70);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorTransient, 75);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorRunciter, 30);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorZuben, 80);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorOfficerLeary, 40);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorOfficerGrayford, 40);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorHowieLee, 70);
+	Actor_Set_Friendliness_To_Other(kActorGordo, kActorGaff, 40);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorSteele, 75);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorGordo, 70);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorGrigorian, 40);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorTransient, 55);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorRunciter, 40);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorZuben, 45);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorOfficerLeary, 55);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorOfficerGrayford, 55);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorHowieLee, 60);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorKlein, 60);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorSergeantWalls, 60);
+	Actor_Set_Friendliness_To_Other(kActorGuzza, kActorGaff, 65);
+	Actor_Set_Friendliness_To_Other(kActorClovis, kActorMcCoy, 63);
+	Actor_Set_Friendliness_To_Other(kActorLucy, kActorMcCoy, 50);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorSteele, 30);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorGordo, 70);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorGuzza, 30);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorTransient, 55);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorRunciter, 60);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorZuben, 70);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorOfficerLeary, 30);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorOfficerGrayford, 30);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorHowieLee, 65);
+	Actor_Set_Friendliness_To_Other(kActorGrigorian, kActorGaff, 30);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorGordo, 75);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorGuzza, 40);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorRunciter, 40);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorZuben, 65);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorOfficerLeary, 40);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorOfficerGrayford, 40);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorHowieLee, 70);
+	Actor_Set_Friendliness_To_Other(kActorTransient, kActorGaff, 45);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorSteele, 55);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorGordo, 40);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorGuzza, 40);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorTransient, 40);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorZuben, 40);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorOfficerLeary, 60);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorOfficerGrayford, 60);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorHowieLee, 65);
+	Actor_Set_Friendliness_To_Other(kActorRunciter, kActorGaff, 65);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorSteele, 45);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorGordo, 90);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorGuzza, 55);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorGrigorian, 65);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorTransient, 60);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorRunciter, 35);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorOfficerLeary, 35);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorOfficerGrayford, 35);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorHowieLee, 60);
+	Actor_Set_Friendliness_To_Other(kActorZuben, kActorGaff, 35);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorSteele, 75);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorGuzza, 75);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorTransient, 45);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorRunciter, 40);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorOfficerGrayford, 80);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorHowieLee, 70);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorKlein, 85);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorSergeantWalls, 85);
+	Actor_Set_Friendliness_To_Other(kActorOfficerLeary, kActorGaff, 85);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorSteele, 75);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorGuzza, 75);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorTransient, 45);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorRunciter, 40);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorOfficerLeary, 80);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorHowieLee, 65);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorKlein, 80);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorSergeantWalls, 85);
+	Actor_Set_Friendliness_To_Other(kActorOfficerGrayford, kActorGaff, 85);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorMcCoy, 60);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorSteele, 60);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorGordo, 65);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorGuzza, 65);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorTransient, 65);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorRunciter, 40);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorZuben, 65);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorOfficerLeary, 70);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorOfficerGrayford, 70);
+	Actor_Set_Friendliness_To_Other(kActorHowieLee, kActorGaff, 70);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorSteele, 70);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorGuzza, 75);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorOfficerLeary, 70);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorOfficerGrayford, 70);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorSergeantWalls, 65);
+	Actor_Set_Friendliness_To_Other(kActorKlein, kActorGaff, 70);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorMcCoy, 70);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorSteele, 70);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorGuzza, 80);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorOfficerLeary, 70);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorOfficerGrayford, 70);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorKlein, 65);
+	Actor_Set_Friendliness_To_Other(kActorSergeantWalls, kActorGaff, 70);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorSteele, 70);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorGuzza, 65);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorGrigorian, 35);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorRunciter, 35);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorOfficerLeary, 70);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorOfficerGrayford, 65);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorHowieLee, 80);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorKlein, 70);
+	Actor_Set_Friendliness_To_Other(kActorGaff, kActorSergeantWalls, 70);
 }
 
 void ScriptInit::Init_Actor_Combat_Aggressiveness() {
-	Actor_Set_Combat_Aggressiveness(4, 50);
-	Actor_Set_Combat_Aggressiveness(14, 50);
-	Actor_Set_Combat_Aggressiveness(17, 50);
-	Actor_Set_Combat_Aggressiveness(19, 90);
-	Actor_Set_Combat_Aggressiveness(2, 50);
-	Actor_Set_Combat_Aggressiveness(6, 0);
-	Actor_Set_Combat_Aggressiveness(7, 70);
-	Actor_Set_Combat_Aggressiveness(3, 60);
-	Actor_Set_Combat_Aggressiveness(1, 70);
-	Actor_Set_Combat_Aggressiveness(8, 80);
-	Actor_Set_Combat_Aggressiveness(5, 75);
-	Actor_Set_Combat_Aggressiveness(23, 70);
-	Actor_Set_Combat_Aggressiveness(24, 60);
-	Actor_Set_Combat_Aggressiveness(70, 40);
-	Actor_Set_Combat_Aggressiveness(71, 30);
-	Actor_Set_Combat_Aggressiveness(72, 30);
-	Actor_Set_Combat_Aggressiveness(64, 100);
+	Actor_Set_Combat_Aggressiveness(kActorGuzza, 50);
+	Actor_Set_Combat_Aggressiveness(kActorBulletBob, 50);
+	Actor_Set_Combat_Aggressiveness(kActorTyrellGuard, 50);
+	Actor_Set_Combat_Aggressiveness(kActorZuben, 90);
+	Actor_Set_Combat_Aggressiveness(kActorGordo, 50);
+	Actor_Set_Combat_Aggressiveness(kActorLucy, 0);
+	Actor_Set_Combat_Aggressiveness(kActorIzo, 70);
+	Actor_Set_Combat_Aggressiveness(kActorDektora, 60);
+	Actor_Set_Combat_Aggressiveness(kActorSteele, 70);
+	Actor_Set_Combat_Aggressiveness(kActorSadik, 80);
+	Actor_Set_Combat_Aggressiveness(kActorClovis, 75);
+	Actor_Set_Combat_Aggressiveness(kActorOfficerLeary, 70);
+	Actor_Set_Combat_Aggressiveness(kActorOfficerGrayford, 60);
+	Actor_Set_Combat_Aggressiveness(kActorMutant1, 40);
+	Actor_Set_Combat_Aggressiveness(kActorMutant2, 30);
+	Actor_Set_Combat_Aggressiveness(kActorMutant3, 30);
+	Actor_Set_Combat_Aggressiveness(kActorFreeSlotA, 100);
 }
 
 void ScriptInit::Init_Actor_Honesty() {
-	Actor_Set_Honesty(19, 90);
+	Actor_Set_Honesty(kActorZuben, 90);
 }
 
 void ScriptInit::Init_Actor_Intelligence() {
-	Actor_Set_Intelligence(19, 20);
-	Actor_Set_Intelligence(2, 70);
-	Actor_Set_Intelligence(6, 60);
-	Actor_Set_Intelligence(7, 75);
-	Actor_Set_Intelligence(3, 80);
-	Actor_Set_Intelligence(1, 80);
-	Actor_Set_Intelligence(8, 80);
-	Actor_Set_Intelligence(5, 100);
-	Actor_Set_Intelligence(23, 50);
-	Actor_Set_Intelligence(24, 40);
-	Actor_Set_Intelligence(70, 40);
-	Actor_Set_Intelligence(71, 20);
-	Actor_Set_Intelligence(72, 30);
-	Actor_Set_Intelligence(64, 10);
+	Actor_Set_Intelligence(kActorZuben, 20);
+	Actor_Set_Intelligence(kActorGordo, 70);
+	Actor_Set_Intelligence(kActorLucy, 60);
+	Actor_Set_Intelligence(kActorIzo, 75);
+	Actor_Set_Intelligence(kActorDektora, 80);
+	Actor_Set_Intelligence(kActorSteele, 80);
+	Actor_Set_Intelligence(kActorSadik, 80);
+	Actor_Set_Intelligence(kActorClovis, 100);
+	Actor_Set_Intelligence(kActorOfficerLeary, 50);
+	Actor_Set_Intelligence(kActorOfficerGrayford, 40);
+	Actor_Set_Intelligence(kActorMutant1, 40);
+	Actor_Set_Intelligence(kActorMutant2, 20);
+	Actor_Set_Intelligence(kActorMutant3, 30);
+	Actor_Set_Intelligence(kActorFreeSlotA, 10);
 }
 
 void ScriptInit::Init_Actor_Stability() {
-	Actor_Set_Stability(19, 35);
+	Actor_Set_Stability(kActorZuben, 35);
 }
 
 void ScriptInit::Init_Actor_Health() {
-	Actor_Set_Health(0, 50, 50);
-	Actor_Set_Health(1, 50, 50);
-	Actor_Set_Health(2, 50, 50);
-	Actor_Set_Health(3, 50, 50);
-	Actor_Set_Health(4, 50, 50);
-	Actor_Set_Health(5, 50, 50);
-	Actor_Set_Health(6, 50, 50);
-	Actor_Set_Health(7, 50, 50);
-	Actor_Set_Health(8, 50, 50);
-	Actor_Set_Health(9, 50, 50);
-	Actor_Set_Health(10, 50, 50);
-	Actor_Set_Health(11, 50, 50);
-	Actor_Set_Health(12, 50, 50);
-	Actor_Set_Health(13, 50, 50);
-	Actor_Set_Health(14, 50, 50);
-	Actor_Set_Health(15, 50, 50);
-	Actor_Set_Health(16, 50, 50);
-	Actor_Set_Health(17, 50, 50);
-	Actor_Set_Health(18, 50, 50);
-	Actor_Set_Health(19, 50, 50);
-	Actor_Set_Health(20, 50, 50);
-	Actor_Set_Health(21, 50, 50);
-	Actor_Set_Health(22, 50, 50);
-	Actor_Set_Health(23, 50, 50);
-	Actor_Set_Health(24, 50, 50);
-	Actor_Set_Health(25, 50, 50);
-	Actor_Set_Health(26, 50, 50);
-	Actor_Set_Health(27, 50, 50);
-	Actor_Set_Health(28, 50, 50);
-	Actor_Set_Health(29, 50, 50);
-	Actor_Set_Health(30, 50, 50);
-	Actor_Set_Health(31, 50, 50);
-	Actor_Set_Health(32, 50, 50);
-	Actor_Set_Health(33, 50, 50);
-	Actor_Set_Health(34, 50, 50);
-	Actor_Set_Health(35, 50, 50);
-	Actor_Set_Health(36, 50, 50);
-	Actor_Set_Health(37, 50, 50);
-	Actor_Set_Health(38, 50, 50);
-	Actor_Set_Health(40, 50, 50);
-	Actor_Set_Health(41, 50, 50);
-	Actor_Set_Health(42, 50, 50);
-	Actor_Set_Health(43, 50, 50);
-	Actor_Set_Health(44, 50, 50);
-	Actor_Set_Health(45, 50, 50);
-	Actor_Set_Health(46, 50, 50);
-	Actor_Set_Health(47, 50, 50);
-	Actor_Set_Health(48, 50, 50);
-	Actor_Set_Health(49, 50, 50);
-	Actor_Set_Health(50, 50, 50);
-	Actor_Set_Health(51, 50, 50);
-	Actor_Set_Health(52, 50, 50);
-	Actor_Set_Health(53, 50, 50);
-	Actor_Set_Health(54, 50, 50);
-	Actor_Set_Health(55, 50, 50);
-	Actor_Set_Health(56, 50, 50);
-	Actor_Set_Health(57, 50, 50);
-	Actor_Set_Health(58, 50, 50);
-	Actor_Set_Health(59, 50, 50);
-	Actor_Set_Health(62, 50, 50);
-	Actor_Set_Health(66, 50, 50);
-	Actor_Set_Health(67, 50, 50);
-	Actor_Set_Health(68, 50, 50);
-	Actor_Set_Health(69, 50, 50);
-	Actor_Set_Health(19, 80, 80);
-	Actor_Set_Health(2, 40, 40);
-	Actor_Set_Health(6, 20, 20);
-	Actor_Set_Health(7, 50, 50);
-	Actor_Set_Health(3, 60, 60);
-	Actor_Set_Health(1, 60, 60);
-	Actor_Set_Health(8, 60, 60);
-	Actor_Set_Health(5, 90, 90);
-	Actor_Set_Health(23, 40, 40);
-	Actor_Set_Health(24, 50, 50);
-	Actor_Set_Health(70, 30, 30);
-	Actor_Set_Health(71, 50, 50);
-	Actor_Set_Health(72, 20, 20);
-	Actor_Set_Health(64, 20, 20);
-	Actor_Set_Health(65, 20, 20);
+	Actor_Set_Health(kActorMcCoy, 50, 50);
+	Actor_Set_Health(kActorSteele, 50, 50);
+	Actor_Set_Health(kActorGordo, 50, 50);
+	Actor_Set_Health(kActorDektora, 50, 50);
+	Actor_Set_Health(kActorGuzza, 50, 50);
+	Actor_Set_Health(kActorClovis, 50, 50);
+	Actor_Set_Health(kActorLucy, 50, 50);
+	Actor_Set_Health(kActorIzo, 50, 50);
+	Actor_Set_Health(kActorSadik, 50, 50);
+	Actor_Set_Health(kActorCrazylegs, 50, 50);
+	Actor_Set_Health(kActorLuther, 50, 50);
+	Actor_Set_Health(kActorGrigorian, 50, 50);
+	Actor_Set_Health(kActorTransient, 50, 50);
+	Actor_Set_Health(kActorLance, 50, 50);
+	Actor_Set_Health(kActorBulletBob, 50, 50);
+	Actor_Set_Health(kActorRunciter, 50, 50);
+	Actor_Set_Health(kActorInsectDealer, 50, 50);
+	Actor_Set_Health(kActorTyrellGuard, 50, 50);
+	Actor_Set_Health(kActorEarlyQ, 50, 50);
+	Actor_Set_Health(kActorZuben, 50, 50);
+	Actor_Set_Health(kActorHasan, 50, 50);
+	Actor_Set_Health(kActorMarcus, 50, 50);
+	Actor_Set_Health(kActorMia, 50, 50);
+	Actor_Set_Health(kActorOfficerLeary, 50, 50);
+	Actor_Set_Health(kActorOfficerGrayford, 50, 50);
+	Actor_Set_Health(kActorHanoi, 50, 50);
+	Actor_Set_Health(kActorBaker, 50, 50);
+	Actor_Set_Health(kActorDeskClerk, 50, 50);
+	Actor_Set_Health(kActorHowieLee, 50, 50);
+	Actor_Set_Health(kActorFishDealer, 50, 50);
+	Actor_Set_Health(kActorKlein, 50, 50);
+	Actor_Set_Health(kActorMurray, 50, 50);
+	Actor_Set_Health(kActorHawkersBarkeep, 50, 50);
+	Actor_Set_Health(kActorHolloway, 50, 50);
+	Actor_Set_Health(kActorSergeantWalls, 50, 50);
+	Actor_Set_Health(kActorMoraji, 50, 50);
+	Actor_Set_Health(kActorTheBard, 50, 50);
+	Actor_Set_Health(kActorPhotographer, 50, 50);
+	Actor_Set_Health(kActorDispatcher, 50, 50);
+	Actor_Set_Health(kActorRajif, 50, 50);
+	Actor_Set_Health(kActorGovernorKolvig, 50, 50);
+	Actor_Set_Health(kActorEarlyQBartender, 50, 50);
+	Actor_Set_Health(kActorHawkersParrot, 50, 50);
+	Actor_Set_Health(kActorTaffyPatron, 50, 50);
+	Actor_Set_Health(kActorLockupGuard, 50, 50);
+	Actor_Set_Health(kActorTeenager, 50, 50);
+	Actor_Set_Health(kActorHysteriaPatron1, 50, 50);
+	Actor_Set_Health(kActorHysteriaPatron2, 50, 50);
+	Actor_Set_Health(kActorHysteriaPatron3, 50, 50);
+	Actor_Set_Health(kActorShoeshineMan, 50, 50);
+	Actor_Set_Health(kActorTyrell, 50, 50);
+	Actor_Set_Health(kActorChew, 50, 50);
+	Actor_Set_Health(kActorGaff, 50, 50);
+	Actor_Set_Health(kActorBryant, 50, 50);
+	Actor_Set_Health(kActorTaffy, 50, 50);
+	Actor_Set_Health(kActorSebastian, 50, 50);
+	Actor_Set_Health(kActorRachael, 50, 50);
+	Actor_Set_Health(kActorGeneralDoll, 50, 50);
+	Actor_Set_Health(kActorIsabella, 50, 50);
+	Actor_Set_Health(kActorLeon, 50, 50);
+	Actor_Set_Health(kActorMaggie, 50, 50);
+	Actor_Set_Health(kActorGenwalkerA, 50, 50);
+	Actor_Set_Health(kActorGenwalkerB, 50, 50);
+	Actor_Set_Health(kActorGenwalkerC, 50, 50);
+	Actor_Set_Health(kActorZuben, 80, 80);
+	Actor_Set_Health(kActorGordo, 40, 40);
+	Actor_Set_Health(kActorLucy, 20, 20);
+	Actor_Set_Health(kActorIzo, 50, 50);
+	Actor_Set_Health(kActorDektora, 60, 60);
+	Actor_Set_Health(kActorSteele, 60, 60);
+	Actor_Set_Health(kActorSadik, 60, 60);
+	Actor_Set_Health(kActorClovis, 90, 90);
+	Actor_Set_Health(kActorOfficerLeary, 40, 40);
+	Actor_Set_Health(kActorOfficerGrayford, 50, 50);
+	Actor_Set_Health(kActorMutant1, 30, 30);
+	Actor_Set_Health(kActorMutant2, 50, 50);
+	Actor_Set_Health(kActorMutant3, 20, 20);
+	Actor_Set_Health(kActorFreeSlotA, 20, 20);
+	Actor_Set_Health(kActorFreeSlotB, 20, 20);
 	if (Game_Flag_Query(45) == 1) {
-		Actor_Set_Health(2, 60, 60);
+		Actor_Set_Health(kActorGordo, 60, 60);
 	}
 	if (Game_Flag_Query(46) == 1) {
-		Actor_Set_Health(6, 40, 40);
+		Actor_Set_Health(kActorLucy, 40, 40);
 	}
 	if (Game_Flag_Query(44) == 1) {
-		Actor_Set_Health(7, 65, 65);
+		Actor_Set_Health(kActorIzo, 65, 65);
 	}
 	if (Game_Flag_Query(47) == 1) {
-		Actor_Set_Health(3, 70, 70);
+		Actor_Set_Health(kActorDektora, 70, 70);
 	}
 	if (Game_Flag_Query(48) == 1) {
-		Actor_Set_Health(8, 80, 80);
+		Actor_Set_Health(kActorSadik, 80, 80);
 	}
 }
 
