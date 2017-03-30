@@ -307,8 +307,8 @@ int MacText::getLineHeight(int line) {
 	return _textLines[line].height;
 }
 
-void MacText::setInterLinear(int interLinear) { 
-	_interLinear = interLinear; 
+void MacText::setInterLinear(int interLinear) {
+	_interLinear = interLinear;
 	recalcDims();
 }
 
@@ -339,14 +339,27 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 }
 
 void MacText::appendText(Common::String str) {
-	int oldLen = _textLines.size();
+	uint oldLen = _textLines.size();
+	uint newLines = 1;
 
-	// TODO: Recalc length
+	// Calc newline characters in str
+	Common::String::iterator p = str.begin();
+	while (*p) {
+		if (*p == '\n')
+			newLines++;
+		p++;
+	}
+
+	// Resize _textLines appropriately
+	for (int curLine = 0; curLine < newLines; ++curLine) {
+		_textLines.resize(oldLen + newLines);
+		_textLines[oldLen + curLine].chunks.push_back(_currentFormatting);
+	}
 
 	splitString(str);
 	recalcDims();
 
-	render(oldLen + 1, _textLines.size());
+	render(oldLen, _textLines.size());
 }
 
 void MacText::replaceLastLine(Common::String str) {
