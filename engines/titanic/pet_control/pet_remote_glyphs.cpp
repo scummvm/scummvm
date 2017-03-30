@@ -618,4 +618,41 @@ CGotoRestaurantGlyph::CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRes
 		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT], 1) {
 }
 
+/*------------------------------------------------------------------------*/
+
+bool CSkipNavigationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetTV", petControl);
+	if (owner) {
+		_button = getElement(7);
+	}
+
+	return true;
+}
+
+void CSkipNavigationGlyph::draw2(CScreenManager *screenManager) {
+	_button->draw(screenManager);
+}
+
+bool CSkipNavigationGlyph::MouseButtonDownMsg(const Point &pt) {
+	if (_button && _button->MouseButtonDownMsg(pt))
+		return true;
+
+	return false;
+}
+
+bool CSkipNavigationGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (_button && _button->MouseButtonUpMsg(pt)) {
+		CActMsg actMsg("SetDestin");
+		actMsg.execute("CaptainsWheel");
+		return true;
+	}
+
+	return false;
+}
+
+void CSkipNavigationGlyph::getTooltip(CTextControl *text) {
+	text->setText(SKIP_NAVIGATION);
+}
+
 } // End of namespace Titanic
