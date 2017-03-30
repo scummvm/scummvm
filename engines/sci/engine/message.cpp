@@ -82,7 +82,7 @@ public:
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -110,7 +110,7 @@ public:
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -138,7 +138,7 @@ public:
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}
@@ -169,7 +169,7 @@ public:
 				record.string = (const char *)_data.getUnsafeDataAt(stringOffset, maxSize);
 				record.length = Common::strnlen(record.string, maxSize);
 				if (record.length == maxSize) {
-					warning("Message %s from %s appears truncated at %ld", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
+					warning("Message %s from %s appears truncated at %d", tuple.toString().c_str(), _data.name().c_str(), recordPtr - _data);
 				}
 				return true;
 			}

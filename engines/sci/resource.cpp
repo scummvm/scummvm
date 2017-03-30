@@ -309,7 +309,7 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 		_header = new byte[_headerSize];
 
 	if (data() == nullptr || (_headerSize > 0 && _header == nullptr)) {
-		error("Can't allocate %lu bytes needed for loading %s", size() + _headerSize, _id.toString().c_str());
+		error("Can't allocate %u bytes needed for loading %s", size() + _headerSize, _id.toString().c_str());
 	}
 
 	uint32 bytesRead;
@@ -321,7 +321,7 @@ bool Resource::loadPatch(Common::SeekableReadStream *file) {
 
 	bytesRead = file->read(ptr, size());
 	if (bytesRead != size())
-		error("Read %d bytes from %s but expected %lu", bytesRead, _id.toString().c_str(), size());
+		error("Read %d bytes from %s but expected %u", bytesRead, _id.toString().c_str(), size());
 
 	_status = kResStatusAllocated;
 	return true;
@@ -1028,7 +1028,7 @@ void ResourceManager::printLRU() {
 
 	while (it != _LRU.end()) {
 		res = *it;
-		debug("\t%s: %lu bytes", res->_id.toString().c_str(), res->size());
+		debug("\t%s: %u bytes", res->_id.toString().c_str(), res->size());
 		mem += res->size();
 		++entries;
 		++it;

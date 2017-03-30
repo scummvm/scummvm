@@ -85,7 +85,7 @@ bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
 
 	uint32 bytesRead = file->read(ptr, _size);
 	if (bytesRead != _size)
-		error("Read %d bytes from %s but expected %lu", bytesRead, _id.toString().c_str(), _size);
+		error("Read %d bytes from %s but expected %u", bytesRead, _id.toString().c_str(), _size);
 
 	_status = kResStatusAllocated;
 	return true;
@@ -139,12 +139,12 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 	_data = ptr;
 
 	if (!ptr) {
-		error("Can't allocate %lu bytes needed for loading %s", _size, _id.toString().c_str());
+		error("Can't allocate %u bytes needed for loading %s", _size, _id.toString().c_str());
 	}
 
 	uint32 bytesRead = file->read(ptr, size());
 	if (bytesRead != size())
-		warning("Read %d bytes from %s but expected %lu", bytesRead, _id.toString().c_str(), _size);
+		warning("Read %d bytes from %s but expected %u", bytesRead, _id.toString().c_str(), _size);
 
 	_status = kResStatusAllocated;
 	return true;

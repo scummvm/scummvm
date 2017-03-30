@@ -954,7 +954,7 @@ bool Console::cmdResourceInfo(int argc, const char **argv) {
 	else {
 		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
-			debugPrintf("Resource size: %lu\n", resource->size());
+			debugPrintf("Resource size: %u\n", resource->size());
 			debugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
 		} else {
 			debugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
@@ -1067,11 +1067,11 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
 			if (script && heap && (script->size() + heap->size() > 65535))
-				debugPrintf("Error: script and heap %d together are larger than 64KB (%lu bytes)\n",
+				debugPrintf("Error: script and heap %d together are larger than 64KB (%u bytes)\n",
 				itr->getNumber(), script->size() + heap->size());
 		} else {	// SCI3
 			if (script && script->size() > 65535)
-				debugPrintf("Error: script %d is larger than 64KB (%lu bytes)\n",
+				debugPrintf("Error: script %d is larger than 64KB (%u bytes)\n",
 				itr->getNumber(), script->size());
 		}
 	}

@@ -151,7 +151,7 @@ void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *palett
 	if (data.size() < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
-		debugC(kDebugLevelResMan, "GfxPalette::createFromData() - not enough bytes in resource (%lu), expected palette header", data.size());
+		debugC(kDebugLevelResMan, "GfxPalette::createFromData() - not enough bytes in resource (%u), expected palette header", data.size());
 		return;
 	}
 

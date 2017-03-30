@@ -1025,7 +1025,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 						error("MT-32 patch has wrong type");
 					} else {
 						// Happens in the SCI3 interactive demo of Lighthouse
-						warning("TODO: Ignoring new SCI3 type of MT-32 patch for now (size = %lu)", res->size());
+						warning("TODO: Ignoring new SCI3 type of MT-32 patch for now (size = %u)", res->size());
 					}
 				}
 			} else {
