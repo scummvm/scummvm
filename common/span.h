@@ -268,9 +268,9 @@ class SpanBase : public SafeBool<Derived<ValueType> > {
 
 public:
 	typedef ValueType value_type;
-	typedef ptrdiff_t difference_type;
-	typedef size_t index_type;
-	typedef size_t size_type;
+	typedef int32 difference_type;
+	typedef uint32 index_type;
+	typedef uint32 size_type;
 	typedef SpanInternal::SpanIterator<derived_type, true> const_iterator;
 	typedef SpanInternal::SpanIterator<derived_type, false> iterator;
 	typedef value_type *pointer;
@@ -601,11 +601,11 @@ public:
 				break;
 		}
 
-		return String::format("Access violation %s %s: %ld + %ld > %ld",
+		return String::format("Access violation %s %s: %u + %d > %u",
 							  modeName,
 							  this->impl().name().c_str(),
 							  index,
-							  deltaInBytes / sizeof(value_type),
+							  deltaInBytes / (int)sizeof(value_type),
 							  size());
 	}
 
@@ -829,7 +829,7 @@ public:
 		const size_type maxSizeInBytes = this->impl().byteSize();
 
 		return super_type::getValidationMessage(index, deltaInBytes, mode) +
-			String::format(" (abs: %ld + %ld > %ld)",
+			String::format(" (abs: %u + %d > %u)",
 						   this->impl().sourceByteOffset() + indexInBytes,
 						   deltaInBytes,
 						   this->impl().sourceByteOffset() + maxSizeInBytes);

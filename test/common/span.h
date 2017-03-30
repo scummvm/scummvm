@@ -640,7 +640,7 @@ public:
 		TS_ASSERT(span.checkInvalidBounds(2, -4)); // negative overflow (-2)
 		TS_ASSERT(span.checkInvalidBounds(0, 10)); // delta positive overflow
 
-		const ptrdiff_t big = 1L << (8 * sizeof(ptrdiff_t) - 1);
+		const Common::Span<byte>::difference_type big = 1L << (8 * sizeof(Common::Span<byte>::difference_type) - 1);
 		TS_ASSERT(span.checkInvalidBounds(big, 0));
 		TS_ASSERT(span.checkInvalidBounds(0, big));
 		TS_ASSERT(span.checkInvalidBounds(big, big));
@@ -662,8 +662,8 @@ public:
 		expected = Common::String::format("Access violation writing %s: 23 + 45 > 1", source.c_str());
 		TS_ASSERT_EQUALS(actual, expected);
 
-		actual = span.getValidationMessage(-34, -56, Common::kValidateSeek);
-		expected = Common::String::format("Access violation seeking %s: -34 + -56 > 1", source.c_str());
+		actual = span.getValidationMessage(0, -56, Common::kValidateSeek);
+		expected = Common::String::format("Access violation seeking %s: 0 + -56 > 1", source.c_str());
 		TS_ASSERT_EQUALS(actual, expected);
 	}
 
@@ -716,15 +716,15 @@ public:
 
 		{
 			Common::NamedSpan<byte> subspan = span.subspan(2, Common::kSpanMaxSize, "new.data");
-			expected = "Access violation reading new.data: -34 + -56 > 4 (abs: -32 + -56 > 6)";
-			actual = subspan.getValidationMessage(-34, -56, Common::kValidateRead);
+			expected = "Access violation reading new.data: 0 + -56 > 4 (abs: 2 + -56 > 6)";
+			actual = subspan.getValidationMessage(0, -56, Common::kValidateRead);
 			TS_ASSERT_EQUALS(actual, expected);
 		}
 
 		{
 			Common::NamedSpan<byte> subspan = span.subspan(2, Common::kSpanMaxSize, "new.data", 0);
-			expected = "Access violation reading new.data: -34 + -56 > 4 (abs: -34 + -56 > 4)";
-			actual = subspan.getValidationMessage(-34, -56, Common::kValidateRead);
+			expected = "Access violation reading new.data: 0 + -56 > 4 (abs: 0 + -56 > 4)";
+			actual = subspan.getValidationMessage(0, -56, Common::kValidateRead);
 			TS_ASSERT_EQUALS(actual, expected);
 		}
 
@@ -754,23 +754,23 @@ public:
 
 		{
 			Common::NamedSpan<const byte> subspan = constSpan.subspan(2, Common::kSpanMaxSize, "new.data");
-			expected = "Access violation reading new.data: -34 + -56 > 4 (abs: -32 + -56 > 6)";
-			actual = subspan.getValidationMessage(-34, -56, Common::kValidateRead);
+			expected = "Access violation reading new.data: 0 + -56 > 4 (abs: 2 + -56 > 6)";
+			actual = subspan.getValidationMessage(0, -56, Common::kValidateRead);
 			TS_ASSERT_EQUALS(actual, expected);
 		}
 
 		{
 			Common::NamedSpan<const byte> subspan = constSpan.subspan(2, Common::kSpanMaxSize, "new.data", 0);
-			expected = "Access violation reading new.data: -34 + -56 > 4 (abs: -34 + -56 > 4)";
-			actual = subspan.getValidationMessage(-34, -56, Common::kValidateRead);
+			expected = "Access violation reading new.data: 0 + -56 > 4 (abs: 0 + -56 > 4)";
+			actual = subspan.getValidationMessage(0, -56, Common::kValidateRead);
 			TS_ASSERT_EQUALS(actual, expected);
 		}
 
 		{
 			Common::NamedSpan<const byte> subspan = constSpan.subspan(2, Common::kSpanMaxSize, "new.data", 0);
 			subspan.sourceByteOffset() = 2;
-			expected = "Access violation reading new.data: -34 + -56 > 4 (abs: -32 + -56 > 6)";
-			actual = subspan.getValidationMessage(-34, -56, Common::kValidateRead);
+			expected = "Access violation reading new.data: 0 + -56 > 4 (abs: 2 + -56 > 6)";
+			actual = subspan.getValidationMessage(0, -56, Common::kValidateRead);
 			TS_ASSERT_EQUALS(actual, expected);
 		}
 
