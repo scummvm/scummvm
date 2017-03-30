@@ -63,6 +63,13 @@ public:
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GUI::Dialog("GlobalMenu"), _engine(engine) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
+	Common::String caption(ConfMan.get("description"));
+
+	if (caption.empty()) {
+		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
+	}
+	if (caption.empty())
+		caption = ConfMan.getActiveDomainName();
 
 #ifndef DISABLE_FANCY_THEMES
 	_logo = 0;
@@ -79,7 +86,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", gScummVMVersionDate);
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", caption.c_str());
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
