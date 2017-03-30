@@ -127,7 +127,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		//
 		// TODO: Remove this once such a mechanism is in place
 		if (script->size() > 65535)
-			warning("TODO: SCI script %d is over 64KB - it's %lu bytes long. This can't "
+			warning("TODO: SCI script %d is over 64KB - it's %u bytes long. This can't "
 			      "be fully handled at the moment", script_nr, script->size());
 	}
 
