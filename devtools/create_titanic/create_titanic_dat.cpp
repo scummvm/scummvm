@@ -416,7 +416,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[140] = {
+static const char *const STRINGS_EN[141] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -521,6 +521,7 @@ static const char *const STRINGS_EN[140] = {
 	"Deploy major horizontally mobile storage compartment",
 	"Succ-U-Bus delivery system control",
 	"Navigation controller",
+	"Let Titania figure out where Earth is (skip puzzle)",
 	"Summon Elevator",
 	"Summon Pellerator",
 	"Go to the Bottom of the Well",
@@ -564,7 +565,7 @@ static const char *const STRINGS_EN[140] = {
 	"A cold"
 };
 
-static const char *const STRINGS_DE[185] = {
+static const char *const STRINGS_DE[186] = {
 	// TODO: Still many strings to translate to German
 	"",
 	"Sie befinden sich vor dem Pellerator.",
@@ -686,6 +687,7 @@ static const char *const STRINGS_DE[185] = {
 	"Deploy major horizontally mobile storage compartment",
 	"Succ-U-Bus delivery system control",
 	"Navigation controller",
+	"Let Titania figure out where Earth is (skip puzzle)",
 	"Summon Elevator",
 	"Summon Pellerator",
 	"Go to the Bottom of the Well",
@@ -1287,8 +1289,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 140);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 185);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 141);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 186);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
