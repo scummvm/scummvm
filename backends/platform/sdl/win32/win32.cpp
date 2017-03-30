@@ -29,6 +29,7 @@
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 #include <shellapi.h>
+#include <ShlObj.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -146,42 +147,22 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 }
 
 Common::String OSystem_Win32::getScreenshotsPath() {
-	char screenshotsPath[MAXPATHLEN];
+	char picturesPath[MAXPATHLEN];
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", screenshotsPath, MAXPATHLEN))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", screenshotsPath, MAXPATHLEN))
-				error("Unable to access user profile directory");
+	// Use the My Pictures folder.
+	if (SHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK)
+		error("Unable to access My Pictures directory");
 
-			strcat(screenshotsPath, "\\Application Data");
-		}
+	Common::String screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
 
-		strcat(screenshotsPath, "\\ScummVM\\Screenshots");
-
-		// If the directory already exists (as it should in most cases),
-		// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
-		if (!CreateDirectory(screenshotsPath, NULL)) {
-			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				error("Cannot create Screenshots folder");
-		}
-
-	} else {
-		// Check windows directory
-		uint ret = GetWindowsDirectory(screenshotsPath, MAXPATHLEN);
-		if (ret == 0 || ret > MAXPATHLEN)
-			error("Cannot retrieve the path of the Windows directory");
+	// If the directory already exists (as it should in most cases),
+	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
+	if (!CreateDirectory(screenshotsPath.c_str(), NULL)) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS)
+			error("Cannot create ScummVM Screenshots folder");
 	}
 
-	return strcat(screenshotsPath, "\\");
+	return screenshotsPath;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
