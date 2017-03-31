@@ -125,7 +125,7 @@ Common::Error MarioGame::run() {
 	return Common::kNoError;
 }
 
-void MarioGame::loadImage(Common::String dirname, Common::String filename) {
+void MarioGame::loadImage(const Common::String &dirname, const Common::String &filename) {
 	if (_image) {
 		delete _image;
 		_image = nullptr;
@@ -274,7 +274,7 @@ void MarioGame::initTables() {
 	memset(_bitmaps, 0, sizeof(_bitmaps));
 }
 
-void MarioGame::readTables(Common::String fileName) {
+void MarioGame::readTables(const Common::String &fileName) {
 	Common::File file;
 	if (!file.open(fileName))
 		error("sReadTables(): Error reading BIN file");

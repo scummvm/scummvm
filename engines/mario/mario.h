@@ -105,7 +105,7 @@ private:
 
 	Common::Queue<Action> _actions;
 	
-	void loadImage(Common::String dirname, Common::String filename);
+	void loadImage(const Common::String &dirname, const Common::String &filename);
 	void drawScreen();
 
 	Audio::SoundHandle _soundHandle;
@@ -121,7 +121,7 @@ private:
 	static void onTimer(void *arg);
 
 	void initTables();
-	void readTables(Common::String fileName);
+	void readTables(const Common::String &fileName);
 	int getSceneNumb(int sNo);
 };
 } // End of namespace Mario
