@@ -49,7 +49,7 @@ MarioGame::~MarioGame() {
 }
 
 Common::Error MarioGame::run() {
-	initGraphics(640, 480, false);
+	initGraphics(640, 480, true);
 	g_system->showMouse(true);
 
 	readTables("game.bin");
