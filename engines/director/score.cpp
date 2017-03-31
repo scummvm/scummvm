@@ -769,7 +769,7 @@ void Score::setStartToLabel(Common::String label) {
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
-		if ((*i)->name == label) {
+		if ((*i)->name.equalsIgnoreCase(label)) {
 			_currentFrame = (*i)->number;
 			return;
 		}
