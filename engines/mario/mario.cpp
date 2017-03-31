@@ -27,6 +27,8 @@
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "graphics/palette.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -150,45 +152,37 @@ void MarioGame::drawScreen() {
 			_actions.push(UpdateScene);
 		}
 
+		Graphics::Surface *screen = g_system->lockScreen();
+		screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), 0);
+
 		const Graphics::Surface *surface = _image->getSurface();
 
-		//TODO sometimes a picture is not 640x480 (SC01/0119.BMP), crop/stretch/center it?
 		int w = CLIP<int>(surface->w, 0, 640);
 		int h = CLIP<int>(surface->h, 0, 480);
 
-		g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, w, h);
+		int x = (640 - w) / 2;
+		int y = (480 - h) / 2;
+
+		screen->copyRectToSurface(*surface, x, y, Common::Rect(0, 0, w, h));
+
+		if (_showScoreFl) {
+			Common::String score = Common::String::format("Your Score is: %ld", _totScore);
+
+			const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont));
+
+			h = font.getFontHeight();
+
+			Common::Rect rect(10, 440, 200, 440 + h);
+
+			screen->fillRect(rect, 0);
+			font.drawString(screen, score, rect.left, rect.top, 190, 255, Graphics::kTextAlignCenter);
+
+			_showScoreFl = false;
+		}
+
+		g_system->unlockScreen();
 		g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
-#if 0
-		xadj = yadj = 0;
-		Common::Rect  rect;
-		rect.left = xadj + 10;
-		rect.top = yadj + 440;
-		rect.right = xadj + 200;
-		rect.bottom = yadj + 460;
-
-		//TODO this should be drawn on top of picture
-		if (bShowScore) {
-			char	szBuffer[24];
-			HBRUSH	hBrush;
-			HRGN	hrgn;
-			hrgn = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
-			SelectObject(hdc, hrgn);
-
-			hBrush = GetStockObject(WHITE_BRUSH);
-			FillRgn(hdc, hrgn, hBrush);
-			DeleteObject(hBrush);
-
-			hBrush = CreateSolidBrush(RGB(255, 0, 0));
-			FrameRgn(hdc, hrgn, hBrush, 2, 2);
-			DeleteObject(hrgn);
-			DeleteObject(hBrush);
-
-			DrawText(hdc, szBuffer, wsprintf(szBuffer, "Your Score is: %ld", Game.lTotScore), &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-
-			bShowScore = FALSE;
-		}
-#endif
 	}
 }
 
