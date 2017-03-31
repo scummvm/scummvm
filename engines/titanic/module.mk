@@ -460,7 +460,6 @@ MODULE_OBJS := \
 	star_control/star_ref.o \
 	star_control/star_view.o \
 	star_control/surface_area.o \
-	star_control/surface_fader_base.o \
 	star_control/surface_fader.o \
 	support/avi_surface.o \
 	support/direct_draw.o \

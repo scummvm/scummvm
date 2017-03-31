@@ -26,6 +26,38 @@
 
 namespace Titanic {
 
+
+CSurfaceFaderBase::CSurfaceFaderBase() : _index(-1), _count(32),
+		_videoSurface(nullptr) {
+}
+
+CSurfaceFaderBase::~CSurfaceFaderBase() {
+	delete _videoSurface;
+}
+
+void CSurfaceFaderBase::reset() {
+	_index = 0;
+}
+
+bool CSurfaceFaderBase::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+	int width = srcSurface->getWidth();
+	int height = srcSurface->getHeight();
+
+	if (_videoSurface) {
+		if (width == _videoSurface->getWidth() && _videoSurface->getHeight())
+			// Allocated surface already matches new size
+			return true;
+
+		// Different sizes, so delete old surface
+		delete _videoSurface;
+	}
+
+	_videoSurface = screenManager->createSurface(width, height);
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
 CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
 	_dataP = new byte[_count];
 
@@ -36,6 +68,32 @@ CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
 
 CSurfaceFader::~CSurfaceFader() {
 	delete[] _dataP;
+}
+
+void CSurfaceFader::setFadeIn(bool fadeIn) {
+	_fadeIn = fadeIn;
+}
+
+CVideoSurface *CSurfaceFader::fade(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+	if (_index == -1 || _index >= _count)
+		return srcSurface;
+
+	if (!_count && !setupSurface(screenManager, srcSurface))
+		return nullptr;
+
+	srcSurface->lock();
+	_videoSurface->lock();
+	CSurfaceArea srCSurfaceArea(srcSurface);
+	CSurfaceArea destSurfaceObj(_videoSurface);
+
+	// Copy the surface with fading
+	copySurface(srCSurfaceArea, destSurfaceObj);
+
+	srcSurface->unlock();
+	_videoSurface->unlock();
+
+	++_index;
+	return _videoSurface;
 }
 
 void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
@@ -64,10 +122,6 @@ void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurf
 			*destPixelP = format.RGBToColor(r, g, b);
 		}
 	}
-}
-
-void CSurfaceFader::setFadeIn(bool fadeIn) {
-	_fadeIn = fadeIn;
 }
 
 } // End of namespace Titanic
