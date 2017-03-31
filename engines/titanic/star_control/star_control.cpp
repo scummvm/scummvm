@@ -41,7 +41,7 @@ BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-CStarControl::CStarControl() : _enabled(false),
+CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
 		_starRect(20, 10, 620, 350) {
 	CStarControlSub12::init();
 	DMatrix::init();
