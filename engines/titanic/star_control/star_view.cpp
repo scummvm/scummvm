@@ -269,7 +269,7 @@ void CStarView::fn2() {
 
 		if (_videoSurface) {
 			fn13();
-			fn19(200);
+			fn19(244);
 			draw(scrManager);
 		}
 	}
