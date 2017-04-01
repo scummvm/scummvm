@@ -87,7 +87,7 @@ public:
 
 	void fn11(const FVector &v);
 	void fn12();
-	void fn13(StarMode mode, double v2);
+	void fn13(StarMode mode, double val);
 	void reposition(double factor);
 	void fn15(const FMatrix &matrix);
 	CStarControlSub6 getSub1();

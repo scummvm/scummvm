@@ -160,17 +160,17 @@ void CStarControlSub13::fn12() {
 	_flag = false;
 }
 
-void CStarControlSub13::fn13(StarMode mode, double v2) {
-	if (mode == MODE_STARFIELD) {
-		_valArray[0] = v2;
-		_valArray[1] = -v2;
+void CStarControlSub13::fn13(StarMode mode, double val) {
+	if (mode == MODE_PHOTO) {
+		_valArray[0] = val;
+		_valArray[1] = -val;
 	} else {
-		_valArray[3] = v2;
-		_valArray[4] = -v2;
+		_valArray[3] = val;
+		_valArray[4] = -val;
 	}
 
 	_valArray[2] = 0.0;
-	_field24 = v2 ? 2 : 0;
+	_field24 = val ? 2 : 0;
 }
 
 void CStarControlSub13::reposition(double factor) {
