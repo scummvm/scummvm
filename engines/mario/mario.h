@@ -57,7 +57,6 @@ public:
 	Common::Platform getPlatform() const;
 
 private:
-
 	static const int kMaxName = 13 + 1;
 	static const int kMaxBitmaps = 2000;
 	static const int kMaxChoice = 3;

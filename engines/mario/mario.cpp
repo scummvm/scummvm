@@ -30,12 +30,10 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "common/system.h"
-
 #include "engines/util.h"
+#include "common/debug.h"
 
 #include "mario/mario.h"
-
-#include "common/debug.h"
 
 namespace Mario {
 
@@ -126,16 +124,14 @@ Common::Error MarioGame::run() {
 }
 
 void MarioGame::loadImage(const Common::String &dirname, const Common::String &filename) {
-	if (_image) {
-		delete _image;
-		_image = nullptr;
-	}
-
 	Common::String name = dirname + "/" + filename;
 	debug("%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
 	if (!file->open(name))
 		error("unable to load image %s", name.c_str());
+
+	if (_image)
+		delete _image;
 
 	_image = new Image::BitmapDecoder();
 	_image->loadStream(*file);
@@ -167,16 +163,10 @@ void MarioGame::drawScreen() {
 
 		if (_showScoreFl) {
 			Common::String score = Common::String::format("Your Score is: %ld", _totScore);
-
 			const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont));
-
-			h = font.getFontHeight();
-
-			Common::Rect rect(10, 440, 200, 440 + h);
-
+			Common::Rect rect(10, 440, 200, 440 + font.getFontHeight());
 			screen->fillRect(rect, 0);
 			font.drawString(screen, score, rect.left, rect.top, 190, 255, Graphics::kTextAlignCenter);
-
 			_showScoreFl = false;
 		}
 

@@ -29,10 +29,8 @@
 
 
 namespace Mario {
-
 const char *MarioGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform MarioGame::getPlatform() const { return _gameDescription->platform; }
-
 }
 
 static const PlainGameDescriptor marioGames[] = {
@@ -43,7 +41,6 @@ static const PlainGameDescriptor marioGames[] = {
 namespace Mario {
 
 static const ADGameDescription gameDescriptions[] = {
-
 	// Mario PC version
 	{
 		"mario",
