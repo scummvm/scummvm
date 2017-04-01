@@ -81,7 +81,7 @@ void CStarView::draw(CScreenManager *screenManager) {
 
 	if (_fader.isActive()) {
 		CVideoSurface *surface = _showingPhoto ? _videoSurface2 : _videoSurface;
-		surface = _fader.fade(screenManager, surface);
+		surface = _fader.draw(screenManager, surface);
 		screenManager->blitFrom(SURFACE_PRIMARY, surface);
 	} else {
 		Point destPos(20, 10);

@@ -27,19 +27,24 @@
 namespace Titanic {
 
 
-CSurfaceFaderBase::CSurfaceFaderBase() : _index(-1), _count(32),
-		_videoSurface(nullptr) {
+CSurfaceFader::CSurfaceFader() : _index(-1), _count(32), _fadeIn(false), _videoSurface(nullptr) {
+	_dataP = new byte[_count];
+
+	for (int idx = 0; idx < _count; ++idx)
+		_dataP[idx] = (byte)(pow((double)idx / (double)_count, 1.299999952316284)
+			* (double)_count + 0.5);
 }
 
-CSurfaceFaderBase::~CSurfaceFaderBase() {
+CSurfaceFader::~CSurfaceFader() {
 	delete _videoSurface;
+	delete[] _dataP;
 }
 
-void CSurfaceFaderBase::reset() {
+void CSurfaceFader::reset() {
 	_index = 0;
 }
 
-bool CSurfaceFaderBase::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+bool CSurfaceFader::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
 	int width = srcSurface->getWidth();
 	int height = srcSurface->getHeight();
 
@@ -56,38 +61,21 @@ bool CSurfaceFaderBase::setupSurface(CScreenManager *screenManager, CVideoSurfac
 	return true;
 }
 
-/*------------------------------------------------------------------------*/
-
-CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
-	_dataP = new byte[_count];
-
-	for (int idx = 0; idx < _count; ++idx)
-		_dataP[idx] = (byte)(pow((double)idx / (double)_count, 1.299999952316284)
-			* (double)_count + 0.5);
-}
-
-CSurfaceFader::~CSurfaceFader() {
-	delete[] _dataP;
-}
-
-void CSurfaceFader::setFadeIn(bool fadeIn) {
-	_fadeIn = fadeIn;
-}
-
-CVideoSurface *CSurfaceFader::fade(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+CVideoSurface *CSurfaceFader::draw(CScreenManager *screenManager, CVideoSurface *srcSurface) {
 	if (_index == -1 || _index >= _count)
 		return srcSurface;
 
-	if (!_count && !setupSurface(screenManager, srcSurface))
+	// On the first iteration, set up a temporary surface
+	if (_index == 0 && !setupSurface(screenManager, srcSurface))
 		return nullptr;
 
 	srcSurface->lock();
 	_videoSurface->lock();
-	CSurfaceArea srCSurfaceArea(srcSurface);
-	CSurfaceArea destSurfaceObj(_videoSurface);
+	CSurfaceArea srcSurfaceArea(srcSurface);
+	CSurfaceArea destSurfaceArea(_videoSurface);
 
 	// Copy the surface with fading
-	copySurface(srCSurfaceArea, destSurfaceObj);
+	step(srcSurfaceArea, destSurfaceArea);
 
 	srcSurface->unlock();
 	_videoSurface->unlock();
@@ -96,7 +84,7 @@ CVideoSurface *CSurfaceFader::fade(CScreenManager *screenManager, CVideoSurface 
 	return _videoSurface;
 }
 
-void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
+void CSurfaceFader::step(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
 	const uint16 *srcPixelP = (const uint16 *)srcSurface._pixelsPtr;
 	uint16 *destPixelP = (uint16 *)destSurface._pixelsPtr;
 
@@ -122,6 +110,10 @@ void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurf
 			*destPixelP = format.RGBToColor(r, g, b);
 		}
 	}
+}
+
+void CSurfaceFader::setFadeIn(bool fadeIn) {
+	_fadeIn = fadeIn;
 }
 
 } // End of namespace Titanic
