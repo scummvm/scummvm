@@ -77,8 +77,8 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 	_field1C = file->readFloat();
 
 	int widthHeight = file->readNumber();
-	_width = widthHeight & 0xff;
-	_height = _width >> 16;
+	_width = widthHeight & 0xffff;
+	_height = widthHeight >> 16;
 	_field24 = file->readNumber();
 
 	for (int idx = 0; idx < 5; ++idx)
@@ -97,7 +97,7 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_field14, indent);
 	file->writeFloatLine(_field18, indent);
 	file->writeFloatLine(_field1C, indent);
-	file->writeFloatLine(_width | (_height << 16), indent);
+	file->writeNumberLine(_width | (_height << 16), indent);
 
 	for (int idx = 0; idx < 5; ++idx)
 		file->writeFloatLine(_valArray[idx], indent);
@@ -250,9 +250,7 @@ void CStarControlSub13::reset() {
 	const double FACTOR = 2 * M_PI / 360.0;
 
 	_sub2.copyFrom(_matrix);
-	_sub2._vector._x = _position._x;
-	_sub2._vector._y = _position._y;
-	_sub2._vector._z = _position._z;
+	_sub2._vector = _position;
 	_sub2.fn4(&_sub1);
 
 	double widthV = (double)_width * 0.5;
