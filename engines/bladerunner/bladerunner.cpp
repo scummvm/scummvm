@@ -803,8 +803,6 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
 	int exitIndex = _scene->_exits->getRegionAtXY(x, y);
 
-	debug("%d %d", sceneObjectId, exitIndex);
-
 	if ((sceneObjectId < 0 || sceneObjectId > 73) && exitIndex >= 0) {
 		handleMouseClickExit(x, y, exitIndex);
 		return;

@@ -153,18 +153,19 @@ public:
 
 	int getSetId();
 	void setSetId(int setId);
-	BoundingBox *getBoundingBox() { return _bbox; }
+	BoundingBox *getBoundingBox() const { return _bbox; }
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
-	int getWalkbox() { return _walkboxId; }
-	bool isRetired() { return _isRetired; }
-	bool isTargetable() { return _isTargetable; }	
+	int getWalkbox() const { return _walkboxId; }
+	bool isRetired()const { return _isRetired; }
+	bool isTargetable() const { return _isTargetable; }
 	void setTargetable(bool targetable);
-	bool isImmuneToObstacles() { return _isImmuneToObstacles; }
-	bool inCombat() { return _inCombat; }
-	bool isMoving() { return _isMoving; }
+	bool isImmuneToObstacles() const { return _isImmuneToObstacles; }
+	bool inCombat() const { return _inCombat; }
+	bool isMoving() const { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
-	bool isWalking();
-	bool isRunning();
+	bool inWalkLoop() const { return _inWalkLoop; }
+	bool isWalking() const;
+	bool isRunning() const;
 	void stopWalking(bool value);
 
 	void faceActor(int otherActorId, bool animate);
@@ -212,19 +213,19 @@ public:
 	bool hasClue(int clueId);
 	void copyClues(int actorId);
 
-	int soundVolume();
-	int soundBalance();
+	int soundVolume() const;
+	int soundBalance() const;
 private:
 	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(const Vector3 &position, bool retired);
-	float distanceFromView(View* view);
+	float distanceFromView(View* view) const;
 	
 	bool loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
 	bool walkTo(bool run, const Vector3 &destination, bool a3);
 
 	bool walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float a3, Vector3 *newDestination);
 	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
-	bool walkToU(const Vector3 &destination, float distance);
+	bool walkToNearestPoint(const Vector3 &destination, float distance);
 	//bool walkFindU3(int actorId, Vector3 from, int distance, Vector3 *out);
 };
 

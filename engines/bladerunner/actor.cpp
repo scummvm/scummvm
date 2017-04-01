@@ -247,7 +247,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 	int delay;
 	int waypointId;
 	Vector3 waypointPosition;
-	bool stopped;
+	bool arrived;
 
 	hasNextMovement = _movementTrack->next(&waypointId, &delay, &angle, &running);
 	_movementTrackNextWaypointId = waypointId;
@@ -262,11 +262,11 @@ void Actor::movementTrackNext(bool omitAiScript) {
 		_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 		if (_setId == waypointSetId && waypointSetId == _vm->_actors[0]->_setId) {
 			stopWalking(false);
-			_walkInfo->setup(_id, running, _position, waypointPosition, false, &stopped);
+			_walkInfo->setup(_id, running, _position, waypointPosition, false, &arrived);
 
 			_movementTrackWalkingToWaypointId = waypointId;
 			_movementTrackDelayOnNextWaypoint = delay;
-			if (stopped) {
+			if (arrived) {
 				movementTrackWaypointReached();
 			}
 		} else {
@@ -302,12 +302,12 @@ void Actor::movementTrackPause() {
 
 void Actor::movementTrackUnpause() {
 	Vector3 waypointPosition;
-	bool stopped;
+	bool arrived;
 
 	_movementTrack->unpause();
 	if (_movementTrackNextWaypointId >= 0 && _movementTrackPaused) {
 		_vm->_waypoints->getXYZ(_movementTrackNextWaypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-		_walkInfo->setup(_id, _movementTrackNextRunning, _position, waypointPosition, false, &stopped);
+		_walkInfo->setup(_id, _movementTrackNextRunning, _position, waypointPosition, false, &arrived);
 		_movementTrackPaused = false;
 	}
 }
@@ -351,7 +351,7 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 	_position = position;
 	setFacing(facing, snapFacing);
 
-	if (_vm->_scene->_setId == _setId) {
+	if (_vm->_scene->getSetId() == _setId) {
 		_walkboxId = _vm->_scene->_set->findWalkbox(_position.x, _position.y);
 	} else {
 		_walkboxId = -1;
@@ -375,8 +375,8 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
 bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *flagIsRunning, bool async) {
 	if (true) { // simple walking
 		*flagIsRunning = false;
-		bool stopped;
-		_walkInfo->setup(_id, false, _position, destination, false, &stopped);
+		bool arrived;
+		_walkInfo->setup(_id, false, _position, destination, false, &arrived);
 
 		for (;;) {
 			_vm->gameTick();
@@ -400,7 +400,7 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 
 		if (a8 && !async && _id && destinationOffset <= 24) {
 			if (distance(_vm->_playerActor->_position, destination) <= 24.0f) {
-				_vm->_playerActor->walkToU(destination, 48.0f);
+				_vm->_playerActor->walkToNearestPoint(destination, 48.0f);
 			}
 		}
 
@@ -476,9 +476,9 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 }
 
 bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
-	bool flagIsRunning;
+	bool arrived;
 
-	return _walkInfo->setup(_id, run, _position, destination, a3, &flagIsRunning);
+	return _walkInfo->setup(_id, run, _position, destination, a3, &arrived);
 }
 
 bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
@@ -765,17 +765,17 @@ void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 	}
 }
 
-float Actor::distanceFromView(View *view) {
+float Actor::distanceFromView(View *view) const{
 	float xDist = this->_position.x - view->_cameraPosition.x;
 	float zDist = this->_position.z - view->_cameraPosition.z;
 	return sqrt(xDist * xDist + zDist * zDist);
 }
 
-bool Actor::isWalking() {
+bool Actor::isWalking() const {
 	return _walkInfo->isWalking();
 }
 
-bool Actor::isRunning() {
+bool Actor::isRunning() const {
 	return _walkInfo->isRunning();
 }
 
@@ -794,7 +794,7 @@ void Actor::stopWalking(bool value) {
 }
 
 void Actor::faceActor(int otherActorId, bool animate) {
-	if (_setId != _vm->_scene->_setId) {
+	if (_setId != _vm->_scene->getSetId()) {
 		return;
 	}
 
@@ -1085,12 +1085,12 @@ void Actor::copyClues(int actorId) {
 	}
 }
 
-int Actor::soundVolume() {
+int Actor::soundVolume() const {
 	float dist = distanceFromView(_vm->_view);
 	return 255.0f * MAX(MIN(dist / 1200.0f, 1.0f), 0.0f);
 }
 
-int Actor::soundBalance() {
+int Actor::soundBalance() const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	return 127.0f * (MAX(MIN(screenPosition.x / 640.0f, 1.0f), 0.0f) * 2.0f - 1.0f);
 }
@@ -1105,8 +1105,8 @@ bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPositi
 	int facing2 = facing;
 	int facing3 = 0;
 	while (true) {
-		float rotatedX = size * sin_1024(facing) + targetPosition.x;
-		float rotatedZ = size * cos_1024(facing) + targetPosition.z;
+		float rotatedX = targetPosition.x + size * sin_1024(facing);
+		float rotatedZ = targetPosition.z - size * cos_1024(facing);
 
 		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
@@ -1161,10 +1161,10 @@ bool Actor::walkFindU2(Vector3 *newDestination, float targetWidth, int destinati
 	}
 }
 
-bool Actor::walkToU(const Vector3 &destination, float distance) {
+bool Actor::walkToNearestPoint(const Vector3 &destination, float distance) {
 	Vector3 out;
 	bool flagIsRunning;
-	if (_walkInfo->findU1(_id, destination, distance, &out)) {
+	if (_walkInfo->findNearestEmptyPosition(_id, destination, distance, out)) {
 		loopWalk(out, 0, false, false, _position, 0.0f, 24.0f, false, &flagIsRunning, false);
 		return true;
 	}

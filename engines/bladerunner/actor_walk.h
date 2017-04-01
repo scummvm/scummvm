@@ -24,16 +24,11 @@
 #define BLADERUNNER_ACTOR_WALK_H
 
 #include "bladerunner/vector.h"
-#include "common/array.h"
+#include "common/hashmap.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-
-struct ActorWalkEntry {
-	int _actorId;
-	int _present;
-};
 
 class ActorWalk {
 	BladeRunnerEngine *_vm;
@@ -42,36 +37,38 @@ private:
 	int     _walking;
 	int     _running;
 	Vector3 _destination;
-	Vector3 _unknown;
+	Vector3 _originalDestination;
 	Vector3 _current;
 	Vector3 _next;
 	int     _facing;
-	Common::Array<ActorWalk> _entries;
-//	int     _field15;
+	Common::HashMap<int, bool> _nearActors;
 	int     _status;
 
 public:
 	ActorWalk(BladeRunnerEngine *vm);
 	~ActorWalk();
-
 	
-	bool setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *stopped);
-	void getCurrentPosition(int actorId, Vector3 *pos, int *facing);
+	bool setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived);
+	void getCurrentPosition(int actorId, Vector3 *pos, int *facing) const;
 	bool tick(int actorId, float stepDistance, bool flag);
 
-	bool isWalking() { return _walking; }
-	bool isRunning() { return _running; }
-	void setRunning();
+	bool isWalking() const { return _walking; }
+	bool isRunning() const { return _running; }
 
-	void stop(int actorId, bool unknown, int combatAnimationMode, int animationMode);
-	// void setWalkingMode(int actorId, int active, int unk2 = 4, int unk3 = 0);
+	bool isXYZEmpty(float x, float y, float z, int actorId) const;
+	bool findNearestEmptyPosition(int actorId, const Vector3 &from, int distance, Vector3 &out) const;
 
-	int nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, Vector3 *next);
+	void stop(int actorId, bool immediately, int combatAnimationMode, int animationMode);
 
-	void resetList();
+private:
+	int nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, Vector3 &next) const;
 
-	bool isXYZEmpty(float x, float y, float z, int actorId);
-	int findU1(int actorId, const Vector3 &to, int distance, Vector3 *out);
+	bool findNearestEmptyPositionToOriginalDestination(int actorId, Vector3 &out) const;
+
+	bool addNearActors(int skipActorId);
+
+	void obstaclesAddNearActors(int actorId) const;
+	void obstaclesRestore() const;
 };
 
 } // End of namespace BladeRunner
