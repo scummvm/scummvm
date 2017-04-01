@@ -62,7 +62,7 @@ bool CSurfaceFader::setupSurface(CScreenManager *screenManager, CVideoSurface *s
 }
 
 CVideoSurface *CSurfaceFader::draw(CScreenManager *screenManager, CVideoSurface *srcSurface) {
-	if (_index == -1 || _index >= _count)
+	if (_index < 0 || _index >= _count)
 		return srcSurface;
 
 	// On the first iteration, set up a temporary surface

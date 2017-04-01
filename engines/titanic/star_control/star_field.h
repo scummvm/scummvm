@@ -42,11 +42,15 @@ private:
 	bool _points1On;
 	bool _points2On;
 	StarMode _mode;
-	bool _val4;
+	bool _showCrosshairs;
 	int _val5;
 	bool _isSolved;
 private:
-	void fn3(CSurfaceArea *surfaceArea);
+	/**
+	 * Draws the square box crosshairs in the middle of the screen
+	 */
+	void drawCrosshairs(CSurfaceArea *surfaceArea);
+
 	void fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 public:
 	CStarField();
@@ -85,8 +89,16 @@ public:
 	 */
 	void setMode(StarMode mode);
 	
-	void toggle4();
-	bool set4(bool val);
+	/**
+	 * Toggles whether the crosshairs box is visible
+	 */
+	void toggleCrosshairs();
+
+	/**
+	 * Sets whether the crosshairs box is visible
+	 */
+	bool setCrosshairs(bool isVisible);
+
 	int get88() const;
 	int get5() const;
 

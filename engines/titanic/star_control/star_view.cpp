@@ -343,9 +343,9 @@ void CStarView::fn11() {
 		_starField->fn9();
 }
 
-void CStarView::fn12() {
+void CStarView::toggleCrosshairs() {
 	if (_starField)
-		_starField->toggle4();
+		_starField->toggleCrosshairs();
 }
 
 void CStarView::fn13() {
@@ -424,13 +424,13 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 
 		if (_videoSurface2) {
 			int oldVal = _starField->get54();
-			bool old4 = _starField->set4(false);
+			bool oldCrosshairs = _starField->setCrosshairs(false);
 
 			_videoSurface2->clear();
 			_videoSurface2->lock();
 			_starField->render(_videoSurface2, sub12);
 
-			_starField->set4(old4);
+			_starField->setCrosshairs(oldCrosshairs);
 			_starField->set54(oldVal);
 			_starField->fn6(_videoSurface2, sub12);
 			_videoSurface2->unlock();

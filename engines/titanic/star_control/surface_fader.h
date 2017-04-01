@@ -70,7 +70,7 @@ public:
 	/**
 	 * Returns true if a fade is in progress
 	 */
-	bool isActive() const { return _index != -1 && _index < _count; }
+	bool isActive() const { return _index >= 0 && _index < _count; }
 };
 
 } // End of namespace Titanic

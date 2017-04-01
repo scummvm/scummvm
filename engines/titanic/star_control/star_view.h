@@ -132,7 +132,12 @@ public:
 	void toggleMode();
 	
 	void fn11();
-	void fn12();
+
+	/**
+	 * Toggles whether the crosshairs box is visible
+	 */
+	void toggleCrosshairs();
+	
 	void fn13();
 	void fn14();
 
