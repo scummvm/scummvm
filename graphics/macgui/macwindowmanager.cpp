@@ -178,19 +178,24 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 	_windows.push_back(w);
 	_windowStack.push_back(w);
 
-	setActive(_lastId);
-
-	_lastId++;
+	setActive(getNextId());
 
 	return w;
 }
 
+void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
+	_windows.push_back(macwindow);
+	_windowStack.push_back(macwindow);
+}
+
+int MacWindowManager::getNextId() {
+	return _lastId++;
+}
+
 MacMenu *MacWindowManager::addMenu() {
-	_menu = new MacMenu(_lastId, _screen->getBounds(), this);
+	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
 
 	_windows.push_back(_menu);
-
-	_lastId++;
 
 	return _menu;
 }

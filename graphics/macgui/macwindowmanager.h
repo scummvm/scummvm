@@ -104,6 +104,17 @@ public:
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
 	/**
+	 * Adds a window that has already been initialized to the registry.
+	 * Like addWindow, but this doesn't create/allocate the Window.
+	 * @param macWindow the window to be added to the registry
+	 */
+	void addWindowInitialized(MacWindow *macwindow);
+	/**
+	 * Returns the next available id and the increments the internal counter.
+	 * @return next (new) window id that can be used
+	 */
+	int getNextId();
+	/**
 	 * Add the menu to the desktop.
 	 * Note that the returned menu is empty, and therefore must be filled
 	 * afterwards.
