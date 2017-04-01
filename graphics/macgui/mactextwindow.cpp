@@ -20,7 +20,9 @@
  *
  */
 
+
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactextwindow.h"
 
 namespace Graphics {
@@ -31,6 +33,11 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm) :
 }
 
 MacTextWindow::~MacTextWindow() {
+}
+
+const Font *MacTextWindow::getTextWindowFont() {
+	// TODO: make this have an actual effect
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 8));
 }
 
 } // End of namespace Graphics
