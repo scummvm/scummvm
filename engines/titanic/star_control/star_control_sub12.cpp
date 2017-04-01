@@ -199,9 +199,9 @@ int CStarControlSub12::proc27() const {
 }
 
 void CStarControlSub12::proc28(int index, const FVector &src, FVector &dest) {
-	dest._x = ((_sub13._valArray[index] + src._x) * _sub13._fieldC8)
-		/ (_sub13._fieldCC * src._z);
-	dest._y = src._y * _sub13._fieldC8 / (_sub13._fieldD0 * src._z);
+	dest._x = ((_sub13._valArray[index] + src._x) * _sub13._centerVector._x)
+		/ (_sub13._centerVector._y * src._z);
+	dest._y = src._y * _sub13._centerVector._x / (_sub13._centerVector._z * src._z);
 	dest._z = src._z;
 }
 
@@ -480,10 +480,10 @@ void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
 		FVector tempV;
 		tempV._z = _sub13._field10;
 		v3._z = v1._z;
-		tempV._x = _sub13._fieldD0 * v1._y * v1._z / _sub13._fieldC8;
-		v3._y = _sub13._fieldCC * tempV._z * v3._x / _sub13._fieldC8;
-		v3._x = _sub13._fieldCC * v1._x * v1._z / _sub13._fieldC8 - _sub13._valArray[2];
-		tempV._y = _sub13._fieldD0 * tempV._z * v3._y / _sub13._fieldC8;
+		tempV._x = _sub13._centerVector._z * v1._y * v1._z / _sub13._centerVector._x;
+		v3._y = _sub13._centerVector._y * tempV._z * v3._x / _sub13._centerVector._x;
+		v3._x = _sub13._centerVector._y * v1._x * v1._z / _sub13._centerVector._x - _sub13._valArray[2];
+		tempV._y = _sub13._centerVector._z * tempV._z * v3._y / _sub13._centerVector._x;
 		tempV._x = tempV._x - _sub13._valArray[2];
 
 		v3.normalize();

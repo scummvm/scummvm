@@ -34,8 +34,6 @@ CStarControlSub13::CStarControlSub13() {
 	_width = 600;
 	_height = 340;
 	_field24 = 0;
-	_fieldC0 = _fieldC4 = _fieldC8 = 0.0;
-	_fieldCC = _fieldD0 = 0.0;
 	_flag = false;
 	Common::fill(&_valArray[0], &_valArray[5], 0.0);
 }
@@ -51,11 +49,8 @@ CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 	_width = src->_width;
 	_height = src->_height;
 
-	_fieldCC = src->_fieldCC;
-	_fieldD0 = src->_fieldD0;
-	_fieldC0 = src->_fieldC0;
-	_fieldC4 = src->_fieldC4;
-	_fieldC8 = src->_fieldC8;
+	_center = src->_center;
+	_centerVector = src->_centerVector;
 	_field24 = src->_field24;
 
 	Common::copy(&src->_valArray[0], &src->_valArray[4], &_valArray[0]);
@@ -221,8 +216,8 @@ FVector CStarControlSub13::fn17(int index, const FVector &src) {
 	FVector tv = src.fn5(&sub6);
 
 	dest._x = (_valArray[index] + tv._x)
-		* _fieldC8 / (_fieldCC * tv._z);
-	dest._y = (tv._y * _fieldC8) / (_fieldD0 * tv._z);
+		* _centerVector._x / (_centerVector._y * tv._z);
+	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;
 }
@@ -233,15 +228,15 @@ FVector CStarControlSub13::fn18(int index, const FVector &src) {
 	FVector tv = src.fn5(&sub6);
 
 	dest._x = (_valArray[index] + tv._x)
-		* _fieldC8 / (_fieldCC * tv._z);
-	dest._y = (tv._y * _fieldC8) / (_fieldD0 * tv._z);
+		* _centerVector._x / (_centerVector._y * tv._z);
+	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;
 }
 
 void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
-	*v1 = _fieldC8 / _fieldCC;
-	*v2 = _fieldC8 / _fieldD0;
+	*v1 = _centerVector._x / _centerVector._y;
+	*v2 = _centerVector._x / _centerVector._z;
 	*v3 = _valArray[3];
 	*v4 = _valArray[4];
 }
@@ -253,13 +248,10 @@ void CStarControlSub13::reset() {
 	_sub2._vector = _position;
 	_sub2.fn4(&_sub1);
 
-	double widthV = (double)_width * 0.5;
-	double heightV = (double)_height * 0.5;
-	_fieldC0 = widthV;
-	_fieldC4 = heightV;
-	_fieldC8 = MIN(widthV, heightV);
-	_fieldCC = tan(_field18 * FACTOR);
-	_fieldD0 = tan(_field1C * FACTOR);
+	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
+	_centerVector._x = MIN(_center._x, _center._y);
+	_centerVector._y = tan(_field18 * FACTOR);
+	_centerVector._z = tan(_field1C * FACTOR);
 	_flag = true;
 }
 
