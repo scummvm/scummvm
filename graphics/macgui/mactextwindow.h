@@ -29,6 +29,8 @@ class MacTextWindow : public MacWindow {
 public:
 	MacTextWindow(MacWindowManager *wm);
 	~MacTextWindow();
+
+	const Font *getTextWindowFont();
 };
 
 } // End of namespace Graphics
