@@ -170,7 +170,7 @@ double CSurfaceArea::fillRect(const FRect &rect) {
 	}
 
 	Common::Rect rr((int)(MIN(r.left, r.right) - 0.5), (int)(MIN(r.top, r.bottom) - 0.5),
-		(int)(MAX(r.left, r.right) - 0.5), (int)(MAX(r.top, r.bottom) - 0.5));
+		(int)(MAX(r.left, r.right) - 0.5) + 1, (int)(MAX(r.top, r.bottom) - 0.5) + 1);
 	
 	Graphics::Surface s;
 	s.setPixels(_pixelsPtr);
