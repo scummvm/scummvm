@@ -140,7 +140,7 @@ void CStarControlSub12::proc15(CErrorCode *errorCode) {
 		set108();
 	}
 
-	if (_matrix1 != _matrix2) {
+	if (*_matrix1 != *_matrix2) {
 		_sub13.setMatrix(*_matrix2);
 	}
 }
