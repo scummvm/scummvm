@@ -36,7 +36,7 @@ Common::Platform MarioGame::getPlatform() const { return _gameDescription->platf
 }
 
 static const PlainGameDescriptor marioGames[] = {
-	{"mario", "Mario and a wet job"},
+	{"mario", "Plumbers Don't Wear Ties!"},
 	{0, 0}
 };
 
@@ -50,7 +50,7 @@ static const ADGameDescription gameDescriptions[] = {
 		0,
 		AD_ENTRY1s("GAME.BIN", 0, 41622),
 		Common::EN_ANY,
-		Common::kPlatformDOS,
+		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
@@ -84,7 +84,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Mario Engine (C) Deep Sewers Production";
+		return "Plumbers Don't Wear Ties (C) 1993-94 Kirin Entertainment";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
