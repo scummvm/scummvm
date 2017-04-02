@@ -269,8 +269,6 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 	return false;
 }
 
-const int EXTRA_GROUPS = 3;
-
 #ifdef ENABLE_SCI32
 bool Object::mustSetViewVisible(const int index) const {
 	if (getSciVersion() == SCI_VERSION_3) {
@@ -294,11 +292,16 @@ bool Object::mustSetViewVisible(const int index) const {
 #endif
 
 void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
-	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
-	const SciSpan<const byte> selectorBase = groupInfo.subspan(EXTRA_GROUPS * 32 * 2);
+	enum {
+		kExtraGroups = 3,
+		kGroupSize   = 32
+	};
 
-	int numGroups = g_sci->getKernel()->getSelectorNamesSize() / 32;
-	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
+	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
+	const SciSpan<const byte> selectorBase = groupInfo.subspan(kExtraGroups * kGroupSize * sizeof(uint16));
+
+	int numGroups = g_sci->getKernel()->getSelectorNamesSize() / kGroupSize;
+	if (g_sci->getKernel()->getSelectorNamesSize() % kGroupSize)
 		++numGroups;
 
 	_mustSetViewVisible.resize(numGroups);
@@ -313,7 +316,7 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 	// there are, so we count them first.
 	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
-		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * 32 * 2);
+		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
 		if (groupLocation != 0)	{
 			// This object actually has selectors belonging to this group
@@ -321,8 +324,8 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 
 			_mustSetViewVisible[groupNr] = (typeMask & 1);
 
-			for (int bit = 2; bit < 32; ++bit) {
-				int value = seeker.getUint16SEAt(bit * 2);
+			for (int bit = 2; bit < kGroupSize; ++bit) {
+				int value = seeker.getUint16SEAt(bit * sizeof(uint16));
 				if (typeMask & (1 << bit)) { // Property
 					++numProperties;
 				} else if (value != 0xffff) { // Method
@@ -345,21 +348,21 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 	int propertyCounter = 0;
 	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
-		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * 32 * 2);
+		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
 		if (groupLocation != 0)	{
 			// This object actually has selectors belonging to this group
 			int typeMask = seeker.getUint32SEAt(0);
-			int groupBaseId = groupNr * 32;
+			int groupBaseId = groupNr * kGroupSize;
 
-			for (int bit = 2; bit < 32; ++bit) {
-				int value = seeker.getUint16SEAt(bit * 2);
+			for (int bit = 2; bit < kGroupSize; ++bit) {
+				int value = seeker.getUint16SEAt(bit * sizeof(uint16));
 				if (typeMask & (1 << bit)) { // Property
 					_baseVars[propertyCounter] = groupBaseId + bit;
 					if (initVariables) {
 						_variables[propertyCounter] = make_reg(0, value);
 					}
-					uint32 propertyOffset = (seeker + bit * 2) - buf;
+					uint32 propertyOffset = (seeker + bit * sizeof(uint16)) - buf;
 					_propertyOffsetsSci3[propertyCounter] = propertyOffset;
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
