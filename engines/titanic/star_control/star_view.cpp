@@ -439,6 +439,7 @@ void CStarView::fn18(CStarControlSub12 *sub12) {
 }
 
 void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
+	/* ***DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
@@ -447,9 +448,14 @@ void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
 	v2._y = -v1._y;
 	v2._z = -v1._z;
 	v2.normalize();
+	*/
+	// Values temporarily hardcoded to match hacked values in original EXE
+	v1 = FVector(69481544.0, 69481544.0, 69481544.0);
+	v2 = FVector(-0.577350259, -0.577350259, -0.577350259);
 }
 
 void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
+	/* ****DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
@@ -458,7 +464,12 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v2._y = g_vm->getRandomFloat() * 1024.0 - v1._y;
 	v2._z = -v1._z;
 	v2.normalize();
+	*/
+	// Values temporarily hardcoded to match hacked values in original EXE
+	v1 = FVector(69481544.0, 69481544.0, 69481544.0);
+	v2 = FVector(0.624659300, -0.468542814, -0.624714553);
 }
+
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 		CVideoSurface **surface) {
 	if (!surface)
