@@ -409,17 +409,20 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
-	double *v1Ptr = &_value1, *v2Ptr = &_value2, *v3Ptr = &_value3;
-	double tempX, tempY, tempZ, total2;
+	double *v1Ptr = &_value1, *v2Ptr = &_value2, *v3Ptr = &_value3, *v4Ptr = &_value4;
+	double tempX, tempY, tempZ, total2, sVal;
+	int xStart, yStart, rgb;
+	uint16 *pixelP;
 
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		const CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
+
 		tempZ = vector._x * sub6._row1._z + vector._y * sub6._row2._z
 			+ vector._z * sub6._row3._z + sub6._vector._z;
 		if (tempZ <= minVal)
 			continue;
-
+	
 		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
 		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
@@ -433,13 +436,13 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		if (tempZ <= threshold || total2 >= MAX_VAL)
 			continue;
 
-		int xStart = (int)((tempX + *v3Ptr) * *v1Ptr / tempZ + centroid._x);
-		int yStart = (int)(tempY * *v2Ptr / tempZ + centroid._y);
-
+		// First pixel
+		xStart = (int)((tempX + *v3Ptr) * *v1Ptr / tempZ + centroid._x);
+		yStart = (int)(tempY * *v2Ptr / tempZ + centroid._y);
 		if (xStart < 0 || xStart >= width1 || yStart < 0 || yStart >= height1)
 			continue;
 
-		double sVal = sqrt(total2);
+		sVal = sqrt(total2);
 		sVal = (sVal < 100000.0) ? 1.0 : 1.0 - ((sVal - 100000.0) / 1.0e9);
 		sVal *= 255.0;
 
@@ -447,8 +450,42 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 			sVal = 255.0;
 
 		if (sVal > 2.0) {
-			uint16 *pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
-			int rgb = ((int)(sVal - 0.5) & 0xf8) << 8;
+			pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
+			rgb = ((int)(sVal - 0.5) & 0xf8) << 8;
+
+			switch (entry._thickness) {
+			case 0:
+				*pixelP = rgb;
+				break;
+
+			case 1:
+				*pixelP = rgb;
+				*(pixelP + 1) = rgb;
+				*(pixelP + surfaceArea->_pitch / 2) = rgb;
+				*(pixelP + surfaceArea->_pitch / 2 + 1) = rgb;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// Second pixel
+		xStart = (int)((tempX + *v4Ptr) * *v1Ptr / tempZ + centroid._x);
+		yStart = (int)((tempY * *v2Ptr) / tempZ + centroid._y);
+		if (xStart < 0 || xStart >= width1 || yStart < 0 || yStart >= height1)
+			continue;
+
+		sVal = sqrt(total2);
+		sVal = (sVal < 100000.0) ? 1.0 : 1.0 - ((sVal - 100000.0) / 1.0e9);
+		sVal *= 255.0;
+
+		if (sVal > 255.0)
+			sVal = 255.0;
+
+		if (sVal > 2.0) {
+			pixelP = (uint16 *)(surfaceArea->_pixelsPtr + surfaceArea->_pitch * yStart + xStart * 2);
+			rgb = ((int)(sVal - 0.5) >> 3) & 0xff;
 
 			switch (entry._thickness) {
 			case 0:
