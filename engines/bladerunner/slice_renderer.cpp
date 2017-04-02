@@ -569,9 +569,9 @@ SliceRendererLights::SliceRendererLights(Lights *lights) {
 	_lights = lights;
 
 	for (int i = 0; i < 20; i++) {
-		_colors[i].r = 0.0f;
-		_colors[i].g = 0.0f;
-		_colors[i].b = 0.0f;
+		_cacheColor[i].r = 0.0f;
+		_cacheColor[i].g = 0.0f;
+		_cacheColor[i].b = 0.0f;
 	}
 }
 
@@ -579,28 +579,27 @@ void SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position
 	_finalColor.r = 0.0f;
 	_finalColor.g = 0.0f;
 	_finalColor.b = 0.0f;
-	_hmm3 = 0;
+	_cacheRecalculation = 0;
 	if (_lights) {
 		for (uint i = 0; i < _lights->_lights.size(); i++) {
 			Light *light = _lights->_lights[i];
 			if (i < 20) {
-				float v8 = light->calculate(position1, position2/*, height*/);
+				float cacheCoeficient = light->calculate(position1, position2/*, height*/);
+				_cacheStart[i] = cacheCoeficient;
+				_cacheCounter[i] = cacheCoeficient;
 
-				this->_hmm2[i] = v8;
-				this->_hmm[i] = v8;
-
-				Color v22;
-				light->calculateColor(&v22, position1);
-				_colors[i] = v22;
-				_finalColor.r += v22.r;
-				_finalColor.g += v22.g;
-				_finalColor.b += v22.b;
+				Color color;
+				light->calculateColor(&color, position1);
+				_cacheColor[i] = color;
+				_finalColor.r += color.r;
+				_finalColor.g += color.g;
+				_finalColor.b += color.b;
 			} else {
-				Color v23;
-				light->calculateColor(&v23, position1);
-				_finalColor.r += v23.r;
-				_finalColor.g += v23.g;
-				_finalColor.b += v23.b;
+				Color color;
+				light->calculateColor(&color, position1);
+				_finalColor.r += color.r;
+				_finalColor.g += color.g;
+				_finalColor.b += color.b;
 			}
 		}
 
@@ -619,22 +618,21 @@ void SliceRendererLights::calculateColorSlice(Vector3 position) {
 		for (uint i = 0; i < _lights->_lights.size(); i++) {
 			Light *light = _lights->_lights[i];
 			if (i < 20) {
-				_hmm[i] = _hmm[i] - 1.0f;
-
-				if (_hmm[i] <= 0.0f) {
+				_cacheCounter[i] -= 1.0f;
+				if (_cacheCounter[i] <= 0.0f) {
 					do {
-						_hmm[i] = _hmm[i] + _hmm2[i];
-					} while (_hmm[i] <= 0.0f);
-					light->calculateColor(&_colors[i], position);
-					_hmm3++;
+						_cacheCounter[i] = _cacheCounter[i] + _cacheStart[i];
+					} while (_cacheCounter[i] <= 0.0f);
+					light->calculateColor(&_cacheColor[i], position);
+					_cacheRecalculation++;
 				}
-				_finalColor.r += _colors[i].r;
-				_finalColor.g += _colors[i].g;
-				_finalColor.b += _colors[i].b;
+				_finalColor.r += _cacheColor[i].r;
+				_finalColor.g += _cacheColor[i].g;
+				_finalColor.b += _cacheColor[i].b;
 			} else {
 				Color color;
 				light->calculateColor(&color, position);
-				_hmm3++;
+				_cacheRecalculation++;
 				_finalColor.r += color.r;
 				_finalColor.g += color.g;
 				_finalColor.b += color.b;

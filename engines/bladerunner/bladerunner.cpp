@@ -659,37 +659,33 @@ void BladeRunnerEngine::gameTick() {
 					BoundingBox *bbox = &sceneObject->_boundingBox;
 					Vector3 a, b;
 					bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
-
-					int color = 0b111111111111111;
-					if (sceneObject->_sceneObjectType == SceneObjectTypeActor) {
-						color = 0b111110000000000;
-					}
-					if (sceneObject->_sceneObjectType == SceneObjectTypeObject) {
-						color = 0b011110111101111;
-			//if (sceneObject->_isObstacle)
-			//	color += 0b100000000000000;
-						if (sceneObject->_isClickable)
-							color = 0b000001111100000;
-			//if (sceneObject->_isTarget)
-			//	color += 0b000000000010000;
-					}
-
-					drawBBox(a, b, _view, &_surface2, color);
-
-			//_surface2.frameRect(sceneObject->_screenRectangle, color);
-
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
+					int color;
+
 					switch (sceneObject->_sceneObjectType) {
 					case SceneObjectTypeActor:
+						color = 0b111110000000000;
+						drawBBox(a, b, _view, &_surface2, color);
 						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surface2, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeItem:
-						_mainFont->drawColor("item", _surface2, pos.x, pos.y, color);
+						char itemText[40];
+						drawBBox(a, b, _view, &_surface2, color);
+						sprintf(itemText, "item %i", sceneObject->_sceneObjectId - SCENE_OBJECTS_ITEMS_OFFSET);
+						_mainFont->drawColor(itemText, _surface2, pos.x, pos.y, color);
 						break;
 					case SceneObjectTypeObject:
+						color = 0b011110111101111;
+						//if (sceneObject->_isObstacle)
+						//	color += 0b100000000000000;
+						if (sceneObject->_isClickable) {
+							color = 0b000001111100000;
+						}
+						drawBBox(a, b, _view, &_surface2, color);
 						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surface2, pos.x, pos.y, color);
 						break;
 					}
+			_surface2.frameRect(sceneObject->_screenRectangle, color);
 				}
 			}
 
@@ -706,32 +702,51 @@ void BladeRunnerEngine::gameTick() {
 				_surface2.frameRect(region->_rectangle, 0b111111111111111);
 			}
 
+
+			//draw walkboxes
 			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
 				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
 
 				for (int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
 					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j + 1) % walkbox->_vertexCount]);
-			//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
 					_mainFont->drawColor(walkbox->_name, _surface2, pos.x, pos.y, 0b111111111100000);
 				}
-
 			}
 
-//			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
-//				Light *light = _lights->_lights[i];
-//				Matrix4x3 m = light->_matrix;
-//				Vector3 pos = Vector3(m(0, 3), m(1, 3), m(2, 3));
-//				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-//				int colorR = (light->_color.r * 31.0f);
-//				int colorG = (light->_color.g * 31.0f);
-//				int colorB = (light->_color.b * 31.0f);
-//				int color = (colorR << 10) + (colorG << 5) + colorB;
-//				drawBBox(pos - size, pos + size, _view, &_surface2, color);
-//			}
+			// draw lights
+			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
+				Light *light = _lights->_lights[i];
+				Matrix4x3 m = light->_matrix;
+				m = invertMatrix(m);
+				//todo do this properly
+				Vector3 posOrigin = m * Vector3(0.0f, 0.0f, 0.0f);
+				float t = posOrigin.y;
+				posOrigin.y = posOrigin.z;
+				posOrigin.z = -t;
 
+				Vector3 posTarget = m * Vector3(0.0f, 0.0f, -100.0f);
+				t = posTarget.y;
+				posTarget.y = posTarget.z;
+				posTarget.z = -t;
+
+				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
+				int colorR = (light->_color.r * 31.0f);
+				int colorG = (light->_color.g * 31.0f);
+				int colorB = (light->_color.b * 31.0f);
+				int color = (colorR << 10) + (colorG << 5) + colorB;
+
+				drawBBox(posOrigin - size, posOrigin + size, _view, &_surface2, color);
+
+				Vector3 posOriginT = _view->calculateScreenPosition(posOrigin);
+				Vector3 posTargetT = _view->calculateScreenPosition(posTarget);
+				_surface2.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+				_mainFont->drawColor(light->_name, _surface2, posOriginT.x, posOriginT.y, color);
+			}
+
+			//draw waypoints
 			for(int i = 0; i < _waypoints->_count; i++) {
 				Waypoint *waypoint = &_waypoints->_waypoints[i];
 				if(waypoint->_setId != _scene->getSetId())
@@ -744,7 +759,6 @@ void BladeRunnerEngine::gameTick() {
 				char waypointText[40];
 				sprintf(waypointText, "waypoint %i", i);
 				_mainFont->drawColor(waypointText, _surface2, spos.x, spos.y, color);
-
 			}
 #endif
 

@@ -536,11 +536,11 @@ bool ScriptBase::Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4) {
 	return false;
 }
 
-void ScriptBase::Actor_Clue_Add_To_Database(int actorId, int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId) {
-	_vm->_actors[actorId]->addClueToDatabase(clueId, unknown, clueAcquired, unknownFlag, fromActorId);
+void ScriptBase::Actor_Clue_Add_To_Database(int actorId, int clueId, int weight, bool clueAcquired, bool unknownFlag, int fromActorId) {
+	_vm->_actors[actorId]->addClueToDatabase(clueId, weight, clueAcquired, unknownFlag, fromActorId);
 }
 
-void ScriptBase::Actor_Clue_Acquire(int actorId, int clueId, byte unknownFlag, int fromActorId) {
+void ScriptBase::Actor_Clue_Acquire(int actorId, int clueId, bool unknownFlag, int fromActorId) {
 	_vm->_actors[actorId]->acquireClue(clueId, unknownFlag, fromActorId);
 }
 

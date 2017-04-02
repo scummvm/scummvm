@@ -89,7 +89,7 @@ public:
 	virtual void calculateColor(Color *outColor, Vector3 position);
 
 protected:
-	float calculateCoefficient(Vector3 start, Vector3 end, float a3, float a4);
+	float calculateFalloutCoefficient(Vector3 start, Vector3 end, float a3, float a4);
 	float attenuation(float min, float max, float distance);
 };
 

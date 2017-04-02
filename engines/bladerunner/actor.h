@@ -208,7 +208,7 @@ public:
 	bool isSpeeching();
 
 	void addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId);
-	void acquireClue(int clueId, byte unknownFlag, int fromActorId);
+	void acquireClue(int clueId, bool unknownFlag, int fromActorId);
 	void loseClue(int clueId);
 	bool hasClue(int clueId);
 	void copyClues(int actorId);

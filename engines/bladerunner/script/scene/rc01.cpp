@@ -220,7 +220,7 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(1880, kActorVoiceOver);
 				Actor_Voice_Over(1890, kActorVoiceOver);
 				I_Sez("JM: That McCoy--he's one funny guy! Jet-black fire truck, hehehehe...");
-				Actor_Clue_Acquire(kActorMcCoy, kCluePaintTransfer, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kCluePaintTransfer, true, -1);
 			}
 		}
 		return true;
@@ -234,11 +234,11 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 				Actor_Says(kActorOfficerLeary, 0, 12);
 				Actor_Says(kActorMcCoy, 4495, 13);
-				Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced2, 1, kActorOfficerLeary);
+				Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced2, true, kActorOfficerLeary);
 			} else {
 				Actor_Says(kActorMcCoy, 8570, 14);
 			}
-			Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced1, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced1, true, -1);
 		}
 		return true;
 	}
@@ -270,7 +270,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					Actor_Face_Object(kActorOfficerLeary, "70_1", true);
 					Actor_Says(kActorOfficerLeary, 100, 15);
 					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
-					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewA, 1, kActorOfficerLeary);
+					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewA, true, kActorOfficerLeary);
 					Game_Flag_Reset(392);
 				} else if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB)) {
 					Actor_Face_Object(kActorOfficerLeary, "70_5", true);
@@ -278,7 +278,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 					Actor_Says(kActorOfficerLeary, 130, 14);
 					I_Sez("JM: Did it have a huge, ugly piece of chrome on it?");
-					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewB, 1, kActorOfficerLeary);
+					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewB, true, kActorOfficerLeary);
 					Game_Flag_Reset(392);
 				} else {
 					Actor_Says(kActorOfficerLeary, 90, 16);
@@ -294,7 +294,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				I_Sez("MG: Hey, leave that officer alone. Can't you see he's busy?");
 				I_Sez("JM: (...mmm, donuts...)");
 				Game_Flag_Set(3);
-				Actor_Clue_Acquire(kActorMcCoy, kClueOfficersStatement, 1, kActorOfficerLeary);
+				Actor_Clue_Acquire(kActorMcCoy, kClueOfficersStatement, true, kActorOfficerLeary);
 				Actor_Says(kActorMcCoy, 4515, 13);
 				Game_Flag_Set(392);
 				Actor_Says(kActorOfficerLeary, 40, 13);
@@ -321,7 +321,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 		Actor_Set_Goal_Number(kActorOfficerLeary, 0);
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 66, 36, 1, false)) {
 			Actor_Face_Item(kActorMcCoy, 66, true);
-			Actor_Clue_Acquire(kActorMcCoy, kClueChromeDebris, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueChromeDebris, true, -1);
 			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 			Actor_Says(kActorOfficerLeary, 20, 12);
 			Game_Flag_Set(163);

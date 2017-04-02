@@ -31,7 +31,7 @@ namespace BladeRunner {
 
 struct ActorClue {
 	int _clueId;
-	int _field1;
+	int _weight;
 	int _fromActorId;
 	int _field3;
 	int _field4;
@@ -55,12 +55,12 @@ public:
 	~ActorClues();
 
 	void add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId);
-	void acquire(int clueId, char flag2, int fromActorId);
+	void acquire(int clueId, bool flag2, int fromActorId);
 	void lose(int clueId);
 	bool isAcquired(int clueId);
 	int getFromActorId(int clueId);
 	bool isFlag2(int clueId);
-	bool isFlag3(int clueId);
+	bool isViewed(int clueId);
 	bool isFlag4(int clueId);
 	int getField1(int clueId);
 

@@ -115,10 +115,10 @@ private:
 
 class SliceRendererLights {
 	Lights *_lights;
-	Color   _colors[20];
-	float   _hmm[20];
-	float   _hmm2[20];
-	int     _hmm3;
+	Color   _cacheColor[20];
+	float   _cacheCounter[20];
+	float   _cacheStart[20];
+	int     _cacheRecalculation;
 
 public:
 	Color   _finalColor;

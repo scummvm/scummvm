@@ -21,8 +21,8 @@
  */
 
 #include "bladerunner/light.h"
+
 #include "common/util.h"
-#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -144,7 +144,7 @@ void Light::setupFrame(int frame) {
 }
 
 float Light::calculate(Vector3 start, Vector3 end) {
-	return calculateCoefficient(_matrix * start, _matrix * end, _falloffStart, _falloffEnd);
+	return calculateFalloutCoefficient(_matrix * start, _matrix * end, _falloffStart, _falloffEnd);
 }
 
 void Light::calculateColor(Color *outColor, Vector3 position) {
@@ -155,20 +155,20 @@ void Light::calculateColor(Color *outColor, Vector3 position) {
 	outColor->b = _color.b * att;
 }
 
-float Light::calculateCoefficient(Vector3 start, Vector3 end, float falloffStart, float falloffEnd) {
+float Light::calculateFalloutCoefficient(Vector3 start, Vector3 end, float falloffStart, float falloffEnd) {
 	if (falloffEnd == 0.0f) {
 		return 1.0e30f;
 	}
 
-	if (falloffStart >= start.length() && falloffStart >= end.length()) {
+	if (falloffStart * falloffStart >= start.length() && falloffStart * falloffStart >= end.length()) {
 		return 1.0e30f;
 	}
 
-	float v40 = (end - start).length();
+	float diff = (end - start).length();
 	float v31 = 0.0f;
-	if (v40 != 0.0f) {
+	if (diff != 0.0f) {
 		Vector3 v27 = Vector3::cross(start, (end - start));
-		v31 = v27.length() / v40;
+		v31 = v27.length() / diff;
 	}
 
 	if (v31 < falloffEnd) {
@@ -198,11 +198,11 @@ float Light1::calculate(Vector3 start, Vector3 end) {
 
 	float v40 = 0.0f;
 	if (_falloffEnd != 0.0f) {
-		v40 = calculateCoefficient(start, end, _falloffStart, _falloffEnd);
+		v40 = calculateFalloutCoefficient(start, end, _falloffStart, _falloffEnd);
 	}
 
-	float v41 = atan2(start.length(), -start.z);
-	float v42 = atan2(end.length(), -end.z);
+	float v41 = atan2(sqrt(start.x * start.x + start.y * start.y), -start.z);
+	float v42 = atan2(sqrt(end.x * end.x + end.y * end.y), -end.z);
 
 	float v43;
 	if ((_angleStart >= v41 && _angleStart >= v42) || (_angleEnd <= v41 && _angleEnd <= v42)) {
@@ -240,7 +240,7 @@ float Light2::calculate(Vector3 start, Vector3 end) {
 
 	float v54 = 0.0f;
 	if (_falloffEnd != 0.0f) {
-		v54 = calculateCoefficient(start, end, _falloffStart, _falloffEnd);
+		v54 = calculateFalloutCoefficient(start, end, _falloffStart, _falloffEnd);
 	}
 
 	float v55 = atan2(fabs(start.x), -start.z);

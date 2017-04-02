@@ -511,7 +511,7 @@ protected:
 	bool Loop_Actor_Travel_Stairs(int actorId, int a2, int a3, int a4);
 	bool Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4);
 	void Actor_Clue_Add_To_Database(int actorId, int clueId, int weight, bool clueAcquired, bool unknownFlag, int fromActorId);
-	void Actor_Clue_Acquire(int actorId, int clueId, byte unknownFlag, int fromActorId);
+	void Actor_Clue_Acquire(int actorId, int clueId, bool unknownFlag, int fromActorId);
 	void Actor_Clue_Lose(int actorId, int clueId);
 	bool Actor_Clue_Query(int actorId, int clueId);
 	void Actor_Clues_Transfer_New_To_Mainframe(int actorId);

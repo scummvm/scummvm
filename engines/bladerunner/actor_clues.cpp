@@ -73,7 +73,7 @@ ActorClues::~ActorClues() {
 	_count = 0;
 }
 
-void ActorClues::acquire(int clueId, char flag2, int fromActorId) {
+void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
 	_clues[clueIndex]._flags |= 0x01;
 	_clues[clueIndex]._flags = (_clues[clueIndex]._flags & ~0x02) | ((flag2 << 1) & 0x02);
@@ -113,7 +113,7 @@ bool ActorClues::isFlag2(int clueId) {
 	return (_clues[clueIndex]._flags & 0x02) >> 1;
 }
 
-bool ActorClues::isFlag3(int clueId) {
+bool ActorClues::isViewed(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return false;
@@ -141,7 +141,7 @@ int ActorClues::getField1(int clueId) {
 		return 0;
 	}
 
-	return _clues[clueIndex]._field1;
+	return _clues[clueIndex]._weight;
 }
 
 int ActorClues::getCount() {
@@ -164,13 +164,13 @@ int ActorClues::findClueIndex(int clueId) {
 	return -1;
 }
 
-void ActorClues::add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId) {
+void ActorClues::add(int actorId, int clueId, int weight, bool acquired, bool unknownFlag, int fromActorId) {
 	assert(_count < _maxCount);
 
-	debug("Actor %d added clue: \"%s\" from %d", actorId, _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+	//debug("Actor %d added clue: \"%s\" from %d", actorId, _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 
 	_clues[_count]._clueId = clueId;
-	_clues[_count]._field1 = unknown;
+	_clues[_count]._weight = weight;
 
 	_clues[_count]._flags = 0;
 	_clues[_count]._flags = (_clues[_count]._flags & ~0x01) | (acquired & 0x01);
@@ -185,7 +185,7 @@ void ActorClues::remove(int index) {
 		debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index]._clueId));
 
 	_clues[index]._clueId = -1;
-	_clues[index]._field1 = 0;
+	_clues[index]._weight = 0;
 	_clues[index]._flags = 0;
 	_clues[index]._fromActorId = -1;
 

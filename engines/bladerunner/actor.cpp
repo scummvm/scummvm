@@ -1057,11 +1057,11 @@ bool Actor::isSpeeching() {
 	return _vm->_audioSpeech->isPlaying();
 }
 
-void Actor::addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId) {
-	_clues->add(_id, clueId, unknown, clueAcquired, unknownFlag, fromActorId);
+void Actor::addClueToDatabase(int clueId, int weight, bool clueAcquired, bool unknownFlag, int fromActorId) {
+	_clues->add(_id, clueId, weight, clueAcquired, unknownFlag, fromActorId);
 }
 
-void Actor::acquireClue(int clueId, byte unknownFlag, int fromActorId) {
+void Actor::acquireClue(int clueId, bool unknownFlag, int fromActorId) {
 	_clues->acquire(clueId, unknownFlag, fromActorId);
 }
 
@@ -1078,9 +1078,10 @@ void Actor::copyClues(int actorId) {
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
 		if (hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
-			if (_id == VOICEOVER_ACTOR)
+			if (_id == VOICEOVER_ACTOR) {
 				fromActorId = _clues->getFromActorId(i);
-			otherActor->acquireClue(i, 0, fromActorId);
+			}
+			otherActor->acquireClue(i, false, fromActorId);
 		}
 	}
 }
