@@ -99,16 +99,16 @@ class ListTestSuite : public CxxTest::TestSuite
 		// Iterate over the container and verify that we encounter the elements in
 		// the order we expect them to be.
 
-		iter = container.lastElement();
-		cIter = container.lastElement();
+		iter = container.reverseBegin();
+		cIter = container.reverseBegin();
 
 		TS_ASSERT_EQUALS(iter, cIter);
 
 		TS_ASSERT_EQUALS(*iter, -11);
 		++iter;
 		++cIter;
-		TS_ASSERT_DIFFERS(iter, container.lastElement());
-		TS_ASSERT_DIFFERS(cIter, container.lastElement());
+		TS_ASSERT_DIFFERS(iter, container.reverseBegin());
+		TS_ASSERT_DIFFERS(cIter, container.reverseBegin());
 		TS_ASSERT_EQUALS(iter, cIter);
 
 		TS_ASSERT_EQUALS(*iter, 33);
@@ -122,8 +122,8 @@ class ListTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(*iter, 17);
 		iter++;
 		cIter++;
-		TS_ASSERT_EQUALS(iter, container.reverse_end());
-		TS_ASSERT_EQUALS(cIter, container.reverse_end());
+		TS_ASSERT_EQUALS(iter, container.reverseEnd());
+		TS_ASSERT_EQUALS(cIter, container.reverseEnd());
 		TS_ASSERT_EQUALS(iter, cIter);
 
 		cIter = iter;
@@ -257,7 +257,7 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.push_back(33);
 		container.push_back(-11);
 
-		iter = container.lastElement();
+		iter = container.reverseBegin();
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 
@@ -273,7 +273,7 @@ class ListTestSuite : public CxxTest::TestSuite
 		++iter;
 		TS_ASSERT_EQUALS(iter, container.end());
 
-		iter = container.lastElement();
+		iter = container.reverseBegin();
 
 		iter = container.reverse_erase(iter);
 		TS_ASSERT_DIFFERS(iter, container.end());
