@@ -350,9 +350,9 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		if (tempZ <= minVal)
 			continue;
 
-		double tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
-		double tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
-		double total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
+		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
+		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
+		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
 			sub5->proc2(&sub6, vector, centroid._x, centroid._y, total2,
