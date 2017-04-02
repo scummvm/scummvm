@@ -693,6 +693,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 							if (g_sci->getEngineState()->currentRoomNumber() == 6050) {
 								skipSignal = false;
 							}
+							break;
 #endif
 						default:
 							break;
