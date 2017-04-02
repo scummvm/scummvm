@@ -61,6 +61,25 @@ static const XeenGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// World of Xeen (2 CD talkie version)
+		{
+			"worldofxeen",
+			nullptr,
+			{
+				{"xeen.cc", 0, "964078c53f649937ce9a1a3596ce3d9f", 13438429},
+				{"dark.cc", 0, "7f755ce39ea614fa6adb016f8bfc6e43", 11288403},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
