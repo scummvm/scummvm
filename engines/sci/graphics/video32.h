@@ -589,7 +589,6 @@ public:
 	}
 
 private:
-	SegManager *_segMan;
 	EventManager *_eventMan;
 	Video::AVIDecoder *_decoder;
 

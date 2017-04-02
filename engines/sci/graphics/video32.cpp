@@ -943,7 +943,6 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 #pragma mark DuckPlayer
 
 DuckPlayer::DuckPlayer(SegManager *segMan, EventManager *eventMan) :
-	_segMan(segMan),
 	_eventMan(eventMan),
 	_decoder(new Video::AVIDecoder(Audio::Mixer::kSFXSoundType)),
 	_plane(nullptr),
