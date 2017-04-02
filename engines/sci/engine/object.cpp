@@ -270,13 +270,29 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 }
 
 #ifdef ENABLE_SCI32
-bool Object::mustSetViewVisible(const int index) const {
+bool Object::mustSetViewVisible(int index, const bool fromPropertyOp) const {
 	if (getSciVersion() == SCI_VERSION_3) {
-		if ((uint)index < getVarCount()) {
-			return _mustSetViewVisible[getVarSelector(index) >> 5];
+		// In SCI3, visible flag lookups are based on selectors
+
+		if (!fromPropertyOp) {
+			// varindexes must be converted to selectors
+			index = getVarSelector(index);
 		}
-		return false;
+
+		if (index == -1) {
+			error("Selector %d is invalid for object %04x:%04x", index, PRINT_REG(_pos));
+		}
+
+		return _mustSetViewVisible[index >> 5];
 	} else {
+		// In SCI2, visible flag lookups are based on varindexes
+
+		if (fromPropertyOp) {
+			// property offsets must be converted to varindexes
+			assert((index % 2) == 0);
+			index >>= 1;
+		}
+
 		int minIndex, maxIndex;
 		if (g_sci->_features->usesAlternateSelectors()) {
 			minIndex = 24;

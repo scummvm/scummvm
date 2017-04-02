@@ -230,8 +230,8 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 }
 
 #ifdef ENABLE_SCI32
-void updateInfoFlagViewVisible(Object *obj, int index) {
-	if (getSciVersion() >= SCI_VERSION_2 && obj->mustSetViewVisible(index)) {
+void updateInfoFlagViewVisible(Object *obj, int index, bool fromPropertyOp) {
+	if (getSciVersion() >= SCI_VERSION_2 && obj->mustSetViewVisible(index, fromPropertyOp)) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }

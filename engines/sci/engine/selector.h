@@ -218,7 +218,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
  * This function checks if index is in the right range, and sets the flag
  * on obj.-info- if it is.
  */
-void updateInfoFlagViewVisible(Object *obj, int index);
+void updateInfoFlagViewVisible(Object *obj, int index, bool fromPropertyOp = false);
 #endif
 
 } // End of namespace Sci

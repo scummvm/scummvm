@@ -277,7 +277,7 @@ public:
 	void syncBaseObject(const SciSpan<const byte> &ptr) { _baseObj = ptr; }
 
 #ifdef ENABLE_SCI32
-	bool mustSetViewVisible(int selector) const;
+	bool mustSetViewVisible(const int index, const bool fromPropertyOp) const;
 #endif
 
 private:
