@@ -972,9 +972,11 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 	_pixelDouble = displayMode != 0;
 
 	const int16 scale = _pixelDouble ? 2 : 1;
+	// SSCI seems to incorrectly calculate the draw rect by scaling the origin
+	// in addition to the width/height for the BR point
 	_drawRect = Common::Rect(x, y,
-							 (x + _decoder->getWidth()) * scale,
-							 (y + _decoder->getHeight()) * scale);
+							 x + _decoder->getWidth() * scale,
+							 y + _decoder->getHeight() * scale);
 
 	g_sci->_gfxCursor32->hide();
 
