@@ -189,7 +189,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 	return false;
 }
 
-void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
+void CStarControlSub5::proc2(CStarControlSub6 *sub6, const FVector &vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
 	double val1 = sub12->proc25();
@@ -207,8 +207,8 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 
 	if (v3 >= 6.0e9) {
 		int count, start;
-		if (vector->_x != 0.0 && (vector->_y != 0.0 || vector->_z != 0.0)) {
-			// WORKAROUND: Ignoring non-sensical randSeed((int)vector->_x);
+		if (vector._x != 0.0 && (vector._y != 0.0 || vector._z != 0.0)) {
+			// WORKAROUND: Ignoring non-sensical randSeed((int)vector._x);
 			count = VALUES[g_vm->getRandomNumber(15)];
 			start = 5 * g_vm->getRandomNumber(255);
 		} else {
@@ -249,9 +249,9 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 			_sub1._row3._z = f14;
 
 			f22 = (double)entryP->_field0;
-			_sub1._vector._x = f22 * f10 + vector->_x;
-			_sub1._vector._y = f9 * f22 + vector->_y;
-			_sub1._vector._z = f22 * f12 + vector->_z;
+			_sub1._vector._x = f22 * f10 + vector._x;
+			_sub1._vector._y = f9 * f22 + vector._y;
+			_sub1._vector._z = f22 * f12 + vector._z;
 			_sub2._row1._x = sub6->_row1._x * f13 + f16 * sub6->_row3._x + f15 * sub6->_row2._x;
 			_sub2._row1._y = f15 * sub6->_row2._y + f16 * sub6->_row3._y + f13 * sub6->_row1._y;
 			_sub2._row1._z = f16 * sub6->_row3._z + f13 * sub6->_row1._z + f15 * sub6->_row2._z;
@@ -405,7 +405,7 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, FVector *vector, double v1,
 	for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 		GridEntry &gridEntry = _grid[ctr];
 		const FVector &d2v = entry._data2[ctr];
-		FVector newV = d2v + *vector;
+		FVector newV = d2v + vector;
 
 		f41 = sub6->_row1._x;
 		f42 = sub6->_row3._x;

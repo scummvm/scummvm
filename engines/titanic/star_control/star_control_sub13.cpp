@@ -246,7 +246,7 @@ void CStarControlSub13::reset() {
 
 	_sub2.copyFrom(_matrix);
 	_sub2._vector = _position;
-	_sub2.fn4(&_sub1);
+	_sub1 = _sub2.fn4();
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);

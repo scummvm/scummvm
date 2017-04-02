@@ -24,6 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB5_H
 
 #include "common/array.h"
+#include "titanic/star_control/fvector.h"
 #include "titanic/star_control/star_control_sub6.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/surface_area.h"
@@ -115,7 +116,7 @@ public:
 	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
-	virtual void proc2(CStarControlSub6 *sub6, FVector *vector, double v1, double v2, double v3,
+	virtual void proc2(CStarControlSub6 *sub6, const FVector &vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	virtual void proc3(CErrorCode *errorCode);
 
