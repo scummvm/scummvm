@@ -338,23 +338,48 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 										Common::Point(xoff, yoff));
 }
 
-void MacText::appendText(Common::String str) {
-	uint oldLen = _textLines.size();
-	uint newLines = 1;
-
-	// Calc newline characters in str
-	Common::String::iterator p = str.begin();
+// Count newline characters in String
+uint getNewlinesInString(const Common::String &str) {
+	Common::String::const_iterator p = str.begin();
+	uint newLines = 0;
 	while (*p) {
 		if (*p == '\n')
 			newLines++;
 		p++;
 	}
+	return newLines;
+}
+
+// Appends numNewLines new lines in _textLines, formatted with the MacFontRun specified
+void MacText::resizeAndFormatLines(uint numNewLines, MacFontRun *fontRun) {
+	uint oldLen = _textLines.size();
 
 	// Resize _textLines appropriately
-	for (int curLine = 0; curLine < newLines; ++curLine) {
-		_textLines.resize(oldLen + newLines);
-		_textLines[oldLen + curLine].chunks.push_back(_currentFormatting);
+	for (uint curLine = 0; curLine < numNewLines; ++curLine) {
+		_textLines.resize(oldLen + numNewLines);
+		_textLines[oldLen + curLine].chunks.push_back(*fontRun);
 	}
+}
+
+void MacText::appendText(Common::String str, int fontId, int fontSize, int fontSlant) {
+	uint oldLen = _textLines.size();
+	uint newLines = 1 + getNewlinesInString(str);
+
+	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, 0, fontSize, 0, 0, 0);
+
+	resizeAndFormatLines(newLines, &fontRun);
+
+	splitString(str);
+	recalcDims();
+
+	render(oldLen, _textLines.size());
+}
+
+void MacText::appendTextDefault(Common::String str) {
+	uint oldLen = _textLines.size();
+	uint newLines = 1 + getNewlinesInString(str);
+
+	resizeAndFormatLines(newLines, &_defaultFormatting);
 
 	splitString(str);
 	recalcDims();

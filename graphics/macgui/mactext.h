@@ -95,7 +95,9 @@ public:
 	void setInterLinear(int interLinear);
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void appendText(Common::String str);
+	void resizeAndFormatLines(uint numNewLines, MacFontRun * fontRun);
+	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular);
+	void appendTextDefault(Common::String str);
 	void replaceLastLine(Common::String str);
 	int getLineCount() { return _textLines.size(); }
 
