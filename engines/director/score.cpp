@@ -519,10 +519,14 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastText:
 		_loadedText->setVal(id, new TextCast(castStream, _vm->getVersion()));
+		for (uint child = 0; child < res->children.size(); child++)
+			_loadedText->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastText;
 		break;
 	case kCastShape:
 		_loadedShapes->setVal(id, new ShapeCast(castStream, _vm->getVersion()));
+		for (uint child = 0; child < res->children.size(); child++)
+			_loadedShapes->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastShape;
 		break;
 	case kCastButton:
