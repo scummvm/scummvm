@@ -23,14 +23,24 @@
 #ifndef GRAPHICS_MACGUI_MACTEXTWINDOW_H
 #define GRAPHICS_MACGUI_MACTEXTWINDOW_H
 
+#include "graphics/macgui/mactext.h"
+
 namespace Graphics {
 
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm);
+	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor,
+		int bgcolor, int maxWidth, TextAlign textAlignment);
 	~MacTextWindow();
 
 	const Font *getTextWindowFont();
+
+	void drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
+	void appendText(Common::String str);
+
+private:
+	MacText *_mactext;
+	const Font *_font;
 };
 
 } // End of namespace Graphics

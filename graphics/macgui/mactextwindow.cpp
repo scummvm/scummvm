@@ -27,17 +27,29 @@
 
 namespace Graphics {
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm) :
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor,
+	int bgcolor, int maxWidth, TextAlign textAlignment) :
 		MacWindow(wm->getNextId(), true, true, true, wm) {
+
 	wm->addWindowInitialized(this);
+
+	_font = font;
+	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+}
+
+void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
+	_mactext->draw(g, x, y, w, h, xoff, yoff);
+}
+
+void MacTextWindow::appendText(Common::String str) {
+	_mactext->appendText(str);
 }
 
 MacTextWindow::~MacTextWindow() {
 }
 
 const Font *MacTextWindow::getTextWindowFont() {
-	// TODO: make this have an actual effect
-	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 8));
+	return _font;
 }
 
 } // End of namespace Graphics
