@@ -298,6 +298,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		res.offset = offset;
 		res.size = size;
 		res.name = name;
+		res.tag = tag;
 	}
 
 	_stream = stream;
@@ -402,6 +403,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Resource res;
 		res.offset = offset;
 		res.size = size;
+		res.tag = tag;
 		resources.push_back(res);
 
 		// APPL is a special case; it has an embedded "normal" archive

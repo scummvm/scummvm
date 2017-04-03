@@ -39,6 +39,7 @@ struct Resource {
 	uint32 offset;
 	uint32 size;
 	uint32 castId;
+	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
 };

@@ -430,8 +430,21 @@ void Score::setSpriteCasts() {
 
 			if (_vm->getSharedScore()->_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _vm->getSharedScore()->_loadedButtons->getVal(castId);
+				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
+					_frames[i]->_sprites[j]->_textCast = 
+						_vm->getSharedScore()->_loadedText->getVal(_frames[i]->_sprites[j]->_buttonCast->children[0].index);
+				} else if (_frames[i]->_sprites[j]->_buttonCast->children.size() > 0) {
+					warning("Cast %d has too many children!", j);
+				}
 			} else if (_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _loadedButtons->getVal(castId);
+				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
+					Resource child = _frames[i]->_sprites[j]->_buttonCast->children[0];
+					_loadedText->setVal(child.index, new TextCast(*_movieArchive->getResource(child.tag, child.index), _vm->getVersion()));
+					_frames[i]->_sprites[j]->_textCast = _loadedText->getVal(child.index);
+				} else if (_frames[i]->_sprites[j]->_buttonCast->children.size() > 0) {
+					warning("Cast %d has too many children!", j);
+				}
 			}
 
 			//if (_loadedScripts->contains(castId))
@@ -521,6 +534,8 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	case kCastButton:
 		_loadedButtons->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
+		for (uint child = 0; child < res->children.size(); child++)
+			_loadedButtons->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastButton;
 		break;
 	case kCastLingoScript:

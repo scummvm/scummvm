@@ -559,7 +559,6 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 
 			CastType castType = kCastTypeNull;
-			Cast *cast = nullptr;
 			if (_vm->getVersion() < 4) {
 				debugC(1, kDebugImages, "Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
@@ -594,9 +593,9 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (castType == kCastShape) {
 				renderShape(surface, i);
 			} else if (castType == kCastText) {
-				renderText(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : cast->children[0].index);
+				renderText(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_textCast->children[0].index);
 			} else if (castType == kCastButton) {
-				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : cast->children[0].index);
+				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_buttonCast->children[0].index);
 			} else {
 				if (!_sprites[i]->_bitmapCast) {
 					warning("No cast ID for sprite %d", i);
@@ -742,8 +741,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (textStream == NULL)
 		return;
 
-	uint16 castId = _sprites[spriteId]->_castId;
-	TextCast *textCast = _vm->getCurrentScore()->_loadedText->getVal(castId);
+	TextCast *textCast = _sprites[spriteId]->_textCast;
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
