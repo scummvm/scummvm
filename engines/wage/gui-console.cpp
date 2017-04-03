@@ -249,8 +249,18 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 				font->drawString(&_console, end, x1 + rectW2 - kConWPadding - kConWOverlap, y1, textW, kColorBlack);
 			}
 		} else {
-			if (*str)
+			if (*str) {
 				font->drawString(&_console, _lines[line], x1, y1, textW, color);
+
+				// TODO: Take into account color (and maybe position)
+#ifdef USE_NEW_TEXT_RENDERER
+#ifdef USE_MACTEXTWINDOW
+				_consoleWindow->appendText(_lines[line]);
+#else
+				_mactext->appendText(_lines[line]);
+#endif // USE_MACTEXTWINDOW
+#endif // USE_OLD_TEXT_RENDERER
+			}
 		}
 
 		y1 += _consoleLineHeight;
@@ -277,6 +287,14 @@ void Gui::renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r) {
 		rr.right = _screen.w - 1;
 	if (rr.bottom > _screen.h - 1)
 		rr.bottom = _screen.h - 1;
+
+#ifdef USE_NEW_TEXT_RENDERER
+#ifdef USE_MACTEXTWINDOW
+	_consoleWindow->drawText(&_console, xcon, ycon, rr.width() - xcon, rr.height() - ycon, rr.left, rr.top);
+#else
+	_mactext->draw(&_console, xcon, ycon, rr.width() - xcon, rr.height() - ycon, rr.left, rr.top);
+#endif // USE_MACTEXTWINDOW
+#endif // USE_NEW_TEXT_RENDERER
 
 	g->copyRectToSurface(_console, xcon, ycon, boundsR);
 }
