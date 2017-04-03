@@ -438,13 +438,6 @@ void Score::setSpriteCasts() {
 				}
 			} else if (_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _loadedButtons->getVal(castId);
-				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
-					Resource child = _frames[i]->_sprites[j]->_buttonCast->children[0];
-					_loadedText->setVal(child.index, new TextCast(*_movieArchive->getResource(child.tag, child.index), _vm->getVersion()));
-					_frames[i]->_sprites[j]->_textCast = _loadedText->getVal(child.index);
-				} else if (_frames[i]->_sprites[j]->_buttonCast->children.size() > 0) {
-					warning("Cast %d has too many children!", j);
-				}
 			}
 
 			//if (_loadedScripts->contains(castId))

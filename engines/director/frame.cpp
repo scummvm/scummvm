@@ -741,7 +741,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	if (textStream == NULL)
 		return;
 
-	TextCast *textCast = _sprites[spriteId]->_textCast;
+	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
