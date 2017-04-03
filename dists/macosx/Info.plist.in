@@ -10,6 +10,8 @@
 	<string>residualvm</string>
 	<key>CFBundleGetInfoString</key>
 	<string>@VERSION@, Copyright 2003-2016 The ResidualVM Team</string>
+	<key>CFBundleIconFile</key>
+	<string>residualvm.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
