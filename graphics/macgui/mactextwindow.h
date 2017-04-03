@@ -23,6 +23,7 @@
 #ifndef GRAPHICS_MACGUI_MACTEXTWINDOW_H
 #define GRAPHICS_MACGUI_MACTEXTWINDOW_H
 
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
 
 namespace Graphics {
@@ -36,7 +37,7 @@ public:
 	const Font *getTextWindowFont();
 
 	void drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void appendText(Common::String str);
+	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular);
 
 private:
 	MacText *_mactext;
