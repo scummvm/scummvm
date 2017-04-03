@@ -64,8 +64,6 @@ Common::Error MarioGame::run() {
 	bool quit = false;
 
 	while (!quit && !_endGameFl) {
-		g_system->delayMillis(100);
-
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -114,7 +112,8 @@ Common::Error MarioGame::run() {
 			}
 		}
 
-		g_system->updateScreen();	//TODO: keep mouse cursor alive
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 
 	g_system->getTimerManager()->removeTimerProc(onTimer);
