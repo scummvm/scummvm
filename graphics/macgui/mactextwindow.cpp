@@ -41,8 +41,8 @@ void MacTextWindow::drawText(ManagedSurface *g, int x, int y, int w, int h, int 
 	_mactext->draw(g, x, y, w, h, xoff, yoff);
 }
 
-void MacTextWindow::appendText(Common::String str) {
-	_mactext->appendText(str);
+void MacTextWindow::appendText(Common::String str, int id, int size, int slant) {
+	_mactext->appendText(str, id, size, slant);
 }
 
 MacTextWindow::~MacTextWindow() {
