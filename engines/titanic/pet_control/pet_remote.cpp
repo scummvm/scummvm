@@ -445,6 +445,7 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 
 	case GLYPH_GOTO_BAR:
 		glyph = new CGotoBarGlyph();
+		break;
 
 	case GLYPH_GOTO_PROMENADE:
 		glyph = new CGotoPromenadeDeckGlyph();
