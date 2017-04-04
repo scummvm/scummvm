@@ -306,7 +306,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
 	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
 	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
-	{ SIG_SCI3,           4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
+	{ SIG_SCI32,          4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -491,6 +491,15 @@ static const SciKernelMapSubEntry kRobot_subops[] = {
 	{ SIG_SINCE_SCI21,    10, MAP_CALL(RobotPause),                "",                     NULL },
 	{ SIG_SINCE_SCI21,    11, MAP_CALL(RobotGetFrameNo),           "",                     NULL },
 	{ SIG_SINCE_SCI21,    12, MAP_CALL(RobotSetPriority),          "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPlayDuck_subops[] = {
+	{ SIG_SCI3,            1, MAP_CALL(PlayDuckPlay),              "iiiii",                NULL },
+	{ SIG_SCI3,            2, MAP_CALL(PlayDuckSetFrameOut),       "i",                    NULL },
+	{ SIG_SCI3,            5, MAP_CALL(PlayDuckClose),             "",                     NULL },
+	{ SIG_SCI3,            6, MAP_CALL(PlayDuckSetVolume),         "i",                    NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -1008,7 +1017,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
-	{ MAP_CALL(PlayDuck),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(PlayDuck),           SIG_SCI3, SIGFOR_ALL,     "(.*)",                 kPlayDuck_subops,NULL },
+	{ MAP_CALL(WebConnect),         SIG_SCI3, SIGFOR_ALL,     "(r)",                  NULL,            NULL },
+	{ MAP_CALL(WinExec),            SIG_SCI3, SIGFOR_ALL,     "r",                    NULL,            NULL },
 #endif
 
 	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
@@ -1490,7 +1501,8 @@ static const char *const sci21_default_knames[] = {
 	/*0x9d*/ "Dummy",
 	/*0x9e*/ "WebConnect",
 	/*0x9f*/ "Dummy",
-	/*0xa0*/ "PlayDuck"
+	/*0xa0*/ "PlayDuck",
+	/*0xa1*/ "WinExec"
 };
 
 #endif

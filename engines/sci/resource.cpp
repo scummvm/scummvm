@@ -335,8 +335,7 @@ bool Resource::loadFromPatchFile() {
 		unalloc();
 		return false;
 	}
-	// Skip resourceid and header size byte
-	file.seek(2, SEEK_SET);
+	file.seek(0, SEEK_SET);
 	return loadPatch(&file);
 }
 
@@ -1401,21 +1400,56 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		return;
 	}
 
-	byte patchType = convertResType(fileStream->readByte());
-	int32 patchDataOffset;
-	if (_volVersion < kResVersionSci2) {
-		patchDataOffset = fileStream->readByte();
-	} else if (patchType == kResourceTypeView) {
-		fileStream->seek(3, SEEK_SET);
-		patchDataOffset = fileStream->readByte() + 22 + 2;
-	} else if (patchType == kResourceTypePic) {
-		patchDataOffset = 2;
-	} else if (patchType == kResourceTypePalette) {
-		fileStream->seek(3, SEEK_SET);
-		patchDataOffset = fileStream->readByte() + 2;
+	byte patchType;
+	if (fileStream->readUint32BE() == MKTAG('R','I','F','F')) {
+		fileStream->seek(-4, SEEK_CUR);
+		patchType = kResourceTypeAudio;
 	} else {
-		patchDataOffset = 0;
+		fileStream->seek(-4, SEEK_CUR);
+		patchType = convertResType(fileStream->readByte());
 	}
+
+	enum {
+		kExtraHeaderSize    = 2, ///< extra header used in gfx resources
+		kViewHeaderSize     = 22 ///< extra header used in view resources
+	};
+
+	int32 patchDataOffset = kResourceHeaderSize;
+	if (_volVersion < kResVersionSci2) {
+		patchDataOffset += fileStream->readByte();
+	}
+#ifdef ENABLE_SCI32
+	else {
+		switch (patchType) {
+		case kResourceTypeView:
+			fileStream->seek(3, SEEK_SET);
+			patchDataOffset += fileStream->readByte() + kViewHeaderSize + kExtraHeaderSize;
+			break;
+		case kResourceTypePic:
+			patchDataOffset += kExtraHeaderSize;
+			break;
+		case kResourceTypePalette:
+			fileStream->seek(3, SEEK_SET);
+			patchDataOffset += fileStream->readByte() + kExtraHeaderSize;
+			break;
+		case kResourceTypeWave:
+		case kResourceTypeAudio:
+		case kResourceTypeAudio36:
+		case kResourceTypeVMD:
+		case kResourceTypeDuck:
+		case kResourceTypeClut:
+		case kResourceTypeTGA:
+		case kResourceTypeZZZ:
+		case kResourceTypeEtc:
+			patchDataOffset = 0;
+			break;
+		default:
+			fileStream->seek(1, SEEK_SET);
+			patchDataOffset += fileStream->readByte();
+			break;
+		}
+	}
+#endif
 
 	delete fileStream;
 
@@ -1427,15 +1461,15 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
 	if (patchDataOffset & 0x80) {
-		switch (patchDataOffset & 0x7F) {
+		switch ((patchDataOffset - kResourceHeaderSize) & 0x7F) {
 			case 0:
-				patchDataOffset = 24;
+				patchDataOffset = kResourceHeaderSize + 24;
 				break;
 			case 1:
-				patchDataOffset = 2;
+				patchDataOffset = kResourceHeaderSize + 2;
 				break;
 			case 4:
-				patchDataOffset = 8;
+				patchDataOffset = kResourceHeaderSize + 8;
 				break;
 			default:
 				error("Resource patch unsupported special case %X", patchDataOffset & 0x7F);
@@ -1443,15 +1477,15 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		}
 	}
 
-	if (patchDataOffset + 2 >= fsize) {
+	if (patchDataOffset >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-		      source->getLocationName().c_str(), patchDataOffset + 2, fsize);
+		      source->getLocationName().c_str(), patchDataOffset, fsize);
 		delete source;
 		return;
 	}
 
 	// Overwrite everything, because we're patching
-	newrsc = updateResource(resId, source, fsize - patchDataOffset - 2);
+	newrsc = updateResource(resId, source, fsize - patchDataOffset);
 	newrsc->_headerSize = patchDataOffset;
 	newrsc->_fileOffset = 0;
 
@@ -2084,8 +2118,19 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 	_data = ptr;
 	_status = kResStatusAllocated;
 	errorNum = ptr ? dec->unpack(file, ptr, szPacked, _size) : SCI_ERROR_RESOURCE_TOO_BIG;
-	if (errorNum)
+	if (errorNum) {
 		unalloc();
+	} else {
+		// At least Lighthouse puts sound effects in RESSCI.00n/RESSCI.PAT
+		// instead of using a RESOURCE.SFX
+		if (getType() == kResourceTypeAudio) {
+			const uint8 headerSize = ptr[1];
+			assert(headerSize >= 11);
+			uint32 audioSize = READ_LE_UINT32(ptr + 9);
+			assert(audioSize + headerSize + kResourceHeaderSize == _size);
+			_size = headerSize + audioSize;
+		}
+	}
 
 	delete dec;
 	return errorNum;

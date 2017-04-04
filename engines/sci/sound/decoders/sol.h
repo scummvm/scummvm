@@ -42,11 +42,6 @@ private:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 
 	/**
-	 * Start offset of the audio data in the read stream.
-	 */
-	int32 _dataOffset;
-
-	/**
 	 * Sample rate of audio data.
 	 */
 	uint16 _sampleRate;
@@ -79,11 +74,9 @@ private:
 	virtual bool rewind() override;
 
 public:
-	SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const int32 dataOffset, const uint16 sampleRate, const int32 rawDataSize);
+	SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const uint16 sampleRate, const int32 rawDataSize);
 };
 
 Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-
-Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *headerStream, Common::SeekableReadStream *dataStream, DisposeAfterUse::Flag disposeAfterUse);
 }
 #endif

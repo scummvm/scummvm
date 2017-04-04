@@ -37,9 +37,9 @@ void CBaseStarEntry::load(Common::SeekableReadStream &s) {
 	_blue = s.readByte();
 	_thickness = s.readByte();
 	_value = s.readFloatLE();
-	_position._x = s.readUint32LE();
-	_position._y = s.readUint32LE();
-	_position._z = s.readUint32LE();
+	_position._x = s.readFloatLE();
+	_position._y = s.readFloatLE();
+	_position._z = s.readFloatLE();
 
 	for (int idx = 0; idx < 5; ++idx)
 		_data[idx] = s.readUint32LE();

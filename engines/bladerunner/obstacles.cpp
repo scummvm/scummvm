@@ -66,5 +66,7 @@ bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) {
 void Obstacles::backup() {
 }
 
+void Obstacles::restore() {}
+
 
 } // End of namespace BladeRunner

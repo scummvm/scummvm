@@ -116,7 +116,7 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		if (localsSegment_ != 0xFFFF)
+		if (localsSegment_ != kUninitializedSegment)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
@@ -132,9 +132,9 @@ struct ExecStack {
 
 enum {
 	VAR_GLOBAL = 0,
-	VAR_LOCAL = 1,
-	VAR_TEMP = 2,
-	VAR_PARAM = 3
+	VAR_LOCAL  = 1,
+	VAR_TEMP   = 2,
+	VAR_PARAM  = 3
 };
 
 enum GlobalVar {

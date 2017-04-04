@@ -79,14 +79,14 @@ public:
 	 * Returns true if the passed vector equals this one
 	 */
 	bool operator==(const FVector &src) const {
-		return _x != src._x || _y != src._y || _z != src._z;
+		return _x == src._x && _y == src._y && _z == src._z;
 	}
 
 	/**
 	 * Returns true if the passed vector does not equal this one
 	 */
 	bool operator!=(const FVector &src) const {
-		return !operator==(src);
+		return _x != src._x || _y != src._y || _z != src._z;
 	}
 
 	FVector operator+(const FVector &delta) const {

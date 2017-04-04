@@ -4871,7 +4871,9 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 // In SSCI, this happens to work because the uninitialized value on the stack
 // happens to be 1. Disabling the super call avoids the bad doVerb call without
 // any apparent ill effect.
-static const uint16 shiversSignatureJoystickFix[] = {
+// The same problem exists when trying to drag the volume & brightness sliders
+// in the main menu. These controls are also fixed by this patch.
+static const uint16 shiversSignatureSuperCall[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0xa5),    // pushi handleEvent
 	0x78,                      // push1
@@ -4881,14 +4883,15 @@ static const uint16 shiversSignatureJoystickFix[] = {
 	SIG_END
 };
 
-static const uint16 shiversPatchJoystickFix[] = {
+static const uint16 shiversPatchSuperCall[] = {
 	0x48,                      // ret
 	PATCH_END
 };
 
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry shiversSignatures[] = {
-	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureJoystickFix,     shiversPatchJoystickFix },
+	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureSuperCall,     shiversPatchSuperCall },
+	{  true,   990, "fix volume & brightness sliders",             2, shiversSignatureSuperCall,     shiversPatchSuperCall },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

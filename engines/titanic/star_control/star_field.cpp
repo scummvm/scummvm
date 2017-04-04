@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
-		_val4(true), _val5(0), _isSolved(false) {
+		_showCrosshairs(true), _val5(0), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
@@ -37,7 +37,7 @@ void CStarField::load(SimpleFile *file) {
 	_points1On = file->readNumber();
 	_points2On = file->readNumber();
 	_mode = (StarMode)file->readNumber();
-	_val4 = file->readNumber();
+	_showCrosshairs = file->readNumber();
 	_isSolved = file->readNumber();
 }
 
@@ -47,7 +47,7 @@ void CStarField::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_points1On, indent);
 	file->writeNumberLine(_points2On, indent);
 	file->writeNumberLine(_mode, indent);
-	file->writeNumberLine(_val4, indent);
+	file->writeNumberLine(_showCrosshairs, indent);
 	file->writeNumberLine(_isSolved, indent);
 }
 
@@ -66,8 +66,8 @@ bool CStarField::initDocument() {
 void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, sub12, &_sub5);
-	if (_val4)
-		fn3(&surfaceArea);
+	if (_showCrosshairs)
+		drawCrosshairs(&surfaceArea);
 
 	_sub7.draw(&surfaceArea, sub12, nullptr);
 	_sub8.draw(&surfaceArea);
@@ -112,13 +112,13 @@ void CStarField::setMode(StarMode mode) {
 	_mode = mode;
 }
 
-void CStarField::toggle4() {
-	_val4 = !_val4;
+void CStarField::toggleCrosshairs() {
+	_showCrosshairs = !_showCrosshairs;
 }
 
-bool CStarField::set4(bool val) {
-	bool oldVal = _val4;
-	_val4 = val;
+bool CStarField::setCrosshairs(bool isVisible) {
+	bool oldVal = _showCrosshairs;
+	_showCrosshairs = isVisible;
 	return oldVal;
 }
 
@@ -142,7 +142,7 @@ void CStarField::fn1(CErrorCode *errorCode) {
 	_sub5.proc3(errorCode);
 }
 
-void CStarField::fn3(CSurfaceArea *surfaceArea) {
+void CStarField::drawCrosshairs(CSurfaceArea *surfaceArea) {
 	uint oldPixel = surfaceArea->_pixel;
 	surfaceArea->_pixel = 0x323232;
 	surfaceArea->setColorFromPixel();

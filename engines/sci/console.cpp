@@ -3657,7 +3657,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	// everything after the selector name is passed as an argument to the send
 	int send_argc = argc - 3;
 
-	// Create the data block for send_selecor() at the top of the stack:
+	// Create the data block for send_selector() at the top of the stack:
 	// [selector_number][argument_counter][arguments...]
 	StackPtr stackframe = _engine->_gamestate->_executionStack.back().sp;
 	stackframe[0] = make_reg(0, selectorId);
@@ -4233,14 +4233,14 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			// TODO: Handle 32-bit PC addresses
 			reg32_t pc = s->_executionStack.back().addr.pc;
-			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
+			dest->setSegment(pc.getSegment());
+			dest->setOffset(pc.getOffset());
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			// TODO: Handle 32-bit PC addresses
 			reg32_t pc = s->_executionStack.back().addr.pc;
-			*dest = make_reg(pc.getSegment(), (uint16)pc.getOffset());
+			dest->setSegment(pc.getSegment());
+			dest->setOffset(pc.getOffset());
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;

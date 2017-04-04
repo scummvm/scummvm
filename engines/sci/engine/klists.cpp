@@ -618,6 +618,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 			}
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
+
 			// Check if the call above leads to a game restore, in which case
 			// the segment manager will be reset, and the original list will
 			// be invalidated
@@ -672,6 +673,12 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
+			// Check if the call above leads to a game restore, in which case
+			// the segment manager will be reset, and the original list will
+			// be invalidated
+			if (s->abortScriptProcessing == kAbortLoadGame)
+				return s->r_acc;
+
 			// Check if the result is true
 			if (!s->r_acc.isNull()) {
 				s->r_acc = curObject;
@@ -721,6 +728,12 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = readSelector(s->_segMan, curObject, slc);
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
+
+			// Check if the call above leads to a game restore, in which case
+			// the segment manager will be reset, and the original list will
+			// be invalidated
+			if (s->abortScriptProcessing == kAbortLoadGame)
+				return s->r_acc;
 		}
 
 		// Check if the result isn't true

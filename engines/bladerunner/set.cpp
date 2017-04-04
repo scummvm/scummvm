@@ -126,7 +126,7 @@ bool Set::open(const Common::String &name) {
 	return true;
 }
 
-void Set::addObjectsToScene(SceneObjects *sceneObjects) {
+void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
 	for (int i = 0; i < _objectCount; i++) {
 		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isTarget);
 	}
@@ -172,17 +172,17 @@ static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 	return found & 1;
 }
 
-float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) {
+float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) const {
 	float altitude = _walkboxes[0]._altitude;
 	*inWalkbox = false;
 
 	for (int i = 0; i < _walkboxCount; ++i) {
-		const Walkbox &w = _walkboxes[i];
+		const Walkbox &walkbox = _walkboxes[i];
 
-		if (isXZInWalkbox(x, z, w)) {
-			*inWalkbox = true;
-			if (w._altitude > altitude) {
-				altitude = w._altitude;
+		if (isXZInWalkbox(x, z, walkbox)) {
+			if (!*inWalkbox || altitude < walkbox._altitude) {
+				altitude = walkbox._altitude;
+				*inWalkbox = true;
 			}
 		}
 	}
@@ -190,7 +190,7 @@ float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) {
 	return altitude;
 }
 
-int Set::findWalkbox(float x, float z) {
+int Set::findWalkbox(float x, float z) const {
 	int result = -1;
 
 	for (int i = 0; i < _walkboxCount; ++i) {
@@ -206,7 +206,7 @@ int Set::findWalkbox(float x, float z) {
 	return result;
 }
 
-int Set::findObject(const char *objectName) {
+int Set::findObject(const char *objectName) const {
 	int i;
 	for (i = 0; i < (int)_objectCount; i++) {
 		if (scumm_stricmp(objectName, _objects[i]._name) == 0) {
@@ -219,7 +219,7 @@ int Set::findObject(const char *objectName) {
 	return -1;
 }
 
-bool Set::objectSetHotMouse(int objectId) {
+bool Set::objectSetHotMouse(int objectId) const {
 	if (!_objects || objectId < 0 || objectId >= (int)_objectCount) {
 		return false;
 	}
@@ -228,7 +228,7 @@ bool Set::objectSetHotMouse(int objectId) {
 	return true;
 }
 
-bool Set::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
+bool Set::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) const {
 	assert(boundingBox);
 
 	if (!_objects || objectId < 0 || objectId >= (int)_objectCount) {
@@ -243,19 +243,19 @@ bool Set::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
 	return true;
 }
 
-void Set::objectSetIsClickable(int objectId, bool isClickable) {
+void Set::objectSetIsClickable(int objectId, bool isClickable) const {
 	_objects[objectId]._isClickable = isClickable;
 }
 
-void Set::objectSetIsObstacle(int objectId, bool isObstacle) {
+void Set::objectSetIsObstacle(int objectId, bool isObstacle) const {
 	_objects[objectId]._isObstacle = isObstacle;
 }
 
-void Set::objectSetIsTarget(int objectId, bool isTarget) {
+void Set::objectSetIsTarget(int objectId, bool isTarget) const {
 	_objects[objectId]._isTarget = isTarget;
 }
 
-const char *Set::objectGetName(int objectId) {
+const char *Set::objectGetName(int objectId) const {
 	return _objects[objectId]._name;
 }
 

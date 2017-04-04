@@ -230,12 +230,12 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
-				debugN("\t%02x  [%04x]", 0xff & offset, 0xffff & (retval.getOffset() + offset));
+				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (retval.getOffset() + offset));
 			}
 			else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
-				debugN("\t%04x  [%04x]", 0xffff & offset, 0xffff & (retval.getOffset() + offset));
+				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (retval.getOffset() + offset));
 			}
 			break;
 

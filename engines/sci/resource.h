@@ -43,6 +43,8 @@ class SeekableReadStream;
 namespace Sci {
 
 enum {
+	kResourceHeaderSize = 2, ///< patch type + header size
+
 	/** The maximum allowed size for a compressed or decompressed resource */
 	SCI_MAX_RESOURCE_SIZE = 0x0400000
 };
@@ -185,7 +187,7 @@ public:
 	}
 
 	// Convert from a resource ID to a base36 patch name
-	Common::String toPatchNameBase36() {
+	Common::String toPatchNameBase36() const {
 		Common::String output;
 
 		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
@@ -241,9 +243,12 @@ class Resource : public SciSpan<const byte> {
 	friend class ChunkResourceSource;
 #endif
 
-// NOTE : Currently most member variables lack the underscore prefix and have
-// public visibility to let the rest of the engine compile without changes.
-public:
+protected:
+	/**
+	 * Holds the extra header data from view, pic, and palette patches so that
+	 * these patches can be rewritten to disk as valid patch files by the
+	 * `diskdump` debugger command.
+	 */
 	byte *_header;
 	uint32 _headerSize;
 

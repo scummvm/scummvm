@@ -643,6 +643,16 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, 0);
 	}
 }
+
+reg_t kWebConnect(EngineState *s, int argc, reg_t *argv) {
+	const Common::String baseUrl = "https://web.archive.org/web/1996/";
+	const Common::String gameUrl = argc > 0 ? s->_segMan->getString(argv[0]) : "http://www.sierra.com";
+	return make_reg(0, !g_system->openUrl(baseUrl + gameUrl));
+}
+
+reg_t kWinExec(EngineState *s, int argc, reg_t *argv) {
+	return NULL_REG;
+}
 #endif
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {

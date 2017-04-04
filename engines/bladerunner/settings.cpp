@@ -60,7 +60,7 @@ bool Settings::openNewScene() {
 //		music::stop(Music, 2);
 	}
 
-	int currentSet = _vm->_scene->_setId;
+	int currentSet = _vm->_scene->getSetId();
 	int newSet     = _newSet;
 	int newScene   = _newScene;
 

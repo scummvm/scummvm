@@ -37,8 +37,7 @@ class BladeRunnerEngine;
 class Scene {
 	BladeRunnerEngine *_vm;
 
-public:
-	Set        *_set;
+private:
 	int         _setId;
 	int         _sceneId;
 	VQAPlayer  *_vqaPlayer;
@@ -57,6 +56,8 @@ public:
 	int         _actorStartFacing;
 	bool        _playerWalkedIn;
 
+public:
+	Set        *_set;
 	Regions*    _regions;
 	Regions*    _exits;
 
@@ -66,15 +67,15 @@ public:
 public:
 	Scene(BladeRunnerEngine *vm)
 		: _vm(vm),
-		  _set(new Set(vm)),
 		  _setId(-1),
 		  _sceneId(-1),
 		  _vqaPlayer(nullptr),
 		  _defaultLoop(0),
+		  _introFinished(false),
 		  _nextSetId(-1),
 		  _nextSceneId(-1),
 		  _playerWalkedIn(false),
-		  _introFinished(false),
+		  _set(new Set(vm)),
 		  _regions(new Regions()),
 		  _exits(new Regions())
 	{}
@@ -94,8 +95,8 @@ public:
 	void loopSetDefault(int a);
 	void loopStartSpecial(int a, int b, int c);
 
-	int getSetId()   { return _setId; }
-	int getSceneId() { return _sceneId; }
+	int getSetId() const { return _setId; }
+	int getSceneId() const { return _sceneId; }
 
 	bool didPlayerWalkIn() { bool r = _playerWalkedIn; _playerWalkedIn = false; return r; }
 

@@ -935,8 +935,8 @@ reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
 }
 
 /*
- * Used in SCI3. SCI3 contains 6 gamma look-up tables, with the first
- * table (gamma = 0) being the default one.
+ * Used starting in Shivers 1. SCI3 contains 6 gamma look-up tables, with the
+ * first table (gamma = 0) being the default one.
  */
 reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
 	const uint8 gamma = argv[0].toUint16();

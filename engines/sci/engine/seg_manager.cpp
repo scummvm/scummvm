@@ -272,9 +272,23 @@ const char *SegManager::getObjectName(reg_t pos) {
 	if (nameReg.isNull())
 		return "<no name>";
 
-	const char *name = 0;
-	if (nameReg.getSegment())
-		name  = derefString(nameReg);
+	const char *name = nullptr;
+
+	if (nameReg.getSegment()) {
+#ifdef ENABLE_SCI32
+		// At least Torin script 64000 creates objects with names that are
+		// pointed to dynamically generated strings which are freed before the
+		// objects themselves are freed. This causes a crash when using
+		// `findObjectByName`, since the name of the object is no longer valid
+		if (nameReg.getSegment() != _arraysSegId ||
+			_heap[_arraysSegId]->isValidOffset(nameReg.getOffset())) {
+#endif
+			name = derefString(nameReg);
+#ifdef ENABLE_SCI32
+		}
+#endif
+	}
+
 	if (!name) {
 		// Crazy Nick Laura Bow is missing some object names needed for the static
 		// selector vocabulary

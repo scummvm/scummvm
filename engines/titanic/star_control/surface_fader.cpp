@@ -26,7 +26,8 @@
 
 namespace Titanic {
 
-CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
+
+CSurfaceFader::CSurfaceFader() : _index(-1), _count(32), _fadeIn(false), _videoSurface(nullptr) {
 	_dataP = new byte[_count];
 
 	for (int idx = 0; idx < _count; ++idx)
@@ -35,10 +36,55 @@ CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
 }
 
 CSurfaceFader::~CSurfaceFader() {
+	delete _videoSurface;
 	delete[] _dataP;
 }
 
-void CSurfaceFader::copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
+void CSurfaceFader::reset() {
+	_index = 0;
+}
+
+bool CSurfaceFader::setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+	int width = srcSurface->getWidth();
+	int height = srcSurface->getHeight();
+
+	if (_videoSurface) {
+		if (width == _videoSurface->getWidth() && _videoSurface->getHeight())
+			// Allocated surface already matches new size
+			return true;
+
+		// Different sizes, so delete old surface
+		delete _videoSurface;
+	}
+
+	_videoSurface = screenManager->createSurface(width, height);
+	return true;
+}
+
+CVideoSurface *CSurfaceFader::draw(CScreenManager *screenManager, CVideoSurface *srcSurface) {
+	if (_index < 0 || _index >= _count)
+		return srcSurface;
+
+	// On the first iteration, set up a temporary surface
+	if (_index == 0 && !setupSurface(screenManager, srcSurface))
+		return nullptr;
+
+	srcSurface->lock();
+	_videoSurface->lock();
+	CSurfaceArea srcSurfaceArea(srcSurface);
+	CSurfaceArea destSurfaceArea(_videoSurface);
+
+	// Copy the surface with fading
+	step(srcSurfaceArea, destSurfaceArea);
+
+	srcSurface->unlock();
+	_videoSurface->unlock();
+
+	++_index;
+	return _videoSurface;
+}
+
+void CSurfaceFader::step(CSurfaceArea &srcSurface, CSurfaceArea &destSurface) {
 	const uint16 *srcPixelP = (const uint16 *)srcSurface._pixelsPtr;
 	uint16 *destPixelP = (uint16 *)destSurface._pixelsPtr;
 

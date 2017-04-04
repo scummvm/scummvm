@@ -38,7 +38,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -70,10 +70,9 @@ void SciMusic::init() {
 	Common::Platform platform = g_sci->getPlatform();
 	uint32 deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
 
-	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
-	// Also, default to MIDI for Windows versions of SCI1.1 games, as their
+	// Default to MIDI for Windows versions of SCI1.1 games, as their
 	// soundtrack is written for GM.
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY || g_sci->_features->useAltWinGMSound())
+	if (g_sci->_features->useAltWinGMSound())
 		deviceFlags |= MDT_PREFER_GM;
 
 	// Currently our CMS implementation only supports SCI1(.1)

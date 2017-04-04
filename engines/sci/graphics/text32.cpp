@@ -38,7 +38,6 @@
 
 namespace Sci {
 
-int16 GfxText32::_defaultFontId = 0;
 int16 GfxText32::_xResolution = 0;
 int16 GfxText32::_yResolution = 0;
 
@@ -49,15 +48,14 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_width(0),
 	_text(""),
 	_bitmap(NULL_REG) {
-		_fontId = _defaultFontId;
-		_font = _cache->getFont(_defaultFontId);
-
-		if (_xResolution == 0) {
-			// initialize the statics
-			_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-			_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-		}
+		_fontId = kSci32SystemFont;
+		_font = _cache->getFont(kSci32SystemFont);
 	}
+
+void GfxText32::init() {
+	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+}
 
 reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, const bool gc) {
 
@@ -170,7 +168,7 @@ void GfxText32::setFont(const GuiResourceId fontId) {
 	// table is built on the FontMgr directly; instead, because we already have
 	// font resources, this code just grabs a font out of GfxCache.
 	if (fontId != _fontId) {
-		_fontId = fontId == -1 ? _defaultFontId : fontId;
+		_fontId = fontId;
 		_font = _cache->getFont(_fontId);
 	}
 }

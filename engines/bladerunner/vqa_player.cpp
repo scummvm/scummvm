@@ -108,31 +108,29 @@ int VQAPlayer::update() {
 	}
 
 
-//	TODO: preload audio
-//	int audioPreloadFrames = 1;
+//	TODO: preload audio in better way
+	int audioPreloadFrames = 3;
 
 	if (now >= _frameNextTime) {
 		int frame = _frameNext;
-//		_decoder.readFrame(_frameNext, 0x2);
-		_decoder.readFrame(_frameNext, 0);
+		_decoder.readFrame(_frameNext, 0x2);
 		_surface = _decoder.decodeVideoFrame();
 
 		if (_hasAudio) {
-			queueAudioFrame(_decoder.decodeAudioFrame());
 			if (!_audioStarted) {
-//				for (int i = 0; i < audioPreloadFrames; i++) {
-//					if (_frameNext + i < _frameEnd) {
-//						_decoder.readFrame(_frameNext + i, 0x1);
-//						queueAudioFrame(_decoder.decodeAudioFrame());
-//					}
-//				}
+				for (int i = 0; i < audioPreloadFrames; i++) {
+					if (_frameNext + i < _frameEnd) {
+						_decoder.readFrame(_frameNext + i, 0x1);
+						queueAudioFrame(_decoder.decodeAudioFrame());
+					}
+				}
 				_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
 				_audioStarted = true;
 			}
-//			if (_frameNext + audioPreloadFrames < _frameEnd) {
-//				_decoder.readFrame(_frameNext + audioPreloadFrames, 0x1);
-//				queueAudioFrame(_decoder.decodeAudioFrame());
-//			}
+			if (_frameNext + audioPreloadFrames < _frameEnd) {
+				_decoder.readFrame(_frameNext + audioPreloadFrames, 0x1);
+				queueAudioFrame(_decoder.decodeAudioFrame());
+			}
 		}
 		if (_frameNextTime == 0) {
 			_frameNextTime = now + 60000 / 15;

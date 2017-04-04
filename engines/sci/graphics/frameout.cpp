@@ -117,6 +117,7 @@ void GfxFrameout::run() {
 	CelObj::init();
 	Plane::init();
 	ScreenItem::init();
+	GfxText32::init();
 
 	// NOTE: This happens in SCI::InitPlane in the actual engine,
 	// and is a background fill plane to ensure hidden planes

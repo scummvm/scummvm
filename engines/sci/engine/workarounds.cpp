@@ -270,6 +270,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",                            NULL,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",                            NULL,    -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game - bug #5232
 	{ GID_GK1,            -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
+	{ GID_GK1,            -1, 64937, -1,         "GKControls", "dispatchEvent",                   NULL,     6, { WORKAROUND_FAKE,   0 } }, // when using keyboard navigation (tab) in the game settings and hitting 'enter' when over a slider
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",                       NULL,     3, { WORKAROUND_FAKE,   0 } }, // called when the game starts
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",                       NULL,     4, { WORKAROUND_FAKE,   0 } }, // called during the game
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",                        NULL,     4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
@@ -411,6 +412,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_TORIN,          -1, 64017,  0,             "oFlags", "clear",                           NULL,     0, { WORKAROUND_FAKE,   0 } }, // entering Torin's home in the French version
 	{ GID_TORIN,       10000, 64029,  0,          "oMessager", "nextMsg",                         NULL,     3, { WORKAROUND_FAKE,   0 } }, // start of chapter one
 	{ GID_TORIN,       20100, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // going down the cliff at the first screen of chapter 2 (washing area)
+	{ GID_TORIN,       61100, 64888,  0,              "Torin", "autorestore",                     NULL,    11, { WORKAROUND_FAKE,   0 } }, // after attempting to restore a save game saved with the wrong game version
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -874,7 +876,7 @@ const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 
 SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin) {
 	const EngineState *state = g_sci->getEngineState();
-	ExecStack *lastCall = state->xs;
+	const ExecStack *lastCall = state->xs;
 	const SciGameId gameId = g_sci->getGameId();
 
 	*trackOrigin = state->getCurrentCallOrigin();

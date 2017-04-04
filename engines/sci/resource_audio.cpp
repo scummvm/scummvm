@@ -95,7 +95,6 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKTAG('R','I','F','F')) {
-		_headerSize = 0;
 		_size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
@@ -105,6 +104,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	// Rave-resources (King's Quest 6) don't have any header at all
 	if (getType() != kResourceTypeRave) {
 		ResourceType type = _resMan->convertResType(file->readByte());
+
 		if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 			|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 			warning("Resource type mismatch loading %s", _id.toString().c_str());
@@ -112,23 +112,27 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 			return false;
 		}
 
-		_headerSize = file->readByte();
+		const uint8 headerSize = file->readByte();
 
 		if (type == kResourceTypeAudio) {
-			if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
-				warning("Unsupported audio header");
+			if (headerSize != 7 && headerSize != 11 && headerSize != 12) {
+				warning("Unsupported audio header size %d", headerSize);
 				unalloc();
 				return false;
 			}
 
-			if (_headerSize != 7) { // Size is defined already from the map
+			if (headerSize != 7) { // Size is defined already from the map
 				// Load sample size
 				file->seek(7, SEEK_CUR);
-				_size = file->readUint32LE();
+				_size = file->readUint32LE() + headerSize + kResourceHeaderSize;
 				assert(!file->err() && !file->eos());
-				// Adjust offset to point at the header data again
+				// Adjust offset to point at the beginning of the audio file
+				// again
 				file->seek(-11, SEEK_CUR);
 			}
+
+			// SOL audio files are designed to require the resource header
+			file->seek(-2, SEEK_CUR);
 		}
 	}
 	return loadPatch(file);
@@ -373,7 +377,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			byte headerSize = stream->readByte();
 			assert(headerSize == 11 || headerSize == 12);
 
-			stream->skip(5);
+			stream->skip(7);
 			uint32 size = stream->readUint32LE() + headerSize + 2;
 
 			assert(offset + size <= srcSize);
@@ -430,8 +434,28 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				}
 			}
 
+			const ResourceId id = ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f);
+
+			// Map 405 on CD 1 of the US release of PQ:SWAT 1.000 is broken
+			// and points to garbage in the RESOURCE.AUD. The affected audio36
+			// assets seem to be able to load successfully from one of the later
+			// CDs, so just ignore the map on this disc
+			if (g_sci->getGameId() == GID_PQSWAT && map->_volumeNumber == 1 && map->_mapNumber == 405) {
+				continue;
+			}
+
+			// At least version 1.00 of GK2 has multiple invalid audio36 map
+			// entries on CD 6
+			if (g_sci->getGameId() == GID_GK2 &&
+				map->_volumeNumber == 6 &&
+				offset + syncSize >= srcSize) {
+
+				debugC(kDebugLevelResMan, "Invalid offset %u for %s in map %d for disc %d", offset + syncSize, id.toPatchNameBase36().c_str(), map->_mapNumber, map->_volumeNumber);
+				continue;
+			}
+
 			assert(offset + syncSize < srcSize);
-			addResource(ResourceId(kResourceTypeAudio36, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize);
+			addResource(id, src, offset + syncSize);
 		}
 	}
 

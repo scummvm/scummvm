@@ -25,8 +25,9 @@
 #include "audio/decoders/raw.h"
 #include "common/substream.h"
 #include "common/util.h"
-#include "engines/sci/sci.h"
-#include "engines/sci/sound/decoders/sol.h"
+#include "sci/sci.h"
+#include "sci/sound/decoders/sol.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
@@ -127,16 +128,11 @@ static void deDPCM8Stereo(int16 *out, Common::ReadStream &audioStream, uint32 nu
 # pragma mark -
 
 template<bool STEREO, bool S16BIT>
-SOLStream<STEREO, S16BIT>::SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const int32 dataOffset, const uint16 sampleRate, const int32 rawDataSize) :
+SOLStream<STEREO, S16BIT>::SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const uint16 sampleRate, const int32 rawDataSize) :
 	_stream(stream, disposeAfterUse),
-	_dataOffset(dataOffset),
 	_sampleRate(sampleRate),
 	// SSCI aligns the size of SOL data to 32 bits
 	_rawDataSize(rawDataSize & ~3) {
-		// TODO: This is not valid for stereo SOL files, which
-		// have interleaved L/R compression so need to store the
-		// carried values for each channel separately. See
-		// 60900.aud from Lighthouse for an example stereo file
 		if (S16BIT) {
 			_dpcmCarry16.l = _dpcmCarry16.r = 0;
 		} else {
@@ -166,7 +162,7 @@ bool SOLStream<STEREO, S16BIT>::seek(const Audio::Timestamp &where) {
 		_dpcmCarry8.l = _dpcmCarry8.r = 0x80;
 	}
 
-	return _stream->seek(_dataOffset, SEEK_SET);
+	return _stream->seek(0, SEEK_SET);
 }
 
 template <bool STEREO, bool S16BIT>
@@ -227,34 +223,35 @@ bool SOLStream<STEREO, S16BIT>::rewind() {
 }
 
 Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-
-	// TODO: Might not be necessary? Makes seeking work, but
-	// not sure if audio is ever actually seeked in SSCI.
-	const int32 initialPosition = stream->pos();
+	int32 initialPosition = stream->pos();
 
 	byte header[6];
 	if (stream->read(header, sizeof(header)) != sizeof(header)) {
+		stream->seek(initialPosition, SEEK_SET);
 		return nullptr;
 	}
 
-	if (header[0] != 0x8d || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
+	if ((header[0] & 0x7f) != kResourceTypeAudio || READ_BE_UINT32(header + 2) != MKTAG('S', 'O', 'L', 0)) {
+		stream->seek(initialPosition, SEEK_SET);
 		return nullptr;
 	}
 
-	const uint8 headerSize = header[1];
+	const uint8 headerSize = header[1] + /* resource header */ 2;
 	const uint16 sampleRate = stream->readUint16LE();
 	const byte flags = stream->readByte();
 	const uint32 dataSize = stream->readUint32LE();
 
+	initialPosition += headerSize;
+
 	if (flags & kCompressed) {
 		if (flags & kStereo && flags & k16Bit) {
-			return new SOLStream<true, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, headerSize, sampleRate, dataSize);
+			return new SOLStream<true, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
 		} else if (flags & kStereo) {
-			return new SOLStream<true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, headerSize, sampleRate, dataSize);
+			return new SOLStream<true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
 		} else if (flags & k16Bit) {
-			return new SOLStream<false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, headerSize, sampleRate, dataSize);
+			return new SOLStream<false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
 		} else {
-			return new SOLStream<false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, headerSize, sampleRate, dataSize);
+			return new SOLStream<false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
 		}
 	}
 
@@ -269,44 +266,6 @@ Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, Di
 		rawFlags |= Audio::FLAG_STEREO;
 	}
 
-	return Audio::makeRawStream(new Common::SeekableSubReadStream(stream, initialPosition + headerSize, initialPosition + headerSize + dataSize, disposeAfterUse), sampleRate, rawFlags, disposeAfterUse);
-}
-
-// TODO: This needs to be removed when resource manager is fixed
-// to not split audio into two parts
-Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *headerStream, Common::SeekableReadStream *dataStream, DisposeAfterUse::Flag disposeAfterUse) {
-
-	if (headerStream->readUint32BE() != MKTAG('S', 'O', 'L', 0)) {
-		return nullptr;
-	}
-
-	const uint16 sampleRate = headerStream->readUint16LE();
-	const byte flags = headerStream->readByte();
-	const int32 dataSize = headerStream->readSint32LE();
-
-	if (flags & kCompressed) {
-		if (flags & kStereo && flags & k16Bit) {
-			return new SOLStream<true, true>(dataStream, disposeAfterUse, 0, sampleRate, dataSize);
-		} else if (flags & kStereo) {
-			return new SOLStream<true, false>(dataStream, disposeAfterUse, 0, sampleRate, dataSize);
-		} else if (flags & k16Bit) {
-			return new SOLStream<false, true>(dataStream, disposeAfterUse, 0, sampleRate, dataSize);
-		} else {
-			return new SOLStream<false, false>(dataStream, disposeAfterUse, 0, sampleRate, dataSize);
-		}
-	}
-
-	byte rawFlags = Audio::FLAG_LITTLE_ENDIAN;
-	if (flags & k16Bit) {
-		rawFlags |= Audio::FLAG_16BITS;
-	} else {
-		rawFlags |= Audio::FLAG_UNSIGNED;
-	}
-
-	if (flags & kStereo) {
-		rawFlags |= Audio::FLAG_STEREO;
-	}
-
-	return Audio::makeRawStream(dataStream, sampleRate, rawFlags, disposeAfterUse);
+	return Audio::makeRawStream(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), sampleRate, rawFlags, disposeAfterUse);
 }
 }

@@ -77,20 +77,20 @@ public:
 
 	bool open(const Common::String &name);
 
-	void addObjectsToScene(SceneObjects *sceneObjects);
-	uint32 getObjectCount() { return _objectCount; }
+	void addObjectsToScene(SceneObjects *sceneObjects) const;
+	uint32 getObjectCount() const { return _objectCount; }
 
-	float getAltitudeAtXZ(float x, float z, bool *inWalkbox);
+	float getAltitudeAtXZ(float x, float z, bool *inWalkbox) const;
 
-	int findWalkbox(float x, float z);
-	int findObject(const char *objectName);
+	int findWalkbox(float x, float z) const;
+	int findObject(const char *objectName) const;
 
-	bool objectSetHotMouse(int objectId);
-	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
-	void objectSetIsClickable(int objectId, bool isClickable);
-	void objectSetIsObstacle(int objectId, bool isObstacle);
-	void objectSetIsTarget(int objectId, bool isTarget);
-	const char *objectGetName(int objectId);
+	bool objectSetHotMouse(int objectId) const;
+	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox) const;
+	void objectSetIsClickable(int objectId, bool isClickable) const;
+	void objectSetIsObstacle(int objectId, bool isObstacle) const;
+	void objectSetIsTarget(int objectId, bool isTarget) const;
+	const char *objectGetName(int objectId) const;
 
 	void setWalkboxStepSound(int walkboxId, int soundId);
 	void setFoodstepSoundOverride(int soundId);

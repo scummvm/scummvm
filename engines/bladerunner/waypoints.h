@@ -39,7 +39,7 @@ struct Waypoint {
 class Waypoints {
 	BladeRunnerEngine *_vm;
 
-private:
+public:
 	int       _count;
 	Waypoint *_waypoints;
 

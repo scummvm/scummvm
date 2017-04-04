@@ -23,27 +23,54 @@
 #ifndef TITANIC_SURFACE_FADER_H
 #define TITANIC_SURFACE_FADER_H
 
-#include "titanic/star_control/surface_fader_base.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-class CSurfaceFader: public CSurfaceFaderBase {
+class CSurfaceFader {
 private:
 	byte *_dataP;
 	bool _fadeIn;
-protected:
+private:
 	/**
-	 * Create a faded version of the source surface at the given dest
+	 * Create a faded version of the source surface for the new step
 	 */
-	virtual void copySurface(CSurfaceArea &srcSurface, CSurfaceArea &destSurface);
+	void step(CSurfaceArea &srcSurface, CSurfaceArea &destSurface);
+
+	/**
+	 * Sets up an internal surface to match the size of the specified one
+	 */
+	bool setupSurface(CScreenManager *screenManager, CVideoSurface *srcSurface);
+public:
+	int _index;
+	int _count;
+	CVideoSurface *_videoSurface;
 public:
 	CSurfaceFader();
-	virtual ~CSurfaceFader();
+	~CSurfaceFader();
+
+	/**
+	 * Reset fading back to the start
+	 */
+	void reset();
+
+	/**
+	 * Creates a faded version of the passed source surface, based on a percentage
+	 * visibility specified by _index of _count
+	 */
+	CVideoSurface *draw(CScreenManager *screenManager, CVideoSurface *srcSurface);
 
 	/**
 	 * Sets whether a fade in (versus a fade out) should be done
 	 */
 	void setFadeIn(bool fadeIn);
+
+	/**
+	 * Returns true if a fade is in progress
+	 */
+	bool isActive() const { return _index >= 0 && _index < _count; }
 };
 
 } // End of namespace Titanic

@@ -397,12 +397,13 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 	} else {
 		// Original source file
-		if (audioRes->_headerSize > 0) {
+		if ((audioRes->getUint8At(0) & 0x7f) == kResourceTypeAudio && audioRes->getUint32BEAt(2) == MKTAG('S','O','L',0)) {
 			// SCI1.1
-			Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
+			const uint8 headerSize = audioRes->getUint8At(1);
+			Common::MemoryReadStream headerStream = audioRes->subspan(kResourceHeaderSize, headerSize).toStream();
 
-			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags, audioRes->size())) {
-				Common::MemoryReadStream dataStream(audioRes->toStream());
+			if (readSOLHeader(&headerStream, headerSize, size, _audioRate, audioFlags, audioRes->size())) {
+				Common::MemoryReadStream dataStream(audioRes->subspan(kResourceHeaderSize + headerSize).toStream());
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
 		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('R','I','F','F')) {

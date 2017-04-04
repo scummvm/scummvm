@@ -40,8 +40,7 @@ private:
 	FMatrix _matrix;
 	CStarControlSub6 _sub1;
 	CStarControlSub6 _sub2;
-	double _fieldC0;
-	double _fieldC4;
+	FPoint _center;
 	bool _flag;
 private:
 	void reset();
@@ -51,9 +50,7 @@ public:
 	double _field14;
 	int _field24;
 	double _valArray[5];
-	double _fieldC8;
-	double _fieldCC;
-	double _fieldD0;
+	FVector _centerVector;
 public:
 	CStarControlSub13();
 	CStarControlSub13(CStarControlSub13 *src);
