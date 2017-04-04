@@ -92,8 +92,8 @@ void DirectorEngine::processEvents() {
 
 				if (getVersion() > 3) {
 					// TODO: check that this is the order of script execution!
-					_lingo->processEvent(kEventNone, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-					_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+					_lingo->processEvent(kEventMouseUp, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+					_lingo->processEvent(kEventMouseUp, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 				} else {
 					// Frame script overrides sprite script
 					if (!currentFrame->_sprites[spriteId]->_scriptId)

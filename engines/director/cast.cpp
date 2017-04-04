@@ -40,7 +40,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 			unk1 = stream.readUint16();
 			unk2 = stream.readUint16();
 		}
-	} else {
+	} else if (version == 4) {
 		stream.readByte();
 		stream.readByte();
 
@@ -65,6 +65,39 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		}
 
 		warning("BitmapCast: %d bytes left", tail);
+	} else if (version == 5) {
+		// WIP!
+		uint32 unk1 = stream.readUint32();
+		uint32 unk2 = stream.readUint32();
+		uint32 unk3 = stream.readUint32();
+		uint32 unk4 = stream.readUint32();
+
+		uint16 count = stream.readUint16();
+		for (uint16 cc = 0; cc < count; cc++)
+			stream.readUint32();
+
+		stream.readUint32();
+		byte stringLength = stream.readByte();
+		char* string = new char[stringLength];
+		stream.read(string, stringLength);
+
+		stream.readUint16();
+		/*node.x1 = stream.readUint16();
+		if (node.x1 > 2048) node.x1 = -(0xffff - node.x1);
+		node.y1 = ReadWordAsInt(ref start, true);
+		if (node.y1 > 2048) node.y1 = -(0xffff - node.y1);
+		node.x2 = ReadWordAsInt(ref start, true);
+		node.y2 = ReadWordAsInt(ref start, true);*/
+
+		initialRect = Score::readRect(stream);
+
+		//node.h = (node.x2 - node.x1);
+		//node.w = (node.y2 - node.y1);
+
+		stream.readUint16(); 
+		stream.readUint16();
+
+		bitsPerPixel = stream.readUint16();
 	}
 	modified = 0;
 }

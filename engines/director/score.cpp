@@ -130,13 +130,14 @@ void Score::loadArchive() {
 	}
 
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
-	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), 1024));
-
 	loadFrames(*_movieArchive->getResource(MKTAG('V', 'W', 'S', 'C'), 1024));
-	loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
+	
 
-	if (_vm->getVersion() < 4) {
-		assert(_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), 1024));
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
+		loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
+	}
+
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
 		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), 1024));
 	}
 
@@ -291,7 +292,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint32 size = stream.readUint32();
 	size -= 4;
 
-	if (_vm->getVersion() > 3) {
+	if (_vm->getVersion() == 4) {
 		uint32 unk1 = stream.readUint32();
 		uint32 unk2 = stream.readUint32();
 		uint16 unk3 = stream.readUint16();
@@ -302,6 +303,26 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 		// Unknown, some bytes - constant (refer to contuinity).
+	} else if (_vm->getVersion() > 4) {
+		//what data is up the top of D5 VWSC?
+		stream.readUint32();
+		stream.readUint32();
+		uint32 blockSize = stream.readUint32() - 1;
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		for (int skip = 0; skip <  blockSize * 4; skip++)
+			stream.readByte();
+
+		//header number two... this is our actual score entry point.
+		uint32 unk1 = stream.readUint32();
+		uint32 unk2 = stream.readUint32();
+		stream.readUint32();
+		uint16 unk3 = stream.readUint16();
+		uint16 unk4 = stream.readUint16();
+		uint16 unk5 = stream.readUint16();
+		uint16 unk6 = stream.readUint16();
 	}
 
 	uint16 channelSize;
@@ -320,36 +341,39 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
 		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
-		size -= frameSize;
-		frameSize -= 2;
 
-		Frame *frame = new Frame(_vm);
+		if (frameSize > 0) {
+			Frame *frame = new Frame(_vm);
+			size -= frameSize;
+			frameSize -= 2;
 
-		while (frameSize != 0) {
-			if (_vm->getVersion() < 4) {
-				channelSize = stream.readByte() * 2;
-				channelOffset = stream.readByte() * 2;
-				frameSize -= channelSize + 2;
-			} else {
-				channelSize = stream.readUint16();
-				channelOffset = stream.readUint16();
-				frameSize -= channelSize + 4;
+			while (frameSize != 0) {
+
+				if (_vm->getVersion() < 4) {
+					channelSize = stream.readByte() * 2;
+					channelOffset = stream.readByte() * 2;
+					frameSize -= channelSize + 2;
+				} else {
+					channelSize = stream.readUint16();
+					channelOffset = stream.readUint16();
+					frameSize -= channelSize + 4;
+				}
+
+				assert(channelOffset + channelSize < kChannelDataSize);
+				stream.read(&channelData[channelOffset], channelSize);
 			}
 
-			assert(channelOffset + channelSize < kChannelDataSize);
+			Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
+			frame->readChannels(str);
+			delete str;
 
-			stream.read(&channelData[channelOffset], channelSize);
+			debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
+
+			_frames.push_back(frame);
+		} else {
+			warning("zero sized frame!? exiting loop until we know what to do with the tags that follow.");
+			size = 0;
 		}
-
-		Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
-		//Common::hexdump(channelData, ARRAYSIZE(channelData));
-		frame->readChannels(str);
-
-		debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
-
-		delete str;
-
-		_frames.push_back(frame);
 	}
 }
 
@@ -409,7 +433,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			_castTypes[id] = kCastButton;
 			break;
 		default:
-			warning("Score::loadCastDataVWCR(): Unhandled cast type: %d", castType);
+			warning("Score::loadCastDataVWCR(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
 			stream.skip(size - 1);
 			break;
 		}
@@ -479,7 +503,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	if (_vm->getVersion() <= 3) {
-		size1 = stream.readUint16();
+		size1 = stream.readUint16() + 16;
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -487,28 +511,29 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
 	} else if (_vm->getVersion() == 4) {
-		size1 = stream.readUint16() + 2;
+		size1 = stream.readUint16() + 2 + 16;
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
 		unk1 = stream.readByte();
-	} else {
+	} else if (_vm->getVersion() == 5) {
 		// FIXME: only the cast type and the strings are good
 		castType = stream.readUint32();
-		size2 = stream.readUint32();
+
 		size3 = stream.readUint32();
-		size1 = stream.readUint32();
-		assert(size1 == 0x14);
-		size1 = 0;
+		size2 = stream.readUint32();
+		size1 = stream.readUint32() - 4;
+		// assert(size1 == 0x14);
+		// size1 = 0;
 	}
 
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(size1 + 16, 1); // 16 is for bounding rects
-	stream.read(data, size1 + 16);
+	byte *data = (byte *)calloc(size1, 1); // 16 is for bounding rects
+	stream.read(data, size1);
 
-	Common::MemoryReadStreamEndian castStream(data, size1 + 16, stream.isBE());
+	Common::MemoryReadStreamEndian castStream(data, size1, stream.isBE());
 
 	switch (castType) {
 	case kCastBitmap:
@@ -540,7 +565,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		_castTypes[id] = kCastLingoScript;
 		break;
 	default:
-		warning("Score::loadCastData(): Unhandled cast type: %d", castType);
+		warning("Score::loadCastData(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
 		break;
 	}
 

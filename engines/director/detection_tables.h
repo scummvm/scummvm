@@ -221,6 +221,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 		5
 	},
 
+	{
+		{
+			"gadget",
+			"Gadget: Past as Future",
+			AD_ENTRY1s("GADGET.EXE", "d62438566e44826960fc16c5c23dbe43", 2212541),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS, //ADGF_HICOLOR,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		5
+	},
+
 	{ AD_TABLE_END_MARKER, GID_GENERIC, 0 }
 };
 
