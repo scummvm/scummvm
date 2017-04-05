@@ -82,7 +82,7 @@ void CDoorbot::load(SimpleFile *file) {
 }
 
 bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d, start=%d, end=%d",
+	debugC(DEBUG_DETAILED, kDebugScripts, "CDoorbot MovieEndMsg flags=%x v=%d, start=%d, end=%d",
 		_npcFlags, _introMovieNum, msg->_startFrame, msg->_endFrame);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
@@ -555,7 +555,7 @@ bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CDoorbot::ActMsg(CActMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "CDoorbot ActMsg action=%s v108=%d v110=%d v114=%d",
+	debugC(DEBUG_DETAILED, kDebugScripts, "CDoorbot ActMsg action=%s v108=%d v110=%d v114=%d",
 		msg->_action.c_str(), _introMovieNum, _field110, _field114);
 
 	if (msg->_action == "DoorbotPlayerPressedTopButton") {

@@ -545,7 +545,7 @@ void CPetConversations::npcDialChange(uint dialNum, uint oldLevel, uint newLevel
 	assert(oldLevel <= 100 && newLevel <= 100);
 
 	if (newLevel != oldLevel) {
-		debugC(ERROR_DETAILED, kDebugScripts, "Dial %d change from %d to %d",
+		debugC(DEBUG_DETAILED, kDebugScripts, "Dial %d change from %d to %d",
 			dialNum, oldLevel, newLevel);
 		uint src = ascending[0], dest = ascending[1];
 		if (newLevel < oldLevel) {

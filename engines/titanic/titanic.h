@@ -63,9 +63,9 @@ enum TitanicDebugChannels {
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define ERROR_BASIC 1
-#define ERROR_INTERMEDIATE 2
-#define ERROR_DETAILED 3
+#define DEBUG_BASIC 1
+#define DEBUG_INTERMEDIATE 2
+#define DEBUG_DETAILED 3
 
 #define TOTAL_ITEMS 46
 #define TOTAL_ROOMS 34

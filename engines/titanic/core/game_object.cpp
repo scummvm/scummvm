@@ -645,7 +645,7 @@ void CGameObject::playMovie(int startFrame, int endFrame, int initialFrame, uint
 }
 
 void CGameObject::playClip(const CString &name, uint flags) {
-	debugC(ERROR_DETAILED, kDebugScripts, "playClip - %s", name.c_str());
+	debugC(DEBUG_DETAILED, kDebugScripts, "playClip - %s", name.c_str());
 
 	_frameNumber = -1;
 	CMovieClip *clip = _movieClips.findByName(name);
@@ -654,7 +654,7 @@ void CGameObject::playClip(const CString &name, uint flags) {
 }
 
 void CGameObject::playClip(uint startFrame, uint endFrame) {
-	debugC(ERROR_DETAILED, kDebugScripts, "playClip - %d to %d", startFrame, endFrame);
+	debugC(DEBUG_DETAILED, kDebugScripts, "playClip - %d to %d", startFrame, endFrame);
 
 	CMovieClip *clip = new CMovieClip("", startFrame, endFrame);
 	CGameManager *gameManager = getGameManager();

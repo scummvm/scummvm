@@ -96,7 +96,7 @@ bool CTrueTalkNPC::DismissBotMsg(CDismissBotMsg *msg) {
 }
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechStartedMsg flags=%x dialogueId=%d",
+	debugC(DEBUG_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechStartedMsg flags=%x dialogueId=%d",
 		getName().c_str(), _npcFlags, msg->_dialogueId);
 
 	_npcFlags |= NPCFLAG_SPEAKING;
@@ -129,7 +129,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 }
 
 bool CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
-	debugC(ERROR_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechEndedMsg flags=%x dialogueId=%d", getName().c_str(), _npcFlags, msg->_dialogueId);
+	debugC(DEBUG_DETAILED, kDebugScripts, "%s TrueTalkNotifySpeechEndedMsg flags=%x dialogueId=%d", getName().c_str(), _npcFlags, msg->_dialogueId);
 	_npcFlags &= ~NPCFLAG_SPEAKING;
 	--_speechCounter;
 	_speechDuration = 0;

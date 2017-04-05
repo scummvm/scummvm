@@ -25,6 +25,7 @@
 #include "titanic/star_control/star_control_sub22.h"
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/fmatrix.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -218,6 +219,8 @@ FVector CStarControlSub12::proc31(int index, const FVector &v) {
 }
 
 void CStarControlSub12::setViewportPosition(const FPoint &angles) {
+	debug(DEBUG_INTERMEDIATE, "setViewportPosition %f %f", angles._x, angles._y);
+
 	if (isLocked())
 		return;
 

@@ -98,7 +98,7 @@ void CCarry::load(SimpleFile *file) {
 
 bool CCarry::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	CString name = getName();
-	debugC(ERROR_BASIC, kDebugScripts, "MosueDragStartMsg - %s", name.c_str());
+	debugC(DEBUG_BASIC, kDebugScripts, "MosueDragStartMsg - %s", name.c_str());
 
 	if (_canTake) {
 		if (checkStartDragging(msg)) {
@@ -122,7 +122,7 @@ bool CCarry::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 }
 
 bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	debugC(ERROR_BASIC, kDebugScripts, "MouseDragEndMsg");
+	debugC(DEBUG_BASIC, kDebugScripts, "MouseDragEndMsg");
 	showMouse();
 
 	if (msg->_dropTarget) {
