@@ -110,7 +110,7 @@ void CStarControlSub6::setRotationMatrix(Axis axis, double amount) {
 		_row2._z = 0.0;
 		_row3._x = -sinVal;
 		_row3._y = 0.0;
-		_row3._z = sinVal;
+		_row3._z = cosVal;
 		break;
 
 	case Z_AXIS:
