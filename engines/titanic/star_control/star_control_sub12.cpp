@@ -225,15 +225,15 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		return;
 
 	if (_matrixRow == -1) {
-		CStarControlSub6 subX(X_AXIS, angles._x);
-		CStarControlSub6 subY(Y_AXIS, angles._y);
+		CStarControlSub6 subX(X_AXIS, angles._y);
+		CStarControlSub6 subY(Y_AXIS, angles._x);
 		CStarControlSub6 sub(&subX, &subY);
 		subY.copyFrom(&sub);
 		proc22(subY);
 	} else if (_matrixRow == 0) {
 		FVector row1 = _matrix._row1;
-		CStarControlSub6 subX(X_AXIS, angles._x);
-		CStarControlSub6 subY(Y_AXIS, angles._y);
+		CStarControlSub6 subX(X_AXIS, angles._y);
+		CStarControlSub6 subY(Y_AXIS, angles._x);
 		CStarControlSub6 sub(&subX, &subY);
 		subX.copyFrom(&sub);
 
@@ -323,7 +323,7 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		DVector tempV13, tempV14, tempV15, tempV16;
 
 		DMatrix subX(0, _matrix._row1);
-		DMatrix subY(Y_AXIS, angles._x);
+		DMatrix subY(Y_AXIS, angles._y);
 
 		tempV1 = _matrix._row2 - _matrix._row1;
 		diffV = tempV1;

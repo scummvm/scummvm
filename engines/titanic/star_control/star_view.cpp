@@ -133,9 +133,9 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 			if (distance >= threshold) {
 				distance -= threshold;
 
-				FPoint relPt(tempPt._x * -2.0 * distance / threshold, 
+				FPoint angle(tempPt._x * -2.0 * distance / threshold, 
 					tempPt._y * -2.0 * distance / threshold);
-				_sub12.setViewportPosition(relPt);
+				_sub12.setViewportPosition(angle);
 				return true;
 			}
 		}
