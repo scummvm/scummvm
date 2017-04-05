@@ -131,7 +131,7 @@ void Score::loadArchive() {
 
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
 	loadFrames(*_movieArchive->getResource(MKTAG('V', 'W', 'S', 'C'), 1024));
-	
+
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
@@ -323,6 +323,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		uint16 unk4 = stream.readUint16();
 		uint16 unk5 = stream.readUint16();
 		uint16 unk6 = stream.readUint16();
+
+		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
 	}
 
 	uint16 channelSize;
@@ -455,7 +457,7 @@ void Score::setSpriteCasts() {
 			if (_vm->getSharedScore()->_loadedButtons->contains(castId)) {
 				_frames[i]->_sprites[j]->_buttonCast = _vm->getSharedScore()->_loadedButtons->getVal(castId);
 				if (_frames[i]->_sprites[j]->_buttonCast->children.size() == 1) {
-					_frames[i]->_sprites[j]->_textCast = 
+					_frames[i]->_sprites[j]->_textCast =
 						_vm->getSharedScore()->_loadedText->getVal(_frames[i]->_sprites[j]->_buttonCast->children[0].index);
 				} else if (_frames[i]->_sprites[j]->_buttonCast->children.size() > 0) {
 					warning("Cast %d has too many children!", j);
@@ -525,6 +527,8 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		size1 = stream.readUint32() - 4;
 		// assert(size1 == 0x14);
 		// size1 = 0;
+	} else {
+		error("Score::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
 
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
