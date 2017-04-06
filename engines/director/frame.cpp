@@ -610,7 +610,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
 				int height = _sprites[i]->_height;
-				int width = _sprites[i]->_width;
+				int width = _vm->getVersion() > 4 ? _sprites[i]->_bitmapCast->initialRect.width() : _sprites[i]->_width;
 
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);

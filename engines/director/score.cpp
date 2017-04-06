@@ -135,6 +135,9 @@ void Score::loadArchive() {
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
+	} else {
+		// TODO: Source this from somewhere!
+		_movieRect = Common::Rect(0, 0, 640, 480);
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
@@ -196,35 +199,43 @@ void Score::loadSpriteImages(bool isSharedCast) {
 	Common::HashMap<int, BitmapCast *>::iterator bc;
 	for (bc = _loadedBitmaps->begin(); bc != _loadedBitmaps->end(); ++bc) {
 		if (bc->_value) {
+			uint32 tag = bc->_value->tag;
 			uint16 imgId = bc->_key + 1024;
 			BitmapCast *bitmapCast = bc->_value;
 
-			if (_vm->getVersion() >= 4 && bitmapCast->children.size() > 0)
+			if (_vm->getVersion() >= 4 && bitmapCast->children.size() > 0) {
 				imgId = bitmapCast->children[0].index;
+				tag = bitmapCast->children[0].tag;
+			}
 
 			Image::ImageDecoder *img = NULL;
-
-			if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
-				img = new DIBDecoder();
-				img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
-				bitmapCast->surface = img->getSurface();
-			}
-
-			if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
-				img = new DIBDecoder();
-				img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
-				bitmapCast->surface = img->getSurface();
-			}
-
 			Common::SeekableReadStream *pic = NULL;
 
-			if (isSharedCast) {
-				debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
-				pic = _vm->getSharedBMP()->getVal(imgId);
-				if (pic != NULL)
-					pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
-			} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-				pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+			switch (tag) {
+			case MKTAG('D', 'I', 'B', ' '):
+				if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+					img = new DIBDecoder();
+					img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
+					bitmapCast->surface = img->getSurface();
+				} else if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
+					img = new DIBDecoder();
+					img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
+					bitmapCast->surface = img->getSurface();
+				}
+				break;
+			case MKTAG('B', 'I', 'T', 'D'):
+				if (isSharedCast) {
+					debugC(4, kDebugImages, "Shared cast BMP: id: %d", imgId);
+					pic = _vm->getSharedBMP()->getVal(imgId);
+					if (pic != NULL)
+						pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
+				} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+					pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+				}
+				break;
+			default:
+				warning("Unknown Bitmap Cast Tag: [%d] %s", tag, tag2str(tag));
+				break;
 			}
 
 			int w = bitmapCast->initialRect.width(), h = bitmapCast->initialRect.height();
@@ -242,9 +253,9 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 				img->loadStream(*pic);
 				bitmapCast->surface = img->getSurface();
+			} else {
+				warning("Image %d not found", imgId);
 			}
-
-			warning("Image %d not found", imgId);
 		}
 	}
 }
@@ -408,7 +419,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		if (size == 0)
 			continue;
 
-		if (debugChannelSet(5, kDebugLoading))
+		if (debugChannelSet(5, kDebugLoading) && size < 2048)
 			stream.hexdump(size);
 
 		uint8 castType = stream.readByte();
@@ -416,7 +427,8 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		switch (castType) {
 		case kCastBitmap:
 			debugC(3, kDebugLoading, "CastTypes id: %d BitmapCast", id);
-			_loadedBitmaps->setVal(id, new BitmapCast(stream));
+			// TODO: Work out the proper tag!
+			_loadedBitmaps->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D')));
 			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
@@ -498,14 +510,14 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 	debugC(3, kDebugLoading, "CASt: id: %d", id);
 
-	if (debugChannelSet(5, kDebugLoading))
+	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
 
 	uint32 size1, size2, size3, castType;
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	if (_vm->getVersion() <= 3) {
-		size1 = stream.readUint16() + 16;
+		size1 = stream.readUint16() + 16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -513,7 +525,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
 	} else if (_vm->getVersion() == 4) {
-		size1 = stream.readUint16() + 2 + 16;
+		size1 = stream.readUint16() + 2 + 16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -524,9 +536,11 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 		size3 = stream.readUint32();
 		size2 = stream.readUint32();
-		size1 = stream.readUint32() - 4;
+		size1 = stream.readUint32();
 		// assert(size1 == 0x14);
-		// size1 = 0;
+
+		// don't read the strings later, the full cast data is needed to be parsed.
+		size1 = stream.size();
 	} else {
 		error("Score::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
@@ -534,14 +548,14 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(size1, 1); // 16 is for bounding rects
+	byte *data = (byte *)calloc(size1, 1);
 	stream.read(data, size1);
 
 	Common::MemoryReadStreamEndian castStream(data, size1, stream.isBE());
 
 	switch (castType) {
 	case kCastBitmap:
-		_loadedBitmaps->setVal(id, new BitmapCast(castStream, _vm->getVersion()));
+		_loadedBitmaps->setVal(id, new BitmapCast(castStream, res->tag, _vm->getVersion()));
 		for (uint child = 0; child < res->children.size(); child++)
 			_loadedBitmaps->getVal(id)->children.push_back(res->children[child]);
 		_castTypes[id] = kCastBitmap;
@@ -570,12 +584,14 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	default:
 		warning("Score::loadCastData(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
+		// also don't try and read the strings... we don't know what this item is.
+		size2 = 0;
 		break;
 	}
 
 	free(data);
 
-	if (size2) {
+	if (size2 && _vm->getVersion() < 5) {
 		uint32 entryType = 0;
 		Common::Array<Common::String> castStrings = loadStrings(stream, entryType, false);
 

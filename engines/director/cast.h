@@ -59,7 +59,7 @@ public:
 
 class BitmapCast : public Cast {
 public:
-	BitmapCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
 
 	uint16 regX;
 	uint16 regY;
@@ -68,6 +68,8 @@ public:
 	uint16 unk1, unk2;
 
 	uint16 bitsPerPixel;
+
+	uint32 tag;
 };
 
 enum ShapeType {

@@ -26,7 +26,7 @@
 
 namespace Director {
 
-BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
+BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	if (version < 4) {
 		flags = stream.readByte();
 		someFlaggyThing = stream.readUint16();
@@ -71,35 +71,33 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		uint32 unk2 = stream.readUint32();
 		uint32 unk3 = stream.readUint32();
 		uint32 unk4 = stream.readUint32();
+		uint32 unk5 = stream.readUint32();
+		uint32 unk6 = stream.readUint32();
+		uint32 unk7 = stream.readUint32();
 
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();
 
-		stream.readUint32();
-		byte stringLength = stream.readByte();
-		char* string = new char[stringLength];
-		stream.read(string, stringLength);
+		uint32 stringLength = stream.readUint32();
+		for (int s = 0; s < stringLength; s++) 
+			stream.readByte();
 
-		stream.readUint16();
-		/*node.x1 = stream.readUint16();
-		if (node.x1 > 2048) node.x1 = -(0xffff - node.x1);
-		node.y1 = ReadWordAsInt(ref start, true);
-		if (node.y1 > 2048) node.y1 = -(0xffff - node.y1);
-		node.x2 = ReadWordAsInt(ref start, true);
-		node.y2 = ReadWordAsInt(ref start, true);*/
-
+		uint16 width = stream.readUint16LE(); //maybe?
 		initialRect = Score::readRect(stream);
 
-		//node.h = (node.x2 - node.x1);
-		//node.w = (node.y2 - node.y1);
-
-		stream.readUint16(); 
-		stream.readUint16();
+		uint32 somethingElse = stream.readUint32();
+		boundingRect = Score::readRect(stream);
 
 		bitsPerPixel = stream.readUint16();
+
+		regX = 0;
+		regY = 0;
+
+		stream.readUint32();
 	}
 	modified = 0;
+	tag = castTag;
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -238,7 +236,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		error("Unhandled Script cast");
-	} else {
+	} else if (version == 4) {
 		stream.readByte();
 		stream.readByte();
 
@@ -251,6 +249,18 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
+	} else if (version > 4) {
+		stream.readByte();
+		stream.readByte();
+
+		initialRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
+
+		id = stream.readUint32();
+
+		debugC(4, kDebugLoading, "CASt: Script id: %d", id);
+
+		// WIP need to complete this!
 	}
 	modified = 0;
 }
