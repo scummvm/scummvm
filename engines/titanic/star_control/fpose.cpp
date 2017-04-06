@@ -32,7 +32,7 @@ FPose::FPose(Axis axis, float amount) {
 	setRotationMatrix(axis, amount);
 }
 
-FPose::FPose(const FPose &src) {
+FPose::FPose(const FPose &src) : FMatrix() {
 	copyFrom(src);
 }
 
