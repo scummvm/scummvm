@@ -43,6 +43,9 @@
 #include "image/bmp.h"
 
 namespace Mario {
+enum MarioDebugChannels {
+	kDebugGeneral = 1 << 0
+};
 
 class MarioGame : public Engine {
 public:

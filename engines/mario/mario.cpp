@@ -32,6 +32,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 
 #include "mario/mario.h"
 
@@ -39,6 +40,7 @@ namespace Mario {
 
 MarioGame::MarioGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_image = nullptr;
+	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 }
 
 MarioGame::~MarioGame() {
@@ -80,7 +82,7 @@ Common::Error MarioGame::run() {
 							break;
 					}
 					if (_curChoice < kMaxChoice) {
-						debug("Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, _curChoice);
+						debugC(5, kDebugGeneral, "Accepting mouse click at %d : %d , choice = %d", mousePos.x, mousePos.y, _curChoice);
 						_totScore += _scenes[_curSceneIdx]._choices[_curChoice]._points;
 						_actions.push(ChangeScene);
 						_leftButtonDownFl = false;
@@ -124,7 +126,7 @@ Common::Error MarioGame::run() {
 
 void MarioGame::loadImage(const Common::String &dirname, const Common::String &filename) {
 	Common::String name = dirname + "/" + filename;
-	debug("%s : %s", __FUNCTION__, name.c_str());
+	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
 	if (!file->open(name))
 		error("unable to load image %s", name.c_str());
@@ -139,7 +141,7 @@ void MarioGame::loadImage(const Common::String &dirname, const Common::String &f
 }
 
 void MarioGame::drawScreen() {
-	debug("%s : %s", __FUNCTION__, _image ? "YES" : "NO");
+	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, _image ? "YES" : "NO");
 	if (_image) {
 		if (_setDurationFl) {
 			g_system->getTimerManager()->removeTimerProc(onTimer);
@@ -177,7 +179,7 @@ void MarioGame::drawScreen() {
 
 void MarioGame::playSound() {
 	Common::String name = _scenes[_curSceneIdx]._sceneName + "/" + _scenes[_curSceneIdx]._waveFilename;
-	debug("%s : %s", __FUNCTION__, name.c_str());
+	debugC(3, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
 	if (!file->open(name))
 		error("unable to load sound %s", name.c_str());
@@ -189,13 +191,13 @@ void MarioGame::playSound() {
 }
 
 void MarioGame::stopSound() {
-	debug("%s", __FUNCTION__);
+	debugC(3, kDebugGeneral, "%s", __FUNCTION__);
 	if (_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->stopHandle(_soundHandle);
 }
 
 void MarioGame::showScene() {
-	debug("%s : %d", __FUNCTION__, _curSceneIdx);
+	debugC(1, kDebugGeneral, "%s : %d", __FUNCTION__, _curSceneIdx);
 	_curBitmapIdx = _scenes[_curSceneIdx]._startBitmap;
 	loadImage(_scenes[_curSceneIdx]._sceneName, _bitmaps[_curBitmapIdx]._filename);
 	_actions.push(Redraw);
@@ -204,7 +206,7 @@ void MarioGame::showScene() {
 }
 
 void MarioGame::updateScene() {
-	debug("%s : %d", __FUNCTION__, _curBitmapIdx);
+	debugC(2, kDebugGeneral, "%s : %d", __FUNCTION__, _curBitmapIdx);
 	_curBitmapIdx++;
 	if (_curBitmapIdx >= _scenes[_curSceneIdx]._startBitmap + _scenes[_curSceneIdx]._bitmapNum) {
 		if (_scenes[_curSceneIdx]._decisionChoices == 1) {
@@ -223,7 +225,7 @@ void MarioGame::updateScene() {
 }
 
 void MarioGame::changeScene() {
-	debug("%s : %d", __FUNCTION__, _curChoice);
+	debugC(1, kDebugGeneral, "%s : %d", __FUNCTION__, _curChoice);
 	if (_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx == -1) {
 		_curSceneIdx = _prvSceneIdx;
 		_curBitmapIdx = 9999;
@@ -248,7 +250,7 @@ void MarioGame::changeScene() {
 }
 
 void MarioGame::processTimer() {
-	debug("%s", __FUNCTION__);
+	debugC(7, kDebugGeneral, "%s", __FUNCTION__);
 	if (!_endGameFl)
 		_actions.push(Redraw);
 }
@@ -308,7 +310,7 @@ void MarioGame::readTables(const Common::String &fileName) {
 }
 
 int MarioGame::getSceneNumb(int sNo) {
-	debug("%s : %d", __FUNCTION__, sNo);
+	debugC(1, kDebugGeneral, "%s : %d", __FUNCTION__, sNo);
 	Common::String testString = Common::String::format("SC%02d", sNo);
 
 	for (int sCurScene = 0; sCurScene < _totScene; sCurScene++) {
