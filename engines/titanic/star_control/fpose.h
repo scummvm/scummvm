@@ -20,21 +20,21 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB6_H
-#define TITANIC_STAR_CONTROL_SUB6_H
+#ifndef TITANIC_FPOSE_H
+#define TITANIC_FPOSE_H
 
 #include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
-class CStarControlSub6 : public FMatrix {
+class FPose : public FMatrix {
 public:
 	FVector _vector;
 public:
-	CStarControlSub6();
-	CStarControlSub6(Axis axis, float amount);
-	CStarControlSub6(const CStarControlSub6 *src);
-	CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2);
+	FPose();
+	FPose(Axis axis, float amount);
+	FPose(const FPose &src);
+	FPose(const FPose &s1, const FPose &s2);
 
 	/**
 	 * Sets an identity matrix
@@ -46,16 +46,19 @@ public:
 	 */
 	void setRotationMatrix(Axis axis, float val);
 
-	void copyFrom(const CStarControlSub6 *src);
+	/**
+	 * Copy from the specified source pose
+	 */
+	void copyFrom(const FPose &src);
 
 	/**
-	 * Copy from the specified matrix
+	 * Copy from the specified source matrix
 	 */
 	void copyFrom(const FMatrix &src);
 
-	CStarControlSub6 fn4() const;
+	FPose fn4() const;
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB6_H */
+#endif /* TITANIC_FPOSE_H */

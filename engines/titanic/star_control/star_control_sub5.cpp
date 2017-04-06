@@ -189,7 +189,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 	return false;
 }
 
-void CStarControlSub5::proc2(CStarControlSub6 *sub6, const FVector &vector, double v1, double v2, double v3,
+void CStarControlSub5::proc2(FPose *pose, const FVector &vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
 	double val1 = sub12->proc25();
@@ -252,15 +252,15 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, const FVector &vector, doub
 			_sub1._vector._x = f22 * f10 + vector._x;
 			_sub1._vector._y = f9 * f22 + vector._y;
 			_sub1._vector._z = f22 * f12 + vector._z;
-			_sub2._row1._x = sub6->_row1._x * f13 + f16 * sub6->_row3._x + f15 * sub6->_row2._x;
-			_sub2._row1._y = f15 * sub6->_row2._y + f16 * sub6->_row3._y + f13 * sub6->_row1._y;
-			_sub2._row1._z = f16 * sub6->_row3._z + f13 * sub6->_row1._z + f15 * sub6->_row2._z;
-			_sub2._row2._x = sub6->_row1._x * f17 + f19 * sub6->_row3._x + f18 * sub6->_row2._x;
-			_sub2._row2._y = f18 * sub6->_row2._y + f17 * sub6->_row1._y + f19 * sub6->_row3._y;
-			_sub2._row2._z = f18 * sub6->_row2._z + f19 * sub6->_row3._z + f17 * sub6->_row1._z;
-			_sub2._row3._x = sub6->_row1._x * f20 + f21 * sub6->_row3._x;
-			_sub2._row3._y = f20 * sub6->_row1._y + f21 * sub6->_row3._y;
-			_sub2._row3._z = f20 * sub6->_row1._z + f21 * sub6->_row3._z;
+			_sub2._row1._x = pose->_row1._x * f13 + f16 * pose->_row3._x + f15 * pose->_row2._x;
+			_sub2._row1._y = f15 * pose->_row2._y + f16 * pose->_row3._y + f13 * pose->_row1._y;
+			_sub2._row1._z = f16 * pose->_row3._z + f13 * pose->_row1._z + f15 * pose->_row2._z;
+			_sub2._row2._x = pose->_row1._x * f17 + f19 * pose->_row3._x + f18 * pose->_row2._x;
+			_sub2._row2._y = f18 * pose->_row2._y + f17 * pose->_row1._y + f19 * pose->_row3._y;
+			_sub2._row2._z = f18 * pose->_row2._z + f19 * pose->_row3._z + f17 * pose->_row1._z;
+			_sub2._row3._x = pose->_row1._x * f20 + f21 * pose->_row3._x;
+			_sub2._row3._y = f20 * pose->_row1._y + f21 * pose->_row3._y;
+			_sub2._row3._z = f20 * pose->_row1._z + f21 * pose->_row3._z;
 
 			f23 = _sub1._vector._y;
 			f24 = _sub1._vector._z;
@@ -269,18 +269,18 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, const FVector &vector, doub
 			f27 = _sub1._vector._x;
 
 			f28 = _sub1._vector._y;
-			_sub2._vector._x = sub6->_row1._x * _sub1._vector._x
-				+ sub6->_row3._x * _sub1._vector._z
-				+ sub6->_row2._x * f28
-				+ sub6->_vector._x;
-			_sub2._vector._y = f23 * sub6->_row2._y
-				+ f24 * sub6->_row3._y
-				+ f25 * sub6->_row1._y
-				+ sub6->_vector._y;
-			_sub2._vector._z = f26 * sub6->_row3._z
-				+ f27 * sub6->_row1._z
-				+ f28 * sub6->_row2._z
-				+ sub6->_vector._z;
+			_sub2._vector._x = pose->_row1._x * _sub1._vector._x
+				+ pose->_row3._x * _sub1._vector._z
+				+ pose->_row2._x * f28
+				+ pose->_vector._x;
+			_sub2._vector._y = f23 * pose->_row2._y
+				+ f24 * pose->_row3._y
+				+ f25 * pose->_row1._y
+				+ pose->_vector._y;
+			_sub2._vector._z = f26 * pose->_row3._z
+				+ f27 * pose->_row1._z
+				+ f28 * pose->_row2._z
+				+ pose->_vector._z;
 
 			size2 = (int)_array[1]._data2.size();
 			size1 = (int)_array[1]._data1.size();
@@ -407,22 +407,22 @@ void CStarControlSub5::proc2(CStarControlSub6 *sub6, const FVector &vector, doub
 		const FVector &d2v = entry._data2[ctr];
 		FVector newV = d2v + vector;
 
-		f41 = sub6->_row1._x;
-		f42 = sub6->_row3._x;
-		f43 = sub6->_row2._x;
+		f41 = pose->_row1._x;
+		f42 = pose->_row3._x;
+		f43 = pose->_row2._x;
 		f44 = f43 * newV._y;
 		f45 = f41 * newV._x + f42 * newV._z + f44;
-		f46 = f45 + sub6->_vector._x;
+		f46 = f45 + pose->_vector._x;
 
 		gridEntry._x = f46;
-		gridEntry._y = newV._y * sub6->_row2._y
-			+ newV._z * sub6->_row3._y
-			+ newV._x * sub6->_row1._y
-			+ sub6->_vector._y;
-		gridEntry._z = newV._z * sub6->_row3._z
-			+ newV._y * sub6->_row2._z
-			+ newV._x * sub6->_row1._z
-			+ sub6->_vector._z;
+		gridEntry._y = newV._y * pose->_row2._y
+			+ newV._z * pose->_row3._y
+			+ newV._x * pose->_row1._y
+			+ pose->_vector._y;
+		gridEntry._z = newV._z * pose->_row3._z
+			+ newV._y * pose->_row2._z
+			+ newV._x * pose->_row1._z
+			+ pose->_vector._z;
 	}
 
 	if (val2 <= 0) {

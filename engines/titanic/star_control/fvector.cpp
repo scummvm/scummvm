@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/dvector.h"
-#include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/fpose.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -74,11 +74,11 @@ float FVector::getDistance(const FVector &src) const {
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-FVector FVector::fn5(const CStarControlSub6 *sub6) const {
+FVector FVector::fn5(const FPose &pose) const {
 	FVector v;
-	v._x = sub6->_row2._x * _y + sub6->_row3._x * _z + sub6->_row1._x * _x + sub6->_vector._x;
-	v._y = sub6->_row2._y * _y + sub6->_row3._y * _z + sub6->_row1._y * _x + sub6->_vector._y;
-	v._z = sub6->_row3._z * _z + sub6->_row2._z * _y + sub6->_row1._z * _x + sub6->_vector._z;
+	v._x = pose._row2._x * _y + pose._row3._x * _z + pose._row1._x * _x + pose._vector._x;
+	v._y = pose._row2._y * _y + pose._row3._y * _z + pose._row1._y * _x + pose._vector._y;
+	v._z = pose._row3._z * _z + pose._row2._z * _y + pose._row1._z * _x + pose._vector._z;
 	return v;
 }
 

@@ -167,9 +167,9 @@ void CStarControlSub12::proc20(double factor) {
 		_sub13.reposition(factor);
 }
 
-void CStarControlSub12::proc21(const CStarControlSub6 *sub6) {
+void CStarControlSub12::proc21(const FPose &pose) {
 	if (!isLocked()) {
-		_sub13.setPosition(sub6);
+		_sub13.setPosition(pose);
 		set108();
 	}
 }
@@ -179,11 +179,11 @@ void CStarControlSub12::proc22(FMatrix &m) {
 		_sub13.fn15(m);
 }
 
-CStarControlSub6 CStarControlSub12::proc23() {
+FPose CStarControlSub12::proc23() {
 	return _sub13.getSub1();
 }
 
-CStarControlSub6 CStarControlSub12::proc24() {
+FPose CStarControlSub12::proc24() {
 	return _sub13.getSub2();
 }
 
@@ -225,17 +225,15 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		return;
 
 	if (_matrixRow == -1) {
-		CStarControlSub6 subX(X_AXIS, angles._y);
-		CStarControlSub6 subY(Y_AXIS, angles._x);
-		CStarControlSub6 sub(&subX, &subY);
-		subY.copyFrom(&sub);
-		proc22(subY);
+		FPose subX(X_AXIS, angles._y);
+		FPose subY(Y_AXIS, angles._x);
+		FPose sub(subX, subY);
+		proc22(sub);
 	} else if (_matrixRow == 0) {
 		FVector row1 = _matrix._row1;
-		CStarControlSub6 subX(X_AXIS, angles._y);
-		CStarControlSub6 subY(Y_AXIS, angles._x);
-		CStarControlSub6 sub(&subX, &subY);
-		subX.copyFrom(&sub);
+		FPose subX(X_AXIS, angles._y);
+		FPose subY(Y_AXIS, angles._x);
+		FPose sub(subX, subY);
 
 		FMatrix m1 = _sub13.getMatrix();
 		FVector tempV1 = _sub13._position;
@@ -280,10 +278,10 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 		tempV6._y = tempV6._y - row1._y;
 		tempV6._z = tempV6._z - row1._z;
 
-		FVector modV1 = tempV1.fn5(&subX);
-		FVector modV2 = tempV4.fn5(&subX);
-		FVector modV3 = tempV5.fn5(&subX);
-		FVector modV4 = tempV6.fn5(&subX);
+		FVector modV1 = tempV1.fn5(sub);
+		FVector modV2 = tempV4.fn5(sub);
+		FVector modV3 = tempV5.fn5(sub);
+		FVector modV4 = tempV6.fn5(sub);
 		tempV1 = modV1;
 		tempV4 = modV2;
 		tempV5 = modV3;

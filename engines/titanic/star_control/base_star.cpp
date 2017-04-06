@@ -159,7 +159,7 @@ void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarC
 }
 
 void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
@@ -174,17 +174,17 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * sub6._row1._z + vector._y * sub6._row2._z
-			+ vector._z * sub6._row3._z + sub6._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
+			+ vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
-		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
-		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
+		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + pose._vector._y;
+		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + pose._vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ; 
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&sub6, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -244,7 +244,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 }
 
 void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
@@ -259,17 +259,17 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * sub6._row1._z + vector._y * sub6._row2._z
-			+ vector._z * sub6._row3._z + sub6._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
+			+ vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
-		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + vector._y;
-		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + vector._x;
+		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + vector._y;
+		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&sub6, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -330,7 +330,7 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 }
 
 void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
@@ -348,17 +348,17 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
-		tempZ = vector._x * sub6._row1._z + vector._y * sub6._row2._z
-			+ vector._z * sub6._row3._z + sub6._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
+			+ vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 
-		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
-		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
+		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + pose._vector._y;
+		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + pose._vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&sub6, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -437,7 +437,7 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 }
 
 void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
@@ -455,17 +455,17 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		const CBaseStarEntry &entry = _data[idx];
 		const FVector &vector = entry._position;
 
-		tempZ = vector._x * sub6._row1._z + vector._y * sub6._row2._z
-			+ vector._z * sub6._row3._z + sub6._vector._z;
+		tempZ = vector._x * pose._row1._z + vector._y * pose._row2._z
+			+ vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
 	
-		tempY = vector._x * sub6._row1._y + vector._y * sub6._row2._y + vector._z * sub6._row3._y + sub6._vector._y;
-		tempX = vector._x * sub6._row1._x + vector._y * sub6._row2._x + vector._z * sub6._row3._x + sub6._vector._x;
+		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + pose._vector._y;
+		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + pose._vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&sub6, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}

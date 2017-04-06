@@ -20,70 +20,70 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/fpose.h"
 
 namespace Titanic {
 
-CStarControlSub6::CStarControlSub6() {
+FPose::FPose() {
 	clear();
 }
 
-CStarControlSub6::CStarControlSub6(Axis axis, float amount) {
+FPose::FPose(Axis axis, float amount) {
 	setRotationMatrix(axis, amount);
 }
 
-CStarControlSub6::CStarControlSub6(const CStarControlSub6 *src) {
+FPose::FPose(const FPose &src) {
 	copyFrom(src);
 }
 
-CStarControlSub6::CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2) {
-	_row1._x = s2->_row1._x * s1->_row1._x
-		+ s1->_row1._z * s2->_row3._x
-		+ s1->_row1._y * s2->_row2._x;
-	_row1._y = s1->_row1._x * s2->_row1._y
-		+ s2->_row3._y * s1->_row1._z
-		+ s2->_row2._y * s1->_row1._y;
-	_row1._z = s1->_row1._x * s2->_row1._z
-		+ s2->_row3._z * s1->_row1._z
-		+ s2->_row2._z * s1->_row1._y;
-	_row2._x = s2->_row1._x * s1->_row2._x
-		+ s1->_row2._y * s2->_row2._x
-		+ s1->_row2._z * s2->_row3._x;
-	_row2._y = s1->_row2._y * s2->_row2._y
-		+ s1->_row2._z * s2->_row3._y
-		+ s2->_row1._y * s1->_row2._x;
-	_row2._z = s2->_row1._z * s1->_row2._x
-		+ s1->_row2._y * s2->_row2._z
-		+ s1->_row2._z * s2->_row3._z;
-	_row3._x = s2->_row1._x * s1->_row3._x
-		+ s1->_row3._y * s2->_row2._x
-		+ s1->_row3._z * s2->_row3._x;
-	_row3._y = s1->_row3._z * s2->_row3._y
-		+ s1->_row3._y * s2->_row2._y
-		+ s2->_row1._y * s1->_row3._x;
-	_row3._z = s2->_row3._z * s1->_row3._z
-		+ s2->_row2._z * s1->_row3._y
-		+ s2->_row1._z * s1->_row3._x;
-	_vector._x = s2->_row1._x * s1->_vector._x
-		+ s1->_vector._y * s2->_row2._x
-		+ s1->_vector._z * s2->_row3._x
-		+ s2->_vector._x;
-	_vector._y = s1->_vector._z * s2->_row3._y
-		+ s1->_vector._y * s2->_row2._y
-		+ s1->_vector._x * s2->_row1._y
-		+ s2->_vector._y;
-	_vector._z = s1->_vector._y * s2->_row2._z
-		+ s1->_vector._z * s2->_row3._z
-		+ s1->_vector._x * s2->_row1._z
-		+ s2->_vector._z;
+FPose::FPose(const FPose &s1, const FPose &s2) {
+	_row1._x = s2._row1._x * s1._row1._x
+		+ s1._row1._z * s2._row3._x
+		+ s1._row1._y * s2._row2._x;
+	_row1._y = s1._row1._x * s2._row1._y
+		+ s2._row3._y * s1._row1._z
+		+ s2._row2._y * s1._row1._y;
+	_row1._z = s1._row1._x * s2._row1._z
+		+ s2._row3._z * s1._row1._z
+		+ s2._row2._z * s1._row1._y;
+	_row2._x = s2._row1._x * s1._row2._x
+		+ s1._row2._y * s2._row2._x
+		+ s1._row2._z * s2._row3._x;
+	_row2._y = s1._row2._y * s2._row2._y
+		+ s1._row2._z * s2._row3._y
+		+ s2._row1._y * s1._row2._x;
+	_row2._z = s2._row1._z * s1._row2._x
+		+ s1._row2._y * s2._row2._z
+		+ s1._row2._z * s2._row3._z;
+	_row3._x = s2._row1._x * s1._row3._x
+		+ s1._row3._y * s2._row2._x
+		+ s1._row3._z * s2._row3._x;
+	_row3._y = s1._row3._z * s2._row3._y
+		+ s1._row3._y * s2._row2._y
+		+ s2._row1._y * s1._row3._x;
+	_row3._z = s2._row3._z * s1._row3._z
+		+ s2._row2._z * s1._row3._y
+		+ s2._row1._z * s1._row3._x;
+	_vector._x = s2._row1._x * s1._vector._x
+		+ s1._vector._y * s2._row2._x
+		+ s1._vector._z * s2._row3._x
+		+ s2._vector._x;
+	_vector._y = s1._vector._z * s2._row3._y
+		+ s1._vector._y * s2._row2._y
+		+ s1._vector._x * s2._row1._y
+		+ s2._vector._y;
+	_vector._z = s1._vector._y * s2._row2._z
+		+ s1._vector._z * s2._row3._z
+		+ s1._vector._x * s2._row1._z
+		+ s2._vector._z;
 }
 
-void CStarControlSub6::identity() {
+void FPose::identity() {
 	FMatrix::identity();
 	_vector.clear();
 }
 
-void CStarControlSub6::setRotationMatrix(Axis axis, float amount) {
+void FPose::setRotationMatrix(Axis axis, float amount) {
 	const float ROTATION = 2 * M_PI / 360.0;
 	float sinVal = sin(amount * ROTATION);
 	float cosVal = cos(amount * ROTATION);
@@ -132,23 +132,23 @@ void CStarControlSub6::setRotationMatrix(Axis axis, float amount) {
 	_vector.clear();
 }
 
-void CStarControlSub6::copyFrom(const CStarControlSub6 *src) {
-	_row1 = src->_row1;
-	_row2 = src->_row2;
-	_row3 = src->_row3;
-	_vector = src->_vector;
+void FPose::copyFrom(const FPose &src) {
+	_row1 = src._row1;
+	_row2 = src._row2;
+	_row3 = src._row3;
+	_vector = src._vector;
 }
 
-void CStarControlSub6::copyFrom(const FMatrix &src) {
+void FPose::copyFrom(const FMatrix &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
 	_row3 = src._row3;
 }
 
-CStarControlSub6 CStarControlSub6::fn4() const {
+FPose FPose::fn4() const {
 	float v2, v3, v6, v7, v8, v9, v10, v11;
 	float v12, v13, v14, v15, v16, v17, v18;
-	CStarControlSub6 result;
+	FPose result;
 
 	v16 = _row3._z * _row2._y;
 	v2 = _row1._x * v16;

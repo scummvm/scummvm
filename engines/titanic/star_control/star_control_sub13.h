@@ -25,7 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/base_star.h"
-#include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
@@ -38,8 +38,8 @@ private:
 	int _width;
 	int _height;
 	FMatrix _matrix;
-	CStarControlSub6 _sub1;
-	CStarControlSub6 _sub2;
+	FPose _sub1;
+	FPose _sub2;
 	FPoint _center;
 	bool _flag;
 private:
@@ -78,7 +78,7 @@ public:
 	/**
 	 * Sets the position
 	 */
-	void setPosition(const CStarControlSub6 *sub6);
+	void setPosition(const FPose &pose);
 
 	/**
 	 * Sets the matrix
@@ -90,8 +90,8 @@ public:
 	void fn13(StarMode mode, double val);
 	void reposition(double factor);
 	void fn15(const FMatrix &matrix);
-	CStarControlSub6 getSub1();
-	CStarControlSub6 getSub2();
+	FPose getSub1();
+	FPose getSub2();
 	void fn16(int index, const FVector &src, FVector &dest);
 	FVector fn17(int index, const FVector &src);
 	FVector fn18(int index, const FVector &src);

@@ -66,7 +66,7 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	if (_data.empty())
 		return;
 
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	double threshold = sub12->proc25();
 	FVector vector1, vector2, vector3, vector4;
 	double vWidth2 = (double)surface->_width * 0.5;
@@ -85,18 +85,18 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 
 		for (uint idx = 0; idx < re.size(); ++idx) {
 			const CStarPointEntry &se = re[idx];
-			vector1._z = sub6._row2._z * se._v1._y + sub6._row3._z * se._v1._z
-				+ sub6._row1._z * se._v1._x + sub6._vector._z;
-			vector1._x = sub6._row2._x * se._v1._y + sub6._row3._x * se._v1._z
-				+ sub6._row1._x * se._v1._x + sub6._vector._x;
-			vector1._y = sub6._row2._y * se._v1._y + sub6._row3._y * se._v1._z
-				+ sub6._row1._y * se._v1._x + sub6._vector._y;
-			vector3._z = sub6._row2._z * se._v2._y + sub6._row2._x * se._v2._z
-				+ sub6._row1._z * se._v2._x + sub6._vector._y;
-			vector3._x = sub6._row3._z * se._v2._y + sub6._row3._x * se._v2._z
-				+ sub6._row1._x * se._v2._x + sub6._vector._y;
-			vector3._y = sub6._row2._y * se._v2._y + sub6._row3._y * se._v2._z
-				+ sub6._row1._y * se._v2._x + sub6._vector._y;
+			vector1._z = pose._row2._z * se._v1._y + pose._row3._z * se._v1._z
+				+ pose._row1._z * se._v1._x + pose._vector._z;
+			vector1._x = pose._row2._x * se._v1._y + pose._row3._x * se._v1._z
+				+ pose._row1._x * se._v1._x + pose._vector._x;
+			vector1._y = pose._row2._y * se._v1._y + pose._row3._y * se._v1._z
+				+ pose._row1._y * se._v1._x + pose._vector._y;
+			vector3._z = pose._row2._z * se._v2._y + pose._row2._x * se._v2._z
+				+ pose._row1._z * se._v2._x + pose._vector._y;
+			vector3._x = pose._row3._z * se._v2._y + pose._row3._x * se._v2._z
+				+ pose._row1._x * se._v2._x + pose._vector._y;
+			vector3._y = pose._row2._y * se._v2._y + pose._row3._y * se._v2._z
+				+ pose._row1._y * se._v2._x + pose._vector._y;
 
 			if (vector1._z > threshold && vector3._z > threshold) {
 				vector2.clear();

@@ -85,10 +85,10 @@ public:
 	virtual void proc18();
 	virtual void proc19();
 	virtual void proc20(double factor);
-	virtual void proc21(const CStarControlSub6 *sub6);
+	virtual void proc21(const FPose &pose);
 	virtual void proc22(FMatrix &m);
-	virtual CStarControlSub6 proc23();
-	virtual CStarControlSub6 proc24();
+	virtual FPose proc23();
+	virtual FPose proc24();
 	virtual double proc25() const;
 	virtual double proc26() const;
 	virtual int proc27() const;

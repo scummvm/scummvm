@@ -25,7 +25,7 @@
 
 #include "common/array.h"
 #include "titanic/star_control/fvector.h"
-#include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/surface_area.h"
 
@@ -93,7 +93,7 @@ class CStarControlSub5 {
 	};
 private:
 	bool _flag;
-	CStarControlSub6 _sub1, _sub2;
+	FPose _sub1, _sub2;
 	SubEntry _array[5];
 	Entry _entries[1284];
 	int _multiplier;
@@ -116,7 +116,7 @@ public:
 	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
-	virtual void proc2(CStarControlSub6 *sub6, const FVector &vector, double v1, double v2, double v3,
+	virtual void proc2(FPose *pose, const FVector &vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	virtual void proc3(CErrorCode *errorCode);
 

@@ -61,7 +61,7 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	if (_data.empty())
 		return;
 
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	double threshold = sub12->proc25();
 	FVector vector1, vector2, vector3, vector4;
 	FVector vTemp = _data[0];
@@ -74,18 +74,18 @@ void CStarPoints1::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	surface->setColorFromPixel();
 	SurfaceAreaMode oldMode = surface->setMode(SA_NONE);
 
-	vector1._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
-	vector1._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x + sub6._vector._x;
-	vector1._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y; 
+	vector1._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
+	vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;
+	vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y; 
 
 	for (uint idx = 1; idx < _data.size(); ++idx) {
 		const FVector &sv = _data[idx];
 		bool flag = _data[idx - 1]._flag;
 		vTemp = sv;
 
-		vector3._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x * sub6._vector._x;
-		vector3._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y * sub6._vector._y;
-		vector3._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
+		vector3._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x * pose._vector._x;
+		vector3._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y * pose._vector._y;
+		vector3._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
 
 		if (flag && vector1._z > threshold && vector3._z > threshold) {
 			vector2.clear();

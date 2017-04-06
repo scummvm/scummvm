@@ -25,7 +25,7 @@
 #include "titanic/star_control/star_control.h"
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/error_code.h"
-#include "titanic/star_control/star_control_sub6.h"
+#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/game_manager.h"
 #include "titanic/core/dont_save_file_item.h"

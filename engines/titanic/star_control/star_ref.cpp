@@ -29,7 +29,7 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 		return;
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	CStarControlSub6 sub6 = sub12->proc23();
+	FPose pose = sub12->proc23();
 	double threshold = sub12->proc25();
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
@@ -39,9 +39,9 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	for (int idx = 0; idx < _star->size(); ++idx) {
 		const CBaseStarEntry &se = _star->_data[idx];
 		vTemp = se._position;
-		vector1._x = vTemp._x * sub6._row1._x + vTemp._y * sub6._row2._x + vTemp._z * sub6._row3._x + sub6._vector._x;
-		vector1._y = vTemp._x * sub6._row1._y + vTemp._y * sub6._row2._y + vTemp._z * sub6._row3._y + sub6._vector._y;
-		vector1._z = vTemp._x * sub6._row1._z + vTemp._y * sub6._row2._z + vTemp._z * sub6._row3._z + sub6._vector._z;
+		vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;
+		vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y;
+		vector1._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
 		double hyp = vector1._x * vector1._x + vector1._y * vector1._y + vector1._z * vector1._z;
 
 		if (vector1._z > threshold && hyp >= 1.0e12 && hyp < MAX_VAL) {

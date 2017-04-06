@@ -29,7 +29,7 @@ namespace Titanic {
 
 enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
 
-class CStarControlSub6;
+class FPose;
 class DVector;
 
 /**
@@ -73,7 +73,7 @@ public:
 	 */
 	float getDistance(const FVector &src) const;
 
-	FVector fn5(const CStarControlSub6 *sub6) const;
+	FVector fn5(const FPose &pose) const;
 
 	/**
 	 * Returns true if the passed vector equals this one
