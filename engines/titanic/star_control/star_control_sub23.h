@@ -39,7 +39,7 @@ protected:
 	FVector _row3;
 	int _field34;
 	double _field38;
-	int _field3C;
+	double _field3C;
 	int _field40;
 	int _field44;
 	int _field48;

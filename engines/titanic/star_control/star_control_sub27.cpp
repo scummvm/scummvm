@@ -28,7 +28,7 @@ namespace Titanic {
 void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {
 	CStarControlSub23::proc2(v1, v2, m1, m2);
 
-	int v24 = _field24;
+	double factor = _field24;
 	if (_field24 > 0.0) {
 		_field8 = 1;
 		_field34 = 1;
@@ -43,7 +43,7 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 			_field60 = 0.1;
 			_field8 = 1;
 		} else {
-			_field60 = 1.0 / (double)v24;
+			_field60 = 1.0 / factor;
 			_field8 = 1;
 		}
 	}
