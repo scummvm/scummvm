@@ -27,6 +27,9 @@
 
 namespace Titanic {
 
+/*
+ * This class combines a position and orientation in 3D space
+ */
 class FPose : public FMatrix {
 public:
 	FVector _vector;

@@ -527,6 +527,7 @@ void OSVideoSurface::clear() {
 	if (!loadIfReady())
 		error("Could not load resource");
 
+	_ddSurface->fill(nullptr, 0);
 }
 
 void OSVideoSurface::playMovie(uint flags, CGameObject *obj) {
