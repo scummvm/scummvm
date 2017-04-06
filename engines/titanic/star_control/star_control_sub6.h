@@ -32,7 +32,7 @@ public:
 	FVector _vector;
 public:
 	CStarControlSub6();
-	CStarControlSub6(Axis axis, double amount);
+	CStarControlSub6(Axis axis, float amount);
 	CStarControlSub6(const CStarControlSub6 *src);
 	CStarControlSub6(const CStarControlSub6 *s1, const CStarControlSub6 *s2);
 
@@ -44,7 +44,7 @@ public:
 	/**
 	 * Sets a rotation matrix for the given axis for the given amount
 	 */
-	void setRotationMatrix(Axis axis, double val);
+	void setRotationMatrix(Axis axis, float val);
 
 	void copyFrom(const CStarControlSub6 *src);
 

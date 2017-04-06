@@ -28,7 +28,7 @@ CStarControlSub6::CStarControlSub6() {
 	clear();
 }
 
-CStarControlSub6::CStarControlSub6(Axis axis, double amount) {
+CStarControlSub6::CStarControlSub6(Axis axis, float amount) {
 	setRotationMatrix(axis, amount);
 }
 
@@ -83,10 +83,10 @@ void CStarControlSub6::identity() {
 	_vector.clear();
 }
 
-void CStarControlSub6::setRotationMatrix(Axis axis, double amount) {
-	const double ROTATION = 2 * M_PI / 360.0;
-	double sinVal = sin(amount * ROTATION);
-	double cosVal = cos(amount * ROTATION);
+void CStarControlSub6::setRotationMatrix(Axis axis, float amount) {
+	const float ROTATION = 2 * M_PI / 360.0;
+	float sinVal = sin(amount * ROTATION);
+	float cosVal = cos(amount * ROTATION);
 
 	switch (axis) {
 	case X_AXIS:
@@ -146,8 +146,8 @@ void CStarControlSub6::copyFrom(const FMatrix &src) {
 }
 
 CStarControlSub6 CStarControlSub6::fn4() const {
-	double v2, v3, v6, v7, v8, v9, v10, v11;
-	double v12, v13, v14, v15, v16, v17, v18;
+	float v2, v3, v6, v7, v8, v9, v10, v11;
+	float v12, v13, v14, v15, v16, v17, v18;
 	CStarControlSub6 result;
 
 	v16 = _row3._z * _row2._y;

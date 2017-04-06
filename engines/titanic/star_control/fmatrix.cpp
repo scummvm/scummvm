@@ -105,15 +105,15 @@ void FMatrix::fn1(const FVector &v) {
 }
 
 void FMatrix::fn2(const FMatrix &m) {
-	double x1 = _row1._y * m._row2._x + _row1._z * m._row3._x + _row1._x * m._row1._x;
-	double y1 = _row1._x * m._row1._y + m._row2._y * _row1._y + m._row3._y * _row1._z;
-	double z1 = _row1._x * m._row1._z + _row1._y * m._row2._z + _row1._z * m._row3._z;
-	double x2 = m._row1._x * _row2._x + m._row3._x * _row2._z + m._row2._x * _row2._y;
-	double y2 = m._row3._y * _row2._z + m._row1._y * _row2._x + m._row2._y * _row2._y;
-	double z2 = _row2._z * m._row3._z + _row2._x * m._row1._z + _row2._y * m._row2._z;
-	double x3 = m._row1._x * _row3._x + _row3._z * m._row3._x + _row3._y * m._row2._x;
-	double y3 = _row3._y * m._row2._y + _row3._z * m._row3._y + _row3._x * m._row1._y;
-	double z3 = _row3._x * m._row1._z + _row3._y * m._row2._z + _row3._z * m._row3._z;
+	float x1 = _row1._y * m._row2._x + _row1._z * m._row3._x + _row1._x * m._row1._x;
+	float y1 = _row1._x * m._row1._y + m._row2._y * _row1._y + m._row3._y * _row1._z;
+	float z1 = _row1._x * m._row1._z + _row1._y * m._row2._z + _row1._z * m._row3._z;
+	float x2 = m._row1._x * _row2._x + m._row3._x * _row2._z + m._row2._x * _row2._y;
+	float y2 = m._row3._y * _row2._z + m._row1._y * _row2._x + m._row2._y * _row2._y;
+	float z2 = _row2._z * m._row3._z + _row2._x * m._row1._z + _row2._y * m._row2._z;
+	float x3 = m._row1._x * _row3._x + _row3._z * m._row3._x + _row3._y * m._row2._x;
+	float y3 = _row3._y * m._row2._y + _row3._z * m._row3._y + _row3._x * m._row1._y;
+	float z3 = _row3._x * m._row1._z + _row3._y * m._row2._z + _row3._z * m._row3._z;
 
 	_row1 = FVector(x1, y1, z1);
 	_row2 = FVector(x2, y2, z2);
@@ -121,15 +121,15 @@ void FMatrix::fn2(const FMatrix &m) {
 }
 
 void FMatrix::fn3(const FMatrix &m) {
-	double x1 = _row2._x * m._row1._y + m._row1._z * _row3._x + _row1._x * m._row1._x;
-	double y1 = m._row1._x * _row1._y + _row3._y * m._row1._z + _row2._y * m._row1._y;
-	double z1 = m._row1._x * _row1._z + m._row1._y * _row2._z + m._row1._z * _row3._z;
-	double x2 = _row1._x * m._row2._x + _row2._x * m._row2._y + _row3._x * m._row2._z;
-	double y2 = _row3._y * m._row2._z + _row1._y * m._row2._x + _row2._y * m._row2._y;
-	double z2 = m._row2._z * _row3._z + m._row2._x * _row1._z + m._row2._y * _row2._z;
-	double x3 = _row1._x * m._row3._x + m._row3._z * _row3._x + m._row3._y * _row2._x;
-	double y3 = m._row3._y * _row2._y + m._row3._z * _row3._y + m._row3._x * _row1._y;
-	double z3 = m._row3._x * _row1._z + m._row3._y * _row2._z + m._row3._z * _row3._z;
+	float x1 = _row2._x * m._row1._y + m._row1._z * _row3._x + _row1._x * m._row1._x;
+	float y1 = m._row1._x * _row1._y + _row3._y * m._row1._z + _row2._y * m._row1._y;
+	float z1 = m._row1._x * _row1._z + m._row1._y * _row2._z + m._row1._z * _row3._z;
+	float x2 = _row1._x * m._row2._x + _row2._x * m._row2._y + _row3._x * m._row2._z;
+	float y2 = _row3._y * m._row2._z + _row1._y * m._row2._x + _row2._y * m._row2._y;
+	float z2 = m._row2._z * _row3._z + m._row2._x * _row1._z + m._row2._y * _row2._z;
+	float x3 = _row1._x * m._row3._x + m._row3._z * _row3._x + m._row3._y * _row2._x;
+	float y3 = m._row3._y * _row2._y + m._row3._z * _row3._y + m._row3._x * _row1._y;
+	float z3 = m._row3._x * _row1._z + m._row3._y * _row2._z + m._row3._z * _row3._z;
 
 	_row1 = FVector(x1, y1, z1);
 	_row2 = FVector(x2, y2, z2);

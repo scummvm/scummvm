@@ -126,10 +126,10 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 		FPoint centerPt(300.0, 170.0);
 
 		if (fpt != centerPt) {
-			double threshold = MIN(centerPt._x, centerPt._y) * 0.5;
+			float threshold = MIN(centerPt._x, centerPt._y) * 0.5;
 			FPoint tempPt = fpt - centerPt;
 
-			double distance = tempPt.normalize();
+			float distance = tempPt.normalize();
 			if (distance >= threshold) {
 				distance -= threshold;
 

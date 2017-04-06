@@ -38,10 +38,10 @@ class DVector;
  */
 class FVector {
 public:
-	double _x, _y, _z;
+	float _x, _y, _z;
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
-	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+	FVector(float x, float y, float z) : _x(x), _y(y), _z(z) {}
 	FVector(const DVector &src);
 
 	/**
@@ -61,7 +61,7 @@ public:
 	/**
 	 * Normalizes the vector so the length from origin equals 1.0
 	 */
-	double normalize();
+	float normalize();
 
 	/**
 	 * Adds two vectors together and then normalizes the result
@@ -71,7 +71,7 @@ public:
 	/**
 	 * Returns the distance between a specified point and this one
 	 */
-	double getDistance(const FVector &src) const;
+	float getDistance(const FVector &src) const;
 
 	FVector fn5(const CStarControlSub6 *sub6) const;
 
@@ -97,7 +97,7 @@ public:
 		return FVector(_x - delta._x, _y - delta._y, _z - delta._z);
 	}
 
-	const FVector operator*(double right) const {
+	const FVector operator*(float right) const {
 		return FVector(_x * right, _y * right, _z * right);
 	}
 

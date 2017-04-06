@@ -48,8 +48,8 @@ FVector FVector::crossProduct(const FVector &src) const {
 	);
 }
 
-double FVector::normalize() {
-	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
+float FVector::normalize() {
+	float hyp = sqrt(_x * _x + _y * _y + _z * _z);
 	assert(hyp);
 
 	_x *= 1.0 / hyp;
@@ -66,10 +66,10 @@ const FVector *FVector::addAndNormalize(FVector &dest, const FVector &v1, const 
 	return &dest;
 }
 
-double FVector::getDistance(const FVector &src) const {
-	double xd = src._x - _x;
-	double yd = src._y - _y;
-	double zd = src._z - _z;
+float FVector::getDistance(const FVector &src) const {
+	float xd = src._x - _x;
+	float yd = src._y - _y;
+	float zd = src._z - _z;
 
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
