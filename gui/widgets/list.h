@@ -89,6 +89,7 @@ public:
 	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
 	virtual ~ListWidget();
 
+	virtual bool containsWidget(Widget *) const;
 	virtual Widget *findWidget(int x, int y);
 
 	void setList(const StringArray &list, const ColorList *colors = 0);

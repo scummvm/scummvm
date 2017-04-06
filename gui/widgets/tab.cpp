@@ -334,6 +334,13 @@ void TabWidget::draw() {
 	}
 }
 
+bool TabWidget::containsWidget(Widget *w) const {
+	if (w == _navLeft || w == _navRight || _navLeft->containsWidget(w) || _navRight->containsWidget(w))
+		return true;
+	return containsWidgetInChain(_firstWidget, w);
+}
+
+
 Widget *TabWidget::findWidget(int x, int y) {
 	if (y < _tabHeight) {
 		if (_navButtonsVisible) {

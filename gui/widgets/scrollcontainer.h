@@ -46,6 +46,8 @@ public:
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	virtual void reflowLayout();
 
+	virtual bool containsWidget(Widget *) const;
+
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.

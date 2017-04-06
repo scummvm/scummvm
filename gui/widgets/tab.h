@@ -107,6 +107,8 @@ public:
 	virtual int getFirstVisible() const;
 	virtual void setFirstVisible(int tabID, bool adjustIfRoom = false);
 
+	virtual bool containsWidget(Widget *) const;
+
 	virtual void reflowLayout();
 
 	virtual void draw();

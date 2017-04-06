@@ -101,6 +101,12 @@ ListWidget::~ListWidget() {
 	delete[] _textWidth;
 }
 
+bool ListWidget::containsWidget(Widget *w) const {
+	if (w == _scrollBar || _scrollBar->containsWidget(w))
+		return true;
+	return false;
+}
+
 Widget *ListWidget::findWidget(int x, int y) {
 	if (x >= _w - _scrollBarWidth)
 		return _scrollBar;
