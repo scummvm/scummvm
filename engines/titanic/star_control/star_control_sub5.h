@@ -116,7 +116,7 @@ public:
 	virtual ~CStarControlSub5() {}
 
 	virtual bool setup();
-	virtual void proc2(FPose *pose, const FVector &vector, double v1, double v2, double v3,
+	virtual void proc2(const FPose &pose, const FVector &vector, double v1, double v2, double v3,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
 	virtual void proc3(CErrorCode *errorCode);
 

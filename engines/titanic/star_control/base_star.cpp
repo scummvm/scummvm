@@ -184,7 +184,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ; 
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -269,7 +269,7 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -358,7 +358,7 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}
@@ -465,7 +465,7 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(&pose, vector, centroid._x, centroid._y, total2,
+			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
 				surfaceArea, sub12);
 			continue;
 		}

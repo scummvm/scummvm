@@ -450,8 +450,8 @@ void CStarView::randomizeVectors1(FVector &v1, FVector &v2) {
 	v2.normalize();
 	*/
 	// Values temporarily hardcoded to match hacked values in original EXE
-	v1 = FVector(69481544.0, 69481544.0, 69481544.0);
-	v2 = FVector(-0.577350259, -0.577350259, -0.577350259);
+	v1 = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
+	v2 = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
 }
 
 void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
@@ -466,8 +466,8 @@ void CStarView::randomizeVectors2(FVector &v1, FVector &v2) {
 	v2.normalize();
 	*/
 	// Values temporarily hardcoded to match hacked values in original EXE
-	v1 = FVector(69481544.0, 69481544.0, 69481544.0);
-	v2 = FVector(0.624659300, -0.468542814, -0.624714553);
+	v1 = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
+	v2 = FVector((float)0.624659300, (float)-0.468542814, (float)-0.624714553);
 }
 
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
