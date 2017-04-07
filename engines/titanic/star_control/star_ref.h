@@ -50,7 +50,7 @@ public:
 	int _index;
 public:
 	CStarRef1(CBaseStar *star, const Common::Point &pt) :
-		CBaseStarRef(star), _index(-1) {}
+		CBaseStarRef(star), _position(pt), _index(-1) {}
 	virtual ~CStarRef1() {}
 
 	virtual bool check(const Common::Point &pt, int index);
