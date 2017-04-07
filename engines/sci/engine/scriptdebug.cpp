@@ -196,6 +196,21 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				}
 
 				debugN(",");
+#ifdef ENABLE_SCI32
+			} else if (getSciVersion() == SCI_VERSION_3 && (
+				opcode == op_pToa || opcode == op_aTop ||
+				opcode == op_pTos || opcode == op_sTop ||
+				opcode == op_ipToa || opcode == op_dpToa ||
+				opcode == op_ipTos || opcode == op_dpTos)) {
+
+				const char *selectorName = "<invalid>";
+
+				if (param_value < kernel->getSelectorNamesSize()) {
+					selectorName = kernel->getSelectorName(param_value).c_str();
+				}
+
+				debugN("\t%s[%x]", selectorName, param_value);
+#endif
 			} else {
 				const char *separator = defaultSeparator;
 
