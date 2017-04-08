@@ -327,6 +327,8 @@ void MacText::recalcDims() {
 }
 
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
+	if (_textLines.empty()) return;
+
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h) {
@@ -361,7 +363,7 @@ void MacText::resizeAndFormatLines(uint numNewLines, MacFontRun *fontRun) {
 	}
 }
 
-void MacText::appendText(Common::String str, int fontId, int fontSize, int fontSlant) {
+void MacText::appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular) {
 	uint oldLen = _textLines.size();
 	uint newLines = 1 + getNewlinesInString(str);
 
@@ -385,6 +387,13 @@ void MacText::appendTextDefault(Common::String str) {
 	recalcDims();
 
 	render(oldLen, _textLines.size());
+}
+
+void MacText::clearText() {
+	_textLines.clear();
+	_str.clear();
+
+	recalcDims();
 }
 
 void MacText::replaceLastLine(Common::String str) {

@@ -133,6 +133,7 @@ Common::Error WageEngine::run() {
 		_gui->regenCommandsMenu();
 		_gui->regenWeaponsMenu();
 	}
+
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -312,6 +313,10 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+
+	// Set the console window's dimensions early here because
+	// flowText() that needs them gets called before they're set
+	_gui->_consoleWindow->setDimensions(*_world->_player->_currentScene->_textBounds);
 }
 
 void WageEngine::wearObjs(Chr* chr) {

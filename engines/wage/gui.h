@@ -48,20 +48,8 @@
 #ifndef WAGE_GUI_H
 #define WAGE_GUI_H
 
-// Whether to use the new text renderer
-// Currently renders along with (on top of) the current one
-#define USE_NEW_TEXT_RENDERER
-
 // Whether to use the new MacTextWindow class for rendering the console
-// Currently it's just a simple wrapper that mostly only holds a MacText
-#define USE_MACTEXTWINDOW
-
-// Make sure USE_MACTEXTWINDOW can't be defined without USE_NEW_TEXT_RENDERER being defined as well
-#ifndef USE_NEW_TEXT_RENDERER
-#ifdef USE_MACTEXTWINDOW
-#define USE_NEW_TEXT_RENDERER
-#endif // USE_MACTEXTWINDOW
-#endif // USE_NEW_TEXT_RENDERER
+// #define USE_MACTEXTWINDOW
 
 #include "common/str-array.h"
 #include "graphics/font.h"
@@ -72,6 +60,7 @@
 #else
 #include "graphics/macgui/macwindow.h"
 #endif
+#include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/macwindowborder.h"
@@ -141,6 +130,7 @@ public:
 
 	void draw();
 	void appendText(const char *str);
+	void reflowText();
 	void clearOutput();
 	bool processEvent(Common::Event &event);
 
@@ -168,6 +158,7 @@ private:
 	void undrawCursor();
 	void renderConsole(Graphics::ManagedSurface *g, const Common::Rect &r);
 	void flowText(Common::String &str);
+	const Graphics::MacFont *getConsoleMacFont();
 	const Graphics::Font *getConsoleFont();
 	const Graphics::Font *getTitleFont();
 	void startMarking(int x, int y);
@@ -195,18 +186,12 @@ public:
 	Graphics::MacWindow *_sceneWindow;
 
 #ifdef USE_MACTEXTWINDOW
-	Graphics::MacTextWindow *_consoleWindow;
+   Graphics::MacTextWindow *_consoleWindow;
 #else
-	Graphics::MacWindow *_consoleWindow;
+   Graphics::MacWindow *_consoleWindow;
 #endif
 
 private:
-
-#ifdef USE_NEW_TEXT_RENDERER
-#ifndef USE_MACTEXTWINDOW
-	Graphics::MacText *_mactext;
-#endif // USE_MACTEXTWINDOW
-#endif // USE_NEW_TEXT_RENDERER
 
 	Graphics::ManagedSurface _console;
 	Graphics::MacMenu *_menu;

@@ -92,12 +92,14 @@ public:
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 			// 0 pixels between the lines by default
 	~MacText();
+
 	void setInterLinear(int interLinear);
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void resizeAndFormatLines(uint numNewLines, MacFontRun * fontRun);
-	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular);
+	void appendText(Common::String str, int fontId, int fontSize, int fontSlant);
 	void appendTextDefault(Common::String str);
+	void clearText();
 	void replaceLastLine(Common::String str);
 	int getLineCount() { return _textLines.size(); }
 
