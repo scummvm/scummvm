@@ -76,13 +76,13 @@ void Demo::runPersistentScripts() {
 	}
 }
 
-void Demo::o_stopIntro(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::o_stopIntro(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Unk", op);
 	// The original also seems to stop the movies. Not needed with this engine.
 	_vm->_gfx->fadeToBlack();
 }
 
-void Demo::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::o_fadeFromBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fade from black", op);
 
 	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
@@ -90,7 +90,7 @@ void Demo::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// _vm->_gfx->fadeFromBlack();
 }
 
-void Demo::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::o_fadeToBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fade to black", op);
 	_vm->_gfx->fadeToBlack();
 }
@@ -122,7 +122,7 @@ void Demo::returnToMenu_run() {
 	}
 }
 
-void Demo::o_returnToMenu_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Demo::o_returnToMenu_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Return to menu init", op);
 
 	// Used on Card 2001, 2002 and 2003

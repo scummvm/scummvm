@@ -95,7 +95,7 @@ uint16 Dni::getVar(uint16 var) {
 	}
 }
 
-void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Dni::o_handPage(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Hand page to Atrus", op);
 	// Used in Card 5014 (Atrus)
 
@@ -214,7 +214,7 @@ void Dni::atrus_run() {
 	}
 }
 
-void Dni::o_atrus_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Dni::o_atrus_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Atrus init", op);
 
 	_atrusRunning = true;

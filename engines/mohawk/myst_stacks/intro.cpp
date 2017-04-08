@@ -79,7 +79,7 @@ uint16 Intro::getVar(uint16 var) {
 	}
 }
 
-void Intro::o_useLinkBook(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_useLinkBook(uint16 op, uint16 var, const ArgumentsArray &args) {
 	// Hard coded SoundId valid only for Intro Stack.
 	// Other stacks use Opcode 40, which takes SoundId values as arguments.
 	const uint16 soundIdLinkSrc = 5;
@@ -146,7 +146,7 @@ void Intro::introMovies_run() {
 	}
 }
 
-void Intro::o_playIntroMovies(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_playIntroMovies(uint16 op, uint16 var, const ArgumentsArray &args) {
 	_introMoviesRunning = true;
 	_introStep = 0;
 }
@@ -165,7 +165,7 @@ void Intro::mystLinkBook_run() {
 	}
 }
 
-void Intro::o_mystLinkBook_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Intro::o_mystLinkBook_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Myst link book init", op);
 
 	_linkBookMovie = getInvokingResource<MystAreaVideo>();

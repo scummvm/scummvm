@@ -79,18 +79,18 @@ void Preview::runPersistentScripts() {
 		speech_run();
 }
 
-void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_fadeToBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fade to black", op);
 	_vm->_gfx->fadeToBlack();
 }
 
-void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_fadeFromBlack(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fade from black", op);
 
 	_vm->_gfx->fadeFromBlack();
 }
 
-void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_stayHere(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Stay here dialog", op);
 
 	// Nuh-uh! No leaving the library in the demo!
@@ -98,7 +98,7 @@ void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	dialog.runModal();
 }
 
-void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_speechStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Speech stop", op);
 
 	_vm->_sound->stopSpeech();
@@ -225,7 +225,7 @@ void Preview::speech_run() {
 	}
 }
 
-void Preview::o_speech_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_speech_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Speech init", op);
 
 	// Used for Card 3000 (Closed Myst Book)
@@ -233,18 +233,18 @@ void Preview::o_speech_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_speechRunning = true;
 }
 
-void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_library_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Library init", op);
 
 	// Used for Card 3002 (Myst Island Overview)
 	_library = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	if (_libraryBookcaseChanged) {
 		MystAreaActionSwitch *resource = getInvokingResource<MystAreaActionSwitch>();
 		_libraryBookcaseMovie = static_cast<MystAreaVideo *>(resource->getSubResource(getVar(303)));
-		_libraryBookcaseSoundId = argv[0];
+		_libraryBookcaseSoundId = args[0];
 		_libraryBookcaseMoving = true;
 	}
 }

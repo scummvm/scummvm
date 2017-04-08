@@ -31,7 +31,9 @@
 
 namespace Mohawk {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+typedef Common::Array<uint16> ArgumentsArray;
+
+#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, const ArgumentsArray &args)
 
 class MohawkEngine_Myst;
 class MystArea;
@@ -45,14 +47,12 @@ enum MystScriptType {
 
 struct MystScriptEntry {
 	MystScriptEntry();
-	~MystScriptEntry();
 
 	MystScriptType type;
 	uint16 resourceId;
 	uint16 opcode;
 	uint16 var;
-	uint16 argc;
-	uint16 *argv;
+	ArgumentsArray args;
 	uint16 u1;
 };
 
@@ -64,7 +64,7 @@ public:
 	virtual ~MystScriptParser();
 
 	void runScript(MystScript script, MystArea *invokingResource = nullptr);
-	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = nullptr);
+	void runOpcode(uint16 op, uint16 var = 0, const ArgumentsArray &args = ArgumentsArray());
 	const Common::String getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
 	void setInvokingResource(MystArea *resource) { _invokingResource = resource; }
@@ -86,7 +86,7 @@ public:
 	virtual uint16 getMap() { return 0; }
 	void showMap();
 
-	void animatedUpdate(uint16 argc, uint16 *argv, uint16 delay);
+	void animatedUpdate(const ArgumentsArray &args, uint16 delay);
 
 	DECLARE_OPCODE(unknown);
 
@@ -146,7 +146,7 @@ protected:
 	MohawkEngine_Myst *_vm;
 	MystGameState::Globals &_globals;
 
-	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, uint16 argc, uint16* argv);
+	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, const ArgumentsArray &args);
 
 	struct MystOpcode {
 		MystOpcode(uint16 o, OpcodeProcMyst p, const char *d) : op(o), proc(p), desc(d) {}

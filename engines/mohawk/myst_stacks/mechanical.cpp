@@ -271,13 +271,13 @@ bool Mechanical::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void Mechanical::o_throneEnablePassage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_throneEnablePassage(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Enable throne passage", op);
 
-	_vm->_resources[argv[0]]->setEnabled(getVar(var));
+	_vm->_resources[args[0]]->setEnabled(getVar(var));
 }
 
-void Mechanical::o_birdCrankStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_birdCrankStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Mechanical bird crank start", op);
 
 	MystAreaDrag *crank = getInvokingResource<MystAreaDrag>();
@@ -292,7 +292,7 @@ void Mechanical::o_birdCrankStart(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	crankMovie->playMovie();
 }
 
-void Mechanical::o_birdCrankStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_birdCrankStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Mechanical bird crank stop", op);
 
 	MystAreaDrag *crank = getInvokingResource<MystAreaDrag>();
@@ -309,14 +309,14 @@ void Mechanical::o_birdCrankStop(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	_bird->playMovie();
 }
 
-void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_snakeBoxTrigger(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Trigger Playing Of Snake Movie", op);
 
 	// Used on Mechanical Card 6043 (Weapons Rack with Snake Box)
 	_snakeBox->playMovie();
 }
 
-void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Play Stairs Movement Movie", op);
 
 	VideoEntryPtr staircase = _vm->_video->playMovie(_vm->wrapMovieFilename("hhstairs", kMechanicalStack));
@@ -334,7 +334,7 @@ void Mechanical::o_fortressStaircaseMovie(uint16 op, uint16 var, uint16 argc, ui
 	_vm->waitUntilMovieEnds(staircase);
 }
 
-void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Elevator rotation lever start", op);
 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
@@ -348,7 +348,7 @@ void Mechanical::o_elevatorRotationStart(uint16 op, uint16 var, uint16 argc, uin
 	_vm->_cursor->setCursor(700);
 }
 
-void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Elevator rotation lever move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -366,7 +366,7 @@ void Mechanical::o_elevatorRotationMove(uint16 op, uint16 var, uint16 argc, uint
 	lever->drawFrame(step);
 }
 
-void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Elevator rotation lever stop", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -414,7 +414,7 @@ void Mechanical::o_elevatorRotationStop(uint16 op, uint16 var, uint16 argc, uint
 	_vm->checkCursorHints();
 }
 
-void Mechanical::o_fortressRotationSpeedStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationSpeedStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever start", op);
 
 	_vm->_cursor->setCursor(700);
@@ -423,7 +423,7 @@ void Mechanical::o_fortressRotationSpeedStart(uint16 op, uint16 var, uint16 argc
 	lever->drawFrame(0);
 }
 
-void Mechanical::o_fortressRotationSpeedMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationSpeedMove(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -441,7 +441,7 @@ void Mechanical::o_fortressRotationSpeedMove(uint16 op, uint16 var, uint16 argc,
 	lever->drawFrame(step);
 }
 
-void Mechanical::o_fortressRotationSpeedStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationSpeedStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation speed lever stop", op);
 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
@@ -457,7 +457,7 @@ void Mechanical::o_fortressRotationSpeedStop(uint16 op, uint16 var, uint16 argc,
 	_vm->checkCursorHints();
 }
 
-void Mechanical::o_fortressRotationBrakeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationBrakeStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever start", op);
 
 	_vm->_cursor->setCursor(700);
@@ -466,7 +466,7 @@ void Mechanical::o_fortressRotationBrakeStart(uint16 op, uint16 var, uint16 argc
 	lever->drawFrame(_fortressRotationBrake);
 }
 
-void Mechanical::o_fortressRotationBrakeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationBrakeMove(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -484,7 +484,7 @@ void Mechanical::o_fortressRotationBrakeMove(uint16 op, uint16 var, uint16 argc,
 	lever->drawFrame(step);
 }
 
-void Mechanical::o_fortressRotationBrakeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationBrakeStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation brake lever stop", op);
 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
@@ -493,7 +493,7 @@ void Mechanical::o_fortressRotationBrakeStop(uint16 op, uint16 var, uint16 argc,
 	_vm->checkCursorHints();
 }
 
-void Mechanical::o_fortressSimulationSpeedStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationSpeedStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever start", op);
 
 	_vm->_cursor->setCursor(700);
@@ -502,7 +502,7 @@ void Mechanical::o_fortressSimulationSpeedStart(uint16 op, uint16 var, uint16 ar
 	lever->drawFrame(0);
 }
 
-void Mechanical::o_fortressSimulationSpeedMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationSpeedMove(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -520,7 +520,7 @@ void Mechanical::o_fortressSimulationSpeedMove(uint16 op, uint16 var, uint16 arg
 	lever->drawFrame(step);
 }
 
-void Mechanical::o_fortressSimulationSpeedStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationSpeedStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator speed lever stop", op);
 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
@@ -536,7 +536,7 @@ void Mechanical::o_fortressSimulationSpeedStop(uint16 op, uint16 var, uint16 arg
 	_vm->checkCursorHints();
 }
 
-void Mechanical::o_fortressSimulationBrakeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationBrakeStart(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever start", op);
 
 	_vm->_cursor->setCursor(700);
@@ -545,7 +545,7 @@ void Mechanical::o_fortressSimulationBrakeStart(uint16 op, uint16 var, uint16 ar
 	lever->drawFrame(_fortressSimulationBrake);
 }
 
-void Mechanical::o_fortressSimulationBrakeMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationBrakeMove(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever move", op);
 
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
@@ -563,7 +563,7 @@ void Mechanical::o_fortressSimulationBrakeMove(uint16 op, uint16 var, uint16 arg
 	lever->drawFrame(step);
 }
 
-void Mechanical::o_fortressSimulationBrakeStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationBrakeStop(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d Fortress rotation simulator brake lever stop", op);
 
 	MystVideoInfo *lever = getInvokingResource<MystVideoInfo>();
@@ -572,9 +572,9 @@ void Mechanical::o_fortressSimulationBrakeStop(uint16 op, uint16 var, uint16 arg
 	_vm->checkCursorHints();
 }
 
-void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	uint16 startTime = argv[0];
-	uint16 endTime = argv[1];
+void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, const ArgumentsArray &args) {
+	uint16 startTime = args[0];
+	uint16 endTime = args[1];
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
@@ -587,7 +587,7 @@ void Mechanical::o_elevatorWindowMovie(uint16 op, uint16 var, uint16 argc, uint1
 	_vm->waitUntilMovieEnds(window);
 }
 
-void Mechanical::o_elevatorGoMiddle(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorGoMiddle(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Elevator go middle from top", op);
 
 	_elevatorTooLate = false;
@@ -634,7 +634,7 @@ void Mechanical::elevatorGoMiddle_run() {
 				_vm->wait(500);
 				_vm->_sound->playEffect(9120);
 				static uint16 moviePos[2] = { 3540, 5380 };
-				o_elevatorWindowMovie(121, 0, 2, moviePos);
+				o_elevatorWindowMovie(121, 0, ArgumentsArray(moviePos, ARRAYSIZE(moviePos)));
 				_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 				_vm->_sound->playEffect(10120);
 				_vm->_cursor->showCursor();
@@ -647,9 +647,9 @@ void Mechanical::elevatorGoMiddle_run() {
 	}
 }
 
-void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	uint16 startTime = argv[0];
-	uint16 endTime = argv[1];
+void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, const ArgumentsArray &args) {
+	uint16 startTime = args[0];
+	uint16 endTime = args[1];
 
 	debugC(kDebugScript, "Opcode %d Movie Time Index %d to %d", op, startTime, endTime);
 
@@ -662,7 +662,7 @@ void Mechanical::o_elevatorTopMovie(uint16 op, uint16 var, uint16 argc, uint16 *
 	_vm->waitUntilMovieEnds(window);
 }
 
-void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Set fortress position", op);
 
 	VideoEntryPtr gears = _fortressRotationGears->getVideo();
@@ -676,13 +676,13 @@ void Mechanical::o_fortressRotationSetPosition(uint16 op, uint16 var, uint16 arg
 	_fortressPosition = (moviePosition + 900) / 1800 % 4;
 }
 
-void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_mystStaircaseMovie(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Myst book staircase video", op);
 
 	_vm->playMovieBlocking(_vm->wrapMovieFilename("sstairs", kMechanicalStack), 199, 108);
 }
 
-void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Wait for the elevator to go middle", op);
 
 	// Wait while the elevator times out
@@ -692,61 +692,61 @@ void Mechanical::o_elevatorWaitTimeout(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterYellow(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 3;
 	_vm->redrawArea(20);
 }
 
-void Mechanical::o_crystalEnterGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterGreen(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 1;
 	_vm->redrawArea(21);
 }
 
-void Mechanical::o_crystalEnterRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalEnterRed(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal enter", op);
 
 	_crystalLit = 2;
 	_vm->redrawArea(22);
 }
 
-void Mechanical::o_crystalLeaveYellow(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveYellow(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(20);
 }
 
-void Mechanical::o_crystalLeaveGreen(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveGreen(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(21);
 }
 
-void Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_crystalLeaveRed(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Crystal leave", op);
 
 	_crystalLit = 0;
 	_vm->redrawArea(22);
 }
 
-void Mechanical::o_throne_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_throne_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	// Used on Card 6238 (Sirrus' Throne) and Card 6027 (Achenar's Throne)
 	debugC(kDebugScript, "Opcode %d: Brother throne init", op);
 
 	getInvokingResource<MystArea>()->setEnabled(getVar(var));
 }
 
-void Mechanical::o_fortressStaircase_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressStaircase_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Staircase init", op);
 
-	_vm->_resources[argv[0]]->setEnabled(!_state.staircaseState);
-	_vm->_resources[argv[1]]->setEnabled(!_state.staircaseState);
-	_vm->_resources[argv[2]]->setEnabled(_state.staircaseState);
+	_vm->_resources[args[0]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[args[1]]->setEnabled(!_state.staircaseState);
+	_vm->_resources[args[2]]->setEnabled(_state.staircaseState);
 }
 
 void Mechanical::birdSing_run() {
@@ -759,7 +759,7 @@ void Mechanical::birdSing_run() {
 	}
 }
 
-void Mechanical::o_bird_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_bird_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Mechanical bird init", op);
 
 	_birdSinging = false;
@@ -767,7 +767,7 @@ void Mechanical::o_bird_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_bird = getInvokingResource<MystAreaVideo>();
 }
 
-void Mechanical::o_snakeBox_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_snakeBox_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Snake box init", op);
 
 	_snakeBox = getInvokingResource<MystAreaVideo>();
@@ -790,10 +790,10 @@ void Mechanical::elevatorRotation_run() {
 	}
 }
 
-void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_elevatorRotation_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Elevator rotation init", op);
 
-	_elevatorRotationSoundId = argv[0];
+	_elevatorRotationSoundId = args[0];
 	_elevatorRotationGearPosition = 0;
 	_elevatorRotationLeverMoving = false;
 }
@@ -870,7 +870,7 @@ void Mechanical::fortressRotation_run() {
 	}
 }
 
-void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fortress rotation init", op);
 
 	_fortressRotationGears = getInvokingResource<MystAreaVideo>();
@@ -880,10 +880,10 @@ void Mechanical::o_fortressRotation_init(uint16 op, uint16 var, uint16 argc, uin
 	gears->seek(Audio::Timestamp(0, 1800 * _fortressPosition, 600));
 	gears->setRate(0);
 
-	_fortressRotationSounds[0] = argv[0];
-	_fortressRotationSounds[1] = argv[1];
-	_fortressRotationSounds[2] = argv[2];
-	_fortressRotationSounds[3] = argv[3];
+	_fortressRotationSounds[0] = args[0];
+	_fortressRotationSounds[1] = args[1];
+	_fortressRotationSounds[2] = args[2];
+	_fortressRotationSounds[3] = args[3];
 
 	_fortressRotationBrake = 0;
 
@@ -1020,18 +1020,18 @@ void Mechanical::fortressSimulation_run() {
 	}
 }
 
-void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fortress rotation simulator init", op);
 
 	_fortressSimulationHolo = getInvokingResource<MystAreaVideo>();
 
-	_fortressSimulationStartSound1 = argv[0];
-	_fortressSimulationStartSound2 = argv[1];
+	_fortressSimulationStartSound1 = args[0];
+	_fortressSimulationStartSound2 = args[1];
 
-	_fortressRotationSounds[0] = argv[2];
-	_fortressRotationSounds[1] = argv[3];
-	_fortressRotationSounds[2] = argv[4];
-	_fortressRotationSounds[3] = argv[5];
+	_fortressRotationSounds[0] = args[2];
+	_fortressRotationSounds[1] = args[3];
+	_fortressRotationSounds[2] = args[4];
+	_fortressRotationSounds[3] = args[5];
 
 	_fortressSimulationBrake = 0;
 
@@ -1042,7 +1042,7 @@ void Mechanical::o_fortressSimulation_init(uint16 op, uint16 var, uint16 argc, u
 	_vm->_cursor->hideCursor();
 }
 
-void Mechanical::o_fortressSimulationStartup_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Mechanical::o_fortressSimulationStartup_init(uint16 op, uint16 var, const ArgumentsArray &args) {
 	debugC(kDebugScript, "Opcode %d: Fortress rotation simulator startup init", op);
 
 	_fortressSimulationStartup = getInvokingResource<MystAreaVideo>();
