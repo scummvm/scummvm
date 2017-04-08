@@ -419,7 +419,7 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 		if (size == 0)
 			continue;
 
-		if (debugChannelSet(5, kDebugLoading) && size < 2048)
+		if (debugChannelSet(5, kDebugLoading))
 			stream.hexdump(size);
 
 		uint8 castType = stream.readByte();
