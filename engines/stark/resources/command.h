@@ -209,7 +209,7 @@ protected:
 	Command *opExit2DLocation();
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(Script *script, int32 rumbleDuration, int32 pause);
-	Command *opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3);
+	Command *opFadeScene(Script *script, bool fadeOut, int32 fadeDuration, bool pause);
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
 	Command *opDoNothing();

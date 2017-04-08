@@ -103,7 +103,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kRumbleScene:
 		return opRumbleScene(script, _arguments[1].intValue, _arguments[2].intValue);
 	case kFadeScene:
-		return opFadeScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
+		return opFadeScene(script, _arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kGameEnd:
 		return opGameEnd();
 	case kInventoryOpen:
@@ -376,10 +376,24 @@ Command *Command::opRumbleScene(Script *script, int32 rumbleDuration, int32 paus
 	}
 }
 
-Command *Command::opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3) {
-	warning("(TODO: Implement) opFadeScene(%d, %d, %d) : %s", unknown1, unknown2, unknown3, getName().c_str());
+Command *Command::opFadeScene(Script *script, bool fadeOut, int32 fadeDuration, bool pause) {
+	uint gameloopDuration = StarkGlobal->getMillisecondsPerGameloop();
+	int32 fadeFrames = fadeDuration / gameloopDuration;
 
-	return nextCommand();
+	Current *current = StarkGlobal->getCurrent();
+	Location *location = current->getLocation();
+	if (fadeOut) {
+		location->fadeOutInit(fadeFrames);
+	} else {
+		location->fadeInInit(fadeFrames);
+	}
+
+	if (pause) {
+		script->pause(fadeDuration);
+		return this; // Stay on this command while the script is suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, int32 *floorFace) {

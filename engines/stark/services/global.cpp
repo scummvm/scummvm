@@ -30,7 +30,7 @@
 namespace Stark {
 
 Global::Global() :
-		_millisecondsPerGameloop(0),
+		_millisecondsPerGameloop(10),
 		_april(nullptr),
 		_root(nullptr),
 		_level(nullptr),

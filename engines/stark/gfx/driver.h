@@ -38,6 +38,7 @@ class VisualProp;
 namespace Gfx {
 
 class SurfaceRenderer;
+class FadeRenderer;
 class Texture;
 
 class Driver {
@@ -88,6 +89,13 @@ public:
 	 * The caller is responsible for freeing it.
 	 */
 	virtual SurfaceRenderer *createSurfaceRenderer() = 0;
+
+	/**
+	 * Create a new fade renderer
+	 *
+	 * The caller is responsible for freeing it.
+	 */
+	virtual FadeRenderer *createFadeRenderer() = 0;
 
 	/** Bound a screen coordinate coord within the actual game area */
 	Common::Point getScreenPosBounded(const Common::Point &point) const;

@@ -61,6 +61,7 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 	texture->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+	_shader->unbind();
 	_gfx->end2DMode();
 }
 
