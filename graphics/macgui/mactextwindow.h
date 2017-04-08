@@ -28,20 +28,35 @@
 
 namespace Graphics {
 
+struct SelectedText {
+	int startX = 0, startY = 0;
+	int endX = 0, endY = 0;
+
+	bool needsRender() {
+		return startX != endX || startY != endY;
+	}
+};
+
 class MacTextWindow : public MacWindow {
 public:
-	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor,
+	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor,
 		int bgcolor, int maxWidth, TextAlign textAlignment);
 	~MacTextWindow();
 
-	const Font *getTextWindowFont();
+	const MacFont *getTextWindowFont();
 
 	void drawText(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular);
+	void appendText(Common::String str, const MacFont *macFont);
+	void clearText();
+
+	void setSelection(int selStartX, int selStartY, int selEndX, int selEndY);
 
 private:
 	MacText *_mactext;
-	const Font *_font;
+	const MacFont *_font;
+
+	SelectedText _selectedText;
 };
 
 } // End of namespace Graphics

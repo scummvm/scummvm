@@ -173,37 +173,23 @@ Gui::Gui(WageEngine *engine) {
 	_sceneWindow = _wm.addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
+#ifdef USE_MACTEXTWINDOW
 	//TODO: Make the font we use here work
 	// (currently MacFontRun::getFont gets called with the fonts being uninitialized,
 	// so it initializes them by itself with default params, and not those here)
-#ifdef USE_NEW_TEXT_RENDERER
-#ifdef USE_MACTEXTWINDOW
 	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 8));
 
 	uint maxWidth = _screen.w;
 
-	_consoleWindow = new Graphics::MacTextWindow(&_wm, font, kColorBlack, kColorWhite,
-		 maxWidth, Graphics::kTextAlignCenter);
+	_consoleWindow = new Graphics::MacTextWindow(&_wm, const_cast<Graphics::Font *>(font), kColorBlack, kColorWhite,
+		 maxWidth, Graphics::kTextAlignLeft);
 #else
-	_consoleWindow = _wm.addWindow(true, true, true);
-	const Graphics::Font *font = _wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 8));
+   _consoleWindow = _wm.addWindow(true, true, true);
 #endif // USE_MACTEXTWINDOW
-#else
-	_consoleWindow = _wm.addWindow(true, true, true);
-#endif // USE_NEW_TEXT_RENDERER
 
 	_consoleWindow->setCallback(consoleWindowCallback, this);
 
 	loadBorders();
-
-#ifdef USE_NEW_TEXT_RENDERER
-#ifndef USE_MACTEXTWINDOW
-	unsigned maxWidth = _screen.w;
-
-	_mactext = new Graphics::MacText("", &_wm, font,
-		kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignCenter);
-#endif // USE_MACTEXTWINDOW
-#endif // USE_NEW_TEXT_RENDERER
 }
 
 Gui::~Gui() {
@@ -236,7 +222,6 @@ void Gui::draw() {
 
 		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
-		_consoleWindow->setDimensions(*_scene->_textBounds);
 
 		_wm.setFullRefresh(true);
 	}

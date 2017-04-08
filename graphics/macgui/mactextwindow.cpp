@@ -27,7 +27,7 @@
 
 namespace Graphics {
 
-MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor,
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor,
 	int bgcolor, int maxWidth, TextAlign textAlignment) :
 		MacWindow(wm->getNextId(), true, true, true, wm) {
 
@@ -45,10 +45,25 @@ void MacTextWindow::appendText(Common::String str, int id, int size, int slant) 
 	_mactext->appendText(str, id, size, slant);
 }
 
+void MacTextWindow::appendText(Common::String str, const MacFont *macFont) {
+	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant());
+}
+
+void MacTextWindow::clearText() {
+	_mactext->clearText();
+}
+
+void MacTextWindow::setSelection(int selStartX, int selStartY, int selEndX, int selEndY) {
+	_selectedText.startX = selStartX;
+	_selectedText.startY = selStartY;
+	_selectedText.endX = selEndX;
+	_selectedText.endY = selEndY;
+}
+
 MacTextWindow::~MacTextWindow() {
 }
 
-const Font *MacTextWindow::getTextWindowFont() {
+const MacFont *MacTextWindow::getTextWindowFont() {
 	return _font;
 }
 
