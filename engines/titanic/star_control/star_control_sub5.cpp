@@ -318,7 +318,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					sub12->proc28(2, gridEntry, tempV);
+					tempV = sub12->proc28(2, gridEntry);
 					gridEntry._position._x = tempV._x;
 					gridEntry._position._y = tempV._y + v2;
 				}
@@ -340,7 +340,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					sub12->proc28(0, gridEntry, tempV);
+					tempV = sub12->proc28(0, gridEntry);
 					gridEntry._position._x = tempV._x + v1;
 					gridEntry._position._y = tempV._y + v2;
 				}
@@ -362,7 +362,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					sub12->proc28(1, gridEntry, tempV);
+					tempV = sub12->proc28(1, gridEntry);
 					gridEntry._position._x = tempV._x + v1;
 					gridEntry._position._y = tempV._y + v2;
 				}
@@ -432,7 +432,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			sub12->proc28(2, gridEntry, tempV);
+			tempV = sub12->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + v1;
 			gridEntry._position._y = tempV._y + v2;
 		}
@@ -454,7 +454,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			sub12->proc28(2, gridEntry, tempV);
+			tempV = sub12->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + v1;
 			gridEntry._position._y = tempV._y + v2;
 		}
@@ -476,7 +476,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			sub12->proc28(2, gridEntry, tempV);
+			tempV = sub12->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + v1;
 			gridEntry._position._y = tempV._y + v2;
 		}

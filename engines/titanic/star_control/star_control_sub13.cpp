@@ -199,15 +199,17 @@ FPose CStarControlSub13::getSub2() {
 	return _sub2;
 }
 
-void CStarControlSub13::fn16(int index, const FVector &src, FVector &dest) {
+FVector CStarControlSub13::fn16(int index, const FVector &src) {
 	FPose temp = getSub1();
 
+	FVector dest;
 	dest._x = temp._row3._x * src._z + temp._row2._x * src._y
 		+ src._x * temp._row1._x + temp._vector._x;
 	dest._y = temp._row3._y * src._z + temp._row2._y * src._y
 		+ src._x * temp._row1._y + temp._vector._y;
 	dest._z = temp._row3._z * src._z + temp._row2._z * src._y
 		+ src._x * temp._row1._z + temp._vector._z;
+	return dest;
 }
 
 FVector CStarControlSub13::fn17(int index, const FVector &src) {

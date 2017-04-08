@@ -45,8 +45,7 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 		double hyp = vector1._x * vector1._x + vector1._y * vector1._y + vector1._z * vector1._z;
 
 		if (vector1._z > threshold && hyp >= 1.0e12 && hyp < MAX_VAL) {
-			vector2.clear();
-			sub12->proc28(2, vector1, vector2);
+			vector2 = sub12->proc28(2, vector1);
 
 			const Common::Point pt((int)(vector2._x + vWidth2 - -0.5),
 				(int)(vector2._y + vHeight2 - -0.5));

@@ -92,7 +92,7 @@ public:
 	void fn15(const FMatrix &matrix);
 	FPose getSub1();
 	FPose getSub2();
-	void fn16(int index, const FVector &src, FVector &dest);
+	FVector fn16(int index, const FVector &src);
 	FVector fn17(int index, const FVector &src);
 	FVector fn18(int index, const FVector &src);
 	void fn19(double *v1, double *v2, double *v3, double *v4);

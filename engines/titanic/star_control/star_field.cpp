@@ -188,13 +188,12 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 
 	const CBaseStarEntry *dataP = _sub7.getDataPtr(_sub8._fieldC);
 	v2 = dataP->_position;
-	FVector tv;
-	sub12->proc29(2, v2, tv);
+	FVector tv = sub12->proc29(2, v2);
 
 	if (sub12->proc25() >= tv._z)
 		return -1.0;
 
-	sub12->proc28(2, tv, tv);
+	tv = sub12->proc28(2, tv);
 
 	v1 = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);

@@ -50,8 +50,7 @@ void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 			+ pose._row2._z * star._position._y + pose._vector._z; 
 
 		if (newV._z > threshold) {
-			FVector vTemp;
-			sub12->proc28(2, newV, vTemp);
+			FVector vTemp = sub12->proc28(2, newV);
 
 			FRect r1(center._x + vTemp._x, center._y + vTemp._y,
 				center._x + vTemp._x + 4.0, center._y + vTemp._y + 4.0);

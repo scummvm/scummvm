@@ -92,8 +92,8 @@ public:
 	virtual double proc25() const;
 	virtual double proc26() const;
 	virtual int proc27() const;
-	virtual void proc28(int index, const FVector &src, FVector &dest);
-	virtual void proc29(int index, const FVector &src, FVector &dest);
+	virtual FVector proc28(int index, const FVector &src);
+	virtual FVector proc29(int index, const FVector &src);
 	virtual FVector proc30(int index, const FVector &v);
 	virtual FVector proc31(int index, const FVector &v);
 
