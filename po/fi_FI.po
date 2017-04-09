@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-23 02:44+0200\n"
-"PO-Revision-Date: 2017-04-09 20:49+0000\n"
+"PO-Revision-Date: 2017-04-23 11:31+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3545,9 +3545,8 @@ msgid ""
 msgstr "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
 
 #: engines/sci/detection.cpp:791
-#, fuzzy
 msgid "(Autosave)"
-msgstr "Autom. tallennus:"
+msgstr "(Autom. tallennus)"
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
