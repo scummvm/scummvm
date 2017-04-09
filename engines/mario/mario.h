@@ -42,6 +42,8 @@
 #include "graphics/surface.h"
 #include "image/bmp.h"
 
+#include "mario/console.h"
+
 namespace Mario {
 enum MarioDebugChannels {
 	kDebugGeneral = 1 << 0
@@ -86,11 +88,13 @@ private:
 	} _scenes[kMaxScene];
 
 	Image::ImageDecoder *_image;
+	Console *_console;
 
 	bool _showScoreFl;
 	bool _setDurationFl;
 	bool _leftButtonDownFl;
 	bool _endGameFl;
+	bool _timerInstalled; 
 	int	 _curSceneIdx, _prvSceneIdx;
 	int	 _curBitmapIdx;
 	int	 _curChoice;

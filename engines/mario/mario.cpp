@@ -40,16 +40,20 @@ namespace Mario {
 
 MarioGame::MarioGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_image = nullptr;
+	_console = nullptr;
+	_timerInstalled = false;
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 }
 
 MarioGame::~MarioGame() {
-	if (_image)
-		delete _image;
+	delete _image;
+	delete _console;
 }
 
 Common::Error MarioGame::run() {
 	initGraphics(640, 480, true);
+	_console = new Console(this);
+
 	g_system->showMouse(true);
 
 	readTables("game.bin");
@@ -87,7 +91,15 @@ Common::Error MarioGame::run() {
 						_actions.push(ChangeScene);
 						_leftButtonDownFl = false;
 					}
+				} else if (_console->_allowSkip && _timerInstalled) {
+					// Allows to skip speech by skipping wait delay
+					onTimer(this);
 				}
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
+					_console->attach();
+
 				break;
 			default:
 				break;
@@ -146,6 +158,7 @@ void MarioGame::drawScreen() {
 		if (_setDurationFl) {
 			g_system->getTimerManager()->removeTimerProc(onTimer);
 			g_system->getTimerManager()->installTimerProc(onTimer, _bitmaps[_curBitmapIdx]._duration * 100 * 1000, this, "timer");
+			_timerInstalled = true;
 			_actions.push(UpdateScene);
 		}
 
@@ -175,6 +188,8 @@ void MarioGame::drawScreen() {
 		g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
 	}
+
+	_console->onFrame();
 }
 
 void MarioGame::playSound() {
@@ -242,6 +257,7 @@ void MarioGame::changeScene() {
 			_actions.push(UpdateScene);
 			_actions.push(Redraw);
 			g_system->getTimerManager()->removeTimerProc(onTimer);
+			_timerInstalled = false;
 		} else {
 			_curSceneIdx = getSceneNumb(_scenes[_curSceneIdx]._choices[_curChoice]._sceneIdx);
 			_actions.push(ShowScene);
@@ -251,6 +267,7 @@ void MarioGame::changeScene() {
 
 void MarioGame::processTimer() {
 	debugC(7, kDebugGeneral, "%s", __FUNCTION__);
+	_timerInstalled = false;
 	if (!_endGameFl)
 		_actions.push(Redraw);
 }

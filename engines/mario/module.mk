@@ -2,6 +2,7 @@ MODULE := engines/mario
 
 MODULE_OBJS = \
 	mario.o \
+	console.o \
 	detection.o
 
 # This module can be built as a plugin
