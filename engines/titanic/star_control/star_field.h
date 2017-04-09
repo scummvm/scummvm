@@ -24,7 +24,7 @@
 #define TITANIC_STAR_FIELD_H
 
 #include "titanic/star_control/star_control_sub2.h"
-#include "titanic/star_control/star_control_sub5.h"
+#include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_control_sub7.h"
 #include "titanic/star_control/star_control_sub8.h"
 #include "titanic/star_control/star_points1.h"
@@ -38,7 +38,7 @@ private:
 	CStarControlSub8 _sub8;
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
-	CStarControlSub5 _sub5;
+	CStarCloseup _starCloseup;
 	bool _points1On;
 	bool _points2On;
 	StarMode _mode;
@@ -122,7 +122,7 @@ public:
 	void fn6(CVideoSurface *surface, CStarControlSub12 *sub12);
 	void fn7();
 	void fn8(CVideoSurface *surface);
-	void fn9() { _sub5.fn1(); }
+	void fn9() { _starCloseup.fn1(); }
 
 	/**
 	 * Called when the starfield is clicked

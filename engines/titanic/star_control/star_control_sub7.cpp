@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	if (_data.empty())
 		return;
 

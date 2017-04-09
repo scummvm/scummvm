@@ -123,16 +123,16 @@ void CBaseStar::resetEntry(CBaseStarEntry &entry) {
 		entry._data[idx] = 0;
 }
 
-void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	if (!_data.empty()) {
 		switch (sub12->proc27()) {
 		case 0:
 			switch (surfaceArea->_bpp) {
 			case 1:
-				draw1(surfaceArea, sub12, sub5);
+				draw1(surfaceArea, sub12, closeup);
 				break;
 			case 2:
-				draw2(surfaceArea, sub12, sub5);
+				draw2(surfaceArea, sub12, closeup);
 				break;
 			default:
 				break;
@@ -142,10 +142,10 @@ void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarC
 		case 2:
 			switch (surfaceArea->_bpp) {
 			case 1:
-				draw3(surfaceArea, sub12, sub5);
+				draw3(surfaceArea, sub12, closeup);
 				break;
 			case 2:
-				draw4(surfaceArea, sub12, sub5);
+				draw4(surfaceArea, sub12, closeup);
 				break;
 			default:
 				break;
@@ -158,7 +158,7 @@ void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarC
 	}
 }
 
-void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -184,7 +184,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ; 
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
+			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
 				surfaceArea, sub12);
 			continue;
 		}
@@ -243,7 +243,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -269,7 +269,7 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
+			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
 				surfaceArea, sub12);
 			continue;
 		}
@@ -329,7 +329,7 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -358,7 +358,7 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
+			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
 				surfaceArea, sub12);
 			continue;
 		}
@@ -436,7 +436,7 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5) {
+void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -465,7 +465,7 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
-			sub5->proc2(pose, vector, centroid._x, centroid._y, total2,
+			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
 				surfaceArea, sub12);
 			continue;
 		}

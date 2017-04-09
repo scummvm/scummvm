@@ -25,7 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/frange.h"
-#include "titanic/star_control/star_control_sub5.h"
+#include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
@@ -65,10 +65,10 @@ struct CStarPosition : public Common::Point {
 
 class CBaseStar {
 private:
-	void draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
-	void draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
-	void draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
-	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+	void draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
+	void draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
+	void draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
+	void draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
 protected:
 	FRange _minMax;
 	double _minVal;
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarControlSub5 *sub5);
+	virtual void draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
 
 	virtual bool loadYale(int v1) { return true; }
 

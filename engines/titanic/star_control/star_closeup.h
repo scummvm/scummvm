@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB5_H
-#define TITANIC_STAR_CONTROL_SUB5_H
+#ifndef TITANIC_STAR_CLOSEUP_H
+#define TITANIC_STAR_CLOSEUP_H
 
 #include "common/array.h"
 #include "titanic/star_control/fvector.h"
@@ -33,7 +33,10 @@ namespace Titanic {
 
 class CStarControlSub12;
 
-class CStarControlSub5 {
+/**
+ * Handles drawing a 3D rendered closeup of a star
+ */
+class CStarCloseup {
 	struct Data1 {
 		int _index1;
 		int _index2;
@@ -112,12 +115,17 @@ private:
 	 */
 	bool setup2(int val1, int val2);
 public:
-	CStarControlSub5();
-	virtual ~CStarControlSub5() {}
+	CStarCloseup();
+	virtual ~CStarCloseup() {}
 
 	virtual bool setup();
-	virtual void proc2(const FPose &pose, const FVector &vector, double v1, double v2, double v3,
+
+	/**
+	 * Draws the star globe
+	 */
+	virtual void draw(const FPose &pose, const FVector &vector, const FVector &vector2,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+
 	virtual void proc3(CErrorCode *errorCode);
 
 	bool get4() const { return _flag; }
@@ -128,4 +136,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB5_H */
+#endif /* TITANIC_STAR_CLOSEUP_H */

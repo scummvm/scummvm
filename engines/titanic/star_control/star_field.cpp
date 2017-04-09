@@ -54,7 +54,7 @@ void CStarField::save(SimpleFile *file, int indent) {
 bool CStarField::initDocument() {
 	bool valid = setup() && _points1.initialize();
 	if (valid)
-		valid = _sub5.setup();
+		valid = _starCloseup.setup();
 	if (valid)
 		valid = _points1.initialize();
 	if (valid)
@@ -65,7 +65,7 @@ bool CStarField::initDocument() {
 
 void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	CSurfaceArea surfaceArea(surface);
-	draw(&surfaceArea, sub12, &_sub5);
+	draw(&surfaceArea, sub12, &_starCloseup);
 	if (_showCrosshairs)
 		drawCrosshairs(&surfaceArea);
 
@@ -97,11 +97,11 @@ void CStarField::set2(int val) {
 }
 
 int CStarField::get54() const {
-	return _sub5.get4();
+	return _starCloseup.get4();
 }
 
 void CStarField::set54(int val) {
-	_sub5.set4(val);
+	_starCloseup.set4(val);
 }
 
 StarMode CStarField::getMode() const {
@@ -139,7 +139,7 @@ bool CStarField::isSolved() const {
 }
 
 void CStarField::fn1(CErrorCode *errorCode) {
-	_sub5.proc3(errorCode);
+	_starCloseup.proc3(errorCode);
 }
 
 void CStarField::drawCrosshairs(CSurfaceArea *surfaceArea) {

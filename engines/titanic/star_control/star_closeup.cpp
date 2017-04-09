@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub5.h"
+#include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/titanic.h"
 
@@ -28,14 +28,14 @@ namespace Titanic {
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
 
-void CStarControlSub5::SubEntry::clear() {
+void CStarCloseup::SubEntry::clear() {
 	_data1.clear();
 	_data2.clear();
 }
 
 /*------------------------------------------------------------------------*/
 
-bool CStarControlSub5::SineTable::setup() {
+bool CStarCloseup::SineTable::setup() {
 	if (_data.empty()) {
 		_data.resize(1024);
 		for (int idx = 0; idx < 1024; ++idx)
@@ -47,10 +47,10 @@ bool CStarControlSub5::SineTable::setup() {
 
 /*------------------------------------------------------------------------*/
 
-CStarControlSub5::CStarControlSub5() : _flag(true), _multiplier(0) {
+CStarCloseup::CStarCloseup() : _flag(true), _multiplier(0) {
 }
 
-bool CStarControlSub5::setup() {
+bool CStarCloseup::setup() {
 	bool success = setupEntry(5, 5, 4, 1024.0)
 		&& setupEntry(7, 7, 3, 1024.0)
 		&& setupEntry(8, 8, 2, 1024.0)
@@ -62,7 +62,7 @@ bool CStarControlSub5::setup() {
 	return success;
 }
 
-bool CStarControlSub5::setup2(int val1, int val2) {
+bool CStarCloseup::setup2(int val1, int val2) {
 	const double FACTOR = 2 * M_PI / 360.0;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
@@ -189,7 +189,7 @@ bool CStarControlSub5::setup2(int val1, int val2) {
 	return false;
 }
 
-void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1, double v2, double v3,
+void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
 		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
 	double val1 = sub12->proc25();
@@ -205,7 +205,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 	double f41, f42, f43, f44, f45, f46;
 	FVector tempV;
 
-	if (v3 >= 6.0e9) {
+	if (vector2._z >= 6.0e9) {
 		int count, start;
 		if (vector._x != 0.0 && (vector._y != 0.0 || vector._z != 0.0)) {
 			// WORKAROUND: Ignoring non-sensical randSeed((int)vector._x);
@@ -320,7 +320,7 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 					GridEntry &gridEntry = _grid[ctr2];
 					tempV = sub12->proc28(2, gridEntry);
 					gridEntry._position._x = tempV._x;
-					gridEntry._position._y = tempV._y + v2;
+					gridEntry._position._y = tempV._y + vector2._y;
 				}
 
 				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
@@ -341,8 +341,8 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
 					tempV = sub12->proc28(0, gridEntry);
-					gridEntry._position._x = tempV._x + v1;
-					gridEntry._position._y = tempV._y + v2;
+					gridEntry._position._x = tempV._x + vector2._x;
+					gridEntry._position._y = tempV._y + vector2._y;
 				}
 
 				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
@@ -363,8 +363,8 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
 					tempV = sub12->proc28(1, gridEntry);
-					gridEntry._position._x = tempV._x + v1;
-					gridEntry._position._y = tempV._y + v2;
+					gridEntry._position._x = tempV._x + vector2._x;
+					gridEntry._position._y = tempV._y + vector2._y;
 				}
 
 				for (int ctr2 = 0; ctr2 < size1; ++ctr2) {
@@ -384,11 +384,11 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 	uint pixel1 = 0x81EEF5, pixel2 = 0xF5, pixel3 = 0x810000;
 	int arrIndex = 0;
 
-	if (v3 >= 200000000.0) {
-		if (v3 >= 900000000.0) {
-			if (v3 >= 6000000000.0) {
+	if (vector2._z >= 200000000.0) {
+		if (vector2._z >= 900000000.0) {
+			if (vector2._z >= 6000000000.0) {
 				arrIndex = 3;
-				if (v3 >= 1.0e10)
+				if (vector2._z >= 1.0e10)
 					arrIndex = 4;
 			} else {
 				arrIndex = 2;
@@ -433,8 +433,8 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
 			tempV = sub12->proc28(2, gridEntry);
-			gridEntry._position._x = tempV._x + v1;
-			gridEntry._position._y = tempV._y + v2;
+			gridEntry._position._x = tempV._x + vector2._x;
+			gridEntry._position._y = tempV._y + vector2._y;
 		}
 
 		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
@@ -455,8 +455,8 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
 			tempV = sub12->proc28(2, gridEntry);
-			gridEntry._position._x = tempV._x + v1;
-			gridEntry._position._y = tempV._y + v2;
+			gridEntry._position._x = tempV._x + vector2._x;
+			gridEntry._position._y = tempV._y + vector2._y;
 		}
 
 		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
@@ -477,8 +477,8 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
 			tempV = sub12->proc28(2, gridEntry);
-			gridEntry._position._x = tempV._x + v1;
-			gridEntry._position._y = tempV._y + v2;
+			gridEntry._position._x = tempV._x + vector2._x;
+			gridEntry._position._y = tempV._y + vector2._y;
 		}
 
 		for (uint ctr = 0; ctr < entry._data1.size(); ++ctr) {
@@ -494,16 +494,16 @@ void CStarControlSub5::proc2(const FPose &pose, const FVector &vector, double v1
 	}
 }
 
-void CStarControlSub5::proc3(CErrorCode *errorCode) {
+void CStarCloseup::proc3(CErrorCode *errorCode) {
 	++_multiplier;
 	errorCode->set();
 }
 
-void CStarControlSub5::fn1() {
+void CStarCloseup::fn1() {
 	_flag = !_flag;
 }
 
-bool CStarControlSub5::setupEntry(int width, int height, int index, double val) {
+bool CStarCloseup::setupEntry(int width, int height, int index, double val) {
 	if (width < 2 || height < 3)
 		return false;
 

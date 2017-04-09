@@ -440,8 +440,8 @@ MODULE_OBJS := \
 	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
+	star_control/star_closeup.o \
 	star_control/star_control_sub2.o \
-	star_control/star_control_sub5.o \
 	star_control/star_control_sub7.o \
 	star_control/star_control_sub8.o \
 	star_control/star_control_sub12.o \
