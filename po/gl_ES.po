@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-06 22:57+0200\n"
+"POT-Creation-Date: 2017-04-09 22:09+0200\n"
 "PO-Revision-Date: 2016-11-28 15:51+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -387,20 +387,20 @@ msgstr "Camiño de gardado:"
 #: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1544
 #: gui/options.cpp:1552 gui/options.cpp:1561 gui/options.cpp:1741
 #: gui/options.cpp:1747 gui/options.cpp:1755 gui/options.cpp:1778
-#: gui/options.cpp:1807 gui/options.cpp:1813 gui/options.cpp:1820
-#: gui/options.cpp:1828 gui/options.cpp:2011 gui/options.cpp:2014
-#: gui/options.cpp:2021 gui/options.cpp:2031
+#: gui/options.cpp:1811 gui/options.cpp:1817 gui/options.cpp:1824
+#: gui/options.cpp:1832 gui/options.cpp:2027 gui/options.cpp:2030
+#: gui/options.cpp:2037 gui/options.cpp:2047
 msgctxt "path"
 msgid "None"
 msgstr "Ningún"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
-#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1801
-#: gui/options.cpp:2017 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1805
+#: gui/options.cpp:2033 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Predefinido"
 
-#: gui/editgamedialog.cpp:450 gui/options.cpp:2025
+#: gui/editgamedialog.cpp:450 gui/options.cpp:2041
 msgid "Select SoundFont"
 msgstr "Seleccionar SoundFont"
 
@@ -408,7 +408,7 @@ msgstr "Seleccionar SoundFont"
 msgid "Select additional game directory"
 msgstr "Selecciona un directorio con datos adicionais"
 
-#: gui/editgamedialog.cpp:502 gui/options.cpp:1948
+#: gui/editgamedialog.cpp:502 gui/options.cpp:1964
 msgid "Select directory for saved games"
 msgstr "Selecciona un directorio para ficheiros de gardado"
 
@@ -1249,7 +1249,7 @@ msgstr "Almacenamento:"
 msgid "Active cloud storage"
 msgstr "Almacenamento na nube activo"
 
-#: gui/options.cpp:1668 gui/options.cpp:2228
+#: gui/options.cpp:1668 gui/options.cpp:2244
 msgid "<none>"
 msgstr "<ningún>"
 
@@ -1315,7 +1315,7 @@ msgstr "Executar servidor"
 msgid "Run local webserver"
 msgstr "Executar servidor web local"
 
-#: gui/options.cpp:1686 gui/options.cpp:2338
+#: gui/options.cpp:1686 gui/options.cpp:2354
 msgid "Not running"
 msgstr "Non se está a executar"
 
@@ -1348,64 +1348,72 @@ msgstr ""
 msgid "Apply"
 msgstr "Aplicar"
 
-#: gui/options.cpp:1863
+#: gui/options.cpp:1858
 msgid "Failed to change cloud storage!"
 msgstr "Erro ao cambiar o almacenamento na nube!"
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1861
 msgid "Another cloud storage is already active."
 msgstr "Xa está activo outro almacenamento na nube."
 
-#: gui/options.cpp:1902
-msgid ""
-"The theme you selected does not support your current language. If you want "
-"to use this theme you need to switch to another language first."
-msgstr ""
-"O tema seleccionado non é compatible co idioma actual. Para empregar o tema, "
-"deberás cambiar antes o idioma da interfaz."
+#: gui/options.cpp:1929
+#, fuzzy
+msgid "Theme does not support selected language!"
+msgstr "O complemento do motor non é compatible cos ficheiros de gardado"
 
-#: gui/options.cpp:1955
+#: gui/options.cpp:1932
+#, fuzzy
+msgid "Theme cannot be loaded!"
+msgstr "Non se puido cargar a partida"
+
+#: gui/options.cpp:1935
+msgid ""
+"\n"
+"Misc settings will be restored."
+msgstr ""
+
+#: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Non é posible escribir no directorio elixido. Selecciona outro."
 
-#: gui/options.cpp:1964
+#: gui/options.cpp:1980
 msgid "Select directory for GUI themes"
 msgstr "Seleccionar directorio para temas de interfaz"
 
-#: gui/options.cpp:1974
+#: gui/options.cpp:1990
 msgid "Select directory for extra files"
 msgstr "Seleccionar directorio para ficheiros adicionais"
 
-#: gui/options.cpp:1985
+#: gui/options.cpp:2001
 msgid "Select directory for plugins"
 msgstr "Seleccionar directorio para complementos"
 
-#: gui/options.cpp:1997
+#: gui/options.cpp:2013
 msgid "Select directory for Files Manager /root/"
 msgstr "Seleccionar directorio para /root/ de xestor de ficheiros"
 
-#: gui/options.cpp:2235
+#: gui/options.cpp:2251
 #, c-format
 msgid "%llu bytes"
 msgstr "%llu bytes"
 
-#: gui/options.cpp:2243
+#: gui/options.cpp:2259
 msgid "<right now>"
 msgstr "<agora mesmo>"
 
-#: gui/options.cpp:2245
+#: gui/options.cpp:2261
 msgid "<never>"
 msgstr "<nunca>"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2345
 msgid "Stop server"
 msgstr "Deter servidor"
 
-#: gui/options.cpp:2330
+#: gui/options.cpp:2346
 msgid "Stop local webserver"
 msgstr "Deter servidor web local"
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2437
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -4540,6 +4548,13 @@ msgstr ""
 "Estes datos gardados empregan a versión %u. No entanto, o motor só é "
 "compatíbel até a versión %d. Cómpre descargar unha versión actualizada do "
 "motor para empregar estes datos gardados."
+
+#~ msgid ""
+#~ "The theme you selected does not support your current language. If you "
+#~ "want to use this theme you need to switch to another language first."
+#~ msgstr ""
+#~ "O tema seleccionado non é compatible co idioma actual. Para empregar o "
+#~ "tema, deberás cambiar antes o idioma da interfaz."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"

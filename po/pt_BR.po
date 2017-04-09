@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-06 22:57+0200\n"
+"POT-Creation-Date: 2017-04-09 22:09+0200\n"
 "PO-Revision-Date: 2017-03-03 22:26+0000\n"
 "Last-Translator: rafaelmessias <rmmartins@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -389,20 +389,20 @@ msgstr "Pasta para Salvar:"
 #: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1544
 #: gui/options.cpp:1552 gui/options.cpp:1561 gui/options.cpp:1741
 #: gui/options.cpp:1747 gui/options.cpp:1755 gui/options.cpp:1778
-#: gui/options.cpp:1807 gui/options.cpp:1813 gui/options.cpp:1820
-#: gui/options.cpp:1828 gui/options.cpp:2011 gui/options.cpp:2014
-#: gui/options.cpp:2021 gui/options.cpp:2031
+#: gui/options.cpp:1811 gui/options.cpp:1817 gui/options.cpp:1824
+#: gui/options.cpp:1832 gui/options.cpp:2027 gui/options.cpp:2030
+#: gui/options.cpp:2037 gui/options.cpp:2047
 msgctxt "path"
 msgid "None"
 msgstr "Nenhum(a)"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
-#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1801
-#: gui/options.cpp:2017 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1805
+#: gui/options.cpp:2033 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Padrão"
 
-#: gui/editgamedialog.cpp:450 gui/options.cpp:2025
+#: gui/editgamedialog.cpp:450 gui/options.cpp:2041
 msgid "Select SoundFont"
 msgstr "Selecione o SoundFont"
 
@@ -410,7 +410,7 @@ msgstr "Selecione o SoundFont"
 msgid "Select additional game directory"
 msgstr "Selecione a pasta adicional do jogo"
 
-#: gui/editgamedialog.cpp:502 gui/options.cpp:1948
+#: gui/editgamedialog.cpp:502 gui/options.cpp:1964
 msgid "Select directory for saved games"
 msgstr "Selecione a pasta para os jogos salvos"
 
@@ -1262,7 +1262,7 @@ msgstr ""
 msgid "Active cloud storage"
 msgstr ""
 
-#: gui/options.cpp:1668 gui/options.cpp:2228
+#: gui/options.cpp:1668 gui/options.cpp:2244
 msgid "<none>"
 msgstr ""
 
@@ -1323,7 +1323,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:1686 gui/options.cpp:2338
+#: gui/options.cpp:1686 gui/options.cpp:2354
 #, fuzzy
 msgid "Not running"
 msgstr "Erro ao executar o jogo:"
@@ -1359,68 +1359,76 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: gui/options.cpp:1863
+#: gui/options.cpp:1858
 #, fuzzy
 msgid "Failed to change cloud storage!"
 msgstr "Falha ao salvar o jogo"
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1861
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:1902
-msgid ""
-"The theme you selected does not support your current language. If you want "
-"to use this theme you need to switch to another language first."
-msgstr ""
-"O tema que você selecionou não suporta seu idioma atual. Se você quiser usar "
-"este tema você precisa mudar para outro idioma."
+#: gui/options.cpp:1929
+#, fuzzy
+msgid "Theme does not support selected language!"
+msgstr "O programa atual não suporta salvar o progresso do jogo"
 
-#: gui/options.cpp:1955
+#: gui/options.cpp:1932
+#, fuzzy
+msgid "Theme cannot be loaded!"
+msgstr "O jogo NÃO foi carregado"
+
+#: gui/options.cpp:1935
+msgid ""
+"\n"
+"Misc settings will be restored."
+msgstr ""
+
+#: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "O diretório escolhido não pode ser usado. Por favor, selecione outro."
 
-#: gui/options.cpp:1964
+#: gui/options.cpp:1980
 msgid "Select directory for GUI themes"
 msgstr "Selecione a pasta para os temas da Interface de Uso Gráfico"
 
-#: gui/options.cpp:1974
+#: gui/options.cpp:1990
 msgid "Select directory for extra files"
 msgstr "Selecione a pasta para os arquivos extras"
 
-#: gui/options.cpp:1985
+#: gui/options.cpp:2001
 msgid "Select directory for plugins"
 msgstr "Selecione a pasta para os plugins"
 
-#: gui/options.cpp:1997
+#: gui/options.cpp:2013
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "Selecione a pasta para os arquivos extras"
 
-#: gui/options.cpp:2235
+#: gui/options.cpp:2251
 #, c-format
 msgid "%llu bytes"
 msgstr ""
 
-#: gui/options.cpp:2243
+#: gui/options.cpp:2259
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:2245
+#: gui/options.cpp:2261
 #, fuzzy
 msgid "<never>"
 msgstr "Nunca"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2345
 #, fuzzy
 msgid "Stop server"
 msgstr "Servidor:"
 
-#: gui/options.cpp:2330
+#: gui/options.cpp:2346
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2437
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -4554,6 +4562,13 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid ""
+#~ "The theme you selected does not support your current language. If you "
+#~ "want to use this theme you need to switch to another language first."
+#~ msgstr ""
+#~ "O tema que você selecionou não suporta seu idioma atual. Se você quiser "
+#~ "usar este tema você precisa mudar para outro idioma."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"

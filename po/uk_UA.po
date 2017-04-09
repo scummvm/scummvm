@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-06 22:57+0200\n"
+"POT-Creation-Date: 2017-04-09 22:09+0200\n"
 "PO-Revision-Date: 2017-03-04 21:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -391,20 +391,20 @@ msgstr "Шлях збер.:"
 #: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1544
 #: gui/options.cpp:1552 gui/options.cpp:1561 gui/options.cpp:1741
 #: gui/options.cpp:1747 gui/options.cpp:1755 gui/options.cpp:1778
-#: gui/options.cpp:1807 gui/options.cpp:1813 gui/options.cpp:1820
-#: gui/options.cpp:1828 gui/options.cpp:2011 gui/options.cpp:2014
-#: gui/options.cpp:2021 gui/options.cpp:2031
+#: gui/options.cpp:1811 gui/options.cpp:1817 gui/options.cpp:1824
+#: gui/options.cpp:1832 gui/options.cpp:2027 gui/options.cpp:2030
+#: gui/options.cpp:2037 gui/options.cpp:2047
 msgctxt "path"
 msgid "None"
 msgstr "Не завдано"
 
 #: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
-#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1801
-#: gui/options.cpp:2017 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:522 gui/options.cpp:1735 gui/options.cpp:1805
+#: gui/options.cpp:2033 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "За умовчанням"
 
-#: gui/editgamedialog.cpp:450 gui/options.cpp:2025
+#: gui/editgamedialog.cpp:450 gui/options.cpp:2041
 msgid "Select SoundFont"
 msgstr "Виберіть SoundFont"
 
@@ -412,7 +412,7 @@ msgstr "Виберіть SoundFont"
 msgid "Select additional game directory"
 msgstr "Виберіть додаткову папку гри"
 
-#: gui/editgamedialog.cpp:502 gui/options.cpp:1948
+#: gui/editgamedialog.cpp:502 gui/options.cpp:1964
 msgid "Select directory for saved games"
 msgstr "Виберіть папку для збережених ігор"
 
@@ -1249,7 +1249,7 @@ msgstr "Середовище:"
 msgid "Active cloud storage"
 msgstr "Активне хмарне середовище"
 
-#: gui/options.cpp:1668 gui/options.cpp:2228
+#: gui/options.cpp:1668 gui/options.cpp:2244
 msgid "<none>"
 msgstr "<немає>"
 
@@ -1312,7 +1312,7 @@ msgstr "Запустити сервер"
 msgid "Run local webserver"
 msgstr "Запускає локальний веб-сервер"
 
-#: gui/options.cpp:1686 gui/options.cpp:2338
+#: gui/options.cpp:1686 gui/options.cpp:2354
 msgid "Not running"
 msgstr "Вимкнено"
 
@@ -1345,64 +1345,72 @@ msgstr ""
 msgid "Apply"
 msgstr "Застосувати"
 
-#: gui/options.cpp:1863
+#: gui/options.cpp:1858
 msgid "Failed to change cloud storage!"
 msgstr "Не вдалося змінити хмарне середовище!"
 
-#: gui/options.cpp:1866
+#: gui/options.cpp:1861
 msgid "Another cloud storage is already active."
 msgstr "Інше хмарне середовище вже активне."
 
-#: gui/options.cpp:1902
-msgid ""
-"The theme you selected does not support your current language. If you want "
-"to use this theme you need to switch to another language first."
-msgstr ""
-"Вибрана тема не підтримує поточну мову. Якщо ви хочете використовувати цю "
-"тему, потрібно в першу чергу змінити мову."
+#: gui/options.cpp:1929
+#, fuzzy
+msgid "Theme does not support selected language!"
+msgstr "Втулок движка не підтримує збереження ігор"
 
-#: gui/options.cpp:1955
+#: gui/options.cpp:1932
+#, fuzzy
+msgid "Theme cannot be loaded!"
+msgstr "Гру НЕ БУЛО завантажено"
+
+#: gui/options.cpp:1935
+msgid ""
+"\n"
+"Misc settings will be restored."
+msgstr ""
+
+#: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
 
-#: gui/options.cpp:1964
+#: gui/options.cpp:1980
 msgid "Select directory for GUI themes"
 msgstr "Виберіть папку для тем GUI"
 
-#: gui/options.cpp:1974
+#: gui/options.cpp:1990
 msgid "Select directory for extra files"
 msgstr "Виберіть папку з додатковими файлами"
 
-#: gui/options.cpp:1985
+#: gui/options.cpp:2001
 msgid "Select directory for plugins"
 msgstr "Виберіть папку зі втулками"
 
-#: gui/options.cpp:1997
+#: gui/options.cpp:2013
 msgid "Select directory for Files Manager /root/"
 msgstr "Виберіть папку /root/ для Керування файлами"
 
-#: gui/options.cpp:2235
+#: gui/options.cpp:2251
 #, c-format
 msgid "%llu bytes"
 msgstr "%llu байт"
 
-#: gui/options.cpp:2243
+#: gui/options.cpp:2259
 msgid "<right now>"
 msgstr "<зараз>"
 
-#: gui/options.cpp:2245
+#: gui/options.cpp:2261
 msgid "<never>"
 msgstr "<ніколи>"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2345
 msgid "Stop server"
 msgstr "Вимкнути сервер"
 
-#: gui/options.cpp:2330
+#: gui/options.cpp:2346
 msgid "Stop local webserver"
 msgstr "Вимкнути локальний веб-сервер"
 
-#: gui/options.cpp:2421
+#: gui/options.cpp:2437
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -4514,6 +4522,13 @@ msgstr ""
 "Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
 "версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
 "файлу."
+
+#~ msgid ""
+#~ "The theme you selected does not support your current language. If you "
+#~ "want to use this theme you need to switch to another language first."
+#~ msgstr ""
+#~ "Вибрана тема не підтримує поточну мову. Якщо ви хочете використовувати цю "
+#~ "тему, потрібно в першу чергу змінити мову."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
