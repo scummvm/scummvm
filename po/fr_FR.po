@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-09 22:09+0200\n"
-"PO-Revision-Date: 2017-03-11 17:16+0000\n"
-"Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"PO-Revision-Date: 2017-04-09 21:10+0000\n"
+"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -379,7 +379,7 @@ msgstr "Sauvegardes :"
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1533 gui/options.cpp:1535
 #: gui/options.cpp:1536
 msgid "Specifies where your saved games are put"
-msgstr "Définie l'emplacement où les fichiers de sauvegarde sont créés"
+msgstr "Définit l'emplacement où les fichiers de sauvegarde sont créés"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1535
 msgctxt "lowres"
@@ -534,13 +534,14 @@ msgstr "Réinitialiser"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "Remet tous les réglages à leurs valeurs par défaut."
+msgstr "Remet tous les réglages FluidSynth à leurs valeurs par défaut."
 
 #: gui/fluidsynth-dialog.cpp:217
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Voulez-vous vraiment remettre tous les réglages à leurs valeurs par défaut ?"
+"Voulez-vous vraiment remettre tous les réglages FluidSynth à leurs valeurs "
+"par défaut ?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
@@ -571,7 +572,7 @@ msgstr "Affecter"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Sélectionnez une action et cliquez 'Affecter'"
+msgstr "Sélectionnez une action et cliquez sur 'Affecter'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
