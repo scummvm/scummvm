@@ -1619,7 +1619,7 @@ void GlobalOptionsDialog::build() {
 
 	// Select the currently configured language or default/English if
 	// nothing is specified.
-	if (ConfMan.hasKey("gui_language"))
+	if (ConfMan.hasKey("gui_language") && !ConfMan.get("gui_language").empty())
 		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
 	else
 #ifdef USE_DETECTLANG
@@ -1797,6 +1797,10 @@ void GlobalOptionsDialog::clean() {
 }
 
 void GlobalOptionsDialog::apply() {
+	OptionsDialog::apply();
+
+	bool isRebuildNeeded = false;
+
 	Common::String savePath(_savePath->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
@@ -1832,15 +1836,6 @@ void GlobalOptionsDialog::apply() {
 #endif
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-
-	GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
-	const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
-	if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
-		// FIXME: Actually, any changes (including the theme change) should
-		// only become active *after* the options dialog has closed.
-		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
-		ConfMan.set("gui_renderer", cfg, _domain);
-	}
 
 #ifdef USE_UPDATES
 	ConfMan.setInt("updates_check", _updatesPopUp->getSelectedTag());
@@ -1885,52 +1880,73 @@ void GlobalOptionsDialog::apply() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
+	Common::String oldThemeId = g_gui.theme()->getThemeId();
+	Common::String oldThemeName = g_gui.theme()->getThemeName();
 	if (!_newTheme.empty()) {
-#ifdef USE_TRANSLATION
-		Common::String lang = TransMan.getCurrentLanguage();
-#endif
-		Common::String oldTheme = g_gui.theme()->getThemeId();
-		if (g_gui.loadNewTheme(_newTheme)) {
-#ifdef USE_TRANSLATION
-			// If the charset has changed, it means the font were not found for the
-			// new theme. Since for the moment we do not support change of translation
-			// language without restarting, we let the user know about this.
-			if (lang != TransMan.getCurrentLanguage()) {
-				TransMan.setLanguage(lang.c_str());
-				g_gui.loadNewTheme(oldTheme);
-				_curTheme->setLabel(g_gui.theme()->getThemeName());
-				MessageDialog error(_("The theme you selected does not support your current language. If you want to use this theme you need to switch to another language first."));
-				error.runModal();
-			} else {
-#endif
-				ConfMan.set("gui_theme", _newTheme);
-#ifdef USE_TRANSLATION
-			}
-#endif
-		}
-		draw();
-		_newTheme.clear();
+		ConfMan.set("gui_theme", _newTheme);
 	}
+
 #ifdef USE_TRANSLATION
+	int selectedLang = _guiLanguagePopUp->getSelectedTag();
 	Common::String oldLang = ConfMan.get("gui_language");
-	int selLang = _guiLanguagePopUp->getSelectedTag();
-
-	ConfMan.set("gui_language", TransMan.getLangById(selLang));
-
-	Common::String newLang = ConfMan.get("gui_language").c_str();
+	Common::String newLang = TransMan.getLangById(selectedLang);
+	Common::String newCharset;
 	if (newLang != oldLang) {
-		// Activate the selected language
-		TransMan.setLanguage(selLang);
+		TransMan.setLanguage(newLang);
+		ConfMan.set("gui_language", newLang);
+		newCharset = TransMan.getCurrentCharset();
+		isRebuildNeeded = true;
+	}
+#endif
 
-		// Rebuild the Launcher and Options dialogs
-		g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
+	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
+	Common::String oldGfxConfig = ConfMan.get("gui_renderer");
+	Common::String newGfxConfig = GUI::ThemeEngine::findModeConfigName(gfxMode);
+	if (newGfxConfig != oldGfxConfig) {
+		ConfMan.set("gui_renderer", newGfxConfig, _domain);
+	}
+
+	if (_newTheme.empty())
+		_newTheme = oldThemeId;
+
+	if (!g_gui.loadNewTheme(_newTheme, gfxMode, true)) {
+		Common::String errorMessage;
+
+		_curTheme->setLabel(oldThemeName);
+		_newTheme = oldThemeId;
+		ConfMan.set("gui_theme", _newTheme);
+		gfxMode = GUI::ThemeEngine::findMode(oldGfxConfig);
+		_rendererPopUp->setSelectedTag(gfxMode);
+		newGfxConfig = oldGfxConfig;
+		ConfMan.set("gui_renderer", newGfxConfig, _domain);
+#ifdef USE_TRANSLATION
+		bool isCharsetEqual = (newCharset == TransMan.getCurrentCharset());
+		TransMan.setLanguage(oldLang);
+		_guiLanguagePopUp->setSelectedTag(selectedLang);
+		ConfMan.set("gui_language", oldLang);
+
+		if (!isCharsetEqual)
+			errorMessage = _("Theme does not support selected language!");
+		else
+#endif
+			errorMessage = _("Theme cannot be loaded!");
+
+		g_gui.loadNewTheme(_newTheme, gfxMode, true);
+		errorMessage += _("\nMisc settings will be restored.");
+		MessageDialog error(errorMessage);
+		error.runModal();
+	}
+
+	if (isRebuildNeeded) {
 		rebuild();
 		if (_launcher != 0)
 			_launcher->rebuild();
 	}
-#endif // USE_TRANSLATION
 
-	OptionsDialog::apply();
+	_newTheme.clear();
+
+	// Save config file
+	ConfMan.flushToDisk();
 }
 
 void GlobalOptionsDialog::close() {
