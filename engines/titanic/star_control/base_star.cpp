@@ -419,14 +419,14 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 
 			switch (entry._thickness) {
 			case 0:
-				*pixelP = rgb;
+				*pixelP |= rgb;
 				break;
 
 			case 1:
-				*pixelP = rgb;
-				*(pixelP + 1) = rgb;
-				*(pixelP + surfaceArea->_pitch / 2) = rgb;
-				*(pixelP + surfaceArea->_pitch / 2 + 1) = rgb;
+				*pixelP |= rgb;
+				*(pixelP + 1) |= rgb;
+				*(pixelP + surfaceArea->_pitch / 2) |= rgb;
+				*(pixelP + surfaceArea->_pitch / 2 + 1) |= rgb;
 				break;
 
 			default:
@@ -526,14 +526,14 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 
 			switch (entry._thickness) {
 			case 0:
-				*pixelP = rgb;
+				*pixelP |= rgb;
 				break;
 
 			case 1:
-				*pixelP = rgb;
-				*(pixelP + 1) = rgb;
-				*(pixelP + surfaceArea->_pitch / 2) = rgb;
-				*(pixelP + surfaceArea->_pitch / 2 + 1) = rgb;
+				*pixelP |= rgb;
+				*(pixelP + 1) |= rgb;
+				*(pixelP + surfaceArea->_pitch / 2) |= rgb;
+				*(pixelP + surfaceArea->_pitch / 2 + 1) |= rgb;
 				break;
 
 			default:
