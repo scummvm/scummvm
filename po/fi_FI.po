@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-09 22:09+0200\n"
-"PO-Revision-Date: 2017-03-05 16:43+0000\n"
+"PO-Revision-Date: 2017-04-09 20:49+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1349,20 +1349,20 @@ msgid "Another cloud storage is already active."
 msgstr "Toinen pilvitila on jo aktiivinen."
 
 #: gui/options.cpp:1929
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Pelimoottoriliitännäinen ei tue pelitallenteita"
+msgstr "Teema ei tue valittua kieltä!"
 
 #: gui/options.cpp:1932
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Peliä EI ladattu"
+msgstr "Teemaa ei pystytä lataamaan!"
 
 #: gui/options.cpp:1935
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Muut asetukset palautetaan."
 
 #: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
