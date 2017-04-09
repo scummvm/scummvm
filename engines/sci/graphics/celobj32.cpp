@@ -263,7 +263,7 @@ int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 struct READER_Uncompressed {
 private:
 #ifndef NDEBUG
-	const int16 _sourceHeight;
+	int16 _sourceHeight;
 #endif
 	const byte *_pixels;
 	const int16 _sourceWidth;
@@ -280,6 +280,9 @@ public:
 
 		if (numPixels < celObj._width * celObj._height) {
 			warning("%s is truncated", celObj._info.toString().c_str());
+#ifndef NDEBUG
+			_sourceHeight = numPixels / celObj._width;
+#endif
 		}
 
 		_pixels = resource.getUnsafeDataAt(pixelsOffset, numPixels);
