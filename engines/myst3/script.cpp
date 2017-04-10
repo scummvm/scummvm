@@ -1450,7 +1450,7 @@ void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
 	uint16 var = cmd.args[0];
 	uint16 end = cmd.args[1];
 
-	if (end > var) {
+	if (var > end) {
 		goToElse(c);
 		return;
 	}
