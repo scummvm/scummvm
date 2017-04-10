@@ -440,6 +440,12 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	FPose pose = camera->getPose();
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
+	//**DEBUG** Testing star closeup
+	pose._row1 = FVector(-0.309339792, 0.777301192, -0.547824562);
+	pose._row2 = FVector(0.796925128, -0.102426603, -0.595331132);
+	pose._row3 = FVector(-0.518863380, -0.620734751, -0.587766230);
+	pose._vector = FVector(28068592.0, 5345916.50, -116580624.0);
+
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
 	double threshold = camera->getThreshold();
@@ -465,6 +471,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;
 
 		if (total2 < 1.0e12) {
+			// We're in close proximity to the given star, so draw a closeup of it
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
 				surfaceArea, camera);
 			continue;
