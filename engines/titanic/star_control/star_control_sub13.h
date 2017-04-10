@@ -24,7 +24,7 @@
 #define TITANIC_STAR_CONTROL_SUB13_H
 
 #include "titanic/support/simple_file.h"
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/fpose.h"
 #include "titanic/star_control/fmatrix.h"
 

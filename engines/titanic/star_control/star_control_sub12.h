@@ -26,7 +26,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/star_control_sub20.h"
 #include "titanic/star_control/error_code.h"

@@ -431,7 +431,7 @@ MODULE_OBJS := \
 	sound/water_lapping_sounds.o \
 	sound/wave_file.o \
 	star_control/star_control.o \
-	star_control/base_star.o \
+	star_control/base_stars.o \
 	star_control/dmatrix.o \
 	star_control/dvector.o \
 	star_control/fmatrix.o \

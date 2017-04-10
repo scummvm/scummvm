@@ -63,7 +63,10 @@ struct CStarPosition : public Common::Point {
 	}
 };
 
-class CBaseStar {
+/**
+ * Base class for views that draw a set of stars in simulated 3D space
+ */
+class CBaseStars {
 private:
 	void draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
 	void draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup);
@@ -94,8 +97,8 @@ protected:
 public:
 	Common::Array<CBaseStarEntry> _data;
 public:
-	CBaseStar();
-	virtual ~CBaseStar() {}
+	CBaseStars();
+	virtual ~CBaseStars() {}
 
 	/**
 	 * Draw the item

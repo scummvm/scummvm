@@ -23,10 +23,10 @@
 #ifndef TITANIC_STAR_CONTROL_SUB7_H
 #define TITANIC_STAR_CONTROL_SUB7_H
 
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 namespace Titanic {
 
-class CStarControlSub7 : public CBaseStar {
+class CStarControlSub7 : public CBaseStars {
 public:
 	virtual ~CStarControlSub7() { clear(); }
 

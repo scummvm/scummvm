@@ -25,7 +25,7 @@
 namespace Titanic {
 
 void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
-	if (_star->_data.empty())
+	if (_stars->_data.empty())
 		return;
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
@@ -36,8 +36,8 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 	FVector vTemp, vector1, vector2;
 	double val1, green, blue, red;
 
-	for (int idx = 0; idx < _star->size(); ++idx) {
-		const CBaseStarEntry &se = _star->_data[idx];
+	for (int idx = 0; idx < _stars->size(); ++idx) {
+		const CBaseStarEntry &se = _stars->_data[idx];
 		vTemp = se._position;
 		vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;
 		vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y;

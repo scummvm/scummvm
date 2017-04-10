@@ -21,7 +21,7 @@
  */
 
 #include "common/rect.h"
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/surface_area.h"
 
@@ -32,10 +32,10 @@ namespace Titanic {
 
 class CBaseStarRef {
 protected:
-	CBaseStar *_star;
+	CBaseStars *_stars;
 public:
-	CBaseStarRef(CBaseStar *star) : _star(star) {}
-	CBaseStarRef() : _star(nullptr) {}
+	CBaseStarRef(CBaseStars *stars) : _stars(stars) {}
+	CBaseStarRef() : _stars(nullptr) {}
 	virtual ~CBaseStarRef() {}
 
 	void process(CSurfaceArea *surface, CStarControlSub12 *sub12);
@@ -49,8 +49,8 @@ private:
 public:
 	int _index;
 public:
-	CStarRef1(CBaseStar *star, const Common::Point &pt) :
-		CBaseStarRef(star), _position(pt), _index(-1) {}
+	CStarRef1(CBaseStars *stars, const Common::Point &pt) :
+		CBaseStarRef(stars), _position(pt), _index(-1) {}
 	virtual ~CStarRef1() {}
 
 	virtual bool check(const Common::Point &pt, int index);
@@ -62,8 +62,8 @@ private:
 public:
 	int _index;
 public:
-	CStarRef2(CBaseStar *star, Common::Array<CStarPosition> *positions) :
-		CBaseStarRef(star), _positions(positions), _index(0) {}
+	CStarRef2(CBaseStars *stars, Common::Array<CStarPosition> *positions) :
+		CBaseStarRef(stars), _positions(positions), _index(0) {}
 	virtual ~CStarRef2() {}
 
 	virtual bool check(const Common::Point &pt, int index);
@@ -73,7 +73,7 @@ class CStarRef3 : public CBaseStarRef {
 public:
 	int _index;
 public:
-	CStarRef3(CBaseStar *star) :CBaseStarRef(star), _index(0) {}
+	CStarRef3(CBaseStars *stars) :CBaseStarRef(stars), _index(0) {}
 	virtual ~CStarRef3() {}
 
 	virtual bool check(const Common::Point &pt, int index);

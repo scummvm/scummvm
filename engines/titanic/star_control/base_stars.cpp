@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_control_sub12.h"
 #include "titanic/star_control/star_ref.h"
 #include "titanic/titanic.h"
@@ -56,15 +56,15 @@ bool CBaseStarEntry::operator==(const CBaseStarEntry &s) const {
 
 /*------------------------------------------------------------------------*/
 
-CBaseStar::CBaseStar() : _minVal(0.0), _maxVal(1.0), _range(0.0),
+CBaseStars::CBaseStars() : _minVal(0.0), _maxVal(1.0), _range(0.0),
 		_value1(0.0), _value2(0.0), _value3(0.0), _value4(0.0) {
 }
 
-void CBaseStar::clear() {
+void CBaseStars::clear() {
 	_data.clear();
 }
 
-void CBaseStar::initialize() {
+void CBaseStars::initialize() {
 	_minVal = 9.9999998e10;
 	_maxVal = -9.9999998e10;
 	_minMax.reset();
@@ -82,11 +82,11 @@ void CBaseStar::initialize() {
 	_range = (_maxVal - _minVal) / 1.0;
 }
 
-const CBaseStarEntry *CBaseStar::getDataPtr(int index) const {
+const CBaseStarEntry *CBaseStars::getDataPtr(int index) const {
 	return (index >= 0 && index < (int)_data.size()) ? &_data[index] : nullptr;
 }
 
-void CBaseStar::loadData(Common::SeekableReadStream &s) {
+void CBaseStars::loadData(Common::SeekableReadStream &s) {
 	uint headerId = s.readUint32LE();
 	uint count = s.readUint32LE();
 	if (headerId != 100 || count == 0)
@@ -101,7 +101,7 @@ void CBaseStar::loadData(Common::SeekableReadStream &s) {
 		_data[idx].load(s);
 }
 
-void CBaseStar::loadData(const CString &resName) {
+void CBaseStars::loadData(const CString &resName) {
 	// Get a stream to read the data from the DAT file
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(resName);
 	assert(stream);
@@ -111,7 +111,7 @@ void CBaseStar::loadData(const CString &resName) {
 	delete stream;
 }
 
-void CBaseStar::resetEntry(CBaseStarEntry &entry) {
+void CBaseStars::resetEntry(CBaseStarEntry &entry) {
 	entry._red = 0xFF;
 	entry._green = 0xFF;
 	entry._blue = 0xFF;
@@ -123,7 +123,7 @@ void CBaseStar::resetEntry(CBaseStarEntry &entry) {
 		entry._data[idx] = 0;
 }
 
-void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	if (!_data.empty()) {
 		switch (sub12->proc27()) {
 		case 0:
@@ -158,7 +158,7 @@ void CBaseStar::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarC
 	}
 }
 
-void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -243,7 +243,7 @@ void CBaseStar::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -329,7 +329,7 @@ void CBaseStar::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -436,7 +436,7 @@ void CBaseStar::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
 	FPose pose = sub12->proc23();
 	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
 
@@ -543,14 +543,14 @@ void CBaseStar::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-int CBaseStar::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+int CBaseStars::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 		const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
 	ref.process(surfaceArea, sub12);
 	return ref._index;
 }
 
-int CBaseStar::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	CStarRef3 ref(this);
 	ref.process(surfaceArea, sub12);
 	return ref._index;

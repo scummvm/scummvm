@@ -25,7 +25,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
-#include "titanic/star_control/base_star.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/support/simple_file.h"
