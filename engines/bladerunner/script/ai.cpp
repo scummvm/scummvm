@@ -37,9 +37,10 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorsCount) : _vm(vm), _inScrip
 		_actorUpdating[i] = false;
 	}
 
-	_AIScripts[kActorMcCoy]  = new AIScriptMcCoy(_vm);
+	_AIScripts[kActorMcCoy] = new AIScriptMcCoy(_vm);
 	_AIScripts[kActorRunciter] = new AIScriptRunciter(_vm);
 	_AIScripts[kActorOfficerLeary] = new AIScriptOfficerLeary(_vm);
+	_AIScripts[kActorLeon] = new AIScriptLeon(_vm);
 }
 
 AIScripts::~AIScripts() {

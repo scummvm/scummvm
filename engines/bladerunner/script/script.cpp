@@ -347,8 +347,9 @@ bool ScriptBase::Actor_Query_In_Set(int actorId, int setId) {
 }
 
 int ScriptBase::Actor_Query_Inch_Distance_From_Actor(int actorId, int otherActorId) {
-	if (_vm->_actors[actorId]->getSetId() != _vm->_actors[otherActorId]->getSetId())
+	if (_vm->_actors[actorId]->getSetId() != _vm->_actors[otherActorId]->getSetId()) {
 		return 0.0f;
+	}
 	return _vm->_actors[actorId]->distanceFromActor(otherActorId);
 }
 
@@ -994,14 +995,14 @@ float ScriptBase::World_Waypoint_Query_Z(int waypointId) {
 	return _vm->_waypoints->getZ(waypointId);
 }
 
-void ScriptBase::Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int sceneId, int a4, float x, float y, float z) {
+void ScriptBase::Combat_Cover_Waypoint_Set_Data(int combatCoverId, int type, int setId, int sceneId, float x, float y, float z) {
 	//TODO
-	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f)", combatCoverId, a2, sceneId, a4, x, y, z);
+	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f)", combatCoverId, type, setId, sceneId, x, y, z);
 }
 
-void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2, int sceneId, int a4, float x, float y, float z, int a8) {
+void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int type, int setId, int sceneId, float x, float y, float z, int a8) {
 	//TODO
-	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f, %d)", combatFleeWaypointId, a2, sceneId, a4, x, y, z, a8);
+	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f, %d)", combatFleeWaypointId, type, setId, sceneId, x, y, z, a8);
 }
 
 void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {

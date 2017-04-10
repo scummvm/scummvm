@@ -599,13 +599,13 @@ protected:
 	void Scene_Exits_Enable();
 	void Scene_2D_Region_Add(int index, int left, int top, int right, int down);
 	void Scene_2D_Region_Remove(int index);
-	void World_Waypoint_Set(int waypointId, int sceneId, float x, float y, float z);
+	void World_Waypoint_Set(int waypointId, int setId, float x, float y, float z);
 	// World_Waypoint_Reset
 	float World_Waypoint_Query_X(int waypointId);
 	float World_Waypoint_Query_Y(int waypointId);
 	float World_Waypoint_Query_Z(int waypointId);
-	void Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int sceneId, int a4, float x, float y, float z);
-	void Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2, int sceneId, int a4, float x, float y, float z, int a8);
+	void Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int setId, int a4, float x, float y, float z);
+	void Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2, int setId, int a4, float x, float y, float z, int a8);
 	void Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10);
 	// Police_Maze_Query_Score
 	// Police_Maze_Zero_Score

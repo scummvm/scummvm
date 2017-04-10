@@ -30,6 +30,7 @@ void AIScriptOfficerLeary::Initialize() {
 	var_462880 = 0;
 	var_45D5B8 = 0;
 	var_45D5BC = 0;
+	var_462884 = 0;
 
 	Actor_Put_In_Set(kActorOfficerLeary, 69);
 	Actor_Set_At_XYZ(kActorOfficerLeary, -261.80f, 6.00f, 79.58f, 512);

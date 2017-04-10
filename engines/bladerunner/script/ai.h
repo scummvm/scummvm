@@ -50,8 +50,8 @@ public:
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
 	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
 	virtual bool ChangeAnimationMode(int mode) = 0;
-	virtual void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) = 0;
-	virtual void SetAnimationState(int animationState, int a2, int a3, int a4) = 0;
+	virtual void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4) = 0;
+	virtual void SetAnimationState(int animationState, int animationFrame, int a3, int a4) = 0;
 	virtual bool ReachedMovementTrackWaypoint(int waypointId) = 0;
 	virtual void FledCombat() = 0;
 };
@@ -79,8 +79,8 @@ public: \
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber); \
 	bool UpdateAnimation(int *animation, int *frame); \
 	bool ChangeAnimationMode(int mode); \
-	void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4); \
-	void SetAnimationState(int animationState, int a2, int a3, int a4); \
+	void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4); \
+	void SetAnimationState(int animationState, int animationFrame, int a3, int a4); \
 	bool ReachedMovementTrackWaypoint(int waypointId); \
 	void FledCombat(); \
 private:
@@ -139,6 +139,19 @@ DECLARE_SCRIPT(OfficerLeary)
 	bool sub_431420();
 END_SCRIPT
 
+DECLARE_SCRIPT(Leon)
+	int var_45EDB0_animation_state;
+	int var_45EDB4_animation_frame;
+	int var_45EDAC;
+	int var_462AF0;
+	int var_462AF4;
+	float var_45EDA0_z;
+	float var_45EDA4_y;
+	float var_45EDA8_x;
+
+	float sub_446700(int actorId, float x, float y, float z);
+END_SCRIPT
+
 #undef DECLARE_SCRIPT
 #undef END_SCRIPT
 
@@ -166,7 +179,7 @@ public:
 	void UpdateAnimation(int actor, int *animation, int *frame);
 	void ChangeAnimationMode(int actor, int mode);
 
-	bool IsInsideScript() { return _inScriptCounter > 0; }
+	bool IsInsideScript() const { return _inScriptCounter > 0; }
 };
 
 } // End of namespace BladeRunner
