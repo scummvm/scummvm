@@ -29,8 +29,8 @@ void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CSta
 	if (_data.empty())
 		return;
 
-	FPose pose = camera->proc23();
-	double threshold = camera->proc25();
+	FPose pose = camera->getPose();
+	double threshold = camera->getThreshold();
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;

@@ -192,7 +192,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
 		CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
-	double val1 = camera->proc25();
+	double val1 = camera->getThreshold();
 	int val2 = camera->proc27();
 	if (!_flag)
 		return;

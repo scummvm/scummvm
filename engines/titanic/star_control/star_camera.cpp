@@ -179,15 +179,15 @@ void CStarCamera::proc22(FMatrix &m) {
 		_sub13.fn15(m);
 }
 
-FPose CStarCamera::proc23() {
+FPose CStarCamera::getPose() {
 	return _sub13.getSub1();
 }
 
-FPose CStarCamera::proc24() {
+FPose CStarCamera::getPose2() {
 	return _sub13.getSub2();
 }
 
-double CStarCamera::proc25() const {
+double CStarCamera::getThreshold() const {
 	return _sub13._field10;
 }
 

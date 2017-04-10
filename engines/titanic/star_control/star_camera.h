@@ -87,9 +87,15 @@ public:
 	virtual void proc20(double factor);
 	virtual void proc21(const FPose &pose);
 	virtual void proc22(FMatrix &m);
-	virtual FPose proc23();
-	virtual FPose proc24();
-	virtual double proc25() const;
+
+	/**
+	 * Get the position and direction of the camera
+	 */
+	virtual FPose getPose();
+
+	virtual FPose getPose2();
+	virtual double getThreshold() const;
+
 	virtual double proc26() const;
 	virtual int proc27() const;
 	virtual FVector proc28(int index, const FVector &src);

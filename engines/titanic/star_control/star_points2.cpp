@@ -66,8 +66,8 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_data.empty())
 		return;
 
-	FPose pose = camera->proc23();
-	double threshold = camera->proc25();
+	FPose pose = camera->getPose();
+	double threshold = camera->getThreshold();
 	FVector vector1, vector2, vector3, vector4;
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;

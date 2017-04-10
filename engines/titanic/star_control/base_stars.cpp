@@ -159,12 +159,12 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 }
 
 void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
-	FPose pose = camera->proc23();
+	FPose pose = camera->getPose();
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = camera->proc25();
+	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -244,12 +244,12 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 }
 
 void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
-	FPose pose = camera->proc23();
+	FPose pose = camera->getPose();
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = camera->proc25();
+	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -330,12 +330,12 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 }
 
 void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
-	FPose pose = camera->proc23();
+	FPose pose = camera->getPose();
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = camera->proc25();
+	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -437,12 +437,12 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 }
 
 void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
-	FPose pose = camera->proc23();
+	FPose pose = camera->getPose();
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = camera->proc25();
+	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;

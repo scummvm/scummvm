@@ -190,7 +190,7 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	v2 = dataP->_position;
 	FVector tv = camera->proc29(2, v2);
 
-	if (camera->proc25() >= tv._z)
+	if (camera->getThreshold() >= tv._z)
 		return -1.0;
 
 	tv = camera->proc28(2, tv);
