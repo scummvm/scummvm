@@ -106,8 +106,7 @@ void CStarControlSub13::setPosition(const FVector &v) {
 }
 
 void CStarControlSub13::setPosition(const FPose &pose) {
-	_position.fn5(pose);
-	_position = pose._row1;
+	_position = _position.fn5(pose);
 	_flag = false;
 }
 
