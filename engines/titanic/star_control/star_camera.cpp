@@ -452,8 +452,7 @@ bool CStarCamera::setupHandler(const CStar20Data *src) {
 		assert(!_handlerP);
 		_handlerP = handler;
 		return true;
-	}
-	else {
+	} else {
 		return false;
 	}
 }
