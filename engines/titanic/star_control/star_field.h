@@ -51,7 +51,7 @@ private:
 	 */
 	void drawCrosshairs(CSurfaceArea *surfaceArea);
 
-	void fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
 public:
 	CStarField();
 
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Renders the contents of the starfield
 	 */
-	void render(CVideoSurface *surface, CStarControlSub12 *sub12);
+	void render(CVideoSurface *surface, CStarCamera *camera);
 
 	int get1() const;
 	void set1(int val);
@@ -117,9 +117,9 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
-	double fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3);
-	void fn6(CVideoSurface *surface, CStarControlSub12 *sub12);
+	void fn6(CVideoSurface *surface, CStarCamera *camera);
 	void fn7();
 	void fn8(CVideoSurface *surface);
 	void fn9() { _starCloseup.fn1(); }
@@ -127,7 +127,7 @@ public:
 	/**
 	 * Called when the starfield is clicked
 	 */
-	bool mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
+	bool mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
 		int flags, const Common::Point &pt);
 
 	/**

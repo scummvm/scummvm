@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_control_sub2.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 
 namespace Titanic {
 
@@ -37,12 +37,12 @@ bool CStarControlSub2::loadYale(int v1) {
 }
 
 bool CStarControlSub2::selectStar(CSurfaceArea *surfaceArea,
-		CStarControlSub12 *sub12, const Common::Point &pt, void *handler) {
-	int index = baseFn1(surfaceArea, sub12, pt);
+		CStarCamera *camera, const Common::Point &pt, void *handler) {
+	int index = baseFn1(surfaceArea, camera, pt);
 	if (index == -1) {
 		return false;
 	} else if (!handler) {
-		sub12->proc14(_data[index]._position);
+		camera->proc14(_data[index]._position);
 		return true;
 	} else {
 		error("no handler ever passed in original");

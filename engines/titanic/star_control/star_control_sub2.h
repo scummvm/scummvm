@@ -36,7 +36,7 @@ public:
 	/**
 	 * Selects a star
 	 */
-	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+	virtual bool selectStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		const Common::Point &pt, void *handler = nullptr);
 
 	virtual bool loadStar();

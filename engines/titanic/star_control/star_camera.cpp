@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_control_sub21.h"
 #include "titanic/star_control/star_control_sub22.h"
 #include "titanic/star_control/dmatrix.h"
@@ -29,101 +29,101 @@
 
 namespace Titanic {
 
-FMatrix *CStarControlSub12::_matrix1;
-FMatrix *CStarControlSub12::_matrix2;
+FMatrix *CStarCamera::_matrix1;
+FMatrix *CStarCamera::_matrix2;
 
-CStarControlSub12::CStarControlSub12(const CStar20Data *data) :
+CStarCamera::CStarCamera(const CStar20Data *data) :
 		_matrixRow(-1), _handlerP(nullptr), _field108(0) {
 	setupHandler(data);
 }
 
-CStarControlSub12::CStarControlSub12(CStarControlSub13 *src) :
+CStarCamera::CStarCamera(CStarControlSub13 *src) :
 		_matrixRow(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
 }
 
-void CStarControlSub12::init() {
+void CStarCamera::init() {
 	_matrix1 = nullptr;
 	_matrix2 = nullptr;
 }
 
-void CStarControlSub12::deinit() {
+void CStarCamera::deinit() {
 	delete _matrix1;
 	delete _matrix2;
 	_matrix1 = nullptr;
 	_matrix2 = nullptr;
 }
 
-CStarControlSub12::~CStarControlSub12() {
+CStarCamera::~CStarCamera() {
 	deleteHandler();
 }
 
-void CStarControlSub12::proc2(const CStarControlSub13 *src) {
+void CStarCamera::proc2(const CStarControlSub13 *src) {
 	_sub13.copyFrom(src);
 }
 
-void CStarControlSub12::proc3(const CStar20Data *src) {
+void CStarCamera::proc3(const CStar20Data *src) {
 	_handlerP->copyFrom(src);
 }
 
-void CStarControlSub12::setPosition(const FVector &v) {
+void CStarCamera::setPosition(const FVector &v) {
 	if (!isLocked()) {
 		_sub13.setPosition(v);
 		set108();
 	}
 }
 
-void CStarControlSub12::proc5(const FVector &v) {
+void CStarCamera::proc5(const FVector &v) {
 	if (!isLocked())
 		_sub13.fn11(v);
 }
 
-void CStarControlSub12::proc6(int v) {
+void CStarCamera::proc6(int v) {
 	if (!isLocked())
 		_sub13.setC(v);
 }
 
-void CStarControlSub12::proc7(int v) {
+void CStarCamera::proc7(int v) {
 	if (!isLocked())
 		_sub13.set10(v);
 }
 
-void CStarControlSub12::proc8(int v) {
+void CStarCamera::proc8(int v) {
 	if (!isLocked())
 		_sub13.set14(v);
 }
 
-void CStarControlSub12::proc9(int v) {
+void CStarCamera::proc9(int v) {
 	if (!isLocked())
 		_sub13.set18(v);
 }
 
-void CStarControlSub12::proc10(int v) {
+void CStarCamera::proc10(int v) {
 	if (!isLocked())
 		_sub13.set1C(v);
 }
 
-void CStarControlSub12::proc11() {
+void CStarCamera::proc11() {
 	if (!isLocked())
 		_sub13.fn12();
 }
 
-void CStarControlSub12::proc12(StarMode mode, double v2) {
+void CStarCamera::proc12(StarMode mode, double v2) {
 	if (!isLocked())
 		_sub13.fn13(mode, v2);
 }
 
-void CStarControlSub12::proc13(CStarControlSub13 *dest) {
+void CStarCamera::proc13(CStarControlSub13 *dest) {
 	*dest = _sub13;
 }
 
-void CStarControlSub12::proc14(FVector &v) {
+void CStarCamera::proc14(FVector &v) {
 	FMatrix matrix = _sub13.getMatrix();
 	FVector vector = _sub13._position;
 
 	_handlerP->proc9(vector, v, matrix);
 }
 
-void CStarControlSub12::proc15(CErrorCode *errorCode) {
+void CStarCamera::proc15(CErrorCode *errorCode) {
 	if (!_matrix1)
 		_matrix1 = new FMatrix();
 	if (!_matrix2)
@@ -146,60 +146,60 @@ void CStarControlSub12::proc15(CErrorCode *errorCode) {
 	}
 }
 
-void CStarControlSub12::proc16() {
+void CStarCamera::proc16() {
 	_handlerP->proc4();
 }
 
-void CStarControlSub12::proc17() {
+void CStarCamera::proc17() {
 	_handlerP->proc5();
 }
 
-void CStarControlSub12::proc18() {
+void CStarCamera::proc18() {
 	_handlerP->proc6();
 }
 
-void CStarControlSub12::proc19() {
+void CStarCamera::proc19() {
 	_handlerP->proc7();
 }
 
-void CStarControlSub12::proc20(double factor) {
+void CStarCamera::proc20(double factor) {
 	if (!isLocked())
 		_sub13.reposition(factor);
 }
 
-void CStarControlSub12::proc21(const FPose &pose) {
+void CStarCamera::proc21(const FPose &pose) {
 	if (!isLocked()) {
 		_sub13.setPosition(pose);
 		set108();
 	}
 }
 
-void CStarControlSub12::proc22(FMatrix &m) {
+void CStarCamera::proc22(FMatrix &m) {
 	if (!isLocked())
 		_sub13.fn15(m);
 }
 
-FPose CStarControlSub12::proc23() {
+FPose CStarCamera::proc23() {
 	return _sub13.getSub1();
 }
 
-FPose CStarControlSub12::proc24() {
+FPose CStarCamera::proc24() {
 	return _sub13.getSub2();
 }
 
-double CStarControlSub12::proc25() const {
+double CStarCamera::proc25() const {
 	return _sub13._field10;
 }
 
-double CStarControlSub12::proc26() const {
+double CStarCamera::proc26() const {
 	return _sub13._field14;
 }
 
-int CStarControlSub12::proc27() const {
+int CStarCamera::proc27() const {
 	return _sub13._field24;
 }
 
-FVector CStarControlSub12::proc28(int index, const FVector &src) {
+FVector CStarCamera::proc28(int index, const FVector &src) {
 	FVector dest;
 	dest._x = ((_sub13._valArray[index] + src._x) * _sub13._centerVector._x)
 		/ (_sub13._centerVector._y * src._z);
@@ -208,19 +208,19 @@ FVector CStarControlSub12::proc28(int index, const FVector &src) {
 	return dest;
 }
 
-FVector CStarControlSub12::proc29(int index, const FVector &src) {
+FVector CStarCamera::proc29(int index, const FVector &src) {
 	return _sub13.fn16(index, src);
 }
 
-FVector CStarControlSub12::proc30(int index, const FVector &v) {
+FVector CStarCamera::proc30(int index, const FVector &v) {
 	return _sub13.fn17(index, v);
 }
 
-FVector CStarControlSub12::proc31(int index, const FVector &v) {
+FVector CStarCamera::proc31(int index, const FVector &v) {
 	return _sub13.fn18(index, v);
 }
 
-void CStarControlSub12::setViewportPosition(const FPoint &angles) {
+void CStarCamera::setViewportPosition(const FPoint &angles) {
 	debug(DEBUG_INTERMEDIATE, "setViewportPosition %f %f", angles._x, angles._y);
 
 	if (isLocked())
@@ -391,7 +391,7 @@ void CStarControlSub12::setViewportPosition(const FPoint &angles) {
 	}
 }
 
-bool CStarControlSub12::addMatrixRow(const FVector &v) {
+bool CStarCamera::addMatrixRow(const FVector &v) {
 	if (_matrixRow >= 2)
 		return false;
 
@@ -405,7 +405,7 @@ bool CStarControlSub12::addMatrixRow(const FVector &v) {
 	return true;
 }
 
-bool CStarControlSub12::removeMatrixRow() {
+bool CStarCamera::removeMatrixRow() {
 	if (_matrixRow == -1)
 		return false;
 
@@ -418,19 +418,19 @@ bool CStarControlSub12::removeMatrixRow() {
 	return true;
 }
 
-void CStarControlSub12::proc36(double *v1, double *v2, double *v3, double *v4) {
+void CStarCamera::proc36(double *v1, double *v2, double *v3, double *v4) {
 	_sub13.fn19(v1, v2, v3, v4);
 }
 
-void CStarControlSub12::load(SimpleFile *file, int param) {
+void CStarCamera::load(SimpleFile *file, int param) {
 	_sub13.load(file, param);
 }
 
-void CStarControlSub12::save(SimpleFile *file, int indent) {
+void CStarCamera::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 
-bool CStarControlSub12::setupHandler(const CStar20Data *src) {
+bool CStarCamera::setupHandler(const CStar20Data *src) {
 	CStarControlSub20 *handler = nullptr;
 
 	switch (_matrixRow) {
@@ -458,14 +458,14 @@ bool CStarControlSub12::setupHandler(const CStar20Data *src) {
 	}
 }
 
-void CStarControlSub12::deleteHandler() {
+void CStarCamera::deleteHandler() {
 	if (_handlerP) {
 		delete _handlerP;
 		_handlerP = nullptr;
 	}
 }
 
-void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
+void CStarCamera::fn1(CStarControlSub13 *sub13, const FVector &v) {
 	if (_matrixRow == 1) {
 		FMatrix m1 = sub13->getMatrix();
 		FMatrix m2 = _sub13.getMatrix();
@@ -478,7 +478,7 @@ void CStarControlSub12::fn1(CStarControlSub13 *sub13, const FVector &v) {
 	}
 }
 
-void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
+void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 	if (_matrixRow == -1) {
 		FVector tempV;
 		tempV._z = _sub13._field10;
@@ -501,7 +501,7 @@ void CStarControlSub12::fn2(FVector v1, FVector v2, FVector v3) {
 	}
 }
 
-void CStarControlSub12::fn3(CStarControlSub13 *sub13, const FVector &v) {
+void CStarCamera::fn3(CStarControlSub13 *sub13, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 

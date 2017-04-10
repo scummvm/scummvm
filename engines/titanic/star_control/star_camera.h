@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB12_H
-#define TITANIC_STAR_CONTROL_SUB12_H
+#ifndef TITANIC_STAR_CAMERA_H
+#define TITANIC_STAR_CAMERA_H
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/fmatrix.h"
@@ -33,7 +33,7 @@
 
 namespace Titanic {
 
-class CStarControlSub12 {
+class CStarCamera {
 private:
 	static FMatrix *_matrix1;
 	static FMatrix *_matrix2;
@@ -62,9 +62,9 @@ public:
 	static void init();
 	static void deinit();
 public:
-	CStarControlSub12(const CStar20Data *data);
-	CStarControlSub12(CStarControlSub13 *src);
-	virtual ~CStarControlSub12();
+	CStarCamera(const CStar20Data *data);
+	CStarCamera(CStarControlSub13 *src);
+	virtual ~CStarCamera();
 
 	virtual void proc2(const CStarControlSub13 *src);
 	virtual void proc3(const CStar20Data *src);
@@ -129,4 +129,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB12_H */
+#endif /* TITANIC_STAR_CAMERA_H */

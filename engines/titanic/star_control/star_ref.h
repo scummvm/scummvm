@@ -22,7 +22,7 @@
 
 #include "common/rect.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/surface_area.h"
 
 #ifndef TITANIC_STAR_REF_H
@@ -38,7 +38,7 @@ public:
 	CBaseStarRef() : _stars(nullptr) {}
 	virtual ~CBaseStarRef() {}
 
-	void process(CSurfaceArea *surface, CStarControlSub12 *sub12);
+	void process(CSurfaceArea *surface, CStarCamera *camera);
 
 	virtual bool check(const Common::Point &pt, int index) { return false; }
 };

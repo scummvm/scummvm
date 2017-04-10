@@ -24,13 +24,13 @@
 
 namespace Titanic {
 
-void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
+void CBaseStarRef::process(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_stars->_data.empty())
 		return;
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	FPose pose = sub12->proc23();
-	double threshold = sub12->proc25();
+	FPose pose = camera->proc23();
+	double threshold = camera->proc25();
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
 	FVector vTemp, vector1, vector2;
@@ -45,7 +45,7 @@ void CBaseStarRef::process(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 		double hyp = vector1._x * vector1._x + vector1._y * vector1._y + vector1._z * vector1._z;
 
 		if (vector1._z > threshold && hyp >= 1.0e12 && hyp < MAX_VAL) {
-			vector2 = sub12->proc28(2, vector1);
+			vector2 = camera->proc28(2, vector1);
 
 			const Common::Point pt((int)(vector2._x + vWidth2 - -0.5),
 				(int)(vector2._y + vHeight2 - -0.5));

@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_points2.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -62,12 +62,12 @@ bool CStarPoints2::initialize() {
 	return true;
 }
 
-void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
+void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_data.empty())
 		return;
 
-	FPose pose = sub12->proc23();
-	double threshold = sub12->proc25();
+	FPose pose = camera->proc23();
+	double threshold = camera->proc25();
 	FVector vector1, vector2, vector3, vector4;
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
@@ -99,8 +99,8 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarControlSub12 *sub12) {
 				+ pose._row1._y * se._v2._x + pose._vector._y;
 
 			if (vector1._z > threshold && vector3._z > threshold) {
-				vector2 = sub12->proc28(2, vector1);
-				vector4 = sub12->proc28(2, vector3);
+				vector2 = camera->proc28(2, vector1);
+				vector4 = camera->proc28(2, vector3);
 
 				r.bottom = vector4._y + vHeight2;
 				r.right = vector4._x + vWidth2;

@@ -25,7 +25,7 @@
 
 #include "titanic/support/simple_file.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_control_sub13.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/error_code.h"
@@ -41,7 +41,7 @@ private:
 	CStarControl *_owner;
 	CStarField *_starField;
 	CVideoSurface *_videoSurface;
-	CStarControlSub12 _sub12;
+	CStarCamera _camera;
 	bool _hasReference;
 	CStarControlSub13 _sub13;
 	CSurfaceFader _fader;
@@ -51,7 +51,7 @@ private:
 	bool _showingPhoto;
 private:
 	bool fn1();
-	void fn18(CStarControlSub12 *sub12);
+	void fn18(CStarCamera *camera);
 	void fn19(int v);
 
 	void randomizeVectors1(FVector &v1, FVector &v2);

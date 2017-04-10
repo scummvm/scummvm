@@ -21,16 +21,16 @@
  */
 
 #include "titanic/star_control/star_control_sub7.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 
 namespace Titanic {
 
-void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	if (_data.empty())
 		return;
 
-	FPose pose = sub12->proc23();
-	double threshold = sub12->proc25();
+	FPose pose = camera->proc23();
+	double threshold = camera->proc25();
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;
@@ -50,7 +50,7 @@ void CStarControlSub7::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 			+ pose._row2._z * star._position._y + pose._vector._z; 
 
 		if (newV._z > threshold) {
-			FVector vTemp = sub12->proc28(2, newV);
+			FVector vTemp = camera->proc28(2, newV);
 
 			FRect r1(center._x + vTemp._x, center._y + vTemp._y,
 				center._x + vTemp._x + 4.0, center._y + vTemp._y + 4.0);

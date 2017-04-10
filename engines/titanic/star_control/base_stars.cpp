@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_ref.h"
 #include "titanic/titanic.h"
 
@@ -123,16 +123,16 @@ void CBaseStars::resetEntry(CBaseStarEntry &entry) {
 		entry._data[idx] = 0;
 }
 
-void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
+void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	if (!_data.empty()) {
-		switch (sub12->proc27()) {
+		switch (camera->proc27()) {
 		case 0:
 			switch (surfaceArea->_bpp) {
 			case 1:
-				draw1(surfaceArea, sub12, closeup);
+				draw1(surfaceArea, camera, closeup);
 				break;
 			case 2:
-				draw2(surfaceArea, sub12, closeup);
+				draw2(surfaceArea, camera, closeup);
 				break;
 			default:
 				break;
@@ -142,10 +142,10 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 		case 2:
 			switch (surfaceArea->_bpp) {
 			case 1:
-				draw3(surfaceArea, sub12, closeup);
+				draw3(surfaceArea, camera, closeup);
 				break;
 			case 2:
-				draw4(surfaceArea, sub12, closeup);
+				draw4(surfaceArea, camera, closeup);
 				break;
 			default:
 				break;
@@ -158,13 +158,13 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStar
 	}
 }
 
-void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
-	FPose pose = sub12->proc23();
-	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+	FPose pose = camera->proc23();
+	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = sub12->proc25();
+	double threshold = camera->proc25();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -185,7 +185,7 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, sub12);
+				surfaceArea, camera);
 			continue;
 		}
 
@@ -243,13 +243,13 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 	}
 }
 
-void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
-	FPose pose = sub12->proc23();
-	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+	FPose pose = camera->proc23();
+	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = sub12->proc25();
+	double threshold = camera->proc25();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -270,7 +270,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, sub12);
+				surfaceArea, camera);
 			continue;
 		}
 
@@ -329,13 +329,13 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 	}
 }
 
-void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
-	FPose pose = sub12->proc23();
-	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+	FPose pose = camera->proc23();
+	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = sub12->proc25();
+	double threshold = camera->proc25();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -359,7 +359,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, sub12);
+				surfaceArea, camera);
 			continue;
 		}
 
@@ -436,13 +436,13 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 	}
 }
 
-void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CStarCloseup *closeup) {
-	FPose pose = sub12->proc23();
-	sub12->proc36(&_value1, &_value2, &_value3, &_value4);
+void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+	FPose pose = camera->proc23();
+	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
-	double threshold = sub12->proc25();
+	double threshold = camera->proc25();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
 	int height1 = surfaceArea->_height - 1;
@@ -466,7 +466,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 
 		if (total2 < 1.0e12) {
 			closeup->draw(pose, vector, FVector(centroid._x, centroid._y, total2),
-				surfaceArea, sub12);
+				surfaceArea, camera);
 			continue;
 		}
 
@@ -543,16 +543,16 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12, CSta
 	}
 }
 
-int CBaseStars::baseFn1(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+int CBaseStars::baseFn1(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
-	ref.process(surfaceArea, sub12);
+	ref.process(surfaceArea, camera);
 	return ref._index;
 }
 
-int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	CStarRef3 ref(this);
-	ref.process(surfaceArea, sub12);
+	ref.process(surfaceArea, camera);
 	return ref._index;
 }
 

@@ -26,7 +26,7 @@
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fpose.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/game_manager.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/project_item.h"
@@ -43,12 +43,12 @@ END_MESSAGE_MAP()
 
 CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
 		_starRect(20, 10, 620, 350) {
-	CStarControlSub12::init();
+	CStarCamera::init();
 	DMatrix::init();
 }
 
 CStarControl::~CStarControl() {
-	CStarControlSub12::deinit();
+	CStarCamera::deinit();
 	DMatrix::deinit();
 }
 

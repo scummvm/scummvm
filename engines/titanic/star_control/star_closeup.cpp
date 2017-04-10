@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -190,10 +190,10 @@ bool CStarCloseup::setup2(int val1, int val2) {
 }
 
 void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+		CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
-	double val1 = sub12->proc25();
-	int val2 = sub12->proc27();
+	double val1 = camera->proc25();
+	int val2 = camera->proc27();
 	if (!_flag)
 		return;
 
@@ -318,7 +318,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = sub12->proc28(2, gridEntry);
+					tempV = camera->proc28(2, gridEntry);
 					gridEntry._position._x = tempV._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -340,7 +340,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = sub12->proc28(0, gridEntry);
+					tempV = camera->proc28(0, gridEntry);
 					gridEntry._position._x = tempV._x + vector2._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -362,7 +362,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 				for (int ctr2 = 0; ctr2 < size2; ++ctr2) {
 					GridEntry &gridEntry = _grid[ctr2];
-					tempV = sub12->proc28(1, gridEntry);
+					tempV = camera->proc28(1, gridEntry);
 					gridEntry._position._x = tempV._x + vector2._x;
 					gridEntry._position._y = tempV._y + vector2._y;
 				}
@@ -432,7 +432,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = sub12->proc28(2, gridEntry);
+			tempV = camera->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}
@@ -454,7 +454,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = sub12->proc28(2, gridEntry);
+			tempV = camera->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}
@@ -476,7 +476,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 
 		for (uint ctr = 0; ctr < entry._data2.size(); ++ctr) {
 			GridEntry &gridEntry = _grid[ctr];
-			tempV = sub12->proc28(2, gridEntry);
+			tempV = camera->proc28(2, gridEntry);
 			gridEntry._position._x = tempV._x + vector2._x;
 			gridEntry._position._y = tempV._y + vector2._y;
 		}

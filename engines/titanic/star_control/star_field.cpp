@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -63,21 +63,21 @@ bool CStarField::initDocument() {
 	return valid;
 }
 
-void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
+void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
-	draw(&surfaceArea, sub12, &_starCloseup);
+	draw(&surfaceArea, camera, &_starCloseup);
 	if (_showCrosshairs)
 		drawCrosshairs(&surfaceArea);
 
-	_sub7.draw(&surfaceArea, sub12, nullptr);
+	_sub7.draw(&surfaceArea, camera, nullptr);
 	_sub8.draw(&surfaceArea);
 
 	if (_points2On)
-		_points2.draw(&surfaceArea, sub12);
+		_points2.draw(&surfaceArea, camera);
 	if (_points1On)
-		_points1.draw(&surfaceArea, sub12);
+		_points1.draw(&surfaceArea, camera);
 
-	fn4(&surfaceArea, sub12);
+	fn4(&surfaceArea, camera);
 }
 
 int CStarField::get1() const {
@@ -168,12 +168,12 @@ void CStarField::drawCrosshairs(CSurfaceArea *surfaceArea) {
 	surfaceArea->setColorFromPixel();
 }
 
-void CStarField::fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
+void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	FVector v1, v2, v3;
 	_val5 = 0;
 
 	if (_mode == MODE_STARFIELD) {
-		if (fn5(surfaceArea, sub12, v1, v2, v3) > -1.0) {
+		if (fn5(surfaceArea, camera, v1, v2, v3) > -1.0) {
 			surfaceArea->_pixel = 0xA0A0;
 			surfaceArea->setColorFromPixel();
 			surfaceArea->fillRect(FRect(v1._x, v1._y, v3._x, v3._y));
@@ -181,19 +181,19 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
 	}
 }
 
-double CStarField::fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
+double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3) {
 	if (_sub8._fieldC < 0)
 		return -1.0;
 
 	const CBaseStarEntry *dataP = _sub7.getDataPtr(_sub8._fieldC);
 	v2 = dataP->_position;
-	FVector tv = sub12->proc29(2, v2);
+	FVector tv = camera->proc29(2, v2);
 
-	if (sub12->proc25() >= tv._z)
+	if (camera->proc25() >= tv._z)
 		return -1.0;
 
-	tv = sub12->proc28(2, tv);
+	tv = camera->proc28(2, tv);
 
 	v1 = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);
@@ -210,9 +210,9 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarControlSub12 *sub12,
 	return v1._y - pt._y;
 }
 
-void CStarField::fn6(CVideoSurface *surface, CStarControlSub12 *sub12) {
+void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
-	_sub8.fn1(this, &surfaceArea, sub12);
+	_sub8.fn1(this, &surfaceArea, camera);
 }
 
 void CStarField::fn7() {
@@ -225,11 +225,11 @@ void CStarField::fn8(CVideoSurface *surface) {
 	setSolved();
 }
 
-bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarControlSub12 *sub12,
+bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
 		int flags, const Common::Point &pt) {
 	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);
-		return selectStar(&surfaceArea, sub12, pt);
+		return selectStar(&surfaceArea, camera, pt);
 	} else {
 		int starNum = _sub8.indexOf(pt);
 		if (starNum >= 0) {

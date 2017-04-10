@@ -35,7 +35,7 @@ namespace Titanic {
 
 class CStarField;
 class CStarControlSub7;
-class CStarControlSub12;
+class CStarCamera;
 
 class CStarControlSub8 {
 private:
@@ -74,7 +74,7 @@ public:
 
 	void draw(CSurfaceArea *surfaceArea);
 
-	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarControlSub7 *sub7);
 	void fn3();
 	void fn4(int index, CSurfaceArea *surfaceArea);

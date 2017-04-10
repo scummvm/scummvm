@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-class CStarControlSub12;
+class CStarCamera;
 
 class CStarPoints2 {
 	struct CStarPointEntry {
@@ -51,7 +51,7 @@ public:
 	/**
 	 * Draw the starfield points
 	 */
-	void draw(CSurfaceArea *surface, CStarControlSub12 *sub12);
+	void draw(CSurfaceArea *surface, CStarCamera *camera);
 };
 
 } // End of namespace Titanic

@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/star_control_sub8.h"
 #include "titanic/star_control/star_control_sub7.h"
-#include "titanic/star_control/star_control_sub12.h"
+#include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_ref.h"
 
@@ -93,13 +93,13 @@ void CStarControlSub8::selectStar(int index, CVideoSurface *surface,
 	}
 }
 
-bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarControlSub12 *sub12) {
-	int count = starField->baseFn2(surfaceArea, sub12);
+bool CStarControlSub8::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera) {
+	int count = starField->baseFn2(surfaceArea, camera);
 
 	if (count > 0) {
 		allocate(count);
 		CStarRef2 starRef(starField, &_positions);
-		starRef.process(surfaceArea, sub12);
+		starRef.process(surfaceArea, camera);
 		return true;
 	} else {
 		clear();

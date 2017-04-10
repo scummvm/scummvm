@@ -31,7 +31,7 @@
 
 namespace Titanic {
 
-class CStarControlSub12;
+class CStarCamera;
 
 /**
  * Handles drawing a 3D rendered closeup of a star
@@ -124,7 +124,7 @@ public:
 	 * Draws the star globe
 	 */
 	virtual void draw(const FPose &pose, const FVector &vector, const FVector &vector2,
-		CSurfaceArea *surfaceArea, CStarControlSub12 *sub12);
+		CSurfaceArea *surfaceArea, CStarCamera *camera);
 
 	virtual void proc3(CErrorCode *errorCode);
 
