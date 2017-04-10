@@ -166,7 +166,7 @@ bool CStarCloseup::setup2(int val1, int val2) {
 		} else {
 			for (int ctr = 0; ctr < 5; ++ctr) {
 				e->_field0 = static_cast<int>(g_vm->getRandomFloat() * 1350.0
-					- 675.0) + VALUES1[idx];
+					- 675.0) + VALUES1[ctr];
 				int val = VALUES2[g_vm->getRandomNumber(15)];
 				e->_pixel1 = val & 0xff;
 				e->_pixel2 = (val >> 8) & 0xff;
