@@ -619,7 +619,11 @@ void Puzzles::pinball(int16 var) {
 			_vm->_state->setVar(var, 0);
 		} else {
 			_vm->_state->setVar(var, 1);
-			// TODO: Play sound 1024, volume 100 if not already playing
+
+			// Play the "peg clicks into spot sound"
+			if (!_vm->_sound->isPlaying(1024)) {
+				_vm->_sound->playEffect(1024, 100);
+			}
 		}
 	}
 
