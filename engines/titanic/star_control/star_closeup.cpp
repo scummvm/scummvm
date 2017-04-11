@@ -202,7 +202,6 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 	double f10, f11, f12, f13, f14, f15, f16, f17, f18, f19;
 	double f20, f21, f22, f23, f24, f25, f26, f27, f28;
 	double f34, f35, f36, f37, f38, f39, f40;
-	double f41, f42, f43, f44, f45, f46;
 	FVector tempV;
 
 	if (vector2._z < 6.0e9) {
@@ -407,22 +406,12 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 		const FVector &d2v = entry._data2[ctr];
 		FVector newV = d2v + vector;
 
-		f41 = pose._row1._x;
-		f42 = pose._row3._x;
-		f43 = pose._row2._x;
-		f44 = f43 * newV._y;
-		f45 = f41 * newV._x + f42 * newV._z + f44;
-		f46 = f45 + pose._vector._x;
-
-		gridEntry._x = f46;
-		gridEntry._y = newV._y * pose._row2._y
-			+ newV._z * pose._row3._y
-			+ newV._x * pose._row1._y
-			+ pose._vector._y;
-		gridEntry._z = newV._z * pose._row3._z
-			+ newV._y * pose._row2._z
-			+ newV._x * pose._row1._z
-			+ pose._vector._z;
+		gridEntry._x = pose._row1._x * newV._x + pose._row3._x * newV._z
+			+ pose._row2._x * newV._y + pose._vector._x;
+		gridEntry._y = newV._y * pose._row2._y + newV._z * pose._row3._y
+			+ newV._x * pose._row1._y + pose._vector._y;
+		gridEntry._z = newV._z * pose._row3._z + newV._y * pose._row2._z
+			+ newV._x * pose._row1._z + pose._vector._z;
 	}
 
 	if (val2 <= 0) {
