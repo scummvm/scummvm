@@ -70,9 +70,8 @@ class CStarCloseup {
 
 	struct GridEntry : public FVector {
 		FPoint _position;
-		int _field14;
 
-		GridEntry() : FVector(), _field14(0) {}
+		GridEntry() : FVector() {}
 	};
 
 	/**

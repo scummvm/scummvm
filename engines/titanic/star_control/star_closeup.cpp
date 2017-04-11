@@ -205,7 +205,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 	double f41, f42, f43, f44, f45, f46;
 	FVector tempV;
 
-	if (vector2._z >= 6.0e9) {
+	if (vector2._z < 6.0e9) {
 		int count, start;
 		if (vector._x != 0.0 && (vector._y != 0.0 || vector._z != 0.0)) {
 			// WORKAROUND: Ignoring non-sensical randSeed((int)vector._x);
