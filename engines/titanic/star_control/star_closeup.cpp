@@ -200,8 +200,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 	int f1, f3, size2, size1;
 	double f2, f4, f5, f6, f7, f8, f9;
 	double f10, f11, f12, f13, f14, f15, f16, f17, f18, f19;
-	double f20, f21, f22, f23, f24, f25, f26, f27, f28;
-	double f34, f35, f36, f37, f38, f39, f40;
+	double f20, f21, f22;
 	FVector tempV;
 
 	if (vector2._z < 6.0e9) {
@@ -261,25 +260,15 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			_sub2._row3._y = f20 * pose._row1._y + f21 * pose._row3._y;
 			_sub2._row3._z = f20 * pose._row1._z + f21 * pose._row3._z;
 
-			f23 = _sub1._vector._y;
-			f24 = _sub1._vector._z;
-			f25 = _sub1._vector._x;
-			f26 = _sub1._vector._z;
-			f27 = _sub1._vector._x;
-
-			f28 = _sub1._vector._y;
 			_sub2._vector._x = pose._row1._x * _sub1._vector._x
 				+ pose._row3._x * _sub1._vector._z
-				+ pose._row2._x * f28
-				+ pose._vector._x;
-			_sub2._vector._y = f23 * pose._row2._y
-				+ f24 * pose._row3._y
-				+ f25 * pose._row1._y
-				+ pose._vector._y;
-			_sub2._vector._z = f26 * pose._row3._z
-				+ f27 * pose._row1._z
-				+ f28 * pose._row2._z
-				+ pose._vector._z;
+				+ pose._row2._x * _sub1._vector._y + pose._vector._x;
+			_sub2._vector._y = _sub1._vector._y * pose._row2._y
+				+ _sub1._vector._z * pose._row3._y
+				+ _sub1._vector._x * pose._row1._y + pose._vector._y;
+			_sub2._vector._z = _sub1._vector._z * pose._row3._z
+				+ _sub1._vector._x * pose._row1._z
+				+ _sub1._vector._y * pose._row2._z + pose._vector._z;
 
 			size2 = (int)_array[1]._data2.size();
 			size1 = (int)_array[1]._data1.size();
@@ -289,23 +278,15 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					FVector &currVector = _array[1]._data2[ctr2];
 					GridEntry &gridEntry = _grid[ctr2];
 
-					f34 = currVector._x;
-					f35 = currVector._y;
-					f36 = f35 * _sub2._row2._x;
-					f37 = currVector._z;
-					f38 = f37 * _sub2._row3._x + f36;
-					f39 = f38 + f34 * _sub2._row1._x;
-					f40 = f39 + _sub2._vector._x;
-
-					gridEntry._x = f40;
-					gridEntry._y = f37 * _sub2._row3._y
-						+ f35 * _sub2._row2._y
-						+ f34 * _sub2._row1._y
-						+ _sub2._vector._y;
-					gridEntry._z = f37 * _sub2._row3._z
-						+ f35 * _sub2._row2._z
-						+ f34 * _sub2._row1._z
-						+ _sub2._vector._z;
+					gridEntry._x = currVector._z * _sub2._row3._x
+						+ currVector._y * _sub2._row2._x
+						+ currVector._x * _sub2._row1._x + _sub2._vector._x;
+					gridEntry._y = currVector._z * _sub2._row3._y
+						+ currVector._y * _sub2._row2._y
+						+ currVector._x * _sub2._row1._y + _sub2._vector._y;
+					gridEntry._z = currVector._z * _sub2._row3._z
+						+ currVector._y * _sub2._row2._z
+						+ currVector._x * _sub2._row1._z + _sub2._vector._z;
 				}
 			}
 
