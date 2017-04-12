@@ -1,12 +1,12 @@
-MODULE := engines/mario
+MODULE := engines/plumbers
 
 MODULE_OBJS = \
-	mario.o \
+	plumbers.o \
 	console.o \
 	detection.o
 
 # This module can be built as a plugin
-ifeq ($(ENABLE_MARIO), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_PLUMBERS), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 

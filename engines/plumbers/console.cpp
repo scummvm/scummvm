@@ -22,12 +22,12 @@
 
 #include "gui/debugger.h"
 
-#include "mario/mario.h"
-#include "mario/console.h"
+#include "plumbers/plumbers.h"
+#include "plumbers/console.h"
 
-namespace Mario {
+namespace Plumbers {
 
-Console::Console(Mario::MarioGame *vm) : _vm(vm) {
+Console::Console(Plumbers::PlumbersGame *vm) : _vm(vm) {
 	_allowSkip = false;
 	 registerCmd("allowSkip", WRAP_METHOD(Console, Cmd_allowSkip));
 }
@@ -44,4 +44,4 @@ bool Console::Cmd_allowSkip(int argc, const char** argv) {
 	return true;
 }
 
-} // End of namespace Mario
+} // End of namespace Plumbers

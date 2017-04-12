@@ -20,23 +20,23 @@
 *
 */
 
-#ifndef MARIO_CONSOLE_H
-#define MARIO_CONSOLE_H
+#ifndef PLUMBERS_CONSOLE_H
+#define PLUMBERS_CONSOLE_H
 
 #include "gui/debugger.h"
 
-namespace Mario {
+namespace Plumbers {
 
-class MarioGame;
+class PlumbersGame;
 
 class Console : public GUI::Debugger {
 private:
-	MarioGame *_vm;
+	PlumbersGame *_vm;
 
 public:
 	bool _allowSkip;
 
-	explicit Console(Mario::MarioGame *vm);
+	explicit Console(Plumbers::PlumbersGame *vm);
 	virtual ~Console(void) {}
 
 	bool Cmd_allowSkip(int argc, const char** argv);

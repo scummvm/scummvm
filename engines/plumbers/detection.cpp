@@ -25,25 +25,25 @@
 #include "engines/advancedDetector.h"
 #include "common/file.h"
 
-#include "mario/mario.h"
+#include "plumbers/plumbers.h"
 
 
-namespace Mario {
-const char *MarioGame::getGameId() const { return _gameDescription->gameId; }
-Common::Platform MarioGame::getPlatform() const { return _gameDescription->platform; }
+namespace Plumbers {
+const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
+Common::Platform PlumbersGame::getPlatform() const { return _gameDescription->platform; }
 }
 
-static const PlainGameDescriptor marioGames[] = {
-	{"mario", "Plumbers Don't Wear Ties!"},
+static const PlainGameDescriptor plumbersGames[] = {
+	{"plumbers", "Plumbers Don't Wear Ties!"},
 	{0, 0}
 };
 
-namespace Mario {
+namespace Plumbers {
 
 static const ADGameDescription gameDescriptions[] = {
-	// Mario PC version
+	// Plumbers PC version
 	{
-		"mario",
+		"plumbers",
 		0,
 		AD_ENTRY1s("GAME.BIN", 0, 41622),
 		Common::EN_ANY,
@@ -53,9 +53,9 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	/*
-	// Mario 3DO version
+	// Plumbers 3DO version
 	{
-		"mario",
+		"plumbers",
 		0,
 		AD_ENTRY1s("launchme", 0, 143300),
 		Common::EN_ANY,
@@ -68,16 +68,16 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // End of namespace Mario
+} // End of namespace Plumbers
 
-class MarioMetaEngine : public AdvancedMetaEngine {
+class PlumbersMetaEngine : public AdvancedMetaEngine {
 public:
-	MarioMetaEngine() : AdvancedMetaEngine(Mario::gameDescriptions, sizeof(ADGameDescription), marioGames) {
-		_singleId = "mario";
+	PlumbersMetaEngine() : AdvancedMetaEngine(Plumbers::gameDescriptions, sizeof(ADGameDescription), plumbersGames) {
+		_singleId = "plumbers";
 	}
 
 	virtual const char *getName() const {
-		return "Mario Engine";
+		return "Plumbers Don't Wear Ties' Engine";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -88,19 +88,19 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
-bool MarioMetaEngine::hasFeature(MetaEngineFeature f) const {
+bool PlumbersMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
 }
 
-bool MarioMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+bool PlumbersMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc)
-		*engine = new Mario::MarioGame(syst, desc);
+		*engine = new Plumbers::PlumbersGame(syst, desc);
 
 	return desc != nullptr;
 }
 
-#if PLUGIN_ENABLED_DYNAMIC(MARIO)
-REGISTER_PLUGIN_DYNAMIC(MARIO, PLUGIN_TYPE_ENGINE, MarioMetaEngine);
+#if PLUGIN_ENABLED_DYNAMIC(PLUMBERS)
+REGISTER_PLUGIN_DYNAMIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(MARIO, PLUGIN_TYPE_ENGINE, MarioMetaEngine);
+REGISTER_PLUGIN_STATIC(PLUMBERS, PLUGIN_TYPE_ENGINE, PlumbersMetaEngine);
 #endif
