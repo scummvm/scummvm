@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-09 22:09+0200\n"
-"PO-Revision-Date: 2017-01-15 22:05+0000\n"
-"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
-"Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/es/>\n"
+"PO-Revision-Date: 2017-04-12 06:04+0000\n"
+"Last-Translator: pablobecerra <pabbec@gmail.com>\n"
+"Language-Team: Spanish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -853,7 +853,7 @@ msgstr "no se han podido cambiar los ajustes de filtrado"
 
 #: gui/options.cpp:958
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Mostrar controles en pantalla"
 
 #: gui/options.cpp:962
 #, fuzzy
@@ -862,12 +862,11 @@ msgstr "Modo Touchpad desactivado."
 
 #: gui/options.cpp:966
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Intercambiar botones Menu y Volver"
 
 #: gui/options.cpp:971
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Velocidad:"
+msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:971 gui/options.cpp:973 gui/options.cpp:974
 msgid "Speed for keyboard/joystick mouse pointer control"
@@ -898,12 +897,12 @@ msgstr ""
 
 #: gui/options.cpp:1000 gui/options.cpp:1002
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Hardware Shaders diferentes, otorgan efectos visuales diferentes."
 
 #: gui/options.cpp:1002
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "HW Shader:"
 
 #: gui/options.cpp:1003
 msgid "Different shaders give different visual effects"
@@ -1163,7 +1162,7 @@ msgstr "Voces:"
 
 #: gui/options.cpp:1472
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/options.cpp:1484
 #, fuzzy
@@ -1364,9 +1363,8 @@ msgid "Another cloud storage is already active."
 msgstr "Ya se ha habilitado otro almacenamiento en línea."
 
 #: gui/options.cpp:1929
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "El plugin del motor no soporta partidas guardadas"
+msgstr "¡El Tema no soporta el lenguaje seleccionado!"
 
 #: gui/options.cpp:1932
 #, fuzzy
@@ -1378,6 +1376,8 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"La configuración por defecto será restaurada."
 
 #: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
