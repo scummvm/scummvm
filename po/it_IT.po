@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-09 22:09+0200\n"
-"PO-Revision-Date: 2017-04-10 09:13+0000\n"
+"PO-Revision-Date: 2017-04-12 20:07+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
@@ -846,7 +846,7 @@ msgstr "impossibile modificare l'impostazione proporzioni"
 
 #: gui/options.cpp:551
 msgid "the fullscreen setting could not be changed"
-msgstr "impossibile modificare l'impostazione schermo intero"
+msgstr "Impossibile modificare l'impostazione schermo intero"
 
 #: gui/options.cpp:557
 msgid "the filtering setting could not be changed"
@@ -892,7 +892,7 @@ msgstr "Deadzone Joy:"
 
 #: gui/options.cpp:1000
 msgid "HW Shader:"
-msgstr "HW Shader:"
+msgstr "Shader Hardware:"
 
 #: gui/options.cpp:1000 gui/options.cpp:1002
 msgid "Different hardware shaders give different visual effects"
@@ -930,7 +930,7 @@ msgstr "Applica filtro grafico"
 
 #: gui/options.cpp:1049
 msgid "Use linear filtering when scaling graphics"
-msgstr "Usa filtro lineare per lo scaling della grafica"
+msgstr "Usa filtro bilineare per lo scaling della grafica"
 
 #: gui/options.cpp:1052
 msgid "Aspect ratio correction"
@@ -938,7 +938,7 @@ msgstr "Correzione proporzioni"
 
 #: gui/options.cpp:1052
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Corregge le proporzioni dei giochi con risoluzione a 320x200"
+msgstr "Correggere le proporzioni dei giochi con risoluzione a 320x200"
 
 #: gui/options.cpp:1060
 msgid "Preferred Device:"
@@ -1791,7 +1791,7 @@ msgstr "Errore sconosciuto"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules verde"
+msgstr "Hercules Verde"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -2991,7 +2991,7 @@ msgstr ""
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "File della scena di intermezzo '%s' non trovato!"
+msgstr "File della sequenza di intermezzo '%s' non trovato!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
@@ -3298,8 +3298,8 @@ msgstr "Riproduci il volo panoramico di Myst"
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
-"Il filmato del volo panoramico non veniva riprodotto dal motore originale "
-"del gioco."
+"Il filmato del volo panoramico di Myst non veniva riprodotto dal motore "
+"originale del gioco."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
