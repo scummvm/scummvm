@@ -47,7 +47,6 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	MidiParser() {
 	_soundVersion = soundVersion;
 	_music = music;
-	_mixedData = NULL;
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
@@ -113,7 +112,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	}
 
 	_numTracks = 1;
-	_tracks[0] = _mixedData;
+	_tracks[0] = const_cast<byte *>(_mixedData->data());
 	if (_pSnd)
 		setTrack(0);
 	_loopTick = 0;
@@ -144,7 +143,15 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	return curr;
 }
 
-byte *MidiParser_SCI::midiMixChannels() {
+static inline bool validateNextRead(const SoundResource::Channel *channel) {
+	if (channel->data.size() <= channel->curPos) {
+		warning("Unexpected end of %s. Music may sound wrong due to game resource corruption", channel->data.name().c_str());
+		return false;
+	}
+	return true;
+}
+
+void MidiParser_SCI::midiMixChannels() {
 	int totalSize = 0;
 
 	for (int i = 0; i < _track->channelCount; i++) {
@@ -154,8 +161,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 		totalSize += _track->channels[i].data.size();
 	}
 
-	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
-	_mixedData = outData;
+	SciSpan<byte> outData = _mixedData->allocate(totalSize * 2, Common::String::format("mixed sound.%d", _pSnd ? _pSnd->resourceId : -1)); // FIXME: creates overhead and still may be not enough to hold all data
+
 	long ticker = 0;
 	byte channelNr, curDelta;
 	byte midiCommand = 0, midiParam, globalPrev = 0;
@@ -164,6 +171,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 
 	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
 		channel = &_track->channels[channelNr];
+		if (!validateNextRead(channel))
+			goto end;
 		curDelta = channel->data[channel->curPos++];
 		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
@@ -171,6 +180,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 		newDelta = channel->time - ticker;
 		ticker += newDelta;
 
+		if (!validateNextRead(channel))
+			goto end;
 		midiCommand = channel->data[channel->curPos++];
 		if (midiCommand != kEndOfTrack) {
 			// Write delta
@@ -185,6 +196,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 		case 0xF0: // sysEx
 			*outData++ = midiCommand;
 			do {
+				if (!validateNextRead(channel))
+					goto end;
 				midiParam = channel->data[channel->curPos++];
 				*outData++ = midiParam;
 			} while (midiParam != 0xF7);
@@ -194,6 +207,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 			break;
 		default: // MIDI command
 			if (midiCommand & 0x80) {
+				if (!validateNextRead(channel))
+					goto end;
 				midiParam = channel->data[channel->curPos++];
 			} else {// running status
 				midiParam = midiCommand;
@@ -207,45 +222,58 @@ byte *MidiParser_SCI::midiMixChannels() {
 			if (midiCommand != globalPrev)
 				*outData++ = midiCommand;
 			*outData++ = midiParam;
-			if (nMidiParams[(midiCommand >> 4) - 8] == 2)
+			if (nMidiParams[(midiCommand >> 4) - 8] == 2) {
+				if (!validateNextRead(channel))
+					goto end;
 				*outData++ = channel->data[channel->curPos++];
+			}
 			channel->prev = midiCommand;
 			globalPrev = midiCommand;
 		}
 	}
 
+end:
 	// Insert stop event
 	*outData++ = 0;    // Delta
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
 	*outData++ = 0x00;
-	return _mixedData;
+}
+
+static inline bool validateNextRead(const SciSpan<const byte> &channelData, const SciSpan<const byte>::size_type size = 1) {
+	if (channelData.size() < size) {
+		warning("Unexpected end of %s. Music may sound wrong due to game resource corruption", channelData.name().c_str());
+		return false;
+	}
+	return true;
 }
 
 // This is used for SCI0 sound-data. SCI0 only has one stream that may
 // contain several channels and according to output device we remove
 // certain channels from that data.
-byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
+void MidiParser_SCI::midiFilterChannels(int channelMask) {
 	SoundResource::Channel *channel = &_track->channels[0];
-	SciSpan<const byte>::const_iterator channelData = channel->data.cbegin();
-	SciSpan<const byte>::const_iterator channelDataEnd = channel->data.cend();
-	byte *outData = new byte[channel->data.size() + 5];
+	SciSpan<const byte> channelData = channel->data;
 	byte curChannel = 15, curByte, curDelta;
 	byte command = 0, lastCommand = 0;
 	int delta = 0;
 	int midiParamCount = 0;
 	bool containsMidiData = false;
 
-	_mixedData = outData;
+	SciSpan<byte> outData = _mixedData->allocate(channel->data.size() + 5, Common::String::format("filtered %s", channel->data.name().c_str()));
 
-	while (channelData != channelDataEnd) {
+	while (channelData.size()) {
+		if (!validateNextRead(channelData))
+			goto end;
 		curDelta = *channelData++;
 		if (curDelta == 0xF8) {
 			delta += 240;
 			continue;
 		}
 		delta += curDelta;
+		if (!validateNextRead(channelData))
+			goto end;
 		curByte = *channelData++;
 
 		switch (curByte) {
@@ -278,6 +306,8 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			case 0xF0: // sysEx
 				*outData++ = command;
 				do {
+					if (!validateNextRead(channelData))
+						goto end;
 					curByte = *channelData++;
 					*outData++ = curByte; // out
 				} while (curByte != 0xF7);
@@ -285,6 +315,10 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 				break;
 
 			case kEndOfTrack: // end of channel
+				// At least KQ4 sound 104 has a doubled kEndOfTrack marker at
+				// the end of the file, which breaks filtering
+				if (channelData.size() < 2)
+					goto end;
 				break;
 
 			default: // MIDI command
@@ -297,23 +331,30 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 					lastCommand = command;
 				}
 				if (midiParamCount > 0) {
-					if (curByte & 0x80)
+					if (curByte & 0x80) {
+						if (!validateNextRead(channelData))
+							goto end;
 						*outData++ = *channelData++;
-					else
+					} else
 						*outData++ = curByte;
 				}
 				if (midiParamCount > 1) {
+					if (!validateNextRead(channelData))
+						goto end;
 					*outData++ = *channelData++;
 				}
 			}
 		} else {
+			int count = midiParamCount - 1;
 			if (curByte & 0x80)
-				channelData += midiParamCount;
-			else
-				channelData += midiParamCount - 1;
+				++count;
+			if (!validateNextRead(channelData, count))
+				goto end;
+			channelData += count;
 		}
 	}
 
+end:
 	// Insert stop event
 	// (Delta is already output above)
 	*outData++ = 0xFF; // Meta event
@@ -325,8 +366,6 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	// driver (bug #3297881)
 	if (!containsMidiData)
 		warning("MIDI parser: the requested SCI0 sound has no MIDI note data for the currently selected sound driver");
-
-	return _mixedData;
 }
 
 void MidiParser_SCI::resetStateTracking() {
@@ -390,11 +429,7 @@ void MidiParser_SCI::unloadMusic() {
 	_numTracks = 0;
 	_activeTrack = 255;
 	_resetOnPause = false;
-
-	if (_mixedData) {
-		delete[] _mixedData;
-		_mixedData = NULL;
-	}
+	_mixedData.clear();
 }
 
 // this is used for scripts sending midi commands to us. we verify in that case that the channel is actually

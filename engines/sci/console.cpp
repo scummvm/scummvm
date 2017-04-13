@@ -1126,13 +1126,13 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		SoundResource sound(itr->getNumber(), _engine->getResMan(), doSoundVersion);
 		int channelFilterMask = sound.getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
 		SoundResource::Track *track = sound.getTrackByType(player->getPlayId());
-		if (track->digitalChannelNr != -1) {
+		if (!track || track->digitalChannelNr != -1) {
 			// Skip digitized sound effects
 			continue;
 		}
 
 		parser->loadMusic(track, NULL, channelFilterMask, doSoundVersion);
-		const byte *channelData = parser->getMixedData();
+		SciSpan<const byte> channelData = parser->getMixedData();
 
 		byte curEvent = 0, prevEvent = 0, command = 0;
 		bool endOfTrack = false;
