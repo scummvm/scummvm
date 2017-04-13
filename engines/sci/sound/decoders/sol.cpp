@@ -60,7 +60,7 @@ static void deDPCM16Channel(int16 *out, int16 &sample, uint8 delta) {
 		sample += tableDPCM16[delta];
 	}
 	sample = CLIP<int16>(sample, -32768, 32767);
-	*out = TO_LE_16(sample);
+	*out = sample;
 }
 
 /**
