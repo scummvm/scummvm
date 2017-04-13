@@ -40,7 +40,10 @@ Archive *DirectorEngine::createArchive() {
 		else
 			return new RIFXArchive();
 	} else {
-		return new RIFFArchive();
+		if (getVersion() < 4)
+			return new RIFFArchive();
+		else
+			return new RIFXArchive();
 	}
 }
 
@@ -269,8 +272,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (cast.size() > 0) {
 		debug(0, "****** Loading %d CASt resources", cast.size());
 
-		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator)
-			_sharedScore->loadCastData(*shardcst->getResource(MKTAG('C','A','S','t'), *iterator), *iterator, NULL);
+		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
+			Resource res = shardcst->getResourceDetail(MKTAG('C', 'A', 'S', 't'), *iterator);
+			_sharedScore->loadCastData(*shardcst->getResource(MKTAG('C', 'A', 'S', 't'), *iterator), *iterator, &res);
+		}
 	}
 
 	Common::Array<uint16> vwci = shardcst->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));

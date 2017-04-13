@@ -138,6 +138,7 @@ void Score::loadArchive() {
 	} else {
 		// TODO: Source this from somewhere!
 		_movieRect = Common::Rect(0, 0, 640, 480);
+		_stageColor = 1;
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
@@ -242,7 +243,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			debugC(4, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bitmapCast->flags, bitmapCast->someFlaggyThing, bitmapCast->unk1, bitmapCast->unk2);
 
-			if (pic != NULL && bitmapCast != NULL) {
+			if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
 				if (_vm->getVersion() < 4) {
 					img = new BITDDecoder(w, h);
 				} else if (_vm->getVersion() < 6) {
@@ -377,6 +378,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 			}
 
 			Common::MemoryReadStreamEndian *str = new Common::MemoryReadStreamEndian(channelData, ARRAYSIZE(channelData), stream.isBE());
+			// str->hexdump(str->size(), 32);
 			frame->readChannels(str);
 			delete str;
 
@@ -513,11 +515,12 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
 
-	uint32 size1, size2, size3, castType;
+	uint32 size1, size2, size3, castType, sizeToRead;
 	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	if (_vm->getVersion() <= 3) {
-		size1 = stream.readUint16() + 16; // 16 is for bounding rects
+		size1 = stream.readUint16();
+		sizeToRead = size1 +16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
@@ -525,22 +528,25 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		unk2 = stream.readByte();
 		unk3 = stream.readByte();
 	} else if (_vm->getVersion() == 4) {
-		size1 = stream.readUint16() + 2 + 16; // 16 is for bounding rects
+		size1 = stream.readUint16();
+		sizeToRead = size1 + 2 + 16; // 16 is for bounding rects
 		size2 = stream.readUint32();
 		size3 = 0;
 		castType = stream.readByte();
 		unk1 = stream.readByte();
 	} else if (_vm->getVersion() == 5) {
-		// FIXME: only the cast type and the strings are good
 		castType = stream.readUint32();
-
 		size3 = stream.readUint32();
 		size2 = stream.readUint32();
 		size1 = stream.readUint32();
-		// assert(size1 == 0x14);
+		if (castType == 1) {
+			if (size3 == 0) 
+				return;
+			for (int skip = 0; skip < (size1 - 4) / 4; skip++)
+				stream.readUint32();
+		}
 
-		// don't read the strings later, the full cast data is needed to be parsed.
-		size1 = stream.size();
+		sizeToRead = stream.size();
 	} else {
 		error("Score::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
@@ -548,10 +554,10 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
-	byte *data = (byte *)calloc(size1, 1);
-	stream.read(data, size1);
+	byte *data = (byte *)calloc(sizeToRead, 1);
+	stream.read(data, sizeToRead);
 
-	Common::MemoryReadStreamEndian castStream(data, size1, stream.isBE());
+	Common::MemoryReadStreamEndian castStream(data, sizeToRead, stream.isBE());
 
 	switch (castType) {
 	case kCastBitmap:

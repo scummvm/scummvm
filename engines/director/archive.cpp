@@ -357,7 +357,9 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 rifxType = subStream.readUint32();
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') && rifxType != MKTAG('A', 'P', 'P', 'L'))
+	if (rifxType != MKTAG('M', 'V', '9', '3') && 
+		rifxType != MKTAG('A', 'P', 'P', 'L') && 
+		rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))

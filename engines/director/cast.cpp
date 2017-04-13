@@ -66,15 +66,6 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		warning("BitmapCast: %d bytes left", tail);
 	} else if (version == 5) {
-		// WIP!
-		uint32 unk1 = stream.readUint32();
-		uint32 unk2 = stream.readUint32();
-		uint32 unk3 = stream.readUint32();
-		uint32 unk4 = stream.readUint32();
-		uint32 unk5 = stream.readUint32();
-		uint32 unk6 = stream.readUint32();
-		uint32 unk7 = stream.readUint32();
-
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();

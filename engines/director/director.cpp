@@ -152,6 +152,10 @@ Common::Error DirectorEngine::run() {
 		} else {
 			_sharedCastFile = "Shared Cast";
 		}
+	} else if (getVersion() == 5) {
+		if (getPlatform() == Common::kPlatformWindows) {
+			_sharedCastFile = "SHARED.Cxt";
+		}
 	} else {
 		_sharedCastFile = "Shared.dir";
 	}
