@@ -163,7 +163,7 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
 	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
@@ -248,7 +248,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
 	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
@@ -334,7 +334,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	camera->proc36(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
 	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
@@ -447,7 +447,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	pose._vector = FVector(28068592.0, 5345916.50, -116580624.0);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
-	FPoint centroid = surfaceArea->_centroid - FPoint(0.5, 0.5);
+	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
 	double threshold = camera->getThreshold();
 	double minVal = threshold - 9216.0;
 	int width1 = surfaceArea->_width - 1;
