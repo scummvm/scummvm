@@ -191,7 +191,7 @@ Common::Rect Scene::getOriginalPosition() const {
 	return originalPosition;
 }
 
-void Scene::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) const {
+void Scene::screenPosToDirection(const Common::Point &screen, float &pitch, float &heading) const {
 	Common::Rect frame = getPosition();
 
 	// Screen coords to window coords

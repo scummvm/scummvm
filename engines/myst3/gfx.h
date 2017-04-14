@@ -149,8 +149,6 @@ public:
 
 	Common::Rect viewport() const;
 
-	Math::Matrix4 makeProjectionMatrix(float fov) const;
-
 	/**
 	 * Select the window where to render
 	 *
@@ -189,6 +187,8 @@ protected:
 
 	Common::Rect getFontCharacterRect(uint8 character);
 	void computeScreenViewport();
+
+	Math::Matrix4 makeProjectionMatrix(float fov) const;
 };
 
 /**
