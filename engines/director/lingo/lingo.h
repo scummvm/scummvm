@@ -181,11 +181,6 @@ public:
 	void printStack(const char *s);
 	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
 
-	ScriptType event2script(LEvent ev);
-	Symbol *getHandler(Common::String &name);
-
-	void processEvent(LEvent event, ScriptType st, int entityId);
-
 	void initBuiltIns();
 	void initFuncs();
 	void initTheEntities();
@@ -194,6 +189,20 @@ public:
 
 private:
 	const char *findNextDefinition(const char *s);
+
+	// lingo-events.cpp
+private:
+	void initEventHandlerTypes();
+	void processInputEvent(LEvent event);
+	void processFrameEvent(LEvent event);
+	void processGenericEvent(LEvent event);
+
+public:
+	ScriptType event2script(LEvent ev);
+	Symbol *getHandler(Common::String &name);
+
+	void processEvent(LEvent event, ScriptType st, int entityId);
+	void processEvent(LEvent event);
 
 public:
 	void execute(uint pc);

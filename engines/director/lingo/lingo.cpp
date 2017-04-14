@@ -31,49 +31,6 @@ namespace Director {
 
 Lingo *g_lingo;
 
-struct EventHandlerType {
-	LEvent handler;
-	const char *name;
-} static const eventHandlerDescs[] = {
-	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },			//		D3?
-	{ kEventStepMovie,			"stepMovie" },			//		D3?
-	{ kEventStopMovie,			"stopMovie" },			//		D3?
-
-	{ kEventNew,				"newSprite" },
-	{ kEventBeginSprite,		"beginSprite" },
-	{ kEventEndSprite,			"endSprite" },
-
-	{ kEventEnterFrame, 		"enterFrame" },			//			D4
-	{ kEventPrepareFrame, 		"prepareFrame" },
-	{ kEventIdle,				"idle" },
-	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame, 			"exitFrame" },			//			D4
-
-	{ kEventActivateWindow,		"activateWindow" },
-	{ kEventDeactivateWindow,	"deactivateWindow" },
-	{ kEventMoveWindow,			"moveWindow" },
-	{ kEventResizeWindow,		"resizeWindow" },
-	{ kEventOpenWindow,			"openWindow" },
-	{ kEventCloseWindow,		"closeWindow" },
-	{ kEventStart,				"start" },
-
-	{ kEventKeyUp,				"keyUp" },				//			D4
-	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
-	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3?
-	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3?
-	{ kEventRightMouseDown,		"rightMouseDown" },
-	{ kEventRightMouseUp,		"rightMouseUp" },
-	{ kEventMouseEnter,			"mouseEnter" },
-	{ kEventMouseLeave,			"mouseLeave" },
-	{ kEventMouseUpOutSide,		"mouseUpOutSide" },
-	{ kEventMouseWithin,		"mouseWithin" },
-
-	{ kEventTimeout,			"timeout" },			// D2 as when
-
-	{ kEventNone,				0 },
-};
-
 Symbol::Symbol() {
 	type = VOID;
 	u.s = NULL;
@@ -85,11 +42,6 @@ Symbol::Symbol() {
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
-
-	for (const EventHandlerType *t = &eventHandlerDescs[0]; t->handler != kEventNone; ++t) {
-		_eventHandlerTypeIds[t->name] = t->handler;
-		_eventHandlerTypes[t->handler] = t->name;
-	}
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
@@ -114,6 +66,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_exitRepeat = false;
 
 	_localvars = NULL;
+
+	initEventHandlerTypes();
 
 	initBuiltIns();
 	initFuncs();
@@ -263,59 +217,6 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	execute(_pc);
 
 	cleanLocalVars();
-}
-
-ScriptType Lingo::event2script(LEvent ev) {
-	if (_vm->getVersion() < 4) {
-		switch (ev) {
-		//case kEventStartMovie: // We are precompiling it now
-		//	return kMovieScript;
-		case kEventEnterFrame:
-			return kFrameScript;
-		default:
-			return kNoneScript;
-		}
-	}
-
-	return kNoneScript;
-}
-
-Symbol *Lingo::getHandler(Common::String &name) {
-	if (!_eventHandlerTypeIds.contains(name)) {
-		if (_builtins.contains(name))
-			return _builtins[name];
-
-		return NULL;
-	}
-
-	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
-	if (!_handlers.contains(entityIndex))
-		return NULL;
-
-	return _handlers[entityIndex];
-}
-
-void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
-	if (entityId < 0)
-		return;
-
-	debugC(9, kDebugEvents, "Lingo::processEvent(%s, %s, %d)", _eventHandlerTypes[event], scriptType2str(st), entityId);
-
-	_currentEntityId = entityId;
-
-	if (!_eventHandlerTypes.contains(event))
-		error("processEvent: Unknown event %d for entity %d", event, entityId);
-
-	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
-		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
-		call(_eventHandlerTypes[event], 0); // D4+ Events
-	} else if (event == kEventNone && _scripts[st].contains(entityId)) {
-		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
-
-		executeScript(st, entityId); // D3 list of scripts.
-	} else {
-		//debugC(3, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
-	}
 }
 
 void Lingo::restartLingo() {

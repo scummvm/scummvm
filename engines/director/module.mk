@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	lingo/lingo-builtins.o \
 	lingo/lingo-code.o \
 	lingo/lingo-codegen.o \
+	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
 	lingo/lingo-lex.o \
 	lingo/lingo-the.o
