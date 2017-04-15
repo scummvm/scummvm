@@ -218,6 +218,7 @@ private:
 	void preloadCommonRooms();
 	void initializeZipBitIndexTable();
 	void patchLanguageMenu();
+	void patchNodeScripts(const RoomData *room, Common::Array<NodePtr> &nodes) const;
 
 	// 'myst3.dat' read methods
 	void readScriptIndex(Common::SeekableReadStream *stream, bool load);

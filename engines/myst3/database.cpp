@@ -637,7 +637,53 @@ Common::Array<NodePtr> Database::readRoomScripts(const RoomData *room) const {
 		delete backgroundSoundsStream;
 	}
 
+	patchNodeScripts(room, nodes);
+
 	return nodes;
+}
+
+void Database::patchNodeScripts(const RoomData *room, Common::Array<NodePtr> &nodes) const {
+	if (strcmp(room->name, "LEOF") == 0) {
+		// The room LEOF does not have a script to set default water effect
+		// parameters when entering a node. As a result, the pool of water
+		// mainly visible in LEOF 23 uses the last set water effect parameters.
+		// If the player comes from the top of the tower, the water effect is
+		// barely visible.
+		// As a workaround we insert default water effect settings in node
+		// 32765 which get applied for each node in the room.
+		// The new script disassembles as follow:
+
+		// node: LEOF 32765
+		// init 0 > c[v1 != 0] (true)
+		// op 33, waterEffectSetWave ( 100 100 )
+		// op 32, waterEffectSetAttenuation ( 360 )
+		// op 31, waterEffectSetSpeed ( 12 )
+
+		Opcode waterEffectSetWave;
+		waterEffectSetWave.op = 33;
+		waterEffectSetWave.args.push_back(100);
+		waterEffectSetWave.args.push_back(100);
+
+		Opcode waterEffectSetAttenuation;
+		waterEffectSetAttenuation.op = 32;
+		waterEffectSetAttenuation.args.push_back(360);
+
+		Opcode waterEffectSetSpeed;
+		waterEffectSetSpeed.op = 31;
+		waterEffectSetSpeed.args.push_back(12);
+
+		CondScript waterEffectScript;
+		waterEffectScript.condition = 1;
+		waterEffectScript.script.push_back(waterEffectSetWave);
+		waterEffectScript.script.push_back(waterEffectSetAttenuation);
+		waterEffectScript.script.push_back(waterEffectSetSpeed);
+
+		NodePtr node32765 = NodePtr(new NodeData());
+		node32765->id = 32765;
+		node32765->scripts.push_back(waterEffectScript);
+
+		nodes.push_back(node32765);
+	}
 }
 
 bool Database::isCommonRoom(uint32 roomID, uint32 ageID) const {
