@@ -39,7 +39,7 @@ bool CStarCloseup::SineTable::setup() {
 	if (_data.empty()) {
 		_data.resize(1024);
 		for (int idx = 0; idx < 1024; ++idx)
-			_data[idx] = sin((double)idx * 2 * M_PI / 512.0);
+			_data[idx] = sin((float)idx * 2 * M_PI / 512.0);
 	}
 
 	return true;
@@ -63,7 +63,7 @@ bool CStarCloseup::setup() {
 }
 
 bool CStarCloseup::setup2(int val1, int val2) {
-	const double FACTOR = 2 * M_PI / 360.0;
+	const float FACTOR = 2 * M_PI / 360.0;
 	const int VALUES1[] = { 0x800, 0xC00, 0x1000, 0x1400, 0x1800 };
 	const int VALUES2[] = {
 		0xF95BCD, 0xA505A0, 0xFFAD43, 0x98F4EB, 0xF3EFA5, 0,
@@ -174,8 +174,8 @@ bool CStarCloseup::setup2(int val1, int val2) {
 				e->_field8 = g_vm->getRandomNumber(3) + 3;
 				
 				e->_fieldC = g_vm->getRandomNumber(255);
-				e->_field10 = FACTOR * (double)g_vm->getRandomNumber(15);
-				e->_field14 = ((double)g_vm->getRandomNumber(0xfffffffe)
+				e->_field10 = FACTOR * (float)g_vm->getRandomNumber(15);
+				e->_field14 = ((float)g_vm->getRandomNumber(0xfffffffe)
 					* 50.0 / 65536.0) / 256.0;
 			}
 		}
@@ -192,15 +192,15 @@ bool CStarCloseup::setup2(int val1, int val2) {
 void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector &vector2,
 		CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
-	double val1 = camera->getThreshold();
+	float val1 = camera->getThreshold();
 	int val2 = camera->proc27();
 	if (!_flag)
 		return;
 
 	int f1, f3, size2, size1;
-	double f2, f4, f5, f6, f7, f8, f9;
-	double f10, f11, f12, f13, f14, f15, f16, f17, f18, f19;
-	double f20, f21, f22;
+	float f2, f4, f5, f6, f7, f8, f9;
+	float f10, incr, f12, f13, f14, f15, f16, f17, f18, f19;
+	float f20, f21, f22;
 	FVector tempV;
 
 	if (vector2._z < 6.0e9) {
@@ -226,14 +226,14 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			f8 = _sineTable[f3 + 128];
 			f9 = f7;
 			f10 = f6 * f8;
-			f11 = f6;
+			incr = f6;
 			f12 = f6 * f5;
 			f13 = f2 * f10;
 			f14 = f8 * f2;
 			f15 = f9 * f2;
 			f16 = f2 * f12;
 			f17 = -(f7 * f8 * f2);
-			f18 = f11 * f2;
+			f18 = incr * f2;
 			f19 = -(f9 * f5 * f2);
 			f20 = -(f5 * f2);
 			f21 = f14;
@@ -246,7 +246,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			_sub1._row3._x = f20;
 			_sub1._row3._z = f14;
 
-			f22 = (double)entryP->_field0;
+			f22 = (float)entryP->_field0;
 			_sub1._vector._x = f22 * f10 + vector._x;
 			_sub1._vector._y = f9 * f22 + vector._y;
 			_sub1._vector._z = f22 * f12 + vector._z;
@@ -473,17 +473,17 @@ void CStarCloseup::fn1() {
 	_flag = !_flag;
 }
 
-bool CStarCloseup::setupEntry(int width, int height, int index, double val) {
+bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 	if (width < 2 || height < 3)
 		return false;
 
 	SubEntry &entry = _array[index];
 	entry.clear();
 
-	const double FACTOR = 2 * M_PI / 360.0;
+	const float FACTOR = 2.0 * M_PI / 360.0;
 	int d1Count, d2Count, size3, height1;
-	int ctr, ctr2, idx, offset, f11;
-	double vx, vy, f5, f6, f7, f8, f9, f10;
+	int ctr, ctr2, idx, offset, incr;
+	float vx, vy, yVal, degrees, cosVal, sinVal, angle;
 
 	d1Count = width * (2 * height - 3);
 	d2Count = (height - 2) * width + 2;
@@ -491,34 +491,31 @@ bool CStarCloseup::setupEntry(int width, int height, int index, double val) {
 	entry._data2.resize(d2Count);
 
 	height1 = height - 1;
+	vy = 180.0 / (float)height1;
+	vx = 360.0 / (float)width;
+
+	// Build up the vector list
 	entry._data2[0]._y = val;
 
-	vy = 180.0 / (double)height1;
-	vx = 360.0 / (double)width;
-
-	for (ctr = height - 2, idx = 0; ctr > 0; --ctr, vy *= 2) {
-		f5 = 0.0;
-		f6 = cos(vy * FACTOR);
-		f7 = sin(vy * FACTOR);
+	for (ctr = height - 2, idx = 1, yVal = vy; ctr > 0; --ctr, yVal += vy) {
+		degrees = 0.0;
+		cosVal = cos(yVal * FACTOR);
+		sinVal = sin(yVal * FACTOR);
 
 		if (width > 0) {
-			f8 = f6 * val;
-
-			for (int xp = width; xp > 0; --xp, ++idx, f5 += vx) {
-				f9 = f5 * FACTOR;
-				f10 = cos(f9) * f7 * val;
+			for (int xCtr = 0; xCtr < width; ++xCtr, ++idx, degrees += vx) {
+				angle = degrees * FACTOR;
 
 				FVector &tempV = entry._data2[idx];
-				tempV._x = sin(f9) * f7 * val;
-				tempV._y = f8;
-				tempV._z = f10;
+				tempV._x = sin(angle) * sinVal * val;
+				tempV._y = cosVal * val;
+				tempV._z = cos(angle) * sinVal * val;
 			}
 		}
 	}
-	entry._data2[idx] = FVector(0.0, -1.0, 0.0);
+	entry._data2[idx] = FVector(0.0, -1.0 * val, 0.0);
 
 	size3 = width * (height - 3) + 1;
-	offset = 0;
 	Data1 *data1P = &entry._data1[0];
 	for (ctr = 0; ctr < width; ++ctr, ++size3) {
 		data1P->_index1 = 0;
@@ -530,25 +527,19 @@ bool CStarCloseup::setupEntry(int width, int height, int index, double val) {
 		++data1P;
 	}
 
-	f11 = 1;
-	for (ctr = 1; ctr < height1; ++ctr, f11 += width) {
-		data1P = &entry._data1[offset];
-
-		for (ctr2 = 0; ctr2 < width; ++ctr2) {
-			data1P->_index1 = ctr2 + f11;
+	incr = 1;
+	for (ctr = 1; ctr < height1; ++ctr, incr += width) {
+		for (ctr2 = 0; ctr2 < width; ++ctr2, ++data1P) {
+			data1P->_index1 = ctr2 + incr;
 			if (ctr2 == width - 1)
-				data1P->_index2 = f11;
+				data1P->_index2 = incr;
 			else
-				data1P->_index2 = ctr2 + f11 + 1;
-
-			++offset;
-			++data1P;
+				data1P->_index2 = ctr2 + incr + 1;
 
 			if (ctr < height - 2) {
-				data1P->_index1 = ctr2 + f11;
-				++offset;
-				data1P->_index2 = width + ctr2 + f11;
 				++data1P;
+				data1P->_index1 = ctr2 + incr;
+				data1P->_index2 = width + ctr2 + incr;
 			}
 		}
 	}

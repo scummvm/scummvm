@@ -79,7 +79,7 @@ class CStarCloseup {
 	 */
 	struct SineTable {
 	private:
-		Common::Array<double> _data;
+		Common::Array<float> _data;
 	public:
 		SineTable() {}
 
@@ -106,7 +106,7 @@ private:
 	 * Sets up the data for an array entry
 	 * @return	True if success
 	 */
-	bool setupEntry(int width, int height, int index, double val);
+	bool setupEntry(int width, int height, int index, float val);
 
 	/**
 	 * Secondary setup method
