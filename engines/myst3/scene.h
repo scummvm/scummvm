@@ -50,6 +50,7 @@ public:
 	void updateMouseSpeed();
 
 	void screenPosToDirection(const Common::Point &screen, float &pitch, float &heading) const;
+	static Math::Vector3d directionToVector(float pitch, float heading);
 
 	void drawSunspotFlare(const SunSpot &s);
 	float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);

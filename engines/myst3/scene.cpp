@@ -111,7 +111,7 @@ void Scene::drawSunspotFlare(const SunSpot &s) {
 }
 
 
-static Math::Vector3d directionToVector(float pitch, float heading) {
+Math::Vector3d Scene::directionToVector(float pitch, float heading) {
 	Math::Vector3d v;
 
 	float radHeading = Common::deg2rad(heading);
