@@ -31,14 +31,14 @@ void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_field60 = 0.1;
 	_field58 = 0.0;
 	_field40 = _field44 = _field48 = -1;
-	_field8 = 1;
+	_active = true;
 }
 
 void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 	CStarControlSub23::proc4(v1, v2, m);
 
 	if (_field24 > 8000.0) {
-		_field8 = 1;
+		_active = true;
 		_field34 = 1;
 		proc6(120, 4, _field24 - 8000.0);
 	}
@@ -75,7 +75,7 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 
 		_field58 = 0.0;
 		_field60 = 0.1;
-		_field8 = 1;
+		_active = true;
 	}
 }
 
@@ -83,7 +83,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	FVector v1, v2, v3, v4;
 	const FVector *tv;
 
-	if (_field8)
+	if (!_active)
 		return 0;
 
 	if (_field58 < 1.0) {
@@ -93,7 +93,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	}
 
 	if (!_field34) {
-		_field8 = 0;
+		_active = false;
 		return 2;
 	}
 
@@ -160,7 +160,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		return 1;
 	}
 
-	_field8 = 0;
+	_active = false;
 	return 2;
 }
 

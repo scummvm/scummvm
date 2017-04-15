@@ -53,7 +53,7 @@ void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVect
 }
 
 void CStarControlSub21::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
-	if (_sub24.get8()) {
+	if (_sub24.isActive()) {
 		decLockCount();
 		int val = _sub24.proc5(errorCode, v, m);
 		if (val == 1)

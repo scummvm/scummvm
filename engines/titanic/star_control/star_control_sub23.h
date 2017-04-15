@@ -33,7 +33,7 @@ namespace Titanic {
 class CStarControlSub23 {
 protected:
 	int _field4;
-	int _field8;
+	bool _active;
 	FVector _row1, _row2;
 	double _field24;
 	FVector _row3;
@@ -59,7 +59,7 @@ public:
 	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) { return 2; }
 	virtual void proc6(int val1, int val2, float val);
 
-	int get8() const { return _field8; }
+	bool isActive() const { return _active; }
 };
 
 } // End of namespace Titanic

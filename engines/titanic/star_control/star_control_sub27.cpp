@@ -30,7 +30,7 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 
 	double factor = _field24;
 	if (_field24 > 0.0) {
-		_field8 = 1;
+		_active = true;
 		_field34 = 1;
 		proc6(120, 4, _field24);
 	}
@@ -41,16 +41,16 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 
 		if (_field4C == 0) {
 			_field60 = 0.1;
-			_field8 = 1;
+			_active = true;
 		} else {
 			_field60 = 1.0 / factor;
-			_field8 = 1;
+			_active = true;
 		}
 	}
 }
 
 int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
-	if (!_field8)
+	if (!_active)
 		return 0;
 
 	_field58 += _field60;
@@ -82,7 +82,7 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		errorCode.set();
 		return 1;
 	} else {
-		_field8 = 0;
+		_active = false;
 		return 2;
 	}
 }
