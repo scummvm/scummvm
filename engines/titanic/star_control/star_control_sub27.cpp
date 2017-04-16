@@ -37,13 +37,13 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 
 	if (m1 != m2) {
 		_sub25.fn1(m1, m2);
-		_field58 = 0.0;
+		_moveDelayCtr = 0.0;
 
 		if (_field4C == 0) {
-			_field60 = 0.1;
+			_moveDelayInc = 0.1;
 			_active = true;
 		} else {
-			_field60 = 1.0 / factor;
+			_moveDelayInc = 1.0 / factor;
 			_active = true;
 		}
 	}
@@ -53,8 +53,8 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (!_active)
 		return 0;
 
-	_field58 += _field60;
-	_sub25.fn2(_field58, m);
+	_moveDelayCtr += _moveDelayInc;
+	_sub25.fn2(_moveDelayCtr, m);
 	errorCode.set();
 
 	if (_field40 >= 0) {

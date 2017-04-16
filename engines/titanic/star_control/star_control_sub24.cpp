@@ -28,8 +28,8 @@ namespace Titanic {
 void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 	CStarControlSub23::proc3(m1, m2);
 	_sub25.fn1(m1, m2);
-	_field60 = 0.1;
-	_field58 = 0.0;
+	_moveDelayInc = 0.1;
+	_moveDelayCtr = 0.0;
 	_field40 = _field44 = _field48 = -1;
 	_active = true;
 }
@@ -45,7 +45,7 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 
 	FVector row3 = m._row3;
 	double mult = _row3._x * row3._x + _row3._y * row3._y+ _row3._z * row3._z;
-	_field58 = 1.0;
+	_moveDelayCtr = 1.0;
 
 	bool flag = false;
 	if (mult < 1.0) {
@@ -73,8 +73,8 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 		m1.fn1(tempV1);
 		_sub25.fn1(m, m1);
 
-		_field58 = 0.0;
-		_field60 = 0.1;
+		_moveDelayCtr = 0.0;
+		_moveDelayInc = 0.1;
 		_active = true;
 	}
 }
@@ -86,9 +86,9 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (!_active)
 		return 0;
 
-	if (_field58 < 1.0) {
-		_field58 += _field60;
-		_sub25.fn2(_field58, m);
+	if (_moveDelayCtr < 1.0) {
+		_moveDelayCtr += _moveDelayInc;
+		_sub25.fn2(_moveDelayCtr, m);
 		errorCode.set();
 		return 1;
 	}
