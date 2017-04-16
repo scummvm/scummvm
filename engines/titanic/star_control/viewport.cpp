@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub13.h"
+#include "titanic/star_control/viewport.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CStarControlSub13::CStarControlSub13() {
+CViewport::CViewport() {
 	_fieldC = 0;
 	_field10 = 800.0;
 	_field14 = 10000.0;
@@ -38,7 +38,7 @@ CStarControlSub13::CStarControlSub13() {
 	Common::fill(&_valArray[0], &_valArray[5], 0.0);
 }
 
-CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
+CViewport::CViewport(CViewport *src) :
 		_matrix(src->_matrix), _sub1(src->_sub1), _sub2(src->_sub2) {
 	_position = src->_position;
 	_fieldC = src->_fieldC;
@@ -57,11 +57,11 @@ CStarControlSub13::CStarControlSub13(CStarControlSub13 *src) :
 	_flag = false;
 }
 
-void CStarControlSub13::copyFrom(const CStarControlSub13 *src) {
+void CViewport::copyFrom(const CViewport *src) {
 	error("Unused function");
 }
 
-void CStarControlSub13::load(SimpleFile *file, int param) {
+void CViewport::load(SimpleFile *file, int param) {
 	_position._x = file->readFloat();
 	_position._y = file->readFloat();
 	_position._z = file->readFloat();
@@ -83,7 +83,7 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 	_flag = false;
 }
 
-void CStarControlSub13::save(SimpleFile *file, int indent) {
+void CViewport::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_position._x, indent);
 	file->writeFloatLine(_position._y, indent);
 	file->writeFloatLine(_position._z, indent);
@@ -100,52 +100,52 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 	_matrix.save(file, indent);
 }
 
-void CStarControlSub13::setPosition(const FVector &v) {
+void CViewport::setPosition(const FVector &v) {
 	debugC(DEBUG_INTERMEDIATE, kDebugStarfield, "Setting starmap position to %s", v.toString().c_str());
 	_position = v;
 	_flag = false;
 }
 
-void CStarControlSub13::setPosition(const FPose &pose) {
+void CViewport::setPosition(const FPose &pose) {
 	_position = _position.fn5(pose);
 	_flag = false;
 }
 
-void CStarControlSub13::setMatrix(const FMatrix &m) {
+void CViewport::setMatrix(const FMatrix &m) {
 	_matrix = m;
 	_flag = false;
 }
 
-void CStarControlSub13::fn11(const FVector &v) {
+void CViewport::fn11(const FVector &v) {
 	_matrix.fn1(v);
 	_flag = false;
 }
 
-void CStarControlSub13::setC(double v) {
+void CViewport::setC(double v) {
 	_fieldC = v;
 	_flag = false;
 }
 
-void CStarControlSub13::set10(double v) {
+void CViewport::set10(double v) {
 	_field10 = v;
 	_flag = false;
 }
 
-void CStarControlSub13::set14(double v) {
+void CViewport::set14(double v) {
 	_field10 = v;
 }
 
-void CStarControlSub13::set18(double v) {
+void CViewport::set18(double v) {
 	_field18 = v;
 	_flag = false;
 }
 
-void CStarControlSub13::set1C(double v) {
+void CViewport::set1C(double v) {
 	_field1C = v;
 	_flag = false;
 }
 
-void CStarControlSub13::fn12() {
+void CViewport::fn12() {
 	_matrix.identity();
 
 	FPose m1(X_AXIS, g_vm->getRandomNumber(359));
@@ -160,7 +160,7 @@ void CStarControlSub13::fn12() {
 	_flag = false;
 }
 
-void CStarControlSub13::fn13(StarMode mode, double val) {
+void CViewport::fn13(StarMode mode, double val) {
 	if (mode == MODE_PHOTO) {
 		_valArray[0] = val;
 		_valArray[1] = -val;
@@ -173,33 +173,33 @@ void CStarControlSub13::fn13(StarMode mode, double val) {
 	_field24 = val ? 2 : 0;
 }
 
-void CStarControlSub13::reposition(double factor) {
+void CViewport::reposition(double factor) {
 	_position._x = _matrix._row3._x * factor + _position._x;
 	_position._y = _matrix._row3._y * factor + _position._y;
 	_position._z = _matrix._row3._z * factor + _position._z;
 	_flag = false;
 }
 
-void CStarControlSub13::fn15(const FMatrix &matrix) {
+void CViewport::fn15(const FMatrix &matrix) {
 	_matrix.fn3(matrix);
 	_flag = false;
 }
 
-FPose CStarControlSub13::getSub1() {
+FPose CViewport::getSub1() {
 	if (!_flag)
 		reset();
 
 	return _sub1;
 }
 
-FPose CStarControlSub13::getSub2() {
+FPose CViewport::getSub2() {
 	if (!_flag)
 		reset();
 
 	return _sub2;
 }
 
-FVector CStarControlSub13::fn16(int index, const FVector &src) {
+FVector CViewport::fn16(int index, const FVector &src) {
 	FPose temp = getSub1();
 
 	FVector dest;
@@ -212,7 +212,7 @@ FVector CStarControlSub13::fn16(int index, const FVector &src) {
 	return dest;
 }
 
-FVector CStarControlSub13::fn17(int index, const FVector &src) {
+FVector CViewport::fn17(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getSub1();
 	FVector tv = src.fn5(pose);
@@ -224,7 +224,7 @@ FVector CStarControlSub13::fn17(int index, const FVector &src) {
 	return dest;
 }
 
-FVector CStarControlSub13::fn18(int index, const FVector &src) {
+FVector CViewport::fn18(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getSub2();
 	FVector tv = src.fn5(pose);
@@ -236,14 +236,14 @@ FVector CStarControlSub13::fn18(int index, const FVector &src) {
 	return dest;
 }
 
-void CStarControlSub13::fn19(double *v1, double *v2, double *v3, double *v4) {
+void CViewport::fn19(double *v1, double *v2, double *v3, double *v4) {
 	*v1 = _centerVector._x / _centerVector._y;
 	*v2 = _centerVector._x / _centerVector._z;
 	*v3 = _valArray[3];
 	*v4 = _valArray[4];
 }
 
-void CStarControlSub13::reset() {
+void CViewport::reset() {
 	const double FACTOR = 2 * M_PI / 360.0;
 
 	_sub2.copyFrom(_matrix);
@@ -257,7 +257,7 @@ void CStarControlSub13::reset() {
 	_flag = true;
 }
 
-const FMatrix &CStarControlSub13::getMatrix() const {
+const FMatrix &CViewport::getMatrix() const {
 	return _matrix;
 }
 

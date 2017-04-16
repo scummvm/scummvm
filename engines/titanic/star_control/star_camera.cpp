@@ -37,8 +37,8 @@ CStarCamera::CStarCamera(const CNavigationInfo *data) :
 	setupHandler(data);
 }
 
-CStarCamera::CStarCamera(CStarControlSub13 *src) :
-		_matrixRow(-1), _mover(nullptr), _field108(0), _sub13(src) {
+CStarCamera::CStarCamera(CViewport *src) :
+		_matrixRow(-1), _mover(nullptr), _field108(0), _viewport(src) {
 }
 
 void CStarCamera::init() {
@@ -57,8 +57,8 @@ CStarCamera::~CStarCamera() {
 	deleteHandler();
 }
 
-void CStarCamera::proc2(const CStarControlSub13 *src) {
-	_sub13.copyFrom(src);
+void CStarCamera::proc2(const CViewport *src) {
+	_viewport.copyFrom(src);
 }
 
 void CStarCamera::proc3(const CNavigationInfo *src) {
@@ -67,58 +67,58 @@ void CStarCamera::proc3(const CNavigationInfo *src) {
 
 void CStarCamera::setPosition(const FVector &v) {
 	if (!isLocked()) {
-		_sub13.setPosition(v);
+		_viewport.setPosition(v);
 		set108();
 	}
 }
 
 void CStarCamera::proc5(const FVector &v) {
 	if (!isLocked())
-		_sub13.fn11(v);
+		_viewport.fn11(v);
 }
 
 void CStarCamera::proc6(int v) {
 	if (!isLocked())
-		_sub13.setC(v);
+		_viewport.setC(v);
 }
 
 void CStarCamera::proc7(int v) {
 	if (!isLocked())
-		_sub13.set10(v);
+		_viewport.set10(v);
 }
 
 void CStarCamera::proc8(int v) {
 	if (!isLocked())
-		_sub13.set14(v);
+		_viewport.set14(v);
 }
 
 void CStarCamera::proc9(int v) {
 	if (!isLocked())
-		_sub13.set18(v);
+		_viewport.set18(v);
 }
 
 void CStarCamera::proc10(int v) {
 	if (!isLocked())
-		_sub13.set1C(v);
+		_viewport.set1C(v);
 }
 
 void CStarCamera::proc11() {
 	if (!isLocked())
-		_sub13.fn12();
+		_viewport.fn12();
 }
 
 void CStarCamera::proc12(StarMode mode, double v2) {
 	if (!isLocked())
-		_sub13.fn13(mode, v2);
+		_viewport.fn13(mode, v2);
 }
 
-void CStarCamera::proc13(CStarControlSub13 *dest) {
-	*dest = _sub13;
+void CStarCamera::proc13(CViewport *dest) {
+	*dest = _viewport;
 }
 
 void CStarCamera::setDestination(const FVector &v) {
-	FMatrix matrix = _sub13.getMatrix();
-	FVector vector = _sub13._position;
+	FMatrix matrix = _viewport.getMatrix();
+	FVector vector = _viewport._position;
 
 	_mover->moveTo(vector, v, matrix);
 }
@@ -129,20 +129,20 @@ void CStarCamera::proc15(CErrorCode *errorCode) {
 	if (!_matrix2)
 		_matrix2 = new FMatrix();
 
-	*_matrix1 = _sub13.getMatrix();
+	*_matrix1 = _viewport.getMatrix();
 	*_matrix2 = *_matrix1;
 
-	FVector v1 = _sub13._position;
-	FVector v2 = _sub13._position;
+	FVector v1 = _viewport._position;
+	FVector v2 = _viewport._position;
 	_mover->proc11(*errorCode, v2, *_matrix2);
 
 	if (v1 != v2) {
-		_sub13.setPosition(v2);
+		_viewport.setPosition(v2);
 		set108();
 	}
 
 	if (*_matrix1 != *_matrix2) {
-		_sub13.setMatrix(*_matrix2);
+		_viewport.setMatrix(*_matrix2);
 	}
 }
 
@@ -164,60 +164,60 @@ void CStarCamera::proc19() {
 
 void CStarCamera::proc20(double factor) {
 	if (!isLocked())
-		_sub13.reposition(factor);
+		_viewport.reposition(factor);
 }
 
 void CStarCamera::proc21(const FPose &pose) {
 	if (!isLocked()) {
-		_sub13.setPosition(pose);
+		_viewport.setPosition(pose);
 		set108();
 	}
 }
 
 void CStarCamera::proc22(FMatrix &m) {
 	if (!isLocked())
-		_sub13.fn15(m);
+		_viewport.fn15(m);
 }
 
 FPose CStarCamera::getPose() {
-	return _sub13.getSub1();
+	return _viewport.getSub1();
 }
 
 FPose CStarCamera::getPose2() {
-	return _sub13.getSub2();
+	return _viewport.getSub2();
 }
 
 double CStarCamera::getThreshold() const {
-	return _sub13._field10;
+	return _viewport._field10;
 }
 
 double CStarCamera::proc26() const {
-	return _sub13._field14;
+	return _viewport._field14;
 }
 
 int CStarCamera::proc27() const {
-	return _sub13._field24;
+	return _viewport._field24;
 }
 
 FVector CStarCamera::proc28(int index, const FVector &src) {
 	FVector dest;
-	dest._x = ((_sub13._valArray[index] + src._x) * _sub13._centerVector._x)
-		/ (_sub13._centerVector._y * src._z);
-	dest._y = src._y * _sub13._centerVector._x / (_sub13._centerVector._z * src._z);
+	dest._x = ((_viewport._valArray[index] + src._x) * _viewport._centerVector._x)
+		/ (_viewport._centerVector._y * src._z);
+	dest._y = src._y * _viewport._centerVector._x / (_viewport._centerVector._z * src._z);
 	dest._z = src._z;
 	return dest;
 }
 
 FVector CStarCamera::proc29(int index, const FVector &src) {
-	return _sub13.fn16(index, src);
+	return _viewport.fn16(index, src);
 }
 
 FVector CStarCamera::proc30(int index, const FVector &v) {
-	return _sub13.fn17(index, v);
+	return _viewport.fn17(index, v);
 }
 
 FVector CStarCamera::proc31(int index, const FVector &v) {
-	return _sub13.fn18(index, v);
+	return _viewport.fn18(index, v);
 }
 
 void CStarCamera::setViewportAngle(const FPoint &angles) {
@@ -237,8 +237,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		FPose subY(Y_AXIS, angles._x);
 		FPose sub(subX, subY);
 
-		FMatrix m1 = _sub13.getMatrix();
-		FVector tempV1 = _sub13._position;
+		FMatrix m1 = _viewport.getMatrix();
+		FVector tempV1 = _viewport._position;
 		FVector tempV2, tempV3, tempV4, tempV5, tempV6;
 		tempV2._y = m1._row1._y * 100000.0;
 		tempV2._z = m1._row1._z * 100000.0;
@@ -312,8 +312,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV1 += row1;
 
 		m1.set(tempV4, tempV5, tempV6);
-		_sub13.setMatrix(m1);
-		_sub13.setPosition(tempV1);
+		_viewport.setMatrix(m1);
+		_viewport.setPosition(tempV1);
 	} else if (_matrixRow == 1) {
 		FVector tempV2;
 		DMatrix m1, m2, sub;
@@ -332,8 +332,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		subX = m1.fn1();
 		subX = subX.fn4(subY);
 
-		FMatrix m3 = _sub13.getMatrix();
-		tempV2 = _sub13._position;
+		FMatrix m3 = _viewport.getMatrix();
+		tempV2 = _viewport._position;
 		multV._x = m3._row1._x * 1000000.0;
 		multV._y = m3._row1._y * 1000000.0;
 		multV._z = m3._row1._z * 1000000.0;
@@ -386,8 +386,8 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV16 = tempV3;
 
 		m3.set(mrow1, mrow2, mrow3);
-		_sub13.setMatrix(m3);
-		_sub13.setPosition(tempV16);
+		_viewport.setMatrix(m3);
+		_viewport.setPosition(tempV16);
 	}
 }
 
@@ -419,15 +419,15 @@ bool CStarCamera::removeMatrixRow() {
 }
 
 void CStarCamera::proc36(double *v1, double *v2, double *v3, double *v4) {
-	_sub13.fn19(v1, v2, v3, v4);
+	_viewport.fn19(v1, v2, v3, v4);
 }
 
 void CStarCamera::load(SimpleFile *file, int param) {
-	_sub13.load(file, param);
+	_viewport.load(file, param);
 }
 
 void CStarCamera::save(SimpleFile *file, int indent) {
-	_sub13.save(file, indent);
+	_viewport.save(file, indent);
 }
 
 bool CStarCamera::setupHandler(const CNavigationInfo *src) {
@@ -464,12 +464,12 @@ void CStarCamera::deleteHandler() {
 	}
 }
 
-void CStarCamera::fn1(CStarControlSub13 *sub13, const FVector &v) {
+void CStarCamera::fn1(CViewport *viewport, const FVector &v) {
 	if (_matrixRow == 1) {
-		FMatrix m1 = sub13->getMatrix();
-		FMatrix m2 = _sub13.getMatrix();
-		FVector v1 = sub13->_position;
-		FVector v2 = _sub13._position;
+		FMatrix m1 = viewport->getMatrix();
+		FMatrix m2 = _viewport.getMatrix();
+		FVector v1 = viewport->_position;
+		FVector v2 = _viewport._position;
 
 		_mover->proc8(v2, v1, m2, m1);
 		CStarVector *sv = new CStarVector(this, v);
@@ -480,19 +480,19 @@ void CStarCamera::fn1(CStarControlSub13 *sub13, const FVector &v) {
 void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 	if (_matrixRow == -1) {
 		FVector tempV;
-		tempV._z = _sub13._field10;
+		tempV._z = _viewport._field10;
 		v3._z = v1._z;
-		tempV._x = _sub13._centerVector._z * v1._y * v1._z / _sub13._centerVector._x;
-		v3._y = _sub13._centerVector._y * tempV._z * v3._x / _sub13._centerVector._x;
-		v3._x = _sub13._centerVector._y * v1._x * v1._z / _sub13._centerVector._x - _sub13._valArray[2];
-		tempV._y = _sub13._centerVector._z * tempV._z * v3._y / _sub13._centerVector._x;
-		tempV._x = tempV._x - _sub13._valArray[2];
+		tempV._x = _viewport._centerVector._z * v1._y * v1._z / _viewport._centerVector._x;
+		v3._y = _viewport._centerVector._y * tempV._z * v3._x / _viewport._centerVector._x;
+		v3._x = _viewport._centerVector._y * v1._x * v1._z / _viewport._centerVector._x - _viewport._valArray[2];
+		tempV._y = _viewport._centerVector._z * tempV._z * v3._y / _viewport._centerVector._x;
+		tempV._x = tempV._x - _viewport._valArray[2];
 
 		v3.normalize();
 		tempV.normalize();
 
-		FMatrix matrix = _sub13.getMatrix();
-		const FVector &pos = _sub13._position;
+		FMatrix matrix = _viewport.getMatrix();
+		const FVector &pos = _viewport._position;
 		_mover->proc10(v3, tempV, pos, matrix);
 
 		CStarVector *sv = new CStarVector(this, v2);
@@ -500,7 +500,7 @@ void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 	}
 }
 
-void CStarCamera::fn3(CStarControlSub13 *sub13, const FVector &v) {
+void CStarCamera::fn3(CViewport *viewport, const FVector &v) {
 	if (_matrixRow != 0)
 		return;
 
@@ -514,14 +514,14 @@ void CStarCamera::fn3(CStarControlSub13 *sub13, const FVector &v) {
 	m1 = m1.fn4(m2);
 	m2 = m1.fn1();
 
-	DVector tempV2 = _sub13._position;
+	DVector tempV2 = _viewport._position;
 	DMatrix m4;
-	m4._row1 = sub13->_position;
+	m4._row1 = viewport->_position;
 	m4._row2 = DVector(0.0, 0.0, 0.0);
 	m4._row3 = DVector(0.0, 0.0, 0.0);
 	m4._row4 = DVector(0.0, 0.0, 0.0);
 
-	FMatrix m5 = sub13->getMatrix();
+	FMatrix m5 = viewport->getMatrix();
 	DVector tempV3, tempV4;
 	tempV4._x = m5._row1._x * 1000000.0 + m4._row1._x;
 	tempV4._y = m5._row1._y * 1000000.0 + m4._row1._y;
@@ -595,8 +595,8 @@ void CStarCamera::fn3(CStarControlSub13 *sub13, const FVector &v) {
 	m5.set(m4._row3, m4._row2, m4._row4);
 
 	FVector tempV6 = m4._row1;
-	FMatrix m6 = _sub13.getMatrix();
-	_mover->proc8(_sub13._position, tempV6, m6, m5);
+	FMatrix m6 = _viewport.getMatrix();
+	_mover->proc8(_viewport._position, tempV6, m6, m5);
 
 	CStarVector *sv = new CStarVector(this, v);
 	_mover->setVector(sv);

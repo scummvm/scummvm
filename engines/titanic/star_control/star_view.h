@@ -26,7 +26,7 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/star_control_sub13.h"
+#include "titanic/star_control/viewport.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
@@ -43,7 +43,7 @@ private:
 	CVideoSurface *_videoSurface;
 	CStarCamera _camera;
 	bool _hasReference;
-	CStarControlSub13 _sub13;
+	CViewport _sub13;
 	CSurfaceFader _fader;
 	CVideoSurface *_videoSurface2;
 	CGameObject *_homePhotoMask;

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB13_H
-#define TITANIC_STAR_CONTROL_SUB13_H
+#ifndef TITANIC_VIEWPORT_H
+#define TITANIC_VIEWPORT_H
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/base_stars.h"
@@ -30,7 +30,11 @@
 
 namespace Titanic {
 
-class CStarControlSub13 {
+/**
+ * Implements the viewport functionality for viewing the star field in
+ * a given position and orientation
+ */
+class CViewport {
 private:
 	double _fieldC;
 	double _field18;
@@ -52,13 +56,13 @@ public:
 	double _valArray[5];
 	FVector _centerVector;
 public:
-	CStarControlSub13();
-	CStarControlSub13(CStarControlSub13 *src);
+	CViewport();
+	CViewport(CViewport *src);
 
 	/**
 	 * Copys the data from another instance
 	 */
-	void copyFrom(const CStarControlSub13 *src);
+	void copyFrom(const CViewport *src);
 
 	/**
 	 * Load the data for the class from file
@@ -111,4 +115,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB13_H */
+#endif /* TITANIC_VIEWPORT_H */

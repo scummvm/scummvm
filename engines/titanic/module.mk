@@ -446,7 +446,6 @@ MODULE_OBJS := \
 	star_control/star_control_sub2.o \
 	star_control/star_control_sub7.o \
 	star_control/star_control_sub8.o \
-	star_control/star_control_sub13.o \
 	star_control/star_control_sub21.o \
 	star_control/star_control_sub22.o \
 	star_control/star_control_sub23.o \
@@ -461,6 +460,7 @@ MODULE_OBJS := \
 	star_control/star_view.o \
 	star_control/surface_area.o \
 	star_control/surface_fader.o \
+	star_control/viewport.o \
 	support/avi_surface.o \
 	support/direct_draw.o \
 	support/direct_draw_surface.o \

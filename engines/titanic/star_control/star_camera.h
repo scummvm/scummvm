@@ -27,12 +27,15 @@
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/star_control_sub13.h"
+#include "titanic/star_control/viewport.h"
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/error_code.h"
 
 namespace Titanic {
 
+/**
+ * Implements a reference point from which the starmap can be viewed
+ */
 class CStarCamera {
 private:
 	static FMatrix *_matrix1;
@@ -41,7 +44,7 @@ private:
 	int _matrixRow;
 	FMatrix _matrix;
 	CCameraMover *_mover;
-	CStarControlSub13 _sub13;
+	CViewport _viewport;
 	int _field108;
 private:
 	/**
@@ -63,10 +66,10 @@ public:
 	static void deinit();
 public:
 	CStarCamera(const CNavigationInfo *data);
-	CStarCamera(CStarControlSub13 *src);
+	CStarCamera(CViewport *src);
 	virtual ~CStarCamera();
 
-	virtual void proc2(const CStarControlSub13 *src);
+	virtual void proc2(const CViewport *src);
 	virtual void proc3(const CNavigationInfo *src);
 	virtual void setPosition(const FVector &v);
 	virtual void proc5(const FVector &v);
@@ -77,7 +80,7 @@ public:
 	virtual void proc10(int v);
 	virtual void proc11();
 	virtual void proc12(StarMode mode, double v2);
-	virtual void proc13(CStarControlSub13 *dest);
+	virtual void proc13(CViewport *dest);
 
 	/**
 	 * Sets the destination to move the camera to
@@ -133,9 +136,9 @@ public:
 	void set108() { _field108 = true; }
 	void reset108() { _field108 = false; }
 
-	void fn1(CStarControlSub13 *sub13, const FVector &v);
+	void fn1(CViewport *sub13, const FVector &v);
 	void fn2(FVector v1, FVector v2, FVector v3);
-	void fn3(CStarControlSub13 *sub13, const FVector &v);
+	void fn3(CViewport *sub13, const FVector &v);
 };
 
 } // End of namespace Titanic
