@@ -482,7 +482,7 @@ bool CStarCloseup::setupEntry(int width, int height, int index, float val) {
 
 	const float FACTOR = 2.0 * M_PI / 360.0;
 	int d1Count, d2Count, size3, height1;
-	int ctr, ctr2, idx, offset, incr;
+	int ctr, ctr2, idx, incr;
 	float vx, vy, yVal, degrees, cosVal, sinVal, angle;
 
 	d1Count = width * (2 * height - 3);
