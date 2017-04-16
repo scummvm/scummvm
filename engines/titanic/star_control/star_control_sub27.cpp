@@ -54,7 +54,6 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		return 0;
 
 	_field58 += _field60;
-	_field58 = _field58;
 	_sub25.fn2(_field58, m);
 	errorCode.set();
 

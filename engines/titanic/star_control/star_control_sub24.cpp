@@ -87,7 +87,8 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		return 0;
 
 	if (_field58 < 1.0) {
-		_sub25.fn2(_field60 + _field58, m);
+		_field58 += _field60;
+		_sub25.fn2(_field58, m);
 		errorCode.set();
 		return 1;
 	}
