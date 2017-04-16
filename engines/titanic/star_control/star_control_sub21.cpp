@@ -31,11 +31,11 @@ CStarControlSub21::CStarControlSub21(const CStar20Data *src) :
 		CStarControlSub20(src) {
 }
 
-void CStarControlSub21::proc9(FVector &v1, FVector &v2, FMatrix &matrix) {
+void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
 	if (isLocked())
 		decLockCount();
 
-	_sub24.proc4(v1, v2, matrix);
+	_sub24.setPath(srcV, destV, srcM);
 }
 
 void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {

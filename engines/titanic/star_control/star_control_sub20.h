@@ -56,7 +56,12 @@ public:
 	virtual void proc6();
 	virtual void proc7();
 	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {}
-	virtual void proc9(FVector &v1, FVector &v2, FMatrix &matrix) {}
+
+	/**
+	 * Start a movement to a given specified destination
+	 */
+	virtual void moveTo(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {}
+
 	virtual void proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {}
 	virtual void proc11(CErrorCode &errorCode, FVector &v, FMatrix &m);
 	virtual void setVector(CStarVector *sv);

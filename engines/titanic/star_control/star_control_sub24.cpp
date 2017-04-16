@@ -34,8 +34,8 @@ void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_active = true;
 }
 
-void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
-	CStarControlSub23::proc4(v1, v2, m);
+void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
+	CStarControlSub23::setPath(srcV, destV, srcM);
 
 	if (_field24 > 8000.0) {
 		_active = true;
@@ -43,8 +43,8 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 		proc6(120, 4, _field24 - 8000.0);
 	}
 
-	FVector row3 = m._row3;
-	double mult = _row3._x * row3._x + _row3._y * row3._y+ _row3._z * row3._z;
+	FVector row3 = srcM._row3;
+	double mult = _posDelta._x * row3._x + _posDelta._y * row3._y+ _posDelta._z * row3._z;
 	_moveDelayCtr = 1.0;
 
 	bool flag = false;
@@ -59,7 +59,7 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 	if (!flag) {
 		const FVector *tv;
 		FVector tempV1, tempV2;
-		FVector::addAndNormalize(tempV1, row3, _row3);
+		FVector::addAndNormalize(tempV1, row3, _posDelta);
 		tv = FVector::addAndNormalize(tempV2, row3, tempV1);
 		tempV1 = *tv;
 
@@ -71,7 +71,7 @@ void CStarControlSub24::proc4(FVector &v1, FVector &v2, FMatrix &m) {
 
 		FMatrix m1;
 		m1.fn1(tempV1);
-		_sub25.fn1(m, m1);
+		_sub25.fn1(srcM, m1);
 
 		_moveDelayCtr = 0.0;
 		_moveDelayInc = 0.1;
@@ -99,7 +99,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	}
 
 	v2 = m._row3;
-	v3 = _row2 - v;
+	v3 = _destPos - v;
 	v3.normalize();
 
 	double val = m._row3._x * v3._x + m._row3._y * v3._y + m._row3._z * v3._z;

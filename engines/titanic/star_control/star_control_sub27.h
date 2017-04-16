@@ -29,7 +29,12 @@ namespace Titanic {
 
 class CStarControlSub27 : public CStarControlSub23 {
 private:
-	void fn1(FVector &v) const;
+	/**
+	 * Given a vector, figures out how far is from the movement source, and
+	 * returns a vector on the proper point along the path to the destination
+	 * with that same distance from the source.
+	 */
+	void getVectorOnPath(FVector &v) const;
 public:
 	virtual ~CStarControlSub27() {}
 

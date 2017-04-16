@@ -544,7 +544,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	}
 }
 
-int CBaseStars::baseFn1(CSurfaceArea *surfaceArea, CStarCamera *camera,
+int CBaseStars::findStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
 	ref.process(surfaceArea, camera);

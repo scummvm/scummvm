@@ -32,7 +32,12 @@ public:
 	virtual ~CStarControlSub24() {}
 
 	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
-	virtual void proc4(FVector &v1, FVector &v2, FMatrix &m);
+
+	/**
+	 * Sets the path to animate movement between
+	 */
+	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM);
+
 	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m);
 };
 

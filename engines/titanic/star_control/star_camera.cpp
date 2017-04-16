@@ -116,11 +116,11 @@ void CStarCamera::proc13(CStarControlSub13 *dest) {
 	*dest = _sub13;
 }
 
-void CStarCamera::proc14(FVector &v) {
+void CStarCamera::setDestination(const FVector &v) {
 	FMatrix matrix = _sub13.getMatrix();
 	FVector vector = _sub13._position;
 
-	_handlerP->proc9(vector, v, matrix);
+	_handlerP->moveTo(vector, v, matrix);
 }
 
 void CStarCamera::proc15(CErrorCode *errorCode) {

@@ -59,23 +59,23 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 
 	if (_field40 >= 0) {
 		double powVal = _powers[_field40];
-		v += _row3 * powVal;
-		fn1(v);
+		v += _posDelta * powVal;
+		getVectorOnPath(v);
 
 		--_field40;
 		errorCode.set();
 		return 1;
 	} else if (_field44 > 0) {
-		v += _row3 * _field38;
-		fn1(v);
+		v += _posDelta * _field38;
+		getVectorOnPath(v);
 
 		--_field44;
 		errorCode.set();
 		return 1;
 	} else if (_field48 >= 0) {
 		double powVal = _powers[31 - _field48];
-		v += _row3 * powVal;
-		fn1(v);
+		v += _posDelta * powVal;
+		getVectorOnPath(v);
 
 		--_field48;
 		errorCode.set();
@@ -86,19 +86,19 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	}
 }
 
-void CStarControlSub27::fn1(FVector &v) const {
-	double distance = _row1.getDistance(v);
+void CStarControlSub27::getVectorOnPath(FVector &v) const {
+	double distance = _posDelta.getDistance(v);
 	distance /= _field24;
 
 	if (distance <= 0.0) {
-		v = _row1;
+		v = _srcPos;
 	} else if (distance >= 1.0) {
-		v = _row2;
+		v = _destPos;
 	} else {
 		v = FVector(
-			(_row2._x - _row1._x) * distance + _row1._x,
-			(_row2._y - _row1._y) * distance + _row1._y,
-			(_row2._z - _row1._z) * distance + _row1._z
+			(_destPos._x - _srcPos._x) * distance + _srcPos._x,
+			(_destPos._y - _srcPos._y) * distance + _srcPos._y,
+			(_destPos._z - _srcPos._z) * distance + _srcPos._z
 		);
 	}
 }

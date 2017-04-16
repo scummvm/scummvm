@@ -34,9 +34,9 @@ class CStarControlSub23 {
 protected:
 	int _field4;
 	bool _active;
-	FVector _row1, _row2;
+	FVector _srcPos, _destPos;
 	double _field24;
-	FVector _row3;
+	FVector _posDelta;
 	int _field34;
 	double _field38;
 	double _field3C;
@@ -55,7 +55,7 @@ public:
 
 	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
 	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
-	virtual void proc4(FVector &v1, FVector &v2, FMatrix &m);
+	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM);
 	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) { return 2; }
 	virtual void proc6(int val1, int val2, float val);
 

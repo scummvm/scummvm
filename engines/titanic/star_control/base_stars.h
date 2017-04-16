@@ -144,7 +144,11 @@ public:
 	 */
 	const CBaseStarEntry *getDataPtr(int index) const;
 
-	int baseFn1(CSurfaceArea *surfaceArea, CStarCamera *camera,
+	/**
+	 * Checks for the presence of a star at a given position on the
+	 * screen given the specified camera view, and returns it's index
+	 */
+	int findStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		const Common::Point &pt);
 
 	int baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera);
