@@ -111,7 +111,7 @@ public:
 	/**
 	 * Sets the viewport position within the starfield
 	 */
-	virtual void setViewportPosition(const FPoint &angles);
+	virtual void setViewportAngle(const FPoint &angles);
 
 	virtual int getMatrixRow() const { return _matrixRow; }
 	virtual bool addMatrixRow(const FVector &v);

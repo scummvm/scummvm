@@ -122,6 +122,11 @@ public:
 		_x -= delta._x;
 		_y -= delta._y;
 	}
+
+	/**
+	 * Converts the vector to a string
+	 */
+	Common::String toString() const;
 };
 
 } // End of namespace Titanic

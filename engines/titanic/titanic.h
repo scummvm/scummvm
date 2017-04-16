@@ -55,7 +55,7 @@ enum TitanicDebugChannels {
 	kDebugCore      = 1 << 0,
 	kDebugScripts	= 1 << 1,
 	kDebugGraphics	= 1 << 2,
-	kDebugSound     = 1 << 3
+	kDebugStarfield = 1 << 3
 };
 
 #define TITANIC_SAVEGAME_VERSION 1

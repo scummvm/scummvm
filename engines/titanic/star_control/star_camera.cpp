@@ -220,8 +220,8 @@ FVector CStarCamera::proc31(int index, const FVector &v) {
 	return _sub13.fn18(index, v);
 }
 
-void CStarCamera::setViewportPosition(const FPoint &angles) {
-	debug(DEBUG_INTERMEDIATE, "setViewportPosition %f %f", angles._x, angles._y);
+void CStarCamera::setViewportAngle(const FPoint &angles) {
+	debug(DEBUG_DETAILED, "setViewportAngle %f %f", angles._x, angles._y);
 
 	if (isLocked())
 		return;

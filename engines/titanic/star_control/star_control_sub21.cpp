@@ -23,6 +23,7 @@
 #include "titanic/star_control/star_control_sub21.h"
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/dvector.h"
+#include "titanic/titanic.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
@@ -35,6 +36,8 @@ void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const 
 	if (isLocked())
 		decLockCount();
 
+	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
+		destV.toString().c_str());
 	_sub24.setPath(srcV, destV, srcM);
 }
 

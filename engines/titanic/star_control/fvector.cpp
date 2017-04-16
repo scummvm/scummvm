@@ -82,4 +82,8 @@ FVector FVector::fn5(const FPose &pose) const {
 	return v;
 }
 
+Common::String FVector::toString() const {
+	return Common::String::format("(%.3f,%.3f,%.3f)", _x, _y, _z);
+}
+
 } // End of namespace Titanic

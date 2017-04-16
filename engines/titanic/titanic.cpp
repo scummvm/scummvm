@@ -66,7 +66,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
 	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
+	DebugMan.addDebugChannel(kDebugStarfield, "starfield", "Starfield logic");
 }
 
 TitanicEngine::~TitanicEngine() {

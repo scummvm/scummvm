@@ -101,6 +101,7 @@ void CStarControlSub13::save(SimpleFile *file, int indent) {
 }
 
 void CStarControlSub13::setPosition(const FVector &v) {
+	debugC(DEBUG_INTERMEDIATE, kDebugStarfield, "Setting starmap position to %s", v.toString().c_str());
 	_position = v;
 	_flag = false;
 }
