@@ -180,11 +180,11 @@ void CStarCamera::proc22(FMatrix &m) {
 }
 
 FPose CStarCamera::getPose() {
-	return _viewport.getSub1();
+	return _viewport.getPose();
 }
 
-FPose CStarCamera::getPose2() {
-	return _viewport.getSub2();
+FPose CStarCamera::getRawPose() {
+	return _viewport.getRawPose();
 }
 
 double CStarCamera::getThreshold() const {

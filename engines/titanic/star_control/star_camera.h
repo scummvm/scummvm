@@ -101,7 +101,7 @@ public:
 	 */
 	virtual FPose getPose();
 
-	virtual FPose getPose2();
+	virtual FPose getRawPose();
 	virtual double getThreshold() const;
 
 	virtual double proc26() const;

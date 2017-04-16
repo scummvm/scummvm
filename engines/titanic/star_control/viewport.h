@@ -42,8 +42,8 @@ private:
 	int _width;
 	int _height;
 	FMatrix _matrix;
-	FPose _sub1;
-	FPose _sub2;
+	FPose _currentPose;
+	FPose _rawPose;
 	FPoint _center;
 	bool _flag;
 private:
@@ -94,8 +94,8 @@ public:
 	void fn13(StarMode mode, double val);
 	void reposition(double factor);
 	void fn15(const FMatrix &matrix);
-	FPose getSub1();
-	FPose getSub2();
+	FPose getPose();
+	FPose getRawPose();
 	FVector fn16(int index, const FVector &src);
 	FVector fn17(int index, const FVector &src);
 	FVector fn18(int index, const FVector &src);

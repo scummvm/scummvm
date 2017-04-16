@@ -39,7 +39,7 @@ CViewport::CViewport() {
 }
 
 CViewport::CViewport(CViewport *src) :
-		_matrix(src->_matrix), _sub1(src->_sub1), _sub2(src->_sub2) {
+		_matrix(src->_matrix), _currentPose(src->_currentPose), _rawPose(src->_rawPose) {
 	_position = src->_position;
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
@@ -185,22 +185,22 @@ void CViewport::fn15(const FMatrix &matrix) {
 	_flag = false;
 }
 
-FPose CViewport::getSub1() {
+FPose CViewport::getPose() {
 	if (!_flag)
 		reset();
 
-	return _sub1;
+	return _currentPose;
 }
 
-FPose CViewport::getSub2() {
+FPose CViewport::getRawPose() {
 	if (!_flag)
 		reset();
 
-	return _sub2;
+	return _rawPose;
 }
 
 FVector CViewport::fn16(int index, const FVector &src) {
-	FPose temp = getSub1();
+	FPose temp = getPose();
 
 	FVector dest;
 	dest._x = temp._row3._x * src._z + temp._row2._x * src._y
@@ -214,7 +214,7 @@ FVector CViewport::fn16(int index, const FVector &src) {
 
 FVector CViewport::fn17(int index, const FVector &src) {
 	FVector dest;
-	FPose pose = getSub1();
+	FPose pose = getPose();
 	FVector tv = src.fn5(pose);
 
 	dest._x = (_valArray[index] + tv._x)
@@ -226,7 +226,7 @@ FVector CViewport::fn17(int index, const FVector &src) {
 
 FVector CViewport::fn18(int index, const FVector &src) {
 	FVector dest;
-	FPose pose = getSub2();
+	FPose pose = getRawPose();
 	FVector tv = src.fn5(pose);
 
 	dest._x = (_valArray[index] + tv._x)
@@ -246,9 +246,9 @@ void CViewport::fn19(double *v1, double *v2, double *v3, double *v4) {
 void CViewport::reset() {
 	const double FACTOR = 2 * M_PI / 360.0;
 
-	_sub2.copyFrom(_matrix);
-	_sub2._vector = _position;
-	_sub1 = _sub2.fn4();
+	_rawPose.copyFrom(_matrix);
+	_rawPose._vector = _position;
+	_currentPose = _rawPose.fn4();
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
