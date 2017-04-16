@@ -90,11 +90,11 @@ void CCameraMover::proc7() {
 	}
 }
 
-void CCameraMover::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
+void CCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_size > 0.0) {
-		v._x += m._row3._x * _size;
-		v._y += m._row3._y * _size;
-		v._z += m._row3._z * _size;
+		pos._x += orientation._row3._x * _size;
+		pos._y += orientation._row3._y * _size;
+		pos._z += orientation._row3._z * _size;
 
 		errorCode.set();
 	}

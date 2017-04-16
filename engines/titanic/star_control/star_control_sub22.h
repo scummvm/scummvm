@@ -36,7 +36,11 @@ public:
 	virtual ~CStarControlSub22() {}
 
 	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
-	virtual void proc11(CErrorCode &errorCode, FVector &v, FMatrix &m);
+
+	/**
+	 * Update the passed position and orientation matrix
+	 */
+	virtual void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic

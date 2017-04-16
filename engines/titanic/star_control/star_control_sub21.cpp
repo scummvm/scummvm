@@ -55,10 +55,10 @@ void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVect
 	incLockCount();
 }
 
-void CStarControlSub21::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
+void CStarControlSub21::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_sub24.isActive()) {
 		decLockCount();
-		int val = _sub24.proc5(errorCode, v, m);
+		int val = _sub24.proc5(errorCode, pos, orientation);
 		if (val == 1)
 			incLockCount();
 		if (val == 2) {
@@ -67,9 +67,9 @@ void CStarControlSub21::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 				_starVector->apply();
 		}
 	} else if (_size != 0.0) {
-		v._x += m._row3._x * _size;
-		v._y += m._row3._y * _size;
-		v._z += m._row3._z * _size;
+		pos._x += orientation._row3._x * _size;
+		pos._y += orientation._row3._y * _size;
+		pos._z += orientation._row3._z * _size;
 		errorCode.set();
 	}
 }

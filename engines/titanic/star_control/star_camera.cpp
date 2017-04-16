@@ -134,7 +134,7 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 
 	FVector priorPos = _viewport._position;
 	FVector newPos = _viewport._position;
-	_mover->proc11(*errorCode, newPos, *_newOrientation);
+	_mover->updatePosition(*errorCode, newPos, *_newOrientation);
 
 	if (newPos != priorPos) {
 		_viewport.setPosition(newPos);
