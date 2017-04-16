@@ -38,8 +38,8 @@ namespace Titanic {
  */
 class CStarCamera {
 private:
-	static FMatrix *_matrix1;
-	static FMatrix *_matrix2;
+	static FMatrix *_priorOrientation;
+	static FMatrix *_newOrientation;
 private:
 	int _matrixRow;
 	FMatrix _matrix;
@@ -87,7 +87,11 @@ public:
 	 */
 	virtual void setDestination(const FVector &v);
 
-	virtual void proc15(CErrorCode *errorCode);
+	/**
+	 * Updates the camera position
+	 */
+	virtual void updatePosition(CErrorCode *errorCode);
+
 	virtual void proc16();
 	virtual void proc17();
 	virtual void proc18();

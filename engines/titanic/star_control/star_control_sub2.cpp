@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/star_control_sub2.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -42,6 +43,7 @@ bool CStarControlSub2::selectStar(CSurfaceArea *surfaceArea,
 	if (index == -1) {
 		return false;
 	} else if (!handler) {
+		debugC(DEBUG_BASIC, kDebugStarfield, "Select star %d", index);
 		camera->setDestination(_data[index]._position);
 		return true;
 	} else {

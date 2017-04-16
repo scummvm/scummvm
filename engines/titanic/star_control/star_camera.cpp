@@ -29,8 +29,8 @@
 
 namespace Titanic {
 
-FMatrix *CStarCamera::_matrix1;
-FMatrix *CStarCamera::_matrix2;
+FMatrix *CStarCamera::_priorOrientation;
+FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
 		_matrixRow(-1), _mover(nullptr), _field108(0) {
@@ -42,15 +42,15 @@ CStarCamera::CStarCamera(CViewport *src) :
 }
 
 void CStarCamera::init() {
-	_matrix1 = nullptr;
-	_matrix2 = nullptr;
+	_priorOrientation = nullptr;
+	_newOrientation = nullptr;
 }
 
 void CStarCamera::deinit() {
-	delete _matrix1;
-	delete _matrix2;
-	_matrix1 = nullptr;
-	_matrix2 = nullptr;
+	delete _priorOrientation;
+	delete _newOrientation;
+	_priorOrientation = nullptr;
+	_newOrientation = nullptr;
 }
 
 CStarCamera::~CStarCamera() {
@@ -123,26 +123,26 @@ void CStarCamera::setDestination(const FVector &v) {
 	_mover->moveTo(vector, v, matrix);
 }
 
-void CStarCamera::proc15(CErrorCode *errorCode) {
-	if (!_matrix1)
-		_matrix1 = new FMatrix();
-	if (!_matrix2)
-		_matrix2 = new FMatrix();
+void CStarCamera::updatePosition(CErrorCode *errorCode) {
+	if (!_priorOrientation)
+		_priorOrientation = new FMatrix();
+	if (!_newOrientation)
+		_newOrientation = new FMatrix();
 
-	*_matrix1 = _viewport.getMatrix();
-	*_matrix2 = *_matrix1;
+	*_priorOrientation = _viewport.getMatrix();
+	*_newOrientation = *_priorOrientation;
 
-	FVector v1 = _viewport._position;
-	FVector v2 = _viewport._position;
-	_mover->proc11(*errorCode, v2, *_matrix2);
+	FVector priorPos = _viewport._position;
+	FVector newPos = _viewport._position;
+	_mover->proc11(*errorCode, newPos, *_newOrientation);
 
-	if (v1 != v2) {
-		_viewport.setPosition(v2);
+	if (newPos != priorPos) {
+		_viewport.setPosition(newPos);
 		set108();
 	}
 
-	if (*_matrix1 != *_matrix2) {
-		_viewport.setMatrix(*_matrix2);
+	if (*_priorOrientation != *_newOrientation) {
+		_viewport.setOrientation(*_newOrientation);
 	}
 }
 
@@ -312,7 +312,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV1 += row1;
 
 		m1.set(tempV4, tempV5, tempV6);
-		_viewport.setMatrix(m1);
+		_viewport.setOrientation(m1);
 		_viewport.setPosition(tempV1);
 	} else if (_matrixRow == 1) {
 		FVector tempV2;
@@ -386,7 +386,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		tempV16 = tempV3;
 
 		m3.set(mrow1, mrow2, mrow3);
-		_viewport.setMatrix(m3);
+		_viewport.setOrientation(m3);
 		_viewport.setPosition(tempV16);
 	}
 }

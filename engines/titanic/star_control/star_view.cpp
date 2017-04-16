@@ -179,7 +179,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		if (v == -1) {
 			pose.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
 			_camera.proc22(pose);
-			_camera.proc15(errorCode);
+			_camera.updatePosition(errorCode);
 			return true;
 		}
 		break;
@@ -212,7 +212,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		if (v == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.proc22(pose);
-			_camera.proc15(errorCode);
+			_camera.updatePosition(errorCode);
 			return true;
 		}
 		break;
@@ -221,7 +221,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		if (v == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.proc22(pose);
-			_camera.proc15(errorCode);
+			_camera.updatePosition(errorCode);
 			return true;
 		}
 		break;
@@ -248,7 +248,7 @@ void CStarView::resetPosition() {
 bool CStarView::fn1() {
 	if (_videoSurface) {
 		CErrorCode errorCode;
-		_camera.proc15(&errorCode);
+		_camera.updatePosition(&errorCode);
 
 		if (_fader._index < 0 || _fader._index >= _fader._count)
 			_starField->fn1(&errorCode);

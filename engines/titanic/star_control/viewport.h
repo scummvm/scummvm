@@ -85,9 +85,9 @@ public:
 	void setPosition(const FPose &pose);
 
 	/**
-	 * Sets the matrix
+	 * Sets the orientation
 	 */
-	void setMatrix(const FMatrix &m);
+	void setOrientation(const FMatrix &m);
 
 	void fn11(const FVector &v);
 	void fn12();

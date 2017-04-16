@@ -111,7 +111,7 @@ void CViewport::setPosition(const FPose &pose) {
 	_flag = false;
 }
 
-void CViewport::setMatrix(const FMatrix &m) {
+void CViewport::setOrientation(const FMatrix &m) {
 	_matrix = m;
 	_flag = false;
 }
