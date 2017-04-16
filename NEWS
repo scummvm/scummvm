@@ -14,6 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Many options in GUI could be applied without closing the dialog.
    - On-the-fly language switching was implemented.
    - Updated Munt MT-32 emulation code to version 2.0.3.
+   - Improved handling of joysticks.
 
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
