@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/camera_mover.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
 
-CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
+CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	_lockCounter = 0;
 	_starVector = nullptr;
 
@@ -43,19 +43,19 @@ CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
 	}
 }
 
-CStarControlSub20::~CStarControlSub20() {
+CCameraMover::~CCameraMover() {
 	clear();
 }
 
-void CStarControlSub20::copyFrom(const CStar20Data *src) {
-	*((CStar20Data *)this) = *src;
+void CCameraMover::copyFrom(const CNavigationInfo *src) {
+	*((CNavigationInfo *)this) = *src;
 }
 
-void CStarControlSub20::copyTo(CStar20Data *dest) {
-	*dest = *((CStar20Data *)this);
+void CCameraMover::copyTo(CNavigationInfo *dest) {
+	*dest = *((CNavigationInfo *)this);
 }
 
-void CStarControlSub20::proc4() {
+void CCameraMover::proc4() {
 	if (!isLocked() && _size < _field10) {
 		_field4 += _size;
 		if (_field8 == _field4)
@@ -65,7 +65,7 @@ void CStarControlSub20::proc4() {
 	}
 }
 
-void CStarControlSub20::proc5() {
+void CCameraMover::proc5() {
 	if (!isLocked()) {
 		_field4 -= _field8;
 		if (_field4 == _size)
@@ -78,19 +78,19 @@ void CStarControlSub20::proc5() {
 	}
 }
 
-void CStarControlSub20::proc6() {
+void CCameraMover::proc6() {
 	if (!isLocked())
 		_size = _field10;
 }
 
-void CStarControlSub20::proc7() {
+void CCameraMover::proc7() {
 	if (!isLocked()) {
 		_size = 0.0;
 		_field4 = 0.0;
 	}
 }
 
-void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
+void CCameraMover::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (_size > 0.0) {
 		v._x += m._row3._x * _size;
 		v._y += m._row3._y * _size;
@@ -100,19 +100,19 @@ void CStarControlSub20::proc11(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	}
 }
 
-void CStarControlSub20::setVector(CStarVector *sv) {
+void CCameraMover::setVector(CStarVector *sv) {
 	clear();
 	_starVector = sv;
 }
 
-void CStarControlSub20::clear() {
+void CCameraMover::clear() {
 	if (_starVector) {
 		delete _starVector;
 		_starVector = nullptr;
 	}
 }
 
-void CStarControlSub20::load(SimpleFile *file, int val) {
+void CCameraMover::load(SimpleFile *file, int val) {
 	if (!val) {
 		_size = file->readFloat();
 		_field4 = file->readFloat();
@@ -125,7 +125,7 @@ void CStarControlSub20::load(SimpleFile *file, int val) {
 	}
 }
 
-void CStarControlSub20::save(SimpleFile *file, int indent) {
+void CCameraMover::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_size, indent);
 	file->writeFloatLine(_field4, indent);
 	file->writeFloatLine(_field8, indent);
@@ -136,11 +136,11 @@ void CStarControlSub20::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_field1C, indent);
 }
 
-void CStarControlSub20::incLockCount() {
+void CCameraMover::incLockCount() {
 	++_lockCounter;
 }
 
-void CStarControlSub20::decLockCount() {
+void CCameraMover::decLockCount() {
 	if (_lockCounter > 0)
 		--_lockCounter;
 }

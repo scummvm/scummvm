@@ -27,8 +27,8 @@
 
 namespace Titanic {
 
-CStarControlSub21::CStarControlSub21(const CStar20Data *src) :
-		CStarControlSub20(src) {
+CStarControlSub21::CStarControlSub21(const CNavigationInfo *src) :
+		CCameraMover(src) {
 }
 
 void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {

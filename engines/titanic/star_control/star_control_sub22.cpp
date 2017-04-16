@@ -25,8 +25,8 @@
 
 namespace Titanic {
 
-CStarControlSub22::CStarControlSub22(const CStar20Data *src) :
-		CStarControlSub20(src) {
+CStarControlSub22::CStarControlSub22(const CNavigationInfo *src) :
+		CCameraMover(src) {
 }
 
 void CStarControlSub22::proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {

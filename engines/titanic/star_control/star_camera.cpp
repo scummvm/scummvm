@@ -32,13 +32,13 @@ namespace Titanic {
 FMatrix *CStarCamera::_matrix1;
 FMatrix *CStarCamera::_matrix2;
 
-CStarCamera::CStarCamera(const CStar20Data *data) :
-		_matrixRow(-1), _handlerP(nullptr), _field108(0) {
+CStarCamera::CStarCamera(const CNavigationInfo *data) :
+		_matrixRow(-1), _mover(nullptr), _field108(0) {
 	setupHandler(data);
 }
 
 CStarCamera::CStarCamera(CStarControlSub13 *src) :
-		_matrixRow(-1), _handlerP(nullptr), _field108(0), _sub13(src) {
+		_matrixRow(-1), _mover(nullptr), _field108(0), _sub13(src) {
 }
 
 void CStarCamera::init() {
@@ -61,8 +61,8 @@ void CStarCamera::proc2(const CStarControlSub13 *src) {
 	_sub13.copyFrom(src);
 }
 
-void CStarCamera::proc3(const CStar20Data *src) {
-	_handlerP->copyFrom(src);
+void CStarCamera::proc3(const CNavigationInfo *src) {
+	_mover->copyFrom(src);
 }
 
 void CStarCamera::setPosition(const FVector &v) {
@@ -120,7 +120,7 @@ void CStarCamera::setDestination(const FVector &v) {
 	FMatrix matrix = _sub13.getMatrix();
 	FVector vector = _sub13._position;
 
-	_handlerP->moveTo(vector, v, matrix);
+	_mover->moveTo(vector, v, matrix);
 }
 
 void CStarCamera::proc15(CErrorCode *errorCode) {
@@ -134,7 +134,7 @@ void CStarCamera::proc15(CErrorCode *errorCode) {
 
 	FVector v1 = _sub13._position;
 	FVector v2 = _sub13._position;
-	_handlerP->proc11(*errorCode, v2, *_matrix2);
+	_mover->proc11(*errorCode, v2, *_matrix2);
 
 	if (v1 != v2) {
 		_sub13.setPosition(v2);
@@ -147,19 +147,19 @@ void CStarCamera::proc15(CErrorCode *errorCode) {
 }
 
 void CStarCamera::proc16() {
-	_handlerP->proc4();
+	_mover->proc4();
 }
 
 void CStarCamera::proc17() {
-	_handlerP->proc5();
+	_mover->proc5();
 }
 
 void CStarCamera::proc18() {
-	_handlerP->proc6();
+	_mover->proc6();
 }
 
 void CStarCamera::proc19() {
-	_handlerP->proc7();
+	_mover->proc7();
 }
 
 void CStarCamera::proc20(double factor) {
@@ -395,8 +395,8 @@ bool CStarCamera::addMatrixRow(const FVector &v) {
 	if (_matrixRow >= 2)
 		return false;
 
-	CStar20Data data;
-	_handlerP->copyTo(&data);
+	CNavigationInfo data;
+	_mover->copyTo(&data);
 	deleteHandler();
 
 	FVector &row = _matrix[++_matrixRow];
@@ -409,8 +409,8 @@ bool CStarCamera::removeMatrixRow() {
 	if (_matrixRow == -1)
 		return false;
 
-	CStar20Data data;
-	_handlerP->copyTo(&data);
+	CNavigationInfo data;
+	_mover->copyTo(&data);
 	deleteHandler();
 
 	--_matrixRow;
@@ -430,27 +430,27 @@ void CStarCamera::save(SimpleFile *file, int indent) {
 	_sub13.save(file, indent);
 }
 
-bool CStarCamera::setupHandler(const CStar20Data *src) {
-	CStarControlSub20 *handler = nullptr;
+bool CStarCamera::setupHandler(const CNavigationInfo *src) {
+	CCameraMover *mover = nullptr;
 
 	switch (_matrixRow) {
 	case -1:
-		handler = new CStarControlSub21(src);
+		mover = new CStarControlSub21(src);
 		break;
 
 	case 0:
 	case 1:
 	case 2:
-		handler = new CStarControlSub22(src);
+		mover = new CStarControlSub22(src);
 		break;
 
 	default:
 		break;
 	}
 
-	if (handler) {
-		assert(!_handlerP);
-		_handlerP = handler;
+	if (mover) {
+		assert(!_mover);
+		_mover = mover;
 		return true;
 	} else {
 		return false;
@@ -458,9 +458,9 @@ bool CStarCamera::setupHandler(const CStar20Data *src) {
 }
 
 void CStarCamera::deleteHandler() {
-	if (_handlerP) {
-		delete _handlerP;
-		_handlerP = nullptr;
+	if (_mover) {
+		delete _mover;
+		_mover = nullptr;
 	}
 }
 
@@ -471,9 +471,9 @@ void CStarCamera::fn1(CStarControlSub13 *sub13, const FVector &v) {
 		FVector v1 = sub13->_position;
 		FVector v2 = _sub13._position;
 
-		_handlerP->proc8(v2, v1, m2, m1);
+		_mover->proc8(v2, v1, m2, m1);
 		CStarVector *sv = new CStarVector(this, v);
-		_handlerP->setVector(sv);
+		_mover->setVector(sv);
 	}
 }
 
@@ -493,10 +493,10 @@ void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 
 		FMatrix matrix = _sub13.getMatrix();
 		const FVector &pos = _sub13._position;
-		_handlerP->proc10(v3, tempV, pos, matrix);
+		_mover->proc10(v3, tempV, pos, matrix);
 
 		CStarVector *sv = new CStarVector(this, v2);
-		_handlerP->setVector(sv);
+		_mover->setVector(sv);
 	}
 }
 
@@ -596,10 +596,10 @@ void CStarCamera::fn3(CStarControlSub13 *sub13, const FVector &v) {
 
 	FVector tempV6 = m4._row1;
 	FMatrix m6 = _sub13.getMatrix();
-	_handlerP->proc8(_sub13._position, tempV6, m6, m5);
+	_mover->proc8(_sub13._position, tempV6, m6, m5);
 
 	CStarVector *sv = new CStarVector(this, v);
-	_handlerP->setVector(sv);
+	_mover->setVector(sv);
 }
 
 } // End of namespace Titanic

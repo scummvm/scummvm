@@ -30,11 +30,11 @@
 
 namespace Titanic {
 
-CStarView::CStarView() : _camera((const CStar20Data *)nullptr), _owner(nullptr),
+CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
 		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
 		_videoSurface2(nullptr), _homePhotoMask(nullptr),
 		_field218(false), _showingPhoto(false) {
-	CStar20Data data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
+	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_camera.proc3(&data);
 }

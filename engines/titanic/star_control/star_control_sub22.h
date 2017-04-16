@@ -23,16 +23,16 @@
 #ifndef TITANIC_STAR_CONTROL_SUB22_H
 #define TITANIC_STAR_CONTROL_SUB22_H
 
-#include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/star_control_sub27.h"
 
 namespace Titanic {
 
-class CStarControlSub22 : public CStarControlSub20 {
+class CStarControlSub22 : public CCameraMover {
 private:
 	CStarControlSub27 _sub27;
 public:
-	CStarControlSub22(const CStar20Data *src);
+	CStarControlSub22(const CNavigationInfo *src);
 	virtual ~CStarControlSub22() {}
 
 	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);

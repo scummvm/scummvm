@@ -28,7 +28,7 @@
 #include "titanic/star_control/fpoint.h"
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_control_sub13.h"
-#include "titanic/star_control/star_control_sub20.h"
+#include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/error_code.h"
 
 namespace Titanic {
@@ -40,14 +40,14 @@ private:
 private:
 	int _matrixRow;
 	FMatrix _matrix;
-	CStarControlSub20 *_handlerP;
+	CCameraMover *_mover;
 	CStarControlSub13 _sub13;
 	int _field108;
 private:
 	/**
 	 * Set up a handler
 	 */
-	bool setupHandler(const CStar20Data *src);
+	bool setupHandler(const CNavigationInfo *src);
 
 	/**
 	 * Deletes any previous handler
@@ -57,17 +57,17 @@ private:
 	/**
 	 * Return whether the handler is locked
 	 */
-	bool isLocked() { return _handlerP->isLocked(); }
+	bool isLocked() { return _mover->isLocked(); }
 public:
 	static void init();
 	static void deinit();
 public:
-	CStarCamera(const CStar20Data *data);
+	CStarCamera(const CNavigationInfo *data);
 	CStarCamera(CStarControlSub13 *src);
 	virtual ~CStarCamera();
 
 	virtual void proc2(const CStarControlSub13 *src);
-	virtual void proc3(const CStar20Data *src);
+	virtual void proc3(const CNavigationInfo *src);
 	virtual void setPosition(const FVector &v);
 	virtual void proc5(const FVector &v);
 	virtual void proc6(int v);

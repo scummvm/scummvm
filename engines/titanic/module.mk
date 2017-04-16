@@ -432,6 +432,7 @@ MODULE_OBJS := \
 	sound/wave_file.o \
 	star_control/star_control.o \
 	star_control/base_stars.o \
+	star_control/camera_mover.o \
 	star_control/dmatrix.o \
 	star_control/dvector.o \
 	star_control/fmatrix.o \
@@ -446,7 +447,6 @@ MODULE_OBJS := \
 	star_control/star_control_sub7.o \
 	star_control/star_control_sub8.o \
 	star_control/star_control_sub13.o \
-	star_control/star_control_sub20.o \
 	star_control/star_control_sub21.o \
 	star_control/star_control_sub22.o \
 	star_control/star_control_sub23.o \

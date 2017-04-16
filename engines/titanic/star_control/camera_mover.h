@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB20_H
-#define TITANIC_STAR_CONTROL_SUB20_H
+#ifndef TITANIC_CAMERA_MOVER_H
+#define TITANIC_CAMERA_MOVER_H
 
 #include "titanic/support/simple_file.h"
 #include "titanic/star_control/base_stars.h"
@@ -30,7 +30,7 @@
 
 namespace Titanic {
 
-struct CStar20Data {
+struct CNavigationInfo {
 	double _size;
 	double _field4;
 	double _field8;
@@ -41,16 +41,16 @@ struct CStar20Data {
 	double _field1C;
 };
 
-class CStarControlSub20 : public CStar20Data {
+class CCameraMover : public CNavigationInfo {
 public:
 	int _lockCounter;
 	CStarVector *_starVector;
 public:
-	CStarControlSub20(const CStar20Data *src);
-	virtual ~CStarControlSub20();
+	CCameraMover(const CNavigationInfo *src);
+	virtual ~CCameraMover();
 
-	virtual void copyFrom(const CStar20Data *src);
-	virtual void copyTo(CStar20Data *dest);
+	virtual void copyFrom(const CNavigationInfo *src);
+	virtual void copyTo(CNavigationInfo *dest);
 	virtual void proc4();
 	virtual void proc5();
 	virtual void proc6();
@@ -99,4 +99,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB20_H */
+#endif /* TITANIC_CAMERA_MOVER_H */
