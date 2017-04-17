@@ -39,7 +39,7 @@ CViewport::CViewport() {
 }
 
 CViewport::CViewport(CViewport *src) :
-		_matrix(src->_matrix), _currentPose(src->_currentPose), _rawPose(src->_rawPose) {
+		_orientation(src->_orientation), _currentPose(src->_currentPose), _rawPose(src->_rawPose) {
 	_position = src->_position;
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
@@ -79,7 +79,7 @@ void CViewport::load(SimpleFile *file, int param) {
 	for (int idx = 0; idx < 5; ++idx)
 		_valArray[idx] = file->readFloat();
 
-	_matrix.load(file, param);
+	_orientation.load(file, param);
 	_flag = false;
 }
 
@@ -97,7 +97,7 @@ void CViewport::save(SimpleFile *file, int indent) {
 	for (int idx = 0; idx < 5; ++idx)
 		file->writeFloatLine(_valArray[idx], indent);
 
-	_matrix.save(file, indent);
+	_orientation.save(file, indent);
 }
 
 void CViewport::setPosition(const FVector &v) {
@@ -112,12 +112,12 @@ void CViewport::setPosition(const FPose &pose) {
 }
 
 void CViewport::setOrientation(const FMatrix &m) {
-	_matrix = m;
+	_orientation = m;
 	_flag = false;
 }
 
 void CViewport::fn11(const FVector &v) {
-	_matrix.fn1(v);
+	_orientation.fn1(v);
 	_flag = false;
 }
 
@@ -146,7 +146,7 @@ void CViewport::set1C(double v) {
 }
 
 void CViewport::fn12() {
-	_matrix.identity();
+	_orientation.identity();
 
 	FPose m1(X_AXIS, g_vm->getRandomNumber(359));
 	FPose m2(Y_AXIS, g_vm->getRandomNumber(359));
@@ -156,7 +156,7 @@ void CViewport::fn12() {
 	FPose s2(s1, m3);
 
 	m1.copyFrom(s2);
-	_matrix.fn2(m1);
+	_orientation.fn2(m1);
 	_flag = false;
 }
 
@@ -174,14 +174,14 @@ void CViewport::fn13(StarMode mode, double val) {
 }
 
 void CViewport::reposition(double factor) {
-	_position._x = _matrix._row3._x * factor + _position._x;
-	_position._y = _matrix._row3._y * factor + _position._y;
-	_position._z = _matrix._row3._z * factor + _position._z;
+	_position._x = _orientation._row3._x * factor + _position._x;
+	_position._y = _orientation._row3._y * factor + _position._y;
+	_position._z = _orientation._row3._z * factor + _position._z;
 	_flag = false;
 }
 
 void CViewport::fn15(const FMatrix &matrix) {
-	_matrix.fn3(matrix);
+	_orientation.fn3(matrix);
 	_flag = false;
 }
 
@@ -246,7 +246,7 @@ void CViewport::fn19(double *v1, double *v2, double *v3, double *v4) {
 void CViewport::reset() {
 	const double FACTOR = 2 * M_PI / 360.0;
 
-	_rawPose.copyFrom(_matrix);
+	_rawPose.copyFrom(_orientation);
 	_rawPose._vector = _position;
 	_currentPose = _rawPose.fn4();
 
@@ -257,8 +257,8 @@ void CViewport::reset() {
 	_flag = true;
 }
 
-const FMatrix &CViewport::getMatrix() const {
-	return _matrix;
+const FMatrix &CViewport::getOrientation() const {
+	return _orientation;
 }
 
 } // End of namespace Titanic

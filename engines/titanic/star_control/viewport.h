@@ -41,7 +41,7 @@ private:
 	double _field1C;
 	int _width;
 	int _height;
-	FMatrix _matrix;
+	FMatrix _orientation;
 	FPose _currentPose;
 	FPose _rawPose;
 	FPoint _center;
@@ -102,9 +102,9 @@ public:
 	void fn19(double *v1, double *v2, double *v3, double *v4);
 
 	/**
-	 * Returns the instance's matrix
+	 * Returns the viewport's orientation
 	 */
-	const FMatrix &getMatrix() const;
+	const FMatrix &getOrientation() const;
 
 	void setC(double v);
 	void set10(double v);

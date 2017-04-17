@@ -117,10 +117,10 @@ void CStarCamera::proc13(CViewport *dest) {
 }
 
 void CStarCamera::setDestination(const FVector &v) {
-	FMatrix matrix = _viewport.getMatrix();
-	FVector vector = _viewport._position;
+	FMatrix orientation = _viewport.getOrientation();
+	FVector oldPos = _viewport._position;
 
-	_mover->moveTo(vector, v, matrix);
+	_mover->moveTo(oldPos, v, orientation);
 }
 
 void CStarCamera::updatePosition(CErrorCode *errorCode) {
@@ -129,7 +129,7 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 	if (!_newOrientation)
 		_newOrientation = new FMatrix();
 
-	*_priorOrientation = _viewport.getMatrix();
+	*_priorOrientation = _viewport.getOrientation();
 	*_newOrientation = *_priorOrientation;
 
 	FVector priorPos = _viewport._position;
@@ -237,7 +237,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		FPose subY(Y_AXIS, angles._x);
 		FPose sub(subX, subY);
 
-		FMatrix m1 = _viewport.getMatrix();
+		FMatrix m1 = _viewport.getOrientation();
 		FVector tempV1 = _viewport._position;
 		FVector tempV2, tempV3, tempV4, tempV5, tempV6;
 		tempV2._y = m1._row1._y * 100000.0;
@@ -332,7 +332,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 		subX = m1.fn1();
 		subX = subX.fn4(subY);
 
-		FMatrix m3 = _viewport.getMatrix();
+		FMatrix m3 = _viewport.getOrientation();
 		tempV2 = _viewport._position;
 		multV._x = m3._row1._x * 1000000.0;
 		multV._y = m3._row1._y * 1000000.0;
@@ -466,12 +466,12 @@ void CStarCamera::deleteHandler() {
 
 void CStarCamera::fn1(CViewport *viewport, const FVector &v) {
 	if (_matrixRow == 1) {
-		FMatrix m1 = viewport->getMatrix();
-		FMatrix m2 = _viewport.getMatrix();
-		FVector v1 = viewport->_position;
-		FVector v2 = _viewport._position;
+		FMatrix newOr = viewport->getOrientation();
+		FMatrix oldOr = _viewport.getOrientation();
+		FVector newPos = viewport->_position;
+		FVector oldPos = _viewport._position;
 
-		_mover->proc8(v2, v1, m2, m1);
+		_mover->proc8(oldPos, newPos, oldOr, newOr);
 		CStarVector *sv = new CStarVector(this, v);
 		_mover->setVector(sv);
 	}
@@ -491,7 +491,7 @@ void CStarCamera::fn2(FVector v1, FVector v2, FVector v3) {
 		v3.normalize();
 		tempV.normalize();
 
-		FMatrix matrix = _viewport.getMatrix();
+		FMatrix matrix = _viewport.getOrientation();
 		const FVector &pos = _viewport._position;
 		_mover->proc10(v3, tempV, pos, matrix);
 
@@ -521,7 +521,7 @@ void CStarCamera::fn3(CViewport *viewport, const FVector &v) {
 	m4._row3 = DVector(0.0, 0.0, 0.0);
 	m4._row4 = DVector(0.0, 0.0, 0.0);
 
-	FMatrix m5 = viewport->getMatrix();
+	FMatrix m5 = viewport->getOrientation();
 	DVector tempV3, tempV4;
 	tempV4._x = m5._row1._x * 1000000.0 + m4._row1._x;
 	tempV4._y = m5._row1._y * 1000000.0 + m4._row1._y;
@@ -595,7 +595,7 @@ void CStarCamera::fn3(CViewport *viewport, const FVector &v) {
 	m5.set(m4._row3, m4._row2, m4._row4);
 
 	FVector tempV6 = m4._row1;
-	FMatrix m6 = _viewport.getMatrix();
+	FMatrix m6 = _viewport.getOrientation();
 	_mover->proc8(_viewport._position, tempV6, m6, m5);
 
 	CStarVector *sv = new CStarVector(this, v);

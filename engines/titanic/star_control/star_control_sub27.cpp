@@ -25,8 +25,9 @@
 
 namespace Titanic {
 
-void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {
-	CStarControlSub23::proc2(v1, v2, m1, m2);
+void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
+	FMatrix &oldOrientation, FMatrix &newOrientation) {
+	CStarControlSub23::proc2(oldPos, newPos, oldOrientation, newOrientation);
 
 	double factor = _field24;
 	if (_field24 > 0.0) {
@@ -35,8 +36,8 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 		proc6(120, 4, _field24);
 	}
 
-	if (m1 != m2) {
-		_sub25.fn1(m1, m2);
+	if (newPos != oldPos) {
+		_sub25.fn1(oldOrientation, newOrientation);
 		_moveDelayCtr = 0.0;
 
 		if (_field4C == 0) {
@@ -49,33 +50,33 @@ void CStarControlSub27::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2
 	}
 }
 
-int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
+int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (!_active)
 		return 0;
 
 	_moveDelayCtr += _moveDelayInc;
-	_sub25.fn2(_moveDelayCtr, m);
+	_sub25.fn2(_moveDelayCtr, orientation);
 	errorCode.set();
 
 	if (_field40 >= 0) {
 		double powVal = _powers[_field40];
-		v += _posDelta * powVal;
-		getVectorOnPath(v);
+		pos += _posDelta * powVal;
+		getVectorOnPath(pos);
 
 		--_field40;
 		errorCode.set();
 		return 1;
 	} else if (_field44 > 0) {
-		v += _posDelta * _field38;
-		getVectorOnPath(v);
+		pos += _posDelta * _field38;
+		getVectorOnPath(pos);
 
 		--_field44;
 		errorCode.set();
 		return 1;
 	} else if (_field48 >= 0) {
 		double powVal = _powers[31 - _field48];
-		v += _posDelta * powVal;
-		getVectorOnPath(v);
+		pos += _posDelta * powVal;
+		getVectorOnPath(pos);
 
 		--_field48;
 		errorCode.set();
@@ -86,16 +87,16 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	}
 }
 
-void CStarControlSub27::getVectorOnPath(FVector &v) const {
-	double distance = _posDelta.getDistance(v);
+void CStarControlSub27::getVectorOnPath(FVector &pos) const {
+	double distance = _posDelta.getDistance(pos);
 	distance /= _field24;
 
 	if (distance <= 0.0) {
-		v = _srcPos;
+		pos = _srcPos;
 	} else if (distance >= 1.0) {
-		v = _destPos;
+		pos = _destPos;
 	} else {
-		v = FVector(
+		pos = FVector(
 			(_destPos._x - _srcPos._x) * distance + _srcPos._x,
 			(_destPos._y - _srcPos._y) * distance + _srcPos._y,
 			(_destPos._z - _srcPos._z) * distance + _srcPos._z

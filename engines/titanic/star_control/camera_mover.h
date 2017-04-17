@@ -55,7 +55,8 @@ public:
 	virtual void proc5();
 	virtual void proc6();
 	virtual void proc7();
-	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {}
+	virtual void proc8(FVector &oldPos, FVector &newPos,
+		FMatrix &oldOrientation, FMatrix &newOrientation) {}
 
 	/**
 	 * Start a movement to a given specified destination

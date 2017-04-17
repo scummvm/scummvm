@@ -35,7 +35,8 @@ public:
 	CStarControlSub22(const CNavigationInfo *src);
 	virtual ~CStarControlSub22() {}
 
-	virtual void proc8(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
+	virtual void proc8(FVector &oldPos, FVector &newPos,
+		FMatrix &oldOrientation, FMatrix &newOrientation);
 
 	/**
 	 * Update the passed position and orientation matrix

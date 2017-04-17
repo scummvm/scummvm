@@ -53,10 +53,11 @@ public:
 	CStarControlSub23();
 	virtual ~CStarControlSub23() {}
 
-	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
+	virtual void proc2(FVector &oldPos, FVector &newPos,
+		FMatrix &oldOrientation, FMatrix &newOrientation);
 	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
 	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM);
-	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) { return 2; }
+	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return 2; }
 	virtual void proc6(int val1, int val2, float val);
 
 	bool isActive() const { return _active; }

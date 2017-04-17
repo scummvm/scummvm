@@ -34,12 +34,13 @@ private:
 	 * returns a vector on the proper point along the path to the destination
 	 * with that same distance from the source.
 	 */
-	void getVectorOnPath(FVector &v) const;
+	void getVectorOnPath(FVector &pos) const;
 public:
 	virtual ~CStarControlSub27() {}
 
-	virtual void proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2);
-	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m);
+	virtual void proc2(FVector &oldPos, FVector &newPos,
+		FMatrix &oldOrientation, FMatrix &newOrientation);
+	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic
