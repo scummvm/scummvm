@@ -35,9 +35,9 @@ protected:
 	int _field4;
 	bool _active;
 	FVector _srcPos, _destPos;
-	double _field24;
+	double _distance;
 	FVector _posDelta;
-	int _field34;
+	bool _field34;
 	double _field38;
 	double _field3C;
 	int _field40;

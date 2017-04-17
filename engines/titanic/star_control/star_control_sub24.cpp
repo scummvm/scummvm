@@ -37,10 +37,10 @@ void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
 	CStarControlSub23::setPath(srcV, destV, srcM);
 
-	if (_field24 > 8000.0) {
+	if (_distance > 8000.0) {
 		_active = true;
 		_field34 = 1;
-		proc6(120, 4, _field24 - 8000.0);
+		proc6(120, 4, _distance - 8000.0);
 	}
 
 	FVector row3 = srcM._row3;

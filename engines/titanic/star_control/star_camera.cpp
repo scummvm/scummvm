@@ -33,12 +33,12 @@ FMatrix *CStarCamera::_priorOrientation;
 FMatrix *CStarCamera::_newOrientation;
 
 CStarCamera::CStarCamera(const CNavigationInfo *data) :
-		_matrixRow(-1), _mover(nullptr), _field108(0) {
+		_matrixRow(-1), _mover(nullptr), _isMoved(false) {
 	setupHandler(data);
 }
 
 CStarCamera::CStarCamera(CViewport *src) :
-		_matrixRow(-1), _mover(nullptr), _field108(0), _viewport(src) {
+		_matrixRow(-1), _mover(nullptr), _isMoved(false), _viewport(src) {
 }
 
 void CStarCamera::init() {
@@ -68,7 +68,7 @@ void CStarCamera::proc3(const CNavigationInfo *src) {
 void CStarCamera::setPosition(const FVector &v) {
 	if (!isLocked()) {
 		_viewport.setPosition(v);
-		set108();
+		setIsMoved();
 	}
 }
 
@@ -138,7 +138,7 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 
 	if (newPos != priorPos) {
 		_viewport.setPosition(newPos);
-		set108();
+		setIsMoved();
 	}
 
 	if (*_priorOrientation != *_newOrientation) {
@@ -170,7 +170,7 @@ void CStarCamera::proc20(double factor) {
 void CStarCamera::proc21(const FPose &pose) {
 	if (!isLocked()) {
 		_viewport.setPosition(pose);
-		set108();
+		setIsMoved();
 	}
 }
 

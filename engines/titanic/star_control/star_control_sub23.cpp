@@ -28,9 +28,9 @@ namespace Titanic {
 CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
 	_field4 = 0;
 	_active = false;
-	_field24 = 0.0;
-	_field34 = 0;
-	_field38 = 0;
+	_distance = 0.0;
+	_field34 = false;
+	_field38 = 0.0;
 	_field3C = 0;
 	_field40 = 0;
 	_field44 = 0;
@@ -41,14 +41,15 @@ CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
 	_moveDelayInc = 0.0;
 }
 
-void CStarControlSub23::proc2(FVector &v1, FVector &v2, FMatrix &m1, FMatrix &m2) {
-	_srcPos = v1;
-	_destPos = v2;
+void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
+		FMatrix &oldOrientation, FMatrix &newOrientation) {
+	_srcPos = oldPos;
+	_destPos = newPos;
 	_posDelta = _destPos - _srcPos;
-	_field24 = _posDelta.normalize();
+	_distance = _posDelta.normalize();
 
 	_active = false;
-	_field34 = 0;
+	_field34 = false;
 	_moveDelayCtr = 1.0;
 	_field40 = -1;
 	_field44 = -1;
@@ -60,19 +61,19 @@ void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_srcPos.clear();
 	_destPos.clear();
 	_moveDelayCtr = 1.0;
-	_field24 = 0.0;
+	_distance = 0.0;
 	_active = false;
-	_field34 = 0;
+	_field34 = false;
 }
 
 void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
-	_field24 = _posDelta.normalize();
+	_distance = _posDelta.normalize();
 
 	_active = false;
-	_field34 = 0;
+	_field34 = false;
 	_field40 = -1;
 	_field44 = -1;
 	_field48 = -1;

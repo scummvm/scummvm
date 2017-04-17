@@ -45,7 +45,7 @@ private:
 	FMatrix _matrix;
 	CCameraMover *_mover;
 	CViewport _viewport;
-	int _field108;
+	bool _isMoved;
 private:
 	/**
 	 * Set up a handler
@@ -135,10 +135,20 @@ public:
 	 */
 	virtual void save(SimpleFile *file, int indent);
 
+	/**
+	 * Returns true for whether the camera has been moved
+	 */
+	bool isMoved() const { return _isMoved; }
 
-	bool is108() const { return _field108; }
-	void set108() { _field108 = true; }
-	void reset108() { _field108 = false; }
+	/**
+	 * Sets the camera as having been moved
+	 */
+	void setIsMoved() { _isMoved = true; }
+
+	/**
+	 * Resets the flag for whether the camera has moved
+	 */
+	void clearIsMoved() { _isMoved = false; }
 
 	void fn1(CViewport *sub13, const FVector &v);
 	void fn2(FVector v1, FVector v2, FVector v3);

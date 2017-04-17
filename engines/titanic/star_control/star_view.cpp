@@ -234,11 +234,11 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 }
 
 bool CStarView::canSetStarDestination() const {
-	return _camera.is108();
+	return _camera.isMoved();
 }
 
 void CStarView::starDestinationSet() {
-	_camera.reset108();
+	_camera.clearIsMoved();
 }
 
 void CStarView::resetPosition() {

@@ -29,11 +29,11 @@ void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
 	FMatrix &oldOrientation, FMatrix &newOrientation) {
 	CStarControlSub23::proc2(oldPos, newPos, oldOrientation, newOrientation);
 
-	double factor = _field24;
-	if (_field24 > 0.0) {
+	double distance = _distance;
+	if (distance > 0.0) {
 		_active = true;
-		_field34 = 1;
-		proc6(120, 4, _field24);
+		_field34 = true;
+		proc6(120, 4, distance);
 	}
 
 	if (newPos != oldPos) {
@@ -44,7 +44,7 @@ void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
 			_moveDelayInc = 0.1;
 			_active = true;
 		} else {
-			_moveDelayInc = 1.0 / factor;
+			_moveDelayInc = 1.0 / distance;
 			_active = true;
 		}
 	}
@@ -89,7 +89,7 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 
 void CStarControlSub27::getVectorOnPath(FVector &pos) const {
 	double distance = _posDelta.getDistance(pos);
-	distance /= _field24;
+	distance /= _distance;
 
 	if (distance <= 0.0) {
 		pos = _srcPos;
