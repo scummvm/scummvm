@@ -104,10 +104,6 @@ void syncWithSerializer(Common::Serializer &s, Node &obj) {
 	syncWithSerializer(s, obj.value);
 }
 
-void syncWithSerializer(Common::Serializer &s, bool &obj) {
-	s.syncAsByte(obj);
-}
-
 #pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
@@ -427,12 +423,20 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
+
+#ifdef ENABLE_SCI32
 	if (s.getVersion() >= 42 && getSciVersion() == SCI_VERSION_3) {
-		syncArray<bool>(s, _mustSetViewVisible);
+		// Obsolete mustSetViewVisible array
+		if (s.getVersion() == 42 && s.isLoading()) {
+			uint32 len;
+			s.syncAsUint32LE(len);
+			s.skip(len);
+		}
 		syncWithSerializer(s, _superClassPosSci3);
 		syncWithSerializer(s, _speciesSelectorSci3);
 		syncWithSerializer(s, _infoSelectorSci3);
 	}
+#endif
 }
 
 

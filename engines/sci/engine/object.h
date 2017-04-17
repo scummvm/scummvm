@@ -264,6 +264,11 @@ public:
 		_baseObj = obj ? obj->_baseObj : SciSpan<const byte>();
 		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint32>();
 		_baseVars = obj ? obj->_baseVars : Common::Array<uint16>();
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3) {
+			_mustSetViewVisible = obj ? obj->_mustSetViewVisible : Common::Array<bool>();
+		}
+#endif
 	}
 
 	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);

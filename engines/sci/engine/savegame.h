@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      43 - stop saving SCI3 mustSetViewVisible array
  *      42 - SCI3 robots and VM objects
  *      41 - palette support for newer SCI2.1 games; stable SCI2/2.1 save games
  *      40 - always store palvary variables
@@ -67,7 +68,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 42,
+	CURRENT_SAVEGAME_VERSION = 43,
 	MINIMUM_SAVEGAME_VERSION = 14
 #ifdef ENABLE_SCI32
 	,
