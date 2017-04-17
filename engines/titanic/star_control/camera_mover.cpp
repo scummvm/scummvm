@@ -35,11 +35,11 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 		_speed = 0.0;
 		_speedChangeCtr = 0.0;
 		_speedChangeInc = 20.0;
-		_fieldC = 0.0;
+		_unused = 0.0;
 		_maxSpeed = 50000.0;
-		_field14 = 1.0;
-		_field18 = 1.0;
-		_field1C = 0.0;
+		_unusedX = 1.0;
+		_unusedY = 1.0;
+		_unusedZ = 0.0;
 	}
 }
 
@@ -117,11 +117,11 @@ void CCameraMover::load(SimpleFile *file, int val) {
 		_speed = file->readFloat();
 		_speedChangeCtr = file->readFloat();
 		_speedChangeInc = file->readFloat();
-		_fieldC = file->readFloat();
+		_unused = file->readFloat();
 		_maxSpeed = file->readFloat();
-		_field14 = file->readFloat();
-		_field18 = file->readFloat();
-		_field1C = file->readFloat();
+		_unusedX = file->readFloat();
+		_unusedY = file->readFloat();
+		_unusedZ = file->readFloat();
 	}
 }
 
@@ -129,11 +129,11 @@ void CCameraMover::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_speed, indent);
 	file->writeFloatLine(_speedChangeCtr, indent);
 	file->writeFloatLine(_speedChangeInc, indent);
-	file->writeFloatLine(_fieldC, indent);
+	file->writeFloatLine(_unused, indent);
 	file->writeFloatLine(_maxSpeed, indent);
-	file->writeFloatLine(_field14, indent);
-	file->writeFloatLine(_field18, indent);
-	file->writeFloatLine(_field1C, indent);
+	file->writeFloatLine(_unusedX, indent);
+	file->writeFloatLine(_unusedY, indent);
+	file->writeFloatLine(_unusedZ, indent);
 }
 
 void CCameraMover::incLockCount() {

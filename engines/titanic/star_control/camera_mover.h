@@ -34,11 +34,11 @@ struct CNavigationInfo {
 	double _speed;
 	double _speedChangeCtr;
 	double _speedChangeInc;
-	double _fieldC;
+	double _unused;
 	double _maxSpeed;
-	double _field14;
-	double _field18;
-	double _field1C;
+	double _unusedX;
+	double _unusedY;
+	double _unusedZ;
 };
 
 class CCameraMover : public CNavigationInfo {
