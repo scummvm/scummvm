@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-09 22:09+0200\n"
-"PO-Revision-Date: 2017-03-07 19:30+0000\n"
+"PO-Revision-Date: 2017-04-17 06:02+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1366,20 +1366,20 @@ msgid "Another cloud storage is already active."
 msgstr "Ein anderer Cloud-Speicher arbeitet gerade."
 
 #: gui/options.cpp:1929
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Engine-Plugin unterstützt keine Spielstände"
+msgstr "Das Theme unterstützt die gewählte Sprache nicht!"
 
 #: gui/options.cpp:1932
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Spiel wurde NICHT geladen"
+msgstr "Theme konnte nicht geladen werden!"
 
 #: gui/options.cpp:1935
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Verschiedene Einstellungen werden wiederhergestellt."
 
 #: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
