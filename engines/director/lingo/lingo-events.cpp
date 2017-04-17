@@ -142,6 +142,7 @@ void Lingo::processEvent(LEvent event) {
 		case kEventIdle:
 		case kEventTimeout:
 			processGenericEvent(event);
+			break;
 
 		default:
 			warning("processEvent: Unhandled event %s", _eventHandlerTypes[event]);
