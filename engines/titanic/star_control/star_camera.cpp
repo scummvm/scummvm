@@ -146,28 +146,28 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 	}
 }
 
-void CStarCamera::proc16() {
-	_mover->proc4();
+void CStarCamera::increaseSpeed() {
+	_mover->increaseSpeed();
 }
 
-void CStarCamera::proc17() {
-	_mover->proc5();
+void CStarCamera::decreaseSpeed() {
+	_mover->decreaseSpeed();
 }
 
-void CStarCamera::proc18() {
-	_mover->proc6();
+void CStarCamera::fullSpeed() {
+	_mover->fullSpeed();
 }
 
-void CStarCamera::proc19() {
-	_mover->proc7();
+void CStarCamera::stop() {
+	_mover->stop();
 }
 
-void CStarCamera::proc20(double factor) {
+void CStarCamera::reposition(double factor) {
 	if (!isLocked())
 		_viewport.reposition(factor);
 }
 
-void CStarCamera::proc21(const FPose &pose) {
+void CStarCamera::setPosition(const FPose &pose) {
 	if (!isLocked()) {
 		_viewport.setPosition(pose);
 		setIsMoved();

@@ -71,7 +71,12 @@ public:
 
 	virtual void proc2(const CViewport *src);
 	virtual void proc3(const CNavigationInfo *src);
+
+	/**
+	 * Set the camera position
+	 */
 	virtual void setPosition(const FVector &v);
+
 	virtual void proc5(const FVector &v);
 	virtual void proc6(int v);
 	virtual void proc7(int v);
@@ -92,12 +97,33 @@ public:
 	 */
 	virtual void updatePosition(CErrorCode *errorCode);
 
-	virtual void proc16();
-	virtual void proc17();
-	virtual void proc18();
-	virtual void proc19();
-	virtual void proc20(double factor);
-	virtual void proc21(const FPose &pose);
+	/**
+	 * Increases movement speed
+	 */
+	virtual void increaseSpeed();
+
+	/**
+	 * Decreases movement speed
+	 */
+	virtual void decreaseSpeed();
+
+	/**
+	 * Increase to full speed
+	 */
+	virtual void fullSpeed();
+
+	/**
+	 * Completely stop
+	 */
+	virtual void stop();
+
+	virtual void reposition(double factor);
+
+	/**
+	 * Set the camera position
+	 */
+	virtual void setPosition(const FPose &pose);
+
 	virtual void proc22(FMatrix &m);
 
 	/**

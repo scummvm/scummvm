@@ -31,11 +31,11 @@
 namespace Titanic {
 
 struct CNavigationInfo {
-	double _size;
-	double _field4;
-	double _field8;
+	double _speed;
+	double _speedChangeCtr;
+	double _speedChangeInc;
 	double _fieldC;
-	double _field10;
+	double _maxSpeed;
 	double _field14;
 	double _field18;
 	double _field1C;
@@ -51,10 +51,27 @@ public:
 
 	virtual void copyFrom(const CNavigationInfo *src);
 	virtual void copyTo(CNavigationInfo *dest);
-	virtual void proc4();
-	virtual void proc5();
-	virtual void proc6();
-	virtual void proc7();
+
+	/**
+	 * Increases movement speed
+	 */
+	virtual void increaseSpeed();
+
+	/**
+	 * Decreases movement speed
+	 */
+	virtual void decreaseSpeed();
+
+	/**
+	 * Increase to full speed
+	 */
+	virtual void fullSpeed();
+
+	/**
+	 * Completely stop
+	 */
+	virtual void stop();
+
 	virtual void proc8(FVector &oldPos, FVector &newPos,
 		FMatrix &oldOrientation, FMatrix &newOrientation) {}
 

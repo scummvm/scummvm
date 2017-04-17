@@ -263,12 +263,12 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			_sub2._vector._x = pose._row1._x * _sub1._vector._x
 				+ pose._row3._x * _sub1._vector._z
 				+ pose._row2._x * _sub1._vector._y + pose._vector._x;
-			_sub2._vector._y = _sub1._vector._y * pose._row2._y
-				+ _sub1._vector._z * pose._row3._y
-				+ _sub1._vector._x * pose._row1._y + pose._vector._y;
-			_sub2._vector._z = _sub1._vector._z * pose._row3._z
-				+ _sub1._vector._x * pose._row1._z
-				+ _sub1._vector._y * pose._row2._z + pose._vector._z;
+			_sub2._vector._y = pose._row2._y * _sub1._vector._y
+				+ pose._row3._y * _sub1._vector._z
+				+ pose._row1._y * _sub1._vector._x + pose._vector._y;
+			_sub2._vector._z = pose._row3._z * _sub1._vector._z
+				+ pose._row1._z * _sub1._vector._x
+				+ pose._row2._z * _sub1._vector._y + pose._vector._z;
 
 			size2 = (int)_array[1]._data2.size();
 			size1 = (int)_array[1]._data1.size();

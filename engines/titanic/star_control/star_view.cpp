@@ -186,7 +186,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SEMICOLON:
 		if (v == -1) {
-			_camera.proc16();
+			_camera.increaseSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -194,7 +194,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_PERIOD:
 		if (v == -1) {
-			_camera.proc17();
+			_camera.decreaseSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -202,7 +202,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SPACE:
 		if (v == -1) {
-			_camera.proc19();
+			_camera.stop();
 			errorCode->set();
 			return true;
 		}
@@ -317,8 +317,8 @@ void CStarView::fn19(int index) {
 	}
 }
 
-void CStarView::fn8() {
-	_camera.proc18();
+void CStarView::fullSpeed() {
+	_camera.fullSpeed();
 }
 
 void CStarView::fn9() {

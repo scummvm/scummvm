@@ -123,7 +123,12 @@ public:
 	void fn5();
 	void fn6();
 	void fn7();
-	void fn8();
+
+	/**
+	 * Increase starfield movement to full speed
+	 */
+	void fullSpeed();
+
 	void fn9();
 
 	/**

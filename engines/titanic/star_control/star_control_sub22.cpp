@@ -45,14 +45,14 @@ void CStarControlSub22::updatePosition(CErrorCode &errorCode, FVector &pos, FMat
 		if (val == 1)
 			incLockCount();
 		if (val == 2) {
-			proc7();
+			stop();
 			if (_starVector)
 				_starVector->apply();
 		}
-	} else if (_size != 0.0) {
-		pos._x += orientation._row3._x * _size;
-		pos._y += orientation._row3._y * _size;
-		pos._z += orientation._row3._z * _size;
+	} else if (_speed != 0.0) {
+		pos._x += orientation._row3._x * _speed;
+		pos._y += orientation._row3._y * _speed;
+		pos._z += orientation._row3._z * _speed;
 		errorCode.set();
 	}
 }

@@ -198,8 +198,8 @@ void CStarControl::doAction(StarControlAction action) {
 		_view.fn7();
 		break;
 
-	case STAR_7:
-		_view.fn8();
+	case STAR_FULL_SPEED:
+		_view.fullSpeed();
 		break;
 
 	case STAR_8:

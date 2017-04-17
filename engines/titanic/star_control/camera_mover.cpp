@@ -32,11 +32,11 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	if (src) {
 		copyFrom(src);
 	} else {
-		_size = 0.0;
-		_field4 = 0.0;
-		_field8 = 20.0;
+		_speed = 0.0;
+		_speedChangeCtr = 0.0;
+		_speedChangeInc = 20.0;
 		_fieldC = 0.0;
-		_field10 = 50000.0;
+		_maxSpeed = 50000.0;
 		_field14 = 1.0;
 		_field18 = 1.0;
 		_field1C = 0.0;
@@ -55,46 +55,46 @@ void CCameraMover::copyTo(CNavigationInfo *dest) {
 	*dest = *((CNavigationInfo *)this);
 }
 
-void CCameraMover::proc4() {
-	if (!isLocked() && _size < _field10) {
-		_field4 += _size;
-		if (_field8 == _field4)
-			_size -= _field4;
+void CCameraMover::increaseSpeed() {
+	if (!isLocked() && _speed < _maxSpeed) {
+		_speedChangeCtr += _speedChangeInc;
+		if (_speedChangeCtr > _speed)
+			_speed -= _speedChangeCtr;
 		else
-			_size += _field4;
+			_speed += _speedChangeCtr;
 	}
 }
 
-void CCameraMover::proc5() {
+void CCameraMover::decreaseSpeed() {
 	if (!isLocked()) {
-		_field4 -= _field8;
-		if (_field4 == _size)
-			_size += _field4;
+		_speedChangeCtr -= _speedChangeInc;
+		if (_speedChangeCtr > _speed)
+			_speed -= _speedChangeCtr;
 		else
-			_size -= _field4;
+			_speed += _speedChangeCtr;
 
-		if (_field4 < 0.0)
-			_field4 = 0.0;
+		if (_speedChangeCtr < 0.0)
+			_speedChangeCtr = 0.0;
 	}
 }
 
-void CCameraMover::proc6() {
+void CCameraMover::fullSpeed() {
 	if (!isLocked())
-		_size = _field10;
+		_speed = _maxSpeed;
 }
 
-void CCameraMover::proc7() {
+void CCameraMover::stop() {
 	if (!isLocked()) {
-		_size = 0.0;
-		_field4 = 0.0;
+		_speed = 0.0;
+		_speedChangeCtr = 0.0;
 	}
 }
 
 void CCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
-	if (_size > 0.0) {
-		pos._x += orientation._row3._x * _size;
-		pos._y += orientation._row3._y * _size;
-		pos._z += orientation._row3._z * _size;
+	if (_speed > 0.0) {
+		pos._x += orientation._row3._x * _speed;
+		pos._y += orientation._row3._y * _speed;
+		pos._z += orientation._row3._z * _speed;
 
 		errorCode.set();
 	}
@@ -114,11 +114,11 @@ void CCameraMover::clear() {
 
 void CCameraMover::load(SimpleFile *file, int val) {
 	if (!val) {
-		_size = file->readFloat();
-		_field4 = file->readFloat();
-		_field8 = file->readFloat();
+		_speed = file->readFloat();
+		_speedChangeCtr = file->readFloat();
+		_speedChangeInc = file->readFloat();
 		_fieldC = file->readFloat();
-		_field10 = file->readFloat();
+		_maxSpeed = file->readFloat();
 		_field14 = file->readFloat();
 		_field18 = file->readFloat();
 		_field1C = file->readFloat();
@@ -126,11 +126,11 @@ void CCameraMover::load(SimpleFile *file, int val) {
 }
 
 void CCameraMover::save(SimpleFile *file, int indent) {
-	file->writeFloatLine(_size, indent);
-	file->writeFloatLine(_field4, indent);
-	file->writeFloatLine(_field8, indent);
+	file->writeFloatLine(_speed, indent);
+	file->writeFloatLine(_speedChangeCtr, indent);
+	file->writeFloatLine(_speedChangeInc, indent);
 	file->writeFloatLine(_fieldC, indent);
-	file->writeFloatLine(_field10, indent);
+	file->writeFloatLine(_maxSpeed, indent);
 	file->writeFloatLine(_field14, indent);
 	file->writeFloatLine(_field18, indent);
 	file->writeFloatLine(_field1C, indent);
