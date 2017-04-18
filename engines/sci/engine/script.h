@@ -246,7 +246,7 @@ public:
 	 * Finds the pointer where a block of a specific type starts from,
 	 * in SCI0 - SCI1 games
 	 */
-	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, int startBlockIndex = -1);
+	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, bool findLastBlock = false);
 
 	/**
 	 * Syncs the string heap of a script. Used when saving/loading.

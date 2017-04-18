@@ -162,7 +162,11 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	scriptPatcher->processScript(_nr, outBuffer);
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		SciSpan<const uint16> exportTable = findBlockSCI0(SCI_OBJ_EXPORTS).subspan<const uint16>(0);
+		// Some buggy game scripts contain two export tables (e.g. script 912
+		// in Camelot and script 306 in KQ4); in these scripts, the first table
+		// is broken, so we ignore it and use the last one instead
+		// Fixes bugs #3039785 and #3037595.
+		SciSpan<const uint16> exportTable = findBlockSCI0(SCI_OBJ_EXPORTS, true).subspan<const uint16>(0);
 		if (exportTable) {
 			// The export table is after the block header (4 bytes / 2 uint16s)
 			// and the number of exports (2 bytes / 1 uint16).
@@ -818,21 +822,6 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 			offset = relocateOffsetSci3(pubfunct * 2 + 22);
 	}
 
-	// Check if the offset found points to a second export table (e.g. script 912
-	// in Camelot and script 306 in KQ4). Such offsets are usually small (i.e. < 10),
-	// thus easily distinguished from actual code offsets.
-	// This only makes sense for SCI0-SCI1, as the export table in SCI1.1+ games
-	// is located at a specific address, thus findBlockSCI0() won't work.
-	// Fixes bugs #3039785 and #3037595.
-	if (offset < 10 && getSciVersion() <= SCI_VERSION_1_LATE) {
-		const SciSpan<const uint16> secondExportTable = findBlockSCI0(SCI_OBJ_EXPORTS, 0).subspan<const uint16>(0);
-
-		if (secondExportTable) {
-			// 3 skips header plus 2 bytes (secondExportTable is a uint16 pointer)
-			offset = secondExportTable.getUint16SEAt(3 + pubfunct);
-		}
-	}
-
 	// TODO: Check if this should be done for SCI1.1 games as well
 	if (getSciVersion() >= SCI_VERSION_2 && offset == 0) {
 		offset = _codeOffset;
@@ -844,11 +833,12 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	return offset;
 }
 
-SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, int startBlockIndex) {
-	SciSpan<const byte> buf = *_buf;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	int blockIndex = 0;
+SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastBlock) {
+	SciSpan<const byte> foundBlock;
 
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	SciSpan<const byte> buf = *_buf;
 	if (oldScriptHeader)
 		buf += 2;
 
@@ -862,15 +852,18 @@ SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, int startBlock
 		const int blockSize = buf.getUint16LEAt(2);
 		assert(blockSize > 0);
 
-		if (blockType == type && blockIndex > startBlockIndex) {
-			return buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));
+		if (blockType == type) {
+			foundBlock = buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));;
+
+			if (!findLastBlock) {
+				break;
+			}
 		}
 
 		buf += blockSize;
-		blockIndex++;
 	}
 
-	return SciSpan<const byte>();
+	return foundBlock;
 }
 
 // memory operations
