@@ -305,7 +305,7 @@ void CMakeProvider::writeEngineDefinitions(std::ofstream &workspace) const {
 	workspace << "    if (ENABLE_${ENGINE})\n";
 	workspace << "        add_definitions(-DENABLE_${ENGINE})\n";
 	workspace << "        foreach(SUB_ENGINE IN LISTS SUB_ENGINES_${ENGINE})\n";
-	workspace << "            add_definitions(-DENABLE_${SUB_ENGINE})\n";;
+	workspace << "            add_definitions(-DENABLE_${SUB_ENGINE})\n";
 	workspace << "        endforeach(SUB_ENGINE)\n";
 	workspace << "    endif()\n";
 	workspace << "endforeach()\n\n";

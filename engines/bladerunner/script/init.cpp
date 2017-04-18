@@ -1785,7 +1785,7 @@ void ScriptInit::Init_World_Waypoints() {
 	World_Waypoint_Set(132, 24, 619.45f, -9.0f, 234.0f);
 	World_Waypoint_Set(133, 24, 619.45f, -9.0f, 270.0f);
 	World_Waypoint_Set(134, 22, -80.59f, -60.31f, 256.35f);
-	World_Waypoint_Set(135, 22, -48.0f, -60.31f, 183.0f);;
+	World_Waypoint_Set(135, 22, -48.0f, -60.31f, 183.0f);
 	World_Waypoint_Set(136, 22, -24.59f, -60.31f, 64.35f);
 	World_Waypoint_Set(137, 22, 99.41f, -60.31f, 4.35f);
 	World_Waypoint_Set(138, 22, 99.41f, -60.34f, -115.65f);

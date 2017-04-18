@@ -150,7 +150,7 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
 
 	if (format) {
-		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());;
+		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());
 		_pfGame = *format;
 	}
 

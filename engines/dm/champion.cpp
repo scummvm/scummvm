@@ -2085,7 +2085,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		curThing = dungeon.getNextThing(curThing);
 	}
 	_vm->_inventoryMan->toggleInventory((ChampionIndex)previousPartyChampionCount);
-	_vm->_menuMan->drawDisabledMenu();;
+	_vm->_menuMan->drawDisabledMenu();
 }
 
 void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {

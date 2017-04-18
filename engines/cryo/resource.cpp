@@ -141,18 +141,18 @@ void EdenGame::loadIconFile(uint16 num, Icon *buffer) {
 			buffer[i].sy = _bigfile.readSint16BE();
 			buffer[i].ex = _bigfile.readSint16BE();
 			buffer[i].ey = _bigfile.readSint16BE();
-			buffer[i]._cursorId = _bigfile.readUint16BE();;
-			buffer[i]._actionId = _bigfile.readUint32BE();;
-			buffer[i]._objectId = _bigfile.readUint32BE();;
+			buffer[i]._cursorId = _bigfile.readUint16BE();
+			buffer[i]._actionId = _bigfile.readUint32BE();
+			buffer[i]._objectId = _bigfile.readUint32BE();
 		}
 		else {
 			buffer[i].sx = _bigfile.readSint16LE();
 			buffer[i].sy = _bigfile.readSint16LE();
 			buffer[i].ex = _bigfile.readSint16LE();
 			buffer[i].ey = _bigfile.readSint16LE();
-			buffer[i]._cursorId = _bigfile.readUint16LE();;
-			buffer[i]._actionId = _bigfile.readUint32LE();;
-			buffer[i]._objectId = _bigfile.readUint32LE();;
+			buffer[i]._cursorId = _bigfile.readUint16LE();
+			buffer[i]._actionId = _bigfile.readUint32LE();
+			buffer[i]._objectId = _bigfile.readUint32LE();
 		}
 	}
 }

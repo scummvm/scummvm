@@ -103,7 +103,7 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 				break;
 			}
 			Actor_Set_Goal_Number(kActorHanoi, 200);
-			return false;;
+			return false;
 		}
 		return true;
 	}

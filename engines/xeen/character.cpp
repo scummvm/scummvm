@@ -1780,7 +1780,7 @@ void Character::subtractHitPoints(int amount) {
 		int v = getMaxHP() + _currentHp;
 		if (v >= 1) {
 			_conditions[UNCONSCIOUS] = 1;
-			sound.playFX(38);;
+			sound.playFX(38);
 		} else {
 			_conditions[DEAD] = 1;
 			flag = true;

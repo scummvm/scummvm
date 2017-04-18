@@ -134,7 +134,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
-	return false;;
+	return false;
 }
 
 bool SceneScriptCT09::ClickedOn2DRegion(int region) {

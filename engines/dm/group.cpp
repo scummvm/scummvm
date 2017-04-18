@@ -830,7 +830,7 @@ T0209061_MoveGroup:
 										if (_vm->_moveSens->getMoveResult(groupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
 											return;
 										nextEvent._Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
-										nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;;
+										nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 										activeGroup->_priorMapX = eventMapX;
 										activeGroup->_priorMapY = eventMapY;
 										activeGroup->_lastMoveTime = _vm->_gameTime;

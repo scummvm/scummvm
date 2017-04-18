@@ -349,7 +349,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 					c._weapons[idx]._bonusFlags |= ITEMFLAG_CURSED;
 				c._armor[idx]._bonusFlags |= ITEMFLAG_CURSED;
 				c._accessories[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._misc[idx]._bonusFlags |= ITEMFLAG_CURSED;;
+				c._misc[idx]._bonusFlags |= ITEMFLAG_CURSED;
 			}
 			sound.playFX(37);
 			break;
