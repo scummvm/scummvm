@@ -798,8 +798,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= (uint)pubfunct) {
-		error("validateExportFunc(): pubfunct is invalid");
-		return 0;
+		error("script.%d validateExportFunc(): pubfunct %d is invalid", _nr, pubfunct);
 	}
 
 	if (exportsAreWide)
@@ -829,7 +828,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	}
 
 	if (offset == -1 || offset >= (int)_buf->size())
-		error("Invalid export function pointer");
+		error("Invalid export %d function pointer (%d) in script.%d", pubfunct, offset, _nr);
 
 	return offset;
 }
