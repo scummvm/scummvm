@@ -73,8 +73,12 @@ public:
 		_isFreed(false),
 		_baseObj(),
 		_baseVars(),
-		_methodCount(0),
-		_propertyOffsetsSci3() {}
+		_methodCount(0)
+#ifdef ENABLE_SCI32
+		,
+		_propertyOffsetsSci3()
+#endif
+		{}
 
 	Object &operator=(const Object &other) {
 		_baseObj = other._baseObj;
@@ -86,6 +90,7 @@ public:
 		_pos = other._pos;
 		_baseVars = other._baseVars;
 
+#ifdef ENABLE_SCI32
 		if (getSciVersion() == SCI_VERSION_3) {
 			_propertyOffsetsSci3 = other._propertyOffsetsSci3;
 			_superClassPosSci3 = other._superClassPosSci3;
@@ -93,67 +98,80 @@ public:
 			_infoSelectorSci3 = other._infoSelectorSci3;
 			_mustSetViewVisible = other._mustSetViewVisible;
 		}
+#endif
 
 		return *this;
 	}
 
 	reg_t getSpeciesSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _variables[_offset];
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			return _speciesSelectorSci3;
+		else
+#endif
+			return _variables[_offset];
 	}
 
 	void setSpeciesSelector(reg_t value) {
-		if (getSciVersion() < SCI_VERSION_3)
-			_variables[_offset] = value;
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			_speciesSelectorSci3 = value;
+		else
+#endif
+			_variables[_offset] = value;
 	}
 
 	reg_t getSuperClassSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _variables[_offset + 1];
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			return _superClassPosSci3;
+		else
+#endif
+			return _variables[_offset + 1];
 	}
 
 	void setSuperClassSelector(reg_t value) {
-		if (getSciVersion() < SCI_VERSION_3)
-			_variables[_offset + 1] = value;
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			_superClassPosSci3 = value;
+		else
+#endif
+			_variables[_offset + 1] = value;
 	}
 
 	reg_t getInfoSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _variables[_offset + 2];
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			return _infoSelectorSci3;
+		else
+#endif
+			return _variables[_offset + 2];
 	}
 
 	void setInfoSelector(reg_t info) {
-		if (getSciVersion() < SCI_VERSION_3)
-			_variables[_offset + 2] = info;
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			_infoSelectorSci3 = info;
+		else
+#endif
+			_variables[_offset + 2] = info;
 	}
 
 #ifdef ENABLE_SCI32
 	void setInfoSelectorFlag(infoSelectorFlags flag) {
-		if (getSciVersion() < SCI_VERSION_3) {
-			_variables[_offset + 2] |= flag;
-		} else {
+		if (getSciVersion() == SCI_VERSION_3) {
 			_infoSelectorSci3 |= flag;
+		} else {
+			_variables[_offset + 2] |= flag;
 		}
 	}
 
 	// NOTE: In real engine, -info- is treated as byte size
 	void clearInfoSelectorFlag(infoSelectorFlags flag) {
-		if (getSciVersion() < SCI_VERSION_3) {
-			_variables[_offset + 2] &= ~flag;
-		} else {
+		if (getSciVersion() == SCI_VERSION_3) {
 			_infoSelectorSci3 &= ~flag;
+		} else {
+			_variables[_offset + 2] &= ~flag;
 		}
 	}
 
@@ -163,43 +181,53 @@ public:
 #endif
 
 	reg_t getNameSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			return _variables.size() ? _variables[0] : NULL_REG;
+		else
+#endif
+			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
 	}
 
 	// No setter for the name selector
 
 	reg_t getPropDictSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _variables[2];
-		else
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
 			error("getPropDictSelector called for SCI3");
+		else
+#endif
+			return _variables[2];
 	}
 
 	void setPropDictSelector(reg_t value) {
-		if (getSciVersion() < SCI_VERSION_3)
-			_variables[2] = value;
-		else
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
 			error("setPropDictSelector called for SCI3");
+		else
+#endif
+			_variables[2] = value;
 	}
 
 	reg_t getClassScriptSelector() const {
-		if (getSciVersion() < SCI_VERSION_3)
-			return _variables[4];
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			return make_reg(0, _baseObj.getUint16SEAt(6));
+		else
+#endif
+			return _variables[4];
 	}
 
 	void setClassScriptSelector(reg_t value) {
-		if (getSciVersion() < SCI_VERSION_3)
-			_variables[4] = value;
-		else	// SCI3
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3)
 			// This should never occur, this is called from a SCI1.1 - SCI2.1 only function
 			error("setClassScriptSelector called for SCI3");
+		else
+#endif
+			_variables[4] = value;
 	}
 
 	Selector getVarSelector(uint16 i) const { return _baseVars[i]; }
@@ -272,7 +300,9 @@ public:
 	}
 
 	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
+#ifdef ENABLE_SCI32
 	bool relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize);
+#endif
 
 	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;
 
@@ -286,7 +316,9 @@ public:
 #endif
 
 private:
+#ifdef ENABLE_SCI32
 	void initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables);
+#endif
 
 	/**
 	 * A pointer to the raw object data within the object's owner script.
@@ -310,6 +342,7 @@ private:
 	 */
 	Common::Array<reg_t> _variables;
 
+#ifdef ENABLE_SCI32
 	/**
 	 * A lookup table from a property index to the property's original absolute
 	 * offset within the raw script data. This absolute offset is coded into the
@@ -318,6 +351,7 @@ private:
 	 * barrier, since the script format still only holds 16-bit values inline).
 	 */
 	Common::Array<uint32> _propertyOffsetsSci3;
+#endif
 
 	/**
 	 * The number of methods on the object.
@@ -336,10 +370,12 @@ private:
 	uint16 _offset;
 
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
+#ifdef ENABLE_SCI32
 	reg_t _superClassPosSci3; /**< reg_t pointing to superclass for SCI3 */
 	reg_t _speciesSelectorSci3;	/**< reg_t containing species "selector" for SCI3 */
 	reg_t _infoSelectorSci3; /**< reg_t containing info "selector" for SCI3 */
 	Common::Array<bool> _mustSetViewVisible; /** cached bit of info to make lookup fast, SCI3 only */
+#endif
 };
 
 

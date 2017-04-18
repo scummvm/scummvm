@@ -572,11 +572,13 @@ uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffse
 	case SCI_VERSION_1_1:
 		offset = relOffset + scr->getScriptSize();
 		break;
+#ifdef ENABLE_SCI32
 	case SCI_VERSION_3:
 		// In theory this can break if the variant with a one-byte argument is
 		// used. For now, assume it doesn't happen.
 		offset = scr->relocateOffsetSci3(pcOffset - 2);
 		break;
+#endif
 	default:
 		error("Unknown lofs type");
 	}

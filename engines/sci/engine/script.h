@@ -253,11 +253,13 @@ public:
 	 */
 	void syncStringHeap(Common::Serializer &ser);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Resolve a relocation in an SCI3 script
 	 * @param offset        The offset to relocate from
 	 */
 	int relocateOffsetSci3(uint32 offset) const;
+#endif
 
 	/**
 	 * Gets an offset to the beginning of the code block in a SCI1.1 or later
@@ -282,6 +284,7 @@ private:
 	 */
 	void relocateSci0Sci21(reg_t block);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Processes a relocation block within a SCI3 script
 	 *  This function is idempotent, but it must only be called after all
@@ -289,13 +292,16 @@ private:
 	 * @param obj_pos	Location (segment, offset) of the block
 	 */
 	void relocateSci3(reg_t block);
+#endif
 
 	bool relocateLocal(SegmentId segment, int location);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Gets a pointer to the beginning of the objects in a SCI3 script
 	 */
 	SciSpan<const byte> getSci3ObjectsPointer();
+#endif
 
 	/**
 	 * Initializes the script's objects (SCI0)
@@ -311,12 +317,14 @@ private:
 	 */
 	void initializeObjectsSci11(SegManager *segMan, SegmentId segmentId);
 
+#ifdef ENABLE_SCI32
 	/**
 	 * Initializes the script's objects (SCI3)
 	 * @param segMan	A reference to the segment manager
 	 * @param segmentId	The script's segment id
 	 */
 	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
+#endif
 
 	LocalVariables *allocLocalsSegment(SegManager *segMan);
 

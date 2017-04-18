@@ -96,16 +96,22 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 		for (int i = 0; i < _methodCount * 2 + 3; ++i) {
 			_baseMethod.push_back(buf.getUint16SEAt(data.getUint16SEAt(6) + i * 2));
 		}
+#ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		initSelectorsSci3(buf, initVariables);
+#endif
 	}
 
 	if (initVariables) {
-		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3) {
+			_infoSelectorSci3 = make_reg(0, data.getUint16SEAt(10));
+		} else {
+#else
+		{
+#endif
 			for (uint i = 0; i < _variables.size(); i++)
 				_variables[i] = make_reg(0, data.getUint16SEAt(i * 2));
-		} else {
-			_infoSelectorSci3 = make_reg(0, data.getUint16SEAt(10));
 		}
 	}
 }
@@ -136,6 +142,7 @@ bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSiz
 	return relocateBlock(_variables, getPos().getOffset(), segment, location, scriptSize);
 }
 
+#ifdef ENABLE_SCI32
 bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
 	assert(_propertyOffsetsSci3.size());
 	assert(offset >= 0 && (uint)offset < scriptSize);
@@ -150,6 +157,7 @@ bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t
 
 	return false;
 }
+#endif
 
 int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
@@ -305,7 +313,6 @@ bool Object::mustSetViewVisible(int index, const bool fromPropertyOp) const {
 		return index >= minIndex && index <= maxIndex;
 	}
 }
-#endif
 
 void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
 	enum {
@@ -398,5 +405,6 @@ void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVa
 		_superClassPosSci3 = make_reg(0, _baseObj.getUint16SEAt(8));
 	}
 }
+#endif
 
 } // End of namespace Sci

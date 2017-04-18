@@ -496,6 +496,7 @@ void Script::identifyOffsets() {
 			_offsetLookupStringCount++;
 		}
 
+#ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		// SCI3
 		uint32 sci3StringOffset = 0;
@@ -607,9 +608,11 @@ void Script::identifyOffsets() {
 				}
 			}
 		}
+#endif
 	}
 }
 
+#ifdef ENABLE_SCI32
 SciSpan<const byte> Script::getSci3ObjectsPointer() {
 	SciSpan<const byte> ptr;
 
@@ -627,6 +630,7 @@ SciSpan<const byte> Script::getSci3ObjectsPointer() {
 
 	return ptr;
 }
+#endif
 
 Object *Script::getObject(uint32 offset) {
 	if (_objects.contains(offset))
@@ -681,6 +685,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 	return true;
 }
 
+#ifdef ENABLE_SCI32
 int Script::relocateOffsetSci3(uint32 offset) const {
 	int relocStart = _buf->getUint32LEAt(8);
 	int relocCount = _buf->getUint16LEAt(18);
@@ -695,6 +700,7 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 
 	return -1;
 }
+#endif
 
 bool Script::relocateLocal(SegmentId segment, int location) {
 	if (_localsBlock)
@@ -750,6 +756,7 @@ void Script::relocateSci0Sci21(reg_t block) {
 	}
 }
 
+#ifdef ENABLE_SCI32
 void Script::relocateSci3(reg_t block) {
 	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
 	const uint relocCount = _buf->getUint16SEAt(18);
@@ -766,6 +773,7 @@ void Script::relocateSci3(reg_t block) {
 		}
 	}
 }
+#endif
 
 void Script::incrementLockers() {
 	assert(!_markedAsDeleted);
@@ -799,9 +807,8 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 
 	int offset;
 
-	if (getSciVersion() != SCI_VERSION_3) {
-		offset = _exports.getUint16SEAt(pubfunct);
-	} else {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() == SCI_VERSION_3) {
 		if (!relocSci3) {
 			offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffset();
 		} else {
@@ -812,7 +819,9 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 				offset = _exports.getUint16SEAt(pubfunct) + getCodeBlockOffset();
 			}
 		}
-	}
+	} else
+#endif
+		offset = _exports.getUint16SEAt(pubfunct);
 
 	// TODO: Check if this should be done for SCI1.1 games as well
 	if (getSciVersion() >= SCI_VERSION_2 && offset == 0) {
@@ -934,9 +943,11 @@ void Script::initializeClasses(SegManager *segMan) {
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		seeker = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 		mult = 2;
+#ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		seeker = getSci3ObjectsPointer();
 		mult = 1;
+#endif
 	}
 
 	if (!seeker)
@@ -1092,6 +1103,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	relocateSci0Sci21(make_reg(segmentId, _heap.getUint16SEAt(0)));
 }
 
+#ifdef ENABLE_SCI32
 void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 	SciSpan<const byte> seeker = getSci3ObjectsPointer();
 
@@ -1110,14 +1122,17 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 
 	relocateSci3(make_reg(segmentId, 0));
 }
+#endif
 
 void Script::initializeObjects(SegManager *segMan, SegmentId segmentId) {
 	if (getSciVersion() <= SCI_VERSION_1_LATE)
 		initializeObjectsSci0(segMan, segmentId);
 	else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
 		initializeObjectsSci11(segMan, segmentId);
+#ifdef ENABLE_SCI32
 	else if (getSciVersion() == SCI_VERSION_3)
 		initializeObjectsSci3(segMan, segmentId);
+#endif
 }
 
 reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
