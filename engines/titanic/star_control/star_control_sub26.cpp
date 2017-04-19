@@ -96,10 +96,11 @@ void CStarControlSub26::fn4(const DMatrix &m) {
 	}
 }
 
-void CStarControlSub26::fn5(double val, CStarControlSub26 *s1, CStarControlSub26 *s2) {
+CStarControlSub26 CStarControlSub26::fn5(double val, CStarControlSub26 *src) {
 	CStarControlSub26 sub1 = *this;
 	CStarControlSub26 sub2, sub3, sub4;
-	double val1 = sub1.fn2(s1);
+	CStarControlSub26 dest;
+	double val1 = sub1.fn2(src);
 
 	if (val1 < 0.0) {
 		val1 = -val1;
@@ -107,44 +108,36 @@ void CStarControlSub26::fn5(double val, CStarControlSub26 *s1, CStarControlSub26
 		sub1 = sub2;
 	}
 
-	if (val1 - -1.0 <= 0.00001) {
-		double sval1 = sub1._sub._v1;
-		double sval3 = sub1._sub._v3;
-		double sval2 = -sub1._sub._v2;
-		double sval0 = -sub1._field0;
+	if (val1 + 1.0 <= 0.00001) {
+		dest._sub._v1 = -sub1._sub._v2;
+		dest._sub._v2 = sub1._sub._v1;
+		dest._sub._v3 = -sub1._field0;
+		dest._field0 = sub1._sub._v3;
 
-		sub2._sub._v1 = sval2;
-		sub2._sub._v2 = sval1;
-		sub2._sub._v3 = sval0;
-		sub2._field0 = sval3;
-
-		double sinVal = sin(val * M_PI);
-		double val2 = sinVal * sval2;
-		double val3 = sin((0.5 - val) * M_PI);
-		double val4 = sinVal * sval0;
-		double val5 = sub1._sub._v3 * val3;
-
-		sub2._sub._v1 = val2 + sub1._sub._v1 * val3;
-		sub2._sub._v2 = sub1._sub._v2 * val3 + sub1._sub._v1 * sinVal;
-		sub2._sub._v3 = val4 + val5;
+		double sin1 = sin(val * M_PI);
+		double sin2 = sin((0.5 - val) * M_PI);
+		dest._sub._v1 = sin1 * dest._sub._v1 + sub1._sub._v1 * sin2;
+		dest._sub._v2 = sub1._sub._v2 * sin2 + sub1._sub._v1 * sin1;
+		dest._sub._v3 = sin1 * -sub1._field0 + sub1._sub._v3 * sin2;
+		return dest;
 	} else {
-		double val2;
 		const CStarControlSub26 *sp;
+		double val2;
 
 		if (1.0 - val1 <= 0.00001) {
 			val2 = 1.0 - val;
-			sp = s1->fn3(&sub3, val);
+			sp = src->fn3(&sub3, val);
 		} else {
 			double cosVal = acos(val1);
 			double sinVal = sin(cosVal);
 			val2 = sin((1.0 - val) * cosVal) / sinVal;
-			sp = s1->fn3(&sub3, sin(cosVal * val) / sinVal);
+			sp = src->fn3(&sub3, sin(cosVal * val) / sinVal);
 		}
 
 		const CStarControlSub26 *sp2 = sub1.fn3(&sub4, val2);
-		sub2.setup(sp2->_field0 + sp->_field0, sp->_sub._v1  + sp2->_sub._v1,
+		dest.setup(sp2->_field0 + sp->_field0, sp->_sub._v1 + sp2->_sub._v1,
 			sp->_sub._v2 + sp2->_sub._v2, sp->_sub._v3 + sp2->_sub._v3);
-		*s2 = sub2;
+		return dest;
 	}
 }
 

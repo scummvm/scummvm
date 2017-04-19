@@ -41,8 +41,7 @@ void CStarControlSub25::fn2(double val, FMatrix &m) {
 	} else if (val > 1.0) {
 		m = _matrix2;
 	} else {
-		CStarControlSub26 sub26;
-		_sub1.fn5(val, &_sub2, &sub26);
+		CStarControlSub26 sub26 = _sub1.fn5(val, &_sub2);
 
 		DMatrix m1;
 		m1.fn3(&sub26);
