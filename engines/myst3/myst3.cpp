@@ -1749,6 +1749,11 @@ bool Myst3Engine::isWideScreenModEnabled() const {
 void Myst3Engine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
+	if (!_state || !_cursor) {
+		// This method may be called before the engine is fully initialized
+		return;
+	}
+
 	for (uint i = 0; i < _movies.size(); i++) {
 		_movies[i]->pause(pause);
 	}
