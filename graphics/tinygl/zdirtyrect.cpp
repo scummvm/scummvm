@@ -36,6 +36,8 @@ namespace TinyGL {
 
 void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	if (c->_enableDirtyRectangles && drawCall->getDirtyRegion().isEmpty())
+		return;
 	c->_drawCallsQueue.push_back(drawCall);
 }
 
