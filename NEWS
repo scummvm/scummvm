@@ -35,8 +35,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added save/load from General Main Menu.
 
 Drascula:
-  - Add handling of the master volume and fix volume synchronization between
+  - Added handling of the master volume and fix volume synchronization between
     the game and ScummVM options.
+  - Added possibility to load and save games using GMM.
 
 1.9.1 (YYYY-MM-DD)
  General:

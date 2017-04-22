@@ -138,7 +138,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	return desc;
 }
 
-void saveMetaData(Common::WriteStream *s, Common::String &desc) {
+void saveMetaData(Common::WriteStream *s, const Common::String &desc) {
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -155,7 +155,7 @@ void saveMetaData(Common::WriteStream *s, Common::String &desc) {
 	s->writeUint32LE(playTime);
 }
 
-void DrasculaEngine::convertSaveGame(int slot, Common::String &desc) {
+void DrasculaEngine::convertSaveGame(int slot, const Common::String &desc) {
 	Common::String oldFileName = Common::String::format("%s%02d", _targetName.c_str(), slot);
 	Common::String newFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::InSaveFile *oldFile = _saveFileMan->openForLoading(oldFileName);
@@ -188,6 +188,26 @@ void DrasculaEngine::convertSaveGame(int slot, Common::String &desc) {
 	_saveFileMan->removeSavefile(oldFileName);
 }
 
+Common::Error DrasculaEngine::loadGameState(int slot) {
+	// The boolean returned by loadGame() indicates if loading is in the same
+	// chapter or in a different one. Thus it does not indicate an error.
+	loadGame(slot);
+	return Common::kNoError;
+}
+
+bool DrasculaEngine::canLoadGameStateCurrently() {
+	return _canSaveLoad;
+}
+
+Common::Error DrasculaEngine::saveGameState(int slot, const Common::String &desc) {
+	saveGame(slot, desc);
+	return Common::kNoError;
+}
+
+bool DrasculaEngine::canSaveGameStateCurrently() {
+	return _canSaveLoad;
+}
+
 /**
  * Loads the first 10 save names, to be used in Drascula's save/load screen
  */
@@ -205,7 +225,7 @@ void DrasculaEngine::loadSaveNames() {
 	}
 }
 
-void DrasculaEngine::saveGame(int slot, Common::String &desc) {
+void DrasculaEngine::saveGame(int slot, const Common::String &desc) {
 	Common::OutSaveFile *out;
 	int l;
 

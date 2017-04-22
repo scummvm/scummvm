@@ -76,7 +76,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
     framesWithoutAction = 0;
 	term_int = 0;
 	currentChapter = 0;
-	_loadedDifferentChapter = 0;
+	_loadedDifferentChapter = false;
+	_canSaveLoad  = false;
 	musicStopped = 0;
 	FrameSSN = 0;
 	globalSpeed = 0;
@@ -230,7 +231,7 @@ DrasculaEngine::~DrasculaEngine() {
 
 bool DrasculaEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL || f == kSupportsLoadingDuringRuntime || f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error DrasculaEngine::run() {
@@ -575,6 +576,7 @@ bool DrasculaEngine::runCurrentChapter() {
 				playMusic(roomMusic);
 		}
 
+		_canSaveLoad = true;
 		delay(25);
 #ifndef _WIN32_WCE
 		// FIXME
@@ -585,6 +587,9 @@ bool DrasculaEngine::runCurrentChapter() {
 		// events in the wince port.
 		updateEvents();
 #endif
+		_canSaveLoad = false;
+		if (_loadedDifferentChapter)
+			return true;
 
 		if (!_menuScreen && takeObject == 1)
 			checkObjects();
@@ -663,7 +668,11 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		_menuBar = (_mouseY < 24 && !_menuScreen) ? true : false;
 
+		_canSaveLoad = true;
 		Common::KeyCode key = getScan();
+		_canSaveLoad = false;
+		if (_loadedDifferentChapter)
+			return true;
 		if (key == Common::KEYCODE_F1 && !_menuScreen) {
 			selectVerb(kVerbLook);
 		} else if (key == Common::KEYCODE_F2 && !_menuScreen) {
@@ -881,7 +890,7 @@ void DrasculaEngine::delay(int ms) {
 		_system->delayMillis(10);
 		updateEvents();
 		_system->updateScreen();
-	} while (_system->getMillis() < end && !shouldQuit());
+	} while (_system->getMillis() < end && !shouldQuit() && !_loadedDifferentChapter);
 }
 
 void DrasculaEngine::pause(int duration) {
