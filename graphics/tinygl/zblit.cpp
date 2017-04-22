@@ -727,16 +727,13 @@ void tglCleanupImages() {
 	}
 }
 
-void tglBlitSetScissorRect(int left, int top, int right, int bottom) {
+void tglBlitSetScissorRect(const Common::Rect &rect) {
+	TinyGL::gl_get_context()->_scissorRect = rect;
+}
+
+void tglBlitResetScissorRect(void) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->_scissorRect.left = left;
-	c->_scissorRect.right = right;
-	c->_scissorRect.top = top;
-	c->_scissorRect.bottom = bottom;
-	if (c->_scissorRect.right == 0 || c->_scissorRect.bottom == 0) {
-		c->_scissorRect.right = c->fb->xsize;
-		c->_scissorRect.bottom = c->fb->ysize;
-	}
+	c->_scissorRect = Common::Rect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 } // end of namespace Internal

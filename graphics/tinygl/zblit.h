@@ -183,12 +183,9 @@ namespace Internal {
 
 	/**
 	@brief Sets up a scissor rectangle for blit calls: every blit call is affected by this rectangle.
-	@param left coordinate
-	@param right coordinate
-	@param top coordinate
-	@param bottom coordinate
 	*/
-	void tglBlitSetScissorRect(int left, int top, int right, int bottom);
+	void tglBlitSetScissorRect(const Common::Rect &rect);
+	void tglBlitResetScissorRect(void);
 } // end of namespace Internal
 
 } // end of namespace Graphics

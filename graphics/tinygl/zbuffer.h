@@ -446,12 +446,12 @@ struct FrameBuffer {
 	void fillLineFlat(ZBufferPoint *p1, ZBufferPoint *p2);
 	void fillLineInterp(ZBufferPoint *p1, ZBufferPoint *p2);
 
-	void setScissorRectangle(int left, int right, int top, int bottom) {
-		_clipRectangle.left = left;
-		_clipRectangle.right = right;
-		_clipRectangle.top = top;
-		_clipRectangle.bottom = bottom;
-		_enableScissor = left != 0 || right != xsize || top != 0 || bottom != ysize;
+	void setScissorRectangle(const Common::Rect &rect) {
+		_clipRectangle = rect;
+		_enableScissor = true;
+	}
+	void resetScissorRectangle() {
+		_enableScissor = false;
 	}
 
 	Common::Rect _clipRectangle;

@@ -238,7 +238,7 @@ void glInit(void *zbuffer1, int textureSize) {
 	c->_drawCallAllocator[1].initialize(kDrawCallMemory);
 	c->_enableDirtyRectangles = false;
 
-	Graphics::Internal::tglBlitSetScissorRect(0, 0, c->fb->xsize, c->fb->ysize);
+	Graphics::Internal::tglBlitResetScissorRect();
 }
 
 void glClose() {

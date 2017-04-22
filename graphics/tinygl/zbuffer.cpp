@@ -80,7 +80,7 @@ void memset_l(void *adr, int val, int count) {
 		*p++ = val;
 }
 
-FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) : _depthWrite(true) {
+FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &frame_buffer) : _depthWrite(true), _enableScissor(false) {
 	int size;
 
 	this->xsize = width;
@@ -89,8 +89,6 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->pixelbytes = this->cmode.bytesPerPixel;
 	this->pixelbits = this->cmode.bytesPerPixel * 8;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
-
-	this->setScissorRectangle(0, xsize, 0, ysize);
 
 	size = this->xsize * this->ysize * sizeof(unsigned int);
 
