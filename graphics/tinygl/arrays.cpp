@@ -77,6 +77,18 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 	}
 }
 
+void glopDrawArrays(GLContext *c, GLParam *p) {
+	GLParam array_element[2];
+	GLParam begin[2];
+	begin[1].i = p[1].i;
+	glopBegin(c, begin);
+	for (int i=0; i < p[3].i; i++) {
+		array_element[1].i = p[2].i + i;
+		glopArrayElement(c, array_element);
+	}
+	glopEnd(c, NULL);
+}
+
 void glopEnableClientState(GLContext *c, GLParam *p) {
 	c->client_states |= p[1].i;
 }
@@ -114,6 +126,15 @@ void tglArrayElement(TGLint i) {
 	TinyGL::GLParam p[2];
 	p[0].op = TinyGL::OP_ArrayElement;
 	p[1].i = i;
+	gl_add_op(p);
+}
+
+void tglDrawArrays(TGLenum mode, TGLint first, TGLsizei count) {
+	TinyGL::GLParam p[4];
+	p[0].op = TinyGL::OP_DrawArrays;
+	p[1].i = mode;
+	p[2].i = first;
+	p[3].i = count;
 	gl_add_op(p);
 }
 

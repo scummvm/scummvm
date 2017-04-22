@@ -91,6 +91,7 @@ ADD_OP(NextBuffer, 1, "%p")
 
 // opengl 1.1 arrays
 ADD_OP(ArrayElement, 1, "%d")
+ADD_OP(DrawArrays, 3, "%C %d %d")
 ADD_OP(EnableClientState, 1, "%C")
 ADD_OP(DisableClientState, 1, "%C")
 ADD_OP(VertexPointer, 4, "%d %C %d %p")
