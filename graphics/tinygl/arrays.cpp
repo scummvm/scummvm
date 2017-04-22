@@ -77,20 +77,49 @@ void glopArrayElement(GLContext *c, GLParam *param) {
 	}
 }
 
-void glArrayElement(TGLint i) {
-	GLParam p[2];
-	p[0].op = OP_ArrayElement;
-	p[1].i = i;
-	gl_add_op(p);
-}
-
 void glopEnableClientState(GLContext *c, GLParam *p) {
 	c->client_states |= p[1].i;
 }
 
-void glEnableClientState(TGLenum array) {
-	GLParam p[2];
-	p[0].op = OP_EnableClientState;
+void glopDisableClientState(GLContext *c, GLParam *p) {
+	c->client_states &= p[1].i;
+}
+
+void glopVertexPointer(GLContext *c, GLParam *p) {
+	c->vertex_array_size = p[1].i;
+	c->vertex_array_stride = p[2].i;
+	c->vertex_array = (float *)p[3].p;
+}
+
+void glopColorPointer(GLContext *c, GLParam *p) {
+	c->color_array_size = p[1].i;
+	c->color_array_stride = p[2].i;
+	c->color_array = (float *)p[3].p;
+}
+
+void glopNormalPointer(GLContext *c, GLParam *p) {
+	c->normal_array_stride = p[1].i;
+	c->normal_array = (float *)p[2].p;
+}
+
+void glopTexCoordPointer(GLContext *c, GLParam *p) {
+	c->texcoord_array_size = p[1].i;
+	c->texcoord_array_stride = p[2].i;
+	c->texcoord_array = (float *)p[3].p;
+}
+
+} // end of namespace TinyGL
+
+void tglArrayElement(TGLint i) {
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_ArrayElement;
+	p[1].i = i;
+	gl_add_op(p);
+}
+
+void tglEnableClientState(TGLenum array) {
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_EnableClientState;
 
 	switch (array) {
 	case TGL_VERTEX_ARRAY:
@@ -112,13 +141,9 @@ void glEnableClientState(TGLenum array) {
 	gl_add_op(p);
 }
 
-void glopDisableClientState(GLContext *c, GLParam *p) {
-	c->client_states &= p[1].i;
-}
-
-void glDisableClientState(TGLenum array) {
-	GLParam p[2];
-	p[0].op = OP_DisableClientState;
+void tglDisableClientState(TGLenum array) {
+	TinyGL::GLParam p[2];
+	p[0].op = TinyGL::OP_DisableClientState;
 
 	switch (array) {
 	case TGL_VERTEX_ARRAY:
@@ -140,66 +165,41 @@ void glDisableClientState(TGLenum array) {
 	gl_add_op(p);
 }
 
-void glopVertexPointer(GLContext *c, GLParam *p) {
-	c->vertex_array_size = p[1].i;
-	c->vertex_array_stride = p[2].i;
-	c->vertex_array = (float *)p[3].p;
-}
-
-void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	GLParam p[4];
+void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLParam p[4];
 	assert(type == TGL_FLOAT);
-	p[0].op = OP_VertexPointer;
+	p[0].op = TinyGL::OP_VertexPointer;
 	p[1].i = size;
 	p[2].i = stride;
 	p[3].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
 
-void glopColorPointer(GLContext *c, GLParam *p) {
-	c->color_array_size = p[1].i;
-	c->color_array_stride = p[2].i;
-	c->color_array = (float *)p[3].p;
-}
-
-void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	GLParam p[4];
+void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLParam p[4];
 	assert(type == TGL_FLOAT);
-	p[0].op = OP_ColorPointer;
+	p[0].op = TinyGL::OP_ColorPointer;
 	p[1].i = size;
 	p[2].i = stride;
 	p[3].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
 
-void glopNormalPointer(GLContext *c, GLParam *p) {
-	c->normal_array_stride = p[1].i;
-	c->normal_array = (float *)p[2].p;
-}
-
-void glNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	GLParam p[3];
+void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLParam p[3];
 	assert(type == TGL_FLOAT);
-	p[0].op = OP_NormalPointer;
+	p[0].op = TinyGL::OP_NormalPointer;
 	p[1].i = stride;
 	p[2].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
 
-void glopTexCoordPointer(GLContext *c, GLParam *p) {
-	c->texcoord_array_size = p[1].i;
-	c->texcoord_array_stride = p[2].i;
-	c->texcoord_array = (float *)p[3].p;
-}
-
-void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	GLParam p[4];
+void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
+	TinyGL::GLParam p[4];
 	assert(type == TGL_FLOAT);
-	p[0].op = OP_TexCoordPointer;
+	p[0].op = TinyGL::OP_TexCoordPointer;
 	p[1].i = size;
 	p[2].i = stride;
 	p[3].p = const_cast<void *>(pointer);
 	gl_add_op(p);
 }
-
-} // end of namespace TinyGL
