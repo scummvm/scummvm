@@ -39,7 +39,8 @@ void tglIssueDrawCall(Graphics::DrawCall *drawCall) {
 	c->_drawCallsQueue.push_back(drawCall);
 }
 
-void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
+#if TGL_DIRTY_RECT_SHOW
+static void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	if (rect.left < 0)
@@ -60,6 +61,7 @@ void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 		c->fb->writePixel(y * c->fb->xsize + rect.right, 255, r, g, b);
 	}
 }
+#endif
 
 struct DirtyRectangle {
 	Common::Rect rectangle;
@@ -109,13 +111,13 @@ void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
 	c->_drawCallsQueue.clear();
 }
 
-inline void _appendDirtyRectangle(const Graphics::DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
+static inline void _appendDirtyRectangle(const Graphics::DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
 	Common::Rect dirty_region = call.getDirtyRegion();
 	if (rectangles.empty() || dirty_region != (*rectangles.end()).rectangle)
 		rectangles.push_back(DirtyRectangle(dirty_region, r, g, b));
 }
 
-void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
+static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
 	typedef Common::List<TinyGL::DirtyRectangle>::iterator RectangleIterator;
 
@@ -234,7 +236,7 @@ void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 	c->_drawCallAllocator[c->_currentAllocatorIndex].reset();
 }
 
-void tglPresentBufferSimple(TinyGL::GLContext *c) {
+static void tglPresentBufferSimple(TinyGL::GLContext *c) {
 	typedef Common::List<Graphics::DrawCall *>::const_iterator DrawCallIterator;
 
 	for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
