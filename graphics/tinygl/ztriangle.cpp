@@ -311,7 +311,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 				l2 = p2;
 			}
 			nb_lines = p2->y - p1->y + 1;
-			y = pr1->y;
 		}
 
 		// compute the values for the left edge
