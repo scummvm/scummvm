@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-09 22:09+0200\n"
+"POT-Creation-Date: 2017-04-22 20:37+0200\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1871,8 +1871,7 @@ msgstr "~T~ilbake til oppstarter"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:915 engines/sci/engine/kfile.cpp:1191
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:916 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
@@ -1892,8 +1891,8 @@ msgstr "Lagret spill:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:915 engines/sci/engine/kfile.cpp:1191
-#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:916 engines/scumm/dialogs.cpp:184
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
@@ -2855,7 +2854,7 @@ msgstr "Vis scanlines"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:430
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:431
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -2863,7 +2862,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:431
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:432
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -2915,8 +2914,8 @@ msgstr ""
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1034
-#: engines/sci/engine/kfile.cpp:1263 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1035
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
@@ -2928,8 +2927,8 @@ msgstr "Gjennopprett spill:"
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:377
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1034
-#: engines/sci/engine/kfile.cpp:1263 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1035
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
@@ -3472,43 +3471,43 @@ msgstr "Alternativ intro"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Bruk en alternativ intro (Kun for CD-versjon)"
 
-#: engines/sci/detection.cpp:390
+#: engines/sci/detection.cpp:391
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Hopp over EGA dithering (fullfarge bakgrunner)"
 
-#: engines/sci/detection.cpp:391
+#: engines/sci/detection.cpp:392
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
-#: engines/sci/detection.cpp:400
+#: engines/sci/detection.cpp:401
 msgid "Enable high resolution graphics"
 msgstr "Aktiver høyoppløselig grafikk"
 
-#: engines/sci/detection.cpp:401
+#: engines/sci/detection.cpp:402
 msgid "Enable high resolution graphics/content"
 msgstr "Aktiver høyoppløselig grafikk/innhold"
 
-#: engines/sci/detection.cpp:410
+#: engines/sci/detection.cpp:411
 msgid "Enable black-lined video"
 msgstr "Aktiver svartlinjet video"
 
-#: engines/sci/detection.cpp:411
+#: engines/sci/detection.cpp:412
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 
-#: engines/sci/detection.cpp:420
+#: engines/sci/detection.cpp:421
 msgid "Prefer digital sound effects"
 msgstr "Foretrekk digitale lydeffekter"
 
-#: engines/sci/detection.cpp:421
+#: engines/sci/detection.cpp:422
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
 
-#: engines/sci/detection.cpp:440
+#: engines/sci/detection.cpp:441
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Bruk IMF/Yamaha-FB-01 for MIDI-output"
 
-#: engines/sci/detection.cpp:441
+#: engines/sci/detection.cpp:442
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -3516,28 +3515,28 @@ msgstr ""
 "Bruk et IBM Music Feature-kort eller en Yamaha FB-01 FM-synthmodul til MIDI "
 "output"
 
-#: engines/sci/detection.cpp:451
+#: engines/sci/detection.cpp:452
 msgid "Use CD audio"
 msgstr "Bruk CD-lyd"
 
-#: engines/sci/detection.cpp:452
+#: engines/sci/detection.cpp:453
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Bruk CD-lyd istedenfor spillets lyd, hvis tilgjengelig"
 
-#: engines/sci/detection.cpp:462
+#: engines/sci/detection.cpp:463
 msgid "Use Windows cursors"
 msgstr "Bruk Windows-muspekere"
 
-#: engines/sci/detection.cpp:463
+#: engines/sci/detection.cpp:464
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "Bruk Windows-muspekerene (mindre, og monokrome) isteden"
 
-#: engines/sci/detection.cpp:473
+#: engines/sci/detection.cpp:474
 msgid "Use silver cursors"
 msgstr "Bruk sølvmuspekere"
 
-#: engines/sci/detection.cpp:474
+#: engines/sci/detection.cpp:475
 #, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
