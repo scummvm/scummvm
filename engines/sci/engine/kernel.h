@@ -491,6 +491,7 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv);
 reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
+reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);

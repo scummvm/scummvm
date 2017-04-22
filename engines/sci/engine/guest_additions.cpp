@@ -29,6 +29,8 @@
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #ifdef ENABLE_SCI32
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "sci/graphics/frameout.h"
 #endif
 #include "sci/sound/music.h"
@@ -52,9 +54,10 @@ enum {
 };
 
 
-GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features) :
+GuestAdditions::GuestAdditions(EngineState *state, GameFeatures *features, Kernel *kernel) :
 	_state(state),
 	_features(features),
+	_kernel(kernel),
 	_segMan(state->_segMan),
 	_messageTypeSynced(false) {}
 
@@ -204,6 +207,178 @@ void GuestAdditions::kDoSoundSetVolumeHook(const reg_t soundObj, const int16 vol
 	if (g_sci->getGameId() == GID_GK1 && shouldSyncAudio()) {
 		syncGK1AudioVolumeToScummVM(soundObj, volume);
 	}
+}
+
+void GuestAdditions::instantiateScriptHook(Script &script) const {
+	if (getSciVersion() < SCI_VERSION_2) {
+		return;
+	}
+
+	// 64990 is the system script containing SRDialog. This script is normally
+	// used by the main Game object, but it is not loaded immediately, so we
+	// wait for it to be loaded before patching it
+	if (!ConfMan.getBool("originalsaveload") && script.getScriptNumber() == 64990) {
+		patchGameSaveRestoreSCI32(script);
+	}
+}
+
+#endif
+
+#pragma mark -
+#pragma mark Save & restore
+
+void GuestAdditions::patchGameSaveRestore() const {
+	if (ConfMan.getBool("originalsaveload") || getSciVersion() >= SCI_VERSION_2)
+		return;
+
+	patchGameSaveRestoreSCI16();
+}
+
+static const byte kSaveRestorePatch[] = {
+	0x39, 0x03,        // pushi 03
+	0x76,              // push0
+	0x38, 0xff, 0xff,  // pushi -1
+	0x76,              // push0
+	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
+	0x48               // ret
+};
+
+static void patchKSaveRestore(SegManager *segMan, reg_t methodAddress, byte id) {
+	Script *script = segMan->getScript(methodAddress.getSegment());
+	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
+	memcpy(patchPtr, kSaveRestorePatch, sizeof(kSaveRestorePatch));
+	patchPtr[8] = id;
+}
+
+void GuestAdditions::patchGameSaveRestoreSCI16() const {
+	const Object *gameObject = _segMan->getObject(g_sci->getGameObject());
+	const Object *gameSuperObject = _segMan->getObject(gameObject->getSuperClassSelector());
+	if (!gameSuperObject)
+		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
+	byte kernelIdRestore = 0;
+	byte kernelIdSave = 0;
+
+	switch (g_sci->getGameId()) {
+	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
+	case GID_HOYLE2: // gets confused, see hoyle1
+	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
+	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
+	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
+		return;
+	default:
+		break;
+	}
+
+	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
+	for (uint16 kernelNr = 0; kernelNr < kernelNamesSize; kernelNr++) {
+		Common::String kernelName = _kernel->getKernelName(kernelNr);
+		if (kernelName == "RestoreGame")
+			kernelIdRestore = kernelNr;
+		if (kernelName == "SaveGame")
+			kernelIdSave = kernelNr;
+		if (kernelName == "Save")
+			kernelIdSave = kernelIdRestore = kernelNr;
+	}
+
+	// Search for gameobject superclass ::restore
+	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
+		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "restore") {
+				patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
+		} else if (methodName == "save") {
+			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
+					patchKSaveRestore(_segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
+			}
+		}
+	}
+
+	// Patch gameobject ::save for now for SCI0 - SCI1.1
+	// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
+	// issues with some game. Needs to get checked and then possibly changed.
+	const Object *patchObjectSave = gameObject;
+
+	// Search for gameobject ::save, if there is one patch that one too
+	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
+	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
+		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
+		Common::String methodName = _kernel->getSelectorName(selectorId);
+		if (methodName == "save") {
+			if (g_sci->getGameId() != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
+					patchKSaveRestore(_segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
+			}
+			break;
+		}
+	}
+}
+
+#ifdef ENABLE_SCI32
+static const byte SRDialogPatch[] = {
+	0x76,                   // push0
+	0x59, 0x00,             // &rest 0
+	0x43, 0x57, 0x00, 0x00, // callk kScummVMSaveLoad, 0
+	0x48                    // ret
+};
+
+void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
+	ObjMap &objMap = script.getObjectMap();
+	for (ObjMap::iterator it = objMap.begin(); it != objMap.end(); ++it) {
+		Object &obj = it->_value;
+		if (obj.getNameSelector().isNull()) {
+			continue;
+		}
+
+		if (Common::String(_segMan->derefString(obj.getNameSelector())) != "SRDialog") {
+			continue;
+		}
+
+		const uint16 methodCount = obj.getMethodCount();
+		for (uint16 methodNr = 0; methodNr < methodCount; ++methodNr) {
+			const uint16 selectorId = obj.getFuncSelector(methodNr);
+			const Common::String methodName = _kernel->getSelectorName(selectorId);
+			if (methodName == "doit") {
+				const reg_t methodAddress = obj.getFunction(methodNr);
+				byte *patchPtr = const_cast<byte *>(script.getBuf(methodAddress.getOffset()));
+				memcpy(patchPtr, SRDialogPatch, sizeof(SRDialogPatch));
+				break;
+			}
+		}
+	}
+}
+
+reg_t GuestAdditions::kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const {
+	const bool isSave = (bool)argv[0].toSint16();
+	int saveNo;
+
+	if (isSave) {
+		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+		saveNo = dialog.runModalWithCurrentTarget();
+		if (saveNo != -1) {
+			reg_t descriptionId;
+			if (_segMan->isObject(argv[1])) {
+				descriptionId = readSelector(_segMan, argv[1], SELECTOR(data));
+			} else {
+				descriptionId = argv[1];
+			}
+			SciArray &description = *_segMan->lookupArray(descriptionId);
+			description.fromString(dialog.getResultString());
+		}
+	} else {
+		GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
+		saveNo = dialog.runModalWithCurrentTarget();
+	}
+
+	if (saveNo > 0) {
+		// The autosave slot in ScummVM takes up slot 0, but in SCI the first
+		// non-autosave save game number needs to be 0, so reduce the save
+		// number here to match what would come from the normal SCI save/restore
+		// dialog. There is additional special code for handling the autosave
+		// game inside of kRestoreGame32.
+		--saveNo;
+	}
+
+	return make_reg(0, saveNo);
 }
 #endif
 

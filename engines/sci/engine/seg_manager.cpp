@@ -24,6 +24,9 @@
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/engine/script.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
+#endif
 
 namespace Sci {
 
@@ -1041,6 +1044,9 @@ int SegManager::instantiateScript(int scriptNum) {
 	scr->initializeLocals(this);
 	scr->initializeClasses(this);
 	scr->initializeObjects(this, segmentId);
+#ifdef ENABLE_SCI32
+	g_sci->_guestAdditions->instantiateScriptHook(*scr);
+#endif
 
 	return segmentId;
 }

@@ -41,6 +41,7 @@
 #include "sci/sound/audio.h"
 #include "sci/console.h"
 #ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
 #include "sci/resource.h"
 #endif
 
@@ -1179,34 +1180,10 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 
 reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
-	const bool isScummVMSave = argv[0].isNull();
-	Common::String gameName = "";
-	int16 saveNo;
-	Common::String saveDescription;
-	Common::String gameVersion = (argc <= 3 || argv[3].isNull()) ? "" : s->_segMan->getString(argv[3]);
-
-	if (isScummVMSave) {
-		// ScummVM call, from a patched Game::save
-		g_sci->_soundCmd->pauseAll(true);
-		GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
-		saveNo = dialog.runModalWithCurrentTarget();
-		g_sci->_soundCmd->pauseAll(false);
-
-		if (saveNo < 0) {
-			// User cancelled save
-			return NULL_REG;
-		}
-
-		saveDescription = dialog.getResultString();
-		if (saveDescription.empty()) {
-			saveDescription = dialog.createDefaultSaveDescription(saveNo);
-		}
-	} else {
-		// Native script call
-		gameName = s->_segMan->getString(argv[0]);
-		saveNo = argv[1].toSint16();
-		saveDescription = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
-	}
+	const Common::String gameName = s->_segMan->getString(argv[0]);
+	int16 saveNo = argv[1].toSint16();
+	const Common::String saveDescription = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+	const Common::String gameVersion = (argc <= 3 || argv[3].isNull()) ? "" : s->_segMan->getString(argv[3]);
 
 	debugC(kDebugLevelFile, "Game name %s save %d desc %s ver %s", gameName.c_str(), saveNo, saveDescription.c_str(), gameVersion.c_str());
 
@@ -1218,9 +1195,7 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
-	} else if (!isScummVMSave) {
-		// ScummVM save screen will give a pre-corrected save number, but native
-		// save-load will not
+	} else {
 		saveNo += kSaveIdShift;
 	}
 
@@ -1252,25 +1227,9 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
-	const bool isScummVMRestore = argv[0].isNull();
-	Common::String gameName = "";
+	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
-
-	if (isScummVMRestore && saveNo == -1) {
-		// ScummVM call, either from lancher or a patched Game::restore
-		g_sci->_soundCmd->pauseAll(true);
-		GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
-		saveNo = dialog.runModalWithCurrentTarget();
-		g_sci->_soundCmd->pauseAll(false);
-
-		if (saveNo < 0) {
-			// User cancelled restore
-			return s->r_acc;
-		}
-	} else {
-		gameName = s->_segMan->getString(argv[0]);
-	}
 
 	if (gameName == "Autosave" || gameName == "Autosv") {
 		if (saveNo == 0) {
@@ -1279,9 +1238,7 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
-	} else if (!isScummVMRestore) {
-		// ScummVM save screen will give a pre-corrected save number, but native
-		// save-load will not
+	} else {
 		saveNo += kSaveIdShift;
 	}
 
@@ -1375,6 +1332,10 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	const int16 saveNo = argv[2].toSint16();
 	outFileName.fromString(g_sci->getSavegameName(saveNo + kSaveIdShift));
 	return argv[0];
+}
+
+reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_guestAdditions->kScummVMSaveLoad(s, argc, argv);
 }
 
 #endif

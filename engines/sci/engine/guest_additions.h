@@ -29,6 +29,8 @@ namespace Sci {
 
 struct EngineState;
 class GameFeatures;
+class Kernel;
+class Script;
 class SegManager;
 
 /**
@@ -43,7 +45,9 @@ class SegManager;
  */
 class GuestAdditions {
 public:
-	GuestAdditions(EngineState *state, GameFeatures *features);
+	GuestAdditions(EngineState *state, GameFeatures *features, Kernel *kernel);
+
+#pragma mark -
 
 	/**
 	 * Synchronises audio volume settings from ScummVM to the game. Called
@@ -65,6 +69,7 @@ public:
 private:
 	EngineState *_state;
 	GameFeatures *_features;
+	Kernel *_kernel;
 	SegManager *_segMan;
 
 	/**
@@ -117,6 +122,32 @@ public:
 	 * Guest additions hook for kDoSoundSetVolume.
 	 */
 	void kDoSoundSetVolumeHook(const reg_t soundObj, const int16 volume) const;
+
+	/**
+	 * Guest additions hook for SegManager::instantiateScript.
+	 */
+	void instantiateScriptHook(Script &script) const;
+#endif
+
+#pragma mark -
+#pragma mark Save & restore
+
+public:
+	/**
+	 * Patches game scripts to hook into the ScummVM launcher UI when a user
+	 * tries to save or restore a game from inside the game.
+	 */
+	void patchGameSaveRestore() const;
+
+private:
+	void patchGameSaveRestoreSCI16() const;
+
+#ifdef ENABLE_SCI32
+public:
+	reg_t kScummVMSaveLoad(EngineState *s, int argc, reg_t *argv) const;
+
+private:
+	void patchGameSaveRestoreSCI32(Script &script) const;
 #endif
 
 #pragma mark -

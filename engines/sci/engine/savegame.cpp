@@ -1229,19 +1229,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		if (g_sci->_gfxScreen)
 			g_sci->_gfxScreen->clearForRestoreGame();
 	}
-#ifdef ENABLE_SCI32
-	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
-	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
-	// the options plane, which are not re-added and are in memory all the time right from the start of the
-	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
-	if (getSciVersion() >= SCI_VERSION_2) {
-		if (!s->_delayedRestoreFromLauncher) {
-			// Only do it, when we are restoring regulary and not from launcher
-			// As it could result in option planes etc. on the screen (happens in gk1)
-			g_sci->_gfxFrameout->syncWithScripts(false);
-		}
-	}
-#endif
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?

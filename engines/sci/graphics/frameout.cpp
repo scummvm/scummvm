@@ -127,93 +127,10 @@ void GfxFrameout::run() {
 	_planes.add(initPlane);
 }
 
-// SCI32 actually did not clear anything at all it seems on restore. The scripts actually cleared up
-// planes + screen items right before restoring. And after restoring they sync'd its internal planes list
-// as well.
 void GfxFrameout::clear() {
 	_planes.clear();
 	_visiblePlanes.clear();
 	_showList.clear();
-}
-
-// This is what Game::restore does, only needed when our ScummVM dialogs are patched in
-// It actually does one pass before actual restore deleting screen items + planes
-// And after restore it does another pass adding screen items + planes.
-// Attention: at least Space Quest 6's option plane seems to stay in memory right from the start and is not re-created.
-void GfxFrameout::syncWithScripts(bool addElements) {
-	EngineState *engineState = g_sci->getEngineState();
-	SegManager *segMan = engineState->_segMan;
-
-	// In case original save/restore dialogs are active, don't do anything
-	if (ConfMan.getBool("originalsaveload"))
-		return;
-
-	// Get planes list object
-	reg_t planesListObject = engineState->variables[VAR_GLOBAL][kGlobalVarPlanes];
-	reg_t planesListElements = readSelector(segMan, planesListObject, SELECTOR(elements));
-
-	List *planesList = segMan->lookupList(planesListElements);
-	reg_t planesNodeObject = planesList->first;
-
-	// Go through all elements of planes::elements
-	while (!planesNodeObject.isNull()) {
-		Node *planesNode = segMan->lookupNode(planesNodeObject);
-		reg_t planeObject = planesNode->value;
-
-		if (addElements) {
-			// Add this plane object
-			kernelAddPlane(planeObject);
-		}
-
-		reg_t planeCastsObject = readSelector(segMan, planeObject, SELECTOR(casts));
-		reg_t setListElements = readSelector(segMan, planeCastsObject, SELECTOR(elements));
-
-		// Now go through all elements of plane::casts::elements
-		List *planeCastsList = segMan->lookupList(setListElements);
-		reg_t planeCastsNodeObject = planeCastsList->first;
-
-		while (!planeCastsNodeObject.isNull()) {
-			Node *castsNode = segMan->lookupNode(planeCastsNodeObject);
-			reg_t castsObject = castsNode->value;
-
-			reg_t castsListElements = readSelector(segMan, castsObject, SELECTOR(elements));
-
-			List *castsList = segMan->lookupList(castsListElements);
-			reg_t castNodeObject = castsList->first;
-
-			while (!castNodeObject.isNull()) {
-				Node *castNode = segMan->lookupNode(castNodeObject);
-				reg_t castObject = castNode->value;
-
-				// read selector "-info-" of this object
-				// TODO: Seems to have been changed for SCI3
-				// Do NOT use getInfoSelector in here. SCI3 games did not use infoToa, but an actual selector.
-				// Maybe that selector is just a straight copy, but it needs to get verified/checked.
-				uint16 castInfoSelector = readSelectorValue(segMan, castObject, SELECTOR(_info_));
-
-				if (castInfoSelector & kInfoFlagViewInserted) {
-					if (addElements) {
-						// Flag set, so add this screen item
-						kernelAddScreenItem(castObject);
-					} else {
-						// Flag set, so delete this screen item
-						kernelDeleteScreenItem(castObject);
-					}
-				}
-
-				castNodeObject = castNode->succ;
-			}
-
-			planeCastsNodeObject = castsNode->succ;
-		}
-
-		if (!addElements) {
-			// Delete this plane object
-			kernelDeletePlane(planeObject);
-		}
-
-		planesNodeObject = planesNode->succ;
-	}
 }
 
 bool GfxFrameout::gameIsHiRes() const {

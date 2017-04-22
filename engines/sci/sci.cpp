@@ -283,7 +283,7 @@ Common::Error SciEngine::run() {
 		_vocabulary = new Vocabulary(_resMan, false);
 
 	_gamestate = new EngineState(segMan);
-	_guestAdditions = new GuestAdditions(_gamestate, _features);
+	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
@@ -336,9 +336,7 @@ Common::Error SciEngine::run() {
 
 	syncSoundSettings();
 	_guestAdditions->syncAudioOptionsFromScummVM();
-
-	// Patch in our save/restore code, so that dialogs are replaced
-	patchGameSaveRestore();
+	_guestAdditions->patchGameSaveRestore();
 	setLauncherLanguage();
 
 	// Check whether loading a savestate was requested
@@ -493,194 +491,6 @@ bool SciEngine::gameHasFanMadePatch() {
 	}
 
 	return false;
-}
-
-static byte patchGameRestoreSave[] = {
-	0x39, 0x03,        // pushi 03
-	0x76,              // push0
-	0x38, 0xff, 0xff,  // pushi -1
-	0x76,              // push0
-	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
-	0x48,              // ret
-};
-
-#ifdef ENABLE_SCI32
-// SCI2 version: Same as above, but the second parameter to callk is a word
-// and third parameter is a string reference
-static byte patchGameRestoreSci2[] = {
-	0x39, 0x03,             // pushi 03
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-static byte patchGameSaveSci2[] = {
-	0x39, 0x04,             // pushi 04
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x76,                   // push0          (save description)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x08, 0x00, // callk kSaveGame (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-// SCI2.1mid version: Same as above, but with an extra subop parameter
-static byte patchGameRestoreSci21[] = {
-	0x39, 0x04,             // pushi 04
-	0x78,                   // push1          (subop)
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x08, 0x00, // callk kSave (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-static byte patchGameSaveSci21[] = {
-	0x39, 0x05,             // pushi 05
-	0x76,                   // push0          (subop)
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x76,                   // push0          (save description)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x0a, 0x00, // callk kSave (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-#endif
-
-static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
-	Script *script = segMan->getScript(methodAddress.getSegment());
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-
-	memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	patchPtr[8] = id;
-}
-
-#ifdef ENABLE_SCI32
-static void patchGameSaveRestoreCodeSci2(SegManager *segMan, reg_t methodAddress, byte id, bool doRestore) {
-	Script *script = segMan->getScript(methodAddress.getSegment());
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-	int kcallOffset;
-
-	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
-		if (doRestore) {
-			memcpy(patchPtr, patchGameRestoreSci2, sizeof(patchGameRestoreSci2));
-			kcallOffset = 9;
-		} else {
-			memcpy(patchPtr, patchGameSaveSci2, sizeof(patchGameSaveSci2));
-			kcallOffset = 10;
-		}
-	} else {
-		if (doRestore) {
-			memcpy(patchPtr, patchGameRestoreSci21, sizeof(patchGameRestoreSci21));
-			kcallOffset = 10;
-		} else {
-			memcpy(patchPtr, patchGameSaveSci21, sizeof(patchGameSaveSci21));
-			kcallOffset = 11;
-		}
-	}
-
-	patchPtr[kcallOffset] = id;
-	if (g_sci->isBE()) {
-		SWAP(patchPtr[kcallOffset + 1], patchPtr[kcallOffset + 2]);
-	}
-}
-#endif
-
-void SciEngine::patchGameSaveRestore() {
-	SegManager *segMan = _gamestate->_segMan;
-	const Object *gameObject = segMan->getObject(_gameObjectAddress);
-	const Object *gameSuperObject = segMan->getObject(gameObject->getSuperClassSelector());
-	if (!gameSuperObject)
-		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
-	byte kernelIdRestore = 0;
-	byte kernelIdSave = 0;
-
-	switch (_gameId) {
-	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
-	case GID_HOYLE2: // gets confused, see hoyle1
-	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
-	case GID_KQ7: // has custom save/load code
-	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
-	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
-	case GID_MOTHERGOOSEHIRES: // has custom save/load code
-	case GID_PHANTASMAGORIA: // has custom save/load code
-	case GID_PQSWAT: // has custom save/load code
-	case GID_SHIVERS: // has custom save/load code
-		return;
-	default:
-		break;
-	}
-
-	if (ConfMan.getBool("originalsaveload"))
-		return;
-
-	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
-	for (uint16 kernelNr = 0; kernelNr < kernelNamesSize; kernelNr++) {
-		Common::String kernelName = _kernel->getKernelName(kernelNr);
-		if (kernelName == "RestoreGame")
-			kernelIdRestore = kernelNr;
-		if (kernelName == "SaveGame")
-			kernelIdSave = kernelNr;
-		if (kernelName == "Save")
-			kernelIdSave = kernelIdRestore = kernelNr;
-	}
-
-	// Search for gameobject superclass ::restore
-	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "restore") {
-#ifdef ENABLE_SCI32
-			if (getSciVersion() >= SCI_VERSION_2) {
-				patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore, true);
-			} else
-#endif
-				patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
-		}
-		else if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-#ifdef ENABLE_SCI32
-				if (getSciVersion() >= SCI_VERSION_2) {
-					patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave, false);
-				} else
-#endif
-					patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
-			}
-		}
-	}
-
-	const Object *patchObjectSave = nullptr;
-
-	if (getSciVersion() < SCI_VERSION_2) {
-		// Patch gameobject ::save for now for SCI0 - SCI1.1
-		// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
-		// issues with some game. Needs to get checked and then possibly changed.
-		patchObjectSave = gameObject;
-	} else {
-		// Patch superclass ::save for SCI32
-		patchObjectSave = gameSuperObject;
-	}
-
-	// Search for gameobject ::save, if there is one patch that one too
-	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
-		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-#ifdef ENABLE_SCI32
-				if (getSciVersion() >= SCI_VERSION_2) {
-					patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave, false);
-				} else
-#endif
-					patchGameSaveRestoreCode(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
-			}
-			break;
-		}
-	}
 }
 
 bool SciEngine::initGame() {
@@ -851,7 +661,7 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
-			patchGameSaveRestore();
+			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			_gamestate->_throttleLastTime = 0;
@@ -863,7 +673,7 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
-			patchGameSaveRestore();
+			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
