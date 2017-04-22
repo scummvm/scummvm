@@ -1279,10 +1279,18 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (save.version < MINIMUM_SCI32_SAVEGAME_VERSION ||
-		save.version > CURRENT_SAVEGAME_VERSION ||
-		save.gameVersion != gameVersion) {
+	if (save.version < MINIMUM_SCI32_SAVEGAME_VERSION) {
+		warning("Save version %d is below minimum SCI32 savegame version %d", save.version, MINIMUM_SCI32_SAVEGAME_VERSION);
+		return NULL_REG;
+	}
 
+	if (save.version > CURRENT_SAVEGAME_VERSION) {
+		warning("Save version %d is above maximum SCI32 savegame version %d", save.version, CURRENT_SAVEGAME_VERSION);
+		return NULL_REG;
+	}
+
+	if (save.gameVersion != gameVersion) {
+		warning("Save game was created for game version %s, but the current game version is %s", save.gameVersion.c_str(), gameVersion.c_str());
 		return NULL_REG;
 	}
 
