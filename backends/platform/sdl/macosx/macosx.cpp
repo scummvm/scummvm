@@ -188,7 +188,9 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 }
 
 Common::String OSystem_MacOSX::getScreenshotsPath() {
-	Common::String path = getDesktopPathMacOSX();
+	Common::String path = ConfMan.get("screenshotpath");
+	if (path.empty())
+		path = getDesktopPathMacOSX();
 	if (!path.empty() && !path.hasSuffix("/"))
 		path += "/";
 	return path;

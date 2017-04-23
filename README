@@ -2682,11 +2682,19 @@ configuration of each entry, allowing the custom options to be shown.
 9.0) Screenshots (SDL backend only):
 ---- -------------------------------
 On systems using the SDL backend (for example Windows, Mac or Linux) you can use
-alt+s to take snapshots (see section 5.4 - Hotkeys). The location of the created
-screenshot file depends on the OS:
+alt+s to take snapshots (see section 5.4 - Hotkeys).
+
+You can specify the directory in which you want the screenshots to be created in
+the config file. To do so add a screenshotpath value under the [scummvm] section:
+
+[scummvm]
+screenshotpath=/path/to/screenshots/
+
+The default location, when no screenshot path is defined in the config file,
+depends on the OS:
   Windows: In Users\username\My Pictures\ScummVM Screenshots.
   macOS X: On the Desktop.
-  Any other OS: In the current directoty.
+  Any other OS: In the current directory.
 
 
 10.0) Compiling:

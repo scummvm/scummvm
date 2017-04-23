@@ -147,13 +147,22 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 }
 
 Common::String OSystem_Win32::getScreenshotsPath() {
+	Common::String screenshotsPath = ConfMan.get("screenshotpath");
+	if (!screenshotsPath.empty()) {
+		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/")
+			screenshotsPath += "\\";
+		return screenshotsPath;
+	}
+
 	char picturesPath[MAXPATHLEN];
 
 	// Use the My Pictures folder.
-	if (SHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK)
-		error("Unable to access My Pictures directory");
+	if (SHGetFolderPath(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
+		warning("Unable to access My Pictures directory");
+		return Common::String();
+	}
 
-	Common::String screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
+	screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
 
 	// If the directory already exists (as it should in most cases),
 	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
