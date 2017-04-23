@@ -625,7 +625,10 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			if (event.kbd.keycode == Common::KEYCODE_s) {
 				Common::String filename;
 
-				Common::String screenshotsPath = ((OSystem_SDL *)g_system)->getScreenshotsPath();
+				Common::String screenshotsPath;
+				OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+				if (sdl_g_system)
+					screenshotsPath = sdl_g_system->getScreenshotsPath();
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;

@@ -2526,7 +2526,10 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
 			Common::String filename;
 
-			Common::String screenshotsPath = ((OSystem_SDL *)g_system)->getScreenshotsPath();
+			Common::String screenshotsPath;
+			OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+			if (sdl_g_system)
+				screenshotsPath = sdl_g_system->getScreenshotsPath();
 
 			for (int n = 0;; n++) {
 				SDL_RWops *file;
