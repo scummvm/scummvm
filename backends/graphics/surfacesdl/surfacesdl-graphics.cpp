@@ -2524,21 +2524,27 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 		// Alt-S: Create a screenshot
 		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			char filename[20];
+			Common::String filename;
+
+			Common::String screenshotsPath = ((OSystem_SDL *)g_system)->getScreenshotsPath();
 
 			for (int n = 0;; n++) {
 				SDL_RWops *file;
 
-				sprintf(filename, "scummvm%05d.bmp", n);
-				file = SDL_RWFromFile(filename, "r");
+				filename = Common::String::format("scummvm%05d.bmp", n);
+
+				file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
+
 				if (!file)
 					break;
 				SDL_RWclose(file);
 			}
-			if (saveScreenshot(filename))
-				debug("Saved screenshot '%s'", filename);
+
+			if (saveScreenshot((screenshotsPath + filename).c_str()))
+				debug("Saved screenshot '%s'", filename.c_str());
 			else
 				warning("Could not save screenshot");
+
 			return true;
 		}
 
