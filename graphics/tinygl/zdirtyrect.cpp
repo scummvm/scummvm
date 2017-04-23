@@ -666,7 +666,8 @@ void ClearBufferDrawCall::execute(bool restoreState) const {
 
 void ClearBufferDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->fb->clearRegion(clippingRectangle.left, clippingRectangle.top, clippingRectangle.width(), clippingRectangle.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
+	Common::Rect clearRect = clippingRectangle.findIntersectingRect(_dirtyRegion);
+	c->fb->clearRegion(clearRect.left, clearRect.top, clearRect.width(), clearRect.height(), _clearZBuffer, _zValue, _clearColorBuffer, _rValue, _gValue, _bValue);
 }
 
 const Common::Rect ClearBufferDrawCall::getDirtyRegion() const {
