@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-23 02:44+0200\n"
-"PO-Revision-Date: 2017-04-23 05:58+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2017-04-23 05:59+0000\n"
+"Last-Translator: Santiago Sanchez <sanchez.santiago.j@gmail.com>\n"
 "Language-Team: Spanish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
 "Language: es_ES\n"
@@ -873,10 +873,9 @@ msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:973
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Velocidad:"
+msgstr "Velocidad del puntero:"
 
 #: gui/options.cpp:984
 msgid "Joy Deadzone:"
