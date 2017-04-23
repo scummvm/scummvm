@@ -229,7 +229,6 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_buf->size()) {
 			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_buf->size());
-			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	}
 
