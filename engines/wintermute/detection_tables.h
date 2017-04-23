@@ -581,6 +581,18 @@ static const WMEGameDescription gameDescriptions[] = {
 		LATEST_VERSION
 	}
 };
+	// Zilm: A Game of Reflex 1.0
+	{
+		"Zilm",
+		"1.0",
+		AD_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	AD_TABLE_END_MARKER
+};
 
 } // End of namespace Wintermute
 
