@@ -478,7 +478,10 @@ void Script::syncStringHeap(Common::Serializer &s) {
 		const int length = _heap.size() - (buf - _heap);
 		s.syncBytes(buf.getUnsafeDataAt(0, length), length);
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: syncStringHeap(): Implement SCI3 variant");
+		const int stringOffset = _buf->getInt32SEAt(4);
+		const int length = _buf->getInt32SEAt(8) - stringOffset;
+		SciSpan<byte> buf = _buf->subspan<byte>(stringOffset, length);
+		s.syncBytes(buf.getUnsafeDataAt(0, length), length);
 	}
 }
 
