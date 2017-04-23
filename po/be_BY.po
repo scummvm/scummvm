@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-23 02:44+0200\n"
+"POT-Creation-Date: 2017-04-23 20:10+0200\n"
 "PO-Revision-Date: 2016-12-31 15:15+0000\n"
 "Last-Translator: Ivan Lukyanov <lid-gr@tut.by>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -1877,7 +1877,7 @@ msgstr "Г~а~лоўнае меню"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:917 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:932 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
@@ -1897,7 +1897,7 @@ msgstr "Захаваць гульню:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:917 engines/scumm/dialogs.cpp:184
+#: engines/sci/engine/kfile.cpp:932 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2862,7 +2862,7 @@ msgstr "Паказваць скан-лініі"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:431
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:440
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -2870,7 +2870,7 @@ msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:432
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:441
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -2929,7 +2929,7 @@ msgstr ""
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1036
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1051
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -2942,7 +2942,7 @@ msgstr "Узнавіць гульню:"
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1036
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1051
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -3484,46 +3484,46 @@ msgstr "Альтэрнатыўны ўступ"
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Выкарыстоўваць альтэрнатыўны ўступ (толькі для CD-версіі гульні)"
 
-#: engines/sci/detection.cpp:391
+#: engines/sci/detection.cpp:400
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "Не рабіць апраксімацыю колераў EGA (поўнакаляровыя фоны)"
 
-#: engines/sci/detection.cpp:392
+#: engines/sci/detection.cpp:401
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі "
 "колерамі"
 
-#: engines/sci/detection.cpp:401
+#: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics"
 msgstr "Уключыць адлюстраванне графікі высокага адрознення"
 
-#: engines/sci/detection.cpp:402
+#: engines/sci/detection.cpp:411
 msgid "Enable high resolution graphics/content"
 msgstr "Уключыць графіку і кантэнт высокага адрознення"
 
-#: engines/sci/detection.cpp:411
+#: engines/sci/detection.cpp:420
 msgid "Enable black-lined video"
 msgstr "Уключыць відэа з лініямі"
 
-#: engines/sci/detection.cpp:412
+#: engines/sci/detection.cpp:421
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Малюе чорныя лініі па-над відэа, павялічваючы такім чынам бачную выразнасць"
 
-#: engines/sci/detection.cpp:421
+#: engines/sci/detection.cpp:430
 msgid "Prefer digital sound effects"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам"
 
-#: engines/sci/detection.cpp:422
+#: engines/sci/detection.cpp:431
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Аддаваць перавагу лічбавым гукавым эфектам замест сінтэзаваных"
 
-#: engines/sci/detection.cpp:441
+#: engines/sci/detection.cpp:450
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr "Выкарыстоўваць IMF/Yamaha FB-01 для вываду MIDI"
 
-#: engines/sci/detection.cpp:442
+#: engines/sci/detection.cpp:451
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
@@ -3531,39 +3531,39 @@ msgstr ""
 "Выкарыстоўваць гукавую карту IBM Music Feature ці модуль сінтэзу Yamaha "
 "FB-01 FM для MIDI"
 
-#: engines/sci/detection.cpp:452
+#: engines/sci/detection.cpp:461
 msgid "Use CD audio"
 msgstr "Выкарыстоўваць CD-аўдыё"
 
-#: engines/sci/detection.cpp:453
+#: engines/sci/detection.cpp:462
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
 "даступна)"
 
-#: engines/sci/detection.cpp:463
+#: engines/sci/detection.cpp:472
 msgid "Use Windows cursors"
 msgstr "Выкарыстоўваць курсоры Windows"
 
-#: engines/sci/detection.cpp:464
+#: engines/sci/detection.cpp:473
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
 "курсораў DOS"
 
-#: engines/sci/detection.cpp:474
+#: engines/sci/detection.cpp:483
 msgid "Use silver cursors"
 msgstr "Выкарыстоўваць срэбныя курсоры"
 
-#: engines/sci/detection.cpp:475
+#: engines/sci/detection.cpp:484
 #, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
 
-#: engines/sci/detection.cpp:791
+#: engines/sci/detection.cpp:800
 #, fuzzy
 msgid "(Autosave)"
 msgstr "Аўтазахаванне:"

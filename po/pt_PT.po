@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-23 02:44+0200\n"
+"POT-Creation-Date: 2017-04-23 20:10+0200\n"
 "PO-Revision-Date: 2017-01-30 14:50+0000\n"
 "Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1861,7 +1861,7 @@ msgstr ""
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:917 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:932 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
@@ -1881,7 +1881,7 @@ msgstr ""
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:917 engines/scumm/dialogs.cpp:184
+#: engines/sci/engine/kfile.cpp:932 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2807,7 +2807,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
-#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:431
+#: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:440
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
@@ -2815,7 +2815,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
-#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:432
+#: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:441
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -2863,7 +2863,7 @@ msgstr ""
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1036
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1051
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -2876,7 +2876,7 @@ msgstr ""
 #: engines/dm/loadsave.cpp:184 engines/drascula/saveload.cpp:397
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1036
+#: engines/neverhood/menumodule.cpp:893 engines/sci/engine/kfile.cpp:1051
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -3362,75 +3362,75 @@ msgstr ""
 msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 
-#: engines/sci/detection.cpp:391
+#: engines/sci/detection.cpp:400
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr ""
 
-#: engines/sci/detection.cpp:392
+#: engines/sci/detection.cpp:401
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
-#: engines/sci/detection.cpp:401
+#: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics"
 msgstr ""
 
-#: engines/sci/detection.cpp:402
+#: engines/sci/detection.cpp:411
 msgid "Enable high resolution graphics/content"
 msgstr ""
 
-#: engines/sci/detection.cpp:411
+#: engines/sci/detection.cpp:420
 msgid "Enable black-lined video"
 msgstr ""
 
-#: engines/sci/detection.cpp:412
+#: engines/sci/detection.cpp:421
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 
-#: engines/sci/detection.cpp:421
+#: engines/sci/detection.cpp:430
 msgid "Prefer digital sound effects"
 msgstr ""
 
-#: engines/sci/detection.cpp:422
+#: engines/sci/detection.cpp:431
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:441
+#: engines/sci/detection.cpp:450
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
 msgstr ""
 
-#: engines/sci/detection.cpp:442
+#: engines/sci/detection.cpp:451
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
 
-#: engines/sci/detection.cpp:452
+#: engines/sci/detection.cpp:461
 msgid "Use CD audio"
 msgstr ""
 
-#: engines/sci/detection.cpp:453
+#: engines/sci/detection.cpp:462
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 
-#: engines/sci/detection.cpp:463
+#: engines/sci/detection.cpp:472
 msgid "Use Windows cursors"
 msgstr ""
 
-#: engines/sci/detection.cpp:464
+#: engines/sci/detection.cpp:473
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:474
+#: engines/sci/detection.cpp:483
 msgid "Use silver cursors"
 msgstr ""
 
-#: engines/sci/detection.cpp:475
+#: engines/sci/detection.cpp:484
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:791
+#: engines/sci/detection.cpp:800
 msgid "(Autosave)"
 msgstr ""
 
