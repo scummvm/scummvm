@@ -836,6 +836,7 @@ void tglSetShadowColor(unsigned char r, unsigned char g, unsigned char b);
 void tglEnableClientState(TGLenum array);
 void tglDisableClientState(TGLenum array);
 void tglArrayElement(TGLint i);
+void tglDrawArrays(TGLenum mode, TGLint first, TGLsizei count);
 void tglVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 void tglColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer);
 void tglNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer);
