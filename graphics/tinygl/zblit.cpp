@@ -733,7 +733,7 @@ void tglBlitSetScissorRect(const Common::Rect &rect) {
 
 void tglBlitResetScissorRect(void) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	c->_scissorRect = c->renderRect;
+	c->_scissorRect = Common::Rect(0, 0, c->fb->xsize, c->fb->ysize);
 }
 
 } // end of namespace Internal
