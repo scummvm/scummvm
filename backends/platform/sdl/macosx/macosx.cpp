@@ -187,6 +187,13 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 #endif // USE_DETECTLANG
 }
 
+Common::String OSystem_MacOSX::getScreenshotsPath() {
+	Common::String path = getDesktopPathMacOSX();
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
+}
+
 AudioCDManager *OSystem_MacOSX::createAudioCDManager() {
 	return createMacOSXAudioCDManager();
 }

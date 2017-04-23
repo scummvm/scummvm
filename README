@@ -2681,8 +2681,12 @@ configuration of each entry, allowing the custom options to be shown.
 
 9.0) Screenshots (SDL backend only):
 ---- -------------------------------
-By default screenshots are put into the current directory, however on Windows
-the directory for this purpose is set to "Users\username\My Pictures\ScummVM Screenshots".
+On systems using the SDL backend (for example Windows, Mac or Linux) you can use
+alt+s to take snapshots (see section 5.4 - Hotkeys). The location of the created
+screenshot file depends on the OS:
+  Windows: In Users\username\My Pictures\ScummVM Screenshots.
+  macOS X: On the Desktop.
+  Any other OS: In the current directoty.
 
 
 10.0) Compiling:
