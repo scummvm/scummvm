@@ -810,7 +810,10 @@ static GameList getGameList(Common::String path) {
 	Common::FSList files;
 
 	//Collect all files from directory
-	dir.getChildren(files, Common::FSNode::kListAll);
+	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+		printf("Path %s does not exist or is not a directory.\n", path.c_str());
+		return GameList();
+	}
 
 	// detect Games
 	GameList candidates(EngineMan.detectGames(files));
@@ -928,7 +931,8 @@ static bool massAddGame(Common::String path) {
 		Common::String dataPath = dir.getPath();
 
 		//Collect all files from directory
-		dir.getChildren(files, Common::FSNode::kListAll);
+		if (!dir.getChildren(files, Common::FSNode::kListAll))
+			continue;
 
 		// Get game list and add games
 		GameList candidates(EngineMan.detectGames(files));
