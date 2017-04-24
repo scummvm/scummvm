@@ -615,8 +615,7 @@ int ResourceManager::addAppropriateSources() {
 		SearchMan.listMatchingMembers(mapFiles, "resmap.0??");
 		SearchMan.listMatchingMembers(files, "ressci.0??");
 
-		// We need to have the same number of maps as resource archives
-		if (mapFiles.empty() || files.empty() || mapFiles.size() != files.size())
+		if (mapFiles.empty() || files.empty())
 			return 0;
 
 		if (Common::File::exists("resaud.001")) {
@@ -626,15 +625,22 @@ int ResourceManager::addAppropriateSources() {
 		for (Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin(); mapIterator != mapFiles.end(); ++mapIterator) {
 			Common::String mapName = (*mapIterator)->getName();
 			int mapNumber = atoi(strrchr(mapName.c_str(), '.') + 1);
+			bool foundVolume = false;
 
 			for (Common::ArchiveMemberList::const_iterator fileIterator = files.begin(); fileIterator != files.end(); ++fileIterator) {
 				Common::String resName = (*fileIterator)->getName();
 				int resNumber = atoi(strrchr(resName.c_str(), '.') + 1);
 
 				if (mapNumber == resNumber) {
+					foundVolume = true;
 					addSource(new VolumeResourceSource(resName, addExternalMap(mapName, mapNumber), mapNumber));
 					break;
 				}
+			}
+
+			// GK2 on Steam comes with an extra bogus resource map file
+			if (!foundVolume) {
+				warning("Could not find corresponding volume for %s", mapName.c_str());
 			}
 		}
 
