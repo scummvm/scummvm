@@ -1150,8 +1150,6 @@ ResVersion ResourceManager::detectMapVersion() {
 	byte buff[6];
 	ResourceSource *rsrc= 0;
 
-	// TODO: Add SCI3 support
-
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
 
