@@ -149,7 +149,7 @@ bool OSystem_Win32::openUrl(const Common::String &url) {
 Common::String OSystem_Win32::getScreenshotsPath() {
 	Common::String screenshotsPath = ConfMan.get("screenshotpath");
 	if (!screenshotsPath.empty()) {
-		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/")
+		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
 			screenshotsPath += "\\";
 		return screenshotsPath;
 	}
