@@ -324,7 +324,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		stream.readUint32();
 		stream.readUint32();
 		stream.readUint32();
-		for (int skip = 0; skip <  blockSize * 4; skip++)
+		for (uint32 skip = 0; skip <  blockSize * 4; skip++)
 			stream.readByte();
 
 		//header number two... this is our actual score entry point.
@@ -542,7 +542,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		if (castType == 1) {
 			if (size3 == 0) 
 				return;
-			for (int skip = 0; skip < (size1 - 4) / 4; skip++)
+			for (uint32 skip = 0; skip < (size1 - 4) / 4; skip++)
 				stream.readUint32();
 		}
 
@@ -763,7 +763,7 @@ void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
 		subId = nextSubId;
 		stringPos = nextStringPos;
 
-		if (stringPos == stream.size())
+		if ((int32)stringPos == stream.size())
 			break;
 	}
 

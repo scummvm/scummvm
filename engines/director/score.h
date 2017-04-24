@@ -77,7 +77,7 @@ public:
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
 	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
-	int getCurrentFrame() { return _currentFrame; }
+	uint16 getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
 	void setSpriteCasts();

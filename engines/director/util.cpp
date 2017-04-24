@@ -120,7 +120,7 @@ Common::String convertPath(Common::String &path) {
 	}
 
 	Common::String res;
-	int idx = 0;
+	uint32 idx = 0;
 
 	if (path.hasPrefix(":::")) {
 		res = "../";

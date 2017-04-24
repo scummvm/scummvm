@@ -71,13 +71,13 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 			stream.readUint32();
 
 		uint32 stringLength = stream.readUint32();
-		for (int s = 0; s < stringLength; s++) 
+		for (uint32 s = 0; s < stringLength; s++)
 			stream.readByte();
 
-		uint16 width = stream.readUint16LE(); //maybe?
+		/*uint16 width =*/ stream.readUint16LE(); //maybe?
 		initialRect = Score::readRect(stream);
 
-		uint32 somethingElse = stream.readUint32();
+		/*uint32 somethingElse =*/ stream.readUint32();
 		boundingRect = Score::readRect(stream);
 
 		bitsPerPixel = stream.readUint16();
