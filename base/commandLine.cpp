@@ -889,7 +889,10 @@ static bool addGame(Common::String path) {
 		}
 
 		// Get user input
-		scanf("%i", &idx);
+		if (scanf("%i", &idx) != 1) {
+			printf("Invalid index. No game added.\n");
+			return false;
+		}
 		--idx;
 		if (idx < 0 || idx >= (int)candidates.size()) {
 			printf("Invalid index. No game added.\n");
