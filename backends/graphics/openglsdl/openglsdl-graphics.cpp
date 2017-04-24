@@ -642,8 +642,17 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					SDL_RWclose(file);
 				}
 
-				saveScreenshot((screenshotsPath + filename).c_str());
-				debug("Saved screenshot '%s'", filename.c_str());
+				if (saveScreenshot(screenshotsPath + filename)) {
+					if (screenshotsPath.empty())
+						debug("Saved screenshot '%s' in current directory", filename.c_str());
+					else
+						debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+				} else {
+					if (screenshotsPath.empty())
+						warning("Could not save screenshot in current directory");
+					else
+						warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+				}
 
 				return true;
 			}

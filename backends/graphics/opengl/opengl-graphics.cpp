@@ -1302,7 +1302,7 @@ const Graphics::Font *OpenGLGraphicsManager::getFontOSD() {
 }
 #endif
 
-void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
+bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	const uint width  = _outputScreenWidth;
 	const uint height = _outputScreenHeight;
 
@@ -1332,7 +1332,10 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	// Open file
 	Common::DumpFile out;
-	out.open(filename);
+	if (!out.open(filename)) {
+		delete[] pixels;
+		return false;
+	}
 
 	// Write BMP header
 	out.writeByte('B');
@@ -1357,6 +1360,7 @@ void OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 
 	// Free allocated memory
 	delete[] pixels;
+	return true;
 }
 
 } // End of namespace OpenGL

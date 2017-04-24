@@ -296,8 +296,9 @@ protected:
 	 * uses Common::DumpFile for writing the screenshot.
 	 *
 	 * @param filename The output filename.
+	 * @return true on success, false otherwise
 	 */
-	void saveScreenshot(const Common::String &filename) const;
+	bool saveScreenshot(const Common::String &filename) const;
 
 private:
 	//
