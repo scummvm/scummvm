@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-23 20:10+0200\n"
+"POT-Creation-Date: 2017-04-24 02:10+0200\n"
 "PO-Revision-Date: 2017-04-10 05:52+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -918,7 +918,7 @@ msgstr "Render modus:"
 msgid "Special dithering modes supported by some games"
 msgstr "Speciale ditheringmodi die door sommige games ondersteund worden"
 
-#: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:616
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2508
 msgid "Fullscreen mode"
 msgstr "Volledig-scherm modus"
@@ -2249,32 +2249,32 @@ msgstr "Swipe drie vingers naar rechts om te schakelen."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
 msgid "Windowed mode"
 msgstr "Venstermodus"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resolutie: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2386
 msgid "Enabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie ingeschakeld"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:751
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2392
 msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2410
 msgid "Filtering enabled"
 msgstr "Filteren aangezet"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:773
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Filtering disabled"
 msgstr "Filteren uitgeschakeld"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-04-23 20:10+0200\n"
+"POT-Creation-Date: 2017-04-24 02:10+0200\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -919,7 +919,7 @@ msgstr "Tegnemodus:"
 msgid "Special dithering modes supported by some games"
 msgstr "Spesiel dithering-modus støttet av enkelte spill"
 
-#: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:615
+#: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:616
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2508
 msgid "Fullscreen mode"
 msgstr "Fullskjermsmodus"
@@ -2242,32 +2242,32 @@ msgstr "Sveip tre fingre til høyre for å veksle."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:617
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
 msgid "Windowed mode"
 msgstr "Vindusmodus"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Oppløsning: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2386
 msgid "Enabled aspect ratio correction"
 msgstr "Aspekt-rate korrigering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:751
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2392
 msgid "Disabled aspect ratio correction"
 msgstr "Aspekt-rate korrigering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2410
 msgid "Filtering enabled"
 msgstr "Filtrering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:773
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Filtering disabled"
 msgstr "Filtrering deaktivert"
