@@ -569,11 +569,6 @@ public:
 	void close();
 
 	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
-	void setAudioSync(bool sync) { _useAudioSync = sync; }
-
-protected:
-	bool _useAudioSync;
-	bool useAudioSync() const { return _useAudioSync; }
 
 private:
 	class VMDVideoTrack : public FixedRateVideoTrack {
