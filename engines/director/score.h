@@ -28,6 +28,7 @@
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/images.h"
+#include "engines/director/stxt.h"
 
 namespace Graphics {
 	class ManagedSurface;
@@ -133,6 +134,7 @@ public:
 	Common::HashMap<int, BitmapCast *> *_loadedBitmaps;
 	Common::HashMap<int, ShapeCast *> *_loadedShapes;
 	Common::HashMap<int, ScriptCast *> *_loadedScripts;
+	Common::HashMap<int, const Stxt *> *_loadedStxts;
 
 private:
 	uint16 _versionMinor;
