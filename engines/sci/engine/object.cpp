@@ -122,13 +122,19 @@ const Object *Object::getClass(SegManager *segMan) const {
 
 int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	const Common::Array<uint16> *buf;
-	const uint varCount = getVarCount();
+	uint varCount;
 
-	if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() == SCI_VERSION_3) {
+		buf = &_baseVars;
+		varCount = getVarCount();
+	} else {
+#else
+	{
+#endif
 		const Object *obj = getClass(segMan);
 		buf = &obj->_baseVars;
-	} else if (getSciVersion() == SCI_VERSION_3) {
-		buf = &_baseVars;
+		varCount = obj->getVarCount();
 	}
 
 	for (uint i = 0; i < varCount; i++)
