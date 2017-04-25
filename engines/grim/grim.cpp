@@ -634,7 +634,7 @@ void GrimEngine::updateDisplayScene() {
 }
 
 void GrimEngine::updateNormalMode() {
-	if (!_currSet)
+	if (!_currSet || !_flipEnable)
 		return;
 
 	g_driver->clearScreen();
