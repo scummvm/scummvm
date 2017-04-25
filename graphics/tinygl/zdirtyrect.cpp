@@ -189,6 +189,10 @@ static void tglPresentBufferDirtyRects(TinyGL::GLContext *c) {
 		}
 	}
 
+	for (RectangleIterator it1 = rectangles.begin(); it1 != rectangles.end(); ++it1) {
+		(*it1).rectangle.clip(c->renderRect);
+	}
+
 	if (!rectangles.empty()) {
 		// Execute draw calls.
 		for (DrawCallIterator it = c->_drawCallsQueue.begin(); it != c->_drawCallsQueue.end(); ++it) {
