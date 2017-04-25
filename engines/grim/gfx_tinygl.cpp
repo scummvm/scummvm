@@ -1337,6 +1337,7 @@ void GfxTinyGL::createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, in
 }
 
 void GfxTinyGL::storeDisplay() {
+	TinyGL::tglPresentBuffer();
 	_zb->copyToBuffer(_storedDisplay);
 }
 
