@@ -92,6 +92,7 @@ Score::Score(DirectorEngine *vm) {
 	_loadedButtons = new Common::HashMap<int, ButtonCast *>();
 	_loadedShapes = new Common::HashMap<int, ShapeCast *>();
 	_loadedScripts = new Common::HashMap<int, ScriptCast *>();
+	_loadedStxts = new Common::HashMap<int, const Stxt *>();
 }
 
 void Score::setArchive(Archive *archive) {
