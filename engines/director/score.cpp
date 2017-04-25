@@ -190,6 +190,13 @@ void Score::loadArchive() {
 
 			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+				// Load STXTS
+
+				// TODO: make sure the Stxt is eventually destroyed
+				_loadedStxts->setVal(*iterator,
+									 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'),
+																		  *iterator))
+									 );
 			}
 		}
 	}
