@@ -593,7 +593,9 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (castType == kCastShape) {
 				renderShape(surface, i);
 			} else if (castType == kCastText) {
-				renderText(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_textCast->children[0].index);
+				uint id = (_vm->getVersion() < 4) ? _sprites[i]->_castId + 1024 : _sprites[i]->_textCast->children[0].index;
+				const Stxt *stxt = _vm->getCurrentScore()->_loadedStxts->getVal(id);
+				renderText(surface, i, stxt, NULL);
 			} else if (castType == kCastButton) {
 				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_buttonCast->children[0].index);
 			} else {
@@ -670,7 +672,8 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 
 	Common::Rect textRect(0, 0, width, height);
 	// pass the rect of the button into the label.
-	renderText(surface, spriteId, _vm->getMainArchive()->getResource(MKTAG('S', 'T', 'X', 'T'), textId), &textRect);
+	const Stxt *stxt = _vm->getCurrentScore()->_loadedStxts->getVal(textId);
+	renderText(surface, spriteId, stxt, &textRect);
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
@@ -725,102 +728,17 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 	}
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId) {
-	Common::SeekableSubReadStreamEndian *textStream = NULL;
 
-	if (_vm->getCurrentScore()->_movieArchive->hasResource(MKTAG('S', 'T', 'X', 'T'), castId)) {
-		textStream = _vm->getCurrentScore()->_movieArchive->getResource(MKTAG('S', 'T', 'X', 'T'), castId);
-	} else if (_vm->getSharedSTXT() != nullptr) {
-		textStream = _vm->getSharedSTXT()->getVal(spriteId + 1024);
-	}
-
-	renderText(surface, spriteId, textStream, NULL);
-}
-
-Common::String Frame::readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCast *textCast) {
-	// TODO: move me somewhere more appropriate
-	// TODO: remove ugly side effects on textStream?
-	Common::String ftext;
-	uint32 unk1 = textStream->readUint32();
-	uint32 strLen = textStream->readUint32();
-	uint32 dataLen = textStream->readUint32();
-	Common::String text;
-
-	for (uint32 i = 0; i < strLen; i++) {
-		byte ch = textStream->readByte();
-		if (ch == 0x0d) {
-			ch = '\n';
-		}
-		text += ch;
-	}
-
-	debugC(3, kDebugText, "renderText: unk1: %d strLen: %d dataLen: %d textlen: %u", unk1, strLen, dataLen, text.size());
-	if (strLen < 200)
-		debugC(3, kDebugText, "text: '%s'", text.c_str());
-
-	uint16 formattingCount = textStream->readUint16();
-	uint32 prevPos = 0;
-
-	while (formattingCount) {
-		uint32 formatStartOffset = textStream->readUint32();
-		uint16 unk1f = textStream->readUint16();
-		uint16 unk2f = textStream->readUint16();
-
-		textCast->fontId = textStream->readUint16();
-		textCast->textSlant = textStream->readByte();
-		byte unk3f = textStream->readByte();
-		textCast->fontSize = textStream->readUint16();
-
-		textCast->palinfo1 = textStream->readUint16();
-		textCast->palinfo2 = textStream->readUint16();
-		textCast->palinfo3 = textStream->readUint16();
-
-		debugC(3, kDebugText, "renderText: formattingCount: %u, formatStartOffset: %d, unk1: %d unk2: %d, fontId: %d, textSlant: %d",
-				formattingCount, formatStartOffset, unk1f, unk2f, textCast->fontId, textCast->textSlant);
-
-		debugC(3, kDebugText, "        unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x", unk3f, textCast->fontSize,
-				textCast->palinfo1, textCast->palinfo2, textCast->palinfo3);
-
-		assert (prevPos <= formatStartOffset); // If this is triggered, we have to implement sorting
-
-		while (prevPos != formatStartOffset) {
-			char f = text.firstChar();
-			ftext += text.firstChar();
-			text.deleteChar(0);
-
-			if (f == '\001')	// Insert two \001s as a replacement
-				ftext += '\001';
-
-			prevPos++;
-
-			debugCN(4, kDebugText, "%c", f);
-		}
-
-		debugCN(4, kDebugText, "*");
-
-		ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
-										(textCast->fontId >> 8) & 0xff, textCast->fontId & 0xff,
-										textCast->textSlant & 0xff, unk3f & 0xff,
-										(textCast->fontSize >> 8) & 0xff, textCast->fontSize & 0xff,
-										(textCast->palinfo1 >> 8) & 0xff, textCast->palinfo1 & 0xff,
-										(textCast->palinfo2 >> 8) & 0xff, textCast->palinfo2 & 0xff,
-										(textCast->palinfo3 >> 8) & 0xff, textCast->palinfo3 & 0xff);
-
-		formattingCount--;
-	}
-
-	ftext += text;
-
-	debugC(4, kDebugText, "%s", text.c_str());
-
-	return ftext;
-}
-
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, Common::Rect *textSize) {
-	if (textStream == NULL)
-		return;
-
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, const Stxt *stxt, Common::Rect *textSize) {
 	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
+
+	textCast->fontId = stxt->_fontId;
+	textCast->textSlant = stxt->_textSlant;
+	textCast->fontSize = stxt->_fontSize;
+	textCast->palinfo1 = stxt->_palinfo1;
+	textCast->palinfo2 = stxt->_palinfo2;
+	textCast->palinfo3 = stxt->_palinfo3;
+
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
 	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
@@ -851,8 +769,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont));
 
-	Common::String ftext = readTextStream(textStream, textCast);
-
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;
 	if (textSize != NULL)
@@ -870,7 +786,8 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		alignment++;
 
-	Graphics::MacText mt(ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+	Graphics::MacText mt(stxt->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
