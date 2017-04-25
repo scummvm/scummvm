@@ -1063,6 +1063,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 
 void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	SciSpan<const byte> seeker = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
+	Common::Array<reg_t> mismatchedVarCountObjects;
 
 	while (seeker.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg = make_reg(segmentId, seeker - *_buf);
@@ -1086,6 +1087,16 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 			reg_t classObject = obj->getSuperClassSelector();
 			const Object *classObj = segMan->getObject(classObject);
 			obj->setPropDictSelector(classObj->getPropDictSelector());
+
+			// At least some versions of Island of Dr Brain have a bMessager
+			// instance in script 0 with a var count greater than that of its
+			// class; warn about this here to see if it shows up in any other
+			// games
+			if (obj->getVarCount() != classObj->getVarCount()) {
+				// Warnings have to be deferred until after relocation for the
+				// object name to be resolvable
+				mismatchedVarCountObjects.push_back(reg);
+			}
 		}
 
 		// Set the -classScript- selector to the script number.
@@ -1100,6 +1111,21 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	}
 
 	relocateSci0Sci21(make_reg(segmentId, _heap.getUint16SEAt(0)));
+
+	for (uint i = 0; i < mismatchedVarCountObjects.size(); ++i) {
+		const reg_t pos = mismatchedVarCountObjects[i];
+		const Object *obj = segMan->getObject(pos);
+		reg_t classObject = obj->getSuperClassSelector();
+		const Object *classObj = segMan->getObject(classObject);
+
+		warning("Object %04x:%04x (%s) from %s declares %d variables, "
+				"but its class declares %d variables",
+				PRINT_REG(pos),
+				segMan->getObjectName(pos),
+				_buf->name().c_str(),
+				obj->getVarCount(),
+				classObj->getVarCount());
+	}
 }
 
 #ifdef ENABLE_SCI32
