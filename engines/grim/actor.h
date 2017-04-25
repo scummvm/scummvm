@@ -365,6 +365,14 @@ public:
 	void putInSet(const Common::String &setName);
 	/**
 	 * Returns true if the actor is in the given set.
+	 * For engine internal use only, do not expose via lua API.
+	 *
+	 * @param setName The name of the set.
+	 */
+	bool isDrawableInSet(const Common::String &setName) const;
+	/**
+	 * Returns true if the actor is in the given set.
+	 * Can be exposed via lua API.
 	 *
 	 * @param setName The name of the set.
 	 */
@@ -549,9 +557,7 @@ public:
 	void activateShadow(bool active, const char *shadowName);
 	void activateShadow(bool active, SetShadow *shadow);
 
-	void restoreCleanBuffer();
 	void drawToCleanBuffer();
-	void clearCleanBuffer();
 
 	bool isTalkingForeground() const;
 
@@ -715,7 +721,7 @@ private:
 	int _sectorSortOrder;
 	bool _useParentSortOrder;
 
-	int _cleanBuffer;
+	bool _fakeUnbound;
 	bool _drawnToClean;
 
 	LightMode _lightMode;

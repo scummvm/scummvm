@@ -49,7 +49,7 @@ GfxBase *CreateGfxTinyGL() {
 
 GfxTinyGL::GfxTinyGL() :
 		_zb(nullptr), _alpha(1.f),
-		_bufferId(0), _currentActor(nullptr), _smushImage(nullptr) {
+		_currentActor(nullptr), _smushImage(nullptr) {
 	_storedDisplay = nullptr;
 	// TGL_LEQUAL as tglDepthFunc ensures that subsequent drawing attempts for
 	// the same triangles are not ignored by the depth test.
@@ -71,7 +71,6 @@ GfxTinyGL::~GfxTinyGL() {
 		Graphics::tglDeleteBlitImage(_emergFont[i]);
 	}
 	if (_zb) {
-		delBuffer(1);
 		TinyGL::glClose();
 		delete _zb;
 	}
@@ -105,11 +104,6 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 	TGLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
-
-	// we now generate a buffer (id 1), which we will use as a backing buffer, where the actors' clean buffers
-	// will blit to. everu frame this will be blitted to screen, but the actors' buffers will be blitted to
-	// this only when they change.
-	genBuffer();
 
 	return buffer;
 }
@@ -187,54 +181,6 @@ void GfxTinyGL::clearDepthBuffer() {
 void GfxTinyGL::flipBuffer() {
 	TinyGL::tglPresentBuffer();
 	g_system->updateScreen();
-}
-
-int GfxTinyGL::genBuffer() {
-	TinyGL::Buffer *buf = _zb->genOffscreenBuffer();
-	_buffers[++_bufferId] = buf;
-
-	return _bufferId;
-}
-
-void GfxTinyGL::delBuffer(int id) {
-	_zb->delOffscreenBuffer(_buffers[id]);
-	_buffers.erase(id);
-}
-
-void GfxTinyGL::selectBuffer(int id) {
-	if (id == 0) {
-		_zb->selectOffscreenBuffer(NULL);
-	} else {
-		_zb->selectOffscreenBuffer(_buffers[id]);
-	}
-}
-
-void GfxTinyGL::clearBuffer(int id) {
-	TinyGL::Buffer *buf = _buffers[id];
-	_zb->clearOffscreenBuffer(buf);
-}
-
-void GfxTinyGL::drawBuffers() {
-	selectBuffer(1);
-	Common::HashMap<int, TinyGL::Buffer *>::iterator i = _buffers.begin();
-	for (++i; i != _buffers.end(); ++i) {
-		TinyGL::Buffer *buf = i->_value;
-		_zb->blitOffscreenBuffer(buf);
-		//this is not necessary, but it prevents the buffers to be blitted every frame, if it is not needed
-		buf->used = false;
-	}
-
-	selectBuffer(0);
-	_zb->blitOffscreenBuffer(_buffers[1]);
-}
-
-void GfxTinyGL::refreshBuffers() {
-	clearBuffer(1);
-	Common::HashMap<int, TinyGL::Buffer *>::iterator i = _buffers.begin();
-	for (++i; i != _buffers.end(); ++i) {
-		TinyGL::Buffer *buf = i->_value;
-		buf->used = true;
-	}
 }
 
 bool GfxTinyGL::isHardwareAccelerated() {

@@ -268,13 +268,6 @@ public:
 	virtual void updateEMIModel(const EMIModel *model) {}
 	virtual void destroyEMIModel(EMIModel *model) {}
 
-	virtual int genBuffer() { return 0; }
-	virtual void delBuffer(int buffer) {}
-	virtual void selectBuffer(int buffer) {}
-	virtual void clearBuffer(int buffer) {}
-	virtual void drawBuffers() {}
-	virtual void refreshBuffers() {}
-
 	virtual void createSpecialtyTexture(uint id, const uint8 *data, int width, int height);
 	virtual void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) = 0;
 

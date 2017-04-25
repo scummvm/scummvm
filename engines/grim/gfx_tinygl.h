@@ -27,10 +27,6 @@
 
 #include "graphics/tinygl/zgl.h"
 
-namespace TinyGL {
-	struct Buffer;
-}
-
 namespace Grim {
 
 class ModelNode;
@@ -126,13 +122,6 @@ public:
 	void drawMovieFrame(int offsetX, int offsetY) override;
 	void releaseMovieFrame() override;
 
-	int genBuffer() override;
-	void delBuffer(int buffer) override;
-	void selectBuffer(int buffer) override;
-	void clearBuffer(int buffer) override;
-	void drawBuffers() override;
-	void refreshBuffers() override;
-
 	void setBlendMode(bool additive) override;
 
 protected:
@@ -145,8 +134,6 @@ private:
 	Graphics::BlitImage *_smushImage;
 	Graphics::PixelBuffer _storedDisplay;
 	float _alpha;
-	Common::HashMap<int, TinyGL::Buffer *> _buffers;
-	uint _bufferId;
 	const Actor *_currentActor;
 	TGLenum _depthFunc;
 

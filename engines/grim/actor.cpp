@@ -98,7 +98,7 @@ Actor::Actor() :
 		_puckOrient(false), _talking(false), 
 		_inOverworld(false), _drawnToClean(false), _backgroundTalk(false),
 		_sortOrder(0), _useParentSortOrder(false),
-		_sectorSortOrder(-1), _cleanBuffer(0), _lightMode(LightFastDyn),
+		_sectorSortOrder(-1), _fakeUnbound(false), _lightMode(LightFastDyn),
 		_hasFollowedBoxes(false), _lookAtActor(0) {
 
 	// Some actors don't set walk and turn rates, so we default the
@@ -121,10 +121,6 @@ Actor::~Actor() {
 		_costumeStack.pop_back();
 	}
 	g_grim->immediatelyRemoveActor(this);
-
-	if (_cleanBuffer) {
-		g_driver->delBuffer(_cleanBuffer);
-	}
 }
 
 void Actor::saveState(SaveGame *savedState) const {
@@ -274,6 +270,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeBool(_drawnToClean);
+	savedState->writeBool(_fakeUnbound);
 }
 
 bool Actor::restoreState(SaveGame *savedState) {
@@ -483,17 +480,17 @@ bool Actor::restoreState(SaveGame *savedState) {
 		}
 	}
 
-	if (_cleanBuffer) {
-		g_driver->delBuffer(_cleanBuffer);
-	}
-	_cleanBuffer = 0;
-	_drawnToClean = false;
 	if (savedState->saveMinorVersion() >= 4) {
-		bool drawnToClean = savedState->readBool();
-		if (drawnToClean) {
-			_cleanBuffer = g_driver->genBuffer();
-			g_driver->clearBuffer(_cleanBuffer);
-		}
+		_drawnToClean = savedState->readBool();
+	} else {
+		_drawnToClean = false;
+	}
+	if (savedState->saveMinorVersion() >= 27) {
+		_fakeUnbound = savedState->readBool();
+	} else {
+		// Note: actor will stay invisible until re-bound to set
+		// by game scripts.
+		_fakeUnbound = false;
 	}
 
 	return true;
@@ -1801,8 +1798,6 @@ void Actor::draw() {
 		}
 		_mustPlaceText = false;
 	}
-
-	_drawnToClean = false;
 }
 
 void Actor::drawCostume(Costume *costume) {
@@ -1934,20 +1929,35 @@ void Actor::clearShadowPlane(int i) {
 }
 
 void Actor::putInSet(const Common::String &set) {
+	if (_drawnToClean) {
+		// actor was frozen and...
+		if (set == "") {
+			// ...is getting unbound from set.
+			// This is done in game scripts to reduce the drawing
+			// workload in original engine, and we should not need
+			// it here. And implementing off-screen buffers is
+			// highly non-trivial. Disobey so it is still drawn.
+			_fakeUnbound = true;
+			return;
+		} else {
+			// ...is getting bound to a set. Thaw and continue.
+			_drawnToClean = false;
+		}
+	}
+	_fakeUnbound = false;
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
 	_setName = set;
 
-	// clean the buffer. this is needed when an actor goes from frozen state to full model rendering
-	if (_setName != "" && _cleanBuffer) {
-		g_driver->clearBuffer(_cleanBuffer);
-	}
-
 	g_grim->invalidateActiveActorsList();
 }
 
-bool Actor::isInSet(const Common::String &set) const {
+bool Actor::isDrawableInSet(const Common::String &set) const {
 	return _setName == set;
+}
+
+bool Actor::isInSet(const Common::String &set) const {
+	return !_fakeUnbound && _setName == set;
 }
 
 void Actor::freeCostume(Costume *costume) {
@@ -2535,35 +2545,7 @@ void Actor::detach() {
 }
 
 void Actor::drawToCleanBuffer() {
-	if (!_cleanBuffer) {
-		_cleanBuffer = g_driver->genBuffer();
-	}
-	if (!_cleanBuffer) {
-		return;
-	}
-
 	_drawnToClean = true;
-	// clean the buffer before drawing to it
-	g_driver->clearBuffer(_cleanBuffer);
-	g_driver->selectBuffer(_cleanBuffer);
-	draw();
-	g_driver->selectBuffer(0);
-
-	_drawnToClean = true;
-}
-
-void Actor::clearCleanBuffer() {
-	if (_cleanBuffer) {
-		g_driver->delBuffer(_cleanBuffer);
-		_cleanBuffer = 0;
-	}
-}
-
-void Actor::restoreCleanBuffer() {
-	if (_cleanBuffer) {
-		update(0);
-		drawToCleanBuffer();
-	}
 }
 
 MaterialPtr Actor::findMaterial(const Common::String &name) {
