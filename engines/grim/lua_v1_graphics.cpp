@@ -517,12 +517,7 @@ void Lua_V1::Display() {
 
 void Lua_V1::EngineDisplay() {
 	// it enable/disable updating display
-	bool mode = (int)lua_getnumber(lua_getparam(1)) != 0;
-	if (mode) {
-		g_grim->setFlipEnable(true);
-	} else {
-		g_grim->setFlipEnable(false);
-	}
+	g_grim->setFlipEnable((bool)lua_getnumber(lua_getparam(1)));
 }
 
 void Lua_V1::ForceRefresh() {
