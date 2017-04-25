@@ -317,7 +317,15 @@ void RasterizationDrawCall::computeDirtyRegion() {
 			bottom = MAX(bottom, v->clip_code & 0x4 ? ymax : v->zp.y);
 			top =    MIN(top,    v->clip_code & 0x8 ?    0 : v->zp.y);
 		}
-		_dirtyRegion = Common::Rect(left, top, right + 1, bottom + 1);
+		// Note: clipping outside of Rect is required despite above clip_code checks,
+		// as vertices far on the Z axis will overflow X and/or Y coordinates.
+		// This happens in EMI intro, for example.
+		_dirtyRegion = Common::Rect(
+			MAX(0, left),
+			MAX(0, top),
+			MIN(right, xmax) + 1,
+			MIN(bottom, ymax) + 1
+		);
 	}
 }
 
