@@ -1325,7 +1325,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h, bool useStored) {
 	if (useStored) {
 		return createScreenshotBitmap(_storedDisplay, w, h, true);
 	} else {
-		Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
+		Graphics::PixelBuffer src(_pixelFormat, _screenWidth * _screenHeight, DisposeAfterUse::YES);
 		_zb->copyToBuffer(src);
 		return createScreenshotBitmap(src, w, h, true);
 	}
