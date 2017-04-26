@@ -1067,12 +1067,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 
 	debug("GrimEngine::StoreSaveGameImage() started.");
 
-	EngineMode mode = g_grim->getMode();
-	g_grim->setMode(_previousMode);
-	g_grim->updateDisplayScene();
-	g_driver->storeDisplay();
-	screenshot = g_driver->getScreenshot(width, height, false);
-	g_grim->setMode(mode);
+	screenshot = g_driver->getScreenshot(width, height, true);
 	state->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
