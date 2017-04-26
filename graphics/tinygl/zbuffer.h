@@ -191,15 +191,15 @@ struct FrameBuffer {
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, int value, unsigned int z) {
-		byte rSrc, gSrc, bSrc, aSrc;
-		this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
-
 		if (kBlendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, value);
 			if (kDepthWrite) {
 				_zbuf[pixel] = z;
 			}
 		} else {
+			byte rSrc, gSrc, bSrc, aSrc;
+			this->pbuf.getFormat().colorToARGB(value, aSrc, rSrc, gSrc, bSrc);
+
 			writePixel<kEnableAlphaTest, kBlendingEnabled, kDepthWrite>(pixel, aSrc, rSrc, gSrc, bSrc, z);
 		}
 	}
