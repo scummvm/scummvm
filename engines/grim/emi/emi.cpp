@@ -221,25 +221,19 @@ void EMIEngine::storeSaveGameImage(SaveGame *state) {
 	// screenshots are not using the whole size of the texture
 	// copy the actual screenshot to the correct position
 	unsigned int texWidth = 256, texHeight = 128;
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(texWidth * texHeight, DisposeAfterUse::YES);
+	unsigned int size = texWidth * texHeight;
+	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(size, DisposeAfterUse::YES);
 	buffer.clear(texWidth * texHeight);
 	for (unsigned int j = 0; j < 120; j++) {
 		buffer.copyBuffer(j * texWidth, j * width, width, screenshot->getData(0));
 	}
 
-	Bitmap *newscreenshot = new Bitmap(buffer, texWidth, texHeight, "screenshot");
 	state->beginSection('SIMG');
-	if (newscreenshot) {
-		int size = newscreenshot->getWidth() * newscreenshot->getHeight();
-		uint16 *data = (uint16 *)newscreenshot->getData(0).getRawBuffer();
-		for (int l = 0; l < size; l++) {
-			state->writeLEUint16(data[l]);
-		}
-	} else {
-		error("Unable to store screenshot");
+	uint16 *data = (uint16 *)buffer.getRawBuffer();
+	for (unsigned int l = 0; l < size; l++) {
+		state->writeLEUint16(data[l]);
 	}
 	state->endSection();
-	delete newscreenshot;
 	delete screenshot;
 }
 
