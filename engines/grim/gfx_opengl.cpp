@@ -2069,9 +2069,6 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glBegin(GL_LINES);
 	glVertex2f(x1, y1);
 	glVertex2f(x2 + 1, y2 + 1);
-	glEnd();
-
-	glBegin(GL_LINES);
 	glVertex2f(x3, y3 + 1);
 	glVertex2f(x4 + 1, y4);
 	glEnd();

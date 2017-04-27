@@ -1601,9 +1601,6 @@ void GfxTinyGL::drawPolygon(const PrimitiveObject *primitive) {
 	tglBegin(TGL_LINES);
 	tglVertex2f(x1, y1);
 	tglVertex2f(x2 + 1, y2 + 1);
-	tglEnd();
-
-	tglBegin(TGL_LINES);
 	tglVertex2f(x3, y3 + 1);
 	tglVertex2f(x4 + 1, y4);
 	tglEnd();
