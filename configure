@@ -488,7 +488,7 @@ find_libcurlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	arm-riscos)
+	arm-*riscos)
 		_exeext=",ff8"
 		;;
 	3ds | dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
@@ -1427,9 +1427,12 @@ androidsdl-x86_64)
 	_host_cpu=x86_64
 	_host_alias=x86_64-linux-android
 	;;
-arm-riscos)
+arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	datarootdir='/\<ScummVM\$$Dir\>'
+	datadir='${datarootdir}/data'
+	docdir='${datarootdir}/docs'
 	;;
 raspberrypi)
 	_host_os=linux
@@ -2712,6 +2715,20 @@ case $_host_os in
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
 		add_line_to_config_mk 'PSP = 1'
 		;;
+	riscos)
+		append_var DEFINES "-DRISCOS"
+		add_line_to_config_mk 'RISCOS = 1'
+		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		_sdlpath=$GCCSDK_INSTALL_ENV/bin
+		_freetypepath=$GCCSDK_INSTALL_ENV/bin
+		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
+		append_var CXXFLAGS "-march=armv4"
+		append_var CXXFLAGS "-mtune=xscale"
+		append_var LDFLAGS "-static"
+		_optimization_level=-O3
+		_port_mk="backends/platform/sdl/riscos/riscos.mk"
+		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -2819,8 +2836,16 @@ if test -n "$_host"; then
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
-		arm-riscos|linupy)
-			append_var DEFINES "-DLINUPY"
+		arm-*riscos)
+			_seq_midi=no
+			_timidity=no
+			_opengl_mode=none
+			_build_hq_scalers=no
+			# toolchain binaries prefixed by host
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			_ar="$_host-ar cru"
+			_as="$_host-as"
 			;;
 		bfin*)
 			;;
@@ -3012,6 +3037,9 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
+			;;
+		linupy)
+			append_var DEFINES "-DLINUPY"
 			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -3577,7 +3605,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp2 | psp | wii | wince)
 		_posix=no
 		;;
-	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | riscos | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)

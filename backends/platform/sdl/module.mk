@@ -31,6 +31,12 @@ MODULE_OBJS += \
 	amigaos/amigaos.o
 endif
 
+ifdef RISCOS
+MODULE_OBJS += \
+	riscos/riscos-main.o \
+	riscos/riscos.o
+endif
+
 ifdef PLAYSTATION3
 MODULE_OBJS += \
 	ps3/ps3-main.o \

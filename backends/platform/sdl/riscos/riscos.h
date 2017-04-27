@@ -20,34 +20,33 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef PLATFORM_SDL_RISCOS_H
+#define PLATFORM_SDL_RISCOS_H
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL) && !defined(RISCOS)
+#include "backends/platform/sdl/sdl.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+class OSystem_RISCOS : public OSystem_SDL {
+public:
+	virtual void init();
+	virtual void initBackend();
 
-int main(int argc, char *argv[]) {
+	virtual bool hasFeature(Feature f);
 
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
+	virtual bool openUrl(const Common::String &url);
 
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
+protected:
+	/**
+	 * The path of the currently open log file, if any.
+	 *
+	 * @note This is currently a string and not an FSNode for simplicity;
+	 * e.g. we don't need to include fs.h here, and currently the
+	 * only use of this value is to use it to open the log file in an
+	 * editor; for that, we need it only as a string anyway.
+	 */
+	Common::String _logFilePath;
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
+	virtual Common::String getDefaultConfigFileName();
+	virtual Common::WriteStream *createLogFile();
+};
 
 #endif
