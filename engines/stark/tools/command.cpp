@@ -20,10 +20,10 @@
  *
  */
 
-#include <common/tokenizer.h>
 #include "engines/stark/tools/command.h"
 
 #include "common/debug.h"
+#include "common/tokenizer.h"
 
 namespace Stark {
 namespace Tools {
