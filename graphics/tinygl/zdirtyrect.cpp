@@ -360,12 +360,13 @@ void RasterizationDrawCall::execute(bool restoreState) const {
 			gl_draw_line(c, &c->vertex[i * 2], &c->vertex[i * 2 + 1]);
 		}
 		break;
-	case TGL_LINE_STRIP:
 	case TGL_LINE_LOOP:
+		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
+		// Fall through...
+	case TGL_LINE_STRIP:
 		for(int i = 0; i < cnt - 1; i++) {
 			gl_draw_line(c, &c->vertex[i], &c->vertex[i + 1]);
 		}
-		gl_draw_line(c, &c->vertex[cnt - 1], &c->vertex[0]);
 		break;
 	case TGL_TRIANGLES:
 		for(int i = 0; i < cnt; i += 3) {
