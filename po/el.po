@@ -7,10 +7,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-04-24 02:10+0200\n"
-"PO-Revision-Date: 2017-03-07 09:56+0000\n"
+"PO-Revision-Date: 2017-04-28 11:11+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
-"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/el/>\n"
+"Language-Team: Greek "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-7\n"
@@ -1373,20 +1373,18 @@ msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκευση σύννεφου είναι ήδη ενεργή."
 
 #: gui/options.cpp:1929
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Το πρόσθετο μηχανής δεν υποστηρίζει αποθηκευμένα παιχνίδια"
+msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
 
 #: gui/options.cpp:1932
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Το παιχνίδι ΔΕΝ φορτώθηκε"
+msgstr "Το θέμα δεν φορτώθηκε!"
 
 #: gui/options.cpp:1935
 msgid ""
 "\n"
 "Misc settings will be restored."
-msgstr ""
+msgstr "Οι λοιπές ρυθμίσεις θα επαναφερθούν στις αρχικές τους τιμές."
 
 #: gui/options.cpp:1971
 msgid "The chosen directory cannot be written to. Please select another one."
