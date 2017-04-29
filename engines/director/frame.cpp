@@ -747,17 +747,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
 	int width;
 
-	if (_vm->getVersion() >= 4 && textSize != NULL)
-		width = textCast->initialRect.right;
-	else
-		width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
-
 	if (_vm->getVersion() >= 4) {
 		if (textSize == NULL)
 			width = textCast->initialRect.right;
 		else {
 			width = textSize->width();
 		}
+	} else {
+		width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
 	}
 
 	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
