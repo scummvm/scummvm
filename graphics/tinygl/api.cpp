@@ -50,7 +50,7 @@ void tglVertex3f(float x, float y, float z)  {
 	tglVertex4f(x, y, z, 1);
 }
 
-void tglVertex3fv(float *v)  {
+void tglVertex3fv(const float *v)  {
 	tglVertex4f(v[0], v[1], v[2], 1);
 }
 
@@ -67,7 +67,7 @@ void tglNormal3f(float x, float y, float z) {
 	TinyGL::gl_add_op(p);
 }
 
-void tglNormal3fv(float *v)  {
+void tglNormal3fv(const float *v)  {
 	tglNormal3f(v[0], v[1], v[2]);
 }
 
@@ -89,7 +89,7 @@ void tglColor4f(float r, float g, float b, float a) {
 	gl_add_op(p);
 }
 
-void tglColor4fv(float *v) {
+void tglColor4fv(const float *v) {
 	tglColor4f(v[0], v[1], v[2], v[3]);
 }
 
@@ -97,7 +97,7 @@ void tglColor3f(float x, float y, float z) {
 	tglColor4f(x, y, z, 1);
 }
 
-void tglColor3fv(float *v)  {
+void tglColor3fv(const float *v)  {
 	tglColor4f(v[0], v[1], v[2], 1);
 }
 
@@ -127,7 +127,7 @@ void tglTexCoord2f(float s, float t) {
 	tglTexCoord4f(s, t, 0, 1);
 }
 
-void tglTexCoord2fv(float *v) {
+void tglTexCoord2fv(const float *v) {
 	tglTexCoord4f(v[0], v[1], 0, 1);
 }
 
@@ -407,7 +407,7 @@ void tglOrtho(double left, double right, double bottom, double top, double zNear
 
 // lightening
 
-void tglMaterialfv(int mode, int type, float *v) {
+void tglMaterialfv(int mode, int type, const float *v) {
 	TinyGL::GLParam p[7];
 	int n;
 
@@ -450,7 +450,7 @@ void tglColorMaterial(int mode, int type) {
 	TinyGL::gl_add_op(p);
 }
 
-void tglLightfv(int light, int type, float *v) {
+void tglLightfv(int light, int type, const float *v) {
 	TinyGL::GLParam p[7];
 
 	p[0].op = TinyGL::OP_Light;
@@ -489,7 +489,7 @@ void tglLightModeli(int pname, int param) {
 	TinyGL::gl_add_op(p);
 }
 
-void tglLightModelfv(int pname, float *param) {
+void tglLightModelfv(int pname, const float *param) {
 	TinyGL::GLParam p[6];
 
 	p[0].op = TinyGL::OP_LightModel;

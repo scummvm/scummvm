@@ -717,26 +717,26 @@ void tglEnd();
 #define PROTO_GL1(name)				\
 void tgl ## name ## 1f(float);		\
 void tgl ## name ## 1d(double);		\
-void tgl ## name ## 1fv(float *);	\
-void tgl ## name ## 1dv(double *);
+void tgl ## name ## 1fv(const float *);	\
+void tgl ## name ## 1dv(const double *);
 
 #define PROTO_GL2(name)					\
 void tgl ## name ## 2f(float, float);	\
 void tgl ## name ## 2d(double, double);	\
-void tgl ## name ## 2fv(float *);		\
-void tgl ## name ## 2dv(double *);
+void tgl ## name ## 2fv(const float *);		\
+void tgl ## name ## 2dv(const double *);
 
 #define PROTO_GL3(name)							\
 void tgl ## name ## 3f(float, float, float);	\
 void tgl ## name ## 3d(double, double, double);	\
-void tgl ## name ## 3fv(float *);				\
-void tgl ## name ## 3dv(double *);
+void tgl ## name ## 3fv(const float *);				\
+void tgl ## name ## 3dv(const double *);
 
 #define PROTO_GL4(name)									\
 void tgl ## name ## 4f(float, float, float, float);		\
 void tgl ## name ## 4d(double, double, double, double);	\
-void tgl ## name ## 4fv(float *);						\
-void tgl ## name ## 4dv(double *);
+void tgl ## name ## 4fv(const float *);						\
+void tgl ## name ## 4dv(const double *);
 
 PROTO_GL2(Vertex)
 PROTO_GL3(Vertex)
@@ -807,14 +807,14 @@ void tglPixelStorei(int pname, int param);
 
 // lighting
 
-void tglMaterialfv(int mode, int type, float *v);
+void tglMaterialfv(int mode, int type, const float *v);
 void tglMaterialf(int mode, int type, float v);
 void tglColorMaterial(int mode, int type);
 
-void tglLightfv(int light, int type, float *v);
-void tglLightf(int light, int type, float v);
+void tglLightfv(int light, int type, const float *v);
+void tglLightf(int light, int type, const float v);
 void tglLightModeli(int pname, int param);
-void tglLightModelfv(int pname, float *param);
+void tglLightModelfv(int pname, const float *param);
 
 // misc
 
