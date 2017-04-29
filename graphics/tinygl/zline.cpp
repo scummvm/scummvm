@@ -99,9 +99,9 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	int sz;
 
 	// kInterpRGB
-	int r = p1->r;
-	int g = p1->g;
-	int b = p1->b;
+	int r = p1->r >> (ZB_POINT_RED_BITS - 8);
+	int g = p1->g >> (ZB_POINT_GREEN_BITS - 8);
+	int b = p1->b >> (ZB_POINT_BLUE_BITS - 8);
 	int color = RGB_TO_PIXEL(r, g, b);
 	int sr, sg, sb;
 
@@ -110,9 +110,9 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 		z = p1->z;
 	}
 	if (kInterpRGB) {
-		sr = (p2->r - p1->r) / n;
-		sg = (p2->g - p1->g) / n;
-		sb = (p2->b - p1->b) / n;
+		sr = ((p2->r - p1->r) / n) >> (ZB_POINT_RED_BITS - 8);
+		sg = ((p2->g - p1->g) / n) >> (ZB_POINT_GREEN_BITS - 8);
+		sb = ((p2->b - p1->b) / n) >> (ZB_POINT_BLUE_BITS - 8);
 	}
 	while (n--) {
 		if (kInterpZ)

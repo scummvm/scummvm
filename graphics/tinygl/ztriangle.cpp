@@ -38,7 +38,7 @@ template <bool kDepthWrite, bool kEnableAlphaTest, bool kEnableScissor, bool kEn
 FORCEINLINE static void putPixelFlat(FrameBuffer *buffer, int buf, unsigned int *pz, int _a,
                                      int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a, int &dzdx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a / 256, r / 256, g / 256, b / 256, z);
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
 	z += dzdx;
 }
@@ -48,7 +48,7 @@ FORCEINLINE static void putPixelSmooth(FrameBuffer *buffer, int buf, unsigned in
                                        int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, unsigned int &a,
                                        int &dzdx, int &drdx, int &dgdx, int &dbdx, unsigned int dadx) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a])) {
-		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a / 256, r / 256, g / 256, b / 256, z);
+		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, a >> (ZB_POINT_ALPHA_BITS - 8), r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
 	z += dzdx;
 	a += dadx;
@@ -70,7 +70,7 @@ FORCEINLINE static void putPixelDepth(FrameBuffer *buffer, int buf, unsigned int
 template <bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled>
 FORCEINLINE static void putPixelShadow(FrameBuffer *buffer, int buf, unsigned int *pz, int _a, int x, int y, unsigned int &z, unsigned int &r, unsigned int &g, unsigned int &b, int &dzdx, unsigned char *pm) {
 	if ((!kEnableScissor || !buffer->scissorPixel(x + _a, y)) && buffer->compareDepth(z, pz[_a]) && pm[_a]) {
-		buffer->writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + _a, 255, r / 256, g / 256, b / 256, z);
+		buffer->writePixel<kAlphaTestEnabled, kBlendingEnabled, kDepthWrite>(buf + _a, 255, r >> (ZB_POINT_RED_BITS - 8), g >> (ZB_POINT_GREEN_BITS - 8), b >> (ZB_POINT_BLUE_BITS - 8), z);
 	}
 	z += dzdx;
 }
@@ -92,14 +92,14 @@ FORCEINLINE static void putPixelTextureMappingPerspective(FrameBuffer *buffer, i
 		c_g = (col >> textureFormat.gShift) & 0xFF;
 		c_b = (col >> textureFormat.bShift) & 0xFF;
 		if (kLightsMode) {
-			unsigned int l_a = (a / 256);
-			unsigned int l_r = (r / 256);
-			unsigned int l_g = (g / 256);
-			unsigned int l_b = (b / 256);
-			c_a = (c_a * l_a) / 256;
-			c_r = (c_r * l_r) / 256;
-			c_g = (c_g * l_g) / 256;
-			c_b = (c_b * l_b) / 256;
+			unsigned int l_a = (a >> (ZB_POINT_ALPHA_BITS - 8));
+			unsigned int l_r = (r >> (ZB_POINT_RED_BITS - 8));
+			unsigned int l_g = (g >> (ZB_POINT_GREEN_BITS - 8));
+			unsigned int l_b = (b >> (ZB_POINT_BLUE_BITS - 8));
+			c_a = (c_a * l_a) >> (ZB_POINT_ALPHA_BITS - 8);
+			c_r = (c_r * l_r) >> (ZB_POINT_RED_BITS - 8);
+			c_g = (c_g * l_g) >> (ZB_POINT_GREEN_BITS - 8);
+			c_b = (c_b * l_b) >> (ZB_POINT_BLUE_BITS - 8);
 		}
 		buffer->writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite>(buf + _a, c_a, c_r, c_g, c_b, z);
 	}

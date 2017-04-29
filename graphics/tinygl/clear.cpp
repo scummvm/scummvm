@@ -41,12 +41,10 @@ void glopClearDepth(GLContext *c, GLParam *p) {
 
 void glopClear(GLContext *c, GLParam *p) {
 	int mask = p[1].i;
-	int z = 0;
-	int r = (int)(c->clear_color.X * 65535);
-	int g = (int)(c->clear_color.Y * 65535);
-	int b = (int)(c->clear_color.Z * 65535);
-
-	// TODO : correct value of Z
+	int z = (int)(c->clear_depth * ((2 << ZB_Z_BITS) - 1));
+	int r = (int)(c->clear_color.X * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) + ZB_POINT_RED_MIN);
+	int g = (int)(c->clear_color.Y * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) + ZB_POINT_GREEN_MIN);
+	int b = (int)(c->clear_color.Z * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN) + ZB_POINT_BLUE_MIN);
 
 	tglIssueDrawCall(new Graphics::ClearBufferDrawCall(mask & TGL_DEPTH_BUFFER_BIT, z, mask & TGL_COLOR_BUFFER_BIT, r, g, b));
 }
