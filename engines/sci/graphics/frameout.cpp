@@ -69,7 +69,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_throttleFrameOut(true),
 	_throttleState(0),
 	_remapOccurred(false),
-	_frameNowVisible(false),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
 
@@ -467,11 +466,6 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 
 	_remapOccurred = _palette->updateForFrame();
 
-	// NOTE: SCI engine set this to false on each loop through the
-	// planelist iterator below. Since that is a waste, we only set
-	// it once.
-	_frameNowVisible = false;
-
 	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
 		drawEraseList(eraseLists[i], *_planes[i]);
 		drawScreenItemList(screenItemLists[i]);
@@ -486,8 +480,6 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 	if (shouldShowBits) {
 		showBits();
 	}
-
-	_frameNowVisible = true;
 
 	if (robotIsActive) {
 		robotPlayer.frameNowVisible();
@@ -528,7 +520,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	}
 
 	_remapOccurred = _palette->updateForFrame();
-	_frameNowVisible = false;
 
 	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
 		drawEraseList(eraseLists[i], *_planes[i]);
@@ -564,8 +555,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 		showBits();
 	}
 
-	_frameNowVisible = true;
-
 	for (PlaneList::iterator plane = _planes.begin(); plane != _planes.end(); ++plane) {
 		(*plane)->_redrawAllCount = getScreenCount();
 	}
@@ -586,9 +575,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	}
 
 	_remapOccurred = _palette->updateForFrame();
-	// NOTE: During this second loop, `_frameNowVisible = false` is
-	// inside the next loop in SCI2.1mid
-	_frameNowVisible = false;
 
 	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
 		drawEraseList(eraseLists[i], *_planes[i]);
@@ -599,8 +585,6 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	_palette->updateFFrame();
 	_palette->updateHardware(false);
 	showBits();
-
-	_frameNowVisible = true;
 }
 
 /**

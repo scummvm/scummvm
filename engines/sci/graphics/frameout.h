@@ -307,13 +307,6 @@ private:
 
 public:
 	/**
-	 * Whether or not the data in the current buffer is what
-	 * is visible to the user. During rendering updates,
-	 * this flag is set to false.
-	 */
-	bool _frameNowVisible;
-
-	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to
 	 * explicitly enable palMorphFrameOut for one frame.

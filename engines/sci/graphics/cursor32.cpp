@@ -287,14 +287,13 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 }
 
 void GfxCursor32::readVideo(DrawRegion &target) {
-	if (g_sci->_gfxFrameout->_frameNowVisible) {
-		copy(target, _vmapRegion);
-	} else {
-		// NOTE: SSCI would read the background for the cursor directly out of
-		// video memory here, but this is not necessary in ScummVM because mouse
-		// events in ScummVM are polled so can never interrupt the renderer
-		// between frames
-	}
+	// NOTE: In SSCI, mouse events were received via hardware interrupt, so
+	// there was a separate branch here that would read from VRAM instead of
+	// from the game's back buffer when a mouse event was received while the
+	// back buffer was being updated. In ScummVM, mouse events are polled, which
+	// means it is not possible to receive a mouse event during a back buffer
+	// update, so the code responsible for handling that is removed.
+	copy(target, _vmapRegion);
 }
 
 void GfxCursor32::copy(DrawRegion &target, const DrawRegion &source) {
