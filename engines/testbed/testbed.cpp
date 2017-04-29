@@ -39,7 +39,7 @@
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/testbed.h"
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 #include "testbed/cloud.h"
 #endif
 #ifdef USE_SDL_NET
@@ -140,7 +140,7 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 	// Cloud
 	ts = new CloudTestSuite();
 	_testsuiteList.push_back(ts);
