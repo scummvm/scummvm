@@ -589,6 +589,8 @@ enum {
 	TGL_UNSIGNED_SHORT_5_6_5_REV    = 0x8364,
 	TGL_UNSIGNED_INT_8_8_8_8        = 0x8035,
 	TGL_UNSIGNED_INT_8_8_8_8_REV    = 0x8367,
+	TGL_UNSIGNED_SHORT_5_5_5_1      = 0x8034,
+	TGL_UNSIGNED_SHORT_1_5_5_5_REV  = 0x8366,
 
 	// Utility
 	TGL_VENDOR                      = 0x1F00,

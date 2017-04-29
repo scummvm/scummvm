@@ -32,6 +32,47 @@
 
 #include "graphics/tinygl/zgl.h"
 
+struct tglColorAssociation {
+	Graphics::PixelFormat pf;
+	TGLuint format;
+	TGLuint type;
+};
+
+static const struct tglColorAssociation colorAssociationList[] = {
+/*
+ * TGL_UNSIGNED_BYTE before other variants to provide OpenGLES-friendly formats
+ * when this table is used to look these up.
+ * Note: this does not matter at all for TinyGL, but this is to be consistent
+ * with future OpenGL equivalent for this code.
+ */
+// TODO: remove pixel endianness conversions from tinygl callers and enable
+//#if defined(SCUMM_LITTLE_ENDIAN)
+#if 1
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_BGR,  TGL_UNSIGNED_BYTE},
+#else
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), TGL_BGRA, TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  TGL_RGB,  TGL_UNSIGNED_BYTE},
+	{Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  TGL_BGR,  TGL_UNSIGNED_BYTE},
+#endif
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), TGL_RGBA, TGL_UNSIGNED_INT_8_8_8_8_REV},
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), TGL_RGBA, TGL_UNSIGNED_INT_8_8_8_8},
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), TGL_BGRA, TGL_UNSIGNED_INT_8_8_8_8_REV},
+	{Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), TGL_BGRA, TGL_UNSIGNED_INT_8_8_8_8},
+	{Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15), TGL_RGBA, TGL_UNSIGNED_SHORT_1_5_5_5_REV},
+	{Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),  TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1},
+	{Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15), TGL_BGRA, TGL_UNSIGNED_SHORT_1_5_5_5_REV},
+	{Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0),  TGL_BGRA, TGL_UNSIGNED_SHORT_5_5_5_1},
+	{Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5_REV},
+	{Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_BGR,  TGL_UNSIGNED_SHORT_5_6_5},
+	{Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  TGL_BGR,  TGL_UNSIGNED_SHORT_5_6_5_REV},
+	{Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),  TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5}
+};
+#define COLOR_ASSOCIATION_LIST_LENGTH (sizeof(colorAssociationList) / sizeof(*colorAssociationList))
+
 namespace TinyGL {
 
 static GLTexture *find_texture(GLContext *c, unsigned int h) {
@@ -112,6 +153,15 @@ void glopBindTexture(GLContext *c, GLParam *p) {
 	c->current_texture = t;
 }
 
+static inline const Graphics::PixelFormat formatType2PixelFormat(TGLuint format,  TGLuint type) {
+	for (unsigned int i = 0; i < COLOR_ASSOCIATION_LIST_LENGTH; i++) {
+		if (colorAssociationList[i].format == format &&
+		    colorAssociationList[i].type == type)
+			return colorAssociationList[i].pf;
+	}
+	error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
+}
+
 void glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
@@ -131,23 +181,6 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		error("tglTexImage2D: invalid level");
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
-	Graphics::PixelFormat sourceFormat;
-	switch (format) {
-		case TGL_RGBA:
-			sourceFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-			break;
-		case TGL_RGB:
-			sourceFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-			break;
-		case TGL_BGRA:
-			sourceFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-			break;
-		case TGL_BGR:
-			sourceFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-			break;
-		default:
-			error("tglTexImage2D: Pixel format not handled.");
-	}
 
 	Graphics::PixelFormat pf;
 	switch (format) {
@@ -176,7 +209,7 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		DisposeAfterUse::NO
 	);
 	if (pixels != NULL) {
-		Graphics::PixelBuffer src(sourceFormat, pixels);
+		Graphics::PixelBuffer src(formatType2PixelFormat(format, type), pixels);
 		if (width != c->_textureSize || height != c->_textureSize) {
 			Graphics::PixelBuffer src_conv(pf, width * height, DisposeAfterUse::YES);
 			src_conv.copyBuffer(
