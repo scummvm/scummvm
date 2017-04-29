@@ -177,13 +177,10 @@ Math::Matrix4 GfxTinyGL::getProjection() {
 }
 
 void GfxTinyGL::clearScreen() {
-	tglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	tglClearDepth(0);
-	tglClear(TGL_DEPTH_BUFFER_BIT | TGL_COLOR_BUFFER_BIT);
+	tglClear(TGL_COLOR_BUFFER_BIT | TGL_DEPTH_BUFFER_BIT);
 }
 
 void GfxTinyGL::clearDepthBuffer() {
-	tglClearDepth(0);
 	tglClear(TGL_DEPTH_BUFFER_BIT);
 }
 
