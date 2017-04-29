@@ -37,6 +37,11 @@ const Font *MacFontRun::getFont() {
 	return font;
 }
 
+
+MacText::~MacText(){
+	delete _macFont;
+}
+
 MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
 	_str = s;
 	_wm = wm;
