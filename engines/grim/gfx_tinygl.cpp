@@ -943,11 +943,6 @@ void GfxTinyGL::turnOffLight(int lightId) {
 }
 
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
-	const int colorKeyValue = _pixelFormat.ARGBToColor(0, 255, 0, 255);
-	if (bitmap->_format == 1) {
-		bitmap->convertToColorFormat(_pixelFormat);
-	}	
-
 	Graphics::BlitImage **imgs = new Graphics::BlitImage*[bitmap->_numImages];
 	bitmap->_texIds = (void *)imgs;
 
@@ -985,7 +980,7 @@ void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 			sourceSurface.w = bitmap->_width;
 			sourceSurface.h = bitmap->_height;
 			sourceSurface.pitch = sourceSurface.w * imageBuffer.getFormat().bytesPerPixel;
-			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, colorKeyValue, true);
+			Graphics::tglUploadBlitImage(imgs[i], sourceSurface, sourceSurface.format.ARGBToColor(0, 255, 0, 255), true);
 		}
 	}
 }
