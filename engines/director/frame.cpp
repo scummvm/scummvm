@@ -846,11 +846,9 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 	}
 
-	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
+	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
-	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
-
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont));
 
 	int alignment = (int)textCast->textAlign;
 	if (alignment == -1)
@@ -866,7 +864,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		}
 	}
 
-	Graphics::MacText mt(ftext, _vm->_wm, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
+	Graphics::MacText mt(ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
