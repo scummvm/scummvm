@@ -135,6 +135,7 @@ private:
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
+	Common::String readTextStream(Common::SeekableSubReadStreamEndian *textStream, TextCast *textCast);
 	void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
 	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
