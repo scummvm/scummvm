@@ -115,7 +115,8 @@ void glopBindTexture(GLContext *c, GLParam *p) {
 void glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
-	int components = p[3].i;
+// "components" is guessed from "format".
+//	int components = p[3].i;
 	int width = p[4].i;
 	int height = p[5].i;
 	int border = p[6].i;
@@ -123,9 +124,13 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	int type = p[8].i;
 	byte *pixels = (byte *)p[9].p;
 	GLImage *im;
-	byte *pixels1;
-	bool do_free_after_rgb2rgba = false;
 
+	if (target != TGL_TEXTURE_2D)
+		error("tglTexImage2D: target not handled");
+	if (level < 0 || level >= MAX_TEXTURE_LEVELS)
+		error("tglTexImage2D: invalid level");
+	if (border != 0)
+		error("tglTexImage2D: invalid border");
 	Graphics::PixelFormat sourceFormat;
 	switch (format) {
 		case TGL_RGBA:
@@ -165,68 +170,41 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 		default:
 			break;
 	}
-	int bytes = pf.bytesPerPixel;
-
-	// Simply unpack RGB into RGBA with 255 for Alpha.
-	// FIXME: This will need additional checks when we get around to adding 24/32-bit backend.
-	if (target == TGL_TEXTURE_2D && level == 0 && components == 3 && border == 0 && pixels != NULL) {
-		if (format == TGL_RGB || format == TGL_BGR) {
-			Graphics::PixelBuffer temp(pf, width * height, DisposeAfterUse::NO);
-			Graphics::PixelBuffer pixPtr(sourceFormat, pixels);
-
-			for (int i = 0; i < width * height; ++i) {
-				uint8 r, g, b;
-				pixPtr.getRGBAt(i, r, g, b);
-				temp.setPixelAt(i, 255, r, g, b);
-			}
-			pixels = temp.getRawBuffer();
-			do_free_after_rgb2rgba = true;
-		}
-	} else if ((format != TGL_RGBA &&
-		    format != TGL_RGB &&
-		    format != TGL_BGR &&
-		    format != TGL_BGRA) ||
-		    (type != TGL_UNSIGNED_BYTE &&
-		     type != TGL_UNSIGNED_INT_8_8_8_8_REV)) {
-		error("tglTexImage2D: combination of parameters not handled");
-	}
-
-	pixels1 = new byte[c->_textureSize * c->_textureSize * bytes];
+	Graphics::PixelBuffer internal(
+		pf,
+		c->_textureSize * c->_textureSize,
+		DisposeAfterUse::NO
+	);
 	if (pixels != NULL) {
+		Graphics::PixelBuffer src(sourceFormat, pixels);
 		if (width != c->_textureSize || height != c->_textureSize) {
+			Graphics::PixelBuffer src_conv(pf, width * height, DisposeAfterUse::YES);
+			src_conv.copyBuffer(
+				0,
+				width * height,
+				src
+			);
 			// we use interpolation for better looking result
-			gl_resizeImage(pixels1, c->_textureSize, c->_textureSize, pixels, width, height);
-			width = c->_textureSize;
-			height = c->_textureSize;
+			gl_resizeImage(
+				internal.getRawBuffer(), c->_textureSize, c->_textureSize,
+				src_conv.getRawBuffer(), width, height
+			);
 		} else {
-			memcpy(pixels1, pixels, c->_textureSize * c->_textureSize * bytes);
+			internal.copyBuffer(
+				0,
+				c->_textureSize * c->_textureSize,
+				src
+			);
 		}
-#if defined(SCUMM_BIG_ENDIAN)
-		if (type == TGL_UNSIGNED_INT_8_8_8_8_REV) {
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					uint32 offset = (y * width + x) * 4;
-					byte *data = pixels1 + offset;
-					WRITE_BE_UINT32(data, READ_LE_UINT32(data));
-				}
-			}
-		}
-#endif
 	}
 
 	c->current_texture->versionNumber++;
 	im = &c->current_texture->images[level];
-	im->xsize = width;
-	im->ysize = height;
+	im->xsize = c->_textureSize;
+	im->ysize = c->_textureSize;
 	if (im->pixmap)
 		im->pixmap.free();
-	im->pixmap = Graphics::PixelBuffer(pf, pixels1);
-
-	if (do_free_after_rgb2rgba) {
-		// pixels as been assigned to tmp.getRawBuffer() which was created with
-		// DisposeAfterUse::NO, therefore delete[] it
-		delete[] pixels;
-	}
+	im->pixmap = internal;
 }
 
 // TODO: not all tests are done
