@@ -1043,7 +1043,6 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 	Graphics::BlitImage **b = (Graphics::BlitImage **)bitmap->getTexIds();
 
-	// For some reason blending happens in RGB565 even without blend enabled
 	if (bitmap->getFormat() == 1) {
 		if (bitmap->getHasTransparency()) {
 			tglEnable(TGL_BLEND);
