@@ -742,6 +742,38 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 
 	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
+	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
+	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
+	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
+	int width;
+
+	if (_vm->getVersion() >= 4 && textSize != NULL)
+		width = textCast->initialRect.right;
+	else
+		width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
+
+	if (width == 0 || height == 0) {
+		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
+		return;
+	}
+
+	if (_vm->getVersion() >= 4) {
+		if (textSize == NULL)
+			width = textCast->initialRect.right;
+		else {
+			width = textSize->width();
+		}
+	}
+
+	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
+		// We need to make sure that the Shared Cast fonts have been loaded in?
+		// might need a mapping table here of our own.
+		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
+	}
+
+	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
+
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
 
 	uint32 unk1 = textStream->readUint32();
 	uint32 strLen = textStream->readUint32();
@@ -827,44 +859,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	//uint32 rectLeft = textCast->initialRect.left;
 	//uint32 rectTop = textCast->initialRect.top;
 
-	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
-	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
-	int height = textCast->initialRect.height(); //_sprites[spriteId]->_height;
-	int width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
-
-	if (_vm->getVersion() >= 4 && textSize != NULL)
-		width = textCast->initialRect.right;
-
-	if (_vm->getCurrentScore()->_fontMap.contains(textCast->fontId)) {
-		// We need to make sure that the Shared Cast fonts have been loaded in?
-		// might need a mapping table here of our own.
-		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
-	}
-
-	if (width == 0 || height == 0) {
-		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
-		return;
-	}
-
-	Graphics::MacFont macFont = Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
-
-	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
-
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(macFont));
-
 	int alignment = (int)textCast->textAlign;
 	if (alignment == -1)
 		alignment = 3;
 	else
 		alignment++;
 
-	if (_vm->getVersion() >= 4) {
-		if (textSize == NULL)
-			width = textCast->initialRect.right;
-		else {
-			width = textSize->width();
-		}
-	}
+	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
 
 	Graphics::MacText mt(ftext, _vm->_wm, font, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
 	mt.setInterLinear(1);
