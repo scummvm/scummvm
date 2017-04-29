@@ -170,7 +170,7 @@ void glInit(void *zbuffer1, int textureSize) {
 
 	// clear
 	c->clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	c->clear_depth = 0;
+	c->clear_depth = 1.0f;
 
 	// selection
 	c->render_mode = TGL_RENDER;
