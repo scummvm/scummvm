@@ -679,12 +679,12 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 
 	tglEnable(TGL_DEPTH_TEST);
 	tglDisable(TGL_ALPHA_TEST);
-	//tglDisable(TGL_LIGHTING); // not apply here in TinyGL
+	tglDisable(TGL_LIGHTING);
 	if (!_currentShadowArray && face->_hasTexture)
 		tglEnable(TGL_TEXTURE_2D);
 	else
 		tglDisable(TGL_TEXTURE_2D);
-	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha() || _alpha < 1.0f )
+	if (face->_flags & EMIMeshFace::kAlphaBlend || face->_flags & EMIMeshFace::kUnknownBlend || _currentActor->hasLocalAlpha() || _alpha < 1.0f)
 		tglEnable(TGL_BLEND);
 
 	tglBegin(TGL_TRIANGLES);
@@ -695,11 +695,11 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	Math::Vector3d noLighting(1.f, 1.f, 1.f);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
+
 		if (!_currentShadowArray) {
 			if (face->_hasTexture) {
 				tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 			}
-
 			Math::Vector3d lighting = (face->_flags & EMIMeshFace::kNoLighting) ? noLighting : model->_lighting[index];
 			byte r = (byte)(model->_colorMap[index].r * lighting.x());
 			byte g = (byte)(model->_colorMap[index].g * lighting.y());
@@ -723,7 +723,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	tglEnable(TGL_TEXTURE_2D);
 	tglEnable(TGL_DEPTH_TEST);
 	tglEnable(TGL_ALPHA_TEST);
-	//tglEnable(TGL_LIGHTING); // not apply here in TinyGL
+	tglEnable(TGL_LIGHTING);
 	tglDisable(TGL_BLEND);
 
 	if (!_currentShadowArray)
