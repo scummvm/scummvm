@@ -90,7 +90,7 @@ class MacText {
 public:
 	MacText(Common::String s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
 				int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft);
-
+	~MacText();
 	void setInterLinear(int interLinear);
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
