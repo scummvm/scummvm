@@ -752,11 +752,6 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	else
 		width = textCast->initialRect.width(); //_sprites[spriteId]->_width;
 
-	if (width == 0 || height == 0) {
-		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
-		return;
-	}
-
 	if (_vm->getVersion() >= 4) {
 		if (textSize == NULL)
 			width = textCast->initialRect.right;
@@ -771,7 +766,12 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		// textCast->fontId = _vm->_wm->_fontMan->getFontIdByName(_vm->getCurrentScore()->_fontMap[textCast->fontId]);
 	}
 
-	Graphics::MacFont* macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
+	if (width == 0 || height == 0) {
+		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
+		return;
+	}
+
+	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
 	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont));
 
