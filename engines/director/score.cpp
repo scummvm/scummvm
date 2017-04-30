@@ -202,16 +202,6 @@ void Score::loadArchive() {
 	}
 }
 
-void copyStxt(TextCast *textCast, const Stxt *stxt) {
-	textCast->fontId = stxt->_fontId;
-	textCast->textSlant = stxt->_textSlant;
-	textCast->fontSize = stxt->_fontSize;
-	textCast->palinfo1 = stxt->_palinfo1;
-	textCast->palinfo2 = stxt->_palinfo2;
-	textCast->palinfo3 = stxt->_palinfo3;
-	textCast->_ftext = stxt->_ftext;
-}
-
 void Score::copyCastStxts() {
 	Common::HashMap<int, TextCast *>::iterator tc;
 	for (tc = _loadedText->begin(); tc != _loadedText->end(); ++tc) {
@@ -220,7 +210,7 @@ void Score::copyCastStxts() {
 			tc->_value->children[0].index;
 		if (_loadedStxts->getVal(stxtid)){
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
-			copyStxt(tc->_value, stxt);
+			tc->_value->importStxt(stxt);
 		}
 	}
 }

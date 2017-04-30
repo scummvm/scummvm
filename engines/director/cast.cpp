@@ -179,6 +179,16 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	modified = 0;
 }
 
+void TextCast::importStxt(const Stxt *stxt) {
+	fontId = stxt->_fontId;
+	textSlant = stxt->_textSlant;
+	fontSize = stxt->_fontSize;
+	palinfo1 = stxt->_palinfo1;
+	palinfo2 = stxt->_palinfo2;
+	palinfo3 = stxt->_palinfo3;
+	_ftext = stxt->_ftext;
+}
+
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		/*byte flags = */ stream.readByte();

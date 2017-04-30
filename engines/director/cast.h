@@ -30,6 +30,8 @@
 
 namespace Director {
 
+class Stxt;
+
 enum CastType {
 	kCastTypeNull = 0,
 	kCastBitmap = 1,
@@ -138,6 +140,7 @@ public:
 	uint16 palinfo1, palinfo2, palinfo3;
 
 	Common::String _ftext;
+	void importStxt(const Stxt *stxt);
 };
 
 enum ButtonType {
