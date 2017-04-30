@@ -107,6 +107,7 @@ public:
 	uint32 getBufSize() const { return _buf->size(); }
 
 	const byte *getBuf(uint offset = 0) const { return _buf->getUnsafeDataAt(offset); }
+	SciSpan<const byte> getSpan(uint offset) const { return _buf->subspan(offset); }
 
 	int getScriptNumber() const { return _nr; }
 	SegmentId getLocalsSegment() const { return _localsSegment; }

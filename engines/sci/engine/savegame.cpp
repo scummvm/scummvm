@@ -256,8 +256,9 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				_scriptSegMap[scr->getScriptNumber()] = i;
 
 				ObjMap objects = scr->getObjectMap();
-				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
-					it->_value.syncBaseObject(SciSpan<const byte>(scr->getBuf(it->_value.getPos().getOffset()), scr->getBufSize() - it->_value.getPos().getOffset()));
+				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+					it->_value.syncBaseObject(scr->getSpan(it->_value.getPos().getOffset()));
+				}
 			}
 
 			// Sync the script's string heap
