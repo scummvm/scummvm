@@ -42,7 +42,7 @@ MacText::~MacText(){
 	delete _macFont;
 }
 
-MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment) {
+MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) {
 	_str = s;
 	_wm = wm;
 	_macFont = macFont;
@@ -53,8 +53,7 @@ MacText::MacText(Common::String s, MacWindowManager *wm, const MacFont *macFont,
 	_textMaxHeight = 0;
 	_surface = nullptr;
 	_textAlignment = textAlignment;
-
-	_interLinear = 0; // 0 pixels between the lines by default
+	_interLinear = interlinear;
 
 	if (macFont) {
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);

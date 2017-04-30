@@ -786,9 +786,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, const
 	else
 		alignment++;
 
-	Graphics::MacText mt(stxt->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment);
-
-	mt.setInterLinear(1);
+	Graphics::MacText mt(stxt->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment, 1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
 
