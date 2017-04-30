@@ -45,18 +45,16 @@ public:
 
 	void loadData(const Graphics::Surface &surface, uint32 colorKey, bool applyColorKey) {
 		const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+		int size = surface.w * surface.h;
 		_surface.create(surface.w, surface.h, textureFormat);
 		Graphics::PixelBuffer buffer(surface.format, (byte *)const_cast<void *>(surface.getPixels()));
 		Graphics::PixelBuffer dataBuffer(textureFormat, (byte *)const_cast<void *>(_surface.getPixels()));
-		dataBuffer.copyBuffer(0, 0, surface.w * surface.h, buffer);
+		dataBuffer.copyBuffer(0, 0, size, buffer);
 		if (applyColorKey) {
-			for (int x = 0;  x < surface.w; x++) {
-				for (int y = 0; y < surface.h; y++) {
-					uint32 pixel = buffer.getValueAt(y * surface.w + x);
-					if (pixel == colorKey) {
-						// Color keyed pixels become transparent white.
-						dataBuffer.setPixelAt(y * surface.w + x, 0, 255, 255, 255); 
-					}
+			for (int x = 0; x < size; x++) {
+				if (buffer.getValueAt(x) == colorKey) {
+					// Color keyed pixels become transparent white.
+					dataBuffer.setPixelAt(x, 0, 255, 255, 255);
 				}
 			}
 		}
