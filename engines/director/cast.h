@@ -136,6 +136,8 @@ public:
 	byte textSlant;
 	Common::Array<TextFlag> textFlags;
 	uint16 palinfo1, palinfo2, palinfo3;
+
+	Common::String _ftext;
 };
 
 enum ButtonType {
