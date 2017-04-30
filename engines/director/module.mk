@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	score.o \
 	sound.o \
 	sprite.o \
+	stxt.o \
 	util.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
