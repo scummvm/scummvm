@@ -469,7 +469,6 @@ struct FrameBuffer {
 	int xsize, ysize;
 	int linesize; // line size, in bytes
 	Graphics::PixelFormat cmode;
-	int pixelbits;
 	int pixelbytes;
 
 	Buffer buffer;

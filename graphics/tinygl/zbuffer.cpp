@@ -87,7 +87,6 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->ysize = height;
 	this->cmode = frame_buffer.getFormat();
 	this->pixelbytes = this->cmode.bytesPerPixel;
-	this->pixelbits = this->cmode.bytesPerPixel * 8;
 	this->linesize = (xsize * this->pixelbytes + 3) & ~3;
 
 	size = this->xsize * this->ysize * sizeof(unsigned int);
