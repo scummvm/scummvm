@@ -192,7 +192,6 @@ void Score::loadArchive() {
 				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
 				// Load STXTS
 
-				// TODO: make sure the Stxt is eventually destroyed
 				_loadedStxts->setVal(*iterator,
 									 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'),
 																		  *iterator))
@@ -284,6 +283,7 @@ Score::~Score() {
 
 	delete _font;
 	delete _labels;
+	delete _loadedStxts;
 }
 
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
