@@ -593,9 +593,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (castType == kCastShape) {
 				renderShape(surface, i);
 			} else if (castType == kCastText) {
-				uint id = (_vm->getVersion() < 4) ? _sprites[i]->_castId + 1024 : _sprites[i]->_textCast->children[0].index;
-				const Stxt *stxt = _vm->getCurrentScore()->_loadedStxts->getVal(id);
-				renderText(surface, i, stxt, NULL);
+				renderText(surface, i, NULL);
 			} else if (castType == kCastButton) {
 				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_buttonCast->children[0].index);
 			} else {
@@ -672,8 +670,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uin
 
 	Common::Rect textRect(0, 0, width, height);
 	// pass the rect of the button into the label.
-	const Stxt *stxt = _vm->getCurrentScore()->_loadedStxts->getVal(textId);
-	renderText(surface, spriteId, stxt, &textRect);
+	renderText(surface, spriteId, &textRect);
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
@@ -729,15 +726,9 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 }
 
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, const Stxt *stxt, Common::Rect *textSize) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
 	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
 
-	textCast->fontId = stxt->_fontId;
-	textCast->textSlant = stxt->_textSlant;
-	textCast->fontSize = stxt->_fontSize;
-	textCast->palinfo1 = stxt->_palinfo1;
-	textCast->palinfo2 = stxt->_palinfo2;
-	textCast->palinfo3 = stxt->_palinfo3;
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;
@@ -786,7 +777,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, const
 	else
 		alignment++;
 
-	Graphics::MacText mt(stxt->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment, 1);
+	Graphics::MacText mt(textCast->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment, 1);
 	mt.render();
 	const Graphics::ManagedSurface *textSurface = mt.getSurface();
 
