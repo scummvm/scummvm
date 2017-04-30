@@ -909,6 +909,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
 
+	// Gabriel Knight 2 - German DOS/Windows (6-CDs original release, provided by m_kiewitz)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{"gk2", "", {
+		{"ressci.001", 0, "5a4f25f3a08a45a9a1452b0922f1c716", 50942045},
+		{"ressci.003", 0, "93c561e5d49a804deed4ea4c2eda7386", 35233438},
+		{"ressci.002", 0, "04657f765ca35b7c620df9cfc2737228", 41718539},
+		{"ressci.005", 0, "f7a9057385041bc99a282c4667ba5309", 37952633},
+		{"ressci.004", 0, "3292b853404d613a8314dfc8dc8c07c0", 59450811},
+		{"ressci.006", 0, "7a3aaeef377cf4b1b2e7914791d34fca", 60585298},
+		{"resmap.001", 0, "ae48ed125f846ad5850ed8d768963947", 2806},
+		{"resmap.002", 0, "8fb07268e064a9dec7776cb70cd45cee", 1981},
+		{"resmap.003", 0, "d9c7eeb5337f01865ab46865e546a10d", 1699},
+		{"resmap.004", 0, "ecbcf7f54dd1d2d29cb234e106558984", 2737},
+		{"resmap.005", 0, "9fe7e86d66deabfeb10760990d2b1724", 2053},
+		{"resmap.006", 0, "c5323f49b7ee6a2c08c4852290e351c0", 2995},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_CD | ADGF_TESTING, GUIO_GK2 },
+
 	// Gabriel Knight 2 - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the persistent file:
 	// Data1. Other discs have conflicting names :(
