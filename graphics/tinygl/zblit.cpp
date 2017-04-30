@@ -77,7 +77,7 @@ public:
 					_binaryTransparent = false;
 				}
 				if (a == 0 && start >= 0) {
-					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start)));
+					_lines.push_back(Line(start, y, x - start, srcBuf.getRawBuffer(start), textureFormat));
 					start = -1;
 				} else if (a != 0 && start == -1) {
 					start = x;
@@ -85,7 +85,7 @@ public:
 			}
 			// end of the bitmap line. if start is an actual pixel save the line.
 			if (start >= 0) {
-				_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start)));
+				_lines.push_back(Line(start, y, surface.w - start, srcBuf.getRawBuffer(start), textureFormat));
 			}
 			srcBuf.shiftBy(surface.w);
 		}
@@ -109,16 +109,15 @@ public:
 		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
 		Line() : _x(0), _y(0), _length(0), _pixels(nullptr) { }
-		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
+		Line(int x, int y, int length, byte *pixels, const Graphics::PixelFormat &textureFormat) : _buf(TinyGL::gl_get_context()->fb->cmode, length, DisposeAfterUse::NO),
 					_x(x), _y(y), _length(length) {
 			// Performing texture to screen conversion.
-			const Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
 			_buf.copyBuffer(0, 0, length, srcBuf);
 			_pixels = _buf.getRawBuffer();
 		}
 
-		Line(const Line& other) : _buf(TinyGL::gl_get_context()->fb->cmode, other._length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO),
+		Line(const Line& other) : _buf(other._buf.getFormat(), other._length, DisposeAfterUse::NO),
 					_x(other._x), _y(other._y), _length(other._length){
 			_buf.copyBuffer(0, 0, _length, other._buf);
 			_pixels = _buf.getRawBuffer();
