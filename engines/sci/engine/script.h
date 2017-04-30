@@ -68,9 +68,9 @@ typedef Common::Array<offsetLookupArrayEntry> offsetLookupArrayType;
 class Script : public SegmentObj {
 private:
 	int _nr; /**< Script number */
-	Common::SpanOwner<SciSpan<const byte> > _buf; /**< Static data buffer, or NULL if not used */
-	SciSpan<const byte> _script; /**< Script size includes alignment byte */
-	SciSpan<const byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
+	Common::SpanOwner<SciSpan<byte> > _buf; /**< Static data buffer, or NULL if not used */
+	SciSpan<byte> _script; /**< Script size includes alignment byte */
+	SciSpan<byte> _heap; /**< Start of heap if SCI1.1, NULL otherwise */
 
 	int _lockers; /**< Number of classes and objects that require this script */
 

@@ -882,7 +882,7 @@ SegmentRef Script::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = true;
 	ret.maxSize = _buf->size() - pointer.getOffset();
-	ret.raw = const_cast<byte *>(_buf->getUnsafeDataAt(pointer.getOffset(), ret.maxSize));
+	ret.raw = _buf->getUnsafeDataAt(pointer.getOffset(), ret.maxSize);
 	return ret;
 }
 

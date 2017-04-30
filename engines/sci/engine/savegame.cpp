@@ -467,7 +467,7 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 void Script::syncStringHeap(Common::Serializer &s) {
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// Sync all of the SCI_OBJ_STRINGS blocks
-		SciSpan<byte> buf = (SciSpan<byte> &)*_buf;
+		SciSpan<byte> buf = *_buf;
 		bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 		if (oldScriptHeader)
@@ -490,7 +490,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
 		// Strings in SCI1.1 come after the object instances
-		SciSpan<byte> buf = _heap.subspan<byte>(4 + _heap.getUint16SEAt(2) * 2);
+		SciSpan<byte> buf = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 
 		// Skip all of the objects
 		while (buf.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER)
@@ -502,8 +502,7 @@ void Script::syncStringHeap(Common::Serializer &s) {
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		const int stringOffset = _buf->getInt32SEAt(4);
 		const int length = _buf->getInt32SEAt(8) - stringOffset;
-		SciSpan<byte> buf = _buf->subspan<byte>(stringOffset, length);
-		s.syncBytes(buf.getUnsafeDataAt(0, length), length);
+		s.syncBytes(_buf->getUnsafeDataAt(stringOffset, length), length);
 	}
 }
 
