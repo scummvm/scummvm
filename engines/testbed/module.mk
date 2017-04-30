@@ -14,7 +14,7 @@ MODULE_OBJS := \
 	testbed.o \
 	testsuite.o
 
-ifdef USE_LIBCURL
+ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloud.o
 endif
