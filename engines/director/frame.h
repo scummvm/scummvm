@@ -128,7 +128,7 @@ private:
 	void playTransition(Score *score);
 	void playSoundChannel();
 	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, const Stxt *stxt, Common::Rect *textSize);
+	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize);
 	void renderShape(Graphics::ManagedSurface &surface, uint16 spriteId);
 	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId);
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
