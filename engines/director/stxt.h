@@ -29,76 +29,7 @@ namespace Director {
 
 class Stxt {
 public:
-	Stxt (Common::SeekableSubReadStreamEndian &textStream) {
-		uint32 unk1 = textStream.readUint32();
-		uint32 strLen = textStream.readUint32();
-		uint32 dataLen = textStream.readUint32();
-		Common::String text;
-
-		for (uint32 i = 0; i < strLen; i++) {
-			byte ch = textStream.readByte();
-			if (ch == 0x0d) {
-				ch = '\n';
-			}
-			text += ch;
-		}
-		debugC(3, kDebugText, "Stxt init: unk1: %d strLen: %d dataLen: %d textlen: %u", unk1, strLen, dataLen, text.size());
-		if (strLen < 200)
-			debugC(3, kDebugText, "text: '%s'", text.c_str());
-
-		uint16 formattingCount = textStream.readUint16();
-		uint32 prevPos = 0;
-
-		while (formattingCount) {
-			uint32 formatStartOffset = textStream.readUint32();
-			uint16 unk1f = textStream.readUint16();
-			uint16 unk2f = textStream.readUint16();
-
-			_fontId = textStream.readUint16();
-			_textSlant = textStream.readByte();
-			byte unk3f = textStream.readByte();
-			_fontSize = textStream.readUint16();
-
-			_palinfo1 = textStream.readUint16();
-			_palinfo2 = textStream.readUint16();
-			_palinfo3 = textStream.readUint16();
-
-			debugC(3, kDebugText, "Stxt init: formattingCount: %u, formatStartOffset: %d, unk1: %d unk2: %d, fontId: %d, textSlant: %d",
-			       formattingCount, formatStartOffset, unk1f, unk2f, _fontId, _textSlant);
-
-			debugC(3, kDebugText, "        unk3: %d, fontSize: %d, p0: %x p1: %x p2: %x", unk3f, _fontSize, _palinfo1, _palinfo2, _palinfo3);
-
-			assert(prevPos <= formatStartOffset);  // If this is triggered, we have to implement sorting
-
-			while (prevPos != formatStartOffset) {
-				char f = text.firstChar();
-				_ftext += text.firstChar();
-				text.deleteChar(0);
-
-				if (f == '\001')    // Insert two \001s as a replacement
-					_ftext += '\001';
-
-				prevPos++;
-
-				debugCN(4, kDebugText, "%c", f);
-			}
-
-			debugCN(4, kDebugText, "*");
-
-			_ftext += Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c%c",
-			                                      (_fontId >> 8) & 0xff, _fontId & 0xff,
-			                                      _textSlant & 0xff, unk3f & 0xff,
-			                                      (_fontSize >> 8) & 0xff, _fontSize & 0xff,
-			                                      (_palinfo1 >> 8) & 0xff, _palinfo1 & 0xff,
-			                                      (_palinfo2 >> 8) & 0xff, _palinfo2 & 0xff,
-			                                      (_palinfo3 >> 8) & 0xff, _palinfo3 & 0xff);
-
-			formattingCount--;
-		}
-
-		debugC(4, kDebugText, "%s", text.c_str());
-		_ftext += text;
-	}
+	Stxt (Common::SeekableSubReadStreamEndian &textStream);
 public:
 	Common::String _ftext;
 	uint32 _fontId;
