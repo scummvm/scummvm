@@ -130,7 +130,7 @@ private:
 	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
 	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize);
 	void renderShape(Graphics::ManagedSurface &surface, uint16 spriteId);
-	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId);
+	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId);
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);

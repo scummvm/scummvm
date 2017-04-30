@@ -595,7 +595,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			} else if (castType == kCastText) {
 				renderText(surface, i, NULL);
 			} else if (castType == kCastButton) {
-				renderButton(surface, i, _vm->getVersion() < 4 ? _sprites[i]->_castId + 1024 : _sprites[i]->_buttonCast->children[0].index);
+				renderButton(surface, i);
 			} else {
 				if (!_sprites[i]->_bitmapCast) {
 					warning("No cast ID for sprite %d", i);
@@ -656,7 +656,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	inkBasedBlit(surface, tmpSurface, spriteId, shapeRect);
 }
 
-void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId) {
+void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	uint16 castId = _sprites[spriteId]->_castId;
 	ButtonCast *button = _vm->getCurrentScore()->_loadedButtons->getVal(castId);
 
