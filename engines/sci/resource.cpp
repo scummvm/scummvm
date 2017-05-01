@@ -1372,6 +1372,16 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
 	ResourceType checkForType = resourceType;
 
+	// HACK: The SFX resource map patch in the Shivers interactive demo has
+	// broken offsets for some sounds; ignore it so that the correct map from
+	// RESSCI.000 will be used instead
+	if (g_sci->getGameId() == GID_SHIVERS && g_sci->isDemo() &&
+		resourceType == kResourceTypeMap && resourceNr == 65535) {
+
+		delete source;
+		return;
+	}
+
 	// base36 encoded patches (i.e. audio36 and sync36) have the same type as their non-base36 encoded counterparts
 	if (checkForType == kResourceTypeAudio36)
 		checkForType = kResourceTypeAudio;

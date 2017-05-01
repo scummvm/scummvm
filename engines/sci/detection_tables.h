@@ -3992,11 +3992,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
 
-	// Shivers - English Windows Demo
+	// Shivers - English Windows Non-interactive Demo
 	// Executable scanning reports "2.100.002"
-	{"shivers", "Demo", {
+	{"shivers", "Non-interactive Demo", {
 		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_SHIVERS },
+
+	// Shivers - English Windows Interactive Demo (from bgK in bug report Trac#9745)
+	{"shivers", "Demo", {
+		{"resmap.000", 0, "58a20b0c839d31d56802ead6c8f953c4", 7069},
+		{"ressci.000", 0, "f9eb6338f658945feadd4d27e58bdb93", 37404155},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING, GUIO_SHIVERS },
 
