@@ -105,6 +105,10 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 		g_system->quit();
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetSurfaceBlendMode(_overlayscreen, SDL_BLENDMODE_NONE);
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+
 	_overlayWidth = effectiveWidth;
 	_overlayHeight = effectiveHeight;
 	_screenFormat = _overlayFormat;
@@ -153,20 +157,7 @@ void SurfaceSdlGraphicsManager::drawOverlay() {
 	if (!_overlayscreen)
 		return;
 
-	SDL_LockSurface(_screen);
-	SDL_LockSurface(_overlayscreen);
-	Graphics::PixelBuffer srcBuf(_overlayFormat, (byte *)_overlayscreen->pixels);
-	Graphics::PixelBuffer dstBuf(_screenFormat, (byte *)_screen->pixels);
-	int h = _overlayHeight;
-
-	do {
-		dstBuf.copyBuffer(0, _overlayWidth, srcBuf);
-
-		srcBuf.shiftBy(_overlayWidth);
-		dstBuf.shiftBy(_overlayWidth);
-	} while (--h);
-	SDL_UnlockSurface(_screen);
-	SDL_UnlockSurface(_overlayscreen);
+	SDL_BlitSurface(_overlayscreen, NULL, _screen, NULL);
 }
 
 void SurfaceSdlGraphicsManager::updateScreen() {
