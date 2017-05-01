@@ -21,6 +21,7 @@
  */
 
 #include "director/director.h"
+#include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
 
@@ -177,6 +178,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	}
 
 	modified = 0;
+
+	cachedMacText = new CachedMacText(this, version);
+	// TODO Destroy me
 }
 
 void TextCast::importStxt(const Stxt *stxt) {

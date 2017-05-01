@@ -31,6 +31,7 @@
 namespace Director {
 
 class Stxt;
+class CachedMacText;
 
 enum CastType {
 	kCastTypeNull = 0,
@@ -141,6 +142,7 @@ public:
 
 	Common::String _ftext;
 	void importStxt(const Stxt *stxt);
+	CachedMacText *cachedMacText;
 };
 
 enum ButtonType {
