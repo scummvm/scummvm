@@ -3,6 +3,7 @@ MODULE := engines/director
 MODULE_OBJS = \
 	archive.o \
 	cast.o \
+	cachedmactext.o \
 	detection.o \
 	director.o \
 	events.o \
