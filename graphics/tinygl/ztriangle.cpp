@@ -260,6 +260,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		r1 = p2->r;
 		g1 = p2->g;
 		b1 = p2->b;
+		a1 = p2->a;
 		break;
 	case DRAW_SMOOTH:
 		break;
@@ -396,7 +397,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						pz = pz1 + x1;
 						z = z1;
 					}
-					a = a1;
+					if (kDrawLogic == DRAW_FLAT) {
+						a = a1;
+					}
 					while (n >= 3) {
 						if (kDrawLogic == DRAW_DEPTH_ONLY) {
 							putPixelDepth<kDepthWrite, kEnableScissor>(this, buf, pz, 0, x, y, z, dzdx);
