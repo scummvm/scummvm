@@ -182,8 +182,10 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
 #endif
-	if (f == kFeatureJoystickDeadzone) return true;
-	if (f == kFeatureKbdMouseSpeed) return true;
+	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
+		bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
+		return joystickSupportEnabled;
+	}
 	return ModularBackend::hasFeature(f);
 }
 
