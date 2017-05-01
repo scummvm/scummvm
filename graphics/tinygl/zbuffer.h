@@ -70,7 +70,7 @@ namespace TinyGL {
 #define ZB_POINT_ALPHA_MIN        ( (1 << ZB_POINT_ALPHA_FRAC_SHIFT) )
 #define ZB_POINT_ALPHA_MAX        ( (1 << ZB_POINT_ALPHA_BITS) - (1 << ZB_POINT_ALPHA_FRAC_SHIFT) )
 
-#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r >> 8, g >> 8, b >> 8) // Default to 255 alpha aka solid colour.
+#define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
 
 static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
