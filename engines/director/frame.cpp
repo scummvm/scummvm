@@ -29,6 +29,7 @@
 #include "image/bmp.h"
 
 #include "director/director.h"
+#include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/frame.h"
 #include "director/images.h"
@@ -770,21 +771,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	//uint32 rectLeft = textCast->initialRect.left;
 	//uint32 rectTop = textCast->initialRect.top;
 
-
-	int alignment = (int)textCast->textAlign;
-	if (alignment == -1)
-		alignment = 3;
-	else
-		alignment++;
-
-	Graphics::MacText mt(textCast->_ftext, _vm->_wm, macFont, 0x00, 0xff, width, (Graphics::TextAlign)alignment, 1);
-	mt.render();
-	const Graphics::ManagedSurface *textSurface = mt.getSurface();
+	textCast->cachedMacText->clip(width);
+	textCast->cachedMacText->setWm(_vm->_wm); // TODO this is not a good place to do it
+	const Graphics::ManagedSurface *textSurface = textCast->cachedMacText->getSurface();
 
 	height = textSurface->h;
 	if (textSize != NULL) {
 		// TODO: this offset could be due to incorrect fonts loaded!
-		textSize->bottom = height + mt.getLineCount();
+		textSize->bottom = height + textCast->cachedMacText->getLineCount();
 	}
 
 	uint16 textX = 0, textY = 0;
