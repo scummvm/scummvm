@@ -50,14 +50,10 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	v->zp.z = (int)(v->pc.Z * winv * c->viewport.scale.Z + c->viewport.trans.Z);
 	// color
 	if (c->lighting_enabled) {
-		v->zp.r = (int)(v->color.X * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN)
-					+ ZB_POINT_RED_MIN);
-		v->zp.g = (int)(v->color.Y * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN)
-					+ ZB_POINT_GREEN_MIN);
-		v->zp.b = (int)(v->color.Z * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN)
-					+ ZB_POINT_BLUE_MIN);
-		v->zp.a = (int)(v->color.W * (ZB_POINT_ALPHA_MAX - ZB_POINT_ALPHA_MIN)
-			+ ZB_POINT_ALPHA_MIN);
+		v->zp.r = (int)(v->color.X * ZB_POINT_RED_MAX);
+		v->zp.g = (int)(v->color.Y * ZB_POINT_GREEN_MAX);
+		v->zp.b = (int)(v->color.Z * ZB_POINT_BLUE_MAX);
+		v->zp.a = (int)(v->color.W * ZB_POINT_ALPHA_MAX);
 	} else {
 		// no need to convert to integer if no lighting : take current color
 		v->zp.r = c->longcurrent_color[0];
@@ -68,8 +64,8 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 
 	// texture
 	if (c->texture_2d_enabled) {
-		v->zp.s = (int)(v->tex_coord.X * (ZB_POINT_ST_MAX - ZB_POINT_ST_MIN) + ZB_POINT_ST_MIN);
-		v->zp.t = (int)(v->tex_coord.Y * (ZB_POINT_ST_MAX - ZB_POINT_ST_MIN) + ZB_POINT_ST_MIN);
+		v->zp.s = (int)(v->tex_coord.X * ZB_POINT_ST_MAX);
+		v->zp.t = (int)(v->tex_coord.Y * ZB_POINT_ST_MAX);
 	}
 }
 

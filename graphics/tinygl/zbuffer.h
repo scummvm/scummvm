@@ -43,32 +43,27 @@ namespace TinyGL {
 
 #define ZB_POINT_ST_FRAC_BITS 14
 #define ZB_POINT_ST_FRAC_SHIFT     (ZB_POINT_ST_FRAC_BITS - 1)
-#define ZB_POINT_ST_MIN            ( (1 << ZB_POINT_ST_FRAC_SHIFT) )
-#define ZB_POINT_ST_MAX            ( (c->_textureSize << ZB_POINT_ST_FRAC_BITS) - (1 << ZB_POINT_ST_FRAC_SHIFT) )
+#define ZB_POINT_ST_MAX            ( (c->_textureSize << ZB_POINT_ST_FRAC_BITS) - 1 )
 
 #define ZB_POINT_RED_BITS         16
 #define ZB_POINT_RED_FRAC_BITS    8
 #define ZB_POINT_RED_FRAC_SHIFT   (ZB_POINT_RED_FRAC_BITS - 1)
-#define ZB_POINT_RED_MIN          ( (1 << ZB_POINT_RED_FRAC_SHIFT) )
-#define ZB_POINT_RED_MAX          ( (1 << ZB_POINT_RED_BITS) - (1 << ZB_POINT_RED_FRAC_SHIFT) )
+#define ZB_POINT_RED_MAX          ( (1 << ZB_POINT_RED_BITS) - 1 )
 
 #define ZB_POINT_GREEN_BITS       16
 #define ZB_POINT_GREEN_FRAC_BITS  8
 #define ZB_POINT_GREEN_FRAC_SHIFT (ZB_POINT_GREEN_FRAC_BITS - 1)
-#define ZB_POINT_GREEN_MIN        ( (1 << ZB_POINT_GREEN_FRAC_SHIFT) )
-#define ZB_POINT_GREEN_MAX        ( (1 << ZB_POINT_GREEN_BITS) - (1 << ZB_POINT_GREEN_FRAC_SHIFT) )
+#define ZB_POINT_GREEN_MAX        ( (1 << ZB_POINT_GREEN_BITS) - 1 )
 
 #define ZB_POINT_BLUE_BITS        16
 #define ZB_POINT_BLUE_FRAC_BITS   8
 #define ZB_POINT_BLUE_FRAC_SHIFT  (ZB_POINT_BLUE_FRAC_BITS - 1)
-#define ZB_POINT_BLUE_MIN         ( (1 << ZB_POINT_BLUE_FRAC_SHIFT) )
-#define ZB_POINT_BLUE_MAX         ( (1 << ZB_POINT_BLUE_BITS) - (1 << ZB_POINT_BLUE_FRAC_SHIFT) )
+#define ZB_POINT_BLUE_MAX         ( (1 << ZB_POINT_BLUE_BITS) - 1 )
 
 #define ZB_POINT_ALPHA_BITS       16
 #define ZB_POINT_ALPHA_FRAC_BITS  8
 #define ZB_POINT_ALPHA_FRAC_SHIFT (ZB_POINT_ALPHA_FRAC_BITS - 1)
-#define ZB_POINT_ALPHA_MIN        ( (1 << ZB_POINT_ALPHA_FRAC_SHIFT) )
-#define ZB_POINT_ALPHA_MAX        ( (1 << ZB_POINT_ALPHA_BITS) - (1 << ZB_POINT_ALPHA_FRAC_SHIFT) )
+#define ZB_POINT_ALPHA_MAX        ( (1 << ZB_POINT_ALPHA_BITS) - 1 )
 
 #define RGB_TO_PIXEL(r, g, b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
 
