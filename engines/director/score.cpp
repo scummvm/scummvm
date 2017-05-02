@@ -92,6 +92,7 @@ Score::Score(DirectorEngine *vm) {
 	_loadedButtons = new Common::HashMap<int, ButtonCast *>();
 	_loadedShapes = new Common::HashMap<int, ShapeCast *>();
 	_loadedScripts = new Common::HashMap<int, ScriptCast *>();
+	_loadedStxts = new Common::HashMap<int, const Stxt *>();
 }
 
 void Score::setArchive(Archive *archive) {
@@ -189,6 +190,12 @@ void Score::loadArchive() {
 
 			for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 				loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
+				// Load STXTS
+
+				_loadedStxts->setVal(*iterator,
+									 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'),
+																		  *iterator))
+									 );
 			}
 		}
 	}
@@ -276,6 +283,7 @@ Score::~Score() {
 
 	delete _font;
 	delete _labels;
+	delete _loadedStxts;
 }
 
 void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
