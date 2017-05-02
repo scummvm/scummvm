@@ -1279,47 +1279,9 @@ void GfxTinyGL::storeDisplay() {
 }
 
 void GfxTinyGL::copyStoredToDisplay() {
-	// XXX: bruteforce workaround for tinygl lacking pixel operation API (glRasterPos2, ...)
-	TGLuint *texture = new TGLuint[1];
-	tglGenTextures(1, texture);
-	tglBindTexture(TGL_TEXTURE_2D, *texture);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
-
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
-	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, _gameWidth, _gameHeight, 0, TGL_BGRA, TGL_UNSIGNED_BYTE, _storedDisplay.getRawBuffer());
-
-	tglMatrixMode(TGL_TEXTURE);
-	tglLoadIdentity();
-	tglMatrixMode(TGL_PROJECTION);
-	tglLoadIdentity();
-	tglOrtho(0, _gameWidth, _gameHeight, 0, 0, 1);
-	tglMatrixMode(TGL_MODELVIEW);
-	tglLoadIdentity();
-
-	tglDisable(TGL_LIGHTING);
-	tglDisable(TGL_DEPTH_TEST);
-	tglDepthMask(TGL_FALSE);
-	tglEnable(TGL_TEXTURE_2D);
-
-	tglBegin(TGL_QUADS);
-	tglTexCoord2f(0, 0);
-	tglVertex2f(0, 0);
-	tglTexCoord2f(1, 0);
-	tglVertex2f(_gameWidth, 0);
-	tglTexCoord2f(1, 1);
-	tglVertex2f(_gameWidth, _gameHeight);
-	tglTexCoord2f(0, 1);
-	tglVertex2f(0, _gameHeight);
-	tglEnd();
-
-	tglDisable(TGL_TEXTURE_2D);
-	tglDepthMask(TGL_TRUE);
-	tglEnable(TGL_DEPTH_TEST);
-	tglEnable(TGL_LIGHTING);
-
-	tglDeleteTextures(1, texture);
+	Bitmap *bitmap = getScreenshot(_gameWidth, _gameHeight, true);
+	drawBitmap(bitmap, 0, 0, 0);
+	delete bitmap;
 }
 
 void GfxTinyGL::dimScreen() {
