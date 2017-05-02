@@ -13,8 +13,7 @@ ResidualVM: A 3D game interpreter
   9. [ Contact             ](#9-contact)
 
 
-1. What is ResidualVM?
-----------------------
+## 1. What is ResidualVM?
 ResidualVM is a game engine reimplementation that allows you
 to play 3D adventure games such as Grim Fandango, Escape from Monkey Island
 and Myst III.
@@ -23,8 +22,7 @@ ResidualVM utilizes OpenGL for 3D graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
 
 
-2. Current state
-----------------
+## 2. Current state
 At this point ResidualVM is fit for normal use, when playing supported
 games, it is however worth noting that you should still save early, and
 save often, as problems or dead-ends might still exist. (Grim Fandango
@@ -58,8 +56,7 @@ For more information, see the page on ResidualVM at the wiki page:
 http://wiki.residualvm.org/
 
 
-3. Running GrimE games
-----------------------
+## 3. Running GrimE games
 
 ### 3.1. Required files
 
@@ -151,8 +148,7 @@ of the engine needs to be enabled using one of the following two options:
   * add "joystick\_num=0" to the "[residualvm]" section of the configuration file
     (see section 5.1. how to find the file)
 
-4. Running Myst III
--------------------
+## 4. Running Myst III
 
 ### 4.1. Required files ###
 
@@ -208,8 +204,7 @@ Ctrl + c   | Force Quit (from command-line)
 Ctrl + q   | Quit (ingame)
 
 
-5. Configuration
-----------------
+## 5. Configuration
 Currently, not all the settings for ResidualVM are available through the GUI,
 if you have problems with getting anything to work, first try to pass the
 settings from the command line, then, if that doesn't work, try to change your
@@ -242,8 +237,7 @@ use_arb_shaders| [true/false]      | If true, and if you are using the OpenGL re
 fullscreen_res | [desktop/WWWxHHH] | If set to "desktop" (the default), ResidualVM will use your desktop resolution in fullscreen mode. If set to a resolution such as "640x480" or "1280x720", that resolution will be used.
 
 
-6. Troubleshooting, Known Bugs, Issues
---------------------------------------
+## 6. Troubleshooting, Known Bugs, Issues
 Grim Fandango had a few issues when it came out, and a few new and exciting
 issues when you try to run it on newer hardware. Some of these have been
 fixed in ResidualVM, but ResidualVM itself also has a few new issues that we
@@ -271,8 +265,7 @@ this isn't always possible.
 This is know issue, in future versions it will be resolved.
 
 
-7. Debugging
-------------
+## 7. Debugging
 WARNING: This section contains information about the various tools that
 are included for debugging ResidualVM, this should not be necessary for
 normal play at all! However, the curious might like to know how to access
@@ -346,8 +339,7 @@ go          | Jump to a node
 var         | Display or alter the value of a variable from the game state
 
 
-8. Bug Reports
---------------
+## 8. Bug Reports
 ResidualVM still has a few bugs, many might already have been reported,
 but should you find a new one, don't hesitate to report it.
 
@@ -367,8 +359,7 @@ Remember to always have the following information in your bug reports:
   * Preferably also a link to a save game right before the bug happened.
 
 
-9. Contact
-----------
+## 9. Contact
   * Homepage: http://www.residualvm.org/
   * Wiki: http://wiki.residualvm.org/
   * Forums: http://forums.residualvm.org/
