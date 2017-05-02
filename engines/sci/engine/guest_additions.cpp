@@ -429,7 +429,10 @@ reg_t GuestAdditions::promptSaveRestoreDefault(EngineState *s, int argc, reg_t *
 				descriptionId = argv[0];
 			}
 			SciArray &description = *_segMan->lookupArray(descriptionId);
-			description.fromString(dialog.getResultString());
+			Common::String descriptionString = dialog.getResultString();
+			if (descriptionString.empty())
+				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
+			description.fromString(descriptionString);
 		}
 	} else {
 		if (s->_delayedRestoreGameId != -1) {
@@ -463,7 +466,10 @@ reg_t GuestAdditions::promptSaveRestoreTorin(EngineState *s, int argc, reg_t *ar
 			reg_t descriptionId = s->variables[VAR_LOCAL][1];
 			reg_t dataId;
 			SciArray &description = *_segMan->allocateArray(kArrayTypeString, 0, &dataId);
-			description.fromString(dialog.getResultString());
+			Common::String descriptionString = dialog.getResultString();
+			if (descriptionString.empty())
+				descriptionString = dialog.createDefaultSaveDescription(saveNo - 1);
+			description.fromString(descriptionString);
 			writeSelector(_segMan, descriptionId, SELECTOR(data), dataId);
 		}
 	} else {
