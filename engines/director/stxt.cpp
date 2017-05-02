@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/director/stxt.h"
+#include "director/stxt.h"
 
 namespace Director {
 

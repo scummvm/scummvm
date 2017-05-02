@@ -28,7 +28,7 @@
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/images.h"
-#include "engines/director/stxt.h"
+#include "director/stxt.h"
 
 namespace Graphics {
 	class ManagedSurface;

@@ -24,7 +24,7 @@
 #define DIRECTOR_FRAME_H
 
 #include "graphics/managed_surface.h"
-#include "engines/director/stxt.h"
+#include "director/stxt.h"
 
 namespace Image {
 	class ImageDecoder;

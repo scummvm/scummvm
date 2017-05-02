@@ -20,11 +20,12 @@
  *
  */
 
-#include "engines/director/cachedmactext.h"
-#include "engines/director/cast.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macwindowmanager.h"
+
+#include "director/cachedmactext.h"
+#include "director/cast.h"
 
 namespace Director {
 
