@@ -24,6 +24,7 @@
 #define DIRECTOR_FRAME_H
 
 #include "graphics/managed_surface.h"
+#include "engines/director/stxt.h"
 
 namespace Image {
 	class ImageDecoder;
@@ -127,10 +128,9 @@ private:
 	void playTransition(Score *score);
 	void playSoundChannel();
 	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 castId);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::SeekableSubReadStreamEndian *textStream, Common::Rect *textSize);
+	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize);
 	void renderShape(Graphics::ManagedSurface &surface, uint16 spriteId);
-	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId, uint16 textId);
+	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId);
 	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
 	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
