@@ -29,7 +29,8 @@ namespace Director {
 
 class Stxt {
 public:
-	Stxt (Common::SeekableSubReadStreamEndian &textStream);
+	Stxt(Common::SeekableSubReadStreamEndian &textStream);
+
 public:
 	Common::String _ftext;
 	uint32 _fontId;

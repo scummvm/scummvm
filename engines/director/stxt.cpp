@@ -24,7 +24,7 @@
 
 namespace Director {
 
-Stxt::Stxt (Common::SeekableSubReadStreamEndian &textStream) {
+Stxt::Stxt(Common::SeekableSubReadStreamEndian &textStream) {
 	// TODO: Side effects on textStream make this a little hard to understand in context?
 	uint32 unk1 = textStream.readUint32();
 	uint32 strLen = textStream.readUint32();
