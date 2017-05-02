@@ -153,6 +153,8 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 # Default option behavior yes/no
+_ramcheck=yes
+_lowramopts=yes
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
@@ -958,6 +960,9 @@ Optional Features:
   --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --disable-ramcheck       bypass check for sufficient RAM to compile
+  --disable-lowramopts     disable options to help avoid out of memory errors
+                           when building with insufficient RAM
   --enable-release         enable building in release mode (this activates
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
@@ -1275,6 +1280,12 @@ for ac_option in $@; do
 		;;
 	--enable-Werror)
 		append_var CXXFLAGS "-Werror"
+		;;
+	--disable-ramcheck)
+		_ramcheck=no
+		;;
+	--disable-lowramopts)
+		_lowramopts=no
 		;;
 	--enable-release-mode)
 		_release_build=yes
@@ -1991,6 +2002,56 @@ if test "$have_gcc" = yes ; then
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
+
+#
+# Check for sufficient compile time memory
+#
+_low_memory_threshold=256 # in MB
+_low_memory=no
+echo_n "Checking compile time memory... "
+if test "$_ramcheck" = yes ; then
+	_compile_free_memory=-1
+
+	# Linux
+	if test -e /proc/meminfo ; then
+		# /proc/meminfo returns a result in kB so the awk term converts to Mb discarding the decimal fraction.
+		_compile_free_memory=`grep -i MemTotal /proc/meminfo | awk '{ print ($2-$2%1024)/1024 }'`
+	fi
+
+	# BSD / OSX
+	if test -e /usr/sbin/sysctl ; then
+		# /proc/meminfo returns a result in bytes so the awk term converts to Mb discarding the decimal fraction.
+		_compile_free_memory=`sysctl hw.usermem | awk '{ print ($2-$2%(1024*1024))/(1024*1024) }'`
+	fi
+
+	if test "$_compile_free_memory" -eq "-1" ; then
+		echo "Unknown... assuming sufficient"
+	else
+		echo_n $_compile_free_memory
+		echo_n " MB... "
+		if test "$_compile_free_memory" -lt "$_low_memory_threshold" ; then
+			echo insufficient
+			_low_memory=yes
+		else
+			echo ok
+		fi
+	fi
+else
+	echo skipped
+fi
+
+#
+# Update status about low memory compile options
+#
+if test "$_low_memory" = yes; then
+	echo_n "Building with low memory compile options... "
+	if test "$_lowramopts" = "yes" ; then
+		if test "$have_gcc" = yes; then
+			CXXFLAGS="$CXXFLAGS -Wl,--no-keep-memory"
+		fi
+	fi
+	echo $_lowramopts
+fi
 
 #
 # Update status about C++11 mode
