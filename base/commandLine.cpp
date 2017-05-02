@@ -124,6 +124,8 @@ static const char HELP_STRING[] =
 	"  --no-show-fps            Set the turn off display FPS info\n"
 	"  --renderer=RENDERER      Select renderer (software, opengl, opengl_shaders)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
+	"  --bpp=NUM                Select number of bits per pixel, 0 (auto-detect), 16, 32\n"
+	"                           (default: 0) (only supported by software renderer)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
@@ -167,6 +169,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("aspect_ratio", false);
+	ConfMan.registerDefault("bpp", 0);
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -506,6 +509,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("aspect-ratio")
+			END_OPTION
+
+			DO_LONG_OPTION_INT("bpp")
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")

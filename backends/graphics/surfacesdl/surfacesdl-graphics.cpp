@@ -87,7 +87,7 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 	if (_fullscreen)
 		sdlflags |= SDL_FULLSCREEN;
 
-	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, 0, sdlflags);
+	_screen = SDL_SetVideoMode(effectiveWidth, effectiveHeight, ConfMan.getInt("bpp"), sdlflags);
 	if (!_screen) {
 		warning("Error: %s", SDL_GetError());
 		g_system->quit();
@@ -381,6 +381,8 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	deinitializeRenderer();
 
 	uint32 createWindowFlags = 0;
+	Uint32 rmask, gmask, bmask, amask, format;
+	int depth;
 #ifdef USE_SDL_RESIZABLE_WINDOW
 	createWindowFlags |= SDL_WINDOW_RESIZABLE;
 #endif
@@ -400,13 +402,32 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
 
-	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+	switch (bpp) {
+	case 0:
+	case 32:
+		format = SDL_PIXELFORMAT_ARGB8888;
+		break;
+	case 16:
+		format = SDL_PIXELFORMAT_RGB565;
+		break;
+	default:
+		warning("Unsupported bpp value: %i", bpp);
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	_screenTexture = SDL_CreateTexture(_renderer, format, SDL_TEXTUREACCESS_STREAMING, width, height);
 	if (!_screenTexture) {
 		deinitializeRenderer();
 		return nullptr;
 	}
 
-	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	if (!SDL_PixelFormatEnumToMasks(format, &depth, &rmask, &gmask, &bmask, &amask)) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, depth, rmask, gmask, bmask, amask);
 	if (!screen) {
 		deinitializeRenderer();
 		return nullptr;
