@@ -104,7 +104,6 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	g_imuse = nullptr;
 
 	//Set default settings
-	ConfMan.registerDefault("engine_speed", 60);
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("use_arb_shaders", true);
