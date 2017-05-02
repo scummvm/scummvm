@@ -298,10 +298,6 @@ void ThemeItemDrawDataClip::drawSelf(bool draw, bool restore) {
 			_engine->renderer()->drawStepClip(_area, _clip, *step, _dynamicData);
 		}
 	}
-
-	extendedRect.clip(_clip);
-
-	_engine->addDirtyRect(extendedRect);
 }
 
 void ThemeItemTextData::drawSelf(bool draw, bool restore) {
