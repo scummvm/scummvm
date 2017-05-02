@@ -55,6 +55,8 @@ GfxCursor32::~GfxCursor32() {
 }
 
 void GfxCursor32::hide() {
+	debugC(kDebugLevelGraphics, "[%d, %d] Hiding cursor: %d -> %d hides", _position.x, _position.y, _hideCount, _hideCount + 1);
+
 	if (_hideCount++) {
 		return;
 	}
@@ -68,8 +70,11 @@ void GfxCursor32::revealCursor() {
 	_cursorBack.rect = _cursor.rect;
 	_cursorBack.rect.clip(_vmapRegion.rect);
 	if (_cursorBack.rect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Not revealing due to empty cursorBack", _position.x, _position.y);
 		return;
 	}
+
+	debugC(kDebugLevelGraphics, "[%d, %d] Revealing cursor: %d, %d, %d, %d", _position.x, _position.y, PRINT_RECT(_cursor.rect));
 
 	readVideo(_cursorBack);
 	_drawBuff1.rect = _cursor.rect;
@@ -80,12 +85,14 @@ void GfxCursor32::revealCursor() {
 
 void GfxCursor32::paint(DrawRegion &target, const DrawRegion &source) {
 	if (source.rect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Not painting due to empty source rect: %d, %d, %d, %d", _position.x, _position.y, PRINT_RECT(source.rect));
 		return;
 	}
 
 	Common::Rect drawRect(source.rect);
 	drawRect.clip(target.rect);
 	if (drawRect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Not painting due to empty draw rect: %d, %d, %d, %d (target: %d, %d, %d, %d)", _position.x, _position.y, PRINT_RECT(drawRect), PRINT_RECT(target.rect));
 		return;
 	}
 
@@ -126,6 +133,8 @@ void GfxCursor32::drawToHardware(const DrawRegion &source) {
 }
 
 void GfxCursor32::unhide() {
+	debugC(kDebugLevelGraphics, "[%d, %d] Unhiding cursor: %d -> %d hides", _position.x, _position.y, _hideCount, MAX(0, _hideCount - 1));
+
 	if (_hideCount == 0 || --_hideCount) {
 		return;
 	}
@@ -135,6 +144,8 @@ void GfxCursor32::unhide() {
 }
 
 void GfxCursor32::show() {
+	debugC(kDebugLevelGraphics, "[%d, %d] Showing cursor: %d -> 0 hides", _position.x, _position.y, _hideCount);
+
 	if (_hideCount) {
 		_hideCount = 0;
 		_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
@@ -173,6 +184,8 @@ void GfxCursor32::clearRestrictedArea() {
 }
 
 void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo) {
+	debugC(kDebugLevelGraphics, "[%d, %d] Setting cursor view: %d hides", _position.x, _position.y, _hideCount);
+
 	hide();
 
 	_cursorInfo.resourceId = viewId;
@@ -215,6 +228,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		_cursor.skipColor = 255;
 
 		Buffer target(_width, _height, _cursor.data);
+		debugC(kDebugLevelGraphics, "[%d, %d] Cursor view is %d x %d", _position.x, _position.y, _width, _height);
 		if (pixelDouble) {
 			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
 		} else {
@@ -298,12 +312,14 @@ void GfxCursor32::readVideo(DrawRegion &target) {
 
 void GfxCursor32::copy(DrawRegion &target, const DrawRegion &source) {
 	if (source.rect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Not copying due to empty source rect: %d, %d, %d, %d", _position.x, _position.y, PRINT_RECT(source.rect));
 		return;
 	}
 
 	Common::Rect drawRect(source.rect);
 	drawRect.clip(target.rect);
 	if (drawRect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Not copying due to empty draw rect: %d, %d, %d, %d (target %d, %d, %d, %d)", _position.x, _position.y, PRINT_RECT(drawRect), PRINT_RECT(target.rect));
 		return;
 	}
 
@@ -395,12 +411,14 @@ void GfxCursor32::move() {
 	// Cursor moved onto the screen after being offscreen
 	_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 	if (_cursorBack.rect.isEmpty()) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Cursor moved onscreen", _position.x, _position.y);
 		revealCursor();
 		return;
 	}
 
 	// Cursor moved offscreen
 	if (!_cursor.rect.intersects(_vmapRegion.rect)) {
+		debugC(kDebugLevelGraphics, "[%d, %d] Cursor moved offscreen", _position.x, _position.y);
 		drawToHardware(_cursorBack);
 		return;
 	}
