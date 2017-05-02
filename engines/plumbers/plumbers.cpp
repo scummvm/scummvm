@@ -24,6 +24,7 @@
 
 #include "common/config-manager.h"
 #include "common/error.h"
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
 #include "graphics/palette.h"
@@ -50,11 +51,38 @@ PlumbersGame::~PlumbersGame() {
 	delete _console;
 }
 
+static const byte MOUSECURSOR_SCI[] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
+};
+
+static const byte cursorPalette[] = {
+	0, 0, 0,           // Black / Transparent
+	0x80, 0x80, 0x80,  // Gray
+	0xff, 0xff, 0xff   // White
+};
+
 Common::Error PlumbersGame::run() {
 	initGraphics(640, 480, true);
 	_console = new Console(this);
 
-	g_system->showMouse(true);
+	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+	CursorMan.showMouse(true);
 
 	readTables("game.bin");
 
