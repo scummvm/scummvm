@@ -855,11 +855,11 @@ static bool addGameToConf(const GameDescriptor &gd) {
 	return true;
 }
 
-/** Display all games in the given directory, add it to config according to input */
-static bool detectGames(Common::String path, bool addToConfig) {
+/** Display all games in the given directory, return ID of first detected game */
+static Common::String detectGames(Common::String path) {
 	GameList candidates = getGameList(path);
 	if (candidates.empty())
-		return false;
+		return Common::String();
 
 	// Print all the candidate found
 	printf("ID                   Description\n");
@@ -868,11 +868,7 @@ static bool detectGames(Common::String path, bool addToConfig) {
 		printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 	}
 
-	if (addToConfig) {
-		Common::String domain = candidates[0].preferredtarget();
-		ConfMan.setActiveDomain(domain);
-	}
-	return true;
+	return candidates[0].gameid();
 }
 
 /** Add one of the games in the given directory, or current directory if empty */
@@ -1194,11 +1190,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf(HELP_STRING, s_appName);
 		return true;
 	} else if (command == "auto-detect") {
-		// If auto-detects succeed, we want to return false so that the game is started
-		return !detectGames(settings["path"], true);
-		//return true;
+		// If auto-detects fails (returns an empty ID) return true to close ScummVM.
+		// If we get a non-empty ID, we store it in command so that it gets processed together with the
+		// other command line options below.
+		command = detectGames(settings["path"]);
+		if (command.empty())
+			return true;
 	} else if (command == "detect") {
-		detectGames(settings["path"], false);
+		// Ignore the return value of detectGame.
+		detectGames(settings["path"]);
 		return true;
 	} else if (command == "add") {
 		addGame(settings["path"]);
