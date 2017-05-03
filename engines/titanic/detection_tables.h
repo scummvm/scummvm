@@ -34,6 +34,18 @@ static const TitanicGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
+	
+	{
+		{
+			"titanic",
+			0,
+			AD_ENTRY1s("newgame.st", "db22924adfd6730f4b79f4e51b25e779", 87608),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
 
 	// German version currently disabled because it won't start up,
 	// even with the English generated titanic.dat file
