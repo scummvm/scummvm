@@ -3183,7 +3183,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.004", 0, "7b7bf3337ebaa2124f557ee3c522f406", 44560744},
 		{"resmap.005", 0, "86cb97f0b5a138b842035d15d222d8c8", 1963},
 		{"ressci.005", 0, "e22a46a3dd54971471b29454ff0352c7", 70558313},
-		{"resource.aud", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
+		//{"resaud.001", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
+		//{"resaud.002", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
+		//{"ressfx.001", 0, "343a6ca9ddd614541b11b155de6368ac", 90268706},
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
 #endif	// ENABLE_SCI3_GAMES
