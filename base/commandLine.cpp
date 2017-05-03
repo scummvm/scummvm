@@ -126,6 +126,8 @@ static const char HELP_STRING[] =
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --bpp=NUM                Select number of bits per pixel, 0 (auto-detect), 16, 32\n"
 	"                           (default: 0) (only supported by software renderer)\n"
+	"  --[no-]dirtyrects        Enable dirty rectangles optimisation in software renderer\n"
+	"                           (default: enabled)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
@@ -171,6 +173,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("show_fps", false);
 	ConfMan.registerDefault("aspect_ratio", false);
+	ConfMan.registerDefault("dirtyrects", true);
 	ConfMan.registerDefault("bpp", 0);
 
 	// Sound & Music
@@ -512,6 +515,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION_INT("bpp")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("dirtyrects")
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")

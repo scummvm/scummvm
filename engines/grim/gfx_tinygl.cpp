@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -94,6 +95,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_pixelFormat = buf.getFormat();
 	_zb = new TinyGL::FrameBuffer(screenW, screenH, buf);
 	TinyGL::glInit(_zb, 256);
+	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
 	_storedDisplay.create(_pixelFormat, _gameWidth * _gameHeight, DisposeAfterUse::YES);
 	_storedDisplay.clear(_gameWidth * _gameHeight);

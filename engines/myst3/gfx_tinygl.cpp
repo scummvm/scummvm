@@ -26,6 +26,7 @@
 #undef ARRAYSIZE
 #endif
 
+#include "common/config-manager.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 
@@ -71,6 +72,7 @@ void TinyGLRenderer::init() {
 	Graphics::PixelBuffer screenBuffer = _system->getScreenPixelBuffer();
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb, 512);
+	tglEnableDirtyRects(ConfMan.getBool("dirtyrects"));
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
