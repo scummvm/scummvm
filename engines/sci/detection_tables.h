@@ -4242,6 +4242,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 3 - English DOS (from telanus, bug report #9626)
+	// Game version 1.0P - 1989-03-22
+	// SCI interpreter version 0.000.453
+	{"sq3", "", {
+		{"resource.map", 0, "6dd8f59dd8a0c8131f34b159044e645e", 5598},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 312537},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 325576},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 170496},
+		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 321377},
+		{"resource.005", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 328162},
+		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356560},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Space Quest 3 - English Mac (from Fingolfin)
 	{"sq3", "", {
 		{"resource.map", 0, "5c931675c6e01c4b418faca85d76c92c", 5844},
