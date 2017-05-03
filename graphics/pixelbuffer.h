@@ -124,17 +124,22 @@ public:
 	inline void setPixelAt(int pixel, uint32 value) {
 		switch (_format.bytesPerPixel) {
 		case 2:
-			((uint16 *) _buffer)[pixel] = TO_LE_16((uint16) value);
+			((uint16 *) _buffer)[pixel] = value;
 			return;
 		case 3:
 			pixel *= 3;
-			value = TO_LE_32(value);
+#if defined(SCUMM_BIG_ENDIAN)
+			_buffer[pixel + 0] = (value >> 16) & 0xFF;
+			_buffer[pixel + 1] = (value >> 8) & 0xFF;
+			_buffer[pixel + 2] = value & 0xFF;
+#elif defined(SCUMM_LITTLE_ENDIAN)
 			_buffer[pixel + 0] = value & 0xFF;
 			_buffer[pixel + 1] = (value >> 8) & 0xFF;
 			_buffer[pixel + 2] = (value >> 16) & 0xFF;
+#endif
 			return;
 		case 4:
-			((uint32 *) _buffer)[pixel] = TO_LE_32(value);
+			((uint32 *) _buffer)[pixel] = value;
 			return;
 		}
 		error("setPixelAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
@@ -202,7 +207,7 @@ public:
 	inline uint32 getValueAt(int i) const {
 		switch (_format.bytesPerPixel) {
 		case 2:
-			return FROM_LE_16(((uint16 *) _buffer)[i]);
+			return ((uint16 *) _buffer)[i];
 		case 3:
 			i *= 3;
 #if defined(SCUMM_BIG_ENDIAN)
@@ -211,7 +216,7 @@ public:
 			return _buffer[i + 0] | (_buffer[i + 1] << 8) | (_buffer[i + 2] << 16);
 #endif
 		case 4:
-			return FROM_LE_32(((uint32 *) _buffer)[i]);
+			return ((uint32 *) _buffer)[i];
 		}
 		error("getValueAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
 	}
