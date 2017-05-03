@@ -90,10 +90,10 @@ void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const Pixe
 	if (buf._format == _format) {
 		memcpy(_buffer + thisFrom * _format.bytesPerPixel, buf._buffer + otherFrom * _format.bytesPerPixel, length * _format.bytesPerPixel);
 	} else {
-		uint8 r, g, b;
+		uint8 r, g, b, a;
 		for (int i = 0; i < length; ++i) {
-			buf.getRGBAt(i + otherFrom, r, g, b);
-			setPixelAt(i + thisFrom, r, g, b);
+			buf.getARGBAt(i + otherFrom, a, r, g, b);
+			setPixelAt(i + thisFrom, a, r, g, b);
 		}
 	}
 }
