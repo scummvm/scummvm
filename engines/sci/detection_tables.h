@@ -1905,6 +1905,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
 
+	// King's Quest 7 - Italian DOS (from dego93 on bug report Trac#9739)
+	// VERSION file reports "2.00"
+	{"kq7", "", {
+		{"resource.aud", 0, "649ce88c0786c0ed4b637728d20ddc9b", 202663332},
+		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		{"resource.map", 0, "c174fb32f045112e210373a31681d97f", 18709},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+
+	// King's Quest 7 - Italian Windows (from dego93 on bug report Trac#9739)
+	// VERSION file reports "2.00"
+	{"kq7", "", {
+		{"resource.aud", 0, "649ce88c0786c0ed4b637728d20ddc9b", 202663332},
+		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		{"resource.map", 0, "c174fb32f045112e210373a31681d97f", 18709},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+
 	// King's Quest 7 - Spanish DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
 	{"kq7", "", {
