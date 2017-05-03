@@ -3992,6 +3992,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
 
+	// Shivers - French Windows (from legluondunet in bug report Trac#9742)
+	{"shivers", "", {
+		{"resmap.000", 0, "73bee036dc8ece0d03f637eb340ea428", 46543},
+		{"ressci.000", 0, "8d45ebb1e5a13468d10e676b8dbce682", 262161072},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING, GUIO_SHIVERS },
+
 	// Shivers - English Windows Non-interactive Demo
 	// Executable scanning reports "2.100.002"
 	{"shivers", "Non-interactive Demo", {
