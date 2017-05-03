@@ -211,16 +211,10 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	if (pixels != NULL) {
 		Graphics::PixelBuffer src(formatType2PixelFormat(format, type), pixels);
 		if (width != c->_textureSize || height != c->_textureSize) {
-			Graphics::PixelBuffer src_conv(pf, width * height, DisposeAfterUse::YES);
-			src_conv.copyBuffer(
-				0,
-				width * height,
-				src
-			);
 			// we use interpolation for better looking result
 			gl_resizeImage(
-				internal.getRawBuffer(), c->_textureSize, c->_textureSize,
-				src_conv.getRawBuffer(), width, height
+				internal, c->_textureSize, c->_textureSize,
+				src, width, height
 			);
 		} else {
 			internal.copyBuffer(

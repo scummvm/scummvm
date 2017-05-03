@@ -423,10 +423,10 @@ void free_texture(GLContext *c, int h);
 void free_texture(GLContext *c, GLTexture *t);
 
 // image_util.c
-void gl_resizeImage(unsigned char *dest, int xsize_dest, int ysize_dest,
-					unsigned char *src, int xsize_src, int ysize_src);
-void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_dest,
-								 unsigned char *src, int xsize_src, int ysize_src);
+void gl_resizeImage(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+		    const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
+void gl_resizeImageNoInterpolate(Graphics::PixelBuffer &dest, int xsize_dest, int ysize_dest,
+				 const Graphics::PixelBuffer &src, int xsize_src, int ysize_src);
 
 void tglIssueDrawCall(Graphics::DrawCall *drawCall);
 
