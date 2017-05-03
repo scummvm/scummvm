@@ -1880,6 +1880,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
 
+	// King's Quest 7 - French Windows (from bgK)
+	// VERSION 1.65c
+	{"kq7", "", {
+		{"resource.aud", 0, "d8b89ef2f7248c63d5810f2e49fb7255", 205546166},
+		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
+		{"resource.map", 0, "a134fc9138b0830d8197877c52ed7aaa", 18925},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+
 	// King's Quest 7 - English DOS (from FRG)
 	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
 	{"kq7", "", {
