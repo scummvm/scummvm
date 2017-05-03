@@ -3096,6 +3096,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Some versions of Phantasmagoria 2 were heavily censored.
 	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany
 
+	// for more information on this matter, see:
+	// http://wiki.scummvm.org/index.php/SCI/Phantasmagoria_2_Censorship
+
 	// Phantasmagoria 2 - English Windows (from jvprat) - US release
 	// Note: Fully uncensored
 	//
@@ -3127,6 +3130,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
 	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
+	//       Another scene was fully replaced (Therese attacks Curtis), reasons unknown. The German/French one is more suspenseful.
 	//
 	// Windows executable scanning reports "unknown" - "Dec 07 1996 15:42:02"
 	// DOS executable scanning reports "unknown" - "Dec 07 1996 08:35:12"
@@ -3162,6 +3166,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "b6f090a2c8fc955d17b8a47085b2f890", 68231525},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
+
+	// Phantasmagoria 2 - Japanese Windows (supplied by m_kiewitz)
+	// Features English voices w/ Japanese subtitles. Background images were also localized to Japanese.
+	// DUK-videos also have subtitles.
+	// Windows executable scanning reports "3.000.000" - "Apr 22 1997 17:09:05"
+	// VERSION file reports "001.0.000"
+	{"phantasmagoria2", "", {
+		{"resmap.001", 0, "36f634180bf509e07f48ca70e8ab43dd", 1114},
+		{"ressci.001", 0, "b8aa3ea7e47425f89fcf9cf025c96760", 24492681},
+		{"resmap.002", 0, "5c391e1c94fd441a9dd4a4bfcf74af7f", 1126},
+		{"ressci.002", 0, "eaaac2587030149e2b92419ce6512772", 34464287},
+		{"resmap.003", 0, "31cc508a52c521573536fcbe793d3c33", 1168},
+		{"ressci.003", 0, "eaaac2587030149e2b92419ce6512772", 38714934},
+		{"resmap.004", 0, "5349a40c053fc0a18eada8d92954aa4c", 1303},
+		{"ressci.004", 0, "7b7bf3337ebaa2124f557ee3c522f406", 44560744},
+		{"resmap.005", 0, "86cb97f0b5a138b842035d15d222d8c8", 1963},
+		{"ressci.005", 0, "e22a46a3dd54971471b29454ff0352c7", 70558313},
+		{"resource.aud", 0, "3b4c5f92e5143fd3539b227e48ac2929", 8414502},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO_PHANTASMAGORIA2 },
 #endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
