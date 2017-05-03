@@ -34,6 +34,10 @@
 #include "sherlock/scalpel/tsage/resources.h"
 #include "sherlock/screen.h"
 
+#ifdef __SYMBIAN32__
+#undef remove
+#endif //__SYMBIAN32__
+
 namespace Sherlock {
 namespace Scalpel {
 
