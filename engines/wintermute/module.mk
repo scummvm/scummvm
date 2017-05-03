@@ -103,7 +103,6 @@ MODULE_OBJS := \
 	debugger/watch.o \
 	debugger/watch_instance.o \
 	detection.o \
-	math/math_util.o \
 	math/matrix4.o \
 	math/vector2.o \
 	platform_osystem.o \

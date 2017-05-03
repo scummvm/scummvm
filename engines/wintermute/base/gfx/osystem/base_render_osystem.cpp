@@ -26,18 +26,18 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "common/config-manager.h"
+#include "common/math.h"
+#include "common/queue.h"
+#include "common/system.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "common/system.h"
 #include "graphics/transparent_surface.h"
-#include "common/queue.h"
-#include "common/config-manager.h"
 
 #define DIRTY_RECT_LIMIT 800
 
@@ -531,10 +531,10 @@ Rect32 BaseRenderOSystem::getViewPort() {
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 	return;
-	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
-	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
-	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderLeft);
-	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderTop);
+	int newWidth = (int16)ceil(rect->width() * _ratioX);
+	int newHeight = (int16)ceil(rect->height() * _ratioY);
+	rect->left = (int16)Common::nearestIntf(rect->left * _ratioX + _borderLeft);
+	rect->top = (int16)Common::nearestIntf(rect->top * _ratioY + _borderTop);
 	rect->setWidth(newWidth);
 	rect->setHeight(newHeight);
 }
@@ -548,8 +548,8 @@ void BaseRenderOSystem::pointFromScreen(Point32 *point) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderOSystem::pointToScreen(Point32 *point) {
-	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
-	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
+	point->x = (int16)ceil(point->x * _ratioX) + _borderLeft - _renderRect.left;
+	point->y = (int16)ceil(point->y * _ratioY) + _borderTop - _renderRect.top;
 }
 
 //////////////////////////////////////////////////////////////////////////
