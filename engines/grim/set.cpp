@@ -417,13 +417,13 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	_pos = Math::Vector3d::getVector3d(v);
 
 	data->read(v, sizeof(float) * 4);
-	Math::Quaternion q(get_float(v), get_float(v + 4), get_float(v + 8), get_float(v + 12));
+	Math::Quaternion q(READ_LE_FLOAT(v), READ_LE_FLOAT(v + 4), READ_LE_FLOAT(v + 8), READ_LE_FLOAT(v + 12));
 	q.toMatrix(_rot);
 
 	data->read(v, sizeof(float) * 3);
-	_fov   = get_float(v);
-	_nclip = get_float(v + 4);
-	_fclip = get_float(v + 8);
+	_fov   = READ_LE_FLOAT(v);
+	_nclip = READ_LE_FLOAT(v + 4);
+	_fclip = READ_LE_FLOAT(v + 8);
 
 	delete[] fileName;
 }
@@ -625,7 +625,7 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_type = (LightType)data->readSint32LE();
 
 	data->read(v, sizeof(float));
-	setIntensity(get_float(v));
+	setIntensity(READ_LE_FLOAT(v));
 
 	int j = data->readSint32LE();
 	// This always seems to be 0
@@ -638,10 +638,10 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_color.getBlue() = data->readSint32LE();
 
 	data->read(v, sizeof(float) * 4);
-	_falloffNear = get_float(v);
-	_falloffFar = get_float(v + 4);
-	setUmbra(get_float(v + 8));
-	setPenumbra(get_float(v + 12));
+	_falloffNear = READ_LE_FLOAT(v);
+	_falloffFar = READ_LE_FLOAT(v + 4);
+	setUmbra(READ_LE_FLOAT(v + 8));
+	setPenumbra(READ_LE_FLOAT(v + 12));
 
 	_enabled = true;
 }

@@ -57,7 +57,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// Next four bytes are the frames per second
 	// The fps value seems to be ignored and causes the animation the first time manny
 	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
-//  _fps = get_float(data + 52);
+//  _fps = READ_LE_FLOAT(data + 52);
 	_fps = 15.;
 	// Next four bytes are the number of frames
 	data->seek(56, SEEK_SET);
@@ -73,7 +73,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numMarkers; i++) {
 		char f[4];
 		data->read(f, 4);
-		_markers[i].frame = get_float(f);
+		_markers[i].frame = READ_LE_FLOAT(f);
 	}
 
 	data->seek(104, SEEK_SET);
@@ -211,16 +211,16 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 }
 
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *data) {
-	_frame = get_float(data);
+	_frame = READ_LE_FLOAT(data);
 	_flags = READ_LE_UINT32(data + 4);
 	_pos = Math::Vector3d::getVector3d(data + 8);
-	_pitch = get_float(data + 20);
-	_yaw = get_float(data + 24);
-	_roll = get_float(data + 28);
+	_pitch = READ_LE_FLOAT(data + 20);
+	_yaw = READ_LE_FLOAT(data + 24);
+	_roll = READ_LE_FLOAT(data + 28);
 	_dpos = Math::Vector3d::getVector3d(data + 32);
-	_dpitch = get_float(data + 44);
-	_dyaw = get_float(data + 48);
-	_droll = get_float(data + 52);
+	_dpitch = READ_LE_FLOAT(data + 44);
+	_dyaw = READ_LE_FLOAT(data + 48);
+	_droll = READ_LE_FLOAT(data + 52);
 }
 
 void KeyframeAnim::KeyframeNode::loadBinary(Common::SeekableReadStream *data, char *meshName) {

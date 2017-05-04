@@ -60,7 +60,7 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 		data->read(name, nameLength);
 		char f[4];
 		data->read(f, 4);
-		float length = get_float(f);
+		float length = READ_LE_FLOAT(f);
 		int numTracks = data->readUint32LE();
 
 		if (length == 1000)
@@ -110,8 +110,8 @@ void EMICostume::load(Common::SeekableReadStream *data) {
 				float time, value;
 				char v[8];
 				data->read(v, 8);
-				time = get_float(v);
-				value = get_float(v + 4);
+				time = READ_LE_FLOAT(v);
+				value = READ_LE_FLOAT(v + 4);
 				track.keys[j].time = (int)(time * 1000);
 				length = MAX(length, time * 1000);
 				track.keys[j].value = (int)value;

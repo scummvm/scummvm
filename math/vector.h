@@ -124,7 +124,7 @@ void MatrixType<dim, 1>::readFromStream(Common::ReadStream *stream) {
 	stream->read(buf, size);
 
 	for (int i = 0; i < dim; ++i) {
-		setValue(i, get_float(buf + i * sizeof(float)));
+		setValue(i, READ_LE_FLOAT(buf + i * sizeof(float)));
 	}
 }
 

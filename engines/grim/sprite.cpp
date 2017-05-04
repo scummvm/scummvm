@@ -76,8 +76,8 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	}
 	char data[20];
 	stream->read(data, sizeof(data));
-	_width = get_float(data);
-	_height = get_float(data + 4);
+	_width = READ_LE_FLOAT(data);
+	_height = READ_LE_FLOAT(data + 4);
 	_pos = Math::Vector3d::getVector3d(data + 8);
 	for (int i = 0; i < 4; ++i) {
 		_alpha[i] = stream->readSint32LE();
@@ -88,9 +88,9 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	for (int i = 0; i < 4; ++i) {
 		char f[4];
 		stream->read(f, 4);
-		_texCoordX[i] = get_float(f);
+		_texCoordX[i] = READ_LE_FLOAT(f);
 		stream->read(f, 4);
-		_texCoordY[i] = get_float(f);
+		_texCoordY[i] = READ_LE_FLOAT(f);
 	}
 	_flags2 = stream->readUint32LE();
 	if (_flags2 & ~(DepthTest | AlphaTest)) {

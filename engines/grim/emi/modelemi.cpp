@@ -111,7 +111,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		}
 	}
 	_meshName = nameString;
-	_radius = get_float(f);
+	_radius = READ_LE_FLOAT(f);
 	_center->readFromStream(data);
 
 	_boxData->readFromStream(data);
@@ -208,7 +208,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 			_boneInfos[i]._incFac = data->readUint32LE();
 			_boneInfos[i]._joint = data->readUint32LE();
 			data->read(f, 4);
-			_boneInfos[i]._weight = get_float(f);
+			_boneInfos[i]._weight = READ_LE_FLOAT(f);
 		}
 	} else {
 		_numBones = 0;

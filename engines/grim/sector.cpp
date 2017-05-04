@@ -212,7 +212,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 
 	char f[4];
 	data->read(f, 4);
-	_height = get_float(f);
+	_height = READ_LE_FLOAT(f);
 }
 
 void Sector::setVisible(bool vis) {

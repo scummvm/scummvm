@@ -91,7 +91,7 @@ public:
 	 * @return	The retrieved Vector3d
 	 */
 	inline static Vector3d getVector3d(const char *data) {
-		return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
+		return Vector3d(READ_LE_FLOAT(data), READ_LE_FLOAT(data + 4), READ_LE_FLOAT(data + 8));
 	}
 
 };

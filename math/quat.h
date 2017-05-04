@@ -82,7 +82,7 @@ public:
 	 * @return              The new Quaternion
 	 */
 	inline static Quaternion getQuaternion(const char *data) {
-		return Quaternion(get_float(data), get_float(data + 4), get_float(data + 8), get_float(data + 12));
+		return Quaternion(READ_LE_FLOAT(data), READ_LE_FLOAT(data + 4), READ_LE_FLOAT(data + 8), READ_LE_FLOAT(data + 12));
 	}
 
 	/**

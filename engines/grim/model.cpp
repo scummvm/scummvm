@@ -126,7 +126,7 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
 	data->read(f, 4);
-	_radius = get_float(f);
+	_radius = READ_LE_FLOAT(f);
 	data->seek(36, SEEK_CUR);
 	data->read(v3, 3 * 4);
 	_insertOffset = Math::Vector3d::getVector3d(v3);
@@ -329,7 +329,7 @@ int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]
 	int materialPtr = data->readUint32LE();
 	data->seek(12, SEEK_CUR);
 	data->read(f, 4);
-	_extraLight = get_float(f);
+	_extraLight = READ_LE_FLOAT(f);
 	data->seek(12, SEEK_CUR);
 	data->read(v3, 4 * 3);
 	_normal = Math::Vector3d::getVector3d(v3);
@@ -435,27 +435,27 @@ void Mesh::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < 3 * _numVertices; i++) {
 		data->read(f, 4);
-		_vertices[i] = get_float(f);
+		_vertices[i] = READ_LE_FLOAT(f);
 	}
 	for (int i = 0; i < 2 * _numTextureVerts; i++) {
 		data->read(f, 4);
-		_textureVerts[i] = get_float(f);
+		_textureVerts[i] = READ_LE_FLOAT(f);
 	}
 	for (int i = 0; i < _numVertices; i++) {
 		data->read(f, 4);
-		_verticesI[i] = get_float(f);
+		_verticesI[i] = READ_LE_FLOAT(f);
 	}
 	data->seek(_numVertices * 4, SEEK_CUR);
 	for (int i = 0; i < _numFaces; i++)
 		_materialid[i] = _faces[i].loadBinary(data, materials);
 	for (int i = 0; i < 3 * _numVertices; i++) {
 		data->read(f, 4);
-		_vertNormals[i] = get_float(f);
+		_vertNormals[i] = READ_LE_FLOAT(f);
 	}
 	_shadow = data->readUint32LE();
 	data->seek(4, SEEK_CUR);
 	data->read(f, 4);
-	_radius = get_float(f);
+	_radius = READ_LE_FLOAT(f);
 	data->seek(24, SEEK_CUR);
 	sortFaces();
 }
@@ -626,11 +626,11 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	data->read(v3, 4 * 3);
 	_pos = Math::Vector3d::getVector3d(v3);
 	data->read(f, 4);
-	float pitch = get_float(f);
+	float pitch = READ_LE_FLOAT(f);
 	data->read(f, 4);
-	float yaw = get_float(f);
+	float yaw = READ_LE_FLOAT(f);
 	data->read(f, 4);
-	float roll = get_float(f);
+	float roll = READ_LE_FLOAT(f);
 	_rot = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
 	_animRot = _rot;
 	_animPos = _pos;

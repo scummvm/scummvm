@@ -291,7 +291,7 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 	for (uint32 i = 0; i < _numCoords * 4; ++i) {
 		char f[4];
 		o->read(f, 4);
-		_texc[i] = get_float(f);
+		_texc[i] = READ_LE_FLOAT(f);
 	}
 
 	_layers = new Layer[_numLayers];
