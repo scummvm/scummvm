@@ -609,7 +609,23 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 #endif
 
 // ResidualVM specific:
+#if defined(SCUMM_BIG_ENDIAN)
+
 inline float get_float(const char *data) {
-	return (float)FROM_LE_32(*data);
+	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
+	unsigned char fdata[4];
+	fdata[0] = udata[3];
+	fdata[1] = udata[2];
+	fdata[2] = udata[1];
+	fdata[3] = udata[0];
+	return *(reinterpret_cast<const float *>(fdata));
 }
+
+#else
+
+inline float get_float(const char *data) {
+	return *(reinterpret_cast<const float *>(data));
+}
+#endif
+
 #endif
