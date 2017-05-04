@@ -3148,7 +3148,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Phantasmagoria 2 - German DOS/Windows (supplied by AReim1982)
 	// Note: Fully uncensored, but one scene is missing probably because of a mastering error (Curtis + Therese meeting near water cooler)
-	//       Another scene was fully replaced (Therese attacks Curtis), reasons unknown. The German/French one is more suspenseful.
+	//       Another scene was cut differently (Therese attacks Curtis), reasons unknown. Violence and/or blood were not changed.
+	//       The German/French one is way shorter, less suspenseful and without any dialog.
 	//
 	// Windows executable scanning reports "unknown" - "Dec 07 1996 15:42:02"
 	// DOS executable scanning reports "unknown" - "Dec 07 1996 08:35:12"
