@@ -61,28 +61,6 @@ public:
 	void run();
 
 #pragma mark -
-#pragma mark Benchmarking
-private:
-	/**
-	 * Optimization to avoid the more expensive object name
-	 * comparision on every call to kAddScreenItem and
-	 * kRemoveScreenItem.
-	 */
-	bool _benchmarkingFinished;
-
-	/**
-	 * Whether or not calls to kFrameOut should be framerate
-	 * limited to 60fps.
-	 */
-	bool _throttleFrameOut;
-
-	/**
-	 * Determines whether or not a screen item is the "Fred"
-	 * object.
-	 */
-	bool checkForFred(const reg_t object);
-
-#pragma mark -
 #pragma mark Screen items
 private:
 	void remapMarkRedraw();

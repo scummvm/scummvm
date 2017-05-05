@@ -107,6 +107,9 @@ static const char *const selectorNameTable[] = {
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
+	"posn",         // SCI2 benchmarking script
+	"detailLevel",  // GK2 benchmarking
+	"view",         // RAMA benchmarking
 #endif
 	NULL
 };
@@ -141,7 +144,10 @@ enum ScriptPatcherSelectors {
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
-	SELECTOR_scrollSelections
+	SELECTOR_scrollSelections,
+	SELECTOR_posn,
+	SELECTOR_detailLevel,
+	SELECTOR_view
 #endif
 };
 
@@ -217,6 +223,34 @@ static const uint16 sci21IntArrayPatch[] = {
 	0x34, PATCH_UINT16(0x0001), // ldi 0001 (waste bytes)
 	PATCH_END
 };
+
+// Most SCI32 games have a video performance benchmarking loop at the
+// beginning of the game. Running this benchmark with calls to
+// `OSystem::updateScreen` will often cause the benchmark to return a low value,
+// which causes games to disable some visual effects. Running without calls to
+// `OSystem::updateScreen` on any reasonably modern CPU will cause the benchmark
+// to overflow, leading to randomly disabled effects. This patch changes the
+// benchmarking code to always return the game's maximum speed value.
+//
+// Applies to at least: GK1 floppy, PQ4 floppy, PQ4CD, LSL6hires, Phant1,
+// Shivers, SQ6
+static const uint16 sci2BenchmarkSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(init),  // pushi init
+	0x76,                        // push0
+	0x38, SIG_SELECTOR16(posn),  // pushi posn
+	SIG_END
+};
+
+static const uint16 sci2BenchmarkPatch[] = {
+	0x7a,                         // push2
+	0x38, SIG_UINT16(64908),      // pushi 64908
+	0x76,                         // push0
+	0x43, 0x03, SIG_UINT16(0x04), // callk DisposeScript[3], 4
+	0x48,                         // ret
+	PATCH_END
+};
+
 #endif
 
 // ===========================================================================
@@ -1042,6 +1076,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,    gk1PatchDay6PoliceBeignet },
 	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,      gk1PatchDay6PoliceSleep },
 	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
@@ -1095,9 +1130,39 @@ static const uint16 gk2VolumeResetPatch[] = {
 	PATCH_END
 };
 
+// GK2 has custom video benchmarking code that needs to be disabled; see
+// sci2BenchmarkSignature
+static const uint16 gk2BenchmarkSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2), // line
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x76,                      // push0
+	0x51, SIG_ADDTOOFFSET(+1), // class Actor
+	0x4a, SIG_UINT16(0x04),    // send 4
+	0xa5, 0x00,                // sat 0
+	0x7e, SIG_ADDTOOFFSET(+2), // line
+	0x7e, SIG_ADDTOOFFSET(+2), // line
+	0x39, 0x0e,                // pushi $e
+	SIG_MAGICDWORD,
+	0x78,                      // push1
+	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
+	SIG_END
+};
+
+static const uint16 gk2BenchmarkPatch[] = {
+	0x38, PATCH_SELECTOR16(detailLevel), // pushi detailLevel
+	0x78,                                // push1
+	0x38, PATCH_UINT16(399),             // pushi 10000 / 25 - 1
+	0x81, 0x01,                          // lag 1
+	0x4a, PATCH_UINT16(0x06),            // send 6
+	0x34, PATCH_UINT16(10000),           // ldi 10000
+	0x48,                                // ret
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,          gk2VolumeResetPatch },
+	{  true,     0, "disable video benchmarking",                          1, gk2BenchmarkSignature,            gk2BenchmarkPatch },
 	{  true,    23, "inventory starts scroll down in the wrong direction", 1, gk2InvScrollSignature,            gk2InvScrollPatch },
 	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",                       1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -1980,8 +2045,30 @@ static const uint16 kq7PatchSubtitleFix3[] = {
 	PATCH_END
 };
 
+// KQ7 has custom video benchmarking code that needs to be disabled; see
+// sci2BenchmarkSignature
+static const uint16 kq7BenchmarkSignature[] = {
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x76,                      // push0
+	0x51, SIG_ADDTOOFFSET(+1), // class Actor
+	0x4a, SIG_UINT16(0x04),    // send 4
+	0xa5, 0x00,                // sat 0
+	0x39, 0x0e,                // pushi $e
+	SIG_MAGICDWORD,
+	0x78,                      // push1
+	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
+	SIG_END
+};
+
+static const uint16 kq7BenchmarkPatch[] = {
+	0x34, PATCH_UINT16(10000), // ldi 10000
+	0x48,                      // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
+	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,    31, "subtitle fix 1/3",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
 	{  true, 64928, "subtitle fix 2/3",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
 	{  true, 64928, "subtitle fix 3/3",                            1, kq7SignatureSubtitleFix3,                 kq7PatchSubtitleFix3 },
@@ -2337,6 +2424,7 @@ static const uint16 larry6HiresPatchVolumeReset[] = {
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup",             1, larry6HiresSignatureVolumeReset,  larry6HiresPatchVolumeReset },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSignatureSetScale,     larry6HiresPatchSetScale },
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
@@ -3226,6 +3314,7 @@ static const uint16 phant1PatchSavedVolume[] = {
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SignatureSavedVolume,      phant1PatchSavedVolume },
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3454,6 +3543,7 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
@@ -4526,10 +4616,33 @@ static const uint16 qfg4PatchTrapArrayType[] = {
 	PATCH_END
 };
 
+// QFG4 has custom video benchmarking code that needs to be disabled; see
+// sci2BenchmarkSignature
+static const uint16 qfg4BenchmarkSignature[] = {
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x76,                      // push0
+	0x51, SIG_ADDTOOFFSET(+1), // class View
+	0x4a, SIG_UINT16(0x04),    // send 4
+	0xa5, 0x00,                // sat 0
+	0x39, 0x0e,                // pushi $e
+	SIG_MAGICDWORD,
+	0x78,                      // push1
+	0x38, SIG_UINT16(0x270f),  // push $270f (9999)
+	SIG_END
+};
+
+static const uint16 qfg4BenchmarkPatch[] = {
+	0x35, 0x01, // ldi 0
+	0xa1, 0xbf, // sag $bf (191)
+	0x48,       // ret
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable volume reset on startup (floppy)",    1, qfg4SignatureVolumeReset,         qfg4PatchVolumeReset },
 	{  true,     1, "disable volume reset on startup (CD)",        1, qfg4CDSignatureVolumeReset,       qfg4PatchVolumeReset },
+	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,           qfg4BenchmarkPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4SignatureTrapArrayType,       qfg4PatchTrapArrayType },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -5104,6 +5217,31 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
+#pragma mark RAMA
+
+// RAMA has custom video benchmarking code that needs to be disabled; see
+// sci2BenchmarkSignature
+static const uint16 ramaBenchmarkSignature[] = {
+	0x38, SIG_SELECTOR16(view), // pushi view
+	SIG_MAGICDWORD,
+	0x78,                       // push1
+	0x38, SIG_UINT16(0xfdd4),   // pushi 64980
+	SIG_END
+};
+
+static const uint16 ramaBenchmarkPatch[] = {
+	0x34, PATCH_UINT16(10000), // ldi 10000
+	0x48,                      // ret
+	PATCH_END
+};
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry ramaSignatures[] = {
+	{  true, 64908, "disable video benchmarking",                  1, ramaBenchmarkSignature,          ramaBenchmarkPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
 #pragma mark Shivers
 
 // In room 35170, there is a CCTV control station with a joystick that must be
@@ -5137,6 +5275,7 @@ static const uint16 shiversPatchSuperCall[] = {
 static const SciScriptPatcherEntry shiversSignatures[] = {
 	{  true, 35170, "fix CCTV joystick interaction",               1, shiversSignatureSuperCall,     shiversPatchSuperCall },
 	{  true,   990, "fix volume & brightness sliders",             2, shiversSignatureSuperCall,     shiversPatchSuperCall },
+	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,        sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -5175,6 +5314,18 @@ static const uint16 sq6SlowTransitionPatch2[] = {
 	PATCH_END
 };
 
+// SQ6 has custom video benchmarking code that needs to be disabled; see
+// sci2BenchmarkSignature. (The sci2BenchmarkPatch is suitable for use with
+// SQ6 as well.)
+static const uint16 sq6BenchmarkSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(init),  // pushi init
+	0x76,                        // push0
+	0x7e, SIG_ADDTOOFFSET(+2),   // line
+	0x38, SIG_SELECTOR16(posn),  // pushi $140 (posn)
+	SIG_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
@@ -5184,6 +5335,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true, 64908, "disable video benchmarking",                  1, sq6BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
@@ -5786,6 +5938,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #ifdef ENABLE_SCI32
 	case GID_QFG4:
 		signatureTable = qfg4Signatures;
+		break;
+	case GID_RAMA:
+		signatureTable = ramaSignatures;
 		break;
 	case GID_SHIVERS:
 		signatureTable = shiversSignatures;

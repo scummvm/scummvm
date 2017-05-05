@@ -65,8 +65,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_cursor(cursor),
 	_segMan(segMan),
 	_transitions(transitions),
-	_benchmarkingFinished(false),
-	_throttleFrameOut(true),
 	_throttleState(0),
 	_remapOccurred(false),
 	_overdrawThreshold(0),
@@ -153,28 +151,6 @@ bool GfxFrameout::gameIsHiRes() const {
 }
 
 #pragma mark -
-#pragma mark Benchmarking
-
-bool GfxFrameout::checkForFred(const reg_t object) {
-	const int16 viewId = readSelectorValue(_segMan, object, SELECTOR(view));
-	const SciGameId gameId = g_sci->getGameId();
-
-	if (gameId == GID_QFG4 && viewId == 9999) {
-		return true;
-	}
-
-	if (gameId != GID_QFG4 && viewId == -556) {
-		return true;
-	}
-
-	if (Common::String(_segMan->getObjectName(object)) == "fred") {
-		return true;
-	}
-
-	return false;
-}
-
-#pragma mark -
 #pragma mark Screen items
 
 void GfxFrameout::addScreenItem(ScreenItem &screenItem) const {
@@ -226,14 +202,6 @@ void GfxFrameout::deleteScreenItem(ScreenItem &screenItem, const reg_t planeObje
 }
 
 void GfxFrameout::kernelAddScreenItem(const reg_t object) {
-	// The "fred" object is used to test graphics performance;
-	// it is impacted by framerate throttling, so disable the
-	// throttling when this item is on the screen for the
-	// performance check to pass.
-	if (!_benchmarkingFinished && _throttleFrameOut && checkForFred(object)) {
-		_throttleFrameOut = false;
-	}
-
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 
 	_segMan->getObject(object)->setInfoSelectorFlag(kInfoFlagViewInserted);
@@ -273,15 +241,6 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 }
 
 void GfxFrameout::kernelDeleteScreenItem(const reg_t object) {
-	// The "fred" object is used to test graphics performance;
-	// it is impacted by framerate throttling, so disable the
-	// throttling when this item is on the screen for the
-	// performance check to pass.
-	if (!_benchmarkingFinished && checkForFred(object)) {
-		_benchmarkingFinished = true;
-		_throttleFrameOut = true;
-	}
-
 	_segMan->getObject(object)->clearInfoSelectorFlag(kInfoFlagViewInserted);
 
 	const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
@@ -430,7 +389,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 	// we must poll for mouse events instead, poll here so that the mouse gets
 	// updated with its current position at render time. If we do not do this,
 	// the mouse gets "stuck" during loops that do not make calls to kGetEvent,
-	// like transitions and the benchmarking loop at the start of every game.
+	// like transitions.
 	g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
 
 	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
@@ -1177,19 +1136,17 @@ void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 }
 
 void GfxFrameout::throttle() {
-	if (_throttleFrameOut) {
-		uint8 throttleTime;
-		if (_throttleState == 2) {
-			throttleTime = 16;
-			_throttleState = 0;
-		} else {
-			throttleTime = 17;
-			++_throttleState;
-		}
-
-		g_sci->getEngineState()->speedThrottler(throttleTime);
-		g_sci->getEngineState()->_throttleTrigger = true;
+	uint8 throttleTime;
+	if (_throttleState == 2) {
+		throttleTime = 16;
+		_throttleState = 0;
+	} else {
+		throttleTime = 17;
+		++_throttleState;
 	}
+
+	g_sci->getEngineState()->speedThrottler(throttleTime);
+	g_sci->getEngineState()->_throttleTrigger = true;
 }
 
 void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
