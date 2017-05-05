@@ -244,6 +244,9 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	final private void initAudio() throws Exception {
 		_sample_rate = AudioTrack.getNativeOutputSampleRate(
 									AudioManager.STREAM_MUSIC);
+		// Maximum supported resampler rate (see LinearRateConverter)
+		if (_sample_rate >= 131072)
+			_sample_rate = 131071;
 		_buffer_size = AudioTrack.getMinBufferSize(_sample_rate,
 									AudioFormat.CHANNEL_CONFIGURATION_STEREO,
 									AudioFormat.ENCODING_PCM_16BIT);
