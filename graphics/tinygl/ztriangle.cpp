@@ -124,9 +124,9 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
 	unsigned int *pz1 = NULL;
 	unsigned char *pm1 = NULL;
-	int part, update_left, update_right;
+	int part, update_left = 1, update_right = 1;
 
-	int nb_lines, dx1, dy1, tmp, dx2, dy2;
+	int nb_lines, dx1, dy1, tmp, dx2, dy2, y;
 
 	int error = 0, derror = 0;
 	int x1 = 0, dxdy_min = 0, dxdy_max = 0;
@@ -278,35 +278,27 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 		ndtzdx = NB_INTERP * dtzdx;
 	}
 
+	if (fz0 > 0) {
+		l1 = p0;
+		l2 = p2;
+		pr1 = p0;
+		pr2 = p1;
+	} else {
+		l1 = p0;
+		l2 = p1;
+		pr1 = p0;
+		pr2 = p2;
+	}
+	nb_lines = p1->y - p0->y;
+	y = p0->y;
 	for (part = 0; part < 2; part++) {
-		int y;
-		if (part == 0) {
-			if (fz0 > 0) {
-				update_left = 1;
-				update_right = 1;
-				l1 = p0;
-				l2 = p2;
-				pr1 = p0;
-				pr2 = p1;
-			} else {
-				update_left = 1;
-				update_right = 1;
-				l1 = p0;
-				l2 = p1;
-				pr1 = p0;
-				pr2 = p2;
-			}
-			nb_lines = p1->y - p0->y;
-			y = p0->y;
-		} else {
+		if (part == 1) {
 			// second part
 			if (fz0 > 0) {
 				update_left = 0;
-				update_right = 1;
 				pr1 = p1;
 				pr2 = p2;
 			} else {
-				update_left = 1;
 				update_right = 0;
 				l1 = p1;
 				l2 = p2;
