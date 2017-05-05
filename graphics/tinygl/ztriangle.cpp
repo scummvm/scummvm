@@ -378,7 +378,6 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 		// we draw all the scan line of the part
 		while (nb_lines > 0) {
-			nb_lines--;
 			int x = x1;
 			{
 				if (kDrawLogic == DRAW_DEPTH_ONLY ||
@@ -633,6 +632,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 
 			if (kDrawLogic == DRAW_SHADOW || kDrawLogic == DRAW_SHADOW_MASK)
 				pm1 = pm1 + xsize;
+			nb_lines--;
 			y++;
 		}
 	}
