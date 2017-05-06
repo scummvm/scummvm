@@ -106,8 +106,10 @@ void free_texture(GLContext *c, GLTexture *t) {
 
 	for (int i = 0; i < MAX_TEXTURE_LEVELS; i++) {
 		im = &t->images[i];
-		if (im->pixmap)
-			im->pixmap.free();
+		if (im->pixmap) {
+			delete im->pixmap;
+			im->pixmap = nullptr;
+		}
 	}
 
 	gl_free(t);
@@ -137,6 +139,8 @@ void glInitTextures(GLContext *c) {
 	// textures
 	c->texture_2d_enabled = 0;
 	c->current_texture = find_texture(c, 0);
+	c->texture_mag_filter = TGL_LINEAR;
+	c->texture_min_filter = TGL_NEAREST_MIPMAP_LINEAR;
 }
 
 void glopBindTexture(GLContext *c, GLParam *p) {
@@ -182,56 +186,40 @@ void glopTexImage2D(GLContext *c, GLParam *p) {
 	if (border != 0)
 		error("tglTexImage2D: invalid border");
 
-	Graphics::PixelFormat pf;
-	switch (format) {
-		case TGL_RGBA:
-		case TGL_RGB:
-#if defined(SCUMM_BIG_ENDIAN)
-			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#elif defined(SCUMM_LITTLE_ENDIAN)
-			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#endif
-			break;
-		case TGL_BGRA:
-		case TGL_BGR:
-#if defined(SCUMM_BIG_ENDIAN)
-			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 0, 8, 16);
-#elif defined(SCUMM_LITTLE_ENDIAN)
-			pf = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
-#endif
-			break;
-		default:
-			break;
-	}
-	Graphics::PixelBuffer internal(
-		pf,
-		c->_textureSize * c->_textureSize,
-		DisposeAfterUse::NO
-	);
-	if (pixels != NULL) {
-		Graphics::PixelBuffer src(formatType2PixelFormat(format, type), pixels);
-		if (width != c->_textureSize || height != c->_textureSize) {
-			// we use interpolation for better looking result
-			gl_resizeImage(
-				internal, c->_textureSize, c->_textureSize,
-				src, width, height
-			);
-		} else {
-			internal.copyBuffer(
-				0,
-				c->_textureSize * c->_textureSize,
-				src
-			);
-		}
-	}
-
 	c->current_texture->versionNumber++;
 	im = &c->current_texture->images[level];
 	im->xsize = c->_textureSize;
 	im->ysize = c->_textureSize;
-	if (im->pixmap)
-		im->pixmap.free();
-	im->pixmap = internal;
+	if (im->pixmap) {
+		delete im->pixmap;
+		im->pixmap = nullptr;
+	}
+	if (pixels != NULL) {
+		unsigned int filter;
+		Graphics::PixelBuffer src(formatType2PixelFormat(format, type), pixels);
+		if (width > c->_textureSize || height > c->_textureSize)
+			filter = c->texture_mag_filter;
+		else
+			filter = c->texture_min_filter;
+		switch (filter) {
+		case TGL_LINEAR_MIPMAP_NEAREST:
+		case TGL_LINEAR_MIPMAP_LINEAR:
+		case TGL_LINEAR:
+			im->pixmap = new Graphics::BilinearTexelBuffer(
+				src,
+				width, height,
+				c->_textureSize
+			);
+			break;
+		default:
+			im->pixmap = new Graphics::NearestTexelBuffer(
+				src,
+				width, height,
+				c->_textureSize
+			);
+			break;
+		}
+	}
 }
 
 // TODO: not all tests are done
@@ -253,7 +241,7 @@ error:
 }
 
 // TODO: not all tests are done
-void glopTexParameter(GLContext *, GLParam *p) {
+void glopTexParameter(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -265,9 +253,34 @@ error:
 
 	switch (pname) {
 	case TGL_TEXTURE_WRAP_S:
+		c->texture_wrap_s = param;
+		break;
 	case TGL_TEXTURE_WRAP_T:
-		if (param != TGL_REPEAT)
+		c->texture_wrap_t = param;
+		break;
+	case TGL_TEXTURE_MAG_FILTER:
+		switch (param) {
+		case TGL_NEAREST:
+		case TGL_LINEAR:
+			c->texture_mag_filter = param;
+			break;
+		default:
 			goto error;
+		}
+		break;
+	case TGL_TEXTURE_MIN_FILTER:
+		switch (param) {
+		case TGL_LINEAR_MIPMAP_NEAREST:
+		case TGL_LINEAR_MIPMAP_LINEAR:
+		case TGL_NEAREST_MIPMAP_NEAREST:
+		case TGL_NEAREST_MIPMAP_LINEAR:
+		case TGL_NEAREST:
+		case TGL_LINEAR:
+			c->texture_min_filter = param;
+			break;
+		default:
+			goto error;
+		}
 		break;
 	default:
 		;

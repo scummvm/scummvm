@@ -325,8 +325,10 @@ void FrameBuffer::clearOffscreenBuffer(Buffer *buf) {
 	buf->used = false;
 }
 
-void FrameBuffer::setTexture(const Graphics::PixelBuffer &texture) {
+void FrameBuffer::setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt) {
 	current_texture = texture;
+	wrapS = wraps;
+	wrapT = wrapt;
 }
 
 } // end of namespace TinyGL

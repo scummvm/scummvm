@@ -453,6 +453,8 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.shadowMode = c->shadow_mode;
 	state.texture2DEnabled = c->texture_2d_enabled;
 	state.texture = c->current_texture;
+	state.wrapS = c->texture_wrap_s;
+	state.wrapT = c->texture_wrap_t;
 	state.shadowMaskBuf = c->fb->shadow_mask_buf;
 	state.depthFunction = c->fb->getDepthFunc();
 	state.depthWrite = c->fb->getDepthWrite();
@@ -489,6 +491,8 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->shadow_mode = state.shadowMode;
 	c->texture_2d_enabled = state.texture2DEnabled;
 	c->current_texture = state.texture; 
+	c->texture_wrap_s = state.wrapS;
+	c->texture_wrap_t = state.wrapT;
 	c->fb->shadow_mask_buf = state.shadowMaskBuf;
 
 	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));

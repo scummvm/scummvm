@@ -537,6 +537,8 @@ enum {
 	TGL_NEAREST                     = 0x2600,
 	TGL_REPEAT                      = 0x2901,
 	TGL_CLAMP                       = 0x2900,
+	TGL_CLAMP_TO_EDGE		= 0x812F,
+	TGL_MIRRORED_REPEAT		= 0x8370,
 	TGL_S                           = 0x2000,
 	TGL_T                           = 0x2001,
 	TGL_R                           = 0x2002,

@@ -71,6 +71,7 @@ MODULE_OBJS += \
 	tinygl/select.o \
 	tinygl/specbuf.o \
 	tinygl/texture.o \
+	tinygl/texelbuffer.o \
 	tinygl/vertex.o \
 	tinygl/zbuffer.o \
 	tinygl/zline.o \

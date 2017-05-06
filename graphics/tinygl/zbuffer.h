@@ -30,6 +30,7 @@
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/tinygl/texelbuffer.h"
 #include "graphics/tinygl/gl.h"
 #include "common/rect.h"
 
@@ -424,7 +425,7 @@ struct FrameBuffer {
 	void blitOffscreenBuffer(Buffer *buffer);
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
-	void setTexture(const Graphics::PixelBuffer &texture);
+	void setTexture(const Graphics::TexelBuffer *texture, unsigned int wraps, unsigned int wrapt);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
@@ -482,9 +483,10 @@ struct FrameBuffer {
 
 	unsigned char *dctable;
 	int *ctable;
-	Graphics::PixelBuffer current_texture;
+	const Graphics::TexelBuffer *current_texture;
 	int _textureSize;
 	int _textureSizeMask;
+	unsigned int wrapS, wrapT;
 
 	FORCEINLINE bool isBlendingEnabled() const { return _blendingEnabled; }
 	FORCEINLINE void getBlendingFactors(int &sourceFactor, int &destinationFactor) const { sourceFactor = _sourceBlendingFactor; destinationFactor = _destinationBlendingFactor; }
