@@ -439,7 +439,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 		robotPlayer.frameAlmostVisible();
 	}
 
-	_palette->updateHardware(!shouldShowBits);
+	_palette->updateHardware();
 
 	if (shouldShowBits) {
 		showBits();
@@ -547,7 +547,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 
 	_palette->submit(nextPalette);
 	_palette->updateFFrame();
-	_palette->updateHardware(false);
+	_palette->updateHardware();
 	showBits();
 }
 

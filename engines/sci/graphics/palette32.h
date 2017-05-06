@@ -240,11 +240,8 @@ public:
 	/**
 	 * Copies all entries from `nextPalette` to `currentPalette` and updates the
 	 * backend's raw palette.
-	 *
-	 * @param updateScreen If true, this call will also tell the backend to draw
-	 * to the screen.
 	 */
-	void updateHardware(const bool updateScreen = true);
+	void updateHardware();
 
 private:
 	ResourceManager *_resMan;

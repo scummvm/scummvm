@@ -455,7 +455,7 @@ void GfxPalette32::updateFFrame() {
 	g_sci->_gfxRemap32->remapAllTables(_nextPalette != _currentPalette);
 }
 
-void GfxPalette32::updateHardware(const bool updateScreen) {
+void GfxPalette32::updateHardware() {
 	if (_currentPalette == _nextPalette && !_gammaChanged) {
 		return;
 	}
@@ -494,10 +494,6 @@ void GfxPalette32::updateHardware(const bool updateScreen) {
 	}
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
-	if (updateScreen) {
-		g_system->updateScreen();
-	}
-
 	_gammaChanged = false;
 }
 

@@ -122,7 +122,6 @@ void GfxCursor32::drawToHardware(const DrawRegion &source) {
 	byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
 
 	g_system->copyRectToScreen(sourcePixel, source.rect.width(), drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
-	g_system->updateScreen();
 }
 
 void GfxCursor32::unhide() {
@@ -379,6 +378,10 @@ void GfxCursor32::deviceMoved(Common::Point &position) {
 	}
 	if (position.y >= _restrictedArea.bottom) {
 		position.y = _restrictedArea.bottom - 1;
+	}
+
+	if (_position == position) {
+		return;
 	}
 
 	_position = position;

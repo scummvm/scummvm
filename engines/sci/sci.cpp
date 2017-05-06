@@ -816,6 +816,14 @@ void SciEngine::sleep(uint32 msecs) {
 	for (;;) {
 		// let backend process events and update the screen
 		_eventMan->getSciEvent(SCI_EVENT_PEEK);
+#ifdef ENABLE_SCI32
+		// If a game is in a wait loop, kFrameOut is not called, but mouse
+		// movement is still occurring and the screen needs to be updated to
+		// reflect it
+		if (getSciVersion() >= SCI_VERSION_2) {
+			g_system->updateScreen();
+		}
+#endif
 		time = g_system->getMillis();
 		if (time + 10 < wakeUpTime) {
 			g_system->delayMillis(10);
