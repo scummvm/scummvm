@@ -397,13 +397,13 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
 
-	s->wait(sleep_time);
+	const int delta = s->wait(sleep_time);
 
 	if (g_sci->_guestAdditions->kWaitHook()) {
 		return NULL_REG;
 	}
 
-	return s->r_acc;
+	return make_reg(0, delta);
 }
 
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {

@@ -136,13 +136,14 @@ void EngineState::speedThrottler(uint32 neededSleep) {
 	}
 }
 
-void EngineState::wait(int16 ticks) {
+int EngineState::wait(int16 ticks) {
 	uint32 time = g_system->getMillis();
-	r_acc = make_reg(0, ((long)time - (long)lastWaitTime) * 60 / 1000);
+	const int tickDelta = ((long)time - (long)lastWaitTime) * 60 / 1000;
 	lastWaitTime = time;
 
 	ticks *= g_debug_sleeptime_factor;
 	g_sci->sleep(ticks * 1000 / 60);
+	return tickDelta;
 }
 
 void EngineState::initGlobals() {
