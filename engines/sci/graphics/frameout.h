@@ -23,6 +23,7 @@
 #ifndef SCI_GRAPHICS_FRAMEOUT_H
 #define SCI_GRAPHICS_FRAMEOUT_H
 
+#include "engines/util.h"                // for initGraphics
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/screen_item32.h"
 
@@ -284,6 +285,10 @@ private:
 	}
 
 public:
+	void setPixelFormat(const Graphics::PixelFormat &format) const {
+		initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes, &format);
+	}
+
 	/**
 	 * Whether palMorphFrameOut should be used instead of
 	 * frameOut for rendering. Used by kMorphOn to

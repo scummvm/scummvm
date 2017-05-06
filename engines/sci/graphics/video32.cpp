@@ -26,7 +26,6 @@
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
 #include "engine.h"                      // for Engine, g_engine
-#include "engines/util.h"                // for initGraphics
 #include "sci/console.h"                 // for Console
 #include "sci/engine/features.h"         // for GameFeatures
 #include "sci/engine/state.h"            // for EngineState
@@ -286,9 +285,8 @@ void AVIPlayer::init() {
 		// have a 24bpp mode but just directed VFW to display videos instead)
 		g_sci->_gfxCursor32->hide();
 
-		const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 		const Graphics::PixelFormat format = _decoder->getPixelFormat();
-		initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, g_sci->_gfxFrameout->_isHiRes, &format);
+		g_sci->_gfxFrameout->setPixelFormat(format);
 
 		if (_pixelDouble) {
 			const int16 width = _drawRect.width();
@@ -338,10 +336,8 @@ AVIPlayer::IOStatus AVIPlayer::close() {
 	_scaleBuffer = nullptr;
 
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		const bool isHiRes = g_sci->_gfxFrameout->_isHiRes;
-		const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-		initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, isHiRes, &format);
+		g_sci->_gfxFrameout->setPixelFormat(format);
 		g_sci->_gfxCursor32->unhide();
 	}
 
@@ -986,7 +982,6 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 	const Graphics::PixelFormat format = _decoder->getPixelFormat();
 
 	if (_pixelDouble) {
@@ -994,7 +989,7 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		_scaleBuffer = new byte[_drawRect.width() * _drawRect.height() * format.bytesPerPixel];
 	}
 
-	initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, true, &format);
+	g_sci->_gfxFrameout->setPixelFormat(format);
 
 	_status = kDuckOpen;
 }
@@ -1049,9 +1044,8 @@ void DuckPlayer::close() {
 
 	_decoder->close();
 
-	const Buffer &currentBuffer = g_sci->_gfxFrameout->getCurrentBuffer();
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(currentBuffer.screenWidth, currentBuffer.screenHeight, true, &format);
+	g_sci->_gfxFrameout->setPixelFormat(format);
 
 	g_sci->_gfxCursor32->unhide();
 
