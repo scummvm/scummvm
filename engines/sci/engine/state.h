@@ -128,7 +128,9 @@ public:
 	void speedThrottler(uint32 neededSleep);
 	void wait(int16 ticks);
 
-	uint32 _throttleCounter; /**< total times kAnimate was invoked */
+#ifdef ENABLE_SCI32
+	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */
+#endif
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
 	bool _gameIsBenchmarking;

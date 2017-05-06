@@ -234,6 +234,7 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	bool showBits = argc > 0 ? argv[0].toUint16() : true;
 	g_sci->_gfxFrameout->kernelFrameOut(showBits);
+	s->_eventCounter = 0;
 	return s->r_acc;
 }
 

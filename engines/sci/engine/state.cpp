@@ -101,7 +101,7 @@ void EngineState::reset(bool isRestoring) {
 
 	gcCountDown = 0;
 
-	_throttleCounter = 0;
+	_eventCounter = 0;
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 	_gameIsBenchmarking = false;

@@ -83,9 +83,29 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	// For a real event we use its associated mouse position
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
+	if (getSciVersion() >= SCI_VERSION_2) {
 		mousePos = curEvent.mousePosSci;
-	else {
+
+		// Some games, like LSL6hires (when interacting with the menu bar) and
+		// Phant2 (when on the "click mouse" screen after restoring a game),
+		// have unthrottled loops that call kGetEvent but do not call kFrameOut.
+		// In these cases we still need to call OSystem::updateScreen to update
+		// the mouse cursor (in SSCI this was not necessary because mouse
+		// updates were made directly to hardware from an interrupt handler),
+		// and we need to throttle these calls so the game does not use 100%
+		// CPU.
+		// This situation seems to be detectable by looking at how many times
+		// kGetEvent has been called between calls to kFrameOut. During normal
+		// game operation, there are usually just 0 or 1 kGetEvent calls between
+		// kFrameOut calls; any more than that indicates that we are probably in
+		// one of these ugly loops and should be updating the screen &
+		// throttling the VM.
+		if (++s->_eventCounter > 2) {
+			g_system->updateScreen();
+			s->speedThrottler(10); // 10ms is an arbitrary value
+			s->_throttleTrigger = true;
+		}
+	} else {
 #endif
 		mousePos = curEvent.mousePos;
 		// Limit the mouse cursor position, if necessary
