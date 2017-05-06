@@ -525,7 +525,7 @@ bool GuestAdditions::restoreFromLauncher() const {
 		// exist. In other games, restoring early either breaks benchmarking,
 		// or, when trying to load an invalid save game, makes the dialog
 		// telling the user that the game is invalid impossible to read
-		if (Common::String(_segMan->getObjectName(_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoom])) == "speedRoom") {
+		if (strcmp(_segMan->getObjectName(_state->variables[VAR_GLOBAL][kGlobalVarCurrentRoom]), "speedRoom") == 0) {
 			return false;
 		}
 
