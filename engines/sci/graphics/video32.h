@@ -498,8 +498,18 @@ private:
 	 * palette is submitted to the palette manager,
 	 * which is then restored after the video pixels
 	 * have already been rendered.
+	 *
+	 * This functionality is currently disabled because it seems like
+	 * it was designed for a different graphics architecture where
+	 * pixel data could be rendered before the video card's palette
+	 * had been updated. This is not possible in ScummVM because the
+	 * palette & pixel data are rendered simultaneously when
+	 * OSystem::updateScreen is called, rather than immediately
+	 * after they are sent to the backend.
 	 */
+#ifdef SCI_VMD_BLACK_PALETTE
 	bool _blackPalette;
+#endif
 
 #pragma mark -
 #pragma mark VMDPlayer - Brightness boost

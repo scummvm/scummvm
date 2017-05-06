@@ -531,8 +531,9 @@ VMDPlayer::VMDPlayer(SegManager *segMan, EventManager *eventMan) :
 
 	_startColor(0),
 	_endColor(255),
+#ifdef SCI_VMD_BLACK_PALETTE
 	_blackPalette(false),
-
+#endif
 	_boostPercent(100),
 	_boostStartColor(0),
 	_boostEndColor(255),
@@ -594,7 +595,9 @@ void VMDPlayer::init(const int16 x, const int16 y, const PlayFlags flags, const 
 	_boostEndColor = CLIP<int16>(boostEndColor, 0, 255);
 	_leaveScreenBlack = flags & kPlayFlagLeaveScreenBlack;
 	_leaveLastFrame = flags & kPlayFlagLeaveLastFrame;
+#ifdef SCI_VMD_BLACK_PALETTE
 	_blackPalette = flags & kPlayFlagBlackPalette;
+#endif
 	_stretchVertical = flags & kPlayFlagStretchVertical;
 }
 
@@ -869,25 +872,28 @@ void VMDPlayer::renderFrame() const {
 		for (uint16 i = _endColor; i < 256; ++i) {
 			palette.colors[i].used = false;
 		}
+#if SCI_VMD_BLACK_PALETTE
 		if (_blackPalette) {
 			for (uint16 i = _startColor; i <= _endColor; ++i) {
 				palette.colors[i].r = palette.colors[i].g = palette.colors[i].b = 0;
 				palette.colors[i].used = true;
 			}
-		} else {
+		} else
+#endif
 			fillPalette(palette);
-		}
 
 		g_sci->_gfxPalette32->submit(palette);
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
 
+#if SCI_VMD_BLACK_PALETTE
 		if (_blackPalette) {
 			fillPalette(palette);
 			g_sci->_gfxPalette32->submit(palette);
 			g_sci->_gfxPalette32->updateForFrame();
 			g_sci->_gfxPalette32->updateHardware();
 		}
+#endif
 	} else {
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
