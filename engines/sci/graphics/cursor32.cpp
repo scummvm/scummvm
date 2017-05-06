@@ -380,10 +380,6 @@ void GfxCursor32::deviceMoved(Common::Point &position) {
 		position.y = _restrictedArea.bottom - 1;
 	}
 
-	if (_position == position) {
-		return;
-	}
-
 	_position = position;
 
 	g_system->warpMouse(position.x, position.y);
