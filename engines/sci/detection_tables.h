@@ -1931,6 +1931,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
 
+	// King's Quest 7 - Spanish Windows (from jvprat)
+	// Executable scanning reports "2.100.002", VERSION file reports "2.00"
+	{"kq7", "", {
+		{"resource.map", 0, "0b62693cbe87e3aaca3e8655a437f27f", 18709},
+		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_KQ7 },
+
 	// King's Quest 7 - English DOS Non-Interactive Demo
 	// SCI interpreter version 2.100.002
 	{"kq7", "Demo", {
