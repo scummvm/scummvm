@@ -456,6 +456,7 @@ void AVIPlayer::renderFrame() const {
 		}
 
 		g_system->updateScreen();
+		g_sci->getSciDebugger()->onFrame();
 	}
 }
 
@@ -885,6 +886,7 @@ void VMDPlayer::renderFrame() const {
 		g_sci->_gfxPalette32->submit(palette);
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
+		g_sci->getSciDebugger()->onFrame();
 
 #if SCI_VMD_BLACK_PALETTE
 		if (_blackPalette) {
