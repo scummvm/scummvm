@@ -136,6 +136,11 @@ bool GfxFrameout::gameIsHiRes() const {
 		return false;
 	}
 
+	// PQ4 DOS floppy is low resolution only
+	if (g_sci->getGameId() == GID_PQ4 && !g_sci->isCD()) {
+		return false;
+	}
+
 	// GK1 DOS floppy is low resolution only, but GK1 Mac floppy is high
 	// resolution only
 	if (g_sci->getGameId() == GID_GK1 &&

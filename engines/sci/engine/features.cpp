@@ -586,11 +586,14 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	switch (g_sci->getGameId()) {
 	// TODO: Hoyle5, SCI3
 	case GID_GK1:
+	case GID_PQ4:
+	case GID_QFG4:
+		return g_sci->isCD() ? kMessageTypeSyncStrategyDefault : kMessageTypeSyncStrategyNone;
+
 	case GID_KQ7:
 	case GID_MOTHERGOOSEHIRES:
 	case GID_PHANTASMAGORIA:
-	case GID_PQ4:
-	case GID_QFG4:
+	case GID_SQ6:
 	case GID_TORIN:
 		return kMessageTypeSyncStrategyDefault;
 
@@ -600,6 +603,8 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	case GID_SHIVERS:
 		return kMessageTypeSyncStrategyShivers;
 
+	case GID_GK2:
+	case GID_PQSWAT:
 	default:
 		break;
 	}
