@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/func.h"
 #include "common/serializer.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
@@ -1258,9 +1259,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
 		if (meta.version < MINIMUM_SAVEGAME_VERSION) {
-			showScummVMDialog("The format of this saved game is obsolete, unable to load it");
+			showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
 		} else {
-			Common::String msg = Common::String::format("Savegame version is %d, maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
+			Common::String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
 			showScummVMDialog(msg);
 		}
 
@@ -1271,7 +1272,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
 		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
 		if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
-			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
+			showScummVMDialog(_("This saved game was created with a different version of the game, unable to load it"));
 
 			s->r_acc = TRUE_REG;	// signal failure
 			return;

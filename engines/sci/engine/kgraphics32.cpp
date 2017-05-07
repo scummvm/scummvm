@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -347,7 +348,7 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		// Load a help file
 		// Maybe in the future we can implement this, but for now this message should suffice
-		showScummVMDialog("Please use an external viewer to open the game's help file: " + s->_segMan->getString(argv[1]));
+		showScummVMDialog(Common::String::format(_("Please use an external viewer to open the game's help file: %s"), s->_segMan->getString(argv[1]).c_str()));
 		break;
 	case 2:
 		// Looks like some init function

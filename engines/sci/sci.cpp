@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -363,23 +364,23 @@ Common::Error SciEngine::run() {
 		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
 
 		if (buggyScript && (buggyScript->size() == 12354 || buggyScript->size() == 12362)) {
-			showScummVMDialog("A known buggy game script has been detected, which could "
+			showScummVMDialog(_("A known buggy game script has been detected, which could "
 			                  "prevent you from progressing later on in the game, during "
 			                  "the sequence with the Green Man's riddles. Please, apply "
 			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems");
+			                  "problems"));
 		}
 	}
 
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
-		showScummVMDialog("Subtitles are enabled, but subtitling in King's"
+		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
 						  " Quest 7 was unfinished and disabled in the release"
 						  " version of the game. ScummVM allows the subtitles"
 						  " to be re-enabled, but because they were removed from"
 						  " the original game, they do not always render"
 						  " properly or reflect the actual game speech."
 						  " This is not a ScummVM bug -- it is a problem with"
-						  " the game's assets.");
+						  " the game's assets."));
 	}
 
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
@@ -396,7 +397,7 @@ Common::Error SciEngine::run() {
 			case GID_SQ1:
 			case GID_SQ4:
 			case GID_FAIRYTALES:
-				showScummVMDialog("You have selected General MIDI as a sound device. Sierra "
+				showScummVMDialog(_("You have selected General MIDI as a sound device. Sierra "
 				                  "has provided after-market support for General MIDI for this "
 				                  "game in their \"General MIDI Utility\". Please, apply this "
 				                  "patch in order to enjoy MIDI music with this game. Once you "
@@ -406,7 +407,7 @@ Common::Error SciEngine::run() {
 				                  "the instructions in the READ.ME file included in the patch and "
 				                  "rename the associated *.PAT file to 4.PAT and place it in the "
 				                  "game folder. Without this patch, General MIDI music for this "
-				                  "game will sound badly distorted.");
+				                  "game will sound badly distorted."));
 				break;
 			default:
 				break;
@@ -415,11 +416,11 @@ Common::Error SciEngine::run() {
 	}
 
 	if (gameHasFanMadePatch()) {
-		showScummVMDialog("Your game is patched with a fan made script patch. Such patches have "
+		showScummVMDialog(_("Your game is patched with a fan made script patch. Such patches have "
 		                  "been reported to cause issues, as they modify game scripts extensively. "
 		                  "The issues that these patches fix do not occur in ScummVM, so you are "
 		                  "advised to remove this patch from your game folder in order to avoid "
-		                  "having unexpected errors and/or issues later on.");
+		                  "having unexpected errors and/or issues later on."));
 	}
 
 	runGame();
