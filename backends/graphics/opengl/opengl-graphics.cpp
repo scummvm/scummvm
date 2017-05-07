@@ -402,7 +402,7 @@ void OpenGLGraphicsManager::updateScreen() {
 
 	// Update changes to textures.
 	_gameScreen->updateGLTexture();
-	if (_cursor) {
+	if (_cursorVisible && _cursor) {
 		_cursor->updateGLTexture();
 	}
 	_overlay->updateGLTexture();
