@@ -26,6 +26,7 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #ifdef ENABLE_SCI32
 #include "common/memstream.h"
 #endif
@@ -543,6 +544,7 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(ResourceManager *resMa
 
 	if (!fileStream) {
 		warning("Failed to open %s", getLocationName().c_str());
+		resMan->_hasBadResources = true;
 		if (res)
 			res->unalloc();
 	}
@@ -638,9 +640,13 @@ int ResourceManager::addAppropriateSources() {
 				}
 			}
 
-			// GK2 on Steam comes with an extra bogus resource map file
-			if (!foundVolume) {
+			if (!foundVolume &&
+				// GK2 on Steam comes with an extra bogus resource map file;
+				// ignore it
+				(g_sci->getGameId() != GID_GK2 || mapFiles.size() != 2 || mapNumber != 1)) {
+
 				warning("Could not find corresponding volume for %s", mapName.c_str());
+				_hasBadResources = true;
 			}
 		}
 
@@ -759,7 +765,11 @@ void ResourceManager::addScriptChunkSources() {
 #endif
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 void ResourceManager::scanNewSources() {
+	_hasBadResources = false;
+
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		ResourceSource *source = *it;
 
@@ -767,6 +777,18 @@ void ResourceManager::scanNewSources() {
 			source->_scanned = true;
 			source->scanSource(this);
 		}
+	}
+
+	// The warning dialog is shown here instead of someplace more obvious like
+	// SciEngine::run because resource sources can be dynamically added
+	// (e.g. KQ5 via kDoAudio, MGDX via kSetLanguage), and users really should
+	// be warned of bad resources in this situation (KQ Collection 1997 has a
+	// bad copy of KQ5 on CD 1; the working copy is on CD 2)
+	if (_hasBadResources) {
+		showScummVMDialog(_("Missing or corrupt game resources have been detected. "
+							"Some game features may not work properly. Please check "
+							"the console for more information, and verify that your "
+							"game files are valid."));
 	}
 }
 
@@ -781,18 +803,27 @@ void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 }
 
 void ExtMapResourceSource::scanSource(ResourceManager *resMan) {
-	if (resMan->_mapVersion < kResVersionSci1Late)
-		resMan->readResourceMapSCI0(this);
-	else
-		resMan->readResourceMapSCI1(this);
+	if (resMan->_mapVersion < kResVersionSci1Late) {
+		if (resMan->readResourceMapSCI0(this) != SCI_ERROR_NONE) {
+			resMan->_hasBadResources = true;
+		}
+	} else {
+		if (resMan->readResourceMapSCI1(this) != SCI_ERROR_NONE) {
+			resMan->_hasBadResources = true;
+		}
+	}
 }
 
 void ExtAudioMapResourceSource::scanSource(ResourceManager *resMan) {
-	resMan->readAudioMapSCI1(this);
+	if (resMan->readAudioMapSCI1(this) != SCI_ERROR_NONE) {
+		resMan->_hasBadResources = true;
+	}
 }
 
 void IntMapResourceSource::scanSource(ResourceManager *resMan) {
-	resMan->readAudioMapSCI11(this);
+	if (resMan->readAudioMapSCI11(this) != SCI_ERROR_NONE) {
+		resMan->_hasBadResources = true;
+	}
 }
 
 #ifdef ENABLE_SCI32
@@ -838,7 +869,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 
 		debugC(kDebugLevelResMan, 2, "Found %s in chunk %d", id.toString().c_str(), _number);
 
-		resMan->updateResource(id, this, entry.length);
+		resMan->updateResource(id, this, entry.length, chunk->_source->getLocationName());
 
 		// There's no end marker to the data table, but the first resource
 		// begins directly after the entry table. So, when we hit the first
@@ -856,10 +887,12 @@ void ChunkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	Resource *chunk = resMan->findResource(ResourceId(kResourceTypeChunk, _number), false);
 
 	if (!_resMap.contains(res->_id))
-		error("Trying to load non-existent resource from chunk %d: %s %d", _number, getResourceTypeName(res->_id.getType()), res->_id.getNumber());
+		error("Trying to load non-existent resource %s from chunk %d", res->_id.toString().c_str(), _number);
 
 	ResourceEntry entry = _resMap[res->_id];
-	assert(entry.offset + entry.length <= chunk->_size);
+	if (entry.offset + entry.length > chunk->size()) {
+		error("Resource %s is too large to exist within chunk %d (%u + %u > %u)", res->_id.toString().c_str(), _number, entry.offset, entry.length, chunk->size());
+	}
 	byte *ptr = new byte[entry.length];
 	res->_data = ptr;
 	res->_size = entry.length;
@@ -1494,10 +1527,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	}
 
 	// Overwrite everything, because we're patching
-	newrsc = updateResource(resId, source, fsize - patchDataOffset);
+	newrsc = updateResource(resId, source, 0, fsize - patchDataOffset, source->getLocationName());
 	newrsc->_headerSize = patchDataOffset;
-	newrsc->_fileOffset = 0;
-
 
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
@@ -1723,10 +1754,18 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 					bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
 					bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
 					source = findVolume(map, offset >> bShift);
+					if (!source) {
+						delete fileStream;
+						warning("Still couldn't find the volume");
+						return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+					}
+				} else {
+					delete fileStream;
+					return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 				}
 			}
 
-			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF));
+			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
 		}
 	} while (!fileStream->eos());
 
@@ -1759,8 +1798,11 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	do {
 		type = fileStream->readByte() & 0x1F;
 		resMap[type].wOffset = fileStream->readUint16LE();
-		if (fileStream->eos())
+		if (fileStream->eos()) {
+			delete fileStream;
+			warning("Premature end of file %s", map->getLocationName().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
+		}
 
 		resMap[prevtype].wSize = (resMap[type].wOffset
 		                          - resMap[prevtype].wOffset) / nEntrySize;
@@ -1804,11 +1846,15 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			int mapVolumeNr = volume_nr + map->_volumeNumber;
 			ResourceSource *source = findVolume(map, mapVolumeNr);
 
-			assert(source);
+			if (!source) {
+				delete fileStream;
+				warning("Could not get volume for resource %d, VolumeID %d", number, mapVolumeNr);
+				return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+			}
 
 			Resource *resource = _resMap.getVal(resId, NULL);
 			if (!resource) {
-				addResource(resId, source, fileOffset);
+				addResource(resId, source, fileOffset, 0, map->getLocationName());
 			} else {
 				// If the resource is already present in a volume, change it to
 				// the new content (but only in a volume, so as not to overwrite
@@ -1825,9 +1871,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 					if (resId.getType() == kResourceTypeMap) {
 						resource->_status = kResStatusNoMalloc;
 					}
-					resource->_source = source;
-					resource->_fileOffset = fileOffset;
-					resource->_size = 0;
+					updateResource(resId, source, fileOffset, 0, map->getLocationName());
 				}
 			}
 
@@ -1839,7 +1883,9 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			// processed immediately, since they will be replaced by the audio
 			// map from the next disc on the next call to readResourceMapSCI1
 			if (_multiDiscAudio && resId.getType() == kResourceTypeMap) {
-				IntMapResourceSource *audioMap = static_cast<IntMapResourceSource *>(addSource(new IntMapResourceSource("MAP", mapVolumeNr, resId.getNumber())));
+				IntMapResourceSource *audioMap = new IntMapResourceSource(source->getLocationName(), mapVolumeNr, resId.getNumber());
+				addSource(audioMap);
+
 				Common::String volumeName;
 				if (resId.getNumber() == 65535) {
 					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
@@ -1948,37 +1994,79 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 
 			// Overwrite Resource instance. Resource forks may contain patches.
 			// The size will be filled in later by decompressResource()
-			resMan->updateResource(resId, this, 0);
+			resMan->updateResource(resId, this, 0, getLocationName());
 		}
 	}
 }
 
-void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {
+bool ResourceManager::validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const {
+	if (size != 0) {
+		if (offset + size > sourceSize) {
+			warning("Resource %s from %s points beyond end of %s (%u + %u > %u)", resourceId.toString().c_str(), sourceMapLocation.c_str(), sourceName.c_str(), offset, size, sourceSize);
+			return false;
+		}
+	} else {
+		if (offset >= sourceSize) {
+			warning("Resource %s from %s points beyond end of %s (%u >= %u)", resourceId.toString().c_str(), sourceMapLocation.c_str(), sourceName.c_str(), offset, sourceSize);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
-		Resource *res = new Resource(this, resId);
-		_resMap.setVal(resId, res);
-		res->_source = src;
-		res->_fileOffset = offset;
-		res->_size = size;
+		Common::SeekableReadStream *volumeFile = getVolumeFile(src);
+		if (volumeFile == nullptr) {
+			error("Could not open %s for reading", src->getLocationName().c_str());
+		}
+
+		if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
+			Resource *res = new Resource(this, resId);
+			_resMap.setVal(resId, res);
+			res->_source = src;
+			res->_fileOffset = offset;
+			res->_size = size;
+		} else {
+			_hasBadResources = true;
+		}
 	}
 }
 
-Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 size) {
-	// Update a patched resource, whether it exists or not
-	Resource *res = 0;
-
+Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::String &sourceMapLocation) {
+	uint32 offset = 0;
 	if (_resMap.contains(resId)) {
-		res = _resMap.getVal(resId);
-	} else {
-		res = new Resource(this, resId);
-		_resMap.setVal(resId, res);
+		const Resource *res = _resMap.getVal(resId);
+		offset = res->_fileOffset;
+	}
+	return updateResource(resId, src, offset, size, sourceMapLocation);
+}
+
+Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
+	// Update a patched resource, whether it exists or not
+	Resource *res = _resMap.getVal(resId, nullptr);
+
+	Common::SeekableReadStream *volumeFile = getVolumeFile(src);
+	if (volumeFile == nullptr) {
+		error("Could not open %s for reading", src->getLocationName().c_str());
 	}
 
-	res->_status = kResStatusNoMalloc;
-	res->_source = src;
-	res->_headerSize = 0;
-	res->_size = size;
+	if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
+		if (res == nullptr) {
+			res = new Resource(this, resId);
+			_resMap.setVal(resId, res);
+		}
+
+		res->_status = kResStatusNoMalloc;
+		res->_source = src;
+		res->_headerSize = 0;
+		res->_fileOffset = offset;
+		res->_size = size;
+	} else {
+		_hasBadResources = true;
+	}
 
 	return res;
 }
@@ -2133,9 +2221,14 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 		// instead of using a RESOURCE.SFX
 		if (getType() == kResourceTypeAudio) {
 			const uint8 headerSize = ptr[1];
-			assert(headerSize >= 11);
-			uint32 audioSize = READ_LE_UINT32(ptr + 9);
-			assert(audioSize + headerSize + kResourceHeaderSize == _size);
+			if (headerSize < 11) {
+				error("Unexpected audio header size for %s: should be >= 11, but got %d", _id.toString().c_str(), headerSize);
+			}
+			const uint32 audioSize = READ_LE_UINT32(ptr + 9);
+			const uint32 calculatedTotalSize = audioSize + headerSize + kResourceHeaderSize;
+			if (calculatedTotalSize != _size) {
+				error("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
+			}
 			_size = headerSize + audioSize;
 		}
 	}

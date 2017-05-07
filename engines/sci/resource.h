@@ -519,8 +519,10 @@ protected:
 	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
 	void loadResource(Resource *res);
 	void freeOldResources();
-	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
-	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size);
+	bool validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const;
+	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0, const Common::String &sourceMapLocation = Common::String("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation = Common::String("(no map location)"));
 	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
@@ -592,6 +594,9 @@ protected:
 	bool checkResourceDataForSignature(Resource *resource, const byte *signature);
 	bool checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2);
 	void detectSciVersion();
+
+private:
+	bool _hasBadResources;
 };
 
 class SoundResource {
