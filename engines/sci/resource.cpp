@@ -1591,6 +1591,7 @@ void ResourceManager::readResourcePatchesBase36() {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			name = (*x)->getName();
+			name.toUppercase();
 
 			// The S/T prefixes often conflict with non-patch files and generate
 			// spurious warnings about invalid patches
