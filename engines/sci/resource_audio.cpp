@@ -196,7 +196,7 @@ void ResourceManager::addNewGMPatch(SciGameId gameId) {
 	}
 }
 
-void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
+void ResourceManager::processWavePatch(ResourceId resourceId, const Common::String &name) {
 	ResourceSource *resSrc = new WaveResourceSource(name);
 	Common::File file;
 	file.open(name);

@@ -571,7 +571,7 @@ protected:
 	 * Process wave files as patches for Audio resources.
 	 */
 	void readWaveAudioPatches();
-	void processWavePatch(ResourceId resourceId, Common::String name);
+	void processWavePatch(ResourceId resourceId, const Common::String &name);
 
 	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
