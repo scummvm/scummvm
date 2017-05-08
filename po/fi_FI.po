@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-05-08 20:23+0200\n"
-"PO-Revision-Date: 2017-04-23 11:31+0000\n"
+"PO-Revision-Date: 2017-05-08 19:19+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3564,26 +3564,32 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"ScummVM:n kautta tallennetut hahmot n‰ytet‰‰n automaattisesti. "
+"Alkuper‰isell‰ pelimoottorilla luodut hahmotiedostot pit‰‰ sijoittaa ScummVM:"
+"n pelitallennuskansioon ja niihin pit‰‰ lis‰t‰ pelikohtainen etuliite: 'qfg1-"
+"' jos peli on Quest for Glory 1, 'qfg2-' jos peli on Quest for Glory 2. "
+"Esimerkki: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:351
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "K‰yt‰ ulkoista ohjelmaa pelin ohjetiedoston avaamiseen: %s"
 
 #: engines/sci/engine/savegame.cpp:1262
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
+"T‰m‰n pelitallenteen formaatti on vanhentunut, sit‰ ei pystyt‰ lataamaan"
 
 #: engines/sci/engine/savegame.cpp:1264
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr ""
+msgstr "Pelitallenteen versio on %d, suurin tuettu versio on %0d"
 
 #: engines/sci/engine/savegame.cpp:1275
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
+msgstr "T‰m‰ pelitallenne on luotu eri peliversiolla, sit‰ ei pystyt‰ lataamaan"
 
 #: engines/sci/resource.cpp:796
 msgid ""
@@ -3591,6 +3597,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"Havaittu puuttuvia tai viallisia peliresursseja. Jotkut peliominaisuudet "
+"saattavat toimia v‰‰rin. Etsi mahdollisia lis‰tietoja konsolista ja tarkista "
+"ett‰ pelitiedostosi ovat kunnossa."
 
 #: engines/sci/sci.cpp:367
 msgid ""
@@ -3599,6 +3608,9 @@ msgid ""
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
 "possible problems"
 msgstr ""
+"Pelist‰ havaittiin tunnetusti viallinen tiedosto, joka saattaa est‰‰ peliss‰ "
+"etenemisen Green Man:in arvoitusten kohdilla. Ole hyv‰ ja asenna viimeisin "
+"korjaus Sierra:lta v‰ltt‰‰ksesi mahdolliset ongelmat"
 
 #: engines/sci/sci.cpp:376
 msgid ""
@@ -3608,6 +3620,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"Tekstitys on p‰‰ll‰, mutta King's Quest 7:n tekstitys on keskener‰inen ja "
+"pois p‰‰lt‰ pelin julkaisuversiossa. ScummVM sallii tekstityksen "
+"p‰‰llelaittamisen, mutta niiden keskener‰isyydest‰ johtuen ne eiv‰t aina "
+"piirry oikein tai vastaa peliss‰ esiintyv‰‰ puhetta. T‰m‰ ei ole vika "
+"ScummVM:ss‰, vaan ongelma peliss‰ itsess‰‰n."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3621,6 +3638,14 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"Olet valinnut General MIDI:n ‰‰nilaitteeksi. Sierralta on saatavilla General "
+"MIDI-tuki t‰h‰n peliin heid‰n 'General MIDI Utility':ss‰‰n. Asenna "
+"edell‰mainittu korjaus jos haluat kuunnella MIDI musiikkia t‰ss‰ peliss‰. "
+"Ladattuasi korjauksen, pura sen sis‰lt‰m‰t *.PAT-tiedostot ScummVM:n extras-"
+"kansioon. ScummVM osaa lukea ja ottaa ne k‰yttˆˆn sielt‰ automaattisesti. "
+"Voit myˆs seurata korjauksen mukana tulleita ohjeita ja nimet‰ *.PAT-"
+"tiedoston 4.PAT:iksi sek‰ siirt‰‰ sen pelikansioon. Ilman t‰t‰ korjausta "
+"pelin MIDI-musiikki kuulostaa pahasti v‰‰ristyneelt‰."
 
 #: engines/sci/sci.cpp:419
 msgid ""
@@ -3630,6 +3655,11 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"Peli‰si on paikkailtu fanien tekem‰ll‰ korjauksella. T‰llaiset korjaukset "
+"saattavat aiheuttaa ongelmia, sill‰ ne muokkaavat peli‰ huomattavasti. "
+"Ongelmat joita n‰m‰ korjaukset paikkaavat ei esiinny ScummVM:ss‰, joten "
+"suosittelemme ett‰ poistatte n‰m‰ korjaukset pelikansiosta jotteiv‰t ne "
+"aiheuttaisi ongelmia."
 
 #: engines/scumm/detection.cpp:1120
 msgid ""
