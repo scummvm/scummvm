@@ -99,16 +99,17 @@ void SmushDecoder::initFrames() {
 		while (size > 0) {
 			uint32 subType = _file->readUint32BE();
 			uint32 subSize = _file->readUint32BE();
+			int32  subPos  = _file->pos();
 
 			if (subType == MKTAG('B', 'l', '1', '6')) {
 				_file->seek(18, SEEK_CUR);
 				if (_file->readByte() == 0) {
 					frame.keyframe = true;
 				}
-				_file->seek(subSize - 19, SEEK_CUR);
-			} else
-				_file->seek(subSize, SEEK_CUR);
+			}
+
 			size -= subSize + 8 + (subSize & 1);
+			_file->seek(subPos + subSize + (subSize & 1), SEEK_SET);
 		}
 
 		_file->seek(size, SEEK_CUR);
