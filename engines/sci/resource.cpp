@@ -345,6 +345,14 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
 	Common::File *file;
 
+#ifdef ENABLE_SCI32
+	ChunkResourceSource *chunkSource = dynamic_cast<ChunkResourceSource *>(source);
+	if (chunkSource != nullptr) {
+		Resource *res = findResource(ResourceId(kResourceTypeChunk, chunkSource->getNumber()), false);
+		return res ? res->makeStream() : nullptr;
+	}
+#endif
+
 	if (source->_resourceFile)
 		return source->_resourceFile->createReadStream();
 
@@ -843,7 +851,7 @@ void IntMapResourceSource::scanSource(ResourceManager *resMan) {
 ChunkResourceSource::ChunkResourceSource(const Common::String &name, uint16 number)
 	: ResourceSource(kSourceChunk, name) {
 
-	_number = 0;
+	_number = number;
 }
 
 void ChunkResourceSource::scanSource(ResourceManager *resMan) {

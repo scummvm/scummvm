@@ -204,6 +204,8 @@ public:
 	virtual void scanSource(ResourceManager *resMan);
 	virtual void loadResource(ResourceManager *resMan, Resource *res);
 
+	uint16 getNumber() const { return _number; }
+
 protected:
 	uint16 _number;
 
