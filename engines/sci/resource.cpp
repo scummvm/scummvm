@@ -1465,18 +1465,21 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	};
 
 	int32 patchDataOffset = kResourceHeaderSize;
-	if (_volVersion < kResVersionSci2) {
+	if (_volVersion < kResVersionSci11) {
 		patchDataOffset += fileStream->readByte();
-	}
-#ifdef ENABLE_SCI32
-	else {
+	} else {
 		switch (patchType) {
 		case kResourceTypeView:
 			fileStream->seek(3, SEEK_SET);
 			patchDataOffset += fileStream->readByte() + kViewHeaderSize + kExtraHeaderSize;
 			break;
 		case kResourceTypePic:
-			patchDataOffset += kExtraHeaderSize;
+			if (_volVersion < kResVersionSci2) {
+				fileStream->seek(3, SEEK_SET);
+				patchDataOffset += fileStream->readByte() + kViewHeaderSize + kExtraHeaderSize;
+			} else {
+				patchDataOffset += kExtraHeaderSize;
+			}
 			break;
 		case kResourceTypePalette:
 			fileStream->seek(3, SEEK_SET);
@@ -1499,7 +1502,6 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 			break;
 		}
 	}
-#endif
 
 	delete fileStream;
 
@@ -1507,24 +1509,6 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		debug("Patching %s failed - resource type mismatch", source->getLocationName().c_str());
 		delete source;
 		return;
-	}
-
-	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
-	if (patchDataOffset & 0x80) {
-		switch ((patchDataOffset - kResourceHeaderSize) & 0x7F) {
-			case 0:
-				patchDataOffset = kResourceHeaderSize + 24;
-				break;
-			case 1:
-				patchDataOffset = kResourceHeaderSize + 2;
-				break;
-			case 4:
-				patchDataOffset = kResourceHeaderSize + 8;
-				break;
-			default:
-				error("Resource patch unsupported special case %X", patchDataOffset & 0x7F);
-				return;
-		}
 	}
 
 	if (patchDataOffset >= fsize) {
