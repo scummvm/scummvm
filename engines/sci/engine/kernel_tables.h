@@ -278,7 +278,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	{ SIG_SCI16,           5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
 	{ SIG_SCI16,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SCI32,           0, MAP_CALL(PalVarySetVary),            "i(i)(i)(i)(i)",        NULL },
+	{ SIG_SCI32,           0, MAP_CALL(PalVarySetVary),            "i(i)(i)(i)(i)",        kPalVarySetVary_workarounds },
 	{ SIG_SCI32,           1, MAP_CALL(PalVarySetPercent),         "(i)(i)",               kPalVarySetPercent_workarounds },
 	{ SIG_SCI32,           2, MAP_CALL(PalVaryGetPercent),         "",                     NULL },
 	{ SIG_SCI32,           3, MAP_CALL(PalVaryOff),                "",                     NULL },

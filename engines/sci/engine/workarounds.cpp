@@ -757,6 +757,12 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kPalVarySetVary_workarounds[] = {
+	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath2", "changeState",               NULL,     0, { WORKAROUND_FAKE, 0 } }, // when dying by letting the dog find you under the house. Trac#9763
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 	{ GID_GK1,           370,   370,  0,        "graceComeOut", "changeState",              NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // there's an extra parameter in GK1, when changing chapters. This extra parameter seems to be a bug or just unimplemented functionality, as there's no visible change from the original in the chapter change room
 	SCI_WORKAROUNDENTRY_TERMINATOR
