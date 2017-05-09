@@ -1485,15 +1485,17 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 			fileStream->seek(3, SEEK_SET);
 			patchDataOffset += fileStream->readByte() + kExtraHeaderSize;
 			break;
-		case kResourceTypeWave:
 		case kResourceTypeAudio:
 		case kResourceTypeAudio36:
+#ifdef ENABLE_SCI32
+		case kResourceTypeWave:
 		case kResourceTypeVMD:
 		case kResourceTypeDuck:
 		case kResourceTypeClut:
 		case kResourceTypeTGA:
 		case kResourceTypeZZZ:
 		case kResourceTypeEtc:
+#endif
 			patchDataOffset = 0;
 			break;
 		default:
