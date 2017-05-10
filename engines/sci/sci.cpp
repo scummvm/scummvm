@@ -164,6 +164,9 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
 	if (_gameId != GID_KQ6)
 		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
+
+	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
+	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
 }
 
 SciEngine::~SciEngine() {
