@@ -61,7 +61,6 @@ public:
 	void setAudioRate(uint16 rate) { _audioRate = rate; }
 	Audio::SoundHandle *getAudioHandle() { return &_audioHandle; }
 	Audio::RewindableAudioStream *getAudioStream(uint32 number, uint32 volume, int *sampleLen);
-	byte *getDecodedRobotAudioFrame(Common::SeekableReadStream *str, uint32 encodedSize);
 	int getAudioPosition();
 	int startAudio(uint16 module, uint32 tuple);
 	int wPlayAudio(uint16 module, uint32 tuple);

@@ -329,11 +329,6 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	return buffer;
 }
 
-byte *AudioPlayer::getDecodedRobotAudioFrame(Common::SeekableReadStream *str, uint32 encodedSize) {
-	byte flags = 0;
-	return readSOLAudio(str, encodedSize, kSolFlagCompressed | kSolFlag16Bit, flags);
-}
-
 Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
 	Audio::SeekableAudioStream *audioSeekStream = 0;
 	Audio::RewindableAudioStream *audioStream = 0;
