@@ -444,7 +444,16 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				ptr += 2;
 
 				if (kq6HiresSyncSize > 0) {
-					addResource(ResourceId(kResourceTypeRave, map->_mapNumber, n & 0xffffff3f), src, offset + syncSize, kq6HiresSyncSize, map->getLocationName());
+					// Rave resources do not have separate entries in the audio
+					// map (their data was just appended to sync resources), so
+					// we have to use the sync resource offset first and then
+					// adjust the offset & size later, otherwise offset
+					// validation will fail for compressed volumes (since the
+					// relocation table in a compressed volume only contains
+					// offsets that existed in the original audio map)
+					Resource *res = addResource(ResourceId(kResourceTypeRave, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize + kq6HiresSyncSize, map->getLocationName());
+					res->_fileOffset += syncSize;
+					res->_size -= syncSize;
 					syncSize += kq6HiresSyncSize;
 				}
 			}

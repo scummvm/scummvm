@@ -2010,10 +2010,12 @@ bool ResourceManager::validateResource(const ResourceId &resourceId, const Commo
 	return true;
 }
 
-void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
+Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
-		updateResource(resId, src, offset, size, sourceMapLocation);
+		return updateResource(resId, src, offset, size, sourceMapLocation);
+	} else {
+		return _resMap.getVal(resId);
 	}
 }
 
