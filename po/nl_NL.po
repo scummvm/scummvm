@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-05-08 20:23+0200\n"
+"POT-Creation-Date: 2017-05-10 19:08+0200\n"
 "PO-Revision-Date: 2017-05-09 05:21+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
+"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3598,8 +3598,8 @@ msgstr ""
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
-"Gebruik a.u.b. een externe viewer om het help-bestand van het spel te openen:"
-" %s"
+"Gebruik a.u.b. een externe viewer om het help-bestand van het spel te "
+"openen: %s"
 
 #: engines/sci/engine/savegame.cpp:1262
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -3629,7 +3629,7 @@ msgstr ""
 "features zullen mogelijk niet goed werken. Controleer a.u.b. de console voor "
 "meer informatie, en verifieer dat uw spel bestanden juist zijn."
 
-#: engines/sci/sci.cpp:367
+#: engines/sci/sci.cpp:370
 msgid ""
 "A known buggy game script has been detected, which could prevent you from "
 "progressing later on in the game, during the sequence with the Green Man's "
@@ -3642,7 +3642,7 @@ msgstr ""
 "Pas a.u.b. de meest recente patch van Sierra voor dit spel toe om mogelijke "
 "problemen te voorkomen"
 
-#: engines/sci/sci.cpp:376
+#: engines/sci/sci.cpp:379
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -3657,7 +3657,7 @@ msgstr ""
 "worden of overeenkomen met de spraak van het spel. Dit is geen ScummVM fout, "
 "maar een probleem met de speldata."
 
-#: engines/sci/sci.cpp:400
+#: engines/sci/sci.cpp:403
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -3670,8 +3670,8 @@ msgid ""
 "game will sound badly distorted."
 msgstr ""
 "U heeft General MIDI als geluidsapparaat geselecteerd. Sierra heeft na "
-"publicatie van dit spel ondersteuning geleverd voor General MIDI met hun \""
-"General MIDI Utility\". Pas deze. a.u.b. toe om te kunnen genieten van de "
+"publicatie van dit spel ondersteuning geleverd voor General MIDI met hun "
+"\"General MIDI Utility\". Pas deze. a.u.b. toe om te kunnen genieten van de "
 "MIDI muziek in dit spel. Wanneer u deze verkregen heeft kunt u alle "
 "bijgesloten *.PAT bestanden uitpakken in de ScummVM extras folder en ScummVM "
 "zal de juiste patch automatisch toevoegen. U kunt ook volgens de instructies "
@@ -3679,7 +3679,7 @@ msgstr ""
 "hernoemen naar 4.PAT en deze dan in de spel folder plaatsen. Zonder deze "
 "patch zal General MIDI muziek sterk verminkt klinken."
 
-#: engines/sci/sci.cpp:419
+#: engines/sci/sci.cpp:422
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
