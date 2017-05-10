@@ -2013,20 +2013,7 @@ bool ResourceManager::validateResource(const ResourceId &resourceId, const Commo
 void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
-		Common::SeekableReadStream *volumeFile = getVolumeFile(src);
-		if (volumeFile == nullptr) {
-			error("Could not open %s for reading", src->getLocationName().c_str());
-		}
-
-		if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
-			Resource *res = new Resource(this, resId);
-			_resMap.setVal(resId, res);
-			res->_source = src;
-			res->_fileOffset = offset;
-			res->_size = size;
-		} else {
-			_hasBadResources = true;
-		}
+		updateResource(resId, src, offset, size, sourceMapLocation);
 	}
 }
 
@@ -2046,6 +2033,13 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	Common::SeekableReadStream *volumeFile = getVolumeFile(src);
 	if (volumeFile == nullptr) {
 		error("Could not open %s for reading", src->getLocationName().c_str());
+	}
+
+	AudioVolumeResourceSource *avSrc = dynamic_cast<AudioVolumeResourceSource *>(src);
+	if (avSrc != nullptr && !avSrc->relocateMapOffset(offset, size)) {
+		warning("Compressed volume %s does not contain a valid entry for %s (map offset %u)", src->getLocationName().c_str(), resId.toString().c_str(), offset);
+		_hasBadResources = true;
+		return res;
 	}
 
 	if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
