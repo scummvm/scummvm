@@ -161,7 +161,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
-	// is for the demo of Phantasmagoria, included in the disk
+	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
 	if (_gameId != GID_KQ6)
 		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
 }
