@@ -127,7 +127,6 @@ private:
 		int sfactor, dfactor;
 		int textureVersion;
 		int depthTestEnabled;
-		unsigned int currentColor[4];
 		float viewportTranslation[3];
 		float viewportScaling[3];
 		bool alphaTest;

@@ -463,7 +463,6 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
-	memcpy(state.currentColor, c->longcurrent_color, sizeof(c->longcurrent_color));
 
 	return state;
 }
@@ -494,7 +493,6 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 
 	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));
 	memcpy(c->viewport.trans._v, state.viewportTranslation, sizeof(c->viewport.trans._v));
-	memcpy(c->longcurrent_color, state.currentColor, sizeof(c->longcurrent_color));
 }
 
 void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool restoreState) const {
@@ -676,10 +674,6 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 			alphaRefValue == other.alphaRefValue &&
 			texture == other.texture &&
 			shadowMaskBuf == other.shadowMaskBuf &&
-			currentColor[0] == other.currentColor[0] &&
-			currentColor[1] == other.currentColor[1] &&
-			currentColor[2] == other.currentColor[2] &&
-			currentColor[3] == other.currentColor[3] &&
 			viewportTranslation[0] == other.viewportTranslation[0] &&
 			viewportTranslation[1] == other.viewportTranslation[1] &&
 			viewportTranslation[2] == other.viewportTranslation[2] &&

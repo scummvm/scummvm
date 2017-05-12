@@ -81,11 +81,6 @@ void tglColor4f(float r, float g, float b, float a) {
 	p[2].f = g;
 	p[3].f = b;
 	p[4].f = a;
-	// direct convertion to integer to go faster if no shading
-	p[5].ui = (unsigned int)(r * ZB_POINT_RED_MAX);
-	p[6].ui = (unsigned int)(g * ZB_POINT_GREEN_MAX);
-	p[7].ui = (unsigned int)(b * ZB_POINT_BLUE_MAX);
-	p[8].ui = (unsigned int)(a * ZB_POINT_ALPHA_MAX);
 	gl_add_op(p);
 }
 

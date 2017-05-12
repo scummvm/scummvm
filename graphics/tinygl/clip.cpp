@@ -49,18 +49,10 @@ void gl_transform_to_viewport(GLContext *c, GLVertex *v) {
 	v->zp.y = (int)(v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y);
 	v->zp.z = (int)(v->pc.Z * winv * c->viewport.scale.Z + c->viewport.trans.Z);
 	// color
-	if (c->lighting_enabled) {
-		v->zp.r = (int)(v->color.X * ZB_POINT_RED_MAX);
-		v->zp.g = (int)(v->color.Y * ZB_POINT_GREEN_MAX);
-		v->zp.b = (int)(v->color.Z * ZB_POINT_BLUE_MAX);
-		v->zp.a = (int)(v->color.W * ZB_POINT_ALPHA_MAX);
-	} else {
-		// no need to convert to integer if no lighting : take current color
-		v->zp.r = c->longcurrent_color[0];
-		v->zp.g = c->longcurrent_color[1];
-		v->zp.b = c->longcurrent_color[2];
-		v->zp.a = c->longcurrent_color[3];
-	}
+	v->zp.r = (int)(v->color.X * ZB_POINT_RED_MAX);
+	v->zp.g = (int)(v->color.Y * ZB_POINT_GREEN_MAX);
+	v->zp.b = (int)(v->color.Z * ZB_POINT_BLUE_MAX);
+	v->zp.a = (int)(v->color.W * ZB_POINT_ALPHA_MAX);
 
 	// texture
 	if (c->texture_2d_enabled) {

@@ -54,10 +54,6 @@ void glopColor(GLContext *c, GLParam *p) {
 	c->current_color.Y = p[2].f;
 	c->current_color.Z = p[3].f;
 	c->current_color.W = p[4].f;
-	c->longcurrent_color[0] = p[5].ui;
-	c->longcurrent_color[1] = p[6].ui;
-	c->longcurrent_color[2] = p[7].ui;
-	c->longcurrent_color[3] = p[8].ui;
 
 	if (c->color_material_enabled) {
 		GLParam q[7];
