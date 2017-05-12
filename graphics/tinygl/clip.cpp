@@ -99,9 +99,16 @@ void gl_draw_point(GLContext *c, GLVertex *p0) {
 
 // line
 
-static inline void interpolate(GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
+static inline void interpolate_color(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
+	if (c->current_shade_model == TGL_SMOOTH)
+		q->color = p0->color + (p1->color - p0->color) * t;
+	else
+		q->color = p0->color;
+}
+
+static inline void interpolate(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
 	q->pc = p0->pc + (p1->pc - p0->pc) * t;
-	q->color = p0->color + (p1->color - p0->color) * t;
+	interpolate_color(c, q, p0, p1, t);
 }
 
 // Line Clipping
@@ -167,8 +174,8 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 				ClipLine1(-dy + dw, y1 - w1, &tmin, &tmax) &&
 				ClipLine1(dz + dw, -z1 - w1, &tmin, &tmax) &&
 				ClipLine1(-dz + dw, z1 - w1, &tmin, &tmax)) {
-			interpolate(&q1, p1, p2, tmin);
-			interpolate(&q2, p1, p2, tmax);
+			interpolate(c, &q1, p1, p2, tmin);
+			interpolate(c, &q2, p1, p2, tmax);
 			gl_transform_to_viewport(c, &q1);
 			gl_transform_to_viewport(c, &q2);
 
@@ -221,11 +228,7 @@ float(*clip_proc[6])(Vector4 *, Vector4 *, Vector4 *) =  {
 };
 
 static inline void updateTmp(GLContext *c, GLVertex *q, GLVertex *p0, GLVertex *p1, float t) {
-	if (c->current_shade_model == TGL_SMOOTH) {
-		q->color = p0->color + (p1->color - p0->color) * t;
-	} else {
-		q->color = p0->color;
-	}
+	interpolate_color(c, q, p0, p1, t);
 
 	if (c->texture_2d_enabled) {
 		// NOTE: This could be implemented with operator overloading,
