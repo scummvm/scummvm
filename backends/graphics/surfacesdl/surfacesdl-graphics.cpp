@@ -42,6 +42,10 @@
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 #include "gui/EventRecorder.h"
+#ifdef USE_PNG
+#include "common/file.h"
+#include "image/png.h"
+#endif
 
 static const OSystem::GraphicsMode s_supportedShaders[] = {
 	{"NONE", "Normal (no shader)", 0},
@@ -1321,8 +1325,66 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
 	assert(_hwscreen != NULL);
 
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
+	Common::StackLock lock(_graphicsMutex);
+#ifdef USE_PNG
+	Common::DumpFile out;
+	if (!out.open(filename)) {
+		return false;
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Surface *rgbScreen = SDL_ConvertSurfaceFormat(_hwscreen, SDL_PIXELFORMAT_RGB24, 0);
+#else
+	// This block of code was taken mostly as-is from SDL 1.2's SDL_SaveBMP_RW
+	SDL_Surface *rgbScreen = SDL_CreateRGBSurface(SDL_SWSURFACE,
+												  _hwscreen->w,
+												  _hwscreen->h,
+												  24,
+#ifdef SCUMM_LITTLE_ENDIAN
+												  0x0000FF, 0x00FF00, 0xFF0000,
+#else
+												  0xFF0000, 0x00FF00, 0x0000FF,
+#endif
+												  0);
+	if (rgbScreen == nullptr) {
+		warning("Could not create RGB24 surface");
+		return false;
+	}
+
+	SDL_Rect bounds;
+	bounds.x = bounds.y = 0;
+	bounds.w = _hwscreen->w;
+	bounds.h = _hwscreen->h;
+	if (SDL_LowerBlit(_hwscreen, &bounds, rgbScreen, &bounds) < 0) {
+		SDL_FreeSurface(rgbScreen);
+		rgbScreen = nullptr;
+	}
+#endif
+
+	if (rgbScreen == nullptr) {
+		warning("Could not convert hardware surface to RGB24");
+		return false;
+	}
+
+	int result = SDL_LockSurface(rgbScreen);
+	if (result < 0) {
+		warning("Could not lock RGB surface");
+		SDL_FreeSurface(rgbScreen);
+		return false;
+	}
+
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+	Graphics::Surface data;
+	data.init(rgbScreen->w, rgbScreen->h, rgbScreen->pitch, rgbScreen->pixels, format);
+	const bool success = Image::writePNG(out, data);
+
+	SDL_UnlockSurface(rgbScreen);
+	SDL_FreeSurface(rgbScreen);
+
+	return success;
+#else
 	return SDL_SaveBMP(_hwscreen, filename) == 0;
+#endif
 }
 
 void SurfaceSdlGraphicsManager::setFullscreenMode(bool enable) {
@@ -2534,7 +2596,11 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			for (int n = 0;; n++) {
 				SDL_RWops *file;
 
+#ifdef USE_PNG
+				filename = Common::String::format("scummvm%05d.png", n);
+#else
 				filename = Common::String::format("scummvm%05d.bmp", n);
+#endif
 
 				file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
 

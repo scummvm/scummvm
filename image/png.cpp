@@ -34,6 +34,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "common/array.h"
 #include "common/stream.h"
 
 namespace Image {
@@ -65,11 +66,23 @@ void pngWarning(png_structp pngptr, png_const_charp warningMsg) {
 	warning("%s", warningMsg);
 }
 
-// libpng-I/O-helper:
+// libpng-I/O-helpers:
 void pngReadFromStream(png_structp pngPtr, png_bytep data, png_size_t length) {
 	void *readIOptr = png_get_io_ptr(pngPtr);
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)readIOptr;
 	stream->read(data, length);
+}
+
+void pngWriteToStream(png_structp pngPtr, png_bytep data, png_size_t length) {
+	void *writeIOptr = png_get_io_ptr(pngPtr);
+	Common::WriteStream *stream = (Common::WriteStream *)writeIOptr;
+	stream->write(data, length);
+}
+
+void pngFlushStream(png_structp pngPtr) {
+	void *writeIOptr = png_get_io_ptr(pngPtr);
+	Common::WriteStream *stream = (Common::WriteStream *)writeIOptr;
+	stream->flush();
 }
 #endif
 
@@ -226,6 +239,58 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// Destroy libpng structures
 	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
 
+	return true;
+#else
+	return false;
+#endif
+}
+
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+#ifdef USE_PNG
+	const Graphics::PixelFormat requiredFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+
+	if (input.format != requiredFormat) {
+		warning("Cannot currently write PNG with pixel format other than %s", requiredFormat.toString().c_str());
+		return false;
+	}
+
+	png_structp pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (!pngPtr) {
+		return false;
+	}
+	png_infop infoPtr = png_create_info_struct(pngPtr);
+	if (!infoPtr) {
+		png_destroy_write_struct(&pngPtr, NULL);
+		return false;
+	}
+	png_infop endInfo = png_create_info_struct(pngPtr);
+	if (!endInfo) {
+		png_destroy_write_struct(&pngPtr, &infoPtr);
+		return false;
+	}
+
+	png_set_error_fn(pngPtr, NULL, pngError, pngWarning);
+	// TODO: The manual says errors should be handled via setjmp
+
+	png_set_write_fn(pngPtr, &out, pngWriteToStream, pngFlushStream);
+
+	png_set_IHDR(pngPtr, infoPtr, input.w, input.h, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+	Common::Array<const uint8 *> rows;
+	rows.reserve(input.h);
+	if (bottomUp) {
+		for (uint y = input.h; y-- > 0;) {
+			rows.push_back((const uint8 *)input.getBasePtr(0, y));
+		}
+	} else {
+		for (uint y = 0; y < input.h; ++y) {
+			rows.push_back((const uint8 *)input.getBasePtr(0, y));
+		}
+	}
+
+	png_set_rows(pngPtr, infoPtr, const_cast<uint8 **>(&rows.front()));
+	png_write_png(pngPtr, infoPtr, 0, NULL);
+	png_destroy_write_struct(&pngPtr, &infoPtr);
 	return true;
 #else
 	return false;
