@@ -260,7 +260,7 @@ const PoMessageEntry *PoMessageEntryList::entry(int index) const {
 }
 
 
-PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
+PoMessageEntryList *parsePoFile(const char *language, const char *file, PoMessageEntryList *list, PoMessageList& messages) {
 	FILE *inFile = fopen(file, "r");
 	if (!inFile)
 		return NULL;
@@ -268,17 +268,8 @@ PoMessageEntryList *parsePoFile(const char *file, PoMessageList& messages) {
 	char msgidBuf[1024], msgctxtBuf[1024], msgstrBuf[1024];
 	char line[1024], *currentBuf = msgstrBuf;
 
-	// Get language from file name and create PoMessageEntryList
-	int index = 0, start_index = strlen(file) - 1;
-	while (start_index > 0 && file[start_index - 1] != '/' && file[start_index - 1] != '\\') {
-		--start_index;
-	}
-	while (file[start_index + index] != '.' && file[start_index + index] != '\0') {
-		msgidBuf[index] = file[start_index + index];
-		++index;
-	}
-	msgidBuf[index] = '\0';
-	PoMessageEntryList *list = new PoMessageEntryList(msgidBuf);
+	if (!list)
+		list = new PoMessageEntryList(language);
 
 	// Initialize the message attributes.
 	bool fuzzy = false;

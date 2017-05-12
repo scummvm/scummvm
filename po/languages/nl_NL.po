@@ -1,0 +1,86 @@
+# LANGUAGE translation for ScummVM.
+# Copyright (C) YEAR ScummVM Team
+# This file is distributed under the same license as the ScummVM package.
+# FIRST AUTHOR scummvm@bencastricum.nl, 2014
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ScummVM 1.8.0git\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
+"POT-Creation-Date: 2014-11-11 14:32+0100\n"
+"PO-Revision-Date: 2014-11-11 14:36+0100\n"
+"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
+"Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
+"Language: Nederlands\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ascii\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Chinese (China)"
+msgstr "Chinees (China)"
+
+msgid "Chinese (Taiwan)"
+msgstr "Chinees (Taiwan)"
+
+msgid "Croatian"
+msgstr "Kroatisch"
+
+msgid "Czech"
+msgstr "Tsjechisch"
+
+msgid "Dutch"
+msgstr "Nederlands"
+
+msgid "English"
+msgstr "Engels"
+
+msgid "English (GB)"
+msgstr "Engels (GB)"
+
+msgid "English (US)"
+msgstr "Engels (VS)"
+
+msgid "French"
+msgstr "Frans"
+
+msgid "German"
+msgstr "Duits"
+
+msgid "Greek"
+msgstr "Grieks"
+
+msgid "Hebrew"
+msgstr "Hebreeuws"
+
+msgid "Hungarian"
+msgstr "Hongaars"
+
+msgid "Italian"
+msgstr "Italiaans"
+
+msgid "Japanese"
+msgstr "Japans"
+
+msgid "Korean"
+msgstr "Koreaans"
+
+msgid "Latvian"
+msgstr "Lets"
+
+msgid "Norwegian Bokmaal"
+msgstr "Noors - Bokmaal"
+
+msgid "Polish"
+msgstr "Pools"
+
+msgid "Portuguese"
+msgstr "Portugees"
+
+msgid "Russian"
+msgstr "Russisch"
+
+msgid "Spanish"
+msgstr "Spaans"
+
+msgid "Swedish"
+msgstr "Zweeds"

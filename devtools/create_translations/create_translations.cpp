@@ -120,10 +120,31 @@ int main(int argc, char *argv[]) {
 		// Check file extension
 		int len = strlen(argv[i]);
 		if (scumm_stricmp(argv[i] + len - 2, "po") == 0) {
-			PoMessageEntryList *po = parsePoFile(argv[i], messageIds);
-			if (po != NULL) {
-				translations.push_back(po);
-				++numLangs;
+
+			// Get language from file name and create PoMessageEntryList
+			char langBuf[16];
+			int index = 0, start_index = strlen(argv[i]) - 1;
+			while (start_index > 0 && argv[i][start_index - 1] != '/' && argv[i][start_index - 1] != '\\') {
+				--start_index;
+			}
+			while (argv[i][start_index + index] != '.' && argv[i][start_index + index] != '\0') {
+				langBuf[index] = argv[i][start_index + index];
+				++index;
+			}
+			langBuf[index] = '\0';
+			int lang;
+			for (lang = 0; lang < numLangs; lang++) {
+				if (!strcmp(translations[lang]->language(), langBuf)) {
+					parsePoFile(langBuf, argv[i], translations[lang], messageIds);
+					break;
+				}
+			}
+			if (lang == numLangs) {
+				PoMessageEntryList *po = parsePoFile(langBuf, argv[i], NULL, messageIds);
+				if (po != NULL) {
+					translations.push_back(po);
+					++numLangs;
+				}
 			}
 		} else if (scumm_stricmp(argv[i] + len - 2, "cp") == 0) {
 			// Else try to parse an codepage
