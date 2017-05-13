@@ -223,7 +223,7 @@ void EMIEngine::storeSaveGameImage(SaveGame *state) {
 	unsigned int texWidth = 256, texHeight = 128;
 	unsigned int size = texWidth * texHeight;
 	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(size, DisposeAfterUse::YES);
-	buffer.clear(texWidth * texHeight);
+	buffer.clear(size);
 	for (unsigned int j = 0; j < 120; j++) {
 		buffer.copyBuffer(j * texWidth, j * width, width, screenshot->getData(0));
 	}
