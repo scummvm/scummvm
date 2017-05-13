@@ -1257,25 +1257,28 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return;
 	}
 
-	if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta.version < MINIMUM_SAVEGAME_VERSION) {
-			showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
-		} else {
-			Common::String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
-			showScummVMDialog(msg);
-		}
-
-		s->r_acc = TRUE_REG;	// signal failure
-		return;
-	}
-
-	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
-		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-		if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
-			showScummVMDialog(_("This saved game was created with a different version of the game, unable to load it"));
+	// In SCI32 these checks are all in kCheckSaveGame32
+	if (getSciVersion() < SCI_VERSION_2) {
+		if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
+			if (meta.version < MINIMUM_SAVEGAME_VERSION) {
+				showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
+			} else {
+				Common::String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
+				showScummVMDialog(msg);
+			}
 
 			s->r_acc = TRUE_REG;	// signal failure
 			return;
+		}
+
+		if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
+			Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+			if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
+				showScummVMDialog(_("This saved game was created with a different version of the game, unable to load it"));
+
+				s->r_acc = TRUE_REG;	// signal failure
+				return;
+			}
 		}
 	}
 

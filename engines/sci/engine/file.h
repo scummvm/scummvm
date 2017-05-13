@@ -64,6 +64,8 @@ struct SavegameDesc {
 	int version;
 	char name[SCI_MAX_SAVENAME_LENGTH];
 	Common::String gameVersion;
+	uint32 script0Size;
+	uint32 gameObjectOffset;
 #ifdef ENABLE_SCI32
 	// Used by Shivers 1
 	uint16 lowScore;

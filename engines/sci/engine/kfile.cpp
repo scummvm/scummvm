@@ -1328,6 +1328,21 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	if (save.gameObjectOffset > 0 && save.script0Size > 0) {
+		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+		assert(script0);
+
+		if (save.script0Size != script0->size()) {
+			warning("Save game was created for a game with a script 0 size of %u, but the current game script 0 size is %u", save.script0Size, script0->size());
+			return NULL_REG;
+		}
+
+		if (save.gameObjectOffset != g_sci->getGameObject().getOffset()) {
+			warning("Save game was created for a game with the main game object at offset %u, but the current main game object offset is %u", save.gameObjectOffset, g_sci->getGameObject().getOffset());
+			return NULL_REG;
+		}
+	}
+
 	return TRUE_REG;
 }
 

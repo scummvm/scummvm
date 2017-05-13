@@ -357,6 +357,8 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
 	desc->time = meta.saveTime;
 	desc->version = meta.version;
 	desc->gameVersion = meta.gameVersion;
+	desc->script0Size = meta.script0Size;
+	desc->gameObjectOffset = meta.gameObjectOffset;
 #ifdef ENABLE_SCI32
 	if (g_sci->getGameId() == GID_SHIVERS) {
 		desc->lowScore = meta.lowScore;
