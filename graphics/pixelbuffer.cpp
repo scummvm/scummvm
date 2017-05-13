@@ -83,7 +83,7 @@ void PixelBuffer::free() {
 }
 
 void PixelBuffer::clear(int length) {
-	memset(_buffer, 0, length);
+	memset(_buffer, 0, length * _format.bytesPerPixel);
 }
 
 void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const PixelBuffer &buf) {
