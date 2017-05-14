@@ -153,9 +153,18 @@ bool Vocabulary::loadParserWords() {
 			}
 		} else {
 			do {
+				if (seeker == resource->size()) {
+					warning("SCI0: Vocabulary not usable, disabling");
+					return false;
+				}
 				c = resource->getUint8At(seeker++);
 				currentWord[currentWordPos++] = c & 0x7f; // 0x80 is used to terminate the string
 			} while (c < 0x80);
+		}
+
+		if (seeker == resource->size()) {
+			warning("Vocabulary not usable, disabling");
+			return false;
 		}
 
 		currentWord[currentWordPos] = 0;
