@@ -387,6 +387,24 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	return NULL;
 }
 
+void ResourceManager::disposeVolumeFileStream(Common::SeekableReadStream *fileStream, Sci::ResourceSource *source) {
+#ifdef ENABLE_SCI32
+	ChunkResourceSource *chunkSource = dynamic_cast<ChunkResourceSource *>(source);
+	if (chunkSource != nullptr) {
+		delete fileStream;
+		return;
+	}
+#endif
+
+	if (source->_resourceFile) {
+		delete fileStream;
+		return;
+	}
+
+	// Other volume file streams are cached in _volumeFiles and should only be
+	// deleted from _volumeFiles
+}
+
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
 }
@@ -575,8 +593,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 		res->unalloc();
 	}
 
-	if (_resourceFile)
-		delete fileStream;
+	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
 Resource *ResourceManager::testResource(ResourceId id) {
@@ -2041,6 +2058,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	if (avSrc != nullptr && !avSrc->relocateMapOffset(offset, size)) {
 		warning("Compressed volume %s does not contain a valid entry for %s (map offset %u)", src->getLocationName().c_str(), resId.toString().c_str(), offset);
 		_hasBadResources = true;
+		disposeVolumeFileStream(volumeFile, src);
 		return res;
 	}
 
@@ -2059,6 +2077,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		_hasBadResources = true;
 	}
 
+	disposeVolumeFileStream(volumeFile, src);
 	return res;
 }
 
@@ -2252,13 +2271,11 @@ ResourceCompression ResourceManager::getViewCompression() {
 		ResourceCompression compression;
 
 		if (res->readResourceInfo(_volVersion, fileStream, szPacked, compression)) {
-			if (res->_source->_resourceFile)
-				delete fileStream;
+			disposeVolumeFileStream(fileStream, res->_source);
 			continue;
 		}
 
-		if (res->_source->_resourceFile)
-			delete fileStream;
+		disposeVolumeFileStream(fileStream, res->_source);
 
 		if (compression != kCompNone)
 			return compression;

@@ -43,7 +43,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	 * table for later usage.
 	 */
 
-	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, 0);
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, nullptr);
 	if (!fileStream)
 		return;
 
@@ -75,8 +75,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		lastEntry->size = fileStream->size() - lastEntry->offset;
 	}
 
-	if (_resourceFile)
-		delete fileStream;
+	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
 bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
@@ -320,6 +319,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 	}
 
 	const uint32 srcSize = fileStream->size();
+	disposeVolumeFileStream(fileStream, src);
 
 	SciSpan<const byte>::const_iterator ptr = mapRes->cbegin();
 
@@ -400,6 +400,8 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			}
 			addResource(audioResId, src, offset, size, map->getLocationName());
 		}
+
+		disposeVolumeFileStream(stream, src);
 	} else {
 		bool isEarly = (entrySize != 11);
 
@@ -928,8 +930,7 @@ void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 	res->loadFromWaveFile(fileStream);
-	if (_resourceFile)
-		delete fileStream;
+	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
 void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
@@ -951,8 +952,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 	else
 		res->loadFromAudioVolumeSCI11(fileStream);
 
-	if (_resourceFile)
-		delete fileStream;
+	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
 bool ResourceManager::addAudioSources() {

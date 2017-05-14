@@ -516,7 +516,13 @@ protected:
 	 */
 	const char *versionDescription(ResVersion version) const;
 
+	/**
+	 * All calls to getVolumeFile must be followed with a corresponding
+	 * call to disposeVolumeFileStream once the stream is finished being used.
+	 * Do NOT call delete directly on returned streams, as they may be cached.
+	 */
 	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
+	void disposeVolumeFileStream(Common::SeekableReadStream *fileStream, ResourceSource *source);
 	void loadResource(Resource *res);
 	void freeOldResources();
 	bool validateResource(const ResourceId &resourceId, const Common::String &sourceMapLocation, const Common::String &sourceName, const uint32 offset, const uint32 size, const uint32 sourceSize) const;
