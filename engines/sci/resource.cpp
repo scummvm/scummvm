@@ -809,7 +809,7 @@ void ResourceManager::scanNewSources() {
 	// (e.g. KQ5 via kDoAudio, MGDX via kSetLanguage), and users really should
 	// be warned of bad resources in this situation (KQ Collection 1997 has a
 	// bad copy of KQ5 on CD 1; the working copy is on CD 2)
-	if (_hasBadResources) {
+	if (!_detectionMode && _hasBadResources) {
 		showScummVMDialog(_("Missing or corrupt game resources have been detected. "
 							"Some game features may not work properly. Please check "
 							"the console for more information, and verify that your "
@@ -950,8 +950,8 @@ void ResourceManager::freeResourceSources() {
 	_sources.clear();
 }
 
-ResourceManager::ResourceManager() {
-}
+ResourceManager::ResourceManager(const bool detectionMode) :
+	_detectionMode(detectionMode) {}
 
 void ResourceManager::init() {
 	_maxMemoryLRU = 256 * 1024; // 256KiB

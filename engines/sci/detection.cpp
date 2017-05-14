@@ -612,7 +612,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	if (!foundResMap && !foundRes000)
 		return 0;
 
-	ResourceManager resMan;
+	ResourceManager resMan(true);
 	resMan.addAppropriateSourcesForDetection(fslist);
 	resMan.init();
 	// TODO: Add error handling.

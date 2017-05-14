@@ -319,7 +319,7 @@ public:
 	/**
 	 * Creates a new SCI resource manager.
 	 */
-	ResourceManager();
+	ResourceManager(const bool detectionMode = false);
 	~ResourceManager();
 
 
@@ -454,6 +454,8 @@ public:
 	ResourceType convertResType(byte type);
 
 protected:
+	bool _detectionMode;
+
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
 	// for resources which are not explicitly locked. However, a warning will be
