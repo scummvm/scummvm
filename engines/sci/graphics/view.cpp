@@ -801,34 +801,7 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 
 	const byte *bitmapData = bitmap.getUnsafeDataAt((clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left), celWidth * (height - 1) + width);
 
-	if (!_EGAmapping) {
-		for (int y = 0; y < height; y++, bitmapData += celWidth) {
-			for (int x = 0; x < width; x++) {
-				const byte color = bitmapData[x];
-				if (color != clearKey) {
-					const int x2 = clipRectTranslated.left + x;
-					const int y2 = clipRectTranslated.top + y;
-					if (!upscaledHires) {
-						if (priority >= _screen->getPriority(x2, y2)) {
-							byte outputColor = palette->mapping[color];
-							// SCI16 remapping (QFG4 demo)
-							if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
-								outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
-							_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
-						}
-					} else {
-						// UpscaledHires means view is hires and is supposed to
-						// get drawn onto lowres screen.
-						// FIXME(?): we can't read priority directly with the
-						// hires coordinates. May not be needed at all in kq6
-						// FIXME: Handle proper aspect ratio. Some GK1 hires images
-						// are in 640x400 instead of 640x480
-						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
-					}
-				}
-			}
-		}
-	} else {
+	if (_EGAmapping) {
 		const SciSpan<const byte> EGAmapping = _EGAmapping.subspan(EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE, SCI_VIEW_EGAMAPPING_SIZE);
 		for (int y = 0; y < height; y++, bitmapData += celWidth) {
 			for (int x = 0; x < width; x++) {
@@ -837,6 +810,34 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 				const int y2 = clipRectTranslated.top + y;
 				if (color != clearKey && priority >= _screen->getPriority(x2, y2))
 					_screen->putPixel(x2, y2, drawMask, color, priority, 0);
+			}
+		}
+	} else if (upscaledHires) {
+		// UpscaledHires means view is hires and is supposed to
+		// get drawn onto lowres screen.
+		for (int y = 0; y < height; y++, bitmapData += celWidth) {
+			for (int x = 0; x < width; x++) {
+				const byte color = bitmapData[x];
+				const int x2 = clipRectTranslated.left + x;
+				const int y2 = clipRectTranslated.top + y;
+				_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
+			}
+		}
+	} else {
+		for (int y = 0; y < height; y++, bitmapData += celWidth) {
+			for (int x = 0; x < width; x++) {
+				const byte color = bitmapData[x];
+				if (color != clearKey) {
+					const int x2 = clipRectTranslated.left + x;
+					const int y2 = clipRectTranslated.top + y;
+					if (priority >= _screen->getPriority(x2, y2)) {
+						byte outputColor = palette->mapping[color];
+						// SCI16 remapping (QFG4 demo)
+						if (g_sci->_gfxRemap16 && g_sci->_gfxRemap16->isRemapped(outputColor))
+							outputColor = g_sci->_gfxRemap16->remapColor(outputColor, _screen->getVisual(x2, y2));
+						_screen->putPixel(x2, y2, drawMask, outputColor, priority, 0);
+					}
+				}
 			}
 		}
 	}
