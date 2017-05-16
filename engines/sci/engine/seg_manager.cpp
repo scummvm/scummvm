@@ -1016,6 +1016,9 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, uint16 calle
 			getScriptSegment(the_class->script, lock);
 
 			if (!the_class->reg.getSegment()) {
+				if (lock == SCRIPT_GET_DONT_LOAD)
+					return NULL_REG;
+
 				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed", classnr, the_class->script, the_class->script);
 			}
 		} else
