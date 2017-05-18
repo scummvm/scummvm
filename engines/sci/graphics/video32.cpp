@@ -71,8 +71,9 @@ static bool flushEvents(EventManager *eventMan) {
 
 #pragma mark SEQPlayer
 
-SEQPlayer::SEQPlayer(SegManager *segMan) :
+SEQPlayer::SEQPlayer(SegManager *segMan, EventManager *eventMan) :
 	_segMan(segMan),
+	_eventMan(eventMan),
 	_decoder(nullptr),
 	_plane(nullptr),
 	_screenItem(nullptr) {}
@@ -114,7 +115,32 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
 		g_sci->sleep(_decoder->getTimeToNextFrame());
-		renderFrame(bitmap);
+
+		while (_decoder->needsUpdate()) {
+			renderFrame(bitmap);
+		}
+
+		// SSCI did not allow SEQ animations to be bypassed like this
+		SciEvent event = _eventMan->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
+		if (event.type == SCI_EVENT_MOUSE_PRESS) {
+			break;
+		}
+
+		event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_PEEK);
+		if (event.type == SCI_EVENT_KEYBOARD) {
+			bool stop = false;
+			while ((event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD)),
+				   event.type != SCI_EVENT_NONE) {
+				if (event.character == SCI_KEY_ESC) {
+					stop = true;
+					break;
+				}
+			}
+
+			if (stop) {
+				break;
+			}
+		}
 	}
 
 	_segMan->freeBitmap(bitmapId);

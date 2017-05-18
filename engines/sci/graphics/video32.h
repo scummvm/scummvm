@@ -50,7 +50,7 @@ struct Palette;
  */
 class SEQPlayer {
 public:
-	SEQPlayer(SegManager *segMan);
+	SEQPlayer(SegManager *segMan, EventManager *eventMan);
 
 	/**
 	 * Plays a SEQ animation with the given
@@ -61,6 +61,7 @@ public:
 
 private:
 	SegManager *_segMan;
+	EventManager *_eventMan;
 	SEQDecoder *_decoder;
 
 	/**
@@ -655,7 +656,7 @@ private:
 class Video32 : public Common::Serializable {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
-	_SEQPlayer(segMan),
+	_SEQPlayer(segMan, eventMan),
 	_AVIPlayer(segMan, eventMan),
 	_VMDPlayer(segMan, eventMan),
 	_robotPlayer(segMan),
