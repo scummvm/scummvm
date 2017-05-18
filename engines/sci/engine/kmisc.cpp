@@ -617,7 +617,16 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		kGetCDDrive    = 3
 	};
 
-	const Operation operation = argc > 0 ? (Operation)argv[0].toSint16() : kGetPlatform;
+	Operation operation;
+	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+		if (argc == 0 || argv[0].toSint16() == 0) {
+			operation = kGetPlatform;
+		} else {
+			return NULL_REG;
+		}
+	} else {
+		operation = argc > 0 ? (Operation)argv[0].toSint16() : kGetPlatform;
+	}
 
 	switch (operation) {
 	case kGetPlatform:
@@ -640,7 +649,7 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 	case kGetCDSpeed:
 	case kGetCDDrive:
 	default:
-		return make_reg(0, 0);
+		return NULL_REG;
 	}
 }
 
