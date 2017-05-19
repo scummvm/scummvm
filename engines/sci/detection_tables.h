@@ -4747,63 +4747,99 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_TESTING | ADGF_CD, GUIO_TORIN_DEMO },
 
-	// Torin's Passage (Multilingual) - English Windows CD
+	// Torin's Passage - Multilingual EN/FR/DE w/ English audio Windows CD
+	// Also matches GOG.com English-only release
+	// Also matches Spanish and Italian CD releases
 	// SCI interpreter version 2.100.002
 	{"torin", "", {
+		// Duplicate resmap is intentional; it gives the English version equal
+		// priority to localized versions that are detected with an additional
+		// file
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
 
-	// Torin's Passage (Multilingual) - Spanish Windows CD (from jvprat)
-	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
 	{"torin", "", {
 		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
 		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
-		// TODO: depend on one of the patches?
-		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
-
-	// Torin's Passage (Multilingual) - French Windows CD
-	// SCI interpreter version 2.100.002
-	{"torin", "", {
-		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
-		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"french/msg/0.msg", 0, "cbf314308636380a96f20a76f2a26ce5", 5857},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
 
-	// Torin's Passage - German Windows CD (from m_kiewitz)
+	{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"german/msg/0.msg", 0, "374ce3a7e540e1f4917d132f74f356b8", 5993},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	// from jvprat and m_kiewitz
+	{"torin", "", {
+		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"spanish/msg/0.msg", 0, "3c468ee0a8595d64d93df68054b116d7", 5681},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	// from glorifindel
+	// TODO: Need to get ahold of italian/msg/0.msg from an Italian release
+//	{"torin", "", {
+//		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+//		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+//		// {"italian/msg/0.msg", 0, ?, ?},
+//		AD_LISTEND},
+//		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	// ---
+
+	// Torin's Passage - Multilingual EN/FR/DE w/ German audio Windows CD (from m_kiewitz)
 	// SCI interpreter version 2.100.002
 	// VERSION file "1.0"
 	{"torin", "", {
 		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
 
-	// Torin's Passage (Multilingual) - German Windows CD
-	// SCI interpreter version 2.100.002
 	{"torin", "", {
-		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
-		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
+		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
+		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	{"torin", "", {
+		{"resmap.000", 0, "e55c3097329b3c53752301e01c6af2fb", 9787},
+		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56127540},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
 
-	// Torin's Passage (Multilingual) - Italian Windows CD (from glorifindel)
-	// SCI interpreter version 2.100.002
-	{"torin", "", {
-		{"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
-		{"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 55973887},
-		AD_LISTEND},
-		Common::IT_ITA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+	// ---
 
-	// Torin's Passage - French Windows (from LePhilousophe)
+	// Torin's Passage - Multilingual EN/FR/DE w/ French audio Windows CD (from LePhilousophe)
 	// SCI interpreter version 2.100.002
+	// NOTE: This version of Torin has an ITALIAN directory, but it contains
+	// English language data, not Italian
+	{"torin", "", {
+		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
+		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
 	{"torin", "", {
 		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
 		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	{"torin", "", {
+		{"resmap.000", 0, "66ed46e3e56f487e688d52f05b33d0ba", 9787},
+		{"ressci.000", 0, "118f9bec04bfe17c4f87bbb5ddb43c18", 56126981},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformWindows, ADGF_TESTING | ADGF_CD, GUIO_TORIN },
+
+	// ---
 
 	// Torin's Passage - Russian Windows CD (SoftClub official translate)
 	// SCI interpreter version 2.100.002

@@ -506,10 +506,23 @@ static ADGameDescription s_fallbackDesc = {
 
 static char s_fallbackGameIdBuf[256];
 
+static const char *directoryGlobs[] = {
+	"english",
+	"french",
+	"german",
+	"italian",
+	"msg",
+	"spanish",
+	0
+};
+
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
 		_singleId = "sci";
+		_maxScanDepth = 3;
+		_directoryGlobs = directoryGlobs;
+		_matchFullPaths = true;
 	}
 
 	virtual const char *getName() const {

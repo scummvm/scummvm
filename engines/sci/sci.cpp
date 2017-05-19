@@ -169,6 +169,28 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
+
+	switch (desc->language) {
+	case Common::DE_DEU:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
+		break;
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "english/msg");
+		break;
+	case Common::ES_ESP:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "spanish/msg");
+		break;
+	case Common::FR_FRA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "french/msg");
+		break;
+	case Common::IT_ITA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "italian/msg");
+		break;
+	default:
+		break;
+	}
 }
 
 SciEngine::~SciEngine() {
