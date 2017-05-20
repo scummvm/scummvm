@@ -132,7 +132,7 @@ public:
 	Script();
 	~Script();
 
-	void freeScript();
+	void freeScript(const bool keepLocalsSegment = false);
 	void load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher);
 
 	virtual bool isValidOffset(uint32 offset) const;

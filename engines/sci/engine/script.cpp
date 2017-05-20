@@ -47,7 +47,7 @@ Script::~Script() {
 	freeScript();
 }
 
-void Script::freeScript() {
+void Script::freeScript(const bool keepLocalsSegment) {
 	_nr = 0;
 
 	_buf.clear();
@@ -59,7 +59,9 @@ void Script::freeScript() {
 	_numSynonyms = 0;
 
 	_localsOffset = 0;
-	_localsSegment = 0;
+	if (!keepLocalsSegment) {
+		_localsSegment = 0;
+	}
 	_localsBlock = NULL;
 	_localsCount = 0;
 

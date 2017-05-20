@@ -1017,7 +1017,7 @@ int SegManager::instantiateScript(int scriptNum) {
 			scr->incrementLockers();
 			return segmentId;
 		} else {
-			scr->freeScript();
+			scr->freeScript(true);
 		}
 	} else {
 		scr = allocateScript(scriptNum, &segmentId);
