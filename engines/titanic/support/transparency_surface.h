@@ -40,8 +40,8 @@ private:
 	int _pitch;
 	int _runLength;
 	bool _flag;
-	bool _flag1;
-	bool _flag2;
+	byte _transparentColor;
+	byte _opaqueColor;
 private:
 	/**
 	* Returns a a pixel from the transparency surface
@@ -74,9 +74,14 @@ public:
 	uint getAlpha() const;
 
 	/**
+	 * Returns true if the pixel is opaque
+	 */
+	bool isPixelOpaque() const;
+
+	/**
 	 * Returns true if the pixel is completely transparent
 	 */
-	bool isPixelTransparent();
+	bool isPixelTransparent() const;
 };
 
 } // End of namespace Titanic
