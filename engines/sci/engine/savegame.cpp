@@ -284,11 +284,52 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 					Object *obj = scr->scriptObjInit(addr, false);
 
 					if (pass == 2) {
-						if (!obj->initBaseObject(this, addr, false)) {
-							// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-							// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-							warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-							objects.erase(addr.toUint16());
+						// When a game disposes a script with kDisposeScript,
+						// the script is marked as deleted and its lockers are
+						// set to 0, which makes the GC stop using the script
+						// as a retainer of its own objects. Most of the time,
+						// this means that the script and all of its objects are
+						// cleaned up on the next GC cycle, but occasionally a
+						// game will retain a reference to an object within a
+						// disposed script somewhere else, which keeps the
+						// script (and all of its objects) alive. This does not
+						// prevent the GC from safely collecting other objects
+						// that had only been retained by now-unreachable script
+						// objects, so references held by these unreachable
+						// objects may be invalidated. If the superclass of one
+						// of these objects is GC'd (because it was the only
+						// retainer of the superclass), and a save game is
+						// created after kDisposeScript is called but before
+						// the script actually becomes collectable, it will
+						// cause the `initBaseObject` call to fail on restore,
+						// but this is fine because the object isn't reachable
+						// anyway (it is just waiting to be GC'd).
+						//
+						// For example, in EcoQuest floppy, after opening the
+						// gate for Delphineus at the beginning of the game,
+						// the game calls to dispose script 380, but there are
+						// still reachable references to the script 380 object
+						// `outsideGateLever` at `CueObj::client` and
+						// `OnMeAndLowY::theObj`, so script 380 (and all of its
+						// objects) are retained. However, the now-unreachable
+						// `fJump` object had been the only retainer of its
+						// superclass `JumpTo`, so the `JumpTo` class gets
+						// GC'd, and the `fJump` object is left with no valid
+						// superclass. If the game is saved and restored at this
+						// point, `initBaseObject` will fail on `fJump` because
+						// it has no superclass (but, again, this is fine
+						// because this is an unreachable object). Later,
+						// `outsideGateLever` becomes unreachable as the
+						// `CueObj::client` and `OnMeAndLowY::theObj` properties
+						// are changed, which means that all script 380 objects
+						// are finally unreachable and the script and its
+						// objects get fully disposed.
+						//
+						// All that said, if a script has lockers and the base
+						// object necessary for restoring the object is still
+						// missing, that is probably a real bug.
+						if (!obj->initBaseObject(this, addr, false) && scr->getLockers()) {
+							warning("Failed to locate base object %04x:%04x for object %04x:%04x (%s); skipping", PRINT_REG(obj->getSpeciesSelector()), PRINT_REG(addr), getObjectName(addr));
 						}
 					}
 				}
