@@ -206,7 +206,6 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
-			uint transColor = getTransparencyColor();
 
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
 				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
