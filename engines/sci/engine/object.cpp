@@ -54,8 +54,8 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 		}
 
 		_methodCount = data.getUint16LEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) - 2);
-		for (int i = 0; i < _methodCount * 2 + 2; ++i) {
-			_baseMethod.push_back(data.getUint16SEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) + i * 2));
+		for (uint i = 0; i < _methodCount * sizeof(uint16) + 2; ++i) {
+			_baseMethod.push_back(data.getUint16SEAt(header.getUint16LEAt(kOffsetHeaderFunctionArea) + i * sizeof(uint16)));
 		}
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
 		_variables.resize(data.getUint16SEAt(2));
@@ -72,8 +72,8 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 		}
 
 		_methodCount = buf.getUint16SEAt(data.getUint16SEAt(6));
-		for (int i = 0; i < _methodCount * 2 + 3; ++i) {
-			_baseMethod.push_back(buf.getUint16SEAt(data.getUint16SEAt(6) + i * 2));
+		for (uint i = 0; i < _methodCount * sizeof(uint16) + 3; ++i) {
+			_baseMethod.push_back(buf.getUint16SEAt(data.getUint16SEAt(6) + i * sizeof(uint16)));
 		}
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
@@ -90,7 +90,7 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 		{
 #endif
 			for (uint i = 0; i < _variables.size(); i++)
-				_variables[i] = make_reg(0, data.getUint16SEAt(i * 2));
+				_variables[i] = make_reg(0, data.getUint16SEAt(i * sizeof(uint16)));
 		}
 	}
 }

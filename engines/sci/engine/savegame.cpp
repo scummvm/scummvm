@@ -233,7 +233,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 #ifdef ENABLE_SCI32
 		} else if (type == SEG_TYPE_ARRAY) {
-			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
 		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
 			_bitmapSegId = i;
@@ -251,13 +250,10 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		if (type == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 
-			// If we are loading a script, perform some extra steps
 			if (s.isLoading()) {
-				// Hook the script up in the script->segment map
 				_scriptSegMap[scr->getScriptNumber()] = i;
 			}
 
-			// Sync the script's string heap
 			if (s.getVersion() >= 28)
 				scr->syncStringHeap(s);
 		}
