@@ -309,7 +309,6 @@ public:
 	void initSpecies(SegManager *segMan, reg_t addr);
 	void initSuperClass(SegManager *segMan, reg_t addr);
 	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
-	void syncBaseObject(const SciSpan<const byte> &ptr) { _baseObj = ptr; }
 
 #ifdef ENABLE_SCI32
 	bool mustSetViewVisible(const int index, const bool fromPropertyOp) const;
