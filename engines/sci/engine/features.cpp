@@ -77,7 +77,7 @@ bool GameFeatures::autoDetectSoundType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 	uint16 intParam = 0xFFFF;
 	bool foundTarget = false;
@@ -224,7 +224,7 @@ bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int met
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -323,7 +323,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -485,7 +485,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 
 	while (true) {
@@ -620,7 +620,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 	if (!addr.getSegment())
 		return false;
 
-	uint16 offset = addr.getOffset();
+	uint32 offset = addr.getOffset();
 	Script *script = _segMan->getScript(addr.getSegment());
 	bool foundTarget = false;
 

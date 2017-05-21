@@ -160,7 +160,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parentAddr));
 
-	uint16 infoSelector = parentObj->getInfoSelector().getOffset();
+	uint16 infoSelector = parentObj->getInfoSelector().toUint16();
 	cloneObj = s->_segMan->allocateClone(&cloneAddr);
 
 	if (!cloneObj) {
@@ -211,7 +211,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	//  At least kq4early relies on this behavior. The scripts clone "Sound", then set bit 1 manually
 	//  and call kDisposeClone later. In that case we may not free it, otherwise we will run into issues
 	//  later, because kIsObject would then return false and Sound object wouldn't get checked.
-	uint16 infoSelector = object->getInfoSelector().getOffset();
+	uint16 infoSelector = object->getInfoSelector().toUint16();
 	if ((infoSelector & 3) == kInfoFlagClone)
 		object->markAsFreed();
 

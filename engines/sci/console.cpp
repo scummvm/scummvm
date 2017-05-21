@@ -1104,8 +1104,8 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 				debugPrintf("Error: script and heap %d together are larger than 64KB (%u bytes)\n",
 				itr->getNumber(), script->size() + heap->size());
 		} else {	// SCI3
-			if (script && script->size() > 65535)
-				debugPrintf("Error: script %d is larger than 64KB (%u bytes)\n",
+			if (script && script->size() > 0x3FFFF)
+				debugPrintf("Error: script %d is larger than 256KB (%u bytes)\n",
 				itr->getNumber(), script->size());
 		}
 	}
@@ -1922,7 +1922,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 	Common::Array<reg_t> entries = hunks->listAllDeallocatable(id);
 
 	for (uint i = 0; i < entries.size(); ++i) {
-		uint16 offset = entries[i].getOffset();
+		uint32 offset = entries[i].getOffset();
 		const Hunk& h = hunks->at(offset);
 		if (strcmp(h.type, "SaveBits()") == 0) {
 			byte* memoryPtr = (byte *)h.mem;
@@ -3556,7 +3556,7 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 			// Now dissassemble each method of the script object
 			for (uint16 i = 0; i < obj->getMethodCount(); i++) {
 				reg_t fptr = obj->getFunction(i);
-				uint16 offset = fptr.getOffset();
+				uint32 offset = fptr.getOffset();
 				int16 opparams[4];
 				byte extOpcode;
 				byte opcode;
