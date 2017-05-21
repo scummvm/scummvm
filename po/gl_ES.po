@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-05-14 05:53+0200\n"
+"POT-Creation-Date: 2017-05-21 04:20+0200\n"
 "PO-Revision-Date: 2016-11-28 15:51+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -1883,8 +1883,8 @@ msgstr "~V~olver ao Iniciador"
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:422
-#: engines/sci/engine/guest_additions.cpp:463 engines/sci/engine/kfile.cpp:932
+#: engines/sci/engine/guest_additions.cpp:418
+#: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1905,8 +1905,8 @@ msgstr "Gardar partida:"
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/guest_additions.cpp:422
-#: engines/sci/engine/guest_additions.cpp:463 engines/sci/engine/kfile.cpp:932
+#: engines/sci/engine/guest_additions.cpp:418
+#: engines/sci/engine/guest_additions.cpp:459 engines/sci/engine/kfile.cpp:932
 #: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -2933,8 +2933,8 @@ msgstr ""
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:441
-#: engines/sci/engine/guest_additions.cpp:479
+#: engines/sci/engine/guest_additions.cpp:437
+#: engines/sci/engine/guest_additions.cpp:475
 #: engines/sci/engine/kfile.cpp:1051 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -2948,8 +2948,8 @@ msgstr "Restaurar xogo:"
 #: engines/dreamweb/saveload.cpp:170 engines/gnap/menu.cpp:473
 #: engines/hugo/file.cpp:400 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/guest_additions.cpp:441
-#: engines/sci/engine/guest_additions.cpp:479
+#: engines/sci/engine/guest_additions.cpp:437
+#: engines/sci/engine/guest_additions.cpp:475
 #: engines/sci/engine/kfile.cpp:1051 engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
@@ -3598,16 +3598,16 @@ msgstr ""
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1264
+#: engines/sci/engine/savegame.cpp:1296
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1266
+#: engines/sci/engine/savegame.cpp:1298
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1277
+#: engines/sci/engine/savegame.cpp:1309
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -3625,7 +3625,7 @@ msgid ""
 "A known buggy game script has been detected, which could prevent you from "
 "progressing later on in the game, during the sequence with the Green Man's "
 "riddles. Please, apply the latest patch for this game by Sierra to avoid "
-"possible problems"
+"possible problems."
 msgstr ""
 
 #: engines/sci/sci.cpp:379
