@@ -35,17 +35,17 @@ void CStarControlSub25::fn1(const FMatrix &m1, const FMatrix &m2) {
 	_sub2.fn4(matrix);
 }
 
-void CStarControlSub25::fn2(double val, FMatrix &m) {
+void CStarControlSub25::fn2(double val, FMatrix &orientation) {
 	if (val <= 0.0) {
-		m = _matrix1;
+		orientation = _matrix1;
 	} else if (val > 1.0) {
-		m = _matrix2;
+		orientation = _matrix2;
 	} else {
 		CStarControlSub26 sub26 = _sub1.fn5(val, &_sub2);
 
 		DMatrix m1;
 		m1.fn3(&sub26);
-		m = m1;
+		orientation = m1;
 	}
 }
 

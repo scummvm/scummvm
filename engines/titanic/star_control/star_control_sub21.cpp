@@ -32,13 +32,13 @@ CStarControlSub21::CStarControlSub21(const CNavigationInfo *src) :
 		CCameraMover(src) {
 }
 
-void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
+void CStarControlSub21::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
 	if (isLocked())
 		decLockCount();
 
 	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
 		destV.toString().c_str());
-	_sub24.setPath(srcV, destV, srcM);
+	_sub24.setPath(srcV, destV, orientation);
 }
 
 void CStarControlSub21::proc10(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {

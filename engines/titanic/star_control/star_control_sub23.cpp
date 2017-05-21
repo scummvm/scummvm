@@ -66,7 +66,7 @@ void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_field34 = false;
 }
 
-void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
+void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;

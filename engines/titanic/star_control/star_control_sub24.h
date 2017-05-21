@@ -36,9 +36,9 @@ public:
 	/**
 	 * Sets the path to animate movement between
 	 */
-	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM);
+	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 
-	virtual int proc5(CErrorCode &errorCode, FVector &v, FMatrix &m);
+	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
 };
 
 } // End of namespace Titanic

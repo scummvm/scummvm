@@ -34,8 +34,8 @@ void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_active = true;
 }
 
-void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const FMatrix &srcM) {
-	CStarControlSub23::setPath(srcV, destV, srcM);
+void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+	CStarControlSub23::setPath(srcV, destV, orientation);
 
 	if (_distance > 8000.0) {
 		_active = true;
@@ -43,8 +43,8 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 		proc6(120, 4, _distance - 8000.0);
 	}
 
-	FVector row3 = srcM._row3;
-	double mult = _posDelta._x * row3._x + _posDelta._y * row3._y+ _posDelta._z * row3._z;
+	FVector row3 = orientation._row3;
+	double mult = _posDelta._x * row3._x + _posDelta._y * row3._y + _posDelta._z * row3._z;
 	_moveDelayCtr = 1.0;
 
 	bool flag = false;
@@ -71,7 +71,7 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 
 		FMatrix m1;
 		m1.fn1(tempV1);
-		_sub25.fn1(srcM, m1);
+		_sub25.fn1(orientation, m1);
 
 		_moveDelayCtr = 0.0;
 		_moveDelayInc = 0.1;
@@ -79,7 +79,7 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 	}
 }
 
-int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
+int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
 	const FVector *tv;
 
@@ -88,7 +88,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 
 	if (_moveDelayCtr < 1.0) {
 		_moveDelayCtr += _moveDelayInc;
-		_sub25.fn2(_moveDelayCtr, m);
+		_sub25.fn2(_moveDelayCtr, orientation);
 		errorCode.set();
 		return 1;
 	}
@@ -98,11 +98,11 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		return 2;
 	}
 
-	v2 = m._row3;
-	v3 = _destPos - v;
+	v2 = orientation._row3;
+	v3 = _destPos - pos;
 	v3.normalize();
 
-	double val = m._row3._x * v3._x + m._row3._y * v3._y + m._row3._z * v3._z;
+	double val = orientation._row3._x * v3._x + orientation._row3._y * v3._y + orientation._row3._z * v3._z;
 	bool flag = false;
 	if (val > 1.0) {
 		if (val >= 1.0 - 1.0e-10)
@@ -121,14 +121,14 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		tv = v2.addAndNormalize(v4, v2, v1);
 		v1 = *tv;
 
-		m.fn1(v1);
+		orientation.fn1(v1);
 		v2 = v1;
 	}
 
 	if (_field40 >= 0) {
 		double powVal = _powers[_field40];
 		v1 = v2 * powVal;
-		v += v1;
+		pos += v1;
 
 		--_field40;
 		errorCode.set();
@@ -138,9 +138,9 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 	if (_field44 > 0) {
 		v1._z = v2._z * _field38;
 		v1._x = v2._x * _field38;
-		v._x = v1._x + v._x;
-		v._y = v2._y * _field38 + v._y;
-		v._z = v1._z + v._z;
+		pos._x = v1._x + pos._x;
+		pos._y = v2._y * _field38 + pos._y;
+		pos._z = v1._z + pos._z;
 
 		--_field44;
 		errorCode.set();
@@ -152,9 +152,9 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &v, FMatrix &m) {
 		v1._y = v2._y * powVal;
 		v1._z = v2._z * powVal;
 		v1._x = v2._x * powVal;
-		v._y = v1._y + v._y;
-		v._z = v1._z + v._z;
-		v._x = v._x + v1._x;
+		pos._y = v1._y + pos._y;
+		pos._z = v1._z + pos._z;
+		pos._x = pos._x + v1._x;
 
 		--_field48;
 		errorCode.set();
