@@ -661,9 +661,7 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	return obj;
 }
 
-// This helper function is used by Script::relocateLocal and Object::relocate
-// Duplicate in segment.cpp and script.cpp
-static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
+bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, uint32 heapOffset) {
 	int rel = location - block_location;
 
 	if (rel < 0)

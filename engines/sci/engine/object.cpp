@@ -30,29 +30,8 @@
 
 namespace Sci {
 
-// This helper function is used by Script::relocateLocal and Object::relocate
-// Duplicate in segment.cpp and script.cpp
-static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
-	int rel = location - block_location;
+extern bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, uint32 heapOffset);
 
-	if (rel < 0)
-		return false;
-
-	uint idx = rel >> 1;
-
-	if (idx >= block.size())
-		return false;
-
-	if (rel & 1) {
-		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
-		return false;
-	}
-	block[idx].setSegment(segment); // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
-		block[idx].incOffset(scriptSize);
-
-	return true;
-}
 
 void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariables) {
 	const SciSpan<const byte> data = buf.subspan(obj_pos.getOffset());
