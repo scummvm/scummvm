@@ -371,7 +371,7 @@ Common::Error SciEngine::run() {
 			                  "prevent you from progressing later on in the game, during "
 			                  "the sequence with the Green Man's riddles. Please, apply "
 			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems"));
+			                  "problems."));
 		}
 	}
 
