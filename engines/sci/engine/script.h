@@ -56,6 +56,10 @@ enum ScriptOffsetEntryTypes {
 	SCI_SCR_OFFSET_TYPE_SAID
 };
 
+enum {
+	kNoRelocation = 0xFFFFFFFF
+};
+
 struct offsetLookupArrayEntry {
 	uint16    type;       // type of entry
 	uint16    id;         // id of this type, first item inside script data is 1, second item is 2, etc.
@@ -105,6 +109,13 @@ public:
 	uint32 getScriptSize() const { return _script.size(); }
 	uint32 getHeapSize() const { return _heap.size(); }
 	uint32 getBufSize() const { return _buf->size(); }
+	inline uint32 getHeapOffset() const {
+		if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
+			return _script.size();
+		}
+
+		return 0;
+	}
 
 	const byte *getBuf(uint offset = 0) const { return _buf->getUnsafeDataAt(offset); }
 	SciSpan<const byte> getSpan(uint offset) const { return _buf->subspan(offset); }
@@ -247,7 +258,7 @@ public:
 	 * Finds the pointer where a block of a specific type starts from,
 	 * in SCI0 - SCI1 games
 	 */
-	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, bool findLastBlock = false);
+	SciSpan<const byte> findBlockSCI0(ScriptObjectTypes type, bool findLastBlock = false) const;
 
 	/**
 	 * Syncs the string heap of a script. Used when saving/loading.
@@ -276,23 +287,35 @@ public:
 	uint16 getOffsetStringCount() { return _offsetLookupStringCount; };
 	uint16 getOffsetSaidCount() { return _offsetLookupSaidCount; };
 
+	/**
+	 * @returns kNoRelocation if no relocation exists for the given offset,
+	 * otherwise returns a delta for the offset to its relocated position.
+	 */
+	uint32 getRelocationOffset(const uint32 offset) const;
+
 private:
+	/**
+	 * Returns a Span containing the relocation table for a SCI0-SCI2.1 script.
+	 * (The SCI0-SCI2.1 relocation table is simply a list of all of the
+	 * offsets in the script heap whose values should be treated as pointers to
+	 * objects (vs just being numbers).)
+	 */
+	const SciSpan<const uint16> getRelocationTableSci0Sci21() const;
+
 	/**
 	 * Processes a relocation block within a SCI0-SCI2.1 script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
 	 */
-	void relocateSci0Sci21(reg_t block);
+	void relocateSci0Sci21(const SegmentId segmentId);
 
 #ifdef ENABLE_SCI32
 	/**
 	 * Processes a relocation block within a SCI3 script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
 	 */
-	void relocateSci3(reg_t block);
+	void relocateSci3(const SegmentId segmentId);
 #endif
 
 	bool relocateLocal(SegmentId segment, int location);

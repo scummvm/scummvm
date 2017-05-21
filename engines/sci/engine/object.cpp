@@ -123,12 +123,12 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 	return -1; // Failed
 }
 
-bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize) {
-	return relocateBlock(_variables, getPos().getOffset(), segment, location, scriptSize);
+bool Object::relocateSci0Sci21(SegmentId segment, int location, uint32 heapOffset) {
+	return relocateBlock(_variables, getPos().getOffset(), segment, location, heapOffset);
 }
 
 #ifdef ENABLE_SCI32
-bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
+bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, uint32 scriptSize) {
 	assert(offset >= 0 && (uint)offset < scriptSize);
 
 	for (uint i = 0; i < _variables.size(); ++i) {

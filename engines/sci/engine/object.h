@@ -299,9 +299,9 @@ public:
 #endif
 	}
 
-	bool relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize);
+	bool relocateSci0Sci21(SegmentId segment, int location, uint32 heapOffset);
 #ifdef ENABLE_SCI32
-	bool relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize);
+	bool relocateSci3(SegmentId segment, uint32 location, int offset, uint32 scriptSize);
 #endif
 
 	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;

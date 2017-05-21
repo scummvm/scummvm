@@ -183,7 +183,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			_exports = _buf->subspan<const uint16>(kSci11ExportTableOffset, _numExports * sizeof(uint16));
 		}
 
-		_localsOffset = _script.size() + 4;
+		_localsOffset = getHeapOffset() + 4;
 		_localsCount = _buf->getUint16SEAt(_localsOffset - 2);
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		_localsCount = _buf->getUint16LEAt(12);
@@ -676,10 +676,9 @@ bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId se
 		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return false;
 	}
-	block[idx].setSegment(segment); // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
-		block[idx].incOffset(scriptSize);
 
+	block[idx].setSegment(segment);
+	block[idx].incOffset(heapOffset);
 	return true;
 }
 
@@ -702,60 +701,123 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 
 bool Script::relocateLocal(SegmentId segment, int location) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _script.size());
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, getHeapOffset());
 	else
 		return false;
 }
 
-void Script::relocateSci0Sci21(reg_t block) {
-	SciSpan<const byte> heap = *_buf;
-	uint16 heapOffset = 0;
+uint32 Script::getRelocationOffset(const uint32 offset) const {
+	if (getSciVersion() == SCI_VERSION_3) {
+		SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
+		const uint relocCount = _buf->getUint16SEAt(18);
 
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
-		heap = _heap;
-		heapOffset = _script.size();
+		for (uint i = 0; i < relocCount; ++i) {
+			if (offset == relocStart.getUint32SEAt(0)) {
+				return relocStart.getUint32SEAt(4);
+			}
+			relocStart += 10;
+		}
+	} else {
+		const SciSpan<const uint16> relocTable = getRelocationTableSci0Sci21();
+		for (uint i = 0; i < relocTable.size(); ++i) {
+			if (relocTable.getUint16SEAt(i) == offset) {
+				return getHeapOffset();
+			}
+		}
 	}
 
-	if (block.getOffset() >= (uint16)heap.size() ||
-		heap.getUint16SEAt(block.getOffset()) * 2 + block.getOffset() >= (uint16)heap.size())
-	    error("Relocation block outside of script");
+	return kNoRelocation;
+}
 
-	int count = heap.getUint16SEAt(block.getOffset());
-	int exportIndex = 0;
-	int pos = 0;
+const SciSpan<const uint16> Script::getRelocationTableSci0Sci21() const {
+	SciSpan<const byte> relocationBlock;
+	uint16 numEntries;
+	uint16 dataOffset;
 
-	for (int i = 0; i < count; i++) {
-		pos = heap.getUint16SEAt(block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
-		// This occurs in SCI01/SCI1 games where usually one export value is
-		// zero. It seems that in this situation, we should skip the export and
-		// move to the next one, though the total count of valid exports remains
-		// the same
-		if (!pos) {
-			exportIndex++;
-			pos = heap.getUint16SEAt(block.getOffset() + 2 + (exportIndex * 2)) + heapOffset;
-			if (!pos)
-				error("Script::relocate(): Consecutive zero exports found");
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
+
+		if (!relocationBlock) {
+			return SciSpan<const uint16>();
 		}
+
+		if (relocationBlock != findBlockSCI0(SCI_OBJ_POINTERS, true)) {
+			warning("script.%u has multiple relocation tables", _nr);
+		}
+
+		numEntries = relocationBlock.getUint16SEAt(4);
+
+		if (!numEntries) {
+			return SciSpan<const uint16>();
+		}
+
+		dataOffset = 6;
+
+		// Starting somewhere around SQ1, and continuing through the rest of
+		// SCI1, the relocation table in scripts started including an extra
+		// null entry at the beginning of the table, without a corresponding
+		// increase in the entry count. While this change is consistent in
+		// most of the SCI1mid+ games (all scripts in LSL1, Jones CD,
+		// EQ floppy, SQ1, LSL5, and Ms Astro Chicken have the null entry),
+		// a few games include scripts without the null entry (Castle of Dr
+		// Brain 947 & 997, PQ3 997, KQ5 CD 975 & 997). Since 0 is never a
+		// valid relocation offset, we just skip it if we see it
+		const uint16 firstEntry = relocationBlock.getUint16SEAt(6);
+		if (firstEntry == 0) {
+			dataOffset += 2;
+		}
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
+		relocationBlock = _heap.subspan(_heap.getUint16SEAt(0));
+
+		if (!relocationBlock) {
+			return SciSpan<const uint16>();
+		}
+
+		numEntries = relocationBlock.getUint16SEAt(0);
+
+		if (!numEntries) {
+			return SciSpan<const uint16>();
+		}
+
+		dataOffset = 2;
+	} else {
+		error("Invalid engine version called Script::getRelocationTableSci0Sci21");
+	}
+
+	// This check should work correctly even with SCI1.1+ because the relocation
+	// table is always at the very end of the heap in these games
+	if (dataOffset + numEntries * sizeof(uint16) != relocationBlock.size()) {
+		warning("script.%u unexpected relocation table size %u", _nr, relocationBlock.size());
+	}
+
+	return relocationBlock.subspan<const uint16>(dataOffset, numEntries * sizeof(uint16));
+}
+
+void Script::relocateSci0Sci21(const SegmentId segmentId) {
+	const SciSpan<const uint16> relocEntries = getRelocationTableSci0Sci21();
+
+	const uint32 heapOffset = getHeapOffset();
+
+	for (uint i = 0; i < relocEntries.size(); ++i) {
+		const uint pos = relocEntries.getUint16SEAt(i) + heapOffset;
 
 		// In SCI0-SCI1, script local variables, objects and code are relocated.
 		// We only relocate locals and objects here, and ignore relocation of
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
-		if (!relocateLocal(block.getSegment(), pos)) {
+		if (!relocateLocal(segmentId, pos)) {
 			// Not a local? It's probably an object or code block. If it's an
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
 			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
-				if (it->_value.relocateSci0Sci21(block.getSegment(), pos, _script.size()))
+				if (it->_value.relocateSci0Sci21(segmentId, pos, getHeapOffset()))
 					break;
 		}
-
-		exportIndex++;
 	}
 }
 
 #ifdef ENABLE_SCI32
-void Script::relocateSci3(reg_t block) {
+void Script::relocateSci3(const SegmentId segmentId) {
 	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
 	const uint relocCount = _buf->getUint16SEAt(18);
 
@@ -763,7 +825,7 @@ void Script::relocateSci3(reg_t block) {
 	for (it = _objects.begin(); it != _objects.end(); ++it) {
 		SciSpan<const byte> seeker = relocStart;
 		for (uint i = 0; i < relocCount; ++i) {
-			it->_value.relocateSci3(block.getSegment(),
+			it->_value.relocateSci3(segmentId,
 						seeker.getUint32SEAt(0),
 						seeker.getUint32SEAt(4),
 						_script.size());
@@ -831,7 +893,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	return offset;
 }
 
-SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastBlock) {
+SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastBlock) const {
 	SciSpan<const byte> foundBlock;
 
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -1054,9 +1116,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 		} while ((uint32)(seeker - *_buf) < getScriptSize() - 2);
 	}
 
-	const SciSpan<const byte> relocationBlock = findBlockSCI0(SCI_OBJ_POINTERS);
-	if (relocationBlock)
-		relocateSci0Sci21(make_reg(segmentId, relocationBlock - *_buf + 4));
+	relocateSci0Sci21(segmentId);
 }
 
 void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
@@ -1108,7 +1168,7 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 		seeker += seeker.getUint16SEAt(2) * 2;
 	}
 
-	relocateSci0Sci21(make_reg(segmentId, _heap.getUint16SEAt(0)));
+	relocateSci0Sci21(segmentId);
 
 	for (uint i = 0; i < mismatchedVarCountObjects.size(); ++i) {
 		const reg_t pos = mismatchedVarCountObjects[i];
@@ -1143,7 +1203,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 		seeker += seeker.getUint16SEAt(2);
 	}
 
-	relocateSci3(make_reg(segmentId, 0));
+	relocateSci3(segmentId);
 }
 #endif
 

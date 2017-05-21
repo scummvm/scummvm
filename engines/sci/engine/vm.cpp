@@ -570,7 +570,7 @@ uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffse
 		offset = relOffset;
 		break;
 	case SCI_VERSION_1_1:
-		offset = relOffset + scr->getScriptSize();
+		offset = relOffset + scr->getHeapOffset();
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_3:

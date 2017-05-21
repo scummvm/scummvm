@@ -246,11 +246,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	uint32 address = scr->validateExportFunc(index, true);
-
-	// Point to the heap for SCI1.1 - SCI2.1 games
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE)
-		address += scr->getScriptSize();
+	const uint32 address = scr->validateExportFunc(index, true) + scr->getHeapOffset();
 
 	// Bugfix for the intro speed in PQ2 version 1.002.011.
 	// This is taken from the patch by NewRisingSun(NRS) / Belzorash. Global 3
