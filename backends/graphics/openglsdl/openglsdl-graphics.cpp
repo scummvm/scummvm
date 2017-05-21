@@ -633,7 +633,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				for (int n = 0;; n++) {
 					SDL_RWops *file;
 
+#ifdef USE_PNG
+					filename = Common::String::format("scummvm%05d.png", n);
+#else
 					filename = Common::String::format("scummvm%05d.bmp", n);
+#endif
 
 					file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
 
