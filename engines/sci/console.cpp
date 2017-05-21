@@ -4211,14 +4211,14 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 		if (obj && ofs < obj->getVarCount()) {
 			uint16 varSelector = obj->getVarSelector(ofs);
 			debugPrintf("%d: property at index %04x of %s is %s %s\n", i, ofs,
-				    s->_segMan->derefString(obj->getNameSelector()),
+				    s->_segMan->getObjectName(reg),
 				    _engine->getKernel()->getSelectorName(varSelector).c_str(),
 				    markers[varSelector] ? "(repeat!)" : "");
 			markers[varSelector] = true;
 		}
 		else {
 			debugPrintf("%d: property at index %04x doesn't match up with %s\n", i, ofs,
-				    s->_segMan->derefString(obj->getNameSelector()));
+				    s->_segMan->getObjectName(reg));
 		}
 	}
 

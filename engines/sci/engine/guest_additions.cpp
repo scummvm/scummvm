@@ -359,14 +359,10 @@ static const byte SRDialogPatch[] = {
 };
 
 void GuestAdditions::patchGameSaveRestoreSCI32(Script &script) const {
-	ObjMap &objMap = script.getObjectMap();
-	for (ObjMap::iterator it = objMap.begin(); it != objMap.end(); ++it) {
-		Object &obj = it->_value;
-		if (obj.getNameSelector().isNull()) {
-			continue;
-		}
-
-		if (Common::String(_segMan->derefString(obj.getNameSelector())) != "SRDialog") {
+	const ObjMap &objMap = script.getObjectMap();
+	for (ObjMap::const_iterator it = objMap.begin(); it != objMap.end(); ++it) {
+		const Object &obj = it->_value;
+		if (strncmp(_segMan->getObjectName(obj.getPos()), "SRDialog", 8) != 0) {
 			continue;
 		}
 
