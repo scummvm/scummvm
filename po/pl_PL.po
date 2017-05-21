@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-05-21 04:20+0200\n"
+"POT-Creation-Date: 2017-05-21 22:56+0200\n"
 "PO-Revision-Date: 2017-01-25 12:49+0000\n"
 "Last-Translator: Rafa³ Rzepecki <divided.mind@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -919,7 +919,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Specjalne tryby ditheringu wspierane przez niektóre gry"
 
 #: gui/options.cpp:1046 backends/graphics/openglsdl/openglsdl-graphics.cpp:616
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2508
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2570
 msgid "Fullscreen mode"
 msgstr "Pe³ny ekran"
 
@@ -2244,54 +2244,54 @@ msgstr "Tryb automatycznego przeci±gania jest"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Przesuñ trzema palcami, ¿eby zmieniæ."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:146
+#: backends/graphics/opengl/opengl-graphics.cpp:151
 msgid "OpenGL"
 msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Windowed mode"
 msgstr "Okno"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:728
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2386
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:753
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
 msgid "Enabled aspect ratio correction"
 msgstr "W³±czono korekcjê formatu obrazu"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:751
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2392
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:755
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
 msgid "Disabled aspect ratio correction"
 msgstr "Wy³±czono korekcjê formatu obrazu"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:771
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2410
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:775
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikanie w³±czone"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:773
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:777
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikanie wy³±czone"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:52
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:56
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
 msgstr "Zwyk³y (bez skalowania)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:71
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Zwyk³y (bez skalowania)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2465
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
 msgid "Active graphics filter:"
 msgstr "Aktywny filtr graficzny:"
 
