@@ -23,6 +23,7 @@
 
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
+#include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #ifdef ENABLE_SCI32
 #include "sci/engine/features.h"
@@ -32,9 +33,9 @@ namespace Sci {
 
 extern bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, uint32 heapOffset);
 
-
-void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariables) {
-	const SciSpan<const byte> data = buf.subspan(obj_pos.getOffset());
+void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
+	const SciSpan<const byte> buf = owner.getSpan(0);
+	const SciSpan<const byte> data = owner.getSpan(obj_pos.getOffset());
 	_baseObj = data;
 	_pos = obj_pos;
 
@@ -78,6 +79,35 @@ void Object::init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariab
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		initSelectorsSci3(buf, initVariables);
+#endif
+	}
+
+	// Some objects, like the unnamed LarryTalker instance in LSL6hires script
+	// 610, and the File class in Torin script 64993, have a `name` property
+	// that is assigned dynamically by game scripts, overriding the static name
+	// value that is normally created by the SC compiler. When this happens, the
+	// value can be set to anything: in LSL6hires it becomes a Str object; in
+	// Torin, it becomes a dynamically allocated string that is disposed before
+	// the corresponding File instance is disposed.
+	// To ensure `SegManager::getObjectName` works consistently and correctly,
+	// without hacks to bypass unexpected/invalid types of dynamic `name` data,
+	// the reg_t pointer to the original static name value for the object is
+	// stored here, ensuring that it is constant and guaranteed to be either a
+	// valid dereferenceable string or NULL_REG.
+	if (getSciVersion() != SCI_VERSION_3) {
+		const uint32 heapOffset = owner.getHeapOffset();
+		const uint32 nameOffset = (obj_pos.getOffset() - heapOffset) + (_offset + 3) * sizeof(uint16);
+		const uint32 relocOffset = owner.getRelocationOffset(nameOffset);
+		if (relocOffset != kNoRelocation) {
+			_name = make_reg(obj_pos.getSegment(), relocOffset + _baseObj.getUint16SEAt((_offset + 3) * sizeof(uint16)));
+		}
+#ifdef ENABLE_SCI32
+	} else if (_propertyOffsetsSci3.size()) {
+		const uint32 nameOffset = _propertyOffsetsSci3[0];
+		const uint32 relocOffset = owner.getRelocationOffset(nameOffset);
+		if (relocOffset != kNoRelocation) {
+			_name = make_reg(obj_pos.getSegment(), relocOffset + buf.getUint16SEAt(nameOffset));
+		}
 #endif
 	}
 

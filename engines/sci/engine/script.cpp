@@ -656,7 +656,7 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
 	Object *obj = &_objects[obj_pos.getOffset()];
-	obj->init(*_buf, obj_pos, fullObjectInit);
+	obj->init(*this, obj_pos, fullObjectInit);
 
 	return obj;
 }

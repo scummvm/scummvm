@@ -34,6 +34,7 @@
 namespace Sci {
 
 class SegManager;
+class Script;
 
 enum infoSelectorFlags {
 	kInfoFlagClone        = 0x0001,
@@ -69,6 +70,7 @@ enum ObjectOffsets {
 class Object {
 public:
 	Object() :
+		_name(NULL_REG),
 		_offset(getSciVersion() < SCI_VERSION_1_1 ? 0 : 5),
 		_isFreed(false),
 		_baseObj(),
@@ -81,6 +83,7 @@ public:
 		{}
 
 	Object &operator=(const Object &other) {
+		_name = other._name;
 		_baseObj = other._baseObj;
 		_baseMethod = other._baseMethod;
 		_variables = other._variables;
@@ -181,12 +184,7 @@ public:
 #endif
 
 	reg_t getNameSelector() const {
-#ifdef ENABLE_SCI32
-		if (getSciVersion() == SCI_VERSION_3)
-			return _variables.size() ? _variables[0] : NULL_REG;
-		else
-#endif
-			return _offset + 3 < (uint16)_variables.size() ? _variables[_offset + 3] : NULL_REG;
+		return _name;
 	}
 
 	// No setter for the name selector
@@ -278,7 +276,7 @@ public:
 
 	uint getVarCount() const { return _variables.size(); }
 
-	void init(const SciSpan<const byte> &buf, reg_t obj_pos, bool initVariables = true);
+	void init(const Script &owner, reg_t obj_pos, bool initVariables = true);
 
 	reg_t getVariable(uint var) const { return _variables[var]; }
 	reg_t &getVariableRef(uint var) { return _variables[var]; }
@@ -289,6 +287,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
 	void cloneFromObject(const Object *obj) {
+		_name = obj ? obj->_name : NULL_REG;
 		_baseObj = obj ? obj->_baseObj : SciSpan<const byte>();
 		_baseMethod = obj ? obj->_baseMethod : Common::Array<uint32>();
 		_baseVars = obj ? obj->_baseVars : Common::Array<uint16>();
@@ -318,6 +317,11 @@ private:
 #ifdef ENABLE_SCI32
 	void initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables);
 #endif
+
+	/**
+	 * The name of the object.
+	 */
+	reg_t _name;
 
 	/**
 	 * A pointer to the raw object data within the object's owner script.
