@@ -22,6 +22,7 @@
 
 // Console module
 
+#include "common/md5.h"
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/debug.h"
@@ -990,6 +991,9 @@ bool Console::cmdResourceInfo(int argc, const char **argv) {
 		if (resource) {
 			debugPrintf("Resource size: %u\n", resource->size());
 			debugPrintf("Resource location: %s\n", resource->getResourceLocation().c_str());
+			Common::MemoryReadStream stream = resource->toStream();
+			const Common::String hash = Common::computeStreamMD5AsString(stream);
+			debugPrintf("Resource hash (decompressed): %s\n", hash.c_str());
 		} else {
 			debugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
