@@ -251,6 +251,17 @@ protected:
 	 */
 	const char * const *_directoryGlobs;
 
+	/**
+	 * If true, filenames will be matched against the entire path, relative to
+	 * the root detection directory (e.g. "foo/bar.000" for a file at
+	 * "<root>/foo/bar.000"). Otherwise, filenames only match the basename
+	 * (e.g. "bar.000" for the same file).
+	 *
+	 * @note _maxScanDepth and _directoryGlobs must still be configured to allow
+	 * the detector to find files inside subdirectories.
+	 */
+	bool _matchFullPaths;
+
 public:
 	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
@@ -326,7 +337,7 @@ protected:
 	 * Compose a hashmap of all files in fslist.
 	 * Includes nifty stuff like removing trailing dots and ignoring case.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
 	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const;

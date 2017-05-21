@@ -345,7 +345,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	g_system->logMessage(LogMessageType::kInfo, report.c_str());
 }
 
-void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const {
+void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
 	if (depth <= 0)
 		return;
 
@@ -353,6 +353,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		Common::String tstr = (_matchFullPaths && !parentName.empty() ? parentName + "/" : "") + file->getName();
+
 		if (file->isDirectory()) {
 			Common::FSList files;
 
@@ -372,10 +374,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
-			composeFileHashMap(allFiles, files, depth - 1);
+			composeFileHashMap(allFiles, files, depth - 1, tstr);
 		}
-
-		Common::String tstr = file->getName();
 
 		// Strip any trailing dot
 		if (tstr.lastChar() == '.')
@@ -625,6 +625,7 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	_guiOptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
+	_matchFullPaths = false;
 }
 
 void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {
