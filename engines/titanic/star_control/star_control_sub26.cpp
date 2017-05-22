@@ -96,7 +96,7 @@ void CStarControlSub26::fn4(const DMatrix &m) {
 	}
 }
 
-CStarControlSub26 CStarControlSub26::fn5(double val, CStarControlSub26 *src) {
+CStarControlSub26 CStarControlSub26::fn5(double percent, CStarControlSub26 *src) {
 	CStarControlSub26 sub1 = *this;
 	CStarControlSub26 sub2, sub3, sub4;
 	CStarControlSub26 dest;
@@ -114,8 +114,8 @@ CStarControlSub26 CStarControlSub26::fn5(double val, CStarControlSub26 *src) {
 		dest._sub._v3 = -sub1._field0;
 		dest._field0 = sub1._sub._v3;
 
-		double sin1 = sin(val * M_PI);
-		double sin2 = sin((0.5 - val) * M_PI);
+		double sin1 = sin(percent * M_PI);
+		double sin2 = sin((0.5 - percent) * M_PI);
 		dest._sub._v1 = sin1 * dest._sub._v1 + sub1._sub._v1 * sin2;
 		dest._sub._v2 = sub1._sub._v2 * sin2 + sub1._sub._v1 * sin1;
 		dest._sub._v3 = sin1 * -sub1._field0 + sub1._sub._v3 * sin2;
@@ -125,13 +125,13 @@ CStarControlSub26 CStarControlSub26::fn5(double val, CStarControlSub26 *src) {
 		double val2;
 
 		if (1.0 - val1 <= 0.00001) {
-			val2 = 1.0 - val;
-			sp = src->fn3(&sub3, val);
+			val2 = 1.0 - percent;
+			sp = src->fn3(&sub3, percent);
 		} else {
 			double cosVal = acos(val1);
 			double sinVal = sin(cosVal);
-			val2 = sin((1.0 - val) * cosVal) / sinVal;
-			sp = src->fn3(&sub3, sin(cosVal * val) / sinVal);
+			val2 = sin((1.0 - percent) * cosVal) / sinVal;
+			sp = src->fn3(&sub3, sin(cosVal * percent) / sinVal);
 		}
 
 		const CStarControlSub26 *sp2 = sub1.fn3(&sub4, val2);

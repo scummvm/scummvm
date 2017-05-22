@@ -20,32 +20,30 @@
  *
  */
 
-#include "titanic/star_control/star_control_sub25.h"
+#include "titanic/star_control/orientation_changer.h"
 #include "titanic/star_control/dmatrix.h"
 
 namespace Titanic {
 
-void CStarControlSub25::fn1(const FMatrix &m1, const FMatrix &m2) {
-	_matrix1 = m1;
-	_matrix2 = m2;
+void COrientationChanger::load(const FMatrix &minOrient, const FMatrix &maxOrient) {
+	_minOrient = minOrient;
+	_maxOrient = maxOrient;
 
-	DMatrix matrix = _matrix2;
-	_sub1.fn4(matrix);
-	matrix = _matrix2;
-	_sub2.fn4(matrix);
+	_sub1.fn4(_minOrient);
+	_sub2.fn4(_maxOrient);
 }
 
-void CStarControlSub25::fn2(double val, FMatrix &orientation) {
-	if (val <= 0.0) {
-		orientation = _matrix1;
-	} else if (val > 1.0) {
-		orientation = _matrix2;
+FMatrix COrientationChanger::getOrientation(double percent) {
+	if (percent <= 0.0) {
+		return _minOrient;
+	} else if (percent > 1.0) {
+		return _maxOrient;
 	} else {
-		CStarControlSub26 sub26 = _sub1.fn5(val, &_sub2);
+		CStarControlSub26 sub26 = _sub1.fn5(percent, &_sub2);
 
 		DMatrix m1;
 		m1.fn3(&sub26);
-		orientation = m1;
+		return m1;
 	}
 }
 

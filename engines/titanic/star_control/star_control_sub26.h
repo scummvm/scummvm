@@ -56,7 +56,7 @@ public:
 
 	double fn1() const;
 	void fn4(const DMatrix &m);
-	CStarControlSub26 fn5(double val, CStarControlSub26 *src);
+	CStarControlSub26 fn5(double percent, CStarControlSub26 *src);
 };
 
 } // End of namespace Titanic

@@ -37,7 +37,7 @@ void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
 	}
 
 	if (newPos != oldPos) {
-		_sub25.fn1(oldOrientation, newOrientation);
+		_sub25.load(oldOrientation, newOrientation);
 		_moveDelayCtr = 0.0;
 
 		if (_field4C == 0) {
@@ -55,7 +55,7 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 		return 0;
 
 	_moveDelayCtr += _moveDelayInc;
-	_sub25.fn2(_moveDelayCtr, orientation);
+	orientation = _sub25.getOrientation(_moveDelayCtr);
 	errorCode.set();
 
 	if (_field40 >= 0) {

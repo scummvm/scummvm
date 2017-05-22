@@ -26,7 +26,7 @@
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fvector.h"
-#include "titanic/star_control/star_control_sub25.h"
+#include "titanic/star_control/orientation_changer.h"
 
 namespace Titanic {
 
@@ -48,7 +48,7 @@ protected:
 	int _field54;
 	double _moveDelayCtr;
 	double _moveDelayInc;
-	CStarControlSub25 _sub25;
+	COrientationChanger _sub25;
 public:
 	CStarControlSub23();
 	virtual ~CStarControlSub23() {}

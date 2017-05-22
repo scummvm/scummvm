@@ -27,7 +27,7 @@ namespace Titanic {
 
 void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
 	CStarControlSub23::proc3(m1, m2);
-	_sub25.fn1(m1, m2);
+	_sub25.load(m1, m2);
 	_moveDelayInc = 0.1;
 	_moveDelayCtr = 0.0;
 	_field40 = _field44 = _field48 = -1;
@@ -71,7 +71,7 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 
 		FMatrix m1;
 		m1.fn1(tempV1);
-		_sub25.fn1(orientation, m1);
+		_sub25.load(orientation, m1);
 
 		_moveDelayCtr = 0.0;
 		_moveDelayInc = 0.1;
@@ -88,7 +88,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 
 	if (_moveDelayCtr < 1.0) {
 		_moveDelayCtr += _moveDelayInc;
-		_sub25.fn2(_moveDelayCtr, orientation);
+		orientation = _sub25.getOrientation(_moveDelayCtr);
 		errorCode.set();
 		return 1;
 	}

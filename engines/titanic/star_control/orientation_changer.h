@@ -20,25 +20,35 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB25_H
-#define TITANIC_STAR_CONTROL_SUB25_H
+#ifndef TITANIC_ORIENTATION_CHANGER_H
+#define TITANIC_ORIENTATION_CHANGER_H
 
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/star_control_sub26.h"
 
 namespace Titanic {
 
-class CStarControlSub25 {
+class COrientationChanger {
 public:
-	FMatrix _matrix1;
-	FMatrix _matrix2;
+	FMatrix _minOrient;
+	FMatrix _maxOrient;
 	CStarControlSub26 _sub1;
 	CStarControlSub26 _sub2;
 public:
-	void fn1(const FMatrix &m1, const FMatrix &m2);
-	void fn2(double val, FMatrix &orientation);
+	/**
+	 * Loads the constraints for the minimum and maximum orientation
+	 */
+	void load(const FMatrix &minOrient, const FMatrix &maxOrient);
+
+	/**
+	 * Returns the orientation for a given percentage between the two
+	 * extremes
+	 * @param percent	Percentage transition 0.0 to 1.0
+	 * @returns		New orientation for the given percentage between the two
+	 */
+	FMatrix getOrientation(double percent);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB25_H */
+#endif /* TITANIC_ORIENTATION_CHANGER_H */
