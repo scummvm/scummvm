@@ -57,7 +57,7 @@ void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
 	_field4C = 0;
 }
 
-void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
+void CStarControlSub23::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
 	_srcPos.clear();
 	_destPos.clear();
 	_transitionPercent = 1.0;

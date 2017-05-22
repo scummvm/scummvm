@@ -37,7 +37,7 @@ void CStarControlSub27::proc2(FVector &oldPos, FVector &newPos,
 	}
 
 	if (newPos != oldPos) {
-		_sub25.load(oldOrientation, newOrientation);
+		_orientationChanger.load(oldOrientation, newOrientation);
 		_transitionPercent = 0.0;
 
 		if (_field4C == 0) {
@@ -55,7 +55,7 @@ int CStarControlSub27::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 		return 0;
 
 	_transitionPercent += _transitionPercentInc;
-	orientation = _sub25.getOrientation(_transitionPercent);
+	orientation = _orientationChanger.getOrientation(_transitionPercent);
 	errorCode.set();
 
 	if (_field40 >= 0) {

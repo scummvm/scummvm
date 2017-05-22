@@ -25,9 +25,9 @@
 
 namespace Titanic {
 
-void CStarControlSub24::proc3(const FMatrix &m1, const FMatrix &m2) {
-	CStarControlSub23::proc3(m1, m2);
-	_sub25.load(m1, m2);
+void CStarControlSub24::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
+	CStarControlSub23::proc3(srcOrient, destOrient);
+	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
 	_field40 = _field44 = _field48 = -1;
@@ -69,9 +69,9 @@ void CStarControlSub24::setPath(const FVector &srcV, const FVector &destV, const
 		tv = FVector::addAndNormalize(tempV2, row3, tempV1);
 		tempV1 = *tv;
 
-		FMatrix m1;
-		m1.fn1(tempV1);
-		_sub25.load(orientation, m1);
+		FMatrix newOrient;
+		newOrient.fn1(tempV1);
+		_orientationChanger.load(orientation, newOrient);
 
 		_transitionPercent = 0.0;
 		_transitionPercentInc = 0.1;
@@ -88,7 +88,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 
 	if (_transitionPercent < 1.0) {
 		_transitionPercent += _transitionPercentInc;
-		orientation = _sub25.getOrientation(_transitionPercent);
+		orientation = _orientationChanger.getOrientation(_transitionPercent);
 		errorCode.set();
 		return 1;
 	}

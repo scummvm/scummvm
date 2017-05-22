@@ -31,7 +31,7 @@ class CStarControlSub24 : public CStarControlSub23 {
 public:
 	virtual ~CStarControlSub24() {}
 
-	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
+	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
 
 	/**
 	 * Sets the path to animate movement between

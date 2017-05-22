@@ -48,14 +48,14 @@ protected:
 	int _field54;
 	double _transitionPercent;
 	double _transitionPercentInc;
-	COrientationChanger _sub25;
+	COrientationChanger _orientationChanger;
 public:
 	CStarControlSub23();
 	virtual ~CStarControlSub23() {}
 
 	virtual void proc2(FVector &oldPos, FVector &newPos,
 		FMatrix &oldOrientation, FMatrix &newOrientation);
-	virtual void proc3(const FMatrix &m1, const FMatrix &m2);
+	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
 	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return 2; }
 	virtual void proc6(int val1, int val2, float val);
