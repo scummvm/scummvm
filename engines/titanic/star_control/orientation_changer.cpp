@@ -39,10 +39,10 @@ FMatrix COrientationChanger::getOrientation(double percent) {
 	} else if (percent > 1.0) {
 		return _maxOrient;
 	} else {
-		CStarControlSub26 sub26 = _sub1.fn5(percent, &_sub2);
+		CMatrixTransform tfm = _sub1.fn5(percent, _sub2);
 
 		DMatrix m1;
-		m1.fn3(&sub26);
+		m1.fn3(tfm);
 		return m1;
 	}
 }

@@ -24,7 +24,7 @@
 #define TITANIC_ORIENTATION_CHANGER_H
 
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/star_control_sub26.h"
+#include "titanic/star_control/matrix_transform.h"
 
 namespace Titanic {
 
@@ -32,8 +32,8 @@ class COrientationChanger {
 public:
 	FMatrix _minOrient;
 	FMatrix _maxOrient;
-	CStarControlSub26 _sub1;
-	CStarControlSub26 _sub2;
+	CMatrixTransform _sub1;
+	CMatrixTransform _sub2;
 public:
 	/**
 	 * Loads the constraints for the minimum and maximum orientation

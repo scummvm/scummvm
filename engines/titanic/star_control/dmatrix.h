@@ -29,7 +29,7 @@
 namespace Titanic {
 
 class FMatrix;
-class CStarControlSub26;
+class CMatrixTransform;
 
 /**
  * Double based matrix class.
@@ -58,7 +58,7 @@ public:
 	void setRotationMatrix(Axis axis, double amount);
 
 	DMatrix fn1() const;
-	void fn3(CStarControlSub26 *sub26);
+	void fn3(const CMatrixTransform &src);
 
 	DMatrix fn4(const DMatrix &m);
 };

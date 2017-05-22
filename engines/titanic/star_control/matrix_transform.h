@@ -20,45 +20,38 @@
  *
  */
 
-#ifndef TITANIC_STAR_CONTROL_SUB26_H
-#define TITANIC_STAR_CONTROL_SUB26_H
+#ifndef TITANIC_MATRIX_TRANSFORM_H
+#define TITANIC_MATRIX_TRANSFORM_H
 
 #include "titanic/star_control/dmatrix.h"
 
 namespace Titanic {
 
-class CStarControlSub26 {
-	struct Sub {
-		double _v1;
-		double _v2;
-		double _v3;
-
-		Sub() : _v1(0.0), _v2(0.0), _v3(0.0) {}
-	};
+class CMatrixTransform {
 private:
-	double fn2(const CStarControlSub26 *src);
-	const CStarControlSub26 *fn3(const CStarControlSub26 *src, double val);
+	double fn2(const CMatrixTransform &src);
+	CMatrixTransform resize(double factor) const;
 public:
 	double _field0;
-	Sub _sub;
+	DVector _vector;
 public:
-	CStarControlSub26() : _field0(1.0) {}
+	CMatrixTransform() : _field0(1.0) {}
 
 	/**
 	 * Sets the field values
 	 */
-	void setup(double val1, double val2, double val3, double val4);
+	void setup(double val1, double x, double y, double z);
 
 	/**
 	 * Copies from another instance
 	 */
-	void copyFrom(const CStarControlSub26 *src);
+	void copyFrom(const CMatrixTransform &src);
 
 	double fn1() const;
 	void fn4(const DMatrix &m);
-	CStarControlSub26 fn5(double percent, CStarControlSub26 *src);
+	CMatrixTransform fn5(double percent, const CMatrixTransform &src);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CONTROL_SUB26_H */
+#endif /* TITANIC_MATRIX_TRANSFORM_H */

@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/dmatrix.h"
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/star_control_sub26.h"
+#include "titanic/star_control/matrix_transform.h"
 
 namespace Titanic {
 
@@ -174,31 +174,31 @@ DMatrix DMatrix::fn1() const {
 	return m;
 }
 
-void DMatrix::fn3(CStarControlSub26 *sub26) {
+void DMatrix::fn3(const CMatrixTransform &src) {
 	double v3, v4, v5, v6, v7, v8, v9, v10;
 	double v11, v12, v13, v14, v15, v16, v17, v18, v19, v20;
 
-	v3 = sub26->fn1();
+	v3 = src.fn1();
 	if (v3 <= 0.0)
 		v20 = 0.0;
 	else
 		v20 = 2.0 / v3;
-	v4 = v20 * sub26->_sub._v1;
-	v5 = v20 * sub26->_sub._v2;
-	v6 = v20 * sub26->_sub._v3;
-	v7 = v4 * sub26->_sub._v1;
+	v4 = v20 * src._vector._x;
+	v5 = v20 * src._vector._y;
+	v6 = v20 * src._vector._z;
+	v7 = v4 * src._vector._x;
 	v8 = v4;
 	v9 = v5;
-	v10 = v5 * sub26->_sub._v1;
-	v11 = v5 * sub26->_sub._v2;
+	v10 = v5 * src._vector._x;
+	v11 = v5 * src._vector._y;
 	v12 = v6;
-	v13 = v8 * sub26->_field0;
+	v13 = v8 * src._field0;
 	v14 = v12 + v11;
-	v15 = v6 * sub26->_sub._v2;
-	v16 = v6 * sub26->_field0;
+	v15 = v6 * src._vector._y;
+	v16 = v6 * src._field0;
 	v17 = v11 + v7;
-	v18 = v6 * sub26->_sub._v1;
-	v19 = v9 * sub26->_field0;
+	v18 = v6 * src._vector._x;
+	v19 = v9 * src._field0;
 	_row1._x = 1.0 - v14;
 	_row1._y = v10 + v16;
 	_row1._z = v18 - v19;

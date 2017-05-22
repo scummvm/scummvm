@@ -441,6 +441,7 @@ MODULE_OBJS := \
 	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
+	star_control/matrix_transform.o \
 	star_control/orientation_changer.o \
 	star_control/star_camera.o \
 	star_control/star_closeup.o \
@@ -451,7 +452,6 @@ MODULE_OBJS := \
 	star_control/star_control_sub22.o \
 	star_control/star_control_sub23.o \
 	star_control/star_control_sub24.o \
-	star_control/star_control_sub26.o \
 	star_control/star_control_sub27.o \
 	star_control/star_field.o \
 	star_control/star_points1.o \
