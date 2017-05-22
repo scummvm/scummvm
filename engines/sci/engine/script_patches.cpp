@@ -2136,9 +2136,34 @@ static const uint16 kq7BenchmarkPatch[] = {
 	PATCH_END
 };
 
+// When attempting to use an inventory item on an object that does not interact
+// with that item, the game temporarily displays an X cursor, but does this by
+// spinning for 90000 cycles, which make the duration dependent on CPU speed,
+// maxes out the CPU for no reason, and keeps the engine from polling for events
+// (which may make the window appear nonresponsive to the OS)
+// Applies to at least: KQ7 English 2.00b
+static const uint16 kq7PragmaFailSpinSignature[] = {
+	0x35, 0x00,               // ldi 0
+	0xa5, 0x02,               // sat 2
+	SIG_MAGICDWORD,
+	0x8d, 0x02,               // lst 2
+	0x35, 0x03,               // ldi 3
+	0x22,                     // lt?
+	SIG_END
+};
+
+static const uint16 kq7PragmaFailSpinPatch[] = {
+	0x78,                                     // push1
+	0x39, 0x12,                               // pushi 18 (~300ms)
+	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
+	0x33, 0x16,                               // jmp to setCursor
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
+	{  true,     0, "remove hardcoded spinloop",                   1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    31, "subtitle fix 1/3",                            1, kq7SignatureSubtitleFix1,                 kq7PatchSubtitleFix1 },
 	{  true, 64928, "subtitle fix 2/3",                            1, kq7SignatureSubtitleFix2,                 kq7PatchSubtitleFix2 },
 	{  true, 64928, "subtitle fix 3/3",                            1, kq7SignatureSubtitleFix3,                 kq7PatchSubtitleFix3 },
