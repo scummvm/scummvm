@@ -2750,6 +2750,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
 
+	// Larry 7 - English 1.1 (also GOG.com release)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.01"
+	{"lsl7", "", {
+                {"resource.aud", 0, "d8358819d1bac70792dadbd62147a3a4", 397103899},
+                {"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
+                {"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_LSL7 },
+
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
