@@ -299,7 +299,6 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		}
 
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->throttle();
 	}
 

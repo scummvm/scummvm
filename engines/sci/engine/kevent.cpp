@@ -101,7 +101,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// one of these ugly loops and should be updating the screen &
 		// throttling the VM.
 		if (++s->_eventCounter > 2) {
-			g_system->updateScreen();
+			g_sci->_gfxFrameout->updateScreen();
 			s->speedThrottler(10); // 10ms is an arbitrary value
 			s->_throttleTrigger = true;
 		}

@@ -68,7 +68,8 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_throttleState(0),
 	_remapOccurred(false),
 	_overdrawThreshold(0),
-	_palMorphIsOn(false) {
+	_palMorphIsOn(false),
+	_lastScreenUpdateTick(0) {
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer = Buffer(630, 450, nullptr);
@@ -1008,7 +1009,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 
 void GfxFrameout::showBits() {
 	if (!_showList.size()) {
-		g_system->updateScreen();
+		updateScreen();
 		return;
 	}
 
@@ -1050,7 +1051,7 @@ void GfxFrameout::showBits() {
 	_cursor->donePainting();
 
 	_showList.clear();
-	g_system->updateScreen();
+	updateScreen();
 }
 
 void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges) {
@@ -1123,6 +1124,20 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 	}
 }
 
+void GfxFrameout::updateScreen(const int delta) {
+	// using OSystem::getMillis instead of Sci::getTickCount because these
+	// values need to be monotonically increasing for the duration of the
+	// GfxFrameout object or else the screen will stop updating
+	const uint32 now = g_system->getMillis() * 60 / 1000;
+	if (now <= _lastScreenUpdateTick + delta) {
+		return;
+	}
+
+	_lastScreenUpdateTick = now;
+	g_system->updateScreen();
+	g_sci->getSciDebugger()->onFrame();
+}
+
 void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
 	if (_transitions->hasShowStyles()) {
 		_transitions->processShowStyles();
@@ -1166,14 +1181,14 @@ void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
 			g_system->setShakePos(_isHiRes ? 8 : 4);
 		}
 
-		g_system->updateScreen();
+		updateScreen();
 		g_sci->getEngineState()->wait(3);
 
 		if (direction & kShakeVertical) {
 			g_system->setShakePos(0);
 		}
 
-		g_system->updateScreen();
+		updateScreen();
 		g_sci->getEngineState()->wait(3);
 	}
 }

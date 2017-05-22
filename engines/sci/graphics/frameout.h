@@ -155,6 +155,11 @@ public:
 #pragma mark -
 #pragma mark Rendering
 private:
+	/**
+	 * The last time the hardware screen was updated.
+	 */
+	uint32 _lastScreenUpdateTick;
+
 	GfxTransitions32 *_transitions;
 
 	/**
@@ -255,8 +260,8 @@ private:
 	void mergeToShowList(const Common::Rect &drawRect, RectList &showList, const int overdrawThreshold);
 
 	/**
-	 * Writes the internal frame buffer out to hardware and
-	 * clears the show list.
+	 * Sends all dirty rects from the internal frame buffer to the backend,
+	 * then updates the hardware screen.
 	 */
 	void showBits();
 
@@ -285,6 +290,18 @@ private:
 	}
 
 public:
+	/**
+	 * Updates the hardware screen, no more than once per tick.
+	 *
+	 * @param delta An additional number of ticks that should elapse
+	 * since the last time the screen was updated before it gets updated now.
+	 * This is used for updating the screen within run_vm, where we normally
+	 * expect that a call to kFrameOut will occur later during the current
+	 * frame, but if it does not, then update the screen on the second frame
+	 * anyway since the game is doing something bad.
+	 */
+	void updateScreen(const int delta = 0);
+
 	void setPixelFormat(const Graphics::PixelFormat &format) const {
 		initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes, &format);
 	}

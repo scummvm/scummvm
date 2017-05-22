@@ -849,7 +849,7 @@ void SciEngine::sleep(uint32 msecs) {
 		// movement is still occurring and the screen needs to be updated to
 		// reflect it
 		if (getSciVersion() >= SCI_VERSION_2) {
-			g_system->updateScreen();
+			g_sci->_gfxFrameout->updateScreen();
 		}
 #endif
 		time = g_system->getMillis();

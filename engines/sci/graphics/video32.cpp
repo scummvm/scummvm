@@ -145,7 +145,6 @@ void SEQPlayer::renderFrame(SciBitmap &bitmap) const {
 
 	g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 	g_sci->_gfxFrameout->frameOut(true);
-	g_sci->getSciDebugger()->onFrame();
 }
 
 #pragma mark -
@@ -419,7 +418,6 @@ void AVIPlayer::renderFrame() const {
 
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->getSciDebugger()->onFrame();
 	} else {
 		assert(surface->format.bytesPerPixel == 4);
 
@@ -455,8 +453,7 @@ void AVIPlayer::renderFrame() const {
 			g_system->copyRectToScreen(surface->getPixels(), surface->pitch, drawRect.left, drawRect.top, surface->w, surface->h);
 		}
 
-		g_system->updateScreen();
-		g_sci->getSciDebugger()->onFrame();
+		g_sci->_gfxFrameout->updateScreen();
 	}
 }
 
@@ -885,7 +882,6 @@ void VMDPlayer::renderFrame() const {
 		g_sci->_gfxPalette32->submit(palette);
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->getSciDebugger()->onFrame();
 
 #if SCI_VMD_BLACK_PALETTE
 		if (_blackPalette) {
@@ -898,7 +894,6 @@ void VMDPlayer::renderFrame() const {
 	} else {
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->getSciDebugger()->onFrame();
 	}
 }
 
@@ -1164,8 +1159,7 @@ void DuckPlayer::renderFrame() const {
 		g_system->copyRectToScreen(surface->getPixels(), surface->pitch, _drawRect.left, _drawRect.top, surface->w, surface->h);
 	}
 
-	g_system->updateScreen();
-	g_sci->getSciDebugger()->onFrame();
+	g_sci->_gfxFrameout->updateScreen();
 }
 
 } // End of namespace Sci
