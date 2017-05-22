@@ -37,8 +37,8 @@ CStarControlSub23::CStarControlSub23() : _srcPos(0.0, 1000000.0, 0.0) {
 	_field48 = 0;
 	_field4C = 0;
 	_field54 = 0;
-	_moveDelayCtr = 0.0;
-	_moveDelayInc = 0.0;
+	_transitionPercent = 0.0;
+	_transitionPercentInc = 0.0;
 }
 
 void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
@@ -50,7 +50,7 @@ void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
 
 	_active = false;
 	_field34 = false;
-	_moveDelayCtr = 1.0;
+	_transitionPercent = 1.0;
 	_field40 = -1;
 	_field44 = -1;
 	_field48 = -1;
@@ -60,7 +60,7 @@ void CStarControlSub23::proc2(FVector &oldPos, FVector &newPos,
 void CStarControlSub23::proc3(const FMatrix &m1, const FMatrix &m2) {
 	_srcPos.clear();
 	_destPos.clear();
-	_moveDelayCtr = 1.0;
+	_transitionPercent = 1.0;
 	_distance = 0.0;
 	_active = false;
 	_field34 = false;
@@ -78,7 +78,7 @@ void CStarControlSub23::setPath(const FVector &srcV, const FVector &destV, const
 	_field44 = -1;
 	_field48 = -1;
 	_field4C = -1;
-	_moveDelayCtr = 1.0;
+	_transitionPercent = 1.0;
 }
 
 void CStarControlSub23::proc6(int val1, int val2, float val) {

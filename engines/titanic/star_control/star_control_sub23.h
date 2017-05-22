@@ -46,8 +46,8 @@ protected:
 	int _field4C;
 	Common::Array<double> _powers;
 	int _field54;
-	double _moveDelayCtr;
-	double _moveDelayInc;
+	double _transitionPercent;
+	double _transitionPercentInc;
 	COrientationChanger _sub25;
 public:
 	CStarControlSub23();
