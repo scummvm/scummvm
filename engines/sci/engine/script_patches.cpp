@@ -2569,7 +2569,7 @@ static const uint16 larry7PatchMakeCheesePriority[] = {
 
 //          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
-	{  true,   540, "fix make cheese cutscene (cycöer)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
+	{  true,   540, "fix make cheese cutscene (cycler)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
 	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
