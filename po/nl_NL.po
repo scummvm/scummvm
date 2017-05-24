@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-05-21 22:56+0200\n"
+"POT-Creation-Date: 2017-05-24 06:16+0200\n"
 "PO-Revision-Date: 2017-05-22 05:36+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
+"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3629,7 +3629,7 @@ msgstr ""
 "features zullen mogelijk niet goed werken. Controleer a.u.b. de console voor "
 "meer informatie, en verifieer dat uw spel bestanden juist zijn."
 
-#: engines/sci/sci.cpp:370
+#: engines/sci/sci.cpp:371
 msgid ""
 "A known buggy game script has been detected, which could prevent you from "
 "progressing later on in the game, during the sequence with the Green Man's "
@@ -3642,7 +3642,7 @@ msgstr ""
 "Pas a.u.b. de meest recente patch van Sierra voor dit spel toe om mogelijke "
 "problemen te voorkomen."
 
-#: engines/sci/sci.cpp:379
+#: engines/sci/sci.cpp:380
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -3657,7 +3657,7 @@ msgstr ""
 "worden of overeenkomen met de spraak van het spel. Dit is geen ScummVM fout, "
 "maar een probleem met de speldata."
 
-#: engines/sci/sci.cpp:403
+#: engines/sci/sci.cpp:404
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -3679,7 +3679,7 @@ msgstr ""
 "hernoemen naar 4.PAT en deze dan in de spel folder plaatsen. Zonder deze "
 "patch zal General MIDI muziek sterk verminkt klinken."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:423
 msgid ""
 "Your game is patched with a fan made script patch. Such patches have been "
 "reported to cause issues, as they modify game scripts extensively. The "
