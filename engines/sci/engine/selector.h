@@ -88,6 +88,7 @@ struct SelectorCache {
 	// value, save, restore, title, button, icon, draw
 	Selector delete_; ///< Called by Animate() to dispose a view object
 	Selector z;
+	Selector setPri;
 
 	// SCI1+ static selectors
 	Selector parseLang;

@@ -76,6 +76,7 @@ namespace Sci {
 //        before they can get used using the SIG_SELECTORx and PATCH_SELECTORx commands.
 //        You have to use the exact same order in both the table and the enum, otherwise
 //        it won't work.
+//        ATTENTION: selectors will only work here, when they are also in SelectorCache (selector.h)
 
 static const char *const selectorNameTable[] = {
 	"cycles",       // system selector
@@ -91,6 +92,7 @@ static const char *const selectorNameTable[] = {
 	"cel",          // system selector
 	"setMotion",    // system selector
 	"overlay",      // system selector
+	"setPri",       // system selector - for setting priority
 	"deskSarg",     // Gabriel Knight
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
@@ -128,6 +130,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_cel,
 	SELECTOR_setMotion,
 	SELECTOR_overlay,
+	SELECTOR_setPri,
 	SELECTOR_deskSarg,
 	SELECTOR_localize,
 	SELECTOR_put,
@@ -2535,9 +2538,39 @@ static const uint16 larry7PatchMakeCheese[] = {
 	PATCH_END
 };
 
-//          script, description,                         signature                   patch
+// ===========================================================================
+// During the same cheese maker cutscene as mentioned before, there is also
+//  a little priority issue, which also happens in the original interpreter.
+//  While Larry is pouring liquid into the cheese maker, he appears shortly right
+//  in front of the guillotine instead of behind it.
+//  This is caused by soMakeCheese::changeState(2) setting priority of ego to 500.
+//  It is needed to change priority a bit, otherwise Larry would also appear behind the cheese
+//  maker and that wouldn't make sense, but the cheese maker has a priority of only 373.
+//
+// This of course also happens, when using the original interpreter.
+//
+// We change this to set priority to 374, which works fine.
+//
+// Applies to at least: English PC-CD, German PC-CD
+// Responsible method: soMakeCheese::changeState(2) in script 540
+static const uint16 larry7SignatureMakeCheesePriority[] = {
+	0x38, SIG_SELECTOR16(setPri),    // pushi (setPri)
+	SIG_MAGICDWORD,
+	0x78,                            // push1
+	0x38, SIG_UINT16(500),           // pushi 1F4h (500d)
+	SIG_END
+};
+
+static const uint16 larry7PatchMakeCheesePriority[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_UINT16(374),         // pushi 176h (374d)
+	PATCH_END
+};
+
+//          script, description,                                signature                           patch
 static const SciScriptPatcherEntry larry7Signatures[] = {
-	{  true,   540, "fix make cheese cutscene",       1, larry7SignatureMakeCheese,  larry7PatchMakeCheese },
+	{  true,   540, "fix make cheese cutscene (cycöer)",     1, larry7SignatureMakeCheese,          larry7PatchMakeCheese },
+	{  true,   540, "fix make cheese cutscene (priority)",   1, larry7SignatureMakeCheesePriority,  larry7PatchMakeCheesePriority },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3366,9 +3399,9 @@ static const uint16 mothergooseHiresPatchLogo[] = {
 // Responsible method: rhymeScript::changeState
 static const uint16 mothergooseHiresSignatureHorse[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x4a,             // pushi $4a (setPri)
-	0x78,                   // push1
-	0x38, SIG_UINT16(0xb7), // pushi $b7
+	0x39, SIG_SELECTOR8(setPri), // pushi $4a (setPri)
+	0x78,                        // push1
+	0x38, SIG_UINT16(0xb7),      // pushi $b7
 	SIG_END
 };
 
