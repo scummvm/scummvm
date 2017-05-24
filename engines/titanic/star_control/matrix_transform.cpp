@@ -134,7 +134,7 @@ CMatrixTransform CMatrixTransform::fn5(double percent, const CMatrixTransform &s
 		double cosVal = acos(val1);
 		double sinVal = sin(cosVal);
 		val2 = sin((1.0 - percent) * cosVal) / sinVal;
-		t2 = src.resize(sin(cosVal * percent) / sinVal);
+		t1 = src.resize(sin(cosVal * percent) / sinVal);
 	}
 
 	t2 = sub1.resize(val2);
