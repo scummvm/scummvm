@@ -58,7 +58,8 @@ public:
 	void setRotationMatrix(Axis axis, double amount);
 
 	DMatrix fn1() const;
-	void fn3(const CMatrixTransform &src);
+
+	void loadTransform(const CMatrixTransform &src);
 
 	DMatrix fn4(const DMatrix &m);
 };

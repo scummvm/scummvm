@@ -42,7 +42,7 @@ FMatrix COrientationChanger::getOrientation(double percent) {
 		CMatrixTransform tfm = _sub1.fn5(percent, _sub2);
 
 		DMatrix m1;
-		m1.fn3(tfm);
+		m1.loadTransform(tfm);
 		return m1;
 	}
 }

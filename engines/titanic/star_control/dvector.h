@@ -87,6 +87,10 @@ public:
 		_y -= delta._y;
 		_z -= delta._z;
 	}
+
+	const DVector operator*(double right) const {
+		return DVector(_x * right, _y * right, _z * right);
+	}
 };
 
 } // End of namespace Titanic

@@ -174,43 +174,34 @@ DMatrix DMatrix::fn1() const {
 	return m;
 }
 
-void DMatrix::fn3(const CMatrixTransform &src) {
-	double v3, v4, v5, v6, v7, v8, v9, v10;
-	double v11, v12, v13, v14, v15, v16, v17, v18, v19, v20;
+void DMatrix::loadTransform(const CMatrixTransform &src) {
+	double total = src.fn1();
+	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
+	DVector tempV = src._vector * factor;
 
-	v3 = src.fn1();
-	if (v3 <= 0.0)
-		v20 = 0.0;
-	else
-		v20 = 2.0 / v3;
-	v4 = v20 * src._vector._x;
-	v5 = v20 * src._vector._y;
-	v6 = v20 * src._vector._z;
-	v7 = v4 * src._vector._x;
-	v8 = v4;
-	v9 = v5;
-	v10 = v5 * src._vector._x;
-	v11 = v5 * src._vector._y;
-	v12 = v6;
-	v13 = v8 * src._field0;
-	v14 = v12 + v11;
-	v15 = v6 * src._vector._y;
-	v16 = v6 * src._field0;
-	v17 = v11 + v7;
-	v18 = v6 * src._vector._x;
-	v19 = v9 * src._field0;
-	_row1._x = 1.0 - v14;
-	_row1._y = v10 + v16;
-	_row1._z = v18 - v19;
-	_row2._x = v10 - v16;
-	_row2._y = 1.0 - (v12 + v7);
-	_row2._z = v15 + v13;
-	_row3._x = v18 + v19;
-	_row3._y = v15 - v13;
-	_row3._z = 1.0 - v17;
-	_row4._x = 0.0;
-	_row4._y = 0.0;
-	_row4._z = 0.0;
+	double val1 = tempV._x * src._vector._x;
+	double val2 = tempV._y * src._vector._x;
+	double val3 = tempV._y * src._vector._y;
+	double val4 = tempV._x * src._field0;
+	double val5 = tempV._z + val3;
+	double val6 = tempV._z * src._vector._y;
+	double val7 = tempV._z * src._field0;
+	double val8 = val3 + val1;
+	double val9 = tempV._z * src._vector._x;
+	double val10 = tempV._y * src._field0;
+
+	_row1._x = 1.0 - val5;
+	_row1._y = val2 + val7;
+	_row1._z = val9 - val10;
+	_row2._x = val2 - val7;
+	_row2._y = 1.0 - (tempV._z + val1);
+	_row2._z = val6 + val4;
+	_row3._x = val9 + val10;
+	_row3._y = val6 - val4;
+	_row3._z = 1.0 - val8;
+	_row4._x = 0;
+	_row4._y = 0;
+	_row4._z = 0;
 }
 
 DMatrix DMatrix::fn4(const DMatrix &m) {

@@ -86,6 +86,8 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 	if (!_active)
 		return 0;
 
+	// Firstly we have to do a transition of the camera orientation from
+	// it's current position to one where the destination star is centered
 	if (_transitionPercent < 1.0) {
 		_transitionPercent += _transitionPercentInc;
 		orientation = _orientationChanger.getOrientation(_transitionPercent);
@@ -93,6 +95,7 @@ int CStarControlSub24::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orien
 		return 1;
 	}
 
+	// From here on, we handle the movement to the given destination
 	if (!_field34) {
 		_active = false;
 		return 2;
