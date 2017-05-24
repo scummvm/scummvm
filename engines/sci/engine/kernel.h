@@ -183,12 +183,6 @@ public:
 	typedef Common::Array<KernelFunction> KernelFunctionArray;
 	KernelFunctionArray _kernelFuncs; /**< Table of kernel functions. */
 
-#ifdef ENABLE_SCI32
-	// id of kString function, for quick usage in kArray
-	// kArray calls kString in case parameters are strings
-	uint16 _kernelFunc_StringId;
-#endif
-
 	/**
 	 * Determines whether a list of registers matches a given signature.
 	 * If no signature is given (i.e., if sig is NULL), this is always

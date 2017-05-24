@@ -35,9 +35,6 @@ namespace Sci {
 
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
-#ifdef ENABLE_SCI32
-	_kernelFunc_StringId = 0;
-#endif
 }
 
 Kernel::~Kernel() {
@@ -615,10 +612,6 @@ void Kernel::mapFunctions() {
 		}
 
 #ifdef ENABLE_SCI32
-		if (kernelName == "String") {
-			_kernelFunc_StringId = id;
-		}
-
 		// HACK: Phantasmagoria Mac uses a modified kDoSound (which *nothing*
 		// else seems to use)!
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() == GID_PHANTASMAGORIA && kernelName == "DoSound") {
