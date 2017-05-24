@@ -2498,6 +2498,49 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#pragma mark -
+#pragma mark Leisure Suit Larry 7
+
+// ===========================================================================
+// In room 540 of Leisure Suit Larry 7, Larry will use 4 items on a so called cheese maker.
+//  A short cutscene will then play.
+//  During that cutscene on state 6, an animation will get triggered via a special
+//  cycler ("End", but from script 64041), that is capable of doing ::cues on specific cels.
+//  The code of the state is broken and pushes the object itself as the 2nd cel to cue on.
+//  This parameter gets later changed to last cel by CycleCueList::init.
+//  Right now, we do not handle comparisons between references to objects and regular values like
+//  SSCI, so this will need to get fixed too. But this script bug should also get fixed, because
+//  otherwise it works just by accident.
+//
+// Applies to at least: English PC-CD, German PC-CD
+// Responsible method: soMakeCheese::changeState(6) in script 540
+static const uint16 larry7SignatureMakeCheese[] = {
+	0x38, SIG_UINT16(4),             // pushi 04
+	0x51, 0xc4,                      // class End
+	0x36,                            // push
+	SIG_MAGICDWORD,
+	0x7c,                            // pushSelf
+	0x39, 0x04,                      // pushi 04
+	0x7c,                            // pushSelf
+	SIG_END
+};
+
+static const uint16 larry7PatchMakeCheese[] = {
+	0x39, 0x04,                      // pushi 04 - save 1 byte
+	0x51, 0xc4,                      // class End
+	0x36,
+	0x7c,                            // pushSelf
+	0x39, 0x04,                      // pushi 04
+	0x39, 0x10,                      // pushi 10h (last cel of view 54007, loop 0)
+	PATCH_END
+};
+
+//          script, description,                         signature                   patch
+static const SciScriptPatcherEntry larry7Signatures[] = {
+	{  true,   540, "fix make cheese cutscene",       1, larry7SignatureMakeCheese,  larry7PatchMakeCheese },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #endif
 
 // ===========================================================================
@@ -5961,6 +6004,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 #ifdef ENABLE_SCI32
 	case GID_LSL6HIRES:
 		signatureTable = larry6HiresSignatures;
+		break;
+	case GID_LSL7:
+		signatureTable = larry7Signatures;
 		break;
 #endif
 	case GID_MOTHERGOOSE256:
