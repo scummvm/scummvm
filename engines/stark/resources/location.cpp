@@ -53,7 +53,7 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_currentLayer(nullptr),
 		_hasActiveScroll(false),
 		_scrollFollowCharacter(false),
-		_rumbleFramesRemaining(0),
+		_rumbleDurationRemaining(0),
 		_fadeOut(false),
 		_fadePosition(0),
 		_fadeDuration(0),
@@ -142,8 +142,8 @@ void Location::onGameLoop() {
 		}
 	}
 
-	if (_rumbleFramesRemaining > 0) {
-		_rumbleFramesRemaining--;
+	if (_rumbleDurationRemaining > 0) {
+		_rumbleDurationRemaining -= StarkGlobal->getMillisecondsPerGameloop();
 	}
 }
 
@@ -159,7 +159,7 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 		if (layer->isEnabled()) {
 			Common::Point baseScroll;
 
-			if (_rumbleFramesRemaining > 0) {
+			if (_rumbleDurationRemaining > 0) {
 				baseScroll = layer->getScroll();
 				Common::Point offsetScroll = baseScroll;
 				offsetScroll.x = StarkRandomSource->getRandomBit() - 1;
@@ -170,7 +170,7 @@ Gfx::RenderEntryArray Location::listRenderEntries() {
 
 			renderEntries.push_back(layer->listRenderEntries());
 
-			if (_rumbleFramesRemaining > 0) {
+			if (_rumbleDurationRemaining > 0) {
 				layer->setScroll(baseScroll);
 			}
 		}
@@ -454,8 +454,8 @@ Sound *Location::findStockSound(const Object *parent, uint32 stockSoundType) con
 	return nullptr;
 }
 
-void Location::setRumbleFramesRemaining(int32 rumbleFramesRemaining) {
-	_rumbleFramesRemaining = rumbleFramesRemaining;
+void Location::startRumble(int32 rumbleDurationRemaining) {
+	_rumbleDurationRemaining = rumbleDurationRemaining;
 }
 
 void Location::fadeInInit(int32 fadeDuration) {

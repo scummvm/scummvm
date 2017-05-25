@@ -365,12 +365,9 @@ Command *Command::opGoto2DLocation(const Common::String &level, const Common::St
 }
 
 Command *Command::opRumbleScene(Script *script, int32 rumbleDuration, int32 pause) {
-	uint gameloopDuration = StarkGlobal->getMillisecondsPerGameloop();
-	int32 rumbleFrames = rumbleDuration / gameloopDuration;
-
 	Current *current = StarkGlobal->getCurrent();
 	Location *location = current->getLocation();
-	location->setRumbleFramesRemaining(rumbleFrames);
+	location->startRumble(rumbleDuration);
 
 	if (pause) {
 		script->pause(rumbleDuration);

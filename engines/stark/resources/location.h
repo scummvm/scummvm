@@ -120,7 +120,7 @@ public:
 	Sound *findStockSound(uint32 stockSoundType) const;
 
 	/** Set remaining frames to rumble on this lcation */
-	void setRumbleFramesRemaining(int32 rumbleFramesRemaining);
+	void startRumble(int32 rumbleDurationRemaining);
 
 	/** Setup fading for this location */
 	void fadeInInit(int32 fadeDuration);
@@ -157,7 +157,7 @@ private:
 
 	Common::HashMap<int32, ItemVisual *> _characterItemMap;
 
-	int32 _rumbleFramesRemaining;
+	int32 _rumbleDurationRemaining;
 
 	bool _fadeOut;
 	int32 _fadeDuration;
