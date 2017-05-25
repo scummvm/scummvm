@@ -51,9 +51,9 @@ Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &n
 		_soundType(0),
 		_pan(0),
 		_volume(0),
-		_fadeFramesRemaining(0),
-		_fadeVolumeStep(0.0),
-		_fadePanStep(0.0) {
+		_fadeDurationRemaining(0),
+		_fadeTargetVolume(0.0),
+		_fadeTargetPan(0.0) {
 	_type = TYPE;
 }
 
@@ -186,14 +186,21 @@ void Sound::onGameLoop() {
 		}
 	}
 
-	if (_fadeFramesRemaining > 0 && isPlaying()) {
-		_volume += _fadeVolumeStep;
-		_pan += _fadePanStep;
+	if (_fadeDurationRemaining > 0 && isPlaying()) {
+		_volume += (_fadeTargetVolume - _volume) * StarkGlobal->getMillisecondsPerGameloop() / (float) _fadeDurationRemaining;
+		_pan += (_fadeTargetPan - _pan) * StarkGlobal->getMillisecondsPerGameloop() / (float) _fadeDurationRemaining;
+
+		_fadeDurationRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_fadeDurationRemaining <= 0) {
+			_fadeDurationRemaining = 0;
+
+			_volume = _fadeTargetVolume;
+			_pan = _fadeTargetPan;
+		}
 
 		g_system->getMixer()->setChannelVolume(_handle, _volume * Audio::Mixer::kMaxChannelVolume);
 		g_system->getMixer()->setChannelBalance(_handle, _pan * 127);
-
-		_fadeFramesRemaining--;
 	}
 }
 
@@ -203,24 +210,22 @@ uint32 Sound::getStockSoundType() const {
 
 void Sound::changeVolumePan(int32 volume, int32 pan, int32 duration) {
 	if (isPlaying()) {
-		_fadeFramesRemaining = duration / StarkGlobal->getMillisecondsPerGameloop();
+		_fadeDurationRemaining = duration;
 
-		if (_fadeFramesRemaining > 0) {
-			_fadeVolumeStep = (volume / 100.0 - _volume) / _fadeFramesRemaining;
-			_fadePanStep = (pan / 100.0 - _pan) / _fadeFramesRemaining;
+		if (_fadeDurationRemaining > 0) {
+			_fadeTargetVolume = volume / 100.0f;
+			_fadeTargetPan = pan / 100.0f;
 		} else {
-			_volume = volume / 100.0;
-			_pan = pan / 100.0;
+			_volume = volume / 100.0f;
+			_pan = pan / 100.0f;
 
 			g_system->getMixer()->setChannelVolume(_handle, _volume * Audio::Mixer::kMaxChannelVolume);
 			g_system->getMixer()->setChannelBalance(_handle, _pan * 127);
-
-			_fadeFramesRemaining = 0;
 		}
 	} else {
-		if (!_fadeFramesRemaining) {
-			_volume = volume / 100.0;
-			_pan = pan / 100.0;
+		if (_fadeDurationRemaining == 0) {
+			_volume = volume / 100.0f;
+			_pan = pan / 100.0f;
 		}
 	}
 }

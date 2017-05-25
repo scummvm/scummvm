@@ -102,9 +102,9 @@ protected:
 	float _pan;
 	float _volume;
 
-	uint32 _fadeFramesRemaining;
-	float _fadeVolumeStep;
-	float _fadePanStep;
+	int32 _fadeDurationRemaining;
+	float _fadeTargetVolume;
+	float _fadeTargetPan;
 
 	Audio::SoundHandle _handle;
 };
