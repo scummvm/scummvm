@@ -129,6 +129,9 @@ public:
 	/** Setup a swaying movement for the 3d items in this location */
 	void swayScene(int32 periodMs, const Math::Angle &angle, float amplitude, float offset);
 
+	/** Setup a up / down floating movement for the 3d items in this location */
+	void floatScene(int32 periodMs, float amplitude, float offset);
+
 protected:
 	void printData() override;
 
@@ -166,6 +169,10 @@ private:
 	float _swayPosition;
 
 	int32 _idleActionWaitMs;
+
+	int32 _floatPeriodMs;
+	float _floatAmplitude;
+	float _floatPosition;
 };
 
 } // End of namespace Resources

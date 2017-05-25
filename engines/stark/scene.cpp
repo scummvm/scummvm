@@ -36,7 +36,8 @@ Scene::Scene(Gfx::Driver *gfx) :
 		_fov(45.0),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0),
-		_fadeLevel(0.0) {
+		_fadeLevel(0.0),
+		_floatOffset(0.0) {
 }
 
 Scene::~Scene() {
@@ -57,6 +58,7 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 
 	setSwayAngle(0);
 	setFadeLevel(1.0);
+	setFloatOffset(0);
 }
 
 void Scene::scrollCamera(const Common::Rect &viewport) {
@@ -156,6 +158,14 @@ Math::Vector3d Scene::getSwayDirection() const {
 	// Actor sway is always along the camera direction, so that
 	// the rotation is not affected by the direction they are facing.
 	return _cameraLookDirection;
+}
+
+void Scene::setFloatOffset(float floatOffset) {
+	_floatOffset = floatOffset;
+}
+
+float Scene::getFloatOffset() const {
+	return _floatOffset;
 }
 
 } // End of namespace Stark

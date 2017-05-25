@@ -60,7 +60,10 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_swayAmplitude(0),
 		_swayOffset(0),
 		_swayPosition(0),
-		_idleActionWaitMs(5500) {
+		_idleActionWaitMs(5500),
+		_floatPeriodMs(0),
+		_floatAmplitude(0),
+		_floatPosition(0) {
 	_type = TYPE;
 }
 
@@ -86,6 +89,16 @@ void Location::onGameLoop() {
 
 			_idleActionWaitMs = 11000; // 330 frames at 30 fps
 		}
+	}
+
+	if (_floatPeriodMs > 0) {
+		_floatPosition += StarkGlobal->getMillisecondsPerGameloop() / (float) _floatPeriodMs;
+		if (_floatPosition > 1.0) {
+			_floatPosition -= 1.0;
+		}
+
+		float floatOffset = sinf(_floatPosition * 2.0f * M_PI) * _floatAmplitude;
+		StarkScene->setFloatOffset(floatOffset);
 	}
 
 	if (_swayPeriodMs > 0) {
@@ -463,6 +476,16 @@ void Location::swayScene(int32 periodMs, const Math::Angle &angle, float amplitu
 	_swayAmplitude = amplitude;
 	_swayOffset = offset;
 	_swayPosition = offset;
+}
+
+void Location::floatScene(int32 periodMs, float amplitude, float offset) {
+	if (periodMs < 33) {
+		periodMs = 1000;
+	}
+
+	_floatPeriodMs = periodMs;
+	_floatAmplitude = amplitude;
+	_floatPosition = offset;
 }
 
 } // End of namespace Resources

@@ -63,6 +63,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kLocationGoToNewCD,          "locationGoToNewCD",          kFlowEnd    },
 			{ Resources::Command::kGameEnd,                    "gameEnd",                    kFlowNormal },
 			{ Resources::Command::kInventoryOpen,              "inventoryOpen",              kFlowNormal },
+			{ Resources::Command::kFloatScene,                 "floatScene",                 kFlowNormal },
 			{ Resources::Command::kBookOfSecretsOpen,          "bookOfSecretsOpen",          kFlowNormal },
 			{ Resources::Command::kDoNothing,                  "doNothing",                  kFlowNormal },
 			{ Resources::Command::kItem3DPlaceOn,              "item3DPlaceOn",              kFlowNormal },

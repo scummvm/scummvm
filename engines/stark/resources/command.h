@@ -81,6 +81,7 @@ public:
 		kLocationGoToNewCD = 22,
 		kGameEnd = 23,
 		kInventoryOpen = 24,
+		kFloatScene = 25,
 		kBookOfSecretsOpen = 26,
 
 		kDoNothing = 80,
@@ -214,6 +215,7 @@ protected:
 	Command *opSwayScene(int32 periodMs, int32 angleIn, int32 amplitudeIn, int32 offsetIn);
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
+	Command *opFloatScene(int32 periodMs, int32 amplitudeIn, int32 offsetIn);
 	Command *opDoNothing();
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);

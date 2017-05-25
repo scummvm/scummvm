@@ -106,6 +106,13 @@ Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d &position, float 
 		modelMatrix = modelMatrix * swayRotation.toMatrix();
 	}
 
+	float floatOffset = StarkScene->getFloatOffset();
+	if (floatOffset != 0) {
+		Math::Matrix4 floatTranslation;
+		floatTranslation.setPosition(Math::Vector3d(0, 0, floatOffset));
+		modelMatrix = modelMatrix * floatTranslation;
+	}
+
 	Math::Matrix4 rot1;
 	rot1.buildAroundX(90);
 

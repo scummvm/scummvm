@@ -83,6 +83,10 @@ public:
 	/** Get the axis for the the sway actor rotation, in world coordinates */
 	Math::Vector3d getSwayDirection() const;
 
+	/** Access the float up / down current Z offset for the actors */
+	void setFloatOffset(float floatOffset);
+	float getFloatOffset() const;
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
@@ -101,6 +105,7 @@ private:
 
 	float _fadeLevel;
 	Math::Angle _swayAngle;
+	float _floatOffset;
 };
 
 } // End of namespace Stark

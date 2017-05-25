@@ -110,6 +110,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opGameEnd();
 	case kInventoryOpen:
 		return opInventoryOpen(_arguments[1].intValue);
+	case kFloatScene:
+		return opFloatScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kDoNothing:
 		return opDoNothing();
 	case kItem3DPlaceOn:
@@ -451,6 +453,16 @@ Command *Command::opGameEnd() {
 
 Command *Command::opInventoryOpen(bool open) {
 	StarkUserInterface->inventoryOpen(open);
+
+	return nextCommand();
+}
+
+Command *Command::opFloatScene(int32 periodMs, int32 amplitudeIn, int32 offsetIn) {
+	float amplitude = amplitudeIn / 10.0f;
+	float offset = offsetIn / 100.0f;
+
+	Location *location = StarkGlobal->getCurrent()->getLocation();
+	location->floatScene(periodMs, amplitude, offset);
 
 	return nextCommand();
 }

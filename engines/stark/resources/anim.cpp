@@ -376,7 +376,7 @@ void AnimVideo::printData() {
 	}
 	debug("sizes: %s", description.c_str());
 
-	debug("frameRateOverride): %d", _frameRateOverride);
+	debug("frameRateOverride: %d", _frameRateOverride);
 	debug("preload: %d", _preload);
 	debug("loop: %d", _loop);
 }
