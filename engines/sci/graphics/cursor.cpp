@@ -179,7 +179,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		Common::SpanOwner<SciSpan<byte> > upscaledBitmap;
 		upscaledBitmap->allocate(heightWidth * heightWidth, "upscaled cursor bitmap");
 		_screen->scale2x(*rawBitmap, *upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
-		rawBitmap = upscaledBitmap;
+		rawBitmap.moveFrom(upscaledBitmap);
 	}
 
 	if (hotspot.x >= heightWidth || hotspot.y >= heightWidth) {
