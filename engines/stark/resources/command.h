@@ -76,6 +76,7 @@ public:
 
 		kRumbleScene = 19,
 		kFadeScene = 20,
+		kSwayScene = 21,
 
 		kLocationGoToNewCD = 22,
 		kGameEnd = 23,
@@ -210,6 +211,7 @@ protected:
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opRumbleScene(Script *script, int32 rumbleDuration, int32 pause);
 	Command *opFadeScene(Script *script, bool fadeOut, int32 fadeDuration, bool pause);
+	Command *opSwayScene(int32 periodMs, int32 angleIn, int32 amplitudeIn, int32 offsetIn);
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
 	Command *opDoNothing();

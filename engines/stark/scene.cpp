@@ -55,6 +55,7 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_viewMatrix.transpose(); // Math::makeLookAtMatrix outputs transposed matrices ...
 	_viewMatrix.translate(-_cameraPosition);
 
+	setSwayAngle(0);
 	setFadeLevel(1.0);
 }
 
@@ -141,6 +142,20 @@ void Scene::setFadeLevel(float fadeLevel) {
 
 float Scene::getFadeLevel() const {
 	return _fadeLevel;
+}
+
+void Scene::setSwayAngle(const Math::Angle &angle) {
+	_swayAngle = angle;
+}
+
+Math::Angle Scene::getSwayAngle() const {
+	return _swayAngle;
+}
+
+Math::Vector3d Scene::getSwayDirection() const {
+	// Actor sway is always along the camera direction, so that
+	// the rotation is not affected by the direction they are facing.
+	return _cameraLookDirection;
 }
 
 } // End of namespace Stark

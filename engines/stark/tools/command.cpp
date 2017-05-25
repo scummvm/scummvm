@@ -59,6 +59,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kGoto2DLocation,             "goto2DLocation",             kFlowEnd    },
 			{ Resources::Command::kRumbleScene,                "rumbleScene",                kFlowNormal },
 			{ Resources::Command::kFadeScene,                  "fadeScene",                  kFlowNormal },
+			{ Resources::Command::kSwayScene,                  "swayScene",                  kFlowNormal },
 			{ Resources::Command::kLocationGoToNewCD,          "locationGoToNewCD",          kFlowEnd    },
 			{ Resources::Command::kGameEnd,                    "gameEnd",                    kFlowNormal },
 			{ Resources::Command::kInventoryOpen,              "inventoryOpen",              kFlowNormal },

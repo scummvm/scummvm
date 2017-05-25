@@ -64,8 +64,8 @@ public:
 	void setTime(uint32 time);
 	void resetBlending();
 
-	bool intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction);
-	virtual void render(const Math::Vector3d position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
+	bool intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction);
+	virtual void render(const Math::Vector3d &position, float direction, const Common::Array<Gfx::LightEntry *> &lights) = 0;
 
 protected:
 	AnimHandler *_animHandler;
@@ -76,7 +76,7 @@ protected:
 	uint32 _time;
 	bool _modelIsDirty;
 
-	Math::Matrix4 getModelMatrix(const Math::Vector3d& position, float direction);
+	Math::Matrix4 getModelMatrix(const Math::Vector3d &position, float direction);
 	const Gfx::Texture *resolveTexture(const MaterialNode *material) const;
 };
 

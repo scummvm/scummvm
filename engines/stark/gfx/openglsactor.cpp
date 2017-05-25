@@ -47,7 +47,7 @@ OpenGLSActorRenderer::~OpenGLSActorRenderer() {
 	delete _shader;
 }
 
-void OpenGLSActorRenderer::render(const Math::Vector3d position, float direction, const LightEntryArray &lights) {
+void OpenGLSActorRenderer::render(const Math::Vector3d &position, float direction, const LightEntryArray &lights) {
 	if (_modelIsDirty) {
 		// Update the OpenGL Buffer Objects if required
 		clearVertices();

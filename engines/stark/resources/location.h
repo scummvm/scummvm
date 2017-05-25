@@ -126,6 +126,9 @@ public:
 	void fadeInInit(int32 fadeFrames);
 	void fadeOutInit(int32 fadeFrames);
 
+	/** Setup a swaying movement for the 3d items in this location */
+	void swayScene(int32 periodMs, const Math::Angle &angle, float amplitude, float offset);
+
 protected:
 	void printData() override;
 
@@ -147,6 +150,8 @@ private:
 	Common::Point _scroll;
 	Common::Point _maxScroll;
 
+	uint getScrollStep();
+
 	Common::HashMap<int32, ItemVisual *> _characterItemMap;
 
 	int32 _rumbleFramesRemaining;
@@ -154,7 +159,11 @@ private:
 	int32 _fadeFramesRemaining;
 	float _fadeLevelIncrement;
 
-	uint getScrollStep();
+	int32 _swayPeriodMs;
+	Math::Angle _swayAngle;
+	float _swayAmplitude;
+	float _swayOffset;
+	float _swayPosition;
 };
 
 } // End of namespace Resources

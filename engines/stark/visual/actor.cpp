@@ -26,6 +26,8 @@
 #include "engines/stark/model/animhandler.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -94,9 +96,15 @@ void VisualActor::setTime(uint32 time) {
 	_time = time;
 }
 
-Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float direction) {
-	Math::Matrix4 posMatrix;
-	posMatrix.setPosition(position);
+Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d &position, float direction) {
+	Math::Matrix4 modelMatrix;
+	modelMatrix.setPosition(position);
+
+	Math::Angle swayAngle = StarkScene->getSwayAngle();
+	if (swayAngle != 0) {
+		Math::Quaternion swayRotation = Math::Quaternion(StarkScene->getSwayDirection(), swayAngle / 2.0);
+		modelMatrix = modelMatrix * swayRotation.toMatrix();
+	}
 
 	Math::Matrix4 rot1;
 	rot1.buildAroundX(90);
@@ -107,10 +115,10 @@ Math::Matrix4 VisualActor::getModelMatrix(const Math::Vector3d& position, float 
 	Math::Matrix4 scale;
 	scale.setValue(2, 2, -1.0f);
 
-	return posMatrix * rot1 * rot2 * scale;
+	return modelMatrix * rot1 * rot2 * scale;
 }
 
-bool VisualActor::intersectRay(const Math::Ray &ray, const Math::Vector3d position, float direction) {
+bool VisualActor::intersectRay(const Math::Ray &ray, const Math::Vector3d &position, float direction) {
 	Math::Matrix4 inverseModelMatrix = getModelMatrix(position, direction);
 	inverseModelMatrix.inverse();
 

@@ -104,6 +104,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opRumbleScene(script, _arguments[1].intValue, _arguments[2].intValue);
 	case kFadeScene:
 		return opFadeScene(script, _arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kSwayScene:
+		return opSwayScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kGameEnd:
 		return opGameEnd();
 	case kInventoryOpen:
@@ -394,6 +396,17 @@ Command *Command::opFadeScene(Script *script, bool fadeOut, int32 fadeDuration, 
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opSwayScene(int32 periodMs, int32 angleIn, int32 amplitudeIn, int32 offsetIn) {
+	Math::Angle angle = ABS(angleIn) % 360;
+	float amplitude = amplitudeIn / 100.0f;
+	float offset = offsetIn / 100.0f;
+
+	Location *location = StarkGlobal->getCurrent()->getLocation();
+	location->swayScene(periodMs, angle, amplitude, offset);
+
+	return nextCommand();
 }
 
 Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, int32 *floorFace) {

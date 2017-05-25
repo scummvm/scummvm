@@ -54,7 +54,11 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_scrollFollowCharacter(false),
 		_rumbleFramesRemaining(0),
 		_fadeFramesRemaining(0),
-		_fadeLevelIncrement(0.0) {
+		_fadeLevelIncrement(0.0),
+		_swayPeriodMs(0),
+		_swayAmplitude(0),
+		_swayOffset(0),
+		_swayPosition(0) {
 	_type = TYPE;
 }
 
@@ -66,6 +70,16 @@ void Location::onAllLoaded() {
 
 void Location::onGameLoop() {
 	Object::onGameLoop();
+
+	if (_swayPeriodMs > 0) {
+		_swayPosition += StarkGlobal->getMillisecondsPerGameloop() / (float) _swayPeriodMs;
+		if (_swayPosition > 1.0) {
+			_swayPosition -= 1.0;
+		}
+
+		float sway = sinf((_swayOffset + _swayPosition) * 2.0f * M_PI) * _swayAmplitude;
+		StarkScene->setSwayAngle(_swayAngle * sway);
+	}
 
 	if (_fadeFramesRemaining > 0) {
 		_fadeFramesRemaining--;
@@ -421,6 +435,18 @@ void Location::fadeOutInit(int32 fadeFrames) {
 		StarkScene->setFadeLevel(1.0);
 		_fadeLevelIncrement = -1.0 / fadeFrames;
 	}
+}
+
+void Location::swayScene(int32 periodMs, const Math::Angle &angle, float amplitude, float offset) {
+	if (periodMs < 33) {
+		periodMs = 1000;
+	}
+
+	_swayPeriodMs = periodMs;
+	_swayAngle = angle;
+	_swayAmplitude = amplitude;
+	_swayOffset = offset;
+	_swayPosition = offset;
 }
 
 } // End of namespace Resources

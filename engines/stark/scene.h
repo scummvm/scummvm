@@ -76,6 +76,13 @@ public:
 	void setFadeLevel(float fadeLevel);
 	float getFadeLevel() const;
 
+	/** Access the sway angle the actors are currently rotated by */
+	void setSwayAngle(const Math::Angle &angle);
+	Math::Angle getSwayAngle() const;
+
+	/** Get the axis for the the sway actor rotation, in world coordinates */
+	Math::Vector3d getSwayDirection() const;
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
@@ -93,6 +100,7 @@ private:
 	Math::Matrix4 _viewMatrix;
 
 	float _fadeLevel;
+	Math::Angle _swayAngle;
 };
 
 } // End of namespace Stark
