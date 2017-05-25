@@ -389,6 +389,10 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 		return;
 	}
 
+	_global->getLevel()->onEnginePause(pause);
+	_global->getCurrent()->getLevel()->onEnginePause(pause);
+	_global->getCurrent()->getLocation()->onEnginePause(pause);
+
 	_frameLimiter->pause(pause);
 }
 } // End of namespace Stark

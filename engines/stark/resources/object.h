@@ -202,6 +202,11 @@ public:
 	virtual void onGameLoop();
 
 	/**
+	 * Called when ResidualVM pauses or resumes the engine
+	 */
+	virtual void onEnginePause(bool pause);
+
+	/**
 	 * Called when exiting a location
 	 */
 	virtual void onExitLocation();

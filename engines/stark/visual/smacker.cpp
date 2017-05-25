@@ -164,4 +164,9 @@ uint32 VisualSmacker::getCurrentTime() const {
 void VisualSmacker::overrideFrameRate(int32 framerate) {
 	_overridenFramerate = framerate;
 }
+
+void VisualSmacker::pause(bool pause) {
+	_smacker->pauseVideo(pause);
+}
+
 } // End of namespace Stark

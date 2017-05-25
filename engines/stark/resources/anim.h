@@ -205,6 +205,7 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onGameLoop() override;
+	void onEnginePause(bool pause) override;
 
 	// Anim API
 	Visual *getVisual() override;

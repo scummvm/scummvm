@@ -329,6 +329,15 @@ void AnimVideo::onGameLoop() {
 	}
 }
 
+void AnimVideo::onEnginePause(bool pause) {
+	Object::onEnginePause(pause);
+
+	if (_smacker && isInUse()) {
+		_smacker->pause(pause);
+	}
+}
+
+
 Visual *AnimVideo::getVisual() {
 	return _smacker;
 }

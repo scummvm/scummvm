@@ -77,6 +77,9 @@ public:
 
 	void overrideFrameRate(int32 framerate);
 
+	/** Pause or resume the video */
+	void pause(bool pause);
+
 private:
 	Video::SmackerDecoder *_smacker;
 	const Graphics::Surface *_surface;

@@ -152,6 +152,14 @@ void Object::onGameLoop() {
 	}
 }
 
+void Object::onEnginePause(bool pause) {
+	Common::Array<Object *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onEnginePause(pause);
+		i++;
+	}
+}
+
 void Object::onExitLocation() {
 	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
