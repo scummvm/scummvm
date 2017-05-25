@@ -54,8 +54,9 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_hasActiveScroll(false),
 		_scrollFollowCharacter(false),
 		_rumbleFramesRemaining(0),
-		_fadeFramesRemaining(0),
-		_fadeLevelIncrement(0.0),
+		_fadeOut(false),
+		_fadePosition(0),
+		_fadeDuration(0),
 		_swayPeriodMs(0),
 		_swayAmplitude(0),
 		_swayOffset(0),
@@ -111,11 +112,20 @@ void Location::onGameLoop() {
 		StarkScene->setSwayAngle(_swayAngle * sway);
 	}
 
-	if (_fadeFramesRemaining > 0) {
-		_fadeFramesRemaining--;
+	if (_fadeDuration > 0) {
+		float fadeSpeed = StarkGlobal->getMillisecondsPerGameloop() / (float) _fadeDuration;
 
-		float newFadeLevel = CLIP<float>(StarkScene->getFadeLevel() + _fadeLevelIncrement, 0.0, 1.0);
-		StarkScene->setFadeLevel(newFadeLevel);
+		_fadePosition += fadeSpeed * (_fadeOut ? -1.0 : 1.0);
+
+		if (_fadeOut && _fadePosition < 0.0) {
+			_fadePosition = 0.0;
+			_fadeDuration = 0;
+		} else if (!_fadeOut && _fadePosition > 1.0) {
+			_fadePosition = 1.0;
+			_fadeDuration = 0;
+		}
+
+		StarkScene->setFadeLevel(_fadePosition);
 	}
 
 	if (_hasActiveScroll) {
@@ -448,22 +458,16 @@ void Location::setRumbleFramesRemaining(int32 rumbleFramesRemaining) {
 	_rumbleFramesRemaining = rumbleFramesRemaining;
 }
 
-void Location::fadeInInit(int32 fadeFrames) {
-	_fadeFramesRemaining = fadeFrames;
-
-	if (fadeFrames > 0) {
-		StarkScene->setFadeLevel(0.0);
-		_fadeLevelIncrement = 1.0 / fadeFrames;
-	}
+void Location::fadeInInit(int32 fadeDuration) {
+	_fadeOut = false;
+	_fadePosition = 0.0;
+	_fadeDuration = fadeDuration;
 }
 
-void Location::fadeOutInit(int32 fadeFrames) {
-	_fadeFramesRemaining = fadeFrames;
-
-	if (fadeFrames > 0) {
-		StarkScene->setFadeLevel(1.0);
-		_fadeLevelIncrement = -1.0 / fadeFrames;
-	}
+void Location::fadeOutInit(int32 fadeDuration) {
+	_fadeOut = true;
+	_fadePosition = 1.0;
+	_fadeDuration = fadeDuration;
 }
 
 void Location::swayScene(int32 periodMs, const Math::Angle &angle, float amplitude, float offset) {

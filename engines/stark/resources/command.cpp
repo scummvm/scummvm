@@ -381,15 +381,12 @@ Command *Command::opRumbleScene(Script *script, int32 rumbleDuration, int32 paus
 }
 
 Command *Command::opFadeScene(Script *script, bool fadeOut, int32 fadeDuration, bool pause) {
-	uint gameloopDuration = StarkGlobal->getMillisecondsPerGameloop();
-	int32 fadeFrames = fadeDuration / gameloopDuration;
-
 	Current *current = StarkGlobal->getCurrent();
 	Location *location = current->getLocation();
 	if (fadeOut) {
-		location->fadeOutInit(fadeFrames);
+		location->fadeOutInit(fadeDuration);
 	} else {
-		location->fadeInInit(fadeFrames);
+		location->fadeInInit(fadeDuration);
 	}
 
 	if (pause) {

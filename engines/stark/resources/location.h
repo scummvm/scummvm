@@ -123,8 +123,8 @@ public:
 	void setRumbleFramesRemaining(int32 rumbleFramesRemaining);
 
 	/** Setup fading for this location */
-	void fadeInInit(int32 fadeFrames);
-	void fadeOutInit(int32 fadeFrames);
+	void fadeInInit(int32 fadeDuration);
+	void fadeOutInit(int32 fadeDuration);
 
 	/** Setup a swaying movement for the 3d items in this location */
 	void swayScene(int32 periodMs, const Math::Angle &angle, float amplitude, float offset);
@@ -159,8 +159,9 @@ private:
 
 	int32 _rumbleFramesRemaining;
 
-	int32 _fadeFramesRemaining;
-	float _fadeLevelIncrement;
+	bool _fadeOut;
+	int32 _fadeDuration;
+	float _fadePosition;
 
 	int32 _swayPeriodMs;
 	Math::Angle _swayAngle;
