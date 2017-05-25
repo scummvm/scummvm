@@ -499,9 +499,16 @@ CelObj &ScreenItem::getCelObj() const {
 }
 
 void ScreenItem::printDebugInfo(Console *con) const {
+	const char *name;
+	if (_object.isNumber()) {
+		name = "-scummvm-";
+	} else {
+		name = g_sci->getEngineState()->_segMan->getObjectName(_object);
+	}
+
 	con->debugPrintf("%04x:%04x (%s), prio %d, ins %u, x %d, y %d, z: %d, scaledX: %d, scaledY: %d flags: %d\n",
-		_object.getSegment(), _object.getOffset(),
-		g_sci->getEngineState()->_segMan->getObjectName(_object),
+		PRINT_REG(_object),
+		name,
 		_priority,
 		_creationId,
 		_position.x,
