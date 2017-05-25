@@ -240,7 +240,14 @@ void StarkEngine::processEvents() {
 }
 
 void StarkEngine::updateDisplayScene() {
-	_global->setMillisecondsPerGameloop(_frameLimiter->getLastFrameDuration());
+	if (_global->isFastForward()) {
+		// The original engine was frame limited to 30 fps.
+		// Set the frame duration to 1000 / 30 ms so that fast forward
+		// skips the same amount of simulated time as the original.
+		_global->setMillisecondsPerGameloop(33);
+	} else {
+		_global->setMillisecondsPerGameloop(_frameLimiter->getLastFrameDuration());
+	}
 
 	// Clear the screen
 	_gfx->clearScreen();
