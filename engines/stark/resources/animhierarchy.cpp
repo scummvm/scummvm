@@ -23,12 +23,14 @@
 #include "engines/stark/resources/animhierarchy.h"
 
 #include "common/debug.h"
+#include "common/random.h"
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/textureset.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 namespace Resources {
@@ -41,7 +43,8 @@ AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const C
 		_animUsage(0),
 		_currentAnim(nullptr),
 		_animHierarchy(nullptr),
-		_field_5C(0) {
+		_field_5C(0),
+		_idleActionsFrequencySum(0) {
 	_type = TYPE;
 }
 
@@ -72,6 +75,13 @@ void AnimHierarchy::onAllLoaded() {
 	if (_animHierarchy) {
 		for (uint i = 0; i < _animHierarchy->_animationReferences.size(); i++) {
 			_animations.push_back(_animHierarchy->_animationReferences[i].resolve<Anim>());
+		}
+	}
+
+	_idleActionsFrequencySum = 0;
+	for (uint i = 0; i < _animations.size(); i++) {
+		if (_animations[i]->getUsage() == Anim::kActiorUsageIdleAction) {
+			_idleActionsFrequencySum += _animations[i]->getIdleActionFrequency();
 		}
 	}
 }
@@ -140,6 +150,27 @@ Visual *AnimHierarchy::getVisualForUsage(uint32 usage) {
 	Anim *anim = getAnimForUsage(usage);
 	if (anim) {
 		return anim->getVisual();
+	}
+
+	return nullptr;
+}
+
+Anim *AnimHierarchy::getIdleActionAnim() const {
+	if (_idleActionsFrequencySum == 0) {
+		return nullptr; // There are no idle animations
+	}
+
+	int pick = StarkRandomSource->getRandomNumber(_idleActionsFrequencySum - 1);
+	for (uint i = 0; i < _animations.size(); i++) {
+		if (_animations[i]->getUsage() != Anim::kActiorUsageIdleAction) {
+			continue;
+		}
+
+		pick -= _animations[i]->getIdleActionFrequency();
+
+		if (pick < 0) {
+			return _animations[i];
+		}
 	}
 
 	return nullptr;

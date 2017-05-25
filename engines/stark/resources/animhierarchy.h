@@ -83,6 +83,9 @@ public:
 
 	Visual *getVisualForUsage(uint32 usage);
 
+	/** Randomize an idle action animation */
+	Anim *getIdleActionAnim() const;
+
 protected:
 	Anim *getAnimForUsage(uint32 usage);
 	void printData() override;
@@ -96,6 +99,7 @@ protected:
 	float _field_5C;
 	uint32 _animUsage;
 	Anim *_currentAnim;
+	uint32 _idleActionsFrequencySum;
 };
 
 } // End of namespace Resources

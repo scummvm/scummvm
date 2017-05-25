@@ -275,6 +275,10 @@ Anim *ItemVisual::getAnim() const {
 	return _animHierarchy->getCurrentAnim();
 }
 
+Anim *ItemVisual::getActionAnim() const {
+	return _actionAnim;
+}
+
 void ItemVisual::setAnimHierarchy(AnimHierarchy *animHierarchy) {
 	resetActionAnim();
 
@@ -957,6 +961,14 @@ Common::String ModelItem::getHotspotTitle(uint32 hotspotIndex) const {
 
 ItemTemplate *ModelItem::getItemTemplate() const {
 	return _referencedItem;
+}
+
+Anim *ModelItem::getIdleActionAnim() const {
+	if (_animHierarchy) {
+		return _animHierarchy->getIdleActionAnim();
+	}
+
+	return nullptr;
 }
 
 void ModelItem::printData() {

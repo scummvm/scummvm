@@ -164,6 +164,8 @@ private:
 	float _swayAmplitude;
 	float _swayOffset;
 	float _swayPosition;
+
+	int32 _idleActionWaitMs;
 };
 
 } // End of namespace Resources

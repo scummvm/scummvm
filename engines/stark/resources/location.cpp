@@ -27,6 +27,7 @@
 
 #include "engines/stark/movement/movement.h"
 
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/container.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
@@ -35,8 +36,8 @@
 #include "engines/stark/resources/sound.h"
 
 #include "engines/stark/scene.h"
-#include "engines/stark/services/services.h"
 #include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
 
 #include "common/random.h"
 
@@ -58,7 +59,8 @@ Location::Location(Object *parent, byte subType, uint16 index, const Common::Str
 		_swayPeriodMs(0),
 		_swayAmplitude(0),
 		_swayOffset(0),
-		_swayPosition(0) {
+		_swayPosition(0),
+		_idleActionWaitMs(5500) {
 	_type = TYPE;
 }
 
@@ -70,6 +72,21 @@ void Location::onAllLoaded() {
 
 void Location::onGameLoop() {
 	Object::onGameLoop();
+
+	ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
+	if (april) {
+		_idleActionWaitMs -= StarkGlobal->getMillisecondsPerGameloop();
+		if (_idleActionWaitMs <= 0) {
+			if (!april->getActionAnim() && april->getAnimKind() == Anim::kActorUsageIdle) {
+				Anim *idleAction = april->getIdleActionAnim();
+				if (idleAction) {
+					april->playActionAnim(idleAction);
+				}
+			}
+
+			_idleActionWaitMs = 11000; // 330 frames at 30 fps
+		}
+	}
 
 	if (_swayPeriodMs > 0) {
 		_swayPosition += StarkGlobal->getMillisecondsPerGameloop() / (float) _swayPeriodMs;
@@ -94,7 +111,6 @@ void Location::onGameLoop() {
 	}
 
 	if (_scrollFollowCharacter) {
-		ModelItem *april = StarkGlobal->getCurrent()->getInteractive();
 		Movement *movement = april->getMovement();
 
 		bool scrollComplete = scrollToCharacter(april);

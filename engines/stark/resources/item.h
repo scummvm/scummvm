@@ -176,6 +176,9 @@ public:
 	/** Get the currently playing animation */
 	Anim *getAnim() const;
 
+	/** Get the currently playing action animation, if any */
+	Anim *getActionAnim() const;
+
 	/** Replace the current generic animation with an action specific animation */
 	void playActionAnim(Anim *anim);
 
@@ -435,6 +438,9 @@ public:
 
 	/** Reset animation blending */
 	void resetAnimationBlending();
+
+	/** Randomize an idle action animation */
+	Anim *getIdleActionAnim() const;
 
 protected:
 	void printData() override;

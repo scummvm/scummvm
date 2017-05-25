@@ -124,6 +124,10 @@ uint32 Anim::getMovementSpeed() const {
 	return 100;
 }
 
+uint32 Anim::getIdleActionFrequency() const {
+	return 1;
+}
+
 void Anim::printData() {
 	debug("usage: %d", _usage);
 	debug("numFrames: %d", _numFrames);
@@ -387,7 +391,7 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 		_castsShadow(true),
 		_loop(false),
 		_movementSpeed(100),
-		_field_6C(1),
+		_idleActionFrequency(1),
 		_seletonAnim(nullptr),
 		_currentTime(0),
 		_totalTime(0),
@@ -451,9 +455,9 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	}
 
 	if (stream->isDataLeft()) {
-		_field_6C = stream->readUint32LE();
+		_idleActionFrequency = stream->readUint32LE();
 	} else {
-		_field_6C = 1;
+		_idleActionFrequency = 1;
 	}
 
 	_archiveName = stream->getArchiveName();
@@ -537,6 +541,10 @@ bool AnimSkeleton::isAtTime(uint32 time) const {
 	return _currentTime >= time;
 }
 
+uint32 AnimSkeleton::getIdleActionFrequency() const {
+	return _idleActionFrequency;
+}
+
 void AnimSkeleton::printData() {
 	Anim::printData();
 
@@ -544,7 +552,7 @@ void AnimSkeleton::printData() {
 	debug("castsShadow: %d", _castsShadow);
 	debug("loop: %d", _loop);
 	debug("movementSpeed: %d", _movementSpeed);
-	debug("field_6C: %d", _field_6C);
+	debug("idleActionFrequency: %d", _idleActionFrequency);
 }
 
 } // End of namespace Resources

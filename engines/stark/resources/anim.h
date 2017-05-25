@@ -74,10 +74,11 @@ public:
 	};
 
 	enum ActorUsage {
-		kActorUsageIdle = 1,
-		kActorUsageWalk = 2,
-		kActorUsageTalk = 3,
-		kActorUsageRun  = 6
+		kActorUsageIdle        = 1,
+		kActorUsageWalk        = 2,
+		kActorUsageTalk        = 3,
+		kActorUsageRun         = 6,
+		kActiorUsageIdleAction = 10
 	};
 
 	/** Anim factory */
@@ -125,6 +126,9 @@ public:
 
 	/** Get the anim movement speed in units per seconds */
 	virtual uint32 getMovementSpeed() const;
+
+	/** Get the chance the animation has to play among other idle actions from the same anim hierarchy */
+	virtual uint32 getIdleActionFrequency() const;
 
 protected:
 	virtual void printData() override;
@@ -259,6 +263,7 @@ public:
 	void playAsAction(ItemVisual *item) override;
 	bool isAtTime(uint32 time) const override;
 	uint32 getMovementSpeed() const override;
+	uint32 getIdleActionFrequency() const override;
 
 	/** Get the position in the animation loop in milliseconds */
 	uint32 getCurrentTime() const;
@@ -274,7 +279,7 @@ protected:
 	Common::String _animFilename;
 	bool _loop;
 	uint32 _movementSpeed;
-	uint32 _field_6C;
+	uint32 _idleActionFrequency;
 
 	uint32 _totalTime;
 	uint32 _currentTime;
