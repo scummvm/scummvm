@@ -74,11 +74,11 @@ public:
 	};
 
 	enum ActorUsage {
-		kActorUsageIdle        = 1,
-		kActorUsageWalk        = 2,
-		kActorUsageTalk        = 3,
-		kActorUsageRun         = 6,
-		kActiorUsageIdleAction = 10
+		kActorUsageIdle       = 1,
+		kActorUsageWalk       = 2,
+		kActorUsageTalk       = 3,
+		kActorUsageRun        = 6,
+		kActorUsageIdleAction = 10
 	};
 
 	/** Anim factory */

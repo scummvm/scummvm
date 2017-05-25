@@ -80,7 +80,7 @@ void AnimHierarchy::onAllLoaded() {
 
 	_idleActionsFrequencySum = 0;
 	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() == Anim::kActiorUsageIdleAction) {
+		if (_animations[i]->getUsage() == Anim::kActorUsageIdleAction) {
 			_idleActionsFrequencySum += _animations[i]->getIdleActionFrequency();
 		}
 	}
@@ -162,7 +162,7 @@ Anim *AnimHierarchy::getIdleActionAnim() const {
 
 	int pick = StarkRandomSource->getRandomNumber(_idleActionsFrequencySum - 1);
 	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getUsage() != Anim::kActiorUsageIdleAction) {
+		if (_animations[i]->getUsage() != Anim::kActorUsageIdleAction) {
 			continue;
 		}
 
