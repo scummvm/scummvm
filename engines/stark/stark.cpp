@@ -38,6 +38,7 @@
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/framelimiter.h"
 
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -53,6 +54,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
 		_gfx(nullptr),
+		_frameLimiter(nullptr),
 		_scene(nullptr),
 		_console(nullptr),
 		_global(nullptr),
@@ -85,6 +87,7 @@ StarkEngine::~StarkEngine() {
 	delete _scene;
 	delete _console;
 	delete _gfx;
+	delete _frameLimiter;
 	delete _staticProvider;
 	delete _resourceProvider;
 	delete _global;
@@ -103,6 +106,7 @@ Common::Error StarkEngine::run() {
 	// Get the screen prepared
 	_gfx->init();
 
+	_frameLimiter = new Gfx::FrameLimiter(_system, 60);
 	_archiveLoader = new ArchiveLoader();
 	_stateProvider = new StateProvider();
 	_global = new Global();
@@ -176,13 +180,7 @@ void StarkEngine::setStartupLocation() {
 
 void StarkEngine::mainLoop() {
 	while (!shouldQuit()) {
-		if (_resourceProvider->hasLocationChangeRequest()) {
-			_global->setNormalSpeed();
-			_resourceProvider->performLocationChange();
-		}
-
-		updateDisplayScene();
-		g_system->delayMillis(10);
+		_frameLimiter->startFrame();
 
 		processEvents();
 
@@ -190,6 +188,17 @@ void StarkEngine::mainLoop() {
 			quitGame();
 			break;
 		}
+
+		if (_resourceProvider->hasLocationChangeRequest()) {
+			_global->setNormalSpeed();
+			_resourceProvider->performLocationChange();
+		}
+
+		updateDisplayScene();
+
+		// Swap buffers
+		_frameLimiter->delayBeforeSwap();
+		_gfx->flipBuffer();
 	}
 }
 
@@ -231,10 +240,7 @@ void StarkEngine::processEvents() {
 }
 
 void StarkEngine::updateDisplayScene() {
-	// Get frame delay
-	static uint32 lastFrame = g_system->getMillis();
-	_global->setMillisecondsPerGameloop(g_system->getMillis() - lastFrame);
-	lastFrame += _global->getMillisecondsPerGameloop();
+	_global->setMillisecondsPerGameloop(_frameLimiter->getLastFrameDuration());
 
 	// Clear the screen
 	_gfx->clearScreen();
@@ -262,9 +268,6 @@ void StarkEngine::updateDisplayScene() {
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_userInterface->render();
-
-	// Swap buffers
-	_gfx->flipBuffer();
 }
 
 bool StarkEngine::hasFeature(EngineFeature f) const {
@@ -376,5 +379,16 @@ bool StarkEngine::isDemo() {
 
 Common::String StarkEngine::formatSaveName(const char *target, int slot) {
 	return Common::String::format("%s-%03d.tlj", target, slot);
+}
+
+void StarkEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (!_global || !_frameLimiter) {
+		// This function may be called when an error occurs before the engine is fully initialized
+		return;
+	}
+
+	_frameLimiter->pause(pause);
 }
 } // End of namespace Stark

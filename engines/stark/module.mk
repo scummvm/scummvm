@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	gfx/driver.o \
+	gfx/framelimiter.o \
 	gfx/opengls.o \
 	gfx/openglsactor.o \
 	gfx/openglsfade.o \

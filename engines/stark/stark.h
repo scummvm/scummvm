@@ -34,6 +34,7 @@ namespace Stark {
 
 namespace Gfx {
 class Driver;
+class FrameLimiter;
 }
 
 enum StarkGameFeatures {
@@ -69,6 +70,7 @@ protected:
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual void pauseEngineIntern(bool pause) override;
 
 private:
 	void mainLoop();
@@ -78,6 +80,7 @@ private:
 	bool isDemo();
 
 	Gfx::Driver *_gfx;
+	Gfx::FrameLimiter *_frameLimiter;
 	Console *_console;
 
 	// Services
