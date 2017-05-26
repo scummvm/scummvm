@@ -740,7 +740,7 @@ public:
 		case kArrayTypeID: {
 			reg_t *target = (reg_t *)_data + index;
 			while (count--) {
-				*target = value;
+				*target++ = value;
 			}
 			break;
 		}
@@ -749,7 +749,7 @@ public:
 			byte *target = (byte *)_data + index;
 			const byte fillValue = value.getOffset();
 			while (count--) {
-				*target = fillValue;
+				*target++ = fillValue;
 			}
 			break;
 		}
