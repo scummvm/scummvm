@@ -681,11 +681,14 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
 	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
-	methodName += ("::" + getKernel()->getSelectorName(selector));
+	methodName += "::" + getKernel()->getSelectorName(selector);
 
 	Common::List<Breakpoint>::const_iterator bpIter;
 	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
-		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
+		if (bpIter->type != breakpointType)
+			continue;
+		if (bpIter->name == methodName ||
+		    (bpIter->name.hasSuffix("::") && methodName.hasPrefix(bpIter->name))) {
 			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			_debugState.debugging = true;
 			_debugState.breakpointWasHit = true;
