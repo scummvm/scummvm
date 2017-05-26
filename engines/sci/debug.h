@@ -47,10 +47,10 @@ enum BreakpointType {
 };
 
 struct Breakpoint {
-	BreakpointType type;
-	uint32 address;     ///< Breakpoints on exports
-	reg32_t regAddress; ///< Breakpoints on addresses
-	Common::String name; ///< Breakpoints on selector names
+	BreakpointType _type;
+	uint32 _address;     ///< Breakpoints on exports
+	reg32_t _regAddress; ///< Breakpoints on addresses
+	Common::String _name; ///< Breakpoints on selector names
 };
 
 enum DebugSeeking {

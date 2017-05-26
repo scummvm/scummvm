@@ -3729,22 +3729,22 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 	Common::List<Breakpoint>::const_iterator end = _debugState._breakpoints.end();
 	for (; bp != end; ++bp) {
 		debugPrintf("  #%i: ", i);
-		switch (bp->type) {
+		switch (bp->_type) {
 		case BREAK_SELECTOREXEC:
-			debugPrintf("Execute %s\n", bp->name.c_str());
+			debugPrintf("Execute %s\n", bp->_name.c_str());
 			break;
 		case BREAK_SELECTORREAD:
-			debugPrintf("Read %s\n", bp->name.c_str());
+			debugPrintf("Read %s\n", bp->_name.c_str());
 			break;
 		case BREAK_SELECTORWRITE:
-			debugPrintf("Write %s\n", bp->name.c_str());
+			debugPrintf("Write %s\n", bp->_name.c_str());
 			break;
 		case BREAK_EXPORT:
-			bpdata = bp->address;
+			bpdata = bp->_address;
 			debugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
 			break;
 		case BREAK_ADDRESS:
-			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->regAddress));
+			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->_regAddress));
 		}
 
 		i++;
@@ -3790,7 +3790,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	// Update EngineState::_activeBreakpointTypes.
 	int type = 0;
 	for (bp = _debugState._breakpoints.begin(); bp != end; ++bp) {
-		type |= bp->type;
+		type |= bp->_type;
 	}
 
 	_debugState._activeBreakpointTypes = type;
@@ -3812,8 +3812,8 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_SELECTOREXEC;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTOREXEC;
+	bp._name = argv[1];
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
@@ -3829,8 +3829,8 @@ bool Console::cmdBreakpointRead(int argc, const char **argv) {
 	}
 
 	Breakpoint bp;
-	bp.type = BREAK_SELECTORREAD;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTORREAD;
+	bp._name = argv[1];
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
@@ -3846,8 +3846,8 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 	}
 
 	Breakpoint bp;
-	bp.type = BREAK_SELECTORWRITE;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTORWRITE;
+	bp._name = argv[1];
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
@@ -3891,9 +3891,9 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_EXPORT;
+	bp._type = BREAK_EXPORT;
 	// script number, export number
-	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
@@ -3917,8 +3917,8 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 	}
 
 	Breakpoint bp;
-	bp.type = BREAK_ADDRESS;
-	bp.regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+	bp._type = BREAK_ADDRESS;
+	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
