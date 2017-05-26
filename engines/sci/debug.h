@@ -47,9 +47,11 @@ enum BreakpointType {
 };
 
 enum BreakpointAction {
-	BREAK_BREAK, // break into debugger when breakpoint is triggered
-	BREAK_LOG, // log the breakpoint, and don't break into debugger
-	BREAK_BACKTRACE // show a backtrace, and don't break into debugger
+	BREAK_NONE,      // ignore breakpoint
+	BREAK_BREAK,     // break into debugger when breakpoint is triggered
+	BREAK_LOG,       // log the breakpoint, and don't break into debugger
+	BREAK_BACKTRACE, // show a backtrace, and don't break into debugger
+	BREAK_INSPECT    // show object, and don't break into debugger
 };
 
 struct Breakpoint {
@@ -81,6 +83,8 @@ struct DebugState {
 	StackPtr old_sp;
 	Common::List<Breakpoint> _breakpoints;   //< List of breakpoints
 	int _activeBreakpointTypes;  //< Bit mask specifying which types of breakpoints are active
+
+	void updateActiveBreakpointTypes();
 };
 
 // Various global variables used for debugging are declared here

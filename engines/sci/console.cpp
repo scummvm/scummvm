@@ -3741,6 +3741,12 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 		case BREAK_BACKTRACE:
 			bpaction = " (action: show backtrace)";
 			break;
+		case BREAK_INSPECT:
+			bpaction = " (action: show object)";
+			break;
+		case BREAK_NONE:
+			bpaction = " (action: ignore)";
+			break;
 		default:
 			bpaction = "";
 		}
@@ -3802,13 +3808,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	// Delete it
 	_debugState._breakpoints.erase(bp);
 
-	// Update EngineState::_activeBreakpointTypes.
-	int type = 0;
-	for (bp = _debugState._breakpoints.begin(); bp != end; ++bp) {
-		type |= bp->_type;
-	}
-
-	_debugState._activeBreakpointTypes = type;
+	_debugState.updateActiveBreakpointTypes();
 
 	return true;
 }
@@ -3831,13 +3831,22 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 		bpaction = BREAK_LOG;
 	else if (arg == "bt")
 		bpaction = BREAK_BACKTRACE;
+	else if (arg == "inspect")
+		bpaction = BREAK_INSPECT;
+	else if (arg == "none")
+		bpaction = BREAK_NONE;
 	else
 		usage = true;
 
 	if (usage) {
 		debugPrintf("Change the action for the breakpoint with the specified index.\n");
-		debugPrintf("Usage: %s <breakpoint index> break|log|bt\n", argv[0]);
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|none\n", argv[0]);
 		debugPrintf("<index> * will process all breakpoints\n");
+		debugPrintf("Actions: break  : break into debugger\n");
+		debugPrintf("         log    : log without breaking\n");
+		debugPrintf("         bt     : show backtrace without breaking\n");
+		debugPrintf("         inspect: show object (only for bpx/bpr/bpw)\n");
+		debugPrintf("         none   : ignore breakpoint\n");
 		return true;
 	}
 
@@ -3846,6 +3855,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 	if (strcmp(argv[1], "*") == 0) {
 		for (; bp != end; ++bp)
 			bp->_action = bpaction;
+		_debugState.updateActiveBreakpointTypes();
 		return true;	
 	}
 
@@ -3862,6 +3872,9 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 	}
 
 	bp->_action = bpaction;
+
+	_debugState.updateActiveBreakpointTypes();
+
 	return true;
 }
 
