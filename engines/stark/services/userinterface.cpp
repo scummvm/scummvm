@@ -53,6 +53,7 @@ UserInterface::UserInterface(Gfx::Driver *gfx) :
 		_actionMenu(nullptr),
 		_gameWindow(nullptr),
 		_interactive(true),
+		_interactionAttemptDenied(false),
 		_currentScreen(kScreenGame) {
 }
 
@@ -208,9 +209,21 @@ bool UserInterface::isInteractive() const {
 void UserInterface::setInteractive(bool interactive) {
 	if (interactive && !_interactive) {
 		StarkGlobal->setNormalSpeed();
+	} else if (!interactive && _interactive) {
+		_interactionAttemptDenied = false;
 	}
 
 	_interactive = interactive;
+}
+
+void UserInterface::markInteractionDenied() {
+	if (!_interactive) {
+		_interactionAttemptDenied = true;
+	}
+}
+
+bool UserInterface::wasInteractionDenied() const {
+	return !_interactive && _interactionAttemptDenied;
 }
 
 void UserInterface::clearLocationDependentState() {

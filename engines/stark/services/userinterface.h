@@ -107,6 +107,12 @@ public:
 	/** Open the in game options menu */
 	void optionsOpen();
 
+	/** Signal a denied interaction that occurred during a non interactive period */
+	void markInteractionDenied();
+
+	/** Was a player interaction with the world denied during this non interactive period? */
+	bool wasInteractionDenied() const;
+
 private:
 	typedef void (Window::*WindowHandler)();
 	void dispatchEvent(WindowHandler handler);
@@ -130,6 +136,7 @@ private:
 
 	Screen _currentScreen;
 	bool _interactive;
+	bool _interactionAttemptDenied;
 };
 
 } // End of namespace Stark

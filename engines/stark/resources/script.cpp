@@ -199,6 +199,12 @@ void Script::updateSuspended() {
 		_pauseTimeLeft = -1;
 	}
 
+	if (_nextCommand->getSubType() == Command::kScriptPauseSkippable
+			&& (StarkUserInterface->wasInteractionDenied() || _pauseTimeLeft < 0)) {
+		StarkUserInterface->setInteractive(true);
+		_pauseTimeLeft = -1;
+	}
+
 	bool commandChanged = false;
 
 	if (_suspendingResource) {

@@ -54,6 +54,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kGameLoop,                   "gameLoop",                   kFlowNormal },
 			{ Resources::Command::kScriptPause,                "scriptPause",                kFlowNormal },
 			{ Resources::Command::kScriptPauseRandom,          "scriptPauseRandom",          kFlowNormal },
+			{ Resources::Command::kScriptPauseSkippable,       "scriptPauseSkippable",       kFlowNormal },
 			{ Resources::Command::kScriptAbort,                "scriptAbort",                kFlowNormal },
 			{ Resources::Command::kExit2DLocation,             "exit2DLocation",             kFlowEnd    },
 			{ Resources::Command::kGoto2DLocation,             "goto2DLocation",             kFlowEnd    },

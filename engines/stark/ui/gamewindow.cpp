@@ -134,6 +134,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 
 void GameWindow::onClick(const Common::Point &pos) {
 	if (!StarkUserInterface->isInteractive()) {
+		StarkUserInterface->markInteractionDenied();
 		return;
 	}
 
@@ -173,6 +174,7 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 
 void GameWindow::onDoubleClick(const Common::Point &pos) {
 	if (!StarkUserInterface->isInteractive()) {
+		StarkUserInterface->markInteractionDenied();
 		return;
 	}
 

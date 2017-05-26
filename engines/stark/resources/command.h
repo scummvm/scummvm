@@ -68,6 +68,7 @@ public:
 		kGameLoop = 8,
 		kScriptPause = 9,
 		kScriptPauseRandom = 10,
+		kScriptPauseSkippable = 11,
 
 		kScriptAbort = 13,
 
@@ -207,6 +208,7 @@ protected:
 	Command *opScriptPauseGameLoop(Script *script, int32 count);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opScriptPauseRandom(Script *script, const ResourceReference &itemRef);
+	Command *opScriptPauseSkippable(Script *script, const ResourceReference &durationRef);
 	Command *opScriptAbort(ResourceReference scriptRef, bool disable);
 	Command *opExit2DLocation();
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);

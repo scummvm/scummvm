@@ -96,6 +96,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptPauseGameLoop(script, _arguments[1].intValue);
 	case kScriptPauseRandom:
 		return opScriptPauseRandom(script, _arguments[1].referenceValue);
+	case kScriptPauseSkippable:
+		return opScriptPauseSkippable(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
 		return opExit2DLocation();
 	case kGoto2DLocation:
@@ -334,6 +336,15 @@ Command *Command::opScriptPauseRandom(Script *script, const ResourceReference &r
 
 	Knowledge *duration = ref.resolve<Knowledge>();
 	script->pause(randomFactor * duration->getIntegerValue());
+
+	return this; // Stay on this command while the script is suspended
+}
+
+Command *Command::opScriptPauseSkippable(Script *script, const ResourceReference &durationRef) {
+	StarkUserInterface->setInteractive(false);
+
+	Knowledge *duration = durationRef.resolve<Knowledge>();
+	script->pause(duration->getIntegerValue());
 
 	return this; // Stay on this command while the script is suspended
 }
