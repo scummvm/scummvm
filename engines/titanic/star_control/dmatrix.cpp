@@ -177,28 +177,25 @@ DMatrix DMatrix::fn1() const {
 void DMatrix::loadTransform(const CMatrixTransform &src) {
 	double total = src.fn1();
 	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
-	DVector tempV = src._vector * factor;
+	DVector temp1V = src._vector * factor;
+	DVector temp2V = temp1V * src._vector;
 
-	double val1 = tempV._x * src._vector._x;
-	double val2 = tempV._y * src._vector._x;
-	double val3 = tempV._y * src._vector._y;
-	double val4 = tempV._x * src._field0;
-	double val5 = tempV._z + val3;
-	double val6 = tempV._z * src._vector._y;
-	double val7 = tempV._z * src._field0;
-	double val8 = val3 + val1;
-	double val9 = tempV._z * src._vector._x;
-	double val10 = tempV._y * src._field0;
+	double val1 = temp1V._y * src._vector._x;
+	double val2 = temp1V._z * src._vector._x;
+	double val3 = temp1V._z * src._vector._y;
+	double val4 = temp1V._x * src._field0;
+	double val5 = temp1V._y * src._field0;
+	double val6 = temp1V._z * src._field0;
 
-	_row1._x = 1.0 - val5;
-	_row1._y = val2 + val7;
-	_row1._z = val9 - val10;
-	_row2._x = val2 - val7;
-	_row2._y = 1.0 - (tempV._z + val1);
-	_row2._z = val6 + val4;
-	_row3._x = val9 + val10;
-	_row3._y = val6 - val4;
-	_row3._z = 1.0 - val8;
+	_row1._x = 1.0 - (temp2V._z + temp2V._y);
+	_row1._y = val1 + val6;
+	_row1._z = val2 - val5;
+	_row2._x = val1 - val6;
+	_row2._y = 1.0 - (temp2V._z + temp2V._x);
+	_row2._z = val3 + val4;
+	_row3._x = val2 + val5;
+	_row3._y = val3 - val4;
+	_row3._z = 1.0 - (temp2V._y + temp2V._x);
 	_row4._x = 0;
 	_row4._y = 0;
 	_row4._z = 0;

@@ -91,6 +91,10 @@ public:
 	const DVector operator*(double right) const {
 		return DVector(_x * right, _y * right, _z * right);
 	}
+
+	const DVector operator*(const DVector &right) const {
+		return DVector(_x * right._x, _y * right._y, _z * right._z);
+	}
 };
 
 } // End of namespace Titanic
