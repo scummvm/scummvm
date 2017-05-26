@@ -915,4 +915,84 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 		debugN(" = %d\n", result.getOffset());
 }
 
+
+void logBacktrace() {
+	Console *con = g_sci->getSciDebugger();
+	EngineState *s = g_sci->getEngineState();
+
+	con->debugPrintf("Call stack (current base: 0x%x):\n", s->executionStackBase);
+	Common::List<ExecStack>::const_iterator iter;
+	uint i = 0;
+
+
+	for (iter = s->_executionStack.begin();
+	     iter != s->_executionStack.end(); ++iter, ++i) {
+		const ExecStack &call = *iter;
+		const char *objname = s->_segMan->getObjectName(call.sendp);
+		int paramc, totalparamc;
+
+		switch (call.type) {
+		case EXEC_STACK_TYPE_CALL: // Normal function
+			if (call.type == EXEC_STACK_TYPE_CALL)
+			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+			if (call.debugSelector != -1) {
+				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
+			} else if (call.debugExportId != -1) {
+				con->debugPrintf("export %d (", call.debugExportId);
+			} else if (call.debugLocalCallOffset != -1) {
+				con->debugPrintf("call %x (", call.debugLocalCallOffset);
+			}
+			break;
+
+		case EXEC_STACK_TYPE_KERNEL: // Kernel function
+			if (call.debugKernelSubFunction == -1)
+				con->debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, g_sci->getKernel()->getKernelName(call.debugKernelFunction).c_str());
+			else
+				con->debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, g_sci->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
+			break;
+
+		case EXEC_STACK_TYPE_VARSELECTOR:
+			con->debugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
+			          objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
+			break;
+		}
+
+		totalparamc = call.argc;
+
+		if (totalparamc > 16)
+			totalparamc = 16;
+
+		for (paramc = 1; paramc <= totalparamc; paramc++) {
+			con->debugPrintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+
+			if (paramc < call.argc)
+				con->debugPrintf(", ");
+		}
+
+		if (call.argc > 16)
+			con->debugPrintf("...");
+
+		con->debugPrintf(")\n     ");
+		if (call.debugOrigin != -1)
+			con->debugPrintf("by %x ", call.debugOrigin);
+		con->debugPrintf("obj@%04x:%04x", PRINT_REG(call.objp));
+		if (call.type == EXEC_STACK_TYPE_CALL) {
+			con->debugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			if (call.sp == CALL_SP_CARRY)
+				con->debugPrintf(" sp,fp:carry");
+			else {
+				con->debugPrintf(" sp=ST:%04x", (unsigned)(call.sp - s->stack_base));
+				con->debugPrintf(" fp=ST:%04x", (unsigned)(call.fp - s->stack_base));
+			}
+		} else
+			con->debugPrintf(" pc:none");
+
+		con->debugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - s->stack_base));
+		con->debugPrintf("\n");
+	}
+}
+
+
+
+
 } // End of namespace Sci
