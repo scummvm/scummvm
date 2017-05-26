@@ -685,10 +685,10 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 
 	Common::List<Breakpoint>::const_iterator bpIter;
 	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
-		if (bpIter->type != breakpointType)
+		if (bpIter->_type != breakpointType)
 			continue;
-		if (bpIter->name == methodName ||
-		    (bpIter->name.hasSuffix("::") && methodName.hasPrefix(bpIter->name))) {
+		if (bpIter->_name == methodName ||
+		    (bpIter->_name.hasSuffix("::") && methodName.hasPrefix(bpIter->_name))) {
 			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
 			_debugState.debugging = true;
 			_debugState.breakpointWasHit = true;
@@ -704,7 +704,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+			if (bp->_type == BREAK_EXPORT && bp->_address == bpaddress) {
 				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
@@ -720,7 +720,7 @@ bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
 	if (_debugState._activeBreakpointTypes & BREAK_ADDRESS) {
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_ADDRESS && bp->regAddress == address) {
+			if (bp->_type == BREAK_ADDRESS && bp->_regAddress == address) {
 				_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
