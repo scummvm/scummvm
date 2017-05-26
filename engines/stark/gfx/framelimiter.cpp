@@ -22,6 +22,8 @@
 
 #include "engines/stark/gfx/framelimiter.h"
 
+#include "common/util.h"
+
 namespace Stark {
 namespace Gfx {
 
@@ -34,7 +36,7 @@ FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
 	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync) && framerate != 0;
 
 	if (_enabled) {
-		_speedLimitMs = 1000 / framerate;
+		_speedLimitMs = 1000 / CLIP<uint>(framerate, 0, 100);
 	}
 }
 

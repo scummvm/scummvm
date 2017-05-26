@@ -106,7 +106,7 @@ Common::Error StarkEngine::run() {
 	// Get the screen prepared
 	_gfx->init();
 
-	_frameLimiter = new Gfx::FrameLimiter(_system, 60);
+	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 	_archiveLoader = new ArchiveLoader();
 	_stateProvider = new StateProvider();
 	_global = new Global();
