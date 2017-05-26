@@ -46,11 +46,18 @@ enum BreakpointType {
 	BREAK_ADDRESS       = 1 << 4  // break when pc is at this address
 };
 
+enum BreakpointAction {
+	BREAK_BREAK, // break into debugger when breakpoint is triggered
+	BREAK_LOG, // log the breakpoint, and don't break into debugger
+	BREAK_BACKTRACE // show a backtrace, and don't break into debugger
+};
+
 struct Breakpoint {
 	BreakpointType _type;
 	uint32 _address;     ///< Breakpoints on exports
 	reg32_t _regAddress; ///< Breakpoints on addresses
 	Common::String _name; ///< Breakpoints on selector names
+	BreakpointAction _action;
 };
 
 enum DebugSeeking {

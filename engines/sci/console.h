@@ -149,6 +149,7 @@ private:
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
+	bool cmdBreakpointAction(int argc, const char **argv);
 	bool cmdBreakpointMethod(int argc, const char **argv);
 	bool cmdBreakpointRead(int argc, const char **argv);
 	bool cmdBreakpointWrite(int argc, const char **argv);

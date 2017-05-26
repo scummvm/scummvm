@@ -205,6 +205,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bp_action",				WRAP_METHOD(Console, cmdBreakpointAction));
+	registerCmd("bpact",				WRAP_METHOD(Console, cmdBreakpointAction));			// alias
 	registerCmd("bp_address",			WRAP_METHOD(Console, cmdBreakpointAddress));
 	registerCmd("bpa",					WRAP_METHOD(Console, cmdBreakpointAddress));		// alias
 	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
@@ -443,6 +445,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	debugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
+	debugPrintf(" bp_action / bpact - Set action to be performed when breakpoint is triggered\n");
 	debugPrintf(" bp_address / bpa - Sets a breakpoint on a script address\n");
 	debugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
 	debugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
@@ -3729,22 +3732,34 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 	Common::List<Breakpoint>::const_iterator end = _debugState._breakpoints.end();
 	for (; bp != end; ++bp) {
 		debugPrintf("  #%i: ", i);
+		const char *bpaction;
+
+		switch (bp->_action) {
+		case BREAK_LOG:
+			bpaction = " (action: log only)";
+			break;
+		case BREAK_BACKTRACE:
+			bpaction = " (action: show backtrace)";
+			break;
+		default:
+			bpaction = "";
+		}
 		switch (bp->_type) {
 		case BREAK_SELECTOREXEC:
-			debugPrintf("Execute %s\n", bp->_name.c_str());
+			debugPrintf("Execute %s%s\n", bp->_name.c_str(), bpaction);
 			break;
 		case BREAK_SELECTORREAD:
-			debugPrintf("Read %s\n", bp->_name.c_str());
+			debugPrintf("Read %s%s\n", bp->_name.c_str(), bpaction);
 			break;
 		case BREAK_SELECTORWRITE:
-			debugPrintf("Write %s\n", bp->_name.c_str());
+			debugPrintf("Write %s%s\n", bp->_name.c_str(), bpaction);
 			break;
 		case BREAK_EXPORT:
 			bpdata = bp->_address;
-			debugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
+			debugPrintf("Execute script %d, export %d%s\n", bpdata >> 16, bpdata & 0xFFFF, bpaction);
 			break;
 		case BREAK_ADDRESS:
-			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->_regAddress));
+			debugPrintf("Execute address %04x:%04x%s\n", PRINT_REG(bp->_regAddress), bpaction);
 		}
 
 		i++;
@@ -3798,6 +3813,59 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdBreakpointAction(int argc, const char **argv) {
+	bool usage = false;
+
+	if (argc != 3) {
+		usage = true;
+	}
+
+	Common::String arg;
+	if (argc >= 3)
+		arg = argv[2];
+
+	BreakpointAction bpaction;
+	if (arg == "break")
+		bpaction = BREAK_BREAK;
+	else if (arg == "log")
+		bpaction = BREAK_LOG;
+	else if (arg == "bt")
+		bpaction = BREAK_BACKTRACE;
+	else
+		usage = true;
+
+	if (usage) {
+		debugPrintf("Change the action for the breakpoint with the specified index.\n");
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt\n", argv[0]);
+		debugPrintf("<index> * will process all breakpoints\n");
+		return true;
+	}
+
+	Common::List<Breakpoint>::iterator bp = _debugState._breakpoints.begin();
+	const Common::List<Breakpoint>::iterator end = _debugState._breakpoints.end();
+	if (strcmp(argv[1], "*") == 0) {
+		for (; bp != end; ++bp)
+			bp->_action = bpaction;
+		return true;	
+	}
+
+	const int idx = atoi(argv[1]);
+
+	// Find the breakpoint at index idx.
+	for (int i = 0; bp != end && i < idx; ++bp, ++i) {
+		// do nothing
+	}
+
+	if (bp == end) {
+		debugPrintf("Invalid breakpoint index %i\n", idx);
+		return true;
+	}
+
+	bp->_action = bpaction;
+	return true;
+}
+
+
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Sets a breakpoint on execution of a specified method/selector.\n");
@@ -3814,6 +3882,7 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	Breakpoint bp;
 	bp._type = BREAK_SELECTOREXEC;
 	bp._name = argv[1];
+	bp._action = BREAK_BREAK;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
@@ -3831,6 +3900,7 @@ bool Console::cmdBreakpointRead(int argc, const char **argv) {
 	Breakpoint bp;
 	bp._type = BREAK_SELECTORREAD;
 	bp._name = argv[1];
+	bp._action = BREAK_BREAK;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
@@ -3848,6 +3918,7 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 	Breakpoint bp;
 	bp._type = BREAK_SELECTORWRITE;
 	bp._name = argv[1];
+	bp._action = BREAK_BREAK;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
@@ -3894,6 +3965,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	bp._type = BREAK_EXPORT;
 	// script number, export number
 	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+	bp._action = BREAK_BREAK;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
@@ -3919,6 +3991,7 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 	Breakpoint bp;
 	bp._type = BREAK_ADDRESS;
 	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+	bp._action = BREAK_BREAK;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
