@@ -28,6 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
+#include "sci/engine/scriptdebug.h"
 
 namespace Sci {
 
@@ -690,8 +691,12 @@ bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t sen
 		if (bpIter->_name == methodName ||
 		    (bpIter->_name.hasSuffix("::") && methodName.hasPrefix(bpIter->_name))) {
 			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
-			_debugState.debugging = true;
-			_debugState.breakpointWasHit = true;
+			if (bpIter->_action == BREAK_BREAK) {
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bpIter->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			}
 			return true;
 		}
 	}
@@ -706,8 +711,12 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
 			if (bp->_type == BREAK_EXPORT && bp->_address == bpaddress) {
 				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
+				if (bp->_action == BREAK_BREAK) {
+					_debugState.debugging = true;
+					_debugState.breakpointWasHit = true;
+				} else if (bp->_action == BREAK_BACKTRACE) {
+					logBacktrace();
+				}
 				return true;
 			}
 		}
@@ -722,8 +731,12 @@ bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
 		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
 			if (bp->_type == BREAK_ADDRESS && bp->_regAddress == address) {
 				_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
-				_debugState.debugging = true;
-				_debugState.breakpointWasHit = true;
+				if (bp->_action == BREAK_BREAK) {
+					_debugState.debugging = true;
+					_debugState.breakpointWasHit = true;
+				} else if (bp->_action == BREAK_BACKTRACE) {
+					logBacktrace();
+				}
 				return true;
 			}
 		}
