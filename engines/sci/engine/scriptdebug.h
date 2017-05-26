@@ -35,6 +35,8 @@ void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curV
 
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result);
 
+void logBacktrace();
+
 }
 
 #endif

@@ -34,6 +34,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/features.h"
+#include "sci/engine/scriptdebug.h"
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
@@ -3260,75 +3261,7 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 }
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
-	debugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
-	Common::List<ExecStack>::const_iterator iter;
-	uint i = 0;
-
-	for (iter = _engine->_gamestate->_executionStack.begin();
-	     iter != _engine->_gamestate->_executionStack.end(); ++iter, ++i) {
-		const ExecStack &call = *iter;
-		const char *objname = _engine->_gamestate->_segMan->getObjectName(call.sendp);
-		int paramc, totalparamc;
-
-		switch (call.type) {
-		case EXEC_STACK_TYPE_CALL: // Normal function
-			if (call.type == EXEC_STACK_TYPE_CALL)
-			debugPrintf(" %x: script %d - ", i, (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.getSegment()]).getScriptNumber());
-			if (call.debugSelector != -1) {
-				debugPrintf("%s::%s(", objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
-			} else if (call.debugExportId != -1) {
-				debugPrintf("export %d (", call.debugExportId);
-			} else if (call.debugLocalCallOffset != -1) {
-				debugPrintf("call %x (", call.debugLocalCallOffset);
-			}
-			break;
-
-		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			if (call.debugKernelSubFunction == -1)
-				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction).c_str());
-			else
-				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
-			break;
-
-		case EXEC_STACK_TYPE_VARSELECTOR:
-			debugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
-			          objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
-			break;
-		}
-
-		totalparamc = call.argc;
-
-		if (totalparamc > 16)
-			totalparamc = 16;
-
-		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			debugPrintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
-
-			if (paramc < call.argc)
-				debugPrintf(", ");
-		}
-
-		if (call.argc > 16)
-			debugPrintf("...");
-
-		debugPrintf(")\n     ");
-		if (call.debugOrigin != -1)
-			debugPrintf("by %x ", call.debugOrigin);
-		debugPrintf("obj@%04x:%04x", PRINT_REG(call.objp));
-		if (call.type == EXEC_STACK_TYPE_CALL) {
-			debugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
-			if (call.sp == CALL_SP_CARRY)
-				debugPrintf(" sp,fp:carry");
-			else {
-				debugPrintf(" sp=ST:%04x", (unsigned)(call.sp - _engine->_gamestate->stack_base));
-				debugPrintf(" fp=ST:%04x", (unsigned)(call.fp - _engine->_gamestate->stack_base));
-			}
-		} else
-			debugPrintf(" pc:none");
-
-		debugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _engine->_gamestate->stack_base));
-		debugPrintf("\n");
-	}
+	logBacktrace();
 
 	return true;
 }
