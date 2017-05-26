@@ -221,6 +221,7 @@ protected:
 	Command *opGameEnd();
 	Command *opInventoryOpen(bool open);
 	Command *opFloatScene(int32 periodMs, int32 amplitudeIn, int32 offsetIn);
+	Command *opBookOfSecretsOpen();
 	Command *opDoNothing();
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, bool suspend);

@@ -114,6 +114,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opInventoryOpen(_arguments[1].intValue);
 	case kFloatScene:
 		return opFloatScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kBookOfSecretsOpen:
+		return opBookOfSecretsOpen();
 	case kDoNothing:
 		return opDoNothing();
 	case kItem3DPlaceOn:
@@ -470,6 +472,12 @@ Command *Command::opFloatScene(int32 periodMs, int32 amplitudeIn, int32 offsetIn
 
 	Location *location = StarkGlobal->getCurrent()->getLocation();
 	location->floatScene(periodMs, amplitude, offset);
+
+	return nextCommand();
+}
+
+Command *Command::opBookOfSecretsOpen() {
+	warning("(TODO: Implement) opBookOfSecretsOpen()");
 
 	return nextCommand();
 }
