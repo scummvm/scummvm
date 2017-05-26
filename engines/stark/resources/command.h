@@ -134,7 +134,7 @@ public:
 
 		kItem3DRunTo = 132,
 		kItemPlaceDirection = 133,
-
+		kItemRotateDirection = 134,
 		kActivateTexture = 135,
 		kActivateMesh = 136,
 		kItem3DSetWalkTarget = 137,
@@ -255,6 +255,7 @@ protected:
 	Command *opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue);
 	Command *opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
+	Command *opItemRotateDirection(Script *script, const ResourceReference &itemRef, int32 direction, int32 speed, bool suspend);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
 	Command *opItem3DSetWalkTarget(const ResourceReference &itemRef, const ResourceReference &targetRef);

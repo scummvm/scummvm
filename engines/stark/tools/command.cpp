@@ -104,6 +104,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kLightSetColor,              "lightSetColor",              kFlowNormal },
 			{ Resources::Command::kItem3DRunTo,                "item3DRunTo",                kFlowNormal },
 			{ Resources::Command::kItemPlaceDirection,         "itemPlaceDirection",         kFlowNormal },
+			{ Resources::Command::kItemRotateDirection,        "itemRotateDirection",        kFlowNormal },
 			{ Resources::Command::kActivateTexture,            "activateTexture",            kFlowNormal },
 			{ Resources::Command::kActivateMesh,               "activateMesh",               kFlowNormal },
 			{ Resources::Command::kItem3DSetWalkTarget,        "item3DSetWalkTarget",        kFlowNormal },

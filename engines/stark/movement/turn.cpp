@@ -81,4 +81,8 @@ void Turn::setTargetDirection(const Math::Vector3d &direction) {
 	_targetDirection = direction;
 }
 
+void Turn::setSpeed(float speed) {
+	_turnSpeed = speed;
+}
+
 } // End of namespace Stark

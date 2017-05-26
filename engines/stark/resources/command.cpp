@@ -189,6 +189,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItem3DRunTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kItemRotateDirection:
+		return opItemRotateDirection(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kActivateTexture:
 		return opActivateTexture(_arguments[1].referenceValue);
 	case kActivateMesh:
@@ -986,6 +988,36 @@ Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 d
 	item->setDirection(direction + cameraAngle);
 
 	return nextCommand();
+}
+
+Command *Command::opItemRotateDirection(Script *script, const ResourceReference &itemRef, int32 direction, int32 speed, bool suspend) {
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
+
+	Current *current = StarkGlobal->getCurrent();
+	Camera *camera = current->getCamera();
+	Math::Angle cameraAngle = camera->getHorizontalAngle();
+	Math::Angle targetAngle = direction + cameraAngle;
+
+	Math::Matrix3 rot;
+	rot.buildAroundZ(-targetAngle);
+
+	Math::Vector3d directionVector(1.0, 0.0, 0.0);
+	rot.transformVector(&directionVector);
+
+	Turn *movement = new Turn(item);
+	movement->setTargetDirection(directionVector);
+	movement->setSpeed(speed / 1000.0f);
+	movement->start();
+
+	item->setMovement(movement);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opActivateTexture(const ResourceReference &textureRef) {

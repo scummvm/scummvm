@@ -45,6 +45,9 @@ public:
 	/** Set the direction to turn towards */
 	void setTargetDirection(const Math::Vector3d &direction);
 
+	/** Override the default rotation speed */
+	void setSpeed(float speed);
+
 private:
 	Resources::FloorPositionedItem *_item3D;
 	Math::Vector3d _targetDirection;
