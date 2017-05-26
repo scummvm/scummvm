@@ -804,6 +804,37 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 	}	// switch
 }
 
+void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType) {
+	const Object *var_container = obj;
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+		var_container = segMan->getObject(obj->getSuperClassSelector());
+	if ((index >> 1) >= var_container->getVarCount()) {
+		// TODO: error, warning, debug?
+		return;
+	}
+	uint16 varSelector = var_container->getVarSelector(index >> 1);
+	if (g_sci->checkSelectorBreakpoint(breakpointType, objp, varSelector)) {
+		// checkSelectorBreakpoint has already triggered the breakpoint.
+		// We just output the relevant data here.
+
+		Console *con = g_sci->getSciDebugger();
+		const char *objectName = segMan->getObjectName(objp);
+		const char *selectorName = g_sci->getKernel()->getSelectorName(varSelector).c_str();
+		if (breakpointType == BREAK_SELECTORWRITE) {
+			con->debugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
+								objectName, selectorName,
+								PRINT_REG(curValue), PRINT_REG(newValue));
+		} else if (breakpointType == BREAK_SELECTORREAD) {
+			con->debugPrintf("Read from selector (%s:%s): %04x:%04x\n",
+								objectName, selectorName,
+								PRINT_REG(curValue));
+
+		} else {
+			assert(false);
+		}
+	}
+}
+
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
 	Kernel *kernel = g_sci->getKernel();
 	if (!kernelSubCall) {

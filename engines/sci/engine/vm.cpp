@@ -1129,29 +1129,60 @@ void run_vm(EngineState *s) {
 
 		case op_pToa: // 0x31 (49)
 			// Property To Accumulator
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    validate_property(s, obj, opparams[0]), NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
 			s->r_acc = validate_property(s, obj, opparams[0]);
 			break;
 
 		case op_aTop: // 0x32 (50)
+			{
 			// Accumulator To Property
-			validate_property(s, obj, opparams[0]) = s->r_acc;
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    opProperty, s->r_acc,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+
+			opProperty = s->r_acc;
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif
 			break;
+		}
 
 		case op_pTos: // 0x33 (51)
+			{
 			// Property To Stack
-			PUSH32(validate_property(s, obj, opparams[0]));
+			reg_t value = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    value, NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
+			PUSH32(value);
 			break;
+		}
 
 		case op_sTop: // 0x34 (52)
+			{
 			// Stack To Property
-			validate_property(s, obj, opparams[0]) = POP32();
+			reg_t newValue = POP32();
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    opProperty, newValue,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+			opProperty = newValue;
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif
 			break;
+		}
 
 		case op_ipToa: // 0x35 (53)
 		case op_dpToa: // 0x36 (54)
@@ -1161,10 +1192,25 @@ void run_vm(EngineState *s) {
 			// Increment/decrement a property and copy to accumulator,
 			// or push to stack
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			reg_t oldValue = opProperty;
+
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    oldValue, NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
+
 			if (opcode & 1)
 				opProperty += 1;
 			else
 				opProperty -= 1;
+
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    oldValue, opProperty,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif
