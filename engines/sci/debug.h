@@ -48,10 +48,8 @@ enum BreakpointType {
 
 struct Breakpoint {
 	BreakpointType type;
-	union {
-		uint32 address;     ///< Breakpoints on exports
-		reg32_t regAddress; ///< Breakpoints on addresses
-	};
+	uint32 address;     ///< Breakpoints on exports
+	reg32_t regAddress; ///< Breakpoints on addresses
 	Common::String name; ///< Breakpoints on selector names
 };
 
