@@ -37,6 +37,8 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 
 void logBacktrace();
 
+bool printObject(reg_t obj);
+
 }
 
 #endif

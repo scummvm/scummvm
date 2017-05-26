@@ -42,6 +42,7 @@
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
+#include "sci/engine/scriptdebug.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -637,7 +638,7 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 
 	// Register the first element on the execution stack
 	if (!send_selector(_gamestate, _gameObjectAddress, _gameObjectAddress, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gameObjectAddress);
+		printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 

@@ -4745,65 +4745,6 @@ void Console::printBitmap(reg_t reg) {
 
 #endif
 
-int Console::printObject(reg_t pos) {
-	EngineState *s = _engine->_gamestate;	// for the several defines in this function
-	const Object *obj = s->_segMan->getObject(pos);
-	const Object *var_container = obj;
-	uint i;
-
-	if (!obj) {
-		debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
-		return 1;
-	}
-
-	// Object header
-	debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
-				obj->getVarCount(), obj->getMethodCount());
-
-	if (!obj->isClass())
-		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
-	debugPrintf("  -- member variables:\n");
-
-	if (getSciVersion() == SCI_VERSION_3) {
-		debugPrintf("    (----) [---] -size- = 0000:%04x (%d)\n", obj->getVarCount(), obj->getVarCount());
-		debugPrintf("    (----) [---] -classScript- = %04x:%04x (%d)\n", PRINT_REG(obj->getClassScriptSelector()), obj->getClassScriptSelector().getOffset());
-		debugPrintf("    (----) [---] -species- = %04x:%04x (%s)\n", PRINT_REG(obj->getSpeciesSelector()), s->_segMan->getObjectName(obj->getSpeciesSelector()));
-		debugPrintf("    (----) [---] -super- = %04x:%04x (%s)\n", PRINT_REG(obj->getSuperClassSelector()), s->_segMan->getObjectName(obj->getSuperClassSelector()));
-		debugPrintf("    (----) [---] -info- = %04x:%04x (%d)\n", PRINT_REG(obj->getInfoSelector()), obj->getInfoSelector().getOffset());
-	}
-
-	for (i = 0; (uint)i < obj->getVarCount(); i++) {
-		debugPrintf("    ");
-		if (var_container && i < var_container->getVarCount()) {
-			uint16 varSelector = var_container->getVarSelector(i);
-			// Times two commented out for now for easy parsing of vocab.994
-			debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
-		} else
-			debugPrintf("p#%x = ", i);
-
-		reg_t val = obj->getVariable(i);
-		debugPrintf("%04x:%04x", PRINT_REG(val));
-
-		if (!val.getSegment())
-			debugPrintf(" (%d)", val.getOffset());
-
-		const Object *ref = s->_segMan->getObject(val);
-		if (ref)
-			debugPrintf(" (%s)", s->_segMan->getObjectName(val));
-
-		debugPrintf("\n");
-	}
-	debugPrintf("  -- methods:\n");
-	for (i = 0; i < obj->getMethodCount(); i++) {
-		reg_t fptr = obj->getFunction(i);
-		debugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
-	}
-	if (s->_segMan->_heap[pos.getSegment()]->getType() == SEG_TYPE_SCRIPT)
-		debugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.getSegment())->getScriptNumber());
-
-	return 0;
-}
-
 static void printChar(byte c) {
 	if (c < 32 || c >= 127)
 		c = '.';

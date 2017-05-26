@@ -45,7 +45,6 @@ public:
 	void printArray(reg_t reg);
 	void printBitmap(reg_t reg);
 #endif
-	int printObject(reg_t reg);
 
 private:
 	virtual void preEnter();
