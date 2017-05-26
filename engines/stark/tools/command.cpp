@@ -103,6 +103,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kPATChangeTooltip,           "pATChangeTooltip",           kFlowNormal },
 			{ Resources::Command::kSoundChange,                "soundChange",                kFlowNormal },
 			{ Resources::Command::kLightSetColor,              "lightSetColor",              kFlowNormal },
+			{ Resources::Command::kLightFollowPath,            "lightFollowPath",            kFlowNormal },
 			{ Resources::Command::kItem3DRunTo,                "item3DRunTo",                kFlowNormal },
 			{ Resources::Command::kItemPlaceDirection,         "itemPlaceDirection",         kFlowNormal },
 			{ Resources::Command::kItemRotateDirection,        "itemRotateDirection",        kFlowNormal },

@@ -62,6 +62,9 @@ public:
 	/** Change this light's diffuse color */
 	void setColor(int32 red, int32 green, int32 blue);
 
+	/** Change this light's position, in world coordinates */
+	void setPosition(const Math::Vector3d &position);
+
 protected:
 	void printData() override;
 

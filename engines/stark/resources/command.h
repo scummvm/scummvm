@@ -132,7 +132,7 @@ public:
 		kPATChangeTooltip = 128,
 		kSoundChange = 129,
 		kLightSetColor = 130,
-
+		kLightFollowPath = 131,
 		kItem3DRunTo = 132,
 		kItemPlaceDirection = 133,
 		kItemRotateDirection = 134,
@@ -259,6 +259,7 @@ protected:
 	Command *opPATChangeTooltip(const ResourceReference &patRef, const ResourceReference &stringRef);
 	Command *opSoundChange(Script *script, const ResourceReference &soundRef, int32 volume, int32 pan, int32 duration, bool pause);
 	Command *opLightSetColor(const ResourceReference &lightRef, int32 red, int32 green, int32 blue);
+	Command *opLightFollowPath(Script *script, const ResourceReference &itemRef, const ResourceReference &lightRef, const ResourceReference &pathRef, int32 speed, bool suspend);
 	Command *opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opItemRotateDirection(Script *script, const ResourceReference &itemRef, int32 direction, int32 speed, bool suspend);

@@ -78,9 +78,13 @@ void Light::saveLoad(ResourceSerializer *serializer) {
 }
 
 void Light::setColor(int32 red, int32 green, int32 blue) {
-	_color.x() = (float) red / 255.0;
-	_color.y() = (float) green / 255.0;
-	_color.z() = (float) blue / 255.0;
+	_color.x() = (float) red / 255.0f;
+	_color.y() = (float) green / 255.0f;
+	_color.z() = (float) blue / 255.0f;
+}
+
+void Light::setPosition(const Math::Vector3d &position) {
+	_position = position;
 }
 
 Gfx::LightEntry *Light::getLightEntry() {

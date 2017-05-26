@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	model/model.o \
 	model/skeleton_anim.o \
 	movement/followpath.o \
+	movement/followpathlight.o \
 	movement/movement.o \
 	movement/shortestpath.o \
 	movement/stringpullingpath.o \

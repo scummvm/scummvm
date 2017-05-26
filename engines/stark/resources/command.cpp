@@ -27,6 +27,7 @@
 #include "engines/stark/formats/xrc.h"
 
 #include "engines/stark/movement/followpath.h"
+#include "engines/stark/movement/followpathlight.h"
 #include "engines/stark/movement/turn.h"
 #include "engines/stark/movement/walk.h"
 
@@ -189,6 +190,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opSoundChange(script, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kLightSetColor:
 		return opLightSetColor(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue);
+	case kLightFollowPath:
+		return opLightFollowPath(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kItem3DRunTo:
 		return opItem3DRunTo(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemPlaceDirection:
@@ -1004,6 +1007,29 @@ Command *Command::opLightSetColor(const ResourceReference &lightRef, int32 red, 
 	light->setColor(red, green, blue);
 
 	return nextCommand();
+}
+
+Command *Command::opLightFollowPath(Script *script, const ResourceReference &itemRef, const ResourceReference &lightRef,
+                                    const ResourceReference &pathRef, int32 speed, bool suspend) {
+	ItemVisual *item = itemRef.resolve<ItemVisual>();
+	Light *light = lightRef.resolve<Light>();
+	Path *path = pathRef.resolve<Path>();
+
+	FollowPathLight *follow = new FollowPathLight(item);
+	follow->setLight(light);
+	follow->setPath(path);
+	follow->setSpeed(speed / 100.0f);
+	follow->start();
+
+	item->setMovement(follow);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opItem3DRunTo(Script *script, const ResourceReference &itemRef, const ResourceReference &targetRef, int32 suspend) {
