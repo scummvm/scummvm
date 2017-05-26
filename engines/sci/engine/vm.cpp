@@ -42,6 +42,7 @@
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
 #include "sci/engine/workarounds.h"
+#include "sci/engine/scriptdebug.h"
 
 namespace Sci {
 
@@ -119,10 +120,6 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 
 	return true;
 }
-
-#ifndef REDUCE_MEMORY_USAGE
-extern const char *opcodeNames[]; // from scriptdebug.cpp
-#endif
 
 static reg_t read_var(EngineState *s, int type, int index) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
@@ -263,8 +260,6 @@ static void _exec_varselectors(EngineState *s) {
 	}
 }
 
-// from scriptdebug.cpp
-extern void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType);
 
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 	// send_obj and work_obj are equal for anything but 'super'
@@ -345,9 +340,6 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kerne
 						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
-
-// from scriptdebug.cpp
-extern void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result);
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
