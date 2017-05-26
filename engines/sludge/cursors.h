@@ -23,8 +23,12 @@
 #ifndef SLUDGE_CURSORS_H
 #define SLUDGE_CURSORS_H
 
+namespace Sludge {
+
 void pickAnimCursor(struct personaAnimation *pp);
 void displayCursor();
 void pasteCursor(int x, int y, struct personaAnimation *c);
+
+} // End of namespace Sludge
 
 #endif

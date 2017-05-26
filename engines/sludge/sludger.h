@@ -24,9 +24,12 @@
 
 #include <stdint.h>
 
+#include "allfiles.h"
 #include "variable.h"
 #include "csludge.h"
 #include "language.h"
+
+namespace Sludge {
 
 #ifndef _WIN32
 typedef struct _FILETIME {
@@ -35,6 +38,8 @@ typedef struct _FILETIME {
 } FILETIME;
 #endif
 
+struct variable;
+struct variableStack;
 
 struct eventHandlers {
 	int leftMouseFunction;
@@ -47,8 +52,8 @@ struct eventHandlers {
 };
 
 struct lineOfCode {
-	sludgeCommand               theCommand;
-	int32_t                     param;
+	sludgeCommand theCommand;
+	int32_t param;
 };
 
 struct loadedFunction {
@@ -94,5 +99,7 @@ void unfreezeSubs();
 void completeTimers();
 void killSpeechTimers();
 int cancelAFunction(int funcNum, loadedFunction *myself, bool &killedMyself);
+
+} // End of namespace Sludge
 
 #endif

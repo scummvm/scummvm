@@ -21,6 +21,9 @@
  */
 #ifndef SLUDGE_MOVIE_H
 #define SLUDGE_MOVIE_H
+
+namespace Sludge {
+
 /*
  movieIsPlaying tracks the state of movie playing
  */
@@ -34,5 +37,7 @@ extern movieStates movieIsPlaying;
 int playMovie(int fileNumber);
 int stopMovie();
 int pauseMovie();
+
+} // End of namespace Sludge
 
 #endif

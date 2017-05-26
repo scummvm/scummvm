@@ -27,6 +27,8 @@
 #include "moreio.h"
 #include "backdrop.h"
 
+namespace Sludge {
+
 screenRegion *allScreenRegions = NULL;
 screenRegion *overRegion = NULL;
 extern inputType input;
@@ -162,3 +164,5 @@ screenRegion *getRegionForObject(int obj) {
 
 	return NULL;
 }
+
+} // End of namespace Sludge

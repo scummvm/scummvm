@@ -30,6 +30,7 @@
 #endif
 #endif
 
+namespace Sludge {
 
 struct zBufferData {
 	int width, height;
@@ -47,5 +48,7 @@ struct zBufferData {
 bool setZBuffer(int y);
 void killZBuffer();
 void drawZBuffer(int x, int y, bool upsidedown);
+
+} // End of namespace Sludges
 
 #endif

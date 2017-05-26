@@ -27,8 +27,6 @@
 #endif
 #endif
 
-#include <string.h>
-
 #include "allfiles.h"
 
 #include "fileset.h"
@@ -44,6 +42,8 @@
 #include "graphics.h"
 
 #include "shaders.h"
+
+namespace Sludge {
 
 extern zBufferData zBuffer;
 
@@ -1109,3 +1109,4 @@ void fixScaleSprite(int x, int y, sprite &single, const spritePalette &fontPal, 
 #endif
 }
 
+} // End of namespace Sludge

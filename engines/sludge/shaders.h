@@ -30,8 +30,12 @@
 #endif
 #endif
 
+namespace Sludge {
+
 char *shaderFileRead(const char *fn);
 int buildShaders(const char *vertexShader, const char *fragmentShader);
+
+} // End of namespace Sludge
 
 #endif
 

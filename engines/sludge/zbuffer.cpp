@@ -28,6 +28,8 @@
 #include "newfatal.h"
 #include "graphics.h"
 
+namespace Sludge {
+
 zBufferData zBuffer;
 extern int sceneWidth, sceneHeight;
 
@@ -203,3 +205,4 @@ void drawZBuffer(int x, int y, bool upsidedown) {
 #endif
 }
 
+} // End of namespace Sludge

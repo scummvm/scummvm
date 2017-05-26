@@ -45,6 +45,8 @@
 #define ANI_WALK 1
 #define ANI_TALK 2
 
+namespace Sludge {
+
 extern speechStruct *speech;
 
 extern variableStack *noStack;
@@ -1175,3 +1177,5 @@ bool loadPeople(FILE *fp) {
 	return true;
 }
 #endif
+
+} // End of namespace Sludge

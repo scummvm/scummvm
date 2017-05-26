@@ -24,6 +24,8 @@
 
 #include "sprites.h"
 
+namespace Sludge {
+
 struct loadedSpriteBank {
 	int ID, timesUsed;
 	spriteBank bank;
@@ -32,5 +34,7 @@ struct loadedSpriteBank {
 
 loadedSpriteBank *loadBankForAnim(int ID);
 void reloadSpriteTextures();
+
+} // End of namespace Sludge
 
 #endif

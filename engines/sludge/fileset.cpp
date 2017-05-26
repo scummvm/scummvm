@@ -35,6 +35,7 @@
 #include "newfatal.h"
 #include "CommonCode/version.h"
 
+namespace Sludge {
 
 bool sliceBusy = true;
 #if ALLOW_FILE
@@ -235,3 +236,5 @@ void setFileIndices(FILE *fp, int numLanguages, unsigned int skipBefore) {
 	// Remember that the data section starts here
 	startOfDataIndex = ftell(fp);
 }
+
+} // End of namespace Sludge

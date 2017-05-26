@@ -41,6 +41,8 @@
 #include "fileset.h"
 #include "debug.h"
 
+namespace Sludge {
+
 //----------------------------------------------------------------------
 // From elsewhere
 //----------------------------------------------------------------------
@@ -91,7 +93,7 @@ stackLibrary *stackLib = NULL;
 //----------------------------------------------------------------------
 // For saving and loading stacks...
 //----------------------------------------------------------------------
-#if ALLOW_FILE
+#if 0
 bool saveVariable(variable *from, FILE *fp);
 bool loadVariable(variable *to, FILE *fp);
 
@@ -179,7 +181,7 @@ stackHandler *getStackFromLibrary(int n) {
 	}
 	return stackLib -> stack;
 }
-#if ALLOW_FILE
+#if 0
 stackHandler *loadStackRef(FILE *fp) {
 	stackHandler *nsh;
 
@@ -381,7 +383,7 @@ loadedFunction *loadFunction(FILE *fp) {
 //----------------------------------------------------------------------
 
 bool saveGame(char *fname) {
-#if ALLOW_FILE
+#if 0
 	int a;
 
 	FILE *fp = fopen(fname, "wb");
@@ -500,7 +502,7 @@ bool saveGame(char *fname) {
 int ssgVersion;
 
 bool loadGame(char *fname) {
-#if ALLOW_FILE
+#if 0
 	FILE *fp;
 	FILETIME savedGameTime;
 	int a;
@@ -676,3 +678,5 @@ bool loadGame(char *fname) {
 	clearStackLib();
 	return true;
 }
+
+} // End of namespace Sludge

@@ -25,6 +25,8 @@
 #include "newfatal.h"
 #include "debug.h"
 
+namespace Sludge {
+
 loadedSpriteBank *allLoadedBanks = NULL;
 extern spriteBank theFont;
 extern int loadedFontNum, fontTableSize;
@@ -72,3 +74,5 @@ void reloadSpriteTextures() {
 		loadSpriteBank(loadedFontNum, theFont, true);
 	}
 }
+
+} // End of namespace Sludge

@@ -36,6 +36,8 @@
 #include "newfatal.h"
 #include "moreio.h"
 
+namespace Sludge {
+
 spriteBank theFont;
 int fontHeight = 0, numFontColours, loadedFontNum;
 char *fontOrderString = NULL;
@@ -204,3 +206,5 @@ bool loadFont(int filenum, const char *charOrder, int h) {
 	fontHeight = h;
 	return true;
 }
+
+} // End of namespace Sludge

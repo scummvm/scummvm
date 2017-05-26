@@ -22,7 +22,11 @@
 #ifndef SLUDGE_SAVEDATA_H
 #define SLUDGE_SAVEDATA_H
 
+namespace Sludge {
+
 bool fileToStack(char *filename, stackHandler *sH);
 bool stackToFile(char *filename, const variable &from);
+
+} // End of namespace Sludge
 
 #endif

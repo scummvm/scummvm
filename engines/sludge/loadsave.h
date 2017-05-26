@@ -22,6 +22,8 @@
 #ifndef SLUDGE_LOADSAVE_H
 #define SLUDGE_LOADSAVE_H
 
+namespace Sludge {
+
 bool saveGame(char *fname);
 bool loadGame(char *fname);
 
@@ -29,5 +31,7 @@ bool loadGame(char *fname);
 loadedFunction *loadFunction(FILE *fp);
 void saveFunction(loadedFunction *fun, FILE *fp);
 #endif
+
+} // End of namespace Sludge
 
 #endif

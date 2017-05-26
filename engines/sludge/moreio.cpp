@@ -19,9 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <string.h>
-#include <stdint.h>
-
 #include "allfiles.h"
 #include "moreio.h"
 #include "newfatal.h"
@@ -35,6 +32,8 @@
 #define __BIG_ENDIAN__
 #endif
 #endif
+
+namespace Sludge {
 
 bool allowAnyFilename = true;
 
@@ -322,3 +321,5 @@ char *decodeFilename(char *nameIn) {
 		return copyString(nameIn);
 	}
 }
+
+} // End of namespace Sludge

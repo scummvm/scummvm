@@ -22,6 +22,7 @@
 #ifndef SLUDGE_FREEZE_H
 #define SLUDGE_FREEZE_H
 
+namespace Sludge {
 
 struct frozenStuffStruct {
 	onScreenPerson *allPeople;
@@ -51,5 +52,7 @@ struct frozenStuffStruct {
 bool freeze();
 void unfreeze(bool killImage = true);
 int howFrozen();
+
+} // End of namespace Sludge
 
 #endif

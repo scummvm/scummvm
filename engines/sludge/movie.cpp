@@ -55,6 +55,8 @@
 #include "AL/alure.h"
 #endif
 
+namespace Sludge {
+
 extern int specialSettings;
 
 // in main.c
@@ -1041,3 +1043,5 @@ int pauseMovie() {
 #endif
 	return movieIsPlaying;
 }
+
+} // End of namespace Sludge

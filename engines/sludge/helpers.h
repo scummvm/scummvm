@@ -22,6 +22,10 @@
 #ifndef SLUDGE_HELPERS_H
 #define SLUDGE_HELPERS_H
 
+namespace Sludge {
+
 bool fileExists(const char *file);
+
+} // End of namespace Sludge
 
 #endif

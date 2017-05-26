@@ -53,6 +53,8 @@
 #endif
 #endif
 
+namespace Sludge {
+
 unsigned int winWidth, winHeight;
 int viewportHeight, viewportWidth;
 int viewportOffsetX = 0, viewportOffsetY = 0;
@@ -954,3 +956,5 @@ int printOglError(const char *file, int line) {
 #endif
 	return retCode;
 }
+
+} // End of namespace Sludge

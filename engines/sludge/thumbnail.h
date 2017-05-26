@@ -22,10 +22,15 @@
 #ifndef SLUDGE_THUMBNAIL_H
 #define SLUDGE_THUMBNAIL_H
 
+namespace Sludge {
+
 #if ALLOW_FILE
 bool saveThumbnail(FILE *fp);
 bool skipThumbnail(FILE *fp);
 #endif
 
 void showThumbnail(char *filename, int x, int y);
+
+} // End of namespace Sludge
+
 #endif

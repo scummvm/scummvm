@@ -26,6 +26,8 @@
 #include "graphics.h"
 #include "allfiles.h"
 
+namespace Sludge {
+
 extern int sceneWidth, sceneHeight;
 #if 0
 extern GLuint backdropTextureName;
@@ -141,3 +143,5 @@ void drawLine(int x1, int y1, int x2, int y2) {
 	setPixelCoords(false);
 #endif
 }
+
+} // End of namespace Sludge

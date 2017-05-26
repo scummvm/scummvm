@@ -22,6 +22,8 @@
 #include "allfiles.h"
 #include "helpers.h"
 
+namespace Sludge {
+
 bool fileExists(const char *file) {
 	bool retval = false;
 #if ALLOW_FILE
@@ -34,3 +36,5 @@ bool fileExists(const char *file) {
 #endif
 	return retval;
 }
+
+} // End of namespace Sludge

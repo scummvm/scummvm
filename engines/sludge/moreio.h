@@ -24,6 +24,8 @@
 
 #include <stdint.h>
 
+namespace Sludge {
+
 #if ALLOW_FILE
 int get2bytes(FILE *fp);
 void put2bytes(int numtoput, FILE *fp);
@@ -38,5 +40,7 @@ void put4bytes(uint32_t f, FILE *fp);
 #endif
 char *encodeFilename(char *nameIn);
 char *decodeFilename(char *nameIn);
+
+} // End of namespace Sludge
 
 #endif

@@ -22,6 +22,10 @@
 #ifndef SLUDGE_LINE_H
 #define SLUDGE_LINE_H
 
+namespace Sludge {
+
 void drawLine(int x1, int y1, int x2, int y2);
+
+} // End of namespace Sludge
 
 #endif

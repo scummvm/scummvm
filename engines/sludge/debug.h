@@ -23,7 +23,11 @@
 #ifndef SLUDGE_DEDBUG_H
 #define SLUDGE_DEGBUG_H
 
+namespace Sludge {
+
 void debugOut(const char *a, ...);
 void debugHeader();
+
+} // End of namespace Sludge
 
 #endif

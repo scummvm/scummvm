@@ -23,6 +23,8 @@
 #ifndef SLUDGE_COLOURS_H
 #define SLUDGE_COLOURS_H
 
+namespace Sludge {
+
 // Simple colour conversion routines to deal with 16-bit graphics
 //unsigned short int makeColour (byte r, byte g, byte b);
 
@@ -43,5 +45,7 @@ inline unsigned short makeGrey(unsigned short int r) {
 inline unsigned short makeColour(unsigned short int r, unsigned short int g, unsigned short int b) {
 	return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
 }
+
+} // End of namespace Sludge
 
 #endif

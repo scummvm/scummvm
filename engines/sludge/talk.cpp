@@ -20,9 +20,6 @@
  *
  */
 #include "allfiles.h"
-
-#include <string.h>
-
 #include "backdrop.h"
 #include "sprites.h"
 #include "sludger.h"
@@ -36,6 +33,8 @@
 #include "newfatal.h"
 #include "stringy.h"
 #include "moreio.h"
+
+namespace Sludge {
 
 extern int fontHeight, cameraX, cameraY, speechMode;
 extern float cameraZoom;
@@ -272,3 +271,5 @@ bool loadSpeech(speechStruct *sS, FILE *fp) {
 	return true;
 }
 #endif
+
+} // End of namespace Sludge

@@ -22,7 +22,11 @@
 #ifndef SLUDGE_STRINGY_H
 #define SLUDGE_STRINGY_H
 
+namespace Sludge {
+
 char *copyString(const char *copyMe);
 char *joinStrings(const char *s1, const char *s2);
+
+} // End of namespace Sludge
 
 #endif

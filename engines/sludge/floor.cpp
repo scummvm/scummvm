@@ -26,6 +26,8 @@
 #include "floor.h"
 #include "line.h"
 
+namespace Sludge {
+
 flor *currentFloor = NULL;
 
 bool pointInFloorPolygon(floorPolygon &floorPoly, int x, int y) {
@@ -288,3 +290,5 @@ bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, in
 	}
 	return false;
 }
+
+} // End of namespace Sludge

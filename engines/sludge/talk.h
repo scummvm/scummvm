@@ -24,6 +24,8 @@
 
 #include "sprites.h"
 
+namespace Sludge {
+
 struct speechLine {
 	char *textLine;
 	speechLine *next;
@@ -49,4 +51,7 @@ void initSpeech();
 void saveSpeech(speechStruct *sS, FILE *fp);
 bool loadSpeech(speechStruct *sS, FILE *fp);
 #endif
+
+} // End of namespace Sludge
+
 #endif

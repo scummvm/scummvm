@@ -36,6 +36,8 @@
 #include "freeze.h"
 #include "zbuffer.h"
 
+namespace Sludge {
+
 extern onScreenPerson *allPeople;
 extern screenRegion *allScreenRegions;
 extern screenRegion *overRegion;
@@ -362,3 +364,5 @@ void unfreeze(bool killImage) {
 	killMe = NULL;
 
 }
+
+} // End of namespace Sludge

@@ -23,6 +23,8 @@
 #include <SDL/SDL.h>
 #endif
 
+namespace Sludge {
+
 int desiredfps = 300;               //holds desired frames per second
 Uint32 starttime, endtime;
 Uint32 desired_frame_time;
@@ -54,3 +56,4 @@ void Wait_Frame(void) {
 	starttime = endtime;
 }
 
+} // End of namespace Sludge

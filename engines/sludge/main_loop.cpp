@@ -75,6 +75,7 @@
 #include "graphics.h"
 #include "helpers.h"
 
+namespace Sludge {
 
 #ifdef _WIN32
 #define PATHSLASH '\\'
@@ -506,3 +507,5 @@ catch (std::exception &ex) { //NOTE by reference, not value
 	return -2;
 }
 #endif
+
+} // End of namespace Sludge

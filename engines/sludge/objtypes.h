@@ -22,6 +22,8 @@
 #ifndef SLUDGE_OBJTYPES_H
 #define SLUDGE_OBJTYPES_H
 
+namespace Sludge {
+
 struct combination {
 	int withObj, funcNum;
 };
@@ -46,4 +48,7 @@ void removeObjectType(objectType *oT);
 void saveObjectRef(objectType *r, FILE *fp);
 objectType *loadObjectRef(FILE *fp);
 #endif
+
+} // End of namespace Sludge
+
 #endif

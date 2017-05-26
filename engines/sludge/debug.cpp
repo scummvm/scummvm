@@ -28,13 +28,15 @@
 #include "debug.h"
 #include "language.h"
 
+namespace Sludge {
+
 void debugOut(const char *a, ...) {
 	if (! gameSettings.debugMode) return;
 
 	va_list argptr;
 	va_start(argptr, a);
 
-#if ALLOW_FILE
+#if 0
 #if defined __unix__ && !(defined __APPLE__)
 	vfprintf(stderr, a, argptr);
 #else
@@ -50,3 +52,5 @@ void debugOut(const char *a, ...) {
 void debugHeader() {
 	debugOut("*** Engine compiled " __DATE__ " at " __TIME__ ".\n");
 }
+
+} // End of namespace Sludge

@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <stdint.h>
-
 #include "allfiles.h"
 #include "errors.h"
 #include "moreio.h"
@@ -30,6 +28,8 @@
 #include "backdrop.h"
 #include "graphics.h"
 #include "newfatal.h"
+
+namespace Sludge {
 
 bool freeze();
 void unfreeze(bool);    // Because FREEZE.H needs a load of other includes
@@ -264,3 +264,5 @@ bool skipThumbnail(FILE *fp) {
 	return (fgetc(fp) == '!');
 }
 #endif
+
+} // End of namespace Sludge
