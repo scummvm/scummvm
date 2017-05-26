@@ -134,6 +134,8 @@ struct CelInfo32 {
 			return Common::String::format("color %d", color);
 		case kCelTypeMem:
 			return Common::String::format("mem %04x:%04x", PRINT_REG(bitmap));
+		default:
+			assert(!"Should never happen");
 		}
 	}
 };
