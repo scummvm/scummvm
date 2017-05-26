@@ -120,6 +120,12 @@ bool Anim::isAtTime(uint32 time) const {
 	return true;
 }
 
+uint32 Anim::getRemainingTime() const {
+	// TODO: Implement for each anim type
+	warning("Anim::getRemainingTime is not implemented");
+	return 0;
+}
+
 uint32 Anim::getMovementSpeed() const {
 	return 100;
 }

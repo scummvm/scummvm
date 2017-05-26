@@ -192,6 +192,9 @@ public:
 	/** Get the command's list of arguments */
 	Common::Array<Argument> getArguments() const;
 
+	/** Resume the opcode ItemSetActivity after it has stopped waiting for the action anim to complete */
+	void resumeItemSetActivity();
+
 protected:
 	void readData(Formats::XRCReadStream *stream) override;
 
@@ -224,7 +227,7 @@ protected:
 	Command *opItemFollowPath(Script *script, ResourceReference itemRef, ResourceReference pathRef, uint32 speed, uint32 suspend);
 	Command *opItemLookAt(Script *script, const ResourceReference &itemRef, const ResourceReference &objRef, bool suspend, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
-	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
+	Command *opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animUsage, bool wait);
 	Command *opItemSelectInInventory(const ResourceReference &itemRef);
 	Command *opUseAnimHierachy(const ResourceReference &animHierRef);
 	Command *opPlayAnimation(Script *script, const ResourceReference &animRef, bool suspend);

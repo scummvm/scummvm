@@ -130,7 +130,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kItemSelectInInventory:
 		return opItemSelectInInventory(_arguments[1].referenceValue);
 	case kItemSetActivity:
-		return opItemSetActivity(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
+		return opItemSetActivity(nullptr, _arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kUseAnimHierarchy:
 		return opUseAnimHierachy(_arguments[1].referenceValue);
 	case kPlayAnimation:
@@ -581,12 +581,28 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	return nextCommand();
 }
 
-Command *Command::opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2) {
-	assert(_arguments.size() == 4);
-	Object *itemObj = itemRef.resolve<Object>();
-	warning("(TODO: Implement) opSetActivity(%s, %d, %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
+Command *Command::opItemSetActivity(Script *script, const ResourceReference &itemRef, int32 animUsage, bool wait) {
+	Item *item = itemRef.resolve<Item>();
+	ItemVisual *sceneItem = item->getSceneInstance();
+	Anim *actionAnim = sceneItem->getActionAnim();
 
-	return nextCommand();
+	if (wait && actionAnim) {
+		script->pause(actionAnim->getRemainingTime());
+		return this;
+	} else {
+		resumeItemSetActivity();
+		return nextCommand();
+	}
+}
+
+void Command::resumeItemSetActivity() {
+	assert(_subType == kItemSetActivity);
+
+	Item *item = _arguments[1].referenceValue.resolve<Item>();
+	int32 animUsage = _arguments[2].intValue;
+	ItemVisual *sceneItem = item->getSceneInstance();
+	sceneItem->setMovement(nullptr);
+	sceneItem->setAnimKind(animUsage);
 }
 
 Command *Command::opItemSelectInInventory(const ResourceReference &itemRef) {

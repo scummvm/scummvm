@@ -205,6 +205,10 @@ void Script::updateSuspended() {
 		_pauseTimeLeft = -1;
 	}
 
+	if (_nextCommand->getSubType() == Command::kItemSetActivity && _pauseTimeLeft < 0) {
+		_nextCommand->resumeItemSetActivity();
+	}
+
 	bool commandChanged = false;
 
 	if (_suspendingResource) {
