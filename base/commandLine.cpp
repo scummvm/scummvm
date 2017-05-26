@@ -139,9 +139,9 @@ static const char HELP_STRING[] =
 #ifdef ENABLE_GRIM
 	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
 	"                           (default: 10)\n"
+#endif
 	"  --engine-speed=NUM       Set frame per second limit (0 - 100), 0 = no limit\n"
 	"                           (default: 60)\n"
-#endif
 ;
 #endif
 
@@ -213,8 +213,8 @@ void registerDefaults() {
 
 #ifdef ENABLE_GRIM
 	ConfMan.registerDefault("dimuse_tempo", 10);
-	ConfMan.registerDefault("engine_speed", 60);
 #endif
+	ConfMan.registerDefault("engine_speed", 60);
 
 	// Miscellaneous
 	ConfMan.registerDefault("joystick_num", -1);
@@ -575,11 +575,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #ifdef ENABLE_GRIM
 			DO_LONG_OPTION_INT("dimuse-tempo")
 			END_OPTION
+#endif
+
 
 			DO_LONG_OPTION_INT("engine-speed")
 			END_OPTION
-#endif
-
 
 			DO_LONG_OPTION("speech-mode")
 			END_OPTION
