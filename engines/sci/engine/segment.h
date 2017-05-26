@@ -738,17 +738,17 @@ public:
 		switch (_type) {
 		case kArrayTypeInt16:
 		case kArrayTypeID: {
-			reg_t *target = (reg_t *)_data + index;
-			while (count--) {
+			for (uint16 i = 0; i < count; ++i) {
+				reg_t *target = (reg_t *)_data + index + i;
 				*target = value;
 			}
 			break;
 		}
 		case kArrayTypeByte:
 		case kArrayTypeString: {
-			byte *target = (byte *)_data + index;
 			const byte fillValue = value.getOffset();
-			while (count--) {
+			for (uint16 i = 0; i < count; ++i) {
+				byte *target = (byte *)_data + index + i;
 				*target = fillValue;
 			}
 			break;
