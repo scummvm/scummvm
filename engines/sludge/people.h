@@ -22,6 +22,8 @@
 #ifndef SLUDGE_PEOPLE_H
 #define SLUDGE_PEOPLE_H
 
+namespace Sludge {
+
 struct animFrame {
 	int frameNum, howMany;
 	int noise;
@@ -131,4 +133,7 @@ bool loadPeople(FILE *fp);
 bool saveCostume(persona *cossy, FILE *fp);
 bool loadCostume(persona *cossy, FILE *fp);
 #endif
+
+} // End of namespace Sludge
+
 #endif

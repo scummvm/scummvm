@@ -31,6 +31,7 @@
 #endif
 #endif
 
+namespace Sludge {
 
 struct texture {
 #if 0
@@ -115,4 +116,7 @@ void getTextureDimensions(GLuint name, GLint *width,  GLint *height);
 int printOglError(const char *file, int         line);
 #define printOpenGLError() printOglError(__FILE__, __LINE__)
 #endif
+
+} // End of namespace Sludge
+
 #endif

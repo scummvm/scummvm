@@ -31,6 +31,8 @@
 
 #define LOAD_ERROR "Can't load custom data...\n\n"
 
+namespace Sludge {
+
 unsigned short saveEncoding = false;
 char encode1 = 0;
 char encode2 = 0;
@@ -266,3 +268,5 @@ bool stackToFile(char *filename, const variable &from) {
 #endif
 	return true;
 }
+
+} // End of namespace Sludge

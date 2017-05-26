@@ -22,6 +22,8 @@
 #ifndef SLUDGE_FILESET_H
 #define SLUDGE_FILESET_H
 
+namespace Sludge {
+
 #if ALLOW_FILE
 extern FILE *bigDataFile;
 
@@ -35,5 +37,7 @@ char *getNumberedString(int value);
 
 bool startAccess();
 void finishAccess();
+
+} // End of namespace Sludge
 
 #endif

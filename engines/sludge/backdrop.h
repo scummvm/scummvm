@@ -34,6 +34,8 @@
 #include "variable.h"
 #include "graphics.h"
 
+namespace Sludge {
+
 enum {
 	LIGHTMAPMODE_NONE       = -1,
 	LIGHTMAPMODE_HOTSPOT,
@@ -65,7 +67,7 @@ void mixBackDrop(int fileNum, int x, int y);
 void drawBackDrop();
 void blankScreen(int x1, int y1, int x2, int y2);
 void darkScreen();
-#if ALLOW_FILE
+#if 0
 void saveHSI(FILE *writer);
 void saveCoreHSI(FILE *writer, GLuint texture, int w, int h);
 bool loadHSI(FILE *fp, int, int, bool);
@@ -101,3 +103,5 @@ void saveSnapshot(FILE *fp);
 bool restoreSnapshot(FILE *fp);
 #endif
 #endif
+
+} // End of namespace Sludge

@@ -30,6 +30,8 @@
 #endif
 #endif
 
+namespace Sludge {
+
 struct onScreenPerson;
 
 struct sprite {
@@ -89,5 +91,7 @@ void pasteSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &
 bool reserveSpritePal(spritePalette &sP, int n);
 void fixScaleSprite(int x1, int y1, sprite &single, const spritePalette &fontPal, onScreenPerson *thisPerson, const int camX, const int camY, bool);
 void burnSpriteToBackDrop(int x1, int y1, sprite &single, const spritePalette &fontPal);
+
+} // End of namespace Sludge
 
 #endif

@@ -22,7 +22,11 @@
 #ifndef SLUDGE_MEMWATCH_H
 #define SLUDGE_MEMWATCH_H
 
+namespace Sludge {
+
 void adding(void *);
 void deleting(void *);
+
+} // End of namespace Sludge
 
 #endif

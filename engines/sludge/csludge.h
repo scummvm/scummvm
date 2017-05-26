@@ -23,6 +23,8 @@
 #ifndef SLUDGE_CSLUDGE_H
 #define SLUDGE_CSLUDGE_H
 
+namespace Sludge {
+
 enum sludgeCommand {SLU_UNKNOWN,
                     SLU_RETURN, SLU_BRANCH, SLU_BR_ZERO, SLU_SET_GLOBAL,
                     SLU_SET_LOCAL, SLU_LOAD_GLOBAL, SLU_LOAD_LOCAL,
@@ -39,5 +41,7 @@ enum sludgeCommand {SLU_UNKNOWN,
                     SLU_INCREMENT_INDEX, SLU_DECREMENT_INDEX, SLU_QUICK_PUSH,
                     numSludgeCommands
                    };
+
+} // End of namespace Sludge
 
 #endif

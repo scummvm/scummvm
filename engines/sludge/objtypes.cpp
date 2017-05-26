@@ -27,6 +27,8 @@
 #include "fileset.h"
 #include "CommonCode/version.h"
 
+namespace Sludge {
+
 objectType *allObjectTypes = NULL;
 extern char *outputDir;
 
@@ -175,3 +177,5 @@ void removeObjectType(objectType *oT) {
 	}
 	fatal("Can't delete object type: bad pointer");
 }
+
+} // End of namespace Sludge

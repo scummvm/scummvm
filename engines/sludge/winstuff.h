@@ -26,6 +26,8 @@
 #include <windows.h>
 #endif
 
+namespace Sludge {
+
 #ifndef _WIN32
 #ifndef HINSTANCE
 #define HINSTANCE int
@@ -35,5 +37,7 @@
 void setWindowName(const char *tx);
 bool InitApplication(HINSTANCE hInstance);
 bool InitInstance(HINSTANCE hInstance, const char *);
+
+} // End of namespace Sludge
 
 #endif

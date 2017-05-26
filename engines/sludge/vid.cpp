@@ -37,6 +37,8 @@
 #include "colours.h"
 #include "fileset.h"
 
+namespace Sludge {
+
 struct timStream {
 	PAVISTREAM      got;
 	AVISTREAMINFO   info;
@@ -257,3 +259,5 @@ bool nextVideoFrame() {
 
 	return true;
 }
+
+} // End of namespace Sludge

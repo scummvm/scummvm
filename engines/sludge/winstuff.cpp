@@ -51,6 +51,8 @@
 
 #include "..\..\images\resource.h"
 
+namespace Sludge {
+
 HINSTANCE hInst;                // Handle of the main instance
 extern HWND hMainWindow;
 
@@ -224,4 +226,7 @@ uint32_t launch(char *f) {
 bool defaultUserFullScreen() {
 	return true;
 }
+
+} // End of namespace Sludge
+
 #endif

@@ -30,6 +30,8 @@
 #include "newfatal.h"
 #include "statusba.h"
 
+namespace Sludge {
+
 spritePalette verbLinePalette;
 spritePalette litVerbLinePalette;
 
@@ -227,3 +229,5 @@ bool loadStatusBars(FILE *fp) {
 	return true;
 }
 #endif
+
+} // End of namespace Sludge

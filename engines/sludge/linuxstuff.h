@@ -22,6 +22,8 @@
 #ifndef SLUDGE_LINUXSTUFF_H
 #define SLUDGE_LINUXSTUFF_H
 
+namespace Sludge {
+
 struct cmdlineSettingsStruct {
 	bool languageSet;
 	unsigned int languageID;
@@ -36,5 +38,7 @@ struct cmdlineSettingsStruct {
 
 void printCmdlineUsage();
 bool parseCmdlineParameters(int argc, char *argv[]);
+
+} // End of namespace Sludge
 
 #endif

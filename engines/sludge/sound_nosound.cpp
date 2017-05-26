@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <stdint.h>
-
 #include "allfiles.h"
 #include "newfatal.h"
 #include "sound.h"
 #include "moreio.h"
 #include "fileset.h"
+
+namespace Sludge {
 
 bool soundOK = false;
 
@@ -133,3 +133,5 @@ bool getSoundCacheStack(stackHandler *sH) {
 //#pragma unused (sH)
 	return true;
 }
+
+} // End of namespace Sludge

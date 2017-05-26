@@ -56,6 +56,8 @@
 #include "graphics.h"
 #include "CommonCode/utf8.h"
 
+namespace Sludge {
+
 extern char *gamePath;
 
 int speechMode = 0;
@@ -308,7 +310,7 @@ builtIn(fileExists) {
 	char *aaaaa = encodeFilename(loadNow);
 	delete loadNow;
 	if (failSecurityCheck(aaaaa)) return BR_ERROR;
-#if ALLOW_FILE
+#if 0
 	FILE *fp = fopen(aaaaa, "rb");
 	if (!fp) {
 		char currentDir[1000];
@@ -324,8 +326,10 @@ builtIn(fileExists) {
 			debugOut("Error: Failed changing to directory %s\n", currentDir);
 		}
 	}
+#endif
 	// Return value
-	setVariable(fun -> reg, SVT_INT, (fp != NULL));
+	setVariable(fun -> reg, SVT_INT, 0/*(fp != NULL)*/);//TODO:false value
+#if 0
 	if (fp) fclose(fp);
 	delete[] aaaaa;
 	loadNow = NULL;
@@ -2543,3 +2547,4 @@ builtReturn callBuiltIn(int whichFunc, int numParams, loadedFunction *fun) {
 	return BR_ERROR;
 }
 
+} // End of namespace Sludge

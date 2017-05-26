@@ -22,6 +22,8 @@
 #ifndef SLUDGE_STATUSBA_H
 #define SLUDGE_STATUSBA_H
 
+namespace Sludge {
+
 struct statusBar {
 	char *text;
 	statusBar *next;
@@ -58,5 +60,7 @@ void saveStatusBars(FILE *fp);
 // For freezing
 void restoreBarStuff(statusStuff *here);
 statusStuff *copyStatusBarStuff(statusStuff *here);
+
+} // End of namespace Sludge
 
 #endif

@@ -22,6 +22,10 @@
 #ifndef SLUDGE_MAIN_LOOP_H
 #define SLUDGE_MAIN_LOOP_H
 
+namespace Sludge {
+
 int main_loop(char *filename);
+
+} // End of namespace Sludge
 
 #endif

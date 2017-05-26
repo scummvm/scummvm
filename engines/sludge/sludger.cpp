@@ -62,9 +62,11 @@
 #include "language.h"
 #include "CommonCode/specialsettings.h"
 #include "graphics.h"
+#include "variable.h"
+#include "common/debug.h"
+#include "sludge.h"
 
-#include "debug.h"
-
+namespace Sludge {
 
 extern personaAnimation *mouseCursorAnim;
 extern spritePalette pastePalette;
@@ -165,7 +167,7 @@ FILE *openAndVerify(char *filename, char extra1, char extra2, const char *er, in
 	}
 	char c;
 	c = fgetc(fp);
-	putchar(c);
+	debug(c);
 	while (c = fgetc(fp)) {
 		putchar(c);
 	}
@@ -264,19 +266,21 @@ bool initSludge(char *filename) {
 	}
 
 	char *checker = readString(fp);
-	printf("checker : %s\n", checker);
+	debug(kSludgeDebugDataLoad, "checker : %s\n", checker);
 
 	if (strcmp(checker, "okSoFar")) return fatal(ERROR_BAD_HEADER, filename);
 	delete checker;
 	checker = NULL;
 
 	unsigned char customIconLogo = fgetc(fp);
-	putchar(customIconLogo);
+	kSludgeDebugDataLoad(kSludgeDebugDataLoad, "Game icon: %i", customIconLogo);
 
 	if (customIconLogo & 1) {
 		// There is an icon - read it!
-		int n;
+		debug(kSludgeDebugDataLoad, "There is an icon - read it!");
 
+#if 0
+		int n;
 		long file_pointer = ftell(fp);
 
 		png_structp png_ptr;
@@ -378,10 +382,12 @@ bool initSludge(char *filename) {
 				}
 			}
 		}
+#endif
 	}
 
 	if (customIconLogo & 2) {
 		// There is an logo - read it!
+		debug(kSludgeDebugDataLoad, "There is an logo - read it!");
 		int n;
 
 		long file_pointer = ftell(fp);
@@ -519,7 +525,7 @@ bool initSludge(char *filename) {
 	delete gameNameOrig;
 
 	changeToUserDir();
-
+#if 0
 #ifdef _WIN32
 	mkdir(gameName);
 #else
@@ -527,7 +533,7 @@ bool initSludge(char *filename) {
 #endif
 
 	if (chdir(gameName)) return fatal("This game's preference folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", gameName);
-
+#endif
 	delete [] gameName;
 
 	// Get user settings
@@ -552,6 +558,7 @@ bool initSludge(char *filename) {
 
 	if (dataFol[0]) {
 		char *dataFolder = encodeFilename(dataFol);
+#if 0
 #ifdef _WIN32
 		mkdir(dataFolder);
 #else
@@ -559,7 +566,7 @@ bool initSludge(char *filename) {
 #endif
 
 		if (chdir(dataFolder)) return fatal("This game's data folder is inaccessible!\nI can't access the following directory (maybe there's a file with the same name, or maybe it's read-protected):", dataFolder);
-
+#endif
 		delete dataFolder;
 	}
 
@@ -1561,3 +1568,5 @@ bool handleInput() {
 	lastRegion = overRegion;
 	return runSludge();
 }
+
+} // End of namespace Sludge

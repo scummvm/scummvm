@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <stdint.h>
-
 #include "allfiles.h"
 #include "newfatal.h"
 #include "bass.h"
@@ -32,6 +30,8 @@
 #define MAX_MODS 3
 #define EFFECT_CHANNELS 8
 #define TOTAL_CHANNELS 32
+
+namespace Sludge {
 
 bool soundOK = false;
 
@@ -389,3 +389,4 @@ bool getSoundCacheStack(stackHandler *sH) {
 	return true;
 }
 
+} // End of namespace Sludge

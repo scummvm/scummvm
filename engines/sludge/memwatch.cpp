@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <stdlib.h>
 #include "allfiles.h"
+
+namespace Sludge {
 
 void *allKnownMem[3000];
 int allKnownNum = 0;
@@ -59,3 +60,5 @@ void deleting(void *mem) {
 	//db ("Error! Deleted a block which hasn't been allocated!");
 	exit(1);
 }
+
+} // End of namespace Sludge

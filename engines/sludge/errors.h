@@ -23,6 +23,8 @@
 #ifndef SLUDGE_ERRRORS_H
 #define SLUDGE_ERRRORS_H
 
+namespace Sludge {
+
 #define _NO_MEMORY_GENERAL_         "\n\nTry closing down any programs you don't really need running (or freeing up a bit of disk space, which will give you more virtual memory - that should help too)."
 
 //---------------------------------------
@@ -68,5 +70,7 @@
 
 #define WARNING_BASS_WRONG_VERSION  "Incompatible version of BASS.DLL found!"
 #define WARNING_BASS_FAIL           "Can't initialise sound engine."
+
+} // End of namespace Sludge
 
 #endif

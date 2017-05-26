@@ -20,9 +20,12 @@
  *
  */
 #include "allfiles.h"
-#include <string.h>
-
 #include "newfatal.h"
+
+#ifndef SLUDGE_STRINGY_H
+#define SLUDGE_STRINGY_H
+
+namespace Sludge {
 
 char *copyString(const char *copyMe) {
 	char *newString = new char [strlen(copyMe) + 1];
@@ -37,3 +40,7 @@ char *joinStrings(const char *s1, const char *s2) {
 	sprintf(newString, "%s%s", s1, s2);
 	return newString;
 }
+
+} // End of namespace Sludge
+
+#endif

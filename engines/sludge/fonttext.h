@@ -22,6 +22,8 @@
 #ifndef SLUDGE_FONTTEXT_H
 #define SLUDGE_FONTTEXT_H
 
+namespace Sludge {
+
 bool loadFont(int filenum, const char *charOrder, int);
 void pasteString(char *theText, int, int, spritePalette &);
 void fixFont(spritePalette &spal);
@@ -31,5 +33,7 @@ int stringLength(char *theText);
 void pasteStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal);
 void burnStringToBackdrop(char *theText, int xOff, int y, spritePalette &thePal);
 bool isInFont(char *theText);
+
+} // End of namespace Sludge
 
 #endif

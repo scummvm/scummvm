@@ -22,9 +22,13 @@
 #ifndef SLUDGE_VID_H
 #define SLUDGE_VID_H
 
+namespace Sludge {
+
 bool startVideo(int fileNum);
 bool nextVideoFrame();
 void finishVideo();
 void initialiseMovieStuff();
+
+} // End of namespace Sludge
 
 #endif

@@ -28,6 +28,8 @@
 #include "newfatal.h"
 #include "moreio.h"
 
+namespace Sludge {
+
 #if 0
 //extern unsigned short int * * backDropImage;
 extern GLuint backdropTextureName;
@@ -373,3 +375,5 @@ bool blurScreen() {
 #endif
 	return false;
 }
+
+} // End of namespace Sludge

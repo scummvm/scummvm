@@ -37,6 +37,8 @@
 #define MAX_MODS 3
 #define NUM_BUFS 3
 
+namespace Sludge {
+
 bool soundOK = false;
 bool cacheLoopySound = false;
 bool SilenceIKillYou = false;
@@ -815,3 +817,5 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 unsigned int getSoundSource(int index) {
 	return 0; /*soundCache[index].playingOnSource;*/ //TODO:false value
 }
+
+} // End of namespace Sludge

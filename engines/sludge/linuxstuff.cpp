@@ -35,6 +35,8 @@
 #include "debug.h"
 #include "helpers.h"
 
+namespace Sludge {
+
 extern settingsStruct gameSettings;
 cmdlineSettingsStruct cmdlineSettings;
 
@@ -222,4 +224,7 @@ uint32_t launch(char *filename) {
 bool defaultUserFullScreen() {
 	return false;
 }
+
+} // End of namespace Sludge
+
 #endif

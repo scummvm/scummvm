@@ -22,6 +22,8 @@
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
+namespace Sludge {
+
 struct settingsStruct {
 	unsigned int languageID;
 	unsigned int numLanguages;
@@ -42,5 +44,7 @@ int getLanguageForFileB();
 #if ALLOW_FILE
 void makeLanguageTable(FILE *table);
 #endif
+
+} // End of namespace Sludge
 
 #endif

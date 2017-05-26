@@ -27,6 +27,11 @@
 
 //#define debuggy2 int
 #define IN_THE_CENTRE 65535
+
+namespace Sludge {
+
 typedef unsigned char byte;
+
+} // End of namespace Sludge
 
 #endif

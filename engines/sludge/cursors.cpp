@@ -36,6 +36,8 @@
 #include "people.h"
 #include "sludger.h"
 
+namespace Sludge {
+
 personaAnimation *mouseCursorAnim;
 int mouseCursorFrameNum = 0;
 int mouseCursorCountUp = 0;
@@ -84,3 +86,5 @@ void pasteCursor(int x, int y, personaAnimation *c) {
 		        c -> theSprites -> bank.sprites[c -> frames[0].frameNum],
 		        c -> theSprites -> bank.myPalette);
 }
+
+} // End of namespace Sludge

@@ -28,6 +28,8 @@
 #include "CommonCode/version.h"
 #include "platform-dependent.h"
 
+namespace Sludge {
+
 int *languageTable;
 char **languageName;
 settingsStruct gameSettings;
@@ -208,3 +210,5 @@ int getLanguageForFileB() {
 
 	return indexNum;
 }
+
+} // End of namespace Sludge

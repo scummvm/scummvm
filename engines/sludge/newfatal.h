@@ -24,6 +24,8 @@
 
 #include "errors.h"
 
+namespace Sludge {
+
 bool hasFatal();
 
 int fatal(const char *str);
@@ -35,5 +37,7 @@ void setFatalInfo(const char *userFunc, const char *BIF);
 void warning(const char *l);
 void setResourceForFatal(int n);
 char *resourceNameFromNum(int i);
+
+} // End of namespace Sludge
 
 #endif

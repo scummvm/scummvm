@@ -26,6 +26,8 @@
  */
 #include <stdint.h>
 
+namespace Sludge {
+
 char *grabFileName();
 int showSetupWindow();
 
@@ -36,5 +38,7 @@ void changeToUserDir();
 uint32_t launch(char *filename);
 
 bool defaultUserFullScreen();
+
+} // End of namespace Sludge
 
 #endif

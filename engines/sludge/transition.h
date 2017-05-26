@@ -22,7 +22,11 @@
 #ifndef SLUDGE_TRANSITION_H
 #define SLUDGE_TRANSITION_H
 
+namespace Sludge {
+
 void fixBrightness();
 void resetRandW();
+
+} // End of namespace Sludge
 
 #endif
