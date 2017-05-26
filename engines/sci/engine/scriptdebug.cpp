@@ -1005,6 +1005,70 @@ void logBacktrace() {
 	}
 }
 
+bool printObject(reg_t pos) {
+	Console *con = g_sci->getSciDebugger();
+	EngineState *s = g_sci->getEngineState();
+	const Object *obj = s->_segMan->getObject(pos);
+	const Object *var_container = obj;
+	uint i;
+
+	if (!obj) {
+		con->debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
+		return false;
+	}
+
+	// Object header
+	con->debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
+	                 obj->getVarCount(), obj->getMethodCount());
+
+	if (!obj->isClass())
+		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
+	con->debugPrintf("  -- member variables:\n");
+
+	if (getSciVersion() == SCI_VERSION_3) {
+		con->debugPrintf("    (----) [---] -size- = 0000:%04x (%d)\n", obj->getVarCount(), obj->getVarCount());
+		con->debugPrintf("    (----) [---] -classScript- = %04x:%04x (%d)\n", PRINT_REG(obj->getClassScriptSelector()), obj->getClassScriptSelector().getOffset());
+		con->debugPrintf("    (----) [---] -species- = %04x:%04x (%s)\n", PRINT_REG(obj->getSpeciesSelector()), s->_segMan->getObjectName(obj->getSpeciesSelector()));
+		con->debugPrintf("    (----) [---] -super- = %04x:%04x (%s)\n", PRINT_REG(obj->getSuperClassSelector()), s->_segMan->getObjectName(obj->getSuperClassSelector()));
+		con->debugPrintf("    (----) [---] -info- = %04x:%04x (%d)\n", PRINT_REG(obj->getInfoSelector()), obj->getInfoSelector().getOffset());
+	}
+
+	for (i = 0; (uint)i < obj->getVarCount(); i++) {
+		con->debugPrintf("    ");
+		if (var_container && i < var_container->getVarCount()) {
+			uint16 varSelector = var_container->getVarSelector(i);
+			// Times two commented out for now for easy parsing of vocab.994
+			con->debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, g_sci->getKernel()->getSelectorName(varSelector).c_str());
+		} else
+			con->debugPrintf("p#%x = ", i);
+
+		reg_t val = obj->getVariable(i);
+		con->debugPrintf("%04x:%04x", PRINT_REG(val));
+
+		if (!val.getSegment())
+			con->debugPrintf(" (%d)", val.getOffset());
+
+		const Object *ref = s->_segMan->getObject(val);
+		if (ref)
+			con->debugPrintf(" (%s)", s->_segMan->getObjectName(val));
+
+		con->debugPrintf("\n");
+	}
+	con->debugPrintf("  -- methods:\n");
+	for (i = 0; i < obj->getMethodCount(); i++) {
+		reg_t fptr = obj->getFunction(i);
+		con->debugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), g_sci->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
+	}
+
+	Script *scr = s->_segMan->getScriptIfLoaded(pos.getSegment());
+	if (scr)
+		con->debugPrintf("\nOwner script: %d\n", scr->getScriptNumber());
+
+	return true;
+}
+
+
+
 
 
 
