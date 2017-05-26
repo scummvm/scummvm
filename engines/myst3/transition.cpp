@@ -36,7 +36,7 @@ Transition::Transition(Myst3Engine *vm) :
 		_vm(vm),
 		_type(kTransitionNone),
 		_sourceScreenshot(nullptr),
-		_frameLimiter(new FrameLimiter(g_system, 60)) {
+		_frameLimiter(new FrameLimiter(g_system, ConfMan.getInt("engine_speed"))) {
 
 	int transitionSpeed = ConfMan.getInt("transition_speed");
 

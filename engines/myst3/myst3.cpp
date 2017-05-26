@@ -148,7 +148,7 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_gfx = createRenderer(_system);
-	_frameLimiter = new FrameLimiter(_system, 60);
+	_frameLimiter = new FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");

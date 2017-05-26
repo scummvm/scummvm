@@ -284,10 +284,14 @@ Common::Point Window::scalePoint(const Common::Point &screen) const {
 
 FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :
 	_system(system),
-	_speedLimitMs(1000 / framerate),
+	_speedLimitMs(0),
 	_startFrameTime(0) {
 	// The frame limiter is disabled when vsync is enabled.
-	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync);
+	_enabled = !_system->getFeatureState(OSystem::kFeatureVSync) && framerate != 0;
+
+	if (_enabled) {
+		_speedLimitMs = 1000 / CLIP<uint>(framerate, 0, 100);
+	}
 }
 
 void FrameLimiter::startFrame() {
