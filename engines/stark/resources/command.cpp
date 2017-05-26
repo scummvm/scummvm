@@ -155,6 +155,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimScriptItem:
 		return opPlayAnimScriptItem(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kItemAnimFollowPath:
+		return opItemAnimFollowPath(script, _arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kKnowledgeAssignBool:
 		return opKnowledgeAssignBool(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kKnowledgeAssignNegatedBool:
@@ -523,7 +525,7 @@ Command *Command::opItemFollowPath(Script *script, ResourceReference itemRef, Re
 
 	FollowPath *follow = new FollowPath(item);
 	follow->setPath(path);
-	follow->setSpeed(speed / 100.0);
+	follow->setSpeed(speed / 100.0f);
 	follow->start();
 
 	item->setMovement(follow);
@@ -775,6 +777,28 @@ Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &
 	if (suspend) {
 		uint32 duration = animScript->getDurationStartingWithItem(animScriptItem);
 		script->pause(duration);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
+}
+
+Command *Command::opItemAnimFollowPath(Script *script, const ResourceReference &animRef, const ResourceReference &pathRef, int32 speed, bool suspend) {
+	Anim *anim = animRef.resolve<Anim>();
+	ItemVisual *item = anim->findParent<ItemVisual>();
+	Path *path = pathRef.resolve<Path>();
+
+	FollowPath *follow = new FollowPath(item);
+	follow->setAnim(anim);
+	follow->setPath(path);
+	follow->setSpeed(speed / 100.0f);
+	follow->start();
+
+	item->setMovement(follow);
+
+	if (suspend) {
+		script->suspend(item);
+		item->setMovementSuspendedScript(script);
 		return this; // Stay on the same command while suspended
 	} else {
 		return nextCommand();

@@ -107,6 +107,7 @@ public:
 
 		kEnableFloorField = 103,
 		kPlayAnimScriptItem = 104,
+		kItemAnimFollowPath = 105,
 
 		kKnowledgeAssignBool = 107,
 
@@ -241,6 +242,7 @@ protected:
 	Command *opKnowledgeSubValue(const ResourceReference &knowledgeRef, const ResourceReference &valueRef);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, bool enable);
 	Command *opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 suspend);
+	Command *opItemAnimFollowPath(Script *script, const ResourceReference &animRef, const ResourceReference &pathRef, int32 speed, bool suspend);
 	Command *opKnowledgeAssignBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignNegatedBool(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);
 	Command *opKnowledgeAssignInteger(const ResourceReference &knowledgeRef1, const ResourceReference &knowledgeRef2);

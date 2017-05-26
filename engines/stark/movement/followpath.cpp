@@ -28,6 +28,7 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/path.h"
 
 namespace Stark {
 
@@ -36,7 +37,8 @@ FollowPath::FollowPath(Resources::ItemVisual *item) :
 		_path(nullptr),
 		_speed(0.0),
 		_position(0.0),
-		_previouslyEnabled(true) {
+		_previouslyEnabled(true),
+		_anim(nullptr) {
 }
 
 FollowPath::~FollowPath() {
@@ -109,9 +111,17 @@ void FollowPath::onGameLoop() {
 
 void FollowPath::changeItemAnim() {
 	if (_ended) {
-		_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+		if (_anim) {
+			_item->playActionAnim(_anim);
+		} else {
+			_item->setAnimKind(Resources::Anim::kActorUsageIdle);
+		}
 	} else {
-		_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+		if (_anim) {
+			_item->resetActionAnim();
+		} else {
+			_item->setAnimKind(Resources::Anim::kActorUsageWalk);
+		}
 	}
 }
 
@@ -125,6 +135,10 @@ void FollowPath::setSpeed(float speed) {
 
 bool FollowPath::is3D() const {
 	return _path->getSubType() == Resources::Path::kPath3D;
+}
+
+void FollowPath::setAnim(Resources::Anim *anim) {
+	_anim = anim;
 }
 
 } // End of namespace Stark

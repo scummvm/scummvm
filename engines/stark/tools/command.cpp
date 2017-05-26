@@ -84,6 +84,7 @@ const Command::SubTypeDesc *Command::searchSubTypeDesc(Resources::Command::SubTy
 			{ Resources::Command::kKnowledgeAddInteger,        "knowledgeAddInteger",        kFlowNormal },
 			{ Resources::Command::kEnableFloorField,           "enableFloorField",           kFlowNormal },
 			{ Resources::Command::kPlayAnimScriptItem,         "playAnimScriptItem",         kFlowNormal },
+			{ Resources::Command::kItemAnimFollowPath,         "itemAnimFollowPath",         kFlowNormal },
 			{ Resources::Command::kKnowledgeAssignBool,        "knowledgeAssignBool",        kFlowNormal },
 			{ Resources::Command::kKnowledgeAssignInteger,     "knowledgeAssignInteger",     kFlowNormal },
 			{ Resources::Command::kLocationScrollTo,           "locationScrollTo",           kFlowNormal },

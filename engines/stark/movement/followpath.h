@@ -23,10 +23,14 @@
 #ifndef STARK_MOVEMENT_FOLLOW_PATH_H
 #define STARK_MOVEMENT_FOLLOW_PATH_H
 
-#include <engines/stark/resources/path.h>
 #include "engines/stark/movement/movement.h"
 
 namespace Stark {
+
+namespace Resources {
+class Anim;
+class Path;
+}
 
 /**
  * Make an item follow pre-computed path
@@ -44,10 +48,13 @@ public:
 	void stop() override;
 
 	/** Set the path to follow */
-	void setPath(Stark::Resources::Path *path);
+	void setPath(Resources::Path *path);
 
 	/** Set the movement speed on the path */
 	void setSpeed(float speed);
+
+	/** Override the animation to play while the item follows the path */
+	void setAnim(Resources::Anim *anim);
 
 private:
 	void changeItemAnim();
@@ -58,6 +65,8 @@ private:
 
 	float _position;
 	bool _previouslyEnabled;
+
+	Resources::Anim *_anim;
 };
 
 } // End of namespace Stark
