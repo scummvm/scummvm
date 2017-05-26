@@ -3813,6 +3813,22 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	return true;
 }
 
+static bool stringToBreakpointAction(Common::String str, BreakpointAction &action) {
+	if (str == "break")
+		action = BREAK_BREAK;
+	else if (str == "log")
+		action = BREAK_LOG;
+	else if (str == "bt")
+		action = BREAK_BACKTRACE;
+	else if (str == "inspect")
+		action = BREAK_INSPECT;
+	else if (str == "none")
+		action = BREAK_NONE;
+	else
+		return false;
+	return true;
+}
+
 bool Console::cmdBreakpointAction(int argc, const char **argv) {
 	bool usage = false;
 
@@ -3825,17 +3841,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 		arg = argv[2];
 
 	BreakpointAction bpaction;
-	if (arg == "break")
-		bpaction = BREAK_BREAK;
-	else if (arg == "log")
-		bpaction = BREAK_LOG;
-	else if (arg == "bt")
-		bpaction = BREAK_BACKTRACE;
-	else if (arg == "inspect")
-		bpaction = BREAK_INSPECT;
-	else if (arg == "none")
-		bpaction = BREAK_NONE;
-	else
+	if (!stringToBreakpointAction(arg, bpaction))
 		usage = true;
 
 	if (usage) {
@@ -3880,13 +3886,24 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on execution of a specified method/selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::doit\n", argv[0]);
+		debugPrintf("         %s ego::doit log\n", argv[0]);
 		debugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
 		debugPrintf("of a specific type is touched: %s foo::\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
@@ -3895,46 +3912,77 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	Breakpoint bp;
 	bp._type = BREAK_SELECTOREXEC;
 	bp._name = argv[1];
-	bp._action = BREAK_BREAK;
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+
 	return true;
 }
 
 bool Console::cmdBreakpointRead(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on reading of a specified selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::view\n", argv[0]);
+		debugPrintf("         %s ego::view log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	Breakpoint bp;
 	bp._type = BREAK_SELECTORREAD;
 	bp._name = argv[1];
-	bp._action = BREAK_BREAK;
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+
 	return true;
 }
 
 bool Console::cmdBreakpointWrite(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on writing of a specified selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::view\n", argv[0]);
+		debugPrintf("         %s ego::view log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	Breakpoint bp;
 	bp._type = BREAK_SELECTORWRITE;
 	bp._name = argv[1];
-	bp._action = BREAK_BREAK;
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
+
 	return true;
 }
 
@@ -3965,10 +4013,20 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
-	if (argc != 3) {
+	if (argc < 3 || argc > 4) {
 		debugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		debugPrintf("Usage: %s <script number> <export number>\n", argv[0]);
+		debugPrintf("Usage: %s <script number> <export number> [<action>]\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 4) {
+		if (!stringToBreakpointAction(argv[3], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[3]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
@@ -3978,7 +4036,7 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	bp._type = BREAK_EXPORT;
 	// script number, export number
 	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
-	bp._action = BREAK_BREAK;
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
@@ -3987,9 +4045,10 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointAddress(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on the execution of the specified code address.\n");
-		debugPrintf("Usage: %s <address>\n", argv[0]);
+		debugPrintf("Usage: %s <address> [<action>]\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
@@ -4001,10 +4060,19 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 		return true;
 	}
 
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
 	Breakpoint bp;
 	bp._type = BREAK_ADDRESS;
 	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
-	bp._action = BREAK_BREAK;
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
