@@ -191,6 +191,8 @@ private:
 	 */
 	void printKernelCallsFound(int kernelFuncNum, bool showFoundScripts);
 
+	void printBreakpoint(int index, const Breakpoint &bp);
+
 	SciEngine *_engine;
 	DebugState &_debugState;
 	Common::String _videoFile;

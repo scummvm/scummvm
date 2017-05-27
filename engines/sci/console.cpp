@@ -3722,54 +3722,55 @@ bool Console::cmdLogKernel(int argc, const char **argv) {
 	return true;
 }
 
+void Console::printBreakpoint(int index, const Breakpoint &bp) {
+	debugPrintf("  #%i: ", index);
+	const char *bpaction;
+
+	switch (bp._action) {
+	case BREAK_LOG:
+		bpaction = " (action: log only)";
+		break;
+	case BREAK_BACKTRACE:
+		bpaction = " (action: show backtrace)";
+		break;
+	case BREAK_INSPECT:
+		bpaction = " (action: show object)";
+		break;
+	case BREAK_NONE:
+		bpaction = " (action: ignore)";
+		break;
+	default:
+		bpaction = "";
+	}
+	switch (bp._type) {
+	case BREAK_SELECTOREXEC:
+		debugPrintf("Execute %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_SELECTORREAD:
+		debugPrintf("Read %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_SELECTORWRITE:
+		debugPrintf("Write %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_EXPORT: {
+		int bpdata = bp._address;
+		debugPrintf("Execute script %d, export %d%s\n", bpdata >> 16, bpdata & 0xFFFF, bpaction);
+		break;
+	}
+	case BREAK_ADDRESS:
+		debugPrintf("Execute address %04x:%04x%s\n", PRINT_REG(bp._regAddress), bpaction);
+	}
+}
+
 bool Console::cmdBreakpointList(int argc, const char **argv) {
 	int i = 0;
-	int bpdata;
 
 	debugPrintf("Breakpoint list:\n");
 
 	Common::List<Breakpoint>::const_iterator bp = _debugState._breakpoints.begin();
 	Common::List<Breakpoint>::const_iterator end = _debugState._breakpoints.end();
-	for (; bp != end; ++bp) {
-		debugPrintf("  #%i: ", i);
-		const char *bpaction;
-
-		switch (bp->_action) {
-		case BREAK_LOG:
-			bpaction = " (action: log only)";
-			break;
-		case BREAK_BACKTRACE:
-			bpaction = " (action: show backtrace)";
-			break;
-		case BREAK_INSPECT:
-			bpaction = " (action: show object)";
-			break;
-		case BREAK_NONE:
-			bpaction = " (action: ignore)";
-			break;
-		default:
-			bpaction = "";
-		}
-		switch (bp->_type) {
-		case BREAK_SELECTOREXEC:
-			debugPrintf("Execute %s%s\n", bp->_name.c_str(), bpaction);
-			break;
-		case BREAK_SELECTORREAD:
-			debugPrintf("Read %s%s\n", bp->_name.c_str(), bpaction);
-			break;
-		case BREAK_SELECTORWRITE:
-			debugPrintf("Write %s%s\n", bp->_name.c_str(), bpaction);
-			break;
-		case BREAK_EXPORT:
-			bpdata = bp->_address;
-			debugPrintf("Execute script %d, export %d%s\n", bpdata >> 16, bpdata & 0xFFFF, bpaction);
-			break;
-		case BREAK_ADDRESS:
-			debugPrintf("Execute address %04x:%04x%s\n", PRINT_REG(bp->_regAddress), bpaction);
-		}
-
-		i++;
-	}
+	for (; bp != end; ++bp)
+		printBreakpoint(i++, *bp);
 
 	if (!i)
 		debugPrintf("  No breakpoints defined.\n");
@@ -3881,6 +3882,8 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 	_debugState.updateActiveBreakpointTypes();
 
+	printBreakpoint(idx, *bp);
+
 	return true;
 }
 
@@ -3919,6 +3922,8 @@ bool Console::cmdBreakpointMethod(int argc, const char **argv) {
 	if (action != BREAK_NONE)
 		_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
 
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
@@ -3951,6 +3956,8 @@ bool Console::cmdBreakpointRead(int argc, const char **argv) {
 	if (action != BREAK_NONE)
 		_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
 
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
@@ -3982,6 +3989,8 @@ bool Console::cmdBreakpointWrite(int argc, const char **argv) {
 
 	if (action != BREAK_NONE)
 		_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
 
 	return true;
 }
